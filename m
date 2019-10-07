@@ -2,29 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 076F6CE609
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:52:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 778BFCE5F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:51:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729186AbfJGOv4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 10:51:56 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44307 "EHLO
+        id S1729143AbfJGOvZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 10:51:25 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44382 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728340AbfJGOt3 (ORCPT
+        with ESMTP id S1728263AbfJGOtd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 10:49:29 -0400
+        Mon, 7 Oct 2019 10:49:33 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iHUK8-0005vJ-AI; Mon, 07 Oct 2019 16:49:20 +0200
+        id 1iHUK3-0005vC-2h; Mon, 07 Oct 2019 16:49:15 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 02A171C032F;
-        Mon,  7 Oct 2019 16:49:15 +0200 (CEST)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B32771C08B0;
+        Mon,  7 Oct 2019 16:49:14 +0200 (CEST)
 Date:   Mon, 07 Oct 2019 14:49:14 -0000
 From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf annotate: Propagate perf_env__arch() error
+Subject: [tip: perf/urgent] perf annotate: Propagate the symbol__annotate()
+ error return
 Cc:     "Russell King - ARM Linux admin" <linux@armlinux.org.uk>,
         Adrian Hunter <adrian.hunter@intel.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
@@ -35,10 +36,10 @@ Cc:     "Russell King - ARM Linux admin" <linux@armlinux.org.uk>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <tip-it5d83kyusfhb1q1b0l4pxzs@git.kernel.org>
-References: <tip-it5d83kyusfhb1q1b0l4pxzs@git.kernel.org>
+In-Reply-To: <tip-0tj89rs9g7nbcyd5skadlvuu@git.kernel.org>
+References: <tip-0tj89rs9g7nbcyd5skadlvuu@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157045975491.9978.7407885401936915311.tip-bot2@tip-bot2>
+Message-ID: <157045975468.9978.12402394598964934292.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -54,20 +55,23 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     a66fa0619a0ae3585ef09e9c33ecfb5c7c6cb72b
-Gitweb:        https://git.kernel.org/tip/a66fa0619a0ae3585ef09e9c33ecfb5c7c6cb72b
+Commit-ID:     211f493b611eef012841f795166c38ec7528738d
+Gitweb:        https://git.kernel.org/tip/211f493b611eef012841f795166c38ec7528738d
 Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Mon, 30 Sep 2019 15:06:01 -03:00
+AuthorDate:    Mon, 30 Sep 2019 15:44:13 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Mon, 30 Sep 2019 17:29:58 -03:00
+CommitterDate: Mon, 30 Sep 2019 17:30:01 -03:00
 
-perf annotate: Propagate perf_env__arch() error
+perf annotate: Propagate the symbol__annotate() error return
 
-The callers of symbol__annotate2() use symbol__strerror_disassemble() to
-convert its failure returns into a human readable string, so
-propagate error values from functions it calls, starting with
-perf_env__arch() that when fails the right thing to do is to look at
-'errno' to see why its possible call to uname() failed.
+We were just returning -1 in symbol__annotate() when symbol__annotate()
+failed, propagate its error as it is used later to pass to
+symbol__strerror_disassemble() to present a error message to the user,
+that in some cases were getting:
+
+  "Invalid -1 error code"
+
+Fix it to propagate the error.
 
 Reported-by: Russell King - ARM Linux admin <linux@armlinux.org.uk>
 Cc: Adrian Hunter <adrian.hunter@intel.com>
@@ -76,22 +80,22 @@ Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>,
 Cc: Will Deacon <will@kernel.org>
-Link: https://lkml.kernel.org/n/tip-it5d83kyusfhb1q1b0l4pxzs@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-0tj89rs9g7nbcyd5skadlvuu@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
  tools/perf/util/annotate.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index e830ead..9b7b917 100644
+index 95109ac..1de1a70 100644
 --- a/tools/perf/util/annotate.c
 +++ b/tools/perf/util/annotate.c
-@@ -2071,7 +2071,7 @@ int symbol__annotate(struct symbol *sym, struct map *map,
- 	int err;
+@@ -2997,7 +2997,7 @@ int symbol__annotate2(struct symbol *sym, struct map *map, struct evsel *evsel,
  
- 	if (!arch_name)
--		return -1;
-+		return errno;
+ out_free_offsets:
+ 	zfree(&notes->offsets);
+-	return -1;
++	return err;
+ }
  
- 	args.arch = arch = arch__find(arch_name);
- 	if (arch == NULL)
+ #define ANNOTATION__CFG(n) \
