@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6596DCE257
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:55:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7619CE25C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:55:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728451AbfJGMy5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 08:54:57 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48726 "EHLO mx1.redhat.com"
+        id S1728588AbfJGMzY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 08:55:24 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55436 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727869AbfJGMyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 08:54:55 -0400
+        id S1727936AbfJGMy5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 08:54:57 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 668F930860D7;
-        Mon,  7 Oct 2019 12:54:55 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 54CED10C0929;
+        Mon,  7 Oct 2019 12:54:57 +0000 (UTC)
 Received: from krava.brq.redhat.com (unknown [10.43.17.61])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C1C6E5D9CC;
-        Mon,  7 Oct 2019 12:54:53 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B3C855D9CC;
+        Mon,  7 Oct 2019 12:54:55 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     lkml <linux-kernel@vger.kernel.org>,
@@ -27,63 +27,64 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Michael Petlan <mpetlan@redhat.com>
-Subject: [PATCH 29/36] libperf: Move mask setup to perf_evlist__mmap_ops function
-Date:   Mon,  7 Oct 2019 14:53:37 +0200
-Message-Id: <20191007125344.14268-30-jolsa@kernel.org>
+Subject: [PATCH 30/36] libperf: Link static tests with libapi.a
+Date:   Mon,  7 Oct 2019 14:53:38 +0200
+Message-Id: <20191007125344.14268-31-jolsa@kernel.org>
 In-Reply-To: <20191007125344.14268-1-jolsa@kernel.org>
 References: <20191007125344.14268-1-jolsa@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 07 Oct 2019 12:54:55 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.66]); Mon, 07 Oct 2019 12:54:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Moving mask setup to perf_evlist__mmap_ops function,
-because it's same on both perf and libperf path.
+Both static and dynamic tests needs to link libapi.a,
+because it's using its functions. Adding also include
+path for libapi includes.
 
-Link: http://lkml.kernel.org/n/tip-z31pepohuxlgecf6400wbvt0@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-ws9g47hh5vnkvdwpn93mtr3f@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/lib/evlist.c  | 3 ++-
- tools/perf/util/evlist.c | 1 -
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/lib/Makefile       | 1 +
+ tools/perf/lib/tests/Makefile | 6 +++---
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/lib/evlist.c b/tools/perf/lib/evlist.c
-index 61ed27526e08..8163b5123c55 100644
---- a/tools/perf/lib/evlist.c
-+++ b/tools/perf/lib/evlist.c
-@@ -578,6 +578,8 @@ int perf_evlist__mmap_ops(struct perf_evlist *evlist,
- 	if (!ops || !ops->get || !ops->mmap)
- 		return -EINVAL;
+diff --git a/tools/perf/lib/Makefile b/tools/perf/lib/Makefile
+index 0889c9c3ec19..0f233638ef1f 100644
+--- a/tools/perf/lib/Makefile
++++ b/tools/perf/lib/Makefile
+@@ -107,6 +107,7 @@ else
+ endif
  
-+	mp->mask = evlist->mmap_len - page_size - 1;
-+
- 	evlist->nr_mmaps = perf_evlist__nr_mmaps(evlist);
+ LIBAPI = $(API_PATH)libapi.a
++export LIBAPI
  
- 	perf_evlist__for_each_entry(evlist, evsel) {
-@@ -605,7 +607,6 @@ int perf_evlist__mmap(struct perf_evlist *evlist, int pages)
- 	};
+ $(LIBAPI): FORCE
+ 	$(Q)$(MAKE) -C $(LIB_DIR) O=$(OUTPUT) $(OUTPUT)libapi.a
+diff --git a/tools/perf/lib/tests/Makefile b/tools/perf/lib/tests/Makefile
+index 1ee4e9ba848b..a43cd08c5c03 100644
+--- a/tools/perf/lib/tests/Makefile
++++ b/tools/perf/lib/tests/Makefile
+@@ -16,13 +16,13 @@ all:
  
- 	evlist->mmap_len = (pages + 1) * page_size;
--	mp.mask = evlist->mmap_len - page_size - 1;
+ include $(srctree)/tools/scripts/Makefile.include
  
- 	return perf_evlist__mmap_ops(evlist, &ops, &mp);
- }
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index b58ef3147163..78185f984f0e 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -788,7 +788,6 @@ int evlist__mmap_ex(struct evlist *evlist, unsigned int pages,
+-INCLUDE = -I$(srctree)/tools/perf/lib/include -I$(srctree)/tools/include
++INCLUDE = -I$(srctree)/tools/perf/lib/include -I$(srctree)/tools/include -I$(srctree)/tools/lib
  
- 	evlist->core.mmap_len = evlist__mmap_size(pages);
- 	pr_debug("mmap size %zuB\n", evlist->core.mmap_len);
--	mp.core.mask = evlist->core.mmap_len - page_size - 1;
+ $(TESTS_A): FORCE
+-	$(QUIET_LINK)$(CC) $(INCLUDE) $(CFLAGS) -o $@ $(subst -a,.c,$@) ../libperf.a
++	$(QUIET_LINK)$(CC) $(INCLUDE) $(CFLAGS) -o $@ $(subst -a,.c,$@) ../libperf.a $(LIBAPI)
  
- 	auxtrace_mmap_params__init(&mp.auxtrace_mp, evlist->core.mmap_len,
- 				   auxtrace_pages, auxtrace_overwrite);
+ $(TESTS_SO): FORCE
+-	$(QUIET_LINK)$(CC) $(INCLUDE) $(CFLAGS) -L.. -o $@ $(subst -so,.c,$@) -lperf
++	$(QUIET_LINK)$(CC) $(INCLUDE) $(CFLAGS) -L.. -o $@ $(subst -so,.c,$@) $(LIBAPI) -lperf
+ 
+ all: $(TESTS_A) $(TESTS_SO)
+ 
 -- 
 2.21.0
 
