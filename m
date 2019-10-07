@@ -2,78 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F6EFCDF0A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 12:16:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80B23CDEDA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 12:11:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbfJGKQU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 06:16:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58858 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727753AbfJGKQS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 06:16:18 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 16169B1FF;
-        Mon,  7 Oct 2019 10:16:17 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id D86701E481A; Fri,  4 Oct 2019 10:12:15 +0200 (CEST)
-Date:   Fri, 4 Oct 2019 10:12:15 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Chengguang Xu <cgxu519@zoho.com.cn>
-Cc:     Jan Kara <jack@suse.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] quota: code cleanup for hash bits calculation
-Message-ID: <20191004081215.GB13650@quack2.suse.cz>
-References: <20190923135223.27674-1-cgxu519@zoho.com.cn>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190923135223.27674-1-cgxu519@zoho.com.cn>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727593AbfJGKKy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 06:10:54 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34256 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726010AbfJGKKx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 06:10:53 -0400
+Received: by mail-pf1-f195.google.com with SMTP id b128so8363896pfa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 03:10:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=XO1tUWwVg3ldpvvlr197QyBHXOPBJs+Oz3B5tCIDh7E=;
+        b=z32D50XwrbQhoMs5ZlCwo6nkE3o2ABiqql4DpVNn93SVGIxKiBRu2bX3xhk6VLxzj0
+         0L2ofFTziab40NeP8sLgVezl0TJJ+PW9E8mJcJsKRWZjippsF+DSNYmQ5xs20yRWAbcE
+         mCRkN31mP6Xk5ZsB3SQL2k82fS+NRAnLw1dbjXYWHR2VpzTWCyMeaj75tGi8HPB9wE6z
+         eOjzScJt1omj1BhxBAfCbXwCY4HTpcn2z6ImgJPTB/g0VTqlTdLnJnbYVlWfSj2jjYQg
+         klO9JOZBDAQeybsbSeI+0t5mS74wXVrtJsmlJZcQVRe9yA1ywDwItK9rx0FrEkoauhbH
+         gtjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=XO1tUWwVg3ldpvvlr197QyBHXOPBJs+Oz3B5tCIDh7E=;
+        b=EWqlb/bgMiykgFP0M2lpY9S4v1Tk3sBhR1hEX6+/F+y0TYo1aVzxiX2YYSrPSgpRtO
+         J5cuPlp48xurns+nMQzcxZPZk32ZAZ+iM9+tvHA1fmj22rl/l66lEpP6GK4f+a9oZ4/w
+         7Bh+xc6bVXYXufXcyvp5M7bQnhsGgzPgu5fJkcnvSDmAOyuGOxNfVraWV8Ce5kG21FCy
+         qMPqPclCXDWVLFutM2et5Vtfq7pUWsSxMqPJOZjEhdIUXD/4rTRwA2jQHKiNmWtJltCI
+         OauWhkpUbThoXHyKU+ogiFKdvAnYCcdgA5ABaGaJH2R/vpjoqcwwoDXDM0ZixpRa9fjG
+         Aa+Q==
+X-Gm-Message-State: APjAAAVv+6PNPtYxXK2dQv2J1Bi0hqsySiNuMrzU0/JClV/tehc5XLlg
+        Hx/6ePPl6JF9Ywo2e7W3B6vFA5ugkQ==
+X-Google-Smtp-Source: APXvYqwnDB36e9vSf5ng1nGbWTuo/pYuBppzVrHRrTabh7OcBrr9kil8al08FbBTpHhuKA6wPFzfPA==
+X-Received: by 2002:aa7:96c1:: with SMTP id h1mr33214998pfq.111.1570443053002;
+        Mon, 07 Oct 2019 03:10:53 -0700 (PDT)
+Received: from localhost.localdomain ([2409:4072:801:5b45:54fa:fc3f:2c55:c2df])
+        by smtp.gmail.com with ESMTPSA id z4sm17465132pfn.45.2019.10.07.03.10.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2019 03:10:51 -0700 (PDT)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+        knaack.h@gmx.de, pmeerw@pmeerw.net, robh+dt@kernel.org
+Cc:     linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 0/2] Add support for ADUX1020 sensor
+Date:   Mon,  7 Oct 2019 15:40:25 +0530
+Message-Id: <20191007101027.8383-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 23-09-19 21:52:23, Chengguang Xu wrote:
-> Code cleanup for hash bits calculation by
-> calling ilog2().
-> 
-> Signed-off-by: Chengguang Xu <cgxu519@zoho.com.cn>
+Hello,
 
-Thanks! I've queued your patch.
+This patchset adds initial IIO driver support for ADUX1020 Photometric
+sensor from Analog Devices. This sensor is usable for multiple optical
+measurement applications, including gesture control and proximity sensing.
 
-								Honza
+This initial driver includes support for only proximity mode with event
+based interrupt. The driver validation has been performed using Shiratech
+LTE mezzanine [1] connected to 96Boards Dragonboard410c [2].
 
-> ---
-> v1->v2:
-> - Calculate hash bits by directly calling ilog2().
-> 
->  fs/quota/dquot.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-> index 6e826b454082..fde1b94ea587 100644
-> --- a/fs/quota/dquot.c
-> +++ b/fs/quota/dquot.c
-> @@ -2983,11 +2983,7 @@ static int __init dquot_init(void)
->  
->  	/* Find power-of-two hlist_heads which can fit into allocation */
->  	nr_hash = (1UL << order) * PAGE_SIZE / sizeof(struct hlist_head);
-> -	dq_hash_bits = 0;
-> -	do {
-> -		dq_hash_bits++;
-> -	} while (nr_hash >> dq_hash_bits);
-> -	dq_hash_bits--;
-> +	dq_hash_bits = ilog2(nr_hash);
->  
->  	nr_hash = 1UL << dq_hash_bits;
->  	dq_hash_mask = nr_hash - 1;
-> -- 
-> 2.21.0
-> 
-> 
-> 
-> 
+Thanks,
+Mani
+
+[1] https://www.96boards.org/product/shiratech-lte/
+[2] https://www.96boards.org/product/dragonboard410c/
+
+Manivannan Sadhasivam (2):
+  dt-bindings: iio: light: Add binding for ADUX1020
+  iio: light: Add support for ADUX1020 sensor
+
+ .../bindings/iio/light/adux1020.txt           |  22 +
+ drivers/iio/light/Kconfig                     |  11 +
+ drivers/iio/light/Makefile                    |   1 +
+ drivers/iio/light/adux1020.c                  | 783 ++++++++++++++++++
+ 4 files changed, 817 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/light/adux1020.txt
+ create mode 100644 drivers/iio/light/adux1020.c
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.17.1
+
