@@ -2,76 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29B11CE05D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 13:26:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 586CFCE065
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 13:27:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727923AbfJGL01 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 07:26:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:32238 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727395AbfJGL00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 07:26:26 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3FE7A30B2502;
-        Mon,  7 Oct 2019 11:26:26 +0000 (UTC)
-Received: from krava (unknown [10.43.17.61])
-        by smtp.corp.redhat.com (Postfix) with SMTP id C2C1660A35;
-        Mon,  7 Oct 2019 11:26:24 +0000 (UTC)
-Date:   Mon, 7 Oct 2019 13:26:24 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Changbin Du <changbin.du@gmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] perf: add support for logging debug messages to
- file
-Message-ID: <20191007112624.GG6919@krava>
-References: <20191004023954.1116-1-changbin.du@gmail.com>
+        id S1727940AbfJGL1N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 07:27:13 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:35252 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727416AbfJGL1N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 07:27:13 -0400
+Received: by mail-ot1-f67.google.com with SMTP id z6so10636621otb.2;
+        Mon, 07 Oct 2019 04:27:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pRO/TI+2U+Mnp2n0LB3QUA+ksdxnhCB7M1sKuDwnBI8=;
+        b=kBd+eM3Zz0OEq0Jsx6D65Q0dPMbvIiytCFWLnpssrMkibLBmfLOpCjF6moavqDlkL/
+         +t8BgH02ORlxrg6M825hTpr6HZ9Y/7vwXMXhNUz6WGeDNRljQxizlDFioPk8ybW+YPuJ
+         XZq9yom2hSMKL1I4FGtOknYUEGMHJwmmd0V9KPMvB2ddNtFUVy4GP9M7hUfWMQYATda8
+         seN6GbZlR4G5LOZJT4VwoZ+YO+JWke/v3MnbWx1xjk04pFLg2tOlzssLpOm732NSpTb5
+         0wali9lN/a9gb+uKbzWvC0sd2GiJdRCiYuD5xPfaJhlMQAsOxqidB43NZSzi5GTVJpKM
+         ASkA==
+X-Gm-Message-State: APjAAAVIHB0eIYtCWc/c8AL9MNgOvoniYCFGKKwNCkmYMuZXOZ/8m+sr
+        0MXZKDiGnITL5HqV+Sw4HNLTD26z2DVvXw14rrA=
+X-Google-Smtp-Source: APXvYqxnu6U8S63dLV1lsHdXGQHef3F61XQEi70QpWOo4C33hmoMZwQPDD+rVz9AbxsCo4FSDAIrRYl9MD9JctgODeY=
+X-Received: by 2002:a9d:404d:: with SMTP id o13mr11205526oti.39.1570447632006;
+ Mon, 07 Oct 2019 04:27:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191004023954.1116-1-changbin.du@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 07 Oct 2019 11:26:26 +0000 (UTC)
+References: <1570178133-21532-1-git-send-email-fabrizio.castro@bp.renesas.com> <1570178133-21532-3-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1570178133-21532-3-git-send-email-fabrizio.castro@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 7 Oct 2019 13:27:00 +0200
+Message-ID: <CAMuHMdW+FAYwuV876Y_BkHoSMtmV=0zUTU_cU1PGhX6zorqbwg@mail.gmail.com>
+Subject: Re: [PATCH 2/7] dt-bindings: spi: sh-msiof: Add r8a774b1 support
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>, xu_shunji@hoperun.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 04, 2019 at 10:39:52AM +0800, Changbin Du wrote:
-> When in TUI mode, it is impossible to show all the debug messages to
-> console. This make it hard to debug perf issues using debug messages.
-> This patch adds support for logging debug messages to file to resolve
-> this problem.
-> 
-> v3:
->   o fix a segfault issue.
+On Fri, Oct 4, 2019 at 10:35 AM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> Document RZ/G2N (R8A774B1) SoC bindings.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-heya,
-getting segfault for this:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[jolsa@krava perf]$ ./perf report -vv 2>out
-Segmentation fault (core dumped)
+Gr{oetje,eeting}s,
 
-jirka
+                        Geert
 
-> v2:
->   o specific all debug options one time.
-> 
-> Changbin Du (2):
->   perf: support multiple debug options separated by ','
->   perf: add support for logging debug messages to file
-> 
->  tools/perf/Documentation/perf.txt |  15 ++--
->  tools/perf/util/debug.c           | 124 +++++++++++++++++++-----------
->  2 files changed, 90 insertions(+), 49 deletions(-)
-> 
-> -- 
-> 2.20.1
-> 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
