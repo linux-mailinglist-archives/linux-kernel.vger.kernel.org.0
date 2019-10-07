@@ -2,70 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E2EFCEB81
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 20:10:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 875C4CEB86
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 20:11:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729330AbfJGSKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 14:10:04 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:43504 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728031AbfJGSKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 14:10:03 -0400
-Received: from zn.tnic (p200300EC2F0642008DAA100DB0709541.dip0.t-ipconnect.de [IPv6:2003:ec:2f06:4200:8daa:100d:b070:9541])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C81311EC05FD;
-        Mon,  7 Oct 2019 20:10:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1570471802;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=5cIYqwVqqS8NoWm5xFx9vBQRzZzElKwM5wDEfP3aKZg=;
-        b=QxfIyCQzPaQauask7kKASpPDp2DEcVvMcUjfaB6QYWntmSSmHnbOfk5zA6Bf0JGSoHoeQe
-        DFdfMbvocA9SWsXYFChNgoDt30xBAcbOfjUu3KgJQY5iPeVNLhIIWwxn4VD6XpyLic3+j4
-        Sf64gfDM3WC+7bEmh08PL5q5vWwj2IY=
-Date:   Mon, 7 Oct 2019 20:09:55 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, josh@joshtriplett.org, luto@kernel.org,
-        kai.huang@intel.com, rientjes@google.com, cedric.xing@intel.com
-Subject: Re: [PATCH v22 09/24] x86/sgx: Add functions to allocate and free
- EPC pages
-Message-ID: <20191007180955.GF24289@zn.tnic>
-References: <20190903142655.21943-1-jarkko.sakkinen@linux.intel.com>
- <20190903142655.21943-10-jarkko.sakkinen@linux.intel.com>
- <20191005164408.GB25699@zn.tnic>
- <20191007175555.GA5972@linux.intel.com>
+        id S1729345AbfJGSLb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 14:11:31 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39078 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728273AbfJGSLa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 14:11:30 -0400
+Received: by mail-lj1-f194.google.com with SMTP id y3so14722414ljj.6
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 11:11:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sSXG+xP1mD1UZGXg2TTq5r4dUsztpjrAAtm+apLCkB0=;
+        b=T9+n4Uy8+vBXnVgYXqxACSICel9I1qrO3WM1rG9o1zxB4y8+nglyP7so9RqnUS9cQ8
+         DPynUXscIFi1WYKoG9zr1emFzkpLyTp2BRuohwDJ1ouK6+mq/bC+2eV4h1P0P5G2vHiB
+         f45dnjMv5AzSxoSBKOdXSpYYKUfiyQB6mH0fg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sSXG+xP1mD1UZGXg2TTq5r4dUsztpjrAAtm+apLCkB0=;
+        b=BbJ8saDVl2gqL3PkjDFyEa0pU8SB3In/flEXC/HdqZ7QEtRbm+jRi6G/gs2YIywG7x
+         daGZw4cqWgANp8lshJQTBZutXK6vpPjcUbda3X1TWa+r8PrpzCl8ad8h40nA+ebvH8ds
+         LAasM3X3w4X52bfan/IIYDeW/M7YjhrIp3jZdOyzr+OSyDlhKVKzvH1aHW14IZM5pFXI
+         4yQbe5SR/40NEeht4sLO2CUN7gcKc8tVFtOAo+qNcWtSiHnQxnXAFRLJTVYbqTiEmkMQ
+         QeTUXBMzetH8pVqpvSTsvWdAVb7FQFU/UDIuau7IEfspTBaSu1RTNUN27rovkSf4ycTq
+         5SWw==
+X-Gm-Message-State: APjAAAWn15EmBT/MNjoKg3B3loxQ9fMw6OYXZdsO0p262/9iOyTdapWi
+        EXLk8Vhh1FJv7N5XSorNSCily344IBg=
+X-Google-Smtp-Source: APXvYqwFwAbsnEOtj0mHzdvJNQkD25rycLvVvvRpUAWnHynzwfWa9M6ePJPhvAsZ6Rf5t/h3oto44A==
+X-Received: by 2002:a2e:3806:: with SMTP id f6mr19787879lja.143.1570471886405;
+        Mon, 07 Oct 2019 11:11:26 -0700 (PDT)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id i21sm2802539lfl.44.2019.10.07.11.11.25
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2019 11:11:25 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id d1so14684795ljl.13
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 11:11:25 -0700 (PDT)
+X-Received: by 2002:a2e:9556:: with SMTP id t22mr19099733ljh.97.1570471885049;
+ Mon, 07 Oct 2019 11:11:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191007175555.GA5972@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191006222046.GA18027@roeck-us.net> <CAHk-=wgrqwuZJmwbrjhjCFeSUu2i57unaGOnP4qZAmSyuGwMZA@mail.gmail.com>
+ <CAHk-=wjRPerXedTDoBbJL=tHBpH+=sP6pX_9NfgWxpnmHC5RtQ@mail.gmail.com>
+ <5f06c138-d59a-d811-c886-9e73ce51924c@roeck-us.net> <CAHk-=whAQWEMADgxb_qAw=nEY4OnuDn6HU4UCSDMNT5ULKvg3g@mail.gmail.com>
+ <20191007012437.GK26530@ZenIV.linux.org.uk> <CAHk-=whKJfX579+2f-CHc4_YmEmwvMe_Csr0+CPfLAsSAdfDoA@mail.gmail.com>
+ <20191007025046.GL26530@ZenIV.linux.org.uk> <CAHk-=whraNSys_Lj=Ut1EA=CJEfw2Uothh+5-WL+7nDJBegWcQ@mail.gmail.com>
+ <c58c2a8a5366409abd4169d10a58196a@AcuMS.aculab.com>
+In-Reply-To: <c58c2a8a5366409abd4169d10a58196a@AcuMS.aculab.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 7 Oct 2019 11:11:09 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjF2fkhuN8N-MnTwvzNig83XdQK50nir8oieF7jV6Om=A@mail.gmail.com>
+Message-ID: <CAHk-=wjF2fkhuN8N-MnTwvzNig83XdQK50nir8oieF7jV6Om=A@mail.gmail.com>
+Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to unsafe_put_user()
+To:     David Laight <David.Laight@aculab.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 07, 2019 at 08:55:55PM +0300, Jarkko Sakkinen wrote:
-> But checkpatch.pl will complain about it...
+On Mon, Oct 7, 2019 at 8:40 AM David Laight <David.Laight@aculab.com> wrote:
+>
+> You don't really want an extra access_ok() for every 'word' of a copy.
 
-You should not take checkpatch.pl messages to the letter but always
-sanity-check them with common sense. In this particular example,
-readability is much more important than some tool measuring line length.
+Yes you do.
 
-Sure, if you can make the line fit into 80 columns, then fine, but
-having to chop it into unreadability just to make some tool happy is
-certainly not what the goal should be.
+> Some copies have to be done a word at a time.
 
--- 
-Regards/Gruss,
-    Boris.
+Completely immaterial. If you can't see the access_ok() close to the
+__get/put_user(), you have a bug.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Plus the access_ok() is cheap. The real cost is the STAC/CLAC.
+
+So stop with the access_ok() "optimizations". They are broken garbage.
+
+Really.
+
+I've been very close to just removing __get_user/__put_user several
+times, exactly because people do completely the wrong thing with them
+- not speeding code up, but making it unsafe and buggy.
+
+The new "user_access_begin/end()" model is much better, but it also
+has actual STATIC checking that there are no function calls etc inside
+th4e region, so it forces you to do the loop properly and tightly, and
+not the incorrect "I checked the range somewhere else, now I'm doing
+an unsafe copy".
+
+And it actually speeds things up, unlike the access_ok() games.
+
+               Linus
