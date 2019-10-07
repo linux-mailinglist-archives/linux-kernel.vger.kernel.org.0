@@ -2,96 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2607CE1D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:35:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45453CE1C8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:33:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727685AbfJGMfp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 08:35:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39274 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727490AbfJGMfp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 08:35:45 -0400
-Received: from dragon (li937-157.members.linode.com [45.56.119.157])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CD50206C0;
-        Mon,  7 Oct 2019 12:35:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570451744;
-        bh=G7bPx9GFN1xcIq71rEDntHAC9rEEeUdtSJm31epRpNc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HHXEvMMPGUIpAl6s1plLNDIIYy0bV2EVRCg4UM5/eMhM19KfB/F+Ev1kAwvho+3Th
-         5ATB6FR8DTeQegelhxD7bvB6tD5/ZBLVke2SvxaEEBTusyNPP4PNorJ4BfKS91wixu
-         8X2LI5HOR3KRxB9whHwVg/AQWbPIylQGjBa/z/f4=
-Date:   Mon, 7 Oct 2019 20:35:14 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Wen He <wen.he_1@nxp.com>
-Cc:     linux-devel@linux.nxdi.nxp.com, Li Yang <leoyang.li@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [v2 2/2] arm64: dts: ls1028a: Update the DT node definition for
- dpclk
-Message-ID: <20191007123512.GM7150@dragon>
-References: <20190920083419.5092-1-wen.he_1@nxp.com>
- <20190920083419.5092-2-wen.he_1@nxp.com>
+        id S1727903AbfJGMd1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 08:33:27 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:36348 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727789AbfJGMd0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 08:33:26 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x97CXKkg026980;
+        Mon, 7 Oct 2019 07:33:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1570451600;
+        bh=orB4Mt40ggPITyEUfzhbhBT5Za8iHXundC/FxfCuCrI=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=cQshZ2d80zjYiGr0EOEc6kGwHZ8LosOKevfIos/zRbEbGQ385bVnFPU4PIhfEdcYh
+         cemLqKOnraPsFxZJllghES9e9tw/Lo4nMad5lm0xAgRUSZdnclr7qDblgdFM5J3Hg1
+         ngUAta5GmYTrc0iycZimtCSUQw9TQn+V1d/cBLcM=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x97CXKlW075007
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 7 Oct 2019 07:33:20 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 7 Oct
+ 2019 07:33:17 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 7 Oct 2019 07:33:19 -0500
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x97CXJMH114580;
+        Mon, 7 Oct 2019 07:33:19 -0500
+Subject: Re: [PATCH v10 06/16] leds: lp50xx: Add the LP50XX family of the RGB
+ LED driver
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20191001145620.11123-1-dmurphy@ti.com>
+ <20191001145620.11123-7-dmurphy@ti.com>
+ <d674fcb2-922e-7801-a3a1-ee86f571eb64@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <2395f219-ce2f-6809-a082-035f5f1a8a6b@ti.com>
+Date:   Mon, 7 Oct 2019 07:35:57 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190920083419.5092-2-wen.he_1@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <d674fcb2-922e-7801-a3a1-ee86f571eb64@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 04:34:19PM +0800, Wen He wrote:
-> Update DT node name clock-controller to clock-display,
+Jacek
 
-The node name clock-controller is so good, and I do not understand why
-you need to change it.
+On 10/6/19 11:12 AM, Jacek Anaszewski wrote:
+> Dan,
+>
+> On 10/1/19 4:56 PM, Dan Murphy wrote:
+>> Introduce the LP5036/30/24/18/12/9 RGB LED driver.
+>> The difference in these parts are the number of
+>> LED outputs where the:
+>>
+>> LP5036 can control 36 LEDs
+>> LP5030 can control 30 LEDs
+>> LP5024 can control 24 LEDs
+>> LP5018 can control 18 LEDs
+>> LP5012 can control 12 LEDs
+>> LP5009 can control 9 LEDs
+>>
+>> The device has the ability to group LED output into control banks
+>> so that multiple LED banks can be controlled with the same mixing and
+>> brightness.  Inversely the LEDs can also be controlled independently.
+>>
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>> ---
+>>   drivers/leds/Kconfig       |  11 +
+>>   drivers/leds/Makefile      |   1 +
+>>   drivers/leds/leds-lp50xx.c | 784 +++++++++++++++++++++++++++++++++++++
+>>   3 files changed, 796 insertions(+)
+>>   create mode 100644 drivers/leds/leds-lp50xx.c
+>>
+>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+>> index cfb1ebb6517f..84f60e35c5ee 100644
+>> --- a/drivers/leds/Kconfig
+>> +++ b/drivers/leds/Kconfig
+>> @@ -363,6 +363,17 @@ config LEDS_LP3952
+>>   	  To compile this driver as a module, choose M here: the
+>>   	  module will be called leds-lp3952.
+>>   
+>> +config LEDS_LP50XX
+>> +	tristate "LED Support for TI LP5036/30/24/18/12/9 LED driver chip"
+>> +	depends on LEDS_CLASS && REGMAP_I2C
+>> +	depends on LEDS_CLASS_MULTI_COLOR
+>> +	help
+>> +	  If you say yes here you get support for the Texas Instruments
+>> +	  LP5036, LP5030, LP5024, LP5018, LP5012 and LP5009 LED driver.
+>> +
+>> +	  To compile this driver as a module, choose M here: the
+>> +	  module will be called leds-lp50xx.
+>> +
+>>   config LEDS_LP55XX_COMMON
+>>   	tristate "Common Driver for TI/National LP5521/5523/55231/5562/8501"
+>>   	depends on LEDS_LP5521 || LEDS_LP5523 || LEDS_LP5562 || LEDS_LP8501
+>> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+>> index 841038cfe35b..7a208a0f7b84 100644
+>> --- a/drivers/leds/Makefile
+>> +++ b/drivers/leds/Makefile
+>> @@ -34,6 +34,7 @@ obj-$(CONFIG_LEDS_GPIO_REGISTER)	+= leds-gpio-register.o
+>>   obj-$(CONFIG_LEDS_GPIO)			+= leds-gpio.o
+>>   obj-$(CONFIG_LEDS_LP3944)		+= leds-lp3944.o
+>>   obj-$(CONFIG_LEDS_LP3952)		+= leds-lp3952.o
+>> +obj-$(CONFIG_LEDS_LP50XX)		+= leds-lp50xx.o
+>>   obj-$(CONFIG_LEDS_LP55XX_COMMON)	+= leds-lp55xx-common.o
+>>   obj-$(CONFIG_LEDS_LP5521)		+= leds-lp5521.o
+>>   obj-$(CONFIG_LEDS_LP5523)		+= leds-lp5523.o
+>> diff --git a/drivers/leds/leds-lp50xx.c b/drivers/leds/leds-lp50xx.c
+> [...]
+>> +static int lp50xx_probe_dt(struct lp50xx *priv)
+>> +{
+>> +	u32 led_banks[LP5036_MAX_LED_MODULES];
+>> +	struct fwnode_handle *child = NULL;
+>> +	struct fwnode_handle *led_node = NULL;
+>> +	struct led_init_data init_data;
+>> +	struct lp50xx_led *led;
+>> +	int num_colors;
+>> +	u32 color_id;
+>> +	int led_number;
+>> +	size_t i = 0;
+>> +	int ret;
+>> +
+>> +	priv->enable_gpio = devm_gpiod_get_optional(&priv->client->dev,
+>> +						   "enable", GPIOD_OUT_LOW);
+>> +	if (IS_ERR(priv->enable_gpio)) {
+>> +		ret = PTR_ERR(priv->enable_gpio);
+>> +		dev_err(&priv->client->dev, "Failed to get enable gpio: %d\n",
+>> +			ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	priv->regulator = devm_regulator_get(&priv->client->dev, "vled");
+>> +	if (IS_ERR(priv->regulator))
+>> +		priv->regulator = NULL;
+>> +
+>> +	device_for_each_child_node(&priv->client->dev, child) {
+>> +		led = &priv->leds[i];
+>> +		if (fwnode_property_present(child, "ti,led-bank")) {
+>> +			ret = fwnode_property_read_u32_array(child,
+>> +							     "ti,led-bank",
+>> +							     NULL, 0);
+>> +			ret = fwnode_property_read_u32_array(child,
+>> +							     "ti,led-bank",
+>> +							     led_banks,
+>> +							     ret);
+> You could check if bank numbers are within a range.
 
-Shawn
+Ack
 
-> also change
-> the property #clock-cells value to zero.
-> 
-> This update according the feedback of the Display output interface
-> clock driver upstream.
-> 
-> Link: https://lore.kernel.org/patchwork/patch/1113832/
-> Signed-off-by: Wen He <wen.he_1@nxp.com>
-> ---
->  arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> index 51fa8f57fdac..db1e186352d8 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> @@ -79,10 +79,10 @@
->  		clock-output-names = "phy_27m";
->  	};
->  
-> -	dpclk: clock-controller@f1f0000 {
-> +	dpclk: clock-display@f1f0000 {
->  		compatible = "fsl,ls1028a-plldig";
->  		reg = <0x0 0xf1f0000 0x0 0xffff>;
-> -		#clock-cells = <1>;
-> +		#clock-cells = <0>;
->  		clocks = <&osc_27m>;
->  	};
->  
-> @@ -665,7 +665,7 @@
->  		interrupts = <0 222 IRQ_TYPE_LEVEL_HIGH>,
->  			     <0 223 IRQ_TYPE_LEVEL_HIGH>;
->  		interrupt-names = "DE", "SE";
-> -		clocks = <&dpclk 0>, <&clockgen 2 2>, <&clockgen 2 2>,
-> +		clocks = <&dpclk>, <&clockgen 2 2>, <&clockgen 2 2>,
->  			 <&clockgen 2 2>;
->  		clock-names = "pxlclk", "mclk", "aclk", "pclk";
->  		arm,malidp-output-port-lines = /bits/ 8 <8 8 8>;
-> -- 
-> 2.17.1
-> 
+
+>
+>> +			if (ret) {
+>> +				dev_err(&priv->client->dev,
+>> +					"led-bank property is missing\n");
+>> +				fwnode_handle_put(child);
+>> +				goto child_out;
+>> +			}
+>> +
+>> +			priv->num_of_banked_leds = ARRAY_SIZE(led_banks);
+>> +
+>> +			ret = lp50xx_set_banks(priv, led_banks);
+>> +			if (ret) {
+>> +				dev_err(&priv->client->dev,
+>> +					"Cannot setup banked LEDs\n");
+>> +				fwnode_handle_put(child);
+>> +				goto child_out;
+>> +			}
+>> +			led->ctrl_bank_enabled = 1;
+>> +
+>> +		} else {
+>> +			ret = fwnode_property_read_u32(child, "reg",
+>> +					       &led_number);
+> The same applies to the led_number.
+
+NACK to this.  This is checked below.  But I should probably move that 
+check up into the else case.
+
+Dan
+
+
+>
+>> +			if (ret) {
+>> +				dev_err(&priv->client->dev,
+>> +					"led reg property missing\n");
+>> +				fwnode_handle_put(child);
+>> +				goto child_out;
+>> +			}
+>> +
+>> +			led->led_number = led_number;
+>> +		}
