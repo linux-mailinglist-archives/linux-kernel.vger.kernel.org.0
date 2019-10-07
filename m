@@ -2,100 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BB5BCE669
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 17:07:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8791CCE698
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 17:09:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728695AbfJGPHA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 11:07:00 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40161 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728603AbfJGPGy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 11:06:54 -0400
-Received: by mail-lj1-f195.google.com with SMTP id 7so14063598ljw.7;
-        Mon, 07 Oct 2019 08:06:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pmVOhqPV32NcE6/VgCf74tZc8Nj51x40T3jhqugB4as=;
-        b=TRWYkwkpgSPiRjKPy7XOhSTGN33f5oXhUOsnZkIejWwy/7/X81vvcWeo+GKHZsSUnp
-         E3GHUBRYro6UKk8LrXrpqN0+qd86i6RKf4dAUYkIc07/3E4gCbZShiNrNCzjuhOJa0M6
-         MON8JdgQg4qJ1LQqrKbpOAk1ZjD7nok8Eu2IS2lB5+AAr4YJM1F19YqS8YXiLDJHj9S9
-         xsTyW2h2UXIlVs0iQ3G1Jbd7C4q2x4J2NTf0m8oP1pNctsPR9nBX++Dm5Njvdkd0dcNI
-         fwG8ck28eRgmWZkTeg+jty5X1pqS7+YHBIZTq2DKnMwRyTn9mcRs6bhADHkiPF06fzAv
-         +h7A==
-X-Gm-Message-State: APjAAAVV4cmWImA+r2gtittKyQFZiLTddQ0g5XUbcEGHO3jKX2srFikh
-        fUKAzvtbToD6MLkhjFJm4jc=
-X-Google-Smtp-Source: APXvYqwK7DNQQdsfY9M8U1S6wADiMibc8D0R/IKBzbxZdTUIZvO0h2ZdKVAPY1QBihaCvYiJN5ndAA==
-X-Received: by 2002:a05:651c:154:: with SMTP id c20mr18307067ljd.83.1570460812200;
-        Mon, 07 Oct 2019 08:06:52 -0700 (PDT)
-Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
-        by smtp.gmail.com with ESMTPSA id n2sm3145517ljj.30.2019.10.07.08.06.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2019 08:06:50 -0700 (PDT)
-From:   Ricardo Ribalda Delgado <ribalda@kernel.org>
-To:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Jacopo Mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Ricardo Ribalda Delgado <ribalda@kernel.org>
-Subject: [PATCH v12 8/8] media: imx214: Add new control with V4L2_CID_UNIT_CELL_SIZE
-Date:   Mon,  7 Oct 2019 17:06:36 +0200
-Message-Id: <20191007150636.16458-9-ribalda@kernel.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191007150636.16458-1-ribalda@kernel.org>
-References: <20191007150636.16458-1-ribalda@kernel.org>
+        id S1729074AbfJGPII (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 11:08:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34038 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729050AbfJGPIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 11:08:07 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3D692070B;
+        Mon,  7 Oct 2019 15:08:05 +0000 (UTC)
+Date:   Mon, 7 Oct 2019 11:08:04 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, mhiramat@kernel.org,
+        bristot@redhat.com, jbaron@akamai.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        namit@vmware.com, hpa@zytor.com, luto@kernel.org,
+        ard.biesheuvel@linaro.org, jpoimboe@redhat.com, hjl.tools@gmail.com
+Subject: Re: [RFC][PATCH 0/9] Variable size jump_label support
+Message-ID: <20191007110804.66edaa03@gandalf.local.home>
+In-Reply-To: <20191007125519.GA56546@gmail.com>
+References: <20191007090225.44108711.6@infradead.org>
+        <20191007084443.79370128.1@infradead.org>
+        <20191007120756.GE2311@hirez.programming.kicks-ass.net>
+        <20191007125519.GA56546@gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to the product brief, the unit cell size is 1120 nanometers^2.
+On Mon, 7 Oct 2019 14:55:19 +0200
+Ingo Molnar <mingo@kernel.org> wrote:
 
-https://www.sony-semicon.co.jp/products_en/IS/sensor1/img/products/ProductBrief_IMX214_20150428.pdf
+> * Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > IIRC the recordmcount variant from Steve was also rewriting JMP8 to NOP2
+> > at build time.
+> >
+> > I dug this here link out of my IRC logs:
+> > 
+> >   https://lore.kernel.org/lkml/1318007374.4729.58.camel@gandalf.stny.rr.com/  
+> 
+> Ancient indeed ...
+> 
+> > Looking at that, part of the reason might've been running yet another 
+> > tool, instead of having one tool do everything.  
+> 
+> Yeah - that too wouldn't be a problem with objtool, as we are running it 
+> anyway, right?
+> 
+> So I can see about 2 valid technical reasons why Linus would have 
+> objected to that old approach from Steve while finding the objtool 
+> approach more acceptable.
+> 
+> Basically the main assumption is that we better never run out of 
+> competent objtool experts... :-)
 
-Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
----
- drivers/media/i2c/imx214.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Actually, even back then I said that it would be best to merge all the
+tools into one (I just didn't have the time to implement it), and then
+we could pull this off. I have one of my developers working to merge
+record-mcount into objtool now (there's been some patches floating
+around).
 
-diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-index 159a3a604f0e..adcaaa8c86d1 100644
---- a/drivers/media/i2c/imx214.c
-+++ b/drivers/media/i2c/imx214.c
-@@ -47,6 +47,7 @@ struct imx214 {
- 	struct v4l2_ctrl *pixel_rate;
- 	struct v4l2_ctrl *link_freq;
- 	struct v4l2_ctrl *exposure;
-+	struct v4l2_ctrl *unit_size;
- 
- 	struct regulator_bulk_data	supplies[IMX214_NUM_SUPPLIES];
- 
-@@ -948,6 +949,10 @@ static int imx214_probe(struct i2c_client *client)
- 	static const s64 link_freq[] = {
- 		IMX214_DEFAULT_LINK_FREQ,
- 	};
-+	static const struct v4l2_area unit_size = {
-+		.width = 1120,
-+		.height = 1120,
-+	};
- 	int ret;
- 
- 	ret = imx214_parse_fwnode(dev);
-@@ -1029,6 +1034,10 @@ static int imx214_probe(struct i2c_client *client)
- 					     V4L2_CID_EXPOSURE,
- 					     0, 3184, 1, 0x0c70);
- 
-+	imx214->unit_size = v4l2_ctrl_new_std_compound(&imx214->ctrls,
-+				NULL,
-+				V4L2_CID_UNIT_CELL_SIZE,
-+				v4l2_ctrl_ptr_create((void *)&unit_size));
- 	ret = imx214->ctrls.error;
- 	if (ret) {
- 		dev_err(&client->dev, "%s control init failed (%d)\n",
--- 
-2.23.0
+Then with a single tool, it shouldn't be controversial.
 
+-- Steve
