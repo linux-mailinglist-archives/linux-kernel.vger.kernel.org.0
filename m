@@ -2,135 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 591EFCEB5C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 20:00:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0655CEB62
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 20:04:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729504AbfJGSAK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 14:00:10 -0400
-Received: from mga11.intel.com ([192.55.52.93]:33637 "EHLO mga11.intel.com"
+        id S1728592AbfJGSEg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 14:04:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729448AbfJGSAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 14:00:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2019 11:00:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,269,1566889200"; 
-   d="scan'208";a="193161378"
-Received: from unknown (HELO labuser-Ice-Lake-Client-Platform.jf.intel.com) ([10.54.55.65])
-  by fmsmga007.fm.intel.com with ESMTP; 07 Oct 2019 11:00:03 -0700
-From:   kan.liang@linux.intel.com
-To:     peterz@infradead.org, acme@kernel.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     jolsa@kernel.org, namhyung@kernel.org, ak@linux.intel.com,
-        vitaly.slobodskoy@intel.com, pavel.gerasimov@intel.com,
-        Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH 09/10] perf top: Add option to enable the LBR stitching approach
-Date:   Mon,  7 Oct 2019 10:59:09 -0700
-Message-Id: <20191007175910.2805-10-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191007175910.2805-1-kan.liang@linux.intel.com>
-References: <20191007175910.2805-1-kan.liang@linux.intel.com>
+        id S1728031AbfJGSEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 14:04:36 -0400
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89B69206C0;
+        Mon,  7 Oct 2019 18:04:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570471475;
+        bh=a/tQzknOhmzpT+cmi0zru3Okxb6K53nlRWKki8ejYMY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=BSPaaHWlukMgVOG2TR6oN2iz8jTqwVmp+i8EhmB5PrGAGku7715laEhDOElBtk0a9
+         +XBfArVp8w4E29UFWB1/MCnddDmf7tZQsP68aJRWa52Bcg1MsiobXTx19PhkkFskGf
+         kHEJAWkotxSN3jfc8Wt1Yn04aehJNf+wNfArJLfw=
+Received: by mail-qk1-f181.google.com with SMTP id x134so13535307qkb.0;
+        Mon, 07 Oct 2019 11:04:35 -0700 (PDT)
+X-Gm-Message-State: APjAAAW7MWxt6yftQQDCNQhPGhuMue0GhVk79SPmKQtI3B4DfWdvFR+V
+        7volN2IIhWP9eKZ3Elw9bJyf22CN83uDY+nYkg==
+X-Google-Smtp-Source: APXvYqyc3RB0S5x2d9A+kFi6GPyadpByd7ZFwQbH6O3IVlD6OEpNglf7rl7rMw2PGZpyngtUlaRHfhL/S/P7NAZdECA=
+X-Received: by 2002:a05:620a:549:: with SMTP id o9mr25186163qko.223.1570471474614;
+ Mon, 07 Oct 2019 11:04:34 -0700 (PDT)
+MIME-Version: 1.0
+References: <20191006142715.45k64cgw7mzlekm5@arbad> <CAL_Jsq+0SpRVmGJSm5Hw8bQ_zdeJy5wfTb9RM1r=crkiT2uM-Q@mail.gmail.com>
+ <20191007170018.673p6fs6mjokihn6@arbad>
+In-Reply-To: <20191007170018.673p6fs6mjokihn6@arbad>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 7 Oct 2019 13:04:23 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqK-yZnPcb=YPfygK4Y+mJ=JoYq7qWbx04_roAiUD=54Sg@mail.gmail.com>
+Message-ID: <CAL_JsqK-yZnPcb=YPfygK4Y+mJ=JoYq7qWbx04_roAiUD=54Sg@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: iio: maxbotix,mb1232.yaml: transform to yaml
+To:     Andreas Klinger <ak@it-klinger.de>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Mon, Oct 7, 2019 at 12:00 PM Andreas Klinger <ak@it-klinger.de> wrote:
+>
+> Hi Rob,
+>
+> i don't get this error. Is there anything i'm doing wrong here?
+>
+> ak@arbad:/project/opt-sw/linux-robh$ make O=3D../build-wega-robh/ dt_bind=
+ing_check
+> make[1]: Verzeichnis =E2=80=9E/project/opt-sw/build-wega-robh=E2=80=9C wi=
+rd betreten
+>   SCHEMA  Documentation/devicetree/bindings/processed-schema.yaml
+>   /project/opt-sw/linux-robh/Documentation/devicetree/bindings/net/adi,ad=
+in.yaml:
+>   ignoring, error in schema 'adi,fifo-depth-bits'
+>   warning: no schema found in file:
+>   /project/opt-sw/linux-robh/Documentation/devicetree/bindings/net/adi,ad=
+in.yaml
+>   /project/opt-sw/linux-robh/Documentation/devicetree/bindings/regulator/=
+fixed-regulator.yaml:
+>   ignoring, error in schema '0'
+>   warning: no schema found in file:
+>   /project/opt-sw/linux-robh/Documentation/devicetree/bindings/regulator/=
+fixed-regulator.yaml
+>     CHKDT   Documentation/devicetree/bindings/iio/proximity/maxbotix,mb12=
+32.yaml
+>     CHKDT   [...]
 
-With the LBR stitching approach, the reconstructed LBR call stack
-can break the HW limitation. However, it may reconstruct invalid call
-stacks in some cases, e.g. exception handing such as setjmp/longjmp.
-Also, it may impact the processing time especially when the number of
-samples with stitched LBRs are huge.
+It would be in the later stage when dtc builds the exmaple. The
+unrelated errors here may be making things error out before that.
 
-Add an option to enable the approach.
-The option must be used with --call-graph lbr.
+BTW, update dtschema and it will fix the first error. The 2nd one is
+pending in linux-next still.
 
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- tools/perf/Documentation/perf-top.txt |  9 +++++++++
- tools/perf/builtin-top.c              | 11 +++++++++++
- tools/perf/util/top.h                 |  1 +
- 3 files changed, 21 insertions(+)
-
-diff --git a/tools/perf/Documentation/perf-top.txt b/tools/perf/Documentation/perf-top.txt
-index 5596129a71cf..80b57f942a86 100644
---- a/tools/perf/Documentation/perf-top.txt
-+++ b/tools/perf/Documentation/perf-top.txt
-@@ -304,6 +304,15 @@ Default is to monitor all CPUS.
- 	go straight to the histogram browser, just like 'perf top' with no events
- 	explicitely specified does.
- 
-+--stitch-lbr::
-+	Show callgraph with stitched LBRs, which may have more complete
-+	callgraph. The option must be used with --call-graph lbr recording.
-+	Disabled by default. In common cases with call stack overflows,
-+	it can recreate better call stacks than the default lbr call stack
-+	output. But this approach is not full proof. There can be cases
-+	where it creates incorrect call stacks from incorrect matches.
-+	The known limitations include exception handing such as
-+	setjmp/longjmp will have calls/returns not match.
- 
- INTERACTIVE PROMPTING KEYS
- --------------------------
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 611d03030abc..539670377e0f 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -33,6 +33,7 @@
- #include "util/map.h"
- #include "util/mmap.h"
- #include "util/session.h"
-+#include "util/thread.h"
- #include "util/symbol.h"
- #include "util/synthetic-events.h"
- #include "util/top.h"
-@@ -764,6 +765,9 @@ static void perf_event__process_sample(struct perf_tool *tool,
- 	if (machine__resolve(machine, &al, sample) < 0)
- 		return;
- 
-+	if (top->stitch_lbr)
-+		al.thread->lbr_stitch_enable = true;
-+
- 	if (!machine->kptr_restrict_warned &&
- 	    symbol_conf.kptr_restrict &&
- 	    al.cpumode == PERF_RECORD_MISC_KERNEL) {
-@@ -1537,6 +1541,8 @@ int cmd_top(int argc, const char **argv)
- 			"number of thread to run event synthesize"),
- 	OPT_BOOLEAN(0, "namespaces", &opts->record_namespaces,
- 		    "Record namespaces events"),
-+	OPT_BOOLEAN(0, "stitch-lbr", &top.stitch_lbr,
-+		    "Enable LBR callgraph stitching approach"),
- 	OPTS_EVSWITCH(&top.evswitch),
- 	OPT_END()
- 	};
-@@ -1599,6 +1605,11 @@ int cmd_top(int argc, const char **argv)
- 		}
- 	}
- 
-+	if (top.stitch_lbr && !(callchain_param.record_mode == CALLCHAIN_LBR)) {
-+		pr_err("Error: --stitch-lbr must be used with --call-graph lbr\n");
-+		goto out_delete_evlist;
-+	}
-+
- 	if (opts->branch_stack && callchain_param.enabled)
- 		symbol_conf.show_branchflag_count = true;
- 
-diff --git a/tools/perf/util/top.h b/tools/perf/util/top.h
-index f117d4f4821e..45dc84ddff37 100644
---- a/tools/perf/util/top.h
-+++ b/tools/perf/util/top.h
-@@ -36,6 +36,7 @@ struct perf_top {
- 	bool		   use_tui, use_stdio;
- 	bool		   vmlinux_warned;
- 	bool		   dump_symtab;
-+	bool		   stitch_lbr;
- 	struct hist_entry  *sym_filter_entry;
- 	struct evsel 	   *sym_evsel;
- 	struct perf_session *session;
--- 
-2.17.1
-
+Rob
