@@ -2,122 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D295CDC35
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 09:08:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4481ACDC4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 09:16:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727367AbfJGHIy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 03:08:54 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:53039 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727028AbfJGHIx (ORCPT
+        id S1727201AbfJGHQS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 03:16:18 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43643 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726202AbfJGHQR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 03:08:53 -0400
-X-UUID: 4f78dc3b78fb4c0c8a6dbf0fafcf538e-20191007
-X-UUID: 4f78dc3b78fb4c0c8a6dbf0fafcf538e-20191007
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <mark-mc.lee@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1850811406; Mon, 07 Oct 2019 15:08:47 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs05n2.mediatek.inc (172.21.101.140) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 7 Oct 2019 15:08:44 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 7 Oct 2019 15:08:44 +0800
-From:   MarkLee <Mark-MC.Lee@mediatek.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Sean Wang <sean.wang@mediatek.com>,
-        John Crispin <john@phrozen.org>,
-        Nelson Chang <nelson.chang@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rene van Dorst <opensource@vdorst.com>,
-        <devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, MarkLee <Mark-MC.Lee@mediatek.com>
-Subject: [PATCH net,v2 2/2] arm: dts: mediatek: Fix mt7629 dts to reflect the latest dt-binding
-Date:   Mon, 7 Oct 2019 15:08:44 +0800
-Message-ID: <20191007070844.14212-3-Mark-MC.Lee@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20191007070844.14212-1-Mark-MC.Lee@mediatek.com>
-References: <20191007070844.14212-1-Mark-MC.Lee@mediatek.com>
+        Mon, 7 Oct 2019 03:16:17 -0400
+Received: by mail-pg1-f196.google.com with SMTP id i32so327004pgl.10
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 00:16:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zzfC8RVq1jP1kr40tiN+8WHn9COGwplqh2mQFPqwcC8=;
+        b=nkMQ8X9CAoT8fwvh8c2BskmgfPKD8hl3HO2ivNlWnmNsG22vLvXE4w7M6RHR0vJfq4
+         l1RI2y6w9uDbcRSFqoli/p50exF0Zidpx6tLxBRqAEOnllb4hf2meGdHc4hE74MeuyLT
+         S6OTOePKh8HFHqJSRN736bofzO7OGadxfB06E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zzfC8RVq1jP1kr40tiN+8WHn9COGwplqh2mQFPqwcC8=;
+        b=KXqzoEdubai/qM1/+zu2rC60o6Ok5RCodVZLs/8KCXq3zt3vLPSxWPEo8uWc9UkfF7
+         jE8NkaXi3EC2Yh1nAWg8U8Ho5uGKzGT3LWUWp3a1tfZ/y7q7ehCFXTB6nVbflnr6P5+V
+         NAlpsssHZdnmA7tKW3jFpbn8sa6hJU3AgJvn5e36R1lJZOhGugQenIhiF+awXJMuITTz
+         TZHtgIQLLk7pUgU34TI3U15S8uJ5v/oifFjkMuTvC0mM00M4HKeV2FqxVyrXJzFFU0CN
+         qbpnIfyEuYYIXws01S80oNJNdCWvMQlhyg/WYPZa792urNpzF8owPMXNj8a/ElIm5aGK
+         /qvw==
+X-Gm-Message-State: APjAAAUWopNS32L3zZdAiPRY3FhlIvxA37xSa43q6FPSSlrA+a9Zbwln
+        KygG4+LxxUdn6otbdR/ocwGz9RoRaL8=
+X-Google-Smtp-Source: APXvYqwiP0yuYdJ+4gkcqPLdLjqZtNFDPJkZPqAzA+L0Ij6yff4yxpEiwaN/m998Kt1N7CdwNV74Ow==
+X-Received: by 2002:a17:90a:256c:: with SMTP id j99mr31552845pje.125.1570432576781;
+        Mon, 07 Oct 2019 00:16:16 -0700 (PDT)
+Received: from localhost ([2401:fa00:1:10:79b4:bd83:e4a5:a720])
+        by smtp.gmail.com with ESMTPSA id d10sm15020616pfh.8.2019.10.07.00.16.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2019 00:16:15 -0700 (PDT)
+From:   Cheng-Yi Chiang <cychiang@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     alsa-devel@alsa-project.org, Guenter Roeck <linux@roeck-us.net>,
+        Hung-Te Lin <hungte@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Brown <broonie@kernel.org>,
+        Cheng-Yi Chiang <cychiang@chromium.org>, dgreid@chromium.org,
+        tzungbi@chromium.org
+Subject: [PATCH] firmware: vpd: Add an interface to read VPD value
+Date:   Mon,  7 Oct 2019 15:16:10 +0800
+Message-Id: <20191007071610.65714-1-cychiang@chromium.org>
+X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Removes mediatek,physpeed property from dtsi that is useless in PHYLINK
-* Use the fixed-link property speed = <2500> to set the phy in 2.5Gbit.
-* Set gmac1 to gmii mode that connect to a internal gphy
+Add an interface for other driver to query VPD value.
+This will be used for ASoC machine driver to query calibration
+data stored in VPD for smart amplifier speaker resistor
+calibration.
 
-Signed-off-by: MarkLee <Mark-MC.Lee@mediatek.com>
---
-v1->v2:
-* SGMII port only support BASE-X at 2.5Gbit.
+Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
 ---
- arch/arm/boot/dts/mt7629-rfb.dts | 13 ++++++++++++-
- arch/arm/boot/dts/mt7629.dtsi    |  2 --
- 2 files changed, 12 insertions(+), 3 deletions(-)
+ drivers/firmware/google/vpd.c              | 16 ++++++++++++++++
+ include/linux/firmware/google/google_vpd.h | 18 ++++++++++++++++++
+ 2 files changed, 34 insertions(+)
+ create mode 100644 include/linux/firmware/google/google_vpd.h
 
-diff --git a/arch/arm/boot/dts/mt7629-rfb.dts b/arch/arm/boot/dts/mt7629-rfb.dts
-index 3621b7d2b22a..9980c10c6e29 100644
---- a/arch/arm/boot/dts/mt7629-rfb.dts
-+++ b/arch/arm/boot/dts/mt7629-rfb.dts
-@@ -66,9 +66,21 @@
- 	pinctrl-1 = <&ephy_leds_pins>;
- 	status = "okay";
+diff --git a/drivers/firmware/google/vpd.c b/drivers/firmware/google/vpd.c
+index db0812263d46..71e9d2da63be 100644
+--- a/drivers/firmware/google/vpd.c
++++ b/drivers/firmware/google/vpd.c
+@@ -65,6 +65,22 @@ static ssize_t vpd_attrib_read(struct file *filp, struct kobject *kobp,
+ 				       info->bin_attr.size);
+ }
  
-+	gmac0: mac@0 {
-+		compatible = "mediatek,eth-mac";
-+		reg = <0>;
-+		phy-mode = "2500base-x";
-+		fixed-link {
-+			speed = <2500>;
-+			full-duplex;
-+			pause;
-+		};
-+	};
++int vpd_attribute_read_value(bool ro, const char *key,
++			     char **value, u32 value_len)
++{
++	struct vpd_attrib_info *info;
++	struct vpd_section *sec = ro ? &ro_vpd : &rw_vpd;
 +
- 	gmac1: mac@1 {
- 		compatible = "mediatek,eth-mac";
- 		reg = <1>;
-+		phy-mode = "gmii";
- 		phy-handle = <&phy0>;
- 	};
- 
-@@ -78,7 +90,6 @@
- 
- 		phy0: ethernet-phy@0 {
- 			reg = <0>;
--			phy-mode = "gmii";
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/mt7629.dtsi b/arch/arm/boot/dts/mt7629.dtsi
-index 9608bc2ccb3f..867b88103b9d 100644
---- a/arch/arm/boot/dts/mt7629.dtsi
-+++ b/arch/arm/boot/dts/mt7629.dtsi
-@@ -468,14 +468,12 @@
- 			compatible = "mediatek,mt7629-sgmiisys", "syscon";
- 			reg = <0x1b128000 0x3000>;
- 			#clock-cells = <1>;
--			mediatek,physpeed = "2500";
- 		};
- 
- 		sgmiisys1: syscon@1b130000 {
- 			compatible = "mediatek,mt7629-sgmiisys", "syscon";
- 			reg = <0x1b130000 0x3000>;
- 			#clock-cells = <1>;
--			mediatek,physpeed = "2500";
- 		};
- 	};
- };
++	list_for_each_entry(info, &sec->attribs, list) {
++		if (strcmp(info->key, key) == 0) {
++			*value = kstrndup(info->value, value_len, GFP_KERNEL);
++			return 0;
++		}
++	}
++	return -EINVAL;
++}
++EXPORT_SYMBOL(vpd_attribute_read_value);
++
+ /*
+  * vpd_section_check_key_name()
+  *
+diff --git a/include/linux/firmware/google/google_vpd.h b/include/linux/firmware/google/google_vpd.h
+new file mode 100644
+index 000000000000..6f1160f28af8
+--- /dev/null
++++ b/include/linux/firmware/google/google_vpd.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Google VPD interface.
++ *
++ * Copyright 2019 Google Inc.
++ */
++
++/* Interface for reading VPD value on Chrome platform. */
++
++#ifndef __GOOGLE_VPD_H
++#define __GOOGLE_VPD_H
++
++#include <linux/types.h>
++
++int vpd_attribute_read_value(bool ro, const char *key,
++			     char **value, u32 value_len);
++
++#endif  /* __GOOGLE_VPD_H */
 -- 
-2.17.1
+2.23.0.581.g78d2f28ef7-goog
 
