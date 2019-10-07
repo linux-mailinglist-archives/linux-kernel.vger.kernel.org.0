@@ -2,100 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A487CE09C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 13:35:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85401CE0A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 13:37:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727925AbfJGLfZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 07:35:25 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42497 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727861AbfJGLfT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 07:35:19 -0400
-Received: by mail-lf1-f65.google.com with SMTP id c195so9006000lfg.9;
-        Mon, 07 Oct 2019 04:35:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pmVOhqPV32NcE6/VgCf74tZc8Nj51x40T3jhqugB4as=;
-        b=hZU5BIigDKrW3EbZX/srO/Xz3nHbo3ImZokKfx48aUdKpTGjL6CP+4ORzzsufI/N/i
-         6Gec15jpJMUE2EppJ3+Ai0s//8aQfCzBupOtna58ZsrqmTFHnMIYG3tNieW4YcvPB6ix
-         HFb87XSsqChGb5e2/rjy19V7d6LIHonqDFfWVQTzCInUh+3oX/22FI0PYVaaTNURBR7B
-         dph2E30s+s2mMAFtKNAsNWZyNlOIYOOGqBaD7OVAZ7smvzOeqOtQq/WF8uro0V//i8WH
-         /VHY9q1o6ZBwbLtRhdEavsXbRe80Z5d9eoxVRZp1aUJ1LgoW/SL3v2bEycRC1IegT96t
-         Lvow==
-X-Gm-Message-State: APjAAAXOcXzxndoE3oTLYLAG/aTXv+eiSUTNhWqX40CabJmOZCRfZTnT
-        rkv5HwYFtk4fesDNTqyjFYo=
-X-Google-Smtp-Source: APXvYqy9XxrNLq2MEaMQGnjZ56QD7dlDtRgKrb3Pgk4e1h2O/nZiZfcSvqfBKoTTk7Seo5suBxbXhg==
-X-Received: by 2002:ac2:44a3:: with SMTP id c3mr15246729lfm.17.1570448116812;
-        Mon, 07 Oct 2019 04:35:16 -0700 (PDT)
-Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
-        by smtp.gmail.com with ESMTPSA id b25sm3666047ljj.36.2019.10.07.04.35.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2019 04:35:15 -0700 (PDT)
-From:   Ricardo Ribalda Delgado <ribalda@kernel.org>
-To:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Jacopo Mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org,
+        id S1727671AbfJGLhM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 07:37:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48546 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727394AbfJGLhM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 07:37:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E6C7FAE65;
+        Mon,  7 Oct 2019 11:37:10 +0000 (UTC)
+Date:   Mon, 7 Oct 2019 13:37:10 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     akpm@linux-foundation.org, sergey.senozhatsky.work@gmail.com,
+        pmladek@suse.com, rostedt@goodmis.org, peterz@infradead.org,
+        david@redhat.com, john.ogness@linutronix.de, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Cc:     Ricardo Ribalda Delgado <ribalda@kernel.org>
-Subject: [PATCH v10 8/8] media: imx214: Add new control with V4L2_CID_UNIT_CELL_SIZE
-Date:   Mon,  7 Oct 2019 13:35:02 +0200
-Message-Id: <20191007113502.11746-9-ribalda@kernel.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191007113502.11746-1-ribalda@kernel.org>
-References: <20191007113502.11746-1-ribalda@kernel.org>
+Subject: Re: [PATCH v2] mm/page_isolation: fix a deadlock with printk()
+Message-ID: <20191007113710.GH2381@dhcp22.suse.cz>
+References: <20191007080742.GD2381@dhcp22.suse.cz>
+ <FB72D947-A0F9-43E7-80D9-D7ACE33849C7@lca.pw>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <FB72D947-A0F9-43E7-80D9-D7ACE33849C7@lca.pw>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to the product brief, the unit cell size is 1120 nanometers^2.
+On Mon 07-10-19 07:04:00, Qian Cai wrote:
+> 
+> 
+> > On Oct 7, 2019, at 4:07 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> > 
+> > I do not think that removing the printk is the right long term solution.
+> > While I do agree that removing the debugging printk __offline_isolated_pages
+> > does make sense because it is essentially of a very limited use, this
+> > doesn't really solve the underlying problem.  There are likely other
+> > printks from zone->lock. It would be much more saner to actually
+> > disallow consoles to allocate any memory while printk is called from an
+> > atomic context.
+> 
+> No, there is only a handful of places called printk() from
+> zone->lock. It is normal that the callers will quietly process
+> “struct zone” modification in a short section with zone->lock
+> held.
 
-https://www.sony-semicon.co.jp/products_en/IS/sensor1/img/products/ProductBrief_IMX214_20150428.pdf
+It is extremely error prone to have any zone->lock vs. printk
+dependency. I do not want to play an endless whack a mole.
 
-Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
----
- drivers/media/i2c/imx214.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+> No, it is not about “allocate any memory while printk is called from an
+> atomic context”. It is opposite lock chain  from different processors which has the same effect. For example,
+> 
+> CPU0:                 CPU1:         CPU2:
+> console_owner
+>                             sclp_lock
+> sclp_lock                                 zone_lock
+>                             zone_lock
+>                                                  console_owner
 
-diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-index 159a3a604f0e..adcaaa8c86d1 100644
---- a/drivers/media/i2c/imx214.c
-+++ b/drivers/media/i2c/imx214.c
-@@ -47,6 +47,7 @@ struct imx214 {
- 	struct v4l2_ctrl *pixel_rate;
- 	struct v4l2_ctrl *link_freq;
- 	struct v4l2_ctrl *exposure;
-+	struct v4l2_ctrl *unit_size;
- 
- 	struct regulator_bulk_data	supplies[IMX214_NUM_SUPPLIES];
- 
-@@ -948,6 +949,10 @@ static int imx214_probe(struct i2c_client *client)
- 	static const s64 link_freq[] = {
- 		IMX214_DEFAULT_LINK_FREQ,
- 	};
-+	static const struct v4l2_area unit_size = {
-+		.width = 1120,
-+		.height = 1120,
-+	};
- 	int ret;
- 
- 	ret = imx214_parse_fwnode(dev);
-@@ -1029,6 +1034,10 @@ static int imx214_probe(struct i2c_client *client)
- 					     V4L2_CID_EXPOSURE,
- 					     0, 3184, 1, 0x0c70);
- 
-+	imx214->unit_size = v4l2_ctrl_new_std_compound(&imx214->ctrls,
-+				NULL,
-+				V4L2_CID_UNIT_CELL_SIZE,
-+				v4l2_ctrl_ptr_create((void *)&unit_size));
- 	ret = imx214->ctrls.error;
- 	if (ret) {
- 		dev_err(&client->dev, "%s control init failed (%d)\n",
+Why would sclp_lock ever take a zone->lock (apart from an allocation).
+So really if sclp_lock is a lock that might be taken from many contexts
+and generate very subtle lock dependencies then it should better be
+really careful what it is calling into.
+
+In other words you are trying to fix a wrong end of the problem. Fix the
+console to not allocate or depend on MM by other means.
 -- 
-2.23.0
-
+Michal Hocko
+SUSE Labs
