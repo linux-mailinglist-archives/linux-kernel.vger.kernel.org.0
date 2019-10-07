@@ -2,93 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68881CE13D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:08:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76FF5CE138
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:07:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728009AbfJGMIY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 08:08:24 -0400
-Received: from mga11.intel.com ([192.55.52.93]:6166 "EHLO mga11.intel.com"
+        id S1727999AbfJGMHP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 08:07:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727467AbfJGMIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 08:08:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2019 05:08:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,268,1566889200"; 
-   d="scan'208";a="276771661"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.66]) ([10.237.72.66])
-  by orsmga001.jf.intel.com with ESMTP; 07 Oct 2019 05:08:21 -0700
-Subject: Re: [PATCH 5/5] perf record: Put a copy of kcore into the perf.data
- directory
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-kernel@vger.kernel.org
-References: <20191004083121.12182-1-adrian.hunter@intel.com>
- <20191004083121.12182-6-adrian.hunter@intel.com>
- <20191007112034.GE6919@krava>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <2298237b-f218-18d9-4fb5-33fc0d3a4664@intel.com>
-Date:   Mon, 7 Oct 2019 15:06:59 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727905AbfJGMHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 08:07:14 -0400
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A59320867;
+        Mon,  7 Oct 2019 12:07:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570450034;
+        bh=arbaz8x3puASuQCFv3RH3ysmpiBHcA2eOWy0FamGrFU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MnVmxZLoAkVyRKheU9X/YR5bMo6nKlHmcKS2ro6emQd2eneWrMDXRAALYjSXBxp1a
+         X5Su7sdTQdbaq81iyYhr3iDbwOwriy8ZJQkNLXJ15ST40Mr4CcXjVRu2h6fGWExYN0
+         KKxfdvMTK6e3SF6GYyWpJfvVJH5ai1c/WiucEvsM=
+Date:   Mon, 7 Oct 2019 14:07:10 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 3/3] drm/sun4i: sun6i_mipi_dsi: fix DCS long write
+ packet length
+Message-ID: <20191007120710.zhm6wkm32kpsqv5m@gilmour>
+References: <20191006160303.24413-1-icenowy@aosc.io>
+ <20191006160303.24413-4-icenowy@aosc.io>
 MIME-Version: 1.0
-In-Reply-To: <20191007112034.GE6919@krava>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="q5xk63oitgdknstb"
+Content-Disposition: inline
+In-Reply-To: <20191006160303.24413-4-icenowy@aosc.io>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/10/19 2:20 PM, Jiri Olsa wrote:
-> On Fri, Oct 04, 2019 at 11:31:21AM +0300, Adrian Hunter wrote:
-> 
-> SNIP
-> 
->> +}
->> +
->>  static int record__mmap_evlist(struct record *rec,
->>  			       struct evlist *evlist)
->>  {
->> @@ -1383,6 +1417,12 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
->>  	session->header.env.comp_type  = PERF_COMP_ZSTD;
->>  	session->header.env.comp_level = rec->opts.comp_level;
->>  
->> +	if (rec->opts.kcore &&
->> +	    !record__kcore_readable(&session->machines.host)) {
->> +		pr_err("ERROR: kcore is not readable.\n");
->> +		return -1;
->> +	}
->> +
-> 
-> is there any reason why this change is not merged with the change below?
 
-It seemed better to do the validation before opening all the events.
+--q5xk63oitgdknstb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> 
-> 
->>  	record__init_features(rec);
->>  
->>  	if (rec->opts.use_clockid && rec->opts.clockid_res_ns)
->> @@ -1414,6 +1454,14 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
->>  	}
->>  	session->header.env.comp_mmap_len = session->evlist->core.mmap_len;
->>  
->> +	if (rec->opts.kcore) {
->> +		err = record__kcore_copy(&session->machines.host, data);
->> +		if (err) {
->> +			pr_err("ERROR: Failed to copy kcore\n");
->> +			goto out_child;
->> +		}
->> +	}
->> +
-> 
-> thanks,
-> jirka
-> 
+On Mon, Oct 07, 2019 at 12:03:02AM +0800, Icenowy Zheng wrote:
+> The packet length of DCS long write packet should not be added with 1
+> when constructing long write packet.
+>
+> Fix this.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
+Applied, thanks
+
+Maxime
+
+--q5xk63oitgdknstb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXZsqbgAKCRDj7w1vZxhR
+xWdGAPoD+SGxYVP/cSUjH/jrEJNThDwZjOU59WN8z3Qi9XF3BgEA0tiZksS/LTVL
+rAlkltweDTGTlptVDBSyEjKNKRqzmg4=
+=Ua0x
+-----END PGP SIGNATURE-----
+
+--q5xk63oitgdknstb--
