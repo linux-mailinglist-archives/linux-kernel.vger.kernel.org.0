@@ -2,96 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18C28CE8B7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 18:10:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48767CE8C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 18:11:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728856AbfJGQJz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 12:09:55 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45741 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728088AbfJGQJy (ORCPT
+        id S1728885AbfJGQKx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 12:10:53 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:37122 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727801AbfJGQKx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 12:09:54 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r5so15952815wrm.12
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 09:09:53 -0700 (PDT)
+        Mon, 7 Oct 2019 12:10:53 -0400
+Received: by mail-qt1-f194.google.com with SMTP id e15so5090870qtr.4
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 09:10:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cqJ0vbvGAeolZd2vSOe/7rP/jwOR0aoF9Fh0aImNAAY=;
-        b=fFDyTPz/c3ABifR0uGkkFfA3T4wZKNjifQ194u3nCRCSJY4LsrTNWUeX1jcPlWprOT
-         1MbCxB6ZLCVa430OOIZ454NIJujssKIzCSNwDei2E588Ha11s/YCWG6fqB/iW/sg7IDn
-         EKihD2BfJp/c+a2C1d7MMJtVJ0AtgOI+Dqmo6gh7UYAKDQPfvGhnHsJ09EYKGzM+OY0M
-         /2mwRPdsmLRIdWqNOFGBQOZoTlAvdt7s/xNAeCGCodT/fTDwgYd2cJsc0kUPShUL3xo6
-         OpkBqoyI2EUTaQZdGRJmaAHyw7l5AOFFufhTCbCHLQj94lPqsNlBoE3sPz6oMdFbfna0
-         KNrg==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ukciw0hdK3K4XMNiPAWm/fQxAF5nCtm7qVJXBq6lLa8=;
+        b=MXPbONKY6jnTaS7ac+01oeoHwclD3WoKLLJfhGNS6cGNYTaYU6LYmJ59DCtAuHDQlB
+         3P3pe07vx6M4s8kx3bzHBZcX7CpbtOBrElbQtbxicb36GXu2HWWz4VDxhQEQ9nfQN2oP
+         ZVxeXRcnwBYg1dpZTyqsp938PupqYsEwW9WProq8d+ciajqd+hVLMRdi5Q1s+X5/ETmA
+         mhKxJOvdeXUkWjxVyaaACq7j+ye99Z2qPGXeJA1TJT1Sj0yFVKncVDLj6ywNLlvlkU5/
+         OtflbGX+4jDi8efoXKszldER9N+ZRLoLD7//ooFC+fJ6C4zbbuWX50M2nvkCeBtufULl
+         OyZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cqJ0vbvGAeolZd2vSOe/7rP/jwOR0aoF9Fh0aImNAAY=;
-        b=SHEkk9lPiNwFExq5rBpJYg9lsQ0MDoDBKwPyGEQ5RcFMVpEiAzMjPRb9V35uR2+ph8
-         AaJpaWf6BmIUaE43JGl1pjxySvCB5dPAO/PCeS0PoLs2YFDuAdErOIvD/eVKj/0bvbmD
-         /IhzaMb+e7NUvvcZI2GlOnoLPRKxEpl14G2Wd5O8Xgu+nnGgoCthPDN5TJ9mUI6ojvXG
-         zCWvYQZBGW4b5kWH7N2oPfgQG/GrRKL9Jrf0sOj0VIVl6svpMxgzrgxGKxBliBHCwZ+D
-         z1VVUo0v2WyNWtJQe+w518P48e7c3n+Hike2SgZxmPnwyWlGBhP4rboO7HGdCxsZxXb0
-         ua8w==
-X-Gm-Message-State: APjAAAXfbqlTxEErrj0iWOsKfbllPV8OMIXCmKaZMeVs2uSJczDTkVNm
-        D/7ND5K/Z6ZSZwidrXYfcZjZpbBC2BIOyLezexQ=
-X-Google-Smtp-Source: APXvYqxgHqJZNgIWzKRUTN0lTc9yubZcuhBGUiP8kclFNKByTkdixaX3OZuWxl98eB2sTzFDMiLudNl4WXyL54+19BU=
-X-Received: by 2002:adf:e951:: with SMTP id m17mr22737714wrn.154.1570464592558;
- Mon, 07 Oct 2019 09:09:52 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ukciw0hdK3K4XMNiPAWm/fQxAF5nCtm7qVJXBq6lLa8=;
+        b=FJPOJjqV2Dfx9QAzk9i4Otq8ncyQbbm0O02jwO8ofg+g0yB78UX5y/p9bd7fuGT1cR
+         t2bC4lNfiMJAFUk3SV0i+j+7TzDUmiZsJdextVwB27s6gG+EwEx1Fqf9eqR/OEPrn+8v
+         8Z9aY8KhwtlTOG40fe8Z/WufZGMVn0yWzJN5m1Tl0sPwo7xlYnoaiunYHKduk09iu44U
+         NrZ+tDxYlmkDlc/QWAqbR00NkyFmQLQRzRkBeYvm2G9l/OUqi3GcCzNjKfg/l+9n5I9E
+         hO2vxSRvASIowSBod+OgBGzkfrWZ593aVehKwy1CHZqDOwXkQSL3Qam6tzsJ+Gev5GZI
+         YNaQ==
+X-Gm-Message-State: APjAAAWzxNQPVhkU1N+kxRZC+5+dPcTo0IKao37hrqUe3eeWCPrCwBsh
+        OsOdRxLCBT3NFZJi23Civ+oMmw==
+X-Google-Smtp-Source: APXvYqy1twfj5uRk3c5GJEpRMAFqpvKXRhFiC5medntRLKOOCku5d98/bLKsSctOhzMzIhghjWqHkw==
+X-Received: by 2002:ac8:1302:: with SMTP id e2mr30156919qtj.326.1570464650651;
+        Mon, 07 Oct 2019 09:10:50 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-162-113-180.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.180])
+        by smtp.gmail.com with ESMTPSA id q5sm10273119qte.38.2019.10.07.09.10.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 07 Oct 2019 09:10:49 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1iHVaz-0006jz-5t; Mon, 07 Oct 2019 13:10:49 -0300
+Date:   Mon, 7 Oct 2019 13:10:49 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Steven Price <steven.price@arm.com>
+Cc:     linux-mm@kvack.org, Andy Lutomirski <luto@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will@kernel.org>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        "Liang, Kan" <kan.liang@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v11 14/22] mm: pagewalk: Add 'depth' parameter to pte_hole
+Message-ID: <20191007161049.GA13229@ziepe.ca>
+References: <20191007153822.16518-1-steven.price@arm.com>
+ <20191007153822.16518-15-steven.price@arm.com>
 MIME-Version: 1.0
-References: <20191004144549.3567-1-krzk@kernel.org> <87sgo4hjii.fsf@intel.com>
-In-Reply-To: <87sgo4hjii.fsf@intel.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Mon, 7 Oct 2019 12:09:40 -0400
-Message-ID: <CADnq5_MqGehpWwOAxYg0T2x3qXisqmae2uGG5dijQX+Aa4NsoQ@mail.gmail.com>
-Subject: Re: [PATCH TRIVIAL v2] gpu: Fix Kconfig indentation
-To:     Jani Nikula <jani.nikula@linux.intel.com>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jiri Kosina <trivial@kernel.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        lima@lists.freedesktop.org,
-        nouveau <nouveau@lists.freedesktop.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-rockchip@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191007153822.16518-15-steven.price@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 7, 2019 at 7:39 AM Jani Nikula <jani.nikula@linux.intel.com> wrote:
->
-> On Fri, 04 Oct 2019, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >  drivers/gpu/drm/i915/Kconfig             |  12 +-
-> >  drivers/gpu/drm/i915/Kconfig.debug       | 144 +++++++++++------------
->
-> Please split these out to a separate patch. Can't speak for others, but
-> the patch looks like it'll be conflicts galore and a problem to manage
-> if merged in one big lump.
+On Mon, Oct 07, 2019 at 04:38:14PM +0100, Steven Price wrote:
+> diff --git a/mm/hmm.c b/mm/hmm.c
+> index 902f5fa6bf93..34fe904dd417 100644
+> +++ b/mm/hmm.c
+> @@ -376,7 +376,7 @@ static void hmm_range_need_fault(const struct hmm_vma_walk *hmm_vma_walk,
+>  }
+>  
+>  static int hmm_vma_walk_hole(unsigned long addr, unsigned long end,
+> -			     struct mm_walk *walk)
+> +			     __always_unused int depth, struct mm_walk *walk)
 
-Yes, it would be nice to have the amd patch separate as well.
+It this __always_unused on function arguments something we are doing
+now?
 
-Alex
+Can we have negative depth? Should it be unsigned?
 
->
-> BR,
-> Jani.
->
->
-> --
-> Jani Nikula, Intel Open Source Graphics Center
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+>  {
+>  	struct hmm_vma_walk *hmm_vma_walk = walk->private;
+>  	struct hmm_range *range = hmm_vma_walk->range;
+> @@ -564,7 +564,7 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+>  again:
+>  	pmd = READ_ONCE(*pmdp);
+>  	if (pmd_none(pmd))
+> -		return hmm_vma_walk_hole(start, end, walk);
+> +		return hmm_vma_walk_hole(start, end, 0, walk);
+>  
+>  	if (thp_migration_supported() && is_pmd_migration_entry(pmd)) {
+>  		bool fault, write_fault;
+> @@ -666,7 +666,7 @@ static int hmm_vma_walk_pud(pud_t *pudp, unsigned long start, unsigned long end,
+>  again:
+>  	pud = READ_ONCE(*pudp);
+>  	if (pud_none(pud))
+> -		return hmm_vma_walk_hole(start, end, walk);
+> +		return hmm_vma_walk_hole(start, end, 0, walk);
+>  
+>  	if (pud_huge(pud) && pud_devmap(pud)) {
+>  		unsigned long i, npages, pfn;
+> @@ -674,7 +674,7 @@ static int hmm_vma_walk_pud(pud_t *pudp, unsigned long start, unsigned long end,
+>  		bool fault, write_fault;
+>  
+>  		if (!pud_present(pud))
+> -			return hmm_vma_walk_hole(start, end, walk);
+> +			return hmm_vma_walk_hole(start, end, 0, walk);
+>  
+>  		i = (addr - range->start) >> PAGE_SHIFT;
+>  		npages = (end - addr) >> PAGE_SHIFT;
+
+Otherwise this mechanical change to hmm.c looks OK to me
+
+Jason
