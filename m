@@ -2,128 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDED7CE6AA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 17:09:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5B20CE6B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 17:09:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729210AbfJGPIo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 11:08:44 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40162 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728762AbfJGPIn (ORCPT
+        id S1728019AbfJGPJL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 11:09:11 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:46911 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727912AbfJGPJJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 11:08:43 -0400
-Received: by mail-wr1-f67.google.com with SMTP id h4so7027907wrv.7
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 08:08:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=rmvp3U9wOO9fx1V5/5lVy3lHSgb3r92p/5Ndn8D9Cno=;
-        b=PZ88vPGKZhvCrX5TQAJCXwbZ/+D6pVQWntk88MxmxD8JNoIcsCt3mUkxbkopRKq2Ok
-         S4zvSHsn2Y4D2U15ngxrUfkOgx2ZnWmIrkIHbxaBIqhfzOQBjA/ixUT+jmWFnoRLJoUf
-         Gr+x/k240g7pHGj3e5EWGz+4qddvm/hVrYCBRl/XV+bNGUYRfgnXy5nsWLgkANYb71ix
-         9Yl1XlQr8iq+6Qs4GaRLGgzG354SH3TytK8CKLgMVaGPzIVYqikwxQWhAVz18kCQQyT8
-         gaM+0swlRNT83/HMqXi3+wEbTmwu2QFdmqwgFVOz/RTQOA+1D1kl8rJ0C8OvcCjj/h3a
-         ofpg==
+        Mon, 7 Oct 2019 11:09:09 -0400
+Received: by mail-io1-f72.google.com with SMTP id t11so27220101ioc.13
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 08:09:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=rmvp3U9wOO9fx1V5/5lVy3lHSgb3r92p/5Ndn8D9Cno=;
-        b=QueWHbu5obHwOwgNWeuJnSWq6uwrs2WRADwkWf8HD4A0RHcpACzysFs9UEgn+1SZrG
-         4SzEB/tfs9IoC3lQi0ZYXoODoCKVIYVz/t4/Y1YBbhKju6e5laEkMEJ6CHohVfA8xfC1
-         lRidn7Bc3blk5jdX+jz//UkSIK1wUforR4TNRVU1J3Ay/EqcJY/gFYaEEyIQ5GB0PsnC
-         gDohMktFZ8e7yEZKC+aiO3+Q2QzafBV91mmfAbl257Bmi0swSb4Sm+rD9OJolkUNcc3w
-         tF5fBAezGnIdBpizVqnNK0g8ibaREHi/ZAbivBkUpfLaE3kfelGg5Ev8NGyuuJ1Tsuby
-         IVKQ==
-X-Gm-Message-State: APjAAAXL6NZgx6VOWcCf9aMiLD2Vc37mROBEbxP+v89Gk5kpywbTmB3F
-        Z9Ou4yaHoDDOKKYC6cnTZYDwkg==
-X-Google-Smtp-Source: APXvYqwkVghS0eHq32QO7i9QSOrwUCdtltFtZcTTIjruUxA68yY7ARWhzNO4HSBRH43QK2i2Zgw8JA==
-X-Received: by 2002:a5d:6a09:: with SMTP id m9mr21687302wru.12.1570460921085;
-        Mon, 07 Oct 2019 08:08:41 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id s12sm29340436wra.82.2019.10.07.08.08.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2019 08:08:40 -0700 (PDT)
-Date:   Mon, 7 Oct 2019 16:08:38 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] backlight: pwm_bl: fix cie1913 comments and constant
-Message-ID: <20191007150838.3qbrten34ln6ufo4@holly.lan>
-References: <20190919140620.32407-1-linux@rasmusvillemoes.dk>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=7KCg+f7TeFzvMI7Bp08YWruXFv6ujw5ZPTj7NmS2ZBg=;
+        b=SkFEMIDOX2iatweuw+Ner5NarK9ZNFiFatR4F298QddrygsBQDycWjv5sTkpuoEWsh
+         oGpjmV++gtdxSX/cmjbO0nE6OZDuEI6XReqmYIXmz5B/MwID8jcwl8Z8mlLse5fkn0So
+         HkjXmefPCjQFEAO/uyrxlkPr9tpg1Ce8N66PozR1eCOYxm04BmG9Ad+Fp7zH67VwEIwY
+         69/av1HgtXiDaaTlCgy91qT6jI+pkw2M6WVpoWnoisQib3Aue+VUxgM4DxqCaqq+bGAE
+         EGOp8lfe/73pfR3FC6eNw+QBVjAnRAvNbNhf9PnhTdseLvE230cvVw/Aepwg5yV8WpGI
+         eUdg==
+X-Gm-Message-State: APjAAAUF6ccM75VGcW7AXwAZqrB6wNrgLlgGkZ1jDgDGssuKWSBdvomp
+        ny2GfIGSnj0geWOMsYkUtTGqUAO+uny8c9S7OzK73AWkdyXl
+X-Google-Smtp-Source: APXvYqy7907YtOP193BqGe7qgENG1Enn1wt1Y4XWrAph4wkpHB4HgDQWbMZWedSuacnxilIEoIu/O8hykW5g6i3TstOFZwjCKt4K
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190919140620.32407-1-linux@rasmusvillemoes.dk>
-User-Agent: NeoMutt/20180716
+X-Received: by 2002:a6b:7a06:: with SMTP id h6mr12529506iom.231.1570460948347;
+ Mon, 07 Oct 2019 08:09:08 -0700 (PDT)
+Date:   Mon, 07 Oct 2019 08:09:08 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f5c33b0594536e77@google.com>
+Subject: kernel BUG at kernel/time/timer.c:LINE! (4)
+From:   syzbot <syzbot+f49d12d34f2321cf4df2@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
+        mchehab@kernel.org, sean@mess.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 19, 2019 at 04:06:16PM +0200, Rasmus Villemoes wrote:
-> The "break-even" point for the two formulas is L==8, which is also
-> what the code actually implements. [Incidentally, at that point one
-> has Y=0.008856, not 0.08856].
-> 
-> Moreover, all the sources I can find say the linear factor is 903.3
-> rather than 902.3, which makes sense since then the formulas agree at
-> L==8, both yielding the 0.008856 figure to four significant digits.
+Hello,
 
-Indeed. Interestingly the following doc (with a high search rank in
-Google) has exactly this inconsistency and uses different values at
-different times:
-http://www.photonstophotos.net/GeneralTopics/Exposure/Psychometric_Lightness_and_Gamma.htm
+syzbot found the following crash on:
 
-> 
-> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+HEAD commit:    58d5f26a usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=11e5b20d600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=aa5dac3cda4ffd58
+dashboard link: https://syzkaller.appspot.com/bug?extid=f49d12d34f2321cf4df2
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13d9c713600000
 
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+f49d12d34f2321cf4df2@syzkaller.appspotmail.com
 
-> ---
->  drivers/video/backlight/pwm_bl.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-> index 2201b8c78641..be36be1cacb7 100644
-> --- a/drivers/video/backlight/pwm_bl.c
-> +++ b/drivers/video/backlight/pwm_bl.c
-> @@ -155,8 +155,8 @@ static const struct backlight_ops pwm_backlight_ops = {
->   *
->   * The CIE 1931 lightness formula is what actually describes how we perceive
->   * light:
-> - *          Y = (L* / 902.3)           if L* ≤ 0.08856
-> - *          Y = ((L* + 16) / 116)^3    if L* > 0.08856
-> + *          Y = (L* / 903.3)           if L* ≤ 8
-> + *          Y = ((L* + 16) / 116)^3    if L* > 8
->   *
->   * Where Y is the luminance, the amount of light coming out of the screen, and
->   * is a number between 0.0 and 1.0; and L* is the lightness, how bright a human
-> @@ -169,9 +169,15 @@ static u64 cie1931(unsigned int lightness, unsigned int scale)
->  {
->  	u64 retval;
->  
-> +	/*
-> +	 * @lightness is given as a number between 0 and 1, expressed
-> +	 * as a fixed-point number in scale @scale. Convert to a
-> +	 * percentage, still expressed as a fixed-point number, so the
-> +	 * above formulas can be applied.
-> +	 */
->  	lightness *= 100;
->  	if (lightness <= (8 * scale)) {
-> -		retval = DIV_ROUND_CLOSEST_ULL(lightness * 10, 9023);
-> +		retval = DIV_ROUND_CLOSEST_ULL(lightness * 10, 9033);
->  	} else {
->  		retval = int_pow((lightness + (16 * scale)) / 116, 3);
->  		retval = DIV_ROUND_CLOSEST_ULL(retval, (scale * scale));
-> -- 
-> 2.20.1
+------------[ cut here ]------------
+kernel BUG at kernel/time/timer.c:956!
+invalid opcode: 0000 [#1] SMP KASAN
+CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.4.0-rc1+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:__mod_timer kernel/time/timer.c:956 [inline]
+RIP: 0010:__mod_timer kernel/time/timer.c:949 [inline]
+RIP: 0010:mod_timer+0x5a2/0xb50 kernel/time/timer.c:1100
+Code: 45 10 c7 44 24 14 ff ff ff ff 48 89 44 24 08 48 8d 45 20 48 c7 44 24  
+18 00 00 00 00 48 89 04 24 e9 5a fc ff ff e8 ae ce 0e 00 <0f> 0b e8 a7 ce  
+0e 00 4c 89 74 24 20 e9 37 fe ff ff e8 98 ce 0e 00
+RSP: 0018:ffff8881db209930 EFLAGS: 00010006
+RAX: ffffffff86c2b200 RBX: 00000000ffffa688 RCX: ffffffff83efc583
+RDX: 0000000000000100 RSI: ffffffff812f4d82 RDI: ffff8881d2356200
+RBP: ffff8881d23561e8 R08: ffffffff86c2b200 R09: ffffed103a46abeb
+R10: ffffed103a46abea R11: ffff8881d2355f53 R12: dffffc0000000000
+R13: 1ffff1103b64132d R14: ffff8881d2355f50 R15: 0000000000000006
+FS:  0000000000000000(0000) GS:ffff8881db200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f75e2799000 CR3: 00000001d3b07000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  <IRQ>
+  imon_touch_event drivers/media/rc/imon.c:1348 [inline]
+  imon_incoming_packet.isra.0+0x2546/0x2f10 drivers/media/rc/imon.c:1603
+  usb_rx_callback_intf0+0x151/0x1e0 drivers/media/rc/imon.c:1734
+  __usb_hcd_giveback_urb+0x1f2/0x470 drivers/usb/core/hcd.c:1654
+  usb_hcd_giveback_urb+0x368/0x420 drivers/usb/core/hcd.c:1719
+  dummy_timer+0x120f/0x2fa2 drivers/usb/gadget/udc/dummy_hcd.c:1965
+  call_timer_fn+0x179/0x650 kernel/time/timer.c:1404
+  expire_timers kernel/time/timer.c:1449 [inline]
+  __run_timers kernel/time/timer.c:1773 [inline]
+  __run_timers kernel/time/timer.c:1740 [inline]
+  run_timer_softirq+0x5e3/0x1490 kernel/time/timer.c:1786
+  __do_softirq+0x221/0x912 kernel/softirq.c:292
+  invoke_softirq kernel/softirq.c:373 [inline]
+  irq_exit+0x178/0x1a0 kernel/softirq.c:413
+  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+  smp_apic_timer_interrupt+0x12f/0x500 arch/x86/kernel/apic/apic.c:1137
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:830
+  </IRQ>
+RIP: 0010:default_idle+0x28/0x2e0 arch/x86/kernel/process.c:581
+Code: 90 90 41 56 41 55 65 44 8b 2d 44 3a 8f 7a 41 54 55 53 0f 1f 44 00 00  
+e8 36 ee d0 fb e9 07 00 00 00 0f 00 2d fa dd 4f 00 fb f4 <65> 44 8b 2d 20  
+3a 8f 7a 0f 1f 44 00 00 5b 5d 41 5c 41 5d 41 5e c3
+RSP: 0018:ffffffff86c07da8 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+RAX: 0000000000000007 RBX: ffffffff86c2b200 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000006 RDI: ffffffff86c2ba4c
+RBP: fffffbfff0d85640 R08: ffffffff86c2b200 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+  cpuidle_idle_call kernel/sched/idle.c:154 [inline]
+  do_idle+0x3b6/0x500 kernel/sched/idle.c:263
+  cpu_startup_entry+0x14/0x20 kernel/sched/idle.c:355
+  start_kernel+0x82a/0x864 init/main.c:784
+  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:241
+Modules linked in:
+---[ end trace 3b8169377985e706 ]---
+RIP: 0010:__mod_timer kernel/time/timer.c:956 [inline]
+RIP: 0010:__mod_timer kernel/time/timer.c:949 [inline]
+RIP: 0010:mod_timer+0x5a2/0xb50 kernel/time/timer.c:1100
+Code: 45 10 c7 44 24 14 ff ff ff ff 48 89 44 24 08 48 8d 45 20 48 c7 44 24  
+18 00 00 00 00 48 89 04 24 e9 5a fc ff ff e8 ae ce 0e 00 <0f> 0b e8 a7 ce  
+0e 00 4c 89 74 24 20 e9 37 fe ff ff e8 98 ce 0e 00
+RSP: 0018:ffff8881db209930 EFLAGS: 00010006
+RAX: ffffffff86c2b200 RBX: 00000000ffffa688 RCX: ffffffff83efc583
+RDX: 0000000000000100 RSI: ffffffff812f4d82 RDI: ffff8881d2356200
+RBP: ffff8881d23561e8 R08: ffffffff86c2b200 R09: ffffed103a46abeb
+R10: ffffed103a46abea R11: ffff8881d2355f53 R12: dffffc0000000000
+R13: 1ffff1103b64132d R14: ffff8881d2355f50 R15: 0000000000000006
+FS:  0000000000000000(0000) GS:ffff8881db200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f75e2799000 CR3: 00000001d3b07000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
