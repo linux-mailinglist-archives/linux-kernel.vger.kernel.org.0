@@ -2,33 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88B5BCED7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 22:32:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9C0FCEDA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 22:38:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729403AbfJGUcK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 16:32:10 -0400
-Received: from vps.xff.cz ([195.181.215.36]:46270 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729263AbfJGUcJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 16:32:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1570480327; bh=Zdq7TsrioBhNJ4nRUcC5Dq41WDeZro1CErpIBoxFFlk=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=qZu3yKxvXIgZ6M9g+fSwLTvYIYJqSTLyWHm91zPfZqj615BCwzyCtg9tka+f9NYhX
-         BooT4yvuwH0xZMINkfmPnGxUDmjd26JQROGYcoAegmIRa8HQmyPRvK3bKXcILkbOLQ
-         6tOPQkCXqMA1L7R4WTusX+R/+W/YVBtzB4jYzzx8=
-From:   megous@megous.com
-To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        id S1729387AbfJGUiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 16:38:13 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.167]:12758 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728187AbfJGUiN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 16:38:13 -0400
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXQrEOHTIXt87vtBtcfg=="
+X-RZG-CLASS-ID: mo00
+Received: from localhost.localdomain
+        by smtp.strato.de (RZmta 44.28.0 AUTH)
+        with ESMTPSA id L0811cv97KZ645Q
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Mon, 7 Oct 2019 22:35:06 +0200 (CEST)
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Andi Shyti <andi@etezian.org>, Andi Shyti <andi.shyti@samsung.com>,
+        Simon Shields <simon@lineageos.org>,
+        linux-input@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Ondrej Jirman <megous@megous.com>
-Subject: [RESEND PATCH 2/2] arm64: dts: allwinner: orange-pi-3: Enable UART1 / Bluetooth
-Date:   Mon,  7 Oct 2019 22:31:52 +0200
-Message-Id: <20191007203152.3889947-3-megous@megous.com>
-In-Reply-To: <20191007203152.3889947-1-megous@megous.com>
-References: <20191007203152.3889947-1-megous@megous.com>
+        Stephan Gerhold <stephan@gerhold.net>
+Subject: [PATCH 0/3] Add support for Melfas MMS345L touchscreen
+Date:   Mon,  7 Oct 2019 22:33:40 +0200
+Message-Id: <20191007203343.101466-1-stephan@gerhold.net>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -36,66 +39,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ondrej Jirman <megous@megous.com>
+This patch series adds support for the Melfas MMS345L touchscreen
+to the mms114 driver.
 
-The board contains AP6256 WiFi/BT module that has its bluetooth part
-connected to SoC's UART1 port. Enable this port, and add node for the
-bluetooth device.
+MMS345L is used in the Samsung Galaxy A5 (2015) that has recently
+gained mainline support [1].
 
-Bluetooth part is named bcm4345c5.
+[1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=1329c1ab0730b521e6cd3051c56a2ff3d55f21e6
 
-You'll need a BCM4345C5.hcd firmware file that can be found in the
-Xulongs's repository for H6:
+Stephan Gerhold (3):
+  Input: mms114 - use device_get_match_data
+  dt-bindings: mms114: document melfas,mms345l binding
+  Input: mms114 - add support for mms345l
 
-https://github.com/orangepi-xunlong/OrangePiH6_external/tree/master/ap6256
+ .../bindings/input/touchscreen/mms114.txt     |  3 +-
+ drivers/input/touchscreen/mms114.c            | 44 +++++++++++++------
+ 2 files changed, 33 insertions(+), 14 deletions(-)
 
-The driver expects the firmware at the following path relative to the
-firmware directory:
-
-  brcm/BCM4345C5.hcd
-
-Signed-off-by: Ondrej Jirman <megous@megous.com>
----
- .../dts/allwinner/sun50i-h6-orangepi-3.dts    | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-index 49d954369087..a9e776446c35 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-@@ -15,6 +15,7 @@
- 
- 	aliases {
- 		serial0 = &uart0;
-+		serial1 = &uart1;
- 	};
- 
- 	chosen {
-@@ -271,6 +272,24 @@
- 	status = "okay";
- };
- 
-+/* There's the BT part of the AP6256 connected to that UART */
-+&uart1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart1_pins>, <&uart1_rts_cts_pins>;
-+	uart-has-rtscts;
-+	status = "okay";
-+
-+	bluetooth {
-+		compatible = "brcm,bcm4345c5";
-+		clocks = <&rtc 1>;
-+		clock-names = "lpo";
-+		device-wakeup-gpios = <&r_pio 1 2 GPIO_ACTIVE_HIGH>; /* PM2 */
-+		host-wakeup-gpios = <&r_pio 1 1 GPIO_ACTIVE_HIGH>; /* PM1 */
-+		shutdown-gpios = <&r_pio 1 4 GPIO_ACTIVE_HIGH>; /* PM4 */
-+		max-speed = <1500000>;
-+	};
-+};
-+
- &usb2otg {
- 	/*
- 	 * This board doesn't have a controllable VBUS even though it
 -- 
 2.23.0
 
