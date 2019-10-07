@@ -2,79 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13AF3CDC34
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 09:08:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD803CDC3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 09:09:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbfJGHIx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 03:08:53 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:6223 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726984AbfJGHIw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 03:08:52 -0400
-X-UUID: c542d997aa35413abc49831fde437c19-20191007
-X-UUID: c542d997aa35413abc49831fde437c19-20191007
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <mark-mc.lee@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 612572372; Mon, 07 Oct 2019 15:08:46 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 7 Oct 2019 15:08:44 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 7 Oct 2019 15:08:44 +0800
-From:   MarkLee <Mark-MC.Lee@mediatek.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Sean Wang <sean.wang@mediatek.com>,
-        John Crispin <john@phrozen.org>,
-        Nelson Chang <nelson.chang@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rene van Dorst <opensource@vdorst.com>,
-        <devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, MarkLee <Mark-MC.Lee@mediatek.com>
-Subject: [PATCH net,v2 1/2] net: ethernet: mediatek: Fix MT7629 missing GMII mode support
-Date:   Mon, 7 Oct 2019 15:08:43 +0800
-Message-ID: <20191007070844.14212-2-Mark-MC.Lee@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20191007070844.14212-1-Mark-MC.Lee@mediatek.com>
-References: <20191007070844.14212-1-Mark-MC.Lee@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+        id S1727382AbfJGHJE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 03:09:04 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36290 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727028AbfJGHJC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 03:09:02 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A678410C0937;
+        Mon,  7 Oct 2019 07:09:01 +0000 (UTC)
+Received: from localhost.localdomain.com (ovpn-12-87.pek2.redhat.com [10.72.12.87])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BF8C4600C1;
+        Mon,  7 Oct 2019 07:08:48 +0000 (UTC)
+From:   Lianbo Jiang <lijiang@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, bhe@redhat.com, dyoung@redhat.com, jgross@suse.com,
+        dhowells@redhat.com, Thomas.Lendacky@amd.com,
+        ebiederm@xmission.com, vgoyal@redhat.com, kexec@lists.infradead.org
+Subject: [PATCH v2] x86/kdump: Fix 'kmem -s' reported an invalid freepointer when SME was active
+Date:   Mon,  7 Oct 2019 15:08:44 +0800
+Message-Id: <20191007070844.15935-1-lijiang@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.66]); Mon, 07 Oct 2019 07:09:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add missing configuration for mt7629 gmii mode support
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=204793
 
-Fixes: 7e538372694b ("net: ethernet: mediatek: Re-add support SGMII")
-Signed-off-by: MarkLee <Mark-MC.Lee@mediatek.com>
---
-v1->v2:
-* no change
+Kdump kernel will reuse the first 640k region because of some reasons,
+for example: the trampline and conventional PC system BIOS region may
+require to allocate memory in this area. Obviously, kdump kernel will
+also overwrite the first 640k region, therefore, kernel has to copy
+the contents of the first 640k area to a backup area, which is done in
+purgatory(), because vmcore may need the old memory. When vmcore is
+dumped, kdump kernel will read the old memory from the backup area of
+the first 640k area.
+
+Basically, the main reason should be clear, kernel does not correctly
+handle the first 640k region when SME is active, which causes that
+kernel does not properly copy these old memory to the backup area in
+purgatory(). Therefore, kdump kernel reads out the incorrect contents
+from the backup area when dumping vmcore. Finally, the phenomenon is
+as follow:
+
+[root linux]$ crash vmlinux /var/crash/127.0.0.1-2019-09-19-08\:31\:27/vmcore
+WARNING: kernel relocated [240MB]: patching 97110 gdb minimal_symbol values
+
+      KERNEL: /var/crash/127.0.0.1-2019-09-19-08:31:27/vmlinux
+    DUMPFILE: /var/crash/127.0.0.1-2019-09-19-08:31:27/vmcore  [PARTIAL DUMP]
+        CPUS: 128
+        DATE: Thu Sep 19 08:31:18 2019
+      UPTIME: 00:01:21
+LOAD AVERAGE: 0.16, 0.07, 0.02
+       TASKS: 1343
+    NODENAME: amd-ethanol
+     RELEASE: 5.3.0-rc7+
+     VERSION: #4 SMP Thu Sep 19 08:14:00 EDT 2019
+     MACHINE: x86_64  (2195 Mhz)
+      MEMORY: 127.9 GB
+       PANIC: "Kernel panic - not syncing: sysrq triggered crash"
+         PID: 9789
+     COMMAND: "bash"
+        TASK: "ffff89711894ae80  [THREAD_INFO: ffff89711894ae80]"
+         CPU: 83
+       STATE: TASK_RUNNING (PANIC)
+
+crash> kmem -s|grep -i invalid
+kmem: dma-kmalloc-512: slab:ffffd77680001c00 invalid freepointer:a6086ac099f0c5a4
+kmem: dma-kmalloc-512: slab:ffffd77680001c00 invalid freepointer:a6086ac099f0c5a4
+crash>
+
+BTW: I also tried to fix the above problem in purgatory(), but there
+are too many restricts in purgatory() context, for example: i can't
+allocate new memory to create the identity mapping page table for SME
+situation.
+
+Currently, there are two places where the first 640k area is needed,
+the first one is in the find_trampoline_placement(), another one is
+in the reserve_real_mode(), and their content doesn't matter. To avoid
+the above error, lets occupy the remain memory of the first 640k region
+(expect for the trampoline and real mode) so that the allocated memory
+does not fall into the first 640k area when SME is active, which makes
+us not to worry about whether kernel can correctly copy the contents of
+the first 640k area to a backup region in the purgatory().
+
+Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
 ---
- drivers/net/ethernet/mediatek/mtk_eth_soc.c | 1 +
- 1 file changed, 1 insertion(+)
+Changes since v1:
+1. Improve patch log
+2. Change the checking condition from sme_active() to sme_active()
+   && strstr(boot_command_line, "crashkernel=")
 
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-index c61069340f4f..703adb96429e 100644
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@ -261,6 +261,7 @@ static void mtk_mac_config(struct phylink_config *config, unsigned int mode,
- 		ge_mode = 0;
- 		switch (state->interface) {
- 		case PHY_INTERFACE_MODE_MII:
-+		case PHY_INTERFACE_MODE_GMII:
- 			ge_mode = 1;
- 			break;
- 		case PHY_INTERFACE_MODE_REVMII:
+ arch/x86/kernel/setup.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 77ea96b794bd..bdb1a02a84fd 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -1148,6 +1148,9 @@ void __init setup_arch(char **cmdline_p)
+ 
+ 	reserve_real_mode();
+ 
++	if (sme_active() && strstr(boot_command_line, "crashkernel="))
++		memblock_reserve(0, 640*1024);
++
+ 	trim_platform_memory_ranges();
+ 	trim_low_memory_range();
+ 
 -- 
 2.17.1
 
