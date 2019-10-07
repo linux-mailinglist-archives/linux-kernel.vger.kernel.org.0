@@ -2,92 +2,223 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30323CEB50
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 19:59:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2F4ACEB55
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 20:00:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729342AbfJGR7A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 13:59:00 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:40611 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728079AbfJGR7A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 13:59:00 -0400
-Received: by mail-qk1-f194.google.com with SMTP id y144so13461346qkb.7
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 10:58:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KFgo0wRkFEy6VhLxhfmWq5wGyMcJAzeHEJSjpxS5JhQ=;
-        b=r4ugxChb5Z8WaG92upUlgKtopDOd0jvBxfboaSQMlL5n8aYxvo3EndkzcWFdNdu5HK
-         p8zBEs2dkUz+YTcydHpvpj9kYiT/RzgcYASZYocUIed2h7iMmo/rlMt1Ms+q3WxSm+Xj
-         Th/g2QOxV9UpjnkP2VsMCK1tw1ZaI8srhwCs5ElLA2XmR1jy4Qj9kJMwfCZ9a/JgYrOd
-         6Yq+1P36LUeD3VePs+vnJqrfqXoDNmV5ezOXb2n+tGgppGT/xIlrQ8NHHLfummEfWFzj
-         MRv3uaWRAHbaf/ykvDlFTkJWaLVLrwIiVKlkYm1aoGe0BMcz7kkUKQ/Ov9zTVfbYM7rM
-         pOLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KFgo0wRkFEy6VhLxhfmWq5wGyMcJAzeHEJSjpxS5JhQ=;
-        b=A9Y2kb+AMGqMcVWWhxq35FUYwc/zNtJVQsa9aB5+ZppA7vWI5yPrewP6GuMrB4ONJE
-         ykF/MonuZZ8Em5qqTJf80FVk6KFrfShACtkfGHSYqZZsX7SfHFFLDthAOakySvC0xhyv
-         vCO0tf/DILY+tM7+xRbiaLIg967kLTl0LsGLk8wUz6QT1MFztpcPVqEd19HrH6b2OYF7
-         niJlEIli+kBcx+YNBcW70X3qV9PgdViKmUYrGYaqAdyImR4H4EpfTNvku8gQ6i2ZeZZn
-         5n3Dhu+Gy/vyyUktwZOCx4k6ROtmwlaV6RVYwE8v3pZZGNzmh+VyZe936AZD1nXHGe7V
-         HqQA==
-X-Gm-Message-State: APjAAAWaeKco70EmYnRMsI/TtCKQ6CFSwtr98iKA2Svls+Pp3UiZdygx
-        1URIgY3+lKqDIQELDFiY3d1CjQaR+pTEEg==
-X-Google-Smtp-Source: APXvYqxiPNuXSPerijni5MUYE58863lxwEhaLkgXUhUry09vaEDR8Lg2wXQU//wlHlGgPOLVE841/g==
-X-Received: by 2002:a37:7282:: with SMTP id n124mr24917289qkc.259.1570471139072;
-        Mon, 07 Oct 2019 10:58:59 -0700 (PDT)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id x15sm6187114qkh.44.2019.10.07.10.58.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Oct 2019 10:58:58 -0700 (PDT)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Mon, 7 Oct 2019 13:58:57 -0400
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
+        id S1729304AbfJGR7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 13:59:54 -0400
+Received: from mga11.intel.com ([192.55.52.93]:33632 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728079AbfJGR7x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 13:59:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2019 10:59:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,269,1566889200"; 
+   d="scan'208";a="193161241"
+Received: from unknown (HELO labuser-Ice-Lake-Client-Platform.jf.intel.com) ([10.54.55.65])
+  by fmsmga007.fm.intel.com with ESMTP; 07 Oct 2019 10:59:52 -0700
+From:   kan.liang@linux.intel.com
+To:     peterz@infradead.org, acme@kernel.org, mingo@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: ehci-pci breakage with dma-mapping changes in 5.4-rc2
-Message-ID: <20191007175856.GA42018@rani.riverdale.lan>
-References: <20191007022454.GA5270@rani.riverdale.lan>
- <20191007073448.GA882@lst.de>
- <20191007175430.GA32537@rani.riverdale.lan>
- <20191007175528.GA21857@lst.de>
- <20191007175630.GA28861@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191007175630.GA28861@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Cc:     jolsa@kernel.org, namhyung@kernel.org, ak@linux.intel.com,
+        vitaly.slobodskoy@intel.com, pavel.gerasimov@intel.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH 00/10] Stitch LBR call stack
+Date:   Mon,  7 Oct 2019 10:59:00 -0700
+Message-Id: <20191007175910.2805-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 07, 2019 at 10:56:30AM -0700, Christoph Hellwig wrote:
-> On Mon, Oct 07, 2019 at 07:55:28PM +0200, Christoph Hellwig wrote:
-> > On Mon, Oct 07, 2019 at 01:54:32PM -0400, Arvind Sankar wrote:
-> > > It doesn't boot with the patch. Won't it go
-> > > 	dma_get_required_mask
-> > > 	-> intel_get_required_mask
-> > > 	-> iommu_need_mapping
-> > > 	-> dma_get_required_mask
-> > > ?
-> > > 
-> > > Should the call to dma_get_required_mask in iommu_need_mapping be
-> > > replaced with dma_direct_get_required_mask on top of your patch?
-> > 
-> > Yes, sorry.
-> 
-> Actually my patch already calls dma_direct_get_required_mask.
-> How did you get the loop?
+From: Kan Liang <kan.liang@linux.intel.com>
 
-The function iommu_need_mapping (not changed by your patch) calls
-dma_get_required_mask internally, to check whether the device's dma_mask
-is big enough or not. That's the call I was asking whether it needs to
-be changed.
+Start from Haswell, Linux perf can utilize the existing Last Branch
+Record (LBR) facility to record call stack. However, the depth of the
+reconstructed LBR call stack limits to the number of LBR registers.
+E.g. on skylake, the depth of reconstructed LBR call stack is <= 32
+That's because HW will overwrite the oldest LBR registers when it's
+full.
+
+However, the overwritten LBRs may still be retrieved from previous
+sample. At that moment, HW hasn't overwritten the LBR registers yet.
+Perf tools can stitch those overwritten LBRs on current call stacks to
+get a more complete call stack.
+
+To determine if LBRs can be stitched, the physical index of LBR
+registers is required. A new sample type is introduced in patch 1 & 2
+to dump the LBR Top-of-Stack (TOS) information for perf tools.
+Besides, the maximum number of LBRs is required as well. Patch 3 & 4
+retrieve the capabilities information from sysfs and save them in perf
+header.
+Patch 5 & 6 implements the LBR stitching approach.
+Users can use the options introduced in patch 7-10 to enable the LBR
+stitching approach for perf report, script, top and c2c.
+
+The stitching approach base on LBR call stack technology. The known
+limitations of LBR call stack technology still apply to the approach,
+e.g. Exception handing such as setjmp/longjmp will have calls/returns
+not match.
+This approach is not full proof. There can be cases where it creates
+incorrect call stacks from incorrect matches. There is no attempt
+to validate any matches in another way. So it is not enabled by default.
+However in many common cases with call stack overflows it can recreate
+better call stacks than the default lbr call stack output. So if there
+are problems with LBR overflows this is a possible workaround.
+
+Performance impact:
+The processing time may increase with the LBR stitching approach
+enabled. The impact depends on the number of samples with stitched LBRs.
+
+For sqlite's tcltest,
+perf record --call-graph lbr -- make tcltest
+perf report --stitch-lbr
+
+There are 4.11% samples has stitched LBRs.
+Total number of samples:                        2833728
+The number of samples with stitched LBRs        116478
+
+The processing time of perf report increases 6.8%
+Without --stitch-lbr:                           55906106 usec
+With --stitch-lbr:                              59728701 usec
+
+For a simple test case tchain_edit with 43 depth of call stacks.
+perf record --call-graph lbr -- ./tchain_edit
+perf report --stitch-lbr
+
+There are 99.9% samples has stitched LBRs.
+Total number of samples:                        10915
+The number of samples with stitched LBRs        10905
+
+The processing time of perf report increases 67.4%
+Without --stitch-lbr:                           11970508 usec
+With --stitch-lbr:                              20036055 usec
+
+The source code of tchain_edit.c is something like as below.
+noinline void f43(void)
+{
+        int i;
+        for (i = 0; i < 10000;) {
+
+                if(i%2)
+                        i++;
+                else
+                        i++;
+        }
+}
+
+noinline void f42(void)
+{
+        int i;
+        for (i = 0; i < 100; i++) {
+                f43();
+                f43();
+                f43();
+        }
+}
+
+noinline void f41(void)
+{
+        int i;
+        for (i = 0; i < 100; i++) {
+                f42();
+                f42();
+                f42();
+        }
+}
+
+noinline void f40(void)
+{
+        f41();
+}
+
+... ...
+
+noinline void f32(void)
+{
+        f33();
+}
+
+noinline void f31(void)
+{
+        int i;
+
+        for (i = 0; i < 10000; i++) {
+                if(i%2)
+                        i++;
+                else
+                        i++;
+        }
+
+        f32();
+}
+
+noinline void f30(void)
+{
+        f31();
+}
+
+... ...
+
+noinline void f1(void)
+{
+        f2();
+}
+
+int main()
+{
+        f1();
+}
+
+Kan Liang (10):
+  perf/core, x86: Add PERF_SAMPLE_LBR_TOS
+  perf tools: Support PERF_SAMPLE_LBR_TOS
+  perf pmu: Add support for PMU capabilities
+  perf header: Support CPU PMU capabilities
+  perf machine: Refine the function for LBR call stack reconstruction
+  perf tools: Stitch LBR call stack
+  perf report: Add option to enable the LBR stitching approach
+  perf script: Add option to enable the LBR stitching approach
+  perf top: Add option to enable the LBR stitching approach
+  perf c2c: Add option to enable the LBR stitching approach
+
+ arch/x86/events/intel/lbr.c                   |   9 +
+ include/linux/perf_event.h                    |   1 +
+ include/uapi/linux/perf_event.h               |   4 +-
+ kernel/events/core.c                          |  12 +
+ tools/include/uapi/linux/perf_event.h         |   4 +-
+ tools/perf/Documentation/perf-c2c.txt         |  11 +
+ tools/perf/Documentation/perf-report.txt      |  11 +
+ tools/perf/Documentation/perf-script.txt      |  11 +
+ tools/perf/Documentation/perf-top.txt         |   9 +
+ .../Documentation/perf.data-file-format.txt   |  16 +
+ tools/perf/builtin-c2c.c                      |   6 +
+ tools/perf/builtin-record.c                   |   3 +
+ tools/perf/builtin-report.c                   |   6 +
+ tools/perf/builtin-script.c                   |   6 +
+ tools/perf/builtin-stat.c                     |   1 +
+ tools/perf/builtin-top.c                      |  11 +
+ tools/perf/util/branch.h                      |  10 +-
+ tools/perf/util/env.h                         |   3 +
+ tools/perf/util/event.h                       |   1 +
+ tools/perf/util/evsel.c                       |  16 +-
+ tools/perf/util/evsel.h                       |   1 +
+ tools/perf/util/header.c                      | 110 +++++++
+ tools/perf/util/header.h                      |   1 +
+ tools/perf/util/machine.c                     | 303 ++++++++++++++----
+ tools/perf/util/perf_event_attr_fprintf.c     |   2 +-
+ tools/perf/util/pmu.c                         |  87 +++++
+ tools/perf/util/pmu.h                         |  12 +
+ tools/perf/util/synthetic-events.c            |   8 +
+ tools/perf/util/thread.c                      |   3 +
+ tools/perf/util/thread.h                      |  18 ++
+ tools/perf/util/top.h                         |   1 +
+ 31 files changed, 626 insertions(+), 71 deletions(-)
+
+-- 
+2.17.1
+
