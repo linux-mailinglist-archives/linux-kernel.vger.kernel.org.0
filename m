@@ -2,93 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD0BBCEAB9
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 19:34:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44B76CEAC6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 19:36:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729072AbfJGRee (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 13:34:34 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:43124 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728028AbfJGRee (ORCPT
+        id S1728980AbfJGRgt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 13:36:49 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:45105 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728371AbfJGRgs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 13:34:34 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iHWu0-00027U-DO; Mon, 07 Oct 2019 17:34:32 +0000
-Date:   Mon, 7 Oct 2019 18:34:32 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to
- unsafe_put_user()
-Message-ID: <20191007173432.GM26530@ZenIV.linux.org.uk>
-References: <20191006222046.GA18027@roeck-us.net>
- <CAHk-=wgrqwuZJmwbrjhjCFeSUu2i57unaGOnP4qZAmSyuGwMZA@mail.gmail.com>
- <CAHk-=wjRPerXedTDoBbJL=tHBpH+=sP6pX_9NfgWxpnmHC5RtQ@mail.gmail.com>
- <5f06c138-d59a-d811-c886-9e73ce51924c@roeck-us.net>
- <CAHk-=whAQWEMADgxb_qAw=nEY4OnuDn6HU4UCSDMNT5ULKvg3g@mail.gmail.com>
- <20191007012437.GK26530@ZenIV.linux.org.uk>
- <CAHk-=whKJfX579+2f-CHc4_YmEmwvMe_Csr0+CPfLAsSAdfDoA@mail.gmail.com>
- <20191007025046.GL26530@ZenIV.linux.org.uk>
- <CAHk-=whraNSys_Lj=Ut1EA=CJEfw2Uothh+5-WL+7nDJBegWcQ@mail.gmail.com>
+        Mon, 7 Oct 2019 13:36:48 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1iHWw8-0001MQ-J4; Mon, 07 Oct 2019 19:36:44 +0200
+Date:   Mon, 7 Oct 2019 19:36:44 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Uladzislau Rezki <urezki@gmail.com>
+Cc:     Daniel Wagner <dwagner@suse.de>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] mm: vmalloc: Use the vmap_area_lock to protect
+ ne_fit_preload_node
+Message-ID: <20191007173644.hiiukrl2xryziro3@linutronix.de>
+References: <20191003090906.1261-1-dwagner@suse.de>
+ <20191004153728.c5xppuqwqcwecbe6@linutronix.de>
+ <20191004162041.GA30806@pc636>
+ <20191004163042.jpiau6dlxqylbpfh@linutronix.de>
+ <20191007083037.zu3n5gindvo7damg@beryllium.lan>
+ <20191007105631.iau6zhxqjeuzajnt@linutronix.de>
+ <20191007162330.GA26503@pc636>
+ <20191007163443.6owts5jp2frum7cy@beryllium.lan>
+ <20191007165611.GA26964@pc636>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHk-=whraNSys_Lj=Ut1EA=CJEfw2Uothh+5-WL+7nDJBegWcQ@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191007165611.GA26964@pc636>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 06, 2019 at 08:11:42PM -0700, Linus Torvalds wrote:
-
-> > So do we want to bother with separation between raw_copy_to_user() and
-> > unsafe_copy_to_user()?  After all, __copy_to_user() also has only few
-> > callers, most of them in arch/*
+On 2019-10-07 18:56:11 [+0200], Uladzislau Rezki wrote:
+> Actually there is a high lock contention on vmap_area_lock, because it
+> is still global. You can have a look at last slide:
 > 
-> No, you're right. Just switch over.
+> https://linuxplumbersconf.org/event/4/contributions/547/attachments/287/479/Reworking_of_KVA_allocator_in_Linux_kernel.pdf
 > 
-> > I'll take a look into that tomorrow - half-asleep right now...
+> so this change will make it a bit higher. From the other hand i agree
+> that for rt it should be fixed, probably it could be done like:
 > 
-> Thanks. No huge hurry.
+> ifdef PREEMPT_RT
+>     migrate_disable()
+> #else
+>     preempt_disable()
+> ...
+> 
+> but i am not sure it is good either.
 
-Tangentially related: copy_regster_to_user() and copy_regset_from_user().
-That's where we do access_ok(), followed by calls of ->get() and
-->set() resp.  Those tend to either use user_regset_copy{out,in}(),
-or open-code those.  The former variant tends to lead to few calls
-of __copy_{to,from}_user(); the latter...  On x86 it ends up doing
-this:
-static int genregs_get(struct task_struct *target,
-                       const struct user_regset *regset,
-                       unsigned int pos, unsigned int count,
-                       void *kbuf, void __user *ubuf)
-{
-        if (kbuf) {
-                unsigned long *k = kbuf;
-                while (count >= sizeof(*k)) {
-                        *k++ = getreg(target, pos);
-                        count -= sizeof(*k);
-                        pos += sizeof(*k);
-                }
-        } else {
-                unsigned long __user *u = ubuf;
-                while (count >= sizeof(*u)) {
-                        if (__put_user(getreg(target, pos), u++))
-                                return -EFAULT;
-                        count -= sizeof(*u);
-                        pos += sizeof(*u);
-                }
-        }
+What is to be expected on average? Is the lock acquired and then
+released again because the slot is empty and memory needs to be
+allocated or can it be assumed that this hardly happens? 
 
-        return 0;
-}
-
-Potentially doing arseloads of stac/clac as it goes.  OTOH, getreg()
-(and setreg()) in there are not entirely trivial, so blanket
-user_access_begin()/user_access_end() over the entire loop might be
-a bad idea...
-
-How hot is that codepath?  I know that arch/um used to rely on it
-(== PTRACE_[GS]ETREGS) quite a bit...
+Sebastian
