@@ -2,312 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E8C0CEE43
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 23:17:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F2EECEE54
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 23:19:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729426AbfJGVRD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 17:17:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32834 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728330AbfJGVRD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 17:17:03 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0966A20867;
-        Mon,  7 Oct 2019 21:17:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570483021;
-        bh=7nj9uQY6WqAuYiCgaynFxhnaYKExae7ZbQ7U1gc709g=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=NakiZhnu9dkcHeFbYC0TI933n5v7qzbrkt+BAZqMDFFIXxamIrH+o8rKz8jKqmMGu
-         5Z9kzlmzp1UEU0j3iPgmfFpJiVYXLH76pVgV/Up7L+bPkoPKOyCinpNfJaOGPiENmk
-         zWk7rCfuJsGe6vw//JMtnGexU/CCLbO1RlHuKyWA=
-Date:   Mon, 7 Oct 2019 22:16:57 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 02/10] iio: imu: adis: add unlocked read/write function
- versions
-Message-ID: <20191007221649.4fb1ee25@archlinux>
-In-Reply-To: <20191006101201.051f9249@archlinux>
-References: <20190926111812.15957-1-alexandru.ardelean@analog.com>
-        <20190926111812.15957-3-alexandru.ardelean@analog.com>
-        <20191006101201.051f9249@archlinux>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1729562AbfJGVS4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 17:18:56 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:57431 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729528AbfJGVSx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 17:18:53 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1N0qmr-1hwMca18BJ-00wmyc; Mon, 07 Oct 2019 23:18:29 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Lijun Ou <oulijun@huawei.com>,
+        "Wei Hu(Xavier)" <xavier.huwei@huawei.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Hulk Robot <hulkci@huawei.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Shaobo Xu <xushaobo2@huawei.com>,
+        Shamir Rabinovitch <shamir.rabinovitch@oracle.com>,
+        Xi Wang <wangxi11@huawei.com>, Tao Tian <tiantao6@huawei.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] RDMA/hns: Fix build error again
+Date:   Mon,  7 Oct 2019 23:18:08 +0200
+Message-Id: <20191007211826.3361202-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:EWiNtZuGapRE+xX1PdtaFNnMOeHZZ8DNLe6GyszUnhUPAIMsWRd
+ +7JZjySSe+lzQIBYcSqcZYMF0teNr+S0b0Bgw0gu8IBq7zI59qfH6MgaBuuxq3frVb9o+Ud
+ OhevsJQQSGs6rJWEgNS+GrJcGjNLj+w5RuUAI0zjTduNkbJac6a7x5qZTOSDQtCUNF0SktU
+ 8rHgKAQ7GcQWdyE6Mdlvg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:LG5/IVF1Aus=:dEwU4fUmO4LXKB528E/eiF
+ azbIpFIGe8I8qZqUKzVBpHVDKlsT6ZGX1TDE955icdCig9ES/mRViuK7BRrwe4qWCIrvVekvE
+ juFv3PJ/xY8Qy9YccE+2Yn4P7ZWnG0Dy6DU6+FFPxQBkenEU0T4a7E7rk/02knOMuT2uVFqu+
+ sRiJTLmZJESoI/4ngWv9fgd0zo5cxjfEKJIBjj19n69cjYge3Bpdsw85K00bG6+HATlZaQ3tf
+ W3Wljb9cZN4fjN6o8lnGMESAvSs0LsP28hlEIZwSGFhHquVn+K0hpcO9BlL6f4mDmo58hRgcE
+ rfaNNrQ3lbGSgX0YqZtwmS2r2otOjZa2emKDTCAXuNnXFVVSvHXDYuXnSNf5MHPRNxkVN/J17
+ SZYsKZjADPBVVO+r4QzrbJjDkpLzgexVT7FPbnGx0c9Ud8SsYVehRRySvOBBFgHwPFTV4YoDW
+ QDd6K9eETIiple3I0bNuHKg7OLaEphVClc9HuwY6/QeMMIwnrU9SH15miNJJNxQIGpFos/nRj
+ 7BzUvZVLjrYHz3PfOzfXb1vVIKA9Jz9gFIAXXWC5FavFgv+JQmGVnqXzQb2CEJI4XrBPXmLov
+ neoEmIxyG+hUzRBnviXQNJOdHVA2A8jrExddQ816tC9D4O8q3jUzdpGceZyv25CnNCeCFEnRG
+ EUZS59Nzi9+DsFFGWNEdbN+bGVeqjLJAGek/tsUw/X2E6/yQEywbcRO3zv3TrmQ1XiUy69gXH
+ jxlOJEI4mNIpmzOteoztMa5zgRQeJdZsHtKyuwbEjT675mZsZL48djD2BpJM0v2UfBL8YqNKZ
+ GwEyfmaEpL7wy89De/LFHEc2Iz7Q7SvgmgDhhCN45BfuWN7sFKcnFOp5fHli8MZYwWsgcBXvR
+ 81Mty/DSXVJgZk3RhOEQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 6 Oct 2019 10:12:01 +0100
-Jonathan Cameron <jic23@kernel.org> wrote:
+This is not the first attempt to fix building random configurations,
+unfortunately the attempt in commit a07fc0bb483e ("RDMA/hns: Fix build
+error") caused a new problem when CONFIG_INFINIBAND_HNS_HIP06=m
+and CONFIG_INFINIBAND_HNS_HIP08=y:
 
-> On Thu, 26 Sep 2019 14:18:04 +0300
-> Alexandru Ardelean <alexandru.ardelean@analog.com> wrote:
-> 
-> > This will allow more flexible control to group reads & writes into a single
-> > lock (particularly the state_lock).
-> > 
-> > The end-goal is to remove the indio_dev->mlock usage, and the simplest fix
-> > would have been to just add another lock, which would not be a good idea on
-> > the long-run.
-> > 
-> > Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>  
-> Applied to the togreg branch of iio.git and pushed out as testing etc.
-> 
-> Jonathan
-> 
-0-day found a potential issue (kind of) in the read functions.
+drivers/infiniband/hw/hns/hns_roce_main.o:(.rodata+0xe60): undefined reference to `__this_module'
 
-> > ---
-> >  drivers/iio/imu/adis.c       |  34 +++++------
-> >  include/linux/iio/imu/adis.h | 114 ++++++++++++++++++++++++++++++++++-
-> >  2 files changed, 128 insertions(+), 20 deletions(-)
-> > 
-> > diff --git a/drivers/iio/imu/adis.c b/drivers/iio/imu/adis.c
-> > index 3c2d896e3a96..4f3be011c898 100644
-> > --- a/drivers/iio/imu/adis.c
-> > +++ b/drivers/iio/imu/adis.c
-> > @@ -26,7 +26,14 @@
-> >  #define ADIS_MSC_CTRL_DATA_RDY_DIO2	BIT(0)
-> >  #define ADIS_GLOB_CMD_SW_RESET		BIT(7)
-> >  
-> > -int adis_write_reg(struct adis *adis, unsigned int reg,
-> > +/**
-> > + * __adis_write_reg() - write N bytes to register (unlocked version)
-> > + * @adis: The adis device
-> > + * @reg: The address of the lower of the two registers
-> > + * @value: The value to write to device (up to 4 bytes)
-> > + * @size: The size of the @value (in bytes)
-> > + */
-> > +int __adis_write_reg(struct adis *adis, unsigned int reg,
-> >  	unsigned int value, unsigned int size)
-> >  {
-> >  	unsigned int page = reg / ADIS_PAGE_SIZE;
-> > @@ -70,8 +77,6 @@ int adis_write_reg(struct adis *adis, unsigned int reg,
-> >  		},
-> >  	};
-> >  
-> > -	mutex_lock(&adis->state_lock);
-> > -
-> >  	spi_message_init(&msg);
-> >  
-> >  	if (adis->current_page != page) {
-> > @@ -96,8 +101,7 @@ int adis_write_reg(struct adis *adis, unsigned int reg,
-> >  		adis->tx[3] = value & 0xff;
-> >  		break;
-> >  	default:
-> > -		ret = -EINVAL;
-> > -		goto out_unlock;
-> > +		return -EINVAL;
-> >  	}
-> >  
-> >  	xfers[size].cs_change = 0;
-> > @@ -113,20 +117,18 @@ int adis_write_reg(struct adis *adis, unsigned int reg,
-> >  		adis->current_page = page;
-> >  	}
-> >  
-> > -out_unlock:
-> > -	mutex_unlock(&adis->state_lock);
-> > -
-> >  	return ret;
-> >  }
-> > -EXPORT_SYMBOL_GPL(adis_write_reg);
-> > +EXPORT_SYMBOL_GPL(__adis_write_reg);
-> >  
-> >  /**
-> > - * adis_read_reg() - read 2 bytes from a 16-bit register
-> > + * __adis_read_reg() - read N bytes from register (unlocked version)
-> >   * @adis: The adis device
-> >   * @reg: The address of the lower of the two registers
-> >   * @val: The value read back from the device
-> > + * @size: The size of the @val buffer
-> >   */
-> > -int adis_read_reg(struct adis *adis, unsigned int reg,
-> > +int __adis_read_reg(struct adis *adis, unsigned int reg,
-> >  	unsigned int *val, unsigned int size)
-> >  {
-> >  	unsigned int page = reg / ADIS_PAGE_SIZE;
-> > @@ -188,15 +190,14 @@ int adis_read_reg(struct adis *adis, unsigned int reg,
-> >  		spi_message_add_tail(&xfers[3], &msg);
-> >  		break;
-> >  	default:
-> > -		ret = -EINVAL;
-> > -		goto out_unlock;
-> > +		return -EINVAL;
-> >  	}
-> >  
-> >  	ret = spi_sync(adis->spi, &msg);
-> >  	if (ret) {
-> >  		dev_err(&adis->spi->dev, "Failed to read register 0x%02X: %d\n",
-> >  				reg, ret);
-> > -		goto out_unlock;
-> > +		return ret;
-> >  	} else {
-> >  		adis->current_page = page;
-> >  	}
-> > @@ -210,12 +211,9 @@ int adis_read_reg(struct adis *adis, unsigned int reg,
-> >  		break;
-> >  	}
-> >  
-> > -out_unlock:
-> > -	mutex_unlock(&adis->state_lock);
-> > -
-> >  	return ret;
-> >  }
-> > -EXPORT_SYMBOL_GPL(adis_read_reg);
-> > +EXPORT_SYMBOL_GPL(__adis_read_reg);
-> >  
-> >  #ifdef CONFIG_DEBUG_FS
-> >  
-> > diff --git a/include/linux/iio/imu/adis.h b/include/linux/iio/imu/adis.h
-> > index 3ed5eceaac2d..3a028c40e04e 100644
-> > --- a/include/linux/iio/imu/adis.h
-> > +++ b/include/linux/iio/imu/adis.h
-> > @@ -75,11 +75,121 @@ int adis_init(struct adis *adis, struct iio_dev *indio_dev,
-> >  	struct spi_device *spi, const struct adis_data *data);
-> >  int adis_reset(struct adis *adis);
-> >  
-> > -int adis_write_reg(struct adis *adis, unsigned int reg,
-> > +int __adis_write_reg(struct adis *adis, unsigned int reg,
-> >  	unsigned int val, unsigned int size);
-> > -int adis_read_reg(struct adis *adis, unsigned int reg,
-> > +int __adis_read_reg(struct adis *adis, unsigned int reg,
-> >  	unsigned int *val, unsigned int size);
-> >  
-> > +/**
-> > + * __adis_write_reg_8() - Write single byte to a register (unlocked version)
-> > + * @adis: The adis device
-> > + * @reg: The address of the register to be written
-> > + * @value: The value to write
-> > + */
-> > +static inline int __adis_write_reg_8(struct adis *adis, unsigned int reg,
-> > +	uint8_t val)
-> > +{
-> > +	return __adis_write_reg(adis, reg, val, 1);
-> > +}
-> > +
-> > +/**
-> > + * __adis_write_reg_16() - Write 2 bytes to a pair of registers (unlocked version)
-> > + * @adis: The adis device
-> > + * @reg: The address of the lower of the two registers
-> > + * @value: Value to be written
-> > + */
-> > +static inline int __adis_write_reg_16(struct adis *adis, unsigned int reg,
-> > +	uint16_t val)
-> > +{
-> > +	return __adis_write_reg(adis, reg, val, 2);
-> > +}
-> > +
-> > +/**
-> > + * __adis_write_reg_32() - write 4 bytes to four registers (unlocked version)
-> > + * @adis: The adis device
-> > + * @reg: The address of the lower of the four register
-> > + * @value: Value to be written
-> > + */
-> > +static inline int __adis_write_reg_32(struct adis *adis, unsigned int reg,
-> > +	uint32_t val)
-> > +{
-> > +	return __adis_write_reg(adis, reg, val, 4);
-> > +}
-> > +
-> > +/**
-> > + * __adis_read_reg_16() - read 2 bytes from a 16-bit register (unlocked version)
-> > + * @adis: The adis device
-> > + * @reg: The address of the lower of the two registers
-> > + * @val: The value read back from the device
-> > + */
-> > +static inline int __adis_read_reg_16(struct adis *adis, unsigned int reg,
-> > +	uint16_t *val)
-> > +{
-> > +	unsigned int tmp;
-> > +	int ret;
-> > +
-> > +	ret = __adis_read_reg(adis, reg, &tmp, 2);
-Zero day isn't happy that this can use tmp without it actually being set in the
-__adis_read_reg.
+Revert commits a07fc0bb483e ("RDMA/hns: Fix build error") and
+a3e2d4c7e766 ("RDMA/hns: remove obsolete Kconfig comment") to get
+back to the previous state, then fix the issues described there
+differently, by adding more specific dependencies: INFINIBAND_HNS
+can now only be built-in if at least one of HNS or HNS3 are
+built-in, and the individual back-ends are only available if
+that code is reachable from the main driver.
 
-I've added
-	if (ret)
-		return ret;
-> > +	*val = tmp;
-> > +
-> > +	return ret;
-and changed this to return 0;
+Fixes: a07fc0bb483e ("RDMA/hns: Fix build error")
+Fixes: a3e2d4c7e766 ("RDMA/hns: remove obsolete Kconfig comment")
+Fixes: dd74282df573 ("RDMA/hns: Initialize the PCI device for hip08 RoCE")
+Fixes: 08805fdbeb2d ("RDMA/hns: Split hw v1 driver from hns roce driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/infiniband/hw/hns/Kconfig  | 17 ++++++++++++++---
+ drivers/infiniband/hw/hns/Makefile |  8 ++++++--
+ 2 files changed, 20 insertions(+), 5 deletions(-)
 
-Same in the 32bit case below.
-
-Hmm. There are quite a few sparse warnings in the adis16400 if anyone fancies
-cleaning them up ;)
-
-Thanks,
-
-Jonathan
-
-> > +}
-> > +
-> > +/**
-> > + * __adis_read_reg_32() - read 4 bytes from a 32-bit register (unlocked version)
-> > + * @adis: The adis device
-> > + * @reg: The address of the lower of the two registers
-> > + * @val: The value read back from the device
-> > + */
-> > +static inline int __adis_read_reg_32(struct adis *adis, unsigned int reg,
-> > +	uint32_t *val)
-> > +{
-> > +	unsigned int tmp;
-> > +	int ret;
-> > +
-> > +	ret = __adis_read_reg(adis, reg, &tmp, 4);
-> > +	*val = tmp;
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +/**
-> > + * adis_write_reg() - write N bytes to register
-> > + * @adis: The adis device
-> > + * @reg: The address of the lower of the two registers
-> > + * @value: The value to write to device (up to 4 bytes)
-> > + * @size: The size of the @value (in bytes)
-> > + */
-> > +static inline int adis_write_reg(struct adis *adis, unsigned int reg,
-> > +	unsigned int val, unsigned int size)
-> > +{
-> > +	int ret;
-> > +
-> > +	mutex_lock(&adis->state_lock);
-> > +	ret = __adis_write_reg(adis, reg, val, size);
-> > +	mutex_unlock(&adis->state_lock);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +/**
-> > + * adis_read_reg() - read N bytes from register
-> > + * @adis: The adis device
-> > + * @reg: The address of the lower of the two registers
-> > + * @val: The value read back from the device
-> > + * @size: The size of the @val buffer
-> > + */
-> > +static int adis_read_reg(struct adis *adis, unsigned int reg,
-> > +	unsigned int *val, unsigned int size)
-> > +{
-> > +	int ret;
-> > +
-> > +	mutex_lock(&adis->state_lock);
-> > +	ret = __adis_read_reg(adis, reg, val, size);
-> > +	mutex_unlock(&adis->state_lock);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> >  /**
-> >   * adis_write_reg_8() - Write single byte to a register
-> >   * @adis: The adis device  
-> 
+diff --git a/drivers/infiniband/hw/hns/Kconfig b/drivers/infiniband/hw/hns/Kconfig
+index d602b698b57e..4921c1e40ccd 100644
+--- a/drivers/infiniband/hw/hns/Kconfig
++++ b/drivers/infiniband/hw/hns/Kconfig
+@@ -1,23 +1,34 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config INFINIBAND_HNS
+-	bool "HNS RoCE Driver"
++	tristate "HNS RoCE Driver"
+ 	depends on NET_VENDOR_HISILICON
+ 	depends on ARM64 || (COMPILE_TEST && 64BIT)
++	depends on (HNS_DSAF && HNS_ENET) || HNS3
+ 	---help---
+ 	  This is a RoCE/RDMA driver for the Hisilicon RoCE engine. The engine
+ 	  is used in Hisilicon Hip06 and more further ICT SoC based on
+ 	  platform device.
+ 
++	  To compile HIP06 or HIP08 driver as module, choose M here.
++
+ config INFINIBAND_HNS_HIP06
+-	tristate "Hisilicon Hip06 Family RoCE support"
++	bool "Hisilicon Hip06 Family RoCE support"
+ 	depends on INFINIBAND_HNS && HNS && HNS_DSAF && HNS_ENET
++	depends on INFINIBAND_HNS=m || (HNS_DSAF=y && HNS_ENET=y)
+ 	---help---
+ 	  RoCE driver support for Hisilicon RoCE engine in Hisilicon Hip06 and
+ 	  Hip07 SoC. These RoCE engines are platform devices.
+ 
++	  To compile this driver, choose Y here: if INFINIBAND_HNS is m, this
++	  module will be called hns-roce-hw-v1
++
+ config INFINIBAND_HNS_HIP08
+-	tristate "Hisilicon Hip08 Family RoCE support"
++	bool "Hisilicon Hip08 Family RoCE support"
+ 	depends on INFINIBAND_HNS && PCI && HNS3
++	depends on INFINIBAND_HNS=m || HNS3=y
+ 	---help---
+ 	  RoCE driver support for Hisilicon RoCE engine in Hisilicon Hip08 SoC.
+ 	  The RoCE engine is a PCI device.
++
++	  To compile this driver, choose Y here: if INFINIBAND_HNS is m, this
++	  module will be called hns-roce-hw-v2.
+diff --git a/drivers/infiniband/hw/hns/Makefile b/drivers/infiniband/hw/hns/Makefile
+index 449a2d81319d..e105945b94a1 100644
+--- a/drivers/infiniband/hw/hns/Makefile
++++ b/drivers/infiniband/hw/hns/Makefile
+@@ -9,8 +9,12 @@ hns-roce-objs := hns_roce_main.o hns_roce_cmd.o hns_roce_pd.o \
+ 	hns_roce_ah.o hns_roce_hem.o hns_roce_mr.o hns_roce_qp.o \
+ 	hns_roce_cq.o hns_roce_alloc.o hns_roce_db.o hns_roce_srq.o hns_roce_restrack.o
+ 
++ifdef CONFIG_INFINIBAND_HNS_HIP06
+ hns-roce-hw-v1-objs := hns_roce_hw_v1.o $(hns-roce-objs)
+-obj-$(CONFIG_INFINIBAND_HNS_HIP06) += hns-roce-hw-v1.o
++obj-$(CONFIG_INFINIBAND_HNS) += hns-roce-hw-v1.o
++endif
+ 
++ifdef CONFIG_INFINIBAND_HNS_HIP08
+ hns-roce-hw-v2-objs := hns_roce_hw_v2.o hns_roce_hw_v2_dfx.o $(hns-roce-objs)
+-obj-$(CONFIG_INFINIBAND_HNS_HIP08) += hns-roce-hw-v2.o
++obj-$(CONFIG_INFINIBAND_HNS) += hns-roce-hw-v2.o
++endif
+-- 
+2.20.0
 
