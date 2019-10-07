@@ -2,380 +2,305 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 777CDCE231
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:50:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F0F0CE260
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:55:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727904AbfJGMuO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 08:50:14 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:46908 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727554AbfJGMuO (ORCPT
+        id S1728645AbfJGMzr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 08:55:47 -0400
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:28267 "EHLO
+        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728382AbfJGMzq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 08:50:14 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x97CoC97010645;
-        Mon, 7 Oct 2019 07:50:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1570452612;
-        bh=9IjfOP8gCGca/mlTC1I3oFYCzdJI7fhG+NZeTD0pUIs=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=mw1ZWcT08BC/AorG2DrXvwracfMbF27+AiLozRone9amKI19s72jm05huAB3nEnyF
-         2k07kHAVfptBoYWQDHQRoMBcQ3dv+8i63JdmK/Gjs4PcrziRoz8gqEyrndM08o+C15
-         cjBwthGUppsSdnFnm3GHlTcqprzXbnvgugaZmz+s=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x97CoCGd097628
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 7 Oct 2019 07:50:12 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 7 Oct
- 2019 07:50:11 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 7 Oct 2019 07:50:11 -0500
-Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with SMTP id x97CoBik101734;
-        Mon, 7 Oct 2019 07:50:11 -0500
-Date:   Mon, 7 Oct 2019 07:52:45 -0500
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [Patch v2 19/21] media: v4l2-common: add pixel encoding support
-Message-ID: <20191007125245.zfysnop5xelitacf@ti.com>
-References: <20191004162952.4963-1-bparrot@ti.com>
- <20191004162952.4963-20-bparrot@ti.com>
- <0118836c-f6d9-dccf-4e90-ede802c8be33@xs4all.nl>
+        Mon, 7 Oct 2019 08:55:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1570452945; x=1601988945;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version;
+  bh=T852ONpASm81kEJ/LbPD2JANcEAe0DiIhC4X82b7JkA=;
+  b=ox4PFHZeeYmdknPQCGZO41OHkKlt/1Dfmc0VGVoHfN6+1xcdHlYKGHrM
+   Wf7LgsCGAJGkq/wJYvzQVjuM1gsXOCDOM+6ETQfhiY1+1WdTIrp5EqnzZ
+   uzu6Lszg1M8ai5LCSQDj+Blk//nFsdEneC0l1F2v51qUefyFjnCB783dr
+   o=;
+X-IronPort-AV: E=Sophos;i="5.67,268,1566864000"; 
+   d="scan'208";a="839833519"
+Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-2c-6f38efd9.us-west-2.amazon.com) ([10.47.22.34])
+  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 07 Oct 2019 12:48:30 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
+        by email-inbound-relay-2c-6f38efd9.us-west-2.amazon.com (Postfix) with ESMTPS id 7FC52A30A4;
+        Mon,  7 Oct 2019 12:47:58 +0000 (UTC)
+Received: from EX13D01EUB001.ant.amazon.com (10.43.166.194) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 7 Oct 2019 12:47:56 +0000
+Received: from udc4a3e82dbc15a031435.hfa15.amazon.com (10.43.162.245) by
+ EX13D01EUB001.ant.amazon.com (10.43.166.194) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 7 Oct 2019 12:47:46 +0000
+From:   Talel Shenhar <talel@amazon.com>
+To:     <robh+dt@kernel.org>, <maz@kernel.org>, <mark.rutland@arm.com>,
+        <arnd@arndb.de>, <bp@alien8.de>, <mchehab@kernel.org>,
+        <james.morse@arm.com>, <davem@davemloft.net>,
+        <gregkh@linuxfoundation.org>, <paulmck@linux.ibm.com>,
+        <talel@amazon.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-edac@vger.kernel.org>
+CC:     <dwmw@amazon.co.uk>, <benh@kernel.crashing.org>,
+        <hhhawa@amazon.com>, <ronenk@amazon.com>, <jonnyc@amazon.com>,
+        <hanochu@amazon.com>, <amirkl@amazon.com>, <barakw@amazon.com>
+Subject: [PATCH v5 2/2] soc: amazon: al-pos-edac: Introduce Amazon's Annapurna Labs POS EDAC driver
+Date:   Mon, 7 Oct 2019 15:47:15 +0300
+Message-ID: <1570452435-8505-3-git-send-email-talel@amazon.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1570452435-8505-1-git-send-email-talel@amazon.com>
+References: <1570452435-8505-1-git-send-email-talel@amazon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <0118836c-f6d9-dccf-4e90-ede802c8be33@xs4all.nl>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+X-Originating-IP: [10.43.162.245]
+X-ClientProxiedBy: EX13D05UWB004.ant.amazon.com (10.43.161.208) To
+ EX13D01EUB001.ant.amazon.com (10.43.166.194)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hans Verkuil <hverkuil@xs4all.nl> wrote on Mon [2019-Oct-07 10:06:39 +0200]:
-> On 10/4/19 6:29 PM, Benoit Parrot wrote:
-> > It is often useful to figure out if a pixel_format is either YUV or RGB
-> > especially for driver who can perform the pixel encoding conversion.
-> > 
-> > Instead of having each driver implement its own "is_this_yuv/rgb"
-> > function based on a restricted set of pixel value, it is better to do
-> > this in centralized manner.
-> > 
-> > We therefore add a pix_enc member to the v4l2_format_info structure to
-> > quickly identify the related pixel encoding.
-> > And add helper function to find/check pixel encoding.
-> > 
-> > Signed-off-by: Benoit Parrot <bparrot@ti.com>
-> > ---
-> >  drivers/media/v4l2-core/v4l2-common.c | 162 ++++++++++++++++----------
-> >  include/media/v4l2-common.h           |  20 ++++
-> >  2 files changed, 119 insertions(+), 63 deletions(-)
-> > 
-> > diff --git a/drivers/media/v4l2-core/v4l2-common.c b/drivers/media/v4l2-core/v4l2-common.c
-> > index 62f7aa92ac29..474cdb5863f4 100644
-> > --- a/drivers/media/v4l2-core/v4l2-common.c
-> > +++ b/drivers/media/v4l2-core/v4l2-common.c
-> > @@ -236,77 +236,77 @@ const struct v4l2_format_info *v4l2_format_info(u32 format)
-> >  {
-> >  	static const struct v4l2_format_info formats[] = {
-> >  		/* RGB formats */
-> > -		{ .format = V4L2_PIX_FMT_BGR24,   .mem_planes = 1, .comp_planes = 1, .bpp = { 3, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_RGB24,   .mem_planes = 1, .comp_planes = 1, .bpp = { 3, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_HSV24,   .mem_planes = 1, .comp_planes = 1, .bpp = { 3, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_BGR32,   .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_XBGR32,  .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_BGRX32,  .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_RGB32,   .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_XRGB32,  .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_RGBX32,  .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_HSV32,   .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_ARGB32,  .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_RGBA32,  .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_ABGR32,  .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_BGRA32,  .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_GREY,    .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_BGR24,   .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 3, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_RGB24,   .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 3, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_HSV24,   .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 3, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_BGR32,   .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_XBGR32,  .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_BGRX32,  .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_RGB32,   .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_XRGB32,  .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_RGBX32,  .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_HSV32,   .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_ARGB32,  .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_RGBA32,  .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_ABGR32,  .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_BGRA32,  .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_GREY,    .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> >  
-> >  		/* YUV packed formats */
-> > -		{ .format = V4L2_PIX_FMT_YUYV,    .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 2, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_YVYU,    .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 2, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_UYVY,    .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 2, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_VYUY,    .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 2, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_YUYV,    .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 2, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_YVYU,    .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 2, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_UYVY,    .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 2, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_VYUY,    .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 2, .vdiv = 1 },
-> >  
-> >  		/* YUV planar formats */
-> > -		{ .format = V4L2_PIX_FMT_NV12,    .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 2 },
-> > -		{ .format = V4L2_PIX_FMT_NV21,    .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 2 },
-> > -		{ .format = V4L2_PIX_FMT_NV16,    .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_NV61,    .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_NV24,    .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_NV42,    .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -
-> > -		{ .format = V4L2_PIX_FMT_YUV410,  .mem_planes = 1, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 4, .vdiv = 4 },
-> > -		{ .format = V4L2_PIX_FMT_YVU410,  .mem_planes = 1, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 4, .vdiv = 4 },
-> > -		{ .format = V4L2_PIX_FMT_YUV411P, .mem_planes = 1, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 4, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_YUV420,  .mem_planes = 1, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 2 },
-> > -		{ .format = V4L2_PIX_FMT_YVU420,  .mem_planes = 1, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 2 },
-> > -		{ .format = V4L2_PIX_FMT_YUV422P, .mem_planes = 1, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_NV12,    .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 2 },
-> > +		{ .format = V4L2_PIX_FMT_NV21,    .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 2 },
-> > +		{ .format = V4L2_PIX_FMT_NV16,    .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_NV61,    .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_NV24,    .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_NV42,    .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +
-> > +		{ .format = V4L2_PIX_FMT_YUV410,  .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 4, .vdiv = 4 },
-> > +		{ .format = V4L2_PIX_FMT_YVU410,  .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 4, .vdiv = 4 },
-> > +		{ .format = V4L2_PIX_FMT_YUV411P, .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 4, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_YUV420,  .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 2 },
-> > +		{ .format = V4L2_PIX_FMT_YVU420,  .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 2 },
-> > +		{ .format = V4L2_PIX_FMT_YUV422P, .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 1 },
-> >  
-> >  		/* YUV planar formats, non contiguous variant */
-> > -		{ .format = V4L2_PIX_FMT_YUV420M, .mem_planes = 3, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 2 },
-> > -		{ .format = V4L2_PIX_FMT_YVU420M, .mem_planes = 3, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 2 },
-> > -		{ .format = V4L2_PIX_FMT_YUV422M, .mem_planes = 3, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_YVU422M, .mem_planes = 3, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_YUV444M, .mem_planes = 3, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_YVU444M, .mem_planes = 3, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -
-> > -		{ .format = V4L2_PIX_FMT_NV12M,   .mem_planes = 2, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 2 },
-> > -		{ .format = V4L2_PIX_FMT_NV21M,   .mem_planes = 2, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 2 },
-> > -		{ .format = V4L2_PIX_FMT_NV16M,   .mem_planes = 2, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_NV61M,   .mem_planes = 2, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_YUV420M, .pix_enc = V4L2_ENC_YUV, .mem_planes = 3, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 2 },
-> > +		{ .format = V4L2_PIX_FMT_YVU420M, .pix_enc = V4L2_ENC_YUV, .mem_planes = 3, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 2 },
-> > +		{ .format = V4L2_PIX_FMT_YUV422M, .pix_enc = V4L2_ENC_YUV, .mem_planes = 3, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_YVU422M, .pix_enc = V4L2_ENC_YUV, .mem_planes = 3, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_YUV444M, .pix_enc = V4L2_ENC_YUV, .mem_planes = 3, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_YVU444M, .pix_enc = V4L2_ENC_YUV, .mem_planes = 3, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +
-> > +		{ .format = V4L2_PIX_FMT_NV12M,   .pix_enc = V4L2_ENC_YUV, .mem_planes = 2, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 2 },
-> > +		{ .format = V4L2_PIX_FMT_NV21M,   .pix_enc = V4L2_ENC_YUV, .mem_planes = 2, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 2 },
-> > +		{ .format = V4L2_PIX_FMT_NV16M,   .pix_enc = V4L2_ENC_YUV, .mem_planes = 2, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_NV61M,   .pix_enc = V4L2_ENC_YUV, .mem_planes = 2, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 1 },
-> >  
-> >  		/* Bayer RGB formats */
-> > -		{ .format = V4L2_PIX_FMT_SBGGR8,	.mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_SGBRG8,	.mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_SGRBG8,	.mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_SRGGB8,	.mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_SBGGR10,	.mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_SGBRG10,	.mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_SGRBG10,	.mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_SRGGB10,	.mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_SBGGR10ALAW8,	.mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_SGBRG10ALAW8,	.mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_SGRBG10ALAW8,	.mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_SRGGB10ALAW8,	.mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_SBGGR10DPCM8,	.mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_SGBRG10DPCM8,	.mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_SGRBG10DPCM8,	.mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_SRGGB10DPCM8,	.mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_SBGGR12,	.mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_SGBRG12,	.mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_SGRBG12,	.mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > -		{ .format = V4L2_PIX_FMT_SRGGB12,	.mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_SBGGR8,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_SGBRG8,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_SGRBG8,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_SRGGB8,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_SBGGR10,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_SGBRG10,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_SGRBG10,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_SRGGB10,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_SBGGR10ALAW8,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_SGBRG10ALAW8,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_SGRBG10ALAW8,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_SRGGB10ALAW8,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_SBGGR10DPCM8,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_SGBRG10DPCM8,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_SGRBG10DPCM8,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_SRGGB10DPCM8,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_SBGGR12,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_SGBRG12,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_SGRBG12,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> > +		{ .format = V4L2_PIX_FMT_SRGGB12,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
-> >  	};
-> >  	unsigned int i;
-> >  
-> > @@ -317,6 +317,42 @@ const struct v4l2_format_info *v4l2_format_info(u32 format)
-> >  }
-> >  EXPORT_SYMBOL(v4l2_format_info);
-> >  
-> > +bool v4l2_is_format_rgb(u32 format)
-> > +{
-> > +	const struct v4l2_format_info *f;
-> > +
-> > +	f = v4l2_format_info(format);
-> > +	if (f && f->pix_enc == V4L2_ENC_RGB)
-> > +		return true;
-> > +
-> > +	return false;
-> 
-> This can be simplified to:
-> 
-> 	return f && f->pix_enc == V4L2_ENC_RGB;
-> 
-> Same for the other two functions below.
+The Amazon's Annapurna Labs SoCs includes Point Of Serialization error
+logging unit that reports an error in case write error (e.g . Attempt to
+write to a read only register).
+This error shall be reported to EDAC subsystem as uncorrectable-error.
 
-Ok I'll change that.
+Signed-off-by: Talel Shenhar <talel@amazon.com>
+---
+ MAINTAINERS                |   7 ++
+ drivers/edac/Kconfig       |   6 ++
+ drivers/edac/Makefile      |   1 +
+ drivers/edac/al_pos_edac.c | 173 +++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 187 insertions(+)
+ create mode 100644 drivers/edac/al_pos_edac.c
 
-> 
-> > +}
-> > +EXPORT_SYMBOL(v4l2_is_format_rgb);
-> > +
-> > +bool v4l2_is_format_yuv(u32 format)
-> > +{
-> > +	const struct v4l2_format_info *f;
-> > +
-> > +	f = v4l2_format_info(format);
-> > +	if (f && f->pix_enc == V4L2_ENC_YUV)
-> > +		return true;
-> > +
-> > +	return false;
-> > +}
-> > +EXPORT_SYMBOL(v4l2_is_format_yuv);
-> > +
-> > +bool v4l2_is_format_bayer(u32 format)
-> > +{
-> > +	const struct v4l2_format_info *f;
-> > +
-> > +	f = v4l2_format_info(format);
-> > +	if (f && f->pix_enc == V4L2_ENC_BAYER)
-> > +		return true;
-> > +
-> > +	return false;
-> > +}
-> > +EXPORT_SYMBOL(v4l2_is_format_bayer);
-> 
-> That said, I am not sure I like these three functions. It leads to
-> usage like this (from patch 21/21):
-> 
-> 	if (v4l2_is_format_yuv(src_fmt->fmt.pix_mp.pixelformat) &&
-> 	    v4l2_is_format_rgb(dst_fmt->fmt.pix_mp.pixelformat)) {
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e7a47b5..f5ce446 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -751,6 +751,13 @@ F:	drivers/tty/serial/altera_jtaguart.c
+ F:	include/linux/altera_uart.h
+ F:	include/linux/altera_jtaguart.h
+ 
++AMAZON ANNAPURNA LABS POS EDAC DRIVER
++M:	Talel Shenhar <talel@amazon.com>
++M:	Talel Shenhar <talelshenhar@gmail.com>
++S:	Maintained
++F:	Documentation/devicetree/bindings/edac/amazon,al-pos-edac.yaml
++F:	drivers/edac/al-pos-edac.c
++
+ AMAZON ANNAPURNA LABS THERMAL MMIO DRIVER
+ M:	Talel Shenhar <talel@amazon.com>
+ S:	Maintained
+diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
+index 200c04c..bb5805f 100644
+--- a/drivers/edac/Kconfig
++++ b/drivers/edac/Kconfig
+@@ -100,6 +100,12 @@ config EDAC_AMD64_ERROR_INJECTION
+ 	  In addition, there are two control files, inject_read and inject_write,
+ 	  which trigger the DRAM ECC Read and Write respectively.
+ 
++config EDAC_AL_POS
++	tristate "Amazon's Annapurna Labs POS EDAC driver"
++	depends on (ARCH_ALPINE || COMPILE_TEST)
++	help
++	  Include support for the SoC POS EDAC error capability.
++
+ config EDAC_AMD76X
+ 	tristate "AMD 76x (760, 762, 768)"
+ 	depends on PCI && X86_32
+diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
+index 165ca65e..3571936 100644
+--- a/drivers/edac/Makefile
++++ b/drivers/edac/Makefile
+@@ -22,6 +22,7 @@ obj-$(CONFIG_EDAC_GHES)			+= ghes_edac.o
+ edac_mce_amd-y				:= mce_amd.o
+ obj-$(CONFIG_EDAC_DECODE_MCE)		+= edac_mce_amd.o
+ 
++obj-$(CONFIG_EDAC_AL_POS)		+= al_pos_edac.o
+ obj-$(CONFIG_EDAC_AMD76X)		+= amd76x_edac.o
+ obj-$(CONFIG_EDAC_CPC925)		+= cpc925_edac.o
+ obj-$(CONFIG_EDAC_I5000)		+= i5000_edac.o
+diff --git a/drivers/edac/al_pos_edac.c b/drivers/edac/al_pos_edac.c
+new file mode 100644
+index 00000000..a85ab67
+--- /dev/null
++++ b/drivers/edac/al_pos_edac.c
+@@ -0,0 +1,173 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
++ */
++#include <linux/bitfield.h>
++#include <linux/edac.h>
++#include <linux/of_irq.h>
++#include "edac_module.h"
++
++#define DRV_NAME "al_pos_edac"
++#define AL_POS_EDAC_MSG_MAX 256
++
++/* Registers Offset */
++#define AL_POS_ERROR_LOG_1	0x0
++#define AL_POS_ERROR_LOG_0	0x4
++
++/* Registers Fields */
++#define AL_POS_ERROR_LOG_1_VALID	BIT(31)
++#define AL_POS_ERROR_LOG_1_BRESP	GENMASK(18, 17)
++#define AL_POS_ERROR_LOG_1_REQUEST_ID	GENMASK(16, 8)
++#define AL_POS_ERROR_LOG_1_ADDR_HIGH	GENMASK(7, 0)
++
++#define AL_POS_ERROR_LOG_0_ADDR_LOW	GENMASK(31, 0)
++
++struct al_pos_edac {
++	struct edac_device_ctl_info *edac_dev;
++	void __iomem *mmio_base;
++	int irq;
++};
++
++static int al_pos_handle(struct al_pos_edac *al_pos)
++{
++	u32 log0, log1;
++	u64 addr;
++	u16 request_id;
++	u8 bresp;
++	char msg[AL_POS_EDAC_MSG_MAX];
++
++	log1 = readl_relaxed(al_pos->mmio_base + AL_POS_ERROR_LOG_1);
++	if (!FIELD_GET(AL_POS_ERROR_LOG_1_VALID, log1))
++		return 0;
++
++	log0 = readl_relaxed(al_pos->mmio_base + AL_POS_ERROR_LOG_0);
++	writel_relaxed(0, al_pos->mmio_base + AL_POS_ERROR_LOG_1);
++
++	addr = FIELD_GET(AL_POS_ERROR_LOG_0_ADDR_LOW, log0);
++	addr |= (((u64)FIELD_GET(AL_POS_ERROR_LOG_1_ADDR_HIGH, log1)) << 32);
++	request_id = FIELD_GET(AL_POS_ERROR_LOG_1_REQUEST_ID, log1);
++	bresp = FIELD_GET(AL_POS_ERROR_LOG_1_BRESP, log1);
++
++	snprintf(msg, sizeof(msg),
++		 "addr=0x%llx request_id=0x%x bresp=0x%x\n",
++		 addr, request_id, bresp);
++
++	edac_device_handle_ue(al_pos->edac_dev, 0, 0, msg);
++
++	return 1;
++}
++
++static void al_pos_edac_check(struct edac_device_ctl_info *edac_dev)
++{
++	struct al_pos_edac *al_pos = edac_dev->pvt_info;
++
++	al_pos_handle(al_pos);
++}
++
++static irqreturn_t al_pos_irq_handler(int irq, void *info)
++{
++	struct platform_device *pdev = info;
++	struct al_pos_edac *al_pos = platform_get_drvdata(pdev);
++
++	if (al_pos_handle(al_pos))
++		return IRQ_HANDLED;
++	return IRQ_NONE;
++}
++
++static int al_pos_probe(struct platform_device *pdev)
++{
++	struct edac_device_ctl_info *edac_dev;
++	struct al_pos_edac *al_pos;
++	int ret;
++
++	edac_dev = edac_device_alloc_ctl_info(sizeof(*al_pos), DRV_NAME, 1,
++					      DRV_NAME, 1, 0, NULL, 0,
++					      edac_device_alloc_index());
++	if (!edac_dev)
++		return -ENOMEM;
++
++	al_pos = edac_dev->pvt_info;
++	al_pos->edac_dev = edac_dev;
++	platform_set_drvdata(pdev, al_pos);
++
++	al_pos->mmio_base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(al_pos->mmio_base)) {
++		dev_err(&pdev->dev, "failed to ioremap memory (%ld)\n",
++			PTR_ERR(al_pos->mmio_base));
++		return PTR_ERR(al_pos->mmio_base);
++	}
++
++	al_pos->irq = platform_get_irq(pdev, 0);
++	if (al_pos->irq <= 0)
++		edac_dev->edac_check = al_pos_edac_check;
++
++	edac_dev->dev = &pdev->dev;
++	edac_dev->mod_name = DRV_NAME;
++	edac_dev->dev_name = dev_name(&pdev->dev);
++	edac_dev->ctl_name = "POS";
++
++	ret = edac_device_add_device(edac_dev);
++	if (ret) {
++		dev_err(&pdev->dev, "Failed to add edac device\n");
++		goto err_free_edac;
++	}
++
++	if (al_pos->irq > 0) {
++		ret = devm_request_irq(&pdev->dev,
++				       al_pos->irq,
++				       al_pos_irq_handler,
++				       0,
++				       pdev->name,
++				       pdev);
++		if (ret != 0) {
++			dev_err(&pdev->dev,
++				"failed to register to irq %d (%d)\n",
++				al_pos->irq, ret);
++			goto err_remove_edac;
++		}
++	}
++
++	return 0;
++
++err_remove_edac:
++	edac_device_del_device(edac_dev->dev);
++err_free_edac:
++	edac_device_free_ctl_info(edac_dev);
++
++	return ret;
++}
++
++static int al_pos_remove(struct platform_device *pdev)
++{
++	struct al_pos_edac *al_pos = platform_get_drvdata(pdev);
++
++	if (al_pos->irq > 0)
++		devm_free_irq(&pdev->dev, al_pos->irq, pdev);
++
++	edac_device_del_device(al_pos->edac_dev->dev);
++	edac_device_free_ctl_info(al_pos->edac_dev);
++
++	return 0;
++}
++
++static const struct of_device_id al_pos_of_match[] = {
++	{ .compatible = "amazon,al-pos-edac", },
++	{},
++};
++
++MODULE_DEVICE_TABLE(of, al_pos_of_match);
++
++static struct platform_driver al_pos_driver = {
++	.probe = al_pos_probe,
++	.remove = al_pos_remove,
++	.driver = {
++		.name = DRV_NAME,
++		.of_match_table = al_pos_of_match,
++	},
++};
++
++module_platform_driver(al_pos_driver);
++
++MODULE_LICENSE("GPL v2");
++MODULE_AUTHOR("Talel Shenhar");
++MODULE_DESCRIPTION("Amazon's Annapurna Labs POS driver");
+-- 
+2.7.4
 
-Well it is called twice here because we are checking two different format,
-so the loop are ineveitable, I am afraid.
-
-But I guess it is also called in the "else" part in case this fails so it
-might get called twice.
-
-> 
-> which is quite inefficient since v4l2_format_info() is called twice, so
-> the same for-loop there is also done twice.
-> 
-> I think the caller should just call v4l2_format_info(), then test f->pix_enc.
-> 
-> You can also add something like this to v4l2-common.h:
-> 
-> static inline bool v4l2_is_format_yuv(const struct v4l2_format_info *f)
-> {
-> 	return f && f->pix_enc == V4L2_ENC_YUV;
-> }
-> 
-> I'm fine with that.
-
-I can store the format_info result I guess and use that.
-
-> 
-> > +
-> >  static inline unsigned int v4l2_format_block_width(const struct v4l2_format_info *info, int plane)
-> >  {
-> >  	if (!info->block_w[plane])
-> > diff --git a/include/media/v4l2-common.h b/include/media/v4l2-common.h
-> > index c070d8ae11e5..27041cf2b818 100644
-> > --- a/include/media/v4l2-common.h
-> > +++ b/include/media/v4l2-common.h
-> > @@ -456,9 +456,25 @@ int v4l2_s_parm_cap(struct video_device *vdev,
-> >  
-> >  /* Pixel format and FourCC helpers */
-> >  
-> > +/**
-> > + * enum v4l2_pixel_encoding - specifies the pixel encoding value
-> > + *
-> > + * @V4L2_ENC_UNKNOWN:	Pixel encoding is unknown/un-initialized
-> > + * @V4L2_ENC_YUV:	Pixel encoding is YUV
-> > + * @V4L2_ENC_RGB:	Pixel encoding is RGB
-> > + * @V4L2_ENC_BAYER:	Pixel encoding is Bayer
-> > + */
-> > +enum v4l2_pixel_encoding {
-> > +	@V4L2_ENC_UNKNOWN = 0,
-> > +	V4L2_ENC_YUV = 1,
-> > +	V4L2_ENC_RGB = 2,
-> > +	V4L2_ENC_BAYER = 3,
-> > +};
-> 
-> Just plain _ENC_ is a bit too generic. I'd change this to _PIXEL_ENC_.
-
-No problem.
-
-> 
-> > +
-> >  /**
-> >   * struct v4l2_format_info - information about a V4L2 format
-> >   * @format: 4CC format identifier (V4L2_PIX_FMT_*)
-> > + * @pix_enc: Pixel format encoding (see enum v4l2_pixel_encoding above)
-> 
-> Drop the 'format' word.
-
-Agreed.
-
-> 
-> >   * @mem_planes: Number of memory planes, which includes the alpha plane (1 to 4).
-> >   * @comp_planes: Number of component planes, which includes the alpha plane (1 to 4).
-> >   * @bpp: Array of per-plane bytes per pixel
-> > @@ -469,6 +485,7 @@ int v4l2_s_parm_cap(struct video_device *vdev,
-> >   */
-> >  struct v4l2_format_info {
-> >  	u32 format;
-> > +	u8 pix_enc;
-> 
-> I would prefer pixel_enc instead of pix_enc.
-
-I'll fix that.
-
-Benoit
-
-> 
-> >  	u8 mem_planes;
-> >  	u8 comp_planes;
-> >  	u8 bpp[4];
-> > @@ -479,6 +496,9 @@ struct v4l2_format_info {
-> >  };
-> >  
-> >  const struct v4l2_format_info *v4l2_format_info(u32 format);
-> > +bool v4l2_is_format_rgb(u32 format);
-> > +bool v4l2_is_format_yuv(u32 format);
-> > +bool v4l2_is_format_bayer(u32 format);
-> >  
-> >  void v4l2_apply_frmsize_constraints(u32 *width, u32 *height,
-> >  				    const struct v4l2_frmsize_stepwise *frmsize);
-> > 
-> 
-> Regards,
-> 
-> 	Hans
