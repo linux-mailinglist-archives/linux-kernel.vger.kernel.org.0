@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32E82CECB1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 21:22:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF659CECAE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 21:22:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729378AbfJGTVz convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 7 Oct 2019 15:21:55 -0400
-Received: from mail-oln040092067026.outbound.protection.outlook.com ([40.92.67.26]:44163
+        id S1729307AbfJGTVw convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 7 Oct 2019 15:21:52 -0400
+Received: from mail-oln040092067037.outbound.protection.outlook.com ([40.92.67.37]:34791
         "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728187AbfJGTVx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 15:21:53 -0400
+        id S1729119AbfJGTVv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 15:21:51 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=T7g7yUeB+IHaHKDGvv2MxPQUORaR6uEDGy/wvmQ25CCbrPX+MX8toaivxE8cYkoOVm9vPMuSBio+Zz+5mMkHiOyxP/jhTz8Fgyx8js9hFuln/jbiqpLRZm5QcVNeMUf36mMTygGWGJo6bAko8ac/EN00qx0LNmkT9lYb69KBBiRRJQwKWgCBXiEnMR9bAhdsWUGImt0prbUB1DnG5xb5ktOTJIyX0pj1Xk11pVtPMnB6w2wEJx3HcJ7sfSrDzJiiViLQqO5quOHFUsP9Zbyj6/+ZZx3Go25IayAzi/LycG7F8hUgV3VuTsqrxjSvz3YDkD+IZRsH47Luz3/SBPfD+g==
+ b=GnoD+86XFqVf4Yy/M/EJPHUCCP9/h1kPqs7mkxQfblqYKAl7ZxAq6iYdBNUF6L9fW/zoonhVBUd7I8mlXRLPvZiOYX35Q6yLFoZYOT698opg6Rv3IxXetXRw5azS6xp2oKAU2zT0C987am0ugrih9XQ0zsKv1sHykI50dhJLfb4i6i9mwmKup+LXkltKJp/wHeU5ypakbNNKQ2dczYDQLIdyd9S9rCr1M3vQCUGge5dLSL633ZMMQ5WZJDEjpaI8KW1MBR76w76EPggop8zvfRJ2G8Qgk0rJQGqVpaDuC91Dj6rFSjc10JxjIQzSuA+HiS3io/oqY9Xn4AejokOVUg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7GmXMoZqbQgbuXEGY5AMW5EjmhkY8tF/xxVQQoHQrIA=;
- b=BtbhHJk03/94eLeSjSkh7XsMnk6/HJiZP20o4SyWg7r5sqRFm64vFaOXPaeOtF4qGbFqaumenESWRpKb8wllY80uzcmlhUDc5KRLymzB2glyZcP4l4po1vDPDwRp+iiBVgpDg0qmlSbvyhzeDA/rndOGbo3Ex3uCe0595RRId//MkbBe85EFZTLe6P+H4JzEjYPJ2+fahw9Ybcvoh/WMGKZGy6mnPhTRcl9S4vwCrkFZrWm9F8Arr9CI+vNtA8cGlZS4kgky/V9/zcQTSiho82XL1fUnjlULuj4jLu7NN18mlycWXtZvn/gNCsB3e4nkhJ0aDqqROcYA/3u9dnNMRQ==
+ bh=dnXj0bICwjFFFTZYWcocvCHmrP5bwb9fqSgT6TUAkSk=;
+ b=G0mSLlJ4/zhOVgF5Mt8hiLPmfvUQIxekmc073k5om7Fvu3o8Ea6FfQ98cgNKq0HKh6bi4wMRKbXnM9Nd+rxuhwAjPDh78aZyZJfuXltztlSQbQ/7RMFegzAn5QjaMIadJLfVm/QXs3ryRybDM8RTzG2QWd74x6lafe34QPZrYV0J5GpLjzJuzp2c4Fuy20+QnZAAgv12HaVkguIB5pmynNCpho1JxWJxa6QKCT+teR4v0ogSVXMmEQGqpqfynbsOmMt8+WY86u/rGyuZskDj0uAPa2Itu7o0FhF0VnRKNG++2mb17FkjGw53+fL9w/EZsDv7l3QCdRTZlQ8t6KIjDQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 Received: from AM5EUR02FT039.eop-EUR02.prod.protection.outlook.com
- (10.152.8.58) by AM5EUR02HT008.eop-EUR02.prod.protection.outlook.com
- (10.152.8.87) with Microsoft SMTP Server (version=TLS1_2,
+ (10.152.8.53) by AM5EUR02HT237.eop-EUR02.prod.protection.outlook.com
+ (10.152.8.235) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2327.20; Mon, 7 Oct
- 2019 19:21:48 +0000
+ 2019 19:21:49 +0000
 Received: from HE1PR06MB4011.eurprd06.prod.outlook.com (10.152.8.55) by
  AM5EUR02FT039.mail.protection.outlook.com (10.152.9.27) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2327.20 via Frontend Transport; Mon, 7 Oct 2019 19:21:48 +0000
+ 15.20.2327.20 via Frontend Transport; Mon, 7 Oct 2019 19:21:49 +0000
 Received: from HE1PR06MB4011.eurprd06.prod.outlook.com
  ([fe80::5c5a:1160:a2e0:43d8]) by HE1PR06MB4011.eurprd06.prod.outlook.com
  ([fe80::5c5a:1160:a2e0:43d8%4]) with mapi id 15.20.2305.023; Mon, 7 Oct 2019
- 19:21:48 +0000
+ 19:21:49 +0000
 From:   Jonas Karlman <jonas@kwiboo.se>
 To:     Andrzej Hajda <a.hajda@samsung.com>,
         Neil Armstrong <narmstrong@baylibre.com>
@@ -48,15 +48,16 @@ CC:     Jonas Karlman <jonas@kwiboo.se>,
         "zhengyang@rock-chips.com" <zhengyang@rock-chips.com>,
         "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 1/4] drm/bridge: dw-hdmi: Add Dynamic Range and Mastering
- InfoFrame support
-Thread-Topic: [PATCH v2 1/4] drm/bridge: dw-hdmi: Add Dynamic Range and
- Mastering InfoFrame support
-Thread-Index: AQHVfUR3du6nZITFzkKDCJlMcDjXMg==
-Date:   Mon, 7 Oct 2019 19:21:48 +0000
-Message-ID: <HE1PR06MB4011D7B916CBF8B740ACC45FAC9B0@HE1PR06MB4011.eurprd06.prod.outlook.com>
+Subject: [PATCH v2 2/4] drm/rockchip: Enable DRM InfoFrame support on RK3328
+ and RK3399
+Thread-Topic: [PATCH v2 2/4] drm/rockchip: Enable DRM InfoFrame support on
+ RK3328 and RK3399
+Thread-Index: AQHVfUR3JXY5xQIOykGs74DZOna4XQ==
+Date:   Mon, 7 Oct 2019 19:21:49 +0000
+Message-ID: <HE1PR06MB4011C9579CA6BBCD96C87810AC9B0@HE1PR06MB4011.eurprd06.prod.outlook.com>
 References: <HE1PR06MB401113BF395C06E96503344FAC9B0@HE1PR06MB4011.eurprd06.prod.outlook.com>
-In-Reply-To: <HE1PR06MB401113BF395C06E96503344FAC9B0@HE1PR06MB4011.eurprd06.prod.outlook.com>
+ <20191007192135.4525-1-jonas@kwiboo.se>
+In-Reply-To: <20191007192135.4525-1-jonas@kwiboo.se>
 Accept-Language: sv-SE, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -64,260 +65,66 @@ X-MS-TNEF-Correlator:
 x-clientproxiedby: HE1P18901CA0018.EURP189.PROD.OUTLOOK.COM
  (2603:10a6:3:8b::28) To HE1PR06MB4011.eurprd06.prod.outlook.com
  (2603:10a6:7:9c::32)
-x-incomingtopheadermarker: OriginalChecksum:70BAB055347A50A9803CE6752A0D259B08E0EB46AFB17D25F50CA8CE9270C4BC;UpperCasedChecksum:02E8799A1085B2CCA5C61188EFBEB4C23A746D419F76A145C87E0FCB5C869ECE;SizeAsReceived:8141;Count:51
+x-incomingtopheadermarker: OriginalChecksum:5B4191A7D513587D91584953D25E71089F789E8C9B84D3AB94C404A59F6E4FB4;UpperCasedChecksum:4C7E7BF373A2D39586CBA1A8B452FB28FAB477C199FA7A95DEEC584251568002;SizeAsReceived:8097;Count:51
 x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.17.1
-x-tmn:  [AQR41JfWxKoBBSfOwQMM3oAjNLbYRz6W]
-x-microsoft-original-message-id: <20191007192135.4525-1-jonas@kwiboo.se>
+x-tmn:  [Ik4UVVWh8enDFLkh6mvDKU4vxxATQVVJ]
+x-microsoft-original-message-id: <20191007192135.4525-2-jonas@kwiboo.se>
 x-ms-publictraffictype: Email
 x-incomingheadercount: 51
 x-eopattributedmessage: 0
-x-ms-traffictypediagnostic: AM5EUR02HT008:
-x-ms-exchange-purlcount: 2
+x-ms-traffictypediagnostic: AM5EUR02HT237:
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 3W+XYo+8KkSK6ALcfRpp0b1mhe8g435YyjwxsvFGO+wMiUnRQWBfv6s7okDvYO8uwShPU9hkakmMJectDWFnSZcPpsiIGjugdWQo1n4zHQWSDHfZKkyBZ0ztO2g9gbFVvg8zBtd5dITm6SZL8oJDytyH78Y/VQ1U/y08yXA1TtqX9WoX3zLwSakZbJK6UWZJ8lXnoB5srIJ3xwfy/AWmNqaGrRP/L3opE1LpbTtnSqg=
+x-microsoft-antispam-message-info: Ow4zPY79ymRpJptUu+nFn5y3wmL2LexQoFASdvU3V/4aIMrRTA0IXM+lrIg+RffJe0L0bJ36SsYVwus3gMIuk35CkEo+QDS7i/0pG/4gMI5WizynHOc5GuldcQmkgUw0TNe628UkgeQUsfbuPj03sfS9n61mgxYbKLgpYLW4h0OSqwVU1C3PRGwyhBQ6Njmx
 x-ms-exchange-transport-forked: True
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
 X-OriginatorOrg: outlook.com
 X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 59c375bb-b166-4e5f-b763-08d74b5b995d
+X-MS-Exchange-CrossTenant-Network-Message-Id: 46408731-acc1-47b7-c856-08d74b5b99e1
 X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Oct 2019 19:21:48.6945
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Oct 2019 19:21:49.5660
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Internet
 X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5EUR02HT008
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5EUR02HT237
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for configuring Dynamic Range and Mastering InfoFrame from
-the hdr_output_metadata connector property.
+This patch enables Dynamic Range and Mastering InfoFrame on RK3328 and RK3399.
 
-This patch adds a use_drm_infoframe flag to dw_hdmi_plat_data that platform
-drivers use to signal when Dynamic Range and Mastering infoframes is supported.
-This flag is needed because Amlogic GXBB and GXL report same DW-HDMI version,
-and only GXL support DRM InfoFrame.
-
-These changes were based on work done by Zheng Yang <zhengyang@rock-chips.com>
-to support DRM InfoFrame on the Rockchip 4.4 BSP kernel at [1] and [2]
-
-[1] https://github.com/rockchip-linux/kernel/tree/develop-4.4
-[2] https://github.com/rockchip-linux/kernel/commit/d1943fde81ff41d7cca87f4a42f03992e90bddd5
-
-Cc: Zheng Yang <zhengyang@rock-chips.com>
+Cc: Sandy Huang <hjc@rock-chips.com>
+Cc: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 81 +++++++++++++++++++++++
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.h | 37 +++++++++++
- include/drm/bridge/dw_hdmi.h              |  1 +
- 3 files changed, 119 insertions(+)
+ drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index a15fbf71b9d7..fdc29869d75a 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -25,6 +25,7 @@
- #include <uapi/linux/videodev2.h>
- 
- #include <drm/bridge/dw_hdmi.h>
-+#include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_bridge.h>
- #include <drm/drm_edid.h>
-@@ -1743,6 +1744,41 @@ static void hdmi_config_vendor_specific_infoframe(struct dw_hdmi *hdmi,
- 			HDMI_FC_DATAUTO0_VSD_MASK);
- }
- 
-+static void hdmi_config_drm_infoframe(struct dw_hdmi *hdmi)
-+{
-+	const struct drm_connector_state *conn_state = hdmi->connector.state;
-+	struct hdmi_drm_infoframe frame;
-+	u8 buffer[30];
-+	ssize_t err;
-+	int i;
-+
-+	if (!hdmi->plat_data->use_drm_infoframe)
-+		return;
-+
-+	hdmi_modb(hdmi, HDMI_FC_PACKET_TX_EN_DRM_DISABLE,
-+		  HDMI_FC_PACKET_TX_EN_DRM_MASK, HDMI_FC_PACKET_TX_EN);
-+
-+	err = drm_hdmi_infoframe_set_hdr_metadata(&frame, conn_state);
-+	if (err < 0)
-+		return;
-+
-+	err = hdmi_drm_infoframe_pack(&frame, buffer, sizeof(buffer));
-+	if (err < 0) {
-+		dev_err(hdmi->dev, "Failed to pack drm infoframe: %zd\n", err);
-+		return;
-+	}
-+
-+	hdmi_writeb(hdmi, frame.version, HDMI_FC_DRM_HB0);
-+	hdmi_writeb(hdmi, frame.length, HDMI_FC_DRM_HB1);
-+
-+	for (i = 0; i < frame.length; i++)
-+		hdmi_writeb(hdmi, buffer[4 + i], HDMI_FC_DRM_PB0 + i);
-+
-+	hdmi_writeb(hdmi, 1, HDMI_FC_DRM_UP);
-+	hdmi_modb(hdmi, HDMI_FC_PACKET_TX_EN_DRM_ENABLE,
-+		  HDMI_FC_PACKET_TX_EN_DRM_MASK, HDMI_FC_PACKET_TX_EN);
-+}
-+
- static void hdmi_av_composer(struct dw_hdmi *hdmi,
- 			     const struct drm_display_mode *mode)
- {
-@@ -2064,6 +2100,7 @@ static int dw_hdmi_setup(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
- 		/* HDMI Initialization Step F - Configure AVI InfoFrame */
- 		hdmi_config_AVI(hdmi, mode);
- 		hdmi_config_vendor_specific_infoframe(hdmi, mode);
-+		hdmi_config_drm_infoframe(hdmi);
- 	} else {
- 		dev_dbg(hdmi->dev, "%s DVI mode\n", __func__);
- 	}
-@@ -2230,6 +2267,45 @@ static int dw_hdmi_connector_get_modes(struct drm_connector *connector)
- 	return ret;
- }
- 
-+static bool hdr_metadata_equal(const struct drm_connector_state *old_state,
-+			       const struct drm_connector_state *new_state)
-+{
-+	struct drm_property_blob *old_blob = old_state->hdr_output_metadata;
-+	struct drm_property_blob *new_blob = new_state->hdr_output_metadata;
-+
-+	if (!old_blob || !new_blob)
-+		return old_blob == new_blob;
-+
-+	if (old_blob->length != new_blob->length)
-+		return false;
-+
-+	return !memcmp(old_blob->data, new_blob->data, old_blob->length);
-+}
-+
-+static int dw_hdmi_connector_atomic_check(struct drm_connector *connector,
-+					  struct drm_atomic_state *state)
-+{
-+	struct drm_connector_state *old_state =
-+		drm_atomic_get_old_connector_state(state, connector);
-+	struct drm_connector_state *new_state =
-+		drm_atomic_get_new_connector_state(state, connector);
-+	struct drm_crtc *crtc = new_state->crtc;
-+	struct drm_crtc_state *crtc_state;
-+
-+	if (!crtc)
-+		return 0;
-+
-+	if (!hdr_metadata_equal(old_state, new_state)) {
-+		crtc_state = drm_atomic_get_crtc_state(state, crtc);
-+		if (IS_ERR(crtc_state))
-+			return PTR_ERR(crtc_state);
-+
-+		crtc_state->mode_changed = true;
-+	}
-+
-+	return 0;
-+}
-+
- static void dw_hdmi_connector_force(struct drm_connector *connector)
- {
- 	struct dw_hdmi *hdmi = container_of(connector, struct dw_hdmi,
-@@ -2254,6 +2330,7 @@ static const struct drm_connector_funcs dw_hdmi_connector_funcs = {
- 
- static const struct drm_connector_helper_funcs dw_hdmi_connector_helper_funcs = {
- 	.get_modes = dw_hdmi_connector_get_modes,
-+	.atomic_check = dw_hdmi_connector_atomic_check,
+diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
+index 906891b03a38..7f56d8c3491d 100644
+--- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
++++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
+@@ -450,6 +450,7 @@ static const struct dw_hdmi_plat_data rk3328_hdmi_drv_data = {
+ 	.phy_ops = &rk3328_hdmi_phy_ops,
+ 	.phy_name = "inno_dw_hdmi_phy2",
+ 	.phy_force_vendor = true,
++	.use_drm_infoframe = true,
  };
  
- static int dw_hdmi_bridge_attach(struct drm_bridge *bridge)
-@@ -2274,6 +2351,10 @@ static int dw_hdmi_bridge_attach(struct drm_bridge *bridge)
- 				    DRM_MODE_CONNECTOR_HDMIA,
- 				    hdmi->ddc);
+ static struct rockchip_hdmi_chip_data rk3399_chip_data = {
+@@ -464,6 +465,7 @@ static const struct dw_hdmi_plat_data rk3399_hdmi_drv_data = {
+ 	.cur_ctr    = rockchip_cur_ctr,
+ 	.phy_config = rockchip_phy_config,
+ 	.phy_data = &rk3399_chip_data,
++	.use_drm_infoframe = true,
+ };
  
-+	if (hdmi->version >= 0x200a && hdmi->plat_data->use_drm_infoframe)
-+		drm_object_attach_property(&connector->base,
-+			connector->dev->mode_config.hdr_output_metadata_property, 0);
-+
- 	drm_connector_attach_encoder(connector, encoder);
- 
- 	cec_fill_conn_info_from_drm(&conn_info, connector);
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
-index fcff5059db24..1999db05bc3b 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
-@@ -254,6 +254,7 @@
- #define HDMI_FC_POL2                            0x10DB
- #define HDMI_FC_PRCONF                          0x10E0
- #define HDMI_FC_SCRAMBLER_CTRL                  0x10E1
-+#define HDMI_FC_PACKET_TX_EN                    0x10E3
- 
- #define HDMI_FC_GMD_STAT                        0x1100
- #define HDMI_FC_GMD_EN                          0x1101
-@@ -289,6 +290,37 @@
- #define HDMI_FC_GMD_PB26                        0x111F
- #define HDMI_FC_GMD_PB27                        0x1120
- 
-+#define HDMI_FC_DRM_UP                          0x1167
-+#define HDMI_FC_DRM_HB0                         0x1168
-+#define HDMI_FC_DRM_HB1                         0x1169
-+#define HDMI_FC_DRM_PB0                         0x116A
-+#define HDMI_FC_DRM_PB1                         0x116B
-+#define HDMI_FC_DRM_PB2                         0x116C
-+#define HDMI_FC_DRM_PB3                         0x116D
-+#define HDMI_FC_DRM_PB4                         0x116E
-+#define HDMI_FC_DRM_PB5                         0x116F
-+#define HDMI_FC_DRM_PB6                         0x1170
-+#define HDMI_FC_DRM_PB7                         0x1171
-+#define HDMI_FC_DRM_PB8                         0x1172
-+#define HDMI_FC_DRM_PB9                         0x1173
-+#define HDMI_FC_DRM_PB10                        0x1174
-+#define HDMI_FC_DRM_PB11                        0x1175
-+#define HDMI_FC_DRM_PB12                        0x1176
-+#define HDMI_FC_DRM_PB13                        0x1177
-+#define HDMI_FC_DRM_PB14                        0x1178
-+#define HDMI_FC_DRM_PB15                        0x1179
-+#define HDMI_FC_DRM_PB16                        0x117A
-+#define HDMI_FC_DRM_PB17                        0x117B
-+#define HDMI_FC_DRM_PB18                        0x117C
-+#define HDMI_FC_DRM_PB19                        0x117D
-+#define HDMI_FC_DRM_PB20                        0x117E
-+#define HDMI_FC_DRM_PB21                        0x117F
-+#define HDMI_FC_DRM_PB22                        0x1180
-+#define HDMI_FC_DRM_PB23                        0x1181
-+#define HDMI_FC_DRM_PB24                        0x1182
-+#define HDMI_FC_DRM_PB25                        0x1183
-+#define HDMI_FC_DRM_PB26                        0x1184
-+
- #define HDMI_FC_DBGFORCE                        0x1200
- #define HDMI_FC_DBGAUD0CH0                      0x1201
- #define HDMI_FC_DBGAUD1CH0                      0x1202
-@@ -744,6 +776,11 @@ enum {
- 	HDMI_FC_PRCONF_OUTPUT_PR_FACTOR_MASK = 0x0F,
- 	HDMI_FC_PRCONF_OUTPUT_PR_FACTOR_OFFSET = 0,
- 
-+/* FC_PACKET_TX_EN field values */
-+	HDMI_FC_PACKET_TX_EN_DRM_MASK = 0x80,
-+	HDMI_FC_PACKET_TX_EN_DRM_ENABLE = 0x80,
-+	HDMI_FC_PACKET_TX_EN_DRM_DISABLE = 0x00,
-+
- /* FC_AVICONF0-FC_AVICONF3 field values */
- 	HDMI_FC_AVICONF0_PIX_FMT_MASK = 0x03,
- 	HDMI_FC_AVICONF0_PIX_FMT_RGB = 0x00,
-diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-index 4b3e863c4f8a..fbf3812c4326 100644
---- a/include/drm/bridge/dw_hdmi.h
-+++ b/include/drm/bridge/dw_hdmi.h
-@@ -126,6 +126,7 @@ struct dw_hdmi_plat_data {
- 					   const struct drm_display_mode *mode);
- 	unsigned long input_bus_format;
- 	unsigned long input_bus_encoding;
-+	bool use_drm_infoframe;
- 
- 	/* Vendor PHY support */
- 	const struct dw_hdmi_phy_ops *phy_ops;
+ static const struct of_device_id dw_hdmi_rockchip_dt_ids[] = {
 -- 
 2.17.1
 
