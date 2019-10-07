@@ -2,131 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEA40CEC87
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 21:14:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EFE7CEC8C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 21:16:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728860AbfJGTN5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 15:13:57 -0400
-Received: from mx2.ucr.edu ([138.23.62.3]:19832 "EHLO mx2.ucr.edu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728116AbfJGTN5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 15:13:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1570475636; x=1602011636;
-  h=mime-version:from:date:message-id:subject:to;
-  bh=dallgVAkyTK9hhgH9V6Aj3NUK6xmHY7JKRhH0QVlX3E=;
-  b=aYvISMBIjVcAFDeNtCrBLzt3BIVgJX4neGnksVDZNgGUmsZA8BbwUWEm
-   ioTOMFFVZz6LnhE1Gj/7TXqX5G0/YWMxR945uMTnjfwCkTi6azLOMdO6U
-   6FHeJaamU38JY2UgBsWi75Zvrilrr0Zag6YS4tmtz1mZbAkyI+uTFJV3A
-   zHF/Zy3/rX+I+tFxfat7qPW6r5eKK0uMpnMXd57LWm5FDP4NkWnS1FikC
-   90goRmYiMARhpWHCUZG3akPUXQQ8abnneGO5xQfgT/5j8wgvmGsbBdRo/
-   yHa4l3V09RPxRP9gX4kl/RTdVcwBk3jeAlkHP0XukRUEINwYdpitqkZce
-   g==;
-IronPort-SDR: yz1j7lCEwiVaqTP5yExWPsJuPJp9Q3/NNRuA71sq/tI3q6FbuJPeAVhf9AhehUc+xqfkQnaub2
- ckg95AOMqnlmoJZnNxZhGpUdXWzvVbwZSR/C31TsytU701We3zvI6oikpb8njAx3raewdI3XnC
- gtF1cWNV0WU8HjAXmXYEmQj71bRZddTQY0dw9DIWyWuPtGNOk0qYvMSC38gut437BYQN447SHq
- pR1ISSK/IRsfQJtkMqKtwR6DN8Y5dWeULV460W0uFg7ht/PuzhTQwGqM+sOET3k3ig/h29wSZk
- 7RA=
-IronPort-PHdr: =?us-ascii?q?9a23=3A+CUvZh0mNFOEe4uosmDT+DRfVm0co7zxezQtwd?=
- =?us-ascii?q?8ZsesXIvTxwZ3uMQTl6Ol3ixeRBMOHsqkC1rWd6vq5EUU7or+5+EgYd5JNUx?=
- =?us-ascii?q?JXwe43pCcHRPC/NEvgMfTxZDY7FskRHHVs/nW8LFQHUJ2mPw6arXK99yMdFQ?=
- =?us-ascii?q?viPgRpOOv1BpTSj8Oq3Oyu5pHfeQpFiCezbL9oLBi7rwrdutQIjYd/N6081g?=
- =?us-ascii?q?bHrnxUdupM2GhmP0iTnxHy5sex+J5s7SFdsO8/+sBDTKv3Yb02QaRXAzo6PW?=
- =?us-ascii?q?814tbrtQTYQguU+nQcSGQWnQFWDAXD8Rr3Q43+sir+tup6xSmaIcj7Rq06VD?=
- =?us-ascii?q?i+86tmTgLjhTwZPDAl7m7Yls1wjLpaoB2/oRx/35XUa5yROPZnY6/RYc8WSW?=
- =?us-ascii?q?9HU81MVSJOH5m8YpMAAOQBM+hWrJTzqUUSohalGQmgGPnixiNUinPq36A31f?=
- =?us-ascii?q?kqHwHc3AwnGtIDqHbbrNT0NacSTOC1y7TDwjbDb/xM2Df29Y/FcxAgoPGMR7?=
- =?us-ascii?q?1wcNbdxVUhGg7ek1WftZblMymL2esQrmiW9uxtXv+shW4/swx9vCSjy8M2ho?=
- =?us-ascii?q?TKho8Z0E3I+CR7zYovJ9C0VUh2asO+HpRKrSGVLY52T9snQ2FvpSk11KULuY?=
- =?us-ascii?q?W+fCgW0JQnwAPfa+Cff4iI/B3jUOGRLC99hH1/ebK/gw++8UyuyuHhT8W03l?=
- =?us-ascii?q?RHojdfntnDsXAN0BPT6syZRfdn4kih3jOP2xjS6uFCP080ibLWJ4A9zrM0jJ?=
- =?us-ascii?q?YeskTOEjXrlEj3jqKabEcp9vWw5+TieLrmp5ucN4FuigH5N6Qjgsy+AOU4Mg?=
- =?us-ascii?q?cUXmiX5fiw2bP48E3kXLpKlOc6nbfEv5DHPcgbvLK2AxdJ0oY/7BayFzOm0N?=
- =?us-ascii?q?UenXkaI1NJYRGHgJbzO1HIPv/4Ceyyg0qjkDh13fDKJL7hDYvXLnjFjrjhea?=
- =?us-ascii?q?xx60lGyAo8nphj4Md2DbEIJvT+QQfbucbXRks7NAy9xeDqE5N325kRcWOJHq?=
- =?us-ascii?q?KddqjVtAnMrs8qJuCKeYIR8BnnNv0v7vXuxSs0nFoUe7Sk2d0Ycm29FP1tI2?=
- =?us-ascii?q?2YZ2bhhpEKFmJc+kIaUefjwHaFXDpTYD7mW7835zg9D8StCorHRoeFgbqd0S?=
- =?us-ascii?q?P9FZpTMCQOK1aQHHOgU4SCRudEVyOIL8tsiSdMAbygTZIxyhCgtSf7zaZqKq?=
- =?us-ascii?q?zf/ShO8drA3dxx6qXtnBU1vWh3Ec2Z1EmGSG15l34SQCU/mqdlrho5gneK0K?=
- =?us-ascii?q?0wr+ZVBNJO/OgBBgczNJuaw/Z3Gt7vQRnpf9GVRVLgSdKjV3V5Z8wwzNYPZw?=
- =?us-ascii?q?5SAdSklQzO3iziV7YLlrOCBZhy/bjd2WPtKsd743fAyKQlyVIhR50LfWmngL?=
- =?us-ascii?q?NvshfSHYPNnl6Cv7ileL5a3yPX8mqHi22UswUQVgNsXajbdW4Qa1GQrtnj4E?=
- =?us-ascii?q?7GCbi0BvBvNgpH1N7HKaZQbNDtpUtJSe2lO9nEZW+13WCqClLA9LONfZfsM1?=
- =?us-ascii?q?wc1SOVXFoEkhEO+2+uPhN4Gyy75W/SEWoqXXnvbkXj4PQ2k3S9QQdgxBqNaU?=
- =?us-ascii?q?JJ3KHz5xUPw/GQVqVA8KgDvXIQqid0AVH17dLfCpLUthhhdaQEOYgV/Vxdk2?=
- =?us-ascii?q?/VqloubdSbM6l+iwtGIExMtET02kAyU90YnA=3D=3D?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FmAgBJjZtdhkenVdFmDoYghE2OYYF?=
- =?us-ascii?q?tBYMlAYxQgRiKNAEIAQEBDi8BAYcfIzgTAgMJAQEFAQEBAQEFBAEBAhABAQE?=
- =?us-ascii?q?ICwsIKYVAgjopAYNVEXwPAiYCJBIBBQEiARoagwCCC6JqgQM8iyaBMoQLAQG?=
- =?us-ascii?q?EVgEJDYFIEnoojA6CF4ERgmSFFIMpglgEgTgBAQGVLJZUAQYCghAUjFSIRBu?=
- =?us-ascii?q?CKgGXFI4smUsPI4FGgXszGiV/BmeBT08QFIFpjXEEAVYkkhwBAQ?=
-X-IPAS-Result: =?us-ascii?q?A2FmAgBJjZtdhkenVdFmDoYghE2OYYFtBYMlAYxQgRiKN?=
- =?us-ascii?q?AEIAQEBDi8BAYcfIzgTAgMJAQEFAQEBAQEFBAEBAhABAQEICwsIKYVAgjopA?=
- =?us-ascii?q?YNVEXwPAiYCJBIBBQEiARoagwCCC6JqgQM8iyaBMoQLAQGEVgEJDYFIEnooj?=
- =?us-ascii?q?A6CF4ERgmSFFIMpglgEgTgBAQGVLJZUAQYCghAUjFSIRBuCKgGXFI4smUsPI?=
- =?us-ascii?q?4FGgXszGiV/BmeBT08QFIFpjXEEAVYkkhwBAQ?=
-X-IronPort-AV: E=Sophos;i="5.67,269,1566889200"; 
-   d="scan'208";a="13364168"
-Received: from mail-lf1-f71.google.com ([209.85.167.71])
-  by smtp2.ucr.edu with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 07 Oct 2019 12:13:55 -0700
-Received: by mail-lf1-f71.google.com with SMTP id q3so1672461lfc.5
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 12:13:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=PJAtcYhKUx1R52oEkTsXsXK1JI9Wj7XIccCM13DifW8=;
-        b=U11APYlcAEerxxJ2E9ABCk1tbsITETzGXSmSRI73ZBOgPcDZEAf6qo8lASEU4hWsAQ
-         ubR3G4V6UeVet67bxvw6MDC5TJ2NJp0AJZZWAog8fsZ+GIoi894jDmTOkUaVV8i1BAS9
-         Fzy6lR8h7cOo9AV1rueFKFUbxlOcsDouWO0B+qRsVw8SqCiFVFhNQsaBQn2RqEj1udqT
-         iyO1mr+vfwDBTFVeD7pucnr0/j0zJLykE6xRvFZRnVawx9+qnvQt8l968txUGrlmtBc8
-         WHJ93ef49P42ENvr+j91DC9W3uRbaJVrrez1r+dKDRRzRkezrP6KuCg8k/GbxaIoQGVB
-         sJAw==
-X-Gm-Message-State: APjAAAXabPyZXuEWeMc8c55/+YvjL1cE6K6rgnZVq6Y3O2Q53kp2eKN8
-        fS82tZpsTqtff+tm0dHyF2qjlcy58G9Hw+IIuK6ecqI1lSzssasVuVcykvzIfca+D448l2UgKav
-        N60IpJDQCoxAWclUxzgJLe8sQ5x2RPdhV4e+DZPjnBw==
-X-Received: by 2002:a2e:a41b:: with SMTP id p27mr19601408ljn.104.1570475634275;
-        Mon, 07 Oct 2019 12:13:54 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqybsfi5mH8tF9NrZD7sU22hacx7Zua94Z8/UMHxu/hlrhN5z+2JdKI5u1YfWM3R1sWLFJpjLuPHGGU6Fb/5yKU=
-X-Received: by 2002:a2e:a41b:: with SMTP id p27mr19601397ljn.104.1570475634102;
- Mon, 07 Oct 2019 12:13:54 -0700 (PDT)
+        id S1729000AbfJGTQH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 15:16:07 -0400
+Received: from barracuda2.shentel.net ([204.111.1.145]:24234 "EHLO
+        barracuda4.shentel.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728187AbfJGTQG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 15:16:06 -0400
+X-Greylist: delayed 353 seconds by postgrey-1.27 at vger.kernel.org; Mon, 07 Oct 2019 15:16:06 EDT
+X-ASG-Debug-ID: 1570475764-0ea5c16c431de2ff0001-xx1T2L
+Received: from mta-out1.edbg.va.oss.shentel.net ([172.26.51.4]) by barracuda4.shentel.net with ESMTP id PiyoGSX6dQrhiqYm; Mon, 07 Oct 2019 15:16:04 -0400 (EDT)
+X-Barracuda-Envelope-From: gheskett@shentel.net
+Received: from coyote.coyote.den (unknown [204.111.64.149])
+        by mta-out1.edbg.va.oss.shentel.net (Postfix) with ESMTPSA id BACCF10008E;
+        Mon,  7 Oct 2019 15:16:04 -0400 (EDT)
+From:   Gene Heskett <gheskett@shentel.net>
+X-Barracuda-Effective-Source-IP: UNKNOWN[204.111.64.149]
+X-Barracuda-Apparent-Source-IP: 204.111.64.149
+Organization: none,nada,zip
+To:     LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [ANNOUNCE] 4.19.72-rt25
+Date:   Mon, 7 Oct 2019 15:16:04 -0400
+X-ASG-Orig-Subj: Re: [ANNOUNCE] 4.19.72-rt25
+User-Agent: KMail/1.9.10
+Cc:     "linux-rt-users" <linux-rt-users@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Carsten Emde <C.Emde@osadl.org>,
+        John Kacur <jkacur@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Julia Cartwright <julia@ni.com>,
+        Daniel Wagner <wagi@monom.org>, tom.zanussi@linux.intel.com
+References: <20190916173921.6368cd62@gandalf.local.home> <201910071510.05101.gheskett@shentel.net>
+In-Reply-To: <201910071510.05101.gheskett@shentel.net>
+X-KMail-QuotePrefix: > 
 MIME-Version: 1.0
-From:   Yizhuo Zhai <yzhai003@ucr.edu>
-Date:   Mon, 7 Oct 2019 12:14:37 -0700
-Message-ID: <CABvMjLRtWPgMKR8t758DZ1AhynWC4LxG8bTVxiNGF4OJgtNsbg@mail.gmail.com>
-Subject: Potential NULL pointer deference in iwlwifi
-To:     Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Haim Dreyfuss <haim.dreyfuss@intel.com>,
-        Avigail Grinstein <avigail.grinstein@intel.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Zhiyun Qian <zhiyunq@cs.ucr.edu>,
-        Chengyu Song <csong@cs.ucr.edu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Message-Id: <201910071516.04269.gheskett@shentel.net>
+X-Barracuda-Connect: UNKNOWN[172.26.51.4]
+X-Barracuda-Start-Time: 1570475764
+X-Barracuda-URL: https://172.26.193.44:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at shentel.net
+X-Barracuda-Scan-Msg-Size: 2909
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Spam-Score: 0.50
+X-Barracuda-Spam-Status: No, SCORE=0.50 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=6.0 tests=WEIRD_PORT
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.77190
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
+        0.50 WEIRD_PORT             URI: Uses non-standard port number for HTTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All:
+On Monday 07 October 2019 15:10:05 Gene Heskett wrote:
 
-drivers/net/wireless/intel/iwlwifi/mvm/power.c:
+> On Monday 16 September 2019 17:39:21 Steven Rostedt wrote:
+> > Dear RT Folks,
+> >
+> > I'm pleased to announce the 4.19.72-rt25 stable release.
+> >
+> > **** <NOTE> ****
+> >
+> > As you probably have noticed, it has been a long time since I
+> > released a stable 4.19-rt. The reason for this delay is that one of
+> > my tests failed after merging with the latest stable upstream. I
+> > refuse to push releases with a known bug in it, so I figured I would
+> > find the bug before releasing. I only spend around 4 to 6 hours a
+> > week on upstream stable RT as I have other responsibilities, and I
+> > could not debug this bug during that time (after several weeks of
+> > trying).
+> >
+> > The bug is a random NULL pointer dereference that only happens with
+> > lockdep enabled and on 32bit x86. I also found that this bug existed
+> > before the latest stable pull release but now it is much easier to
+> > trigger.
+> >
+> > I have not been able to trigger this bug in the 64 bit kernel, and
+> > as I rather do a release than waste more time on this bug and
+> > postpone the release further, I am now doing that. As a consequence,
+> > I am no longer supporting 32bit x86, as it is known to have this
+> > bug.
+> >
+> > If you are interested in this, I am willing to send out the config I
+> > am using and one of the dmesg crashes. Just ask.
+> >
+> > **** </NOTE> ****
+> >
+> >
+> > This release is just an update to the new stable 4.19.72 version
+> > and no RT specific changes have been made.
+> >
+> >
+> > You can get this release via the git tree at:
+> >
+> >  
+> > git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+> >
+> >   branch: v4.19-rt
+> >   Head SHA1: 9cd04ab6a9a162ac4189a80032261d243563ff45
+>
+> =====================================================================
+>
+> > Or to build 4.19.72-rt25 directly, the following patches should be
+> > applied:
+> >
+> >   http://www.kernel.org/pub/linux/kernel/v4.x/linux-4.19.tar.xz
+> >
+> >   http://www.kernel.org/pub/linux/kernel/v4.x/patch-4.19.72.xz
+> >
+> >
+> > http://www.kernel.org/pub/linux/kernel/projects/rt/4.19/patch-4.19.7
+> >2- rt25.patch.xz
+>
+> Unfortunately, this does not work for the pi3-4 family. When its all
+> pulled in and patched, there is no arch/arm/configs bcm2709_defconfig
+> or bcm2711_defconfig for either a pi3b or the new pi4b.
+>
+> I'll go find the 5.2.14 announce and see if its any more complete.
+Its disappeared.
 
-Inside function iwl_mvm_power_ps_disabled_iterator(),
-iwl_mvm_vif_from_mac80211()
-could return NULL,however, the return value of
-iwl_mvm_vif_from_mac80211() is not
-checked and get
-used. This could potentially be unsafe.
+> > Enjoy,
+> >
+> > -- Steve
+>
+> Cheers, Gene Heskett
 
+
+Cheers, Gene Heskett
 -- 
-Kind Regards,
-
-Yizhuo Zhai
-
-Computer Science, Graduate Student
-University of California, Riverside
+"There are four boxes to be used in defense of liberty:
+ soap, ballot, jury, and ammo. Please use in that order."
+-Ed Howdershelt (Author)
+If we desire respect for the law, we must first make the law respectable.
+ - Louis D. Brandeis
+Genes Web page <http://geneslinuxbox.net:6309/gene>
