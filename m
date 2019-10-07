@@ -2,109 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A05C1CE25E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:55:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67924CE26E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:56:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728619AbfJGMza (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 08:55:30 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59182 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728592AbfJGMz0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 08:55:26 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D38B430842AF;
-        Mon,  7 Oct 2019 12:55:25 +0000 (UTC)
-Received: from krava (unknown [10.43.17.61])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0C14560C18;
-        Mon,  7 Oct 2019 12:55:24 +0000 (UTC)
-Date:   Mon, 7 Oct 2019 14:55:24 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5] perf record: Put a copy of kcore into the perf.data
- directory
-Message-ID: <20191007125524.GH6919@krava>
-References: <20191004083121.12182-1-adrian.hunter@intel.com>
+        id S1728680AbfJGM4J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 08:56:09 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44815 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727734AbfJGM4H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 08:56:07 -0400
+Received: by mail-wr1-f65.google.com with SMTP id z9so15126665wrl.11
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 05:56:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lNH90AFjH7treDMnlBjyecd4jzPpSJ8AKVgoDKflMFE=;
+        b=LXCip3xNAoYNYlV6dtRSB1uaKZJUo/K2WvzEmJRHr+u/U9uUi6O/di4oCQpBqx6of6
+         J8XOGzJu5nCzvTxGoqsiLjRPzX9KO9l4JCcWeI93DIREUfvtMDYRTnbHLsgnFVRxVI91
+         eNra9cn8FwGFq8SDd2yIo0KXFmOCwHroK8OA2B5D1/jzLI/DY49mWmhZxm/vLUxlHJAu
+         IlX2X51TLp9dLtREuMFWPmRDOal9jgmHy97kXh6hnCm5M672qNcj/YFGyiD7kXlx7jBP
+         8arMHMBD1atKgJ6GHC9o9ETGcZeqw3lUmF21zbtZEjD1U0ryJS/rR24tZMSTn1SLOEyI
+         VALg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lNH90AFjH7treDMnlBjyecd4jzPpSJ8AKVgoDKflMFE=;
+        b=W3aKBSqk10LVzaVSE3JvEUGVgsCprnFXr6XOTurQw6DLKXwR86mvwq8uiz8JoNmtWW
+         xmmz/LF0YHqH+SX0Hn6iapDlo9YPlGiaWjS+cNIcr3jw8XTL57Rmg7T3dYgs/e+sTyRL
+         UMzycx4jGz+mipBH9C7OhT8on6PtfzoiM6oJHenKSzqiwqM9TQsInDz29VTk/IGPaYA0
+         fE0y9ckUahK5UMOxxnSGfJ3nB3dLfwyQS5kwFomdvEcURqmLUwRLS7G4JKGSbqZw/4iE
+         cD5jgwqHYU8Sg5/cyz2DfIsYBsNlYC3ZuHB+E48SyOR0IZF1YIlGkKiQDvsWMEWd4eoI
+         dw+g==
+X-Gm-Message-State: APjAAAV3vtPYPlyW+PNYfnSBVQqIXEshWel3ApyhJZoyNoRm/4x3LKe/
+        zzFMts7FbpxM4iMb+k6JCXtx+Q==
+X-Google-Smtp-Source: APXvYqw4wrBCEizxjGd3Oo7lWF2KXUVRw9xkZJnF90lw1VD0wL+cQobj6SS5sgKiiRn76myZtcAY3Q==
+X-Received: by 2002:adf:ef8f:: with SMTP id d15mr22105358wro.67.1570452966040;
+        Mon, 07 Oct 2019 05:56:06 -0700 (PDT)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id c9sm14922385wrt.7.2019.10.07.05.56.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2019 05:56:05 -0700 (PDT)
+Date:   Mon, 7 Oct 2019 13:56:03 +0100
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jacopo Mondi <jacopo@jmondi.org>, linux-sh@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v5 7/7] backlight: gpio: pull
+ gpio_backlight_initial_power_state() into probe
+Message-ID: <20191007125603.qmb6jfu2tjxnzmm6@holly.lan>
+References: <20191007033200.13443-1-brgl@bgdev.pl>
+ <20191007033200.13443-8-brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191004083121.12182-1-adrian.hunter@intel.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 07 Oct 2019 12:55:25 +0000 (UTC)
+In-Reply-To: <20191007033200.13443-8-brgl@bgdev.pl>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 04, 2019 at 11:31:16AM +0300, Adrian Hunter wrote:
-> Hi
+On Mon, Oct 07, 2019 at 05:32:00AM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> Here are patches to add a new 'perf record' option '--kcore' which will put
-> a copy of /proc/kcore, kallsyms and modules into a perf.data directory.
-> Note, that without the --kcore option, output goes to a file as previously.
-> The tools' -o and -i options work with either a file name or directory
-> name.
+> The probe function in the gpio-backlight driver is quite short. If we
+> pull gpio_backlight_initial_power_state() into probe we can drop two
+> more fields from struct gpio_backlight and shrink the driver code.
 > 
-> Example:
-> 
->  $ sudo perf record --kcore uname
-> 
->  $ sudo tree perf.data
->  perf.data
->  ├── kcore_dir
->  │   ├── kallsyms
->  │   ├── kcore
->  │   └── modules
->  └── data
-> 
->  $ sudo perf script -v
->  build id event received for vmlinux: 1eaa285996affce2d74d8e66dcea09a80c9941de
->  build id event received for [vdso]: 8bbaf5dc62a9b644b4d4e4539737e104e4a84541
->  Samples for 'cycles' event do not have CPU attribute set. Skipping 'cpu' field.
->  Using CPUID GenuineIntel-6-8E-A
->  Using perf.data/kcore_dir/kcore for kernel data
->  Using perf.data/kcore_dir/kallsyms for symbols
->              perf 19058 506778.423729:          1 cycles:  ffffffffa2caa548 native_write_msr+0x8 (vmlinux)
->              perf 19058 506778.423733:          1 cycles:  ffffffffa2caa548 native_write_msr+0x8 (vmlinux)
->              perf 19058 506778.423734:          7 cycles:  ffffffffa2caa548 native_write_msr+0x8 (vmlinux)
->              perf 19058 506778.423736:        117 cycles:  ffffffffa2caa54a native_write_msr+0xa (vmlinux)
->              perf 19058 506778.423738:       2092 cycles:  ffffffffa2c9b7b0 native_apic_msr_write+0x0 (vmlinux)
->              perf 19058 506778.423740:      37380 cycles:  ffffffffa2f121d0 perf_event_addr_filters_exec+0x0 (vmlinux)
->             uname 19058 506778.423751:     582673 cycles:  ffffffffa303a407 propagate_protected_usage+0x147 (vmlinux)
->             uname 19058 506778.423892:    2241841 cycles:  ffffffffa2cae0c9 unwind_next_frame.part.5+0x79 (vmlinux)
->             uname 19058 506778.424430:    2457397 cycles:  ffffffffa3019232 check_memory_region+0x52 (vmlinux)
-> 
-> 
-> Adrian Hunter (5):
->       perf data: Correctly identify directory data files
->       perf data: Move perf_dir_version into data.h
->       perf data: Rename directory "header" file to "data"
->       perf tools: Support single perf.data file directory
->       perf record: Put a copy of kcore into the perf.data directory
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
 
-thanks,
-jirka
-
+> ---
+>  drivers/video/backlight/gpio_backlight.c | 37 +++++++++---------------
+>  1 file changed, 13 insertions(+), 24 deletions(-)
 > 
->  tools/perf/Documentation/perf-record.txt           |  3 ++
->  .../Documentation/perf.data-directory-format.txt   | 63 ++++++++++++++++++++++
->  tools/perf/builtin-record.c                        | 54 ++++++++++++++++++-
->  tools/perf/util/data.c                             | 46 ++++++++++++++--
->  tools/perf/util/data.h                             | 12 +++++
->  tools/perf/util/header.h                           |  4 --
->  tools/perf/util/record.h                           |  1 +
->  tools/perf/util/session.c                          |  4 ++
->  tools/perf/util/util.c                             | 19 ++++++-
->  9 files changed, 197 insertions(+), 9 deletions(-)
->  create mode 100644 tools/perf/Documentation/perf.data-directory-format.txt
+> diff --git a/drivers/video/backlight/gpio_backlight.c b/drivers/video/backlight/gpio_backlight.c
+> index 6247687b6330..407d4eaafc5c 100644
+> --- a/drivers/video/backlight/gpio_backlight.c
+> +++ b/drivers/video/backlight/gpio_backlight.c
+> @@ -17,11 +17,8 @@
+>  #include <linux/slab.h>
+>  
+>  struct gpio_backlight {
+> -	struct device *dev;
+>  	struct device *fbdev;
+> -
+>  	struct gpio_desc *gpiod;
+> -	int def_value;
+>  };
+>  
+>  static int gpio_backlight_update_status(struct backlight_device *bl)
+> @@ -53,41 +50,24 @@ static const struct backlight_ops gpio_backlight_ops = {
+>  	.check_fb	= gpio_backlight_check_fb,
+>  };
+>  
+> -static int gpio_backlight_initial_power_state(struct gpio_backlight *gbl)
+> -{
+> -	struct device_node *node = gbl->dev->of_node;
+> -
+> -	/* Not booted with device tree or no phandle link to the node */
+> -	if (!node || !node->phandle)
+> -		return gbl->def_value ? FB_BLANK_UNBLANK : FB_BLANK_POWERDOWN;
+> -
+> -	/* if the enable GPIO is disabled, do not enable the backlight */
+> -	if (gpiod_get_value_cansleep(gbl->gpiod) == 0)
+> -		return FB_BLANK_POWERDOWN;
+> -
+> -	return FB_BLANK_UNBLANK;
+> -}
+> -
+> -
+>  static int gpio_backlight_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+>  	struct gpio_backlight_platform_data *pdata = dev_get_platdata(dev);
+> +	struct device_node *of_node = dev->of_node;
+>  	struct backlight_properties props;
+>  	struct backlight_device *bl;
+>  	struct gpio_backlight *gbl;
+> -	int ret;
+> +	int ret, def_value;
+>  
+>  	gbl = devm_kzalloc(dev, sizeof(*gbl), GFP_KERNEL);
+>  	if (gbl == NULL)
+>  		return -ENOMEM;
+>  
+> -	gbl->dev = dev;
+> -
+>  	if (pdata)
+>  		gbl->fbdev = pdata->fbdev;
+>  
+> -	gbl->def_value = device_property_read_bool(dev, "default-on");
+> +	def_value = device_property_read_bool(dev, "default-on");
+>  
+>  	gbl->gpiod = devm_gpiod_get(dev, NULL, GPIOD_ASIS);
+>  	if (IS_ERR(gbl->gpiod)) {
+> @@ -109,7 +89,16 @@ static int gpio_backlight_probe(struct platform_device *pdev)
+>  		return PTR_ERR(bl);
+>  	}
+>  
+> -	bl->props.power = gpio_backlight_initial_power_state(gbl);
+> +	/* Set the initial power state */
+> +	if (!of_node || !of_node->phandle)
+> +		/* Not booted with device tree or no phandle link to the node */
+> +		bl->props.power = def_value ? FB_BLANK_UNBLANK
+> +					    : FB_BLANK_POWERDOWN;
+> +	else if (gpiod_get_value_cansleep(gbl->gpiod) == 0)
+> +		bl->props.power = FB_BLANK_POWERDOWN;
+> +	else
+> +		bl->props.power = FB_BLANK_UNBLANK;
+> +
+>  	bl->props.brightness = 1;
+>  
+>  	backlight_update_status(bl);
+> -- 
+> 2.23.0
 > 
-> 
-> Regards
-> Adrian
