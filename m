@@ -2,107 +2,259 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80CDDCE056
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 13:26:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1834FCE05F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 13:26:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728322AbfJGL0M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 07:26:12 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35681 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727395AbfJGL0L (ORCPT
+        id S1727973AbfJGL0g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 07:26:36 -0400
+Received: from inca-roads.misterjones.org ([213.251.177.50]:34339 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727566AbfJGL0f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 07:26:11 -0400
-Received: by mail-wr1-f66.google.com with SMTP id v8so14843655wrt.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 04:26:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=H4mBwNwKo3Hw5GQf27SGsDBu1e3aMiLQBDWHw2yh2jA=;
-        b=WAyG+kEphCADric44Plx+oHVjOnKviZ5O+s0eQzuS0rdVHtJ9/0b0Qv+2C/b7+CQYF
-         CuQiTOv3mpmcagfqjoAtJUup/kmLxImbumWjcGelMFiuSSeiTv7WGEu9W9ZZ7l55cw6f
-         kF1ZfKxrDVIHBPBUPMFAX2sWR4O0QEU5Y/ZgSnmgPYT5BynRzEbs8mQ2Rnx9K4zPPert
-         Pqd1rogyAmTLd4Hede2AsFAyXO7Qjwf3XBYOxW9Dr2aZI0ZXdd9Sjt5bqIlMI0dtJ5i3
-         l2Jem8a03C25ibKPhWbtwN+DNxmwwZ+nntYwznidyMlg/ePX4xC+jyJl47hghsAhja13
-         VDoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=H4mBwNwKo3Hw5GQf27SGsDBu1e3aMiLQBDWHw2yh2jA=;
-        b=AyZCpMTe13D78wER0u88ByfxoXumzYpgz7qo7wef4wYCw27b2QNrOEkDKY9gf+9N4P
-         iWNqPVu88nFiMiqkf7/D6OGNssYuEUjxYwGzWyvQ0rk7vg9JdLFhGTM3lDRBvcmw0EDK
-         FvR1fOFtHkgiM/0wD0prhJUfgV0mHvXhqPQHBg7yy08/A/q5Tw1QPg8TcegPLo7C8fZF
-         j93zQfqtfshTiOgzjALLHoBn3U3W+BiOlRSLXLc2fXztoHp3F1QkA0y4Xv4sC6fyWOny
-         0gswIX4yYTT9E80+wIILfF2Jwz75sVxbhbBbNIqmY+1o4maCs4nHX0hw4jUHStaOOe/V
-         25sQ==
-X-Gm-Message-State: APjAAAX39PFXKqciqeB8C4XtR5jAbLBCGshkYco2G+2730Wv+9P7QjNM
-        5Mrbz9LwK3ntecMWZJrmJKc=
-X-Google-Smtp-Source: APXvYqxAYBBqhUdrgro6AdU92AfqkjpBXjKvaQM+Qh6MuTkPlCOPieeZwhROTxKbHgVFl5k102y4eQ==
-X-Received: by 2002:a5d:670c:: with SMTP id o12mr10688264wru.103.1570447569312;
-        Mon, 07 Oct 2019 04:26:09 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id j26sm22560441wrd.2.2019.10.07.04.26.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2019 04:26:08 -0700 (PDT)
-Date:   Mon, 7 Oct 2019 13:26:06 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        mhiramat@kernel.org, bristot@redhat.com, jbaron@akamai.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        namit@vmware.com, hpa@zytor.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, jpoimboe@redhat.com,
-        hjl.tools@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Denys Vlasenko <dvlasenk@redhat.com>
-Subject: Re: [RFC][PATCH 0/9] Variable size jump_label support
-Message-ID: <20191007112606.GA44864@gmail.com>
-References: <20191007090225.441087116@infradead.org>
- <20191007084443.793701281@infradead.org>
- <20191007112229.GA3221@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191007112229.GA3221@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 7 Oct 2019 07:26:35 -0400
+Received: from 82-132-224-193.dab.02.net ([82.132.224.193] helo=big-swifty.misterjones.org)
+        by cheepnis.misterjones.org with esmtpsa (TLSv1.2:AES256-GCM-SHA384:256)
+        (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1iHR9j-0007gp-4l; Mon, 07 Oct 2019 13:26:23 +0200
+Date:   Mon, 07 Oct 2019 12:26:10 +0100
+Message-ID: <86k19gztil.wl-maz@kernel.org>
+From:   Marc Zyngier <maz@kernel.org>
+To:     Talel Shenhar <talel@amazon.com>
+Cc:     <robh+dt@kernel.org>, <mark.rutland@arm.com>, <arnd@arndb.de>,
+        <bp@alien8.de>, <mchehab@kernel.org>, <james.morse@arm.com>,
+        <davem@davemloft.net>, <gregkh@linuxfoundation.org>,
+        <paulmck@linux.ibm.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-edac@vger.kernel.org>,
+        <dwmw@amazon.co.uk>, <benh@kernel.crashing.org>,
+        <hhhawa@amazon.com>, <ronenk@amazon.com>, <jonnyc@amazon.com>,
+        <hanochu@amazon.com>, <amirkl@amazon.com>, <barakw@amazon.com>
+Subject: Re: [PATCH v4 2/2] soc: amazon: al-pos-edac: Introduce Amazon's Annapurna Labs POS EDAC driver
+In-Reply-To: <1570102361-11696-3-git-send-email-talel@amazon.com>
+References: <1570102361-11696-1-git-send-email-talel@amazon.com>
+        <1570102361-11696-3-git-send-email-talel@amazon.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/26
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 82.132.224.193
+X-SA-Exim-Rcpt-To: talel@amazon.com, robh+dt@kernel.org, mark.rutland@arm.com, arnd@arndb.de, bp@alien8.de, mchehab@kernel.org, james.morse@arm.com, davem@davemloft.net, gregkh@linuxfoundation.org, paulmck@linux.ibm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org, dwmw@amazon.co.uk, benh@kernel.crashing.org, hhhawa@amazon.com, ronenk@amazon.com, jonnyc@amazon.com, hanochu@amazon.com, amirkl@amazon.com, barakw@amazon.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-[ Sorry, fixed the Cc:lkml line. ]
-
-* Peter Zijlstra <peterz@infradead.org> wrote:
-
-> These here patches are something I've been poking at for a while, 
-> enabling jump_label to use 2 byte jumps/nops.
+On Thu, 03 Oct 2019 12:32:41 +0100,
+Talel Shenhar <talel@amazon.com> wrote:
 > 
-> It _almost_ works :-/
+> The Amazon's Annapurna Labs SoCs includes Point Of Serialization error
+> logging unit that reports an error in case write error (e.g . Attempt to
+> write to a read only register).
+> This error shall be reported to EDAC subsystem as uncorrectable-error.
 > 
-> That is, you can build some kernels with it (x86_64-defconfig for 
-> example works just fine).
+> Signed-off-by: Talel Shenhar <talel@amazon.com>
+> ---
+>  MAINTAINERS                |   7 ++
+>  drivers/edac/Kconfig       |   6 ++
+>  drivers/edac/Makefile      |   1 +
+>  drivers/edac/al_pos_edac.c | 173 +++++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 187 insertions(+)
+>  create mode 100644 drivers/edac/al_pos_edac.c
 > 
-> The problem comes when GCC generates a branch into another section, 
-> mostly .text.unlikely. At that point GAS just gives up and throws a fit 
-> (more details in the last patch).
-> 
-> Aside from anyone coming up with a really clever GAS trick, I don't see 
-> how we can do this other than:
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e7a47b5..f5ce446 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -751,6 +751,13 @@ F:	drivers/tty/serial/altera_jtaguart.c
+>  F:	include/linux/altera_uart.h
+>  F:	include/linux/altera_jtaguart.h
+>  
+> +AMAZON ANNAPURNA LABS POS EDAC DRIVER
+> +M:	Talel Shenhar <talel@amazon.com>
+> +M:	Talel Shenhar <talelshenhar@gmail.com>
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/edac/amazon,al-pos-edac.yaml
+> +F:	drivers/edac/al-pos-edac.c
+> +
+>  AMAZON ANNAPURNA LABS THERMAL MMIO DRIVER
+>  M:	Talel Shenhar <talel@amazon.com>
+>  S:	Maintained
+> diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
+> index 200c04c..bb5805f 100644
+> --- a/drivers/edac/Kconfig
+> +++ b/drivers/edac/Kconfig
+> @@ -100,6 +100,12 @@ config EDAC_AMD64_ERROR_INJECTION
+>  	  In addition, there are two control files, inject_read and inject_write,
+>  	  which trigger the DRAM ECC Read and Write respectively.
+>  
+> +config EDAC_AL_POS
+> +	tristate "Amazon's Annapurna Labs POS EDAC driver"
+> +	depends on (ARCH_ALPINE || COMPILE_TEST)
+> +	help
+> +	  Include support for the SoC POS EDAC error capability.
+> +
+>  config EDAC_AMD76X
+>  	tristate "AMD 76x (760, 762, 768)"
+>  	depends on PCI && X86_32
+> diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
+> index 165ca65e..3571936 100644
+> --- a/drivers/edac/Makefile
+> +++ b/drivers/edac/Makefile
+> @@ -22,6 +22,7 @@ obj-$(CONFIG_EDAC_GHES)			+= ghes_edac.o
+>  edac_mce_amd-y				:= mce_amd.o
+>  obj-$(CONFIG_EDAC_DECODE_MCE)		+= edac_mce_amd.o
+>  
+> +obj-$(CONFIG_EDAC_AL_POS)		+= al_pos_edac.o
+>  obj-$(CONFIG_EDAC_AMD76X)		+= amd76x_edac.o
+>  obj-$(CONFIG_EDAC_CPC925)		+= cpc925_edac.o
+>  obj-$(CONFIG_EDAC_I5000)		+= i5000_edac.o
+> diff --git a/drivers/edac/al_pos_edac.c b/drivers/edac/al_pos_edac.c
+> new file mode 100644
+> index 00000000..bd6cd87
+> --- /dev/null
+> +++ b/drivers/edac/al_pos_edac.c
+> @@ -0,0 +1,173 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+> + */
+> +#include <linux/bitfield.h>
+> +#include <linux/edac.h>
+> +#include <linux/of_irq.h>
+> +#include "edac_module.h"
+> +
+> +#define DRV_NAME "al_pos_edac"
+> +#define AL_POS_EDAC_MSG_MAX 256
+> +
+> +/* Registers Offset */
+> +#define AL_POS_ERROR_LOG_1	0x0
+> +#define AL_POS_ERROR_LOG_0	0x4
+> +
+> +/* Registers Fields */
+> +#define AL_POS_ERROR_LOG_1_VALID	BIT(31)
+> +#define AL_POS_ERROR_LOG_1_BRESP	GENMASK(18, 17)
+> +#define AL_POS_ERROR_LOG_1_REQUEST_ID	GENMASK(16, 8)
+> +#define AL_POS_ERROR_LOG_1_ADDR_HIGH	GENMASK(7, 0)
+> +
+> +#define AL_POS_ERROR_LOG_0_ADDR_LOW	GENMASK(31, 0)
+> +
+> +struct al_pos_edac {
+> +	struct edac_device_ctl_info *edac_dev;
+> +	void __iomem *mmio_base;
+> +	int irq;
+> +};
+> +
+> +static int al_pos_handle(struct al_pos_edac *al_pos)
+> +{
+> +	u32 log0, log1;
+> +	u64 addr;
+> +	u16 request_id;
+> +	u8 bresp;
+> +	char msg[AL_POS_EDAC_MSG_MAX];
+> +
+> +	log1 = readl(al_pos->mmio_base + AL_POS_ERROR_LOG_1);
 
->  - use 'jmp' and get objtool to rewrite the text. Steven has earlier proposed
->    something like that (using recordmcount) and Linus hated that.
+I already commented on the misuse of strict accesses. Unless you can
+explain and document *why* you need the extra ordering, please use
+relaxed accesses.
 
-As long as GCC+GAS correctly generates a 2-byte or 5-byte JMP depending 
-on the target distance, the objtool solution should work fine, shouldn't 
-it?
+> +	if (!FIELD_GET(AL_POS_ERROR_LOG_1_VALID, log1))
+> +		return 0;
+> +
+> +	log0 = readl(al_pos->mmio_base + AL_POS_ERROR_LOG_0);
+> +	writel(0, al_pos->mmio_base + AL_POS_ERROR_LOG_1);
+> +
+> +	addr = FIELD_GET(AL_POS_ERROR_LOG_0_ADDR_LOW, log0);
+> +	addr |= (((u64)FIELD_GET(AL_POS_ERROR_LOG_1_ADDR_HIGH, log1)) << 32);
+> +	request_id = FIELD_GET(AL_POS_ERROR_LOG_1_REQUEST_ID, log1);
+> +	bresp = FIELD_GET(AL_POS_ERROR_LOG_1_BRESP, log1);
+> +
+> +	snprintf(msg, sizeof(msg),
+> +		 "addr=0x%llx request_id=0x%x bresp=0x%x\n",
+> +		 addr, request_id, bresp);
+> +
+> +	edac_device_handle_ue(al_pos->edac_dev, 0, 0, msg);
+> +
+> +	return 1;
+> +}
+> +
+> +static void al_pos_edac_check(struct edac_device_ctl_info *edac_dev)
+> +{
+> +	struct al_pos_edac *al_pos = edac_dev->pvt_info;
+> +
+> +	al_pos_handle(al_pos);
+> +}
+> +
+> +static irqreturn_t al_pos_irq_handler(int irq, void *info)
+> +{
+> +	struct platform_device *pdev = info;
+> +	struct al_pos_edac *al_pos = platform_get_drvdata(pdev);
+> +
+> +	if (al_pos_handle(al_pos))
+> +		return IRQ_HANDLED;
+> +	return IRQ_NONE;
+> +}
+> +
+> +static int al_pos_probe(struct platform_device *pdev)
+> +{
+> +	struct edac_device_ctl_info *edac_dev;
+> +	struct al_pos_edac *al_pos;
+> +	int ret;
+> +
+> +	edac_dev = edac_device_alloc_ctl_info(sizeof(*al_pos), DRV_NAME, 1,
+> +					      DRV_NAME, 1, 0, NULL, 0,
+> +					      edac_device_alloc_index());
+> +	if (!edac_dev)
+> +		return -ENOMEM;
+> +
+> +	al_pos = edac_dev->pvt_info;
+> +	al_pos->edac_dev = edac_dev;
+> +	platform_set_drvdata(pdev, al_pos);
+> +
+> +	al_pos->mmio_base = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(al_pos->mmio_base)) {
+> +		dev_err(&pdev->dev, "failed to ioremap memory (%ld)\n",
+> +			PTR_ERR(al_pos->mmio_base));
+> +		return PTR_ERR(al_pos->mmio_base);
+> +	}
+> +
+> +	al_pos->irq = platform_get_irq(pdev, 0);
+> +	if (al_pos->irq <= 0)
+> +		edac_dev->edac_check = al_pos_edac_check;
+> +
+> +	edac_dev->dev = &pdev->dev;
+> +	edac_dev->mod_name = DRV_NAME;
+> +	edac_dev->dev_name = dev_name(&pdev->dev);
+> +	edac_dev->ctl_name = "POS";
+> +
+> +	ret = edac_device_add_device(edac_dev);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Failed to add edac device\n");
+> +		goto err_free_edac;
+> +	}
+> +
+> +	if (al_pos->irq > 0) {
+> +		ret = devm_request_irq(&pdev->dev,
+> +				       al_pos->irq,
+> +				       al_pos_irq_handler,
+> +				       0,
+> +				       pdev->name,
+> +				       pdev);
+> +		if (ret != 0) {
+> +			dev_err(&pdev->dev,
+> +				"failed to register to irq %d (%d)\n",
+> +				al_pos->irq, ret);
+> +			goto err_remove_edac;
 
-I can see the recordmcount solution sucking, it would depend on early 
-kernel patchery. But build time patchery is something we already depend 
-on, so assuming some objtool catastrophy it's a more robust solution, 
-isn't it?
+Would it be worth continuing without interrupts? After all, the
+interrupt seems to be an optional part of the device...
 
 Thanks,
 
-	Ingo
+	M.
+
+-- 
+Jazz is not dead, it just smells funny.
