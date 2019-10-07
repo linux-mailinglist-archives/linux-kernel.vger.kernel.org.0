@@ -2,84 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0D98CEE8B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 23:46:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F5C6CEE93
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 23:47:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729345AbfJGVqg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 17:46:36 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:56222 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728422AbfJGVqg (ORCPT
+        id S1729469AbfJGVqt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 17:46:49 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34722 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728422AbfJGVqt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 17:46:36 -0400
-Received: from dread.disaster.area (pa49-181-226-196.pa.nsw.optusnet.com.au [49.181.226.196])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 5B0DD363506;
-        Tue,  8 Oct 2019 08:46:34 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.2)
-        (envelope-from <david@fromorbit.com>)
-        id 1iHaps-0001j3-Pf; Tue, 08 Oct 2019 08:46:32 +1100
-Date:   Tue, 8 Oct 2019 08:46:32 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/11] iomap: zero newly allocated mapped blocks
-Message-ID: <20191007214632.GA16973@dread.disaster.area>
-References: <20191006154608.24738-1-hch@lst.de>
- <20191006154608.24738-6-hch@lst.de>
+        Mon, 7 Oct 2019 17:46:49 -0400
+Received: by mail-pg1-f195.google.com with SMTP id y35so9039651pgl.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 14:46:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QXb17KO+aaTb9iSIuGo/6wibZdR0MZ0rDkPqukvilAM=;
+        b=Uu+pR4K3lVtvbqUe+qBy2kwwSW987fMlpT86iMKCGuTNzumfkGvgSvaLPbgBoURd+z
+         eo/xS9U8Vkqx9YrbIGg7WvZoz5oVBhp/PyaAD3k/883nlYImUXWcnznvUgR61KS1qQMS
+         Uf1P6HBgtlmlEUf5fuNWT6GnbzUwQqyKNruL/lpESCRcwmD4NKfjTCWqiNO71ZJTklvr
+         HbDvsa0R7yzCPAPsJkE5n0HTFCZCA2KTbnnEmZqzy7hvxhQbNSRSDwxi9f+dtZbBrOAZ
+         IWS02u65LnOicJtK2m73IiGbl1vIahncmXXHtLAMp38/Fk9dypnSq6N9qR0LHloHOjcH
+         7KBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QXb17KO+aaTb9iSIuGo/6wibZdR0MZ0rDkPqukvilAM=;
+        b=tVjgFOygHWvzwM1OggUNCdp1cwW7mpoWOwmG2fL7xjKhqgDTI85UeXA6USPfV2jI6u
+         H+FXxr3/a3AgGJnlVhPOtecsw0otoKXXndR+IsJYJUOw2d57uTUrcijhUUWNdpUEp7pj
+         WmHY3YJh3P8gRjCo3oRLGTEls2SBdAcmD5EN+gnN2aYD4NKLR7KxAeIvPJieUEX5Dk4c
+         RKfAlsUVn3ApCyZtr/Xzdw1CXMZr6Yzoe4/77m6va20KwyWCz8TF4zf5toSlwRp8UrlX
+         oFS8NDNDni8vNstXlb66Or1wzD72fnWrrMzprET6OhuV2Z8kG2z4vukJlk+ya2X898rd
+         /5Jw==
+X-Gm-Message-State: APjAAAWUQGYO7216narRuf6OYuPrtF3gO0tQKFJYj9/gV19AMUBGAG7l
+        hANPHhqjKyYjV5nhrT6LgqO2jyx058AvGl0wQvtQtw==
+X-Google-Smtp-Source: APXvYqw+0il7qlP4A2/lUfKoYuXJsc5yiAMjSSfJLRuXEdwLXtGPjG1nzT2ac7ISvwG4aa3gbooME1RCU4UO8GVgTYY=
+X-Received: by 2002:a62:798e:: with SMTP id u136mr35718450pfc.3.1570484808071;
+ Mon, 07 Oct 2019 14:46:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191006154608.24738-6-hch@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0
-        a=dRuLqZ1tmBNts2YiI0zFQg==:117 a=dRuLqZ1tmBNts2YiI0zFQg==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
-        a=yPCof4ZbAAAA:8 a=7-415B0cAAAA:8 a=PhxamUq2ceSyVfUHfJsA:9
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+References: <20191007201452.208067-1-samitolvanen@google.com>
+ <CAKwvOdmaMaO-Gpv2x0CWG+CRUCNKbNWJij97Jr0LaRaZXjAiTA@mail.gmail.com> <CABCJKufxncBPOx6==57asbMF_On=g1sZAv+w6RnqHJFSwOSeTw@mail.gmail.com>
+In-Reply-To: <CABCJKufxncBPOx6==57asbMF_On=g1sZAv+w6RnqHJFSwOSeTw@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 7 Oct 2019 14:46:36 -0700
+Message-ID: <CAKwvOd=k5iE8L5xbxwYDF=hSftqUXDdpgKYBDBa35XOkAx3d0w@mail.gmail.com>
+Subject: Re: [PATCH] arm64: lse: fix LSE atomics with LLVM's integrated assembler
+To:     Sami Tolvanen <samitolvanen@google.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 06, 2019 at 05:46:02PM +0200, Christoph Hellwig wrote:
-> File systems like gfs2 don't support delayed allocations or unwritten
-> extents and thus allocate normal mapped blocks to fill holes.  To
-> cover the case of such file systems allocating new blocks to fill holes
-> also zero out mapped blocks with the new flag.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-> ---
->  fs/iomap/buffered-io.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 23cc308f971d..4132c0cccb0a 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -207,6 +207,14 @@ iomap_read_inline_data(struct inode *inode, struct page *page,
->  	SetPageUptodate(page);
->  }
->  
-> +static inline bool iomap_block_needs_zeroing(struct inode *inode,
-> +		struct iomap *iomap, loff_t pos)
-> +{
-> +	return iomap->type != IOMAP_MAPPED ||
-> +		(iomap->flags & IOMAP_F_NEW) ||
-> +		pos >= i_size_read(inode);
+On Mon, Oct 7, 2019 at 2:24 PM Sami Tolvanen <samitolvanen@google.com> wrote:
+>
+> On Mon, Oct 7, 2019 at 1:28 PM 'Nick Desaulniers' via Clang Built
+> Linux <clang-built-linux@googlegroups.com> wrote:
+> > I tried adding `.arch armv8-a+lse` directives to all of the inline asm:
+> > https://github.com/ClangBuiltLinux/linux/issues/573#issuecomment-535098996
+>
+> Yes, I had a similar patch earlier. I feel like using a command line
+> parameter here is cleaner, but I'm fine with either solution.
+>
+> > One thing to be careful about is that blankets the entire kernel in
+> > `+lse`, allowing LSE atomics to be selected at any point.
+>
+> Is that a problem? The current code allows LSE instructions with gcc
+> in any file that includes <asm/lse.h>, which turns out to be quite a
+> few places.
 
-This is a change of logic - why is the IOMAP_F_NEW check added here
-and what bug does it fix?
+I may be mistaken, but I don't think inline asm directives allow the C
+compiler to change what instructions it selects for C code, but
+command line arguments to the C compiler do.
 
-Cheers,
+Grepping the kernel for some of the functions and memory orderings
+turns up a few hits:
+https://gcc.gnu.org/onlinedocs/gcc/_005f_005fatomic-Builtins.html
 
-Dave.
+I'm worried that one of these might lower to LSE atomics without
+ALTERNATIVE guards by blanketing all C code with `-march=armv8-a+lse`.
+But I did just boot test this patch but using GAS in QEMU (on a -cpu
+cortex-a72 which I suspect should not have lse instructions by default
+IIUC), FWIW.
+Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+Maybe the maintainers have more thoughts?
 -- 
-Dave Chinner
-david@fromorbit.com
+Thanks,
+~Nick Desaulniers
