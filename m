@@ -2,80 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7828CE6F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 17:12:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF704CE6FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 17:13:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728452AbfJGPMf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 11:12:35 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:36297 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727835AbfJGPMe (ORCPT
+        id S1728436AbfJGPNY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 11:13:24 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53899 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727745AbfJGPNY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 11:12:34 -0400
-Received: by mail-io1-f68.google.com with SMTP id b136so29352771iof.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 08:12:34 -0700 (PDT)
+        Mon, 7 Oct 2019 11:13:24 -0400
+Received: by mail-wm1-f66.google.com with SMTP id i16so13092193wmd.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 08:13:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eTNIlZe+EdZVGG81HeluEl5PY/3Uq8GfkNMqYYi6lVs=;
-        b=Ne2oqzo3lM0h47eqjURdWmhmFSIBlEB3GBusCr3D8jHo6sLs1I7/m08oy+dzdA9/XS
-         GWAe6rzF0lRZzxQLtZVaclX201QJOmnoXZszZXVvjpbTPD3G8O6olD0JGOx2MmhFMBhG
-         GM9yPR0GbuBRHZCOozmrCcPvc6pCyc94A+VoFDbX1YRuiv031Jq8lktRhx76GQviLcEX
-         IZna8p8GV54/VTQruw81XGihL45w0EaxvZo05/nn1QRRW6LgR9n+fEOMr9NSe4+P+IZl
-         8XThJi1bYsa3IfwWQOXhaqq9WOMQWuldyVZPlasMst5S3vRSlPQ1i9pb7ZNH4NYW9FyO
-         zZDQ==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zZhWwemYig8kkhxldGf4LKemMdD16O7Dc8IYXL4Z9nQ=;
+        b=TtfturaR8liADnZGl/3TkUOAnWRUKqPN60ooxnYYL6Va4SHdSH7tCSecNi7Y8dNBVv
+         Sih8Zsx/P0NdmRovUTDJe4OefM0M3fYYZkH4Ua62ocK1kMsPnqFa7Jd7GlevAYguTp8W
+         XGGqQNl9SfdSzxtH9TLnymc2P6hPk/2NiYyKUnEGd4D/dnQH8a7AYyfhHKZ+gSY2rhs0
+         f+Kp+YX+VBKSaaD4RCxkq1pJfGPNK5hjrT6zv/Q2jqxp3rScWis3JE7VYfsz9L5mpSK3
+         AJIWz6NA29ya4ZFpE6PfdJ1qGWzJ1SRoQjz583M8TK5FJWxbHjLuKCHxNOdeu1MiCL7R
+         Cc1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eTNIlZe+EdZVGG81HeluEl5PY/3Uq8GfkNMqYYi6lVs=;
-        b=uU30R8nDsOu7jpu6iZWw2lelSF/uZmjz5Z4fSUo3w9p0KdXp/Cv5d4xzyMqzfBfTU2
-         IqlKCPTUlkn1FPJlsDvmIJfodX6inx5p24fDMBvmjgCNN4huaJNDNj4ARineauXjJTrw
-         IqeE5XqfkD8U0dlsP97pDQi1NiiD3xrugFL8LLI2jLPedHPcOUJ9GHRptTjw8r3NljUI
-         9/jiGZcRzA7KIrJ0WHzQi56rVq2xvlVsH/s6Aw/epxsHSRkaTymmou3zWAO4k5G/N7Nm
-         jQy2+ECw9WVOLJmpjpFJ7exy6neAS09bO/BBxHyYdbYRzeeUhutueL7ZB9ZXFBiRhWOD
-         HiQQ==
-X-Gm-Message-State: APjAAAXMPicsgsKkmXd9UBIQquI3S2ej5IYEQMcw5Ddg/P8QAyM+ML5K
-        guYTsDBTKrtpbglhTwepkXABrtP7jHzVbM8VB6cR5A==
-X-Google-Smtp-Source: APXvYqwjVvEIBF1oeHfIZ9hknNqCBGyZJX1ke0y4rqi7/ogm/ZY1CcjP6dK75kC/nVARrTJwndeMA/LIkiwi3HstniI=
-X-Received: by 2002:a92:ce48:: with SMTP id a8mr28074054ilr.281.1570461153887;
- Mon, 07 Oct 2019 08:12:33 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zZhWwemYig8kkhxldGf4LKemMdD16O7Dc8IYXL4Z9nQ=;
+        b=FbS1WNAOwKVhn5di1Wd3leObQoNmq1BFgz3fOi1P694oB/Gyg9d/8TBPYyDk4Oz+zU
+         AjbqxUgLCYjRRdT+0uaTmk2yAb625oipGR20xVLJQckx3F4BZNn3dp80Lb2GMcgQ9PPD
+         kL1z5TBAXMDbneJoK+9P19zMoLm2Mov9cqDiuWhfV27k0jMUdcsKAifu87Br1H3xO5xy
+         RwqkKQpJcsp1jMtN6ofUA4GWn/aGTKBbvAjVQdv0YJz3NVxgIJTWTbsDnQw/KAicJPOn
+         NPHwyLgFZw2sZaIoLtU7eUwwrcwURO9HrgwZ/AL5SIyCb7MtFxwmDQvT80k7S66x4jCJ
+         W6bw==
+X-Gm-Message-State: APjAAAVbRdP/Z9V9cvhPWzA3OQk/zNgj7FIHeq6LY04WRckfDUkektzg
+        2Ah4PwhpqjtHnsS8w653cx5WMg==
+X-Google-Smtp-Source: APXvYqyoB84wgf2m2ZiN/nCRXnW//WyCx1S1jxPL+K+bYrlRxCFhQyVxnrvMqqjqFYdzzvEJ6AVRAA==
+X-Received: by 2002:a7b:c148:: with SMTP id z8mr12606425wmi.95.1570461201869;
+        Mon, 07 Oct 2019 08:13:21 -0700 (PDT)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id a3sm28051120wmc.3.2019.10.07.08.13.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2019 08:13:21 -0700 (PDT)
+Date:   Mon, 7 Oct 2019 16:13:19 +0100
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] backlight: pwm_bl: eliminate a 64/32 division
+Message-ID: <20191007151319.de6ko7n5dypqgyce@holly.lan>
+References: <20190919140620.32407-1-linux@rasmusvillemoes.dk>
+ <20190919140620.32407-2-linux@rasmusvillemoes.dk>
 MIME-Version: 1.0
-References: <20191003191354.GA4481@Serenity> <CAKcoMVC2LdcmUx6j5JzuT-TsFGz=mwQ0MsprrKR2qeXoTmQ-TQ@mail.gmail.com>
- <20191006192109.GA9983@keith-busch>
-In-Reply-To: <20191006192109.GA9983@keith-busch>
-From:   Tyler Ramer <tyaramer@gmail.com>
-Date:   Mon, 7 Oct 2019 11:13:12 -0400
-Message-ID: <CAKcoMVCDk+VDk6PSznTzMfJsjhZMdo6wBKZLzNbjDCkg73-WEw@mail.gmail.com>
-Subject: Re: [PATCH] nvme-pci: Shutdown when removing dead controller
-To:     Keith Busch <kbusch@kernel.org>
-Cc:     Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190919140620.32407-2-linux@rasmusvillemoes.dk>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Setting the shutdown to true is
-> usually just to get the queues flushed, but the nvme_kill_queues() that
-> we call accomplishes the same thing.
+On Thu, Sep 19, 2019 at 04:06:17PM +0200, Rasmus Villemoes wrote:
+> lightness*1000 is nowhere near overflowing 32 bits, so we can just use
+> an ordinary 32/32 division, which is much cheaper than the 64/32 done
+> via do_div().
+> 
+> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
-The intention of this patch was to clean up another location where
-nvme_dev_disable()
-is called with shutdown == false, but the device is being removed due
-to a failure
-condition, so it should be shutdown.
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
 
-Perhaps though, given nvme_kill_queues() provides a subset of the
-functionality of
-nvme_dev_disable() with shutdown == true, we can just use
-nvme_dev_disable() and
-remove nvme_kill_queues()?
-
-This will make nvme_remove_dead_ctrl() more in line with nvme_remove(),
-nvme_shutdown(), etc.
-
-- Tyler
+> ---
+>  drivers/video/backlight/pwm_bl.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+> index be36be1cacb7..9252d51f31b9 100644
+> --- a/drivers/video/backlight/pwm_bl.c
+> +++ b/drivers/video/backlight/pwm_bl.c
+> @@ -177,7 +177,7 @@ static u64 cie1931(unsigned int lightness, unsigned int scale)
+>  	 */
+>  	lightness *= 100;
+>  	if (lightness <= (8 * scale)) {
+> -		retval = DIV_ROUND_CLOSEST_ULL(lightness * 10, 9033);
+> +		retval = DIV_ROUND_CLOSEST(lightness * 10, 9033);
+>  	} else {
+>  		retval = int_pow((lightness + (16 * scale)) / 116, 3);
+>  		retval = DIV_ROUND_CLOSEST_ULL(retval, (scale * scale));
+> -- 
+> 2.20.1
