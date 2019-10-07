@@ -2,76 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 077CFCE415
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:47:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B180DCE420
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:47:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727903AbfJGNr2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 09:47:28 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44574 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727324AbfJGNr2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 09:47:28 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CAF594FCDA;
-        Mon,  7 Oct 2019 13:47:27 +0000 (UTC)
-Received: from shalem.localdomain.com (ovpn-116-197.ams2.redhat.com [10.36.116.197])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B71AF66A06;
-        Mon,  7 Oct 2019 13:47:25 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-crypto@vger.kernel.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Arvind Sankar <nivedita@alum.mit.edu>
-Subject: [PATCH v2 5.4 regression fix] x86/boot: Provide memzero_explicit
+        id S1728502AbfJGNrr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 09:47:47 -0400
+Received: from relay10.mail.gandi.net ([217.70.178.230]:41537 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728414AbfJGNrg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 09:47:36 -0400
+Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 2A111240013;
+        Mon,  7 Oct 2019 13:47:34 +0000 (UTC)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     linux-rtc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 10/10] rtc: ds1347: handle century register
 Date:   Mon,  7 Oct 2019 15:47:24 +0200
-Message-Id: <20191007134724.4019-1-hdegoede@redhat.com>
+Message-Id: <20191007134724.15505-10-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20191007134724.15505-1-alexandre.belloni@bootlin.com>
+References: <20191007134724.15505-1-alexandre.belloni@bootlin.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 07 Oct 2019 13:47:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The purgatory code now uses the shared lib/crypto/sha256.c sha256
-implementation. This needs memzero_explicit, implement this.
+The DS1347 can handle years from 0 to 9999, add century register support.
 
-Reported-by: Arvind Sankar <nivedita@alum.mit.edu>
-Fixes: 906a4bb97f5d ("crypto: sha256 - Use get/put_unaligned_be32 to get input, memzero_explicit")
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
-Changes in v2:
-- Add barrier_data() call after the memset, making the function really
-  explicit. Using barrier_data() works fine in the purgatory (build)
-  environment.
----
- arch/x86/boot/compressed/string.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/rtc/rtc-ds1347.c | 37 ++++++++++++++++++++++++-------------
+ 1 file changed, 24 insertions(+), 13 deletions(-)
 
-diff --git a/arch/x86/boot/compressed/string.c b/arch/x86/boot/compressed/string.c
-index 81fc1eaa3229..654a7164a702 100644
---- a/arch/x86/boot/compressed/string.c
-+++ b/arch/x86/boot/compressed/string.c
-@@ -50,6 +50,12 @@ void *memset(void *s, int c, size_t n)
- 	return s;
- }
+diff --git a/drivers/rtc/rtc-ds1347.c b/drivers/rtc/rtc-ds1347.c
+index a49ce9991916..7025cf3fb9f8 100644
+--- a/drivers/rtc/rtc-ds1347.c
++++ b/drivers/rtc/rtc-ds1347.c
+@@ -26,6 +26,7 @@
+ #define DS1347_DAY_REG		0x0B
+ #define DS1347_YEAR_REG		0x0D
+ #define DS1347_CONTROL_REG	0x0F
++#define DS1347_CENTURY_REG	0x13
+ #define DS1347_STATUS_REG	0x17
+ #define DS1347_CLOCK_BURST	0x3F
  
-+void memzero_explicit(void *s, size_t count)
-+{
-+	memset(s, 0, count);
-+	barrier_data(s);
-+}
-+
- void *memmove(void *dest, const void *src, size_t n)
+@@ -49,9 +50,9 @@ static const struct regmap_access_table ds1347_access_table = {
+ static int ds1347_read_time(struct device *dev, struct rtc_time *dt)
  {
- 	unsigned char *d = dest;
+ 	struct regmap *map = dev_get_drvdata(dev);
+-	unsigned int status;
+-	int err;
++	unsigned int status, century, secs;
+ 	unsigned char buf[8];
++	int err;
+ 
+ 	err = regmap_read(map, DS1347_STATUS_REG, &status);
+ 	if (err)
+@@ -60,9 +61,19 @@ static int ds1347_read_time(struct device *dev, struct rtc_time *dt)
+ 	if (status & DS1347_OSF_BIT)
+ 		return -EINVAL;
+ 
+-	err = regmap_bulk_read(map, DS1347_CLOCK_BURST, buf, 8);
+-	if (err)
+-		return err;
++	do {
++		err = regmap_bulk_read(map, DS1347_CLOCK_BURST, buf, 8);
++		if (err)
++			return err;
++
++		err = regmap_read(map, DS1347_CENTURY_REG, &century);
++		if (err)
++			return err;
++
++		err = regmap_read(map, DS1347_SECONDS_REG, &secs);
++		if (err)
++			return err;
++	} while (buf[0] != secs);
+ 
+ 	dt->tm_sec = bcd2bin(buf[0]);
+ 	dt->tm_min = bcd2bin(buf[1] & 0x7f);
+@@ -70,7 +81,7 @@ static int ds1347_read_time(struct device *dev, struct rtc_time *dt)
+ 	dt->tm_mday = bcd2bin(buf[3]);
+ 	dt->tm_mon = bcd2bin(buf[4]) - 1;
+ 	dt->tm_wday = bcd2bin(buf[5]) - 1;
+-	dt->tm_year = bcd2bin(buf[6]) + 100;
++	dt->tm_year = (bcd2bin(century) * 100) + bcd2bin(buf[6]) - 1900;
+ 
+ 	return 0;
+ }
+@@ -78,6 +89,7 @@ static int ds1347_read_time(struct device *dev, struct rtc_time *dt)
+ static int ds1347_set_time(struct device *dev, struct rtc_time *dt)
+ {
+ 	struct regmap *map = dev_get_drvdata(dev);
++	unsigned int century;
+ 	unsigned char buf[8];
+ 	int err;
+ 
+@@ -92,19 +104,18 @@ static int ds1347_set_time(struct device *dev, struct rtc_time *dt)
+ 	buf[3] = bin2bcd(dt->tm_mday);
+ 	buf[4] = bin2bcd(dt->tm_mon + 1);
+ 	buf[5] = bin2bcd(dt->tm_wday + 1);
+-
+-	/* year in linux is from 1900 i.e in range of 100
+-	in rtc it is from 00 to 99 */
+-	dt->tm_year = dt->tm_year % 100;
+-
+-	buf[6] = bin2bcd(dt->tm_year);
++	buf[6] = bin2bcd(dt->tm_year % 100);
+ 	buf[7] = bin2bcd(0x00);
+ 
+-	/* write the rtc settings */
+ 	err = regmap_bulk_write(map, DS1347_CLOCK_BURST, buf, 8);
+ 	if (err)
+ 		return err;
+ 
++	century = (dt->tm_year / 100) + 19;
++	err = regmap_write(map, DS1347_CENTURY_REG, century);
++	if (err)
++		return err;
++
+ 	return regmap_update_bits(map, DS1347_STATUS_REG,
+ 				  DS1347_NEOSC_BIT | DS1347_OSF_BIT, 0);
+ }
 -- 
-2.23.0
+2.21.0
 
