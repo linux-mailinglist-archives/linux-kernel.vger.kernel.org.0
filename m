@@ -2,102 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0885BCE585
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:42:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 554F7CE596
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:44:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728044AbfJGOmt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 10:42:49 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53822 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727711AbfJGOms (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 10:42:48 -0400
-Received: by mail-wm1-f68.google.com with SMTP id i16so12977501wmd.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 07:42:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0kl+DAj1oCg+aQcQu6D5DV3XjvnFcsuot+q3ncQGbNg=;
-        b=1APETO5dW5o/P6Bf0/LysOTzFrtKEin7/g+Es/v671W7F2gfUXc5xQ/UqZvhegttkQ
-         Q9qHf/nCa2w6h2TBH6GiIpmYBeGKbQf704cUluye9KUV1/ZFscSqtebTOC857bbLoV9i
-         bFqJaKz/xGcly7fkB3JpVz6EI5DJT2oYMmO6eMtFUtzjCvheQS5tlg94nfrbvBaqobjK
-         qKKaIi+OzCbRD/NO6Y0mki7kQQ/iT993PFbtZrkkGeZhS2KLDZDORxECOgdLFUDnWoBd
-         Ozygifu9Aiouwto0rx5J7wLAy4U6naxGLp9lARRKoU/yOUBJ3a99PsYRu17vHd2kPz0+
-         MIVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0kl+DAj1oCg+aQcQu6D5DV3XjvnFcsuot+q3ncQGbNg=;
-        b=h4gOZHyEyyGTz5S2GKPkGBQLL2Y/0iE93fGPPF52tgNY473sPTADuLxczfez6BRKMa
-         OFY1kjLeZxatbIEWSqm7yCb8bSRFAJRbSLqwa4GvKyI2yPwDMcN73d/sRiNK9jFsJm1U
-         lWds4QBlnzEUrb6yR9uAKZYtelaVSj2BKV+5lclgp+HATmDCu1xGpiQXZecoL0RhM04L
-         ng+7DAXHxRVKskYZGDDAbVbQaWuZdos6DGczi+oMhWOxiqGxl1JWpvd7R/DWVNdoNdqt
-         UkMcgJtBA3NwWqakVHBkEdfTc/Tjgp9AihS2iyHRKVqoQmKudLfnX7bpz1T+w9lYgx1Q
-         x6cA==
-X-Gm-Message-State: APjAAAWVrdLdMjSt+LwPnkm8HftaZoa+kHEOF5Ck6X1n0ondRvTql1bk
-        2UIy92xDOW7miL71Pfgxy9w/nw==
-X-Google-Smtp-Source: APXvYqzGiEZjoZdI1oEjJFuGvM2gE1Fi2waku98ts48QCWrm+IFggCsmK6LJTaueX3QZI/RfatXNuw==
-X-Received: by 2002:a7b:c7d4:: with SMTP id z20mr20958580wmk.49.1570459366588;
-        Mon, 07 Oct 2019 07:42:46 -0700 (PDT)
-Received: from localhost (ip-213-220-235-50.net.upcbroadband.cz. [213.220.235.50])
-        by smtp.gmail.com with ESMTPSA id q15sm31743144wrg.65.2019.10.07.07.42.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2019 07:42:46 -0700 (PDT)
-Date:   Mon, 7 Oct 2019 16:42:45 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     syzbot <syzbot+9cb7edb2906ea1e83006@syzkaller.appspotmail.com>
-Cc:     alex.aring@gmail.com, davem@davemloft.net, jiri@mellanox.com,
-        linux-kernel@vger.kernel.org, linux-wpan@vger.kernel.org,
-        netdev@vger.kernel.org, stefan@datenfreihafen.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: KASAN: use-after-free Read in __cfg8NUM_wpan_dev_from_attrs
-Message-ID: <20191007144245.GC2326@nanopsycho>
-References: <00000000000035a04b059452bc21@google.com>
+        id S1728031AbfJGOoZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 10:44:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55248 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727490AbfJGOoY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 10:44:24 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BAD9D21721;
+        Mon,  7 Oct 2019 14:44:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570459464;
+        bh=VtWId5vYYsclunErfb5u6anv5q7krptmTQWAa+3fm0o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=y/zA5wDpgBSS11fa0DPaotgCqyxAoUoP9sjoIkwDWeErZuOUvC9zQ1cht0PlgJCz7
+         oDOWEFjt3bzZFMMkF97mKTsU/ISIiQrBAPj2O+qpMWGY2JRAVAA9w6qLmhdCbLR5Qq
+         c2q9JMvQKLIEaZvl2XAwY0aDEx/POtvwuHZgOkxc=
+Date:   Mon, 7 Oct 2019 16:44:21 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Rich Felker <dalias@libc.org>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jiri Slaby <jslaby@suse.com>, linux-sh@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v4 0/2] drivers: make early_platform code SuperH-specific
+Message-ID: <20191007144421.GA966763@kroah.com>
+References: <20191003092913.10731-1-brgl@bgdev.pl>
+ <20191004130031.GA596158@kroah.com>
+ <20191004132025.GQ16318@brightrain.aerifal.cx>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <00000000000035a04b059452bc21@google.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20191004132025.GQ16318@brightrain.aerifal.cx>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mon, Oct 07, 2019 at 04:19:09PM CEST, syzbot+9cb7edb2906ea1e83006@syzkaller.appspotmail.com wrote:
->Hello,
->
->syzbot found the following crash on:
->
->HEAD commit:    056ddc38 Merge branch 'stmmac-next'
->git tree:       net-next
->console output: https://syzkaller.appspot.com/x/log.txt?x=125aaafd600000
->kernel config:  https://syzkaller.appspot.com/x/.config?x=d9be300620399522
->dashboard link: https://syzkaller.appspot.com/bug?extid=9cb7edb2906ea1e83006
->compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1232bb3f600000
->C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=162d0d0b600000
->
->The bug was bisected to:
->
->commit 75cdbdd089003cd53560ff87b690ae911fa7df8e
->Author: Jiri Pirko <jiri@mellanox.com>
->Date:   Sat Oct 5 18:04:37 2019 +0000
->
->    net: ieee802154: have genetlink code to parse the attrs during dumpit
->
->bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11be5d0b600000
->final crash:    https://syzkaller.appspot.com/x/report.txt?x=13be5d0b600000
->console output: https://syzkaller.appspot.com/x/log.txt?x=15be5d0b600000
->
->IMPORTANT: if you fix the bug, please add the following tag to the commit:
->Reported-by: syzbot+9cb7edb2906ea1e83006@syzkaller.appspotmail.com
->Fixes: 75cdbdd08900 ("net: ieee802154: have genetlink code to parse the attrs
->during dumpit")
->
->netlink: 'syz-executor134': attribute type 6 has an invalid length.
->==================================================================
->BUG: KASAN: use-after-free in nla_memcpy+0xa2/0xb0 lib/nlattr.c:572
+On Fri, Oct 04, 2019 at 09:20:25AM -0400, Rich Felker wrote:
+> On Fri, Oct 04, 2019 at 03:00:31PM +0200, Greg Kroah-Hartman wrote:
+> > On Thu, Oct 03, 2019 at 11:29:11AM +0200, Bartosz Golaszewski wrote:
+> > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > > 
+> > > Some time ago I started a discussion about the need for a proper early device
+> > > probing mechanism[1]. One that would be based on real platform drivers and
+> > > support both platform data and device tree.
+> > > 
+> > > While we're far from reaching any consensus on the implementation, Arnd
+> > > suggested that I start off by moving the SuperH-specific early platform
+> > > drivers implementation to arch/sh[2].
+> > > 
+> > > This series is the first attempt at making way for a new, less hacky
+> > > implementation.
+> > > 
+> > > The first patch moves all the early_platform code to arch/sh.
+> > > 
+> > > The second patch prefixes all early_platform symbols with 'sh_'.
+> > > 
+> > > [1] https://lkml.org/lkml/2018/4/26/657
+> > > [2] https://lkml.org/lkml/2018/4/27/239
+> > > 
+> > > v1 -> v2:
+> > > - certain drivers are compiled for arm/mach-shmobile too - we need to
+> > >   add ifdefs for CONFIG_SUPERH around early_platform calls
+> > > 
+> > > v2 -> v3:
+> > > - added a stub for is_early_platform_device() which always returns false
+> > >   on non-SuperH architectures
+> > > 
+> > > v3 -> v4:
+> > > - rebased on top of v5.4-rc1
+> > > - removed patches that are already upstream from the series
+> > > 
+> > > Bartosz Golaszewski (2):
+> > >   drivers: move the early platform device support to arch/sh
+> > >   sh: add the sh_ prefix to early platform symbols
+> > 
+> > I like this, any objection from anyone if I take this in my driver-core
+> > tree for 5.5-rc1?
+> 
+> I don't think I have any objection. It will probably make gratuitous
+> merge conflicts with Sato-san's old device tree sh4 work when we get
+> back to finishing that, but that's not really a big deal.
 
-I'm on this.
+Ok, I've queued it up in my tree now, thanks,
+
+greg k-h
