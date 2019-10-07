@@ -2,86 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D3A9CE553
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:33:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B22FCE55E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:34:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728455AbfJGOd2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 10:33:28 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:32828 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726334AbfJGOd2 (ORCPT
+        id S1728111AbfJGOeU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 10:34:20 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:15408 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728417AbfJGOeS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 10:33:28 -0400
-Received: by mail-pg1-f194.google.com with SMTP id i76so1178999pgc.0;
-        Mon, 07 Oct 2019 07:33:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=vgkfuDOHZBQgZuKFercCCu0wiKIxFanlyd00oLyvMvM=;
-        b=pF/ZsIKCD8HlMzrr23xeqTLPzdvtKCYji/HAPtta0Yi6KW2ChioIEADwFGgpk3cL2/
-         bwOsASpK5R+dtoUZoE6IRLXmIGvZJI00e07xbyAa8bB090MOkcOHjjbHzj/5670kvv4L
-         A7z2YVxnllI6Apr61r28cygDdm61c1HxE/E9fxT3K8xz9z3Rt2TnEe1YXF0Y4/VRK+c9
-         7a4WETwD0GA20Yztdy6sJF1S1KPBEwmJSrfYdVYlEUmqa6Z+owx2iud1O5X8qJ79G2GW
-         WxgzmyCyKPP3D6Nd9V4Ok7ILtP8sV4d/Bi2HVYcY0lT6Bmn5RMSFdfUM/Tx9Fb4Y2Bw8
-         WRmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vgkfuDOHZBQgZuKFercCCu0wiKIxFanlyd00oLyvMvM=;
-        b=VCsuRwfe6DSB/eFWZj0BM9APyZ65J76LXBLBpS5pcB0zkDX3Etj7OswFjZU47v5z2x
-         ELvzKyXHFDtppvRM6Hg2hqLDzgs5s0eNOjUOEebY5tOx49IAINPfcxTb94rcmd6yFO6A
-         8tYE8En8kT4BOdexNULm1WZe8iwEIWbaJ/hLZC1MILxpAathTE9MAMBLhDISEA0+P/fL
-         w5hIlSfVKA4quQeOr5R0qN/on8A/Fs8+QO7o11r6ezvCkUuTDwmQ4fRQYs+IzKXa3GjN
-         jKRJ+Pz6nNUq9SBVUwfCxO/JdJlp2oSPAojNysDpTwxsPagC4lrwroPLK5KgRxQm+F0+
-         FKPg==
-X-Gm-Message-State: APjAAAVTEMEMGDgFUKPLxhgZSIUCCwKyF1oClW3irkGBqpCJag+0mPNB
-        3Nu5oq6cUyaoH0WOgXKzy/4Bo1EV
-X-Google-Smtp-Source: APXvYqwEJYxwloVh+NwNmuMKM7pGr4DLSQcQ5LDAFiFp6/5etwTOqAi3+Ay0jH+PqeYn+PVb4OEoCg==
-X-Received: by 2002:a17:90a:8991:: with SMTP id v17mr32598122pjn.127.1570458807387;
-        Mon, 07 Oct 2019 07:33:27 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id l192sm22148953pga.92.2019.10.07.07.33.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Oct 2019 07:33:26 -0700 (PDT)
-Subject: Re: [PATCH 5.2 000/137] 5.2.20-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20191006171209.403038733@linuxfoundation.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <82db8361-c3ab-b48f-ecfb-eda9b6b0d726@roeck-us.net>
-Date:   Mon, 7 Oct 2019 07:33:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 7 Oct 2019 10:34:18 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x97EVeYl021701;
+        Mon, 7 Oct 2019 16:34:05 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=Z6JwJ7BA4jHWAT0HHOYTMuKD4KHqxvNFYvDntJKt8Cs=;
+ b=ztBt+TDuhXSbnwSv2ZtYNw8umrUsXzzT28B7eT7txWClmlqFX8U9d13MZfm3mADgPVI0
+ pyIWyQfGi3xA/E9bQamRyIpj+MhZ6ogzVFyq7eIe4RyYPwNGy4NiuxiZsTCWBeapien2
+ /R8CE2yAekiUaTD1zBX/NRoSC+APC3aZ1wes83NZ3fVUAwN1tH19PMqWWMriO07gbD+P
+ 0y15Myl2QNpR0Lk70a7kvnJe6Xa5aJ//eSlcsV28P2RDUl6UnJ3qx/47b9H7Re15t0Hr
+ 4WZ8Xq7UZI1TdYPoDf/x5KmSmc/Kv55It80+dWBVtlvp5OSQNlPwhkpfIAJoL0MJWeMx 9Q== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2vegn0jw3s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 07 Oct 2019 16:34:05 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 20FAB10002A;
+        Mon,  7 Oct 2019 16:34:05 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E51362B4929;
+        Mon,  7 Oct 2019 16:34:04 +0200 (CEST)
+Received: from localhost (10.75.127.46) by SFHDAG3NODE2.st.com (10.75.127.8)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 7 Oct 2019 16:34:04
+ +0200
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>, <arnd@arndb.de>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/4] ARM: dts: stm32: Add fixes to be compliant with DT validation tool
+Date:   Mon, 7 Oct 2019 16:33:58 +0200
+Message-ID: <20191007143402.13266-1-alexandre.torgue@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-07_02:2019-10-07,2019-10-07 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/6/19 10:19 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.2.20 release.
-> There are 137 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Tue 08 Oct 2019 05:07:10 PM UTC.
-> Anything received after that time might be too late.
-> 
+This series updates STM32 DT files in order to clean some issues seen during
+STM32 device trees validation ("make dtbs_check"). 
 
-Build results:
-	total: 159 pass: 159 fail: 0
-Qemu test results:
-	total: 390 pass: 390 fail: 0
+Regards
+Alex
 
-Guenter
+
+Alexandre Torgue (4):
+  ARM: dts: stm32: fix memory nodes to match with DT validation tool
+  ARM: dts: stm32: fix joystick node on stm32f746 and stm32mp157c eval
+    boards
+  ARM: dts: stm32: remove usb phy-names entries on stm32mp157c-ev1
+  ARM: dts: stm32: fix regulator-sd_switch node on stm32mp157c-ed1 board
+
+ arch/arm/boot/dts/stm32429i-eval.dts   | 2 +-
+ arch/arm/boot/dts/stm32746g-eval.dts   | 3 +--
+ arch/arm/boot/dts/stm32f429-disco.dts  | 2 +-
+ arch/arm/boot/dts/stm32f469-disco.dts  | 2 +-
+ arch/arm/boot/dts/stm32f746-disco.dts  | 2 +-
+ arch/arm/boot/dts/stm32f769-disco.dts  | 2 +-
+ arch/arm/boot/dts/stm32h743i-disco.dts | 2 +-
+ arch/arm/boot/dts/stm32h743i-eval.dts  | 2 +-
+ arch/arm/boot/dts/stm32mp157a-dk1.dts  | 1 +
+ arch/arm/boot/dts/stm32mp157c-ed1.dts  | 3 ++-
+ arch/arm/boot/dts/stm32mp157c-ev1.dts  | 3 ---
+ 11 files changed, 11 insertions(+), 13 deletions(-)
+
+-- 
+2.17.1
+
