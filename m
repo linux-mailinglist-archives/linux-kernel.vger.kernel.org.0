@@ -2,86 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EAD4CEAA5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 19:30:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7170CEAAF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 19:33:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729169AbfJGRaE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 13:30:04 -0400
-Received: from mga01.intel.com ([192.55.52.88]:16822 "EHLO mga01.intel.com"
+        id S1728413AbfJGRdd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 13:33:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728691AbfJGRaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 13:30:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2019 10:30:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,268,1566889200"; 
-   d="scan'208";a="344795161"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
-  by orsmga004.jf.intel.com with ESMTP; 07 Oct 2019 10:30:01 -0700
-From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     andriy.shevchenko@intel.com
-Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        prarit@redhat.com,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH v2 3/3] tools/power/x86/intel-speed-select: Refuse to disable core-power when getting used
-Date:   Mon,  7 Oct 2019 10:29:59 -0700
-Message-Id: <20191007172959.25912-4-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20191007172959.25912-1-srinivas.pandruvada@linux.intel.com>
-References: <20191007172959.25912-1-srinivas.pandruvada@linux.intel.com>
+        id S1728028AbfJGRdd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 13:33:33 -0400
+Received: from localhost.localdomain (unknown [194.230.155.145])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 574DC206BB;
+        Mon,  7 Oct 2019 17:33:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570469612;
+        bh=89Dgdcnx+TZFIqd6fwq18cEG+oms2xjy64qSLbTDVXA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=j/nSOY2CLSaY6ykV7MPW0ZITidtvOocSQkjkkdODAci1fsN3tiruPdaOAKITrI4Ml
+         ncaMCUiUScL9Ybo60bA5L/7thaGYctYs0zCISt34bZq1WwG91JmX3W6hB4OTq7kZ4i
+         SXGqbbPo3GWtooR229ICb41mvhcyQTAmcqgPrUzc=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v3] drm/amd: Fix Kconfig indentation
+Date:   Mon,  7 Oct 2019 19:33:22 +0200
+Message-Id: <20191007173322.9306-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The turbo-freq feature is dependent on the core-power feature. If the
-core-power feature is disabled while the turbo-freq feature is enabled,
-this will break the turbo-freq feature. This is a firmware limitation,
-where they can't return error under this scenario.
+Adjust indentation from spaces to tab (+optional two spaces) as in
+coding style with command like:
+    $ sed -e 's/^        /\t/' -i */Kconfig
 
-So when trying to disable core-power, make sure that the turbo-freq
-feature is not enabled. If it enabled, return error if user is trying to
-disable the core-power feature.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 ---
- .../power/x86/intel-speed-select/isst-core.c  | 21 +++++++++++++++++++
- 1 file changed, 21 insertions(+)
 
-diff --git a/tools/power/x86/intel-speed-select/isst-core.c b/tools/power/x86/intel-speed-select/isst-core.c
-index 6dee5332c9d3..67d32f2b9bea 100644
---- a/tools/power/x86/intel-speed-select/isst-core.c
-+++ b/tools/power/x86/intel-speed-select/isst-core.c
-@@ -649,6 +649,27 @@ int isst_pm_qos_config(int cpu, int enable_clos, int priority_type)
- 	unsigned int req, resp;
- 	int ret;
+Changes since v2:
+1. Split AMD and i915 to separate patches.
+---
+ drivers/gpu/drm/Kconfig             |  4 ++--
+ drivers/gpu/drm/amd/display/Kconfig | 32 ++++++++++++++---------------
+ 2 files changed, 18 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+index 108e1b7f4564..7cb6e4eb99e8 100644
+--- a/drivers/gpu/drm/Kconfig
++++ b/drivers/gpu/drm/Kconfig
+@@ -226,9 +226,9 @@ config DRM_AMDGPU
+ 	tristate "AMD GPU"
+ 	depends on DRM && PCI && MMU
+ 	select FW_LOADER
+-        select DRM_KMS_HELPER
++	select DRM_KMS_HELPER
+ 	select DRM_SCHED
+-        select DRM_TTM
++	select DRM_TTM
+ 	select POWER_SUPPLY
+ 	select HWMON
+ 	select BACKLIGHT_CLASS_DEVICE
+diff --git a/drivers/gpu/drm/amd/display/Kconfig b/drivers/gpu/drm/amd/display/Kconfig
+index 1bbe762ee6ba..313183b80032 100644
+--- a/drivers/gpu/drm/amd/display/Kconfig
++++ b/drivers/gpu/drm/amd/display/Kconfig
+@@ -23,16 +23,16 @@ config DRM_AMD_DC_DCN2_0
+ 	depends on DRM_AMD_DC && X86
+ 	depends on DRM_AMD_DC_DCN1_0
+ 	help
+-	    Choose this option if you want to have
+-	    Navi support for display engine
++	  Choose this option if you want to have
++	  Navi support for display engine
  
-+	if (!enable_clos) {
-+		struct isst_pkg_ctdp pkg_dev;
-+		struct isst_pkg_ctdp_level_info ctdp_level;
-+
-+		ret = isst_get_ctdp_levels(cpu, &pkg_dev);
-+		if (ret) {
-+			debug_printf("isst_get_ctdp_levels\n");
-+			return ret;
-+		}
-+
-+		ret = isst_get_ctdp_control(cpu, pkg_dev.current_level,
-+					    &ctdp_level);
-+		if (ret)
-+			return ret;
-+
-+		if (ctdp_level.fact_enabled) {
-+			debug_printf("Turbo-freq feature must be disabled first\n");
-+			return -EINVAL;
-+		}
-+	}
-+
- 	ret = isst_send_mbox_command(cpu, CONFIG_CLOS, CLOS_PM_QOS_CONFIG, 0, 0,
- 				     &resp);
- 	if (ret)
+ config DRM_AMD_DC_DCN2_1
+-        bool "DCN 2.1 family"
+-        depends on DRM_AMD_DC && X86
+-        depends on DRM_AMD_DC_DCN2_0
+-        help
+-            Choose this option if you want to have
+-            Renoir support for display engine
++	bool "DCN 2.1 family"
++	depends on DRM_AMD_DC && X86
++	depends on DRM_AMD_DC_DCN2_0
++	help
++	  Choose this option if you want to have
++	  Renoir support for display engine
+ 
+ config DRM_AMD_DC_DSC_SUPPORT
+ 	bool "DSC support"
+@@ -41,16 +41,16 @@ config DRM_AMD_DC_DSC_SUPPORT
+ 	depends on DRM_AMD_DC_DCN1_0
+ 	depends on DRM_AMD_DC_DCN2_0
+ 	help
+-	    Choose this option if you want to have
+-	    Dynamic Stream Compression support
++	  Choose this option if you want to have
++	  Dynamic Stream Compression support
+ 
+ config DRM_AMD_DC_HDCP
+-        bool "Enable HDCP support in DC"
+-        depends on DRM_AMD_DC
+-        help
+-         Choose this option
+-         if you want to support
+-         HDCP authentication
++	bool "Enable HDCP support in DC"
++	depends on DRM_AMD_DC
++	help
++	 Choose this option
++	 if you want to support
++	 HDCP authentication
+ 
+ config DEBUG_KERNEL_DC
+ 	bool "Enable kgdb break in DC"
 -- 
-2.17.2
+2.17.1
 
