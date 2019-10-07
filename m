@@ -2,148 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0EE1CEC2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 20:53:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF312CEC33
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 20:54:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729027AbfJGSxB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 14:53:01 -0400
-Received: from mail-eopbgr750047.outbound.protection.outlook.com ([40.107.75.47]:60456
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728289AbfJGSw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 14:52:57 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gxnfwTDXyT++wLeM+1VpHUUuls3zJyrq+DVPRVxMmzN2+rShmN2O8VcmzEiguWG3rqNVDzyun/GycH0zCCTFLX4ywHBVutnrr9k8ntqogFvXOMliBErHmfgU3AwjKuQ+Mm6Yehh2Ab4g7Fh4RHAijaD+Gl8ln5v/oftKM2YPXjH9DUcYi45Mwjxx58EVXH0Ou05JhW63RQID9c1oMb9a6OE6fuhBmmv8CQkHZR+SEHf4dL76tKBC+JCqC4/uvOh4dFr/xDTOxQ2hSYRlg3vjsSZTKxlGvLMdqysKxgsBiBt705RRFI/cVGOUpifSKc3m/6pTVuqrWEQvCEmwxllBpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VTaKeHXgf5Prw5VTRo31RjtpleuswlB5qdV+CG0qalo=;
- b=Bzgy3NlmbpEIBs2DkM9JRZG01goDEFFKWcIAzAhmdTrszB7wz3RQP3hRP1PTRWVRE5aN1g9eNghV4Z/wnBDLKmwdK9i+qdVZAykYi6yOpbQ/3kBrwCbIgiL3hG1a0G4C5tNiJPjdhZH/Pr2S4xjjFQ35buBa9mOiybNS+dDUXZhStf+1QMG0zMNF/vagoO0o8JjGuL3vincSsi8FVwHEhSg9LiHmEPm9GmBF5//LTIlvYhoyhIWLUlgNpPQpBVMrk5rbu8S3OVq/5i4miaUjATq7q7LPjXekAcSanOFNjdzCJulqTs3PI8F4EYplFD2/8/VGBqrih0SfeND5J87GGg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.60.83) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
- dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
- not signed); arc=none
+        id S1729146AbfJGSy2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 14:54:28 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45107 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728081AbfJGSy1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 14:54:27 -0400
+Received: by mail-wr1-f65.google.com with SMTP id r5so16498490wrm.12
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 11:54:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VTaKeHXgf5Prw5VTRo31RjtpleuswlB5qdV+CG0qalo=;
- b=qEMFQsu10sjKOUGTfUksijxZOEQ/nQ8gxvZ4ksjKBJai9kIdmHjwiiUjw97NpV0ff6CxrMEEFy9tQv+MEtSh+SFMqFV9TY8v541HhVQHPGGnwklKNi1QAo6N0ixRDP51sasqsX/5FYmRHJ9RPhG6B+UwIknO/hN0DxPmnR24klI=
-Received: from CH2PR02CA0023.namprd02.prod.outlook.com (2603:10b6:610:4e::33)
- by SN6PR02MB4912.namprd02.prod.outlook.com (2603:10b6:805:99::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2327.24; Mon, 7 Oct
- 2019 18:52:52 +0000
-Received: from BL2NAM02FT028.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e46::208) by CH2PR02CA0023.outlook.office365.com
- (2603:10b6:610:4e::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2327.24 via Frontend
- Transport; Mon, 7 Oct 2019 18:52:51 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- BL2NAM02FT028.mail.protection.outlook.com (10.152.77.165) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2327.21
- via Frontend Transport; Mon, 7 Oct 2019 18:52:51 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <jolly.shah@xilinx.com>)
-        id 1iHY7n-0003TZ-0l; Mon, 07 Oct 2019 11:52:51 -0700
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <jolly.shah@xilinx.com>)
-        id 1iHY7h-0002EM-Td; Mon, 07 Oct 2019 11:52:45 -0700
-Received: from xsj-pvapsmtp01 (mailman.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id x97Iqf94022517;
-        Mon, 7 Oct 2019 11:52:41 -0700
-Received: from [172.19.2.91] (helo=xsjjollys50.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <jolly.shah@xilinx.com>)
-        id 1iHY7c-00027p-TL; Mon, 07 Oct 2019 11:52:40 -0700
-From:   Jolly Shah <jolly.shah@xilinx.com>
-To:     ard.biesheuvel@linaro.org, mingo@kernel.org,
-        gregkh@linuxfoundation.org, matt@codeblueprint.co.uk,
-        sudeep.holla@arm.com, hkallweit1@gmail.com, keescook@chromium.org,
-        dmitry.torokhov@gmail.com, michal.simek@xilinx.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Jolly Shah <jolly.shah@xilinx.com>
-Subject: [PATCH v2 2/2] drivers: firmware: xilinx: Add support for versal soc
-Date:   Mon,  7 Oct 2019 11:52:23 -0700
-Message-Id: <1570474343-21524-3-git-send-email-jolly.shah@xilinx.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1570474343-21524-1-git-send-email-jolly.shah@xilinx.com>
-References: <1570474343-21524-1-git-send-email-jolly.shah@xilinx.com>
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(136003)(396003)(39860400002)(189003)(199004)(48376002)(126002)(476003)(305945005)(76176011)(486006)(426003)(478600001)(2906002)(107886003)(2616005)(11346002)(5660300002)(9786002)(446003)(7696005)(36756003)(51416003)(106002)(336012)(47776003)(316002)(7416002)(6666004)(356004)(81156014)(81166006)(50226002)(4326008)(44832011)(50466002)(8676002)(186003)(26005)(16586007)(8936002)(70586007)(70206006)(36386004)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR02MB4912;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MQcOGUTHfO/bHwXtRoACnVGMfWQ7WlONlR3KblVpn3I=;
+        b=XszFQacSBW4ktTMc6TvptZPfwjJCzK9C16AwItg41HgWbI8R4mCw0qrQVum2W02ywO
+         4vrQbaR/aX5Anv77ybANXeuPdJwFt5XWJOq17xCRHVbBDtcPT0eamMG1DBiwa7/EMZxk
+         nGW21Ys/3OIAMKezIA4HuASy+f9PKIS4GLS6z32nVoC6RARkjix5TvT5ZZXesY0zusZS
+         mz+0ZbPZNabeiLdOcNQ7qvsKRplT06+VPlGSAjz0q/GGTaeJe6+MwxyX/mzTJVXjNz87
+         CRKH1nKJ3Jg1NIfGPK7izd0mW3wPqve6DTo6mnNNu/F5ZR+DOC6hbUl33D/81OVBdMJC
+         EAEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MQcOGUTHfO/bHwXtRoACnVGMfWQ7WlONlR3KblVpn3I=;
+        b=i/xBV0vEfuOO87JSoyX9ijCvWRXMscVjp0AfAAQ9q6GYENqwTIcoyjABb3vANKBTGm
+         DiIH8rODwtyQzf3VbycB+Je+/AxvyFI3/mz+OEYr7K7a1she8PA6nXId+MMhfR150lWp
+         0CnTyiUMNyZ9b8bm28DqXQl87OY/dv5UX6r3asx8t8BIW6s8UjVqEbG65g+VsLIFLHmr
+         rupWp7VmRXE5WJQ9VG3ktgNjj4mQwv17Fxj06OaTi8DaozwH09wHqLgK4GaqCTSwvSH+
+         nOTB8yIIxRa26TTmF3lQIzGuV+CIQnDT8/sCu+izwN0ImlquLaTVd50ZU3rB6OoGi/no
+         Oy2g==
+X-Gm-Message-State: APjAAAWDfCqpGWSWoAzP+X1Nfe+ISTjV6ivPiiOGDADMK0QzuOjD7Fdc
+        xhaUFlyZKX4zbxrmy4E/poHThOxik7LVSAKt0+b7T0he
+X-Google-Smtp-Source: APXvYqzON7sOsPzp1Tk+w4HqTa/WQrWkfVsembsWxklnM+yW7t2zngU61jGW9q83KCDxVjYgsyHvvoztig7e4/bxL4s=
+X-Received: by 2002:adf:f287:: with SMTP id k7mr24800437wro.206.1570474465219;
+ Mon, 07 Oct 2019 11:54:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a8372303-7a9a-457a-9718-08d74b578e51
-X-MS-TrafficTypeDiagnostic: SN6PR02MB4912:
-X-Microsoft-Antispam-PRVS: <SN6PR02MB491222265DE6696A0A3AD26CB89B0@SN6PR02MB4912.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:561;
-X-Forefront-PRVS: 01834E39B7
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ECxILLhfrlHHfrdMNYFiC7r9HiBe/PX7FZ1Bkuguylm5//nBKE14zTlsMDvVr9DntiLEi+C1S3vD62zPvl3bKlb5A9MoGh9tpsmpdrjjf7kgUvqZ24hqYvD+4ddLRsxxDHddy6vZLMy4cn+KLIwwuMuAvC6hVLbKZytJ+XqOuwb6s/P5ZqbuiExVPBK0DGT/8I9jHTlagC7eqEI8nJyTYJ71CfzArI6uWF/5hbkSWRY0Lx1+DD445foc9fSOJqDhcm8J6DdNN2VFXNauUiaaWojhNyNsJ7ZTmmMK/WgmE8dWj5mR1BpYJihX1VmYBVtsVxpLgkIJZwrYn7U8lg5Dcearg6iXs/cFSePE573tzyewzh0pqp6Ps1jDKxgJJb9Saw9dFvG7HFTiU8+zhacKKoh2VhBmT2iXsr+8f+fwH3E=
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2019 18:52:51.6422
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a8372303-7a9a-457a-9718-08d74b578e51
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB4912
+References: <20191007173322.9306-1-krzk@kernel.org>
+In-Reply-To: <20191007173322.9306-1-krzk@kernel.org>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Mon, 7 Oct 2019 14:54:13 -0400
+Message-ID: <CADnq5_MpRZKTKLbJhzKOS=boP8RwvXPzkk0vBnJeRPgTHxStJQ@mail.gmail.com>
+Subject: Re: [PATCH v3] drm/amd: Fix Kconfig indentation
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Versal is xilinx's next generation soc. This patch adds
-driver support required to be compatible with versal device.
+On Mon, Oct 7, 2019 at 1:33 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> Adjust indentation from spaces to tab (+optional two spaces) as in
+> coding style with command like:
+>     $ sed -e 's/^        /\t/' -i */Kconfig
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Signed-off-by: Jolly Shah <jolly.shah@xilinx.com>
----
- drivers/firmware/xilinx/zynqmp.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Applied.  Thanks!
 
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index fd3d837..75bdfaa 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -711,8 +711,11 @@ static int zynqmp_firmware_probe(struct platform_device *pdev)
- 	int ret;
- 
- 	np = of_find_compatible_node(NULL, NULL, "xlnx,zynqmp");
--	if (!np)
--		return 0;
-+	if (!np) {
-+		np = of_find_compatible_node(NULL, NULL, "xlnx,versal");
-+		if (!np)
-+			return 0;
-+	}
- 	of_node_put(np);
- 
- 	ret = get_set_conduit_method(dev->of_node);
-@@ -770,6 +773,7 @@ static int zynqmp_firmware_remove(struct platform_device *pdev)
- 
- static const struct of_device_id zynqmp_firmware_of_match[] = {
- 	{.compatible = "xlnx,zynqmp-firmware"},
-+	{.compatible = "xlnx,versal-firmware"},
- 	{},
- };
- MODULE_DEVICE_TABLE(of, zynqmp_firmware_of_match);
--- 
-2.7.4
+Alex
 
+>
+> ---
+>
+> Changes since v2:
+> 1. Split AMD and i915 to separate patches.
+> ---
+>  drivers/gpu/drm/Kconfig             |  4 ++--
+>  drivers/gpu/drm/amd/display/Kconfig | 32 ++++++++++++++---------------
+>  2 files changed, 18 insertions(+), 18 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+> index 108e1b7f4564..7cb6e4eb99e8 100644
+> --- a/drivers/gpu/drm/Kconfig
+> +++ b/drivers/gpu/drm/Kconfig
+> @@ -226,9 +226,9 @@ config DRM_AMDGPU
+>         tristate "AMD GPU"
+>         depends on DRM && PCI && MMU
+>         select FW_LOADER
+> -        select DRM_KMS_HELPER
+> +       select DRM_KMS_HELPER
+>         select DRM_SCHED
+> -        select DRM_TTM
+> +       select DRM_TTM
+>         select POWER_SUPPLY
+>         select HWMON
+>         select BACKLIGHT_CLASS_DEVICE
+> diff --git a/drivers/gpu/drm/amd/display/Kconfig b/drivers/gpu/drm/amd/display/Kconfig
+> index 1bbe762ee6ba..313183b80032 100644
+> --- a/drivers/gpu/drm/amd/display/Kconfig
+> +++ b/drivers/gpu/drm/amd/display/Kconfig
+> @@ -23,16 +23,16 @@ config DRM_AMD_DC_DCN2_0
+>         depends on DRM_AMD_DC && X86
+>         depends on DRM_AMD_DC_DCN1_0
+>         help
+> -           Choose this option if you want to have
+> -           Navi support for display engine
+> +         Choose this option if you want to have
+> +         Navi support for display engine
+>
+>  config DRM_AMD_DC_DCN2_1
+> -        bool "DCN 2.1 family"
+> -        depends on DRM_AMD_DC && X86
+> -        depends on DRM_AMD_DC_DCN2_0
+> -        help
+> -            Choose this option if you want to have
+> -            Renoir support for display engine
+> +       bool "DCN 2.1 family"
+> +       depends on DRM_AMD_DC && X86
+> +       depends on DRM_AMD_DC_DCN2_0
+> +       help
+> +         Choose this option if you want to have
+> +         Renoir support for display engine
+>
+>  config DRM_AMD_DC_DSC_SUPPORT
+>         bool "DSC support"
+> @@ -41,16 +41,16 @@ config DRM_AMD_DC_DSC_SUPPORT
+>         depends on DRM_AMD_DC_DCN1_0
+>         depends on DRM_AMD_DC_DCN2_0
+>         help
+> -           Choose this option if you want to have
+> -           Dynamic Stream Compression support
+> +         Choose this option if you want to have
+> +         Dynamic Stream Compression support
+>
+>  config DRM_AMD_DC_HDCP
+> -        bool "Enable HDCP support in DC"
+> -        depends on DRM_AMD_DC
+> -        help
+> -         Choose this option
+> -         if you want to support
+> -         HDCP authentication
+> +       bool "Enable HDCP support in DC"
+> +       depends on DRM_AMD_DC
+> +       help
+> +        Choose this option
+> +        if you want to support
+> +        HDCP authentication
+>
+>  config DEBUG_KERNEL_DC
+>         bool "Enable kgdb break in DC"
+> --
+> 2.17.1
+>
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
