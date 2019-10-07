@@ -2,126 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EF97CECDF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 21:35:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8F6DCECF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 21:47:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728792AbfJGTfl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 15:35:41 -0400
-Received: from mga18.intel.com ([134.134.136.126]:16422 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728212AbfJGTfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 15:35:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2019 12:35:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,269,1566889200"; 
-   d="scan'208";a="205174650"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga002.jf.intel.com with ESMTP; 07 Oct 2019 12:35:40 -0700
-Date:   Mon, 7 Oct 2019 12:39:12 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>
-Cc:     "Yi Liu" <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        "Christoph Hellwig" <hch@infradead.org>,
-        "Lu Baolu" <baolu.lu@linux.intel.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v4 0/4] User API for nested shared virtual address (SVA)
-Message-ID: <20191007123912.60c19a79@jacob-builder>
-In-Reply-To: <1570045363-24856-1-git-send-email-jacob.jun.pan@linux.intel.com>
-References: <1570045363-24856-1-git-send-email-jacob.jun.pan@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1728567AbfJGTrl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 15:47:41 -0400
+Received: from www17.your-server.de ([213.133.104.17]:42296 "EHLO
+        www17.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728187AbfJGTrk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 15:47:40 -0400
+X-Greylist: delayed 1120 seconds by postgrey-1.27 at vger.kernel.org; Mon, 07 Oct 2019 15:47:39 EDT
+Received: from sslproxy05.your-server.de ([78.46.172.2])
+        by www17.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <thomas@m3y3r.de>)
+        id 1iHYgk-0000RR-24; Mon, 07 Oct 2019 21:28:58 +0200
+Received: from [2a02:908:4c22:ec00:8ad5:993:4cda:a89f] (helo=localhost.localdomain)
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <thomas@m3y3r.de>)
+        id 1iHYgj-000I8G-RV; Mon, 07 Oct 2019 21:28:57 +0200
+From:   Thomas Meyer <thomas@m3y3r.de>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux@rasmusvillemoes.dk, Thomas Meyer <thomas@m3y3r.de>
+Subject: [PATCH] kernel/groups.c: use bsearch library function
+Date:   Mon,  7 Oct 2019 21:26:32 +0200
+Message-Id: <20191007192632.29535-1-thomas@m3y3r.de>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: thomas@m3y3r.de
+X-Virus-Scanned: Clear (ClamAV 0.101.4/25595/Mon Oct  7 10:28:44 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joerg and all,
+commit b7b2562f7252 ("kernel/groups.c: use sort library function")
+introduced the sort library function.
+also use the bsearch library function instead of open-coding the binary
+search.
 
-Just wondering if you have more comments on this series.
+Signed-off-by: Thomas Meyer <thomas@m3y3r.de>
+---
+ kernel/groups.c | 17 ++++-------------
+ 1 file changed, 4 insertions(+), 13 deletions(-)
 
-Thanks,
+diff --git a/kernel/groups.c b/kernel/groups.c
+index daae2f2dc6d4f..69561a9cb4d39 100644
+--- a/kernel/groups.c
++++ b/kernel/groups.c
+@@ -2,6 +2,7 @@
+ /*
+  * Supplementary group IDs
+  */
++#include <linux/bsearch.h>
+ #include <linux/cred.h>
+ #include <linux/export.h>
+ #include <linux/slab.h>
+@@ -96,22 +97,12 @@ EXPORT_SYMBOL(groups_sort);
+ /* a simple bsearch */
+ int groups_search(const struct group_info *group_info, kgid_t grp)
+ {
+-	unsigned int left, right;
+-
+ 	if (!group_info)
+ 		return 0;
+ 
+-	left = 0;
+-	right = group_info->ngroups;
+-	while (left < right) {
+-		unsigned int mid = (left+right)/2;
+-		if (gid_gt(grp, group_info->gid[mid]))
+-			left = mid + 1;
+-		else if (gid_lt(grp, group_info->gid[mid]))
+-			right = mid;
+-		else
+-			return 1;
+-	}
++	if (bsearch(&grp, group_info->gid, group_info->ngroups,
++		    sizeof(*group_info->gid), gid_cmp))
++		return 1;
+ 	return 0;
+ }
+ 
+-- 
+2.21.0
 
-Jacob
-
-On Wed,  2 Oct 2019 12:42:39 -0700
-Jacob Pan <jacob.jun.pan@linux.intel.com> wrote:
-
-> This set consists of IOMMU APIs to support SVA in the guest, a.k.a
-> nested SVA. As the complete SVA support is complex, we break down the
-> enabling effort into three stages:
-> 1. PCI device direct assignment
-> 2. Fault handling, especially page request service support
-> 3. Mediated device assignment
-> 
-> Each stage includes common API and vendor specific IOMMU driver
-> changes. This series is the common uAPI for stage #1. It is intended
-> to build consensus on the interface which all vendors reply on.
-> 
-> This series is extracted from the complete stage1 set which includes
-> VT-d code. https://lkml.org/lkml/2019/8/15/951
-> 
-> Changes:
->  - Use spinlock instead of mutex to protect ioasid custom allocators.
-> This is to support callers in atomic context
->  - Added more padding to guest PASID bind data for future extensions,
-> suggested by Joerg.
-> After much thinking, I did not do name change from PASID to IOASID in
-> the uAPI, considering we have been using PASID in the rest of uAPIs.
-> IOASID will remain used within the kernel.
-> 
-> For more discussions lead to this series, checkout LPC 2019
-> VFIO/IOMMU/PCI microconference materials.
-> https://linuxplumbersconf.org/event/4/sessions/66/#20190909
-> 
-> 
-> Change log:
-> v4:    - minor patch regroup and fixes based on review from Jean
-> v3:    - include errno.h in ioasid.h to fix compile error
->        - rebased to v5.4-rc1, no change
->  
-> v2:
-> 	- Addressed review comments by Jean on IOASID custom
-> allocators, locking fix, misc control flow fix.
-> 	- Fixed a compile error with missing header errno.h
-> 	- Updated Jean-Philiippe's new email and updateded
-> reviewed-by tag
-> 
-> Jacob Pan (2):
->   iommu/ioasid: Add custom allocators
->   iommu: Introduce guest PASID bind function
-> 
-> Jean-Philippe Brucker (1):
->   iommu: Add I/O ASID allocator
-> 
-> Yi L Liu (1):
->   iommu: Introduce cache_invalidate API
-> 
->  drivers/iommu/Kconfig      |   4 +
->  drivers/iommu/Makefile     |   1 +
->  drivers/iommu/ioasid.c     | 422
-> +++++++++++++++++++++++++++++++++++++++++++++
-> drivers/iommu/iommu.c      |  30 ++++ include/linux/ioasid.h     |
-> 76 ++++++++ include/linux/iommu.h      |  36 ++++
->  include/uapi/linux/iommu.h | 169 ++++++++++++++++++
->  7 files changed, 738 insertions(+)
->  create mode 100644 drivers/iommu/ioasid.c
->  create mode 100644 include/linux/ioasid.h
-> 
-
-[Jacob Pan]
