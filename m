@@ -2,106 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45009D0091
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 20:15:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92DFAD0099
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 20:16:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728462AbfJHSPT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 14:15:19 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38837 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbfJHSPT (ORCPT
+        id S1729888AbfJHSQW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 14:16:22 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:54948 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726138AbfJHSQW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 14:15:19 -0400
-Received: by mail-pg1-f193.google.com with SMTP id x10so10705494pgi.5
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 11:15:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=LZNljN/AkdZhmtnZA8uLQ3poagOBASW7ZSNDsz+/4TI=;
-        b=kwoc3wm2rR3CIvUhtdBdlhmWm/YevOQgX/fD++B9Iejzidcl2fLkhoXtCuWqKWjo+S
-         etvhAve6tI2G+/U4buEu4yBSn3NIaEdAQ6/qvHF6ACUEeg/y29D4conmgY4TJt7WSRN4
-         PInLB3D9DEiqS2yAkJkKAn4CjlIW7sxlBqDBE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=LZNljN/AkdZhmtnZA8uLQ3poagOBASW7ZSNDsz+/4TI=;
-        b=oYjkFQdNA1Yndka5hc2ThS1vs1hfhkUGtvYgjnXfTntWaTVveS0O1TwT3PzkNnsY6k
-         P7BeQcZQcL5rrZv1b5d7eUylt4jTYpC1euvxciFTqf0ghlvVUJFJHRVRbxAXbvKEtIbD
-         aNcc32HstoH8j0EpdSUI10RK9FAH/vqNITgYUj5S41hdyR/fbg/LMU2gEytYVL5H3E6j
-         DDYKrL7LXU/B9NK0Rs9NTHxV8UWIhGYkSjhR26YyLcroUipnCg2ZDRHx8H+IracwfaoY
-         /hR6XF36kNzbBeICrKGrEQZpyEjHBQ0/7PVS+mzyDPJ9withYWwghrJ9ZAPLQJspkStS
-         7cwg==
-X-Gm-Message-State: APjAAAUIlfMVB5sf10/hSA6d9KDyujKioOWkCrpgYCzXDhidavEKghmc
-        ddCKm1kkKOHsEg80GowK9W2F0g==
-X-Google-Smtp-Source: APXvYqzYjnU+6t/eIHObkAKBvtTJwWuCd0pBBXRV6LW14MPtb06wVjGqmQ3hz203J6/CQf9wDdhylQ==
-X-Received: by 2002:a17:90a:1150:: with SMTP id d16mr7594707pje.2.1570558516852;
-        Tue, 08 Oct 2019 11:15:16 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id p189sm20549336pfp.163.2019.10.08.11.15.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2019 11:15:15 -0700 (PDT)
-Date:   Tue, 8 Oct 2019 11:15:14 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     David Gow <davidgow@google.com>, shuah@kernel.org,
-        akpm@linux-foundation.org, linux-kselftest@vger.kernel.org,
-        kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] lib/list-test: add a test for the 'list' doubly linked
- list
-Message-ID: <201910081110.C2C582408F@keescook>
-References: <20191007213633.92565-1-davidgow@google.com>
- <20191008174837.GA155928@google.com>
+        Tue, 8 Oct 2019 14:16:22 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x98IFZYd055295;
+        Tue, 8 Oct 2019 13:15:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1570558535;
+        bh=MHbt/egTxGNc/lCwyNbm8rdYzujVZ7DY1baO8ocVABU=;
+        h=From:To:CC:Subject:Date;
+        b=c3Y+k5fgd7o03DtgIecpJ/TGaYIJGTN0hde/Hu9HP21ivAvfZjAR1Ej1ZJJ/XE1L6
+         HKJQrAhfAZyVGu4GLaEEjfgtY7u0vlZ5E12Fos/zlSNhfsz9UI38rlD2FwzH/GdKza
+         OtOaDPet+pflnPMTxUc8wzLPMsCDRKOlogeoJTKo=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x98IFZ72085052
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 8 Oct 2019 13:15:35 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 8 Oct
+ 2019 13:15:32 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 8 Oct 2019 13:15:35 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x98IFZD4029023;
+        Tue, 8 Oct 2019 13:15:35 -0500
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <broonie@kernel.org>
+CC:     <alsa-devel@alsa-project.org>, <lgirdwood@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <navada@ti.com>, <perex@perex.cz>,
+        <tiwai@suse.com>, Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH 1/2] ASoc: Add Texas Instruments TAS2562 amplifier binding
+Date:   Tue, 8 Oct 2019 13:15:16 -0500
+Message-ID: <20191008181517.5332-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191008174837.GA155928@google.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 10:48:37AM -0700, Brendan Higgins wrote:
-> On Mon, Oct 07, 2019 at 02:36:33PM -0700, David Gow wrote:
-> > This change adds a KUnit test for the kernel doubly linked list
-> > implementation in include/linux/list.h
-> > 
-> > Note that, at present, it only tests the list_ types (not the
-> > singly-linked hlist_), and does not yet test all of the
-> > list_for_each_entry* macros (and some related things like
-> > list_prepare_entry).
-> > 
-> > This change depends on KUnit, so should be merged via the 'test' branch:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git/log/?h=test
-> > 
-> > Signed-off-by: David Gow <davidgow@google.com>
-> > ---
-> >  lib/Kconfig.debug |  12 +
-> >  lib/Makefile      |   3 +
-> >  lib/list-test.c   | 711 ++++++++++++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 726 insertions(+)
-> >  create mode 100644 lib/list-test.c
-> 
-> Also, I think it might be good to make a MAINTAINERs entry for this
-> test.
+Add the DT binding for the TAS2562 amplifier.
 
-Another thought, though maybe this is already covered and I missed the
-"best practices" notes on naming conventions.
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ .../devicetree/bindings/sound/tas2562.txt     | 34 +++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/tas2562.txt
 
-As the "one-off" tests are already named "foo_test.c" it seems like
-KUnit tests should be named distinctly. Should this be lib/kunit-list.c,
-lib/list-kunit.c, or something else?
-
-For internal naming of structs and tests, should things be
-named "kunit_foo"? Examples here would be kunit_list_struct and
-kunit_list_test_...
-
-When testing other stuff, should only exposed interfaces be tested?
-Many things have their API exposed via registration of a static structure
-of function pointers to static functions. What's the proposed best way
-to get at that? Should the KUnit tests is IN the .c file that declares
-all the static functions?
-
+diff --git a/Documentation/devicetree/bindings/sound/tas2562.txt b/Documentation/devicetree/bindings/sound/tas2562.txt
+new file mode 100644
+index 000000000000..658e1fb18a99
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/tas2562.txt
+@@ -0,0 +1,34 @@
++Texas Instruments TAS2562 Smart PA
++
++The TAS2562 is a mono, digital input Class-D audio amplifier optimized for
++efficiently driving high peak power into small loudspeakers.
++Integrated speaker voltage and current sense provides for
++real time monitoring of loudspeaker behavior.
++
++Required properties:
++ - #address-cells  - Should be <1>.
++ - #size-cells     - Should be <0>.
++ - compatible:	   - Should contain "ti,tas2562".
++ - reg:		   - The i2c address. Should be 0x4c, 0x4d, 0x4e or 0x4f.
++ - ti,imon-slot-no:- TDM TX current sense time slot.
++
++Optional properties:
++- interrupt-parent: phandle to the interrupt controller which provides
++                    the interrupt.
++- interrupts: (GPIO) interrupt to which the chip is connected.
++- shut-down: GPIO used to control the state of the device.
++
++Examples:
++tas2562@4c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++        compatible = "ti,tas2562";
++        reg = <0x4c>;
++
++        interrupt-parent = <&gpio1>;
++        interrupts = <14>;
++
++	shut-down = <&gpio1 15 0>;
++        ti,imon-slot-no = <0>;
++};
++
 -- 
-Kees Cook
+2.22.0.214.g8dca754b1e
+
