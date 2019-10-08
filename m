@@ -2,73 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C955ACFF57
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 18:54:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6223ACFF69
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 18:59:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727126AbfJHQyw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 12:54:52 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:51365 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbfJHQyw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 12:54:52 -0400
-Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 4886D240003;
-        Tue,  8 Oct 2019 16:54:50 +0000 (UTC)
-Date:   Tue, 8 Oct 2019 18:54:49 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        nicolas.ferre@microchip.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: at91: add compatible for sam9x60
-Message-ID: <20191008165449.GA4254@piout.net>
-References: <1570553186-24691-1-git-send-email-claudiu.beznea@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1570553186-24691-1-git-send-email-claudiu.beznea@microchip.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1729026AbfJHQ73 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 12:59:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34930 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726822AbfJHQ73 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 12:59:29 -0400
+Received: from localhost.localdomain (unknown [194.230.155.145])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 634C52070B;
+        Tue,  8 Oct 2019 16:59:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570553968;
+        bh=dF2A6bAxUEMaFmUvUj+ll27edvmItLZmDILm3HS9nUU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=V4ydDdEHj1By7ZtTlpkr4meoeVJ4FOr6t7JqgJ1lyGLu/DQS6rrRwpS43Nw2hXpST
+         AJ9gGuDKkQ8oi5rE/w/uiyjwLpSO06r5OmwB8XiZ+yJExHgJdhRTP7EioFtGRYqwbE
+         2tZ+B8De839x222LyU2u8aj7JQ5R5C/Z5E5+71hU=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Lihua Yao <ylhuajnu@outlook.com>
+Subject: [PATCH] ARM: dts: s3c64xx: Fix init order of clock providers
+Date:   Tue,  8 Oct 2019 18:59:17 +0200
+Message-Id: <20191008165917.23908-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Lihua Yao <ylhuajnu@outlook.com>
 
-On 08/10/2019 19:46:26+0300, Claudiu Beznea wrote:
-> Add compatible for SAM9X60's PMC.
+fin_pll is the parent of clock-controller@7e00f000, specify
+the dependency to ensure proper initialization order of clock
+providers.
 
-I think the commit log could be clearer and mention why this is needed
-and the compatible string in sam9x60 is not sufficient.
+without this patch:
+[    0.000000] S3C6410 clocks: apll = 0, mpll = 0
+[    0.000000]  epll = 0, arm_clk = 0
 
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> ---
->  drivers/clk/at91/pmc.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-> index db24539d5740..24975bca608e 100644
-> --- a/drivers/clk/at91/pmc.c
-> +++ b/drivers/clk/at91/pmc.c
-> @@ -271,6 +271,7 @@ static struct syscore_ops pmc_syscore_ops = {
->  
->  static const struct of_device_id sama5d2_pmc_dt_ids[] = {
+with this patch:
+[    0.000000] S3C6410 clocks: apll = 532000000, mpll = 532000000
+[    0.000000]  epll = 24000000, arm_clk = 532000000
 
-Maybe rename the array?
+Fixes: 3f6d439f2022 ("clk: reverse default clk provider initialization order in of_clk_init()")
+Signed-off-by: Lihua Yao <ylhuajnu@outlook.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
->  	{ .compatible = "atmel,sama5d2-pmc" },
-> +	{ .compatible = "microchip,sam9x60-pmc" },
->  	{ /* sentinel */ }
->  };
->  
-> -- 
-> 2.7.4
-> 
+---
 
+Sending in author's name because outlook bounces from the lists.
+---
+ arch/arm/boot/dts/s3c6410-mini6410.dts | 4 ++++
+ arch/arm/boot/dts/s3c6410-smdk6410.dts | 4 ++++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/arch/arm/boot/dts/s3c6410-mini6410.dts b/arch/arm/boot/dts/s3c6410-mini6410.dts
+index 0e159c884f97..1aeac33b0d34 100644
+--- a/arch/arm/boot/dts/s3c6410-mini6410.dts
++++ b/arch/arm/boot/dts/s3c6410-mini6410.dts
+@@ -165,6 +165,10 @@
+ 	};
+ };
+ 
++&clocks {
++	clocks = <&fin_pll>;
++};
++
+ &sdhci0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sd0_clk>, <&sd0_cmd>, <&sd0_cd>, <&sd0_bus4>;
+diff --git a/arch/arm/boot/dts/s3c6410-smdk6410.dts b/arch/arm/boot/dts/s3c6410-smdk6410.dts
+index a9a5689dc462..3bf6c450a26e 100644
+--- a/arch/arm/boot/dts/s3c6410-smdk6410.dts
++++ b/arch/arm/boot/dts/s3c6410-smdk6410.dts
+@@ -69,6 +69,10 @@
+ 	};
+ };
+ 
++&clocks {
++	clocks = <&fin_pll>;
++};
++
+ &sdhci0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sd0_clk>, <&sd0_cmd>, <&sd0_cd>, <&sd0_bus4>;
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.17.1
+
