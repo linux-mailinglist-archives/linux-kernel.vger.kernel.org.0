@@ -2,120 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 351FDCFF70
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 18:59:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01EABCFF78
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 19:03:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729616AbfJHQ7r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 12:59:47 -0400
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:32052 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729589AbfJHQ7q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 12:59:46 -0400
-Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Tue, 8 Oct 2019 09:44:42 -0700
-Received: from akaher-lnx-dev.eng.vmware.com (unknown [10.110.19.203])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 6C20640C00;
-        Tue,  8 Oct 2019 09:44:39 -0700 (PDT)
-From:   Ajay Kaher <akaher@vmware.com>
-To:     <gregkh@linuxfoundation.org>
-CC:     <torvalds@linux-foundation.org>, <punit.agrawal@arm.com>,
-        <akpm@linux-foundation.org>, <kirill.shutemov@linux.intel.com>,
-        <willy@infradead.org>, <will.deacon@arm.com>,
-        <mszeredi@redhat.com>, <stable@vger.kernel.org>,
-        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        <srivatsab@vmware.com>, <srivatsa@csail.mit.edu>,
-        <amakhalov@vmware.com>, <srinidhir@vmware.com>,
-        <bvikas@vmware.com>, <anishs@vmware.com>, <vsirnapalli@vmware.com>,
-        <srostedt@vmware.com>, <akaher@vmware.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH v2 7/8] pipe: add pipe_buf_get() helper
-Date:   Wed, 9 Oct 2019 06:14:22 +0530
-Message-ID: <1570581863-12090-8-git-send-email-akaher@vmware.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1570581863-12090-1-git-send-email-akaher@vmware.com>
-References: <1570581863-12090-1-git-send-email-akaher@vmware.com>
+        id S1729034AbfJHRA6 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 8 Oct 2019 13:00:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38286 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725966AbfJHRA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 13:00:58 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6F213B1FF;
+        Tue,  8 Oct 2019 17:00:56 +0000 (UTC)
+Date:   Tue, 8 Oct 2019 09:59:42 -0700
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     "Koenig, Christian" <Christian.Koenig@amd.com>
+Cc:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "walken@google.com" <walken@google.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Doug Ledford <dledford@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        J?r?me Glisse <jglisse@redhat.com>,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH 09/11] lib/interval-tree: convert interval_tree to half
+ closed intervals
+Message-ID: <20191008165942.vxfwbectycuersdx@linux-p48b>
+Mail-Followup-To: "Koenig, Christian" <Christian.Koenig@amd.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "walken@google.com" <walken@google.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Doug Ledford <dledford@redhat.com>, Joerg Roedel <joro@8bytes.org>,
+        J?r?me Glisse <jglisse@redhat.com>,
+        Davidlohr Bueso <dbueso@suse.de>
+References: <20191003201858.11666-1-dave@stgolabs.net>
+ <20191003201858.11666-10-dave@stgolabs.net>
+ <bc45a4c6-35ab-54a3-487f-ce41b75dd99c@amd.com>
+ <d1f5de2f-006f-5e76-cd1b-1524b8bc2cb0@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: akaher@vmware.com does not
- designate permitted sender hosts)
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <d1f5de2f-006f-5e76-cd1b-1524b8bc2cb0@amd.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+On Fri, 04 Oct 2019, Koenig, Christian wrote:
 
-commit 7bf2d1df80822ec056363627e2014990f068f7aa upstream.
+>Am 04.10.19 um 08:57 schrieb Christian König:
+>> Am 03.10.19 um 22:18 schrieb Davidlohr Bueso:
+>>> The generic tree tree really wants [a, b) intervals, not fully closed.
+>>> As such convert it to use the new interval_tree_gen.h. Most of the
+>>> conversions are straightforward, with the exception of perhaps
+>>> radeon_vm_bo_set_addr(), but semantics have been tried to be left
+>>> untouched.
+>>
+>> NAK, the whole thing won't work.
+>>
+>> See we need to handle the full device address space which means we
+>> have values in the range of 0x0-0xffffffff.
+>>
+>> If you make this a closed interval then the end would wrap around to
+>> 0x0 if long is only 32bit.
+>
+>Well I've just now re-read the subject line. From that it sounds like
+>you are actually trying to fix the interval tree to use a half closed
+>interval, e.g. something like [a, b[
 
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Ajay Kaher <akaher@vmware.com>
-Reviewed-by: Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
----
- fs/fuse/dev.c             |  2 +-
- fs/splice.c               |  4 ++--
- include/linux/pipe_fs_i.h | 11 +++++++++++
- 3 files changed, 14 insertions(+), 3 deletions(-)
+Correct.
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index f5d2d23..36a5df9 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -2052,7 +2052,7 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
- 			pipe->curbuf = (pipe->curbuf + 1) & (pipe->buffers - 1);
- 			pipe->nrbufs--;
- 		} else {
--			ibuf->ops->get(pipe, ibuf);
-+			pipe_buf_get(pipe, ibuf);
- 			*obuf = *ibuf;
- 			obuf->flags &= ~PIPE_BUF_FLAG_GIFT;
- 			obuf->len = rem;
-diff --git a/fs/splice.c b/fs/splice.c
-index 8398974..fde1263 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -1876,7 +1876,7 @@ retry:
- 			 * Get a reference to this pipe buffer,
- 			 * so we can copy the contents over.
- 			 */
--			ibuf->ops->get(ipipe, ibuf);
-+			pipe_buf_get(ipipe, ibuf);
- 			*obuf = *ibuf;
- 
- 			/*
-@@ -1948,7 +1948,7 @@ static int link_pipe(struct pipe_inode_info *ipipe,
- 		 * Get a reference to this pipe buffer,
- 		 * so we can copy the contents over.
- 		 */
--		ibuf->ops->get(ipipe, ibuf);
-+		pipe_buf_get(ipipe, ibuf);
- 
- 		obuf = opipe->bufs + nbuf;
- 		*obuf = *ibuf;
-diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-index 24f5470..10876f3 100644
---- a/include/linux/pipe_fs_i.h
-+++ b/include/linux/pipe_fs_i.h
-@@ -115,6 +115,17 @@ struct pipe_buf_operations {
- 	void (*get)(struct pipe_inode_info *, struct pipe_buffer *);
- };
- 
-+/**
-+ * pipe_buf_get - get a reference to a pipe_buffer
-+ * @pipe:	the pipe that the buffer belongs to
-+ * @buf:	the buffer to get a reference to
-+ */
-+static inline void pipe_buf_get(struct pipe_inode_info *pipe,
-+				struct pipe_buffer *buf)
-+{
-+	buf->ops->get(pipe, buf);
-+}
-+
- /* Differs from PIPE_BUF in that PIPE_SIZE is the length of the actual
-    memory allocation, whereas PIPE_BUF makes atomicity guarantees.  */
- #define PIPE_SIZE		PAGE_SIZE
--- 
-2.7.4
+>
+>But your code changes sometimes doesn't seem to reflect that.
 
+Hmm the change simply aims at avoiding the end - 1 trick when dealing
+with interval_tree insertions and lookups; the rest of the series
+converts other interval tree users in a similar way, albeit some errors
+which will be updated. What are your concerns about this patch?
+
+Thanks,
+Davidlohr
