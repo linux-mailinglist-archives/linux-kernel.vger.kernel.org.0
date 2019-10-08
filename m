@@ -2,154 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 537CFCF67C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 11:56:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6CD9CF688
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 11:56:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730371AbfJHJ4D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 05:56:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53680 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730180AbfJHJ4B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 05:56:01 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1D28FAF76;
-        Tue,  8 Oct 2019 09:55:59 +0000 (UTC)
+        id S1730475AbfJHJ4d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 05:56:33 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:13734 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730408AbfJHJ4a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 05:56:30 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x989q3T5002806;
+        Tue, 8 Oct 2019 11:56:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=lalHdG7UJQKEamzJtgMq1V9aYOha/nksgz4VLZDsBvA=;
+ b=hZGvZF6Um9r+0Rf/q9onqdXuiWZDQ2Ld3rqIJKGOtmpQesJIL5DDvfLnAilxtw5eUtgN
+ nrRhwvD8WdgDBnuC/mdPvdSSAozRuGCO8tN19UbUAPOVN9GwkZ2kD/4TOBH4nXKfN95q
+ UQiLt/Sunt0IS5Nin8Nd7L3uQevCATpcMXrwknjWnxakxKM1W84eWViOnP9e7Rh3X9lX
+ m2Z6c9JxzvlndWH+gLyf25CvFGLjj0mnV3qfTY+7Uv50+zXVpV7EO61dewq5+oH8r0TE
+ 0VF+NrChDfFuOKRDv9CCqDeY2llT494APGo/FwBex9caC3UkjHC4SY9IzrkwQxxgSOwG bg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2vegagyygt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Oct 2019 11:56:20 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 312A410002A;
+        Tue,  8 Oct 2019 11:56:19 +0200 (CEST)
+Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 21C6D2B40AD;
+        Tue,  8 Oct 2019 11:56:19 +0200 (CEST)
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.46) by Safex1hubcas24.st.com
+ (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 8 Oct 2019
+ 11:56:19 +0200
+Received: from lmecxl0923.lme.st.com (10.48.0.237) by webmail-ga.st.com
+ (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 8 Oct 2019
+ 11:56:18 +0200
+From:   Ludovic Barre <ludovic.Barre@st.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     <srinivas.kandagatla@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Ludovic Barre <ludovic.barre@st.com>
+Subject: [PATCH V7 0/3] mmc: mmci: add busy detect for stm32 sdmmc variant
+Date:   Tue, 8 Oct 2019 11:56:01 +0200
+Message-ID: <20191008095604.20675-1-ludovic.Barre@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Tue, 08 Oct 2019 11:55:58 +0200
-From:   Roman Penyaev <rpenyaev@suse.de>
-To:     Jason Baron <jbaron@akamai.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, hev <r@hev.cc>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Davide Libenzi <davidel@xmailserver.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Eric Wong <e@80x24.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sridhar Samudrala <sridhar.samudrala@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND v4] fs/epoll: Remove unnecessary wakeups of nested
- epoll that in ET mode
-In-Reply-To: <56b7c2c2-debc-4e62-904e-f2f1c2e65293@akamai.com>
-References: <20190925015603.10939-1-r@hev.cc>
- <20190927192915.6ec24ad706258de99470a96e@linux-foundation.org>
- <c0a96dd89d0a361d8061b8c356b57ed2@suse.de>
- <9ca02c9b-85b7-dced-9c82-1fc453c49b8a@akamai.com>
- <9a82925ff7dfc314d36b3d36e54316a8@suse.de>
- <9ceee722-d2a8-b182-c95a-e7a873b08ca1@akamai.com>
- <cda953c3fec34fe14b231c30c75e57a1@suse.de>
- <56b7c2c2-debc-4e62-904e-f2f1c2e65293@akamai.com>
-Message-ID: <f2083f2862f9c2197576900ae0771e32@suse.de>
-X-Sender: rpenyaev@suse.de
-User-Agent: Roundcube Webmail
+Content-Type: text/plain
+X-Originating-IP: [10.48.0.237]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-08_03:2019-10-07,2019-10-08 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-10-07 20:43, Jason Baron wrote:
+From: Ludovic Barre <ludovic.barre@st.com>
 
-[...]
+This patch series adds busy detect for stm32 sdmmc variant.
+Some adaptations are required:
+-On sdmmc the data timer is started on data transfert
+and busy state, so we must add hardware busy timeout support.
+-Add busy_complete callback at mmci_host_ops to allow to define
+a specific busy completion by variant.
+-Add sdmmc busy_complete callback.
 
->> But what if to make this wakeup explicit if we have more events to 
->> process?
->> (nothing is tested, just a guess)
->> 
->> @@ -255,6 +255,7 @@ struct ep_pqueue {
->>  struct ep_send_events_data {
->>         int maxevents;
->>         struct epoll_event __user *events;
->> +       bool have_more;
->>         int res;
->>  };
->> @@ -1783,14 +1768,17 @@ static __poll_t ep_send_events_proc(struct
->> eventpoll *ep, struct list_head *head
->>  }
->> 
->>  static int ep_send_events(struct eventpoll *ep,
->> -                         struct epoll_event __user *events, int 
->> maxevents)
->> +                         struct epoll_event __user *events, int 
->> maxevents,
->> +                         bool *have_more)
->>  {
->> -       struct ep_send_events_data esed;
->> -
->> -       esed.maxevents = maxevents;
->> -       esed.events = events;
->> +       struct ep_send_events_data esed = {
->> +               .maxevents = maxevents,
->> +               .events = events,
->> +       };
->> 
->>         ep_scan_ready_list(ep, ep_send_events_proc, &esed, 0, false);
->> +       *have_more = esed.have_more;
->> +
->>         return esed.res;
->>  }
->> 
->> @@ -1827,7 +1815,7 @@ static int ep_poll(struct eventpoll *ep, struct
->> epoll_event __user *events,
->>  {
->>         int res = 0, eavail, timed_out = 0;
->>         u64 slack = 0;
->> -       bool waiter = false;
->> +       bool waiter = false, have_more;
->>         wait_queue_entry_t wait;
->>         ktime_t expires, *to = NULL;
->> 
->> @@ -1927,7 +1915,8 @@ static int ep_poll(struct eventpoll *ep, struct
->> epoll_event __user *events,
->>          * more luck.
->>          */
->>         if (!res && eavail &&
->> -           !(res = ep_send_events(ep, events, maxevents)) && 
->> !timed_out)
->> +           !(res = ep_send_events(ep, events, maxevents, &have_more)) 
->> &&
->> +           !timed_out)
->>                 goto fetch_events;
->> 
->>         if (waiter) {
->> @@ -1935,6 +1924,12 @@ static int ep_poll(struct eventpoll *ep, struct
->> epoll_event __user *events,
->>                 __remove_wait_queue(&ep->wq, &wait);
->>                 spin_unlock_irq(&ep->wq.lock);
->>         }
->> +       /*
->> +        * We were not able to process all the events, so immediately
->> +        * wakeup other waiter.
->> +        */
->> +       if (res > 0 && have_more && waitqueue_active(&ep->wq))
->> +               wake_up(&ep->wq);
->> 
->>         return res;
->>  }
->> 
->> 
-> 
+V7:
+-Patch 1/3: rephrasing like proposed (thx ulf)
+-If busy timeout is undefined => increase to 10s
+-Keep busy_detect.
+-Patch 3/3: rephrasing comment header
+-Avoid twice read of status register
+-Avoid writing in MMCIMASK0 & MMCICLEAR if not modified
 
-[...]
+V6:
+-mmci_start_command: set datatimer only on rsp_busy flag
+(remove host->mrq->data).
+-move max_busy_timeout in set_ios callback.
+-typo fix: err_msk, clks on one lines.
 
-> And I think the above change can go in separately (if we decide we want 
-> it).
+V5:
+-Replaces !cmd->data to !host->mrq->data to avoid overwrite
+ of datatimer register by the first command (cmd23, without data) of
+ SBC request.
 
-Hi Jason,
+V4:
+-Re-work with busy_complete callback
+-In series, move "mmc: mmci: add hardware busy timeout feature" in
+first to simplify busy_complete prototype with err_msk parameter.
 
-I did measurements using Eric's test http://yhbt.net/eponeshotmt.c
-(8 writers, 8 waiters;  1 writer, 8 waiters) and tested the impact
-of outrunning wakeup: I do not see any difference. Since write events
-are constantly coming, next waiter will be woken up anyway by the
-following write event.  In order to have some perf gain probably writes
-should happen with some interval: produce bunch of events, sleep,
-produce bunch of events, sleep, etc, which seems can bring something
-only if writer is accidentally synchronized with waiters. Not a clean
-way of perf improvement.
+V3:
+-rebase on latest mmc next
+-replace re-read by status parameter. 
 
---
-Roman
+V2:
+-mmci_cmd_irq cleanup in separate patch.
+-simplify the busy_detect_flag exclude
+-replace sdmmc specific comment in
+"mmc: mmci: avoid fake busy polling in mmci_irq"
+to focus on common behavior
 
+Ludovic Barre (3):
+  mmc: mmci: add hardware busy timeout feature
+  mmc: mmci: add busy_complete callback
+  mmc: mmci: sdmmc: add busy_complete callback
+
+ drivers/mmc/host/mmci.c             | 178 +++++++++++++++++-----------
+ drivers/mmc/host/mmci.h             |   5 +
+ drivers/mmc/host/mmci_stm32_sdmmc.c |  42 +++++++
+ 3 files changed, 159 insertions(+), 66 deletions(-)
+
+-- 
+2.17.1
 
