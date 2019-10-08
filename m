@@ -2,556 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B01C4CF061
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 03:23:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBCE6CF06C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 03:24:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729793AbfJHBXF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 21:23:05 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:52926 "EHLO huawei.com"
+        id S1729854AbfJHBYF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 21:24:05 -0400
+Received: from mail-eopbgr40054.outbound.protection.outlook.com ([40.107.4.54]:16448
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729307AbfJHBWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 21:22:55 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 38AC99F868F984062584;
-        Tue,  8 Oct 2019 09:22:51 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.132) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 8 Oct 2019 09:22:44 +0800
-From:   Huazhong Tan <tanhuazhong@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <linuxarm@huawei.com>
-Subject: [PATCH net-next 6/6] net: hns3: support tx-scatter-gather-fraglist feature
-Date:   Tue, 8 Oct 2019 09:20:09 +0800
-Message-ID: <1570497609-36349-7-git-send-email-tanhuazhong@huawei.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1570497609-36349-1-git-send-email-tanhuazhong@huawei.com>
-References: <1570497609-36349-1-git-send-email-tanhuazhong@huawei.com>
+        id S1729389AbfJHBYF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 21:24:05 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AGbRK+cO4Hn0tyormGesEL6umKnqcKc6bwMlcis/jgMTAKxgizhLi/Rm54uFQai8C1HFHJ/EgucERlSgK3OfsQS3oIe+YK1icTpz69OxxiBGKuTFKx1SmTwDG/HMRAhBcaC01ZZeDeHx+/qZqq6eYHKRzbEDfk1QJWpJ2cwSf52PLdkIFey0tXy2LSfEk0ujHZ2J0GgGjifs32um7BN35yfkvUO4rI2Cc/GBHOpTOuKhpjW2dXRpmbLRxaQXl43Iko5x81uL+q98U/ZRDNDC5b+vBDXovuvDuCVqaRISpDQkdxrHiJxSghqmCHw+jNJI7JDO7SJSJvYIYIVNhqg1Yg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PXdl6zGKYQr3UqXF+Q4qnSOYWnnZNBZXfydR2SOhWtU=;
+ b=LSUEce54jO6KJzGfvd1QaMH34HkQ8UTuMo/C/WI6LCAxjYNm7+mQta9Mbg0lqbyUlW5tZlSqAlssJ3Ig+u30W/i94SAAr/fN+/ywlETT53tWU3xlxbHJc5oT/5H1aaW6pCS8993nhBoY6s94vI8tsOBrxPlWGdZhR/zdZ9RavygnlFKlReEQ6DQ+F6JQySDfeEMzaNULL+3VtGd1MhXv81XSe/T9PAi/qawFZW0GxBAkow3Q5VRCKIxvTju0BuHS6i9BNEC0NhyW00cH0T1p+DtYAYi+hGuW1svcllDj3ASVYIOgLlFlXZx+WzyJR/tCYh0Y3ZK1Ez4fVQ6DrklMfg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PXdl6zGKYQr3UqXF+Q4qnSOYWnnZNBZXfydR2SOhWtU=;
+ b=SAECd+P9mCNGogUFk24tXdUux0039itunft1wp/sEvZiVVKfa4TY5xvxoCuXIWn22uyrWhhcsDi2Uio6zdMOdbU5E45ET0Cpi8Hdy9ApYHCb9avwmiVRINteUuBRBh5jbEa0xEYhew49SOSOCVa2QQNR6fU8L+bIxc/ZodY4SKY=
+Received: from AM5PR04MB3299.eurprd04.prod.outlook.com (10.173.255.158) by
+ AM5PR04MB3027.eurprd04.prod.outlook.com (10.173.254.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2327.24; Tue, 8 Oct 2019 01:23:55 +0000
+Received: from AM5PR04MB3299.eurprd04.prod.outlook.com
+ ([fe80::5dd3:ddc9:411a:db41]) by AM5PR04MB3299.eurprd04.prod.outlook.com
+ ([fe80::5dd3:ddc9:411a:db41%3]) with mapi id 15.20.2305.023; Tue, 8 Oct 2019
+ 01:23:55 +0000
+From:   Xiaowei Bao <xiaowei.bao@nxp.com>
+To:     Andrew Murray <andrew.murray@arm.com>
+CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>, "kishon@ti.com" <kishon@ti.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Subject: RE: [PATCH v4 11/11] misc: pci_endpoint_test: Add LS1088a in
+ pci_device_id table
+Thread-Topic: [PATCH v4 11/11] misc: pci_endpoint_test: Add LS1088a in
+ pci_device_id table
+Thread-Index: AQHVcn/x16DzWe6fqE+HQYFU7grjl6dEWbwAgAuvO5A=
+Date:   Tue, 8 Oct 2019 01:23:55 +0000
+Message-ID: <AM5PR04MB329958D65C0D0B5172FEBE07F59A0@AM5PR04MB3299.eurprd04.prod.outlook.com>
+References: <20190924021849.3185-1-xiaowei.bao@nxp.com>
+ <20190924021849.3185-12-xiaowei.bao@nxp.com>
+ <20190930145723.GC42880@e119886-lin.cambridge.arm.com>
+In-Reply-To: <20190930145723.GC42880@e119886-lin.cambridge.arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=xiaowei.bao@nxp.com; 
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f6a50e3b-2525-438e-9b04-08d74b8e3005
+x-ms-office365-filtering-ht: Tenant
+x-ms-traffictypediagnostic: AM5PR04MB3027:|AM5PR04MB3027:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM5PR04MB3027E3B88FE9BA9C30801119F59A0@AM5PR04MB3027.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3513;
+x-forefront-prvs: 01842C458A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(346002)(136003)(396003)(366004)(376002)(13464003)(199004)(189003)(305945005)(66446008)(64756008)(9686003)(6436002)(102836004)(76176011)(53546011)(229853002)(6506007)(256004)(8936002)(7416002)(14454004)(33656002)(81166006)(81156014)(4326008)(44832011)(54906003)(66476007)(478600001)(66556008)(74316002)(316002)(8676002)(6246003)(55016002)(52536014)(6116002)(86362001)(25786009)(26005)(71190400001)(71200400001)(7696005)(7736002)(486006)(2906002)(76116006)(11346002)(446003)(5660300002)(66066001)(66946007)(6916009)(3846002)(186003)(99286004)(476003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR04MB3027;H:AM5PR04MB3299.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: wTa4eLZVGRwiH5mvZdD9d4dvHBKed8mHXgExF3snZqV7NTFpr3f2NzQKH5l9mdRhVdyTUDide3mtdHPA/8ccdU2s68cXiO9iDkL1rd6yktcC4cohu6Qdm/+r7+3f76ze9tTe3phqrshiypZ2WuMtPjWIu2U/cTn5sdNpMOmbf3EmHP8z5kQLp7eyKR/BTx4UXPke901+SdjEtlVJJ/zB+MdmYrYR8wj1W4WmOk/HmKeKT1a+OuoU+Ol3qEKvCYcACQVRqv9UL6gqeMYLbg7INqYkS+vPg2hVnON+FbxKJ4awdZgWdF16WA+W5C7hpXcre702+cSbioWvzouNX+/EWdSNKSr2Kg5Wp5F63NN1gvUTcnhSsGhO7G4zLYwHNr+tyBJ7v/lqRnbxgfbf4O6SvCYq1dv5OoMHAFnUFp6eDO8=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.132]
-X-CFilter-Loop: Reflected
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f6a50e3b-2525-438e-9b04-08d74b8e3005
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Oct 2019 01:23:55.8358
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 7ZQfdJQG7kEn+VRMm8DaviIrY2kXwnl/5vHTpx0CRCdmdxwlh+x+XFJA9wmJPdb18GvHWMBTGxqZQoVruRw8EA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR04MB3027
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
-
-The hardware supports up to 8 TX BD for non-tso skb and up to
-63 TX BD for TSO skb. Currently, the hns3 driver supports RX skb
-with fraglist when HW GRO is enabled, when the stack forwards a
-RX skb with fraglist, the stack need to linearize the skb before
-sending to other interface without TX fraglist support.
-
-This patch adds support for TX fraglist. The performance increases
-from 1 GByte to 1.5 GByte for one iperf TCP stream during
-forwarding test after this patch. BTW, the minimum BD number of
-ring should be updated to 72 for supporting TX fraglist.
-
-This patch also changes the error handling of some function that
-called by hns3_fill_desc, which returns BD num when there is no
-error, change some macro to more meaningful name.
-
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 249 +++++++++++++++---------
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.h |  12 +-
- 2 files changed, 168 insertions(+), 93 deletions(-)
-
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index 4e304b4..6e0b261 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -681,7 +681,7 @@ static int hns3_set_tso(struct sk_buff *skb, u32 *paylen,
- 		return 0;
- 
- 	ret = skb_cow_head(skb, 0);
--	if (unlikely(ret))
-+	if (unlikely(ret < 0))
- 		return ret;
- 
- 	l3.hdr = skb_network_header(skb);
-@@ -962,14 +962,6 @@ static int hns3_set_l2l3l4(struct sk_buff *skb, u8 ol4_proto,
- 	return 0;
- }
- 
--static void hns3_set_txbd_baseinfo(u16 *bdtp_fe_sc_vld_ra_ri, int frag_end)
--{
--	/* Config bd buffer end */
--	if (!!frag_end)
--		hns3_set_field(*bdtp_fe_sc_vld_ra_ri, HNS3_TXD_FE_B, 1U);
--	hns3_set_field(*bdtp_fe_sc_vld_ra_ri, HNS3_TXD_VLD_B, 1U);
--}
--
- static int hns3_handle_vtags(struct hns3_enet_ring *tx_ring,
- 			     struct sk_buff *skb)
- {
-@@ -1062,7 +1054,7 @@ static int hns3_fill_skb_desc(struct hns3_enet_ring *ring,
- 		skb_reset_mac_len(skb);
- 
- 		ret = hns3_get_l4_protocol(skb, &ol4_proto, &il4_proto);
--		if (unlikely(ret)) {
-+		if (unlikely(ret < 0)) {
- 			u64_stats_update_begin(&ring->syncp);
- 			ring->stats.tx_l4_proto_err++;
- 			u64_stats_update_end(&ring->syncp);
-@@ -1072,7 +1064,7 @@ static int hns3_fill_skb_desc(struct hns3_enet_ring *ring,
- 		ret = hns3_set_l2l3l4(skb, ol4_proto, il4_proto,
- 				      &type_cs_vlan_tso,
- 				      &ol_type_vlan_len_msec);
--		if (unlikely(ret)) {
-+		if (unlikely(ret < 0)) {
- 			u64_stats_update_begin(&ring->syncp);
- 			ring->stats.tx_l2l3l4_err++;
- 			u64_stats_update_end(&ring->syncp);
-@@ -1081,7 +1073,7 @@ static int hns3_fill_skb_desc(struct hns3_enet_ring *ring,
- 
- 		ret = hns3_set_tso(skb, &paylen, &mss,
- 				   &type_cs_vlan_tso);
--		if (unlikely(ret)) {
-+		if (unlikely(ret < 0)) {
- 			u64_stats_update_begin(&ring->syncp);
- 			ring->stats.tx_tso_err++;
- 			u64_stats_update_end(&ring->syncp);
-@@ -1102,9 +1094,10 @@ static int hns3_fill_skb_desc(struct hns3_enet_ring *ring,
- }
- 
- static int hns3_fill_desc(struct hns3_enet_ring *ring, void *priv,
--			  unsigned int size, int frag_end,
--			  enum hns_desc_type type)
-+			  unsigned int size, enum hns_desc_type type)
- {
-+#define HNS3_LIKELY_BD_NUM	1
-+
- 	struct hns3_desc_cb *desc_cb = &ring->desc_cb[ring->next_to_use];
- 	struct hns3_desc *desc = &ring->desc[ring->next_to_use];
- 	struct device *dev = ring_to_dev(ring);
-@@ -1118,7 +1111,7 @@ static int hns3_fill_desc(struct hns3_enet_ring *ring, void *priv,
- 		int ret;
- 
- 		ret = hns3_fill_skb_desc(ring, skb, desc);
--		if (unlikely(ret))
-+		if (unlikely(ret < 0))
- 			return ret;
- 
- 		dma = dma_map_single(dev, skb->data, size, DMA_TO_DEVICE);
-@@ -1137,19 +1130,16 @@ static int hns3_fill_desc(struct hns3_enet_ring *ring, void *priv,
- 	desc_cb->length = size;
- 
- 	if (likely(size <= HNS3_MAX_BD_SIZE)) {
--		u16 bdtp_fe_sc_vld_ra_ri = 0;
--
- 		desc_cb->priv = priv;
- 		desc_cb->dma = dma;
- 		desc_cb->type = type;
- 		desc->addr = cpu_to_le64(dma);
- 		desc->tx.send_size = cpu_to_le16(size);
--		hns3_set_txbd_baseinfo(&bdtp_fe_sc_vld_ra_ri, frag_end);
- 		desc->tx.bdtp_fe_sc_vld_ra_ri =
--			cpu_to_le16(bdtp_fe_sc_vld_ra_ri);
-+			cpu_to_le16(BIT(HNS3_TXD_VLD_B));
- 
- 		ring_ptr_move_fw(ring, next_to_use);
--		return 0;
-+		return HNS3_LIKELY_BD_NUM;
- 	}
- 
- 	frag_buf_num = hns3_tx_bd_count(size);
-@@ -1158,8 +1148,6 @@ static int hns3_fill_desc(struct hns3_enet_ring *ring, void *priv,
- 
- 	/* When frag size is bigger than hardware limit, split this frag */
- 	for (k = 0; k < frag_buf_num; k++) {
--		u16 bdtp_fe_sc_vld_ra_ri = 0;
--
- 		/* The txbd's baseinfo of DESC_TYPE_PAGE & DESC_TYPE_SKB */
- 		desc_cb->priv = priv;
- 		desc_cb->dma = dma + HNS3_MAX_BD_SIZE * k;
-@@ -1170,11 +1158,8 @@ static int hns3_fill_desc(struct hns3_enet_ring *ring, void *priv,
- 		desc->addr = cpu_to_le64(dma + HNS3_MAX_BD_SIZE * k);
- 		desc->tx.send_size = cpu_to_le16((k == frag_buf_num - 1) ?
- 				     (u16)sizeoflast : (u16)HNS3_MAX_BD_SIZE);
--		hns3_set_txbd_baseinfo(&bdtp_fe_sc_vld_ra_ri,
--				       frag_end && (k == frag_buf_num - 1) ?
--						1 : 0);
- 		desc->tx.bdtp_fe_sc_vld_ra_ri =
--				cpu_to_le16(bdtp_fe_sc_vld_ra_ri);
-+				cpu_to_le16(BIT(HNS3_TXD_VLD_B));
- 
- 		/* move ring pointer to next */
- 		ring_ptr_move_fw(ring, next_to_use);
-@@ -1183,23 +1168,78 @@ static int hns3_fill_desc(struct hns3_enet_ring *ring, void *priv,
- 		desc = &ring->desc[ring->next_to_use];
- 	}
- 
--	return 0;
-+	return frag_buf_num;
- }
- 
--static unsigned int hns3_nic_bd_num(struct sk_buff *skb)
-+static unsigned int hns3_skb_bd_num(struct sk_buff *skb, unsigned int *bd_size,
-+				    unsigned int bd_num)
- {
--	unsigned int bd_num;
-+	unsigned int size;
- 	int i;
- 
--	/* if the total len is within the max bd limit */
--	if (likely(skb->len <= HNS3_MAX_BD_SIZE))
--		return skb_shinfo(skb)->nr_frags + 1;
-+	size = skb_headlen(skb);
-+	while (size > HNS3_MAX_BD_SIZE) {
-+		bd_size[bd_num++] = HNS3_MAX_BD_SIZE;
-+		size -= HNS3_MAX_BD_SIZE;
-+
-+		if (bd_num > HNS3_MAX_TSO_BD_NUM)
-+			return bd_num;
-+	}
- 
--	bd_num = hns3_tx_bd_count(skb_headlen(skb));
-+	if (size) {
-+		bd_size[bd_num++] = size;
-+		if (bd_num > HNS3_MAX_TSO_BD_NUM)
-+			return bd_num;
-+	}
- 
- 	for (i = 0; i < skb_shinfo(skb)->nr_frags; i++) {
- 		skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
--		bd_num += hns3_tx_bd_count(skb_frag_size(frag));
-+		size = skb_frag_size(frag);
-+		if (!size)
-+			continue;
-+
-+		while (size > HNS3_MAX_BD_SIZE) {
-+			bd_size[bd_num++] = HNS3_MAX_BD_SIZE;
-+			size -= HNS3_MAX_BD_SIZE;
-+
-+			if (bd_num > HNS3_MAX_TSO_BD_NUM)
-+				return bd_num;
-+		}
-+
-+		bd_size[bd_num++] = size;
-+		if (bd_num > HNS3_MAX_TSO_BD_NUM)
-+			return bd_num;
-+	}
-+
-+	return bd_num;
-+}
-+
-+static unsigned int hns3_tx_bd_num(struct sk_buff *skb, unsigned int *bd_size)
-+{
-+	struct sk_buff *frag_skb;
-+	unsigned int bd_num = 0;
-+
-+	/* If the total len is within the max bd limit */
-+	if (likely(skb->len <= HNS3_MAX_BD_SIZE && !skb_has_frag_list(skb) &&
-+		   skb_shinfo(skb)->nr_frags < HNS3_MAX_NON_TSO_BD_NUM))
-+		return skb_shinfo(skb)->nr_frags + 1U;
-+
-+	/* The below case will always be linearized, return
-+	 * HNS3_MAX_BD_NUM_TSO + 1U to make sure it is linearized.
-+	 */
-+	if (unlikely(skb->len > HNS3_MAX_TSO_SIZE ||
-+		     (!skb_is_gso(skb) && skb->len > HNS3_MAX_NON_TSO_SIZE)))
-+		return HNS3_MAX_TSO_BD_NUM + 1U;
-+
-+	bd_num = hns3_skb_bd_num(skb, bd_size, bd_num);
-+
-+	if (!skb_has_frag_list(skb) || bd_num > HNS3_MAX_TSO_BD_NUM)
-+		return bd_num;
-+
-+	skb_walk_frags(skb, frag_skb) {
-+		bd_num = hns3_skb_bd_num(frag_skb, bd_size, bd_num);
-+		if (bd_num > HNS3_MAX_TSO_BD_NUM)
-+			return bd_num;
- 	}
- 
- 	return bd_num;
-@@ -1218,26 +1258,26 @@ static unsigned int hns3_gso_hdr_len(struct sk_buff *skb)
-  * 7 frags to to be larger than gso header len + mss, and the remaining
-  * continuous 7 frags to be larger than MSS except the last 7 frags.
-  */
--static bool hns3_skb_need_linearized(struct sk_buff *skb)
-+static bool hns3_skb_need_linearized(struct sk_buff *skb, unsigned int *bd_size,
-+				     unsigned int bd_num)
- {
--	int bd_limit = HNS3_MAX_BD_NUM_NORMAL - 1;
- 	unsigned int tot_len = 0;
- 	int i;
- 
--	for (i = 0; i < bd_limit; i++)
--		tot_len += skb_frag_size(&skb_shinfo(skb)->frags[i]);
-+	for (i = 0; i < HNS3_MAX_NON_TSO_BD_NUM - 1U; i++)
-+		tot_len += bd_size[i];
- 
--	/* ensure headlen + the first 7 frags is greater than mss + header
--	 * and the first 7 frags is greater than mss.
--	 */
--	if (((tot_len + skb_headlen(skb)) < (skb_shinfo(skb)->gso_size +
--	    hns3_gso_hdr_len(skb))) || (tot_len < skb_shinfo(skb)->gso_size))
-+	/* ensure the first 8 frags is greater than mss + header */
-+	if (tot_len + bd_size[HNS3_MAX_NON_TSO_BD_NUM - 1U] <
-+	    skb_shinfo(skb)->gso_size + hns3_gso_hdr_len(skb))
- 		return true;
- 
--	/* ensure the remaining continuous 7 buffer is greater than mss */
--	for (i = 0; i < (skb_shinfo(skb)->nr_frags - bd_limit - 1); i++) {
--		tot_len -= skb_frag_size(&skb_shinfo(skb)->frags[i]);
--		tot_len += skb_frag_size(&skb_shinfo(skb)->frags[i + bd_limit]);
-+	/* ensure every continuous 7 buffer is greater than mss
-+	 * except the last one.
-+	 */
-+	for (i = 0; i < bd_num - HNS3_MAX_NON_TSO_BD_NUM; i++) {
-+		tot_len -= bd_size[i];
-+		tot_len += bd_size[i + HNS3_MAX_NON_TSO_BD_NUM - 1U];
- 
- 		if (tot_len < skb_shinfo(skb)->gso_size)
- 			return true;
-@@ -1249,15 +1289,16 @@ static bool hns3_skb_need_linearized(struct sk_buff *skb)
- static int hns3_nic_maybe_stop_tx(struct hns3_enet_ring *ring,
- 				  struct sk_buff **out_skb)
- {
-+	unsigned int bd_size[HNS3_MAX_TSO_BD_NUM + 1U];
- 	struct sk_buff *skb = *out_skb;
- 	unsigned int bd_num;
- 
--	bd_num = hns3_nic_bd_num(skb);
--	if (unlikely(bd_num > HNS3_MAX_BD_NUM_NORMAL)) {
-+	bd_num = hns3_tx_bd_num(skb, bd_size);
-+	if (unlikely(bd_num > HNS3_MAX_NON_TSO_BD_NUM)) {
- 		struct sk_buff *new_skb;
- 
--		if (skb_is_gso(skb) && bd_num <= HNS3_MAX_BD_NUM_TSO &&
--		    !hns3_skb_need_linearized(skb))
-+		if (bd_num <= HNS3_MAX_TSO_BD_NUM && skb_is_gso(skb) &&
-+		    !hns3_skb_need_linearized(skb, bd_size, bd_num))
- 			goto out;
- 
- 		/* manual split the send packet */
-@@ -1267,9 +1308,10 @@ static int hns3_nic_maybe_stop_tx(struct hns3_enet_ring *ring,
- 		dev_kfree_skb_any(skb);
- 		*out_skb = new_skb;
- 
--		bd_num = hns3_nic_bd_num(new_skb);
--		if ((skb_is_gso(new_skb) && bd_num > HNS3_MAX_BD_NUM_TSO) ||
--		    (!skb_is_gso(new_skb) && bd_num > HNS3_MAX_BD_NUM_NORMAL))
-+		bd_num = hns3_tx_bd_count(new_skb->len);
-+		if ((skb_is_gso(new_skb) && bd_num > HNS3_MAX_TSO_BD_NUM) ||
-+		    (!skb_is_gso(new_skb) &&
-+		     bd_num > HNS3_MAX_NON_TSO_BD_NUM))
- 			return -ENOMEM;
- 
- 		u64_stats_update_begin(&ring->syncp);
-@@ -1314,6 +1356,37 @@ static void hns3_clear_desc(struct hns3_enet_ring *ring, int next_to_use_orig)
- 	}
- }
- 
-+static int hns3_fill_skb_to_desc(struct hns3_enet_ring *ring,
-+				 struct sk_buff *skb, enum hns_desc_type type)
-+{
-+	unsigned int size = skb_headlen(skb);
-+	int i, ret, bd_num = 0;
-+
-+	if (size) {
-+		ret = hns3_fill_desc(ring, skb, size, type);
-+		if (unlikely(ret < 0))
-+			return ret;
-+
-+		bd_num += ret;
-+	}
-+
-+	for (i = 0; i < skb_shinfo(skb)->nr_frags; i++) {
-+		skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
-+
-+		size = skb_frag_size(frag);
-+		if (!size)
-+			continue;
-+
-+		ret = hns3_fill_desc(ring, frag, size, DESC_TYPE_PAGE);
-+		if (unlikely(ret < 0))
-+			return ret;
-+
-+		bd_num += ret;
-+	}
-+
-+	return bd_num;
-+}
-+
- netdev_tx_t hns3_nic_net_xmit(struct sk_buff *skb, struct net_device *netdev)
- {
- 	struct hns3_nic_priv *priv = netdev_priv(netdev);
-@@ -1321,58 +1394,54 @@ netdev_tx_t hns3_nic_net_xmit(struct sk_buff *skb, struct net_device *netdev)
- 		&tx_ring_data(priv, skb->queue_mapping);
- 	struct hns3_enet_ring *ring = ring_data->ring;
- 	struct netdev_queue *dev_queue;
--	skb_frag_t *frag;
--	int next_to_use_head;
--	int buf_num;
--	int seg_num;
--	int size;
-+	int pre_ntu, next_to_use_head;
-+	struct sk_buff *frag_skb;
-+	int bd_num = 0;
- 	int ret;
--	int i;
- 
- 	/* Prefetch the data used later */
- 	prefetch(skb->data);
- 
--	buf_num = hns3_nic_maybe_stop_tx(ring, &skb);
--	if (unlikely(buf_num <= 0)) {
--		if (buf_num == -EBUSY) {
-+	ret = hns3_nic_maybe_stop_tx(ring, &skb);
-+	if (unlikely(ret <= 0)) {
-+		if (ret == -EBUSY) {
- 			u64_stats_update_begin(&ring->syncp);
- 			ring->stats.tx_busy++;
- 			u64_stats_update_end(&ring->syncp);
- 			goto out_net_tx_busy;
--		} else if (buf_num == -ENOMEM) {
-+		} else if (ret == -ENOMEM) {
- 			u64_stats_update_begin(&ring->syncp);
- 			ring->stats.sw_err_cnt++;
- 			u64_stats_update_end(&ring->syncp);
- 		}
- 
--		hns3_rl_err(netdev, "xmit error: %d!\n", buf_num);
-+		hns3_rl_err(netdev, "xmit error: %d!\n", ret);
- 		goto out_err_tx_ok;
- 	}
- 
--	/* No. of segments (plus a header) */
--	seg_num = skb_shinfo(skb)->nr_frags + 1;
--	/* Fill the first part */
--	size = skb_headlen(skb);
--
- 	next_to_use_head = ring->next_to_use;
- 
--	ret = hns3_fill_desc(ring, skb, size, seg_num == 1 ? 1 : 0,
--			     DESC_TYPE_SKB);
--	if (unlikely(ret))
-+	ret = hns3_fill_skb_to_desc(ring, skb, DESC_TYPE_SKB);
-+	if (unlikely(ret < 0))
- 		goto fill_err;
- 
--	/* Fill the fragments */
--	for (i = 1; i < seg_num; i++) {
--		frag = &skb_shinfo(skb)->frags[i - 1];
--		size = skb_frag_size(frag);
-+	bd_num += ret;
- 
--		ret = hns3_fill_desc(ring, frag, size,
--				     seg_num - 1 == i ? 1 : 0,
--				     DESC_TYPE_PAGE);
-+	if (!skb_has_frag_list(skb))
-+		goto out;
- 
--		if (unlikely(ret))
-+	skb_walk_frags(skb, frag_skb) {
-+		ret = hns3_fill_skb_to_desc(ring, frag_skb, DESC_TYPE_PAGE);
-+		if (unlikely(ret < 0))
- 			goto fill_err;
-+
-+		bd_num += ret;
- 	}
-+out:
-+	pre_ntu = ring->next_to_use ? (ring->next_to_use - 1) :
-+					(ring->desc_num - 1);
-+	ring->desc[pre_ntu].tx.bdtp_fe_sc_vld_ra_ri |=
-+				cpu_to_le16(BIT(HNS3_TXD_FE_B));
- 
- 	/* Complete translate all packets */
- 	dev_queue = netdev_get_tx_queue(netdev, ring_data->queue_index);
-@@ -1380,7 +1449,7 @@ netdev_tx_t hns3_nic_net_xmit(struct sk_buff *skb, struct net_device *netdev)
- 
- 	wmb(); /* Commit all data before submit */
- 
--	hnae3_queue_xmit(ring->tqp, buf_num);
-+	hnae3_queue_xmit(ring->tqp, bd_num);
- 
- 	return NETDEV_TX_OK;
- 
-@@ -2158,9 +2227,8 @@ static void hns3_set_default_feature(struct net_device *netdev)
- 		NETIF_F_RXCSUM | NETIF_F_SG | NETIF_F_GSO |
- 		NETIF_F_GRO | NETIF_F_TSO | NETIF_F_TSO6 | NETIF_F_GSO_GRE |
- 		NETIF_F_GSO_GRE_CSUM | NETIF_F_GSO_UDP_TUNNEL |
--		NETIF_F_GSO_UDP_TUNNEL_CSUM | NETIF_F_SCTP_CRC;
--
--	netdev->hw_enc_features |= NETIF_F_TSO_MANGLEID;
-+		NETIF_F_GSO_UDP_TUNNEL_CSUM | NETIF_F_SCTP_CRC |
-+		NETIF_F_TSO_MANGLEID | NETIF_F_FRAGLIST;
- 
- 	netdev->gso_partial_features |= NETIF_F_GSO_GRE_CSUM;
- 
-@@ -2170,21 +2238,24 @@ static void hns3_set_default_feature(struct net_device *netdev)
- 		NETIF_F_RXCSUM | NETIF_F_SG | NETIF_F_GSO |
- 		NETIF_F_GRO | NETIF_F_TSO | NETIF_F_TSO6 | NETIF_F_GSO_GRE |
- 		NETIF_F_GSO_GRE_CSUM | NETIF_F_GSO_UDP_TUNNEL |
--		NETIF_F_GSO_UDP_TUNNEL_CSUM | NETIF_F_SCTP_CRC;
-+		NETIF_F_GSO_UDP_TUNNEL_CSUM | NETIF_F_SCTP_CRC |
-+		NETIF_F_FRAGLIST;
- 
- 	netdev->vlan_features |=
- 		NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM | NETIF_F_RXCSUM |
- 		NETIF_F_SG | NETIF_F_GSO | NETIF_F_GRO |
- 		NETIF_F_TSO | NETIF_F_TSO6 | NETIF_F_GSO_GRE |
- 		NETIF_F_GSO_GRE_CSUM | NETIF_F_GSO_UDP_TUNNEL |
--		NETIF_F_GSO_UDP_TUNNEL_CSUM | NETIF_F_SCTP_CRC;
-+		NETIF_F_GSO_UDP_TUNNEL_CSUM | NETIF_F_SCTP_CRC |
-+		NETIF_F_FRAGLIST;
- 
- 	netdev->hw_features |= NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM |
- 		NETIF_F_HW_VLAN_CTAG_TX | NETIF_F_HW_VLAN_CTAG_RX |
- 		NETIF_F_RXCSUM | NETIF_F_SG | NETIF_F_GSO |
- 		NETIF_F_GRO | NETIF_F_TSO | NETIF_F_TSO6 | NETIF_F_GSO_GRE |
- 		NETIF_F_GSO_GRE_CSUM | NETIF_F_GSO_UDP_TUNNEL |
--		NETIF_F_GSO_UDP_TUNNEL_CSUM | NETIF_F_SCTP_CRC;
-+		NETIF_F_GSO_UDP_TUNNEL_CSUM | NETIF_F_SCTP_CRC |
-+		NETIF_F_FRAGLIST;
- 
- 	if (pdev->revision >= 0x21) {
- 		netdev->hw_features |= NETIF_F_GRO_HW;
-@@ -2447,7 +2518,7 @@ void hns3_clean_tx_ring(struct hns3_enet_ring *ring)
- 	netdev_tx_completed_queue(dev_queue, pkts, bytes);
- 
- 	if (unlikely(pkts && netif_carrier_ok(netdev) &&
--		     (ring_space(ring) > HNS3_MAX_BD_PER_PKT))) {
-+		     ring_space(ring) > HNS3_MAX_TSO_BD_NUM)) {
- 		/* Make sure that anybody stopping the queue after this
- 		 * sees the new next_to_clean.
- 		 */
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-index 2110fa3..c5b7c22 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-@@ -76,7 +76,7 @@ enum hns3_nic_state {
- #define HNS3_RING_NAME_LEN			16
- #define HNS3_BUFFER_SIZE_2048			2048
- #define HNS3_RING_MAX_PENDING			32760
--#define HNS3_RING_MIN_PENDING			24
-+#define HNS3_RING_MIN_PENDING			72
- #define HNS3_RING_BD_MULTIPLE			8
- /* max frame size of mac */
- #define HNS3_MAC_MAX_FRAME			9728
-@@ -195,9 +195,13 @@ enum hns3_nic_state {
- #define HNS3_VECTOR_INITED			1
- 
- #define HNS3_MAX_BD_SIZE			65535
--#define HNS3_MAX_BD_NUM_NORMAL			8
--#define HNS3_MAX_BD_NUM_TSO			63
--#define HNS3_MAX_BD_PER_PKT			MAX_SKB_FRAGS
-+#define HNS3_MAX_NON_TSO_BD_NUM			8U
-+#define HNS3_MAX_TSO_BD_NUM			63U
-+#define HNS3_MAX_TSO_SIZE \
-+	(HNS3_MAX_BD_SIZE * HNS3_MAX_TSO_BD_NUM)
-+
-+#define HNS3_MAX_NON_TSO_SIZE \
-+	(HNS3_MAX_BD_SIZE * HNS3_MAX_NON_TSO_BD_NUM)
- 
- #define HNS3_VECTOR_GL0_OFFSET			0x100
- #define HNS3_VECTOR_GL1_OFFSET			0x200
--- 
-2.7.4
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW5kcmV3IE11cnJheSA8
+YW5kcmV3Lm11cnJheUBhcm0uY29tPg0KPiBTZW50OiAyMDE5xOo51MIzMMjVIDIyOjU3DQo+IFRv
+OiBYaWFvd2VpIEJhbyA8eGlhb3dlaS5iYW9AbnhwLmNvbT4NCj4gQ2M6IHJvYmgrZHRAa2VybmVs
+Lm9yZzsgbWFyay5ydXRsYW5kQGFybS5jb207IHNoYXduZ3VvQGtlcm5lbC5vcmc7IExlbw0KPiBM
+aSA8bGVveWFuZy5saUBueHAuY29tPjsga2lzaG9uQHRpLmNvbTsgbG9yZW56by5waWVyYWxpc2lA
+YXJtLmNvbTsgTS5oLg0KPiBMaWFuIDxtaW5naHVhbi5saWFuQG54cC5jb20+OyBNaW5na2FpIEh1
+IDxtaW5na2FpLmh1QG54cC5jb20+OyBSb3kNCj4gWmFuZyA8cm95LnphbmdAbnhwLmNvbT47IGpp
+bmdvb2hhbjFAZ21haWwuY29tOw0KPiBndXN0YXZvLnBpbWVudGVsQHN5bm9wc3lzLmNvbTsgbGlu
+dXgtcGNpQHZnZXIua2VybmVsLm9yZzsNCj4gbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRl
+YWQub3JnOyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsNCj4gbGludXgta2VybmVsQHZnZXIu
+a2VybmVsLm9yZzsgbGludXhwcGMtZGV2QGxpc3RzLm96bGFicy5vcmcNCj4gU3ViamVjdDogUmU6
+IFtQQVRDSCB2NCAxMS8xMV0gbWlzYzogcGNpX2VuZHBvaW50X3Rlc3Q6IEFkZCBMUzEwODhhIGlu
+DQo+IHBjaV9kZXZpY2VfaWQgdGFibGUNCj4gDQo+IE9uIFR1ZSwgU2VwIDI0LCAyMDE5IGF0IDEw
+OjE4OjQ5QU0gKzA4MDAsIFhpYW93ZWkgQmFvIHdyb3RlOg0KPiA+IEFkZCBMUzEwODhhIGluIHBj
+aV9kZXZpY2VfaWQgdGFibGUgc28gdGhhdCBwY2ktZXBmLXRlc3QgY2FuIGJlIHVzZWQNCj4gPiBm
+b3IgdGVzdGluZyBQQ0llIEVQIGluIExTMTA4OGEuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBY
+aWFvd2VpIEJhbyA8eGlhb3dlaS5iYW9AbnhwLmNvbT4NCj4gPiAtLS0NCj4gPiB2MjoNCj4gPiAg
+LSBObyBjaGFuZ2UuDQo+ID4gdjM6DQo+ID4gIC0gTm8gY2hhbmdlLg0KPiA+IHY0Og0KPiA+ICAt
+IFVzZSBhIG1hY28gdG8gZGVmaW5lIHRoZSBMUzEwODhhIGRldmljZSBJRC4NCj4gPg0KPiA+ICBk
+cml2ZXJzL21pc2MvcGNpX2VuZHBvaW50X3Rlc3QuYyB8IDIgKysNCj4gPiAgMSBmaWxlIGNoYW5n
+ZWQsIDIgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWlzYy9w
+Y2lfZW5kcG9pbnRfdGVzdC5jDQo+ID4gYi9kcml2ZXJzL21pc2MvcGNpX2VuZHBvaW50X3Rlc3Qu
+Yw0KPiA+IGluZGV4IDZlMjA4YTAuLjhjMjIyYTYgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9t
+aXNjL3BjaV9lbmRwb2ludF90ZXN0LmMNCj4gPiArKysgYi9kcml2ZXJzL21pc2MvcGNpX2VuZHBv
+aW50X3Rlc3QuYw0KPiA+IEBAIC02NSw2ICs2NSw3IEBADQo+ID4gICNkZWZpbmUgUENJX0VORFBP
+SU5UX1RFU1RfSVJRX05VTUJFUgkJMHgyOA0KPiA+DQo+ID4gICNkZWZpbmUgUENJX0RFVklDRV9J
+RF9USV9BTTY1NAkJCTB4YjAwYw0KPiA+ICsjZGVmaW5lIFBDSV9ERVZJQ0VfSURfTFMxMDg4QQkJ
+CTB4ODBjMA0KPiANCj4gUmV2aWV3ZWQtYnk6IEFuZHJldyBNdXJyYXkgPGFuZHJldy5tdXJyYXlA
+YXJtLmNvbT4NCg0KVGhhbmtzIEFuZHJldy4NCg0KPiANCj4gPg0KPiA+ICAjZGVmaW5lIGlzX2Ft
+NjU0X3BjaV9kZXYocGRldikJCVwNCj4gPiAgCQkoKHBkZXYpLT5kZXZpY2UgPT0gUENJX0RFVklD
+RV9JRF9USV9BTTY1NCkgQEAgLTc5Myw2ICs3OTQsNw0KPiBAQA0KPiA+IHN0YXRpYyBjb25zdCBz
+dHJ1Y3QgcGNpX2RldmljZV9pZCBwY2lfZW5kcG9pbnRfdGVzdF90YmxbXSA9IHsNCj4gPiAgCXsg
+UENJX0RFVklDRShQQ0lfVkVORE9SX0lEX1RJLCBQQ0lfREVWSUNFX0lEX1RJX0RSQTc0eCkgfSwN
+Cj4gPiAgCXsgUENJX0RFVklDRShQQ0lfVkVORE9SX0lEX1RJLCBQQ0lfREVWSUNFX0lEX1RJX0RS
+QTcyeCkgfSwNCj4gPiAgCXsgUENJX0RFVklDRShQQ0lfVkVORE9SX0lEX0ZSRUVTQ0FMRSwgMHg4
+MWMwKSB9LA0KPiA+ICsJeyBQQ0lfREVWSUNFKFBDSV9WRU5ET1JfSURfRlJFRVNDQUxFLCBQQ0lf
+REVWSUNFX0lEX0xTMTA4OEEpIH0sDQo+ID4gIAl7IFBDSV9ERVZJQ0VfREFUQShTWU5PUFNZUywg
+RUREQSwgTlVMTCkgfSwNCj4gPiAgCXsgUENJX0RFVklDRShQQ0lfVkVORE9SX0lEX1RJLCBQQ0lf
+REVWSUNFX0lEX1RJX0FNNjU0KSwNCj4gPiAgCSAgLmRyaXZlcl9kYXRhID0gKGtlcm5lbF91bG9u
+Z190KSZhbTY1NF9kYXRhDQo+ID4gLS0NCj4gPiAyLjkuNQ0KPiA+DQo=
