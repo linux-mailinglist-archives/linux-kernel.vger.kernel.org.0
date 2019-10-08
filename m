@@ -2,119 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88332CFBE1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:05:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C183CFBE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:06:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726086AbfJHOFr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 10:05:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41492 "EHLO mail.kernel.org"
+        id S1726314AbfJHOGC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 10:06:02 -0400
+Received: from smtp2.goneo.de ([85.220.129.33]:38536 "EHLO smtp2.goneo.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725908AbfJHOFr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 10:05:47 -0400
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99A4D21835;
-        Tue,  8 Oct 2019 14:05:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570543545;
-        bh=BSS0pP5TSRCvXx2PTe+19CYaQtXYwyol55cIo7m2kK4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Kew6HNvNZ6MlVZWAgDPneJGj58ojWZM9y1SNfNv2eqWdvrpd39CXDtv/nOjRtLDTn
-         LXMWxGOtUr6RzWSRbP6C/c7tYxmpnY1iWy38I5FhwsOEecriIePU2URkPu38dZLjKK
-         U8f9EO4J9PpFswvfVGwK3aBM5g1z582U/JNJ652A=
-Received: by mail-qk1-f175.google.com with SMTP id z67so16822526qkb.12;
-        Tue, 08 Oct 2019 07:05:45 -0700 (PDT)
-X-Gm-Message-State: APjAAAVBzQgXdDemSni4DIsI/PRSJlx4Yl2TmqJD1kHHli8dfMhTZ/uJ
-        +aK9lmFkLzoWLgW/MZ+GPQWLGkmU80scqA2x3w==
-X-Google-Smtp-Source: APXvYqzmV2QKGWccGoICKAMKFwzAvk3BDhnCzy9bG1IFslKWjFwHSNzobfLRiSO2TBvO8XDayAdctf68UpVEJjgX+fE=
-X-Received: by 2002:a05:620a:7da:: with SMTP id 26mr27130717qkb.119.1570543544639;
- Tue, 08 Oct 2019 07:05:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191004151414.8458-1-krzk@kernel.org> <CAL_JsqJDTcHu5oXG6zszGHCBhTE6EW94AANUjyMV78SkKcn5yA@mail.gmail.com>
- <20191008125038.GA2550@pi3>
-In-Reply-To: <20191008125038.GA2550@pi3>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 8 Oct 2019 09:05:32 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+GcsUWN6kjBLkyr1rHGh6_4=w6JL6+k7DBXkBcvHcSBw@mail.gmail.com>
-Message-ID: <CAL_Jsq+GcsUWN6kjBLkyr1rHGh6_4=w6JL6+k7DBXkBcvHcSBw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: arm: samsung: Force clkoutN names to be
- unique in PMU
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Kukjin Kim <kgene@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lee Jones <lee.jones@linaro.org>,
+        id S1725795AbfJHOGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 10:06:01 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp2.goneo.de (Postfix) with ESMTP id 248F023F4C2;
+        Tue,  8 Oct 2019 16:05:58 +0200 (CEST)
+X-Virus-Scanned: by goneo
+X-Spam-Flag: NO
+X-Spam-Score: -3.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-3.099 tagged_above=-999 tests=[ALL_TRUSTED=-1,
+        AWL=-0.199, BAYES_00=-1.9] autolearn=ham
+Received: from smtp2.goneo.de ([127.0.0.1])
+        by localhost (smtp2.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id PdJ_mfceu7tW; Tue,  8 Oct 2019 16:05:56 +0200 (CEST)
+Received: from lem-wkst-02.lemonage.de. (hq.lemonage.de [87.138.178.34])
+        by smtp2.goneo.de (Postfix) with ESMTPA id 1807623F232;
+        Tue,  8 Oct 2019 16:05:55 +0200 (CEST)
+From:   Lars Poeschel <poeschel@lemonage.de>
+Cc:     Lars Poeschel <poeschel@lemonage.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jilayne Lovejoy <opensource@jilayne.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Maciej Falkowski <m.falkowski@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, Steve Winslow <swinslow@gmail.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>,
+        Allison Randal <allison@lohutok.net>,
+        Johan Hovold <johan@kernel.org>,
+        Simon Horman <horms@verge.net.au>
+Subject: [PATCH v9 0/7] nfc: pn533: add uart phy driver
+Date:   Tue,  8 Oct 2019 16:05:37 +0200
+Message-Id: <20191008140544.17112-1-poeschel@lemonage.de>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 8, 2019 at 7:50 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Tue, Oct 08, 2019 at 07:38:14AM -0500, Rob Herring wrote:
-> > On Fri, Oct 4, 2019 at 10:14 AM Krzysztof Kozlowski <krzk@kernel.org> w=
-rote:
-> > >
-> > > The clkoutN names of clocks must be unique because they represent
-> > > unique inputs of clock multiplexer.
-> > >
-> > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > > ---
-> > >  Documentation/devicetree/bindings/arm/samsung/pmu.yaml | 6 ++++--
-> > >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.yaml b=
-/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
-> > > index 73b56fc5bf58..d8e03716f5d2 100644
-> > > --- a/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
-> > > +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
-> > > @@ -53,8 +53,10 @@ properties:
-> > >        List of clock names for particular CLKOUT mux inputs
-> > >      minItems: 1
-> > >      maxItems: 32
-> > > -    items:
-> > > -      pattern: '^clkout([0-9]|[12][0-9]|3[0-1])$'
-> > > +    allOf:
-> > > +      - items:
-> > > +          pattern: '^clkout([0-9]|[12][0-9]|3[0-1])$'
-> > > +      - uniqueItems: true
-> >
-> > You shouldn't need the 'allOf', just add uniqueItems at the same level =
-as items.
->
-> If you mean something like:
->   56     uniqueItems: true
->   57     items:
->   58       pattern: '^clkout([0-9]|[12][0-9]|3[0-1])$'
->
-> Then the dt_binding_check fails:
->
-> dev/linux/Documentation/devicetree/bindings/arm/samsung/pmu.yaml: propert=
-ies:clock-names:
-> 'uniqueItems' is not one of ['$ref', 'additionalItems', 'additionalProper=
-ties', 'allOf', 'anyOf', 'const', 'contains', 'default', 'dependencies', 'd=
-eprecated', 'description', 'else', 'enum', 'items', 'if', 'minItems', 'mini=
-mum', 'maxItems', 'maximum', 'not', 'oneOf', 'pattern', 'patternProperties'=
-, 'properties', 'required', 'then', 'type', 'typeSize', 'unevaluatedPropert=
-ies']
+The purpose of this patch series is to add a uart phy driver to the
+pn533 nfc driver.
+It first changes the dt strings and docs. The dt compatible strings
+need to change, because I would add "pn532-uart" to the already
+existing "pn533-i2c" one. These two are now unified into just
+"pn532". Then the neccessary changes to the pn533 core driver are
+made. Then the uart phy is added.
+As the pn532 chip supports a autopoll, I wanted to use this instead
+of the software poll loop in the pn533 core driver. It is added and
+activated by the last to patches.
+The way to add the autopoll later in seperate patches is chosen, to
+show, that the uart phy driver can also work with the software poll
+loop, if someone needs that for some reason.
+This patchset is already rebased on Johans "NFC: pn533: fix
+use-after-free and memleaks" patch
+https://lore.kernel.org/netdev/20191007164059.5927-1-johan@kernel.org/
+as they would conflict.
+If for some reason Johans patch will not get merged, I can of course
+provide the patchset without depending on this patch.
 
-I can add it.
+Cc: Lars Poeschel <poeschel@lemonage.de>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jilayne Lovejoy <opensource@jilayne.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org
+Cc: Steve Winslow <swinslow@gmail.com>
+Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Allison Randal <allison@lohutok.net>
+Cc: Johan Hovold <johan@kernel.org>
+Cc: Simon Horman <horms@verge.net.au>
 
-The other option is to fix this in the clock schema. I'm not sure if
-there's a need for duplicate clock-names. Seems unlikely. I'll test
-that.
+Lars Poeschel (7):
+  nfc: pn533: i2c: "pn532" as dt compatible string
+  nfc: pn532: Add uart phy docs and rename it
+  nfc: pn533: Add dev_up/dev_down hooks to phy_ops
+  nfc: pn533: Split pn533 init & nfc_register
+  nfc: pn533: add UART phy driver
+  nfc: pn533: Add autopoll capability
+  nfc: pn532_uart: Make use of pn532 autopoll
 
-Rob
+ .../net/nfc/{pn533-i2c.txt => pn532.txt}      |  25 +-
+ drivers/nfc/pn533/Kconfig                     |  11 +
+ drivers/nfc/pn533/Makefile                    |   2 +
+ drivers/nfc/pn533/i2c.c                       |  22 +-
+ drivers/nfc/pn533/pn533.c                     | 271 +++++++++++++--
+ drivers/nfc/pn533/pn533.h                     |  38 +-
+ drivers/nfc/pn533/uart.c                      | 324 ++++++++++++++++++
+ drivers/nfc/pn533/usb.c                       |  12 +-
+ 8 files changed, 646 insertions(+), 59 deletions(-)
+ rename Documentation/devicetree/bindings/net/nfc/{pn533-i2c.txt => pn532.txt} (42%)
+ create mode 100644 drivers/nfc/pn533/uart.c
+
+-- 
+2.23.0
+
