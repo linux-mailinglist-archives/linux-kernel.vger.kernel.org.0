@@ -2,76 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 862D6CFC6F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:30:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB4C9CFC4A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:22:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727179AbfJHO3o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 10:29:44 -0400
-Received: from one.firstfloor.org ([193.170.194.197]:39246 "EHLO
-        one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726333AbfJHO3o (ORCPT
+        id S1726489AbfJHOWh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 10:22:37 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:34736 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725839AbfJHOWg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 10:29:44 -0400
-X-Greylist: delayed 477 seconds by postgrey-1.27 at vger.kernel.org; Tue, 08 Oct 2019 10:29:44 EDT
-Received: by one.firstfloor.org (Postfix, from userid 503)
-        id D5AA586951; Tue,  8 Oct 2019 16:21:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=firstfloor.org;
-        s=mail; t=1570544504;
-        bh=qU+aOZ8e3XhF+99FLjM1jrujYQGQA+No8pJoZYO/5Pw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=b8kZOjeb4MtKFWbWeVqJPPRLt9CdIbDsFzN4tZvHefzobHsgfpkPFcSZsKLFL5tUh
-         fTuZ3BJvecZMBRb5WgnM5GDjOOS0W/e6m2Jko2OwQq92qKMydlo+a41JXUpgXeFaih
-         OUes1KKrjJFztWsFLfmI6JvceO/bBeG+73X3ZY0I=
-Date:   Tue, 8 Oct 2019 07:21:44 -0700
-From:   Andi Kleen <andi@firstfloor.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Andi Kleen <andi@firstfloor.org>, acme@kernel.org,
-        jolsa@kernel.org, linux-kernel@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH] perf data: Fix babeltrace detection
-Message-ID: <20191008142143.ts5se4pzwfnfnbsh@two.firstfloor.org>
-References: <20191007174120.12330-1-andi@firstfloor.org>
- <20191008115240.GE10009@krava>
+        Tue, 8 Oct 2019 10:22:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1570544555;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jMpWj4uOPxcgbjJ4IsWoC4M5sQShlFz4NNLvVWf/x6o=;
+        b=Cszw21RsBE2P8aVTe7ByjPE3OXu768c33Lf6s+jGwrRzqcpeyfCrvF2LWtAwhKPMXC2Adn
+        bgOw/C2La2SEtla0gcAz0opspVDHhce8gpXBtDZapr5/0wAGPM6rnDM2ZfMpJBOA9WCUm8
+        D5gRbMyHefonYwdNtpH5wDc8KSBWIq4=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-330-DAMSSagpMD6PALxAVV3EIQ-1; Tue, 08 Oct 2019 10:22:33 -0400
+Received: by mail-lf1-f72.google.com with SMTP id w193so2275453lff.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 07:22:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=izWGXNhra/3fh2DCf3llnwEjW05viNBlyod0b16IslA=;
+        b=NtFMET7yNImU3yBrof/SJJOWPNGHwK827qSIYn98yEkKoIk7jt5C9ku0khij7HjiEN
+         /von2AqXE6xg/6izO7LCYWUIkqm/IKmnnvlr2ElYMAO7sOOEGjmIVRTKgMIKE1WG/knL
+         B6bw4qOURpLGccaKdNaH7vjP9htigVvzarDOpDQkXYPR5f4Brx+V/fNGDNI+/X9r7FUS
+         wzenvR2wSnkxS4eG18P2PxCTKpXdddKtW/zxr+jLY0HoZt62po/J6Elky/wVC+Jk1dWe
+         GGX0GK88uxcMtkqFowCdrhhHDhGRK6m/Q9KCvY58Oy7q5DM2Hac0VTfduKw6glKfIXRA
+         KiTw==
+X-Gm-Message-State: APjAAAVln7KxcjvgvzEFCAwgaJ/JmXIrXDgEZ3UgB17/ytNSIN9sPCI4
+        2rg37PGWP3mCJV5IVZkhUvGgzlYcIaMxl0J16bgyNyJcGDRBvZHOqDjYL28LtT6Cnb0WaLluSnz
+        PKlryfSOr+S5p3CfppsEjaf5AX1ztAf7feBeCrCFV
+X-Received: by 2002:a19:f617:: with SMTP id x23mr20131655lfe.97.1570544551405;
+        Tue, 08 Oct 2019 07:22:31 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwQ5BIwFckGkZoqMa3dajoTZI5b2H0V7PwZ9+q73PFB53Spl/+fGoimtc5lTyv7g1Hv5kaHN9PjZmq2Rci2J+I=
+X-Received: by 2002:a19:f617:: with SMTP id x23mr20131648lfe.97.1570544551211;
+ Tue, 08 Oct 2019 07:22:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191008115240.GE10009@krava>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20191008123346.3931-1-mcroce@redhat.com> <20191008131518.GH25098@kadam>
+In-Reply-To: <20191008131518.GH25098@kadam>
+From:   Matteo Croce <mcroce@redhat.com>
+Date:   Tue, 8 Oct 2019 16:21:54 +0200
+Message-ID: <CAGnkfhxefH+3YKDWQMCOYoj1skcq6rUmHuiHZQ-76YixFqbQjg@mail.gmail.com>
+Subject: Re: [PATCH] staging: vchiq: don't leak kernel address
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Eric Anholt <eric@anholt.net>, Stefan Wahren <wahrenst@gmx.net>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>, devel@driverdev.osuosl.org
+X-MC-Unique: DAMSSagpMD6PALxAVV3EIQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 01:52:40PM +0200, Jiri Olsa wrote:
-> On Mon, Oct 07, 2019 at 10:41:20AM -0700, Andi Kleen wrote:
-> > From: Andi Kleen <ak@linux.intel.com>
-> > 
-> > The symbol the feature file checks for is now actually in -lbabeltrace,
-> > not -lbabeltrace-ctf, at least as of libbabeltrace-1.5.6-2.fc30.x86_64
-> > 
-> > Always add both libraries to fix the feature detection.
-> 
-> well, we link with libbabeltrace-ctf.so which links with libbabeltrace.so
-> 
-> I guess we can link it as well, but where do you see it fail?
+On Tue, Oct 8, 2019 at 3:16 PM Dan Carpenter <dan.carpenter@oracle.com> wro=
+te:
+>
+> The subject doesn't match the patch.  It should just be "remove useless
+> printk".
+>
+> regards,
+> dan carpenter
+>
 
-On FC30 the .so file is just a symlink, so it doesn't pull
-in the other library.
+Well, it avoids leaking an address by removing an useless printk.
+It seems that GKH already picked the patch in his staging tree, but
+I'm fine with both subjects, really,
 
-$ gcc test-libbabeltrace.c -lbabeltrace-ctf
-/usr/bin/ld:
-/usr/lib/gcc/x86_64-redhat-linux/9/../../../../lib64/libbabeltrace-ctf.so:
-undefined reference to `bt_packet_seek_get_error'
-/usr/bin/ld:
-/usr/lib/gcc/x86_64-redhat-linux/9/../../../../lib64/libbabeltrace-ctf.so:
-undefined reference to `bt_packet_seek_set_error'
-collect2: error: ld returned 1 exit status
+Greg?
 
-$ ls -l /usr/lib64/libbabeltrace-ctf.so
-lrwxrwxrwx 1 root root 26 Jan 31  2019 /usr/lib64/libbabeltrace-ctf.so
--> libbabeltrace-ctf.so.1.0.0
+--=20
+Matteo Croce
+per aspera ad upstream
 
-$ rpm -qf /usr/lib64/libbabeltrace-ctf.so
-libbabeltrace-devel-1.5.6-2.fc30.x86_64
-
--Andi
