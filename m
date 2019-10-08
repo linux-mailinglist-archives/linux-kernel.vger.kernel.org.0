@@ -2,147 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92016CF9E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 14:35:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D64BFCF9F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 14:36:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730944AbfJHMeu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 08:34:50 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:10186 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730605AbfJHMet (ORCPT
+        id S1730954AbfJHMgK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 08:36:10 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55509 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730249AbfJHMgJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 08:34:49 -0400
-Received-SPF: Pass (esa6.microchip.iphmx.com: domain of
-  Nicolas.Ferre@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
-  envelope-from="Nicolas.Ferre@microchip.com";
-  x-sender="Nicolas.Ferre@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa6.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
-  envelope-from="Nicolas.Ferre@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa6.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Nicolas.Ferre@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: FxSCSadRfyOhjmGJ0lq7LzW+WbK63wzhjmw9cb8R/74ZHo7MW1K73CZIBHrOxnJajFj0BaPoKB
- uv53CT0mlylEXBhYUY2oOoE53N3JtzGeVaqveo6n6pNhLxCjQFO2SBDHzZfAK91pH+ScGp/ZKY
- B6Qq/xYJA1i9jU6BWGX5qzgSh4Px3p2td819sVi/ji7ngj4iyPmZWFdD8e/RSUU+pQJBtBuzm9
- Wl2kJO2vZtn+1BXrBGSp7C9bDbhIx7RAj+3mO9OEDDDk4dfuQyZ+Yg6lgQRJdboFRs7csD7gme
- Qf4=
-X-IronPort-AV: E=Sophos;i="5.67,270,1566889200"; 
-   d="scan'208";a="49212619"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 08 Oct 2019 05:34:48 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Tue, 8 Oct 2019 05:34:48 -0700
-Received: from tenerife.corp.atmel.com (10.10.85.251) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Tue, 8 Oct 2019 05:34:46 -0700
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-To:     Ludovic Desroches <ludovic.desroches@microchip.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <robh+dt@kernel.org>
-CC:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        <linux-kernel@vger.kernel.org>, <ulf.hansson@linaro.org>,
-        <adrian.hunter@intel.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: [PATCH 2/2] mmc: sdhci-of-at91: add DT property to enable calibration on full reset
-Date:   Tue, 8 Oct 2019 14:34:32 +0200
-Message-ID: <d25c8f909d039938a5696e8de32396cf2aaf54b7.1570537903.git.nicolas.ferre@microchip.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <4d269f30b1122487a2b5c8b48e24f78f2b75a509.1570537903.git.nicolas.ferre@microchip.com>
-References: <4d269f30b1122487a2b5c8b48e24f78f2b75a509.1570537903.git.nicolas.ferre@microchip.com>
+        Tue, 8 Oct 2019 08:36:09 -0400
+Received: by mail-wm1-f67.google.com with SMTP id a6so2950525wma.5
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 05:36:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Kc2Ivzmz/SqwidGdqpK+CvkXVy5k2Sl1jkfVbY/LHJY=;
+        b=q7SplP/Y/2yE40tNY379pmoTEnauF4kpPRy2t/ObYgeynDMhWlZfiMFRIGTUrMwKkL
+         tIC/4SAgt7me05rlP6uVlS7/9YDTCaUBkDhxKEe6CZoQNmeCi+LcAn+KL5jV/N7x+EuH
+         MZP/9SGzmjM+4JOu2k82PxV0Sfmt8J8Pdp8BO1rvNu9Ooq9rH1XECqnBBJUJzVhBaaHu
+         NAcUga0gC577BnN320mwrncTSPpbLjbvCpWlGKHnFSIaWU2n+Bcy2DafGWeaGwI4mID+
+         O768xU5EMNhRiWvnOSlS1RStSUPbBCYeRc+RU6wXL0MY3ZPrZ/wc3SNtgrkLxrGrwZeK
+         0EhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Kc2Ivzmz/SqwidGdqpK+CvkXVy5k2Sl1jkfVbY/LHJY=;
+        b=OBWZVyLDvc4bfgHpODEFnFQhpwbMnx3QMdCNFxOZ+wo/gY6uiL21KRLiOnFH2cwBZw
+         WAVck6RaW7cZzcNs2ZvRb/DbVp9iiPXQCaNWBgNOnbK6kD9hI/jl387WUokOs8gr9auB
+         SGCrHz7hAXwzrDiFZi3U+b2DtieRvbYJVFpbnblPZHShyAoZSoTolz8tV48eU55LwRXB
+         aV18eSC1Cge/AhEZrUt2rwUljvKoIwSoGBO5suwSHWaKq0dDOlowJ/uNMXH5wwIekyBI
+         ZR6CAPkeL5sV6WFku0DojMactFIqK1+ZH8dQiNr6rzNs9EY3wFnuSAry/B7rmMoYWjU2
+         wvSQ==
+X-Gm-Message-State: APjAAAU0fcMLJYmM9c9SsBouf/JDyLxFeW5eku/LUgiwRmjEZPLPEPkf
+        2MeG5BxEgeL8ClCrCHzbE3g=
+X-Google-Smtp-Source: APXvYqyTG1vPuj0rzqQjBmow3gco42j2U9YKMZ0Jhh7u5quThdvAtxCyg6tyK0Liil6REULqLNDf5A==
+X-Received: by 2002:a1c:9988:: with SMTP id b130mr3778582wme.164.1570538168133;
+        Tue, 08 Oct 2019 05:36:08 -0700 (PDT)
+Received: from localhost.localdomain ([104.238.174.53])
+        by smtp.gmail.com with ESMTPSA id d4sm23100575wrq.22.2019.10.08.05.36.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2019 05:36:07 -0700 (PDT)
+From:   Changbin Du <changbin.du@gmail.com>
+To:     Jiri Olsa <jolsa@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org, Changbin Du <changbin.du@gmail.com>
+Subject: [PATCH v4 0/2] perf: add support for logging debug messages to file
+Date:   Tue,  8 Oct 2019 20:35:52 +0800
+Message-Id: <20191008123554.6796-1-changbin.du@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a property to keep the analog calibration cell powered.
-This feature is specific to the Microchip SDHCI IP and outside
-of the standard SDHCI register map.
+When in TUI mode, it is impossible to show all the debug messages to
+console. This make it hard to debug perf issues using debug messages.
+This patch adds support for logging debug messages to file to resolve
+this problem.
 
-By always keeping it on, after a full reset sequence, we make sure
-that this feature is activated and not disabled.
+v4:
+  o fix another segfault.
+v3:
+  o fix a segfault issue.
+v2:
+  o specific all debug options one time.
 
-We expose a hardware property to the DT as this feature can be used
-to adapt SDHCI behavior vs. how the SDCAL SoC pin is connected
-on the board.
+Changbin Du (2):
+  perf: support multiple debug options separated by ','
+  perf: add support for logging debug messages to file
 
-Note that managing properly this property would reduce
-power consumption on some SAMA5D2 SiP revisions.
+ tools/perf/Documentation/perf.txt |  15 ++--
+ tools/perf/util/debug.c           | 124 ++++++++++++++++++++----------
+ 2 files changed, 91 insertions(+), 48 deletions(-)
 
-Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
----
- drivers/mmc/host/sdhci-of-at91.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/drivers/mmc/host/sdhci-of-at91.c b/drivers/mmc/host/sdhci-of-at91.c
-index e7d1920729fb..9571c4a882a9 100644
---- a/drivers/mmc/host/sdhci-of-at91.c
-+++ b/drivers/mmc/host/sdhci-of-at91.c
-@@ -27,6 +27,9 @@
- #define SDMMC_CACR	0x230
- #define		SDMMC_CACR_CAPWREN	BIT(0)
- #define		SDMMC_CACR_KEY		(0x46 << 8)
-+#define SDMMC_CALCR	0x240
-+#define		SDMMC_CALCR_EN		BIT(0)
-+#define		SDMMC_CALCR_ALWYSON	BIT(4)
- 
- #define SDHCI_AT91_PRESET_COMMON_CONF	0x400 /* drv type B, programmable clock mode */
- 
-@@ -35,6 +38,7 @@ struct sdhci_at91_priv {
- 	struct clk *gck;
- 	struct clk *mainck;
- 	bool restore_needed;
-+	bool cal_always_on;
- };
- 
- static void sdhci_at91_set_force_card_detect(struct sdhci_host *host)
-@@ -116,10 +120,17 @@ static void sdhci_at91_set_uhs_signaling(struct sdhci_host *host,
- 
- static void sdhci_at91_reset(struct sdhci_host *host, u8 mask)
- {
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_at91_priv *priv = sdhci_pltfm_priv(pltfm_host);
-+
- 	sdhci_reset(host, mask);
- 
- 	if (host->mmc->caps & MMC_CAP_NONREMOVABLE)
- 		sdhci_at91_set_force_card_detect(host);
-+
-+	if (priv->cal_always_on && (mask & SDHCI_RESET_ALL))
-+		sdhci_writel(host, SDMMC_CALCR_ALWYSON | SDMMC_CALCR_EN,
-+			     SDMMC_CALCR);
- }
- 
- static const struct sdhci_ops sdhci_at91_sama5d2_ops = {
-@@ -345,6 +356,14 @@ static int sdhci_at91_probe(struct platform_device *pdev)
- 
- 	priv->restore_needed = false;
- 
-+	/*
-+	 * if SDCAL pin is wrongly connected, we must enable
-+	 * the analog calibration cell permanently.
-+	 */
-+	priv->cal_always_on =
-+		device_property_read_bool(&pdev->dev,
-+					  "microchip,sdcal-inverted");
-+
- 	ret = mmc_of_parse(host->mmc);
- 	if (ret)
- 		goto clocks_disable_unprepare;
 -- 
-2.17.1
+2.20.1
 
