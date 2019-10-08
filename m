@@ -2,156 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6614CCFE6A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 18:02:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 108A6CFE77
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 18:03:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728893AbfJHQCM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 12:02:12 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:40297 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726253AbfJHQCL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 12:02:11 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191008160209euoutp01841cd8d992d677716d8fe6fb5f0fd4ab~Lt2K5e-Qh2295322953euoutp019
-        for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2019 16:02:09 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191008160209euoutp01841cd8d992d677716d8fe6fb5f0fd4ab~Lt2K5e-Qh2295322953euoutp019
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1570550529;
-        bh=BCc/Qqs2WfjDX6ovn/o7YnWTV1oZSv54+rW4zjmhABo=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=qGMvm+2QotfDQkWPSvp8QGFNnNfrITDMmuUePoF49F5qT0jaSyXi9PZozSAzrtgU+
-         wHV2kR4GOjSLhb3O+8Z8nucUROLk/CsEK0gxB/5daynwmbgeg/T+6OlXyBuE6YYuw3
-         qlegoJlgnXQs9CY78I9X44LtxLZAFmy2afDGJG2Q=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191008160209eucas1p155ddc06b8fad76e3b2576add32d61040~Lt2Kjw58e1601816018eucas1p1_;
-        Tue,  8 Oct 2019 16:02:09 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id FE.98.04469.103BC9D5; Tue,  8
-        Oct 2019 17:02:09 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191008160208eucas1p2e9ad389fc2843c811c75cc67e19d0bbc~Lt2KIZskR2583825838eucas1p2j;
-        Tue,  8 Oct 2019 16:02:08 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191008160208eusmtrp2606ccc70cbf904fc248e07e7fa63a657~Lt2KHJ9_w2351923519eusmtrp2C;
-        Tue,  8 Oct 2019 16:02:08 +0000 (GMT)
-X-AuditID: cbfec7f2-54fff70000001175-31-5d9cb301d180
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id DB.A1.04117.003BC9D5; Tue,  8
-        Oct 2019 17:02:08 +0100 (BST)
-Received: from [106.120.51.71] (unknown [106.120.51.71]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191008160208eusmtip16c1310b5cc70442ea478899f3d1d7f5e~Lt2Jn41Bh2692826928eusmtip1a;
-        Tue,  8 Oct 2019 16:02:08 +0000 (GMT)
-Subject: Re: [PATCH] regulator: core: Skip balancing of the enabled
- regulators in regulator_enable()
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-kernel@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
+        id S1728329AbfJHQDr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 12:03:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52300 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725966AbfJHQDq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 12:03:46 -0400
+Received: from localhost.localdomain (unknown [194.230.155.145])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 635102070B;
+        Tue,  8 Oct 2019 16:03:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570550625;
+        bh=d+bnSj+aUj4AkXaZ4Ba8QnLrU2qyvLx31uOPqtiUmhI=;
+        h=From:To:Subject:Date:From;
+        b=H2xcjj4P9W2tviDzgYjGRTTxuPxOYpcSgIF9pxhrONAgj/21fvrOlOBAu9EZevDa1
+         7HTk8iy6+edgjN0a98y2RvXdk9Yfi6Iax6chhjUZ2cJC5jsKmRjRnfioXLPQ1N6Ja+
+         eJtv0Qiovj1wieTVz4OVlcniEhwYfQck63F6nc/A=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Russell King <linux@armlinux.org.uk>,
+        Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Kamil Konieczny <k.konieczny@samsung.com>
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Message-ID: <86eb668d-7bcf-798b-dabb-95071d16cbb6@samsung.com>
-Date:   Tue, 8 Oct 2019 18:02:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20191008154844.GM4382@sirena.co.uk>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfyyUcRzH+z5399zj9NjjaPeZWuy0LI1O0zz6YWr9cav144+2dEUOT8e6
-        O7oHRWvZmMPmd6TbidGoQ34Twx/HMrVYxGjJiT+wqTkusZDzZPPf6/Pj/fl83tuH4Il7BG5E
-        jDae0WmVaiku4re9Xxv0Qc3GUNnUM4oump7F6ZqlGUSXW0sE9NBQg5C2lE5g9O8vGRg90mnE
-        6ZKhHoyu65sU0o02ebBI3mGYFMqbTJm4/NtYFy7P3ZDJc1pMSL7cdPg6rhCdjWLUMYmM7kRQ
-        uCi6tnmZHzdIPhovXBCmoBzHLORAAOUP0z9b8SwkIsTUawSGbBvGBSsIBlqqEBcsI1hrrsF2
-        JXXtQ0KuUI2gvtIk4IJFBO3zuTtdLtQ9KFhY4dvZlfKE0dXuHeZRMxiY/0rsjFOnIV9v2l5B
-        ECQVBNO1IfY0nzoC9a8sQjsfoELAaukV2JmknGHgxezOGAfKD/Tr6zg3UgZ9FUYBxxL4OluG
-        cewO7YtGnv02oMaEsFpdxOMcXISpumwBxy6w0N8i5PgQbHWUYZzgLYKNjLn/6nYE1YWbONd1
-        Bnr7PwvsVwN1HtJqozh0gvFFZ26xExS0PedxaRIy0sWc8Cg0VDXgu6uyOt7w8pDUsMeaYY8d
-        wx47hj12yhHfhCRMAqtRMayflnnoyyo1bIJW5RsZq2lC21/1cbPf+g7ZhiPMiCKQdD8ZnGwM
-        FQuUiWySxoyA4EldyQrDdoqMUiYlM7rYu7oENcOa0UGCL5WQj/dZbosplTKeuc8wcYxut4oR
-        Dm4pKF3tWFqc6W27cLVg+nusNkOuzA8fHZkf9vv0Uv/AVHbZrLc9DZMUe6KJuhuKXI/iqT8R
-        Cnf3pa5zHgr/yEqv1puZ6EPYrfVGVHH8SWxh1y82uFSVP1fcSS54+cSlBlqvxB/r0aYFXFrf
-        KvnRoQ9QpS7JAk8GQFdet+ma+lT+HSmfjVb6efN0rPIf6lxn1FEDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHIsWRmVeSWpSXmKPExsVy+t/xu7oMm+fEGiz7Z2wx9eETNovVHx8z
-        Wiz4NIPV4vz5DewWD+beZLL4dqWDyeLyrjlsFjPO72OyWHvkLrvFxq8eDlweO2fdZffYtKqT
-        zePOtT1sHv1/DTz6tqxi9Pi8SS6ALUrPpii/tCRVISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzW
-        yshUSd/OJiU1J7MstUjfLkEvY83mzywF53grbkx+xd7A2MfdxcjJISFgIrF2+3n2LkYuDiGB
-        pYwSpxrmMXUxcgAlZCSOry+DqBGW+HOtiw3EFhJ4zSgxeaIxiC0skCZx//BjRhBbREBZ4ur3
-        vSwgc5gFHjNJnJ5whBVi6BlmiZ1rGllBqtgErCQmtq9iBFnAK2An8XBNBEiYRUBFYv2SB+wg
-        tqhAhMThHbPAhvIKCEqcnPmEBcTmFDCUaP/1C+wIZgE9iR3Xf7FC2OISt57MZ4Kw5SW2v53D
-        PIFRaBaS9llIWmYhaZmFpGUBI8sqRpHU0uLc9NxiI73ixNzi0rx0veT83E2MwLjcduznlh2M
-        Xe+CDzEKcDAq8fA6VM2JFWJNLCuuzD3EKMHBrCTCu2gWUIg3JbGyKrUoP76oNCe1+BCjKdBz
-        E5mlRJPzgSkjryTe0NTQ3MLS0NzY3NjMQkmct0PgYIyQQHpiSWp2ampBahFMHxMHp1QDY0ZC
-        ZWb8aXvO6el1eZ/Na1s2BSofev95o6IKc1FmTXeZYpK0DUN6R0vyzxsuio9vJCUm9b80tax7
-        U1NbyGYlVhO05+DlI/u2Vygznni36o+4zQ+BqxmRVuyGZWc+nnvJcEfr4rFp+y+cmF/0yS5M
-        kXNywO4dgRGHYq6W7Ct9wiNZNeed/b4yJZbijERDLeai4kQANVD/u+ECAAA=
-X-CMS-MailID: 20191008160208eucas1p2e9ad389fc2843c811c75cc67e19d0bbc
-X-Msg-Generator: CA
-X-RootMTR: 20191008101720eucas1p2e0d1bca6e696848bf689067e05620679
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20191008101720eucas1p2e0d1bca6e696848bf689067e05620679
-References: <CGME20191008101720eucas1p2e0d1bca6e696848bf689067e05620679@eucas1p2.samsung.com>
-        <20191008101709.13827-1-m.szyprowski@samsung.com>
-        <20191008115025.GF4382@sirena.co.uk>
-        <0e222fdd-4407-51ea-b75c-a62621cbe622@samsung.com>
-        <20191008120611.GG4382@sirena.co.uk>
-        <9268b455-ec66-97e1-909d-f964ac31c0ef@samsung.com>
-        <20191008124736.GJ4382@sirena.co.uk>
-        <86b9b4b5-cca5-9052-7c87-c5679dfffff4@samsung.com>
-        <20191008154844.GM4382@sirena.co.uk>
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Olof Johansson <olof@lixom.net>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v2 1/2] ARM: multi_v7_defconfig: Enable options for boards with Exynos SoC
+Date:   Tue,  8 Oct 2019 18:02:33 +0200
+Message-Id: <20191008160234.3106-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Sync with exynos_defconfig and enable following options for Samsung
+Exynos SoC based boards:
+1. NFC_S3FWRN5_I2C (with NFC stack): Samsung S3FWRN5 NCI NFC Controller,
+   used for example on Exynos5433 (if booted in 32-bit mode),
+2. S3C2410_WATCHDOG: watchdog driver used on S3C, S5P and Exynos SoCs,
+3. REGULATOR_S2MPA01: Samsung S2MPA01 regulators driver present on
+   Exynos5260 RexNos REX-RED board,
+4. SND_SOC_ARNDALE: sound support on Arndale boards,
+5. EXYNOS_IOMMU: IOMMU driver used on all Exynos SocS,,
+6. EXTCON_MAX14577, EXTCON_MAX77693 and EXTCON_MAX8997: extcon drivers
+   for handling micro USB on mobile Samsung boards (Trats, Trats2,
+   Rinato),
+7. PHY_EXYNOS5250_SATA: SATA phy for Exynos5250 present on Arndale and
+   SMDK5250 boards.
 
-On 10/8/19 5:48 PM, Mark Brown wrote:
-> On Tue, Oct 08, 2019 at 03:24:17PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> 
->> Commit 7f93ff73f7c8 ("opp: core: add regulators enable and disable")
->> currently can be safely reverted as all affected users use always-on
->> regulators. However IMHO it should be possible to enable always-on
->> regulator without side-effects.
-> 
-> With coupled regulators you might have something kicking in because a
-> change was made on a completely different regulator...  If we don't take
-> account of coupling requirements we'd doubtless have issues with that at
-> some point.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-OK, I have not considered this.
+---
 
->> When it comes to setting regulator constraints before doing enable
->> operation, it also seems to be possible solution but would require
->> splitting regulator_set_voltage() operation on two functions:
-> 
->> - one for setting constraints (before regulator_enable() operation)
-> 
->> - the other one actually setting voltage (after enable operation)
-> 
-> I don't follow?  What would a "constraint" be in this context and how
-> would it be different to the voltage range you'd set in normal operation?
+SND_SOC_ARNDALE is in progress (patch introducing it was not yet applied)
 
-The constraint here would be just the voltage range. I just wanted to
-point out that the actual voltage set operation (on the hardware itself
-not the internal subsystem bookkeeping) shouldn't be done before enable
-operation (especially in context of non-coupled regulators).
+Changes since v1:
+1. Bring back REMOTEPROC.
+---
+ arch/arm/configs/multi_v7_defconfig | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-Taking into account your remark about enable operation on coupled
-regulators and Dmitry's mail about cpufreq issue I think now that just
-dropping opp change is the most straightforward fix.
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 198de8e36d92..d576845acd6f 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -168,6 +168,14 @@ CONFIG_MAC80211=m
+ CONFIG_RFKILL=y
+ CONFIG_RFKILL_INPUT=y
+ CONFIG_RFKILL_GPIO=y
++CONFIG_NFC=m
++CONFIG_NFC_DIGITAL=m
++CONFIG_NFC_NCI=m
++CONFIG_NFC_NCI_SPI=m
++CONFIG_NFC_NCI_UART=m
++CONFIG_NFC_HCI=m
++CONFIG_NFC_SHDLC=y
++CONFIG_NFC_S3FWRN5_I2C=m
+ CONFIG_PCIEPORTBUS=y
+ CONFIG_PCI_MVEBU=y
+ CONFIG_PCI_TEGRA=y
+@@ -491,12 +499,12 @@ CONFIG_BCM2835_THERMAL=m
+ CONFIG_BRCMSTB_THERMAL=m
+ CONFIG_ST_THERMAL_MEMMAP=y
+ CONFIG_UNIPHIER_THERMAL=y
+-CONFIG_WATCHDOG=y
+ CONFIG_DA9063_WATCHDOG=m
+ CONFIG_XILINX_WATCHDOG=y
+ CONFIG_ARM_SP805_WATCHDOG=y
+ CONFIG_AT91SAM9X_WATCHDOG=y
+ CONFIG_SAMA5D4_WATCHDOG=y
++CONFIG_S3C2410_WATCHDOG=m
+ CONFIG_DW_WATCHDOG=y
+ CONFIG_DAVINCI_WATCHDOG=m
+ CONFIG_ORION_WATCHDOG=y
+@@ -581,6 +589,7 @@ CONFIG_REGULATOR_QCOM_RPM=y
+ CONFIG_REGULATOR_QCOM_SMD_RPM=m
+ CONFIG_REGULATOR_RK808=y
+ CONFIG_REGULATOR_RN5T618=y
++CONFIG_REGULATOR_S2MPA01=m
+ CONFIG_REGULATOR_S2MPS11=y
+ CONFIG_REGULATOR_S5M8767=y
+ CONFIG_REGULATOR_STM32_BOOSTER=m
+@@ -711,6 +720,7 @@ CONFIG_SND_SOC_SAMSUNG_SMDK_WM8994=m
+ CONFIG_SND_SOC_SMDK_WM8994_PCM=m
+ CONFIG_SND_SOC_SNOW=m
+ CONFIG_SND_SOC_ODROID=m
++CONFIG_SND_SOC_ARNDALE=m
+ CONFIG_SND_SOC_SH4_FSI=m
+ CONFIG_SND_SOC_RCAR=m
+ CONFIG_SND_SOC_STI=m
+@@ -933,6 +943,7 @@ CONFIG_BCM2835_MBOX=y
+ CONFIG_ROCKCHIP_IOMMU=y
+ CONFIG_TEGRA_IOMMU_GART=y
+ CONFIG_TEGRA_IOMMU_SMMU=y
++CONFIG_EXYNOS_IOMMU=y
+ CONFIG_REMOTEPROC=y
+ CONFIG_ST_REMOTEPROC=m
+ CONFIG_RPMSG_VIRTIO=m
+@@ -968,6 +979,9 @@ CONFIG_ARCH_TEGRA_3x_SOC=y
+ CONFIG_ARCH_TEGRA_114_SOC=y
+ CONFIG_ARCH_TEGRA_124_SOC=y
+ CONFIG_ARM_TEGRA_DEVFREQ=m
++CONFIG_EXTCON_MAX14577=m
++CONFIG_EXTCON_MAX77693=m
++CONFIG_EXTCON_MAX8997=m
+ CONFIG_TI_AEMIF=y
+ CONFIG_IIO=y
+ CONFIG_IIO_SW_TRIGGER=y
+@@ -1026,6 +1040,7 @@ CONFIG_PHY_RCAR_GEN2=m
+ CONFIG_PHY_ROCKCHIP_DP=m
+ CONFIG_PHY_ROCKCHIP_USB=y
+ CONFIG_PHY_SAMSUNG_USB2=m
++CONFIG_PHY_EXYNOS5250_SATA=m
+ CONFIG_PHY_UNIPHIER_USB2=y
+ CONFIG_PHY_UNIPHIER_USB3=y
+ CONFIG_PHY_MIPHY28LP=y
+-- 
+2.17.1
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
