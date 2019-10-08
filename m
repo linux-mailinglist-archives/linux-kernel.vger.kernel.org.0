@@ -2,169 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80279CF112
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 05:10:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD954CF130
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 05:20:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729891AbfJHDKy convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 7 Oct 2019 23:10:54 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:41452 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729536AbfJHDKx (ORCPT
+        id S1729926AbfJHDUE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 23:20:04 -0400
+Received: from regular1.263xmail.com ([211.150.70.197]:57864 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729823AbfJHDUD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 23:10:53 -0400
-Received: from mail-wm1-f70.google.com ([209.85.128.70])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <chia-lin.kao@canonical.com>)
-        id 1iHftk-0004pD-1V
-        for linux-kernel@vger.kernel.org; Tue, 08 Oct 2019 03:10:52 +0000
-Received: by mail-wm1-f70.google.com with SMTP id z205so715538wmb.7
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 20:10:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=PcQE/Ilpx4wUgVDFDSmrOJyPXD+8IDPDe8f7G2pEYPY=;
-        b=gg+YfcFGZYcLUr9SNViquCM3foFKZuuDsjyw+GCs8tqJV8KuxiGB0R+VLDZtNrqxJZ
-         xIwSoNxLZohIZQsc8TovOSruXtDnZxl9Yk5capaW4moZu/6FQHnGjye/rD43IMIL0Q2e
-         v1b8OI1ZUSCd9ZagmIlp4xXRX5fricKnaIWE/3oetn1vG2Bm96m/dkRF+EsGcz2yPON7
-         LdbdMrVcC4wXxl/FAcuT3nlYXNDCmpye4ZonGLQJXnlMKh2Auh7aUXzG3TSroYsSB01m
-         gLGJBfAUbDuttVGqdCXKojq/CbvZS50r4u3QoibyWeC6aZ6qbfMnHK1S9z5HDbKd3h3q
-         Of3Q==
-X-Gm-Message-State: APjAAAXrrPtmYJpA1uQoZSgf1fVW3LdiW2bRs9KWIQjgjP14XCHJZ5mz
-        LZ3Hvir895v7SCmPfRveEkGn5cJBvjT+AbKs0OUnwYTUGq//y9YegZXV3Tl9Tel7DpwiGMgBuWv
-        fNzK3IHVGz/vn59tFoJKkPyGNZuPagAT1jEWRS4tDXkAE4OUIh2xvBoBXrQ==
-X-Received: by 2002:adf:e387:: with SMTP id e7mr12803434wrm.306.1570504251192;
-        Mon, 07 Oct 2019 20:10:51 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzBrHtTIIlDToIUIbq7+MsGB/KzIpYQHFIGjbFAr1e35SIsPjII6WCSb2+0AQzhPRI8KeusJIdT5gb/pC5YhUo=
-X-Received: by 2002:adf:e387:: with SMTP id e7mr12803415wrm.306.1570504250806;
- Mon, 07 Oct 2019 20:10:50 -0700 (PDT)
+        Mon, 7 Oct 2019 23:20:03 -0400
+X-Greylist: delayed 453 seconds by postgrey-1.27 at vger.kernel.org; Mon, 07 Oct 2019 23:20:02 EDT
+Received: from localhost (unknown [192.168.165.252])
+        by regular1.263xmail.com (Postfix) with ESMTP id 8722E5EB;
+        Tue,  8 Oct 2019 11:12:21 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-SKE-CHECKED: 1
+X-ABS-CHECKED: 1
+Received: from localhost (unknown [183.57.25.242])
+        by smtp.263.net (postfix) whith ESMTP id P628T140409852389120S1570504336050683_;
+        Tue, 08 Oct 2019 11:12:20 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <05ed1e03424721773edf294b718993ad>
+X-RL-SENDER: djw@t-chip.com.cn
+X-SENDER: djw@t-chip.com.cn
+X-LOGIN-NAME: djw@t-chip.com.cn
+X-FST-TO: jagan@amarulasolutions.com
+X-SENDER-IP: 183.57.25.242
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From:   djw@t-chip.com.cn
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Da Xue <da@lessconfused.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list\:ARM\/Rockchip SoC..." 
+        <linux-rockchip@lists.infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Akash Gajjar <akash@openedev.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/6] arm64: dts: rockchip: Fix rk3399-roc-pc pwm2 pin
+Organization: Firefly Team
+References: <20190919052822.10403-1-jagan@amarulasolutions.com>
+        <20190919052822.10403-2-jagan@amarulasolutions.com>
+        <6797961.eJj5WIFbM9@phil>
+        <CAMty3ZDKaywoPxCSD-5N2pLjtGmZ-dZ7ZgUOJqiB1V_9rfR26A@mail.gmail.com>
+Date:   Tue, 08 Oct 2019 11:11:10 +0800
+In-Reply-To: <CAMty3ZDKaywoPxCSD-5N2pLjtGmZ-dZ7ZgUOJqiB1V_9rfR26A@mail.gmail.com>
+        (Jagan Teki's message of "Tue, 1 Oct 2019 15:56:14 +0530")
+Message-ID: <87eezolynl.fsf@archiso.i-did-not-set--mail-host-address--so-tickle-me>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
 MIME-Version: 1.0
-References: <20191007184231.13256-1-ztuowen@gmail.com>
-In-Reply-To: <20191007184231.13256-1-ztuowen@gmail.com>
-From:   AceLan Kao <acelan.kao@canonical.com>
-Date:   Tue, 8 Oct 2019 11:10:39 +0800
-Message-ID: <CAFv23Qmt7BFJgE+=kJFbnJwYDtVrsX56cN6QtZbs=pRwKjbK0Q@mail.gmail.com>
-Subject: Re: [PATCH v2] mfd: intel-lpss: use devm_ioremap_uc for MMIO
-To:     Tuowen Zhao <ztuowen@gmail.com>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Kai Heng Feng <kai.heng.feng@canonical.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Confirmed the patch works well on Dell XPS 7390 2-in-1 machine.
+Jagan Teki <jagan@amarulasolutions.com> writes:
 
-Tested-by: AceLan Kao <acelan.kao@canonical.com>
+> Hi Heiko,
+>
+> On Mon, Sep 30, 2019 at 2:51 AM Heiko Stuebner <heiko@sntech.de> wrote:
+>>
+>> Hi Jagan,
+>>
+>> Am Donnerstag, 19. September 2019, 07:28:17 CEST schrieb Jagan Teki:
+>> > ROC-PC is not able to boot linux console if PWM2_d is
+>> > unattached to any pinctrl logic.
+>> >
+>> > To be precise the linux boot hang with last logs as,
+>> > ...
+>> > .....
+>> > [    0.003367] Console: colour dummy device 80x25
+>> > [    0.003788] printk: console [tty0] enabled
+>> > [    0.004178] printk: bootconsole [uart8250] disabled
+>> >
+>> > In ROC-PC the PWM2_d pin is connected to LOG_DVS_PWM of
+>> > VDD_LOG. So, for normal working operations this needs to
+>> > active and pull-down.
+>> >
+>> > This patch fix, by attaching pinctrl active and pull-down
+>> > the pwm2.
+>>
+>> This looks highly dubious on first glance. The pwm subsystem nor
+>> the Rockchip pwm driver do not do any pinctrl handling.
+>>
+>> So I don't really see where that "active" pinctrl state is supposed
+>> to come from.
+>>
+>> Comparing with the pwm driver in the vendor tree I see that there
+>> is such a state defined there. But that code there also looks strange
+>> as that driver never again leaves this active state after entering it.
+>>
+>> Also for example all the Gru devices run with quite a number of pwm-
+>> regulators without needing additional fiddling with the pwm itself, so
+>> I don't really see why that should be different here.
+>
+> I deed, I was supposed to think the same. but the vendor kernel dts
+> from firefly do follow the pwm2 pinctrl [1]. I wouldn't find any
+> information other than this vensor information, ie one of the reason I
+> have marked "Levin Du" who initially supported this board.
+>
+> One, think I have seen was this pinctrl active fixed the boot hang.
+> any inputs from would be very helpful.
+>
+> Levin Du, any inputs?
+>
+> [1] https://github.com/FireflyTeam/kernel/blob/stable-4.4-rk3399-linux/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi#L1184
+>
 
-Tuowen Zhao <ztuowen@gmail.com> 於 2019年10月8日 週二 上午2:43寫道：
->
-> Some BIOS erroneously specifies write-combining BAR for intel-lpss-pci
-> in MTRR. This will cause the system to hang during boot. If possible,
-> this bug could be corrected with a firmware update.
->
-> This patch adds devm_ioremap_uc as a new managed wrapper to ioremap_uc
-> and with it overwrite the MTRR settings to force the use of strongly
-> uncachable pages for intel-lpss.
->
-> The BIOS bug is present on Dell XPS 13 7390 2-in-1:
->
-> [    0.001734]   5 base 4000000000 mask 6000000000 write-combining
->
-> 4000000000-7fffffffff : PCI Bus 0000:00
->   4000000000-400fffffff : 0000:00:02.0 (i915)
->   4010000000-4010000fff : 0000:00:15.0 (intel-lpss-pci)
->
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=203485
-> Signed-off-by: Tuowen Zhao <ztuowen@gmail.com>
-> ---
-> Changes from previous version:
->
->   * changed commit message
->
->  drivers/mfd/intel-lpss.c |  2 +-
->  include/linux/io.h       |  2 ++
->  lib/devres.c             | 19 +++++++++++++++++++
->  3 files changed, 22 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mfd/intel-lpss.c b/drivers/mfd/intel-lpss.c
-> index bfe4ff337581..b0f0781a6b9c 100644
-> --- a/drivers/mfd/intel-lpss.c
-> +++ b/drivers/mfd/intel-lpss.c
-> @@ -384,7 +384,7 @@ int intel_lpss_probe(struct device *dev,
->         if (!lpss)
->                 return -ENOMEM;
->
-> -       lpss->priv = devm_ioremap(dev, info->mem->start + LPSS_PRIV_OFFSET,
-> +       lpss->priv = devm_ioremap_uc(dev, info->mem->start + LPSS_PRIV_OFFSET,
->                                   LPSS_PRIV_SIZE);
->         if (!lpss->priv)
->                 return -ENOMEM;
-> diff --git a/include/linux/io.h b/include/linux/io.h
-> index accac822336a..a59834bc0a11 100644
-> --- a/include/linux/io.h
-> +++ b/include/linux/io.h
-> @@ -64,6 +64,8 @@ static inline void devm_ioport_unmap(struct device *dev, void __iomem *addr)
->
->  void __iomem *devm_ioremap(struct device *dev, resource_size_t offset,
->                            resource_size_t size);
-> +void __iomem *devm_ioremap_uc(struct device *dev, resource_size_t offset,
-> +                                  resource_size_t size);
->  void __iomem *devm_ioremap_nocache(struct device *dev, resource_size_t offset,
->                                    resource_size_t size);
->  void __iomem *devm_ioremap_wc(struct device *dev, resource_size_t offset,
-> diff --git a/lib/devres.c b/lib/devres.c
-> index 6a0e9bd6524a..beb0a064b891 100644
-> --- a/lib/devres.c
-> +++ b/lib/devres.c
-> @@ -9,6 +9,7 @@
->  enum devm_ioremap_type {
->         DEVM_IOREMAP = 0,
->         DEVM_IOREMAP_NC,
-> +       DEVM_IOREMAP_UC,
->         DEVM_IOREMAP_WC,
->  };
->
-> @@ -39,6 +40,9 @@ static void __iomem *__devm_ioremap(struct device *dev, resource_size_t offset,
->         case DEVM_IOREMAP_NC:
->                 addr = ioremap_nocache(offset, size);
->                 break;
-> +       case DEVM_IOREMAP_UC:
-> +               addr = ioremap_uc(offset, size);
-> +               break;
->         case DEVM_IOREMAP_WC:
->                 addr = ioremap_wc(offset, size);
->                 break;
-> @@ -68,6 +72,21 @@ void __iomem *devm_ioremap(struct device *dev, resource_size_t offset,
->  }
->  EXPORT_SYMBOL(devm_ioremap);
->
-> +/**
-> + * devm_ioremap_uc - Managed ioremap_uc()
-> + * @dev: Generic device to remap IO address for
-> + * @offset: Resource address to map
-> + * @size: Size of map
-> + *
-> + * Managed ioremap_uc().  Map is automatically unmapped on driver detach.
-> + */
-> +void __iomem *devm_ioremap_uc(struct device *dev, resource_size_t offset,
-> +                             resource_size_t size)
-> +{
-> +       return __devm_ioremap(dev, offset, size, DEVM_IOREMAP_UC);
-> +}
-> +EXPORT_SYMBOL(devm_ioremap_uc);
-> +
->  /**
->   * devm_ioremap_nocache - Managed ioremap_nocache()
->   * @dev: Generic device to remap IO address for
-> --
-> 2.23.0
->
+A grep of the `pwm2` shows that there's such block in rk3399-nanopi4.dtsi:
+
+    &pwm2 {
+            pinctrl-names = "active";
+            pinctrl-0 = <&pwm2_pin_pull_down>;
+            status = "okay";
+    };
+
+But last time I checked, using the mainline U-Boot (the roc-rk3399-pc is
+in mainline now) with mainline linux v5.2-rc7, no such setting is
+necessary, and the board boots happily.
+
+I cannot find the use of "active" pinctrl state in the
+`drivers/pwm/pwm-rockchip.c`. If the pinctrl state needs to be setup as
+default, the `pinctrl-names` needs to be "default" or "init" (see
+`drivers/base/pinctrl.c`) .
+
+Jagan, what version of board do you use? I checked with
+"ROC-RK3399-PC-V1.0-A 2018-07-12". 
+
+Thanks
+
+--
+Levin Du
+
+
