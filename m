@@ -2,80 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9236ECF941
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 14:06:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC7B9CF93C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 14:06:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730958AbfJHMGn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 08:06:43 -0400
-Received: from conuserg-11.nifty.com ([210.131.2.78]:28287 "EHLO
-        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730648AbfJHMGm (ORCPT
+        id S1730851AbfJHMGS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 08:06:18 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58158 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730249AbfJHMGR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 08:06:42 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id x98C6137021176;
-        Tue, 8 Oct 2019 21:06:05 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com x98C6137021176
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1570536365;
-        bh=o08jjtAXayQQibqWZRK6KQghEgpMnJSKKT2mpiY9c0U=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2Uu9Qr+8AGGzvZd0q21inKfPqkb3+LMAVmxPBumQEdVjLZ3i/EXLi8qnf6VOzyIvr
-         NcIteZbNS121zvZNqlfXSJNr/R1AireeQYJTDrJ3Lff3VhRZ2W3pm6+7sHX+nlr5Te
-         8jcKIg8Rc83tFGhW4eJG5H5qPmyBeFwD24pVr7BZYVPJRIvBpfklJ7b613JD6iltzw
-         JaPKxFdHBfjLL4tRVGOBWi7ZaOaCKewtd9sfxRUT0bbdl0RfJRA38ukFmFHqJTdNAa
-         EVG8g0WUUGLfE2PKeGCsHOi7AtKte8oW8UH4aYzis7LsQ91o0N7YETeQ8TNGniFb5O
-         Bj1/7DImlJvPg==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] kheaders: explain why include/config/autoconf.h is excluded from md5sum
-Date:   Tue,  8 Oct 2019 21:05:56 +0900
-Message-Id: <20191008120556.4263-5-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191008120556.4263-1-yamada.masahiro@socionext.com>
-References: <20191008120556.4263-1-yamada.masahiro@socionext.com>
+        Tue, 8 Oct 2019 08:06:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=iNXCq0tdrGr+v7qLVsnpGqjHYmCeZ78z3PFZJHaeMP8=; b=WL1P9kiXgzGcYtmdIzPPUSwi2
+        e078UMBv6u0H4uP1gcANf0zyzq0lvQhR51bV3+nh60NbKPhmoAecyshaBuTQX3uYm+BE+q8IsHMQn
+        7D4Eb/yl0AzxicYvZRRBfuLR73k7qSPLzHG5B5F8ryNieZ0cskUt0siySP076tEecLF2I=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iHoFo-0008EX-8U; Tue, 08 Oct 2019 12:06:12 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 6F8752742998; Tue,  8 Oct 2019 13:06:11 +0100 (BST)
+Date:   Tue, 8 Oct 2019 13:06:11 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH] regulator: core: Skip balancing of the enabled
+ regulators in regulator_enable()
+Message-ID: <20191008120611.GG4382@sirena.co.uk>
+References: <CGME20191008101720eucas1p2e0d1bca6e696848bf689067e05620679@eucas1p2.samsung.com>
+ <20191008101709.13827-1-m.szyprowski@samsung.com>
+ <20191008115025.GF4382@sirena.co.uk>
+ <0e222fdd-4407-51ea-b75c-a62621cbe622@samsung.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="+1TulI7fc0PCHNy3"
+Content-Disposition: inline
+In-Reply-To: <0e222fdd-4407-51ea-b75c-a62621cbe622@samsung.com>
+X-Cookie: Do not disturb.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This comment block explains why include/generated/compile.h is omitted,
-but nothing about include/generated/autoconf.h, which might be more
-difficult to understand. Add more comments.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+--+1TulI7fc0PCHNy3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- kernel/gen_kheaders.sh | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+On Tue, Oct 08, 2019 at 02:01:15PM +0200, Marek Szyprowski wrote:
+> On 08.10.2019 13:50, Mark Brown wrote:
 
-diff --git a/kernel/gen_kheaders.sh b/kernel/gen_kheaders.sh
-index 6c5f88f3ca2d..b229a84693e5 100755
---- a/kernel/gen_kheaders.sh
-+++ b/kernel/gen_kheaders.sh
-@@ -32,8 +32,15 @@ fi
- all_dirs="$all_dirs $dir_list"
- 
- # include/generated/compile.h is ignored because it is touched even when none
--# of the source files changed. This causes pointless regeneration, so let us
--# ignore them for md5 calculation.
-+# of the source files changed.
-+#
-+# When Kconfig regenerates include/generated/autoconf.h, its timestamp is
-+# updated, but the contents might be still the same. When any CONFIG option is
-+# changed, Kconfig touches the corresponding timestamp file include/config/*.h.
-+# Hence, the md5sum detects the configuration change anyway. We do not need to
-+# check include/generated/autoconf.h explicitly.
-+#
-+# Ignore them for md5 calculation to avoid pointless regeneration.
- headers_md5="$(find $all_dirs -name "*.h"			|
- 		grep -v "include/generated/compile.h"	|
- 		grep -v "include/generated/autoconf.h"	|
--- 
-2.17.1
+> > This then means that for users that might legitimately enable and
+> > disable regulators that need to be constrained are forced to change the
+> > voltage when they enable the regualtors in order to have their
+> > constraints take effect which seems bad.  I'd rather change the the
+> > cpufreq consumers to either not do the enable (since there really should
+> > be an always-on constraint this should be redundant, we might need to
+> > fix the core to take account of their settings though I think we lost
+> > that) or to set the voltage to whatever they need prior to doing their
+> > first enable, that seems more robust.
 
+> Well, I'm open for other ways of fixing this issue. Calling enable on=20
+> always-on regulator imho should not change its rate...
+
+Yes, although there is the whole "don't touch things until a consumer
+tells us to" thing going on.  I had expected that this was kicking in
+because we weren't paying attention to the constraints of disabled
+regulators but I can't see the code implementing that any more so I
+guess we removed it at some point (it was always debatable).
+
+--+1TulI7fc0PCHNy3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2ce7IACgkQJNaLcl1U
+h9AGmwf/UbimQ9sq/zEYWdR5N0U5nYyw0n1illJslo92MzhrHjeXkA+J75dNT9wo
+E1wtoPEndtrRtb0F+650lzfqvceJauFIaDwb2WvG3vxutwoSdFCJ9qjoPoXLFZOx
+T0gTrPtDX9HHTgMoFackql9B0xwjwHg+cEV6bcAfw3B4F6LnwYIZB27i4Rbf+DXt
+oxB70sgrULzP0QJAtJLMN3QZtNOg94vNdA8xH83V/FeXdtZiE1VLlJVSQ0hjAjc2
+GJ+zjjSFfC5qRLw+DpKpF6CbBO9NwkcBEhFt5CVNiQlQCwL/tuXHBBGUAXvlk/GN
+zDivlP9XJXhyJRNSbxzDX7C4rEqn3w==
+=Qc9y
+-----END PGP SIGNATURE-----
+
+--+1TulI7fc0PCHNy3--
