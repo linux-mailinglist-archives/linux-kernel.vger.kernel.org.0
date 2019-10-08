@@ -2,97 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A143ACFD29
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 17:07:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC484CFD04
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 17:01:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbfJHPGb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 11:06:31 -0400
-Received: from sender2-of-o52.zoho.com.cn ([163.53.93.247]:21543 "EHLO
-        sender2-of-o52.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725976AbfJHPGb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 11:06:31 -0400
-X-Greylist: delayed 906 seconds by postgrey-1.27 at vger.kernel.org; Tue, 08 Oct 2019 11:06:29 EDT
-ARC-Seal: i=1; a=rsa-sha256; t=1570546276; cv=none; 
-        d=zoho.com.cn; s=zohoarc; 
-        b=brFUoouPEMjJSqsa8+K9u9vBzwF8LLEcUDjzvdPUb44eMP0eYlmrKDAntG4o7xgPfm57wlCk3MYuwEZSJGSVEptKtLiMfvM1Iik8W4lkQh2+j+IV4mBKJfUQGfdxLQEYjDJefRMI72Ik72mZEoFz+sd4fjd4koiG7287gBvJH2Y=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
-        t=1570546276; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To:ARC-Authentication-Results; 
-        bh=iWLsd00kA2pIWjpDhgqoOn/cVUxOJx70YwdIj1xn/rY=; 
-        b=KKnfq3OF+IV0w8iKJJYewfJ2/qtZ/8GJEjcyTjkKS6WgjqOBLX/9Gk4Ml07cUVLl5GS7iOrvL4vFuGaS5xRtgXhrW89Wh5fLnf5CdrjmwaxbYWQIcd0EDBCqrWOvd+NlDJ6zHlSTz7NMy36svLfdAbWEbHyBPGGHMJzKzdxY/sQ=
-ARC-Authentication-Results: i=1; mx.zoho.com.cn;
-        dkim=pass  header.i=mykernel.net;
-        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
-        dmarc=pass header.from=<cgxu519@mykernel.net> header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1570546276;
-        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
-        h=From:To:Cc:Message-ID:Subject:Date:MIME-Version:Content-Transfer-Encoding:Content-Type;
-        l=1328; bh=iWLsd00kA2pIWjpDhgqoOn/cVUxOJx70YwdIj1xn/rY=;
-        b=TaUNNTFhjoldUyM6Ks2KaiQNYCHUOkq7VmOkAMoR7f1CBj3BIvu0NKGkFKtOavmT
-        323Pful323iDGIp5jI1R5Bni/9oeLoE+w0C2wsaRumc8dcYK/7iRhhVoaCRaXTXn13q
-        4V/bWmC+B53FunhFypVTTdRifUhgwxgEZoralXnI=
-Received: from localhost.localdomain (113.116.49.170 [113.116.49.170]) by mx.zoho.com.cn
-        with SMTPS id 1570546274198707.4831055250032; Tue, 8 Oct 2019 22:51:14 +0800 (CST)
-From:   Chengguang Xu <cgxu519@mykernel.net>
-To:     jack@suse.com
-Cc:     linux-kernel@vger.kernel.org, Chengguang Xu <cgxu519@mykernel.net>
-Message-ID: <20191008145059.21402-1-cgxu519@mykernel.net>
-Subject: [PATCH] quota: check quota type in early stage
-Date:   Tue,  8 Oct 2019 22:50:59 +0800
-X-Mailer: git-send-email 2.21.0
+        id S1726416AbfJHPAz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 11:00:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36688 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725908AbfJHPAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 11:00:55 -0400
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0A4421721;
+        Tue,  8 Oct 2019 15:00:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570546854;
+        bh=2ILkLKJMhVewO7YXPjwi7ITxE09NkLitzKFS8RD6cF4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=tgsldvaDL9BYjWvesGpBQdKUHkXWUfUNX+B0iMBaUqel0roQOkSEgNAZhwOqEiPSa
+         E8rOkfJShI3VACodadJjlGAY8fTsEoUcmpYyc7WynBzEu5Z/9M9ttZxu9M4zD1+IjN
+         5LL5pYehh5+K356nhgf1xEvSRLHAdpRoPkkgvwEw=
+Received: by mail-qt1-f174.google.com with SMTP id w14so25707137qto.9;
+        Tue, 08 Oct 2019 08:00:53 -0700 (PDT)
+X-Gm-Message-State: APjAAAUJM+nfZPI35b1DEVRMHN8b95U9yi9LbqWkfwLZrBiCy6xN8VQ4
+        UjZ6Mu5KEaQG96xxIhkT0OIb1VF499eo6att4A==
+X-Google-Smtp-Source: APXvYqxP6OYtmivflGW5PuW6N5u1AFSfWfw65nZu7DiCXNvZAX3yzN9B4FocPVaxRPLAuQbbqjyQg6ezZktfviQ4t/8=
+X-Received: by 2002:a0c:9792:: with SMTP id l18mr32776173qvd.79.1570546852893;
+ Tue, 08 Oct 2019 08:00:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-ZohoCNMailClient: External
-Content-Type: text/plain; charset=utf8
+References: <20191007124437.20367-1-jjhiblot@ti.com> <20191007124437.20367-5-jjhiblot@ti.com>
+ <CAL_JsqLTqnKpU4PB8Zt9SSPSia5mkFcUgoA8ZyX_1E_HfdFyxg@mail.gmail.com>
+ <30fcd898-aa50-bac2-b316-0d9bf2429369@ti.com> <bc5e4094-2b58-c917-9b9e-0f646c04dd78@ti.com>
+In-Reply-To: <bc5e4094-2b58-c917-9b9e-0f646c04dd78@ti.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 8 Oct 2019 10:00:41 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqL8b0gWPTt3oJ8ScY_AwP+uB__dZP6Eednfa5Fq9vAptw@mail.gmail.com>
+Message-ID: <CAL_JsqL8b0gWPTt3oJ8ScY_AwP+uB__dZP6Eednfa5Fq9vAptw@mail.gmail.com>
+Subject: Re: [PATCH v9 4/5] dt-bindings: backlight: Add led-backlight binding
+To:     Jean-Jacques Hiblot <jjhiblot@ti.com>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Sebastian Reichel <sre@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Dan Murphy <dmurphy@ti.com>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check quota type in early stage so we can avoid many
-unncessary operations when the type is wrong.
+On Tue, Oct 8, 2019 at 8:30 AM Jean-Jacques Hiblot <jjhiblot@ti.com> wrote:
+>
+> Rob,
+>
+> On 08/10/2019 14:51, Jean-Jacques Hiblot wrote:
+> > Hi Rob,
+> >
+> > On 07/10/2019 18:15, Rob Herring wrote:
+> >> Please send DT bindings to DT list or it's never in my queue. IOW,
+> >> send patches to the lists that get_maintainers.pl tells you to.
+> >>
+> >> On Mon, Oct 7, 2019 at 7:45 AM Jean-Jacques Hiblot <jjhiblot@ti.com>
+> >> wrote:
+> >>> Add DT binding for led-backlight.
+> >>>
+> >>> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+> >>> Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+> >>> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> >>> ---
+> >>>   .../bindings/leds/backlight/led-backlight.txt | 28
+> >>> +++++++++++++++++++
+> >>>   1 file changed, 28 insertions(+)
+> >>>   create mode 100644
+> >>> Documentation/devicetree/bindings/leds/backlight/led-backlight.txt
+> >> Please make this a DT schema.
+> >
+> > OK.
+> >
+> > BTW I used "make dt_binding_check" but had to fix a couple of YAMLs
+> > file to get it to work. Do you have a kernel tree with already all the
+> > YAML files in good shape ? Or do you want me to post the changes to
+> > devicetree@vger.kernel.org ?
+> >
+> >
+> >>
+> >>> diff --git
+> >>> a/Documentation/devicetree/bindings/leds/backlight/led-backlight.txt
+> >>> b/Documentation/devicetree/bindings/leds/backlight/led-backlight.txt
+> >>> new file mode 100644
+> >>> index 000000000000..4c7dfbe7f67a
+> >>> --- /dev/null
+> >>> +++
+> >>> b/Documentation/devicetree/bindings/leds/backlight/led-backlight.txt
+> >>> @@ -0,0 +1,28 @@
+> >>> +led-backlight bindings
+> >>> +
+> >>> +This binding is used to describe a basic backlight device made of
+> >>> LEDs.
+> >>> +It can also be used to describe a backlight device controlled by
+> >>> the output of
+> >>> +a LED driver.
+> >>> +
+> >>> +Required properties:
+> >>> +  - compatible: "led-backlight"
+> >>> +  - leds: a list of LEDs
+> >> 'leds' is already used as a node name and mixing is not ideal.
+> >>
+> >> We already have 'flash-leds' in use and with the same definition, so
+> >> lets continue that and use 'backlight-leds'.
+> > OK
+>
+> I am taking that back. I have added of_get_led() and devm_of_get_led()
+> to the LED core to make it easier to get a LED from the DT. I modeled
+> the interface like it is done for PWM, PHYs or clocks. The property
+> containing list/array of phandle  is always named the same. To get one
+> particular PWM/PHY/clock, a identifier (name or integer) must be provided.
 
-Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
----
- fs/quota/quota.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+It can be done as we do support that with '-gpios', but yes, it is a
+bit more painful to deal with.
 
-diff --git a/fs/quota/quota.c b/fs/quota/quota.c
-index cb13fb76dbee..5444d3c4d93f 100644
---- a/fs/quota/quota.c
-+++ b/fs/quota/quota.c
-@@ -60,8 +60,6 @@ static int quota_sync_all(int type)
- {
- =09int ret;
-=20
--=09if (type >=3D MAXQUOTAS)
--=09=09return -EINVAL;
- =09ret =3D security_quotactl(Q_SYNC, type, 0, NULL);
- =09if (!ret)
- =09=09iterate_supers(quota_sync_one, &type);
-@@ -686,8 +684,6 @@ static int do_quotactl(struct super_block *sb, int type=
-, int cmd, qid_t id,
- {
- =09int ret;
-=20
--=09if (type >=3D MAXQUOTAS)
--=09=09return -EINVAL;
- =09type =3D array_index_nospec(type, MAXQUOTAS);
- =09/*
- =09 * Quota not supported on this fs? Check this before s_quota_types
-@@ -831,6 +827,9 @@ int kernel_quotactl(unsigned int cmd, const char __user=
- *special,
- =09cmds =3D cmd >> SUBCMDSHIFT;
- =09type =3D cmd & SUBCMDMASK;
-=20
-+=09if (type >=3D MAXQUOTAS)
-+=09=09return -EINVAL;
-+
- =09/*
- =09 * As a special case Q_SYNC can be called without a specific device.
- =09 * It will iterate all superblocks that have quota enabled and call
---=20
-2.21.0
+> So unless there is a strong incentive to do otherwise I's rather keep
+> this name here.
 
+In that case, this needs to be documented as a common LED binding, not
+something hidden away in this binding.
 
-
+Rob
