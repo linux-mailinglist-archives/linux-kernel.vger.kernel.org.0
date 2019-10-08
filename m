@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25983CF012
+	by mail.lfdr.de (Postfix) with ESMTP id 9A1A2CF013
 	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 02:59:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729749AbfJHA6Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 20:58:16 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:45460 "EHLO inva020.nxp.com"
+        id S1729771AbfJHA6R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 20:58:17 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:45506 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729730AbfJHA6P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 20:58:15 -0400
+        id S1729285AbfJHA6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 20:58:17 -0400
 Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 42AEE1A06D1;
-        Tue,  8 Oct 2019 02:58:13 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0F30F1A0156;
+        Tue,  8 Oct 2019 02:58:15 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C5FFA1A0156;
-        Tue,  8 Oct 2019 02:58:03 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 90C2C1A0058;
+        Tue,  8 Oct 2019 02:58:05 +0200 (CEST)
 Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 31E9D402DA;
-        Tue,  8 Oct 2019 08:57:52 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 077CD402DF;
+        Tue,  8 Oct 2019 08:57:53 +0800 (SGT)
 From:   Anson Huang <Anson.Huang@nxp.com>
 To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
         s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
@@ -30,49 +30,60 @@ To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
         agx@sigxcpu.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     Linux-imx@nxp.com
-Subject: [PATCH V2 1/3] arm64: dts: imx8mq: Use correct clock for usdhc's ipg clk
-Date:   Tue,  8 Oct 2019 08:55:43 +0800
-Message-Id: <1570496145-11053-1-git-send-email-Anson.Huang@nxp.com>
+Subject: [PATCH V2 2/3] arm64: dts: imx8mm: Use correct clock for usdhc's ipg clk
+Date:   Tue,  8 Oct 2019 08:55:44 +0800
+Message-Id: <1570496145-11053-2-git-send-email-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1570496145-11053-1-git-send-email-Anson.Huang@nxp.com>
+References: <1570496145-11053-1-git-send-email-Anson.Huang@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On i.MX8MQ, usdhc's ipg clock is from IMX8MQ_CLK_IPG_ROOT,
-assign it explicitly instead of using IMX8MQ_CLK_DUMMY.
+On i.MX8MM, usdhc's ipg clock is from IMX8MM_CLK_IPG_ROOT,
+assign it explicitly instead of using IMX8MM_CLK_DUMMY.
 
-Fixes: 748f908cc882 ("arm64: add basic DTS for i.MX8MQ")
+Fixes: a05ea40eb384 ("arm64: dts: imx: Add i.mx8mm dtsi support")
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
 Changes since V1:
 	- Add fixes tag.
 ---
- arch/arm64/boot/dts/freescale/imx8mq.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/freescale/imx8mm.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-index 04115ca..55a3d1c 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-@@ -850,7 +850,7 @@
- 				             "fsl,imx7d-usdhc";
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
+index 7c4dcce..8aafad2 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
+@@ -694,7 +694,7 @@
+ 				compatible = "fsl,imx8mm-usdhc", "fsl,imx7d-usdhc";
  				reg = <0x30b40000 0x10000>;
  				interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&clk IMX8MQ_CLK_DUMMY>,
-+				clocks = <&clk IMX8MQ_CLK_IPG_ROOT>,
- 				         <&clk IMX8MQ_CLK_NAND_USDHC_BUS>,
- 				         <&clk IMX8MQ_CLK_USDHC1_ROOT>;
+-				clocks = <&clk IMX8MM_CLK_DUMMY>,
++				clocks = <&clk IMX8MM_CLK_IPG_ROOT>,
+ 					 <&clk IMX8MM_CLK_NAND_USDHC_BUS>,
+ 					 <&clk IMX8MM_CLK_USDHC1_ROOT>;
  				clock-names = "ipg", "ahb", "per";
-@@ -867,7 +867,7 @@
- 				             "fsl,imx7d-usdhc";
+@@ -710,7 +710,7 @@
+ 				compatible = "fsl,imx8mm-usdhc", "fsl,imx7d-usdhc";
  				reg = <0x30b50000 0x10000>;
  				interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&clk IMX8MQ_CLK_DUMMY>,
-+				clocks = <&clk IMX8MQ_CLK_IPG_ROOT>,
- 				         <&clk IMX8MQ_CLK_NAND_USDHC_BUS>,
- 				         <&clk IMX8MQ_CLK_USDHC2_ROOT>;
+-				clocks = <&clk IMX8MM_CLK_DUMMY>,
++				clocks = <&clk IMX8MM_CLK_IPG_ROOT>,
+ 					 <&clk IMX8MM_CLK_NAND_USDHC_BUS>,
+ 					 <&clk IMX8MM_CLK_USDHC2_ROOT>;
+ 				clock-names = "ipg", "ahb", "per";
+@@ -724,7 +724,7 @@
+ 				compatible = "fsl,imx8mm-usdhc", "fsl,imx7d-usdhc";
+ 				reg = <0x30b60000 0x10000>;
+ 				interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
+-				clocks = <&clk IMX8MM_CLK_DUMMY>,
++				clocks = <&clk IMX8MM_CLK_IPG_ROOT>,
+ 					 <&clk IMX8MM_CLK_NAND_USDHC_BUS>,
+ 					 <&clk IMX8MM_CLK_USDHC3_ROOT>;
  				clock-names = "ipg", "ahb", "per";
 -- 
 2.7.4
