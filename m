@@ -2,124 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8FC2CFCA9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:44:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C442CFCB8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:46:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727212AbfJHOol (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 10:44:41 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:34149 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726057AbfJHOok (ORCPT
+        id S1727403AbfJHOpk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 10:45:40 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:54565 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726416AbfJHOpk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 10:44:40 -0400
-Received: by mail-ed1-f67.google.com with SMTP id p10so15891798edq.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 07:44:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=roNGOd3FOBsYLcw6p6AfNsDfUlpEWk12K8lCSg6iAUY=;
-        b=y65D0zMlciZ3pKMueE9P/nkUSG2s2/S9BTNNDHGb/WgvM/3pFToz8zmyClu6SIbzkk
-         sEQmikJFrj2iHOL7IGwkeUWjamJVgSWk3cYBP1PNNjrr/agjKJX4rXyqIGi4zoLzeNan
-         nAJ9XfaeBIpVqlv0WKrMV6KsA18TiyBIMjqJUJMWsk7M5IU3RUEfolfStiafA2TSRBlA
-         ZWReAlrO9npe3o+Hhfam0Qb3FZraz2sWMiSj1WALXsJTnYobtVR63+n2+CEHj8NO/Mcp
-         l6uBVJ8+IVjhHooVDzJ4PJK+wdJRTJQtw5y0OD42C09JBaH6Yitq5n/PBFV8zIUBjIkD
-         FQvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=roNGOd3FOBsYLcw6p6AfNsDfUlpEWk12K8lCSg6iAUY=;
-        b=ZDoFLxSZATbi1v2o4kBxksc3+NYYPg7sBJtuSeeDD2USBvJHNLSMko3NUXOuGs4LHm
-         RogEywCmQuJeX2cMTzAWvZu7V831uYZWp6y8tQiNLMnej95CHUf5dxlloggyWe2l9pWM
-         w5DZ47O+j8+F0T7+I3v06DfG/b03A1+LyS3l0UVDS0b8InJsm+btvcRD6+3EaBRo90+E
-         LZEJZ3da/ylDYEqu2ZY69nrQm1lEGhfJBFagN90VPF+di6q7rPZ4KSdebkTbusfqDxTM
-         Oyh8C19wsK4NlOR9NpAvrm1bEMg4/JaQqZDjPD95N8pN4xrZRJTQn3qUXOKIBJm/FpgO
-         Q2Rg==
-X-Gm-Message-State: APjAAAWwJJ9j0PUqhvl8LXAfgzQC4jbC/s0SFweUiV6RXxokEhouoKqR
-        V/6rNyvsrod4O0LL5ZAu7oRAAQ==
-X-Google-Smtp-Source: APXvYqw+1C1Pvr11q8AONS2td9iwm6bodbUuuJy7w3SrM1wrQki8aRt57kKphgwrMCqqnWG+ZJDomQ==
-X-Received: by 2002:aa7:cdd6:: with SMTP id h22mr34660703edw.132.1570545878559;
-        Tue, 08 Oct 2019 07:44:38 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id z20sm3957544edb.3.2019.10.08.07.44.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2019 07:44:37 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 9DE6E10170F; Tue,  8 Oct 2019 17:44:37 +0300 (+03)
-Date:   Tue, 8 Oct 2019 17:44:37 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        kirill.shutemov@linux.intel.com, ktkhai@virtuozzo.com,
-        hannes@cmpxchg.org, hughd@google.com, shakeelb@google.com,
-        rientjes@google.com, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: thp: move deferred split queue to memcg's nodeinfo
-Message-ID: <20191008144437.fr374cxtpnrnnjsv@box>
-References: <1569968203-64647-1-git-send-email-yang.shi@linux.alibaba.com>
- <20191002084304.GI15624@dhcp22.suse.cz>
- <30421920-4fdb-767a-6ef2-60187932c414@suse.cz>
- <20191007143030.GN2381@dhcp22.suse.cz>
+        Tue, 8 Oct 2019 10:45:40 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iHqk0-0001Zs-Vp; Tue, 08 Oct 2019 16:45:32 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iHqjz-0001yc-As; Tue, 08 Oct 2019 16:45:31 +0200
+Date:   Tue, 8 Oct 2019 16:45:31 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Fabrice Gasnier <fabrice.gasnier@st.com>
+Cc:     thierry.reding@gmail.com, alexandre.torgue@st.com,
+        benjamin.gaignard@st.com, linux-pwm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH] pwm: stm32: add comment to better describe breakinput
+ feature
+Message-ID: <20191008144531.pjt525xuz7n5a3hq@pengutronix.de>
+References: <1570534887-26181-1-git-send-email-fabrice.gasnier@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20191007143030.GN2381@dhcp22.suse.cz>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1570534887-26181-1-git-send-email-fabrice.gasnier@st.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 07, 2019 at 04:30:30PM +0200, Michal Hocko wrote:
-> On Mon 07-10-19 16:19:59, Vlastimil Babka wrote:
-> > On 10/2/19 10:43 AM, Michal Hocko wrote:
-> > > On Wed 02-10-19 06:16:43, Yang Shi wrote:
-> > >> The commit 87eaceb3faa59b9b4d940ec9554ce251325d83fe ("mm: thp: make
-> > >> deferred split shrinker memcg aware") makes deferred split queue per
-> > >> memcg to resolve memcg pre-mature OOM problem.  But, all nodes end up
-> > >> sharing the same queue instead of one queue per-node before the commit.
-> > >> It is not a big deal for memcg limit reclaim, but it may cause global
-> > >> kswapd shrink THPs from a different node.
-> > >>
-> > >> And, 0-day testing reported -19.6% regression of stress-ng's madvise
-> > >> test [1].  I didn't see that much regression on my test box (24 threads,
-> > >> 48GB memory, 2 nodes), with the same test (stress-ng --timeout 1
-> > >> --metrics-brief --sequential 72  --class vm --exclude spawn,exec), I saw
-> > >> average -3% (run the same test 10 times then calculate the average since
-> > >> the test itself may have most 15% variation according to my test)
-> > >> regression sometimes (not every time, sometimes I didn't see regression
-> > >> at all).
-> > >>
-> > >> This might be caused by deferred split queue lock contention.  With some
-> > >> configuration (i.e. just one root memcg) the lock contention my be worse
-> > >> than before (given 2 nodes, two locks are reduced to one lock).
-> > >>
-> > >> So, moving deferred split queue to memcg's nodeinfo to make it NUMA
-> > >> aware again.
-> > >>
-> > >> With this change stress-ng's madvise test shows average 4% improvement
-> > >> sometimes and I didn't see degradation anymore.
-> > > 
-> > > My concern about this getting more and more complex
-> > > (http://lkml.kernel.org/r/20191002084014.GH15624@dhcp22.suse.cz) holds
-> > > here even more. Can we step back and reconsider the whole thing please?
-> > 
-> > What about freeing immediately after split via workqueue and also have a
-> > synchronous version called before going oom? Maybe there would be also
-> > other things that would benefit from this scheme instead of traditional
-> > reclaim and shrinkers?
+On Tue, Oct 08, 2019 at 01:41:27PM +0200, Fabrice Gasnier wrote:
+> Add a comment to better describe the purpose of breakinput feature that
+> can be found on some STM32 timer instances. Briefly comment on the
+> characteristics of this input for PWM, and pinmuxing as suggested in [1].
 > 
-> That is exactly what we have discussed some time ago.
+> [1] https://lkml.org/lkml/2019/10/1/207
+> 
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> ---
+>  drivers/pwm/pwm-stm32.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pwm/pwm-stm32.c b/drivers/pwm/pwm-stm32.c
+> index 359b085..6406ebb 100644
+> --- a/drivers/pwm/pwm-stm32.c
+> +++ b/drivers/pwm/pwm-stm32.c
+> @@ -522,8 +522,14 @@ static int stm32_pwm_apply_breakinputs(struct stm32_pwm *priv,
+>  					     sizeof(struct stm32_breakinput));
+>  
+>  	/*
+> +	 * Some timer instances can have BRK input pins (e.g. basically a fault
+> +	 * pin from the output power stage). The break feature allows a safe
+> +	 * shut-down of the PWM outputs to a predefined state. Further details
+> +	 * are available in application note AN4277, "Using STM32 device PWM
+> +	 * shut-down features..."
 
-Yes, I've posted the patch:
+Without having read the application note I don't understand the purpose.
+Not sure if this should be a show stopper though.
 
-http://lkml.kernel.org/r/20190827125911.boya23eowxhqmopa@box
+>  	 * Because "st,breakinput" parameter is optional do not make probe
+> -	 * failed if it doesn't exist.
+> +	 * failed if it doesn't exist. The pinctrl handle must hold the BRK
+> +	 * pin(s) when using "st,breakinput" property.
 
-But I still not sure that the approach is right. I expect it to trigger
-performance regressions. For system with pleanty of free memory, we will
-just pay split cost for nothing in many cases.
+Is this a comment that has a better place in the binding doc?
+
+Best regards
+Uwe
+
 
 -- 
- Kirill A. Shutemov
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
