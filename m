@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BCE3CF5CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 11:15:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B332CCF5CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 11:16:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730211AbfJHJPf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 05:15:35 -0400
-Received: from pio-pvt-msa2.bahnhof.se ([79.136.2.41]:56136 "EHLO
-        pio-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730163AbfJHJPc (ORCPT
+        id S1729987AbfJHJPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 05:15:24 -0400
+Received: from pio-pvt-msa1.bahnhof.se ([79.136.2.40]:46120 "EHLO
+        pio-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728866AbfJHJPX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 05:15:32 -0400
+        Tue, 8 Oct 2019 05:15:23 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 365FC3F68E;
-        Tue,  8 Oct 2019 11:15:25 +0200 (CEST)
-Authentication-Results: pio-pvt-msa2.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=aHdlB1za;
+        by pio-pvt-msa1.bahnhof.se (Postfix) with ESMTP id 79BE83F787;
+        Tue,  8 Oct 2019 11:15:21 +0200 (CEST)
+Authentication-Results: pio-pvt-msa1.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b="CHMVWjyy";
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at bahnhof.se
 X-Spam-Flag: NO
@@ -26,22 +26,22 @@ X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
         tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
         DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
         autolearn=ham autolearn_force=no
-Received: from pio-pvt-msa2.bahnhof.se ([127.0.0.1])
-        by localhost (pio-pvt-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id PK8-sFKECaEf; Tue,  8 Oct 2019 11:15:20 +0200 (CEST)
+Received: from pio-pvt-msa1.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id COAn5xUjmjkU; Tue,  8 Oct 2019 11:15:20 +0200 (CEST)
 Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
         (Authenticated sender: mb878879)
-        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 0400A3F374;
+        by pio-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 1B41D3F59D;
         Tue,  8 Oct 2019 11:15:17 +0200 (CEST)
 Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id 7E8FC3605CA;
+        by mail1.shipmail.org (Postfix) with ESMTPSA id A16BB3605DC;
         Tue,  8 Oct 2019 11:15:17 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1570526117; bh=fG/GNjL9xDuyikgbRDOUKbeudoZ9IgG6ULIdrU+mLBQ=;
+        t=1570526117; bh=cWWLN8IyL/PIrg0tjEE8pDhLTEss1yQM1iEt6Room1s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aHdlB1zax3KqHtdg+12GqQ4xe9oZhVhb/iGc5X6UYUyemkpWGmKCluj2cofgOkrXW
-         kxRjrliinZnszyw+Eec2OClT+3OLJFNSQ8QLK9Mlwa6IBTYHo2i32L7z7Tvl5z2Eot
-         ZrDcqiN6xpMBg0l1Z6nFYhbPQ3xjmUh5UbMINoAs=
+        b=CHMVWjyymcO57wjd2bv9bPjkIzsm7+YRzfsVkGqFCn3rOzHnWRNa1hy3ECnnK/S56
+         fIEu8ZxmY4ivhNnsGEe+GL4Qi+WuSePxGOKG2Yl+v0a6LMcMBoMgbKzWpo+tnkrFwe
+         ehwinB/VzkQvGI3zXl5wxaUvKKFPOa7iLymr7dfc=
 From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
         <thomas_os@shipmail.org>
 To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
@@ -56,9 +56,9 @@ Cc:     torvalds@linux-foundation.org,
         Huang Ying <ying.huang@intel.com>,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         "Kirill A . Shutemov" <kirill@shutemov.name>
-Subject: [PATCH v4 2/9] mm: pagewalk: Take the pagetable lock in walk_pte_range()
-Date:   Tue,  8 Oct 2019 11:15:01 +0200
-Message-Id: <20191008091508.2682-3-thomas_os@shipmail.org>
+Subject: [PATCH v4 3/9] mm: pagewalk: Don't split transhuge pmds when a pmd_entry is present
+Date:   Tue,  8 Oct 2019 11:15:02 +0200
+Message-Id: <20191008091508.2682-4-thomas_os@shipmail.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191008091508.2682-1-thomas_os@shipmail.org>
 References: <20191008091508.2682-1-thomas_os@shipmail.org>
@@ -72,8 +72,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Hellstrom <thellstrom@vmware.com>
 
-Without the lock, anybody modifying a pte from within this function might
-have it concurrently modified by someone else.
+The pagewalk code was unconditionally splitting transhuge pmds when a
+pte_entry was present. However ideally we'd want to handle transhuge pmds
+in the pmd_entry function and ptes in pte_entry function. So don't split
+huge pmds when there is a pmd_entry function present, but let the callback
+take care of it if necessary.
+
+In order to make sure a virtual address range is handled by one and only
+one callback, and since pmd entries may be unstable, we introduce a
+pmd_entry return code that tells the walk code to continue processing this
+pmd entry rather than to move on. Since caller-defined positive return
+codes (up to 2) are used by current callers, use a high value that allows a
+large range of positive caller-defined return codes for future users.
 
 Cc: Matthew Wilcox <willy@infradead.org>
 Cc: Will Deacon <will.deacon@arm.com>
@@ -87,33 +97,93 @@ Cc: Kirill A. Shutemov <kirill@shutemov.name>
 Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
 ---
- mm/pagewalk.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ include/linux/pagewalk.h |  8 ++++++++
+ mm/pagewalk.c            | 28 +++++++++++++++++++++-------
+ 2 files changed, 29 insertions(+), 7 deletions(-)
 
+diff --git a/include/linux/pagewalk.h b/include/linux/pagewalk.h
+index bddd9759bab9..c4a013eb445d 100644
+--- a/include/linux/pagewalk.h
++++ b/include/linux/pagewalk.h
+@@ -4,6 +4,11 @@
+ 
+ #include <linux/mm.h>
+ 
++/* Highest positive pmd_entry caller-specific return value */
++#define PAGE_WALK_CALLER_MAX     (INT_MAX / 2)
++/* The handler did not handle the entry. Fall back to the next level */
++#define PAGE_WALK_FALLBACK       (PAGE_WALK_CALLER_MAX + 1)
++
+ struct mm_walk;
+ 
+ /**
+@@ -16,6 +21,9 @@ struct mm_walk;
+  *			this handler is required to be able to handle
+  *			pmd_trans_huge() pmds.  They may simply choose to
+  *			split_huge_page() instead of handling it explicitly.
++ *                      If the handler did not handle the PMD, or split the
++ *                      PMD and wants it handled by the PTE handler, it
++ *                      should return PAGE_WALK_FALLBACK.
+  * @pte_entry:		if set, called for each non-empty PTE (4th-level) entry
+  * @pte_hole:		if set, called for each hole at all levels
+  * @hugetlb_entry:	if set, called for each hugetlb entry
 diff --git a/mm/pagewalk.c b/mm/pagewalk.c
-index d48c2a986ea3..83c0b78363b4 100644
+index 83c0b78363b4..f844c2a2aa60 100644
 --- a/mm/pagewalk.c
 +++ b/mm/pagewalk.c
-@@ -10,8 +10,9 @@ static int walk_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
- 	pte_t *pte;
- 	int err = 0;
- 	const struct mm_walk_ops *ops = walk->ops;
-+	spinlock_t *ptl;
+@@ -50,10 +50,18 @@ static int walk_pmd_range(pud_t *pud, unsigned long addr, unsigned long end,
+ 		 * This implies that each ->pmd_entry() handler
+ 		 * needs to know about pmd_trans_huge() pmds
+ 		 */
+-		if (ops->pmd_entry)
++		if (ops->pmd_entry) {
+ 			err = ops->pmd_entry(pmd, addr, next, walk);
+-		if (err)
+-			break;
++			if (!err)
++				continue;
++			else if (err <= PAGE_WALK_CALLER_MAX)
++				break;
++			WARN_ON(err != PAGE_WALK_FALLBACK);
++			err = 0;
++			if (pmd_trans_unstable(pmd))
++				goto again;
++			/* Fall through */
++		}
  
--	pte = pte_offset_map(pmd, addr);
-+	pte = pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
- 	for (;;) {
- 		err = ops->pte_entry(pte, addr, addr + PAGE_SIZE, walk);
- 		if (err)
-@@ -22,7 +23,7 @@ static int walk_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
- 		pte++;
- 	}
- 
--	pte_unmap(pte);
-+	pte_unmap_unlock(pte - 1, ptl);
- 	return err;
- }
- 
+ 		/*
+ 		 * Check this here so we only break down trans_huge
+@@ -61,8 +69,8 @@ static int walk_pmd_range(pud_t *pud, unsigned long addr, unsigned long end,
+ 		 */
+ 		if (!ops->pte_entry)
+ 			continue;
+-
+-		split_huge_pmd(walk->vma, pmd, addr);
++		if (!ops->pmd_entry)
++			split_huge_pmd(walk->vma, pmd, addr);
+ 		if (pmd_trans_unstable(pmd))
+ 			goto again;
+ 		err = walk_pte_range(pmd, addr, next, walk);
+@@ -281,11 +289,17 @@ static int __walk_page_range(unsigned long start, unsigned long end,
+  *
+  *  - 0  : succeeded to handle the current entry, and if you don't reach the
+  *         end address yet, continue to walk.
+- *  - >0 : succeeded to handle the current entry, and return to the caller
+- *         with caller specific value.
++ *  - >0, and <= PAGE_WALK_CALLER_MAX : succeeded to handle the current entry,
++ *         and return to the caller with caller specific value.
+  *  - <0 : failed to handle the current entry, and return to the caller
+  *         with error code.
+  *
++ * For pmd_entry(), a value <= PAGE_WALK_CALLER_MAX indicates that the entry
++ * was handled by the callback. PAGE_WALK_FALLBACK indicates that the entry
++ * could not be handled by the callback and should be re-checked. If the
++ * callback needs the entry to be handled by the next level, it should
++ * split the entry and then return PAGE_WALK_FALLBACK.
++ *
+  * Before starting to walk page table, some callers want to check whether
+  * they really want to walk over the current vma, typically by checking
+  * its vm_flags. walk_page_test() and @ops->test_walk() are used for this
 -- 
 2.21.0
 
