@@ -2,166 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 959CDCFB1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 15:15:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8234CFB20
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 15:16:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731008AbfJHNP0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 09:15:26 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37211 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730371AbfJHNPZ (ORCPT
+        id S1731073AbfJHNQA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 09:16:00 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:46780 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730439AbfJHNQA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 09:15:25 -0400
-Received: by mail-wm1-f67.google.com with SMTP id f22so3097952wmc.2;
-        Tue, 08 Oct 2019 06:15:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PkpF12I5oQshYFWC4o9XSkqiU1qpyK9lT1SgMd5gkK4=;
-        b=Y1k4Wk9UX+Y9FRbroM6LtBWf93FOcq6kDKkBB2zP1Ah52Lg0AHcaF4VIzXzWoYT7IC
-         +P30xMZV7MRbPmGKDLslptAl/YYVdrEXIIwiabicfU6Dq/MnLygAfMF48ESEZe/Ztroq
-         bjzhD+XQWcWcGRoQlhFsN66f2DQ02LLmGTH2AAE03JY1yx37ncmZNo7l2agzMoZLr5Ia
-         deKG5kKYS0LjvEqfK1E1ArC5is/MR6M/j3DDhA0HcZknap4HfREj72uHvE4CR2oWW6py
-         DVBNk6GZkwM8t4oJ4KbsGPjeF1Dd34gcpuUxR6WBd5MVY7klDfN9Fk5jfnDBK3JwJvmy
-         AUQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=PkpF12I5oQshYFWC4o9XSkqiU1qpyK9lT1SgMd5gkK4=;
-        b=DL845Di1RHEnn0pUwZFMRVSP6HejnEECmwb5rAZeNDByaKF/qI4byHOi4DNOplgqpw
-         125dKA+tvNCQgHdzhZTk0zsgMJ32n1uDA0QVtGFyzfB8Z2IpOIeItagZbg/6anbfDwZv
-         zyYFtPzK+CT7Feff1ugGXs7/R0Dhwf7jkhaTQiREzqs5ECxVOXXi+ydX4Pph9MqFzPQp
-         TQWC9r9G7wbsex0vyLWD9JwUA1jK3UajV3mQgGlHXh3SEoEt7iaJZRaJx+Ilrc/OiaZv
-         poSwUM7keKqADhvpHEDejesQ0tv7Z2nkLE7hFmjATHz893sDvbzvN9CuhNS3TEIAYtzr
-         SgrQ==
-X-Gm-Message-State: APjAAAVu0XPKl2wV51xycHfeBukNRfljANMrpuqqjZ2JpGehyOjObpls
-        jKBdG8QX7nc0ruXQ+sTOVwCTeWIR
-X-Google-Smtp-Source: APXvYqxi2eXP5iDv1oV+9RJSekAwMNi7Dl5XfE0GwzX7za55ZRZfFZHCKBd3pI2e5P/gIz2GO+HO4A==
-X-Received: by 2002:a1c:ed0d:: with SMTP id l13mr3709880wmh.54.1570540523490;
-        Tue, 08 Oct 2019 06:15:23 -0700 (PDT)
-Received: from debian.mshome.net (207.148.159.143.dyn.plus.net. [143.159.148.207])
-        by smtp.gmail.com with ESMTPSA id 79sm5485377wmb.7.2019.10.08.06.15.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2019 06:15:22 -0700 (PDT)
-From:   Wei Liu <wei.liu@kernel.org>
-X-Google-Original-From: Wei Liu <liuw@liuw.name>
-To:     Linux on Hyper-V List <linux-hyperv@vger.kernel.org>
-Cc:     Linux Kernel List <linux-kernel@vger.kernel.org>,
-        Linux Kconfig List <linux-kbuild@vger.kernel.org>,
-        Wei Liu <liuwe@microsoft.com>
-Subject: [PATCH RFC] kconfig: add hvconfig for Linux on Hyper-V
-Date:   Tue,  8 Oct 2019 14:15:08 +0100
-Message-Id: <20191008131508.21189-1-liuw@liuw.name>
-X-Mailer: git-send-email 2.20.1
+        Tue, 8 Oct 2019 09:16:00 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x98D8tM7163596;
+        Tue, 8 Oct 2019 13:15:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=ipRechiw780jXrMMe1Cvbd53h+EID/P4q8QMm+dXalk=;
+ b=gZW3cLAgKrXSuzptNZ7Mb5WsgSLw26Jgv6KrU9O/bnmrM1eBHtFfC4J4b64MlEt4h6mv
+ 8N53EfvlYBA/Sn0I3ULitLnsj7mQ229AIlhQ1iYS1FDSw+JTXkdILNizyiOUcCmOlyBH
+ qZYcuRUlWYlNxTx30BzDt5hss0p2MCm7YU1xa1xj1C+RKbcyy/LmYa8EvNsEclyw07Un
+ ZOi8boC2mOM/C7PsQ2s1uBIr3Mme+GEG/kOCLSO0LFSMIvpkys6g39vhCft5g977jr2I
+ h91zRyCScDAxiBlZ7au8CLSU9tBlJfitIosFnX5kozLFZoF0KMavPI18f44uMrdn5mso GQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2vek4qd51y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 08 Oct 2019 13:15:29 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x98DDQEC001904;
+        Tue, 8 Oct 2019 13:15:28 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2vg206963q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 08 Oct 2019 13:15:28 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x98DFQsL027920;
+        Tue, 8 Oct 2019 13:15:26 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 08 Oct 2019 06:15:25 -0700
+Date:   Tue, 8 Oct 2019 16:15:18 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Matteo Croce <mcroce@redhat.com>
+Cc:     Eric Anholt <eric@anholt.net>, Stefan Wahren <wahrenst@gmx.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org
+Subject: Re: [PATCH] staging: vchiq: don't leak kernel address
+Message-ID: <20191008131518.GH25098@kadam>
+References: <20191008123346.3931-1-mcroce@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191008123346.3931-1-mcroce@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9403 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=674
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910080127
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9403 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=755 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910080127
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Liu <liuwe@microsoft.com>
+The subject doesn't match the patch.  It should just be "remove useless
+printk".
 
-Add an config file snippet which enalbes additional options useful for
-running the kernel in a Hyper-V guest.
-
-The expected use case is a user provides an existing config file then
-executes `make hvconfig`. It will merge those options with the
-provided config file.
-
-Based on similar concept for Xen and KVM.
-
-Signed-off-by: Wei Liu <liuwe@microsoft.com>
----
-RFC: I only tested this on x86.  Although the config options included in
-hv_guest.config don't seem to be arch-specific, we should probably
-move the ones not yet implemented on Arm to an x86 specific config
-file.
----
- Documentation/admin-guide/README.rst |  3 +++
- kernel/configs/hv_guest.config       | 33 ++++++++++++++++++++++++++++
- scripts/kconfig/Makefile             |  5 +++++
- 3 files changed, 41 insertions(+)
- create mode 100644 kernel/configs/hv_guest.config
-
-diff --git a/Documentation/admin-guide/README.rst b/Documentation/admin-guide/README.rst
-index cc6151fc0845..d5f4389a7a2f 100644
---- a/Documentation/admin-guide/README.rst
-+++ b/Documentation/admin-guide/README.rst
-@@ -224,6 +224,9 @@ Configuring the kernel
-      "make xenconfig"   Enable additional options for xen dom0 guest kernel
-                         support.
- 
-+     "make hvconfig"    Enable additional options for Hyper-V guest kernel
-+                        support.
-+
-      "make tinyconfig"  Configure the tiniest possible kernel.
- 
-    You can find more information on using the Linux kernel config tools
-diff --git a/kernel/configs/hv_guest.config b/kernel/configs/hv_guest.config
-new file mode 100644
-index 000000000000..0e71e34a2d4d
---- /dev/null
-+++ b/kernel/configs/hv_guest.config
-@@ -0,0 +1,33 @@
-+CONFIG_NET=y
-+CONFIG_NET_CORE=y
-+CONFIG_NETDEVICES=y
-+CONFIG_BLOCK=y
-+CONFIG_BLK_DEV=y
-+CONFIG_NETWORK_FILESYSTEMS=y
-+CONFIG_INET=y
-+CONFIG_TTY=y
-+CONFIG_SERIAL_8250=y
-+CONFIG_SERIAL_8250_CONSOLE=y
-+CONFIG_IP_PNP=y
-+CONFIG_IP_PNP_DHCP=y
-+CONFIG_BINFMT_ELF=y
-+CONFIG_PCI=y
-+CONFIG_PCI_MSI=y
-+CONFIG_DEBUG_KERNEL=y
-+CONFIG_VIRTUALIZATION=y
-+CONFIG_HYPERVISOR_GUEST=y
-+CONFIG_PARAVIRT=y
-+CONFIG_HYPERV=y
-+CONFIG_HYPERV_VSOCKETS=y
-+CONFIG_PCI_HYPERV=y
-+CONFIG_PCI_HYPERV_INTERFACE=y
-+CONFIG_HYPERV_STORAGE=y
-+CONFIG_HYPERV_NET=y
-+CONFIG_HYPERV_KEYBOARD=y
-+CONFIG_FB_HYPERV=y
-+CONFIG_HID_HYPERV_MOUSE=y
-+CONFIG_HYPERV=y
-+CONFIG_HYPERV_TIMER=y
-+CONFIG_HYPERV_UTILS=y
-+CONFIG_HYPERV_BALLOON=y
-+CONFIG_HYPERV_IOMMU=y
-diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
-index ef2f2336c469..2ee46301b22e 100644
---- a/scripts/kconfig/Makefile
-+++ b/scripts/kconfig/Makefile
-@@ -104,6 +104,10 @@ PHONY += xenconfig
- xenconfig: xen.config
- 	@:
- 
-+PHONY += hvconfig
-+hvconfig: hv_guest.config
-+	@:
-+
- PHONY += tinyconfig
- tinyconfig:
- 	$(Q)$(MAKE) -f $(srctree)/Makefile allnoconfig tiny.config
-@@ -138,6 +142,7 @@ help:
- 	@echo  '                    default value without prompting'
- 	@echo  '  kvmconfig	  - Enable additional options for kvm guest kernel support'
- 	@echo  '  xenconfig       - Enable additional options for xen dom0 and guest kernel support'
-+	@echo  '  hvconfig        - Enable additional options for Hyper-V guest kernel support'
- 	@echo  '  tinyconfig	  - Configure the tiniest possible kernel'
- 	@echo  '  testconfig	  - Run Kconfig unit tests (requires python3 and pytest)'
- 
--- 
-2.20.1
+regards,
+dan carpenter
 
