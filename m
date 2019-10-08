@@ -2,96 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1389CD03D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 01:09:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E746ED0407
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 01:21:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729587AbfJHXJo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 19:09:44 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:54808 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725908AbfJHXJn (ORCPT
+        id S1729688AbfJHXVx convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 8 Oct 2019 19:21:53 -0400
+Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:50883 "EHLO
+        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725848AbfJHXVw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 19:09:43 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01451;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0TeUt30J_1570576174;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TeUt30J_1570576174)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 09 Oct 2019 07:09:40 +0800
-Subject: Re: [PATCH] mm: thp: move deferred split queue to memcg's nodeinfo
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Tue, 8 Oct 2019 19:21:52 -0400
+Received: from mailgate02.nec.co.jp ([114.179.233.122])
+        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x98NLWJi014370
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 9 Oct 2019 08:21:32 +0900
+Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x98NLW2b008602;
+        Wed, 9 Oct 2019 08:21:32 +0900
+Received: from mail02.kamome.nec.co.jp (mail02.kamome.nec.co.jp [10.25.43.5])
+        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x98NLHSZ010859;
+        Wed, 9 Oct 2019 08:21:32 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.151] [10.38.151.151]) by mail02.kamome.nec.co.jp with ESMTP id BT-MMP-9250569; Wed, 9 Oct 2019 08:18:32 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC23GP.gisp.nec.co.jp ([10.38.151.151]) with mapi id 14.03.0439.000; Wed, 9
+ Oct 2019 08:18:32 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     Jane Chu <jane.chu@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Michal Hocko <mhocko@kernel.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, kirill.shutemov@linux.intel.com,
-        ktkhai@virtuozzo.com, hannes@cmpxchg.org, hughd@google.com,
-        shakeelb@google.com, rientjes@google.com,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1569968203-64647-1-git-send-email-yang.shi@linux.alibaba.com>
- <20191002084304.GI15624@dhcp22.suse.cz>
- <30421920-4fdb-767a-6ef2-60187932c414@suse.cz>
- <20191007143030.GN2381@dhcp22.suse.cz> <20191008144437.fr374cxtpnrnnjsv@box>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <d96cf698-585a-c90b-c038-1009447d4daa@linux.alibaba.com>
-Date:   Tue, 8 Oct 2019 16:09:29 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+Subject: Re: [PATCH v4 0/2] mm/memory-failure: Poison read receives SIGKILL
+ instead of SIGBUS issue
+Thread-Topic: [PATCH v4 0/2] mm/memory-failure: Poison read receives SIGKILL
+ instead of SIGBUS issue
+Thread-Index: AQHVfgQYMR1+dM5I0kqkeQcqu0tLzKdQyn2A
+Date:   Tue, 8 Oct 2019 23:18:31 +0000
+Message-ID: <20191008231831.GB27781@hori.linux.bs1.fc.nec.co.jp>
+References: <1565112345-28754-1-git-send-email-jane.chu@oracle.com>
+ <9af6b35d-bfbf-7f87-a419-042dff018fdd@oracle.com>
+In-Reply-To: <9af6b35d-bfbf-7f87-a419-042dff018fdd@oracle.com>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.34.125.96]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <9FE488C625E5C44BB985629469BD079F@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-In-Reply-To: <20191008144437.fr374cxtpnrnnjsv@box>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jane,
 
+I think that this patchset is good enough and ready to be merged.
+Andrew, could you consider queuing this series into your tree?
 
-On 10/8/19 7:44 AM, Kirill A. Shutemov wrote:
-> On Mon, Oct 07, 2019 at 04:30:30PM +0200, Michal Hocko wrote:
->> On Mon 07-10-19 16:19:59, Vlastimil Babka wrote:
->>> On 10/2/19 10:43 AM, Michal Hocko wrote:
->>>> On Wed 02-10-19 06:16:43, Yang Shi wrote:
->>>>> The commit 87eaceb3faa59b9b4d940ec9554ce251325d83fe ("mm: thp: make
->>>>> deferred split shrinker memcg aware") makes deferred split queue per
->>>>> memcg to resolve memcg pre-mature OOM problem.  But, all nodes end up
->>>>> sharing the same queue instead of one queue per-node before the commit.
->>>>> It is not a big deal for memcg limit reclaim, but it may cause global
->>>>> kswapd shrink THPs from a different node.
->>>>>
->>>>> And, 0-day testing reported -19.6% regression of stress-ng's madvise
->>>>> test [1].  I didn't see that much regression on my test box (24 threads,
->>>>> 48GB memory, 2 nodes), with the same test (stress-ng --timeout 1
->>>>> --metrics-brief --sequential 72  --class vm --exclude spawn,exec), I saw
->>>>> average -3% (run the same test 10 times then calculate the average since
->>>>> the test itself may have most 15% variation according to my test)
->>>>> regression sometimes (not every time, sometimes I didn't see regression
->>>>> at all).
->>>>>
->>>>> This might be caused by deferred split queue lock contention.  With some
->>>>> configuration (i.e. just one root memcg) the lock contention my be worse
->>>>> than before (given 2 nodes, two locks are reduced to one lock).
->>>>>
->>>>> So, moving deferred split queue to memcg's nodeinfo to make it NUMA
->>>>> aware again.
->>>>>
->>>>> With this change stress-ng's madvise test shows average 4% improvement
->>>>> sometimes and I didn't see degradation anymore.
->>>> My concern about this getting more and more complex
->>>> (http://lkml.kernel.org/r/20191002084014.GH15624@dhcp22.suse.cz) holds
->>>> here even more. Can we step back and reconsider the whole thing please?
->>> What about freeing immediately after split via workqueue and also have a
->>> synchronous version called before going oom? Maybe there would be also
->>> other things that would benefit from this scheme instead of traditional
->>> reclaim and shrinkers?
->> That is exactly what we have discussed some time ago.
-> Yes, I've posted the patch:
->
-> http://lkml.kernel.org/r/20190827125911.boya23eowxhqmopa@box
->
-> But I still not sure that the approach is right. I expect it to trigger
-> performance regressions. For system with pleanty of free memory, we will
-> just pay split cost for nothing in many cases.
+Thanks,
+Naoya Horiguchi
 
-This is exactly what I'm concerned about as well.
-
->
-
+On Tue, Oct 08, 2019 at 11:13:23AM -0700, Jane Chu wrote:
+> Hi, Naoya,
+> 
+> What is the status of the patches?
+> Is there anything I need to do from my end ?
+> 
+> Regards,
+> -jane
+> 
+> On 8/6/2019 10:25 AM, Jane Chu wrote:
+> > Change in v4:
+> >   - remove trailing white space
+> > 
+> > Changes in v3:
+> >   - move **tk cleanup to its own patch
+> > 
+> > Changes in v2:
+> >   - move 'tk' allocations internal to add_to_kill(), suggested by Dan;
+> >   - ran checkpatch.pl check, pointed out by Matthew;
+> >   - Noaya pointed out that v1 would have missed the SIGKILL
+> >     if "tk->addr == -EFAULT", since the code returns early.
+> >     Incorporated Noaya's suggestion, also, skip VMAs where
+> >     "tk->size_shift == 0" for zone device page, and deliver SIGBUS
+> >     when "tk->size_shift != 0" so the payload is helpful;
+> >   - added Suggested-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> > 
+> > Jane Chu (2):
+> >    mm/memory-failure.c clean up around tk pre-allocation
+> >    mm/memory-failure: Poison read receives SIGKILL instead of SIGBUS if
+> >      mmaped more than once
+> > 
+> >   mm/memory-failure.c | 62 ++++++++++++++++++++++-------------------------------
+> >   1 file changed, 26 insertions(+), 36 deletions(-)
+> > 
+> 
