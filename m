@@ -2,59 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6D8FCFB6B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 15:36:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE6F1CFB6D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 15:37:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726227AbfJHNg2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 09:36:28 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:40096 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbfJHNg2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 09:36:28 -0400
-Received: by mail-io1-f67.google.com with SMTP id h144so36431037iof.7
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 06:36:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=S75fZ5a4KVv1g+czdImMOXYeJomw3b28gBjmJDZ4khY=;
-        b=Zr5biDaa5yAKby16sDuAIQa96yZ19pLRlf/8pAJJrkQUbpLIckbBgjumKzuzrKPbnx
-         B0DT4r637Z8xS0KPuzm5d99vqLhV3n1tm9m0tTGBTQnuFFDJEAHTXdVpQozGAcGwnzyd
-         r5KV+xLkGkjg00Vxo6m32GB5frDK2Vgw6kDJFKtAxDYpxUTqomYWY+aHbAX8F6Bw/gDp
-         lfssn3vuKKyXrMh6DoNL3b6DlZQTGcTsd+tY8UlI+vzWzZrmjlxyqG71CrSzcO4J899p
-         dNGHeN5RILlIGdsgDNjKdlEH2Id4yLucvHIVOlAXUEKauys8PYZLTyTKTiJZqwTyHt1G
-         OQmQ==
+        id S1725908AbfJHNhK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 09:37:10 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50352 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725821AbfJHNhK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 09:37:10 -0400
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com [209.85.221.70])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CCB13155E0
+        for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2019 13:37:09 +0000 (UTC)
+Received: by mail-wr1-f70.google.com with SMTP id w10so9163479wrl.5
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 06:37:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=S75fZ5a4KVv1g+czdImMOXYeJomw3b28gBjmJDZ4khY=;
-        b=NPgzIVdOva0wZFvQZ//8oY5i+BhYLVBUGgRpBl+HYu8vBxgz7UQENydOcho+/LlFmL
-         jqgHjtP1BSV8vxFlZKK7nxeN9RfrGDHRVkjFeNo8lhqLB8jaRDSNTbyIgacZxKnk81kV
-         S1RmSb8S4Ced64B7k0pC4SpKxqPDpqxrJ4O1Ychd1o7HJyND3wgVTbzoCzP57Zd3OSgI
-         +MRCKUAk3kJ3zEEt+rqS1wKGfQeGk2FvkbHMiibe4bcHApiSsI1Jrh1qbe5iSp7FJrQi
-         nU7cytgYcvgK9XOKxtVZcNs/D7CWUxcahExI9z8Le4zXKRiC9aw9zPqhluF0YRfuch3W
-         YwjQ==
-X-Gm-Message-State: APjAAAX03dSfeov8lsWEvKgi2LMfMZ+7Qd6HkOeXVegUO8G/JhlVAEiF
-        lLRIzpsfiAma57K8Xen5Pp6ezZa6IOclkvLsXxk=
-X-Google-Smtp-Source: APXvYqwEb2nIgYOZ+llVntO/oLWzTR4Fuo/6XfD3QJiLO5ffKqcCrnh1M17NQJJ+exPbA2SNgd8xqk2waLk9z3Dwd8w=
-X-Received: by 2002:a5d:8143:: with SMTP id f3mr30459039ioo.294.1570541786037;
- Tue, 08 Oct 2019 06:36:26 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vTKU4asFHsQZstw1g0KtKeKGEKBYpbJyZV57QnF+Bfw=;
+        b=Z58WAsq07N8HSF/zug/LDMaXT6fd5AOd3Q8IzEbeTJawz/T7EdPlCc+gTExMmNESDJ
+         55+fFKNzFCQXmdG+lXMZNbL4kR+JtvJKKwH6gwk+npe99ngr+/NWdDAlSNVR6CKyLouh
+         +aeMdGkgoTTvPF0B1UtLCA1ZaRR2QtW7gWczSlPlhoCe1+OdmwWVMSOqCx3MqqP9IfpJ
+         pXMKNKlgdN71xxuT+AjiTzvO4P/1Njv13dOAX1txxRx4eO5oOzJxDlP1boB3uCX2UaSG
+         2PBCgQi6ykzc8iJtfg9ua0yuAUK3JWeFqAJaRiBLBrZkI0u9ZvPtQteprEkn3USo4uMl
+         qzqg==
+X-Gm-Message-State: APjAAAXPEl4NkOMwLAWjZfdzZoV+m5m9D0xmglxCmxjWlg0OqtHD27On
+        YmtJzcall45SCLYqmtaTunXXj5zYtoizhBWODS24mpr5ja92ABggGO5CRWl1kiVL2SBWfMoZuFi
+        D8c2cGFrFJv4iNm3GAbsAg7/Q
+X-Received: by 2002:a1c:f01a:: with SMTP id a26mr3795626wmb.84.1570541828210;
+        Tue, 08 Oct 2019 06:37:08 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxnuJ7KXIuOAIWb7zFCCpi5VmAl/uLouZSD0mULYcoqsYPeliJmcmZAt53Q76g8awMmTH2vLw==
+X-Received: by 2002:a1c:f01a:: with SMTP id a26mr3795602wmb.84.1570541827960;
+        Tue, 08 Oct 2019 06:37:07 -0700 (PDT)
+Received: from localhost ([2a02:2450:102e:d85:877d:43b4:dd8f:144d])
+        by smtp.gmail.com with ESMTPSA id 36sm24791429wrp.30.2019.10.08.06.37.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2019 06:37:07 -0700 (PDT)
+From:   Christian Kellner <ckellner@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Christian Kellner <christian@kellner.me>,
+        Christian Brauner <christian@brauner.io>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, Michal Hocko <mhocko@suse.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Roman Gushchin <guro@fb.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Dmitry V. Levin" <ldv@altlinux.org>
+Subject: [PATCH] pidfd: show pids for nested pid namespaces in fdinfo
+Date:   Tue,  8 Oct 2019 15:36:37 +0200
+Message-Id: <20191008133641.23019-1-ckellner@redhat.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Received: by 2002:a4f:8906:0:0:0:0:0 with HTTP; Tue, 8 Oct 2019 06:36:23 -0700 (PDT)
-Reply-To: michellegoodman45@gmail.com
-From:   Shayma <shaymamarwan08@gmail.com>
-Date:   Tue, 8 Oct 2019 13:36:23 +0000
-Message-ID: <CA+HOoT03dHTuLB_JBxwa4CGw+xJE_k8CXx9E=zGNn+Qpcz_+1g@mail.gmail.com>
-Subject: Hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hallo liebe Hoffnung, Sie haben meine Nachricht erhalten, bitte
-Ich brauche eine sofortige Antwort
-danke
-michelle
+From: Christian Kellner <christian@kellner.me>
+
+The fdinfo file for a process file descriptor already contains the
+pid of the process in the callers namespaces. Additionally, if pid
+namespaces are configured, show the process ids of the process in
+all nested namespaces in the same format as in the procfs status
+file, i.e. "NSPid:\t%d\%d...". This allows the easy identification
+of the processes in nested namespaces.
+
+Signed-off-by: Christian Kellner <christian@kellner.me>
+---
+ kernel/fork.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 5a0fd518e04e..801793789f33 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1685,8 +1685,18 @@ static void pidfd_show_fdinfo(struct seq_file *m, struct file *f)
+ {
+ 	struct pid_namespace *ns = proc_pid_ns(file_inode(m->file));
+ 	struct pid *pid = f->private_data;
++#ifdef CONFIG_PID_NS
++	int i;
++#endif
+ 
+ 	seq_put_decimal_ull(m, "Pid:\t", pid_nr_ns(pid, ns));
++#ifdef CONFIG_PID_NS
++	seq_puts(m, "\nNSpid:");
++	for (i = ns->level; i <= pid->level; i++) {
++		ns = pid_nr_ns(pid, pid->numbers[i].ns);
++		seq_put_decimal_ull(m, "\t", ns);
++	}
++#endif
+ 	seq_putc(m, '\n');
+ }
+ #endif
+-- 
+2.21.0
+
