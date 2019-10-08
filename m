@@ -2,52 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EA89D0051
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 20:00:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10A6AD0055
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 20:00:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729767AbfJHSAL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 14:00:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47498 "EHLO mail.kernel.org"
+        id S1729838AbfJHSAN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 14:00:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726336AbfJHSAK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 14:00:10 -0400
-Subject: Re: [GIT PULL] Kselftest update for Linux 5.4-rc3
+        id S1729746AbfJHSAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 14:00:12 -0400
+Subject: Re: [GIT PULL] SELinux fixes for v5.4 (#1)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570557609;
-        bh=HwzVqlpqTlUCC0/ZTEjrzR58/tMSplLoD1BQABsruxQ=;
+        s=default; t=1570557611;
+        bh=Zny/HnbAxFHT+uTu3gIjuufkIPQtw4WdhZzjsc7dSqE=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=ciRhypSKlarR/snUNq1fn+bjKOyy6Qr+d0GDLdrdE5uAg1QWw+JToScxakmArZ8ZQ
-         5iGB4817VhPoUhjYOAAZPQM7+VLV2YFLpwCz2b/6D1zYpOldnA/h3p888HtPMo5Gx2
-         5lObbEG/w0RapP5hN6aoh19HXpMeU+JgRye/3mtQ=
+        b=bCQjwCWs47fBZn4nOPnNaYdTdfmLP1aGies2FezU2SzmEnVy9qOtPQW4MDqfn5i8a
+         VZ76NNOLv1p72qgMkiFQa3ejdE9sGkQhytEtcYz5xUAo+A33zFi3KLlnX89Kwz9MRo
+         r/NaWd/SUO+WMvwOcqJcC9dUOVQAnKRWhRKJ44zM=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <be198a81-7b4b-5d4c-c8c4-8dc3920f2ae5@linuxfoundation.org>
-References: <be198a81-7b4b-5d4c-c8c4-8dc3920f2ae5@linuxfoundation.org>
+In-Reply-To: <CAHC9VhR6KFR+1F1eWyYEHnRfJyYhUP7RYf6=FsZOX=_m24btbg@mail.gmail.com>
+References: <CAHC9VhR6KFR+1F1eWyYEHnRfJyYhUP7RYf6=FsZOX=_m24btbg@mail.gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <be198a81-7b4b-5d4c-c8c4-8dc3920f2ae5@linuxfoundation.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest
- tags/linux-kselftest-5.4-rc3
-X-PR-Tracked-Commit-Id: ce3a677802121e038d2f062e90f96f84e7351da0
+X-PR-Tracked-Message-Id: <CAHC9VhR6KFR+1F1eWyYEHnRfJyYhUP7RYf6=FsZOX=_m24btbg@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+ tags/selinux-pr-20191007
+X-PR-Tracked-Commit-Id: 2a5243937c700ffe6a28e6557a4562a9ab0a17a4
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f54e66ae770fe559fb21383f95d739ac74c03ea8
-Message-Id: <157055760984.21274.18416681419306362425.pr-tracker-bot@kernel.org>
-Date:   Tue, 08 Oct 2019 18:00:09 +0000
-To:     Shuah Khan <skhan@linuxfoundation.org>
+X-PR-Merge-Commit-Id: 2ef459167adb5d7cf76df403b4fcf79347056824
+Message-Id: <157055761155.21274.2978117862183960301.pr-tracker-bot@kernel.org>
+Date:   Tue, 08 Oct 2019 18:00:11 +0000
+To:     Paul Moore <paul@paul-moore.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shuah <shuah@kernel.org>
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 7 Oct 2019 15:02:55 -0600:
+The pull request you sent on Mon, 7 Oct 2019 18:51:56 -0400:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux-kselftest-5.4-rc3
+> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20191007
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f54e66ae770fe559fb21383f95d739ac74c03ea8
+https://git.kernel.org/torvalds/c/2ef459167adb5d7cf76df403b4fcf79347056824
 
 Thank you!
 
