@@ -2,81 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DDDACF847
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 13:33:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B9AACF850
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 13:33:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730754AbfJHLcz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 07:32:55 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:33924 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730156AbfJHLcz (ORCPT
+        id S1730789AbfJHLdg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 07:33:36 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:47840 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730710AbfJHLdf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 07:32:55 -0400
-Received: by mail-ot1-f65.google.com with SMTP id m19so13752895otp.1;
-        Tue, 08 Oct 2019 04:32:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=X/P4A34kBWltit617HgU9BCptX8N7U/u6oSp9tuhsww=;
-        b=JP7YPc7eT6xQ6ck0G+DAbgxNob/xhbTbFLe+4zOsFMlL+8h5pm3+Es7g9xdUY39/Oz
-         cAo08tHYGKA9+8g8KuWmWzaIEIL09oCiIK8HxwO788kw55sb++QjjS4XmvW0RPj1IDKi
-         dpgFfkrpQ0RlprPqoTtqnnRXfbObL+D8bzCLA7A16KqiLwOx2EIzBnR+g088Uixo2Kwn
-         2VVm1EirYPHe4redtNgV6n0BC1o1GvXrnDjvTWlgV3ukFFR+oe/Ft44iS/Y2aFNoe9aT
-         59RUT1pP/y4P7NYDdBHGvoJCaPadroPCYNJZPdJXnWF+vPNRbNzbbXiEvSRd1xzt4QtV
-         YPQw==
-X-Gm-Message-State: APjAAAXsAHPvbDxOu+YGRBsbXquuwdRfu/2XFsM0q2Cz6APd1G3vz7lY
-        U+cM5pR35CZJ+XulkfHH4jsr2MuWhprRNkWRxmA=
-X-Google-Smtp-Source: APXvYqz93Kf3dVVQ1pD17nYMR7M0+TJGZ+RyWjaEPoiOqoprx/G7pBNyusN7HY7F4713UaL1ro4MlzqU5ZzEiQNFxQk=
-X-Received: by 2002:a9d:7311:: with SMTP id e17mr23509246otk.107.1570534372603;
- Tue, 08 Oct 2019 04:32:52 -0700 (PDT)
+        Tue, 8 Oct 2019 07:33:35 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iHnk3-0008DR-CC; Tue, 08 Oct 2019 13:33:23 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E98E01C0325;
+        Tue,  8 Oct 2019 13:33:22 +0200 (CEST)
+Date:   Tue, 08 Oct 2019 11:33:22 -0000
+From:   "tip-bot2 for Arvind Sankar" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] lib/string: Make memzero_explicit() inline instead
+ of external
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stephan Mueller <smueller@chronox.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-crypto@vger.kernel.org, linux-s390@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
+In-Reply-To: <20191007220000.GA408752@rani.riverdale.lan>
+References: <20191007220000.GA408752@rani.riverdale.lan>
 MIME-Version: 1.0
-References: <1570531132-21856-1-git-send-email-fabrizio.castro@bp.renesas.com> <1570531132-21856-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1570531132-21856-3-git-send-email-fabrizio.castro@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 8 Oct 2019 13:32:41 +0200
-Message-ID: <CAMuHMdVgkmrDmTwZQksy_qfkk6kmshnTwCMeYXBpKb0Nk_PKLg@mail.gmail.com>
-Subject: Re: [PATCH 02/10] dt-bindings: dmaengine: usb-dmac: Add binding for r8a774b1
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Magnus Damm <magnus.damm@gmail.com>, dmaengine@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <157053440280.9978.14856787712173585355.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 8, 2019 at 12:39 PM Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> This patch adds the binding for r8a774b1 SoC (RZ/G2N).
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+The following commit has been merged into the x86/urgent branch of tip:
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Commit-ID:     bec500777089b3c96c53681fc0aa6fee59711d4a
+Gitweb:        https://git.kernel.org/tip/bec500777089b3c96c53681fc0aa6fee59711d4a
+Author:        Arvind Sankar <nivedita@alum.mit.edu>
+AuthorDate:    Mon, 07 Oct 2019 18:00:02 -04:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 08 Oct 2019 13:27:05 +02:00
 
-Gr{oetje,eeting}s,
+lib/string: Make memzero_explicit() inline instead of external
 
-                        Geert
+With the use of the barrier implied by barrier_data(), there is no need
+for memzero_explicit() to be extern. Making it inline saves the overhead
+of a function call, and allows the code to be reused in arch/*/purgatory
+without having to duplicate the implementation.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Tested-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: H . Peter Anvin <hpa@zytor.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephan Mueller <smueller@chronox.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-s390@vger.kernel.org
+Fixes: 906a4bb97f5d ("crypto: sha256 - Use get/put_unaligned_be32 to get input, memzero_explicit")
+Link: https://lkml.kernel.org/r/20191007220000.GA408752@rani.riverdale.lan
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ include/linux/string.h | 21 ++++++++++++++++++++-
+ lib/string.c           | 21 ---------------------
+ 2 files changed, 20 insertions(+), 22 deletions(-)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/include/linux/string.h b/include/linux/string.h
+index b2f9df7..b6ccdc2 100644
+--- a/include/linux/string.h
++++ b/include/linux/string.h
+@@ -227,7 +227,26 @@ static inline bool strstarts(const char *str, const char *prefix)
+ }
+ 
+ size_t memweight(const void *ptr, size_t bytes);
+-void memzero_explicit(void *s, size_t count);
++
++/**
++ * memzero_explicit - Fill a region of memory (e.g. sensitive
++ *		      keying data) with 0s.
++ * @s: Pointer to the start of the area.
++ * @count: The size of the area.
++ *
++ * Note: usually using memset() is just fine (!), but in cases
++ * where clearing out _local_ data at the end of a scope is
++ * necessary, memzero_explicit() should be used instead in
++ * order to prevent the compiler from optimising away zeroing.
++ *
++ * memzero_explicit() doesn't need an arch-specific version as
++ * it just invokes the one of memset() implicitly.
++ */
++static inline void memzero_explicit(void *s, size_t count)
++{
++	memset(s, 0, count);
++	barrier_data(s);
++}
+ 
+ /**
+  * kbasename - return the last part of a pathname.
+diff --git a/lib/string.c b/lib/string.c
+index cd7a10c..08ec58c 100644
+--- a/lib/string.c
++++ b/lib/string.c
+@@ -748,27 +748,6 @@ void *memset(void *s, int c, size_t count)
+ EXPORT_SYMBOL(memset);
+ #endif
+ 
+-/**
+- * memzero_explicit - Fill a region of memory (e.g. sensitive
+- *		      keying data) with 0s.
+- * @s: Pointer to the start of the area.
+- * @count: The size of the area.
+- *
+- * Note: usually using memset() is just fine (!), but in cases
+- * where clearing out _local_ data at the end of a scope is
+- * necessary, memzero_explicit() should be used instead in
+- * order to prevent the compiler from optimising away zeroing.
+- *
+- * memzero_explicit() doesn't need an arch-specific version as
+- * it just invokes the one of memset() implicitly.
+- */
+-void memzero_explicit(void *s, size_t count)
+-{
+-	memset(s, 0, count);
+-	barrier_data(s);
+-}
+-EXPORT_SYMBOL(memzero_explicit);
+-
+ #ifndef __HAVE_ARCH_MEMSET16
+ /**
+  * memset16() - Fill a memory area with a uint16_t
