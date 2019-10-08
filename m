@@ -2,150 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8926ECF4A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 10:09:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74B47CF4B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 10:13:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730455AbfJHIJh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 04:09:37 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:57001 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730309AbfJHIJh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 04:09:37 -0400
-X-UUID: c39eb231dc22401c88f5cd08b45f1614-20191008
-X-UUID: c39eb231dc22401c88f5cd08b45f1614-20191008
-Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <yong.wu@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 966190512; Tue, 08 Oct 2019 16:09:29 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS32DR.mediatek.inc
- (172.27.6.104) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 8 Oct
- 2019 16:09:28 +0800
-Received: from [10.17.3.153] (172.27.4.253) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 8 Oct 2019 16:09:27 +0800
-Message-ID: <1570522168.19130.39.camel@mhfsdcap03>
-Subject: Re: [PATCH] iommu/mediatek: Move the tlb_sync into tlb_flush
-From:   Yong Wu <yong.wu@mediatek.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-CC:     Tomasz Figa <tfiga@chromium.org>, <youlin.pei@mediatek.com>,
-        <anan.sun@mediatek.com>, Nicolas Boichat <drinkcat@chromium.org>,
-        <cui.zhang@mediatek.com>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        "Joerg Roedel" <joro@8bytes.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        Evan Green <evgreen@chromium.org>, <chao.hao@mediatek.com>,
-        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Tue, 8 Oct 2019 16:09:28 +0800
-In-Reply-To: <366b0bda-d874-9109-5c83-ff27301f3486@arm.com>
-References: <1569822142-14303-1-git-send-email-yong.wu@mediatek.com>
-         <CAAFQd5C+FM3n-Ww4C+qDD1QZOGZrqEYw4EvYECfadGcDH0fmew@mail.gmail.com>
-         <366b0bda-d874-9109-5c83-ff27301f3486@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1730494AbfJHINN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 04:13:13 -0400
+Received: from foss.arm.com ([217.140.110.172]:58144 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727724AbfJHINM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 04:13:12 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C2581570;
+        Tue,  8 Oct 2019 01:13:11 -0700 (PDT)
+Received: from [10.162.40.139] (p8cg001049571a15.blr.arm.com [10.162.40.139])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 28D403F6C4;
+        Tue,  8 Oct 2019 01:12:58 -0700 (PDT)
+Subject: Re: [PATCH V4 2/2] mm/pgtable/debug: Add test validating architecture
+ page table helpers
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Steven Price <Steven.Price@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Matthew Wilcox <willy@infradead.org>,
+        Sri Krishna chowdary <schowdary@nvidia.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        James Hogan <jhogan@kernel.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        linux-snps-arc@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+References: <1570427124-21887-1-git-send-email-anshuman.khandual@arm.com>
+ <1570427124-21887-3-git-send-email-anshuman.khandual@arm.com>
+ <20191007130617.GB56546@gmail.com> <20191007132607.4q537nauwfn5thol@box>
+ <20191007135158.GA36360@gmail.com> <20191007140058.um5g44rvxyzyiref@box>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <881796fc-c35e-3790-a1ee-7031c6cdb38d@arm.com>
+Date:   Tue, 8 Oct 2019 13:43:22 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20191007140058.um5g44rvxyzyiref@box>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: 3E9F2367AB2AA294B0B502AA0BA1AABDAC92BE66BC543487A09D89709BFE290B2000:8
-X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-10-02 at 11:35 +0100, Robin Murphy wrote:
-> On 02/10/2019 06:18, Tomasz Figa wrote:
-> > Hi Yong,
-> > 
-> > On Mon, Sep 30, 2019 at 2:42 PM Yong Wu <yong.wu@mediatek.com> wrote:
-> >>
-> >> The commit 4d689b619445 ("iommu/io-pgtable-arm-v7s: Convert to IOMMU API
-> >> TLB sync") help move the tlb_sync of unmap from v7s into the iommu
-> >> framework. It helps add a new function "mtk_iommu_iotlb_sync", But it
-> >> lacked the dom->pgtlock, then it will cause the variable
-> >> "tlb_flush_active" may be changed unexpectedly, we could see this warning
-> >> log randomly:
-> >>
-> > 
-> > Thanks for the patch! Please see my comments inline.
-> > 
-> >> mtk-iommu 10205000.iommu: Partial TLB flush timed out, falling back to
-> >> full flush
-> >>
-> >> To fix this issue, we can add dom->pgtlock in the "mtk_iommu_iotlb_sync".
-> >> And when checking this issue, we find that __arm_v7s_unmap call
-> >> io_pgtable_tlb_add_flush consecutively when it is supersection/largepage,
-> >> this also is potential unsafe for us. There is no tlb flush queue in the
-> >> MediaTek M4U HW. The HW always expect the tlb_flush/tlb_sync one by one.
-> >> If v7s don't always gurarantee the sequence, Thus, In this patch I move
-> >> the tlb_sync into tlb_flush(also rename the function deleting "_nosync").
-> >> and we don't care if it is leaf, rearrange the callback functions. Also,
-> >> the tlb flush/sync was already finished in v7s, then iotlb_sync and
-> >> iotlb_sync_all is unnecessary.
-> > 
-> > Performance-wise, we could do much better. Instead of synchronously
-> > syncing at the end of mtk_iommu_tlb_add_flush(), we could sync at the
-> > beginning, if there was any previous flush still pending. We would
-> > also have to keep the .iotlb_sync() callback, to take care of waiting
-> > for the last flush. That would allow better pipelining with CPU in
-> > cases like this:
-> > 
-> > for (all pages in range) {
-> >     change page table();
-> >     flush();
-> > }
-> > 
-> > "change page table()" could execute while the IOMMU is flushing the
-> > previous change.
+
+
+On 10/07/2019 07:30 PM, Kirill A. Shutemov wrote:
+> On Mon, Oct 07, 2019 at 03:51:58PM +0200, Ingo Molnar wrote:
+>>
+>> * Kirill A. Shutemov <kirill@shutemov.name> wrote:
+>>
+>>> On Mon, Oct 07, 2019 at 03:06:17PM +0200, Ingo Molnar wrote:
+>>>>
+>>>> * Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+>>>>
+>>>>> This adds a test module which will validate architecture page table helpers
+>>>>> and accessors regarding compliance with generic MM semantics expectations.
+>>>>> This will help various architectures in validating changes to the existing
+>>>>> page table helpers or addition of new ones.
+>>>>>
+>>>>> Test page table and memory pages creating it's entries at various level are
+>>>>> all allocated from system memory with required alignments. If memory pages
+>>>>> with required size and alignment could not be allocated, then all depending
+>>>>> individual tests are skipped.
+>>>>
+>>>>> diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
+>>>>> index 52e5f5f2240d..b882792a3999 100644
+>>>>> --- a/arch/x86/include/asm/pgtable_64_types.h
+>>>>> +++ b/arch/x86/include/asm/pgtable_64_types.h
+>>>>> @@ -40,6 +40,8 @@ static inline bool pgtable_l5_enabled(void)
+>>>>>  #define pgtable_l5_enabled() 0
+>>>>>  #endif /* CONFIG_X86_5LEVEL */
+>>>>>  
+>>>>> +#define mm_p4d_folded(mm) (!pgtable_l5_enabled())
+>>>>> +
+>>>>>  extern unsigned int pgdir_shift;
+>>>>>  extern unsigned int ptrs_per_p4d;
+>>>>
+>>>> Any deep reason this has to be a macro instead of proper C?
+>>>
+>>> It's a way to override the generic mm_p4d_folded(). It can be rewritten
+>>> as inline function + define. Something like:
+>>>
+>>> #define mm_p4d_folded mm_p4d_folded
+>>> static inline bool mm_p4d_folded(struct mm_struct *mm)
+>>> {
+>>> 	return !pgtable_l5_enabled();
+>>> }
+>>>
+>>> But I don't see much reason to be more verbose here than needed.
+>>
+>> C type checking? Documentation? Yeah, I know it's just a one-liner, but 
+>> the principle of the death by a thousand cuts applies here.
 > 
-> FWIW, given that the underlying invalidation mechanism is range-based, 
-> this driver would be an ideal candidate for making use of the new 
-> iommu_gather mechanism. As a fix for stable, though, simply ensuring 
-> that add_flush syncs any pending invalidation before issuing a new one 
-> sounds like a good idea (and probably a simpler patch too).
+> Okay, if you think it worth it. Anshuman, could you fix it up for the next
+> submission?
 
-Thanks very much for the confirmation.
-
-> 
-> [...]
-> >> @@ -574,8 +539,7 @@ static int mtk_iommu_of_xlate(struct device *dev, struct of_phandle_args *args)
-> >>          .detach_dev     = mtk_iommu_detach_device,
-> >>          .map            = mtk_iommu_map,
-> >>          .unmap          = mtk_iommu_unmap,
-> >> -       .flush_iotlb_all = mtk_iommu_flush_iotlb_all,
-> > 
-> > Don't we still want .flush_iotlb_all()? I think it should be more
-> > efficient in some cases than doing a big number of single flushes.
-> > (That said, the previous implementation didn't do any flush at all. It
-> > just waited for previously queued flushes to happen. Was that
-> > expected?)
-> 
-> Commit 07fdef34d2be ("iommu/arm-smmu-v3: Implement flush_iotlb_all 
-> hook") has an explanation of what the deal was there - similarly, it's 
-> probably worth this driver implementing it properly as well now (but 
-> that's really a separate patch).
-
-Thanks the hint, At the beginning, I noticed that we don't have
-DOMAIN_ATTR_DMA_USE_FLUSH_QUEUE, thus I thought flush_iotlb_all is
-unnecessary.
-
-After grep, iommu_flush_tlb_all also is called in the x_direct_mapping,
-then we still need this.
-
-If putting it in a new patch(switch flush_iotlb_all to
-mtk_iommu_tlb_flush_all), then the Fixes tag(commit id: 4d689b619445) is
-needed?
+Sure, will do.
 
 > 
-> Robin.
 > 
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+>> BTW., any reason this must be in the low level pgtable_64_types.h type 
+>> header, instead of one of the API level header files?
+> 
+> I defined it next pgtable_l5_enabled(). What is more appropriate place to
+> you? pgtable_64.h? Yeah, it makes sense.
 
 
+Needs to be moved to arch/x86/include/asm/pgtable_64.h as well ?
