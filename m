@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F30D5D0379
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 00:41:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E4C3D037C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 00:41:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728828AbfJHWlG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 18:41:06 -0400
-Received: from mail-pg1-f201.google.com ([209.85.215.201]:45203 "EHLO
-        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728116AbfJHWlF (ORCPT
+        id S1729457AbfJHWlL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 18:41:11 -0400
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:53675 "EHLO
+        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728116AbfJHWlH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 18:41:05 -0400
-Received: by mail-pg1-f201.google.com with SMTP id x31so220257pgl.12
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 15:41:04 -0700 (PDT)
+        Tue, 8 Oct 2019 18:41:07 -0400
+Received: by mail-pl1-f201.google.com with SMTP id g13so238310plq.20
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 15:41:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=6CRaByPmwZZbYHACg7k1nT3qVKizFi1JIygNj2Eu6tU=;
-        b=flY5qlCGmPdESWqrzPRhJ6fA000kiBKtv7ouLl1zCVc9abIPurp5+foDKJes/TAbVP
-         BOvnlmpWOKZGnlsbPDIs6d1FSZsgIQHXTjeU58N2yA/eeB3Sw/+OsL1I+GXKq9XNT0AD
-         OIclucvqSWN3FFzU9JlGO9HR767pQM/LRt+oGaJM/clIrViIOItWiFv97xjGlBCTMfnZ
-         J421CZp9Uc1+eiXJjZLZsmhtYJNUNB1nQZ72C+hcWV69er5Yrp6PWpwIcpC6U8Z9Dv2p
-         reYfp1mTlUl4bqOU8FcubPHiMACGVpwptF2AZ6R0BI/4SXQwP5VnqDzht2vJ5ViwQmyi
-         25aA==
+        bh=nY9TR1zH/jI+XYpaiFW/FXGUm9qw4jfI4t8VFgiNY4c=;
+        b=KZ79GobXrQMLfriyi4mGSroRkl4B969zUHlHKe7WxoiPUQ2hlGziQcVffjhBhoFtIo
+         gGx57adOfO11m5qIPJrVDLLkRrTl5Iey3gVPSRKVsOTfbr9a6qvoX2p8REQ7B+JSpdB+
+         8TlH48i5S2wB75eCb67J4ryPXKhJcYLqVawFWHGjD7sbzUf+3aySsAjcykiAAAko8A75
+         DkO7tG3ZioOZLPRAOaUNC502CqDCzwyUMtSMpfT2IXFMfbnOQXUMyRoE+N/kk8nwfSdd
+         GpLZyhKZBWcmKz3whWvIFQj9lK47CW5RR3lV12D9h6DuhWozzEvzBhFsAmV7vPXFUmbO
+         qweA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=6CRaByPmwZZbYHACg7k1nT3qVKizFi1JIygNj2Eu6tU=;
-        b=VbOqhiZxvsIvJkFE7g1DCb4TMr8cBZboaC4vHptNl/0L5buWI3l/aa8VuHo5wCjODm
-         0rV3hmoCXELarogrTfFaEel7MtKqks75T34MmsJsfNWYinSQiNgbdtGhbBzeDIl64nHu
-         UVYalenxac5S5X8riJzXT5xJmb+w8enQ/iGfrB2fmH9cxW71wbKYaFYbFMDN2IQ6GrzY
-         xCrOJNMCBhOodV1vDH1N4Wnmr+h7oKOOPbf7yHR2SZFAec/U1qG9lva4vhLfskjuio/X
-         Qit75l6BGtIzWr0XcCOQt/yLf5IZU7RnaCTJbzMKxCZLPT7geGqj+ToF3qVBLiTI29jd
-         vfhg==
-X-Gm-Message-State: APjAAAX7mquUg6tG7T6HqSSMXi2iESGLLlBnBDrV9q6+fuiUe4Xfo1bg
-        AlSs1KNg8DAgx4ygPf9nhBt0x5DrUtlAQYr0kVg=
-X-Google-Smtp-Source: APXvYqyx2Zu73kfLvNByNSHZTqrz36zsEhp5z58ZxJrKO+1xLooAIVRmOoecfTmKXbfbRCujP+XgqbeZYdiAL7YQyUk=
-X-Received: by 2002:a65:434c:: with SMTP id k12mr820592pgq.141.1570574464142;
- Tue, 08 Oct 2019 15:41:04 -0700 (PDT)
-Date:   Tue,  8 Oct 2019 15:40:46 -0700
+        bh=nY9TR1zH/jI+XYpaiFW/FXGUm9qw4jfI4t8VFgiNY4c=;
+        b=okqd339A9/s27PpBhmNZdi+qMV5wVYZbLhd0MgFprn+HUBrrxUGNLkcgZ4EpepS3Mp
+         RACcRrbAKA9nzTbGWJlV1Zcq68+/wyzSmLs7xTXC/CDbKyS+57ZT6NMPrVk/GDyzzDOR
+         s2NDict8VSXvrAWtV1zT/ZKaoX0GUyRzMGNG25qRsyH3PGahFzZVRskwfa7Fcxx7kiZn
+         h02+7qaN2SQuMWPg9K5RjVp3dgTMKtBXRFVzGIYHYG8hkD0kTzfw9M18tZ+D9yEUVF9B
+         LCoEtmdohgGYWDTD0705jsGPnhrHPHIYiKWXIiVE8juY6veydsg+rLpBvgu40Md/bK83
+         rhWQ==
+X-Gm-Message-State: APjAAAVfLcxgMRM2mI9uqSDOHifojUYoTEJg6I8f/sALQCODvebvdGnD
+        +R92fe6GdZz+nTk3EwksNLcmoF55O5lpVNvW/tE=
+X-Google-Smtp-Source: APXvYqwE+zkZO9o8rV7bGeKM0jIUo/CP8dqDgpqaBVP6YdPc/OKN/BxZIAQtcHRP/z4TwNI+ph1gSeZd8WOlHH49r8k=
+X-Received: by 2002:a63:40b:: with SMTP id 11mr782332pge.425.1570574466521;
+ Tue, 08 Oct 2019 15:41:06 -0700 (PDT)
+Date:   Tue,  8 Oct 2019 15:40:47 -0700
 In-Reply-To: <20191008224049.115427-1-samitolvanen@google.com>
-Message-Id: <20191008224049.115427-3-samitolvanen@google.com>
+Message-Id: <20191008224049.115427-4-samitolvanen@google.com>
 Mime-Version: 1.0
 References: <20190913210018.125266-1-samitolvanen@google.com> <20191008224049.115427-1-samitolvanen@google.com>
 X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
-Subject: [RESEND PATCH v2 2/5] x86/syscalls: Wire up COMPAT_SYSCALL_DEFINE0
+Subject: [RESEND PATCH v2 3/5] x86: use COMPAT_SYSCALL_DEFINE0 for IA32 (rt_)sigreturn
 From:   Sami Tolvanen <samitolvanen@google.com>
 To:     Andy Lutomirski <luto@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -62,89 +62,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Lutomirski <luto@kernel.org>
+Use COMPAT_SYSCALL_DEFINE0 to define (rt_)sigreturn syscalls to
+replace sys32_sigreturn and sys32_rt_sigreturn. This fixes indirect
+call mismatches with Control-Flow Integrity (CFI) checking.
 
-x86 has special handling for COMPAT_SYSCALL_DEFINEx, but there was
-no override for COMPAT_SYSCALL_DEFINE0.  Wire it up so that we can
-use it for rt_sigreturn.
-
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
 ---
- arch/x86/include/asm/syscall_wrapper.h | 32 ++++++++++++++++++++++++--
- 1 file changed, 30 insertions(+), 2 deletions(-)
+ arch/x86/entry/syscalls/syscall_32.tbl | 4 ++--
+ arch/x86/ia32/ia32_signal.c            | 5 +++--
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/include/asm/syscall_wrapper.h b/arch/x86/include/asm/syscall_wrapper.h
-index 90eb70df0b18..3dab04841494 100644
---- a/arch/x86/include/asm/syscall_wrapper.h
-+++ b/arch/x86/include/asm/syscall_wrapper.h
-@@ -28,13 +28,21 @@
-  * kernel/sys_ni.c and SYS_NI in kernel/time/posix-stubs.c to cover this
-  * case as well.
-  */
-+#define __IA32_COMPAT_SYS_STUB0(x, name)				\
-+	asmlinkage long __ia32_compat_sys_##name(const struct pt_regs *regs);\
-+	ALLOW_ERROR_INJECTION(__ia32_compat_sys_##name, ERRNO);		\
-+	asmlinkage long __ia32_compat_sys_##name(const struct pt_regs *regs)\
-+	{								\
-+		return __se_compat_sys_##name();			\
-+	}
-+
- #define __IA32_COMPAT_SYS_STUBx(x, name, ...)				\
- 	asmlinkage long __ia32_compat_sys##name(const struct pt_regs *regs);\
- 	ALLOW_ERROR_INJECTION(__ia32_compat_sys##name, ERRNO);		\
- 	asmlinkage long __ia32_compat_sys##name(const struct pt_regs *regs)\
- 	{								\
- 		return __se_compat_sys##name(SC_IA32_REGS_TO_ARGS(x,__VA_ARGS__));\
--	}								\
-+	}
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 3fe02546aed3..2de75fda1d20 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -130,7 +130,7 @@
+ 116	i386	sysinfo			sys_sysinfo			__ia32_compat_sys_sysinfo
+ 117	i386	ipc			sys_ipc				__ia32_compat_sys_ipc
+ 118	i386	fsync			sys_fsync			__ia32_sys_fsync
+-119	i386	sigreturn		sys_sigreturn			sys32_sigreturn
++119	i386	sigreturn		sys_sigreturn			__ia32_compat_sys_sigreturn
+ 120	i386	clone			sys_clone			__ia32_compat_sys_x86_clone
+ 121	i386	setdomainname		sys_setdomainname		__ia32_sys_setdomainname
+ 122	i386	uname			sys_newuname			__ia32_sys_newuname
+@@ -184,7 +184,7 @@
+ 170	i386	setresgid		sys_setresgid16			__ia32_sys_setresgid16
+ 171	i386	getresgid		sys_getresgid16			__ia32_sys_getresgid16
+ 172	i386	prctl			sys_prctl			__ia32_sys_prctl
+-173	i386	rt_sigreturn		sys_rt_sigreturn		sys32_rt_sigreturn
++173	i386	rt_sigreturn		sys_rt_sigreturn		__ia32_compat_sys_rt_sigreturn
+ 174	i386	rt_sigaction		sys_rt_sigaction		__ia32_compat_sys_rt_sigaction
+ 175	i386	rt_sigprocmask		sys_rt_sigprocmask		__ia32_compat_sys_rt_sigprocmask
+ 176	i386	rt_sigpending		sys_rt_sigpending		__ia32_compat_sys_rt_sigpending
+diff --git a/arch/x86/ia32/ia32_signal.c b/arch/x86/ia32/ia32_signal.c
+index 1cee10091b9f..30416d7f19d4 100644
+--- a/arch/x86/ia32/ia32_signal.c
++++ b/arch/x86/ia32/ia32_signal.c
+@@ -21,6 +21,7 @@
+ #include <linux/personality.h>
+ #include <linux/compat.h>
+ #include <linux/binfmts.h>
++#include <linux/syscalls.h>
+ #include <asm/ucontext.h>
+ #include <linux/uaccess.h>
+ #include <asm/fpu/internal.h>
+@@ -118,7 +119,7 @@ static int ia32_restore_sigcontext(struct pt_regs *regs,
+ 	return err;
+ }
  
- #define __IA32_SYS_STUBx(x, name, ...)					\
- 	asmlinkage long __ia32_sys##name(const struct pt_regs *regs);	\
-@@ -76,15 +84,24 @@
-  * of the x86-64-style parameter ordering of x32 syscalls. The syscalls common
-  * with x86_64 obviously do not need such care.
-  */
-+#define __X32_COMPAT_SYS_STUB0(x, name, ...)				\
-+	asmlinkage long __x32_compat_sys_##name(const struct pt_regs *regs);\
-+	ALLOW_ERROR_INJECTION(__x32_compat_sys_##name, ERRNO);		\
-+	asmlinkage long __x32_compat_sys_##name(const struct pt_regs *regs)\
-+	{								\
-+		return __se_compat_sys_##name();\
-+	}
-+
- #define __X32_COMPAT_SYS_STUBx(x, name, ...)				\
- 	asmlinkage long __x32_compat_sys##name(const struct pt_regs *regs);\
- 	ALLOW_ERROR_INJECTION(__x32_compat_sys##name, ERRNO);		\
- 	asmlinkage long __x32_compat_sys##name(const struct pt_regs *regs)\
- 	{								\
- 		return __se_compat_sys##name(SC_X86_64_REGS_TO_ARGS(x,__VA_ARGS__));\
--	}								\
-+	}
+-asmlinkage long sys32_sigreturn(void)
++COMPAT_SYSCALL_DEFINE0(sigreturn)
+ {
+ 	struct pt_regs *regs = current_pt_regs();
+ 	struct sigframe_ia32 __user *frame = (struct sigframe_ia32 __user *)(regs->sp-8);
+@@ -144,7 +145,7 @@ asmlinkage long sys32_sigreturn(void)
+ 	return 0;
+ }
  
- #else /* CONFIG_X86_X32 */
-+#define __X32_COMPAT_SYS_STUB0(x, name)
- #define __X32_COMPAT_SYS_STUBx(x, name, ...)
- #endif /* CONFIG_X86_X32 */
- 
-@@ -95,6 +112,17 @@
-  * mapping of registers to parameters, we need to generate stubs for each
-  * of them.
-  */
-+#define COMPAT_SYSCALL_DEFINE0(name)					\
-+	static long __se_compat_sys_##name(void);			\
-+	static inline long __do_compat_sys_##name(void);		\
-+	__IA32_COMPAT_SYS_STUB0(x, name)				\
-+	__X32_COMPAT_SYS_STUB0(x, name)					\
-+	static long __se_compat_sys_##name(void)			\
-+	{								\
-+		return __do_compat_sys_##name();			\
-+	}								\
-+	static inline long __do_compat_sys_##name(void)
-+
- #define COMPAT_SYSCALL_DEFINEx(x, name, ...)					\
- 	static long __se_compat_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__));	\
- 	static inline long __do_compat_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__));\
+-asmlinkage long sys32_rt_sigreturn(void)
++COMPAT_SYSCALL_DEFINE0(rt_sigreturn)
+ {
+ 	struct pt_regs *regs = current_pt_regs();
+ 	struct rt_sigframe_ia32 __user *frame;
 -- 
 2.23.0.581.g78d2f28ef7-goog
 
