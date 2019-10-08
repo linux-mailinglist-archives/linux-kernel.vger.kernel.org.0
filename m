@@ -2,195 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AACFCFCCB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:51:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B9D2CFCCD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:52:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726822AbfJHOvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 10:51:19 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39976 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725839AbfJHOvS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 10:51:18 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E7A2110F2E81;
-        Tue,  8 Oct 2019 14:51:16 +0000 (UTC)
-Received: from [10.36.118.36] (unknown [10.36.118.36])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5626B19C69;
-        Tue,  8 Oct 2019 14:51:04 +0000 (UTC)
-Subject: Re: [RFC PATCH] mm: set memory section offline when all its pages are
- offline.
-To:     lantianyu1986@gmail.com, pbonzini@redhat.com, rkrcmar@redhat.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        x86@kernel.org, dave.hansen@linux.intel.com, luto@kernel.org,
-        peterz@infradead.org, kys@microsoft.com, haiyangz@microsoft.com,
-        sthemmin@microsoft.com, sashal@kernel.org,
-        akpm@linux-foundation.org, rppt@linux.ibm.com, jgross@suse.com,
-        mhocko@suse.com, paul.burton@mips.com, m.mizuma@jp.fujitsu.com,
-        huang.zijiang@zte.com.cn, karahmed@amazon.de,
-        dan.j.williams@intel.com, bhelgaas@google.com, osalvador@suse.de,
-        rdunlap@infradead.org, richardw.yang@linux.intel.com,
-        pavel.tatashin@microsoft.com, cai@lca.pw, arunks@codeaurora.org,
-        vbabka@suse.cz, mgorman@techsingularity.net,
-        alexander.h.duyck@linux.intel.com, glider@google.com,
-        logang@deltatee.com, bsingharora@gmail.com, bhe@redhat.com,
-        Tianyu.Lan@microsoft.com, michael.h.kelley@microsoft.com
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, linux-mm@kvack.org,
-        vkuznets@redhat.com
-References: <20191008143648.11882-1-Tianyu.Lan@microsoft.com>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <ca6b21a3-efdc-5f7f-7b62-22a07a33c424@redhat.com>
-Date:   Tue, 8 Oct 2019 16:51:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727179AbfJHOwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 10:52:05 -0400
+Received: from sonic308-19.consmr.mail.sg3.yahoo.com ([106.10.241.209]:39550
+        "EHLO sonic308-19.consmr.mail.sg3.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726134AbfJHOwF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 10:52:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1570546321; bh=VvuyvMElMBxMgVM065W8Mb7OgboYNAf/LGiLQZjTnyM=; h=Date:From:Reply-To:Subject:From:Subject; b=cB6xxHewnrZI5e4j3dPJtLAl+9FE9Cr2AmxdfPNJLq44zp7Jtnep7IqG5nw65Rg0f3xoVil0Qd+BKc1PjbVrStrIq2x7XQgwxb+XkLzgtefQjmz7rT+QI+1kYAX6OIU+hlyWZVIZhA8SiWqfGQZ3egxyoNKQMG/qv8SsYHIR+NZEIq08nLE+L5n5t6b5ktpODm873DT8eSBg3IfB48FQElGdMZydX33bvCLLvKTfHPIISgiPKxi50xvGW1p+dWhJq0KE3RiNQg8uKiGTk0A0uvDt5CJLifrkkrBigPKGOOXMoOChQw51ZVBOo1gGwH9PEu7+fIKdlwYfJNXq6Nzt0Q==
+X-YMail-OSG: A7LONBoVM1l6QUMHcxDNWKApYQ7YKH3_QxgK5AAZVfm7LhAQ6jDxlK1Pw43AkvY
+ ioj9WtguEnm_LBgP.kBUBzJrxBNlM4baFwdoofxRFmy0Cpz_vBjDlRpqoWVFKSJC8hnHcIQibu9X
+ srCdx15xveS79CX_Tl11W.dR8yzs6.GM9_xxDwMTDN9zrRmo1f1iWJ5pf2OaZS3n_Ljz7q.w4GYu
+ vBzxwWOY5poLLhwcLk.IlgGaSgcaQmFvReK0OgXYnkOLZ5fGBwiZaBiX6DwefrlRITiG5tPTxVRT
+ s7cmzmxPwlejhNkLmTFwAWKwJ_lQzh9lqc_6ui7e6V5URIinR8gy0PDNfsw.KMnKbuWPU580i0ul
+ h3vZweu_5LyMTU9g5uaq6AQbSDjSzV8migswuVMnQIssGzCwaRKlLXQsJkh8yqxjCOBnbRTiJpaR
+ CHWu.Q98j_mkBEMZMo8gVt9IIDX6ca2kjdtmLrEe.gXuplir3U5.gkCySv.27XI5iSO.sAGZ796Y
+ qO8LzQNVUZe42JHXiIB0P1ZAgXt.ki6THsSGsCf7B5Fnkjv.oLkwEfOmjvdpfymUzcgddkRu0jWj
+ uCSwepih43Oozie7EqpDueSu5bmJzwzuOukzQW5WuGeweqa5Eyn9r1kbYveWrpkHKXNFXLIZoxBW
+ 4dB2obvkR7CYbgJ79kT7so2Dxwvb_m73qsavQI18Dgy.6xBQx75NRZjvXF83hSgmIQsJqcTReQjb
+ .iXhQGRyohidiajlga2NPWPTcdEupGF3yKmvHokHQCQMvm6lehYuMCsrjwGPAej59yah.uWHpJxU
+ ZSBGP_0ahylNiQc8hwfugz3CxNUwpaJJ1u7d788Mtls1KoDNuGrGEivhpz3JaU.GeymLTcko3i.k
+ bmdl_5ci1wkegTSSZLAG9P0KT18J8I.3b2GQmG3slDgUPPMvwKCU24xX1kmpOgnS4XwsGNT4tGRE
+ OeA0CM9AbRG2Yud3_UdMYJWvK9pQPBlPdE0gectIXgdo4_vdXejE7xsEQquRiyEsAklVtvR_1iWj
+ HNWZ580IaNw.aRDAOlTMqAiDtVVjUr0LBngs2Gve1EHkxv5CVAseW3NM6Z4bcILEynfY3MFRSShZ
+ VK4Kq0Yv5X_yZjejkQhRsHgL27q7ur_Hzw4gHs6YVjhHP_vdBbRfuo3pIQ.jBL2aq_2kir_WSzQT
+ ht.drMXr.xmr_KrdyeICpTLJlqBAwulQZV1w9fCVjtBN9ZemKa464THdA_Ph7C95Rc9RUcP_7YD.
+ ENC0FHOk_0mEbEUJbXszm0WDnKKcExSlD.ydrdalDsG6Q.c5YDG8-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.sg3.yahoo.com with HTTP; Tue, 8 Oct 2019 14:52:01 +0000
+Date:   Tue, 8 Oct 2019 14:51:57 +0000 (UTC)
+From:   mohamed <mohamed4bennani@gmail.com>
+Reply-To: mohamed4bennani@gmail.com
+Message-ID: <1648048918.4829388.1570546317408@mail.yahoo.com>
+Subject: Greetings My Dear Friend,
 MIME-Version: 1.0
-In-Reply-To: <20191008143648.11882-1-Tianyu.Lan@microsoft.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.66]); Tue, 08 Oct 2019 14:51:17 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08.10.19 16:36, lantianyu1986@gmail.com wrote:
-> From: Tianyu Lan <Tianyu.Lan@microsoft.com>
-> 
-> If size of offline memory region passed to offline_pages() is
-> not aligned with PAGES_PER_SECTION, memory section will be set
-> to offline in the offline_mem_sections() with some pages of
-> memory section online. Fix it, Update memory section status after
-> marking offline pages as "reserved" in __offline_isolated_pages()
-> and check all pages in memory are reserved or not before setting
-> memory section offline.
-> 
-> Signed-off-by: Tianyu Lan <Tianyu.Lan@microsoft.com>
-> ---
-> This patch is to prepare for hot remove memory function in Hyper-V
-> balloon driver. It requests to offline memory with random size.
-
-I proposed roughly the same a while ago. See
-
-https://lkml.org/lkml/2018/4/30/207
-
-Memory onlining/offlining works in memory block granularity only.
-Sub-sections, you have to emulate it on top, similar to how hyper-v
-balloon handles it already. E.g., have a look how virtio-mem handles it
-using alloc_contig_range/free_contig_range and PG_offline extensions.
-
-https://lkml.org/lkml/2018/4/30/207
-
-So a clear NACK from my side.
 
 
-> ---
->  mm/page_alloc.c |  3 ++-
->  mm/sparse.c     | 10 ++++++++++
->  2 files changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index dbd0d5cbbcbb..cc02866924ae 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -8540,7 +8540,6 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
->  	if (pfn == end_pfn)
->  		return offlined_pages;
->  
-> -	offline_mem_sections(pfn, end_pfn);
->  	zone = page_zone(pfn_to_page(pfn));
->  	spin_lock_irqsave(&zone->lock, flags);
->  	pfn = start_pfn;
-> @@ -8576,6 +8575,8 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
->  	}
->  	spin_unlock_irqrestore(&zone->lock, flags);
->  
-> +	offline_mem_sections(pfn, end_pfn);
-> +
->  	return offlined_pages;
->  }
->  #endif
-> diff --git a/mm/sparse.c b/mm/sparse.c
-> index fd13166949b5..eb5860487b84 100644
-> --- a/mm/sparse.c
-> +++ b/mm/sparse.c
-> @@ -571,6 +571,7 @@ void online_mem_sections(unsigned long start_pfn, unsigned long end_pfn)
->  void offline_mem_sections(unsigned long start_pfn, unsigned long end_pfn)
->  {
->  	unsigned long pfn;
-> +	int i;
->  
->  	for (pfn = start_pfn; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
->  		unsigned long section_nr = pfn_to_section_nr(pfn);
-> @@ -583,6 +584,15 @@ void offline_mem_sections(unsigned long start_pfn, unsigned long end_pfn)
->  		if (WARN_ON(!valid_section_nr(section_nr)))
->  			continue;
->  
-> +		/*
-> +		 * Check whether all pages in the section are reserverd before
-> +		 * setting setction offline.
-> +		 */
-> +		for (i = 0; i < PAGES_PER_SECTION; i++)
-> +			if (!PageReserved(pfn_to_page(
-> +			    SECTION_ALIGN_DOWN(pfn + i))))
-> +				continue;
-> +
->  		ms = __nr_to_section(section_nr);
->  		ms->section_mem_map &= ~SECTION_IS_ONLINE;
->  	}
-> 
+Greetings My Dear Friend,
 
+ Before I introduce myself, I wish to inform you that this letter is not a =
+hoax mail and I urge you to treat it serious.This letter must come to you a=
+s a big surprise, but I believe it is only a day that people meet and becom=
+e great friends and business partners. Please I want you to read this lette=
+r very carefully and I must apologize for barging this message into your ma=
+il box without any formal introduction due to the urgency and confidentiali=
+ty of this business and I know that this message will come to you as a surp=
+rise. Please this is not a joke and I will not like you to joke with it ok,=
+With due respect to your person and much sincerity of purpose, I make this =
+contact with you as I believe that you can be of great assistance to me. My=
+ name is Mr.Mohamed Bennani, from Burkina Faso, West Africa. I work in Bank=
+ Of Africa (BOA) as telex manager, please see this as a confidential messag=
+e and do not reveal it to another person and let me know whether you can be=
+ of assistance regarding my proposal below because it is top secret.
 
--- 
+ I am about to retire from active Banking service to start a new life but I=
+ am skeptical to reveal this particular secret to a stranger. You must assu=
+re me that everything will be handled confidentially because we are not goi=
+ng to suffer again in life. It has been 10 years now that most of the greed=
+y African Politicians used our bank to launder money overseas through the h=
+elp of their Political advisers. Most of the funds which they transferred o=
+ut of the shores of Africa were gold and oil money that was supposed to hav=
+e been used to develop the continent. Their Political advisers always infla=
+ted the amounts before transferring to foreign accounts, so I also used the=
+ opportunity to divert part of the funds hence I am aware that there is no =
+official trace of how much was transferred as all the accounts used for suc=
+h transfers were being closed after transfer. I acted as the Bank Officer t=
+o most of the politicians and when I discovered that they were using me to =
+succeed in their greedy act; I also cleaned some of their banking records f=
+rom the Bank files and no one cared to ask me because the money was too muc=
+h for them to control. They laundered over $5billion Dollars during the pro=
+cess.
 
-Thanks,
+ Before I send this message to you, I have already diverted ($10.5million D=
+ollars) to an escrow account belonging to no one in the bank. The bank is a=
+nxious now to know who the beneficiary to the funds is because they have ma=
+de a lot of profits with the funds. It is more than Eight years now and mos=
+t of the politicians are no longer using our bank to transfer funds oversea=
+s. The ($10.5million Dollars) has been laying waste in our bank and I don=
+=E2=80=99t want to retire from the bank without transferring the funds to a=
+ foreign account to enable me share the proceeds with the receiver (a forei=
+gner). The money will be shared 60% for me and 40% for you. There is no one=
+ coming to ask you about the funds because I secured everything. I only wan=
+t you to assist me by providing a reliable bank account where the funds can=
+ be transferred.
 
-David / dhildenb
+ You are not to face any difficulties or legal implications as I am going t=
+o handle the transfer personally. If you are capable of receiving the funds=
+, do let me know immediately to enable me give you a detailed information o=
+n what to do. For me, I have not stolen the money from anyone because the o=
+ther people that took the whole money did not face any problems. This is my=
+ chance to grab my own life opportunity but you must keep the details of th=
+e funds secret to avoid any leakages as no one in the bank knows about my p=
+lans.Please get back to me if you are interested and capable to handle this=
+ project, I shall intimate you on what to do when I hear from your confirma=
+tion and acceptance.If you are capable of being my trusted associate, do de=
+clare your consent to me I am looking forward to hear from you immediately =
+for further information.
+
+ Thanks with my best regards.
+ Mr.Mohamed Bennani
+ Telex Manager
+ Bank Of Africa (BOA)
+ Burkina Faso.
