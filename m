@@ -2,177 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3571FCF8D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 13:49:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA23CCF8F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 13:54:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730737AbfJHLtt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 07:49:49 -0400
-Received: from regular1.263xmail.com ([211.150.70.199]:56782 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730699AbfJHLtr (ORCPT
+        id S1730785AbfJHLxm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 07:53:42 -0400
+Received: from 2.mo69.mail-out.ovh.net ([178.33.251.80]:59896 "EHLO
+        2.mo69.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729790AbfJHLxm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 07:49:47 -0400
-Received: from localhost (unknown [192.168.167.13])
-        by regular1.263xmail.com (Postfix) with ESMTP id D7C533DD;
-        Tue,  8 Oct 2019 19:49:34 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED4: 1
-X-ANTISPAM-LEVEL: 2
-X-SKE-CHECKED: 1
-X-ABS-CHECKED: 1
-Received: from [172.16.10.69] (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P5322T139950326527744S1570535374143958_;
-        Tue, 08 Oct 2019 19:49:34 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <22671dc7acf9fc0b92f2f382ec646b55>
-X-RL-SENDER: hjc@rock-chips.com
-X-SENDER: hjc@rock-chips.com
-X-LOGIN-NAME: hjc@rock-chips.com
-X-FST-TO: linux-kernel@vger.kernel.org
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Subject: Re: [PATCH v2 1/3] drm: Add some new format DRM_FORMAT_NVXX_10
-To:     =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
-References: <1569486289-152061-1-git-send-email-hjc@rock-chips.com>
- <1569486289-152061-2-git-send-email-hjc@rock-chips.com>
- <20190930104849.GA1208@intel.com>
- <2c46d532-f810-392d-b9c0-3b9aaccae7f4@rock-chips.com>
- <20191008113338.GP1208@intel.com>
-From:   "sandy.huang" <hjc@rock-chips.com>
-Message-ID: <a5fa3d8e-9e8e-8aa8-8abb-f00e8357acb5@rock-chips.com>
-Date:   Tue, 8 Oct 2019 19:49:33 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 8 Oct 2019 07:53:42 -0400
+X-Greylist: delayed 541 seconds by postgrey-1.27 at vger.kernel.org; Tue, 08 Oct 2019 07:53:41 EDT
+Received: from player168.ha.ovh.net (unknown [10.108.42.82])
+        by mo69.mail-out.ovh.net (Postfix) with ESMTP id E622A69E08
+        for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2019 13:35:24 +0200 (CEST)
+Received: from etezian.org (85-76-98-218-nat.elisa-mobile.fi [85.76.98.218])
+        (Authenticated sender: andi@etezian.org)
+        by player168.ha.ovh.net (Postfix) with ESMTPSA id C8BA2A9AD333;
+        Tue,  8 Oct 2019 11:35:13 +0000 (UTC)
+Date:   Tue, 8 Oct 2019 14:35:11 +0300
+From:   Andi Shyti <andi@etezian.org>
+To:     Stephan Gerhold <stephan@gerhold.net>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Andi Shyti <andi@etezian.org>,
+        Simon Shields <simon@lineageos.org>,
+        linux-input@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] Input: mms114 - add support for mms345l
+Message-ID: <20191008113511.GA4015@jack.zhora.eu>
+References: <20191007203343.101466-1-stephan@gerhold.net>
+ <20191007205021.104402-1-stephan@gerhold.net>
 MIME-Version: 1.0
-In-Reply-To: <20191008113338.GP1208@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191007205021.104402-1-stephan@gerhold.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Ovh-Tracer-Id: 8393583808645546733
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrheelgdegfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Stephan,
 
-在 2019/10/8 下午7:33, Ville Syrjälä 写道:
-> On Tue, Oct 08, 2019 at 10:40:20AM +0800, sandy.huang wrote:
->> Hi ville syrjala,
->>
->> 在 2019/9/30 下午6:48, Ville Syrjälä 写道:
->>> On Thu, Sep 26, 2019 at 04:24:47PM +0800, Sandy Huang wrote:
->>>> These new format is supported by some rockchip socs:
->>>>
->>>> DRM_FORMAT_NV12_10/DRM_FORMAT_NV21_10
->>>> DRM_FORMAT_NV16_10/DRM_FORMAT_NV61_10
->>>> DRM_FORMAT_NV24_10/DRM_FORMAT_NV42_10
->>>>
->>>> Signed-off-by: Sandy Huang <hjc@rock-chips.com>
->>>> ---
->>>>    drivers/gpu/drm/drm_fourcc.c  | 18 ++++++++++++++++++
->>>>    include/uapi/drm/drm_fourcc.h | 14 ++++++++++++++
->>>>    2 files changed, 32 insertions(+)
->>>>
->>>> diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
->>>> index c630064..ccd78a3 100644
->>>> --- a/drivers/gpu/drm/drm_fourcc.c
->>>> +++ b/drivers/gpu/drm/drm_fourcc.c
->>>> @@ -261,6 +261,24 @@ const struct drm_format_info *__drm_format_info(u32 format)
->>>>    		{ .format = DRM_FORMAT_P016,		.depth = 0,  .num_planes = 2,
->>>>    		  .char_per_block = { 2, 4, 0 }, .block_w = { 1, 0, 0 }, .block_h = { 1, 0, 0 },
->>>>    		  .hsub = 2, .vsub = 2, .is_yuv = true},
->>>> +		{ .format = DRM_FORMAT_NV12_10,		.depth = 0,  .num_planes = 2,
->>>> +		  .char_per_block = { 5, 10, 0 }, .block_w = { 4, 4, 0 }, .block_h = { 4, 4, 0 },
->>>> +		  .hsub = 2, .vsub = 2, .is_yuv = true},
->>>> +		{ .format = DRM_FORMAT_NV21_10,		.depth = 0,  .num_planes = 2,
->>>> +		  .char_per_block = { 5, 10, 0 }, .block_w = { 4, 4, 0 }, .block_h = { 4, 4, 0 },
->>>> +		  .hsub = 2, .vsub = 2, .is_yuv = true},
->>>> +		{ .format = DRM_FORMAT_NV16_10,		.depth = 0,  .num_planes = 2,
->>>> +		  .char_per_block = { 5, 10, 0 }, .block_w = { 4, 4, 0 }, .block_h = { 4, 4, 0 },
->>>> +		  .hsub = 2, .vsub = 1, .is_yuv = true},
->>>> +		{ .format = DRM_FORMAT_NV61_10,		.depth = 0,  .num_planes = 2,
->>>> +		  .char_per_block = { 5, 10, 0 }, .block_w = { 4, 4, 0 }, .block_h = { 4, 4, 0 },
->>>> +		  .hsub = 2, .vsub = 1, .is_yuv = true},
->>>> +		{ .format = DRM_FORMAT_NV24_10,		.depth = 0,  .num_planes = 2,
->>>> +		  .char_per_block = { 5, 10, 0 }, .block_w = { 4, 4, 0 }, .block_h = { 4, 4, 0 },
->>>> +		  .hsub = 1, .vsub = 1, .is_yuv = true},
->>>> +		{ .format = DRM_FORMAT_NV42_10,		.depth = 0,  .num_planes = 2,
->>>> +		  .char_per_block = { 5, 10, 0 }, .block_w = { 4, 4, 0 }, .block_h = { 4, 4, 0 },
->>>> +		  .hsub = 1, .vsub = 1, .is_yuv = true},
->>>>    		{ .format = DRM_FORMAT_P210,		.depth = 0,
->>>>    		  .num_planes = 2, .char_per_block = { 2, 4, 0 },
->>>>    		  .block_w = { 1, 0, 0 }, .block_h = { 1, 0, 0 }, .hsub = 2,
->>>> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
->>>> index 3feeaa3..08e2221 100644
->>>> --- a/include/uapi/drm/drm_fourcc.h
->>>> +++ b/include/uapi/drm/drm_fourcc.h
->>>> @@ -238,6 +238,20 @@ extern "C" {
->>>>    #define DRM_FORMAT_NV42		fourcc_code('N', 'V', '4', '2') /* non-subsampled Cb:Cr plane */
->>>>    
->>>>    /*
->>>> + * 2 plane YCbCr
->>>> + * index 0 = Y plane, Y3:Y2:Y1:Y0 10:10:10:10
->>>> + * index 1 = Cb:Cr plane, Cb3:Cr3:Cb2:Cr2:Cb1:Cr1:Cb0:Cr0 10:10:10:10:10:10:10:10
->>>> + * or
->>>> + * index 1 = Cr:Cb plane, Cr3:Cb3:Cr2:Cb2:Cr1:Cb1:Cr0:Cb0 10:10:10:10:10:10:10:10
->>> So now you're defining it as some kind of byte aligned block.
->>> With that specifying endianness would now make sense since
->>> otherwise this tells us absolutely nothing about the memory
->>> layout.
->>>
->>> So I'd either do that, or go back to not specifying anything and
->>> use some weasel words like "mamory layout is implementation defined"
->>> which of course means no one can use it for anything that involves
->>> any kind of cross vendor stuff.
->> /*
->>    * 2 plane YCbCr
->>    * index 0 = Y plane, [39: 0] Y3:Y2:Y1:Y0 10:10:10:10  little endian
->>    * index 1 = Cb:Cr plane, [79: 0] Cb3:Cr3:Cb2:Cr2:Cb1:Cr1:Cb0:Cr0
->> 10:10:10:10:10:10:10:10  little endian
->>    * or
->>    * index 1 = Cr:Cb plane, [79: 0] Cr3:Cb3:Cr2:Cb2:Cr1:Cb1:Cr0:Cb0
->> 10:10:10:10:10:10:10:10  little endian
->>    */
->>
->> Is this description ok?
-> Seems OK to me, if it actually describes the format correctly.
->
-> Though I'm not sure why the CbCr is defines as an 80bit block
-> and Y has a 40bit block. 40bits should be enough for CbCr as well.
->
-well, this is taken into account yuv444,  4 y point corresponding with 4 
-uv point.
+On Mon, Oct 07, 2019 at 10:50:21PM +0200, Stephan Gerhold wrote:
+> MMS345L is another first generation touch screen from Melfas,
+> which uses the same registers as MMS152.
+> 
+> However, using I2C_M_NOSTART for it causes errors when reading:
+> 
+> 	i2c i2c-0: sendbytes: NAK bailout.
+> 	mms114 0-0048: __mms114_read_reg: i2c transfer failed (-5)
+> 
+> The driver works fine as soon as I2C_M_NOSTART is removed.
+> 
+> Add a separate melfas,mms345l binding, and make use of I2C_M_NOSTART
+> only for MMS114 and MMS152.
+> 
+> Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
 
-if only describes the layout memory, here can change to 40bit block.
+Reviewed-by: Andi Shyti <andi@etezian.org>
 
-thanks.
+just a nitpick in case you will resend it (but you don't need
+to).
 
->>>> + */
->>>> +#define DRM_FORMAT_NV12_10	fourcc_code('N', 'A', '1', '2') /* 2x2 subsampled Cr:Cb plane */
->>>> +#define DRM_FORMAT_NV21_10	fourcc_code('N', 'A', '2', '1') /* 2x2 subsampled Cb:Cr plane */
->>>> +#define DRM_FORMAT_NV16_10	fourcc_code('N', 'A', '1', '6') /* 2x1 subsampled Cr:Cb plane */
->>>> +#define DRM_FORMAT_NV61_10	fourcc_code('N', 'A', '6', '1') /* 2x1 subsampled Cb:Cr plane */
->>>> +#define DRM_FORMAT_NV24_10	fourcc_code('N', 'A', '2', '4') /* non-subsampled Cr:Cb plane */
->>>> +#define DRM_FORMAT_NV42_10	fourcc_code('N', 'A', '4', '2') /* non-subsampled Cb:Cr plane */
->>>> +
->>>> +/*
->>>>     * 2 plane YCbCr MSB aligned
->>>>     * index 0 = Y plane, [15:0] Y:x [10:6] little endian
->>>>     * index 1 = Cr:Cb plane, [31:0] Cr:x:Cb:x [10:6:10:6] little endian
->>>> -- 
->>>> 2.7.4
->>>>
->>>>
->>>>
->>>> _______________________________________________
->>>> dri-devel mailing list
->>>> dri-devel@lists.freedesktop.org
->>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> -	if (!i2c_check_functionality(client->adapter,
+> -				I2C_FUNC_PROTOCOL_MANGLING)) {
+> +	type = (enum mms_type)device_get_match_data(&client->dev);
 
+you don't need any cast here.
 
+Thanks,
+Andi
