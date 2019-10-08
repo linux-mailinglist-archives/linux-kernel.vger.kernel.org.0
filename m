@@ -2,101 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2832DCFABE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 14:59:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4628CFAC9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 14:59:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731091AbfJHM7F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 08:59:05 -0400
-Received: from mga02.intel.com ([134.134.136.20]:33053 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730705AbfJHM7F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 08:59:05 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2019 05:59:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,270,1566889200"; 
-   d="asc'?scan'208";a="192568244"
-Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
-  by fmsmga008.fm.intel.com with ESMTP; 08 Oct 2019 05:59:01 -0700
-From:   Felipe Balbi <felipe.balbi@linux.intel.com>
-To:     Peter Chen <peter.chen@nxp.com>,
-        Pawel Laszczak <pawell@cadence.com>
-Cc:     "gregkh\@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "rogerq\@ti.com" <rogerq@ti.com>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jbergsagel\@ti.com" <jbergsagel@ti.com>,
-        "nsekhar\@ti.com" <nsekhar@ti.com>, "nm\@ti.com" <nm@ti.com>,
-        "sureshp\@cadence.com" <sureshp@cadence.com>,
-        "kurahul\@cadence.com" <kurahul@cadence.com>
-Subject: Re: [PATCH] usb:cdns3: Fix for CV CH9 running with g_zero driver.
-In-Reply-To: <20191008065619.GE5670@b29397-desktop>
-References: <1570430355-26118-1-git-send-email-pawell@cadence.com> <20191008065619.GE5670@b29397-desktop>
-Date:   Tue, 08 Oct 2019 15:58:57 +0300
-Message-ID: <87a7abv1f2.fsf@gmail.com>
+        id S1731108AbfJHM71 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 08:59:27 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:39894 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730981AbfJHM71 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 08:59:27 -0400
+Received: by mail-oi1-f193.google.com with SMTP id w144so14659426oia.6
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 05:59:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0tGbLg5pDPWdBfHPDXrkGRg32Rty4rSohcbiylPKIHo=;
+        b=qziPsC183Aq2h35Rf8aJVRy9mz/sdpPP8Jx84i8WAB3WpBjOFno4cBanTnz7xHxD4p
+         VBzQMvpQFxQb5v0QDuLkzbfKDvFUCZFtlmNduL1Y96S9v+7mgd9ClhO9Erf3mS5n2T38
+         tv0qUvmgoo5M8qqiw2YobdOaVNERAPgkUD9pfZ1BffoZCnxs//qELq118diCIkiwNmZz
+         VMj50b+lbCh0Mq+EkgbhQAI1N9T+BUn4XzN61MS9EV5bJDfxHDefY15eJvvkQCFtoslx
+         UQHDrhNI5oY+zE5LX+sWqQENrxbGAS1eHsnEYEnWZ74UHDxSPFafg7RRBZ576L8mEPy/
+         qH3Q==
+X-Gm-Message-State: APjAAAVZIFOfRFgyyoCCuQcncuz5KEQa54JvtLPINNPOQvLemHGiyi0R
+        iVBMgxlga2osmHH/8KHCiyAJDXN1LybK/ffzp9apdg==
+X-Google-Smtp-Source: APXvYqyAF+oJX3Gy9vgacsv7VQIijL40G0ACCrOWvMbKp0YqK7vgdkLf5ui04RiIYHn8zz9L5KYK/EW3gw666L7e06o=
+X-Received: by 2002:a54:4e89:: with SMTP id c9mr3551995oiy.148.1570539566417;
+ Tue, 08 Oct 2019 05:59:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+References: <20191008094006.8251-1-geert+renesas@glider.be> <5ccc9458aeb124d5c66baa8fd24e78e918609487.camel@perches.com>
+In-Reply-To: <5ccc9458aeb124d5c66baa8fd24e78e918609487.camel@perches.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 8 Oct 2019 14:59:15 +0200
+Message-ID: <CAMuHMdW=qamydEn6=cEbeRe79jBi4FZ8LH+3OyTQp0S-w7+3WQ@mail.gmail.com>
+Subject: Re: [PATCH] checkpatch: use patch subject when reading from stdin
+To:     Joe Perches <joe@perches.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Andy Whitcroft <apw@canonical.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hi Joe,
 
-
-Hi,
-
-Peter Chen <peter.chen@nxp.com> writes:
-> On 19-10-07 07:39:11, Pawel Laszczak wrote:
->> Patch fixes issue with Halt Endnpoint Test observed
+On Tue, Oct 8, 2019 at 2:50 PM Joe Perches <joe@perches.com> wrote:
+> On Tue, 2019-10-08 at 11:40 +0200, Geert Uytterhoeven wrote:
+> > When reading a patch file from standard input, checkpatch calls it "Your
+> > patch", and reports its state as:
+> >
+> >     Your patch has style problems, please review.
+> >
+> > or:
+> >
+> >     Your patch has no obvious style problems and is ready for submission.
+> >
+> > Hence when checking multiple patches by piping them to checkpatch, e.g.
+> > when checking patchwork bundles using:
+> >
+> >     formail -s scripts/checkpatch.pl < bundle-foo.mbox
+> >
+> > it is difficult to identify which patches need to be reviewed and
+> > improved.
+> >
+> > Fix this by replacing "Your patch" by the patch subject, if present.
 >
-> %s/Endnpoint/Endpoint
+> Seems sensible, thanks Geert
 >
->>
->> during using g_zero
->> driver as DUT. Bug occurred only on some testing board.
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> >  scripts/checkpatch.pl | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> > index 6fcc66afb0880830..6b9feb4d646a116b 100755
+> > --- a/scripts/checkpatch.pl
+> > +++ b/scripts/checkpatch.pl
+> > @@ -1047,6 +1047,10 @@ for my $filename (@ARGV) {
+> >       }
+> >       while (<$FILE>) {
+> >               chomp;
+> > +             if ($vname eq 'Your patch') {
+> > +                     my ($subject) = $_ =~ /^Subject:\s*(.*)/;
+> > +                     $vname = '"' . $subject . '"' if $subject;
 >
-> g_zero is legacy, please use configfs function source_sink or loopback
-> instead.
-
-We still want fixes for those ;-)
-
->> Endpoint can defer transition to Halted state if endpoint has pending
->> requests.
+> trivia:
 >
-> The implementation of halt handling is a little complicated, you may
-> consider return -EAGAIN for functional stall through usb_ep_set_halt
-> from function driver if the requests are pending, it doesn't need to
-> defer such kinds of functional stall.
+> Not a big deal and is likely good enough but this will
+> cut off subjects that are continued on multiple lines.
+>
+> e.g.:
+>
+> Subject: [PATCH Vx n/M] very long description with a subject spanning
+>  multiple lines
+> From: patch submitter <submitter@domain.tld>
 
-=2DEAGAIN, IIRC is only supposed to be used for IN endpoint stalls.
+I know.
 
-=2D-=20
-balbi
+Fixing that is not that simple, I'm afraid.
+And $vname is used before process() is called.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+>
+> > +             }
+> >               push(@rawlines, $_);
+> >       }
+> >       close($FILE);
+>
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl2ciBEACgkQzL64meEa
-mQbb8hAAomfKJn0CSDdwf7TlgIBVDMs499S0HgMYnKdya2wxFewm2Fmp5b8pVaEO
-sdNweEVC9C8G/+iOdCXrJC4Yix6O7CjK34qxcMT52Hh1I4Ay0WZTYoiHenA8rzos
-AxPXLtZG2iY0gvbdjS6l8rZcYi/T7Hv2aesLv8UJ4OT17Wt8Zb2IZU7gdphUOOme
-XJFy/42lpLaQSf8tfW8yqgnZFqCwNeDgLXA40YVtzDZJnB9Mvfklr+jxlSCqI+Lf
-2m3Es+JgAyg7W8ATaj3ehmjA/bJlVczYy69wgd4bCWiPW6xsofZu+dMsTvgoy8xu
-sxCqsCfCWgoOrtttOQzwf4oV4Bv0a3ykvN3zRmRuRIEqgnikF1PJN6IYpmI7QDpu
-ytzUFzoVhago1LJczNJs1bb1oNfUWspTetaU7KaauJbZemyOHz1qMfK50i7QJOKU
-tzNrujMIVrC9U+4H80bQUj3imtA07YoY3XlLmUdwsfuB8M5H9B4+qs4vynJT9TXA
-tUeITszbLGoYavxA4xqjAUqswdmp7G1Kj8lXqjqe8KJV02FuA7v4zpy5uf8/RKFZ
-AXlofJI9vyG0YGCkZr7IVG6R5ttoZ42nn4vWNTCaRB6dEpEO85fGzGGWbjx+SbEN
-9YlTiWeNAnd84DpTWIbP1cXE254bO5n7IJr16caefX/ta0t/QPA=
-=IlzZ
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
