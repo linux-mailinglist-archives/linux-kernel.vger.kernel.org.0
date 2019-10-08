@@ -2,133 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D59ECCF991
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 14:13:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33DAECF977
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 14:12:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730827AbfJHMMY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 08:12:24 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33288 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731105AbfJHMLY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 08:11:24 -0400
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0069244BD1
-        for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2019 12:11:24 +0000 (UTC)
-Received: by mail-wm1-f72.google.com with SMTP id n3so1296978wmf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 05:11:23 -0700 (PDT)
+        id S1731272AbfJHMMB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 08:12:01 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:44598 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731193AbfJHMLg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 08:11:36 -0400
+Received: by mail-qk1-f196.google.com with SMTP id u22so16415858qkk.11
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 05:11:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GMN6AE/Wckiy15zsiQVxc8Ha0nqrOTJmAoLEeM+N80A=;
+        b=eh8pCLowBh+BgvZfmBoGRvtXPz9zE1aDs0RO30fbYsKrn8CCi0iz7dLb+5ZAUaoxjI
+         h8+YdOrv4kFWisVv0+ypSez27VEQps+efiGk7jOMYv3keDR/Y6/soCbxUzNbJXsWmunL
+         vpPylf8BdgPE/ZA1QeOokTinVOQWJUymEUANn2Y+dJMoeBbgBazYB8JxeoNrYQwBHkLP
+         +Y93UIITl3fYH+rqskwFY4S7s0OHFw4upx8Nhqyxd6tVP1iDJRTOXsPTSYokzso/fTTr
+         QdOgkswn28Rv8/n9whT/owI7R/u5774xcNIdbtAtjI/OLjhmtMk6lPra8liDCk+ffMra
+         +nBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XC+l+JGNpdezIfgQgjgQjgcBhVIbmx5T2yywcc/3dIc=;
-        b=qIXljDXW85qD9CPClz+PItVYDpgRkJyoNfZQ/aUKp9gcY51o0D/QDEGou8ZX0dvEj8
-         7ocBZZeuDRGeymvdyqXQeIAyJ89ANJnQNNEFdmIrummoWwfyzbKKHw6gtbQZUgEP8iWI
-         OdkrDu/ARH4viTqc6U+JcPtZrARdznq7iimSxMy8k13qpPPpsvvO0nYike4StKlYOpc7
-         uy5e+m2TzBu0aLDQ6NMua3ejzMhKBgRURDv/dpnRIP4D47gUGrxHBnLdusNkF7jM61bM
-         KFXjwNg/+/SMfA2X3iA1FItaSdSegv8XcK4TGM5DuSK+qzCnJekjMQMkSbDMdelhR7VR
-         qcJw==
-X-Gm-Message-State: APjAAAWbbTXK28+qZ4vh4VxTiWRE7rs/KOWue2ejTZT3lUcwH8tssKg+
-        wduGoUTPQI4gn5VvKmaSnGJbD8LSx+KYKEvCTjYL9CUzfUZSmfFBYtn59tIQkBhMXJuDMt+2Asm
-        GTEChjQi4vM5g38V6F1TZ4hiq
-X-Received: by 2002:a05:6000:45:: with SMTP id k5mr24156923wrx.259.1570536682666;
-        Tue, 08 Oct 2019 05:11:22 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxVOLNmOG55qRmpeZcOk9E693639E92Lk3u+fEJ6vxxVUor4lqnEMXs6hNuOIi96Wl4hyTPMw==
-X-Received: by 2002:a05:6000:45:: with SMTP id k5mr24156902wrx.259.1570536682402;
-        Tue, 08 Oct 2019 05:11:22 -0700 (PDT)
-Received: from [192.168.10.150] ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id t83sm5002990wmt.18.2019.10.08.05.11.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2019 05:11:21 -0700 (PDT)
-Subject: Re: [PATCH v2] KVM: Don't shrink/grow vCPU halt_poll_ns if host side
- polling is disabled
-To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Marcelo Tosatti <mtosatti@redhat.com>
-References: <1569719216-32080-1-git-send-email-wanpengli@tencent.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <a0f940ba-7bc9-8695-c233-0d82858fb91d@redhat.com>
-Date:   Tue, 8 Oct 2019 14:11:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GMN6AE/Wckiy15zsiQVxc8Ha0nqrOTJmAoLEeM+N80A=;
+        b=pzXJDK32x6NrGLphtLaSR7No0hFrT8xsX9KUEKdivK3esH1GL1mpCUAnnBud5fOt3C
+         QxH7B/7g6OHGttFM5mFTPqlpx6xDIGjdZsj2sol8N9bfzoDytqIDr+DLvWkn3G64F/CE
+         vLPOHM4w8AhIxK6l/7A9z1RJcqLU2xcUKTQjrzAPa6gxRUoBZjW7xCugXinAcovBsSbc
+         9TJ13TQQxnOCNofijcE3kFPUoEKwgWKqUosvnitd9L484JpfKL2mx7HbiU1N0nzg4WSG
+         MDqNWIYmLscX2B5BgYcylbAVgKA7dgvhkmuHtP/zZSB+VOmUt+PyxP4UB8prW7azSIOR
+         N8Lg==
+X-Gm-Message-State: APjAAAUW5heEnc+9irqatV84TUU55R2s5uGWA4JFTFK/tApOSO05P21t
+        hrA7FCWf+rrI44BvtO5X356U8fvULr0DXPG2/qKTTQ==
+X-Google-Smtp-Source: APXvYqyJTh5B6y0iJNFqTbgDhKIdXD1dXKap90/51GY/1HBwwtMG0+QVGVvei9Jaj15xHEza/1jKSqBJZkqQ4s2WLQ0=
+X-Received: by 2002:a37:d84:: with SMTP id 126mr26540903qkn.407.1570536695225;
+ Tue, 08 Oct 2019 05:11:35 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1569719216-32080-1-git-send-email-wanpengli@tencent.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1570532528.4686.102.camel@mtksdccf07> <D2B6D82F-AE5F-4A45-AC0C-BE5DA601FDC3@lca.pw>
+In-Reply-To: <D2B6D82F-AE5F-4A45-AC0C-BE5DA601FDC3@lca.pw>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 8 Oct 2019 14:11:23 +0200
+Message-ID: <CACT4Y+Zbx-2yR-mN5GioaKUgGH1TpTE2D-OgLbR2Dy09ezyGGQ@mail.gmail.com>
+Subject: Re: [PATCH] kasan: fix the missing underflow in memmove and memcpy
+ with CONFIG_KASAN_GENERIC=y
+To:     Qian Cai <cai@lca.pw>
+Cc:     Walter Wu <walter-zh.wu@mediatek.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org,
+        wsd_upstream <wsd_upstream@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/09/19 03:06, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
-> 
-> Don't waste cycles to shrink/grow vCPU halt_poll_ns if host 
-> side polling is disabled.
-> 
-> Acked-by: Marcelo Tosatti <mtosatti@redhat.com>
-> Cc: Marcelo Tosatti <mtosatti@redhat.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> ---
-> v1 -> v2: 
->  * fix coding style
-> 
->  virt/kvm/kvm_main.c | 29 ++++++++++++++++-------------
->  1 file changed, 16 insertions(+), 13 deletions(-)
-> 
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index e6de315..9d5eed9 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -2359,20 +2359,23 @@ void kvm_vcpu_block(struct kvm_vcpu *vcpu)
->  	kvm_arch_vcpu_unblocking(vcpu);
->  	block_ns = ktime_to_ns(cur) - ktime_to_ns(start);
->  
-> -	if (!vcpu_valid_wakeup(vcpu))
-> -		shrink_halt_poll_ns(vcpu);
-> -	else if (halt_poll_ns) {
-> -		if (block_ns <= vcpu->halt_poll_ns)
-> -			;
-> -		/* we had a long block, shrink polling */
-> -		else if (vcpu->halt_poll_ns && block_ns > halt_poll_ns)
-> +	if (!kvm_arch_no_poll(vcpu)) {
-> +		if (!vcpu_valid_wakeup(vcpu)) {
->  			shrink_halt_poll_ns(vcpu);
-> -		/* we had a short halt and our poll time is too small */
-> -		else if (vcpu->halt_poll_ns < halt_poll_ns &&
-> -			block_ns < halt_poll_ns)
-> -			grow_halt_poll_ns(vcpu);
-> -	} else
-> -		vcpu->halt_poll_ns = 0;
-> +		} else if (halt_poll_ns) {
-> +			if (block_ns <= vcpu->halt_poll_ns)
-> +				;
-> +			/* we had a long block, shrink polling */
-> +			else if (vcpu->halt_poll_ns && block_ns > halt_poll_ns)
-> +				shrink_halt_poll_ns(vcpu);
-> +			/* we had a short halt and our poll time is too small */
-> +			else if (vcpu->halt_poll_ns < halt_poll_ns &&
-> +				block_ns < halt_poll_ns)
-> +				grow_halt_poll_ns(vcpu);
-> +		} else {
-> +			vcpu->halt_poll_ns = 0;
-> +		}
-> +	}
->  
->  	trace_kvm_vcpu_wakeup(block_ns, waited, vcpu_valid_wakeup(vcpu));
->  	kvm_arch_vcpu_block_finish(vcpu);
-> 
+On Tue, Oct 8, 2019 at 1:42 PM Qian Cai <cai@lca.pw> wrote:
+> > On Oct 8, 2019, at 7:02 AM, Walter Wu <walter-zh.wu@mediatek.com> wrote:
+> > I don't know very well in UBSAN, but I try to build ubsan kernel and
+> > test a negative number in memset and kmalloc_memmove_invalid_size(), it
+> > look like no check.
+>
+> It sounds like more important to figure out why the UBSAN is not working in this case rather than duplicating functionality elsewhere.
 
-Queued, thanks.
-
-Paolo
+Detecting out-of-bounds accesses is the direct KASAN responsibility.
+Even more direct than for KUBSAN. We are not even adding
+functionality, it's just a plain bug in KASAN code, it tricks itself
+into thinking that access size is 0.
+Maybe it's already detected by KUBSAN too?
