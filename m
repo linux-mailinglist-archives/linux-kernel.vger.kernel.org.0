@@ -2,113 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0CBDCFC95
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:39:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04ED2CFC98
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:39:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726643AbfJHOiy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 10:38:54 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56144 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726227AbfJHOix (ORCPT
+        id S1726439AbfJHOjF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 10:39:05 -0400
+Received: from mail.loongson.cn ([114.242.206.163]:43927 "EHLO
+        mail.loongson.cn" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726227AbfJHOjF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 10:38:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=t3TAGrSwNyqu0l9I73T4aQsF2AAmpzQqRNglFdEZsCU=; b=EaRdgeoaqDDLChlJjTzE4vuQG
-        AKmCATMSWrmmdPnwiziN8o9RBYg07Rb+bdWSQzvxUjaJopBPkhE3Qj710TGiakcHplDsK50MK0V+V
-        Hm+5XULSfmb8aR0YzfVFLnpZrnrX+9D9VevtGW5ST+Bzcv/W04HuxyW1FJfnnd0AzYlRCSc5k0GnK
-        jzw7QvKKaH+c7kkfCzDDFY6ETH0XEuL75gQROcvLpYTSQTRc0fvpnTj1ZW+CnWEzpVaOoz3BFGM7j
-        d3Uf/46vonS3/oxpapnttjPhUWLoTQIF4FecO00V14/VkOuvA5uqteA+GSycn77NKmmBriU6fbOse
-        VjU5IjX0Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iHqdY-0007Ki-Hg; Tue, 08 Oct 2019 14:38:52 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 06469305E32;
-        Tue,  8 Oct 2019 16:37:58 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2F4162020725A; Tue,  8 Oct 2019 16:38:50 +0200 (CEST)
-Date:   Tue, 8 Oct 2019 16:38:50 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Liang, Kan" <kan.liang@linux.intel.com>
-Cc:     acme@kernel.org, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        jolsa@kernel.org, namhyung@kernel.org, ak@linux.intel.com,
-        vitaly.slobodskoy@intel.com, pavel.gerasimov@intel.com
-Subject: Re: [PATCH 01/10] perf/core, x86: Add PERF_SAMPLE_LBR_TOS
-Message-ID: <20191008143850.GB2328@hirez.programming.kicks-ass.net>
-References: <20191007175910.2805-1-kan.liang@linux.intel.com>
- <20191007175910.2805-2-kan.liang@linux.intel.com>
- <20191008083141.GH2294@hirez.programming.kicks-ass.net>
- <3ac026c3-6b9c-a6c1-2c2b-c7ecdbb22b1d@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3ac026c3-6b9c-a6c1-2c2b-c7ecdbb22b1d@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 8 Oct 2019 10:39:05 -0400
+Received: from linux.loongson.cn (unknown [10.20.41.27])
+        by mail (Coremail) with SMTP id QMiowPDxv2CAn5xdu7sLAA--.72S2;
+        Tue, 08 Oct 2019 22:38:56 +0800 (CST)
+From:   Tiezhu Yang <yangtiezhu@loongson.cn>
+To:     paul.burton@mips.com, ralf@linux-mips.org, jhogan@kernel.org
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] MIPS: generic: Use __initconst for const init data
+Date:   Tue,  8 Oct 2019 22:38:53 +0800
+Message-Id: <1570545533-12718-1-git-send-email-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.1.0
+X-CM-TRANSID: QMiowPDxv2CAn5xdu7sLAA--.72S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKw1rKrW8uryxGFWkuF15urg_yoWkCwb_uw
+        s2yF18Gr1rCrWY9FsFvw15Ja4IkaySvF9rA34kKan8A3s3tF15Cw4q9r13Jry8WFZ0yry5
+        JF4rXa45Cr17ujkaLaAFLSUrUUUUYb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUb6AYjsxI4VW3JwAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I
+        6I8E6xAIw20EY4v20xvaj40_JFC_Wr1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0
+        cI8IcVCY1x0267AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4
+        A2jsIEc7CjxVAFwI0_GcCE3s1ln4kS14v26r1q6r43M2AIxVAIcxkEcVAq07x20xvEncxI
+        r21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87
+        Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7xvr2IY
+        c2Ij64vIr40E4x8a64kEw24lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I
+        8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jw0_GFylx2IqxVAqx4xG67AKxVWU
+        JVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7V
+        AKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j
+        6r4UMIIF0xvE42xK8VAvwI8IcIk0rVW3JVWrJr1lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIx
+        AIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU51GQDUUUUU=
+        =
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 09:53:24AM -0400, Liang, Kan wrote:
-> 
-> 
-> On 10/8/2019 4:31 AM, Peter Zijlstra wrote:
-> > On Mon, Oct 07, 2019 at 10:59:01AM -0700, kan.liang@linux.intel.com wrote:
-> > > diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> > > index 61448c19a132..ee9ef0c4cb08 100644
-> > > --- a/include/linux/perf_event.h
-> > > +++ b/include/linux/perf_event.h
-> > > @@ -100,6 +100,7 @@ struct perf_raw_record {
-> > >    */
-> > >   struct perf_branch_stack {
-> > >   	__u64				nr;
-> > > +	__u64				tos;
-> > >   	struct perf_branch_entry	entries[0];
-> > >   };
-> > > diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-> > > index bb7b271397a6..fe36ebb7dc2e 100644
-> > > --- a/include/uapi/linux/perf_event.h
-> > > +++ b/include/uapi/linux/perf_event.h
-> > > @@ -141,8 +141,9 @@ enum perf_event_sample_format {
-> > >   	PERF_SAMPLE_TRANSACTION			= 1U << 17,
-> > >   	PERF_SAMPLE_REGS_INTR			= 1U << 18,
-> > >   	PERF_SAMPLE_PHYS_ADDR			= 1U << 19,
-> > > +	PERF_SAMPLE_LBR_TOS			= 1U << 20,
-> > > -	PERF_SAMPLE_MAX = 1U << 20,		/* non-ABI */
-> > > +	PERF_SAMPLE_MAX = 1U << 21,		/* non-ABI */
-> > >   	__PERF_SAMPLE_CALLCHAIN_EARLY		= 1ULL << 63, /* non-ABI; internal use */
-> > >   };
-> > > @@ -864,6 +865,7 @@ enum perf_event_type {
-> > >   	 *	{ u64			abi; # enum perf_sample_regs_abi
-> > >   	 *	  u64			regs[weight(mask)]; } && PERF_SAMPLE_REGS_INTR
-> > >   	 *	{ u64			phys_addr;} && PERF_SAMPLE_PHYS_ADDR
-> > > +	 *	{ u64			tos;} && PERF_SAMPLE_LBR_TOS
-> > >   	 * };
-> > >   	 */
-> > >   	PERF_RECORD_SAMPLE			= 9,
-> > 
-> > I have problems with the API.. You're introducing the intel specific LBR
-> > naming, and adding a whole new sample type vs extending the existing
-> > BRANCH_STACK (like you really already do with struct perf_branch_stack). >
-> > So why not add a bit to PERF_SAMPLE_BRANCH_* to request the presence of
-> > the TOS field in the PERF_SAMPLE_BRANCH_STACK output?
-> 
-> We never store PERF_SAMPLE_BRANCH_* in a sample. The perf tool cannot tell
-> if the sample includes TOS field.
+Fix the following checkpatch errors:
 
-The perf tool bloody sets the perf_event_attr::branch_sample_type value!
-Of course it knows to expect the TOS field when it asks for it in the
-first place.
+$ ./scripts/checkpatch.pl --no-tree -f arch/mips/generic/init.c
+ERROR: Use of const init definition must use __initconst
++static __initdata const void *fdt;
 
-> There will be a problem when a new perf tool parsing the data generated by
-> an old kernel.
+ERROR: Use of const init definition must use __initconst
++static __initdata const struct mips_machine *mach;
 
-ISTR perf stores the full perf_event_attr in the .data file these days,
-and therefore such confusion should never happen.
+ERROR: Use of const init definition must use __initconst
++static __initdata const void *mach_match_data;
+
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+---
+ arch/mips/generic/init.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/mips/generic/init.c b/arch/mips/generic/init.c
+index d5b8c47..1de215b 100644
+--- a/arch/mips/generic/init.c
++++ b/arch/mips/generic/init.c
+@@ -20,9 +20,9 @@
+ #include <asm/smp-ops.h>
+ #include <asm/time.h>
+ 
+-static __initdata const void *fdt;
+-static __initdata const struct mips_machine *mach;
+-static __initdata const void *mach_match_data;
++static __initconst const void *fdt;
++static __initconst const struct mips_machine *mach;
++static __initconst const void *mach_match_data;
+ 
+ void __init prom_init(void)
+ {
+-- 
+2.1.0
+
+
