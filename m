@@ -2,167 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93742D034C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 00:18:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76160D034F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 00:19:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727920AbfJHWSu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 18:18:50 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:50820 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727290AbfJHWSt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 18:18:49 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1iHxod-000554-C6; Tue, 08 Oct 2019 16:18:48 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.92)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1iHxob-0003Pf-2O; Tue, 08 Oct 2019 16:18:45 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     Kit Chow <kchow@gigaio.com>, Logan Gunthorpe <logang@deltatee.com>
-Date:   Tue,  8 Oct 2019 16:18:37 -0600
-Message-Id: <20191008221837.13067-4-logang@deltatee.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191008221837.13067-1-logang@deltatee.com>
-References: <20191008221837.13067-1-logang@deltatee.com>
+        id S1728718AbfJHWS5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 18:18:57 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:45409 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727278AbfJHWSz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 18:18:55 -0400
+Received: by mail-vs1-f67.google.com with SMTP id d204so168747vsc.12
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 15:18:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5qBbOQHMEGbIi6Q8TmHGDl9gpWTvaemlinsXz3g2z2g=;
+        b=ucyWSYoYA12iEZoC/jmhn0gx9UeO6YTpJIhPL5ASqtkeMRBmalnv79A57nfiKdMDvH
+         d+/U6QsjQODu6OueuddkHxvnd4tBDc8GEtdiGVo05end60mJeAk3Pknxd9Jf7FUSvNqc
+         Fs6gKTEFMcTzhPFsvZwtlglbNVykTFtbEPYuo6lyJWOYKP01UAhYq9IDmq9grSsUI00h
+         vwHpCGN2Z0S+lZeVZWHMD8yCuZhnKuqHOM3oqIYAaUuhrA7u+LUkShByy9qbdx/ztgBs
+         xSEprjAb2LaO56Nd/tSvvrg9xpIt4LAuS4SKASc8Dqw5xgYGSPvSM+EIs6ow9naVB65R
+         bJMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5qBbOQHMEGbIi6Q8TmHGDl9gpWTvaemlinsXz3g2z2g=;
+        b=Gl7YB7lF6SvAoZtdjOumZ0mxnZEbm5vsRyv96TEsCQpg5vcV33lDYiF4ZzXZx+Lr29
+         aVsU90Fp0LH9d98cQj2OTo/atEsV7CF2Da2sur36pobTy2V0uk2Sf8UA1HepEMsMjZaX
+         RQg1IQVObcfnROKWRfGd6Ex4AlwN1T+ipm7FgMLLIjkJTGxO53P68NQ1sX9FuooUAb+w
+         EPFtrw0ASf4f/sS/PNjtxlfoyMgE0/YQnFIalEG9wRj1+NQmr92rloYFXxl974DMUfB5
+         3pC8pBPX13HQn17KTUnr5zSs5+M2WMUOIcpsMyF8YW7anUH1Ews+hdwB+j0xYr2vCkFt
+         q5YQ==
+X-Gm-Message-State: APjAAAVLeLxbFADXa6swoLT5cg4X+04petz9sVoIbtJAtJemXn9rFeeI
+        dzvdDlpZQGsY/1SqRXJmSocUoAtIIiJ8Typ354mnYQ==
+X-Google-Smtp-Source: APXvYqxMQK7/AOsW+Xue+pf0X2/MOkBpQY9PoEzc7LsIoEIsIagWdCJpyGdoMXNJ3oK11ksvAi7z30I/sV4YTJO+FYg=
+X-Received: by 2002:a67:ed8b:: with SMTP id d11mr67518vsp.104.1570573133773;
+ Tue, 08 Oct 2019 15:18:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, joro@8bytes.org, kchow@gigaio.com, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        MYRULES_NO_TEXT autolearn=no autolearn_force=no version=3.4.2
-Subject: [PATCH 3/3] iommu/amd: Support multiple PCI DMA aliases in IRQ Remapping
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+References: <20190913211402.193018-1-samitolvanen@google.com>
+ <201909231626.A912664DA1@keescook> <CABCJKudtyL4UO+45GMLNT6vZK-FEB-Nvry=aPEnWDY3v0goOew@mail.gmail.com>
+In-Reply-To: <CABCJKudtyL4UO+45GMLNT6vZK-FEB-Nvry=aPEnWDY3v0goOew@mail.gmail.com>
+From:   Sami Tolvanen <samitolvanen@google.com>
+Date:   Tue, 8 Oct 2019 15:18:42 -0700
+Message-ID: <CABCJKudjboSdZAqS0DViAi0=Y+R63CZbbO-L3Gm=MCoOKjYK0w@mail.gmail.com>
+Subject: Re: [PATCH] x86: use the correct function type for native_set_fixmap
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Non-Transparent Bridge (NTB) devices (among others) may have many DMA
-aliases seeing the hardware will send requests with different device ids
-depending on their origin across the bridged hardware.
+On Tue, Sep 24, 2019 at 12:51 PM Sami Tolvanen <samitolvanen@google.com> wrote:
+> Someone else probably knows better, but yes, we could also fix this by
+> changing set_fixmap to accept enum fixed_addresses as the first
+> parameter, and changing the type of xen_set_fixmap instead.
 
-See commit ad281ecf1c7d ("PCI: Add DMA alias quirk for Microsemi Switchtec
-NTB") for more information on this.
+This approach is actually more problematic since we cannot forward
+declare an enum in C and including <asm/fixmap.h> here results in a
+ton of other missing dependencies. I assume this is why the callback
+function accepts unsigned in the first place.
 
-The AMD IOMMU IRQ remapping functionality ignores all PCI aliases for
-IRQs so if devices send an interrupt from one of their aliases they
-will be blocked on AMD hardware with the IOMMU enabled.
-
-To fix this, ensure IRQ remapping is enabled for all aliases with
-MSI interrupts.
-
-This is analogous to the functionality added to the Intel IRQ remapping
-code in commit 3f0c625c6ae7 ("iommu/vt-d: Allow interrupts from the entire
-bus for aliased devices")
-
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
----
- drivers/iommu/amd_iommu.c | 46 +++++++++++++++++++++++++++++++++------
- 1 file changed, 39 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 1f15f0bae5b3..f8a6fa8d639b 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -3758,7 +3758,27 @@ static void set_remap_table_entry(struct amd_iommu *iommu, u16 devid,
- 	iommu_flush_dte(iommu, devid);
- }
- 
--static struct irq_remap_table *alloc_irq_table(u16 devid)
-+static int set_remap_table_entry_alias(struct pci_dev *pdev, u16 alias,
-+				       void *data)
-+{
-+	struct irq_remap_table *table = data;
-+
-+	irq_lookup_table[alias] = table;
-+	set_dte_irq_entry(alias, table);
-+
-+	return 0;
-+}
-+
-+static int iommu_flush_dte_alias(struct pci_dev *pdev, u16 alias, void *data)
-+{
-+	struct amd_iommu *iommu = data;
-+
-+	iommu_flush_dte(iommu, alias);
-+
-+	return 0;
-+}
-+
-+static struct irq_remap_table *alloc_irq_table(u16 devid, struct pci_dev *pdev)
- {
- 	struct irq_remap_table *table = NULL;
- 	struct irq_remap_table *new_table = NULL;
-@@ -3804,7 +3824,14 @@ static struct irq_remap_table *alloc_irq_table(u16 devid)
- 	table = new_table;
- 	new_table = NULL;
- 
--	set_remap_table_entry(iommu, devid, table);
-+	if (pdev) {
-+		pci_for_each_dma_alias(pdev, set_remap_table_entry_alias,
-+				       table);
-+		pci_for_each_dma_alias(pdev, iommu_flush_dte_alias, iommu);
-+	} else {
-+		set_remap_table_entry(iommu, devid, table);
-+	}
-+
- 	if (devid != alias)
- 		set_remap_table_entry(iommu, alias, table);
- 
-@@ -3821,7 +3848,8 @@ static struct irq_remap_table *alloc_irq_table(u16 devid)
- 	return table;
- }
- 
--static int alloc_irq_index(u16 devid, int count, bool align)
-+static int alloc_irq_index(u16 devid, int count, bool align,
-+			   struct pci_dev *pdev)
- {
- 	struct irq_remap_table *table;
- 	int index, c, alignment = 1;
-@@ -3831,7 +3859,7 @@ static int alloc_irq_index(u16 devid, int count, bool align)
- 	if (!iommu)
- 		return -ENODEV;
- 
--	table = alloc_irq_table(devid);
-+	table = alloc_irq_table(devid, pdev);
- 	if (!table)
- 		return -ENODEV;
- 
-@@ -4264,7 +4292,7 @@ static int irq_remapping_alloc(struct irq_domain *domain, unsigned int virq,
- 		struct irq_remap_table *table;
- 		struct amd_iommu *iommu;
- 
--		table = alloc_irq_table(devid);
-+		table = alloc_irq_table(devid, NULL);
- 		if (table) {
- 			if (!table->min_index) {
- 				/*
-@@ -4281,11 +4309,15 @@ static int irq_remapping_alloc(struct irq_domain *domain, unsigned int virq,
- 		} else {
- 			index = -ENOMEM;
- 		}
--	} else {
-+	} else if (info->type == X86_IRQ_ALLOC_TYPE_MSI ||
-+		   info->type == X86_IRQ_ALLOC_TYPE_MSIX) {
- 		bool align = (info->type == X86_IRQ_ALLOC_TYPE_MSI);
- 
--		index = alloc_irq_index(devid, nr_irqs, align);
-+		index = alloc_irq_index(devid, nr_irqs, align, info->msi_dev);
-+	} else {
-+		index = alloc_irq_index(devid, nr_irqs, false, NULL);
- 	}
-+
- 	if (index < 0) {
- 		pr_warn("Failed to allocate IRTE\n");
- 		ret = index;
--- 
-2.20.1
-
+Sami
