@@ -2,107 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E658ECF0A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 03:49:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADB18CF09D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 03:44:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729638AbfJHBt5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 21:49:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53804 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726917AbfJHBt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 21:49:57 -0400
-Received: from localhost (unknown [216.9.110.8])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF9EF20835;
-        Tue,  8 Oct 2019 01:49:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570499396;
-        bh=cFjDcRdNYug32NXchWp9aEpXNbMiQH0Y5DH9uQ/EtSQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=07+iTFYw5GUk75foY3KUq7udBBXdj/iWmY4zMeY2JlqzDTTHOMAWg/nhyKkR/SPTT
-         zPmlzDe6qiBcPHfeYWK9j1ZZZB4apgERFmvGGxhvmTAuur1r5zofzc8wWgUEAj90Je
-         KYXG9zCAsf9mVUyAEdF2IGVog6VIFgjo5rIQLLy0=
-Date:   Mon, 7 Oct 2019 21:49:54 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.4 00/36] 4.4.196-stable review
-Message-ID: <20191008014954.GB1396@sasha-vm>
-References: <20191006171038.266461022@linuxfoundation.org>
- <d3e1e6ae-8ca4-a43b-d30d-9a9a9a7e5752@roeck-us.net>
- <20191007144951.GB966828@kroah.com>
- <20191007230708.GA1396@sasha-vm>
- <35f5fb99-6c35-9afd-1a4e-3fa7d4ba213a@roeck-us.net>
+        id S1729737AbfJHBoh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 21:44:37 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:39634 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726917AbfJHBoh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 21:44:37 -0400
+Received: by mail-io1-f67.google.com with SMTP id a1so33112304ioc.6;
+        Mon, 07 Oct 2019 18:44:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Fw209Whs539FleYIAnU1s0PqSxWW0KiTK1H4R+hwlPI=;
+        b=OVM9BcVLoy6BaRIpxY8+rAgvJ00VTOBWAiySLb/FwcAzbDZIwDGGgb/C/oZ7axKGns
+         mIk7bwGQo78Ahi0c0ZEyjVw2ZvYCuNod3xX2tppd7mTUr7GEUqfJvaLVfBIj+3O1/Z4X
+         iQqBoxjeQlZiHtcbpZbqYpkG7VdOJxx3lPTQ/m8/BaA/Pw6E14XOXVPunznX76FNaTd5
+         EixN7GlsZxlvh6v0Z9rsJ6+A1rvHUowLrR8u7QB4QVRISIJNcUqTz0m1MAEzn60FFs0G
+         F1jUK+zocZQwlIkQ5HUFJ5CaVRupKdrjW98xH/W49nKbhQZA4NNEC8yuz7XOv250B1m+
+         92gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Fw209Whs539FleYIAnU1s0PqSxWW0KiTK1H4R+hwlPI=;
+        b=lqHTyF7vUCZdR/KQXJQpq/ksfBekVMzXHf/8yZ+iAangoxxQSG8RhcibSXIM32tshp
+         X56eyMcoFn7TuNmuOV3PobgNrQQAa4IYjs0RZf3AOwY4ppPmxEdmvS9cMYq5uCUSf3Lo
+         bdTclTzVVlU4+JEbs4gHzADztIhGPlP/62Ve30XcKERMmATYls6FnsaBriBusofa08FQ
+         b3wYsB8o1xSo6Nheqe5i1FqsVNuYA0fSrxLLljhVzPB1N1FwvqefaipPR7YErrKJFFFE
+         g9BDJxAmF2CGPHtiVvTJIG038vpbnBAX0WoUM9PfSLS1roYuMuS9tgNj1oHfoVDrozfp
+         AbVw==
+X-Gm-Message-State: APjAAAViqBJY9e/esU9B4uU9HTVGQNDekAZvaMYG6X8OqP5IIlzplNE+
+        uUgvC/Ed4slLgd0v6Bc4CeUhONSZ2FvCH6HKjBw=
+X-Google-Smtp-Source: APXvYqxt6/0xninW5CnKNuJYQqbikrgLXATP2QD131RmcPQ9Z/5vmjUUYkrZ6xXfXBxL3RpKBYFfL7OfUy6i9llje9k=
+X-Received: by 2002:a5e:8c15:: with SMTP id n21mr11990598ioj.246.1570499076276;
+ Mon, 07 Oct 2019 18:44:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <35f5fb99-6c35-9afd-1a4e-3fa7d4ba213a@roeck-us.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191007131649.1768-1-linux.amoon@gmail.com> <20191007131649.1768-6-linux.amoon@gmail.com>
+ <CAFBinCAoJLZj9Kh+SfF4Q+0OCzac2+huon_BU=Q3yE7Fu38U3w@mail.gmail.com>
+In-Reply-To: <CAFBinCAoJLZj9Kh+SfF4Q+0OCzac2+huon_BU=Q3yE7Fu38U3w@mail.gmail.com>
+From:   Anand Moon <linux.amoon@gmail.com>
+Date:   Tue, 8 Oct 2019 12:49:46 +0530
+Message-ID: <CANAwSgQScXdKewfBtu-o_sjRb-pk+CvJrv4RunGJOzz=DWjBnQ@mail.gmail.com>
+Subject: Re: [RFCv1 5/5] arm64/ARM: configs: Change CONFIG_PWM_MESON from m to y
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-amlogic@lists.infradead.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 07, 2019 at 04:16:51PM -0700, Guenter Roeck wrote:
->On 10/7/19 4:07 PM, Sasha Levin wrote:
->>On Mon, Oct 07, 2019 at 04:49:51PM +0200, Greg Kroah-Hartman wrote:
->>>On Mon, Oct 07, 2019 at 05:53:55AM -0700, Guenter Roeck wrote:
->>>>On 10/6/19 10:18 AM, Greg Kroah-Hartman wrote:
->>>>> This is the start of the stable review cycle for the 4.4.196 release.
->>>>> There are 36 patches in this series, all will be posted as a response
->>>>> to this one.  If anyone has any issues with these being applied, please
->>>>> let me know.
->>>>>
->>>>> Responses should be made by Tue 08 Oct 2019 05:07:10 PM UTC.
->>>>> Anything received after that time might be too late.
->>>>>
->>>>
->>>>powerpc:defconfig fails to build.
->>>>
->>>>arch/powerpc/kernel/eeh_driver.c: In function ‘eeh_handle_normal_event’:
->>>>arch/powerpc/kernel/eeh_driver.c:678:2: error: implicit declaration of function ‘eeh_for_each_pe’; did you mean ‘bus_for_each_dev’?
->>>>
->>>>It has a point:
->>>>
->>>>... HEAD is now at 13cac61d31df Linux 4.4.196-rc1
->>>>$ git grep eeh_for_each_pe
->>>>arch/powerpc/kernel/eeh_driver.c:       eeh_for_each_pe(pe, tmp_pe)
->>>>arch/powerpc/kernel/eeh_driver.c:                               eeh_for_each_pe(pe, tmp_pe)
->>>>
->>>>Caused by commit 3fb431be8de3a ("powerpc/eeh: Clear stale EEH_DEV_NO_HANDLER flag").
->>>>Full report will follow later.
->>>
->>>Thanks for letting me know, I've dropped this from the queue now and
->>>pushed out a -rc2 with that removed.
->>>
->>>Sasha, I thought your builder would have caught stuff like this?
->>
->>Interesting, the 4.4 build fails for me with vanilla 4.4 LTS kernel
->>(which is why this was missed):
->>
->>  AS      arch/powerpc/kernel/systbl.o
->>arch/powerpc/kernel/exceptions-64s.S: Assembler messages:
->>arch/powerpc/kernel/exceptions-64s.S:1599: Warning: invalid register expression
->>arch/powerpc/kernel/exceptions-64s.S:1640: Warning: invalid register expression
->>arch/powerpc/kernel/exceptions-64s.S:839: Error: attempt to move .org backwards
->>arch/powerpc/kernel/exceptions-64s.S:840: Error: attempt to move .org backwards
->>arch/powerpc/kernel/exceptions-64s.S:864: Error: attempt to move .org backwards
->>arch/powerpc/kernel/exceptions-64s.S:865: Error: attempt to move .org backwards
->>scripts/Makefile.build:375: recipe for target 'arch/powerpc/kernel/head_64.o' failed
->>
+Hi Martin.
+
+On Tue, 8 Oct 2019 at 01:40, Martin Blumenstingl
+<martin.blumenstingl@googlemail.com> wrote:
 >
->Is this allmodconfig ? That is correct - it won't build in 4.4.y, and it would not be
->easy to fix.
+> On Mon, Oct 7, 2019 at 3:17 PM Anand Moon <linux.amoon@gmail.com> wrote:
+> [...]
+> > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> > index c9a867ac32d4..72f6a7dca0d6 100644
+> > --- a/arch/arm64/configs/defconfig
+> > +++ b/arch/arm64/configs/defconfig
+> > @@ -774,7 +774,7 @@ CONFIG_MPL3115=m
+> >  CONFIG_PWM=y
+> >  CONFIG_PWM_BCM2835=m
+> >  CONFIG_PWM_CROS_EC=m
+> > -CONFIG_PWM_MESON=m
+> > +CONFIG_PWM_MESON=y
+> some time ago I submitted a similar patch for the 32-bit SoCs
+> it turned that that pwm-meson can be built as module because the
+> kernel will run without CPU DVFS as long as the clock and regulator
+> drivers are returning -EPROBE_DEFER (-517)
+>
+> did you check whether there's some other problem like some unused
+> clock which is being disabled at that moment?
+> I've been hunting weird problems in the past where it turned out that
+> changing kernel config bits changed the boot timing - that masked the
+> original problem
 
-Oh, interesting, so no allmodconfig? I've disabled everything but
-allmodconfig on a few architectures in an attempt to save to build time.
+OK.
 
---
-Thanks,
-Sasha
+>
+>
+> Martin
+
+Sorry for linking this two separate issue PWM failed and microSD detect failed.
+Thanks for the input, I will check if you patch help, I will try to
+investigate more why it fails at my end.
+
+Best Regards
+-Anand
