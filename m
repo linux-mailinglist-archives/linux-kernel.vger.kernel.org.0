@@ -2,171 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17772CFD51
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 17:15:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6022DCFD57
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 17:16:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727766AbfJHPOs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 11:14:48 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40836 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727659AbfJHPOs (ORCPT
+        id S1727496AbfJHPQU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 11:16:20 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:36682 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726291AbfJHPQU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 11:14:48 -0400
-Received: by mail-pg1-f196.google.com with SMTP id d26so10407877pgl.7
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 08:14:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:from:to:cc:subject:user-agent:date;
-        bh=b0SnpNhMUbVCEQgJptnlWM+4wSJCqeG8y6NSSqT0tLc=;
-        b=W70crH8RHO9sJtcShnUUaAlhOqFx2fMphJf1FO7wncUFAdi+rPx2p2X7u3oTQd8EC8
-         ++vTMzXltZIE+ovOXoCoiQHFZewsdb4/vLA0FByTnqyF0lP07t6J9LlLGfO5MaJHb4JK
-         f8/vvpD8yJ1PAxVUxdM2BGMSJbc49rHkSdgXY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:from:to:cc:subject
-         :user-agent:date;
-        bh=b0SnpNhMUbVCEQgJptnlWM+4wSJCqeG8y6NSSqT0tLc=;
-        b=A9p0HWdHCsEJLXqZc8fV3PDJtDP9ArQ7yGXURlEb8wj14gwWTTkEFNQJswU+arKTtb
-         g7QKz6JY/tqN+VE7yh9jtqgUgc5FioHXWoXCJEkdGthVZ+7EK8EdW8Hxx7sV9pZYC7td
-         BzfWHzvLlnf9fP8Mn65cbdqYAqiReCdQAo1sSOb0ANRMaId8toR/Y1du4nOatKJhEmRM
-         2nJA4jvQnKPluDBGs9Xyj2XUCIEvVejN1xi4aY9h4QSrbLTcEbMJpvFvN4FAoVaLzbG7
-         vK6+2p7UbqcdUj6fomh58fMHbeVsejW4fMsG0bpDWKZiV3oXog+xgdgMJdX1Ngnx13qR
-         cB8A==
-X-Gm-Message-State: APjAAAWhBWk3xmE37j1/0aFrcY/6GT2H+7jTDvjl3FyGYcalmh/XGyPj
-        xVW6pJAFVlFJsbph66GKkG132w==
-X-Google-Smtp-Source: APXvYqwEyFPtcLS13yv1gL8f/6Ms8qqajmvMZiGwmNGwHT4zxY9yfThc0vYuQ761Jws4hBNSomME4Q==
-X-Received: by 2002:a17:90a:cc08:: with SMTP id b8mr6352843pju.119.1570547685494;
-        Tue, 08 Oct 2019 08:14:45 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id l21sm15295740pgm.55.2019.10.08.08.14.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2019 08:14:44 -0700 (PDT)
-Message-ID: <5d9ca7e4.1c69fb81.7f8fa.3f7d@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        Tue, 8 Oct 2019 11:16:20 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x98FCpaM126200;
+        Tue, 8 Oct 2019 15:15:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : in-reply-to : message-id : references : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=G3hEXpcqfex8tKkgNX8GKdCKE+z2Dp/2HG2CbwOSfg0=;
+ b=Y/UWuuHgnhvwYn3IWR4zKaD1rSQ/rjm71tVZQVCqYNZFNBNGrbgZVRCsTXxHEVR8yLOZ
+ 9aY11pb4lr+XCfrd8bN+lEIEX3L+ygZfdyZPCQFyyzYEZ9FPeYfpToKXs6VTE7yC7Nd/
+ rFvt5K+lc0lSwAFSTBLtUF3tA/md7ZwZ6LIGXM1V9F5/znaFpzOBZGuL1XT0mD3efiBX
+ 5mazH27pI22iMWTifvxp5IJChrmIpXVCb/w0IhRF3xqbK8sW0GmDs40PPOz9e762czG+
+ 9tbefRrROSNUIVjhut6bj5p9qiHMbhdcTM7TM8WA/NrK+5i8RwCn7HNTAJ5P7XhAkMpZ JA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2vejkue1p7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 08 Oct 2019 15:15:33 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x98FFIKj143243;
+        Tue, 8 Oct 2019 15:15:32 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2vg206hdkc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 08 Oct 2019 15:15:32 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x98FFJa2016720;
+        Tue, 8 Oct 2019 15:15:19 GMT
+Received: from dhcp-10-175-191-48.vpn.oracle.com (/10.175.191.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 08 Oct 2019 15:15:18 +0000
+Date:   Tue, 8 Oct 2019 16:15:09 +0100 (BST)
+From:   Alan Maguire <alan.maguire@oracle.com>
+X-X-Sender: alan@dhcp-10-175-191-48.vpn.oracle.com
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+cc:     Alan Maguire <alan.maguire@oracle.com>,
+        linux-kselftest@vger.kernel.org, brendanhiggins@google.com,
+        skhan@linuxfoundation.org, mcgrof@kernel.org,
+        keescook@chromium.org, yzaikin@google.com,
+        akpm@linux-foundation.org, yamada.masahiro@socionext.com,
+        catalin.marinas@arm.com, joe.lawrence@redhat.com,
+        penguin-kernel@i-love.sakura.ne.jp, schowdary@nvidia.com,
+        urezki@gmail.com, changbin.du@intel.com,
+        kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Knut Omang <knut.omang@oracle.com>,
+        rdunlap@infradead.org
+Subject: Re: [PATCH linux-kselftest-test 2/3] kunit: allow kunit to be loaded
+ as a module
+In-Reply-To: <20191008145552.GS32742@smile.fi.intel.com>
+Message-ID: <alpine.LRH.2.20.1910081611050.839@dhcp-10-175-191-48.vpn.oracle.com>
+References: <1570545832-32326-1-git-send-email-alan.maguire@oracle.com> <1570545832-32326-3-git-send-email-alan.maguire@oracle.com> <20191008145552.GS32742@smile.fi.intel.com>
+User-Agent: Alpine 2.20 (LRH 67 2015-01-07)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAFv8Nw+x6V-995ijyws1Q36W1MpaP=kNJeiVtNakH-uC3Vgg9Q@mail.gmail.com>
-References: <20191007071610.65714-1-cychiang@chromium.org> <CA+Px+wWkr1xmSpgEkSaGS7UZu8TKUYvSnbjimBRH29=kDtcHKA@mail.gmail.com> <ebf9bc3f-a531-6c5b-a146-d80fe6c5d772@roeck-us.net> <CAFv8NwLuYKHJoG9YR3WvofwiMnXCgYv-Sk7t5jCvTZbST+Ctjw@mail.gmail.com> <5d9b5b3e.1c69fb81.7203c.1215@mx.google.com> <CAFv8Nw+x6V-995ijyws1Q36W1MpaP=kNJeiVtNakH-uC3Vgg9Q@mail.gmail.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Cheng-yi Chiang <cychiang@chromium.org>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Tzung-Bi Shih <tzungbi@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ALSA development <alsa-devel@alsa-project.org>,
-        Hung-Te Lin <hungte@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Brown <broonie@kernel.org>,
-        Dylan Reid <dgreid@chromium.org>,
-        Tzung-Bi Shih <tzungbi@chromium.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH] firmware: vpd: Add an interface to read VPD value
-User-Agent: alot/0.8.1
-Date:   Tue, 08 Oct 2019 08:14:43 -0700
+Content-Type: text/plain; charset=US-ASCII
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9404 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910080135
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9403 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910080135
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Cheng-yi Chiang (2019-10-07 11:50:31)
-> On Mon, Oct 7, 2019 at 11:35 PM Stephen Boyd <swboyd@chromium.org> wrote:
-> >
-> > Quoting Cheng-yi Chiang (2019-10-07 06:58:41)
-> > >
-> > > Hi Guenter,
-> > > Thanks for the quick review.
-> > > I'll update accordingly in v2.
-> >
-> > I'd prefer this use the nvmem framework which already handles many of
-> > the requirements discussed here. Implement an nvmem provider and figure
-> > out how to wire that up to the kernel users. Also, please include a user
-> > of the added support, otherwise it is impossible to understand how this
-> > code is used.
-> >
-> Hi Stephen,
-> Thanks for the suggestion.
-> My usage is for Intel machine driver to read a string for speaker calibra=
-tion.
->=20
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/=
-+/1838091/4/sound/soc/intel/boards/cml_rt1011_rt5682.c#325
->=20
-> Based on the comments in this thread, its usage would look like
->=20
-> #define DSM_CALIB_KEY "dsm_calib"
-> static int load_calibration_data(struct cml_card_private *ctx) {
->           char *data =3D NULL;
->           int ret;
->           u32 value_len;
->=20
->           /* Read calibration data from VPD. */
->           ret =3D vpd_attribute_read(1, DSM_CALIB_KEY,
->                                          (u8 **)&data, &value_len);
->=20
->           /* Parsing of this string...*/
-> }
->=20
-> It is currently pending on unmerged machine driver cml_rt1011_rt5682.c
-> in ASoC so I can not post it for review for now.
->=20
-> As for nvmem approach, I looked into examples of nvmem usage, and have
-> a rough idea how to do this.
->=20
-> 1) In vpd.c, as it parses key and value in the VPD section, add nvmem cel=
-l  with
-> {
-> .name=3Dkey,
-> .offset=3Dconsumed,   // need some change in vpd_decodec.c to get the
-> offset of value in the section.
-> .bytes=3Dvalue
-> }
-> Implement read function with vpd_section as context.
->=20
-> 2) In vpd.c, register an nvm_device using devm_nvmem_register in
-> coreboot_driver's probe function vpd_probe.
->=20
-> 3) As my use case does not use device tree, it is hard for ASoC
-> machine to access nvmem device. I am wondering if I can use
-> nvm_cell_lookup so machine driver can find the nvmem device using a
-> con_id. But currently the cell lookup API requires a matched device,
-> which does not fit my usage because there will be different machine
-> drivers requesting the value.
-> I think I can still workaround this by adding the lookup table in
-> machine driver. This would seem to be a bit weird because I found that
-> most lookup table is added in provider side, not consumer side. Not
-> sure if this is logically correct.
+On Tue, 8 Oct 2019, Andy Shevchenko wrote:
 
-Maybe Srini has some input here. It looks like your main concern is
-consumer to provider mapping?
+> On Tue, Oct 08, 2019 at 03:43:51PM +0100, Alan Maguire wrote:
+> > Making kunit itself buildable as a module allows for "always-on"
+> > kunit configuration; specifying CONFIG_KUNIT=m means the module
+> > is built but only used when loaded.  Kunit test modules will load
+> > kunit.ko as an implicit dependency, so simply running
+> > "modprobe my-kunit-tests" will load the tests along with the kunit
+> > module and run them.
+> 
+> > +#ifdef MODULE
+> 
+> > +#endif /* MODULE */
+> 
+> This is strange. Why do you need ifdef?
+>
 
->=20
-> IMO the nvmem approach would create more complexity to support this
-> simple usage. Plus, the underlying assumption of accessing data with
-> offset in a buffer does not fit well with the already parsed VPD
-> values in a list of vpd_attrib_info. But if you strongly feel that
-> this is a better approach I can work toward this.
->=20
+Ah, this was an incorrect assumption on my part; I thought that
+declaring a module license for built-in code might trigger a warning 
+during build. I'll remove the #ifdef MODULE around licenses in v3 (v2 has 
+already gone out as I mistakenly initially sent the wrong version of the 
+patches). I've verified that removing it triggers no warnings.
 
-I'm not sure how an ACPI system like this would work because my exposure
-to ACPI is extremely limited. I would expect there to be some sort of
-firmware property indicating that an nvmem should be used and it's
-provided by VPD or for firmware to parse VPD itself and put the
-information into the ACPI table for this device.
+Thanks to you and Randy for spotting this!
 
-Has either of those things been done? If it is a reference/property in
-firmware then it should be possible to connect consumer devices like the
-audio device you mention to VPD via the nvmem APIs with some changes to
-the nvmem framework assuming there's an approach for nvmem in ACPI in
-some "standard" way.=20
+Alan
 
-I'd like to use nvmem for two reasons. First, it is a kernel framework
-for reading non-volatile memories, which is fairly close to what VPD is
-for. Second, it makes a standard, i.e. non-vpd/coreboot specific, API
-that drivers can use to read memories. Of course in ASoC the machine
-driver is already very platform specific, but the idea is to avoid
-platform specific APIs so that drivers are loosely coupled with the rest
-of the kernel. We shouldn't push against that goal by introducing more
-platform specific APIs.
-
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
+> 
