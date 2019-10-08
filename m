@@ -2,94 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29F64CFD9F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 17:30:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ECC7CFDA2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 17:30:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727999AbfJHP3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1728096AbfJHP3d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 11:29:33 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53206 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727476AbfJHP3c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 8 Oct 2019 11:29:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50234 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726134AbfJHP3c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 11:29:32 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1D112B1B6;
-        Tue,  8 Oct 2019 15:29:30 +0000 (UTC)
-From:   Vlastimil Babka <vbabka@suse.cz>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Florian Weimer <fw@deneb.enyo.de>,
-        Dave Chinner <david@fromorbit.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Vlastimil Babka <vbabka@suse.cz>, stable@vger.kernel.org
-Subject: [PATCH] mm, compaction: fix wrong pfn handling in __reset_isolation_pfn()
-Date:   Tue,  8 Oct 2019 17:29:15 +0200
-Message-Id: <20191008152915.24704-1-vbabka@suse.cz>
-X-Mailer: git-send-email 2.23.0
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=EYiFJW7nu0Cy2CKQ8PkOp6XSsK19E1yuZjWyjvznUac=; b=BhhEgF2xIOYP9jMhQ8LJ0V5xj
+        reaQ1WL97PmAeXxKPGiQkeghEhioj/AbPMQqSxxoox7eSK1ivwkXtsywCtCI7LKi99nWFzRaS2/sh
+        15XPHTwqwn9yul/9dRMqodCT5pYpArPL/162ezWbytqGqclKLxJyDaQIz1YlVeyNhhJeltmKmr+Tt
+        ghWG3HmFfsCJZ6OZppoe0lWw99nc+IyhRsIiykHpLyjH4F5ahf+4NItB6ndHvD9k/LRJpmWLdVXNM
+        9mjU1kqIKfRYopoXjRiSzj/fwDa6MZo1Y6dpVBBce3nFu4mH2gae/7oj0v28flmHnChDAbxnGLG4n
+        uRCjlVn0w==;
+Received: from [2601:1c0:6280:3f0::9ef4]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iHrQZ-0001nJ-4m; Tue, 08 Oct 2019 15:29:31 +0000
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Dmitry Safonov <dima@arista.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH -next] hung_task: fix Documentation warning
+Message-ID: <55ce9772-cffe-f28f-d002-088127842980@infradead.org>
+Date:   Tue, 8 Oct 2019 08:29:29 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Florian and Dave reported [1] a NULL pointer dereference in
-__reset_isolation_pfn(). While the exact cause is unclear, staring at the code
-revealed two bugs, which might be related.
+From: Randy Dunlap <rdunlap@infradead.org>
 
-One bug is that if zone starts in the middle of pageblock, block_page might
-correspond to different pfn than block_pfn, and then the pfn_valid_within()
-checks will check different pfn's than those accessed via struct page. This
-might result in acessing an unitialized page in CONFIG_HOLES_IN_ZONE configs.
+Fix Sphinx warning when building Documentation:
 
-The other bug is that end_page refers to the first page of next pageblock and
-not last page of current pageblock. The online and valid check is then wrong
-and with sections, the while (page < end_page) loop might wander off actual
-struct page arrays.
+Documentation/admin-guide/sysctl/kernel.rst:397: WARNING: Title underline too short.
 
-[1] https://lore.kernel.org/linux-xfs/87o8z1fvqu.fsf@mid.deneb.enyo.de/
+hung_task_interval_warnings:
+===================
 
-Reported-by: Florian Weimer <fw@deneb.enyo.de>
-Reported-by: Dave Chinner <david@fromorbit.com>
-Fixes: 6b0868c820ff ("mm/compaction.c: correct zone boundary handling when resetting pageblock skip hints")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Dmitry Safonov <dima@arista.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ingo Molnar <mingo@kernel.org>
 ---
- mm/compaction.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ Documentation/admin-guide/sysctl/kernel.rst |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/compaction.c b/mm/compaction.c
-index ce08b39d85d4..672d3c78c6ab 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -270,14 +270,15 @@ __reset_isolation_pfn(struct zone *zone, unsigned long pfn, bool check_source,
+--- linux-next-20191008.orig/Documentation/admin-guide/sysctl/kernel.rst
++++ linux-next-20191008/Documentation/admin-guide/sysctl/kernel.rst
+@@ -394,7 +394,7 @@ This file shows up if CONFIG_DETECT_HUNG
  
- 	/* Ensure the start of the pageblock or zone is online and valid */
- 	block_pfn = pageblock_start_pfn(pfn);
--	block_page = pfn_to_online_page(max(block_pfn, zone->zone_start_pfn));
-+	block_pfn = max(block_pfn, zone->zone_start_pfn);
-+	block_page = pfn_to_online_page(block_pfn);
- 	if (block_page) {
- 		page = block_page;
- 		pfn = block_pfn;
- 	}
  
- 	/* Ensure the end of the pageblock or zone is online and valid */
--	block_pfn += pageblock_nr_pages;
-+	block_pfn = pageblock_end_pfn(pfn) - 1;
- 	block_pfn = min(block_pfn, zone_end_pfn(zone) - 1);
- 	end_page = pfn_to_online_page(block_pfn);
- 	if (!end_page)
-@@ -303,7 +304,7 @@ __reset_isolation_pfn(struct zone *zone, unsigned long pfn, bool check_source,
+ hung_task_interval_warnings:
+-===================
++============================
  
- 		page += (1 << PAGE_ALLOC_COSTLY_ORDER);
- 		pfn += (1 << PAGE_ALLOC_COSTLY_ORDER);
--	} while (page < end_page);
-+	} while (page <= end_page);
- 
- 	return false;
- }
--- 
-2.23.0
+ The same as hung_task_warnings, but set the number of interval
+ warnings to be issued about detected hung tasks during check
 
