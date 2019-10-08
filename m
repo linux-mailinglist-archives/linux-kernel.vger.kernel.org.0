@@ -2,65 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FD7BCF504
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 10:29:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA79DCF508
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 10:30:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730434AbfJHI2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 04:28:54 -0400
-Received: from szxga08-in.huawei.com ([45.249.212.255]:41018 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728104AbfJHI2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 04:28:54 -0400
-Received: from DGGEMM402-HUB.china.huawei.com (unknown [172.30.72.55])
-        by Forcepoint Email with ESMTP id 730C73D0F908E7FA7B9E;
-        Tue,  8 Oct 2019 16:28:52 +0800 (CST)
-Received: from dggeme764-chm.china.huawei.com (10.3.19.110) by
- DGGEMM402-HUB.china.huawei.com (10.3.20.210) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Tue, 8 Oct 2019 16:28:52 +0800
-Received: from dggeme763-chm.china.huawei.com (10.3.19.109) by
- dggeme764-chm.china.huawei.com (10.3.19.110) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Tue, 8 Oct 2019 16:28:51 +0800
-Received: from dggeme763-chm.china.huawei.com ([10.6.66.36]) by
- dggeme763-chm.china.huawei.com ([10.6.66.36]) with mapi id 15.01.1713.004;
- Tue, 8 Oct 2019 16:28:51 +0800
-From:   linmiaohe <linmiaohe@huawei.com>
-To:     "Li, Aubrey" <aubrey.li@linux.intel.com>
-CC:     "adobriyan@gmail.com" <adobriyan@gmail.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "cyphar@cyphar.com" <cyphar@cyphar.com>,
-        "christian@brauner.io" <christian@brauner.io>,
-        Mingfangsen <mingfangsen@huawei.com>,
-        "mm-commits@vger.kernel.org" <mm-commits@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] proc:fix confusing macro arg name
-Thread-Topic: [PATCH] proc:fix confusing macro arg name
-Thread-Index: AdV9sJtGS5V1IJ1hQmaaEj6tyX7o5A==
-Date:   Tue, 8 Oct 2019 08:28:51 +0000
-Message-ID: <5c66196346aa47d7a252a8c0dd67ae84@huawei.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.184.189.20]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1730510AbfJHIaD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 04:30:03 -0400
+Received: from eddie.linux-mips.org ([148.251.95.138]:38186 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728104AbfJHIaC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 04:30:02 -0400
+Received: (from localhost user: 'macro', uid#1010) by eddie.linux-mips.org
+        with ESMTP id S23990947AbfJHI37AjQK8 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org> + 2 others);
+        Tue, 8 Oct 2019 10:29:59 +0200
+Date:   Tue, 8 Oct 2019 09:29:58 +0100 (BST)
+From:   "Maciej W. Rozycki" <macro@linux-mips.org>
+To:     Colin King <colin.king@canonical.com>
+cc:     Jakub Kicinski <jakub.kicinski@netronome.com>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] netdevsim: fix spelling mistake "forbidded" ->
+ "forbid"
+In-Reply-To: <20191008081747.19431-1-colin.king@canonical.com>
+Message-ID: <alpine.LFD.2.21.1910080921350.25653@eddie.linux-mips.org>
+References: <20191008081747.19431-1-colin.king@canonical.com>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQpPbiAyMDE5LzEwLzggMTU6MDUsIEF1YnJleSB3cm90ZToNCj4+IE9uIDIwMTkvMTAvOCAxNDo0
-NCwgbGlubWlhb2hlIHdyb3RlOg0KPj4gIHN0YXRlX3NpemUgYW5kIG9wcyBhcmUgaW4gdGhlIHdy
-b25nIHBvc2l0aW9uLCBmaXggaXQuDQo+PiANCj4gDQo+IEdvb2QgY2F0Y2ghDQo+IA0KPiBUaGlz
-IGlzIGludGVyZXN0aW5nLCBJIHNhdyB0aGlzIGludGVyZmFjZSBoYXMgNTArIGNhbGxlcnMsIEhv
-dyBkaWQgdGhleSB3b3JrIGJlZm9yZT8gOykNCj4NCg0KVGhpcyBjb25mdXNlZCBtZSB0b28uIFRo
-ZSBhcmdzIG9mIGZ1bmN0aW9uIHByb2NfY3JlYXRlX25ldF9zaW5nbGUgaXMgY29uc2lzdGVudCB3
-aXRoDQp0aGUgY2FsbGVycywgc28gaXQgd29ya3MuIEJ1dCB0aGUgd3JvbmcgYXJncyBuYW1lIGlu
-IG1hY3JvIHByb2NfY3JlYXRlX25ldCBtYWtlcw0KaXQgY29uZnVzaW5nLg0KDQpUaGFua3MsIGhh
-dmUgYSBuaWNlIGRheSENCg0KPiBUaGFua3MsDQo+IC1BdWJyZXkNCj4NCg0K
+On Tue, 8 Oct 2019, Colin King wrote:
+
+> diff --git a/drivers/net/netdevsim/dev.c b/drivers/net/netdevsim/dev.c
+> index a3d7d39f231a..ff6ced5487b6 100644
+> --- a/drivers/net/netdevsim/dev.c
+> +++ b/drivers/net/netdevsim/dev.c
+> @@ -486,7 +486,7 @@ static int nsim_dev_reload_down(struct devlink *devlink, bool netns_change,
+>  		/* For testing purposes, user set debugfs dont_allow_reload
+>  		 * value to true. So forbid it.
+>  		 */
+> -		NL_SET_ERR_MSG_MOD(extack, "User forbidded reload for testing purposes");
+> +		NL_SET_ERR_MSG_MOD(extack, "User forbid the reload for testing purposes");
+
+ If nitpicking about grammar, then FWIW I believe it should actually be:
+
+		NL_SET_ERR_MSG_MOD(extack, "User forbade the reload for testing purposes");
+
+(and then:
+
+		NL_SET_ERR_MSG_MOD(extack, "User set up the reload to fail for testing purposes");
+
+elsewhere).
+
+  Maciej
