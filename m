@@ -2,101 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC7B9CF93C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 14:06:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08F30CF946
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 14:07:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730851AbfJHMGS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 08:06:18 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58158 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730249AbfJHMGR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 08:06:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=iNXCq0tdrGr+v7qLVsnpGqjHYmCeZ78z3PFZJHaeMP8=; b=WL1P9kiXgzGcYtmdIzPPUSwi2
-        e078UMBv6u0H4uP1gcANf0zyzq0lvQhR51bV3+nh60NbKPhmoAecyshaBuTQX3uYm+BE+q8IsHMQn
-        7D4Eb/yl0AzxicYvZRRBfuLR73k7qSPLzHG5B5F8ryNieZ0cskUt0siySP076tEecLF2I=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1iHoFo-0008EX-8U; Tue, 08 Oct 2019 12:06:12 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 6F8752742998; Tue,  8 Oct 2019 13:06:11 +0100 (BST)
-Date:   Tue, 8 Oct 2019 13:06:11 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-kernel@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH] regulator: core: Skip balancing of the enabled
- regulators in regulator_enable()
-Message-ID: <20191008120611.GG4382@sirena.co.uk>
-References: <CGME20191008101720eucas1p2e0d1bca6e696848bf689067e05620679@eucas1p2.samsung.com>
- <20191008101709.13827-1-m.szyprowski@samsung.com>
- <20191008115025.GF4382@sirena.co.uk>
- <0e222fdd-4407-51ea-b75c-a62621cbe622@samsung.com>
+        id S1731001AbfJHMGz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 08:06:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57548 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730249AbfJHMGy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 08:06:54 -0400
+Received: from localhost (92-111-67-33.static.v4.ziggozakelijk.nl [92.111.67.33])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF2C3206C2;
+        Tue,  8 Oct 2019 12:06:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570536412;
+        bh=Uj5x6J2gH97vDiZFnRpH5rNfDhiBDOr6x+X7q7iJ0jw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Q5WIB6Znd6MmUFiZe7cgph9CBc1fO+biOlU76MaIEDNoUNutRckaP5t2Mm/TuJqDL
+         hZEp9E9sM4a0nfrAhj/SvTFS+aWmGcwUdO7KNlJL+H6BYWG0F7pX61N9N98tq/NcQi
+         KU49X+7gCqZLnPY/GrThfiKaOrzaW1+JYR1bKFuc=
+Date:   Tue, 8 Oct 2019 14:06:49 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Cheng-Yi Chiang <cychiang@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        Guenter Roeck <linux@roeck-us.net>,
+        Hung-Te Lin <hungte@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Shuming Fan <shumingf@realtek.com>,
+        sathya.prakash.m.r@intel.com,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        dgreid@chromium.org, tzungbi@chromium.org
+Subject: Re: [PATCH v2] firmware: vpd: Add an interface to read VPD value
+Message-ID: <20191008120649.GC2761030@kroah.com>
+References: <20191008101144.39342-1-cychiang@chromium.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="+1TulI7fc0PCHNy3"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0e222fdd-4407-51ea-b75c-a62621cbe622@samsung.com>
-X-Cookie: Do not disturb.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191008101144.39342-1-cychiang@chromium.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Oct 08, 2019 at 06:11:44PM +0800, Cheng-Yi Chiang wrote:
+> Add an interface for other driver to query VPD value.
+> This will be used for ASoC machine driver to query calibration
+> data stored in VPD for smart amplifier speaker resistor
+> calibration.
+> 
+> The example usage in ASoC machine driver is like:
+> 
+> #define DSM_CALIB_KEY "dsm_calib"
+> static int load_calibration_data(struct cml_card_private *ctx) {
+>     char *data = NULL;
+>     int ret;
+>     u32 value_len;
+> 
+>     /* Read calibration data from VPD. */
+>     ret = vpd_attribute_read(1, DSM_CALIB_KEY,
+>                             (u8 **)&data, &value_len);
+> 
+>     /* Parsing of this string...*/
+> }
+> 
+> 
+> Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
+> ---
 
---+1TulI7fc0PCHNy3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I can't take this patch without a real user of this function in the
+kernel tree at the same time.  Please submit it as part of a patch
+series with that change as well.
 
-On Tue, Oct 08, 2019 at 02:01:15PM +0200, Marek Szyprowski wrote:
-> On 08.10.2019 13:50, Mark Brown wrote:
+thanks,
 
-> > This then means that for users that might legitimately enable and
-> > disable regulators that need to be constrained are forced to change the
-> > voltage when they enable the regualtors in order to have their
-> > constraints take effect which seems bad.  I'd rather change the the
-> > cpufreq consumers to either not do the enable (since there really should
-> > be an always-on constraint this should be redundant, we might need to
-> > fix the core to take account of their settings though I think we lost
-> > that) or to set the voltage to whatever they need prior to doing their
-> > first enable, that seems more robust.
-
-> Well, I'm open for other ways of fixing this issue. Calling enable on=20
-> always-on regulator imho should not change its rate...
-
-Yes, although there is the whole "don't touch things until a consumer
-tells us to" thing going on.  I had expected that this was kicking in
-because we weren't paying attention to the constraints of disabled
-regulators but I can't see the code implementing that any more so I
-guess we removed it at some point (it was always debatable).
-
---+1TulI7fc0PCHNy3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2ce7IACgkQJNaLcl1U
-h9AGmwf/UbimQ9sq/zEYWdR5N0U5nYyw0n1illJslo92MzhrHjeXkA+J75dNT9wo
-E1wtoPEndtrRtb0F+650lzfqvceJauFIaDwb2WvG3vxutwoSdFCJ9qjoPoXLFZOx
-T0gTrPtDX9HHTgMoFackql9B0xwjwHg+cEV6bcAfw3B4F6LnwYIZB27i4Rbf+DXt
-oxB70sgrULzP0QJAtJLMN3QZtNOg94vNdA8xH83V/FeXdtZiE1VLlJVSQ0hjAjc2
-GJ+zjjSFfC5qRLw+DpKpF6CbBO9NwkcBEhFt5CVNiQlQCwL/tuXHBBGUAXvlk/GN
-zDivlP9XJXhyJRNSbxzDX7C4rEqn3w==
-=Qc9y
------END PGP SIGNATURE-----
-
---+1TulI7fc0PCHNy3--
+greg k-h
