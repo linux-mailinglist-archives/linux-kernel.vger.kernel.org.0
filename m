@@ -2,96 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6E19CFB80
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 15:43:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 084F2CFB88
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 15:45:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726134AbfJHNm6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 09:42:58 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43446 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725821AbfJHNm6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 09:42:58 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8B3BDB1AB;
-        Tue,  8 Oct 2019 13:42:56 +0000 (UTC)
-Date:   Tue, 8 Oct 2019 15:42:56 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Qian Cai <cai@lca.pw>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        sergey.senozhatsky.work@gmail.com, peterz@infradead.org,
-        Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
-        john.ogness@linutronix.de, akpm@linux-foundation.org,
-        david@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm/page_isolation: fix a deadlock with printk()
-Message-ID: <20191008134256.5ti6rjkvadn5b5q4@pathway.suse.cz>
-References: <1570228005-24979-1-git-send-email-cai@lca.pw>
- <20191007143002.l37bt2lzqtnqjqxu@pathway.suse.cz>
- <1570460350.5576.290.camel@lca.pw>
- <20191007151237.GP2381@dhcp22.suse.cz>
- <1570462407.5576.292.camel@lca.pw>
- <20191008081510.ptwmb7zflqiup5py@pathway.suse.cz>
- <20191008091349.6195830d@gandalf.local.home>
- <1570541032.5576.297.camel@lca.pw>
+        id S1726211AbfJHNpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 09:45:24 -0400
+Received: from mga02.intel.com ([134.134.136.20]:36613 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725821AbfJHNpX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 09:45:23 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2019 06:45:23 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,270,1566889200"; 
+   d="scan'208";a="205418032"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.188]) ([10.237.72.188])
+  by orsmga002.jf.intel.com with ESMTP; 08 Oct 2019 06:45:19 -0700
+Subject: Re: [PATCH v1 2/2] mmc: sdhci-of-arasan: Add Support for Intel LGM
+ SDXC
+To:     "Ramuthevar,Vadivel MuruganX" 
+        <vadivel.muruganx.ramuthevar@linux.intel.com>,
+        ulf.hansson@linaro.org, linux-mmc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, michal.simek@xilinx.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        andriy.shevchenko@intel.com, cheol.yong.kim@intel.com,
+        qi-ming.wu@intel.com
+References: <20191003040032.37696-1-vadivel.muruganx.ramuthevar@linux.intel.com>
+ <20191003040032.37696-3-vadivel.muruganx.ramuthevar@linux.intel.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <2cbda555-42d2-392c-0887-09cae4a35dce@intel.com>
+Date:   Tue, 8 Oct 2019 16:44:19 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1570541032.5576.297.camel@lca.pw>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20191003040032.37696-3-vadivel.muruganx.ramuthevar@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2019-10-08 09:23:52, Qian Cai wrote:
-> On Tue, 2019-10-08 at 09:13 -0400, Steven Rostedt wrote:
-> > On Tue, 8 Oct 2019 10:15:10 +0200
-> > Petr Mladek <pmladek@suse.com> wrote:
-> > 
-> > > There are basically three possibilities:
-> > > 
-> > > 1. Do crazy exercises with locks all around the kernel to
-> > >    avoid the deadlocks. It is usually not worth it. And
-> > >    it is a "whack a mole" approach.
-> > > 
-> > > 2. Use printk_deferred() in problematic code paths. It is
-> > >    a "whack a mole" approach as well. And we would end up
-> > >    with printk_deferred() used almost everywhere.
-> > > 
-> > > 3. Always deffer the console handling in printk(). This would
-> > >    help also to avoid soft lockups. Several people pushed
-> > >    against this last few years because it might reduce
-> > >    the chance to see the message in case of system crash.
-> > > 
-> > > As I said, there has finally been agreement to always do
-> > > the offload few weeks ago. John Ogness is working on it.
-> > > So we might have the systematic solution for these deadlocks
-> > > rather sooner than later.
-> > 
-> > Another solution is to add the printk_deferred() in these places that
-> > cause lockdep splats, and when John's work is done, it would be easy to
-> > grep for them and remove them as they would no longer be needed.
-> > 
-> > This way we don't play whack-a-mole forever (only until we have a
-> > proper solution) and everyone is happy that we no longer have these
-> > false positive or I-don't-care lockdep splats which hide real lockdep
-> > splats because lockdep shuts off as soon as it discovers its first
-> > splat.
+On 3/10/19 7:00 AM, Ramuthevar,Vadivel MuruganX wrote:
+> From: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
 > 
-> I feel like that is what I trying to do, but there seems a lot of resistances
-> with that approach where pragmatism met with perfectionism.
+> The current arasan sdhci PHY configuration isn't compatible
+> with the PHY on Intel's LGM(Lightning Mountain) SoC devices.
+> 
+> Therefore, add a new compatible, to adapt the Intel's LGM
+> SDXC PHY with arasan-sdhc controller to configure the PHY.
+> 
+> Signed-off-by: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
 
-No, the resistance was against complicated code changes (games with
-locks) and against removing useful messages. Such changes might cause
-more harm than good.
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-I am not -mm maintainer so I could not guarantee that a patch
-using printk_deferred() will get accepted. But it will have much
-bigger chance than the original patch.
+> ---
+>  drivers/mmc/host/sdhci-of-arasan.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
+> index 7023cbec4017..55de839a8a5e 100644
+> --- a/drivers/mmc/host/sdhci-of-arasan.c
+> +++ b/drivers/mmc/host/sdhci-of-arasan.c
+> @@ -120,6 +120,12 @@ static const struct sdhci_arasan_soc_ctl_map intel_lgm_emmc_soc_ctl_map = {
+>  	.hiword_update = false,
+>  };
+>  
+> +static const struct sdhci_arasan_soc_ctl_map intel_lgm_sdxc_soc_ctl_map = {
+> +	.baseclkfreq = { .reg = 0x80, .width = 8, .shift = 2 },
+> +	.clockmultiplier = { .reg = 0, .width = -1, .shift = -1 },
+> +	.hiword_update = false,
+> +};
+> +
+>  /**
+>   * sdhci_arasan_syscon_write - Write to a field in soc_ctl registers
+>   *
+> @@ -384,6 +390,11 @@ static struct sdhci_arasan_of_data intel_lgm_emmc_data = {
+>  	.pdata = &sdhci_arasan_cqe_pdata,
+>  };
+>  
+> +static struct sdhci_arasan_of_data intel_lgm_sdxc_data = {
+> +	.soc_ctl_map = &intel_lgm_sdxc_soc_ctl_map,
+> +	.pdata = &sdhci_arasan_cqe_pdata,
+> +};
+> +
+>  #ifdef CONFIG_PM_SLEEP
+>  /**
+>   * sdhci_arasan_suspend - Suspend method for the driver
+> @@ -489,6 +500,10 @@ static const struct of_device_id sdhci_arasan_of_match[] = {
+>  		.compatible = "intel,lgm-sdhci-5.1-emmc",
+>  		.data = &intel_lgm_emmc_data,
+>  	},
+> +	{
+> +		.compatible = "intel,lgm-sdhci-5.1-sdxc",
+> +		.data = &intel_lgm_sdxc_data,
+> +	},
+>  	/* Generic compatible below here */
+>  	{
+>  		.compatible = "arasan,sdhci-8.9a",
+> 
 
-Anyway, printk_deferred() is a lost war. It is temporary solution
-for one particular scenario. But as you said, there might be many
-others. The long term solution is the printk rework.
-
-Best Regards,
-Petr
