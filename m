@@ -2,97 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 442E8CFC62
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:27:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92968CFC5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:26:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726439AbfJHO1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 10:27:51 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:56596 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726227AbfJHO1v (ORCPT
+        id S1726579AbfJHOZq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 10:25:46 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52761 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725795AbfJHOZq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 10:27:51 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x98E9LSo051875;
-        Tue, 8 Oct 2019 14:27:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=GfyLIyqEXxIaQ2ACVoOP4oi4Ygck8YSsBITIQGuPxKk=;
- b=ZZO3tmZ3gQVSLd44qJDLr14aTBJ+45hTD+0oLHKe/QFJkx0wt0+8Il93UI62MOadCgun
- ZJ6zZ+pZDxJ8ldFJczwGgP3YcL323c84s04yGngHjtNTGa3YupuII/vmevf4fbw8yyKz
- CsjdpASsKjfV/5bpfHS0lbMEFOtckUmr0sWbL8zxzSj4oARMSlbtv2EQtc5RYqqE7g5D
- RYhNfxPXQRVlSBJbtYj8jpV/KpNztCyDVpYY+46TBuTAFVcve+zYzNa73qQMx+djrK++
- E/F1OxThFaX+iDXcuPfjZDmHVJ//uYpVYONh2FpX9igLgaDKbimL1ytGoG0Pp670fdXc oA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2vektrde4w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 08 Oct 2019 14:27:29 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x98E92iE155480;
-        Tue, 8 Oct 2019 14:25:28 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2vg206ds9x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 08 Oct 2019 14:25:28 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x98EPP4U015274;
-        Tue, 8 Oct 2019 14:25:25 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 08 Oct 2019 07:25:24 -0700
-Date:   Tue, 8 Oct 2019 17:25:17 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Matteo Croce <mcroce@redhat.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>, devel@driverdev.osuosl.org
-Subject: Re: [PATCH] staging: vchiq: don't leak kernel address
-Message-ID: <20191008142517.GO21515@kadam>
-References: <20191008123346.3931-1-mcroce@redhat.com>
- <20191008131518.GH25098@kadam>
- <CAGnkfhxefH+3YKDWQMCOYoj1skcq6rUmHuiHZQ-76YixFqbQjg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGnkfhxefH+3YKDWQMCOYoj1skcq6rUmHuiHZQ-76YixFqbQjg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9403 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=748
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910080132
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9403 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=830 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910080132
+        Tue, 8 Oct 2019 10:25:46 -0400
+Received: by mail-wm1-f68.google.com with SMTP id r19so3398473wmh.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 07:25:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=T1EoziBTkltAHMdc4buw9CGaKKcLnkZK2Xg/SL3bAR4=;
+        b=yXu869UJT4DZ6ShP3Lq21w+k8SvrbwZ8BBXbEyayU0MvLGlVN3E2x1fFomLnlsmvYZ
+         DbfNuFvjNpjti30lwXOENTvIDu4MiRca3YQ2N3r+cql9Kj2PyDju9lqX0OP8pmASzC6d
+         OY7DttRSnAnzlQTE+sbf2xRBiizj5VykngpWgDfQ+hqVB7DmbyCkvXuR1zl9aBHvDCuL
+         I4vAqaRSq+jigGBskbCgUemaslfTPxO6cVZS13SB++qADsBWF5EETqcj6joc8XpjbF4w
+         mccVrmF0uFeTTkh+HJgtHsrDi+bbyz9pdJ3c0muVodEpQYuYq4hFnwbSUaXHLE9N1CUh
+         hPOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=T1EoziBTkltAHMdc4buw9CGaKKcLnkZK2Xg/SL3bAR4=;
+        b=hDeBJFNQffO6S/L1n9/255WpuzY46WDEe1GEEIMpf9dlH8uY+s8Bqk8B9/Q/lOZIQ/
+         BX8vGfbMcHdWnd7/Bcp5uBAhJKThhfn+CdS/kRTIYjqlQlUPmhOQJ/ajKNonp4/dTRxd
+         7V4J09aSy15NuwPJChVPhYQ5QmtOJbHAoL+l9aedlWQngEYr/fsy3NlyUox8fYVX4Rxk
+         1KfaPiP4ULf09otMQ5wBDZJiG0jL0lrIawe8TRZrJUG+3PFhpJ01ryO/96EaiDAAhOmD
+         TcD4BYFsNwM8DrUqVHU81lJpo05nCu6PW1uwPUhjTjtwXeKQ2vR8DYJOtK45QFU/4yXH
+         QD6w==
+X-Gm-Message-State: APjAAAXxNsWjSl8pomDLeNiER0D/5T15Z1D3GpmsqGMAmjMns53FcAfm
+        oGhU72gSV3qQIogyiftJuESbd3unPyeiu6LS
+X-Google-Smtp-Source: APXvYqyWKsQ9SfdIDOC7smhgfVGN4ZnXDTPhORIUYTwQs0c17NQHzryFDWGsfQjjV5PUvpaqvl9hSQ==
+X-Received: by 2002:a1c:1fd3:: with SMTP id f202mr3957965wmf.18.1570544743722;
+        Tue, 08 Oct 2019 07:25:43 -0700 (PDT)
+Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
+        by smtp.gmail.com with ESMTPSA id d10sm4485803wma.42.2019.10.08.07.25.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 08 Oct 2019 07:25:42 -0700 (PDT)
+From:   Michal Simek <michal.simek@xilinx.com>
+To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
+        michal.simek@xilinx.com, git@xilinx.com
+Cc:     Srinivas Goud <srinivas.goud@xilinx.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
+Subject: [PATCH] rtc: xilinx: Fix calibval variable type
+Date:   Tue,  8 Oct 2019 16:25:41 +0200
+Message-Id: <20765c4c27aa92c75426b82fd2815ebef6471492.1570544738.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 04:21:54PM +0200, Matteo Croce wrote:
-> On Tue, Oct 8, 2019 at 3:16 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> >
-> > The subject doesn't match the patch.  It should just be "remove useless
-> > printk".
-> >
-> > regards,
-> > dan carpenter
-> >
-> 
-> Well, it avoids leaking an address by removing an useless printk.
-> It seems that GKH already picked the patch in his staging tree, but
-> I'm fine with both subjects, really,
+From: Srinivas Goud <srinivas.goud@xilinx.com>
 
-The address wasn't leaked because it was already %pK.  The subject
-says there is an info leak security problem, when the opposite is true.
+This patch fixes the warnings reported by static code analysis.
+Updated calibval variable type to unsigned type from signed.
 
-regards,
-dan carpenter
+Signed-off-by: Srinivas Goud <srinivas.goud@xilinx.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+---
+
+ drivers/rtc/rtc-zynqmp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/rtc/rtc-zynqmp.c b/drivers/rtc/rtc-zynqmp.c
+index 2c762757fb54..da0dbea8def3 100644
+--- a/drivers/rtc/rtc-zynqmp.c
++++ b/drivers/rtc/rtc-zynqmp.c
+@@ -44,7 +44,7 @@ struct xlnx_rtc_dev {
+ 	void __iomem		*reg_base;
+ 	int			alarm_irq;
+ 	int			sec_irq;
+-	int			calibval;
++	unsigned int		calibval;
+ };
+ 
+ static int xlnx_rtc_set_time(struct device *dev, struct rtc_time *tm)
+-- 
+2.17.1
 
