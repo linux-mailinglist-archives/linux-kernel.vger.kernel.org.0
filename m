@@ -2,94 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C61BCF8B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 13:42:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E18BCF8BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 13:42:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730601AbfJHLmG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 07:42:06 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:49281 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729790AbfJHLmG (ORCPT
+        id S1730728AbfJHLmy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 07:42:54 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:42836 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730118AbfJHLmx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 07:42:06 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x98BesFt005862;
-        Tue, 8 Oct 2019 13:41:50 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=JZ29o3+ZA5x48x8+yCCPyxRuo1rTg5MroHIYryI/F3c=;
- b=LempFh1Xlla+0GUWqcqrMNqJTOx1DFSj02f0oYlIGwTNiroRG51+Pt80DQ+R8llxMluq
- GRry1sBSVssoH4J4s6U0FzLfcEMwAqAMh08xU+2PdkDlEUt5iPYsgW/fvAgrVlkjpRuo
- 8shy6xDyiign0oIshGl7hQguuuhNHm7O+UIdtEqH4w5VAAZ5FazUCjlPkcMubO01NF3N
- qm60avg/xJmeThj3w2VPhYbWql+x2G2r5MD4ACkkgp0vhkJmrSOshbXd1DHeszEKrccG
- uHdB4htnX4OoWP+f5fsHKPRf2Nv2XIZX1K4jWi8QTRMbYK0OUBf5qyKyMsg0o43/evk7 og== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2vegxvqwq4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 08 Oct 2019 13:41:50 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 831D710002A;
-        Tue,  8 Oct 2019 13:41:47 +0200 (CEST)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 766142B8A64;
-        Tue,  8 Oct 2019 13:41:47 +0200 (CEST)
-Received: from SAFEX1HUBCAS23.st.com (10.75.90.46) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 8 Oct 2019
- 13:41:47 +0200
-Received: from localhost (10.48.0.192) by webmail-ga.st.com (10.75.90.48) with
- Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 8 Oct 2019 13:41:46 +0200
-From:   Fabrice Gasnier <fabrice.gasnier@st.com>
-To:     <thierry.reding@gmail.com>, <u.kleine-koenig@pengutronix.de>
-CC:     <alexandre.torgue@st.com>, <benjamin.gaignard@st.com>,
-        <fabrice.gasnier@st.com>, <linux-pwm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-Subject: [PATCH] pwm: stm32: add comment to better describe breakinput feature
-Date:   Tue, 8 Oct 2019 13:41:27 +0200
-Message-ID: <1570534887-26181-1-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 8 Oct 2019 07:42:53 -0400
+Received: by mail-oi1-f194.google.com with SMTP id i185so14447664oif.9;
+        Tue, 08 Oct 2019 04:42:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rWU50A1ftSfnXS5t6he0dr7vBuFC5vEUJUAdKOgY8bw=;
+        b=CN9t7YfAc0vWJIDXMZTaDRZQTh76TPp4qTdZD4q6reYI5nrtM2KkzO3bkJX9EGgdnN
+         gvHwRVL/CCevZiKCAzhu8V6gXArCwrJycQnANMX7JiVdMtgQrKMb3Mhc+38uxEImGhYz
+         iqiUFb8nIWlvmDI2bexaxD1nP4Q9pbhYeNNtpCzvFpBhO6yQd5LaXXbhb/C5teesnPaW
+         mLfIRCY9BThKjnbEkGOvqGGnaC2p7ZK5AbjyUpIu1FTNOUaM+r99yE8Bi4GoO9450Har
+         cpvTD8ev8bAO/AGpUHQSrJSv8oA7xZno95O3zT2H7bxjyoMa/hhbvX9V8N7oR6UnycVt
+         YoqQ==
+X-Gm-Message-State: APjAAAU7MAeL8yAD8LVEIOCzku3sG88fOI1ivYkE1QPFT23J8dUu7jHw
+        bR0+F71zeYWYbVnY0eMEitovInlB81HAtE/DjYU=
+X-Google-Smtp-Source: APXvYqyCiews/tKA57sXvPG5XvGEr37Qd8csRkV55q3J6cezMVTk15zb8MhXvmopRDNPJSrIQDtYqNfHP9ZJEaZ2Qus=
+X-Received: by 2002:aca:4bd2:: with SMTP id y201mr3663250oia.102.1570534973087;
+ Tue, 08 Oct 2019 04:42:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.48.0.192]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-08_04:2019-10-08,2019-10-08 signatures=0
+References: <1570531132-21856-1-git-send-email-fabrizio.castro@bp.renesas.com> <1570531132-21856-7-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1570531132-21856-7-git-send-email-fabrizio.castro@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 8 Oct 2019 13:42:41 +0200
+Message-ID: <CAMuHMdX5hkZ7kLRiA_NRrBziFsrZNgZX-cEiE+bAaubkMdX=1A@mail.gmail.com>
+Subject: Re: [PATCH 06/10] dt-bindings: usb: renesas_usb3: Document r8a774b1 support
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Simon Horman <horms@verge.net.au>, Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Magnus Damm <magnus.damm@gmail.com>, dmaengine@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a comment to better describe the purpose of breakinput feature that
-can be found on some STM32 timer instances. Briefly comment on the
-characteristics of this input for PWM, and pinmuxing as suggested in [1].
+On Tue, Oct 8, 2019 at 12:39 PM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> Document RZ/G2N (R8A774B1) SoC bindings.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-[1] https://lkml.org/lkml/2019/10/1/207
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
----
- drivers/pwm/pwm-stm32.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/pwm/pwm-stm32.c b/drivers/pwm/pwm-stm32.c
-index 359b085..6406ebb 100644
---- a/drivers/pwm/pwm-stm32.c
-+++ b/drivers/pwm/pwm-stm32.c
-@@ -522,8 +522,14 @@ static int stm32_pwm_apply_breakinputs(struct stm32_pwm *priv,
- 					     sizeof(struct stm32_breakinput));
- 
- 	/*
-+	 * Some timer instances can have BRK input pins (e.g. basically a fault
-+	 * pin from the output power stage). The break feature allows a safe
-+	 * shut-down of the PWM outputs to a predefined state. Further details
-+	 * are available in application note AN4277, "Using STM32 device PWM
-+	 * shut-down features..."
- 	 * Because "st,breakinput" parameter is optional do not make probe
--	 * failed if it doesn't exist.
-+	 * failed if it doesn't exist. The pinctrl handle must hold the BRK
-+	 * pin(s) when using "st,breakinput" property.
- 	 */
- 	if (nb <= 0)
- 		return 0;
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
