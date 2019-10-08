@@ -2,125 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FF12CFCF0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:57:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A143ACFD29
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 17:07:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727729AbfJHO5U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 10:57:20 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55290 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725939AbfJHO5U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 10:57:20 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CC763300C22E;
-        Tue,  8 Oct 2019 14:57:19 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7B4C419C69;
-        Tue,  8 Oct 2019 14:57:18 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jim Mattson <jmattson@google.com>
-Subject: [PATCH RFC] selftests: kvm: fix sync_regs_test with newer gccs
-Date:   Tue,  8 Oct 2019 16:57:17 +0200
-Message-Id: <20191008145717.17841-1-vkuznets@redhat.com>
+        id S1727753AbfJHPGb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 11:06:31 -0400
+Received: from sender2-of-o52.zoho.com.cn ([163.53.93.247]:21543 "EHLO
+        sender2-of-o52.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725976AbfJHPGb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 11:06:31 -0400
+X-Greylist: delayed 906 seconds by postgrey-1.27 at vger.kernel.org; Tue, 08 Oct 2019 11:06:29 EDT
+ARC-Seal: i=1; a=rsa-sha256; t=1570546276; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=brFUoouPEMjJSqsa8+K9u9vBzwF8LLEcUDjzvdPUb44eMP0eYlmrKDAntG4o7xgPfm57wlCk3MYuwEZSJGSVEptKtLiMfvM1Iik8W4lkQh2+j+IV4mBKJfUQGfdxLQEYjDJefRMI72Ik72mZEoFz+sd4fjd4koiG7287gBvJH2Y=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1570546276; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To:ARC-Authentication-Results; 
+        bh=iWLsd00kA2pIWjpDhgqoOn/cVUxOJx70YwdIj1xn/rY=; 
+        b=KKnfq3OF+IV0w8iKJJYewfJ2/qtZ/8GJEjcyTjkKS6WgjqOBLX/9Gk4Ml07cUVLl5GS7iOrvL4vFuGaS5xRtgXhrW89Wh5fLnf5CdrjmwaxbYWQIcd0EDBCqrWOvd+NlDJ6zHlSTz7NMy36svLfdAbWEbHyBPGGHMJzKzdxY/sQ=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=mykernel.net;
+        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+        dmarc=pass header.from=<cgxu519@mykernel.net> header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1570546276;
+        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+        h=From:To:Cc:Message-ID:Subject:Date:MIME-Version:Content-Transfer-Encoding:Content-Type;
+        l=1328; bh=iWLsd00kA2pIWjpDhgqoOn/cVUxOJx70YwdIj1xn/rY=;
+        b=TaUNNTFhjoldUyM6Ks2KaiQNYCHUOkq7VmOkAMoR7f1CBj3BIvu0NKGkFKtOavmT
+        323Pful323iDGIp5jI1R5Bni/9oeLoE+w0C2wsaRumc8dcYK/7iRhhVoaCRaXTXn13q
+        4V/bWmC+B53FunhFypVTTdRifUhgwxgEZoralXnI=
+Received: from localhost.localdomain (113.116.49.170 [113.116.49.170]) by mx.zoho.com.cn
+        with SMTPS id 1570546274198707.4831055250032; Tue, 8 Oct 2019 22:51:14 +0800 (CST)
+From:   Chengguang Xu <cgxu519@mykernel.net>
+To:     jack@suse.com
+Cc:     linux-kernel@vger.kernel.org, Chengguang Xu <cgxu519@mykernel.net>
+Message-ID: <20191008145059.21402-1-cgxu519@mykernel.net>
+Subject: [PATCH] quota: check quota type in early stage
+Date:   Tue,  8 Oct 2019 22:50:59 +0800
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 08 Oct 2019 14:57:19 +0000 (UTC)
+Content-Transfer-Encoding: quoted-printable
+X-ZohoCNMailClient: External
+Content-Type: text/plain; charset=utf8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 204c91eff798a ("KVM: selftests: do not blindly clobber registers in
- guest asm") was intended to make test more gcc-proof, however, the result
-is exactly the opposite: on newer gccs (e.g. 8.2.1)  the test breaks with
+Check quota type in early stage so we can avoid many
+unncessary operations when the type is wrong.
 
-==== Test Assertion Failure ====
-  x86_64/sync_regs_test.c:168: run->s.regs.regs.rbx == 0xBAD1DEA + 1
-  pid=14170 tid=14170 - Invalid argument
-     1	0x00000000004015b3: main at sync_regs_test.c:166 (discriminator 6)
-     2	0x00007f413fb66412: ?? ??:0
-     3	0x000000000040191d: _start at ??:?
-  rbx sync regs value incorrect 0x1.
-
-Disassembly show the following:
-
-00000000004019e0 <guest_code>:
-  4019e0:       55                      push   %rbp
-  4019e1:       89 dd                   mov    %ebx,%ebp
-  4019e3:       53                      push   %rbx
-  4019e4:       48 83 ec 08             sub    $0x8,%rsp
-  4019e8:       0f 1f 84 00 00 00 00    nopl   0x0(%rax,%rax,1)
-  4019ef:       00
-  4019f0:       31 c9                   xor    %ecx,%ecx
-  4019f2:       ba 10 90 40 00          mov    $0x409010,%edx
-  4019f7:       be 02 00 00 00          mov    $0x2,%esi
-  4019fc:       31 c0                   xor    %eax,%eax
-  4019fe:       bf 01 00 00 00          mov    $0x1,%edi
-  401a03:       83 c5 01                add    $0x1,%ebp
-  401a06:       e8 15 2b 00 00          callq  404520 <ucall>
-  401a0b:       89 eb                   mov    %ebp,%ebx
-  401a0d:       eb e1                   jmp    4019f0 <guest_code+0x10>
-  401a0f:       90                      nop
-
-and apparently this is broken. If we add 'volatile' qualifier to 'stage'
-we get the following code:
-
-00000000004019e0 <guest_code>:
-  4019e0:       53                      push   %rbx
-  4019e1:       0f 1f 80 00 00 00 00    nopl   0x0(%rax)
-  4019e8:       31 c9                   xor    %ecx,%ecx
-  4019ea:       ba 10 90 40 00          mov    $0x409010,%edx
-  4019ef:       be 02 00 00 00          mov    $0x2,%esi
-  4019f4:       31 c0                   xor    %eax,%eax
-  4019f6:       bf 01 00 00 00          mov    $0x1,%edi
-  4019fb:       83 c3 01                add    $0x1,%ebx
-  4019fe:       e8 1d 2b 00 00          callq  404520 <ucall>
-  401a03:       eb e3                   jmp    4019e8 <guest_code+0x8>
-  401a05:       66 66 2e 0f 1f 84 00    data16 nopw %cs:0x0(%rax,%rax,1)
-  401a0c:       00 00 00 00
-
-and everything seems to work. The only problem is that I now get a new
-warning from gcc:
-
-x86_64/sync_regs_test.c: In function ‘guest_code’:
-x86_64/sync_regs_test.c:25:6: warning: optimization may eliminate reads
- and/or writes to register variables [-Wvolatile-register-var]
-
-checkpatch.pl doesn't like me either:
-
-"WARNING: Use of volatile is usually wrong: see
- Documentation/process/volatile-considered-harmful.rst"
-
-I can think of an 'ultimate' solution to open code ucall() in a single
-asm block making sure the register we need is preserved but this looks
-like an overkill.
-
-Fixes: 204c91eff798a ("KVM: selftests: do not blindly clobber registers in guest asm")
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
 ---
- tools/testing/selftests/kvm/x86_64/sync_regs_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/quota/quota.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/tools/testing/selftests/kvm/x86_64/sync_regs_test.c b/tools/testing/selftests/kvm/x86_64/sync_regs_test.c
-index 11c2a70a7b87..25c54250d591 100644
---- a/tools/testing/selftests/kvm/x86_64/sync_regs_test.c
-+++ b/tools/testing/selftests/kvm/x86_64/sync_regs_test.c
-@@ -28,7 +28,7 @@ void guest_code(void)
- 	 * use a callee-save register, otherwise the compiler
- 	 * saves it around the call to GUEST_SYNC.
- 	 */
--	register u32 stage asm("rbx");
-+	register volatile u32 stage asm("rbx");
- 	for (;;) {
- 		GUEST_SYNC(0);
- 		stage++;
--- 
-2.20.1
+diff --git a/fs/quota/quota.c b/fs/quota/quota.c
+index cb13fb76dbee..5444d3c4d93f 100644
+--- a/fs/quota/quota.c
++++ b/fs/quota/quota.c
+@@ -60,8 +60,6 @@ static int quota_sync_all(int type)
+ {
+ =09int ret;
+=20
+-=09if (type >=3D MAXQUOTAS)
+-=09=09return -EINVAL;
+ =09ret =3D security_quotactl(Q_SYNC, type, 0, NULL);
+ =09if (!ret)
+ =09=09iterate_supers(quota_sync_one, &type);
+@@ -686,8 +684,6 @@ static int do_quotactl(struct super_block *sb, int type=
+, int cmd, qid_t id,
+ {
+ =09int ret;
+=20
+-=09if (type >=3D MAXQUOTAS)
+-=09=09return -EINVAL;
+ =09type =3D array_index_nospec(type, MAXQUOTAS);
+ =09/*
+ =09 * Quota not supported on this fs? Check this before s_quota_types
+@@ -831,6 +827,9 @@ int kernel_quotactl(unsigned int cmd, const char __user=
+ *special,
+ =09cmds =3D cmd >> SUBCMDSHIFT;
+ =09type =3D cmd & SUBCMDMASK;
+=20
++=09if (type >=3D MAXQUOTAS)
++=09=09return -EINVAL;
++
+ =09/*
+ =09 * As a special case Q_SYNC can be called without a specific device.
+ =09 * It will iterate all superblocks that have quota enabled and call
+--=20
+2.21.0
+
+
 
