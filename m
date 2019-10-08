@@ -2,80 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8234CFB20
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 15:16:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23643CFB2E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 15:21:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731073AbfJHNQA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 09:16:00 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:46780 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730439AbfJHNQA (ORCPT
+        id S1730737AbfJHNVA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 09:21:00 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45128 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730316AbfJHNVA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 09:16:00 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x98D8tM7163596;
-        Tue, 8 Oct 2019 13:15:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=ipRechiw780jXrMMe1Cvbd53h+EID/P4q8QMm+dXalk=;
- b=gZW3cLAgKrXSuzptNZ7Mb5WsgSLw26Jgv6KrU9O/bnmrM1eBHtFfC4J4b64MlEt4h6mv
- 8N53EfvlYBA/Sn0I3ULitLnsj7mQ229AIlhQ1iYS1FDSw+JTXkdILNizyiOUcCmOlyBH
- qZYcuRUlWYlNxTx30BzDt5hss0p2MCm7YU1xa1xj1C+RKbcyy/LmYa8EvNsEclyw07Un
- ZOi8boC2mOM/C7PsQ2s1uBIr3Mme+GEG/kOCLSO0LFSMIvpkys6g39vhCft5g977jr2I
- h91zRyCScDAxiBlZ7au8CLSU9tBlJfitIosFnX5kozLFZoF0KMavPI18f44uMrdn5mso GQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2vek4qd51y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 08 Oct 2019 13:15:29 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x98DDQEC001904;
-        Tue, 8 Oct 2019 13:15:28 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2vg206963q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 08 Oct 2019 13:15:28 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x98DFQsL027920;
-        Tue, 8 Oct 2019 13:15:26 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 08 Oct 2019 06:15:25 -0700
-Date:   Tue, 8 Oct 2019 16:15:18 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Matteo Croce <mcroce@redhat.com>
-Cc:     Eric Anholt <eric@anholt.net>, Stefan Wahren <wahrenst@gmx.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Subject: Re: [PATCH] staging: vchiq: don't leak kernel address
-Message-ID: <20191008131518.GH25098@kadam>
-References: <20191008123346.3931-1-mcroce@redhat.com>
+        Tue, 8 Oct 2019 09:21:00 -0400
+Received: by mail-wr1-f66.google.com with SMTP id r5so19320763wrm.12
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 06:20:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6RWTxHt7zKzXfYPhwl9vO4EuXYxc6AyULIB2uI0LmfM=;
+        b=cNq1Ed5GzasuMH1y9ug9vDcF22n6vlCP/1FO1m7fvDDoOLyWcX78rM8DONBByZA2Zb
+         Gskb17VHPu1a9HWj7EH6TUDdxGVoicMlQ8W4qJXy+KRz5k4fm4PhFv4GHsHPJIQZ0Jqv
+         GP5fDn3k5yyZUj3xjRbO/gO9AhSkqWdcKF8oS8v1uoaZ/BGUMHbum5nXQMcC40RhxHlV
+         w+ByZ3LHXh9535tKnWf0DaHjjJT+4kf2nE6JHLzzUkIjNOrTvmony6bF22PctzqqJVoh
+         vD50IGmZjnoAJS+P767MtqDmVQhDU1LXnjxuuDiKemFKb5wqjt1PLxlzpNFpd6KwOSji
+         f6TA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6RWTxHt7zKzXfYPhwl9vO4EuXYxc6AyULIB2uI0LmfM=;
+        b=XkN7sKsUc/7JjF6zPiyXCKBYn2xLFuMIEkgm62H4VXUtTk5KY9fq2YEQkejMPePhb4
+         PTIXSzCLMmejKdhWoKZluslS7qKo1cYEzIpzWtWqL3tZZkSTBO+Po+RFqmXWjrf+kwrO
+         42yODFn7ULRMdiztPaD1k00Pkdzg8CA5rJiculq3I0mem6BcUFBMDaOK8yM7OFokNR06
+         uO8iC8sV1Pj9+RrWdNYQUu4eWOiY2DeFMrNvnSq0AdXn33EaOgIWQCdeCa0Viytxf+Mo
+         fvvh83+2YMSvds4pEExpb7nhIsbm3jyuxbO3D82MzDuvWUk1aJu4XDSm8vS87Qwp3oZu
+         vfOw==
+X-Gm-Message-State: APjAAAUEuvyryDlGeL68cuTKDdiFNIHTNiaJmYkyAlLpYSyn7n8Nc+/X
+        DRMGc5aCCKg8p+/dyNxuSlNf8w==
+X-Google-Smtp-Source: APXvYqyCXe2mCxlJgegBeQiMsMW/DceUIxnKsxEr5RLMHNcvj7L1A4ab4Pzav+WZ/SrQVlRdEVrk/g==
+X-Received: by 2002:a05:6000:1204:: with SMTP id e4mr20944912wrx.5.1570540857894;
+        Tue, 08 Oct 2019 06:20:57 -0700 (PDT)
+Received: from wychelm.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id t8sm18237214wrx.76.2019.10.08.06.20.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2019 06:20:57 -0700 (PDT)
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Jason Wessel <jason.wessel@windriver.com>,
+        Douglas Anderson <dianders@chromium.org>
+Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
+        kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        patches@linaro.org
+Subject: [PATCH v2 0/5] kdb: Cleanup code to read user input and handle escape sequences
+Date:   Tue,  8 Oct 2019 14:20:38 +0100
+Message-Id: <20191008132043.7966-1-daniel.thompson@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191008123346.3931-1-mcroce@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9403 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=674
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910080127
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9403 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=755 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910080127
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The subject doesn't match the patch.  It should just be "remove useless
-printk".
+I've been meaning to repost this for some time, and inspired by
+having someone keen to review it, I dug it out again!
 
-regards,
-dan carpenter
+I split this as carefully as I could into small pieces but the original
+code was complex so even in small bits it doesn't make for light
+reading.  Things do make more sense once you realize/remember that
+escape_delay is a count down timer that expires the escape sequences!
+
+Most of the patches are simple tidy ups although patches 4 and 5
+introduce new behaviours. Patch 4 shouldn't be controversial but
+perhaps patch 5 is (although hopefully not ;-) ).
+
+Mostly this is auto tested, see here:
+https://github.com/daniel-thompson/kgdbtest/commit/c65e28d99357c2df6dac2cebe195574e634d04dc
+
+Changes in v2:
+
+ - Improve comment in patch 4 to better describe what is happening
+ - Rebase on v5.4-rc2
+
+Daniel Thompson (5):
+  kdb: Tidy up code to handle escape sequences
+  kdb: Simplify code to fetch characters from console
+  kdb: Remove special case logic from kdb_read()
+  kdb: Improve handling of characters from different input sources
+  kdb: Tweak escape handling for vi users
+
+ kernel/debug/kdb/kdb_io.c | 222 ++++++++++++++++++--------------------
+ 1 file changed, 103 insertions(+), 119 deletions(-)
+
+--
+2.21.0
 
