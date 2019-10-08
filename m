@@ -2,84 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C82B4CFBCC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:01:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B895CFBCF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:02:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726293AbfJHOAw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 10:00:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51468 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725848AbfJHOAw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 10:00:52 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6D70DB1A9;
-        Tue,  8 Oct 2019 14:00:50 +0000 (UTC)
-Date:   Tue, 8 Oct 2019 16:00:49 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Christian Kellner <ckellner@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Christian Kellner <christian@kellner.me>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Roman Gushchin <guro@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Dmitry V. Levin" <ldv@altlinux.org>
-Subject: Re: [PATCH] pidfd: show pids for nested pid namespaces in fdinfo
-Message-ID: <20191008140049.GM6681@dhcp22.suse.cz>
-References: <20191008133641.23019-1-ckellner@redhat.com>
- <20191008135258.mzc7o2djiq5yydko@wittgenstein>
+        id S1726489AbfJHOCG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 10:02:06 -0400
+Received: from mga06.intel.com ([134.134.136.31]:12455 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725848AbfJHOCG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 10:02:06 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2019 07:02:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,270,1566889200"; 
+   d="scan'208";a="206639741"
+Received: from kuha.fi.intel.com ([10.237.72.53])
+  by fmsmga001.fm.intel.com with SMTP; 08 Oct 2019 07:02:00 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 08 Oct 2019 17:01:59 +0300
+Date:   Tue, 8 Oct 2019 17:01:59 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] extcon: axp288: Move to swnodes
+Message-ID: <20191008140159.GC12909@kuha.fi.intel.com>
+References: <20191008122600.22340-1-heikki.krogerus@linux.intel.com>
+ <8120fbf2-08d3-6ee2-21bf-458a4e12b29c@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191008135258.mzc7o2djiq5yydko@wittgenstein>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <8120fbf2-08d3-6ee2-21bf-458a4e12b29c@redhat.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 08-10-19 15:52:59, Christian Brauner wrote:
-> On Tue, Oct 08, 2019 at 03:36:37PM +0200, Christian Kellner wrote:
-> > From: Christian Kellner <christian@kellner.me>
+On Tue, Oct 08, 2019 at 03:59:23PM +0200, Hans de Goede wrote:
+> Hi,
+> 
+> On 08-10-2019 14:25, Heikki Krogerus wrote:
+> > Hi Hans,
 > > 
-> > The fdinfo file for a process file descriptor already contains the
-> > pid of the process in the callers namespaces. Additionally, if pid
-> > namespaces are configured, show the process ids of the process in
-> > all nested namespaces in the same format as in the procfs status
-> > file, i.e. "NSPid:\t%d\%d...". This allows the easy identification
-> > of the processes in nested namespaces.
+> > Fixed the compiler warning in this version. No other changes.
 > > 
-> > Signed-off-by: Christian Kellner <christian@kellner.me>
+> > The original cover letter:
+> > 
+> > That AXP288 extcon driver is the last that uses build-in connection
+> > description. I'm replacing it with a code that finds the role mux
+> > software node instead.
+> > 
+> > I'm proposing also here a little helper
+> > usb_role_switch_find_by_fwnode() that uses
+> > class_find_device_by_fwnode() to find the role switches.
 > 
-> Yeah, makes sense to me.
-> Note that if you send the pidfd to a sibling pid namespace NSpid won't
-> show you anything useful. But that's what I'd expect security wise. You
-> should only be able to snoop on descendant pid namespaces.
+> Both patches look good to me and I can confirm that things still
+> work as they should on a CHT device with an AXP288 PMIC, so for both:
 > 
-> Please add a test for this to verify that this all works correctly and
-> then resend. The tests live in tools/testing/selftests/pidfd/ and should
-> already have most of the infrastructure there. The fdinfo parsing code
-> should be in samples/pidfd/ which
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> Tested-by: Hans de Goede <hdegoede@redhat.com>
 > 
-> For the patch itself:
+> Regards,
 > 
-> Reviewed-by: Christian Brauner <christian.brauner@ubuntu.com>
+> Hans
 > 
-> You can resend with my Reviewed-by retained if you don't change
-> anything. Before I see tests I'll hold off on merging this. ;)
+> p.s.
+> 
+> I guess this means we can remove the build-in connection (
+> device_connection_add / remove) stuff now?
 
-This is also forming a new user visible "api" right? So the make sure
-that linux-api is on the Cc list.
+Yes. I'll prepare separate patches for that.
 
-And one minore note. The ifdefery is just ugly, could you just make it a
-separate function with ifdef hidden inside?
+thanks,
+
 -- 
-Michal Hocko
-SUSE Labs
+heikki
