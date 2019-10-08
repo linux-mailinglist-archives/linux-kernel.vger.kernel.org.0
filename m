@@ -2,118 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2096ED016D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 21:47:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4D6ED0177
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 21:50:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730535AbfJHTrY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 15:47:24 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:55311 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729385AbfJHTrY (ORCPT
+        id S1730533AbfJHTum (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 15:50:42 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42004 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729385AbfJHTum (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 15:47:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1570564043;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=OiLraLEOHVJMQW3DZM6T811AWApI3wm6nU4uAi5YLA4=;
-        b=fSjxWfWuntY7x4DKEd4necUVWR3P2cL+HGTTsGAoh+5JPGdm7gyg/saXURl8Q/PcQEBIVl
-        p/cSRsaOp8RCSHu5e2KxoFQFHFZTkD21xbBZ5MwDb+lArdy25a9M/FOLKGumPepMfT6Uo7
-        F2OVKPnrfP5lqafHjhMfTeNG6LUjejo=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-53-beo1XltJNGWqfrB7AIed_Q-1; Tue, 08 Oct 2019 15:47:21 -0400
-Received: by mail-wr1-f69.google.com with SMTP id 32so9592008wrk.15
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 12:47:21 -0700 (PDT)
+        Tue, 8 Oct 2019 15:50:42 -0400
+Received: by mail-pf1-f193.google.com with SMTP id q12so11393883pff.9
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 12:50:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=m4uzQSP3Au83CY4u9n7jhItUEp/vcRKY4n5Lv4fKXM4=;
+        b=NEknN+AncK8N4y3dBTFRjlKwCZTSN45tB2R19Wdue51byzRgFK6nM32RciwiCAIrZZ
+         xFqf5RC0mQTk3lG5OYT8jlQFtxEBNHC9dp5Dhh2m3Q9+oWws25Vy7E6OKTWyvUj2aAbJ
+         H6ONAOSSaHWDlCR1ES2lfPvBhbkhjW1I+N6Xs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=9PwM6aqKCiJLV+IIYiBNTz1lzh80V+pvcsEJSuL6Dsk=;
-        b=sp8gbRow5n5OlBohsP/sRBmhXUs9sH3R1sTKDRj0173HPxrtAlJ2hEM3F66osA5b3A
-         BfqbelNKAQr9LO/cUz2z0PD++GYcouL3xO21ymdSxq1ouSxuBzaLwjxcVGw2cfUFcMOg
-         GWe3OouNyz3Ts4kH+D/B2bdgXg5wdYntoDpILZAzBpJvHsjTaf4+s24i8mCP/QZFGTmP
-         frqwMvEawOAUOjrg9mAJ6KUlMFMpr+Y9IHwbaKrzC/oA/ST65+i56MRRA8BhR721UCnO
-         tza/vBWfK7sHxLD9zONlZD06YFIQA46XJBb8D5/j/d472dp+uxlWpDcl6KWvhUi0pFIh
-         YvZg==
-X-Gm-Message-State: APjAAAVvGIHlPyVqOWrZMBbNK6f2otcrTI6h2xcpWa/IiWzJmKxEndoM
-        FGsCsicUE9kJonlDJmFYbQvRWStfc1aietkdPBH+IGSNCJzhZcegEBoEssaMCaU8jWe4cKBnmyu
-        xf8Csk/oMdK55NwC9VylcRXzM
-X-Received: by 2002:a7b:cd1a:: with SMTP id f26mr4831610wmj.71.1570564040738;
-        Tue, 08 Oct 2019 12:47:20 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxJlALWevvlEenjVPCyVJrYw0c1CrRdaL/NdPL7Y1i+9HYclK/R/sOgnLBu6GUskCbDEiEI/A==
-X-Received: by 2002:a7b:cd1a:: with SMTP id f26mr4831588wmj.71.1570564040470;
-        Tue, 08 Oct 2019 12:47:20 -0700 (PDT)
-Received: from vitty.brq.redhat.com ([95.82.135.158])
-        by smtp.gmail.com with ESMTPSA id x5sm17615412wrt.75.2019.10.08.12.47.19
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=m4uzQSP3Au83CY4u9n7jhItUEp/vcRKY4n5Lv4fKXM4=;
+        b=B2WJMSH1X9CAHRgf5U+7F2VgyMnRpHLgeUKtlAZJyik2nlbDIgrJHteQMzN5KnVqoS
+         Yd87N1M22WJXhhDpUZ/bvNOyhIX9knhFrF9M4IexJHxSpeTJf6eh2V6/Rj8oe0bwGGMr
+         uVOpJaaIJ6FILn4Ki02D+CD1w/BN3s3F/V1L4KkqDZVI1wjqTxzbfX+7pr/8Tj5szW73
+         N+kJar5ZFcWpV1bQ6sIUrzyzojN5nvHA1eV2QQb//r0EZCG49IjHBMptZHrv4bSjSzZU
+         CMsaSRUAPn+WNAGl80Ep0YdkdnTot33Et8GYkbz97HnsznqVvNGOhYLFoTWMTXLW08eY
+         B0ng==
+X-Gm-Message-State: APjAAAXcJgIdJHx6WHHkUXnUlClmvmarVGCmSdNoFaw9eiTunx5xTSAi
+        vwMUF3z46GKQT1/KJAePDpJzTA==
+X-Google-Smtp-Source: APXvYqzF88Vn4VUDh5dsiErTZYveKRuzhv1DkFqI04BEQC732nyRt5k8P/3eBe/8j0xqwAB7yvXHCw==
+X-Received: by 2002:a17:90a:730a:: with SMTP id m10mr6682606pjk.80.1570564239809;
+        Tue, 08 Oct 2019 12:50:39 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id 30sm13313pjk.25.2019.10.08.12.50.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2019 12:47:19 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Andrea Parri <parri.andrea@gmail.com>,
-        Dexuan Cui <decui@microsoft.com>
-Cc:     "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-hyperv\@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>
-Subject: Re: [PATCH 0/2] Drivers: hv: vmbus: Miscellaneous improvements
-In-Reply-To: <20191008150847.GA15276@andrea>
-References: <20191007163115.26197-1-parri.andrea@gmail.com> <PU1P153MB01691E9B0DD83E521B1E12C0BF9B0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM> <20191008150847.GA15276@andrea>
-Date:   Tue, 08 Oct 2019 21:47:18 +0200
-Message-ID: <87imozyq7t.fsf@vitty.brq.redhat.com>
+        Tue, 08 Oct 2019 12:50:39 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        Sean Paul <seanpaul@chromium.org>, devicetree@vger.kernel.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] arm64: dts: rockchip: Fix override mode for rk3399-kevin panel
+Date:   Tue,  8 Oct 2019 12:49:54 -0700
+Message-Id: <20191008124949.1.I674acd441997dd0690c86c9003743aacda1cf5dd@changeid>
+X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
 MIME-Version: 1.0
-X-MC-Unique: beo1XltJNGWqfrB7AIed_Q-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrea Parri <parri.andrea@gmail.com> writes:
+When I re-posted Sean's original commit to add the override mode for
+the kevin panel, for some reason I didn't notice that the pixel clock
+wasn't quite right.  Looking at /sys/kernel/debug/clk/clk_summary on
+downstream kernels it can be seen that the VOP clock is supposed to be
+266,666,667 Hz achieved by dividing the 800 MHz PLL by 3.
 
-> On Mon, Oct 07, 2019 at 05:41:10PM +0000, Dexuan Cui wrote:
->> > From: linux-hyperv-owner@vger.kernel.org
->> > <linux-hyperv-owner@vger.kernel.org> On Behalf Of Andrea Parri
->> > Sent: Monday, October 7, 2019 9:31 AM
->> >=20
->> > Hi all,
->> >=20
->> > The patchset:
->> >=20
->> > - simplifies/refactors the VMBus negotiation code by introducing
->> >   the table of VMBus protocol versions (patch 1/2),
->> >=20
->> > - enables VMBus protocol versions 5.1 and 5.2 (patch 2/2).
->> >=20
->> > Thanks,
->> >   Andrea
->> >=20
->> > Andrea Parri (2):
->> >   Drivers: hv: vmbus: Introduce table of VMBus protocol versions
->> >   Drivers: hv: vmbus: Enable VMBus protocol versions 5.1 and 5.2
->>=20
->> Should we add a module parameter to allow the user to specify a lower
->> protocol version, when the VM runs on the latest host?=20
->>=20
->> This can be useful for testing and debugging purpose: the variable
->> "vmbus_proto_version" is referenced by the vmbus driver itself and
->> some VSC drivers: if we always use the latest available proto version,
->> some code paths can not be tested on the latest hosts.=20
->
-> The idea is appealing to me (altough I made no attempt to implement/test
-> it yet).  What do others think about this?  Maybe can be considered as a
-> follow-up patch/work to this series?
+Looking at history, it seems that even Sean's first patch [1] had this
+funny clock rate.  I'm not sure where it came from since the commit
+message specifically mentioned 26666 kHz and the Chrome OS tree [2]
+can be seen to request 266667 kHz.
 
-IMO such debug option makes sense, it shouldn be a simple patch so you
-may want to squeeze it in this series as it will definitely have code
-dependencies.
+In any case, let's fix it up.  This together with my patch [3] to do
+the proper rounding when setting the clock rate makes the VOP clock
+more proper as seen in /sys/kernel/debug/clk/clk_summary.
 
---=20
-Vitaly
+[1] https://lore.kernel.org/r/20180206165626.37692-4-seanpaul@chromium.org
+[2] https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-4.4/drivers/gpu/drm/panel/panel-simple.c#1172
+[3] https://lkml.kernel.org/r/20191003114726.v2.1.Ib233b3e706cf6317858384264d5b0ed35657456e@changeid
+
+Fixes: 84ebd2da6d04 ("arm64: dts: rockchip: Specify override mode for kevin panel")
+Cc: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
+
+ arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts b/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts
+index e152b0ca0290..b8066868a3fe 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts
+@@ -44,7 +44,7 @@
+ 		power-supply = <&pp3300_disp>;
+ 
+ 		panel-timing {
+-			clock-frequency = <266604720>;
++			clock-frequency = <266666667>;
+ 			hactive = <2400>;
+ 			hfront-porch = <48>;
+ 			hback-porch = <84>;
+-- 
+2.23.0.581.g78d2f28ef7-goog
 
