@@ -2,86 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39280CF25F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 08:05:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C4AFCF285
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 08:13:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730024AbfJHGFb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 02:05:31 -0400
-Received: from mga17.intel.com ([192.55.52.151]:38069 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728297AbfJHGFb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 02:05:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2019 23:05:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,269,1566889200"; 
-   d="scan'208";a="206577319"
-Received: from wpross-mobl.ger.corp.intel.com (HELO localhost) ([10.252.55.86])
-  by fmsmga001.fm.intel.com with ESMTP; 07 Oct 2019 23:05:09 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Alex Deucher <alexdeucher@gmail.com>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jiri Kosina <trivial@kernel.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        lima@lists.freedesktop.org,
-        nouveau <nouveau@lists.freedesktop.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH TRIVIAL v2] gpu: Fix Kconfig indentation
-In-Reply-To: <CAJKOXPeVFeSDpxPv-rDywCafWbN3mivtcM3UQX_+wZkyPcZwPQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20191004144549.3567-1-krzk@kernel.org> <87sgo4hjii.fsf@intel.com> <CADnq5_MqGehpWwOAxYg0T2x3qXisqmae2uGG5dijQX+Aa4NsoQ@mail.gmail.com> <CAJKOXPeVFeSDpxPv-rDywCafWbN3mivtcM3UQX_+wZkyPcZwPQ@mail.gmail.com>
-Date:   Tue, 08 Oct 2019 09:05:49 +0300
-Message-ID: <87v9szdb5u.fsf@intel.com>
+        id S1730063AbfJHGNo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 02:13:44 -0400
+Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:49741 "EHLO
+        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729987AbfJHGNn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 02:13:43 -0400
+Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
+        by ATCSQR.andestech.com with ESMTP id x985u7EV075289;
+        Tue, 8 Oct 2019 13:56:07 +0800 (GMT-8)
+        (envelope-from nickhu@andestech.com)
+Received: from atcsqa06.andestech.com (10.0.15.65) by ATCPCS16.andestech.com
+ (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Tue, 8 Oct 2019
+ 14:11:59 +0800
+From:   Nick Hu <nickhu@andestech.com>
+To:     <alankao@andestech.com>, <paul.walmsley@sifive.com>,
+        <palmer@sifive.com>, <aou@eecs.berkeley.edu>,
+        <aryabinin@virtuozzo.com>, <glider@google.com>,
+        <dvyukov@google.com>, <corbet@lwn.net>, <alexios.zavras@intel.com>,
+        <allison@lohutok.net>, <Anup.Patel@wdc.com>, <tglx@linutronix.de>,
+        <gregkh@linuxfoundation.org>, <atish.patra@wdc.com>,
+        <kstewart@linuxfoundation.org>, <linux-doc@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <kasan-dev@googlegroups.com>, <linux-mm@kvack.org>
+CC:     Nick Hu <nickhu@andestech.com>
+Subject: [PATCH v3 0/3] KASAN support for RISC-V
+Date:   Tue, 8 Oct 2019 14:11:50 +0800
+Message-ID: <cover.1570514544.git.nickhu@andestech.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
 Content-Type: text/plain
+X-Originating-IP: [10.0.15.65]
+X-DNSRBL: 
+X-MAIL: ATCSQR.andestech.com x985u7EV075289
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 07 Oct 2019, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Mon, 7 Oct 2019 at 18:09, Alex Deucher <alexdeucher@gmail.com> wrote:
->>
->> On Mon, Oct 7, 2019 at 7:39 AM Jani Nikula <jani.nikula@linux.intel.com> wrote:
->> >
->> > On Fri, 04 Oct 2019, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> > >  drivers/gpu/drm/i915/Kconfig             |  12 +-
->> > >  drivers/gpu/drm/i915/Kconfig.debug       | 144 +++++++++++------------
->> >
->> > Please split these out to a separate patch. Can't speak for others, but
->> > the patch looks like it'll be conflicts galore and a problem to manage
->> > if merged in one big lump.
->>
->> Yes, it would be nice to have the amd patch separate as well.
->
-> I'll split the AMD and i915 although I am not sure if it is sense to
-> split such trivial patch per each driver.
+KASAN is an important runtime memory debugging feature in linux kernel
+which can detect use-after-free and out-of-bounds problems.
 
-Thanks.
+Changes in v2:
+  - Remove the porting of memmove and exclude the check instead.
+  - Fix some code noted by Christoph Hellwig
 
-See MAINTAINERS, many of the drivers are maintained in the same drm-misc
-repo, and it makes no difference to split those.
+Changes in v3:
+  - Update the KASAN documentation to mention that riscv is supported.
 
-In general it's, well, trivial to split up patches like this per driver
-or repo, but not splitting it up generates extra busywork in managing
-conflicts until some common merge/backmerge happens. We just want to
-apply the patch and forget about it, instead of dealing with a trivial
-whitespace cleanup many times over.
+Nick Hu (3):
+  kasan: Archs don't check memmove if not support it.
+  riscv: Add KASAN support
+  kasan: Add riscv to KASAN documentation.
 
-BR,
-Jani.
-
+ Documentation/dev-tools/kasan.rst   |   4 +-
+ arch/riscv/Kconfig                  |   1 +
+ arch/riscv/include/asm/kasan.h      |  27 ++++++++
+ arch/riscv/include/asm/pgtable-64.h |   5 ++
+ arch/riscv/include/asm/string.h     |   9 +++
+ arch/riscv/kernel/head.S            |   3 +
+ arch/riscv/kernel/riscv_ksyms.c     |   2 +
+ arch/riscv/kernel/setup.c           |   5 ++
+ arch/riscv/kernel/vmlinux.lds.S     |   1 +
+ arch/riscv/lib/memcpy.S             |   5 +-
+ arch/riscv/lib/memset.S             |   5 +-
+ arch/riscv/mm/Makefile              |   6 ++
+ arch/riscv/mm/kasan_init.c          | 104 ++++++++++++++++++++++++++++
+ mm/kasan/common.c                   |   2 +
+ 14 files changed, 173 insertions(+), 6 deletions(-)
+ create mode 100644 arch/riscv/include/asm/kasan.h
+ create mode 100644 arch/riscv/mm/kasan_init.c
 
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+2.17.0
+
