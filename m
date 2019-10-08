@@ -2,92 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6401ECF542
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 10:47:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF317CF54B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 10:49:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730262AbfJHIrz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 04:47:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42592 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730137AbfJHIrz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 04:47:55 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DD2F1AFAE;
-        Tue,  8 Oct 2019 08:47:52 +0000 (UTC)
-Date:   Tue, 8 Oct 2019 10:47:51 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Qian Cai <cai@lca.pw>, tj@kernel.org, vdavydov.dev@gmail.com,
-        hannes@cmpxchg.org, guro@fb.com, cl@linux.com, penberg@kernel.org,
-        rientjes@google.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] mm/slub: fix a deadlock in show_slab_objects()
-Message-ID: <20191008084751.GD6681@dhcp22.suse.cz>
-References: <1570192309-10132-1-git-send-email-cai@lca.pw>
- <20191004125701.GJ9578@dhcp22.suse.cz>
- <20191007081621.GE2381@dhcp22.suse.cz>
- <20191007145902.a1ae6aac11c29d466a445a94@linux-foundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191007145902.a1ae6aac11c29d466a445a94@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1730401AbfJHItF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 04:49:05 -0400
+Received: from mga07.intel.com ([134.134.136.100]:30193 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729767AbfJHItF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 04:49:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2019 01:49:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,270,1566889200"; 
+   d="scan'208";a="223175848"
+Received: from unknown (HELO ubuntu.localdomain) ([10.226.250.216])
+  by fmsmga002.fm.intel.com with ESMTP; 08 Oct 2019 01:49:02 -0700
+From:   Joyce Ooi <joyce.ooi@intel.com>
+To:     Dinh Nguyen <dinguyen@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Joyce Ooi <joyce.ooi@intel.com>,
+        Ong Hean Loong <hean.loong.ong@intel.com>,
+        See Chin Liang <chin.liang.see@intel.com>,
+        Tan Ley Foon <ley.foon.tan@intel.com>
+Subject: [PATCH] arm64: dts: altera: update QSPI reg addresses for Stratix10
+Date:   Tue,  8 Oct 2019 01:48:59 -0700
+Message-Id: <1570524539-7411-1-git-send-email-joyce.ooi@intel.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 07-10-19 14:59:02, Andrew Morton wrote:
-> On Mon, 7 Oct 2019 10:16:21 +0200 Michal Hocko <mhocko@kernel.org> wrote:
-> 
-> > On Fri 04-10-19 14:57:01, Michal Hocko wrote:
-> > > On Fri 04-10-19 08:31:49, Qian Cai wrote:
-> > > > Long time ago, there fixed a similar deadlock in show_slab_objects()
-> > > > [1]. However, it is apparently due to the commits like 01fb58bcba63
-> > > > ("slab: remove synchronous synchronize_sched() from memcg cache
-> > > > deactivation path") and 03afc0e25f7f ("slab: get_online_mems for
-> > > > kmem_cache_{create,destroy,shrink}"), this kind of deadlock is back by
-> > > > just reading files in /sys/kernel/slab which will generate a lockdep
-> > > > splat below.
-> > > > 
-> > > > Since the "mem_hotplug_lock" here is only to obtain a stable online node
-> > > > mask while racing with NUMA node hotplug, in the worst case, the results
-> > > > may me miscalculated while doing NUMA node hotplug, but they shall be
-> > > > corrected by later reads of the same files.
-> > > 
-> > > I think it is important to mention that this doesn't expose the
-> > > show_slab_objects to use-after-free. There is only a single path that
-> > > might really race here and that is the slab hotplug notifier callback
-> > > __kmem_cache_shrink (via slab_mem_going_offline_callback) but that path
-> > > doesn't really destroy kmem_cache_node data structures.
-> 
-> Yes, I noted this during review.  It's a bit subtle and is worthy of
-> more than a changelog note, I think.  How about this?
-> 
-> --- a/mm/slub.c~mm-slub-fix-a-deadlock-in-show_slab_objects-fix
-> +++ a/mm/slub.c
-> @@ -4851,6 +4851,10 @@ static ssize_t show_slab_objects(struct
->  	 * already held which will conflict with an existing lock order:
->  	 *
->  	 * mem_hotplug_lock->slab_mutex->kernfs_mutex
-> +	 *
-> +	 * We don't really need mem_hotplug_lock (to hold off
-> +	 * slab_mem_going_offline_callback()) here because slab's memory hot
-> +	 * unplug code doesn't destroy the kmem_cache->node[] data.
->  	 */
+From: "Ooi, Joyce" <joyce.ooi@intel.com>
 
-Yes please! 
+This patch updates the reg addresses for QSPI boot and QSPI rootfs in
+the device tree for Stratix10
 
->  #ifdef CONFIG_SLUB_DEBUG
-> _
-> 
-> > Andrew, please add this to the changelog so that we do not have to
-> > scratch heads again when looking into that code.
-> 
-> I did that as well.
+Signed-off-by: Ooi, Joyce <joyce.ooi@intel.com>
+---
+ arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks!
+diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
+index 66e4ffb4e929..fb11ef05d556 100644
+--- a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
++++ b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
+@@ -178,12 +178,12 @@
+ 
+ 			qspi_boot: partition@0 {
+ 				label = "Boot and fpga data";
+-				reg = <0x0 0x4000000>;
++				reg = <0x0 0x034B0000>;
+ 			};
+ 
+ 			qspi_rootfs: partition@4000000 {
+ 				label = "Root Filesystem - JFFS2";
+-				reg = <0x4000000 0x4000000>;
++				reg = <0x034B0000 0x0EB50000>;
+ 			};
+ 		};
+ 	};
 -- 
-Michal Hocko
-SUSE Labs
+2.13.0
+
