@@ -2,101 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73071CFD23
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 17:06:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 011C5CFD2B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 17:08:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbfJHPGB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 11:06:01 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42244 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725839AbfJHPGB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 11:06:01 -0400
-Received: by mail-pf1-f193.google.com with SMTP id q12so10918174pff.9
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 08:06:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=tzsRg9pgEa9ifvg41ObkDkwx5TvwMyRk1wxFJpblvlg=;
-        b=G8uczl3RULQcRPZNuuCGSUomb/snylYiJ6arGsUloQ3Wa2+dSUqI/YENI2cilQPHq+
-         eA3+zmXi0bCaRtlqrEy+DS9RnTMUiUNxO7mtjIW0Oiv+ayXsEwyO1XyYkZs+MHOgW5wu
-         oo7eY39CvJcRKrVWmog/2bO2uGO+77/Ey6dQDwRu2cePnp97SenCamFTlNwEhPwdn30b
-         eKObB9wkms+pp9bQfr6USpdBqSs/idPOEUXkd5ziVWpP5BZomIUV9TSOmhWqXpWjNkHv
-         7mqwMZ5Q2KRhss4E0XnwCxFBcGdvFhuBOHQT+4vIwhLu6XPGYqhiiyZVyUyltufgpUw1
-         LQNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=tzsRg9pgEa9ifvg41ObkDkwx5TvwMyRk1wxFJpblvlg=;
-        b=qJ/FzhCNfjfqPM3C+mQ4PPsiSMnGjTPp4FXV4Yddd6Yvi4HLecmLplcAlFGNl9KJjX
-         ACrKrG6HTZ7pyrLeOwlyjPMKN1IMGO2HK6oyyGp9XhvIwaiDUwAe9bRr+vGBJ6r+8KLA
-         7ic/XbcN0BuLn4yylyr7/Y0sAt0Nf8YsWmeLWJs1jPWGeWExQ6Qq9P0cO++g7IHfdFyg
-         sqx6ZOb0IuowTvGRz6hS+32Y6LTK4Soj1hBY6987KTPcnu7LBnwSaIPTerHgl6pN03gR
-         pyZoPBsTmvXU5hfnvc8jMf+DLO8d6uWM7sUqHDTsLwHd5ksyaqj3hyDk0kn27RF9wEM9
-         b6rQ==
-X-Gm-Message-State: APjAAAVRfvSOXevgKLnfTiaTQT+s4X4fVcuMZvP2AC35RHldkTNaGFSO
-        90lHtzYsNcePPAAJ0AHrMbQsJA==
-X-Google-Smtp-Source: APXvYqxhixa3F/cEc785OVOZs0F2stbVxXL2Q91Zz8G3dA0FQLAg7s6F+eNuzgo0xQ6EBlfs3p8Uew==
-X-Received: by 2002:a65:48ca:: with SMTP id o10mr7551202pgs.116.1570547160188;
-        Tue, 08 Oct 2019 08:06:00 -0700 (PDT)
-Received: from localhost ([2601:602:9200:a1a5:8d4b:adae:e1eb:fe8e])
-        by smtp.gmail.com with ESMTPSA id u3sm17330522pfn.134.2019.10.08.08.05.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 08 Oct 2019 08:05:59 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Saurav Girepunje <saurav.girepunje@gmail.com>, balbi@kernel.org,
-        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     saurav.girepunje@hotmail.com
-Subject: Re: [PATCH] usb: dwc3: dwc3-meson-g12a.c: use devm_platform_ioremap_resource()
-In-Reply-To: <20191008102751.GA10401@saurav>
-References: <20191008102751.GA10401@saurav>
-Date:   Tue, 08 Oct 2019 08:05:58 -0700
-Message-ID: <7h7e5f5lbd.fsf@baylibre.com>
+        id S1727224AbfJHPHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 11:07:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38354 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725976AbfJHPHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 11:07:40 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45336206BB;
+        Tue,  8 Oct 2019 15:07:39 +0000 (UTC)
+Date:   Tue, 8 Oct 2019 11:07:37 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, mhiramat@kernel.org,
+        bristot@redhat.com, jbaron@akamai.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
+        ard.biesheuvel@linaro.org, jpoimboe@redhat.com
+Subject: Re: [PATCH v3 0/6] Rewrite x86/ftrace to use text_poke()
+Message-ID: <20191008110737.73803008@gandalf.local.home>
+In-Reply-To: <20191007081716.07616230.8@infradead.org>
+References: <20191007090225.44108711.6@infradead.org>
+        <20191007081716.07616230.8@infradead.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Saurav Girepunje <saurav.girepunje@gmail.com> writes:
+On Mon, 07 Oct 2019 10:17:16 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-> Use the new helper that wraps the calls to platform_get_resource()
-> and devm_ioremap_resource() together in dwc3_meson_g12a_probe().
->
-> Signed-off-by: Saurav Girepunje <saurav.girepunje@gmail.com>
+> Ftrace was one of the last W^X violators; these patches move it over to the
+> generic text_poke() interface and thereby get rid of this oddity.
+> 
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Ingo, Thomas or H.Peter,
 
-> ---
->  drivers/usb/dwc3/dwc3-meson-g12a.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/usb/dwc3/dwc3-meson-g12a.c b/drivers/usb/dwc3/dwc3-meson-g12a.c
-> index bca7e92a10e9..d73ccd9e1366 100644
-> --- a/drivers/usb/dwc3/dwc3-meson-g12a.c
-> +++ b/drivers/usb/dwc3/dwc3-meson-g12a.c
-> @@ -386,7 +386,6 @@ static int dwc3_meson_g12a_probe(struct platform_device *pdev)
->  	struct device		*dev = &pdev->dev;
->  	struct device_node	*np = dev->of_node;
->  	void __iomem *base;
-> -	struct resource *res;
->  	enum phy_mode otg_id;
->  	int ret, i, irq;
->  
-> @@ -394,8 +393,7 @@ static int dwc3_meson_g12a_probe(struct platform_device *pdev)
->  	if (!priv)
->  		return -ENOMEM;
->  
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	base = devm_ioremap_resource(dev, res);
-> +	base = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(base))
->  		return PTR_ERR(base);
->  
-> -- 
-> 2.20.1
+If it's OK with you, can you ack this series so that I can pull it
+through my tree? I have some code that will conflict with this that I
+want to write on top of it. As well as hammer it out to make sure
+ftrace works fine.
+
+Thanks!
+
+-- Steve
