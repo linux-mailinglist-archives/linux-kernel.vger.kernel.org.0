@@ -2,175 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8565CFB5A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 15:31:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03910CFB56
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 15:30:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731087AbfJHNbs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 09:31:48 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:46274 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730970AbfJHNbr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 09:31:47 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0F21A3082E72;
-        Tue,  8 Oct 2019 13:31:47 +0000 (UTC)
-Received: from gondolin (dhcp-192-202.str.redhat.com [10.33.192.202])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D6D2719D70;
-        Tue,  8 Oct 2019 13:31:41 +0000 (UTC)
-Date:   Tue, 8 Oct 2019 15:30:04 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Matthew Rosato <mjrosato@linux.ibm.com>
-Cc:     sebott@linux.ibm.com, gerald.schaefer@de.ibm.com,
-        pasic@linux.ibm.com, borntraeger@de.ibm.com, walling@linux.ibm.com,
-        linux-s390@vger.kernel.org, iommu@lists.linux-foundation.org,
-        joro@8bytes.org, linux-kernel@vger.kernel.org,
-        alex.williamson@redhat.com, kvm@vger.kernel.org,
-        heiko.carstens@de.ibm.com, robin.murphy@arm.com, gor@linux.ibm.com,
-        pmorel@linux.ibm.com
-Subject: Re: [PATCH v4 3/4] vfio: zpci: defining the VFIO headers
-Message-ID: <20191008153004.6be0e095.cohuck@redhat.com>
-In-Reply-To: <86647083-7f94-44aa-8856-103836906f36@linux.ibm.com>
-References: <1567815231-17940-1-git-send-email-mjrosato@linux.ibm.com>
-        <1567815231-17940-4-git-send-email-mjrosato@linux.ibm.com>
-        <20190919172009.71b1c246.cohuck@redhat.com>
-        <0a62aba7-578a-6875-da4d-13e8b145cf9b@linux.ibm.com>
-        <20190920160258.70631905.cohuck@redhat.com>
-        <86647083-7f94-44aa-8856-103836906f36@linux.ibm.com>
-Organization: Red Hat GmbH
+        id S1730827AbfJHNag (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 09:30:36 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:39946 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730317AbfJHNag (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 09:30:36 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x98DUQh5006610;
+        Tue, 8 Oct 2019 08:30:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1570541426;
+        bh=lQQiCwrpULzFgm3ZorluBP+qndxuBlCDA9JrLAelV6w=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=Jaw6DUR15NED4trF7LQ+GSvwQnDzExBq3Hw3+XQAUjz2dx1H93lPy4N2EqJid+ttr
+         27NfNH8KyRavgm/EqaJwjZVvZ5/S+CTftv0aR/rq2hNLfpUxzbBjxMzLtsb2Vm1nbt
+         KXHqb+HJn/1BQvzoq12F7U+Tie5d91bt9txDmPGQ=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x98DUQeb078006
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 8 Oct 2019 08:30:26 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 8 Oct
+ 2019 08:30:23 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 8 Oct 2019 08:30:23 -0500
+Received: from [10.250.99.146] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x98DUNZQ000416;
+        Tue, 8 Oct 2019 08:30:23 -0500
+Subject: Re: [PATCH v9 4/5] dt-bindings: backlight: Add led-backlight binding
+From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
+To:     Rob Herring <robh+dt@kernel.org>
+CC:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Sebastian Reichel <sre@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Dan Murphy <dmurphy@ti.com>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>
+References: <20191007124437.20367-1-jjhiblot@ti.com>
+ <20191007124437.20367-5-jjhiblot@ti.com>
+ <CAL_JsqLTqnKpU4PB8Zt9SSPSia5mkFcUgoA8ZyX_1E_HfdFyxg@mail.gmail.com>
+ <30fcd898-aa50-bac2-b316-0d9bf2429369@ti.com>
+Message-ID: <bc5e4094-2b58-c917-9b9e-0f646c04dd78@ti.com>
+Date:   Tue, 8 Oct 2019 15:30:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 08 Oct 2019 13:31:47 +0000 (UTC)
+In-Reply-To: <30fcd898-aa50-bac2-b316-0d9bf2429369@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Sep 2019 11:14:28 -0400
-Matthew Rosato <mjrosato@linux.ibm.com> wrote:
+Rob,
 
-> On 9/20/19 10:02 AM, Cornelia Huck wrote:
-> > On Thu, 19 Sep 2019 16:55:57 -0400
-> > Matthew Rosato <mjrosato@linux.ibm.com> wrote:
-> >   
-> >> On 9/19/19 11:20 AM, Cornelia Huck wrote:  
-> >>> On Fri,  6 Sep 2019 20:13:50 -0400
-> >>> Matthew Rosato <mjrosato@linux.ibm.com> wrote:
-> >>>     
-> >>>> From: Pierre Morel <pmorel@linux.ibm.com>
-> >>>>
-> >>>> We define a new device region in vfio.h to be able to
-> >>>> get the ZPCI CLP information by reading this region from
-> >>>> userland.
-> >>>>
-> >>>> We create a new file, vfio_zdev.h to define the structure
-> >>>> of the new region we defined in vfio.h
-> >>>>
-> >>>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-> >>>> Signed-off-by: Matthew Rosato <mjrosato@linux.ibm.com>
-> >>>> ---
-> >>>>  include/uapi/linux/vfio.h      |  1 +
-> >>>>  include/uapi/linux/vfio_zdev.h | 35 +++++++++++++++++++++++++++++++++++
-> >>>>  2 files changed, 36 insertions(+)
-> >>>>  create mode 100644 include/uapi/linux/vfio_zdev.h  
-> >   
-> >>>> diff --git a/include/uapi/linux/vfio_zdev.h b/include/uapi/linux/vfio_zdev.h
-> >>>> new file mode 100644
-> >>>> index 0000000..55e0d6d
-> >>>> --- /dev/null
-> >>>> +++ b/include/uapi/linux/vfio_zdev.h
-> >>>> @@ -0,0 +1,35 @@
-> >>>> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> >>>> +/*
-> >>>> + * Region definition for ZPCI devices
-> >>>> + *
-> >>>> + * Copyright IBM Corp. 2019
-> >>>> + *
-> >>>> + * Author(s): Pierre Morel <pmorel@linux.ibm.com>
-> >>>> + */
-> >>>> +
-> >>>> +#ifndef _VFIO_ZDEV_H_
-> >>>> +#define _VFIO_ZDEV_H_
-> >>>> +
-> >>>> +#include <linux/types.h>
-> >>>> +
-> >>>> +/**
-> >>>> + * struct vfio_region_zpci_info - ZPCI information.    
-> >>>
-> >>> Hm... probably should also get some more explanation. E.g. is that
-> >>> derived from a hardware structure?
-> >>>     
-> >>
-> >> The structure itself is not mapped 1:1 to a hardware structure, but it
-> >> does serve as a collection of information that was derived from other
-> >> hardware structures.
-> >>
-> >> "Used for passing hardware feature information about a zpci device
-> >> between the host and guest" ?  
-> > 
-> > "zPCI specific hardware feature information for a device"?
-> > 
-> > Are we reasonably sure that this is complete for now? I'm not sure if
-> > expanding this structure would work; adding another should always be
-> > possible, though (if a bit annoying).
-> >   
-> 
-> I think trying to make the structure expandable would be best...  If we
-> allow arbitrary-sized reads of the info, and only add new fields onto
-> the end it should be OK, no? (older qemu doesn't get the info it doesn't
-> ask for / understand)....  But I guess that's not compatible with having
-> util_str[] size being defined dynamically.  Another caveat would be if
-> CLP_UTIL_STR_LEN were to grow in size in the future, and assuming
-> util_str[] was no longer at the end of the structure, I guess the
-> additional data would have to end up in a
-> util_str2[CLP_UTIL_STR_LEN_NEW-CLP_UTIL_STR_LEN_OLD]...  To explain what
-> I mean, something like:
-> 
-> struct vfio_region_zpci_info {
-> 	<..>
-> 	__u8 util_str[CLP_UTIL_STR_LEN_OLD];
-> 	/* END OF V1 */
-> 	__u8 foo;
-> 	/* END OF V2 */
-> 	__u8 util_str2[CLP_UTIL_STR_LEN_NEW-CLP_UTIL_STR_LEN_OLD];
-> 	/* END OF V3 */
-> } __packed;
+On 08/10/2019 14:51, Jean-Jacques Hiblot wrote:
+> Hi Rob,
+>
+> On 07/10/2019 18:15, Rob Herring wrote:
+>> Please send DT bindings to DT list or it's never in my queue. IOW,
+>> send patches to the lists that get_maintainers.pl tells you to.
+>>
+>> On Mon, Oct 7, 2019 at 7:45 AM Jean-Jacques Hiblot <jjhiblot@ti.com> 
+>> wrote:
+>>> Add DT binding for led-backlight.
+>>>
+>>> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+>>> Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+>>> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+>>> ---
+>>>   .../bindings/leds/backlight/led-backlight.txt | 28 
+>>> +++++++++++++++++++
+>>>   1 file changed, 28 insertions(+)
+>>>   create mode 100644 
+>>> Documentation/devicetree/bindings/leds/backlight/led-backlight.txt
+>> Please make this a DT schema.
+>
+> OK.
+>
+> BTW I used "make dt_binding_check" but had to fix a couple of YAMLs 
+> file to get it to work. Do you have a kernel tree with already all the 
+> YAML files in good shape ? Or do you want me to post the changes to 
+> devicetree@vger.kernel.org ?
+>
+>
+>>
+>>> diff --git 
+>>> a/Documentation/devicetree/bindings/leds/backlight/led-backlight.txt 
+>>> b/Documentation/devicetree/bindings/leds/backlight/led-backlight.txt
+>>> new file mode 100644
+>>> index 000000000000..4c7dfbe7f67a
+>>> --- /dev/null
+>>> +++ 
+>>> b/Documentation/devicetree/bindings/leds/backlight/led-backlight.txt
+>>> @@ -0,0 +1,28 @@
+>>> +led-backlight bindings
+>>> +
+>>> +This binding is used to describe a basic backlight device made of 
+>>> LEDs.
+>>> +It can also be used to describe a backlight device controlled by 
+>>> the output of
+>>> +a LED driver.
+>>> +
+>>> +Required properties:
+>>> +  - compatible: "led-backlight"
+>>> +  - leds: a list of LEDs
+>> 'leds' is already used as a node name and mixing is not ideal.
+>>
+>> We already have 'flash-leds' in use and with the same definition, so
+>> lets continue that and use 'backlight-leds'.
+> OK
 
-[Sorry about the late response -- was on PTO]
+I am taking that back. I have added of_get_led() and devm_of_get_led() 
+to the LED core to make it easier to get a LED from the DT. I modeled 
+the interface like it is done for PWM, PHYs or clocks. The property 
+containing list/array of phandle  is always named the same. To get one 
+particular PWM/PHY/clock, a identifier (name or integer) must be provided.
 
-That sounds a bit too complicated to me, and I'd prefer the "add
-another region if we missed something" approach. If we put anything
-looking potentially useful in here now, that "add another region" event
-is hopefully far in the future.
+So unless there is a strong incentive to do otherwise I's rather keep 
+this name here.
 
-> 
-> 
-> >>  
-> >>>> + *
-> >>>> + */
-> >>>> +struct vfio_region_zpci_info {
-> >>>> +	__u64 dasm;
-> >>>> +	__u64 start_dma;
-> >>>> +	__u64 end_dma;
-> >>>> +	__u64 msi_addr;
-> >>>> +	__u64 flags;
-> >>>> +	__u16 pchid;
-> >>>> +	__u16 mui;
-> >>>> +	__u16 noi;
-> >>>> +	__u16 maxstbl;
-> >>>> +	__u8 version;
-> >>>> +	__u8 gid;
-> >>>> +#define VFIO_PCI_ZDEV_FLAGS_REFRESH 1
-> >>>> +	__u8 util_str[];
-> >>>> +} __packed;
-> >>>> +
-> >>>> +#endif    
-> >>>
-> >>>     
-> >>  
-> >   
-> 
 
+JJ
+
+
+>>> +
+>>> +Optional properties:
+>>> +  - brightness-levels: Array of distinct brightness levels. The 
+>>> levels must be
+>>> +                       in the range accepted by the underlying LED 
+>>> devices.
+>>> +                       This is used to translate a backlight 
+>>> brightness level
+>>> +                       into a LED brightness level. If it is not 
+>>> provided, the
+>>> +                       identity mapping is used.
+>>> +
+>>> +  - default-brightness-level: The default brightness level.
+>> You can just assume these 2 get a common schema at some point. So just
+>> need to define any additional constraints if possible.
+>
+> Maybe we should keep them until such a common schema is written ?
+>
+> JJ
+>
+>>
+>> Rob
