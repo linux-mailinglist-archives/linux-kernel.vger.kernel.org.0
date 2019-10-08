@@ -2,87 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06D66CFC57
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:25:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 442E8CFC62
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:27:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727077AbfJHOYU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 10:24:20 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:57079 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725942AbfJHOYU (ORCPT
+        id S1726439AbfJHO1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 10:27:51 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:56596 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726227AbfJHO1v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 10:24:20 -0400
-Received: from p2e585ebf.dip0.t-ipconnect.de ([46.88.94.191] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1iHqPP-0007Ee-SD; Tue, 08 Oct 2019 14:24:15 +0000
-Date:   Tue, 8 Oct 2019 16:24:14 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Andrea Parri <parri.andrea@gmail.com>
-Cc:     Dmitry Vyukov <dvyukov@google.com>, bsingharora@gmail.com,
-        Marco Elver <elver@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzbot <syzbot+c5d03165a1bd1dead0c1@syzkaller.appspotmail.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        stable <stable@vger.kernel.org>
-Subject: Re: [PATCH v2] taskstats: fix data-race
-Message-ID: <20191008142413.h5kczta7jo4ado6u@wittgenstein>
-References: <20191007104039.GA16085@andrea.guest.corp.microsoft.com>
- <20191007110117.1096-1-christian.brauner@ubuntu.com>
- <20191007131804.GA19242@andrea.guest.corp.microsoft.com>
- <CACT4Y+YG23qbL16MYH3GTK4hOPsM9tDfbLzrTZ7k_ocR2ABa6A@mail.gmail.com>
- <20191007141432.GA22083@andrea.guest.corp.microsoft.com>
- <CACT4Y+avbYvtF9mHiX=R8Y2=YsP1_QsN6i_FpjLM7UxCKv6vxA@mail.gmail.com>
- <20191008142035.GA13564@andrea.guest.corp.microsoft.com>
+        Tue, 8 Oct 2019 10:27:51 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x98E9LSo051875;
+        Tue, 8 Oct 2019 14:27:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=GfyLIyqEXxIaQ2ACVoOP4oi4Ygck8YSsBITIQGuPxKk=;
+ b=ZZO3tmZ3gQVSLd44qJDLr14aTBJ+45hTD+0oLHKe/QFJkx0wt0+8Il93UI62MOadCgun
+ ZJ6zZ+pZDxJ8ldFJczwGgP3YcL323c84s04yGngHjtNTGa3YupuII/vmevf4fbw8yyKz
+ CsjdpASsKjfV/5bpfHS0lbMEFOtckUmr0sWbL8zxzSj4oARMSlbtv2EQtc5RYqqE7g5D
+ RYhNfxPXQRVlSBJbtYj8jpV/KpNztCyDVpYY+46TBuTAFVcve+zYzNa73qQMx+djrK++
+ E/F1OxThFaX+iDXcuPfjZDmHVJ//uYpVYONh2FpX9igLgaDKbimL1ytGoG0Pp670fdXc oA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2vektrde4w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 08 Oct 2019 14:27:29 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x98E92iE155480;
+        Tue, 8 Oct 2019 14:25:28 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2vg206ds9x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 08 Oct 2019 14:25:28 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x98EPP4U015274;
+        Tue, 8 Oct 2019 14:25:25 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 08 Oct 2019 07:25:24 -0700
+Date:   Tue, 8 Oct 2019 17:25:17 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Matteo Croce <mcroce@redhat.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>, devel@driverdev.osuosl.org
+Subject: Re: [PATCH] staging: vchiq: don't leak kernel address
+Message-ID: <20191008142517.GO21515@kadam>
+References: <20191008123346.3931-1-mcroce@redhat.com>
+ <20191008131518.GH25098@kadam>
+ <CAGnkfhxefH+3YKDWQMCOYoj1skcq6rUmHuiHZQ-76YixFqbQjg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191008142035.GA13564@andrea.guest.corp.microsoft.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAGnkfhxefH+3YKDWQMCOYoj1skcq6rUmHuiHZQ-76YixFqbQjg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9403 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=748
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910080132
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9403 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=830 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910080132
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 04:20:35PM +0200, Andrea Parri wrote:
-> On Mon, Oct 07, 2019 at 04:18:26PM +0200, Dmitry Vyukov wrote:
-> > On Mon, Oct 7, 2019 at 4:14 PM Andrea Parri <parri.andrea@gmail.com> wrote:
-> > >
-> > > > > >  static struct taskstats *taskstats_tgid_alloc(struct task_struct *tsk)
-> > > > > >  {
-> > > > > >       struct signal_struct *sig = tsk->signal;
-> > > > > > -     struct taskstats *stats;
-> > > > > > +     struct taskstats *stats_new, *stats;
-> > > > > >
-> > > > > > -     if (sig->stats || thread_group_empty(tsk))
-> > > > > > -             goto ret;
-> > > > > > +     /* Pairs with smp_store_release() below. */
-> > > > > > +     stats = READ_ONCE(sig->stats);
-> > > > >
-> > > > > This pairing suggests that the READ_ONCE() is heading an address
-> > > > > dependency, but I fail to identify it: what is the target memory
-> > > > > access of such a (putative) dependency?
-> > > >
-> > > > I would assume callers of this function access *stats. So the
-> > > > dependency is between loading stats and accessing *stats.
-> > >
-> > > AFAICT, the only caller of the function in 5.4-rc2 is taskstats_exit(),
-> > > which 'casts' the return value to a boolean (so I really don't see how
-> > > any address dependency could be carried over/relied upon here).
-> > 
-> > This does not make sense.
-> > 
-> > But later taskstats_exit does:
-> > 
-> > memcpy(stats, tsk->signal->stats, sizeof(*stats));
-> > 
-> > Perhaps it's supposed to use stats returned by taskstats_tgid_alloc?
+On Tue, Oct 08, 2019 at 04:21:54PM +0200, Matteo Croce wrote:
+> On Tue, Oct 8, 2019 at 3:16 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> >
+> > The subject doesn't match the patch.  It should just be "remove useless
+> > printk".
+> >
+> > regards,
+> > dan carpenter
+> >
 > 
-> Seems reasonable to me.  If so, replacing the READ_ONCE() in question
-> with an smp_load_acquire() might be the solution.  Thoughts?
+> Well, it avoids leaking an address by removing an useless printk.
+> It seems that GKH already picked the patch in his staging tree, but
+> I'm fine with both subjects, really,
 
-I've done that already in my tree yesterday. I can resend for another
-review if you'd prefer.
+The address wasn't leaked because it was already %pK.  The subject
+says there is an info leak security problem, when the opposite is true.
 
-Christian
+regards,
+dan carpenter
+
