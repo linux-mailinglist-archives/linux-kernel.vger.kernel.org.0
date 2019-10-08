@@ -2,200 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CECA0CF9F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 14:36:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0748CF9EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 14:36:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730987AbfJHMgW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 08:36:22 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:34928 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730249AbfJHMgV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 08:36:21 -0400
-Received: by mail-wm1-f66.google.com with SMTP id y21so2964627wmi.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 05:36:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5V4/YTrCDA2Y4CjapiR7kwxoAP4iI0pi4NlrpV9i7/0=;
-        b=pp9EPYPCdjMCuyJsvWvvT6MesZUAFpzob9Gpw4+F3i4leWX87MqaB1V3TwNfO6jHYn
-         /HQ9HeLAo2Nvm0iy/1vEUWtDN7zePVCxBoOXDy9q7mYtNv/5EhMkYuro+GYZhA46EHat
-         bg6yGpRbClI5LIQocIG5Opfm4T65xHsDSnZgMkXDHAX0ecYoqbqbrePiW99vpvaBaHLK
-         0rN7RFcx5CwkrZU+F76fZggf4UgKUIuC7RSBcWxe+Gpfw9jQSsrzgqvlgra69dUs5+1X
-         9ER8NQkGzgHA19qsmcE6Tk/4mxsQ8V3PVpRJkvAHhb/wmQQzDhO/04jG2WFdXI1+5KLw
-         aWFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5V4/YTrCDA2Y4CjapiR7kwxoAP4iI0pi4NlrpV9i7/0=;
-        b=NOJmtGIuWvVrQc2VhpowxC3+De5QhkQ3s53GSEJAezo0NEanFN6FnovgeLv3V0VVyn
-         QQlEAcfuzn5GekjrVrhL5f3ZRvTDbYIdzSIflgQzFugHi6qz4UdZbh6QLeNAclbqZ4Th
-         4xvzChNeayUvInmeCeXc+rWJrGgAPOcFomvjjYUBfpkmjDfCJnR33c6fkotHtaubNjaB
-         V0S1/Uap4fXi84tHmzoNzCBu8RQIOp3fuELw8JqlbhGUKw13i++EqfxGv7nCRcqhFCQ3
-         ckWy3jmnKjX3WJ3/EiTYxl2XhkB3G9/vMxcXpR9S0TlZTKZT3pQYE7koapiaTxq/M1pF
-         V63w==
-X-Gm-Message-State: APjAAAUZgXNSibPzMNxJHKk5Y4ySfdK+jIyPpKOlRGXPZMelSPMAl9eI
-        VuLlfRWUoOXLuInfKVAnPwoTCTRUXNQ=
-X-Google-Smtp-Source: APXvYqyQcR6eiTaaSpLGRIh+UVzp3KrHoklpyAO8vRKcatrOySFwKS6iSttskXWxORRcBGRIuSl4Zg==
-X-Received: by 2002:a1c:4456:: with SMTP id r83mr3655361wma.44.1570538179357;
-        Tue, 08 Oct 2019 05:36:19 -0700 (PDT)
-Received: from localhost.localdomain ([104.238.174.53])
-        by smtp.gmail.com with ESMTPSA id d4sm23100575wrq.22.2019.10.08.05.36.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2019 05:36:18 -0700 (PDT)
-From:   Changbin Du <changbin.du@gmail.com>
-To:     Jiri Olsa <jolsa@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org, Changbin Du <changbin.du@gmail.com>
-Subject: [PATCH v4 2/2] perf: add support for logging debug messages to file
-Date:   Tue,  8 Oct 2019 20:35:54 +0800
-Message-Id: <20191008123554.6796-3-changbin.du@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191008123554.6796-1-changbin.du@gmail.com>
-References: <20191008123554.6796-1-changbin.du@gmail.com>
+        id S1730737AbfJHMgF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 08:36:05 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54436 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730249AbfJHMgF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 08:36:05 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 566FC87717;
+        Tue,  8 Oct 2019 12:36:05 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.44])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 2F4CA60605;
+        Tue,  8 Oct 2019 12:36:04 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Tue,  8 Oct 2019 14:36:03 +0200 (CEST)
+Date:   Tue, 8 Oct 2019 14:36:01 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Bruce Ashfield <bruce.ashfield@gmail.com>
+Cc:     Roman Gushchin <guro@fb.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tj@kernel.org" <tj@kernel.org>,
+        Richard Purdie <richard.purdie@linuxfoundation.org>
+Subject: Re: ptrace/strace and freezer oddities and v5.2+ kernels
+Message-ID: <20191008123601.GA28621@redhat.com>
+References: <CADkTA4PBT374CY+UNb85WjQEaNCDodMZu=MgpG8aMYbAu2eOGA@mail.gmail.com>
+ <20191002020100.GA6436@castle.dhcp.thefacebook.com>
+ <CADkTA4Mbai=Q5xgKH9-md_g73UsHiKnEauVgMWev+-sG8FVNSA@mail.gmail.com>
+ <20191002181914.GA7617@castle.DHCP.thefacebook.com>
+ <CADkTA4PmGBR7YdOXvi6sEDJ+uztuB7x2G95TCcW2u_iqjwhUNQ@mail.gmail.com>
+ <20191004000913.GA5519@castle.DHCP.thefacebook.com>
+ <CADkTA4OJok3cmYCcDKtxBXQ5xtK1EMujh7_AgLnVaeRr18TH9w@mail.gmail.com>
+ <CADkTA4PKc6VEQYvXk4-EWMJPyOrzWQEsk4p6O_BMFo6kvT2jYg@mail.gmail.com>
+ <20191007232754.GB11171@tower.DHCP.thefacebook.com>
+ <CADkTA4NKDn4jd2BQaGk+JEnM3B5GMDudsBi6V4YwK3Soq9q9pA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADkTA4NKDn4jd2BQaGk+JEnM3B5GMDudsBi6V4YwK3Soq9q9pA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.71]); Tue, 08 Oct 2019 12:36:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When in TUI mode, it is impossible to show all the debug messages to
-console. This make it hard to debug perf issues using debug messages.
-This patch adds support for logging debug messages to file to resolve
-this problem.
+On 10/08, Bruce Ashfield wrote:
+>
+> So I've been looking through the config delta's and late last night, I was
+> able to move the runtime back to a failed 4 minute state by adding the
+> CONFIG_PREEMPT settings that we have by default in our reference
+> kernel.
 
-The usage is:
-perf -debug verbose=2,file=~/perf.log COMMAND
+Aha... Can you try the patch below?
 
-Signed-off-by: Changbin Du <changbin.du@gmail.com>
+Oleg.
 
---
-v4: fix another segfault.
-v3: fix a segfault issue.
----
- tools/perf/Documentation/perf.txt | 15 ++++++-----
- tools/perf/util/debug.c           | 44 ++++++++++++++++++++++++++++---
- 2 files changed, 49 insertions(+), 10 deletions(-)
-
-diff --git a/tools/perf/Documentation/perf.txt b/tools/perf/Documentation/perf.txt
-index c05a94b2488e..a6b19661e5c3 100644
---- a/tools/perf/Documentation/perf.txt
-+++ b/tools/perf/Documentation/perf.txt
-@@ -16,14 +16,17 @@ OPTIONS
- 	Setup debug variable (see list below) in value
- 	range (0, 10). Use like:
- 	  --debug verbose   # sets verbose = 1
--	  --debug verbose=2 # sets verbose = 2
-+	  --debug verbose=2,file=~/perf.log
-+	                    # sets verbose = 2 and save log to file
- 
- 	List of debug variables allowed to set:
--	  verbose=level		- general debug messages
--	  ordered-events=level	- ordered events object debug messages
--	  data-convert=level	- data convert command debug messages
--	  stderr		- write debug output (option -v) to stderr
--				  in browser mode
-+	  verbose=level         - general debug messages
-+	  ordered-events=level  - ordered events object debug messages
-+	  data-convert=level    - data convert command debug messages
-+	  stderr                - write debug output (option -v) to stderr
-+	                          in browser mode
-+	  file=path             - write debug output to log file (stderr and
-+	                          file options are exclusive)
- 
- --buildid-dir::
- 	Setup buildid cache directory. It has higher priority than
-diff --git a/tools/perf/util/debug.c b/tools/perf/util/debug.c
-index df82ad9cd16d..5cc2479d63ea 100644
---- a/tools/perf/util/debug.c
-+++ b/tools/perf/util/debug.c
-@@ -6,6 +6,7 @@
- #include <stdarg.h>
- #include <stdio.h>
- #include <stdlib.h>
-+#include <errno.h>
- #include <sys/wait.h>
- #include <api/debug.h>
- #include <linux/kernel.h>
-@@ -26,7 +27,7 @@
- int verbose;
- bool dump_trace = false, quiet = false;
- int debug_ordered_events;
--static bool redirect_to_stderr;
-+static FILE *log_file;
- int debug_data_convert;
- 
- int veprintf(int level, int var, const char *fmt, va_list args)
-@@ -34,8 +35,10 @@ int veprintf(int level, int var, const char *fmt, va_list args)
- 	int ret = 0;
- 
- 	if (var >= level) {
--		if (use_browser >= 1 && !redirect_to_stderr)
-+		if (use_browser >= 1 && !log_file)
- 			ui_helpline__vshow(fmt, args);
-+		else if (log_file)
-+			ret = vfprintf(log_file, fmt, args);
- 		else
- 			ret = vfprintf(stderr, fmt, args);
- 	}
-@@ -197,6 +200,24 @@ static int str2loglevel(const char *vstr)
- 	return v;
- }
- 
-+static void flush_log(void)
-+{
-+	if (log_file)
-+		fflush(log_file);
-+}
-+
-+static void set_log_output(FILE *f)
-+{
-+	if (f == log_file)
-+		return;
-+
-+	if (log_file && log_file != stderr)
-+		fclose(log_file);
-+
-+	log_file = f;
-+	atexit(flush_log);
-+}
-+
- int perf_debug_option(const char *str)
- {
- 	char *sep, *vstr;
-@@ -218,8 +239,23 @@ int perf_debug_option(const char *str)
- 		else if (!strcmp(opt, "data-convert"))
- 			debug_data_convert = str2loglevel(vstr);
- 		else if (!strcmp(opt, "stderr"))
--			redirect_to_stderr = true;
--		else {
-+			set_log_output(stderr);
-+		else if (!strcmp(opt, "file")) {
-+			FILE *f;
-+
-+			if (!vstr)
-+				vstr = (char *)"perf.log";
-+
-+			f = fopen(vstr, "a");
-+			if (!f) {
-+				pr_err("Can not create log file: %s\n",
-+				       strerror(errno));
-+				free(dstr);
-+				return -1;
-+			}
-+			fprintf(f, "\n===========perf log===========\n");
-+			set_log_output(f);
-+		} else {
- 			fprintf(stderr, "unkown debug option '%s'\n", opt);
- 			free(dstr);
- 			return -1;
--- 
-2.20.1
+--- x/kernel/signal.c
++++ x/kernel/signal.c
+@@ -2205,8 +2205,8 @@ static void ptrace_stop(int exit_code, int why, int clear_code, kernel_siginfo_t
+ 		 */
+ 		preempt_disable();
+ 		read_unlock(&tasklist_lock);
+-		preempt_enable_no_resched();
+ 		cgroup_enter_frozen();
++		preempt_enable_no_resched();
+ 		freezable_schedule();
+ 		cgroup_leave_frozen(true);
+ 	} else {
 
