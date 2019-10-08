@@ -2,138 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1CB2CF937
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 14:05:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5011DCF928
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 14:05:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730953AbfJHMFb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 08:05:31 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:42332 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730923AbfJHMF3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 08:05:29 -0400
-Received: by mail-lj1-f193.google.com with SMTP id y23so17214898lje.9
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 05:05:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=TptQKMAgu40zPvzhQ1Z31J/pJlahQ9zU95/IQSGlotQ=;
-        b=EQxxLJPuv5kKROn32XBozgwjwLwg89RorArcZU/g8cItI4zFmL7g+GBxM/Ahg/onYr
-         /Qq6eZw1P0LGp4IiWbUpBRj0wt8o58C+ixmMvDPdQyY9ckNxJ8fwVC+8j5r3oWi+ocMe
-         bAPIcSJt4aI9G1QMFztBqZWK5BjdSrlZzfkn0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=TptQKMAgu40zPvzhQ1Z31J/pJlahQ9zU95/IQSGlotQ=;
-        b=gT6n/s4hkYaiQYJbSYBfw1NVvhFyUU72ZOTV6SzmEfuaEbD0I1boRf3qynZNVoFWzu
-         py1GDsznh9bQDNKt9m3oK3rchU1AhegshvNr8nMSzW39nC2Tz7ButAqGLULnlNcfrjBI
-         drQmQvynHaCn5TIGG7YAAAnCN3gt4L653CWPsN3TDNG9JJCeo9IXwhr9szVeckhmn4Ai
-         BDnjPlqfC7wVH00rEiiAlQOK5NLXnG+CgAqLQ9X1STbfIjuzb5SUcoFUo4r3yDe47xBa
-         PzaiibCnbd3d13Kaf3jcJD8BMBUPtswkFQ8hSFRpH3KiO64SaPYEnqrsvRm8mwge2m7S
-         PZSA==
-X-Gm-Message-State: APjAAAU0uxDmEKks4FvsZQnWCh2sZbcE5amscXxbUtfhlCn6UYeevX+z
-        +aouW7dVDP8RA00O+XWaFKgHN/DRrp8WC19d
-X-Google-Smtp-Source: APXvYqz1ZVV6abC07XSZS+ewKWoIdZcZT75MUkfMcioX26MZiIhkt3Y7dE8w+s+hfv7TsUNPdK5xaw==
-X-Received: by 2002:a2e:b045:: with SMTP id d5mr22159030ljl.105.1570536327398;
-        Tue, 08 Oct 2019 05:05:27 -0700 (PDT)
-Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id z18sm3918033ljh.17.2019.10.08.05.05.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2019 05:05:25 -0700 (PDT)
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/4] backlight: pwm_bl: switch to power-of-2 base for fixed-point math
-Date:   Tue,  8 Oct 2019 14:03:27 +0200
-Message-Id: <20191008120327.24208-5-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191008120327.24208-1-linux@rasmusvillemoes.dk>
-References: <20191008120327.24208-1-linux@rasmusvillemoes.dk>
+        id S1730878AbfJHMFF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 08:05:05 -0400
+Received: from mga14.intel.com ([192.55.52.115]:59561 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730332AbfJHMFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 08:05:04 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2019 05:05:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,270,1566889200"; 
+   d="scan'208";a="206624152"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga001.fm.intel.com with SMTP; 08 Oct 2019 05:05:01 -0700
+Received: by lahna (sSMTP sendmail emulation); Tue, 08 Oct 2019 15:05:00 +0300
+Date:   Tue, 8 Oct 2019 15:05:00 +0300
+From:   "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>
+To:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        "logang@deltatee.com" <logang@deltatee.com>
+Subject: Re: [PATCH v8 3/6] PCI: Change extend_bridge_window() to set
+ resource size directly
+Message-ID: <20191008120500.GH2819@lahna.fi.intel.com>
+References: <SL2P216MB018777F9E124D364769E5D4680C00@SL2P216MB0187.KORP216.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SL2P216MB018777F9E124D364769E5D4680C00@SL2P216MB0187.KORP216.PROD.OUTLOOK.COM>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using a power-of-2 instead of power-of-10 base makes the computations
-much cheaper. 2^16 is safe; retval never becomes more than 2^48 +
-2^32/2. On a 32 bit platform, the very expensive 64/32 division at the
-end of cie1931() instead becomes essentially free (a shift by 32 is
-just a register rename).
+On Fri, Jul 26, 2019 at 12:54:01PM +0000, Nicholas Johnson wrote:
+> Change extend_bridge_window() to set resource size directly instead of
+> using additional resource lists.
+> 
+> Because additional resource lists are optional resources, any algorithm
+> that requires guaranteed allocation that uses them cannot be guaranteed
+> to work.
+> 
+> Remove the resource from add_list. If it is set to zero size and left,
+> it can cause significant problems when it comes to assigning resources.
 
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
- drivers/video/backlight/pwm_bl.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+It would be good if you would open bit more what kind of significant
+problems this may result.
 
-diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-index 273d3fb628a0..a99c2210c935 100644
---- a/drivers/video/backlight/pwm_bl.c
-+++ b/drivers/video/backlight/pwm_bl.c
-@@ -148,7 +148,8 @@ static const struct backlight_ops pwm_backlight_ops = {
- };
- 
- #ifdef CONFIG_OF
--#define PWM_LUMINANCE_SCALE	10000 /* luminance scale */
-+#define PWM_LUMINANCE_SHIFT	16
-+#define PWM_LUMINANCE_SCALE	(1 << PWM_LUMINANCE_SHIFT) /* luminance scale */
- 
- /*
-  * CIE lightness to PWM conversion.
-@@ -165,23 +166,25 @@ static const struct backlight_ops pwm_backlight_ops = {
-  * The following function does the fixed point maths needed to implement the
-  * above formula.
-  */
--static u64 cie1931(unsigned int lightness, unsigned int scale)
-+static u64 cie1931(unsigned int lightness)
- {
- 	u64 retval;
- 
- 	/*
- 	 * @lightness is given as a number between 0 and 1, expressed
--	 * as a fixed-point number in scale @scale. Convert to a
--	 * percentage, still expressed as a fixed-point number, so the
--	 * above formulas can be applied.
-+	 * as a fixed-point number in scale
-+	 * PWM_LUMINANCE_SCALE. Convert to a percentage, still
-+	 * expressed as a fixed-point number, so the above formulas
-+	 * can be applied.
- 	 */
- 	lightness *= 100;
--	if (lightness <= (8 * scale)) {
-+	if (lightness <= (8 * PWM_LUMINANCE_SCALE)) {
- 		retval = DIV_ROUND_CLOSEST(lightness * 10, 9033);
- 	} else {
--		retval = (lightness + (16 * scale)) / 116;
-+		retval = (lightness + (16 * PWM_LUMINANCE_SCALE)) / 116;
- 		retval *= retval * retval;
--		retval = DIV_ROUND_CLOSEST_ULL(retval, (scale * scale));
-+		retval += 1ULL << (2*PWM_LUMINANCE_SHIFT - 1);
-+		retval >>= 2*PWM_LUMINANCE_SHIFT;
- 	}
- 
- 	return retval;
-@@ -215,8 +218,7 @@ int pwm_backlight_brightness_default(struct device *dev,
- 	/* Fill the table using the cie1931 algorithm */
- 	for (i = 0; i < data->max_brightness; i++) {
- 		retval = cie1931((i * PWM_LUMINANCE_SCALE) /
--				 data->max_brightness, PWM_LUMINANCE_SCALE) *
--				 period;
-+				 data->max_brightness) * period;
- 		retval = DIV_ROUND_CLOSEST_ULL(retval, PWM_LUMINANCE_SCALE);
- 		if (retval > UINT_MAX)
- 			return -EINVAL;
--- 
-2.20.1
+> Signed-off-by: Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
 
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
