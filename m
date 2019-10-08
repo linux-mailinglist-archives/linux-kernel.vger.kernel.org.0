@@ -2,160 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79A18CF85D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 13:34:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BFFACF862
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 13:34:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730829AbfJHLdo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 07:33:44 -0400
-Received: from mga02.intel.com ([134.134.136.20]:27247 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730812AbfJHLdn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 07:33:43 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2019 04:33:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,270,1566889200"; 
-   d="scan'208";a="187267995"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by orsmga008.jf.intel.com with SMTP; 08 Oct 2019 04:33:38 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Tue, 08 Oct 2019 14:33:38 +0300
-Date:   Tue, 8 Oct 2019 14:33:38 +0300
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     "sandy.huang" <hjc@rock-chips.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] drm: Add some new format DRM_FORMAT_NVXX_10
-Message-ID: <20191008113338.GP1208@intel.com>
-References: <1569486289-152061-1-git-send-email-hjc@rock-chips.com>
- <1569486289-152061-2-git-send-email-hjc@rock-chips.com>
- <20190930104849.GA1208@intel.com>
- <2c46d532-f810-392d-b9c0-3b9aaccae7f4@rock-chips.com>
+        id S1730855AbfJHLdy convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 8 Oct 2019 07:33:54 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:22595 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730833AbfJHLdv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 07:33:51 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-90-a7HITZQhP0ySUXEt4BGcmA-1; Tue, 08 Oct 2019 12:33:47 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Tue, 8 Oct 2019 12:33:47 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 8 Oct 2019 12:33:47 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Pavel Machek' <pavel@ucw.cz>, "Theodore Y. Ts'o" <tytso@mit.edu>
+CC:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Nicholas Mc Guire <hofrat@opentech.at>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: RE: x86/random: Speculation to the rescue
+Thread-Topic: x86/random: Speculation to the rescue
+Thread-Index: AQHVfV0j+0Zbqc/i0UCMngMctaT4AqdQmbew
+Date:   Tue, 8 Oct 2019 11:33:46 +0000
+Message-ID: <4748b43e6b00415fb21c1a127a835e87@AcuMS.aculab.com>
+References: <alpine.DEB.2.21.1909290010500.2636@nanos.tec.linutronix.de>
+ <CAHk-=wgjC01UaoV35PZvGPnrQ812SRGPoV7Xp63BBFxAsJjvrg@mail.gmail.com>
+ <20191006114129.GD24605@amd>
+ <CAHk-=wjvhovO6V4-zT=xEMFnRonYteZvsPo-S0_n_DetSTUk5A@mail.gmail.com>
+ <20191006173501.GA31243@amd>
+ <CAHk-=whgfz2+OgBTVrHLoHK57emYb4gN6TtJ_s-607U=jBQ+ig@mail.gmail.com>
+ <20191006182103.GA2394@amd> <20191007114734.GA6104@mit.edu>
+ <20191007221817.GA4027@amd>
+In-Reply-To: <20191007221817.GA4027@amd>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2c46d532-f810-392d-b9c0-3b9aaccae7f4@rock-chips.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MC-Unique: a7HITZQhP0ySUXEt4BGcmA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 10:40:20AM +0800, sandy.huang wrote:
-> Hi ville syrjala,
-> 
-> 在 2019/9/30 下午6:48, Ville Syrjälä 写道:
-> > On Thu, Sep 26, 2019 at 04:24:47PM +0800, Sandy Huang wrote:
-> >> These new format is supported by some rockchip socs:
-> >>
-> >> DRM_FORMAT_NV12_10/DRM_FORMAT_NV21_10
-> >> DRM_FORMAT_NV16_10/DRM_FORMAT_NV61_10
-> >> DRM_FORMAT_NV24_10/DRM_FORMAT_NV42_10
-> >>
-> >> Signed-off-by: Sandy Huang <hjc@rock-chips.com>
-> >> ---
-> >>   drivers/gpu/drm/drm_fourcc.c  | 18 ++++++++++++++++++
-> >>   include/uapi/drm/drm_fourcc.h | 14 ++++++++++++++
-> >>   2 files changed, 32 insertions(+)
-> >>
-> >> diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
-> >> index c630064..ccd78a3 100644
-> >> --- a/drivers/gpu/drm/drm_fourcc.c
-> >> +++ b/drivers/gpu/drm/drm_fourcc.c
-> >> @@ -261,6 +261,24 @@ const struct drm_format_info *__drm_format_info(u32 format)
-> >>   		{ .format = DRM_FORMAT_P016,		.depth = 0,  .num_planes = 2,
-> >>   		  .char_per_block = { 2, 4, 0 }, .block_w = { 1, 0, 0 }, .block_h = { 1, 0, 0 },
-> >>   		  .hsub = 2, .vsub = 2, .is_yuv = true},
-> >> +		{ .format = DRM_FORMAT_NV12_10,		.depth = 0,  .num_planes = 2,
-> >> +		  .char_per_block = { 5, 10, 0 }, .block_w = { 4, 4, 0 }, .block_h = { 4, 4, 0 },
-> >> +		  .hsub = 2, .vsub = 2, .is_yuv = true},
-> >> +		{ .format = DRM_FORMAT_NV21_10,		.depth = 0,  .num_planes = 2,
-> >> +		  .char_per_block = { 5, 10, 0 }, .block_w = { 4, 4, 0 }, .block_h = { 4, 4, 0 },
-> >> +		  .hsub = 2, .vsub = 2, .is_yuv = true},
-> >> +		{ .format = DRM_FORMAT_NV16_10,		.depth = 0,  .num_planes = 2,
-> >> +		  .char_per_block = { 5, 10, 0 }, .block_w = { 4, 4, 0 }, .block_h = { 4, 4, 0 },
-> >> +		  .hsub = 2, .vsub = 1, .is_yuv = true},
-> >> +		{ .format = DRM_FORMAT_NV61_10,		.depth = 0,  .num_planes = 2,
-> >> +		  .char_per_block = { 5, 10, 0 }, .block_w = { 4, 4, 0 }, .block_h = { 4, 4, 0 },
-> >> +		  .hsub = 2, .vsub = 1, .is_yuv = true},
-> >> +		{ .format = DRM_FORMAT_NV24_10,		.depth = 0,  .num_planes = 2,
-> >> +		  .char_per_block = { 5, 10, 0 }, .block_w = { 4, 4, 0 }, .block_h = { 4, 4, 0 },
-> >> +		  .hsub = 1, .vsub = 1, .is_yuv = true},
-> >> +		{ .format = DRM_FORMAT_NV42_10,		.depth = 0,  .num_planes = 2,
-> >> +		  .char_per_block = { 5, 10, 0 }, .block_w = { 4, 4, 0 }, .block_h = { 4, 4, 0 },
-> >> +		  .hsub = 1, .vsub = 1, .is_yuv = true},
-> >>   		{ .format = DRM_FORMAT_P210,		.depth = 0,
-> >>   		  .num_planes = 2, .char_per_block = { 2, 4, 0 },
-> >>   		  .block_w = { 1, 0, 0 }, .block_h = { 1, 0, 0 }, .hsub = 2,
-> >> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
-> >> index 3feeaa3..08e2221 100644
-> >> --- a/include/uapi/drm/drm_fourcc.h
-> >> +++ b/include/uapi/drm/drm_fourcc.h
-> >> @@ -238,6 +238,20 @@ extern "C" {
-> >>   #define DRM_FORMAT_NV42		fourcc_code('N', 'V', '4', '2') /* non-subsampled Cb:Cr plane */
-> >>   
-> >>   /*
-> >> + * 2 plane YCbCr
-> >> + * index 0 = Y plane, Y3:Y2:Y1:Y0 10:10:10:10
-> >> + * index 1 = Cb:Cr plane, Cb3:Cr3:Cb2:Cr2:Cb1:Cr1:Cb0:Cr0 10:10:10:10:10:10:10:10
-> >> + * or
-> >> + * index 1 = Cr:Cb plane, Cr3:Cb3:Cr2:Cb2:Cr1:Cb1:Cr0:Cb0 10:10:10:10:10:10:10:10
-> > So now you're defining it as some kind of byte aligned block.
-> > With that specifying endianness would now make sense since
-> > otherwise this tells us absolutely nothing about the memory
-> > layout.
-> >
-> > So I'd either do that, or go back to not specifying anything and
-> > use some weasel words like "mamory layout is implementation defined"
-> > which of course means no one can use it for anything that involves
-> > any kind of cross vendor stuff.
-> /*
->   * 2 plane YCbCr
->   * index 0 = Y plane, [39: 0] Y3:Y2:Y1:Y0 10:10:10:10  little endian
->   * index 1 = Cb:Cr plane, [79: 0] Cb3:Cr3:Cb2:Cr2:Cb1:Cr1:Cb0:Cr0 
-> 10:10:10:10:10:10:10:10  little endian
->   * or
->   * index 1 = Cr:Cb plane, [79: 0] Cr3:Cb3:Cr2:Cb2:Cr1:Cb1:Cr0:Cb0 
-> 10:10:10:10:10:10:10:10  little endian
->   */
-> 
-> Is this description ok?
+From: Pavel Machek
+> Sent: 07 October 2019 23:18
+..
+> I have many systems including SoC here, but technology needed for NAND
+> flash is different from technology for CPU, so these parts do _not_
+> share a silicon die. They do not even share same package. (Also RTC
+> tends to be on separate chip, connected using i2c).
 
-Seems OK to me, if it actually describes the format correctly.
+NAND flash requires ECC so is likely to be async.
+But I2C is clocked from the cpu end - so is fixed.
 
-Though I'm not sure why the CbCr is defines as an 80bit block
-and Y has a 40bit block. 40bits should be enough for CbCr as well.
+Also an embedded system could be booting off a large serial EEPROM.
+These have fixed timings and are clocked from the cpu end.
 
-> 
-> >> + */
-> >> +#define DRM_FORMAT_NV12_10	fourcc_code('N', 'A', '1', '2') /* 2x2 subsampled Cr:Cb plane */
-> >> +#define DRM_FORMAT_NV21_10	fourcc_code('N', 'A', '2', '1') /* 2x2 subsampled Cb:Cr plane */
-> >> +#define DRM_FORMAT_NV16_10	fourcc_code('N', 'A', '1', '6') /* 2x1 subsampled Cr:Cb plane */
-> >> +#define DRM_FORMAT_NV61_10	fourcc_code('N', 'A', '6', '1') /* 2x1 subsampled Cb:Cr plane */
-> >> +#define DRM_FORMAT_NV24_10	fourcc_code('N', 'A', '2', '4') /* non-subsampled Cr:Cb plane */
-> >> +#define DRM_FORMAT_NV42_10	fourcc_code('N', 'A', '4', '2') /* non-subsampled Cb:Cr plane */
-> >> +
-> >> +/*
-> >>    * 2 plane YCbCr MSB aligned
-> >>    * index 0 = Y plane, [15:0] Y:x [10:6] little endian
-> >>    * index 1 = Cr:Cb plane, [31:0] Cr:x:Cb:x [10:6:10:6] little endian
-> >> -- 
-> >> 2.7.4
-> >>
-> >>
-> >>
-> >> _______________________________________________
-> >> dri-devel mailing list
-> >> dri-devel@lists.freedesktop.org
-> >> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> 
+So until you get any ethernet interface up and can look at receive packet
+timings there isn't likely to be any randomness at all.
+A high resolution voltage  (or temperature) monitor might generate noise
+in its LSB - but they don't often have a higher resolution than the stability
+of the signal.
 
--- 
-Ville Syrjälä
-Intel
+I can't remember (from the start of this thread) why 'speculation' is expected to
+generate randomness.
+I'd have thought the loop was deterministic - but you don't know the initial state.
+More iterations may just be amplifying the initial small randomness - rather than
+generating extra randomness.
+So while it gets the system to boot, it hasn't actually done its job.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
