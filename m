@@ -2,147 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBF18CF631
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 11:37:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94C7ECF637
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 11:39:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730232AbfJHJhk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 05:37:40 -0400
-Received: from pio-pvt-msa3.bahnhof.se ([79.136.2.42]:54472 "EHLO
-        pio-pvt-msa3.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729624AbfJHJhk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 05:37:40 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTP id E09B63F401;
-        Tue,  8 Oct 2019 11:37:38 +0200 (CEST)
-Authentication-Results: pio-pvt-msa3.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=pCfPjt60;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Received: from pio-pvt-msa3.bahnhof.se ([127.0.0.1])
-        by localhost (pio-pvt-msa3.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id jX9fBUDLkclA; Tue,  8 Oct 2019 11:37:36 +0200 (CEST)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTPA id E46C33F38D;
-        Tue,  8 Oct 2019 11:37:35 +0200 (CEST)
-Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id AA328360191;
-        Tue,  8 Oct 2019 11:37:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1570527455; bh=BdOL3OXFhH9K64iSzx6V4VbA9yGzD99MHLslZ0uMKbA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=pCfPjt6033xbRss3NodIcigP6sWsPoXjj/cbBojOGS4EbO+ZwDcYs71Qv3+PgkAle
-         RKpc9iRBUd52k+vzjjE9Cr7bjEtZgJJN80A1XJG2tq7PGHsqEEb3hJWu62p219wK8x
-         8xVQwVM02xVZJ9cH6YAud0TLwEsbktc6r9Kl1XPY=
-From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
-        <thomas_os@shipmail.org>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc:     kirill@shutemov.name, Thomas Hellstrom <thellstrom@vmware.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: [RFC PATCH] mm: Fix a huge pud insertion race during faulting
-Date:   Tue,  8 Oct 2019 11:37:11 +0200
-Message-Id: <20191008093711.3410-1-thomas_os@shipmail.org>
-X-Mailer: git-send-email 2.20.1
+        id S1730248AbfJHJjA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 05:39:00 -0400
+Received: from spam01.hygon.cn ([110.188.70.11]:40787 "EHLO spam2.hygon.cn"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729624AbfJHJjA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 05:39:00 -0400
+Received: from MK-FE.hygon.cn ([172.23.18.61])
+        by spam2.hygon.cn with ESMTP id x989btVM098946;
+        Tue, 8 Oct 2019 17:37:55 +0800 (GMT-8)
+        (envelope-from fanjinke@hygon.cn)
+Received: from cncheex01.Hygon.cn ([172.23.18.10])
+        by MK-FE.hygon.cn with ESMTP id x989bmqS049399;
+        Tue, 8 Oct 2019 17:37:48 +0800 (GMT-8)
+        (envelope-from fanjinke@hygon.cn)
+Received: from bogon.higon.com (172.23.18.44) by cncheex01.Hygon.cn
+ (172.23.18.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Tue, 8 Oct 2019
+ 17:37:50 +0800
+From:   Jinke Fan <fanjinke@hygon.cn>
+To:     <a.zummo@towertech.it>, <alexandre.belloni@bootlin.com>,
+        <puwen@hygon.cn>, <thomas.lendacky@amd.com>, <kim.phillips@amd.com>
+CC:     <linux-rtc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Jinke Fan <fanjinke@hygon.cn>
+Subject: [PATCH v2] rtc: Fix the AltCentury value on AMD/Hygon platform
+Date:   Tue, 8 Oct 2019 17:37:12 +0800
+Message-ID: <20191008093712.102158-1-fanjinke@hygon.cn>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [172.23.18.44]
+X-ClientProxiedBy: cncheex01.Hygon.cn (172.23.18.10) To cncheex01.Hygon.cn
+ (172.23.18.10)
+X-MAIL: spam2.hygon.cn x989btVM098946
+X-DNSRBL: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Hellstrom <thellstrom@vmware.com>
+When using following operations:
+date -s "21190910 19:20:00"
+hwclock -w
+to change date from 2019 to 2119 for test, it will fail on Hygon
+Dhyana and AMD Zen CPUs, while the same operations run ok on Intel i7
+platform.
 
-A huge pud page can theoretically be faulted in racing with pmd_alloc()
-in __handle_mm_fault(). That will lead to pmd_alloc() returning an
-invalid pmd pointer. Fix this by adding a pud_trans_unstable() function
-similar to pmd_trans_unstable() and check whether the pud is really stable
-before using the pmd pointer.
+MC146818 driver use function mc146818_set_time() to set register
+RTC_FREQ_SELECT(RTC_REG_A)'s bit4-bit6 field which means divider stage
+reset value on Intel platform to 0x7.
 
-Race:
-Thread 1:             Thread 2:                 Comment
-create_huge_pud()                               Fallback - not taken.
-		      create_huge_pud()         Taken.
-pmd_alloc()                                     Returns an invalid pointer.
+While AMD/Hygon RTC_REG_A(0Ah)'s bit4 is defined as DV0 [Reference]:
+DV0 = 0 selects Bank 0, DV0 = 1 selects Bank 1. Bit5-bit6 is defined
+as reserved.
 
-Cc: Matthew Wilcox <willy@infradead.org>
-Fixes: a00cc7d9dd93 ("mm, x86: add support for PUD-sized transparent hugepages")
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+DV0 is set to 1, it will select Bank 1, which will disable AltCentury
+register(0x32) access. As UEFI pass acpi_gbl_FADT.century 0x32
+(AltCentury), the CMOS write will be failed on code:
+CMOS_WRITE(century, acpi_gbl_FADT.century).
+
+Correct RTC_REG_A bank select bit(DV0) to 0 on AMD/Hygon CPUs, it will
+enable AltCentury(0x32) register writing and finally setup century as
+expected.
+
+Test results on AMD/Hygon machine show that it works as expected.
+
+Reference:
+https://www.amd.com/system/files/TechDocs/51192_Bolton_FCH_RRG.pdf
+section: 3.13 Real Time Clock (RTC)
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Jinke Fan <fanjinke@hygon.cn>
 ---
-RFC: We include pud_devmap() as an unstable PUD flag. Is this correct?
-     Do the same for pmds?
----
- include/asm-generic/pgtable.h | 25 +++++++++++++++++++++++++
- mm/memory.c                   |  6 ++++++
- 2 files changed, 31 insertions(+)
+ drivers/rtc/rtc-mc146818-lib.c | 9 +++++++--
+ include/linux/mc146818rtc.h    | 6 ++++++
+ 2 files changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
-index 818691846c90..70c2058230ba 100644
---- a/include/asm-generic/pgtable.h
-+++ b/include/asm-generic/pgtable.h
-@@ -912,6 +912,31 @@ static inline int pud_trans_huge(pud_t pud)
- }
- #endif
+diff --git a/drivers/rtc/rtc-mc146818-lib.c b/drivers/rtc/rtc-mc146818-lib.c
+index 2ecd8752b088..a821dbe215d3 100644
+--- a/drivers/rtc/rtc-mc146818-lib.c
++++ b/drivers/rtc/rtc-mc146818-lib.c
+@@ -170,9 +170,14 @@ int mc146818_set_time(struct rtc_time *time)
+ 	}
  
-+/* See pmd_none_or_trans_huge_or_clear_bad for discussion. */
-+static inline int pud_none_or_trans_huge_or_dev_or_clear_bad(pud_t *pud)
-+{
-+	pud_t pudval = READ_ONCE(*pud);
+ 	save_control = CMOS_READ(RTC_CONTROL);
+-	CMOS_WRITE((save_control|RTC_SET), RTC_CONTROL);
++	CMOS_WRITE((save_control | RTC_SET), RTC_CONTROL);
+ 	save_freq_select = CMOS_READ(RTC_FREQ_SELECT);
+-	CMOS_WRITE((save_freq_select|RTC_DIV_RESET2), RTC_FREQ_SELECT);
 +
-+	if (pud_none(pudval) || pud_trans_huge(pudval) || pud_devmap(pudval))
-+		return 1;
-+	if (unlikely(pud_bad(pudval))) {
-+		pud_clear_bad(pud);
-+		return 1;
-+	}
-+	return 0;
-+}
-+
-+/* See pmd_trans_unstable for discussion. */
-+static inline int pud_trans_unstable(pud_t *pud)
-+{
-+#if defined(CONFIG_TRANSPARENT_HUGEPAGE) &&			\
-+	defined(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
-+	return pud_none_or_trans_huge_or_dev_or_clear_bad(pud);
++#if defined(CONFIG_CPU_SUP_AMD) || defined(CONFIG_CPU_SUP_HYGON)
++	CMOS_WRITE((save_freq_select & (~RTC_DV0)), RTC_FREQ_SELECT);
 +#else
-+	return 0;
++	CMOS_WRITE((save_freq_select | RTC_DIV_RESET2), RTC_FREQ_SELECT);
 +#endif
-+}
+ 
+ #ifdef CONFIG_MACH_DECSTATION
+ 	CMOS_WRITE(real_yrs, RTC_DEC_YEAR);
+diff --git a/include/linux/mc146818rtc.h b/include/linux/mc146818rtc.h
+index 0661af17a758..590ac7849c78 100644
+--- a/include/linux/mc146818rtc.h
++++ b/include/linux/mc146818rtc.h
+@@ -86,6 +86,12 @@ struct cmos_rtc_board_info {
+    /* 2 values for divider stage reset, others for "testing purposes only" */
+ #  define RTC_DIV_RESET1	0x60
+ #  define RTC_DIV_RESET2	0x70
 +
- #ifndef pmd_read_atomic
- static inline pmd_t pmd_read_atomic(pmd_t *pmdp)
- {
-diff --git a/mm/memory.c b/mm/memory.c
-index b1ca51a079f2..43ff372f4f07 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3914,6 +3914,7 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
- 	vmf.pud = pud_alloc(mm, p4d, address);
- 	if (!vmf.pud)
- 		return VM_FAULT_OOM;
-+retry_pud:
- 	if (pud_none(*vmf.pud) && __transparent_hugepage_enabled(vma)) {
- 		ret = create_huge_pud(&vmf);
- 		if (!(ret & VM_FAULT_FALLBACK))
-@@ -3940,6 +3941,11 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
- 	vmf.pmd = pmd_alloc(mm, vmf.pud, address);
- 	if (!vmf.pmd)
- 		return VM_FAULT_OOM;
++#if defined(CONFIG_CPU_SUP_AMD) || defined(CONFIG_CPU_SUP_HYGON)
++   /* DV0 = 0 selects Bank 0, DV0 = 1 selects Bank 1 on AMD/Hygon platform */
++#  define RTC_DV0		0x10
++#endif
 +
-+	/* Huge pud page fault raced with pmd_alloc? */
-+	if (pud_trans_unstable(vmf.pud))
-+		goto retry_pud;
-+
- 	if (pmd_none(*vmf.pmd) && __transparent_hugepage_enabled(vma)) {
- 		ret = create_huge_pmd(&vmf);
- 		if (!(ret & VM_FAULT_FALLBACK))
+   /* Periodic intr. / Square wave rate select. 0=none, 1=32.8kHz,... 15=2Hz */
+ # define RTC_RATE_SELECT 	0x0F
+ 
 -- 
-2.20.1
+2.17.1
 
