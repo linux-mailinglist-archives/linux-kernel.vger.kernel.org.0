@@ -2,52 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B7D9CFFC6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 19:25:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92A1ACFFC9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 19:26:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727336AbfJHRZi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 13:25:38 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:36579 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbfJHRZi (ORCPT
+        id S1728054AbfJHR0C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 13:26:02 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:34305 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725900AbfJHR0C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 13:25:38 -0400
+        Tue, 8 Oct 2019 13:26:02 -0400
+X-Originating-IP: 91.224.148.103
 Received: from xps13.stephanxp.local (unknown [91.224.148.103])
         (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 655A4200003;
-        Tue,  8 Oct 2019 17:25:34 +0000 (UTC)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id A8E85C0004;
+        Tue,  8 Oct 2019 17:25:59 +0000 (UTC)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
+To:     Stephen Boyd <swboyd@chromium.org>, linux-kernel@vger.kernel.org
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
         Vignesh Raghavendra <vigneshr@ti.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mtd: st_spi_fsm: remove unused field from struct stfsm
-Date:   Tue,  8 Oct 2019 19:25:29 +0200
-Message-Id: <20191008172529.5704-1-miquel.raynal@bootlin.com>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Richard Weinberger <richard@nod.at>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH v6 30/57] mtd: Remove dev_err() usage after platform_get_irq()
+Date:   Tue,  8 Oct 2019 19:25:58 +0200
+Message-Id: <20191008172558.5955-1-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191001100510.13962-1-brgl@bgdev.pl>
+In-Reply-To: <20190730181557.90391-31-swboyd@chromium.org>
 References: 
 MIME-Version: 1.0
 X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b34c095ca6091836c4da3856ed30c8690a2d1d3a
+X-linux-mtd-patch-commit: aab478ca0f7ada511088039c6e2c8fdcb09139db
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-10-01 at 10:05:10 UTC, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Tue, 2019-07-30 at 18:15:30 UTC, Stephen Boyd wrote:
+> We don't need dev_err() messages when platform_get_irq() fails now that
+> platform_get_irq() prints an error message itself when something goes
+> wrong. Let's remove these prints with a simple semantic patch.
 > 
-> The 'region' field in struct stfsm is unused and can be removed.
+> // <smpl>
+> @@
+> expression ret;
+> struct platform_device *E;
+> @@
 > 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ret =
+> (
+> platform_get_irq(E, ...)
+> |
+> platform_get_irq_byname(E, ...)
+> );
+> 
+> if ( \( ret < 0 \| ret <= 0 \) )
+> {
+> (
+> -if (ret != -EPROBE_DEFER)
+> -{ ...
+> -dev_err(...);
+> -... }
+> |
+> ...
+> -dev_err(...);
+> )
+> ...
+> }
+> // </smpl>
+> 
+> While we're here, remove braces on if statements that only have one
+> statement (manually).
+> 
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> Cc: Brian Norris <computersforpeace@gmail.com>
+> Cc: Marek Vasut <marek.vasut@gmail.com>
+> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+> Cc: Richard Weinberger <richard@nod.at>
+> Cc: Vignesh Raghavendra <vigneshr@ti.com>
+> Cc: linux-mtd@lists.infradead.org
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
 Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/next, thanks.
 
