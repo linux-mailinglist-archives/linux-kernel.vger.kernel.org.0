@@ -2,105 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD0DECFAA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 14:56:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B479CFA70
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 14:53:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731047AbfJHM4U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 08:56:20 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52458 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730670AbfJHM4U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 08:56:20 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1074AA26682;
-        Tue,  8 Oct 2019 12:56:20 +0000 (UTC)
-Received: from 10.255.255.10 (unknown [10.40.205.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7EE285DA2C;
-        Tue,  8 Oct 2019 12:56:13 +0000 (UTC)
-Date:   Tue, 8 Oct 2019 14:56:10 +0200
-From:   Karel Zak <kzak@redhat.com>
-To:     Ian Kent <raven@themaw.net>
-Cc:     Hugh Dickins <hughd@google.com>, Laura Abbott <labbott@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: mount on tmpfs failing to parse context option
-Message-ID: <20191008125610.s4fgnnba7yhclb3z@10.255.255.10>
-References: <d5b67332-57b7-c19a-0462-f84d07ef1a16@redhat.com>
- <d7f83334-d731-b892-ee49-1065d64a4887@redhat.com>
- <alpine.LSU.2.11.1910071655060.4431@eggly.anvils>
- <59784f8ac4d458a09d40706b554432b283083938.camel@themaw.net>
+        id S1730888AbfJHMxW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 08:53:22 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:36934 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730541AbfJHMxW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 08:53:22 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id E8BFF7BAEF272BFF2464;
+        Tue,  8 Oct 2019 20:53:20 +0800 (CST)
+Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 8 Oct 2019
+ 20:53:10 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Chao Yu <yuchao0@huawei.com>, <linux-erofs@lists.ozlabs.org>
+CC:     LKML <linux-kernel@vger.kernel.org>, Miao Xie <miaoxie@huawei.com>,
+        "Li Guifu" <bluce.liguifu@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH for-next 1/5] erofs: clean up collection handling routines
+Date:   Tue, 8 Oct 2019 20:56:12 +0800
+Message-ID: <20191008125616.183715-1-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <59784f8ac4d458a09d40706b554432b283083938.camel@themaw.net>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.68]); Tue, 08 Oct 2019 12:56:20 +0000 (UTC)
+Content-Type: text/plain
+X-Originating-IP: [10.140.130.215]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 08:38:18PM +0800, Ian Kent wrote:
-> > That's because the options in shmem_parse_options() are
-> > "size=4G,nr_inodes=0", which indeed looks like an attempt to
-> > retroactively limit size; but the user never asked "size=4G" there.
-> 
-> I believe that's mount(8) doing that.
-> I don't think it's specific to the new mount api.
-> 
-> AFAIK it's not new but it does mean the that things that come
-> through that have been found in mtab by mount(8) need to be
-> checked against the current value before failing or ignored if
-> changing them is not allowed.
-> 
-> I wonder if the problem has been present for quite a while but
-> gone unnoticed perhaps.
-> 
-> IIUC the order should always be command line options last and it
-> must be that way to honour the last specified option takes
-> precedence convention.
-> 
-> I thought this was well known, but maybe I'm wrong ... and TBH
-> I wasn't aware of it until recently myself.
+ - change return value to int since collection is
+   already returned within the collector.
+ - better function naming.
 
-Yep, the common behavior is "the last option wins". See man mount,
-remount option:
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
+ fs/erofs/zdata.c | 47 +++++++++++++++++++++++++----------------------
+ 1 file changed, 25 insertions(+), 22 deletions(-)
 
-  remount  functionality  follows  the standard way the mount command
-  works with options from fstab.  This means that mount does not read
-  fstab (or mtab) only when both device and dir are specified.
-
-        mount -o remount,rw /dev/foo /dir
-
-  After this call all old mount options are replaced and arbitrary
-  stuff from fstab (or mtab) is ignored, except the loop= option which
-  is  internally  generated  and  maintained by the mount command.
-
-        mount -o remount,rw  /dir
-
-  After  this call, mount reads fstab and merges these options with
-  the options from the command line (-o).  If no mountpoint is found
-  in fstab, then a remount with unspeci‐ fied source is allowed.
-
-
-If you do not like this classic behavior than recent mount(8) versions
-provide --options-mode={ignore,append,prepend,replace} to keep it in
-your hands.
-
-
-    Karel
-
-> 
-> > 
-> > Hugh
-> 
-
+diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+index fad80c97d247..ef32757d1aac 100644
+--- a/fs/erofs/zdata.c
++++ b/fs/erofs/zdata.c
+@@ -337,9 +337,9 @@ try_to_claim_pcluster(struct z_erofs_pcluster *pcl,
+ 	return COLLECT_PRIMARY;	/* :( better luck next time */
+ }
+ 
+-static struct z_erofs_collection *cllookup(struct z_erofs_collector *clt,
+-					   struct inode *inode,
+-					   struct erofs_map_blocks *map)
++static int z_erofs_lookup_collection(struct z_erofs_collector *clt,
++				     struct inode *inode,
++				     struct erofs_map_blocks *map)
+ {
+ 	struct erofs_workgroup *grp;
+ 	struct z_erofs_pcluster *pcl;
+@@ -349,20 +349,20 @@ static struct z_erofs_collection *cllookup(struct z_erofs_collector *clt,
+ 
+ 	grp = erofs_find_workgroup(inode->i_sb, map->m_pa >> PAGE_SHIFT, &tag);
+ 	if (!grp)
+-		return NULL;
++		return -ENOENT;
+ 
+ 	pcl = container_of(grp, struct z_erofs_pcluster, obj);
+ 	if (clt->owned_head == &pcl->next || pcl == clt->tailpcl) {
+ 		DBG_BUGON(1);
+ 		erofs_workgroup_put(grp);
+-		return ERR_PTR(-EFSCORRUPTED);
++		return -EFSCORRUPTED;
+ 	}
+ 
+ 	cl = z_erofs_primarycollection(pcl);
+ 	if (cl->pageofs != (map->m_la & ~PAGE_MASK)) {
+ 		DBG_BUGON(1);
+ 		erofs_workgroup_put(grp);
+-		return ERR_PTR(-EFSCORRUPTED);
++		return -EFSCORRUPTED;
+ 	}
+ 
+ 	length = READ_ONCE(pcl->length);
+@@ -370,7 +370,7 @@ static struct z_erofs_collection *cllookup(struct z_erofs_collector *clt,
+ 		if ((map->m_llen << Z_EROFS_PCLUSTER_LENGTH_BIT) > length) {
+ 			DBG_BUGON(1);
+ 			erofs_workgroup_put(grp);
+-			return ERR_PTR(-EFSCORRUPTED);
++			return -EFSCORRUPTED;
+ 		}
+ 	} else {
+ 		unsigned int llen = map->m_llen << Z_EROFS_PCLUSTER_LENGTH_BIT;
+@@ -394,12 +394,12 @@ static struct z_erofs_collection *cllookup(struct z_erofs_collector *clt,
+ 		clt->tailpcl = NULL;
+ 	clt->pcl = pcl;
+ 	clt->cl = cl;
+-	return cl;
++	return 0;
+ }
+ 
+-static struct z_erofs_collection *clregister(struct z_erofs_collector *clt,
+-					     struct inode *inode,
+-					     struct erofs_map_blocks *map)
++static int z_erofs_register_collection(struct z_erofs_collector *clt,
++				       struct inode *inode,
++				       struct erofs_map_blocks *map)
+ {
+ 	struct z_erofs_pcluster *pcl;
+ 	struct z_erofs_collection *cl;
+@@ -408,7 +408,7 @@ static struct z_erofs_collection *clregister(struct z_erofs_collector *clt,
+ 	/* no available workgroup, let's allocate one */
+ 	pcl = kmem_cache_alloc(pcluster_cachep, GFP_NOFS);
+ 	if (!pcl)
+-		return ERR_PTR(-ENOMEM);
++		return -ENOMEM;
+ 
+ 	z_erofs_pcluster_init_always(pcl);
+ 	pcl->obj.index = map->m_pa >> PAGE_SHIFT;
+@@ -442,7 +442,7 @@ static struct z_erofs_collection *clregister(struct z_erofs_collector *clt,
+ 	if (err) {
+ 		mutex_unlock(&cl->lock);
+ 		kmem_cache_free(pcluster_cachep, pcl);
+-		return ERR_PTR(-EAGAIN);
++		return -EAGAIN;
+ 	}
+ 	/* used to check tail merging loop due to corrupted images */
+ 	if (clt->owned_head == Z_EROFS_PCLUSTER_TAIL)
+@@ -450,14 +450,14 @@ static struct z_erofs_collection *clregister(struct z_erofs_collector *clt,
+ 	clt->owned_head = &pcl->next;
+ 	clt->pcl = pcl;
+ 	clt->cl = cl;
+-	return cl;
++	return 0;
+ }
+ 
+ static int z_erofs_collector_begin(struct z_erofs_collector *clt,
+ 				   struct inode *inode,
+ 				   struct erofs_map_blocks *map)
+ {
+-	struct z_erofs_collection *cl;
++	int ret;
+ 
+ 	DBG_BUGON(clt->cl);
+ 
+@@ -471,19 +471,22 @@ static int z_erofs_collector_begin(struct z_erofs_collector *clt,
+ 	}
+ 
+ repeat:
+-	cl = cllookup(clt, inode, map);
+-	if (!cl) {
+-		cl = clregister(clt, inode, map);
++	ret = z_erofs_lookup_collection(clt, inode, map);
++	if (ret == -ENOENT) {
++		ret = z_erofs_register_collection(clt, inode, map);
+ 
+-		if (cl == ERR_PTR(-EAGAIN))
++		/* someone registered at the same time, give another try */
++		if (ret == -EAGAIN) {
++			cond_resched();
+ 			goto repeat;
++		}
+ 	}
+ 
+-	if (IS_ERR(cl))
+-		return PTR_ERR(cl);
++	if (ret)
++		return ret;
+ 
+ 	z_erofs_pagevec_ctor_init(&clt->vector, Z_EROFS_NR_INLINE_PAGEVECS,
+-				  cl->pagevec, cl->vcnt);
++				  clt->cl->pagevec, clt->cl->vcnt);
+ 
+ 	clt->compressedpages = clt->pcl->compressed_pages;
+ 	if (clt->mode <= COLLECT_PRIMARY) /* cannot do in-place I/O */
 -- 
- Karel Zak  <kzak@redhat.com>
- http://karelzak.blogspot.com
+2.17.1
+
