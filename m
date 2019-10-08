@@ -2,125 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 943DDCFE23
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 17:53:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41935CFE1C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 17:52:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728796AbfJHPwW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 11:52:22 -0400
-Received: from mga06.intel.com ([134.134.136.31]:21591 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728718AbfJHPwT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 11:52:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2019 08:52:19 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,270,1566889200"; 
-   d="scan'208";a="277135045"
-Received: from otc-lr-04.jf.intel.com ([10.54.39.120])
-  by orsmga001.jf.intel.com with ESMTP; 08 Oct 2019 08:52:18 -0700
-From:   kan.liang@linux.intel.com
-To:     peterz@infradead.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH 9/9] perf/x86/cstate: Add Tiger Lake CPU support
-Date:   Tue,  8 Oct 2019 08:50:10 -0700
-Message-Id: <1570549810-25049-10-git-send-email-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1570549810-25049-1-git-send-email-kan.liang@linux.intel.com>
-References: <1570549810-25049-1-git-send-email-kan.liang@linux.intel.com>
+        id S1727046AbfJHPwC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 11:52:02 -0400
+Received: from outbound-smtp15.blacknight.com ([46.22.139.232]:54604 "EHLO
+        outbound-smtp15.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725966AbfJHPwB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 11:52:01 -0400
+Received: from mail.blacknight.com (unknown [81.17.254.17])
+        by outbound-smtp15.blacknight.com (Postfix) with ESMTPS id 8DC431C2D68
+        for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2019 16:51:58 +0100 (IST)
+Received: (qmail 5557 invoked from network); 8 Oct 2019 15:51:58 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.19.210])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 8 Oct 2019 15:51:58 -0000
+Date:   Tue, 8 Oct 2019 16:51:56 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Florian Weimer <fw@deneb.enyo.de>,
+        Dave Chinner <david@fromorbit.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] mm, compaction: fix wrong pfn handling in
+ __reset_isolation_pfn()
+Message-ID: <20191008155156.GD3321@techsingularity.net>
+References: <20191008152915.24704-1-vbabka@suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20191008152915.24704-1-vbabka@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Tue, Oct 08, 2019 at 05:29:15PM +0200, Vlastimil Babka wrote:
+> Florian and Dave reported [1] a NULL pointer dereference in
+> __reset_isolation_pfn(). While the exact cause is unclear, staring at the code
+> revealed two bugs, which might be related.
+> 
 
-Tiger Lake is the followon to Ice Lake. From the perspective of Intel
-cstate residency counters, there is nothing changed compared with
-Ice Lake.
+I think the fix is a good fit. Even if the problem still occurs, it
+eliminates an important possibility.
 
-Share icl_cstates with Ice Lake.
-Update the comments for Tiger Lake.
+> One bug is that if zone starts in the middle of pageblock, block_page might
+> correspond to different pfn than block_pfn, and then the pfn_valid_within()
+> checks will check different pfn's than those accessed via struct page. This
+> might result in acessing an unitialized page in CONFIG_HOLES_IN_ZONE configs.
+> 
 
-The External Design Specification (EDS) is not published yet. It comes
-from an authoritative internal source.
+s/acessing/accessing/
 
-The patch has been tested on real hardware.
+Aside from HOLES_IN_ZONE, the patch addresses an issue if the start
+of the zone is not pageblock-aligned. While this is common, it's not
+guaranteed. I don't think this needs to be clarified in the changelog as
+your example is valid. I'm commenting in case someone decides not to try
+the patch because they feel HOLES_IN_ZONE is required.
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- arch/x86/events/intel/cstate.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+> The other bug is that end_page refers to the first page of next pageblock and
+> not last page of current pageblock. The online and valid check is then wrong
+> and with sections, the while (page < end_page) loop might wander off actual
+> struct page arrays.
+> 
+> [1] https://lore.kernel.org/linux-xfs/87o8z1fvqu.fsf@mid.deneb.enyo.de/
+> 
+> Reported-by: Florian Weimer <fw@deneb.enyo.de>
+> Reported-by: Dave Chinner <david@fromorbit.com>
+> Fixes: 6b0868c820ff ("mm/compaction.c: correct zone boundary handling when resetting pageblock skip hints")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 
-diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
-index 4d232ac..e1daf41 100644
---- a/arch/x86/events/intel/cstate.c
-+++ b/arch/x86/events/intel/cstate.c
-@@ -50,44 +50,44 @@
-  *	MSR_CORE_C6_RESIDENCY: CORE C6 Residency Counter
-  *			       perf code: 0x02
-  *			       Available model: SLM,AMT,NHM,WSM,SNB,IVB,HSW,BDW,
-- *						SKL,KNL,GLM,CNL,KBL,CML,ICL
-+ *						SKL,KNL,GLM,CNL,KBL,CML,ICL,TGL
-  *			       Scope: Core
-  *	MSR_CORE_C7_RESIDENCY: CORE C7 Residency Counter
-  *			       perf code: 0x03
-  *			       Available model: SNB,IVB,HSW,BDW,SKL,CNL,KBL,CML,
-- *						ICL
-+ *						ICL,TGL
-  *			       Scope: Core
-  *	MSR_PKG_C2_RESIDENCY:  Package C2 Residency Counter.
-  *			       perf code: 0x00
-  *			       Available model: SNB,IVB,HSW,BDW,SKL,KNL,GLM,CNL,
-- *						KBL,CML,ICL
-+ *						KBL,CML,ICL,TGL
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C3_RESIDENCY:  Package C3 Residency Counter.
-  *			       perf code: 0x01
-  *			       Available model: NHM,WSM,SNB,IVB,HSW,BDW,SKL,KNL,
-- *						GLM,CNL,KBL,CML,ICL
-+ *						GLM,CNL,KBL,CML,ICL,TGL
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C6_RESIDENCY:  Package C6 Residency Counter.
-  *			       perf code: 0x02
-  *			       Available model: SLM,AMT,NHM,WSM,SNB,IVB,HSW,BDW
-- *						SKL,KNL,GLM,CNL,KBL,CML,ICL
-+ *						SKL,KNL,GLM,CNL,KBL,CML,ICL,TGL
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C7_RESIDENCY:  Package C7 Residency Counter.
-  *			       perf code: 0x03
-  *			       Available model: NHM,WSM,SNB,IVB,HSW,BDW,SKL,CNL,
-- *						KBL,CML,ICL
-+ *						KBL,CML,ICL,TGL
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C8_RESIDENCY:  Package C8 Residency Counter.
-  *			       perf code: 0x04
-- *			       Available model: HSW ULT,KBL,CNL,CML,ICL
-+ *			       Available model: HSW ULT,KBL,CNL,CML,ICL,TGL
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C9_RESIDENCY:  Package C9 Residency Counter.
-  *			       perf code: 0x05
-- *			       Available model: HSW ULT,KBL,CNL,CML,ICL
-+ *			       Available model: HSW ULT,KBL,CNL,CML,ICL,TGL
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C10_RESIDENCY: Package C10 Residency Counter.
-  *			       perf code: 0x06
-- *			       Available model: HSW ULT,KBL,GLM,CNL,CML,ICL
-+ *			       Available model: HSW ULT,KBL,GLM,CNL,CML,ICL,TGL
-  *			       Scope: Package (physical package)
-  *
-  */
-@@ -645,6 +645,8 @@ static const struct x86_cpu_id intel_cstates_match[] __initconst = {
- 
- 	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE_L, icl_cstates),
- 	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE,   icl_cstates),
-+	X86_CSTATES_MODEL(INTEL_FAM6_TIGERLAKE_L, icl_cstates),
-+	X86_CSTATES_MODEL(INTEL_FAM6_TIGERLAKE, icl_cstates),
- 	{ },
- };
- MODULE_DEVICE_TABLE(x86cpu, intel_cstates_match);
+Acked-by: Mel Gorman <mgorman@techsingularity.net>
+
+Just one minor irrelevant note below.
+
+> ---
+>  mm/compaction.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/mm/compaction.c b/mm/compaction.c
+> index ce08b39d85d4..672d3c78c6ab 100644
+> --- a/mm/compaction.c
+> +++ b/mm/compaction.c
+> @@ -270,14 +270,15 @@ __reset_isolation_pfn(struct zone *zone, unsigned long pfn, bool check_source,
+>  
+>  	/* Ensure the start of the pageblock or zone is online and valid */
+>  	block_pfn = pageblock_start_pfn(pfn);
+> -	block_page = pfn_to_online_page(max(block_pfn, zone->zone_start_pfn));
+> +	block_pfn = max(block_pfn, zone->zone_start_pfn);
+> +	block_page = pfn_to_online_page(block_pfn);
+>  	if (block_page) {
+>  		page = block_page;
+>  		pfn = block_pfn;
+>  	}
+>  
+>  	/* Ensure the end of the pageblock or zone is online and valid */
+> -	block_pfn += pageblock_nr_pages;
+> +	block_pfn = pageblock_end_pfn(pfn) - 1;
+>  	block_pfn = min(block_pfn, zone_end_pfn(zone) - 1);
+>  	end_page = pfn_to_online_page(block_pfn);
+>  	if (!end_page)
+
+This is fine and is definetly fixing a potential issue.
+
+> @@ -303,7 +304,7 @@ __reset_isolation_pfn(struct zone *zone, unsigned long pfn, bool check_source,
+>  
+>  		page += (1 << PAGE_ALLOC_COSTLY_ORDER);
+>  		pfn += (1 << PAGE_ALLOC_COSTLY_ORDER);
+> -	} while (page < end_page);
+> +	} while (page <= end_page);
+>  
+>  	return false;
+>  }
+
+I think this is also ok as it's appropriate for PFN walkers in general of
+this style. However, I think it's unlikely to fix anything given that we
+are walking in steps of (1 << PAGE_ALLOC_COSTLY_ORDER) and the final page
+is not necessarily aligned on that boundary. Still, it's an improvement.
+
+Thanks
+
 -- 
-2.7.4
-
+Mel Gorman
+SUSE Labs
