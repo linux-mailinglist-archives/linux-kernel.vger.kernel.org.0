@@ -2,120 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55A52CF4C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 10:15:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1FBACF4C6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 10:16:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730539AbfJHIPO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 04:15:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58268 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730292AbfJHIPO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 04:15:14 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 86616ADDC;
-        Tue,  8 Oct 2019 08:15:11 +0000 (UTC)
-Date:   Tue, 8 Oct 2019 10:15:10 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Qian Cai <cai@lca.pw>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        sergey.senozhatsky.work@gmail.com, rostedt@goodmis.org,
-        peterz@infradead.org, linux-mm@kvack.org,
-        john.ogness@linutronix.de, akpm@linux-foundation.org,
-        david@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm/page_isolation: fix a deadlock with printk()
-Message-ID: <20191008081510.ptwmb7zflqiup5py@pathway.suse.cz>
-References: <1570228005-24979-1-git-send-email-cai@lca.pw>
- <20191007143002.l37bt2lzqtnqjqxu@pathway.suse.cz>
- <1570460350.5576.290.camel@lca.pw>
- <20191007151237.GP2381@dhcp22.suse.cz>
- <1570462407.5576.292.camel@lca.pw>
+        id S1730563AbfJHIPr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 04:15:47 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39086 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730549AbfJHIPq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 04:15:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=sh9ykIEzDZIGiyjLdhPffAiNXbo1ruICQ2cpisEDWQA=; b=dcAWg8QQ4feUcsmnPUK85ucvM
+        h1AWM/e2x6RsKCdJWTalQOyQY1735NVykrYFIcX19lU0Zj/wWry+TorFKQ3QN6WiG1bideFKoFJOy
+        uPZt6YFVxvU2rKLe2wIlXaS3Wa71fpqcpTeENfnIhNky0na1F4AdgieV3r8ayyNpD2jT/T+ozWupF
+        v8yPAVLZ6wuleRI1WE93ae0wOHs5JknRKgp+q+X9UCIyiUHEAHOeF728CI55uW6UR1BqnXLYsE2On
+        LgbCHit0tuCY+THwHBQRaD3hfKAKMNe3AiIO7XKlSx+iYBm3bXRFjsN5SnKh+MKzwrSc/6K7lCyR2
+        Kxpkpzw/w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iHkeg-000788-6H; Tue, 08 Oct 2019 08:15:38 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 2F62E3008C1;
+        Tue,  8 Oct 2019 10:14:43 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 511AA2022BAB2; Tue,  8 Oct 2019 10:15:35 +0200 (CEST)
+Date:   Tue, 8 Oct 2019 10:15:35 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        bristot@redhat.com, jbaron@akamai.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
+        ard.biesheuvel@linaro.org, jpoimboe@redhat.com
+Subject: Re: [PATCH v3 4/6] x86/alternatives: Add and use text_gen_insn()
+ helper
+Message-ID: <20191008081535.GF2311@hirez.programming.kicks-ass.net>
+References: <20191007081716.07616230.8@infradead.org>
+ <20191007081945.05309765.9@infradead.org>
+ <20191008152349.293e77b5315acf42f6e607ec@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1570462407.5576.292.camel@lca.pw>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20191008152349.293e77b5315acf42f6e607ec@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2019-10-07 11:33:27, Qian Cai wrote:
-> On Mon, 2019-10-07 at 17:12 +0200, Michal Hocko wrote:
-> > On Mon 07-10-19 10:59:10, Qian Cai wrote:
-> > [...]
-> > > It is almost impossible to eliminate all the indirect call chains from
-> > > console_sem/console_owner_lock to zone->lock because it is too normal that
-> > > something later needs to allocate some memory dynamically, so as long as it
-> > > directly call printk() with zone->lock held, it will be in trouble.
-> > 
-> > Do you have any example where the console driver really _has_ to
-> > allocate. Because I have hard time to believe this is going to work at
-> > all as the atomic context doesn't allow to do any memory reclaim and
-> > such an allocation would be too easy to fail so the allocation cannot
-> > really rely on it.
+On Tue, Oct 08, 2019 at 03:23:49PM +0900, Masami Hiramatsu wrote:
+> On Mon, 07 Oct 2019 10:17:20 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
 > 
-> I don't know how to explain to you clearly, but let me repeat again one last
-> time. There is no necessary for console driver directly to allocate considering
-> this example,
+> > Provide a simple helper function to create common instruction
+> > encodings.
 > 
-> CPU0:              CPU1:    CPU2:       CPU3:
-> console_sem->lock                       zone->lock
->                    pi->lock
-> pi->lock                    rq_lock
->                    rq->lock
->                             zone->lock
->                                         console_sem->lock
-
-I am curious about CPU2. Does scheduler need to allocate memory?
-
-> Here it only need someone held the rq_lock and allocate some memory. There is
-> also true for port_lock. Since the deadlock could involve a lot of CPUs and a
-> longer lock chain, it is impossible to predict which one to allocate some memory
-> while held a lock could end up with the same problematic lock chain.
+> Thanks for using correct INSN_OPCODE:)
+> This looks good to me.
 > 
-> This is just a tip of iceberg to show the lock dependency,
-> 
-> console_owner --> port_lock_key
-> 
-> which could easily happen everywhere with a simple printk().
 
-We have got several lockdep reports about possible deadlocks between
-console_lock and port_lock caused by printk() called from console
-code.
-
-First note that they have been there for years. They were well hidden
-until 4.11 released in April 2017. Where the commit
-f975237b76827956fe13e ("printk: use printk_safe buffers in printk")
-allowed recursive printk() and lockdep.
-
-We believe that these deadlocks are really hard to hit. Console
-drivers call printk() only in very critical and rare situations.
-This is why nobody invested too much time into fixing these
-so far.
-
-There are basically three possibilities:
-
-1. Do crazy exercises with locks all around the kernel to
-   avoid the deadlocks. It is usually not worth it. And
-   it is a "whack a mole" approach.
-
-2. Use printk_deferred() in problematic code paths. It is
-   a "whack a mole" approach as well. And we would end up
-   with printk_deferred() used almost everywhere.
-
-3. Always deffer the console handling in printk(). This would
-   help also to avoid soft lockups. Several people pushed
-   against this last few years because it might reduce
-   the chance to see the message in case of system crash.
-
-As I said, there has finally been agreement to always do
-the offload few weeks ago. John Ogness is working on it.
-So we might have the systematic solution for these deadlocks
-rather sooner than later.
-
-Feel free to ask John to CC you on the patches if you want
-to help with review.
-
-Best Regards,
-Petr
+Right, I have it on my todo list to convert all of kprobes over. But
+feel tree to beat me to it :-)
