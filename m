@@ -2,73 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ED24CF286
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 08:13:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88C58CF279
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 08:12:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730053AbfJHGNn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 02:13:43 -0400
-Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:38443 "EHLO
-        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729876AbfJHGNn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 02:13:43 -0400
-Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
-        by ATCSQR.andestech.com with ESMTP id x985uS4f075344;
-        Tue, 8 Oct 2019 13:56:28 +0800 (GMT-8)
-        (envelope-from nickhu@andestech.com)
-Received: from atcsqa06.andestech.com (10.0.15.65) by ATCPCS16.andestech.com
- (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Tue, 8 Oct 2019
- 14:12:20 +0800
-From:   Nick Hu <nickhu@andestech.com>
-To:     <alankao@andestech.com>, <paul.walmsley@sifive.com>,
-        <palmer@sifive.com>, <aou@eecs.berkeley.edu>,
-        <aryabinin@virtuozzo.com>, <glider@google.com>,
-        <dvyukov@google.com>, <corbet@lwn.net>, <alexios.zavras@intel.com>,
-        <allison@lohutok.net>, <Anup.Patel@wdc.com>, <tglx@linutronix.de>,
-        <gregkh@linuxfoundation.org>, <atish.patra@wdc.com>,
-        <kstewart@linuxfoundation.org>, <linux-doc@vger.kernel.org>,
-        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <kasan-dev@googlegroups.com>, <linux-mm@kvack.org>
-CC:     Nick Hu <nickhu@andestech.com>
-Subject: [PATCH v3 3/3] kasan: Add riscv to KASAN documentation.
-Date:   Tue, 8 Oct 2019 14:11:53 +0800
-Message-ID: <8f3c66f3f24450b21b749a5e6e6eabf066632ac9.1570514545.git.nickhu@andestech.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <cover.1570514544.git.nickhu@andestech.com>
-References: <cover.1570514544.git.nickhu@andestech.com>
+        id S1729968AbfJHGMb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 02:12:31 -0400
+Received: from verein.lst.de ([213.95.11.211]:43917 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728297AbfJHGMb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 02:12:31 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 6910568B20; Tue,  8 Oct 2019 08:12:26 +0200 (CEST)
+Date:   Tue, 8 Oct 2019 08:12:25 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Carlos Maiolino <cmaiolino@redhat.com>
+Subject: Re: [PATCH 09/11] xfs: remove the fork fields in the writepage_ctx
+ and ioend
+Message-ID: <20191008061225.GA27652@lst.de>
+References: <20191006154608.24738-1-hch@lst.de> <20191006154608.24738-10-hch@lst.de> <20191007215944.GC16973@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.0.15.65]
-X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com x985uS4f075344
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191007215944.GC16973@dread.disaster.area>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add riscv to the KASAN documentation to mention that riscv
-is supporting generic kasan now.
+On Tue, Oct 08, 2019 at 08:59:44AM +1100, Dave Chinner wrote:
+> On Sun, Oct 06, 2019 at 05:46:06PM +0200, Christoph Hellwig wrote:
+> > In preparation for moving the writeback code to iomap.c, replace the
+> > XFS-specific COW fork concept with the iomap IOMAP_F_SHARED flag.
+> 
+> "In preparation for switching XFS to use the fs/iomap writeback
+> code..."?
+> 
+> I suspect the IOMAP_F_SHARED hunk I pointed out in the previous
+> patch should be in this one...
 
-Signed-off-by: Nick Hu <nickhu@andestech.com>
----
- Documentation/dev-tools/kasan.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/dev-tools/kasan.rst b/Documentation/dev-tools/kasan.rst
-index b72d07d70239..34fbb7212cbc 100644
---- a/Documentation/dev-tools/kasan.rst
-+++ b/Documentation/dev-tools/kasan.rst
-@@ -21,8 +21,8 @@ global variables yet.
- 
- Tag-based KASAN is only supported in Clang and requires version 7.0.0 or later.
- 
--Currently generic KASAN is supported for the x86_64, arm64, xtensa and s390
--architectures, and tag-based KASAN is supported only for arm64.
-+Currently generic KASAN is supported for the x86_64, arm64, xtensa, s390 and
-+riscv architectures, and tag-based KASAN is supported only for arm64.
- 
- Usage
- -----
--- 
-2.17.0
-
+All these made a whole lot more sense before Darrick reshuffled the
+code.  In my original version I started massaging the XFS code so that
+it can be moved to iomap without functional changes, but Darrick wanted
+the iomap code added in one series and then XFS switched over, which
+made a lot of things more confusing than they were intended to be.
