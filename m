@@ -2,109 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73271CF8D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 13:50:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFE4ACF8E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 13:51:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730751AbfJHLuc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 07:50:32 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59860 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730503AbfJHLub (ORCPT
+        id S1730555AbfJHLvI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 07:51:08 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:33766 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730371AbfJHLvH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 07:50:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=HU5Z8WYkEcy2A0wU6XIUSzSQGNyQSuE2XR7coM1PA08=; b=l/T7t9Ub/pYvcCITICGEh94C5
-        u4ZwpFmxbsiOdc0nusHOtfMzz8pB9HThddX24FyCbpmAslty2U1sAn6/NmMv5e6J8qsMMMmOu6gNT
-        2a8D3OT0j99z5tB7aCyAch+KsV/5kMz1JnN+yDCAApZq+CGtrUqaGFMVVK//O+9z7f2kI=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1iHo0Y-0008Cn-Pl; Tue, 08 Oct 2019 11:50:26 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 02C082742998; Tue,  8 Oct 2019 12:50:25 +0100 (BST)
-Date:   Tue, 8 Oct 2019 12:50:25 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-kernel@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH] regulator: core: Skip balancing of the enabled
- regulators in regulator_enable()
-Message-ID: <20191008115025.GF4382@sirena.co.uk>
-References: <CGME20191008101720eucas1p2e0d1bca6e696848bf689067e05620679@eucas1p2.samsung.com>
- <20191008101709.13827-1-m.szyprowski@samsung.com>
+        Tue, 8 Oct 2019 07:51:07 -0400
+Received: by mail-qt1-f196.google.com with SMTP id r5so24837354qtd.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 04:51:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TP0fuYtSeZDOT7CrZEihsRgw5tOuh/8kOVD2u7lNDTk=;
+        b=n7NbUBcWkVFWs+SNEwxjt2F/wAULZ8WYp6vM1sr8jzMVnzGQBAUaUwdbXY7YB1I/hI
+         2An88SwgNSk9ss7fOYeCvQ3oGI8JzXhLJyW7yJ+h6F5JIPK5FF+HvDwMwDKxQ40i1/c1
+         TTuI5D3HAX79cKWrvg14Izzuly3WQLKm29/qyCSPn0iJIw6JuZW28NOdjtz4U9Uws3xP
+         JXMXI3A2XaXqDlWQ0jP+oXJw89H/94k4Shd7DW5lZGw0H7us0ArtCDym0zX5Ejf2X9CZ
+         62CzjaDm6cv/om+O1A4EUz0/cr+/YOF3xGIcpXKJeUuoXhekEzdYP5vYkVu8tH2Y+t5Y
+         rxrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TP0fuYtSeZDOT7CrZEihsRgw5tOuh/8kOVD2u7lNDTk=;
+        b=DrRM3bU37cXbPGecUUIpqdQyJZu6soGzdQm7xvuODOKtyzZdD6W9V3ajUxBMCeETL1
+         IWqwFo+Bztofk8bM6UeFCwHbsMd8biZDmUXEGoMsrJkG8FlRn4eLwT9dxLZQR66Xoh02
+         uvnQizfAkQ5DKx5jLnBBRXkgVJZS6ngE6zGM8inV5xjC1BOXR6DnvcvDb1d3QEV6Aij/
+         P5GOhQDfRen5UqgDGmF0JckUo5O+qemdRXK5L5Lfwyk0ZXi7sxgIFIVHZquFJfsyFTXz
+         KDGpJudF57C1SJJEw3YI2+aea3mVRNkYOYiEtnvvY4Veyy9yNwus1y6kuWgW/OOSPdQ/
+         NIXA==
+X-Gm-Message-State: APjAAAXeI9fNwr3ZA1AOTFlNRUVFMEi2KJSrPCtjlFYahZG8DVT3s21h
+        iuFU15Gzp0KLtmQmx68O9vdvt+GT3BDCag==
+X-Google-Smtp-Source: APXvYqwAnQv5oYaT67RRjPtBW6WIjMuNwzonJT372UgMKyREbq2IqlSwhJ/AzDCWkGdXAMv4byeyUQ==
+X-Received: by 2002:a0c:e90e:: with SMTP id a14mr32637560qvo.184.1570535466036;
+        Tue, 08 Oct 2019 04:51:06 -0700 (PDT)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id x12sm12289720qtb.32.2019.10.08.04.51.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 08 Oct 2019 04:51:05 -0700 (PDT)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Tue, 8 Oct 2019 07:51:03 -0400
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: ehci-pci breakage with dma-mapping changes in 5.4-rc2
+Message-ID: <20191008115103.GA463127@rani.riverdale.lan>
+References: <20191007073448.GA882@lst.de>
+ <20191007175430.GA32537@rani.riverdale.lan>
+ <20191007175528.GA21857@lst.de>
+ <20191007175630.GA28861@infradead.org>
+ <20191007175856.GA42018@rani.riverdale.lan>
+ <20191007183206.GA13589@rani.riverdale.lan>
+ <20191007184754.GB31345@lst.de>
+ <20191007221054.GA409402@rani.riverdale.lan>
+ <20191007235401.GA608824@rani.riverdale.lan>
+ <20191008073210.GB9452@lst.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="eNMatiwYGLtwo1cJ"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191008101709.13827-1-m.szyprowski@samsung.com>
-X-Cookie: Do not disturb.
+In-Reply-To: <20191008073210.GB9452@lst.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Oct 08, 2019 at 09:32:10AM +0200, Christoph Hellwig wrote:
+> On Mon, Oct 07, 2019 at 07:54:02PM -0400, Arvind Sankar wrote:
+> > > Do you want me to resend the patch as its own mail, or do you just take
+> > > it with a Tested-by: from me? If the former, I assume you're ok with me
+> > > adding your Signed-off-by?
+> > > 
+> > > Thanks
+> > 
+> > A question on the original change though -- what happens if a single
+> > device (or a single IOMMU domain really) does want >4G DMA address
+> > space? Was that not previously allowed either?
+> 
+> Your EHCI device actually supports the larger addressing.  Without an
+> IOMMU (or with accidentally enabled passthrough mode as in your report)
+> that will use bounce buffers for physical address that are too large.
+> With an iommu we can just remap, and by default those remap addresses
+> are under 32-bit just to make everyones life easier.
+> 
+> The dma_get_required_mask function is misnamed unfortunately, what it
+> really means is the optimal mask, that is one that avoids bounce
+> buffering or other complications.
 
---eNMatiwYGLtwo1cJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I understand that my EHCI device, even though it only supports 32-bit
+adddressing, will be able to DMA into anywhere in physical RAM, whether
+below 4G or not, via the IOMMU or bounce buffering.
 
-On Tue, Oct 08, 2019 at 12:17:09PM +0200, Marek Szyprowski wrote:
-> Commit f8702f9e4aa7 ("regulator: core: Use ww_mutex for regulators
-> locking"), regardless of the subject, added additional call to
-> regulator_balance_voltage() during regulator_enable(). This is basically
-> a good idea, however it causes some issue for the regulators which are
-> already enabled at boot and are critical for system operation (for example
-> provides supply to the CPU).
-
-If regulators are essential to system operation they should be marked as
-always-on...
-
-> CPUfreq or other drivers typically call regulator_enable() on such
-> regulators during their probe, although the regulators are already enabled
-> by bootloader. The mentioned patch however added a call to
-> regulator_balance_voltage(), what in case of system boot, where no
-> additional requirements are set yet, typically causes to limit the voltage
-> to the minimal value defined at regulator constraints. This causes a crash
-> of the system when voltage on the CPU regulator is set to the lowest
-> possible value without adjusting the operation frequency. Fix this by
-> adding a check if regulator is already enabled - if so, then skip the
-> balancing procedure. The voltage will be balanced later anyway once the
-> required voltage value is requested.
-
-This then means that for users that might legitimately enable and
-disable regulators that need to be constrained are forced to change the
-voltage when they enable the regualtors in order to have their
-constraints take effect which seems bad.  I'd rather change the the
-cpufreq consumers to either not do the enable (since there really should
-be an always-on constraint this should be redundant, we might need to
-fix the core to take account of their settings though I think we lost
-that) or to set the voltage to whatever they need prior to doing their
-first enable, that seems more robust.
-
---eNMatiwYGLtwo1cJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2ceAEACgkQJNaLcl1U
-h9DWoAf/dbUB8lRI6R+Hiquem9S07NhSAZKa1EzqebKLcAZ9dLQMvsXS+i8xm+uY
-fUCKtKGaxmGAq8NE3Mf9rrwR3J4xRt0HmJNcQjH7zlb+rq8Vg2m6dwr+Vk1sm+AK
-gHX0zgtg8sCvTJekKSso8/kb/ac/qhKn7MZAryUFaXLvOWWdwGlPjl49BrqEAej0
-GCem17IW9Xa8qZ3F+woV41hdO95n8HmTS9nj0NWhZGFUu9LCAea3cMp5QcQ6AUNS
-099DSn2Y/opczEuevMQALSFMiAvBToZRUzO1+HuEfwjpxbKY1ErJ/yIMUySnZQI2
-m+88vWiJU1TxV7C3gTg/cAeuEhr9FQ==
-=dYbd
------END PGP SIGNATURE-----
-
---eNMatiwYGLtwo1cJ--
+What I mean is, do there exist devices (which would necessarily support
+64-bit DMA) that want to DMA using bigger than 4Gb buffers. Eg a GPU
+accelerator card with 16Gb of RAM on-board that wants to map 6Gb for DMA
+in one go, or 5 accelerator cards that are in one IOMMU domain and want
+to simultaneously map 1Gb each.
