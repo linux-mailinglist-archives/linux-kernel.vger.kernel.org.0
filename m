@@ -2,118 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 958F4D022D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 22:33:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21892D022F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 22:34:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730962AbfJHUda (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 16:33:30 -0400
-Received: from sauhun.de ([88.99.104.3]:52996 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730523AbfJHUda (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 16:33:30 -0400
-Received: from localhost (p54B3324A.dip0.t-ipconnect.de [84.179.50.74])
-        by pokefinder.org (Postfix) with ESMTPSA id 365942C07DC;
-        Tue,  8 Oct 2019 22:33:28 +0200 (CEST)
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     linux-i2c@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] gpu: drm: bridge: sii9234: convert to devm_i2c_new_dummy_device
-Date:   Tue,  8 Oct 2019 22:33:22 +0200
-Message-Id: <20191008203322.3238-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.20.1
+        id S1730985AbfJHUey (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 16:34:54 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:34624 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727835AbfJHUey (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 16:34:54 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iHwC4-0002Mx-0p; Tue, 08 Oct 2019 20:34:52 +0000
+Date:   Tue, 8 Oct 2019 21:34:51 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to
+ unsafe_put_user()
+Message-ID: <20191008203451.GX26530@ZenIV.linux.org.uk>
+References: <CAHk-=wgrqwuZJmwbrjhjCFeSUu2i57unaGOnP4qZAmSyuGwMZA@mail.gmail.com>
+ <CAHk-=wjRPerXedTDoBbJL=tHBpH+=sP6pX_9NfgWxpnmHC5RtQ@mail.gmail.com>
+ <5f06c138-d59a-d811-c886-9e73ce51924c@roeck-us.net>
+ <CAHk-=whAQWEMADgxb_qAw=nEY4OnuDn6HU4UCSDMNT5ULKvg3g@mail.gmail.com>
+ <20191007012437.GK26530@ZenIV.linux.org.uk>
+ <CAHk-=whKJfX579+2f-CHc4_YmEmwvMe_Csr0+CPfLAsSAdfDoA@mail.gmail.com>
+ <20191007025046.GL26530@ZenIV.linux.org.uk>
+ <CAHk-=whraNSys_Lj=Ut1EA=CJEfw2Uothh+5-WL+7nDJBegWcQ@mail.gmail.com>
+ <CAHk-=witTXMGsc9ZAK4hnKnd_O7u8b1eiou-6cfjt4aOcWvruQ@mail.gmail.com>
+ <20191008195858.GV26530@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191008195858.GV26530@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move from the deprecated i2c_new_dummy() to devm_i2c_new_dummy_device().
-We now get an ERRPTR which we use in error handling and we can skip
-removal of the created devices.
+On Tue, Oct 08, 2019 at 08:58:58PM +0100, Al Viro wrote:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+> The difference is, they have separate "for read" and "for write" primitives
+> and they want the range in their user_access_end() analogue.  Separating
+> the read and write isn't a problem for callers (we want them close to
+> the actual memory accesses).  Passing the range to user_access_end() just
+> might be tolerable, unless it makes you throw up...
 
-Rebased to v5.4-rc2 since last time. One of the last two users of the
-old API, so please apply soon, so I can remove the old interface. Only
-build tested.
+NOTE: I'm *NOT* suggesting to bring back the VERIFY_READ/VERIFY_WRITE
+argument to access_ok().  We'd gotten rid of it, and for a very good
+reason (and decades overdue).
 
- drivers/gpu/drm/bridge/sii9234.c | 36 +++++++++++---------------------
- 1 file changed, 12 insertions(+), 24 deletions(-)
+The main difference between access_ok() and user_access_begin() is that
+the latter is right next to actual memory access, with user_access_end()
+on the other side, also very close.  And most of those guys would be
+concentrated in a few functions, where we bloody well know which
+direction we are copying.
 
-diff --git a/drivers/gpu/drm/bridge/sii9234.c b/drivers/gpu/drm/bridge/sii9234.c
-index 25d4ad8c7ad6..8a6c85693a88 100644
---- a/drivers/gpu/drm/bridge/sii9234.c
-+++ b/drivers/gpu/drm/bridge/sii9234.c
-@@ -841,39 +841,28 @@ static int sii9234_init_resources(struct sii9234 *ctx,
- 
- 	ctx->client[I2C_MHL] = client;
- 
--	ctx->client[I2C_TPI] = i2c_new_dummy(adapter, I2C_TPI_ADDR);
--	if (!ctx->client[I2C_TPI]) {
-+	ctx->client[I2C_TPI] = devm_i2c_new_dummy_device(&client->dev, adapter,
-+							 I2C_TPI_ADDR);
-+	if (IS_ERR(ctx->client[I2C_TPI])) {
- 		dev_err(ctx->dev, "failed to create TPI client\n");
--		return -ENODEV;
-+		return PTR_ERR(ctx->client[I2C_TPI]);
- 	}
- 
--	ctx->client[I2C_HDMI] = i2c_new_dummy(adapter, I2C_HDMI_ADDR);
--	if (!ctx->client[I2C_HDMI]) {
-+	ctx->client[I2C_HDMI] = devm_i2c_new_dummy_device(&client->dev, adapter,
-+							  I2C_HDMI_ADDR);
-+	if (IS_ERR(ctx->client[I2C_HDMI])) {
- 		dev_err(ctx->dev, "failed to create HDMI RX client\n");
--		goto fail_tpi;
-+		return PTR_ERR(ctx->client[I2C_HDMI]);
- 	}
- 
--	ctx->client[I2C_CBUS] = i2c_new_dummy(adapter, I2C_CBUS_ADDR);
--	if (!ctx->client[I2C_CBUS]) {
-+	ctx->client[I2C_CBUS] = devm_i2c_new_dummy_device(&client->dev, adapter,
-+							  I2C_CBUS_ADDR);
-+	if (IS_ERR(ctx->client[I2C_CBUS])) {
- 		dev_err(ctx->dev, "failed to create CBUS client\n");
--		goto fail_hdmi;
-+		return PTR_ERR(ctx->client[I2C_CBUS]);
- 	}
- 
- 	return 0;
--
--fail_hdmi:
--	i2c_unregister_device(ctx->client[I2C_HDMI]);
--fail_tpi:
--	i2c_unregister_device(ctx->client[I2C_TPI]);
--
--	return -ENODEV;
--}
--
--static void sii9234_deinit_resources(struct sii9234 *ctx)
--{
--	i2c_unregister_device(ctx->client[I2C_CBUS]);
--	i2c_unregister_device(ctx->client[I2C_HDMI]);
--	i2c_unregister_device(ctx->client[I2C_TPI]);
- }
- 
- static inline struct sii9234 *bridge_to_sii9234(struct drm_bridge *bridge)
-@@ -950,7 +939,6 @@ static int sii9234_remove(struct i2c_client *client)
- 
- 	sii9234_cable_out(ctx);
- 	drm_bridge_remove(&ctx->bridge);
--	sii9234_deinit_resources(ctx);
- 
- 	return 0;
- }
--- 
-2.20.1
-
+Even if we try and map ppc allow_..._to_user() on user_access_begin(),
+access_ok() remains as it is (and I hope we'll get rid of the majority
+of its caller in process).
