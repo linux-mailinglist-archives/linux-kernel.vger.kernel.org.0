@@ -2,99 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89E51CFF76
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 19:00:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A502CFF79
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 19:03:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729779AbfJHRAY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 13:00:24 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:38441 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725917AbfJHRAX (ORCPT
+        id S1729795AbfJHRBY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 13:01:24 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:35612 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725900AbfJHRBY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 13:00:23 -0400
-Received: by mail-io1-f68.google.com with SMTP id u8so38075130iom.5
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 10:00:23 -0700 (PDT)
+        Tue, 8 Oct 2019 13:01:24 -0400
+Received: by mail-pl1-f193.google.com with SMTP id c3so7239025plo.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 10:01:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=jjX9NlOHpquC/Sfta8LEcd2OkeJi//hJzKxsmDBzbTE=;
-        b=gB1e0PwfuyEBf0jsz8o+5nHpb3VXP4nLO2wfWhWGC/75vX90xaUYLZ4CufQ5pwgEWA
-         f8a5GGESkScrhfUAFIM4IFRh3V0WAhqgs+Kmk3mWHKL2rEcI8HlIY1LfgTOQlCc6tP0b
-         h6jT5o5L+wV1miWcBWTMdBUybHf6EcVoGjHdL13bcBnoLCFVA7KP3/9aIKvJX2MQkxAr
-         KYwxpGBGlnQ94spt/znvnB8E6DmZI+mw4LA5Oa6tJhfgzhsDywolVaDeuQ3f/MFzOt/d
-         1Xug10qjK5BsETha8IW6lHS6mIO8JkOX/87sj4GVcyu7dCn/AzcS+9IUP00iMTOvuWoK
-         IKPw==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HZp8JchvcdlzTvPRe10OMjXECzkCkCJFVu0ZHeOLniw=;
+        b=xNuhAuTlqdl5j1fwt9UJkPakMi2ENRRhCumwZwhgTgkNiH5ylj6vQ7y8xEVqRkR2mU
+         GjT+EpDYJIldteTU1vgUrLGBhWpq+n8uMLdGsIIAfafTbIFWFp2n/NvfOrLtJOXtCapB
+         UbCGJINHJ3dCbPZ9XSEsuTzdasxQvh+PaAX74=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jjX9NlOHpquC/Sfta8LEcd2OkeJi//hJzKxsmDBzbTE=;
-        b=UmSH1QKn7ESguWrzNa3d5aXCnKxy1WIPn8wB0HHk/510JgfUHQl2kO2MritEsP5NTI
-         0rwkocvIgrVAJ8SADO5HeuYSlujxaMn7phCtdQUjyNtoeIhvG3TtubczWJrYGPd5mSIS
-         /JVhohbxP440ze7RdOPRlm0R/uMOpDqq2NPScJGSvz4uoe1oB+zpgJXLeWW818rb324O
-         0PdzeSN7cHLQJ2EzDBfgzoCrixlS2mpfJtUJwK+I8cdW2so68J3pHAx0rbih/B2tIlgB
-         d3zdsQtvFwEpjJoOZlpWXqTvUJIKbUDbo1odV58MZuR3g9X8DD+OFw2LXpXXQTGVnwjY
-         UF7Q==
-X-Gm-Message-State: APjAAAW0R3Rf8rpYSXpVyMZqXYKHqOWkMJHs9kln+UoruXpJ3V1XqX8R
-        XEEp7Zi02eMYNRQoJrJFD/up8EykOcF1rQ==
-X-Google-Smtp-Source: APXvYqwAmqmBluQAIhWf2f/0FiXxNwozNzClbWMkH8dbk0HE2IO35d/M6WcDFO4TLIqY5dwZ5O2cxg==
-X-Received: by 2002:a5d:9c4c:: with SMTP id 12mr29014127iof.276.1570554022169;
-        Tue, 08 Oct 2019 10:00:22 -0700 (PDT)
-Received: from [192.168.1.50] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id r2sm9402226ila.52.2019.10.08.10.00.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Oct 2019 10:00:20 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: remove wait loop spurious wakeups
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <936cd758d6c694fe1b8b9de050e24cfecdc2e60d.1570489620.git.asml.silence@gmail.com>
- <e11a0716-eb18-4ce3-9902-3247beafe65a@kernel.dk>
- <d035bb1b-e6f0-77db-a434-1761b0a7a142@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <62a8a6c7-9c5b-c9a4-9c73-c77db87c6637@kernel.dk>
-Date:   Tue, 8 Oct 2019 11:00:19 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HZp8JchvcdlzTvPRe10OMjXECzkCkCJFVu0ZHeOLniw=;
+        b=ajVJNLB3weRDvnarHEwkcdNLs6q52XKKMXxkKpCp8+Nj4d5j6wKgFKeDTjjAQSQy/P
+         DY9o0KqemO6VkafuWhGd8zU4Pcn40OE8REpqYOehb+P0LdiXIxbNFQZqyS+Mwoo3M94L
+         ow4xQjO5EMHBVtnTSM3taABqUQMXA7gSe4VDKUUzuhDzWCyNH5BnUuq5lqcvED2LgZv8
+         uNuE/V1mlwnqKoSxeFe7ataUiBm8UG3PKzHt8t7h1K3PJXxqzDEF+bETI5i9uSxX439g
+         yCXdMJrexm6Ol/CvQ2uww9TxzJLMjFOwIMg+sHtoxwJYRp1oaM/VfveuDy9oKMyjMYfm
+         Je8A==
+X-Gm-Message-State: APjAAAVqZcS5h/J6Rlmizor4woY6AhdA1ydSRN3sje3m1G7bPbSyDtx/
+        oSvU2gmM524JP6mX39Su0Ey7dg==
+X-Google-Smtp-Source: APXvYqzoa24eCDGzskBwnBJhJbLFJX9UR15QVg4KFbUcqw5jE0XCrtF+ME55lMZeJWp8xku3lijeSQ==
+X-Received: by 2002:a17:902:a611:: with SMTP id u17mr4774307plq.4.1570554082947;
+        Tue, 08 Oct 2019 10:01:22 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id m123sm19044062pfb.133.2019.10.08.10.01.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2019 10:01:22 -0700 (PDT)
+Date:   Tue, 8 Oct 2019 13:01:21 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Marco Elver <elver@google.com>
+Cc:     Boqun Feng <boqun.feng@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>, rcu@vger.kernel.org
+Subject: Re: [PATCH] rcu: Avoid to modify mask_ofl_ipi in
+ sync_rcu_exp_select_node_cpus()
+Message-ID: <20191008170121.GA143258@google.com>
+References: <20191008050145.4041702-1-boqun.feng@gmail.com>
+ <20191008163028.GA136151@google.com>
+ <CANpmjNP0Vt4i7nWXPd2g4vaqkE3J2K1M_BiEMrtGqVcRE8khtw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <d035bb1b-e6f0-77db-a434-1761b0a7a142@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANpmjNP0Vt4i7nWXPd2g4vaqkE3J2K1M_BiEMrtGqVcRE8khtw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/8/19 10:43 AM, Pavel Begunkov wrote:
-> On 08/10/2019 06:16, Jens Axboe wrote:
->> On 10/7/19 5:18 PM, Pavel Begunkov (Silence) wrote:
->>> From: Pavel Begunkov <asml.silence@gmail.com>
->>>
->>> Any changes interesting to tasks waiting in io_cqring_wait() are
->>> commited with io_cqring_ev_posted(). However, io_ring_drop_ctx_refs()
->>> also tries to do that but with no reason, that means spurious wakeups
->>> every io_free_req() and io_uring_enter().
->>>
->>> Just use percpu_ref_put() instead.
->>
->> Looks good, this is a leftover from when the ctx teardown used
->> the waitqueue as well.
->>
-> BTW, is there a reason for ref-counting in struct io_kiocb? I understand
-> the idea behind submission reference, but don't see any actual part
-> needing it.
-
-In short, it's to prevent the completion running before we're done with
-the iocb on the submission side.
-
-> Tested with another ref-counting patch and got +5-8% to
-> nops performance.
+On Tue, Oct 08, 2019 at 06:35:45PM +0200, Marco Elver wrote:
+> On Tue, 8 Oct 2019 at 18:30, Joel Fernandes <joel@joelfernandes.org> wrote:
+> >
+> > On Tue, Oct 08, 2019 at 01:01:40PM +0800, Boqun Feng wrote:
+> > > "mask_ofl_ipi" is used for iterate CPUs which IPIs are needed to send
+> > > to, however in the IPI sending loop, "mask_ofl_ipi" along with another
+> > > variable "mask_ofl_test" might also get modified to record which CPU's
+> > > quiesent state can be reported by sync_rcu_exp_select_node_cpus(). Two
+> > > variables seems to be redundant for such a propose, so this patch clean
+> > > things a little by solely using "mask_ofl_test" for recording and
+> > > "mask_ofl_ipi" for iteration. This would improve the readibility of the
+> > > IPI sending loop in sync_rcu_exp_select_node_cpus().
+> > >
+> > > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> > > ---
+> >
+> > Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> >
+> > thanks,
+> >
+> >  - Joel
 > 
+> Acked-by: Marco Elver <elver@google.com>
 > 
+> If this is the official patch for the fix to the KCSAN reported
+> data-race, it'd be great to include the tag:
+> Reported-by: syzbot+134336b86f728d6e55a0@syzkaller.appspotmail.com
+> so the bot knows this was fixed.
 
+It is just an optimization that got triggerred due to debugging of the
+reported issue but does (should) not fix the issue.
 
--- 
-Jens Axboe
+Boqun, are you going to be posting another patch which just uses mask_ofl_ipi
+in the for_each(..) loop? (without using _snap) as Paul suggested?
 
+Paul mentioned other places where rnp->expmask is locklessly accessed so I
+think that may be fixed separately (such as the stall-warning code). Paul,
+were you planning on fixing all such accesses together (other than this code)
+or should I look into it more? I guess for the stall case, KCSAN would have
+to trigger stalls to see those issues.
+
+thanks,
+
+ - Joel
+
+> 
+> Thanks!
+> -- Marco
+> 
+> > >  kernel/rcu/tree_exp.h | 13 ++++++-------
+> > >  1 file changed, 6 insertions(+), 7 deletions(-)
+> > >
+> > > diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+> > > index 69c5aa64fcfd..212470018752 100644
+> > > --- a/kernel/rcu/tree_exp.h
+> > > +++ b/kernel/rcu/tree_exp.h
+> > > @@ -387,10 +387,10 @@ static void sync_rcu_exp_select_node_cpus(struct work_struct *wp)
+> > >               }
+> > >               ret = smp_call_function_single(cpu, rcu_exp_handler, NULL, 0);
+> > >               put_cpu();
+> > > -             if (!ret) {
+> > > -                     mask_ofl_ipi &= ~mask;
+> > > +             /* The CPU responses the IPI, and will report QS itself */
+> > > +             if (!ret)
+> > >                       continue;
+> > > -             }
+> > > +
+> > >               /* Failed, raced with CPU hotplug operation. */
+> > >               raw_spin_lock_irqsave_rcu_node(rnp, flags);
+> > >               if ((rnp->qsmaskinitnext & mask) &&
+> > > @@ -401,13 +401,12 @@ static void sync_rcu_exp_select_node_cpus(struct work_struct *wp)
+> > >                       schedule_timeout_uninterruptible(1);
+> > >                       goto retry_ipi;
+> > >               }
+> > > -             /* CPU really is offline, so we can ignore it. */
+> > > -             if (!(rnp->expmask & mask))
+> > > -                     mask_ofl_ipi &= ~mask;
+> > > +             /* CPU really is offline, and we need its QS to pass GP. */
+> > > +             if (rnp->expmask & mask)
+> > > +                     mask_ofl_test |= mask;
+> > >               raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+> > >       }
+> > >       /* Report quiescent states for those that went offline. */
+> > > -     mask_ofl_test |= mask_ofl_ipi;
+> > >       if (mask_ofl_test)
+> > >               rcu_report_exp_cpu_mult(rnp, mask_ofl_test, false);
+> > >  }
+> > > --
+> > > 2.23.0
+> > >
