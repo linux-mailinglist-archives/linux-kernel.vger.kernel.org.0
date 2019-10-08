@@ -2,93 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2DD8CF726
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 12:39:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63D8DCF753
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 12:41:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730597AbfJHKj2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 06:39:28 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40009 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730580AbfJHKj1 (ORCPT
+        id S1730256AbfJHKle (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 06:41:34 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:46190 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729876AbfJHKle (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 06:39:27 -0400
-Received: by mail-wr1-f68.google.com with SMTP id h4so10069519wrv.7
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 03:39:25 -0700 (PDT)
+        Tue, 8 Oct 2019 06:41:34 -0400
+Received: by mail-qt1-f195.google.com with SMTP id u22so24409110qtq.13
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 03:41:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=Cwwrqaqfkc7a5d/MS5exo0NUOtyUn8PYYYF8oRW8wg4=;
-        b=oYX641WFSw3a4b1+F8m3HlnUqFtfehAsO457JIH66/pubSKxy4wW78NtxaPt5V4w7c
-         FwzgWzXm3bIcH/njrVzMzjRlr2doGQpG6m7GDizgHWmOaTMj+gA1ROr6vkU+XxgTm1al
-         JimpQTTSBnizJNtRfv+7lAaqNsnJlihM8pXejNbm+uDhH9WC8jT+ydRP8JYjl5EKylUf
-         O6vqo3iPgBUDcI6ek9Aad7zt0xl7j1tVlx3aSjpBdoWKxjxME5P/4J5+10A8IMqYQWCZ
-         PGSkHGaZx90Lk7mZ/pff9L9PbQNmcHRX8rP0bQOALjlQ26VJNYWCKVuDYa+gGtSaMyjm
-         K4vg==
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Tk6htHWDZvZCH07nwYndLGD24Vgw/DSGreBenVs56Hs=;
+        b=B7wDgQ9ge4X2R3aZQ0cISLoy2ririBZnyzt6LQBMUQQL3VSzWRQTcgxBfREY49npby
+         L3BuN9zZzzprT4et05jJ5Jg477G8ZsJS3TmroAcUMqOd69UVfySDBdCOYizq7FlXmrYJ
+         LhinKCRXu4aM3ntw+7XdWVddYXCMPdB6Ic+9l67e7pzIqO5Yrir357zi8wUlIXlIQv5e
+         POUudyGvMDW812m1+5wEgcRoDxD4dJRFM+7fJgXGYTiV3Uyj/K93m/GHQhioCLqVxwcJ
+         N1yj+WaUV6rvMm6Mo/yzq965X/YMq296nrwD57+PZCicYC9L4rZ32Z+oTOi1SlQU7MhT
+         iHUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=Cwwrqaqfkc7a5d/MS5exo0NUOtyUn8PYYYF8oRW8wg4=;
-        b=GatY92CbJcesRCr58QEN78cCtUB+rct0pMmgBbXwdMnrBO/cKMz+DYFsjQFw+TSM3i
-         lmNgYuyOI6MD2xGEMPGdDy9W5u1e8l4R7bzL5cjDa4oe4XhM1U21gd2JFqPCLwh+BZv+
-         /d7Oek8XPoJ0hutLuoydQvd3vPw/aHdIbRcgn/OdLvodQ29dIf8zL5x081N1eRR/6RYe
-         jh5THzNoZuFYLlqKEK/+gihPAMVlCgdcXXM2ubRH7sYDXOP3fWKryMiJvwU4BqN0dcLZ
-         MImg1kr6yNPFGKLVNV+d6vVxvSKL2T9dDhh80wn3dQyq0OnVlp5SMP7t+APeoSKIGx/F
-         xMaQ==
-X-Gm-Message-State: APjAAAVumuHhvCQATfGvXWD/DX9Ww2OKhyiFUQ6u/UhK/dmTCSYelvfQ
-        JGMAtTzl2J3w75VBnzQOEHn1ylEcBBIFx2cN
-X-Google-Smtp-Source: APXvYqyYdMtpc0TZmnqQyW6MCm46p59/czdxjZQ2PqQRtMenCNZMm9BnHBYtnUEPDnYi4OnP5dsHTA==
-X-Received: by 2002:a5d:604e:: with SMTP id j14mr9588389wrt.119.1570531164832;
-        Tue, 08 Oct 2019 03:39:24 -0700 (PDT)
-Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
-        by smtp.gmail.com with ESMTPSA id t17sm38269184wrp.72.2019.10.08.03.39.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 08 Oct 2019 03:39:24 -0700 (PDT)
-From:   Michal Simek <michal.simek@xilinx.com>
-To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
-        michal.simek@xilinx.com, git@xilinx.com
-Cc:     Kuldeep Dave <kuldeep.dave@xilinx.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
-Subject: [PATCH] PCI/MSI: Enable PCI_MSI_IRQ_DOMAIN support for Microblaze
-Date:   Tue,  8 Oct 2019 12:39:22 +0200
-Message-Id: <e0ead31283c74254e8c02c0e5e5123277ed1f927.1570531159.git.michal.simek@xilinx.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Tk6htHWDZvZCH07nwYndLGD24Vgw/DSGreBenVs56Hs=;
+        b=FEo9KCoSTutW7fbytVtsQ4nOJ5y4/vBFfXUUKWLlqqs4Q9bLjPGHIGbGnxwEqGzBdF
+         uGJT+lJNWThVR7eg/RtVZxz1AaF615uB2GjFJ+M7KYgfZb1X1zEnDswlzj2qaKEScEeN
+         5Dg3p5r8WieGSnYXvi34JxdReuQ6Tr4E8dVRwZhn55NaAzEmRZNkjn0MIIDEm3Urtopy
+         8efrMYzHECH2/Q1xxd/Mo45rFh3ZJ9JqFiZjogySSHhfIyhotKfXQ8eEZ0MtLBD9v+6q
+         0m4P3/0fjjDAj3fsj1eL5GmRR8Lquws6VIdJXGUZv3zll1TGx9M659Wbm4XRNsJ5T6BC
+         N4wA==
+X-Gm-Message-State: APjAAAUm2QQZeCGs41cwCeNG2Zcq3hlFd5AaF8izq0Jzoa6VXaV+q3+J
+        JUw/5yTVRRFQddAA29EfRGFDwKVRcVd7dzOC4q9xvw==
+X-Google-Smtp-Source: APXvYqybpf83/dqFUb0/N890BX6HKINavzfHrhqTBPjVu8aLdmYYDq13WEqW+gZuiOgtWtQgcRKFfoSM9V3mUdK0i7Q=
+X-Received: by 2002:a05:6214:c4:: with SMTP id f4mr31270966qvs.111.1570531292882;
+ Tue, 08 Oct 2019 03:41:32 -0700 (PDT)
+MIME-Version: 1.0
+References: <20191007115009.25672-1-axel.lin@ingics.com> <20191007115009.25672-2-axel.lin@ingics.com>
+In-Reply-To: <20191007115009.25672-2-axel.lin@ingics.com>
+From:   Axel Lin <axel.lin@ingics.com>
+Date:   Tue, 8 Oct 2019 18:41:21 +0800
+Message-ID: <CAFRkauCW5-+u6npP2fpAaNL5kPdKXQ_wWrZ_7qZkJr=uMP1BsA@mail.gmail.com>
+Subject: Re: [RESEND][PATCH 2/2] regulator: da9062: Simplify
+ da9062_buck_set_mode for BUCK_MODE_MANUAL case
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Steve Twiss <stwiss.opensource@diasemi.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuldeep Dave <kuldeep.dave@xilinx.com>
+Axel Lin <axel.lin@ingics.com> =E6=96=BC 2019=E5=B9=B410=E6=9C=887=E6=97=A5=
+ =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=887:50=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> The sleep flag bit decides the mode for BUCK_MODE_MANUAL case, simplify
+> the logic as the result is the same.
+>
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> Reviewed-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Hi Mark,
 
-Add Microblaze as an arch that supports PCI_MSI_IRQ_DOMAIN.
-Enabling msi.h generation is done by separate patch.
+I'm wondering if any issue with this patch?
+Note, this patch is for da9062 (not for da9063 which is already applied).
 
-Similar change was done by commit 2a9af0273c1c
-("PCI/MSI: Enable PCI_MSI_IRQ_DOMAIN support for RISC-V")
-
-Signed-off-by: Kuldeep Dave <kuldeep.dave@xilinx.com>
-Signed-off-by: Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
----
-
-Arch part was sent here:
-https://lkml.org/lkml/2019/10/8/277
----
- drivers/pci/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
-index a304f5ea11b9..9d259372fbfd 100644
---- a/drivers/pci/Kconfig
-+++ b/drivers/pci/Kconfig
-@@ -52,7 +52,7 @@ config PCI_MSI
- 	   If you don't know what to do here, say Y.
- 
- config PCI_MSI_IRQ_DOMAIN
--	def_bool ARC || ARM || ARM64 || X86 || RISCV
-+	def_bool ARC || ARM || ARM64 || X86 || RISCV || MICROBLAZE
- 	depends on PCI_MSI
- 	select GENERIC_MSI_IRQ_DOMAIN
- 
--- 
-2.17.1
-
+Regards,
+Axel
