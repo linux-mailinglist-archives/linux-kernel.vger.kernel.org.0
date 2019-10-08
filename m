@@ -2,144 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72838CFCAF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:45:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8FC2CFCA9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:44:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727336AbfJHOpZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 10:45:25 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:41912 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbfJHOpZ (ORCPT
+        id S1727212AbfJHOol (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 10:44:41 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:34149 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726057AbfJHOok (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 10:45:25 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x98ESmbn041740;
-        Tue, 8 Oct 2019 14:44:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2019-08-05;
- bh=6simcc1A7X0q4K8SZt/71FEhzObgYlOmPpnvxhl2O8E=;
- b=Uv4DBZ7OjHnb8yReW59vb/MfJWxxYuRRttKfUDHFEPywXdBQ/fSaeZiBxM6rkROu5F8Z
- UC4Ywsun0Ie/JU7vPXF1FEf+1RWZo+8d+UplmY9H5HfUltdjOLjXUshihGqE+t2lfiFD
- 95myj69c5bSEJ7qqNEHoC3/VYcYBBWtfbmJ0EOz5gitDsqQFXUUo4e944blcDqvJAGi0
- Bn3UuHCoOaGYTanESCPiTkcnrFYj+MXxot4WNH0a6Yz022IP6n0hv3p1ThGI8qvfAoin
- XLLNH7nV5SRrb3rwADjT2bpz8WfbUUnp0Gd85jZ1cf0OoAo2+DYA2QeUnWOqMCQ5sy+K dQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2vek4qdqtp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 08 Oct 2019 14:44:47 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x98ET4Eg070439;
-        Tue, 8 Oct 2019 14:44:47 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 2vg1yw2rd1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 08 Oct 2019 14:44:46 +0000
-Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x98Eii6Y031958;
-        Tue, 8 Oct 2019 14:44:44 GMT
-Received: from dhcp-10-175-191-48.vpn.oracle.com (/10.175.191.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 08 Oct 2019 14:44:44 +0000
-From:   Alan Maguire <alan.maguire@oracle.com>
-To:     linux-kselftest@vger.kernel.org, brendanhiggins@google.com,
-        skhan@linuxfoundation.org
-Cc:     mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
-        akpm@linux-foundation.org, yamada.masahiro@socionext.com,
-        catalin.marinas@arm.com, joe.lawrence@redhat.com,
-        penguin-kernel@i-love.sakura.ne.jp, schowdary@nvidia.com,
-        urezki@gmail.com, andriy.shevchenko@linux.intel.com,
-        changbin.du@intel.com, kunit-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alan Maguire <alan.maguire@oracle.com>,
-        Knut Omang <knut.omang@oracle.com>
-Subject: [PATCH linux-kselftest-test 3/3] kunit: update documentation to describe module-based build
-Date:   Tue,  8 Oct 2019 15:43:52 +0100
-Message-Id: <1570545832-32326-4-git-send-email-alan.maguire@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1570545832-32326-1-git-send-email-alan.maguire@oracle.com>
-References: <1570545832-32326-1-git-send-email-alan.maguire@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9403 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=43 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910080133
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9403 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=43 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910080133
+        Tue, 8 Oct 2019 10:44:40 -0400
+Received: by mail-ed1-f67.google.com with SMTP id p10so15891798edq.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 07:44:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=roNGOd3FOBsYLcw6p6AfNsDfUlpEWk12K8lCSg6iAUY=;
+        b=y65D0zMlciZ3pKMueE9P/nkUSG2s2/S9BTNNDHGb/WgvM/3pFToz8zmyClu6SIbzkk
+         sEQmikJFrj2iHOL7IGwkeUWjamJVgSWk3cYBP1PNNjrr/agjKJX4rXyqIGi4zoLzeNan
+         nAJ9XfaeBIpVqlv0WKrMV6KsA18TiyBIMjqJUJMWsk7M5IU3RUEfolfStiafA2TSRBlA
+         ZWReAlrO9npe3o+Hhfam0Qb3FZraz2sWMiSj1WALXsJTnYobtVR63+n2+CEHj8NO/Mcp
+         l6uBVJ8+IVjhHooVDzJ4PJK+wdJRTJQtw5y0OD42C09JBaH6Yitq5n/PBFV8zIUBjIkD
+         FQvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=roNGOd3FOBsYLcw6p6AfNsDfUlpEWk12K8lCSg6iAUY=;
+        b=ZDoFLxSZATbi1v2o4kBxksc3+NYYPg7sBJtuSeeDD2USBvJHNLSMko3NUXOuGs4LHm
+         RogEywCmQuJeX2cMTzAWvZu7V831uYZWp6y8tQiNLMnej95CHUf5dxlloggyWe2l9pWM
+         w5DZ47O+j8+F0T7+I3v06DfG/b03A1+LyS3l0UVDS0b8InJsm+btvcRD6+3EaBRo90+E
+         LZEJZ3da/ylDYEqu2ZY69nrQm1lEGhfJBFagN90VPF+di6q7rPZ4KSdebkTbusfqDxTM
+         Oyh8C19wsK4NlOR9NpAvrm1bEMg4/JaQqZDjPD95N8pN4xrZRJTQn3qUXOKIBJm/FpgO
+         Q2Rg==
+X-Gm-Message-State: APjAAAWwJJ9j0PUqhvl8LXAfgzQC4jbC/s0SFweUiV6RXxokEhouoKqR
+        V/6rNyvsrod4O0LL5ZAu7oRAAQ==
+X-Google-Smtp-Source: APXvYqw+1C1Pvr11q8AONS2td9iwm6bodbUuuJy7w3SrM1wrQki8aRt57kKphgwrMCqqnWG+ZJDomQ==
+X-Received: by 2002:aa7:cdd6:: with SMTP id h22mr34660703edw.132.1570545878559;
+        Tue, 08 Oct 2019 07:44:38 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id z20sm3957544edb.3.2019.10.08.07.44.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2019 07:44:37 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 9DE6E10170F; Tue,  8 Oct 2019 17:44:37 +0300 (+03)
+Date:   Tue, 8 Oct 2019 17:44:37 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        kirill.shutemov@linux.intel.com, ktkhai@virtuozzo.com,
+        hannes@cmpxchg.org, hughd@google.com, shakeelb@google.com,
+        rientjes@google.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: thp: move deferred split queue to memcg's nodeinfo
+Message-ID: <20191008144437.fr374cxtpnrnnjsv@box>
+References: <1569968203-64647-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20191002084304.GI15624@dhcp22.suse.cz>
+ <30421920-4fdb-767a-6ef2-60187932c414@suse.cz>
+ <20191007143030.GN2381@dhcp22.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191007143030.GN2381@dhcp22.suse.cz>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Documentation should describe how to build kunit and tests as
-modules.
+On Mon, Oct 07, 2019 at 04:30:30PM +0200, Michal Hocko wrote:
+> On Mon 07-10-19 16:19:59, Vlastimil Babka wrote:
+> > On 10/2/19 10:43 AM, Michal Hocko wrote:
+> > > On Wed 02-10-19 06:16:43, Yang Shi wrote:
+> > >> The commit 87eaceb3faa59b9b4d940ec9554ce251325d83fe ("mm: thp: make
+> > >> deferred split shrinker memcg aware") makes deferred split queue per
+> > >> memcg to resolve memcg pre-mature OOM problem.  But, all nodes end up
+> > >> sharing the same queue instead of one queue per-node before the commit.
+> > >> It is not a big deal for memcg limit reclaim, but it may cause global
+> > >> kswapd shrink THPs from a different node.
+> > >>
+> > >> And, 0-day testing reported -19.6% regression of stress-ng's madvise
+> > >> test [1].  I didn't see that much regression on my test box (24 threads,
+> > >> 48GB memory, 2 nodes), with the same test (stress-ng --timeout 1
+> > >> --metrics-brief --sequential 72  --class vm --exclude spawn,exec), I saw
+> > >> average -3% (run the same test 10 times then calculate the average since
+> > >> the test itself may have most 15% variation according to my test)
+> > >> regression sometimes (not every time, sometimes I didn't see regression
+> > >> at all).
+> > >>
+> > >> This might be caused by deferred split queue lock contention.  With some
+> > >> configuration (i.e. just one root memcg) the lock contention my be worse
+> > >> than before (given 2 nodes, two locks are reduced to one lock).
+> > >>
+> > >> So, moving deferred split queue to memcg's nodeinfo to make it NUMA
+> > >> aware again.
+> > >>
+> > >> With this change stress-ng's madvise test shows average 4% improvement
+> > >> sometimes and I didn't see degradation anymore.
+> > > 
+> > > My concern about this getting more and more complex
+> > > (http://lkml.kernel.org/r/20191002084014.GH15624@dhcp22.suse.cz) holds
+> > > here even more. Can we step back and reconsider the whole thing please?
+> > 
+> > What about freeing immediately after split via workqueue and also have a
+> > synchronous version called before going oom? Maybe there would be also
+> > other things that would benefit from this scheme instead of traditional
+> > reclaim and shrinkers?
+> 
+> That is exactly what we have discussed some time ago.
 
-Signed-off-by: Knut Omang <knut.omang@oracle.com>
-Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
----
- Documentation/dev-tools/kunit/faq.rst   |  3 ++-
- Documentation/dev-tools/kunit/index.rst |  3 +++
- Documentation/dev-tools/kunit/usage.rst | 16 ++++++++++++++++
- 3 files changed, 21 insertions(+), 1 deletion(-)
+Yes, I've posted the patch:
 
-diff --git a/Documentation/dev-tools/kunit/faq.rst b/Documentation/dev-tools/kunit/faq.rst
-index bf20951..ea55b24 100644
---- a/Documentation/dev-tools/kunit/faq.rst
-+++ b/Documentation/dev-tools/kunit/faq.rst
-@@ -29,7 +29,8 @@ Yes, well, mostly.
- 
- For the most part, the KUnit core framework (what you use to write the tests)
- can compile to any architecture; it compiles like just another part of the
--kernel and runs when the kernel boots. However, there is some infrastructure,
-+kernel and runs when the kernel boots, or when built as a module, when the
-+module is loaded.  However, there is some infrastructure,
- like the KUnit Wrapper (``tools/testing/kunit/kunit.py``) that does not support
- other architectures.
- 
-diff --git a/Documentation/dev-tools/kunit/index.rst b/Documentation/dev-tools/kunit/index.rst
-index 26ffb46..7ddc385 100644
---- a/Documentation/dev-tools/kunit/index.rst
-+++ b/Documentation/dev-tools/kunit/index.rst
-@@ -48,6 +48,9 @@ to a standalone program that can be run like any other program directly inside
- of a host operating system; to be clear, it does not require any virtualization
- support; it is just a regular program.
- 
-+Alternatively, kunit and kunit tests can be built as modules and tests will
-+run when the test module is loaded.
-+
- KUnit is fast. Excluding build time, from invocation to completion KUnit can run
- several dozen tests in only 10 to 20 seconds; this might not sound like a big
- deal to some people, but having such fast and easy to run tests fundamentally
-diff --git a/Documentation/dev-tools/kunit/usage.rst b/Documentation/dev-tools/kunit/usage.rst
-index c6e6963..fa0f03f 100644
---- a/Documentation/dev-tools/kunit/usage.rst
-+++ b/Documentation/dev-tools/kunit/usage.rst
-@@ -539,6 +539,22 @@ Interspersed in the kernel logs you might see the following:
- 
- Congratulations, you just ran a KUnit test on the x86 architecture!
- 
-+In a similar manner, kunit and kunit tests can also be built as modules,
-+so if you wanted to run tests in this way you might add the following config
-+options to your ``.config``:
-+
-+.. code-block:: none
-+
-+        CONFIG_KUNIT=m
-+        CONFIG_KUNIT_EXAMPLE_TEST=m
-+
-+Once the kernel is built and installed, a simple
-+
-+.. code-block:: bash
-+	modprobe example-test
-+
-+...will run the tests.
-+
- Writing new tests for other architectures
- -----------------------------------------
- 
+http://lkml.kernel.org/r/20190827125911.boya23eowxhqmopa@box
+
+But I still not sure that the approach is right. I expect it to trigger
+performance regressions. For system with pleanty of free memory, we will
+just pay split cost for nothing in many cases.
+
 -- 
-1.8.3.1
-
+ Kirill A. Shutemov
