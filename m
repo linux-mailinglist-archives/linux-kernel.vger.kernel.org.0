@@ -2,89 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 287A9CF785
+	by mail.lfdr.de (Postfix) with ESMTP id 9B049CF787
 	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 12:53:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730425AbfJHKxg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 06:53:36 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:39374 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730008AbfJHKxg (ORCPT
+        id S1730631AbfJHKxo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 06:53:44 -0400
+Received: from sonic311-13.consmr.mail.bf2.yahoo.com ([74.6.131.123]:45630
+        "EHLO sonic311-13.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730497AbfJHKxn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 06:53:36 -0400
-Received: by mail-qt1-f193.google.com with SMTP id n7so24518874qtb.6
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 03:53:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=I/XAz6EQQu2WMJ2Xm/Zu1m8Sd6t9gK7D5HCK9hWTzCE=;
-        b=m2y5d8Tcs8u9GpWYwEKhUdJe2ngQOmPDj8+a3tK4xhEr7u+kr7LXS8iuB+aghFA6Qy
-         4uAE4PbkaRR3EPMk/yWmyEoVUD7Q/ds9QkzWfe+uVbB7rkVVo+GjRREQuU7XfTBOeGT0
-         8jpEBsQq74dAtyTlQLF7Dnzq4++Xve8gLpyZcb/Oh1hc38ko7n6dQLmmMHaOvgxtimYg
-         TVoK+YGXK7nbFHF0ykRBPsKI3DDQR9uDk/SfqP3ng2a462tViNsbQPrWLoQU8byY+ZkH
-         NAXVtNsem3dW6UyvF9IkNVll9OhGoVzkRJupzKxkylIfjZ641a9c2TJYhUA1SAqRgWNb
-         kYJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=I/XAz6EQQu2WMJ2Xm/Zu1m8Sd6t9gK7D5HCK9hWTzCE=;
-        b=hRgAJ9pvP9uLpavZcNT/UBgbF7q2mzAwzIYAfu87V3XqvCIAhXObeaLcPkVWsmS37J
-         xXjJL0g03jHxl1gKzpQJXeUToDgDg7gMuBToYmZHLwTJuf1DPg1jKM5tQAev+OHu56z0
-         fRYhYUcU8RvED5agRj90vIROHk883pygkQCQ4elEHpqInuskyZM1ATc/S8XGkAaZlhAh
-         WEJ+hP9x+lBi0vpoIoemwyCirpN0vZfNxOazlhoXjkQfYmeG1IEbZa27TkgbvJJ95zZ+
-         UDQH7yKzgA4hjsfJG9rmsEka6iyVTynuoYh/uvzDDVq3hiFYY743LUEGfQlUdOZpGImR
-         KcOg==
-X-Gm-Message-State: APjAAAUjnvQjMFVU6buGgr1/Nlidl0Z0eKnKaLjydC/rZEJ/MpLVvKtT
-        9pEc/CMN5m9kejkEGmJ26KxPaFMRDWlEfE0q3bZxCw==
-X-Google-Smtp-Source: APXvYqzbJ/Tk9Al57lBqL/SeljRXAbglXoJFju7NC/jfHt0IuVX+6aDIXdMxE1cxGezyP3wqRp8o1f7BVO4yYBd3Nu4=
-X-Received: by 2002:ac8:c01:: with SMTP id k1mr34376936qti.59.1570532014073;
- Tue, 08 Oct 2019 03:53:34 -0700 (PDT)
+        Tue, 8 Oct 2019 06:53:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1570532022; bh=zPC9p8T5S06DA73PD5F75wViZ/EpBpeYylTS7OqjCU4=; h=Date:From:Reply-To:Subject:From:Subject; b=Xx862rLBFXSU57lKDjLNxjuVBwuGVMhoMsAz5FaYNmVy6by3FKn8mTLpvQC1/SKpkGqd+BqC2wko21zrC7E5K140RHvR5Td6iMoE+EY2W+zpSvBx9RpmTVb056cWlpVM0oKbeqq9avY6irVhued42QKcnm154t5kZVGz8hnIzIT8ZkpDR6pDeziO7pdQbP8lfQpTh3ZAprkzRMD57Mtwa+QGesxkkMw717XgI6APeps0FBxTZP/RtaCJ3RpkXoHMXSbPgh22HGyddqYRwlf08Oj6Q0RFCKs3L7yOwSPVM46YTP4o3LKmkxuC4QNtkiSB3Ysrd4rjBMrcasvAAYBtBg==
+X-YMail-OSG: wld7PHsVM1nxwOas3qgStdeyvVXNZnOUigfZQCsq.vJSzRLn.piynw3o7E2RSKw
+ EqyudJQbiNOo6r8lQLDgZm4i3M8ZtayHt9o9VTeuyOUZAOiDMxOML8m3O172VnKH19hZr2uK256h
+ _yLoXzQhq3zF0gDuJtWHXugUqG8Os4kkeiicT2LiJH8OMYoVKoKIaqFeDclIEWT8_zHCT10ZYybN
+ MSl4D4lwZM_nZLKGVBwMPYP3a4.spxWtX2k26PN_gukleAGFF5TaYINtQY_Au8x7CtGbB77tPW8Z
+ ftRPEQuYuC5UtomwqZIYP6.ZMFoT3Bge2u4L2PMjbwrsMPYC..QO1s9g_7CNCq6wKJAqp5K.PfL3
+ 7TanqdiU6IJLk42BMYkWpBTz3A1uCptwnNuIXg6gTEChr_QfE1BPC8H.N2GhzbIpVA1.j8F6hcLH
+ wULjKR.3oKNNv2AE4Np6_1ukTKwcFTz2cHAzIBZ26Oif1MAMwn5PF95LSpbvb4C6pNlbXBLf1mcE
+ Uqr48ULNQJnubZlx7YyVWviKeyTVsH8xZZxxOPKMGqjUJ9Xl0fynEpnqnhMfALpjKV0j80KPoA._
+ K9uJNDFyrt3Nyoa9LWaBaV81ljViS9.un6lbbOP6anKMUVZjunSXgUQE0ZW3UwXYBJ1mq8xEUSNZ
+ DHGq9tRj9lb1t557ocWZtvJuABtCuwz0g0gQDvtheyaDTBz8ajwMqUqG1hZ0HVRV4EuJ5NU9qnHl
+ HXZ_NK3vc9miRb2ECWWA6Tdeb.fGsi2.Vf3573z19d_lqj_EHffsybSdOPZ26_Z6Vh9BKAXR.Cqh
+ I_SMKIbXq4yhVIyBAf6FXlD2RVzdTe9O_gKpmEjt9qvHUML1wR9EasMjpzFy1fqThjAWQk5OMi4c
+ mN5M6YSuyENIUIKpDKTW4gmBf9XsuzVgpLKW6_7XwI_bE5vwTKWnExF75.VUuPNWfOuj0f7KxlXl
+ J0JWadKhpZ.HBCkib6dvxSZW9NYLdfpNwTQNld7.kwP2Usey9at3t3CP4JZWsCz4QMHflo1o63Sg
+ xmk.D0ONA84m1kWt_DKttDhKGCSOzk4k4o57zmSAEnAC1Lb.7z04HAFlseMH47B41ZlHYKsOGQzr
+ ae2b4Z.OsuWLNkBjNjNZwmXD.fPWA8TrvtA.kfmVqM3m62KgT3uorAUuAi9v922AF1sgrqRHV5O.
+ 7fdzjx.VA4X_xYdwrBMPUz.Rxy1K7gZt.SlRdb.2zpW1XohOgYlYEi5BjDjf2GfR9SH4.YPGGD6s
+ PCjfsANbpb3FPQwi8XERILrdmZ9sVRvrEFbQ7VW.LkmguDwmwEA--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.bf2.yahoo.com with HTTP; Tue, 8 Oct 2019 10:53:42 +0000
+Date:   Tue, 8 Oct 2019 10:53:37 +0000 (UTC)
+From:   Ms Lisa Hugh <lisa.hugh101@gmail.com>
+Reply-To: ms.lisahugh000@gmail.com
+Message-ID: <246021388.3343132.1570532017567@mail.yahoo.com>
+Subject: FROM MS LISA HUGH (BUSINESS).
 MIME-Version: 1.0
-References: <20191007115009.25672-1-axel.lin@ingics.com> <20191007115009.25672-2-axel.lin@ingics.com>
- <CAFRkauCW5-+u6npP2fpAaNL5kPdKXQ_wWrZ_7qZkJr=uMP1BsA@mail.gmail.com>
- <20191008104407.GA4382@sirena.co.uk> <CAFRkauDq=6X9LRj7APwKOV+7CVZN5OSVuWXmwBQ3QQPWD9Nauw@mail.gmail.com>
- <20191008105101.GB4382@sirena.co.uk>
-In-Reply-To: <20191008105101.GB4382@sirena.co.uk>
-From:   Axel Lin <axel.lin@ingics.com>
-Date:   Tue, 8 Oct 2019 18:53:22 +0800
-Message-ID: <CAFRkauCft5p4P_LkZVLde62Yh03p-_2hNPm6wEct5XSeg-p0Bg@mail.gmail.com>
-Subject: Re: [RESEND][PATCH 2/2] regulator: da9062: Simplify
- da9062_buck_set_mode for BUCK_MODE_MANUAL case
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Steve Twiss <stwiss.opensource@diasemi.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mark Brown <broonie@kernel.org> =E6=96=BC 2019=E5=B9=B410=E6=9C=888=E6=97=
-=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=886:51=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> On Tue, Oct 08, 2019 at 06:48:15PM +0800, Axel Lin wrote:
-> > Mark Brown <broonie@kernel.org> =E6=96=BC 2019=E5=B9=B410=E6=9C=888=E6=
-=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=886:44=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> > > It doesn't seem to apply against current code.
->
-> > I just test apply it and It looks fine to be applied by linux-next tree=
-.
-> > Or which branch of regulator tree should I generate the patch?
->
-> Well, I queued it for 5.5.  I've not seen if it's got dependencies
-> against 5.4 yet but you chased me so...
 
-Ok, I see the problem.
-commit a72865f05782 ("regulator: da9062: fix suspend_enable/disable
-preparation") is in for-5.4 branch
-but not in for-5.5 branch. So it does not apply to for-5.5 branch.
 
-But if I generate the patch on for-5.5 branch, I think you will get
-conflict when merge for-5.4 and for-5.5 to for-next.
+Dear Friend,
+
+I am Ms Lisa Hugh work with the department of Audit and accounting manager here in the Bank(B.O.A).
+
+Please i need your assistance for the transferring of thIs fund to your bank account for both of us benefit for life time investment, amount (US$4.5M DOLLARS).
+
+I have every inquiry details to make the bank believe you and release the fund in within 5 banking working days with your full co-operation with me forsuccess.
+
+Note/ 50% for you why 50% for me after success of the transfer to your bank
+account.
+
+Below information is what i need from you so will can be reaching each
+other
+
+1)Full name ...
+2)Private telephone number...
+3)Age...
+4)Nationality...
+5)Occupation ...
+
+
+Thanks.
+
+Ms Lisa Hugh
