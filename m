@@ -2,99 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E14E2CF416
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 09:42:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E84FDCF41F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 09:44:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730379AbfJHHmB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 03:42:01 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45004 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729740AbfJHHl7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 03:41:59 -0400
-Received: by mail-pl1-f194.google.com with SMTP id q15so8082543pll.11
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 00:41:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=2fURBUxy7kUtYmeZp2XZ00W6cQyOn6QtabdpUGQ4D60=;
-        b=eN9IOY1D4JQEhqeD44A6DLSptkIVd9EhQ/T4ofBMp9tMybypG0GD+jceTeEDFwcwV7
-         pX90ySjQ5ypCgooLkJtxt3hhiI9btIxC2oZWRlJTA/XGY2xE465JEYP/jh6TVRHRbRei
-         +iZFx52+vEmaikMY6Xd65ZTnvtPZZhVEITp09SG76jmRAi9ykhVh54pgk6wweIWH0A6k
-         qZtrJhqn4zf9OSEs3ILwYWXfAdJ/tmC/KKvMP3qhdl5TIfCg2mwvzpbgxFFAB/Rklut/
-         WC1HZnyvgj4kDwjviC8/NfJEL78LAc/JWbztrIUBvdsL14/6NBJ8/H6YV5r8icot/B+E
-         9t9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=2fURBUxy7kUtYmeZp2XZ00W6cQyOn6QtabdpUGQ4D60=;
-        b=cfgoW6/gfZmg9pz1uNy3XBkf3q//F8ivIZm9pEefmQWctYCQCjU/REqGueH361oAAO
-         bhgjkpz6U8/7+/ETbeJzpZCbXXgf4+R6lpiAcP3nqGSw5j2q6u4xp+FFP2kehYkWiBR8
-         ZfvHVyF2oz/z8OBn/VdVxudwr/Y0loRfoaWIt3z5yLHMCHE7yRC8Kpwx1Oxxuz5yrCvS
-         y7/EKDlbj8LIyS/N3yWfiUn1gIwzbm401MFB/EPUpFyPrNNx0dDw/4XQeypOMwr553eh
-         lRwKgJkvr2K6BnX7/Ah+u+7/Lp7A373qCPi4YjYS2jTXLsUwS5CaYkZKA9tbKCYZegBb
-         AOjA==
-X-Gm-Message-State: APjAAAWQjUVkWgFJZ16TBSy30QaNT7yIU/JflrCSpDv8i1I29txgCFDK
-        U/J8F/z9moo099lCKcGoJJc2yA==
-X-Google-Smtp-Source: APXvYqx4yx63wHZRg9innu1QmsE+S9mEbWtE9KI7zgBRFk/4iSCLPMEPKXa8fosu99z/4tYcXy5EOg==
-X-Received: by 2002:a17:902:8c8d:: with SMTP id t13mr2644087plo.3.1570520519051;
-        Tue, 08 Oct 2019 00:41:59 -0700 (PDT)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id y8sm18231363pge.21.2019.10.08.00.41.56
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 08 Oct 2019 00:41:58 -0700 (PDT)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     mturquette@baylibre.com, sboyd@kernel.org
-Cc:     orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] clk: sprd: Change to use devm_platform_ioremap_resource()
-Date:   Tue,  8 Oct 2019 15:41:39 +0800
-Message-Id: <841d26a2adb4bf3b4423f82a41dd3f1346413db6.1570520268.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1995139bee5248ff3e9d46dc715968f212cfc4cc.1570520268.git.baolin.wang@linaro.org>
-References: <1995139bee5248ff3e9d46dc715968f212cfc4cc.1570520268.git.baolin.wang@linaro.org>
-In-Reply-To: <1995139bee5248ff3e9d46dc715968f212cfc4cc.1570520268.git.baolin.wang@linaro.org>
-References: <1995139bee5248ff3e9d46dc715968f212cfc4cc.1570520268.git.baolin.wang@linaro.org>
+        id S1730404AbfJHHoA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 03:44:00 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39908 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730222AbfJHHn7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 03:43:59 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0DF5FAB98;
+        Tue,  8 Oct 2019 07:43:58 +0000 (UTC)
+Date:   Tue, 8 Oct 2019 09:43:57 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Qian Cai <cai@lca.pw>, akpm@linux-foundation.org,
+        sergey.senozhatsky.work@gmail.com, rostedt@goodmis.org,
+        peterz@infradead.org, linux-mm@kvack.org,
+        john.ogness@linutronix.de, david@redhat.com,
+        linux-kernel@vger.kernel.org,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>
+Subject: Re: [PATCH v2] mm/page_isolation: fix a deadlock with printk()
+Message-ID: <20191008074357.f33f6pbs4cw5majk@pathway.suse.cz>
+References: <1570228005-24979-1-git-send-email-cai@lca.pw>
+ <20191007143002.l37bt2lzqtnqjqxu@pathway.suse.cz>
+ <20191007144937.GO2381@dhcp22.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191007144937.GO2381@dhcp22.suse.cz>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the new helper that wraps the calls to platform_get_resource()
-and devm_ioremap_resource() together, which can simpify the code.
+On Mon 2019-10-07 16:49:37, Michal Hocko wrote:
+> [Cc s390 maintainers - the lockdep is http://lkml.kernel.org/r/1570228005-24979-1-git-send-email-cai@lca.pw
+>  Petr has explained it is a false positive
+>  http://lkml.kernel.org/r/20191007143002.l37bt2lzqtnqjqxu@pathway.suse.cz]
+> On Mon 07-10-19 16:30:02, Petr Mladek wrote:
+> [...]
+> > I believe that it cannot really happen because:
+> > 
+> > 	static int __init
+> > 	sclp_console_init(void)
+> > 	{
+> > 	[...]
+> > 		rc = sclp_rw_init();
+> > 	[...]
+> > 		register_console(&sclp_console);
+> > 		return 0;
+> > 	}
+> > 
+> > sclp_rw_init() is called before register_console(). And
+> > console_unlock() will never call sclp_console_write() before
+> > the console is registered.
+> > 
+> > AFAIK, lockdep only compares existing chain of locks. It does
+> > not know about console registration that would make some
+> > code paths mutually exclusive.
+> > 
+> > I believe that it is a false positive. I do not know how to
+> > avoid this lockdep report. I hope that it will disappear
+> > by deferring all printk() calls rather soon.
+> 
+> Thanks a lot for looking into this Petr. I have also checked the code
+> and I really fail to see why the allocation has to be done under the
+> lock in the first place. sclp_read_sccb and sclp_init_sccb are global
+> variables but I strongly suspect that they need a synchronization during
+> early init, callbacks are registered only later IIUC:
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
-Changes from v1:
- - None.
----
- drivers/clk/sprd/common.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Good idea. It would work when the init function is called only once.
+But see below.
 
-diff --git a/drivers/clk/sprd/common.c b/drivers/clk/sprd/common.c
-index 7ad5ba2..c0af477 100644
---- a/drivers/clk/sprd/common.c
-+++ b/drivers/clk/sprd/common.c
-@@ -42,7 +42,6 @@ int sprd_clk_regmap_init(struct platform_device *pdev,
- 	void __iomem *base;
- 	struct device_node *node = pdev->dev.of_node;
- 	struct regmap *regmap;
--	struct resource *res;
- 
- 	if (of_find_property(node, "sprd,syscon", NULL)) {
- 		regmap = syscon_regmap_lookup_by_phandle(node, "sprd,syscon");
-@@ -51,8 +50,7 @@ int sprd_clk_regmap_init(struct platform_device *pdev,
- 			return PTR_ERR(regmap);
- 		}
- 	} else {
--		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--		base = devm_ioremap_resource(&pdev->dev, res);
-+		base = devm_platform_ioremap_resource(pdev, 0);
- 		if (IS_ERR(base))
- 			return PTR_ERR(base);
- 
--- 
-1.7.9.5
+> diff --git a/drivers/s390/char/sclp.c b/drivers/s390/char/sclp.c
+> index d2ab3f07c008..4b1c033e3255 100644
+> --- a/drivers/s390/char/sclp.c
+> +++ b/drivers/s390/char/sclp.c
+> @@ -1169,13 +1169,13 @@ sclp_init(void)
+>  	unsigned long flags;
+>  	int rc = 0;
+>  
+> +	sclp_read_sccb = (void *) __get_free_page(GFP_ATOMIC | GFP_DMA);
+> +	sclp_init_sccb = (void *) __get_free_page(GFP_ATOMIC | GFP_DMA);
+>  	spin_lock_irqsave(&sclp_lock, flags);
+>  	/* Check for previous or running initialization */
+>  	if (sclp_init_state != sclp_init_state_uninitialized)
+>  		goto fail_unlock;
 
+It seems that sclp_init() could be called several times in parallel.
+I see it called from sclp_register() and sclp_initcall().
+
+I am not sure if it is really needed or if it is just a strange
+desing.
+
+It might be still possible to always do the allocation without the lock
+and free the memory when it is not really used. But I am not sure
+if we want to do this exercise just to avoid lockdep false positive.
+
+Best Regards,
+Petr
