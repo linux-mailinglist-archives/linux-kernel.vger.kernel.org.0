@@ -2,79 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA23CCF8F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 13:54:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73271CF8D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 13:50:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730785AbfJHLxm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 07:53:42 -0400
-Received: from 2.mo69.mail-out.ovh.net ([178.33.251.80]:59896 "EHLO
-        2.mo69.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729790AbfJHLxm (ORCPT
+        id S1730751AbfJHLuc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 07:50:32 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59860 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730503AbfJHLub (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 07:53:42 -0400
-X-Greylist: delayed 541 seconds by postgrey-1.27 at vger.kernel.org; Tue, 08 Oct 2019 07:53:41 EDT
-Received: from player168.ha.ovh.net (unknown [10.108.42.82])
-        by mo69.mail-out.ovh.net (Postfix) with ESMTP id E622A69E08
-        for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2019 13:35:24 +0200 (CEST)
-Received: from etezian.org (85-76-98-218-nat.elisa-mobile.fi [85.76.98.218])
-        (Authenticated sender: andi@etezian.org)
-        by player168.ha.ovh.net (Postfix) with ESMTPSA id C8BA2A9AD333;
-        Tue,  8 Oct 2019 11:35:13 +0000 (UTC)
-Date:   Tue, 8 Oct 2019 14:35:11 +0300
-From:   Andi Shyti <andi@etezian.org>
-To:     Stephan Gerhold <stephan@gerhold.net>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Andi Shyti <andi@etezian.org>,
-        Simon Shields <simon@lineageos.org>,
-        linux-input@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] Input: mms114 - add support for mms345l
-Message-ID: <20191008113511.GA4015@jack.zhora.eu>
-References: <20191007203343.101466-1-stephan@gerhold.net>
- <20191007205021.104402-1-stephan@gerhold.net>
+        Tue, 8 Oct 2019 07:50:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=HU5Z8WYkEcy2A0wU6XIUSzSQGNyQSuE2XR7coM1PA08=; b=l/T7t9Ub/pYvcCITICGEh94C5
+        u4ZwpFmxbsiOdc0nusHOtfMzz8pB9HThddX24FyCbpmAslty2U1sAn6/NmMv5e6J8qsMMMmOu6gNT
+        2a8D3OT0j99z5tB7aCyAch+KsV/5kMz1JnN+yDCAApZq+CGtrUqaGFMVVK//O+9z7f2kI=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iHo0Y-0008Cn-Pl; Tue, 08 Oct 2019 11:50:26 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 02C082742998; Tue,  8 Oct 2019 12:50:25 +0100 (BST)
+Date:   Tue, 8 Oct 2019 12:50:25 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH] regulator: core: Skip balancing of the enabled
+ regulators in regulator_enable()
+Message-ID: <20191008115025.GF4382@sirena.co.uk>
+References: <CGME20191008101720eucas1p2e0d1bca6e696848bf689067e05620679@eucas1p2.samsung.com>
+ <20191008101709.13827-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="eNMatiwYGLtwo1cJ"
 Content-Disposition: inline
-In-Reply-To: <20191007205021.104402-1-stephan@gerhold.net>
+In-Reply-To: <20191008101709.13827-1-m.szyprowski@samsung.com>
+X-Cookie: Do not disturb.
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Ovh-Tracer-Id: 8393583808645546733
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrheelgdegfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephan,
 
-On Mon, Oct 07, 2019 at 10:50:21PM +0200, Stephan Gerhold wrote:
-> MMS345L is another first generation touch screen from Melfas,
-> which uses the same registers as MMS152.
-> 
-> However, using I2C_M_NOSTART for it causes errors when reading:
-> 
-> 	i2c i2c-0: sendbytes: NAK bailout.
-> 	mms114 0-0048: __mms114_read_reg: i2c transfer failed (-5)
-> 
-> The driver works fine as soon as I2C_M_NOSTART is removed.
-> 
-> Add a separate melfas,mms345l binding, and make use of I2C_M_NOSTART
-> only for MMS114 and MMS152.
-> 
-> Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+--eNMatiwYGLtwo1cJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Reviewed-by: Andi Shyti <andi@etezian.org>
+On Tue, Oct 08, 2019 at 12:17:09PM +0200, Marek Szyprowski wrote:
+> Commit f8702f9e4aa7 ("regulator: core: Use ww_mutex for regulators
+> locking"), regardless of the subject, added additional call to
+> regulator_balance_voltage() during regulator_enable(). This is basically
+> a good idea, however it causes some issue for the regulators which are
+> already enabled at boot and are critical for system operation (for example
+> provides supply to the CPU).
 
-just a nitpick in case you will resend it (but you don't need
-to).
+If regulators are essential to system operation they should be marked as
+always-on...
 
-> -	if (!i2c_check_functionality(client->adapter,
-> -				I2C_FUNC_PROTOCOL_MANGLING)) {
-> +	type = (enum mms_type)device_get_match_data(&client->dev);
+> CPUfreq or other drivers typically call regulator_enable() on such
+> regulators during their probe, although the regulators are already enabled
+> by bootloader. The mentioned patch however added a call to
+> regulator_balance_voltage(), what in case of system boot, where no
+> additional requirements are set yet, typically causes to limit the voltage
+> to the minimal value defined at regulator constraints. This causes a crash
+> of the system when voltage on the CPU regulator is set to the lowest
+> possible value without adjusting the operation frequency. Fix this by
+> adding a check if regulator is already enabled - if so, then skip the
+> balancing procedure. The voltage will be balanced later anyway once the
+> required voltage value is requested.
 
-you don't need any cast here.
+This then means that for users that might legitimately enable and
+disable regulators that need to be constrained are forced to change the
+voltage when they enable the regualtors in order to have their
+constraints take effect which seems bad.  I'd rather change the the
+cpufreq consumers to either not do the enable (since there really should
+be an always-on constraint this should be redundant, we might need to
+fix the core to take account of their settings though I think we lost
+that) or to set the voltage to whatever they need prior to doing their
+first enable, that seems more robust.
 
-Thanks,
-Andi
+--eNMatiwYGLtwo1cJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2ceAEACgkQJNaLcl1U
+h9DWoAf/dbUB8lRI6R+Hiquem9S07NhSAZKa1EzqebKLcAZ9dLQMvsXS+i8xm+uY
+fUCKtKGaxmGAq8NE3Mf9rrwR3J4xRt0HmJNcQjH7zlb+rq8Vg2m6dwr+Vk1sm+AK
+gHX0zgtg8sCvTJekKSso8/kb/ac/qhKn7MZAryUFaXLvOWWdwGlPjl49BrqEAej0
+GCem17IW9Xa8qZ3F+woV41hdO95n8HmTS9nj0NWhZGFUu9LCAea3cMp5QcQ6AUNS
+099DSn2Y/opczEuevMQALSFMiAvBToZRUzO1+HuEfwjpxbKY1ErJ/yIMUySnZQI2
+m+88vWiJU1TxV7C3gTg/cAeuEhr9FQ==
+=dYbd
+-----END PGP SIGNATURE-----
+
+--eNMatiwYGLtwo1cJ--
