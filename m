@@ -2,103 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98FC0CF971
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 14:12:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D59ECCF991
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 14:13:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731225AbfJHMLn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 08:11:43 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:40942 "EHLO inva021.nxp.com"
+        id S1730827AbfJHMMY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 08:12:24 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33288 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731207AbfJHMLi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 08:11:38 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B0A662002CF;
-        Tue,  8 Oct 2019 14:11:36 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A27782002C9;
-        Tue,  8 Oct 2019 14:11:36 +0200 (CEST)
-Received: from fsr-fed2164-101.ea.freescale.net (fsr-fed2164-101.ea.freescale.net [10.171.82.91])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 61CCC205DB;
-        Tue,  8 Oct 2019 14:11:36 +0200 (CEST)
-From:   Madalin Bucur <madalin.bucur@nxp.com>
-To:     davem@davemloft.net, netdev@vger.kernel.org
-Cc:     roy.pledge@nxp.com, laurentiu.tudor@nxp.com,
-        linux-kernel@vger.kernel.org, Madalin Bucur <madalin.bucur@nxp.com>
-Subject: [PATCH 20/20] dpaa_eth: cleanup skb_to_contig_fd()
-Date:   Tue,  8 Oct 2019 15:10:41 +0300
-Message-Id: <1570536641-25104-21-git-send-email-madalin.bucur@nxp.com>
-X-Mailer: git-send-email 2.1.0
-In-Reply-To: <1570536641-25104-1-git-send-email-madalin.bucur@nxp.com>
-References: <1570536641-25104-1-git-send-email-madalin.bucur@nxp.com>
-Reply-to: madalin.bucur@nxp.com
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1731105AbfJHMLY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 08:11:24 -0400
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0069244BD1
+        for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2019 12:11:24 +0000 (UTC)
+Received: by mail-wm1-f72.google.com with SMTP id n3so1296978wmf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 05:11:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=XC+l+JGNpdezIfgQgjgQjgcBhVIbmx5T2yywcc/3dIc=;
+        b=qIXljDXW85qD9CPClz+PItVYDpgRkJyoNfZQ/aUKp9gcY51o0D/QDEGou8ZX0dvEj8
+         7ocBZZeuDRGeymvdyqXQeIAyJ89ANJnQNNEFdmIrummoWwfyzbKKHw6gtbQZUgEP8iWI
+         OdkrDu/ARH4viTqc6U+JcPtZrARdznq7iimSxMy8k13qpPPpsvvO0nYike4StKlYOpc7
+         uy5e+m2TzBu0aLDQ6NMua3ejzMhKBgRURDv/dpnRIP4D47gUGrxHBnLdusNkF7jM61bM
+         KFXjwNg/+/SMfA2X3iA1FItaSdSegv8XcK4TGM5DuSK+qzCnJekjMQMkSbDMdelhR7VR
+         qcJw==
+X-Gm-Message-State: APjAAAWbbTXK28+qZ4vh4VxTiWRE7rs/KOWue2ejTZT3lUcwH8tssKg+
+        wduGoUTPQI4gn5VvKmaSnGJbD8LSx+KYKEvCTjYL9CUzfUZSmfFBYtn59tIQkBhMXJuDMt+2Asm
+        GTEChjQi4vM5g38V6F1TZ4hiq
+X-Received: by 2002:a05:6000:45:: with SMTP id k5mr24156923wrx.259.1570536682666;
+        Tue, 08 Oct 2019 05:11:22 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxVOLNmOG55qRmpeZcOk9E693639E92Lk3u+fEJ6vxxVUor4lqnEMXs6hNuOIi96Wl4hyTPMw==
+X-Received: by 2002:a05:6000:45:: with SMTP id k5mr24156902wrx.259.1570536682402;
+        Tue, 08 Oct 2019 05:11:22 -0700 (PDT)
+Received: from [192.168.10.150] ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id t83sm5002990wmt.18.2019.10.08.05.11.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Oct 2019 05:11:21 -0700 (PDT)
+Subject: Re: [PATCH v2] KVM: Don't shrink/grow vCPU halt_poll_ns if host side
+ polling is disabled
+To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Marcelo Tosatti <mtosatti@redhat.com>
+References: <1569719216-32080-1-git-send-email-wanpengli@tencent.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <a0f940ba-7bc9-8695-c233-0d82858fb91d@redhat.com>
+Date:   Tue, 8 Oct 2019 14:11:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <1569719216-32080-1-git-send-email-wanpengli@tencent.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove cast, align variable name, simplify DMA map size computation.
+On 29/09/19 03:06, Wanpeng Li wrote:
+> From: Wanpeng Li <wanpengli@tencent.com>
+> 
+> Don't waste cycles to shrink/grow vCPU halt_poll_ns if host 
+> side polling is disabled.
+> 
+> Acked-by: Marcelo Tosatti <mtosatti@redhat.com>
+> Cc: Marcelo Tosatti <mtosatti@redhat.com>
+> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> ---
+> v1 -> v2: 
+>  * fix coding style
+> 
+>  virt/kvm/kvm_main.c | 29 ++++++++++++++++-------------
+>  1 file changed, 16 insertions(+), 13 deletions(-)
+> 
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index e6de315..9d5eed9 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -2359,20 +2359,23 @@ void kvm_vcpu_block(struct kvm_vcpu *vcpu)
+>  	kvm_arch_vcpu_unblocking(vcpu);
+>  	block_ns = ktime_to_ns(cur) - ktime_to_ns(start);
+>  
+> -	if (!vcpu_valid_wakeup(vcpu))
+> -		shrink_halt_poll_ns(vcpu);
+> -	else if (halt_poll_ns) {
+> -		if (block_ns <= vcpu->halt_poll_ns)
+> -			;
+> -		/* we had a long block, shrink polling */
+> -		else if (vcpu->halt_poll_ns && block_ns > halt_poll_ns)
+> +	if (!kvm_arch_no_poll(vcpu)) {
+> +		if (!vcpu_valid_wakeup(vcpu)) {
+>  			shrink_halt_poll_ns(vcpu);
+> -		/* we had a short halt and our poll time is too small */
+> -		else if (vcpu->halt_poll_ns < halt_poll_ns &&
+> -			block_ns < halt_poll_ns)
+> -			grow_halt_poll_ns(vcpu);
+> -	} else
+> -		vcpu->halt_poll_ns = 0;
+> +		} else if (halt_poll_ns) {
+> +			if (block_ns <= vcpu->halt_poll_ns)
+> +				;
+> +			/* we had a long block, shrink polling */
+> +			else if (vcpu->halt_poll_ns && block_ns > halt_poll_ns)
+> +				shrink_halt_poll_ns(vcpu);
+> +			/* we had a short halt and our poll time is too small */
+> +			else if (vcpu->halt_poll_ns < halt_poll_ns &&
+> +				block_ns < halt_poll_ns)
+> +				grow_halt_poll_ns(vcpu);
+> +		} else {
+> +			vcpu->halt_poll_ns = 0;
+> +		}
+> +	}
+>  
+>  	trace_kvm_vcpu_wakeup(block_ns, waited, vcpu_valid_wakeup(vcpu));
+>  	kvm_arch_vcpu_block_finish(vcpu);
+> 
 
-Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
----
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Queued, thanks.
 
-diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-index c178f1b8c5e5..78651bb45cfe 100644
---- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-@@ -1382,7 +1382,7 @@ static void count_ern(struct dpaa_percpu_priv *percpu_priv,
- static int dpaa_enable_tx_csum(struct dpaa_priv *priv,
- 			       struct sk_buff *skb,
- 			       struct qm_fd *fd,
--			       char *parse_results)
-+			       void *parse_results)
- {
- 	struct fman_prs_result *parse_result;
- 	u16 ethertype = ntohs(skb->protocol);
-@@ -1836,7 +1836,7 @@ static int skb_to_contig_fd(struct dpaa_priv *priv,
- {
- 	struct net_device *net_dev = priv->net_dev;
- 	enum dma_data_direction dma_dir;
--	unsigned char *buffer_start;
-+	unsigned char *buff_start;
- 	struct sk_buff **skbh;
- 	dma_addr_t addr;
- 	int err;
-@@ -1845,10 +1845,10 @@ static int skb_to_contig_fd(struct dpaa_priv *priv,
- 	 * available, so just use that for offset.
- 	 */
- 	fd->bpid = FSL_DPAA_BPID_INV;
--	buffer_start = skb->data - priv->tx_headroom;
-+	buff_start = skb->data - priv->tx_headroom;
- 	dma_dir = DMA_TO_DEVICE;
- 
--	skbh = (struct sk_buff **)buffer_start;
-+	skbh = (struct sk_buff **)buff_start;
- 	*skbh = skb;
- 
- 	/* Enable L3/L4 hardware checksum computation.
-@@ -1857,7 +1857,7 @@ static int skb_to_contig_fd(struct dpaa_priv *priv,
- 	 * need to write into the skb.
- 	 */
- 	err = dpaa_enable_tx_csum(priv, skb, fd,
--				  ((char *)skbh) + DPAA_TX_PRIV_DATA_SIZE);
-+				  buff_start + DPAA_TX_PRIV_DATA_SIZE);
- 	if (unlikely(err < 0)) {
- 		if (net_ratelimit())
- 			netif_err(priv, tx_err, net_dev, "HW csum error: %d\n",
-@@ -1870,8 +1870,8 @@ static int skb_to_contig_fd(struct dpaa_priv *priv,
- 	fd->cmd |= cpu_to_be32(FM_FD_CMD_FCO);
- 
- 	/* Map the entire buffer size that may be seen by FMan, but no more */
--	addr = dma_map_single(priv->tx_dma_dev, skbh,
--			      skb_tail_pointer(skb) - buffer_start, dma_dir);
-+	addr = dma_map_single(priv->tx_dma_dev, buff_start,
-+			      priv->tx_headroom + skb->len, dma_dir);
- 	if (unlikely(dma_mapping_error(priv->tx_dma_dev, addr))) {
- 		if (net_ratelimit())
- 			netif_err(priv, tx_err, net_dev, "dma_map_single() failed\n");
--- 
-2.1.0
-
+Paolo
