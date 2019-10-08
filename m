@@ -2,107 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51E1FD008C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 20:13:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45009D0091
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 20:15:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729589AbfJHSNe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 14:13:34 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:32902 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726138AbfJHSNd (ORCPT
+        id S1728462AbfJHSPT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 14:15:19 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38837 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726384AbfJHSPT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 14:13:33 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x98HwtS5076605;
-        Tue, 8 Oct 2019 18:13:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
- references : message-id : date : mime-version : in-reply-to : content-type
- : content-transfer-encoding; s=corp-2019-08-05;
- bh=/UJpMBgMVV9V7RcawlqYq2l9m+5ScOrASd+f/x6MW54=;
- b=p2dbOqq1rCl59FOuQvF4t50DnKhSaA9OSHVZuQZcUt4En2B1gSxySOXOI0syYMHIZtuu
- Rzrjpr9qWe7mpERwZGYsNR6wMghpSsfTxEzDfSii+q5+JvByASKlmY+yULx6xASXCcYy
- 2K9daEr4m48NqoE0VO3AfdMyWG5Xuta8yrVPBvpiKQnCRzeYOZmSVYUWbbGNuGBd6Ptw
- J7b1ZNgP9L+wZoOt3OW7lJ9FwNEgjl/OtnerjZ5mXIm+uYkdI6nReOWg7PQLvR8ppP5n
- DiX7PG/crLr3wFwL7JJoQKIQoUy53V7AuBKVm9gWQmmEc6d0xkk/9Fma0sMWbZ9xNXRI xQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 2vejkuf2ju-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 08 Oct 2019 18:13:26 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x98Hx8pg030335;
-        Tue, 8 Oct 2019 18:13:25 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2vg1ywdm0b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 08 Oct 2019 18:13:25 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x98IDO6t007602;
-        Tue, 8 Oct 2019 18:13:24 GMT
-Received: from [10.159.141.189] (/10.159.141.189)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 08 Oct 2019 18:13:24 +0000
-Subject: Re: [PATCH v4 0/2] mm/memory-failure: Poison read receives SIGKILL
- instead of SIGBUS issue
-From:   Jane Chu <jane.chu@oracle.com>
-To:     n-horiguchi@ah.jp.nec.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1565112345-28754-1-git-send-email-jane.chu@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <9af6b35d-bfbf-7f87-a419-042dff018fdd@oracle.com>
-Date:   Tue, 8 Oct 2019 11:13:23 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 8 Oct 2019 14:15:19 -0400
+Received: by mail-pg1-f193.google.com with SMTP id x10so10705494pgi.5
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 11:15:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=LZNljN/AkdZhmtnZA8uLQ3poagOBASW7ZSNDsz+/4TI=;
+        b=kwoc3wm2rR3CIvUhtdBdlhmWm/YevOQgX/fD++B9Iejzidcl2fLkhoXtCuWqKWjo+S
+         etvhAve6tI2G+/U4buEu4yBSn3NIaEdAQ6/qvHF6ACUEeg/y29D4conmgY4TJt7WSRN4
+         PInLB3D9DEiqS2yAkJkKAn4CjlIW7sxlBqDBE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=LZNljN/AkdZhmtnZA8uLQ3poagOBASW7ZSNDsz+/4TI=;
+        b=oYjkFQdNA1Yndka5hc2ThS1vs1hfhkUGtvYgjnXfTntWaTVveS0O1TwT3PzkNnsY6k
+         P7BeQcZQcL5rrZv1b5d7eUylt4jTYpC1euvxciFTqf0ghlvVUJFJHRVRbxAXbvKEtIbD
+         aNcc32HstoH8j0EpdSUI10RK9FAH/vqNITgYUj5S41hdyR/fbg/LMU2gEytYVL5H3E6j
+         DDYKrL7LXU/B9NK0Rs9NTHxV8UWIhGYkSjhR26YyLcroUipnCg2ZDRHx8H+IracwfaoY
+         /hR6XF36kNzbBeICrKGrEQZpyEjHBQ0/7PVS+mzyDPJ9withYWwghrJ9ZAPLQJspkStS
+         7cwg==
+X-Gm-Message-State: APjAAAUIlfMVB5sf10/hSA6d9KDyujKioOWkCrpgYCzXDhidavEKghmc
+        ddCKm1kkKOHsEg80GowK9W2F0g==
+X-Google-Smtp-Source: APXvYqzYjnU+6t/eIHObkAKBvtTJwWuCd0pBBXRV6LW14MPtb06wVjGqmQ3hz203J6/CQf9wDdhylQ==
+X-Received: by 2002:a17:90a:1150:: with SMTP id d16mr7594707pje.2.1570558516852;
+        Tue, 08 Oct 2019 11:15:16 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id p189sm20549336pfp.163.2019.10.08.11.15.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2019 11:15:15 -0700 (PDT)
+Date:   Tue, 8 Oct 2019 11:15:14 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     David Gow <davidgow@google.com>, shuah@kernel.org,
+        akpm@linux-foundation.org, linux-kselftest@vger.kernel.org,
+        kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] lib/list-test: add a test for the 'list' doubly linked
+ list
+Message-ID: <201910081110.C2C582408F@keescook>
+References: <20191007213633.92565-1-davidgow@google.com>
+ <20191008174837.GA155928@google.com>
 MIME-Version: 1.0
-In-Reply-To: <1565112345-28754-1-git-send-email-jane.chu@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9404 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910080143
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9404 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910080143
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191008174837.GA155928@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Naoya,
+On Tue, Oct 08, 2019 at 10:48:37AM -0700, Brendan Higgins wrote:
+> On Mon, Oct 07, 2019 at 02:36:33PM -0700, David Gow wrote:
+> > This change adds a KUnit test for the kernel doubly linked list
+> > implementation in include/linux/list.h
+> > 
+> > Note that, at present, it only tests the list_ types (not the
+> > singly-linked hlist_), and does not yet test all of the
+> > list_for_each_entry* macros (and some related things like
+> > list_prepare_entry).
+> > 
+> > This change depends on KUnit, so should be merged via the 'test' branch:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git/log/?h=test
+> > 
+> > Signed-off-by: David Gow <davidgow@google.com>
+> > ---
+> >  lib/Kconfig.debug |  12 +
+> >  lib/Makefile      |   3 +
+> >  lib/list-test.c   | 711 ++++++++++++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 726 insertions(+)
+> >  create mode 100644 lib/list-test.c
+> 
+> Also, I think it might be good to make a MAINTAINERs entry for this
+> test.
 
-What is the status of the patches?
-Is there anything I need to do from my end ?
+Another thought, though maybe this is already covered and I missed the
+"best practices" notes on naming conventions.
 
-Regards,
--jane
+As the "one-off" tests are already named "foo_test.c" it seems like
+KUnit tests should be named distinctly. Should this be lib/kunit-list.c,
+lib/list-kunit.c, or something else?
 
-On 8/6/2019 10:25 AM, Jane Chu wrote:
-> Change in v4:
->   - remove trailing white space
-> 
-> Changes in v3:
->   - move **tk cleanup to its own patch
-> 
-> Changes in v2:
->   - move 'tk' allocations internal to add_to_kill(), suggested by Dan;
->   - ran checkpatch.pl check, pointed out by Matthew;
->   - Noaya pointed out that v1 would have missed the SIGKILL
->     if "tk->addr == -EFAULT", since the code returns early.
->     Incorporated Noaya's suggestion, also, skip VMAs where
->     "tk->size_shift == 0" for zone device page, and deliver SIGBUS
->     when "tk->size_shift != 0" so the payload is helpful;
->   - added Suggested-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> 
-> Jane Chu (2):
->    mm/memory-failure.c clean up around tk pre-allocation
->    mm/memory-failure: Poison read receives SIGKILL instead of SIGBUS if
->      mmaped more than once
-> 
->   mm/memory-failure.c | 62 ++++++++++++++++++++++-------------------------------
->   1 file changed, 26 insertions(+), 36 deletions(-)
-> 
+For internal naming of structs and tests, should things be
+named "kunit_foo"? Examples here would be kunit_list_struct and
+kunit_list_test_...
+
+When testing other stuff, should only exposed interfaces be tested?
+Many things have their API exposed via registration of a static structure
+of function pointers to static functions. What's the proposed best way
+to get at that? Should the KUnit tests is IN the .c file that declares
+all the static functions?
+
+-- 
+Kees Cook
