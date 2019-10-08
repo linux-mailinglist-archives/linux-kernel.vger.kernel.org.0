@@ -2,70 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23183D010D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 21:17:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F36ABD0111
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 21:18:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729802AbfJHTRc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 15:17:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34248 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726439AbfJHTRc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 15:17:32 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7F338B112;
-        Tue,  8 Oct 2019 19:17:30 +0000 (UTC)
-Date:   Tue, 8 Oct 2019 21:17:28 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        akpm@linux-foundation.org, sergey.senozhatsky.work@gmail.com,
-        rostedt@goodmis.org, peterz@infradead.org, linux-mm@kvack.org,
-        john.ogness@linutronix.de, david@redhat.com,
-        linux-kernel@vger.kernel.org,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Subject: Re: [PATCH v2] mm/page_isolation: fix a deadlock with printk()
-Message-ID: <20191008191728.GS6681@dhcp22.suse.cz>
-References: <1570228005-24979-1-git-send-email-cai@lca.pw>
- <20191007143002.l37bt2lzqtnqjqxu@pathway.suse.cz>
- <20191007144937.GO2381@dhcp22.suse.cz>
- <20191008074357.f33f6pbs4cw5majk@pathway.suse.cz>
- <20191008082752.GB6681@dhcp22.suse.cz>
- <aefe7f75-b0ec-9e99-a77e-87324edb24e0@de.ibm.com>
- <1570550917.5576.303.camel@lca.pw>
- <20191008183525.GQ6681@dhcp22.suse.cz>
- <1570561573.5576.307.camel@lca.pw>
+        id S1730069AbfJHTSV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 15:18:21 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:43196 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726439AbfJHTSV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 15:18:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ME1BnonkhshqxMfctofPIhF2CHKZ2ZAEIXQ0ulRQ3lE=; b=o1O6FNkZzqWDcXwvJ3hHDOq0o
+        BMkJQzyt6YzaVcyMuCfeC9jgl8zgqJ+gzVrQoF8DjbgxM+b6eVIzIKscRV2QVQAvdWFGu6k5MpXca
+        u/QPjUfbHMlQ/iy6d0geZ1TVMCU5Vmoa4yRhy4anVHM+hfWj3ElKYBAZRXk+iTRKglgDtSRduQ3j+
+        1zZyfxnd7YQisu13+bG13p7383jY+VR514dHVsxTYDqwZ0Yhp6ZJMD3e93OSznC8Y+qpCMIj6SLnl
+        4qhBAKyoF8UVP6FCMiO4jC6iVErOhZGe2QrRX+UDoXKhDcYKiZCJw3JdxbTw3ihIUYL1laD6iinuz
+        EpmRMA0pA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iHuzv-0005Va-H5; Tue, 08 Oct 2019 19:18:15 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 9009D30034F;
+        Tue,  8 Oct 2019 21:17:21 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 14806202448A4; Tue,  8 Oct 2019 21:18:13 +0200 (CEST)
+Date:   Tue, 8 Oct 2019 21:18:13 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        stable@vger.kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH v2] perf/core: fix corner case in perf_rotate_context()
+Message-ID: <20191008191813.GG2328@hirez.programming.kicks-ass.net>
+References: <20191008165949.920548-1-songliubraving@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1570561573.5576.307.camel@lca.pw>
+In-Reply-To: <20191008165949.920548-1-songliubraving@fb.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 08-10-19 15:06:13, Qian Cai wrote:
-> On Tue, 2019-10-08 at 20:35 +0200, Michal Hocko wrote:
-[...]
-> > I fully agree that this class of lockdep splats are annoying especially
-> > when they make the lockdep unusable but please discuss this with lockdep
-> > maintainers and try to find some solution rather than go and try to
-> > workaround the problem all over the place. If there are places that
-> > would result in a cleaner code then go for it but please do not make the
-> > code worse just because of a non existent problem flagged by a false
-> > positive.
+On Tue, Oct 08, 2019 at 09:59:49AM -0700, Song Liu wrote:
+> In perf_rotate_context(), when the first cpu flexible event fail to
+> schedule, cpu_rotate is 1, while cpu_event is NULL. Since cpu_event is
+> NULL, perf_rotate_context will _NOT_ call cpu_ctx_sched_out(), thus
+> cpuctx->ctx.is_active will have EVENT_FLEXIBLE set. Then, the next
+> perf_event_sched_in() will skip all cpu flexible events because of the
+> EVENT_FLEXIBLE bit.
 > 
-> It makes me wonder what make you think it is a false positive for sure.
+> In the next call of perf_rotate_context(), cpu_rotate stays 1, and
+> cpu_event stays NULL, so this process repeats. The end result is, flexible
+> events on this cpu will not be scheduled (until another event being added
+> to the cpuctx).
+> 
+> Here is an easy repro of this issue. On Intel CPUs, where ref-cycles
+> could only use one counter, run one pinned event for ref-cycles, one
+> flexible event for ref-cycles, and one flexible event for cycles. The
+> flexible ref-cycles is never scheduled, which is expected. However,
+> because of this issue, the cycles event is never scheduled either.
+> 
+> perf stat -e ref-cycles:D,ref-cycles,cycles -C 5 -I 1000
+>            time             counts unit events
+>     1.000152973         15,412,480      ref-cycles:D
+>     1.000152973      <not counted>      ref-cycles     (0.00%)
+>     1.000152973      <not counted>      cycles         (0.00%)
+>     2.000486957         18,263,120      ref-cycles:D
+>     2.000486957      <not counted>      ref-cycles     (0.00%)
+>     2.000486957      <not counted>      cycles         (0.00%)
+> 
+> To fix this, when the flexible_active list is empty, try rotate the
+> first event in the flexible_groups. Also, rename ctx_first_active() to
+> ctx_event_to_rotate(), which is more accurate.
+> 
+> Fixes: 8d5bce0c37fa ("perf/core: Optimize perf_rotate_context() event scheduling")
+> Cc: stable@vger.kernel.org # v4.17+
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Sasha Levin <sashal@kernel.org>
+> Signed-off-by: Song Liu <songliubraving@fb.com>
 
-Because this is an early init code? Because if it were a real deadlock
-then your system wouldn't boot to get run with the real userspace
-(remember there is zone->lock spinlock involved and that means that you
-would hit hard lock after few seconds - but I feel I am repeating
-myself).
--- 
-Michal Hocko
-SUSE Labs
+Thanks!
