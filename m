@@ -2,95 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CE2CCFC44
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:21:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 862D6CFC6F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:30:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726384AbfJHOVu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 10:21:50 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:42935 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725853AbfJHOVu (ORCPT
+        id S1727179AbfJHO3o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 10:29:44 -0400
+Received: from one.firstfloor.org ([193.170.194.197]:39246 "EHLO
+        one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726333AbfJHO3o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 10:21:50 -0400
-Received: by mail-oi1-f196.google.com with SMTP id i185so14882357oif.9
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 07:21:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=MA85NocqHsE0pV0WfruagTwcSPZ20OKA7j0BxtbfiKg=;
-        b=kPwgbuv4SZyOXa0VVd9PS9lv1q4g0p3gD2oqmeLiueLI2DbgKdwfPbfzH4pTCEopYB
-         9buGDhEoq2K4C/Yw2E0U3aAFxVD7aLRefWrB36OLxiETjmGIsDzr5Rk1VU2vNDz9EoRD
-         EKiEmRQx7/m2707sy1vkdtlvzY1h5eP+tPomtD9Yqqe1HCwpA4TCjlkB7PyFhlivKltZ
-         VFjGKXbPvPNqkdqk6XJZ+3OQgsHjcXbVuM8EsQG4HefArMnpTQzjMHA04jz7TF6rWJtL
-         zTcBYEaeqx7aMxygbS07rBNSTW8RyGmFwTaEwnpq3lP4CYWj1G5tRCCxxZ4vB2w3AP9y
-         L8+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=MA85NocqHsE0pV0WfruagTwcSPZ20OKA7j0BxtbfiKg=;
-        b=Oscou09YYndxX3lhs2w9DMXZJIOQ7gj8a3DIFOkuCWGh3pYW7o+4Djex4QDdNlYxzA
-         /q1hvRgTNHpk5HXmSpdktIirsrxeeB4XL/XLJBMcGT/Q2qruevyUgqo8njdBD1vLuwwM
-         qIWntlsSjn000/LdFkG+GaLZVMASA0JTacmr2zOpO0ZFhpz2xaOViAcMuLDCsuzfQrSZ
-         cKWFGTIlz/J7QpN541DaTeAPZjloB/RV8cZYhnrlvyYFLkZjLgd09XWtmphv2KTuxcs9
-         HMlrSzvjhG/+xIF8uM7vjfhSwSVfpZxkg7dURi+I5TkbpNxlrIRzIheRmWXEYBk7BqrU
-         +MtQ==
-X-Gm-Message-State: APjAAAWjy3/tfBUagdsU8pgxdtBEznxg/PeDX23+5922VSQUzl+sG78O
-        cKx76XnEa9CBq6atWxL+hykreARMzZ3CbxI2C08=
-X-Google-Smtp-Source: APXvYqwbOXJQBSQzyqHrkkq9QPraEKF9kIEK+PuMw7Wmluq/cUmot0rXXoSPY/Vp/T+6R4vHL4wlRBxK5y1qx7cAvvc=
-X-Received: by 2002:a05:6808:9b6:: with SMTP id e22mr3925086oig.51.1570544509753;
- Tue, 08 Oct 2019 07:21:49 -0700 (PDT)
+        Tue, 8 Oct 2019 10:29:44 -0400
+X-Greylist: delayed 477 seconds by postgrey-1.27 at vger.kernel.org; Tue, 08 Oct 2019 10:29:44 EDT
+Received: by one.firstfloor.org (Postfix, from userid 503)
+        id D5AA586951; Tue,  8 Oct 2019 16:21:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=firstfloor.org;
+        s=mail; t=1570544504;
+        bh=qU+aOZ8e3XhF+99FLjM1jrujYQGQA+No8pJoZYO/5Pw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=b8kZOjeb4MtKFWbWeVqJPPRLt9CdIbDsFzN4tZvHefzobHsgfpkPFcSZsKLFL5tUh
+         fTuZ3BJvecZMBRb5WgnM5GDjOOS0W/e6m2Jko2OwQq92qKMydlo+a41JXUpgXeFaih
+         OUes1KKrjJFztWsFLfmI6JvceO/bBeG+73X3ZY0I=
+Date:   Tue, 8 Oct 2019 07:21:44 -0700
+From:   Andi Kleen <andi@firstfloor.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Andi Kleen <andi@firstfloor.org>, acme@kernel.org,
+        jolsa@kernel.org, linux-kernel@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH] perf data: Fix babeltrace detection
+Message-ID: <20191008142143.ts5se4pzwfnfnbsh@two.firstfloor.org>
+References: <20191007174120.12330-1-andi@firstfloor.org>
+ <20191008115240.GE10009@krava>
 MIME-Version: 1.0
-References: <1569241648-26908-1-git-send-email-lpf.vector@gmail.com> <20191002160649.9ab76eabaf5900548c455b02@linux-foundation.org>
-In-Reply-To: <20191002160649.9ab76eabaf5900548c455b02@linux-foundation.org>
-From:   Pengfei Li <lpf.vector@gmail.com>
-Date:   Tue, 8 Oct 2019 22:21:38 +0800
-Message-ID: <CAD7_sbFvsXMMa9zHiV9SvaXYnrX6zoo9X5e09ToLupcx1=U8=Q@mail.gmail.com>
-Subject: Re: [PATCH v6 0/3] mm, slab: Make kmalloc_info[] contain all types of names
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Christopher Lameter <cl@linux.com>, penberg@kernel.org,
-        David Rientjes <rientjes@google.com>, iamjoonsoo.kim@lge.com,
-        Vlastimil Babka <vbabka@suse.cz>, Roman Gushchin <guro@fb.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191008115240.GE10009@krava>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 3, 2019 at 7:06 AM Andrew Morton <akpm@linux-foundation.org> wr=
-ote:
->
-> On Mon, 23 Sep 2019 20:27:25 +0800 Pengfei Li <lpf.vector@gmail.com> wrot=
-e:
->
-> > Changes in v6
-> > --
-> > 1. abandon patch 4-7 (Because there is not enough reason to explain
-> > that they are beneficial)
->
-> So http://lkml.kernel.org/r/20190923004022.GC15734@shao2-debian can no
-> longer occur?
->
+On Tue, Oct 08, 2019 at 01:52:40PM +0200, Jiri Olsa wrote:
+> On Mon, Oct 07, 2019 at 10:41:20AM -0700, Andi Kleen wrote:
+> > From: Andi Kleen <ak@linux.intel.com>
+> > 
+> > The symbol the feature file checks for is now actually in -lbabeltrace,
+> > not -lbabeltrace-ctf, at least as of libbabeltrace-1.5.6-2.fc30.x86_64
+> > 
+> > Always add both libraries to fix the feature detection.
+> 
+> well, we link with libbabeltrace-ctf.so which links with libbabeltrace.so
+> 
+> I guess we can link it as well, but where do you see it fail?
 
-Sorry for such a late reply.
+On FC30 the .so file is just a symlink, so it doesn't pull
+in the other library.
 
-Yes, it=E2=80=98s caused by [patch v5 5/7]. So do not occur in v6.
+$ gcc test-libbabeltrace.c -lbabeltrace-ctf
+/usr/bin/ld:
+/usr/lib/gcc/x86_64-redhat-linux/9/../../../../lib64/libbabeltrace-ctf.so:
+undefined reference to `bt_packet_seek_get_error'
+/usr/bin/ld:
+/usr/lib/gcc/x86_64-redhat-linux/9/../../../../lib64/libbabeltrace-ctf.so:
+undefined reference to `bt_packet_seek_set_error'
+collect2: error: ld returned 1 exit status
 
-> > Changes in v5
-> > --
-> > 1. patch 1/7:
-> >     - rename SET_KMALLOC_SIZE to INIT_KMALLOC_INFO
-> > 2. patch 5/7:
-> >     - fix build errors (Reported-by: kbuild test robot)
-> >     - make all_kmalloc_info[] static (Reported-by: kbuild test robot)
-> > 3. patch 6/7:
-> >     - for robustness, determine kmalloc_cache is !NULL in
-> >       new_kmalloc_cache()
-> > 4. add ack tag from David Rientjes
-> >
->
->
->
+$ ls -l /usr/lib64/libbabeltrace-ctf.so
+lrwxrwxrwx 1 root root 26 Jan 31  2019 /usr/lib64/libbabeltrace-ctf.so
+-> libbabeltrace-ctf.so.1.0.0
+
+$ rpm -qf /usr/lib64/libbabeltrace-ctf.so
+libbabeltrace-devel-1.5.6-2.fc30.x86_64
+
+-Andi
