@@ -2,77 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0748CF9EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 14:36:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51D46CF9F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 14:37:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730737AbfJHMgF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 08:36:05 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54436 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730249AbfJHMgF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 08:36:05 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 566FC87717;
-        Tue,  8 Oct 2019 12:36:05 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.44])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 2F4CA60605;
-        Tue,  8 Oct 2019 12:36:04 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue,  8 Oct 2019 14:36:03 +0200 (CEST)
-Date:   Tue, 8 Oct 2019 14:36:01 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Bruce Ashfield <bruce.ashfield@gmail.com>
-Cc:     Roman Gushchin <guro@fb.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tj@kernel.org" <tj@kernel.org>,
-        Richard Purdie <richard.purdie@linuxfoundation.org>
-Subject: Re: ptrace/strace and freezer oddities and v5.2+ kernels
-Message-ID: <20191008123601.GA28621@redhat.com>
-References: <CADkTA4PBT374CY+UNb85WjQEaNCDodMZu=MgpG8aMYbAu2eOGA@mail.gmail.com>
- <20191002020100.GA6436@castle.dhcp.thefacebook.com>
- <CADkTA4Mbai=Q5xgKH9-md_g73UsHiKnEauVgMWev+-sG8FVNSA@mail.gmail.com>
- <20191002181914.GA7617@castle.DHCP.thefacebook.com>
- <CADkTA4PmGBR7YdOXvi6sEDJ+uztuB7x2G95TCcW2u_iqjwhUNQ@mail.gmail.com>
- <20191004000913.GA5519@castle.DHCP.thefacebook.com>
- <CADkTA4OJok3cmYCcDKtxBXQ5xtK1EMujh7_AgLnVaeRr18TH9w@mail.gmail.com>
- <CADkTA4PKc6VEQYvXk4-EWMJPyOrzWQEsk4p6O_BMFo6kvT2jYg@mail.gmail.com>
- <20191007232754.GB11171@tower.DHCP.thefacebook.com>
- <CADkTA4NKDn4jd2BQaGk+JEnM3B5GMDudsBi6V4YwK3Soq9q9pA@mail.gmail.com>
+        id S1730901AbfJHMhO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 08:37:14 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:33272 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730605AbfJHMhN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 08:37:13 -0400
+Received: by mail-qk1-f193.google.com with SMTP id x134so16562807qkb.0;
+        Tue, 08 Oct 2019 05:37:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4v0d+1p/aArXJ2yOJRd5yNu1aMPL1BHOkAquOKCrLz0=;
+        b=hdoPfz7i2ZAKAojYg3MCdn1h3u+bC0JsI4n7zh6dL6bVxNYeSc793Pmj5qltJe44fQ
+         to9MLzW0F9Q2qJMBxS063xbPKegLPpoWtkY13KtO91GW7ABSL8Ijg3sD3+wEzdn3gUKl
+         KdAuBnJ7Q4VRAthQ+JYQcg1M4uXtSRp5ZpLUY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4v0d+1p/aArXJ2yOJRd5yNu1aMPL1BHOkAquOKCrLz0=;
+        b=LHvGCio9hc5uATawH+wK9itXGHh4btLNhjYg5hYAye4Ny6xvMxr3oWsA9hKdZMmroq
+         JD9wuiEjxqBludOOwfllGhB/Lc/RxIjLcwPekD5+AvAJdPhDOI3Pa21gUsNjKHmj9IhH
+         OZNjFXIgiIT6xRTs5pwYBZpXorypRKcC7usPo22n06KkgAZa1wJD4kjJhE+atBoPIMKQ
+         2MEY/U5DOKLU2rrZEkEeTLZjhKASgx38OseceCoemMMfyQq0FSDnZMq1Vxkq9syXsJ9O
+         8vY/eEZ/L28x4Xjc2mp2PJoQWvsRgqx45cyu8EWPlfm+EgKGkBNQIBQAE4z2PXNxXbck
+         89EA==
+X-Gm-Message-State: APjAAAXXPiUxAYN9T6pmG0Fh8NfIvMYQBoAS2DvkZyZebhe8WXEuHFlL
+        NuQwDixU5/BbclgGag58FHVjcWCBcdaLqyCirTI=
+X-Google-Smtp-Source: APXvYqwWnZfc72JvmcJyYRX4c70u9XGRpY6zMM0qiDyLh1kU7xYPHgtRMVXxvCmA/MGSrjXZ3fNWualilBMYFbbhMQE=
+X-Received: by 2002:a37:4a54:: with SMTP id x81mr28628198qka.292.1570538232484;
+ Tue, 08 Oct 2019 05:37:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADkTA4NKDn4jd2BQaGk+JEnM3B5GMDudsBi6V4YwK3Soq9q9pA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.71]); Tue, 08 Oct 2019 12:36:05 +0000 (UTC)
+References: <20191008113523.13601-1-andrew@aj.id.au> <20191008113523.13601-2-andrew@aj.id.au>
+In-Reply-To: <20191008113523.13601-2-andrew@aj.id.au>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Tue, 8 Oct 2019 12:37:00 +0000
+Message-ID: <CACPK8Xf-f-r4S02GoxYdBYOJi5NGYMCOr6XGVza4vEGAsqzR9w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Add AST2500 RMII RCLK definitions
+To:     Andrew Jeffery <andrew@aj.id.au>
+Cc:     linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/08, Bruce Ashfield wrote:
+On Tue, 8 Oct 2019 at 11:34, Andrew Jeffery <andrew@aj.id.au> wrote:
 >
-> So I've been looking through the config delta's and late last night, I was
-> able to move the runtime back to a failed 4 minute state by adding the
-> CONFIG_PREEMPT settings that we have by default in our reference
-> kernel.
+> The AST2500 has an explicit gate for the RMII RCLK for each of the two
+> MACs.
+>
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> ---
+>  include/dt-bindings/clock/aspeed-clock.h | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
+> index f43738607d77..64e245fb113f 100644
+> --- a/include/dt-bindings/clock/aspeed-clock.h
+> +++ b/include/dt-bindings/clock/aspeed-clock.h
+> @@ -39,6 +39,8 @@
+>  #define ASPEED_CLK_BCLK                        33
+>  #define ASPEED_CLK_MPLL                        34
+>  #define ASPEED_CLK_24M                 35
+> +#define ASPEED_CLK_GATE_MAC1RCLK       36
+> +#define ASPEED_CLK_GATE_MAC2RCLK       37
 
-Aha... Can you try the patch below?
+Calling these ASPEED_CLK_GATE breaks the pattern the rest of the
+driver has in using that name for the clocks that are registered as
+struct aspeed_clk_gate clocks.
 
-Oleg.
+Do you think we should drop the GATE_ to match the existing clocks?
 
---- x/kernel/signal.c
-+++ x/kernel/signal.c
-@@ -2205,8 +2205,8 @@ static void ptrace_stop(int exit_code, int why, int clear_code, kernel_siginfo_t
- 		 */
- 		preempt_disable();
- 		read_unlock(&tasklist_lock);
--		preempt_enable_no_resched();
- 		cgroup_enter_frozen();
-+		preempt_enable_no_resched();
- 		freezable_schedule();
- 		cgroup_leave_frozen(true);
- 	} else {
 
+>
+>  #define ASPEED_RESET_XDMA              0
+>  #define ASPEED_RESET_MCTP              1
+> --
+> 2.20.1
+>
