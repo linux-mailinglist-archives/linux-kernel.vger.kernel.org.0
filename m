@@ -2,68 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B62B7CF317
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 08:58:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA5F2CF32B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 09:04:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730248AbfJHG6V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 02:58:21 -0400
-Received: from mga17.intel.com ([192.55.52.151]:41205 "EHLO mga17.intel.com"
+        id S1730131AbfJHHEz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 03:04:55 -0400
+Received: from mga12.intel.com ([192.55.52.136]:1926 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730111AbfJHG6V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 02:58:21 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1729740AbfJHHEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 03:04:54 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2019 23:58:21 -0700
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2019 00:04:54 -0700
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.67,269,1566889200"; 
-   d="scan'208";a="344954697"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2019 23:58:19 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 05F8820976; Tue,  8 Oct 2019 09:58:16 +0300 (EEST)
-Date:   Tue, 8 Oct 2019 09:58:16 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Benoit Parrot <bparrot@ti.com>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Jacopo Mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [Patch v3 1/3] media: ov5640: add PIXEL_RATE control
-Message-ID: <20191008065816.GA24435@paasikivi.fi.intel.com>
-References: <20191004172418.2339-1-bparrot@ti.com>
- <20191004172418.2339-2-bparrot@ti.com>
- <20191007080320.GG14917@paasikivi.fi.intel.com>
- <20191007151703.z3eejxuujzt5ruth@ti.com>
+   d="scan'208";a="277017670"
+Received: from cli6-desk1.ccr.corp.intel.com (HELO [10.239.161.118]) ([10.239.161.118])
+  by orsmga001.jf.intel.com with ESMTP; 08 Oct 2019 00:04:51 -0700
+Subject: Re: [PATCH] proc:fix confusing macro arg name
+To:     linmiaohe <linmiaohe@huawei.com>,
+        "adobriyan@gmail.com" <adobriyan@gmail.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "cyphar@cyphar.com" <cyphar@cyphar.com>,
+        "christian@brauner.io" <christian@brauner.io>
+Cc:     Mingfangsen <mingfangsen@huawei.com>,
+        "mm-commits@vger.kernel.org" <mm-commits@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <165631b964b644dfa933653def533e41@huawei.com>
+From:   "Li, Aubrey" <aubrey.li@linux.intel.com>
+Message-ID: <56474105-0df0-975b-a347-711c1c6422f2@linux.intel.com>
+Date:   Tue, 8 Oct 2019 15:04:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191007151703.z3eejxuujzt5ruth@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <165631b964b644dfa933653def533e41@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 07, 2019 at 10:17:03AM -0500, Benoit Parrot wrote:
-> Sakari Ailus <sakari.ailus@linux.intel.com> wrote on Mon [2019-Oct-07 11:03:20 +0300]:
-> > On Fri, Oct 04, 2019 at 12:24:16PM -0500, Benoit Parrot wrote:
-> > > @@ -2657,6 +2669,12 @@ static int ov5640_init_controls(struct ov5640_dev *sensor)
-> > >  	/* we can use our own mutex for the ctrl lock */
-> > >  	hdl->lock = &sensor->lock;
-> > >  
-> > > +	/* Clock related controls */
-> > > +	ctrls->pixel_rate = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_PIXEL_RATE,
-> > > +					      0, INT_MAX, 1,
-> > > +					      ov5640_calc_pixel_rate(sensor));
-> > > +	ctrls->pixel_rate->flags |= V4L2_CTRL_FLAG_READ_ONLY;
-> > 
-> > Please check ctrls->pixel_rate first; it may be NULL here.
+On 2019/10/8 14:44, linmiaohe wrote:
+> Add suitable additional cc's as Andrew Morton suggested.
+> Get cc list from get_maintainer script:
+> [root@localhost mm]# ./scripts/get_maintainer.pl 0001-proc-fix-confusing-macro-arg-name.patch 
+> Alexey Dobriyan <adobriyan@gmail.com> (reviewer:PROC FILESYSTEM)
+> linux-kernel@vger.kernel.org (open list:PROC FILESYSTEM)
+> linux-fsdevel@vger.kernel.org (open list:PROC FILESYSTEM)
 > 
-> How about I just move this line below "if (hdl->error)" instead?
+> ------------------------------------------------------
+> From: Miaohe Lin <linmiaohe@huawei.com>
+> Subject: fix confusing macro arg name
+> 
+> state_size and ops are in the wrong position, fix it.
+> 
+> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+> Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Alexey Dobriyan <adobriyan@gmail.com>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> ---
 
-That's fine, too. As long as it won't oops if memory allocation fails...
-:-)
+Good catch!
 
--- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+This is interesting, I saw this interface has 50+ callers,
+How did they work before? ;)
+
+Thanks,
+-Aubrey
+
+> 
+>  include/linux/proc_fs.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h index a705aa2d03f9..0640be56dcbd 100644
+> --- a/include/linux/proc_fs.h
+> +++ b/include/linux/proc_fs.h
+> @@ -58,8 +58,8 @@ extern int remove_proc_subtree(const char *, struct proc_dir_entry *);  struct proc_dir_entry *proc_create_net_data(const char *name, umode_t mode,
+>  		struct proc_dir_entry *parent, const struct seq_operations *ops,
+>  		unsigned int state_size, void *data);
+> -#define proc_create_net(name, mode, parent, state_size, ops) \
+> -	proc_create_net_data(name, mode, parent, state_size, ops, NULL)
+> +#define proc_create_net(name, mode, parent, ops, state_size) \
+> +	proc_create_net_data(name, mode, parent, ops, state_size, NULL)
+>  struct proc_dir_entry *proc_create_net_single(const char *name, umode_t mode,
+>  		struct proc_dir_entry *parent,
+>  		int (*show)(struct seq_file *, void *), void *data);
+> --
+> 2.21.GIT
+> 
+> 
+
