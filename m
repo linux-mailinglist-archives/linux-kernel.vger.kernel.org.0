@@ -2,148 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41B61CFBCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:01:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52582CFBC8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:00:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726466AbfJHOBB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 10:01:01 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:37384 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725848AbfJHOBB (ORCPT
+        id S1726426AbfJHOAT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 10:00:19 -0400
+Received: from smtprelay0001.hostedemail.com ([216.40.44.1]:49946 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725795AbfJHOAS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 10:01:01 -0400
-Received: by mail-ed1-f68.google.com with SMTP id r4so15722683edy.4
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 07:00:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VQS/Qj2ND8v944kFO5rho9xg1dVm9pVNi7V4CDUfWyo=;
-        b=WzzmG5vYA/2jMSBgIPMlnot27v5BdCPtHn8dUcldsLNmzJrDs1r/CDiobI8kzsuahX
-         84BU8uDMNsgr86N++x4zaqtUNPgLDGCHcqp55fqmZmIu1+gLHdLjvkW648Q2NBomyLHK
-         97F2T3tCBI6HZ31MShEgJssW7SZwgeQ2rYDz4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VQS/Qj2ND8v944kFO5rho9xg1dVm9pVNi7V4CDUfWyo=;
-        b=Js5JJN76IMaT27kxZac4QTbaT1FfFG76xj1a4iCiD7/GiNH59ljtm4Reih0gFWYy6B
-         AaCsSpKwC7z/NhYm/UOrc0MiADpTOjglxAc/drUX/EiY2tc+30FzlfIqmAVk4F0woIou
-         uGJ9SvaiNEUmDPQGacP+1DSUWL4kF2h+2dU5HeU3J+pg4seQtt5lbFBLazmLUukXr5lI
-         /JmfBDrVr5soU1+Jgf+AstBWdpYwY20+slstBc2iiJgzz7MZn5tAgGyjHI1EgBujou74
-         t298uIWTGibUN/SlWOfLv9NAy+oK4K4tPwlWkQHVlRku5rJtL3sdORzZKj3k2xnDxQ4A
-         CGFw==
-X-Gm-Message-State: APjAAAUR0O35HBmLVIpq8x/wiyB7E1TzlLpHkNZ+rD8MYuG/ZpKQ+w2J
-        KQzUP/BgHenYd7Yxxy90J8vpa/gw5F8U/w==
-X-Google-Smtp-Source: APXvYqzTg2v01nMJWwFzMW+6Ul66i4fwc7BudLHOqL5IDi3pacsH2OkhBQfTfYJdhW3L7Q6LOivwAg==
-X-Received: by 2002:a17:906:7f05:: with SMTP id d5mr21072811ejr.328.1570543258965;
-        Tue, 08 Oct 2019 07:00:58 -0700 (PDT)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com. [209.85.128.43])
-        by smtp.gmail.com with ESMTPSA id j6sm2290069ejv.36.2019.10.08.07.00.58
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2019 07:00:58 -0700 (PDT)
-Received: by mail-wm1-f43.google.com with SMTP id m18so3276362wmc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 07:00:58 -0700 (PDT)
-X-Received: by 2002:a1c:2e50:: with SMTP id u77mr4189007wmu.64.1570542850077;
- Tue, 08 Oct 2019 06:54:10 -0700 (PDT)
+        Tue, 8 Oct 2019 10:00:18 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 49ACD8368F00;
+        Tue,  8 Oct 2019 14:00:17 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3350:3622:3865:3871:3873:3874:4321:5007:6737:10004:10400:10450:10455:10848:11026:11232:11473:11657:11658:11914:12043:12048:12296:12297:12438:12740:12760:12895:13069:13255:13311:13357:13439:14659:14721:19904:19999:21080:21627:30054:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:455,LUA_SUMMARY:none
+X-HE-Tag: year93_1f3b28f822a23
+X-Filterd-Recvd-Size: 2066
+Received: from XPS-9350.home (unknown [47.151.152.152])
+        (Authenticated sender: joe@perches.com)
+        by omf02.hostedemail.com (Postfix) with ESMTPA;
+        Tue,  8 Oct 2019 14:00:14 +0000 (UTC)
+Message-ID: <05e9cf0254790321433fd7d2c19129ec952bb3ac.camel@perches.com>
+Subject: Re: [PATCH] drm/amdgpu/display: make various arrays static, makes
+ object smaller
+From:   Joe Perches <joe@perches.com>
+To:     Harry Wentland <hwentlan@amd.com>,
+        Colin King <colin.king@canonical.com>,
+        "Wentland, Harry" <Harry.Wentland@amd.com>,
+        "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        "Koenig, Christian" <Christian.Koenig@amd.com>,
+        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Cc:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Tue, 08 Oct 2019 07:00:13 -0700
+In-Reply-To: <9579bfae-1db5-d282-79ea-df1966f4c123@amd.com>
+References: <20191007215857.14720-1-colin.king@canonical.com>
+         <9579bfae-1db5-d282-79ea-df1966f4c123@amd.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-References: <20191007174505.10681-1-ezequiel@collabora.com>
- <20191007174505.10681-3-ezequiel@collabora.com> <CAAFQd5BNu2ea3ei_imHmEwmdna0+iiSbQSv_SBsdHfP4Uh1h4Q@mail.gmail.com>
- <HE1PR06MB4011EC9E93ECBB6773252247AC9A0@HE1PR06MB4011.eurprd06.prod.outlook.com>
- <CAAFQd5CWoAP1psrEW6bVMkRmhFeTvFKtDSLjT7nefc2YiFovqQ@mail.gmail.com> <CAAFQd5AYCiKcA9pGc44L3gGHLPx6iMSb7KywkO8OqVv4gS8KvQ@mail.gmail.com>
-In-Reply-To: <CAAFQd5AYCiKcA9pGc44L3gGHLPx6iMSb7KywkO8OqVv4gS8KvQ@mail.gmail.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Tue, 8 Oct 2019 22:53:59 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5AQXGX_2gmKLfymH5mLG-uVh-v+XXtGXzbfzYzVVV42mA@mail.gmail.com>
-Message-ID: <CAAFQd5AQXGX_2gmKLfymH5mLG-uVh-v+XXtGXzbfzYzVVV42mA@mail.gmail.com>
-Subject: Re: [PATCH v2 for 5.4 2/4] media: hantro: Fix H264 max frmsize
- supported on RK3288
-To:     Jonas Karlman <jonas@kwiboo.se>
-Cc:     Ezequiel Garcia <ezequiel@collabora.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        "kernel@collabora.com" <kernel@collabora.com>,
-        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        "fbuergisser@chromium.org" <fbuergisser@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Douglas Anderson <dianders@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 8, 2019 at 10:35 PM Tomasz Figa <tfiga@chromium.org> wrote:
->
-> On Tue, Oct 8, 2019 at 7:42 PM Tomasz Figa <tfiga@chromium.org> wrote:
-> >
-> > On Tue, Oct 8, 2019 at 3:31 PM Jonas Karlman <jonas@kwiboo.se> wrote:
-> > >
-> > > On 2019-10-08 07:27, Tomasz Figa wrote:
-> > > > Hi Ezequiel, Jonas,
-> > > >
-> > > > On Tue, Oct 8, 2019 at 2:46 AM Ezequiel Garcia <ezequiel@collabora.com> wrote:
-> > > >> From: Jonas Karlman <jonas@kwiboo.se>
-> > > >>
-> > > >> TRM specify supported image size 48x48 to 4096x2304 at step size 16 pixels,
-> > > >> change frmsize max_width/max_height to match TRM.
-> > > >>
-> > > >> Fixes: 760327930e10 ("media: hantro: Enable H264 decoding on rk3288")
-> > > >> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-> > > >> ---
-> > > >> v2:
-> > > >> * No changes.
-> > > >>
-> > > >>  drivers/staging/media/hantro/rk3288_vpu_hw.c | 4 ++--
-> > > >>  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > >>
-> > > >> diff --git a/drivers/staging/media/hantro/rk3288_vpu_hw.c b/drivers/staging/media/hantro/rk3288_vpu_hw.c
-> > > >> index 6bfcc47d1e58..ebb017b8a334 100644
-> > > >> --- a/drivers/staging/media/hantro/rk3288_vpu_hw.c
-> > > >> +++ b/drivers/staging/media/hantro/rk3288_vpu_hw.c
-> > > >> @@ -67,10 +67,10 @@ static const struct hantro_fmt rk3288_vpu_dec_fmts[] = {
-> > > >>                 .max_depth = 2,
-> > > >>                 .frmsize = {
-> > > >>                         .min_width = 48,
-> > > >> -                       .max_width = 3840,
-> > > >> +                       .max_width = 4096,
-> > > >>                         .step_width = H264_MB_DIM,
-> > > >>                         .min_height = 48,
-> > > >> -                       .max_height = 2160,
-> > > >> +                       .max_height = 2304,
-> > > > This doesn't match the datasheet I have, which is RK3288 Datasheet Rev
-> > > > 1.4 and which has the values as in current code. What's the one you
-> > > > got the values from?
-> > >
-> > > The RK3288 TRM vcodec chapter from [1], unknown revision and date, lists 48x48 to 4096x2304 step size 16 pixels under 25.5.1 H.264 decoder.
-> > >
-> > > I can also confirm that one of my test samples (PUPPIES BATH IN 4K) is 4096x2304 and can be decoded after this patch.
-> > > However the decoding speed is not optimal at 400Mhz, if I recall correctly you need to set the VPU1 clock to 600Mhz for 4K decoding on RK3288.
-> > >
-> > > I am not sure if I should include a v2 of this patch in my v2 series, as-is this patch do not apply on master (H264_MB_DIM has changed to MB_DIM in master).
-> > >
-> > > [1] http://www.t-firefly.com/download/firefly-rk3288/docs/TRM/rk3288-chapter-25-video-encoder-decoder-unit-(vcodec).pdf
-> >
-> > I checked the RK3288 TRM V1.1 too and it refers to 3840x2160@24fps as
-> > the maximum.
-> >
-> > As for performance, we've actually been getting around 33 fps at 400
-> > MHz with 3840x2160 on our devices (the old RK3288 Asus Chromebook
-> > Flip).
-> >
-> > I guess we might want to check that with Hantro.
->
-> Could you check the value of bits 10:0 in register at 0x0c8? That
-> should be the maximum supported stream width in the units of 16
-> pixels.
+On Tue, 2019-10-08 at 13:56 +0000, Harry Wentland wrote:
+[]
+> > diff --git a/drivers/gpu/drm/amd/display/dc/bios/bios_parser.c b/drivers/gpu/drm/amd/display/dc/bios/bios_parser.c
+> []
+> > @@ -2745,7 +2745,7 @@ static enum bp_result bios_get_board_layout_info(
+> >  	struct bios_parser *bp;
+> >  	enum bp_result record_result;
+> >  
+> > -	const unsigned int slot_index_to_vbios_id[MAX_BOARD_SLOTS] = {
+> > +	static const unsigned int slot_index_to_vbios_id[MAX_BOARD_SLOTS] = {
+> 
+> Won't this break the multi-GPU case where you'll have multiple driver
+> instances with different layout?
 
-Correction: The unit is 1 pixel and there are additional 2 most
-significant bits at 0x0d8, 15:14.
+As the array is read-only, how could that happen?
 
-Best regards,
-Tomasz
+
