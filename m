@@ -2,101 +2,298 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E746ED0407
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 01:21:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B956FD0401
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 01:19:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729688AbfJHXVx convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 8 Oct 2019 19:21:53 -0400
-Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:50883 "EHLO
-        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725848AbfJHXVw (ORCPT
+        id S1729352AbfJHXT6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 19:19:58 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:55537 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726579AbfJHXT6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 19:21:52 -0400
-Received: from mailgate02.nec.co.jp ([114.179.233.122])
-        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x98NLWJi014370
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 9 Oct 2019 08:21:32 +0900
-Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x98NLW2b008602;
-        Wed, 9 Oct 2019 08:21:32 +0900
-Received: from mail02.kamome.nec.co.jp (mail02.kamome.nec.co.jp [10.25.43.5])
-        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x98NLHSZ010859;
-        Wed, 9 Oct 2019 08:21:32 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.151] [10.38.151.151]) by mail02.kamome.nec.co.jp with ESMTP id BT-MMP-9250569; Wed, 9 Oct 2019 08:18:32 +0900
-Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
- BPXC23GP.gisp.nec.co.jp ([10.38.151.151]) with mapi id 14.03.0439.000; Wed, 9
- Oct 2019 08:18:32 +0900
-From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To:     Jane Chu <jane.chu@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH v4 0/2] mm/memory-failure: Poison read receives SIGKILL
- instead of SIGBUS issue
-Thread-Topic: [PATCH v4 0/2] mm/memory-failure: Poison read receives SIGKILL
- instead of SIGBUS issue
-Thread-Index: AQHVfgQYMR1+dM5I0kqkeQcqu0tLzKdQyn2A
-Date:   Tue, 8 Oct 2019 23:18:31 +0000
-Message-ID: <20191008231831.GB27781@hori.linux.bs1.fc.nec.co.jp>
-References: <1565112345-28754-1-git-send-email-jane.chu@oracle.com>
- <9af6b35d-bfbf-7f87-a419-042dff018fdd@oracle.com>
-In-Reply-To: <9af6b35d-bfbf-7f87-a419-042dff018fdd@oracle.com>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.34.125.96]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <9FE488C625E5C44BB985629469BD079F@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
+        Tue, 8 Oct 2019 19:19:58 -0400
+Received: from 79.184.255.36.ipv4.supernova.orange.pl (79.184.255.36) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
+ id c4f09adb8ea881e8; Wed, 9 Oct 2019 01:19:51 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Doug Smythies <dsmythies@telus.net>
+Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "Chen, Hu" <hu1.chen@intel.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>
+Subject: Re: [RFC/RFT][PATCH v8] cpuidle: New timer events oriented governor for tickless systems
+Date:   Wed, 09 Oct 2019 01:19:51 +0200
+Message-ID: <1574317.FFykgJKpNH@kreacher>
+In-Reply-To: <CAJZ5v0jvusVBcKECBueDHk5KQGda=GGuSGPO3F4wCvk3cro56A@mail.gmail.com>
+References: <001601d57487$e1029ef0$a307dcd0$@net> <CAJZ5v0gRSpNtwDXrRr9GW2O9ZQpM0yBdKfQDXLwsZua5692yUQ@mail.gmail.com> <CAJZ5v0jvusVBcKECBueDHk5KQGda=GGuSGPO3F4wCvk3cro56A@mail.gmail.com>
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jane,
+On Tuesday, October 8, 2019 12:49:01 PM CEST Rafael J. Wysocki wrote:
+> On Tue, Oct 8, 2019 at 11:51 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> >
+> > On Tue, Oct 8, 2019 at 8:20 AM Doug Smythies <dsmythies@telus.net> wrote:
+> > >
+> > > On 2019.10.06 08:34 Rafael J. Wysocki wrote:
+> > > > On Sun, Oct 6, 2019 at 4:46 PM Doug Smythies <dsmythies@telus.net> wrote:
+> > > >> On 2019.10.01 02:32 Rafael J. Wysocki wrote:
+> > > >>> On Sun, Sep 29, 2019 at 6:05 PM Doug Smythies <dsmythies@telus.net> wrote:
+> > > >>>> On 2019.09.26 09:32 Doug Smythies wrote:
+> > > >>>>
+> > > >>>>> If the deepest idle state is disabled, the system
+> > > >>>>> can become somewhat unstable, with anywhere between no problem
+> > > >>>>> at all, to the occasional temporary jump using a lot more
+> > > >>>>> power for a few seconds, to a permanent jump using a lot more
+> > > >>>>> power continuously. I have been unable to isolate the exact
+> > > >>>>> test load conditions under which this will occur. However,
+> > > >>>>> temporarily disabling and then enabling other idle states
+> > > >>>>> seems to make for a somewhat repeatable test. It is important
+> > > >>>>> to note that the issue occurs with only ever disabling the deepest
+> > > >>>>> idle state, just not reliably.
+> > > >>>>>
+> > > >>>>> I want to know how you want to proceed before I do a bunch of
+> > > >>>>> regression testing.
+> > > >>>>
+> > > >> I do not think I stated it clearly before: The problem here is that some CPUs
+> > > >> seem to get stuck in idle state 0, and when they do power consumption spikes,
+> > > >> often by several hundred % and often indefinitely.
+> > > >
+> > > > That indeed has not been clear to me, thanks for the clarification!
+> > >
+> > > >
+> > > >> I made a hack job automated test:
+> > > >> Kernel  tests                 fail rate
+> > > >> 5.4-rc1                6616           13.45%
+> > > >> 5.3              2376            4.50%
+> > > >> 5.3-teov7       12136            0.00%  <<< teo.c reverted and teov7 put in its place.
+> > > >> 5.4-rc1-ds      11168        0.00%  <<< [old] proposed patch (> 7 hours test time)
+> > >
+> > >
+> > >    5.4-rc1-ds12   4224          0.005 <<< new proposed patch
+> > >
+> > > >>
+> > > >> [old] Proposed patch (on top of kernel 5.4-rc1): [deleted]
+> > >
+> > > > This change may cause the deepest state to be selected even if its
+> > > > "hits" metric is less than the "misses" one AFAICS, in which case the
+> > > > max_early_index state should be selected instead.
+> > > >
+> > > > It looks like the max_early_index computation is broken when the
+> > > > deepest state is disabled.
+> > >
+> > > O.K. Thanks for your quick reply, and insight.
+> > >
+> > > I think long durations always need to be counted, but currently if
+> > > the deepest idle state is disabled, they are not.
+> > > How about this?:
+> > > (test results added above, more tests pending if this might be a path forward.)
+> > >
+> > > diff --git a/drivers/cpuidle/governors/teo.c b/drivers/cpuidle/governors/teo.c
+> > > index b5a0e49..a970d2c 100644
+> > > --- a/drivers/cpuidle/governors/teo.c
+> > > +++ b/drivers/cpuidle/governors/teo.c
+> > > @@ -155,10 +155,12 @@ static void teo_update(struct cpuidle_driver *drv, struct cpuidle_device *dev)
+> > >
+> > >                 cpu_data->states[i].early_hits -= early_hits >> DECAY_SHIFT;
+> > >
+> > > -               if (drv->states[i].target_residency <= sleep_length_us) {
+> > > -                       idx_timer = i;
+> > > -                       if (drv->states[i].target_residency <= measured_us)
+> > > -                               idx_hit = i;
+> > > +               if (!(drv->states[i].disabled || dev->states_usage[i].disable)){
+> > > +                       if (drv->states[i].target_residency <= sleep_length_us) {
+> > > +                               idx_timer = i;
+> > > +                               if (drv->states[i].target_residency <= measured_us)
+> > > +                                       idx_hit = i;
+> > > +                       }
+> >
+> > What if the state is enabled again after some time?
+> 
+> Actually, the states are treated as "bins" here, so for the metrics it
+> doesn't matter whether or not they are enabled at the moment.
+> 
+> > >                 }
+> > >         }
+> > >
+> > > @@ -256,39 +258,25 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+> > >                 struct cpuidle_state *s = &drv->states[i];
+> > >                 struct cpuidle_state_usage *su = &dev->states_usage[i];
+> > >
+> > > -               if (s->disabled || su->disable) {
+> > > -                       /*
+> > > -                        * If the "early hits" metric of a disabled state is
+> > > -                        * greater than the current maximum, it should be taken
+> > > -                        * into account, because it would be a mistake to select
+> > > -                        * a deeper state with lower "early hits" metric.  The
+> > > -                        * index cannot be changed to point to it, however, so
+> > > -                        * just increase the max count alone and let the index
+> > > -                        * still point to a shallower idle state.
+> > > -                        */
+> > > -                       if (max_early_idx >= 0 &&
+> > > -                           count < cpu_data->states[i].early_hits)
+> > > -                               count = cpu_data->states[i].early_hits;
+> > > -
+> > > -                       continue;
+> >
+> > AFAICS, adding early_hits to count is not a mistake if there are still
+> > enabled states deeper than the current one.
+> 
+> And the mistake appears to be that the "hits" and "misses" metrics
+> aren't handled in analogy with the "early_hits" one when the current
+> state is disabled.
+> 
+> Let me try to cut a patch to address that.
 
-I think that this patchset is good enough and ready to be merged.
-Andrew, could you consider queuing this series into your tree?
+Appended below, not tested.
 
-Thanks,
-Naoya Horiguchi
+It is meant to address two problems, one of which is that the "hits" and
+"misses" metrics of disabled states need to be taken into account too in
+some cases, and the other is an issue with the handling of "early hits"
+which may lead to suboptimal state selection if some states are disabled.
 
-On Tue, Oct 08, 2019 at 11:13:23AM -0700, Jane Chu wrote:
-> Hi, Naoya,
-> 
-> What is the status of the patches?
-> Is there anything I need to do from my end ?
-> 
-> Regards,
-> -jane
-> 
-> On 8/6/2019 10:25 AM, Jane Chu wrote:
-> > Change in v4:
-> >   - remove trailing white space
-> > 
-> > Changes in v3:
-> >   - move **tk cleanup to its own patch
-> > 
-> > Changes in v2:
-> >   - move 'tk' allocations internal to add_to_kill(), suggested by Dan;
-> >   - ran checkpatch.pl check, pointed out by Matthew;
-> >   - Noaya pointed out that v1 would have missed the SIGKILL
-> >     if "tk->addr == -EFAULT", since the code returns early.
-> >     Incorporated Noaya's suggestion, also, skip VMAs where
-> >     "tk->size_shift == 0" for zone device page, and deliver SIGBUS
-> >     when "tk->size_shift != 0" so the payload is helpful;
-> >   - added Suggested-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> > 
-> > Jane Chu (2):
-> >    mm/memory-failure.c clean up around tk pre-allocation
-> >    mm/memory-failure: Poison read receives SIGKILL instead of SIGBUS if
-> >      mmaped more than once
-> > 
-> >   mm/memory-failure.c | 62 ++++++++++++++++++++++-------------------------------
-> >   1 file changed, 26 insertions(+), 36 deletions(-)
-> > 
-> 
+---
+ drivers/cpuidle/governors/teo.c |   71 +++++++++++++++++++++++++++++-----------
+ 1 file changed, 52 insertions(+), 19 deletions(-)
+
+Index: linux-pm/drivers/cpuidle/governors/teo.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/governors/teo.c
++++ linux-pm/drivers/cpuidle/governors/teo.c
+@@ -233,7 +233,7 @@ static int teo_select(struct cpuidle_dri
+ {
+ 	struct teo_cpu *cpu_data = per_cpu_ptr(&teo_cpus, dev->cpu);
+ 	int latency_req = cpuidle_governor_latency_req(dev->cpu);
+-	unsigned int duration_us, count;
++	unsigned int duration_us, hits, misses, early_hits;
+ 	int max_early_idx, constraint_idx, idx, i;
+ 	ktime_t delta_tick;
+ 
+@@ -247,7 +247,9 @@ static int teo_select(struct cpuidle_dri
+ 	cpu_data->sleep_length_ns = tick_nohz_get_sleep_length(&delta_tick);
+ 	duration_us = ktime_to_us(cpu_data->sleep_length_ns);
+ 
+-	count = 0;
++	hits = 0;
++	misses = 0;
++	early_hits = 0;
+ 	max_early_idx = -1;
+ 	constraint_idx = drv->state_count;
+ 	idx = -1;
+@@ -258,23 +260,54 @@ static int teo_select(struct cpuidle_dri
+ 
+ 		if (s->disabled || su->disable) {
+ 			/*
+-			 * If the "early hits" metric of a disabled state is
+-			 * greater than the current maximum, it should be taken
+-			 * into account, because it would be a mistake to select
+-			 * a deeper state with lower "early hits" metric.  The
+-			 * index cannot be changed to point to it, however, so
+-			 * just increase the max count alone and let the index
+-			 * still point to a shallower idle state.
++			 * If the "hits" metric of a disabled state is greater
++			 * than its "misses" metric, it needs to be taken into
++			 * account, because the closest shallower enabled state
++			 * "represents" it in that case.
+ 			 */
+-			if (max_early_idx >= 0 &&
+-			    count < cpu_data->states[i].early_hits)
+-				count = cpu_data->states[i].early_hits;
++			if (cpu_data->states[i].hits > cpu_data->states[i].misses) {
++				hits = cpu_data->states[i].hits;
++				misses = cpu_data->states[i].misses;
++			}
++
++			if (early_hits >= cpu_data->states[i].early_hits ||
++			    idx < 0)
++				continue;
++
++			/*
++			 * If the current candidate state has been the one with
++			 * the maximum "early hits" metric so far, the "early
++			 * hits" metric of the disabled state replaces the
++			 * current "early hits" count to avoid selecting a
++			 * deeper state with lower "early hits" metric.
++			 */
++			if (max_early_idx == idx) {
++				early_hits = cpu_data->states[i].early_hits;
++				continue;
++			}
++
++			/*
++			 * The current candidate state is closer to the disabled
++			 * one than the current maximum "early hits" state, so
++			 * replace the latter with it, but in case the maximum
++			 * "early hits" state index has not been set so far,
++			 * check if the current candidate state is not too
++			 * shallow for that role.
++			 */
++			if (!(tick_nohz_tick_stopped() &&
++			      drv->states[idx].target_residency < TICK_USEC)) {
++				early_hits = cpu_data->states[i].early_hits;
++				max_early_idx = idx;
++			}
+ 
+ 			continue;
+ 		}
+ 
+-		if (idx < 0)
++		if (idx < 0) {
+ 			idx = i; /* first enabled state */
++			hits = cpu_data->states[i].hits;
++			misses = cpu_data->states[i].misses;
++		}
+ 
+ 		if (s->target_residency > duration_us)
+ 			break;
+@@ -283,11 +316,13 @@ static int teo_select(struct cpuidle_dri
+ 			constraint_idx = i;
+ 
+ 		idx = i;
++		hits = cpu_data->states[i].hits;
++		misses = cpu_data->states[i].misses;
+ 
+-		if (count < cpu_data->states[i].early_hits &&
++		if (early_hits < cpu_data->states[i].early_hits &&
+ 		    !(tick_nohz_tick_stopped() &&
+ 		      drv->states[i].target_residency < TICK_USEC)) {
+-			count = cpu_data->states[i].early_hits;
++			early_hits = cpu_data->states[i].early_hits;
+ 			max_early_idx = i;
+ 		}
+ 	}
+@@ -300,8 +335,7 @@ static int teo_select(struct cpuidle_dri
+ 	 * "early hits" metric, but if that cannot be determined, just use the
+ 	 * state selected so far.
+ 	 */
+-	if (cpu_data->states[idx].hits <= cpu_data->states[idx].misses &&
+-	    max_early_idx >= 0) {
++	if (hits <= misses && max_early_idx >= 0) {
+ 		idx = max_early_idx;
+ 		duration_us = drv->states[idx].target_residency;
+ 	}
+@@ -316,10 +350,9 @@ static int teo_select(struct cpuidle_dri
+ 	if (idx < 0) {
+ 		idx = 0; /* No states enabled. Must use 0. */
+ 	} else if (idx > 0) {
++		unsigned int count = 0;
+ 		u64 sum = 0;
+ 
+-		count = 0;
+-
+ 		/*
+ 		 * Count and sum the most recent idle duration values less than
+ 		 * the current expected idle duration value.
+
+
+
