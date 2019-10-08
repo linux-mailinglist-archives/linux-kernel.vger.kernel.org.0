@@ -2,108 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B89FACF402
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 09:35:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A43CCF408
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 09:37:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730375AbfJHHff (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 03:35:35 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38959 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730156AbfJHHfe (ORCPT
+        id S1730342AbfJHHg6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 03:36:58 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:44647 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729740AbfJHHg5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 03:35:34 -0400
-Received: by mail-wm1-f65.google.com with SMTP id v17so1944421wml.4
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 00:35:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=IAmY8wSJYHaq63xMZva0VKaV5IVa+dPtYZ22qWpusgQ=;
-        b=tXD04oUorVrs0Qr7NDaaV+exszVTijzDCYUoP9Ms1NDNT3RP+sGbtWKme17UL9nLDM
-         wfleeOhDMFndnn6Ibt/NC7858hF0bYBMuPuN43nKNUdSQ0rxVWEUfr9taI867ECAMoDh
-         vavOEblsWJ07b32QMbyfz+dnz9hauio5xvvL/YARcRjQv3WK+wjZ5UUR//3CSGviWPHJ
-         3HgxkZGnXuA3zA+h8HdU3UtRPKGgynNXG1cTO3OiLyXgRllUroAMqG+34CXAn2UBUh1u
-         e7bh4EeY19LMEbLBNluvbmvPU6bPxHRsnUYGCkgNMaaD0q3AiSQQE+5knOH7nWTIp0uc
-         ZQSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=IAmY8wSJYHaq63xMZva0VKaV5IVa+dPtYZ22qWpusgQ=;
-        b=Z014mxCfLGwfpp7rx59sRa6xE98lNF6DoSxyF6dj0DaUpi2vLsar6uqj+XbC/KgEU/
-         jjSg3J1Lg89xSGfLBaNHFB+AufHoXL86rvnRxTjaAzS/Tg7r2TjG5qmmZ+d+BJDgtDIG
-         f9jvPLGbGHJx6NPga9v41w9eWXWJonOEYG/mQbXOGrHGyPDpVIaFr5rwOQV5lVcvVjiq
-         tZJ2r8DTQT3G5w5LcjakiDm4p1W7V9xq0Ou8N2tJEQvau/tPRpcxhKMw7S9CouquLtrC
-         IWej9Pdz97Ax/usG6Hkr4m1FhkZmjbZA/17KJVt/LvwU7FpLqUD5vGlyqbWep2E4TdKQ
-         KTbA==
-X-Gm-Message-State: APjAAAWat/Z6Os282M9YWnYizh2UEpqlourOxnedvz76emKKDx0SDQE5
-        jjaWMEOB1ffaMCXkSa2K9dbbRQ==
-X-Google-Smtp-Source: APXvYqwRMSviP1Knn31C1pXBRZyBjj63INxAWbiTXlW4xrXz3uzxk1cbGwFf4t+dOfZyyQ6CJw5kcw==
-X-Received: by 2002:a1c:444:: with SMTP id 65mr2563758wme.73.1570520132541;
-        Tue, 08 Oct 2019 00:35:32 -0700 (PDT)
-Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id y18sm44366082wro.36.2019.10.08.00.35.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2019 00:35:31 -0700 (PDT)
-References: <20191002091529.17112-1-jbrunet@baylibre.com>
-User-agent: mu4e 1.3.3; emacs 26.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        Tue, 8 Oct 2019 03:36:57 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1M9W78-1iCDjs0OqS-005VR9; Tue, 08 Oct 2019 09:36:36 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-watchdog@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/7] clk: meson: axg-audio: add sm1 support
-In-reply-to: <20191002091529.17112-1-jbrunet@baylibre.com>
-Date:   Tue, 08 Oct 2019 09:35:30 +0200
-Message-ID: <1jy2xvadvh.fsf@starbuckisacylon.baylibre.com>
+Subject: [PATCH] watchdog: cpwd: fix build regression
+Date:   Tue,  8 Oct 2019 09:36:16 +0200
+Message-Id: <20191008073634.290255-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:e0lTh4PYIS+uOwLuEcT+6SHvLxiPJVb0x3syccCvfXdySprRihH
+ qEApwBNgPs+3ElpfxURB1l+2SkpYZBzguc9t/iIdh765204J1l61APY5bO6/SORe0kenS26
+ LsZENXIen+9F1wEDEhyLYG0de6gqaq1/s8vGQ48OmnqHs+DPZ5GZYKV2KygqKckQ5hw9IV8
+ sn5eQyWj8nvzSoxnt3C4A==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:WiFGJjr5i6k=:FtjrVF5t6utKSO7CsTSnCd
+ 4l2xCl0MSd2jjdiJqEVcObg8c0JhZnWJxaocwfZPUmt3AJCjY2Nk8YIlhunZ/IAQj784BlBEj
+ egp0w2fA6NYSGNzEUvVIy9AW1d1KLGuUP1hUN8eD64PSIr8SULsQ4KyxTPnv642RuctQO46Kj
+ NVB3YNRO553/D7ot42tbPo/zs027WcqljgJUDsZ0q2IGEWd2+chgAjVT9sgTzCy88S4Nxnuiv
+ Ar+Ipt/e0x1j9DBcTk//BqUzz5n9yz26/9n1nxsdjwcuD3s50kpzdJpu1YLE85qt/fbycmWM2
+ dTWj4CGrXf4dIk+3cYVJ4TWJcOh5rGzt5n7pNDgvoIfr9yg2rZnejtHXFZahLalR8sfAou9Qm
+ GsZaU8sb24ndkTOkb7wbIP0w3wSIFxWsLGOGHAlTUDIOWeY8yY+AUHb3qPy84DisSToXdVwIu
+ GCxuEvlkBOwvUg0ERthxan4MFHqvEg3TDQys5/3KiUZ0/+qvVGwNV3aOEYjnwLUzPAaeaJl7t
+ t5XM+GG+LqDva7z3ZsBOsT9JBntiB3gfy8L6l1j8o6OP3A99hH9zNBnv0bVJjTYeqn10HznH2
+ Xdm0NRLSbw+EsONin+hJEI2MmetjnEqv3ushgvDzcSnKvanplZFH5Yotbe14P5jDWZCc0GJLy
+ f4KG0ekCBYKnCt15StYAEx1EbCxAAVtCj5Bix5q4PfGzEApp5O4uplas4V+wrMtEZH/nydrCW
+ rCMLgp1SqBdmn9Qrc5JKRK5pIN/Kfrrm4ERf8kAV9mMvBkAvWP2d2h+J40GrAO38+S60NYEQF
+ 6zC8gIgxZa23e7p2eHmQktY2hIKVBAeg/oRFxqVNtXodqf1mY8IhtiSE06pcZbqFKcYOx6kWx
+ QjtaA8O5imqxS1Uuxkng==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The compat_ptr_ioctl() infrastructure did not make it into
+linux-5.4, so cpwd now fails to build.
 
-On Wed 02 Oct 2019 at 11:15, Jerome Brunet <jbrunet@baylibre.com> wrote:
+Fix it by using an open-coded version.
 
-> The purpose of this patchset is to add the sm1 support to the amlogic audio
-> clock controller. The line count is lot higher than what I hoped for. Even
-> if extremely similar, there is a shift in the register address on the sm1
-> which makes a bit of a mess.
->
-> I could have patched the address on the fly if running on sm1 but the end
-> result did not save much lines and would have been a pain to maintain and
-> scale in the future
->
-> Instead I choose to re-arrange the driver to share the macros and declare
-> separate clocks for the clock which have changed.
->
-> Changes since v2 [1]:
->  - Add missing gate ops for
->   * sm1_clk81_en
->   * sm1_sysclk_a_en
->   * sm1_sysclk_b_en
->
-> Changes since v1 [0]:
->  - Fix newline in the last patch
->
-> [0]: https://lkml.kernel.org/r/20190924153356.24103-1-jbrunet@baylibre.com
-> [1]: https://lkml.kernel.org/r/20191001115511.17357-1-jbrunet@baylibre.com>
->
-> Jerome Brunet (7):
->   dt-bindings: clk: axg-audio: add sm1 bindings
->   dt-bindings: clock: meson: add sm1 resets to the axg-audio controller
->   clk: meson: axg-audio: remove useless defines
->   clk: meson: axg-audio: fix regmap last register
->   clk: meson: axg-audio: prepare sm1 addition
->   clk: meson: axg-audio: provide clk top signal name
->   clk: meson: axg_audio: add sm1 support
->
->  .../bindings/clock/amlogic,axg-audio-clkc.txt |    3 +-
->  drivers/clk/meson/axg-audio.c                 | 2021 +++++++++++------
->  drivers/clk/meson/axg-audio.h                 |   21 +-
->  include/dt-bindings/clock/axg-audio-clkc.h    |   10 +
->  .../reset/amlogic,meson-g12a-audio-reset.h    |   15 +
->  5 files changed, 1373 insertions(+), 697 deletions(-)
+Fixes: 68f28b01fb9e ("watchdog: cpwd: use generic compat_ptr_ioctl")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/watchdog/cpwd.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Applied
+diff --git a/drivers/watchdog/cpwd.c b/drivers/watchdog/cpwd.c
+index 9393be584e72..808eeb4779e4 100644
+--- a/drivers/watchdog/cpwd.c
++++ b/drivers/watchdog/cpwd.c
+@@ -26,6 +26,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/ioport.h>
+ #include <linux/timer.h>
++#include <linux/compat.h>
+ #include <linux/slab.h>
+ #include <linux/mutex.h>
+ #include <linux/io.h>
+@@ -473,6 +474,11 @@ static long cpwd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	return 0;
+ }
+ 
++static long cpwd_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
++{
++	return cpwd_ioctl(file, cmd, (unsigned long)compat_ptr(arg));
++}
++
+ static ssize_t cpwd_write(struct file *file, const char __user *buf,
+ 			  size_t count, loff_t *ppos)
+ {
+@@ -497,7 +503,7 @@ static ssize_t cpwd_read(struct file *file, char __user *buffer,
+ static const struct file_operations cpwd_fops = {
+ 	.owner =		THIS_MODULE,
+ 	.unlocked_ioctl =	cpwd_ioctl,
+-	.compat_ioctl =		compat_ptr_ioctl,
++	.compat_ioctl =		cpwd_compat_ioctl,
+ 	.open =			cpwd_open,
+ 	.write =		cpwd_write,
+ 	.read =			cpwd_read,
+-- 
+2.20.0
+
