@@ -2,158 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16D9BCFC6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:30:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E73DCFC74
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:31:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727101AbfJHO3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 10:29:32 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:49658 "EHLO mail.skyhub.de"
+        id S1726253AbfJHObV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 10:31:21 -0400
+Received: from muru.com ([72.249.23.125]:35994 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726066AbfJHO3c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 10:29:32 -0400
-Received: from zn.tnic (p200300EC2F0B5100B1AE7F6CCC5C3495.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:5100:b1ae:7f6c:cc5c:3495])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C492C1EC0716;
-        Tue,  8 Oct 2019 16:29:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1570544970;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=9PJBBSCRdNjF8VxwfgzjbBJn0bf1aZWuK6L0d+VB2mg=;
-        b=o6Nw29ctnTHW194qsV5qKF957t/AbcVrtIhq1J/+Po158QASa7d17VL/wU5mNc/6+zGk4O
-        Nnm1QyNpKKTOj2k48Joqt/FPNSNvETWZr+zl0WHEX5DJaz6oTTCyiMWszM8S81nfoWEmMM
-        pwANodob+6eoUIBFqeReisNw45AeyR4=
-Date:   Tue, 8 Oct 2019 16:29:24 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        mhiramat@kernel.org, bristot@redhat.com, jbaron@akamai.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, jpoimboe@redhat.com
-Subject: Re: [PATCH v3 1/6] x86/alternatives: Teach text_poke_bp() to emulate
- instructions
-Message-ID: <20191008142924.GE14765@zn.tnic>
-References: <20191007081716.07616230.8@infradead.org>
- <20191007081944.88332264.2@infradead.org>
+        id S1725795AbfJHObU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 10:31:20 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 48D9F8081;
+        Tue,  8 Oct 2019 14:31:53 +0000 (UTC)
+Date:   Tue, 8 Oct 2019 07:31:16 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     Marcel Holtmann <marcel@holtmann.org>,
+        Adam Ford <aford173@gmail.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-bluetooth@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCHv2 0/4] Convert all btwilink users to hci_ll and drop
+ btwilink
+Message-ID: <20191008143116.GF5610@atomide.com>
+References: <20191003134147.9458-1-sre@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191007081944.88332264.2@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191003134147.9458-1-sre@kernel.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 07, 2019 at 10:17:17AM +0200, Peter Zijlstra wrote:
-> In preparation for static_call and variable size jump_label support,
-> teach text_poke_bp() to emulate instructions, namely:
+* Sebastian Reichel <sre@kernel.org> [191003 06:42]:
+> Hi,
 > 
->   JMP32, JMP8, CALL, NOP2, NOP_ATOMIC5, INT3
+> This moves the remaining users of btwilink to the "new" serdev based hci_ll
+> driver and drops the btwilink driver afterwards. The patches were only compile
+> tested by me, but Enric tested the IGEP platform and Adam will test the LogicPD
+> platform.
 > 
-> The current text_poke_bp() takes a @handler argument which is used as
-> a jump target when the temporary INT3 is hit by a different CPU.
+> I kept the TI_ST driver for now, since I plan to send a second patchset for the
+> FM radio driver. Once the FM driver has been converted to also use hci_ll, we
+> can remove TI_ST completly.
 > 
-> When patching CALL instructions, this doesn't work because we'd miss
-> the PUSH of the return address. Instead, teach poke_int3_handler() to
-> emulate an instruction, typically the instruction we're patching in.
+> My suggestion is for the patch handling is, that everything simply goes through
+> Tony's tree.
+
+Sounds good to me, good to see kim gone with patch 3/4 :)
+
+Marcel, care to ack the old driver removal patch?
+
+Regards,
+
+Tony
+
+> Changes since PATCHv1 [0]
+>  * rebase to 5.4-rc1
+>  * move FM radio patches into separate patchset
 > 
-> This fits almost all text_poke_bp() users, except
-> arch_unoptimize_kprobe() which restores random text, and for that site
-> we have to build an explicit emulate instruction.
-
-...
-
-> @@ -63,8 +66,17 @@ static inline void int3_emulate_jmp(stru
->  	regs->ip = ip;
->  }
->  
-> -#define INT3_INSN_SIZE 1
-> -#define CALL_INSN_SIZE 5
-> +#define INT3_INSN_SIZE		1
-> +#define INT3_INSN_OPCODE	0xCC
-> +
-> +#define CALL_INSN_SIZE		5
-> +#define CALL_INSN_OPCODE	0xE8
-> +
-> +#define JMP32_INSN_SIZE		5
-> +#define JMP32_INSN_OPCODE	0xE9
-> +
-> +#define JMP8_INSN_SIZE		2
-> +#define JMP8_INSN_OPCODE	0xEB
-
-You probably should switch those to have the name prefix come first and
-make them even shorter:
-
-OPCODE_CALL
-INSN_SIZE_CALL
-OPCODE_JMP32
-INSN_SIZE_JMP32
-OPCODE_JMP8
-...
-
-This way you have the opcodes prefixed with OPCODE_ and the insn sizes
-with INSN_SIZE_. I.e., what they actually are.
-
-> --- a/arch/x86/kernel/alternative.c
-> +++ b/arch/x86/kernel/alternative.c
-
-...
-
-> @@ -1027,9 +1046,9 @@ NOKPROBE_SYMBOL(poke_int3_handler);
->   */
->  void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries)
->  {
-> -	int patched_all_but_first = 0;
-> -	unsigned char int3 = 0xcc;
-> +	unsigned char int3 = INT3_INSN_OPCODE;
->  	unsigned int i;
-> +	int do_sync;
->  
->  	lockdep_assert_held(&text_mutex);
->  
-> @@ -1053,16 +1072,16 @@ void text_poke_bp_batch(struct text_poke
->  	/*
->  	 * Second step: update all but the first byte of the patched range.
->  	 */
-> -	for (i = 0; i < nr_entries; i++) {
-> +	for (do_sync = 0, i = 0; i < nr_entries; i++) {
->  		if (tp[i].len - sizeof(int3) > 0) {
->  			text_poke((char *)tp[i].addr + sizeof(int3),
-> -				  (const char *)tp[i].opcode + sizeof(int3),
-> +				  (const char *)tp[i].text + sizeof(int3),
->  				  tp[i].len - sizeof(int3));
-> -			patched_all_but_first++;
-> +			do_sync++;
->  		}
->  	}
->  
-> -	if (patched_all_but_first) {
-> +	if (do_sync) {
->  		/*
->  		 * According to Intel, this core syncing is very likely
->  		 * not necessary and we'd be safe even without it. But
-> @@ -1075,10 +1094,17 @@ void text_poke_bp_batch(struct text_poke
->  	 * Third step: replace the first byte (int3) by the first byte of
->  	 * replacing opcode.
->  	 */
-> -	for (i = 0; i < nr_entries; i++)
-> -		text_poke(tp[i].addr, tp[i].opcode, sizeof(int3));
-> +	for (do_sync = 0, i = 0; i < nr_entries; i++) {
-
-Can we have the do_sync reset outside of the loop?
-
-> +		if (tp[i].text[0] == INT3_INSN_OPCODE)
-> +			continue;
-
-I'm guessing we preset the 0th byte to 0xcc somewhere.... I just can't
-seem to find it...
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> [0] https://lore.kernel.org/lkml/20181221011752.25627-1-sre@kernel.org/
+> 
+> -- Sebastian
+> 
+> Sebastian Reichel (4):
+>   ARM: dts: LogicPD Torpedo: Add WiLink UART node
+>   ARM: dts: IGEP: Add WiLink UART node
+>   ARM: OMAP2+: pdata-quirks: drop TI_ST/KIM support
+>   Bluetooth: btwilink: drop superseded driver
+> 
+>  .../boot/dts/logicpd-torpedo-37xx-devkit.dts  |   8 +
+>  arch/arm/boot/dts/omap3-igep0020-rev-f.dts    |   8 +
+>  arch/arm/boot/dts/omap3-igep0030-rev-g.dts    |   8 +
+>  arch/arm/mach-omap2/pdata-quirks.c            |  52 ---
+>  drivers/bluetooth/Kconfig                     |  11 -
+>  drivers/bluetooth/Makefile                    |   1 -
+>  drivers/bluetooth/btwilink.c                  | 337 ------------------
+>  7 files changed, 24 insertions(+), 401 deletions(-)
+>  delete mode 100644 drivers/bluetooth/btwilink.c
+> 
+> -- 
+> 2.23.0
+> 
