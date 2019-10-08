@@ -2,80 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 389B9CF665
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 11:47:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06AF7CF66A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 11:49:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730179AbfJHJrc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 05:47:32 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:38023 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728866AbfJHJrc (ORCPT
+        id S1730093AbfJHJtS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 05:49:18 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:35852 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729767AbfJHJtR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 05:47:32 -0400
-Received: by mail-qk1-f196.google.com with SMTP id u186so16047505qkc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 02:47:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=qLgfnJa8TF+fqJn6Csm2aNbaRpOd4zDzxzOPf12HbGU=;
-        b=cXYZ/yJKZHxhLdFc+J/7aqzW3aWMwrEzbFfkVK6b2STx6QHscvIWH7imnBEe4+5hu8
-         /u0EZHWjyQPT1nvtbEF/Q0Kg9i/YqCDMse7zLQQlF9qvnZzDAYO5lv25xZR6t9BXHcuq
-         ah+dWBDMRgaikW+rvVfyvyISzE+jZZi8EytVeEJcb33yP6AZXWRPX4ij4dNNh6n//HA4
-         ZeX5K7IRgHSrqr/EWrbf7Id2OL3sA+Y9zt+wp0c875bq5Eka/sHOIgqCnKbwSuEhZiRH
-         Ywn2sJjbAl32mBITdW2nABbm8slhsaxFggyDU0O6KlXeMgbBlIYIBTgAtq0NFFUY9INh
-         Kx7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=qLgfnJa8TF+fqJn6Csm2aNbaRpOd4zDzxzOPf12HbGU=;
-        b=tQSz0dNOI5q/EczKBJDk0T5Yzrg7UGYKZI0v9lkAjuAY6qTAZQZLmrYD7ThSEK07bY
-         2ADQfFRVa/Xkt6ZrYbOIGE5fSU5vIEH0kakxgP2Q3yd+coI8YSt8pE4BRDh5W9lTpRfh
-         tPXWY/lyPYoiH9G3Bx79G0cVtaQ0YBkAyIZS+IAtGNzhkVGY8rBCSKVvp75ZW4KNhtPJ
-         ngnMmoYbwiOC55FZg9dxTrn+K9Zo7aZtfTZKFU/9TjVPMi9NNXkudiEYKlM/40djUodC
-         Y5xXJgPppXeCgm0UHjypPBzqlL3aDs4gKxl3m2pCLmbJk7e4c3WLDAskywAHDnjLvKik
-         N4Cg==
-X-Gm-Message-State: APjAAAXglB3c09VIEQLN8lr41/+nDc/OVZX21eRLxtF4jwZQuJBMgUv4
-        AM2dQ/P3zG4UyCfk7cyKgyymGQ==
-X-Google-Smtp-Source: APXvYqxfD11gEiq1MLqW9BfGOXUQNepLHs6yxjwdSPwZov/5cEt3QgQYUXTBcN37CEYZ7nm6dUXSjQ==
-X-Received: by 2002:a37:4d4a:: with SMTP id a71mr28591867qkb.327.1570528051524;
-        Tue, 08 Oct 2019 02:47:31 -0700 (PDT)
-Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id h68sm8988573qkd.35.2019.10.08.02.47.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2019 02:47:30 -0700 (PDT)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] kasan: fix the missing underflow in memmove and memcpy with CONFIG_KASAN_GENERIC=y
-Date:   Tue, 8 Oct 2019 05:47:30 -0400
-Message-Id: <B53A3CC0-CEA6-4E1C-BC38-19315D949F38@lca.pw>
-References: <1570515358.4686.97.camel@mtksdccf07>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-mediatek@lists.infradead.org,
-        wsd_upstream <wsd_upstream@mediatek.com>
-In-Reply-To: <1570515358.4686.97.camel@mtksdccf07>
-To:     Walter Wu <walter-zh.wu@mediatek.com>
-X-Mailer: iPhone Mail (17A860)
+        Tue, 8 Oct 2019 05:49:17 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 618B88037F; Tue,  8 Oct 2019 11:49:00 +0200 (CEST)
+Date:   Tue, 8 Oct 2019 11:49:15 +0200
+From:   Pavel Machek <pavel@denx.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Corey Minyard <cminyard@mvista.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 012/106] ipmi_si: Only schedule continuously in the
+ thread in maintenance mode
+Message-ID: <20191008094915.GC608@amd>
+References: <20191006171124.641144086@linuxfoundation.org>
+ <20191006171130.485953894@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="Clx92ZfkiYIKRjnr"
+Content-Disposition: inline
+In-Reply-To: <20191006171130.485953894@linuxfoundation.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--Clx92ZfkiYIKRjnr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Oct 8, 2019, at 2:16 AM, Walter Wu <walter-zh.wu@mediatek.com> wrote:
->=20
-> It is an undefined behavior to pass a negative numbers to
->    memset()/memcpy()/memmove(), so need to be detected by KASAN.
+Hi!
 
-Why can=E2=80=99t this be detected by UBSAN?=
+> @@ -1013,11 +1016,20 @@ static int ipmi_thread(void *data)
+>  		spin_unlock_irqrestore(&(smi_info->si_lock), flags);
+>  		busy_wait =3D ipmi_thread_busy_wait(smi_result, smi_info,
+>  						  &busy_until);
+> -		if (smi_result =3D=3D SI_SM_CALL_WITHOUT_DELAY)
+> +		if (smi_result =3D=3D SI_SM_CALL_WITHOUT_DELAY) {
+>  			; /* do nothing */
+> -		else if (smi_result =3D=3D SI_SM_CALL_WITH_DELAY && busy_wait)
+> -			schedule();
+> -		else if (smi_result =3D=3D SI_SM_IDLE) {
+> +		} else if (smi_result =3D=3D SI_SM_CALL_WITH_DELAY && busy_wait) {
+> +			/*
+> +			 * In maintenance mode we run as fast as
+> +			 * possible to allow firmware updates to
+> +			 * complete as fast as possible, but normally
+> +			 * don't bang on the scheduler.
+> +			 */
+> +			if (smi_info->in_maintenance_mode)
+> +				schedule();
+> +			else
+> +				usleep_range(100, 200);
+> +		} else if (smi_result =3D=3D SI_SM_IDLE) {
+
+This is quite crazy code. usleep() will need to do magic with high
+resolution timers to provide 200usec sleep... when all you want to do
+is unload the scheduler.
+
+cond_resched() should be okay to call in a loop, can the code use that
+instead?
+
+Best regards,
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--Clx92ZfkiYIKRjnr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl2cW5sACgkQMOfwapXb+vJ7eQCaAzXAg5l8bKuBD/+tQE+XpSfc
+J6sAn05kFLCKSTjEBPozN5WdveX4pR9R
+=82/+
+-----END PGP SIGNATURE-----
+
+--Clx92ZfkiYIKRjnr--
