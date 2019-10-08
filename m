@@ -2,81 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24C29CFE16
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 17:50:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A737CFE1E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 17:53:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728297AbfJHPt6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 11:49:58 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41812 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726239AbfJHPt5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 11:49:57 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9864F61110; Tue,  8 Oct 2019 15:49:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1570549796;
-        bh=h3VL4ZBPrnT897PQsUIyI6anbgxW0GUUyodhS8+7YPI=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=Tcez90tDP4y04s5zhd9xb/f7RNp45PgAY2zrZZadV5t8uHqw6bdvj8hC1ubpNsmbn
-         75WCtv6mgh/+OFsV8WtSn09J2NHPh37SP5C9au694oMzqXLfQpVxfVIPiqpDfbP+tz
-         YlHhU8UOLBJamY5k7aw61Fs6MgVkPekSXROK0wHk=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID,SPF_NONE autolearn=no
-        autolearn_force=no version=3.4.0
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8D18D602DC;
-        Tue,  8 Oct 2019 15:49:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1570549796;
-        bh=h3VL4ZBPrnT897PQsUIyI6anbgxW0GUUyodhS8+7YPI=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=lMOdN6k2Odv3QIiy+N47mS6ScNn1pjGxCRVK4qsM4t/vSnhr5ksNIJINqIkM0hZLv
-         P2deuwTuv1fbdY0RCItnttszJPXeHhwr8zxLwDoB+NAqQWi2dPowepGt1TJQQOyNsp
-         kelq4DekPrCjG4cKx2iVRTk2nV5djMDfNwQdIWuk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8D18D602DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] rt2x00: remove input-polldev.h header
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20191002215052.GA116229@dtor-ws>
-References: <20191002215052.GA116229@dtor-ws>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Stanislaw Gruszka <sgruszka@redhat.com>,
-        Helmut Schaa <helmut.schaa@googlemail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        id S1727730AbfJHPwL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 11:52:11 -0400
+Received: from mga06.intel.com ([134.134.136.31]:21581 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727336AbfJHPwL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 11:52:11 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2019 08:52:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,270,1566889200"; 
+   d="scan'208";a="277134991"
+Received: from otc-lr-04.jf.intel.com ([10.54.39.120])
+  by orsmga001.jf.intel.com with ESMTP; 08 Oct 2019 08:52:09 -0700
+From:   kan.liang@linux.intel.com
+To:     peterz@infradead.org, mingo@kernel.org,
         linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20191008154956.9864F61110@smtp.codeaurora.org>
-Date:   Tue,  8 Oct 2019 15:49:56 +0000 (UTC)
+Cc:     ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH 0/9] perf: Several update for Comet Lake, Ice Lake and Tiger Lake
+Date:   Tue,  8 Oct 2019 08:50:01 -0700
+Message-Id: <1570549810-25049-1-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+From: Kan Liang <kan.liang@linux.intel.com>
 
-> The driver does not use input subsystem so we do not need this header,
-> and it is being removed, so stop pulling it in.
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Comet Lake is the new 10th Gen Intel processor. Add Comet Lake to Intel family.
+From the perspective of Intel core PMU, there is nothing changed compared with
+Sky Lake. Share the perf code with Sky Lake.
+Add support for perf msr and cstate driver as well.
 
-Patch applied to wireless-drivers.git, thanks.
+Tiger Lake is the followon to Ice Lake.
+From the perspective of Intel core PMU, there is little changes compared with
+Ice Lake, e.g. small changes in the event list. But it doesn't impact on core
+PMU functionality. Share the perf code with Ice Lake.
+Add support for perf msr and cstate driver as well.
 
-98d22b01f9f6 rt2x00: remove input-polldev.h header
+Both are verified on real hardware.
+
+Also, update perf msr and cstate driver for Ice Lake.
+
+Kan Liang (9):
+  x86/cpu: Add Comet Lake to Intel family
+  perf/x86/intel: Add Comet Lake CPU support
+  perf/x86/msr: Add Comet Lake CPU support
+  perf/x86/cstate: Add Comet Lake CPU support
+  perf/x86/msr: Add more CPU model number for Ice Lake
+  perf/x86/cstate: Update C-state counters for Ice Lake
+  perf/x86/intel: Add Tiger Lake CPU support
+  perf/x86/msr: Add Tiger Lake CPU support
+  perf/x86/cstate: Add Tiger Lake CPU support
+
+ arch/x86/events/intel/core.c        |  4 ++++
+ arch/x86/events/intel/cstate.c      | 44 +++++++++++++++++++++++++++----------
+ arch/x86/events/msr.c               |  7 ++++++
+ arch/x86/include/asm/intel-family.h |  3 +++
+ 4 files changed, 46 insertions(+), 12 deletions(-)
 
 -- 
-https://patchwork.kernel.org/patch/11171877/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.7.4
 
