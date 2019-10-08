@@ -2,66 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A73DCFDF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 17:43:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 260BFCFDF8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 17:44:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727220AbfJHPnu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 11:43:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47980 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725908AbfJHPnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 11:43:49 -0400
-Received: from localhost (unknown [89.205.136.99])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E9C7217D7;
-        Tue,  8 Oct 2019 15:43:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570549429;
-        bh=W4qbPuJMKTMXYc7ExZx/Lic/BRAYA1i782fPAsu3PKk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=yc/q6+HFFtbovKZs1x6TdjAqSShe6t8mYq2/4+Utc1BHUg5OQHv5Pi4SpOpDRcBiR
-         pQQXuuSbvsaLkVPrf4CPQQPXw7r8tzr0gjCq+mFAWXtXIkBCSRKnNfhfwlxNICD9Uj
-         ubgo0KcbFLZkszDZEMNYIH1y8dOqrzXwIta4+mew=
-Date:   Tue, 8 Oct 2019 17:43:46 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Murali Nalajala <mnalajal@codeaurora.org>, rafael@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bjorn.andersson@linaro.org
-Subject: Re: [PATCH v2] base: soc: Handle custom soc information sysfs entries
-Message-ID: <20191008154346.GA2881455@kroah.com>
-References: <1570480662-25252-1-git-send-email-mnalajal@codeaurora.org>
- <5d9cac38.1c69fb81.682ec.053a@mx.google.com>
+        id S1727814AbfJHPoJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 11:44:09 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48748 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbfJHPoJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 11:44:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Rm4/9rv6HX2r0nJlpOILNCRrJ7/GYeb4OrtBUUbPm84=; b=XoZbfyRrk2Yb9Xh/JWriMo57w
+        0MlWAM/84VG3DoYgBjM9o1GsAaajHkBisrShC21UZ/dgEzxExcZPpibG1/Gyotgp+84IJqBCxg+Ty
+        nvgJr2coRkCNnyOesaeqKQzY86vATs2BI4MQraBpeK3X1BEI2MIxEnjhx9BBpXcuKMVqNbjpSUFI7
+        FvjQvHeK9GVKw+cOMIsXDiBEzDhvmWZKXYpSl6rEKyE9RIC7zr9clShR9I2VpzK2k84Zp9WDvkcRN
+        3SgHOINsTr/DceK00Y9xFGANdeUewSp/oOU/2C1RGF1gSadDYXxufXLsdp5iIZsvG3nDqiVin6TsG
+        XTxymkvww==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iHrei-0001rR-O5; Tue, 08 Oct 2019 15:44:08 +0000
+Date:   Tue, 8 Oct 2019 08:44:08 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Atish Patra <atish.patra@wdc.com>
+Cc:     linux-kernel@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
+        Richard Fontana <rfontana@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Johan Hovold <johan@kernel.org>,
+        Alexandre Ghiti <aghiti@upmem.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Anup Patel <anup@brainfault.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-riscv@lists.infradead.org
+Subject: Re: [v1 PATCH  2/2] RISC-V: Consolidate isa correctness check
+Message-ID: <20191008154408.GC20318@infradead.org>
+References: <20191004012000.2661-1-atish.patra@wdc.com>
+ <20191004012000.2661-3-atish.patra@wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5d9cac38.1c69fb81.682ec.053a@mx.google.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191004012000.2661-3-atish.patra@wdc.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 08:33:11AM -0700, Stephen Boyd wrote:
-> Quoting Murali Nalajala (2019-10-07 13:37:42)
-> > Soc framework exposed sysfs entries are not sufficient for some
-> > of the h/w platforms. Currently there is no interface where soc
-> > drivers can expose further information about their SoCs via soc
-> > framework. This change address this limitation where clients can
-> > pass their custom entries as attribute group and soc framework
-> > would expose them as sysfs properties.
-> > 
-> > Signed-off-by: Murali Nalajala <mnalajal@codeaurora.org>
-> > ---
-> 
-> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-> 
+> +int riscv_read_check_isa(struct device_node *node, const char **isa)
+> +{
+> +	u32 hart;
+> +
+> +	if (of_property_read_u32(node, "reg", &hart)) {
+> +		pr_warn("Found CPU without hart ID\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	if (of_property_read_string(node, "riscv,isa", isa)) {
+> +		pr_warn("CPU with hartid=%d has no \"riscv,isa\" property\n",
+> +			hart);
+> +		return -ENODEV;
+> +	}
+> +
+> +	/*
+> +	 * Linux doesn't support rv32e or rv128i, and we only support booting
+> +	 * kernels on harts with the same ISA that the kernel is compiled for.
+> +	 */
+> +#if defined(CONFIG_32BIT)
+> +	if (strncmp(*isa, "rv32i", 5) != 0)
+> +		return -ENODEV;
+> +#elif defined(CONFIG_64BIT)
+> +	if (strncmp(*isa, "rv64i", 5) != 0)
+> +		return -ENODEV;
+> +#endif
 
-Nice, can we convert the existing soc drivers to use this interface
-instead of the "export the device pointer" mess that they currently
-have?  That way we can drop that function entirely.
+Using IS_ENABLED here would clean the checks up a bit.
 
-thanks,
+> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+> index b1ade9a49347..eaad5aa07403 100644
+> --- a/arch/riscv/kernel/cpufeature.c
+> +++ b/arch/riscv/kernel/cpufeature.c
+> @@ -38,10 +38,8 @@ void riscv_fill_hwcap(void)
+>  		if (riscv_of_processor_hartid(node) < 0)
+>  			continue;
+>  
+> -		if (of_property_read_string(node, "riscv,isa", &isa)) {
+> -			pr_warn("Unable to find \"riscv,isa\" devicetree entry\n");
+> +		if (riscv_read_check_isa(node, &isa) < 0)
+>  			continue;
 
-greg k-h
+Do we really get rid of warnings if we didn't find anything proper?
