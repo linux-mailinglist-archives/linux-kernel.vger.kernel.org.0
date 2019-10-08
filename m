@@ -2,111 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2337FCFE70
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 18:02:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1502CFE7B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 18:04:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728786AbfJHQCv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 12:02:51 -0400
-Received: from mail-eopbgr80091.outbound.protection.outlook.com ([40.107.8.91]:40270
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726211AbfJHQCv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 12:02:51 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=i8stZ60f+48Y9X0BHh7NwFVnjpf1uY1/lTXpvIAX6uwsm6+a6gH4qy8jyxLYgiy32S0kjUB+bbv9az0Ymtmvc2W6abo3UGrV3p0TtwcsIgPsTH+F0xCKpCBQnEkJY6q5GYNaubOAv03WAbloC5hiyt7Tn01jQS7vAvfhA6IvXHOH/L52sTiCx5jChpPYYtbedbWl4HsphX9H1m+bWfoVOY+VY2wyQSlgJtZ5nuNQXTlMjLxD2gbEzJ68vjJVmyB4JvgT7CIpebf8FKxcoc/oCoUPbBk3xOvmv4fRy7hSLxacBVSGvMWgpbfOW2twS6oSObuV1lH6V1fBfPKxqb8RpA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MPbiwc2u+DOMU9ienA5ScEKJdDxtjzBcZLyObfwc8Oc=;
- b=Q1AYipSEIGvOReD7qORCA1XVtudkrPrs0317EidXxUqbNxLaGXmOwBXlpX30uvTf4B6iYVQu/sF7HXnmtw9De+fYzWTI6EGf/Qy4ii4HxdncpV5Y+jvzwbIvLmLs/Kua090jp0gEZFqa4hvoSbA5K/1ZG0DWbHiLzHI38GAlIgGc92jke02zVRNtAe+4zV2P9T2271B3WwGrqsHq46dYzZAsuZVlNLzG94qVDCK86MGSJKY4NWls8A6zz1m1TyYZxPch51lPdDP0JVzFIedklaPtAseRPmEZG/0jG9e3HuHBpa0/kKR0ZKu5n0RRJ29ZQGesjZhF8rrBb9d9ic6y0w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=victronenergy.com; dmarc=pass action=none
- header.from=victronenergy.com; dkim=pass header.d=victronenergy.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=victronenergy.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MPbiwc2u+DOMU9ienA5ScEKJdDxtjzBcZLyObfwc8Oc=;
- b=eWcS1Fu8ZckNzONUc+cioQp93IrnIoY8Ci4Z40KQwWvWfke3oDpPgr0TDSSsFI9puH01DOP69yc7qAlg31/QB51rXFEqBDMQxn4na5Mt4X4/PyjYRuH3funa9ElrAP6Vt6jhMcyz3wNvmCPexf9Oae95soI7XWGg/Pxsq04uB8w=
-Received: from VI1PR0701MB2623.eurprd07.prod.outlook.com (10.173.82.19) by
- VI1PR0701MB2767.eurprd07.prod.outlook.com (10.173.81.139) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.15; Tue, 8 Oct 2019 16:02:47 +0000
-Received: from VI1PR0701MB2623.eurprd07.prod.outlook.com
- ([fe80::49b7:a244:d3e4:396c]) by VI1PR0701MB2623.eurprd07.prod.outlook.com
- ([fe80::49b7:a244:d3e4:396c%9]) with mapi id 15.20.2347.016; Tue, 8 Oct 2019
- 16:02:47 +0000
-From:   Jeroen Hofstee <jhofstee@victronenergy.com>
-To:     Tony Lindgren <tony@atomide.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-CC:     "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        Koen Kooi <koen@dominion.thruhere.net>,
-        =?utf-8?B?QmVub8OudCBDb3Vzc29u?= <bcousson@baylibre.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ARM: dts: am335x-sancloud-bbe: Fix PHY mode for ethernet
-Thread-Topic: [PATCH] ARM: dts: am335x-sancloud-bbe: Fix PHY mode for ethernet
-Thread-Index: AQHVeQdofKkOWkby2kaW5oWVx4ahWqdHbuCAgAFGYQD///NzgIAILT2AgAAbpYA=
-Date:   Tue, 8 Oct 2019 16:02:47 +0000
-Message-ID: <1f779973-1702-47eb-158f-7000770c435a@victronenergy.com>
-References: <20191002095416.19603-1-jhofstee@victronenergy.com>
- <d027ef07-807d-6a7b-2939-b67be4542469@ti.com>
- <436f1712-7dec-db40-d08f-1a3032af3596@victronenergy.com>
- <d85cd860-22a3-6142-7f2d-736a428d7a31@ti.com>
- <20191008142349.GE5610@atomide.com>
-In-Reply-To: <20191008142349.GE5610@atomide.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-x-originating-ip: [2001:1c01:3bc5:4e00:58f1:a5aa:4c48:a7ed]
-x-clientproxiedby: AM0PR10CA0016.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:208:17c::26) To VI1PR0701MB2623.eurprd07.prod.outlook.com
- (2603:10a6:801:b::19)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jhofstee@victronenergy.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2ac11550-4419-4fcc-5913-08d74c08f613
-x-ms-traffictypediagnostic: VI1PR0701MB2767:
-x-microsoft-antispam-prvs: <VI1PR0701MB27675FD68D211F1B5AE4E4E0C09A0@VI1PR0701MB2767.eurprd07.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 01842C458A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(376002)(366004)(346002)(396003)(39850400004)(136003)(199004)(189003)(58126008)(386003)(110136005)(31696002)(486006)(52116002)(76176011)(2616005)(446003)(476003)(11346002)(316002)(6506007)(54906003)(53546011)(46003)(102836004)(66476007)(2906002)(66446008)(64756008)(31686004)(6116002)(71200400001)(186003)(71190400001)(66946007)(66556008)(6512007)(4326008)(229853002)(6486002)(6436002)(305945005)(36756003)(7736002)(99286004)(81166006)(65806001)(65956001)(256004)(8936002)(8676002)(6246003)(5660300002)(14454004)(81156014)(4744005)(25786009)(478600001)(86362001);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0701MB2767;H:VI1PR0701MB2623.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: victronenergy.com does not
- designate permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: TkKtyQw/6461im1gKvbuxN2JmsgV978+sJVr79VB7FBMiAJ/Gcyb18k96CRQp8hjMOJxOPv1KIeNL4vz4r08LLEB4IhpIDBiVSwuNvaN9DNjMB8gpuOxLyrHlaNmMWhh1jpNH9yjnpEbNip9eJfDZh8cY7rN9p2XI61eUGK2HkjuJlGQlZNd6wl//fG0U48p1ZwgufHFTtqkfmVQlw7lqXDQNQ1agN0OvVzwfB41VjIWG/GnZJf9ho6sErxKHqXMsdLi7Y91KYohP+KlOl91sUolcj5a8i0uMb8FQnFPWNEmx8T24eHwD7p/PLRi/gUisolk4DEVOv/J3GxmabQ1JRzzuNB7t7xYwq+B4XhoLJ2jhM3rSCmRljIthN0A4w+2jx/xvQSmYVwW/a+cXgdilyY+SB9Yp5kOC2wlATgyfhQ=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D25751073CDE47498688199522BD3F1F@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1729123AbfJHQEG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 12:04:06 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:35653 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727753AbfJHQEG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 12:04:06 -0400
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id x98G3unh020436;
+        Wed, 9 Oct 2019 01:03:57 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x98G3unh020436
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1570550637;
+        bh=wybdrSAUDiWttDrdYwmnM3PPCTy7GU0Fn5r1t39IAV4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=stsY27QmY3e4cdjd26j3AwIR2go+/rLzbRRgGbZrpIS02vfgKk3A1y2mcdjVUX79g
+         rOGdkw0ABhDPWk6atIw3FE2dcV5zottd+ucAhnIg4s/FIp+Van5kWdekfHfssUn4G2
+         8tzzNK7mBrRTKl+iY8wYRjpcmoE55nROfRTWw4uYHl5oWSxpiX9zh3qX/HNHmN2+WF
+         JZLZ7ly5d1UBbV8To1WclFXiudwECV3PQWwzXpFvE+IiqmAqzebOzkyTDNJjEVhlUX
+         GMtJv5UU2XjqPuoOhvgKSs6DDCydQzCPiDTeHjDPMArr3t0AXqGHM74bLj328Gg7hX
+         vxuGFR1e9Fnhg==
+X-Nifty-SrcIP: [209.85.222.45]
+Received: by mail-ua1-f45.google.com with SMTP id m21so5342716ual.13;
+        Tue, 08 Oct 2019 09:03:57 -0700 (PDT)
+X-Gm-Message-State: APjAAAUV3E/l/I5bOTc0/iRANZvFOkP2ygFywZeLyg5B/wWFpnZHkxjS
+        1bVVgtBUkmId8JQyhcmbC1ynlr3pwqzm+/yjjh0=
+X-Google-Smtp-Source: APXvYqxAKivaqtk30va8WrQGa0qaiwLZZ+L7SLNr+fd+sRgHvQEnmpEuBnc7hWFcbzyxQvrMZcXeMUkpcGU06JnVDMA=
+X-Received: by 2002:ab0:6355:: with SMTP id f21mr18556759uap.40.1570550635843;
+ Tue, 08 Oct 2019 09:03:55 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: victronenergy.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ac11550-4419-4fcc-5913-08d74c08f613
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Oct 2019 16:02:47.0885
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 60b95f08-3558-4e94-b0f8-d690c498e225
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 52N2+ffncErrgmYFd24NIX/nDs2AmCdk65G11mNkcdQdQ/rxXcZr6NCADaSOx8WNVx6RNXfmLydECehXoWXsKhhUxQcg1R0Vft8BQzV1cBI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0701MB2767
+References: <20191008131508.21189-1-liuw@liuw.name>
+In-Reply-To: <20191008131508.21189-1-liuw@liuw.name>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 9 Oct 2019 01:03:19 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQpszkwtp2mAfoPajkRi0SHPspivWn9sUsxO0oua2X6NQ@mail.gmail.com>
+Message-ID: <CAK7LNAQpszkwtp2mAfoPajkRi0SHPspivWn9sUsxO0oua2X6NQ@mail.gmail.com>
+Subject: Re: [PATCH RFC] kconfig: add hvconfig for Linux on Hyper-V
+To:     Wei Liu <wei.liu@kernel.org>
+Cc:     Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
+        Linux Kernel List <linux-kernel@vger.kernel.org>,
+        Linux Kconfig List <linux-kbuild@vger.kernel.org>,
+        Wei Liu <liuwe@microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8gVG9ueSwNCg0KT24gMTAvOC8xOSA0OjIzIFBNLCBUb255IExpbmRncmVuIHdyb3RlOg0K
-PiAqIEdyeWdvcmlpIFN0cmFzaGtvIDxncnlnb3JpaS5zdHJhc2hrb0B0aS5jb20+IFsxOTEwMDMg
-MDI6MzJdOg0KPj4gT24gMDMvMTAvMjAxOSAxMToxNiwgSmVyb2VuIEhvZnN0ZWUgd3JvdGU6DQo+
-Pj4gRnVydGhlcm1vcmUgNC4xOSBpcyBmaW5lLCBzbyB0aGVyZSBpcyBubyBuZWVkIHRvIGluY2x1
-ZGUgaXQgaW4gc3RhYmxlDQo+Pj4gYW5kIGhhdmUgYSBub3RlIHRvIG1ha2Ugc3VyZSBhbHNvIG90
-aGVyIHBhdGNoZXMgYXJlIHJlcXVpcmVkIGV0Yy4NCj4+IEhlbmNlIGFsbCBhYm92ZSBwYXRjaGVz
-IHdlbnQgaW4gNS4xIGl0IHdvdWxkIGJlIGNvcnJlY3QgdG8gbWVudGlvbiBvbmx5DQo+PiA2ZDRj
-ZDA0MWYwYWYgbmV0OiBwaHk6IGF0ODAzeDogZGlzYWJsZSBkZWxheSBvbmx5IGZvciBSR01JSSBt
-b2RlDQo+IEplcm9lbiwgY2FuIHlvdSBwbGVhc2Ugc2VuZCBhbiB1cGRhdGVkIHBhdGNoIHdpdGgg
-dGhlIGZpeGVzDQo+IHRhZyBjaGFuZ2VkPw0KPg0KDQpGb3IgY29tcGxldGVuZXNzLCB0aGVyZSBp
-cyBubyAiRml4ZXMgdGFnIiBhcyB5b3UgbWVudGlvbmVkLg0KVGhlIGNvbW1pdCBvbmx5IHJlZmVy
-cyB0byBhbm90aGVyIGNvbW1pdCB3aGljaCBpbnRyb2R1Y2VzDQphIHByb2JsZW0uDQoNClJlZ2Fy
-ZHMsDQoNCkplcm9lbg0KDQo=
+On Tue, Oct 8, 2019 at 10:15 PM Wei Liu <wei.liu@kernel.org> wrote:
+>
+> From: Wei Liu <liuwe@microsoft.com>
+>
+> Add an config file snippet which enalbes additional options useful for
+> running the kernel in a Hyper-V guest.
+>
+> The expected use case is a user provides an existing config file then
+> executes `make hvconfig`. It will merge those options with the
+> provided config file.
+>
+> Based on similar concept for Xen and KVM.
+>
+> Signed-off-by: Wei Liu <liuwe@microsoft.com>
+> ---
+> RFC: I only tested this on x86.  Although the config options included in
+> hv_guest.config don't seem to be arch-specific, we should probably
+> move the ones not yet implemented on Arm to an x86 specific config
+> file.
+> ---
+>  Documentation/admin-guide/README.rst |  3 +++
+>  kernel/configs/hv_guest.config       | 33 ++++++++++++++++++++++++++++
+>  scripts/kconfig/Makefile             |  5 +++++
+>  3 files changed, 41 insertions(+)
+>  create mode 100644 kernel/configs/hv_guest.config
+>
+> diff --git a/Documentation/admin-guide/README.rst b/Documentation/admin-guide/README.rst
+> index cc6151fc0845..d5f4389a7a2f 100644
+> --- a/Documentation/admin-guide/README.rst
+> +++ b/Documentation/admin-guide/README.rst
+> @@ -224,6 +224,9 @@ Configuring the kernel
+>       "make xenconfig"   Enable additional options for xen dom0 guest kernel
+>                          support.
+>
+> +     "make hvconfig"    Enable additional options for Hyper-V guest kernel
+> +                        support.
+> +
+>       "make tinyconfig"  Configure the tiniest possible kernel.
+>
+>     You can find more information on using the Linux kernel config tools
+> diff --git a/kernel/configs/hv_guest.config b/kernel/configs/hv_guest.config
+> new file mode 100644
+> index 000000000000..0e71e34a2d4d
+> --- /dev/null
+> +++ b/kernel/configs/hv_guest.config
+> @@ -0,0 +1,33 @@
+> +CONFIG_NET=y
+> +CONFIG_NET_CORE=y
+> +CONFIG_NETDEVICES=y
+> +CONFIG_BLOCK=y
+> +CONFIG_BLK_DEV=y
+> +CONFIG_NETWORK_FILESYSTEMS=y
+> +CONFIG_INET=y
+> +CONFIG_TTY=y
+> +CONFIG_SERIAL_8250=y
+> +CONFIG_SERIAL_8250_CONSOLE=y
+> +CONFIG_IP_PNP=y
+> +CONFIG_IP_PNP_DHCP=y
+> +CONFIG_BINFMT_ELF=y
+> +CONFIG_PCI=y
+> +CONFIG_PCI_MSI=y
+> +CONFIG_DEBUG_KERNEL=y
+> +CONFIG_VIRTUALIZATION=y
+> +CONFIG_HYPERVISOR_GUEST=y
+> +CONFIG_PARAVIRT=y
+> +CONFIG_HYPERV=y
+> +CONFIG_HYPERV_VSOCKETS=y
+> +CONFIG_PCI_HYPERV=y
+> +CONFIG_PCI_HYPERV_INTERFACE=y
+> +CONFIG_HYPERV_STORAGE=y
+> +CONFIG_HYPERV_NET=y
+> +CONFIG_HYPERV_KEYBOARD=y
+> +CONFIG_FB_HYPERV=y
+> +CONFIG_HID_HYPERV_MOUSE=y
+> +CONFIG_HYPERV=y
+> +CONFIG_HYPERV_TIMER=y
+> +CONFIG_HYPERV_UTILS=y
+> +CONFIG_HYPERV_BALLOON=y
+> +CONFIG_HYPERV_IOMMU=y
+> diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
+> index ef2f2336c469..2ee46301b22e 100644
+> --- a/scripts/kconfig/Makefile
+> +++ b/scripts/kconfig/Makefile
+> @@ -104,6 +104,10 @@ PHONY += xenconfig
+>  xenconfig: xen.config
+>         @:
+>
+> +PHONY += hvconfig
+> +hvconfig: hv_guest.config
+> +       @:
+> +
+
+
+Does this need to be hooked up to kconfig Makefile?
+
+In my understanding, this code provides
+"make hvconfig" as a shorthand for "make hv_guest.config"
+
+Please do not do this.
+
+
+See "xenconfig" as a bad example.
+
+"make xenconfig" is a shorthand of "make xen.config".
+This exists to save just one character typing.
+
+
+If I allow this, people would push more and more random pointless shorthands,
+which are essentially unrelated to kconfig.
+
+
+kvmconfig and xenconfig are just historical mistakes.
+
+
+Please drop the changes to scripts/kconfig/Makefile.
+
+Also, please do not use misleading "kconfig:" for the subject prefix.
+You can use the subject prefix "hyper-v:" or something.
+
+
+Thanks.
+
+
+>  PHONY += tinyconfig
+>  tinyconfig:
+>         $(Q)$(MAKE) -f $(srctree)/Makefile allnoconfig tiny.config
+> @@ -138,6 +142,7 @@ help:
+>         @echo  '                    default value without prompting'
+>         @echo  '  kvmconfig       - Enable additional options for kvm guest kernel support'
+>         @echo  '  xenconfig       - Enable additional options for xen dom0 and guest kernel support'
+> +       @echo  '  hvconfig        - Enable additional options for Hyper-V guest kernel support'
+>         @echo  '  tinyconfig      - Configure the tiniest possible kernel'
+>         @echo  '  testconfig      - Run Kconfig unit tests (requires python3 and pytest)'
+>
+> --
+> 2.20.1
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
