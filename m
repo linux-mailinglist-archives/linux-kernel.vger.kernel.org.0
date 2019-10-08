@@ -2,51 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAC6DCFE04
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 17:46:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCD7CCFE06
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 17:46:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727688AbfJHPqE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 11:46:04 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54858 "EHLO
+        id S1727365AbfJHPqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 11:46:53 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55950 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725908AbfJHPqE (ORCPT
+        with ESMTP id S1726057AbfJHPqx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 11:46:04 -0400
+        Tue, 8 Oct 2019 11:46:53 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=0B4Il8PmhkOUmEhLQP9qNlA++eZXIw98dqX7m+U4L5k=; b=UbD6SjMaqVYPYvOMJ2h2Y3bgR
-        ERHHDjvgiBvw2KL79vGFfa3ykXAq3tHK3WYnBcSKTl+1vLZOZ/H5IPxKnqeflnYr3Xm7LpcuSwq1d
-        dqkzM9q9Vkq/vUKjRUlswvDlLWAZ9jRi2pVaXW/+uYJgE2K+IZNh1uPc+PhwluyCr1I5bcWtTkBOD
-        8RwONzu05MbT6dUN44VleSgIzBwNp25GzonkYnEyYHTdWjRST6/NFkUfjvhXFAlqJANa4U7R8oaF7
-        Assb1gm99kobpxSiEOoqMqVQbf5T+43G/N0c9QI+wRdbjE2MtWeY0p9PA2arkBB4wB3cIcUgu26dx
-        4rdUOiM9g==;
+         bh=gu8QuxTbWjjSVfL2vy0xkXyQp8/uuH9770PDPTzotQU=; b=Ga5eC1maOxKXdSfmA8ytKWiA4
+        lT6GUyZdknGGwJbGM/8ilR2SKzS3ZRaNBH1Vbb5Ev4ePpbWzD9IQzx8kg7S+gJ78j7M8KaRJQA7qP
+        Em2U/RXQJHSsexcdDErqQ5JR/Vrnt+p9Cyt2URvNjUWyRRqV6t6W3KY//dy6KUaUu8LH963xeICUG
+        c/YqEjaG2ClNAioC9iXyXOJCxHgqEbLneMxbsmTB8Wq/Hafrol8g0rxtHtspEnzO65sP4lDu3IWWt
+        C6J2ZntBU25yE36qsKqLbYeXS0rWojUXTU4BAW36pVXFylvkN1EYIz8ts/TVVNXGxlMBd71SzqKaB
+        AhTQUGPIw==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iHrga-0004YZ-1L; Tue, 08 Oct 2019 15:46:04 +0000
-Date:   Tue, 8 Oct 2019 08:46:04 -0700
+        id 1iHrhM-0004lP-GK; Tue, 08 Oct 2019 15:46:52 +0000
+Date:   Tue, 8 Oct 2019 08:46:52 -0700
 From:   Christoph Hellwig <hch@infradead.org>
 To:     Michal Simek <michal.simek@xilinx.com>
 Cc:     linux-kernel@vger.kernel.org, monstr@monstr.eu, git@xilinx.com,
-        Kate Stewart <kstewart@linuxfoundation.org>,
         Kuldeep Dave <kuldeep.dave@xilinx.com>,
         Albert Ou <aou@eecs.berkeley.edu>,
+        Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>, linux-pci@vger.kernel.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Firoz Khan <firoz.khan@linaro.org>,
         Paul Walmsley <paul.walmsley@sifive.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Will Deacon <will@kernel.org>, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH] microblaze: Include generic support for MSI irqdomains
-Message-ID: <20191008154604.GA7903@infradead.org>
-References: <aa6dd855474451ff4f2e82691d1f590f3a85ba68.1570530881.git.michal.simek@xilinx.com>
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-riscv@lists.infradead.org, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v2] PCI/MSI: Enable PCI_MSI_IRQ_DOMAIN support for
+ Microblaze
+Message-ID: <20191008154652.GB7903@infradead.org>
+References: <b5959a9f6bfa65f0ae1a6a184e1b09dcec8e8f15.1570539512.git.michal.simek@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aa6dd855474451ff4f2e82691d1f590f3a85ba68.1570530881.git.michal.simek@xilinx.com>
+In-Reply-To: <b5959a9f6bfa65f0ae1a6a184e1b09dcec8e8f15.1570539512.git.michal.simek@xilinx.com>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
@@ -54,15 +55,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 12:34:47PM +0200, Michal Simek wrote:
-> index e5c9170a07fc..83417105c00a 100644
-> --- a/arch/microblaze/include/asm/Kbuild
-> +++ b/arch/microblaze/include/asm/Kbuild
-> @@ -25,6 +25,7 @@ generic-y += local64.h
->  generic-y += mcs_spinlock.h
->  generic-y += mm-arch-hooks.h
->  generic-y += mmiowb.h
-> +generic-y += msi.h
+> diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
+> index a304f5ea11b9..9d259372fbfd 100644
+> --- a/drivers/pci/Kconfig
+> +++ b/drivers/pci/Kconfig
+> @@ -52,7 +52,7 @@ config PCI_MSI
+>  	   If you don't know what to do here, say Y.
+>  
+>  config PCI_MSI_IRQ_DOMAIN
+> -	def_bool ARC || ARM || ARM64 || X86 || RISCV
+> +	def_bool ARC || ARM || ARM64 || X86 || RISCV || MICROBLAZE
 
-Please just mark it as mandatory-y in the asm-generic makefile
-instead of requiring a sniplet for every architecture.
+Can you find out what the actual dependency is so that we can
+automatically enabled this instead of the weird arch list?
