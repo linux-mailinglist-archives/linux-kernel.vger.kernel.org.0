@@ -2,113 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8A86CFE90
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 18:10:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ECCDCFE94
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 18:11:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727999AbfJHQKH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 12:10:07 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39453 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727046AbfJHQKH (ORCPT
+        id S1727876AbfJHQLc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 12:11:32 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42080 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725966AbfJHQLb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 12:10:07 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r3so20116293wrj.6;
-        Tue, 08 Oct 2019 09:10:03 -0700 (PDT)
+        Tue, 8 Oct 2019 12:11:31 -0400
+Received: by mail-lj1-f195.google.com with SMTP id y23so18171056lje.9;
+        Tue, 08 Oct 2019 09:11:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AT+kDpEjrdBshsMqJBNVg8JsTs5Ln99yNIaxkRDtThA=;
+        b=H6F4206g5t18kFz01VuQPieIxoQpVLKANGGFoXM6ePueTOX2VPQy9nC+c5TYLTnnzm
+         cXmJh9QSTByOD5ZAOuYOjClZi5iBiCF0vNx1zq00dK7Wyi1H1+gZlfWIMVXePyHUeYca
+         DY1z20zNcqEog30lb3AZ6JYZ1rz+7vvs4wfDZc0EOU+hH9z4Q1aohsLuA7I8reUzxSLw
+         3K8n5XJvZDHvVgXXusNohBOFHHLJC86XiJ/xtyMX1XKyUSo2F2L+ZdP+p3GKZUX8WDMv
+         B8EVK03VA/5XGiwYMQQnR7PVYVqDziUUOGQJqQZlwKxx2OrIIOUYImbDXX5TRgaykp2i
+         qvKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TwO+d9qD9wJW979LKepMLImGrjMaBnzYxRK7KA5j0Xk=;
-        b=aR/7iMpMxZ4g5vs+DrnV6pTeJm/kUw9rjmspB3P9tQeaRWxnUKOp7DaBbuWJcTp5+q
-         aFKGK7Q2/J/v8a7pK6z7gYH2V0uSBFhA/TB3jEHix5FM5EGrTGPTI370DekIGEqKEDTi
-         gVbc7MW/r0vdQIkRgnWMyUCQHdn6uG8LLCT8uyafThUL5eG+wPoqplsLCq3AsHWHKrv2
-         1ix1h6hg19fo25wnJRokwQkarwa4WfwDh7JhOyG+Ncl4jrhWJi2KSZq2nE4RD3z8ShzF
-         lD53o2vKVc41hlWqE8bIVUE8d0N6nIJ4qKIaSZWDmeDN4nQZ2qF2E56fA6eKUbq6PFKN
-         2w/w==
-X-Gm-Message-State: APjAAAVupkD3K0ZpYhZ4qHxq+5CakdwhzC9OXtWXCybXnnej1z7BQeT4
-        EQzemptaO3xvJNUUTwRBcqE=
-X-Google-Smtp-Source: APXvYqyLw49eump/ox38Z4zA11mDBtivQ61A7rJMxWU5H6pE4n+L8FeJt8/QHXENvF/U12TGXTn3sQ==
-X-Received: by 2002:a5d:44d2:: with SMTP id z18mr6605539wrr.122.1570551003336;
-        Tue, 08 Oct 2019 09:10:03 -0700 (PDT)
-Received: from debian (207.148.159.143.dyn.plus.net. [143.159.148.207])
-        by smtp.gmail.com with ESMTPSA id f20sm3302107wmb.6.2019.10.08.09.10.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2019 09:10:02 -0700 (PDT)
-Date:   Tue, 8 Oct 2019 17:10:01 +0100
-From:   Wei Liu <wei.liu@kernel.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Wei Liu <wei.liu@kernel.org>,
-        Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
-        Linux Kernel List <linux-kernel@vger.kernel.org>,
-        Linux Kconfig List <linux-kbuild@vger.kernel.org>,
-        Wei Liu <liuwe@microsoft.com>
-Subject: Re: [PATCH RFC] kconfig: add hvconfig for Linux on Hyper-V
-Message-ID: <20191008161001.lwiduq4mlyjumw5b@debian>
-References: <20191008131508.21189-1-liuw@liuw.name>
- <CAK7LNAQpszkwtp2mAfoPajkRi0SHPspivWn9sUsxO0oua2X6NQ@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AT+kDpEjrdBshsMqJBNVg8JsTs5Ln99yNIaxkRDtThA=;
+        b=ECJwNgmcDo/Shvz3vVGn9uI2XqEpooBCzy+1KaVHFJTHyjBkRgiOGBdz55f0FTPEDp
+         Wd8H6t0e/6XXLYUMCi6fEgvd3XF2XxPguJBAUuHOSveIqF13aPsAsMKgaX9Lnk8yN8xL
+         dRAXN/sgYdVIuf/eT1FcwiAegexdByDDNOY4ymxhV0L7zcWszjuDovWogPqXHybKr4FU
+         NZ4NcYsiSGqDNpAcz47/N331bqzteFByo3X7mQk1k1Nt8bNCxixMjCctW5+vaqjoEONF
+         26Q/gk4SMm8d51Eu75goNxmiTHYViqN1rjPwonoz+pD49Ph4ctkdPV1Ih0YR7ADRXG1X
+         ij6g==
+X-Gm-Message-State: APjAAAUxObYZw+iYflbK0k1zam7JImYFLEH8kWI3PnxXlUTsoiP00nov
+        ZVibZ7eSKZOvxUEm1YMsKlA2sYC0cpSfTW6kRp4=
+X-Google-Smtp-Source: APXvYqwn5DlZGijUmc7DgbkIfu62kvr3NLZ18Ba3IyP+/Ho1XmFOjIm2o1fNq5KIpNcvuRoaxSrAnDitq5DGjmcTndI=
+X-Received: by 2002:a2e:7502:: with SMTP id q2mr23044246ljc.202.1570551089481;
+ Tue, 08 Oct 2019 09:11:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNAQpszkwtp2mAfoPajkRi0SHPspivWn9sUsxO0oua2X6NQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+References: <20190904171723.2956-1-robdclark@gmail.com>
+In-Reply-To: <20190904171723.2956-1-robdclark@gmail.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Tue, 8 Oct 2019 13:11:19 -0300
+Message-ID: <CAOMZO5DgnB0kuSTxg1=ngJYiRvbq6bqBC4K-R5nQMzEinBYq7A@mail.gmail.com>
+Subject: Re: [PATCH] drm/msm: Use the correct dma_sync calls harder
+To:     Rob Clark <robdclark@gmail.com>
+Cc:     DRI mailing list <dri-devel@lists.freedesktop.org>,
+        Rob Clark <robdclark@chromium.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
+        <linux-arm-msm@vger.kernel.org>,
+        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
+        <freedreno@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 01:03:19AM +0900, Masahiro Yamada wrote:
-[...]
-> > diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
-> > index ef2f2336c469..2ee46301b22e 100644
-> > --- a/scripts/kconfig/Makefile
-> > +++ b/scripts/kconfig/Makefile
-> > @@ -104,6 +104,10 @@ PHONY += xenconfig
-> >  xenconfig: xen.config
-> >         @:
-> >
-> > +PHONY += hvconfig
-> > +hvconfig: hv_guest.config
-> > +       @:
-> > +
-> 
-> 
-> Does this need to be hooked up to kconfig Makefile?
-> 
+Hi Rob,
 
-It is not strictly necessary. Just thought it would be nice to follow
-existing examples.
+On Wed, Sep 4, 2019 at 2:19 PM Rob Clark <robdclark@gmail.com> wrote:
+>
+> From: Rob Clark <robdclark@chromium.org>
+>
+> Looks like the dma_sync calls don't do what we want on armv7 either.
+> Fixes:
+>
+>   Unable to handle kernel paging request at virtual address 50001000
+>   pgd = (ptrval)
+>   [50001000] *pgd=00000000
+>   Internal error: Oops: 805 [#1] SMP ARM
+>   Modules linked in:
+>   CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.3.0-rc6-00271-g9f159ae07f07 #4
+>   Hardware name: Freescale i.MX53 (Device Tree Support)
+>   PC is at v7_dma_clean_range+0x20/0x38
+>   LR is at __dma_page_cpu_to_dev+0x28/0x90
+>   pc : [<c011c76c>]    lr : [<c01181c4>]    psr: 20000013
+>   sp : d80b5a88  ip : de96c000  fp : d840ce6c
+>   r10: 00000000  r9 : 00000001  r8 : d843e010
+>   r7 : 00000000  r6 : 00008000  r5 : ddb6c000  r4 : 00000000
+>   r3 : 0000003f  r2 : 00000040  r1 : 50008000  r0 : 50001000
+>   Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+>   Control: 10c5387d  Table: 70004019  DAC: 00000051
+>   Process swapper/0 (pid: 1, stack limit = 0x(ptrval))
+>
+> Signed-off-by: Rob Clark <robdclark@chromium.org>
+> Fixes: 3de433c5b38a ("drm/msm: Use the correct dma_sync calls in msm_gem")
+> Tested-by: Fabio Estevam <festevam@gmail.com>
 
-> In my understanding, this code provides
-> "make hvconfig" as a shorthand for "make hv_guest.config"
-> 
+I see this one got applied in linux-next already.
+Could it be sent to 5.4-rc, please?
 
-Yes that's correct.
+mx53 boards cannot boot in mainline because of this.
 
-> Please do not do this.
-> 
-> 
-> See "xenconfig" as a bad example.
-> 
-> "make xenconfig" is a shorthand of "make xen.config".
-> This exists to save just one character typing.
-> 
-> 
-> If I allow this, people would push more and more random pointless shorthands,
-> which are essentially unrelated to kconfig.
-> 
-> 
-> kvmconfig and xenconfig are just historical mistakes.
-> 
-> 
-> Please drop the changes to scripts/kconfig/Makefile.
-
-OK.
-
-> 
-> Also, please do not use misleading "kconfig:" for the subject prefix.
-> You can use the subject prefix "hyper-v:" or something.
-> 
-
-OK.
-
-Wei.
+Thanks
