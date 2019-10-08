@@ -2,145 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD954CF130
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 05:20:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C4D4CF11B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 05:13:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729926AbfJHDUE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 23:20:04 -0400
-Received: from regular1.263xmail.com ([211.150.70.197]:57864 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729823AbfJHDUD (ORCPT
+        id S1729914AbfJHDNJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 23:13:09 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41917 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729536AbfJHDNI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 23:20:03 -0400
-X-Greylist: delayed 453 seconds by postgrey-1.27 at vger.kernel.org; Mon, 07 Oct 2019 23:20:02 EDT
-Received: from localhost (unknown [192.168.165.252])
-        by regular1.263xmail.com (Postfix) with ESMTP id 8722E5EB;
-        Tue,  8 Oct 2019 11:12:21 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED4: 1
-X-ANTISPAM-LEVEL: 2
-X-SKE-CHECKED: 1
-X-ABS-CHECKED: 1
-Received: from localhost (unknown [183.57.25.242])
-        by smtp.263.net (postfix) whith ESMTP id P628T140409852389120S1570504336050683_;
-        Tue, 08 Oct 2019 11:12:20 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <05ed1e03424721773edf294b718993ad>
-X-RL-SENDER: djw@t-chip.com.cn
-X-SENDER: djw@t-chip.com.cn
-X-LOGIN-NAME: djw@t-chip.com.cn
-X-FST-TO: jagan@amarulasolutions.com
-X-SENDER-IP: 183.57.25.242
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From:   djw@t-chip.com.cn
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Da Xue <da@lessconfused.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list\:ARM\/Rockchip SoC..." 
-        <linux-rockchip@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Akash Gajjar <akash@openedev.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/6] arm64: dts: rockchip: Fix rk3399-roc-pc pwm2 pin
-Organization: Firefly Team
-References: <20190919052822.10403-1-jagan@amarulasolutions.com>
-        <20190919052822.10403-2-jagan@amarulasolutions.com>
-        <6797961.eJj5WIFbM9@phil>
-        <CAMty3ZDKaywoPxCSD-5N2pLjtGmZ-dZ7ZgUOJqiB1V_9rfR26A@mail.gmail.com>
-Date:   Tue, 08 Oct 2019 11:11:10 +0800
-In-Reply-To: <CAMty3ZDKaywoPxCSD-5N2pLjtGmZ-dZ7ZgUOJqiB1V_9rfR26A@mail.gmail.com>
-        (Jagan Teki's message of "Tue, 1 Oct 2019 15:56:14 +0530")
-Message-ID: <87eezolynl.fsf@archiso.i-did-not-set--mail-host-address--so-tickle-me>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+        Mon, 7 Oct 2019 23:13:08 -0400
+Received: by mail-pf1-f194.google.com with SMTP id q7so9921300pfh.8;
+        Mon, 07 Oct 2019 20:13:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=MwOr1Yqsq0vV0L2I0NuVxBn/YJkcXrSl5bx2uwm6GME=;
+        b=l5DQgPL2Y+0qJXzGNoIaNDOAAIUJAk63EXpupbo+H3/fiTJ5modtP5d7iA6U+VfMhk
+         OBjVGHCy6FaDj3AuFsasOQQ8RUord7oybiI12W0qKEl+M2XXUgqu8VSGVzSOCmtzA2CH
+         sEF363igvp2bC4v0mTB6FF5EU/rszyjfER5wfETyzGteql8Teb70RDknSIosrHaQJ9+K
+         LcBvIcdTTMTBtoa1SOxNtaKzR7PamQaMwo58AIbfWdd6uS8ppsJcf5egYQLwYl/fFV/o
+         bKGFMP7VN5YYhOp2pzHsBggjiBYGDcejwSMIdLrAHNwHruk9+8gGSlFK0gotavTOaqiS
+         lzpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=MwOr1Yqsq0vV0L2I0NuVxBn/YJkcXrSl5bx2uwm6GME=;
+        b=RFelGU2khEtrAa8WN4mNYOaFLGZLUoHmDCd74sWchbWPWMm1eVy+pKXrZg8KT4wmYt
+         AN9VvI5NOfFr36NLSHuHkm4o/nSD1ROrIY4TKGzFcG4CrYbC1HRTuoQHg2zTXvFmbLvu
+         6kBEvBis4UHExZHfq/lQph2vfcHZHCM+Z1/wum8J9uOaPmqNE7VO2wGy42x8EFLuAiye
+         DwN5cCb5TSvWS3Jwzi1SwpSg+qgrd2zbIuH6Xc3KYI2/4O3oUU45UZ/ZAITvb4oo0+yy
+         S02oaXN/t4MwPoAfDO0sOHAAS++3ByFUU7j5ZLm3tMHPJOXLDJVH8zxrqixDI8oIta6n
+         Vl4Q==
+X-Gm-Message-State: APjAAAXzjea5UAZiG5ooG6By5a6gPv9dG/158lygUwuOlNraux5rWxEN
+        qeP2Hs8rVILm90PH2nrU32DgW3wP
+X-Google-Smtp-Source: APXvYqz/aTjJrRNMzNO1/XB1zmUl5/r7tcj7a/bk8SorwCF5Qq9Ugle+lKHLjSticXDM+CViaWRbDg==
+X-Received: by 2002:a63:2348:: with SMTP id u8mr2860808pgm.344.1570504387491;
+        Mon, 07 Oct 2019 20:13:07 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id s1sm9574747pgi.52.2019.10.07.20.13.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Oct 2019 20:13:06 -0700 (PDT)
+Subject: Re: [PATCH 4.4 00/36] 4.4.196-stable review
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+References: <20191006171038.266461022@linuxfoundation.org>
+ <d3e1e6ae-8ca4-a43b-d30d-9a9a9a7e5752@roeck-us.net>
+ <20191007144951.GB966828@kroah.com> <20191007230708.GA1396@sasha-vm>
+ <35f5fb99-6c35-9afd-1a4e-3fa7d4ba213a@roeck-us.net>
+ <20191008014954.GB1396@sasha-vm>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <4e0e8cf2-a085-9bdf-b084-a3cb205bb100@roeck-us.net>
+Date:   Mon, 7 Oct 2019 20:13:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20191008014954.GB1396@sasha-vm>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jagan Teki <jagan@amarulasolutions.com> writes:
-
-> Hi Heiko,
->
-> On Mon, Sep 30, 2019 at 2:51 AM Heiko Stuebner <heiko@sntech.de> wrote:
+On 10/7/19 6:49 PM, Sasha Levin wrote:
+> On Mon, Oct 07, 2019 at 04:16:51PM -0700, Guenter Roeck wrote:
+>> On 10/7/19 4:07 PM, Sasha Levin wrote:
+>>> On Mon, Oct 07, 2019 at 04:49:51PM +0200, Greg Kroah-Hartman wrote:
+>>>> On Mon, Oct 07, 2019 at 05:53:55AM -0700, Guenter Roeck wrote:
+>>>>> On 10/6/19 10:18 AM, Greg Kroah-Hartman wrote:
+>>>>>> This is the start of the stable review cycle for the 4.4.196 release.
+>>>>>> There are 36 patches in this series, all will be posted as a response
+>>>>>> to this one.  If anyone has any issues with these being applied, please
+>>>>>> let me know.
+>>>>>>
+>>>>>> Responses should be made by Tue 08 Oct 2019 05:07:10 PM UTC.
+>>>>>> Anything received after that time might be too late.
+>>>>>>
+>>>>>
+>>>>> powerpc:defconfig fails to build.
+>>>>>
+>>>>> arch/powerpc/kernel/eeh_driver.c: In function ‘eeh_handle_normal_event’:
+>>>>> arch/powerpc/kernel/eeh_driver.c:678:2: error: implicit declaration of function ‘eeh_for_each_pe’; did you mean ‘bus_for_each_dev’?
+>>>>>
+>>>>> It has a point:
+>>>>>
+>>>>> ... HEAD is now at 13cac61d31df Linux 4.4.196-rc1
+>>>>> $ git grep eeh_for_each_pe
+>>>>> arch/powerpc/kernel/eeh_driver.c:       eeh_for_each_pe(pe, tmp_pe)
+>>>>> arch/powerpc/kernel/eeh_driver.c:                               eeh_for_each_pe(pe, tmp_pe)
+>>>>>
+>>>>> Caused by commit 3fb431be8de3a ("powerpc/eeh: Clear stale EEH_DEV_NO_HANDLER flag").
+>>>>> Full report will follow later.
+>>>>
+>>>> Thanks for letting me know, I've dropped this from the queue now and
+>>>> pushed out a -rc2 with that removed.
+>>>>
+>>>> Sasha, I thought your builder would have caught stuff like this?
+>>>
+>>> Interesting, the 4.4 build fails for me with vanilla 4.4 LTS kernel
+>>> (which is why this was missed):
+>>>
+>>>  AS      arch/powerpc/kernel/systbl.o
+>>> arch/powerpc/kernel/exceptions-64s.S: Assembler messages:
+>>> arch/powerpc/kernel/exceptions-64s.S:1599: Warning: invalid register expression
+>>> arch/powerpc/kernel/exceptions-64s.S:1640: Warning: invalid register expression
+>>> arch/powerpc/kernel/exceptions-64s.S:839: Error: attempt to move .org backwards
+>>> arch/powerpc/kernel/exceptions-64s.S:840: Error: attempt to move .org backwards
+>>> arch/powerpc/kernel/exceptions-64s.S:864: Error: attempt to move .org backwards
+>>> arch/powerpc/kernel/exceptions-64s.S:865: Error: attempt to move .org backwards
+>>> scripts/Makefile.build:375: recipe for target 'arch/powerpc/kernel/head_64.o' failed
+>>>
 >>
->> Hi Jagan,
->>
->> Am Donnerstag, 19. September 2019, 07:28:17 CEST schrieb Jagan Teki:
->> > ROC-PC is not able to boot linux console if PWM2_d is
->> > unattached to any pinctrl logic.
->> >
->> > To be precise the linux boot hang with last logs as,
->> > ...
->> > .....
->> > [    0.003367] Console: colour dummy device 80x25
->> > [    0.003788] printk: console [tty0] enabled
->> > [    0.004178] printk: bootconsole [uart8250] disabled
->> >
->> > In ROC-PC the PWM2_d pin is connected to LOG_DVS_PWM of
->> > VDD_LOG. So, for normal working operations this needs to
->> > active and pull-down.
->> >
->> > This patch fix, by attaching pinctrl active and pull-down
->> > the pwm2.
->>
->> This looks highly dubious on first glance. The pwm subsystem nor
->> the Rockchip pwm driver do not do any pinctrl handling.
->>
->> So I don't really see where that "active" pinctrl state is supposed
->> to come from.
->>
->> Comparing with the pwm driver in the vendor tree I see that there
->> is such a state defined there. But that code there also looks strange
->> as that driver never again leaves this active state after entering it.
->>
->> Also for example all the Gru devices run with quite a number of pwm-
->> regulators without needing additional fiddling with the pwm itself, so
->> I don't really see why that should be different here.
->
-> I deed, I was supposed to think the same. but the vendor kernel dts
-> from firefly do follow the pwm2 pinctrl [1]. I wouldn't find any
-> information other than this vensor information, ie one of the reason I
-> have marked "Levin Du" who initially supported this board.
->
-> One, think I have seen was this pinctrl active fixed the boot hang.
-> any inputs from would be very helpful.
->
-> Levin Du, any inputs?
->
-> [1] https://github.com/FireflyTeam/kernel/blob/stable-4.4-rk3399-linux/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi#L1184
->
+>> Is this allmodconfig ? That is correct - it won't build in 4.4.y, and it would not be
+>> easy to fix.
+> 
+> Oh, interesting, so no allmodconfig? I've disabled everything but
+> allmodconfig on a few architectures in an attempt to save to build time.
+> 
 
-A grep of the `pwm2` shows that there's such block in rk3399-nanopi4.dtsi:
+If I recall correctly, it stopped working quite some time ago for v4.4.y, and the powerpc
+maintainers didn't want to spend the time fixing it. It works with v4.9.y and later.
 
-    &pwm2 {
-            pinctrl-names = "active";
-            pinctrl-0 = <&pwm2_pin_pull_down>;
-            status = "okay";
-    };
-
-But last time I checked, using the mainline U-Boot (the roc-rk3399-pc is
-in mainline now) with mainline linux v5.2-rc7, no such setting is
-necessary, and the board boots happily.
-
-I cannot find the use of "active" pinctrl state in the
-`drivers/pwm/pwm-rockchip.c`. If the pinctrl state needs to be setup as
-default, the `pinctrl-names` needs to be "default" or "init" (see
-`drivers/base/pinctrl.c`) .
-
-Jagan, what version of board do you use? I checked with
-"ROC-RK3399-PC-V1.0-A 2018-07-12". 
-
-Thanks
-
---
-Levin Du
-
-
+Guenter
