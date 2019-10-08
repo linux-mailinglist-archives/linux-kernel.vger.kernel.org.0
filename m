@@ -2,78 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D014CF7C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 13:07:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6164FCF7C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 13:08:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730527AbfJHLHp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 07:07:45 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:51062 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730278AbfJHLHo (ORCPT
+        id S1730621AbfJHLIB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 07:08:01 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44970 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730605AbfJHLIA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 07:07:44 -0400
-Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1iHnLC-0006Y9-JQ; Tue, 08 Oct 2019 12:07:42 +0100
-Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.2)
-        (envelope-from <ben@rainbowdash.codethink.co.uk>)
-        id 1iHnLB-0003al-Rh; Tue, 08 Oct 2019 12:07:41 +0100
-From:   Ben Dooks <ben.dooks@codethink.co.uk>
-To:     linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Cc:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: [PATCH 3/3] drm/nouveau/kms/nv50-: include n50_display.h for nv50_display_create
-Date:   Tue,  8 Oct 2019 12:07:39 +0100
-Message-Id: <20191008110739.13757-3-ben.dooks@codethink.co.uk>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191008110739.13757-1-ben.dooks@codethink.co.uk>
-References: <20191008110739.13757-1-ben.dooks@codethink.co.uk>
+        Tue, 8 Oct 2019 07:08:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=arx0iJ9oCcD6kiiS1i6MFFkHgoYnfedXHBCD6Yt/pqM=; b=P+C81FXqN4/H9k4+FPHIXGHl0
+        1oxcHV7+qVHe4/Pu2yWrd1H70E1lV1Wq7iYNxlHgEUITWP/tbW+ewZR2ihhcz7PGBFDi4pavECOkW
+        Gn5VZL2VGVsa/JIsgwMDezgrslv2cmD9QLAao8H8sElGAohdPWUFcZTE2oumgL8xjv8AQ=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iHnLS-00086j-Fk; Tue, 08 Oct 2019 11:07:58 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 0343B2742998; Tue,  8 Oct 2019 12:07:57 +0100 (BST)
+Date:   Tue, 8 Oct 2019 12:07:57 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Axel Lin <axel.lin@ingics.com>
+Cc:     Steve Twiss <stwiss.opensource@diasemi.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Subject: Re: [RESEND][PATCH 2/2] regulator: da9062: Simplify
+ da9062_buck_set_mode for BUCK_MODE_MANUAL case
+Message-ID: <20191008110757.GE4382@sirena.co.uk>
+References: <20191007115009.25672-1-axel.lin@ingics.com>
+ <20191007115009.25672-2-axel.lin@ingics.com>
+ <CAFRkauCW5-+u6npP2fpAaNL5kPdKXQ_wWrZ_7qZkJr=uMP1BsA@mail.gmail.com>
+ <20191008104407.GA4382@sirena.co.uk>
+ <CAFRkauDq=6X9LRj7APwKOV+7CVZN5OSVuWXmwBQ3QQPWD9Nauw@mail.gmail.com>
+ <20191008105101.GB4382@sirena.co.uk>
+ <CAFRkauCft5p4P_LkZVLde62Yh03p-_2hNPm6wEct5XSeg-p0Bg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="6Vw0j8UKbyX0bfpA"
+Content-Disposition: inline
+In-Reply-To: <CAFRkauCft5p4P_LkZVLde62Yh03p-_2hNPm6wEct5XSeg-p0Bg@mail.gmail.com>
+X-Cookie: Do not disturb.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Include n50_display.h for the definition of nv50_display_create to
-fix the warning (and remove the now non-exported definitions in the
-n50_display.h to allow the code to build):
 
-drivers/gpu/drm/nouveau/dispnv50/disp.c:2297:1: warning: symbol 'nv50_display_create' was not declared. Should it be static?
+--6Vw0j8UKbyX0bfpA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
----
- drivers/gpu/drm/nouveau/dispnv50/disp.c | 2 ++
- drivers/gpu/drm/nouveau/nv50_display.h  | 3 ---
- 2 files changed, 2 insertions(+), 3 deletions(-)
+On Tue, Oct 08, 2019 at 06:53:22PM +0800, Axel Lin wrote:
 
-diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-index b46be8a091e9..f7774cc927d8 100644
---- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
-+++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-@@ -53,6 +53,8 @@
- #include "nouveau_fence.h"
- #include "nouveau_fbcon.h"
- 
-+#include "nv50_display.h"
-+
- #include <subdev/bios/dp.h>
- 
- /******************************************************************************
-diff --git a/drivers/gpu/drm/nouveau/nv50_display.h b/drivers/gpu/drm/nouveau/nv50_display.h
-index fbd3b15583bc..2421401d1263 100644
---- a/drivers/gpu/drm/nouveau/nv50_display.h
-+++ b/drivers/gpu/drm/nouveau/nv50_display.h
-@@ -31,7 +31,4 @@
- #include "nouveau_reg.h"
- 
- int  nv50_display_create(struct drm_device *);
--void nv50_display_destroy(struct drm_device *);
--int  nv50_display_init(struct drm_device *);
--void nv50_display_fini(struct drm_device *);
- #endif /* __NV50_DISPLAY_H__ */
--- 
-2.23.0
+> But if I generate the patch on for-5.5 branch, I think you will get
+> conflict when merge for-5.4 and for-5.5 to for-next.
 
+Right.  I will probably merge the 5.4 branch into the 5.5 branch at some
+point, if something doesn't apply I will say so.  Like I say I've not
+looked at that yet.
+
+--6Vw0j8UKbyX0bfpA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2cbg0ACgkQJNaLcl1U
+h9BCrQf9HN89mZXia0lhlu9Ty/WeykpHCfJaU5mT5duKOGcV6gqwea7nQOYqRYXz
+nZvgK4SCjQmnfRp72HZhR6I+B58oW+srv6y/+JDdHgN8W6Ut7Y4yIGk4asU0AXqf
+kYZakmfy88t9bR1RtbsN36kcVTyLCP1b2sGewQ0oPMJFMFIUV49IVDI5eTN8xM+D
+ZhtoOqZDM6yQz2CaoSTKDbZy7IJquYnngvFb20t25RcLzaK6YZ0Ig1oAvJ43OYGM
+AtHeENsSsdHUFNX2ZVL7CGZXVs6G+ijABMWlTBXm102M/olOsdalMK6MoBVKuKDB
+nlZaQbcdkzN35yH5wc5F45WsQI8+Rw==
+=F7Du
+-----END PGP SIGNATURE-----
+
+--6Vw0j8UKbyX0bfpA--
