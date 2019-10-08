@@ -2,182 +2,243 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B048CF689
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 11:56:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFFC6CF67E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 11:56:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730519AbfJHJ4h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 05:56:37 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:20524 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730471AbfJHJ4e (ORCPT
+        id S1730405AbfJHJ4W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 05:56:22 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36697 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730177AbfJHJ4V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 05:56:34 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x989oqB2017657;
-        Tue, 8 Oct 2019 11:56:23 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=D1YTtXGlnn9n+wzMgmKua3M6JR/Hf72FY8yVMBQwtWI=;
- b=wWOV9dlnI7b6wCn4MtpVrTkngtTOGrtkV+7uI304jlygQIo0HZnhy2bmoAAC+rDCaAOi
- RnoFi1Z75OPIfdl+J8qwKHXWSMnZHf8SqCECwbDvUITf/bKCNqd+FbnegDoUij9cu4B6
- mf6CJGoLaAA+NqUenNV4QQ/ej5Rd7kkFKW28/ii4HX8tXKcGeBVOiAe1A3UPxT8TjUip
- VwqaGi56ABUH2z47yR/yB+efUHuIo4B/x5iHd5tH9ImE0rBKhbu3pDIywgE/KquKomIk
- 1EYE4wuVA1MK4iOKRGcFxngbXaM6sGAdE8K7L9+SKbm2Ewf5EDLYNtZKM6pjqy7n/IBh Ag== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2vegn0qfsd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 08 Oct 2019 11:56:23 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 992D310002A;
-        Tue,  8 Oct 2019 11:56:22 +0200 (CEST)
-Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8E79A2B40AF;
-        Tue,  8 Oct 2019 11:56:22 +0200 (CEST)
-Received: from SAFEX1HUBCAS23.st.com (10.75.90.46) by Safex1hubcas22.st.com
- (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 8 Oct 2019
- 11:56:22 +0200
-Received: from lmecxl0923.lme.st.com (10.48.0.237) by webmail-ga.st.com
- (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 8 Oct 2019
- 11:56:21 +0200
-From:   Ludovic Barre <ludovic.Barre@st.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     <srinivas.kandagatla@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH V7 3/3] mmc: mmci: sdmmc: add busy_complete callback
-Date:   Tue, 8 Oct 2019 11:56:04 +0200
-Message-ID: <20191008095604.20675-4-ludovic.Barre@st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191008095604.20675-1-ludovic.Barre@st.com>
-References: <20191008095604.20675-1-ludovic.Barre@st.com>
+        Tue, 8 Oct 2019 05:56:21 -0400
+Received: by mail-wm1-f65.google.com with SMTP id m18so2462214wmc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 02:56:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=vEHGV8fz0ze30XF5NY4MQwYrrRa9sbd2HQQv35b43+o=;
+        b=bpInivkjCcBdWt72oZG09k+4GDuW0SRI/kvbp/9mJwwkIEwpu6e+pq3a54EnOca1d3
+         dvpbiDr8tWAdanduHyyHC8LmSFkcfM4Ab8ZvMDzRyJRKxfZzvslMBDEkG4g5mZsCcTwj
+         QiOKcOjopviqLZpiXWLrAbHG5p9teAlRCeQa2i7uRWQpo95/K6wJg0L4hsGPjRWb3Cnl
+         j3AJgYoRSGadnzZbbQQebDwPlvAe0eh5Sh/yLcHlJkUis6cOWwTWJbdKmdvlsyEqCrz1
+         u60N0C1MbC4oqjbB1JjhoQ6diTpZhyv+AVDhJYOFggFUt1CaMRIRrSk82XaQiRFTwBOD
+         1ciA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=vEHGV8fz0ze30XF5NY4MQwYrrRa9sbd2HQQv35b43+o=;
+        b=G3DuZDPaak0TTfY+P1tR32aux3IDftiTmJPcZNQeLKVb7t6EbxkqwGGIOqA2k/X5Ij
+         miTzsWgphAtKtfffEbkqEKUZCIQcQnqNsvQs0NEMLLPy7YTdPkYsUpEdingML+sLro+m
+         NI2lXlJ2oRk9/xQEjRNkk2gZ7Qx2kNNeCvFmQVSrlqmvBL2aK0EWDsQGz+Ijhm4txbZ2
+         5u5ZRvALJrWQflVQhJrcw04GodL2BPC9I1nL1jP0+wDvdAkMNXRrJXk4ZBtMUCCbn133
+         M292vU0fjnLsrdy1XbV+V4DeRGx9jFpeS8l3W5EwOKkxD5ruXKm+RI+RpefyJkeZhKFU
+         Rn8Q==
+X-Gm-Message-State: APjAAAVDPNN8oZQvjl+y1Cmttr8gJUmH/6xMxOOlU4EbUuRsezBC/E0m
+        B1kPrDnUOKBV3YX05W0Kgh96OG1SvfF/YRgoFuFjTg==
+X-Google-Smtp-Source: APXvYqyWjlo/zH9ipkhuvdAIdYUJ0fjb2/N4IKbtIjiMQ02/qWKSCIjdbuQ+CuXaeFEi2/elRvjPTCk9rlqZ2Mxsb88=
+X-Received: by 2002:a05:600c:2489:: with SMTP id 9mr3019891wms.131.1570528577418;
+ Tue, 08 Oct 2019 02:56:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.48.0.237]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-08_03:2019-10-07,2019-10-08 signatures=0
+References: <20190608054928.4792-1-hdanton@sina.com>
+In-Reply-To: <20190608054928.4792-1-hdanton@sina.com>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Tue, 8 Oct 2019 11:56:06 +0200
+Message-ID: <CAG_fn=VfLkw5H+e+NPDFeMyE9R7vLN4jnCpe04trGTCcfEuDRA@mail.gmail.com>
+Subject: Re: KMSAN: uninit-value in read_sensor_register
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     syzbot <syzbot+06ddf1788cfd048c5e82@syzkaller.appspotmail.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org,
+        mchehab@kernel.org,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ludovic Barre <ludovic.barre@st.com>
+On Sat, Jun 8, 2019 at 7:49 AM Hillf Danton <hdanton@sina.com> wrote:
+>
+>
+> Hi
+>
+> On Fri, 07 Jun 2019 14:53:05 -0700 (PDT) syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    f75e4cfe kmsan: use kmsan_handle_urb() in urb.c
+> > git tree:       kmsan
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D1454b01ea00=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D602468164cc=
+dc30a
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D06ddf1788cfd0=
+48c5e82
+> > compiler:       clang version 9.0.0 (/home/glider/llvm/clang
+> > 06d00afa61eef8f7f501ebdb4e8612ea43ec2d78)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D12cbead2a=
+00000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1683b761a00=
+000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the comm=
+it:
+> > Reported-by: syzbot+06ddf1788cfd048c5e82@syzkaller.appspotmail.com
+> >
+> > usb 1-1: config 0 has an invalid interface number: 110 but max is 0
+> > usb 1-1: config 0 has no interface number 0
+> > usb 1-1: New USB device found, idVendor=3D0ac8, idProduct=3Dc301, bcdDe=
+vice=3D
+> > 1.4a
+> > usb 1-1: New USB device strings: Mfr=3D0, Product=3D0, SerialNumber=3D0
+> > usb 1-1: config 0 descriptor??
+> > gspca_main: vc032x-2.14.0 probing 0ac8:c301
+> > gspca_vc032x: reg_w err -71
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > BUG: KMSAN: uninit-value in read_sensor_register+0x732/0x26a0
+> > drivers/media/usb/gspca/vc032x.c:2975
+> > CPU: 1 PID: 33 Comm: kworker/1:1 Not tainted 5.1.0+ #1
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS=
+ Google 01/01/2011
+> > Workqueue: usb_hub_wq hub_event
+> > Call Trace:
+> >   __dump_stack lib/dump_stack.c:77 [inline]
+> >   dump_stack+0x191/0x1f0 lib/dump_stack.c:113
+> >   kmsan_report+0x130/0x2a0 mm/kmsan/kmsan.c:622
+> >   __msan_warning+0x75/0xe0 mm/kmsan/kmsan_instr.c:310
+> >   read_sensor_register+0x732/0x26a0 drivers/media/usb/gspca/vc032x.c:29=
+75
+> >   vc032x_probe_sensor drivers/media/usb/gspca/vc032x.c:3036 [inline]
+> >   sd_init+0x2f94/0x5330 drivers/media/usb/gspca/vc032x.c:3167
+> >   gspca_dev_probe2+0xee0/0x2240 drivers/media/usb/gspca/gspca.c:1546
+> >   gspca_dev_probe+0x346/0x3b0 drivers/media/usb/gspca/gspca.c:1619
+> >   sd_probe+0x8d/0xa0 drivers/media/usb/gspca/gl860/gl860.c:523
+> >   usb_probe_interface+0xd66/0x1320 drivers/usb/core/driver.c:361
+> >   really_probe+0xdae/0x1d80 drivers/base/dd.c:513
+> >   driver_probe_device+0x1b3/0x4f0 drivers/base/dd.c:671
+> >   __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:778
+> >   bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:454
+> >   __device_attach+0x454/0x730 drivers/base/dd.c:844
+> >   device_initial_probe+0x4a/0x60 drivers/base/dd.c:891
+> >   bus_probe_device+0x137/0x390 drivers/base/bus.c:514
+> >   device_add+0x288d/0x30e0 drivers/base/core.c:2106
+> >   usb_set_configuration+0x30dc/0x3750 drivers/usb/core/message.c:2027
+> >   generic_probe+0xe7/0x280 drivers/usb/core/generic.c:210
+> >   usb_probe_device+0x14c/0x200 drivers/usb/core/driver.c:266
+> >   really_probe+0xdae/0x1d80 drivers/base/dd.c:513
+> >   driver_probe_device+0x1b3/0x4f0 drivers/base/dd.c:671
+> >   __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:778
+> >   bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:454
+> >   __device_attach+0x454/0x730 drivers/base/dd.c:844
+> >   device_initial_probe+0x4a/0x60 drivers/base/dd.c:891
+> >   bus_probe_device+0x137/0x390 drivers/base/bus.c:514
+> >   device_add+0x288d/0x30e0 drivers/base/core.c:2106
+> >   usb_new_device+0x23e5/0x2ff0 drivers/usb/core/hub.c:2534
+> >   hub_port_connect drivers/usb/core/hub.c:5089 [inline]
+> >   hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
+> >   port_event drivers/usb/core/hub.c:5350 [inline]
+> >   hub_event+0x48d1/0x7290 drivers/usb/core/hub.c:5432
+> >   process_one_work+0x1572/0x1f00 kernel/workqueue.c:2269
+> >   worker_thread+0x111b/0x2460 kernel/workqueue.c:2415
+> >   kthread+0x4b5/0x4f0 kernel/kthread.c:254
+> >   ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
+> >
+> > Uninit was created at:
+> >   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:208 [inline]
+> >   kmsan_internal_poison_shadow+0x92/0x150 mm/kmsan/kmsan.c:162
+> >   kmsan_kmalloc+0xa4/0x130 mm/kmsan/kmsan_hooks.c:175
+> >   kmem_cache_alloc_trace+0x503/0xae0 mm/slub.c:2801
+> >   kmalloc include/linux/slab.h:547 [inline]
+> >   gspca_dev_probe2+0x30c/0x2240 drivers/media/usb/gspca/gspca.c:1480
+> >   gspca_dev_probe+0x346/0x3b0 drivers/media/usb/gspca/gspca.c:1619
+> >   sd_probe+0x8d/0xa0 drivers/media/usb/gspca/gl860/gl860.c:523
+> >   usb_probe_interface+0xd66/0x1320 drivers/usb/core/driver.c:361
+> >   really_probe+0xdae/0x1d80 drivers/base/dd.c:513
+> >   driver_probe_device+0x1b3/0x4f0 drivers/base/dd.c:671
+> >   __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:778
+> >   bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:454
+> >   __device_attach+0x454/0x730 drivers/base/dd.c:844
+> >   device_initial_probe+0x4a/0x60 drivers/base/dd.c:891
+> >   bus_probe_device+0x137/0x390 drivers/base/bus.c:514
+> >   device_add+0x288d/0x30e0 drivers/base/core.c:2106
+> >   usb_set_configuration+0x30dc/0x3750 drivers/usb/core/message.c:2027
+> >   generic_probe+0xe7/0x280 drivers/usb/core/generic.c:210
+> >   usb_probe_device+0x14c/0x200 drivers/usb/core/driver.c:266
+> >   really_probe+0xdae/0x1d80 drivers/base/dd.c:513
+> >   driver_probe_device+0x1b3/0x4f0 drivers/base/dd.c:671
+> >   __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:778
+> >   bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:454
+> >   __device_attach+0x454/0x730 drivers/base/dd.c:844
+> >   device_initial_probe+0x4a/0x60 drivers/base/dd.c:891
+> >   bus_probe_device+0x137/0x390 drivers/base/bus.c:514
+> >   device_add+0x288d/0x30e0 drivers/base/core.c:2106
+> >   usb_new_device+0x23e5/0x2ff0 drivers/usb/core/hub.c:2534
+> >   hub_port_connect drivers/usb/core/hub.c:5089 [inline]
+> >   hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
+> >   port_event drivers/usb/core/hub.c:5350 [inline]
+> >   hub_event+0x48d1/0x7290 drivers/usb/core/hub.c:5432
+> >   process_one_work+0x1572/0x1f00 kernel/workqueue.c:2269
+> >   worker_thread+0x111b/0x2460 kernel/workqueue.c:2415
+> >   kthread+0x4b5/0x4f0 kernel/kthread.c:254
+> >   ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> Ignore my noise if you have no interest seeing the syzbot report.
+>
+> The following tiny diff, made in hope that it may help you perhaps handle
+> the report, allocates a slab with zero filled to make the bot happy.
+>
+> Thanks
+> Hillf
+> ---
+>  drivers/media/usb/gspca.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/media/usb/gspca.c b/drivers/media/usb/gspca.c
+> index be11f78..dcc6ed4 100644
+> --- a/drivers/media/usb/gspca.c
+> +++ b/drivers/media/usb/gspca.c
+> @@ -1468,7 +1468,7 @@ int gspca_dev_probe2(struct usb_interface *intf,
+>                 pr_err("couldn't kzalloc gspca struct\n");
+>                 return -ENOMEM;
+>         }
+> -       gspca_dev->usb_buf =3D kmalloc(USB_BUF_SZ, GFP_KERNEL);
+> +       gspca_dev->usb_buf =3D kmalloc(USB_BUF_SZ, GFP_KERNEL|__GFP_ZERO)=
+;
+How about calling kzalloc() then?
+>         if (!gspca_dev->usb_buf) {
+>                 pr_err("out of memory\n");
+>                 ret =3D -ENOMEM;
+> --
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgi=
+d/syzkaller-bugs/20190608054928.4792-1-hdanton%40sina.com.
+> For more options, visit https://groups.google.com/d/optout.
 
-This patch adds a specific busy_complete callback for sdmmc variant.
 
-sdmmc has 2 status flags:
--busyd0: This is a hardware status flag (inverted value of d0 line).
-it does not generate an interrupt.
--busyd0end: This indicates only end of busy following a CMD response.
-On busy to Not busy changes, an interrupt is generated (if unmask)
-and BUSYD0END status flag is set. Status flag is cleared by writing
-corresponding interrupt clear bit in MMCICLEAR.
 
-The legacy busy completion has no dedicated interrupt for the end
-of busy, so it's must monitor step by step the busy progression.
-On sdmmc variant, this procedure is not needed, it's just need
-to wait the busyd0end interrupt.
+--=20
+Alexander Potapenko
+Software Engineer
 
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
----
- drivers/mmc/host/mmci.c             |  4 +++
- drivers/mmc/host/mmci.h             |  1 +
- drivers/mmc/host/mmci_stm32_sdmmc.c | 42 +++++++++++++++++++++++++++++
- 3 files changed, 47 insertions(+)
+Google Germany GmbH
+Erika-Mann-Stra=C3=9Fe, 33
+80636 M=C3=BCnchen
 
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index 5e53f9b6d82a..40e72c30ea84 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -262,6 +262,10 @@ static struct variant_data variant_stm32_sdmmc = {
- 	.datalength_bits	= 25,
- 	.datactrl_blocksz	= 14,
- 	.stm32_idmabsize_mask	= GENMASK(12, 5),
-+	.busy_timeout		= true,
-+	.busy_detect		= true,
-+	.busy_detect_flag	= MCI_STM32_BUSYD0,
-+	.busy_detect_mask	= MCI_STM32_BUSYD0ENDMASK,
- 	.init			= sdmmc_variant_init,
- };
- 
-diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-index 2a0b98f98c36..158e1231aa23 100644
---- a/drivers/mmc/host/mmci.h
-+++ b/drivers/mmc/host/mmci.h
-@@ -164,6 +164,7 @@
- #define MCI_ST_CARDBUSY		(1 << 24)
- /* Extended status bits for the STM32 variants */
- #define MCI_STM32_BUSYD0	BIT(20)
-+#define MCI_STM32_BUSYD0END	BIT(21)
- 
- #define MMCICLEAR		0x038
- #define MCI_CMDCRCFAILCLR	(1 << 0)
-diff --git a/drivers/mmc/host/mmci_stm32_sdmmc.c b/drivers/mmc/host/mmci_stm32_sdmmc.c
-index 8e83ae6920ae..1de855d29ad4 100644
---- a/drivers/mmc/host/mmci_stm32_sdmmc.c
-+++ b/drivers/mmc/host/mmci_stm32_sdmmc.c
-@@ -282,6 +282,47 @@ static u32 sdmmc_get_dctrl_cfg(struct mmci_host *host)
- 	return datactrl;
- }
- 
-+static bool sdmmc_busy_complete(struct mmci_host *host, u32 status, u32 err_msk)
-+{
-+	void __iomem *base = host->base;
-+	u32 busy_d0, busy_d0end, mask, sdmmc_status;
-+
-+	mask = readl_relaxed(base + MMCIMASK0);
-+	sdmmc_status = readl_relaxed(base + MMCISTATUS);
-+	busy_d0end = sdmmc_status & MCI_STM32_BUSYD0END;
-+	busy_d0 = sdmmc_status & MCI_STM32_BUSYD0;
-+
-+	/* complete if there is an error or busy_d0end */
-+	if ((status & err_msk) || busy_d0end)
-+		goto complete;
-+
-+	/*
-+	 * On response the busy signaling is reflected in the BUSYD0 flag.
-+	 * if busy_d0 is in-progress we must activate busyd0end interrupt
-+	 * to wait this completion. Else this request has no busy step.
-+	 */
-+	if (busy_d0) {
-+		if (!host->busy_status) {
-+			writel_relaxed(mask | host->variant->busy_detect_mask,
-+				       base + MMCIMASK0);
-+			host->busy_status = status &
-+				(MCI_CMDSENT | MCI_CMDRESPEND);
-+		}
-+		return false;
-+	}
-+
-+complete:
-+	if (host->busy_status) {
-+		writel_relaxed(mask & ~host->variant->busy_detect_mask,
-+			       base + MMCIMASK0);
-+		writel_relaxed(host->variant->busy_detect_mask,
-+			       base + MMCICLEAR);
-+		host->busy_status = 0;
-+	}
-+
-+	return true;
-+}
-+
- static struct mmci_host_ops sdmmc_variant_ops = {
- 	.validate_data = sdmmc_idma_validate_data,
- 	.prep_data = sdmmc_idma_prep_data,
-@@ -292,6 +333,7 @@ static struct mmci_host_ops sdmmc_variant_ops = {
- 	.dma_finalize = sdmmc_idma_finalize,
- 	.set_clkreg = mmci_sdmmc_set_clkreg,
- 	.set_pwrreg = mmci_sdmmc_set_pwrreg,
-+	.busy_complete = sdmmc_busy_complete,
- };
- 
- void sdmmc_variant_init(struct mmci_host *host)
--- 
-2.17.1
-
+Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
