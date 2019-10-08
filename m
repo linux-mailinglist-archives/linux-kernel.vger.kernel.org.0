@@ -2,84 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80E30CFDC1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 17:38:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65FEECFDC6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 17:39:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727272AbfJHPih (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 11:38:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45858 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725908AbfJHPig (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 11:38:36 -0400
-Received: from localhost (unknown [89.205.136.99])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02E902070B;
-        Tue,  8 Oct 2019 15:38:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570549114;
-        bh=gjdt14TlOZyesMNTH7/5zSE94bMrmk0OHHv7OXJGXaE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=g6Hw1hA8MaxUCugwMm+KqWjnL4ueUeMaByU1o/g241xDYq/YvMvFCndcGgL6KBg/C
-         CHK3kljSd/j9kMjl7/uRDDwzU2ShSfUUaXtN72uf53LWFMLpVY0qDHQRe7XZu0H+F7
-         SbqoQhju7xWNE5hakgvm6d5VXqDy9Jl7ziRTVI9k=
-Date:   Tue, 8 Oct 2019 17:38:31 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to
- unsafe_put_user()
-Message-ID: <20191008153831.GA2881123@kroah.com>
-References: <20191007012437.GK26530@ZenIV.linux.org.uk>
- <CAHk-=whKJfX579+2f-CHc4_YmEmwvMe_Csr0+CPfLAsSAdfDoA@mail.gmail.com>
- <20191007025046.GL26530@ZenIV.linux.org.uk>
- <CAHk-=whraNSys_Lj=Ut1EA=CJEfw2Uothh+5-WL+7nDJBegWcQ@mail.gmail.com>
- <CAHk-=witTXMGsc9ZAK4hnKnd_O7u8b1eiou-6cfjt4aOcWvruQ@mail.gmail.com>
- <20191008032912.GQ26530@ZenIV.linux.org.uk>
- <CAHk-=wiAyZmsEp6oQQgHiuaDU0bLj=OVHSGV_OfvHRSXNPYABw@mail.gmail.com>
- <20191008045712.GR26530@ZenIV.linux.org.uk>
- <20191008131416.GA2860109@kroah.com>
- <20191008152900.GT26530@ZenIV.linux.org.uk>
+        id S1727536AbfJHPj3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 11:39:29 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56454 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbfJHPj3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 11:39:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=XrQwPYJ9ZxtAK55jxj1ROP1SF0zdgUGUTqfiib/SpJ4=; b=XngeCDSoSquz9UNqpG9IqIOMw
+        g80aeCv7meKmzZllrXkgxMG8xhyW4i6s6xhdFF5J1SUC9dZwcUhhu/HZPFY4HE9uiLNjM1iBjYXTg
+        H25tJ/QNXPfPF2ssYk9zIRNZc3AnsoavpXdPsDxzSvXptuLXDXoje/hE43+NzjaQWBqM4QME4MA6R
+        YAE1ejYqKB6XjbW7lc2fajOWbkoYopdPt6NZkpVYqfXwbt39RXYpVQteWSf2JwfuUnUL8Dlx2StbR
+        mKezoiwSvka2UkCMWyziw4eSGlLtFIr/m5hoWcXcWU3LNJ4RibDOeoiPcnpXNbMjYgPpTKpIxkH4p
+        AjusAdTUA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iHra8-0005PO-Co; Tue, 08 Oct 2019 15:39:24 +0000
+Date:   Tue, 8 Oct 2019 08:39:24 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Anup Patel <anup@brainfault.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alan Kao <alankao@andestech.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Atish Patra <atish.patra@wdc.com>, Gary Guo <gary@garyguo.net>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>
+Subject: Re: [PATCH v2 3/3] RISC-V: Move SBI related macros under uapi.
+Message-ID: <20191008153924.GA20318@infradead.org>
+References: <20190927000915.31781-1-atish.patra@wdc.com>
+ <20190927000915.31781-4-atish.patra@wdc.com>
+ <20190927222107.GC4700@infradead.org>
+ <CAAhSdy2kAze4bt17kVA3tB4H6qXPMSUroi5ybPcTvFB_=p48oQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191008152900.GT26530@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <CAAhSdy2kAze4bt17kVA3tB4H6qXPMSUroi5ybPcTvFB_=p48oQ@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 04:29:00PM +0100, Al Viro wrote:
-> On Tue, Oct 08, 2019 at 03:14:16PM +0200, Greg KH wrote:
-> > On Tue, Oct 08, 2019 at 05:57:12AM +0100, Al Viro wrote:
-> > > 
-> > > 	OK...  BTW, do you agree that the use of access_ok() in
-> > > drivers/tty/n_hdlc.c:n_hdlc_tty_read() is wrong?  It's used as an early
-> > > cutoff, so we don't bother waiting if user has passed an obviously bogus
-> > > address.  copy_to_user() is used for actual copying there...
-> > 
-> > Yes, it's wrong, and not needed.  I'll go rip it out unless you want to?
-> 
-> I'll throw it into misc queue for now; it has no prereqs and nothing is going
-> to depend upon it.
+On Thu, Oct 03, 2019 at 11:00:05AM +0530, Anup Patel wrote:
+> These defines are indeed part of KVM userspace API because we will
+> be forwarding SBI calls not handled by KVM RISC-V kernel module to
+> KVM userspace (QEMU/KVMTOOL). The forwarded SBI call details
+> are passed to userspace via "struct kvm_run" of KVM_RUN ioctl.
 
-Great, thanks.
-
-> While looking for more of the same pattern: usb_device_read().  Frankly,
-> usb_device_dump() calling conventions look ugly - it smells like it
-> would be much happier as seq_file.  Iterator would take some massage,
-> but that seems to be doable.  Anyway, that's a separate story...
-
-That's just a debugfs file, and yes, it should be moved to seq_file.  I
-think I tried it a long time ago, but given it's just a debugging thing,
-I gave up as it wasn't worth it.
-
-But yes, the access_ok() there also seems odd, and should be dropped.
-
-thanks,
-
-greg k-h
+At best your are passing through a hardware interface.  We don't expose
+e.g. the nvme headers to userspace either.  We keep the headers clean
+enough that userspace can copy them (and a few projects do), but they
+really are not a kernel interface in any classic way.
