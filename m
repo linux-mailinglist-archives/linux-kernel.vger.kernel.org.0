@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF662CF783
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 12:53:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8BF7CF779
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 12:53:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730611AbfJHKxO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 06:53:14 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47622 "EHLO
+        id S1730471AbfJHKwy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 06:52:54 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47626 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730016AbfJHKwy (ORCPT
+        with ESMTP id S1730063AbfJHKwy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 8 Oct 2019 06:52:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,27 +18,27 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=ngt3gSvS1KH6rVDgxpsnLeZZYKwMM9UIKM2G9/QBotk=; b=TGm54aoVA/Ji
-        rdLAkOiG3y3eitoFt72K7QEtPTG6ziFkQFm5uLm91+ThVyYiZuG62oXG0hFkyqf0voncw6Ke8qAL9
-        ULe1c9WexgjAB/aLW6msUm8HCjNJVezQrUjNoiWwI9b+LEYvxlJZGMPOb69m05fbctklNcIh+WqVF
-        QMuY8=;
+        List-Archive; bh=ul8ns9r6ws/iQLKhPCURq0GxvyPGJtbgzbQoZ2Ssn2s=; b=Ia8FcXHsiEle
+        HIBta3YV8NajED6o1oEY68nBb+u8UwY8tb1ty+bzgwkcOcmijW9+pDWjlcAULuXR1WkL1sAf5xZhq
+        EA4TabaEAyo6H/vF3BcSifzF+I/LWT83axglodYFf5pfzXrSfQv7e2ZN7N7gPqBMetXD1SLYVj+iU
+        4Blhs=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iHn6n-00083Y-B6; Tue, 08 Oct 2019 10:52:49 +0000
+        id 1iHn6n-00083X-4Z; Tue, 08 Oct 2019 10:52:49 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id CDB5D274299F; Tue,  8 Oct 2019 11:52:48 +0100 (BST)
+        id 9086E274299B; Tue,  8 Oct 2019 11:52:48 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Axel Lin <axel.lin@ingics.com>
 Cc:     Heiko Stuebner <heiko@sntech.de>,
         Liam Girdwood <lgirdwood@gmail.com>,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
         Tony Xie <tony.xie@rock-chips.com>
-Subject: Applied "regulator: rk808: Constify rk817 regulator_ops" to the regulator tree
-In-Reply-To: <20191008010628.8513-1-axel.lin@ingics.com>
+Subject: Applied "regulator: rk808: Fix warning message in rk817_set_ramp_delay" to the regulator tree
+In-Reply-To: <20191008010628.8513-2-axel.lin@ingics.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191008105248.CDB5D274299F@ypsilon.sirena.org.uk>
+Message-Id: <20191008105248.9086E274299B@ypsilon.sirena.org.uk>
 Date:   Tue,  8 Oct 2019 11:52:48 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -47,7 +47,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: rk808: Constify rk817 regulator_ops
+   regulator: rk808: Fix warning message in rk817_set_ramp_delay
 
 has been applied to the regulator tree at
 
@@ -72,70 +72,33 @@ to this mail.
 Thanks,
 Mark
 
-From 2e67f32296e3f1841793e36ce796f1497614c687 Mon Sep 17 00:00:00 2001
+From cc37038fe344e6000d30879c27521ee47c534fc8 Mon Sep 17 00:00:00 2001
 From: Axel Lin <axel.lin@ingics.com>
-Date: Tue, 8 Oct 2019 09:06:26 +0800
-Subject: [PATCH] regulator: rk808: Constify rk817 regulator_ops
+Date: Tue, 8 Oct 2019 09:06:27 +0800
+Subject: [PATCH] regulator: rk808: Fix warning message in rk817_set_ramp_delay
 
-These regulator_ops variables never need to be modified, make them const so
-compiler can put them to .rodata.
+The default in rk817_set_ramp_delay is 25MV rather than 10MV.
 
 Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Link: https://lore.kernel.org/r/20191008010628.8513-1-axel.lin@ingics.com
+Link: https://lore.kernel.org/r/20191008010628.8513-2-axel.lin@ingics.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/rk808-regulator.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/regulator/rk808-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/regulator/rk808-regulator.c b/drivers/regulator/rk808-regulator.c
-index 61bd5ef0806c..eda056fce65f 100644
+index eda056fce65f..d0d1b868b0cd 100644
 --- a/drivers/regulator/rk808-regulator.c
 +++ b/drivers/regulator/rk808-regulator.c
-@@ -686,7 +686,7 @@ static const struct regulator_linear_range rk805_buck_1_2_voltage_ranges[] = {
- 	REGULATOR_LINEAR_RANGE(2300000, 63, 63, 0),
- };
+@@ -388,7 +388,7 @@ static int rk817_set_ramp_delay(struct regulator_dev *rdev, int ramp_delay)
+ 		break;
+ 	default:
+ 		dev_warn(&rdev->dev,
+-			 "%s ramp_delay: %d not supported, setting 10000\n",
++			 "%s ramp_delay: %d not supported, setting 25000\n",
+ 			 rdev->desc->name, ramp_delay);
+ 	}
  
--static struct regulator_ops rk809_buck5_ops_range = {
-+static const struct regulator_ops rk809_buck5_ops_range = {
- 	.list_voltage		= regulator_list_voltage_linear_range,
- 	.map_voltage		= regulator_map_voltage_linear_range,
- 	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-@@ -700,7 +700,7 @@ static struct regulator_ops rk809_buck5_ops_range = {
- 	.set_suspend_disable	= rk817_set_suspend_disable,
- };
- 
--static struct regulator_ops rk817_reg_ops = {
-+static const struct regulator_ops rk817_reg_ops = {
- 	.list_voltage		= regulator_list_voltage_linear,
- 	.map_voltage		= regulator_map_voltage_linear,
- 	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-@@ -713,7 +713,7 @@ static struct regulator_ops rk817_reg_ops = {
- 	.set_suspend_disable	= rk817_set_suspend_disable,
- };
- 
--static struct regulator_ops rk817_boost_ops = {
-+static const struct regulator_ops rk817_boost_ops = {
- 	.list_voltage		= regulator_list_voltage_linear,
- 	.map_voltage		= regulator_map_voltage_linear,
- 	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-@@ -725,7 +725,7 @@ static struct regulator_ops rk817_boost_ops = {
- 	.set_suspend_disable	= rk817_set_suspend_disable,
- };
- 
--static struct regulator_ops rk817_buck_ops_range = {
-+static const struct regulator_ops rk817_buck_ops_range = {
- 	.list_voltage		= regulator_list_voltage_linear_range,
- 	.map_voltage		= regulator_map_voltage_linear_range,
- 	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-@@ -743,7 +743,7 @@ static struct regulator_ops rk817_buck_ops_range = {
- 	.set_suspend_disable	= rk817_set_suspend_disable,
- };
- 
--static struct regulator_ops rk817_switch_ops = {
-+static const struct regulator_ops rk817_switch_ops = {
- 	.enable			= regulator_enable_regmap,
- 	.disable		= regulator_disable_regmap,
- 	.is_enabled		= rk8xx_is_enabled_wmsk_regmap,
 -- 
 2.20.1
 
