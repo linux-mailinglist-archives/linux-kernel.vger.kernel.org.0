@@ -2,85 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04ED2CFC98
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:39:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D871CFCA7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:44:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726439AbfJHOjF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 10:39:05 -0400
-Received: from mail.loongson.cn ([114.242.206.163]:43927 "EHLO
-        mail.loongson.cn" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726227AbfJHOjF (ORCPT
+        id S1727010AbfJHOoO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 10:44:14 -0400
+Received: from sender4-op-o14.zoho.com ([136.143.188.14]:17478 "EHLO
+        sender4-op-o14.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726057AbfJHOoO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 10:39:05 -0400
-Received: from linux.loongson.cn (unknown [10.20.41.27])
-        by mail (Coremail) with SMTP id QMiowPDxv2CAn5xdu7sLAA--.72S2;
-        Tue, 08 Oct 2019 22:38:56 +0800 (CST)
-From:   Tiezhu Yang <yangtiezhu@loongson.cn>
-To:     paul.burton@mips.com, ralf@linux-mips.org, jhogan@kernel.org
-Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] MIPS: generic: Use __initconst for const init data
-Date:   Tue,  8 Oct 2019 22:38:53 +0800
-Message-Id: <1570545533-12718-1-git-send-email-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.1.0
-X-CM-TRANSID: QMiowPDxv2CAn5xdu7sLAA--.72S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrKw1rKrW8uryxGFWkuF15urg_yoWkCwb_uw
-        s2yF18Gr1rCrWY9FsFvw15Ja4IkaySvF9rA34kKan8A3s3tF15Cw4q9r13Jry8WFZ0yry5
-        JF4rXa45Cr17ujkaLaAFLSUrUUUUYb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUb6AYjsxI4VW3JwAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I
-        6I8E6xAIw20EY4v20xvaj40_JFC_Wr1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
-        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0
-        cI8IcVCY1x0267AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4
-        A2jsIEc7CjxVAFwI0_GcCE3s1ln4kS14v26r1q6r43M2AIxVAIcxkEcVAq07x20xvEncxI
-        r21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87
-        Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7xvr2IY
-        c2Ij64vIr40E4x8a64kEw24lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I
-        8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jw0_GFylx2IqxVAqx4xG67AKxVWU
-        JVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7V
-        AKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j
-        6r4UMIIF0xvE42xK8VAvwI8IcIk0rVW3JVWrJr1lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIx
-        AIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU51GQDUUUUU=
-        =
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+        Tue, 8 Oct 2019 10:44:14 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1570545850; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=XRrV7pyCThipqclKUM2Ky5bqi/GNdFf7j9T/FxLOeVPVsDVbRQe9gJ99QnAdlOF5ahFAbNMx2wyPiJZt3OWackGod/nhYIO5r4bFJp/7Qm9cucOHXnob5W9fV2kHpu//OF7I/HDTXzYnLI4nZA4GqcVq3jcfO/PXmRRge0LftCU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1570545850; h=Content-Type:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=/JtGJI/LSl4yi67OOHIZfNwrdK+iHIc6JyX2j7v59Rs=; 
+        b=MVRxIK4yi0PF44rkH4ipNGFNDZTD5y2OU5Wm/ILPID/DENLFJlZc8MmeJSy4lLI+W0dxSHbLLuQar4t9YhIp8+cr6T1I6djRFglvURAAaMROmZ9FThRpDJNLbBYUNxnFUBwvhd7y9uWg1eVp9WgwuE6JC3Yfwj/AGeAxGNbD00c=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=dlrobertson.com;
+        spf=pass  smtp.mailfrom=dan@dlrobertson.com;
+        dmarc=pass header.from=<dan@dlrobertson.com> header.from=<dan@dlrobertson.com>
+Received: from nessie (pool-100-15-144-194.washdc.fios.verizon.net [100.15.144.194]) by mx.zohomail.com
+        with SMTPS id 15705458495321015.360847600824; Tue, 8 Oct 2019 07:44:09 -0700 (PDT)
+Date:   Tue, 8 Oct 2019 14:29:46 +0000
+From:   Dan Robertson <dan@dlrobertson.com>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] iio: (bma400) add driver for the BMA400
+Message-ID: <20191008142946.GA7784@nessie>
+References: <20190925013941.20431-1-dan@dlrobertson.com>
+ <20190925013941.20431-2-dan@dlrobertson.com>
+ <20191006093754.61a12172@archlinux>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
+Content-Disposition: inline
+In-Reply-To: <20191006093754.61a12172@archlinux>
+User-Agent: Mutt/1.12.2 (2019-09-21)
+X-Zoho-Virus-Status: 1
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the following checkpatch errors:
 
-$ ./scripts/checkpatch.pl --no-tree -f arch/mips/generic/init.c
-ERROR: Use of const init definition must use __initconst
-+static __initdata const void *fdt;
+--vkogqOf2sHV7VnPd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-ERROR: Use of const init definition must use __initconst
-+static __initdata const struct mips_machine *mach;
+Jonathan,
 
-ERROR: Use of const init definition must use __initconst
-+static __initdata const void *mach_match_data;
+Thanks for the review! I _think_ I've made all the changes you mentioned
+locally. I'll run some more tests and clean it up a bit before submitting the
+next patchset version.
 
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
----
- arch/mips/generic/init.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> So my first thought was that Bosch have been moderately good at keeping their
+> interfaces consistent across generations.  Seems not this time from
+> a quick look!
 
-diff --git a/arch/mips/generic/init.c b/arch/mips/generic/init.c
-index d5b8c47..1de215b 100644
---- a/arch/mips/generic/init.c
-+++ b/arch/mips/generic/init.c
-@@ -20,9 +20,9 @@
- #include <asm/smp-ops.h>
- #include <asm/time.h>
- 
--static __initdata const void *fdt;
--static __initdata const struct mips_machine *mach;
--static __initdata const void *mach_match_data;
-+static __initconst const void *fdt;
-+static __initconst const struct mips_machine *mach;
-+static __initconst const void *mach_match_data;
- 
- void __init prom_init(void)
- {
--- 
-2.1.0
+Originally I had hoped to extend the bma180 driver, but there did seem to be a
+reasonably large change in the interfaces. I also hope to add support for some
+of the newer features and SPI. I think it would be possible to merge the two
+drivers, but I think it would require pretty close to a complete overhaul of
+the bma180 driver. If this is something you'd like to explore, I can probably
+order a breakout board for the BMA180 and BMA220 and work on a way to create a
+driver that supports all three.
 
+> I'd also expect a modern driver to have DT bindings.  Might let that go if
+> it was being used with ACPI but neither is true here.
+
+Good catch. The DT bindings will be very simple in the initial version of the
+driver. I'll add the bindings and some documentation.
+
+> See the docs for struct iio_info -> read_avail.
+
+Nice! I missed this. This fits exactly what I needed.
+
+Cheers,
+
+Dan
+
+--vkogqOf2sHV7VnPd
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEF5dO2RaKc5C+SCJ9RcSmUsR+QqUFAl2cnVUACgkQRcSmUsR+
+QqXyLA//eu9Q/gGMKF3BqJN9CTa7BhBQaCeEjUJ9R9mD79eaF7uOXJ+wgUZwSFtk
+0VtFigIzrigNGiZX4h21kqGf5zKaYUEgQZXaA4UbRgEwDVGQXqe2p4SidEWRh90K
+KcD/AO4fh3DlXipMH7ZkAzfLDPnHqf27b0W759prlrgYYIYSjZUIk9YKoIVSHFlJ
+i8h6/nsvqMWMeGM7z1W4ZPU3KmSM9jr+mZXPKgdooan2cAKk0FuZwQSLXhnRDi8F
+55MaT1Syr9BwOKTDX8K4h4K9UOwo7cFPqo24Ihwa1vDT2bQLK8e4T8K/GbcybfQd
+cAvI5VOdS3f88DF0cGHNMrPLd25yzahu5SINI7oAqrUtXhKsoxg06AFR4R3UtH+u
+uYtQ37aqbz11awHmA9rJ5MSvoTv6KrA8wsEwu/gk+QGM6Hu5RBX1lCLcGCeNt766
+yfk88E6PtLkEofn1Mggeb+m3+jEHNl2ezy/jFjY2hytn269A0INgfWIz1YeEsmx1
+JJT8MnJvYRWG9X9Sumcss6ExnNqRY6XDtaS/iGQoeS53r+yDjezwdoKhmuFpsnXu
+l2ObWLSmoUN/S/E8jjoo8jWYlgfvB2IBl9P5krUq1U3ZI74DT0Ziwa9GsjwbtM2J
+8JXOFHYJXOAXfOaGsvzfgYC4ZK0UBr7fK9hLvud9r2bDJXn+o+4=
+=hT/h
+-----END PGP SIGNATURE-----
+
+--vkogqOf2sHV7VnPd--
 
