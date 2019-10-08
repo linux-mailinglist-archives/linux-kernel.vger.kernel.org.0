@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 760F2CF5C6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 11:15:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BCE3CF5CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 11:15:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730036AbfJHJPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 05:15:24 -0400
-Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:55822 "EHLO
-        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729624AbfJHJPX (ORCPT
+        id S1730211AbfJHJPf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 05:15:35 -0400
+Received: from pio-pvt-msa2.bahnhof.se ([79.136.2.41]:56136 "EHLO
+        pio-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730163AbfJHJPc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 05:15:23 -0400
+        Tue, 8 Oct 2019 05:15:32 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id D644A3F673;
-        Tue,  8 Oct 2019 11:15:21 +0200 (CEST)
-Authentication-Results: ste-pvt-msa1.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=Pak/abgf;
+        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 365FC3F68E;
+        Tue,  8 Oct 2019 11:15:25 +0200 (CEST)
+Authentication-Results: pio-pvt-msa2.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=aHdlB1za;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at bahnhof.se
 X-Spam-Flag: NO
@@ -26,28 +26,27 @@ X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
         tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
         DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
         autolearn=ham autolearn_force=no
-Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
-        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id fZQSLccUoC82; Tue,  8 Oct 2019 11:15:21 +0200 (CEST)
+Received: from pio-pvt-msa2.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id PK8-sFKECaEf; Tue,  8 Oct 2019 11:15:20 +0200 (CEST)
 Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
         (Authenticated sender: mb878879)
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 390433F659;
+        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 0400A3F374;
         Tue,  8 Oct 2019 11:15:17 +0200 (CEST)
 Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id 5DA3F360327;
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 7E8FC3605CA;
         Tue,  8 Oct 2019 11:15:17 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1570526117; bh=ATsPYfeOkElUoDV2E6FX8H5ycT5UvTUPVg1ij4MRN/0=;
+        t=1570526117; bh=fG/GNjL9xDuyikgbRDOUKbeudoZ9IgG6ULIdrU+mLBQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pak/abgffgmvvrWWx80fzit+L2hS07qF1Be4/EwwR0UFBI+QNVAcuJURboeEJez+d
-         6VmyHW1B4vi0rcB9QddoCxQLIQGccMmJMQ7zcvTLczzInzmSUucr0w1BDlv878P5yG
-         /+1C0AFXV+pvgfyNfp0K3UpFiGY78TLGc7Z1aYek=
+        b=aHdlB1zax3KqHtdg+12GqQ4xe9oZhVhb/iGc5X6UYUyemkpWGmKCluj2cofgOkrXW
+         kxRjrliinZnszyw+Eec2OClT+3OLJFNSQ8QLK9Mlwa6IBTYHo2i32L7z7Tvl5z2Eot
+         ZrDcqiN6xpMBg0l1Z6nFYhbPQ3xjmUh5UbMINoAs=
 From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
         <thomas_os@shipmail.org>
 To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
 Cc:     torvalds@linux-foundation.org,
         Thomas Hellstrom <thellstrom@vmware.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
         Matthew Wilcox <willy@infradead.org>,
         Will Deacon <will.deacon@arm.com>,
         Peter Zijlstra <peterz@infradead.org>,
@@ -57,9 +56,9 @@ Cc:     torvalds@linux-foundation.org,
         Huang Ying <ying.huang@intel.com>,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         "Kirill A . Shutemov" <kirill@shutemov.name>
-Subject: [PATCH v4 1/9] mm: Remove BUG_ON mmap_sem not held from xxx_trans_huge_lock()
-Date:   Tue,  8 Oct 2019 11:15:00 +0200
-Message-Id: <20191008091508.2682-2-thomas_os@shipmail.org>
+Subject: [PATCH v4 2/9] mm: pagewalk: Take the pagetable lock in walk_pte_range()
+Date:   Tue,  8 Oct 2019 11:15:01 +0200
+Message-Id: <20191008091508.2682-3-thomas_os@shipmail.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191008091508.2682-1-thomas_os@shipmail.org>
 References: <20191008091508.2682-1-thomas_os@shipmail.org>
@@ -73,12 +72,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Hellstrom <thellstrom@vmware.com>
 
-The caller needs to make sure that the vma is not torn down during the
-lock operation and can also use the i_mmap_rwsem for file-backed vmas.
-Remove the BUG_ON. We could, as an alternative, add a test that either
-vma->vm_mm->mmap_sem or vma->vm_file->f_mapping->i_mmap_rwsem are held.
+Without the lock, anybody modifying a pte from within this function might
+have it concurrently modified by someone else.
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Matthew Wilcox <willy@infradead.org>
 Cc: Will Deacon <will.deacon@arm.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
@@ -88,32 +84,36 @@ Cc: Michal Hocko <mhocko@suse.com>
 Cc: Huang Ying <ying.huang@intel.com>
 Cc: Jérôme Glisse <jglisse@redhat.com>
 Cc: Kirill A. Shutemov <kirill@shutemov.name>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
-Acked-by: Kirill A. Shutemov <kirill@shutemov.name>
 ---
- include/linux/huge_mm.h | 2 --
- 1 file changed, 2 deletions(-)
+ mm/pagewalk.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 93d5cf0bc716..0b84e13e88e2 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -216,7 +216,6 @@ static inline int is_swap_pmd(pmd_t pmd)
- static inline spinlock_t *pmd_trans_huge_lock(pmd_t *pmd,
- 		struct vm_area_struct *vma)
- {
--	VM_BUG_ON_VMA(!rwsem_is_locked(&vma->vm_mm->mmap_sem), vma);
- 	if (is_swap_pmd(*pmd) || pmd_trans_huge(*pmd) || pmd_devmap(*pmd))
- 		return __pmd_trans_huge_lock(pmd, vma);
- 	else
-@@ -225,7 +224,6 @@ static inline spinlock_t *pmd_trans_huge_lock(pmd_t *pmd,
- static inline spinlock_t *pud_trans_huge_lock(pud_t *pud,
- 		struct vm_area_struct *vma)
- {
--	VM_BUG_ON_VMA(!rwsem_is_locked(&vma->vm_mm->mmap_sem), vma);
- 	if (pud_trans_huge(*pud) || pud_devmap(*pud))
- 		return __pud_trans_huge_lock(pud, vma);
- 	else
+diff --git a/mm/pagewalk.c b/mm/pagewalk.c
+index d48c2a986ea3..83c0b78363b4 100644
+--- a/mm/pagewalk.c
++++ b/mm/pagewalk.c
+@@ -10,8 +10,9 @@ static int walk_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
+ 	pte_t *pte;
+ 	int err = 0;
+ 	const struct mm_walk_ops *ops = walk->ops;
++	spinlock_t *ptl;
+ 
+-	pte = pte_offset_map(pmd, addr);
++	pte = pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
+ 	for (;;) {
+ 		err = ops->pte_entry(pte, addr, addr + PAGE_SIZE, walk);
+ 		if (err)
+@@ -22,7 +23,7 @@ static int walk_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
+ 		pte++;
+ 	}
+ 
+-	pte_unmap(pte);
++	pte_unmap_unlock(pte - 1, ptl);
+ 	return err;
+ }
+ 
 -- 
 2.21.0
 
