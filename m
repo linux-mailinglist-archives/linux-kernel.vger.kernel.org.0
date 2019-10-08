@@ -2,89 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB4C9CFC4A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:22:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABE7BCFC52
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:25:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726489AbfJHOWh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 10:22:37 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:34736 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725839AbfJHOWg (ORCPT
+        id S1726828AbfJHOXW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 10:23:22 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:45377 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725839AbfJHOXW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 10:22:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1570544555;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=jMpWj4uOPxcgbjJ4IsWoC4M5sQShlFz4NNLvVWf/x6o=;
-        b=Cszw21RsBE2P8aVTe7ByjPE3OXu768c33Lf6s+jGwrRzqcpeyfCrvF2LWtAwhKPMXC2Adn
-        bgOw/C2La2SEtla0gcAz0opspVDHhce8gpXBtDZapr5/0wAGPM6rnDM2ZfMpJBOA9WCUm8
-        D5gRbMyHefonYwdNtpH5wDc8KSBWIq4=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-330-DAMSSagpMD6PALxAVV3EIQ-1; Tue, 08 Oct 2019 10:22:33 -0400
-Received: by mail-lf1-f72.google.com with SMTP id w193so2275453lff.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 07:22:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=izWGXNhra/3fh2DCf3llnwEjW05viNBlyod0b16IslA=;
-        b=NtFMET7yNImU3yBrof/SJJOWPNGHwK827qSIYn98yEkKoIk7jt5C9ku0khij7HjiEN
-         /von2AqXE6xg/6izO7LCYWUIkqm/IKmnnvlr2ElYMAO7sOOEGjmIVRTKgMIKE1WG/knL
-         B6bw4qOURpLGccaKdNaH7vjP9htigVvzarDOpDQkXYPR5f4Brx+V/fNGDNI+/X9r7FUS
-         wzenvR2wSnkxS4eG18P2PxCTKpXdddKtW/zxr+jLY0HoZt62po/J6Elky/wVC+Jk1dWe
-         GGX0GK88uxcMtkqFowCdrhhHDhGRK6m/Q9KCvY58Oy7q5DM2Hac0VTfduKw6glKfIXRA
-         KiTw==
-X-Gm-Message-State: APjAAAVln7KxcjvgvzEFCAwgaJ/JmXIrXDgEZ3UgB17/ytNSIN9sPCI4
-        2rg37PGWP3mCJV5IVZkhUvGgzlYcIaMxl0J16bgyNyJcGDRBvZHOqDjYL28LtT6Cnb0WaLluSnz
-        PKlryfSOr+S5p3CfppsEjaf5AX1ztAf7feBeCrCFV
-X-Received: by 2002:a19:f617:: with SMTP id x23mr20131655lfe.97.1570544551405;
-        Tue, 08 Oct 2019 07:22:31 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwQ5BIwFckGkZoqMa3dajoTZI5b2H0V7PwZ9+q73PFB53Spl/+fGoimtc5lTyv7g1Hv5kaHN9PjZmq2Rci2J+I=
-X-Received: by 2002:a19:f617:: with SMTP id x23mr20131648lfe.97.1570544551211;
- Tue, 08 Oct 2019 07:22:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191008123346.3931-1-mcroce@redhat.com> <20191008131518.GH25098@kadam>
-In-Reply-To: <20191008131518.GH25098@kadam>
-From:   Matteo Croce <mcroce@redhat.com>
-Date:   Tue, 8 Oct 2019 16:21:54 +0200
-Message-ID: <CAGnkfhxefH+3YKDWQMCOYoj1skcq6rUmHuiHZQ-76YixFqbQjg@mail.gmail.com>
-Subject: Re: [PATCH] staging: vchiq: don't leak kernel address
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Eric Anholt <eric@anholt.net>, Stefan Wahren <wahrenst@gmx.net>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>, devel@driverdev.osuosl.org
-X-MC-Unique: DAMSSagpMD6PALxAVV3EIQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+        Tue, 8 Oct 2019 10:23:22 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1iHqOJ-0007ME-4O; Tue, 08 Oct 2019 16:23:07 +0200
+Message-ID: <1570544586.18914.9.camel@pengutronix.de>
+Subject: Re: [PATCH v3 0/3] reset: meson: add Meson-A1 SoC support
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Xingyu Chen <xingyu.chen@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Date:   Tue, 08 Oct 2019 16:23:06 +0200
+In-Reply-To: <1569738255-3941-1-git-send-email-xingyu.chen@amlogic.com>
+References: <1569738255-3941-1-git-send-email-xingyu.chen@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 8, 2019 at 3:16 PM Dan Carpenter <dan.carpenter@oracle.com> wro=
-te:
+Hi Xingyu,
+
+On Sun, 2019-09-29 at 14:24 +0800, Xingyu Chen wrote:
+> This patchset adds support for Meson-A1 SoC Reset Controller. A new struct
+> meson_reset_param is introduced to describe the register differences between
+> Meson-A1 and previous SoCs.
 >
-> The subject doesn't match the patch.  It should just be "remove useless
-> printk".
->
-> regards,
-> dan carpenter
->
+> Changes since v2 at [1]:
+> - add comments in header file to indicate holes
+> - reorder the Signed-off-by and Reviewed-by
+> - remove Jianxin's Signed-off-by
+> - add Kevin's Reviewed-by
 
-Well, it avoids leaking an address by removing an useless printk.
-It seems that GKH already picked the patch in his staging tree, but
-I'm fine with both subjects, really,
+Thank you, I have applied patches 2 and 3 to reset/next.
 
-Greg?
+regards
+Philipp
 
---=20
-Matteo Croce
-per aspera ad upstream
-
+> Changes since v1 at [0]:
+> - rebase on linux-next
+> - add Neil's Reviewed-by
+> 
+> [0] https://lore.kernel.org/linux-amlogic/1568808746-1153-1-git-send-email-xingyu.chen@amlogic.com
+> [1] https://lore.kernel.org/linux-amlogic/1569227661-4261-1-git-send-email-xingyu.chen@amlogic.com
+> 
+> Xingyu Chen (3):
+>   arm64: dts: meson: add reset controller for Meson-A1 SoC
+>   dt-bindings: reset: add bindings for the Meson-A1 SoC Reset Controller
+>   reset: add support for the Meson-A1 SoC Reset Controller
+> 
+>  .../bindings/reset/amlogic,meson-reset.yaml        |  1 +
+>  arch/arm64/boot/dts/amlogic/meson-a1.dtsi          |  6 ++
+>  drivers/reset/reset-meson.c                        | 35 ++++++++--
+>  include/dt-bindings/reset/amlogic,meson-a1-reset.h | 74 ++++++++++++++++++++++
+>  4 files changed, 109 insertions(+), 7 deletions(-)
+>  create mode 100644 include/dt-bindings/reset/amlogic,meson-a1-reset.h
+> 
