@@ -2,78 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B74ECF5B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 11:09:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8660ECF5C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 11:15:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730063AbfJHJJo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 05:09:44 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:56482 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729784AbfJHJJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 05:09:43 -0400
-Received: from zn.tnic (p200300EC2F0B510054990CC7734BB19B.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:5100:5499:cc7:734b:b19b])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5B0CA1EC0586;
-        Tue,  8 Oct 2019 11:09:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1570525781;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=qt4hy0nHJpZzoW+FdanfkOoQrJ3VcoxYAWMats/0cuY=;
-        b=d86V74O523mB29Lrfe7xMwqw93h5ms5psG6yR7hcCoIgxSi5PEiyu47/agTwTCT/IIbWt8
-        BIPm+2KnntWEpPpFkLTdYVjBIJGPdxzc8Fx1QGdGlywjgUm9KrGXOXOAK2Hv55GNrYdbnX
-        jAVfXJiG0V9CQyCuFjQXb2IFyFQxr34=
-Date:   Tue, 8 Oct 2019 11:09:31 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
-        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
-        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
-        tglx@linutronix.de, kai.svahn@intel.com, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com
-Subject: Re: [PATCH v22 09/24] x86/sgx: Add functions to allocate and free
- EPC pages
-Message-ID: <20191008090931.GC14765@zn.tnic>
-References: <20190903142655.21943-1-jarkko.sakkinen@linux.intel.com>
- <20190903142655.21943-10-jarkko.sakkinen@linux.intel.com>
- <20191005164408.GB25699@zn.tnic>
- <20191007145011.GA18016@linux.intel.com>
+        id S1730068AbfJHJP0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 05:15:26 -0400
+Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:8723 "EHLO
+        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729767AbfJHJPZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 05:15:25 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 1E7133F5AE;
+        Tue,  8 Oct 2019 11:15:22 +0200 (CEST)
+Authentication-Results: ste-pvt-msa2.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=LrQ0Zej0;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
+        dkim=pass (1024-bit key) header.d=shipmail.org
+Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
+        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id bmFCtrWnn2Ro; Tue,  8 Oct 2019 11:15:19 +0200 (CEST)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id CF0313F218;
+        Tue,  8 Oct 2019 11:15:17 +0200 (CEST)
+Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 3DFE2360191;
+        Tue,  8 Oct 2019 11:15:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1570526117; bh=tyDYzJNzqfT/d5ghCy5FJjRqTCw8Fi3aGd90siIbvyY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=LrQ0Zej0aeC4ObGtIrdp2B1IGJ/YdbO3/t/nUg8qynsJ+95DP3RwgIBWKnuKeocHB
+         Mf3lNW1cqFHL2o06smyhYjYj0CRtNYqA016xU+0RlH9o2KgHAVxefjEnLt92BGKMtB
+         sKJADwOMA+L4vr0ofvtnJZDVe44/uCs2L6eZ2jPw=
+From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
+        <thomas_os@shipmail.org>
+To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc:     torvalds@linux-foundation.org,
+        =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thellstrom@vmware.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rik van Riel <riel@surriel.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Huang Ying <ying.huang@intel.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>
+Subject: [PATCH v4 0/9] Emulated coherent graphics memory take 2
+Date:   Tue,  8 Oct 2019 11:14:59 +0200
+Message-Id: <20191008091508.2682-1-thomas_os@shipmail.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191007145011.GA18016@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 07, 2019 at 07:50:11AM -0700, Sean Christopherson wrote:
-> The caller is responsible for ensuring EREMOVE can be safely executed,
-> e.g. by holding the enclave's lock.
+From: Thomas Hellström <thellstrom@vmware.com>
 
-lockdep_assert_held() here maybe?
+Graphics APIs like OpenGL 4.4 and Vulkan require the graphics driver
+to provide coherent graphics memory, meaning that the GPU sees any
+content written to the coherent memory on the next GPU operation that
+touches that memory, and the CPU sees any content written by the GPU
+to that memory immediately after any fence object trailing the GPU
+operation is signaled.
 
-> For many ENCLS leafs, EREMOVE included, the CPU requires exclusive access
-> to the SGX Enclave Control Structures (SECS)[*] and will signal a #GP if
-> a different logical CPU is already executing an ENCLS leaf that requires
-> exclusive SECS access.  The SGX subsystem uses a per-enclave mutex to
-> serialize such ENCLS leafs, among other things.
->
-> [*] The SECS is a per-enclave page that resides in the EPC and can only be
->     directly accessed by the CPU.  It's used to track metadata about the
->     enclave, e.g. number of child pages, base, size, etc...
+Paravirtual drivers that otherwise require explicit synchronization
+needs to do this by hooking up dirty tracking to pagefault handlers
+and buffer object validation.
 
-Ok.
+Provide mm helpers needed for this and that also allow for huge pmd-
+and pud entries (patch 1-3), and the associated vmwgfx code (patch 4-7).
 
--- 
-Regards/Gruss,
-    Boris.
+The code has been tested and exercised by a tailored version of mesa
+where we disable all explicit synchronization and assume graphics memory
+is coherent. The performance loss varies of course; a typical number is
+around 5%.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+I would like to merge this code through the DRM tree, so an ack to include
+the new mm helpers in that merge would be greatly appreciated.
+
+Changes since RFC:
+- Merge conflict changes moved to the correct patch. Fixes intra-patchset
+  compile errors.
+- Be more aggressive when turning ttm vm code into helpers. This makes sure
+  we can use a const qualifier on the vmwgfx vm_ops.
+- Reinstate a lost comment an fix an error path that was broken when turning
+  the ttm vm code into helpers.
+- Remove explicit type-casts of struct vm_area_struct::vm_private_data
+- Clarify the locking inversion that makes us not being able to use the mm
+  pagewalk code.
+
+Changes since v1:
+- Removed the vmwgfx maintainer entry for as_dirty_helpers.c, updated
+  commit message accordingly
+- Removed the TTM patches from the series as they are merged separately
+  through DRM.
+Changes since v2:
+- Split out the pagewalk code from as_dirty_helpers.c and document locking.
+- Add pre_vma and post_vma callbacks to the pagewalk code.
+- Remove huge pmd and -pud asserts that would trip when we protect vmas with
+  struct address_space::i_mmap_rwsem rather than with
+  struct vm_area_struct::mmap_sem.
+- Do some naming cleanup in as_dirty_helpers.c
+Changes since v3:
+- Extensive renaming of the dirty helpers including the filename.
+- Update walk_page_mapping() doc.
+- Update the pagewalk code to not unconditionally split pmds if a pte_entry()
+  callback is present. Update the dirty helper pmd_entry accordingly.
+- Use separate walk ops for the dirty helpers.
+- Update the pagewalk code to take the pagetable lock in walk_pte_range.
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: Jérôme Glisse <jglisse@redhat.com>
+Cc: Kirill A. Shutemov <kirill@shutemov.name>
