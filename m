@@ -2,99 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAFEECFD76
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 17:21:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8F8DCFD7C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 17:22:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727365AbfJHPU5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 11:20:57 -0400
-Received: from smtprelay0242.hostedemail.com ([216.40.44.242]:41673 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725989AbfJHPU5 (ORCPT
+        id S1727220AbfJHPWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 11:22:20 -0400
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:33436 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbfJHPWU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 11:20:57 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 0BBCA180A68B4;
-        Tue,  8 Oct 2019 15:20:56 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:599:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2197:2199:2393:2553:2559:2562:2828:2911:3138:3139:3140:3141:3142:3353:3622:3653:3865:3867:3868:3871:3872:3873:4321:4425:5007:7903:9545:10004:10400:10848:11232:11658:11914:12297:12740:12760:12895:13069:13071:13311:13357:13439:14180:14181:14659:14721:21060:21063:21080:21221:21627:21740:30045:30054:30070:30090:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
-X-HE-Tag: horn44_806ca6b72c2e
-X-Filterd-Recvd-Size: 2257
-Received: from XPS-9350.home (unknown [47.151.152.152])
-        (Authenticated sender: joe@perches.com)
-        by omf13.hostedemail.com (Postfix) with ESMTPA;
-        Tue,  8 Oct 2019 15:20:55 +0000 (UTC)
-Message-ID: <19c54ca5b3750bebc057e20542ad6c0c2acef960.camel@perches.com>
-Subject: Re: [PATCH] checkpatch: use patch subject when reading from stdin
-From:   Joe Perches <joe@perches.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Andy Whitcroft <apw@canonical.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org
-Date:   Tue, 08 Oct 2019 08:20:53 -0700
-In-Reply-To: <20191008094006.8251-1-geert+renesas@glider.be>
-References: <20191008094006.8251-1-geert+renesas@glider.be>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
+        Tue, 8 Oct 2019 11:22:20 -0400
+Received: by mail-vk1-f195.google.com with SMTP id s21so117341vkm.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 08:22:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OaNDrHWuf2YNQdBBfgofGBEnuYpRlrKz3qdtkWdVupc=;
+        b=v8a8BLbdp886LwnyKcfcEzNg2DWslLphnhUYmwRCdeDXyhD/wXHxf4UFzmxxSVDOfX
+         Y1SLDNnrIm9He9kujuCj924lKLMQu5Z3O+l7M4oWU3xCNqMchlsFmC+n4ehVTSlrfS76
+         2ulnZTIoMM5YedI9n6jmBy5xfZxmHnXDV4ysoXI05s5LhCKxOyheUE7elUKrTUdsJ8l9
+         CPqMlgBUGzW78/ZkC+FSC3BgoztHmMZbNFcXHrzGI0dLP2Dx8+3rzPcTlTJBPgAEuMny
+         8kjO/eWWuhQ8pv7o+C/E/TMu/Yz49mJfamMWzKXbV24ANgzodOhPMegFzlnq2x103GLK
+         ZClQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OaNDrHWuf2YNQdBBfgofGBEnuYpRlrKz3qdtkWdVupc=;
+        b=eqtEXTkxG6ZwgkL6UuAk7a68vHC3e6EHfDEY6cb+pj0wXHM+9R1fMHmYBPaosgn9AY
+         PLcaaZVfee9yr1EGrjPXKIIIfvxhyxbXzZxijq9NPe/40FzVnciap1782khTE7A1bidm
+         HH+IGTtaGjrdAkjKxR5me4wIxYqa2km2Jad8qM4cAkuddKdVVfoQM8OqFBSDPblXte7u
+         jn12lFngCItgq/PxSgfSvBnDfohCyCgVg2Sno9SV+D89dSQdlKnHzZii68ndSebzIIys
+         puQKrmKJIfLPql6h9zBzkCmGPdc72FNNYQsHhH9eK7bgN9NlUgdhZvGIQsVjO7rvenom
+         aNDg==
+X-Gm-Message-State: APjAAAWOr9XVeS4ZUfFAXKO2HDgQhNq+qFJmvT3zDl1gnV6SdJt/SytX
+        Tif9BL73E70nsLwgJXY49cAzeuANUik1DSAzfLq92Q==
+X-Google-Smtp-Source: APXvYqw0cdHQAFUr9qXPA3syc72BDMnRBk0iMwv2cwlFyFw144X/NmOqKsuIGB6TOtCy8QxQCPWIn0sPHjmd721wUpk=
+X-Received: by 2002:a1f:5003:: with SMTP id e3mr3693062vkb.35.1570548138747;
+ Tue, 08 Oct 2019 08:22:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20191007201452.208067-1-samitolvanen@google.com>
+ <CAKwvOdmaMaO-Gpv2x0CWG+CRUCNKbNWJij97Jr0LaRaZXjAiTA@mail.gmail.com>
+ <CABCJKufxncBPOx6==57asbMF_On=g1sZAv+w6RnqHJFSwOSeTw@mail.gmail.com> <CAKwvOd=k5iE8L5xbxwYDF=hSftqUXDdpgKYBDBa35XOkAx3d0w@mail.gmail.com>
+In-Reply-To: <CAKwvOd=k5iE8L5xbxwYDF=hSftqUXDdpgKYBDBa35XOkAx3d0w@mail.gmail.com>
+From:   Sami Tolvanen <samitolvanen@google.com>
+Date:   Tue, 8 Oct 2019 08:22:07 -0700
+Message-ID: <CABCJKucPcqSS=8dP-6hOwGpKUYxOk8Q_Av83O0A2A85JKznypQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: lse: fix LSE atomics with LLVM's integrated assembler
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-10-08 at 11:40 +0200, Geert Uytterhoeven wrote:
-> When reading a patch file from standard input, checkpatch calls it "Your
-> patch", and reports its state as:
-> 
->     Your patch has style problems, please review.
-> 
-> or:
-> 
->     Your patch has no obvious style problems and is ready for submission.
-> 
-> Hence when checking multiple patches by piping them to checkpatch, e.g.
-> when checking patchwork bundles using:
-> 
->     formail -s scripts/checkpatch.pl < bundle-foo.mbox
-> 
-> it is difficult to identify which patches need to be reviewed and
-> improved.
-> 
-> Fix this by replacing "Your patch" by the patch subject, if present.
-[]
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-[]
-> @@ -1047,6 +1047,10 @@ for my $filename (@ARGV) {
->  	}
->  	while (<$FILE>) {
->  		chomp;
-> +		if ($vname eq 'Your patch') {
-> +			my ($subject) = $_ =~ /^Subject:\s*(.*)/;
-> +			$vname = '"' . $subject . '"' if $subject;
+On Mon, Oct 7, 2019 at 2:46 PM 'Nick Desaulniers' via Clang Built
+Linux <clang-built-linux@googlegroups.com> wrote:
+> I'm worried that one of these might lower to LSE atomics without
+> ALTERNATIVE guards by blanketing all C code with `-march=armv8-a+lse`.
 
-Hi again Geert.
+True, that's a valid concern. I think adding the directive to each
+assembly block is the way forward then, assuming the maintainers are
+fine with that.
 
-Just some stylistic nits:
-
-$filename is not quoted so I think adding quotes
-before and after $subject may not be useful.
-
-Can you please use what checkpatch uses as a more
-common parenthesis style after an if?
-
-i.e. use:
-	if (foo)
-not
-	if foo
-
-so maybe:
-
-	if ($filename eq '-' && $_ =~ /^Subject:\s*(.*)/) {
-		$vname = $1;
-	}
-
-or maybe
-
-	$vname = $1 if ($filename eq '-' && $_ =~ /^Subject:\s*(.*)/);
-
-
+Sami
