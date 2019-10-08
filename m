@@ -2,64 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59729CF8F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 13:54:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C647ECF8F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 13:54:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730813AbfJHLyE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 07:54:04 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54791 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730439AbfJHLyD (ORCPT
+        id S1730866AbfJHLyU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 07:54:20 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52121 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730835AbfJHLyU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 07:54:03 -0400
-Received: by mail-wm1-f66.google.com with SMTP id p7so2821233wmp.4
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 04:54:00 -0700 (PDT)
+        Tue, 8 Oct 2019 07:54:20 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 7so2835775wme.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 04:54:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=9elements.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sHpb4y5Jge7bT4i0hXsaWPVC1oPVGh0Dw3VnnTFspt4=;
-        b=Iwr0Q79UZEa0k7li7kubbpoQonu85WoRHNCpp+4gDBErUJbJ7JnAqKkPbTlF2igkLK
-         640BsQhj2FI7iq6G90sLcjZCe2e4wDRNx8gK8Do6rvtyB1IN4okKFltajkPUxql4C1zQ
-         ySoN2J1WbQDeDmSiuCyaIXJbC8RXjg1oKGbds29+iXaDsGb/QOu3wiJMQCtvk7myRnE7
-         0/y9ykdl5yLrEEbpUn3S14X1Ej/SgHnPGeLW6m7ChHMUekv9Ofl6k2QWfl1c73RKMZx/
-         RPHLBviiCgGHZhWxK9kJqdVz1iThwIaeWEz81HYMn6Wjz74XiQhQ7ySMUQZOtNUMfhBb
-         Dhvw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=x6cLNIibeTIK82QCll5CTrLqaXyHM8hh5YWTiuB41j4=;
+        b=ACkFV+FvXymweclUVq0OdJhTH7NFfqNnK9mz6INicNXoAbPNIXCtUFcsZYq05+UNq6
+         UeDEzAmAIi8mLdOwhG2wtj7agZjgjleaQzFhY5bVehIXJbhOTc0AQqseCP3pmz+DAyER
+         yBG4+WFKAA6KpWKul8kWYVktTlCwZ4j4hxrmpDyddQYqqa0emqgzF/dzJkl4ne5kWckG
+         AI/3u52Ks3I4ssqHLl5LeOXg3FlZzDGr/LDb9gqQcHv0vYQbImJ6IF5G17kLqGm1XvA9
+         57WPesHq7b4a4fYuTmPOhJMQpPOKfXLrjYPdlDy46iz1K49w2j/O6hzxswG8KJNOHzV5
+         rwmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sHpb4y5Jge7bT4i0hXsaWPVC1oPVGh0Dw3VnnTFspt4=;
-        b=C21uaoC7Ur/Uw9bn7PzTMIElIL70y6VbJJ4nxAh8x7Y+R0gShn2OcATIfN8A3JAWB2
-         oc/dm9GcTQf0LMgGEjQBExMILpLH1IG4ogkDn8ZN6xUGbBrSbydH2wdC9dRJRL9NG+T+
-         xBnrjrkuGmr+a1pnuhj8GPenyG6JHMLsRUhU/POxxlKDShTiNj4bVZaVkleDTOKj7uI/
-         l0AXcSRdpY8gxm/Oj/ztQyLBsXiTn7fpRXP7f2rjuh1hA+pr+eAQC+pmGuwy6JcOx3Nv
-         KzgpG+d9awddm+N0XMa5eVnJ79KtQLs0y5PmPmb1VLNSu6dcyvmsw1cI1UUP73PIEjNk
-         qnbw==
-X-Gm-Message-State: APjAAAWdLEqR5AMJqT3tb0VamB+hjcDZ14mTtW5ChoAwPQ4yOx5w+Jve
-        0icDzWOGhBxJ+jHCwNOJGJvfQC1sn4x8FnY1
-X-Google-Smtp-Source: APXvYqxKn1ukqj5qIz5mpa3b8wPigQccMPCapzUmn1WmYmcjpoM/j+5h+fjkwSXyJMofAC1crl6HGA==
-X-Received: by 2002:a7b:cb08:: with SMTP id u8mr3732130wmj.6.1570535639544;
-        Tue, 08 Oct 2019 04:53:59 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=x6cLNIibeTIK82QCll5CTrLqaXyHM8hh5YWTiuB41j4=;
+        b=Qkaizyse/lL+HBLY0HBiTU9OyYOxfATA9xtLslbA3GJRpllDgIVdWN99sOXlPZIUT4
+         DPGRp/TLGch7plcLg1x7dzRMxdZspjfnrVmGIqAmjVJ/UxsBhZthIX1LQQKXylfxgsZr
+         ik8Dll3lrzWgrIQtGQ2AeFaNsuvRjpiwFVYpbHxVF33sWA/e4LEM7UrYRpBIXG9X+YM1
+         hIWHMGxNzyn1Y9K/P+eZ0jknsvMEM+ZZkJ2CnuPH84UMX7xPuqvAdiKBFuh9eB2/VNl9
+         0PwpP40C5uxmSqhebqCWisPQmBcLFX6Cv6+GdpbxnhgGU1vDSZ3pdsUuQJAo1ZDyzfFF
+         jooQ==
+X-Gm-Message-State: APjAAAXPqZFVQ4M9Vua/tpc1JgNftmu4GuiSBvBHaH8pRWDNNjkh37yn
+        ARnOFNhCV0vJKLDsjVzbDV5J7WP+cyplhxFX
+X-Google-Smtp-Source: APXvYqzezkq/bhLD4X0Q5urn8uPDzMGPxS2jlRQfQf+3znujeyyVxZjyy6T1MQGxY35UGUKQcl1VQw==
+X-Received: by 2002:a05:600c:253:: with SMTP id 19mr3245828wmj.158.1570535656798;
+        Tue, 08 Oct 2019 04:54:16 -0700 (PDT)
 Received: from rudolphp.sr1.9esec.dev (b2b-78-94-0-50.unitymedia.biz. [78.94.0.50])
-        by smtp.gmail.com with ESMTPSA id l7sm19273741wrv.77.2019.10.08.04.53.58
+        by smtp.gmail.com with ESMTPSA id l7sm19273741wrv.77.2019.10.08.04.54.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2019 04:53:58 -0700 (PDT)
+        Tue, 08 Oct 2019 04:54:16 -0700 (PDT)
 From:   patrick.rudolph@9elements.com
 To:     linux-kernel@vger.kernel.org
 Cc:     Patrick Rudolph <patrick.rudolph@9elements.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ben Zhang <benzh@chromium.org>,
         Filipe Brandenburger <filbranden@chromium.org>,
         Duncan Laurie <dlaurie@chromium.org>,
-        Aaron Durbin <adurbin@chromium.org>,
         Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <swboyd@chromium.org>,
         Samuel Holland <samuel@sholland.org>,
-        Julius Werner <jwerner@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>
-Subject: [PATCH 1/2] firmware: coreboot: Export the binary FMAP
-Date:   Tue,  8 Oct 2019 13:53:25 +0200
-Message-Id: <20191008115342.28483-1-patrick.rudolph@9elements.com>
+        Julius Werner <jwerner@chromium.org>
+Subject: [PATCH 2/2] firmware: coreboot: Export active CBFS partition
+Date:   Tue,  8 Oct 2019 13:53:26 +0200
+Message-Id: <20191008115342.28483-2-patrick.rudolph@9elements.com>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20191008115342.28483-1-patrick.rudolph@9elements.com>
+References: <20191008115342.28483-1-patrick.rudolph@9elements.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -69,73 +71,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Patrick Rudolph <patrick.rudolph@9elements.com>
 
-Expose coreboot's binary FMAP[1] to /sys/firmware/fmap.
+Expose the name of the active CBFS partition under
+/sys/firmware/cbfs_active_partition
 
-coreboot copies the FMAP to a CBMEM buffer at boot since CB:35377[2],
-allowing an architecture independ way of exposing the FMAP to userspace.
+In case of Google's VBOOT[1] that currently can be one of:
+"FW_MAIN_A", "FW_MAIN_B" or "COREBOOT"
 
-Will be used by fwupd[3] to determine the current firmware layout.
+Will be used by fwupd[2] to determinde the active partition in the
+VBOOT A/B partition update scheme.
 
-[1]: https://doc.coreboot.org/lib/flashmap.html
-[2]: https://review.coreboot.org/c/coreboot/+/35377
-[3]: https://fwupd.org/
+[1]: https://doc.coreboot.org/security/vboot/index.html
+[2]: https://fwupd.org/
 
 Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
 ---
- drivers/firmware/google/Kconfig           |   8 ++
- drivers/firmware/google/Makefile          |   1 +
- drivers/firmware/google/fmap-coreboot.c   | 156 ++++++++++++++++++++++
- drivers/firmware/google/fmap-coreboot.h   |  13 ++
- drivers/firmware/google/fmap_serialized.h |  59 ++++++++
- 5 files changed, 237 insertions(+)
- create mode 100644 drivers/firmware/google/fmap-coreboot.c
- create mode 100644 drivers/firmware/google/fmap-coreboot.h
- create mode 100644 drivers/firmware/google/fmap_serialized.h
+ drivers/firmware/google/Kconfig              |  10 ++
+ drivers/firmware/google/Makefile             |   1 +
+ drivers/firmware/google/bootmedia-coreboot.c | 115 +++++++++++++++++++
+ drivers/firmware/google/coreboot_table.h     |  13 +++
+ 4 files changed, 139 insertions(+)
+ create mode 100644 drivers/firmware/google/bootmedia-coreboot.c
 
 diff --git a/drivers/firmware/google/Kconfig b/drivers/firmware/google/Kconfig
-index a3a6ca659ffa..5fbbd7b8fef6 100644
+index 5fbbd7b8fef6..f58b723d77de 100644
 --- a/drivers/firmware/google/Kconfig
 +++ b/drivers/firmware/google/Kconfig
-@@ -74,4 +74,12 @@ config GOOGLE_VPD
- 	  This option enables the kernel to expose the content of Google VPD
- 	  under /sys/firmware/vpd.
+@@ -82,4 +82,14 @@ config GOOGLE_FMAP
+ 	  the coreboot table.  If found, this binary file is exported to userland
+ 	  in the file /sys/firmware/fmap.
  
-+config GOOGLE_FMAP
-+	tristate "Coreboot FMAP access"
++config GOOGLE_BOOTMEDIA
++	tristate "Coreboot bootmedia params access"
 +	depends on GOOGLE_COREBOOT_TABLE
++	depends on GOOGLE_FMAP
 +	help
-+	  This option enables the kernel to search for a Google FMAP in
-+	  the coreboot table.  If found, this binary file is exported to userland
-+	  in the file /sys/firmware/fmap.
++	  This option enables the kernel to search for a boot media params
++	  table, providing the active CBFS partition.  If found, the name of
++	  the partition is exported to userland in the file
++	  /sys/firmware/cbfs_active_partition.
 +
  endif # GOOGLE_FIRMWARE
 diff --git a/drivers/firmware/google/Makefile b/drivers/firmware/google/Makefile
-index d17caded5d88..6d31fe167700 100644
+index 6d31fe167700..e47c59376566 100644
 --- a/drivers/firmware/google/Makefile
 +++ b/drivers/firmware/google/Makefile
-@@ -6,6 +6,7 @@ obj-$(CONFIG_GOOGLE_FRAMEBUFFER_COREBOOT)  += framebuffer-coreboot.o
- obj-$(CONFIG_GOOGLE_MEMCONSOLE)            += memconsole.o
+@@ -7,6 +7,7 @@ obj-$(CONFIG_GOOGLE_MEMCONSOLE)            += memconsole.o
  obj-$(CONFIG_GOOGLE_MEMCONSOLE_COREBOOT)   += memconsole-coreboot.o
  obj-$(CONFIG_GOOGLE_MEMCONSOLE_X86_LEGACY) += memconsole-x86-legacy.o
-+obj-$(CONFIG_GOOGLE_FMAP)                  += fmap-coreboot.o
+ obj-$(CONFIG_GOOGLE_FMAP)                  += fmap-coreboot.o
++obj-$(CONFIG_GOOGLE_BOOTMEDIA)             += bootmedia-coreboot.o
  
  vpd-sysfs-y := vpd.o vpd_decode.o
  obj-$(CONFIG_GOOGLE_VPD)		+= vpd-sysfs.o
-diff --git a/drivers/firmware/google/fmap-coreboot.c b/drivers/firmware/google/fmap-coreboot.c
+diff --git a/drivers/firmware/google/bootmedia-coreboot.c b/drivers/firmware/google/bootmedia-coreboot.c
 new file mode 100644
-index 000000000000..14050030ebc6
+index 000000000000..09c0caedaf05
 --- /dev/null
-+++ b/drivers/firmware/google/fmap-coreboot.c
-@@ -0,0 +1,156 @@
++++ b/drivers/firmware/google/bootmedia-coreboot.c
+@@ -0,0 +1,115 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * fmap-coreboot.c
++ * bootmedia-coreboot.c
 + *
-+ * Exports the binary FMAP through coreboot table.
++ * Exports the active VBOOT partition name through boot media params.
 + *
 + * Copyright 2012-2013 David Herrmann <dh.herrmann@gmail.com>
 + * Copyright 2017 Google Inc.
-+ * Copyright 2019 9elements Agency GmbH <patrick.rudolph@9elements.com>
++ * Copyright 2019 Patrick Rudolph <patrick.rudolph@9elements.com>
 + */
 +
 +#include <linux/device.h>
@@ -144,101 +146,60 @@ index 000000000000..14050030ebc6
 +#include <linux/module.h>
 +#include <linux/platform_device.h>
 +#include <linux/string.h>
-+#include <linux/io.h>
++#include <linux/slab.h>
 +
 +#include "coreboot_table.h"
-+#include "fmap_serialized.h"
++#include "fmap-coreboot.h"
 +
-+#define CB_TAG_FMAP 0x37
++#define CB_TAG_BOOT_MEDIA_PARAMS 0x30
 +
-+static void *fmap;
-+static u32 fmap_size;
++/* The current CBFS partition */
++static char *name;
 +
-+/*
-+ * Convert FMAP region to name.
-+ * The caller has to free the string.
-+ * Return NULL if no containing region was found.
-+ */
-+const char *coreboot_fmap_region_to_name(const u32 start, const u32 size)
++static ssize_t cbfs_active_partition_read(struct file *filp,
++					  struct kobject *kobp,
++					  struct bin_attribute *bin_attr,
++					  char *buf,
++					  loff_t pos, size_t count)
 +{
-+	const char *name = NULL;
-+	struct fmap *iter;
-+	u32 size_old = ~0;
-+	int i;
-+
-+	iter = fmap;
-+	/* Find smallest containing region */
-+	for (i = 0; i < iter->nareas && fmap; i++) {
-+		if (iter->areas[i].offset <= start &&
-+		    iter->areas[i].size >= size &&
-+		    iter->areas[i].size <= size_old) {
-+			size_old = iter->areas[i].size;
-+			name = iter->areas[i].name;
-+		}
-+	}
-+
-+	if (name)
-+		return kstrdup(name, GFP_KERNEL);
-+	return NULL;
-+}
-+EXPORT_SYMBOL(coreboot_fmap_region_to_name);
-+
-+static ssize_t fmap_read(struct file *filp, struct kobject *kobp,
-+			 struct bin_attribute *bin_attr, char *buf,
-+			 loff_t pos, size_t count)
-+{
-+	if (!fmap)
++	if (!name)
 +		return -ENODEV;
 +
-+	return memory_read_from_buffer(buf, count, &pos, fmap, fmap_size);
++	return memory_read_from_buffer(buf, count, &pos, name, strlen(name));
 +}
 +
-+static int fmap_probe(struct coreboot_device *dev)
++static int bmp_probe(struct coreboot_device *dev)
 +{
-+	struct lb_cbmem_ref *cbmem_ref = &dev->cbmem_ref;
-+	struct fmap *header;
++	struct lb_boot_media_params *b = &dev->bmp;
++	const char *tmp;
 +
-+	if (!cbmem_ref)
-+		return -ENODEV;
-+
-+	header = memremap(cbmem_ref->cbmem_addr, sizeof(*header), MEMREMAP_WB);
-+	if (!header) {
-+		pr_warn("coreboot: Failed to remap FMAP\n");
-+		return -ENOMEM;
-+	}
-+
-+	/* Validate FMAP signature */
-+	if (memcmp(header->signature, FMAP_SIGNATURE,
-+		   sizeof(header->signature))) {
-+		pr_warn("coreboot: FMAP signature mismatch\n");
-+		memunmap(header);
++	/* Sanity checks on the data we got */
++	if ((b->cbfs_offset == ~0) ||
++	    b->cbfs_size == 0 ||
++	    ((b->cbfs_offset + b->cbfs_size) > b->boot_media_size)) {
++		pr_warn("coreboot: Boot media params contains invalid data\n");
 +		return -ENODEV;
 +	}
 +
-+	/* Validate FMAP version */
-+	if (header->ver_major != FMAP_VER_MAJOR) {
-+		pr_warn("coreboot: FMAP version not supported\n");
-+		memunmap(header);
++	tmp = coreboot_fmap_region_to_name(b->cbfs_offset, b->cbfs_size);
++	if (!tmp) {
++		pr_warn("coreboot: Active CBFS region not found in FMAP\n");
 +		return -ENODEV;
 +	}
 +
-+	pr_info("coreboot: Got valid FMAP v%u.%u for 0x%x byte ROM\n",
-+		header->ver_major, header->ver_minor, header->size);
-+
-+	fmap_size = sizeof(*header) + header->nareas * sizeof(struct fmap_area);
-+	memunmap(header);
-+
-+	fmap = devm_memremap(&dev->dev, cbmem_ref->cbmem_addr, fmap_size,
-+			     MEMREMAP_WB);
-+	if (!fmap) {
-+		pr_warn("coreboot: Failed to remap FMAP\n");
-+		return -ENOMEM;
++	name = devm_kmalloc(&dev->dev, strlen(tmp) + 2, GFP_KERNEL);
++	if (!name) {
++		kfree(tmp);
++		return -ENODEV;
 +	}
++	snprintf(name, strlen(tmp) + 2, "%s\n", tmp);
++
++	kfree(tmp);
 +
 +	return 0;
 +}
 +
-+static int fmap_remove(struct coreboot_device *dev)
++static int bmp_remove(struct coreboot_device *dev)
 +{
 +	struct platform_device *pdev = dev_get_drvdata(&dev->dev);
 +
@@ -247,126 +208,73 @@ index 000000000000..14050030ebc6
 +	return 0;
 +}
 +
-+static struct coreboot_driver fmap_driver = {
-+	.probe = fmap_probe,
-+	.remove = fmap_remove,
++static struct coreboot_driver bmp_driver = {
++	.probe = bmp_probe,
++	.remove = bmp_remove,
 +	.drv = {
-+		.name = "fmap",
++		.name = "bootmediaparams",
 +	},
-+	.tag = CB_TAG_FMAP,
++	.tag = CB_TAG_BOOT_MEDIA_PARAMS,
 +};
 +
-+static struct bin_attribute fmap_bin_attr = {
-+	.attr = {.name = "fmap", .mode = 0444},
-+	.read = fmap_read,
++static struct bin_attribute cbfs_partition_bin_attr = {
++	.attr = {.name = "cbfs_active_partition", .mode = 0444},
++	.read = cbfs_active_partition_read,
 +};
 +
-+static int __init coreboot_fmap_init(void)
++static int __init coreboot_bmp_init(void)
 +{
 +	int err;
 +
-+	err = sysfs_create_bin_file(firmware_kobj, &fmap_bin_attr);
++	err = sysfs_create_bin_file(firmware_kobj, &cbfs_partition_bin_attr);
 +	if (err)
 +		return err;
 +
-+	return coreboot_driver_register(&fmap_driver);
++	return coreboot_driver_register(&bmp_driver);
 +}
 +
-+static void coreboot_fmap_exit(void)
++static void coreboot_bmp_exit(void)
 +{
-+	coreboot_driver_unregister(&fmap_driver);
-+	sysfs_remove_bin_file(firmware_kobj, &fmap_bin_attr);
++	coreboot_driver_unregister(&bmp_driver);
++	sysfs_remove_bin_file(firmware_kobj, &cbfs_partition_bin_attr);
 +}
 +
-+module_init(coreboot_fmap_init);
-+module_exit(coreboot_fmap_exit);
++module_init(coreboot_bmp_init);
++module_exit(coreboot_bmp_exit);
 +
 +MODULE_AUTHOR("9elements Agency GmbH");
 +MODULE_LICENSE("GPL");
-diff --git a/drivers/firmware/google/fmap-coreboot.h b/drivers/firmware/google/fmap-coreboot.h
-new file mode 100644
-index 000000000000..7107a01af0e3
---- /dev/null
-+++ b/drivers/firmware/google/fmap-coreboot.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * bootmedia-coreboot.h
-+ *
-+ * Copyright 2019 9elements Agency GmbH <patrick.rudolph@9elements.com>
-+ */
+diff --git a/drivers/firmware/google/coreboot_table.h b/drivers/firmware/google/coreboot_table.h
+index 7b7b4a6eedda..a03e039425b8 100644
+--- a/drivers/firmware/google/coreboot_table.h
++++ b/drivers/firmware/google/coreboot_table.h
+@@ -59,6 +59,18 @@ struct lb_framebuffer {
+ 	u8  reserved_mask_size;
+ };
+ 
++/* coreboot table with TAG 0x30 */
++struct lb_boot_media_params {
++	u32 tag;
++	u32 size;
 +
-+#ifndef __FMAP_COREBOOT_H
-+#define __FMAP_COREBOOT_H
-+
-+const char *coreboot_fmap_region_to_name(const u32 start, const u32 size);
-+
-+#endif /* __FMAP_COREBOOT_H */
-diff --git a/drivers/firmware/google/fmap_serialized.h b/drivers/firmware/google/fmap_serialized.h
-new file mode 100644
-index 000000000000..a001e47fa244
---- /dev/null
-+++ b/drivers/firmware/google/fmap_serialized.h
-@@ -0,0 +1,59 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright 2010, Google Inc.
-+ * All rights reserved.
-+ *
-+ * Redistribution and use in source and binary forms, with or without
-+ * modification, are permitted provided that the following conditions are
-+ * met:
-+ *    * Redistributions of source code must retain the above copyright
-+ * notice, this list of conditions and the following disclaimer.
-+ *    * Redistributions in binary form must reproduce the above
-+ * copyright notice, this list of conditions and the following disclaimer
-+ * in the documentation and/or other materials provided with the
-+ * distribution.
-+ *    * Neither the name of Google Inc. nor the names of its
-+ * contributors may be used to endorse or promote products derived from
-+ * this software without specific prior written permission.
-+ *
-+ */
-+
-+#ifndef FLASHMAP_SERIALIZED_H__
-+#define FLASHMAP_SERIALIZED_H__
-+
-+#define FMAP_SIGNATURE		"__FMAP__"
-+#define FMAP_VER_MAJOR		1	/* this header's FMAP major version */
-+#define FMAP_VER_MINOR		1	/* this header's FMAP minor version */
-+#define FMAP_STRLEN		32	/* maximum length for strings,
-+					 * including null-terminator
-+					 */
-+
-+enum fmap_flags {
-+	FMAP_AREA_STATIC	= 1 << 0,
-+	FMAP_AREA_COMPRESSED	= 1 << 1,
-+	FMAP_AREA_RO		= 1 << 2,
-+	FMAP_AREA_PRESERVE	= 1 << 3,
++	/* offsets are relative to start of boot media */
++	u64 fmap_offset;
++	u64 cbfs_offset;
++	u64 cbfs_size;
++	u64 boot_media_size;
 +};
 +
-+/* Mapping of volatile and static regions in firmware binary */
-+struct fmap_area {
-+	u32 offset;                /* offset relative to base */
-+	u32 size;                  /* size in bytes */
-+	u8  name[FMAP_STRLEN];     /* descriptive name */
-+	u16 flags;                 /* flags for this area */
-+} __packed;
-+
-+struct fmap {
-+	u8  signature[8];	/* "__FMAP__" (0x5F5F464D41505F5F) */
-+	u8  ver_major;		/* major version */
-+	u8  ver_minor;		/* minor version */
-+	u64 base;		/* address of the firmware binary */
-+	u32 size;		/* size of firmware binary in bytes */
-+	u8  name[FMAP_STRLEN];	/* name of this firmware binary */
-+	u16 nareas;		/* number of areas described by
-+				 * fmap_areas[] below
-+				 */
-+	struct fmap_area areas[];
-+} __packed;
-+
-+#endif	/* FLASHMAP_SERIALIZED_H__ */
+ /* A device, additionally with information from coreboot. */
+ struct coreboot_device {
+ 	struct device dev;
+@@ -66,6 +78,7 @@ struct coreboot_device {
+ 		struct coreboot_table_entry entry;
+ 		struct lb_cbmem_ref cbmem_ref;
+ 		struct lb_framebuffer framebuffer;
++		struct lb_boot_media_params bmp;
+ 	};
+ };
+ 
 -- 
 2.21.0
 
