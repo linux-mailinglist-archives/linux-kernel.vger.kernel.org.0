@@ -2,80 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33DAECF977
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 14:12:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52631CF975
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 14:12:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731272AbfJHMMB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 08:12:01 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:44598 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731193AbfJHMLg (ORCPT
+        id S1731266AbfJHMLx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 08:11:53 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35068 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731226AbfJHMLw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 08:11:36 -0400
-Received: by mail-qk1-f196.google.com with SMTP id u22so16415858qkk.11
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 05:11:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GMN6AE/Wckiy15zsiQVxc8Ha0nqrOTJmAoLEeM+N80A=;
-        b=eh8pCLowBh+BgvZfmBoGRvtXPz9zE1aDs0RO30fbYsKrn8CCi0iz7dLb+5ZAUaoxjI
-         h8+YdOrv4kFWisVv0+ypSez27VEQps+efiGk7jOMYv3keDR/Y6/soCbxUzNbJXsWmunL
-         vpPylf8BdgPE/ZA1QeOokTinVOQWJUymEUANn2Y+dJMoeBbgBazYB8JxeoNrYQwBHkLP
-         +Y93UIITl3fYH+rqskwFY4S7s0OHFw4upx8Nhqyxd6tVP1iDJRTOXsPTSYokzso/fTTr
-         QdOgkswn28Rv8/n9whT/owI7R/u5774xcNIdbtAtjI/OLjhmtMk6lPra8liDCk+ffMra
-         +nBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GMN6AE/Wckiy15zsiQVxc8Ha0nqrOTJmAoLEeM+N80A=;
-        b=pzXJDK32x6NrGLphtLaSR7No0hFrT8xsX9KUEKdivK3esH1GL1mpCUAnnBud5fOt3C
-         QxH7B/7g6OHGttFM5mFTPqlpx6xDIGjdZsj2sol8N9bfzoDytqIDr+DLvWkn3G64F/CE
-         vLPOHM4w8AhIxK6l/7A9z1RJcqLU2xcUKTQjrzAPa6gxRUoBZjW7xCugXinAcovBsSbc
-         9TJ13TQQxnOCNofijcE3kFPUoEKwgWKqUosvnitd9L484JpfKL2mx7HbiU1N0nzg4WSG
-         MDqNWIYmLscX2B5BgYcylbAVgKA7dgvhkmuHtP/zZSB+VOmUt+PyxP4UB8prW7azSIOR
-         N8Lg==
-X-Gm-Message-State: APjAAAUW5heEnc+9irqatV84TUU55R2s5uGWA4JFTFK/tApOSO05P21t
-        hrA7FCWf+rrI44BvtO5X356U8fvULr0DXPG2/qKTTQ==
-X-Google-Smtp-Source: APXvYqyJTh5B6y0iJNFqTbgDhKIdXD1dXKap90/51GY/1HBwwtMG0+QVGVvei9Jaj15xHEza/1jKSqBJZkqQ4s2WLQ0=
-X-Received: by 2002:a37:d84:: with SMTP id 126mr26540903qkn.407.1570536695225;
- Tue, 08 Oct 2019 05:11:35 -0700 (PDT)
+        Tue, 8 Oct 2019 08:11:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=el0DYGZ+UtD3Q7bf+tloYS3IVTjk0rUS+bONbgMT2Rg=; b=O74tYwgUjbjFkwHNi6ZU+HaR6
+        LBkK8REqe9k40pVT68Vf1bZ875QNzej49ZWHpedsMDiJGCyVXElI/WYMpzBequQwZQVxzCvGsqycR
+        1Eo3sHvlUSL/B1zyyKLRGDs0KZFQ00BLfbPtTEoQPZFPo2j2OY6DHN/ia/ea4oX4QPXsw5Q2sqE66
+        FA2i/hjj6056Mr6HBGA/HW7QvtuWNTBvA8Y9v3TTDYwe8ImhMa7IiT3bARuiUKS7RHE9oYafG+HMr
+        q3yB4iMkdE0a6FKcVTvl/5KaggJ8OxdgMRG+Y23uk7kjteTIGJ11T0ySqwJJEPPEdHpYy4PDVnJqr
+        0kSH4reeg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iHoL9-0007Qk-R3; Tue, 08 Oct 2019 12:11:44 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id A8440306C53;
+        Tue,  8 Oct 2019 14:10:49 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 0714D202A1952; Tue,  8 Oct 2019 14:11:41 +0200 (CEST)
+Date:   Tue, 8 Oct 2019 14:11:40 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Like Xu <like.xu@linux.intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+        rkrcmar@redhat.com, sean.j.christopherson@intel.com,
+        vkuznets@redhat.com, Jim Mattson <jmattson@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        ak@linux.intel.com, wei.w.wang@intel.com, kan.liang@intel.com,
+        like.xu@intel.com, ehankland@google.com, arbel.moshe@oracle.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] KVM: x86/vPMU: Add lazy mechanism to release
+ perf_event per vPMC
+Message-ID: <20191008121140.GN2294@hirez.programming.kicks-ass.net>
+References: <20190930072257.43352-1-like.xu@linux.intel.com>
+ <20190930072257.43352-4-like.xu@linux.intel.com>
+ <20191001082321.GL4519@hirez.programming.kicks-ass.net>
+ <e77fe471-1c65-571d-2b9e-d97c2ee0706f@linux.intel.com>
 MIME-Version: 1.0
-References: <1570532528.4686.102.camel@mtksdccf07> <D2B6D82F-AE5F-4A45-AC0C-BE5DA601FDC3@lca.pw>
-In-Reply-To: <D2B6D82F-AE5F-4A45-AC0C-BE5DA601FDC3@lca.pw>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 8 Oct 2019 14:11:23 +0200
-Message-ID: <CACT4Y+Zbx-2yR-mN5GioaKUgGH1TpTE2D-OgLbR2Dy09ezyGGQ@mail.gmail.com>
-Subject: Re: [PATCH] kasan: fix the missing underflow in memmove and memcpy
- with CONFIG_KASAN_GENERIC=y
-To:     Qian Cai <cai@lca.pw>
-Cc:     Walter Wu <walter-zh.wu@mediatek.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-mediatek@lists.infradead.org,
-        wsd_upstream <wsd_upstream@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e77fe471-1c65-571d-2b9e-d97c2ee0706f@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 8, 2019 at 1:42 PM Qian Cai <cai@lca.pw> wrote:
-> > On Oct 8, 2019, at 7:02 AM, Walter Wu <walter-zh.wu@mediatek.com> wrote:
-> > I don't know very well in UBSAN, but I try to build ubsan kernel and
-> > test a negative number in memset and kmalloc_memmove_invalid_size(), it
-> > look like no check.
->
-> It sounds like more important to figure out why the UBSAN is not working in this case rather than duplicating functionality elsewhere.
+On Tue, Oct 01, 2019 at 08:33:45PM +0800, Like Xu wrote:
+> Hi Peter,
+> 
+> On 2019/10/1 16:23, Peter Zijlstra wrote:
+> > On Mon, Sep 30, 2019 at 03:22:57PM +0800, Like Xu wrote:
+> > > +	union {
+> > > +		u8 event_count :7; /* the total number of created perf_events */
+> > > +		bool enable_cleanup :1;
+> > 
+> > That's atrocious, don't ever create a bitfield with base _Bool.
+> 
+> I saw this kind of usages in the tree such as "struct
+> arm_smmu_master/tipc_mon_state/regmap_irq_chip".
 
-Detecting out-of-bounds accesses is the direct KASAN responsibility.
-Even more direct than for KUBSAN. We are not even adding
-functionality, it's just a plain bug in KASAN code, it tricks itself
-into thinking that access size is 0.
-Maybe it's already detected by KUBSAN too?
+Because other people do tasteless things doesn't make it right.
+
+> I'm not sure is this your personal preference or is there a technical
+> reason such as this usage is not incompatible with union syntax?
+
+Apparently it 'works', so there is no hard technical reason, but
+consider that _Bool is specified as an integer type large enough to
+store the values 0 and 1, then consider it as a base type for a
+bitfield. That's just disguisting.
+
+Now, I suppose it 'works', but there is no actual benefit over just
+using a single bit of any other base type.
+
+> My design point is to save a little bit space without introducing
+> two variables such as "int event_count & bool enable_cleanup".
+
+Your design is questionable, the structure is _huge_, and your union has
+event_count:0 and enable_cleanup:0 as the same bit, which I don't think
+was intentional.
+
+Did you perhaps want to write:
+
+	struct {
+		u8 event_count : 7;
+		u8 event_cleanup : 1;
+	};
+
+which has a total size of 1 byte and uses the low 7 bits as count and the
+msb as cleanup.
+
+Also, the structure has plenty holes to stick proper variables in
+without further growing it.
+
+> By the way, is the lazy release mechanism looks reasonable to you?
+
+I've no idea how it works.. I don't know much about virt.
