@@ -2,106 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFE4ACF8E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 13:51:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ADE8CF8DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 13:50:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730555AbfJHLvI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 07:51:08 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:33766 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730371AbfJHLvH (ORCPT
+        id S1730777AbfJHLum (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 07:50:42 -0400
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:53749 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730503AbfJHLum (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 07:51:07 -0400
-Received: by mail-qt1-f196.google.com with SMTP id r5so24837354qtd.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 04:51:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TP0fuYtSeZDOT7CrZEihsRgw5tOuh/8kOVD2u7lNDTk=;
-        b=n7NbUBcWkVFWs+SNEwxjt2F/wAULZ8WYp6vM1sr8jzMVnzGQBAUaUwdbXY7YB1I/hI
-         2An88SwgNSk9ss7fOYeCvQ3oGI8JzXhLJyW7yJ+h6F5JIPK5FF+HvDwMwDKxQ40i1/c1
-         TTuI5D3HAX79cKWrvg14Izzuly3WQLKm29/qyCSPn0iJIw6JuZW28NOdjtz4U9Uws3xP
-         JXMXI3A2XaXqDlWQ0jP+oXJw89H/94k4Shd7DW5lZGw0H7us0ArtCDym0zX5Ejf2X9CZ
-         62CzjaDm6cv/om+O1A4EUz0/cr+/YOF3xGIcpXKJeUuoXhekEzdYP5vYkVu8tH2Y+t5Y
-         rxrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TP0fuYtSeZDOT7CrZEihsRgw5tOuh/8kOVD2u7lNDTk=;
-        b=DrRM3bU37cXbPGecUUIpqdQyJZu6soGzdQm7xvuODOKtyzZdD6W9V3ajUxBMCeETL1
-         IWqwFo+Bztofk8bM6UeFCwHbsMd8biZDmUXEGoMsrJkG8FlRn4eLwT9dxLZQR66Xoh02
-         uvnQizfAkQ5DKx5jLnBBRXkgVJZS6ngE6zGM8inV5xjC1BOXR6DnvcvDb1d3QEV6Aij/
-         P5GOhQDfRen5UqgDGmF0JckUo5O+qemdRXK5L5Lfwyk0ZXi7sxgIFIVHZquFJfsyFTXz
-         KDGpJudF57C1SJJEw3YI2+aea3mVRNkYOYiEtnvvY4Veyy9yNwus1y6kuWgW/OOSPdQ/
-         NIXA==
-X-Gm-Message-State: APjAAAXeI9fNwr3ZA1AOTFlNRUVFMEi2KJSrPCtjlFYahZG8DVT3s21h
-        iuFU15Gzp0KLtmQmx68O9vdvt+GT3BDCag==
-X-Google-Smtp-Source: APXvYqwAnQv5oYaT67RRjPtBW6WIjMuNwzonJT372UgMKyREbq2IqlSwhJ/AzDCWkGdXAMv4byeyUQ==
-X-Received: by 2002:a0c:e90e:: with SMTP id a14mr32637560qvo.184.1570535466036;
-        Tue, 08 Oct 2019 04:51:06 -0700 (PDT)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id x12sm12289720qtb.32.2019.10.08.04.51.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Oct 2019 04:51:05 -0700 (PDT)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Tue, 8 Oct 2019 07:51:03 -0400
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: ehci-pci breakage with dma-mapping changes in 5.4-rc2
-Message-ID: <20191008115103.GA463127@rani.riverdale.lan>
-References: <20191007073448.GA882@lst.de>
- <20191007175430.GA32537@rani.riverdale.lan>
- <20191007175528.GA21857@lst.de>
- <20191007175630.GA28861@infradead.org>
- <20191007175856.GA42018@rani.riverdale.lan>
- <20191007183206.GA13589@rani.riverdale.lan>
- <20191007184754.GB31345@lst.de>
- <20191007221054.GA409402@rani.riverdale.lan>
- <20191007235401.GA608824@rani.riverdale.lan>
- <20191008073210.GB9452@lst.de>
+        Tue, 8 Oct 2019 07:50:42 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 756D521E3E;
+        Tue,  8 Oct 2019 07:50:41 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Tue, 08 Oct 2019 07:50:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=from
+        :to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm3; bh=umrX+JUQqbY3FSsNbyshpYr96O
+        AybZxQrPbWF4qGYPk=; b=FnxLoC7ArxtL3Donfyk9DyhnEcnCy4f3DHUDENkyBF
+        R0iHi7DxJ1sBcEcfxLT7KKv3sOPM6b3XGy77ILTf1UsjTP8Mef4ne9JYsrlkd6Ex
+        4Yz8LNs6mNtVmb/A+1CNifLLF0YrTRQgbE8ANRd2GNuckP3jLB2enf8jyjtO2+gS
+        f6SsuomM/Zo7cno71tR6/FAaDOZVofbD2teT2RzRPXacVeEOFK9+WOmsjKJ/S62x
+        30g7b7RjgXu6yRX2EOTg9zm1Zdi+t4DCsMZ35WGkr2n5RDLAg9AXC/4BKaRywF9F
+        EZSvP+kIFjA+vMiJSSI8w1rNFw4U2pO7N7KhN0u4NY8w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=umrX+JUQqbY3FSsNb
+        yshpYr96OAybZxQrPbWF4qGYPk=; b=RUjjnziVaMEWUEupHB139IudGeHAL0Cem
+        q3KPjI73IAVWg2jvCUfs1abtQMYibDRqIVtlMgFe5yXUWrWDLXnxSipUns+kRB4o
+        nHOuTlrrNYQcaFYQm78sFeo0IF0J6lc7oI52b22ze8jFapy2LDWUQOfnmmYoTmr/
+        Wbew3maW399k5qpzeuXM1U0rP3Sje1q/YVJnqatT5JzBh4DRbWOOYjXQl+iVGSys
+        z6aLXcH1557/T9CH+zZRtIaGnWiBTqt0vNPVEKy2/yE5EyHQbaX96Ck+YfhWcT3z
+        L1sO+i9A3gkDObd4ZhZV1aOGSgsDDCEjFZb4DYrEv2/7xRRwslmUg==
+X-ME-Sender: <xms:D3icXfIP6zDjWQAehaozBBeGxNJwHy4t9OvmcoNfMAFirxxK373MkQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrheelgdegjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecunecujfgurhephffvufffkffoggfgsedtkeertdertd
+    dtnecuhfhrohhmpeetnhgurhgvficulfgvfhhfvghrhicuoegrnhgurhgvfiesrghjrdhi
+    ugdrrghuqeenucfkphepvddtfedrheejrddvudehrddujeeknecurfgrrhgrmhepmhgrih
+    hlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgvrhfuihiivgep
+    td
+X-ME-Proxy: <xmx:D3icXdFWTX2LSPxYLecgdzwmC8Y6ie71dIaTYYV4PooUsJ42OYVQIQ>
+    <xmx:D3icXeDmxPrV9bTn7d7TVSQm02yYzFMABpGn8T-4i78aqdoFA63jkA>
+    <xmx:D3icXe4j5oGFNEkaE2rzqLEHSOxGC52cCfGO2d817I4dsiVfa4TbAQ>
+    <xmx:EXicXR8ojn4PCVXzrojQcpAecFcp6SJcmaJnU5icZsgFg5X_0vMT1A>
+Received: from mistburn.lan (203-57-215-178.dyn.iinet.net.au [203.57.215.178])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 5312680063;
+        Tue,  8 Oct 2019 07:50:36 -0400 (EDT)
+From:   Andrew Jeffery <andrew@aj.id.au>
+To:     netdev@vger.kernel.org
+Cc:     davem@davemloft.net, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        joel@jms.id.au, benh@kernel.crashing.org
+Subject: [PATCH 0/3] net: ftgmac100: Ungate RCLK for RMII on ASPEED MACs
+Date:   Tue,  8 Oct 2019 22:21:40 +1030
+Message-Id: <20191008115143.14149-1-andrew@aj.id.au>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191008073210.GB9452@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 09:32:10AM +0200, Christoph Hellwig wrote:
-> On Mon, Oct 07, 2019 at 07:54:02PM -0400, Arvind Sankar wrote:
-> > > Do you want me to resend the patch as its own mail, or do you just take
-> > > it with a Tested-by: from me? If the former, I assume you're ok with me
-> > > adding your Signed-off-by?
-> > > 
-> > > Thanks
-> > 
-> > A question on the original change though -- what happens if a single
-> > device (or a single IOMMU domain really) does want >4G DMA address
-> > space? Was that not previously allowed either?
-> 
-> Your EHCI device actually supports the larger addressing.  Without an
-> IOMMU (or with accidentally enabled passthrough mode as in your report)
-> that will use bounce buffers for physical address that are too large.
-> With an iommu we can just remap, and by default those remap addresses
-> are under 32-bit just to make everyones life easier.
-> 
-> The dma_get_required_mask function is misnamed unfortunately, what it
-> really means is the optimal mask, that is one that avoids bounce
-> buffering or other complications.
+Hello,
 
-I understand that my EHCI device, even though it only supports 32-bit
-adddressing, will be able to DMA into anywhere in physical RAM, whether
-below 4G or not, via the IOMMU or bounce buffering.
+This series slightly extends the devicetree binding and driver for the
+FTGMAC100 to describe an optional RMII RCLK gate in the clocks property.
+Currently it's necessary for the kernel to ungate RCLK on the AST2600 in NCSI
+configurations as u-boot does not yet support NCSI (which uses the RMII).
 
-What I mean is, do there exist devices (which would necessarily support
-64-bit DMA) that want to DMA using bigger than 4Gb buffers. Eg a GPU
-accelerator card with 16Gb of RAM on-board that wants to map 6Gb for DMA
-in one go, or 5 accelerator cards that are in one IOMMU domain and want
-to simultaneously map 1Gb each.
+Please review!
+
+Andrew
+
+Andrew Jeffery (3):
+  dt-bindings: net: ftgmac100: Document AST2600 compatible
+  dt-bindings: net: ftgmac100: Describe clock properties
+  net: ftgmac100: Ungate RCLK for RMII on ASPEED MACs
+
+ .../devicetree/bindings/net/ftgmac100.txt     |  7 ++++
+ drivers/net/ethernet/faraday/ftgmac100.c      | 35 +++++++++++++++----
+ 2 files changed, 35 insertions(+), 7 deletions(-)
+
+-- 
+2.20.1
+
