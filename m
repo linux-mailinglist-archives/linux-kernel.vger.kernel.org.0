@@ -2,111 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 068A7CFC21
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:16:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45993CFC29
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 16:17:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726439AbfJHOQT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 10:16:19 -0400
-Received: from correo.us.es ([193.147.175.20]:52196 "EHLO mail.us.es"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725848AbfJHOQS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 10:16:18 -0400
-Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
-        by mail.us.es (Postfix) with ESMTP id 3D602A0AEF1
-        for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2019 16:16:12 +0200 (CEST)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id 23093B8001
-        for <linux-kernel@vger.kernel.org>; Tue,  8 Oct 2019 16:16:12 +0200 (CEST)
-Received: by antivirus1-rhel7.int (Postfix, from userid 99)
-        id 17169CA0F2; Tue,  8 Oct 2019 16:16:12 +0200 (CEST)
-X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on antivirus1-rhel7.int
-X-Spam-Level: 
-X-Spam-Status: No, score=-108.2 required=7.5 tests=ALL_TRUSTED,BAYES_50,
-        SMTPAUTH_US2,USER_IN_WHITELIST autolearn=disabled version=3.4.1
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id 859A4DA7B6;
-        Tue,  8 Oct 2019 16:16:09 +0200 (CEST)
-Received: from 192.168.1.97 (192.168.1.97)
- by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
- Tue, 08 Oct 2019 16:16:09 +0200 (CEST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
-Received: from us.es (sys.soleta.eu [212.170.55.40])
+        id S1726614AbfJHORC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 10:17:02 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:41298 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725795AbfJHORB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 10:17:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=l9Gyq38LaeYddeGuisMrwC7W1W2X2MQMdHRXsX7Odc8=; b=q7aOEk8jQ0RZ6MkcvlqcPH4v7
+        kStA71izKvQ0vm0IUzZHhToJREX+IWGHtXbBkBmWzkbyCAm9pCUjZbR6kLYP1KTC7nvxBLkKUb17z
+        dbtcLo96Hwfbjv672rvY/Brk8w9ZvvkRCB2BvvY1RbXWL840q3yzwexcWRk9bRpzBIoLFY9FX6d+0
+        evXDuD9rBV/p4Vgr4rHw6JRUHwDNuuHjhdrZlyqWa+sQXx5MtoXSDwuKHZ7Qsu9cRt28HBuP27nun
+        1jYa1VDKrmqS1eOcFAqPSDOtUzVzTt2DGzN5zsncKhkJji2uliDdtsPpt2Y2ZCWx9iooaEIafZO2B
+        7z/6W7Qeg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iHqI8-0001Qx-Fd; Tue, 08 Oct 2019 14:16:45 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: 1984lsi)
-        by entrada.int (Postfix) with ESMTPSA id 1DFE742EF4E3;
-        Tue,  8 Oct 2019 16:16:09 +0200 (CEST)
-Date:   Tue, 8 Oct 2019 16:16:11 +0200
-X-SMTPAUTHUS: auth mail.us.es
-From:   Pablo Neira Ayuso <pablo@netfilter.org>
-To:     paulmck@kernel.org
-Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH tip/core/rcu 8/9] net/netfilter: Replace
- rcu_swap_protected() with rcu_replace()
-Message-ID: <20191008141611.usmxb5vzoxc36wqw@salvia>
-References: <20191003014153.GA13156@paulmck-ThinkPad-P72>
- <20191003014310.13262-8-paulmck@kernel.org>
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 7A106305EE1;
+        Tue,  8 Oct 2019 16:15:51 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id D8182202801A0; Tue,  8 Oct 2019 16:16:42 +0200 (CEST)
+Date:   Tue, 8 Oct 2019 16:16:42 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Phil Auld <pauld@redhat.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Hillf Danton <hdanton@sina.com>
+Subject: Re: [PATCH v3 04/10] sched/fair: rework load_balance
+Message-ID: <20191008141642.GQ2294@hirez.programming.kicks-ass.net>
+References: <1568878421-12301-1-git-send-email-vincent.guittot@linaro.org>
+ <1568878421-12301-5-git-send-email-vincent.guittot@linaro.org>
+ <c752dd1a-731e-aae3-6a2c-aecf88901ac0@arm.com>
+ <CAKfTPtBQNJfNmBqpuaefsLzsTrGxJ=2bTs+tRdbOAa9J3eKuVw@mail.gmail.com>
+ <31cac0c1-98e4-c70e-e156-51a70813beff@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191003014310.13262-8-paulmck@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Virus-Scanned: ClamAV using ClamSMTP
+In-Reply-To: <31cac0c1-98e4-c70e-e156-51a70813beff@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 06:43:09PM -0700, paulmck@kernel.org wrote:
-> From: "Paul E. McKenney" <paulmck@kernel.org>
-> 
-> This commit replaces the use of rcu_swap_protected() with the more
-> intuitively appealing rcu_replace() as a step towards removing
-> rcu_swap_protected().
-> 
-> Link: https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com/
-> Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Pablo Neira Ayuso <pablo@netfilter.org>
-> Cc: Jozsef Kadlecsik <kadlec@netfilter.org>
-> Cc: Florian Westphal <fw@strlen.de>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: <netfilter-devel@vger.kernel.org>
-> Cc: <coreteam@netfilter.org>
-> Cc: <netdev@vger.kernel.org>
+On Wed, Oct 02, 2019 at 11:47:59AM +0100, Valentin Schneider wrote:
 
-Acked-by: Pablo Neira Ayuso <pablo@netfilter.org>
+> Yeah, right shift on signed negative values are implementation defined.
 
-> ---
->  net/netfilter/nf_tables_api.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
-> index d481f9b..8499baf 100644
-> --- a/net/netfilter/nf_tables_api.c
-> +++ b/net/netfilter/nf_tables_api.c
-> @@ -1461,8 +1461,9 @@ static void nft_chain_stats_replace(struct nft_trans *trans)
->  	if (!nft_trans_chain_stats(trans))
->  		return;
->  
-> -	rcu_swap_protected(chain->stats, nft_trans_chain_stats(trans),
-> -			   lockdep_commit_lock_is_held(trans->ctx.net));
-> +	nft_trans_chain_stats(trans) =
-> +		rcu_replace(chain->stats, nft_trans_chain_stats(trans),
-> +			    lockdep_commit_lock_is_held(trans->ctx.net));
->  
->  	if (!nft_trans_chain_stats(trans))
->  		static_branch_inc(&nft_counters_enabled);
-> -- 
-> 2.9.5
-> 
+Seriously? Even under -fno-strict-overflow? There is a perfectly
+sensible operation for signed shift right, this stuff should not be
+undefined.
