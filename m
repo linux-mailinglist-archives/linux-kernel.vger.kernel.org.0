@@ -2,103 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70A86CF8EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 13:54:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1481CF8E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 13:53:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730741AbfJHLxd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 07:53:33 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.50]:14418 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729790AbfJHLxc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 07:53:32 -0400
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXQrEOHTIXuMPvtxBR0Q=="
-X-RZG-CLASS-ID: mo00
-Received: from localhost.localdomain
-        by smtp.strato.de (RZmta 44.28.0 AUTH)
-        with ESMTPSA id L0811cv98BrU8B7
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Tue, 8 Oct 2019 13:53:30 +0200 (CEST)
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH] phy: qcom-usb-hs: Fix extcon double register after power cycle
-Date:   Tue,  8 Oct 2019 13:52:08 +0200
-Message-Id: <20191008115208.149987-1-stephan@gerhold.net>
-X-Mailer: git-send-email 2.23.0
+        id S1730687AbfJHLwn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 07:52:43 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55824 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730317AbfJHLwn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Oct 2019 07:52:43 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E9B6D121D;
+        Tue,  8 Oct 2019 11:52:42 +0000 (UTC)
+Received: from krava (unknown [10.40.205.103])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 8917B60BE0;
+        Tue,  8 Oct 2019 11:52:41 +0000 (UTC)
+Date:   Tue, 8 Oct 2019 13:52:40 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Andi Kleen <andi@firstfloor.org>
+Cc:     acme@kernel.org, jolsa@kernel.org, linux-kernel@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH] perf data: Fix babeltrace detection
+Message-ID: <20191008115240.GE10009@krava>
+References: <20191007174120.12330-1-andi@firstfloor.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191007174120.12330-1-andi@firstfloor.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 08 Oct 2019 11:52:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit f0b5c2c96370 ("phy: qcom-usb-hs: Replace the extcon API")
-switched from extcon_register_notifier() to the resource-managed
-API, i.e. devm_extcon_register_notifier().
+On Mon, Oct 07, 2019 at 10:41:20AM -0700, Andi Kleen wrote:
+> From: Andi Kleen <ak@linux.intel.com>
+> 
+> The symbol the feature file checks for is now actually in -lbabeltrace,
+> not -lbabeltrace-ctf, at least as of libbabeltrace-1.5.6-2.fc30.x86_64
+> 
+> Always add both libraries to fix the feature detection.
 
-This is problematic in this case, because the extcon notifier
-is dynamically registered/unregistered whenever the PHY is powered
-on/off. The resource-managed API does not unregister the notifier
-until the driver is removed, so as soon as the PHY is power cycled,
-attempting to register the notifier again results in:
+well, we link with libbabeltrace-ctf.so which links with libbabeltrace.so
 
-	double register detected
-	WARNING: CPU: 1 PID: 182 at kernel/notifier.c:26 notifier_chain_register+0x74/0xa0
-	Call trace:
-	 ...
-	 extcon_register_notifier+0x74/0xb8
-	 devm_extcon_register_notifier+0x54/0xb8
-	 qcom_usb_hs_phy_power_on+0x1fc/0x208
-	 ...
+I guess we can link it as well, but where do you see it fail?
 
-... and USB stops working after plugging the cable out and in
-another time.
+jirka
 
-The easiest way to fix this is to make a partial revert of
-commit f0b5c2c96370 ("phy: qcom-usb-hs: Replace the extcon API")
-and avoid using the resource-managed API in this case.
-
-Fixes: f0b5c2c96370 ("phy: qcom-usb-hs: Replace the extcon API")
-Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
----
-An other way to fix this would be keep the extcon notifier
-permanently registered, and check in qcom_usb_hs_phy_vbus_notifier
-if the PHY is currently powered on.
----
- drivers/phy/qualcomm/phy-qcom-usb-hs.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/phy/qualcomm/phy-qcom-usb-hs.c b/drivers/phy/qualcomm/phy-qcom-usb-hs.c
-index b163b3a1558d..61054272a7c8 100644
---- a/drivers/phy/qualcomm/phy-qcom-usb-hs.c
-+++ b/drivers/phy/qualcomm/phy-qcom-usb-hs.c
-@@ -158,8 +158,8 @@ static int qcom_usb_hs_phy_power_on(struct phy *phy)
- 		/* setup initial state */
- 		qcom_usb_hs_phy_vbus_notifier(&uphy->vbus_notify, state,
- 					      uphy->vbus_edev);
--		ret = devm_extcon_register_notifier(&ulpi->dev, uphy->vbus_edev,
--				EXTCON_USB, &uphy->vbus_notify);
-+		ret = extcon_register_notifier(uphy->vbus_edev, EXTCON_USB,
-+					       &uphy->vbus_notify);
- 		if (ret)
- 			goto err_ulpi;
- 	}
-@@ -180,6 +180,9 @@ static int qcom_usb_hs_phy_power_off(struct phy *phy)
- {
- 	struct qcom_usb_hs_phy *uphy = phy_get_drvdata(phy);
- 
-+	if (uphy->vbus_edev)
-+		extcon_unregister_notifier(uphy->vbus_edev, EXTCON_USB,
-+					   &uphy->vbus_notify);
- 	regulator_disable(uphy->v3p3);
- 	regulator_disable(uphy->v1p8);
- 	clk_disable_unprepare(uphy->sleep_clk);
--- 
-2.23.0
-
+> 
+> Signed-off-by: Andi Kleen <ak@linux.intel.com>
+> ---
+>  tools/perf/Makefile.config | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+> index bf8caa7d17f6..71638917e18a 100644
+> --- a/tools/perf/Makefile.config
+> +++ b/tools/perf/Makefile.config
+> @@ -155,7 +155,7 @@ ifdef LIBBABELTRACE_DIR
+>    LIBBABELTRACE_LDFLAGS := -L$(LIBBABELTRACE_DIR)/lib
+>  endif
+>  FEATURE_CHECK_CFLAGS-libbabeltrace := $(LIBBABELTRACE_CFLAGS)
+> -FEATURE_CHECK_LDFLAGS-libbabeltrace := $(LIBBABELTRACE_LDFLAGS) -lbabeltrace-ctf
+> +FEATURE_CHECK_LDFLAGS-libbabeltrace := $(LIBBABELTRACE_LDFLAGS) -lbabeltrace-ctf -lbabeltrace
+>  
+>  ifdef LIBZSTD_DIR
+>    LIBZSTD_CFLAGS  := -I$(LIBZSTD_DIR)/lib
+> @@ -895,7 +895,7 @@ ifndef NO_LIBBABELTRACE
+>    ifeq ($(feature-libbabeltrace), 1)
+>      CFLAGS += -DHAVE_LIBBABELTRACE_SUPPORT $(LIBBABELTRACE_CFLAGS)
+>      LDFLAGS += $(LIBBABELTRACE_LDFLAGS)
+> -    EXTLIBS += -lbabeltrace-ctf
+> +    EXTLIBS += -lbabeltrace-ctf -lbabeltrace
+>      $(call detected,CONFIG_LIBBABELTRACE)
+>    else
+>      msg := $(warning No libbabeltrace found, disables 'perf data' CTF format support, please install libbabeltrace-dev[el]/libbabeltrace-ctf-dev);
+> -- 
+> 2.21.0
+> 
