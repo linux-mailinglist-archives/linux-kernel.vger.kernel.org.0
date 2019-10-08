@@ -2,176 +2,249 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C624D00E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 20:58:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36B46D00F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 21:07:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729599AbfJHS61 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 14:58:27 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:34837 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727220AbfJHS61 (ORCPT
+        id S1729790AbfJHTGX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 15:06:23 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:38554 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726098AbfJHTGW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 14:58:27 -0400
-Received: by mail-oi1-f194.google.com with SMTP id x3so15775009oig.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 11:58:26 -0700 (PDT)
+        Tue, 8 Oct 2019 15:06:22 -0400
+Received: by mail-lf1-f66.google.com with SMTP id u28so12796388lfc.5
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 12:06:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Sdd8UeD7EiCxoJwTM/QPh2OA+sefTqXvnnv/jjwK0zw=;
-        b=TNle+G1KuN9oDQGu0BmjNjXGR3vYWVs8gfP06Jlm0BNgSbzKEiTm+ScwOg3eb5N05g
-         d0FtnU7jftmt2eaPZKNtyujH6j5+xrAG5Ld5bMxmYUDg1a9G80SJW3inMQ6nRlY7PGm/
-         B1eska/0Qjo0X247Phr/Xc5UR12hoA5fKfApxJNc7uuZxtqI8fkZqFL8SWAH2OgD2lrC
-         g6PwrscsW9wragzZtyeRaG8VgB89XvpLwR8iFAdL5WwR+o4GemyF244B3nj9vNJkzTgO
-         GPz2aUUsYK4uF6ouD+wyE6gK1Nedu8JXpK2CMLGcZYEahhZdhASkxQBLG9V9FzNbZ9up
-         uibg==
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=y+4dahDwqppQ/lGt5CT5AlzyDGG98Y1WJrrGLrGCAME=;
+        b=cohyz/FMoizyhRX+jNQrtjCTaU9Ha549yFcT8pF3P+2xlpWgskYa+iHI1zP+Z/1Gy5
+         Xsf/gs9te34tcTs1E4pwr+0RGUfAxZvWgiTFqGh8BG8g3/lJ3WM3A4PqxDbTGynigpur
+         lL0hlwgyvPDmK6QA4onTCgCvBMqrJoYoh/Ha9IqS5NOM0iWIFZfS2Z6pkjVAnXi2qQwg
+         mR27eia5y4X76QAWfZVD/QjlcNomH7Mk9xffWfmw2/6eB4a6iY4HalsfjumcP5GULi2g
+         Zenl/v+KMfFcEaWjSc2ScW8B5RpM4QpcFa4J1Nrbx3lU8jeNjGzQkyBAAyavgK4fqa/w
+         1jFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Sdd8UeD7EiCxoJwTM/QPh2OA+sefTqXvnnv/jjwK0zw=;
-        b=Yws3qRkEDqOiuPHdbrD069QOVyTfptcNd3+6A4yGHHh54/SPX1SpDqfJCC2rivO+Si
-         LqDZLUWtD+OAWT4niaEyU1VX2xW2LQ7dE/XEkOtzdS4Y6yvFpfT90iElv6vxYO5mm7vc
-         j2PArN9eMiL21aXdqawJCyr6uBj96akicA4cx94/F4mgRBGB99RHoYoROvjhdVbuAf9t
-         vv8NZhqaLdDE0aiUF3SusdQ/fMXZvAItJaHMzViCAuyUxO4KIrNv1v9lVvp/DWCspILB
-         pa41UmO1oRtsEcXNmIw2O9vPNCFcPpEQRka23y2ac7aosdLpYImGSheai05g4labUzNB
-         O6qw==
-X-Gm-Message-State: APjAAAVc+H3P7P58BAEsldI22+nHp/efa7WUviGWdJVQh9ldCSwh+LNO
-        X0akyXVRT5J1cXx3m6mLxVDb6BU6gWiLXGU0iBbKiA==
-X-Google-Smtp-Source: APXvYqyN+bveVuoKdS9k3wA83EzzIQByd8qFhP+O/Mr9ZtquQ9jL3+B0Vu9Hl6o8alfzt39akAUhisSQnxeiKV2UD/E=
-X-Received: by 2002:aca:51c7:: with SMTP id f190mr5258340oib.69.1570561105608;
- Tue, 08 Oct 2019 11:58:25 -0700 (PDT)
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=y+4dahDwqppQ/lGt5CT5AlzyDGG98Y1WJrrGLrGCAME=;
+        b=k1ZM4UK7ktXM5fDeIr29YL0qQWCamJbfu85J9YLwckrGeqwP9CDSCnRGIM9oQUijmJ
+         2KHPdL1zXhs6sSWULmT8oSGyxuRe9lBTM5gI//GsGlQIZwTwxPFvr0eKg4Funze4G6QR
+         f+kYsMvMWi0D8cpECMyc5oCQu4Nh8iInMky1/dPszuztW8p6IQF+vT+SdJKBK85ILlfj
+         3yXItmduoVYNictoiFaM+0vwmjbQY/RspIL2S70eodkNktyczWhkp9MT+pq+dAIduA7h
+         Y3Rq+DpTZUw8VH7q6abEmoA81VF6COtJqx+9t40Z8dK4TX7QfZsYHdIy3wFi2hrLOrH9
+         BdQg==
+X-Gm-Message-State: APjAAAVV5gyXVk/dJxjCb2lJ8HK2YAeaLbbyldmtFvmBa6GUEq+/1OTM
+        kw1ferzLk55S7xK1rTIhPzVWFwj+VsI=
+X-Google-Smtp-Source: APXvYqxIRolJdXo4fSn2XjXjAxaVvBO1lggMrO4nPY2h4nN+zA0Voc6mDUgXCFHPKuSP1Xt5uWM8Zw==
+X-Received: by 2002:a19:381a:: with SMTP id f26mr5999973lfa.168.1570561579798;
+        Tue, 08 Oct 2019 12:06:19 -0700 (PDT)
+Received: from rikard (h-98-128-228-153.NA.cust.bahnhof.se. [98.128.228.153])
+        by smtp.gmail.com with ESMTPSA id m15sm4180044ljh.50.2019.10.08.12.06.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2019 12:06:18 -0700 (PDT)
+From:   Rikard Falkeborn <rikard.falkeborn@gmail.com>
+X-Google-Original-From: Rikard Falkeborn <rikard.falkeborn>
+Date:   Tue, 8 Oct 2019 21:06:13 +0200
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rikard Falkeborn <rikard.falkeborn@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joe Perches <joe@perches.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Haren Myneni <haren@us.ibm.com>
+Subject: Re: [PATCH v3 3/3] linux/bits.h: Add compile time sanity check of
+ GENMASK inputs
+Message-ID: <20191008190613.GA860@rikard>
+References: <20190801230358.4193-1-rikard.falkeborn@gmail.com>
+ <20190811184938.1796-1-rikard.falkeborn@gmail.com>
+ <20190811184938.1796-4-rikard.falkeborn@gmail.com>
+ <CAMuHMdUkM98oiz-v8X-1QMAM25_d_=Gnxtud+gVQyZNb4nJDMA@mail.gmail.com>
+ <CAK7LNARAC=ATn67PHMBiO2b7ZM-GzmKNSv0o6_yi2qSg9Dyq-w@mail.gmail.com>
+ <CAK7LNARt3Ag0B2H=vgYG2j+nGGCZXv_CGVNFgnmHNT1Udz+s=Q@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190904211126.47518-1-saravanak@google.com> <20190904211126.47518-4-saravanak@google.com>
- <20190911102926.A9F8D2082C@mail.kernel.org> <20191004153750.GB823823@kroah.com>
- <20191008145304.2BD54205F4@mail.kernel.org>
-In-Reply-To: <20191008145304.2BD54205F4@mail.kernel.org>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Tue, 8 Oct 2019 11:57:49 -0700
-Message-ID: <CAGETcx-FjF+bktBgL6h0ORH3MU4vMM9JNC2oB8Myn8KqvnmhDg@mail.gmail.com>
-Subject: Re: [PATCH v11 3/6] of: property: Add functional dependency link from
- DT bindings
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, Len Brown <lenb@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-acpi@vger.kernel.org,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        David Collins <collinsd@codeaurora.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        kbuild test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNARt3Ag0B2H=vgYG2j+nGGCZXv_CGVNFgnmHNT1Udz+s=Q@mail.gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 8, 2019 at 7:53 AM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Greg Kroah-Hartman (2019-10-04 08:37:50)
-> > On Wed, Sep 11, 2019 at 03:29:25AM -0700, Stephen Boyd wrote:
-> > > Quoting Saravana Kannan (2019-09-04 14:11:22)
-> > > > +       int ret = 0;
-> > > > +       struct device_node *tmp_np = sup_np;
-> > > > +
-> > > > +       of_node_get(sup_np);
-> > > > +       /*
-> > > > +        * Find the device node that contains the supplier phandle.  It may be
-> > > > +        * @sup_np or it may be an ancestor of @sup_np.
-> > > > +        */
-> > > > +       while (sup_np && !of_find_property(sup_np, "compatible", NULL))
-> > > > +               sup_np = of_get_next_parent(sup_np);
+On Tue, Oct 08, 2019 at 04:52:17PM +0900, Masahiro Yamada wrote:
+> On Tue, Oct 8, 2019 at 4:44 PM Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+> >
+> > Hi Geert,
+> >
+> > On Tue, Oct 8, 2019 at 4:23 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 > > >
-> > > I don't get this. This is assuming that drivers are only probed for
-> > > device nodes that have a compatible string? What about drivers that make
-> > > sub-devices for clk support that have drivers in drivers/clk/ that then
-> > > attach at runtime later? This happens sometimes for MFDs that want to
-> > > split the functionality across the driver tree to the respective
-> > > subsystems.
-> >
-> > For that, the link would not be there, correct?
->
-> The parent device (MFD) would have the links because that is the device
-> node with the provider property like '#clock-cells'. The child clk
-> device that's populated by the MFD would be the one actually providing
-> the clk via a driver that may probe any time later, or never, depending
-> on if the clk driver is configured as a module or not. I fail to see how
-> this will work for these cases.
->
-> Is this logic there to find the parent of a regulator phandle and match
-> that to some driver? It looks like it.
-
-In the case of an MFD creating "fake" children devices, the parent MFD
-device's driver is responsible for handling the sync state callback.
-It'll get the sync_state callback after all the child devices'
-consumers have probed. The MFD driver will need to do the sync state
-clean up for the children devices or pass it on to the child devices'
-drivers (whatever makes sense for that specific MFD) by whatever means
-those specific drivers talk to each other (direct calls, registering
-callbacks, etc).
-
-If they are real sub-devices, then they should really be captured in
-DT as child devices and then the child device's drivers will get the
-sync state callback directly.
-
-> >
-> > > > +static int of_link_property(struct device *dev, struct device_node *con_np,
-> > > > +                            const char *prop_name)
-> > > > +{
-> > > > +       struct device_node *phandle;
-> > > > +       const struct supplier_bindings *s = bindings;
-> > > > +       unsigned int i = 0;
-> > > > +       bool matched = false;
-> > > > +       int ret = 0;
-> > > > +
-> > > > +       /* Do not stop at first failed link, link all available suppliers. */
-> > > > +       while (!matched && s->parse_prop) {
-> > > > +               while ((phandle = s->parse_prop(con_np, prop_name, i))) {
-> > > > +                       matched = true;
-> > > > +                       i++;
-> > > > +                       if (of_link_to_phandle(dev, phandle) == -EAGAIN)
-> > > > +                               ret = -EAGAIN;
+> > > Hi Rikard,
 > > >
-> > > And don't break?
+> > > On Sun, Aug 11, 2019 at 8:52 PM Rikard Falkeborn
+> > > <rikard.falkeborn@gmail.com> wrote:
+> > > > GENMASK() and GENMASK_ULL() are supposed to be called with the high bit
+> > > > as the first argument and the low bit as the second argument. Mixing
+> > > > them will return a mask with zero bits set.
+> > > >
+> > > > Recent commits show getting this wrong is not uncommon, see e.g.
+> > > > commit aa4c0c9091b0 ("net: stmmac: Fix misuses of GENMASK macro") and
+> > > > commit 9bdd7bb3a844 ("clocksource/drivers/npcm: Fix misuse of GENMASK
+> > > > macro").
+> > > >
+> > > > To prevent such mistakes from appearing again, add compile time sanity
+> > > > checking to the arguments of GENMASK() and GENMASK_ULL(). If both
+> > > > arguments are known at compile time, and the low bit is higher than the
+> > > > high bit, break the build to detect the mistake immediately.
+> > > >
+> > > > Since GENMASK() is used in declarations, BUILD_BUG_ON_ZERO() must be
+> > > > used instead of BUILD_BUG_ON().
+> > > >
+> > > > __builtin_constant_p does not evaluate is argument, it only checks if it
+> > > > is a constant or not at compile time, and __builtin_choose_expr does not
+> > > > evaluate the expression that is not chosen. Therefore, GENMASK(x++, 0)
+> > > > does only evaluate x++ once.
+> > > >
+> > > > Commit 95b980d62d52 ("linux/bits.h: make BIT(), GENMASK(), and friends
+> > > > available in assembly") made the macros in linux/bits.h available in
+> > > > assembly. Since BUILD_BUG_OR_ZERO() is not asm compatible, disable the
+> > > > checks if the file is included in an asm file.
+> > > >
+> > > > Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
+> > > > ---
+> > > > Changes in v3:
+> > > >   - Changed back to shorter macro argument names
+> > > >   - Remove casts and use 0 instead of UL(0) in GENMASK_INPUT_CHECK(),
+> > > >     since all results in GENMASK_INPUT_CHECK() are now ints. Update
+> > > >     commit message to reflect that.
+> > > >
+> > > > Changes in v2:
+> > > >   - Add comment about why inputs are not checked when used in asm file
+> > > >   - Use UL(0) instead of 0
+> > > >   - Extract mask creation in a separate macro to improve readability
+> > > >   - Use high and low instead of h and l (part of this was extracted to a
+> > > >     separate patch)
+> > > >   - Updated commit message
+> > > >
+> > > > Joe Perches sent a series to fix the existing misuses of GENMASK() that
+> > > > needs to be merged before this to avoid build failures. Currently, 5 of
+> > > > the patches are not in Linus tree, and 2 are not in linux-next. There is
+> > > > also a patch pending by Nathan Chancellor that also needs to be merged
+> > > > before this patch is merged to avoid build failures.
+> > > >
+> > > >  include/linux/bits.h | 21 +++++++++++++++++++--
+> > > >  1 file changed, 19 insertions(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/include/linux/bits.h b/include/linux/bits.h
+> > > > index 669d69441a62..4ba0fb609239 100644
+> > > > --- a/include/linux/bits.h
+> > > > +++ b/include/linux/bits.h
+> > > > @@ -18,12 +18,29 @@
+> > > >   * position @h. For example
+> > > >   * GENMASK_ULL(39, 21) gives us the 64bit vector 0x000000ffffe00000.
+> > > >   */
+> > > > -#define GENMASK(h, l) \
+> > > > +#ifndef __ASSEMBLY__
+> > > > +#include <linux/build_bug.h>
+> > > > +#define GENMASK_INPUT_CHECK(h, l) \
+> > > > +       (BUILD_BUG_ON_ZERO(__builtin_choose_expr( \
+> > > > +               __builtin_constant_p((l) > (h)), (l) > (h), 0)))
+> > > > +#else
+> > > > +/*
+> > > > + * BUILD_BUG_ON_ZERO is not available in h files included from asm files,
+> > > > + * disable the input check if that is the case.
+> > > > + */
+> > > > +#define GENMASK_INPUT_CHECK(h, l) 0
+> > > > +#endif
+> > > > +
+> > > > +#define __GENMASK(h, l) \
+> > > >         (((~UL(0)) - (UL(1) << (l)) + 1) & \
+> > > >          (~UL(0) >> (BITS_PER_LONG - 1 - (h))))
+> > > > +#define GENMASK(h, l) \
+> > > > +       (GENMASK_INPUT_CHECK(h, l) + __GENMASK(h, l))
+> > > >
+> > > > -#define GENMASK_ULL(h, l) \
+> > > > +#define __GENMASK_ULL(h, l) \
+> > > >         (((~ULL(0)) - (ULL(1) << (l)) + 1) & \
+> > > >          (~ULL(0) >> (BITS_PER_LONG_LONG - 1 - (h))))
+> > > > +#define GENMASK_ULL(h, l) \
+> > > > +       (GENMASK_INPUT_CHECK(h, l) + __GENMASK_ULL(h, l))
+> > > >
+> > > >  #endif /* __LINUX_BITS_H */
+> > >
+> > > This is now commit 0fd35cd30a2fece1 ("linux/bits.h: add compile time sanity
+> > > check of GENMASK inputs") in next-20191008.
+> > >
+> > > <noreply@ellerman.id.au> reported the following failure in sun3_defconfig,
+> > > which I managed to reproduce with gcc-4.6.3:
 > >
-> > There was comments before about how this is not needed.  Frank asked
-> > that the comment be removed.  And now you point it out again :)
+> > Oh dear.
 > >
-> > Look at the comment a few lines up, we have to go through all of the
-> > suppliers.
+> > I was able to reproduce this for gcc 4.7 or 4.8,
+> > but I did not see any problem for gcc 4.9+
 > >
->
-> Ok. The comment tells me what is happening but it misses the essential
-> part which is _why_ we must make links to each supplier and return
-> -EAGAIN.
+> > Perhaps, is this due to broken __builtin_choose_expr or __builtin_constant_p
+> > for old compilers?
+> >
+> >
+> >
+> >
+> >
+> >
+> >
+> > >
+> > >     lib/842/842_compress.c: In function '__split_add_bits':
+> > >     lib/842/842_compress.c:164:25: error: first argument to
+> > > '__builtin_choose_expr' not a constant
+> > >     lib/842/842_compress.c:164:25: error: bit-field '<anonymous>'
+> > > width not an integer constant
+> > >     scripts/Makefile.build:265: recipe for target
+> > > 'lib/842/842_compress.o' failed
+> > >
+> > > __split_add_bits() calls GENMASK_ULL() with a non-constant.
+> > > However __split_add_bits() itself is called with constants only.
+> > > Apparently gcc fails to inline __split_add_bits().
+> > > Adding inline or always_inline doesn't help.
+> > >
+> 
+> 
+> If this is broken for GCC < 4.9,
+> we might be able to workaround it as follows:
+> 
+> 
+> 
+> 
+> diff --git a/include/linux/bits.h b/include/linux/bits.h
+> index 4ba0fb609239..f00417baf545 100644
+> --- a/include/linux/bits.h
+> +++ b/include/linux/bits.h
+> @@ -18,7 +18,7 @@
+>   * position @h. For example
+>   * GENMASK_ULL(39, 21) gives us the 64bit vector 0x000000ffffe00000.
+>   */
+> -#ifndef __ASSEMBLY__
+> +#if !defined(__ASSEMBLY__) && (!defined(CONFIG_CC_IS_GCC) ||
+> CONFIG_GCC_VERSION >= 49000)
+>  #include <linux/build_bug.h>
+>  #define GENMASK_INPUT_CHECK(h, l) \
+>         (BUILD_BUG_ON_ZERO(__builtin_choose_expr( \
+> 
+> 
+> -- 
+> Best Regards
+> Masahiro Yamada
 
-To be clear the -EAGAIN is only if any of the linking fails.
+Hi Masahiro, Geert,
 
-The reason was already discussion in the email thread [1] but I agree
-it needs to be documented.
+It seems it is broken for GCC < 4.9, see [1]. I'll try disabling it for
+too old compilers and resend.
 
-I thought I had documented the _why_ in the documentation for
-fwnode.add_links(), but it's not there. I'll check to make sure I
-didn't capture it elsewhere and if not, I'll update fwnode.add_links
-documentation.
+In the meantime, I guess it should be dropped from linux-next?
 
-To copy-paste the discussion from the earlier thread:
+Rikard
 
-"Actually, there is a point for this. Say Device-C depends on suppliers
-Device-S1 and Device-S2 and they are listed in DT in that order.
-
-Say, S1 gets populated after late_initcall_sync but S2 is probes way
-before that. If I don't continue past a "failed linking" to S1 and
-also link up to S2, then S2 will get a sync_state() callback before C
-is probed. So I have to go through all possible suppliers and [link] as many
-as possible."
-
--Saravana
-
-[1] - https://lore.kernel.org/lkml/CAGETcx-hCrUvY5whZBihueqqCxmF3oDjFybjmoo3JUu87iiiEw@mail.gmail.com/
+[1]: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=19449
