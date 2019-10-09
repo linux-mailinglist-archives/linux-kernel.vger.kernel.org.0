@@ -2,78 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95F6AD0927
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 10:07:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 039F0D0949
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 10:10:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729778AbfJIIHe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 04:07:34 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:44729 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725848AbfJIIHe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 04:07:34 -0400
-Received: by mail-lj1-f194.google.com with SMTP id m13so1474648ljj.11
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 01:07:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=z0LNDSpFSctbTJTf0zAvXYKetHW153zqZU28HUuc6aw=;
-        b=al6Ibeoh+WLVyhfBLsOSWTkDu5aVd8ZnfivuhHFSq+6OfHR5fCwI9BJRWh+2ywdwB2
-         7RaFw6L3+jC4LIu0k784taSAmRoksY9qso+BLF3wsBDjqjeHutXwg+yonzAACVOBlxTa
-         1fNvJCQtMiqEtPNT3EZM0P8KkEskNiBFXuJFwkx/ILoWNWs2Ba0ay4Aend4cvBbhRNu2
-         cL4ZPccP2qxcFEQ28q97/D+wFYD5utOrvGIJyEBDEiAPnBVoodPnydqRBv8hxZ+R+KEx
-         KBazv/AW6mcNv02KdyGRKqRnCw0wBmVQOr0XgE5VO5y6U82uY/UYmxLRHh4nSQybiiaF
-         BEWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=z0LNDSpFSctbTJTf0zAvXYKetHW153zqZU28HUuc6aw=;
-        b=k/NDN3MI7NApGsEMi45NEM1OdM+nY+4pVy4bKxgOgXXy0VFNQ2P2Uz8kgpkwtV353j
-         0lSoxJiKF1qDSPEwpc0u+QrR4JbHETViUcaD7FnmDfyxY90tIes9frGGMV63gelADVtl
-         zUXpUiNkaFPwVXhWqhAG5a7DLv3mueVKrIGEdZrqTJOZ046YbxymzHcPHvCWaBo6OKNQ
-         3zlfBY/gpkzVGlnvhfsA3zHLNQr8uzFZ4tVM1LGhCagoMTs4fQVgAGC9/9Kn3LuuTnBr
-         r2ZgnUhseSUDlJW+B2+AERdT3brrQPZNo7GXgtZ2OzXdwMrbX0I/o576fIXqEaXDMw7L
-         jlaw==
-X-Gm-Message-State: APjAAAXP2ButeCHS3FaWVQVZgM2eUFHM/TcLMhg/RJ0k25p3kKedr+Xd
-        eH9JODTZu6EHgqEF2NH5JN3EtVSQ+nX5FQRz1iLRB1o6huU=
-X-Google-Smtp-Source: APXvYqw8WgwcmY17xXOAsdHSJSmkcYeQFlwgx89ruHbyb51KBUE6h+72k3lbA4aB1aUnh5XUgrNWfwyOfGRut6XOGxI=
-X-Received: by 2002:a2e:9e0a:: with SMTP id e10mr1513190ljk.35.1570608451497;
- Wed, 09 Oct 2019 01:07:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <6c5d22c8-6e27-3314-9c46-701d932b11a6@infradead.org>
-In-Reply-To: <6c5d22c8-6e27-3314-9c46-701d932b11a6@infradead.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 9 Oct 2019 10:07:20 +0200
-Message-ID: <CACRpkdbtRan_7nwPZNGLWE3xWiB54aF0fv6poFvbJpeGOz_TJg@mail.gmail.com>
-Subject: Re: [PATCH] gpio: fix kernel-doc for of_gpio_need_valid_mask()
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1730271AbfJIIJs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 04:09:48 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:53892 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725935AbfJIIJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 04:09:47 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id AFAA91A039B;
+        Wed,  9 Oct 2019 10:09:45 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A95891A0397;
+        Wed,  9 Oct 2019 10:09:41 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id A21154030D;
+        Wed,  9 Oct 2019 16:09:34 +0800 (SGT)
+From:   Richard Zhu <hongxing.zhu@nxp.com>
+To:     jassisinghbrar@gmail.com, o.rempel@pengutronix.de,
+        daniel.baluta@nxp.com, aisheng.dong@nxp.com
+Cc:     linux-imx@nxp.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Richard Zhu <hongxing.zhu@nxp.com>
+Subject: [PATCH v6 3/4] dt-bindings: mailbox: imx-mu: add imx7ulp MU support
+Date:   Wed,  9 Oct 2019 16:07:20 +0800
+Message-Id: <1570608441-29651-4-git-send-email-hongxing.zhu@nxp.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1570608441-29651-1-git-send-email-hongxing.zhu@nxp.com>
+References: <1570608441-29651-1-git-send-email-hongxing.zhu@nxp.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 8, 2019 at 10:40 PM Randy Dunlap <rdunlap@infradead.org> wrote:
+There is a version 1.0 MU on imx7ulp, use "fsl,imx7ulp-mu" compatible
+to support it.
 
-> From: Randy Dunlap <rdunlap@infradead.org>
->
-> Fix kernel-doc for of_gpio_need_valid_mask().
-> Fixes this warning and uses correct Return: format.
->
-> ../drivers/gpio/gpiolib-of.c:92: warning: Excess function parameter 'dev' description in 'of_gpio_need_valid_mask'
->
-> Fixes: f626d6dfb709 ("gpio: of: Break out OF-only code")
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Cc: linux-gpio@vger.kernel.org
+Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ Documentation/devicetree/bindings/mailbox/fsl,mu.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Patch applied.
+diff --git a/Documentation/devicetree/bindings/mailbox/fsl,mu.txt b/Documentation/devicetree/bindings/mailbox/fsl,mu.txt
+index f3cf77e..9c43357 100644
+--- a/Documentation/devicetree/bindings/mailbox/fsl,mu.txt
++++ b/Documentation/devicetree/bindings/mailbox/fsl,mu.txt
+@@ -21,6 +21,8 @@ Required properties:
+ 		imx6sx, imx7s, imx8qxp, imx8qm.
+ 		The "fsl,imx6sx-mu" compatible is seen as generic and should
+ 		be included together with SoC specific compatible.
++		There is a version 1.0 MU on imx7ulp, use "fsl,imx7ulp-mu"
++		compatible to support it.
+ - reg :		Should contain the registers location and length
+ - interrupts :	Interrupt number. The interrupt specifier format depends
+ 		on the interrupt controller parent.
+-- 
+2.7.4
 
-Yours,
-Linus Walleij
