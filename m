@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 656E8D19F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 22:43:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4459CD19C9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 22:41:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731990AbfJIUmt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 16:42:49 -0400
-Received: from mail-lj1-f178.google.com ([209.85.208.178]:40764 "EHLO
-        mail-lj1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731952AbfJIUls (ORCPT
+        id S1732105AbfJIUly (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 16:41:54 -0400
+Received: from mail-lj1-f173.google.com ([209.85.208.173]:41397 "EHLO
+        mail-lj1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732018AbfJIUlt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 16:41:48 -0400
-Received: by mail-lj1-f178.google.com with SMTP id 7so3868528ljw.7
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 13:41:47 -0700 (PDT)
+        Wed, 9 Oct 2019 16:41:49 -0400
+Received: by mail-lj1-f173.google.com with SMTP id f5so3865227ljg.8
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 13:41:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Q8GViA3rslKXoIblVB14HOdim3G08AtxcYrIekVeHcE=;
-        b=pfrCF401TvMKnGGNl+mGcNqDCp2vUaNFpxEHOZUq1XK5MSPm3P1fYAf7wPUa+ETpQy
-         VOVS4CBzr+1pxsUk6OaY9H5cdbJJGJ79afBvAVM7dhtqB3p/rgd3mhnIdLqFLvDK0mTd
-         g0BL+HT0f/ysat5klwdZ82W7ujyD7W84PDhXsN3PpZ6AVA+ItryF/xgSXb9ZFPZ0XQH8
-         bbDmHihjaFmyodxwsKWZK1D9NAxKeEqJpo8wMBZLQH4UaAtgHRCn4mApNkvdxUcnXGbV
-         DQg/S8s66IiuaM28TVfm+AHtC3W49BgIRvSedebxXVHbJ/nrr4jh4KffMFSzscaK04Ud
-         MiNA==
+        bh=ZXAfjdX+WvsCZ4Putv4iaBG542bdy+GxK4sst7rF5S0=;
+        b=qkf+hcumHsQI6T6Bbst2NXrX6p/4qw3OeD4CpV1jU/++8iHkhW3cMYtNH9mREMkDZY
+         dw0k847/GZ3RsBrIo6fLNuSBl+IS3TYL5uYngPA39KkRaREOxcb7fn1Lm8U6nxkyVzpp
+         kKHLIGY97UeNipi308i0NGdVLMg6MXgyvQFiWlqCpjL61Pk2JwLpqqKnCIr76E8QFXcx
+         IIO4JkEUcrZxZ2lYIBVT9plAKyNyRif7shOotjWAv8xJ5mPhfMT+HN9YA5uN/dcMnf6o
+         S/Nk38iowj23/tgkQKaz6riDTwBDoyPL2cpRnWLh++wojn81jeid5itZbrGgJocTdlw/
+         9LFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Q8GViA3rslKXoIblVB14HOdim3G08AtxcYrIekVeHcE=;
-        b=iTSMGegNcGmV5ZL2s1ta3rW9GHUzoFzqkgco1l6qKEFzCQavWvI9CzYEPGr+7jK4BB
-         kUOClbnpFlNHl5Xg4+WYb3PlGJycX52wIAhtR7++b5IDhxvXaKGVXjd3i7hxQtODE4Ok
-         XlnYpruxGrcsHyRYILR414BIsTZjdjXQC8COajQFyeyhp/uYjmPA8PMtWjilv0PzI5ZG
-         P3Wj48oqKeiakN2TXm9MD3rxQ194iNTn558NSPkctgfPop8ot5UGfgcPhGt0uM0mC8+b
-         Zi1wkbPLKkBA/tpWfmZH7i1VrmfWH1/olN+LwU7Nm91NY05xL31sJXJEZgLB0UGyFapd
-         aZJA==
-X-Gm-Message-State: APjAAAWgRLHUk4kvMmlh4uHtxpDjy8u/AXkVINFDazrLZrdQDBbSjJMR
-        qXZurlCZmcOufczeXhFHAo9WHQ==
-X-Google-Smtp-Source: APXvYqxuctn/aA7ZrMAT8XQt+9VdRu1DrxUiAKw6n2hPLrMceayMK9zf2VM0qBBS8IA1Bb4098YjEA==
-X-Received: by 2002:a2e:9890:: with SMTP id b16mr3652941ljj.4.1570653706617;
-        Wed, 09 Oct 2019 13:41:46 -0700 (PDT)
+        bh=ZXAfjdX+WvsCZ4Putv4iaBG542bdy+GxK4sst7rF5S0=;
+        b=rZ8mwtGCXcj3dnqc7s3uYhDxjdzJ4QQ15fHvfnWwIxYmB94q55jCSJA/XmhwZmpB5q
+         wxF0wIXZmGj58SdH+XI04gdn19HWfRC8dWSBsDJeYSIuW1CffRnrPSDqDVjXJD1fCJb+
+         9deQJpFJCQj+Nb/AKmO8Lbn3UMajhtoGrUTnBfQqVyjh3doYgYdc2rd2BAztSpSLgECX
+         DipqyVUSEp3EFweRoPfICRMT+iB3uPt2SCq2mHiELIuK2LdwhEAycPYPBs4uvoFAgyuj
+         k1Om1G05QYgq9ArEYvIN1+TQ6fJ8aMNJRznCONgROk+IrshEewcIgGTKenEoO2tBICFH
+         bB9g==
+X-Gm-Message-State: APjAAAV7F+40XiBDIumsm8B2mwR1Tf+Wz7rhDpFk5pbmeUc+XaJvKgVP
+        MwuyFTp5Vb0QHcUbylH0vIswyg==
+X-Google-Smtp-Source: APXvYqwoQocvSjKS7oIyjB8L3ej+KEEvnlN4wQufb6MKCMSUsbLGdy/ttUAn/yRstnBBD/dxNPpWEQ==
+X-Received: by 2002:a2e:89c9:: with SMTP id c9mr3470319ljk.108.1570653707934;
+        Wed, 09 Oct 2019 13:41:47 -0700 (PDT)
 Received: from localhost.localdomain (168-200-94-178.pool.ukrtel.net. [178.94.200.168])
-        by smtp.gmail.com with ESMTPSA id h3sm730871ljf.12.2019.10.09.13.41.45
+        by smtp.gmail.com with ESMTPSA id h3sm730871ljf.12.2019.10.09.13.41.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2019 13:41:46 -0700 (PDT)
+        Wed, 09 Oct 2019 13:41:47 -0700 (PDT)
 From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 To:     ast@kernel.org, daniel@iogearbox.net, yhs@fb.com,
         davem@davemloft.net, jakub.kicinski@netronome.com, hawk@kernel.org,
@@ -52,9 +52,9 @@ Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
         bpf@vger.kernel.org, clang-built-linux@googlegroups.com,
         ilias.apalodimas@linaro.org, sergei.shtylyov@cogentembedded.com,
         Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [PATCH v4 bpf-next 05/15] samples/bpf: use __LINUX_ARM_ARCH__ selector for arm
-Date:   Wed,  9 Oct 2019 23:41:24 +0300
-Message-Id: <20191009204134.26960-6-ivan.khoronzhuk@linaro.org>
+Subject: [PATCH v4 bpf-next 06/15] samples/bpf: drop unnecessarily inclusion for bpf_load
+Date:   Wed,  9 Oct 2019 23:41:25 +0300
+Message-Id: <20191009204134.26960-7-ivan.khoronzhuk@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191009204134.26960-1-ivan.khoronzhuk@linaro.org>
 References: <20191009204134.26960-1-ivan.khoronzhuk@linaro.org>
@@ -63,35 +63,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For arm, -D__LINUX_ARM_ARCH__=X is min version used as instruction
-set selector and is absolutely required while parsing some parts of
-headers. It's present in KBUILD_CFLAGS but not in autoconf.h, so let's
-retrieve it from and add to programs cflags. In another case errors
-like "SMP is not supported" for armv7 and bunch of other errors are
-issued resulting to incorrect final object.
+Drop inclusion for bpf_load -I$(objtree)/usr/include as it is
+included for all objects anyway, with above line:
+KBUILD_HOSTCFLAGS += -I$(objtree)/usr/include
+
+Acked-by: Andrii Nakryiko <andriin@fb.com>
+Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 ---
- samples/bpf/Makefile | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ samples/bpf/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
-index cf882e43648a..9b33e7395eac 100644
+index 9b33e7395eac..bb2d976e824e 100644
 --- a/samples/bpf/Makefile
 +++ b/samples/bpf/Makefile
-@@ -185,6 +185,14 @@ HOSTLDLIBS_map_perf_test	+= -lrt
- HOSTLDLIBS_test_overhead	+= -lrt
- HOSTLDLIBS_xdpsock		+= -pthread
+@@ -176,7 +176,7 @@ KBUILD_HOSTCFLAGS += -I$(srctree)/tools/testing/selftests/bpf/
+ KBUILD_HOSTCFLAGS += -I$(srctree)/tools/lib/ -I$(srctree)/tools/include
+ KBUILD_HOSTCFLAGS += -I$(srctree)/tools/perf
  
-+ifeq ($(ARCH), arm)
-+# Strip all except -D__LINUX_ARM_ARCH__ option needed to handle linux
-+# headers when arm instruction set identification is requested.
-+ARM_ARCH_SELECTOR := $(filter -D__LINUX_ARM_ARCH__%, $(KBUILD_CFLAGS))
-+BPF_EXTRA_CFLAGS := $(ARM_ARCH_SELECTOR)
-+KBUILD_HOSTCFLAGS += $(ARM_ARCH_SELECTOR)
-+endif
-+
- # Allows pointing LLC/CLANG to a LLVM backend with bpf support, redefine on cmdline:
- #  make samples/bpf/ LLC=~/git/llvm/build/bin/llc CLANG=~/git/llvm/build/bin/clang
- LLC ?= llc
+-HOSTCFLAGS_bpf_load.o += -I$(objtree)/usr/include -Wno-unused-variable
++HOSTCFLAGS_bpf_load.o += -Wno-unused-variable
+ 
+ KBUILD_HOSTLDLIBS		+= $(LIBBPF) -lelf
+ HOSTLDLIBS_tracex4		+= -lrt
 -- 
 2.17.1
 
