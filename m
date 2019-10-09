@@ -2,169 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94EEFD124B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 17:21:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78FB3D124E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 17:22:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731382AbfJIPVq convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 9 Oct 2019 11:21:46 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59824 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728019AbfJIPVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 11:21:45 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 764BFC010923;
-        Wed,  9 Oct 2019 15:21:44 +0000 (UTC)
-Received: from [10.18.17.163] (dhcp-17-163.bos.redhat.com [10.18.17.163])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 003A019C69;
-        Wed,  9 Oct 2019 15:21:34 +0000 (UTC)
-Subject: Re: [PATCH v11 0/6] mm / virtio: Provide support for unused page
- reporting
-From:   Nitesh Narayan Lal <nitesh@redhat.com>
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-        Alexander Duyck <alexander.duyck@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        virtio-dev@lists.oasis-open.org, kvm list <kvm@vger.kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Oscar Salvador <osalvador@suse.de>,
-        Yang Zhang <yang.zhang.wz@gmail.com>,
-        Pankaj Gupta <pagupta@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Rik van Riel <riel@surriel.com>, lcapitulino@redhat.com,
-        "Wang, Wei W" <wei.w.wang@intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>
-References: <20191001152441.27008.99285.stgit@localhost.localdomain>
- <7233498c-2f64-d661-4981-707b59c78fd5@redhat.com>
- <1ea1a4e11617291062db81f65745b9c95fd0bb30.camel@linux.intel.com>
- <8bd303a6-6e50-b2dc-19ab-4c3f176c4b02@redhat.com>
- <CAKgT0Uf37xAFK2CWqUZJgn7bWznSAi6qncLxBpC55oSpBMG1HQ@mail.gmail.com>
- <c06b68cb-5e94-ae3e-f84e-48087d675a8f@redhat.com>
- <CAKgT0Ud6TT=XxqFx6ePHzbUYqMp5FHVPozRvnNZK3tKV7j2xjg@mail.gmail.com>
- <0a16b11e-ec3b-7196-5b7f-e7395876cf28@redhat.com>
- <d96f744d2c48f5a96c6962c6a0a89d2429e5cab8.camel@linux.intel.com>
- <7fc13837-546c-9c4a-1456-753df199e171@redhat.com>
- <5b6e0b6df46c03bfac906313071ac0362d43c432.camel@linux.intel.com>
- <c2fd074b-1c86-cd93-41ea-ae1a6b2ca841@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nitesh@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- VujM7c/b4pps
-Organization: Red Hat Inc,
-Message-ID: <5c640ecb-cfef-2fa6-57aa-1352f1036f4e@redhat.com>
-Date:   Wed, 9 Oct 2019 11:21:34 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <c2fd074b-1c86-cd93-41ea-ae1a6b2ca841@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 09 Oct 2019 15:21:44 +0000 (UTC)
+        id S1731511AbfJIPWE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 11:22:04 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40906 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728019AbfJIPWE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 11:22:04 -0400
+Received: by mail-pg1-f194.google.com with SMTP id d26so1621085pgl.7
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 08:22:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=T84zFmO42nbUzgLTJpkaQAq6A6ocHYBnhFxVngdSKr4=;
+        b=jo0D7FVIHUBDCB+50tpx961qMwi+Ll3o+WbCw7LdPww5xwZMbl2+g+2aUpSrf7Zq98
+         SPyQznWoVlO67wV2ixuEVX8zJiLdj2vqGQukc22prBfbxr0RUC2DBxT3DymmVA5p4Mt3
+         CXYD5q42Cy82ToM4O3Rym9LjFGKfcx7ROqyHF8WBw3LU3tAGVR4eRM/ZK63cswUlH80T
+         rq1tS3HwnnrfDjsVrXmyvJOIgs+ZmBMzdKiTP/NeX9wuOy/w1J/zYVEFH+fgi73pK8Xx
+         i+2XOBLujnNz9mJ0FhyKjtjsZEa/7prtLzVyc36HO1U2ptjCShMkAKi0kZkQpV61nYry
+         mHVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=T84zFmO42nbUzgLTJpkaQAq6A6ocHYBnhFxVngdSKr4=;
+        b=Qic0m4ZVz+3lVBCoLRJHyPYwN5760dmZpXarIJa5rOu7OPWFEmHFD2NDvzd4ZZsezi
+         B3h3uXoWjXtlrNFlDpNudkdwz4qa6XB0FdlJZDdiOqVIMlCytUxTRMld6F6zzDe8jxHr
+         jtQ8ZfHCKbKCssxY7kNAHMpbIra2ITXgRNnQkZ9gO/ZISERj6ll+on4tU2apD7rOyyg0
+         mVMB8gykoPmrDrJKcwyQDELK4riHrbqouWptXhB55p/T/FfBZQiu1Ut/WdK+GlY8AiKy
+         3AazI+X2c1Yygzxf7OqNUX6Ojmui1EeCPM6HqwO+Fn6xWCLFUpfhfcCaPnjb/si4j8Ku
+         iabg==
+X-Gm-Message-State: APjAAAUFhkATBGo2OkYCY//ZQHfjq4Tia41PQS4s/OVQwmIv3G1RLZyq
+        QeH9cMUKeSGCC1tG1uuJt+76xA==
+X-Google-Smtp-Source: APXvYqwYdmt7LdffGfHn+xN9LhF6QT6xzfmGlCotOAqgwADoJX92Wh73x3TxJas5GxB69mtF9/7FyQ==
+X-Received: by 2002:a17:90a:9416:: with SMTP id r22mr4896064pjo.20.1570634523256;
+        Wed, 09 Oct 2019 08:22:03 -0700 (PDT)
+Received: from localhost.localdomain ([85.203.47.40])
+        by smtp.gmail.com with ESMTPSA id h68sm3279597pfb.149.2019.10.09.08.21.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 09 Oct 2019 08:22:02 -0700 (PDT)
+From:   Zhangfei Gao <zhangfei.gao@linaro.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, jonathan.cameron@huawei.com,
+        grant.likely@arm.com, jean-philippe <jean-philippe@linaro.org>,
+        ilias.apalodimas@linaro.org, francois.ozog@linaro.org,
+        kenneth-lee-2012@foxmail.com, Wangzhou <wangzhou1@hisilicon.com>
+Cc:     linux-accelerators@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Zhangfei Gao <zhangfei.gao@linaro.org>
+Subject: [RESEND PATCH v4 0/2] Add uacce module for Accelerator
+Date:   Wed,  9 Oct 2019 23:21:40 +0800
+Message-Id: <1570634502-20923-1-git-send-email-zhangfei.gao@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Uacce (Unified/User-space-access-intended Accelerator Framework) targets to
+provide Shared Virtual Addressing (SVA) between accelerators and processes.
+So accelerator can access any data structure of the main cpu.
+This differs from the data sharing between cpu and io device, which share
+data content rather than address.
+Because of unified address, hardware and user space of process can share
+the same virtual address in the communication.
 
-On 10/7/19 1:06 PM, Nitesh Narayan Lal wrote:
-[...]
->> So what was the size of your guest? One thing that just occurred to me is
->> that you might be running a much smaller guest than I was.
-> I am running a 30 GB guest.
->
->>>>  If so I would have expected a much higher difference versus
->>>> baseline as zeroing/faulting the pages in the host gets expensive fairly
->>>> quick. What is the host kernel you are running your test on? I'm just
->>>> wondering if there is some additional overhead currently limiting your
->>>> setup. My host kernel was just the same kernel I was running in the guest,
->>>> just built without the patches applied.
->>> Right now I have a different host-kernel. I can install the same kernel to the
->>> host as well and see if that changes anything.
->> The host kernel will have a fairly significant impact as I recall. For
->> example running a stock CentOS kernel lowered the performance compared to
->> running a linux-next kernel. As a result the numbers looked better since
->> the overall baseline was lower to begin with as the host OS was
->> introducing additional overhead.
-> I see in that case I will try by installing the same guest kernel
-> to the host as well.
+Uacce is intended to be used with Jean Philippe Brucker's SVA
+patchset[1], which enables IO side page fault and PASID support. 
+We have keep verifying with Jean's sva/current [2]
+We also keep verifying with Eric's SMMUv3 Nested Stage patch [3]
 
-As per your suggestion, I tried replacing the host kernel with an
-upstream kernel without my patches i.e., my host has a kernel built on top
-of the upstream kernel's master branch which has Sept 23rd commit and the guest
-has the same kernel for the no-hinting case and same kernel + my patches
-for the page reporting case.
+This series and related zip & qm driver
+https://github.com/Linaro/linux-kernel-warpdrive/tree/5.4-rc1-uacce-v4
 
-With the changes reported earlier on top of v12, I am not seeing any further
-degradation (other than what I have previously reported).
+The library and user application:
+https://github.com/Linaro/warpdrive/tree/wdprd-v1-upstream
 
-To be sure that THP is actively used, I did an experiment where I changed the
-MEMSIZE in the page_fault. On doing so THP usage checked via /proc/meminfo also
-increased as I expected.
+References:
+[1] http://jpbrucker.net/sva/
+[2] http://www.linux-arm.org/git?p=linux-jpb.git;a=shortlog;h=refs/heads/sva/current
+[3] https://github.com/eauger/linux/tree/v5.3.0-rc0-2stage-v9
 
-In any case, if you find something else please let me know and I will look into it
-again.
+Change History:
+v4:
+Based on 5.4-rc1
+Considering other driver integrating uacce, 
+if uacce not compiled, uacce_register return error and uacce_unregister is empty.
+Simplify uacce flag: UACCE_DEV_SVA.
+Address Greg's comments: 
+Fix state machine, remove potential syslog triggered from user space etc.
+
+v3:
+Recommended by Greg, use sturct uacce_device instead of struct uacce,
+and use struct *cdev in struct uacce_device, as a result, 
+cdev can be released by itself when refcount decreased to 0.
+So the two structures are decoupled and self-maintained by themsleves.
+Also add dev.release for put_device.
+
+v2:
+Address comments from Greg and Jonathan
+Modify interface uacce_register
+Drop noiommu mode first
+
+v1:
+1. Rebase to 5.3-rc1
+2. Build on iommu interface
+3. Verifying with Jean's sva and Eric's nested mode iommu.
+4. User library has developed a lot: support zlib, openssl etc.
+5. Move to misc first
+
+RFC3:
+https://lkml.org/lkml/2018/11/12/1951
+
+RFC2:
+https://lwn.net/Articles/763990/
 
 
-I am still looking into your suggestion about cache line bouncing and will reply
-to it, if I have more questions.
+Background of why Uacce:
+Von Neumann processor is not good at general data manipulation.
+It is designed for control-bound rather than data-bound application.
+The latter need less control path facility and more/specific ALUs.
+So there are more and more heterogeneous processors, such as
+encryption/decryption accelerators, TPUs, or
+EDGE (Explicated Data Graph Execution) processors, introduced to gain
+better performance or power efficiency for particular applications
+these days.
 
+There are generally two ways to make use of these heterogeneous processors:
 
-[...]
+The first is to make them co-processors, just like FPU.
+This is good for some application but it has its own cons:
+It changes the ISA set permanently.
+You must save all state elements when the process is switched out.
+But most data-bound processors have a huge set of state elements.
+It makes the kernel scheduler more complex.
 
+The second is Accelerator.
+It is taken as a IO device from the CPU's point of view
+(but it need not to be physically). The process, running on CPU,
+hold a context of the accelerator and send instructions to it as if
+it calls a function or thread running with FPU.
+The context is bound with the processor itself.
+So the state elements remain in the hardware context until
+the context is released.
 
+We believe this is the core feature of an "Accelerator" vs. Co-processor
+or other heterogeneous processors.
+
+The intention of Uacce is to provide the basic facility to backup
+this scenario. Its first step is to make sure the accelerator and process
+can share the same address space. So the accelerator ISA can directly
+address any data structure of the main CPU.
+This differs from the data sharing between CPU and IO device,
+which share data content rather than address.
+So it is different comparing to the other DMA libraries.
+
+In the future, we may add more facility to support linking accelerator
+library to the main application, or managing the accelerator context as
+special thread.
+But no matter how, this can be a solid start point for new processor
+to be used as an "accelerator" as this is the essential requirement.
+
+Kenneth Lee (2):
+  uacce: Add documents for uacce
+  uacce: add uacce driver
+
+ Documentation/ABI/testing/sysfs-driver-uacce |   47 ++
+ Documentation/misc-devices/uacce.rst         |  297 ++++++++
+ drivers/misc/Kconfig                         |    1 +
+ drivers/misc/Makefile                        |    1 +
+ drivers/misc/uacce/Kconfig                   |   13 +
+ drivers/misc/uacce/Makefile                  |    2 +
+ drivers/misc/uacce/uacce.c                   | 1013 ++++++++++++++++++++++++++
+ include/linux/uacce.h                        |  167 +++++
+ include/uapi/misc/uacce.h                    |   36 +
+ 9 files changed, 1577 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-uacce
+ create mode 100644 Documentation/misc-devices/uacce.rst
+ create mode 100644 drivers/misc/uacce/Kconfig
+ create mode 100644 drivers/misc/uacce/Makefile
+ create mode 100644 drivers/misc/uacce/uacce.c
+ create mode 100644 include/linux/uacce.h
+ create mode 100644 include/uapi/misc/uacce.h
 
 -- 
-Thanks
-Nitesh
+2.7.4
 
