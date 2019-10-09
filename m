@@ -2,136 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0F63D1875
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 21:14:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAA98D189A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 21:16:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732511AbfJITOS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 15:14:18 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33998 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732492AbfJITOL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 15:14:11 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 15EDE10DCC95;
-        Wed,  9 Oct 2019 19:14:11 +0000 (UTC)
-Received: from ovpn-116-36.ams2.redhat.com (ovpn-116-36.ams2.redhat.com [10.36.116.36])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BA4AE5EE1D;
-        Wed,  9 Oct 2019 19:14:08 +0000 (UTC)
-Message-ID: <95c5a697932e19ebd6577b5dac4d7052fe8c4255.camel@redhat.com>
-Subject: Re: Packet gets stuck in NOLOCK pfifo_fast qdisc
-From:   Paolo Abeni <pabeni@redhat.com>
-To:     Jonas Bonn <jonas.bonn@netrounds.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        John Fastabend <john.fastabend@gmail.com>
-Date:   Wed, 09 Oct 2019 21:14:07 +0200
-In-Reply-To: <d102074f-7489-e35a-98cf-e2cad7efd8a2@netrounds.com>
-References: <d102074f-7489-e35a-98cf-e2cad7efd8a2@netrounds.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S1732033AbfJITQ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 15:16:28 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:33198 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731144AbfJITQ1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 15:16:27 -0400
+Received: by mail-ot1-f67.google.com with SMTP id 60so2724147otu.0;
+        Wed, 09 Oct 2019 12:16:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NsEhGh1kFaBNKGsSiEy6NKNPiYELx9hdX+GfRAKSPVg=;
+        b=YjVfrtKrMEzOZ+WLkmgXY7tbQUdOTvzkr6Wg1olFXtPslH3gjHM9zaCvp6R6zCu1lR
+         YnoftlxFNuiGADq+KxcUEgb5KV6JCmUHI8rEK2TzoQUXuxQXHtCcCTqvs9tEkQjNLy9J
+         eZxox+A8adI6PrpDOqnxOHcDaT3QucAcb8ScSMLgkRQrbAv7wt23NlvPMC36pgUo1A5u
+         /nb42/E2Iy5RBhcitd7iTPV6/X5CV5hKJz0qgOwOKNUNLkJ6iYW+mTp4k5KLaSNWy7SF
+         UUagTwm63asMsysFN24/2Y0Zb0Wk+Zmuj9mUO0MKc9K6MdLElKOLcl68HqRkwgt/k56C
+         CtoQ==
+X-Gm-Message-State: APjAAAXXja3OtUZugE+1G7iNBxkdKyCyQed33wlEBaD5gL/uKdZv6eFb
+        JzsOuPvbY6z3kk1ULdUwFw==
+X-Google-Smtp-Source: APXvYqxM9n9jUehaPoDUkjLcg71MT46PUEqivMh5AfPwwaW1yPIijflLW5J8dPQdilMcg/UbuPNGhg==
+X-Received: by 2002:a9d:4501:: with SMTP id w1mr4457932ote.239.1570648586846;
+        Wed, 09 Oct 2019 12:16:26 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id y6sm959195oiy.45.2019.10.09.12.16.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 12:16:26 -0700 (PDT)
+Date:   Wed, 9 Oct 2019 14:16:25 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Talel Shenhar <talel@amazon.com>
+Cc:     mark.rutland@arm.com, bp@alien8.de, mchehab@kernel.org,
+        james.morse@arm.com, davem@davemloft.net,
+        gregkh@linuxfoundation.org, paulmck@linux.ibm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-edac@vger.kernel.org, dwmw@amazon.co.uk,
+        benh@kernel.crashing.org, hhhawa@amazon.com, ronenk@amazon.com,
+        jonnyc@amazon.com, hanochu@amazon.com, amirkl@amazon.com,
+        barakw@amazon.com
+Subject: Re: [PATCH v3 1/2] dt-bindings: edac: al-mc-edac: Amazon's Annapurna
+ Labs Memory Controller EDAC
+Message-ID: <20191009191625.GA8179@bogus>
+References: <1570103363-21486-1-git-send-email-talel@amazon.com>
+ <1570103363-21486-2-git-send-email-talel@amazon.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.64]); Wed, 09 Oct 2019 19:14:11 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1570103363-21486-2-git-send-email-talel@amazon.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-10-09 at 08:46 +0200, Jonas Bonn wrote:
-> Hi,
+On Thu, Oct 03, 2019 at 02:49:22PM +0300, Talel Shenhar wrote:
+> Document Amazon's Annapurna Labs Memory Controller EDAC SoC binding.
 > 
-> The lockless pfifo_fast qdisc has an issue with packets getting stuck in 
-> the queue.  What appears to happen is:
+> Signed-off-by: Talel Shenhar <talel@amazon.com>
+> ---
+>  .../bindings/edac/amazon,al-mc-edac.yaml           | 40 ++++++++++++++++++++++
+>  1 file changed, 40 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/edac/amazon,al-mc-edac.yaml
 > 
-> i)  Thread 1 holds the 'seqlock' on the qdisc and dequeues packets.
-> ii)  Thread 1 dequeues the last packet in the queue.
-> iii)  Thread 1 iterates through the qdisc->dequeue function again and 
-> determines that the queue is empty.
+> diff --git a/Documentation/devicetree/bindings/edac/amazon,al-mc-edac.yaml b/Documentation/devicetree/bindings/edac/amazon,al-mc-edac.yaml
+> new file mode 100644
+> index 0000000..33da051
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/edac/amazon,al-mc-edac.yaml
+> @@ -0,0 +1,40 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/edac/amazon,al-mc-edac.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Amazon's Annapurna Labs Memory Controller EDAC
+> +
+> +maintainers:
+> +  - Talel Shenhar <talel@amazon.com>
+> +  - Talel Shenhar <talelshenhar@gmail.com>
+> +
+> +description: |
+> +  EDAC node is defined to describe on-chip error detection and correction for
+> +  Amazon's Annapurna Labs Memory Controller.
+> +
+> +properties:
+> +
+> +  compatible:
+> +    - const: "amazon,al-mc-edac"
+
+Fails 'make dt_binding_check'. Drop the '-' as a property is not a list.
+
+The "" are also unnecessary.
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +examples:
+> +  - |
+> +    edac@f0080000 {
+> +      compatible = "amazon,al-mc-edac";
+> +      reg = <0x0 0xf0080000 0x0 0x00010000>;
+> +      interrupt-parent = <&amazon_al_system_fabric>;
+> +      interrupt-names = "ue";
+
+Need to document the name or drop as -names on a single entry is 
+pointless.
+
+> +      interrupts = <20 IRQ_TYPE_LEVEL_HIGH>;
+> +    };
+> -- 
+> 2.7.4
 > 
-> iv)  Thread 2 queues up a packet.  Since 'seqlock' is busy, it just 
-> assumes the packet will be dequeued by whoever is holding the lock.
-> 
-> v)  Thread 1 releases 'seqlock'.
-> 
-> After v), nobody will check if there are packets in the queue until a 
-> new packet is enqueued.  Thereby, the packet enqueued by Thread 2 may be 
-> delayed indefinitely.
-
-I think you are right.
-
-It looks like this possible race is present since the initial lockless
-implementation - commit 6b3ba9146fe6 ("net: sched: allow qdiscs to
-handle locking")
-
-Anyhow the racing windows looks quite tiny - I never observed that
-issue in my tests. Do you have a working reproducer?
-
-Something alike the following code - completely untested - can possibly
-address the issue, but it's a bit rough and I would prefer not adding
-additonal complexity to the lockless qdiscs, can you please have a spin
-a it?
-
-Thanks,
-
-Paolo
----
-diff --git a/include/net/pkt_sched.h b/include/net/pkt_sched.h
-index 6a70845bd9ab..65a1c03330d6 100644
---- a/include/net/pkt_sched.h
-+++ b/include/net/pkt_sched.h
-@@ -113,18 +113,23 @@ bool sch_direct_xmit(struct sk_buff *skb, struct Qdisc *q,
- 		     struct net_device *dev, struct netdev_queue *txq,
- 		     spinlock_t *root_lock, bool validate);
- 
--void __qdisc_run(struct Qdisc *q);
-+int __qdisc_run(struct Qdisc *q);
- 
- static inline void qdisc_run(struct Qdisc *q)
- {
-+	int quota = 0;
-+
- 	if (qdisc_run_begin(q)) {
- 		/* NOLOCK qdisc must check 'state' under the qdisc seqlock
- 		 * to avoid racing with dev_qdisc_reset()
- 		 */
- 		if (!(q->flags & TCQ_F_NOLOCK) ||
- 		    likely(!test_bit(__QDISC_STATE_DEACTIVATED, &q->state)))
--			__qdisc_run(q);
-+			quota = __qdisc_run(q);
- 		qdisc_run_end(q);
-+
-+		if (quota > 0 && q->flags & TCQ_F_NOLOCK && q->ops->peek(q))
-+			__netif_schedule(q);
- 	}
- }
- 
-diff --git a/net/sched/sch_generic.c b/net/sched/sch_generic.c
-index 17bd8f539bc7..013480f6a794 100644
---- a/net/sched/sch_generic.c
-+++ b/net/sched/sch_generic.c
-@@ -376,7 +376,7 @@ static inline bool qdisc_restart(struct Qdisc *q, int *packets)
- 	return sch_direct_xmit(skb, q, dev, txq, root_lock, validate);
- }
- 
--void __qdisc_run(struct Qdisc *q)
-+int __qdisc_run(struct Qdisc *q)
- {
- 	int quota = dev_tx_weight;
- 	int packets;
-@@ -390,9 +390,10 @@ void __qdisc_run(struct Qdisc *q)
- 		quota -= packets;
- 		if (quota <= 0 || need_resched()) {
- 			__netif_schedule(q);
--			break;
-+			return 0;
- 		}
- 	}
-+	return quota;
- }
- 
- unsigned long dev_trans_start(struct net_device *dev)
-
