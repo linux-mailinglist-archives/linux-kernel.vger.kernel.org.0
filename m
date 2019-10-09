@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B4C7D156B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:22:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66C89D1574
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:22:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731852AbfJIRV7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 13:21:59 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43806 "EHLO
+        id S1731964AbfJIRW3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 13:22:29 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44636 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731173AbfJIRV7 (ORCPT
+        with ESMTP id S1731173AbfJIRW3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 13:21:59 -0400
+        Wed, 9 Oct 2019 13:22:29 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=DhO1lhFWMD157dxNth9KK8xifPRfFHFsba37Wl3UBJ0=; b=Xyzbpa1PLU2+
-        r7JWoQveHm0Ugw4QDoPeaqS7JOzp5enjB+wkuHDY+4QoovdMMzYeo1MwQVUe3ls44KR+9ASXrzGfN
-        d/394yMOfyAH9aVa8fR3CTNa/WIVpTcV1TVa/IvUoxwtmzx3JNmZ0JGV85djkbuAX5ZxM1AnLoaB5
-        wNnIU=;
+        List-Archive; bh=IxAhdgaQrq0J/VgaJk4Li88x6ZuphvJhRzy9YVZATI4=; b=W3atcQgxz0VK
+        qgwUx5C1pL778u1fRvJ9j/go4rghn/bptabdJwPMJmvuyM7Vzkp62SQGGbye3VAobT7d9+r8qije7
+        /XUiFec4C+pAbueudkV6i9q9LykahBuQXmZZLBP4RuQ4lCQkFItbejvf4fyl0LLbXJrg+vnmw2Npk
+        UQpuw=;
 Received: from 188.31.199.195.threembb.co.uk ([188.31.199.195] helo=fitzroy.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1iIFer-0005Jr-J9; Wed, 09 Oct 2019 17:21:55 +0000
+        id 1iIFer-0005Jq-Jg; Wed, 09 Oct 2019 17:21:54 +0000
 Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 96BEFD03ED6; Wed,  9 Oct 2019 18:21:48 +0100 (BST)
+        id 59243D03ED4; Wed,  9 Oct 2019 18:21:48 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     Dan Murphy <dmurphy@ti.com>
 Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
         lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Stephan Gerhold <stephan@gerhold.net>
-Subject: Applied "ASoC: msm8916-wcd-digital: add missing MIX2 path for RX1/2" to the asoc tree
-In-Reply-To: <20191009111944.28069-1-srinivas.kandagatla@linaro.org>
+        Mark Brown <broonie@kernel.org>, navada@ti.com, perex@perex.cz,
+        tiwai@suse.com
+Subject: Applied "ASoc: Add Texas Instruments TAS2562 amplifier binding" to the asoc tree
+In-Reply-To: <20191008181517.5332-1-dmurphy@ti.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191009172148.96BEFD03ED6@fitzroy.sirena.org.uk>
+Message-Id: <20191009172148.59243D03ED4@fitzroy.sirena.org.uk>
 Date:   Wed,  9 Oct 2019 18:21:48 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -47,11 +47,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: msm8916-wcd-digital: add missing MIX2 path for RX1/2
+   ASoc: Add Texas Instruments TAS2562 amplifier binding
 
 has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.5
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -72,88 +72,61 @@ to this mail.
 Thanks,
 Mark
 
-From bcab05880f9306e94531b0009c627421db110a74 Mon Sep 17 00:00:00 2001
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Wed, 9 Oct 2019 12:19:44 +0100
-Subject: [PATCH] ASoC: msm8916-wcd-digital: add missing MIX2 path for RX1/2
+From ac84b8b21b8e305b82d2b204999ee3140990d1b5 Mon Sep 17 00:00:00 2001
+From: Dan Murphy <dmurphy@ti.com>
+Date: Tue, 8 Oct 2019 13:15:16 -0500
+Subject: [PATCH] ASoc: Add Texas Instruments TAS2562 amplifier binding
 
-This patch adds missing MIX2 path on RX1/2 which take IIR1 and
-IIR2 as inputs.
+Add the DT binding for the TAS2562 amplifier.
 
-Without this patch sound card fails to intialize with below warning:
-
- ASoC: no sink widget found for RX1 MIX2 INP1
- ASoC: Failed to add route IIR1 -> IIR1 -> RX1 MIX2 INP1
- ASoC: no sink widget found for RX2 MIX2 INP1
- ASoC: Failed to add route IIR1 -> IIR1 -> RX2 MIX2 INP1
- ASoC: no sink widget found for RX1 MIX2 INP1
- ASoC: Failed to add route IIR2 -> IIR2 -> RX1 MIX2 INP1
- ASoC: no sink widget found for RX2 MIX2 INP1
- ASoC: Failed to add route IIR2 -> IIR2 -> RX2 MIX2 INP1
-
-Reported-by: Stephan Gerhold <stephan@gerhold.net>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Tested-by: Stephan Gerhold <stephan@gerhold.net>
-Link: https://lore.kernel.org/r/20191009111944.28069-1-srinivas.kandagatla@linaro.org
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+Link: https://lore.kernel.org/r/20191008181517.5332-1-dmurphy@ti.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/msm8916-wcd-digital.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ .../devicetree/bindings/sound/tas2562.txt     | 34 +++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/tas2562.txt
 
-diff --git a/sound/soc/codecs/msm8916-wcd-digital.c b/sound/soc/codecs/msm8916-wcd-digital.c
-index 9fa5d44fdc79..58b2468fb2a7 100644
---- a/sound/soc/codecs/msm8916-wcd-digital.c
-+++ b/sound/soc/codecs/msm8916-wcd-digital.c
-@@ -243,6 +243,10 @@ static const char *const rx_mix1_text[] = {
- 	"ZERO", "IIR1", "IIR2", "RX1", "RX2", "RX3"
- };
- 
-+static const char * const rx_mix2_text[] = {
-+	"ZERO", "IIR1", "IIR2"
+diff --git a/Documentation/devicetree/bindings/sound/tas2562.txt b/Documentation/devicetree/bindings/sound/tas2562.txt
+new file mode 100644
+index 000000000000..658e1fb18a99
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/tas2562.txt
+@@ -0,0 +1,34 @@
++Texas Instruments TAS2562 Smart PA
++
++The TAS2562 is a mono, digital input Class-D audio amplifier optimized for
++efficiently driving high peak power into small loudspeakers.
++Integrated speaker voltage and current sense provides for
++real time monitoring of loudspeaker behavior.
++
++Required properties:
++ - #address-cells  - Should be <1>.
++ - #size-cells     - Should be <0>.
++ - compatible:	   - Should contain "ti,tas2562".
++ - reg:		   - The i2c address. Should be 0x4c, 0x4d, 0x4e or 0x4f.
++ - ti,imon-slot-no:- TDM TX current sense time slot.
++
++Optional properties:
++- interrupt-parent: phandle to the interrupt controller which provides
++                    the interrupt.
++- interrupts: (GPIO) interrupt to which the chip is connected.
++- shut-down: GPIO used to control the state of the device.
++
++Examples:
++tas2562@4c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++        compatible = "ti,tas2562";
++        reg = <0x4c>;
++
++        interrupt-parent = <&gpio1>;
++        interrupts = <14>;
++
++	shut-down = <&gpio1 15 0>;
++        ti,imon-slot-no = <0>;
 +};
 +
- static const char *const dec_mux_text[] = {
- 	"ZERO", "ADC1", "ADC2", "ADC3", "DMIC1", "DMIC2"
- };
-@@ -270,6 +274,16 @@ static const struct soc_enum rx3_mix1_inp_enum[] = {
- 	SOC_ENUM_SINGLE(LPASS_CDC_CONN_RX3_B2_CTL, 0, 6, rx_mix1_text),
- };
- 
-+/* RX1 MIX2 */
-+static const struct soc_enum rx_mix2_inp1_chain_enum =
-+	SOC_ENUM_SINGLE(LPASS_CDC_CONN_RX1_B3_CTL,
-+		0, 3, rx_mix2_text);
-+
-+/* RX2 MIX2 */
-+static const struct soc_enum rx2_mix2_inp1_chain_enum =
-+	SOC_ENUM_SINGLE(LPASS_CDC_CONN_RX2_B3_CTL,
-+		0, 3, rx_mix2_text);
-+
- /* DEC */
- static const struct soc_enum dec1_mux_enum = SOC_ENUM_SINGLE(
- 				LPASS_CDC_CONN_TX_B1_CTL, 0, 6, dec_mux_text);
-@@ -309,6 +323,10 @@ static const struct snd_kcontrol_new rx3_mix1_inp2_mux = SOC_DAPM_ENUM(
- 				"RX3 MIX1 INP2 Mux", rx3_mix1_inp_enum[1]);
- static const struct snd_kcontrol_new rx3_mix1_inp3_mux = SOC_DAPM_ENUM(
- 				"RX3 MIX1 INP3 Mux", rx3_mix1_inp_enum[2]);
-+static const struct snd_kcontrol_new rx1_mix2_inp1_mux = SOC_DAPM_ENUM(
-+				"RX1 MIX2 INP1 Mux", rx_mix2_inp1_chain_enum);
-+static const struct snd_kcontrol_new rx2_mix2_inp1_mux = SOC_DAPM_ENUM(
-+				"RX2 MIX2 INP1 Mux", rx2_mix2_inp1_chain_enum);
- 
- /* Digital Gain control -38.4 dB to +38.4 dB in 0.3 dB steps */
- static const DECLARE_TLV_DB_SCALE(digital_gain, -3840, 30, 0);
-@@ -740,6 +758,10 @@ static const struct snd_soc_dapm_widget msm8916_wcd_digital_dapm_widgets[] = {
- 			 &rx3_mix1_inp2_mux),
- 	SND_SOC_DAPM_MUX("RX3 MIX1 INP3", SND_SOC_NOPM, 0, 0,
- 			 &rx3_mix1_inp3_mux),
-+	SND_SOC_DAPM_MUX("RX1 MIX2 INP1", SND_SOC_NOPM, 0, 0,
-+			 &rx1_mix2_inp1_mux),
-+	SND_SOC_DAPM_MUX("RX2 MIX2 INP1", SND_SOC_NOPM, 0, 0,
-+			 &rx2_mix2_inp1_mux),
- 
- 	SND_SOC_DAPM_MUX("CIC1 MUX", SND_SOC_NOPM, 0, 0, &cic1_mux),
- 	SND_SOC_DAPM_MUX("CIC2 MUX", SND_SOC_NOPM, 0, 0, &cic2_mux),
 -- 
 2.20.1
 
