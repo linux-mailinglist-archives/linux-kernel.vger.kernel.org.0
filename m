@@ -2,87 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1285D13D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 18:18:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 401BED13CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 18:17:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731734AbfJIQSS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 12:18:18 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:35238 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731688AbfJIQSS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 12:18:18 -0400
-Received: from s0106ac1f6bb1ecac.cg.shawcable.net ([70.73.163.230] helo=[192.168.11.155])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1iIEfE-0007Md-Fx; Wed, 09 Oct 2019 10:18:13 -0600
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Joerg Roedel <joro@8bytes.org>, Kit Chow <kchow@gigaio.com>
-References: <20191008221837.13067-1-logang@deltatee.com>
- <20191008221837.13067-2-logang@deltatee.com>
- <20191009065750.GA17832@infradead.org>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <c5f6750f-b415-3562-9abe-0937bae94f75@deltatee.com>
-Date:   Wed, 9 Oct 2019 10:17:36 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1731590AbfJIQRy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 12:17:54 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37756 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729644AbfJIQRy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 12:17:54 -0400
+Received: by mail-wr1-f67.google.com with SMTP id p14so3764096wro.4;
+        Wed, 09 Oct 2019 09:17:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/XG8wGMoyUv6lYKMyZk/b63prTSeiN7OqjwfzhXPeBU=;
+        b=mZTMp25p5tZ0QS0QQn2WdAs83YNBwqRMFSxTq86nFaKIOCf6chuWTaKlENsao9OeDa
+         CgKnDADSE7Dx8ODu0JgVhrgWjnRKMJ8mLWF8hwOvWD1fTLSGiLKWDozvjerIiL8V3Ggr
+         5OTCrQ+ZGZUaMshEx0AyLZjb3p5dwvfgKoTZMynJGZHvgMuW74cqgCYYF4gZuClipIAM
+         Pf7+SfYjBr3ipQG9Znp04j3nKycyUWT6604f5EZRVDocOU441jop29clCIKCU6wIbhLK
+         Mt1OomC3eSIhfyaEWnQcS2UPXs4KhsBEJnGw1+YGgowp/9LnB1Pu+IEu0ednFtBwIGyD
+         goEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/XG8wGMoyUv6lYKMyZk/b63prTSeiN7OqjwfzhXPeBU=;
+        b=Ftiw+9F+MH/ywgIozgawOO8+jmiUnYVZK5Tt8r65COGVwd1OPi83EULgGHhsGaNxuh
+         herrydCEz23540MU12ELJv073lxFFSsFuXcf/LwB51Ti14JJKPaZOU3sie/VV6E3H2Fu
+         bmPo1hveh9XAhFzo+zlBVw+yY2moAhJjlglWyn6d6OY+pa4TrAWyFNn4fiIXE9o81P/0
+         4eHSnKhRYBTo3NoGDmYtfWvgJY874WARm8dlxp8Ex5Df7Xz10ptQc1r4pHbvuPAI2wr5
+         ojI/8kEngMtULmBn+y1OWqt3EO48ltFzkEeZHLcgtpSJkem9zXatwLDsgnYFbhrQ0rh3
+         v10w==
+X-Gm-Message-State: APjAAAW65xIUsZ1O55sqnNQ+pd1HFbr5k+QkP06vbVZU0rMYzokNnCDY
+        mZwnAO0JJrx1zV+qz1QuDv4qrMNuNFvxNMwXxtFliQ==
+X-Google-Smtp-Source: APXvYqwuFxizJIc608t7uMIyzZUpg60M7UXO170bbTV8WWpxvxozUM5YuBaV9KuuipR2H0z6C97a1BSFfNMask+sQyg=
+X-Received: by 2002:adf:db43:: with SMTP id f3mr2544310wrj.11.1570637872054;
+ Wed, 09 Oct 2019 09:17:52 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191009065750.GA17832@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 70.73.163.230
-X-SA-Exim-Rcpt-To: kchow@gigaio.com, joro@8bytes.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, hch@infradead.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=5.0 tests=ALL_TRUSTED,BAYES_00
-        autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [PATCH 1/3] iommu/amd: Implement dma_[un]map_resource()
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+References: <20191009113557.41ced49e@canb.auug.org.au>
+In-Reply-To: <20191009113557.41ced49e@canb.auug.org.au>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Wed, 9 Oct 2019 12:17:36 -0400
+Message-ID: <CADnq5_M0+PqajRUxgho2WVLq4ykdHJh=4-mWKrR25_93HMj68Q@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the drm-misc tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Harish Kasiviswanathan <Harish.Kasiviswanathan@amd.com>,
+        Sam Ravnborg <sam@ravnborg.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Applied.  thanks!
 
+Alex
 
-On 2019-10-09 12:57 a.m., Christoph Hellwig wrote:
-> On Tue, Oct 08, 2019 at 04:18:35PM -0600, Logan Gunthorpe wrote:
->> From: Kit Chow <kchow@gigaio.com>
->>
->> Currently the Intel IOMMU uses the default dma_[un]map_resource()
-> 
-> s/Intel/AMD/ ?
-
-Oops, yes, my mistake.
-
->> +static dma_addr_t map_resource(struct device *dev, phys_addr_t paddr,
->> +		size_t size, enum dma_data_direction dir, unsigned long attrs)
->> +{
->> +	struct protection_domain *domain;
->> +	struct dma_ops_domain *dma_dom;
->> +
->> +	domain = get_domain(dev);
->> +	if (PTR_ERR(domain) == -EINVAL)
->> +		return (dma_addr_t)paddr;
-> 
-> I thought that case can't happen anymore?
-> 
-> Also note that Joerg just applied the patch to convert the AMD iommu
-> driver to use the dma-iommu ops.  Can you test that series and check
-> it does the right thing for your use case?  From looking at the code
-> I think it should.
-
-Yes, looking at the new code, it looks like this patch will not be
-needed. So we can drop it. We'll test it to make sure.
-
-I believe the other two patches in this series are still needed though.
-
-Thanks,
-
-Logan
-
-
+On Tue, Oct 8, 2019 at 8:36 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> After merging the drm-misc tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> In file included from drivers/gpu/drm/amd/amdgpu/../amdkfd/kfd_module.c:25:
+> drivers/gpu/drm/amd/amdgpu/../amdkfd/kfd_priv.h:40:10: fatal error: drm/drmP.h: No such file or directory
+>    40 | #include <drm/drmP.h>
+>       |          ^~~~~~~~~~~~
+> In file included from drivers/gpu/drm/amd/amdgpu/../amdkfd/kfd_chardev.c:38:
+> drivers/gpu/drm/amd/amdgpu/../amdkfd/kfd_priv.h:40:10: fatal error: drm/drmP.h: No such file or directory
+>    40 | #include <drm/drmP.h>
+>       |          ^~~~~~~~~~~~
+> In file included from drivers/gpu/drm/amd/amdgpu/../amdkfd/kfd_device.c:26:
+> drivers/gpu/drm/amd/amdgpu/../amdkfd/kfd_priv.h:40:10: fatal error: drm/drmP.h: No such file or directory
+>    40 | #include <drm/drmP.h>
+>       |          ^~~~~~~~~~~~
+> In file included from drivers/gpu/drm/amd/amdgpu/../amdkfd/kfd_topology.c:34:
+> drivers/gpu/drm/amd/amdgpu/../amdkfd/kfd_priv.h:40:10: fatal error: drm/drmP.h: No such file or directory
+>    40 | #include <drm/drmP.h>
+>       |          ^~~~~~~~~~~~
+>
+>
+> Caused by commit
+>
+>   4e98f871bcff ("drm: delete drmP.h + drm_os_linux.h")
+>
+> interacting with commit
+>
+>   6b855f7b83d2 ("drm/amdkfd: Check against device cgroup")
+>
+> from the amdgpu tree.
+>
+> I added the following merge fix patch for today:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 9 Oct 2019 11:24:38 +1100
+> Subject: [PATCH] drm/amdkfd: update for drmP.h removal
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/gpu/drm/amd/amdkfd/kfd_priv.h | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_priv.h b/drivers/gpu/drm/amd/amdkfd/kfd_priv.h
+> index b8b4485c8f74..41bc0428bfc0 100644
+> --- a/drivers/gpu/drm/amd/amdkfd/kfd_priv.h
+> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_priv.h
+> @@ -37,7 +37,9 @@
+>  #include <linux/kref.h>
+>  #include <linux/sysfs.h>
+>  #include <linux/device_cgroup.h>
+> -#include <drm/drmP.h>
+> +#include <drm/drm_file.h>
+> +#include <drm/drm_drv.h>
+> +#include <drm/drm_device.h>
+>  #include <kgd_kfd_interface.h>
+>
+>  #include "amd_shared.h"
+> @@ -49,8 +51,6 @@
+>  /* GPU ID hash width in bits */
+>  #define KFD_GPU_ID_HASH_WIDTH 16
+>
+> -struct drm_device;
+> -
+>  /* Use upper bits of mmap offset to store KFD driver specific information.
+>   * BITS[63:62] - Encode MMAP type
+>   * BITS[61:46] - Encode gpu_id. To identify to which GPU the offset belongs to
+> --
+> 2.23.0
+>
+> --
+> Cheers,
+> Stephen Rothwell
