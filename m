@@ -2,126 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBC96D08B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 09:46:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3C2ED08D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 09:52:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729767AbfJIHqi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 03:46:38 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:22667 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725848AbfJIHqi (ORCPT
+        id S1727572AbfJIHwx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 03:52:53 -0400
+Received: from mail-40135.protonmail.ch ([185.70.40.135]:46794 "EHLO
+        mail-40135.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725440AbfJIHww (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 03:46:38 -0400
-Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
-  Ludovic.Desroches@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Ludovic.Desroches@microchip.com";
-  x-sender="Ludovic.Desroches@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa3.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Ludovic.Desroches@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa3.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Ludovic.Desroches@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: 8v0tdMs3LlvQuSHU7rzAWhRtWIVlotOUQ8ditN56wCSdkOVwSWrpH6xpRpB5o4IFGvwz2oQWnn
- IIj3G65C0gTbgnRV+douGVZvsSs5albruElzTe2OAUWUZNsguLdlc6PBeICA8q2ZCy5PBDKLNx
- 3yOjtw6tAsg6bPGLyfJ2eavi13JhfaL84i8Mm82sgjZXzkv5jwHGouLGCzuHKtkV4ax2cf8mWS
- RojiYrUy9JaS7J+XD+q6QhVZetGADXwhPxHErHQ8eotSGUrP2WfzIOigipksHTLSF+468tjMif
- Xxk=
-X-IronPort-AV: E=Sophos;i="5.67,273,1566889200"; 
-   d="scan'208";a="52257068"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 09 Oct 2019 00:46:36 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Wed, 9 Oct 2019 00:46:33 -0700
-Received: from localhost (10.10.85.251) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
- Transport; Wed, 9 Oct 2019 00:46:33 -0700
-Date:   Wed, 9 Oct 2019 09:46:42 +0200
-From:   Ludovic Desroches <ludovic.desroches@microchip.com>
-To:     Markus Elfring <Markus.Elfring@web.de>
-CC:     <dmaengine@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        "Dan Williams" <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        "Nicolas Ferre" <nicolas.ferre@atmel.com>
-Subject: Re: [PATCH] dmaengine: at_xdmac: Use
- devm_platform_ioremap_resource() in at_xdmac_probe()
-Message-ID: <20191009074641.taocxbrs2vodvsgm@M43218.corp.atmel.com>
-Mail-Followup-To: Markus Elfring <Markus.Elfring@web.de>,
-        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Nicolas Ferre <nicolas.ferre@atmel.com>
-References: <377247f3-b53a-a9d9-66c7-4b8515de3809@web.de>
+        Wed, 9 Oct 2019 03:52:52 -0400
+Date:   Wed, 09 Oct 2019 07:52:43 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=default; t=1570607570;
+        bh=7EnMgl/2zFKetT2sNFehzIDh6jVK/DRj5tYj0IhtKIs=;
+        h=Date:To:From:Reply-To:Subject:Feedback-ID:From;
+        b=yZG+5/gOGMQaq9lf2ABQuoVBqhOAnb6ONuJ+LUDLqtS7LNocgak3n6gXjPhJt+roL
+         hlspg0helnfbJmE6k3OcAxh+r7Rry9WO8js6L5IZuBHXssAFf472SkrOQcIuVc1m9a
+         KeqbBkhHCpqSTdmqqCIww0AiOBG0keXelL9nie5w=
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
+Reply-To: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
+Subject: (was Fair Trade O.S.) Operating Systems Philosophy Completed
+Message-ID: <pf2Kww8gDvv1R4YOsQ8PlzrqyIhjolu1qA6AHudDHSnNI6U-tNgrqTvhMbsjuymHVHDg41qDSielMXI28h36xlWBIw-7TWRVYG6hS5KJDWY=@protonmail.com>
+Feedback-ID: jE8CP55NmWCGfbi9g5qzrOGkxuwuSXpchSI6fmYzjd5UEveHXeJrmiWc0_sgJdqIHM8YAKf9EEyPwffaRmhZ0A==:Ext:ProtonMail
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <377247f3-b53a-a9d9-66c7-4b8515de3809@web.de>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 22, 2019 at 10:48:20AM +0200, Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 22 Sep 2019 10:37:31 +0200
-> 
-> Simplify this function implementation by using a known wrapper function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com> 
+Ok, I think I have a fully and complete view of operating systems philosoph=
+y.
 
-Thanks
+Basically a good O.S. philosophy can be traced back to 1000 A.D. and the Sa=
+xons forcing the bible, and "god" on people in Norway. Still Norway never r=
+eally did not become un-varangian.
+Today contemplating a background on a good O.S. based on my research, I und=
+erstand that varangian culture was quite good, and building further on it, =
+ridding oneself of the christian trinitarian god, we can also have a good O=
+.S.
 
-> ---
->  drivers/dma/at_xdmac.c | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
-> 
-> diff --git a/drivers/dma/at_xdmac.c b/drivers/dma/at_xdmac.c
-> index b58ac720d9a1..f71c9f77d405 100644
-> --- a/drivers/dma/at_xdmac.c
-> +++ b/drivers/dma/at_xdmac.c
-> @@ -1957,21 +1957,16 @@ static int atmel_xdmac_resume(struct device *dev)
-> 
->  static int at_xdmac_probe(struct platform_device *pdev)
->  {
-> -	struct resource	*res;
->  	struct at_xdmac	*atxdmac;
->  	int		irq, size, nr_channels, i, ret;
->  	void __iomem	*base;
->  	u32		reg;
-> 
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	if (!res)
-> -		return -EINVAL;
-> -
->  	irq = platform_get_irq(pdev, 0);
->  	if (irq < 0)
->  		return irq;
-> 
-> -	base = devm_ioremap_resource(&pdev->dev, res);
-> +	base = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(base))
->  		return PTR_ERR(base);
-> 
-> --
-> 2.23.0
-> 
+Therefore the system is now named Varanger Sys, with Cider as the original =
+drink of T=C3=B3r. And the EDM culture of the 90s that Norway was largely i=
+nfluental in, I have named =C3=9App Varanger EDM, that went all the way up =
+to Kygo (and Maren), that represents types already established in the 90s, =
+which I was part of. Very Norwegian, Scandinavian, probably European, and m=
+aybe other places. And we fully support EU.
+
+This is the final basis of my operating system philosophy, and cultural asp=
+ect. Small changes may come, if it improves things.
+
+Best Greetings,
+Ywe C=C3=A6rlyn
+Lead & Philosophy
+Varanger Sys
+
+https://www.youtube.com/channel/UCR3gmLVjHS5A702wo4bol_Q
