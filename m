@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C992D0F5E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 14:59:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3953DD0F59
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 14:59:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731411AbfJIM7p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 08:59:45 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50940 "EHLO
+        id S1731348AbfJIM7e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 08:59:34 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:50915 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731356AbfJIM7h (ORCPT
+        with ESMTP id S1731237AbfJIM7c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 08:59:37 -0400
+        Wed, 9 Oct 2019 08:59:32 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iIBYr-0002pT-4v; Wed, 09 Oct 2019 14:59:25 +0200
+        id 1iIBYr-0002pS-6h; Wed, 09 Oct 2019 14:59:25 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id AFAD01C028F;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 886A01C0270;
         Wed,  9 Oct 2019 14:59:19 +0200 (CEST)
 Date:   Wed, 09 Oct 2019 12:59:19 -0000
 From:   "tip-bot2 for Song Liu" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf/core: Rework memory accounting in perf_mmap()
-Cc:     Hechao Li <hechaol@fb.com>, Song Liu <songliubraving@fb.com>,
+Subject: [tip: perf/urgent] perf/core: Fix corner case in perf_rotate_context()
+Cc:     Song Liu <songliubraving@fb.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        <kernel-team@fb.com>, Jie Meng <jmeng@fb.com>,
+        <kernel-team@fb.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20190904214618.3795672-1-songliubraving@fb.com>
-References: <20190904214618.3795672-1-songliubraving@fb.com>
+In-Reply-To: <20191008165949.920548-1-songliubraving@fb.com>
+References: <20191008165949.920548-1-songliubraving@fb.com>
 MIME-Version: 1.0
-Message-ID: <157062595964.9978.13325399994782902718.tip-bot2@tip-bot2>
+Message-ID: <157062595948.9978.4521559810702776433.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -51,78 +52,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     d44248a41337731a111374822d7d4451b64e73e4
-Gitweb:        https://git.kernel.org/tip/d44248a41337731a111374822d7d4451b64e73e4
+Commit-ID:     7fa343b7fdc4f351de4e3f28d5c285937dd1f42f
+Gitweb:        https://git.kernel.org/tip/7fa343b7fdc4f351de4e3f28d5c285937dd1f42f
 Author:        Song Liu <songliubraving@fb.com>
-AuthorDate:    Wed, 04 Sep 2019 14:46:18 -07:00
+AuthorDate:    Tue, 08 Oct 2019 09:59:49 -07:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 09 Oct 2019 12:44:12 +02:00
+CommitterDate: Wed, 09 Oct 2019 12:44:13 +02:00
 
-perf/core: Rework memory accounting in perf_mmap()
+perf/core: Fix corner case in perf_rotate_context()
 
-perf_mmap() always increases user->locked_vm. As a result, "extra" could
-grow bigger than "user_extra", which doesn't make sense. Here is an
-example case:
+In perf_rotate_context(), when the first cpu flexible event fail to
+schedule, cpu_rotate is 1, while cpu_event is NULL. Since cpu_event is
+NULL, perf_rotate_context will _NOT_ call cpu_ctx_sched_out(), thus
+cpuctx->ctx.is_active will have EVENT_FLEXIBLE set. Then, the next
+perf_event_sched_in() will skip all cpu flexible events because of the
+EVENT_FLEXIBLE bit.
 
-(Note: Assume "user_lock_limit" is very small.)
+In the next call of perf_rotate_context(), cpu_rotate stays 1, and
+cpu_event stays NULL, so this process repeats. The end result is, flexible
+events on this cpu will not be scheduled (until another event being added
+to the cpuctx).
 
-  | # of perf_mmap calls |vma->vm_mm->pinned_vm|user->locked_vm|
-  | 0                    | 0                   | 0             |
-  | 1                    | user_extra          | user_extra    |
-  | 2                    | 3 * user_extra      | 2 * user_extra|
-  | 3                    | 6 * user_extra      | 3 * user_extra|
-  | 4                    | 10 * user_extra     | 4 * user_extra|
+Here is an easy repro of this issue. On Intel CPUs, where ref-cycles
+could only use one counter, run one pinned event for ref-cycles, one
+flexible event for ref-cycles, and one flexible event for cycles. The
+flexible ref-cycles is never scheduled, which is expected. However,
+because of this issue, the cycles event is never scheduled either.
 
-Fix this by maintaining proper user_extra and extra.
+ $ perf stat -e ref-cycles:D,ref-cycles,cycles -C 5 -I 1000
 
-Reviewed-By: Hechao Li <hechaol@fb.com>
-Reported-by: Hechao Li <hechaol@fb.com>
+           time             counts unit events
+    1.000152973         15,412,480      ref-cycles:D
+    1.000152973      <not counted>      ref-cycles     (0.00%)
+    1.000152973      <not counted>      cycles         (0.00%)
+    2.000486957         18,263,120      ref-cycles:D
+    2.000486957      <not counted>      ref-cycles     (0.00%)
+    2.000486957      <not counted>      cycles         (0.00%)
+
+To fix this, when the flexible_active list is empty, try rotate the
+first event in the flexible_groups. Also, rename ctx_first_active() to
+ctx_event_to_rotate(), which is more accurate.
+
 Signed-off-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: <kernel-team@fb.com>
-Cc: Jie Meng <jmeng@fb.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sasha Levin <sashal@kernel.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190904214618.3795672-1-songliubraving@fb.com
+Fixes: 8d5bce0c37fa ("perf/core: Optimize perf_rotate_context() event scheduling")
+Link: https://lkml.kernel.org/r/20191008165949.920548-1-songliubraving@fb.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/events/core.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ kernel/events/core.c | 22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
 
 diff --git a/kernel/events/core.c b/kernel/events/core.c
-index f953dd1..2b8265a 100644
+index 2b8265a..9ec0b0b 100644
 --- a/kernel/events/core.c
 +++ b/kernel/events/core.c
-@@ -5668,7 +5668,8 @@ again:
- 	 * undo the VM accounting.
- 	 */
+@@ -3779,11 +3779,23 @@ static void rotate_ctx(struct perf_event_context *ctx, struct perf_event *event)
+ 	perf_event_groups_insert(&ctx->flexible_groups, event);
+ }
  
--	atomic_long_sub((size >> PAGE_SHIFT) + 1, &mmap_user->locked_vm);
-+	atomic_long_sub((size >> PAGE_SHIFT) + 1 - mmap_locked,
-+			&mmap_user->locked_vm);
- 	atomic64_sub(mmap_locked, &vma->vm_mm->pinned_vm);
- 	free_uid(mmap_user);
- 
-@@ -5812,8 +5813,20 @@ accounting:
- 
- 	user_locked = atomic_long_read(&user->locked_vm) + user_extra;
- 
--	if (user_locked > user_lock_limit)
-+	if (user_locked <= user_lock_limit) {
-+		/* charge all to locked_vm */
-+	} else if (atomic_long_read(&user->locked_vm) >= user_lock_limit) {
-+		/* charge all to pinned_vm */
-+		extra = user_extra;
-+		user_extra = 0;
-+	} else {
-+		/*
-+		 * charge locked_vm until it hits user_lock_limit;
-+		 * charge the rest from pinned_vm
-+		 */
- 		extra = user_locked - user_lock_limit;
-+		user_extra -= extra;
++/* pick an event from the flexible_groups to rotate */
+ static inline struct perf_event *
+-ctx_first_active(struct perf_event_context *ctx)
++ctx_event_to_rotate(struct perf_event_context *ctx)
+ {
+-	return list_first_entry_or_null(&ctx->flexible_active,
+-					struct perf_event, active_list);
++	struct perf_event *event;
++
++	/* pick the first active flexible event */
++	event = list_first_entry_or_null(&ctx->flexible_active,
++					 struct perf_event, active_list);
++
++	/* if no active flexible event, pick the first event */
++	if (!event) {
++		event = rb_entry_safe(rb_first(&ctx->flexible_groups.tree),
++				      typeof(*event), group_node);
 +	}
++
++	return event;
+ }
  
- 	lock_limit = rlimit(RLIMIT_MEMLOCK);
- 	lock_limit >>= PAGE_SHIFT;
+ static bool perf_rotate_context(struct perf_cpu_context *cpuctx)
+@@ -3808,9 +3820,9 @@ static bool perf_rotate_context(struct perf_cpu_context *cpuctx)
+ 	perf_pmu_disable(cpuctx->ctx.pmu);
+ 
+ 	if (task_rotate)
+-		task_event = ctx_first_active(task_ctx);
++		task_event = ctx_event_to_rotate(task_ctx);
+ 	if (cpu_rotate)
+-		cpu_event = ctx_first_active(&cpuctx->ctx);
++		cpu_event = ctx_event_to_rotate(&cpuctx->ctx);
+ 
+ 	/*
+ 	 * As per the order given at ctx_resched() first 'pop' task flexible
