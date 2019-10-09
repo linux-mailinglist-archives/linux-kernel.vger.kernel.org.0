@@ -2,180 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 902F7D1C24
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 00:46:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7991ED1C28
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 00:48:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732309AbfJIWqv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 18:46:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60200 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730815AbfJIWqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 18:46:50 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2189C218AC;
-        Wed,  9 Oct 2019 22:46:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570661209;
-        bh=G4qaDJvkgucJqayGdIGRgColYPN7u9fMFeBqJUjKfz0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gr469wBofiAFIdOGgkpSdkNgSeQMWQW+3lG3nQ7+YuABSj9TtzblnULya9ZAbb3ZV
-         AnNOC2RkF1flKoPor+TBb/ggYQ6mwg7mIw+vkTJs4+dreg5w1AUipBYYc6N/cRq1Om
-         j8AzddchSO4UXHhYCAzAhMkMdTVL/JV/8/t850jE=
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     Ashok Raj <ashok.raj@intel.com>,
-        Keith Busch <keith.busch@intel.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 2/2] PCI/ATS: Move pci_prg_resp_pasid_required() to CONFIG_PCI_PRI
-Date:   Wed,  9 Oct 2019 17:45:51 -0500
-Message-Id: <20191009224551.179497-3-helgaas@kernel.org>
-X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
-In-Reply-To: <20191009224551.179497-1-helgaas@kernel.org>
-References: <20191009224551.179497-1-helgaas@kernel.org>
+        id S1732347AbfJIWsV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 18:48:21 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:37099 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731150AbfJIWsU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 18:48:20 -0400
+Received: by mail-qt1-f194.google.com with SMTP id l51so5602856qtc.4
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 15:48:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=Z+3EdhKE+AeW2xdFzbCTybbKxG5jLxRNaHCmlepKnCw=;
+        b=tPiQH17p72YrZtxFr1LqCPf01LguDgjeCPY7Ev5YfqIPrJ/jRhim9woLkOrLDv86X4
+         /aTnTOeJ/t7E8+CWY4V1sCiZYSC0UHo+oyNlRfWZdzCIY98M1Nnf4MHw4wkL2zzQW/S/
+         zw4SffqEqQHWaJ9Cj9mIgAzY3aMgpsd0+8CQH/3dmVd5Xt3ED0VnDQNuWzgAmkntww3b
+         0sLsxRb5azzyG1iR14POYl4Z2x4ImSvxfU85iuQUVs5nD4C6PdRuUJvuYrd1xElpvJGy
+         ZESG2CHc7o63RVUq95aRQ1wFXbsJ6UMNw0XEbffHkKP+h5m4racXVPILlsoVpCcNsU0G
+         Eu2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=Z+3EdhKE+AeW2xdFzbCTybbKxG5jLxRNaHCmlepKnCw=;
+        b=Qh44QyNrKyhiDhzyi7ViX2IGuD/IoGfUj4NNASb02HlHLy3zTrB6PgWd+QuVDoClbw
+         v5Evz0AfnR03v8CR7JYh65ekEv4CojpVgDKqeDqFFn8MoWEl7JO5Vlpmufyk84HrMZrz
+         G/Dby0NPFjhVXarTlhE7T+FqxwcOdgyHtUnrQct1Eh8i5hF6WPCB/aVBwA3mLoSMxNar
+         jfnSYhBtcQHCMTFS9j23Bh0fBqoDvcORG/t6SDPA3ORX4twAiEEDFAM2A2/6D1F1fxt9
+         TVyx1Tck/E0zlE4J+CWZx5oNcJfu+ABrYIoEVgPYkPdYHUDtk6MfDGiSqDB0D0vYuRIK
+         K3Cg==
+X-Gm-Message-State: APjAAAVGlrZk0ddYyrzVWptzYF2lpR+CG0t+JpK7Oc2ucOBSuRQ2tc6/
+        JHndMfhZsjD6Eop5SDECqlI7HQ==
+X-Google-Smtp-Source: APXvYqzbI6LUeO5TJ+8XMFJemSA1dYxl8UN4xKPjlcsfjqpVjIN2lEJW3zfkTDGY3/sCKeE6Lff2vw==
+X-Received: by 2002:ac8:682:: with SMTP id f2mr6557906qth.149.1570661298493;
+        Wed, 09 Oct 2019 15:48:18 -0700 (PDT)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id s16sm1414725qkg.40.2019.10.09.15.48.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 15:48:18 -0700 (PDT)
+Date:   Wed, 9 Oct 2019 15:48:03 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     David Miller <davem@davemloft.net>, j.neuschaefer@gmx.net,
+        linux-doc@vger.kernel.org, jeffrey.t.kirsher@intel.com,
+        snelson@pensando.io, drivers@pensando.io,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Documentation: networking: device drivers: Remove stray
+ asterisks
+Message-ID: <20191009154803.34e21bae@cakuba.netronome.com>
+In-Reply-To: <20191003082953.396ebc1a@lwn.net>
+References: <20191002150956.16234-1-j.neuschaefer@gmx.net>
+        <20191002.172526.1832563406015085740.davem@davemloft.net>
+        <20191003082953.396ebc1a@lwn.net>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On Thu, 3 Oct 2019 08:29:53 -0600, Jonathan Corbet wrote:
+> On Wed, 02 Oct 2019 17:25:26 -0700 (PDT)
+> David Miller <davem@davemloft.net> wrote:
+> 
+> > Jon, how do you want to handle changes like this?  
+> 
+> In whatever way works best.  Documentation should make our lives easier,
+> not get in the way :)
+> 
+> > I mean, there are unlikely to be conflicts from something like this so it
+> > could simply go via the documentation tree.
+> > 
+> > Acked-by: David S. Miller <davem@davemloft.net>  
+> 
+> OK, I'll go ahead and apply it, then.
 
-pci_prg_resp_pasid_required() returns the value of the "PRG Response PASID
-Required" bit from the PRI capability, but the interface was previously
-defined under #ifdef CONFIG_PCI_PASID.
+Hi Jon, I think Dave intended a few more patches to go via the doc
+tree, in particular:
 
-Move it from CONFIG_PCI_PASID to CONFIG_PCI_PRI so it's with the other
-PRI-related things.
+ docs: networking: devlink-trap: Fix reference to other document
+ docs: networking: phy: Improve phrasing
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/ats.c       | 55 +++++++++++++++++++----------------------
- include/linux/pci-ats.h | 11 ++++-----
- 2 files changed, 30 insertions(+), 36 deletions(-)
-
-diff --git a/drivers/pci/ats.c b/drivers/pci/ats.c
-index e18499243f84..0d06177252c7 100644
---- a/drivers/pci/ats.c
-+++ b/drivers/pci/ats.c
-@@ -280,6 +280,31 @@ int pci_reset_pri(struct pci_dev *pdev)
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(pci_reset_pri);
-+
-+/**
-+ * pci_prg_resp_pasid_required - Return PRG Response PASID Required bit
-+ *				 status.
-+ * @pdev: PCI device structure
-+ *
-+ * Returns 1 if PASID is required in PRG Response Message, 0 otherwise.
-+ */
-+int pci_prg_resp_pasid_required(struct pci_dev *pdev)
-+{
-+	u16 status;
-+	int pos;
-+
-+	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PRI);
-+	if (!pos)
-+		return 0;
-+
-+	pci_read_config_word(pdev, pos + PCI_PRI_STATUS, &status);
-+
-+	if (status & PCI_PRI_STATUS_PASID)
-+		return 1;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(pci_prg_resp_pasid_required);
- #endif /* CONFIG_PCI_PRI */
- 
- #ifdef CONFIG_PCI_PASID
-@@ -395,36 +420,6 @@ int pci_pasid_features(struct pci_dev *pdev)
- }
- EXPORT_SYMBOL_GPL(pci_pasid_features);
- 
--/**
-- * pci_prg_resp_pasid_required - Return PRG Response PASID Required bit
-- *				 status.
-- * @pdev: PCI device structure
-- *
-- * Returns 1 if PASID is required in PRG Response Message, 0 otherwise.
-- *
-- * Even though the PRG response PASID status is read from PRI Status
-- * Register, since this API will mainly be used by PASID users, this
-- * function is defined within #ifdef CONFIG_PCI_PASID instead of
-- * CONFIG_PCI_PRI.
-- */
--int pci_prg_resp_pasid_required(struct pci_dev *pdev)
--{
--	u16 status;
--	int pos;
--
--	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PRI);
--	if (!pos)
--		return 0;
--
--	pci_read_config_word(pdev, pos + PCI_PRI_STATUS, &status);
--
--	if (status & PCI_PRI_STATUS_PASID)
--		return 1;
--
--	return 0;
--}
--EXPORT_SYMBOL_GPL(pci_prg_resp_pasid_required);
--
- #define PASID_NUMBER_SHIFT	8
- #define PASID_NUMBER_MASK	(0x1f << PASID_NUMBER_SHIFT)
- /**
-diff --git a/include/linux/pci-ats.h b/include/linux/pci-ats.h
-index 1ebb88e7c184..a7a2b3d94fcc 100644
---- a/include/linux/pci-ats.h
-+++ b/include/linux/pci-ats.h
-@@ -10,6 +10,7 @@ int pci_enable_pri(struct pci_dev *pdev, u32 reqs);
- void pci_disable_pri(struct pci_dev *pdev);
- void pci_restore_pri_state(struct pci_dev *pdev);
- int pci_reset_pri(struct pci_dev *pdev);
-+int pci_prg_resp_pasid_required(struct pci_dev *pdev);
- 
- #else /* CONFIG_PCI_PRI */
- 
-@@ -31,6 +32,10 @@ static inline int pci_reset_pri(struct pci_dev *pdev)
- 	return -ENODEV;
- }
- 
-+static inline int pci_prg_resp_pasid_required(struct pci_dev *pdev)
-+{
-+	return 0;
-+}
- #endif /* CONFIG_PCI_PRI */
- 
- #ifdef CONFIG_PCI_PASID
-@@ -40,7 +45,6 @@ void pci_disable_pasid(struct pci_dev *pdev);
- void pci_restore_pasid_state(struct pci_dev *pdev);
- int pci_pasid_features(struct pci_dev *pdev);
- int pci_max_pasids(struct pci_dev *pdev);
--int pci_prg_resp_pasid_required(struct pci_dev *pdev);
- 
- #else  /* CONFIG_PCI_PASID */
- 
-@@ -66,11 +70,6 @@ static inline int pci_max_pasids(struct pci_dev *pdev)
- {
- 	return -EINVAL;
- }
--
--static inline int pci_prg_resp_pasid_required(struct pci_dev *pdev)
--{
--	return 0;
--}
- #endif /* CONFIG_PCI_PASID */
- 
- 
--- 
-2.23.0.581.g78d2f28ef7-goog
-
+Looks like those went missing. Would you mind taking those, or
+would you prefer for them to land in the networking trees?
