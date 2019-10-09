@@ -2,280 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB2F8D115A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 16:34:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86A91D1147
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 16:31:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731338AbfJIOeO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 10:34:14 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:62132 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730490AbfJIOeN (ORCPT
+        id S1731514AbfJIOay (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 10:30:54 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:34858 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729865AbfJIOax (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 10:34:13 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x99DwbGn165116
-        for <linux-kernel@vger.kernel.org>; Wed, 9 Oct 2019 09:59:06 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2vhf6s3y51-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 09:59:01 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <oberpar@linux.ibm.com>;
-        Wed, 9 Oct 2019 14:56:38 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 9 Oct 2019 14:56:33 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x99DuV6B14155898
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 9 Oct 2019 13:56:32 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D6DE05205A;
-        Wed,  9 Oct 2019 13:56:31 +0000 (GMT)
-Received: from [9.152.212.144] (unknown [9.152.212.144])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 595365204F;
-        Wed,  9 Oct 2019 13:56:31 +0000 (GMT)
-Subject: Re: [PATCH v2] mm/page_isolation: fix a deadlock with printk()
-To:     Qian Cai <cai@lca.pw>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Petr Mladek <pmladek@suse.com>
-Cc:     akpm@linux-foundation.org, sergey.senozhatsky.work@gmail.com,
-        rostedt@goodmis.org, peterz@infradead.org, linux-mm@kvack.org,
-        john.ogness@linutronix.de, david@redhat.com,
-        linux-kernel@vger.kernel.org,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-References: <1570228005-24979-1-git-send-email-cai@lca.pw>
- <20191007143002.l37bt2lzqtnqjqxu@pathway.suse.cz>
- <20191007144937.GO2381@dhcp22.suse.cz>
- <20191008074357.f33f6pbs4cw5majk@pathway.suse.cz>
- <20191008082752.GB6681@dhcp22.suse.cz>
- <aefe7f75-b0ec-9e99-a77e-87324edb24e0@de.ibm.com>
- <1570550917.5576.303.camel@lca.pw>
-From:   Peter Oberparleiter <oberpar@linux.ibm.com>
-Date:   Wed, 9 Oct 2019 15:56:32 +0200
+        Wed, 9 Oct 2019 10:30:53 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x99ET5EP091425;
+        Wed, 9 Oct 2019 14:30:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=xieOlnCZNdH9rUJsmmz2r6xC3pikyG8vEfffwj7nqrw=;
+ b=OOvnWUKCQhvigjaczx/qR1uBte5t61Z/QDolYiL05qZxUCsWNHdRQKhJWREdJEd50eVy
+ S5jenrGsYWmitNcsX/IDCRwufe6OiXJ5UQ5M2ppSpZWaa+AcSSoJTDT7DWzaNvZ92hVO
+ uMGSXQCEW/N2FRRMCg0SbTziGa6IWx3O+KfE46GFbifC9CUGDfZt+0c7VUvcHx2pt6Gs
+ NE04+Y6luipnF1BAt8CfIXyGgYtIyvqAw9xs4V9B/QLW/mdy86Nk8Lju35NBFPsrTu+E
+ kiSOurdkp2EDfP9qCSs9784af8DYrJeekHVKz5Tay4qF9HKcwM/8yngIl6RdKmbPI7a4 Nw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2vektrmsct-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 09 Oct 2019 14:30:15 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x99ENELC032173;
+        Wed, 9 Oct 2019 14:30:15 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2vgev1gx1s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 09 Oct 2019 14:30:15 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x99EUAlf020123;
+        Wed, 9 Oct 2019 14:30:12 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 09 Oct 2019 07:30:10 -0700
+Date:   Wed, 9 Oct 2019 17:30:01 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Markus Elfring <Markus.Elfring@web.de>,
+        kernel-janitors@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Joe Perches <joe@perches.com>,
+        Kees Cook <keescook@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] string.h: Mark 34 functions with __must_check
+Message-ID: <20191009143000.GD13286@kadam>
+References: <75f70e5e-9ece-d6d1-a2c5-2f3ad79b9ccb@web.de>
+ <954c5d70-742f-7b0e-57ad-ea967e93be89@rasmusvillemoes.dk>
+ <20191009135522.GA20194@kadam>
+ <b1f055ec-b4ec-d0ed-a03d-7d9828fa9440@rasmusvillemoes.dk>
 MIME-Version: 1.0
-In-Reply-To: <1570550917.5576.303.camel@lca.pw>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19100913-4275-0000-0000-000003708094
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19100913-4276-0000-0000-000038838541
-Message-Id: <1157b3ae-006e-5b8e-71f0-883918992ecc@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-09_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=86 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1910090133
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b1f055ec-b4ec-d0ed-a03d-7d9828fa9440@rasmusvillemoes.dk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9404 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=814
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910090139
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9404 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=894 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910090140
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08.10.2019 18:08, Qian Cai wrote:
-> On Tue, 2019-10-08 at 14:56 +0200, Christian Borntraeger wrote:
->> Adding Peter Oberparleiter.
->> Peter, can you have a look?
->>
->> On 08.10.19 10:27, Michal Hocko wrote:
->>> On Tue 08-10-19 09:43:57, Petr Mladek wrote:
->>>> On Mon 2019-10-07 16:49:37, Michal Hocko wrote:
->>>>> [Cc s390 maintainers - the lockdep is http://lkml.kernel.org/r/1570228005-24979-1-git-send-email-cai@lca.pw
->>>>>  Petr has explained it is a false positive
->>>>>  http://lkml.kernel.org/r/20191007143002.l37bt2lzqtnqjqxu@pathway.suse.cz]
->>>>> On Mon 07-10-19 16:30:02, Petr Mladek wrote:
->>>>> [...]
->>>>>> I believe that it cannot really happen because:
->>>>>>
->>>>>> 	static int __init
->>>>>> 	sclp_console_init(void)
->>>>>> 	{
->>>>>> 	[...]
->>>>>> 		rc = sclp_rw_init();
->>>>>> 	[...]
->>>>>> 		register_console(&sclp_console);
->>>>>> 		return 0;
->>>>>> 	}
->>>>>>
->>>>>> sclp_rw_init() is called before register_console(). And
->>>>>> console_unlock() will never call sclp_console_write() before
->>>>>> the console is registered.
->>>>>>
->>>>>> AFAIK, lockdep only compares existing chain of locks. It does
->>>>>> not know about console registration that would make some
->>>>>> code paths mutually exclusive.
->>>>>>
->>>>>> I believe that it is a false positive. I do not know how to
->>>>>> avoid this lockdep report. I hope that it will disappear
->>>>>> by deferring all printk() calls rather soon.
->>>>>
->>>>> Thanks a lot for looking into this Petr. I have also checked the code
->>>>> and I really fail to see why the allocation has to be done under the
->>>>> lock in the first place. sclp_read_sccb and sclp_init_sccb are global
->>>>> variables but I strongly suspect that they need a synchronization during
->>>>> early init, callbacks are registered only later IIUC:
->>>>
->>>> Good idea. It would work when the init function is called only once.
->>>> But see below.
->>>>
->>>>> diff --git a/drivers/s390/char/sclp.c b/drivers/s390/char/sclp.c
->>>>> index d2ab3f07c008..4b1c033e3255 100644
->>>>> --- a/drivers/s390/char/sclp.c
->>>>> +++ b/drivers/s390/char/sclp.c
->>>>> @@ -1169,13 +1169,13 @@ sclp_init(void)
->>>>>  	unsigned long flags;
->>>>>  	int rc = 0;
->>>>>  
->>>>> +	sclp_read_sccb = (void *) __get_free_page(GFP_ATOMIC | GFP_DMA);
->>>>> +	sclp_init_sccb = (void *) __get_free_page(GFP_ATOMIC | GFP_DMA);
->>>>>  	spin_lock_irqsave(&sclp_lock, flags);
->>>>>  	/* Check for previous or running initialization */
->>>>>  	if (sclp_init_state != sclp_init_state_uninitialized)
->>>>>  		goto fail_unlock;
->>>>
->>>> It seems that sclp_init() could be called several times in parallel.
->>>> I see it called from sclp_register() and sclp_initcall().
->>>
->>> Interesting. Something for s390 people to answer I guess.
->>> Anyway, this should be quite trivial to workaround by a cmpxch or alike.
->>>
+On Wed, Oct 09, 2019 at 04:21:20PM +0200, Rasmus Villemoes wrote:
+> On 09/10/2019 15.56, Dan Carpenter wrote:
+> > That's because glibc strlen is annotated with __attribute_pure__ which
+> > means it has no side effects.
 > 
-> The above fix is simply insufficient,
-> 
-> 00: [    3.654307] WARNING: possible circular locking dependency detected       
-> 00: [    3.654309] 5.4.0-rc1-next-20191004+ #4 Not tainted                      
-> 00: [    3.654311] ------------------------------------------------------       
-> 00: [    3.654313] swapper/0/1 is trying to acquire lock:                       
-> 00: [    3.654314] 00000000553f3fb8 (sclp_lock){-.-.}, at: sclp_add_request+0x34
-> 00: /0x308                                                                      
-> 00: [    3.654320]                                                              
-> 00: [    3.654322] but task is already holding lock:                            
-> 00: [    3.654323] 00000000550c9fc0 (console_owner){....}, at: console_unlock+0x
-> 00: 328/0xa30                                                                   
-> 00: [    3.654329]                                                              
-> 00: [    3.654331] which lock already depends on the new lock.                  
+> I know, except it has nothing to do with glibc headers. Just try the
+> same thing in the kernel. gcc itself knows this about __builtin_strlen()
+> etc. If anything, we could annotate some of our non-standard functions
+> (say, memchr_inv) with __pure - then we'd both get the Wunused-value in
+> the nonsense cases, and allow gcc to optimize or reorder the calls.
 
-I can confirm that both this lockdep warning as well as the original one
-are both false positives: lockdep warns that code in sclp_init could
-trigger a deadlock via the chain
+Huh.  You're right.  GCC already knows.  So this patch is pointless like
+you say.
 
-   sclp_lock --> &(&zone->lock)->rlock --> console_owner
-
-but
-
-  a) before sclp_init successfully completes, register_console is not
-     called, so there is no connection between console_owner -> sclp_lock
-  b) after sclp_init completed, it won't be called again, so any
-     dependency that requires a call-chain including sclp_init is
-     impossible to achieve
-
-Apparently lockdep cannot determine that sclp_init won't be called again.
-I'm attaching a patch that moves sclp_init to __init so that lockdep has
-a chance of knowing that the function will be gone after init.
-
-This patch is intended for testing only though, to see if there are other
-paths to similar possible deadlocks. I still need to decide if its worth
-changing the code to remove false positives in lockdep.
-
-A generic solution would be preferable from my point of view though,
-because otherwise each console driver owner would need to ensure that any
-lock taken in their console.write implementation is never held while
-memory is allocated/released.
-
-diff --git a/drivers/s390/char/sclp.c b/drivers/s390/char/sclp.c
-index d2ab3f07c008..13219e43d488 100644
---- a/drivers/s390/char/sclp.c
-+++ b/drivers/s390/char/sclp.c
-@@ -140,7 +140,6 @@ static void sclp_request_timeout(bool force_restart);
- static void sclp_process_queue(void);
- static void __sclp_make_read_req(void);
- static int sclp_init_mask(int calculate);
--static int sclp_init(void);
-
- static void
- __sclp_queue_read_req(void)
-@@ -670,7 +669,8 @@ __sclp_get_mask(sccb_mask_t *receive_mask, sccb_mask_t *send_mask)
- 	}
- }
-
--/* Register event listener. Return 0 on success, non-zero otherwise. */
-+/* Register event listener. Return 0 on success, non-zero otherwise. Early
-+ * callers (<= arch_initcall) must call sclp_init() first. */
- int
- sclp_register(struct sclp_register *reg)
- {
-@@ -679,9 +679,8 @@ sclp_register(struct sclp_register *reg)
- 	sccb_mask_t send_mask;
- 	int rc;
-
--	rc = sclp_init();
--	if (rc)
--		return rc;
-+	if (sclp_init_state != sclp_init_state_initialized)
-+		return -EINVAL;
- 	spin_lock_irqsave(&sclp_lock, flags);
- 	/* Check event mask for collisions */
- 	__sclp_get_mask(&receive_mask, &send_mask);
-@@ -1163,8 +1162,7 @@ static struct platform_device *sclp_pdev;
-
- /* Initialize SCLP driver. Return zero if driver is operational, non-zero
-  * otherwise. */
--static int
--sclp_init(void)
-+int __init sclp_init(void)
- {
- 	unsigned long flags;
- 	int rc = 0;
-diff --git a/drivers/s390/char/sclp.h b/drivers/s390/char/sclp.h
-index 196333013e54..463660261379 100644
---- a/drivers/s390/char/sclp.h
-+++ b/drivers/s390/char/sclp.h
-@@ -296,6 +296,7 @@ struct sclp_register {
- };
-
- /* externals from sclp.c */
-+int __init sclp_init(void);
- int sclp_add_request(struct sclp_req *req);
- void sclp_sync_wait(void);
- int sclp_register(struct sclp_register *reg);
-diff --git a/drivers/s390/char/sclp_con.c b/drivers/s390/char/sclp_con.c
-index 8966a1c1b548..a08ef2c8379e 100644
---- a/drivers/s390/char/sclp_con.c
-+++ b/drivers/s390/char/sclp_con.c
-@@ -319,6 +319,9 @@ sclp_console_init(void)
- 	/* SCLP consoles are handled together */
- 	if (!(CONSOLE_IS_SCLP || CONSOLE_IS_VT220))
- 		return 0;
-+	rc = sclp_init();
-+	if (rc)
-+		return rc;
- 	rc = sclp_rw_init();
- 	if (rc)
- 		return rc;
-diff --git a/drivers/s390/char/sclp_vt220.c b/drivers/s390/char/sclp_vt220.c
-index 3f9a6ef650fa..28b23e22248b 100644
---- a/drivers/s390/char/sclp_vt220.c
-+++ b/drivers/s390/char/sclp_vt220.c
-@@ -694,6 +694,11 @@ static int __init __sclp_vt220_init(int num_pages)
- 	sclp_vt220_init_count++;
- 	if (sclp_vt220_init_count != 1)
- 		return 0;
-+	rc = sclp_init();
-+	if (rc) {
-+		sclp_vt220_init_count--;
-+		return rc;
-+	}
- 	spin_lock_init(&sclp_vt220_lock);
- 	INIT_LIST_HEAD(&sclp_vt220_empty);
- 	INIT_LIST_HEAD(&sclp_vt220_outqueue);
--- 
-Peter Oberparleiter
-Linux on Z Development - IBM Germany
+regards,
+dan carpenter
 
