@@ -2,104 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47785D0F67
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 15:00:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 626D9D0F7F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 15:03:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731432AbfJIM7v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 08:59:51 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50964 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731413AbfJIM7s (ORCPT
+        id S1731218AbfJINCP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 09:02:15 -0400
+Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:53031 "EHLO
+        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730901AbfJINCP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 08:59:48 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iIBZ8-0002z5-EA; Wed, 09 Oct 2019 14:59:42 +0200
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 20DDB1C01BD;
-        Wed,  9 Oct 2019 14:59:42 +0200 (CEST)
-Date:   Wed, 09 Oct 2019 12:59:41 -0000
-From:   "tip-bot2 for Waiman Long" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/core] lib/smp_processor_id: Don't use cpumask_equal()
-Cc:     Waiman Long <longman@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Wed, 9 Oct 2019 09:02:15 -0400
+Received: from [IPv6:2001:983:e9a7:1:2801:e038:f2c3:e060] ([IPv6:2001:983:e9a7:1:2801:e038:f2c3:e060])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id IBbYigmgKjZ8vIBbZiI1pc; Wed, 09 Oct 2019 15:02:13 +0200
+Subject: Re: [PATCH] staging: media: Fix alignment to match open parenthesis
+To:     Amol Grover <frextrite@gmail.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20191003203608.21881-1-longman@redhat.com>
-References: <20191003203608.21881-1-longman@redhat.com>
+References: <20190911165655.GA22041@Debian.gxnx00eri1wudnlrc5f3ppaydc.bx.internal.cloudapp.net>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <27da1d8b-09fc-8d23-5213-f0c352ee615d@xs4all.nl>
+Date:   Wed, 9 Oct 2019 15:02:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Message-ID: <157062598194.9978.10224113529074728326.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20190911165655.GA22041@Debian.gxnx00eri1wudnlrc5f3ppaydc.bx.internal.cloudapp.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+X-CMAE-Envelope: MS4wfD9xGs8YOYZuV2WnHUMHNDzu/rb3+CIh2AtNp5uss+ux5BI/fVCKdjPT2bWBacECXDWhk3Hf31un/fG+RhxxTg16tusrwCrpOJ0ZB00szu2mhkTClY/7
+ 4f/V7rNk74jiJaH6t5+c8ix9wYWAf6YeUbzUkHV2JnW+cTZPHuPJ3lVFR3i/jv61sKvcaLlKjl/tzm5D9yporFfLKj2nBVr2IrmBak8yeIsFkuhAj9xiCM91
+ Z+cRkBjrpP8E2WbB4vAqd75vw430EJLKXor3vg9m3ojfPtWHJ/v2eMboHFtgpWQr0tAGn8xY9Q5cFFsmQqiPkqptDi2B3Y/+PRKEJ0p2ZD/8ycjSPdIyfaQe
+ htaGq53QKeHef36+PMxMMCqaowIiuqtRuscWoIXQrw6JYJrNfbXFu6w57kVcLWUJDZG8uPDX8NUJhncy+TLQwnp5XfxTV3uKA1y+PKQb8x9P0yUzbdFnkE9F
+ qUEN4JH7dJojP8BJmCY4Fnfu4lhGPkhATd2J2d9LbzXXqW3iQAA7kw2N2wt7BhA6uavtrk6fXcPkokAZ
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the locking/core branch of tip:
+Hi Amol,
 
-Commit-ID:     e950cca3f3c40902a052a78a36b3fac1f8a62d19
-Gitweb:        https://git.kernel.org/tip/e950cca3f3c40902a052a78a36b3fac1f8a62d19
-Author:        Waiman Long <longman@redhat.com>
-AuthorDate:    Thu, 03 Oct 2019 16:36:08 -04:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 09 Oct 2019 12:46:10 +02:00
+For future reference: always include the driver name in the subject.
 
-lib/smp_processor_id: Don't use cpumask_equal()
+I've added "imx: " to the subject for you, so no need to resend, but
+the driver name is important information.
 
-The check_preemption_disabled() function uses cpumask_equal() to see
-if the task is bounded to the current CPU only. cpumask_equal() calls
-memcmp() to do the comparison. As x86 doesn't have __HAVE_ARCH_MEMCMP,
-the slow memcmp() function in lib/string.c is used.
+Regards,
 
-On a RT kernel that call check_preemption_disabled() very frequently,
-below is the perf-record output of a certain microbenchmark:
+	Hans
 
-  42.75%  2.45%  testpmd [kernel.kallsyms] [k] check_preemption_disabled
-  40.01% 39.97%  testpmd [kernel.kallsyms] [k] memcmp
+On 9/11/19 6:56 PM, Amol Grover wrote:
+> CHECK: Alignment should match open parenthesis
+> 
+> Signed-off-by: Amol Grover <frextrite@gmail.com>
+> ---
+>  drivers/staging/media/imx/imx-media-csi.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
+> index 367e39f5b382..773b3d6964cf 100644
+> --- a/drivers/staging/media/imx/imx-media-csi.c
+> +++ b/drivers/staging/media/imx/imx-media-csi.c
+> @@ -627,8 +627,8 @@ static int csi_idmac_start(struct csi_priv *priv)
+>  	}
+>  
+>  	priv->nfb4eof_irq = ipu_idmac_channel_irq(priv->ipu,
+> -						 priv->idmac_ch,
+> -						 IPU_IRQ_NFB4EOF);
+> +						  priv->idmac_ch,
+> +						  IPU_IRQ_NFB4EOF);
+>  	ret = devm_request_irq(priv->dev, priv->nfb4eof_irq,
+>  			       csi_idmac_nfb4eof_interrupt, 0,
+>  			       "imx-smfc-nfb4eof", priv);
+> @@ -1472,7 +1472,7 @@ static void csi_try_fmt(struct csi_priv *priv,
+>  			imx_media_enum_mbus_format(&code, 0,
+>  						   CS_SEL_ANY, false);
+>  			*cc = imx_media_find_mbus_format(code,
+> -							CS_SEL_ANY, false);
+> +							 CS_SEL_ANY, false);
+>  			sdformat->format.code = (*cc)->codes[0];
+>  		}
+>  
+> 
 
-We should avoid calling memcmp() in performance critical path. So the
-cpumask_equal() call is now replaced with an equivalent simpler check.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Juri Lelli <juri.lelli@redhat.com>
-Acked-by:  Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20191003203608.21881-1-longman@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- lib/smp_processor_id.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/lib/smp_processor_id.c b/lib/smp_processor_id.c
-index 60ba93f..bd95716 100644
---- a/lib/smp_processor_id.c
-+++ b/lib/smp_processor_id.c
-@@ -23,7 +23,7 @@ unsigned int check_preemption_disabled(const char *what1, const char *what2)
- 	 * Kernel threads bound to a single CPU can safely use
- 	 * smp_processor_id():
- 	 */
--	if (cpumask_equal(current->cpus_ptr, cpumask_of(this_cpu)))
-+	if (current->nr_cpus_allowed == 1)
- 		goto out;
- 
- 	/*
