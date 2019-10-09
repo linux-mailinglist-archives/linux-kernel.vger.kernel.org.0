@@ -2,98 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13D81D1C88
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 01:13:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31707D1CB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 01:20:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732375AbfJIXND (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 19:13:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35492 "EHLO mail.kernel.org"
+        id S1732678AbfJIXTs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 19:19:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731542AbfJIXND (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 19:13:03 -0400
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1732643AbfJIXTp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 19:19:45 -0400
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5ECAE206BB;
-        Wed,  9 Oct 2019 23:13:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2D9E21D7A;
+        Wed,  9 Oct 2019 23:19:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570662782;
-        bh=oCRn3JjATva9R6bAW/lMjEkdJaPC+cn6csIMs4uFiPw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YxgfdepboPDcp50suajDKZE/jFrWOWYBnGVR4FSn2qQjsRNg+b9CmsuTOAsRCHJjB
-         BwW76CsJVUUb3/Ec8lupsntFXyszdN5pHcf3HMVZKuC5aqbYfaOy7yS73Pu8Rg8lnQ
-         VsQDblnJTIxudsD45Dh4kH8dRJnckGlSDiDGAamU=
-Date:   Wed, 9 Oct 2019 16:13:00 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-kernel@lists.codethink.co.uk,
-        Ben Dooks <ben.dooks@codethink.co.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/namespace: make to_mnt_ns static
-Message-ID: <20191009231259.GA125579@gmail.com>
-Mail-Followup-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@lists.codethink.co.uk,
-        Ben Dooks <ben.dooks@codethink.co.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191009145211.16614-1-ben.dooks@codethink.co.uk>
+        s=default; t=1570663184;
+        bh=lUJoAmwVYmxxiLBq1t4lFuiOCc5wh99DLAMa0XWi83Q=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=EX0XvZkUqRywUXEZluTpt8by0lHIdCK0jXPS5QiWzgkmoqtDPcb8vs+/4csID0idh
+         iuI+A4/4AaNMjW05zuB+OIPXeaO34GcyKyEEFea6ZOiHHQWZbwVX282H6ZDd85uWqB
+         rao57zDmN4mh8HK9pAEEpRfTKZvfVL1wt33VE2d4=
+Received: by mail-qk1-f172.google.com with SMTP id u22so3824978qkk.11;
+        Wed, 09 Oct 2019 16:19:44 -0700 (PDT)
+X-Gm-Message-State: APjAAAW/S3U+viHuqTPO6nNFg62Bl9HrPhquxkCeNpod6CkTE4JCcTHZ
+        BOjKpIW04FN+zxbUD48OOlW+4LF7LGNHtXIeiA==
+X-Google-Smtp-Source: APXvYqyPSfTjVLV3COlA1kAK+1OFfKGo6+mldinX14j08Mhg6XsRIJdoe4XiZTLLEwhEamG94ntdDl3vE8H5N2e0G8U=
+X-Received: by 2002:a05:620a:12f1:: with SMTP id f17mr6421929qkl.152.1570663183781;
+ Wed, 09 Oct 2019 16:19:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191009145211.16614-1-ben.dooks@codethink.co.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191007151730.7705-1-hhhawa@amazon.com> <20191007151730.7705-4-hhhawa@amazon.com>
+In-Reply-To: <20191007151730.7705-4-hhhawa@amazon.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 9 Oct 2019 18:19:32 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLZOHx=3d9jPy+7y0a92wA-VKEDQ4PVNvo6L8fRe7xJCQ@mail.gmail.com>
+Message-ID: <CAL_JsqLZOHx=3d9jPy+7y0a92wA-VKEDQ4PVNvo6L8fRe7xJCQ@mail.gmail.com>
+Subject: Re: [PATCH v6 3/3] edac: Add support for Amazon's Annapurna Labs L2 EDAC
+To:     Hanna Hawa <hhhawa@amazon.com>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>, daniel@iogearbox.net,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-edac <linux-edac@vger.kernel.org>,
+        devicetree@vger.kernel.org, "Woodhouse, David" <dwmw@amazon.co.uk>,
+        benh@amazon.com, "Krupnik, Ronen" <ronenk@amazon.com>,
+        Talel Shenhar <talel@amazon.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
+        "Hanoch, Uri" <hanochu@amazon.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 03:52:11PM +0100, Ben Dooks wrote:
-> The to_mnt_ns() is not exported outside the file so
-> make it static to fix the following sparse warning:
-> 
-> fs/namespace.c:1731:22: warning: symbol 'to_mnt_ns' was not declared. Should it be static?
-> 
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+On Mon, Oct 7, 2019 at 10:18 AM Hanna Hawa <hhhawa@amazon.com> wrote:
+>
+> Adds support for Amazon's Annapurna Labs L2 EDAC driver to detect and
+> report L2 errors.
+>
+> Signed-off-by: Hanna Hawa <hhhawa@amazon.com>
 > ---
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  fs/namespace.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index fe0e9e1410fe..b87b127fdce4 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -1728,7 +1728,7 @@ static bool is_mnt_ns_file(struct dentry *dentry)
->  	       dentry->d_fsdata == &mntns_operations;
->  }
->  
-> -struct mnt_namespace *to_mnt_ns(struct ns_common *ns)
-> +static struct mnt_namespace *to_mnt_ns(struct ns_common *ns)
->  {
->  	return container_of(ns, struct mnt_namespace, ns);
->  }
-> -- 
-> 2.23.0
-> 
+>  MAINTAINERS               |   5 +
+>  drivers/edac/Kconfig      |   8 ++
+>  drivers/edac/Makefile     |   1 +
+>  drivers/edac/al_l2_edac.c | 251 ++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 265 insertions(+)
+>  create mode 100644 drivers/edac/al_l2_edac.c
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 7887a62dc843..0eabcfcf91a9 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -748,6 +748,11 @@ M: Hanna Hawa <hhhawa@amazon.com>
+>  S:     Maintained
+>  F:     drivers/edac/al_l1_edac.c
+>
+> +AMAZON ANNAPURNA LABS L2 EDAC
+> +M:     Hanna Hawa <hhhawa@amazon.com>
+> +S:     Maintained
+> +F:     drivers/edac/al_l2_edac.c
+> +
+>  AMAZON ANNAPURNA LABS THERMAL MMIO DRIVER
+>  M:     Talel Shenhar <talel@amazon.com>
+>  S:     Maintained
+> diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
+> index e8161d7c7469..cb394aff1cab 100644
+> --- a/drivers/edac/Kconfig
+> +++ b/drivers/edac/Kconfig
+> @@ -82,6 +82,14 @@ config EDAC_AL_L1
+>           for Amazon's Annapurna Labs SoCs.
+>           This driver detects errors of L1 caches.
+>
+> +config EDAC_AL_L2
+> +       tristate "Amazon's Annapurna Labs L2 EDAC"
 
-Al, this patch has been sent to you 11 times by 8 different people over 2 years:
+I still think this should be an "A57 L2 ECC" driver, but if no one
+cares I'll shut up and the 2nd person can rename everything.
 
-https://lore.kernel.org/linux-fsdevel/20191009145211.16614-1-ben.dooks@codethink.co.uk/
-https://lore.kernel.org/linux-fsdevel/20190822154014.14401-1-ebiggers@kernel.org/
-https://lore.kernel.org/linux-fsdevel/20190529212108.164246-1-ebiggers@kernel.org/
-https://lore.kernel.org/linux-fsdevel/20190414191913.GA11798@bharath12345-Inspiron-5559/
-https://lore.kernel.org/linux-fsdevel/20190319151756.96768-1-maowenan@huawei.com/
-https://lore.kernel.org/linux-fsdevel/20190110204147.120073-1-ebiggers@kernel.org/
-https://lore.kernel.org/linux-fsdevel/20181115000930.47611-1-ebiggers@kernel.org/
-https://lore.kernel.org/linux-fsdevel/20180630120447.17861-1-colin.king@canonical.com/
-https://lore.kernel.org/linux-fsdevel/20170111104846.26220-1-tklauser@distanz.ch/
-https://lore.kernel.org/linux-fsdevel/20181207204318.1920-1-malat@debian.org/
-https://lore.kernel.org/linux-fsdevel/a2cc7bd9cd4cd5be54303090c7ba6654d7b04b4f.1443364195.git.geliangtang@163.com/
+> +       depends on ARCH_ALPINE
 
-No response from you to any of them.  I guess this means you're just not taking
-these types of obvious cleanups?  Should people be sending them to Andrew Morton
-instead?
+|| COMPILE_TEST
 
-- Eric
+Maybe it needs an ARM64 dependency too in this case?
+
+> +       help
+> +         Support for L2 error detection and correction
+> +         for Amazon's Annapurna Labs SoCs.
+> +         This driver detects errors of L2 caches.
+> +
+
+> +
+> +       ret = platform_driver_register(&al_l2_edac_driver);
+> +       if (ret) {
+> +               pr_err("Failed to register %s (%d)\n", DRV_NAME, ret);
+> +               return ret;
+> +       }
+> +
+> +       edac_l2_device = platform_device_register_simple(DRV_NAME, -1, NULL, 0);
+> +       if (IS_ERR(edac_l2_device)) {
+> +               pr_err("Failed to register EDAC AL L2 platform device\n");
+> +               return PTR_ERR(edac_l2_device);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static void __exit al_l2_exit(void)
+> +{
+> +       platform_device_unregister(edac_l2_device);
+> +       platform_driver_unregister(&al_l2_edac_driver);
+> +}
+> +
+> +late_initcall(al_l2_init);
+> +module_exit(al_l2_exit);
+> +
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_AUTHOR("Hanna Hawa <hhhawa@amazon.com>");
+> +MODULE_DESCRIPTION("Amazon's Annapurna Lab's L2 EDAC Driver");
+> --
+> 2.17.1
+>
