@@ -2,324 +2,280 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CA65D0D0C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 12:46:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C03AED0D10
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 12:47:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730722AbfJIKqb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 06:46:31 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:36559 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726734AbfJIKqb (ORCPT
+        id S1730780AbfJIKrc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 06:47:32 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:46246 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726765AbfJIKrc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 06:46:31 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iI9UD-0003wQ-Fz; Wed, 09 Oct 2019 12:46:29 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iI9UA-0002w6-RZ; Wed, 09 Oct 2019 12:46:26 +0200
-Date:   Wed, 9 Oct 2019 12:46:26 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Matt Helsley <mhelsley@vmware.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>, kernel@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 4/8] recordmcount: Rewrite error/success handling
-Message-ID: <20191009104626.f3hy5dcehdfagxto@pengutronix.de>
-References: <cover.1564596289.git.mhelsley@vmware.com>
- <8ba8633d4afe444931f363c8d924bf9565b89a86.1564596289.git.mhelsley@vmware.com>
+        Wed, 9 Oct 2019 06:47:32 -0400
+Received: by mail-ed1-f66.google.com with SMTP id t3so1540470edw.13
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 03:47:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=C/f6/fe6l9qpOq8K1lx4cS1L0t1Hq00anJTRcpjdZaY=;
+        b=fXBFCO323Bm+FQBU/+LL08XySBNen3E6T9qKA4aIio7ZnVTc1qrmiXWPHfafjaF5OM
+         5+mK5egfmwUECqbtv1EY9REiXUiGHZdUls0/dxznEkib+Mj3bSSpPBFsRkZrfsTEJLTB
+         MelIIKF4vIGWv96w8TwbvIWb5b5NsUUnkfhjM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=C/f6/fe6l9qpOq8K1lx4cS1L0t1Hq00anJTRcpjdZaY=;
+        b=qTMFR12zSupuPQrowxur/JXLiCjaZaFsv018jMTodfmlZ+6OCuEIALvz7I7f8eazog
+         Y/B+YxDqB46ep5PUx5+bKSVpSxJjJH61TVHHFZd04dKGNXk8Be1OxQLh5203tysI6mbw
+         a3zwaIvHEjdKKvRxcXmCALkrDx99qZMOYHgYdWdem2Zw3be0HU2MqnbIoRzXx4k7I2DA
+         i1qChzgEE0bFByn8NwlnLPHNxuUD4gt+iKbQiNA+IXXIBvfs2pEXG9I+qGxaeo04sByy
+         I8M1LqNOTrbizmaxBD97Z3xdSJnL+iV0IAv3hVQxPudm5u6PoLjgN6Czfo8zdiQpPfgO
+         pe9w==
+X-Gm-Message-State: APjAAAW28SaIIhvNYZJRGdYqTSTOVZ14iByrLJpcFsWl9QuovA1Fw9vl
+        kZdDlGLm+M6lkgAGeDKiiYFIrBzZaJ8=
+X-Google-Smtp-Source: APXvYqwFKxcsVszGn80rMYG6TMaGo4tkWTwu1HVt5uwb1ZbnJ6lXbxPzQggnmUgneVU6eJIaIg8Pmw==
+X-Received: by 2002:a50:f10a:: with SMTP id w10mr2253640edl.247.1570618050207;
+        Wed, 09 Oct 2019 03:47:30 -0700 (PDT)
+Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
+        by smtp.gmail.com with ESMTPSA id dv15sm208287ejb.49.2019.10.09.03.47.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 03:47:29 -0700 (PDT)
+Date:   Wed, 9 Oct 2019 12:47:27 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Jeykumar Sankaran <jsanka@codeaurora.org>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-amlogic@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH] drm/meson: fix max mode_config height/width
+Message-ID: <20191009104727.GX16989@phenom.ffwll.local>
+Mail-Followup-To: Jeykumar Sankaran <jsanka@codeaurora.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-amlogic@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+References: <1538642563-22465-1-git-send-email-narmstrong@baylibre.com>
+ <20181004100958.GI31561@phenom.ffwll.local>
+ <0ef7fa13-ce77-f8a5-f5f3-6568be3d6145@baylibre.com>
+ <CAKMK7uHxiDF3z19cMBb0o2o4Ev0DFJkhMR7Ny6U2776Ry4oc=A@mail.gmail.com>
+ <8e980de4-5a52-8f3d-fba2-734617e40d1b@baylibre.com>
+ <CAKMK7uE71OeOdDPb+5-cs9bByD-unYPxBV_R1t+4A0Nb4H6CAw@mail.gmail.com>
+ <5dbd6337-7e08-f3f7-6d4a-d6bcaddfd3be@baylibre.com>
+ <91cd8a2aebefd4ea3e9bcee5a4ef796a@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="ty77l2etqcnjy4dl"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8ba8633d4afe444931f363c8d924bf9565b89a86.1564596289.git.mhelsley@vmware.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <91cd8a2aebefd4ea3e9bcee5a4ef796a@codeaurora.org>
+X-Operating-System: Linux phenom 5.2.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---ty77l2etqcnjy4dl
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-
-Hello,
-
-On Wed, Jul 31, 2019 at 11:24:12AM -0700, Matt Helsley wrote:
-> Recordmcount uses setjmp/longjmp to manage control flow as
-> it reads and then writes the ELF file. This unusual control
-> flow is hard to follow and check in addition to being unlike
-> kernel coding style.
+On Tue, Sep 24, 2019 at 10:28:48AM -0700, Jeykumar Sankaran wrote:
+> Reviving this thread from the context of the below conversion:
 > 
-> So we rewrite these paths to use regular return values to
-> indicate error/success. When an error or previously-completed object
-> file is found we return an error code following kernel
-> coding conventions -- negative error values and 0 for success when
-> we're not returning a pointer. We return NULL for those that fail
-> and return non-NULL pointers otherwise.
+> https://lore.kernel.org/linux-arm-msm/db26145b-3f64-a334-f698-76f972332881@baylibre.com/T/#u
 > 
-> One oddity is already_has_rel_mcount -- there we use pointer comparison
-> rather than string comparison to differentiate between
-> previously-processed object files and returning the name of a text
-> section.
+> On 2018-10-05 01:19, Neil Armstrong wrote:
+> > On 05/10/2018 09:58, Daniel Vetter wrote:
+> > > On Fri, Oct 5, 2018 at 9:39 AM Neil Armstrong
+> > > <narmstrong@baylibre.com> wrote:
+> > > > 
+> > 
+> > [...]
+> > 
+> > > > OK, won't this be enough ?
+> > > > --- a/include/drm/drm_mode_config.h
+> > > > +++ b/include/drm/drm_mode_config.h
+> > > > @@ -333,6 +333,8 @@ struct drm_mode_config_funcs {
+> > > >   * @min_height: minimum fb pixel height on this device
+> > > >   * @max_width: maximum fb pixel width on this device
+> > > >   * @max_height: maximum fb pixel height on this device
+> > > > + * @max_fb_width: maximum fb buffer width if differs from max_width
+> > > > + * @max_fb_height: maximum fb buffer height if differs from
+> > > > max_height
+> > > >   * @funcs: core driver provided mode setting functions
+> > > >   * @fb_base: base address of the framebuffer
+> > > >   * @poll_enabled: track polling support for this device
+> > > > @@ -508,6 +510,7 @@ struct drm_mode_config {
+> > > > 
+> > > >         int min_width, min_height;
+> > > >         int max_width, max_height;
+> > > > +       int max_fb_width, max_fb_height;
+> > > >         const struct drm_mode_config_funcs *funcs;
+> > > >         resource_size_t fb_base;
+> > > > 
+> > > > --- a/drivers/gpu/drm/drm_framebuffer.c
+> > > > +++ b/drivers/gpu/drm/drm_framebuffer.c
+> > > > @@ -283,14 +283,20 @@ drm_internal_framebuffer_create(struct
+> > > > drm_device *dev,
+> > > >                 return ERR_PTR(-EINVAL);
+> > > >         }
+> > > > 
+> > > > -       if ((config->min_width > r->width) || (r->width >
+> > > > config->max_width)) {
+> > > > +       if ((config->min_width > r->width) ||
+> > > > +           (!config->max_fb_width && r->width >
+> > > > config->max_width) ||
+> > > > +           (config->max_fb_width && r->width >
+> > > > config->max_fb_width)) {
+> > > >                 DRM_DEBUG_KMS("bad framebuffer width %d, should
+> > > > be >= %d && <= %d\n",
+> > > > -                         r->width, config->min_width,
+> > > > config->max_width);
+> > > > +                         r->width, config->min_width,
+> > > > config->max_fb_width ?
+> > > > +                         config->max_fb_width : config->max_width);
+> > > >                 return ERR_PTR(-EINVAL);
+> > > >         }
+> > > > -       if ((config->min_height > r->height) || (r->height >
+> > > > config->max_height)) {
+> > > > +       if ((config->min_height > r->height) ||
+> > > > +           (!config->max_fb_height && r->height >
+> > > > config->max_height) ||
+> > > > +           (config->max_fb_height && r->height >
+> > > > config->max_fb_height)) {
+> > > >                 DRM_DEBUG_KMS("bad framebuffer height %d, should
+> > > > be >= %d && <= %d\n",
+> > > > -                         r->height, config->min_height,
+> > > > config->max_height);
+> > > > +                         r->height, config->min_height,
+> > > > config->max_fb_height ?
+> > > > +                         config->max_fb_height :
+> > > > config->max_height);
+> > > >                 return ERR_PTR(-EINVAL);
+> > > >         }
+> > > > 
+> > > > and in the driver :
+> > > > 
+> > > > +       drm->mode_config.max_width = 4096;
+> > > > +       drm->mode_config.max_height = 3840;
+> > > > +       drm->mode_config.max_fb_width = 16384;
+> > > > +       drm->mode_config.max_fb_height = 8192;
+> > > > 
+> > > > With this I leave the mode filtering intact.
+> > > 
+> > > Not enough. See
+> > > https://dri.freedesktop.org/docs/drm/gpu/drm-kms-helpers.html#c.drm_connector_helper_funcs
+> > > and scroll down to mode_valid. You need to filter modes both in the
+> > > detect paths, and the atomic_check paths.
+> > > 
+> > > Detect is explicitly filtered out, but atomic_check was only
+> > > implicitly filtered, through the max fb size checks. Ok, you could
+> > > light up a mode that's bigger than max fb, but in practice, no
+> > > userspace ever did that.
 > 
-> Signed-off-by: Matt Helsley <mhelsley@vmware.com>
+> Daniel, MSM and few other vendor hardware have upscale blocks where the
+> driver can expose fb sizes smaller than
+> the mode resolution and use h/w upscaling to fill the screen. This would
+> optimize the fetch bandwidth.
+> 
+> But with your code we're missing crucial
+> > > validation now, and userspace could fall over that. What I think we
+> > > need is to add mode filter against mode_config.max_width/height in
+> > > drm_atomic_helper_check_modeset(). Probably best to stuff that into
+> > > the mode_valid() function.
+> > 
+> Agreed! Since the above patch from Niel is taking care of cases where
+> max/min fb values
+> are not set, by checking against the original max/min values, can we
+> separate out this
+> core change from the driver level mode_valid changes? If Niel couldn't find
+> the time, I can
+> repost the above change.
 
-This is 3f1df12019f333442b12c3b5d110b8fc43eb0b36 in mainline now.
+Sure, I think Neil wouldn't mind if you take this over and get it ready
+for merging. Just need to make sure we're not leaving any validation gaps
+in core/helper code.
+-Daniel
 
-I have the following problem:
-
-	$ make ARCH=arm arch/arm/crypto/
-	  Using /home/uwe/gsrc/linux as source for kernel
-	  GEN     Makefile
-	  CALL    /home/uwe/gsrc/linux/scripts/checksyscalls.sh
-	  CALL    /home/uwe/gsrc/linux/scripts/atomic/check-atomics.sh
-	  CC      arch/arm/crypto/aes-cipher-glue.o
-	arch/arm/crypto/aes-cipher-glue.o: failed
-	make[2]: *** [/home/uwe/gsrc/linux/scripts/Makefile.build:281: arch/arm/crypto/aes-cipher-glue.o] Error 1
-	make[2]: *** Deleting file 'arch/arm/crypto/aes-cipher-glue.o'
-	make[1]: *** [/home/uwe/gsrc/linux/Makefile:1792: arch/arm/crypto/] Error 2
-	make: *** [/home/uwe/gsrc/linux/Makefile:179: sub-make] Error 2
-
-and bisection points to 3f1df12019f333442b12c3b5d110b8fc43eb0b36.
-
-This doesn't affect all files, most compile just fine. After calling the
-compiler by hand to get aes-cipher-glue.o back I have:
-
-uwe@taurus:~/arietta/kbuild$ ./scripts/recordmcount "arch/arm/crypto/aes-cipher-glue.o"
-arch/arm/crypto/aes-cipher-glue.o: failed
-
-I didn't debug this further, if you have problems reproducing or need more
-infos tell me. The defconfig I'm using is attached.
-
-Best regards
-Uwe
+> 
+> Thanks and Regards,
+> Jeykumar S.
+> 
+> > Ok I understood now, thanks for pointer, I'll try to add this.
+> > 
+> > Neil
+> > 
+> > > 
+> > > Cheers, Daniel
+> > > > 
+> > > > Neil
+> > > > 
+> > > > 
+> > > > > -Daniel
+> > > > > 
+> > > > > > 
+> > > > > > Neil
+> > > > > > 
+> > > > > > > 
+> > > > > > > Bunch of igt to make sure we're not missing anything
+> > > > > > > would be sweet on
+> > > > > > > top, e.g. e.g. trying to set a mode over the limit
+> > > > > > > and making sure it
+> > > > > > > fails.
+> > > > > > > 
+> > > > > > > Cheers, Daniel
+> > > > > > > 
+> > > > > > > > ---
+> > > > > > > >  drivers/gpu/drm/meson/meson_drv.c | 4 ++--
+> > > > > > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > > > > > > 
+> > > > > > > > diff --git a/drivers/gpu/drm/meson/meson_drv.c
+> > > > > > > > b/drivers/gpu/drm/meson/meson_drv.c
+> > > > > > > > index d344312..2e29968 100644
+> > > > > > > > --- a/drivers/gpu/drm/meson/meson_drv.c
+> > > > > > > > +++ b/drivers/gpu/drm/meson/meson_drv.c
+> > > > > > > > @@ -243,8 +243,8 @@ static int
+> > > > > > > > meson_drv_bind_master(struct device *dev, bool
+> > > > > > > > has_components)
+> > > > > > > >              goto free_drm;
+> > > > > > > > 
+> > > > > > > >      drm_mode_config_init(drm);
+> > > > > > > > -    drm->mode_config.max_width = 3840;
+> > > > > > > > -    drm->mode_config.max_height = 2160;
+> > > > > > > > +    drm->mode_config.max_width = 16384;
+> > > > > > > > +    drm->mode_config.max_height = 8192;
+> > > > > > > >      drm->mode_config.funcs = &meson_mode_config_funcs;
+> > > > > > > > 
+> > > > > > > >      /* Hardware Initialization */
+> > > > > > > > --
+> > > > > > > > 2.7.4
+> > > > > > > > 
+> > > > > > > > _______________________________________________
+> > > > > > > > dri-devel mailing list
+> > > > > > > > dri-devel@lists.freedesktop.org
+> > > > > > > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> > > > > > > 
+> > > > > > 
+> > > > > > _______________________________________________
+> > > > > > dri-devel mailing list
+> > > > > > dri-devel@lists.freedesktop.org
+> > > > > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> > > > > 
+> > > > > 
+> > > > > 
+> > > > 
+> > > 
+> > > 
+> > 
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
+> -- 
+> Jeykumar S
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-
---ty77l2etqcnjy4dl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename=arietta_defconfig
-
-# CONFIG_LOCALVERSION_AUTO is not set
-# CONFIG_SWAP is not set
-CONFIG_SYSVIPC=y
-CONFIG_HIGH_RES_TIMERS=y
-CONFIG_IKCONFIG=y
-CONFIG_IKCONFIG_PROC=y
-CONFIG_CGROUPS=y
-CONFIG_CGROUP_BPF=y
-CONFIG_NAMESPACES=y
-CONFIG_BLK_DEV_INITRD=y
-CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-CONFIG_KALLSYMS_ALL=y
-CONFIG_BPF_SYSCALL=y
-CONFIG_EMBEDDED=y
-CONFIG_SLAB=y
-CONFIG_ARCH_MULTI_V4T=y
-CONFIG_ARCH_MULTI_V5=y
-# CONFIG_ARCH_MULTI_V7 is not set
-CONFIG_ARCH_AT91=y
-CONFIG_SOC_AT91RM9200=y
-CONFIG_SOC_AT91SAM9=y
-CONFIG_AEABI=y
-CONFIG_UACCESS_WITH_MEMCPY=y
-CONFIG_SECCOMP=y
-CONFIG_ZBOOT_ROM_TEXT=0x0
-CONFIG_ZBOOT_ROM_BSS=0x0
-CONFIG_ARM_APPENDED_DTB=y
-CONFIG_ARM_ATAG_DTB_COMPAT=y
-CONFIG_KEXEC=y
-CONFIG_CPU_IDLE=y
-CONFIG_ARM_CRYPTO=y
-CONFIG_CRYPTO_SHA1_ARM=y
-CONFIG_CRYPTO_SHA256_ARM=y
-CONFIG_CRYPTO_SHA512_ARM=y
-CONFIG_CRYPTO_AES_ARM=y
-CONFIG_MODULES=y
-CONFIG_MODULE_UNLOAD=y
-# CONFIG_BLK_DEV_BSG is not set
-# CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
-CONFIG_NET=y
-CONFIG_PACKET=y
-CONFIG_UNIX=y
-CONFIG_INET=y
-CONFIG_IP_MULTICAST=y
-CONFIG_IP_PNP=y
-CONFIG_IP_PNP_DHCP=y
-CONFIG_IP_PNP_BOOTP=y
-CONFIG_IP_PNP_RARP=y
-# CONFIG_INET_DIAG is not set
-CONFIG_IPV6_SIT_6RD=y
-CONFIG_CFG80211=y
-CONFIG_MAC80211=y
-CONFIG_DEVTMPFS=y
-CONFIG_DEVTMPFS_MOUNT=y
-# CONFIG_STANDALONE is not set
-# CONFIG_PREVENT_FIRMWARE_BUILD is not set
-CONFIG_MTD=y
-CONFIG_MTD_CMDLINE_PARTS=y
-CONFIG_MTD_BLOCK=y
-CONFIG_MTD_DATAFLASH=y
-CONFIG_MTD_UBI=y
-CONFIG_MTD_UBI_GLUEBI=y
-CONFIG_BLK_DEV_LOOP=y
-CONFIG_BLK_DEV_RAM=y
-CONFIG_BLK_DEV_RAM_COUNT=4
-CONFIG_BLK_DEV_RAM_SIZE=8192
-CONFIG_ATMEL_TCLIB=y
-CONFIG_ATMEL_SSC=y
-CONFIG_EEPROM_93CX6=y
-CONFIG_SCSI=y
-CONFIG_BLK_DEV_SD=y
-# CONFIG_SCSI_LOWLEVEL is not set
-CONFIG_NETDEVICES=y
-# CONFIG_NET_VENDOR_BROADCOM is not set
-CONFIG_MACB=y
-CONFIG_DM9000=y
-# CONFIG_NET_VENDOR_FARADAY is not set
-# CONFIG_NET_VENDOR_INTEL is not set
-# CONFIG_NET_VENDOR_MARVELL is not set
-# CONFIG_NET_VENDOR_MICREL is not set
-# CONFIG_NET_VENDOR_NATSEMI is not set
-# CONFIG_NET_VENDOR_SEEQ is not set
-# CONFIG_NET_VENDOR_SMSC is not set
-# CONFIG_NET_VENDOR_STMICRO is not set
-CONFIG_DAVICOM_PHY=y
-CONFIG_MICREL_PHY=y
-CONFIG_RT2X00=y
-CONFIG_RT2500USB=y
-CONFIG_RT73USB=y
-CONFIG_RT2800USB=y
-CONFIG_RT2800USB_RT53XX=y
-CONFIG_RT2800USB_RT55XX=y
-CONFIG_RT2800USB_UNKNOWN=y
-# CONFIG_RTL_CARDS is not set
-CONFIG_INPUT_POLLDEV=y
-CONFIG_INPUT_JOYDEV=y
-CONFIG_INPUT_EVDEV=y
-# CONFIG_KEYBOARD_ATKBD is not set
-CONFIG_KEYBOARD_QT1070=y
-CONFIG_KEYBOARD_GPIO=y
-# CONFIG_INPUT_MOUSE is not set
-CONFIG_INPUT_TOUCHSCREEN=y
-CONFIG_TOUCHSCREEN_ADS7846=y
-# CONFIG_SERIO is not set
-CONFIG_LEGACY_PTY_COUNT=4
-CONFIG_SERIAL_ATMEL=y
-CONFIG_SERIAL_ATMEL_CONSOLE=y
-CONFIG_HW_RANDOM=y
-CONFIG_I2C=y
-CONFIG_I2C_CHARDEV=y
-CONFIG_I2C_AT91=y
-CONFIG_I2C_GPIO=y
-CONFIG_SPI=y
-CONFIG_SPI_ATMEL=y
-CONFIG_SPI_GPIO=y
-CONFIG_SPI_SPIDEV=y
-CONFIG_GPIO_SYSFS=y
-CONFIG_W1=y
-CONFIG_W1_MASTER_GPIO=y
-CONFIG_W1_SLAVE_THERM=y
-CONFIG_POWER_RESET=y
-CONFIG_POWER_SUPPLY=y
-CONFIG_SENSORS_SHT3x=y
-CONFIG_WATCHDOG=y
-CONFIG_AT91SAM9X_WATCHDOG=y
-CONFIG_REGULATOR=y
-CONFIG_REGULATOR_FIXED_VOLTAGE=y
-CONFIG_FB=y
-CONFIG_FB_ATMEL=y
-# CONFIG_LCD_CLASS_DEVICE is not set
-# CONFIG_BACKLIGHT_GENERIC is not set
-CONFIG_FRAMEBUFFER_CONSOLE=y
-CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y
-CONFIG_SOUND=y
-CONFIG_SND=y
-CONFIG_SND_SOC=y
-CONFIG_SND_ATMEL_SOC=y
-CONFIG_SND_AT91_SOC_SAM9G20_WM8731=y
-CONFIG_SND_ATMEL_SOC_WM8904=y
-CONFIG_SND_AT91_SOC_SAM9X5_WM8731=y
-CONFIG_USB=y
-CONFIG_USB_ANNOUNCE_NEW_DEVICES=y
-CONFIG_USB_EHCI_HCD=y
-CONFIG_USB_OHCI_HCD=y
-CONFIG_USB_ACM=y
-CONFIG_USB_STORAGE=y
-CONFIG_USB_SERIAL=y
-CONFIG_USB_SERIAL_GENERIC=y
-CONFIG_USB_SERIAL_FTDI_SIO=y
-CONFIG_USB_SERIAL_PL2303=y
-CONFIG_USB_GADGET=y
-CONFIG_USB_AT91=y
-CONFIG_USB_ATMEL_USBA=y
-CONFIG_USB_ETH=y
-CONFIG_MMC=y
-CONFIG_MMC_ATMELMCI=y
-CONFIG_MMC_SPI=y
-CONFIG_NEW_LEDS=y
-CONFIG_LEDS_CLASS=y
-CONFIG_LEDS_GPIO=y
-CONFIG_LEDS_PWM=y
-CONFIG_LEDS_TRIGGERS=y
-CONFIG_LEDS_TRIGGER_TIMER=y
-CONFIG_LEDS_TRIGGER_HEARTBEAT=y
-CONFIG_LEDS_TRIGGER_GPIO=y
-CONFIG_RTC_CLASS=y
-CONFIG_RTC_DRV_S35390A=y
-CONFIG_RTC_DRV_RV3029C2=y
-CONFIG_RTC_DRV_AT91RM9200=y
-CONFIG_RTC_DRV_AT91SAM9=y
-CONFIG_DMADEVICES=y
-CONFIG_AT_HDMAC=y
-# CONFIG_IOMMU_SUPPORT is not set
-CONFIG_IIO=y
-CONFIG_AT91_ADC=y
-CONFIG_PWM=y
-CONFIG_PWM_DEBUG=y
-CONFIG_PWM_ATMEL=y
-CONFIG_PWM_ATMEL_TCB=y
-CONFIG_EXT4_FS=y
-CONFIG_FANOTIFY=y
-CONFIG_AUTOFS4_FS=y
-CONFIG_VFAT_FS=y
-CONFIG_TMPFS=y
-CONFIG_UBIFS_FS=y
-CONFIG_UBIFS_FS_ADVANCED_COMPR=y
-CONFIG_NFS_FS=y
-CONFIG_ROOT_NFS=y
-CONFIG_NLS_CODEPAGE_437=y
-CONFIG_NLS_CODEPAGE_850=y
-CONFIG_NLS_ISO8859_1=y
-CONFIG_NLS_UTF8=y
-CONFIG_CRYPTO_ECHAINIV=y
-CONFIG_CRYPTO_ECB=y
-CONFIG_CRYPTO_USER_API_HASH=y
-CONFIG_CRYPTO_USER_API_SKCIPHER=y
-# CONFIG_CRYPTO_HW is not set
-CONFIG_FONTS=y
-CONFIG_FONT_8x8=y
-CONFIG_FONT_ACORN_8x8=y
-CONFIG_FONT_MINI_4x6=y
-CONFIG_PRINTK_TIME=y
-CONFIG_STRIP_ASM_SYMS=y
-# CONFIG_SCHED_DEBUG is not set
-# CONFIG_DEBUG_BUGVERBOSE is not set
-CONFIG_FUNCTION_TRACER=y
-CONFIG_TEST_PRINTF=y
-CONFIG_DEBUG_USER=y
-
---ty77l2etqcnjy4dl--
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
