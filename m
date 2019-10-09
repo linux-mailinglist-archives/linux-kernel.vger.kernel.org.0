@@ -2,105 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4224D079D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 08:46:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F1F6D0791
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 08:44:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728132AbfJIGq0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 02:46:26 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:33986 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725914AbfJIGqZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 02:46:25 -0400
-Received: by mail-lj1-f193.google.com with SMTP id j19so1316058lja.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 23:46:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netrounds-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=f+gWR+LjmSBbJitTfLQV8AjJIexhV1cxyS84yC8N87o=;
-        b=jAmFYcUlczPMa/GIKzBcfOv+GCxavycEJ7t6U88F5+Dt2B4W3JRWnYpnfZi2+8G1bP
-         G474GC8PZ+Mmwa3jHuw36I7zhhMQzCDkk6DRlLTYwxsPHU62/BRwJDubtpqA8CdnxLZg
-         ZyUdURzQDXEG/2xxyBt/T7HjAFqNZSIw8r7GgIj9XTOidOzLJBwnwRWeznQOdDmtxvxk
-         8ch2XqgSmiMqZfF+Nb11PHj+Ws1XmwUD5vtz4S6EaUn3czE2I4QF9Oh/DnYFm6I27RWs
-         OGXcaA8nj3bF9/JxpIWR0+BIkcYMK6J8ZGTC9BFrH9bXgafMmcKaPHAy1N6jZzpHGybC
-         1k6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=f+gWR+LjmSBbJitTfLQV8AjJIexhV1cxyS84yC8N87o=;
-        b=VUveHLSdMOItT8pOR7HtgUKq537BegSq5u78v3QHtKajVY+/Tzu1GXVVcUB2LSR4h8
-         MdROMvRvVaGZPFMOHk/yixocCyddMxDi8Ur0+kXbIWgK26wNoUn8AtRUaUeE4PDmAycW
-         dX6QL5guoLawr85uQXyLh8an7ES9BYAHpVygFjeht0lRKtC6CsgPddlB7UkQbOXaOSsa
-         cB4MGQ0gEiRRX+e42XC53xXPXf0AmMBsb7ZAureWoK2Zqhrmrg4FQi1TbuiyddpljfQU
-         PohwfcbGvUFUU92roH9PNP68KfZKLxD4tPKbtTGeb+5vsIeiTUi+W+E7DIF+LCUlPHHO
-         VLdQ==
-X-Gm-Message-State: APjAAAXwSh0YjF2bGRUPR/SHvhWrAxkor2MRE5c1Sxkfu8CSgnC+9olp
-        64GVyNx/Ji+/4a/m2Qw4wDKVpg==
-X-Google-Smtp-Source: APXvYqzMx79MdjNQ10diKOd4OBQPKpH0x6KeOmrH48ZVecxxD63q16fZKrPGZwtGBxkbUM7b6RnDnw==
-X-Received: by 2002:a2e:880e:: with SMTP id x14mr1278708ljh.42.1570603583122;
-        Tue, 08 Oct 2019 23:46:23 -0700 (PDT)
-Received: from [10.0.156.104] ([195.22.87.57])
-        by smtp.gmail.com with ESMTPSA id q16sm246677lfp.71.2019.10.08.23.46.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Oct 2019 23:46:22 -0700 (PDT)
-From:   Jonas Bonn <jonas.bonn@netrounds.com>
-To:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        id S1726765AbfJIGoz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 02:44:55 -0400
+Received: from mga01.intel.com ([192.55.52.88]:37246 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725914AbfJIGoy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 02:44:54 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2019 23:44:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,273,1566889200"; 
+   d="scan'208";a="368658906"
+Received: from unknown (HELO localhost) ([10.239.159.128])
+  by orsmga005.jf.intel.com with ESMTP; 08 Oct 2019 23:44:51 -0700
+Date:   Wed, 9 Oct 2019 14:46:48 +0800
+From:   Yang Weijiang <weijiang.yang@intel.com>
+To:     Jim Mattson <jmattson@google.com>
+Cc:     Yang Weijiang <weijiang.yang@intel.com>,
+        kvm list <kvm@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        "David S . Miller" <davem@davemloft.net>, pabeni@redhat.com
-Subject: Packet gets stuck in NOLOCK pfifo_fast qdisc
-Message-ID: <d102074f-7489-e35a-98cf-e2cad7efd8a2@netrounds.com>
-Date:   Wed, 9 Oct 2019 08:46:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Subject: Re: [PATCH v7 6/7] KVM: x86: Load Guest fpu state when accessing
+ MSRs managed by XSAVES
+Message-ID: <20191009064648.GD27851@local-michael-cet-test>
+References: <20190927021927.23057-1-weijiang.yang@intel.com>
+ <20190927021927.23057-7-weijiang.yang@intel.com>
+ <CALMp9eRouyhkKeadM_w80bisWB-VSBCf3NSei5hZXcDsRR7GJg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALMp9eRouyhkKeadM_w80bisWB-VSBCf3NSei5hZXcDsRR7GJg@mail.gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, Oct 02, 2019 at 12:56:30PM -0700, Jim Mattson wrote:
+> On Thu, Sep 26, 2019 at 7:17 PM Yang Weijiang <weijiang.yang@intel.com> wrote:
+> >
+> > From: Sean Christopherson <sean.j.christopherson@intel.com>
+> >
+ >  /*
+> >   * Read or write a bunch of msrs. All parameters are kernel addresses.
+> >   *
+> > @@ -3009,11 +3017,23 @@ static int __msr_io(struct kvm_vcpu *vcpu, struct kvm_msrs *msrs,
+> >                     int (*do_msr)(struct kvm_vcpu *vcpu,
+> >                                   unsigned index, u64 *data))
+> >  {
+> > +       bool fpu_loaded = false;
+> >         int i;
+> > +       const u64 cet_bits = XFEATURE_MASK_CET_USER | XFEATURE_MASK_CET_KERNEL;
+> > +       bool cet_xss = kvm_x86_ops->xsaves_supported() &&
+> > +                      (kvm_supported_xss() & cet_bits);
+> 
+> It seems like I've seen a lot of checks like this. Can this be
+> simplified (throughout this series) by sinking the
+> kvm_x86_ops->xsaves_supported() check into kvm_supported_xss()? That
+> is, shouldn't kvm_supported_xss() return 0 if
+> kvm_x86_ops->xsaves_supported() is false?
+>
+OK, let me add this check, thank you!
 
-The lockless pfifo_fast qdisc has an issue with packets getting stuck in 
-the queue.  What appears to happen is:
-
-i)  Thread 1 holds the 'seqlock' on the qdisc and dequeues packets.
-ii)  Thread 1 dequeues the last packet in the queue.
-iii)  Thread 1 iterates through the qdisc->dequeue function again and 
-determines that the queue is empty.
-
-iv)  Thread 2 queues up a packet.  Since 'seqlock' is busy, it just 
-assumes the packet will be dequeued by whoever is holding the lock.
-
-v)  Thread 1 releases 'seqlock'.
-
-After v), nobody will check if there are packets in the queue until a 
-new packet is enqueued.  Thereby, the packet enqueued by Thread 2 may be 
-delayed indefinitely.
-
-What, I think, should probably happen is that Thread 1 should check that 
-the queue is empty again after releasing 'seqlock'.  I poked at this, 
-but it wasn't obvious to me how to go about this given the way the 
-layering works here.  Roughly:
-
-qdisc_run_end() {
-...
-	spin_unlock(seqlock);
-	if (!qdisc_is_empty(qdisc))
-		qdisc_run();
-...
-}
-
-Calling qdisc_run() from qdisc_run_end() doesn't feel right!
-
-There's a qdisc->empty property (and qdisc_is_empty() relies on it) but 
-it's not particularly useful in this case since there's a race in 
-setting this property which makes it not quite reliable.
-
-Hope someone can shine some light on how to proceed here.
-
-/Jonas
+> > -       for (i = 0; i < msrs->nmsrs; ++i)
+> > +       for (i = 0; i < msrs->nmsrs; ++i) {
+> > +               if (!fpu_loaded && cet_xss &&
+> > +                   is_xsaves_msr(entries[i].index)) {
+> > +                       kvm_load_guest_fpu(vcpu);
+> > +                       fpu_loaded = true;
+> > +               }
+> >                 if (do_msr(vcpu, entries[i].index, &entries[i].data))
+> >                         break;
+> > +       }
+> > +       if (fpu_loaded)
+> > +               kvm_put_guest_fpu(vcpu);
+> >
+> >         return i;
+> >  }
+> > --
+> > 2.17.2
+> >
