@@ -2,447 +2,280 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8409BD113E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 16:29:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB2F8D115A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 16:34:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731489AbfJIO3v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 10:29:51 -0400
-Received: from mail-eopbgr30092.outbound.protection.outlook.com ([40.107.3.92]:5783
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730546AbfJIO3v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 10:29:51 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eChznSHDK/BPeED0gmV9bouQ52HNysszjgvSmgYpqwCunk7sPf1hvJ3w6FvHdyqKVe7RFPv30+PJVwFfv/rWxvmKfL9Ouj9ZX3LMsTpDErnnFiDGH8DmZpX2NZdz8hnIU25cIZcJB/zeTLtRxLeZKq3Kq/0tmsYfsfR3bvIEFtoD2GhGMJnvt4xFRJJO/tdFHQMiWRjPAZXLM/NyIeICYJzK4OpaJZwvRDZ4LGQMxh1anQO8lXVh7NaIk+pbq8tQvfMM1QHAfdYTfJJsVzDaV24z0GZT2PV7vToOmuJD+hPMHMtX/F30+t3Q/RkcO6qVGk+IQ8Dngi9vCLFpGvQnug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Gk8AG3qKuRsuIMYjn869Uf2zCoMbcqW55wnY+ApUiiM=;
- b=MikQpiBe9MBeYkvjapYLK4AFcXuyqEitCf5MB2tNcqmbtSYnQDxbWuSAf44EXvzCggkssc2tq2kVq9+kxNjruVREUMMVlVfQOOmMoFy6kKUkdZap07VPrgZqRqXuIY4feD6ZQIcN1N/1Cn1vmLnaeI9Jh9jeEc3tdP+dPvq84//JEdikZcmBESw9hpqDSUY3YkXLCaBsbSsIUO/LRQv7vELesmM7DtRyXpXi+K632rXLp/3IeJ8/2ypTWZqhuG0/YDdsxQGfZT4Hl5DJ01WmsCujqyMbA9t+S6nFFUXLilPxMs8FEzAoXE7dSDOiWvzpGpkQ/t95PBIt2yiY+Oibsg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toradex.com; dmarc=pass action=none header.from=toradex.com;
- dkim=pass header.d=toradex.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Gk8AG3qKuRsuIMYjn869Uf2zCoMbcqW55wnY+ApUiiM=;
- b=IRYK9JqWLiULFnxDMqNI93M0DLu5qjTpcOikrnDibY33eCLtH5lLAOcMqcXsz95q2Q1IcxJHrY/0F6AaSZ2WXbmD7cTeb0uzgaYsw/iqBeANVSoOQRvUt5HdJZjy77ntuoLLGI40YRwO0ZxUoifL55NLh3EyUvkzi3miIRuc8I4=
-Received: from AM6PR05MB6535.eurprd05.prod.outlook.com (20.179.18.212) by
- AM6PR05MB6582.eurprd05.prod.outlook.com (20.179.7.86) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.16; Wed, 9 Oct 2019 14:29:41 +0000
-Received: from AM6PR05MB6535.eurprd05.prod.outlook.com
- ([fe80::c9f9:f21d:d401:7f35]) by AM6PR05MB6535.eurprd05.prod.outlook.com
- ([fe80::c9f9:f21d:d401:7f35%5]) with mapi id 15.20.2347.016; Wed, 9 Oct 2019
- 14:29:41 +0000
-From:   Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
-To:     "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Igor Opaniuk <igor.opaniuk@toradex.com>,
-        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        Sasha Levin <sashal@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Subject: [PATCH 1/1] ASoC: sgtl5000: Improve VAG power and mute control
-Thread-Topic: [PATCH 1/1] ASoC: sgtl5000: Improve VAG power and mute control
-Thread-Index: AQHVfq38ih3nz15oy0qN94yWfTlkWw==
-Date:   Wed, 9 Oct 2019 14:29:41 +0000
-Message-ID: <20191009142822.14808-2-oleksandr.suvorov@toradex.com>
-References: <20191009142822.14808-1-oleksandr.suvorov@toradex.com>
-In-Reply-To: <20191009142822.14808-1-oleksandr.suvorov@toradex.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM4PR07CA0019.eurprd07.prod.outlook.com
- (2603:10a6:205:1::32) To AM6PR05MB6535.eurprd05.prod.outlook.com
- (2603:10a6:20b:74::20)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=oleksandr.suvorov@toradex.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.20.1
-x-originating-ip: [194.105.145.90]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 1a9f6b7c-67cd-4c33-83ac-08d74cc51f40
-x-ms-traffictypediagnostic: AM6PR05MB6582:
-x-ms-exchange-purlcount: 2
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM6PR05MB6582AC223115F7C7BFEFD7BDF9950@AM6PR05MB6582.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:248;
-x-forefront-prvs: 018577E36E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(396003)(366004)(376002)(346002)(39850400004)(199004)(189003)(81156014)(386003)(6506007)(30864003)(2906002)(1730700003)(305945005)(5660300002)(476003)(7736002)(2351001)(14454004)(6512007)(6306002)(8936002)(7416002)(81166006)(99286004)(50226002)(76176011)(486006)(11346002)(446003)(44832011)(2616005)(71190400001)(6916009)(8676002)(102836004)(26005)(71200400001)(1076003)(86362001)(186003)(52116002)(6116002)(3846002)(256004)(478600001)(966005)(14444005)(54906003)(2501003)(36756003)(316002)(5640700003)(6486002)(66066001)(4326008)(66476007)(66556008)(64756008)(66446008)(25786009)(6436002)(66946007);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR05MB6582;H:AM6PR05MB6535.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: toradex.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: rvg5ySEy/mupCjg4AtAquRB0DTIhe2hoHaXabh8+H8Ksk0LpFbWglucQgn4NIy9zbVLo7z0eNo6cASfn5gwsMe0qO57CxWHrnVn42K2btDE6DjzEljRksl/XlojAl/u8qZquVd6eV2zcfO/fdrFmpX+MKy3Z8gV8YocoAOrcbElgclt4MRtyBKLvD+s3p+cjzDmVz4JPlhnkHBXMXnWUhZ2yOC55eogdAY7Fucw7TuE5Cd8hUHGH9e59ew2vtVdJmQhPQlQq3E2DLZckKq+4G4FU7ASItDfJL6rXc5Gxoasj5Uc0wM2poEeK33KPp+lQBLrwb37SgNhoMTPbJZJNUT/Fl8+sJabNcmIgNsr9o3n0WYYeNvw3OZPK2Lyw3SfGi8dnPIwRsQ53dmDRxXtzxvuIhbvVXKePKI0EENQwD9QWX/qoycg5EmwobhbRn2ZxSqnZtInWtzuRr4nIL27VlA==
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1731338AbfJIOeO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 10:34:14 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:62132 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730490AbfJIOeN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 10:34:13 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x99DwbGn165116
+        for <linux-kernel@vger.kernel.org>; Wed, 9 Oct 2019 09:59:06 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2vhf6s3y51-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 09:59:01 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <oberpar@linux.ibm.com>;
+        Wed, 9 Oct 2019 14:56:38 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 9 Oct 2019 14:56:33 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x99DuV6B14155898
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 9 Oct 2019 13:56:32 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D6DE05205A;
+        Wed,  9 Oct 2019 13:56:31 +0000 (GMT)
+Received: from [9.152.212.144] (unknown [9.152.212.144])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 595365204F;
+        Wed,  9 Oct 2019 13:56:31 +0000 (GMT)
+Subject: Re: [PATCH v2] mm/page_isolation: fix a deadlock with printk()
+To:     Qian Cai <cai@lca.pw>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Petr Mladek <pmladek@suse.com>
+Cc:     akpm@linux-foundation.org, sergey.senozhatsky.work@gmail.com,
+        rostedt@goodmis.org, peterz@infradead.org, linux-mm@kvack.org,
+        john.ogness@linutronix.de, david@redhat.com,
+        linux-kernel@vger.kernel.org,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+References: <1570228005-24979-1-git-send-email-cai@lca.pw>
+ <20191007143002.l37bt2lzqtnqjqxu@pathway.suse.cz>
+ <20191007144937.GO2381@dhcp22.suse.cz>
+ <20191008074357.f33f6pbs4cw5majk@pathway.suse.cz>
+ <20191008082752.GB6681@dhcp22.suse.cz>
+ <aefe7f75-b0ec-9e99-a77e-87324edb24e0@de.ibm.com>
+ <1570550917.5576.303.camel@lca.pw>
+From:   Peter Oberparleiter <oberpar@linux.ibm.com>
+Date:   Wed, 9 Oct 2019 15:56:32 +0200
 MIME-Version: 1.0
-X-OriginatorOrg: toradex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1a9f6b7c-67cd-4c33-83ac-08d74cc51f40
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2019 14:29:41.4123
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6Xk1f0eWC3+GG9GAUXGUmw7MzTo89fDwsSXP3sSLZrOikEKIino9OTdVtaUbkZWtZ4Fkpax57gchPqUoDfXBWI/0lM4bidIN51iyf2wXxtA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB6582
+In-Reply-To: <1570550917.5576.303.camel@lca.pw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19100913-4275-0000-0000-000003708094
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19100913-4276-0000-0000-000038838541
+Message-Id: <1157b3ae-006e-5b8e-71f0-883918992ecc@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-09_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=86 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910090133
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit b1f373a11d25 ("ASoC: sgtl5000: Improve VAG power and mute
-control") upstream.
+On 08.10.2019 18:08, Qian Cai wrote:
+> On Tue, 2019-10-08 at 14:56 +0200, Christian Borntraeger wrote:
+>> Adding Peter Oberparleiter.
+>> Peter, can you have a look?
+>>
+>> On 08.10.19 10:27, Michal Hocko wrote:
+>>> On Tue 08-10-19 09:43:57, Petr Mladek wrote:
+>>>> On Mon 2019-10-07 16:49:37, Michal Hocko wrote:
+>>>>> [Cc s390 maintainers - the lockdep is http://lkml.kernel.org/r/1570228005-24979-1-git-send-email-cai@lca.pw
+>>>>>  Petr has explained it is a false positive
+>>>>>  http://lkml.kernel.org/r/20191007143002.l37bt2lzqtnqjqxu@pathway.suse.cz]
+>>>>> On Mon 07-10-19 16:30:02, Petr Mladek wrote:
+>>>>> [...]
+>>>>>> I believe that it cannot really happen because:
+>>>>>>
+>>>>>> 	static int __init
+>>>>>> 	sclp_console_init(void)
+>>>>>> 	{
+>>>>>> 	[...]
+>>>>>> 		rc = sclp_rw_init();
+>>>>>> 	[...]
+>>>>>> 		register_console(&sclp_console);
+>>>>>> 		return 0;
+>>>>>> 	}
+>>>>>>
+>>>>>> sclp_rw_init() is called before register_console(). And
+>>>>>> console_unlock() will never call sclp_console_write() before
+>>>>>> the console is registered.
+>>>>>>
+>>>>>> AFAIK, lockdep only compares existing chain of locks. It does
+>>>>>> not know about console registration that would make some
+>>>>>> code paths mutually exclusive.
+>>>>>>
+>>>>>> I believe that it is a false positive. I do not know how to
+>>>>>> avoid this lockdep report. I hope that it will disappear
+>>>>>> by deferring all printk() calls rather soon.
+>>>>>
+>>>>> Thanks a lot for looking into this Petr. I have also checked the code
+>>>>> and I really fail to see why the allocation has to be done under the
+>>>>> lock in the first place. sclp_read_sccb and sclp_init_sccb are global
+>>>>> variables but I strongly suspect that they need a synchronization during
+>>>>> early init, callbacks are registered only later IIUC:
+>>>>
+>>>> Good idea. It would work when the init function is called only once.
+>>>> But see below.
+>>>>
+>>>>> diff --git a/drivers/s390/char/sclp.c b/drivers/s390/char/sclp.c
+>>>>> index d2ab3f07c008..4b1c033e3255 100644
+>>>>> --- a/drivers/s390/char/sclp.c
+>>>>> +++ b/drivers/s390/char/sclp.c
+>>>>> @@ -1169,13 +1169,13 @@ sclp_init(void)
+>>>>>  	unsigned long flags;
+>>>>>  	int rc = 0;
+>>>>>  
+>>>>> +	sclp_read_sccb = (void *) __get_free_page(GFP_ATOMIC | GFP_DMA);
+>>>>> +	sclp_init_sccb = (void *) __get_free_page(GFP_ATOMIC | GFP_DMA);
+>>>>>  	spin_lock_irqsave(&sclp_lock, flags);
+>>>>>  	/* Check for previous or running initialization */
+>>>>>  	if (sclp_init_state != sclp_init_state_uninitialized)
+>>>>>  		goto fail_unlock;
+>>>>
+>>>> It seems that sclp_init() could be called several times in parallel.
+>>>> I see it called from sclp_register() and sclp_initcall().
+>>>
+>>> Interesting. Something for s390 people to answer I guess.
+>>> Anyway, this should be quite trivial to workaround by a cmpxch or alike.
+>>>
+> 
+> The above fix is simply insufficient,
+> 
+> 00: [    3.654307] WARNING: possible circular locking dependency detected       
+> 00: [    3.654309] 5.4.0-rc1-next-20191004+ #4 Not tainted                      
+> 00: [    3.654311] ------------------------------------------------------       
+> 00: [    3.654313] swapper/0/1 is trying to acquire lock:                       
+> 00: [    3.654314] 00000000553f3fb8 (sclp_lock){-.-.}, at: sclp_add_request+0x34
+> 00: /0x308                                                                      
+> 00: [    3.654320]                                                              
+> 00: [    3.654322] but task is already holding lock:                            
+> 00: [    3.654323] 00000000550c9fc0 (console_owner){....}, at: console_unlock+0x
+> 00: 328/0xa30                                                                   
+> 00: [    3.654329]                                                              
+> 00: [    3.654331] which lock already depends on the new lock.                  
 
-VAG power control is improved to fit the manual [1]. This patch fixes as
-minimum one bug: if customer muxes Headphone to Line-In right after boot,
-the VAG power remains off that leads to poor sound quality from line-in.
+I can confirm that both this lockdep warning as well as the original one
+are both false positives: lockdep warns that code in sclp_init could
+trigger a deadlock via the chain
 
-I.e. after boot:
-  - Connect sound source to Line-In jack;
-  - Connect headphone to HP jack;
-  - Run following commands:
-  $ amixer set 'Headphone' 80%
-  $ amixer set 'Headphone Mux' LINE_IN
+   sclp_lock --> &(&zone->lock)->rlock --> console_owner
 
-Change VAG power on/off control according to the following algorithm:
-  - turn VAG power ON on the 1st incoming event.
-  - keep it ON if there is any active VAG consumer (ADC/DAC/HP/Line-In).
-  - turn VAG power OFF when there is the latest consumer's pre-down event
-    come.
-  - always delay after VAG power OFF to avoid pop.
-  - delay after VAG power ON if the initiative consumer is Line-In, this
-    prevents pop during line-in muxing.
+but
 
-According to the data sheet [1], to avoid any pops/clicks,
-the outputs should be muted upon input/output
-routing changes.
+  a) before sclp_init successfully completes, register_console is not
+     called, so there is no connection between console_owner -> sclp_lock
+  b) after sclp_init completed, it won't be called again, so any
+     dependency that requires a call-chain including sclp_init is
+     impossible to achieve
 
-[1] https://www.nxp.com/docs/en/data-sheet/SGTL5000.pdf
+Apparently lockdep cannot determine that sclp_init won't be called again.
+I'm attaching a patch that moves sclp_init to __init so that lockdep has
+a chance of knowing that the function will be gone after init.
 
-Cc: stable@vger.kernel.org
-Fixes: 9b34e6cc3bc2 ("ASoC: Add Freescale SGTL5000 codec support")
-Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
-[Backport: Replace snd_soc_component_read32() with snd_soc_component_read()=
-]
-Reviewed-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
-Reviewed-by: Cezary Rojewski <cezary.rojewski@intel.com>
-Link: https://lore.kernel.org/r/20190719100524.23300-3-oleksandr.suvorov@to=
-radex.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+This patch is intended for testing only though, to see if there are other
+paths to similar possible deadlocks. I still need to decide if its worth
+changing the code to remove false positives in lockdep.
 
----
+A generic solution would be preferable from my point of view though,
+because otherwise each console driver owner would need to ensure that any
+lock taken in their console.write implementation is never held while
+memory is allocated/released.
 
- sound/soc/codecs/sgtl5000.c | 234 +++++++++++++++++++++++++++++++-----
- 1 file changed, 203 insertions(+), 31 deletions(-)
+diff --git a/drivers/s390/char/sclp.c b/drivers/s390/char/sclp.c
+index d2ab3f07c008..13219e43d488 100644
+--- a/drivers/s390/char/sclp.c
++++ b/drivers/s390/char/sclp.c
+@@ -140,7 +140,6 @@ static void sclp_request_timeout(bool force_restart);
+ static void sclp_process_queue(void);
+ static void __sclp_make_read_req(void);
+ static int sclp_init_mask(int calculate);
+-static int sclp_init(void);
 
-diff --git a/sound/soc/codecs/sgtl5000.c b/sound/soc/codecs/sgtl5000.c
-index d81ac4e499aa..7406ea5c9a4f 100644
---- a/sound/soc/codecs/sgtl5000.c
-+++ b/sound/soc/codecs/sgtl5000.c
-@@ -35,6 +35,13 @@
- #define SGTL5000_DAP_REG_OFFSET	0x0100
- #define SGTL5000_MAX_REG_OFFSET	0x013A
-=20
-+/* Delay for the VAG ramp up */
-+#define SGTL5000_VAG_POWERUP_DELAY 500 /* ms */
-+/* Delay for the VAG ramp down */
-+#define SGTL5000_VAG_POWERDOWN_DELAY 500 /* ms */
-+
-+#define SGTL5000_OUTPUTS_MUTE (SGTL5000_HP_MUTE | SGTL5000_LINE_OUT_MUTE)
-+
- /* default value of sgtl5000 registers */
- static const struct reg_default sgtl5000_reg_defaults[] =3D {
- 	{ SGTL5000_CHIP_DIG_POWER,		0x0000 },
-@@ -99,6 +106,13 @@ enum sgtl5000_micbias_resistor {
- 	SGTL5000_MICBIAS_8K =3D 8,
- };
-=20
-+enum {
-+	HP_POWER_EVENT,
-+	DAC_POWER_EVENT,
-+	ADC_POWER_EVENT,
-+	LAST_POWER_EVENT =3D ADC_POWER_EVENT
-+};
-+
- /* sgtl5000 private structure in codec */
- struct sgtl5000_priv {
- 	int sysclk;	/* sysclk rate */
-@@ -111,8 +125,117 @@ struct sgtl5000_priv {
- 	int revision;
- 	u8 micbias_resistor;
- 	u8 micbias_voltage;
-+	u16 mute_state[LAST_POWER_EVENT + 1];
- };
-=20
-+static inline int hp_sel_input(struct snd_soc_component *component)
-+{
-+	unsigned int ana_reg =3D 0;
-+
-+	snd_soc_component_read(component, SGTL5000_CHIP_ANA_CTRL, &ana_reg);
-+
-+	return (ana_reg & SGTL5000_HP_SEL_MASK) >> SGTL5000_HP_SEL_SHIFT;
-+}
-+
-+static inline u16 mute_output(struct snd_soc_component *component,
-+			      u16 mute_mask)
-+{
-+	unsigned int mute_reg =3D 0;
-+
-+	snd_soc_component_read(component, SGTL5000_CHIP_ANA_CTRL, &mute_reg);
-+
-+	snd_soc_component_update_bits(component, SGTL5000_CHIP_ANA_CTRL,
-+			    mute_mask, mute_mask);
-+	return mute_reg;
-+}
-+
-+static inline void restore_output(struct snd_soc_component *component,
-+				  u16 mute_mask, u16 mute_reg)
-+{
-+	snd_soc_component_update_bits(component, SGTL5000_CHIP_ANA_CTRL,
-+		mute_mask, mute_reg);
-+}
-+
-+static void vag_power_on(struct snd_soc_component *component, u32 source)
-+{
-+	unsigned int ana_reg =3D 0;
-+
-+	snd_soc_component_read(component, SGTL5000_CHIP_ANA_POWER, &ana_reg);
-+
-+	if (ana_reg & SGTL5000_VAG_POWERUP)
-+		return;
-+
-+	snd_soc_component_update_bits(component, SGTL5000_CHIP_ANA_POWER,
-+			    SGTL5000_VAG_POWERUP, SGTL5000_VAG_POWERUP);
-+
-+	/* When VAG powering on to get local loop from Line-In, the sleep
-+	 * is required to avoid loud pop.
-+	 */
-+	if (hp_sel_input(component) =3D=3D SGTL5000_HP_SEL_LINE_IN &&
-+	    source =3D=3D HP_POWER_EVENT)
-+		msleep(SGTL5000_VAG_POWERUP_DELAY);
-+}
-+
-+static int vag_power_consumers(struct snd_soc_component *component,
-+			       u16 ana_pwr_reg, u32 source)
-+{
-+	int consumers =3D 0;
-+
-+	/* count dac/adc consumers unconditional */
-+	if (ana_pwr_reg & SGTL5000_DAC_POWERUP)
-+		consumers++;
-+	if (ana_pwr_reg & SGTL5000_ADC_POWERUP)
-+		consumers++;
-+
-+	/*
-+	 * If the event comes from HP and Line-In is selected,
-+	 * current action is 'DAC to be powered down'.
-+	 * As HP_POWERUP is not set when HP muxed to line-in,
-+	 * we need to keep VAG power ON.
-+	 */
-+	if (source =3D=3D HP_POWER_EVENT) {
-+		if (hp_sel_input(component) =3D=3D SGTL5000_HP_SEL_LINE_IN)
-+			consumers++;
-+	} else {
-+		if (ana_pwr_reg & SGTL5000_HP_POWERUP)
-+			consumers++;
-+	}
-+
-+	return consumers;
-+}
-+
-+static void vag_power_off(struct snd_soc_component *component, u32 source)
-+{
-+	unsigned int ana_pwr =3D SGTL5000_VAG_POWERUP;
-+
-+	snd_soc_component_read(component, SGTL5000_CHIP_ANA_POWER, &ana_pwr);
-+
-+	if (!(ana_pwr & SGTL5000_VAG_POWERUP))
-+		return;
-+
-+	/*
-+	 * This function calls when any of VAG power consumers is disappearing.
-+	 * Thus, if there is more than one consumer at the moment, as minimum
-+	 * one consumer will definitely stay after the end of the current
-+	 * event.
-+	 * Don't clear VAG_POWERUP if 2 or more consumers of VAG present:
-+	 * - LINE_IN (for HP events) / HP (for DAC/ADC events)
-+	 * - DAC
-+	 * - ADC
-+	 * (the current consumer is disappearing right now)
-+	 */
-+	if (vag_power_consumers(component, ana_pwr, source) >=3D 2)
-+		return;
-+
-+	snd_soc_component_update_bits(component, SGTL5000_CHIP_ANA_POWER,
-+		SGTL5000_VAG_POWERUP, 0);
-+	/* In power down case, we need wait 400-1000 ms
-+	 * when VAG fully ramped down.
-+	 * As longer we wait, as smaller pop we've got.
-+	 */
-+	msleep(SGTL5000_VAG_POWERDOWN_DELAY);
-+}
-+
- /*
-  * mic_bias power on/off share the same register bits with
-  * output impedance of mic bias, when power on mic bias, we
-@@ -144,36 +267,46 @@ static int mic_bias_event(struct snd_soc_dapm_widget =
-*w,
- 	return 0;
+ static void
+ __sclp_queue_read_req(void)
+@@ -670,7 +669,8 @@ __sclp_get_mask(sccb_mask_t *receive_mask, sccb_mask_t *send_mask)
+ 	}
  }
-=20
--/*
-- * As manual described, ADC/DAC only works when VAG powerup,
-- * So enabled VAG before ADC/DAC up.
-- * In power down case, we need wait 400ms when vag fully ramped down.
-- */
--static int power_vag_event(struct snd_soc_dapm_widget *w,
--	struct snd_kcontrol *kcontrol, int event)
-+static int vag_and_mute_control(struct snd_soc_component *component,
-+				 int event, int event_source)
+
+-/* Register event listener. Return 0 on success, non-zero otherwise. */
++/* Register event listener. Return 0 on success, non-zero otherwise. Early
++ * callers (<= arch_initcall) must call sclp_init() first. */
+ int
+ sclp_register(struct sclp_register *reg)
  {
--	struct snd_soc_codec *codec =3D snd_soc_dapm_to_codec(w->dapm);
--	const u32 mask =3D SGTL5000_DAC_POWERUP | SGTL5000_ADC_POWERUP;
-+	static const u16 mute_mask[] =3D {
-+		/*
-+		 * Mask for HP_POWER_EVENT.
-+		 * Muxing Headphones have to be wrapped with mute/unmute
-+		 * headphones only.
-+		 */
-+		SGTL5000_HP_MUTE,
-+		/*
-+		 * Masks for DAC_POWER_EVENT/ADC_POWER_EVENT.
-+		 * Muxing DAC or ADC block have to be wrapped with mute/unmute
-+		 * both headphones and line-out.
-+		 */
-+		SGTL5000_OUTPUTS_MUTE,
-+		SGTL5000_OUTPUTS_MUTE
-+	};
-+
-+	struct sgtl5000_priv *sgtl5000 =3D
-+		snd_soc_component_get_drvdata(component);
-=20
- 	switch (event) {
--	case SND_SOC_DAPM_POST_PMU:
--		snd_soc_update_bits(codec, SGTL5000_CHIP_ANA_POWER,
--			SGTL5000_VAG_POWERUP, SGTL5000_VAG_POWERUP);
--		msleep(400);
-+	case SND_SOC_DAPM_PRE_PMU:
-+		sgtl5000->mute_state[event_source] =3D
-+			mute_output(component, mute_mask[event_source]);
-+		break;
-+	case SND_SOC_DAPM_POST_PMU:
-+		vag_power_on(component, event_source);
-+		restore_output(component, mute_mask[event_source],
-+			       sgtl5000->mute_state[event_source]);
- 		break;
--
- 	case SND_SOC_DAPM_PRE_PMD:
--		/*
--		 * Don't clear VAG_POWERUP, when both DAC and ADC are
--		 * operational to prevent inadvertently starving the
--		 * other one of them.
--		 */
--		if ((snd_soc_read(codec, SGTL5000_CHIP_ANA_POWER) &
--				mask) !=3D mask) {
--			snd_soc_update_bits(codec, SGTL5000_CHIP_ANA_POWER,
--				SGTL5000_VAG_POWERUP, 0);
--			msleep(400);
--		}
-+		sgtl5000->mute_state[event_source] =3D
-+			mute_output(component, mute_mask[event_source]);
-+		vag_power_off(component, event_source);
-+		break;
-+	case SND_SOC_DAPM_POST_PMD:
-+		restore_output(component, mute_mask[event_source],
-+			       sgtl5000->mute_state[event_source]);
- 		break;
- 	default:
- 		break;
-@@ -182,6 +315,41 @@ static int power_vag_event(struct snd_soc_dapm_widget =
-*w,
- 	return 0;
- }
-=20
-+/*
-+ * Mute Headphone when power it up/down.
-+ * Control VAG power on HP power path.
-+ */
-+static int headphone_pga_event(struct snd_soc_dapm_widget *w,
-+	struct snd_kcontrol *kcontrol, int event)
-+{
-+	struct snd_soc_component *component =3D
-+		snd_soc_dapm_to_component(w->dapm);
-+
-+	return vag_and_mute_control(component, event, HP_POWER_EVENT);
-+}
-+
-+/* As manual describes, ADC/DAC powering up/down requires
-+ * to mute outputs to avoid pops.
-+ * Control VAG power on ADC/DAC power path.
-+ */
-+static int adc_updown_depop(struct snd_soc_dapm_widget *w,
-+	struct snd_kcontrol *kcontrol, int event)
-+{
-+	struct snd_soc_component *component =3D
-+		snd_soc_dapm_to_component(w->dapm);
-+
-+	return vag_and_mute_control(component, event, ADC_POWER_EVENT);
-+}
-+
-+static int dac_updown_depop(struct snd_soc_dapm_widget *w,
-+	struct snd_kcontrol *kcontrol, int event)
-+{
-+	struct snd_soc_component *component =3D
-+		snd_soc_dapm_to_component(w->dapm);
-+
-+	return vag_and_mute_control(component, event, DAC_POWER_EVENT);
-+}
-+
- /* input sources for ADC */
- static const char *adc_mux_text[] =3D {
- 	"MIC_IN", "LINE_IN"
-@@ -217,7 +385,10 @@ static const struct snd_soc_dapm_widget sgtl5000_dapm_=
-widgets[] =3D {
- 			    mic_bias_event,
- 			    SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_PRE_PMD),
-=20
--	SND_SOC_DAPM_PGA("HP", SGTL5000_CHIP_ANA_POWER, 4, 0, NULL, 0),
-+	SND_SOC_DAPM_PGA_E("HP", SGTL5000_CHIP_ANA_POWER, 4, 0, NULL, 0,
-+			   headphone_pga_event,
-+			   SND_SOC_DAPM_PRE_POST_PMU |
-+			   SND_SOC_DAPM_PRE_POST_PMD),
- 	SND_SOC_DAPM_PGA("LO", SGTL5000_CHIP_ANA_POWER, 0, 0, NULL, 0),
-=20
- 	SND_SOC_DAPM_MUX("Capture Mux", SND_SOC_NOPM, 0, 0, &adc_mux),
-@@ -233,11 +404,12 @@ static const struct snd_soc_dapm_widget sgtl5000_dapm=
-_widgets[] =3D {
- 				0, SGTL5000_CHIP_DIG_POWER,
- 				1, 0),
-=20
--	SND_SOC_DAPM_ADC("ADC", "Capture", SGTL5000_CHIP_ANA_POWER, 1, 0),
--	SND_SOC_DAPM_DAC("DAC", "Playback", SGTL5000_CHIP_ANA_POWER, 3, 0),
--
--	SND_SOC_DAPM_PRE("VAG_POWER_PRE", power_vag_event),
--	SND_SOC_DAPM_POST("VAG_POWER_POST", power_vag_event),
-+	SND_SOC_DAPM_ADC_E("ADC", "Capture", SGTL5000_CHIP_ANA_POWER, 1, 0,
-+			   adc_updown_depop, SND_SOC_DAPM_PRE_POST_PMU |
-+			   SND_SOC_DAPM_PRE_POST_PMD),
-+	SND_SOC_DAPM_DAC_E("DAC", "Playback", SGTL5000_CHIP_ANA_POWER, 3, 0,
-+			   dac_updown_depop, SND_SOC_DAPM_PRE_POST_PMU |
-+			   SND_SOC_DAPM_PRE_POST_PMD),
+@@ -679,9 +679,8 @@ sclp_register(struct sclp_register *reg)
+ 	sccb_mask_t send_mask;
+ 	int rc;
+
+-	rc = sclp_init();
+-	if (rc)
+-		return rc;
++	if (sclp_init_state != sclp_init_state_initialized)
++		return -EINVAL;
+ 	spin_lock_irqsave(&sclp_lock, flags);
+ 	/* Check event mask for collisions */
+ 	__sclp_get_mask(&receive_mask, &send_mask);
+@@ -1163,8 +1162,7 @@ static struct platform_device *sclp_pdev;
+
+ /* Initialize SCLP driver. Return zero if driver is operational, non-zero
+  * otherwise. */
+-static int
+-sclp_init(void)
++int __init sclp_init(void)
+ {
+ 	unsigned long flags;
+ 	int rc = 0;
+diff --git a/drivers/s390/char/sclp.h b/drivers/s390/char/sclp.h
+index 196333013e54..463660261379 100644
+--- a/drivers/s390/char/sclp.h
++++ b/drivers/s390/char/sclp.h
+@@ -296,6 +296,7 @@ struct sclp_register {
  };
-=20
- /* routes for sgtl5000 */
---=20
-2.20.1
+
+ /* externals from sclp.c */
++int __init sclp_init(void);
+ int sclp_add_request(struct sclp_req *req);
+ void sclp_sync_wait(void);
+ int sclp_register(struct sclp_register *reg);
+diff --git a/drivers/s390/char/sclp_con.c b/drivers/s390/char/sclp_con.c
+index 8966a1c1b548..a08ef2c8379e 100644
+--- a/drivers/s390/char/sclp_con.c
++++ b/drivers/s390/char/sclp_con.c
+@@ -319,6 +319,9 @@ sclp_console_init(void)
+ 	/* SCLP consoles are handled together */
+ 	if (!(CONSOLE_IS_SCLP || CONSOLE_IS_VT220))
+ 		return 0;
++	rc = sclp_init();
++	if (rc)
++		return rc;
+ 	rc = sclp_rw_init();
+ 	if (rc)
+ 		return rc;
+diff --git a/drivers/s390/char/sclp_vt220.c b/drivers/s390/char/sclp_vt220.c
+index 3f9a6ef650fa..28b23e22248b 100644
+--- a/drivers/s390/char/sclp_vt220.c
++++ b/drivers/s390/char/sclp_vt220.c
+@@ -694,6 +694,11 @@ static int __init __sclp_vt220_init(int num_pages)
+ 	sclp_vt220_init_count++;
+ 	if (sclp_vt220_init_count != 1)
+ 		return 0;
++	rc = sclp_init();
++	if (rc) {
++		sclp_vt220_init_count--;
++		return rc;
++	}
+ 	spin_lock_init(&sclp_vt220_lock);
+ 	INIT_LIST_HEAD(&sclp_vt220_empty);
+ 	INIT_LIST_HEAD(&sclp_vt220_outqueue);
+-- 
+Peter Oberparleiter
+Linux on Z Development - IBM Germany
 
