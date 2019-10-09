@@ -2,51 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97858D18FA
+	by mail.lfdr.de (Postfix) with ESMTP id 81A5ED18F9
 	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 21:30:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731750AbfJITaL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 15:30:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51078 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730708AbfJITaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731614AbfJITaK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 9 Oct 2019 15:30:10 -0400
-Subject: Re: [GIT PULL] Please pull RDMA subsystem changes
+Received: from mail.kernel.org ([198.145.29.99]:51064 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729535AbfJITaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 15:30:10 -0400
+Subject: Re: [GIT PULL] arm64: Fixes for -rc3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570649410;
-        bh=JJ5I9OVWtkwkRq2I70I9m+OltylDY3E9ybe8AUc5jGE=;
+        s=default; t=1570649409;
+        bh=3yuozM4FLhSm+i6yEQ1YGbYeMOgWaz07K3LfwiSuah4=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=tb4EmhwdpNyI6jrgmIV42aT98s0RiyYFR3xJMegVm1/80YxWttg2vTU1iNUYm2BkI
-         o5ljmLd7p89u/Elcu3nKSH9TceMe5vNb4GL7XHTfcJfe30HP+vE+8LfCqkj/lu0wdR
-         +4Gmjsxh3jHdl+FtppW57JH/Uwi/o0r8gTP7NVCQ=
+        b=OCXIDH/uxYHRlXIF5Tfm07UizQk4ej6Ea89+dhYt7o8q+gFRAwKoDEw0janNMOmDw
+         zhYnsVxevTQ+9WVUvJtU3Myvv6g0S4b4BmXrmTj5zoUft4aT4PvvSLVjjH4b5yX3UD
+         sA4+jHB5qC/PwGOmuZeMSpGcluqHr076+z7eCS4M=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20191009142811.GA29521@ziepe.ca>
-References: <20191009142811.GA29521@ziepe.ca>
+In-Reply-To: <20191009133053.p7bxzkub32x3mclb@willie-the-truck>
+References: <20191009133053.p7bxzkub32x3mclb@willie-the-truck>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20191009142811.GA29521@ziepe.ca>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
-X-PR-Tracked-Commit-Id: 0417791536ae1e28d7f0418f1d20048ec4d3c6cf
+X-PR-Tracked-Message-Id: <20191009133053.p7bxzkub32x3mclb@willie-the-truck>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+ tags/arm64-fixes
+X-PR-Tracked-Commit-Id: 3e7c93bd04edfb0cae7dad1215544c9350254b8f
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 8a8c600de5dc1d9a7f4b83269fddc80ebd3dd045
-Message-Id: <157064940999.25372.866898993735455801.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: e60329c97b9cc07ce15e3c39fc42e57bf14add92
+Message-Id: <157064940962.25372.13156786010603530011.pr-tracker-bot@kernel.org>
 Date:   Wed, 09 Oct 2019 19:30:09 +0000
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Doug Ledford <dledford@redhat.com>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To:     Will Deacon <will@kernel.org>
+Cc:     torvalds@linux-foundation.org, catalin.marinas@arm.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 9 Oct 2019 14:28:15 +0000:
+The pull request you sent on Wed, 9 Oct 2019 14:30:54 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/8a8c600de5dc1d9a7f4b83269fddc80ebd3dd045
+https://git.kernel.org/torvalds/c/e60329c97b9cc07ce15e3c39fc42e57bf14add92
 
 Thank you!
 
