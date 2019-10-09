@@ -2,97 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70E78D1317
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 17:39:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D974ED132B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 17:43:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731423AbfJIPj2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 11:39:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38038 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729471AbfJIPj2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 11:39:28 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3DC5D21848;
-        Wed,  9 Oct 2019 15:39:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570635567;
-        bh=wEjkXEpo6a+ocQcIoxonVZQvVfCaphW+qJXwz5ZtMwc=;
-        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=LIxH5q7g63SDPlNc7o1USkQ3yX/1C539AVpTxoDWueAXD2hFiYleI+iKtZ+1+DdB6
-         mllVpxnFN4LMCLsGYUvmUD4T9fAb9/oBCmILsu0KLEpK8H1C+Iv3ATiQW9k3yZ+15+
-         LL21Fvyqw1ZUgC9stZitovG1640810+YZgGK8hSU=
-Content-Type: text/plain; charset="utf-8"
+        id S1731493AbfJIPnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 11:43:42 -0400
+Received: from 12.mo6.mail-out.ovh.net ([178.32.125.228]:53761 "EHLO
+        12.mo6.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729471AbfJIPnl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 11:43:41 -0400
+X-Greylist: delayed 29401 seconds by postgrey-1.27 at vger.kernel.org; Wed, 09 Oct 2019 11:43:40 EDT
+Received: from player755.ha.ovh.net (unknown [10.108.57.226])
+        by mo6.mail-out.ovh.net (Postfix) with ESMTP id 21E3F1E4ABA
+        for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2019 09:26:25 +0200 (CEST)
+Received: from etezian.org (81-175-223-118.bb.dnainternet.fi [81.175.223.118])
+        (Authenticated sender: andi@etezian.org)
+        by player755.ha.ovh.net (Postfix) with ESMTPSA id 845A2AD418DA;
+        Wed,  9 Oct 2019 07:26:14 +0000 (UTC)
+Date:   Wed, 9 Oct 2019 10:26:12 +0300
+From:   Andi Shyti <andi@etezian.org>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Stephan Gerhold <stephan@gerhold.net>,
+        Andi Shyti <andi@etezian.org>,
+        Simon Shields <simon@lineageos.org>,
+        linux-input@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] Input: mms114 - add support for mms345l
+Message-ID: <20191009072612.GA2814@jack.zhora.eu>
+References: <20191007203343.101466-1-stephan@gerhold.net>
+ <20191007205021.104402-1-stephan@gerhold.net>
+ <20191008220014.GI22365@dtor-ws>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191009060520.GA14506@onstation.org>
-References: <20191007014509.25180-1-masneyb@onstation.org> <20191007014509.25180-5-masneyb@onstation.org> <20191009022131.604B52070B@mail.kernel.org> <20191009060520.GA14506@onstation.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Brian Masney <masneyb@onstation.org>
-Cc:     robdclark@gmail.com, sean@poorly.run, bjorn.andersson@linaro.org,
-        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
-        airlied@linux.ie, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, jonathan@marek.ca,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH RFC v2 4/5] ARM: dts: qcom: msm8974: add HDMI nodes
-User-Agent: alot/0.8.1
-Date:   Wed, 09 Oct 2019 08:39:26 -0700
-Message-Id: <20191009153927.3DC5D21848@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191008220014.GI22365@dtor-ws>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Ovh-Tracer-Id: 10061041571171844762
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedriedtgdduvddtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Brian Masney (2019-10-08 23:05:20)
-> On Tue, Oct 08, 2019 at 07:21:30PM -0700, Stephen Boyd wrote:
-> > Quoting Brian Masney (2019-10-06 18:45:08)
-> > > diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/=
-qcom-msm8974.dtsi
-> > > index 7fc23e422cc5..af02eace14e2 100644
-> > > --- a/arch/arm/boot/dts/qcom-msm8974.dtsi
-> > > +++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
-> > > @@ -1335,6 +1342,77 @@
-> > >                                 clocks =3D <&mmcc MDSS_AHB_CLK>;
-> > >                                 clock-names =3D "iface";
-> > >                         };
-> > > +
-> > > +                       hdmi: hdmi-tx@fd922100 {
-> > > +                               status =3D "disabled";
-> > > +
-> > > +                               compatible =3D "qcom,hdmi-tx-8974";
-> > > +                               reg =3D <0xfd922100 0x35c>,
-> > > +                                     <0xfc4b8000 0x60f0>;
-> > > +                               reg-names =3D "core_physical",
-> > > +                                           "qfprom_physical";
-> >=20
-> > Is this the qfprom "uncorrected" physical address? If so, why can't this
-> > node use an nvmem to read whatever it needs out of the qfprom?
->=20
-> The MSM HDMI code is configured to look for this reg-name here:
->=20
-> https://elixir.bootlin.com/linux/latest/source/drivers/gpu/drm/msm/hdmi/h=
-dmi.c#L582
->=20
-> There is a qcom,qfprom configured for this board in DTS, however its at
-> a different address range, so maybe there are multiple qfproms?
->=20
-> https://elixir.bootlin.com/linux/latest/source/arch/arm/boot/dts/qcom-msm=
-8974.dtsi#L424
->=20
-> msm8996.dtsi has the same style of configuration:
->=20
-> https://elixir.bootlin.com/linux/latest/source/arch/arm64/boot/dts/qcom/m=
-sm8996.dtsi#L956
-> https://elixir.bootlin.com/linux/latest/source/arch/arm64/boot/dts/qcom/m=
-sm8996.dtsi#L1736
->=20
+Hi Dmitry,
 
-There's only one qfprom and there's the address space that's
-"uncorrected" which is not supposed to be used and there's the space
-that is "corrected" and is supposed to be used. It looks like this is
-poking the uncorrected space and it should probably stop doing that and
-use the nvmem provider instead. Maybe someone with docs for this chip
-and 8996 can help confirm this.
+> > There was a related patch [2] that removes I2C_M_NOSTART for all models,
+> > but it seems abandoned and I do not have any other model for testing.
+> > Therefore, this patch implements the least instrusive solution
+> > and only removes I2C_M_NOSTART for MMS345L.
+> 
+> Hmm,  at this point I am inclined to pick up Andi's patch since it seems
+> to work for you and him and it looks like Android drivers are not using
+> I2C_M_NOSTART. I wonder if this was some quirk/big on the platform where
+> it was originally developed.
 
+I completely forgot about that patch :)
+
+I should refresh some old work on that device which was left
+undone.
+
+> Any objections?
+
+It's OK for me. If you can just update my e-mail, please, when
+applying the patch to "andi@etezian.org". Thanks!
+
+Thank you,
+Andi
