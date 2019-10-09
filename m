@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D2EDD16AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:32:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AAEDD16A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:31:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732963AbfJIRbu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 13:31:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47988 "EHLO mail.kernel.org"
+        id S1732940AbfJIRbf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 13:31:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732037AbfJIRX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 13:23:59 -0400
+        id S1732063AbfJIRYA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 13:24:00 -0400
 Received: from sasha-vm.mshome.net (unknown [167.220.2.234])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9938921D56;
-        Wed,  9 Oct 2019 17:23:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91E2921920;
+        Wed,  9 Oct 2019 17:23:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570641838;
-        bh=R3+/hJX/2rD8flEe2XZwxCvvYNQNQxgQCV+Xkg2vBdw=;
+        s=default; t=1570641839;
+        bh=8bnMYcLJcKc4ZU8HhKpFN1Z0TuerJPwW6b+l8HVm9/0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kxngq0O07xbxdf3ZEEveYUR2Rp5zNJWzvBZGtI1qLBTcqJm6KwotGk83acEJuZz3H
-         M6z2NcGdWdAZ4TrslWHICCxbwIywIhFO70JzgN18cukMcdltxcNf086V9JRm0+CM+M
-         VxXmhG2u+6Vy8nAFTZmK0X+d4BS60wZh46AzONXw=
+        b=tKGYLMLAa2Wvzk4k5sY9/cXLyczoZgHVFjQ9HdBOWiuyNL0ejS0xdXN3FqD7iCIlE
+         N32dKQRk4WpzxADzu68ifDxCr7x9XCGoKQEeVj/Ap094WqZJQzbCKbfcEykCv5XBLr
+         OXZpvtB0yPrK3/3LReQpbMOm3snaze88lGJrcCIQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mario Limonciello <mario.limonciello@dell.com>,
-        Keith Busch <kbusch@kernel.org>,
+Cc:     Jian-Hong Pan <jian-hong@endlessm.com>,
         Sagi Grimberg <sagi@grimberg.me>,
         Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.3 19/68] nvme-pci: Save PCI state before putting drive into deepest state
-Date:   Wed,  9 Oct 2019 13:04:58 -0400
-Message-Id: <20191009170547.32204-19-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 23/68] nvme: Add quirk for Kingston NVME SSD running FW E8FK11.T
+Date:   Wed,  9 Oct 2019 13:05:02 -0400
+Message-Id: <20191009170547.32204-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191009170547.32204-1-sashal@kernel.org>
 References: <20191009170547.32204-1-sashal@kernel.org>
@@ -44,72 +43,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mario Limonciello <mario.limonciello@dell.com>
+From: Jian-Hong Pan <jian-hong@endlessm.com>
 
-[ Upstream commit 7cbb5c6f9aa7cfda7175d82a9cf77a92965b0c5e ]
+[ Upstream commit 19ea025e1d28c629b369c3532a85b3df478cc5c6 ]
 
-The action of saving the PCI state will cause numerous PCI configuration
-space reads which depending upon the vendor implementation may cause
-the drive to exit the deepest NVMe state.
+Kingston NVME SSD with firmware version E8FK11.T has no interrupt after
+resume with actions related to suspend to idle. This patch applied
+NVME_QUIRK_SIMPLE_SUSPEND quirk to fix this issue.
 
-In these cases ASPM will typically resolve the PCIe link state and APST
-may resolve the NVMe power state.  However it has also been observed
-that this register access after quiesced will cause PC10 failure
-on some device combinations.
-
-To resolve this, move the PCI state saving to before SetFeatures has been
-called.  This has been proven to resolve the issue across a 5000 sample
-test on previously failing disk/system combinations.
-
-Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
-Reviewed-by: Keith Busch <kbusch@kernel.org>
+Fixes: d916b1be94b6 ("nvme-pci: use host managed power state for suspend")
+Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=204887
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
 Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/pci.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ drivers/nvme/host/core.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 732d5b63ec054..19458e85dab34 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -2894,11 +2894,21 @@ static int nvme_suspend(struct device *dev)
- 	if (ret < 0)
- 		goto unfreeze;
- 
-+	/*
-+	 * A saved state prevents pci pm from generically controlling the
-+	 * device's power. If we're using protocol specific settings, we don't
-+	 * want pci interfering.
-+	 */
-+	pci_save_state(pdev);
-+
- 	ret = nvme_set_power_state(ctrl, ctrl->npss);
- 	if (ret < 0)
- 		goto unfreeze;
- 
- 	if (ret) {
-+		/* discard the saved state */
-+		pci_load_saved_state(pdev, NULL);
-+
- 		/*
- 		 * Clearing npss forces a controller reset on resume. The
- 		 * correct value will be resdicovered then.
-@@ -2906,14 +2916,7 @@ static int nvme_suspend(struct device *dev)
- 		nvme_dev_disable(ndev, true);
- 		ctrl->npss = 0;
- 		ret = 0;
--		goto unfreeze;
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index ac2ac06d870b5..3304e2c8a448a 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -2270,6 +2270,16 @@ static const struct nvme_core_quirk_entry core_quirks[] = {
+ 		.vid = 0x14a4,
+ 		.fr = "22301111",
+ 		.quirks = NVME_QUIRK_SIMPLE_SUSPEND,
++	},
++	{
++		/*
++		 * This Kingston E8FK11.T firmware version has no interrupt
++		 * after resume with actions related to suspend to idle
++		 * https://bugzilla.kernel.org/show_bug.cgi?id=204887
++		 */
++		.vid = 0x2646,
++		.fr = "E8FK11.T",
++		.quirks = NVME_QUIRK_SIMPLE_SUSPEND,
  	}
--	/*
--	 * A saved state prevents pci pm from generically controlling the
--	 * device's power. If we're using protocol specific settings, we don't
--	 * want pci interfering.
--	 */
--	pci_save_state(pdev);
- unfreeze:
- 	nvme_unfreeze(ctrl);
- 	return ret;
+ };
+ 
 -- 
 2.20.1
 
