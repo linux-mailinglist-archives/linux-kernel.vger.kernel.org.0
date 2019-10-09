@@ -2,89 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 680A1D100F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 15:28:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70F72D1013
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 15:28:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731527AbfJIN1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 09:27:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47664 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731152AbfJIN1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 09:27:48 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2CFDCAC6E;
-        Wed,  9 Oct 2019 13:27:47 +0000 (UTC)
-Date:   Wed, 9 Oct 2019 15:27:46 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        sergey.senozhatsky.work@gmail.com, rostedt@goodmis.org,
-        peterz@infradead.org, linux-mm@kvack.org,
-        john.ogness@linutronix.de, akpm@linux-foundation.org,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>, david@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm/page_isolation: fix a deadlock with printk()
-Message-ID: <20191009132746.GA6681@dhcp22.suse.cz>
-References: <20191008074357.f33f6pbs4cw5majk@pathway.suse.cz>
- <20191008082752.GB6681@dhcp22.suse.cz>
- <aefe7f75-b0ec-9e99-a77e-87324edb24e0@de.ibm.com>
- <1570550917.5576.303.camel@lca.pw>
- <20191008183525.GQ6681@dhcp22.suse.cz>
- <1570561573.5576.307.camel@lca.pw>
- <20191008191728.GS6681@dhcp22.suse.cz>
- <1570563324.5576.309.camel@lca.pw>
- <20191009114903.aa6j6sa56z2cssom@pathway.suse.cz>
- <1570626402.5937.1.camel@lca.pw>
+        id S1731538AbfJIN2j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 09:28:39 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36536 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731138AbfJIN2i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 09:28:38 -0400
+Received: by mail-wm1-f65.google.com with SMTP id m18so2627268wmc.1;
+        Wed, 09 Oct 2019 06:28:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=I7jMF/Qy1gpLzvR/kN34jEJdNQ3gvhWQW+1n1B3riaI=;
+        b=LMKtmy8hlP943Yo/NfDhtwq/wBaNOX0zpKbxyEeVZyrNN1kGf7yoo+/6R2c9OZNEZs
+         k/fQbrQhamPPC4uKg8s4ic+2Hm3gLRfw7nwlsDdVUc5CYMtR9mFFosPvhv2gPkBu0q5j
+         Fr31uCccDz26FsVg/EeINyhgyvEWsKjCIfZzCsr4gTkbWHo6YOJoG9pWmGWtCX+QVEqc
+         9X4bhfhfHqfVOamQ3hFW4xhq1sG8HU9vDQhFlzc7Aya/VFqeKTNlgFtCKSBIIbVXu3dx
+         /+IUVX6MghDY4n+V08lebyJDwIdWQeCzV72IK8gWQWEf5Sq2ff1Bb5ZhhXVk41uvhGvm
+         HrEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=I7jMF/Qy1gpLzvR/kN34jEJdNQ3gvhWQW+1n1B3riaI=;
+        b=S4gm70sEgfUhZIWkKEDWe4IqGmcJJ84YK1G8D8XvK4BTMgE+GbLHgrm/ENV5VaF081
+         X1k6HsYWmB8iC9HzbaUMBp8wb8WJ/bbOaIrf/urgm6D3Xl1I0EGawgqWbbm6WIqQ85dN
+         tp2AzlNjTwh8AzJSf+jdEQp3e4Ub3WL+UouAIILZ+ork+LVCuzKVdK7x/geY3BS4s0dl
+         tuiUPGKsRJdqDSV+0AGIhcerW0IKsR3gZgSKzyPxnGKh8/py3ZPfmeoesyUPUxZ4lz+T
+         +ehHNVWUyKu9JRKUkGI1+paO2pVWHdSdkOkI64z7y9QwSiGum/dgv0savoAXWC3XNZeQ
+         Y53w==
+X-Gm-Message-State: APjAAAX/zkc2IbWRF+DRZXAZZfXlQbxFlJqdYAbgIOf7IZSK828ctOIv
+        c5fJuZRyN08TihoK/VNt05g=
+X-Google-Smtp-Source: APXvYqxKwJu6lkxS1KK3M8WqeAE93yjTEj4R/WrVk3k/UcBmQ2RJXQeaqdeRl98n5f6etP6D+PHErw==
+X-Received: by 2002:a1c:658a:: with SMTP id z132mr2596866wmb.174.1570627715977;
+        Wed, 09 Oct 2019 06:28:35 -0700 (PDT)
+Received: from localhost ([51.15.41.238])
+        by smtp.gmail.com with ESMTPSA id b7sm2763342wrx.56.2019.10.09.06.28.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 06:28:35 -0700 (PDT)
+Date:   Wed, 9 Oct 2019 14:28:33 +0100
+From:   Stefan Hajnoczi <stefanha@gmail.com>
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     netdev@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
+        linux-hyperv@vger.kernel.org,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        kvm@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
+        Dexuan Cui <decui@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jorgen Hansen <jhansen@vmware.com>
+Subject: Re: [RFC PATCH 12/13] vsock: prevent transport modules unloading
+Message-ID: <20191009132833.GM5747@stefanha-x1.localdomain>
+References: <20190927112703.17745-1-sgarzare@redhat.com>
+ <20190927112703.17745-13-sgarzare@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="kunpHVz1op/+13PW"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1570626402.5937.1.camel@lca.pw>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190927112703.17745-13-sgarzare@redhat.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 09-10-19 09:06:42, Qian Cai wrote:
-[...]
-> https://lore.kernel.org/linux-mm/1570460350.5576.290.camel@lca.pw/
-> 
-> [  297.425964] -> #1 (&port_lock_key){-.-.}:
-> [  297.425967]        __lock_acquire+0x5b3/0xb40
-> [  297.425967]        lock_acquire+0x126/0x280
-> [  297.425968]        _raw_spin_lock_irqsave+0x3a/0x50
-> [  297.425969]        serial8250_console_write+0x3e4/0x450
-> [  297.425970]        univ8250_console_write+0x4b/0x60
-> [  297.425970]        console_unlock+0x501/0x750
-> [  297.425971]        vprintk_emit+0x10d/0x340
-> [  297.425972]        vprintk_default+0x1f/0x30
-> [  297.425972]        vprintk_func+0x44/0xd4
-> [  297.425973]        printk+0x9f/0xc5
-> [  297.425974]        register_console+0x39c/0x520
-> [  297.425975]        univ8250_console_init+0x23/0x2d
-> [  297.425975]        console_init+0x338/0x4cd
-> [  297.425976]        start_kernel+0x534/0x724
-> [  297.425977]        x86_64_start_reservations+0x24/0x26
-> [  297.425977]        x86_64_start_kernel+0xf4/0xfb
-> [  297.425978]        secondary_startup_64+0xb6/0xc0
-> 
-> where the report again show the early boot call trace for the locking
-> dependency,
-> 
-> console_owner --> port_lock_key
-> 
-> but that dependency clearly not only happen in the early boot.
 
-Can you provide an example of the runtime dependency without any early
-boot artifacts? Because this discussion really doens't make much sense
-without a clear example of a _real_ lockdep report that is not a false
-possitive. All of them so far have been concluded to be false possitive
-AFAIU.
--- 
-Michal Hocko
-SUSE Labs
+--kunpHVz1op/+13PW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Sep 27, 2019 at 01:27:02PM +0200, Stefano Garzarella wrote:
+> diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+> index c5f46b8242ce..750b62711b01 100644
+> --- a/net/vmw_vsock/af_vsock.c
+> +++ b/net/vmw_vsock/af_vsock.c
+> @@ -416,13 +416,28 @@ int vsock_assign_transport(struct vsock_sock *vsk, =
+struct vsock_sock *psk)
+>  		return -ESOCKTNOSUPPORT;
+>  	}
+> =20
+> -	if (!vsk->transport)
+> +	/* We increase the module refcnt to prevent the tranport unloading
+
+s/tranport/transport/
+
+Otherwise:
+
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+
+--kunpHVz1op/+13PW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl2d4IEACgkQnKSrs4Gr
+c8gJ2gf/fEP3ucMouPO/fhEeGplHc1JeWTI82mmjT2/LiJgxHaNqylqpIMASW19q
+7nn9yxlVS1rBu7D/Os+q4CtQwAc3ea5KvmwwHgFa4v/N1Sm25jklsw/zWMyus6gw
+0xc5zcifHOfttIiSKldJuRCc1nYYUnUrakwm1MJjlzB+LEIYUm2/264mLBbyxWqa
+TxQBVZSI0BlpISSAry9LKNQIqZU/3gWBa1sIHT3PElSZQ5Z9be7XQciuLi84Hfag
+uOky8F3zdmzG2REAu8mKuF0thOyFpPP05O2qo6GML9+ERqf1PwR2qenlTO/cMBzS
+KwNQ3ydpast9dLj7idIKHuiQgTIxcQ==
+=qIxu
+-----END PGP SIGNATURE-----
+
+--kunpHVz1op/+13PW--
