@@ -2,114 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC5A2D1647
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:29:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D66D0D16D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:33:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732652AbfJIR2w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 13:28:52 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:40480 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732513AbfJIR2u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 13:28:50 -0400
-Received: by mail-io1-f68.google.com with SMTP id h144so6811931iof.7
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 10:28:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=X6N0xkl4bTPUi6zGcRxZ0oIYFX/fveTjl+e6ocsFVkI=;
-        b=FW0PIz9QpEJNdQumuiaUalMyaj2SzMhIDhra6dX9NJb4a5Laxke+fDfxJBtD/etYOr
-         w4jxzvQnZ27rB/wkJMbsqX6XfuqANFpnb7FoaCJegpZLlaXI+p5vU0X2V9REcsVm3F79
-         NLP9UYGd300jIkFcrZZaDZLF+ymWhQ+VxPBlg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=X6N0xkl4bTPUi6zGcRxZ0oIYFX/fveTjl+e6ocsFVkI=;
-        b=GMcXKFdlhjFnFX6vrlULmbt5QHlkTM4z11SwESChui1kr1vUZz81/vSNIHbs7C5l5E
-         pqIDJnrkxvPUORp8XeeIdqMacwwW3a7h76x8XWXrFkEhrqD03SycsFMxlJLi9BeMAMNE
-         hjz1G9kntkIRNda4klTf2hX+gxtKUDHZom0MJYGf1zAd0rGfkHJn7wFauSkRzrBie74X
-         MrFqLeBNWDnb/arlwsGXlcOMmQzSBPTas7T/M+fSxWXtTLsm1GyU38Mwic+ZCxUMb2tT
-         6CYDYPmvrQ5EPafhISxb/N6P5S/tYpdan6RDVqDN18zHwzvZzF576w7jJC36fAurx3NX
-         1onA==
-X-Gm-Message-State: APjAAAW8Nm8SApNhevXiHdbsAPRgIHhxNlG27i9cPziwkYqwMpYNCjoH
-        y92nOg4htWfNAFzABbFId9+X7qGpyGg=
-X-Google-Smtp-Source: APXvYqwrcUt7pMigPuIvCDduTSoNVEnXXQ/YztN50v7FFgTAhqUISFz7tZhb9cV5W5HtrEJcKvQMHA==
-X-Received: by 2002:a5e:8e05:: with SMTP id a5mr295885ion.125.1570642129272;
-        Wed, 09 Oct 2019 10:28:49 -0700 (PDT)
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com. [209.85.166.45])
-        by smtp.gmail.com with ESMTPSA id x11sm1612000ioa.4.2019.10.09.10.28.48
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2019 10:28:48 -0700 (PDT)
-Received: by mail-io1-f45.google.com with SMTP id b19so6852478iob.4
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 10:28:48 -0700 (PDT)
-X-Received: by 2002:a5d:9386:: with SMTP id c6mr4649645iol.269.1570642128135;
- Wed, 09 Oct 2019 10:28:48 -0700 (PDT)
+        id S1732717AbfJIRcr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 13:32:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47968 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731145AbfJIRXz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 13:23:55 -0400
+Received: from sasha-vm.mshome.net (unknown [167.220.2.234])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE394218DE;
+        Wed,  9 Oct 2019 17:23:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570641833;
+        bh=K02rh1HsZkrO5DpDzfg0K9uNvLOc6lHlJ8tW9pFGt+0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Cd6Q9R6iyZSwnf2sUjMSrLHYgtSpWVD5esuQnyhbfK7iEoIDHW2b8CjpKiva6XWhK
+         cAUskU5vGFLgMo/ivHt9vquVSexuBFOqeax8W8deZNeNzHCwZd6awcxXDGSRK/vT2/
+         3ba3Ijblb/bYtAXtLWlSYG3+W52FaJhApWpy8K6c=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
+        Lowry Li <lowry.li@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+        James Qian Wang <james.qian.wang@arm.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-sh@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 02/68] drm: Free the writeback_job when it with an empty fb
+Date:   Wed,  9 Oct 2019 13:04:41 -0400
+Message-Id: <20191009170547.32204-2-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191009170547.32204-1-sashal@kernel.org>
+References: <20191009170547.32204-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20191008132043.7966-1-daniel.thompson@linaro.org>
- <20191008132043.7966-4-daniel.thompson@linaro.org> <CAD=FV=W9Tdh2hPekzgSYnCqoTX_ms1GY-FXgnxd-uEW0SWbyuw@mail.gmail.com>
- <20191009093049.tnz442bo54bzmzmz@holly.lan>
-In-Reply-To: <20191009093049.tnz442bo54bzmzmz@holly.lan>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 9 Oct 2019 10:28:36 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=UuLYPpkJBWbkWoJzv97A6jxRFa4QmmD-0chSrsuT_bPg@mail.gmail.com>
-Message-ID: <CAD=FV=UuLYPpkJBWbkWoJzv97A6jxRFa4QmmD-0chSrsuT_bPg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] kdb: Remove special case logic from kdb_read()
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     Jason Wessel <jason.wessel@windriver.com>,
-        kgdb-bugreport@lists.sourceforge.net,
-        LKML <linux-kernel@vger.kernel.org>,
-        Patch Tracking <patches@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>
 
-On Wed, Oct 9, 2019 at 2:30 AM Daniel Thompson
-<daniel.thompson@linaro.org> wrote:
->
-> > > @@ -183,17 +186,7 @@ static int kdb_read_get_key(char *buffer, size_t bufsize)
-> > >   *     function.  It is not reentrant - it relies on the fact
-> > >   *     that while kdb is running on only one "master debug" cpu.
-> > >   * Remarks:
-> > > - *
-> > > - * The buffer size must be >= 2.  A buffer size of 2 means that the caller only
-> > > - * wants a single key.
-> >
-> > By removing this you broke "BTAPROMPT".  So doing:
-> >
-> > set BTAPROMPT=1
-> > bta
-> >
-> > It's now impossible to quit out.  Not that I've ever used BTAPROMPT,
-> > but seems like we should either get rid of it or keep it working.
->
-> Thanks. Just to check I got exactly what you meant I assume this could
-> also have been phrased as "it looks like you forgot to convert the
-> kdb_getstr() in kdb_bt1() over to use the new kdb_getchar() function"?
+[ Upstream commit 8581d51055a08cc6eb061c8856062290e8582ce4 ]
 
-Right.  Sorry for wording it in a confusing way.  ;-)
+Adds the check if the writeback_job with an empty fb, then it should
+be freed in atomic_check phase.
 
+With this change, the driver users will not check empty fb case any more.
+So refined accordingly.
 
-> > > @@ -741,7 +732,7 @@ int vkdb_printf(enum kdb_msgsrc src, const char *fmt, va_list ap)
-> > >
-> > >         /* check for having reached the LINES number of printed lines */
-> > >         if (kdb_nextline >= linecount) {
-> > > -               char buf1[16] = "";
-> > > +               char ch;
-> >
-> > The type of "ch" should be the same as returned by kdb_getchar()?
-> > Either "int" if you're keeping it "int" or "unsigned char"?
->
-> Probably... although the assumption that kdb strings are char * is burnt
-> in a lot of places so there will still be further tidy up needed.
+Signed-off-by: Lowry Li (Arm Technology China) <lowry.li@arm.com>
+Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+Reviewed-by: James Qian Wang (Arm Technology China) <james.qian.wang@arm.com>
+Signed-off-by: james qian wang (Arm Technology China) <james.qian.wang@arm.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1564571048-15029-2-git-send-email-lowry.li@arm.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ .../drm/arm/display/komeda/komeda_wb_connector.c    |  3 +--
+ drivers/gpu/drm/arm/malidp_mw.c                     |  4 ++--
+ drivers/gpu/drm/drm_atomic.c                        | 13 +++++++++----
+ drivers/gpu/drm/rcar-du/rcar_du_writeback.c         |  4 ++--
+ drivers/gpu/drm/vc4/vc4_txp.c                       |  5 ++---
+ 5 files changed, 16 insertions(+), 13 deletions(-)
 
-True.  It doesn't matter a whole lot so if you think it's easier to
-keep it as char that's OK too.
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c b/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c
+index 2851cac94d869..23fbee268119f 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c
+@@ -43,9 +43,8 @@ komeda_wb_encoder_atomic_check(struct drm_encoder *encoder,
+ 	struct komeda_data_flow_cfg dflow;
+ 	int err;
+ 
+-	if (!writeback_job || !writeback_job->fb) {
++	if (!writeback_job)
+ 		return 0;
+-	}
+ 
+ 	if (!crtc_st->active) {
+ 		DRM_DEBUG_ATOMIC("Cannot write the composition result out on a inactive CRTC.\n");
+diff --git a/drivers/gpu/drm/arm/malidp_mw.c b/drivers/gpu/drm/arm/malidp_mw.c
+index 2e812525025dd..a59227b2cdb55 100644
+--- a/drivers/gpu/drm/arm/malidp_mw.c
++++ b/drivers/gpu/drm/arm/malidp_mw.c
+@@ -130,7 +130,7 @@ malidp_mw_encoder_atomic_check(struct drm_encoder *encoder,
+ 	struct drm_framebuffer *fb;
+ 	int i, n_planes;
+ 
+-	if (!conn_state->writeback_job || !conn_state->writeback_job->fb)
++	if (!conn_state->writeback_job)
+ 		return 0;
+ 
+ 	fb = conn_state->writeback_job->fb;
+@@ -247,7 +247,7 @@ void malidp_mw_atomic_commit(struct drm_device *drm,
+ 
+ 	mw_state = to_mw_state(conn_state);
+ 
+-	if (conn_state->writeback_job && conn_state->writeback_job->fb) {
++	if (conn_state->writeback_job) {
+ 		struct drm_framebuffer *fb = conn_state->writeback_job->fb;
+ 
+ 		DRM_DEV_DEBUG_DRIVER(drm->dev,
+diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+index 419381abbdd16..14aeaf7363210 100644
+--- a/drivers/gpu/drm/drm_atomic.c
++++ b/drivers/gpu/drm/drm_atomic.c
+@@ -430,10 +430,15 @@ static int drm_atomic_connector_check(struct drm_connector *connector,
+ 		return -EINVAL;
+ 	}
+ 
+-	if (writeback_job->out_fence && !writeback_job->fb) {
+-		DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] requesting out-fence without framebuffer\n",
+-				 connector->base.id, connector->name);
+-		return -EINVAL;
++	if (!writeback_job->fb) {
++		if (writeback_job->out_fence) {
++			DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] requesting out-fence without framebuffer\n",
++					 connector->base.id, connector->name);
++			return -EINVAL;
++		}
++
++		drm_writeback_cleanup_job(writeback_job);
++		state->writeback_job = NULL;
+ 	}
+ 
+ 	return 0;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_writeback.c b/drivers/gpu/drm/rcar-du/rcar_du_writeback.c
+index ae07290bba6a4..04efa78d70b6e 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_writeback.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_writeback.c
+@@ -147,7 +147,7 @@ static int rcar_du_wb_enc_atomic_check(struct drm_encoder *encoder,
+ 	struct drm_device *dev = encoder->dev;
+ 	struct drm_framebuffer *fb;
+ 
+-	if (!conn_state->writeback_job || !conn_state->writeback_job->fb)
++	if (!conn_state->writeback_job)
+ 		return 0;
+ 
+ 	fb = conn_state->writeback_job->fb;
+@@ -221,7 +221,7 @@ void rcar_du_writeback_setup(struct rcar_du_crtc *rcrtc,
+ 	unsigned int i;
+ 
+ 	state = rcrtc->writeback.base.state;
+-	if (!state || !state->writeback_job || !state->writeback_job->fb)
++	if (!state || !state->writeback_job)
+ 		return;
+ 
+ 	fb = state->writeback_job->fb;
+diff --git a/drivers/gpu/drm/vc4/vc4_txp.c b/drivers/gpu/drm/vc4/vc4_txp.c
+index 96f91c1b4b6e6..e92fa12750343 100644
+--- a/drivers/gpu/drm/vc4/vc4_txp.c
++++ b/drivers/gpu/drm/vc4/vc4_txp.c
+@@ -229,7 +229,7 @@ static int vc4_txp_connector_atomic_check(struct drm_connector *conn,
+ 	int i;
+ 
+ 	conn_state = drm_atomic_get_new_connector_state(state, conn);
+-	if (!conn_state->writeback_job || !conn_state->writeback_job->fb)
++	if (!conn_state->writeback_job)
+ 		return 0;
+ 
+ 	crtc_state = drm_atomic_get_new_crtc_state(state, conn_state->crtc);
+@@ -269,8 +269,7 @@ static void vc4_txp_connector_atomic_commit(struct drm_connector *conn,
+ 	u32 ctrl;
+ 	int i;
+ 
+-	if (WARN_ON(!conn_state->writeback_job ||
+-		    !conn_state->writeback_job->fb))
++	if (WARN_ON(!conn_state->writeback_job))
+ 		return;
+ 
+ 	mode = &conn_state->crtc->state->adjusted_mode;
+-- 
+2.20.1
 
--Doug
