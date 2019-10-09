@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2775D159C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:25:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6698BD1654
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:29:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732336AbfJIRY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 13:24:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48600 "EHLO mail.kernel.org"
+        id S1732499AbfJIR3X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 13:29:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732157AbfJIRYJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 13:24:09 -0400
+        id S1732211AbfJIRYO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 13:24:14 -0400
 Received: from sasha-vm.mshome.net (unknown [167.220.2.234])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0DA6A21D80;
-        Wed,  9 Oct 2019 17:24:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C20FD21924;
+        Wed,  9 Oct 2019 17:24:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570641849;
-        bh=a/MCXoavl9JvhK3hpE2GJaVA161WW/cC61fw8BtEg2w=;
+        s=default; t=1570641853;
+        bh=iUn0+AXJbd2oK9c2oxMcnZEUu2QM6vGDtG0r2+b2KF4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wr+TnJ2NkdBAfNOGnbBgScESL1GYfdPyIDf9mhwUXZBmQ/sl1i8oPISYiDtdiPQfv
-         obrD6t3v69yMoKJyNJ9QcNLlJ79WnmusUIZRqH483Md9lPJvM8hvAHHdpL2tkdZe50
-         khdugWbICmTsEbobkGJQBJKFy4Dd3BXn7BVQqpvk=
+        b=TCfrPSureOAEnLxKYrmXCsJQViA+gRTExvKDVl7nPmU0ROm2PkIYJoYHpSO13XaK1
+         fYURwBTHvQm/1n+IaKabS5t8AaHOpSb2Osw0UauoY2h8w/KO5073w6wCMa6sQukG+Y
+         gvIZERXVc5wHxwDJkjAqutVBPekpPBXAqnrwmK9I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Miaoqing Pan <miaoqing@codeaurora.org>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 16/26] nl80211: fix null pointer dereference
-Date:   Wed,  9 Oct 2019 13:05:48 -0400
-Message-Id: <20191009170558.32517-16-sashal@kernel.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 22/26] lib: textsearch: fix escapes in example code
+Date:   Wed,  9 Oct 2019 13:05:54 -0400
+Message-Id: <20191009170558.32517-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191009170558.32517-1-sashal@kernel.org>
 References: <20191009170558.32517-1-sashal@kernel.org>
@@ -44,60 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miaoqing Pan <miaoqing@codeaurora.org>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit b501426cf86e70649c983c52f4c823b3c40d72a3 ]
+[ Upstream commit 2105b52e30debe7f19f3218598d8ae777dcc6776 ]
 
-If the interface is not in MESH mode, the command 'iw wlanx mpath del'
-will cause kernel panic.
+This textsearch code example does not need the '\' escapes and they can
+be misleading to someone reading the example. Also, gcc and sparse warn
+that the "\%d" is an unknown escape sequence.
 
-The root cause is null pointer access in mpp_flush_by_proxy(), as the
-pointer 'sdata->u.mesh.mpp_paths' is NULL for non MESH interface.
-
-Unable to handle kernel NULL pointer dereference at virtual address 00000068
-[...]
-PC is at _raw_spin_lock_bh+0x20/0x5c
-LR is at mesh_path_del+0x1c/0x17c [mac80211]
-[...]
-Process iw (pid: 4537, stack limit = 0xd83e0238)
-[...]
-[<c021211c>] (_raw_spin_lock_bh) from [<bf8c7648>] (mesh_path_del+0x1c/0x17c [mac80211])
-[<bf8c7648>] (mesh_path_del [mac80211]) from [<bf6cdb7c>] (extack_doit+0x20/0x68 [compat])
-[<bf6cdb7c>] (extack_doit [compat]) from [<c05c309c>] (genl_rcv_msg+0x274/0x30c)
-[<c05c309c>] (genl_rcv_msg) from [<c05c25d8>] (netlink_rcv_skb+0x58/0xac)
-[<c05c25d8>] (netlink_rcv_skb) from [<c05c2e14>] (genl_rcv+0x20/0x34)
-[<c05c2e14>] (genl_rcv) from [<c05c1f90>] (netlink_unicast+0x11c/0x204)
-[<c05c1f90>] (netlink_unicast) from [<c05c2420>] (netlink_sendmsg+0x30c/0x370)
-[<c05c2420>] (netlink_sendmsg) from [<c05886d0>] (sock_sendmsg+0x70/0x84)
-[<c05886d0>] (sock_sendmsg) from [<c0589f4c>] (___sys_sendmsg.part.3+0x188/0x228)
-[<c0589f4c>] (___sys_sendmsg.part.3) from [<c058add4>] (__sys_sendmsg+0x4c/0x70)
-[<c058add4>] (__sys_sendmsg) from [<c0208c80>] (ret_fast_syscall+0x0/0x44)
-Code: e2822c02 e2822001 e5832004 f590f000 (e1902f9f)
----[ end trace bbd717600f8f884d ]---
-
-Signed-off-by: Miaoqing Pan <miaoqing@codeaurora.org>
-Link: https://lore.kernel.org/r/1569485810-761-1-git-send-email-miaoqing@codeaurora.org
-[trim useless data from commit message]
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fixes: 5968a70d7af5 ("textsearch: fix kernel-doc warnings and add kernel-api section")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: netdev@vger.kernel.org
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/nl80211.c | 3 +++
- 1 file changed, 3 insertions(+)
+ lib/textsearch.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index 6168db3c35e4c..9af8e5c60e13d 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -5803,6 +5803,9 @@ static int nl80211_del_mpath(struct sk_buff *skb, struct genl_info *info)
- 	if (!rdev->ops->del_mpath)
- 		return -EOPNOTSUPP;
- 
-+	if (dev->ieee80211_ptr->iftype != NL80211_IFTYPE_MESH_POINT)
-+		return -EOPNOTSUPP;
-+
- 	return rdev_del_mpath(rdev, dev, dst);
- }
- 
+diff --git a/lib/textsearch.c b/lib/textsearch.c
+index 5939549c0e7bc..9135c29add624 100644
+--- a/lib/textsearch.c
++++ b/lib/textsearch.c
+@@ -93,9 +93,9 @@
+  *       goto errout;
+  *   }
+  *
+- *   pos = textsearch_find_continuous(conf, \&state, example, strlen(example));
++ *   pos = textsearch_find_continuous(conf, &state, example, strlen(example));
+  *   if (pos != UINT_MAX)
+- *       panic("Oh my god, dancing chickens at \%d\n", pos);
++ *       panic("Oh my god, dancing chickens at %d\n", pos);
+  *
+  *   textsearch_destroy(conf);
+  */
 -- 
 2.20.1
 
