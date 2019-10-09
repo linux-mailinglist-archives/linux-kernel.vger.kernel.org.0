@@ -2,82 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9477AD0D95
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 13:24:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80284D0D99
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 13:27:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730881AbfJILY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 07:24:28 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37662 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727035AbfJILY2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 07:24:28 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5C333AF05;
-        Wed,  9 Oct 2019 11:24:26 +0000 (UTC)
-Date:   Wed, 9 Oct 2019 13:24:24 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Qian Cai <cai@lca.pw>, Alexey Dobriyan <adobriyan@gmail.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>,
-        Konstantin Khlebnikov <koct9i@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Anthony Yznaga <anthony.yznaga@oracle.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v1] mm: Fix access of uninitialized memmaps in
- fs/proc/page.c
-Message-ID: <20191009112424.GY6681@dhcp22.suse.cz>
-References: <20191009091205.11753-1-david@redhat.com>
- <20191009093756.GV6681@dhcp22.suse.cz>
- <67aeaacc-d850-5c81-bd17-e95c7f7f75df@redhat.com>
+        id S1730490AbfJIL1q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 07:27:46 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45784 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729471AbfJIL1q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 07:27:46 -0400
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com [209.85.221.70])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D5DB781F11
+        for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2019 11:27:45 +0000 (UTC)
+Received: by mail-wr1-f70.google.com with SMTP id i2so990174wrv.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 04:27:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=ifVLEC5uXx0xXbZ5E3zE7qcYovO4iLtIeSopENFKhCg=;
+        b=cBweikkdYNjeYI88z0rK4A2iP6QquUN1y0bRocm9E6X3eAiYtvdU9ExFsySCHCS+nE
+         TZUh+vKWNzRKtZaKPdQQj59D30YkAqs/Zlpra7POdf1We5hRVFcod2qO00BTEoSEqQMX
+         GyXDEMwOlPO0tVGrg43EmJokXElQIamCBGx2oaEdiR9jD8mXQpm6cLQ2sJGWAn8Plmhc
+         ZOEmYl426Gh5QBop8atCyXbVRpok4aJu1854+rKLKwFg7tNd3m1HCZW5Ooz/HvvbjL9l
+         r9e6yXJXnw6f/JnOvoJ9JSPOLqnOMbEV4auvxYrPXD9VjkABe7/X7N2LN/y/KVtt7KUS
+         lV9w==
+X-Gm-Message-State: APjAAAXHC36gSNQPh/x9W21d8F2hWA9n6OQ58htN42DRhboWjU/IOnVt
+        KTl+ztJFSzYD+W0N+wEhVw5Jf6zHrnZ8hJtM9OuZAu1hi2z9dDMvuE127P805Gf6dlOKpJ8Fhv/
+        wCjnEO/8gEkHquyetaX6PFttw
+X-Received: by 2002:a05:600c:34b:: with SMTP id u11mr2242549wmd.176.1570620464528;
+        Wed, 09 Oct 2019 04:27:44 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzhbHq0jBzIpVmXjFywxZ2l55Q3tKca7gUZJ83WF4NOur5t8DDjUN50FdCbtP55IeTz4hoFmQ==
+X-Received: by 2002:a05:600c:34b:: with SMTP id u11mr2242532wmd.176.1570620464298;
+        Wed, 09 Oct 2019 04:27:44 -0700 (PDT)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id h10sm1982665wrq.95.2019.10.09.04.27.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 04:27:43 -0700 (PDT)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Reto Buerki <reet@codelabs.ch>,
+        Liran Alon <liran.alon@oracle.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Subject: Re: [PATCH v2 6/8] KVM: x86: Fold 'enum kvm_ex_reg' definitions into 'enum kvm_reg'
+In-Reply-To: <57cae37d-acd0-074c-26cd-aaf7a7989905@redhat.com>
+References: <20190927214523.3376-1-sean.j.christopherson@intel.com> <20190927214523.3376-7-sean.j.christopherson@intel.com> <87ftke3zll.fsf@vitty.brq.redhat.com> <57cae37d-acd0-074c-26cd-aaf7a7989905@redhat.com>
+Date:   Wed, 09 Oct 2019 13:27:42 +0200
+Message-ID: <87a7aayx8x.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67aeaacc-d850-5c81-bd17-e95c7f7f75df@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 09-10-19 12:19:59, David Hildenbrand wrote:
-[...]
-> > pfn_to_online_page makes sense because offline pages are not really in a
-> > defined state. This would be worth a patch of its own. I remember there
-> 
-> The issue is, once I check for pfn_to_online_page(), these functions
-> can't handle ZONE_DEVICE at all anymore. Especially in regards to
-> memory_failure() I don't think this is acceptable.
+Paolo Bonzini <pbonzini@redhat.com> writes:
 
-Could you be more specific please? I am not sure I am following.
+> On 30/09/19 11:25, Vitaly Kuznetsov wrote:
+>>> -enum kvm_reg_ex {
+>>>  	VCPU_EXREG_PDPTR = NR_VCPU_REGS,
+>> (Personally, I would've changed that to NR_VCPU_REGS + 1)
+>> 
+>
+> Why?
+>
 
-> So while I
-> (personally) only care about adding pfn_to_online_page() checks, the
-> in-this-sense-fragile-subsection ZONE_DEVICE implementation requires me
-> to introduce a temporary check for initialized memmaps.
-> 
-> > was a discussion about the uninitialized zone device memmaps. It would
-> > be really good to summarize this discussion in the changelog and
-> > conclude why the explicit check is really good and what were other
-> > alternatives considered.
-> 
-> Yeah, I also expressed my feelings and the issues to be solved by
-> ZONE_DEVICE people in https://lkml.org/lkml/2019/9/6/114. However, the
-> discussion stalled and nobody really proposed a solution or followed up.
-
-I will try to get back to that discussion but is there any technical
-reason that prevents any conclusion or it is just stuck on a lack of
-time of the participants?
+Just so every entry in the enum is different and NR_VCPU_REGS acts as a
+guardian.
 
 -- 
-Michal Hocko
-SUSE Labs
+Vitaly
