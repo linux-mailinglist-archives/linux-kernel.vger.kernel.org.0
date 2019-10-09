@@ -2,68 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 479E8D0EC1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 14:31:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9766D0EC6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 14:32:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731090AbfJIMbc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 08:31:32 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:48084 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728200AbfJIMbc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 08:31:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ge6IyJp6CtTVfQFWwPeoTTgBQJKNq3jXQ5sYXlhTiXg=; b=g306avEzv3jgEY934wrhMuzKR
-        zIhvCldX2J/FPckX6Bx/kBxHWTpxiX98Ymnv29/3esKUagx5w3x+LrTTAh4z1Y2080usgkbf7u+Iq
-        z7g82y1WIFQxYLPVH/VDXjWoAQOnXDGBpENx8994QU3c9hi2lCXYdclO2jvAa8O+37nhZs1h3mu8j
-        g8uN96gsUtdqn4774KU9dF91S0bOQn98mn04mcRt21yJsyuWW/QtYFAYqGcZD6kTSFCQHN5kNl5cb
-        YEy0+TZSJRUTNwUpQDB3YhcHUlcGYjhpQHzATA8YCohK7Gre/A8r04eU92qgVGbTWbSXErljCa6s2
-        kzqkxRnHw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iIB7Y-0002Ki-Kw; Wed, 09 Oct 2019 12:31:12 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 703A0300565;
-        Wed,  9 Oct 2019 14:30:19 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3B7732009B59E; Wed,  9 Oct 2019 14:31:06 +0200 (CEST)
-Date:   Wed, 9 Oct 2019 14:31:06 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
-Subject: Re: [PATCH -tip v4 0/4] x86: kprobes: Prohibit kprobes on Xen/KVM
- emulate prefixes
-Message-ID: <20191009123106.GK2311@hirez.programming.kicks-ass.net>
-References: <156777561745.25081.1205321122446165328.stgit@devnote2>
- <20190917151403.60023814bda80304777a35e5@kernel.org>
+        id S1731155AbfJIMbq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 08:31:46 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3670 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727029AbfJIMbq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 08:31:46 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 95FD72B76B81C23962B2;
+        Wed,  9 Oct 2019 20:31:41 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 9 Oct 2019 20:31:32 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     David Howells <dhowells@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vitaly Wool <vitaly.wool@konsulko.com>,
+        "Henry Burns" <henryburns@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        "Stephen Rothwell" <sfr@canb.auug.org.au>
+CC:     YueHaibing <yuehaibing@huawei.com>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] mm/z3fold.c: remove set but not used variable 'newpage'
+Date:   Wed, 9 Oct 2019 12:31:11 +0000
+Message-ID: <20191009123111.80425-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190917151403.60023814bda80304777a35e5@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 17, 2019 at 03:14:03PM +0900, Masami Hiramatsu wrote:
-> Hi Peter,
-> 
-> Could you review this version?
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-These look good to me; shall I merge them or what was the plan?
+mm/z3fold.c: In function 'compact_single_buddy':
+mm/z3fold.c:693:16: warning:
+ variable 'newpage' set but not used [-Wunused-but-set-variable]
+
+mm/z3fold.c:664:13: warning:
+ variable 'bud' set but not used [-Wunused-but-set-variable]
+
+It is never used, so can be removed.
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ mm/z3fold.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/mm/z3fold.c b/mm/z3fold.c
+index 25713a4a7186..d48d0ec3bcdd 100644
+--- a/mm/z3fold.c
++++ b/mm/z3fold.c
+@@ -661,7 +661,6 @@ static struct z3fold_header *compact_single_buddy(struct z3fold_header *zhdr)
+ 	struct z3fold_pool *pool = zhdr_to_pool(zhdr);
+ 	void *p = zhdr;
+ 	unsigned long old_handle = 0;
+-	enum buddy bud;
+ 	size_t sz = 0;
+ 	struct z3fold_header *new_zhdr = NULL;
+ 	int first_idx = __idx(zhdr, FIRST);
+@@ -673,24 +672,20 @@ static struct z3fold_header *compact_single_buddy(struct z3fold_header *zhdr)
+ 	 * the page lock is already taken
+ 	 */
+ 	if (zhdr->first_chunks && zhdr->slots->slot[first_idx]) {
+-		bud = FIRST;
+ 		p += ZHDR_SIZE_ALIGNED;
+ 		sz = zhdr->first_chunks << CHUNK_SHIFT;
+ 		old_handle = (unsigned long)&zhdr->slots->slot[first_idx];
+ 	} else if (zhdr->middle_chunks && zhdr->slots->slot[middle_idx]) {
+-		bud = MIDDLE;
+ 		p += zhdr->start_middle << CHUNK_SHIFT;
+ 		sz = zhdr->middle_chunks << CHUNK_SHIFT;
+ 		old_handle = (unsigned long)&zhdr->slots->slot[middle_idx];
+ 	} else if (zhdr->last_chunks && zhdr->slots->slot[last_idx]) {
+-		bud = LAST;
+ 		p += PAGE_SIZE - (zhdr->last_chunks << CHUNK_SHIFT);
+ 		sz = zhdr->last_chunks << CHUNK_SHIFT;
+ 		old_handle = (unsigned long)&zhdr->slots->slot[last_idx];
+ 	}
+ 
+ 	if (sz > 0) {
+-		struct page *newpage;
+ 		enum buddy new_bud = HEADLESS;
+ 		short chunks = size_to_chunks(sz);
+ 		void *q;
+@@ -699,7 +694,6 @@ static struct z3fold_header *compact_single_buddy(struct z3fold_header *zhdr)
+ 		if (!new_zhdr)
+ 			return NULL;
+ 
+-		newpage = virt_to_page(new_zhdr);
+ 		if (WARN_ON(new_zhdr == zhdr))
+ 			goto out_fail;
+
+
+
