@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D604D1182
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 16:41:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20D0CD118E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 16:41:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731595AbfJIOli (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 10:41:38 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45176 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731436AbfJIOlf (ORCPT
+        id S1731631AbfJIOlw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 10:41:52 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39488 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731570AbfJIOlg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 10:41:35 -0400
-Received: by mail-wr1-f68.google.com with SMTP id r5so3317713wrm.12
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 07:41:34 -0700 (PDT)
+        Wed, 9 Oct 2019 10:41:36 -0400
+Received: by mail-wm1-f66.google.com with SMTP id v17so2903758wml.4
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 07:41:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=kcLlMzjMsysWETgQh91f6OPcWKj+qkhd5X668mmqw/Q=;
-        b=GWaEyzGql51eoXnd1+9HbztdXoU4S+/WAXkpE3JiLjoAdSXYFfOCdRlo8ka9teKRo+
-         qctTklxUCgnX3HTAEi1A/qI8zu4jpaZ8Gpl0WdfdlypBR0CL9S2J6Kf/MT1h2byvXceh
-         QK/dtGGW0CV4g99zEJvCwYenJUQLXrnwtV6F3uoN4j3DxmWgw7W3Io/JU8KvRo5Pcp8L
-         Hdk2SNOFCK/hZLLxkSTEnvE8/h6YMePlmmSNE9eLQk3bWmnXbJspBYFqHiU7dmQb1xOs
-         SHODCutnrqaEqWbryPH3ZYsK4fGW2F3TBYA3Lwu0I1O9fZWYurW1/M2EpF/1Bj4zKuMj
-         H6BA==
+        bh=x6OiJB7EuLtp7p4md9nfqD7cxFgmkO+0cPK10Zj1xY4=;
+        b=S37KM856wHDnECg/1FKkIy1yjXEgnkQZyXIgt16MoukNlQDooW2oElREMEGO9tw42c
+         AN0H2HND1RtIjiWZr5Fo+xtOP9xOk176a+hD22LrL5O9GSyT4botIELjYdWGET/4hcDF
+         MSnQufVUYttCnPzEAqqOarb+lb97gnpLlsqgoN9KOEiH629AypzkAIhnbqv3tknO6SkK
+         FRN+R9m1a/e1/sTZ2XFgbsuZdeP8lIROsVWrKCc9X5BLqc22aK4ZCiTbb0gi/H/ZCFF8
+         iUyxB5Om0WyMwD3xAeu98dsJPGZ06bln/EFt4pVLcPpPvIdRTLhK3woc13l4ShOYOBVW
+         1Klw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=kcLlMzjMsysWETgQh91f6OPcWKj+qkhd5X668mmqw/Q=;
-        b=Lf+KdFKi8nyFFY6dWOGR2YDqxNGQ4FQKUYrBxxAfEPo2tg5jIuBkJVmtknUhLLNbA+
-         RsQ9Q7NBpvU3c/TOgWQbETzI9NJXcTfeT/0y+V9Uia/DxvWgzMXa7tCOXr1MDHbbGrc9
-         RAwRZM1w8yiXktQc87kcwv3F/Cz+ctVq0W6882kOX4QGTBXuaaM0oFYZLtLbVaJto+pG
-         4QB9WRZDmkGVOzuCRtRDp6J2S+w22peiJywEPH35ZljYDSVZ67Ba+4yMg0ZyNBpvAAJb
-         2qkaUQ3z6cloI0XIpmBge50LnIQhpn3/JUo8xNNbiqqbP34QiQlwEhS2dYFapssEEESs
-         IcBQ==
-X-Gm-Message-State: APjAAAUxdK+jYrSSjtYxmY54Vw/+XOoYFr0DF1rXbu8HipJ8UVB71NwM
-        LJSgfqiTkhk72tO+i50tKa9tCQ==
-X-Google-Smtp-Source: APXvYqxydnAiNuYi21zzjBXjR+z8z1rVa1I47B0cpHpyMgSL01A5yw7XriPlERbrOpW2hLnh+ZYe3Q==
-X-Received: by 2002:adf:de85:: with SMTP id w5mr3185456wrl.278.1570632093491;
-        Wed, 09 Oct 2019 07:41:33 -0700 (PDT)
+        bh=x6OiJB7EuLtp7p4md9nfqD7cxFgmkO+0cPK10Zj1xY4=;
+        b=Vwemqg0xqYlPJJjomThQE+RO8zjBfHcW3gKrMhK0Ri07yQy2qyea0bTdP47+Ax1A9q
+         l1lluopgAGScw4AsBfRb8qO0N7ovaK3aTvf/K3l3eDTrOjKXj3g3dGZco1p6vX9jEBWi
+         GtncpguoKHKr4mWlzYqR8ApzjpeKRqM4da1rKVGpvmirZiNJDhq7pKxBlA1B2Mmx9Z3u
+         whHaSn8GbAR1N1DNTtHR2bJxICCaMhMilYcEIHhIHUddqr4pxEtntCNB8Mu678PnW+df
+         x+TReLRJje8A59NhalU21cp1JEZvaOpY/SINE3unalL0CFdPZhj4wE6Qj0nsdQ1e92Kv
+         +30A==
+X-Gm-Message-State: APjAAAW6EV1u6u4hvgPZsDWtGr2r1x9ssRej7M3pwdNr8vPoxRo+n7ud
+        C97S0eyTrU+G3kVugiNbVHlOJg==
+X-Google-Smtp-Source: APXvYqzdoajYxUt+SlTTO0rYrQtFoWl/VHou2VgKvHy8Q2cy4h9n2LvSPVFWSoFcClx2YWzAtQ95gQ==
+X-Received: by 2002:a7b:ce89:: with SMTP id q9mr2928113wmj.2.1570632095145;
+        Wed, 09 Oct 2019 07:41:35 -0700 (PDT)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id b7sm3031770wrx.56.2019.10.09.07.41.32
+        by smtp.gmail.com with ESMTPSA id b7sm3031770wrx.56.2019.10.09.07.41.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2019 07:41:32 -0700 (PDT)
+        Wed, 09 Oct 2019 07:41:33 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     arnd@arndb.de, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org,
         Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v3 3/5] misc: fastrpc: do not interrupt kernel calls
-Date:   Wed,  9 Oct 2019 15:41:21 +0100
-Message-Id: <20191009144123.24583-4-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v3 4/5] misc: fastrpc: handle interrupted contexts
+Date:   Wed,  9 Oct 2019 15:41:22 +0100
+Message-Id: <20191009144123.24583-5-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191009144123.24583-1-srinivas.kandagatla@linaro.org>
 References: <20191009144123.24583-1-srinivas.kandagatla@linaro.org>
@@ -66,40 +66,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 
-the DSP firmware requires some calls to be held until processing has
-completed: this is to guarantee that memory continues to be
-accessible.
+Buffers owned by a context that has been interrupted either by a
+signal or a timeout might still be being accessed by the DSP.
 
-Nevertheless, the fastrpc driver chooses not support the case were
-requests need to be held for unbounded amounts of time. If such a
-use-case becomes necessary, this timeout will need to be revisited.
+delegate returning the associated memory to a later time when the
+device is released.
 
 Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/misc/fastrpc.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/misc/fastrpc.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index c0fe3419c685..666c431380ce 100644
+index 666c431380ce..eef2cdc00672 100644
 --- a/drivers/misc/fastrpc.c
 +++ b/drivers/misc/fastrpc.c
-@@ -959,8 +959,13 @@ static int fastrpc_internal_invoke(struct fastrpc_user *fl,  u32 kernel,
- 	if (err)
- 		goto bail;
+@@ -984,12 +984,13 @@ static int fastrpc_internal_invoke(struct fastrpc_user *fl,  u32 kernel,
+ 	}
  
--	/* Wait for remote dsp to respond or time out */
--	err = wait_for_completion_interruptible(&ctx->work);
-+	if (kernel) {
-+		if (!wait_for_completion_timeout(&ctx->work, 10 * HZ))
-+			err = -ETIMEDOUT;
-+	} else {
-+		err = wait_for_completion_interruptible(&ctx->work);
+ bail:
+-	/* We are done with this compute context, remove it from pending list */
+-	spin_lock(&fl->lock);
+-	list_del(&ctx->node);
+-	spin_unlock(&fl->lock);
+-	fastrpc_context_put(ctx);
+-
++	if (err != -ERESTARTSYS && err != -ETIMEDOUT) {
++		/* We are done with this compute context */
++		spin_lock(&fl->lock);
++		list_del(&ctx->node);
++		spin_unlock(&fl->lock);
++		fastrpc_context_put(ctx);
 +	}
-+
  	if (err)
- 		goto bail;
+ 		dev_dbg(fl->sctx->dev, "Error: Invoke Failed %d\n", err);
  
 -- 
 2.21.0
