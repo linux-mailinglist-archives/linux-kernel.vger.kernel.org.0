@@ -2,474 +2,286 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7857BD17F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 21:06:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39D9FD182D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 21:12:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731528AbfJITGj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 15:06:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34962 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728804AbfJITGi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 15:06:38 -0400
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 241FB11A31
-        for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2019 19:06:38 +0000 (UTC)
-Received: by mail-qt1-f198.google.com with SMTP id f15so3120055qth.6
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 12:06:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:organization:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=KdJ9eR9SxTz3WPIrVw97FI+J80rJ8nwCrH/6lba2Agk=;
-        b=BfFO30dXFOzLXLagnfVy+kguqBCB9WDenmA5L7UcahGCVG46O7gE2nRQ4CceX6Mp5w
-         8fsEHWw8HKUDYMmhXpXSAt5FTfYkVrL8rIVBta7ntW8GzSsUdSgoo0H4xz9V73R7atK3
-         V6iTpRgLDqt9L9Kpgxokc7hQkiC6wt1lhArswmocDyCrXpjbV1DBTUKEeQ3g3bnztrQM
-         iMNfAc4XywyUx5iJOdTHpDAi/J/C5MhyRwSNMua/+UyCI8ainxwVIV0GsuNPLxrI1brh
-         F8wd2oapM88US0Ic4RkulgJBSHaauxqCCibUule+1Lm2lTJ6akTDSXSA5ap0UbJ4k/Tr
-         SgNA==
-X-Gm-Message-State: APjAAAURtjJqtDE2oKP3EHI8rGcz5W8B3MKoBVJWiWePlYsuFLaCqPDY
-        WXCSFs0Q3TirYV0nm5yLVJYrlqeruvLD1jOBSoHm8GZr3oZWxFqWnsd6yYYW4uS9w/gJgVzldhr
-        6WBCDrULmRoASyiq7h8XXf1hy
-X-Received: by 2002:ac8:22b6:: with SMTP id f51mr5350409qta.210.1570647997341;
-        Wed, 09 Oct 2019 12:06:37 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqy5AhgoO7tMowHm0OxxsRU9Rxv2UplSfpHjgV/kBrVIlDrwY/orJBcwTEAiDgb7N+x8rLL/Ew==
-X-Received: by 2002:ac8:22b6:: with SMTP id f51mr5350364qta.210.1570647996936;
-        Wed, 09 Oct 2019 12:06:36 -0700 (PDT)
-Received: from dhcp-10-20-1-34.bss.redhat.com ([144.121.20.162])
-        by smtp.gmail.com with ESMTPSA id t32sm1908703qtb.64.2019.10.09.12.06.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2019 12:06:36 -0700 (PDT)
-Message-ID: <6b2a3798235b3b485bd920d79a39ec849200143d.camel@redhat.com>
-Subject: Re: [PATCH v2 25/27] drm/dp_mst: Add basic topology reprobing when
- resuming
-From:   Lyude Paul <lyude@redhat.com>
-To:     Sean Paul <sean@poorly.run>
-Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, Juston Li <juston.li@intel.com>,
-        Imre Deak <imre.deak@intel.com>,
-        Ville =?ISO-8859-1?Q?Syrj=E4l=E4?= 
-        <ville.syrjala@linux.intel.com>, Harry Wentland <hwentlan@amd.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-        David Francis <David.Francis@amd.com>,
-        Mario Kleiner <mario.kleiner.de@gmail.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Manasi Navare <manasi.d.navare@intel.com>,
-        Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>,
-        =?ISO-8859-1?Q?Jos=E9?= Roberto de Souza 
-        <jose.souza@intel.com>, Karol Herbst <karolherbst@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Ilia Mirkin <imirkin@alum.mit.edu>,
-        linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org
-Date:   Wed, 09 Oct 2019 15:06:34 -0400
-In-Reply-To: <20190927135207.GR218215@art_vandelay>
-References: <20190903204645.25487-1-lyude@redhat.com>
-         <20190903204645.25487-26-lyude@redhat.com>
-         <20190927135207.GR218215@art_vandelay>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S1732285AbfJITMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 15:12:14 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:59681 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732061AbfJITLf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 15:11:35 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1M9Frd-1iCUhU1UAx-006S0r; Wed, 09 Oct 2019 21:09:11 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-kernel@vger.kernel.org, y2038@lists.linaro.org,
+        linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v6 00/43] compat_ioctl: remove most of fs/compat_ioctl.c
+Date:   Wed,  9 Oct 2019 21:08:52 +0200
+Message-Id: <20191009190853.245077-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:soRfA8GEsLyL6KJg7pQMmF7Bo5SXBVsSv+VAvypPv38g8t9aDtn
+ 3y0GeYyEh9Ep2hbXg3Lgcef44HAU8BgCX5p0M8kyvLrlCTJan4SAkA/P7hpL88VyJP8xOqx
+ WDz/UwhCf549lXsxlbiA1d0aA+bUwFqCIzBu3kWkC4G9ZxtTrn47udvoEX8UQyIcUxYqKra
+ 4x1+N9IJOh6o18fVm/DYg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:q9EmiQP5Hoc=:HeLrSdtqCXfrAstU0aO7OD
+ 884C2iPGS1h17y6cvncKVzY7Rh+WZvsveod21s3AMUX6zEPTX4OV2KmfDwGPPQf0hejWYCJbV
+ OGiqdwt8W1012ByoFy9WMhEg1qB6V+/F6DVYrtAfM0b9pn7P8VTjMa3K0n5oKQA/RluYkP+Tv
+ CTD4vr9OPALoSZkA9MXJ26tR5j4KoT6rdtZcb6D74ib/xLy+WdW6Uh96552Zb32nOXYPfQm/P
+ urDGniIgVPa3PSjVOYcV4BzO8qqVeM8oeDPiSSFEbirsBH+/CPjGgIsR2UCmceeSQlqTRelnf
+ Oci0xFbSJpZ7apksCk0/Fps4gl6B8+kL+c8kI9/8fDrmCUHEs7/gkchidTf4aL9t8fWVPnoKz
+ NoabhvGvwUwR+LlmizruvBi0IXG1wQvMH5we7gOBbO6aqrrlFwl/XTDGYf1TN12JPvQZitMtz
+ Jb3bhe6iE5io+NuBey6HpUCVQ7kKJn2kdIj9cvH57maGC5StNvBPRC/BNVgvMyci0CZaQJMUx
+ iXcp7gh10qMZNlnOMhHMEO0wxiE0xib8XC5PRcPCTrZr8Gk8AzkgfiihJG0BE9LNTez9e4jWm
+ Lyd8sFOPqqIYpMkMhcQpaTGpwgg05yjqT8TYD3rnCI8QBkDG5aCPiCw2hti6e7g76O7v2GIZv
+ Lrh5y8x5j32XSdtk26K5V4B5y6+3xcrol+uyeYIY45s/bP6oRsgVHzeMtMhtWjQhn70QRH6VJ
+ Mny9K9XEHt3dm7f3uu3k6U2Ip/kW3x5+7o5HK9+7HQFXccoMg8buR/iQh5PZMzcrBlYC30x4v
+ d36CIWAEEHEUamoKgqnAzBSpP5dLcEPavVuKaJuEe7jT4VPam9B63/cWl12SAckf9GzCTYOgu
+ Zxrg5El2sPCxv4k9iMhA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-09-27 at 09:52 -0400, Sean Paul wrote:
-> On Tue, Sep 03, 2019 at 04:46:03PM -0400, Lyude Paul wrote:
-> > Finally! For a very long time, our MST helpers have had one very
-> > annoying issue: They don't know how to reprobe the topology state when
-> > coming out of suspend. This means that if a user has a machine connected
-> > to an MST topology and decides to suspend their machine, we lose all
-> > topology changes that happened during that period. That can be a big
-> > problem if the machine was connected to a different topology on the same
-> > port before resuming, as we won't bother reprobing any of the ports and
-> > likely cause the user's monitors not to come back up as expected.
-> > 
-> > So, we start fixing this by teaching our MST helpers how to reprobe the
-> > link addresses of each connected topology when resuming. As it turns
-> > out, the behavior that we want here is identical to the behavior we want
-> > when initially probing a newly connected MST topology, with a couple of
-> > important differences:
-> > 
-> > - We need to be more careful about handling the potential races between
-> >   events from the MST hub that could change the topology state as we're
-> >   performing the link address reprobe
-> > - We need to be more careful about handling unlikely state changes on
-> >   ports - such as an input port turning into an output port, something
-> >   that would be far more likely to happen in situations like the MST hub
-> >   we're connected to being changed while we're suspend
-> > 
-> > Both of which have been solved by previous commits. That leaves one
-> > requirement:
-> > 
-> > - We need to prune any MST ports in our in-memory topology state that
-> >   were present when suspending, but have not appeared in the post-resume
-> >   link address response from their parent branch device
-> > 
-> > Which we can now handle in this commit by modifying
-> > drm_dp_send_link_address(). We then introduce suspend/resume reprobing
-> > by introducing drm_dp_mst_topology_mgr_invalidate_mstb(), which we call
-> > in drm_dp_mst_topology_mgr_suspend() to traverse the in-memory topology
-> > state to indicate that each mstb needs it's link address resent and PBN
-> > resources reprobed.
-> > 
-> > On resume, we start back up &mgr->work and have it reprobe the topology
-> > in the same way we would on a hotplug, removing any leftover ports that
-> > no longer appear in the topology state.
-> > 
-> > Cc: Juston Li <juston.li@intel.com>
-> > Cc: Imre Deak <imre.deak@intel.com>
-> > Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> > Cc: Harry Wentland <hwentlan@amd.com>
-> > Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > Signed-off-by: Lyude Paul <lyude@redhat.com>
-> > ---
-> >  .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |   2 +-
-> >  drivers/gpu/drm/drm_dp_mst_topology.c         | 138 +++++++++++++-----
-> >  drivers/gpu/drm/i915/display/intel_dp.c       |   3 +-
-> >  drivers/gpu/drm/nouveau/dispnv50/disp.c       |   6 +-
-> >  include/drm/drm_dp_mst_helper.h               |   3 +-
-> >  5 files changed, 112 insertions(+), 40 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> > b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> > index 4d3c8bff77da..27ee3e045b86 100644
-> > --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> > +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> > @@ -973,7 +973,7 @@ static void s3_handle_mst(struct drm_device *dev, bool
-> > suspend)
-> >  		if (suspend) {
-> >  			drm_dp_mst_topology_mgr_suspend(mgr);
-> >  		} else {
-> > -			ret = drm_dp_mst_topology_mgr_resume(mgr);
-> > +			ret = drm_dp_mst_topology_mgr_resume(mgr, true);
-> >  			if (ret < 0) {
-> >  				drm_dp_mst_topology_mgr_set_mst(mgr, false);
-> >  				need_hotplug = true;
-> > diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c
-> > b/drivers/gpu/drm/drm_dp_mst_topology.c
-> > index e407aba1fbd2..2fe24e366925 100644
-> > --- a/drivers/gpu/drm/drm_dp_mst_topology.c
-> > +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-> > @@ -2020,6 +2020,14 @@ drm_dp_mst_handle_link_address_port(struct
-> > drm_dp_mst_branch *mstb,
-> >  		goto fail_unlock;
-> >  	}
-> >  
-> > +	/*
-> > +	 * If this port wasn't just created, then we're reprobing because
-> > +	 * we're coming out of suspend. In this case, always resend the link
-> > +	 * address if there's an MSTB on this port
-> > +	 */
-> > +	if (!created && port->pdt == DP_PEER_DEVICE_MST_BRANCHING)
-> > +		send_link_addr = true;
-> > +
-> >  	if (send_link_addr) {
-> >  		mutex_lock(&mgr->lock);
-> >  		if (port->mstb) {
-> > @@ -2530,7 +2538,8 @@ static void drm_dp_send_link_address(struct
-> > drm_dp_mst_topology_mgr *mgr,
-> >  {
-> >  	struct drm_dp_sideband_msg_tx *txmsg;
-> >  	struct drm_dp_link_address_ack_reply *reply;
-> > -	int i, len, ret;
-> > +	struct drm_dp_mst_port *port, *tmp;
-> > +	int i, len, ret, port_mask = 0;
-> >  
-> >  	txmsg = kzalloc(sizeof(*txmsg), GFP_KERNEL);
-> >  	if (!txmsg)
-> > @@ -2560,9 +2569,28 @@ static void drm_dp_send_link_address(struct
-> > drm_dp_mst_topology_mgr *mgr,
-> >  
-> >  	drm_dp_check_mstb_guid(mstb, reply->guid);
-> >  
-> > -	for (i = 0; i < reply->nports; i++)
-> > +	for (i = 0; i < reply->nports; i++) {
-> > +		port_mask |= BIT(reply->ports[i].port_number);
-> >  		drm_dp_mst_handle_link_address_port(mstb, mgr->dev,
-> >  						    &reply->ports[i]);
-> > +	}
-> > +
-> > +	/* Prune any ports that are currently a part of mstb in our in-memory
-> > +	 * topology, but were not seen in this link address. Usually this
-> > +	 * means that they were removed while the topology was out of sync,
-> > +	 * e.g. during suspend/resume
-> > +	 */
-> > +	mutex_lock(&mgr->lock);
-> > +	list_for_each_entry_safe(port, tmp, &mstb->ports, next) {
-> > +		if (port_mask & BIT(port->port_num))
-> > +			continue;
-> > +
-> > +		DRM_DEBUG_KMS("port %d was not in link address, removing\n",
-> > +			      port->port_num);
-> > +		list_del(&port->next);
-> > +		drm_dp_mst_topology_put_port(port);
-> > +	}
-> > +	mutex_unlock(&mgr->lock);
-> >  
-> >  	drm_kms_helper_hotplug_event(mgr->dev);
-> >  
-> > @@ -3191,6 +3219,23 @@ int drm_dp_mst_topology_mgr_set_mst(struct
-> > drm_dp_mst_topology_mgr *mgr, bool ms
-> >  }
-> >  EXPORT_SYMBOL(drm_dp_mst_topology_mgr_set_mst);
-> >  
-> > +static void
-> > +drm_dp_mst_topology_mgr_invalidate_mstb(struct drm_dp_mst_branch *mstb)
-> > +{
-> > +	struct drm_dp_mst_port *port;
-> > +
-> > +	/* The link address will need to be re-sent on resume */
-> > +	mstb->link_address_sent = false;
-> > +
-> > +	list_for_each_entry(port, &mstb->ports, next) {
-> > +		/* The PBN for each port will also need to be re-probed */
-> > +		port->available_pbn = 0;
-> > +
-> > +		if (port->mstb)
-> > +			drm_dp_mst_topology_mgr_invalidate_mstb(port->mstb);
-> > +	}
-> > +}
-> > +
-> >  /**
-> >   * drm_dp_mst_topology_mgr_suspend() - suspend the MST manager
-> >   * @mgr: manager to suspend
-> > @@ -3207,60 +3252,85 @@ void drm_dp_mst_topology_mgr_suspend(struct
-> > drm_dp_mst_topology_mgr *mgr)
-> >  	flush_work(&mgr->up_req_work);
-> >  	flush_work(&mgr->work);
-> >  	flush_work(&mgr->delayed_destroy_work);
-> > +
-> > +	mutex_lock(&mgr->lock);
-> > +	if (mgr->mst_state && mgr->mst_primary)
-> > +		drm_dp_mst_topology_mgr_invalidate_mstb(mgr->mst_primary);
-> > +	mutex_unlock(&mgr->lock);
-> >  }
-> >  EXPORT_SYMBOL(drm_dp_mst_topology_mgr_suspend);
-> >  
-> >  /**
-> >   * drm_dp_mst_topology_mgr_resume() - resume the MST manager
-> >   * @mgr: manager to resume
-> > + * @sync: whether or not to perform topology reprobing synchronously
-> >   *
-> >   * This will fetch DPCD and see if the device is still there,
-> >   * if it is, it will rewrite the MSTM control bits, and return.
-> >   *
-> > - * if the device fails this returns -1, and the driver should do
-> > + * If the device fails this returns -1, and the driver should do
-> >   * a full MST reprobe, in case we were undocked.
-> 
-> nit: I don't think this sentence applies any longer since we're doing the
-> reprobe.
-Note that this does actually still apply, but I should be a bit more clear
-about it: "reprobe" in this sense just means drm_dp_mst_topology_set_mst(mgr,
-off)
-> 
-> > + *
-> > + * During system resume (where it is assumed that the driver will be
-> > calling
-> > + * drm_atomic_helper_resume()) this function should be called beforehand
-> > with
-> > + * @sync set to true. In contexts like runtime resume where the driver is
-> > not
-> > + * expected to be calling drm_atomic_helper_resume(), this function
-> > should be
-> > + * called with @sync set to false in order to avoid deadlocking.
-> > + *
-> > + * Returns: -1 if the MST topology was removed while we were suspended, 0
-> > + * otherwise.
-> >   */
-> > -int drm_dp_mst_topology_mgr_resume(struct drm_dp_mst_topology_mgr *mgr)
-> > +int drm_dp_mst_topology_mgr_resume(struct drm_dp_mst_topology_mgr *mgr,
-> > +				   bool sync)
-> >  {
-> > -	int ret = 0;
-> > +	int ret;
-> > +	u8 guid[16];
-> >  
-> >  	mutex_lock(&mgr->lock);
-> > +	if (!mgr->mst_primary)
-> > +		goto out_fail;
-> >  
-> > -	if (mgr->mst_primary) {
-> > -		int sret;
-> > -		u8 guid[16];
-> > +	ret = drm_dp_dpcd_read(mgr->aux, DP_DPCD_REV, mgr->dpcd,
-> > +			       DP_RECEIVER_CAP_SIZE);
-> > +	if (ret != DP_RECEIVER_CAP_SIZE) {
-> > +		DRM_DEBUG_KMS("dpcd read failed - undocked during
-> > suspend?\n");
-> > +		goto out_fail;
-> > +	}
-> >  
-> > -		sret = drm_dp_dpcd_read(mgr->aux, DP_DPCD_REV, mgr->dpcd,
-> > DP_RECEIVER_CAP_SIZE);
-> > -		if (sret != DP_RECEIVER_CAP_SIZE) {
-> > -			DRM_DEBUG_KMS("dpcd read failed - undocked during
-> > suspend?\n");
-> > -			ret = -1;
-> > -			goto out_unlock;
-> > -		}
-> > +	ret = drm_dp_dpcd_writeb(mgr->aux, DP_MSTM_CTRL,
-> > +				 DP_MST_EN |
-> > +				 DP_UP_REQ_EN |
-> > +				 DP_UPSTREAM_IS_SRC);
-> > +	if (ret < 0) {
-> > +		DRM_DEBUG_KMS("mst write failed - undocked during
-> > suspend?\n");
-> > +		goto out_fail;
-> > +	}
-> >  
-> > -		ret = drm_dp_dpcd_writeb(mgr->aux, DP_MSTM_CTRL,
-> > -					 DP_MST_EN | DP_UP_REQ_EN |
-> > DP_UPSTREAM_IS_SRC);
-> > -		if (ret < 0) {
-> > -			DRM_DEBUG_KMS("mst write failed - undocked during
-> > suspend?\n");
-> > -			ret = -1;
-> > -			goto out_unlock;
-> > -		}
-> > +	/* Some hubs forget their guids after they resume */
-> > +	ret = drm_dp_dpcd_read(mgr->aux, DP_GUID, guid, 16);
-> > +	if (ret != 16) {
-> > +		DRM_DEBUG_KMS("dpcd read failed - undocked during
-> > suspend?\n");
-> > +		goto out_fail;
-> > +	}
-> > +	drm_dp_check_mstb_guid(mgr->mst_primary, guid);
-> >  
-> > -		/* Some hubs forget their guids after they resume */
-> > -		sret = drm_dp_dpcd_read(mgr->aux, DP_GUID, guid, 16);
-> > -		if (sret != 16) {
-> > -			DRM_DEBUG_KMS("dpcd read failed - undocked during
-> > suspend?\n");
-> > -			ret = -1;
-> > -			goto out_unlock;
-> > -		}
-> > -		drm_dp_check_mstb_guid(mgr->mst_primary, guid);
-> > +	/* For the final step of resuming the topology, we need to bring the
-> > +	 * state of our in-memory topology back into sync with reality. So,
-> > +	 * restart the probing process as if we're probing a new hub
-> > +	 */
-> > +	queue_work(system_long_wq, &mgr->work);
-> > +	mutex_unlock(&mgr->lock);
-> >  
-> > -		ret = 0;
-> > -	} else
-> > -		ret = -1;
-> > +	if (sync) {
-> > +		DRM_DEBUG_KMS("Waiting for link probe work to finish re-
-> > syncing topology...\n");
-> > +		flush_work(&mgr->work);
-> > +	}
-> 
-> It took me longer than I'd like to admit to realize that most of the diff in
-> this function is just removing the indent. Would you mind splitting that out
-> into a separate patch so the reprobe change is more obvious?
-> 
-> With these nits fixed,
-> 
-> Reviewed-by: Sean Paul <sean@poorly.run>
-> 
-> 
-> >  
-> > -out_unlock:
-> > +	return 0;
-> > +
-> > +out_fail:
-> >  	mutex_unlock(&mgr->lock);
-> > -	return ret;
-> > +	return -1;
-> >  }
-> >  EXPORT_SYMBOL(drm_dp_mst_topology_mgr_resume);
-> >  
-> > diff --git a/drivers/gpu/drm/i915/display/intel_dp.c
-> > b/drivers/gpu/drm/i915/display/intel_dp.c
-> > index 5673ed75e428..b78364dcdef9 100644
-> > --- a/drivers/gpu/drm/i915/display/intel_dp.c
-> > +++ b/drivers/gpu/drm/i915/display/intel_dp.c
-> > @@ -7400,7 +7400,8 @@ void intel_dp_mst_resume(struct drm_i915_private
-> > *dev_priv)
-> >  		if (!intel_dp->can_mst)
-> >  			continue;
-> >  
-> > -		ret = drm_dp_mst_topology_mgr_resume(&intel_dp->mst_mgr);
-> > +		ret = drm_dp_mst_topology_mgr_resume(&intel_dp->mst_mgr,
-> > +						     true);
-> >  		if (ret) {
-> >  			intel_dp->is_mst = false;
-> >  			drm_dp_mst_topology_mgr_set_mst(&intel_dp->mst_mgr,
-> > diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c
-> > b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-> > index 307584107d77..e459e2a79d78 100644
-> > --- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
-> > +++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-> > @@ -1309,14 +1309,14 @@ nv50_mstm_fini(struct nv50_mstm *mstm)
-> >  }
-> >  
-> >  static void
-> > -nv50_mstm_init(struct nv50_mstm *mstm)
-> > +nv50_mstm_init(struct nv50_mstm *mstm, bool runtime)
-> >  {
-> >  	int ret;
-> >  
-> >  	if (!mstm || !mstm->mgr.mst_state)
-> >  		return;
-> >  
-> > -	ret = drm_dp_mst_topology_mgr_resume(&mstm->mgr);
-> > +	ret = drm_dp_mst_topology_mgr_resume(&mstm->mgr, !runtime);
-> >  	if (ret == -1) {
-> >  		drm_dp_mst_topology_mgr_set_mst(&mstm->mgr, false);
-> >  		drm_kms_helper_hotplug_event(mstm->mgr.dev);
-> > @@ -2262,7 +2262,7 @@ nv50_display_init(struct drm_device *dev, bool
-> > resume, bool runtime)
-> >  		if (encoder->encoder_type != DRM_MODE_ENCODER_DPMST) {
-> >  			struct nouveau_encoder *nv_encoder =
-> >  				nouveau_encoder(encoder);
-> > -			nv50_mstm_init(nv_encoder->dp.mstm);
-> > +			nv50_mstm_init(nv_encoder->dp.mstm, runtime);
-> >  		}
-> >  	}
-> >  
-> > diff --git a/include/drm/drm_dp_mst_helper.h
-> > b/include/drm/drm_dp_mst_helper.h
-> > index 1efbb086f7ac..1bdee5ee6dcd 100644
-> > --- a/include/drm/drm_dp_mst_helper.h
-> > +++ b/include/drm/drm_dp_mst_helper.h
-> > @@ -685,7 +685,8 @@ void drm_dp_mst_dump_topology(struct seq_file *m,
-> >  
-> >  void drm_dp_mst_topology_mgr_suspend(struct drm_dp_mst_topology_mgr
-> > *mgr);
-> >  int __must_check
-> > -drm_dp_mst_topology_mgr_resume(struct drm_dp_mst_topology_mgr *mgr);
-> > +drm_dp_mst_topology_mgr_resume(struct drm_dp_mst_topology_mgr *mgr,
-> > +			       bool sync);
-> >  
-> >  ssize_t drm_dp_mst_dpcd_read(struct drm_dp_aux *aux,
-> >  			     unsigned int offset, void *buffer, size_t size);
-> > -- 
-> > 2.21.0
-> > 
+As part of the cleanup of some remaining y2038 issues, I came to
+fs/compat_ioctl.c, which still has a couple of commands that need support
+for time64_t.
+
+In completely unrelated work, I spent time on cleaning up parts of this
+file in the past, moving things out into drivers instead.
+
+After Al Viro reviewed an earlier version of this series and did a lot
+more of that cleanup, I decided to try to completely eliminate the rest
+of it and move it all into drivers.
+
+This series incorporates some of Al's work and many patches of my own,
+but in the end stops short of actually removing the last part, which is
+the scsi ioctl handlers. I have patches for those as well, but they need
+more testing or possibly a rewrite.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+
+Everything in here was posted one or more times already, sending
+the whole series again for review, I hope to get some input on those
+patches that have not already been reviewed.
+
+The entire series is also part of linux-next through
+https://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git/commit/?h=y2038
+
+
+Al Viro (8):
+  fix compat handling of FICLONERANGE, FIDEDUPERANGE and FS_IOC_FIEMAP
+  FIGETBSZ: fix compat
+  compat: itanic doesn't have one
+  do_vfs_ioctl(): use saner types
+  compat: move FS_IOC_RESVSP_32 handling to fs/ioctl.c
+  compat_sys_ioctl(): make parallel to do_vfs_ioctl()
+  compat_ioctl: unify copy-in of ppp filters
+  compat_ioctl: move PPPIOCSCOMPRESS to ppp_generic
+
+Arnd Bergmann (35):
+  ceph: fix compat_ioctl for ceph_dir_operations
+  compat_ioctl: drop FIOQSIZE table entry
+  compat_ioctl: add compat_ptr_ioctl()
+  compat_ioctl: move rtc handling into rtc-dev.c
+  compat_ioctl: move drivers to compat_ptr_ioctl
+  compat_ioctl: move more drivers to compat_ptr_ioctl
+  compat_ioctl: use correct compat_ptr() translation in drivers
+  compat_ioctl: move tape handling into drivers
+  compat_ioctl: move ATYFB_CLK handling to atyfb driver
+  compat_ioctl: move isdn/capi ioctl translation into driver
+  compat_ioctl: move rfcomm handlers into driver
+  compat_ioctl: move hci_sock handlers into driver
+  compat_ioctl: remove HCIUART handling
+  compat_ioctl: remove HIDIO translation
+  compat_ioctl: remove translation for sound ioctls
+  compat_ioctl: remove IGNORE_IOCTL()
+  compat_ioctl: remove /dev/random commands
+  compat_ioctl: remove joystick ioctl translation
+  compat_ioctl: remove PCI ioctl translation
+  compat_ioctl: remove /dev/raw ioctl translation
+  compat_ioctl: remove last RAID handling code
+  compat_ioctl: remove unused convert_in_user macro
+  gfs2: add compat_ioctl support
+  fs: compat_ioctl: move FITRIM emulation into file systems
+  compat_ioctl: move WDIOC handling into wdt drivers
+  compat_ioctl: reimplement SG_IO handling
+  af_unix: add compat_ioctl support
+  compat_ioctl: handle SIOCOUTQNSD
+  compat_ioctl: move SIOCOUTQ out of compat_ioctl.c
+  tty: handle compat PPP ioctls
+  compat_ioctl: handle PPPIOCGIDLE for 64-bit time_t
+  compat_ioctl: ppp: move simple commands into ppp_generic.c
+  compat_ioctl: move SG_GET_REQUEST_TABLE handling
+  pktcdvd: add compat_ioctl handler
+  scsi: sd: enable compat ioctls for sed-opal
+
+ Documentation/networking/ppp_generic.txt    |   2 +
+ arch/powerpc/platforms/52xx/mpc52xx_gpt.c   |   1 +
+ arch/um/drivers/harddog_kern.c              |   1 +
+ arch/um/drivers/hostaudio_kern.c            |   1 +
+ block/scsi_ioctl.c                          | 132 ++-
+ drivers/android/binder.c                    |   2 +-
+ drivers/block/pktcdvd.c                     |  25 +
+ drivers/char/ipmi/ipmi_watchdog.c           |   1 +
+ drivers/char/ppdev.c                        |  12 +-
+ drivers/char/random.c                       |   1 +
+ drivers/char/tpm/tpm_vtpm_proxy.c           |  12 +-
+ drivers/crypto/qat/qat_common/adf_ctl_drv.c |   2 +-
+ drivers/dma-buf/dma-buf.c                   |   4 +-
+ drivers/dma-buf/sw_sync.c                   |   2 +-
+ drivers/dma-buf/sync_file.c                 |   2 +-
+ drivers/firewire/core-cdev.c                |  12 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_chardev.c    |   2 +-
+ drivers/hid/hidraw.c                        |   4 +-
+ drivers/hid/usbhid/hiddev.c                 |  11 +-
+ drivers/hwmon/fschmd.c                      |   1 +
+ drivers/hwtracing/stm/core.c                |  12 +-
+ drivers/ide/ide-tape.c                      |  27 +-
+ drivers/iio/industrialio-core.c             |   2 +-
+ drivers/infiniband/core/uverbs_main.c       |   4 +-
+ drivers/isdn/capi/capi.c                    |  31 +
+ drivers/media/rc/lirc_dev.c                 |   4 +-
+ drivers/misc/cxl/flash.c                    |   8 +-
+ drivers/misc/genwqe/card_dev.c              |  23 +-
+ drivers/misc/mei/main.c                     |  22 +-
+ drivers/misc/vmw_vmci/vmci_host.c           |   2 +-
+ drivers/mtd/ubi/cdev.c                      |  36 +-
+ drivers/net/ppp/ppp_generic.c               | 245 ++++--
+ drivers/net/tap.c                           |  12 +-
+ drivers/nvdimm/bus.c                        |   4 +-
+ drivers/nvme/host/core.c                    |   2 +-
+ drivers/pci/switch/switchtec.c              |   2 +-
+ drivers/platform/x86/wmi.c                  |   2 +-
+ drivers/rpmsg/rpmsg_char.c                  |   4 +-
+ drivers/rtc/dev.c                           |  13 +-
+ drivers/rtc/rtc-ds1374.c                    |   1 +
+ drivers/rtc/rtc-vr41xx.c                    |  10 +
+ drivers/s390/char/tape_char.c               |  41 +-
+ drivers/sbus/char/display7seg.c             |   2 +-
+ drivers/sbus/char/envctrl.c                 |   4 +-
+ drivers/scsi/3w-xxxx.c                      |   4 +-
+ drivers/scsi/cxlflash/main.c                |   2 +-
+ drivers/scsi/esas2r/esas2r_main.c           |   2 +-
+ drivers/scsi/megaraid/megaraid_mm.c         |  28 +-
+ drivers/scsi/pmcraid.c                      |   4 +-
+ drivers/scsi/sd.c                           |  14 +-
+ drivers/scsi/sg.c                           |  59 +-
+ drivers/scsi/st.c                           |  28 +-
+ drivers/staging/android/ion/ion.c           |   4 +-
+ drivers/staging/pi433/pi433_if.c            |  12 +-
+ drivers/staging/vme/devices/vme_user.c      |   2 +-
+ drivers/tee/tee_core.c                      |   2 +-
+ drivers/tty/tty_io.c                        |   5 +
+ drivers/usb/class/cdc-wdm.c                 |   2 +-
+ drivers/usb/class/usbtmc.c                  |   4 +-
+ drivers/usb/core/devio.c                    |  16 +-
+ drivers/usb/gadget/function/f_fs.c          |  12 +-
+ drivers/vfio/vfio.c                         |  39 +-
+ drivers/vhost/net.c                         |  12 +-
+ drivers/vhost/scsi.c                        |  12 +-
+ drivers/vhost/test.c                        |  12 +-
+ drivers/vhost/vsock.c                       |  12 +-
+ drivers/video/fbdev/aty/atyfb_base.c        |  12 +-
+ drivers/virt/fsl_hypervisor.c               |   2 +-
+ drivers/watchdog/acquirewdt.c               |   1 +
+ drivers/watchdog/advantechwdt.c             |   1 +
+ drivers/watchdog/alim1535_wdt.c             |   1 +
+ drivers/watchdog/alim7101_wdt.c             |   1 +
+ drivers/watchdog/ar7_wdt.c                  |   1 +
+ drivers/watchdog/at91rm9200_wdt.c           |   1 +
+ drivers/watchdog/ath79_wdt.c                |   1 +
+ drivers/watchdog/bcm63xx_wdt.c              |   1 +
+ drivers/watchdog/cpu5wdt.c                  |   1 +
+ drivers/watchdog/eurotechwdt.c              |   1 +
+ drivers/watchdog/f71808e_wdt.c              |   1 +
+ drivers/watchdog/gef_wdt.c                  |   1 +
+ drivers/watchdog/geodewdt.c                 |   1 +
+ drivers/watchdog/ib700wdt.c                 |   1 +
+ drivers/watchdog/ibmasr.c                   |   1 +
+ drivers/watchdog/indydog.c                  |   1 +
+ drivers/watchdog/intel_scu_watchdog.c       |   1 +
+ drivers/watchdog/iop_wdt.c                  |   1 +
+ drivers/watchdog/it8712f_wdt.c              |   1 +
+ drivers/watchdog/ixp4xx_wdt.c               |   1 +
+ drivers/watchdog/m54xx_wdt.c                |   1 +
+ drivers/watchdog/machzwd.c                  |   1 +
+ drivers/watchdog/mixcomwd.c                 |   1 +
+ drivers/watchdog/mtx-1_wdt.c                |   1 +
+ drivers/watchdog/mv64x60_wdt.c              |   1 +
+ drivers/watchdog/nv_tco.c                   |   1 +
+ drivers/watchdog/pc87413_wdt.c              |   1 +
+ drivers/watchdog/pcwd.c                     |   1 +
+ drivers/watchdog/pcwd_pci.c                 |   1 +
+ drivers/watchdog/pcwd_usb.c                 |   1 +
+ drivers/watchdog/pika_wdt.c                 |   1 +
+ drivers/watchdog/pnx833x_wdt.c              |   1 +
+ drivers/watchdog/rc32434_wdt.c              |   1 +
+ drivers/watchdog/rdc321x_wdt.c              |   1 +
+ drivers/watchdog/riowd.c                    |   1 +
+ drivers/watchdog/sa1100_wdt.c               |   1 +
+ drivers/watchdog/sb_wdog.c                  |   1 +
+ drivers/watchdog/sbc60xxwdt.c               |   1 +
+ drivers/watchdog/sbc7240_wdt.c              |   1 +
+ drivers/watchdog/sbc_epx_c3.c               |   1 +
+ drivers/watchdog/sbc_fitpc2_wdt.c           |   1 +
+ drivers/watchdog/sc1200wdt.c                |   1 +
+ drivers/watchdog/sc520_wdt.c                |   1 +
+ drivers/watchdog/sch311x_wdt.c              |   1 +
+ drivers/watchdog/scx200_wdt.c               |   1 +
+ drivers/watchdog/smsc37b787_wdt.c           |   1 +
+ drivers/watchdog/w83877f_wdt.c              |   1 +
+ drivers/watchdog/w83977f_wdt.c              |   1 +
+ drivers/watchdog/wafer5823wdt.c             |   1 +
+ drivers/watchdog/watchdog_dev.c             |   1 +
+ drivers/watchdog/wdrtas.c                   |   1 +
+ drivers/watchdog/wdt.c                      |   1 +
+ drivers/watchdog/wdt285.c                   |   1 +
+ drivers/watchdog/wdt977.c                   |   1 +
+ drivers/watchdog/wdt_pci.c                  |   1 +
+ fs/btrfs/super.c                            |   2 +-
+ fs/ceph/dir.c                               |   1 +
+ fs/ceph/file.c                              |   2 +-
+ fs/ceph/super.h                             |   1 +
+ fs/compat_ioctl.c                           | 917 +-------------------
+ fs/ecryptfs/file.c                          |   1 +
+ fs/ext4/ioctl.c                             |   1 +
+ fs/f2fs/file.c                              |   1 +
+ fs/fat/file.c                               |  13 +-
+ fs/fuse/dev.c                               |   2 +-
+ fs/gfs2/file.c                              |  30 +
+ fs/hpfs/dir.c                               |   1 +
+ fs/hpfs/file.c                              |   1 +
+ fs/ioctl.c                                  |  80 +-
+ fs/nilfs2/ioctl.c                           |   1 +
+ fs/notify/fanotify/fanotify_user.c          |   2 +-
+ fs/ocfs2/ioctl.c                            |   1 +
+ fs/userfaultfd.c                            |   2 +-
+ include/linux/blkdev.h                      |   2 +
+ include/linux/falloc.h                      |  20 +
+ include/linux/fs.h                          |   7 +
+ include/linux/mtio.h                        |  60 ++
+ include/uapi/linux/ppp-ioctl.h              |   2 +
+ include/uapi/linux/ppp_defs.h               |  14 +
+ lib/iov_iter.c                              |   1 +
+ net/bluetooth/hci_sock.c                    |  21 +-
+ net/bluetooth/rfcomm/sock.c                 |  14 +-
+ net/rfkill/core.c                           |   2 +-
+ net/socket.c                                |   3 +
+ net/unix/af_unix.c                          |  19 +
+ sound/core/oss/pcm_oss.c                    |   4 +
+ sound/oss/dmasound/dmasound_core.c          |   2 +
+ 155 files changed, 935 insertions(+), 1394 deletions(-)
+ create mode 100644 include/linux/mtio.h
+
 -- 
-Cheers,
-	Lyude Paul
+2.20.0
 
