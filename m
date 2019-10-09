@@ -2,309 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3566D11A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 16:45:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5AD3D11AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 16:46:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731584AbfJIOpV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 10:45:21 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:35309 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730674AbfJIOpU (ORCPT
+        id S1731557AbfJIOqT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 10:46:19 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:34065 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730674AbfJIOqS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 10:45:20 -0400
-Received: by mail-lj1-f194.google.com with SMTP id m7so2810357lji.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 07:45:18 -0700 (PDT)
+        Wed, 9 Oct 2019 10:46:18 -0400
+Received: by mail-qt1-f194.google.com with SMTP id 3so3836540qta.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 07:46:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WHLqnBcAMWl9oxUxGSTJExK0Gib3hZ/+qFSag2SnMEc=;
-        b=B8+o2znHRHD/V8dEhy4aDoTZdnArOLYa6TUorSUQmIk595Xl7NOFqChI8+KUigVn7R
-         zlFYkGRa6y+deWLCikjjE/igMxZvZNiDVolisBb3GENV9jT9d9LN5v8vAYapFFXs1YKh
-         G57ER7/3a8JEZa5VMordbF57zRzgyGSrIwMkscdM6N+iuwV8gRwzXrizlsEtSCB1QmOF
-         G/QHCh3KsQ7gAGKE3kTgKEROxy3pHW7gervRWU1djCfyD0mtj5I0gNVkiGDcgltErZKC
-         SlzmgRyy9/u2xJO86fivb3NFp7sxv74EzVNylni3AXBuK1WP+1rrmZeIjUS267SuYBfS
-         st9Q==
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=CDYimNdlqZqti9uoTUL9lVho/jaJwsRQPs3PzeToXqA=;
+        b=c6jocuHIz3N6hTVYKaMaNLDcGo4jq8kIZm30W95LUvZ70eYiNV4La8Ov71iiyZApF6
+         F0RrH8KgBFFoKN07XWe6oDLsYKHqSUGNSJ+U1lcCFA2dwnTv/zJes4LIIXkW2hKdi511
+         dPVCxsUxQxMNx/KkLZ8iKJcMxbf5WHOFR/gk0QnyD3ZYgOE+kVXgVuk/HCDFCqWvmtSt
+         KNNFgbddkpOyzIs9gzTpK9pPbT+ir6BTFlaauJIFBGy3SWC7TJq4nW64C9MJEQXppdQi
+         UTLc6nArP4p7hEdBgJ/5iU7wMtPSYfQRVoWSZ/VTvCvOeo8wfXy1dgR8JyYf9Up+nt6S
+         xx9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WHLqnBcAMWl9oxUxGSTJExK0Gib3hZ/+qFSag2SnMEc=;
-        b=cHiEXqsCtB0hTPwuJxu14Qk8bRMd+mUEXuynNHFYC72tkMRkN7mJRALaAGP43/41j8
-         bj94+EQ5D2mBYlk85ObR1CNs4p1lxTQTMJv/Pap5NyyQdMKZRL8IMgxC0O9vNksP5Z18
-         tI0sLtLzEbZUUPBRA38R2DR71HTTJ6RcplV3NJYRJ02MLwjOF6mJV1na62ResNUJ7lWe
-         msyCabovl7xcrG1GHi3FdFZKFuuDHRhlKuFtyyZ8MyoLhLCDz2LIN0PNl+WzGiNspbSZ
-         n1EU9pbSp1fWCMHEUvML8IZskcPXyHjTjWE1pYFySZbJWgSVwhLTBLXTilHOJPRhTlTd
-         EwBA==
-X-Gm-Message-State: APjAAAWZPrcqK/RVaODrGGKiqeD/DR9eD7ExLw93FMDtpN+MMP8Xr+HJ
-        Q3TsybEC0+B9IZhZl6k970rANA==
-X-Google-Smtp-Source: APXvYqxTbi648QQFAqz7HczUUQLCcbKuogovtYoFBs5AJSxYzt2EYoP7qLWmnUsU7NeYOv4zy2KZsQ==
-X-Received: by 2002:a2e:5dd5:: with SMTP id v82mr2693751lje.54.1570632317793;
-        Wed, 09 Oct 2019 07:45:17 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id c4sm514343lfm.4.2019.10.09.07.45.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2019 07:45:17 -0700 (PDT)
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-X-Google-Original-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 3DD02102BFA; Wed,  9 Oct 2019 17:45:17 +0300 (+03)
-To:     Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
-        Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     hannes@cmpxchg.org, hughd@google.com, rientjes@google.com,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [RFC, PATCH] mm, thp: Try to bound number of pages on deferred split queue
-Date:   Wed,  9 Oct 2019 17:45:09 +0300
-Message-Id: <20191009144509.23649-1-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.21.0
-MIME-Version: 1.0
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=CDYimNdlqZqti9uoTUL9lVho/jaJwsRQPs3PzeToXqA=;
+        b=uYc6Yl8a/yqaLXQUE2qJejZF1D7vFlke1gvExGikZ5fTDt2KKElAAFdusX6rA9Y43R
+         i+/UZjs0o8328RWp666S/gD2VqaaHykdf6J0ZpfJLwAkiZRkyvflSQNxu6cQKLc08OpR
+         CRQ1eNHHBxBFrDZxRxljQ/dPR1eeEHXcLWVadNlpIKX0OugrexQqLSspTssF3s+yEuEJ
+         /+TBKFLQIz20Gz+63sSyUYFTDE5nM9mebhQmjsbkgbq7ZH/F/ihrBneXmRq8+oYn+49J
+         dubBcf3/1QBU105YZZ74CX/LoI9f0sAk8DsY9W8Ms1g/FNrDCC1/hINpQbj2lR/30ODb
+         DU5A==
+X-Gm-Message-State: APjAAAVWvqDBQRXJ+V6Z1/mLj9+36kbER+/oqyzmzfoG7GfHcB490ny3
+        d7vHiOFO+eeBoMIr1g/nrHOwVg==
+X-Google-Smtp-Source: APXvYqySm+nkzZ9mLR20xYq8dvYVkcqa029czjHQlPaLLb2zNFSgHANkdGDNzAVYTA0YOhcQMBFJVQ==
+X-Received: by 2002:aed:30c6:: with SMTP id 64mr3908950qtf.91.1570632377158;
+        Wed, 09 Oct 2019 07:46:17 -0700 (PDT)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id o14sm1444386qtk.52.2019.10.09.07.46.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 09 Oct 2019 07:46:16 -0700 (PDT)
+Message-ID: <1570632374.5937.8.camel@lca.pw>
+Subject: Re: [PATCH v2] mm/page_isolation: fix a deadlock with printk()
+From:   Qian Cai <cai@lca.pw>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        sergey.senozhatsky.work@gmail.com, rostedt@goodmis.org,
+        peterz@infradead.org, linux-mm@kvack.org,
+        john.ogness@linutronix.de, akpm@linux-foundation.org,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        PeterOberparleiter <oberpar@linux.ibm.com>, david@redhat.com,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 09 Oct 2019 10:46:14 -0400
+In-Reply-To: <20191009142438.yx74ukfqwy2hr4fz@pathway.suse.cz>
+References: <aefe7f75-b0ec-9e99-a77e-87324edb24e0@de.ibm.com>
+         <1570550917.5576.303.camel@lca.pw> <20191008183525.GQ6681@dhcp22.suse.cz>
+         <1570561573.5576.307.camel@lca.pw> <20191008191728.GS6681@dhcp22.suse.cz>
+         <1570563324.5576.309.camel@lca.pw>
+         <20191009114903.aa6j6sa56z2cssom@pathway.suse.cz>
+         <1570626402.5937.1.camel@lca.pw> <20191009132746.GA6681@dhcp22.suse.cz>
+         <1570628593.5937.3.camel@lca.pw>
+         <20191009142438.yx74ukfqwy2hr4fz@pathway.suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-THPs on deferred split queue got split by shrinker if memory pressure
-comes.
+On Wed, 2019-10-09 at 16:24 +0200, Petr Mladek wrote:
+> On Wed 2019-10-09 09:43:13, Qian Cai wrote:
+> > On Wed, 2019-10-09 at 15:27 +0200, Michal Hocko wrote:
+> > > On Wed 09-10-19 09:06:42, Qian Cai wrote:
+> > > [...]
+> > > > https://lore.kernel.org/linux-mm/1570460350.5576.290.camel@lca.pw/
+> > > > 
+> > > > [  297.425964] -> #1 (&port_lock_key){-.-.}:
+> > > > [  297.425967]        __lock_acquire+0x5b3/0xb40
+> > > > [  297.425967]        lock_acquire+0x126/0x280
+> > > > [  297.425968]        _raw_spin_lock_irqsave+0x3a/0x50
+> > > > [  297.425969]        serial8250_console_write+0x3e4/0x450
+> > > > [  297.425970]        univ8250_console_write+0x4b/0x60
+> > > > [  297.425970]        console_unlock+0x501/0x750
+> > > > [  297.425971]        vprintk_emit+0x10d/0x340
+> > > > [  297.425972]        vprintk_default+0x1f/0x30
+> > > > [  297.425972]        vprintk_func+0x44/0xd4
+> > > > [  297.425973]        printk+0x9f/0xc5
+> > > > [  297.425974]        register_console+0x39c/0x520
+> > > > [  297.425975]        univ8250_console_init+0x23/0x2d
+> > > > [  297.425975]        console_init+0x338/0x4cd
+> > > > [  297.425976]        start_kernel+0x534/0x724
+> > > > [  297.425977]        x86_64_start_reservations+0x24/0x26
+> > > > [  297.425977]        x86_64_start_kernel+0xf4/0xfb
+> > > > [  297.425978]        secondary_startup_64+0xb6/0xc0
+> > > > 
+> > > > where the report again show the early boot call trace for the locking
+> > > > dependency,
+> > > > 
+> > > > console_owner --> port_lock_key
+> > > > 
+> > > > but that dependency clearly not only happen in the early boot.
+> > > 
+> > > Can you provide an example of the runtime dependency without any early
+> > > boot artifacts? Because this discussion really doens't make much sense
+> > > without a clear example of a _real_ lockdep report that is not a false
+> > > possitive. All of them so far have been concluded to be false possitive
+> > > AFAIU.
+> > 
+> > An obvious one is in the above link. Just replace the trace in #1 above with
+> > printk() from anywhere, i.e., just ignore the early boot calls there as they are
+> >  not important.
+> > 
+> > printk()
+> >   console_unlock()
+> >     console_lock_spinning_enable() --> console_owner_lock
+> >   call_console_drivers()
+> >     serial8250_console_write() --> port->lock
+> 
+> Please, find the location where this really happens and then suggests
+> how the real deadlock could get fixed. So far, we have seen only
+> false positives and theoretical scenarios.
 
-In absence of memory pressure, there is no bound on how long the
-deferred split queue can be. In extreme cases, deferred queue can grow
-to tens of gigabytes.
-
-It is suboptimal: even without memory pressure we can find better way to
-use the memory (page cache for instance).
-
-Make deferred_split_huge_page() to trigger a work that would split
-pages, if we have more than NR_PAGES_ON_QUEUE_TO_SPLIT on the queue.
-
-The split can fail (i.e. due to memory pinning by GUP), making the
-queue grow despite the effort. Rate-limit the work triggering to at most
-every NR_CALLS_TO_SPLIT calls of deferred_split_huge_page().
-
-NR_PAGES_ON_QUEUE_TO_SPLIT and NR_CALLS_TO_SPLIT chosen arbitrarily and
-will likely require tweaking.
-
-The patch has risk to introduce performance regressions. For system with
-plenty of free memory, triggering the split would cost CPU time (~100ms
-per GB of THPs to split).
-
-I have doubts about the approach, so:
-
-Not-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
----
- include/linux/mmzone.h |   5 ++
- mm/huge_memory.c       | 129 ++++++++++++++++++++++++++++-------------
- mm/memcontrol.c        |   3 +
- mm/page_alloc.c        |   2 +
- 4 files changed, 100 insertions(+), 39 deletions(-)
-
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index bda20282746b..f748542745ec 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -684,7 +684,12 @@ struct deferred_split {
- 	spinlock_t split_queue_lock;
- 	struct list_head split_queue;
- 	unsigned long split_queue_len;
-+	unsigned int deferred_split_calls;
-+	struct work_struct deferred_split_work;
- };
-+
-+void flush_deferred_split_queue(struct work_struct *work);
-+void flush_deferred_split_queue_memcg(struct work_struct *work);
- #endif
- 
- /*
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index c5cb6dcd6c69..bb7bef856e38 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2842,43 +2842,6 @@ void free_transhuge_page(struct page *page)
- 	free_compound_page(page);
- }
- 
--void deferred_split_huge_page(struct page *page)
--{
--	struct deferred_split *ds_queue = get_deferred_split_queue(page);
--#ifdef CONFIG_MEMCG
--	struct mem_cgroup *memcg = compound_head(page)->mem_cgroup;
--#endif
--	unsigned long flags;
--
--	VM_BUG_ON_PAGE(!PageTransHuge(page), page);
--
--	/*
--	 * The try_to_unmap() in page reclaim path might reach here too,
--	 * this may cause a race condition to corrupt deferred split queue.
--	 * And, if page reclaim is already handling the same page, it is
--	 * unnecessary to handle it again in shrinker.
--	 *
--	 * Check PageSwapCache to determine if the page is being
--	 * handled by page reclaim since THP swap would add the page into
--	 * swap cache before calling try_to_unmap().
--	 */
--	if (PageSwapCache(page))
--		return;
--
--	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
--	if (list_empty(page_deferred_list(page))) {
--		count_vm_event(THP_DEFERRED_SPLIT_PAGE);
--		list_add_tail(page_deferred_list(page), &ds_queue->split_queue);
--		ds_queue->split_queue_len++;
--#ifdef CONFIG_MEMCG
--		if (memcg)
--			memcg_set_shrinker_bit(memcg, page_to_nid(page),
--					       deferred_split_shrinker.id);
--#endif
--	}
--	spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
--}
--
- static unsigned long deferred_split_count(struct shrinker *shrink,
- 		struct shrink_control *sc)
- {
-@@ -2895,8 +2858,7 @@ static unsigned long deferred_split_count(struct shrinker *shrink,
- static unsigned long deferred_split_scan(struct shrinker *shrink,
- 		struct shrink_control *sc)
- {
--	struct pglist_data *pgdata = NODE_DATA(sc->nid);
--	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
-+	struct deferred_split *ds_queue = NULL;
- 	unsigned long flags;
- 	LIST_HEAD(list), *pos, *next;
- 	struct page *page;
-@@ -2906,6 +2868,10 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
- 	if (sc->memcg)
- 		ds_queue = &sc->memcg->deferred_split_queue;
- #endif
-+	if (!ds_queue) {
-+		struct pglist_data *pgdata = NODE_DATA(sc->nid);
-+		ds_queue = &pgdata->deferred_split_queue;
-+	}
- 
- 	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
- 	/* Take pin on all head pages to avoid freeing them under us */
-@@ -2957,6 +2923,91 @@ static struct shrinker deferred_split_shrinker = {
- 		 SHRINKER_NONSLAB,
- };
- 
-+static void __flush_deferred_split_queue(struct pglist_data *pgdata,
-+		struct mem_cgroup *memcg)
-+{
-+	struct shrink_control sc;
-+
-+	sc.nid = pgdata ? pgdata->node_id : 0;
-+	sc.memcg = memcg;
-+	sc.nr_to_scan = 0; /* Unlimited */
-+
-+	deferred_split_scan(NULL, &sc);
-+}
-+
-+void flush_deferred_split_queue(struct work_struct *work)
-+{
-+	struct deferred_split *ds_queue;
-+	struct pglist_data *pgdata;
-+
-+	ds_queue = container_of(work, struct deferred_split,
-+			deferred_split_work);
-+	pgdata = container_of(ds_queue, struct pglist_data,
-+			deferred_split_queue);
-+	__flush_deferred_split_queue(pgdata, NULL);
-+}
-+
-+#ifdef CONFIG_MEMCG
-+void flush_deferred_split_queue_memcg(struct work_struct *work)
-+{
-+	struct deferred_split *ds_queue;
-+	struct mem_cgroup *memcg;
-+
-+	ds_queue = container_of(work, struct deferred_split,
-+			deferred_split_work);
-+	memcg = container_of(ds_queue, struct mem_cgroup,
-+			deferred_split_queue);
-+	__flush_deferred_split_queue(NULL, memcg);
-+}
-+#endif
-+
-+#define NR_CALLS_TO_SPLIT 32
-+#define NR_PAGES_ON_QUEUE_TO_SPLIT 16
-+
-+void deferred_split_huge_page(struct page *page)
-+{
-+	struct deferred_split *ds_queue = get_deferred_split_queue(page);
-+#ifdef CONFIG_MEMCG
-+	struct mem_cgroup *memcg = compound_head(page)->mem_cgroup;
-+#endif
-+	unsigned long flags;
-+
-+	VM_BUG_ON_PAGE(!PageTransHuge(page), page);
-+
-+	/*
-+	 * The try_to_unmap() in page reclaim path might reach here too,
-+	 * this may cause a race condition to corrupt deferred split queue.
-+	 * And, if page reclaim is already handling the same page, it is
-+	 * unnecessary to handle it again in shrinker.
-+	 *
-+	 * Check PageSwapCache to determine if the page is being
-+	 * handled by page reclaim since THP swap would add the page into
-+	 * swap cache before calling try_to_unmap().
-+	 */
-+	if (PageSwapCache(page))
-+		return;
-+
-+	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
-+	if (list_empty(page_deferred_list(page))) {
-+		count_vm_event(THP_DEFERRED_SPLIT_PAGE);
-+		list_add_tail(page_deferred_list(page), &ds_queue->split_queue);
-+		ds_queue->split_queue_len++;
-+		ds_queue->deferred_split_calls++;
-+#ifdef CONFIG_MEMCG
-+		if (memcg)
-+			memcg_set_shrinker_bit(memcg, page_to_nid(page),
-+					       deferred_split_shrinker.id);
-+#endif
-+	}
-+
-+	if (ds_queue->split_queue_len > NR_PAGES_ON_QUEUE_TO_SPLIT &&
-+			ds_queue->deferred_split_calls > NR_CALLS_TO_SPLIT) {
-+		ds_queue->deferred_split_calls = 0;
-+		schedule_work(&ds_queue->deferred_split_work);
-+	}
-+	spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
-+}
-+
- #ifdef CONFIG_DEBUG_FS
- static int split_huge_pages_set(void *data, u64 val)
- {
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index c313c49074ca..67305ec75fdc 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -5085,6 +5085,9 @@ static struct mem_cgroup *mem_cgroup_alloc(void)
- 	spin_lock_init(&memcg->deferred_split_queue.split_queue_lock);
- 	INIT_LIST_HEAD(&memcg->deferred_split_queue.split_queue);
- 	memcg->deferred_split_queue.split_queue_len = 0;
-+	memcg->deferred_split_queue.deferred_split_calls = 0;
-+	INIT_WORK(&memcg->deferred_split_queue.deferred_split_work,
-+			flush_deferred_split_queue_memcg);
- #endif
- 	idr_replace(&mem_cgroup_idr, memcg, memcg->id.id);
- 	return memcg;
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 15c2050c629b..2f52e538a26f 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -6674,6 +6674,8 @@ static void pgdat_init_split_queue(struct pglist_data *pgdat)
- 	spin_lock_init(&ds_queue->split_queue_lock);
- 	INIT_LIST_HEAD(&ds_queue->split_queue);
- 	ds_queue->split_queue_len = 0;
-+	ds_queue->deferred_split_calls = 0;
-+	INIT_WORK(&ds_queue->deferred_split_work, flush_deferred_split_queue);
- }
- #else
- static void pgdat_init_split_queue(struct pglist_data *pgdat) {}
--- 
-2.21.0
-
+Now the bar is higher again. You are now asking me to actually trigger this
+potential deadlock live. I am probably better off buying some lottery tickets
+then if I could be that lucky.
