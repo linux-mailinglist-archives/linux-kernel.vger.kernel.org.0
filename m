@@ -2,155 +2,389 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F9D2D124D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 17:22:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E176FD124F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 17:22:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731461AbfJIPWA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 11:22:00 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:4482 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731340AbfJIPV7 (ORCPT
+        id S1731571AbfJIPWO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 11:22:14 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40167 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728019AbfJIPWN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 11:21:59 -0400
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x99FJqe5024453;
-        Wed, 9 Oct 2019 08:21:46 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=RSwVoYYtqeQs0uAmApLtNxJN96yWZ5eQLOSAfu1Rjeo=;
- b=l8MZnwbcB7mn5jXy8IwMSnhfyOFX1WyiDvP4fm6NfVf6HBQ06aYBW41gQK4M/rcpKAk7
- t/zUE63EjX3gv3Wx7Z9kJUgAunMBOCvUc2RdKlb7/YDzk941pw9Gl+YwWXuAyXyxvwmy
- jxDZMQPKqlBAQ23BkpC2B1SekiunOj6h30s= 
-Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2vgbjxj5w6-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Wed, 09 Oct 2019 08:21:45 -0700
-Received: from prn-mbx07.TheFacebook.com (2620:10d:c081:6::21) by
- prn-hub03.TheFacebook.com (2620:10d:c081:35::127) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1713.5; Wed, 9 Oct 2019 08:21:44 -0700
-Received: from prn-hub04.TheFacebook.com (2620:10d:c081:35::128) by
- prn-mbx07.TheFacebook.com (2620:10d:c081:6::21) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1713.5; Wed, 9 Oct 2019 08:21:44 -0700
-Received: from NAM04-BN3-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.28) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
- via Frontend Transport; Wed, 9 Oct 2019 08:21:44 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UP05cgeKjvmgpxLLsGHgAhcPg0WTlVl3oLbPixiZCKkgSHIXpkXgvB3wUcCVvbIXbP7akuvYey61U0nZDRhA/hhogXthwNFKlxJUTlR8cknuWT+dZ0GMq7y8onFTIqJ3sWZ4HPRVAycoOcPnYOaZscceeVDFxg1HfyMlDlSHI99ku0OhQ3Ko1VskAjBayjJ9vYvDL1JVzVnDg832uv6zDCEUMbioGP2QLP9iAt/lTkjss8IR8viD0E0W9U+UILFWcSrDVMKld6ueFiN+uhMitaqo2VeRODWtXNw3XmSwQ7aFUdzZdSGghMhNoURpAjjsnYWQnPD0y6ZslS1KFNQlCQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RSwVoYYtqeQs0uAmApLtNxJN96yWZ5eQLOSAfu1Rjeo=;
- b=ZGxe3kwEUe2K0GkolfkBE22tnQb7LUXwtRhfv/TQN67I2BqKWA5QttWs56RCOEHU1NUS++su/jc7Ai8SRzHvYuZ+EMpTgoiJtZHOgnIZg++XfDF+toZGfvEQ3AmBrBqyDuC5QtWCmtIaR9x7xeo06zph4KGw8QmlF57zujJ5qg7JnCjT2MEN0bEyW59FlqDRoaw6FWyJbiqNLPzhh7sWyhlI9gwTxJB4aCibcY9SAuRTr4I7G3m7WNoN8C0WpuLn3cJcQ8ksiXz0y+Z0VWIWrXPlqdV4Hp2zBwP2kxLS7rUVu6D50YC+g+LdHSLqTkqn1h8wW4bmZI3Yt/iBrGQjug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RSwVoYYtqeQs0uAmApLtNxJN96yWZ5eQLOSAfu1Rjeo=;
- b=T3/HR+pFzcFE/CZ7ccAkBl1d4dVUAJsjZmHTgZTa8EElS2ME2kr+MAe8RZqKHgLREJ1ihsLZm+E96LOFLmZUGufns8+jFgtp1coVHdmVU5x3n1NvCFq+QqiD4aOarlgI0Tq18pTzYDwMDy24V2FTWMRZ36mK6s8gLI2YfxwWD0s=
-Received: from BN8PR15MB2626.namprd15.prod.outlook.com (20.179.137.220) by
- BN8PR15MB3411.namprd15.prod.outlook.com (20.179.75.221) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.16; Wed, 9 Oct 2019 15:21:42 +0000
-Received: from BN8PR15MB2626.namprd15.prod.outlook.com
- ([fe80::dde5:821f:4571:dea4]) by BN8PR15MB2626.namprd15.prod.outlook.com
- ([fe80::dde5:821f:4571:dea4%5]) with mapi id 15.20.2327.026; Wed, 9 Oct 2019
- 15:21:42 +0000
-From:   Roman Gushchin <guro@fb.com>
-To:     Oleg Nesterov <oleg@redhat.com>
-CC:     Tejun Heo <tj@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Richard Purdie <richard.purdie@linuxfoundation.org>,
-        Bruce Ashfield <bruce.ashfield@gmail.com>
-Subject: Re: [PATCH] cgroup: freezer: call cgroup_enter_frozen() with
- preemption disabled in ptrace_stop()
-Thread-Topic: [PATCH] cgroup: freezer: call cgroup_enter_frozen() with
- preemption disabled in ptrace_stop()
-Thread-Index: AQHVfrKaoLG3P0+w5kG0208VkVoMq6dSbRUA
-Date:   Wed, 9 Oct 2019 15:21:41 +0000
-Message-ID: <20191009152136.GA19519@castle.dhcp.thefacebook.com>
-References: <CADkTA4PBT374CY+UNb85WjQEaNCDodMZu=MgpG8aMYbAu2eOGA@mail.gmail.com>
- <20191009150230.GB12511@redhat.com>
-In-Reply-To: <20191009150230.GB12511@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR13CA0020.namprd13.prod.outlook.com
- (2603:10b6:300:16::30) To BN8PR15MB2626.namprd15.prod.outlook.com
- (2603:10b6:408:c7::28)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:180::7da4]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 106cf5e9-b35e-45fc-9f9e-08d74ccc6338
-x-ms-traffictypediagnostic: BN8PR15MB3411:
-x-microsoft-antispam-prvs: <BN8PR15MB3411CF3C896DB8A754F8B6D0BE950@BN8PR15MB3411.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3826;
-x-forefront-prvs: 018577E36E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(346002)(136003)(396003)(39860400002)(199004)(189003)(14454004)(4744005)(386003)(486006)(25786009)(476003)(1076003)(11346002)(6116002)(478600001)(446003)(6506007)(102836004)(64756008)(66556008)(66476007)(66946007)(99286004)(66446008)(76176011)(52116002)(2906002)(186003)(46003)(7736002)(33656002)(305945005)(14444005)(6916009)(9686003)(6512007)(316002)(229853002)(6436002)(54906003)(8936002)(8676002)(6486002)(81166006)(81156014)(256004)(71190400001)(71200400001)(6246003)(86362001)(4326008)(5660300002);DIR:OUT;SFP:1102;SCL:1;SRVR:BN8PR15MB3411;H:BN8PR15MB2626.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: d7xgJ4CftQJljvMhhSJAYVZds3DGy6j2b3ZvKwqoaY1T6HtwqjkgpTIHsDSx6FSKX3XBB6qF/74GpY18kHO8eRjlgZgW91ZQKFmvbFB+XYyiUR/f2KegkHFy2oKM51Lf2tHGv5vYn3GieSg9CXEeH1E/HpW0KLqJEw4GWXeE02FqgHxQ8c/uuEz/UhQYrgWEv+nL0YMgHi1zwmoo1uvwTDoB640TXm64hDJxjDJYVwlL5legzUA5yeyrNRf6T7g1jW+ctoZ/KOxrZnWwwlT7Jwqhd0QTsKmJYuT8+e471zLQA0ij1bmoQRgKRvdcDNa/K1Tzjgih0P+hcMP39fi7DqZsR8avTI8eVnGA3FvIwPY+sBoSvIrBnUwK5ikc4NDNleXBuJf3bNmS8rc5zPRxL+Tc/55F8sEBPf00MzKUWII=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <67F1D49F8697B644929005C8CFB08CD8@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 106cf5e9-b35e-45fc-9f9e-08d74ccc6338
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2019 15:21:41.9997
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: VtPRD3LN+Zl5FO7i82cIXpcreBnS9kpyl/BL3TYRcQC0aVqjB0NhiI9Hsz5aOUWR
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR15MB3411
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-09_07:2019-10-08,2019-10-09 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 impostorscore=0
- priorityscore=1501 mlxscore=0 adultscore=0 lowpriorityscore=0 spamscore=0
- phishscore=0 suspectscore=0 clxscore=1015 mlxlogscore=876 bulkscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1910090143
-X-FB-Internal: deliver
+        Wed, 9 Oct 2019 11:22:13 -0400
+Received: by mail-pf1-f196.google.com with SMTP id x127so1833172pfb.7
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 08:22:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=z9gZT9Y5q7C0nyO0S/r5bAREixzFKTbr+XkZ/nuD2t8=;
+        b=UOIY/DCyDndkA/jbITAYPoEb7NQFCPhb2rKl+OYRTqVSNcTszDQYN6tu1BM1f/le6U
+         3P6aaDnXA2VZYoQgxJF49dop4K1cAUtt3Wy6yFFaJKum1/CSttXIdggCYyhPGRneBAYI
+         igh7Uhq5BNKkSESmXAQNXbUaPT1/mHJx1hPKn1chyevPRJPmXGW0DRZyENrtSCEojNJ0
+         kBWo0xYZrpVMlq99pj0zYuVCFGlpj3hSPXQ+X4lWyKlxYJUw71PagQqaO/VPl67a45BN
+         1Qv60q6czy4syvYXLZJYwIVQ5AiWYDwSFqfvQEjNc/zO/qka6qCTB6dJzruFx1rFPwK5
+         12mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=z9gZT9Y5q7C0nyO0S/r5bAREixzFKTbr+XkZ/nuD2t8=;
+        b=CFhf8U92VxXYuVyGL5UdxcV/JeSELgIM2EnnPGjpiNd/zZ4y4sFbBP+F5oa/tNKyO6
+         l9B//hllj4eI0nFodOSxXh3dhNdfs9CanStg7SQaSj/wCFhSKKVuuV4qebKEecpJ4OuU
+         gNcgks2xMDzPzB7LRd1ZcQywotS0dzNNuNsEDdZkoMZruP4q92r7uAg8eQBkjnoQQ5ek
+         iAt3GNxJ7UJO0MAE8WmtV6qsaiwV11+44kkmu5jxoKnaSwQ8Wm1cMRcoFM+AMOCUW2Ed
+         7W1UhO76WLnoTMDF3bLOM0bRLO+zUf8U+YX00ZpDPmkuMuGU0MIKL+9DeWh0qrvHvywm
+         FXRQ==
+X-Gm-Message-State: APjAAAWEdl8m0vMb4+mBJqPWTguX1NSjj3O067O76UxZIq7PYkdPkfZh
+        sE1nf2pZ21tUnmKfDqt0L/NccQ==
+X-Google-Smtp-Source: APXvYqxG/STWnWlGGZwJMXcKncUSJzgqNB44RULlO91bF0/ykeIzJB0NU8da+1lBLQQUTsrlDNWFtA==
+X-Received: by 2002:a63:f750:: with SMTP id f16mr4938179pgk.206.1570634532165;
+        Wed, 09 Oct 2019 08:22:12 -0700 (PDT)
+Received: from localhost.localdomain ([85.203.47.40])
+        by smtp.gmail.com with ESMTPSA id h68sm3279597pfb.149.2019.10.09.08.22.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 09 Oct 2019 08:22:11 -0700 (PDT)
+From:   Zhangfei Gao <zhangfei.gao@linaro.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, jonathan.cameron@huawei.com,
+        grant.likely@arm.com, jean-philippe <jean-philippe@linaro.org>,
+        ilias.apalodimas@linaro.org, francois.ozog@linaro.org,
+        kenneth-lee-2012@foxmail.com, Wangzhou <wangzhou1@hisilicon.com>
+Cc:     linux-accelerators@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Kenneth Lee <liguozhu@hisilicon.com>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        Zhangfei Gao <zhangfei.gao@linaro.org>
+Subject: [RESEND PATCH v4 1/2] uacce: Add documents for uacce
+Date:   Wed,  9 Oct 2019 23:21:41 +0800
+Message-Id: <1570634502-20923-2-git-send-email-zhangfei.gao@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1570634502-20923-1-git-send-email-zhangfei.gao@linaro.org>
+References: <1570634502-20923-1-git-send-email-zhangfei.gao@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 05:02:30PM +0200, Oleg Nesterov wrote:
-> ptrace_stop() does preempt_enable_no_resched() to avoid the preemption,
-> but after that cgroup_enter_frozen() does spin_lock/unlock and this adds
-> another preemption point.
->=20
-> Reported-and-tested-by: Bruce Ashfield <bruce.ashfield@gmail.com>
-> Fixes: 76f969e8948d ("cgroup: cgroup v2 freezer")
-> Cc: stable@vger.kernel.org # v5.2+
-> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-> ---
->  kernel/signal.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/kernel/signal.c b/kernel/signal.c
-> index 534fec2..f8eed86 100644
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -2205,8 +2205,8 @@ static void ptrace_stop(int exit_code, int why, int=
- clear_code, kernel_siginfo_t
->  		 */
->  		preempt_disable();
->  		read_unlock(&tasklist_lock);
-> -		preempt_enable_no_resched();
->  		cgroup_enter_frozen();
-> +		preempt_enable_no_resched();
+From: Kenneth Lee <liguozhu@hisilicon.com>
 
-Acked-by: Roman Gushchin <guro@fb.com>
+Uacce (Unified/User-space-access-intended Accelerator Framework) is
+a kernel module targets to provide Shared Virtual Addressing (SVA)
+between the accelerator and process.
 
-Thank you!
+This patch add document to explain how it works.
+
+Signed-off-by: Kenneth Lee <liguozhu@hisilicon.com>
+Signed-off-by: Zaibo Xu <xuzaibo@huawei.com>
+Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
+Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
+---
+ Documentation/misc-devices/uacce.rst | 297 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 297 insertions(+)
+ create mode 100644 Documentation/misc-devices/uacce.rst
+
+diff --git a/Documentation/misc-devices/uacce.rst b/Documentation/misc-devices/uacce.rst
+new file mode 100644
+index 0000000..b3cf0d5
+--- /dev/null
++++ b/Documentation/misc-devices/uacce.rst
+@@ -0,0 +1,297 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++Introduction of Uacce
++=========================
++
++Uacce (Unified/User-space-access-intended Accelerator Framework) targets to
++provide Shared Virtual Addressing (SVA) between accelerators and processes.
++So accelerator can access any data structure of the main cpu.
++This differs from the data sharing between cpu and io device, which share
++data content rather than address.
++Because of the unified address, hardware and user space of process can
++share the same virtual address in the communication.
++Uacce takes the hardware accelerator as a heterogeneous processor, while
++IOMMU share the same CPU page tables and as a result the same translation
++from va to pa.
++
++	 __________________________       __________________________
++	|                          |     |                          |
++	|  User application (CPU)  |     |   Hardware Accelerator   |
++	|__________________________|     |__________________________|
++
++	             |                                 |
++	             | va                              | va
++	             V                                 V
++                 __________                        __________
++                |          |                      |          |
++                |   MMU    |                      |  IOMMU   |
++                |__________|                      |__________|
++		     |                                 |
++	             |                                 |
++	             V pa                              V pa
++		 _______________________________________
++		|                                       |
++		|              Memory                   |
++		|_______________________________________|
++
++
++
++Architecture
++------------
++
++Uacce is the kernel module, taking charge of iommu and address sharing.
++The user drivers and libraries are called WarpDrive.
++
++A virtual concept, queue, is used for the communication. It provides a
++FIFO-like interface. And it maintains a unified address space between the
++application and all involved hardware.
++
++                             ___________________                  ________________
++                            |                   |   user API     |                |
++                            | WarpDrive library | ------------>  |  user driver   |
++                            |___________________|                |________________|
++                                     |                                    |
++                                     |                                    |
++                                     | queue fd                           |
++                                     |                                    |
++                                     |                                    |
++                                     v                                    |
++     ___________________         _________                                |
++    |                   |       |         |                               | mmap memory
++    | Other framework   |       |  uacce  |                               | r/w interface
++    | crypto/nic/others |       |_________|                               |
++    |___________________|                                                 |
++             |                       |                                    |
++             | register              | register                           |
++             |                       |                                    |
++             |                       |                                    |
++             |                _________________       __________          |
++             |               |                 |     |          |         |
++              -------------  |  Device Driver  |     |  IOMMU   |         |
++                             |_________________|     |__________|         |
++                                     |                                    |
++                                     |                                    V
++                                     |                            ___________________
++                                     |                           |                   |
++                                     --------------------------  |  Device(Hardware) |
++                                                                 |___________________|
++
++
++How does it work
++================
++
++Uacce uses mmap and IOMMU to play the trick.
++
++Uacce create a chrdev for every device registered to it. New queue is
++created when user application open the chrdev. The file descriptor is used
++as the user handle of the queue.
++The accelerator device present itself as an Uacce object, which exports as
++chrdev to the user space. The user application communicates with the
++hardware by ioctl (as control path) or share memory (as data path).
++
++The control path to the hardware is via file operation, while data path is
++via mmap space of the queue fd.
++
++The queue file address space:
++
++enum uacce_qfrt {
++	UACCE_QFRT_MMIO = 0,	/* device mmio region */
++	UACCE_QFRT_DKO = 1,	/* device kernel-only region */
++	UACCE_QFRT_DUS = 2,	/* device user share region */
++	UACCE_QFRT_SS = 3,	/* static shared memory (for non-sva devices) */
++	UACCE_QFRT_MAX = 16,
++};
++
++All regions are optional and differ from device type to type. The
++communication protocol is wrapped by the user driver.
++
++The device mmio region is mapped to the hardware mmio space. It is generally
++used for doorbell or other notification to the hardware. It is not fast enough
++as data channel.
++
++The device kernel-only region is necessary only if the device IOMMU has no
++PASID support or it cannot send kernel-only address request. In this case, if
++kernel need to share memory with the device, kernel has to share iova address
++space with the user process via mmap, to prevent iova conflict.
++
++The device user share region is used for share data buffer between user process
++and device. It can be merged into other regions. But a separated region can help
++on device state management. For example, the device can be started when this
++region is mapped.
++
++The static share virtual memory region is used for share data buffer with the
++device and can be shared among queues / devices.
++Its size is set according to the application requirement.
++
++
++The user API
++------------
++
++We adopt a polling style interface in the user space: ::
++
++	int wd_request_queue(struct wd_queue *q);
++	void wd_release_queue(struct wd_queue *q);
++	int wd_send(struct wd_queue *q, void *req);
++	int wd_recv(struct wd_queue *q, void **req);
++	int wd_recv_sync(struct wd_queue *q, void **req);
++	void wd_flush(struct wd_queue *q);
++
++wd_recv_sync() is a wrapper to its non-sync version. It will trap into
++kernel and wait until the queue become available.
++
++If the queue do not support SVA/SVM. The following helper functions
++can be used to create Static Virtual Share Memory: ::
++
++	void *wd_reserve_memory(struct wd_queue *q, size_t size);
++	int wd_share_reserved_memory(struct wd_queue *q,
++				     struct wd_queue *target_q);
++
++The user API is not mandatory. It is simply a suggestion and hint what the
++kernel interface is supposed to be.
++
++
++The user driver
++---------------
++
++The queue file mmap space will need a user driver to wrap the communication
++protocol. Uacce provides some attributes in sysfs for the user driver to
++match the right accelerator accordingly.
++More details in Documentation/ABI/testing/sysfs-driver-uacce.
++
++
++The Uacce register API
++-----------------------
++The register API is defined in uacce.h.
++
++struct uacce_interface {
++	char name[32];
++	unsigned int flags;
++	struct uacce_ops *ops;
++};
++
++According to the IOMMU capability, uacce_interface flags can be:
++
++UACCE_DEV_SVA (0x1)
++	Support shared virtual address
++
++UACCE_DEV_SHARE_DOMAIN (0)
++	This is used for device which does not support pasid.
++
++struct uacce_device *uacce_register(struct device *parent,
++				    struct uacce_interface *interface);
++void uacce_unregister(struct uacce_device *uacce);
++
++uacce_register resultes can be:
++a. If uacce module is not compiled, ERR_PTR(-ENODEV)
++b. Succeed with the desired flags
++c. Succeed with the negotiated flags, for example
++   uacce_interface.flags = UACCE_DEV_SVA but uacce->flags = ~UACCE_DEV_SVA
++So user driver need check return value as well as the negotiated uacce->flags.
++
++
++The Memory Sharing Model
++------------------------
++The perfect form of a Uacce device is to support SVM/SVA. We built this upon
++Jean Philippe Brucker's SVA patches. [1]
++
++If the hardware support UACCE_DEV_SVA, the user process's page table is
++shared to the opened queue. So the device can access any address in the
++process address space.
++And it can raise a page fault if the physical page is not available yet.
++It can also access the address in the kernel space, which is referred by
++another page table particular to the kernel. Most of IOMMU implementation can
++handle this by a tag on the address request of the device. For example, ARM
++SMMU uses SSV bit to indicate that the address request is for kernel or user
++space.
++Queue file regions can be used:
++UACCE_QFRT_MMIO: device mmio region (map to user)
++UACCE_QFRT_DUS: device user share (map to dev and user)
++
++If the device does not support UACCE_DEV_SVA, Uacce allow only one process at
++the same time. DMA API cannot be used as well, since Uacce will create an
++unmanaged iommu_domain for the device.
++Queue file regions can be used:
++UACCE_QFRT_MMIO: device mmio region (map to user)
++UACCE_QFRT_DKO: device kernel-only (map to dev, no user)
++UACCE_QFRT_DUS: device user share (map to dev and user)
++UACCE_QFRT_SS:  static share memory (map to devs and user)
++
++
++The Folk Scenario
++=================
++For a process with allocated queues and shared memory, what happen if it forks
++a child?
++
++The fd of the queue will be duplicated on folk, so the child can send request
++to the same queue as its parent. But the requests which is sent from processes
++except for the one who opens the queue will be blocked.
++
++It is recommended to add O_CLOEXEC to the queue file.
++
++The queue mmap space has a VM_DONTCOPY in its VMA. So the child will lose all
++those VMAs.
++
++This is a reason why Uacce does not adopt the mode used in VFIO and
++InfiniBand.  Both solutions can set any user pointer for hardware sharing.
++But they cannot support fork when the dma is in process. Or the
++"Copy-On-Write" procedure will make the parent process lost its physical
++pages.
++
++
++Difference to the VFIO and IB framework
++---------------------------------------
++The essential function of Uacce is to let the device access the user
++address directly. There are many device drivers doing the same in the kernel.
++And both VFIO and IB can provide similar function in framework level.
++
++But Uacce has a different goal: "share address space". It is
++not taken the request to the accelerator as an enclosure data structure. It
++takes the accelerator as another thread of the same process. So the
++accelerator can refer to any address used by the process.
++
++Both VFIO and IB are taken this as "memory sharing", not "address sharing".
++They care more on sharing the block of memory. But if there is an address
++stored in the block and referring to another memory region. The address may
++not be valid.
++
++By adding more constraints to the VFIO and IB framework, in some sense, we may
++achieve a similar goal. But we gave it up finally. Both VFIO and IB have extra
++assumption which is unnecessary to Uacce. They may hurt each other if we
++try to merge them together.
++
++VFIO manages resource of a hardware as a "virtual device". If a device need to
++serve a separated application. It must isolate the resource as a separate
++virtual device.  And the life cycle of the application and virtual device are
++unnecessary unrelated. And most concepts, such as bus, driver, probe and
++so on, to make it as a "device" is unnecessary either. And the logic added to
++VFIO to make address sharing do no help on "creating a virtual device".
++
++IB creates a "verbs" standard for sharing memory region to another remote
++entity.  Most of these verbs are to make memory region between entities to be
++synchronized.  This is not what accelerator need. Accelerator is in the same
++memory system with the CPU. It refers to the same memory system among CPU and
++devices. So the local memory terms/verbs are good enough for it. Extra "verbs"
++are not necessary. And its queue (like queue pair in IB) is the communication
++channel direct to the accelerator hardware. There is nothing about memory
++itself.
++
++Further, both VFIO and IB use the "pin" (get_user_page) way to lock local
++memory in place.  This is flexible. But it can cause other problems. For
++example, if the user process fork a child process. The COW procedure may make
++the parent process lost its pages which are sharing with the device. These may
++be fixed in the future. But is not going to be easy. (There is a discussion
++about this on Linux Plumbers Conference 2018 [2])
++
++So we choose to build the solution directly on top of IOMMU interface. IOMMU
++is the essential way for device and process to share their page mapping from
++the hardware perspective. It will be safe to create a software solution on
++this assumption.  Uacce manages the IOMMU interface for the accelerator
++device, so the device driver can export some of the resources to the user
++space. Uacce than can make sure the device and the process have the same
++address space.
++
++
++References
++==========
++.. [1] http://jpbrucker.net/sva/
++.. [2] https://lwn.net/Articles/774411/
+-- 
+2.7.4
+
