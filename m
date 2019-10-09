@@ -2,30 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3E5DD1C8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 01:18:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58448D1C8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 01:18:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732322AbfJIXSW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 19:18:22 -0400
-Received: from padbanking.net ([31.220.0.186]:56851 "EHLO
+        id S1732199AbfJIXSU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 19:18:20 -0400
+Received: from padbanking.net ([31.220.0.186]:46119 "EHLO
         slot0.jntechglass.com" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1731542AbfJIXSV (ORCPT
+        with ESMTP id S1731542AbfJIXST (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 19:18:21 -0400
+        Wed, 9 Oct 2019 19:18:19 -0400
+X-Greylist: delayed 4347 seconds by postgrey-1.27 at vger.kernel.org; Wed, 09 Oct 2019 19:18:19 EDT
 DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; s=dkim; d=jntechglass.com;
  h=Content-Type:MIME-Version:Content-Transfer-Encoding:Content-Description:Subject:To:From:Date:Reply-To:Message-ID; i=admin@jntechglass.com;
  bh=hQv2xyHgiip2TLUF6aUMYcSIgrQ=;
- b=P++lm5bbDaCr+P5l5CvQ0duYUBFxUO2RsSKuGeh2oPj45LAb1t5fJHWp0he/ocWPLXExoTE8KpBq
-   520Ff5Lhxve033ZYXPIOT8JbaGUnkk3xRrxVt3YlePKUKhJUIwa495D9gV1UQS5tao4/KDQpMWLz
-   VUq4nYjk/OlmqHwRDLT8qVTLY+nx2t+A6/mdzGY9pdonvu3XPqEh4pTlopjjjWixXHrcbuVwF5eq
-   xP4TWeSyfdNMFNFoesUBspBDhtL/q2u0LRBPQ5Ys5Hs3+fStBF+fEpsGUMrFNWCn32TvtWW+dDsY
-   JizMkprzB65HyoHyIRFBxTpc5GAHruThFHQX7g==
+ b=E/NUqKjtns4+qhU6zpXo7epBO6WOYhHO3i4Y2pdAlRprVHDKNWOBQxB964AYVbkvieO+rPoat4RR
+   DNWw3q4zOdpmRCIvcVJ83j/Dgc2bnO/LiirLP1iEfhJV803uMk6oE6gkcI4wtLQ3F/7VWZJNCqFk
+   M5QZ4uQuDkJJU+1oJjPVjqJecmThTJ3hA7ReJCr4FaltKqE8ONTzGPUB0O1n8+ZT75MfYMgbGJNK
+   1PQXnyg9EgWyL6JhbqIzD7D3UN3Py7SIibHcyup0UKOhf+PIi0eCkK2iGSltdxE4+MSksFJGj4Ba
+   0hHz6fydu9bl6FXFN1LY+wY7dTDkxkZthIVgnw==
 DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns; s=dkim; d=jntechglass.com;
- b=IY4Eg+SMhJf+V87jdzAw/X2o/q1X1zoHnytTWJzuR7E5ZMsC/TDLsZGWzcIJwHM0JLvSQBocm8Dh
-   qxGmV+ZJnnEzqs7t0AfhiJYFXvY5iXuzbsOZpof2PZ2xuyQMOLEaFa/5IGtcTS6iEwegme3KkK/g
-   oZVT1Wnmd/4W9qnEoUBAvY1XfB4zpq/y7IZie9lWM+QaRZfmd73lvkphuegesSS/6MzSGxzTujak
-   +21zZHR3kE3MgqBXOukXtVsMoC/j6RVebNzQ3wyHKwX96ISEqpCyiI4yfrx7hOJm7ghsg4L8QRIa
-   8y/UvcC1L3V8fG/RiudnIp2hLYn9HkT6FVbq1Q==;
+ b=hmbd1pzVklMBE9umisuReK/NSqwVsp/K1xtQHD8gU+fmawwT3U9bL84Ux+GdtNRkrh/XeEZdlqHE
+   KM9gAUHVRR6MTdUW0MGqNaDoIbhYk5g7bWnymZI1Q5p/yzzS0LrAZ9syKk8/+wOj+/XJeIO1LVLO
+   9fH/7lPYlulys7gHbgDYImb1r7Ky8WAIGTD5dWCLxZenSTCw7vO/LvBMkPgNOD6FRg+RWdxJYCfv
+   vMNLjm9qnbeTAm5qgRUSApKVktyk2HhC2yTgcMdW8iXEIMr/JmDU2T1U7VMph2LseycpVgNn0Mgr
+   +9w9eQQE92pOEtdftEA0ZBkQtYZXZhkQ/9X09A==;
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -33,9 +34,9 @@ Content-Description: Mail message body
 Subject: =?utf-8?q?Wohlt=C3=A4tige_Spende=3A_=E2=82=AC_2=2C000=2C000-00_EUR?=
 To:     Recipients <admin@jntechglass.com>
 From:   "Herr Richard Wahl" <admin@jntechglass.com>
-Date:   Wed, 09 Oct 2019 14:43:44 -0700
+Date:   Wed, 09 Oct 2019 15:19:43 -0700
 Reply-To: myburghhugohendrik@gmail.com
-Message-ID: <0.0.26B.6AA.1D57EEA9E8FD5DE.0@slot0.jntechglass.com>
+Message-ID: <0.0.4A.65B.1D57EEFA505AB00.0@slot0.jntechglass.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
