@@ -2,158 +2,252 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12638D11DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 16:58:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 093E8D11EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 17:00:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731291AbfJIO6R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 10:58:17 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39107 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728019AbfJIO6Q (ORCPT
+        id S1731598AbfJIPAg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 11:00:36 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:37197 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729644AbfJIPAg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 10:58:16 -0400
-Received: by mail-wr1-f68.google.com with SMTP id r3so3428806wrj.6;
-        Wed, 09 Oct 2019 07:58:15 -0700 (PDT)
+        Wed, 9 Oct 2019 11:00:36 -0400
+Received: by mail-oi1-f196.google.com with SMTP id i16so2020571oie.4
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 08:00:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bLOSHRRPDzF4u9wV1pAUxn+EtmiKCY8TCQWeWSJQ6Uo=;
-        b=OYuPtr1jHzPRfv++Z2pCkoqLuGO/0+qLoBHw9RCheLRJMgSMKtaoTukrtr+lCdWivc
-         jE0dSWd/VHkytRBntY3rh029k9/55x66tZhRxtPQCmxtwpvNb6V4J8TRdMP1SGBp1FkB
-         e1aKT53MDA9G/4sgbLJzaWAt4ctbVmjqdxlkl0FXWKlk95JNfVajJmpI9ydLJ0n+y/eW
-         Du/txE1OMchSZGkIlhVzo7xXk1iNsCsNPZFv+dWmIgtNSCAHdePd+2pTeTEzssDhyiPw
-         W1f9LWAFCXKKZ8uFc8+8m/sPYN4lb1DKUYldNzxDewYdpm+wCva3BgwXIhh8dXEjOdyN
-         PMWA==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ut10a4G8K7hTMXl6//BmSb4hIjvYhn5dvYI1LmSgCOw=;
+        b=MGcSnGnxSYoBepUW47fuuVDs9AqP+d48cS4ZdmQrMoUGjayvpr03MFQFEOZ0YJEvUv
+         bIql3w1CC1pQfX52lo0qAl7NGSSJnQR+EU6sOq+L0M85u/XGsO1njJuobx94unFSvBTU
+         SnBHyy4lz1BTHzfXUADrGu8G5dLmfLPoXFtP4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bLOSHRRPDzF4u9wV1pAUxn+EtmiKCY8TCQWeWSJQ6Uo=;
-        b=EcjHdAQB3qd/CBX22jmcyBknx/VPVhi6nMaYyf4PBBUg/SChQKjiZDMfAtdEkqhFfv
-         sGthj3iPBe7OQO1OReEtJHt4lnl/a4KPw0ugBesAJ8WiHhK04Pl44E3X3fTTLaEQAHK5
-         CiQROq5s/i13PVHnJrTjpb30/0tD4THqqIj/ezdYsd/KWUXK5h1DbKzwJONnAD41896X
-         +9e1NHMV/V/lPh+4f6kdodbH6g/0CSuuvERjA+Y8f75zNKPNekyTkNoK/gQkFK1yhBL2
-         AgbtwbgAhDs6XXMzEgAZ6Y5kakJlpJsazQw14LFaYtlAj0MXW0Ib5aOVuqlxCo3glrCU
-         LAQA==
-X-Gm-Message-State: APjAAAUKn/IIDZEV0IH0FNF7Usn+W12KfVw31TDsfYMq5w75j0iWZHpY
-        4MeghLOiP1gvGgjC+Ov1fE0=
-X-Google-Smtp-Source: APXvYqzhuDvocnI5zvw34t/95cTa0BVorSk8YqtdkDxCZqRGi0eKZU91Ddkfq2+aCFgxSIWAdDvDAA==
-X-Received: by 2002:a5d:540d:: with SMTP id g13mr438062wrv.8.1570633094550;
-        Wed, 09 Oct 2019 07:58:14 -0700 (PDT)
-Received: from AlexGordeev-DPT-VI0092 ([213.86.25.46])
-        by smtp.gmail.com with ESMTPSA id n18sm1645825wrq.20.2019.10.09.07.58.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 09 Oct 2019 07:58:14 -0700 (PDT)
-Date:   Wed, 9 Oct 2019 16:58:12 +0200
-From:   Alexander Gordeev <a.gordeev.box@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        Michael Chen <micchen@altera.com>, dmaengine@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dmaengine: avalon: Intel Avalon-MM DMA Interface
- for PCIe
-Message-ID: <20191009145811.GA3823@AlexGordeev-DPT-VI0092>
-References: <cover.1570558807.git.a.gordeev.box@gmail.com>
- <3ed3c016b7fbe69e36023e7ee09c53acac8a064c.1570558807.git.a.gordeev.box@gmail.com>
- <20191009121441.GM25098@kadam>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ut10a4G8K7hTMXl6//BmSb4hIjvYhn5dvYI1LmSgCOw=;
+        b=d+6zOER6VZOq5FsjwPNaThwAONBW8BET4rTme/XfoV0xl3NvQkbSDe4oxB2t0Qdyfh
+         H4qirXLEJmOA864uHM+LNkGZ21WtgeTxsRhElAma8t6sACHTXlZPSGzzto77S25baWsR
+         8l5QcxWXY7YEujY1AJEvIODf72znXNTuilorehxVoBkaB75MCjF4G/R6os8qJ80mN56T
+         xv+KGM934BVlKGW/ZsmQ8X+Abb9lL0zzqQ+3jsCTCf4knEFSVri5VxSYkssj8i52U4aC
+         /YOH2UNPNAI1xYUVevg5A22mZrft1PymXVN/LBCmXAC4KWYkdZufCZW0TsWco5IMaYoE
+         AjqA==
+X-Gm-Message-State: APjAAAWHgVZMHEgZYD6vF50S8l9FJCnq9V/R1agzHselrLrBoRA23vET
+        tw+beTvFyTwTkoV5shCdQ9N29h6dQEI=
+X-Google-Smtp-Source: APXvYqw7hEQUjY+lCnyF1+V4E+U7rXAiOzPVaOljk67hhhEsHJgr/60iB7m5wYsFBbJzkp9iNr15+Q==
+X-Received: by 2002:aca:3001:: with SMTP id w1mr2776693oiw.178.1570633233481;
+        Wed, 09 Oct 2019 08:00:33 -0700 (PDT)
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com. [209.85.167.182])
+        by smtp.gmail.com with ESMTPSA id b4sm675399oiy.30.2019.10.09.08.00.32
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Oct 2019 08:00:32 -0700 (PDT)
+Received: by mail-oi1-f182.google.com with SMTP id k9so2004438oib.7
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 08:00:32 -0700 (PDT)
+X-Received: by 2002:a05:6808:249:: with SMTP id m9mr2760741oie.49.1570633231923;
+ Wed, 09 Oct 2019 08:00:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191009121441.GM25098@kadam>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20191008161749.1.I4476e6e2b1026ff388eb11813310264e25aa9cc9@changeid>
+In-Reply-To: <20191008161749.1.I4476e6e2b1026ff388eb11813310264e25aa9cc9@changeid>
+From:   Nick Crews <ncrews@chromium.org>
+Date:   Wed, 9 Oct 2019 09:00:19 -0600
+X-Gmail-Original-Message-ID: <CAHX4x85WTGKMDn22T6SmaemVS1km8yNRgXNj3AgyAzB=69B3nA@mail.gmail.com>
+Message-ID: <CAHX4x85WTGKMDn22T6SmaemVS1km8yNRgXNj3AgyAzB=69B3nA@mail.gmail.com>
+Subject: Re: [PATCH v4] wilco_ec: Add Dell's USB PowerShare Policy control
+To:     Daniel Campello <campello@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Benson Leung <bleung@chromium.org>,
+        Raul E Rangel <rrangel@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 03:14:41PM +0300, Dan Carpenter wrote:
-> > +config AVALON_DMA_PCI_VENDOR_ID
-> > +	hex "PCI vendor ID"
-> > +	default "0x1172"
-> > +
-> > +config AVALON_DMA_PCI_DEVICE_ID
-> > +	hex "PCI device ID"
-> > +	default "0xe003"
-> 
-> This feels wrong.  Why isn't it known in advance.
+On Tue, Oct 8, 2019 at 4:18 PM Daniel Campello <campello@chromium.org> wrote:
+>
+> USB PowerShare is a policy which affects charging via the special
+> USB PowerShare port (marked with a small lightning bolt or battery icon)
+> when in low power states:
+> - In S0, the port will always provide power.
+> - In S0ix, if usb_charge is enabled, then power will be supplied to
+>   the port when on AC or if battery is > 50%. Else no power is supplied.
+> - In S5, if usb_charge is enabled, then power will be supplied to
+>   the port when on AC. Else no power is supplied.
+>
+> Signed-off-by: Daniel Campello <campello@chromium.org>
+> Signed-off-by: Nick Crews <ncrews@chromium.org>
+> ---
+>
+> v4 changes:
+> - Renamed from usb_power_share to usb_charge to match existing feature
+> in other platforms in the kernel (i.e., sony-laptop, samsung-laptop,
+> lg-laptop)
 
-Because device designers would likely use they own IDs. The ones I
-put are just defaults inherited from the (Altera) reference design.
+Daniel and I put in considerable effort trying to get this integrated
+with the USB subsystem. However, it was becoming much too
+complicated, so we hoped that if we made this more consistent
+with the three existing examples it would be acceptable.
 
-> > +	u32 *rd_flags = hw->dma_desc_table_rd.cpu_addr->flags;
-> > +	u32 *wr_flags = hw->dma_desc_table_wr.cpu_addr->flags;
-> > +	struct avalon_dma_desc *desc;
-> > +	struct virt_dma_desc *vdesc;
-> > +	bool rd_done;
-> > +	bool wr_done;
-> > +
-> > +	spin_lock(lock);
-> > +
-> > +	rd_done = (hw->h2d_last_id < 0);
-> > +	wr_done = (hw->d2h_last_id < 0);
-> > +
-> > +	if (rd_done && wr_done) {
-> > +		spin_unlock(lock);
-> > +		return IRQ_NONE;
-> > +	}
-> > +
-> > +	do {
-> > +		if (!rd_done && rd_flags[hw->h2d_last_id])
-> > +			rd_done = true;
-> > +
-> > +		if (!wr_done && wr_flags[hw->d2h_last_id])
-> > +			wr_done = true;
-> > +	} while (!rd_done || !wr_done);
-> 
-> This loop is very strange.  It feels like the last_id indexes needs
-> to atomic or protected from racing somehow so we don't do an out of
-> bounds read.
+Thanks for the thoughts,
+Nick
 
-My bad. I should have put a comment on this. This polling comes from my
-reading of the Intel documentation:
-
-"The MSI interrupt notifies the host when a DMA operation has completed.
-After the host receives this interrupt, it can poll the DMA read or write
-status table to determine which entry or entries have the done bit set."
-
-"The Descriptor Controller writes a 1 to the done bit of the status DWORD
-to indicate successful completion. The Descriptor Controller also sends
-an MSI interrupt for the final descriptor. After receiving this MSI,
-host software can poll the done bit to determine status."
-
-I sense an ambiguity above. It sounds possible an MSI interrupt could be
-delivered before corresponding done bit is set. May be imperfect wording..
-Anyway, the loop does look weird and in reality I doubt I observed the
-done bit unset even once. So I put this polling just in case.
-
-> > +	struct avalon_dma_chan *chan = to_avalon_dma_chan(dma_chan);
-> > +	struct avalon_dma_desc *desc;
-> > +	gfp_t gfp_flags = in_interrupt() ? GFP_NOWAIT : GFP_KERNEL;
-> > +	dma_addr_t dev_addr;
-> > +
-> > +	if (direction == DMA_MEM_TO_DEV)
-> > +		dev_addr = chan->dst_addr;
-> > +	else if (direction == DMA_DEV_TO_MEM)
-> > +		dev_addr = chan->src_addr;
-> > +	else
-> > +		return NULL;
-> > +
-> > +	desc = kzalloc(sizeof(*desc), gfp_flags);
-> 
-> Everyone else does GFP_WAIT or GFP_ATOMIC.  Is GFP_KERNEL really okay?
-
-I am not sure why not to use GFP_KERNEL from non-atomic context.
-Documentation/driver-api/dmaengine/provider.rst claims always to
-use GFP_NOWAIT though:
-
-  - Any allocation you might do should be using the GFP_NOWAIT
-    flag, in order not to potentially sleep, but without depleting
-    the emergency pool either.
-
-So probably I just should use GFP_NOWAIT.
-
-Thanks, Dan!
-
-> regards,
-> dan carpenter
-> 
+> v3 changes:
+> - Drop a silly blank line
+> - Use val > 1 instead of val != 0 && val != 1
+> v2 changes:
+> - Move documentation to Documentation/ABI/testing/sysfs-platform-wilco-ec
+> - Zero out reserved bytes in requests.
+>
+>  .../ABI/testing/sysfs-platform-wilco-ec       | 17 ++++
+>  drivers/platform/chrome/wilco_ec/sysfs.c      | 91 +++++++++++++++++++
+>  2 files changed, 108 insertions(+)
+>
+> diff --git a/Documentation/ABI/testing/sysfs-platform-wilco-ec b/Documentation/ABI/testing/sysfs-platform-wilco-ec
+> index 8827a734f933..bb7ba67cae97 100644
+> --- a/Documentation/ABI/testing/sysfs-platform-wilco-ec
+> +++ b/Documentation/ABI/testing/sysfs-platform-wilco-ec
+> @@ -31,6 +31,23 @@ Description:
+>                 Output will a version string be similar to the example below:
+>                 08B6
+>
+> +What:          /sys/bus/platform/devices/GOOG000C\:00/usb_charge
+> +Date:          October 2019
+> +KernelVersion: 5.5
+> +Description:
+> +               Control the USB PowerShare Policy. USB PowerShare is a policy
+> +               which affects charging via the special USB PowerShare port
+> +               (marked with a small lightning bolt or battery icon) when in
+> +               low power states:
+> +               - In S0, the port will always provide power.
+> +               - In S0ix, if usb_charge is enabled, then power will be
+> +                 supplied to the port when on AC or if battery is > 50%.
+> +                 Else no power is supplied.
+> +               - In S5, if usb_charge is enabled, then power will be supplied
+> +                 to the port when on AC. Else no power is supplied.
+> +
+> +               Input should be either "0" or "1".
+> +
+>  What:          /sys/bus/platform/devices/GOOG000C\:00/version
+>  Date:          May 2019
+>  KernelVersion: 5.3
+> diff --git a/drivers/platform/chrome/wilco_ec/sysfs.c b/drivers/platform/chrome/wilco_ec/sysfs.c
+> index 3b86a21005d3..f0d174b6bb21 100644
+> --- a/drivers/platform/chrome/wilco_ec/sysfs.c
+> +++ b/drivers/platform/chrome/wilco_ec/sysfs.c
+> @@ -23,6 +23,26 @@ struct boot_on_ac_request {
+>         u8 reserved7;
+>  } __packed;
+>
+> +#define CMD_USB_CHARGE 0x39
+> +
+> +enum usb_charge_op {
+> +       USB_CHARGE_GET = 0,
+> +       USB_CHARGE_SET = 1,
+> +};
+> +
+> +struct usb_charge_request {
+> +       u8 cmd;         /* Always CMD_USB_CHARGE */
+> +       u8 reserved;
+> +       u8 op;          /* One of enum usb_charge_op */
+> +       u8 val;         /* When setting, either 0 or 1 */
+> +} __packed;
+> +
+> +struct usb_charge_response {
+> +       u8 reserved;
+> +       u8 status;      /* Set by EC to 0 on success, other value on failure */
+> +       u8 val;         /* When getting, set by EC to either 0 or 1 */
+> +} __packed;
+> +
+>  #define CMD_EC_INFO                    0x38
+>  enum get_ec_info_op {
+>         CMD_GET_EC_LABEL        = 0,
+> @@ -131,12 +151,83 @@ static ssize_t model_number_show(struct device *dev,
+>
+>  static DEVICE_ATTR_RO(model_number);
+>
+> +static int send_usb_charge(struct wilco_ec_device *ec,
+> +                               struct usb_charge_request *rq,
+> +                               struct usb_charge_response *rs)
+> +{
+> +       struct wilco_ec_message msg;
+> +       int ret;
+> +
+> +       memset(&msg, 0, sizeof(msg));
+> +       msg.type = WILCO_EC_MSG_LEGACY;
+> +       msg.request_data = rq;
+> +       msg.request_size = sizeof(*rq);
+> +       msg.response_data = rs;
+> +       msg.response_size = sizeof(*rs);
+> +       ret = wilco_ec_mailbox(ec, &msg);
+> +       if (ret < 0)
+> +               return ret;
+> +       if (rs->status)
+> +               return -EIO;
+> +
+> +       return 0;
+> +}
+> +
+> +static ssize_t usb_charge_show(struct device *dev,
+> +                                   struct device_attribute *attr, char *buf)
+> +{
+> +       struct wilco_ec_device *ec = dev_get_drvdata(dev);
+> +       struct usb_charge_request rq;
+> +       struct usb_charge_response rs;
+> +       int ret;
+> +
+> +       memset(&rq, 0, sizeof(rq));
+> +       rq.cmd = CMD_USB_CHARGE;
+> +       rq.op = USB_CHARGE_GET;
+> +
+> +       ret = send_usb_charge(ec, &rq, &rs);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       return sprintf(buf, "%d\n", rs.val);
+> +}
+> +
+> +static ssize_t usb_charge_store(struct device *dev,
+> +                                    struct device_attribute *attr,
+> +                                    const char *buf, size_t count)
+> +{
+> +       struct wilco_ec_device *ec = dev_get_drvdata(dev);
+> +       struct usb_charge_request rq;
+> +       struct usb_charge_response rs;
+> +       int ret;
+> +       u8 val;
+> +
+> +       ret = kstrtou8(buf, 10, &val);
+> +       if (ret < 0)
+> +               return ret;
+> +       if (val > 1)
+> +               return -EINVAL;
+> +
+> +       memset(&rq, 0, sizeof(rq));
+> +       rq.cmd = CMD_USB_CHARGE;
+> +       rq.op = USB_CHARGE_SET;
+> +       rq.val = val;
+> +
+> +       ret = send_usb_charge(ec, &rq, &rs);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       return count;
+> +}
+> +
+> +static DEVICE_ATTR_RW(usb_charge);
+>
+>  static struct attribute *wilco_dev_attrs[] = {
+>         &dev_attr_boot_on_ac.attr,
+>         &dev_attr_build_date.attr,
+>         &dev_attr_build_revision.attr,
+>         &dev_attr_model_number.attr,
+> +       &dev_attr_usb_charge.attr,
+>         &dev_attr_version.attr,
+>         NULL,
+>  };
+> --
+> 2.23.0.581.g78d2f28ef7-goog
+>
