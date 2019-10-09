@@ -2,202 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E147D07AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 08:55:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C91BFD07B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 08:57:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbfJIGzA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 02:55:00 -0400
-Received: from mga09.intel.com ([134.134.136.24]:65443 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725848AbfJIGy7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 02:54:59 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2019 23:54:59 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,273,1566889200"; 
-   d="scan'208";a="200042363"
-Received: from unknown (HELO localhost) ([10.239.159.128])
-  by FMSMGA003.fm.intel.com with ESMTP; 08 Oct 2019 23:54:54 -0700
-Date:   Wed, 9 Oct 2019 14:56:51 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Jim Mattson <jmattson@google.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH v7 7/7] KVM: x86: Add user-space access interface for CET
- MSRs
-Message-ID: <20191009065651.GE27851@local-michael-cet-test>
-References: <20190927021927.23057-1-weijiang.yang@intel.com>
- <20190927021927.23057-8-weijiang.yang@intel.com>
- <CALMp9eQNDNmmCr8DM-2fMVYvQ-eTEpeE=bW8+BLbfxmBsTmQvg@mail.gmail.com>
+        id S1727355AbfJIG5w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 02:57:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47456 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725776AbfJIG5v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 02:57:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=vKBYsQl0kFkDyRT0YqTcpHkTEz1PkuhlbRjhgXM8cpI=; b=ZwHQym2evAmhibdUSByOi4oUR
+        bjhksOQoCEsVgWc1Q7wt4kWAT4Qn+mT8oJq1nsHWv5QWqRdAYS23zZXfCI1HjYth326SrqPDAWzaX
+        txIsXC5PlOjyr0IVvhgCg9ccyKd2Cei3w0mr3fkf+Zf4ZC6zFU1fNeU6slJbqWmNKZG7mBmOd2pfh
+        He9wexKeaahpCma16N86FmPTvXYD2/HNgyX18UreFdYmTusZFm6MQ7fMiQK3E5MijC/wUeWkH1nVt
+        Tf1uXz2T15Why6bUyJ5C5oAKWlSAVLY93rRlxUmzU/SLNOTxQP8m1LNRvZ5tBZT1XDPyuE+C910Ht
+        +3kNrli3g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iI5uw-0004hU-S3; Wed, 09 Oct 2019 06:57:50 +0000
+Date:   Tue, 8 Oct 2019 23:57:50 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Joerg Roedel <joro@8bytes.org>, Kit Chow <kchow@gigaio.com>
+Subject: Re: [PATCH 1/3] iommu/amd: Implement dma_[un]map_resource()
+Message-ID: <20191009065750.GA17832@infradead.org>
+References: <20191008221837.13067-1-logang@deltatee.com>
+ <20191008221837.13067-2-logang@deltatee.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALMp9eQNDNmmCr8DM-2fMVYvQ-eTEpeE=bW8+BLbfxmBsTmQvg@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20191008221837.13067-2-logang@deltatee.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 01:57:50PM -0700, Jim Mattson wrote:
-> On Thu, Sep 26, 2019 at 7:17 PM Yang Weijiang <weijiang.yang@intel.com> wrote:
-> >
-> > There're two different places storing Guest CET states, the states
-> > managed with XSAVES/XRSTORS, as restored/saved
-> > in previous patch, can be read/write directly from/to the MSRs.
-> > For those stored in VMCS fields, they're access via vmcs_read/
-> > vmcs_write.
-> >
-> > Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> > ---
-> >  arch/x86/kvm/vmx/vmx.c | 83 ++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 83 insertions(+)
-> >
-> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> > index 44913e4ab558..5265db7cd2af 100644
-> > --- a/arch/x86/kvm/vmx/vmx.c
-> > +++ b/arch/x86/kvm/vmx/vmx.c
-> > @@ -1671,6 +1671,49 @@ static int vmx_get_msr_feature(struct kvm_msr_entry *msr)
-> >         return 0;
-> >  }
-> >
-> > +static int check_cet_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+On Tue, Oct 08, 2019 at 04:18:35PM -0600, Logan Gunthorpe wrote:
+> From: Kit Chow <kchow@gigaio.com>
 > 
-> I'd suggest changing return type to bool, since you are essentially
-> returning true or false.
->
-Sure, will change it.
+> Currently the Intel IOMMU uses the default dma_[un]map_resource()
 
-> > +{
-> > +       u64 kvm_xss = kvm_supported_xss();
-> > +
-> > +       switch (msr_info->index) {
-> > +       case MSR_IA32_PL0_SSP ... MSR_IA32_PL2_SSP:
-> > +               if (!(kvm_xss | XFEATURE_MASK_CET_KERNEL))
-> '|' should be '&'
-Oops, thanks for the capture!
+s/Intel/AMD/ ?
 
-> > +                       return 1;
-> > +               if (!msr_info->host_initiated &&
-> > +                   !guest_cpuid_has(vcpu, X86_FEATURE_SHSTK))
-> > +                       return 1;
-> > +               break;
-> > +       case MSR_IA32_PL3_SSP:
-> > +               if (!(kvm_xss | XFEATURE_MASK_CET_USER))
-> '|' should be '&'
-> > +                       return 1;
-> > +               if (!msr_info->host_initiated &&
-> > +                   !guest_cpuid_has(vcpu, X86_FEATURE_SHSTK))
-> > +                       return 1;
-> > +               break;
-> > +       case MSR_IA32_U_CET:
-> > +               if (!(kvm_xss | XFEATURE_MASK_CET_USER))
-> '|' should be '&'
-> > +                       return 1;
-> > +               if (!msr_info->host_initiated &&
-> > +                   !guest_cpuid_has(vcpu, X86_FEATURE_SHSTK) &&
-> > +                   !guest_cpuid_has(vcpu, X86_FEATURE_IBT))
-> > +                       return 1;
-> > +               break;
-> > +       case MSR_IA32_S_CET:
-> > +               if (!msr_info->host_initiated &&
-> > +                   !guest_cpuid_has(vcpu, X86_FEATURE_SHSTK) &&
-> > +                   !guest_cpuid_has(vcpu, X86_FEATURE_IBT))
-> > +                       return 1;
-> > +               break;
-> > +       case MSR_IA32_INT_SSP_TAB:
-> > +               if (!msr_info->host_initiated &&
-> > +                   !guest_cpuid_has(vcpu, X86_FEATURE_SHSTK))
-> > +                       return 1;
-> > +               break;
-> > +       default:
-> > +               return 1;
-> > +       }
-> > +       return 0;
-> > +}
-> >  /*
-> >   * Reads an msr value (of 'msr_index') into 'pdata'.
-> >   * Returns 0 on success, non-0 otherwise.
-> > @@ -1788,6 +1831,26 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
-> >                 else
-> >                         msr_info->data = vmx->pt_desc.guest.addr_a[index / 2];
-> >                 break;
-> > +       case MSR_IA32_S_CET:
-> > +               if (check_cet_msr(vcpu, msr_info))
-> > +                       return 1;
-> > +               msr_info->data = vmcs_readl(GUEST_S_CET);
-> Have we ensured that this VMCS field exists?
-> > +               break;
-> > +       case MSR_IA32_INT_SSP_TAB:
-> > +               if (check_cet_msr(vcpu, msr_info))
-> > +                       return 1;
-> > +               msr_info->data = vmcs_readl(GUEST_INTR_SSP_TABLE);
-> Have we ensured that this VMCS field exists?
-If host kernel sets correct info, we can make sure here.
+> +static dma_addr_t map_resource(struct device *dev, phys_addr_t paddr,
+> +		size_t size, enum dma_data_direction dir, unsigned long attrs)
+> +{
+> +	struct protection_domain *domain;
+> +	struct dma_ops_domain *dma_dom;
+> +
+> +	domain = get_domain(dev);
+> +	if (PTR_ERR(domain) == -EINVAL)
+> +		return (dma_addr_t)paddr;
 
-> > +               break;
-> > +       case MSR_IA32_U_CET:
-> Can this be lumped together with MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP, below?
-Unfortunately, this MSR is not adjacent to below MSRs.
+I thought that case can't happen anymore?
 
-> > +               if (check_cet_msr(vcpu, msr_info))
-> > +                       return 1;
-> > +               rdmsrl(MSR_IA32_U_CET, msr_info->data);
-> > +               break;
-> > +       case MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP:
-> > +               if (check_cet_msr(vcpu, msr_info))
-> > +                       return 1;
-> > +               rdmsrl(msr_info->index, msr_info->data);
-> > +               break;
-> >         case MSR_TSC_AUX:
-> >                 if (!msr_info->host_initiated &&
-> >                     !guest_cpuid_has(vcpu, X86_FEATURE_RDTSCP))
-> > @@ -2039,6 +2102,26 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
-> >                 else
-> >                         vmx->pt_desc.guest.addr_a[index / 2] = data;
-> >                 break;
-> > +       case MSR_IA32_S_CET:
-> > +               if (check_cet_msr(vcpu, msr_info))
-> > +                       return 1;
-> Bits 9:6 must be zero.
-> > +               vmcs_writel(GUEST_S_CET, data);
-> Have we ensured that this VMCS field exists?
-> > +               break;
-> > +       case MSR_IA32_INT_SSP_TAB:
-> > +               if (check_cet_msr(vcpu, msr_info))
-> > +                       return 1;
-> Must be canonical. vCPU must support longmode.
-> > +               vmcs_writel(GUEST_INTR_SSP_TABLE, data);
-> Have we ensured that this VMCS field exists?
-> > +               break;
-> > +       case MSR_IA32_U_CET:
-> > +               if (check_cet_msr(vcpu, msr_info))
-> > +                       return 1;
-> Bits 9:6 must be zero.
-> > +               wrmsrl(MSR_IA32_U_CET, data);
-> > +               break;
-> > +       case MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP:
-> > +               if (check_cet_msr(vcpu, msr_info))
-> > +                       return 1;
-> 'Data' must be canonical and 4-byte aligned. High dword must be zero
-> on vCPUs that don't support longmode.
-
-Thanks a lot for all above captures, will add sanity checks in next
-version.
-
-> > +               wrmsrl(msr_info->index, data);
-> > +               break;
-> >         case MSR_TSC_AUX:
-> >                 if (!msr_info->host_initiated &&
-> >                     !guest_cpuid_has(vcpu, X86_FEATURE_RDTSCP))
-> > --
-> > 2.17.2
-> >
+Also note that Joerg just applied the patch to convert the AMD iommu
+driver to use the dma-iommu ops.  Can you test that series and check
+it does the right thing for your use case?  From looking at the code
+I think it should.
