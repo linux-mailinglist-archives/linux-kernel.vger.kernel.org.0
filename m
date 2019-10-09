@@ -2,95 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52BD8D0980
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 10:21:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11D83D09D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 10:29:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729820AbfJIIVC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 04:21:02 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:51768 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725776AbfJIIVC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 04:21:02 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 2659932AA2271B9FDEC2;
-        Wed,  9 Oct 2019 16:21:00 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Wed, 9 Oct 2019
- 16:20:49 +0800
-From:   Zhihao Cheng <chengzhihao1@huawei.com>
-To:     <guaneryu@gmail.com>, <darrick.wong@oracle.com>,
-        <ebiggers@google.com>, <yi.zhang@huawei.com>
-CC:     <fstests@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <chengzhihao1@huawei.com>
-Subject: [PATCH xfstests] generic/192: Move 'cd /' to the place where the program exits
-Date:   Wed, 9 Oct 2019 16:27:57 +0800
-Message-ID: <1570609677-49586-1-git-send-email-chengzhihao1@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        id S1729863AbfJII2e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 04:28:34 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35686 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725848AbfJII2d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 04:28:33 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 7B8BC61AC6; Wed,  9 Oct 2019 08:28:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1570609712;
+        bh=HbZdDa2cOuuT9V7lXu+I+zSgZiv78NTVmAzMtH+i/9M=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=K538711DcIhJnteovFc+JdlEiNz8SUHYidnlAfp6Gb6qnSJLjSrdb0KxuwRZTs9un
+         qbNbyEa5+iBx05gnGWeqMUAgou/imCNgEdL7pjPwGoMvuJmxCGUUxP5KPN0EBq1gjN
+         2/6yqPonn1gb4mVOr/qJnYmgBEugoGNhAeaymc6M=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID,SPF_NONE autolearn=no
+        autolearn_force=no version=3.4.0
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2CF80602A9;
+        Wed,  9 Oct 2019 08:28:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1570609710;
+        bh=HbZdDa2cOuuT9V7lXu+I+zSgZiv78NTVmAzMtH+i/9M=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=GwhbOQpX0nN5FqRep6gJ9G4j4uj/jE9vs51Jc0GzV/UNTdLpTeil51JcZK7RCUC5+
+         1cDMabGFzmeYpTrD6YwB1NuEAgerDcnT5UwjE+ZD854Baes9OxLIFpTp3iaHDpIlSY
+         PLPzDV2rpsAlgvABiJ8bHVRiPDMnaUApMuKBx9dw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2CF80602A9
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] iwlegacy: make array interval static, makes object smaller
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20191007134113.5647-1-colin.king@canonical.com>
+References: <20191007134113.5647-1-colin.king@canonical.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Stanislaw Gruszka <sgruszka@redhat.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20191009082832.7B8BC61AC6@smtp.codeaurora.org>
+Date:   Wed,  9 Oct 2019 08:28:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Running generic/192 with overlayfs(Let ubifs as base fs) yields the
-following output:
+Colin King <colin.king@canonical.com> wrote:
 
-  generic/192 - output mismatch
-     QA output created by 192
-     sleep for 5 seconds
-     test
-    +./common/rc: line 316: src/t_dir_type: No such file or directory
-     delta1 is in range
-     delta2 is in range
-    ...
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate the array interval on the stack but instead make it
+> static. Makes the object code smaller by 121 bytes.
+> 
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>  167797	  29676	    448	 197921	  30521	wireless/intel/iwlegacy/common.o
+> 
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>  167580	  29772	    448	 197800	  304a8	wireless/intel/iwlegacy/common.o
+> 
+> (gcc version 9.2.1, amd64)
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-When the use case fails, the call stack in generic/192 is:
+Patch applied to wireless-drivers-next.git, thanks.
 
-  local unknowns=$(src/t_dir_type $dir u | wc -l)	common/rc:316
-  _supports_filetype					common/rc:299
-  _overlay_mount					common/overlay:52
-  _overlay_test_mount					common/overlay:93
-  _test_mount						common/rc:407
-  _test_cycle_mount					generic/192:50
+55047fb783e0 iwlegacy: make array interval static, makes object smaller
 
-Before _test_cycle_mount() being invoked, generic/192 executed 'cd /'
-to change work dir from 'xfstests-dev' to '/', so src/t_dir_type was not
-found.
-
-Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
----
- tests/generic/192 | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/tests/generic/192 b/tests/generic/192
-index 50b3d6fd..5550f39e 100755
---- a/tests/generic/192
-+++ b/tests/generic/192
-@@ -15,7 +15,12 @@ echo "QA output created by $seq"
- here=`pwd`
- tmp=/tmp/$$
- status=1	# failure is the default!
--trap "exit \$status" 0 1 2 3 15
-+trap "_cleanup; exit \$status" 0 1 2 3 15
-+
-+_cleanup()
-+{
-+	cd /
-+}
- 
- _access_time()
- {
-@@ -46,7 +51,6 @@ sleep $delay # sleep to allow time to move on for access
- cat $testfile
- time2=`_access_time $testfile | tee -a $seqres.full`
- 
--cd /
- _test_cycle_mount
- time3=`_access_time $testfile | tee -a $seqres.full`
- 
 -- 
-2.13.6
+https://patchwork.kernel.org/patch/11177531/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
