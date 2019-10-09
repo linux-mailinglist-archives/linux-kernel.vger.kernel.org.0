@@ -2,95 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C271D1950
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 21:59:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A779ED195A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 22:05:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731671AbfJIT7z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 15:59:55 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:43146 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729865AbfJIT7z (ORCPT
+        id S1731193AbfJIUFc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 16:05:32 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:46557 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728804AbfJIUFc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 15:59:55 -0400
-Received: by mail-io1-f68.google.com with SMTP id v2so7906658iob.10
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 12:59:55 -0700 (PDT)
+        Wed, 9 Oct 2019 16:05:32 -0400
+Received: by mail-ot1-f65.google.com with SMTP id 89so2808900oth.13;
+        Wed, 09 Oct 2019 13:05:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=smOqlbangbl/j+F0cqdsikuLQkS2xT/NWT5gQd8sJls=;
-        b=t8e+mZPhQ5OiF1eDv+6ayzg2IGvo71vQ1zK7EKwM2zdx8KaDgEQhhYSQZtXIwWe9CA
-         H9dHiHAQivNndfZtFNDI6+vbuXwXOeLSY7/6peUMDhx9ulLgSlrFWXphIpfjcfecd99M
-         umAIuCiyhA4rINwSumn1+2ENYBctWM7VAA3iBXRRyBv/Nny4Ll8lRAJGod1szrDjpB3Z
-         2Srqkcz4m9zoGvFacErIBzlTYZXxNShNep00ZEGoGlw8KtJlrIdtw2l1+JwTZvV6crJs
-         WnpjFTMnJjds2MnHWF0SVYu0yka0PgQkk6mbE9x3ev1eSqXM6b39tmfmc1Lk13wI1lHk
-         F+Cw==
+        h=from:to:cc:subject:date:message-id;
+        bh=VJ6+GJRwt7B8QIB95Qkr/6HpC/9offIDxz70B65cdOw=;
+        b=uK7w/WSrVBWqomR/LSIN609I7J7qD6S7Km8ILac0Aq/rIxOGsUVrcmzLjlwixAjahA
+         1/kg6qlNoEeBlzKRbWq1CoINxQOg1LnBXupGCRCJAqY+FfpfWrHdQVrMTP1P0ht16eUV
+         FMmWf8OwLPq8yLxCABj0yHZ43xxVBw7Gudc+jiIUoDbfuBX6FJtAdYU5vbXaWyw5H09+
+         IN5dY/83u2vfUCZunYrbzqYlijlEwVFqZw/esA+IEJdvNcbJzBvfY9LwnBk3akQAm028
+         XjxQ3fqdzKiRi7Twi5h0TTUR0PrfvjnHMktdWdOMDrTNEW+u9MVTlaBP8zlKkjMdMxiA
+         4HSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=smOqlbangbl/j+F0cqdsikuLQkS2xT/NWT5gQd8sJls=;
-        b=dP9TQzAr5MKCz3CYM8gor/Qrzid/3kIV+H9ybEAw7txbbA+UeEXOQ2t797iQiansFR
-         bqFUnAS6KUeW3TNPvkcPbJaXLUKAU35v3zrGITE/X9Pa/rIu3ZnmP6nlr93fsTCOh+aV
-         5xOXRJRnkpov6jF5irkHw9N1TzwOlBQCFb+m7992Tq7NXBbeUskqIXTEJkvlOXRUNvka
-         K34czbmi607hu6y85UsRxT+B6MT3XTEoMGdoy9XN3wFNMkt2pux/vq6/HwZbVj9nJlwc
-         hSjdrE7t9dr/UaqaoXzkxnDordoPR4Gozj19+aXVQo7LUyHiXYjJUKAFBOV3D3UiPDft
-         K5tg==
-X-Gm-Message-State: APjAAAWP0D9TaF+2dHsJnccI7r0MRlYYEzjBaLoq2xn90IWz1UDqGb+R
-        UzxiblqAZ0HvA9B/WoilgbyG8sxRBkOTeEcGbig=
-X-Google-Smtp-Source: APXvYqzUklU7K9Tn+bzE/Zr3xecH9ClqU1AEbFpjoksnc7/EEebQOaLfFKjHoaX8fMTh5rDZKy9h34zNH2S+zSMxbag=
-X-Received: by 2002:a6b:7414:: with SMTP id s20mr5504318iog.299.1570651194740;
- Wed, 09 Oct 2019 12:59:54 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a4f:dd0:0:0:0:0:0 with HTTP; Wed, 9 Oct 2019 12:59:54 -0700 (PDT)
-Reply-To: mrs.suzanmark12@yahoo.com
-From:   Mr David Nicholas <petermike1331@gmail.com>
-Date:   Wed, 9 Oct 2019 12:59:54 -0700
-Message-ID: <CAEs009nK_WaDm0n_upEJw1cQ6rYLaw8=q-ttUUPR=n-=tPc=AA@mail.gmail.com>
-Subject: ATTN: My Dear
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=VJ6+GJRwt7B8QIB95Qkr/6HpC/9offIDxz70B65cdOw=;
+        b=N4l8l/yP0/qU5tAZT+uGL9UHQCU+mlBxeKH8JmpcJkX+fsiBJDVwkHF5stB5Xa6k29
+         BKswQ0wPc/zpzJ/MP1qseptF4PhYs9RO//LgwM/JIqW9fBZy0wxYIMCPa2wFBIm7UApV
+         DlRkuzA4JbxBlGz9Ph74myAko0yARGmuvdGUcLx6VPbaHDRWoahXjYk0wt8GwvvZJWZp
+         /ReGkLFw0SfIkEJU7GCGD31IFVqQIUhedoSvQcxh+yiCipAnpHlhzvnbHhGSzngi/oNr
+         MbeVU+4np7wXbAX8ITVhK/C90b3PCQ05GZTYsfTRXqjgXOcDayvdIqB10ZnFWnwRQaXU
+         1a9w==
+X-Gm-Message-State: APjAAAU0XbpQ18QhefCW5+kicQo5YcY5VDQk5EaDYq28YZlSSdSfyalk
+        WudgQCjmtOGhJHlwwI9HgEI=
+X-Google-Smtp-Source: APXvYqzXjE1T9bjPweSrdrFrNEroWM2NPJm/mFEDlRApVsqKmuJpT6OAGNDKz/jge2tDwcl6//62ag==
+X-Received: by 2002:a9d:77d4:: with SMTP id w20mr4547780otl.148.1570651530976;
+        Wed, 09 Oct 2019 13:05:30 -0700 (PDT)
+Received: from localhost.localdomain ([143.166.81.254])
+        by smtp.gmail.com with ESMTPSA id b5sm976883oia.20.2019.10.09.13.05.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 13:05:30 -0700 (PDT)
+From:   Stuart Hayes <stuart.w.hayes@gmail.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Austin Bolen <austin_bolen@dell.com>, keith.busch@intel.com,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Sinan Kaya <okaya@kernel.org>,
+        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, lukas@wunner.de,
+        Stuart Hayes <stuart.w.hayes@gmail.com>
+Subject: [PATCH 0/3] PCI: pciehp: Do not turn off slot if presence comes up after link
+Date:   Wed,  9 Oct 2019 16:05:20 -0400
+Message-Id: <20191009200523.8436-1-stuart.w.hayes@gmail.com>
+X-Mailer: git-send-email 2.18.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ATTN: My Dear
+In older PCIe specs, PDS (presence detect) would come up when the
+"in-band" presence detect pin connected, and would be up before DLLLA
+(link active).
 
-Good news,The BRITISH HIGH COMMISSION has actually verified and discovered
-that your payment has been unnecessarily Delayed by corrupt officials of the
-Company who are Trying to divert your fund of $4,700.000.00 Million
-into their private
-accounts. Therefore we have obtained an irrevocable payment guarantee on your
-Payment with the Bank to make your payment through our new ATM VISA CARD
-system which you can use to withdraw your money in any ATM MACHINE around your
-area.
+In PCIe 4.0 (as an ECN) and in PCIe 5.0, there is a new bit to show if
+in-band presence detection can be disabled for the slot, and another bit
+that disables it--and a recommendation that it should be disabled if it
+can be. In addition, certain OEMs disable in-band presence detection
+without implementing these bits.
 
-So we are here by inviting you to our office to pick up your ATM VISA CARD but
-if you cannot be able to come down here in our office in person be inform that
-you are going to pay for shipping fee of your ATM visa CARD, so if you are
-unable to come down here then you are required to update us so that we will
-proceed with the necessary arrangement for the delivery of your ATM VISA CARD.
+This means it is possible to get a "card present" interrupt after the
+link is up and the driver is loaded.  This causes an erroneous removal
+of the device driver, followed by an immediate re-probing.
 
-As of now be informed that all arrangement has been done and the ATM VISA CARD
-has be in your name, but to RE-ACTIVATE the ATM Card you have to forward your
-current information as requested below to the bank for the ATM Card re-
-activcation, then we will send you the ATM CARD for your immediate use.
+This patch set defines these new bits, uses them to disable in-band
+presence detection if it can be, waits for PDS to go up if in-band
+presence detection is disabled, and adds a DMI table that will let us
+know if we should assume in-band presence is disabled on a system.
 
-Here are the information you have to forward to the bank:
-1. Your Full Names:______
-2. Postal Address:_______
-3. Direct Cell Numbers:_______
-4. E-mail Address:________
-5. Sex:_____
-6.Age:_____
-7. Occupation:________
-8.Nationality:________
-9.whatsapp Number______
+The first two patches in this set come from a patch set that was
+submitted but not accepted many months ago by Alexandru Gagniuc [1].
+The first is unmodified, the second has the commit message and timeout 
+modified.
 
-Therefore you are advised to contact Bank accountant Manager Mrs.Susan Mark
+[1] https://patchwork.kernel.org/cover/10909167/
+    [v3,0/4] PCI: pciehp: Do not turn off slot if presence comes up after link
 
-CONTACT PERSON: Mrs.Susan Mark
-Direct Hotline: +22990489892
-E-mail:( mrs.suzanmark12@yahoo.com )
+Alexandru Gagniuc (2):
+  PCI: pciehp: Add support for disabling in-band presence
+  PCI: pciehp: Wait for PDS if in-band presence is disabled
 
-Mr David Nicholas
+Stuart Hayes (1):
+  PCI: pciehp: Add dmi table for in-band presence disabled
+
+ drivers/pci/hotplug/pciehp.h     |  1 +
+ drivers/pci/hotplug/pciehp_hpc.c | 45 +++++++++++++++++++++++++++++++-
+ include/uapi/linux/pci_regs.h    |  2 ++
+ 3 files changed, 47 insertions(+), 1 deletion(-)
+
+-- 
+2.18.1
+
