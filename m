@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49935D1591
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:24:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45D8ED1643
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:29:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732248AbfJIRYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 13:24:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48498 "EHLO mail.kernel.org"
+        id S1732259AbfJIRYV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 13:24:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732094AbfJIRYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 13:24:03 -0400
+        id S1732105AbfJIRYF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 13:24:05 -0400
 Received: from sasha-vm.mshome.net (unknown [167.220.2.234])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78752206BB;
-        Wed,  9 Oct 2019 17:24:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E745E21D7D;
+        Wed,  9 Oct 2019 17:24:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570641843;
-        bh=BnNP/S94t0ycyVIws48GAEBsgOMeY35JYl69u3+93fc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=2K95rJMeoMxMEN3j4dvRQ/3zglAiNfgn35uBRtZzX3SsdVnZKSiXnq25C9eM/ZU12
-         oT1pYff8dT66YjCYyPeppFpiO9kkKpNfN2tJH40dAQeOzRcP1IUIQ1zvnlpOD0O68X
-         Lgk/1E6he3a7wrJwuDhUGnh7zcJsMR85AwtRq+W4=
+        s=default; t=1570641845;
+        bh=KZRpUOb3mPBcUo8o24araf8SxsKewq/8Rl1F83Gkluk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=XZiRyk+4HQuG/Njpo0YStNBvcM9VfKC98/ajyiK1Qasa1pcNZhthkkUxqmQwYrvAM
+         CcOe4CADxdHVY+zq5dizc3yIRJk02++OiPMbVY2zMDEIeQdGs59KSnj0rP7Ge9cEHF
+         u3qqrbE5QlpX3tRecI+eB43Ddi1VVOflHwWRISPM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Zenghui Yu <yuzenghui@huawei.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        kvmarm@lists.cs.columbia.edu
-Subject: [PATCH AUTOSEL 4.19 01/26] KVM: arm/arm64: vgic: Use the appropriate TRACE_INCLUDE_PATH
-Date:   Wed,  9 Oct 2019 13:05:33 -0400
-Message-Id: <20191009170558.32517-1-sashal@kernel.org>
+Cc:     Quinn Tran <qutran@marvell.com>,
+        Himanshu Madhani <hmadhani@marvell.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 05/26] scsi: qla2xxx: Fix unbound sleep in fcport delete path.
+Date:   Wed,  9 Oct 2019 13:05:37 -0400
+Message-Id: <20191009170558.32517-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191009170558.32517-1-sashal@kernel.org>
+References: <20191009170558.32517-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -42,37 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zenghui Yu <yuzenghui@huawei.com>
+From: Quinn Tran <qutran@marvell.com>
 
-[ Upstream commit aac60f1a867773de9eb164013d89c99f3ea1f009 ]
+[ Upstream commit c3b6a1d397420a0fdd97af2f06abfb78adc370df ]
 
-Commit 49dfe94fe5ad ("KVM: arm/arm64: Fix TRACE_INCLUDE_PATH") fixes
-TRACE_INCLUDE_PATH to the correct relative path to the define_trace.h
-and explains why did the old one work.
+There are instances, though rare, where a LOGO request cannot be sent out
+and the thread in free session done can wait indefinitely. Fix this by
+putting an upper bound to sleep.
 
-The same fix should be applied to virt/kvm/arm/vgic/trace.h.
-
-Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
+Link: https://lore.kernel.org/r/20190912180918.6436-3-hmadhani@marvell.com
+Signed-off-by: Quinn Tran <qutran@marvell.com>
+Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- virt/kvm/arm/vgic/trace.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/qla2xxx/qla_target.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/virt/kvm/arm/vgic/trace.h b/virt/kvm/arm/vgic/trace.h
-index 55fed77a9f739..4fd4f6db181b0 100644
---- a/virt/kvm/arm/vgic/trace.h
-+++ b/virt/kvm/arm/vgic/trace.h
-@@ -30,7 +30,7 @@ TRACE_EVENT(vgic_update_irq_pending,
- #endif /* _TRACE_VGIC_H */
+diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+index 7a1cc0b25e594..d6dc320f81a7a 100644
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -1023,6 +1023,7 @@ void qlt_free_session_done(struct work_struct *work)
  
- #undef TRACE_INCLUDE_PATH
--#define TRACE_INCLUDE_PATH ../../../virt/kvm/arm/vgic
-+#define TRACE_INCLUDE_PATH ../../virt/kvm/arm/vgic
- #undef TRACE_INCLUDE_FILE
- #define TRACE_INCLUDE_FILE trace
+ 	if (logout_started) {
+ 		bool traced = false;
++		u16 cnt = 0;
  
+ 		while (!READ_ONCE(sess->logout_completed)) {
+ 			if (!traced) {
+@@ -1032,6 +1033,9 @@ void qlt_free_session_done(struct work_struct *work)
+ 				traced = true;
+ 			}
+ 			msleep(100);
++			cnt++;
++			if (cnt > 200)
++				break;
+ 		}
+ 
+ 		ql_dbg(ql_dbg_disc, vha, 0xf087,
 -- 
 2.20.1
 
