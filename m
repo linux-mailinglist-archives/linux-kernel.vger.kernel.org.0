@@ -2,224 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F217D0A21
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 10:49:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7367D0A3C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 10:52:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729575AbfJIItB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 04:49:01 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:44659 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbfJIItB (ORCPT
+        id S1725953AbfJIIwG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 04:52:06 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34853 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730121AbfJIIwB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 04:49:01 -0400
-Received: by mail-io1-f68.google.com with SMTP id w12so3149980iol.11;
-        Wed, 09 Oct 2019 01:49:00 -0700 (PDT)
+        Wed, 9 Oct 2019 04:52:01 -0400
+Received: by mail-wr1-f65.google.com with SMTP id v8so1787638wrt.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 01:51:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6fjFEQA6Bis4Kn8//oB0C9jpdDmkRZ41dqbmTV7c3SQ=;
-        b=WaYhSBL2qLmHAw/cL0ZrWpsm4ha4n7C20aghmPPB/v9aNbqiCNPeYLW1MJNwIJRbx5
-         yv/K+Kur15MY6n0mowuWY/WNJ/vpNTlTfAydD0WnqZceZ9me/DgjggTE0gp2BFJwoDHV
-         gy57dIlBNL+b95yckfwSG8w3Vql1FeLVbyDtj3YA3oMHT4cgON5p1KHmByQSTp6nbkfZ
-         Vk3Avw75rBKz04VxykLEzYYmwjgsdUwy9XnJUSocLbC2TBk+Pr4WWBtiIQKNM4IwnsFT
-         0ViEwoBjbhFw6dPokuGFIVAjFPNXPqe+PNSVvi8a9b8tW/Ks6Z9oBJ7HHnlEmNHR3aMI
-         8aKg==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kIXSgqPot/VtHtCYhdqESFswgKhZA/r+U2HQFD+JPgo=;
+        b=YgLRRZYuoAZwYcthuxRPzBi/noASE7Z6NQeQ7wPn8AHqgTR+fv5F10cz4dKU2NoQPm
+         7Fj65EDd4DgPh134OONDT8GVKQl2hxntl7NXFSprLnO+p6TmNePG8ONMtpWWdPBm4jSY
+         Z7xE9r9SEYM74vEdRM8527c1BFS9G6Hc2kMIQi5aAPG2Cxl0kmB+Ke9ECuR4RgHA91F8
+         BBoerfCgxKA9SqihRnDE7WNg0PvVDkyDeUjNoeHZr3NPr02DEjl608ylnIrs37R4em8M
+         8KJYPecHqgo1x3qJSXalEBlzMeJ0GER0xRuqKpV+PYhEJ8PBs7zD7EruPCcTkz7girvK
+         UUOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6fjFEQA6Bis4Kn8//oB0C9jpdDmkRZ41dqbmTV7c3SQ=;
-        b=AoM6lVe1A0l4Qx7mkPrJuxV32HhdtzZiplSlSAKJVksIcPC3wAXZxODFNGxyz4I+73
-         xWwEPq5QOTejWvlePI2UMd4x4TqgvkMeJ//rMKz1ZDx0iu/5sTKqtNsZ7UGFO1OdfLH6
-         lmIl83rwEE/pe2fksQzESgBVprVN4koFwZOAD2OnV3AKmoBV7Xp/UozXW7clQ9wmGyXi
-         2nXi3BtJupfDurCN1k2YuCC+EJz+9HPUizjYZQGRIQXOIVC2HWYwjNVhx6sOj4lfTqom
-         L+4mRrq9rSm4ktB+b+QRq/xiMl2rhyxtJzeAQ7tRXzjHeWv28Cd6QnmAekCqqifRjHDm
-         WWgw==
-X-Gm-Message-State: APjAAAWhG1MfLBbPFjzQuDpfn79hPTAYQUHgZ2ax6CRV9/SJBz/RMYzn
-        nsp3ysxefdJ0/lWXyOt0EjlU9o4N6Mrf9V3e6Cs=
-X-Google-Smtp-Source: APXvYqxMQYQOWMiMwjv8i0P4w/7rpRlfgxBWulH8ZLJq0svPKZntLFqJJnvsUmd2Qng0jhbsmRsx7OZe5UA1rV2rTNU=
-X-Received: by 2002:a92:6e0d:: with SMTP id j13mr2187423ilc.75.1570610940134;
- Wed, 09 Oct 2019 01:49:00 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kIXSgqPot/VtHtCYhdqESFswgKhZA/r+U2HQFD+JPgo=;
+        b=F6GPIbsqRGNnOcZ3EwWbuXnARLoqmufQzcByuwMZZNgjgROKP3cnrn3vPRlzjgdxeT
+         xwyiuXNP+5mw05HpTuGT+YkUMyeHeVaaj/TeKK7NQBDHStNRtfKTV0ltKwex59Ep0gyr
+         V6wsAI5qCuETrEYyI+OGKY2X4LcrH50DyJ8WO7LuEoNjKVf+1KlLfULWLNa4Q3/0M3Nx
+         9ZcCaNjuh71BAO5RFsFIHIw5nNFvmB/ITMRdNDl2UaRBcbX387alyxma2EyjL6p7iXxW
+         +CDdMPR5E7j+tHvIqZNJ3nz65n92SYHKFGKHr2PfiFnPt+nY7vqK0/60qyqp1xVhqiQg
+         7YGw==
+X-Gm-Message-State: APjAAAVo4wy4ahnwXl9ErzrGroicUDaN8QABCAEucSV0pRVLIq+dpj8W
+        KXoPvWoCaSFvV1zZCLcKR+7ATQ==
+X-Google-Smtp-Source: APXvYqws1ottQYgV2u6n6BCavAvLpJrmB3BJnOxpCU3FGnq8IrsHlRBrn75l3yq5qrftbTvHq7ZAOQ==
+X-Received: by 2002:a5d:52c6:: with SMTP id r6mr2052521wrv.141.1570611117411;
+        Wed, 09 Oct 2019 01:51:57 -0700 (PDT)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id b144sm2476291wmb.3.2019.10.09.01.51.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 01:51:56 -0700 (PDT)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     broonie@kernel.org
+Cc:     spapothi@codeaurora.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, lgirdwood@gmail.com,
+        devicetree@vger.kernel.org, vkoul@kernel.org,
+        pierre-louis.bossart@linux.intel.com,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v7 0/2] ASoC: codecs: Add WSA881x Smart Speaker amplifier support
+Date:   Wed,  9 Oct 2019 09:51:06 +0100
+Message-Id: <20191009085108.4950-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20191007131649.1768-1-linux.amoon@gmail.com> <20191007131649.1768-6-linux.amoon@gmail.com>
- <CAFBinCAoJLZj9Kh+SfF4Q+0OCzac2+huon_BU=Q3yE7Fu38U3w@mail.gmail.com>
- <7hsgo4cgeg.fsf@baylibre.com> <CANAwSgRfcFa6uBNtpqz6y=9Uwsa4gcp_4tDD+Chhg4SynJCq0Q@mail.gmail.com>
- <CAFBinCA6ZoeR4m4bhj08HF1DqxY1qB5mygpaQCGbo3d8M+Wr9Q@mail.gmail.com>
-In-Reply-To: <CAFBinCA6ZoeR4m4bhj08HF1DqxY1qB5mygpaQCGbo3d8M+Wr9Q@mail.gmail.com>
-From:   Anand Moon <linux.amoon@gmail.com>
-Date:   Wed, 9 Oct 2019 14:18:48 +0530
-Message-ID: <CANAwSgSeYTnUkLnjw-RORw76Fyj3_WT0cdM9D0vFsY8g=9L94Q@mail.gmail.com>
-Subject: Re: [RFCv1 5/5] arm64/ARM: configs: Change CONFIG_PWM_MESON from m to y
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-amlogic@lists.infradead.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Martin,
+This patchset adds support to WSA8810/WSA8815 Class-D Smart Speaker
+Amplifier which is SoundWire interfaced.
 
-Thanks for your inputs.
+This patchset along with DB845c machine driver and WCD934x codec driver
+has been tested on SDM845 SoC based DragonBoard DB845c with two
+WSA8810 and Lenovo YOGA C630 Laptop based on SDM850 with WSA8815
+speaker amplifiers.
 
-On Tue, 8 Oct 2019 at 23:11, Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
->
-> Hi Anand,
->
-> On Tue, Oct 8, 2019 at 4:39 PM Anand Moon <linux.amoon@gmail.com> wrote:
-> >
-> > Hi Kevin / Martin,
-> >
-> > On Tue, 8 Oct 2019 at 04:28, Kevin Hilman <khilman@baylibre.com> wrote:
-> > >
-> > > Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
-> > >
-> > > > On Mon, Oct 7, 2019 at 3:17 PM Anand Moon <linux.amoon@gmail.com> wrote:
-> > > > [...]
-> > > >> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> > > >> index c9a867ac32d4..72f6a7dca0d6 100644
-> > > >> --- a/arch/arm64/configs/defconfig
-> > > >> +++ b/arch/arm64/configs/defconfig
-> > > >> @@ -774,7 +774,7 @@ CONFIG_MPL3115=m
-> > > >>  CONFIG_PWM=y
-> > > >>  CONFIG_PWM_BCM2835=m
-> > > >>  CONFIG_PWM_CROS_EC=m
-> > > >> -CONFIG_PWM_MESON=m
-> > > >> +CONFIG_PWM_MESON=y
-> > > >
-> > > > some time ago I submitted a similar patch for the 32-bit SoCs
-> > > > it turned that that pwm-meson can be built as module because the
-> > > > kernel will run without CPU DVFS as long as the clock and regulator
-> > > > drivers are returning -EPROBE_DEFER (-517)
-> > >
-> > > On 64-bit SoCs, the kernel boots with PWM as a module also, but DVFS
-> > > only works sometimes, and making it built-in fixes the problem.
-> > > Actually, it doesn't fix, it just hides the problem, which is likely a
-> > > race or timeout happening during deferred probing.
-> > >
-> > > > did you check whether there's some other problem like some unused
-> > > > clock which is being disabled at that moment?
-> > > > I've been hunting weird problems in the past where it turned out that
-> > > > changing kernel config bits changed the boot timing - that masked the
-> > > > original problem
-> > >
-> > > Right, I would definitely prefer to not make this built-in without a lot
-> > > more information to *why* this is needed.  In figuring that out, we'll
-> > > probably find the race/timeout that's the root cause.
-> > >
-> > > Kevin
-> > >
-> > >
-> >
-> > Kevin,
-> >
-> > As per my understanding from the kernelci.org logs it seen that
-> > pwm-meson driver is requested more than once before it finally load the module.
-> >
-> > [0] https://storage.kernelci.org/next/master/next-20191008/arm64/defconfig/gcc-8/lab-baylibre/boot-meson-g12b-odroid-n2.txt
-> my understanding is that:
-> - the PWM regulator driver is built in (=y)
-> - the Meson PWM controller driver is built as module (=m)
-> - during boot the PWM regulator node is found and it has a matching
-> driver (built-in)
-> - the PWM regulator driver tries to find the PWM controller but cannot
-> find it yet (and reports "Failed to get PWM: -517")
-> - (this repeats a few times)
-> - then the filesystem / initramfs is loaded where the modules are located
-> - now the Meson PWM controller driver is loaded
-> - the PWM regulator driver tries to find the PWM controller -> now it found it
->
+Most of the code in this driver is rework of Qualcomm downstream drivers
+used in Andriod. Credits to Banajit Goswami and Patrick Lai's Team.
 
-Thanks of this information.
-At my end on archlinux I also tried to update my initramfs to
-add support for *pwm-meson* to but it did not work for me.
+TODO:
+        Add thermal sensor support in WSA881x.
 
-> > Hi Martin,
-> >
-> > I have tired your Martin's patch [1] and still the boot fails to move
-> > ahead with below logs.
-> > [1] https://lore.kernel.org/patchwork/patch/1034186/
-> this patch only silences the "Failed to get PWM: -517" message
-> Mark didn't apply it back then because without that message it would
-> be harder to debug these issues
->
-> > [    1.543928] xhci-hcd xhci-hcd.0.auto: Host supports USB 3.0 SuperSpeed
-> > [    1.550422] usb usb2: We don't know the algorithms for LPM for this
-> > host, disabling LPM.
-> > [    1.558702] hub 2-0:1.0: USB hub found
-> > [    1.562131] hub 2-0:1.0: 1 port detected
-> > [    1.566206] dwc3-meson-g12a ffe09000.usb: switching to Device Mode
-> > [    1.573252] meson-gx-mmc ffe05000.sd: Got CD GPIO
-> > [    1.607405] hctosys: unable to open rtc device (rtc0)
-> >
-> > I have put some more prints in pwm-meson.c it fails to load the module
-> > as microsSD card is not completely initialized.
-> what makes you think that there's a problem with pwm-meson?
->
-> can you please share a boot log with the command line parameter
-> "initcall_debug" [0]?
-> from Documentation/admin-guide/kernel-parameters.txt:
->  initcall_debug [KNL] Trace initcalls as they are executed.  Useful
->  for working out where the kernel is dying during
->  startup.
->
+Thanks,
+srini
 
-Well I have tied to add this command  *initcall_debug* to kernel command prompt.
-Here is the console log,  but I did not see any init kernel timer logs
+Changes since v6:
+	- Added reviewed-by tag from Pierre and Rob
+	- Removed udelay argument as suggested by Pierre.
+	- Added device id for WSA8815
+	- rebased on sound-next
 
-Kernel command line: console=ttyAML0,115200n8
-root=PARTUUID=45d7d61e-01 rw rootwait
-earlyprintk=serial,ttyAML0,115200 initcall_debug printk.time=y
+Srinivas Kandagatla (2):
+  dt-bindings: ASoC: Add WSA881x bindings
+  ASoC: codecs: add wsa881x amplifier support
 
-[0] https://pastebin.com/eBgJrSKe
+ .../bindings/sound/qcom,wsa881x.yaml          |   62 +
+ sound/soc/codecs/Kconfig                      |   10 +
+ sound/soc/codecs/Makefile                     |    2 +
+ sound/soc/codecs/wsa881x.c                    | 1113 +++++++++++++++++
+ 4 files changed, 1187 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,wsa881x.yaml
+ create mode 100644 sound/soc/codecs/wsa881x.c
 
-> you can also try the command line parameter "clk_ignore_unused" (it's
-> just a gut feeling: maybe a "critical" clock is being disabled because
-> it's not wired up correctly).
->
+-- 
+2.21.0
 
-It look like some clk issue after I added the *clk_ignore_unused* to
-kernel command line
-it booted further to login prompt and cpufreq DVFS seem to be loaded.
-So I could conclude this is clk issue.below is the boot log
-
-Kernel command line: console=ttyAML0,115200n8
-root=PARTUUID=45d7d61e-01 rw rootwait
-earlyprintk=serial,ttyAML0,115200 initcall_debug printk.time=y
-clk_ignore_unused
-
-[1] https://pastebin.com/Nsk0wZQJ
-
-> back when I was working out the CPU clock tree for the 32-bit SoCs I
-> had a bad parent clock in one of the muxes which resulted in sporadic
-> lockups if CPU DVFS was enabled.
-> you can try to disable CPU DVFS by dropping the OPP table and it's
-> references from the .dtsi
->
-
-Yep yesterday my focus was to disable PWM feature and get boot up-to
-login prompt
-But not I have to look into clk feature.
-
-*Many thanks for your valuable inputs, I learned a lot of things.*
-
->
-> Martin
->
->
-> [0] https://elinux.org/Initcall_Debug
-
-Best Regards
--Anand
