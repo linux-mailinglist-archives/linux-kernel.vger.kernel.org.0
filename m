@@ -2,137 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12EBBD17AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 20:43:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A793D17B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 20:44:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731562AbfJISny (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 14:43:54 -0400
-Received: from dc2-smtprelay2.synopsys.com ([198.182.61.142]:48738 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728804AbfJISny (ORCPT
+        id S1731650AbfJISoM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 14:44:12 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:42635 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731254AbfJISoM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 14:43:54 -0400
-Received: from mailhost.synopsys.com (dc8-mailhost1.synopsys.com [10.13.135.209])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id A8F42C0161;
-        Wed,  9 Oct 2019 18:43:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1570646633; bh=z/IWOeKhq4peAhuuLCtaYHRBzB8hgA55HCXWFihVAJU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S+c3tq+5m56Mv/qT4UTC2Ab9/9O4fRh9+OIZx/tFgTUVDPb4WnJWXrsfDr01itju7
-         +m7+BbfTjV1ovUbeg0yEtktwkujtLbUB3DL+JR9KQPYfZ/csuoulLUqJuGhT1JvlQO
-         lUiIPS0/o5L+rim9+MfoOQCEa3lupHVO3LbWkgwLgAC9pVQxpfTcTQUVW8+Tash/jx
-         3/MDMAZkbqHhMOXTN2dZYnOpfu3Hr6X236pQ30oDvW10PnTfs5bcflja1NtWQbvT1L
-         yr2Td7dfjdbKUc8732j6Hc/aG6QHCH2D+Lq9YtISpetf/tRK7QmaStRWkPNOMUMjYC
-         78Xmzw/ugkKtA==
-Received: from vineetg-Latitude-E7450.internal.synopsys.com (vineetg-latitude-e7450.internal.synopsys.com [10.10.161.61])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 94C19A006B;
-        Wed,  9 Oct 2019 18:43:52 +0000 (UTC)
-From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
-To:     linux-snps-arc@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH v2] ARC: mm: remove __ARCH_USE_5LEVEL_HACK
-Date:   Wed,  9 Oct 2019 11:43:50 -0700
-Message-Id: <20191009184350.18323-1-vgupta@synopsys.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <adaa82a2-b143-d49f-f38c-24ef52a200b8@gmail.com>
-References: <adaa82a2-b143-d49f-f38c-24ef52a200b8@gmail.com>
+        Wed, 9 Oct 2019 14:44:12 -0400
+Received: by mail-oi1-f194.google.com with SMTP id i185so2644062oif.9
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 11:44:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=80jcnPBLsOoks69yHo8g6YiW4RIC2Pi47/8pROpVuWc=;
+        b=MNqqYHpMw01a7siHJTmNDsZU/gVtDJklrOtu9mitWMxnxA/AjOqQHWYUhBI6XkjxBp
+         fb/0SUpv7f97S258loyt9/mP1quCcObSikIDKnzLPgYRkv0mTX1R+JLXdPDMs5nlPoNM
+         hq2MsXJt/oJZugSpmImlMYOydesHrFM6MorA4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=80jcnPBLsOoks69yHo8g6YiW4RIC2Pi47/8pROpVuWc=;
+        b=ri9KB5Qw+yVkAejAYw4SCU+LW9DxKgRIurAeWRg5Iej1vLZoVXO2N9uUZK1M5r2M6J
+         NzHPeA0Cuzv4bfANUvgv8IFrb4ABtxvWIHuXQaDniRjrVHQioT+EJgJoMK1A53U7w8y7
+         Yth6r5v0E3razdhZ7O9n96OE16z42293vPI7TURUp5zIrQshBAA/LYY/nNOvkG5VZK7F
+         GMS4+DLBcGo8uxlbt7NmZm+TYULcM8A7gXC1Z4uq3p9nWlhkkYc9ENnkhKu+0uT2248Y
+         SWssAmOo2ZDtujJwpoMv2oEP86jiyk/+0C4kHw2lXsYAYQnzEK2gpfdX4XzNcB1bFE/p
+         wHBg==
+X-Gm-Message-State: APjAAAW9mnJuoQa4yDIaywsi8xFDTDUarsddzmXtpEazOXKX/Zcl4LR2
+        yQ9iMMvmpXUFC6+6nZkMSmfmP/11SLnCjwS9XUPW5Q==
+X-Google-Smtp-Source: APXvYqxK3ZYbW7gmd9nE9xtV5IyS7KCU4ZqXAfWDOa71iD0fhMG/5Icn6oKm9z6SvhJQad7k7SDKuvifreNikeNYeVw=
+X-Received: by 2002:aca:3a55:: with SMTP id h82mr3856687oia.128.1570646649343;
+ Wed, 09 Oct 2019 11:44:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <951eb7dc-bebe-5049-4998-f199e18b0bf3@canonical.com>
+ <20191009163235.GT16989@phenom.ffwll.local> <a0d5f3a3-a2b3-5367-42f9-bde514571e25@amd.com>
+In-Reply-To: <a0d5f3a3-a2b3-5367-42f9-bde514571e25@amd.com>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Wed, 9 Oct 2019 20:43:58 +0200
+Message-ID: <CAKMK7uEtJRDhibWDv2TB2WrFzFooMWPSbveDD2N-rudAwvzVFA@mail.gmail.com>
+Subject: Re: drm/amd/display: Add HDCP module - static analysis bug report
+To:     "Lakha, Bhawanpreet" <Bhawanpreet.Lakha@amd.com>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        "Wentland, Harry" <Harry.Wentland@amd.com>,
+        "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        "Koenig, Christian" <Christian.Koenig@amd.com>,
+        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        amd-gfx mailing list <amd-gfx@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the intermediate p4d accessors to make it 5 level compliant.
+On Wed, Oct 9, 2019 at 8:23 PM Lakha, Bhawanpreet
+<Bhawanpreet.Lakha@amd.com> wrote:
+>
+> Hi,
+>
+> The reason we don't use drm_hdcp is because our policy is to do hdcp
+> verification using PSP/HW (onboard secure processor).
 
-This is a non-functional change anyways since ARC has software page walker
-with 2 lookup levels (pgd -> pte)
+i915 also uses hw to auth, we still use the parts from drm_hdcp ...
+Did you actually look at what's in there? It's essentially just shared
+defines and data structures from the standard, plus a few minimal
+helpers to en/decode some bits. Just from a quick read the entire
+patch very much looks like midlayer everywhere design that we
+discussed back when DC landed ...
+-Daniel
 
-There is slight code bloat due to pulling in needless p*d_free_tlb()
-macros which needs to be addressed seperately.
+>
+> Bhawan
+>
+> On 2019-10-09 12:32 p.m., Daniel Vetter wrote:
+> > On Thu, Oct 03, 2019 at 11:08:03PM +0100, Colin Ian King wrote:
+> >> Hi,
+> >>
+> >> Static analysis with Coverity has detected a potential issue with
+> >> function validate_bksv in
+> >> drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_execution.c with recent
+> >> commit:
+> >>
+> >> commit ed9d8e2bcb003ec94658cafe9b1bb3960e2139ec
+> >> Author: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+> >> Date:   Tue Aug 6 17:52:01 2019 -0400
+> >>
+> >>      drm/amd/display: Add HDCP module
+> > I think the real question here is ... why is this not using drm_hdcp?
+> > -Daniel
+> >
+> >>
+> >> The analysis is as follows:
+> >>
+> >>   28 static inline enum mod_hdcp_status validate_bksv(struct mod_hdcp *hdcp)
+> >>   29 {
+> >>
+> >> CID 89852 (#1 of 1): Out-of-bounds read (OVERRUN)
+> >>
+> >> 1. overrun-local:
+> >> Overrunning array of 5 bytes at byte offset 7 by dereferencing pointer
+> >> (uint64_t *)hdcp->auth.msg.hdcp1.bksv.
+> >>
+> >>   30        uint64_t n = *(uint64_t *)hdcp->auth.msg.hdcp1.bksv;
+> >>   31        uint8_t count = 0;
+> >>   32
+> >>   33        while (n) {
+> >>   34                count++;
+> >>   35                n &= (n - 1);
+> >>   36        }
+> >>
+> >> hdcp->auth.msg.hdcp1.bksv is an array of 5 uint8_t as defined in
+> >> drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h as follows:
+> >>
+> >> struct mod_hdcp_message_hdcp1 {
+> >>          uint8_t         an[8];
+> >>          uint8_t         aksv[5];
+> >>          uint8_t         ainfo;
+> >>          uint8_t         bksv[5];
+> >>          uint16_t        r0p;
+> >>          uint8_t         bcaps;
+> >>          uint16_t        bstatus;
+> >>          uint8_t         ksvlist[635];
+> >>          uint16_t        ksvlist_size;
+> >>          uint8_t         vp[20];
+> >>
+> >>          uint16_t        binfo_dp;
+> >> };
+> >>
+> >> variable n is going to contain the contains of r0p and bcaps. I'm not
+> >> sure if that is intentional. If not, then the count is going to be
+> >> incorrect if these are non-zero.
+> >>
+> >> Colin
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-| bloat-o-meter2 vmlinux-with-5LEVEL_HACK vmlinux-patched
-| add/remove: 0/0 grow/shrink: 2/0 up/down: 128/0 (128)
-| function                                     old     new   delta
-| free_pgd_range                               546     656    +110
-| p4d_clear_bad                                  2      20     +18
-| Total: Before=4137148, After=4137276, chg 0.000000%
 
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
----
-v2 <- v1:
-  - fix highmem code
----
- arch/arc/include/asm/pgtable.h |  1 -
- arch/arc/mm/fault.c            | 10 ++++++++--
- arch/arc/mm/highmem.c          |  4 +++-
- 3 files changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arc/include/asm/pgtable.h b/arch/arc/include/asm/pgtable.h
-index 976b5931372e..902d45428cea 100644
---- a/arch/arc/include/asm/pgtable.h
-+++ b/arch/arc/include/asm/pgtable.h
-@@ -33,7 +33,6 @@
- #define _ASM_ARC_PGTABLE_H
- 
- #include <linux/bits.h>
--#define __ARCH_USE_5LEVEL_HACK
- #include <asm-generic/pgtable-nopmd.h>
- #include <asm/page.h>
- #include <asm/mmu.h>	/* to propagate CONFIG_ARC_MMU_VER <n> */
-diff --git a/arch/arc/mm/fault.c b/arch/arc/mm/fault.c
-index 3861543b66a0..fb86bc3e9b35 100644
---- a/arch/arc/mm/fault.c
-+++ b/arch/arc/mm/fault.c
-@@ -30,6 +30,7 @@ noinline static int handle_kernel_vaddr_fault(unsigned long address)
- 	 * with the 'reference' page table.
- 	 */
- 	pgd_t *pgd, *pgd_k;
-+	p4d_t *p4d, *p4d_k;
- 	pud_t *pud, *pud_k;
- 	pmd_t *pmd, *pmd_k;
- 
-@@ -39,8 +40,13 @@ noinline static int handle_kernel_vaddr_fault(unsigned long address)
- 	if (!pgd_present(*pgd_k))
- 		goto bad_area;
- 
--	pud = pud_offset(pgd, address);
--	pud_k = pud_offset(pgd_k, address);
-+	p4d = p4d_offset(pgd, address);
-+	p4d_k = p4d_offset(pgd_k, address);
-+	if (!p4d_present(*p4d_k))
-+		goto bad_area;
-+
-+	pud = pud_offset(p4d, address);
-+	pud_k = pud_offset(p4d_k, address);
- 	if (!pud_present(*pud_k))
- 		goto bad_area;
- 
-diff --git a/arch/arc/mm/highmem.c b/arch/arc/mm/highmem.c
-index a4856bfaedf3..69397c884a7b 100644
---- a/arch/arc/mm/highmem.c
-+++ b/arch/arc/mm/highmem.c
-@@ -111,12 +111,14 @@ EXPORT_SYMBOL(__kunmap_atomic);
- static noinline pte_t * __init alloc_kmap_pgtable(unsigned long kvaddr)
- {
- 	pgd_t *pgd_k;
-+	p4d_t *p4d_k;
- 	pud_t *pud_k;
- 	pmd_t *pmd_k;
- 	pte_t *pte_k;
- 
- 	pgd_k = pgd_offset_k(kvaddr);
--	pud_k = pud_offset(pgd_k, kvaddr);
-+	p4d_k = p4d_offset(pgd_k, address);
-+	pud_k = pud_offset(p4d_k, kvaddr);
- 	pmd_k = pmd_offset(pud_k, kvaddr);
- 
- 	pte_k = (pte_t *)memblock_alloc_low(PAGE_SIZE, PAGE_SIZE);
 -- 
-2.20.1
-
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
