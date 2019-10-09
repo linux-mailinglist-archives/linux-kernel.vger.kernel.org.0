@@ -2,109 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A47CD17EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 20:58:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 739F6D17FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 21:07:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731559AbfJIS6V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 14:58:21 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:60208 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729535AbfJIS6V (ORCPT
+        id S1731611AbfJITHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 15:07:11 -0400
+Received: from us03-smtprelay2.synopsys.com ([149.117.87.133]:37260 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728804AbfJITHL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 14:58:21 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x99ImqCW142489;
-        Wed, 9 Oct 2019 18:58:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2019-08-05;
- bh=P+/ghBe4HEy3gT/gHu/XLIQ7wMnVX6Y2sBI1mZRANTs=;
- b=PoYxF+L2FSYq/4fntDJ+pUMOqr7X/igLOyqhcv9gmAcueiiFUBKR4R4CCC5qLlUh3LwZ
- QhSA9pGNREiLsxD4iJmG9JyE1UlsmJTvn1NSGEw+FOhUH8DXSPy8qlcMiR9lHWtZ9/Ii
- 7sLLObGyby5kLWkWM64pW7tV9UcPnxqQk3IW036zJJpWnKQH5S3N29f4/1fuBHt+/7i5
- +RbgIhe9uh7R4UKx+iNESuiTxJCsuDO6x/Umx5iOAkwia82+Px2SZKoUK5tl2XZ6wLyh
- gWoGw2wjCrAiSDyAu7qJLzWqoJ5ylpb57kPd5p/JfvXtjb2hAauszv9Tqc+niAFVSdMT 1Q== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 2vejkuppur-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 09 Oct 2019 18:58:16 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x99InBPk069950;
-        Wed, 9 Oct 2019 18:58:15 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2vh8k1atss-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 09 Oct 2019 18:58:15 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x99IwEMv023925;
-        Wed, 9 Oct 2019 18:58:14 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 09 Oct 2019 11:58:13 -0700
-Date:   Wed, 9 Oct 2019 21:58:07 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Jerome Pouiller <Jerome.Pouiller@silabs.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/7] Fix various compilation issues with wfx driver
-Message-ID: <20191009185807.GB20470@kadam>
-References: <20191008094232.10014-1-Jerome.Pouiller@silabs.com>
- <20191008151046.GA2862250@kroah.com>
- <6487016.ESlEkJNu7c@pc-42>
+        Wed, 9 Oct 2019 15:07:11 -0400
+X-Greylist: delayed 570 seconds by postgrey-1.27 at vger.kernel.org; Wed, 09 Oct 2019 15:07:10 EDT
+Received: from mailhost.synopsys.com (dc8-mailhost1.synopsys.com [10.13.135.209])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 1B40BC04D5;
+        Wed,  9 Oct 2019 18:57:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1570647460; bh=MgRIVfEAJ94OkyjrBQhZFPU5pG5MPCWR3XI6euyMrTY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=P+q9EXk90lZx9V+thbZSLXi49Y0ooOEh5vUOV8p3jhCTwLzIHl/RZ7ohsPJYil6S5
+         MX+hMG6F8kJl+0eeDQWxtLCi/cwYPeHsOOdRGya1RISfM9OIOB2RQrkk1GecY+QMjj
+         a/2Pn0fH8yKHPvi1RFOqc+3/3N4OND0/sYKMktnctjKSxiyuv6ceGCKkkh4dSwi6z/
+         PayIEkKnBy3eEQxM10ruy0N3aFHd8dQOnMMvL5skgVWo+Wkdb7TJKBlw7Idw7ra3Qn
+         nAiX1/VYXOy14er8uHy08AgCTMs9si1hkMijKYZ1o7w0ezfl4kf6mwUKW4hgYHc6SR
+         jZs8RKEqLqEog==
+Received: from vineetg-Latitude-E7450.internal.synopsys.com (vineetg-latitude-e7450.internal.synopsys.com [10.10.161.61])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 93B7EA006B;
+        Wed,  9 Oct 2019 18:57:33 +0000 (UTC)
+From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
+To:     linux-snps-arc@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCH v3] ARC: mm: remove __ARCH_USE_5LEVEL_HACK
+Date:   Wed,  9 Oct 2019 11:57:31 -0700
+Message-Id: <20191009185731.25814-1-vgupta@synopsys.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191009184350.18323-1-vgupta@synopsys.com>
+References: <20191009184350.18323-1-vgupta@synopsys.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6487016.ESlEkJNu7c@pc-42>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9405 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910090153
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9405 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910090153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 03:13:14PM +0000, Jerome Pouiller wrote:
-> On Tuesday 8 October 2019 17:10:56 CEST Greg Kroah-Hartman wrote:
-> > On Tue, Oct 08, 2019 at 09:42:47AM +0000, Jerome Pouiller wrote:
-> > > From: Jérôme Pouiller <jerome.pouiller@silabs.com>
-> > >
-> > > Most of problems are related to big-endian architectures.
-> > 
-> > kbuild still reports 2 errors with these patches applied:
-> > 
-> > Regressions in current branch:
-> > 
-> > drivers/staging/wfx/hif_tx.c:82:2-8: preceding lock on line 65
-> 
-> As I replied to Julia, this behavior is intended.
-> 
-> > drivers/staging/wfx/main.c:188:14-21: ERROR: PTR_ERR applied after initialization to constant on line 183
-> 
-> This is a false positive, as confirmed by Dan.
-> 
-> You may also notice:
-> 
->   drivers/staging/wfx/scan.c:207 wfx_scan_work() warn: inconsistent returns 'sem:&wvif->scan.lock'
-> 
-> I also consider it as a false positive.
+Add the intermediate p4d accessors to make it 5 level compliant.
 
-Yeah.  I thought it might be.  The beauty of 0day bot is that normally
-the warnings come really quick after the original author wrote the code
-so it's fresh in their heads.  I suspected it might be a false positive
-but I wasn't sure either way and I try not to spend a lot of time
-reviewing those warnings.
+This is a non-functional change anyways since ARC has software page walker
+with 2 lookup levels (pgd -> pte)
 
-regards,
-dan carpenter
+There is slight code bloat due to pulling in needless p*d_free_tlb()
+macros which needs to be addressed seperately.
+
+| bloat-o-meter2 vmlinux-with-5LEVEL_HACK vmlinux-patched
+| add/remove: 0/0 grow/shrink: 2/0 up/down: 128/0 (128)
+| function                                     old     new   delta
+| free_pgd_range                               546     656    +110
+| p4d_clear_bad                                  2      20     +18
+| Total: Before=4137148, After=4137276, chg 0.000000%
+
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+---
+v3 <- v2
+  - fix highmem build error
+
+v2 <- v1
+ - fix highmem code
+---
+ arch/arc/include/asm/pgtable.h |  1 -
+ arch/arc/mm/fault.c            | 10 ++++++++--
+ arch/arc/mm/highmem.c          |  4 +++-
+ 3 files changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arc/include/asm/pgtable.h b/arch/arc/include/asm/pgtable.h
+index 976b5931372e..902d45428cea 100644
+--- a/arch/arc/include/asm/pgtable.h
++++ b/arch/arc/include/asm/pgtable.h
+@@ -33,7 +33,6 @@
+ #define _ASM_ARC_PGTABLE_H
+ 
+ #include <linux/bits.h>
+-#define __ARCH_USE_5LEVEL_HACK
+ #include <asm-generic/pgtable-nopmd.h>
+ #include <asm/page.h>
+ #include <asm/mmu.h>	/* to propagate CONFIG_ARC_MMU_VER <n> */
+diff --git a/arch/arc/mm/fault.c b/arch/arc/mm/fault.c
+index 3861543b66a0..fb86bc3e9b35 100644
+--- a/arch/arc/mm/fault.c
++++ b/arch/arc/mm/fault.c
+@@ -30,6 +30,7 @@ noinline static int handle_kernel_vaddr_fault(unsigned long address)
+ 	 * with the 'reference' page table.
+ 	 */
+ 	pgd_t *pgd, *pgd_k;
++	p4d_t *p4d, *p4d_k;
+ 	pud_t *pud, *pud_k;
+ 	pmd_t *pmd, *pmd_k;
+ 
+@@ -39,8 +40,13 @@ noinline static int handle_kernel_vaddr_fault(unsigned long address)
+ 	if (!pgd_present(*pgd_k))
+ 		goto bad_area;
+ 
+-	pud = pud_offset(pgd, address);
+-	pud_k = pud_offset(pgd_k, address);
++	p4d = p4d_offset(pgd, address);
++	p4d_k = p4d_offset(pgd_k, address);
++	if (!p4d_present(*p4d_k))
++		goto bad_area;
++
++	pud = pud_offset(p4d, address);
++	pud_k = pud_offset(p4d_k, address);
+ 	if (!pud_present(*pud_k))
+ 		goto bad_area;
+ 
+diff --git a/arch/arc/mm/highmem.c b/arch/arc/mm/highmem.c
+index a4856bfaedf3..fc8849e4f72e 100644
+--- a/arch/arc/mm/highmem.c
++++ b/arch/arc/mm/highmem.c
+@@ -111,12 +111,14 @@ EXPORT_SYMBOL(__kunmap_atomic);
+ static noinline pte_t * __init alloc_kmap_pgtable(unsigned long kvaddr)
+ {
+ 	pgd_t *pgd_k;
++	p4d_t *p4d_k;
+ 	pud_t *pud_k;
+ 	pmd_t *pmd_k;
+ 	pte_t *pte_k;
+ 
+ 	pgd_k = pgd_offset_k(kvaddr);
+-	pud_k = pud_offset(pgd_k, kvaddr);
++	p4d_k = p4d_offset(pgd_k, kvaddr);
++	pud_k = pud_offset(p4d_k, kvaddr);
+ 	pmd_k = pmd_offset(pud_k, kvaddr);
+ 
+ 	pte_k = (pte_t *)memblock_alloc_low(PAGE_SIZE, PAGE_SIZE);
+-- 
+2.20.1
 
