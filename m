@@ -2,86 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 767F9D1BA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 00:26:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15443D1BB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 00:27:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732210AbfJIW0e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 18:26:34 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:40323 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731916AbfJIW0e (ORCPT
+        id S1732242AbfJIW1I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 18:27:08 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:55028 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731589AbfJIW1I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 18:26:34 -0400
-Received: by mail-qt1-f194.google.com with SMTP id m61so5791807qte.7
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 15:26:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=CiNtf9aBIrrX5eeY+lWUtp3cirNfSmpXQ9FltiktAv8=;
-        b=FifhUGIjpae34or/omxVvVhF4rTt/qglBiIOmZrJKECnjR1gVHZsl8LD6YgHFKTCXk
-         hCZnog3cO2un3XkGVataAVPc30evbmMui325U5Rp6eS6XapsDteXGLN6FhKqGctsV2ao
-         Mx5Ef0I0DwwIRgRslVWXqZydwnLF4QJibAxyqWnlvJgXenZgySzhiKYKJ2uae0g4NoWq
-         alJLKjeJwSPpS3TJfgbwb9lEEdUq51XdBXR6eLtEthEIroRTCUZMZeqzJ967zjwYCcUi
-         FBTwZhcbcy1YP3GF59x/oZdm0LstQNmyJKF1+4jueJ4vBmMxQkuLHpXREbEd1e/VGs0B
-         wX7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=CiNtf9aBIrrX5eeY+lWUtp3cirNfSmpXQ9FltiktAv8=;
-        b=dpOp8Evf8isTSLYIRgv1MGskUOdc+bZ+ni+fjWMX7BP/DjT1TUFQcIjg4CM+kAWQBz
-         meFJA3uKGimK1bCRIenOWWFj9mNh36XbQnxWYj2jzL2+tdVnwGQ868sywil8UkyEkV7E
-         xakX88JNiPZ+YpU/jxmAEsA1jY4ItZqSJHWRdFJsFfsu8BsVScRP9dEEJvGYQQXvYW2m
-         dJE+GHMGK0tOBVEvkVCd4j+UmsvZM4DXZBiIDjDxW63HQL+qdO1YNqvlCL0/m7zD6G7J
-         sKgLaZBIDFAb22gEJnLAYdREtHg4TuwPhbG3k00xnlV9R98tQ8wr6JrBxeok16WyKJ1Z
-         af+w==
-X-Gm-Message-State: APjAAAWL5Ok8VRUMm5PiOStOIb2qDUHVfWZQyiw8eGS2rbsuQ/JfCTke
-        oiXVQcvYDuhQcWgKDNWSgwK0PA==
-X-Google-Smtp-Source: APXvYqy0slX/EioTfIAvk6LMnCaI+bB5mkLKuNgrupgqFoZCuC6hMmDIMoLJbc3HFKkDgCKbzceKzA==
-X-Received: by 2002:a05:6214:1264:: with SMTP id r4mr6460857qvv.64.1570659993075;
-        Wed, 09 Oct 2019 15:26:33 -0700 (PDT)
-Received: from cakuba.netronome.com ([66.60.152.14])
-        by smtp.gmail.com with ESMTPSA id k54sm2393829qtf.28.2019.10.09.15.26.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2019 15:26:32 -0700 (PDT)
-Date:   Wed, 9 Oct 2019 15:26:18 -0700
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Antonio Borneo <antonio.borneo@st.com>
-Cc:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] net: stmmac: add flexible PPS to dwmac 4.10a
-Message-ID: <20191009152618.33b45c2d@cakuba.netronome.com>
-In-Reply-To: <20191007154306.95827-5-antonio.borneo@st.com>
-References: <20191007154306.95827-1-antonio.borneo@st.com>
-        <20191007154306.95827-5-antonio.borneo@st.com>
-Organization: Netronome Systems, Ltd.
+        Wed, 9 Oct 2019 18:27:08 -0400
+Received: from mailhost.synopsys.com (dc8-mailhost1.synopsys.com [10.13.135.209])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 20F71C0161;
+        Wed,  9 Oct 2019 22:27:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1570660027; bh=6Aq+CRKQ123HNwQJOwDjxHCXrqx0gY8ewNZL7wsZSIE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=blyN6FOQZeulLD0rf1SvXjIM81rGAzdstFNamvGPsaElojyMMbzaqYVTCZj9ydVaI
+         98ChzD8+Zzd9r82lUCkcUZ0ow0H9UDFTURRj24tyNIEt0x1laSOmwqXhtzXsovPU4f
+         ZG7hvAT/GsDUNNbnWqvCcRLa/tNcmyAP7TqHMoG34jSYE4g9/0aCA9CSfpYq/auC9V
+         bjivnGSy4eHHx9kIoq5WETVy1zXayxj9iDSOMc/jfoDsftL/Aj43lciQgdrgZDxb9Z
+         kMchGMJj1ztHCMXyEQccdFLNG8OUrAYat7gFNAuFwU+S5jF7Dzu6W6+AvVW9IOojR/
+         Oc73ruBIiQR/w==
+Received: from vineetg-Latitude-E7450.internal.synopsys.com (vineetg-latitude-e7450.internal.synopsys.com [10.10.161.61])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 22EC0A006B;
+        Wed,  9 Oct 2019 22:27:03 +0000 (UTC)
+From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
+To:     linux-mm@kvack.org
+Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Will Deacon <will@kernel.org>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nick Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Subject: [PATCH 0/3] eldie generated code for folded p4d/pud
+Date:   Wed,  9 Oct 2019 15:26:55 -0700
+Message-Id: <20191009222658.961-1-vgupta@synopsys.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 7 Oct 2019 17:43:06 +0200, Antonio Borneo wrote:
-> All the registers and the functionalities used in the callback
-> dwmac5_flex_pps_config() are common between dwmac 4.10a [1] and
-> 5.00a [2].
-> 
-> Reuse the same callback for dwmac 4.10a too.
-> 
-> Tested on STM32MP15x, based on dwmac 4.10a.
-> 
-> [1] DWC Ethernet QoS Databook 4.10a October 2014
-> [2] DWC Ethernet QoS Databook 5.00a September 2017
-> 
-> Signed-off-by: Antonio Borneo <antonio.borneo@st.com>
+Hi,
 
-Applied to net-next.
+This series elides extraneous generate code for folded p4d/pud.
+This came up when trying to remove __ARCH_USE_5LEVEL_HACK from ARC port.
+The code saving are not a while lot, but still worthwhile IMHO.
+
+bloat-o-meter2 vmlinux-A-baseline vmlinux-E-elide-p?d_clear_bad
+add/remove: 0/2 grow/shrink: 0/1 up/down: 0/-146 (-146)
+function                                     old     new   delta
+p4d_clear_bad                                  2       -      -2
+pud_clear_bad                                 20       -     -20
+free_pgd_range                               546     422    -124
+Total: Before=4137148, After=4137002, chg -1.000000%
+
+Thx,
+-Vineet
+
+Vineet Gupta (3):
+  asm-generic/tlb: stub out pud_free_tlb() if __PAGETABLE_PUD_FOLDED ...
+  asm-generic/tlb: stub out p4d_free_tlb() if __PAGETABLE_P4D_FOLDED ...
+  asm-generic/mm: stub out p{4,d}d_clear_bad() if
+    __PAGETABLE_P{4,u}D_FOLDED
+
+ include/asm-generic/4level-fixup.h |  2 --
+ include/asm-generic/5level-fixup.h |  2 --
+ include/asm-generic/pgtable.h      | 11 +++++++++++
+ include/asm-generic/tlb.h          |  8 ++++++--
+ mm/pgtable-generic.c               |  4 ++++
+ 5 files changed, 21 insertions(+), 6 deletions(-)
+
+-- 
+2.20.1
+
