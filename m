@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59508D1BF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 00:40:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39CB7D1BEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 00:40:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732404AbfJIWkk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 18:40:40 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:46371 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730999AbfJIWkN (ORCPT
+        id S1732246AbfJIWkQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 18:40:16 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:53175 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732158AbfJIWkO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 18:40:13 -0400
+        Wed, 9 Oct 2019 18:40:14 -0400
 X-Originating-IP: 86.202.229.42
 Received: from localhost (lfbn-lyo-1-146-42.w86-202.abo.wanadoo.fr [86.202.229.42])
         (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id D0D55C0003;
-        Wed,  9 Oct 2019 22:40:11 +0000 (UTC)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id AAADA40008;
+        Wed,  9 Oct 2019 22:40:12 +0000 (UTC)
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -24,11 +24,10 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH 2/8] dt-bindings: mfd: atmel,at91rm9200-tcb: add sama5d2 compatible
-Date:   Thu, 10 Oct 2019 00:40:00 +0200
-Message-Id: <20191009224006.5021-3-alexandre.belloni@bootlin.com>
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 3/8] ARM: dts: at91: sama5d2: add TCB GCLK
+Date:   Thu, 10 Oct 2019 00:40:01 +0200
+Message-Id: <20191009224006.5021-4-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191009224006.5021-1-alexandre.belloni@bootlin.com>
 References: <20191009224006.5021-1-alexandre.belloni@bootlin.com>
@@ -39,77 +38,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The sama5d2 TC block TIMER_CLOCK1 is different from the at91sam9x5 one.
-Instead of being MCK / 2, it is the TCB GCLK.
+The sama5d2 tcbs take an extra input clock, their gclk.
 
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
-Cc: Rob Herring <robh+dt@kernel.org>
+ arch/arm/boot/dts/sama5d2.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
- .../bindings/mfd/atmel,at91rm9200-tcb.yaml    | 36 +++++++++++++++----
- 1 file changed, 30 insertions(+), 6 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/mfd/atmel,at91rm9200-tcb.yaml b/Documentation/devicetree/bindings/mfd/atmel,at91rm9200-tcb.yaml
-index 4d9247fc0593..4fc5bd34d38b 100644
---- a/Documentation/devicetree/bindings/mfd/atmel,at91rm9200-tcb.yaml
-+++ b/Documentation/devicetree/bindings/mfd/atmel,at91rm9200-tcb.yaml
-@@ -19,6 +19,7 @@ properties:
-       - enum:
-           - atmel,at91rm9200-tcb
-           - atmel,at91sam9x5-tcb
-+          - atmel,sama5d2-tcb
-       - const: simple-mfd
-       - const: syscon
+diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
+index 2e2c1a7b1d1d..f878d7866970 100644
+--- a/arch/arm/boot/dts/sama5d2.dtsi
++++ b/arch/arm/boot/dts/sama5d2.dtsi
+@@ -495,23 +495,23 @@
+ 			};
  
-@@ -38,12 +39,6 @@ properties:
-       t1_clk and t2_clk if a clock per channel is available.
-     minItems: 2
-     maxItems: 4
--    items:
--      enum:
--        - t0_clk
--        - t1_clk
--        - t2_clk
--        - slow_clk
+ 			tcb0: timer@f800c000 {
+-				compatible = "atmel,at91sam9x5-tcb", "simple-mfd", "syscon";
++				compatible = "atmel,sama5d2-tcb", "simple-mfd", "syscon";
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+ 				reg = <0xf800c000 0x100>;
+ 				interrupts = <35 IRQ_TYPE_LEVEL_HIGH 0>;
+-				clocks = <&pmc PMC_TYPE_PERIPHERAL 35>, <&clk32k>;
+-				clock-names = "t0_clk", "slow_clk";
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 35>, <&pmc PMC_TYPE_GCK 35>, <&clk32k>;
++				clock-names = "t0_clk", "gclk", "slow_clk";
+ 			};
  
-   clocks:
-     minItems: 2
-@@ -55,6 +50,35 @@ properties:
-   '#size-cells':
-     const: 0
+ 			tcb1: timer@f8010000 {
+-				compatible = "atmel,at91sam9x5-tcb", "simple-mfd", "syscon";
++				compatible = "atmel,sama5d2-tcb", "simple-mfd", "syscon";
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+ 				reg = <0xf8010000 0x100>;
+ 				interrupts = <36 IRQ_TYPE_LEVEL_HIGH 0>;
+-				clocks = <&pmc PMC_TYPE_PERIPHERAL 36>, <&clk32k>;
+-				clock-names = "t0_clk", "slow_clk";
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 36>, <&pmc PMC_TYPE_GCK 36>, <&clk32k>;
++				clock-names = "t0_clk", "gclk", "slow_clk";
+ 			};
  
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: atmel,sama5d2-tcb
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 3
-+          maxItems: 3
-+        clock-names:
-+          items:
-+            - const: t0_clk
-+            - const: gclk
-+            - const: slow_clk
-+    else:
-+      properties:
-+        clocks:
-+          minItems: 2
-+          maxItems: 4
-+        clock-names:
-+          items:
-+            enum:
-+              - t0_clk
-+              - t1_clk
-+              - t2_clk
-+              - slow_clk
-+
- required:
-   - compatible
-   - reg
+ 			hsmc: hsmc@f8014000 {
 -- 
 2.21.0
 
