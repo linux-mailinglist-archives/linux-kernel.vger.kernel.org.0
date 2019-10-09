@@ -2,74 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6482AD11FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 17:02:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B62D4D1204
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 17:04:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731650AbfJIPCe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 11:02:34 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53100 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731072AbfJIPCe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 11:02:34 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 044B810C050B;
-        Wed,  9 Oct 2019 15:02:34 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.44])
-        by smtp.corp.redhat.com (Postfix) with SMTP id CDA531001B30;
-        Wed,  9 Oct 2019 15:02:32 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Wed,  9 Oct 2019 17:02:32 +0200 (CEST)
-Date:   Wed, 9 Oct 2019 17:02:30 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Roman Gushchin <guro@fb.com>,
-        Richard Purdie <richard.purdie@linuxfoundation.org>,
-        Bruce Ashfield <bruce.ashfield@gmail.com>
-Subject: [PATCH] cgroup: freezer: call cgroup_enter_frozen() with preemption
- disabled in ptrace_stop()
-Message-ID: <20191009150230.GB12511@redhat.com>
-References: <CADkTA4PBT374CY+UNb85WjQEaNCDodMZu=MgpG8aMYbAu2eOGA@mail.gmail.com>
+        id S1731570AbfJIPED (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 11:04:03 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:38108 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729865AbfJIPEC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 11:04:02 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 85C58CBB2DF5AD50A978;
+        Wed,  9 Oct 2019 23:04:00 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Wed, 9 Oct 2019
+ 23:03:50 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <richardcochran@gmail.com>, <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] ptp: ptp_dte: use devm_platform_ioremap_resource() to simplify code
+Date:   Wed, 9 Oct 2019 23:03:25 +0800
+Message-ID: <20191009150325.12736-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADkTA4PBT374CY+UNb85WjQEaNCDodMZu=MgpG8aMYbAu2eOGA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.65]); Wed, 09 Oct 2019 15:02:34 +0000 (UTC)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ptrace_stop() does preempt_enable_no_resched() to avoid the preemption,
-but after that cgroup_enter_frozen() does spin_lock/unlock and this adds
-another preemption point.
+Use devm_platform_ioremap_resource() to simplify the code a bit.
+This is detected by coccinelle.
 
-Reported-and-tested-by: Bruce Ashfield <bruce.ashfield@gmail.com>
-Fixes: 76f969e8948d ("cgroup: cgroup v2 freezer")
-Cc: stable@vger.kernel.org # v5.2+
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- kernel/signal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/ptp/ptp_dte.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 534fec2..f8eed86 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2205,8 +2205,8 @@ static void ptrace_stop(int exit_code, int why, int clear_code, kernel_siginfo_t
- 		 */
- 		preempt_disable();
- 		read_unlock(&tasklist_lock);
--		preempt_enable_no_resched();
- 		cgroup_enter_frozen();
-+		preempt_enable_no_resched();
- 		freezable_schedule();
- 		cgroup_leave_frozen(true);
- 	} else {
+diff --git a/drivers/ptp/ptp_dte.c b/drivers/ptp/ptp_dte.c
+index 0dcfdc8..82d31ba 100644
+--- a/drivers/ptp/ptp_dte.c
++++ b/drivers/ptp/ptp_dte.c
+@@ -240,14 +240,12 @@ static int ptp_dte_probe(struct platform_device *pdev)
+ {
+ 	struct ptp_dte *ptp_dte;
+ 	struct device *dev = &pdev->dev;
+-	struct resource *res;
+ 
+ 	ptp_dte = devm_kzalloc(dev, sizeof(struct ptp_dte), GFP_KERNEL);
+ 	if (!ptp_dte)
+ 		return -ENOMEM;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	ptp_dte->regs = devm_ioremap_resource(dev, res);
++	ptp_dte->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(ptp_dte->regs))
+ 		return PTR_ERR(ptp_dte->regs);
+ 
 -- 
-2.5.0
+2.7.4
 
 
