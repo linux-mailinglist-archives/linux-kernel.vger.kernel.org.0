@@ -2,240 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78C1DD0C0E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 12:00:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 135FFD0C12
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 12:01:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730568AbfJIKAu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 06:00:50 -0400
-Received: from mx2a.mailbox.org ([80.241.60.219]:41189 "EHLO mx2a.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726211AbfJIKAt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 06:00:49 -0400
-Received: from smtp2.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx2a.mailbox.org (Postfix) with ESMTPS id 00312A1954;
-        Wed,  9 Oct 2019 12:00:46 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.240])
-        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
-        with ESMTP id M1X-GLUNr7re; Wed,  9 Oct 2019 12:00:39 +0200 (CEST)
-Date:   Wed, 9 Oct 2019 21:00:30 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Aleksa Sarai <asarai@suse.de>, linux-man@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 2/3] open.2: add O_EMPTYPATH documentation
-Message-ID: <20191009100030.lnvglfvo6jcsobez@yavin>
-References: <20191003145542.17490-1-cyphar@cyphar.com>
- <20191003145542.17490-3-cyphar@cyphar.com>
- <c4485b10-692d-ed24-a1d9-a047bb1054bf@gmail.com>
+        id S1730857AbfJIKBI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 06:01:08 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3282 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726211AbfJIKBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 06:01:08 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 252BB9A4CA4130BAA917;
+        Wed,  9 Oct 2019 18:01:06 +0800 (CST)
+Received: from [127.0.0.1] (10.177.223.23) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Wed, 9 Oct 2019
+ 18:01:01 +0800
+Subject: Re: [PATCH v3 00/10] Rework REFCOUNT_FULL using atomic_fetch_*
+ operations
+To:     Will Deacon <will@kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     Kees Cook <keescook@chromium.org>, Ingo Molnar <mingo@kernel.org>,
+        "Elena Reshetova" <elena.reshetova@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jan Glauber <jglauber@marvell.com>
+References: <20191007154703.5574-1-will@kernel.org>
+From:   Hanjun Guo <guohanjun@huawei.com>
+Message-ID: <644616a9-ec05-1d2e-22fc-93890adb3324@huawei.com>
+Date:   Wed, 9 Oct 2019 18:01:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="safzalfmrbpglft2"
-Content-Disposition: inline
-In-Reply-To: <c4485b10-692d-ed24-a1d9-a047bb1054bf@gmail.com>
+In-Reply-To: <20191007154703.5574-1-will@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.223.23]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2019/10/7 23:46, Will Deacon wrote:
+> Hi all,
+> 
+> This is version three of the patches I previously posted here:
+> 
+>   v1: https://lkml.kernel.org/r/20190802101000.12958-1-will@kernel.org
+>   v2: https://lkml.kernel.org/r/20190827163204.29903-1-will@kernel.org
+> 
+> Changes since v2 include:
+> 
+>   - Remove the x86 assembly version and enable this code unconditionally
+>   - Move saturation warnings out-of-line to reduce image bloat
+> 
+> Cheers,
+> 
+> Will
+> 
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Elena Reshetova <elena.reshetova@intel.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Cc: Hanjun Guo <guohanjun@huawei.com>
+> Cc: Jan Glauber <jglauber@marvell.com>
+> 
 
---safzalfmrbpglft2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I tested on top of 5.4-rc2 (with Jan's open-read-close file test case), on a 96 CPU
+cores ARM64 server, I can see no much difference under 24 cores (each 24 core is
+a NUMA node), but +5.9% performance improve on 48 cores and +8.4% for 96 cores.
 
-On 2019-10-09, Michael Kerrisk (man-pages) <mtk.manpages@gmail.com> wrote:
-> Hello Aleksa,
->=20
-> You write "5.FOO" in these patches. When do you expect these changes to=
-=20
-> land in the kernel?
+For the ARM64 arch,
 
-Probably 5.6 (I'd hope for 5.5, but I don't know how the v14 review will
-go). I'm not too sure though, and the magic-link changes (plus
-O_EMPTYPATH) will probably land after openat2(2) since there is some
-remaining work to do.
+Tested-by: Hanjun Guo <guohanjun@huawei.com>
 
-> On 10/3/19 4:55 PM, Aleksa Sarai wrote:
-> > Some of the wording around empty paths in path_resolution(7) also needed
-> > to be reworked since it's now legal (if you pass O_EMPTYPATH).
-> >=20
-> > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> > ---
-> >  man2/open.2            | 42 +++++++++++++++++++++++++++++++++++++++++-
-> >  man7/path_resolution.7 | 17 ++++++++++++++++-
-> >  2 files changed, 57 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/man2/open.2 b/man2/open.2
-> > index b0f485b41589..7217fe056e5e 100644
-> > --- a/man2/open.2
-> > +++ b/man2/open.2
-> > @@ -48,7 +48,7 @@
-> >  .\" FIXME . Apr 08: The next POSIX revision has O_EXEC, O_SEARCH, and
-> >  .\" O_TTYINIT.  Eventually these may need to be documented.  --mtk
-> >  .\"
-> > -.TH OPEN 2 2018-04-30 "Linux" "Linux Programmer's Manual"
-> > +.TH OPEN 2 2019-10-03 "Linux" "Linux Programmer's Manual"
->=20
-> No need to update the timestamp. I have scripts that handle this
-> automatically.
->=20
-> >  .SH NAME
-> >  open, openat, creat \- open and possibly create a file
-> >  .SH SYNOPSIS
-> > @@ -421,6 +421,21 @@ was followed by a call to
-> >  .BR fdatasync (2)).
-> >  .IR "See NOTES below" .
-> >  .TP
-> > +.BR O_EMPTYPATH " (since Linux 5.FOO)"
-> > +If \fIpathname\fP is an empty string, re-open the the file descriptor =
-given as
->=20
-> In general, I prefer the general form
->=20
-> .I pathname
->=20
-> over \fIpathname\fP.=20
->=20
-> If you would be willing to cahnge that, it would  save me a little work.
-> (And likewise throughout the rest of the patch.)
->=20
-> > +the \fIdirfd\fP argument to
-> > +.BR openat (2).
-> > +This can be used with both ordinary (file and directory) and \fBO_PATH=
-\fP file
-> > +descriptors, but cannot be used with
-> > +.BR AT_FDCWD
-> > +(or as an argument to plain
-> > +.BR open (2).) When re-opening an \fBO_PATH\fP file descriptor, the sa=
-me "link
->=20
-> There's a formatting problem here which can be fixed by inserting a=20
-> newline before "When".
->=20
-> > +mode" restrictions apply as with re-opening through
-> > +.BR proc (5)
-> > +(see
-> > +.BR path_resolution "(7) and " symlink (7)
-> > +for more details.)
-> > +.TP
-> >  .B O_EXCL
-> >  Ensure that this call creates the file:
-> >  if this flag is specified in conjunction with
-> > @@ -668,6 +683,13 @@ with
-> >  (or via procfs using
-> >  .BR AT_SYMLINK_FOLLOW )
-> >  even if the file is not a directory.
-> > +You can even "re-open" (or upgrade) an
-> > +.BR O_PATH
-> > +file descriptor by using
-> > +.BR O_EMPTYPATH
-> > +(see the section for
-> > +.BR O_EMPTYPATH
-> > +for more details.)
-> >  .IP *
-> >  Passing the file descriptor to another process via a UNIX domain socket
-> >  (see
-> > @@ -958,6 +980,15 @@ is not allowed.
-> >  (See also
-> >  .BR path_resolution (7).)
-> >  .TP
-> > +.B EBADF
-> > +.I pathname
-> > +was an empty string (and
-> > +.B O_EMPTYPATH
-> > +was passed) with
-> > +.BR open (2)
-> > +(instead of
-> > +.BR openat (2).)
-> > +.TP
-> >  .B EDQUOT
-> >  Where
-> >  .B O_CREAT
-> > @@ -1203,6 +1234,15 @@ The following additional errors can occur for
-> >  .I dirfd
-> >  is not a valid file descriptor.
-> >  .TP
-> > +.B EBADF
-> > +.I pathname
-> > +was an empty string (and
-> > +.B O_EMPTYPATH
-> > +was passed), but the provided
-> > +.I dirfd
-> > +was an invalid file descriptor (or was
-> > +.BR AT_FDCWD .)
-> > +.TP
-> >  .B ENOTDIR
-> >  .I pathname
-> >  is a relative pathname and
-> > diff --git a/man7/path_resolution.7 b/man7/path_resolution.7
-> > index 46f25ec4cdfa..85dd354e9a93 100644
-> > --- a/man7/path_resolution.7
-> > +++ b/man7/path_resolution.7
-> > @@ -22,7 +22,7 @@
-> >  .\" the source, must acknowledge the copyright and authors of this wor=
-k.
-> >  .\" %%%LICENSE_END
-> >  .\"
-> > -.TH PATH_RESOLUTION 7 2017-11-26 "Linux" "Linux Programmer's Manual"
-> > +.TH PATH_RESOLUTION 7 2019-10-03 "Linux" "Linux Programmer's Manual"
-> >  .SH NAME
-> >  path_resolution \- how a pathname is resolved to a file
-> >  .SH DESCRIPTION
-> > @@ -198,6 +198,21 @@ successfully.
-> >  Linux returns
-> >  .B ENOENT
-> >  in this case.
-> > +.PP
-> > +As of Linux 5.FOO, an empty path argument can be used to indicate the =
-"re-open"
-> > +an existing file descriptor if
-> > +.B O_EMPTYPATH
-> > +is passed as a flag argument to
-> > +.BR openat (2),
-> > +with the
-> > +.I dfd
-> > +argument indicating which file descriptor to "re-open". This is approx=
-imately
-> > +equivalent to opening
-> > +.I /proc/self/fd/$fd
->=20
-> .IR /proc/self/fd/$fd ,
->=20
-> > +where
-> > +.I $fd
-> > +is the open file descriptor to be "re-opened".
-> > +
->=20
-> No blank line here.
->=20
-> >  .SS Permissions
-> >  The permission bits of a file consist of three groups of three bits; s=
-ee
-> >  .BR chmod (1)
+Thanks
+Hanjun
 
-Will fix all of the above -- thanks!
-
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---safzalfmrbpglft2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXZ2vugAKCRCdlLljIbnQ
-EsbVAQD5xDig2A54+r7gr4A1LzNImXSFvlv/K27Oa7IcbazcggEAs50kZAq+7MdM
-15Y5f1BT2jg01oMFBON7sOhBaP6dZwI=
-=S8p1
------END PGP SIGNATURE-----
-
---safzalfmrbpglft2--
