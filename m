@@ -2,53 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81A5ED18F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 21:30:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A7CBD18FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 21:31:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731614AbfJITaK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 15:30:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51064 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729535AbfJITaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 15:30:10 -0400
-Subject: Re: [GIT PULL] arm64: Fixes for -rc3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570649409;
-        bh=3yuozM4FLhSm+i6yEQ1YGbYeMOgWaz07K3LfwiSuah4=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=OCXIDH/uxYHRlXIF5Tfm07UizQk4ej6Ea89+dhYt7o8q+gFRAwKoDEw0janNMOmDw
-         zhYnsVxevTQ+9WVUvJtU3Myvv6g0S4b4BmXrmTj5zoUft4aT4PvvSLVjjH4b5yX3UD
-         sA4+jHB5qC/PwGOmuZeMSpGcluqHr076+z7eCS4M=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20191009133053.p7bxzkub32x3mclb@willie-the-truck>
-References: <20191009133053.p7bxzkub32x3mclb@willie-the-truck>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20191009133053.p7bxzkub32x3mclb@willie-the-truck>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
- tags/arm64-fixes
-X-PR-Tracked-Commit-Id: 3e7c93bd04edfb0cae7dad1215544c9350254b8f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e60329c97b9cc07ce15e3c39fc42e57bf14add92
-Message-Id: <157064940962.25372.13156786010603530011.pr-tracker-bot@kernel.org>
-Date:   Wed, 09 Oct 2019 19:30:09 +0000
-To:     Will Deacon <will@kernel.org>
-Cc:     torvalds@linux-foundation.org, catalin.marinas@arm.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+        id S1731777AbfJITbv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 15:31:51 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:44685 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729535AbfJITbv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 15:31:51 -0400
+Received: by mail-qk1-f195.google.com with SMTP id u22so3276663qkk.11;
+        Wed, 09 Oct 2019 12:31:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jUusHZnfWO6yMQOFQ+VtWA65o/Iz6fBliSGz9QEZwDg=;
+        b=Gm5HwDXVyVrEOxieRL46FWN78itw3QMAGcQZjwh2MjVLn+9TRxpzkVuLn08u47LxPW
+         qGoa5dNUUkTClS9z41PdxtIJLkAdwSGlJaieomYEwOnRvutnLaB7ZZ0Of24U3Qzx+zty
+         6sUHr8/H8ozxSl2UDe/q9OhWX5tQh5lfSQ0C3KyammWVYPHNZiqx3cOuVQ0LdW5gMUjY
+         qjJKcLl6CAIbcxPDxTi1CLNO9jbaW/twUb42nipqa2xf10yYD77Q/4xdqsJfcyUDdYSj
+         hju89HMEQge/OXdjfkmDXcuVef48U/jf6lxfcmvwoyIHZm33OIDpDh9zAUPj19eGYRRT
+         eF5A==
+X-Gm-Message-State: APjAAAVQ7YZ3IishH+kOO0n1RhbF0w1QunPNLD4WbMS0pmrSSyhPDqzF
+        xuvd4JDGYU6ehFVJ0hjiaB7PPA5f7GTkWgn9QNW0APTB
+X-Google-Smtp-Source: APXvYqxDcZcqVm8Nm1eqPFmKZDJyPAWkGBqwBEf2+Yye78l/7+Ho8Fxl+0VisC2hYNFeNCXUJ1GsSgs0/Q3IYnRco7U=
+X-Received: by 2002:a05:620a:1592:: with SMTP id d18mr5478352qkk.286.1570649509847;
+ Wed, 09 Oct 2019 12:31:49 -0700 (PDT)
+MIME-Version: 1.0
+References: <20191009190853.245077-1-arnd@arndb.de> <20191009191044.308087-10-arnd@arndb.de>
+ <20191009192524.GK4254@piout.net>
+In-Reply-To: <20191009192524.GK4254@piout.net>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 9 Oct 2019 21:31:32 +0200
+Message-ID: <CAK8P3a1zf5kwsRcE1a-GranGz2BEjwdQ_fBcfRLVs-vmC=CjGw@mail.gmail.com>
+Subject: Re: [PATCH v6 10/43] compat_ioctl: move rtc handling into rtc-dev.c
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 9 Oct 2019 14:30:54 +0100:
+On Wed, Oct 9, 2019 at 9:25 PM Alexandre Belloni
+<alexandre.belloni@bootlin.com> wrote:
+>
+> If you ever have to resend, the file is now named rtc/dev.c so you could
+> adjust the subject.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
+Ok, I fixed up my local copy.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e60329c97b9cc07ce15e3c39fc42e57bf14add92
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+      Arnd
