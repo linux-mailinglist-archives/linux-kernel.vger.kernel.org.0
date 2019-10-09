@@ -2,85 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AC6CD1122
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 16:24:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DFF7D111F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 16:24:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731475AbfJIOYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 10:24:51 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50720 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731464AbfJIOYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 10:24:48 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 33609A44AFA;
-        Wed,  9 Oct 2019 14:24:48 +0000 (UTC)
-Received: from t460s.redhat.com (unknown [10.36.118.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BBF0D60BF4;
-        Wed,  9 Oct 2019 14:24:46 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, David Hildenbrand <david@redhat.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: [PATCH v2 2/2] mm/memory-failure.c: Don't access uninitialized memmaps in memory_failure()
-Date:   Wed,  9 Oct 2019 16:24:35 +0200
-Message-Id: <20191009142435.3975-3-david@redhat.com>
-In-Reply-To: <20191009142435.3975-1-david@redhat.com>
-References: <20191009142435.3975-1-david@redhat.com>
+        id S1731386AbfJIOYl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 10:24:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54988 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729491AbfJIOYl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 10:24:41 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7BEAEAD2C;
+        Wed,  9 Oct 2019 14:24:39 +0000 (UTC)
+Date:   Wed, 9 Oct 2019 16:24:38 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Qian Cai <cai@lca.pw>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        sergey.senozhatsky.work@gmail.com, rostedt@goodmis.org,
+        peterz@infradead.org, linux-mm@kvack.org,
+        john.ogness@linutronix.de, akpm@linux-foundation.org,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        PeterOberparleiter <oberpar@linux.ibm.com>, david@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm/page_isolation: fix a deadlock with printk()
+Message-ID: <20191009142438.yx74ukfqwy2hr4fz@pathway.suse.cz>
+References: <aefe7f75-b0ec-9e99-a77e-87324edb24e0@de.ibm.com>
+ <1570550917.5576.303.camel@lca.pw>
+ <20191008183525.GQ6681@dhcp22.suse.cz>
+ <1570561573.5576.307.camel@lca.pw>
+ <20191008191728.GS6681@dhcp22.suse.cz>
+ <1570563324.5576.309.camel@lca.pw>
+ <20191009114903.aa6j6sa56z2cssom@pathway.suse.cz>
+ <1570626402.5937.1.camel@lca.pw>
+ <20191009132746.GA6681@dhcp22.suse.cz>
+ <1570628593.5937.3.camel@lca.pw>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.68]); Wed, 09 Oct 2019 14:24:48 +0000 (UTC)
+In-Reply-To: <1570628593.5937.3.camel@lca.pw>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should check for pfn_to_online_page() to not access uninitialized
-memmaps. Reshuffle the code so we don't have to duplicate the error
-message.
+On Wed 2019-10-09 09:43:13, Qian Cai wrote:
+> On Wed, 2019-10-09 at 15:27 +0200, Michal Hocko wrote:
+> > On Wed 09-10-19 09:06:42, Qian Cai wrote:
+> > [...]
+> > > https://lore.kernel.org/linux-mm/1570460350.5576.290.camel@lca.pw/
+> > > 
+> > > [  297.425964] -> #1 (&port_lock_key){-.-.}:
+> > > [  297.425967]        __lock_acquire+0x5b3/0xb40
+> > > [  297.425967]        lock_acquire+0x126/0x280
+> > > [  297.425968]        _raw_spin_lock_irqsave+0x3a/0x50
+> > > [  297.425969]        serial8250_console_write+0x3e4/0x450
+> > > [  297.425970]        univ8250_console_write+0x4b/0x60
+> > > [  297.425970]        console_unlock+0x501/0x750
+> > > [  297.425971]        vprintk_emit+0x10d/0x340
+> > > [  297.425972]        vprintk_default+0x1f/0x30
+> > > [  297.425972]        vprintk_func+0x44/0xd4
+> > > [  297.425973]        printk+0x9f/0xc5
+> > > [  297.425974]        register_console+0x39c/0x520
+> > > [  297.425975]        univ8250_console_init+0x23/0x2d
+> > > [  297.425975]        console_init+0x338/0x4cd
+> > > [  297.425976]        start_kernel+0x534/0x724
+> > > [  297.425977]        x86_64_start_reservations+0x24/0x26
+> > > [  297.425977]        x86_64_start_kernel+0xf4/0xfb
+> > > [  297.425978]        secondary_startup_64+0xb6/0xc0
+> > > 
+> > > where the report again show the early boot call trace for the locking
+> > > dependency,
+> > > 
+> > > console_owner --> port_lock_key
+> > > 
+> > > but that dependency clearly not only happen in the early boot.
+> > 
+> > Can you provide an example of the runtime dependency without any early
+> > boot artifacts? Because this discussion really doens't make much sense
+> > without a clear example of a _real_ lockdep report that is not a false
+> > possitive. All of them so far have been concluded to be false possitive
+> > AFAIU.
+> 
+> An obvious one is in the above link. Just replace the trace in #1 above with
+> printk() from anywhere, i.e., just ignore the early boot calls there as they are
+>  not important.
+> 
+> printk()
+>   console_unlock()
+>     console_lock_spinning_enable() --> console_owner_lock
+>   call_console_drivers()
+>     serial8250_console_write() --> port->lock
 
-Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- mm/memory-failure.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+Please, find the location where this really happens and then suggests
+how the real deadlock could get fixed. So far, we have seen only
+false positives and theoretical scenarios.
 
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index 7ef849da8278..e866e6e5660b 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -1253,17 +1253,19 @@ int memory_failure(unsigned long pfn, int flags)
- 	if (!sysctl_memory_failure_recovery)
- 		panic("Memory failure on page %lx", pfn);
- 
--	if (!pfn_valid(pfn)) {
-+	p = pfn_to_online_page(pfn);
-+	if (!p) {
-+		if (pfn_valid(pfn)) {
-+			pgmap = get_dev_pagemap(pfn, NULL);
-+			if (pgmap)
-+				return memory_failure_dev_pagemap(pfn, flags,
-+								  pgmap);
-+		}
- 		pr_err("Memory failure: %#lx: memory outside kernel control\n",
- 			pfn);
- 		return -ENXIO;
- 	}
- 
--	pgmap = get_dev_pagemap(pfn, NULL);
--	if (pgmap)
--		return memory_failure_dev_pagemap(pfn, flags, pgmap);
--
--	p = pfn_to_page(pfn);
- 	if (PageHuge(p))
- 		return memory_failure_hugetlb(pfn, flags);
- 	if (TestSetPageHWPoison(p)) {
--- 
-2.21.0
-
+Best Regards,
+Petr
