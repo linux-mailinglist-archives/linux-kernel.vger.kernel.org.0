@@ -2,181 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78F9ED0A68
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 10:57:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BEC0D0A6B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 10:58:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730030AbfJII5l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 04:57:41 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:9402 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725903AbfJII5k (ORCPT
+        id S1730212AbfJII56 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 04:57:58 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:43833 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbfJII56 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 04:57:40 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x998vawI091660
-        for <linux-kernel@vger.kernel.org>; Wed, 9 Oct 2019 04:57:37 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2vha4cmpr1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 04:57:37 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <parth@linux.ibm.com>;
-        Wed, 9 Oct 2019 09:57:23 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 9 Oct 2019 09:57:18 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x998vH2L26214522
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 9 Oct 2019 08:57:18 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D9B5842041;
-        Wed,  9 Oct 2019 08:57:17 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 93A954204B;
-        Wed,  9 Oct 2019 08:57:15 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.124.35.210])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  9 Oct 2019 08:57:15 +0000 (GMT)
-Subject: Re: [RFC v5 4/6] sched/fair: Tune task wake-up logic to pack small
- background tasks on fewer cores
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Doug Smythies <dsmythies@telus.net>,
-        Quentin Perret <qperret@qperret.net>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-References: <20191007083051.4820-1-parth@linux.ibm.com>
- <20191007083051.4820-5-parth@linux.ibm.com>
- <CAKfTPtCgoTJXxbYyza1W55ayw9QeM7fue2e91Xpt804sL9GQWA@mail.gmail.com>
- <80bb34ec-6358-f4dc-d20d-cde6c9d7e197@linux.ibm.com>
- <d55c593d-af8e-c8ba-cc0e-c9917df5d593@arm.com>
-From:   Parth Shah <parth@linux.ibm.com>
-Date:   Wed, 9 Oct 2019 14:27:14 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 9 Oct 2019 04:57:58 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1iI7n8-0007JL-1z; Wed, 09 Oct 2019 10:57:54 +0200
+Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1iI7n5-0007Mi-MT; Wed, 09 Oct 2019 10:57:51 +0200
+Date:   Wed, 9 Oct 2019 10:57:51 +0200
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH V2] firmware: imx: Skip return value check for some
+ special SCU firmware APIs
+Message-ID: <20191009085751.h3voimqz25kj6lh2@pengutronix.de>
+References: <1570410959-32563-1-git-send-email-Anson.Huang@nxp.com>
+ <20191007080135.4e5ljhh6z2rbx5bw@pengutronix.de>
+ <AM6PR0402MB39118DABDE62496539D7EE6DF59A0@AM6PR0402MB3911.eurprd04.prod.outlook.com>
+ <20191009082455.5hqhotkbozsr7mgo@pengutronix.de>
+ <DB3PR0402MB3916CD3B5EC47C023F9D840DF5950@DB3PR0402MB3916.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <d55c593d-af8e-c8ba-cc0e-c9917df5d593@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19100908-0020-0000-0000-000003776260
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19100908-0021-0000-0000-000021CD67E2
-Message-Id: <86dc25e4-9f19-627f-9581-d74608b7f20c@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-09_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1910090085
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB3PR0402MB3916CD3B5EC47C023F9D840DF5950@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 10:56:52 up 144 days, 15:15, 97 users,  load average: 0.27, 0.09,
+ 0.08
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 19-10-09 08:28, Anson Huang wrote:
+> Hi, Marco
+> 
+> > On 19-10-08 00:48, Anson Huang wrote:
+> > > Hi, Marco
+> > >
+> > > > On 19-10-07 09:15, Anson Huang wrote:
+> > > > > The SCU firmware does NOT always have return value stored in
+> > > > > message header's function element even the API has response data,
+> > > > > those special APIs are defined as void function in SCU firmware,
+> > > > > so they should be treated as return success always.
+> > > > >
+> > > > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> > > > > ---
+> > > > > Changes since V1:
+> > > > > 	- Use direct API check instead of calling another function to check.
+> > > > > 	- This patch is based on
+> > > > > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2F
+> > > > > patc
+> > > > >
+> > > >
+> > hwork.kernel.org%2Fpatch%2F11129553%2F&amp;data=02%7C01%7Canson.
+> > > > huang%
+> > > > >
+> > > >
+> > 40nxp.com%7C2de0a6be69b74cc249ad08d74afc9730%7C686ea1d3bc2b4c6f
+> > > > a92cd99
+> > > > >
+> > > >
+> > c5c301635%7C0%7C0%7C637060321046247040&amp;sdata=RMFAdLKGKb6
+> > > > mEdhycrzHX
+> > > > > R03E6Qr5pWyRc8Zk6ErlBc%3D&amp;reserved=0
+> > > >
+> > > > Thanks for this v2. It would be good to change the callers within this
+> > series.
+> > >
+> > > NOT quite understand your point, the callers does NOT need to be
+> > > changed, those
+> > > 2 special APIs callers are already following the right way of calling the APIs.
+> > 
+> > Ah okay. I searched the 5.4-rc2 tag and found the soc_uid_show() as only
+> > user but this user sets the have_resp field to false. Is this intended?
+> 
+> I already fixed it and patch applied by Shawn, see below:
+> 
+> https://patchwork.kernel.org/patch/11129497/
 
+I see :) So one last question, please check the other thread.
 
-On 10/8/19 10:22 PM, Dietmar Eggemann wrote:
-> [- Quentin Perret <quentin.perret@arm.com>]
-> [+ Quentin Perret <qperret@qperret.net>]
-> 
-> See commit c193a3ffc282 ("mailmap: Update email address for Quentin Perret")
-> 
+Regards,
+  Marco
 
-noted. thanks for notifying me.
-
-> On 07/10/2019 18:53, Parth Shah wrote:
->>
->>
->> On 10/7/19 5:49 PM, Vincent Guittot wrote:
->>> On Mon, 7 Oct 2019 at 10:31, Parth Shah <parth@linux.ibm.com> wrote:
->>>>
->>>> The algorithm finds the first non idle core in the system and tries to
->>>> place a task in the idle CPU in the chosen core. To maintain
->>>> cache hotness, work of finding non idle core starts from the prev_cpu,
->>>> which also reduces task ping-pong behaviour inside of the core.
->>>>
->>>> Define a new method to select_non_idle_core which keep tracks of the idle
->>>> and non-idle CPUs in the core and based on the heuristics determines if the
->>>> core is sufficiently busy to place the incoming backgroung task. The
->>>> heuristic further defines the non-idle CPU into either busy (>12.5% util)
->>>> CPU and overutilized (>80% util) CPU.
->>>> - The core containing more idle CPUs and no busy CPUs is not selected for
->>>>   packing
->>>> - The core if contains more than 1 overutilized CPUs are exempted from
->>>>   task packing
->>>> - Pack if there is atleast one busy CPU and overutilized CPUs count is <2
->>>>
->>>> Value of 12.5% utilization for busy CPU gives sufficient heuristics for CPU
->>>> doing enough work an
 > 
-> [...]
-> 
->>>> @@ -6483,7 +6572,11 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
->>>>         } else if (sd_flag & SD_BALANCE_WAKE) { /* XXX always ? */
->>>>                 /* Fast path */
->>>>
->>>> -               new_cpu = select_idle_sibling(p, prev_cpu, new_cpu);
->>>> +               if (is_turbosched_enabled() && unlikely(is_background_task(p)))
->>>> +                       new_cpu = turbosched_select_non_idle_core(p, prev_cpu,
->>>> +                                                                 new_cpu);
->>>
->>> Could you add turbosched_select_non_idle_core() similarly to
->>> find_energy_efficient_cpu() ?
->>> Add it at the beg select_task_rq_fair()
->>> Return immediately with theCPU if you have found one
->>> Or let the normal path select a CPU if the
->>> turbosched_select_non_idle_core() has not been able to find a suitable
->>> CPU for packing
->>>
->>
->> of course. I can do that.
->> I was just not aware about the effect of wake_affine and so was waiting for
->> such comments to be sure of. Thanks for this.
->> Maybe I can add just below the sched_energy_present(){...} construct giving
->> precedence to EAS? I'm asking this because I remember Patrick telling me to
->> leverage task packing for android as well?
-> 
-> I have a hard time imaging that Turbosched will be used in Android next
-> to EAS in the foreseeable future.
-> 
-> First of all, EAS provides task packing already on Performance Domain
-> (PD) level (a.k.a. as cluster on traditional 2-cluster Arm/Arm64
-> big.LITTLE or DynamIQ (with Phantom domains (out of tree solution)).
-> This is where we can safe energy without harming latency.
-> 
-> See the tests results under '2.1 Energy test case' in
-> 
-> https://lore.kernel.org/r/20181203095628.11858-1-quentin.perret@arm.com
-> 
-> There are 10 to 50 small (classified solely by task utilization) tasks
-> per test case and EAS shows an effect on energy consumption by packing
-> them onto the PD (cluster) of the small CPUs.
-> 
-> And second, the CPU supported topology is different to the one you're
-> testing on.
+> Anson
 > 
 
-cool. I was just keeping in mind the following quote
-" defining a generic spread-vs-pack wakeup policy which is something
-Android also could benefit from " (https://lkml.org/lkml/2019/6/28/628)
-
-BTW, IIUC that does task consolidation only on single CPU unless
-rd->overload is set, right?
-
-> [...]
-> 
-
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
