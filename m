@@ -2,73 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6744DD147B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 18:49:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAE12D147F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 18:49:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731739AbfJIQtj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 12:49:39 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:35825 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731538AbfJIQti (ORCPT
+        id S1731793AbfJIQtt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 12:49:49 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:40739 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731416AbfJIQtt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 12:49:38 -0400
-Received: from localhost.localdomain (238.210.broadband10.iol.cz [90.177.210.238])
-        (Authenticated sender: i.maximets@ovn.org)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id BE66E10000F;
-        Wed,  9 Oct 2019 16:49:34 +0000 (UTC)
-From:   Ilya Maximets <i.maximets@ovn.org>
-To:     netdev@vger.kernel.org
-Cc:     bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Ilya Maximets <i.maximets@ovn.org>
-Subject: [PATCH bpf v2] libbpf: fix passing uninitialized bytes to setsockopt
-Date:   Wed,  9 Oct 2019 18:49:29 +0200
-Message-Id: <20191009164929.17242-1-i.maximets@ovn.org>
-X-Mailer: git-send-email 2.17.1
+        Wed, 9 Oct 2019 12:49:49 -0400
+Received: by mail-lj1-f194.google.com with SMTP id 7so3204302ljw.7
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 09:49:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SkGcyVg51H0E4AFHBmfSaZnSH8nue7geHmrbA1SXwgw=;
+        b=uWNLLt4FV01tXR42m0BzyJwNl1r244JLyctfZn3BKgVSv8nrE2xMlQExCd8KFyjmoT
+         tJoDvZUsuEvEO0Rvk/HUBFEgScUx4csk/VmA86Bc5NqNo6fPkq4jZqzLJt8iWhfGWGce
+         aJZS8y2YAas3LDhAcmUNE26ifi+pxy8q6uMFEM+yzfkPhD6EnwTDFLALmpPCBQenMJl5
+         YHYgJjgPku/rq/0eVi8SZ37AJBvyxjMZ8NrE+279ZX8itZqCjZCCzaePaY94FCu7QpmB
+         Yxp2cxCQvJLKAv/vHf8g2j9RcaaWr4oTu8USsy6m4DBdniUQFhbvkVJTCDrN/XnYT2ki
+         VYPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SkGcyVg51H0E4AFHBmfSaZnSH8nue7geHmrbA1SXwgw=;
+        b=gajKbmAegbugukBqBPtQ+uJ/yhUc9SNZhVTe3Fd4j8P7CB8meEZwc9459DBrV/OlZL
+         ADgtbjgp6RKG4D5V7LYmZAHiEc8AGN97yiWz9fdM8g5parbJBHFMSVmWvg5npdr8yW5h
+         YgcUdUYkXX4GUeG7Cpbprv8GmpThpqPPK+3P6HP7LEDGbx8zE3YsnTXSyyZJA1fNa4Jq
+         AlwPiVOsLdlVytUl4NT611TXL4qGQhv4lUSegZBeNPG+pT0461wp7eHdaKzilGAPofmJ
+         PxEh90PIrYIYNi240AhS2i/CNLVDENe9IWI7XOoMPjNve1iE5pG6EenmowP2gW9uZtIG
+         JBFw==
+X-Gm-Message-State: APjAAAV/X6oEoMtc2YLtKpAYkLL7zDZu3iWxTvEnGZUTQyxnTTt/t3sA
+        HFOx+pOauuXlgIcWyQi66GA=
+X-Google-Smtp-Source: APXvYqx8NBaZTGpzzgmaw4+w/0S+bRs+h195tjNsjKyxhK3dLzZj0MM8Vr8WJWzs4oe58eU6g9n1Ag==
+X-Received: by 2002:a05:651c:105c:: with SMTP id x28mr3057983ljm.114.1570639785225;
+        Wed, 09 Oct 2019 09:49:45 -0700 (PDT)
+Received: from pc636.semobile.internal ([37.139.158.167])
+        by smtp.gmail.com with ESMTPSA id h5sm623557ljf.83.2019.10.09.09.49.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 09:49:44 -0700 (PDT)
+From:   "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Daniel Wagner <dwagner@suse.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH 1/1] mm/vmalloc: remove preempt_disable/enable when do preloading
+Date:   Wed,  9 Oct 2019 18:49:34 +0200
+Message-Id: <20191009164934.10166-1-urezki@gmail.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'struct xdp_umem_reg' has 4 bytes of padding at the end that makes
-valgrind complain about passing uninitialized stack memory to the
-syscall:
+Get rid of preempt_disable() and preempt_enable() when the
+preload is done for splitting purpose. The reason is that
+calling spin_lock() with disabled preemtion is forbidden in
+CONFIG_PREEMPT_RT kernel.
 
-  Syscall param socketcall.setsockopt() points to uninitialised byte(s)
-    at 0x4E7AB7E: setsockopt (in /usr/lib64/libc-2.29.so)
-    by 0x4BDE035: xsk_umem__create@@LIBBPF_0.0.4 (xsk.c:172)
-  Uninitialised value was created by a stack allocation
-    at 0x4BDDEBA: xsk_umem__create@@LIBBPF_0.0.4 (xsk.c:140)
+Therefore, we do not guarantee that a CPU is preloaded, instead
+we minimize the case when it is not with this change.
 
-Padding bytes appeared after introducing of a new 'flags' field.
-memset() is required to clear them.
+For example i run the special test case that follows the preload
+pattern and path. 20 "unbind" threads run it and each does
+1000000 allocations. Only 3.5 times among 1000000 a CPU was
+not preloaded thus. So it can happen but the number is rather
+negligible.
 
-Fixes: 10d30e301732 ("libbpf: add flags to umem config")
-Signed-off-by: Ilya Maximets <i.maximets@ovn.org>
+Fixes: 82dd23e84be3 ("mm/vmalloc.c: preload a CPU with one object for split purpose")
+Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 ---
+ mm/vmalloc.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-Version 2:
-  * Struct initializer replaced with explicit memset(). [Andrii]
-
- tools/lib/bpf/xsk.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/lib/bpf/xsk.c b/tools/lib/bpf/xsk.c
-index a902838f9fcc..9d5348086203 100644
---- a/tools/lib/bpf/xsk.c
-+++ b/tools/lib/bpf/xsk.c
-@@ -163,6 +163,7 @@ int xsk_umem__create_v0_0_4(struct xsk_umem **umem_ptr, void *umem_area,
- 	umem->umem_area = umem_area;
- 	xsk_set_umem_config(&umem->config, usr_config);
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index e92ff5f7dd8b..2ed6fef86950 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -1078,9 +1078,12 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
  
-+	memset(&mr, 0, sizeof(mr));
- 	mr.addr = (uintptr_t)umem_area;
- 	mr.len = size;
- 	mr.chunk_size = umem->config.frame_size;
+ retry:
+ 	/*
+-	 * Preload this CPU with one extra vmap_area object to ensure
+-	 * that we have it available when fit type of free area is
+-	 * NE_FIT_TYPE.
++	 * Preload this CPU with one extra vmap_area object. It is used
++	 * when fit type of free area is NE_FIT_TYPE. Please note, it
++	 * does not guarantee that an allocation occurs on a CPU that
++	 * is preloaded, instead we minimize the case when it is not.
++	 * It can happen because of migration, because there is a race
++	 * until the below spinlock is taken.
+ 	 *
+ 	 * The preload is done in non-atomic context, thus it allows us
+ 	 * to use more permissive allocation masks to be more stable under
+@@ -1089,20 +1092,16 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
+ 	 * Even if it fails we do not really care about that. Just proceed
+ 	 * as it is. "overflow" path will refill the cache we allocate from.
+ 	 */
+-	preempt_disable();
+-	if (!__this_cpu_read(ne_fit_preload_node)) {
+-		preempt_enable();
++	if (!this_cpu_read(ne_fit_preload_node)) {
+ 		pva = kmem_cache_alloc_node(vmap_area_cachep, GFP_KERNEL, node);
+-		preempt_disable();
+ 
+-		if (__this_cpu_cmpxchg(ne_fit_preload_node, NULL, pva)) {
++		if (this_cpu_cmpxchg(ne_fit_preload_node, NULL, pva)) {
+ 			if (pva)
+ 				kmem_cache_free(vmap_area_cachep, pva);
+ 		}
+ 	}
+ 
+ 	spin_lock(&vmap_area_lock);
+-	preempt_enable();
+ 
+ 	/*
+ 	 * If an allocation fails, the "vend" address is
 -- 
-2.17.1
+2.20.1
 
