@@ -2,292 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DDFCD0F5D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 14:59:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14634D0F89
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 15:03:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731397AbfJIM7l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 08:59:41 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50923 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731329AbfJIM7g (ORCPT
+        id S1731375AbfJINDH convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 9 Oct 2019 09:03:07 -0400
+Received: from mx0b-00176a03.pphosted.com ([67.231.157.48]:41762 "EHLO
+        mx0a-00176a03.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730901AbfJINDG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 08:59:36 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iIBYr-0002r1-5p; Wed, 09 Oct 2019 14:59:25 +0200
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 838C01C031F;
-        Wed,  9 Oct 2019 14:59:20 +0200 (CEST)
-Date:   Wed, 09 Oct 2019 12:59:20 -0000
-From:   "tip-bot2 for Frederic Weisbecker" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/cputime: Rename vtime_account_system() to
- vtime_account_kernel()
-Cc:     Frederic Weisbecker <frederic@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rik van Riel <riel@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Yauheni Kaliuta <yauheni.kaliuta@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20191003161745.28464-2-frederic@kernel.org>
-References: <20191003161745.28464-2-frederic@kernel.org>
+        Wed, 9 Oct 2019 09:03:06 -0400
+X-Greylist: delayed 3109 seconds by postgrey-1.27 at vger.kernel.org; Wed, 09 Oct 2019 09:03:05 EDT
+Received: from pps.filterd (m0048205.ppops.net [127.0.0.1])
+        by m0048205.ppops.net-00176a03. (8.16.0.27/8.16.0.27) with SMTP id x99C9XgY029449;
+        Wed, 9 Oct 2019 08:11:15 -0400
+From:   "Safford, David (GE Global Research, US)" <david.safford@ge.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Ken Goldman <kgold@linux.ibm.com>
+CC:     Mimi Zohar <zohar@linux.ibm.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        "open list:CRYPTO API" <linux-crypto@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Thread-Topic: Re: [PATCH] KEYS: asym_tpm: Switch to get_random_bytes()
+Thread-Index: AQHVdI4g9L3xPAeMJki3mq4fpV79C6dHrWSAgAFrf4CAABaxAIAAUs4AgAAPVoCAAOxxAIAAnnWA///LRNCAA7fgAIABcvOAgAGtUICAAAEjgIAAiUkQ
+Date:   Wed, 9 Oct 2019 12:11:06 +0000
+Message-ID: <BCA04D5D9A3B764C9B7405BBA4D4A3C035F2B995@ALPMBAPA12.e2k.ad.ge.com>
+References: <20191003114119.GF8933@linux.intel.com>
+ <1570107752.4421.183.camel@linux.ibm.com>
+ <20191003175854.GB19679@linux.intel.com>
+ <1570128827.5046.19.camel@linux.ibm.com>
+ <BCA04D5D9A3B764C9B7405BBA4D4A3C035F2A22E@ALPMBAPA12.e2k.ad.ge.com>
+ <20191004182711.GC6945@linux.intel.com>
+ <BCA04D5D9A3B764C9B7405BBA4D4A3C035F2A38B@ALPMBAPA12.e2k.ad.ge.com>
+ <20191007000520.GA17116@linux.intel.com>
+ <59b88042-9c56-c891-f75e-7c0719eb5ff9@linux.ibm.com>
+ <20191008234935.GA13926@linux.intel.com>
+ <20191008235339.GB13926@linux.intel.com>
+In-Reply-To: <20191008235339.GB13926@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: =?us-ascii?Q?PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcMjEyNDczOTUw?=
+ =?us-ascii?Q?XGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0?=
+ =?us-ascii?Q?YmEyOWUzNWJcbXNnc1xtc2ctZGRkMDhkMzItZWE4ZC0xMWU5LThlNjQtYTRj?=
+ =?us-ascii?Q?M2YwYjU5OGE2XGFtZS10ZXN0XGRkZDA4ZDM0LWVhOGQtMTFlOS04ZTY0LWE0?=
+ =?us-ascii?Q?YzNmMGI1OThhNmJvZHkudHh0IiBzej0iMjA5NSIgdD0iMTMyMTUwOTY2NjU0?=
+ =?us-ascii?Q?NTEyMTE0IiBoPSJOeUxXaXhaaHFjUHNKaXhDWEppNWF4MkppRkE9IiBpZD0i?=
+ =?us-ascii?Q?IiBibD0iMCIgYm89IjEiIGNpPSJjQUFBQUVSSFUxUlNSVUZOQ2dVQUFFb0NB?=
+ =?us-ascii?Q?QUR5cXlxZ21uN1ZBZGZLMWFPdHBmaG4xOHJWbzYybCtHY0RBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBSEFBQUFEYUFRQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBRUFBUUFCQUFBQUZ0R2VRd0FBQUFBQUFBQUFBQUFBQUo0QUFBQm5BR1VB?=
+ =?us-ascii?Q?WHdCakFHOEFiZ0JtQUdrQVpBQmxBRzRBZEFCcEFHRUFiQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFFQUFBQUFBQUFBQWdBQUFBQUFuZ0FBQUdjQVpRQmZBR2dBYVFCbkFHZ0Fi?=
+ =?us-ascii?Q?QUI1QUdNQWJ3QnVBR1lBYVFCa0FHVUFiZ0IwQUdrQVlRQnNBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBUUFBQUFBQUFBQUNB?=
+ =?us-ascii?Q?QUFBQUFDZUFBQUFad0JsQUY4QWJnQnZBRzRBY0FCMUFHSUFiQUJwQUdNQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQkFBQUFBQUFBQUFJQUFBQUFBQT09Ii8+PC9t?=
+ =?us-ascii?Q?ZXRhPg=3D=3D?=
+x-dg-rorf: 
+x-originating-ip: [3.159.16.111]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Message-ID: <157062596047.9978.13993465481296426700.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Subject: [PATCH] KEYS: asym_tpm: Switch to get_random_bytes()
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-09_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910090115
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     f83eeb1a01689b2691f6f56629ac9f66de8d41c2
-Gitweb:        https://git.kernel.org/tip/f83eeb1a01689b2691f6f56629ac9f66de8d41c2
-Author:        Frederic Weisbecker <frederic@kernel.org>
-AuthorDate:    Thu, 03 Oct 2019 18:17:44 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 09 Oct 2019 12:39:25 +02:00
+> From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Sent: Tuesday, October 8, 2019 7:54 PM
+> To: Ken Goldman <kgold@linux.ibm.com>
+> Cc: Safford, David (GE Global Research, US) <david.safford@ge.com>; Mimi
+> Zohar <zohar@linux.ibm.com>; linux-integrity@vger.kernel.org;
+> stable@vger.kernel.org; open list:ASYMMETRIC KEYS
+> <keyrings@vger.kernel.org>; open list:CRYPTO API <linux-
+> crypto@vger.kernel.org>; open list <linux-kernel@vger.kernel.org>
+> Subject: EXT: Re: [PATCH] KEYS: asym_tpm: Switch to get_random_bytes()
+> 
+> On Wed, Oct 09, 2019 at 02:49:35AM +0300, Jarkko Sakkinen wrote:
+> > On Mon, Oct 07, 2019 at 06:13:01PM -0400, Ken Goldman wrote:
+> > > The TPM library specification states that the TPM must comply with
+> > > NIST
+> > > SP800-90 A.
+> > >
+> > > https://trustedcomputinggroup.org/membership/certification/tpm-certi
+> > > fied-products/
+> > >
+> > > shows that the TPMs get third party certification, Common Criteria EAL 4+.
+> > >
+> > > While it's theoretically possible that an attacker could compromise
+> > > both the TPM vendors and the evaluation agencies, we do have EAL 4+
+> > > assurance against both 1 and 2.
+> >
+> > Certifications do not equal to trust.
+> 
+> And for trusted keys the least trust solution is to do generation with the kernel
+> assets and sealing with TPM. With TEE the least trust solution is equivalent.
+> 
+> Are you proposing that the kernel random number generation should be
+> removed? That would be my conclusion of this discussion if I would agree any
+> of this (I don't).
+> 
+> /Jarkko
 
-sched/cputime: Rename vtime_account_system() to vtime_account_kernel()
+No one is suggesting that.
 
-vtime_account_system() decides if we need to account the time to the
-system (__vtime_account_system()) or to the guest (vtime_account_guest()).
+You are suggesting changing the documented behavior of trusted keys, and
+that would cause problems for some of our use cases. While certification
+may not in your mind be equal to trust, it is equal to compliance with 
+mandatory regulations.
 
-So this function is a misnomer as we are on a higher level than
-"system". All we know when we call that function is that we are
-accounting kernel cputime. Whether it belongs to guest or system time
-is a lower level detail.
+Perhaps rather than arguing past each other, we should look into 
+providing users the ability to choose, as an argument to keyctl?
 
-Rename this function to vtime_account_kernel(). This will clarify things
-and avoid too many underscored vtime_account_system() versions.
-
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Wanpeng Li <wanpengli@tencent.com>
-Cc: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
-Link: https://lkml.kernel.org/r/20191003161745.28464-2-frederic@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/ia64/kernel/time.c          |  4 ++--
- arch/powerpc/kernel/time.c       |  6 +++---
- arch/s390/kernel/vtime.c         |  4 ++--
- include/linux/context_tracking.h |  4 ++--
- include/linux/vtime.h            |  6 +++---
- kernel/sched/cputime.c           | 18 +++++++++---------
- 6 files changed, 21 insertions(+), 21 deletions(-)
-
-diff --git a/arch/ia64/kernel/time.c b/arch/ia64/kernel/time.c
-index 1e95d32..91b4024 100644
---- a/arch/ia64/kernel/time.c
-+++ b/arch/ia64/kernel/time.c
-@@ -132,7 +132,7 @@ static __u64 vtime_delta(struct task_struct *tsk)
- 	return delta_stime;
- }
- 
--void vtime_account_system(struct task_struct *tsk)
-+void vtime_account_kernel(struct task_struct *tsk)
- {
- 	struct thread_info *ti = task_thread_info(tsk);
- 	__u64 stime = vtime_delta(tsk);
-@@ -146,7 +146,7 @@ void vtime_account_system(struct task_struct *tsk)
- 	else
- 		ti->stime += stime;
- }
--EXPORT_SYMBOL_GPL(vtime_account_system);
-+EXPORT_SYMBOL_GPL(vtime_account_kernel);
- 
- void vtime_account_idle(struct task_struct *tsk)
- {
-diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
-index 6945223..84827da 100644
---- a/arch/powerpc/kernel/time.c
-+++ b/arch/powerpc/kernel/time.c
-@@ -338,7 +338,7 @@ static unsigned long vtime_delta(struct task_struct *tsk,
- 	return stime;
- }
- 
--void vtime_account_system(struct task_struct *tsk)
-+void vtime_account_kernel(struct task_struct *tsk)
- {
- 	unsigned long stime, stime_scaled, steal_time;
- 	struct cpu_accounting_data *acct = get_accounting(tsk);
-@@ -366,7 +366,7 @@ void vtime_account_system(struct task_struct *tsk)
- #endif
- 	}
- }
--EXPORT_SYMBOL_GPL(vtime_account_system);
-+EXPORT_SYMBOL_GPL(vtime_account_kernel);
- 
- void vtime_account_idle(struct task_struct *tsk)
- {
-@@ -395,7 +395,7 @@ static void vtime_flush_scaled(struct task_struct *tsk,
- /*
-  * Account the whole cputime accumulated in the paca
-  * Must be called with interrupts disabled.
-- * Assumes that vtime_account_system/idle() has been called
-+ * Assumes that vtime_account_kernel/idle() has been called
-  * recently (i.e. since the last entry from usermode) so that
-  * get_paca()->user_time_scaled is up to date.
-  */
-diff --git a/arch/s390/kernel/vtime.c b/arch/s390/kernel/vtime.c
-index c475ca4..8df10d3 100644
---- a/arch/s390/kernel/vtime.c
-+++ b/arch/s390/kernel/vtime.c
-@@ -247,9 +247,9 @@ void vtime_account_irq_enter(struct task_struct *tsk)
- }
- EXPORT_SYMBOL_GPL(vtime_account_irq_enter);
- 
--void vtime_account_system(struct task_struct *tsk)
-+void vtime_account_kernel(struct task_struct *tsk)
- __attribute__((alias("vtime_account_irq_enter")));
--EXPORT_SYMBOL_GPL(vtime_account_system);
-+EXPORT_SYMBOL_GPL(vtime_account_kernel);
- 
- /*
-  * Sorted add to a list. List is linear searched until first bigger
-diff --git a/include/linux/context_tracking.h b/include/linux/context_tracking.h
-index d05609a..558a209 100644
---- a/include/linux/context_tracking.h
-+++ b/include/linux/context_tracking.h
-@@ -141,7 +141,7 @@ static inline void guest_enter_irqoff(void)
- 	 * to assume that it's the stime pending cputime
- 	 * to flush.
- 	 */
--	vtime_account_system(current);
-+	vtime_account_kernel(current);
- 	current->flags |= PF_VCPU;
- 	rcu_virt_note_context_switch(smp_processor_id());
- }
-@@ -149,7 +149,7 @@ static inline void guest_enter_irqoff(void)
- static inline void guest_exit_irqoff(void)
- {
- 	/* Flush the guest cputime we spent on the guest */
--	vtime_account_system(current);
-+	vtime_account_kernel(current);
- 	current->flags &= ~PF_VCPU;
- }
- #endif /* CONFIG_VIRT_CPU_ACCOUNTING_GEN */
-diff --git a/include/linux/vtime.h b/include/linux/vtime.h
-index a26ed10..2fd247f 100644
---- a/include/linux/vtime.h
-+++ b/include/linux/vtime.h
-@@ -57,13 +57,13 @@ static inline void vtime_task_switch(struct task_struct *prev)
- }
- #endif /* __ARCH_HAS_VTIME_TASK_SWITCH */
- 
--extern void vtime_account_system(struct task_struct *tsk);
-+extern void vtime_account_kernel(struct task_struct *tsk);
- extern void vtime_account_idle(struct task_struct *tsk);
- 
- #else /* !CONFIG_VIRT_CPU_ACCOUNTING */
- 
- static inline void vtime_task_switch(struct task_struct *prev) { }
--static inline void vtime_account_system(struct task_struct *tsk) { }
-+static inline void vtime_account_kernel(struct task_struct *tsk) { }
- #endif /* !CONFIG_VIRT_CPU_ACCOUNTING */
- 
- #ifdef CONFIG_VIRT_CPU_ACCOUNTING_GEN
-@@ -86,7 +86,7 @@ extern void vtime_account_irq_enter(struct task_struct *tsk);
- static inline void vtime_account_irq_exit(struct task_struct *tsk)
- {
- 	/* On hard|softirq exit we always account to hard|softirq cputime */
--	vtime_account_system(tsk);
-+	vtime_account_kernel(tsk);
- }
- extern void vtime_flush(struct task_struct *tsk);
- #else /* !CONFIG_VIRT_CPU_ACCOUNTING_NATIVE */
-diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
-index 46ed4e1..b45932e 100644
---- a/kernel/sched/cputime.c
-+++ b/kernel/sched/cputime.c
-@@ -412,7 +412,7 @@ void vtime_common_task_switch(struct task_struct *prev)
- 	if (is_idle_task(prev))
- 		vtime_account_idle(prev);
- 	else
--		vtime_account_system(prev);
-+		vtime_account_kernel(prev);
- 
- 	vtime_flush(prev);
- 	arch_vtime_task_switch(prev);
-@@ -425,7 +425,7 @@ void vtime_common_task_switch(struct task_struct *prev)
- /*
-  * Archs that account the whole time spent in the idle task
-  * (outside irq) as idle time can rely on this and just implement
-- * vtime_account_system() and vtime_account_idle(). Archs that
-+ * vtime_account_kernel() and vtime_account_idle(). Archs that
-  * have other meaning of the idle time (s390 only includes the
-  * time spent by the CPU when it's in low power mode) must override
-  * vtime_account().
-@@ -436,7 +436,7 @@ void vtime_account_irq_enter(struct task_struct *tsk)
- 	if (!in_interrupt() && is_idle_task(tsk))
- 		vtime_account_idle(tsk);
- 	else
--		vtime_account_system(tsk);
-+		vtime_account_kernel(tsk);
- }
- EXPORT_SYMBOL_GPL(vtime_account_irq_enter);
- #endif /* __ARCH_HAS_VTIME_ACCOUNT */
-@@ -711,8 +711,8 @@ static u64 get_vtime_delta(struct vtime *vtime)
- 	return delta - other;
- }
- 
--static void __vtime_account_system(struct task_struct *tsk,
--				   struct vtime *vtime)
-+static void vtime_account_system(struct task_struct *tsk,
-+				 struct vtime *vtime)
- {
- 	vtime->stime += get_vtime_delta(vtime);
- 	if (vtime->stime >= TICK_NSEC) {
-@@ -731,7 +731,7 @@ static void vtime_account_guest(struct task_struct *tsk,
- 	}
- }
- 
--void vtime_account_system(struct task_struct *tsk)
-+void vtime_account_kernel(struct task_struct *tsk)
- {
- 	struct vtime *vtime = &tsk->vtime;
- 
-@@ -743,7 +743,7 @@ void vtime_account_system(struct task_struct *tsk)
- 	if (tsk->flags & PF_VCPU)
- 		vtime_account_guest(tsk, vtime);
- 	else
--		__vtime_account_system(tsk, vtime);
-+		vtime_account_system(tsk, vtime);
- 	write_seqcount_end(&vtime->seqcount);
- }
- 
-@@ -752,7 +752,7 @@ void vtime_user_enter(struct task_struct *tsk)
- 	struct vtime *vtime = &tsk->vtime;
- 
- 	write_seqcount_begin(&vtime->seqcount);
--	__vtime_account_system(tsk, vtime);
-+	vtime_account_system(tsk, vtime);
- 	vtime->state = VTIME_USER;
- 	write_seqcount_end(&vtime->seqcount);
- }
-@@ -782,7 +782,7 @@ void vtime_guest_enter(struct task_struct *tsk)
- 	 * that can thus safely catch up with a tickless delta.
- 	 */
- 	write_seqcount_begin(&vtime->seqcount);
--	__vtime_account_system(tsk, vtime);
-+	vtime_account_system(tsk, vtime);
- 	tsk->flags |= PF_VCPU;
- 	write_seqcount_end(&vtime->seqcount);
- }
+dave
