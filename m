@@ -2,123 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A812CD182E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 21:12:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0F63D1875
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 21:14:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732299AbfJITMU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 15:12:20 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45294 "EHLO mx1.redhat.com"
+        id S1732511AbfJITOS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 15:14:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33998 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732032AbfJITMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 15:12:18 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        id S1732492AbfJITOL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 15:14:11 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7ACE118CB909;
-        Wed,  9 Oct 2019 19:12:18 +0000 (UTC)
-Received: from ovpn-117-172.phx2.redhat.com (ovpn-117-172.phx2.redhat.com [10.3.117.172])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E887F60C05;
-        Wed,  9 Oct 2019 19:12:11 +0000 (UTC)
-Message-ID: <9c12342ed1e6d180fae3348409fabb9fc045361d.camel@redhat.com>
-Subject: Re: [PATCH RT 5/8] sched/deadline: Reclaim cpuset bandwidth in
- .migrate_task_rq()
-From:   Scott Wood <swood@redhat.com>
-To:     Juri Lelli <juri.lelli@redhat.com>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
-Date:   Wed, 09 Oct 2019 14:12:10 -0500
-In-Reply-To: <20191009072745.GI19588@localhost.localdomain>
-References: <20190727055638.20443-1-swood@redhat.com>
-         <20190727055638.20443-6-swood@redhat.com>
-         <20190927081141.GB31660@localhost.localdomain>
-         <9a4cc499e6de4690c682c03c0c880363fe3c9307.camel@redhat.com>
-         <20190930071233.GE31660@localhost.localdomain>
-         <9acc5f1bd0fe06acb2b7b518c5ef1f082e89ad63.camel@redhat.com>
-         <20191001085209.GA6481@localhost.localdomain>
-         <a1098e5f95a1ab202fdf79a73aedfeeb8e02dd47.camel@redhat.com>
-         <20191009072745.GI19588@localhost.localdomain>
-Organization: Red Hat
+        by mx1.redhat.com (Postfix) with ESMTPS id 15EDE10DCC95;
+        Wed,  9 Oct 2019 19:14:11 +0000 (UTC)
+Received: from ovpn-116-36.ams2.redhat.com (ovpn-116-36.ams2.redhat.com [10.36.116.36])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BA4AE5EE1D;
+        Wed,  9 Oct 2019 19:14:08 +0000 (UTC)
+Message-ID: <95c5a697932e19ebd6577b5dac4d7052fe8c4255.camel@redhat.com>
+Subject: Re: Packet gets stuck in NOLOCK pfifo_fast qdisc
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     Jonas Bonn <jonas.bonn@netrounds.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        John Fastabend <john.fastabend@gmail.com>
+Date:   Wed, 09 Oct 2019 21:14:07 +0200
+In-Reply-To: <d102074f-7489-e35a-98cf-e2cad7efd8a2@netrounds.com>
+References: <d102074f-7489-e35a-98cf-e2cad7efd8a2@netrounds.com>
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.63]); Wed, 09 Oct 2019 19:12:18 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.64]); Wed, 09 Oct 2019 19:14:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-10-09 at 09:27 +0200, Juri Lelli wrote:
-> On 09/10/19 01:25, Scott Wood wrote:
-> > On Tue, 2019-10-01 at 10:52 +0200, Juri Lelli wrote:
-> > > On 30/09/19 11:24, Scott Wood wrote:
-> > > > On Mon, 2019-09-30 at 09:12 +0200, Juri Lelli wrote:
-> > > 
-> > > [...]
-> > > 
-> > > > > Hummm, I was actually more worried about the fact that we call
-> > > > > free_old_
-> > > > > cpuset_bw_dl() only if p->state != TASK_WAKING.
-> > > > 
-> > > > Oh, right. :-P  Not sure what I had in mind there; we want to call
-> > > > it
-> > > > regardless.
-> > > > 
-> > > > I assume we need rq->lock in free_old_cpuset_bw_dl()?  So something
-> > > > like
-> > > 
-> > > I think we can do with rcu_read_lock_sched() (see
-> > > dl_task_can_attach()).
-> > 
-> > RCU will keep dl_bw from being freed under us (we're implicitly in an
-> > RCU
-> > sched read section due to atomic context).  It won't stop rq->rd from
-> > changing, but that could have happened before we took rq->lock.  If the
-> > cpu
-> > the task was running on was removed from the cpuset, and that raced with
-> > the
-> > task being moved to a different cpuset, couldn't we end up erroneously
-> > subtracting from the cpu's new root domain (or failing to subtract at
-> > all if
-> > the old cpu's new cpuset happens to be the task's new cpuset)?  I don't
-> > see
-> > anything that forces tasks off of the cpu when a cpu is removed from a
-> > cpuset (though maybe I'm not looking in the right place), so the race
-> > window
-> > could be quite large.  In any case, that's an existing problem that's
-> > not
-> > going to get solved in this patchset.
+On Wed, 2019-10-09 at 08:46 +0200, Jonas Bonn wrote:
+> Hi,
 > 
-> OK. So, mainline has got cpuset_read_lock() which should be enough to
-> guard against changes to rd(s).
+> The lockless pfifo_fast qdisc has an issue with packets getting stuck in 
+> the queue.  What appears to happen is:
 > 
-> I agree that rq->lock is needed here.
+> i)  Thread 1 holds the 'seqlock' on the qdisc and dequeues packets.
+> ii)  Thread 1 dequeues the last packet in the queue.
+> iii)  Thread 1 iterates through the qdisc->dequeue function again and 
+> determines that the queue is empty.
+> 
+> iv)  Thread 2 queues up a packet.  Since 'seqlock' is busy, it just 
+> assumes the packet will be dequeued by whoever is holding the lock.
+> 
+> v)  Thread 1 releases 'seqlock'.
+> 
+> After v), nobody will check if there are packets in the queue until a 
+> new packet is enqueued.  Thereby, the packet enqueued by Thread 2 may be 
+> delayed indefinitely.
 
-My point was that rq->lock isn't actually helping, because rq->rd could have
-changed before rq->lock is acquired (and it's still the old rd that needs
-the bandwidth subtraction).  cpuset_mutex/cpuset_rwsem helps somewhat,
-though there's still a problem due to the subtraction not happening until
-the task is woken up (by which time cpuset_mutex may have been released and
-further reconfiguration could have happened).  This would be an issue even
-without lazy migrate, since in that case ->set_cpus_allowed() can get
-deferred, but this patch makes the window much bigger.
+I think you are right.
 
-The right solution is probably to explicitly track the rd for which a task
-has a pending bandwidth subtraction (if any), and to continue doing it from
-set_cpus_allowed() if the task is not migrate-disabled.  In the meantime, I
-think we should drop this patch from the patchset -- without it, lazy
-migrate disable doesn't really make the race situation any worse than it
-already was.
+It looks like this possible race is present since the initial lockless
+implementation - commit 6b3ba9146fe6 ("net: sched: allow qdiscs to
+handle locking")
 
-BTW, what happens to the bw addition in dl_task_can_attach() if a subsequent
-can_attach fails and the whole operation is cancelled?
+Anyhow the racing windows looks quite tiny - I never observed that
+issue in my tests. Do you have a working reproducer?
 
--Scott
+Something alike the following code - completely untested - can possibly
+address the issue, but it's a bit rough and I would prefer not adding
+additonal complexity to the lockless qdiscs, can you please have a spin
+a it?
 
+Thanks,
+
+Paolo
+---
+diff --git a/include/net/pkt_sched.h b/include/net/pkt_sched.h
+index 6a70845bd9ab..65a1c03330d6 100644
+--- a/include/net/pkt_sched.h
++++ b/include/net/pkt_sched.h
+@@ -113,18 +113,23 @@ bool sch_direct_xmit(struct sk_buff *skb, struct Qdisc *q,
+ 		     struct net_device *dev, struct netdev_queue *txq,
+ 		     spinlock_t *root_lock, bool validate);
+ 
+-void __qdisc_run(struct Qdisc *q);
++int __qdisc_run(struct Qdisc *q);
+ 
+ static inline void qdisc_run(struct Qdisc *q)
+ {
++	int quota = 0;
++
+ 	if (qdisc_run_begin(q)) {
+ 		/* NOLOCK qdisc must check 'state' under the qdisc seqlock
+ 		 * to avoid racing with dev_qdisc_reset()
+ 		 */
+ 		if (!(q->flags & TCQ_F_NOLOCK) ||
+ 		    likely(!test_bit(__QDISC_STATE_DEACTIVATED, &q->state)))
+-			__qdisc_run(q);
++			quota = __qdisc_run(q);
+ 		qdisc_run_end(q);
++
++		if (quota > 0 && q->flags & TCQ_F_NOLOCK && q->ops->peek(q))
++			__netif_schedule(q);
+ 	}
+ }
+ 
+diff --git a/net/sched/sch_generic.c b/net/sched/sch_generic.c
+index 17bd8f539bc7..013480f6a794 100644
+--- a/net/sched/sch_generic.c
++++ b/net/sched/sch_generic.c
+@@ -376,7 +376,7 @@ static inline bool qdisc_restart(struct Qdisc *q, int *packets)
+ 	return sch_direct_xmit(skb, q, dev, txq, root_lock, validate);
+ }
+ 
+-void __qdisc_run(struct Qdisc *q)
++int __qdisc_run(struct Qdisc *q)
+ {
+ 	int quota = dev_tx_weight;
+ 	int packets;
+@@ -390,9 +390,10 @@ void __qdisc_run(struct Qdisc *q)
+ 		quota -= packets;
+ 		if (quota <= 0 || need_resched()) {
+ 			__netif_schedule(q);
+-			break;
++			return 0;
+ 		}
+ 	}
++	return quota;
+ }
+ 
+ unsigned long dev_trans_start(struct net_device *dev)
 
