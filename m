@@ -2,367 +2,1027 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F565D0CBD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 12:22:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06808D0CC0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 12:25:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730754AbfJIKWz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 06:22:55 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45524 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726579AbfJIKWz (ORCPT
+        id S1729566AbfJIKZw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 06:25:52 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:43437 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726579AbfJIKZw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 06:22:55 -0400
-Received: by mail-wr1-f66.google.com with SMTP id r5so2129845wrm.12;
-        Wed, 09 Oct 2019 03:22:51 -0700 (PDT)
+        Wed, 9 Oct 2019 06:25:52 -0400
+Received: by mail-pf1-f195.google.com with SMTP id a2so1328138pfo.10
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 03:25:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=cc:subject:to:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lHUntepvarEZP4ykk04YfbzwmrqUUI9qQRqo7cBkvGg=;
-        b=hOQr+eaSYXF6yxzprFWFKpu76zH0RD45ZfnC5VhpTC47b7jgwJv0nU9R/NgiH9bixA
-         RajeFrBIK31PFOWEmeAasT3Pr11b1KzhJq5O5CM0ou91EPvk2HrR+kbKC7tfN5GZw8tX
-         ZwSeVmriTxg64TZuCdsgrGvWjKNYM5tfuo/xJiJ9RkrMGqloSEQGoGHwSFNDOsYHogh7
-         6k+znSn4e5Lhg4EW6NL0hyL6QMjK/dDvHgHFmUXsx9+gFrq0y+0amx/ajan+KXMAVVnT
-         UrS/YvNjbCIBOsVUHE5a8sdy8/zDmJ0EsTnuJkAFHNeHDPOG5YwCczVuWDT//QsASkFc
-         ePDA==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+7M+41q41/40yUKCsuRLWefaRCtYYSSqHcLObyMwLZQ=;
+        b=OvrtUu/xKz3SU1TzTUP6jdwAXuiFzQRlYdwnqzJ/xXUWgZat4y8eUtztGT6fDFi2Y8
+         PlT94MPwbpCPie9TdVmBxelbwXa/fsH8/mYcKcv/HEUmB9GTYEZJOQdJULSN9cVeHSg8
+         Bx1fKvIh+uAyAYiUSETLXlbY4wzojWQnUCxgZvgVvRHrSLt5zka3e/Z/+XutuI/o0kWg
+         eoUP9wMzp3XPuqUjueDKzHnvjlNqyBbn4CFGfsW/+cokEgcCs6yy6+UqJCPbChhY2MHW
+         BRX1XPFWEMFhsrx38SNX06/rGPQ83ZE6CioR1EU9gTbjqvlLpvoUr3qst7AmIMhlmJFF
+         2jHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lHUntepvarEZP4ykk04YfbzwmrqUUI9qQRqo7cBkvGg=;
-        b=d5GaRkDc6BxaEjPDj8XGhfgox9kuEt7EV3f/s1Yvdpw03Xjz8IogXSiTeCAzVJOfqW
-         tW00xVN/e49t2Hm+odZw2SHhYwf4KgBEiqOWtyroPSP4O2diJCG+O967xlpYMNyeZj8x
-         sWzezLopP4ir9ZLaiPWYjmnOCE3QacN2WlGGpKJ/M8yxnjhYO92kzSEmsJeRDC0Fhni1
-         2451LFzHHodpI3enNvcumjowA7g/qXUHFv3J4JaM1oJ5rF+EDaqwba4z9z7vmLYUl45w
-         GUE4RaCDr1GOCK8LQ3+wFMsv9yD1pbzcl6Sea1ve6eG/DLDLIHn0msF0C3gl/fzgXjQJ
-         fcuQ==
-X-Gm-Message-State: APjAAAU3LnmhVOVTG80PrpEmIocCNp01Vj7ooWuPsmmEyYsdIVCVYveq
-        /VTwMggASTB6eyAZ02ANem4=
-X-Google-Smtp-Source: APXvYqxaivOYFX/Q9EQ6qQtyD906/lGmEsRISxKVEF6zyhDopyZbQkWIZ/xPmIrO5eZNdAcP35rbCw==
-X-Received: by 2002:a05:6000:1288:: with SMTP id f8mr2148693wrx.111.1570616571009;
-        Wed, 09 Oct 2019 03:22:51 -0700 (PDT)
-Received: from [10.0.20.253] ([95.157.63.22])
-        by smtp.gmail.com with ESMTPSA id r140sm2774487wme.47.2019.10.09.03.22.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2019 03:22:50 -0700 (PDT)
-Cc:     mtk.manpages@gmail.com, Philipp Wendler <ml@philippwendler.de>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian@brauner.io>,
-        Aleksa Sarai <asarai@suse.de>,
-        Reid Priedhorsky <reidpr@lanl.gov>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Yang Bo <rslovers@yandex.com>, Jakub Wilk <jwilk@jwilk.net>,
-        Joseph Sible <josephcsible@gmail.com>,
-        Al Viro <viro@ftp.linux.org.uk>, werner@almesberger.net,
-        linux-man <linux-man@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Containers <containers@lists.linux-foundation.org>,
-        =?UTF-8?Q?St=c3=a9phane_Graber?= <stgraber@ubuntu.com>
-Subject: Re: For review: rewritten pivot_root(2) manual page
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-References: <620c691a-065e-b894-4f06-7453012bc8d3@gmail.com>
- <d449305b-f87c-f26e-e43f-d193fd8f4332@philippwendler.de>
- <e51e454c-b0e7-e5d1-7810-e8f023574aa2@gmail.com>
- <87y2xu71dh.fsf@x220.int.ebiederm.org>
-From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Message-ID: <c1e7f140-ca5b-2c8c-7b9d-54b61984cd3b@gmail.com>
-Date:   Wed, 9 Oct 2019 12:22:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+7M+41q41/40yUKCsuRLWefaRCtYYSSqHcLObyMwLZQ=;
+        b=IGSrDxs9OA0UOcR3k4arLzCYPa7wMky7C7HbrUfvgnwrPZV3BMmT24sA0eW2rXEcB0
+         cL01iSGoLimTdhlnxznUjJLWmuwKk6Jr0lGmtzmcLt/4lQuxXfJlx2Hk3p42gBUjNxDF
+         0h14yowGoNGp1vV7Fu4f5Jvkq1JLby+OwObvH4JbZfDZsYnBCZz4VL2lAfWh9lc5URT/
+         r55hG2ALgh2WZbnbI07HE01Xe9kku7cnWhYQMNsHjPhGccMg5IT0eHOQDJlRGKIHJLOd
+         K1fhMNjoBp8ZBwxtkIwuv2D+H+nZ9D7QBBxZHaL1yA+xxScUEbS5MK45p/M7suZqRLXH
+         IbGA==
+X-Gm-Message-State: APjAAAWPawaNH4qpH+N2Mtmu8LFeqd4VtWw6NgVSCEFUw/RNyk+LpqCx
+        sWMG95EfrPLe3pGroZ0+3uYC
+X-Google-Smtp-Source: APXvYqwnACG1JzUsGdeW+91FBgTCvs1tijh7ZgEqF+H6bxX3Vs5rLQk1ubudIWXnb7NxIk5KcBYNEA==
+X-Received: by 2002:a17:90a:2ec1:: with SMTP id h1mr3171334pjs.96.1570616750443;
+        Wed, 09 Oct 2019 03:25:50 -0700 (PDT)
+Received: from Mani-XPS-13-9360 ([103.59.132.163])
+        by smtp.gmail.com with ESMTPSA id l21sm2718978pgm.55.2019.10.09.03.25.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 09 Oct 2019 03:25:49 -0700 (PDT)
+Date:   Wed, 9 Oct 2019 15:55:41 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc:     ars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+        knaack.h@gmx.de, pmeerw@pmeerw.net, robh+dt@kernel.org,
+        alexandru.Ardelean@analog.com, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] iio: light: Add support for ADUX1020 sensor
+Message-ID: <20191009102541.GB17962@Mani-XPS-13-9360>
+References: <20191007153917.13611-1-manivannan.sadhasivam@linaro.org>
+ <20191007153917.13611-3-manivannan.sadhasivam@linaro.org>
+ <20191008132744.000047cb@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <87y2xu71dh.fsf@x220.int.ebiederm.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191008132744.000047cb@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Eric,
+Hi Jonathan,
 
-Thank you. I was hoping you might jump in on this thread.
+Thanks for the review!
 
-Please see below.
-
-On 10/9/19 10:46 AM, Eric W. Biederman wrote:
-> "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com> writes:
+On Tue, Oct 08, 2019 at 01:27:44PM +0100, Jonathan Cameron wrote:
+> On Mon, 7 Oct 2019 21:09:17 +0530
+> Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
 > 
->> Hello Philipp,
->>
->> My apologies that it has taken a while to reply. (I had been hoping
->> and waiting that a few more people might weigh in on this thread.)
->>
->> On 9/23/19 3:42 PM, Philipp Wendler wrote:
->>> Hello Michael,
->>>
->>> Am 23.09.19 um 14:04 schrieb Michael Kerrisk (man-pages):
->>>
->>>> I'm considering to rewrite these pieces to exactly
->>>> describe what the system call does (which I already
->>>> do in the third paragraph) and remove the "may or may not"
->>>> pieces in the second paragraph. I'd welcome comments
->>>> on making that change.
-
-What did you think about my proposal above? To put it in context,
-this was my initial comment in the mail:
-
-[[
-One area of the page that I'm still not really happy with
-is the "vague" wording in the second paragraph and the note
-in the third paragraph about the system call possibly
-changing. These pieces survive (in somewhat modified form)
-from the original page, which was written before the
-system call was released, and it seems there was some
-question about whether the system call might still change
-its behavior with respect to the root directory and current
-working directory of other processes. However, after 19
-years, nothing has changed, and surely it will not in the
-future, since that would constitute an ABI breakage.
-I'm considering to rewrite these pieces to exactly
-describe what the system call does (which I already
-do in the third paragraph) and remove the "may or may not"
-pieces in the second paragraph. I'd welcome comments
-on making that change.
-]]
-
-And the second and third paragraphs of the manual page currently
-read:
-
-[[
-       pivot_root()  may  or may not change the current root and the cur‐
-       rent working directory of any processes or threads  that  use  the
-       old  root  directory  and which are in the same mount namespace as
-       the caller of pivot_root().  The  caller  of  pivot_root()  should
-       ensure  that  processes  with root or current working directory at
-       the old root operate correctly in either case.   An  easy  way  to
-       ensure  this is to change their root and current working directory
-       to  new_root  before  invoking  pivot_root().   Note   also   that
-       pivot_root()  may  or may not affect the calling process's current
-       working directory.  It is therefore recommended to call chdir("/")
-       immediately after pivot_root().
-
-       The  paragraph  above  is  intentionally vague because at the time
-       when pivot_root() was first implemented, it  was  unclear  whether
-       its  affect  on  other process's root and current working directo‐
-       ries—and the caller's current working  directory—might  change  in
-       the  future.   However, the behavior has remained consistent since
-       this system call was first implemented: pivot_root()  changes  the
-       root  directory  and the current working directory of each process
-       or thread in the same mount namespace to new_root if they point to
-       the  old  root  directory.   (See also NOTES.)  On the other hand,
-       pivot_root() does not change the caller's current  working  direc‐
-       tory  (unless it is on the old root directory), and thus it should
-       be followed by a chdir("/") call.
-]]
-
->>> I think that it would make the man page significantly easier to
->>> understand if if the vague wording and the meta discussion about it are
->>> removed.
->>
->> It is my inclination to make this change, but I'd love to get more
->> feedback on this point.
->>
->>>> DESCRIPTION
->>> [...]>        pivot_root()  changes  the
->>>>        root  directory  and the current working directory of each process
->>>>        or thread in the same mount namespace to new_root if they point to
->>>>        the  old  root  directory.   (See also NOTES.)  On the other hand,
->>>>        pivot_root() does not change the caller's current  working  direc‐
->>>>        tory  (unless it is on the old root directory), and thus it should
->>>>        be followed by a chdir("/") call.
->>>
->>> There is a contradiction here with the NOTES (cf. below).
->>
->> See below.
->>
->>>>        The following restrictions apply:
->>>>
->>>>        -  new_root and put_old must be directories.
->>>>
->>>>        -  new_root and put_old must not be on the same filesystem as  the
->>>>           current root.  In particular, new_root can't be "/" (but can be
->>>>           a bind mounted directory on the current root filesystem).
->>>
->>> Wouldn't "must not be on the same mountpoint" or something similar be
->>> more clear, at least for new_root? The note in parentheses indicates
->>> that new_root can actually be on the same filesystem as the current
->>> note. However, ...
->>
->> For 'put_old', it really is "filesystem".
+> > Add initial support for Analog Devices ADUX1020 Photometric sensor.
+> > Only proximity mode has been enabled for now.
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > 
-> If we are going to be pedantic "filesystem" is really the wrong concept
-> here.  The section about bind mount clarifies it, but I wonder if there
-> is a better term.
-
-Thanks. My aim was to try to distinguish "mount point" from
-"a mount somewhere inside the file system associated with a
-certain mount point"--in other words, I wanted to make it clear
-that 'put_old' (and 'new_root') could not be subdirectories
-under the current root mount point (which is correct, right?).
-
-Using "mount" does seem better. (My only concern is that some
-people may take it to mean "the mount point", but perhaps that
-just my own confusion.)
-
-> I think I would say: "new_root and put_old must not be on the same mount
-> as the current root."
-
-I've made that change.
-
-> I think using "mount" instead of "filesystem" keeps the concepts less
-> confusing.
+> Hi Manivannan,
 > 
-> As I am reading through this email and seeing text that is trying to be
-> precise and clear then hitting the term "filesystem" is a bit jarring.
-> pivot_root doesn't care a thing for file systems.  pivot_root only cares
-> about mounts.
+> Various minor comments inline.
 > 
-> And by a "mount" I mean the thing that you get when you create a bind
-> mount or you call mount normally.
-
-Thanks for the above comments.
-
-Hmm, doI need to make similar changes in the initial paragraph of
-the manual page as well? It currently reads:
-
-       pivot_root() changes the root filesystem in the mount namespace of
-       the calling process.  More precisely, it moves the root filesystem
-       to  the directory put_old and makes new_root the new root filesys‐
-       tem.  The calling process must have the  CAP_SYS_ADMIN  capability
-       in the user namespace that owns the caller's mount namespace.
-
-Furthermore the one line NAME of the man page reads:
-
-       pivot_root - change the root filesystem
-
-Is a change needed there also?
-
-> Michael do you have man pages for the new mount api yet?
-
-David Howells wrote pages in mid-2018, well before the syscalls got
-merged in the kernel (in mid-2019). I did not merge them because
-the code was not yet in the kernel, and lacking time, I never chased
-David when the syscalls did get merged to see if the pages were still
-up to date. I pinged David just now.
-
->> For 'new_root', see below.
->>
->>>>        -  put_old must be at or underneath new_root; that  is,  adding  a
->>>>           nonnegative  number  of /.. to the string pointed to by put_old
->>>>           must yield the same directory as new_root.
->>>>
->>>>        -  new_root must be a mount point.  (If  it  is  not  otherwise  a
->>>>           mount  point,  it  suffices  to  bind  mount new_root on top of
->>>>           itself.)
->>>
->>> ... this item actually makes the above item almost redundant regarding
->>> new_root (except for the "/") case. So one could replace this item with
->>> something like this:
->>>
->>> - new_root must be a mount point different from "/". (If it is not
->>>   otherwise a mount point, it suffices  to bind mount new_root on top
->>>   of itself.)
->>>
->>> The above item would then only mention put_old (and maybe use clarified
->>> wording on whether actually a different file system is necessary for
->>> put_old or whether a different mount point is enough).
->>
->> Thanks. That's a good suggestion. I simplified the earlier bullet
->> point as you suggested, and changed the text here to say:
->>
->>        -  new_root must be a mount point, but can't be "/".  If it is not
->>           otherwise  a mount point, it suffices to bind mount new_root on
->>           top of itself.  (new_root can be a bind  mounted  directory  on
->>           the current root filesystem.)
+> Thanks,
 > 
-> How about:
->           - new_root must be the path to a mount, but can't be "/".  Any
-
-Surely here it must be "mount point" not "mount"? (See my discussion
-above.)
-
->           path that is not already a mount can be converted into one by
->           bind mounting the path onto itself.
->>>> NOTES
->>> [...]
->>>>        pivot_root() allows the caller to switch to a new root  filesystem
->>>>        while  at  the  same time placing the old root mount at a location
->>>>        under new_root from where it can subsequently be unmounted.   (The
->>>>        fact  that  it  moves  all processes that have a root directory or
->>>>        current working directory on the old root filesystem  to  the  new
->>>>        root  filesystem  frees the old root filesystem of users, allowing
->>>>        it to be unmounted more easily.)
->>>
->>> Here is the contradiction:
->>> The DESCRIPTION says that root and current working dir are only changed
->>> "if they point to the old root directory". Here in the NOTES it says
->>> that any root or working directories on the old root file system (i.e.,
->>> even if somewhere below the root) are changed.
->>>
->>> Which is correct?
->>
->> The first text is correct. I must have accidentally inserted
->> "filesystem" into the paragraph just here during a global edit.
->> Thanks for catching that.
->>
->>> If it indeed affects all processes with root and/or current working
->>> directory below the old root, the text here does not clearly state what
->>> the new root/current working directory of theses processes is.
->>> E.g., if a process is at /foo and we pivot to /bar, will the process be
->>> moved to /bar (i.e., at / after pivot_root), or will the kernel attempt
->>> to move it to some location like /bar/foo? Because the latter might not
->>> even exist, I suspect that everything is just moved to new_root, but
->>> this could be stated explicitly by replacing "to the new root
->>> filesystem" in the above paragraph with "to the new root directory"
->>> (after checking whether this is true).
->>
->> The text here now reads:
->>
->>        pivot_root() allows the caller to switch to a new root  filesystem
->>        while  at  the  same time placing the old root mount at a location
->>        under new_root from where it can subsequently be unmounted.   (The
->>        fact  that  it  moves  all processes that have a root directory or
->>        current working directory on the old root  directory  to  the  new
->>        root  frees the old root directory of users, allowing the old root
->>        filesystem to be unmounted more easily.)
+> Jonathan
 > 
+> > ---
+> >  drivers/iio/light/Kconfig    |  11 +
+> >  drivers/iio/light/Makefile   |   1 +
+> >  drivers/iio/light/adux1020.c | 783 +++++++++++++++++++++++++++++++++++
+> >  3 files changed, 795 insertions(+)
+> >  create mode 100644 drivers/iio/light/adux1020.c
+> > 
+> > diff --git a/drivers/iio/light/Kconfig b/drivers/iio/light/Kconfig
+> > index 08d7e1ef2186..3f8c8689cd89 100644
+> > --- a/drivers/iio/light/Kconfig
+> > +++ b/drivers/iio/light/Kconfig
+> > @@ -32,6 +32,17 @@ config ADJD_S311
+> >  	  This driver can also be built as a module.  If so, the module
+> >  	  will be called adjd_s311.
+> >  
+> > +config ADUX1020
+> > +	tristate "ADUX1020 photometric sensor"
+> > +	select REGMAP_I2C
+> > +	depends on I2C
+> > +	help
+> > +	 Say Y here if you want to build a driver for the Analog Devices
+> > +	 ADUX1020 photometric sensor.
+> > +
+> > +	 To compile this driver as a module, choose M here: the
+> > +	 module will be called adux1020.
+> > +
+> >  config AL3320A
+> >  	tristate "AL3320A ambient light sensor"
+> >  	depends on I2C
+> > diff --git a/drivers/iio/light/Makefile b/drivers/iio/light/Makefile
+> > index 00d1f9b98f39..5d650ce46a40 100644
+> > --- a/drivers/iio/light/Makefile
+> > +++ b/drivers/iio/light/Makefile
+> > @@ -6,6 +6,7 @@
+> >  # When adding new entries keep the list in alphabetical order
+> >  obj-$(CONFIG_ACPI_ALS)		+= acpi-als.o
+> >  obj-$(CONFIG_ADJD_S311)		+= adjd_s311.o
+> > +obj-$(CONFIG_ADUX1020)		+= adux1020.o
+> >  obj-$(CONFIG_AL3320A)		+= al3320a.o
+> >  obj-$(CONFIG_APDS9300)		+= apds9300.o
+> >  obj-$(CONFIG_APDS9960)		+= apds9960.o
+> > diff --git a/drivers/iio/light/adux1020.c b/drivers/iio/light/adux1020.c
+> > new file mode 100644
+> > index 000000000000..d0b76e5b44f1
+> > --- /dev/null
+> > +++ b/drivers/iio/light/adux1020.c
+> > @@ -0,0 +1,783 @@
+> > +// SPDX-License-Identifier: GPL-2.0+
+> > +/*
+> > + * adux1020.c - Support for Analog Devices ADUX1020 photometric sensor
+> > + *
+> > + * Copyright (C) 2019 Linaro Ltd.
+> > + * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > + *
+> > + * TODO: Triggered buffer support
+> > + */
+> > +
+> > +#include <linux/delay.h>
+> > +#include <linux/err.h>
+> > +#include <linux/i2c.h>
+> > +#include <linux/init.h>
+> > +#include <linux/interrupt.h>
+> > +#include <linux/irq.h>
+> > +#include <linux/module.h>
+> > +#include <linux/mutex.h>
+> > +#include <linux/regmap.h>
+> > +
+> > +#include <linux/iio/iio.h>
+> > +#include <linux/iio/sysfs.h>
+> > +#include <linux/iio/events.h>
+> > +
+> > +#define ADUX1020_REGMAP_NAME		"adux1020_regmap"
+> > +#define ADUX1020_DRV_NAME		"adux1020"
+> > +
+> > +/* System registers */
+> > +#define ADUX1020_REG_CHIP_ID		0x08
+> > +#define ADUX1020_REG_SLAVE_ADDRESS	0x09
+> > +
+> > +#define ADUX1020_REG_SW_RESET		0x0f
+> > +#define ADUX1020_REG_INT_ENABLE		0x1c
+> > +#define ADUX1020_REG_INT_POLARITY	0x1d
+> > +#define ADUX1020_REG_PROX_TH_ON1	0x2a
+> > +#define ADUX1020_REG_PROX_TH_OFF1	0x2b
+> > +#define	ADUX1020_REG_PROX_TYPE		0x2f
+> > +#define	ADUX1020_REG_TEST_MODES_3	0x32
+> > +#define	ADUX1020_REG_FORCE_MODE		0x33
+> > +#define	ADUX1020_REG_FREQUENCY		0x40
+> > +#define ADUX1020_REG_LED_CURRENT	0x41
+> > +#define	ADUX1020_REG_OP_MODE		0x45
+> > +#define	ADUX1020_REG_INT_MASK		0x48
+> > +#define	ADUX1020_REG_INT_STATUS		0x49
+> > +#define	ADUX1020_REG_DATA_BUFFER	0x60
+> > +
+> > +/* Chip ID bits */
+> > +#define ADUX1020_CHIP_ID_MASK		GENMASK(11, 0)
+> > +#define ADUX1020_CHIP_ID		0x03fc
+> > +
+> > +#define ADUX1020_MODE_OUT_SHIFT		4
+> > +#define ADUX1020_MODE_OUT_PROX_I	1
+> > +#define ADUX1020_MODE_OUT_PROX_XY	3
+> > +
+> > +#define ADUX1020_SW_RESET		BIT(1)
+> > +#define ADUX1020_FIFO_FLUSH		BIT(15)
+> > +#define ADUX1020_OP_MODE_MASK		GENMASK(3, 0)
+> > +#define ADUX1020_DATA_OUT_MODE_MASK	GENMASK(7, 4)
+> > +
+> > +#define ADUX1020_MODE_INT_MASK		GENMASK(7, 0)
+> > +#define ADUX1020_INT_ENABLE		0x2096
+> > +#define ADUX1020_INT_DISABLE		0x2090
+> > +#define ADUX1020_PROX_INT_ENABLE	0x00f0
+> > +#define ADUX1020_PROX_ON1_INT		BIT(0)
+> > +#define ADUX1020_PROX_OFF1_INT		BIT(1)
+> > +#define ADUX1020_FIFO_INT_ENABLE	0x7f
+> > +#define ADUX1020_MODE_INT_DISABLE	0xff
+> > +#define ADUX1020_MODE_INT_STATUS_MASK	GENMASK(7, 0)
+> > +#define ADUX1020_FIFO_STATUS_MASK	GENMASK(15, 8)
+> > +#define ADUX1020_PROX_TYPE		BIT(15)
+> > +
+> > +#define ADUX1020_INT_PROX_ON1		BIT(0)
+> > +#define ADUX1020_INT_PROX_OFF1		BIT(1)
+> > +
+> > +#define	ADUX1020_FORCE_CLOCK_ON		0x0f4f
+> > +#define	ADUX1020_FORCE_CLOCK_RESET	0x0040
+> > +#define ADUX1020_ACTIVE_4_STATE		0x0008
+> > +
+> > +#define ADUX1020_PROX_FREQ_MASK		GENMASK(7, 4)
+> > +#define ADUX1020_PROX_FREQ_SHIFT	4
+> > +
+> > +#define ADUX1020_LED_CURRENT_MASK	GENMASK(3, 0)
+> > +#define ADUX1020_LED_PIREF_EN		BIT(12)
+> > +
+> > +/* Operating modes */
+> > +enum adux1020_op_modes {
+> > +	ADUX1020_MODE_STANDBY,
+> > +	ADUX1020_MODE_PROX_I,
+> > +	ADUX1020_MODE_PROX_XY,
+> > +	ADUX1020_MODE_GEST,
+> > +	ADUX1020_MODE_SAMPLE,
+> > +	ADUX1020_MODE_FORCE = 0x0e,
+> > +	ADUX1020_MODE_IDLE = 0x0f,
+> > +};
+> > +
+> > +struct adux1020_data {
+> > +	struct i2c_client *client;
+> > +	struct iio_dev *indio_dev;
+> > +	struct mutex lock;
+> > +	struct regmap *regmap;
+> > +};
+> > +
+> > +struct adux1020_mode_data {
+> > +	u8 bytes;
+> > +	u8 buf_len;
+> > +	u16 int_en;
+> > +};
+> > +
+> > +static const struct adux1020_mode_data adux1020_modes[] = {
+> > +	[ADUX1020_MODE_PROX_I] = {
+> > +		.bytes = 2,
+> > +		.buf_len = 1,
+> > +		.int_en = ADUX1020_PROX_INT_ENABLE,
+> > +	},
+> > +};
+> > +
+> > +static const struct regmap_config adux1020_regmap_config = {
+> > +	.name = ADUX1020_REGMAP_NAME,
+> > +	.reg_bits = 8,
+> > +	.val_bits = 16,
+> > +	.max_register = 0x6F,
+> > +	.cache_type = REGCACHE_NONE,
+> > +};
+> > +
+> > +static const int adux1020_def_conf[][2] = {
+> > +	{ 0x000c, 0x000f },
+> > +	{ 0x0010, 0x1010 },
+> > +	{ 0x0011, 0x004c },
+> > +	{ 0x0012, 0x5f0c },
+> > +	{ 0x0013, 0xada5 },
+> > +	{ 0x0014, 0x0080 },
+> > +	{ 0x0015, 0x0000 },
+> > +	{ 0x0016, 0x0600 },
+> > +	{ 0x0017, 0x0000 },
+> > +	{ 0x0018, 0x2693 },
+> > +	{ 0x0019, 0x0004 },
+> > +	{ 0x001a, 0x4280 },
+> > +	{ 0x001b, 0x0060 },
+> > +	{ 0x001c, 0x2094 },
+> > +	{ 0x001d, 0x0020 },
+> > +	{ 0x001e, 0x0001 },
+> > +	{ 0x001f, 0x0100 },
+> > +	{ 0x0020, 0x0320 },
+> > +	{ 0x0021, 0x0A13 },
+> > +	{ 0x0022, 0x0320 },
+> > +	{ 0x0023, 0x0113 },
+> > +	{ 0x0024, 0x0000 },
+> > +	{ 0x0025, 0x2412 },
+> > +	{ 0x0026, 0x2412 },
+> > +	{ 0x0027, 0x0022 },
+> > +	{ 0x0028, 0x0000 },
+> > +	{ 0x0029, 0x0300 },
+> > +	{ 0x002a, 0x0700 },
+> > +	{ 0x002b, 0x0600 },
+> > +	{ 0x002c, 0x6000 },
+> > +	{ 0x002d, 0x4000 },
+> > +	{ 0x002e, 0x0000 },
+> > +	{ 0x002f, 0x0000 },
+> > +	{ 0x0030, 0x0000 },
+> > +	{ 0x0031, 0x0000 },
+> > +	{ 0x0032, 0x0040 },
+> > +	{ 0x0033, 0x0008 },
+> > +	{ 0x0034, 0xE400 },
+> > +	{ 0x0038, 0x8080 },
+> > +	{ 0x0039, 0x8080 },
+> > +	{ 0x003a, 0x2000 },
+> > +	{ 0x003b, 0x1f00 },
+> > +	{ 0x003c, 0x2000 },
+> > +	{ 0x003d, 0x2000 },
+> > +	{ 0x003e, 0x0000 },
+> > +	{ 0x0040, 0x8069 },
+> > +	{ 0x0041, 0x1f2f },
+> > +	{ 0x0042, 0x4000 },
+> > +	{ 0x0043, 0x0000 },
+> > +	{ 0x0044, 0x0008 },
+> > +	{ 0x0046, 0x0000 },
+> > +	{ 0x0048, 0x00ef },
+> > +	{ 0x0049, 0x0000 },
+> > +	{ 0x0045, 0x0000 },
+> > +};
+> > +
+> > +static const int adux1020_rate[][2] = {
+> > +	{ 0, 100000 },
+> > +	{ 0, 200000 },
+> > +	{ 0, 500000 },
+> > +	{ 1, 0 },
+> > +	{ 2, 0 },
+> > +	{ 5, 0 },
+> > +	{ 10, 0 },
+> > +	{ 20, 0 },
+> > +	{ 50, 0 },
+> > +	{ 100, 0 },
+> > +	{ 190, 0 },
+> > +	{ 450, 0 },
+> > +	{ 820, 0 },
+> > +	{ 1400, 0 },
+> > +};
+> > +
+> > +static const int adux1020_led_current[][2] = {
+> > +	{ 0, 25000 },
+> > +	{ 0, 40000 },
+> > +	{ 0, 55000 },
+> > +	{ 0, 70000 },
+> > +	{ 0, 85000 },
+> > +	{ 0, 100000 },
+> > +	{ 0, 115000 },
+> > +	{ 0, 130000 },
+> > +	{ 0, 145000 },
+> > +	{ 0, 160000 },
+> > +	{ 0, 175000 },
+> > +	{ 0, 190000 },
+> > +	{ 0, 205000 },
+> > +	{ 0, 220000 },
+> > +	{ 0, 235000 },
+> > +	{ 0, 250000 },
+> > +};
+> > +
+> > +static void adux1020_flush_fifo(struct adux1020_data *data)
+> > +{
+> > +	/* Force Idle mode */
+> > +	regmap_write(data->regmap, ADUX1020_REG_FORCE_MODE,
+> > +		     ADUX1020_ACTIVE_4_STATE);
+> > +	regmap_update_bits(data->regmap, ADUX1020_REG_OP_MODE,
+> > +			   ADUX1020_OP_MODE_MASK, ADUX1020_MODE_FORCE);
+> > +	regmap_update_bits(data->regmap, ADUX1020_REG_OP_MODE,
+> > +			   ADUX1020_OP_MODE_MASK, ADUX1020_MODE_IDLE);
+> > +
+> > +	/* Flush FIFO */
+> > +	regmap_write(data->regmap, ADUX1020_REG_TEST_MODES_3,
+> > +		     ADUX1020_FORCE_CLOCK_ON);
+> > +	regmap_write(data->regmap, ADUX1020_REG_INT_STATUS,
+> > +		     ADUX1020_FIFO_FLUSH);
+> > +	regmap_write(data->regmap, ADUX1020_REG_TEST_MODES_3,
+> > +		     ADUX1020_FORCE_CLOCK_RESET);
+> > +}
+> > +
+> > +static int adux1020_read_fifo(struct adux1020_data *data, u16 *buf, u8 buf_len)
+> > +{
+> > +	int i, ret = -EINVAL;
+> > +	unsigned int regval;
+> > +
+> > +	/* Enable 32MHz clock */
+> > +	regmap_write(data->regmap, ADUX1020_REG_TEST_MODES_3,
+> > +		     ADUX1020_FORCE_CLOCK_ON);
+> > +
+> > +	for (i = 0; i < buf_len; i++) {
+> > +		ret = regmap_read(data->regmap, ADUX1020_REG_DATA_BUFFER,
+> > +				      &regval);
+> > +		if (ret < 0)
+> > +			goto err_out;
+> > +
+> > +		buf[i] = regval;
+> > +	}
+> > +
+> > +	/* Set 32MHz clock to be controlled by internal state machine */
+> > +	regmap_write(data->regmap, ADUX1020_REG_TEST_MODES_3,
+> > +		     ADUX1020_FORCE_CLOCK_RESET);
+> > +
+> > +err_out:
+> > +	return ret;
+> > +}
+> > +
+> > +static void adux1020_set_mode(struct adux1020_data *data,
+> > +			      enum adux1020_op_modes mode)
+> > +{
+> > +	/* Switch to standby mode before changing the mode */
+> > +	regmap_write(data->regmap, ADUX1020_REG_OP_MODE, ADUX1020_MODE_STANDBY);
+> > +
+> > +	/* Set data out and switch to the desired mode */
+> > +	if (mode == ADUX1020_MODE_PROX_I) {
+> > +		regmap_update_bits(data->regmap, ADUX1020_REG_OP_MODE,
+> > +			ADUX1020_DATA_OUT_MODE_MASK,
+> > +			ADUX1020_MODE_OUT_PROX_I << ADUX1020_MODE_OUT_SHIFT);
+> > +		regmap_update_bits(data->regmap, ADUX1020_REG_OP_MODE,
+> > +			ADUX1020_OP_MODE_MASK, ADUX1020_MODE_PROX_I);
+> > +	}
+> > +}
+> > +
+> > +static int adux1020_measure(struct adux1020_data *data,
+> > +			    enum adux1020_op_modes mode,
+> > +			    u16 *val)
+> > +{
+> > +	int ret, tries = 50;
+> > +	unsigned int status;
+> > +
+> > +	mutex_lock(&data->lock);
+> > +
+> > +	/* Disable INT pin as polling is going to be used */
+> > +	regmap_write(data->regmap, ADUX1020_REG_INT_ENABLE,
+> > +		     ADUX1020_INT_DISABLE);
+> Error checking.
+
+Yes, will add error check to regmap_ APIs wherever required.
+
+> > +
+> > +	/* Enable mode interrupt */
+> > +	regmap_update_bits(data->regmap, ADUX1020_REG_INT_MASK,
+> > +			   ADUX1020_MODE_INT_MASK,
+> > +			   adux1020_modes[mode].int_en);
+> > +
+> > +	while (tries--) {
+> > +		ret = regmap_read(data->regmap, ADUX1020_REG_INT_STATUS,
+> > +				  &status);
+> > +		if (ret < 0)
+> > +			goto fail;
+> > +
+> > +		status &= ADUX1020_FIFO_STATUS_MASK;
+> > +		if (status >= adux1020_modes[mode].bytes)
+> > +			break;
+> > +		msleep(20);
+> > +	}
+> > +
+> > +	if (tries < 0) {
+> > +		ret = -EIO;
+> > +		goto fail;
+> > +	}
+> > +
+> > +	ret = adux1020_read_fifo(data, val, adux1020_modes[mode].buf_len);
+> > +	if (ret < 0)
+> > +		goto fail;
+> > +
+> > +	/* Clear mode interrupt */
+> > +	regmap_write(data->regmap, ADUX1020_REG_INT_STATUS,
+> > +			   (~adux1020_modes[mode].int_en));
+> > +	/* Disable mode interrupts */
+> > +	regmap_update_bits(data->regmap, ADUX1020_REG_INT_MASK,
+> > +			   ADUX1020_MODE_INT_MASK, ADUX1020_MODE_INT_DISABLE);
+> > +
+> > +fail:
+> > +	mutex_unlock(&data->lock);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static int adux1020_read_raw(struct iio_dev *indio_dev,
+> > +			     struct iio_chan_spec const *chan,
+> > +			     int *val, int *val2, long mask)
+> > +{
+> > +	struct adux1020_data *data = iio_priv(indio_dev);
+> > +	u16 buf[3];
+> > +	int ret = -EINVAL;
+> > +	unsigned int regval;
+> > +
+> > +	switch (mask) {
+> > +	case IIO_CHAN_INFO_RAW:
+> > +		switch (chan->type) {
+> > +		case IIO_PROXIMITY:
+> > +			adux1020_set_mode(data, ADUX1020_MODE_PROX_I);
+> > +			ret = adux1020_measure(data, ADUX1020_MODE_PROX_I, buf);
+> > +			if (ret < 0)
+> > +				return ret;
+> > +
+> > +			*val = buf[0];
+> > +			ret = IIO_VAL_INT;
+> 			return IIO_VAL_INT;
+> > +			break;
+> > +		default:
+> 			return -EINVAL;
+> > +			break;
+> > +		}
+> > +		break;
+> > +	case IIO_CHAN_INFO_PROCESSED:
+> > +		switch (chan->type) {
+> > +		case IIO_CURRENT:
+> > +			ret = regmap_read(data->regmap,
+> > +					  ADUX1020_REG_LED_CURRENT, &regval);
+> > +			if (ret < 0)
+> > +				return ret;
+> > +
+> > +			regval = regval & ADUX1020_LED_CURRENT_MASK;
+> > +
+> > +			*val = adux1020_led_current[regval][0];
+> > +			*val2 = adux1020_led_current[regval][1];
+> > +
+> > +			ret = IIO_VAL_INT_PLUS_MICRO;
+> > +			break;
+> > +		default:
+> > +			break;
+> > +		}
+> > +		break;
+> > +	case IIO_CHAN_INFO_SAMP_FREQ:
+> > +		switch (chan->type) {
+> > +		case IIO_PROXIMITY:
+> > +			ret = regmap_read(data->regmap, ADUX1020_REG_FREQUENCY,
+> > +					  &regval);
+> > +			if (ret < 0)
+> > +				return ret;
+> > +
+> > +			regval = (regval & ADUX1020_PROX_FREQ_MASK) >>
+> > +				  ADUX1020_PROX_FREQ_SHIFT;
+> > +
+> > +			*val = adux1020_rate[regval][0];
+> > +			*val2 = adux1020_rate[regval][1];
+> > +
+> > +			ret = IIO_VAL_INT_PLUS_MICRO;
+> > +			break;
+> > +		default:
+> > +			break;
+> > +		}
+> > +		break;
+> > +	default:
+> > +		break;
+> > +	}
+> > +
+> > +	return ret;
+> > +};
+> > +
+> > +static int adux1020_write_raw(struct iio_dev *indio_dev,
+> > +			     struct iio_chan_spec const *chan,
+> > +			     int val, int val2, long mask)
+> > +{
+> > +	struct adux1020_data *data = iio_priv(indio_dev);
+> > +	int i, ret = -EINVAL;
+> > +
+> > +	switch (mask) {
+> > +	case IIO_CHAN_INFO_SAMP_FREQ:
+> > +		if (chan->type == IIO_PROXIMITY) {
+> Indent is very deep. I would suggest flipping conditions a bit.
 > 
-> Please "mount" instead of "filesystem".
-
-Changed.
-
-
->>>> EXAMPLE>        The program below demonstrates the use of  pivot_root()  inside  a
->>>>        mount namespace that is created using clone(2).  After pivoting to
->>>>        the root directory named in the program's first command-line argu‐
->>>>        ment,  the  child  created  by  clone(2) then executes the program
->>>>        named in the remaining command-line arguments.
->>>
->>> Why not use the pivot_root(".", ".") in the example program?
->>> It would make the example shorter, and also works if the process cannot
->>> write to new_root (e..g., in a user namespace).
->>
->> I'm not sure. Some people have a bit of trouble to wrap their head
->> around the pivot_root(".", ".") idea. (I possibly am one of them.)
->> I'd be quite keen to hear other opinions on this. Unfortunately,
->> few people have commented on this manual page rewrite.
+> 		if (chan->type != IIO_PROXIMITY)
+> 			return -EINVAL;
 > 
-> I am happy as long as it is pivot_root(".", ".") is documented
-> somewhere.  There is real code that uses it so it is not going away.
-> Plus pivot_root(".", ".") is really what is desired in a lot of
-> situations where the caller of pivot_root is an intermediary and
-> does not control the new root filesystem.  At which point the only
-> path you can be guaranteed to exit on the new root filesystem is "/".
+> 		for (i = 0; i < ARRAY_SIZE(adux1020_rate); i++) {
+> 			if ((val != adux1020_rate[i][0]) ||
+> 		            (val2 != adux1020_rate[i][1]))
+> 				continue;
+> 			return regmap_update_bits(data->regmap,
+> 						  ADUX1020_REG_FREQUENCY,
+> 						  ADUX1020_PROX_FREQ_MASK,
+> 						  i << ADUX1020_PROX_FREQ_SHIFT);
+> 
+> 		}
+> 		return -EINVAL;	
 
-Good. There is documentation of pivot_root(".", ".") i the page!
+This code will be modified to use a helper for finding the index. Then
+it will look more cleaner.
+
+> 
+> > +			for (i = 0; i < ARRAY_SIZE(adux1020_rate); i++) {
+> > +				if ((val == adux1020_rate[i][0]) &&
+> > +				     (val2 == adux1020_rate[i][1])) {
+> > +					ret = regmap_update_bits(data->regmap,
+> > +						ADUX1020_REG_FREQUENCY,
+> > +						ADUX1020_PROX_FREQ_MASK,
+> > +						i << ADUX1020_PROX_FREQ_SHIFT);
+> > +				}
+> > +			}
+> > +		}
+> > +		break;
+> 
+> direct return preferred if there is no cleanup to be done (like here).
+> 
+> > +	case IIO_CHAN_INFO_PROCESSED:
+> > +		if (chan->type == IIO_CURRENT) {
+> > +			for (i = 0; i < ARRAY_SIZE(adux1020_led_current); i++) {
+> > +				if ((val == adux1020_led_current[i][0]) &&
+> > +				     (val2 == adux1020_led_current[i][1])) {
+> > +					ret = regmap_update_bits(data->regmap,
+> > +						ADUX1020_REG_LED_CURRENT,
+> > +						ADUX1020_LED_CURRENT_MASK, i);
+> > +				}
+> > +			}
+> > +		}
+> > +		break;
+> > +	default:
+> > +		break;
+> > +	}
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static int adux1020_write_event_config(struct iio_dev *indio_dev,
+> > +		const struct iio_chan_spec *chan, enum iio_event_type type,
+> > +		enum iio_event_direction dir, int state)
+> > +{
+> > +	struct adux1020_data *data = iio_priv(indio_dev);
+> > +
+> > +	regmap_write(data->regmap, ADUX1020_REG_INT_ENABLE,
+> > +		     ADUX1020_INT_ENABLE);
+> 
+> Check returns from regmap everywhere.  I've had far too many dodgy
+> i2c buses in the past to assume they will always work!
+> 
+> > +
+> > +	regmap_write(data->regmap, ADUX1020_REG_INT_POLARITY, 0);
+> > +
+> > +	switch (chan->type) {
+> > +	case IIO_PROXIMITY:
+> > +		if (dir == IIO_EV_DIR_RISING) {
+> > +			regmap_update_bits(data->regmap, ADUX1020_REG_INT_MASK,
+> > +					   ADUX1020_PROX_ON1_INT,
+> > +					   state ? 0 : ADUX1020_PROX_ON1_INT);
+> > +		} else {
+> > +			regmap_update_bits(data->regmap, ADUX1020_REG_INT_MASK,
+> > +					   ADUX1020_PROX_OFF1_INT,
+> > +					   state ? 0 : ADUX1020_PROX_OFF1_INT);
+> > +		}
+> > +
+> > +		/*
+> > +		 * Trigger proximity interrupt when the intensity is above
+> > +		 * or below threshold
+> > +		 */
+> > +		regmap_update_bits(data->regmap, ADUX1020_REG_PROX_TYPE,
+> > +				   ADUX1020_PROX_TYPE, ADUX1020_PROX_TYPE);
+> > +
+> > +		/* Set proximity mode */
+> > +		adux1020_set_mode(data, ADUX1020_MODE_PROX_I);
+> > +		break;
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int adux1020_read_event_config(struct iio_dev *indio_dev,
+> > +		const struct iio_chan_spec *chan, enum iio_event_type type,
+> > +		enum iio_event_direction dir)
+> > +{
+> > +	struct adux1020_data *data = iio_priv(indio_dev);
+> > +	int ret, mask;
+> > +	unsigned int regval;
+> > +
+> > +	switch (chan->type) {
+> > +	case IIO_PROXIMITY:
+> > +		if (dir == IIO_EV_DIR_RISING)
+> > +			mask = ADUX1020_PROX_ON1_INT;
+> > +		else
+> > +			mask = ADUX1020_PROX_OFF1_INT;
+> > +		break;
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	ret = regmap_read(data->regmap, ADUX1020_REG_INT_MASK, &regval);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	return !(regval & mask);
+> > +}
+> > +
+> > +static int adux1020_read_thresh(struct iio_dev *indio_dev,
+> > +		const struct iio_chan_spec *chan, enum iio_event_type type,
+> > +		enum iio_event_direction dir, enum iio_event_info info,
+> > +		int *val, int *val2)
+> > +{
+> > +	struct adux1020_data *data = iio_priv(indio_dev);
+> > +	u8 reg;
+> > +	int ret;
+> > +	unsigned int regval;
+> > +
+> > +	switch (chan->type) {
+> > +	case IIO_PROXIMITY:
+> > +		if (dir == IIO_EV_DIR_RISING)
+> > +			reg = ADUX1020_REG_PROX_TH_ON1;
+> > +		else
+> > +			reg = ADUX1020_REG_PROX_TH_OFF1;
+> > +		break;
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	ret = regmap_read(data->regmap, reg, &regval);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	*val = regval;
+> > +
+> > +	return IIO_VAL_INT;
+> > +}
+> > +
+> > +static int adux1020_write_thresh(struct iio_dev *indio_dev,
+> > +		const struct iio_chan_spec *chan, enum iio_event_type type,
+> > +		enum iio_event_direction dir, enum iio_event_info info,
+> > +		int val, int val2)
+> > +{
+> > +	struct adux1020_data *data = iio_priv(indio_dev);
+> > +	u8 reg;
+> > +
+> > +	switch (chan->type) {
+> > +	case IIO_PROXIMITY:
+> > +		if (dir == IIO_EV_DIR_RISING)
+> > +			reg = ADUX1020_REG_PROX_TH_ON1;
+> > +		else
+> > +			reg = ADUX1020_REG_PROX_TH_OFF1;
+> > +		break;
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	/* Full scale threshold value is 0-65535  */
+> > +	if (val < 0 || val > 65535)
+> > +		return -EINVAL;
+> > +
+> > +	return regmap_write(data->regmap, reg, val);
+> > +}
+> > +
+> > +static const struct iio_event_spec adux1020_proximity_event[] = {
+> > +	{
+> > +		.type = IIO_EV_TYPE_THRESH,
+> > +		.dir = IIO_EV_DIR_RISING,
+> > +		.mask_separate = BIT(IIO_EV_INFO_VALUE) |
+> > +			BIT(IIO_EV_INFO_ENABLE),
+> > +	},
+> > +	{
+> > +		.type = IIO_EV_TYPE_THRESH,
+> > +		.dir = IIO_EV_DIR_FALLING,
+> > +		.mask_separate = BIT(IIO_EV_INFO_VALUE) |
+> > +			BIT(IIO_EV_INFO_ENABLE),
+> > +	},
+> > +};
+> > +
+> > +static const struct iio_chan_spec adux1020_channels[] = {
+> > +	{
+> > +		.type = IIO_PROXIMITY,
+> > +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+> > +				      BIT(IIO_CHAN_INFO_SAMP_FREQ),
+> > +		.event_spec = adux1020_proximity_event,
+> > +		.num_event_specs = ARRAY_SIZE(adux1020_proximity_event),
+> > +	},
+> > +	{
+> > +		.type = IIO_CURRENT,
+> > +		.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
+> > +		.extend_name = "led",
+> 
+> out channel?
+> 
+
+If I add `out channel`, the sysfs naming gets wierd (out_current_led_input).
+Do you have a suggestion on how to represent it properly? This channel
+is used for getting the LED driver current and the value is in mA.
+
+> > +	},
+> > +};
+> > +
+> > +static IIO_CONST_ATTR(sampling_frequency_available,
+> > +		      "0.1 0.2 0.5 1 2 5 10 20 50 100 190 450 820 1400");
+> > +
+> > +static struct attribute *adux1020_attributes[] = {
+> > +	&iio_const_attr_sampling_frequency_available.dev_attr.attr,
+> > +	NULL
+> > +};
+> > +
+> > +static const struct attribute_group adux1020_attribute_group = {
+> > +	.attrs = adux1020_attributes,
+> > +};
+> > +
+> > +static const struct iio_info adux1020_info = {
+> > +	.attrs = &adux1020_attribute_group,
+> > +	.read_raw = adux1020_read_raw,
+> > +	.write_raw = adux1020_write_raw,
+> > +	.read_event_config = adux1020_read_event_config,
+> > +	.write_event_config = adux1020_write_event_config,
+> > +	.read_event_value = adux1020_read_thresh,
+> > +	.write_event_value = adux1020_write_thresh,
+> > +};
+> > +
+> > +static irqreturn_t adux1020_interrupt_handler(int irq, void *private)
+> > +{
+> > +	struct iio_dev *indio_dev = private;
+> > +	struct adux1020_data *data = iio_priv(indio_dev);
+> > +	int ret, status;
+> > +
+> > +	ret = regmap_read(data->regmap, ADUX1020_REG_INT_STATUS, &status);
+> > +	if (ret < 0)
+> 
+> interrupt handlers have to return an irqreturn_t, so you can't just
+> return random error codes.
+> 
+
+ah, yes.
+
+> > +		return ret;
+> > +
+> > +	status &= ADUX1020_MODE_INT_STATUS_MASK;
+> > +
+> > +	if (status & ADUX1020_INT_PROX_ON1) {
+> > +		iio_push_event(indio_dev,
+> > +				IIO_UNMOD_EVENT_CODE(IIO_PROXIMITY, 0,
+> > +					IIO_EV_TYPE_THRESH,
+> > +					IIO_EV_DIR_RISING),
+> > +				iio_get_time_ns(indio_dev));
+> > +	}
+> > +
+> > +	if (status & ADUX1020_INT_PROX_OFF1) {
+> > +		iio_push_event(indio_dev,
+> > +				IIO_UNMOD_EVENT_CODE(IIO_PROXIMITY, 0,
+> > +					IIO_EV_TYPE_THRESH,
+> > +					IIO_EV_DIR_FALLING),
+> > +				iio_get_time_ns(indio_dev));
+> > +	}
+> > +
+> > +	regmap_update_bits(data->regmap, ADUX1020_REG_INT_STATUS,
+> > +			   ADUX1020_MODE_INT_MASK, status);
+> > +
+> > +	return IRQ_HANDLED;
+> > +}
+> > +
+> > +static int adux1020_chip_init(struct adux1020_data *data)
+> > +{
+> > +	struct i2c_client *client = data->client;
+> > +	int ret, i;
+> > +	unsigned int val;
+> > +
+> > +	ret = regmap_read(data->regmap, ADUX1020_REG_CHIP_ID, &val);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	val &= ADUX1020_CHIP_ID_MASK;
+> > +
+> > +	if (val != ADUX1020_CHIP_ID) {
+> as val is only used here,
+> 
+> 	if (val & ADUX1020_CHIP_ID_MASK != ADUX1020_CHIP_ID) {
+> 
+> Saves a bit of code and isn't significantly harder to read.
+> 
+
+okay.
+
+> > +		dev_err(&client->dev, "invalid chip id 0x%04x\n", val);
+> > +		return -ENODEV;
+> > +	};
+> > +
+> > +	dev_dbg(&client->dev, "Detected ADUX1020 with chip id: 0x%04x\n", val);
+> > +
+> > +	/* Perform software reset */
+> 
+> Try to avoid comments where the code is fairly self explanatory.
+> They are just potential places to diverge from reality in the future ;)
+> 
+
+okay.
+
+> > +	regmap_update_bits(data->regmap, ADUX1020_REG_SW_RESET,
+> > +			   ADUX1020_SW_RESET, ADUX1020_SW_RESET);
+> 
+> This is i2c so not exactly 100% reliable (depends on good board
+> design etc).  Hence I'd add error checking for all these reads and
+> writes.
+> 
+> > +
+> > +	/* Load default configuration */
+> > +	for (i = 0; i < ARRAY_SIZE(adux1020_def_conf); i++)
+> > +		regmap_write(data->regmap, adux1020_def_conf[i][0],
+> > +			     adux1020_def_conf[i][1]);
+> > +
+> > +	adux1020_flush_fifo(data);
+> > +
+> > +	/* Use LED_IREF for proximity mode */
+> > +	regmap_update_bits(data->regmap, ADUX1020_REG_LED_CURRENT,
+> > +			   ADUX1020_LED_PIREF_EN, 0);
+> > +
+> > +	/* Mask all interrupts */
+> > +	regmap_update_bits(data->regmap, ADUX1020_REG_INT_MASK,
+> > +			   ADUX1020_MODE_INT_MASK, ADUX1020_MODE_INT_DISABLE);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int adux1020_probe(struct i2c_client *client,
+> > +			  const struct i2c_device_id *id)
+> > +{
+> > +	struct adux1020_data *data;
+> > +	struct iio_dev *indio_dev;
+> > +	int ret;
+> > +
+> > +	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
+> > +	if (!indio_dev)
+> > +		return -ENOMEM;
+> > +
+> > +	indio_dev->dev.parent = &client->dev;
+> > +	indio_dev->info = &adux1020_info;
+> > +	indio_dev->name = ADUX1020_DRV_NAME;
+> > +	indio_dev->channels = adux1020_channels;
+> > +	indio_dev->num_channels = ARRAY_SIZE(adux1020_channels);
+> > +	indio_dev->modes = INDIO_DIRECT_MODE;
+> > +
+> > +	data = iio_priv(indio_dev);
+> > +	i2c_set_clientdata(client, indio_dev);
+> > +
+> > +	data->regmap = devm_regmap_init_i2c(client, &adux1020_regmap_config);
+> > +	if (IS_ERR(data->regmap)) {
+> > +		dev_err(&client->dev, "regmap initialization failed.\n");
+> > +		return PTR_ERR(data->regmap);
+> > +	}
+> > +
+> > +	data->client = client;
+> > +	data->indio_dev = indio_dev;
+> > +	mutex_init(&data->lock);
+> > +
+> > +	ret = adux1020_chip_init(data);
+> > +	if (ret)
+> 
+> 		return ret;
+> 
+> > +		goto err_out;
+> > +
+> > +	if (client->irq) {
+> > +		ret = devm_request_threaded_irq(&client->dev, client->irq,
+> > +				NULL, adux1020_interrupt_handler,
+> > +				IRQF_TRIGGER_HIGH | IRQF_ONESHOT,
+> > +				ADUX1020_DRV_NAME, indio_dev);
+> > +		if (ret) {
+> > +			dev_err(&client->dev, "irq request error %d\n", -ret);
+> > +			goto err_out;
+> 
+> Direct returns are preferred in kernel code as they are generally easier
+> to review.  No need to check the error handling if we immediately know
+> there isn't any to be done!
+> 
+> 			return ret;
+
+ack.
+
+> > +		}
+> > +	}
+> > +
+> > +	ret = iio_device_register(indio_dev);
+> > +	if (ret) {
+> > +		dev_err(&client->dev, "Failed to register IIO device\n");
+> > +		goto err_out;
+> 
+> This error path does no error handling so you can return directly here.
+> 		return ret;
+> 
+> But... Then there is no point in having the return here as you might
+> as well drop it out of the brackets and replace the return 0 below with
+> return ret;
+
+ack.
+
+> 
+> > +	}
+> > +
+> > +	return 0;
+> > +
+> > +err_out:
+> > +	return ret;
+> > +}
+> > +
+> > +static int adux1020_remove(struct i2c_client *client)
+> > +{
+> > +	struct iio_dev *indio_dev = i2c_get_clientdata(client);
+> > +
+> > +	iio_device_unregister(indio_dev);
+> If we have a remove with only iio_device_unregister it normally
+> implies we could have used devm_iio_device_register and allowed
+> the automatic unwinding to do it for us.
+> 
+> Make that change and you shouldn't need a remove function at all.
+> In turn, there is no reason to then call i2c_set_clientdata()
+
+Sure, will use devm_ API.
 
 Thanks,
+Mani
 
-Michael
-
--- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+> 
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static const struct i2c_device_id adux1020_id[] = {
+> > +	{ "adux1020", 0 },
+> > +	{}
+> > +};
+> > +MODULE_DEVICE_TABLE(i2c, adux1020_id);
+> > +
+> > +static const struct of_device_id adux1020_of_match[] = {
+> > +	{ .compatible = "adi,adux1020" },
+> > +	{ }
+> > +};
+> > +MODULE_DEVICE_TABLE(of, adux1020_of_match);
+> > +
+> > +static struct i2c_driver adux1020_driver = {
+> > +	.driver = {
+> > +		.name	= ADUX1020_DRV_NAME,
+> > +		.of_match_table = adux1020_of_match,
+> > +	},
+> > +	.probe		= adux1020_probe,
+> > +	.remove		= adux1020_remove,
+> > +	.id_table	= adux1020_id,
+> > +};
+> > +module_i2c_driver(adux1020_driver);
+> > +
+> > +MODULE_AUTHOR("Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>");
+> > +MODULE_DESCRIPTION("ADUX1020 photometric sensor");
+> > +MODULE_LICENSE("GPL");
+> 
+> 
