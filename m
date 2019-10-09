@@ -2,143 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B6A7D0CAB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 12:20:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9CD1D0CC4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 12:26:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730823AbfJIKTp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 06:19:45 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:58898 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbfJIKTo (ORCPT
+        id S1730523AbfJIK0e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 06:26:34 -0400
+Received: from mail-smail-vm20.hanmail.net ([203.133.180.201]:39317 "EHLO
+        mail-smail-vm20.hanmail.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729742AbfJIK0d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 06:19:44 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 3236C28F6C7
-Subject: Re: [PATCH] pwm: cros-ec: Let cros_ec_pwm_get_state() return the last
- applied state
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, thierry.reding@gmail.com,
-        heiko@sntech.de, dianders@chromium.org, mka@chromium.org,
-        groeck@chromium.org, kernel@collabora.com, bleung@chromium.org,
-        linux-pwm@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
-References: <20191008105417.16132-1-enric.balletbo@collabora.com>
- <20191008143432.pbhcqamd6f4qwbqn@pengutronix.de>
- <4f009344-242e-19a7-6872-2c55df086044@collabora.com>
- <20191008203137.s22clq6v2om5ktio@pengutronix.de>
- <53b7d02b-1a2d-11da-fdd0-5378f360d876@collabora.com>
- <20191009095635.yysr33lnwldicyng@holly.lan>
- <20191009101637.gmvghwdvcmfw4yyk@pengutronix.de>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <2b24df87-10fb-f590-3643-ffca5f180f5d@collabora.com>
-Date:   Wed, 9 Oct 2019 12:19:38 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Wed, 9 Oct 2019 06:26:33 -0400
+X-Greylist: delayed 313 seconds by postgrey-1.27 at vger.kernel.org; Wed, 09 Oct 2019 06:26:33 EDT
+Received: from mail-hmail-smtp2 ([10.194.31.52])
+        by mail-smail-vm20.hanmail.net (8.13.8/8.9.1) with SMTP id x99AKw8k006627;
+        Wed, 9 Oct 2019 19:20:58 +0900
+X-Hermes-Message-Id: n99JIOafH1359376821
+X-Originating-IP: 92.223.73.212
+Received: from mail-qpsmtp-vm19 ([10.61.241.166]) by hermes of mail-hmail-smtp2 (10.194.31.52) with ESMTP id n99JIOafH1359376821 for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 19:18:24 +0900 (KST)
+Received: from [92.223.73.212] (HELO DESKTOP-D0OTJLM) (92.223.73.212)
+ by  (8.12.9/8.9.1) with ESMTPA; Wed, 09 Oct 2019 19:18:24 +0900
+Authentication-Results: mail-qpsmtp-vm19; auth=pass (login) smtp.auth=jamesandsongood@daum.net
+Message-ID: <02ba9bc4-43747-bbd46585799537@desktop-d0otjlm>
+Reply-To: "Loan" <info@investorsdeposit.com>
+From:   "Loan" <jamesandsongood@daum.net>
+To:     linux-kernel@vger.kernel.org
+Subject: Re !!!
+Date:   Wed, 9 Oct 2019 15:47:21 +0530
 MIME-Version: 1.0
-In-Reply-To: <20191009101637.gmvghwdvcmfw4yyk@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
+X-Priority: 3
+X-HM-UT: QJF7J6SP+vvRt9PNTGiihil4ccriBEutlbo+ozLrb8A=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
+Are you in need of a loan of any purpose?, Do you want to pay your bills?, Are you in a financial problem:, Do you need a financial Solution?. Here is the solution to all your financial problem. We are offering Non Collateral loans From Minimum of $50,000 to $3,500,000.00 for project, business, taxes, bills, and so many others reasons, our loan are easy, cheap.
 
-On 9/10/19 12:16, Uwe Kleine-KÃ¶nig wrote:
-> On Wed, Oct 09, 2019 at 10:56:35AM +0100, Daniel Thompson wrote:
->> On Wed, Oct 09, 2019 at 11:27:13AM +0200, Enric Balletbo i Serra wrote:
->>> Hi Uwe,
->>>
->>> Adding Daniel and Lee to the discussion ...
->>
->> Thanks!
->>
->>> On 8/10/19 22:31, Uwe Kleine-KÃ¶nig wrote:
->>>> On Tue, Oct 08, 2019 at 06:33:15PM +0200, Enric Balletbo i Serra wrote:
->>>>>> A few thoughts to your approach here ...:
->>>>>>
->>>>>>  - Would it make sense to only store duty_cycle and enabled in the
->>>>>>    driver struct?
->>>>>>
->>>>>
->>>>> Yes, in fact, my first approach (that I didn't send) was only storing enabled
->>>>> and duty cycle. For some reason I ended storing the full pwm_state struct, but I
->>>>> guess is not really needed.
->>>>>
->>>>>
->>>>>>  - Which driver is the consumer of your pwm? If I understand correctly
->>>>>>    the following sequence is the bad one:
->>>>>>
->>>>>
->>>>> The consumer is the pwm_bl driver. Actually I'n trying to identify
->>>>> other consumers.
->>>>
->>>
->>> So far, the pwm_bl driver is the only consumer of cros-ec-pwm.
->>>
->>>> Ah, I see why I missed to identify the problem back when I checked this
->>>> driver. The problem is not that .duty_cycle isn't set but there .enabled
->>>> isn't set. So maybe we just want:
->>>>
->>>> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
->>>> index 2201b8c78641..0468c6ee4448 100644
->>>> --- a/drivers/video/backlight/pwm_bl.c
->>>> +++ b/drivers/video/backlight/pwm_bl.c
->>>> @@ -123,6 +123,7 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
->>>>         if (brightness > 0) {
->>>>                 pwm_get_state(pb->pwm, &state);
->>>>                 state.duty_cycle = compute_duty_cycle(pb, brightness);
->>>> +               state.enabled = true;
->>>>                 pwm_apply_state(pb->pwm, &state);
->>>>                 pwm_backlight_power_on(pb);
->>>>         } else
->>>>
->>>> ? On a side note: It's IMHO strange that pwm_backlight_power_on
->>>> reconfigures the PWM once more.
->>>>
->>>
->>> Looking again to the pwm_bl code, now, I am not sure this is correct (although
->>> it probably solves the problem for me).
->>
->> Looking at the pwm_bl code I wouldn't accept the above as it is but I'd
->> almost certainly accept a patch to pwm_bl to move the PWM enable/disable
->> out of both the power on/off functions so the duty-cycle/enable or
->> disable can happen in one go within the update_status function. I don't
->> think such a change would interfere with the power and enable sequencing
->> needed by panels and it would therefore be a nice continuation of the
->> work to convert over to the pwm_apply_state() API.
-> 
-> OK for me. Enric, do you care enough to come up with a patch for pwm_bl?
-> I'd expect that this alone should already fix your issue.
->  
+- Getting a loan from us benefits include:
 
-Yes, I'll work on a proposal and send. Thanks you all.
+• Quick Approval @ a 4% Interest rate,
+• No pre-payment penalty
+• No Processing fee
+• Real and easy.
+• Online Transfer Funding
+• Can Apply from Out side United Kingdom.
 
-Regards,
- Enric
+To request for our loan terms and conditions, send us the details below:
 
->> None of the above has anything to do with what is right or wrong for
->> the PWM API evolution. Of course, if this thread does conclude that it
->> is OK the duty cycle of a disabled PWM to be retained for some drivers
->> and not others then I'd hope to see some WARN_ON()s added to the PWM
->> framework to help bring problems to the surface with all drivers.
-> 
-> I think it's not possible to add a reliable WARN_ON for that issue. It
-> is quite expected that .get_state returns something that doesn't
-> completely match the requested configuration. So if a consumer requests
-> 
-> 	.duty_cycle = 1
-> 	.period = 100000000
-> 	.enabled = false
-> 
-> pwm_get_state possibly returns .duty_cycle = 0 even for drivers/hardware
-> that has a concept of duty_cycle for disabled hardware.
-> 
-> A bit this is addressed in https://patchwork.ozlabs.org/patch/1147517/.
-> 
-> Best regards
-> Uwe
-> 
+Full Name:........................
+Contact Address:..................
+Phone:............................
+Country...........................
+Amount Needed as Loan:............
+Loan Tenure:....................
+Sex:..............................
+
+Our loan terms and conditions are determine by the loan amount and tenure, kindly  Contact us today for that loan you desire, we can arrange any loan you suit your budget at low interest rate. In acknowledgement to this mail, send us the above details of yours via email:{info@investorsdeposit.com}, we will surely get back to you with your loan terms & Conditions and start the processing of your loan. There is more to gain by getting a loan from us.
+
+IDEL Ltd United States of America
+1448 New York Ave NW, Washington, DC 20005, USA
+Email: info@investorsdeposit.com
+Phone: Tel: +1 (202) 888 4510
+
