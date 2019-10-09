@@ -2,123 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2B6ED195D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 22:05:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EAB7D1962
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 22:06:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731864AbfJIUFj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 16:05:39 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:40703 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731751AbfJIUFh (ORCPT
+        id S1731935AbfJIUGp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 16:06:45 -0400
+Received: from pio-pvt-msa2.bahnhof.se ([79.136.2.41]:42398 "EHLO
+        pio-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731452AbfJIUGo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 16:05:37 -0400
-Received: by mail-oi1-f193.google.com with SMTP id k9so2863334oib.7;
-        Wed, 09 Oct 2019 13:05:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6Uxm0TX5vGTMd3DyNdjqMCnLsY8aWV4rFP4cSXY0jjU=;
-        b=aJ7iUfQLOJZ1J/TZtBsydyKqUMJpk15S9ecWVwtjcdXfsZ3gZjKWZBDOs1CXHE7+Uq
-         jRHL+7ARH92CB+F1izM5UXSJjf363b2JMOQk+n/qhdn9eozVrZjaLWyI/RnAd43FBNed
-         kRqc9xej9yhtatMZWs29YLeJlH3lWouNmF8ztA44L7qX1XXwKXShb8WMohU13x8yB6jL
-         5xCoTKwUzPIpNG1afGvryKuugbwKy1AsdCukooJudEW6vtYNYmfCSRZRoOYwRSYsUbgl
-         Da1r68IiYRFoDhL0LFsW4Jeht/i8wsAZZHKNBusBTnFDgfqp82LlnVApNV194XSx2E6i
-         r0xQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=6Uxm0TX5vGTMd3DyNdjqMCnLsY8aWV4rFP4cSXY0jjU=;
-        b=tDHcrjkXjYMe3CGJSqM/ElBrdLsAMIqPAeJIaO1o145Xu5h4dd/QfuC/e5PBVxTLBk
-         s8UG8lX9Rl2kw1fxmVvMW4q9iPI1VVsbJoVC8uoif27cvOOm5E0a+bLq/lG2M5/o9ULb
-         nlZb+tJrexcWq6HzqRL1QU6Sg5idqGKPyJ0ONa5oKZLiMfRQ0nEkw5jCdGGUlS9/W1mx
-         dIvyt0Y+ux+yqADySF0BtNwP5PNCTaIaBbq02Ry+cLFgpk7nbtNwcDTbuJ2texsU6rJN
-         CKSEWVNXyV59mmY6ZEtgPeTrE2T1cDWLU5TePCQ0DJovXMCi1QkPcXJDoF3tDD7cy4vg
-         ksrg==
-X-Gm-Message-State: APjAAAVxNFVkq37uzELvemFIwz9ohE1HUkgOKzGGyogAg7VDRNYfgdoT
-        isi4Z9oNwe1ZgZHrR89reTzsYun1SlfJxA==
-X-Google-Smtp-Source: APXvYqxbWsgq7cVNGUpBi4KQ4X/R9gCkTZmXY55Lvl0IKTG9RxuBrUlkvhwbEZu7nqFq5xDAwTxROw==
-X-Received: by 2002:a54:4483:: with SMTP id v3mr1208620oiv.111.1570651535411;
-        Wed, 09 Oct 2019 13:05:35 -0700 (PDT)
-Received: from localhost.localdomain ([143.166.81.254])
-        by smtp.gmail.com with ESMTPSA id b5sm976883oia.20.2019.10.09.13.05.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2019 13:05:34 -0700 (PDT)
-From:   Stuart Hayes <stuart.w.hayes@gmail.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Austin Bolen <austin_bolen@dell.com>, keith.busch@intel.com,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
-        Sinan Kaya <okaya@kernel.org>,
-        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, lukas@wunner.de,
-        Stuart Hayes <stuart.w.hayes@gmail.com>
-Subject: [PATCH 3/3] PCI: pciehp: Add dmi table for in-band presence disabled
-Date:   Wed,  9 Oct 2019 16:05:23 -0400
-Message-Id: <20191009200523.8436-4-stuart.w.hayes@gmail.com>
-X-Mailer: git-send-email 2.18.1
-In-Reply-To: <20191009200523.8436-1-stuart.w.hayes@gmail.com>
-References: <20191009200523.8436-1-stuart.w.hayes@gmail.com>
+        Wed, 9 Oct 2019 16:06:44 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 1245140283;
+        Wed,  9 Oct 2019 22:06:37 +0200 (CEST)
+Authentication-Results: pio-pvt-msa2.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=rnUqYRov;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Received: from pio-pvt-msa2.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id HgnOJi0KOPz9; Wed,  9 Oct 2019 22:06:34 +0200 (CEST)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 12D363FC34;
+        Wed,  9 Oct 2019 22:06:32 +0200 (CEST)
+Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 64CEC36016C;
+        Wed,  9 Oct 2019 22:06:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1570651592; bh=vMGxm9pZDwGkNVJyzKKG8CHgzWvHnRo9CbPaujwY7dI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=rnUqYRovvZ2i8GbdNSe5v6n5CIMlncF95E2mKDseexkW7r9I4LnOfhZU4ee/Dq/3O
+         F3FMKMWMCkaUpqF/vbTSvXt4ggbt3+qS9vmuH1lEraRg+WGpNk0rgetaHI8LqBWjUT
+         jF1UrexXsFRHgQWCw39+t+RQgA4Wim6ms/1HqdZU=
+Subject: Re: [PATCH v4 3/9] mm: pagewalk: Don't split transhuge pmds when a
+ pmd_entry is present
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Hellstrom <thellstrom@vmware.com>
+Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rik van Riel <riel@surriel.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Huang Ying <ying.huang@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
+References: <20191008091508.2682-1-thomas_os@shipmail.org>
+ <20191008091508.2682-4-thomas_os@shipmail.org>
+ <20191009152737.p42w7w456zklxz72@box>
+ <CAHk-=wh4waroKr-Xtcv+5pTxBcHxGEj-g73eQvXVawML_C0EXw@mail.gmail.com>
+ <03d85a6a-e24a-82f4-93b8-86584b463471@shipmail.org>
+ <CAHk-=whhdRSqjX5wy1LzFYnOG58UztpifkNvbxBcTVbT3Mzv4g@mail.gmail.com>
+ <MN2PR05MB6141B981C2CAB4955D59747EA1950@MN2PR05MB6141.namprd05.prod.outlook.com>
+ <CAHk-=wgy-ULe8UmEDn9gCCmTtw65chS0h309WrTaQhK3RAXM-A@mail.gmail.com>
+From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
+        <thomas_os@shipmail.org>
+Organization: VMware Inc.
+Message-ID: <c054849e-1e24-6b27-6a54-740ea9d17054@shipmail.org>
+Date:   Wed, 9 Oct 2019 22:06:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <CAHk-=wgy-ULe8UmEDn9gCCmTtw65chS0h309WrTaQhK3RAXM-A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some systems have in-band presence detection disabled for hot-plug PCI
-slots, but do not report this in the slot capabilities 2 (SLTCAP2) register.
-On these systems, presence detect can become active well after the link is
-reported to be active, which can cause the slots to be disabled after a
-device is connected.
+On 10/9/19 9:20 PM, Linus Torvalds wrote:
+>
+> No. Your logic is garbage. The above code is completely broken.
+>
+> YOU CAN NOT AVOID TRHE SPLIT AND THEN GO ON AT THE PTE LEVEL.
+>
+> Don't you get it? There *is* no PTE level if you didn't split.
 
-Add a dmi table to flag these systems as having in-band presence disabled.
+Hmm, This paragraph makes me think we have very different perceptions about what I'm trying to achieve.
 
-Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
----
- drivers/pci/hotplug/pciehp_hpc.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+I wanted the pte level to *only* get called for *pre-existing* pte entries.
+Surely those must be able to exist even if we don't split occasional huge pmds in the pagewalk code?
 
-diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
-index 1282641c6458..cabd745b844e 100644
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -14,6 +14,7 @@
- 
- #define dev_fmt(fmt) "pciehp: " fmt
- 
-+#include <linux/dmi.h>
- #include <linux/kernel.h>
- #include <linux/types.h>
- #include <linux/jiffies.h>
-@@ -26,6 +27,16 @@
- #include "../pci.h"
- #include "pciehp.h"
- 
-+static const struct dmi_system_id inband_presence_disabled_dmi_table[] = {
-+	{
-+		.ident = "Dell System",
-+		.matches = {
-+			DMI_MATCH(DMI_OEM_STRING, "Dell System"),
-+		},
-+	},
-+	{}
-+};
-+
- static inline struct pci_dev *ctrl_dev(struct controller *ctrl)
- {
- 	return ctrl->pcie->port;
-@@ -898,6 +909,9 @@ struct controller *pcie_init(struct pcie_device *dev)
- 		ctrl->inband_presence_disabled = 1;
- 	}
- 
-+	if (dmi_first_match(inband_presence_disabled_dmi_table))
-+		ctrl->inband_presence_disabled = 1;
-+
- 	/*
- 	 * If empty slot's power status is on, turn power off.  The IRQ isn't
- 	 * requested yet, so avoid triggering a notification with this command.
--- 
-2.18.1
+>
+> So what you should do is to just always return 0 in your pmd_entry().
+> Boom, done. The only reason for the pmd_entry existing at all is to
+> get the warning. Then, if you don't want to split it, you make that
+> warning just return an error (or a positive value) instead and say
+> "ok, that was bad, we don't handle it at all".
+>
+> And in some _future_ life, if anybody wants to actually say "yeah,
+> let's not split it", make it have some "yeah I handled it" case.
+
+Well yes, this is exactly what I want. Because any huge pmd we encounter 
+should be read-only.
+
+/Thomas
+
 
