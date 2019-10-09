@@ -2,71 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEE60D0CA3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 12:20:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F421D0C68
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 12:16:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731187AbfJIKSU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 06:18:20 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:54076 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731144AbfJIKSK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 06:18:10 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C416F1A0012;
-        Wed,  9 Oct 2019 12:18:09 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 57F1E1A0266;
-        Wed,  9 Oct 2019 12:18:05 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 991C1402EC;
-        Wed,  9 Oct 2019 18:17:59 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     fugang.duan@nxp.com, davem@davemloft.net,
-        gregkh@linuxfoundation.org, andy.shevchenko@gmail.com,
-        rafael.j.wysocki@intel.com, swboyd@chromium.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 2/2] net: fec_ptp: Use platform_get_irq_xxx_optional() to avoid error message
-Date:   Wed,  9 Oct 2019 18:15:48 +0800
-Message-Id: <1570616148-11571-2-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1570616148-11571-1-git-send-email-Anson.Huang@nxp.com>
-References: <1570616148-11571-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1730252AbfJIKQm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 06:16:42 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:43897 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbfJIKQm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 06:16:42 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iI91K-0000rZ-Jn; Wed, 09 Oct 2019 12:16:38 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iI91J-0001w3-GX; Wed, 09 Oct 2019 12:16:37 +0200
+Date:   Wed, 9 Oct 2019 12:16:37 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Daniel Thompson <daniel.thompson@linaro.org>
+Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-kernel@vger.kernel.org, thierry.reding@gmail.com,
+        heiko@sntech.de, dianders@chromium.org, mka@chromium.org,
+        groeck@chromium.org, kernel@collabora.com, bleung@chromium.org,
+        linux-pwm@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH] pwm: cros-ec: Let cros_ec_pwm_get_state() return the
+ last applied state
+Message-ID: <20191009101637.gmvghwdvcmfw4yyk@pengutronix.de>
+References: <20191008105417.16132-1-enric.balletbo@collabora.com>
+ <20191008143432.pbhcqamd6f4qwbqn@pengutronix.de>
+ <4f009344-242e-19a7-6872-2c55df086044@collabora.com>
+ <20191008203137.s22clq6v2om5ktio@pengutronix.de>
+ <53b7d02b-1a2d-11da-fdd0-5378f360d876@collabora.com>
+ <20191009095635.yysr33lnwldicyng@holly.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191009095635.yysr33lnwldicyng@holly.lan>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use platform_get_irq_byname_optional() and platform_get_irq_optional()
-instead of platform_get_irq_byname() and platform_get_irq() for optional
-IRQs to avoid below error message during probe:
+On Wed, Oct 09, 2019 at 10:56:35AM +0100, Daniel Thompson wrote:
+> On Wed, Oct 09, 2019 at 11:27:13AM +0200, Enric Balletbo i Serra wrote:
+> > Hi Uwe,
+> > 
+> > Adding Daniel and Lee to the discussion ...
+> 
+> Thanks!
+> 
+> > On 8/10/19 22:31, Uwe Kleine-König wrote:
+> > > On Tue, Oct 08, 2019 at 06:33:15PM +0200, Enric Balletbo i Serra wrote:
+> > >>> A few thoughts to your approach here ...:
+> > >>>
+> > >>>  - Would it make sense to only store duty_cycle and enabled in the
+> > >>>    driver struct?
+> > >>>
+> > >>
+> > >> Yes, in fact, my first approach (that I didn't send) was only storing enabled
+> > >> and duty cycle. For some reason I ended storing the full pwm_state struct, but I
+> > >> guess is not really needed.
+> > >>
+> > >>
+> > >>>  - Which driver is the consumer of your pwm? If I understand correctly
+> > >>>    the following sequence is the bad one:
+> > >>>
+> > >>
+> > >> The consumer is the pwm_bl driver. Actually I'n trying to identify
+> > >> other consumers.
+> > > 
+> > 
+> > So far, the pwm_bl driver is the only consumer of cros-ec-pwm.
+> > 
+> > > Ah, I see why I missed to identify the problem back when I checked this
+> > > driver. The problem is not that .duty_cycle isn't set but there .enabled
+> > > isn't set. So maybe we just want:
+> > > 
+> > > diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+> > > index 2201b8c78641..0468c6ee4448 100644
+> > > --- a/drivers/video/backlight/pwm_bl.c
+> > > +++ b/drivers/video/backlight/pwm_bl.c
+> > > @@ -123,6 +123,7 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
+> > >         if (brightness > 0) {
+> > >                 pwm_get_state(pb->pwm, &state);
+> > >                 state.duty_cycle = compute_duty_cycle(pb, brightness);
+> > > +               state.enabled = true;
+> > >                 pwm_apply_state(pb->pwm, &state);
+> > >                 pwm_backlight_power_on(pb);
+> > >         } else
+> > > 
+> > > ? On a side note: It's IMHO strange that pwm_backlight_power_on
+> > > reconfigures the PWM once more.
+> > > 
+> > 
+> > Looking again to the pwm_bl code, now, I am not sure this is correct (although
+> > it probably solves the problem for me).
+> 
+> Looking at the pwm_bl code I wouldn't accept the above as it is but I'd
+> almost certainly accept a patch to pwm_bl to move the PWM enable/disable
+> out of both the power on/off functions so the duty-cycle/enable or
+> disable can happen in one go within the update_status function. I don't
+> think such a change would interfere with the power and enable sequencing
+> needed by panels and it would therefore be a nice continuation of the
+> work to convert over to the pwm_apply_state() API.
 
-[    0.795803] fec 30be0000.ethernet: IRQ pps not found
-[    0.800787] fec 30be0000.ethernet: IRQ index 3 not found
-
-Fixes: 7723f4c5ecdb ("driver core: platform: Add an error message to platform_get_irq*()")
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/net/ethernet/freescale/fec_ptp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/freescale/fec_ptp.c b/drivers/net/ethernet/freescale/fec_ptp.c
-index 19e2365..945643c 100644
---- a/drivers/net/ethernet/freescale/fec_ptp.c
-+++ b/drivers/net/ethernet/freescale/fec_ptp.c
-@@ -600,9 +600,9 @@ void fec_ptp_init(struct platform_device *pdev, int irq_idx)
+OK for me. Enric, do you care enough to come up with a patch for pwm_bl?
+I'd expect that this alone should already fix your issue.
  
- 	INIT_DELAYED_WORK(&fep->time_keep, fec_time_keep);
- 
--	irq = platform_get_irq_byname(pdev, "pps");
-+	irq = platform_get_irq_byname_optional(pdev, "pps");
- 	if (irq < 0)
--		irq = platform_get_irq(pdev, irq_idx);
-+		irq = platform_get_irq_optional(pdev, irq_idx);
- 	/* Failure to get an irq is not fatal,
- 	 * only the PTP_CLOCK_PPS clock events should stop
- 	 */
+> None of the above has anything to do with what is right or wrong for
+> the PWM API evolution. Of course, if this thread does conclude that it
+> is OK the duty cycle of a disabled PWM to be retained for some drivers
+> and not others then I'd hope to see some WARN_ON()s added to the PWM
+> framework to help bring problems to the surface with all drivers.
+
+I think it's not possible to add a reliable WARN_ON for that issue. It
+is quite expected that .get_state returns something that doesn't
+completely match the requested configuration. So if a consumer requests
+
+	.duty_cycle = 1
+	.period = 100000000
+	.enabled = false
+
+pwm_get_state possibly returns .duty_cycle = 0 even for drivers/hardware
+that has a concept of duty_cycle for disabled hardware.
+
+A bit this is addressed in https://patchwork.ozlabs.org/patch/1147517/.
+
+Best regards
+Uwe
+
 -- 
-2.7.4
-
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
