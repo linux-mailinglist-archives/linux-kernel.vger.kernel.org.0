@@ -2,86 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B650D0953
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 10:12:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29226D095C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 10:15:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728200AbfJIIMd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 04:12:33 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43431 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725903AbfJIIMc (ORCPT
+        id S1727657AbfJIIPC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 04:15:02 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:32976 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725776AbfJIIPC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 04:12:32 -0400
-Received: by mail-pg1-f196.google.com with SMTP id i32so899547pgl.10;
-        Wed, 09 Oct 2019 01:12:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=11B75nSfpkiHSUA7kLDSZM9qo28NOGIlqXnAmtJunQI=;
-        b=hyC/2ZbDrDifzE37Wh14howiTcK3yRDDklHrqOsMBCUi4Gvz1fB5e1Qwg3mtSMqQb+
-         ppKRaWCX2rOxI1qTJS0E49VuBxXP+2a4C2C86eBs993/2vt4lx1z20KvNcAEtBpMBv9H
-         kDn36XlhsBDUA7szlV6MEMpKQVHx00bwVge8g6GssHCoVD6dVSxuSEa4e+sC/SyKsD/+
-         QlL17FjMFZxgnCooLGAlZYjmZGXMOHvGOaEzQpekTRM2MdThx3/u3lVMY9nT9arxBRS1
-         wWEsb6cL4u8RP2adDMpuxOHAQgF2jkv/sL3vO1qaE74ef8zOsotQXsDir8QYobskJ9UE
-         dwMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=11B75nSfpkiHSUA7kLDSZM9qo28NOGIlqXnAmtJunQI=;
-        b=aGe1SpmByjFt77ZMz1zgIaoFosL8VU7en8HbiU/z+VfIcoAsxOBLZjMkNbNzKAYkJk
-         COZjrghm3AIGO0oLTMfub9zi5W9ogiqAXSzCJVM0Zs0EFD9ovzkuT6HWNASRe7PfsYPJ
-         4SmqmFu/0VxPMvEyTNT4i96ZyJv3KqoirkoJcL2M2eHHju9Xzt7VvSGxH0l8NpmBlScV
-         mCGHg6c6QbmQa7Dn7PxuXKuawdtGznNyGf2miKY5eD+DMpTtlnJrFVCjV5nf5C456k6g
-         7fHybInTCkw3fUUKofUcSR10cLxF+lifCqwz22fYPkAeGSm6vk21tASqVsxc++F9oEdk
-         Y0jw==
-X-Gm-Message-State: APjAAAXhZO+YJY76lZpUI4s/7RRtINxDILISr52i3B+iEhpptTcfk77d
-        N15YkRvmffVmGhEjCG4wXZQx6whGxCCzh7w2hnI=
-X-Google-Smtp-Source: APXvYqz78hCAKbdx1xRfKxNWl6+jG4BDO/bMlHunDvw7i8+a+54Q6DZDFb9iTjJNg/rruFkAAayzrzmIJTjd3c5K1Sk=
-X-Received: by 2002:a65:5a08:: with SMTP id y8mr2996887pgs.4.1570608751808;
- Wed, 09 Oct 2019 01:12:31 -0700 (PDT)
+        Wed, 9 Oct 2019 04:15:02 -0400
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3477A4FF;
+        Wed,  9 Oct 2019 10:14:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1570608899;
+        bh=++ntxKRvSWOvvroIqsnx23Cq7lZXrSkD/go2481uxUQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=aogUTJealSc4dmR3mdqA/NgRAH0cmHX7YrCr5WNicv5tBBTJVfy0h3/+Vv0VuUjFG
+         ImD7nUNITRrYejOX5O9JqjmgnBhtX7la+MpjaE/IkFs766ggiTViN+QUJJKVF38T0W
+         diK0f/vp5PShKgv6QYcD7gDx5nSZvLlQLlCE5lSI=
+Date:   Wed, 9 Oct 2019 11:14:58 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-i2c@vger.kernel.org,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND] gpu: drm: bridge: analogix-anx78xx: convert to
+ i2c_new_dummy_device
+Message-ID: <20191009081458.GB22998@pendragon.ideasonboard.com>
+References: <20191008203145.3159-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-References: <1570601911-9162-1-git-send-email-Anson.Huang@nxp.com> <20191009065315.wgdvmkv6skteyul4@pengutronix.de>
-In-Reply-To: <20191009065315.wgdvmkv6skteyul4@pengutronix.de>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 9 Oct 2019 11:12:20 +0300
-Message-ID: <CAHp75VcWXT+j5cfVzxPL+3YdgR+3uhFSb0qEDRr4YL+WenVKUQ@mail.gmail.com>
-Subject: Re: [PATCH] tty: serial: imx: Only get second/third IRQ when there is
- more than one IRQ
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Anson Huang <Anson.Huang@nxp.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <Linux-imx@nxp.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191008203145.3159-1-wsa+renesas@sang-engineering.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 9, 2019 at 9:53 AM Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
+Hi Wolfram,
 
-> The patch is fine given the changed behaviour of platform_get_irq. I
-> wonder if it is sensible to introduce a variant of platform_get_irq (say
-> platform_get_irq_nowarn) that behaves like __platform_get_irq does
-> today. Then the imx driver would just call platform_get_irq_nowarn
-> without having to check the number of available irqs first.
+Thank you for the patch.
 
-It's being discussed in parallel thread about
-platform_get_irq_optional() which won't issue a warning.
+On Tue, Oct 08, 2019 at 10:31:45PM +0200, Wolfram Sang wrote:
+> Move from the deprecated i2c_new_dummy() to i2c_new_dummy_device(). We
+> now get an ERRPTR which we use in error handling.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
---=20
-With Best Regards,
-Andy Shevchenko
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+> 
+> Rebased to v5.4-rc2 since last time. One of the last two users of the
+> old API, so please apply soon, so I can remove the old interface. Only
+> build tested.
+> 
+>  drivers/gpu/drm/bridge/analogix-anx78xx.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/analogix-anx78xx.c b/drivers/gpu/drm/bridge/analogix-anx78xx.c
+> index 3c7cc5af735c..be7756280e41 100644
+> --- a/drivers/gpu/drm/bridge/analogix-anx78xx.c
+> +++ b/drivers/gpu/drm/bridge/analogix-anx78xx.c
+> @@ -1350,10 +1350,10 @@ static int anx78xx_i2c_probe(struct i2c_client *client,
+>  
+>  	/* Map slave addresses of ANX7814 */
+>  	for (i = 0; i < I2C_NUM_ADDRESSES; i++) {
+> -		anx78xx->i2c_dummy[i] = i2c_new_dummy(client->adapter,
+> +		anx78xx->i2c_dummy[i] = i2c_new_dummy_device(client->adapter,
+>  						anx78xx_i2c_addresses[i] >> 1);
+> -		if (!anx78xx->i2c_dummy[i]) {
+> -			err = -ENOMEM;
+> +		if (IS_ERR(anx78xx->i2c_dummy[i])) {
+> +			err = PTR_ERR(anx78xx->i2c_dummy[i]);
+>  			DRM_ERROR("Failed to reserve I2C bus %02x\n",
+>  				  anx78xx_i2c_addresses[i]);
+>  			goto err_unregister_i2c;
+
+-- 
+Regards,
+
+Laurent Pinchart
