@@ -2,228 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93AAFD0894
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 09:41:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D907FD08A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 09:43:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730260AbfJIHll (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 03:41:41 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35117 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbfJIHlj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 03:41:39 -0400
-Received: by mail-wr1-f67.google.com with SMTP id v8so1496773wrt.2;
-        Wed, 09 Oct 2019 00:41:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=cc:subject:to:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9UY2QbIEGmOf3Zlgv93V9GQZjtls83MvwklkIbK7UcU=;
-        b=JMiEwo3kLUZJRv2GBcyt2r2G8LVII7f8OPxj12em9L3VP3COd7cFJ33hUC9hRAd7WZ
-         feuVyW9Sp9WZh4QGXupeNhxrMGL6+S/8UsHsTL2g4jiFPaO166TnOKYgt/wsc6z4DCTx
-         hi3bXzh873VRscdE8Da5DtsvMmDR0FNzjFRDEDWD9GpdLX4jg9l5Y7l1Nbn0ku3C+u6P
-         WbmHyeXaGxegWzc4jXi/lDrydbY3lRCpn4uCEr6OHj/NnQtg77Lbvx8iIC7zC3pRclYh
-         v1nRtZ7sPbKrQ09XOwFGTv3uxdb6HIMjtp0Ctt5t3Sfj2F64BwgUCpuMwZnqblmCnRJj
-         SV7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9UY2QbIEGmOf3Zlgv93V9GQZjtls83MvwklkIbK7UcU=;
-        b=XPyhM6JHS+v9SEayuTivjg3GK/U0eif2omTDPZduCffEoRRCd7Qy2MBm5bNciyUpz1
-         a+JBbFg9SY/m6t0ZysU2HvU7Gy1rJuSMurh28pwTn2or1Ng67H0sbZL7Fw9s0x+ctUmy
-         w1YgxtYRVZKhEV9pYJhaPbHQzqWF5CzDllqUzCSZbNxZHm4SNw0FqGtNiElWe2WQCEA2
-         RQNhJynfCQrK7LI/jVX8k+txs2uR9KYP9Nqc9rnzzIYcJcPeYG0rexixZX576rCmddTn
-         iQ5C03yEKv/aLh6ap7pVrgmjCGvCh3C54KS3RVhEfD7qIbtcinBgym6SzFNbdbob6iJq
-         Rfug==
-X-Gm-Message-State: APjAAAVho1kV8LeV+mRa92EOpzNVEXh39wv4+8V5suR+l0En9hwpqfnx
-        g0E+CKBzQHu44RJYtI7iGKU=
-X-Google-Smtp-Source: APXvYqw4KVm55RedrhNoQvGBxTLCBpdNABz/XYNmtniV22b3bGHJOBJ4Ro7i6BxQYdm2QGYdCZ+stg==
-X-Received: by 2002:adf:c143:: with SMTP id w3mr1678433wre.77.1570606895856;
-        Wed, 09 Oct 2019 00:41:35 -0700 (PDT)
-Received: from [10.0.20.253] ([95.157.63.22])
-        by smtp.gmail.com with ESMTPSA id s1sm1742156wrg.80.2019.10.09.00.41.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2019 00:41:35 -0700 (PDT)
-Cc:     mtk.manpages@gmail.com, linux-man <linux-man@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Containers <containers@lists.linux-foundation.org>,
-        =?UTF-8?Q?St=c3=a9phane_Graber?= <stgraber@ubuntu.com>
-Subject: Re: For review: rewritten pivot_root(2) manual page
-To:     Philipp Wendler <ml@philippwendler.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian@brauner.io>,
-        Aleksa Sarai <asarai@suse.de>,
-        Reid Priedhorsky <reidpr@lanl.gov>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Yang Bo <rslovers@yandex.com>, Jakub Wilk <jwilk@jwilk.net>,
-        Joseph Sible <josephcsible@gmail.com>,
-        Al Viro <viro@ftp.linux.org.uk>, werner@almesberger.net
-References: <620c691a-065e-b894-4f06-7453012bc8d3@gmail.com>
- <d449305b-f87c-f26e-e43f-d193fd8f4332@philippwendler.de>
-From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Message-ID: <e51e454c-b0e7-e5d1-7810-e8f023574aa2@gmail.com>
-Date:   Wed, 9 Oct 2019 09:41:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <d449305b-f87c-f26e-e43f-d193fd8f4332@philippwendler.de>
-Content-Type: text/plain; charset=utf-8
+        id S1728839AbfJIHn2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 03:43:28 -0400
+Received: from mail-eopbgr150050.outbound.protection.outlook.com ([40.107.15.50]:49991
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725879AbfJIHn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 03:43:28 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aBITk9laVtxC1yKnZGd7p9nJCBFWX8i2CARu4Cj03s/MPrGzJyccMpr59XmP8B9fj7b4gVWLDjYvRSVBG8EaIKxSyt6bVxtPE03PmmtIVpyodOu1PeTGPe972YADfkns1qMMN14LTik+uWWWFIMrMX42U84MmV8vfJ+mYIzsSU7gyKW1Xerzd4oQQFvcrZppxfrLZ3gE/pgYAXXyhPaENS+21vd1xwmEI0GImf8l2Lzu5kDvtgn2+TIZbe5xKT0xQ5k+OTMUvrGA9ia7e+RV4MxDkizdbseyvlLDGnVcl7dXW90OMDdJZXgtp2YMjGKyEQd2eiWtZ7jCJHFJg+Qfeg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JezFGT7SYnw9AouOO/SQOroJZ5TZ0/9VIIVeY8a11O0=;
+ b=gKsIk9vxxftpOTZVSRe84sOxEOR9qjBEyRphciq4h9DnrqHiDM/Nsuz+udWHS7b1uTmTap0FoqtSI+BhduPv9vxdPHm8z/JQhYKwJAOOgIa+OEnnRQW59iPxO11QO8oFhTGM1PbnOKmfkP5dRWFCCyY+HDcTcSxQU69nTx6sBeSqxnx+6l5zNRM0jBoKRXf76pU2hEYJ+RviePQ3mpfVfkOr3HtChGLNvBjMxA9iM9yjG1T8q3oN7JS353Pjc2uz9Pt9xxPYbOx68mZw6Zx/DGLa9ZvAZlOSiC8N2Gpq9Yvj/dAuyvhCDbI10FQBrNo6mzhVRwGi5UAZ8fKrTCbBMg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JezFGT7SYnw9AouOO/SQOroJZ5TZ0/9VIIVeY8a11O0=;
+ b=AEIA7XYOLT/hKBKBd39zumDhdZEIXVDgIJ+ZjChYAgqgPwj3nzPKzi+yL+2g4CW8MPdvE26FgOi9i8KkN5ON/9KxmR7QRI9AD3g/cLBl1UGclFUFejTL6sIGDBtepMhQ0xmOnTEW5nw2NYnnmE6s5hpSmiz5Hm3IOX6aDoybBy8=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3836.eurprd04.prod.outlook.com (52.134.71.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2347.16; Wed, 9 Oct 2019 07:43:24 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::d469:ad51:2bec:19f0]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::d469:ad51:2bec:19f0%6]) with mapi id 15.20.2347.016; Wed, 9 Oct 2019
+ 07:43:24 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     =?utf-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= 
+        <u.kleine-koenig@pengutronix.de>
+CC:     Stephen Boyd <swboyd@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "jslaby@suse.com" <jslaby@suse.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: RE: [PATCH] tty: serial: imx: Only get second/third IRQ when there is
+ more than one IRQ
+Thread-Topic: [PATCH] tty: serial: imx: Only get second/third IRQ when there
+ is more than one IRQ
+Thread-Index: AQHVfmm1cibywjMA5UifVvn4HL9DWadR35+AgAAA6hCAAATlgIAAAf4ggAAEgICAAADzQA==
+Date:   Wed, 9 Oct 2019 07:43:24 +0000
+Message-ID: <DB3PR0402MB391677227A688D5DD56A8417F5950@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <1570601911-9162-1-git-send-email-Anson.Huang@nxp.com>
+ <20191009065315.wgdvmkv6skteyul4@pengutronix.de>
+ <DB3PR0402MB39165F9CE876772F8F94F187F5950@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <20191009071403.ugd2wuac6ue5zsd6@pengutronix.de>
+ <DB3PR0402MB39161E02A9D042948B71FDCDF5950@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <20191009073717.qlr2svma5fiaf4ad@pengutronix.de>
+In-Reply-To: <20191009073717.qlr2svma5fiaf4ad@pengutronix.de>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 8a99a174-9d4f-43f3-5116-08d74c8c5d6a
+x-ms-office365-filtering-ht: Tenant
+x-ms-traffictypediagnostic: DB3PR0402MB3836:|DB3PR0402MB3836:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB3PR0402MB3836CE4599F507FE3DECBE8BF5950@DB3PR0402MB3836.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 018577E36E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(396003)(136003)(366004)(39860400002)(376002)(189003)(54094003)(199004)(55016002)(6246003)(305945005)(52536014)(6436002)(66066001)(7736002)(8936002)(74316002)(25786009)(8676002)(76116006)(66946007)(81156014)(4326008)(66446008)(64756008)(81166006)(66556008)(66476007)(6916009)(229853002)(86362001)(14454004)(3846002)(6116002)(256004)(7696005)(76176011)(26005)(2906002)(6506007)(102836004)(7416002)(11346002)(99286004)(446003)(9686003)(478600001)(33656002)(54906003)(486006)(44832011)(316002)(476003)(186003)(71190400001)(71200400001)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3836;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: akzimXs4Lk2OKyGVcCP4Yssd4yMA6Iv5ZYqWAT5aghZI7pEqpx9tJskPEWgQTeRXjWtp5eP4ZlYIxwJLqYJ9Jy1zNjFufIA6YTD9PHjYTJP3x0UokF2RajqwEPcaQfPWs2yAi3tbP7golf1VROstTqSFl0wwKqyFSdJfzRZHN4SCxnugHU3Ce3ZzrWH3srlQ5Q12eehwIBNVbZHCP8hCeDm6vv94V5c7zsjDkRuiyggvvMVeaLz/p74INcAtDmpq1DauE40auwNSme2llpWpMl9tfV6WMaPpZsyRRwJaGZbMGkWYRYlsjiczGG9UuU78ZMpnWplSsN8A0BROV01wBeYL2IM1ypi2Ess5HgIFaZBdFmzINJubFY98MzPQvaqwJ4mV9ZOZn58sOox+E9LOzJlOonSst4JusxhBy+raiFo=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a99a174-9d4f-43f3-5116-08d74c8c5d6a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2019 07:43:24.1826
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: HnHE5edpr8D21Ycgeqh0eCPcrqjV58CtaGDS+lC/zsN/Bcm2oruKeU6vvHEhVAdMr2A4rlTJn7VcfZSlxdfwRQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3836
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Philipp,
-
-My apologies that it has taken a while to reply. (I had been hoping
-and waiting that a few more people might weigh in on this thread.)
-
-On 9/23/19 3:42 PM, Philipp Wendler wrote:
-> Hello Michael,
-> 
-> Am 23.09.19 um 14:04 schrieb Michael Kerrisk (man-pages):
-> 
->> I'm considering to rewrite these pieces to exactly
->> describe what the system call does (which I already
->> do in the third paragraph) and remove the "may or may not"
->> pieces in the second paragraph. I'd welcome comments
->> on making that change.
-> 
-> I think that it would make the man page significantly easier to
-> understand if if the vague wording and the meta discussion about it are
-> removed.
-
-It is my inclination to make this change, but I'd love to get more
-feedback on this point.
-
->> DESCRIPTION
-> [...]>        pivot_root()  changes  the
->>        root  directory  and the current working directory of each process
->>        or thread in the same mount namespace to new_root if they point to
->>        the  old  root  directory.   (See also NOTES.)  On the other hand,
->>        pivot_root() does not change the caller's current  working  direc‐
->>        tory  (unless it is on the old root directory), and thus it should
->>        be followed by a chdir("/") call.
-> 
-> There is a contradiction here with the NOTES (cf. below).
-
-See below.
-
->>        The following restrictions apply:
->>
->>        -  new_root and put_old must be directories.
->>
->>        -  new_root and put_old must not be on the same filesystem as  the
->>           current root.  In particular, new_root can't be "/" (but can be
->>           a bind mounted directory on the current root filesystem).
-> 
-> Wouldn't "must not be on the same mountpoint" or something similar be
-> more clear, at least for new_root? The note in parentheses indicates
-> that new_root can actually be on the same filesystem as the current
-> note. However, ...
-
-For 'put_old', it really is "filesystem".
-
-For 'new_root', see below.
-
->>        -  put_old must be at or underneath new_root; that  is,  adding  a
->>           nonnegative  number  of /.. to the string pointed to by put_old
->>           must yield the same directory as new_root.
->>
->>        -  new_root must be a mount point.  (If  it  is  not  otherwise  a
->>           mount  point,  it  suffices  to  bind  mount new_root on top of
->>           itself.)
-> 
-> ... this item actually makes the above item almost redundant regarding
-> new_root (except for the "/") case. So one could replace this item with
-> something like this:
-> 
-> - new_root must be a mount point different from "/". (If it is not
->   otherwise a mount point, it suffices  to bind mount new_root on top
->   of itself.)
-> 
-> The above item would then only mention put_old (and maybe use clarified
-> wording on whether actually a different file system is necessary for
-> put_old or whether a different mount point is enough).
-
-Thanks. That's a good suggestion. I simplified the earlier bullet
-point as you suggested, and changed the text here to say:
-
-       -  new_root must be a mount point, but can't be "/".  If it is not
-          otherwise  a mount point, it suffices to bind mount new_root on
-          top of itself.  (new_root can be a bind  mounted  directory  on
-          the current root filesystem.)
-
->> NOTES
-> [...]
->>        pivot_root() allows the caller to switch to a new root  filesystem
->>        while  at  the  same time placing the old root mount at a location
->>        under new_root from where it can subsequently be unmounted.   (The
->>        fact  that  it  moves  all processes that have a root directory or
->>        current working directory on the old root filesystem  to  the  new
->>        root  filesystem  frees the old root filesystem of users, allowing
->>        it to be unmounted more easily.)
-> 
-> Here is the contradiction:
-> The DESCRIPTION says that root and current working dir are only changed
-> "if they point to the old root directory". Here in the NOTES it says
-> that any root or working directories on the old root file system (i.e.,
-> even if somewhere below the root) are changed.
-> 
-> Which is correct?
-
-The first text is correct. I must have accidentally inserted
-"filesystem" into the paragraph just here during a global edit.
-Thanks for catching that.
-
-> If it indeed affects all processes with root and/or current working
-> directory below the old root, the text here does not clearly state what
-> the new root/current working directory of theses processes is.
-> E.g., if a process is at /foo and we pivot to /bar, will the process be
-> moved to /bar (i.e., at / after pivot_root), or will the kernel attempt
-> to move it to some location like /bar/foo? Because the latter might not
-> even exist, I suspect that everything is just moved to new_root, but
-> this could be stated explicitly by replacing "to the new root
-> filesystem" in the above paragraph with "to the new root directory"
-> (after checking whether this is true).
-
-The text here now reads:
-
-       pivot_root() allows the caller to switch to a new root  filesystem
-       while  at  the  same time placing the old root mount at a location
-       under new_root from where it can subsequently be unmounted.   (The
-       fact  that  it  moves  all processes that have a root directory or
-       current working directory on the old root  directory  to  the  new
-       root  frees the old root directory of users, allowing the old root
-       filesystem to be unmounted more easily.)
-
-
->> EXAMPLE>        The program below demonstrates the use of  pivot_root()  inside  a
->>        mount namespace that is created using clone(2).  After pivoting to
->>        the root directory named in the program's first command-line argu‐
->>        ment,  the  child  created  by  clone(2) then executes the program
->>        named in the remaining command-line arguments.
-> 
-> Why not use the pivot_root(".", ".") in the example program?
-> It would make the example shorter, and also works if the process cannot
-> write to new_root (e..g., in a user namespace).
-
-I'm not sure. Some people have a bit of trouble to wrap their head
-around the pivot_root(".", ".") idea. (I possibly am one of them.)
-I'd be quite keen to hear other opinions on this. Unfortunately,
-few people have commented on this manual page rewrite.
-
-Thanks,
-
-Michael
-
-
--- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+SGksIFV3ZQ0KDQo+IE9uIFdlZCwgT2N0IDA5LCAyMDE5IGF0IDA3OjI0OjU3QU0gKzAwMDAsIEFu
+c29uIEh1YW5nIHdyb3RlOg0KPiA+ID4gT24gV2VkLCBPY3QgMDksIDIwMTkgYXQgMDY6NTg6MjRB
+TSArMDAwMCwgQW5zb24gSHVhbmcgd3JvdGU6DQo+ID4gPiA+ID4gVGhlIHBhdGNoIGlzIGZpbmUg
+Z2l2ZW4gdGhlIGNoYW5nZWQgYmVoYXZpb3VyIG9mDQo+ID4gPiA+ID4gcGxhdGZvcm1fZ2V0X2ly
+cS4gSSB3b25kZXIgaWYgaXQgaXMgc2Vuc2libGUgdG8gaW50cm9kdWNlIGENCj4gPiA+ID4gPiB2
+YXJpYW50IG9mIHBsYXRmb3JtX2dldF9pcnEgKHNheQ0KPiA+ID4gPiA+IHBsYXRmb3JtX2dldF9p
+cnFfbm93YXJuKSB0aGF0IGJlaGF2ZXMgbGlrZSBfX3BsYXRmb3JtX2dldF9pcnENCj4gPiA+ID4g
+PiBkb2VzIHQgVGhlbiB0aGUgaW14IGRyaXZlciB3b3VsZCBqdXN0IGNhbGwNCj4gPiA+ID4gPiBw
+bGF0Zm9ybV9nZXRfaXJxX25vd2FybiB3aXRob3V0IGhhdmluZyB0byBjaGVjayB0aGUgbnVtYmVy
+IG9mDQo+IGF2YWlsYWJsZSBpcnFzIGZpcnN0Lg0KPiA+ID4gPg0KPiA+ID4gPiBBZ3JlZWQsIGl0
+IHdvdWxkIGJlIG5pY2UgaWYgd2UgY2FuIGZpeCB0aGlzIGZyb20gdGhlIEFQSSBsZXZlbCwNCj4g
+PiA+ID4gdGhpcyBpcyB0byBzYXZlIG1hbnkgcGF0Y2hlcyBmcm9tIHZhcmlvdXMgZHJpdmVycyBz
+aWRlLCBsZXQgbWUNCj4gPiA+ID4ga25vdyBpZiBhZ3JlZW1lbnQgaXMgcmVhY2hlZCBhbmQgSSB3
+aWxsIGRvIHRoZSBwYXRjaC4NCj4gPiA+DQo+ID4gPiBJIHdvdWxkbid0IGV4cGVjdCB0aGF0IG1v
+c3QgY2FsbGVycyBhY3R1YWxseSB3YW50IGFuIGVycm9yIG1lc3NhZ2UNCj4gPiA+IGFuZCBzbyB0
+aGVzZSBuZWVkIGEgZGlmZmVyZW50IHBhdGNoIChpLmUuIGRyb3BwaW5nIHRoZSBlcnJvciBtZXNz
+YWdlIGJ5DQo+IHRoZSBjYWxsZXIpLg0KPiA+ID4gVGhpcyB0eXBlIG9mIHBhdGNoIGlzIGZpbmUg
+YW5kIHRoZSBub3JtYWwgbG9hZCB3aGVuIHNvbWV0aGluZyBpcw0KPiA+ID4gY29uc29saWRhdGVk
+Lg0KPiA+ID4NCj4gPiA+IFdoaWNoIG90aGVyIGRyaXZlcnMgZG8geW91IGhhdmUgb24geW91ciBy
+YWRhciB0aGF0IGRvbid0IHdhbnQgYW4NCj4gPiA+IGVycm9yIG1lc3NhZ2UgaWYgcGxhdGZvcm1f
+Z2V0X2lycSgpIGZhaWxzPw0KPiA+DQo+ID4gSSBkaWQgTk9UIG1lYW4gZHJpdmVycyBkb24ndCB3
+YW50IGFuIGVycm9yIHdoZW4gZ2V0dGluZyBpcnEgZmFpbGVkLA0KPiA+IGJ1dCBJIGp1c3QgYWdy
+ZWUgdGhhdCBpbnRyb2R1Y2luZyBhbm90aGVyIEFQSSB3aXRoIG5vd2FybiBhcyB5b3UNCj4gPiBt
+ZW50aW9uZWQgdXBwZXIsIHRoZW4gaS5NWCBkcml2ZXIgY2FuIGNhbGwgaXQuIEZvciBub3csIHRo
+ZSBGRUMgZHJpdmVyDQo+ID4gYWxzbyBoYXZlIG1hbnkgc3VjaCBlcnJvciBtZXNzYWdlLCB3ZSB3
+aWxsIGZpeCBsYXRlci4NCj4gPg0KPiA+IFNvIGlmIHRoZSBBUEkgd2l0aCBub3dhcm4gaXMgYWRk
+ZWQsIHRoZW4gSSBjYW4gY2hhbmdlIHRoZSBBUEkgY2FsbCBpbg0KPiA+IHNvbWUgaS5NWCBkcml2
+ZXIgaW5zdGVhZCBvZiBnZXR0aW5nIGlycV9jb3VudCBmaXJzdC4gRG8geW91IHRoaW5rIEkNCj4g
+PiBzaG91bGQgYWRkIHRoZSBub3dhcm4gQVBJIGFuZCByZWRvIHRoaXMgcGF0Y2ggdG8gY2FsbCBp
+dD8NCj4gDQo+IEhhdmluZyBhIHBhdGNoIChvciBhIHNldCBvZiBwYXRjaGVzKSBpcyBwcm9iYWJs
+eSBoZWxwZnVsIHRvIGdldCBmb3J3YXJkIGhlcmUsDQo+IHllcy4gWW91IGhhdmUgbXkgYmxlc3Np
+bmcgdG8gY3JlYXRlIGEgc3VnZ2VzdGlvbi4gKE5vdCB0aGF0IHlvdSBhY3R1YWxseSBuZWVkDQo+
+IHRoYXQgOi0pDQoNClRoYW5rcywgT0ssIHRoZW4gSSB3aWxsIGxlYXZlIHRoaXMgcGF0Y2ggYXMg
+aXQgaXMgZm9yIG5vdywgYW5kIGxlYXZlIG90aGVycyB0byBkZWNpZGUgd2hldGhlcg0KdG8gYWRk
+IGEgcGF0Y2ggb2YgYWRkaW5nIG5ldyBBUEkgb2Ygbm93YXJuLiBTb21lIGRyaXZlcnMgbmVlZCB0
+byBiZSBjaGFuZ2VkIGFueXdheSB0byBhdm9pZA0KdGhpcyBlcnJvciBtZXNzYWdlLCBlaXRoZXIg
+Z2V0dGluZyBpcnEgY291bnQgZmlyc3Qgb3IgY2FsbGluZyBuZXcgQVBJIG9uY2UgaXQgaXMgYWRk
+ZWQuDQoNClRoYW5rcywNCkFuc29uDQo=
