@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7B2AD19E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 22:43:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C940D19E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 22:43:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732208AbfJIUmD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 16:42:03 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:33734 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732056AbfJIUmB (ORCPT
+        id S1732227AbfJIUmG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 16:42:06 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40789 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732171AbfJIUmA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 16:42:01 -0400
-Received: by mail-lf1-f66.google.com with SMTP id y127so2690163lfc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 13:41:58 -0700 (PDT)
+        Wed, 9 Oct 2019 16:42:00 -0400
+Received: by mail-lj1-f195.google.com with SMTP id 7so3869102ljw.7
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 13:41:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=LjUmR6syFZQTjTX+EMH7Sbgc4CwkKZT5NTkS4TQtAUc=;
-        b=sam0/KZSTXmUo2WdsnqCOUMLoQL0oTggZsrHu5xImVNB4DQszXP4VtC6SBAq/YaCj6
-         oZ6V+aleXgxEQmYw17nYVsNTLotnMYHMksl+zIUhW7TUugybC0sScWu16ACFEgW5U9BW
-         bTsDyycFa5HCBVNQ0giJ0kfWtl1HZaXU8oiQDCSEMB6AgOb1dV8Xe5A5es+7vUne7ONT
-         3RMXkAbwjp4xqCDZdeuo5KlRB7t5rARVOS7kuZsRRb9z+bWzkHKkRrTmAX+GjNH3JYJQ
-         y74rRnMCpbmdDtq0gOFuyPg1ZHyMwXzwpOOsQUK/gT2ou23MHlRIiL9fnkgBq1xxhYjL
-         KQgg==
+        bh=ZSbYJ+tLtfDuMSVqb7LwJbRD3u314/MfD3p1keHf2Mw=;
+        b=pzdPyL78q/gbChT77HCP7gSmJXWVdEWKYJQzr4nN7gdvvWnYwHoI8e+zFj+6pgj6yb
+         K8kXXGGo9S629wH2TsCb/WtRqZmXgJJ70q3HTxWrCTT/7iMCwuiKj7zudoSmlfGB+PAI
+         /45wQ4KP7k11v6we53lk8hhEeehY1QX9SjVDv/VQv1jaHINDd6U4g/QtWhYfubjHDXgp
+         XTVVibyKnEQzXFUc37axnMinQOpbyw7ku8dOxYuTW/BDJAeS00IL5E1xmBcZliiAeCXU
+         ntHfGa4HfaPvseNHg7XszDFS0voyh5uMx9tMPpL6EIkU9r4TMaGMpMFzfb6wZW5PrWf4
+         cALg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=LjUmR6syFZQTjTX+EMH7Sbgc4CwkKZT5NTkS4TQtAUc=;
-        b=Kk6n/9SZq50UIbaMmyw9AZoD0E61cQ8uwlzuOY29KUhqemkDW/ty/RV1zQI3HHUrXe
-         Qb4eN+JQTF3NnrLjKi9c2Du2douKtyWul9M8inWub0OLH44oX3hEOweVi3cHAByLvdxQ
-         U1y++0PBzc6KKpNVsGkFe9tAGm5uQqN+K4Ppeuz0G2u4+vbmtONUzhrZCvTam/TvGQLh
-         mXp3JTBCjdugiTzkuc6CztUii1gq+X797YBAR1Ez/J8THq1RpvMlbg3yYh833r+ixPss
-         kET4buSDm0X9o94J9b/okOAWVDB+5x0sc48rlx/RWgOwy6v32kGYnPZn1174NWw78Dxw
-         GlEg==
-X-Gm-Message-State: APjAAAVbsWBEmkEx3c73TaAbtuLeSAKCxU6GYLnoxwfbzdvN+hGtx5Fq
-        CCe4p8jvIKMpCIAQEWSr8H6QEw==
-X-Google-Smtp-Source: APXvYqyiGSARqeIXVEVI1rDeKHEAUCzETEToOqGqB5l4cdarrKDlAOgnSm/pu8APW5hjoQ/RqSsBHA==
-X-Received: by 2002:ac2:4904:: with SMTP id n4mr3170649lfi.179.1570653717613;
-        Wed, 09 Oct 2019 13:41:57 -0700 (PDT)
+        bh=ZSbYJ+tLtfDuMSVqb7LwJbRD3u314/MfD3p1keHf2Mw=;
+        b=bd8gtaTcmZ32RyRIyMfqo7YgeCqZA0SlAiemDECZq587mxybdDWuuKsNQLioo6gnIr
+         UFk/koPA+I6raq09dowKXyThq17cn9aH9HE9tNE1IDoKICTYsS7jUM2xcix5ma0xKirh
+         W3wtwu63ecSn7mDWv5rqHv8jGOMcfjGCtZ6mswDC/KFqPwDFdMXJe8Gm31fdmocir8yw
+         9ufiuVHSr8zjVMkYGvyInPQLmKE+Hv+x9iKZHvxqMORccMrCjJhQpnu0L/uj9n0K4kFV
+         zAPo03IHlV2aK0wgksBpP1EMPaC3MJyzeHvch1PTdYVjwCrBcTw9L10qDB+EqCvOgpYG
+         XQjQ==
+X-Gm-Message-State: APjAAAW6jVaSQZdfs6aa/zZQxJFqw87c+MJrbHJzYIDcYtQlHFjG8twO
+        Hm+YU2L+LiquGJ4NuLGbousoZg==
+X-Google-Smtp-Source: APXvYqw28C/ieWvRsyR1+UMEt2bz2E5FWkQj5sxBQdPyN7lcnh1XII6n052wtVOlBKbSfxiLGW1YSg==
+X-Received: by 2002:a2e:86cd:: with SMTP id n13mr3689328ljj.252.1570653718918;
+        Wed, 09 Oct 2019 13:41:58 -0700 (PDT)
 Received: from localhost.localdomain (168-200-94-178.pool.ukrtel.net. [178.94.200.168])
-        by smtp.gmail.com with ESMTPSA id h3sm730871ljf.12.2019.10.09.13.41.56
+        by smtp.gmail.com with ESMTPSA id h3sm730871ljf.12.2019.10.09.13.41.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2019 13:41:57 -0700 (PDT)
+        Wed, 09 Oct 2019 13:41:58 -0700 (PDT)
 From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 To:     ast@kernel.org, daniel@iogearbox.net, yhs@fb.com,
         davem@davemloft.net, jakub.kicinski@netronome.com, hawk@kernel.org,
@@ -52,9 +52,9 @@ Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
         bpf@vger.kernel.org, clang-built-linux@googlegroups.com,
         ilias.apalodimas@linaro.org, sergei.shtylyov@cogentembedded.com,
         Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [PATCH v4 bpf-next 13/15] samples/bpf: provide C/LDFLAGS to libbpf
-Date:   Wed,  9 Oct 2019 23:41:32 +0300
-Message-Id: <20191009204134.26960-14-ivan.khoronzhuk@linaro.org>
+Subject: [PATCH v4 bpf-next 14/15] samples/bpf: add sysroot support
+Date:   Wed,  9 Oct 2019 23:41:33 +0300
+Message-Id: <20191009204134.26960-15-ivan.khoronzhuk@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191009204134.26960-1-ivan.khoronzhuk@linaro.org>
 References: <20191009204134.26960-1-ivan.khoronzhuk@linaro.org>
@@ -63,28 +63,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to build lib using C/LD flags of target arch, provide them
-to libbpf make.
+Basically it only enables that was added by previous couple fixes.
+Sysroot contains correct libs installed and its headers. Useful when
+working with NFC or virtual machine.
+
+Usage example:
+
+clean (on demand)
+    make ARCH=arm -C samples/bpf clean
+    make ARCH=arm -C tools clean
+    make ARCH=arm clean
+
+configure and install headers:
+
+    make ARCH=arm defconfig
+    make ARCH=arm headers_install
+
+build samples/bpf:
+    make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- samples/bpf/ \
+    SYSROOT="path/to/sysroot"
 
 Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 ---
- samples/bpf/Makefile | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ samples/bpf/Makefile | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
-index a6c33496e8ca..6b161326ac67 100644
+index 6b161326ac67..4df11ddb9c75 100644
 --- a/samples/bpf/Makefile
 +++ b/samples/bpf/Makefile
-@@ -248,7 +248,8 @@ clean:
+@@ -187,6 +187,11 @@ TPROGS_CFLAGS += -I$(srctree)/tools/lib/
+ TPROGS_CFLAGS += -I$(srctree)/tools/include
+ TPROGS_CFLAGS += -I$(srctree)/tools/perf
  
- $(LIBBPF): FORCE
- # Fix up variables inherited from Kbuild that tools/ build system won't like
--	$(MAKE) -C $(dir $@) RM='rm -rf' LDFLAGS= srctree=$(BPF_SAMPLES_PATH)/../../ O=
-+	$(MAKE) -C $(dir $@) RM='rm -rf' EXTRA_CFLAGS="$(TPROGS_CFLAGS)" \
-+		LDFLAGS=$(TPROGS_LDFLAGS) srctree=$(BPF_SAMPLES_PATH)/../../ O=
++ifdef SYSROOT
++TPROGS_CFLAGS += --sysroot=$(SYSROOT)
++TPROGS_LDFLAGS := -L$(SYSROOT)/usr/lib
++endif
++
+ TPROGCFLAGS_bpf_load.o += -Wno-unused-variable
  
- $(obj)/syscall_nrs.h:	$(obj)/syscall_nrs.s FORCE
- 	$(call filechk,offsets,__SYSCALL_NRS_H__)
+ TPROGS_LDLIBS			+= $(LIBBPF) -lelf
 -- 
 2.17.1
 
