@@ -2,62 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AA92D11E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 16:59:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 518F0D11D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 16:56:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731550AbfJIO7Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 10:59:25 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3673 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730955AbfJIO7X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 10:59:23 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 33D8429321D2634C5162;
-        Wed,  9 Oct 2019 22:59:16 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 9 Oct 2019 22:59:06 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <mchehab@kernel.org>, <sean@mess.org>, <hansverk@cisco.com>,
-        <daniel.vetter@ffwll.ch>
-CC:     <linux-media@vger.kernel.org>, <zhongjiang@huawei.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 4/4] media: v4l2-dv-timings: Use DIV_ROUND_CLOSEST directly to make it readable
-Date:   Wed, 9 Oct 2019 22:55:25 +0800
-Message-ID: <1570632925-14926-5-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
-In-Reply-To: <1570632925-14926-1-git-send-email-zhongjiang@huawei.com>
-References: <1570632925-14926-1-git-send-email-zhongjiang@huawei.com>
+        id S1731214AbfJIO4D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 10:56:03 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38557 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729491AbfJIO4D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 10:56:03 -0400
+Received: by mail-pf1-f195.google.com with SMTP id h195so1789134pfe.5
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 07:56:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=aOgn8mw5G0zCorohTbiBhErE9Htr2eH0PTcfAgZzeCI=;
+        b=VstX66QSqpiEh6mLaTLvPTUKIxieH1clx0lHan9qg0sh7wSLa9o1SAHAsDn45Y1LEX
+         VnvHVqpzptArvIVOzmNnYmTvkQoS8/kmuZZoq6M0C8NPelxANZI7SXzH1WJ+NCXymblC
+         8P4YVNu/EppaFy48zVDd4SMI+oGovUArNlnRM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aOgn8mw5G0zCorohTbiBhErE9Htr2eH0PTcfAgZzeCI=;
+        b=VnSS77fUdLXhAjU5nnev6vgwFPmSBuhSpDGpxvPhAKsARWdsoC0wBR8AsSce7YxX/J
+         dQ//ZZhbCfMGQD8VzrU3gQO1krH8ZgLVvVqZBn7i0dNwVHG/ma/c8f7W3x9UeSGJ/xY3
+         9DFR7BBKGjCMStmp3sAVvzxMD40PCYHhxucGlSf5lHZSzirlWsuEH8F0GygNWFRKWF7Q
+         9fAFtES8Pqgl07aMchorwIPoqwFgPUuE2n4nIBkiazjG2LvH+0ukPtswDFImu7y64mPZ
+         y5Fpw7IDOYpvy9Zd1WrH1yB+qOibymVOcHxFnXtFCX7e+zQ814HiZH8omW4q4Jzbv3Qb
+         PN0Q==
+X-Gm-Message-State: APjAAAVSqP5BWgetdpfCznWfRzsdSZJSfJhZcGs4H7oaJCDNESsCE14M
+        4k7RxsPMMy52C6koibPLrW1JnA==
+X-Google-Smtp-Source: APXvYqxG4MfEe0DJOggwz01Le1Ib2Ew4XpzR9Ciw+7fCKsEz4kX7uyIeV9AIXk2h68uhE2I+UsKqfg==
+X-Received: by 2002:a63:287:: with SMTP id 129mr4814068pgc.190.1570632960950;
+        Wed, 09 Oct 2019 07:56:00 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id v9sm2866264pfe.1.2019.10.09.07.55.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 07:56:00 -0700 (PDT)
+Date:   Wed, 9 Oct 2019 10:55:58 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Todd Kjos <tkjos@android.com>, jannh@google.com, arve@android.com,
+        christian@brauner.io, devel@driverdev.osuosl.org,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        maco@android.com, tkjos@google.com,
+        Hridya Valsaraju <hridya@google.com>
+Subject: Re: [PATCH] binder: prevent UAF read in
+ print_binder_transaction_log_entry()
+Message-ID: <20191009145558.GA96813@google.com>
+References: <CAG48ez14Q0-F8LqsvcNbyR2o6gPW8SHXsm4u5jmD9MpsteM2Tw@mail.gmail.com>
+ <20191008130159.10161-1-christian.brauner@ubuntu.com>
+ <20191008180516.GB143258@google.com>
+ <20191009104011.rzfdvq7otkkj533m@wittgenstein>
+ <20191009142129.GD143258@google.com>
+ <20191009142910.ggerxqxkft2ifhdn@wittgenstein>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191009142910.ggerxqxkft2ifhdn@wittgenstein>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kernel.h macro DIV_ROUND_CLOSEST performs the computation (x + d/2)/d
-but is perhaps more readable.
+On Wed, Oct 09, 2019 at 04:29:11PM +0200, Christian Brauner wrote:
+> On Wed, Oct 09, 2019 at 10:21:29AM -0400, Joel Fernandes wrote:
+> > On Wed, Oct 09, 2019 at 12:40:12PM +0200, Christian Brauner wrote:
+> > > On Tue, Oct 08, 2019 at 02:05:16PM -0400, Joel Fernandes wrote:
+> > > > On Tue, Oct 08, 2019 at 03:01:59PM +0200, Christian Brauner wrote:
+> > > > > When a binder transaction is initiated on a binder device coming from a
+> > > > > binderfs instance, a pointer to the name of the binder device is stashed
+> > > > > in the binder_transaction_log_entry's context_name member. Later on it
+> > > > > is used to print the name in print_binder_transaction_log_entry(). By
+> > > > > the time print_binder_transaction_log_entry() accesses context_name
+> > > > > binderfs_evict_inode() might have already freed the associated memory
+> > > > > thereby causing a UAF. Do the simple thing and prevent this by copying
+> > > > > the name of the binder device instead of stashing a pointer to it.
+> > > > > 
+> > > > > Reported-by: Jann Horn <jannh@google.com>
+> > > > > Fixes: 03e2e07e3814 ("binder: Make transaction_log available in binderfs")
+> > > > > Link: https://lore.kernel.org/r/CAG48ez14Q0-F8LqsvcNbyR2o6gPW8SHXsm4u5jmD9MpsteM2Tw@mail.gmail.com
+> > > > > Cc: Joel Fernandes <joel@joelfernandes.org>
+> > > > > Cc: Todd Kjos <tkjos@android.com>
+> > > > > Cc: Hridya Valsaraju <hridya@google.com>
+> > > > > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> > > > > ---
+> > > > >  drivers/android/binder.c          | 4 +++-
+> > > > >  drivers/android/binder_internal.h | 2 +-
+> > > > >  2 files changed, 4 insertions(+), 2 deletions(-)
+> > > > > 
+> > > > > diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+> > > > > index c0a491277aca..5b9ac2122e89 100644
+> > > > > --- a/drivers/android/binder.c
+> > > > > +++ b/drivers/android/binder.c
+> > > > > @@ -57,6 +57,7 @@
+> > > > >  #include <linux/sched/signal.h>
+> > > > >  #include <linux/sched/mm.h>
+> > > > >  #include <linux/seq_file.h>
+> > > > > +#include <linux/string.h>
+> > > > >  #include <linux/uaccess.h>
+> > > > >  #include <linux/pid_namespace.h>
+> > > > >  #include <linux/security.h>
+> > > > > @@ -66,6 +67,7 @@
+> > > > >  #include <linux/task_work.h>
+> > > > >  
+> > > > >  #include <uapi/linux/android/binder.h>
+> > > > > +#include <uapi/linux/android/binderfs.h>
+> > > > >  
+> > > > >  #include <asm/cacheflush.h>
+> > > > >  
+> > > > > @@ -2876,7 +2878,7 @@ static void binder_transaction(struct binder_proc *proc,
+> > > > >  	e->target_handle = tr->target.handle;
+> > > > >  	e->data_size = tr->data_size;
+> > > > >  	e->offsets_size = tr->offsets_size;
+> > > > > -	e->context_name = proc->context->name;
+> > > > > +	strscpy(e->context_name, proc->context->name, BINDERFS_MAX_NAME);
+> > > > 
+> > > > Strictly speaking, proc-context->name can also be initialized for !BINDERFS
+> > > > so the BINDERFS in the MAX_NAME macro is misleading. So probably there should
+> > > > be a BINDER_MAX_NAME (and associated checks for whether non BINDERFS names
+> > > > fit within the MAX.
+> > > 
+> > > I know but I don't think it's worth special-casing non-binderfs devices.
+> > > First, non-binderfs devices can only be created through a KCONFIG option
+> > > determined at compile time. For stock Android the names are the same for
+> > > all vendors afaik.
+> > 
+> > I am just talking about the name of weirdly named macro here.
+> 
+> You might miss context here: It's named that way because currently only
+> binderfs binder devices are bound to that limit. That's a point I made
+> further below in my previous mail. Non-binderfs devices are not subject
+> to that restriction and when we tried to make them subject to the same
+> it as rejected.
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- drivers/media/v4l2-core/v4l2-dv-timings.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I know that. I am saying the memcpy is happening for regular binder devices
+as well but the macro has BINDERFS in the name. That's all. It is not a
+significant eye sore. But is a bit odd.
 
-diff --git a/drivers/media/v4l2-core/v4l2-dv-timings.c b/drivers/media/v4l2-core/v4l2-dv-timings.c
-index 4f23e93..2b399c0 100644
---- a/drivers/media/v4l2-core/v4l2-dv-timings.c
-+++ b/drivers/media/v4l2-core/v4l2-dv-timings.c
-@@ -757,7 +757,7 @@ bool v4l2_detect_gtf(unsigned frame_height,
- 	pix_clk = pix_clk / GTF_PXL_CLK_GRAN * GTF_PXL_CLK_GRAN;
- 
- 	hsync = (frame_width * 8 + 50) / 100;
--	hsync = ((hsync + GTF_CELL_GRAN / 2) / GTF_CELL_GRAN) * GTF_CELL_GRAN;
-+	hsync = DIV_ROUND_CLOSEST(hsync, GTF_CELL_GRAN) * GTF_CELL_GRAN;
- 
- 	h_fp = h_blank / 2 - hsync;
- 
--- 
-1.7.12.4
+> <snip>
+> 
+> > 
+> > > Fifth, I already tried to push for validation of non-binderfs binder
+> > > devices a while back when I wrote binderfs and was told that it's not
+> > > needed. Hrydia tried the same and we decided the same thing. So you get
+> > > to be the next person to send a patch. :)
+> > 
+> > I don't follow why we are talking about non-binderfs validation. I am just
+> 
+> Because above you said
+> 
+> > > > so the BINDERFS in the MAX_NAME macro is misleading. So probably there should
+> > > > be a BINDER_MAX_NAME (and associated checks for whether non BINDERFS names
+> > > > fit within the MAX.
+> 
+> which to me reads like you want generic checks for _all_ binder devices
+> not just for the ones from binderfs.
 
+No I am not talking about the checks at all, I am talking about the unwanted
+mem copy you are doing for regular binder devices now. Before binderfs this
+would not have happened, but now for regular binder devices we have to do the
+extra mem copies which were avoided before. That was what I was talking about.
+
+But this discussing is getting to bike shedding at this point, and since the
+overhead is likely small, I am Ok with the change (though I don't like very
+much the additional memcpy and the associated space wastage in the
+transaction buffer for regular binder devices).
+
+thanks!
+
+ - Joel
+
+> 
+> (Btw, I didn't read your comments as pointing it out the patch is buggy.
+> I mostly wanted to provide context why we ended up with the
+> binderfs-specific restriction. Maybe the list sounded like a complaint
+> but it wasn't meant to. :))
+> 
+> Thanks!
+> Christian
