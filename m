@@ -2,71 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A11ED0EB2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 14:28:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20148D0EB6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 14:29:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730765AbfJIM2g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 08:28:36 -0400
-Received: from sonic302-20.consmr.mail.ir2.yahoo.com ([87.248.110.83]:37119
-        "EHLO sonic302-20.consmr.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727219AbfJIM2g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 08:28:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1570624114; bh=Y3TWFWuOTE5CQkBWoUgdRvykNtAy7iWo0XA1fZ7yQKQ=; h=Date:From:Reply-To:Subject:From:Subject; b=N/wfbmjJ8MersS8tHxPPxkAS6VJrhzvCt+w8V8uVJEdTMNNq9aXA0nNc2FmIsVNxLEMPiSaKaFoRPH7l+VDb1R7l1GO65C2aWUmHrNkmgG67WO+vwvpuYa01NWdcN6JOY9RAOhacJwKj8ewTWAyn7lin3vHOsoQG8rZSe1amC7tp08sSfT4BQEtk3PX3ENU8rZM+gI6vfKmvbs2DiyhM471/b12QxuBihnGlgGu8SZA5KuRMjwZJLdERivKKMijnr5rNPieWmFCFBelDMz4lMF1QAy2a0liLosiqD6N8ijRqqsiXFGawfeeyWD+NRcdHyu59sRRNfC/YOc+kNxdkew==
-X-YMail-OSG: Zxk1SjsVM1ntMMKygoy784HOaGf0_.pNYIpvZ3mKWkuOxhtr84BFaIyqz7isaNQ
- 7z5DP8cgHTkoUcQsmI8Xq1sh2HKD.XTXGS6ybHpL2o456NUzQkAkJtOiVJCiPRuFMszeEg2k9Ou2
- uggzd2muyIMiqpJDdEOjGngvjalFjJ6wHrFKHmkQcX1HuEKGab7lE4gq8fu5Sc.uYW2Skp0Q.mtY
- ueA127QU.YYdLTnr8bhbbnL_CWpTFffiWfrZ.OOOW_zRzyydt7PLGejIvUyOrjZphCoU2Aa2hO60
- sSYKIv3TI87RrSWQEFb_KcgEl7NXNuTCX3T986tZr3jp30p8OBXxWB4Q.421RCoaiqfLmtTbgYg4
- 9DvbI2cJEOrE_amBX31raDrPsUkg.t2RTi7f4TipW3tiKrtkLch_5hwo.UrPjSozWYimDEfaY9B_
- ukFQmdjLCEp9hG3yXwDI3d0eIY2CaLEdTkDjjGu8t5MGcZp.Mn8HixgkHDvQnYZZ03o_PaDl_tq6
- zw_qyy9lRzs9uTJncrB6ggG0tT7.mRqEzJOCsAgQwvHWS4MbpcvgbFKk2_pqTCgCrSqECoTutcct
- QEv6ve50deGx0evP_RMUNKUbvGcL5eJ5dIJz8l3MhJRU6NHyF1w2BpVpfSzePPJ1lrK5CpgY3ODF
- 2N5nHfASBPsBFn5S00J1nUfYyOIwD1gCTW8IuvTl5Mynu7eNDFzJE7HvAAwhkaDIbRRc6RN9_WbC
- 7ovYZQVsVxaxYS303pBRs7TiUr0fklXrQ7oYyBdGhbaRAqqRbE4veyl0omUa4OiXqo8Hdxr9zAGb
- 6sknzd4pM_bY2zaf9aJvObsNTpZVRbUwhoR9LLcDTXs2GKL7gG16fNQXjf4FlNCNf2H7ZnIcMv0k
- _p3Qi7B65KSc_7mhf51fb7_Sigyc7Tr0_5D.N2MGQY1D47POwZAR2y7FWCe3mbFAjeXXPkS7LFm5
- dRrgUYNVccw6OXA6_5.TCvvUld.p8xQSS6CJo_TcEhgj0qH7RVtD39PrqF9ZTXBYefSUOqD53fHc
- .MOppjUehM6kzV2tCwIvEEu1MKvUZTg0qmPwJB9SrUpIA4z6tUH9USeFlYmhPG.LRHoYkDWw4Lnh
- Dv4Tcek.BPtLFN5wUF9sfew.l0rf6J2.AO4fI5CGbkosaDvABqKCt2u3CoKmxc6tZxRuXohE9N3c
- KvkyOjmjCu5mbHzHOkSIBMBUQurBQA47zEn1F4Big2nZZAZgbLQMfNUnb4RVSDofDS9cG4MUSvvS
- tMBG54plxuo.1qhbWX5i97GEqd9TAerWdO5VdY2XvCal_n1viju0-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ir2.yahoo.com with HTTP; Wed, 9 Oct 2019 12:28:34 +0000
-Date:   Wed, 9 Oct 2019 12:28:32 +0000 (UTC)
-From:   Diana Markus <dianamarkus343@gmail.com>
-Reply-To: markusdian121@gmail.com
-Message-ID: <1081640945.8572917.1570624112834@mail.yahoo.com>
-Subject: Spendenfonds von Frau Diana Markus,
+        id S1730950AbfJIM3t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 08:29:49 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42612 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727029AbfJIM3s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 08:29:48 -0400
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9061434CC
+        for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2019 12:29:48 +0000 (UTC)
+Received: by mail-wm1-f69.google.com with SMTP id 190so991985wme.4
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 05:29:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=xvThJK+yx5Ccn9NmhrAQG/4aOZL4annIFveYbxX7LRY=;
+        b=PiY62UuC9RHHxnofqDuidHBZE10TMkZfMKaxrLNBwLqReKlDLMhTfHoPbCCvr9B9Rm
+         4NxwoZ/ISrFDknyXxvmc5FvkxW4R2f7TpC9hCnQu7f/t3qHjRjpTpG/WXHu9psbAy8pD
+         p/tPdNl6ZTGhKaxeg/w98lDF9gLKqtMqGFgc1vcmZXqXwkRH6PbkwqgkJmvQr7uiIELX
+         /UtZkn59GPZBFyPsE227yx/Ap0koDZBxgCxnY6RHNKe1FFgCxKn47nkEgCwFMCqxrHb2
+         GQFotuwAKOGEyJeZ5/FloR9SZxId84pC0EgXpLHfmPxpjvByYpgHgIZKDKU31/Dnc19d
+         eFaA==
+X-Gm-Message-State: APjAAAWrQ2C3MuExIX14dPg5M2BZuzgq1abTsPUEqeZEAbjWkl5dERz7
+        bkn1b4Gzyt6T21tPtLBGkGUfm0PjlrU1G+Y35U4OXe3HP33Vy5i49CX7D6vih2n/2VOI3n3DVzb
+        OH0aoyyTawMWeZy0jKoK1+Nao
+X-Received: by 2002:a1c:6389:: with SMTP id x131mr2379539wmb.77.1570624187334;
+        Wed, 09 Oct 2019 05:29:47 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzmSCLkj57Flq62wjjdik+sMsp+Gw9vcplMUYMGct4y5MTaJRpQ2Q5fyhVBXbKv5lQZ0l/Y2A==
+X-Received: by 2002:a1c:6389:: with SMTP id x131mr2379523wmb.77.1570624187133;
+        Wed, 09 Oct 2019 05:29:47 -0700 (PDT)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id 59sm3512855wrc.23.2019.10.09.05.29.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 05:29:46 -0700 (PDT)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jim Mattson <jmattson@google.com>
+Subject: Re: [PATCH] selftests: kvm: fix sync_regs_test with newer gccs
+In-Reply-To: <5b1b95e5-4836-ab55-fe4d-e9cc78a7a95e@redhat.com>
+References: <20191008180808.14181-1-vkuznets@redhat.com> <20191008183634.GF14020@linux.intel.com> <b7d20806-4e88-91af-31c1-8cbb0a8a330b@redhat.com> <87d0f6yzd3.fsf@vitty.brq.redhat.com> <5b1b95e5-4836-ab55-fe4d-e9cc78a7a95e@redhat.com>
+Date:   Wed, 09 Oct 2019 14:29:45 +0200
+Message-ID: <874l0iyudi.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Guten Tag, wie geht es dir heute ?. Ich bin Frau Diana Markus, ich bin seit=
- 19 Jahren ohne Kind mit meinem Mann verheiratet und mein Mann ist 2014 ges=
-torben. Ich melde mich, um Ihnen meinen Wunsch mitzuteilen, einen Betrag vo=
-n $2,900.000,00 US-Dollar zu spenden, den ich von meinem geerbt habe versto=
-rbener Ehemann. F=C3=BCr wohlt=C3=A4tige Stiftungsschulen, Kirchen, Witwen,=
- die das Wort Gottes in Ihrem Land verbreiten
+Paolo Bonzini <pbonzini@redhat.com> writes:
 
-K=C3=BCrzlich sagte mir mein Arzt, dass ich die n=C3=A4chsten acht Monate a=
-ufgrund eines Krebsleiden nicht durchhalten w=C3=BCrde. Das Problem, das mi=
-ch am meisten st=C3=B6rt, ist meine Schlaganfallkrankheit. Ich habe diese E=
-ntscheidung getroffen, weil ich kein Kind habe, das dieses Geld erbt, und i=
-ch ziehe an Ich m=C3=B6chte nicht, dass dieser Fonds gottlos angelegt wird.
+> On 09/10/19 12:42, Vitaly Kuznetsov wrote:
+>> Paolo Bonzini <pbonzini@redhat.com> writes:
+>>> There is no practical difference with Vitaly's patch.  The first
+>>> _vcpu_run has no pre-/post-conditions on the value of %rbx:
+>> 
+>> I think what Sean was suggesting is to prevent GCC from inserting
+>> anything (and thus clobbering RBX) between the call to guest_call() and
+>> the beginning of 'asm volatile' block by calling *inside* 'asm volatile'
+>> block instead.
+>
+> Yes, but there is no way that clobbering RBX will break the test,
+> because RBX is not initialized until after the first _vcpu_run succeeds.
+>
 
-Sobald ich Ihre Antwort erhalten habe, die Ihre Zustimmung zur von mir ange=
-wiesenen Arbeit best=C3=A4tigt, gebe ich Ihnen alle relevanten Informatione=
-n, die die Freigabe und =C3=9Cberweisung des Geldes an Sie als meinen ordnu=
-ngsgem=C3=A4=C3=9F zugewiesenen Vertreter autorisieren. Und auch mein Bild
+Right, we're always resuming after so potential clobbering doesn't
+matter. Thanks!
 
-Bitte versichern Sie mir, dass Sie dementsprechend handeln werden, wie ich =
-es hier angegeben habe. In der Hoffnung, bald Ihre Antwort zu erhalten,
-
-Bleibe im Herrn gesegnet.
-Deine Schwester in Christus
-Frau Diana Markus
+-- 
+Vitaly
