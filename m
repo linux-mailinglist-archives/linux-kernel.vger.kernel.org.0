@@ -2,87 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20DADD0ED9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 14:33:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B424D0EF2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 14:35:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731204AbfJIMdA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 08:33:00 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:43818 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727029AbfJIMc7 (ORCPT
+        id S1731173AbfJIMf3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 08:35:29 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:33152 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730662AbfJIMf3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 08:32:59 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x99CWfZZ083947;
-        Wed, 9 Oct 2019 07:32:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1570624361;
-        bh=wy74BV+gADxjYq84q/3icEqfPmppjgnaKhtU7G9oYJM=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=yuh5FDLTaWIkFnM/ECeh1Gucupgc11l0TsYvbWxZxIrVMv/ua5k3ONVZoGs4CTwRS
-         3Mq04p2jAnku+Djw/x8Y6NjxtbwjwlN+fgHc6TTBVTQklkEeaTMQH8ShUL5vmrFPg4
-         gaONubkEn9so8UAclt9I6Rtuymp0Hg9Kh4DNI1Fw=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x99CWf4p090522
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 9 Oct 2019 07:32:41 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 9 Oct
- 2019 07:32:37 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 9 Oct 2019 07:32:37 -0500
-Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x99CWbNS081004;
-        Wed, 9 Oct 2019 07:32:40 -0500
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-CC:     Jacopo Mondi <jacopo@jmondi.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Benoit Parrot <bparrot@ti.com>
-Subject: [Patch v4 3/3] media: ov5640: Make 2592x1944 mode only available at 15 fps
-Date:   Wed, 9 Oct 2019 07:35:10 -0500
-Message-ID: <20191009123510.19106-4-bparrot@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191009123510.19106-1-bparrot@ti.com>
-References: <20191009123510.19106-1-bparrot@ti.com>
+        Wed, 9 Oct 2019 08:35:29 -0400
+Received: by mail-wm1-f67.google.com with SMTP id r17so4676578wme.0;
+        Wed, 09 Oct 2019 05:35:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zrukuNIIpELS1SFhnaqgjV+S03DcpwgywhfpTJYGiQY=;
+        b=YXWWoxP687A4XDYTVavYfNNciK2iQ3bmHf87UHCsApkdu79BpNx2//OcEqWcVxnCyi
+         xLJgx28lRn8/3stvBve9smtm0pdcFk5rF6GR32ipf7KGFWBiSDNJ/G313z/GJbOLOyf1
+         0GgmM4KMdLcmEr2tkc2lUPvzB9oV1LKtFNj5r1N1ztWPV3Ihq78w4at+y9KLqPFjD2dr
+         wCUpV6hILJU9EpH4psIpdxWw/p5i64tRaF8FSoAJB6NFaftHNxo7ruiynw+UvZgN0PXt
+         vjlD/f63gHYQPqtUD/uzBOMUaPgw9i4Bx9EbeTD923ox9nnMe3Eo1FhGzxATp5KDB48A
+         5spw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zrukuNIIpELS1SFhnaqgjV+S03DcpwgywhfpTJYGiQY=;
+        b=qW9QJ+LgomqnTpkiGoXM/ymUIu9J6xR5z//GCto1U9Goo4nQzxGMU47OIfAEynakS9
+         W8UPBBDpL6ZBYMZEoV074umoyPp2MN88a8LGLQXHwkxZGynLa7KHYRSWvztc3QM6cLeD
+         OjZ0+0bs7xw14ZJpPMBtPwzOC6XXNL4P7Sb75qZkSuUpOsHHNoc5qmWwHbZdRBoQ3S+t
+         bvu89vEuJ97BoRl/KMvKrtRhf74WIv8qP1Ff1A6FycaSHIMtZQ2Hssf5+aP5Wm3N4T/a
+         YfKXg8cf2heiOEPMJg61/+kjSdOmRYguh+4NerAud4TI7SeQFQUO7nh9gQhumaSVx5WR
+         JjJg==
+X-Gm-Message-State: APjAAAVUdb+kcX7SCxf/p7vL4vBihj9ED5FLWJ+14PaqwkI1bYM75o6n
+        KJMTQCQ7Mr4e8LBxE+2CuhI=
+X-Google-Smtp-Source: APXvYqyIM0rgTcW2Gxf93OV7hWpxtlNpWqt+guqqmn2grspSyMcKu7E2vZauZhYTsT6VIMg9UDo/NQ==
+X-Received: by 2002:a1c:a8c7:: with SMTP id r190mr2445724wme.162.1570624526496;
+        Wed, 09 Oct 2019 05:35:26 -0700 (PDT)
+Received: from localhost ([51.15.41.238])
+        by smtp.gmail.com with ESMTPSA id d15sm2260310wru.50.2019.10.09.05.35.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 05:35:25 -0700 (PDT)
+Date:   Wed, 9 Oct 2019 13:35:24 +0100
+From:   Stefan Hajnoczi <stefanha@gmail.com>
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     netdev@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
+        linux-hyperv@vger.kernel.org,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        kvm@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
+        Dexuan Cui <decui@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jorgen Hansen <jhansen@vmware.com>
+Subject: Re: [RFC PATCH 09/13] hv_sock: set VMADDR_CID_HOST in the
+ hvs_remote_addr_init()
+Message-ID: <20191009123524.GJ5747@stefanha-x1.localdomain>
+References: <20190927112703.17745-1-sgarzare@redhat.com>
+ <20190927112703.17745-10-sgarzare@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5me2qT3T17SWzdxI"
+Content-Disposition: inline
+In-Reply-To: <20190927112703.17745-10-sgarzare@redhat.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The sensor data sheet clearly state that 2592x1944 only works at 15 fps
-make sure we don't try to miss configure the pll out of acceptable
-range.
 
-Signed-off-by: Benoit Parrot <bparrot@ti.com>
-Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
----
- drivers/media/i2c/ov5640.c | 5 +++++
- 1 file changed, 5 insertions(+)
+--5me2qT3T17SWzdxI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/media/i2c/ov5640.c b/drivers/media/i2c/ov5640.c
-index 065c9b61ecbd..5e495c833d32 100644
---- a/drivers/media/i2c/ov5640.c
-+++ b/drivers/media/i2c/ov5640.c
-@@ -1611,6 +1611,11 @@ ov5640_find_mode(struct ov5640_dev *sensor, enum ov5640_frame_rate fr,
- 	    !(mode->hact == 640 && mode->vact == 480))
- 		return NULL;
- 
-+	/* 2592x1944 only works at 15fps max */
-+	if ((mode->hact == 2592 && mode->vact == 1944) &&
-+	    fr > OV5640_15_FPS)
-+		return NULL;
-+
- 	return mode;
- }
- 
--- 
-2.17.1
+On Fri, Sep 27, 2019 at 01:26:59PM +0200, Stefano Garzarella wrote:
+> Remote peer is always the host, so we set VMADDR_CID_HOST as
+> remote CID instead of VMADDR_CID_ANY.
+>=20
+> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> ---
+>  net/vmw_vsock/hyperv_transport.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+
+--5me2qT3T17SWzdxI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl2d1AwACgkQnKSrs4Gr
+c8jb5wf/RiXbiexvEEg0hOVPHCNYSDBNEehuU8/ZUOo11ueiWzI9+b5rFidWUcc9
+4VZ3SCtzOW/3meXooyF42QP97QPJ0sQO3jpPZjCECe9McxAbm0zum+N3Cb/0AbjT
+xrpQ1FHtTgGBHydsxFcsyIcZMvp91o4Q7qNtExg/CB7vbOEJXFkSmh5968GD3o1f
+uK0Rqjqgx1Fm30mT41uRe41JvrE7QtJr8yc/uFB2h2JL7RgxRa+G+mIV1+66P2t+
+xIwq8Nj/JyQBfvD82Bvezuvf6ITNloJ7/97xTnHgg2U0YcslB/cU8gArZJlWHAKv
+O9b3imMu/xyzY1oO4yJ+mmOM3cEtFQ==
+=ktlx
+-----END PGP SIGNATURE-----
+
+--5me2qT3T17SWzdxI--
