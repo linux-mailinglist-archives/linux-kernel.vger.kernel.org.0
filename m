@@ -2,104 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46844D09DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 10:29:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2D18D09E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 10:30:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730059AbfJII3X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 04:29:23 -0400
-Received: from foss.arm.com ([217.140.110.172]:56426 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726765AbfJII3X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 04:29:23 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BB02B337;
-        Wed,  9 Oct 2019 01:29:22 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3EACF3F68E;
-        Wed,  9 Oct 2019 01:29:22 -0700 (PDT)
-Date:   Wed, 9 Oct 2019 09:29:20 +0100
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Sami Tolvanen <samitolvanen@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Subject: Re: [PATCH v2] arm64: lse: fix LSE atomics with LLVM's integrated
- assembler
-Message-ID: <20191009082920.GM42880@e119886-lin.cambridge.arm.com>
-References: <20191007201452.208067-1-samitolvanen@google.com>
- <20191008212730.185532-1-samitolvanen@google.com>
- <20191008233137.GL42880@e119886-lin.cambridge.arm.com>
- <CABCJKufHzQamE5+JtH0J4TyS05kutkty_7GwJ6w8T-szdCwHvg@mail.gmail.com>
- <20191009000159.GA531859@archlinux-threadripper>
+        id S1730006AbfJIIaA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 04:30:00 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:33807 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725848AbfJIIaA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 04:30:00 -0400
+Received: by mail-lf1-f65.google.com with SMTP id r22so990557lfm.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 01:29:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9aF36gaw1IL/nWzuDiTqLh7zzkv/1MrK93P5SQw9amo=;
+        b=GCxTBJV2TpfN5yh9793aMppv3nFyV0gP/CEpN0FhqOU0FI3HvIFnrG7SFVPFndQfQ/
+         en0lxtP89WPAMPk9DT2k4QLmsY/06k1uBFGbZdUotZ1kLMHjlj1cckoaflNScKeGwaSP
+         zH8Mh9H5zvvq0fR8ajjoqoQ65WsgxjdxOhaqw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9aF36gaw1IL/nWzuDiTqLh7zzkv/1MrK93P5SQw9amo=;
+        b=LYJjcPmklZFkAuihOWZqD6V261hO8oRac4qSFh/oho7zEOC398rnBnPq8hyeP5aWcr
+         Jd+T5QWg7Ex5jfrVzlxySG22sLBlVdySncOGd+bT/EpMAnw5R/Va7BqsuIig0l4A/HXi
+         PbSYodg4M7x/6G9FN1oUSaNoxw7gF93Npux4L05SRi0RV9JM2MFEs7rGFbdZRmXg9MIi
+         KFv6KX2QEmzPAo7gSZ7db+G14nxDX86RJvKrk5p0ja+Ik8hIe8Ta1hpiOyTg/7Ihsadh
+         zXv9RC5/FKJlYYa1q6LaL5GK23NDK8fZ2jdMDcyiS1ojOXDiC+O0alfyEuzfgWaz9YMo
+         BHEA==
+X-Gm-Message-State: APjAAAU5wTBS61WI/q4cktW+HZMrMpHoEt4wrw6Pc0aKbuGtR7TbZuDe
+        0SneVSaiibjxLhKAfToLPSd7qw==
+X-Google-Smtp-Source: APXvYqwyVvKlZ6JkfpoobL/avlhFPf8iTiuVHztmuz8Xa/Adw/gnkVXMZ4sZyLvmYLarOMoAhzv/og==
+X-Received: by 2002:ac2:4345:: with SMTP id o5mr1342574lfl.60.1570609796736;
+        Wed, 09 Oct 2019 01:29:56 -0700 (PDT)
+Received: from prevas-ravi.prevas.se ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id p86sm273799lja.100.2019.10.09.01.29.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 01:29:56 -0700 (PDT)
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     James Morris <jamorris@linux.microsoft.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <frederic@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] kernel/cred.c: make init_groups static
+Date:   Wed,  9 Oct 2019 10:29:52 +0200
+Message-Id: <20191009082953.8864-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191009000159.GA531859@archlinux-threadripper>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 05:01:59PM -0700, Nathan Chancellor wrote:
-> On Tue, Oct 08, 2019 at 04:59:25PM -0700, 'Sami Tolvanen' via Clang Built Linux wrote:
-> > On Tue, Oct 8, 2019 at 4:31 PM Andrew Murray <andrew.murray@arm.com> wrote:
-> > > This looks good to me. I can build and boot in a model with both Clang
-> > > (9.0.6) and GCC (7.3.1) and boot a guest without anything going bang.
-> > 
-> > Great, thank you for testing this!
-> > 
-> > > Though when I build with AS=clang, e.g.
-> > >
-> > > make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CC=clang AS=clang Image
-> > 
-> > Note that this patch only fixes issues with inline assembly, which
-> > should at some point allow us to drop -no-integrated-as from clang
-> > builds. I believe there are still other fixes needed before AS=clang
-> > works.
-> > 
-> > > I get errors like this:
-> > >
-> > >   CC      init/main.o
-> > > In file included from init/main.c:17:
-> > > In file included from ./include/linux/module.h:9:
-> > > In file included from ./include/linux/list.h:9:
-> > > In file included from ./include/linux/kernel.h:12:
-> > > In file included from ./include/linux/bitops.h:26:
-> > > In file included from ./arch/arm64/include/asm/bitops.h:26:
-> > > In file included from ./include/asm-generic/bitops/atomic.h:5:
-> > > In file included from ./include/linux/atomic.h:7:
-> > > In file included from ./arch/arm64/include/asm/atomic.h:16:
-> > > In file included from ./arch/arm64/include/asm/cmpxchg.h:14:
-> > > In file included from ./arch/arm64/include/asm/lse.h:13:
-> > > In file included from ./include/linux/jump_label.h:117:
-> > > ./arch/arm64/include/asm/jump_label.h:24:20: error: expected a symbol reference in '.long' directive
-> > >                  "      .align          3                       \n\t"
-> > >                                                                   ^
-> > > <inline asm>:4:21: note: instantiated into assembly here
-> > >                 .long           1b - ., "" - .
-> > >                                            ^
-> > >
-> > > I'm assuming that I'm doing something wrong?
-> > 
-> > No, this particular issue will be fixed in clang 10:
-> > https://github.com/ClangBuiltLinux/linux/issues/500
-> > 
-> > Sami
-> 
-> I believe that it should be fixed with AOSP's Clang 9.0.8 or upstream
-> Clang 9.0.0.
+init_groups is declared in both cred.h and init_task.h, but it is not
+actually referenced anywhere outside of cred.c where it is defined. So
+make it static and remove the declarations.
 
-OK, understood. You can add:
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+ include/linux/cred.h      | 1 -
+ include/linux/init_task.h | 1 -
+ kernel/cred.c             | 2 +-
+ 3 files changed, 1 insertion(+), 3 deletions(-)
 
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
-Tested-by: Andrew Murray <andrew.murray@arm.com>
+diff --git a/include/linux/cred.h b/include/linux/cred.h
+index 18639c069263..4f4af62fe8f9 100644
+--- a/include/linux/cred.h
++++ b/include/linux/cred.h
+@@ -53,7 +53,6 @@ do {							\
+ 		groups_free(group_info);		\
+ } while (0)
+ 
+-extern struct group_info init_groups;
+ #ifdef CONFIG_MULTIUSER
+ extern struct group_info *groups_alloc(int);
+ extern void groups_free(struct group_info *);
+diff --git a/include/linux/init_task.h b/include/linux/init_task.h
+index 2c620d7ac432..6a046030ffad 100644
+--- a/include/linux/init_task.h
++++ b/include/linux/init_task.h
+@@ -25,7 +25,6 @@
+ extern struct files_struct init_files;
+ extern struct fs_struct init_fs;
+ extern struct nsproxy init_nsproxy;
+-extern struct group_info init_groups;
+ extern struct cred init_cred;
+ 
+ #ifndef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
+diff --git a/kernel/cred.c b/kernel/cred.c
+index c0a4c12d38b2..87983c9f82e9 100644
+--- a/kernel/cred.c
++++ b/kernel/cred.c
+@@ -33,7 +33,7 @@ do {									\
+ static struct kmem_cache *cred_jar;
+ 
+ /* init to 2 - one for init_task, one to ensure it is never freed */
+-struct group_info init_groups = { .usage = ATOMIC_INIT(2) };
++static struct group_info init_groups = { .usage = ATOMIC_INIT(2) };
+ 
+ /*
+  * The initial credentials for the initial task
+-- 
+2.20.1
 
-> 
-> Cheers,
-> Nathan
