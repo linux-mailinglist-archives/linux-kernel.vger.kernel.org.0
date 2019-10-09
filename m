@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CC7DD16D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:33:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C1BBD1697
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:31:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732668AbfJIRcn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 13:32:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48018 "EHLO mail.kernel.org"
+        id S1732093AbfJIRYD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 13:24:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731985AbfJIRXz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 13:23:55 -0400
+        id S1731993AbfJIRX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 13:23:56 -0400
 Received: from sasha-vm.mshome.net (unknown [167.220.2.234])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D76E2190F;
+        by mail.kernel.org (Postfix) with ESMTPSA id 84E2D21A4A;
         Wed,  9 Oct 2019 17:23:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1570641835;
-        bh=u1QY37GQqiMRz3nMqJTL9xuwt1CVrLfwwm/6Qk4iZPM=;
+        bh=WTkKy8s4ac7duYl64OPSqQAgvDeJDiVxDqId02GUUs4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GJbjEGac3/M1WXVOHXDrlX/BsDB6t+4wt6/wJf+eDuaS+Gqtwj+YpZZDJOAt2+EM6
-         1YGKCjYP+vQksjEGWb8XQjafxTenA26VCg1pSDyqhDLlYEITayxtFoJ4rF8Qe4Yoiq
-         uqbXS4iZWJYDgY/J4bBMkQGCkZiDDZeCerntZbDU=
+        b=ntfBWaGHGorr8xzsHTAnrL+qQtquqDm107BxBObpY0N3Ncfg7JmTOG3HB89EDFlj9
+         qVUDOlYl/rlPn+UnAFrR5EKzX9tfB/9gXKQIcK3n8uG2C5X5X81TuG+JwIOYZKzPqK
+         OVzqN5ReMXc31n3LMfmVgT8Kq8YryJlMjiIg1xaQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Balbir Singh <sblbir@amzn.com>, Keith Busch <kbusch@kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.3 06/68] nvme-pci: Fix a race in controller removal
-Date:   Wed,  9 Oct 2019 13:04:45 -0400
-Message-Id: <20191009170547.32204-6-sashal@kernel.org>
+Cc:     Xiang Chen <chenxiang66@hisilicon.com>,
+        John Garry <john.garry@huawei.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>,
+        megaraidlinux.pdl@avagotech.com, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 08/68] scsi: megaraid: disable device when probe failed after enabled device
+Date:   Wed,  9 Oct 2019 13:04:47 -0400
+Message-Id: <20191009170547.32204-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191009170547.32204-1-sashal@kernel.org>
 References: <20191009170547.32204-1-sashal@kernel.org>
@@ -43,44 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Balbir Singh <sblbir@amzn.com>
+From: Xiang Chen <chenxiang66@hisilicon.com>
 
-[ Upstream commit b224726de5e496dbf78147a66755c3d81e28bdd2 ]
+[ Upstream commit 70054aa39a013fa52eff432f2223b8bd5c0048f8 ]
 
-User space programs like udevd may try to read to partitions at the
-same time the driver detects a namespace is unusable, and may deadlock
-if revalidate_disk() is called while such a process is waiting to
-enter the frozen queue. On detecting a dead namespace, move the disk
-revalidate after unblocking dispatchers that may be holding bd_butex.
+For pci device, need to disable device when probe failed after enabled
+device.
 
-changelog Suggested-by: Keith Busch <kbusch@kernel.org>
-Signed-off-by: Balbir Singh <sblbir@amzn.com>
-Reviewed-by: Keith Busch <kbusch@kernel.org>
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+Link: https://lore.kernel.org/r/1567818450-173315-1-git-send-email-chenxiang66@hisilicon.com
+Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
+Reviewed-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/core.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/scsi/megaraid.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index d3d6b7bd69033..28217cee5e762 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -103,10 +103,13 @@ static void nvme_set_queue_dying(struct nvme_ns *ns)
- 	 */
- 	if (!ns->disk || test_and_set_bit(NVME_NS_DEAD, &ns->flags))
- 		return;
--	revalidate_disk(ns->disk);
- 	blk_set_queue_dying(ns->queue);
- 	/* Forcibly unquiesce queues to avoid blocking dispatch */
- 	blk_mq_unquiesce_queue(ns->queue);
-+	/*
-+	 * Revalidate after unblocking dispatchers that may be holding bd_butex
-+	 */
-+	revalidate_disk(ns->disk);
- }
+diff --git a/drivers/scsi/megaraid.c b/drivers/scsi/megaraid.c
+index 45a66048801be..ff6d4aa924213 100644
+--- a/drivers/scsi/megaraid.c
++++ b/drivers/scsi/megaraid.c
+@@ -4183,11 +4183,11 @@ megaraid_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
+ 		 */
+ 		if (pdev->subsystem_vendor == PCI_VENDOR_ID_COMPAQ &&
+ 		    pdev->subsystem_device == 0xC000)
+-		   	return -ENODEV;
++			goto out_disable_device;
+ 		/* Now check the magic signature byte */
+ 		pci_read_config_word(pdev, PCI_CONF_AMISIG, &magic);
+ 		if (magic != HBA_SIGNATURE_471 && magic != HBA_SIGNATURE)
+-			return -ENODEV;
++			goto out_disable_device;
+ 		/* Ok it is probably a megaraid */
+ 	}
  
- static void nvme_queue_scan(struct nvme_ctrl *ctrl)
 -- 
 2.20.1
 
