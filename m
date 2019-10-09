@@ -2,371 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24DC9D0A40
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 10:52:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03CA5D0A4C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 10:52:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730485AbfJIIwR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 04:52:17 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:43750 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730406AbfJIIwP (ORCPT
+        id S1730565AbfJIIwY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 04:52:24 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41184 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730406AbfJIIwV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 04:52:15 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x998q6Bm035255;
-        Wed, 9 Oct 2019 03:52:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1570611126;
-        bh=CJRCJuf3Ec4lXKJvRu7xvfp5Qc4WB9fgDUnDZNXBBis=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=J/yC1r1zlbV7N78XH+SIII9Hiszdkk1jm2UI0nmKW+fJBNRE+rJAfo+ru/SggPb91
-         LERUse9hRmvUZwz6UcEVlC095S+SyvGQXLAD1pvnzCGBwIzQNYpz1LNemeq1vcnuY1
-         s6+PaR4RVt23Uc9tVNqiINZu24FRQ/sR5lNQqBF8=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x998q6KF023623
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 9 Oct 2019 03:52:06 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 9 Oct
- 2019 03:52:02 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 9 Oct 2019 03:52:02 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x998q4n1094650;
-        Wed, 9 Oct 2019 03:52:05 -0500
-From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <sre@kernel.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <lee.jones@linaro.org>, <daniel.thompson@linaro.org>
-CC:     <dmurphy@ti.com>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <tomi.valkeinen@ti.com>, Jean-Jacques Hiblot <jjhiblot@ti.com>
-Subject: [PATCH v10 6/6] backlight: add led-backlight driver
-Date:   Wed, 9 Oct 2019 10:51:27 +0200
-Message-ID: <20191009085127.22843-7-jjhiblot@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191009085127.22843-1-jjhiblot@ti.com>
-References: <20191009085127.22843-1-jjhiblot@ti.com>
+        Wed, 9 Oct 2019 04:52:21 -0400
+Received: by mail-lj1-f195.google.com with SMTP id f5so1620931ljg.8;
+        Wed, 09 Oct 2019 01:52:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=f04OdU6Fyk3m2zdZCMUEKpGzg4pA3Tu5ccwXrcxWMa0=;
+        b=vPBVAl//lPkqDRQlLMjKuZdWOSz95s6yp3C/B+ltHKl8GcNV8r85ugL9sN1QgKnIrU
+         WnnXRA7G04rnxLe+J5vCllC5fLr1Mi4gYBgtT0ADwWN4zyIQu/Uedr2oXwUop/WKaaMg
+         WWNXqZi6W/tPcxxG7zwAs4AnS0hbOQvJUembAd9dX+kYzmm7fBdYuNfHfOUj+5eeHZvt
+         4Iw1N+d1vBD14mJ4GozTAWfJvtDfE7MifSUkNKNFEtiKYxKX9AmQGk8NWgzpr2P89QtX
+         HN7a1jiU9KLxzBiBkOxEepeWZwa/zwALjN4PsUIzJgWpR4VA+A566hrTqgdf+3s7uh6k
+         bH1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=f04OdU6Fyk3m2zdZCMUEKpGzg4pA3Tu5ccwXrcxWMa0=;
+        b=E1MGvBlMdWW5CwUCwhPLdUc4Dgw5RnJaQCCXQFSWGBsQd3MkRWlQxPtQI8vPxNBpLr
+         Y36hihQJzMFuhhEDfasqwY/sqhb6Uf/qKlhVUBG/tRpyDnYjcvBIbjTqCytKtNY9WvsR
+         CF9GmQT11jUMNOYVOMkC7hv5r6f9VF4fVknKJhKk9OQojj+LPq5PoiHFYaSgzgCPa+10
+         aKtlXjgydRgZtNQ7SjgtA0Z73+9kE+ToKivCzLP9clnYk4FN95E9vKDcALdlrl4YngBH
+         5+77sPYIw7YFHp7u9sOV2Fj1O5n2iYUmJi/Zcj6HkiX8u1QzAUXQ/Cu1YxDFaw4DuxpY
+         t21Q==
+X-Gm-Message-State: APjAAAVETSDkOBSWcznpfupuDcBr4HJBSwco/HpAnPrzSJtfnvl0rPKv
+        wIQk+l4lRdAvgAazQZly8rhd2BI/
+X-Google-Smtp-Source: APXvYqx5wbfdt6yNdn2U6rc1m53le8zF3t+PqSJO6cvPIxeB8MW6r9epDp1r+XLEuOcFdRv3aRzjVg==
+X-Received: by 2002:a2e:880e:: with SMTP id x14mr1584844ljh.42.1570611138277;
+        Wed, 09 Oct 2019 01:52:18 -0700 (PDT)
+Received: from [192.168.2.145] ([94.29.34.231])
+        by smtp.googlemail.com with ESMTPSA id v1sm325809lfa.87.2019.10.09.01.52.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Oct 2019 01:52:17 -0700 (PDT)
+Subject: Re: [PATCH v10 12/15] memory: tegra: Introduce Tegra30 EMC driver
+To:     Peter Geis <pgwipeout@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Joseph Lo <josephl@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190811210043.20122-1-digetx@gmail.com>
+ <20190811210043.20122-13-digetx@gmail.com>
+ <CAMdYzYqNL_KAYwsnWYuz9wf2xT_RM0cWA8jkKATWMX7yuVq7Hw@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <ebd9b2df-e4dd-1207-ad38-fc52cf4e86d4@gmail.com>
+Date:   Wed, 9 Oct 2019 11:52:16 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <CAMdYzYqNL_KAYwsnWYuz9wf2xT_RM0cWA8jkKATWMX7yuVq7Hw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+05.10.2019 19:28, Peter Geis пишет:
+> Tested on the Ouya (tegra30).
+> 
+> Tested-by: Peter Geis <pgwipeout@gmail.com>
+> 
+> On Sun, Aug 11, 2019 at 5:02 PM Dmitry Osipenko <digetx@gmail.com> wrote:
+>>
+>> Introduce driver for the External Memory Controller (EMC) found on Tegra30
+>> chips, it controls the external DRAM on the board. The purpose of this
+>> driver is to program memory timing for external memory on the EMC clock
+>> rate change.
+>>
+>> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
 
-This patch adds a led-backlight driver (led_bl), which is similar to
-pwm_bl except the driver uses a LED class driver to adjust the
-brightness in the HW. Multiple LEDs can be used for a single backlight.
+Peter, thank you very much for the testing!
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
- drivers/video/backlight/Kconfig  |   7 +
- drivers/video/backlight/Makefile |   1 +
- drivers/video/backlight/led_bl.c | 258 +++++++++++++++++++++++++++++++
- 3 files changed, 266 insertions(+)
- create mode 100644 drivers/video/backlight/led_bl.c
-
-diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
-index 8b081d61773e..585a1787618c 100644
---- a/drivers/video/backlight/Kconfig
-+++ b/drivers/video/backlight/Kconfig
-@@ -458,6 +458,13 @@ config BACKLIGHT_RAVE_SP
- 	help
- 	  Support for backlight control on RAVE SP device.
- 
-+config BACKLIGHT_LED
-+	tristate "Generic LED based Backlight Driver"
-+	depends on LEDS_CLASS && OF
-+	help
-+	  If you have a LCD backlight adjustable by LED class driver, say Y
-+	  to enable this driver.
-+
- endif # BACKLIGHT_CLASS_DEVICE
- 
- endmenu
-diff --git a/drivers/video/backlight/Makefile b/drivers/video/backlight/Makefile
-index 63c507c07437..2a67642966a5 100644
---- a/drivers/video/backlight/Makefile
-+++ b/drivers/video/backlight/Makefile
-@@ -57,3 +57,4 @@ obj-$(CONFIG_BACKLIGHT_TPS65217)	+= tps65217_bl.o
- obj-$(CONFIG_BACKLIGHT_WM831X)		+= wm831x_bl.o
- obj-$(CONFIG_BACKLIGHT_ARCXCNN) 	+= arcxcnn_bl.o
- obj-$(CONFIG_BACKLIGHT_RAVE_SP)		+= rave-sp-backlight.o
-+obj-$(CONFIG_BACKLIGHT_LED)		+= led_bl.o
-diff --git a/drivers/video/backlight/led_bl.c b/drivers/video/backlight/led_bl.c
-new file mode 100644
-index 000000000000..718fa3e03eac
---- /dev/null
-+++ b/drivers/video/backlight/led_bl.c
-@@ -0,0 +1,258 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2015-2019 Texas Instruments Incorporated -  http://www.ti.com/
-+ * Authors: Tomi Valkeinen <tomi.valkeinen@ti.com>
-+ *          Jean-Jacques Hiblot <jjhiblot@ti.com>
-+ */
-+
-+#include <linux/backlight.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+
-+struct led_bl_data {
-+	struct device		*dev;
-+	struct backlight_device	*bl_dev;
-+	struct led_classdev	**leds;
-+	bool			enabled;
-+	int			nb_leds;
-+	unsigned int		*levels;
-+	unsigned int		default_brightness;
-+	unsigned int		max_brightness;
-+};
-+
-+static void led_bl_set_brightness(struct led_bl_data *priv, int level)
-+{
-+	int i;
-+	int bkl_brightness;
-+
-+	if (priv->levels)
-+		bkl_brightness = priv->levels[level];
-+	else
-+		bkl_brightness = level;
-+
-+	for (i = 0; i < priv->nb_leds; i++)
-+		led_set_brightness(priv->leds[i], bkl_brightness);
-+
-+	priv->enabled = true;
-+}
-+
-+static void led_bl_power_off(struct led_bl_data *priv)
-+{
-+	int i;
-+
-+	if (!priv->enabled)
-+		return;
-+
-+	for (i = 0; i < priv->nb_leds; i++)
-+		led_set_brightness(priv->leds[i], LED_OFF);
-+
-+	priv->enabled = false;
-+}
-+
-+static int led_bl_update_status(struct backlight_device *bl)
-+{
-+	struct led_bl_data *priv = bl_get_data(bl);
-+	int brightness = bl->props.brightness;
-+
-+	if (bl->props.power != FB_BLANK_UNBLANK ||
-+	    bl->props.fb_blank != FB_BLANK_UNBLANK ||
-+	    bl->props.state & BL_CORE_FBBLANK)
-+		brightness = 0;
-+
-+	if (brightness > 0)
-+		led_bl_set_brightness(priv, brightness);
-+	else
-+		led_bl_power_off(priv);
-+
-+	return 0;
-+}
-+
-+static const struct backlight_ops led_bl_ops = {
-+	.update_status	= led_bl_update_status,
-+};
-+
-+static int led_bl_get_leds(struct device *dev,
-+			   struct led_bl_data *priv)
-+{
-+	int i, nb_leds, ret;
-+	struct device_node *node = dev->of_node;
-+	struct led_classdev **leds;
-+	unsigned int max_brightness;
-+	unsigned int default_brightness;
-+
-+	ret = of_count_phandle_with_args(node, "leds", NULL);
-+	if (ret < 0) {
-+		dev_err(dev, "Unable to get led count\n");
-+		return -EINVAL;
-+	}
-+
-+	nb_leds = ret;
-+	if (nb_leds < 1) {
-+		dev_err(dev, "At least one LED must be specified!\n");
-+		return -EINVAL;
-+	}
-+
-+	leds = devm_kzalloc(dev, sizeof(struct led_classdev *) * nb_leds,
-+			    GFP_KERNEL);
-+	if (!leds)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < nb_leds; i++) {
-+		leds[i] = devm_of_led_get(dev, i);
-+		if (IS_ERR(leds[i]))
-+			return PTR_ERR(leds[i]);
-+	}
-+
-+	/* check that the LEDs all have the same brightness range */
-+	max_brightness = leds[0]->max_brightness;
-+	for (i = 1; i < nb_leds; i++) {
-+		if (max_brightness != leds[i]->max_brightness) {
-+			dev_err(dev, "LEDs must have identical ranges\n");
-+			return -EINVAL;
-+		}
-+	}
-+
-+	/* get the default brightness from the first LED from the list */
-+	default_brightness = leds[0]->brightness;
-+
-+	priv->nb_leds = nb_leds;
-+	priv->leds = leds;
-+	priv->max_brightness = max_brightness;
-+	priv->default_brightness = default_brightness;
-+
-+	return 0;
-+}
-+
-+static int led_bl_parse_levels(struct device *dev,
-+			   struct led_bl_data *priv)
-+{
-+	struct device_node *node = dev->of_node;
-+	int num_levels;
-+	u32 value;
-+	int ret;
-+
-+	if (!node)
-+		return -ENODEV;
-+
-+	num_levels = of_property_count_u32_elems(node, "brightness-levels");
-+	if (num_levels > 1) {
-+		int i;
-+		unsigned int db;
-+		u32 *levels = NULL;
-+
-+		levels = devm_kzalloc(dev, sizeof(u32) * num_levels,
-+				      GFP_KERNEL);
-+		if (!levels)
-+			return -ENOMEM;
-+
-+		ret = of_property_read_u32_array(node, "brightness-levels",
-+						levels,
-+						num_levels);
-+		if (ret < 0)
-+			return ret;
-+
-+		/*
-+		 * Try to map actual LED brightness to backlight brightness
-+		 * level
-+		 */
-+		db = priv->default_brightness;
-+		for (i = 0 ; i < num_levels; i++) {
-+			if ((i && db > levels[i-1]) && db <= levels[i])
-+				break;
-+		}
-+		priv->default_brightness = i;
-+		priv->max_brightness = num_levels - 1;
-+		priv->levels = levels;
-+	} else if (num_levels >= 0)
-+		dev_warn(dev, "Not enough levels defined\n");
-+
-+	ret = of_property_read_u32(node, "default-brightness", &value);
-+	if (!ret && value <= priv->max_brightness)
-+		priv->default_brightness = value;
-+	else if (!ret  && value > priv->max_brightness)
-+		dev_warn(dev, "Invalid default brightness. Ignoring it\n");
-+
-+	return 0;
-+}
-+
-+static void led_bl_cleanup(void *data)
-+{
-+	struct led_bl_data *priv = data;
-+	int i;
-+
-+	led_bl_power_off(priv);
-+	for (i = 0; i < priv->nb_leds; i++)
-+		led_sysfs_enable(priv->leds[i]);
-+}
-+
-+static int led_bl_probe(struct platform_device *pdev)
-+{
-+	struct backlight_properties props;
-+	struct led_bl_data *priv;
-+	int ret, i;
-+
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, priv);
-+
-+	priv->dev = &pdev->dev;
-+
-+	ret = led_bl_get_leds(&pdev->dev, priv);
-+	if (ret)
-+		return ret;
-+
-+	ret = led_bl_parse_levels(&pdev->dev, priv);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to parse DT data\n");
-+		return ret;
-+	}
-+
-+	ret = devm_add_action_or_reset(&pdev->dev, led_bl_cleanup, priv);
-+	if (ret)
-+		return ret;
-+
-+	for (i = 0; i < priv->nb_leds; i++)
-+		led_sysfs_disable(priv->leds[i]);
-+
-+	memset(&props, 0, sizeof(struct backlight_properties));
-+	props.type = BACKLIGHT_RAW;
-+	props.max_brightness = priv->max_brightness;
-+	props.brightness = priv->default_brightness;
-+	props.power = (priv->default_brightness > 0) ? FB_BLANK_POWERDOWN :
-+		      FB_BLANK_UNBLANK;
-+	priv->bl_dev = devm_backlight_device_register(&pdev->dev,
-+			dev_name(&pdev->dev), &pdev->dev, priv, &led_bl_ops,
-+			&props);
-+	if (IS_ERR(priv->bl_dev)) {
-+		dev_err(&pdev->dev, "Failed to register backlight\n");
-+		return PTR_ERR(priv->bl_dev);
-+	}
-+
-+	backlight_update_status(priv->bl_dev);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id led_bl_of_match[] = {
-+	{ .compatible = "led-backlight" },
-+	{ }
-+};
-+
-+MODULE_DEVICE_TABLE(of, led_bl_of_match);
-+
-+static struct platform_driver led_bl_driver = {
-+	.driver		= {
-+		.name		= "led-backlight",
-+		.of_match_table	= led_bl_of_match,
-+	},
-+	.probe		= led_bl_probe,
-+};
-+
-+module_platform_driver(led_bl_driver);
-+
-+MODULE_DESCRIPTION("LED based Backlight Driver");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:led-backlight");
--- 
-2.17.1
-
+Thierry, could you please pick up this series and other relevant patches
+for 5.5? Thanks in advance!
