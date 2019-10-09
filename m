@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 056FFD0F6D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 15:00:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A7A2D0F6C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 15:00:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731470AbfJINAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 09:00:08 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50979 "EHLO
+        id S1731458AbfJINAH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 09:00:07 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:50978 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731442AbfJINAE (ORCPT
+        with ESMTP id S1731441AbfJINAE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 9 Oct 2019 09:00:04 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iIBYs-0002sr-Ql; Wed, 09 Oct 2019 14:59:26 +0200
+        id 1iIBYu-0002qh-Bt; Wed, 09 Oct 2019 14:59:28 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id DC2E01C0324;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2B3921C02FC;
         Wed,  9 Oct 2019 14:59:20 +0200 (CEST)
 Date:   Wed, 09 Oct 2019 12:59:20 -0000
 From:   "tip-bot2 for Xuewei Zhang" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/fair: Scale bandwidth quota and period
+Subject: [tip: sched/urgent] sched/fair: Scale bandwidth quota and period
  without losing quota/period ratio precision
 Cc:     Phil Auld <pauld@redhat.com>, Xuewei Zhang <xueweiz@google.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
@@ -42,7 +42,7 @@ Cc:     Phil Auld <pauld@redhat.com>, Xuewei Zhang <xueweiz@google.com>,
 In-Reply-To: <20191004001243.140897-1-xueweiz@google.com>
 References: <20191004001243.140897-1-xueweiz@google.com>
 MIME-Version: 1.0
-Message-ID: <157062596082.9978.4938210445987063652.tip-bot2@tip-bot2>
+Message-ID: <157062596009.9978.18110832344830515975.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -56,7 +56,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the sched/core branch of tip:
+The following commit has been merged into the sched/urgent branch of tip:
 
 Commit-ID:     4929a4e6faa0f13289a67cae98139e727f0d4a97
 Gitweb:        https://git.kernel.org/tip/4929a4e6faa0f13289a67cae98139e727f0d4a97
