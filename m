@@ -2,69 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFD8CD1945
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 21:55:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C271D1950
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 21:59:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731823AbfJITzL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 15:55:11 -0400
-Received: from muru.com ([72.249.23.125]:36342 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730490AbfJITzK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 15:55:10 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 1D6228140;
-        Wed,  9 Oct 2019 19:55:43 +0000 (UTC)
-Date:   Wed, 9 Oct 2019 12:55:06 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PM / runtime: Add support for wake-up reason for wakeirqs
-Message-ID: <20191009195506.GO5610@atomide.com>
-References: <20191009182803.63742-1-tony@atomide.com>
- <Pine.LNX.4.44L0.1910091447510.1603-100000@iolanthe.rowland.org>
+        id S1731671AbfJIT7z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 15:59:55 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:43146 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729865AbfJIT7z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 15:59:55 -0400
+Received: by mail-io1-f68.google.com with SMTP id v2so7906658iob.10
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 12:59:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=smOqlbangbl/j+F0cqdsikuLQkS2xT/NWT5gQd8sJls=;
+        b=t8e+mZPhQ5OiF1eDv+6ayzg2IGvo71vQ1zK7EKwM2zdx8KaDgEQhhYSQZtXIwWe9CA
+         H9dHiHAQivNndfZtFNDI6+vbuXwXOeLSY7/6peUMDhx9ulLgSlrFWXphIpfjcfecd99M
+         umAIuCiyhA4rINwSumn1+2ENYBctWM7VAA3iBXRRyBv/Nny4Ll8lRAJGod1szrDjpB3Z
+         2Srqkcz4m9zoGvFacErIBzlTYZXxNShNep00ZEGoGlw8KtJlrIdtw2l1+JwTZvV6crJs
+         WnpjFTMnJjds2MnHWF0SVYu0yka0PgQkk6mbE9x3ev1eSqXM6b39tmfmc1Lk13wI1lHk
+         F+Cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=smOqlbangbl/j+F0cqdsikuLQkS2xT/NWT5gQd8sJls=;
+        b=dP9TQzAr5MKCz3CYM8gor/Qrzid/3kIV+H9ybEAw7txbbA+UeEXOQ2t797iQiansFR
+         bqFUnAS6KUeW3TNPvkcPbJaXLUKAU35v3zrGITE/X9Pa/rIu3ZnmP6nlr93fsTCOh+aV
+         5xOXRJRnkpov6jF5irkHw9N1TzwOlBQCFb+m7992Tq7NXBbeUskqIXTEJkvlOXRUNvka
+         K34czbmi607hu6y85UsRxT+B6MT3XTEoMGdoy9XN3wFNMkt2pux/vq6/HwZbVj9nJlwc
+         hSjdrE7t9dr/UaqaoXzkxnDordoPR4Gozj19+aXVQo7LUyHiXYjJUKAFBOV3D3UiPDft
+         K5tg==
+X-Gm-Message-State: APjAAAWP0D9TaF+2dHsJnccI7r0MRlYYEzjBaLoq2xn90IWz1UDqGb+R
+        UzxiblqAZ0HvA9B/WoilgbyG8sxRBkOTeEcGbig=
+X-Google-Smtp-Source: APXvYqzUklU7K9Tn+bzE/Zr3xecH9ClqU1AEbFpjoksnc7/EEebQOaLfFKjHoaX8fMTh5rDZKy9h34zNH2S+zSMxbag=
+X-Received: by 2002:a6b:7414:: with SMTP id s20mr5504318iog.299.1570651194740;
+ Wed, 09 Oct 2019 12:59:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1910091447510.1603-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Received: by 2002:a4f:dd0:0:0:0:0:0 with HTTP; Wed, 9 Oct 2019 12:59:54 -0700 (PDT)
+Reply-To: mrs.suzanmark12@yahoo.com
+From:   Mr David Nicholas <petermike1331@gmail.com>
+Date:   Wed, 9 Oct 2019 12:59:54 -0700
+Message-ID: <CAEs009nK_WaDm0n_upEJw1cQ6rYLaw8=q-ttUUPR=n-=tPc=AA@mail.gmail.com>
+Subject: ATTN: My Dear
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Alan Stern <stern@rowland.harvard.edu> [191009 18:51]:
-> On Wed, 9 Oct 2019, Tony Lindgren wrote:
-> 
-> > With generic wakeirqs we can wake a device, but do not know if the
-> > device woke to a wakeirq. Let's add pm_runtime_wakeup_is_wakeirq() so
-> > a device can check the wake-up reason.
-> 
-> People have tried many times over the years to do something like this.  
-> It's never right.
-> 
-> The problem is simple: It's impossible to know for certain why the
-> system woke up from suspend.  In fact, there may be many wakeup sources
-> all active at the same time, and any of them could be the one
-> responsible for actually waking the system.
+ATTN: My Dear
 
-Hmm yeah good point. Even with dedicated wakeirq it could race
-against a timer for the wake-up event.
+Good news,The BRITISH HIGH COMMISSION has actually verified and discovered
+that your payment has been unnecessarily Delayed by corrupt officials of the
+Company who are Trying to divert your fund of $4,700.000.00 Million
+into their private
+accounts. Therefore we have obtained an irrevocable payment guarantee on your
+Payment with the Bank to make your payment through our new ATM VISA CARD
+system which you can use to withdraw your money in any ATM MACHINE around your
+area.
 
-> All you can do is check to see whether a particular wakeup source is
-> active at the present moment.  You can't tell whether it was active in
-> the past (while the system was suspended) or whether it caused the
-> system to resume.
+So we are here by inviting you to our office to pick up your ATM VISA CARD but
+if you cannot be able to come down here in our office in person be inform that
+you are going to pay for shipping fee of your ATM visa CARD, so if you are
+unable to come down here then you are required to update us so that we will
+proceed with the necessary arrangement for the delivery of your ATM VISA CARD.
 
-We can actually do more than that now though :)
+As of now be informed that all arrangement has been done and the ATM VISA CARD
+has be in your name, but to RE-ACTIVATE the ATM Card you have to forward your
+current information as requested below to the bank for the ATM Card re-
+activcation, then we will send you the ATM CARD for your immediate use.
 
-With handle_threaded_wake_irq() we could optionally call a handler
-before we call pm_runtime_resume() and let the consumer device
-driver figure out what the state is.
+Here are the information you have to forward to the bank:
+1. Your Full Names:______
+2. Postal Address:_______
+3. Direct Cell Numbers:_______
+4. E-mail Address:________
+5. Sex:_____
+6.Age:_____
+7. Occupation:________
+8.Nationality:________
+9.whatsapp Number______
 
-Regards,
+Therefore you are advised to contact Bank accountant Manager Mrs.Susan Mark
 
-Tony
+CONTACT PERSON: Mrs.Susan Mark
+Direct Hotline: +22990489892
+E-mail:( mrs.suzanmark12@yahoo.com )
+
+Mr David Nicholas
