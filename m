@@ -2,109 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B010CD138D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 18:05:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE5F7D13A9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 18:09:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731664AbfJIQFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 12:05:46 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55587 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731263AbfJIQFo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 12:05:44 -0400
-Received: by mail-wm1-f67.google.com with SMTP id a6so3236872wma.5
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 09:05:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OcoDswvcpgORUe+MjF3j+myWKBr/y/JxVMKqWxIZdns=;
-        b=PlMwn9qd6erojZKwrGuwRQoT3mBFtPJPdxKkIoi+g/d953cHVVQVDyFhTmkAOHq9HS
-         VH6Kz+ynJOta/5jpwjQNaOKkCz8EqFOd8eFpwMkcdLBa/lGr9vFX4ZH9Odb0ZasRfZfg
-         hL4ixrbd5H9Gn9ce4slb2XkurFpkRA99mVhAJRq0EpElm5jcHAq+hLY5NEFSOcYi8T5c
-         XDGKEmdJaOWe6vEv1mdkMetvYaOe5w19Ke0Q6x3RRBcLXohUpsQ+H+tsU7xqCcKjV69C
-         oJPkEMkoDqtuEHAJMbrD0RUQcVb80wtCimLZE2tavU+7cfhJGR2bsMlGyBuIYnXcbGRM
-         T4sw==
+        id S1731809AbfJIQJk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 12:09:40 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40160 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731686AbfJIQJj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 12:09:39 -0400
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F021A8763B
+        for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2019 16:09:38 +0000 (UTC)
+Received: by mail-ed1-f69.google.com with SMTP id y21so1705218edr.18
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 09:09:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OcoDswvcpgORUe+MjF3j+myWKBr/y/JxVMKqWxIZdns=;
-        b=PuC5oJfDXRyszVDqfukAvdH9r/FW8D2XEtol9dA/IrIuEnnSVisoN2sVeTZoPcduB9
-         mHSyC6E/JjSt9W7nSEtfOII3nMDsUm5wiMwo/jHZO/1i86zphoTr9u1JbzhbcovFi9+k
-         aXDrO/X9VenxCK9Izpzv2IMcOqYWzBRxz7v1SEYGS39QJzBHqcfdjbIm/RqAus+1LxMa
-         cg/jLqhLA7iXO9tckqnxZqyARJ61gPK9bRIqaQ6WOM4vslAuCZ0UG8oZrYsgaF8Sc+VC
-         QOIfIKqkO/lKWRTHuYOYMDgJLnI4V8q8C3JR8Xp1JvJla5ALdPuEAvVCXGGKoovxAzUl
-         4eXw==
-X-Gm-Message-State: APjAAAVMj9BI5NW9FS2WBSsEqiQLXpN9zIbezQlXF4URKAolbx7YNXJ3
-        iKHQAimz/m3QtsEvvv7m8Tq9VznacwVjh2yB17aZ5w==
-X-Google-Smtp-Source: APXvYqwf2k+wes8U4KHH/Mq/y7m8PrdEQhLEFToIcu4WDfCk10VCZnURO4OVa/kXncgoav9k+nk3ezXxb9qFfCb0MU8=
-X-Received: by 2002:a1c:a8c9:: with SMTP id r192mr3238811wme.152.1570637140793;
- Wed, 09 Oct 2019 09:05:40 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=yo8HgxFaUzFJT5aifHeLW47+7+qi0Gxu8+x3gkt5AcY=;
+        b=b0Ze0wauzkoEHT/peMYcxSr3hrH8ToGF+9H0lTpL77SVs6Cf5I1LcFFNYVsrxJdRte
+         aWaMjpmn3LeMxPxelT/ah53Y5LGO/Z0lNROh3dCCTzk27+4lIspIKGXFtBf5MVkM0QSt
+         liIPqbA0afG7tc3oxZpIkXw0aWqxpVpZ8I1QETE3s+VHNL5e/Baz+f92G5QsyxAqtnU8
+         wZX84WmHd1oK4wNMTE1WClXBPvhkQc+9VEZ8O7gqpY87tzGzQJfjm63iqckT18NTLX6Z
+         ehzZn2ir7qW6vJnCSmyJpqu2ku0KgQaro78F431hmN69A7QK/tqBDA2o8RL5ECYLLEPG
+         pECg==
+X-Gm-Message-State: APjAAAWUlwGEZQTnTehSNr50W1RaDucH8lmjm8fkJvf7Klkx3NiC5Jju
+        3HEVi7bhb/PuQAWo6xkStdbescce6sD2sRaBwXli1XbM/qRvKmPHgSAHv+alrE+RjBw/z36V1HC
+        yvcsmuE8Y8Mu2nCtzK3Iy8Agv
+X-Received: by 2002:a17:906:8598:: with SMTP id v24mr3576960ejx.328.1570637377270;
+        Wed, 09 Oct 2019 09:09:37 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzIa1NlC5x/Y/DxrahdimMpGxXuvwAyvm2TeQKg29VSeDf6iUFdplanwS4MmX2Wk7mlZDp32A==
+X-Received: by 2002:a17:906:8598:: with SMTP id v24mr3576934ejx.328.1570637377052;
+        Wed, 09 Oct 2019 09:09:37 -0700 (PDT)
+Received: from localhost ([2a02:2450:102e:d85:877d:43b4:dd8f:144d])
+        by smtp.gmail.com with ESMTPSA id e52sm415148eda.36.2019.10.09.09.09.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 09:09:36 -0700 (PDT)
+From:   Christian Kellner <ckellner@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-api@vger.kernel.org,
+        Christian Kellner <christian@kellner.me>,
+        Christian Brauner <christian@brauner.io>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, Michal Hocko <mhocko@suse.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Roman Gushchin <guro@fb.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Dmitry V. Levin" <ldv@altlinux.org>
+Subject: [PATCH v2 1/2] pidfd: show pids for nested pid namespaces in fdinfo
+Date:   Wed,  9 Oct 2019 18:05:30 +0200
+Message-Id: <20191009160532.20674-1-ckellner@redhat.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20191008133641.23019-1-ckellner@redhat.com>
+References: <20191008133641.23019-1-ckellner@redhat.com>
 MIME-Version: 1.0
-References: <20190918080716.64242-1-jianyong.wu@arm.com> <20190918080716.64242-5-jianyong.wu@arm.com>
- <83ed7fac-277f-a31e-af37-8ec134f39d26@redhat.com> <HE1PR0801MB1676F57B317AE85E3B934B32F48E0@HE1PR0801MB1676.eurprd08.prod.outlook.com>
- <629538ea-13fb-e666-8df6-8ad23f114755@redhat.com> <HE1PR0801MB167639E2F025998058A77F86F4890@HE1PR0801MB1676.eurprd08.prod.outlook.com>
- <ef6ab8bd-41ad-88f8-9cfd-dc749ca65310@redhat.com> <a1b554b8-4417-5305-3419-fe71a8c50842@kernel.org>
- <56a5b885-62c8-c4ef-e2f8-e945c0eb700e@redhat.com> <HE1PR0801MB1676115C248E6DF09F9DD5A6F4950@HE1PR0801MB1676.eurprd08.prod.outlook.com>
- <1cc145ca-1af2-d46f-d530-0ae434005f0b@redhat.com> <HE1PR0801MB1676B1AD68544561403C3196F4950@HE1PR0801MB1676.eurprd08.prod.outlook.com>
- <6b8b59b2-a07e-7e33-588c-1da7658e3f1e@redhat.com>
-In-Reply-To: <6b8b59b2-a07e-7e33-588c-1da7658e3f1e@redhat.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Wed, 9 Oct 2019 09:05:29 -0700
-Message-ID: <CALAqxLVa-BSY0i007GfzKEVU1uak4=eY=TJ3wj6JL_Y-EfY3ng@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 4/6] psci: Add hvc call service for ptp_kvm.
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     "Jianyong Wu (Arm Technology China)" <Jianyong.Wu@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "yangbo.lu@nxp.com" <yangbo.lu@nxp.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
-        "richardcochran@gmail.com" <richardcochran@gmail.com>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Suzuki Poulose <Suzuki.Poulose@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Steve Capper <Steve.Capper@arm.com>,
-        "Kaly Xin (Arm Technology China)" <Kaly.Xin@arm.com>,
-        "Justin He (Arm Technology China)" <Justin.He@arm.com>,
-        nd <nd@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 9, 2019 at 2:13 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
-> On 09/10/19 10:18, Jianyong Wu (Arm Technology China) wrote:
-> >
-> > We must ensure both of the host and guest using the same clocksource.
-> > get_device_system_crosststamp will check the clocksource of guest and we also need check
-> > the clocksource in host, and struct type can't be transferred from host to guest using arm hypercall.
-> > now we lack of a mechanism to check the current clocksource. I think this will be useful if we add one.
->
-> Got it---yes, I think adding a struct clocksource to struct
-> system_time_snapshot would make sense.  Then the hypercall can just use
-> ktime_get_snapshot and fail if the clocksource is not the ARM arch counter.
->
-> John (Stultz), does that sound good to you?  The context is that
-> Jianyong would like to add a hypercall that returns a (cycles,
-> nanoseconds) pair to the guest.  On x86 we're relying on the vclock_mode
-> field that is already there for the vDSO, but being able to just use
-> ktime_get_snapshot would be much nicer.
+From: Christian Kellner <christian@kellner.me>
 
-I've not really looked at the code closely in awhile, so I'm not sure
-my suggestions will be too useful.
+The fdinfo file for a process file descriptor already contains the
+pid of the process in the callers namespaces. Additionally, if pid
+namespaces are configured, show the process ids of the process in
+all nested namespaces in the same format as in the procfs status
+file, i.e. "NSPid:\t%d\%d...". This allows the easy identification
+of the processes in nested namespaces.
 
-My only instinct is maybe to not include the clocksource pointer in
-the system_time_snapshot, as I worry that structure will then be
-abused by the interface users.  If you're just wanting to make sure
-the clocksource is what you're expecting, would instead putting only
-the clocksource name in the structure suffice?
+Signed-off-by: Christian Kellner <christian@kellner.me>
+---
 
-thanks
--john
+Changes in v2:
+- Moved into separate function to avoid multiple ifdefs as suggested
+  by Michal Hocko
+
+ kernel/fork.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 5a0fd518e04e..f7a59ef046e9 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1681,12 +1681,27 @@ static int pidfd_release(struct inode *inode, struct file *file)
+ }
+ 
+ #ifdef CONFIG_PROC_FS
++static void pidfd_nspid(struct seq_file *m, struct pid *pid)
++{
++#ifdef CONFIG_PID_NS
++	struct pid_namespace *ns = proc_pid_ns(file_inode(m->file));
++	int i;
++
++	seq_puts(m, "\nNSpid:");
++	for (i = ns->level; i <= pid->level; i++) {
++		ns = pid->numbers[i].ns;
++		seq_put_decimal_ull(m, "\t", pid_nr_ns(pid, ns));
++	}
++#endif
++}
++
+ static void pidfd_show_fdinfo(struct seq_file *m, struct file *f)
+ {
+ 	struct pid_namespace *ns = proc_pid_ns(file_inode(m->file));
+ 	struct pid *pid = f->private_data;
+ 
+ 	seq_put_decimal_ull(m, "Pid:\t", pid_nr_ns(pid, ns));
++	pidfd_nspid(m, pid);
+ 	seq_putc(m, '\n');
+ }
+ #endif
+-- 
+2.21.0
+
