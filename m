@@ -2,93 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8599D13C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 18:13:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1285D13D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 18:18:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731593AbfJIQNb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 12:13:31 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35832 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731426AbfJIQNa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 12:13:30 -0400
-Received: by mail-pg1-f193.google.com with SMTP id p30so1720393pgl.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 09:13:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=c47qbrSLLIGvUFt5MXsNztJFq0VL1S5Chm3p/SDAdyg=;
-        b=EqoIt1h2PDX7vbfae8AJX5+I4HC6Gk8kl3tB8yyytrR6muGw6bUAKdUrwRTTRciyOc
-         5JAaJBNXH0afOQ/y1srk/nOrZYMA7SitU4EXessmNx2E2LvYGeN5YWB9E1g9VpvBi5Qg
-         Heu2lsW9dReZSr+18lwS2AVry3IK5pN0cUYumY1zY7mwqxYHr9UgK7xjUBNnKH5tuCwV
-         7ot7Xfz95MR9DgD80amwXFTtohgg8bfdfCs3VC5YQFZ+sMkYFrLY6gFNgJLG1fb5FbW2
-         UR9kDDOg4Wlk7pTEMQYVbCJsPEoDiif+FVUVbUremIRYyZUBKrqtcDbjwYrHgj3CVNU1
-         yRuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=c47qbrSLLIGvUFt5MXsNztJFq0VL1S5Chm3p/SDAdyg=;
-        b=jERYsn1OEJnxgz5NhmsUrLfy/WiIFroZk2RaSfXo4DaZk78dUhIRNLeJ5tsF7ij1o9
-         Ph6ge/VDTD50MamnV+4ayl/LlaSKGZv2r7AVrDhZNmKN4r1VzVzG+D9LxBAUDoKS0ewt
-         5L+liY/kQdSlHrYO0jWoQrhqC1ab5JbHIVSh7tzKryIii0LXW8wxYsfAtUxG17ed5+iN
-         pbHdqxGj71omfsjA9v6q5EjwEo1C5JVgvGq6EFC9xcc2OA3KWq7Skbra7IUfWEML4+x8
-         TGniRBxwE292veHBtemg3H7LdiZlcZgw6F5s6cuIgYIWnUVEiZ9x6kyVGVtPcbZtYZSE
-         9wIQ==
-X-Gm-Message-State: APjAAAXOPrPwW/g94PT8qsWX6vR5guUr+7o1JGqrBp7cSek5uXcD6D/q
-        2l4Ae81rLm753ezjxZ4PQHY0MpjG0En+tP5aPG1qGhi4
-X-Google-Smtp-Source: APXvYqxLyT5YvYlsd+Ut7uCgK3TewVURguI1L+P+j6SbeZGD2B+eX5eQBTsw0b/K/ahpodvnAwT/Veh1PiFi/Ial8Sw=
-X-Received: by 2002:a63:5a03:: with SMTP id o3mr5108717pgb.381.1570637609432;
- Wed, 09 Oct 2019 09:13:29 -0700 (PDT)
+        id S1731734AbfJIQSS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 12:18:18 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:35238 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731688AbfJIQSS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 12:18:18 -0400
+Received: from s0106ac1f6bb1ecac.cg.shawcable.net ([70.73.163.230] helo=[192.168.11.155])
+        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1iIEfE-0007Md-Fx; Wed, 09 Oct 2019 10:18:13 -0600
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Joerg Roedel <joro@8bytes.org>, Kit Chow <kchow@gigaio.com>
+References: <20191008221837.13067-1-logang@deltatee.com>
+ <20191008221837.13067-2-logang@deltatee.com>
+ <20191009065750.GA17832@infradead.org>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <c5f6750f-b415-3562-9abe-0937bae94f75@deltatee.com>
+Date:   Wed, 9 Oct 2019 10:17:36 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <75f70e5e-9ece-d6d1-a2c5-2f3ad79b9ccb@web.de> <20191009110943.7ff3a08a@gandalf.local.home>
-In-Reply-To: <20191009110943.7ff3a08a@gandalf.local.home>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 9 Oct 2019 09:13:17 -0700
-Message-ID: <CAKwvOdk3OTaAVmbV9Cu+Dzg8zuojjU6ENZfu4cUPaKS2a58d3w@mail.gmail.com>
-Subject: Re: [PATCH] string.h: Mark 34 functions with __must_check
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Markus Elfring <Markus.Elfring@web.de>,
-        kernel-janitors@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Joe Perches <joe@perches.com>,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191009065750.GA17832@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 70.73.163.230
+X-SA-Exim-Rcpt-To: kchow@gigaio.com, joro@8bytes.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, hch@infradead.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-6.9 required=5.0 tests=ALL_TRUSTED,BAYES_00
+        autolearn=ham autolearn_force=no version=3.4.2
+Subject: Re: [PATCH 1/3] iommu/amd: Implement dma_[un]map_resource()
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 9, 2019 at 8:09 AM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> On Wed, 9 Oct 2019 14:14:28 +0200
-> Markus Elfring <Markus.Elfring@web.de> wrote:
->
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Wed, 9 Oct 2019 13:53:59 +0200
-> >
-> > Several functions return values with which useful data processing
-> > should be performed. These values must not be ignored then.
-> > Thus use the annotation =E2=80=9C__must_check=E2=80=9D in the shown fun=
-ction declarations.
-> >
-> > Add also corresponding parameter names for adjusted functions.
-> >
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> >
->
-> I'm curious. How many warnings showed up when you applied this patch?
 
-I got zero for x86_64 and arm64 defconfig builds of linux-next with
-this applied.  Hopefully that's not an argument against the more
-liberal application of it?  I view __must_check as a good thing, and
-encourage its application, unless someone can show that a certain
-function would be useful to call without it.
---=20
+
+On 2019-10-09 12:57 a.m., Christoph Hellwig wrote:
+> On Tue, Oct 08, 2019 at 04:18:35PM -0600, Logan Gunthorpe wrote:
+>> From: Kit Chow <kchow@gigaio.com>
+>>
+>> Currently the Intel IOMMU uses the default dma_[un]map_resource()
+> 
+> s/Intel/AMD/ ?
+
+Oops, yes, my mistake.
+
+>> +static dma_addr_t map_resource(struct device *dev, phys_addr_t paddr,
+>> +		size_t size, enum dma_data_direction dir, unsigned long attrs)
+>> +{
+>> +	struct protection_domain *domain;
+>> +	struct dma_ops_domain *dma_dom;
+>> +
+>> +	domain = get_domain(dev);
+>> +	if (PTR_ERR(domain) == -EINVAL)
+>> +		return (dma_addr_t)paddr;
+> 
+> I thought that case can't happen anymore?
+> 
+> Also note that Joerg just applied the patch to convert the AMD iommu
+> driver to use the dma-iommu ops.  Can you test that series and check
+> it does the right thing for your use case?  From looking at the code
+> I think it should.
+
+Yes, looking at the new code, it looks like this patch will not be
+needed. So we can drop it. We'll test it to make sure.
+
+I believe the other two patches in this series are still needed though.
+
 Thanks,
-~Nick Desaulniers
+
+Logan
+
+
