@@ -2,89 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60423D16B6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:32:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C79C4D16BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:32:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732676AbfJIRcH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 13:32:07 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:40570 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732396AbfJIRb4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 13:31:56 -0400
-Received: from zn.tnic (p200300EC2F0C2000CC8F9AE7D5DA1569.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:2000:cc8f:9ae7:d5da:1569])
+        id S1732298AbfJIRcW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 13:32:22 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:53030 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731901AbfJIRcU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 13:32:20 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 46pLrL04G5z1rqSZ;
+        Wed,  9 Oct 2019 19:32:17 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 46pLrK0DR6z1qqkQ;
+        Wed,  9 Oct 2019 19:32:17 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id l80dbBGTn2J7; Wed,  9 Oct 2019 19:32:16 +0200 (CEST)
+X-Auth-Info: /7eABWXbI0RPW7CdzoEHdo7a5y0u4TYQb2jLxJ1Ts0Dsl0C17k5BT8IcnhnVMxYN
+Received: from igel.home (ppp-46-244-190-21.dynamic.mnet-online.de [46.244.190.21])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BF3761EC0819;
-        Wed,  9 Oct 2019 19:31:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1570642311;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=TswlQo4vEF+AgJvamc1wb5Alk3PGWUEclAdiRh5vN/8=;
-        b=j3dNU27rfdTrYdutjpQ9JRpVeZk5vrj9IRTq5BqHc1HnAM2iJRSD6YC4MevF7KOSOPwfpV
-        QUYPFxtjStRxpXi2h9zvNv8NTjFJGVrVIcN8eOG3UOg/UKPgL+OPNdjqTBGaMERhYtNOzk
-        pvNKT/Pg8egSrmyGVH6HDtkQnxl+31w=
-Date:   Wed, 9 Oct 2019 19:31:48 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 6/6] x86/fpu/xstate: Rename validate_xstate_header() to
- validate_xstate_header_from_user()
-Message-ID: <20191009173148.GJ10395@zn.tnic>
-References: <20190925151022.21688-1-yu-cheng.yu@intel.com>
- <20190925151022.21688-7-yu-cheng.yu@intel.com>
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Wed,  9 Oct 2019 19:32:16 +0200 (CEST)
+Received: by igel.home (Postfix, from userid 1000)
+        id 834F92C2277; Wed,  9 Oct 2019 19:32:15 +0200 (CEST)
+From:   Andreas Schwab <schwab@linux-m68k.org>
+To:     Dmitry Goldin <dgoldin@protonmail.ch>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "linux-kernel\\\\\\\\\@vger.kernel.org" 
+        <linux-kernel@vger.kernel.org>,
+        "joel\\\\\\\\\@joelfernandes.org" <joel@joelfernandes.org>,
+        Ben Hutchings <ben@decadent.org.uk>
+Subject: Re: [PATCH] kheaders: substituting --sort in archive creation
+References: <oZ31wh8h96sDGJ_uQWJbvFDzh4-ByMMeoyOhTLmfdf5B5T0KWgLhhNbC49J6EM_Nlgo_zH-bUScrWxYTgP9eNNMF1D5AbpcbIHbBuzbS_44=@protonmail.ch>
+        <JhK61rXiXRkJbVJqHH9kRlLM_zO-J6fPM-NCa2P1eKSIfXzpunRtwJNMS4fliDWqMBhQKqp5t3fmUmKLhuSAeqTS6nVogdqnVyxagsH2z9M=@protonmail.ch>
+X-Yow:  They don't hire PERSONAL PINHEADS, Mr. Toad!
+Date:   Wed, 09 Oct 2019 19:32:15 +0200
+In-Reply-To: <JhK61rXiXRkJbVJqHH9kRlLM_zO-J6fPM-NCa2P1eKSIfXzpunRtwJNMS4fliDWqMBhQKqp5t3fmUmKLhuSAeqTS6nVogdqnVyxagsH2z9M=@protonmail.ch>
+        (Dmitry Goldin's message of "Wed, 09 Oct 2019 13:56:52 +0000")
+Message-ID: <87eezlq0yo.fsf@igel.home>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190925151022.21688-7-yu-cheng.yu@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 08:10:22AM -0700, Yu-cheng Yu wrote:
-> From: Fenghua Yu <fenghua.yu@intel.com>
-> 
-> The function validate_xstate_header() validates an xstate header coming
-> from userspace (PTRACE or sigreturn).  To make it clear, rename it to
-> validate_xstate_header_from_user().
-> 
-> Suggested-by: Dave Hansen <dave.hansen@intel.com>
-> Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
-> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+On Okt 09 2019, Dmitry Goldin <dgoldin@protonmail.ch> wrote:
 
-This one is correct!
+> Andreas: Could you give this patch a try and see if this works for you?
 
-\o/
+Thanks, works for me.
 
-> Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Reviewed-by: Tony Luck <tony.luck@intel.com>
-> ---
->  arch/x86/include/asm/fpu/xstate.h | 2 +-
->  arch/x86/kernel/fpu/regset.c      | 2 +-
->  arch/x86/kernel/fpu/signal.c      | 2 +-
->  arch/x86/kernel/fpu/xstate.c      | 6 +++---
->  4 files changed, 6 insertions(+), 6 deletions(-)
-
-And I like patches like this one! :-)
-
-Reviewed-by: Borislav Petkov <bp@suse.de>
+Andreas.
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Andreas Schwab, schwab@linux-m68k.org
+GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
+"And now for something completely different."
