@@ -2,77 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1844CD111D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 16:24:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BE63D1120
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 16:24:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731328AbfJIOYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 10:24:24 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:60996 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729491AbfJIOYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 10:24:24 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id D5B68D1D3597239601EF;
-        Wed,  9 Oct 2019 22:24:21 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Wed, 9 Oct 2019
- 22:24:19 +0800
-Message-ID: <5D9DED92.8060201@huawei.com>
-Date:   Wed, 9 Oct 2019 22:24:18 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        id S1731450AbfJIOYn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 10:24:43 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43780 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729491AbfJIOYm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 10:24:42 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id ADD4333027C;
+        Wed,  9 Oct 2019 14:24:42 +0000 (UTC)
+Received: from t460s.redhat.com (unknown [10.36.118.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5258D60BF4;
+        Wed,  9 Oct 2019 14:24:36 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, David Hildenbrand <david@redhat.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Pankaj gupta <pagupta@redhat.com>, Qian Cai <cai@lca.pw>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>
+Subject: [PATCH v2 0/2] mm: Don't access uninitialized memmaps in PFN walkers
+Date:   Wed,  9 Oct 2019 16:24:33 +0200
+Message-Id: <20191009142435.3975-1-david@redhat.com>
 MIME-Version: 1.0
-To:     Sean Young <sean@mess.org>
-CC:     <mchehab@kernel.org>, <hansverk@cisco.com>,
-        <daniel.vetter@ffwll.ch>, <linux-media@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/4] media: dvb-frontends: Use DIV_ROUND_CLOSEST directly
- to make it readable
-References: <1567700092-27769-1-git-send-email-zhongjiang@huawei.com> <1567700092-27769-2-git-send-email-zhongjiang@huawei.com> <20191001111552.GA18622@gofer.mess.org>
-In-Reply-To: <20191001111552.GA18622@gofer.mess.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 09 Oct 2019 14:24:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/10/1 19:15, Sean Young wrote:
-> Hi,
->
-> On Fri, Sep 06, 2019 at 12:14:49AM +0800, zhong jiang wrote:
->> The kernel.h macro DIV_ROUND_CLOSEST performs the computation (x + d/2)/d
->> but is perhaps more readable.
->>
->> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
->> ---
->>  drivers/media/dvb-frontends/mt312.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/media/dvb-frontends/mt312.c b/drivers/media/dvb-frontends/mt312.c
->> index 7cae7d6..251ff41 100644
->> --- a/drivers/media/dvb-frontends/mt312.c
->> +++ b/drivers/media/dvb-frontends/mt312.c
->> @@ -137,7 +137,7 @@ static inline int mt312_writereg(struct mt312_state *state,
->>  
->>  static inline u32 mt312_div(u32 a, u32 b)
->>  {
->> -	return (a + (b / 2)) / b;
->> +	return DIV_ROUND_CLOSEST(a, b);
-> Well spotted, that is absolutely correct. However now mt312_div() is just
-> a wrapper for DIV_ROUND_CLOSEST() -- and even marked inline. Really all
-> the callers to mt312_div() should be replaced with DIV_ROUND_CLOSEST().
-Thanks for your suggestion.   I will use DIV_ROUND_CLOSEST directly in v2.
+This is the follow-up of:
+  [PATCH v1] mm: Fix access of uninitialized memmaps in fs/proc/page.c
 
-Sincerely,
-zhong jiang
-> Thanks,
->
-> Sean
->
-> .
->
+We have multiple places where we might access uninitialized memmaps and
+trigger kernel BUGs. Make sure to only access initialized memmaps.
 
+Some of these places got easier to trigger with:
+  [PATCH v6 00/10] mm/memory_hotplug: Shrink zones before removing memory
+As memmaps are now also poisoned when memory is offlined, before it is
+actually removed.
+
+v1 -> v2:
+- Drop ZONE_DEVICE support from the /proc/k... files as requested by Michal
+- Further simplify the code
+- Split up into two patches
+
+David Hildenbrand (2):
+  mm: Don't access uninitialized memmaps in fs/proc/page.c
+  mm/memory-failure.c: Don't access uninitialized memmaps in
+    memory_failure()
+
+ fs/proc/page.c      | 28 ++++++++++++++++------------
+ mm/memory-failure.c | 14 ++++++++------
+ 2 files changed, 24 insertions(+), 18 deletions(-)
+
+-- 
+2.21.0
 
