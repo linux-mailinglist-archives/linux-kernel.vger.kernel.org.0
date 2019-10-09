@@ -2,161 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CADA3D0B63
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 11:38:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DEFCD0B75
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 11:40:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730541AbfJIJht (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 05:37:49 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:48077 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726579AbfJIJht (ORCPT
+        id S1730692AbfJIJjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 05:39:21 -0400
+Received: from antares.kleine-koenig.org ([94.130.110.236]:45520 "EHLO
+        antares.kleine-koenig.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727228AbfJIJjV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 05:37:49 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1iI8Ph-0004BJ-SS; Wed, 09 Oct 2019 11:37:45 +0200
-Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1iI8Ph-0000SJ-7m; Wed, 09 Oct 2019 11:37:45 +0200
-Date:   Wed, 9 Oct 2019 11:37:45 +0200
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V2] firmware: imx: Skip return value check for some
- special SCU firmware APIs
-Message-ID: <20191009093745.r5vevql7bcdhxleo@pengutronix.de>
-References: <1570410959-32563-1-git-send-email-Anson.Huang@nxp.com>
- <20191009090043.4yq4l7iac3zgytnp@pengutronix.de>
- <DB3PR0402MB3916595DFC84910873FBA91AF5950@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+        Wed, 9 Oct 2019 05:39:21 -0400
+Received: by antares.kleine-koenig.org (Postfix, from userid 1000)
+        id 48CE07E9236; Wed,  9 Oct 2019 11:39:18 +0200 (CEST)
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] driver core: simplify definitions of platform_get_irq*
+Date:   Wed,  9 Oct 2019 11:37:46 +0200
+Message-Id: <20191009093746.12095-1-uwe@kleine-koenig.org>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20190828083411.2496-1-thierry.reding@gmail.com>
+References: <20190828083411.2496-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DB3PR0402MB3916595DFC84910873FBA91AF5950@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 11:34:42 up 144 days, 15:52, 98 users,  load average: 0.00, 0.08,
- 0.33
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anson,
+platform_get_irq_optional is just a wrapper for __platform_get_irq. So
+rename __platform_get_irq to platform_get_irq_optional and drop
+platform_get_irq_optional's previous implementation. This way there is
+one function and one indirection less without loss of functionality.
 
-On 19-10-09 09:09, Anson Huang wrote:
-> Hi, Marco
-> 
-> > On 19-10-07 09:15, Anson Huang wrote:
-> > > The SCU firmware does NOT always have return value stored in message
-> > > header's function element even the API has response data, those
-> > > special APIs are defined as void function in SCU firmware, so they
-> > > should be treated as return success always.
-> > >
-> > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > > ---
-> > > Changes since V1:
-> > > 	- Use direct API check instead of calling another function to check.
-> > > 	- This patch is based on
-> > > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fpatc
-> > >
-> > hwork.kernel.org%2Fpatch%2F11129553%2F&amp;data=02%7C01%7Canson.
-> > huang%
-> > >
-> > 40nxp.com%7Cbefd2849a124462caa4a08d74c972dc9%7C686ea1d3bc2b4c6f
-> > a92cd99
-> > >
-> > c5c301635%7C0%7C0%7C637062084506889431&amp;sdata=7fW8hZB4AaUK
-> > 9QTKTJQR7
-> > > LuV2nGo6e%2Fqb%2Fqmn4ykquk%3D&amp;reserved=0
-> > > ---
-> > >  drivers/firmware/imx/imx-scu.c | 16 +++++++++++++++-
-> > >  1 file changed, 15 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/firmware/imx/imx-scu.c
-> > > b/drivers/firmware/imx/imx-scu.c index 869be7a..03b43b7 100644
-> > > --- a/drivers/firmware/imx/imx-scu.c
-> > > +++ b/drivers/firmware/imx/imx-scu.c
-> > > @@ -162,6 +162,7 @@ static int imx_scu_ipc_write(struct imx_sc_ipc
-> > *sc_ipc, void *msg)
-> > >   */
-> > >  int imx_scu_call_rpc(struct imx_sc_ipc *sc_ipc, void *msg, bool
-> > > have_resp)  {
-> > > +	uint8_t saved_svc, saved_func;
-> > >  	struct imx_sc_rpc_msg *hdr;
-> > >  	int ret;
-> > >
-> > > @@ -171,8 +172,11 @@ int imx_scu_call_rpc(struct imx_sc_ipc *sc_ipc,
-> > void *msg, bool have_resp)
-> > >  	mutex_lock(&sc_ipc->lock);
-> > >  	reinit_completion(&sc_ipc->done);
-> > >
-> > > -	if (have_resp)
-> > > +	if (have_resp) {
-> > >  		sc_ipc->msg = msg;
-> > > +		saved_svc = ((struct imx_sc_rpc_msg *)msg)->svc;
-> > 
-> > Why do we need to check the svc too?
-> 
-> It is because the SCU firmware API has many different category called SVC, each category has
-> many different function, and the function value could be same in each category,
-> for example, there are IRQ, PM, MISC etc. SVC category, and each of them could have function
-> type defined as 0, 1, 2 .... That is why I need to save both SVC and FUNC to identify the SCU FW
-> API. See below: 
-> 
-> PM SVC:
-> #define PM_FUNC_SET_PARTITION_POWER_MODE 1U /* Index for pm_set_partition_power_mode() RPC call */
-> #define PM_FUNC_GET_SYS_POWER_MODE 2U /* Index for pm_get_sys_power_mode() RPC call */
-> #define PM_FUNC_SET_RESOURCE_POWER_MODE 3U /* Index for pm_set_resource_power_mode() RPC call */
-> 
-> MISC SVC:
-> #define MISC_FUNC_SET_CONTROL 1U /* Index for misc_set_control() RPC call */
-> #define MISC_FUNC_GET_CONTROL 2U /* Index for misc_get_control() RPC call */
-> #define MISC_FUNC_SET_MAX_DMA_GROUP 4U /* Index for misc_set_max_dma_group() RPC call */
+Signed-off-by: Uwe Kleine-König <uwe@kleine-koenig.org>
+---
+ drivers/base/platform.c | 47 ++++++++++++++++++-----------------------
+ 1 file changed, 21 insertions(+), 26 deletions(-)
 
-Ahh, okay get it. Thanks for the explanation.
-
-> > 
-> > > +		saved_func = ((struct imx_sc_rpc_msg *)msg)->func;
-> > 
-> > Nitpick, should we call it requested_func/req_func?
-> 
-> OK, I will change them If I have to sent out a new version, otherwise, I think the saved_func and saved_svc
-> should also be fine.
-
-Just a nitpick ;)
-
-Feel free to add my
-
-Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
-
-Regards,
-  Marco
-
-> 
-> Thanks,
-> Anson
-
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index b6c6c7d97d5b..60ff536b46f1 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -80,7 +80,24 @@ void __iomem *devm_platform_ioremap_resource(struct platform_device *pdev,
+ EXPORT_SYMBOL_GPL(devm_platform_ioremap_resource);
+ #endif /* CONFIG_HAS_IOMEM */
+ 
+-static int __platform_get_irq(struct platform_device *dev, unsigned int num)
++/**
++ * platform_get_irq_optional - get an optional IRQ for a device
++ * @dev: platform device
++ * @num: IRQ number index
++ *
++ * Gets an IRQ for a platform device. Device drivers should check the return
++ * value for errors so as to not pass a negative integer value to the
++ * request_irq() APIs. This is the same as platform_get_irq(), except that it
++ * does not print an error message if an IRQ can not be obtained.
++ *
++ * Example:
++ *		int irq = platform_get_irq_optional(pdev, 0);
++ *		if (irq < 0)
++ *			return irq;
++ *
++ * Return: IRQ number on success, negative error number on failure.
++ */
++int platform_get_irq_optional(struct platform_device *dev, unsigned int num)
+ {
+ #ifdef CONFIG_SPARC
+ 	/* sparc does not have irqs represented as IORESOURCE_IRQ resources */
+@@ -144,6 +161,7 @@ static int __platform_get_irq(struct platform_device *dev, unsigned int num)
+ 	return -ENXIO;
+ #endif
+ }
++EXPORT_SYMBOL_GPL(platform_get_irq_optional);
+ 
+ /**
+  * platform_get_irq - get an IRQ for a device
+@@ -165,7 +183,7 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
+ {
+ 	int ret;
+ 
+-	ret = __platform_get_irq(dev, num);
++	ret = platform_get_irq_optional(dev, num);
+ 	if (ret < 0 && ret != -EPROBE_DEFER)
+ 		dev_err(&dev->dev, "IRQ index %u not found\n", num);
+ 
+@@ -173,29 +191,6 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
+ }
+ EXPORT_SYMBOL_GPL(platform_get_irq);
+ 
+-/**
+- * platform_get_irq_optional - get an optional IRQ for a device
+- * @dev: platform device
+- * @num: IRQ number index
+- *
+- * Gets an IRQ for a platform device. Device drivers should check the return
+- * value for errors so as to not pass a negative integer value to the
+- * request_irq() APIs. This is the same as platform_get_irq(), except that it
+- * does not print an error message if an IRQ can not be obtained.
+- *
+- * Example:
+- *		int irq = platform_get_irq_optional(pdev, 0);
+- *		if (irq < 0)
+- *			return irq;
+- *
+- * Return: IRQ number on success, negative error number on failure.
+- */
+-int platform_get_irq_optional(struct platform_device *dev, unsigned int num)
+-{
+-	return __platform_get_irq(dev, num);
+-}
+-EXPORT_SYMBOL_GPL(platform_get_irq_optional);
+-
+ /**
+  * platform_irq_count - Count the number of IRQs a platform device uses
+  * @dev: platform device
+@@ -206,7 +201,7 @@ int platform_irq_count(struct platform_device *dev)
+ {
+ 	int ret, nr = 0;
+ 
+-	while ((ret = __platform_get_irq(dev, nr)) >= 0)
++	while ((ret = platform_get_irq_optional(dev, nr)) >= 0)
+ 		nr++;
+ 
+ 	if (ret == -EPROBE_DEFER)
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.23.0
+
