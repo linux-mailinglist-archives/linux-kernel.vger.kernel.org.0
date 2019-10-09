@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0AA6D1642
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:29:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49935D1591
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:24:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732237AbfJIRYS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 13:24:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48034 "EHLO mail.kernel.org"
+        id S1732248AbfJIRYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 13:24:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48498 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731995AbfJIRYB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 13:24:01 -0400
+        id S1732094AbfJIRYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 13:24:03 -0400
 Received: from sasha-vm.mshome.net (unknown [167.220.2.234])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45E8321D7C;
-        Wed,  9 Oct 2019 17:24:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78752206BB;
+        Wed,  9 Oct 2019 17:24:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570641841;
-        bh=NNl2VEcS5iXIkcI2f5gpfTalyoIENeQKXES09/ID1C8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jH/BU0hBjW7mRS/bT+t2ndJ1fZw31uybVEqAgUW74xQV5yCmCWQlIPQjs7B7ATO3X
-         kmMH5SKlVTxINbktVu9aVEqkcSSXfuL+qBQd3P/jhdLIPZV/jUx6qI/qy3sW9Rz8eJ
-         ra21LFfN1KOb1lSRqYXCpfiUcKeIzwJ3+sD2A61I=
+        s=default; t=1570641843;
+        bh=BnNP/S94t0ycyVIws48GAEBsgOMeY35JYl69u3+93fc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=2K95rJMeoMxMEN3j4dvRQ/3zglAiNfgn35uBRtZzX3SsdVnZKSiXnq25C9eM/ZU12
+         oT1pYff8dT66YjCYyPeppFpiO9kkKpNfN2tJH40dAQeOzRcP1IUIQ1zvnlpOD0O68X
+         Lgk/1E6he3a7wrJwuDhUGnh7zcJsMR85AwtRq+W4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 28/68] KVM: x86: Expose XSAVEERPTR to the guest
-Date:   Wed,  9 Oct 2019 13:05:07 -0400
-Message-Id: <20191009170547.32204-28-sashal@kernel.org>
+Cc:     Zenghui Yu <yuzenghui@huawei.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        kvmarm@lists.cs.columbia.edu
+Subject: [PATCH AUTOSEL 4.19 01/26] KVM: arm/arm64: vgic: Use the appropriate TRACE_INCLUDE_PATH
+Date:   Wed,  9 Oct 2019 13:05:33 -0400
+Message-Id: <20191009170558.32517-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191009170547.32204-1-sashal@kernel.org>
-References: <20191009170547.32204-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -43,37 +42,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Zenghui Yu <yuzenghui@huawei.com>
 
-[ Upstream commit 504ce1954fba888936c9d13ccc1e3db9b8f613d5 ]
+[ Upstream commit aac60f1a867773de9eb164013d89c99f3ea1f009 ]
 
-I was surprised to see that the guest reported `fxsave_leak' while the
-host did not. After digging deeper I noticed that the bits are simply
-masked out during enumeration.
+Commit 49dfe94fe5ad ("KVM: arm/arm64: Fix TRACE_INCLUDE_PATH") fixes
+TRACE_INCLUDE_PATH to the correct relative path to the define_trace.h
+and explains why did the old one work.
 
-The XSAVEERPTR feature is actually a bug fix on AMD which means the
-kernel can disable a workaround.
+The same fix should be applied to virt/kvm/arm/vgic/trace.h.
 
-Pass XSAVEERPTR to the guest if available on the host.
-
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/cpuid.c | 1 +
- 1 file changed, 1 insertion(+)
+ virt/kvm/arm/vgic/trace.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index fd1b8db8bf242..59b66e343fa5a 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -479,6 +479,7 @@ static inline int __do_cpuid_func(struct kvm_cpuid_entry2 *entry, u32 function,
+diff --git a/virt/kvm/arm/vgic/trace.h b/virt/kvm/arm/vgic/trace.h
+index 55fed77a9f739..4fd4f6db181b0 100644
+--- a/virt/kvm/arm/vgic/trace.h
++++ b/virt/kvm/arm/vgic/trace.h
+@@ -30,7 +30,7 @@ TRACE_EVENT(vgic_update_irq_pending,
+ #endif /* _TRACE_VGIC_H */
  
- 	/* cpuid 0x80000008.ebx */
- 	const u32 kvm_cpuid_8000_0008_ebx_x86_features =
-+		F(XSAVEERPTR) |
- 		F(WBNOINVD) | F(AMD_IBPB) | F(AMD_IBRS) | F(AMD_SSBD) | F(VIRT_SSBD) |
- 		F(AMD_SSB_NO) | F(AMD_STIBP) | F(AMD_STIBP_ALWAYS_ON);
+ #undef TRACE_INCLUDE_PATH
+-#define TRACE_INCLUDE_PATH ../../../virt/kvm/arm/vgic
++#define TRACE_INCLUDE_PATH ../../virt/kvm/arm/vgic
+ #undef TRACE_INCLUDE_FILE
+ #define TRACE_INCLUDE_FILE trace
  
 -- 
 2.20.1
