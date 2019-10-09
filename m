@@ -2,133 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DEFCD0B75
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 11:40:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC53BD0B65
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 11:38:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730692AbfJIJjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 05:39:21 -0400
-Received: from antares.kleine-koenig.org ([94.130.110.236]:45520 "EHLO
-        antares.kleine-koenig.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727228AbfJIJjV (ORCPT
+        id S1730595AbfJIJiB convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 9 Oct 2019 05:38:01 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:53045 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729616AbfJIJiA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 05:39:21 -0400
-Received: by antares.kleine-koenig.org (Postfix, from userid 1000)
-        id 48CE07E9236; Wed,  9 Oct 2019 11:39:18 +0200 (CEST)
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] driver core: simplify definitions of platform_get_irq*
-Date:   Wed,  9 Oct 2019 11:37:46 +0200
-Message-Id: <20191009093746.12095-1-uwe@kleine-koenig.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190828083411.2496-1-thierry.reding@gmail.com>
-References: <20190828083411.2496-1-thierry.reding@gmail.com>
+        Wed, 9 Oct 2019 05:38:00 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-103-VZzcP8GxPMmH4z8lG9RLRA-1; Wed, 09 Oct 2019 10:37:57 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 9 Oct 2019 10:37:56 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 9 Oct 2019 10:37:56 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Pavel Machek' <pavel@ucw.cz>
+CC:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Nicholas Mc Guire <hofrat@opentech.at>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: RE: x86/random: Speculation to the rescue
+Thread-Topic: x86/random: Speculation to the rescue
+Thread-Index: AQHVfV0j+0Zbqc/i0UCMngMctaT4AqdQmbewgAFKogCAACVSoA==
+Date:   Wed, 9 Oct 2019 09:37:56 +0000
+Message-ID: <0ee565c2378a4abab6b623d6d3e10a7f@AcuMS.aculab.com>
+References: <alpine.DEB.2.21.1909290010500.2636@nanos.tec.linutronix.de>
+ <CAHk-=wgjC01UaoV35PZvGPnrQ812SRGPoV7Xp63BBFxAsJjvrg@mail.gmail.com>
+ <20191006114129.GD24605@amd>
+ <CAHk-=wjvhovO6V4-zT=xEMFnRonYteZvsPo-S0_n_DetSTUk5A@mail.gmail.com>
+ <20191006173501.GA31243@amd>
+ <CAHk-=whgfz2+OgBTVrHLoHK57emYb4gN6TtJ_s-607U=jBQ+ig@mail.gmail.com>
+ <20191006182103.GA2394@amd> <20191007114734.GA6104@mit.edu>
+ <20191007221817.GA4027@amd>
+ <4748b43e6b00415fb21c1a127a835e87@AcuMS.aculab.com>
+ <20191009080240.GA11561@amd>
+In-Reply-To: <20191009080240.GA11561@amd>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
+X-MC-Unique: VZzcP8GxPMmH4z8lG9RLRA-1
+X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-platform_get_irq_optional is just a wrapper for __platform_get_irq. So
-rename __platform_get_irq to platform_get_irq_optional and drop
-platform_get_irq_optional's previous implementation. This way there is
-one function and one indirection less without loss of functionality.
+From: Pavel Machek
+> Sent: 09 October 2019 09:03
+> > NAND flash requires ECC so is likely to be async.
+> > But I2C is clocked from the cpu end - so is fixed.
+>
+> RTC i2c may be clocked from the CPU end, but the time source needs to
+> work when machine is off, so that has a separate crystal for
+> timekeeping.
 
-Signed-off-by: Uwe Kleine-König <uwe@kleine-koenig.org>
----
- drivers/base/platform.c | 47 ++++++++++++++++++-----------------------
- 1 file changed, 21 insertions(+), 26 deletions(-)
+That only helps if the rtc chip lets you read its internal counters.
+You get one read of a few bits of 'randomness'.
 
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index b6c6c7d97d5b..60ff536b46f1 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -80,7 +80,24 @@ void __iomem *devm_platform_ioremap_resource(struct platform_device *pdev,
- EXPORT_SYMBOL_GPL(devm_platform_ioremap_resource);
- #endif /* CONFIG_HAS_IOMEM */
- 
--static int __platform_get_irq(struct platform_device *dev, unsigned int num)
-+/**
-+ * platform_get_irq_optional - get an optional IRQ for a device
-+ * @dev: platform device
-+ * @num: IRQ number index
-+ *
-+ * Gets an IRQ for a platform device. Device drivers should check the return
-+ * value for errors so as to not pass a negative integer value to the
-+ * request_irq() APIs. This is the same as platform_get_irq(), except that it
-+ * does not print an error message if an IRQ can not be obtained.
-+ *
-+ * Example:
-+ *		int irq = platform_get_irq_optional(pdev, 0);
-+ *		if (irq < 0)
-+ *			return irq;
-+ *
-+ * Return: IRQ number on success, negative error number on failure.
-+ */
-+int platform_get_irq_optional(struct platform_device *dev, unsigned int num)
- {
- #ifdef CONFIG_SPARC
- 	/* sparc does not have irqs represented as IORESOURCE_IRQ resources */
-@@ -144,6 +161,7 @@ static int __platform_get_irq(struct platform_device *dev, unsigned int num)
- 	return -ENXIO;
- #endif
- }
-+EXPORT_SYMBOL_GPL(platform_get_irq_optional);
- 
- /**
-  * platform_get_irq - get an IRQ for a device
-@@ -165,7 +183,7 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
- {
- 	int ret;
- 
--	ret = __platform_get_irq(dev, num);
-+	ret = platform_get_irq_optional(dev, num);
- 	if (ret < 0 && ret != -EPROBE_DEFER)
- 		dev_err(&dev->dev, "IRQ index %u not found\n", num);
- 
-@@ -173,29 +191,6 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
- }
- EXPORT_SYMBOL_GPL(platform_get_irq);
- 
--/**
-- * platform_get_irq_optional - get an optional IRQ for a device
-- * @dev: platform device
-- * @num: IRQ number index
-- *
-- * Gets an IRQ for a platform device. Device drivers should check the return
-- * value for errors so as to not pass a negative integer value to the
-- * request_irq() APIs. This is the same as platform_get_irq(), except that it
-- * does not print an error message if an IRQ can not be obtained.
-- *
-- * Example:
-- *		int irq = platform_get_irq_optional(pdev, 0);
-- *		if (irq < 0)
-- *			return irq;
-- *
-- * Return: IRQ number on success, negative error number on failure.
-- */
--int platform_get_irq_optional(struct platform_device *dev, unsigned int num)
--{
--	return __platform_get_irq(dev, num);
--}
--EXPORT_SYMBOL_GPL(platform_get_irq_optional);
+> > Also an embedded system could be booting off a large serial EEPROM.
+> > These have fixed timings and are clocked from the cpu end.
+> 
+> Have you seen such system running Linux?
+
+You can run Linux on the Nios cpu on an Altera/Intel FPGA.
+The kernel is likely to be loaded from the same serial eeprom as the FPGA image.
+
+I've not personally run such a setup, but there are examples for the dev boards
+so I assume some people do.
+I'm not sure I'd want to run Linux on a 100MHz cpu with a slow memory interface.
+Better finding an fpga with an arm core in the corner!
+
+(We do use the Nios cpu - but for standalone code that fits in small internal
+memory blocks.)
+
+	David
+
 -
- /**
-  * platform_irq_count - Count the number of IRQs a platform device uses
-  * @dev: platform device
-@@ -206,7 +201,7 @@ int platform_irq_count(struct platform_device *dev)
- {
- 	int ret, nr = 0;
- 
--	while ((ret = __platform_get_irq(dev, nr)) >= 0)
-+	while ((ret = platform_get_irq_optional(dev, nr)) >= 0)
- 		nr++;
- 
- 	if (ret == -EPROBE_DEFER)
--- 
-2.23.0
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
