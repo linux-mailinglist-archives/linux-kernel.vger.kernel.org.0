@@ -2,183 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08ED6D101C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 15:30:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6025FD1025
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 15:30:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731547AbfJIN2w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 09:28:52 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38160 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731178AbfJIN2w (ORCPT
+        id S1731570AbfJIN3Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 09:29:24 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40806 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731181AbfJIN3X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 09:28:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=gHIhwkOGTyUWJ1ds4Grb/2Fv2sxTh2+8y7kBcVqDK7w=; b=VfC1q4L/4310KKHZb9OqOufFH
-        QQ7mJVQekbdoXWSyJgQX8loaj7NvL6bmReTPMPBQFcPQHSoL0bJf61mO3r16EEbUpFa3uJdBKfExp
-        laeHtyrKA1tx++/aBnH9QLV6vSGWMnlLa7Y3hQGx72HzH0nQhaJKawPJ6IXKs+3CJFHCRR0URoIrH
-        tknIEAcY4EfpnpFhPH0RnXs0lYzVyz4WckNplk9JgzJtCu1+JBWwY/WQeAHybC4qJvHBfLIq+d0+i
-        jT0M7ZLRTR+ADtlJ86FoR3vJvgurPfbKhjR1oaB5XpQMVSxa5ma+Sxj0ioXy0pEqP2jZOc7K5Rk2j
-        nsWlF0d4g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iIC1G-0001XD-5d; Wed, 09 Oct 2019 13:28:46 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 806503008C1;
-        Wed,  9 Oct 2019 15:27:52 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 5213A209D5B27; Wed,  9 Oct 2019 15:28:44 +0200 (CEST)
-Date:   Wed, 9 Oct 2019 15:28:44 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        paulmck@kernel.org
-Subject: Re: x86/kprobes bug? (was: [PATCH 1/3] x86/alternatives: Teach
- text_poke_bp() to emulate instructions)
-Message-ID: <20191009132844.GG2359@hirez.programming.kicks-ass.net>
-References: <20190827180622.159326993@infradead.org>
- <20190827181147.053490768@infradead.org>
- <20191003140050.1d4cf59d3de8b5396d36c269@kernel.org>
- <20191003082751.GQ4536@hirez.programming.kicks-ass.net>
- <20191003110106.GI4581@hirez.programming.kicks-ass.net>
- <20191004224540.766dc0fd824bcd5b8baa2f4c@kernel.org>
- <20191009130754.GL2311@hirez.programming.kicks-ass.net>
- <20191009132639.GF2359@hirez.programming.kicks-ass.net>
+        Wed, 9 Oct 2019 09:29:23 -0400
+Received: by mail-wm1-f65.google.com with SMTP id b24so2611017wmj.5;
+        Wed, 09 Oct 2019 06:29:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GDuh8wOWud4/h7FBqgUO27K9UbX8e3rhEg2xYH7BQNg=;
+        b=f+nXm2f/x4SFc3z61bN/4O+TQEsVxwJLm1a8Ysx2R0Jwt5UoKtc7Rb9yu4+9HgkILs
+         2wvIwU68sXGIVb1+YrM4MaTImBjZfYmarAqMC2Y7wZCPqcBvarWKAZ06VBSN8aGr/yhu
+         CFfyXyi9K+DxQ8OHAp3bJFHDFyGpXl+PfCZPVC9Rmphk88/T5Y2xYIxo91ECmlJC8BZk
+         9H6aB0DiFx3hQa1Z9M2a4UJbePb/vpazuPthF2V4dtM+Qx0r8gHkCyjKoAqa0IzscDd2
+         GeUfBWin4JZN/V8wtLAGvLX3g816AfgCZG/57Xt3zlpLYNh+I6iatUhB3mS76zoyZ0ss
+         ZNuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GDuh8wOWud4/h7FBqgUO27K9UbX8e3rhEg2xYH7BQNg=;
+        b=khLE/CPVTXAleTvOTe0cyHUiwO1HmVxuhOASHbTlpjB7IXmI9plWaY0IHpU5Y/Wr0N
+         sBYry0IFyXPiioFvGoQDG3ob/Huq+MIXhum3q4RfM569wzrP3qW7f5C6uYH7ai6ajt7n
+         yLR0Yic2fQbnbhIulAXVnjjrbFnxqJHMyhzNYAgZG3E/9ytoT+nALmNuDf+ol/QhyeXu
+         P2M84RgaZ1LEZLb+R4OeugZGG4ovkXzgRYXzb74Zk+UJ2+gGjtr0lWi38D6nvzODE8qN
+         TJFcKHm6V2GXzueLkuqmxI3VamMdJ+D8gYCLo1jQ6laT7qIDQf8Sbv4Uax0kJ6xUpXo7
+         ipVA==
+X-Gm-Message-State: APjAAAVXlMnhzZQ7noAJjylVgOpoYN8Vyq7LCdRQq10OLu2tAg9z3bG/
+        vqxvUfNl7RS20Ttg9x/Xbas=
+X-Google-Smtp-Source: APXvYqw1aUJubsYg5UUcikhG5dviUNyvuNRUtpwlBrEioF409+G2sxwGyLDf1q0QhLloVC316zvwsQ==
+X-Received: by 2002:a1c:f210:: with SMTP id s16mr2434290wmc.24.1570627761339;
+        Wed, 09 Oct 2019 06:29:21 -0700 (PDT)
+Received: from localhost ([51.15.41.238])
+        by smtp.gmail.com with ESMTPSA id t83sm3862315wmt.18.2019.10.09.06.29.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 06:29:20 -0700 (PDT)
+Date:   Wed, 9 Oct 2019 14:29:19 +0100
+From:   Stefan Hajnoczi <stefanha@gmail.com>
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     netdev@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
+        linux-hyperv@vger.kernel.org,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        kvm@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
+        Dexuan Cui <decui@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jorgen Hansen <jhansen@vmware.com>
+Subject: Re: [RFC PATCH 13/13] vsock: fix bind() behaviour taking care of CID
+Message-ID: <20191009132919.GN5747@stefanha-x1.localdomain>
+References: <20190927112703.17745-1-sgarzare@redhat.com>
+ <20190927112703.17745-14-sgarzare@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cs5saTBZh7UZl2eX"
 Content-Disposition: inline
-In-Reply-To: <20191009132639.GF2359@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190927112703.17745-14-sgarzare@redhat.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 03:26:39PM +0200, Peter Zijlstra wrote:
-> So I suppose I'm suggesting we do something like the below on top of
-> what I already have here:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git x86/ftrace
-> 
-> All it needs are a few comments ;-) Also note how this nicely gets rid
-> of the one text_poke_bp(.emulate) user, so we can go and remove that as
-> well.
-> 
+
+--cs5saTBZh7UZl2eX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Sep 27, 2019 at 01:27:03PM +0200, Stefano Garzarella wrote:
+> When we are looking for a socket bound to a specific address,
+> we also have to take into account the CID.
+>=20
+> This patch is useful with multi-transports support because it
+> allows the binding of the same port with different CID, and
+> it prevents a connection to a wrong socket bound to the same
+> port, but with different CID.
+>=20
+> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
 > ---
->  arch/x86/include/asm/text-patching.h |  1 +
->  arch/x86/kernel/alternative.c        | 11 ++++++++---
->  arch/x86/kernel/kprobes/core.c       |  1 +
->  arch/x86/kernel/kprobes/opt.c        | 12 ++++--------
->  4 files changed, 14 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
-> index d553175212b3..d3269558e5b5 100644
-> --- a/arch/x86/include/asm/text-patching.h
-> +++ b/arch/x86/include/asm/text-patching.h
-> @@ -42,6 +42,7 @@ extern void text_poke_early(void *addr, const void *opcode, size_t len);
->   * an inconsistent instruction while you patch.
->   */
->  extern void *text_poke(void *addr, const void *opcode, size_t len);
-> +extern void text_poke_sync(void);
->  extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
->  extern int poke_int3_handler(struct pt_regs *regs);
->  extern void text_poke_bp(void *addr, const void *opcode, size_t len, const void *emulate);
-> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-> index 34a08bc68e9a..9e81ab542190 100644
-> --- a/arch/x86/kernel/alternative.c
-> +++ b/arch/x86/kernel/alternative.c
-> @@ -936,6 +936,11 @@ static void do_sync_core(void *info)
->  	sync_core();
->  }
->  
-> +void text_poke_sync(void)
-> +{
-> +	on_each_cpu(do_sync_core, NULL, 1);
-> +}
-> +
->  struct text_poke_loc {
->  	s32 rel_addr; /* addr := _stext + rel_addr */
->  	s32 rel32;
-> @@ -1089,7 +1094,7 @@ static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries
->  	for (i = 0; i < nr_entries; i++)
->  		text_poke(text_poke_addr(&tp[i]), &int3, sizeof(int3));
->  
-> -	on_each_cpu(do_sync_core, NULL, 1);
-> +	text_poke_sync();
->  
->  	/*
->  	 * Second step: update all but the first byte of the patched range.
-> @@ -1111,7 +1116,7 @@ static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries
->  		 * not necessary and we'd be safe even without it. But
->  		 * better safe than sorry (plus there's not only Intel).
->  		 */
-> -		on_each_cpu(do_sync_core, NULL, 1);
-> +		text_poke_sync();
->  	}
->  
->  	/*
-> @@ -1127,7 +1132,7 @@ static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries
->  	}
->  
->  	if (do_sync)
-> -		on_each_cpu(do_sync_core, NULL, 1);
-> +		text_poke_sync();
->  
->  	/*
->  	 * sync_core() implies an smp_mb() and orders this store against
+>  net/vmw_vsock/af_vsock.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-index 7e4a8a1c9d9a..04858ea7cd76 100644
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -498,11 +498,13 @@ int arch_prepare_kprobe(struct kprobe *p)
- void arch_arm_kprobe(struct kprobe *p)
- {
- 	text_poke(p->addr, ((unsigned char []){INT3_INSN_OPCODE}), 1);
-+	text_poke_sync();
- }
- 
- void arch_disarm_kprobe(struct kprobe *p)
- {
- 	text_poke(p->addr, &p->opcode, 1);
-+	text_poke_sync();
- }
- 
- void arch_remove_kprobe(struct kprobe *p)
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
 
->  void arch_remove_kprobe(struct kprobe *p)
-> diff --git a/arch/x86/kernel/kprobes/opt.c b/arch/x86/kernel/kprobes/opt.c
-> index 36d7249f2145..30a2646cfc8a 100644
-> --- a/arch/x86/kernel/kprobes/opt.c
-> +++ b/arch/x86/kernel/kprobes/opt.c
-> @@ -446,14 +446,10 @@ void arch_optimize_kprobes(struct list_head *oplist)
->  /* Replace a relative jump with a breakpoint (int3).  */
->  void arch_unoptimize_kprobe(struct optimized_kprobe *op)
->  {
-> -	u8 insn_buff[JMP32_INSN_SIZE];
-> -
-> -	/* Set int3 to first byte for kprobes */
-> -	insn_buff[0] = INT3_INSN_OPCODE;
-> -	memcpy(insn_buff + 1, op->optinsn.copied_insn, DISP32_SIZE);
-> -
-> -	text_poke_bp(op->kp.addr, insn_buff, JMP32_INSN_SIZE,
-> -		     text_gen_insn(JMP32_INSN_OPCODE, op->kp.addr, op->optinsn.insn));
-> +	arch_arm_kprobe(&op->kp);
-> +	text_poke(op->kp.addr + INT3_INSN_SIZE,
-> +		  op->optinsn.copied_insn, DISP32_SIZE);
-> +	text_poke_sync();
->  }
->  
->  /*
+--cs5saTBZh7UZl2eX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl2d4K8ACgkQnKSrs4Gr
+c8jIHQgArLXLyHXwZu55EHHu9yiNNFHasNE5dRT3AdGHmJvK/neRvEFmuyQ2w9Xr
+Ap1yzIgihhRbUNxJaiyxXeuB1KwSQmWUSs15m027eetOieQFnnPZodUYF1PVRloj
++2ol43xqmHW4vOlqdXbTrl6Ggr97gSNylVBDC5naNbR/r7/md1MYEmkpRTGHlUFe
+IPQ5Ip2z8hWKLnK70fs1yYKmj8Tbb+pZBDN68i3iC5+98SzrvY9Tix1SfeQwVSn+
+HKXhugUiYvtl2VwaqSEud28/3Hqcxe3wnfZcYXFJkPhj5p0/gprCBUeLUfP4jwlz
+b42+Ttg66N+HW7vXgrTesK83l3PpJA==
+=f3oL
+-----END PGP SIGNATURE-----
+
+--cs5saTBZh7UZl2eX--
