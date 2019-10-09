@@ -2,167 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C48D3D1817
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 21:11:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A812CD182E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 21:12:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732181AbfJITLr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 15:11:47 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39788 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732116AbfJITLp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 15:11:45 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x99Im51m031124;
-        Wed, 9 Oct 2019 15:11:09 -0400
-Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2vhkdycf8w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 09 Oct 2019 15:11:09 -0400
-Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
-        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x99J5KQK009954;
-        Wed, 9 Oct 2019 19:11:10 GMT
-Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
-        by ppma01wdc.us.ibm.com with ESMTP id 2vejt745ys-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 09 Oct 2019 19:11:10 +0000
-Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x99JB7jG57540966
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 9 Oct 2019 19:11:07 GMT
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6DAC66E056;
-        Wed,  9 Oct 2019 19:11:07 +0000 (GMT)
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0742B6E04E;
-        Wed,  9 Oct 2019 19:11:06 +0000 (GMT)
-Received: from talon7.ibm.com (unknown [9.41.179.222])
-        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed,  9 Oct 2019 19:11:06 +0000 (GMT)
-From:   Eddie James <eajames@linux.ibm.com>
-To:     linux-hwmon@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        jdelvare@suse.com, linux@roeck-us.net, mark.rutland@arm.com,
-        robh+dt@kernel.org, Eddie James <eajames@linux.ibm.com>
-Subject: [PATCH 2/2] hwmon: (pmbus/ibm-cffps) Add version detection capability
-Date:   Wed,  9 Oct 2019 14:11:02 -0500
-Message-Id: <1570648262-25383-3-git-send-email-eajames@linux.ibm.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1570648262-25383-1-git-send-email-eajames@linux.ibm.com>
-References: <1570648262-25383-1-git-send-email-eajames@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-09_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1910090153
+        id S1732299AbfJITMU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 15:12:20 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45294 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732032AbfJITMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 15:12:18 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7ACE118CB909;
+        Wed,  9 Oct 2019 19:12:18 +0000 (UTC)
+Received: from ovpn-117-172.phx2.redhat.com (ovpn-117-172.phx2.redhat.com [10.3.117.172])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E887F60C05;
+        Wed,  9 Oct 2019 19:12:11 +0000 (UTC)
+Message-ID: <9c12342ed1e6d180fae3348409fabb9fc045361d.camel@redhat.com>
+Subject: Re: [PATCH RT 5/8] sched/deadline: Reclaim cpuset bandwidth in
+ .migrate_task_rq()
+From:   Scott Wood <swood@redhat.com>
+To:     Juri Lelli <juri.lelli@redhat.com>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
+Date:   Wed, 09 Oct 2019 14:12:10 -0500
+In-Reply-To: <20191009072745.GI19588@localhost.localdomain>
+References: <20190727055638.20443-1-swood@redhat.com>
+         <20190727055638.20443-6-swood@redhat.com>
+         <20190927081141.GB31660@localhost.localdomain>
+         <9a4cc499e6de4690c682c03c0c880363fe3c9307.camel@redhat.com>
+         <20190930071233.GE31660@localhost.localdomain>
+         <9acc5f1bd0fe06acb2b7b518c5ef1f082e89ad63.camel@redhat.com>
+         <20191001085209.GA6481@localhost.localdomain>
+         <a1098e5f95a1ab202fdf79a73aedfeeb8e02dd47.camel@redhat.com>
+         <20191009072745.GI19588@localhost.localdomain>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.63]); Wed, 09 Oct 2019 19:12:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some systems may plug in either version 1 or version 2 of the IBM common
-form factor power supply. Add a version-less compatibility string that
-tells the driver to try and detect which version of the power supply is
-connected.
+On Wed, 2019-10-09 at 09:27 +0200, Juri Lelli wrote:
+> On 09/10/19 01:25, Scott Wood wrote:
+> > On Tue, 2019-10-01 at 10:52 +0200, Juri Lelli wrote:
+> > > On 30/09/19 11:24, Scott Wood wrote:
+> > > > On Mon, 2019-09-30 at 09:12 +0200, Juri Lelli wrote:
+> > > 
+> > > [...]
+> > > 
+> > > > > Hummm, I was actually more worried about the fact that we call
+> > > > > free_old_
+> > > > > cpuset_bw_dl() only if p->state != TASK_WAKING.
+> > > > 
+> > > > Oh, right. :-P  Not sure what I had in mind there; we want to call
+> > > > it
+> > > > regardless.
+> > > > 
+> > > > I assume we need rq->lock in free_old_cpuset_bw_dl()?  So something
+> > > > like
+> > > 
+> > > I think we can do with rcu_read_lock_sched() (see
+> > > dl_task_can_attach()).
+> > 
+> > RCU will keep dl_bw from being freed under us (we're implicitly in an
+> > RCU
+> > sched read section due to atomic context).  It won't stop rq->rd from
+> > changing, but that could have happened before we took rq->lock.  If the
+> > cpu
+> > the task was running on was removed from the cpuset, and that raced with
+> > the
+> > task being moved to a different cpuset, couldn't we end up erroneously
+> > subtracting from the cpu's new root domain (or failing to subtract at
+> > all if
+> > the old cpu's new cpuset happens to be the task's new cpuset)?  I don't
+> > see
+> > anything that forces tasks off of the cpu when a cpu is removed from a
+> > cpuset (though maybe I'm not looking in the right place), so the race
+> > window
+> > could be quite large.  In any case, that's an existing problem that's
+> > not
+> > going to get solved in this patchset.
+> 
+> OK. So, mainline has got cpuset_read_lock() which should be enough to
+> guard against changes to rd(s).
+> 
+> I agree that rq->lock is needed here.
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
----
- drivers/hwmon/pmbus/ibm-cffps.c | 37 +++++++++++++++++++++++++++++++++----
- 1 file changed, 33 insertions(+), 4 deletions(-)
+My point was that rq->lock isn't actually helping, because rq->rd could have
+changed before rq->lock is acquired (and it's still the old rd that needs
+the bandwidth subtraction).  cpuset_mutex/cpuset_rwsem helps somewhat,
+though there's still a problem due to the subtraction not happening until
+the task is woken up (by which time cpuset_mutex may have been released and
+further reconfiguration could have happened).  This would be an issue even
+without lazy migrate, since in that case ->set_cpus_allowed() can get
+deferred, but this patch makes the window much bigger.
 
-diff --git a/drivers/hwmon/pmbus/ibm-cffps.c b/drivers/hwmon/pmbus/ibm-cffps.c
-index d44745e..d61547e 100644
---- a/drivers/hwmon/pmbus/ibm-cffps.c
-+++ b/drivers/hwmon/pmbus/ibm-cffps.c
-@@ -3,6 +3,7 @@
-  * Copyright 2017 IBM Corp.
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/bitops.h>
- #include <linux/debugfs.h>
- #include <linux/device.h>
-@@ -29,6 +30,10 @@
- #define CFFPS_INPUT_HISTORY_CMD			0xD6
- #define CFFPS_INPUT_HISTORY_SIZE		100
- 
-+#define CFFPS_CCIN_VERSION			GENMASK(15, 8)
-+#define CFFPS_CCIN_VERSION_1			 0x2b
-+#define CFFPS_CCIN_VERSION_2			 0x2e
-+
- /* STATUS_MFR_SPECIFIC bits */
- #define CFFPS_MFR_FAN_FAULT			BIT(0)
- #define CFFPS_MFR_THERMAL_FAULT			BIT(1)
-@@ -54,7 +59,7 @@ enum {
- 	CFFPS_DEBUGFS_NUM_ENTRIES
- };
- 
--enum versions { cffps1, cffps2 };
-+enum versions { cffps1, cffps2, cffps_unknown };
- 
- struct ibm_cffps_input_history {
- 	struct mutex update_lock;
-@@ -395,7 +400,7 @@ static int ibm_cffps_probe(struct i2c_client *client,
- 			   const struct i2c_device_id *id)
- {
- 	int i, rc;
--	enum versions vs;
-+	enum versions vs = cffps_unknown;
- 	struct dentry *debugfs;
- 	struct dentry *ibm_cffps_dir;
- 	struct ibm_cffps *psu;
-@@ -405,8 +410,27 @@ static int ibm_cffps_probe(struct i2c_client *client,
- 		vs = (enum versions)md;
- 	else if (id)
- 		vs = (enum versions)id->driver_data;
--	else
--		vs = cffps1;
-+
-+	if (vs == cffps_unknown) {
-+		u16 ccin_version = CFFPS_CCIN_VERSION_1;
-+		int ccin = i2c_smbus_read_word_swapped(client, CFFPS_CCIN_CMD);
-+
-+		if (ccin > 0)
-+			ccin_version = FIELD_GET(CFFPS_CCIN_VERSION, ccin);
-+
-+		switch (ccin_version) {
-+		default:
-+		case CFFPS_CCIN_VERSION_1:
-+			vs = cffps1;
-+			break;
-+		case CFFPS_CCIN_VERSION_2:
-+			vs = cffps2;
-+			break;
-+		}
-+
-+		/* Set the client name to include the version number. */
-+		snprintf(client->name, I2C_NAME_SIZE, "cffps%d", vs + 1);
-+	}
- 
- 	client->dev.platform_data = &ibm_cffps_pdata;
- 	rc = pmbus_do_probe(client, id, &ibm_cffps_info[vs]);
-@@ -465,6 +489,7 @@ static int ibm_cffps_probe(struct i2c_client *client,
- static const struct i2c_device_id ibm_cffps_id[] = {
- 	{ "ibm_cffps1", cffps1 },
- 	{ "ibm_cffps2", cffps2 },
-+	{ "ibm_cffps", cffps_unknown },
- 	{}
- };
- MODULE_DEVICE_TABLE(i2c, ibm_cffps_id);
-@@ -478,6 +503,10 @@ static int ibm_cffps_probe(struct i2c_client *client,
- 		.compatible = "ibm,cffps2",
- 		.data = (void *)cffps2
- 	},
-+	{
-+		.compatible = "ibm,cffps",
-+		.data = (void *)cffps_unknown
-+	},
- 	{}
- };
- MODULE_DEVICE_TABLE(of, ibm_cffps_of_match);
--- 
-1.8.3.1
+The right solution is probably to explicitly track the rd for which a task
+has a pending bandwidth subtraction (if any), and to continue doing it from
+set_cpus_allowed() if the task is not migrate-disabled.  In the meantime, I
+think we should drop this patch from the patchset -- without it, lazy
+migrate disable doesn't really make the race situation any worse than it
+already was.
+
+BTW, what happens to the bw addition in dl_task_can_attach() if a subsequent
+can_attach fails and the whole operation is cancelled?
+
+-Scott
+
 
