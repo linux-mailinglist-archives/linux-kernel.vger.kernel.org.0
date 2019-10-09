@@ -2,144 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75694D1274
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 17:27:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48DE2D1286
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 17:28:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731702AbfJIP1K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 11:27:10 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35758 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731689AbfJIP1K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 11:27:10 -0400
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 95D2872FD4
-        for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2019 15:27:09 +0000 (UTC)
-Received: by mail-wr1-f71.google.com with SMTP id n3so1278317wrt.9
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 08:27:09 -0700 (PDT)
+        id S1731254AbfJIP1w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 11:27:52 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:43139 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731767AbfJIP1t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 11:27:49 -0400
+Received: by mail-yw1-f68.google.com with SMTP id q7so948949ywe.10;
+        Wed, 09 Oct 2019 08:27:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=GAGfzyUV4XhvgurCxyCR2EqX3tIH+KR8HXshRAb1W4M=;
+        b=kXMUo3pNLSF6Bp5VuIy+BzgCHpXZAPVHaSL4XcqD5U2yDdjIyMtggpchGRC0lzQ9cl
+         8OsrKzXBk/gvBZY4XUMDYanF00odndN8hUaCsXTmXQQfOsi0yqoZ2BGaAgFZFTAwKYY+
+         72CDl/NCip1wkGco+vDpg3SscZRhlC7j9N9wrj/CQme5+DfjMpt2WHmkxeUc3cArczYr
+         41q2EJWcGZl/6ZNW5izQrtO1dmpxsC6dnYwpz0u1TXcMnSwV361ENBPmaynMnEGAo58F
+         rBF+krBfJm17uq7xmqcSlvUL0UfaU89yEGJYBAsU3aElh6RV8Q0XCRUggxxrmH0b1uli
+         FBoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=LnjHlFJZ3FGQs1QMmZ0Kw4G8OSYD5KUzSAtQFbnF6ZY=;
-        b=KyPP10Lrk39V7LYEh3Y9SMWqjFVL6eY2ABOT+SPACfdzAVnMqD1KfjuyH0LrjoiQNr
-         rS8ZefsRpJdHi7oJReaGlAIPfwSr8GLX1RW80jo3UCIF+0uAID5NhGs1nsM0FPwSMFC4
-         nGGnbpPBNm7p58GHBNeYkHRgLKQYUFqDtiRYMmXYULkBIxuJyFwIff1/KdF53Y8/M/qE
-         Efi/CUEwhV/WyvxhGRiT+8pzicMfo/HB3zU3rtiXe8C3dOzX1yBaOQBJ1BZV7gb6KRB2
-         6TYpRJ5mEatnCJYLxm6AY8cszA8nIKave7QkFps79KRdniOVd/ztVihm4l3nNnByrvJv
-         U5QA==
-X-Gm-Message-State: APjAAAXKrTFafKkV8wa9ilm6vUu5oUm5vImi52W0Be1i2ea04vhpzUNR
-        NYvd8KLkiei8eUugKKgti2bdOf/AcJAktR4dk8Sfp2lAbYFh9XEQmRrZ/Un5fmMNzGrbh3X7BEZ
-        gYsto5I1wjXeiOWI2dSZTqbUX
-X-Received: by 2002:a5d:558b:: with SMTP id i11mr3472660wrv.166.1570634827932;
-        Wed, 09 Oct 2019 08:27:07 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqz0yhf0MXP9Ng1677vjj7N5mFHVu5KZ31jlXdy5OfBdWtvgpCjVAte/20NBF1wNoCg+0aCTPg==
-X-Received: by 2002:a5d:558b:: with SMTP id i11mr3472632wrv.166.1570634827634;
-        Wed, 09 Oct 2019 08:27:07 -0700 (PDT)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id h125sm3559380wmf.31.2019.10.09.08.27.06
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=GAGfzyUV4XhvgurCxyCR2EqX3tIH+KR8HXshRAb1W4M=;
+        b=bOkL+vFUslFsfafdPJFKvX0bGi728Fxz5vwzIKBy4zSN3mJTnmAtkr+L8cTEMES/4o
+         zQWYfyXQTtyJ5MP75xBjw3r+c5YK/HsWcK9edpnxXVsdRpR7ZJHzlzoDvXz7QY57CExl
+         RP7Lz0vJW3sr5mTbuStASrXyqSHJmmTgSFmupMUbjQqAnfUeX4TcklMkSC1Do//zbc0v
+         2Ne9AYo+Nji78LT9TjoYXERsjeLGuR+XyFrARaGjbQR/r5P3PKD9iAAayWqJhf6BvX2T
+         QFoh03PX+NqQe/FY4qwrwED9DMT9BdbaE1qBSUL5gYYlC8uIUg6L7hU2vqAKT4132VkK
+         L6PA==
+X-Gm-Message-State: APjAAAU9Nv7kjbVjAiQASqElHkGTZ4GrPtMcZwsPQpn1T9P2dyQDTAFF
+        349PgS144b3p1YLfwDejjO0=
+X-Google-Smtp-Source: APXvYqzU4mk2ALxC5shgv1Btwp1xQb3tD3PCuvxgw7dxEmZhlvqDmfddDtyomz4/6eWxAvTEX7t0SQ==
+X-Received: by 2002:a81:7446:: with SMTP id p67mr3018012ywc.457.1570634868449;
+        Wed, 09 Oct 2019 08:27:48 -0700 (PDT)
+Received: from localhost.localdomain (072-189-084-142.res.spectrum.com. [72.189.84.142])
+        by smtp.gmail.com with ESMTPSA id g40sm611863ywk.14.2019.10.09.08.27.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2019 08:27:07 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Roman Kagan <rkagan@virtuozzo.com>,
-        Michael Kelley <mikelley@microsoft.com>
-Cc:     "kvm\@vger.kernel.org" <kvm@vger.kernel.org>,
-        Lan Tianyu <Tianyu.Lan@microsoft.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "x86\@kernel.org" <x86@kernel.org>,
-        "linux-hyperv\@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] x86/hyperv: make vapic support x2apic mode
-In-Reply-To: <20191009145022.28442-1-rkagan@virtuozzo.com>
-References: <20191009145022.28442-1-rkagan@virtuozzo.com>
-Date:   Wed, 09 Oct 2019 17:27:06 +0200
-Message-ID: <87r23mx7lh.fsf@vitty.brq.redhat.com>
+        Wed, 09 Oct 2019 08:27:47 -0700 (PDT)
+From:   William Breathitt Gray <vilhelm.gray@gmail.com>
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        akpm@linux-foundation.org
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, andriy.shevchenko@linux.intel.com,
+        linux@rasmusvillemoes.dk, yamada.masahiro@socionext.com,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        geert@linux-m68k.org, preid@electromag.com.au, lukas@wunner.de,
+        sean.nyekjaer@prevas.dk, morten.tiljeset@prevas.dk,
+        William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH v17 09/14] gpio: uniphier: Utilize for_each_set_clump8 macro
+Date:   Wed,  9 Oct 2019 11:27:07 -0400
+Message-Id: <271a7735b02b6a8b1f54c018e38ea932d1fd299e.1570633189.git.vilhelm.gray@gmail.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <cover.1570633189.git.vilhelm.gray@gmail.com>
+References: <cover.1570633189.git.vilhelm.gray@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Roman Kagan <rkagan@virtuozzo.com> writes:
+Replace verbose implementation in set_multiple callback with
+for_each_set_clump8 macro to simplify code and improve clarity. An
+improvement in this case is that banks that are not masked will now be
+skipped.
 
-> Now that there's Hyper-V IOMMU driver, Linux can switch to x2apic mode
-> when supported by the vcpus.
->
-> However, the apic access functions for Hyper-V enlightened apic assume
-> xapic mode only.
->
-> As a result, Linux fails to bring up secondary cpus when run as a guest
-> in QEMU/KVM with both hv_apic and x2apic enabled.
->
-> According to Michael Kelley, when in x2apic mode, the Hyper-V synthetic
-> apic MSRs behave exactly the same as the corresponding architectural
-> x2apic MSRs, so there's no need to override the apic accessors.  The
-> only exception is hv_apic_eoi_write, which benefits from lazy EOI when
-> available; however, its implementation works for both xapic and x2apic
-> modes.
->
-> Fixes: 29217a474683 ("iommu/hyper-v: Add Hyper-V stub IOMMU driver")
-> Fixes: 6b48cb5f8347 ("X86/Hyper-V: Enlighten APIC access")
-> Cc: stable@vger.kernel.org
-> Suggested-by: Michael Kelley <mikelley@microsoft.com>
-> Signed-off-by: Roman Kagan <rkagan@virtuozzo.com>
-> ---
-> v2 -> v3:
-> - do not introduce x2apic-capable hv_apic accessors; leave original
->   x2apic accessors instead
->
-> v1 -> v2:
-> - add ifdefs to handle !CONFIG_X86_X2APIC
->
->  arch/x86/hyperv/hv_apic.c | 17 +++++++++++++----
->  1 file changed, 13 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
-> index 5c056b8aebef..26eeff5bd535 100644
-> --- a/arch/x86/hyperv/hv_apic.c
-> +++ b/arch/x86/hyperv/hv_apic.c
-> @@ -261,10 +261,19 @@ void __init hv_apic_init(void)
->  
->  	if (ms_hyperv.hints & HV_X64_APIC_ACCESS_RECOMMENDED) {
->  		pr_info("Hyper-V: Using MSR based APIC access\n");
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+---
+ drivers/gpio/gpio-uniphier.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
-This pr_info() becomes a bit misleading in x2apic mode, maybe do
-something like
-
-pr_info("Hyper-V: using Enlightened APIC (%s mode)",
-        x2apic_enabled() ? "x2apic" : "xapic");
-
-> +		/*
-> +		 * With x2apic, architectural x2apic MSRs are equivalent to the
-> +		 * respective synthetic MSRs, so there's no need to override
-> +		 * the apic accessors.  The only exception is
-> +		 * hv_apic_eoi_write, because it benefits from lazy EOI when
-> +		 * available, but it works for both xapic and x2apic modes.
-> +		 */
->  		apic_set_eoi_write(hv_apic_eoi_write);
-> -		apic->read      = hv_apic_read;
-> -		apic->write     = hv_apic_write;
-> -		apic->icr_write = hv_apic_icr_write;
-> -		apic->icr_read  = hv_apic_icr_read;
-> +		if (!x2apic_enabled()) {
-> +			apic->read      = hv_apic_read;
-> +			apic->write     = hv_apic_write;
-> +			apic->icr_write = hv_apic_icr_write;
-> +			apic->icr_read  = hv_apic_icr_read;
-> +		}
->  	}
->  }
-
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-
+diff --git a/drivers/gpio/gpio-uniphier.c b/drivers/gpio/gpio-uniphier.c
+index 93cdcc41e9fb..3e4b15d0231e 100644
+--- a/drivers/gpio/gpio-uniphier.c
++++ b/drivers/gpio/gpio-uniphier.c
+@@ -15,9 +15,6 @@
+ #include <linux/spinlock.h>
+ #include <dt-bindings/gpio/uniphier-gpio.h>
+ 
+-#define UNIPHIER_GPIO_BANK_MASK		\
+-				GENMASK((UNIPHIER_GPIO_LINES_PER_BANK) - 1, 0)
+-
+ #define UNIPHIER_GPIO_IRQ_MAX_NUM	24
+ 
+ #define UNIPHIER_GPIO_PORT_DATA		0x0	/* data */
+@@ -147,15 +144,14 @@ static void uniphier_gpio_set(struct gpio_chip *chip,
+ static void uniphier_gpio_set_multiple(struct gpio_chip *chip,
+ 				       unsigned long *mask, unsigned long *bits)
+ {
+-	unsigned int bank, shift, bank_mask, bank_bits;
+-	int i;
++	unsigned long i;
++	unsigned long bank_mask;
++	unsigned long bank;
++	unsigned long bank_bits;
+ 
+-	for (i = 0; i < chip->ngpio; i += UNIPHIER_GPIO_LINES_PER_BANK) {
++	for_each_set_clump8(i, bank_mask, mask, chip->ngpio) {
+ 		bank = i / UNIPHIER_GPIO_LINES_PER_BANK;
+-		shift = i % BITS_PER_LONG;
+-		bank_mask = (mask[BIT_WORD(i)] >> shift) &
+-						UNIPHIER_GPIO_BANK_MASK;
+-		bank_bits = bits[BIT_WORD(i)] >> shift;
++		bank_bits = bitmap_get_value8(bits, i);
+ 
+ 		uniphier_gpio_bank_write(chip, bank, UNIPHIER_GPIO_PORT_DATA,
+ 					 bank_mask, bank_bits);
 -- 
-Vitaly
+2.23.0
+
