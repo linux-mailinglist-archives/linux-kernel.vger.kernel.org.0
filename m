@@ -2,147 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54B83D1221
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 17:10:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7521FD1227
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 17:11:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731532AbfJIPKi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 11:10:38 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:29458 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729644AbfJIPKi (ORCPT
+        id S1731589AbfJIPLD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 11:11:03 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:43702 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729644AbfJIPLC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 11:10:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1570633837;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=eHwEpktLjemhDVWBTEE5wdMKU4jlPm/MsrXeEwc5KjE=;
-        b=B2mxlj0lnjrlG6zX49vE7p9bjUH3hj8GjGCEfEHxDiqXia1thAlDBX5f/qsMmUOAu4Qftc
-        o4RuZXJnb9wrZl0W7YiDuZZyBg42Pw2ymKPavVsBhowpGvW9dbt3+NqGz32xmKq5yFwwF4
-        M4sO+X44fCxT6kgLeBxt6Og33awo4wo=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-371-viXaEt5iNF6tq0J-nUDL7A-1; Wed, 09 Oct 2019 11:10:33 -0400
-Received: by mail-wm1-f72.google.com with SMTP id g67so799878wmg.4
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 08:10:33 -0700 (PDT)
+        Wed, 9 Oct 2019 11:11:02 -0400
+Received: by mail-ed1-f68.google.com with SMTP id r9so2342156edl.10
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 08:10:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=C7vV5Ta7kiN+Jx0dsp84oi99P0gny8OqQ+rZiWxEBQk=;
+        b=hXnr3vL6PO1kH7F2wkslm/RjNKmVZY3XVz7tO/PS0bz12ywGqTlC5upN53sDakhHDT
+         sUpY7UqPN9Y3i8wY737vRCcuFbf1YUDlTXhLR8ZFofzKJM3wJVCjWUGUnfWJan8SPniv
+         VzpE+kX1ak69oMF6G597TNJCDR99bgGvUhbS0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=LxNQTZ3YeufmomqfUHsgwjNWfLwpx4ZrPxKfNiHSTCQ=;
-        b=RcrNIWuwxH67WYl5L067qF/tHTzHWzxH4ekXmvSpP9ynEsYEHvZ94ea8dCHqddVWWG
-         baVXrIWH5OsUMX//g2eksCI55QzsrExyQSLwpxcPDzi2Ke8BiUSMMUzH7BtT/UPskyVs
-         vTqz71H6hPC9uataBVWmrsf5n2D48quPLyL/Ygb8pUsaHFdPjrPFXzT5ufPCsuScklqx
-         ipl4y9JlJM32qd1XTx/bN0ql+sf2B0mLcj/1hdFpg4T2kEfo/ueEwHxnjODV6MPEn01y
-         aevpbkNcKcaJjJf7u1hlJ1btAeT0DkaOJueGIEzAWKqGo7oZq/cA/6CoePeqoxBGwTIZ
-         59Kg==
-X-Gm-Message-State: APjAAAV4RiDoTww+fCbqoviU4WVRkdE1RIoOvEgIBrK7TLh+aaapWosk
-        N5KJR/1Obz/3YWvhjY52AyqC99vcvSziHx6ONt/Fh2ZDfr99A7zcJLmScu5wE9a8XiUvZfRfead
-        VgwKkbHQdSA0u1vF0w45F5pWN
-X-Received: by 2002:a1c:a651:: with SMTP id p78mr3091154wme.53.1570633832723;
-        Wed, 09 Oct 2019 08:10:32 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqy2DKfpiOa0gDYGVHcI1QGzExxF+RjY57g4EvetJOtB+5T4xjb1JbF4tMF5HPiOYyOdwRBr+Q==
-X-Received: by 2002:a1c:a651:: with SMTP id p78mr3091130wme.53.1570633832474;
-        Wed, 09 Oct 2019 08:10:32 -0700 (PDT)
-Received: from mcroce-redhat.mxp.redhat.com (nat-pool-mxp-t.redhat.com. [149.6.153.186])
-        by smtp.gmail.com with ESMTPSA id e3sm2708136wme.39.2019.10.09.08.10.31
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=C7vV5Ta7kiN+Jx0dsp84oi99P0gny8OqQ+rZiWxEBQk=;
+        b=o1vWrgA0XFqYEtnbRgwGnVPJ38djw1rwOCuPZ0AaN+YWfNs8xnCl+kbJTfuJ0tci3R
+         B4CUogjM5Z0W5NFC2ruGDI8jmuDLYstz0b5yvMr2dE9tDXIb9n2uQSRbuiOv6gWIdBZ/
+         CvNwlbR/PjjYLscAZOQ8WRLP2M6maQnCKMB7byN6nH2AQoeGEtbdeiLcJSGQFVBFfA2I
+         dIMAcraLa/xT+rd/ru+ZP6RXWKXFfNGm7nxNLAefWwYBdzBkz/Ue53v87y05/+ZW1zh7
+         RJkzM+xOMnlJoWeewoQqNFdXLowDLY/fBgRWg86bzRhXgTbNaz5lGcByYSOctT49ql67
+         jGKQ==
+X-Gm-Message-State: APjAAAWj/ag/LD0wrc29j3mUjaN24MsAdyZlmjWe7OsKzA//25gob2o/
+        rjglaxI6X1NOMNoE6AzIIPeAaw==
+X-Google-Smtp-Source: APXvYqwTrH8nNXFpjqBvvrCTsz5k53RaNmz8K/Y+gt0Ek91OqtHE2k0ZinvAPu2kUyysshLL7Ub7ZQ==
+X-Received: by 2002:a50:955e:: with SMTP id v30mr3455881eda.221.1570633859068;
+        Wed, 09 Oct 2019 08:10:59 -0700 (PDT)
+Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
+        by smtp.gmail.com with ESMTPSA id u27sm395824edb.48.2019.10.09.08.10.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2019 08:10:31 -0700 (PDT)
-From:   Matteo Croce <mcroce@redhat.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] kbuild: Add make dir-pkg build option
-Date:   Wed,  9 Oct 2019 17:10:19 +0200
-Message-Id: <20191009151019.13488-1-mcroce@redhat.com>
-X-Mailer: git-send-email 2.21.0
+        Wed, 09 Oct 2019 08:10:43 -0700 (PDT)
+Date:   Wed, 9 Oct 2019 17:10:24 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Ilia Mirkin <imirkin@alum.mit.edu>
+Cc:     Brian Starkey <Brian.Starkey@arm.com>, nd <nd@arm.com>,
+        "Oscar Zhang (Arm Technology China)" <Oscar.Zhang@arm.com>,
+        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
+        Mihail Atanassov <Mihail.Atanassov@arm.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        "Channing Chen (Arm Technology China)" <Channing.Chen@arm.com>,
+        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        "Yiqi Kang (Arm Technology China)" <Yiqi.Kang@arm.com>,
+        Ben Davis <Ben.Davis@arm.com>,
+        "Thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
+        Ayan Halder <Ayan.Halder@arm.com>,
+        "sean@poorly.run" <sean@poorly.run>,
+        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>
+Subject: Re: [PATCH 2/3] drm/komeda: Add drm_ctm_to_coeffs()
+Message-ID: <20191009151024.GF16989@phenom.ffwll.local>
+Mail-Followup-To: Ilia Mirkin <imirkin@alum.mit.edu>,
+        Brian Starkey <Brian.Starkey@arm.com>, nd <nd@arm.com>,
+        "Oscar Zhang (Arm Technology China)" <Oscar.Zhang@arm.com>,
+        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
+        Mihail Atanassov <Mihail.Atanassov@arm.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        "Channing Chen (Arm Technology China)" <Channing.Chen@arm.com>,
+        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        "Yiqi Kang (Arm Technology China)" <Yiqi.Kang@arm.com>,
+        Ben Davis <Ben.Davis@arm.com>,
+        "Thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
+        Ayan Halder <Ayan.Halder@arm.com>,
+        "sean@poorly.run" <sean@poorly.run>,
+        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>
+References: <20190930045408.8053-1-james.qian.wang@arm.com>
+ <20190930045408.8053-3-james.qian.wang@arm.com>
+ <20190930110438.6w7jtw2e5s2ykwnd@DESKTOP-E1NTVVP.localdomain>
+ <CAKb7UviDMLLJWZYV_aW2odJBfmSA8pH7TVuU7T9qpuy1713-EA@mail.gmail.com>
 MIME-Version: 1.0
-X-MC-Unique: viXaEt5iNF6tq0J-nUDL7A-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKb7UviDMLLJWZYV_aW2odJBfmSA8pH7TVuU7T9qpuy1713-EA@mail.gmail.com>
+X-Operating-System: Linux phenom 5.2.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a 'dir-pkg' target which just creates the same directory structures
-as in tar-pkg, but doesn't package anything.
-Useful when the user wants to copy the kernel tree on a machine using
-ssh, rsync or whatever.
+On Mon, Sep 30, 2019 at 07:56:13AM -0400, Ilia Mirkin wrote:
+> On Mon, Sep 30, 2019 at 7:05 AM Brian Starkey <Brian.Starkey@arm.com> wrote:
+> >
+> > Hi James,
+> >
+> > On Mon, Sep 30, 2019 at 04:54:41AM +0000, james qian wang (Arm Technology China) wrote:
+> > > This function is used to convert drm_color_ctm S31.32 sign-magnitude
+> > > value to komeda required Q2.12 2's complement
+> > >
+> > > Signed-off-by: james qian wang (Arm Technology China) <james.qian.wang@arm.com>
+> > > ---
+> > >  .../arm/display/komeda/komeda_color_mgmt.c    | 27 +++++++++++++++++++
+> > >  .../arm/display/komeda/komeda_color_mgmt.h    |  1 +
+> > >  2 files changed, 28 insertions(+)
+> > >
+> > > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.c b/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.c
+> > > index c180ce70c26c..c92c82eebddb 100644
+> > > --- a/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.c
+> > > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.c
+> > > @@ -117,3 +117,30 @@ void drm_lut_to_fgamma_coeffs(struct drm_property_blob *lut_blob, u32 *coeffs)
+> > >  {
+> > >       drm_lut_to_coeffs(lut_blob, coeffs, sector_tbl, ARRAY_SIZE(sector_tbl));
+> > >  }
+> > > +
+> > > +/* Convert from S31.32 sign-magnitude to HW Q2.12 2's complement */
+> > > +static s32 drm_ctm_s31_32_to_q2_12(u64 input)
+> > > +{
+> > > +     u64 mag = (input & ~BIT_ULL(63)) >> 20;
+> > > +     bool negative = !!(input & BIT_ULL(63));
+> > > +     u32 val;
+> > > +
+> > > +     /* the range of signed 2s complement is [-2^n, 2^n - 1] */
+> > > +     val = clamp_val(mag, 0, negative ? BIT(14) : BIT(14) - 1);
+> > > +
+> > > +     return negative ? 0 - val : val;
+> > > +}
+> >
+> > This function looks generally useful. Should it be in DRM core
+> > (assuming there isn't already one there)?
+> >
+> > You can use a parameter to determine the number of bits desired in the
+> > output.
+> 
+> I suspect every driver needs to do something similar. You can see what
+> I did for nouveau here:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=88b703527ba70659365d989f29579f1292ebf9c3
+> 
+> (look for csc_drm_to_base)
+> 
+> Would be great to have a common helper which correctly accounts for
+> all the variability.
 
-Signed-off-by: Matteo Croce <mcroce@redhat.com>
----
- scripts/Makefile.package | 3 ++-
- scripts/package/buildtar | 9 +++++++--
- 2 files changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/scripts/Makefile.package b/scripts/Makefile.package
-index 56eadcc48d46..36600ad1d5e6 100644
---- a/scripts/Makefile.package
-+++ b/scripts/Makefile.package
-@@ -103,7 +103,7 @@ snap-pkg:
-=20
- # tarball targets
- # ------------------------------------------------------------------------=
----
--tar-pkgs :=3D tar-pkg targz-pkg tarbz2-pkg tarxz-pkg
-+tar-pkgs :=3D dir-pkg tar-pkg targz-pkg tarbz2-pkg tarxz-pkg
- PHONY +=3D $(tar-pkgs)
- $(tar-pkgs):
- =09$(MAKE) -f $(srctree)/Makefile
-@@ -147,6 +147,7 @@ help:
- =09@echo '  deb-pkg             - Build both source and binary deb kernel =
-packages'
- =09@echo '  bindeb-pkg          - Build only the binary kernel deb package=
-'
- =09@echo '  snap-pkg            - Build only the binary kernel snap packag=
-e (will connect to external hosts)'
-+=09@echo '  dir-pkg             - Build the kernel as a plain directory st=
-ructure'
- =09@echo '  tar-pkg             - Build the kernel as an uncompressed tarb=
-all'
- =09@echo '  targz-pkg           - Build the kernel as a gzip compressed ta=
-rball'
- =09@echo '  tarbz2-pkg          - Build the kernel as a bzip2 compressed t=
-arball'
-diff --git a/scripts/package/buildtar b/scripts/package/buildtar
-index 2f66c81e4021..ca283079f652 100755
---- a/scripts/package/buildtar
-+++ b/scripts/package/buildtar
-@@ -2,7 +2,7 @@
- # SPDX-License-Identifier: GPL-2.0
-=20
- #
--# buildtar 0.0.4
-+# buildtar 0.0.5
- #
- # (C) 2004-2006 by Jan-Benedict Glaw <jbglaw@lug-owl.de>
- #
-@@ -24,7 +24,7 @@ tarball=3D"${objtree}/linux-${KERNELRELEASE}-${ARCH}.tar"
- # Figure out how to compress, if requested at all
- #
- case "${1}" in
--=09tar-pkg)
-+=09dir-pkg|tar-pkg)
- =09=09opts=3D
- =09=09;;
- =09targz-pkg)
-@@ -133,6 +133,11 @@ if tar --owner=3Droot --group=3Droot --help >/dev/null=
- 2>&1; then
- =09opts=3D"$opts --owner=3Droot --group=3Droot"
- fi
-=20
-+if [ "${1}" =3D dir-pkg ]; then
-+=09echo "Kernel tree successfully created in $tmpdir"
-+=09exit 0
-+fi
-+
- tar cf $tarball -C $tmpdir $opts $dirs
-=20
- echo "Tarball successfully created in $tarball"
---=20
-2.21.0
-
+Yeah the sign-bit 31.32 fixed point format is probably the most ludicrous
+uapi fumble we've ever done. A shared function, rolled out to drivers, to
+switch it to a signed 2 complements integer sounds like a _very_ good
+idea.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
