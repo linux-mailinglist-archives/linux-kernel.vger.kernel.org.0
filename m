@@ -2,208 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2707D1B56
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 00:01:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08882D1B5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 00:02:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732153AbfJIWBb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 18:01:31 -0400
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:58909 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731736AbfJIWBa (ORCPT
+        id S1732155AbfJIWC0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 18:02:26 -0400
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:3692 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730809AbfJIWC0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 18:01:30 -0400
+        Wed, 9 Oct 2019 18:02:26 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1570658490; x=1602194490;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=glioQ9gbQCwDyZ1lhDR7P9tsfgoc1+ZWkzIr2khfKYM=;
-  b=PGRm3frGjgvMORRBMxaITscBg9zHXgcpbn/ZxT33CZaQaP0kDnxavQ76
-   8UwceYfjKNgt00foQptAOm+b8Cngb/Yxpt2a6aP9NXHGM8RJy/197faJY
-   F1NdcJ6Pd/yzNswy/qWO6oaQU2xbNSMN8jEc+XaitWaf/Ih4GkdjkdwKc
-   n3/pDTxWVyPDf1pj+LGZRfw1oUgU7XNQZsHVmdD5V13wSQEJo+TkiCA3P
-   WRs35cJxGN3uRKvKfps3qgfXuKY3/jJPGdcV/tLpOOofPEQp025zRd52K
-   4dcFvAozrOEqa6QqIYEPBiABCZf1BacblDDLvS1arBJPPuV1OknWyzXUF
-   A==;
-IronPort-SDR: Hix8DplbLu/t0uII8+vQEz3tXhhseZf0CqsSphcRw9gdjwBfeKCHjccJGI5voUxnUitT/3Qn/3
- AGyBhiINlGSXcBnx9AGgZlyO9WvFrffhE6pYEX9/zWn4vN3PnJZyljkdPw40qocY0uoMedriCp
- GCfQQ6MFbOpQQiiTghAXd3ji+rLCSXVywPnauHy/rYtd4+7qQKVltkeTDPP5tTNINFg1ElaAFa
- MuRalqmUfauUT5zqS3kI/uEVFNjfWTNc3PhLUwI7t6EXASNPIc/eBpY6aJtNdJDIkKVtMw9Xoc
- 6wY=
+  t=1570658546; x=1602194546;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=+zsaZc6kxpwaRjehPSTssL3stLwWwuaV9Og6AnYp1GU=;
+  b=O0h7sRfTolrsbRalfJAq8aNJc/VbxENt1SsTNmACvsY3BZvttVzCWPhR
+   V4TpEvB8C/GirnWKe7l9FrHJt5p+1S3akqdGayrVXO7DfSDD8OCriMOBl
+   IAko81UX5EQFpWo9wAk1wkhcqVnerjW329qainK/RK15eG8l/Ql8dEPU0
+   wP9+YBHNRuwCSq0zFY9gYxCtSdkquc0xteJ6sZl33QgH+TPi8YpVRlBqE
+   3A9vyD4WYwjq+b2M/SQYNhU8x2RMVcgvt0V03CGvQuEI+mRpkk+dNyOTC
+   n8eFSkIY8oGQKf5hV1RB7b6IPXY+ZlOxQ9cUseJ/qTuu+PJ+yes3evxE2
+   w==;
+IronPort-SDR: g4DVKxNJNsTgbZCVowb9EVMk2kF0VBA3ygDRnI76AfWUfntHRZirEg9klW+mz+hO5VQ3LXkp21
+ F7vb7ccanTN2v2TLVex5W3FjNhEEuoonbwkQblk3/FUqhHPt/tcFoFWsBA9oK6namLGbRr4eUR
+ 1UcVnBb2XoaAVn3zxJq2cxcE7VAAup31a3py+0P9CNmHnu7ScsjLQX0hm31Ac65aroCX1MEcnr
+ UH8l0XS9ZXaitCm+N+8WRFqep0X/dxjTpQf4Unb4LVUTT2VXSwVdSb+SAj1Zv0WWTo516tJtK6
+ OTA=
 X-IronPort-AV: E=Sophos;i="5.67,277,1566835200"; 
-   d="scan'208";a="121776287"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 10 Oct 2019 06:01:30 +0800
-IronPort-SDR: 8pKUP6XiutD+fjqbk40Am0sN534JqPDfCVP4TDCgNhZsZTHiEA2o4TzxonjkVbA/OZVnR9D7IE
- TYJbO6FfqBWHIWZfd48zNQaJEbLOStbUxYLpmfnIDgN/keh0n6FM4ykY3YYTY6MEDda7HsbYrO
- MEWCUDr10uInZTeN0llL4MaOT8TfbFWL5lea33zy2Nx1EjZuoLiJp/PrWYxMt7a/ohnEpSPZFm
- vzYv5klVG1FzwCv0RxB2pToNL/arWv2KkBSK23gUIlHyjQNUZlxOhLrnDAaBF31N3cZxFbouSD
- 9m187ZOP3nWn0GLIGxTMKKlY
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2019 14:57:28 -0700
-IronPort-SDR: NyxctKEn7ncwH/wA8FjcZp+ShlYaHe5YcCbwrG7kc3vUEoYiZzialcvIWkyZMDcgCofvTkPo+G
- rU4chCkgn3vdYe7QKBSzx9mPmUzKJhQDvpU97V5tN0IyRMHBVVio47LNeKEh31SdyRo+3MS+fM
- /+h7dM/yttFW8wtmuMpxpts7jFKS9H+cRw5OmcItbGRcp5NlKJpwfIt7VGW6ksoN3TsfjkvvRi
- B5YmcR7746rsJ+v4M8PyaWad30CWqc3TIAhxeXE766F+LdQkGgJT61vkSkpLLkgvEO2AMebrFq
- K90=
-WDCIronportException: Internal
-Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
-  by uls-op-cesaip02.wdc.com with ESMTP; 09 Oct 2019 15:01:29 -0700
-From:   Atish Patra <atish.patra@wdc.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Atish Patra <atish.patra@wdc.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Allison Randal <allison@lohutok.net>,
-        Anup Patel <anup@brainfault.org>,
-        Enrico Weigelt <info@metux.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Johan Hovold <johan@kernel.org>,
-        linux-riscv@lists.infradead.org,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Richard Fontana <rfontana@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v2  2/2] RISC-V: Consolidate isa correctness check
-Date:   Wed,  9 Oct 2019 15:00:58 -0700
-Message-Id: <20191009220058.24964-3-atish.patra@wdc.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191009220058.24964-1-atish.patra@wdc.com>
-References: <20191009220058.24964-1-atish.patra@wdc.com>
+   d="scan'208";a="124618111"
+Received: from mail-dm3nam05lp2058.outbound.protection.outlook.com (HELO NAM05-DM3-obe.outbound.protection.outlook.com) ([104.47.49.58])
+  by ob1.hgst.iphmx.com with ESMTP; 10 Oct 2019 06:02:23 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ChgIetBlMxCaxTGojATCoSCsVH18MkWDiDXQ6Mlr1eJCo9V+jRAKQsXrApCx8Rswh1dx3sZ2rhP0VNIiBKVb9Cqm2rq/Igtiv8n1s+Vbjbw2IZbQibIj+g1IHl1qZhN91RstluTX0wd59hBfLqDAmA/MwR20isaAdVQ+AlngPpH/s21WXBYNE+K4PrYHYXH604GkaJpT9tpfgPBnVkk3X4CYTHRnSMvYMTBTh/Ht11pH6ACX3tSWq8jWJoI08i+FiMaojrsbsmjsLL+d+0sbPVZikPK9KOMLEtJ+RevjZyEmU3dFmupOrq8WP3PrufVm4CqKSUk5rk7V4PzG9F+mfg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+zsaZc6kxpwaRjehPSTssL3stLwWwuaV9Og6AnYp1GU=;
+ b=XAgcOr66jxTmZFajZUfTC24QHRpMSIsNRmCE6iPfV0Wx3xz1V93v/mvqsVBtOuSEGXk7bQsi9F2r8tz2ID6KVHZFJzjiFlP9kDpsSd0bEslGQWjR798zSENhOswH1YrkfpekmKdrHtRMUgCTP8qmsftZbX/wI7DrYayh9TCyAzsZONG9IzULyOpbKjsZeW7NjMicFG4Uxr+mov1ue31MgTRHXsKPBJ9SNIXXapZcDweWTqxzZ1vHsKXE02pQQ0O5MLJm8RP66MGyuCXob141TkbNccMJ4+Kvdct793h9wrc2MAO8veUBJX96XuUXA5ng5j91qUPlmeB6xi63qAF2pQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+zsaZc6kxpwaRjehPSTssL3stLwWwuaV9Og6AnYp1GU=;
+ b=EmrSZwByQmz2bp7lHDefUxxgFeNFz2qM3Il7VkNObWdLFrxPFgk2bX5RxzJBP0AS9glJiOZqgOVDPu0OzPudRNMuvd6CgoWOdoEChu/9tAJTFi+Uc7XIyjjfOy4s3kIzgOWtp1ESyGaOTvX5hkLcYtAFvjbBrsPJSMtiokQo6T4=
+Received: from BYAPR04MB3990.namprd04.prod.outlook.com (52.135.215.29) by
+ BYAPR04MB5030.namprd04.prod.outlook.com (52.135.234.220) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2347.16; Wed, 9 Oct 2019 22:02:21 +0000
+Received: from BYAPR04MB3990.namprd04.prod.outlook.com
+ ([fe80::51dd:7de9:c4a1:f9f3]) by BYAPR04MB3990.namprd04.prod.outlook.com
+ ([fe80::51dd:7de9:c4a1:f9f3%3]) with mapi id 15.20.2327.026; Wed, 9 Oct 2019
+ 22:02:21 +0000
+From:   Atish Patra <Atish.Patra@wdc.com>
+To:     "hch@infradead.org" <hch@infradead.org>
+CC:     "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "aghiti@upmem.com" <aghiti@upmem.com>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "rfontana@redhat.com" <rfontana@redhat.com>,
+        "johan@kernel.org" <johan@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "anup@brainfault.org" <anup@brainfault.org>
+Subject: Re: [v1 PATCH  2/2] RISC-V: Consolidate isa correctness check
+Thread-Topic: [v1 PATCH  2/2] RISC-V: Consolidate isa correctness check
+Thread-Index: AQHVelHdFNDYeeaoR0C47HAPlzL9UadQ6c0AgAH8AAA=
+Date:   Wed, 9 Oct 2019 22:02:21 +0000
+Message-ID: <bf56b97914951617cbcc49941737d6714eb762e7.camel@wdc.com>
+References: <20191004012000.2661-1-atish.patra@wdc.com>
+         <20191004012000.2661-3-atish.patra@wdc.com>
+         <20191008154408.GC20318@infradead.org>
+In-Reply-To: <20191008154408.GC20318@infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Atish.Patra@wdc.com; 
+x-originating-ip: [199.255.44.250]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: c8e42985-e488-4b6a-1755-08d74d045c21
+x-ms-office365-filtering-ht: Tenant
+x-ms-traffictypediagnostic: BYAPR04MB5030:
+x-microsoft-antispam-prvs: <BYAPR04MB5030D4E0BD08A486EA1F5D63FA950@BYAPR04MB5030.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 018577E36E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39860400002)(136003)(346002)(396003)(366004)(376002)(189003)(199004)(256004)(6116002)(71190400001)(4326008)(2351001)(99286004)(476003)(478600001)(2616005)(5660300002)(7736002)(2906002)(3846002)(7416002)(54906003)(36756003)(305945005)(316002)(76116006)(229853002)(71200400001)(66446008)(446003)(6436002)(14454004)(6486002)(6506007)(8936002)(11346002)(2501003)(102836004)(6512007)(6916009)(64756008)(66556008)(76176011)(5640700003)(66476007)(6246003)(25786009)(486006)(86362001)(66066001)(81166006)(118296001)(186003)(1730700003)(26005)(81156014)(66946007)(8676002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB5030;H:BYAPR04MB3990.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: xQ/mBFQsv7knGYm4Dp7Bc6C9h/GqlvFn1lQJ/7y5p8ftxcoLpAg5C+TurWgWdizAQHNHGNmXVqx9Nm6EIszIgjFjXXJ3UcrZwDeqmZ/R6C3g/ZXa0pP4oL0zD8y5WHNFhcjtaM2uwRiygzY9MOatZL8st+w4wPGlrSRlD5K99JvKsGBWXckNsBEa1msiA7lV82a5NF8dCDjoSISqvjU2XpfmLGdnqSK9+pbIgvzbdxJ4Dh1PCEn+UucuY0VH6AdSMCDkP1q9Wz2cqSt3wVU+4Ds8xKurTp/L0rmnU9qKq7INyuSufv9Dez43q6mL+BPzr9qoRlPFVIGmlPTm+PJHxSid1PKVGM4rkccT2dlPF9dyu6JE3/frnJy0w3ocNKQ2XmtlXalI2FV2E/pNMun0SW+FJdRL9hyVrv7EQjwtPNc=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <599FA5FC1033F84281BA3C35FA81F1E3@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c8e42985-e488-4b6a-1755-08d74d045c21
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2019 22:02:21.5166
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: BpNmY1RNeJgqwLLe2iOj3yEw4+JRUSnvOh/6H4L/2BwBDhzftJ5YUcdjmNsVq2hOYTVZx85G3DLOMDeCEXrEHg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5030
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, isa string is read and checked for correctness at multiple
-places.
-
-Consolidate them into one function and use it only during early bootup.
-In case of a incorrect isa string, the cpu shouldn't boot at all.
-
-Signed-off-by: Atish Patra <atish.patra@wdc.com>
----
- arch/riscv/include/asm/processor.h |  1 +
- arch/riscv/kernel/cpu.c            | 41 ++++++++++++++++++++++--------
- arch/riscv/kernel/cpufeature.c     |  4 +--
- arch/riscv/kernel/smpboot.c        |  4 +++
- 4 files changed, 37 insertions(+), 13 deletions(-)
-
-diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/asm/processor.h
-index f539149d04c2..189bf98f9a3f 100644
---- a/arch/riscv/include/asm/processor.h
-+++ b/arch/riscv/include/asm/processor.h
-@@ -74,6 +74,7 @@ static inline void wait_for_interrupt(void)
- }
- 
- struct device_node;
-+int riscv_read_check_isa(struct device_node *node, const char **isa);
- int riscv_of_processor_hartid(struct device_node *node);
- 
- extern void riscv_fill_hwcap(void);
-diff --git a/arch/riscv/kernel/cpu.c b/arch/riscv/kernel/cpu.c
-index 40a3c442ac5f..6bd4c7176bf6 100644
---- a/arch/riscv/kernel/cpu.c
-+++ b/arch/riscv/kernel/cpu.c
-@@ -8,13 +8,43 @@
- #include <linux/of.h>
- #include <asm/smp.h>
- 
-+int riscv_read_check_isa(struct device_node *node, const char **isa)
-+{
-+	u32 hart;
-+
-+	if (of_property_read_u32(node, "reg", &hart)) {
-+		pr_warn("Found CPU without hart ID\n");
-+		return -ENODEV;
-+	}
-+
-+	if (of_property_read_string(node, "riscv,isa", isa)) {
-+		pr_warn("CPU with hartid=%d has no \"riscv,isa\" property\n",
-+			hart);
-+		return -ENODEV;
-+	}
-+	/*
-+	 * Linux doesn't support rv32e or rv128i, and we only support booting
-+	 * kernels on harts with the same ISA that the kernel is compiled for.
-+	 */
-+	if (IS_ENABLED(CONFIG_32BIT) && (strncmp(*isa, "rv32i", 5) != 0)) {
-+		pr_warn("hartid=%d has an invalid ISA \"%s\" for 32bit config\n",
-+			hart, *isa);
-+		return -ENODEV;
-+	} else if (IS_ENABLED(CONFIG_64BIT) &&
-+		  (strncmp(*isa, "rv64i", 5) != 0)) {
-+		pr_warn("hartid=%d has an invalid ISA \"%s\" for 64bit config\n",
-+			hart, *isa);
-+		return -ENODEV;
-+	}
-+	return 0;
-+}
-+
- /*
-  * Returns the hart ID of the given device tree node, or -ENODEV if the node
-  * isn't an enabled and valid RISC-V hart node.
-  */
- int riscv_of_processor_hartid(struct device_node *node)
- {
--	const char *isa;
- 	u32 hart;
- 
- 	if (!of_device_is_compatible(node, "riscv")) {
-@@ -32,15 +62,6 @@ int riscv_of_processor_hartid(struct device_node *node)
- 		return -ENODEV;
- 	}
- 
--	if (of_property_read_string(node, "riscv,isa", &isa)) {
--		pr_warn("CPU with hartid=%d has no \"riscv,isa\" property\n", hart);
--		return -ENODEV;
--	}
--	if (isa[0] != 'r' || isa[1] != 'v') {
--		pr_warn("CPU with hartid=%d has an invalid ISA of \"%s\"\n", hart, isa);
--		return -ENODEV;
--	}
--
- 	return hart;
- }
- 
-diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
-index b1ade9a49347..eaad5aa07403 100644
---- a/arch/riscv/kernel/cpufeature.c
-+++ b/arch/riscv/kernel/cpufeature.c
-@@ -38,10 +38,8 @@ void riscv_fill_hwcap(void)
- 		if (riscv_of_processor_hartid(node) < 0)
- 			continue;
- 
--		if (of_property_read_string(node, "riscv,isa", &isa)) {
--			pr_warn("Unable to find \"riscv,isa\" devicetree entry\n");
-+		if (riscv_read_check_isa(node, &isa) < 0)
- 			continue;
--		}
- 
- 		for (i = 0; i < strlen(isa); ++i)
- 			this_hwcap |= isa2hwcap[(unsigned char)(isa[i])];
-diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
-index 18ae6da5115e..15ee71297abf 100644
---- a/arch/riscv/kernel/smpboot.c
-+++ b/arch/riscv/kernel/smpboot.c
-@@ -60,12 +60,16 @@ void __init setup_smp(void)
- 	int hart;
- 	bool found_boot_cpu = false;
- 	int cpuid = 1;
-+	const char *isa;
- 
- 	for_each_of_cpu_node(dn) {
- 		hart = riscv_of_processor_hartid(dn);
- 		if (hart < 0)
- 			continue;
- 
-+		if (riscv_read_check_isa(dn, &isa) < 0)
-+			continue;
-+
- 		if (hart == cpuid_to_hartid_map(0)) {
- 			BUG_ON(found_boot_cpu);
- 			found_boot_cpu = 1;
--- 
-2.21.0
-
+T24gVHVlLCAyMDE5LTEwLTA4IGF0IDA4OjQ0IC0wNzAwLCBDaHJpc3RvcGggSGVsbHdpZyB3cm90
+ZToNCj4gPiAraW50IHJpc2N2X3JlYWRfY2hlY2tfaXNhKHN0cnVjdCBkZXZpY2Vfbm9kZSAqbm9k
+ZSwgY29uc3QgY2hhcg0KPiA+ICoqaXNhKQ0KPiA+ICt7DQo+ID4gKwl1MzIgaGFydDsNCj4gPiAr
+DQo+ID4gKwlpZiAob2ZfcHJvcGVydHlfcmVhZF91MzIobm9kZSwgInJlZyIsICZoYXJ0KSkgew0K
+PiA+ICsJCXByX3dhcm4oIkZvdW5kIENQVSB3aXRob3V0IGhhcnQgSURcbiIpOw0KPiA+ICsJCXJl
+dHVybiAtRU5PREVWOw0KPiA+ICsJfQ0KPiA+ICsNCj4gPiArCWlmIChvZl9wcm9wZXJ0eV9yZWFk
+X3N0cmluZyhub2RlLCAicmlzY3YsaXNhIiwgaXNhKSkgew0KPiA+ICsJCXByX3dhcm4oIkNQVSB3
+aXRoIGhhcnRpZD0lZCBoYXMgbm8gXCJyaXNjdixpc2FcIg0KPiA+IHByb3BlcnR5XG4iLA0KPiA+
+ICsJCQloYXJ0KTsNCj4gPiArCQlyZXR1cm4gLUVOT0RFVjsNCj4gPiArCX0NCj4gPiArDQo+ID4g
+KwkvKg0KPiA+ICsJICogTGludXggZG9lc24ndCBzdXBwb3J0IHJ2MzJlIG9yIHJ2MTI4aSwgYW5k
+IHdlIG9ubHkgc3VwcG9ydA0KPiA+IGJvb3RpbmcNCj4gPiArCSAqIGtlcm5lbHMgb24gaGFydHMg
+d2l0aCB0aGUgc2FtZSBJU0EgdGhhdCB0aGUga2VybmVsIGlzDQo+ID4gY29tcGlsZWQgZm9yLg0K
+PiA+ICsJICovDQo+ID4gKyNpZiBkZWZpbmVkKENPTkZJR18zMkJJVCkNCj4gPiArCWlmIChzdHJu
+Y21wKCppc2EsICJydjMyaSIsIDUpICE9IDApDQo+ID4gKwkJcmV0dXJuIC1FTk9ERVY7DQo+ID4g
+KyNlbGlmIGRlZmluZWQoQ09ORklHXzY0QklUKQ0KPiA+ICsJaWYgKHN0cm5jbXAoKmlzYSwgInJ2
+NjRpIiwgNSkgIT0gMCkNCj4gPiArCQlyZXR1cm4gLUVOT0RFVjsNCj4gPiArI2VuZGlmDQo+IA0K
+PiBVc2luZyBJU19FTkFCTEVEIGhlcmUgd291bGQgY2xlYW4gdGhlIGNoZWNrcyB1cCBhIGJpdC4N
+Cj4gDQo+ID4gZGlmZiAtLWdpdCBhL2FyY2gvcmlzY3Yva2VybmVsL2NwdWZlYXR1cmUuYw0KPiA+
+IGIvYXJjaC9yaXNjdi9rZXJuZWwvY3B1ZmVhdHVyZS5jDQo+ID4gaW5kZXggYjFhZGU5YTQ5MzQ3
+Li5lYWFkNWFhMDc0MDMgMTAwNjQ0DQo+ID4gLS0tIGEvYXJjaC9yaXNjdi9rZXJuZWwvY3B1ZmVh
+dHVyZS5jDQo+ID4gKysrIGIvYXJjaC9yaXNjdi9rZXJuZWwvY3B1ZmVhdHVyZS5jDQo+ID4gQEAg
+LTM4LDEwICszOCw4IEBAIHZvaWQgcmlzY3ZfZmlsbF9od2NhcCh2b2lkKQ0KPiA+ICAJCWlmIChy
+aXNjdl9vZl9wcm9jZXNzb3JfaGFydGlkKG5vZGUpIDwgMCkNCj4gPiAgCQkJY29udGludWU7DQo+
+ID4gIA0KPiA+IC0JCWlmIChvZl9wcm9wZXJ0eV9yZWFkX3N0cmluZyhub2RlLCAicmlzY3YsaXNh
+IiwgJmlzYSkpIHsNCj4gPiAtCQkJcHJfd2FybigiVW5hYmxlIHRvIGZpbmQgXCJyaXNjdixpc2Fc
+Ig0KPiA+IGRldmljZXRyZWUgZW50cnlcbiIpOw0KPiA+ICsJCWlmIChyaXNjdl9yZWFkX2NoZWNr
+X2lzYShub2RlLCAmaXNhKSA8IDApDQo+ID4gIAkJCWNvbnRpbnVlOw0KPiANCj4gRG8gd2UgcmVh
+bGx5IGdldCByaWQgb2Ygd2FybmluZ3MgaWYgd2UgZGlkbid0IGZpbmQgYW55dGhpbmcgcHJvcGVy
+Pw0KDQpPay4gQWRkZWQgYmFjayB0aGUgd2FybmluZ3MgYW5kIElTX0VOQUJMRUQgaW4gdjIuDQoN
+Ci0tIA0KUmVnYXJkcywNCkF0aXNoDQo=
