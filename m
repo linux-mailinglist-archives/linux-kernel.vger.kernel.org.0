@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D4B8D169F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:31:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 572B5D1699
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:31:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732942AbfJIRb0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 13:31:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48018 "EHLO mail.kernel.org"
+        id S1732839AbfJIRbP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 13:31:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48510 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732078AbfJIRYB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 13:24:01 -0400
+        id S1732096AbfJIRYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 13:24:04 -0400
 Received: from sasha-vm.mshome.net (unknown [167.220.2.234])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D938421D82;
-        Wed,  9 Oct 2019 17:24:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C89FA21929;
+        Wed,  9 Oct 2019 17:24:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570641841;
-        bh=hwjiPPOo2K3sUN/XgOVRlgCmz1oVu8eixNpFgdwRK/Q=;
+        s=default; t=1570641843;
+        bh=HqvXM5KNaKG/zgmqzl+/ZTz93tY+4j8tnfWyNVjau/s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mn06O9Gk+QjOG7NGJfcK0LHb7VeqdHP69crpXn3utoOYNS/6Ipx/YnXlwFX+lMdPu
-         y4gmqcMSnmm7dQoZoPhNNXJpdFUm1TymxmqD1EqiAVOuHXaTd5fEFKZ7dbMbOfpVxD
-         KGYOsMpYkt5TT7cK0IQ0OStQDlRQBekmDNhaNlXU=
+        b=rB5L71OlaJzeuc1a/F/Pbtv9Vc7iaYO+SZdYz6wCuOFoix7ep6I7vNivjCxCBBS71
+         HdVP5OkKi6AYGku9I9EE/dqhh5sMKEaD8G+AEAANn7sT1GQcdVdFG+K79m7gudPJUw
+         bSyb7VCEwXH/D6iaKfeZ3OWFbLbxwKr+NXYijJP8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jim Mattson <jmattson@google.com>, Marc Orr <marcorr@google.com>,
-        Peter Shier <pshier@google.com>,
-        Jacob Xu <jacobhxu@google.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 27/68] kvm: x86: Use AMD CPUID semantics for AMD vCPUs
-Date:   Wed,  9 Oct 2019 13:05:06 -0400
-Message-Id: <20191009170547.32204-27-sashal@kernel.org>
+Cc:     Balbir Singh <sblbir@amzn.com>, Keith Busch <kbusch@kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 02/26] nvme-pci: Fix a race in controller removal
+Date:   Wed,  9 Oct 2019 13:05:34 -0400
+Message-Id: <20191009170558.32517-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191009170547.32204-1-sashal@kernel.org>
-References: <20191009170547.32204-1-sashal@kernel.org>
+In-Reply-To: <20191009170558.32517-1-sashal@kernel.org>
+References: <20191009170558.32517-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -46,45 +43,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jim Mattson <jmattson@google.com>
+From: Balbir Singh <sblbir@amzn.com>
 
-[ Upstream commit 5f41a37b151f6459e0b650a2f4d1d59b6c02d1ab ]
+[ Upstream commit b224726de5e496dbf78147a66755c3d81e28bdd2 ]
 
-When the guest CPUID information represents an AMD vCPU, return all
-zeroes for queries of undefined CPUID leaves, whether or not they are
-in range.
+User space programs like udevd may try to read to partitions at the
+same time the driver detects a namespace is unusable, and may deadlock
+if revalidate_disk() is called while such a process is waiting to
+enter the frozen queue. On detecting a dead namespace, move the disk
+revalidate after unblocking dispatchers that may be holding bd_butex.
 
-Signed-off-by: Jim Mattson <jmattson@google.com>
-Fixes: bd22f5cfcfe8f6 ("KVM: move and fix substitue search for missing CPUID entries")
-Reviewed-by: Marc Orr <marcorr@google.com>
-Reviewed-by: Peter Shier <pshier@google.com>
-Reviewed-by: Jacob Xu <jacobhxu@google.com>
-Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+changelog Suggested-by: Keith Busch <kbusch@kernel.org>
+Signed-off-by: Balbir Singh <sblbir@amzn.com>
+Reviewed-by: Keith Busch <kbusch@kernel.org>
+Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/cpuid.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/nvme/host/core.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index a8a46e0b3d13b..fd1b8db8bf242 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -987,9 +987,11 @@ bool kvm_cpuid(struct kvm_vcpu *vcpu, u32 *eax, u32 *ebx,
- 	/*
- 	 * Intel CPUID semantics treats any query for an out-of-range
- 	 * leaf as if the highest basic leaf (i.e. CPUID.0H:EAX) were
--	 * requested.
-+	 * requested. AMD CPUID semantics returns all zeroes for any
-+	 * undefined leaf, whether or not the leaf is in range.
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index ae0b01059fc6d..5d0f99bcc987f 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -111,10 +111,13 @@ static void nvme_set_queue_dying(struct nvme_ns *ns)
  	 */
--	if (!entry && check_limit && !cpuid_function_in_range(vcpu, function)) {
-+	if (!entry && check_limit && !guest_cpuid_is_amd(vcpu) &&
-+	    !cpuid_function_in_range(vcpu, function)) {
- 		max = kvm_find_cpuid_entry(vcpu, 0, 0);
- 		if (max) {
- 			function = max->eax;
+ 	if (!ns->disk || test_and_set_bit(NVME_NS_DEAD, &ns->flags))
+ 		return;
+-	revalidate_disk(ns->disk);
+ 	blk_set_queue_dying(ns->queue);
+ 	/* Forcibly unquiesce queues to avoid blocking dispatch */
+ 	blk_mq_unquiesce_queue(ns->queue);
++	/*
++	 * Revalidate after unblocking dispatchers that may be holding bd_butex
++	 */
++	revalidate_disk(ns->disk);
+ }
+ 
+ static void nvme_queue_scan(struct nvme_ctrl *ctrl)
 -- 
 2.20.1
 
