@@ -2,132 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A519ED1554
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:17:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE413D157D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:23:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732073AbfJIRRM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 13:17:12 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42398 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731173AbfJIRRL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 13:17:11 -0400
-Received: by mail-lj1-f195.google.com with SMTP id y23so3267691lje.9
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 10:17:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=WYDrRYPHs0j7kH6nvfHacya6cMEOhB6fPC+Nemlqhfc=;
-        b=AOAkA+oySTesOPMVYaXrzFKziTaxffb4NvaLlldPxDNma8iMLawniVil20T4VPFBT/
-         lJMODrpuJPMyGcX5A2MSdkt5UwkF3L8ZbQNgFABx5dhefmgUO+tHZ4ey9D0lN9erNqVg
-         hnHobkTbmoNLfTwLN96hilGvYMpN12W8DR9gI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=WYDrRYPHs0j7kH6nvfHacya6cMEOhB6fPC+Nemlqhfc=;
-        b=j0yxFzv+Eo9AEphcPo3gKeqRr4geT2mY7bPAJioq91ceDtYRpc5wjiq/YbLwa6xiu1
-         0zOO3SMaB53yRGElqEFn27QguAkAkFiN5tPBH7cpKymjqI6WXLo7HNK+4tlzSUUOBUYf
-         MnAFhDwsIcOU5QanqX3wymJHiW1MdZaVyGc8LL25VwPf3wHoY1Sg3Q0tG6CGnSWANQtU
-         nmSPve7aROK/rbobAwVBf/iQ5ZGg29eHoYW0KrNz4yekKvwUuGfmcCf7uMnuHZt/t+uW
-         nn1EbdwjTkQFtYkXhWdJIuB+R2wim8evF87V2hT65eajs/qf6s4UrO24VL4e0mHJDc26
-         JEEQ==
-X-Gm-Message-State: APjAAAXnbE9JHURTYDlXxqmWYCgi2uBHWYYJ5RC0pFUITw4WGTRzYCDo
-        NSBELajnalwiUjLrDYSkXUeHbZspReg=
-X-Google-Smtp-Source: APXvYqwEqKKtsSFNgZYBf8LOAmNf9R+KCSYw9QROpKPcWgzN42iNW223FQu8hBKrfW75ptSDNc72EQ==
-X-Received: by 2002:a2e:98d8:: with SMTP id s24mr2973536ljj.72.1570641429405;
-        Wed, 09 Oct 2019 10:17:09 -0700 (PDT)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id m15sm568852ljh.50.2019.10.09.10.17.06
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2019 10:17:06 -0700 (PDT)
-Received: by mail-lf1-f48.google.com with SMTP id u28so2247049lfc.5
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 10:17:06 -0700 (PDT)
-X-Received: by 2002:a19:6f0e:: with SMTP id k14mr2845221lfc.79.1570641426174;
- Wed, 09 Oct 2019 10:17:06 -0700 (PDT)
+        id S1731970AbfJIRXy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 13:23:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47952 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730490AbfJIRXx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 13:23:53 -0400
+Received: from sasha-vm.mshome.net (unknown [167.220.2.234])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 126CA206BB;
+        Wed,  9 Oct 2019 17:23:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570641833;
+        bh=BnNP/S94t0ycyVIws48GAEBsgOMeY35JYl69u3+93fc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=kU6CQGlrQqr5rwGxHL3NP8rtMt8jQRFHeJcBGjHpZkp9ry50kUKJs9rL2p3hWTihu
+         tT+/xZgCS1iO/FqE8mKljpiJju3puOerUBhhuY13uy3st7nM9WHd00Nt5XyneaES2/
+         4khjHPm+/pgHD9XJkm77SZiL+hpfjr9WMHEoMuNU=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Zenghui Yu <yuzenghui@huawei.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 01/68] KVM: arm/arm64: vgic: Use the appropriate TRACE_INCLUDE_PATH
+Date:   Wed,  9 Oct 2019 13:04:40 -0400
+Message-Id: <20191009170547.32204-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20191008091508.2682-1-thomas_os@shipmail.org> <20191008091508.2682-4-thomas_os@shipmail.org>
- <20191009152737.p42w7w456zklxz72@box> <CAHk-=wh4waroKr-Xtcv+5pTxBcHxGEj-g73eQvXVawML_C0EXw@mail.gmail.com>
- <03d85a6a-e24a-82f4-93b8-86584b463471@shipmail.org>
-In-Reply-To: <03d85a6a-e24a-82f4-93b8-86584b463471@shipmail.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 9 Oct 2019 10:16:49 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whhdRSqjX5wy1LzFYnOG58UztpifkNvbxBcTVbT3Mzv4g@mail.gmail.com>
-Message-ID: <CAHk-=whhdRSqjX5wy1LzFYnOG58UztpifkNvbxBcTVbT3Mzv4g@mail.gmail.com>
-Subject: Re: [PATCH v4 3/9] mm: pagewalk: Don't split transhuge pmds when a
- pmd_entry is present
-To:     =?UTF-8?Q?Thomas_Hellstr=C3=B6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rik van Riel <riel@surriel.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Huang Ying <ying.huang@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 9, 2019 at 10:03 AM Thomas Hellstr=C3=B6m (VMware)
-<thomas_os@shipmail.org> wrote:
->
-> Nope, it handles the hugepages by ignoring them, since they should be
-> read-only, but if pmd_entry() was called with something else than a
-> hugepage, then it requests the fallback, but never a split.
+From: Zenghui Yu <yuzenghui@huawei.com>
 
-But  PAGE_WALK_FALLBACK _is_ a split.
+[ Upstream commit aac60f1a867773de9eb164013d89c99f3ea1f009 ]
 
-Oh, except you did this
+Commit 49dfe94fe5ad ("KVM: arm/arm64: Fix TRACE_INCLUDE_PATH") fixes
+TRACE_INCLUDE_PATH to the correct relative path to the define_trace.h
+and explains why did the old one work.
 
--               split_huge_pmd(walk->vma, pmd, addr);
-+               if (!ops->pmd_entry)
-+                       split_huge_pmd(walk->vma, pmd, addr);
+The same fix should be applied to virt/kvm/arm/vgic/trace.h.
 
+Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ virt/kvm/arm/vgic/trace.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-so it avoids the split.
+diff --git a/virt/kvm/arm/vgic/trace.h b/virt/kvm/arm/vgic/trace.h
+index 55fed77a9f739..4fd4f6db181b0 100644
+--- a/virt/kvm/arm/vgic/trace.h
++++ b/virt/kvm/arm/vgic/trace.h
+@@ -30,7 +30,7 @@ TRACE_EVENT(vgic_update_irq_pending,
+ #endif /* _TRACE_VGIC_H */
+ 
+ #undef TRACE_INCLUDE_PATH
+-#define TRACE_INCLUDE_PATH ../../../virt/kvm/arm/vgic
++#define TRACE_INCLUDE_PATH ../../virt/kvm/arm/vgic
+ #undef TRACE_INCLUDE_FILE
+ #define TRACE_INCLUDE_FILE trace
+ 
+-- 
+2.20.1
 
-No, that's unacceptable. And makes no sense anyway. If it doesn't
-split the pmd, then it shouldn't walk the pte's - because they don't
-exist. And if it's not a hugepmd, then the split is a no-op, so the
-test makes no sense.
-
-I hadn't noticed that part of the patch. That simply can't be right. I
-don't think you've tested this, because you never actually have
-hugepages, do you?
-
-You didn't notice or realize that split_huge_pmd() just does that
-
-                if (is_swap_pmd(*____pmd) || pmd_trans_huge(*____pmd)   \
-                                        || pmd_devmap(*____pmd))        \
-
-thing and doesn't do anythign at all if it's not huge.
-
-So no. That code makes no sense at all, and I didn't realize how
-senseless it was, becasue I stupidly missed that "make the split
-conditional" - which is insane and wrong - and I thought that you
-wanted PAGE_WALK_FALLBACK to split a pmd and fall back to per-pte
-entries, which is what the name implies.
-
-But that's not what you wanted at all.
-
-Just get rid of PAGE_WALK_FALLBACK entirely then, and make the rule be
-that a zero return value just means "split and do ptes". Which is what
-you want (see above why "split" simply is wrong, and isn't an issue
-for you anyway.
-
-That won't change any existing cases, since even if they do have a
-zero return value, they don't have a pte_entry() callback, so they
-won't do that "split and do ptes" anyway.
-
-             Linus
