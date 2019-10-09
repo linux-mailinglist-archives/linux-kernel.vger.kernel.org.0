@@ -2,81 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55856D0946
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 10:09:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95F6AD0927
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 10:07:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730318AbfJIIJt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 04:09:49 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:53878 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730212AbfJIIJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 04:09:47 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id AFACE1A039D;
-        Wed,  9 Oct 2019 10:09:45 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A951F1A0382;
-        Wed,  9 Oct 2019 10:09:41 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id B4232402FF;
-        Wed,  9 Oct 2019 16:09:33 +0800 (SGT)
-From:   Richard Zhu <hongxing.zhu@nxp.com>
-To:     jassisinghbrar@gmail.com, o.rempel@pengutronix.de,
-        daniel.baluta@nxp.com, aisheng.dong@nxp.com
-Cc:     linux-imx@nxp.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Richard Zhu <hongxing.zhu@nxp.com>
-Subject: [PATCH v6 2/4] mailbox: imx: Clear the right interrupts at shutdown
-Date:   Wed,  9 Oct 2019 16:07:19 +0800
-Message-Id: <1570608441-29651-3-git-send-email-hongxing.zhu@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1570608441-29651-1-git-send-email-hongxing.zhu@nxp.com>
-References: <1570608441-29651-1-git-send-email-hongxing.zhu@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1729778AbfJIIHe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 04:07:34 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:44729 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725848AbfJIIHe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 04:07:34 -0400
+Received: by mail-lj1-f194.google.com with SMTP id m13so1474648ljj.11
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 01:07:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=z0LNDSpFSctbTJTf0zAvXYKetHW153zqZU28HUuc6aw=;
+        b=al6Ibeoh+WLVyhfBLsOSWTkDu5aVd8ZnfivuhHFSq+6OfHR5fCwI9BJRWh+2ywdwB2
+         7RaFw6L3+jC4LIu0k784taSAmRoksY9qso+BLF3wsBDjqjeHutXwg+yonzAACVOBlxTa
+         1fNvJCQtMiqEtPNT3EZM0P8KkEskNiBFXuJFwkx/ILoWNWs2Ba0ay4Aend4cvBbhRNu2
+         cL4ZPccP2qxcFEQ28q97/D+wFYD5utOrvGIJyEBDEiAPnBVoodPnydqRBv8hxZ+R+KEx
+         KBazv/AW6mcNv02KdyGRKqRnCw0wBmVQOr0XgE5VO5y6U82uY/UYmxLRHh4nSQybiiaF
+         BEWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=z0LNDSpFSctbTJTf0zAvXYKetHW153zqZU28HUuc6aw=;
+        b=k/NDN3MI7NApGsEMi45NEM1OdM+nY+4pVy4bKxgOgXXy0VFNQ2P2Uz8kgpkwtV353j
+         0lSoxJiKF1qDSPEwpc0u+QrR4JbHETViUcaD7FnmDfyxY90tIes9frGGMV63gelADVtl
+         zUXpUiNkaFPwVXhWqhAG5a7DLv3mueVKrIGEdZrqTJOZ046YbxymzHcPHvCWaBo6OKNQ
+         3zlfBY/gpkzVGlnvhfsA3zHLNQr8uzFZ4tVM1LGhCagoMTs4fQVgAGC9/9Kn3LuuTnBr
+         r2ZgnUhseSUDlJW+B2+AERdT3brrQPZNo7GXgtZ2OzXdwMrbX0I/o576fIXqEaXDMw7L
+         jlaw==
+X-Gm-Message-State: APjAAAXP2ButeCHS3FaWVQVZgM2eUFHM/TcLMhg/RJ0k25p3kKedr+Xd
+        eH9JODTZu6EHgqEF2NH5JN3EtVSQ+nX5FQRz1iLRB1o6huU=
+X-Google-Smtp-Source: APXvYqw8WgwcmY17xXOAsdHSJSmkcYeQFlwgx89ruHbyb51KBUE6h+72k3lbA4aB1aUnh5XUgrNWfwyOfGRut6XOGxI=
+X-Received: by 2002:a2e:9e0a:: with SMTP id e10mr1513190ljk.35.1570608451497;
+ Wed, 09 Oct 2019 01:07:31 -0700 (PDT)
+MIME-Version: 1.0
+References: <6c5d22c8-6e27-3314-9c46-701d932b11a6@infradead.org>
+In-Reply-To: <6c5d22c8-6e27-3314-9c46-701d932b11a6@infradead.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 9 Oct 2019 10:07:20 +0200
+Message-ID: <CACRpkdbtRan_7nwPZNGLWE3xWiB54aF0fv6poFvbJpeGOz_TJg@mail.gmail.com>
+Subject: Re: [PATCH] gpio: fix kernel-doc for of_gpio_need_valid_mask()
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Baluta <daniel.baluta@nxp.com>
+On Tue, Oct 8, 2019 at 10:40 PM Randy Dunlap <rdunlap@infradead.org> wrote:
 
-Make sure to only clear enabled interrupts keeping count
-of the connection type.
+> From: Randy Dunlap <rdunlap@infradead.org>
+>
+> Fix kernel-doc for of_gpio_need_valid_mask().
+> Fixes this warning and uses correct Return: format.
+>
+> ../drivers/gpio/gpiolib-of.c:92: warning: Excess function parameter 'dev' description in 'of_gpio_need_valid_mask'
+>
+> Fixes: f626d6dfb709 ("gpio: of: Break out OF-only code")
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Cc: linux-gpio@vger.kernel.org
 
-Suggested-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
-Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/mailbox/imx-mailbox.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+Patch applied.
 
-diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailbox.c
-index 957c10c..afe625e 100644
---- a/drivers/mailbox/imx-mailbox.c
-+++ b/drivers/mailbox/imx-mailbox.c
-@@ -219,8 +219,19 @@ static void imx_mu_shutdown(struct mbox_chan *chan)
- 		return;
- 	}
- 
--	imx_mu_xcr_rmw(priv, 0, IMX_MU_xCR_TIEn(cp->idx) |
--		       IMX_MU_xCR_RIEn(cp->idx) | IMX_MU_xCR_GIEn(cp->idx));
-+	switch (cp->type) {
-+	case IMX_MU_TYPE_TX:
-+		imx_mu_xcr_rmw(priv, 0, IMX_MU_xCR_TIEn(cp->idx));
-+		break;
-+	case IMX_MU_TYPE_RX:
-+		imx_mu_xcr_rmw(priv, 0, IMX_MU_xCR_RIEn(cp->idx));
-+		break;
-+	case IMX_MU_TYPE_RXDB:
-+		imx_mu_xcr_rmw(priv, 0, IMX_MU_xCR_GIEn(cp->idx));
-+		break;
-+	default:
-+		break;
-+	}
- 
- 	free_irq(priv->irq, chan);
- }
--- 
-2.7.4
-
+Yours,
+Linus Walleij
