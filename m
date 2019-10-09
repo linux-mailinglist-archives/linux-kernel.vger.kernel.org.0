@@ -2,26 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51030D1A49
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 23:00:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22445D1A5B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 23:01:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732314AbfJIU7c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 16:59:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51666 "EHLO mx1.suse.de"
+        id S1732063AbfJIU7K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 16:59:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51280 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732274AbfJIU7b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 16:59:31 -0400
+        id S1731940AbfJIU7I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 16:59:08 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4CB58B24A;
-        Wed,  9 Oct 2019 20:59:28 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id B4020B232;
+        Wed,  9 Oct 2019 20:59:05 +0000 (UTC)
 Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id E7BC3E3785; Wed,  9 Oct 2019 22:59:27 +0200 (CEST)
-Message-Id: <b000e461e348ba1a0af30f2e8493618bce11ec12.1570654310.git.mkubecek@suse.cz>
-In-Reply-To: <cover.1570654310.git.mkubecek@suse.cz>
-References: <cover.1570654310.git.mkubecek@suse.cz>
+        id ABD6DE3785; Wed,  9 Oct 2019 22:59:00 +0200 (CEST)
+Message-Id: <cover.1570654310.git.mkubecek@suse.cz>
 From:   Michal Kubecek <mkubecek@suse.cz>
-Subject: [PATCH net-next v7 09/17] ethtool: generic handlers for GET requests
+Subject: [PATCH net-next v7 00/17] ethtool netlink interface, part 1
 To:     David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 Cc:     Jakub Kicinski <jakub.kicinski@netronome.com>,
         Jiri Pirko <jiri@resnulli.us>, Andrew Lunn <andrew@lunn.ch>,
@@ -30,523 +28,190 @@ Cc:     Jakub Kicinski <jakub.kicinski@netronome.com>,
         Stephen Hemminger <stephen@networkplumber.org>,
         Johannes Berg <johannes@sipsolutions.net>,
         linux-kernel@vger.kernel.org
-Date:   Wed,  9 Oct 2019 22:59:27 +0200 (CEST)
+Date:   Wed,  9 Oct 2019 22:59:00 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Significant part of GET request processing is common for most request
-types but unfortunately it cannot be easily separated from type specific
-code as we need to alternate between common actions (parsing common request
-header, allocating message and filling netlink/genetlink headers etc.) and
-specific actions (querying the device, composing the reply). The processing
-also happens in three different situations: "do" request, "dump" request
-and notification, each doing things in slightly different way.
+This is first part of netlink based alternative userspace interface for
+ethtool. It aims to address some long known issues with the ioctl
+interface, mainly lack of extensibility, raciness, limited error reporting
+and absence of notifications. The goal is to allow userspace ethtool
+utility to provide all features it currently does but without using the
+ioctl interface. However, some features provided by ethtool ioctl API will
+be available through other netlink interfaces (rtnetlink, devlink) if it's
+more appropriate.
 
-The request specific code is implemented in four or five callbacks defined
-in an instance of struct get_request_ops:
+The interface uses generic netlink family "ethtool" and provides multicast
+group "monitor" which is used for notifications. Documentation for the
+interface is in Documentation/networking/ethtool-netlink.rst file. The
+netlink interface is optional, it is built when CONFIG_ETHTOOL_NETLINK
+(bool) option is enabled.
 
-  parse_request() - parse incoming message
-  prepare_data()  - retrieve data from driver or NIC
-  reply_size()    - estimate reply message size
-  fill_reply()    - compose reply message
-  cleanup_data()  - (optional) clean up additional data
+There are three types of request messages distinguished by suffix "_GET"
+(query for information), "_SET" (modify parameters) and "_ACT" (perform an
+action). Kernel reply messages have name with additional suffix "_REPLY"
+(e.g. ETHTOOL_MSG_SETTINGS_GET_REPLY). Most "_SET" and "_ACT" message types
+do not have matching reply type as only some of them need additional reply
+data beyond numeric error code and extack. Kernel also broadcasts
+notification messages ("_NTF" suffix) on changes.
 
-Other members of struct get_request_ops describe the data structure holding
-information from client request and data used to compose the message. The
-standard handlers ethnl_get_doit(), ethnl_get_dumpit(), ethnl_get_start()
-and ethnl_get_done() can be then used in genl_ops handler. Notification
-handler will be introduced in a later patch.
+Basic concepts:
 
-Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
----
- net/ethtool/netlink.c | 329 ++++++++++++++++++++++++++++++++++++++++++
- net/ethtool/netlink.h | 120 ++++++++++++++-
- 2 files changed, 448 insertions(+), 1 deletion(-)
+- make extensions easier not only by allowing new attributes but also by
+  imposing as few artificial limits as possible, e.g. by using arbitrary
+  size bit sets for most bitmap attributes or by not using fixed size
+  strings
+- use extack for error reporting and warnings
+- send netlink notifications on changes (even if they were done using the
+  ioctl interface) and actions
+- avoid the racy read/modify/write cycle between kernel and userspace by
+  sending only attributes which userspace wants to change; there is still
+  a read/modify/write cycle between generic kernel code and ethtool_ops
+  handler in NIC driver but it is only in kernel and under RTNL lock
+- reduce the number of name lists that need to be kept in sync between
+  kernel and userspace (e.g. recognized link modes)
+- where feasible, allow dump requests to query specific information for all
+  network devices
+- as parsing and generating netlink messages is more complicated than
+  simply copying data structures between userspace API and ethtool_ops
+  handlers (which most ioctl commands do), split the code into multiple
+  files in net/ethtool directory; move net/core/ethtool.c also to this
+  directory and rename it to ioctl.c
 
-diff --git a/net/ethtool/netlink.c b/net/ethtool/netlink.c
-index ed9c0f82aca4..e5aade3b69d1 100644
---- a/net/ethtool/netlink.c
-+++ b/net/ethtool/netlink.c
-@@ -177,6 +177,335 @@ struct sk_buff *ethnl_reply_init(size_t payload, struct net_device *dev, u8 cmd,
- 	return NULL;
- }
- 
-+/* GET request helpers */
-+
-+/**
-+ * struct ethnl_dump_ctx - context structure for generic dumpit() callback
-+ * @ops:      request ops of currently processed message type
-+ * @req_info: parsed request header of processed request
-+ * @pos_hash: saved iteration position - hashbucket
-+ * @pos_idx:  saved iteration position - index
-+ *
-+ * These parameters are kept in struct netlink_callback as context preserved
-+ * between iterations. They are initialized by ethnl_get_start() and used in
-+ * ethnl_get_dumpit() and ethnl_get_done().
-+ */
-+struct ethnl_dump_ctx {
-+	const struct get_request_ops	*ops;
-+	struct ethnl_req_info		*req_info;
-+	struct ethnl_reply_data		*reply_data;
-+	int				pos_hash;
-+	int				pos_idx;
-+};
-+
-+static const struct get_request_ops *get_requests[__ETHTOOL_MSG_USER_CNT] = {
-+};
-+
-+static struct ethnl_dump_ctx *ethnl_dump_context(struct netlink_callback *cb)
-+{
-+	return (struct ethnl_dump_ctx *)cb->ctx;
-+}
-+
-+/**
-+ * ethnl_std_parse() - Parse request message
-+ * @req_info:    pointer to structure to put data into
-+ * @nlhdr:       pointer to request message header
-+ * @net:         request netns
-+ * @request_ops: struct request_ops for request type
-+ * @extack:      netlink extack for error reporting
-+ * @require_dev: fail if no device identified in header
-+ *
-+ * Parse universal request header and call request specific ->parse_request()
-+ * callback (if defined) to parse the rest of the message.
-+ *
-+ * Return: 0 on success or negative error code
-+ */
-+static int ethnl_std_parse(struct ethnl_req_info *req_info,
-+			   const struct nlmsghdr *nlhdr, struct net *net,
-+			   const struct get_request_ops *request_ops,
-+			   struct netlink_ext_ack *extack, bool require_dev)
-+{
-+	struct nlattr **tb;
-+	int ret;
-+
-+	tb = kmalloc_array(request_ops->max_attr + 1, sizeof(tb[0]),
-+			   GFP_KERNEL);
-+	if (!tb)
-+		return -ENOMEM;
-+
-+	ret = nlmsg_parse(nlhdr, GENL_HDRLEN, tb, request_ops->max_attr,
-+			  request_ops->request_policy, extack);
-+	if (ret < 0)
-+		goto out;
-+	ret = ethnl_parse_header(req_info, tb[request_ops->hdr_attr], net,
-+				 extack, request_ops->header_policy,
-+				 require_dev);
-+	if (ret < 0)
-+		goto out;
-+
-+	if (request_ops->parse_request) {
-+		ret = request_ops->parse_request(req_info, tb, extack);
-+		if (ret < 0)
-+			goto out;
-+	}
-+
-+	if (req_info->req_flags & ~request_ops->all_reqflags) {
-+		ret = -EOPNOTSUPP;
-+		NL_SET_ERR_MSG_ATTR(extack, tb[ETHTOOL_A_HEADER_RFLAGS],
-+				    "unsupported request specific flags");
-+		goto out;
-+	}
-+
-+	ret = 0;
-+out:
-+	kfree(tb);
-+	return ret;
-+}
-+
-+/**
-+ * ethnl_init_reply_data() - Initialize reply data for GET request
-+ * @req_info: pointer to embedded struct ethnl_req_info
-+ * @ops:      instance of struct get_request_ops describing the layout
-+ * @dev:      network device to initialize the reply for
-+ *
-+ * Fills the reply data part with zeros and sets the dev member. Must be called
-+ * before calling the ->fill_reply() callback (for each iteration when handling
-+ * dump requests).
-+ */
-+static void ethnl_init_reply_data(struct ethnl_reply_data *reply_data,
-+				  const struct get_request_ops *ops,
-+				  struct net_device *dev)
-+{
-+	memset(reply_data, '\0', ops->reply_data_size);
-+	reply_data->dev = dev;
-+}
-+
-+/* generic ->doit() handler for GET type requests */
-+static int ethnl_get_doit(struct sk_buff *skb, struct genl_info *info)
-+{
-+	struct ethnl_reply_data *reply_data = NULL;
-+	struct ethnl_req_info *req_info = NULL;
-+	const u8 cmd = info->genlhdr->cmd;
-+	const struct get_request_ops *ops;
-+	struct sk_buff *rskb;
-+	void *reply_payload;
-+	int reply_len;
-+	int ret;
-+
-+	ops = get_requests[cmd];
-+	if (WARN_ONCE(!ops, "cmd %u has no get_request_ops\n", cmd))
-+		return -EOPNOTSUPP;
-+	req_info = kzalloc(ops->req_info_size, GFP_KERNEL);
-+	if (!req_info)
-+		return -ENOMEM;
-+	reply_data = kmalloc(ops->reply_data_size, GFP_KERNEL);
-+	if (!reply_data) {
-+		kfree(req_info);
-+		return -ENOMEM;
-+	}
-+
-+	ret = ethnl_std_parse(req_info, info->nlhdr, genl_info_net(info), ops,
-+			      info->extack, !ops->allow_nodev_do);
-+	if (ret < 0)
-+		goto err_dev;
-+	ethnl_init_reply_data(reply_data, ops, req_info->dev);
-+
-+	rtnl_lock();
-+	ret = ops->prepare_data(req_info, reply_data, info);
-+	rtnl_unlock();
-+	if (ret < 0)
-+		goto err_cleanup;
-+	reply_len = ops->reply_size(req_info, reply_data);
-+	if (ret < 0)
-+		goto err_cleanup;
-+	ret = -ENOMEM;
-+	rskb = ethnl_reply_init(reply_len, req_info->dev, ops->reply_cmd,
-+				ops->hdr_attr, info, &reply_payload);
-+	if (!rskb)
-+		goto err_cleanup;
-+	ret = ops->fill_reply(rskb, req_info, reply_data);
-+	if (ret < 0)
-+		goto err_msg;
-+	if (ops->cleanup_data)
-+		ops->cleanup_data(reply_data);
-+
-+	genlmsg_end(rskb, reply_payload);
-+	if (req_info->dev)
-+		dev_put(req_info->dev);
-+	kfree(reply_data);
-+	kfree(req_info);
-+	return genlmsg_reply(rskb, info);
-+
-+err_msg:
-+	WARN_ONCE(ret == -EMSGSIZE,
-+		  "calculated message payload length (%d) not sufficient\n",
-+		  reply_len);
-+	nlmsg_free(rskb);
-+err_cleanup:
-+	if (ops->cleanup_data)
-+		ops->cleanup_data(reply_data);
-+err_dev:
-+	if (req_info->dev)
-+		dev_put(req_info->dev);
-+	kfree(reply_data);
-+	kfree(req_info);
-+	return ret;
-+}
-+
-+static int ethnl_get_dump_one(struct sk_buff *skb, struct net_device *dev,
-+			      const struct ethnl_dump_ctx *ctx)
-+{
-+	int ret;
-+
-+	ethnl_init_reply_data(ctx->reply_data, ctx->ops, dev);
-+	rtnl_lock();
-+	ret = ctx->ops->prepare_data(ctx->req_info, ctx->reply_data, NULL);
-+	rtnl_unlock();
-+	if (ret < 0)
-+		goto out;
-+	ret = ethnl_fill_reply_header(skb, dev, ctx->ops->hdr_attr);
-+	if (ret < 0)
-+		goto out;
-+	ret = ctx->ops->fill_reply(skb, ctx->req_info, ctx->reply_data);
-+
-+out:
-+	if (ctx->ops->cleanup_data)
-+		ctx->ops->cleanup_data(ctx->reply_data);
-+	ctx->reply_data->dev = NULL;
-+	return ret;
-+}
-+
-+/* Generic ->dumpit() handler for GET requests. Device iteration copied from
-+ * rtnl_dump_ifinfo(); we have to be more careful about device hashtable
-+ * persistence as we cannot guarantee to hold RTNL lock through the whole
-+ * function as rtnetnlink does.
-+ */
-+static int ethnl_get_dumpit(struct sk_buff *skb, struct netlink_callback *cb)
-+{
-+	struct ethnl_dump_ctx *ctx = ethnl_dump_context(cb);
-+	struct net *net = sock_net(skb->sk);
-+	int s_idx = ctx->pos_idx;
-+	int h, idx = 0;
-+	int ret = 0;
-+	void *ehdr;
-+
-+	rtnl_lock();
-+	for (h = ctx->pos_hash; h < NETDEV_HASHENTRIES; h++, s_idx = 0) {
-+		struct hlist_head *head;
-+		struct net_device *dev;
-+		unsigned int seq;
-+
-+		head = &net->dev_index_head[h];
-+
-+restart_chain:
-+		seq = net->dev_base_seq;
-+		cb->seq = seq;
-+		idx = 0;
-+		hlist_for_each_entry(dev, head, index_hlist) {
-+			if (idx < s_idx)
-+				goto cont;
-+			dev_hold(dev);
-+			rtnl_unlock();
-+
-+			ehdr = genlmsg_put(skb, NETLINK_CB(cb->skb).portid,
-+					   cb->nlh->nlmsg_seq,
-+					   &ethtool_genl_family, 0,
-+					   ctx->ops->reply_cmd);
-+			if (!ehdr) {
-+				dev_put(dev);
-+				ret = -EMSGSIZE;
-+				goto out;
-+			}
-+			ret = ethnl_get_dump_one(skb, dev, ctx);
-+			dev_put(dev);
-+			if (ret < 0) {
-+				genlmsg_cancel(skb, ehdr);
-+				if (ret == -EOPNOTSUPP)
-+					goto lock_and_cont;
-+				if (likely(skb->len))
-+					ret = skb->len;
-+				goto out;
-+			}
-+			genlmsg_end(skb, ehdr);
-+lock_and_cont:
-+			rtnl_lock();
-+			if (net->dev_base_seq != seq) {
-+				s_idx = idx + 1;
-+				goto restart_chain;
-+			}
-+cont:
-+			idx++;
-+		}
-+
-+	}
-+	rtnl_unlock();
-+
-+out:
-+	ctx->pos_hash = h;
-+	ctx->pos_idx = idx;
-+	nl_dump_check_consistent(cb, nlmsg_hdr(skb));
-+
-+	return ret;
-+}
-+
-+/* generic ->start() handler for GET requests */
-+static int ethnl_get_start(struct netlink_callback *cb)
-+{
-+	struct ethnl_dump_ctx *ctx = ethnl_dump_context(cb);
-+	struct ethnl_reply_data *reply_data;
-+	const struct get_request_ops *ops;
-+	struct ethnl_req_info *req_info;
-+	struct genlmsghdr *ghdr;
-+	int ret;
-+
-+	BUILD_BUG_ON(sizeof(*ctx) > sizeof(cb->ctx));
-+
-+	ghdr = nlmsg_data(cb->nlh);
-+	ops = get_requests[ghdr->cmd];
-+	if (WARN_ONCE(!ops, "cmd %u has no get_request_ops\n", ghdr->cmd))
-+		return -EOPNOTSUPP;
-+	req_info = kzalloc(ops->req_info_size, GFP_KERNEL);
-+	if (!req_info)
-+		return -ENOMEM;
-+	reply_data = kmalloc(ops->reply_data_size, GFP_KERNEL);
-+	if (!reply_data) {
-+		kfree(req_info);
-+		return -ENOMEM;
-+	}
-+
-+	ret = ethnl_std_parse(req_info, cb->nlh, sock_net(cb->skb->sk), ops,
-+			      cb->extack, false);
-+	if (req_info->dev) {
-+		/* We ignore device specification in dump requests but as the
-+		 * same parser as for non-dump (doit) requests is used, it
-+		 * would take reference to the device if it finds one
-+		 */
-+		dev_put(req_info->dev);
-+		req_info->dev = NULL;
-+	}
-+	if (ret < 0)
-+		return ret;
-+
-+	ctx->ops = ops;
-+	ctx->req_info = req_info;
-+	ctx->reply_data = reply_data;
-+	ctx->pos_hash = 0;
-+	ctx->pos_idx = 0;
-+
-+	return 0;
-+}
-+
-+/* generic ->done() handler for GET requests */
-+static int ethnl_get_done(struct netlink_callback *cb)
-+{
-+	struct ethnl_dump_ctx *ctx = ethnl_dump_context(cb);
-+
-+	kfree(ctx->reply_data);
-+	kfree(ctx->req_info);
-+
-+	return 0;
-+}
-+
- /* notifications */
- 
- typedef void (*ethnl_notify_handler_t)(struct net_device *dev, unsigned int cmd,
-diff --git a/net/ethtool/netlink.h b/net/ethtool/netlink.h
-index 4c0b5ca439f8..077966a33544 100644
---- a/net/ethtool/netlink.h
-+++ b/net/ethtool/netlink.h
-@@ -210,13 +210,30 @@ static inline unsigned int ethnl_reply_header_size(void)
- 			      nla_total_size(IFNAMSIZ));
- }
- 
-+/* GET request handling */
-+
-+/* Unified processing of GET requests uses two data structures: request info
-+ * and reply data. Request info holds information parsed from client request
-+ * and its stays constant through all request processing. Reply data holds data
-+ * retrieved from ethtool_ops callbacks or other internal sources which is used
-+ * to compose the reply. When processing a dump request, request info is filled
-+ * only once (when the request message is parsed) but reply data is filled for
-+ * each reply message.
-+ *
-+ * Both structures consist of part common for all request types (struct
-+ * ethnl_req_info and struct ethnl_reply_data defined below) and optional
-+ * parts specific for each request type. Common part always starts at offset 0.
-+ */
-+
- /**
-  * struct ethnl_req_info - base type of request information for GET requests
-  * @dev:          network device the request is for (may be null)
-  * @global_flags: request flags common for all request types
-  * @req_flags:    request flags specific for each request type
-  *
-- * This is a common base, additional members may follow after this structure.
-+ * This is a common base for request specific structures holding data from
-+ * parsed userspace request. These always embed struct ethnl_req_info at
-+ * zero offset.
-  */
- struct ethnl_req_info {
- 	struct net_device		*dev;
-@@ -224,4 +241,105 @@ struct ethnl_req_info {
- 	u32				req_flags;
- };
- 
-+/**
-+ * struct ethnl_reply_data - base type of reply data for GET requests
-+ * @dev:       device for current reply message; in single shot requests it is
-+ *             equal to &ethnl_req_info.dev; in dumps it's different for each
-+ *             reply message
-+ *
-+ * This is a common base for request specific structures holding data for
-+ * kernel reply message. These always embed struct ethnl_reply_data at zero
-+ * offset.
-+ */
-+struct ethnl_reply_data {
-+	struct net_device		*dev;
-+};
-+
-+static inline int ethnl_before_ops(struct net_device *dev)
-+{
-+	if (dev && dev->ethtool_ops->begin)
-+		return dev->ethtool_ops->begin(dev);
-+	else
-+		return 0;
-+}
-+
-+static inline void ethnl_after_ops(struct net_device *dev)
-+{
-+	if (dev && dev->ethtool_ops->complete)
-+		dev->ethtool_ops->complete(dev);
-+}
-+
-+/**
-+ * struct get_request_ops - unified handling of GET requests
-+ * @request_cmd:      command id for request (GET)
-+ * @reply_cmd:        command id for reply (GET_REPLY)
-+ * @hdr_attr:         attribute type for request header
-+ * @max_attr:         maximum (top level) attribute type
-+ * @req_info_size:    size of request info
-+ * @reply_data_size:  size of reply data
-+ * @request_policy:   netlink policy for message contents
-+ * @header_policy:    (optional) netlink policy for request header
-+ * @all_reqflags:     allowed request specific flags
-+ * @allow_nodev_do:   allow non-dump request with no device identification
-+ * @parse_request:
-+ *	Parse request except common header (struct ethnl_req_info). Common
-+ *	header is already filled on entry, the rest up to @repdata_offset
-+ *	is zero initialized. This callback should only modify type specific
-+ *	request info by parsed attributes from request message.
-+ * @prepare_data:
-+ *	Retrieve and prepare data needed to compose a reply message. Calls to
-+ *	ethtool_ops handlers should be limited to this callback. Common reply
-+ *	data (struct ethnl_reply_data) is filled on entry, type specific part
-+ *	after it is zero initialized. This callback should only modify the
-+ *	type specific part of reply data. Device identification from struct
-+ *	ethnl_reply_data is to be used as for dump requests, it iterates
-+ *	through network devices which common_req_info::dev points to the
-+ *	device from client request.
-+ * @reply_size:
-+ *	Estimate reply message size. Returned value must be sufficient for
-+ *	message payload without common reply header. The callback may returned
-+ *	estimate higher than actual message size if exact calculation would
-+ *	not be worth the saved memory space.
-+ * @fill_reply:
-+ *	Fill reply message payload (except for common header) from reply data.
-+ *	The callback must not generate more payload than previously called
-+ *	->reply_size() estimated.
-+ * @cleanup_data:
-+ *	Optional cleanup called when reply data is no longer needed. Can be
-+ *	used e.g. to free any additional data structures outside the main
-+ *	structure which were allocated by ->prepare_data(). When processing
-+ *	dump requests, ->cleanup() is called for each message.
-+ *
-+ * Description of variable parts of GET request handling when using the unified
-+ * infrastructure. When used, a pointer to an instance of this structure is to
-+ * be added to &get_requests array and generic handlers ethnl_get_doit(),
-+ * ethnl_get_dumpit(), ethnl_get_start() and ethnl_get_done() used in
-+ * @ethnl_genl_ops
-+ */
-+struct get_request_ops {
-+	u8			request_cmd;
-+	u8			reply_cmd;
-+	u16			hdr_attr;
-+	unsigned int		max_attr;
-+	unsigned int		req_info_size;
-+	unsigned int		reply_data_size;
-+	const struct nla_policy *request_policy;
-+	const struct nla_policy *header_policy;
-+	u32			all_reqflags;
-+	bool			allow_nodev_do;
-+
-+	int (*parse_request)(struct ethnl_req_info *req_info,
-+			     struct nlattr **tb,
-+			     struct netlink_ext_ack *extack);
-+	int (*prepare_data)(const struct ethnl_req_info *req_info,
-+			    struct ethnl_reply_data *reply_data,
-+			    struct genl_info *info);
-+	int (*reply_size)(const struct ethnl_req_info *req_info,
-+			  const struct ethnl_reply_data *reply_data);
-+	int (*fill_reply)(struct sk_buff *skb,
-+			  const struct ethnl_req_info *req_info,
-+			  const struct ethnl_reply_data *reply_data);
-+	void (*cleanup_data)(struct ethnl_reply_data *reply_data);
-+};
-+
- #endif /* _NET_ETHTOOL_NETLINK_H */
+The full (work in progress) series, together with the (userspace) ethtool
+counterpart can be found at https://github.com/mkubecek/ethnl
+
+Main changes between v6 and v7:
+
+- split complex messages into small single purpose ones (drop info and
+  request masks and one level of nesting)
+- separate request information and reply data into two structures
+- refactor bitset handling (no simultaneous u32/ulong handling but avoid
+  kmalloc() except for long bitmaps on 64-bit big endian architectures)
+- use only fixed size strings internally (will be replaced by char *
+  eventually but that will require rewriting also existing ioctl code)
+- rework ethnl_update_* helpers to return error code
+- rename request flag constants (to ETHTOOL_[GR]FLAG_ prefix)
+- convert documentation to rst
+
+Main changes between v5 and v6:
+
+- use ETHTOOL_MSG_ prefix for message types
+- replace ETHA_ prefix for netlink attributes by ETHTOOL_A_
+- replace ETH_x_IM_y for infomask bits by ETHTOOL_IM_x_y
+- split GET reply types from SET requests and notifications
+- split kernel and userspace message types into different enums
+- remove INFO_GET requests from submitted part
+- drop EVENT notifications (use rtnetlink and on-demand string set load)
+- reorganize patches to reduce the number of intermitent warnings
+- unify request/reply header and its processing
+- another nest around strings in a string set for consistency
+- more consistent identifier naming
+- coding style cleanup
+- get rid of some of the helpers
+- set bad attribute in extack where applicable
+- various bug fixes
+- improve documentation and code comments, more kerneldoc comments
+- more verbose commit messages
+
+Changes between v4 and v5:
+
+- do not panic on failed initialization, only WARN()
+
+Main changes between RFC v3 and v4:
+
+- use more kerneldoc style comments
+- strict attribute policy checking
+- use macros for tables of link mode names and parameters
+- provide permanent hardware address in rtnetlink
+- coding style cleanup
+- split too long patches, reorder
+- wrap more ETHA_SETTINGS_* attributes in nests
+- add also some SET_* implementation into submitted part
+
+Main changes between RFC v2 and RFC v3:
+
+- do not allow building as a module (no netdev notifiers needed)
+- drop some obsolete fields
+- add permanent hw address, timestamping and private flags support
+- rework bitset handling to get rid of variable length arrays
+- notify monitor on device renames
+- restructure GET_SETTINGS/SET_SETTINGS messages
+- split too long patches and submit only first part of the series
+
+Main changes between RFC v1 and RFC v2:
+
+- support dumps for all "get" requests
+- provide notifications for changes related to supported request types
+- support getting string sets (both global and per device)
+- support getting/setting device features
+- get rid of family specific header, everything passed as attributes
+- split netlink code into multiple files in net/ethtool/ directory
+
+
+Michal Kubecek (17):
+  rtnetlink: provide permanent hardware address in RTM_NEWLINK
+  netlink: rename nl80211_validate_nested() to nla_validate_nested()
+  ethtool: move to its own directory
+  ethtool: introduce ethtool netlink interface
+  ethtool: helper functions for netlink interface
+  ethtool: netlink bitset handling
+  ethtool: support for netlink notifications
+  ethtool: move string arrays into common file
+  ethtool: generic handlers for GET requests
+  ethtool: provide string sets with STRSET_GET request
+  ethtool: provide link mode names as a string set
+  ethtool: provide link settings with LINKINFO_GET request
+  ethtool: add standard notification handler
+  ethtool: set link settings with LINKINFO_SET request
+  ethtool: provide link mode information with LINKMODES_GET request
+  ethtool: set link modes related data with LINKMODES_SET request
+  ethtool: provide link state with LINKSTATE_GET request
+
+ Documentation/networking/ethtool-netlink.rst | 510 ++++++++++++
+ include/linux/ethtool.h                      |   4 +
+ include/linux/ethtool_netlink.h              |  17 +
+ include/linux/netdevice.h                    |   9 +
+ include/net/netlink.h                        |   8 +-
+ include/uapi/linux/ethtool.h                 |   4 +
+ include/uapi/linux/ethtool_netlink.h         | 215 +++++
+ include/uapi/linux/if_link.h                 |   1 +
+ net/Kconfig                                  |   8 +
+ net/Makefile                                 |   2 +-
+ net/core/Makefile                            |   2 +-
+ net/core/rtnetlink.c                         |   5 +
+ net/ethtool/Makefile                         |   8 +
+ net/ethtool/bitset.c                         | 714 +++++++++++++++++
+ net/ethtool/bitset.h                         |  28 +
+ net/ethtool/common.c                         | 141 ++++
+ net/ethtool/common.h                         |  24 +
+ net/{core/ethtool.c => ethtool/ioctl.c}      | 156 +---
+ net/ethtool/linkinfo.c                       | 180 +++++
+ net/ethtool/linkmodes.c                      | 406 ++++++++++
+ net/ethtool/linkstate.c                      |  77 ++
+ net/ethtool/netlink.c                        | 789 +++++++++++++++++++
+ net/ethtool/netlink.h                        | 358 +++++++++
+ net/ethtool/strset.c                         | 435 ++++++++++
+ net/wireless/nl80211.c                       |   3 +-
+ 25 files changed, 3960 insertions(+), 144 deletions(-)
+ create mode 100644 Documentation/networking/ethtool-netlink.rst
+ create mode 100644 include/linux/ethtool_netlink.h
+ create mode 100644 include/uapi/linux/ethtool_netlink.h
+ create mode 100644 net/ethtool/Makefile
+ create mode 100644 net/ethtool/bitset.c
+ create mode 100644 net/ethtool/bitset.h
+ create mode 100644 net/ethtool/common.c
+ create mode 100644 net/ethtool/common.h
+ rename net/{core/ethtool.c => ethtool/ioctl.c} (93%)
+ create mode 100644 net/ethtool/linkinfo.c
+ create mode 100644 net/ethtool/linkmodes.c
+ create mode 100644 net/ethtool/linkstate.c
+ create mode 100644 net/ethtool/netlink.c
+ create mode 100644 net/ethtool/netlink.h
+ create mode 100644 net/ethtool/strset.c
+
 -- 
 2.23.0
 
