@@ -2,186 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E2E2D15C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:25:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2105D156E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:22:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732635AbfJIRZf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 13:25:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50054 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732534AbfJIRZA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 13:25:00 -0400
-Received: from sasha-vm.mshome.net (unknown [167.220.2.234])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 989CA2196E;
-        Wed,  9 Oct 2019 17:24:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570641898;
-        bh=R3kC4bpe5gkE7DfaKQbGxOTN+3veWg1wgjMHDOChSUo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Oa7mL3ym1PF5dfzKrChKqgHR1si6bt/AL0s5t2/YhscXsCPyKw8+ojwL19WqmWj8Z
-         A/qnGS4HwgJFKI3VLcXnAhgqpABB6xpzKhntFwFbdVek1D3qtzbFjVJUdUgFqt1JFb
-         uDb5ax8m6g60n5xpnq7QFBSxONF4ffN0imxG5//E=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jann Horn <jannh@google.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 11/11] Make filldir[64]() verify the directory entry filename is valid
-Date:   Wed,  9 Oct 2019 13:06:45 -0400
-Message-Id: <20191009170646.696-11-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191009170646.696-1-sashal@kernel.org>
-References: <20191009170646.696-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        id S1731894AbfJIRWF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 13:22:05 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44014 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730256AbfJIRWF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 13:22:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=pz74bknz997j+mbCprEwkouLntFbN+WYwKb9bknd7z0=; b=NF9/Mx18Kz0v
+        YIL+dR5MoM9xvdC1mu1883UhUY9H1bCAeExmrq2aIxUNL+yhuAG0OeGYBf8GDwVFa00ak40Oda4f2
+        j8oBCCbpAPczOzr1cF+Nr88t+N3ysugyhrSH/7sSz1i7/lvC90uFpnZmduyeD9YrXcUjRMmO6rgZm
+        YbTbc=;
+Received: from 188.31.199.195.threembb.co.uk ([188.31.199.195] helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1iIFer-0005Jt-Jh; Wed, 09 Oct 2019 17:21:54 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id 77012D03ED5; Wed,  9 Oct 2019 18:21:48 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Daniel Baluta <daniel.baluta@nxp.com>
+Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
+        kuninori.morimoto.gx@renesas.com, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        perex@perex.cz, tiwai@suse.com
+Subject: Applied "ASoC: simple_card_utils.h: Fix potential multiple redefinition error" to the asoc tree
+In-Reply-To: <20191009153615.32105-3-daniel.baluta@nxp.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20191009172148.77012D03ED5@fitzroy.sirena.org.uk>
+Date:   Wed,  9 Oct 2019 18:21:48 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+The patch
 
-[ Upstream commit 8a23eb804ca4f2be909e372cf5a9e7b30ae476cd ]
+   ASoC: simple_card_utils.h: Fix potential multiple redefinition error
 
-This has been discussed several times, and now filesystem people are
-talking about doing it individually at the filesystem layer, so head
-that off at the pass and just do it in getdents{64}().
+has been applied to the asoc tree at
 
-This is partially based on a patch by Jann Horn, but checks for NUL
-bytes as well, and somewhat simplified.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
 
-There's also commentary about how it might be better if invalid names
-due to filesystem corruption don't cause an immediate failure, but only
-an error at the end of the readdir(), so that people can still see the
-filenames that are ok.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-There's also been discussion about just how much POSIX strictly speaking
-requires this since it's about filesystem corruption.  It's really more
-"protect user space from bad behavior" as pointed out by Jann.  But
-since Eric Biederman looked up the POSIX wording, here it is for context:
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
- "From readdir:
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-   The readdir() function shall return a pointer to a structure
-   representing the directory entry at the current position in the
-   directory stream specified by the argument dirp, and position the
-   directory stream at the next entry. It shall return a null pointer
-   upon reaching the end of the directory stream. The structure dirent
-   defined in the <dirent.h> header describes a directory entry.
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-  From definitions:
+Thanks,
+Mark
 
-   3.129 Directory Entry (or Link)
+From af6219590b541418d3192e9bfa03989834ca0e78 Mon Sep 17 00:00:00 2001
+From: Daniel Baluta <daniel.baluta@nxp.com>
+Date: Wed, 9 Oct 2019 18:36:15 +0300
+Subject: [PATCH] ASoC: simple_card_utils.h: Fix potential multiple
+ redefinition error
 
-   An object that associates a filename with a file. Several directory
-   entries can associate names with the same file.
+asoc_simple_debug_info and asoc_simple_debug_dai must be static
+otherwise we might a compilation error if the compiler decides
+not to inline the given function.
 
-  ...
-
-   3.169 Filename
-
-   A name consisting of 1 to {NAME_MAX} bytes used to name a file. The
-   characters composing the name may be selected from the set of all
-   character values excluding the slash character and the null byte. The
-   filenames dot and dot-dot have special meaning. A filename is
-   sometimes referred to as a 'pathname component'."
-
-Note that I didn't bother adding the checks to any legacy interfaces
-that nobody uses.
-
-Also note that if this ends up being noticeable as a performance
-regression, we can fix that to do a much more optimized model that
-checks for both NUL and '/' at the same time one word at a time.
-
-We haven't really tended to optimize 'memchr()', and it only checks for
-one pattern at a time anyway, and we really _should_ check for NUL too
-(but see the comment about "soft errors" in the code about why it
-currently only checks for '/')
-
-See the CONFIG_DCACHE_WORD_ACCESS case of hash_name() for how the name
-lookup code looks for pathname terminating characters in parallel.
-
-Link: https://lore.kernel.org/lkml/20190118161440.220134-2-jannh@google.com/
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Jann Horn <jannh@google.com>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 0580dde59438686d ("ASoC: simple-card-utils: add asoc_simple_debug_info()")
+Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+Link: https://lore.kernel.org/r/20191009153615.32105-3-daniel.baluta@nxp.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- fs/readdir.c | 40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ include/sound/simple_card_utils.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/readdir.c b/fs/readdir.c
-index ced679179cac0..4c6ffe3bdfc71 100644
---- a/fs/readdir.c
-+++ b/fs/readdir.c
-@@ -50,6 +50,40 @@ int iterate_dir(struct file *file, struct dir_context *ctx)
+diff --git a/include/sound/simple_card_utils.h b/include/sound/simple_card_utils.h
+index 985a5f583de4..31f76b6abf71 100644
+--- a/include/sound/simple_card_utils.h
++++ b/include/sound/simple_card_utils.h
+@@ -135,9 +135,9 @@ int asoc_simple_init_priv(struct asoc_simple_priv *priv,
+ 			       struct link_info *li);
+ 
+ #ifdef DEBUG
+-inline void asoc_simple_debug_dai(struct asoc_simple_priv *priv,
+-				  char *name,
+-				  struct asoc_simple_dai *dai)
++static inline void asoc_simple_debug_dai(struct asoc_simple_priv *priv,
++					 char *name,
++					 struct asoc_simple_dai *dai)
+ {
+ 	struct device *dev = simple_priv_to_dev(priv);
+ 
+@@ -167,7 +167,7 @@ inline void asoc_simple_debug_dai(struct asoc_simple_priv *priv,
+ 		dev_dbg(dev, "%s clk %luHz\n", name, clk_get_rate(dai->clk));
  }
- EXPORT_SYMBOL(iterate_dir);
  
-+/*
-+ * POSIX says that a dirent name cannot contain NULL or a '/'.
-+ *
-+ * It's not 100% clear what we should really do in this case.
-+ * The filesystem is clearly corrupted, but returning a hard
-+ * error means that you now don't see any of the other names
-+ * either, so that isn't a perfect alternative.
-+ *
-+ * And if you return an error, what error do you use? Several
-+ * filesystems seem to have decided on EUCLEAN being the error
-+ * code for EFSCORRUPTED, and that may be the error to use. Or
-+ * just EIO, which is perhaps more obvious to users.
-+ *
-+ * In order to see the other file names in the directory, the
-+ * caller might want to make this a "soft" error: skip the
-+ * entry, and return the error at the end instead.
-+ *
-+ * Note that this should likely do a "memchr(name, 0, len)"
-+ * check too, since that would be filesystem corruption as
-+ * well. However, that case can't actually confuse user space,
-+ * which has to do a strlen() on the name anyway to find the
-+ * filename length, and the above "soft error" worry means
-+ * that it's probably better left alone until we have that
-+ * issue clarified.
-+ */
-+static int verify_dirent_name(const char *name, int len)
-+{
-+	if (WARN_ON_ONCE(!len))
-+		return -EIO;
-+	if (WARN_ON_ONCE(memchr(name, '/', len)))
-+		return -EIO;
-+	return 0;
-+}
-+
- /*
-  * Traditional linux readdir() handling..
-  *
-@@ -159,6 +193,9 @@ static int filldir(struct dir_context *ctx, const char *name, int namlen,
- 	int reclen = ALIGN(offsetof(struct linux_dirent, d_name) + namlen + 2,
- 		sizeof(long));
- 
-+	buf->error = verify_dirent_name(name, namlen);
-+	if (unlikely(buf->error))
-+		return buf->error;
- 	buf->error = -EINVAL;	/* only used if we fail.. */
- 	if (reclen > buf->count)
- 		return -EINVAL;
-@@ -243,6 +280,9 @@ static int filldir64(struct dir_context *ctx, const char *name, int namlen,
- 	int reclen = ALIGN(offsetof(struct linux_dirent64, d_name) + namlen + 1,
- 		sizeof(u64));
- 
-+	buf->error = verify_dirent_name(name, namlen);
-+	if (unlikely(buf->error))
-+		return buf->error;
- 	buf->error = -EINVAL;	/* only used if we fail.. */
- 	if (reclen > buf->count)
- 		return -EINVAL;
+-inline void asoc_simple_debug_info(struct asoc_simple_priv *priv)
++static inline void asoc_simple_debug_info(struct asoc_simple_priv *priv)
+ {
+ 	struct snd_soc_card *card = simple_priv_to_card(priv);
+ 	struct device *dev = simple_priv_to_dev(priv);
 -- 
 2.20.1
 
