@@ -2,84 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68CA4D1662
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:30:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 948A0D166B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:30:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732873AbfJIR3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 13:29:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48634 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732190AbfJIRYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 13:24:11 -0400
-Received: from sasha-vm.mshome.net (unknown [167.220.2.234])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF5F521929;
-        Wed,  9 Oct 2019 17:24:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570641851;
-        bh=KSTyBycvaBF6MzT0NdhfrBGaaI+TnTsiPM3uavlCd/I=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I3lqMqqhVA+N+MauuJeWQ6SudcOstHVY8l0aEFLPrvdxySfp7ElASLrcscLbd2Ax5
-         sv2Za9atazSSVP3Uxda0IPghJ18FYasoJ9y/DyysRPOF4UzhmiOHhkA9GaA2KWKODe
-         Db+LBp2wAXp47kltmAhKIvFq5oZoEiX2gQcdneGc=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yizhuo <yzhai003@ucr.edu>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 21/26] net: hisilicon: Fix usage of uninitialized variable in function mdio_sc_cfg_reg_write()
-Date:   Wed,  9 Oct 2019 13:05:53 -0400
-Message-Id: <20191009170558.32517-21-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191009170558.32517-1-sashal@kernel.org>
-References: <20191009170558.32517-1-sashal@kernel.org>
+        id S1732901AbfJIR3w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 13:29:52 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49541 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732184AbfJIR3t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 13:29:49 -0400
+Received: from [213.220.153.21] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1iIFmU-0002kv-Qn; Wed, 09 Oct 2019 17:29:46 +0000
+Date:   Wed, 9 Oct 2019 19:29:46 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Christian Kellner <ckellner@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Christian Kellner <christian@kellner.me>,
+        Christian Brauner <christian@brauner.io>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, Michal Hocko <mhocko@suse.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Roman Gushchin <guro@fb.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Dmitry V. Levin" <ldv@altlinux.org>
+Subject: Re: [PATCH v2 1/2] pidfd: show pids for nested pid namespaces in
+ fdinfo
+Message-ID: <20191009172944.if5x3rpkb54zs4ry@wittgenstein>
+References: <20191008133641.23019-1-ckellner@redhat.com>
+ <20191009160532.20674-1-ckellner@redhat.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191009160532.20674-1-ckellner@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yizhuo <yzhai003@ucr.edu>
+On Wed, Oct 09, 2019 at 06:05:30PM +0200, Christian Kellner wrote:
+> From: Christian Kellner <christian@kellner.me>
+> 
+> The fdinfo file for a process file descriptor already contains the
+> pid of the process in the callers namespaces. Additionally, if pid
+> namespaces are configured, show the process ids of the process in
+> all nested namespaces in the same format as in the procfs status
+> file, i.e. "NSPid:\t%d\%d...". This allows the easy identification
+> of the processes in nested namespaces.
+> 
+> Signed-off-by: Christian Kellner <christian@kellner.me>
+> ---
+> 
+> Changes in v2:
+> - Moved into separate function to avoid multiple ifdefs as suggested
+>   by Michal Hocko
+> 
+>  kernel/fork.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index 5a0fd518e04e..f7a59ef046e9 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -1681,12 +1681,27 @@ static int pidfd_release(struct inode *inode, struct file *file)
+>  }
+>  
+>  #ifdef CONFIG_PROC_FS
+> +static void pidfd_nspid(struct seq_file *m, struct pid *pid)
 
-[ Upstream commit 53de429f4e88f538f7a8ec2b18be8c0cd9b2c8e1 ]
+If it has to be a separate helper then please make it:
 
-In function mdio_sc_cfg_reg_write(), variable "reg_value" could be
-uninitialized if regmap_read() fails. However, "reg_value" is used
-to decide the control flow later in the if statement, which is
-potentially unsafe.
+static inline void print_pidfd_nspid(struct seq_file *m, struct pid_namespace *ns, struct pid *pid)
+{
+#ifdef CONFIG_PID_NS
+	int i;
 
-Signed-off-by: Yizhuo <yzhai003@ucr.edu>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/ethernet/hisilicon/hns_mdio.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+	seq_puts(m, "\nNSpid:");
+	for (i = ns->level; i <= pid->level; i++) {
+		ns = pid->numbers[i].ns;
+		seq_put_decimal_ull(m, "\t", pid_nr_ns(pid, ns));
+	}
+#endif
+}
 
-diff --git a/drivers/net/ethernet/hisilicon/hns_mdio.c b/drivers/net/ethernet/hisilicon/hns_mdio.c
-index baf5cc251f329..9a3bc0994a1db 100644
---- a/drivers/net/ethernet/hisilicon/hns_mdio.c
-+++ b/drivers/net/ethernet/hisilicon/hns_mdio.c
-@@ -156,11 +156,15 @@ static int mdio_sc_cfg_reg_write(struct hns_mdio_device *mdio_dev,
- {
- 	u32 time_cnt;
- 	u32 reg_value;
-+	int ret;
- 
- 	regmap_write(mdio_dev->subctrl_vbase, cfg_reg, set_val);
- 
- 	for (time_cnt = MDIO_TIMEOUT; time_cnt; time_cnt--) {
--		regmap_read(mdio_dev->subctrl_vbase, st_reg, &reg_value);
-+		ret = regmap_read(mdio_dev->subctrl_vbase, st_reg, &reg_value);
-+		if (ret)
-+			return ret;
-+
- 		reg_value &= st_msk;
- 		if ((!!check_st) == (!!reg_value))
- 			break;
--- 
-2.20.1
+It's called nowhere else and we've already retrieved the pid_namespace
+in pidfd_show_fdinfo().
 
+> +{
+> +#ifdef CONFIG_PID_NS
+> +	struct pid_namespace *ns = proc_pid_ns(file_inode(m->file));
+> +	int i;
+> +
+> +	seq_puts(m, "\nNSpid:");
+> +	for (i = ns->level; i <= pid->level; i++) {
+> +		ns = pid->numbers[i].ns;
+> +		seq_put_decimal_ull(m, "\t", pid_nr_ns(pid, ns));
+> +	}
+> +#endif
+> +}
+> +
+>  static void pidfd_show_fdinfo(struct seq_file *m, struct file *f)
+>  {
+>  	struct pid_namespace *ns = proc_pid_ns(file_inode(m->file));
+>  	struct pid *pid = f->private_data;
+>  
+>  	seq_put_decimal_ull(m, "Pid:\t", pid_nr_ns(pid, ns));
+> +	pidfd_nspid(m, pid);
+>  	seq_putc(m, '\n');
+>  }
+>  #endif
+> -- 
+> 2.21.0
+> 
