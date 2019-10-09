@@ -2,213 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DD97D12B3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 17:28:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95A33D12F0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 17:37:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731839AbfJIP2e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 11:28:34 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:45319 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731731AbfJIP1l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 11:27:41 -0400
-Received: by mail-lf1-f66.google.com with SMTP id r134so1970622lff.12
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 08:27:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=iQQlvVf1KnrDupGieXQiT31DlPt7ngRIn+oWlntJbrA=;
-        b=b6eo6v+rJT+f5py5qdHxkFUU24IJk6MDtdyK7QsLn5YNoKS2Io8CSF0unhd5MezXos
-         Zcuj2GnoBTJD8FPhZkv6DgFglV++T/ayZ7WfL5L/JCfX8hi4+TFrRhJtoe8aioxyRDC8
-         8R1TGet8cI2X4kMc9Rp2nDGt0wlPtuBiAC5QaDp2Gw0riGJYv9trGOuAejkpce1fjL7m
-         eCQH6ukjMWp9Q3WJELgsKxfUS7ETB6y4Hb1KuzPPpY8yCj+FwgltC+wQgNo7Qt4xUKQ5
-         tpy+fcFouWSBQE+IzBCPJDBGo/dfFbpXZ1m/UiXErfewbR48Bge918/6LA9Uvr/NQ0/Y
-         +4Jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=iQQlvVf1KnrDupGieXQiT31DlPt7ngRIn+oWlntJbrA=;
-        b=XlHcD2gpvpf3gRDDmH9dXOUEfa10KbR8m6ujyx0cd16oytECjJfgYZGksFazuzGYfP
-         bzVmPms94onNQeibodD8YQGQDojn/AwQvR6hcGhO0X2tUD4AjDy6VAUgNmyf9q152H4i
-         nI4/FSzMk58QCLBZfpC9W2ubVx1jCiDzcqSYcw7c0goa+rGNuQ5NDV6uIUz8PFrNbhvi
-         veZzsRiUuIYZNHCTrBtaynRvM5X+LAbJolp2TqEa1U+FgiWx+c4mWYfZFpr1JcNqzKcM
-         EYfFURXFzjOpu5lSWQtdla7JchAK2S3I3kxiTW+zhFL1MFWE99yzPjRRJp8rqD4iBktD
-         pMXw==
-X-Gm-Message-State: APjAAAWVfad82pgejrbb5peCpy/+3wU2gQKri/A/HLcfkVW2RzP7f2sP
-        WqrVT4n3GZeKxFEsIwVW8F8vMw==
-X-Google-Smtp-Source: APXvYqyAYIbpIxwbWzio0EZMQsTyoULCSbdhI02dK/m5+S3lmVAsOItzeHSa2fMvA22WHbAMrkXg9Q==
-X-Received: by 2002:ac2:5c4b:: with SMTP id s11mr2521837lfp.18.1570634858609;
-        Wed, 09 Oct 2019 08:27:38 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id t27sm542192lfl.48.2019.10.09.08.27.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2019 08:27:37 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id C2409102BFA; Wed,  9 Oct 2019 18:27:37 +0300 (+03)
-Date:   Wed, 9 Oct 2019 18:27:37 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Thomas =?utf-8?Q?Hellstr=C3=B6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        torvalds@linux-foundation.org,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rik van Riel <riel@surriel.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Huang Ying <ying.huang@intel.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>
-Subject: Re: [PATCH v4 3/9] mm: pagewalk: Don't split transhuge pmds when a
- pmd_entry is present
-Message-ID: <20191009152737.p42w7w456zklxz72@box>
-References: <20191008091508.2682-1-thomas_os@shipmail.org>
- <20191008091508.2682-4-thomas_os@shipmail.org>
+        id S1731557AbfJIPhg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 11:37:36 -0400
+Received: from mga06.intel.com ([134.134.136.31]:3516 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729742AbfJIPhg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 11:37:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Oct 2019 08:37:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,276,1566889200"; 
+   d="scan'208";a="223620857"
+Received: from mmahler-mobl1.amr.corp.intel.com (HELO [10.251.30.188]) ([10.251.30.188])
+  by fmsmga002.fm.intel.com with ESMTP; 09 Oct 2019 08:37:33 -0700
+Subject: Re: [alsa-devel] [PATCH v2 3/5] ASoC: core: add support to
+ snd_soc_dai_get_sdw_stream()
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>
+Cc:     devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        bgoswami@codeaurora.org, linux-kernel@vger.kernel.org,
+        plai@codeaurora.org, lgirdwood@gmail.com, robh+dt@kernel.org,
+        spapothi@codeaurora.org
+References: <20190813083550.5877-1-srinivas.kandagatla@linaro.org>
+ <20190813083550.5877-4-srinivas.kandagatla@linaro.org>
+ <ba88e0f9-ae7d-c26e-d2dc-83bf910c2c01@linux.intel.com>
+ <c2eecd44-f06a-7287-2862-0382bf697f8d@linaro.org>
+ <d2b7773b-d52a-7769-aa5b-ef8c8845d447@linux.intel.com>
+ <d7c1fdb2-602f-ecb1-9b32-91b893e7f408@linaro.org>
+ <f0228cb4-0a6f-17f3-fe03-9be7f5f2e59d@linux.intel.com>
+ <20190813191827.GI5093@sirena.co.uk>
+ <cc360858-571a-6a46-1789-1020bcbe4bca@linux.intel.com>
+ <20190813195804.GL5093@sirena.co.uk>
+ <20190814041142.GU12733@vkoul-mobl.Dlink>
+ <99d35a9d-cbd8-f0da-4701-92ef650afe5a@linux.intel.com>
+ <5e08f822-3507-6c69-5d83-4ce2a9f5c04f@linaro.org>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <53bb3105-8e85-a972-fce8-a7911ae4d461@linux.intel.com>
+Date:   Wed, 9 Oct 2019 09:29:39 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191008091508.2682-4-thomas_os@shipmail.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <5e08f822-3507-6c69-5d83-4ce2a9f5c04f@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 11:15:02AM +0200, Thomas Hellström (VMware) wrote:
-> From: Thomas Hellstrom <thellstrom@vmware.com>
+
+
+On 10/9/19 3:32 AM, Srinivas Kandagatla wrote:
+> Hi Pierre,
 > 
-> The pagewalk code was unconditionally splitting transhuge pmds when a
-> pte_entry was present. However ideally we'd want to handle transhuge pmds
-> in the pmd_entry function and ptes in pte_entry function. So don't split
-> huge pmds when there is a pmd_entry function present, but let the callback
-> take care of it if necessary.
-
-Do we have any current user that expect split_huge_pmd() in this scenario.
-
+> On 14/08/2019 15:09, Pierre-Louis Bossart wrote:
+>>
+>>
+>> On 8/13/19 11:11 PM, Vinod Koul wrote:
+>>> On 13-08-19, 20:58, Mark Brown wrote:
+>>>> On Tue, Aug 13, 2019 at 02:38:53PM -0500, Pierre-Louis Bossart wrote:
+>>>>
+>>>>> Indeed. I don't have a full understanding of that part to be 
+>>>>> honest, nor why
+>>>>> we need something SoundWire-specific. We already abused the 
+>>>>> set_tdm_slot API
+>>>>> to store an HDaudio stream, now we have a rather confusing stream
+>>>>> information for SoundWire and I have about 3 other 'stream' 
+>>>>> contexts in
+>>>>> SOF... I am still doing basic cleanups but this has been on my 
+>>>>> radar for a
+>>>>> while.
+>>>>
+>>>> There is something to be said for not abusing the TDM slot API if it 
+>>>> can
+>>>> make things clearer by using bus-idiomatic mechanisms, but it does mean
+>>>> everything needs to know about each individual bus :/ .
+>>>
+>>> Here ASoC doesn't need to know about sdw bus. As Srini explained, this
+>>> helps in the case for him to get the stream context and set the stream
+>>> context from the machine driver.
+>>>
+>>> Nothing else is expected to be done from this API. We already do a set
+>>> using snd_soc_dai_set_sdw_stream(). Here we add the 
+>>> snd_soc_dai_get_sdw_stream() to query
+>>
+>> I didn't see a call to snd_soc_dai_set_sdw_stream() in Srini's code?
 > 
-> In order to make sure a virtual address range is handled by one and only
-> one callback, and since pmd entries may be unstable, we introduce a
-> pmd_entry return code that tells the walk code to continue processing this
-> pmd entry rather than to move on. Since caller-defined positive return
-> codes (up to 2) are used by current callers, use a high value that allows a
-> large range of positive caller-defined return codes for future users.
 > 
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Rik van Riel <riel@surriel.com>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Huang Ying <ying.huang@intel.com>
-> Cc: Jérôme Glisse <jglisse@redhat.com>
-> Cc: Kirill A. Shutemov <kirill@shutemov.name>
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
-> ---
->  include/linux/pagewalk.h |  8 ++++++++
->  mm/pagewalk.c            | 28 +++++++++++++++++++++-------
->  2 files changed, 29 insertions(+), 7 deletions(-)
+> There is a snd_soc_dai_get_sdw_stream() to get stream context and we add 
+> slave streams(amplifier in this case) to that context using 
+> sdw_stream_add_slave() in machine driver[1].
 > 
-> diff --git a/include/linux/pagewalk.h b/include/linux/pagewalk.h
-> index bddd9759bab9..c4a013eb445d 100644
-> --- a/include/linux/pagewalk.h
-> +++ b/include/linux/pagewalk.h
-> @@ -4,6 +4,11 @@
->  
->  #include <linux/mm.h>
->  
-> +/* Highest positive pmd_entry caller-specific return value */
-> +#define PAGE_WALK_CALLER_MAX     (INT_MAX / 2)
-> +/* The handler did not handle the entry. Fall back to the next level */
-> +#define PAGE_WALK_FALLBACK       (PAGE_WALK_CALLER_MAX + 1)
-> +
-
-That's hacky.
-
-Maybe just use an error code for this? -EAGAIN?
-
->  struct mm_walk;
->  
->  /**
-> @@ -16,6 +21,9 @@ struct mm_walk;
->   *			this handler is required to be able to handle
->   *			pmd_trans_huge() pmds.  They may simply choose to
->   *			split_huge_page() instead of handling it explicitly.
-> + *                      If the handler did not handle the PMD, or split the
-> + *                      PMD and wants it handled by the PTE handler, it
-> + *                      should return PAGE_WALK_FALLBACK.
-
-Indentation is broken. Use tabs.
-
->   * @pte_entry:		if set, called for each non-empty PTE (4th-level) entry
->   * @pte_hole:		if set, called for each hole at all levels
->   * @hugetlb_entry:	if set, called for each hugetlb entry
-> diff --git a/mm/pagewalk.c b/mm/pagewalk.c
-> index 83c0b78363b4..f844c2a2aa60 100644
-> --- a/mm/pagewalk.c
-> +++ b/mm/pagewalk.c
-> @@ -50,10 +50,18 @@ static int walk_pmd_range(pud_t *pud, unsigned long addr, unsigned long end,
->  		 * This implies that each ->pmd_entry() handler
->  		 * needs to know about pmd_trans_huge() pmds
->  		 */
-> -		if (ops->pmd_entry)
-> +		if (ops->pmd_entry) {
->  			err = ops->pmd_entry(pmd, addr, next, walk);
-> -		if (err)
-> -			break;
-> +			if (!err)
-> +				continue;
-> +			else if (err <= PAGE_WALK_CALLER_MAX)
-> +				break;
-> +			WARN_ON(err != PAGE_WALK_FALLBACK);
-> +			err = 0;
-> +			if (pmd_trans_unstable(pmd))
-> +				goto again;
-> +			/* Fall through */
-> +		}
->  
->  		/*
->  		 * Check this here so we only break down trans_huge
-> @@ -61,8 +69,8 @@ static int walk_pmd_range(pud_t *pud, unsigned long addr, unsigned long end,
->  		 */
->  		if (!ops->pte_entry)
->  			continue;
-> -
-> -		split_huge_pmd(walk->vma, pmd, addr);
-> +		if (!ops->pmd_entry)
-> +			split_huge_pmd(walk->vma, pmd, addr);
->  		if (pmd_trans_unstable(pmd))
->  			goto again;
->  		err = walk_pte_range(pmd, addr, next, walk);
-> @@ -281,11 +289,17 @@ static int __walk_page_range(unsigned long start, unsigned long end,
->   *
->   *  - 0  : succeeded to handle the current entry, and if you don't reach the
->   *         end address yet, continue to walk.
-> - *  - >0 : succeeded to handle the current entry, and return to the caller
-> - *         with caller specific value.
-> + *  - >0, and <= PAGE_WALK_CALLER_MAX : succeeded to handle the current entry,
-> + *         and return to the caller with caller specific value.
->   *  - <0 : failed to handle the current entry, and return to the caller
->   *         with error code.
->   *
-> + * For pmd_entry(), a value <= PAGE_WALK_CALLER_MAX indicates that the entry
-> + * was handled by the callback. PAGE_WALK_FALLBACK indicates that the entry
-> + * could not be handled by the callback and should be re-checked. If the
-> + * callback needs the entry to be handled by the next level, it should
-> + * split the entry and then return PAGE_WALK_FALLBACK.
-> + *
->   * Before starting to walk page table, some callers want to check whether
->   * they really want to walk over the current vma, typically by checking
->   * its vm_flags. walk_page_test() and @ops->test_walk() are used for this
-> -- 
-> 2.21.0
+> Without this helper there is no way to link slave streams to stream 
+> context in non dai based setup like smart speaker amplifiers.
 > 
+> Currently this driver is blocked on this patch, If you think there are 
+> other ways to do this, am happy to try them out.
 
--- 
- Kirill A. Shutemov
+So to be clear, you are *not* using snd_soc_dai_set_sdw_stream?
+
+
+
+
+
