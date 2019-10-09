@@ -2,92 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EC8AD0D93
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 13:22:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9477AD0D95
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 13:24:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730876AbfJILWh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 07:22:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36574 "EHLO mx1.suse.de"
+        id S1730881AbfJILY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 07:24:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37662 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727219AbfJILWg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 07:22:36 -0400
+        id S1727035AbfJILY2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 07:24:28 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AF103AF05;
-        Wed,  9 Oct 2019 11:22:34 +0000 (UTC)
-Date:   Wed, 9 Oct 2019 13:22:34 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Joe Lawrence <joe.lawrence@redhat.com>
-Cc:     Miroslav Benes <mbenes@suse.cz>, rostedt@goodmis.org,
-        jikos@kernel.org, jpoimboe@redhat.com, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
-Subject: Re: [PATCH 0/3] ftrace: Introduce PERMANENT ftrace_ops flag
-Message-ID: <20191009112234.bi7lvp4pvmna26vz@pathway.suse.cz>
-References: <20191007081714.20259-1-mbenes@suse.cz>
- <20191008193534.GA16675@redhat.com>
+        by mx1.suse.de (Postfix) with ESMTP id 5C333AF05;
+        Wed,  9 Oct 2019 11:24:26 +0000 (UTC)
+Date:   Wed, 9 Oct 2019 13:24:24 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Qian Cai <cai@lca.pw>, Alexey Dobriyan <adobriyan@gmail.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>,
+        Konstantin Khlebnikov <koct9i@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v1] mm: Fix access of uninitialized memmaps in
+ fs/proc/page.c
+Message-ID: <20191009112424.GY6681@dhcp22.suse.cz>
+References: <20191009091205.11753-1-david@redhat.com>
+ <20191009093756.GV6681@dhcp22.suse.cz>
+ <67aeaacc-d850-5c81-bd17-e95c7f7f75df@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191008193534.GA16675@redhat.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <67aeaacc-d850-5c81-bd17-e95c7f7f75df@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2019-10-08 15:35:34, Joe Lawrence wrote:
-> On Mon, Oct 07, 2019 at 10:17:11AM +0200, Miroslav Benes wrote:
-> > Livepatch uses ftrace for redirection to new patched functions. It is
-> > thus directly affected by ftrace sysctl knobs such as ftrace_enabled.
-> > Setting ftrace_enabled to 0 also disables all live patched functions. It
-> > is not a problem per se, because only administrator can set sysctl
-> > values, but it still may be surprising.
-> > 
-> > Introduce PERMANENT ftrace_ops flag to amend this. If the
-> > FTRACE_OPS_FL_PERMANENT is set, the tracing of the function is not
-> > disabled. Such ftrace_ops can still be unregistered in a standard way.
-> > 
-> > The patch set passes ftrace and livepatch kselftests.
-> > 
-> > Miroslav Benes (3):
-> >   ftrace: Make test_rec_ops_needs_regs() generic
-> >   ftrace: Introduce PERMANENT ftrace_ops flag
-> >   livepatch: Use FTRACE_OPS_FL_PERMANENT
-> > 
-> >  Documentation/trace/ftrace-uses.rst |  6 ++++
-> >  Documentation/trace/ftrace.rst      |  2 ++
-> >  include/linux/ftrace.h              |  8 +++--
-> >  kernel/livepatch/patch.c            |  3 +-
-> >  kernel/trace/ftrace.c               | 47 ++++++++++++++++++++++++-----
-> >  5 files changed, 55 insertions(+), 11 deletions(-)
-> > 
-> > -- 
-> > 2.23.0
-> > 
+On Wed 09-10-19 12:19:59, David Hildenbrand wrote:
+[...]
+> > pfn_to_online_page makes sense because offline pages are not really in a
+> > defined state. This would be worth a patch of its own. I remember there
 > 
-> Hi Miroslav,
+> The issue is, once I check for pfn_to_online_page(), these functions
+> can't handle ZONE_DEVICE at all anymore. Especially in regards to
+> memory_failure() I don't think this is acceptable.
+
+Could you be more specific please? I am not sure I am following.
+
+> So while I
+> (personally) only care about adding pfn_to_online_page() checks, the
+> in-this-sense-fragile-subsection ZONE_DEVICE implementation requires me
+> to introduce a temporary check for initialized memmaps.
 > 
-> I wonder if the opposite would be more intuitive: when ftrace_enabled is
-> not set, don't allow livepatches to register ftrace filters and
-> likewise, don't allow ftrace_enabled to be unset if any livepatches are
-> already registered.  I guess you could make an argument either way, but
-> just offering another option.  Perhaps livepatches should follow similar
-> behavior of other ftrace clients (like perf probes?)
+> > was a discussion about the uninitialized zone device memmaps. It would
+> > be really good to summarize this discussion in the changelog and
+> > conclude why the explicit check is really good and what were other
+> > alternatives considered.
+> 
+> Yeah, I also expressed my feelings and the issues to be solved by
+> ZONE_DEVICE people in https://lkml.org/lkml/2019/9/6/114. However, the
+> discussion stalled and nobody really proposed a solution or followed up.
 
-I am not sure that I understand it correctly.
+I will try to get back to that discussion but is there any technical
+reason that prevents any conclusion or it is just stuck on a lack of
+time of the participants?
 
-ftrace_enables is a global flag. My expectation is that it can be
-manipulated at any time. But it should affect only ftrace handlers
-without FTRACE_OPS_FL_PERMANENT flag.
-
-By other words, the handlers with FTRACE_OPS_FL_PERMANENT flag and
-only these handlers should ignore the global flag.
-
-To be even more precise. If a function has registered more ftrace
-handlers then the global ftrace_enable setting shold affect only
-the handlers without the flag.
-
-Is this the plan, please?
-
-Best Regards,
-Petr
+-- 
+Michal Hocko
+SUSE Labs
