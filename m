@@ -2,135 +2,258 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BB61D190E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 21:37:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66362D1919
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 21:40:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731826AbfJIThA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 15:37:00 -0400
-Received: from mail-eopbgr710068.outbound.protection.outlook.com ([40.107.71.68]:12917
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729535AbfJIThA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 15:37:00 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=g1jnIBC+ZCyTbMmY5Hjd6sLkF0dzWolWELdB1Gk+jUUs/KbYNN4BqfgBdA5SnP95TbQGaQgBmksTBmZiH2PIb8y5x/FKB0G4zo+jVtc+QICUSAg+2fJ8GQA86SsjppJ7AGzzYpe2Bw9M+rdeIABOqfsVk/OJWkUAgw3vX1mTJfbTtmI43XrgF9FS0nNe/1H53YOQTwb3eW9b7ZvfyYPMW6aUbIK0EEOCtlQ51151dkImkVjtiJKSghPs624PG5GoOgANYs5th8imCYWMRehM66x72Zvfe0kAl+U77B9DRbPNnttip0daefvaeYfhlsK6iv6i9F2gPBiWkvifVl1mLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=X9oH3eePqu6UHumaucwSX0j7mqp6QwBs5tbrJTjoj6Q=;
- b=au5TkzTXbH/OpmpjqjV1B4HFuLgXGstsHUWbuHGQyifN0YN0MKRKwT/79aVQkictC5Ae/FfgQM4I68CYBkkG3+m5bnMBJbMSIzs4+OKI1u3nRoImnGrA0SefsOxPSSEb9EqCThHWshZ/Jd3b5ovemTZvx8dxTLFgzHzCLrgxsXFojvLWSzA9nCPyBz0eOjVY/LUIoBD8BURrXqHvXgPhVXPoRy6NzhX7Rlz1xTjrlWiKPGAnmqKiEp3d8UUBsvNoOXHFuHCBsvcTsq6T8oVjmmt2O2BQVxC6gslbGaVytBE5rgidLKtyoyU0bPKU7iGE4Q3pH92edcVruc/y7AEdUg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=X9oH3eePqu6UHumaucwSX0j7mqp6QwBs5tbrJTjoj6Q=;
- b=pb1ZffoAfmlDxc6vVF7nLYkEtYwzkBs6IUsEtOFbKQNuQSpS7SF3zerlCpYTCW74d5NhCGyLY8WWWuXIOzyhvtynHorytgC/VQnKifyiwhRTyEExeJ8WBjQKoM2DLVfcd8TAyVGLPmNmwPNoFtU+tbPFBXv7+T3PXhk0JJPiQoA=
-Received: from DM6PR12MB3865.namprd12.prod.outlook.com (10.255.173.210) by
- DM6PR12MB3786.namprd12.prod.outlook.com (10.255.173.11) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.17; Wed, 9 Oct 2019 19:36:57 +0000
-Received: from DM6PR12MB3865.namprd12.prod.outlook.com
- ([fe80::bc68:3310:d894:b9f]) by DM6PR12MB3865.namprd12.prod.outlook.com
- ([fe80::bc68:3310:d894:b9f%6]) with mapi id 15.20.2347.016; Wed, 9 Oct 2019
- 19:36:57 +0000
-From:   "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>
-CC:     Kurt Garloff <kurt@garloff.de>, Joerg Roedel <joro@8bytes.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>,
-        "Singh, Sandeep" <Sandeep.Singh@amd.com>
-Subject: Re: IOMMU vs Ryzen embedded EMMC controller
-Thread-Topic: IOMMU vs Ryzen embedded EMMC controller
-Thread-Index: AQHVb7hsQOyE/u2Eok64rlGlf/1aqKc1tHeAgAbXlwCAAAROAIACwXIAgAALx4CAE3F2AIAAA1KA
-Date:   Wed, 9 Oct 2019 19:36:57 +0000
-Message-ID: <7dfc753a-b189-d8d0-ff83-afcfbab99f71@amd.com>
-References: <643f99a4-4613-50af-57e4-5ea6ac975314@garloff.de>
- <47da1247-fbc1-fe50-041c-3808b0e140bf@garloff.de>
- <nycvar.YEU.7.76.1909251726550.15418@gjva.wvxbf.pm>
- <20190925154256.GB4643@8bytes.org>
- <70b2d326-6257-025c-5ffa-1f543a900073@garloff.de>
- <63913cd8-a0c5-61e3-2f52-139bade01afc@amd.com>
- <nycvar.YFH.7.76.1910092124260.13160@cbobk.fhfr.pm>
-In-Reply-To: <nycvar.YFH.7.76.1910092124260.13160@cbobk.fhfr.pm>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.0
-x-originating-ip: [165.204.77.11]
-x-clientproxiedby: SN1PR12CA0096.namprd12.prod.outlook.com
- (2603:10b6:802:21::31) To DM6PR12MB3865.namprd12.prod.outlook.com
- (2603:10b6:5:1c8::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Suravee.Suthikulpanit@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 19853415-48cd-414b-570a-08d74cf00bcf
-x-ms-office365-filtering-ht: Tenant
-x-ms-traffictypediagnostic: DM6PR12MB3786:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DM6PR12MB37867C5197E4162694435611F3950@DM6PR12MB3786.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 018577E36E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(396003)(366004)(346002)(39860400002)(136003)(199004)(189003)(186003)(6436002)(31686004)(25786009)(14454004)(2616005)(11346002)(76176011)(81166006)(6246003)(52116002)(4326008)(81156014)(36756003)(446003)(6116002)(53546011)(486006)(5024004)(6506007)(476003)(6636002)(229853002)(386003)(102836004)(256004)(3846002)(316002)(26005)(2906002)(8676002)(6486002)(65806001)(65956001)(66066001)(31696002)(66556008)(66476007)(66946007)(64756008)(66446008)(305945005)(54906003)(5660300002)(7736002)(6512007)(8936002)(86362001)(99286004)(71200400001)(478600001)(110136005)(71190400001)(58126008);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3786;H:DM6PR12MB3865.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: n3S+wFgQrTxxF8+RSBluVgZUnLEQEoiGmqyWj7oTVBqO+t11ZoZmReq8gdY95ivGQncqcw53DGX30Tdk0VwreTwJRYTemOgy51i0t9o2qA6KZnOLitwPZLN+PknWodMwqFPqAkF/QZdthAQ+PDyZXvWJm3SHTfkoyISe0CsmjhbJ0wZ6Zdp+BhSkZ7zWoyxXR0yCN2cSt+JrjGp9R4SGz04dyfao06/C3pB0j8jcQapsWLjxUuMqWANr9MCMexU3GxdJj0wEiNy1fXX1fXKrnD2ymP1u+OqDtEVOAIlBa9CyJJbdHv5tfoxqEMpamO3+kx0l2od9fnVJFgAdfTIMFGj1LrRkM786e1iGRIgDR/59Nfun0A9R1wKXjC946ZEGPThvKNVCMVuDeCgK8xZS2OxXvQ/WNSvaRTs3maw5Y2I=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <550D94580287FC4B90B6E94657F35667@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1731632AbfJITki (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 15:40:38 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:49523 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728804AbfJITkh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 15:40:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1570650035;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=AES1euluYpt8pZOrifbFD6nxniRMA/NiiVgR/kvQytg=;
+        b=Y9V7v3DzBkVIobpuA68tDZ+Jz3XJ1Vv71GsEGBxgGay9vgg6yWALRtCSyIzwv8iggmjL7L
+        lgb3f5gAMhibtuVUtE+jBAp2leGiW6j/wXMqyRSNx1T2kTMD+9wv8038JDUsoJb9dCfBuD
+        XTbZirbAExAiTl2zaAmUx1LnQHw8IE4=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-16-vn2ZJXzPMjCfnCJrFZAhQg-1; Wed, 09 Oct 2019 15:40:32 -0400
+Received: by mail-qk1-f198.google.com with SMTP id s28so3070311qkm.5
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 12:40:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:organization:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=4KxjULPGLqjAZrTVsVVDxzvB76dQUgaEDF7zWxkJIms=;
+        b=ovmrJma26T2Bi4flOYZnB1+UP4S5rQ/ik9yueLGkxtKSE87E+mmVYzWRytmDTSkxhd
+         NKMp3JHAlXiMcXVg6XZlbzaFDBprCiEii/KIklRj1vX+tmUrjDMl475e56YfdAeeWltM
+         EMZvP3YvUhEEETzceRYAzKdkXZhVue99SkCcK3M8LGeZrsCuA7FTLTHfJoTaYBTBqM3Z
+         /c0lugktPwvkuejsKdl77C8S/fOtw7GzbTf2i4p3INYMKOnzwdRNyg5yx/t3TR9PQOdj
+         YSlXyzCmFhNcI+n8rhmBOG75XQLqzocQjAAluhjpGIlxcmleN5G/n+I1BNlrdfZXQ0/M
+         Ireg==
+X-Gm-Message-State: APjAAAVjPTPvxqC02gtXHovfGP897kWm4KtSpun6E37BG0YfpedCbdwd
+        OQpZZgmKke00TYVgzdoxStQyYzytnY+nwgYRZFQjRAGJdacxPNr5shLu/ndv94kUFvxln6QXmaq
+        qtZhgX8UkFS/5MuNYz3Lcdan3
+X-Received: by 2002:ac8:6683:: with SMTP id d3mr5538957qtp.85.1570650031902;
+        Wed, 09 Oct 2019 12:40:31 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzTfbsLv4+WnHvBD3IUlVlWZk20K6FFZoR9W+ieQtbpCsR8I5HeuaYr+WgOErds/sxPg/WDDw==
+X-Received: by 2002:ac8:6683:: with SMTP id d3mr5538940qtp.85.1570650031595;
+        Wed, 09 Oct 2019 12:40:31 -0700 (PDT)
+Received: from dhcp-10-20-1-34.bss.redhat.com ([144.121.20.162])
+        by smtp.gmail.com with ESMTPSA id 139sm1451793qkf.14.2019.10.09.12.40.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 12:40:30 -0700 (PDT)
+Message-ID: <308f0fe3bf2705a975d4b1f9dfd16dc07724d454.camel@redhat.com>
+Subject: Re: [PATCH v2 26/27] drm/dp_mst: Also print unhashed pointers for
+ malloc/topology references
+From:   Lyude Paul <lyude@redhat.com>
+To:     Sean Paul <sean@poorly.run>
+Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, Juston Li <juston.li@intel.com>,
+        Imre Deak <imre.deak@intel.com>,
+        Ville =?ISO-8859-1?Q?Syrj=E4l=E4?= 
+        <ville.syrjala@linux.intel.com>, Harry Wentland <hwentlan@amd.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
+Date:   Wed, 09 Oct 2019 15:40:29 -0400
+In-Reply-To: <20190927142510.GS218215@art_vandelay>
+References: <20190903204645.25487-1-lyude@redhat.com>
+         <20190903204645.25487-27-lyude@redhat.com>
+         <20190927142510.GS218215@art_vandelay>
+Organization: Red Hat
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30)
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 19853415-48cd-414b-570a-08d74cf00bcf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2019 19:36:57.2252
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: i96mwk6DbmAxCi/g0q53f+n6zK7AHP/uyjgBiN/bhPYhH1GY0klo/TsjzzgMb4GIq7nETioqNGsxY4JKKqsztg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3786
+X-MC-Unique: vn2ZJXzPMjCfnCJrFZAhQg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksDQoNCk9uIDEwLzkvMTkgMjoyNSBQTSwgSmlyaSBLb3NpbmEgd3JvdGU6DQo+IE9uIEZyaSwg
-MjcgU2VwIDIwMTksIFNoYWgsIE5laGFsLWJha3VsY2hhbmRyYSB3cm90ZToNCj4gDQo+Pj4+PiBE
-byB5b3UgaGF2ZSBCQVIgbWVtb3J5IGFsbG9jYXRpb24gZmFpbHVyZXMgaW4gZG1lc2cgd2l0aCBJ
-T01NVSBvbj8NCj4+Pg0KPj4+IE5vLiBUaGUgZGV2aWNlIGlzICpub3QqIHRyZWF0ZWQgYXMgUENJ
-IGRldmljZSBhbmQgSSBzdGlsbCB0aGluayB0aGF0DQo+Pj4gdGhpcyBpcyB0aGUgc291cmNlIG9m
-IHRoZSBldmlsLg0KPj4+DQo+Pj4+PiBBY3R1YWxseSwgc2hhcmluZyBib3RoIHdvcmtpbmcgYW5k
-IG5vbi13b3JraW5nIGRtZXNnLCBhcyB3ZWxsIGFzDQo+Pj4+PiAvcHJvYy9pb21lbSBjb250ZW50
-cywgd291bGQgYmUgaGVscGZ1bC4NCj4gDQo+Pj4+IFllcywgY2FuIHlvdSBwbGVhc2UgZ3JhYiBk
-bWVzZyBmcm9tIGEgYm9vdCB3aXRoIGlvbW11IGVuYWJsZWQgYW5kIGFkZA0KPj4+PiAnYW1kX2lv
-bW11X2R1bXAnIHRvIHRoZSBrZXJuZWwgY29tbWFuZCBsaW5lPyBUaGF0IHNob3VsZCBnaXZlIHNv
-bWUNCj4+Pj4gaGludHMgb24gd2hhdCBpcyBnb2luZyBvbi4NCj4+Pg0KPj4+IEZvciBub3cgSSBh
-dHRhY2ggYSBkbWVzZyBhbmQgaW9tZW0gZnJvbSB0aGUgYm9vdCB3aXRoIElPTU1VIGVuYWJsZWQu
-DQo+Pj4gTm90aGluZyBtdWNoIGludGVyZXN0aW5nIHdpdGhvdXQgSU9NTVUsIHNkaGNpLWFjcGkg
-dGhlcmUganVzdCB3b3JrcyAtLQ0KPj4+IGxldCBtZSBrbm93IGlmIHlvdSBzdGlsbCB3YW50IG1l
-IHRvIHNlbmQgdGhlIGtlcm5lbCBtc2cuDQo+Pj4NCj4+PiBUaGFua3MgZm9yIGxvb2tpbmcgaW50
-byB0aGlzIQ0KPj4+DQo+Pg0KPj4gSSBoYXZlIGFkZGVkIFN1cmF2ZWUgZnJvbSBBTUQgaW4gdGhl
-IG1haWwgbG9vcC4gSGUgd29ya3Mgb24gSU9NTVUgcGFydC4NCj4+IEFzIHBlciBteSB1bmRlcnN0
-YW5kaW5nLCBpdCBuZWVkcyBhIHBhdGNoIGluIElPTU1VIGRyaXZlciBmb3IgYWRkaW5nDQo+PiBz
-dXBwb3J0IG9mIEVNTUMuIE5vdGUgdGhhdCBvbiBSeXplbiBwbGF0Zm9ybSB3ZSBoYXZlIEVNTUMg
-NS4wIGFzIEFDUEkNCj4+IGRldmljZS4NCj4gDQo+IEZyaWVuZGx5IHBpbmcgLi4uIGFueSBuZXdz
-IGhlcmU/DQo+IA0KPiBUaGFua3MsDQo+IA0KDQpDb3VsZCB5b3UgcGxlYXNlIGJvb3QgdGhlIHN5
-c3RlbSB3LyBrZXJuZWwgb3B0aW9uIGFtZF9pb21tdV9kdW1wPTEsDQphbmQgZG8gImRtZXNnIHwg
-Z3JlcCBBTUQtVmkiLiBUaGVuIHByb3ZpZGUgdGhlIG91dHB1dC4NCg0KSSBzdXNwZWN0IHRoYXQg
-dGhlcmUgaXMgc29tZXRoaW5nIG1pc3NpbmcgaW4gdGhlIElWUlMgdGFibGUsIHdoZXJlIGl0IG5l
-ZWRzDQp0byBwcm92aWRlIEFDUEkgSElEIGZvciB0aGUgZU1NQyBkZXZpY2UuDQoNClNlZSBrZXJu
-ZWwgcGFyYW1ldGVyOg0KDQppdnJzX2FjcGloaWQgICAgW0hXLFg4Nl82NF0NCiAgICAgICAgICAg
-ICAgICAgICAgICAgICBQcm92aWRlIGFuIG92ZXJyaWRlIHRvIHRoZSBBQ1BJLUhJRDpVSUQ8LT5E
-RVZJQ0UtSUQNCiAgICAgICAgICAgICAgICAgICAgICAgICBtYXBwaW5nIHByb3ZpZGVkIGluIHRo
-ZSBJVlJTIEFDUEkgdGFibGUuIEZvcg0KICAgICAgICAgICAgICAgICAgICAgICAgIGV4YW1wbGUs
-IHRvIG1hcCBVQVJULUhJRDpVSUQgQU1EMDAyMDowIHRvDQogICAgICAgICAgICAgICAgICAgICAg
-ICAgUENJIGRldmljZSAwMDoxNC41IHdyaXRlIHRoZSBwYXJhbWV0ZXIgYXM6DQogICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICBpdnJzX2FjcGloaWRbMDA6MTQuNV09QU1EMDAyMDowDQoN
-CkhlcmUgd2UgbWlnaHQgbmVlZCB0byBkby4NCg0KICAgICBpdnJzX2FjcGloaWRbMDA6MTMuMV09
-PGVtbWMgQUNQSSBISUQgb24gdGhhdCBzeXN0ZW0+DQoNClRoYW5rcywNClN1cmF2ZWUNCg==
+Hey! Re: our discussion about this at XDC, I think I'm going to drop this
+patch and just fix KASAN so it prints the hashed pointer as well, I'll cc y=
+ou
+on the patches for that as well
+
+On Fri, 2019-09-27 at 10:25 -0400, Sean Paul wrote:
+> On Tue, Sep 03, 2019 at 04:46:04PM -0400, Lyude Paul wrote:
+> > Currently we only print mstb/port pointer addresses in our malloc and
+> > topology refcount functions using the hashed-by-default %p, but
+> > unfortunately if you're trying to debug a use-after-free error caused b=
+y
+> > a refcounting error then this really isn't terribly useful. On the othe=
+r
+> > hand though, everything in the rest of the DP MST helpers uses hashed
+> > pointer values as well and probably isn't useful to convert to unhashed=
+.
+> > So, let's just get the best of both worlds and print both the hashed an=
+d
+> > unhashed pointer in our malloc/topology refcount debugging output. This
+> > will hopefully make it a lot easier to figure out which port/mstb is
+> > causing KASAN to get upset.
+> >=20
+> > Cc: Juston Li <juston.li@intel.com>
+> > Cc: Imre Deak <imre.deak@intel.com>
+> > Cc: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com>
+> > Cc: Harry Wentland <hwentlan@amd.com>
+> > Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> > Signed-off-by: Lyude Paul <lyude@redhat.com>
+>=20
+> It's really too bad there isn't a CONFIG_DEBUG_SHOW_PK_ADDRESSES or even =
+a
+> value
+> of kptr_restrict value that bypasses pointer hashing. I'm sure we're not =
+the
+> only ones to feel this pain. Maybe everyone just hacks vsnprintf...
+>=20
+> As it is, I'm not totally sold on exposing the actual addresses
+> unconditionally.
+> What do you think about pulling the print out into a function and only
+> printing
+> px if a debug kconfig is set?
+>=20
+> Sean
+>=20
+> > ---
+> >  drivers/gpu/drm/drm_dp_mst_topology.c | 34 ++++++++++++++++-----------
+> >  1 file changed, 20 insertions(+), 14 deletions(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c
+> > b/drivers/gpu/drm/drm_dp_mst_topology.c
+> > index 2fe24e366925..5b5c0b3b3c0e 100644
+> > --- a/drivers/gpu/drm/drm_dp_mst_topology.c
+> > +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+> > @@ -1327,7 +1327,8 @@ static void
+> >  drm_dp_mst_get_mstb_malloc(struct drm_dp_mst_branch *mstb)
+> >  {
+> >  =09kref_get(&mstb->malloc_kref);
+> > -=09DRM_DEBUG("mstb %p (%d)\n", mstb, kref_read(&mstb->malloc_kref));
+> > +=09DRM_DEBUG("mstb %p/%px (%d)\n",
+> > +=09=09  mstb, mstb, kref_read(&mstb->malloc_kref));
+> >  }
+> > =20
+> >  /**
+> > @@ -1344,7 +1345,8 @@ drm_dp_mst_get_mstb_malloc(struct drm_dp_mst_bran=
+ch
+> > *mstb)
+> >  static void
+> >  drm_dp_mst_put_mstb_malloc(struct drm_dp_mst_branch *mstb)
+> >  {
+> > -=09DRM_DEBUG("mstb %p (%d)\n", mstb, kref_read(&mstb->malloc_kref) - 1=
+);
+> > +=09DRM_DEBUG("mstb %p/%px (%d)\n",
+> > +=09=09  mstb, mstb, kref_read(&mstb->malloc_kref) - 1);
+> >  =09kref_put(&mstb->malloc_kref, drm_dp_free_mst_branch_device);
+> >  }
+> > =20
+> > @@ -1379,7 +1381,8 @@ void
+> >  drm_dp_mst_get_port_malloc(struct drm_dp_mst_port *port)
+> >  {
+> >  =09kref_get(&port->malloc_kref);
+> > -=09DRM_DEBUG("port %p (%d)\n", port, kref_read(&port->malloc_kref));
+> > +=09DRM_DEBUG("port %p/%px (%d)\n",
+> > +=09=09  port, port, kref_read(&port->malloc_kref));
+> >  }
+> >  EXPORT_SYMBOL(drm_dp_mst_get_port_malloc);
+> > =20
+> > @@ -1396,7 +1399,8 @@ EXPORT_SYMBOL(drm_dp_mst_get_port_malloc);
+> >  void
+> >  drm_dp_mst_put_port_malloc(struct drm_dp_mst_port *port)
+> >  {
+> > -=09DRM_DEBUG("port %p (%d)\n", port, kref_read(&port->malloc_kref) - 1=
+);
+> > +=09DRM_DEBUG("port %p/%px (%d)\n",
+> > +=09=09  port, port, kref_read(&port->malloc_kref) - 1);
+> >  =09kref_put(&port->malloc_kref, drm_dp_free_mst_port);
+> >  }
+> >  EXPORT_SYMBOL(drm_dp_mst_put_port_malloc);
+> > @@ -1447,8 +1451,8 @@ drm_dp_mst_topology_try_get_mstb(struct
+> > drm_dp_mst_branch *mstb)
+> >  =09int ret =3D kref_get_unless_zero(&mstb->topology_kref);
+> > =20
+> >  =09if (ret)
+> > -=09=09DRM_DEBUG("mstb %p (%d)\n", mstb,
+> > -=09=09=09  kref_read(&mstb->topology_kref));
+> > +=09=09DRM_DEBUG("mstb %p/%px (%d)\n",
+> > +=09=09=09  mstb, mstb, kref_read(&mstb->topology_kref));
+> > =20
+> >  =09return ret;
+> >  }
+> > @@ -1471,7 +1475,8 @@ static void drm_dp_mst_topology_get_mstb(struct
+> > drm_dp_mst_branch *mstb)
+> >  {
+> >  =09WARN_ON(kref_read(&mstb->topology_kref) =3D=3D 0);
+> >  =09kref_get(&mstb->topology_kref);
+> > -=09DRM_DEBUG("mstb %p (%d)\n", mstb, kref_read(&mstb->topology_kref));
+> > +=09DRM_DEBUG("mstb %p/%px (%d)\n",
+> > +=09=09  mstb, mstb, kref_read(&mstb->topology_kref));
+> >  }
+> > =20
+> >  /**
+> > @@ -1489,8 +1494,8 @@ static void drm_dp_mst_topology_get_mstb(struct
+> > drm_dp_mst_branch *mstb)
+> >  static void
+> >  drm_dp_mst_topology_put_mstb(struct drm_dp_mst_branch *mstb)
+> >  {
+> > -=09DRM_DEBUG("mstb %p (%d)\n",
+> > -=09=09  mstb, kref_read(&mstb->topology_kref) - 1);
+> > +=09DRM_DEBUG("mstb %p/%px (%d)\n",
+> > +=09=09  mstb, mstb, kref_read(&mstb->topology_kref) - 1);
+> >  =09kref_put(&mstb->topology_kref, drm_dp_destroy_mst_branch_device);
+> >  }
+> > =20
+> > @@ -1546,8 +1551,8 @@ drm_dp_mst_topology_try_get_port(struct
+> > drm_dp_mst_port *port)
+> >  =09int ret =3D kref_get_unless_zero(&port->topology_kref);
+> > =20
+> >  =09if (ret)
+> > -=09=09DRM_DEBUG("port %p (%d)\n", port,
+> > -=09=09=09  kref_read(&port->topology_kref));
+> > +=09=09DRM_DEBUG("port %p/%px (%d)\n",
+> > +=09=09=09  port, port, kref_read(&port->topology_kref));
+> > =20
+> >  =09return ret;
+> >  }
+> > @@ -1569,7 +1574,8 @@ static void drm_dp_mst_topology_get_port(struct
+> > drm_dp_mst_port *port)
+> >  {
+> >  =09WARN_ON(kref_read(&port->topology_kref) =3D=3D 0);
+> >  =09kref_get(&port->topology_kref);
+> > -=09DRM_DEBUG("port %p (%d)\n", port, kref_read(&port->topology_kref));
+> > +=09DRM_DEBUG("port %p/%px (%d)\n",
+> > +=09=09  port, port, kref_read(&port->topology_kref));
+> >  }
+> > =20
+> >  /**
+> > @@ -1585,8 +1591,8 @@ static void drm_dp_mst_topology_get_port(struct
+> > drm_dp_mst_port *port)
+> >   */
+> >  static void drm_dp_mst_topology_put_port(struct drm_dp_mst_port *port)
+> >  {
+> > -=09DRM_DEBUG("port %p (%d)\n",
+> > -=09=09  port, kref_read(&port->topology_kref) - 1);
+> > +=09DRM_DEBUG("port %p/%px (%d)\n",
+> > +=09=09  port, port, kref_read(&port->topology_kref) - 1);
+> >  =09kref_put(&port->topology_kref, drm_dp_destroy_port);
+> >  }
+> > =20
+> > --=20
+> > 2.21.0
+> >=20
+--=20
+Cheers,
+=09Lyude Paul
+
