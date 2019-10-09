@@ -2,206 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7FB8D0DC1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 13:36:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D90B9D0DC5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 13:39:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730629AbfJILfq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 07:35:46 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42783 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727769AbfJILfq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 07:35:46 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n14so2462160wrw.9
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 04:35:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=zoqf544e3TSKxjInWelA53LaLfaxVwpSA7VlNSs9qgo=;
-        b=R1CbvyDtvpySmFaKbbIdxzu0cPyIBdPrvbomY5WDuXS8FxEqhBltUDb5ybu73Ceezl
-         28RuTNVzaP+spaUFzIMjW3soNKDjW0byowHx/jD+8okoGxg5B5FL6c5z6u7GTtPL1Ezt
-         GcWiYZBP6ABSky8QhzjgvvgLVbGPFJ5NVcwyRbP+kilR1V4Yp7tf2GeJFnvc0gNAWSjD
-         D3fSlEK26BgDxrypoUnz0NPXwaWwkyAxyoq9oSTgxnNj3VxJ4puuQWWjgoNGE/8SEJaJ
-         NFqs5lqeIpf45gPrbT0NHio6hU172nZsKlIDWHKTlxmodf9p4rFE9E5CcBdphSa9Ugs4
-         KHTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=zoqf544e3TSKxjInWelA53LaLfaxVwpSA7VlNSs9qgo=;
-        b=BajJN+dMeMmQzTQkComidiLZ+WoRjGokfLn0TE6bmdS7It8VgGwdIetNZsK/P1BV6V
-         DyatEqfhePoZJRyPPhJ9S+C2TiqZEH4OprH10zPl7BSNNhjhTzt9nt/x/ba13WHgMav9
-         yCoEAfcj1v+Dhu0q6TPvXWHWvZcg2npnPbCmwoFmFjbTAAc4onLQDAqvw4FalpgEd0pf
-         xs8OQWFhSWyQSdLTP1HKZ5aGqMtkLgLCQ+8y18hrYc82GvAS3B6cPUNYSaPB6G67w4yz
-         165RdjF/JrGKpdyCAu3+tBZCh/vbOq81eCQ7LJ+KBqjQVF5brjFjs/Y7v32EJersk6Gb
-         w7wQ==
-X-Gm-Message-State: APjAAAUwifDX2uTh1a1BUoVsQ6V1m8/oQAEekbZ+JHaPiXjx1Pg7l5N2
-        +6aM4hVVrYbXyk7DULWanTuHfw==
-X-Google-Smtp-Source: APXvYqzhIsgdZaIpGiHVKQhRfk7caa2l51lGxUjY2AM9i4e/fL3Ggyzq/0MaSvh70LwtsSxIjX5IVQ==
-X-Received: by 2002:a5d:56c4:: with SMTP id m4mr2387150wrw.195.1570620942880;
-        Wed, 09 Oct 2019 04:35:42 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id n7sm1887494wrt.59.2019.10.09.04.35.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2019 04:35:42 -0700 (PDT)
-Date:   Wed, 9 Oct 2019 12:35:40 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-kernel@vger.kernel.org, thierry.reding@gmail.com,
-        heiko@sntech.de, dianders@chromium.org, mka@chromium.org,
-        groeck@chromium.org, kernel@collabora.com, bleung@chromium.org,
-        linux-pwm@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH] pwm: cros-ec: Let cros_ec_pwm_get_state() return the
- last applied state
-Message-ID: <20191009113540.x6uxo3ryiuf7ql55@holly.lan>
-References: <20191008105417.16132-1-enric.balletbo@collabora.com>
- <20191008143432.pbhcqamd6f4qwbqn@pengutronix.de>
- <4f009344-242e-19a7-6872-2c55df086044@collabora.com>
- <20191008203137.s22clq6v2om5ktio@pengutronix.de>
- <53b7d02b-1a2d-11da-fdd0-5378f360d876@collabora.com>
- <20191009095635.yysr33lnwldicyng@holly.lan>
- <20191009101637.gmvghwdvcmfw4yyk@pengutronix.de>
- <20191009104236.ux23ywnhvsym2qcb@holly.lan>
- <20191009112126.slpyxhnuqpiqgmes@pengutronix.de>
+        id S1730111AbfJILjT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 07:39:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43628 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728054AbfJILjT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 07:39:19 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 430DBAFD4;
+        Wed,  9 Oct 2019 11:39:16 +0000 (UTC)
+Date:   Wed, 9 Oct 2019 13:39:15 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Qian Cai <cai@lca.pw>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        sergey.senozhatsky.work@gmail.com, rostedt@goodmis.org,
+        peterz@infradead.org, linux-mm@kvack.org,
+        john.ogness@linutronix.de, akpm@linux-foundation.org,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>, david@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm/page_isolation: fix a deadlock with printk()
+Message-ID: <20191009113915.xhjswocremwmdum7@pathway.suse.cz>
+References: <1570228005-24979-1-git-send-email-cai@lca.pw>
+ <20191007143002.l37bt2lzqtnqjqxu@pathway.suse.cz>
+ <20191007144937.GO2381@dhcp22.suse.cz>
+ <20191008074357.f33f6pbs4cw5majk@pathway.suse.cz>
+ <20191008082752.GB6681@dhcp22.suse.cz>
+ <aefe7f75-b0ec-9e99-a77e-87324edb24e0@de.ibm.com>
+ <1570550917.5576.303.camel@lca.pw>
+ <20191008183525.GQ6681@dhcp22.suse.cz>
+ <1570561573.5576.307.camel@lca.pw>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191009112126.slpyxhnuqpiqgmes@pengutronix.de>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <1570561573.5576.307.camel@lca.pw>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 01:21:26PM +0200, Uwe Kleine-König wrote:
-> On Wed, Oct 09, 2019 at 11:42:36AM +0100, Daniel Thompson wrote:
-> > On Wed, Oct 09, 2019 at 12:16:37PM +0200, Uwe Kleine-König wrote:
-> > > On Wed, Oct 09, 2019 at 10:56:35AM +0100, Daniel Thompson wrote:
-> > > > On Wed, Oct 09, 2019 at 11:27:13AM +0200, Enric Balletbo i Serra wrote:
-> > > > > Hi Uwe,
-> > > > > 
-> > > > > Adding Daniel and Lee to the discussion ...
+On Tue 2019-10-08 15:06:13, Qian Cai wrote:
+> On Tue, 2019-10-08 at 20:35 +0200, Michal Hocko wrote:
+> > On Tue 08-10-19 12:08:37, Qian Cai wrote:
+> > > On Tue, 2019-10-08 at 14:56 +0200, Christian Borntraeger wrote:
+> > > > Adding Peter Oberparleiter.
+> > > > Peter, can you have a look?
 > > > > 
-> > > > Thanks!
-> > > > 
-> > > > > On 8/10/19 22:31, Uwe Kleine-König wrote:
-> > > > > > On Tue, Oct 08, 2019 at 06:33:15PM +0200, Enric Balletbo i Serra wrote:
-> > > > > >>> A few thoughts to your approach here ...:
-> > > > > >>>
-> > > > > >>>  - Would it make sense to only store duty_cycle and enabled in the
-> > > > > >>>    driver struct?
-> > > > > >>>
-> > > > > >>
-> > > > > >> Yes, in fact, my first approach (that I didn't send) was only storing enabled
-> > > > > >> and duty cycle. For some reason I ended storing the full pwm_state struct, but I
-> > > > > >> guess is not really needed.
-> > > > > >>
-> > > > > >>
-> > > > > >>>  - Which driver is the consumer of your pwm? If I understand correctly
-> > > > > >>>    the following sequence is the bad one:
-> > > > > >>>
-> > > > > >>
-> > > > > >> The consumer is the pwm_bl driver. Actually I'n trying to identify
-> > > > > >> other consumers.
+> > > > On 08.10.19 10:27, Michal Hocko wrote:
+> > > > > On Tue 08-10-19 09:43:57, Petr Mladek wrote:
+> > > > > > On Mon 2019-10-07 16:49:37, Michal Hocko wrote:
+> > > > > > > [Cc s390 maintainers - the lockdep is http://lkml.kernel.org/r/1570228005-24979-1-git-send-email-cai@lca.pw
+> > > > > > >  Petr has explained it is a false positive
+> > > > > > >  http://lkml.kernel.org/r/20191007143002.l37bt2lzqtnqjqxu@pathway.suse.cz]
+> > > > > > > On Mon 07-10-19 16:30:02, Petr Mladek wrote:
+> > > > > > > [...]
+> > > > > > > > I believe that it cannot really happen because:
+> > > > > > > > 
+> > > > > > > > 	static int __init
+> > > > > > > > 	sclp_console_init(void)
+> > > > > > > > 	{
+> > > > > > > > 	[...]
+> > > > > > > > 		rc = sclp_rw_init();
+> > > > > > > > 	[...]
+> > > > > > > > 		register_console(&sclp_console);
+> > > > > > > > 		return 0;
+> > > > > > > > 	}
+> > > > > > > > 
+> > > > > > > > sclp_rw_init() is called before register_console(). And
+> > > > > > > > console_unlock() will never call sclp_console_write() before
+> > > > > > > > the console is registered.
+> > > > > > > > 
+> > > > > > > > AFAIK, lockdep only compares existing chain of locks. It does
+> > > > > > > > not know about console registration that would make some
+> > > > > > > > code paths mutually exclusive.
+> > > > > > > > 
+> > > > > > > > I believe that it is a false positive. I do not know how to
+> > > > > > > > avoid this lockdep report. I hope that it will disappear
+> > > > > > > > by deferring all printk() calls rather soon.
+> > > > > > > 
+> > > > > > > Thanks a lot for looking into this Petr. I have also checked the code
+> > > > > > > and I really fail to see why the allocation has to be done under the
+> > > > > > > lock in the first place. sclp_read_sccb and sclp_init_sccb are global
+> > > > > > > variables but I strongly suspect that they need a synchronization during
+> > > > > > > early init, callbacks are registered only later IIUC:
 > > > > > > 
+> > > > > > Good idea. It would work when the init function is called only once.
+> > > > > > But see below.
+> > > > > > 
+> > > > > > > diff --git a/drivers/s390/char/sclp.c b/drivers/s390/char/sclp.c
+> > > > > > > index d2ab3f07c008..4b1c033e3255 100644
+> > > > > > > --- a/drivers/s390/char/sclp.c
+> > > > > > > +++ b/drivers/s390/char/sclp.c
+> > > > > > > @@ -1169,13 +1169,13 @@ sclp_init(void)
+> > > > > > >  	unsigned long flags;
+> > > > > > >  	int rc = 0;
+> > > > > > >  
+> > > > > > > +	sclp_read_sccb = (void *) __get_free_page(GFP_ATOMIC | GFP_DMA);
+> > > > > > > +	sclp_init_sccb = (void *) __get_free_page(GFP_ATOMIC | GFP_DMA);
+> > > > > > >  	spin_lock_irqsave(&sclp_lock, flags);
+> > > > > > >  	/* Check for previous or running initialization */
+> > > > > > >  	if (sclp_init_state != sclp_init_state_uninitialized)
+> > > > > > >  		goto fail_unlock;
+> > > > > > 
+> > > > > > It seems that sclp_init() could be called several times in parallel.
+> > > > > > I see it called from sclp_register() and sclp_initcall().
 > > > > > 
-> > > > > So far, the pwm_bl driver is the only consumer of cros-ec-pwm.
+> > > > > Interesting. Something for s390 people to answer I guess.
+> > > > > Anyway, this should be quite trivial to workaround by a cmpxch or alike.
 > > > > > 
-> > > > > > Ah, I see why I missed to identify the problem back when I checked this
-> > > > > > driver. The problem is not that .duty_cycle isn't set but there .enabled
-> > > > > > isn't set. So maybe we just want:
-> > > > > > 
-> > > > > > diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-> > > > > > index 2201b8c78641..0468c6ee4448 100644
-> > > > > > --- a/drivers/video/backlight/pwm_bl.c
-> > > > > > +++ b/drivers/video/backlight/pwm_bl.c
-> > > > > > @@ -123,6 +123,7 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
-> > > > > >         if (brightness > 0) {
-> > > > > >                 pwm_get_state(pb->pwm, &state);
-> > > > > >                 state.duty_cycle = compute_duty_cycle(pb, brightness);
-> > > > > > +               state.enabled = true;
-> > > > > >                 pwm_apply_state(pb->pwm, &state);
-> > > > > >                 pwm_backlight_power_on(pb);
-> > > > > >         } else
-> > > > > > 
-> > > > > > ? On a side note: It's IMHO strange that pwm_backlight_power_on
-> > > > > > reconfigures the PWM once more.
-> > > > > > 
-> > > > > 
-> > > > > Looking again to the pwm_bl code, now, I am not sure this is correct (although
-> > > > > it probably solves the problem for me).
-> > > > 
-> > > > Looking at the pwm_bl code I wouldn't accept the above as it is but I'd
-> > > > almost certainly accept a patch to pwm_bl to move the PWM enable/disable
-> > > > out of both the power on/off functions so the duty-cycle/enable or
-> > > > disable can happen in one go within the update_status function. I don't
-> > > > think such a change would interfere with the power and enable sequencing
-> > > > needed by panels and it would therefore be a nice continuation of the
-> > > > work to convert over to the pwm_apply_state() API.
 > > > 
-> > > OK for me. Enric, do you care enough to come up with a patch for pwm_bl?
-> > > I'd expect that this alone should already fix your issue.
-> > >  
-> > > > None of the above has anything to do with what is right or wrong for
-> > > > the PWM API evolution. Of course, if this thread does conclude that it
-> > > > is OK the duty cycle of a disabled PWM to be retained for some drivers
-> > > > and not others then I'd hope to see some WARN_ON()s added to the PWM
-> > > > framework to help bring problems to the surface with all drivers.
-> > > 
-> > > I think it's not possible to add a reliable WARN_ON for that issue. It
-> > > is quite expected that .get_state returns something that doesn't
-> > > completely match the requested configuration. So if a consumer requests
-> > > 
-> > > 	.duty_cycle = 1
-> > > 	.period = 100000000
-> > > 	.enabled = false
-> > > 
-> > > pwm_get_state possibly returns .duty_cycle = 0 even for drivers/hardware
-> > > that has a concept of duty_cycle for disabled hardware.
-> > > 
-> > > A bit this is addressed in https://patchwork.ozlabs.org/patch/1147517/.
+> > > The above fix is simply insufficient,
 > > 
-> > Isn't that intended to help identify "odd" PWM drivers rather than "odd"
-> > clients?
+> > Isn't this yet another init time lockdep false possitive?
+> 
+> Again, this is not 100% false positive for sure yet.
+> 
 > > 
-> > Initially I was thinking that a WARN_ON() could be emitted when:
+> > > 00: [    3.654337] -> #3 (console_owner){....}:                                 
+> > > 00: [    3.654343]        lock_acquire+0x21a/0x468                              
+> > > 00: [    3.654345]        console_unlock+0x3a6/0xa30                            
+> > > 00: [    3.654346]        vprintk_emit+0x184/0x3c8                              
+> > > 00: [    3.654348]        vprintk_default+0x44/0x50                             
+> > > 00: [    3.654349]        printk+0xa8/0xc0                                      
+> > > 00: [    3.654351]        get_random_u64+0x40/0x108                             
+> > > 00: [    3.654360]        add_to_free_area_random+0x188/0x1c0                   
+> > > 00: [    3.654364]        free_one_page+0x72/0x128                              
+> > > 00: [    3.654366]        __free_pages_ok+0x51c/0xca0                           
+> > > 00: [    3.654368]        memblock_free_all+0x30a/0x3b0                         
+> > > 00: [    3.654370]        mem_init+0x84/0x200                                   
+> > > 00: [    3.654371]        start_kernel+0x384/0x6a0                              
+> > > 00: [    3.654373]        startup_continue+0x70/0xd0                            
 > > 
-> > 1. .duty_cycle is non-zero
-> > 2. .enabled is false
-> > 3. the PWM is not already enabled
-> > 
-> > (#3 included to avoid too many false positives when disabling a PWM)
+> > This one is actually a nice example why trying to get printk out of the
+> > zone->lock is simply not viable. This one is likely a printk to warn
+> > that the random pool is not fully intiailized. Just because the
+> > allocator tries to randomize the initial free memory pool. You are not
+> > going to remove that printk, right?
 > 
-> I think I created a patch for that in the past, don't remember the
-> details.
-> 
-> > A poisoning approach might be equally valid. If some drivers are
-> > permitted to "round" .duty_cycle to 0 when .enabled is false then the
-> > framework could get *all* drivers to behave in the same way by
-> > zeroing it out before calling the drivers apply method. It is not that
-> > big a deal but minimising the difference between driver behaviour should
-> > automatically reduce the difference in API usage by clients.
-> 
-> I like it, but that breaks consumers that set .duty_cycle once during
-> probe and then only do:
-> 
-> 	pwm_get_state(pwm, &state);
-> 	state.enabled = ...
-> 	pwm_apply_state(pwm, &state);
-> 
-> which is a common idiom.
+> Well, Sergey had a patch to convert that one to printk_deferred(), but even with
+> his patch, it will still trigger the lockdep splat here because the lock
+> dependency between zone->lock --> console_owner is still there from memory
+> offline.
 
-Sorry I must have missed something. That appears to be identical to
-what pwm_bl.c currently does, albeit for rather better reasons.
+Is's this another printk() that might need to become printk_deferred()?
 
-If setting the duty cycle and then separately enabling it is a
-reasonable idiom then the cros-ec-pwm driver is a broken implementation
-of the API and needs to be fixed regardless of any changes to pwm_bl.c .
-
-
-Daniel.
+Best Regards,
+Petr
