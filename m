@@ -2,81 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07C5CD08AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 09:46:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DD32D08B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 09:46:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729592AbfJIHq0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 03:46:26 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:34440 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725848AbfJIHq0 (ORCPT
+        id S1729859AbfJIHqm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 03:46:42 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43941 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725848AbfJIHqk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 03:46:26 -0400
-Received: by mail-lf1-f68.google.com with SMTP id r22so897912lfm.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 00:46:24 -0700 (PDT)
+        Wed, 9 Oct 2019 03:46:40 -0400
+Received: by mail-lj1-f194.google.com with SMTP id n14so1418189ljj.10
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 00:46:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=KOoyq8RqjZWNlPjmqQisdxVkSm46lwidU3y+cPs0IOg=;
-        b=LUP7B66+wEM8L5sUI+Hb62UygnXuS5HBMHRMUQ23XTZ3ZM4KcwDbIzhWRRIO0WkeSB
-         1JOotOaghsMdH/IscJ8V8HYypVS99dBJu51Fz9W0rPa6Vpn9W/mluhriAa10jnIF20MC
-         6Bs9GTH3J1CaxAUekp4Ru6I80r0pYPDJVcXKc=
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hZEfc+r3FkjJNXGg5OrQndZ7EVhjrXvy0Arp8Ba6y3Y=;
+        b=wjvQivs+C+mNfu/kBT+oqZ7KD4q6+IZ5Kth6hhfGFbltlKdqAJ38C7ajvyZ31te4gJ
+         C5EqhO//ZRTNxmVHsnWpL4FPvGmq6RGPaLctgOfRFcn64vZmRPcZzkMMWQJ5TtpYGxOS
+         ++ZFPLLjrWzBCECqMtnDgmicGmA0oWmKIWQeYM/ZOxDhwuAVKbdEN/zSfWvAA3hLQZZq
+         ubaT/P3ZZ59MYBEbi3oE/Ge+OFG+iQYKsWIiR5Ef3yKK7kivB5XTNZls9k74vNap0dO9
+         ytr/crl5hSQEYBvLZjmMXVpBhkzUNMwtOdUVNlFdxRC9uu49L9C1IMRlaxaQ+WnE44XU
+         dFHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KOoyq8RqjZWNlPjmqQisdxVkSm46lwidU3y+cPs0IOg=;
-        b=N03XeuDKG34EclsSqQLwgS1cgRmvenSF6L8aSzIFDatvNmURN6aAirFdlU4FiMGMd+
-         NQ7+Ehf5XNyA8spTqmGnFTPd5ngoijj8b8MXVMndjmcTi8L+724nsx+33GSmeOEg3fVN
-         1Y4fLfj7+SZ75WgLUusJvODe0FZzPGvuEyYSOifuFDduCZhhZCsBfsZfk5YBEtpiYD9a
-         GJmECphV3gBnhsIW3cnibLNSpkDuY3tyyBjGMDBlKUVBN9xkUy06a8yCSlcJqg8cgbVM
-         bVBzq8PIZ2+yWIZlrXifMatN9aLFvlczN0OQ2Jub/Itdy1bNexMjdwEd312qDVWOrFUa
-         FpUg==
-X-Gm-Message-State: APjAAAWudEOw+8bisuxXZxmzX7HcQFiH5CYhg9TJ9pIfMS1+Z6Qe5RcI
-        aZijGcvtJusXQx4KBpj/qVsw63O8Hiyfngco
-X-Google-Smtp-Source: APXvYqwfAAzqX3zsxoWi6OCBpof60gACh0ZPTFnk+uDgyVKE6P3tO0/u4qyRn3gBy6YF5BnuRUuBKw==
-X-Received: by 2002:ac2:5df0:: with SMTP id z16mr1243326lfq.36.1570607183397;
-        Wed, 09 Oct 2019 00:46:23 -0700 (PDT)
-Received: from [172.16.11.28] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id t8sm278076ljd.18.2019.10.09.00.46.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Oct 2019 00:46:22 -0700 (PDT)
-Subject: Re: [PATCH] kernel/groups.c: use bsearch library function
-To:     Thomas Meyer <thomas@m3y3r.de>, linux-kernel@vger.kernel.org
-References: <20191007192632.29535-1-thomas@m3y3r.de>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <60e43953-a7f9-c52e-150c-74059d1b377b@rasmusvillemoes.dk>
-Date:   Wed, 9 Oct 2019 09:46:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hZEfc+r3FkjJNXGg5OrQndZ7EVhjrXvy0Arp8Ba6y3Y=;
+        b=uWNkTEfz1e4TaCJ/cAhpTLoz4ks5O0lLOdhdjX0WsgXkZyL1+dLV46vunKDnKpIeoz
+         upXSt1DRSBmP66O6/DIY3NFSVvlznKGEZSLcAKmtlQsYvsUQmwJWWaMaGbNIWRAV8vfV
+         4eRsrMrtR2b85tWD8PvpgEySQ/gIpn8o1aGCb90inpDhHnWugAhRQswaRla2ogeuZfdN
+         y+kntuO6ftsLEXfdyv6Nfqav2HT6PGx5Y8zgy+Co4XMjeslipB135PEaIf31u5B/Jhx1
+         VQoZ6AKsSS7VpcSot6WuOprXZFECABunyjFrhkbru3OXweDpwniwtio+pMRU+q7DCZY2
+         0eQA==
+X-Gm-Message-State: APjAAAWyZ3hhDstIvlWVM487Ge+GBZ3rZU1/w1sux5pYDtTnlHjX/gpN
+        ca4Iqtzptighj4QLYi1gdIo8TRSYYO4xMa11IyCtUg==
+X-Google-Smtp-Source: APXvYqzKb6yyez5/a7eDQjEjte0+mGMXwCtZbVyeffNWrWYP4x2euviqJJy4ezdD4TVfujVbQ0UR4GcHrwjyGqp8gXQ=
+X-Received: by 2002:a2e:80d1:: with SMTP id r17mr1435527ljg.118.1570607198839;
+ Wed, 09 Oct 2019 00:46:38 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191007192632.29535-1-thomas@m3y3r.de>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191006102953.57536-1-yuehaibing@huawei.com> <20191006102953.57536-7-yuehaibing@huawei.com>
+In-Reply-To: <20191006102953.57536-7-yuehaibing@huawei.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 9 Oct 2019 09:46:27 +0200
+Message-ID: <CACRpkdY5x3wG4h6Wm_L5OXWXB7SPqHimUFOQa2jOeqDETWciYg@mail.gmail.com>
+Subject: Re: [PATCH -next 06/34] rtc: coh901331: use devm_platform_ioremap_resource()
+ to simplify code
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        huang eddie <eddie.huang@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Patrice CHOTARD <patrice.chotard@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Tony Prisk <linux@prisktech.co.nz>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-rtc@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/10/2019 21.26, Thomas Meyer wrote:
-> commit b7b2562f7252 ("kernel/groups.c: use sort library function")
-> introduced the sort library function.
-> also use the bsearch library function instead of open-coding the binary
-> search.
+On Sun, Oct 6, 2019 at 12:32 PM YueHaibing <yuehaibing@huawei.com> wrote:
 
-Yes, but please note the difference between sorting the group_info and
-searching it: The former is done quite rarely - the setgroups syscall is
-used roughly once per login-session.
+> Use devm_platform_ioremap_resource() to simplify the code a bit.
+> This is detected by coccinelle.
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-But the searching of that structure is done more or less every time a
-user accesses a file not owned by that user (e.g., any time a normal
-user accesses anything in /usr) - at least if I'm reading
-acl_permission_check() right.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-So using a callback-based interface, especially in a post-spectre world,
-may have a somewhat large performance impact.
-
-Rasmus
+Yours,
+Linus Walleij
