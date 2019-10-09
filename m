@@ -2,80 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 529C4D0D1F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 12:49:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99788D0D2A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 12:50:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731033AbfJIKtI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 06:49:08 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:32827 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730936AbfJIKtE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 06:49:04 -0400
-Received: by mail-lj1-f194.google.com with SMTP id a22so2015033ljd.0;
-        Wed, 09 Oct 2019 03:49:03 -0700 (PDT)
+        id S1730696AbfJIKus (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 06:50:48 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34792 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726579AbfJIKus (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 06:50:48 -0400
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 30A12859FE
+        for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2019 10:50:48 +0000 (UTC)
+Received: by mail-wr1-f71.google.com with SMTP id c17so915256wro.18
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 03:50:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ysqjawGWGxhBElqwciD5mCdMVjymryIh3Vgfdb6+Ybk=;
-        b=Ky4pkrfsT56P7zj+dT/LonYWtFW3qiZLR3t9kS5t6E5KVAbxQrYSanNNBq8tOd+Wsn
-         QGOdEJTDm3Epo2BzlZtYCIhPGaVQy0f4fq4wce1Z7TPVngFMbgv5JQcD547TkuNfpL2V
-         Ib35DNfnW/qdAHIvZNMxbR36C4MT6XjQ9nYsVW1/0G1CLhLpZEYG8eQnepCGt3K6NSyW
-         x+LLW7ecK2n+VebtZXV7Br/v6ZU2T+jKn4Ay70RiUM4T0PEDgfZBVHP6tlFgp1QOVF4N
-         ZSTEUpOkDD0i4AXwOsP+Kcrj1kocDKgcQK8SGuxl/3tI8gZ1aJrHdIVxCzTAPyH6PvH3
-         vpAA==
-X-Gm-Message-State: APjAAAWrW+Wu1hM+mHE2pVt3mdgdxBXRL2VqFIc1KipaJWzpxq1t+dOD
-        pUZB3VYQjzgcAhqaMakV7BfcYU9G
-X-Google-Smtp-Source: APXvYqxR7CFmMBUEG7pNzCeUKgPWwONBSYUrHcPPm9rFSyUklLhkzYPOXveucArAshfDN8NlssTqMQ==
-X-Received: by 2002:a2e:9d06:: with SMTP id t6mr1889394lji.253.1570618142306;
-        Wed, 09 Oct 2019 03:49:02 -0700 (PDT)
-Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
-        by smtp.gmail.com with ESMTPSA id c4sm377448lfm.4.2019.10.09.03.48.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Oct 2019 03:49:00 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.92.2)
-        (envelope-from <johan@xi.terra>)
-        id 1iI9Wl-0001Z6-9y; Wed, 09 Oct 2019 12:49:07 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Oliver Neukum <oneukum@suse.com>,
-        Valentin Vidic <vvidic@valentin-vidic.from.hr>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 6/6] USB: iowarrior: use pr_err()
-Date:   Wed,  9 Oct 2019 12:48:46 +0200
-Message-Id: <20191009104846.5925-7-johan@kernel.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191009104846.5925-1-johan@kernel.org>
-References: <20191009104846.5925-1-johan@kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Bmn/r0BsJ/ckLkCEhbCCOJ9mUA04B3GjpaUyic1itQY=;
+        b=M8ANC+WwMGvqbVU7ujzpozTS/YE3PGt6XMsAwOin9idvzgkA5ATaK5k+8aoHa10prH
+         mugySxZEtOt33LFJUal/sSvgEVOw4ASbY7H03pBhaC1MtLsKmU0AHiaa3ACOV2k6Yy7d
+         xKN3EIfooIqpkYiSmLVTpynmKQxkFwoliEsHmN4x0mq4G4dhMrMQsnsXyzYM/AYVAkS+
+         2O1EALH7plf1ejhaqub/DY7vaPgkdG68aSOXee1Ltd6GibZMEdMdMLNqVXEOgObWvCxg
+         kkvsC+NJ/DQQPcWMlB2Oqi3pFABCXK3tW8ui+p1jcKI9MzwydcBeWmqNNVFZwsKSNF6G
+         KSVA==
+X-Gm-Message-State: APjAAAV1wOt7M6X+5P++K3BwKLvFWszDWciwEVjTuTt2RNN3EHZPgc8J
+        yM3x9bcKbjx5OAqBu3gAFYQCGrgzwXoWRdA4+9tU9Ec2wxeCbUIiLJRcFcKu4Ifi9JxbUkXIVBk
+        wcOLPHpcMDYPYOmkpQhEfpjHS
+X-Received: by 2002:a1c:990a:: with SMTP id b10mr2059256wme.39.1570618246852;
+        Wed, 09 Oct 2019 03:50:46 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwhBZEvSW0EUo/Gi5mU/wgwGG9A2c5aEjG6Esfy9ahvDY3vtdaKuBgF6plJ2JQLOMY1Q38/Fg==
+X-Received: by 2002:a1c:990a:: with SMTP id b10mr2059238wme.39.1570618246602;
+        Wed, 09 Oct 2019 03:50:46 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:f4b0:55d4:57da:3527? ([2001:b07:6468:f312:f4b0:55d4:57da:3527])
+        by smtp.gmail.com with ESMTPSA id n1sm2469406wrg.67.2019.10.09.03.50.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Oct 2019 03:50:46 -0700 (PDT)
+Subject: Re: [PATCH v2 5/8] KVM: x86: Add WARNs to detect out-of-bounds
+ register indices
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Reto Buerki <reet@codelabs.ch>,
+        Liran Alon <liran.alon@oracle.com>
+References: <20190927214523.3376-1-sean.j.christopherson@intel.com>
+ <20190927214523.3376-6-sean.j.christopherson@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <9e4570a4-1da1-1109-32d3-1fba25de1963@redhat.com>
+Date:   Wed, 9 Oct 2019 12:50:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190927214523.3376-6-sean.j.christopherson@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace the one remaining printk with pr_err().
+On 27/09/19 23:45, Sean Christopherson wrote:
+> Open code the RIP and RSP accessors so as to avoid pointless overhead of
+> WARN_ON_ONCE().
 
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/usb/misc/iowarrior.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Is there actually an overhead here?  It is effectively WARN_ON_ONCE(0)
+which should be compiled out just fine.
 
-diff --git a/drivers/usb/misc/iowarrior.c b/drivers/usb/misc/iowarrior.c
-index ad29ef51e53f..dce44fbf031f 100644
---- a/drivers/usb/misc/iowarrior.c
-+++ b/drivers/usb/misc/iowarrior.c
-@@ -587,7 +587,7 @@ static int iowarrior_open(struct inode *inode, struct file *file)
- 
- 	interface = usb_find_interface(&iowarrior_driver, subminor);
- 	if (!interface) {
--		printk(KERN_ERR "%s - error, can't find device for minor %d\n",
-+		pr_err("%s - error, can't find device for minor %d\n",
- 		       __func__, subminor);
- 		return -ENODEV;
- 	}
--- 
-2.23.0
-
+Paolo
