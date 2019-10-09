@@ -2,193 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFA2AD107F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 15:47:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79E11D1087
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 15:48:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731243AbfJINrs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 09:47:48 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:33332 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730985AbfJINrs (ORCPT
+        id S1731420AbfJINsM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 09:48:12 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:37634 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731254AbfJINsL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 09:47:48 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id D8C89290000
-Subject: Re: [PATCH] pwm: cros-ec: Let cros_ec_pwm_get_state() return the last
- applied state
-To:     Daniel Thompson <daniel.thompson@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     linux-kernel@vger.kernel.org, thierry.reding@gmail.com,
-        heiko@sntech.de, dianders@chromium.org, mka@chromium.org,
-        groeck@chromium.org, kernel@collabora.com, bleung@chromium.org,
-        linux-pwm@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
-References: <20191008105417.16132-1-enric.balletbo@collabora.com>
- <20191008143432.pbhcqamd6f4qwbqn@pengutronix.de>
- <4f009344-242e-19a7-6872-2c55df086044@collabora.com>
- <20191008203137.s22clq6v2om5ktio@pengutronix.de>
- <53b7d02b-1a2d-11da-fdd0-5378f360d876@collabora.com>
- <20191009095635.yysr33lnwldicyng@holly.lan>
- <20191009101637.gmvghwdvcmfw4yyk@pengutronix.de>
- <20191009104236.ux23ywnhvsym2qcb@holly.lan>
- <20191009112126.slpyxhnuqpiqgmes@pengutronix.de>
- <20191009113540.x6uxo3ryiuf7ql55@holly.lan>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <49990b56-44f9-7c3c-ce81-ed295895f90a@collabora.com>
-Date:   Wed, 9 Oct 2019 15:47:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Wed, 9 Oct 2019 09:48:11 -0400
+Received: by mail-qk1-f195.google.com with SMTP id u184so2271096qkd.4
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 06:48:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mESqt/CcfPjIOLtTAJm1X7rA5CiQI3dlP7XMSoawWCU=;
+        b=X8SeepnvI8a/4+b3k0oX2sVEs4DLFuNjcVCmLUoyLwmaq4xfnf99emNKyMRmxVD+5y
+         MA+WUG+RH+AkyFE8ETYwDk9gHsGNXC/T/dxEay1Verdo9zKWbo4fyITqZGSm1mck2nRp
+         oQmTiAcrIMkr+EDtuvmaVherYhUk9/aH9TINyPmmJB0xtHCQYtoVP9ekeeDgprTHe2pN
+         kWlskZ2V9cZxsfxLYUQuESd3vxNcXs9+ldHMZTJ1hfDubYe5uHMx1psxViP2TaZAyz0W
+         hwA2yIlr+veenOhU3EP1zBt12CCZy1nMiO6FBguWGkhocBWd2i+uqYvyyKV9yMXvLIta
+         2yyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mESqt/CcfPjIOLtTAJm1X7rA5CiQI3dlP7XMSoawWCU=;
+        b=VK04YQjNH0M5eoNek8S+lG825Xu7D+8jAut6GGGVpNmTtqsRCxTEHtvUeuiksoxM3C
+         XF9oOLwPMIMMZHLJwyfnLBEujd7gKbisQNGp75t9W5/XPDDw+i3z+Vom09J7+3Ke9KJo
+         e77upLo7ydh2iVOVRUOZf8l56wpox9LQd1Ddk0dskYRx4R89bLVetlzXIBEliHFLm7Ll
+         LJW6wjMbrRYAzsNZjeW5y9bjfBq/A4P+DrGV+4c3IkH4MElj6z1R22v0GDhrKRAj2D0I
+         VQPZ51Yr/f4DqCl139UwbDM2+F8tUAYCWrr2OXg22oasSPB5D6Yq6lBo/OKLimWhBCoP
+         H3sw==
+X-Gm-Message-State: APjAAAUENHtVmHWiloycHyW6p4AjG1+1fCgiFnqyT38bHaIYWx3ITIfm
+        bK9KAyJt3fvN9a8XP9Nvv+eqFhGi9j0=
+X-Google-Smtp-Source: APXvYqzvbtRnuvJaUDbwEZjYx3LQVRjq09cBMt+S3BGtXyy0Y9iKGCpQbNcs+e2qYDmrFsla0DXDHQ==
+X-Received: by 2002:a05:620a:896:: with SMTP id b22mr3695929qka.216.1570628889709;
+        Wed, 09 Oct 2019 06:48:09 -0700 (PDT)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id 54sm1332668qts.75.2019.10.09.06.48.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 09 Oct 2019 06:48:09 -0700 (PDT)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Wed, 9 Oct 2019 09:48:07 -0400
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: ehci-pci breakage with dma-mapping changes in 5.4-rc2
+Message-ID: <20191009134807.GA2091030@rani.riverdale.lan>
+References: <20191007175630.GA28861@infradead.org>
+ <20191007175856.GA42018@rani.riverdale.lan>
+ <20191007183206.GA13589@rani.riverdale.lan>
+ <20191007184754.GB31345@lst.de>
+ <20191007221054.GA409402@rani.riverdale.lan>
+ <20191007235401.GA608824@rani.riverdale.lan>
+ <20191008073210.GB9452@lst.de>
+ <20191008115103.GA463127@rani.riverdale.lan>
+ <20191008154731.GA616259@rani.riverdale.lan>
+ <20191009065043.GA30157@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20191009113540.x6uxo3ryiuf7ql55@holly.lan>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+In-Reply-To: <20191009065043.GA30157@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Uwe, Daniel,
-
-On 9/10/19 13:35, Daniel Thompson wrote:
-> On Wed, Oct 09, 2019 at 01:21:26PM +0200, Uwe Kleine-König wrote:
->> On Wed, Oct 09, 2019 at 11:42:36AM +0100, Daniel Thompson wrote:
->>> On Wed, Oct 09, 2019 at 12:16:37PM +0200, Uwe Kleine-König wrote:
->>>> On Wed, Oct 09, 2019 at 10:56:35AM +0100, Daniel Thompson wrote:
->>>>> On Wed, Oct 09, 2019 at 11:27:13AM +0200, Enric Balletbo i Serra wrote:
->>>>>> Hi Uwe,
->>>>>>
->>>>>> Adding Daniel and Lee to the discussion ...
->>>>>
->>>>> Thanks!
->>>>>
->>>>>> On 8/10/19 22:31, Uwe Kleine-König wrote:
->>>>>>> On Tue, Oct 08, 2019 at 06:33:15PM +0200, Enric Balletbo i Serra wrote:
->>>>>>>>> A few thoughts to your approach here ...:
->>>>>>>>>
->>>>>>>>>  - Would it make sense to only store duty_cycle and enabled in the
->>>>>>>>>    driver struct?
->>>>>>>>>
->>>>>>>>
->>>>>>>> Yes, in fact, my first approach (that I didn't send) was only storing enabled
->>>>>>>> and duty cycle. For some reason I ended storing the full pwm_state struct, but I
->>>>>>>> guess is not really needed.
->>>>>>>>
->>>>>>>>
->>>>>>>>>  - Which driver is the consumer of your pwm? If I understand correctly
->>>>>>>>>    the following sequence is the bad one:
->>>>>>>>>
->>>>>>>>
->>>>>>>> The consumer is the pwm_bl driver. Actually I'n trying to identify
->>>>>>>> other consumers.
->>>>>>>
->>>>>>
->>>>>> So far, the pwm_bl driver is the only consumer of cros-ec-pwm.
->>>>>>
->>>>>>> Ah, I see why I missed to identify the problem back when I checked this
->>>>>>> driver. The problem is not that .duty_cycle isn't set but there .enabled
->>>>>>> isn't set. So maybe we just want:
->>>>>>>
->>>>>>> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
->>>>>>> index 2201b8c78641..0468c6ee4448 100644
->>>>>>> --- a/drivers/video/backlight/pwm_bl.c
->>>>>>> +++ b/drivers/video/backlight/pwm_bl.c
->>>>>>> @@ -123,6 +123,7 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
->>>>>>>         if (brightness > 0) {
->>>>>>>                 pwm_get_state(pb->pwm, &state);
->>>>>>>                 state.duty_cycle = compute_duty_cycle(pb, brightness);
->>>>>>> +               state.enabled = true;
->>>>>>>                 pwm_apply_state(pb->pwm, &state);
->>>>>>>                 pwm_backlight_power_on(pb);
->>>>>>>         } else
->>>>>>>
->>>>>>> ? On a side note: It's IMHO strange that pwm_backlight_power_on
->>>>>>> reconfigures the PWM once more.
->>>>>>>
->>>>>>
->>>>>> Looking again to the pwm_bl code, now, I am not sure this is correct (although
->>>>>> it probably solves the problem for me).
->>>>>
->>>>> Looking at the pwm_bl code I wouldn't accept the above as it is but I'd
->>>>> almost certainly accept a patch to pwm_bl to move the PWM enable/disable
->>>>> out of both the power on/off functions so the duty-cycle/enable or
->>>>> disable can happen in one go within the update_status function. I don't
->>>>> think such a change would interfere with the power and enable sequencing
->>>>> needed by panels and it would therefore be a nice continuation of the
->>>>> work to convert over to the pwm_apply_state() API.
->>>>
->>>> OK for me. Enric, do you care enough to come up with a patch for pwm_bl?
->>>> I'd expect that this alone should already fix your issue.
->>>>  
->>>>> None of the above has anything to do with what is right or wrong for
->>>>> the PWM API evolution. Of course, if this thread does conclude that it
->>>>> is OK the duty cycle of a disabled PWM to be retained for some drivers
->>>>> and not others then I'd hope to see some WARN_ON()s added to the PWM
->>>>> framework to help bring problems to the surface with all drivers.
->>>>
->>>> I think it's not possible to add a reliable WARN_ON for that issue. It
->>>> is quite expected that .get_state returns something that doesn't
->>>> completely match the requested configuration. So if a consumer requests
->>>>
->>>> 	.duty_cycle = 1
->>>> 	.period = 100000000
->>>> 	.enabled = false
->>>>
->>>> pwm_get_state possibly returns .duty_cycle = 0 even for drivers/hardware
->>>> that has a concept of duty_cycle for disabled hardware.
->>>>
->>>> A bit this is addressed in https://patchwork.ozlabs.org/patch/1147517/.
->>>
->>> Isn't that intended to help identify "odd" PWM drivers rather than "odd"
->>> clients?
->>>
->>> Initially I was thinking that a WARN_ON() could be emitted when:
->>>
->>> 1. .duty_cycle is non-zero
->>> 2. .enabled is false
->>> 3. the PWM is not already enabled
->>>
->>> (#3 included to avoid too many false positives when disabling a PWM)
->>
->> I think I created a patch for that in the past, don't remember the
->> details.
->>
->>> A poisoning approach might be equally valid. If some drivers are
->>> permitted to "round" .duty_cycle to 0 when .enabled is false then the
->>> framework could get *all* drivers to behave in the same way by
->>> zeroing it out before calling the drivers apply method. It is not that
->>> big a deal but minimising the difference between driver behaviour should
->>> automatically reduce the difference in API usage by clients.
->>
->> I like it, but that breaks consumers that set .duty_cycle once during
->> probe and then only do:
->>
->> 	pwm_get_state(pwm, &state);
->> 	state.enabled = ...
->> 	pwm_apply_state(pwm, &state);
->>
->> which is a common idiom.
+On Wed, Oct 09, 2019 at 08:50:43AM +0200, Christoph Hellwig wrote:
+> On Tue, Oct 08, 2019 at 11:47:31AM -0400, Arvind Sankar wrote:
+> > Ok, I see that almost nothing actually uses dma_get_required_mask. So if
+> > something did need >4Gb space, the IOMMU would allocate it anyway
+> > regardless of dma_get_required_mask.
 > 
-> Sorry I must have missed something. That appears to be identical to
-> what pwm_bl.c currently does, albeit for rather better reasons.
+> Yes.  And with the direct mapping it also isn't an issue.
 > 
-> If setting the duty cycle and then separately enabling it is a
-> reasonable idiom then the cros-ec-pwm driver is a broken implementation
-> of the API and needs to be fixed regardless of any changes to pwm_bl.c .
+> > I'm thinking this means that we actually only needed to change
+> > dma_get_required_mask to dma_direct_get_required_mask in
+> > iommu_need_mapping, and the rest of the change is unnecessary?
+> > 
+> > Below is list of stuff calling dma_get_required_mask currently:
 > 
-
-I think that Daniel has reason here. Just come to my mind that, if the fix is
-not in the cros-ec-pwm driver we will also have the PWM sysfs user space
-interface broken for that driver, apart from future consumers.
-
-This turns on to my first approach, this patch. Uwe, You had some complains
-regarding is if I can only store enabled and duty_cycle instead of all the
-pwm_state, that should also work for me. If I solve that concern, might be this
-solution acceptable for you? Do you have more concerns?
-
-Regards,
- Enric
-
+> I guess that would actually work ok, but I prefer the more verbose
+> version as it explain what is going on, and will lead people to do
+> the right thing if we split the iommu vs passthrough case into
+> different ops (we already had a patch for that out on the list).
 > 
-> Daniel.
+> > For the drivers that do currently use dma_get_required_mask, I believe
+> > we will need to replace most of them with dma_direct_get_required_mask
+> > as well to maintain passthrough functionality -- the fusion, scsi, and
+> > infinband drivers all seem to be using this call to determine whether to
+> > expose the device's 64-bit DMA capability or not. With the change they
+> > will think they only need 32-bit DMA, which in turn will disable
+> > passthrough on them.
 > 
+> At least for some of the legacy SCSI drivers that is intentional, and
+> the reason why dma_get_required_mask was originally added.  On actual
+> PCI (and PCI-X, but not PCIe which everyone uses now) the 64-bit
+> addressing even if supported is not very efficient as it needs two
+> bus cycles.  So we prefer to just use the iommu.
+> 
+> > The etnaviv driver is doing something funky that I'm not sure about, but
+> > I *think* that one might want the real physical range as well. The mmc
+> > driver I think might be ok with the 32-bit range.
+> 
+> etnaviv is never used on systems with the intel iommu anyway.
+> 
+> > The vmd controller one not sure about.
+> 
+> That just passes through the dma ops to work around really stupid
+> intel chipsets.
+> 
+> > In dma-mapping.h, the function is used in dma_addressing_limited, which
+> > in turn is used in a couple of amd drm drivers, again not sure about
+> > these.
+> ---end quoted text---
+
+Thanks for the detailed explanation!
+
+That means your changes actually improve the situation for those scsi
+drivers -- previously they would have been using 64-bit addressing if
+physical RAM needed it, regardless of IOMMU availability/use, right?
