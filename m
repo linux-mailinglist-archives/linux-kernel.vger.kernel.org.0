@@ -2,101 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD13ED11FB
+	by mail.lfdr.de (Postfix) with ESMTP id 4F0FCD11FA
 	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 17:02:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731629AbfJIPCD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1731641AbfJIPCD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 9 Oct 2019 11:02:03 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:42812 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731345AbfJIPCC (ORCPT
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:46605 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731343AbfJIPCC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 9 Oct 2019 11:02:02 -0400
-Received: by mail-io1-f65.google.com with SMTP id n197so5621046iod.9;
-        Wed, 09 Oct 2019 08:02:02 -0700 (PDT)
+Received: by mail-ed1-f68.google.com with SMTP id t3so2298400edw.13
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 08:02:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Z4AULEV/1OkpdS8GLMgMKJd/N77GZOnH9zsY4Or4awY=;
-        b=C9/GlktKQq+UhJCklxy/wjmeurDA98BmMhZJF7gWghXkqGR5TwN2McupN4XJSGPt7p
-         d4GAYgQHni4sRNU6dIxV2d2TiDaFHyILSeioe/6tunKhDQBXHPGcHbBT+vLwzK2qdJLH
-         tghQKUJCnN9+QMmBJYc6ZLPvYzeZ7KKC3s5WhSPBmr3C3crVaUDmM6GGClE569a54Y/g
-         E4UDfk5+xalXRAZHa7BUVza7co5w4JjVFtUjvtxKV3+DikfksDmsoBVYusgkBMBaEfzI
-         i5owPMLt583bhrZtQUHNrDb2LLSP2j1RQGoyhyDSSyeHMqiqbWVuSEjIVRauhRtmYc+q
-         djPQ==
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=yyvcYwcZMjLvzOg82pdsNDaaC7kmo5LxgAiQA0bNidE=;
+        b=gYe64hQiSH9s0AJCdM7d1Bpyt8JKFCNdMMrjjOcAJi8DHx8XJgIrh57L+Ua+aOEDF3
+         tDEDdsqQtlX72bjr6UtMaozSyJBPTTbaEmX2NDhel45HJY+/8NLQeeGyBEW28ALnz25W
+         IzDdms1jqdIXYegTRSGBxksi1VQ7WtffxRg+8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Z4AULEV/1OkpdS8GLMgMKJd/N77GZOnH9zsY4Or4awY=;
-        b=nhaS8DKwj5fP7dp08tO5afuDFBpLloF6h/aB+elat1o6/QJuzeTGYV5hIFAaLVkDCU
-         jKJzWBNFBhwuoa4x/czHJTlOCXTk1EbXA8QYTyHbNexxlSnIHpnRnP+XWswY9hhtlmHW
-         tFSpgwL+jTvhJTZAVHDEmPaRFnbZS76smaTSzIpbs0LfihBZ5UzyAr0f+cQLbRG0peiN
-         6oCzq1Y6uMYuFUj8cbaoAOQhKtpgtARX+NIqOlVhH7DZRDccgOGoy1O3kscpc93g3xFe
-         3ck2Jnc0C0rQuHB5+yciB2RqVNSkhdvlf0Fjpno1ugtKf3uNmCFDr8ptR+O3sfLaaDK2
-         w/BA==
-X-Gm-Message-State: APjAAAW01ft1pT5MBdao+ccHYRckOWu1WLMl2FGI/75OsTZJcCiZZ5HQ
-        FlP0JJS3lRS/WZk2NUV0GP4=
-X-Google-Smtp-Source: APXvYqwil7LDiZE5RwUQR46RyNkw6ou97UIC4KBDGqdtGNtTWZlQ2CgXipbFbCGXn/Tkj0Y4Ueq2zA==
-X-Received: by 2002:a6b:8b56:: with SMTP id n83mr3724862iod.200.1570633321809;
-        Wed, 09 Oct 2019 08:02:01 -0700 (PDT)
-Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
-        by smtp.googlemail.com with ESMTPSA id t9sm1157429iop.86.2019.10.09.08.02.00
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=yyvcYwcZMjLvzOg82pdsNDaaC7kmo5LxgAiQA0bNidE=;
+        b=WwTcR5DbqBdgZ35my57R3XKED+JELAs/s4rcMvlksaoOXDPjaKCvAlDS/JNljbi2H3
+         ckmtrFE+yy3ITwd/E7oFOu9ox9Ujm+udarvXxwBZ8LKwPvstNeB8LemkTUtB1pQEostX
+         7f/FNNLMLvBWrkjR9ddMZtI45fX2uYSYtJw+sv3Rgdkt/jzBPtr/lh/XJSPNC3/Dfa/3
+         H22+b4Gtbvf7Dn7js93gdNp9PPUD1PK3qo7xwzYnlHFlurDQD3fQ4Wgj9Hvc31ZnFmpJ
+         QEI6QeYtRu38A5fdbTb3tLNiWQ+qPftf3VKC76fgPMV/exC83QC0R6CM5KbZeFQ9ZDei
+         R4MA==
+X-Gm-Message-State: APjAAAVif+0TZnjS9sBbxQ99I/nz0OyBEfsadp1FQPxGAl9PSYNfHDN3
+        Ub+ea47uPrgYmqgW5M23sc1rpQ==
+X-Google-Smtp-Source: APXvYqzkvG0y4CciW6y1869o9q6BjLYLBuhrjR2c8HeHPYa3utK2/23Gs+BF00yuGt+GrnN38hw7bQ==
+X-Received: by 2002:a05:6402:3c5:: with SMTP id t5mr3299252edw.125.1570633320982;
+        Wed, 09 Oct 2019 08:02:00 -0700 (PDT)
+Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
+        by smtp.gmail.com with ESMTPSA id fx25sm279855ejb.19.2019.10.09.08.01.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2019 08:02:01 -0700 (PDT)
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-To:     hverkuil@xs4all.nl
-Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Richard Fontana <rfontana@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Allison Randal <allison@lohutok.net>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] media: usb: fix memory leak in af9005_identify_state
-Date:   Wed,  9 Oct 2019 10:01:47 -0500
-Message-Id: <20191009150150.1087-1-navid.emamdoost@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <6de2396d-eaa4-5cb4-9a1d-f253503bcf48@xs4all.nl>
-References: <6de2396d-eaa4-5cb4-9a1d-f253503bcf48@xs4all.nl>
+        Wed, 09 Oct 2019 08:01:59 -0700 (PDT)
+Date:   Wed, 9 Oct 2019 17:01:55 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Sean Paul <sean@poorly.run>
+Cc:     Lyude Paul <lyude@redhat.com>, amd-gfx@lists.freedesktop.org,
+        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
+        <ville.syrjala@linux.intel.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        David Francis <David.Francis@amd.com>,
+        Mario Kleiner <mario.kleiner.de@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/6] drm/amdgpu/dm/mst: Report possible_crtcs
+ incorrectly, for now
+Message-ID: <20191009150155.GD16989@phenom.ffwll.local>
+Mail-Followup-To: Sean Paul <sean@poorly.run>,
+        Lyude Paul <lyude@redhat.com>, amd-gfx@lists.freedesktop.org,
+        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        David Francis <David.Francis@amd.com>,
+        Mario Kleiner <mario.kleiner.de@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20190926225122.31455-1-lyude@redhat.com>
+ <20190926225122.31455-6-lyude@redhat.com>
+ <20190927152741.GU218215@art_vandelay>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190927152741.GU218215@art_vandelay>
+X-Operating-System: Linux phenom 5.2.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In af9005_identify_state when returning -EIO the allocated buffer should
-be released. Replace the "return -EIO" with assignment into ret and move
-deb_info() under a check.
+On Fri, Sep 27, 2019 at 11:27:41AM -0400, Sean Paul wrote:
+> On Thu, Sep 26, 2019 at 06:51:07PM -0400, Lyude Paul wrote:
+> > This commit is seperate from the previous one to make it easier to
+> > revert in the future. Basically, there's multiple userspace applications
+> > that interpret possible_crtcs very wrong:
+> > 
+> > https://gitlab.freedesktop.org/xorg/xserver/merge_requests/277
+> > https://gitlab.gnome.org/GNOME/mutter/issues/759
+> > 
+> > While work is ongoing to fix these issues in userspace, we need to
+> > report ->possible_crtcs incorrectly for now in order to avoid
+> > introducing a regression in in userspace. Once these issues get fixed,
+> > this commit should be reverted.
+> > 
+> > Signed-off-by: Lyude Paul <lyude@redhat.com>
+> > Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> > ---
+> >  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 11 +++++++++++
+> >  1 file changed, 11 insertions(+)
+> > 
+> > diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> > index b404f1ae6df7..fe8ac801d7a5 100644
+> > --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> > +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> > @@ -4807,6 +4807,17 @@ static int amdgpu_dm_crtc_init(struct amdgpu_display_manager *dm,
+> >  	if (!acrtc->mst_encoder)
+> >  		goto fail;
+> >  
+> > +	/*
+> > +	 * FIXME: This is a hack to workaround the following issues:
+> > +	 *
+> > +	 * https://gitlab.gnome.org/GNOME/mutter/issues/759
+> > +	 * https://gitlab.freedesktop.org/xorg/xserver/merge_requests/277
+> > +	 *
+> > +	 * One these issues are closed, this should be removed
+> 
+> Even when these issues are closed, we'll still be introducing a regression if we
+> revert this change. Time for actually_possible_crtcs? :)
+> 
+> You also might want to briefly explain the u/s bug in case the links go sour.
+> 
+> > +	 */
+> > +	acrtc->mst_encoder->base.possible_crtcs =
+> > +		amdgpu_dm_get_encoder_crtc_mask(dm->adev);
+> 
+> Why don't we put this hack in amdgpu_dm_dp_create_fake_mst_encoder()?
 
-Fixes: af4e067e1dcf ("V4L/DVB (5625): Add support for the AF9005 demodulator from Afatech")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
----
-Changes in v2:
-	-- Reused the error handling to release buf
-	-- Added Fixes tag
----
- drivers/media/usb/dvb-usb/af9005.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/media/usb/dvb-usb/af9005.c b/drivers/media/usb/dvb-usb/af9005.c
-index 02697d86e8c1..bc6e7659c37b 100644
---- a/drivers/media/usb/dvb-usb/af9005.c
-+++ b/drivers/media/usb/dvb-usb/af9005.c
-@@ -975,9 +975,10 @@ static int af9005_identify_state(struct usb_device *udev,
- 		*cold = 1;
- 	else if (reply == 0x02)
- 		*cold = 0;
--	else
--		return -EIO;
--	deb_info("Identify state cold = %d\n", *cold);
-+	else
-+		ret = -EIO;
-+	if (!ret)
-+		deb_info("Identify state cold = %d\n", *cold);
- 
- err:
- 	kfree(buf);
+If we don't have the same hack for i915 mst I think we shouldn't merge
+this ... broken userspace is broken.
+-Daniel
 -- 
-2.17.1
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
