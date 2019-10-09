@@ -2,34 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4819ED1636
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:28:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 923D4D162A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:28:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732846AbfJIR2V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 13:28:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49058 "EHLO mail.kernel.org"
+        id S1732844AbfJIR2D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 13:28:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732294AbfJIRYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732299AbfJIRYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 9 Oct 2019 13:24:25 -0400
 Received: from sasha-vm.mshome.net (unknown [167.220.2.234])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BEE4A21D82;
-        Wed,  9 Oct 2019 17:24:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E53521D7B;
+        Wed,  9 Oct 2019 17:24:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570641864;
-        bh=NPNT9I5o/4emtMTJrnusg3gedRhNDoLKH7IfGRjATXc=;
+        s=default; t=1570641865;
+        bh=mpVfi+A2VV7XDoIj1M8d0rcZZUt1N63X7CXHAW2KBAc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1hVVk+DcC9NedQxXaz2xftpU3pSgQ0ZCqlZd80utf46EJiwiWeIcgrH+wNjFUGIeD
-         ewwNJCMVmA/pQWbGmau1pbCPoWorSZ35h8/On75Ebn+bsdh8XxP9G1kZ2t+mUDN5tT
-         RdEykr1zMCDmkII9oLsglvElJU4ByOSqvfvG+Fso=
+        b=Ox+2t/Ze6fbcTYtj2IcgyssiFQzaFNXperwGl8WZQTcogJ2ilyP1+HQOULQHMFuBa
+         KdF5Ggd523mFQ3koS4tInWzgPChLHSpxMrjLvoRfDtKAROXwlWTQItiD7GQNizObFf
+         kobg+1gUcbvcmjwLQS5E5he6psmbHi4NW6gFT1w4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tony Lindgren <tony@atomide.com>, Sasha Levin <sashal@kernel.org>,
-        linux-omap@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 05/21] ARM: OMAP2+: Fix missing reset done flag for am3 and am43
-Date:   Wed,  9 Oct 2019 13:05:58 -0400
-Message-Id: <20191009170615.32750-5-sashal@kernel.org>
+Cc:     Jim Mattson <jmattson@google.com>, Marc Orr <marcorr@google.com>,
+        Peter Shier <pshier@google.com>,
+        Jacob Xu <jacobhxu@google.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 06/21] kvm: x86: Improve emulation of CPUID leaves 0BH and 1FH
+Date:   Wed,  9 Oct 2019 13:05:59 -0400
+Message-Id: <20191009170615.32750-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191009170615.32750-1-sashal@kernel.org>
 References: <20191009170615.32750-1-sashal@kernel.org>
@@ -42,51 +46,138 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+From: Jim Mattson <jmattson@google.com>
 
-[ Upstream commit 8ad8041b98c665b6147e607b749586d6e20ba73a ]
+[ Upstream commit 43561123ab3759eb6ff47693aec1a307af0aef83 ]
 
-For ti,sysc-omap4 compatible devices with no sysstatus register, we do have
-reset done status available in the SOFTRESET bit that clears when the reset
-is done. This is documented for example in am437x TRM for DMTIMER_TIOCP_CFG
-register. The am335x TRM just says that SOFTRESET bit value 1 means reset is
-ongoing, but it behaves the same way clearing after reset is done.
+For these CPUID leaves, the EDX output is not dependent on the ECX
+input (i.e. the SIGNIFCANT_INDEX flag doesn't apply to
+EDX). Furthermore, the low byte of the ECX output is always identical
+to the low byte of the ECX input. KVM does not produce the correct ECX
+and EDX outputs for any undefined subleaves beyond the first.
 
-With the ti-sysc driver handling this automatically based on no sysstatus
-register defined, we see warnings if SYSC_HAS_RESET_STATUS is missing in the
-legacy platform data:
+Special-case these CPUID leaves in kvm_cpuid, so that the ECX and EDX
+outputs are properly generated for all undefined subleaves.
 
-ti-sysc 48042000.target-module: sysc_flags 00000222 != 00000022
-ti-sysc 48044000.target-module: sysc_flags 00000222 != 00000022
-ti-sysc 48046000.target-module: sysc_flags 00000222 != 00000022
-...
-
-Let's fix these warnings by adding SYSC_HAS_RESET_STATUS. Let's also
-remove the useless parentheses while at it.
-
-If it turns out we do have ti,sysc-omap4 compatible devices without a
-working SOFTRESET bit we can set up additional quirk handling for it.
-
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Fixes: 0771671749b59a ("KVM: Enhance guest cpuid management")
+Fixes: a87f2d3a6eadab ("KVM: x86: Add Intel CPUID.1F cpuid emulation support")
+Signed-off-by: Jim Mattson <jmattson@google.com>
+Reviewed-by: Marc Orr <marcorr@google.com>
+Reviewed-by: Peter Shier <pshier@google.com>
+Reviewed-by: Jacob Xu <jacobhxu@google.com>
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/kvm/cpuid.c | 83 +++++++++++++++++++++++++-------------------
+ 1 file changed, 47 insertions(+), 36 deletions(-)
 
-diff --git a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
-index de06a1d5ffab5..e61c14f590634 100644
---- a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
-@@ -966,7 +966,8 @@ static struct omap_hwmod_class_sysconfig am33xx_timer_sysc = {
- 	.rev_offs	= 0x0000,
- 	.sysc_offs	= 0x0010,
- 	.syss_offs	= 0x0014,
--	.sysc_flags	= (SYSC_HAS_SIDLEMODE | SYSC_HAS_SOFTRESET),
-+	.sysc_flags	= SYSC_HAS_SIDLEMODE | SYSC_HAS_SOFTRESET |
-+			  SYSC_HAS_RESET_STATUS,
- 	.idlemodes	= (SIDLE_FORCE | SIDLE_NO | SIDLE_SMART |
- 			  SIDLE_SMART_WKUP),
- 	.sysc_fields	= &omap_hwmod_sysc_type2,
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index 5c82b4bc4a68a..f3c49dc423895 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -868,53 +868,64 @@ struct kvm_cpuid_entry2 *kvm_find_cpuid_entry(struct kvm_vcpu *vcpu,
+ EXPORT_SYMBOL_GPL(kvm_find_cpuid_entry);
+ 
+ /*
+- * If no match is found, check whether we exceed the vCPU's limit
+- * and return the content of the highest valid _standard_ leaf instead.
+- * This is to satisfy the CPUID specification.
++ * If the basic or extended CPUID leaf requested is higher than the
++ * maximum supported basic or extended leaf, respectively, then it is
++ * out of range.
+  */
+-static struct kvm_cpuid_entry2* check_cpuid_limit(struct kvm_vcpu *vcpu,
+-                                                  u32 function, u32 index)
++static bool cpuid_function_in_range(struct kvm_vcpu *vcpu, u32 function)
+ {
+-	struct kvm_cpuid_entry2 *maxlevel;
+-
+-	maxlevel = kvm_find_cpuid_entry(vcpu, function & 0x80000000, 0);
+-	if (!maxlevel || maxlevel->eax >= function)
+-		return NULL;
+-	if (function & 0x80000000) {
+-		maxlevel = kvm_find_cpuid_entry(vcpu, 0, 0);
+-		if (!maxlevel)
+-			return NULL;
+-	}
+-	return kvm_find_cpuid_entry(vcpu, maxlevel->eax, index);
++	struct kvm_cpuid_entry2 *max;
++
++	max = kvm_find_cpuid_entry(vcpu, function & 0x80000000, 0);
++	return max && function <= max->eax;
+ }
+ 
+ bool kvm_cpuid(struct kvm_vcpu *vcpu, u32 *eax, u32 *ebx,
+ 	       u32 *ecx, u32 *edx, bool check_limit)
+ {
+ 	u32 function = *eax, index = *ecx;
+-	struct kvm_cpuid_entry2 *best;
+-	bool entry_found = true;
+-
+-	best = kvm_find_cpuid_entry(vcpu, function, index);
+-
+-	if (!best) {
+-		entry_found = false;
+-		if (!check_limit)
+-			goto out;
++	struct kvm_cpuid_entry2 *entry;
++	struct kvm_cpuid_entry2 *max;
++	bool found;
+ 
+-		best = check_cpuid_limit(vcpu, function, index);
++	entry = kvm_find_cpuid_entry(vcpu, function, index);
++	found = entry;
++	/*
++	 * Intel CPUID semantics treats any query for an out-of-range
++	 * leaf as if the highest basic leaf (i.e. CPUID.0H:EAX) were
++	 * requested.
++	 */
++	if (!entry && check_limit && !cpuid_function_in_range(vcpu, function)) {
++		max = kvm_find_cpuid_entry(vcpu, 0, 0);
++		if (max) {
++			function = max->eax;
++			entry = kvm_find_cpuid_entry(vcpu, function, index);
++		}
+ 	}
+-
+-out:
+-	if (best) {
+-		*eax = best->eax;
+-		*ebx = best->ebx;
+-		*ecx = best->ecx;
+-		*edx = best->edx;
+-	} else
++	if (entry) {
++		*eax = entry->eax;
++		*ebx = entry->ebx;
++		*ecx = entry->ecx;
++		*edx = entry->edx;
++	} else {
+ 		*eax = *ebx = *ecx = *edx = 0;
+-	trace_kvm_cpuid(function, *eax, *ebx, *ecx, *edx, entry_found);
+-	return entry_found;
++		/*
++		 * When leaf 0BH or 1FH is defined, CL is pass-through
++		 * and EDX is always the x2APIC ID, even for undefined
++		 * subleaves. Index 1 will exist iff the leaf is
++		 * implemented, so we pass through CL iff leaf 1
++		 * exists. EDX can be copied from any existing index.
++		 */
++		if (function == 0xb || function == 0x1f) {
++			entry = kvm_find_cpuid_entry(vcpu, function, 1);
++			if (entry) {
++				*ecx = index & 0xff;
++				*edx = entry->edx;
++			}
++		}
++	}
++	trace_kvm_cpuid(function, *eax, *ebx, *ecx, *edx, found);
++	return found;
+ }
+ EXPORT_SYMBOL_GPL(kvm_cpuid);
+ 
 -- 
 2.20.1
 
