@@ -2,159 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1342D1B50
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 23:59:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72B65D1B55
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 00:01:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732118AbfJIV7M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 17:59:12 -0400
-Received: from mail-eopbgr800099.outbound.protection.outlook.com ([40.107.80.99]:6166
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729161AbfJIV7M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 17:59:12 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BMUoFZ/z4bz5uOlfQ/qi1O05dzxMQ1bWrmnvAYSkaAue+ykKp85DE/A/YH4MJtd6/NyVjx//KRuWFGYePIBiPqZBAah+y4JY1c14iroSUKviJHCABrktDPJ85l+EqZbaRVS39rWso6Z7csXUwXhLQOKKsT+93mWWAe5dFjbq1LG5i7QdwB40iow1icr3dOCzOcYbBtI4cXWSVjWH3AbV+fHqRBvt7PFOopUMouuDroQwqpfPZbNSCHWK2OyOyt7yCJrhPin5r0uB6XeFQLdb5UC35G7p9UYGfVNGcy5LLib7bBJCYokM+gv1HeRLSmiRWbCy7ZMvc105BCFkPbgUFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FDNpjfUtMsgrqkAyi6iay2BGlBrO+73t+q6BPX7siRk=;
- b=horHhbh0PalaNV+Kl7T6lXHoBZcdWUEXEi59hOJQkI4/ewAhmnbuLLBeqDBt1Hs25zee2G/WlOHx5/YYT4bdTlWSpOiFjq9oTSinzylzBepRdgkEJAcYelYceQ2406NyJKkmMt/Bk5la2XaF5baSTR+1Eq6fsO/c67RKAAumL5SCt/m0heushHWgUDrU1bj7mSdOU+yfhI7K5m6sBw9qJbHKxLDg1UX0kM3txHWLI29DWy48ls6AHErtUUx91TZr+sn6aYnMUD1jZyEJzcAbeWeFmrcYG3BSRtvisPMJIa4qaqsAg6r6M2eNRCdQDU/RJuJefxZj6TIiQFFjw/SozA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wavecomp.com; dmarc=pass action=none header.from=mips.com;
- dkim=pass header.d=mips.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wavecomp.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FDNpjfUtMsgrqkAyi6iay2BGlBrO+73t+q6BPX7siRk=;
- b=XbNdCizwz9PDSpl4kBZ4hv5+hheyJE41CBs1taT5oH8MJJD+4blc0sQ193jW+dOZBhD1vBRJTK5HTzNa2CoMMeLerZY6vlB6CPIYotqXb8BQfSb7BxFoApAHYIgp4Ca3dAsN1JQ0I4AugEAaBjNZtozaGSEYz5bdX3l5fQNMlA0=
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.172.60.12) by
- MWHPR2201MB1248.namprd22.prod.outlook.com (10.172.60.143) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.16; Wed, 9 Oct 2019 21:58:28 +0000
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::c1dc:dba3:230c:e7f0]) by MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::c1dc:dba3:230c:e7f0%8]) with mapi id 15.20.2347.016; Wed, 9 Oct 2019
- 21:58:28 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
-CC:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <pburton@wavecomp.com>,
-        James Hogan <jhogan@kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH 0/6] Clean up ARC code and fix IP22/28 early printk
-Thread-Topic: [PATCH 0/6] Clean up ARC code and fix IP22/28 early printk
-Thread-Index: AQHVfuyukmgOVvdByUe0BOLWKwweCg==
-Date:   Wed, 9 Oct 2019 21:58:28 +0000
-Message-ID: <MWHPR2201MB127787BAFB6F0B08F13C4B53C1950@MWHPR2201MB1277.namprd22.prod.outlook.com>
-References: <20191009132718.25346-1-tbogendoerfer@suse.de>
-In-Reply-To: <20191009132718.25346-1-tbogendoerfer@suse.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BYAPR02CA0009.namprd02.prod.outlook.com
- (2603:10b6:a02:ee::22) To MWHPR2201MB1277.namprd22.prod.outlook.com
- (2603:10b6:301:18::12)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [12.94.197.246]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b72f6a6d-d511-4409-311b-08d74d03d117
-x-ms-traffictypediagnostic: MWHPR2201MB1248:
-x-ms-exchange-purlcount: 6
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MWHPR2201MB1248A8E2649008243199131AC1950@MWHPR2201MB1248.namprd22.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 018577E36E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39850400004)(346002)(396003)(366004)(136003)(376002)(199004)(189003)(102836004)(33656002)(11346002)(386003)(2906002)(26005)(6506007)(446003)(99286004)(71200400001)(966005)(42882007)(186003)(71190400001)(478600001)(5660300002)(44832011)(54906003)(316002)(476003)(486006)(9686003)(6306002)(305945005)(52536014)(7736002)(66066001)(6436002)(74316002)(8936002)(55016002)(81166006)(64756008)(81156014)(25786009)(6246003)(76176011)(7696005)(52116002)(256004)(6116002)(8676002)(66946007)(66556008)(229853002)(66476007)(6916009)(14454004)(66446008)(3846002)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1248;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: y81eehNxN7s4zGnArYUvMDyEgBXq5f//1aD1WKndy66zeOBtU2iZt/X5FoE4vvCvwRxkUnEuBUwW+TE6rd6HlO/WT22/MIYZ9eovqAD/H3DOxuXYbOtQnqIBFlHLHio1aWpP5LpLd0oWbxVxbD0Xxn7vZM6tvq0UMN5C13cydOkJCOexAWlLdz/TaGTioOFUVtm0/90MqQMvYqiY9e1BxN5tbpxMNYhTaRYqPszrgZnS0r4ysFJK0iz16EsKwkJDfkmXh2GJwlJGCw1/UQiXe48P+2qHYuafPIO6lmqA4EN9jFHtj5QgZStghA5G1hWBWjQv/eNxnGTUaQGQ5XZob84pej20MTG4oEdczkrP4MWCJXPaN8UgdL3fYxuyCEcZatVw2IzoYG6yeQcnuwTcVDBn/ohUtZSFMURpwL4QFOdWWbOt/1nbSkGA3ZkeIx0HVv3XWHe1lKrinblPQnTvBg==
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1732002AbfJIWBa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 18:01:30 -0400
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:58909 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730675AbfJIWB3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 18:01:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1570658490; x=1602194490;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=8Q4GE5gdbitQv1cQSotQR8lsgi17rKp/inu/3Yi4EBk=;
+  b=M+WVhJXQ4R5I9Igb3YWhqcviUFCHsdpF8NRqDJYijsM1Pwm9eDERC8Dn
+   wn+xLSdXf3iU14KoK/nQB/LUffvxuT20mFPlUclWGlskA+KTCMOIvDCCf
+   eugjbqypb36UlY93dc63mcHTUwIJps0ONgSJW6a9hUYLmWSTiuc6FuS0I
+   VctxnEpKB5hqvaQymJMc1fGUwen3vgKsQcteij+1H8Orhkj7aS5MahWuE
+   VPnfcXt1a9WW7+sAlfCq/hBLMyv9kt5GNBMwVf9LdYx+AzEPKOXKTNs4G
+   e2qL7v/HWdkQ+2AbBZOXhgCNk5W1zWFRCwBgKd/+SjU02KYiTyMAeUiOs
+   Q==;
+IronPort-SDR: dP5NnaypNocZKDTNy86ibQFzs7n9YarhY0+ZnWrgXFDBpVoHIhQPGXIY/ANdpiAJ4kZgP7DK6p
+ Bz0kI3ARlRLB8gZPjNfSnA/IQqnyxh58TrSjUqCrGCIgO7LPTnVSAa/VhbKX1mjZeSX5rpn/g1
+ YRtlKE421d7xzOpVF5FVIOr6G5O8hJAIecTGe62FkuB1BdkC7eezhJ4ibKSzzWDKZ+yl/m40zv
+ aI+S2PZzQzqx2EQjKT6lgU8k1hMukzs3Ewxv0j8jtNypnsi9HQsvmN6gE5t/3Z7h9fNun9wYyH
+ Y3U=
+X-IronPort-AV: E=Sophos;i="5.67,277,1566835200"; 
+   d="scan'208";a="121776282"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 10 Oct 2019 06:01:29 +0800
+IronPort-SDR: DB2AdpsHRiMM6f8t6VeUY+1lQNxFPY9Tt2DI5TZWkOkNDaHtVNWZC+QoCN0L8uxKWPh6Q8UH6f
+ Iknn4qslJ4q2ev7NC+nHDVg3UeIxq3U/RMtsaJvupt7OFQsCPVJIKWiVngRzuzhAQVWkgMox2U
+ ygNp/Jc0M29qSqJDLEhEj5Mb3+A0jIR6GYMlrD3Sa2JXV/z12gg9K0CMhwASZ6R44vaHD1/DzE
+ Paa67liGMKdcetTq5JSNpEbLjMg5r9VXbm8Nw7pKxkMLp5NzBv54DN41YKseRn+yFqvoPn1s9x
+ vjVmWTQ4A6KN3/uK0jRimCsd
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2019 14:57:27 -0700
+IronPort-SDR: U0ejGo6VniJ5zhqevlDDzVhwPOQOhhjCa+WXrdc2T7aDNINglgGRDlroCFlTlv7RCW3A2zHgsv
+ Eux2EkcMeLIj+8rx6Y5QEr6lTMhhp/365SoySWibBacGoChDa1K/3ekmmn0PuiLh5shqpIkdnn
+ ZBwaR8JE8+9sLufWKX4Op2dHYl/7JZON6Z6UhObVnf3JR16yq/XYhWFvmeKWKoH7TJbYbAZmwo
+ a1c7RyhpTOPENdH2C3VumKL0YNN4P5WACFBl2J8znLrIYtt3eMtWNbr+WDlvCDk60Pw6FkLRWc
+ F3c=
+WDCIronportException: Internal
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip02.wdc.com with ESMTP; 09 Oct 2019 15:01:29 -0700
+From:   Atish Patra <atish.patra@wdc.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Atish Patra <atish.patra@wdc.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Allison Randal <allison@lohutok.net>,
+        Anup Patel <anup@brainfault.org>,
+        Enrico Weigelt <info@metux.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Johan Hovold <johan@kernel.org>,
+        linux-riscv@lists.infradead.org,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Richard Fontana <rfontana@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH v2  0/2] Cleanup isa string access and print 
+Date:   Wed,  9 Oct 2019 15:00:56 -0700
+Message-Id: <20191009220058.24964-1-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b72f6a6d-d511-4409-311b-08d74d03d117
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2019 21:58:28.7101
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: PBXJumxVF7e8CMQBCMBafHjp2yBcepDQ6c871tFWZaWft28wOZQ/rQQEWMF/7bYyu6rPC9jyjkeYslR+Fn3/OQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1248
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+This is a cleanup series addressing issues around isa string accesses
+and prints. Patch 1 is actually a revised patch as a result of discussion
+in the following thread.
 
-Thomas Bogendoerfer wrote:
-> While fixing the problem of not working EARLY_PRINTK on IP22/IP28
-> I've removed not used ARC function and made 32bit ARC PROMs working
-> with 64bit kernels. By switching to memory detection via PROM calls
-> EARLY_PRINTK works now. And by using the regular 64bit spaces
-> maximum memory of 384MB on Indigo2 R4k machines is working, too.
->=20
-> Thomas Bogendoerfer (6):
->   MIPS: fw: arc: remove unused ARC code
->   MIPS: fw: arc: use call_o32 to call ARC prom from 64bit kernel
->   MIPS: Kconfig: always select ARC_MEMORY and ARC_PROMLIB for platform
->   MIPS: fw: arc: workaround 64bit kernel/32bit ARC problems
->   MIPS: SGI-IP22: set PHYS_OFFSET to memory start
->   MIPS: SGI-IP22/28: Use PROM for memory detection
+http://lists.infradead.org/pipermail/linux-riscv/2019-September/006702.html
 
-Series applied to mips-next.
+Patch 2 is an additional cleanup that tries to consolidate all isa
+string related checks.
 
-> MIPS: fw: arc: remove unused ARC code
->   commit d11646b5ce93
->   https://git.kernel.org/mips/c/d11646b5ce93
->  =20
->   Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
->   Signed-off-by: Paul Burton <paul.burton@mips.com>
->=20
-> MIPS: fw: arc: use call_o32 to call ARC prom from 64bit kernel
->   commit ce6c0a593b3c
->   https://git.kernel.org/mips/c/ce6c0a593b3c
->  =20
->   Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
->   Signed-off-by: Paul Burton <paul.burton@mips.com>
->=20
-> MIPS: Kconfig: always select ARC_MEMORY and ARC_PROMLIB for platform
->   commit 39b2d7565a47
->   https://git.kernel.org/mips/c/39b2d7565a47
->  =20
->   Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
->   Signed-off-by: Paul Burton <paul.burton@mips.com>
->=20
-> MIPS: fw: arc: workaround 64bit kernel/32bit ARC problems
->   commit 351889d35629
->   https://git.kernel.org/mips/c/351889d35629
->  =20
->   Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
->   Signed-off-by: Paul Burton <paul.burton@mips.com>
->=20
-> MIPS: SGI-IP22: set PHYS_OFFSET to memory start
->   commit 931e1bfea403
->   https://git.kernel.org/mips/c/931e1bfea403
->  =20
->   Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
->   Signed-off-by: Paul Burton <paul.burton@mips.com>
->=20
-> MIPS: SGI-IP22/28: Use PROM for memory detection
->   commit c0de00b286ed
->   https://git.kernel.org/mips/c/c0de00b286ed
->  =20
->   Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
->   Signed-off-by: Paul Burton <paul.burton@mips.com>
+Changes from v1->v2
+1. Used IS_ENABLED instead of #if defined
+2. Adding additional warning statement incase of invalid isa string
 
-Thanks,
-    Paul
+Atish Patra (2):
+RISC-V: Remove unsupported isa string info print
+RISC-V: Consolidate isa correctness check
 
-[ This message was auto-generated; if you believe anything is incorrect
-  then please email paul.burton@mips.com to report it. ]
+arch/riscv/include/asm/processor.h |  1 +
+arch/riscv/kernel/cpu.c            | 86 ++++++++++++------------------
+arch/riscv/kernel/cpufeature.c     |  4 +-
+arch/riscv/kernel/smpboot.c        |  4 ++
+4 files changed, 40 insertions(+), 55 deletions(-)
+
+--
+2.21.0
+
