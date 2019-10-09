@@ -2,56 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A64FCD12D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 17:33:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A73C8D12DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 17:36:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731224AbfJIPdX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 11:33:23 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60164 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729644AbfJIPdW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 11:33:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=a2E8wQcqj4G8crXfa0YqPMgIZwfuWHtwLVN/e+vZ4HE=; b=XAwyJP+LqYlbn6MjxvAf7Q1IR
-        kTcINXVPquFWBaZ2KXNXiUZIvaejMGapAYR0NBh754itkLMBNDJMsZHMaD7XJKyZPKZRESbHohfGj
-        c2UiJ1ZeVU/5soxZ5L8iBVp3K7NaU7XQGM94m9poiX2hFdCZkiW9k5QCpfZbnKUOBsGjhB7breygk
-        YWCzcle/NVjkzOnO/a62brnETRmGECqovnAqfavLO0hwsHMvjrUjDZ+L+akS2ZlxLvAJAEKoVvaLN
-        22qq34XKxeRt2iom75zv3fe0gTWL1B+MHRODF5Zl3Wxcl1hIWn2qQEf+18/cONJSTnce5/FoMarr/
-        0e/bYqDJA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iIDxk-0006fF-L7; Wed, 09 Oct 2019 15:33:16 +0000
-Date:   Wed, 9 Oct 2019 08:33:16 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Ben Dooks <ben.dooks@codethink.co.uk>
-Cc:     linux-kernel@lists.codethink.co.uk,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm: add kernel/fork.c function definitions
-Message-ID: <20191009153316.GA25186@infradead.org>
-References: <20191009140637.12443-1-ben.dooks@codethink.co.uk>
+        id S1731180AbfJIPgT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 11:36:19 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:49864 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728019AbfJIPgS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 11:36:18 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1D09F1A019D;
+        Wed,  9 Oct 2019 17:36:17 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 105A21A0084;
+        Wed,  9 Oct 2019 17:36:17 +0200 (CEST)
+Received: from fsr-ub1864-103.ea.freescale.net (fsr-ub1864-103.ea.freescale.net [10.171.82.17])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 7C5392060B;
+        Wed,  9 Oct 2019 17:36:16 +0200 (CEST)
+From:   Daniel Baluta <daniel.baluta@nxp.com>
+To:     perex@perex.cz, tiwai@suse.com, broonie@kernel.org
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        linux-imx@nxp.com, kuninori.morimoto.gx@renesas.com,
+        Daniel Baluta <daniel.baluta@nxp.com>
+Subject: [PATCH 0/2] ASoC: simple_card_utils.h: Fix two potential compilation errors
+Date:   Wed,  9 Oct 2019 18:36:13 +0300
+Message-Id: <20191009153615.32105-1-daniel.baluta@nxp.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191009140637.12443-1-ben.dooks@codethink.co.uk>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 03:06:37PM +0100, Ben Dooks wrote:
-> Add the definitions of arch_release_task_struct,
-> arch_task_cache_init and arch_dup_task_struct which
-> are used in kernel/fork.c but defined in various
-> architecture's <asm/thread_info.h>.
+For this to happen we symbol DEBUG to be defined.
 
-So please lift them into a common header.  In fact I'm pretty sure
-I had that comment before when people did the same blind sparse
-cleanups for riscv..
+Daniel Baluta (2):
+  ASoC: simple_card_utils.h: Add missing include
+  ASoC: Fix potential multiple redefinition error
+
+ include/sound/simple_card_utils.h | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+-- 
+2.17.1
+
