@@ -2,105 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 162BCD1381
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 18:03:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B010CD138D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 18:05:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731707AbfJIQDG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 12:03:06 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:33332 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731452AbfJIQDG (ORCPT
+        id S1731664AbfJIQFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 12:05:46 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55587 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731263AbfJIQFo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 12:03:06 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x99Fj0MG178749;
-        Wed, 9 Oct 2019 16:02:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=5eyqqcNyRkIYJ/KfstQRnTPLVlNRh+PVIx0mtGqGQzI=;
- b=WycN9nMEm1Z1hwXQ6EnSR9nzH8nWxZAiSQQX0AJ/m1db544ssaE+cNclh6kS79KwtPqW
- qkyCY4KWmDxR2QHbMeRKRSas2ynmKu4pCpSiDEIs4uh9i3sE3jUTsO8MJhyolRtylsx9
- 1n9MnIKyyis6+RkLF18ox55DJgLzUNhl2YWcmiClaqUJoiXpm2VIx5GhE3QsHpcZAuiW
- vSgqjdjeAMa+IZ+p3ceeyOs22az2yH9LqV0e1PUAzPercLk57ONTVESeFfv7Hos5PNMv
- aJRGAHWYW/0KKLFwHHg3a3tYJsncOnlDBsFxVPuKg3Z3jsfNd1hIYe5lQJdL6NHRo90k OQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2vejkunqy3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 09 Oct 2019 16:02:56 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x99FhBiM184467;
-        Wed, 9 Oct 2019 16:02:56 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 2vhhsmudke-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 09 Oct 2019 16:02:55 +0000
-Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x99G2qL5007340;
-        Wed, 9 Oct 2019 16:02:53 GMT
-Received: from dhcp-10-159-237-174.vpn.oracle.com (/10.159.237.174)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 09 Oct 2019 16:02:52 +0000
-Subject: Re: [PATCH v3 00/14] dmaengine/soc: Add Texas Instruments UDMA
- support
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>, vkoul@kernel.org,
-        robh+dt@kernel.org, nm@ti.com, ssantosh@kernel.org
-Cc:     dan.j.williams@intel.com, dmaengine@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, grygorii.strashko@ti.com,
-        lokeshvutla@ti.com, t-kristo@ti.com, tony@atomide.com,
-        j-keerthy@ti.com
-References: <20191001061704.2399-1-peter.ujfalusi@ti.com>
- <c567c1a2-2e74-3809-8e0f-4c2049ba4747@oracle.com>
- <7dd18208-1ca5-c902-dc11-edbd4ded51ed@ti.com>
-From:   "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <5b2d27ca-1a1a-6d17-f5d8-62e7eb76c39b@oracle.com>
-Date:   Wed, 9 Oct 2019 09:02:48 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.0
+        Wed, 9 Oct 2019 12:05:44 -0400
+Received: by mail-wm1-f67.google.com with SMTP id a6so3236872wma.5
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 09:05:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OcoDswvcpgORUe+MjF3j+myWKBr/y/JxVMKqWxIZdns=;
+        b=PlMwn9qd6erojZKwrGuwRQoT3mBFtPJPdxKkIoi+g/d953cHVVQVDyFhTmkAOHq9HS
+         VH6Kz+ynJOta/5jpwjQNaOKkCz8EqFOd8eFpwMkcdLBa/lGr9vFX4ZH9Odb0ZasRfZfg
+         hL4ixrbd5H9Gn9ce4slb2XkurFpkRA99mVhAJRq0EpElm5jcHAq+hLY5NEFSOcYi8T5c
+         XDGKEmdJaOWe6vEv1mdkMetvYaOe5w19Ke0Q6x3RRBcLXohUpsQ+H+tsU7xqCcKjV69C
+         oJPkEMkoDqtuEHAJMbrD0RUQcVb80wtCimLZE2tavU+7cfhJGR2bsMlGyBuIYnXcbGRM
+         T4sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OcoDswvcpgORUe+MjF3j+myWKBr/y/JxVMKqWxIZdns=;
+        b=PuC5oJfDXRyszVDqfukAvdH9r/FW8D2XEtol9dA/IrIuEnnSVisoN2sVeTZoPcduB9
+         mHSyC6E/JjSt9W7nSEtfOII3nMDsUm5wiMwo/jHZO/1i86zphoTr9u1JbzhbcovFi9+k
+         aXDrO/X9VenxCK9Izpzv2IMcOqYWzBRxz7v1SEYGS39QJzBHqcfdjbIm/RqAus+1LxMa
+         cg/jLqhLA7iXO9tckqnxZqyARJ61gPK9bRIqaQ6WOM4vslAuCZ0UG8oZrYsgaF8Sc+VC
+         QOIfIKqkO/lKWRTHuYOYMDgJLnI4V8q8C3JR8Xp1JvJla5ALdPuEAvVCXGGKoovxAzUl
+         4eXw==
+X-Gm-Message-State: APjAAAVMj9BI5NW9FS2WBSsEqiQLXpN9zIbezQlXF4URKAolbx7YNXJ3
+        iKHQAimz/m3QtsEvvv7m8Tq9VznacwVjh2yB17aZ5w==
+X-Google-Smtp-Source: APXvYqwf2k+wes8U4KHH/Mq/y7m8PrdEQhLEFToIcu4WDfCk10VCZnURO4OVa/kXncgoav9k+nk3ezXxb9qFfCb0MU8=
+X-Received: by 2002:a1c:a8c9:: with SMTP id r192mr3238811wme.152.1570637140793;
+ Wed, 09 Oct 2019 09:05:40 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <7dd18208-1ca5-c902-dc11-edbd4ded51ed@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9405 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910090144
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9405 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910090144
+References: <20190918080716.64242-1-jianyong.wu@arm.com> <20190918080716.64242-5-jianyong.wu@arm.com>
+ <83ed7fac-277f-a31e-af37-8ec134f39d26@redhat.com> <HE1PR0801MB1676F57B317AE85E3B934B32F48E0@HE1PR0801MB1676.eurprd08.prod.outlook.com>
+ <629538ea-13fb-e666-8df6-8ad23f114755@redhat.com> <HE1PR0801MB167639E2F025998058A77F86F4890@HE1PR0801MB1676.eurprd08.prod.outlook.com>
+ <ef6ab8bd-41ad-88f8-9cfd-dc749ca65310@redhat.com> <a1b554b8-4417-5305-3419-fe71a8c50842@kernel.org>
+ <56a5b885-62c8-c4ef-e2f8-e945c0eb700e@redhat.com> <HE1PR0801MB1676115C248E6DF09F9DD5A6F4950@HE1PR0801MB1676.eurprd08.prod.outlook.com>
+ <1cc145ca-1af2-d46f-d530-0ae434005f0b@redhat.com> <HE1PR0801MB1676B1AD68544561403C3196F4950@HE1PR0801MB1676.eurprd08.prod.outlook.com>
+ <6b8b59b2-a07e-7e33-588c-1da7658e3f1e@redhat.com>
+In-Reply-To: <6b8b59b2-a07e-7e33-588c-1da7658e3f1e@redhat.com>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Wed, 9 Oct 2019 09:05:29 -0700
+Message-ID: <CALAqxLVa-BSY0i007GfzKEVU1uak4=eY=TJ3wj6JL_Y-EfY3ng@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 4/6] psci: Add hvc call service for ptp_kvm.
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     "Jianyong Wu (Arm Technology China)" <Jianyong.Wu@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "yangbo.lu@nxp.com" <yangbo.lu@nxp.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
+        "richardcochran@gmail.com" <richardcochran@gmail.com>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        Will Deacon <Will.Deacon@arm.com>,
+        Suzuki Poulose <Suzuki.Poulose@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Steve Capper <Steve.Capper@arm.com>,
+        "Kaly Xin (Arm Technology China)" <Kaly.Xin@arm.com>,
+        "Justin He (Arm Technology China)" <Justin.He@arm.com>,
+        nd <nd@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Oct 9, 2019 at 2:13 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
+> On 09/10/19 10:18, Jianyong Wu (Arm Technology China) wrote:
+> >
+> > We must ensure both of the host and guest using the same clocksource.
+> > get_device_system_crosststamp will check the clocksource of guest and we also need check
+> > the clocksource in host, and struct type can't be transferred from host to guest using arm hypercall.
+> > now we lack of a mechanism to check the current clocksource. I think this will be useful if we add one.
+>
+> Got it---yes, I think adding a struct clocksource to struct
+> system_time_snapshot would make sense.  Then the hypercall can just use
+> ktime_get_snapshot and fail if the clocksource is not the ARM arch counter.
+>
+> John (Stultz), does that sound good to you?  The context is that
+> Jianyong would like to add a hypercall that returns a (cycles,
+> nanoseconds) pair to the guest.  On x86 we're relying on the vclock_mode
+> field that is already there for the vDSO, but being able to just use
+> ktime_get_snapshot would be much nicer.
 
+I've not really looked at the code closely in awhile, so I'm not sure
+my suggestions will be too useful.
 
-On 10/8/19 3:09 AM, Peter Ujfalusi wrote:
-> Hi Santosh,
-> 
-> On 04/10/2019 19.35, santosh.shilimkar@oracle.com wrote:
->> On 9/30/19 11:16 PM, Peter Ujfalusi wrote:
->>> Hi,
->>>
->>> Changes since v2
->>> )https://patchwork.kernel.org/project/linux-dmaengine/list/?series=152609&state=*)
->>>
->>> - Based on 5.4-rc1
->>> - Support for Flow only data transfer for the glue layer
->>>
-[...]
+My only instinct is maybe to not include the clocksource pointer in
+the system_time_snapshot, as I worry that structure will then be
+abused by the interface users.  If you're just wanting to make sure
+the clocksource is what you're expecting, would instead putting only
+the clocksource name in the structure suffice?
 
->> Can you please split this series and post drivers/soc/* bits
->> separately ?  If its ready, I can apply k3-ringacc.c changes.
-> 
-> I'll wait couple of days for guys to check the series, then I can send
-> the split out ringacc patches separately.
-> 
-Sounds good !!
+thanks
+-john
