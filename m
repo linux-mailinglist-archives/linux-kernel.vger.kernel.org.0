@@ -2,55 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF65AD0C61
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 12:15:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 192F8D0CA1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 12:20:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729883AbfJIKPr convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 9 Oct 2019 06:15:47 -0400
-Received: from mail.fireflyinternet.com ([109.228.58.192]:63928 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726579AbfJIKPr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 06:15:47 -0400
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
-Received: from localhost (unverified [78.156.65.138]) 
-        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 18775438-1500050 
-        for multiple; Wed, 09 Oct 2019 11:15:44 +0100
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     Colin King <colin.king@canonical.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
-From:   Chris Wilson <chris@chris-wilson.co.uk>
-In-Reply-To: <20191009100024.23077-1-colin.king@canonical.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191009100024.23077-1-colin.king@canonical.com>
-Message-ID: <157061614282.18808.3604540678077210321@skylake-alporthouse-com>
-User-Agent: alot/0.6
-Subject: Re: [PATCH][next] drm/i915/selftests: fix null pointer dereference on
- pointer data
-Date:   Wed, 09 Oct 2019 11:15:42 +0100
+        id S1731170AbfJIKSM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 06:18:12 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:54048 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731118AbfJIKSK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 06:18:10 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CBDAA1A0180;
+        Wed,  9 Oct 2019 12:18:08 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6000B1A002C;
+        Wed,  9 Oct 2019 12:18:04 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id A0B26402E4;
+        Wed,  9 Oct 2019 18:17:58 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     fugang.duan@nxp.com, davem@davemloft.net,
+        gregkh@linuxfoundation.org, andy.shevchenko@gmail.com,
+        rafael.j.wysocki@intel.com, swboyd@chromium.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH 1/2] net: fec_main: Use platform_get_irq_byname_optional() to avoid error message
+Date:   Wed,  9 Oct 2019 18:15:47 +0800
+Message-Id: <1570616148-11571-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Colin King (2019-10-09 11:00:24)
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> In the case where data fails to be allocated the error exit path is
-> via label 'out' where data is dereferenced in a for-loop.  Fix this
-> by exiting via the label 'out_file' instead to avoid the null pointer
-> dereference.
-> 
-> Addresses-Coverity: ("Dereference after null check")
-> Fixes: 50d16d44cce4 ("drm/i915/selftests: Exercise context switching in parallel")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
--Chris
+Failed to get irq using name is NOT fatal as driver will use index
+to get irq instead, use platform_get_irq_byname_optional() instead
+of platform_get_irq_byname() to avoid below error message during
+probe:
+
+[    0.819312] fec 30be0000.ethernet: IRQ int0 not found
+[    0.824433] fec 30be0000.ethernet: IRQ int1 not found
+[    0.829539] fec 30be0000.ethernet: IRQ int2 not found
+
+Fixes: 7723f4c5ecdb ("driver core: platform: Add an error message to platform_get_irq*()")
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/net/ethernet/freescale/fec_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
+index d4d4c72..22c01b2 100644
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -3558,7 +3558,7 @@ fec_probe(struct platform_device *pdev)
+ 
+ 	for (i = 0; i < irq_cnt; i++) {
+ 		snprintf(irq_name, sizeof(irq_name), "int%d", i);
+-		irq = platform_get_irq_byname(pdev, irq_name);
++		irq = platform_get_irq_byname_optional(pdev, irq_name);
+ 		if (irq < 0)
+ 			irq = platform_get_irq(pdev, i);
+ 		if (irq < 0) {
+-- 
+2.7.4
+
