@@ -2,111 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71838D0D80
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 13:17:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA8C2D0D8A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 13:20:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730848AbfJILRS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 07:17:18 -0400
-Received: from cmccmta1.chinamobile.com ([221.176.66.79]:5553 "EHLO
-        cmccmta1.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727228AbfJILRQ (ORCPT
+        id S1730678AbfJILUK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 07:20:10 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38215 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725848AbfJILUK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 07:17:16 -0400
-Received: from spf.mail.chinamobile.com (unknown[172.16.121.13]) by rmmx-syy-dmz-app03-12003 (RichMail) with SMTP id 2ee35d9dc1a5921-087f3; Wed, 09 Oct 2019 19:16:55 +0800 (CST)
-X-RM-TRANSID: 2ee35d9dc1a5921-087f3
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG: 00000000
-Received: from localhost (unknown[223.105.0.241])
-        by rmsmtp-syy-appsvr07-12007 (RichMail) with SMTP id 2ee75d9dc1a6c47-6ba43;
-        Wed, 09 Oct 2019 19:16:55 +0800 (CST)
-X-RM-TRANSID: 2ee75d9dc1a6c47-6ba43
-From:   Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
-To:     Shuah Khan <shuah@kernel.org>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Simon Horman <horms@verge.net.au>
-Cc:     Julian Anastasov <ja@ssi.bg>, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, lvs-devel@vger.kernel.org,
-        netfilter-devel@vger.kernel.org,
-        Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
-Subject: [PATCH v5 3/3] selftests: netfilter: add ipvs tunnel test case
-Date:   Wed,  9 Oct 2019 19:16:30 +0800
-Message-Id: <1570619790-6086-4-git-send-email-yanhaishuang@cmss.chinamobile.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1570619790-6086-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
-References: <1570619790-6086-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
+        Wed, 9 Oct 2019 07:20:10 -0400
+Received: by mail-wr1-f66.google.com with SMTP id w12so2411418wro.5
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 04:20:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NiFi50FuqI1VBpxzFdOXo/50+9I/uAkHDK87JHPscnU=;
+        b=IYUqb/h35TlOVvANFhPXRwdzAJit1HS7e8FL86O0yeE6P8hgNfhos27Ng6uveFyPyw
+         2mf36pEI87UXaGXeLkOr1yOQe+onbuyQ/DoIL+nFkyGAj+kHFjN+IB4PCfv9KVrqE6aM
+         /kyYvCbklhWGYbmsUeHdoeqo9DmeJslfqOY4o+nqx5s9dYQe4dthhWF4WR/b8KLIPZPo
+         BKUZiaSLr/lOFjOStbueSEKq81bBBjh+TAU3v/QFaHcIkEYyrv3ID0DRMg3suNM2xeMf
+         R36IjldPLxPfA+siJfNs9KxyUMDN/U3ihcuYGO4THYVe2AC94XI26aN2mgrVhRcYhz6z
+         AZhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NiFi50FuqI1VBpxzFdOXo/50+9I/uAkHDK87JHPscnU=;
+        b=cLfVtnAu8R/R2KfQXqcd1L0r6CsH8d5rpRwLuFeFXCdCizP+7JGsmNZPbQ05Id8P61
+         UT8nXdI6dAbRtPnkyFX+KlkuAzzYyuvyi+wVssA4UkpJR8DCB0GVf9RFKNlq3B8LZ37S
+         MiJO3bxdH192l8KH5so5erwp3YvTVBn3YdmnUSmizA12yNb9HiLrHX36u1ZKhZ3CKApY
+         3+Vzl7gDHcJE1QUyKefoyAuygd3jo/8CRRlhqiLZRd+xTg6C7nxKo/I6wk08POnjrzdd
+         uCLRpZK962jX/kELjBZV8QjEckjRclytIy3519gGbdInH1ddTj/mG0v1vHPn4rlkykyy
+         n5eQ==
+X-Gm-Message-State: APjAAAX3lvBwPMgODp1upKvdcbBmD/Pk/hs4CfuVheLNeCyfDrlyN+zL
+        Ffpqj0wQmv99xwEpBeNWfknqtQ==
+X-Google-Smtp-Source: APXvYqxfoIMEQHrCYevrzZsV5a92ggMZZsyuGPNKm0meavL9E991mpyYRdC345pA/uJsZsgpQ5WMbQ==
+X-Received: by 2002:adf:fa88:: with SMTP id h8mr2392734wrr.89.1570620008255;
+        Wed, 09 Oct 2019 04:20:08 -0700 (PDT)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id q15sm3197470wrg.65.2019.10.09.04.20.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 04:20:07 -0700 (PDT)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     broonie@kernel.org
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        lgirdwood@gmail.com,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Stephan Gerhold <stephan@gerhold.net>
+Subject: [PATCH] ASoC: msm8916-wcd-digital: add missing MIX2 path for RX1/2
+Date:   Wed,  9 Oct 2019 12:19:44 +0100
+Message-Id: <20191009111944.28069-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Test virtual server via ipip tunnel.
+This patch adds missing MIX2 path on RX1/2 which take IIR1 and
+IIR2 as inputs.
 
-Tested:
-# selftests: netfilter: ipvs.sh
-# Testing DR mode...
-# Testing NAT mode...
-# Testing Tunnel mode...
-# ipvs.sh: PASS
-ok 6 selftests: netfilter: ipvs.sh
+Without this patch sound card fails to intialize with below warning:
 
-Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+ ASoC: no sink widget found for RX1 MIX2 INP1
+ ASoC: Failed to add route IIR1 -> IIR1 -> RX1 MIX2 INP1
+ ASoC: no sink widget found for RX2 MIX2 INP1
+ ASoC: Failed to add route IIR1 -> IIR1 -> RX2 MIX2 INP1
+ ASoC: no sink widget found for RX1 MIX2 INP1
+ ASoC: Failed to add route IIR2 -> IIR2 -> RX1 MIX2 INP1
+ ASoC: no sink widget found for RX2 MIX2 INP1
+ ASoC: Failed to add route IIR2 -> IIR2 -> RX2 MIX2 INP1
+
+Reported-by: Stephan Gerhold <stephan@gerhold.net>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Tested-by: Stephan Gerhold <stephan@gerhold.net>
 ---
-v2: optimize test script
----
- tools/testing/selftests/netfilter/ipvs.sh | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ sound/soc/codecs/msm8916-wcd-digital.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/tools/testing/selftests/netfilter/ipvs.sh b/tools/testing/selftests/netfilter/ipvs.sh
-index 60250f7..edea729 100755
---- a/tools/testing/selftests/netfilter/ipvs.sh
-+++ b/tools/testing/selftests/netfilter/ipvs.sh
-@@ -168,6 +168,30 @@ test_nat() {
- 	test_service
- }
+diff --git a/sound/soc/codecs/msm8916-wcd-digital.c b/sound/soc/codecs/msm8916-wcd-digital.c
+index 9fa5d44fdc79..58b2468fb2a7 100644
+--- a/sound/soc/codecs/msm8916-wcd-digital.c
++++ b/sound/soc/codecs/msm8916-wcd-digital.c
+@@ -243,6 +243,10 @@ static const char *const rx_mix1_text[] = {
+ 	"ZERO", "IIR1", "IIR2", "RX1", "RX2", "RX3"
+ };
  
-+test_tun() {
-+	ip netns exec ns0 ip route add ${vip_v4} via ${gip_v4} dev br0
++static const char * const rx_mix2_text[] = {
++	"ZERO", "IIR1", "IIR2"
++};
 +
-+	ip netns exec ns1 modprobe ipip
-+	ip netns exec ns1 ip link set tunl0 up
-+	ip netns exec ns1 sysctl -qw net.ipv4.ip_forward=0
-+	ip netns exec ns1 sysctl -qw net.ipv4.conf.all.send_redirects=0
-+	ip netns exec ns1 sysctl -qw net.ipv4.conf.default.send_redirects=0
-+	ip netns exec ns1 ipvsadm -A -t ${vip_v4}:${port} -s rr
-+	ip netns exec ns1 ipvsadm -a -i -t ${vip_v4}:${port} -r ${rip_v4}:${port}
-+	ip netns exec ns1 ip addr add ${vip_v4}/32 dev lo:1
-+
-+	ip netns exec ns2 modprobe ipip
-+	ip netns exec ns2 ip link set tunl0 up
-+	ip netns exec ns2 sysctl -qw net.ipv4.conf.all.arp_ignore=1
-+	ip netns exec ns2 sysctl -qw net.ipv4.conf.all.arp_announce=2
-+	ip netns exec ns2 sysctl -qw net.ipv4.conf.all.rp_filter=0
-+	ip netns exec ns2 sysctl -qw net.ipv4.conf.tunl0.rp_filter=0
-+	ip netns exec ns2 sysctl -qw net.ipv4.conf.veth21.rp_filter=0
-+	ip netns exec ns2 ip addr add ${vip_v4}/32 dev lo:1
-+
-+	test_service
-+}
-+
- run_tests() {
- 	local errors=
+ static const char *const dec_mux_text[] = {
+ 	"ZERO", "ADC1", "ADC2", "ADC3", "DMIC1", "DMIC2"
+ };
+@@ -270,6 +274,16 @@ static const struct soc_enum rx3_mix1_inp_enum[] = {
+ 	SOC_ENUM_SINGLE(LPASS_CDC_CONN_RX3_B2_CTL, 0, 6, rx_mix1_text),
+ };
  
-@@ -183,6 +207,12 @@ run_tests() {
- 	test_nat
- 	errors=$(( $errors + $? ))
- 
-+	echo "Testing Tunnel mode..."
-+	cleanup
-+	setup
-+	test_tun
-+	errors=$(( $errors + $? ))
++/* RX1 MIX2 */
++static const struct soc_enum rx_mix2_inp1_chain_enum =
++	SOC_ENUM_SINGLE(LPASS_CDC_CONN_RX1_B3_CTL,
++		0, 3, rx_mix2_text);
 +
- 	return $errors
- }
++/* RX2 MIX2 */
++static const struct soc_enum rx2_mix2_inp1_chain_enum =
++	SOC_ENUM_SINGLE(LPASS_CDC_CONN_RX2_B3_CTL,
++		0, 3, rx_mix2_text);
++
+ /* DEC */
+ static const struct soc_enum dec1_mux_enum = SOC_ENUM_SINGLE(
+ 				LPASS_CDC_CONN_TX_B1_CTL, 0, 6, dec_mux_text);
+@@ -309,6 +323,10 @@ static const struct snd_kcontrol_new rx3_mix1_inp2_mux = SOC_DAPM_ENUM(
+ 				"RX3 MIX1 INP2 Mux", rx3_mix1_inp_enum[1]);
+ static const struct snd_kcontrol_new rx3_mix1_inp3_mux = SOC_DAPM_ENUM(
+ 				"RX3 MIX1 INP3 Mux", rx3_mix1_inp_enum[2]);
++static const struct snd_kcontrol_new rx1_mix2_inp1_mux = SOC_DAPM_ENUM(
++				"RX1 MIX2 INP1 Mux", rx_mix2_inp1_chain_enum);
++static const struct snd_kcontrol_new rx2_mix2_inp1_mux = SOC_DAPM_ENUM(
++				"RX2 MIX2 INP1 Mux", rx2_mix2_inp1_chain_enum);
  
+ /* Digital Gain control -38.4 dB to +38.4 dB in 0.3 dB steps */
+ static const DECLARE_TLV_DB_SCALE(digital_gain, -3840, 30, 0);
+@@ -740,6 +758,10 @@ static const struct snd_soc_dapm_widget msm8916_wcd_digital_dapm_widgets[] = {
+ 			 &rx3_mix1_inp2_mux),
+ 	SND_SOC_DAPM_MUX("RX3 MIX1 INP3", SND_SOC_NOPM, 0, 0,
+ 			 &rx3_mix1_inp3_mux),
++	SND_SOC_DAPM_MUX("RX1 MIX2 INP1", SND_SOC_NOPM, 0, 0,
++			 &rx1_mix2_inp1_mux),
++	SND_SOC_DAPM_MUX("RX2 MIX2 INP1", SND_SOC_NOPM, 0, 0,
++			 &rx2_mix2_inp1_mux),
+ 
+ 	SND_SOC_DAPM_MUX("CIC1 MUX", SND_SOC_NOPM, 0, 0, &cic1_mux),
+ 	SND_SOC_DAPM_MUX("CIC2 MUX", SND_SOC_NOPM, 0, 0, &cic2_mux),
 -- 
-1.8.3.1
-
-
+2.21.0
 
