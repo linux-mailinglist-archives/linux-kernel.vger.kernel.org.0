@@ -2,97 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EECD0D106C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 15:43:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41B12D1070
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 15:43:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731290AbfJINm4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 09:42:56 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:50938 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731072AbfJINmz (ORCPT
+        id S1731416AbfJINnR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 09:43:17 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:38480 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731072AbfJINnQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 09:42:55 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x99DgXJs086811;
-        Wed, 9 Oct 2019 08:42:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1570628553;
-        bh=s1ULam50Hr59d2Q+B3GgfeudAX6pTL2y0nYltbe755s=;
-        h=Subject:To:References:From:Date:In-Reply-To;
-        b=xq47ib1oRQsmvETxShS6fOnordxgxaJcSSgGFM92czD3ma6v6RsgHtdocnk6ya6+Y
-         /Tq78BNHjY72gI3CiG3IEAUnE+2H1sQdGhT6oincmZyiw/gKU0PTNehFq0x/XJ6M4h
-         rxfcBAf0cifMHRCCf9XPzzdsZkCivhFAHfX4cBbE=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x99DgWYf087295;
-        Wed, 9 Oct 2019 08:42:33 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 9 Oct
- 2019 08:42:29 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 9 Oct 2019 08:42:29 -0500
-Received: from [172.24.145.136] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x99DgTen078224;
-        Wed, 9 Oct 2019 08:42:29 -0500
-Subject: Re: Serial 8250 DMA Broken on OMAP3630
-To:     Adam Ford <aford173@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        <linux-serial@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <CAHCN7x+oXNA6WRiq1OnDdcgDTJrm-QyazyYLw-ow0vPMMmrVbQ@mail.gmail.com>
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <3d5b3a12-a21c-f464-e7d1-252ccd768ff8@ti.com>
-Date:   Wed, 9 Oct 2019 19:13:00 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAHCN7x+oXNA6WRiq1OnDdcgDTJrm-QyazyYLw-ow0vPMMmrVbQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Wed, 9 Oct 2019 09:43:16 -0400
+Received: by mail-qt1-f196.google.com with SMTP id j31so3473959qta.5
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 06:43:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=GbmW8oMNpcfaVBYTBCBL+jTjm9GV5hpZALa8v3HrwBI=;
+        b=jEaNuP3rdCVFGZxQzP6IhXiwIvWzYOR2BOnjGW/ZS/MZDjw4lhUkTbFwedoTYx7O8s
+         O2oViWttfCcTpn/JPLgmoylmDFj0c3QJtiwW181yaxlV1ZrQCOCiSUe87N4rAIi/2GFS
+         hczkgK9kOA5i24jZ5RqZhw4PEsqR2QQTcnb+17TRWPfgHI2x5RA4i6LkQX5Wr2/dzAKO
+         WLxa7Azghv0uV36wRLw7JBKD5DWWdWbz/wvm73wvc0M73yHflabvhFxKxxnyQP+jmKPC
+         lApfCuu5ddOQyatXSzIyqkDQz/TBf2fjiGSm6mvVzfxgYWg6Y5k7T8TyGT8q5li4Mbyi
+         ebYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=GbmW8oMNpcfaVBYTBCBL+jTjm9GV5hpZALa8v3HrwBI=;
+        b=eZQzYIrq0UGpXPMyoPMx3q7hbfnsFh1/Kz1mmD/w1EZRoonwue8pYu8oaXlRxGGsP4
+         h0mG1zbT/Lh62EL76d4BVrXZoEn5Q17AGdvt/f8XChHnC17zGucFzF8T5oXV8kWrdJms
+         T40gabYGlhRLLbTcdZGGTtJeK1AiU+FZ3sm0ZF8JoM+TjmLOq92MvR7QAn2Jmeg08Aem
+         WjsfGAbdiHLN+2Lc/SrZqdkHv3VhhHZLPzvsOCZyt/bFfvwdnFkkDJ3jD6hPinUf2+xZ
+         TEEIIY4ySUju93FJ0oTtjbCK75peU6zjsN6rqHAt7TtSAnhqve8y/jwFP+C3QC/IY9Jv
+         ziKA==
+X-Gm-Message-State: APjAAAU6BVZWl/Sz6ozrMEm/RtupSxvbd6Fou2gL1PGx4Ucrr6PjWhG2
+        gbcqeLrzOOkPtaBrOkppa6FbgA==
+X-Google-Smtp-Source: APXvYqwqYbj/zGNpmimC3/YGl2R7OxFdKZ71uQmOs9/bcaIv7w/W7Ed5fVY8a+QSBxB1jax1AN+JWA==
+X-Received: by 2002:a0c:c10d:: with SMTP id f13mr3745220qvh.88.1570628595720;
+        Wed, 09 Oct 2019 06:43:15 -0700 (PDT)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id o14sm1321995qtk.52.2019.10.09.06.43.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 09 Oct 2019 06:43:15 -0700 (PDT)
+Message-ID: <1570628593.5937.3.camel@lca.pw>
+Subject: Re: [PATCH v2] mm/page_isolation: fix a deadlock with printk()
+From:   Qian Cai <cai@lca.pw>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        sergey.senozhatsky.work@gmail.com, rostedt@goodmis.org,
+        peterz@infradead.org, linux-mm@kvack.org,
+        john.ogness@linutronix.de, akpm@linux-foundation.org,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>, david@redhat.com,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 09 Oct 2019 09:43:13 -0400
+In-Reply-To: <20191009132746.GA6681@dhcp22.suse.cz>
+References: <20191008074357.f33f6pbs4cw5majk@pathway.suse.cz>
+         <20191008082752.GB6681@dhcp22.suse.cz>
+         <aefe7f75-b0ec-9e99-a77e-87324edb24e0@de.ibm.com>
+         <1570550917.5576.303.camel@lca.pw> <20191008183525.GQ6681@dhcp22.suse.cz>
+         <1570561573.5576.307.camel@lca.pw> <20191008191728.GS6681@dhcp22.suse.cz>
+         <1570563324.5576.309.camel@lca.pw>
+         <20191009114903.aa6j6sa56z2cssom@pathway.suse.cz>
+         <1570626402.5937.1.camel@lca.pw> <20191009132746.GA6681@dhcp22.suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Adam,
+On Wed, 2019-10-09 at 15:27 +0200, Michal Hocko wrote:
+> On Wed 09-10-19 09:06:42, Qian Cai wrote:
+> [...]
+> > https://lore.kernel.org/linux-mm/1570460350.5576.290.camel@lca.pw/
+> > 
+> > [  297.425964] -> #1 (&port_lock_key){-.-.}:
+> > [  297.425967]        __lock_acquire+0x5b3/0xb40
+> > [  297.425967]        lock_acquire+0x126/0x280
+> > [  297.425968]        _raw_spin_lock_irqsave+0x3a/0x50
+> > [  297.425969]        serial8250_console_write+0x3e4/0x450
+> > [  297.425970]        univ8250_console_write+0x4b/0x60
+> > [  297.425970]        console_unlock+0x501/0x750
+> > [  297.425971]        vprintk_emit+0x10d/0x340
+> > [  297.425972]        vprintk_default+0x1f/0x30
+> > [  297.425972]        vprintk_func+0x44/0xd4
+> > [  297.425973]        printk+0x9f/0xc5
+> > [  297.425974]        register_console+0x39c/0x520
+> > [  297.425975]        univ8250_console_init+0x23/0x2d
+> > [  297.425975]        console_init+0x338/0x4cd
+> > [  297.425976]        start_kernel+0x534/0x724
+> > [  297.425977]        x86_64_start_reservations+0x24/0x26
+> > [  297.425977]        x86_64_start_kernel+0xf4/0xfb
+> > [  297.425978]        secondary_startup_64+0xb6/0xc0
+> > 
+> > where the report again show the early boot call trace for the locking
+> > dependency,
+> > 
+> > console_owner --> port_lock_key
+> > 
+> > but that dependency clearly not only happen in the early boot.
+> 
+> Can you provide an example of the runtime dependency without any early
+> boot artifacts? Because this discussion really doens't make much sense
+> without a clear example of a _real_ lockdep report that is not a false
+> possitive. All of them so far have been concluded to be false possitive
+> AFAIU.
 
-On 06/10/19 10:34 PM, Adam Ford wrote:
-> Has anyone else had any issues using the CONFIG_SERIAL_8250_DMA on the OMAP?
-> 
-> I can use the DMA on the legacy, omap-serial driver, but when I enable
-> the DMA on the 8250-omap driver, I get missing frames in Bluetooth.
-> 
-> The older driver seems to have an ISR that seems to address a variety
-> of items compared to the very tiny ISR for 8250-omap.c.
-> 
-> I am not exactly sure where to start, but if someone has any
-> suggestions on how I can troubleshoot, please let me know.  As of now,
-> I have to disable CONFIG_SERIAL_8250_DMA to get the Bluetooth
-> connected to UART2 operational on a DM3730 at 3,000,000 baud, but it
-> appears to work just fine after some patches I just submitted for
-> handling RTS/CTS.  The legacy omap-serial driver works fine with DMA.
-> 
+An obvious one is in the above link. Just replace the trace in #1 above with
+printk() from anywhere, i.e., just ignore the early boot calls there as they are
+ not important.
 
-Mainline omap-serial does not support DMA (evident from lack of
-dmaengine API calls) and therefore is not a regression. So OMAP3 UART
-DMA was never tested at least with 8250 driver.
-I am not sure enabling UART DMA on OMAP3 would be a trivial job. We need
-analyse of whether all erratas workarounds are implemented and see if
-there any difference wrt DMA integration itself. Do we know if UART DMA
-ever worked on OMAP3 previously?
-
-> adam
-> 
-
--- 
-Regards
-Vignesh
+printk()
+  console_unlock()
+    console_lock_spinning_enable() --> console_owner_lock
+  call_console_drivers()
+    serial8250_console_write() --> port->lock
