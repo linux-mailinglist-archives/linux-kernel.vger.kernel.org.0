@@ -2,84 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C387DD0F82
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 15:03:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A151ED0F8B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 15:04:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731315AbfJINC2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 09:02:28 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55678 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730901AbfJINC2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 09:02:28 -0400
-Received: by mail-wm1-f68.google.com with SMTP id a6so2493986wma.5
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 06:02:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6gKyU2lVUG9r8tkVXQwlslVrnGaZcT+vH7d3AbPHYB0=;
-        b=GHo82XUApFZmoJ9rbUiaxY0lPH5g1hfz9r8MSUnSI3GN9JdNoZQcA4UQ6OJo1rICO0
-         qzfEEIaPLpbItb/8PbB0tgtmMY3OvSBeFhFZiL7aO0dIhyWBySy0Gc4iZkpX6vcuzMon
-         Wj//7wE6Nd30Th7JDUX9ivMJk8/CkfEoL9COKkOw/OLGxaSlPBMlO4GEdXfniAHaK+uV
-         ThL1YwwiUvNrQ4RoX+Gkqtnk4np+XvZsHPcUah8iL/Z2af9/saPP/imUSPit0/RkYjkD
-         lCQnoyj1ClCApdV1FAhLZTizqvX7pcIkRlATP26I2RICqhtg4PmooQaeKNBqRXA5MyyA
-         j92g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6gKyU2lVUG9r8tkVXQwlslVrnGaZcT+vH7d3AbPHYB0=;
-        b=GZDh9BQ9xPARU/mCI9JbiBgCn0fTGJR1rM074yj+WfDmG4UoVJGQJ80+UNSMopooib
-         yz1RewPfwcp1+HbHe7IyvOU/fnwfJQeq1SD7SyyJUWMOZhf/S9Y9ih8no31Hiomlc7nH
-         z/h7ipPOcbykxTqaTlIWlQamtMEQSINHie6QXVuyPI+iR1gOZgK+zkRh/Vj9itj74ikh
-         XWKT49PA6XK1YvSG+yWTSTEKZVdVblPs1X+ct7Fh7kRTBIKe0tTAgm1krARZQjuyV1Mi
-         BKd2BDjVf5qVYschH6OFjPH8QL/1OwfzitfSQegX8EvaHQWYcl5jI8+PT/vH6TfxDarK
-         KsKg==
-X-Gm-Message-State: APjAAAUDCWm9T6AOH6Mgdd1OwcK9Za7HosZyRr4NF6rJZWqVOs2qvMD2
-        PHOoFMBbmzvDD26ukWEx4lH1X0EhleGaUZP/wSpZaA==
-X-Google-Smtp-Source: APXvYqx+LxYtjcQzWODIZ+2Z6/00LXRbD8qwCw7fnhTtTZ7OXnXpkwtdFXmQrWSQSDmS0fILF/nvqqpHFCBNgF8/Vuo=
-X-Received: by 2002:a7b:cb54:: with SMTP id v20mr2412915wmj.119.1570626144905;
- Wed, 09 Oct 2019 06:02:24 -0700 (PDT)
+        id S1731245AbfJINEi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 09:04:38 -0400
+Received: from mga04.intel.com ([192.55.52.120]:5507 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731049AbfJINEi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 09:04:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Oct 2019 06:04:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,276,1566889200"; 
+   d="scan'208";a="223580488"
+Received: from skassina-mobl.ccr.corp.intel.com (HELO caravaggio.ger.corp.intel.com) ([10.251.93.62])
+  by fmsmga002.fm.intel.com with ESMTP; 09 Oct 2019 06:04:34 -0700
+From:   Samuel Ortiz <sameo@linux.intel.com>
+To:     Len Brown <lenb@kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>
+Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        Samuel Ortiz <sameo@linux.intel.com>
+Subject: [PATCH 0/2] acpi: Unconditional GED build
+Date:   Wed,  9 Oct 2019 15:04:31 +0200
+Message-Id: <20191009130433.29134-1-sameo@linux.intel.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20191008105510.6975-1-javierm@redhat.com> <CACdnJusuMQf8B9u83mB2Wye+aZ4aV8v4j2eFrokURHkLGA0G_w@mail.gmail.com>
-In-Reply-To: <CACdnJusuMQf8B9u83mB2Wye+aZ4aV8v4j2eFrokURHkLGA0G_w@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Wed, 9 Oct 2019 15:02:13 +0200
-Message-ID: <CAKv+Gu8xgqEqeRPQSyEkcW6q0rosFRsGNdDxfOL2QdQXzkKvWw@mail.gmail.com>
-Subject: Re: [PATCH v2] efi/efi_test: lock down /dev/efi_test and require CAP_SYS_ADMIN
-To:     Matthew Garrett <mjg59@google.com>
-Cc:     Javier Martinez Canillas <javierm@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ivan Hu <ivan.hu@canonical.com>,
-        Laszlo Ersek <lersek@redhat.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Josh Boyer <jwboyer@redhat.com>,
-        Peter Jones <pjones@redhat.com>,
-        Janne Karhunen <janne.karhunen@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        David Howells <dhowells@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Micah Morton <mortonm@chromium.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        James Morris <jmorris@namei.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 9 Oct 2019 at 04:18, Matthew Garrett <mjg59@google.com> wrote:
->
-> On Tue, Oct 8, 2019 at 9:55 PM Javier Martinez Canillas
-> <javierm@redhat.com> wrote:
-> > Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-> > Acked-by: Laszlo Ersek <lersek@redhat.com>
->
-> Acked-by: Matthew Garrett <mjg59@google.com>
+The Generic Event Device is a hardware-reduced ACPI specific device, but
+kernels supporting both fixed and hardware-reduced ACPI hardware should
+be able to probe it dynamically.
 
-Thanks all. Queued as a fix.
+For that purpose, here are 2 patches:
+
+- The first one makes the GED device probe fail on non hardware-reduced
+  platforms.
+- The second one disable the conditional evged build.
+
+Arjan van de Ven (1):
+  acpi: Always build evged in
+
+Samuel Ortiz (1):
+  acpi: Fail GED probe when not on hardware-reduced
+
+ drivers/acpi/Makefile | 2 +-
+ drivers/acpi/evged.c  | 3 +++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+-- 
+2.21.0
+
