@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66C89D1574
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:22:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14548D156C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:22:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731964AbfJIRW3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 13:22:29 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44636 "EHLO
+        id S1731913AbfJIRWG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 13:22:06 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44016 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731173AbfJIRW3 (ORCPT
+        with ESMTP id S1731173AbfJIRWF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 13:22:29 -0400
+        Wed, 9 Oct 2019 13:22:05 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=IxAhdgaQrq0J/VgaJk4Li88x6ZuphvJhRzy9YVZATI4=; b=W3atcQgxz0VK
-        qgwUx5C1pL778u1fRvJ9j/go4rghn/bptabdJwPMJmvuyM7Vzkp62SQGGbye3VAobT7d9+r8qije7
-        /XUiFec4C+pAbueudkV6i9q9LykahBuQXmZZLBP4RuQ4lCQkFItbejvf4fyl0LLbXJrg+vnmw2Npk
-        UQpuw=;
+        List-Archive; bh=TKg7v6WJnfalf3/eDZyUsArggkC5Wu/TWTDuseQcCOg=; b=iZcejeOlvIs8
+        AvpDHdDwFddODe7PpldqSNZhqCbEV0+F2Kc1ttGpzZFn63sOlGhxe1d314M8htdGp0KjV3NE+A1Ja
+        ato26IZALx88FURRdVOJBj81FuB99Nx/7FFM+GYZkys4V3arLJg6zw3fFqgbdODaTrXgwjN7YfOqH
+        VFlik=;
 Received: from 188.31.199.195.threembb.co.uk ([188.31.199.195] helo=fitzroy.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1iIFer-0005Jq-Jg; Wed, 09 Oct 2019 17:21:54 +0000
+        id 1iIFer-0005Js-J7; Wed, 09 Oct 2019 17:21:54 +0000
 Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 59243D03ED4; Wed,  9 Oct 2019 18:21:48 +0100 (BST)
+        id 3C7EBD03ED3; Wed,  9 Oct 2019 18:21:48 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Dan Murphy <dmurphy@ti.com>
+To:     Daniel Baluta <daniel.baluta@nxp.com>
 Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, navada@ti.com, perex@perex.cz,
-        tiwai@suse.com
-Subject: Applied "ASoc: Add Texas Instruments TAS2562 amplifier binding" to the asoc tree
-In-Reply-To: <20191008181517.5332-1-dmurphy@ti.com>
+        kuninori.morimoto.gx@renesas.com, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        perex@perex.cz, tiwai@suse.com
+Subject: Applied "ASoC: simple_card_utils.h: Add missing include" to the asoc tree
+In-Reply-To: <20191009153615.32105-2-daniel.baluta@nxp.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191009172148.59243D03ED4@fitzroy.sirena.org.uk>
+Message-Id: <20191009172148.3C7EBD03ED3@fitzroy.sirena.org.uk>
 Date:   Wed,  9 Oct 2019 18:21:48 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -47,7 +47,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoc: Add Texas Instruments TAS2562 amplifier binding
+   ASoC: simple_card_utils.h: Add missing include
 
 has been applied to the asoc tree at
 
@@ -72,61 +72,46 @@ to this mail.
 Thanks,
 Mark
 
-From ac84b8b21b8e305b82d2b204999ee3140990d1b5 Mon Sep 17 00:00:00 2001
-From: Dan Murphy <dmurphy@ti.com>
-Date: Tue, 8 Oct 2019 13:15:16 -0500
-Subject: [PATCH] ASoc: Add Texas Instruments TAS2562 amplifier binding
+From 4bbee14d8e5487e3d2662138e3767cf4678cdf57 Mon Sep 17 00:00:00 2001
+From: Daniel Baluta <daniel.baluta@nxp.com>
+Date: Wed, 9 Oct 2019 18:36:14 +0300
+Subject: [PATCH] ASoC: simple_card_utils.h: Add missing include
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Add the DT binding for the TAS2562 amplifier.
+When debug is enabled compiler cannot find the definition of
+clk_get_rate resulting in the following error:
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
-Link: https://lore.kernel.org/r/20191008181517.5332-1-dmurphy@ti.com
+./include/sound/simple_card_utils.h:168:40: note: previous implicit
+declaration of ‘clk_get_rate’ was here
+   dev_dbg(dev, "%s clk %luHz\n", name, clk_get_rate(dai->clk));
+./include/sound/simple_card_utils.h:168:3: note: in expansion of macro
+‘dev_dbg’
+   dev_dbg(dev, "%s clk %luHz\n", name, clk_get_rate(dai->clk));
+
+Fix this by including the appropriate header.
+
+Fixes: 0580dde59438686d ("ASoC: simple-card-utils: add asoc_simple_debug_info()")
+Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+Link: https://lore.kernel.org/r/20191009153615.32105-2-daniel.baluta@nxp.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../devicetree/bindings/sound/tas2562.txt     | 34 +++++++++++++++++++
- 1 file changed, 34 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/tas2562.txt
+ include/sound/simple_card_utils.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/sound/tas2562.txt b/Documentation/devicetree/bindings/sound/tas2562.txt
-new file mode 100644
-index 000000000000..658e1fb18a99
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/tas2562.txt
-@@ -0,0 +1,34 @@
-+Texas Instruments TAS2562 Smart PA
-+
-+The TAS2562 is a mono, digital input Class-D audio amplifier optimized for
-+efficiently driving high peak power into small loudspeakers.
-+Integrated speaker voltage and current sense provides for
-+real time monitoring of loudspeaker behavior.
-+
-+Required properties:
-+ - #address-cells  - Should be <1>.
-+ - #size-cells     - Should be <0>.
-+ - compatible:	   - Should contain "ti,tas2562".
-+ - reg:		   - The i2c address. Should be 0x4c, 0x4d, 0x4e or 0x4f.
-+ - ti,imon-slot-no:- TDM TX current sense time slot.
-+
-+Optional properties:
-+- interrupt-parent: phandle to the interrupt controller which provides
-+                    the interrupt.
-+- interrupts: (GPIO) interrupt to which the chip is connected.
-+- shut-down: GPIO used to control the state of the device.
-+
-+Examples:
-+tas2562@4c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        compatible = "ti,tas2562";
-+        reg = <0x4c>;
-+
-+        interrupt-parent = <&gpio1>;
-+        interrupts = <14>;
-+
-+	shut-down = <&gpio1 15 0>;
-+        ti,imon-slot-no = <0>;
-+};
-+
+diff --git a/include/sound/simple_card_utils.h b/include/sound/simple_card_utils.h
+index 985a5f583de4..293ff8115960 100644
+--- a/include/sound/simple_card_utils.h
++++ b/include/sound/simple_card_utils.h
+@@ -8,6 +8,7 @@
+ #ifndef __SIMPLE_CARD_UTILS_H
+ #define __SIMPLE_CARD_UTILS_H
+ 
++#include <linux/clk.h>
+ #include <sound/soc.h>
+ 
+ #define asoc_simple_init_hp(card, sjack, prefix) \
 -- 
 2.20.1
 
