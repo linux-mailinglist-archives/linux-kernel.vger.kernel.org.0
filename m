@@ -2,154 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A793D17B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 20:44:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23279D17B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 20:44:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731650AbfJISoM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 14:44:12 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:42635 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731254AbfJISoM (ORCPT
+        id S1731623AbfJISoF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 14:44:05 -0400
+Received: from smtprelay0072.hostedemail.com ([216.40.44.72]:34834 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731254AbfJISoF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 14:44:12 -0400
-Received: by mail-oi1-f194.google.com with SMTP id i185so2644062oif.9
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 11:44:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=80jcnPBLsOoks69yHo8g6YiW4RIC2Pi47/8pROpVuWc=;
-        b=MNqqYHpMw01a7siHJTmNDsZU/gVtDJklrOtu9mitWMxnxA/AjOqQHWYUhBI6XkjxBp
-         fb/0SUpv7f97S258loyt9/mP1quCcObSikIDKnzLPgYRkv0mTX1R+JLXdPDMs5nlPoNM
-         hq2MsXJt/oJZugSpmImlMYOydesHrFM6MorA4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=80jcnPBLsOoks69yHo8g6YiW4RIC2Pi47/8pROpVuWc=;
-        b=ri9KB5Qw+yVkAejAYw4SCU+LW9DxKgRIurAeWRg5Iej1vLZoVXO2N9uUZK1M5r2M6J
-         NzHPeA0Cuzv4bfANUvgv8IFrb4ABtxvWIHuXQaDniRjrVHQioT+EJgJoMK1A53U7w8y7
-         Yth6r5v0E3razdhZ7O9n96OE16z42293vPI7TURUp5zIrQshBAA/LYY/nNOvkG5VZK7F
-         GMS4+DLBcGo8uxlbt7NmZm+TYULcM8A7gXC1Z4uq3p9nWlhkkYc9ENnkhKu+0uT2248Y
-         SWssAmOo2ZDtujJwpoMv2oEP86jiyk/+0C4kHw2lXsYAYQnzEK2gpfdX4XzNcB1bFE/p
-         wHBg==
-X-Gm-Message-State: APjAAAW9mnJuoQa4yDIaywsi8xFDTDUarsddzmXtpEazOXKX/Zcl4LR2
-        yQ9iMMvmpXUFC6+6nZkMSmfmP/11SLnCjwS9XUPW5Q==
-X-Google-Smtp-Source: APXvYqxK3ZYbW7gmd9nE9xtV5IyS7KCU4ZqXAfWDOa71iD0fhMG/5Icn6oKm9z6SvhJQad7k7SDKuvifreNikeNYeVw=
-X-Received: by 2002:aca:3a55:: with SMTP id h82mr3856687oia.128.1570646649343;
- Wed, 09 Oct 2019 11:44:09 -0700 (PDT)
+        Wed, 9 Oct 2019 14:44:05 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 1D54C100E86C3;
+        Wed,  9 Oct 2019 18:44:04 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1537:1566:1593:1594:1711:1714:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3167:3622:3865:3870:4321:5007:6742:10004:10400:11026:11232:11658:11914:12297:12740:12760:12895:13069:13311:13357:13439:14659:21080:21212:21627:30054:30090:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
+X-HE-Tag: mist32_5d7188b702942
+X-Filterd-Recvd-Size: 1584
+Received: from XPS-9350.home (unknown [47.151.152.152])
+        (Authenticated sender: joe@perches.com)
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Wed,  9 Oct 2019 18:44:02 +0000 (UTC)
+Message-ID: <cf1934f2668eea9d35dea1d16bb26cf911d4f831.camel@perches.com>
+Subject: Re: [PATCH] x86/mce: Lower throttling MCE messages to warnings
+From:   Joe Perches <joe@perches.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Benjamin Berg <bberg@redhat.com>, linux-kernel@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Christian Kellner <ckellner@redhat.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-edac@vger.kernel.org
+Date:   Wed, 09 Oct 2019 11:44:00 -0700
+In-Reply-To: <20191009182246.GL10395@zn.tnic>
+References: <20191009155424.249277-1-bberg@redhat.com>
+         <20191009175608.GK10395@zn.tnic>
+         <1dfc2bf57335b7eb9f130cc791db76655fb5b8f4.camel@perches.com>
+         <20191009182246.GL10395@zn.tnic>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-References: <951eb7dc-bebe-5049-4998-f199e18b0bf3@canonical.com>
- <20191009163235.GT16989@phenom.ffwll.local> <a0d5f3a3-a2b3-5367-42f9-bde514571e25@amd.com>
-In-Reply-To: <a0d5f3a3-a2b3-5367-42f9-bde514571e25@amd.com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Wed, 9 Oct 2019 20:43:58 +0200
-Message-ID: <CAKMK7uEtJRDhibWDv2TB2WrFzFooMWPSbveDD2N-rudAwvzVFA@mail.gmail.com>
-Subject: Re: drm/amd/display: Add HDCP module - static analysis bug report
-To:     "Lakha, Bhawanpreet" <Bhawanpreet.Lakha@amd.com>
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        "Wentland, Harry" <Harry.Wentland@amd.com>,
-        "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        amd-gfx mailing list <amd-gfx@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 9, 2019 at 8:23 PM Lakha, Bhawanpreet
-<Bhawanpreet.Lakha@amd.com> wrote:
->
-> Hi,
->
-> The reason we don't use drm_hdcp is because our policy is to do hdcp
-> verification using PSP/HW (onboard secure processor).
+On Wed, 2019-10-09 at 20:22 +0200, Borislav Petkov wrote:
+> On Wed, Oct 09, 2019 at 11:05:37AM -0700, Joe Perches wrote:
+> > Perhaps this should be
+> > 
+> > 	pr_warn_ratelimited(...)
+> > 
+> > as the temperature changes can be relatively quick.
+> 
+> There's already ratelimiting machinery a bit above in the same function.
 
-i915 also uses hw to auth, we still use the parts from drm_hdcp ...
-Did you actually look at what's in there? It's essentially just shared
-defines and data structures from the standard, plus a few minimal
-helpers to en/decode some bits. Just from a quick read the entire
-patch very much looks like midlayer everywhere design that we
-discussed back when DC landed ...
--Daniel
+right, thanks, nevermind...
 
->
-> Bhawan
->
-> On 2019-10-09 12:32 p.m., Daniel Vetter wrote:
-> > On Thu, Oct 03, 2019 at 11:08:03PM +0100, Colin Ian King wrote:
-> >> Hi,
-> >>
-> >> Static analysis with Coverity has detected a potential issue with
-> >> function validate_bksv in
-> >> drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_execution.c with recent
-> >> commit:
-> >>
-> >> commit ed9d8e2bcb003ec94658cafe9b1bb3960e2139ec
-> >> Author: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-> >> Date:   Tue Aug 6 17:52:01 2019 -0400
-> >>
-> >>      drm/amd/display: Add HDCP module
-> > I think the real question here is ... why is this not using drm_hdcp?
-> > -Daniel
-> >
-> >>
-> >> The analysis is as follows:
-> >>
-> >>   28 static inline enum mod_hdcp_status validate_bksv(struct mod_hdcp *hdcp)
-> >>   29 {
-> >>
-> >> CID 89852 (#1 of 1): Out-of-bounds read (OVERRUN)
-> >>
-> >> 1. overrun-local:
-> >> Overrunning array of 5 bytes at byte offset 7 by dereferencing pointer
-> >> (uint64_t *)hdcp->auth.msg.hdcp1.bksv.
-> >>
-> >>   30        uint64_t n = *(uint64_t *)hdcp->auth.msg.hdcp1.bksv;
-> >>   31        uint8_t count = 0;
-> >>   32
-> >>   33        while (n) {
-> >>   34                count++;
-> >>   35                n &= (n - 1);
-> >>   36        }
-> >>
-> >> hdcp->auth.msg.hdcp1.bksv is an array of 5 uint8_t as defined in
-> >> drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h as follows:
-> >>
-> >> struct mod_hdcp_message_hdcp1 {
-> >>          uint8_t         an[8];
-> >>          uint8_t         aksv[5];
-> >>          uint8_t         ainfo;
-> >>          uint8_t         bksv[5];
-> >>          uint16_t        r0p;
-> >>          uint8_t         bcaps;
-> >>          uint16_t        bstatus;
-> >>          uint8_t         ksvlist[635];
-> >>          uint16_t        ksvlist_size;
-> >>          uint8_t         vp[20];
-> >>
-> >>          uint16_t        binfo_dp;
-> >> };
-> >>
-> >> variable n is going to contain the contains of r0p and bcaps. I'm not
-> >> sure if that is intentional. If not, then the count is going to be
-> >> incorrect if these are non-zero.
-> >>
-> >> Colin
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
-
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
