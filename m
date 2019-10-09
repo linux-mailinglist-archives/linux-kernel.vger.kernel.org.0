@@ -2,72 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B3C2D0707
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 08:05:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6EE9D070C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 08:10:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729518AbfJIGFm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 02:05:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48616 "EHLO mx1.suse.de"
+        id S1728187AbfJIGKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 02:10:43 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:41086 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726651AbfJIGFl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 02:05:41 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id ED5F9AC19;
-        Wed,  9 Oct 2019 06:05:39 +0000 (UTC)
-Date:   Wed, 9 Oct 2019 08:05:39 +0200
-From:   Daniel Wagner <dwagner@suse.de>
-To:     Uladzislau Rezki <urezki@gmail.com>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] mm: vmalloc: Use the vmap_area_lock to protect
- ne_fit_preload_node
-Message-ID: <20191009060539.fmpqesc4wfisulrl@beryllium.lan>
-References: <20191004162041.GA30806@pc636>
- <20191004163042.jpiau6dlxqylbpfh@linutronix.de>
- <20191007083037.zu3n5gindvo7damg@beryllium.lan>
- <20191007105631.iau6zhxqjeuzajnt@linutronix.de>
- <20191007162330.GA26503@pc636>
- <20191007163443.6owts5jp2frum7cy@beryllium.lan>
- <20191007165611.GA26964@pc636>
- <20191007173644.hiiukrl2xryziro3@linutronix.de>
- <20191007214420.GA3212@pc636>
- <20191008160459.GA5487@pc636>
+        id S1726698AbfJIGKm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 02:10:42 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 67AE8BE9F0EFCB45E312;
+        Wed,  9 Oct 2019 14:10:39 +0800 (CST)
+Received: from [127.0.0.1] (10.177.96.203) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Wed, 9 Oct 2019
+ 14:10:29 +0800
+Subject: Re: [PATCH v7 00/12] implement KASLR for powerpc/fsl_booke/32
+From:   Jason Yan <yanaijie@huawei.com>
+To:     <mpe@ellerman.id.au>, <linuxppc-dev@lists.ozlabs.org>,
+        <diana.craciun@nxp.com>, <christophe.leroy@c-s.fr>,
+        <benh@kernel.crashing.org>, <paulus@samba.org>,
+        <npiggin@gmail.com>, <keescook@chromium.org>,
+        <kernel-hardening@lists.openwall.com>, <oss@buserror.net>
+CC:     <linux-kernel@vger.kernel.org>, <wangkefeng.wang@huawei.com>,
+        <yebin10@huawei.com>, <thunder.leizhen@huawei.com>,
+        <jingxiangfeng@huawei.com>, <zhaohongjiang@huawei.com>
+References: <20190920094546.44948-1-yanaijie@huawei.com>
+ <9c2dd2a8-83f2-983c-383e-956e19a7803a@huawei.com>
+Message-ID: <c4769b34-95f6-81b9-4856-50459630aa0d@huawei.com>
+Date:   Wed, 9 Oct 2019 14:10:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191008160459.GA5487@pc636>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <9c2dd2a8-83f2-983c-383e-956e19a7803a@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.177.96.203]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 06:04:59PM +0200, Uladzislau Rezki wrote:
-> > so, we do not guarantee, instead we minimize number of allocations
-> > with GFP_NOWAIT flag. For example on my 4xCPUs i am not able to
-> > even trigger the case when CPU is not preloaded.
-> > 
-> > I can test it tomorrow on my 12xCPUs to see its behavior there.
-> > 
-> Tested it on different systems. For example on my 8xCPUs system that
-> runs PREEMPT kernel i see only few GFP_NOWAIT allocations, i.e. it
-> happens when we land to another CPU that was not preloaded.
-> 
-> I run the special test case that follows the preload pattern and path.
-> So 20 "unbind" threads run it and each does 1000000 allocations. As a
-> result only 3.5 times among 1000000, during splitting, CPU was not
-> preloaded thus, GFP_NOWAIT was used to obtain an extra object.
-> 
-> It is obvious that slightly modified approach still minimizes allocations
-> in atomic context, so it can happen but the number is negligible and can
-> be ignored, i think.
+Hi Scott,
 
-Thanks for doing the tests. In this case I would suggest to get rid of
-the preempt_disable() micro optimization, since there is almost no
-gain in doing so. Do you send a patch? :)
+Would you please take sometime to test this?
 
-Thanks,
-Daniel
+Thank you so much.
+
+On 2019/9/24 13:52, Jason Yan wrote:
+> Hi Scott,
+> 
+> Can you test v7 to see if it works to load a kernel at a non-zero address?
+> 
+> Thanks,
+> 
+> On 2019/9/20 17:45, Jason Yan wrote:
+>> This series implements KASLR for powerpc/fsl_booke/32, as a security
+>> feature that deters exploit attempts relying on knowledge of the location
+>> of kernel internals.
+>>
+>> Since CONFIG_RELOCATABLE has already supported, what we need to do is
+>> map or copy kernel to a proper place and relocate. Freescale Book-E
+>> parts expect lowmem to be mapped by fixed TLB entries(TLB1). The TLB1
+>> entries are not suitable to map the kernel directly in a randomized
+>> region, so we chose to copy the kernel to a proper place and restart to
+>> relocate.
+>>
+>> Entropy is derived from the banner and timer base, which will change 
+>> every
+>> build and boot. This not so much safe so additionally the bootloader may
+>> pass entropy via the /chosen/kaslr-seed node in device tree.
+>>
+>> We will use the first 512M of the low memory to randomize the kernel
+>> image. The memory will be split in 64M zones. We will use the lower 8
+>> bit of the entropy to decide the index of the 64M zone. Then we chose a
+>> 16K aligned offset inside the 64M zone to put the kernel in.
+>>
+>>      KERNELBASE
+>>
+>>          |-->   64M   <--|
+>>          |               |
+>>          +---------------+    +----------------+---------------+
+>>          |               |....|    |kernel|    |               |
+>>          +---------------+    +----------------+---------------+
+>>          |                         |
+>>          |----->   offset    <-----|
+>>
+>>                                kernstart_virt_addr
+>>
+>> We also check if we will overlap with some areas like the dtb area, the
+>> initrd area or the crashkernel area. If we cannot find a proper area,
+>> kaslr will be disabled and boot from the original kernel.
+>>
+>> Changes since v6:
+>>   - Rename create_tlb_entry() to create_kaslr_tlb_entry()
+>>   - Remove MAS2_VAL since there is no more users.
+>>   - Move kaslr_booke.c to arch/powerpc/mm/nohash.
+>>   - Call flush_icache_range() after copying the kernel.
+>>   - Warning if no kaslr-seed provided by the bootloader
+>>   - Use the right physical address when checking if the new position 
+>> will overlap with other regions.
+>>   - Do not clear bss for the second pass because some global variables 
+>> will not be initialized again
+>>   - Use tabs instead of spaces between the mnemonic and the 
+>> arguments(in fsl_booke_entry_mapping.S).
+>>
+>> Changes since v5:
+>>   - Rename M_IF_NEEDED to MAS2_M_IF_NEEDED
+>>   - Define some global variable as __ro_after_init
+>>   - Replace kimage_vaddr with kernstart_virt_addr
+>>   - Depend on RELOCATABLE, not select it
+>>   - Modify the comment block below the SPDX tag
+>>   - Remove some useless headers in kaslr_booke.c and move is_second_reloc
+>>     declarationto mmu_decl.h
+>>   - Remove DBG() and use pr_debug() and rewrite comment above 
+>> get_boot_seed().
+>>   - Add a patch to document the KASLR implementation.
+>>   - Split a patch from patch #10 which exports kaslr offset in 
+>> VMCOREINFO ELF notes.
+>>   - Remove extra logic around finding nokaslr string in cmdline.
+>>   - Make regions static global and __initdata
+>>
+>> Changes since v4:
+>>   - Add Reviewed-by tag from Christophe
+>>   - Remove an unnecessary cast
+>>   - Remove unnecessary parenthesis
+>>   - Fix checkpatch warning
+>>
+>> Changes since v3:
+>>   - Add Reviewed-by and Tested-by tag from Diana
+>>   - Change the comment in fsl_booke_entry_mapping.S to be consistent
+>>     with the new code.
+>>
+>> Changes since v2:
+>>   - Remove unnecessary #ifdef
+>>   - Use SZ_64M instead of0x4000000
+>>   - Call early_init_dt_scan_chosen() to init boot_command_line
+>>   - Rename kaslr_second_init() to kaslr_late_init()
+>>
+>> Changes since v1:
+>>   - Remove some useless 'extern' keyword.
+>>   - Replace EXPORT_SYMBOL with EXPORT_SYMBOL_GPL
+>>   - Improve some assembly code
+>>   - Use memzero_explicit instead of memset
+>>   - Use boot_command_line and remove early_command_line
+>>   - Do not print kaslr offset if kaslr is disabled
+>>
+>> Jason Yan (12):
+>>    powerpc: unify definition of M_IF_NEEDED
+>>    powerpc: move memstart_addr and kernstart_addr to init-common.c
+>>    powerpc: introduce kernstart_virt_addr to store the kernel base
+>>    powerpc/fsl_booke/32: introduce create_kaslr_tlb_entry() helper
+>>    powerpc/fsl_booke/32: introduce reloc_kernel_entry() helper
+>>    powerpc/fsl_booke/32: implement KASLR infrastructure
+>>    powerpc/fsl_booke/32: randomize the kernel image offset
+>>    powerpc/fsl_booke/kaslr: clear the original kernel if randomized
+>>    powerpc/fsl_booke/kaslr: support nokaslr cmdline parameter
+>>    powerpc/fsl_booke/kaslr: dump out kernel offset information on panic
+>>    powerpc/fsl_booke/kaslr: export offset in VMCOREINFO ELF notes
+>>    powerpc/fsl_booke/32: Document KASLR implementation
+>>
+>>   Documentation/powerpc/kaslr-booke32.rst       |  42 ++
+>>   arch/powerpc/Kconfig                          |  11 +
+>>   arch/powerpc/include/asm/nohash/mmu-book3e.h  |  11 +-
+>>   arch/powerpc/include/asm/page.h               |   7 +
+>>   arch/powerpc/kernel/early_32.c                |   5 +-
+>>   arch/powerpc/kernel/exceptions-64e.S          |  12 +-
+>>   arch/powerpc/kernel/fsl_booke_entry_mapping.S |  25 +-
+>>   arch/powerpc/kernel/head_fsl_booke.S          |  61 ++-
+>>   arch/powerpc/kernel/machine_kexec.c           |   1 +
+>>   arch/powerpc/kernel/misc_64.S                 |   7 +-
+>>   arch/powerpc/kernel/setup-common.c            |  20 +
+>>   arch/powerpc/mm/init-common.c                 |   7 +
+>>   arch/powerpc/mm/init_32.c                     |   5 -
+>>   arch/powerpc/mm/init_64.c                     |   5 -
+>>   arch/powerpc/mm/mmu_decl.h                    |  11 +
+>>   arch/powerpc/mm/nohash/Makefile               |   1 +
+>>   arch/powerpc/mm/nohash/fsl_booke.c            |   8 +-
+>>   arch/powerpc/mm/nohash/kaslr_booke.c          | 401 ++++++++++++++++++
+>>   18 files changed, 587 insertions(+), 53 deletions(-)
+>>   create mode 100644 Documentation/powerpc/kaslr-booke32.rst
+>>   create mode 100644 arch/powerpc/mm/nohash/kaslr_booke.c
+>>
+> 
+> 
+> .
+> 
+
