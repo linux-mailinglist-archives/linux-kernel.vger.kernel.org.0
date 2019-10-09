@@ -2,69 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47EC7D1326
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 17:42:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 034BBD1330
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 17:44:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731463AbfJIPmt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 11:42:49 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:57735 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729471AbfJIPms (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 11:42:48 -0400
-X-Originating-IP: 90.177.210.238
-Received: from localhost.localdomain (238.210.broadband10.iol.cz [90.177.210.238])
-        (Authenticated sender: i.maximets@ovn.org)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 69C66C000D;
-        Wed,  9 Oct 2019 15:42:45 +0000 (UTC)
-From:   Ilya Maximets <i.maximets@ovn.org>
-To:     netdev@vger.kernel.org
-Cc:     bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Ilya Maximets <i.maximets@ovn.org>
-Subject: [PATCH bpf] libbpf: fix passing uninitialized bytes to setsockopt
-Date:   Wed,  9 Oct 2019 17:42:38 +0200
-Message-Id: <20191009154238.15410-1-i.maximets@ovn.org>
-X-Mailer: git-send-email 2.17.1
+        id S1731507AbfJIPow (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 11:44:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43086 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729865AbfJIPov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 11:44:51 -0400
+Received: from paulmck-ThinkPad-P72 (mobile-166-170-42-80.mycingular.net [166.170.42.80])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B83521848;
+        Wed,  9 Oct 2019 15:44:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570635891;
+        bh=455RXi27qe5dtbw0NFBsN3pauhdn6Ix/HhbI3M5wM2g=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=xvmErgJ7fXy0Wft7hYtVrXfw/mgp7QIKTEqAy05R82xhaI4tPhOmyrWmjAUgcxOx0
+         LTuKTu4J9eUYQglGb3BLs7MfawbYTL8KhNYO5PP6erRGv+ER1fvlC8m4IErh6l1GTA
+         hjLWN224KvRXH+IAViwCzchyBz1mios+nG6XDtdI=
+Date:   Wed, 9 Oct 2019 08:44:46 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
+        elver@google.com, Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>, rcu@vger.kernel.org
+Subject: Re: [PATCH] rcu: Avoid to modify mask_ofl_ipi in
+ sync_rcu_exp_select_node_cpus()
+Message-ID: <20191009154446.GA2689@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20191008050145.4041702-1-boqun.feng@gmail.com>
+ <20191008163028.GA136151@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191008163028.GA136151@google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'struct xdp_umem_reg' has 4 bytes of padding at the end that makes
-valgrind complain about passing uninitialized stack memory to the
-syscall:
+On Tue, Oct 08, 2019 at 12:30:28PM -0400, Joel Fernandes wrote:
+> On Tue, Oct 08, 2019 at 01:01:40PM +0800, Boqun Feng wrote:
+> > "mask_ofl_ipi" is used for iterate CPUs which IPIs are needed to send
+> > to, however in the IPI sending loop, "mask_ofl_ipi" along with another
+> > variable "mask_ofl_test" might also get modified to record which CPU's
+> > quiesent state can be reported by sync_rcu_exp_select_node_cpus(). Two
+> > variables seems to be redundant for such a propose, so this patch clean
+> > things a little by solely using "mask_ofl_test" for recording and
+> > "mask_ofl_ipi" for iteration. This would improve the readibility of the
+> > IPI sending loop in sync_rcu_exp_select_node_cpus().
+> > 
+> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> > ---
+> 
+> Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-  Syscall param socketcall.setsockopt() points to uninitialised byte(s)
-    at 0x4E7AB7E: setsockopt (in /usr/lib64/libc-2.29.so)
-    by 0x4BDE035: xsk_umem__create@@LIBBPF_0.0.4 (xsk.c:172)
-  Uninitialised value was created by a stack allocation
-    at 0x4BDDEBA: xsk_umem__create@@LIBBPF_0.0.4 (xsk.c:140)
+Applied, thank you!
 
-Padding bytes appeared after introducing of a new 'flags' field.
+							Thanx, Paul
 
-Fixes: 10d30e301732 ("libbpf: add flags to umem config")
-Signed-off-by: Ilya Maximets <i.maximets@ovn.org>
----
- tools/lib/bpf/xsk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/lib/bpf/xsk.c b/tools/lib/bpf/xsk.c
-index a902838f9fcc..26d9db783560 100644
---- a/tools/lib/bpf/xsk.c
-+++ b/tools/lib/bpf/xsk.c
-@@ -139,7 +139,7 @@ int xsk_umem__create_v0_0_4(struct xsk_umem **umem_ptr, void *umem_area,
- 			    const struct xsk_umem_config *usr_config)
- {
- 	struct xdp_mmap_offsets off;
--	struct xdp_umem_reg mr;
-+	struct xdp_umem_reg mr = {};
- 	struct xsk_umem *umem;
- 	socklen_t optlen;
- 	void *map;
--- 
-2.17.1
-
+> thanks,
+> 
+>  - Joel
+> 
+> >  kernel/rcu/tree_exp.h | 13 ++++++-------
+> >  1 file changed, 6 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+> > index 69c5aa64fcfd..212470018752 100644
+> > --- a/kernel/rcu/tree_exp.h
+> > +++ b/kernel/rcu/tree_exp.h
+> > @@ -387,10 +387,10 @@ static void sync_rcu_exp_select_node_cpus(struct work_struct *wp)
+> >  		}
+> >  		ret = smp_call_function_single(cpu, rcu_exp_handler, NULL, 0);
+> >  		put_cpu();
+> > -		if (!ret) {
+> > -			mask_ofl_ipi &= ~mask;
+> > +		/* The CPU responses the IPI, and will report QS itself */
+> > +		if (!ret)
+> >  			continue;
+> > -		}
+> > +
+> >  		/* Failed, raced with CPU hotplug operation. */
+> >  		raw_spin_lock_irqsave_rcu_node(rnp, flags);
+> >  		if ((rnp->qsmaskinitnext & mask) &&
+> > @@ -401,13 +401,12 @@ static void sync_rcu_exp_select_node_cpus(struct work_struct *wp)
+> >  			schedule_timeout_uninterruptible(1);
+> >  			goto retry_ipi;
+> >  		}
+> > -		/* CPU really is offline, so we can ignore it. */
+> > -		if (!(rnp->expmask & mask))
+> > -			mask_ofl_ipi &= ~mask;
+> > +		/* CPU really is offline, and we need its QS to pass GP. */
+> > +		if (rnp->expmask & mask)
+> > +			mask_ofl_test |= mask;
+> >  		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+> >  	}
+> >  	/* Report quiescent states for those that went offline. */
+> > -	mask_ofl_test |= mask_ofl_ipi;
+> >  	if (mask_ofl_test)
+> >  		rcu_report_exp_cpu_mult(rnp, mask_ofl_test, false);
+> >  }
+> > -- 
+> > 2.23.0
+> > 
