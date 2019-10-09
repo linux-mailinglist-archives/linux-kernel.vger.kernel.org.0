@@ -2,108 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCBF5D10E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 16:09:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E07DD10E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 16:11:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731192AbfJIOJK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 10:09:10 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:46898 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729883AbfJIOJK (ORCPT
+        id S1731317AbfJIOLU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 10:11:20 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54058 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729644AbfJIOLT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 10:09:10 -0400
-Received: by mail-io1-f68.google.com with SMTP id c6so5148905ioo.13;
-        Wed, 09 Oct 2019 07:09:09 -0700 (PDT)
+        Wed, 9 Oct 2019 10:11:19 -0400
+Received: by mail-wm1-f65.google.com with SMTP id i16so2796594wmd.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 07:11:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=WrZAk5gJkER1O1xn2TCucF4dEQP6LH4cuHnhethSJ8M=;
-        b=ItHuOga3a0OFHONWEPlKRcF5GP+jCkkvEjryppl8BJ8T5PIdxFMrWrT5UTLk5uy83g
-         5OCtgnfkD45s3QNWiV9VXifVJKgc4MVZk7OCN8YYk5+n/tO/GCZQOlbp07EjVaQTeJ7B
-         l5K1vBtEaTyy/6aad+Fkc9HCzCa36sg5CZ8Cp6SeS69iQuVpkoSW9nyePKlQ/RvI/92n
-         JtYgdXEDo0Ot8wEC28eYJGpgm2O+3YLxJVYMlMOe7MVuXg2O+08Q2PQdIiu8ZihNX/eJ
-         Iu4oJlsa2gpQ7Dh9R3UEkO7684Ha862Hr66jV7E+E9zui0mE7uFLCMUHnb6uh4+ZQw/V
-         W4GA==
+        bh=IfzmZhp36WpTVFDJFrKg1q1OTVja9xjnVrTlka/Jkoc=;
+        b=rXBWxnxtuK+619VAVXoKS+DxsBa9UqJ7nfRNBcS2Sz4XI5ZQ6Hw8QwSDlqpW05k9eA
+         u9gld6jlBbewvfS51nf5OFVC/a+LQIB6CuaaXNjWixic5MnQZvut2Bv+qWHX2LVAC4k0
+         fHt9MT4y8YaPU1k2ecpQ1spQAjEqNJ9n8x8fx1LKnzmuemvO+UXUJv1/TouqPyZwO+KG
+         nERyMqKdNVU2hHZLDMJ/Ehy9tnUAF0umDOwh8zb8aITfSgaY8toVe4iwMQx9PSwQHa4D
+         6arjQMc6CsuR3/NeKO1u3tNpuCCorVcoglK8+XO7sO2mad/ddObthg86fus9JfH2XK94
+         qxGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=WrZAk5gJkER1O1xn2TCucF4dEQP6LH4cuHnhethSJ8M=;
-        b=PW3A0k51Zhf+uRAVAzI57KigqxmJ7UIiUTGvjBowua9tmGBEwCStU/iuVUwDu559xN
-         /tAGSKd2x0iLp09/GdrFBCCI99i/TFh6O7+q0QkyJArI7VPaZhWpOKEfZEIvxBEVLD48
-         lGCREr288CNnVLhvlaZ68A2M7OgPPAyt/d1E8HkHTbSHMYsC3YzA2UKM3a84EIf7EDmb
-         i5a40fHO1Rb2RtcZ7aJiJeA81FNA5EC25AfZjHKLIgpBTqX/JMUy8drNCWqZrjnskRf+
-         yDYWgTxh3d1vl9zgcS3ugYYBBw3PMnV2iJ547uOSACSrcDQsQABQXp/5+VDbO4XY7YdZ
-         Yjrg==
-X-Gm-Message-State: APjAAAVrhm3ZzmUo8vQqbSVJ+GfIKqVHYt1PHbKk/2fepvBOK8a23AjL
-        iPOl5HAhGA2vyaZ2uVYlfVsgtC4ipfsRI6XzSJI=
-X-Google-Smtp-Source: APXvYqydLUN9gXf0yzgt77Zbc8y4VKX5W7xoCP1U5BA0C169qM9cU6AyjGMeW1wmLxpllA1iM/VBGRA6ZSvHF9wowLw=
-X-Received: by 2002:a02:a11e:: with SMTP id f30mr3223182jag.95.1570630148852;
- Wed, 09 Oct 2019 07:09:08 -0700 (PDT)
+        bh=IfzmZhp36WpTVFDJFrKg1q1OTVja9xjnVrTlka/Jkoc=;
+        b=kXo2e0y/LY6hD6ZWzRm1g144VUHgDl4aNExmEvTyZaT/Bk/435PMr/+Hk5zi8/2x64
+         ZnzH9mND5wHmvCijQn6XRyxZzdXNSALDq9dUTNhRzDbQ6uQR5nPPwZhsJ7Z/S8CfbTI9
+         W4MyWIoE9vxdfCDa95XFRJl3f7h3x54TUpKeSpASgmNO1Y7eNQFRP4sAUuIB+8H+usq2
+         zrXmUcVU/7nqVMnVZ+XRZDX20RgshXwdwyonnK9KthAam/wDBE81h7EWVQ/i8y/WM29F
+         sV27Q7LEJ7EJT5vosKRGy5etWlxdUeAjXNwIyrJUcG8azx88/ulugzVrbGCfEuiNZ+Jw
+         8YtQ==
+X-Gm-Message-State: APjAAAUKWAdMiqDnXM599ltIYf/m+r2HYfxRz43b1TrSes0p0qkKT54j
+        1d+oTflfXyDHPx0LnYtJUesUQmgldvk5t0SVjFjfmw==
+X-Google-Smtp-Source: APXvYqwDjV9Fg1lr9K+PEMuIeJ8FN7Fcu2NkkOGfxXp13qEHX+6TJYJ7EfF6XxgXCEW3E2563Mm8g5LqtpMA35qiQg0=
+X-Received: by 2002:a05:600c:2214:: with SMTP id z20mr2945175wml.10.1570630276021;
+ Wed, 09 Oct 2019 07:11:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAHCN7x+oXNA6WRiq1OnDdcgDTJrm-QyazyYLw-ow0vPMMmrVbQ@mail.gmail.com>
- <3d5b3a12-a21c-f464-e7d1-252ccd768ff8@ti.com>
-In-Reply-To: <3d5b3a12-a21c-f464-e7d1-252ccd768ff8@ti.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Wed, 9 Oct 2019 09:08:57 -0500
-Message-ID: <CAHCN7xJDS_NwT8VZbOQgsA6iHkeTLt4UrR2vFmzkCtWYCYzQrg@mail.gmail.com>
-Subject: Re: Serial 8250 DMA Broken on OMAP3630
-To:     Vignesh Raghavendra <vigneshr@ti.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        linux-serial@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20191002194346.GA3792@localhost.localdomain>
+In-Reply-To: <20191002194346.GA3792@localhost.localdomain>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Wed, 9 Oct 2019 16:11:04 +0200
+Message-ID: <CAKv+Gu9_xX3RgDNGB=T83vhg_snMKe0F2YPKp1S2o2toNHHZZQ@mail.gmail.com>
+Subject: Re: [PATCH] Ask user input only when CONFIG_X86 or
+ CONFIG_COMPILE_TEST is set to y
+To:     Narendra K <Narendra.K@dell.com>
+Cc:     linux-efi <linux-efi@vger.kernel.org>,
+        Mario Limonciello <Mario.Limonciello@dell.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Ingo Molnar <mingo@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 9, 2019 at 8:42 AM Vignesh Raghavendra <vigneshr@ti.com> wrote:
->
-> Hi Adam,
->
-> On 06/10/19 10:34 PM, Adam Ford wrote:
-> > Has anyone else had any issues using the CONFIG_SERIAL_8250_DMA on the OMAP?
-> >
-> > I can use the DMA on the legacy, omap-serial driver, but when I enable
-> > the DMA on the 8250-omap driver, I get missing frames in Bluetooth.
-> >
-> > The older driver seems to have an ISR that seems to address a variety
-> > of items compared to the very tiny ISR for 8250-omap.c.
-> >
-> > I am not exactly sure where to start, but if someone has any
-> > suggestions on how I can troubleshoot, please let me know.  As of now,
-> > I have to disable CONFIG_SERIAL_8250_DMA to get the Bluetooth
-> > connected to UART2 operational on a DM3730 at 3,000,000 baud, but it
-> > appears to work just fine after some patches I just submitted for
-> > handling RTS/CTS.  The legacy omap-serial driver works fine with DMA.
-> >
->
-> Mainline omap-serial does not support DMA (evident from lack of
-> dmaengine API calls) and therefore is not a regression. So OMAP3 UART
-> DMA was never tested at least with 8250 driver.
-> I am not sure enabling UART DMA on OMAP3 would be a trivial job. We need
-> analyse of whether all erratas workarounds are implemented and see if
-> there any difference wrt DMA integration itself. Do we know if UART DMA
-> ever worked on OMAP3 previously?
+Hello Narendra,
 
-Can we disable CONFIG_SERIAL_8250_DMA from omap2plus_defconfig?   As
-of right now, it's the only way I can use the Bluetooth.  There are
-#ifdef's in the 8250-omap driver, so it looks like some of the hooks
-are there, but if it's incomplete, it seems like we shouldn't enable
-this config option by default yet.
-
-adam
+On Wed, 2 Oct 2019 at 21:44, <Narendra.K@dell.com> wrote:
 >
-> > adam
-> >
+> From: Narendra K <Narendra.K@dell.com>
+>
+> For the EFI_RCI2_TABLE kconfig option, 'make oldconfig' asks the user
+> for input as it is a new kconfig option in kernel version 5.4. This patch
+> modifies the kconfig option to ask the user for input only when CONFIG_X86
+> or CONFIG_COMPILE_TEST is set to y.
+>
+> The patch also makes EFI_RCI2_TABLE kconfig option depend on CONFIG_EFI.
+>
+> Signed-off-by: Narendra K <Narendra.K@dell.com>
+> ---
+> The patch is created on kernel version 5.4-rc1.
+>
+> Hi Ard, I have made following changes -
+>
+> - changed the prompt string from "EFI Runtime Configuration
+> Interface Table Version 2 Support" to "EFI RCI Table Version 2 Support"
+> as the string crossed 80 char limit.
+>
+> - added "depends on EFI" so that code builds only when CONFIG_EFI is
+> set to y.
+>
+> - added 'default n' for ease of understanding though default is set to n.
+>
+
+None of these changes are necessary, tbh. 'depends on EFI' is implied
+by the placement of the option, and default n is indeed the default.
+
+
+>  drivers/firmware/efi/Kconfig | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
+> index 178ee8106828..6e4c46e8a954 100644
+> --- a/drivers/firmware/efi/Kconfig
+> +++ b/drivers/firmware/efi/Kconfig
+> @@ -181,7 +181,10 @@ config RESET_ATTACK_MITIGATION
+>           reboots.
+>
+>  config EFI_RCI2_TABLE
+> -       bool "EFI Runtime Configuration Interface Table Version 2 Support"
+> +       bool
+> +       prompt "EFI RCI Table Version 2 Support" if X86 || COMPILE_TEST
+
+You can drop the || COMPILE_TEST as well.
+> +       depends on EFI
+> +       default n
+>         help
+>           Displays the content of the Runtime Configuration Interface
+>           Table version 2 on Dell EMC PowerEdge systems as a binary
+> --
+> 2.18.1
 >
 > --
-> Regards
-> Vignesh
+> With regards,
+> Narendra K
