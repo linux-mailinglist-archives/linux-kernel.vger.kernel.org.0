@@ -2,154 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B16ABD0F33
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 14:53:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84C10D0F3A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 14:54:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731152AbfJIMxs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 08:53:48 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:9475 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730994AbfJIMxr (ORCPT
+        id S1731229AbfJIMyl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 08:54:41 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:35839 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731215AbfJIMyk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 08:53:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1570625625;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=6vH2V5lHL3NiigClBhih4XYbxC61BJAkQyYykew5ddI=;
-        b=INz+ylf3frHd2ICtBuH4ZYk3fs3opbXWj5KXnqL9FIUhpTqQ3cOpyjuVO+e2e4JSOg
-        Xy+T8ByHSdz/UoHEmbPauw4zobOU4BjBdlncRHfXlo2raqgLl6KmDef4226KuG1WKwJz
-        M6QSL5xSmZFxc1Liu1Bx2MtrYrV1IUShO1iXPTlISkQ8/yjBdj7gtFMc4A/hAL24eQ5p
-        GSiQWMf2NVgrGvBKgB1NimQrElTfmHxamQEDPEV2StjobkElJUvz/gV5sr1h2ZW9CNbb
-        voO6EP9qopwOcWwJZ+zcant19OjRjezmiN2qwT3hNCB+b1bucb38hwp9aLXCnU2klwQY
-        uGoA==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj7wpz8NMGH/ztwDqvvQ=="
-X-RZG-CLASS-ID: mo00
-Received: from imac.fritz.box
-        by smtp.strato.de (RZmta 44.28.0 DYNA|AUTH)
-        with ESMTPSA id v00409v99CrhzeG
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Wed, 9 Oct 2019 14:53:43 +0200 (CEST)
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: Lay common foundation to make PVR/SGX work without hacks on OMAP34xx, OMAP36xx, AM335x and potentially OMAP4, OMAP5
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <0FEF1AB1-5FE0-4EEE-BEB9-0957BB424C18@goldelico.com>
-Date:   Wed, 9 Oct 2019 14:53:42 +0200
-Cc:     Merlijn Wajer <merlijn@wizzup.org>, Adam Ford <aford173@gmail.com>,
-        Philipp Rossak <embed3d@gmail.com>,
-        =?utf-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        =?utf-8?Q?Filip_Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
-        moaz korena <moaz@korena.xyz>,
-        James Hilliard <james.hilliard1@gmail.com>,
-        kernel@pyra-handheld.com,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>, maemo-leste@lists.dyne.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <270E1695-9B1F-4470-AEA2-724E2139BCF5@goldelico.com>
-References: <d0cbfaaf-813e-8803-f90b-931a38396750@wizzup.org> <3A03FF16-C203-43ED-AEEF-0260F6B3331A@goldelico.com> <3b0a5e78-c4c2-1963-bac7-b49496a1e9b9@wizzup.org> <1F942AAB-1648-46C0-ADD5-90F6898778BE@goldelico.com> <84cac9b8-0eff-33f8-464d-4f8045d7db19@wizzup.org> <BFAA7FA6-A352-476A-99F9-02EA663A6AAD@goldelico.com> <CAHCN7x+87xTsA3MeHy7kUWU0SU3X8HmSc2wbk5gKvYm1dRNe6A@mail.gmail.com> <04809E3E-A690-4931-B949-1CFDAF407C14@goldelico.com> <ebb50954-b456-4dab-0765-9dfa06c67075@wizzup.org> <C3A56737-6187-4B31-8697-3A02DD164429@goldelico.com> <20191007155252.GQ5610@atomide.com> <64474fb1-f6d2-52d0-175a-65bb493dc1fe@ti.com> <9253CFB5-0AF7-4EA0-AC7F-6DE37318238A@goldelico.com> <0bb4739d-e26f-de49-fd80-257a836e892a@ti.com> <0FEF1AB1-5FE0-4EEE-BEB9-0957BB424C18@goldelico.com>
-To:     Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>
-X-Mailer: Apple Mail (2.3124)
+        Wed, 9 Oct 2019 08:54:40 -0400
+Received: by mail-qt1-f196.google.com with SMTP id m15so3249587qtq.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 05:54:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:references:cc:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=TgY7kPmBZqnecD8fmdALLpGAi+Y1sBS44TN0W3OZTbI=;
+        b=Ieth1LzWB3tqDdxRYS6TrTDImdY44X93i3yUuyswKh9NjwTJ9MG4I2p3ASCGRBbhIi
+         EN685xkM080/OSbNL3HVipQhMTiUC3wCskwGs71Fi0G583KGpAhgDjb9VZTSwNOizajq
+         KjMDn74QgrW5rjxwCxpxgHrztK5XKLYGw7Ptb6Dzw2Um68uQEEtb9QD58DgmCL+djw5x
+         hvj6SPb+jQ8H91BafRWYx9bXKeCGoUZ3pYmo9zaWEqj9Hbxyx5PkknrLQpIrt+b6pPv2
+         UWqyEnjMQk6gtxIgsg+zv6Xm7CfObViLTHWCh+F8QEAs8uzXv+iWzUnHp4NYkK8A+eno
+         2GbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=TgY7kPmBZqnecD8fmdALLpGAi+Y1sBS44TN0W3OZTbI=;
+        b=CFRZypudoZOcrdsM+Bk1l2aDXpsRAVfwXlo/rtwSplu7t8b/UpujX8r80WrznCBMqn
+         ipbnLM7FQ3Hs0INdQfNfADHyVtBkkkVZAe1NJKmDOJP+zsuCFG3TTg1Fa3urRriN6app
+         pDKqvM4c3SpF8GZuxZ4M63B7iyiszjTrPZF2eJr4SNthGscnoygcBYAwzPpHDDIutXtz
+         lA7nqkuh8txIAcigONcHw2UpBN7zFr2F4YLjttQRZ8K9m7j0WnN9LhvzzVZpONN+R6O6
+         ydTWZ/I6KkpLKs7NqLf1+XXNJ+TALuRrUkxLFXhXCXxUbW9oO2C2CEz1kVfvQiwP/82C
+         qnag==
+X-Gm-Message-State: APjAAAUHPUvd9hH5YfLjS/L5NIcMQsKNBvHF4HEhkCQ8lLlU/5aeTGiL
+        tq1KjNX+vb58lKyi1agV15hiDhunGu9GNg==
+X-Google-Smtp-Source: APXvYqxDRTRnNCFB3xzy90ZREa6zqiTGq9G4A+t6sp3p4WDaJF1dHGjJKNb5yoJjpKhBQP6sEqhRHA==
+X-Received: by 2002:a0c:ef85:: with SMTP id w5mr3460733qvr.159.1570625678531;
+        Wed, 09 Oct 2019 05:54:38 -0700 (PDT)
+Received: from [192.168.1.169] (pool-71-255-246-27.washdc.fios.verizon.net. [71.255.246.27])
+        by smtp.gmail.com with ESMTPSA id c201sm890854qke.128.2019.10.09.05.54.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 09 Oct 2019 05:54:37 -0700 (PDT)
+Subject: Re: [PATCH 1/4] dt-bindings: thermal: Introduce monitor-falling
+ parameter to thermal trip point binding
+To:     Rob Herring <robh@kernel.org>
+References: <1568859503-19725-1-git-send-email-thara.gopinath@linaro.org>
+ <1568859503-19725-2-git-send-email-thara.gopinath@linaro.org>
+ <5d93ce86.1c69fb81.70b0d.ba56@mx.google.com>
+Cc:     rui.zhang@intel.com, edubezval@gmail.com,
+        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
+        bjorn.andersson@linaro.org, amit.kucheria@verdurent.com,
+        mark.rutland@arm.com, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Thara Gopinath <thara.gopinath@linaro.org>
+Message-ID: <5D9DD88C.7090804@linaro.org>
+Date:   Wed, 9 Oct 2019 08:54:36 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
+MIME-Version: 1.0
+In-Reply-To: <5d93ce86.1c69fb81.70b0d.ba56@mx.google.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Rob,
+Thanks for the review.
 
-> Am 08.10.2019 um 22:15 schrieb H. Nikolaus Schaller =
-<hns@goldelico.com>:
->=20
->=20
->> Am 08.10.2019 um 10:00 schrieb Tero Kristo <t-kristo@ti.com>:
->>=20
->> On 07/10/2019 22:24, H. Nikolaus Schaller wrote:
->>> Hi Tero,
->>>> Am 07.10.2019 um 21:18 schrieb Tero Kristo <t-kristo@ti.com>:
->>>>=20
->>>> On 07/10/2019 18:52, Tony Lindgren wrote:
->>>>> Hi,
->>>>> * H. Nikolaus Schaller <hns@goldelico.com> [191005 16:59]:
->>>>> Please try with Tero's current github branch at =
-github.com/t-kristo/linux-pm.git
->>>>> 5.4-rc1-ipc from few days ago, the earlier versions had still =
-issues.
->>>>=20
->>>> Yeah, this one should be fixed now.
->>> Ok! Will try asap.
->>>>=20
->>>>>> * OMAP5 (Pyra): fails to enable the clocks (did work with the =
-previous version)
->>>>>> [  304.140363] clock-controller:clk:0000:0: failed to enable
->>>>>> [  304.147388] PVR_K:(Error): EnableSGXClocks: =
-pm_runtime_get_sync failed (16)
->>>>> Hmm no idea what might be up with this one. Did some clkctrl clock
->>>>> fixes maybe cause a regression here? Tero do you have any ideas?
->>>>=20
->>>> So, this one I am not too sure, I haven't looked at omap5 graphics =
-clocking. I don't think it has anything to do with reset handling =
-though.
->>>>=20
->>>> Is there some simple way to try this out on board; without PVR =
-module that is?
->>> Yes, I have also seen it when just running the commands in the =
-original commit message [1]:
->>> # echo on > $(find /sys -name control | grep \/5600)
->>> # rwmem 0x5600fe00	# OCP Revision
->>> 0x5600fe00 =3D 0x40000000
->>> # echo auto > $(find /sys -name control | grep \/5600)
->>> # rwmem 0x5600fe10
->>> # rwmem 0x56000024
->>> But I have not yet tested with 5.4-rc2, just 5.4-rc1.
->>=20
->> Ok, there is a one liner DTS data fix for this issue, attached.
->=20
-> Yes, have tested and it fixes omap5. I have the 3D demo running again =
-on the Pyra. Yay!
->=20
-> Together with the latest rstcrtl patches, am335x is now better.
-> No omap_reset_deassert: timedout waiting for gfx:0 any more.
->=20
-> But I can't access the sgx registers and get memory faults. Maybe
-> my script has a bug and is trying the wrong address. Have to check
-> with some distance...
+On 10/01/2019 06:09 PM, Rob Herring wrote:
+> On Wed, Sep 18, 2019 at 10:18:20PM -0400, Thara Gopinath wrote:
+>> Introduce a new binding parameter to thermal trip point description
+>> to indicate whether the temperature level specified by the trip point
+>> is monitored for a rise or fall in temperature.
+> 
+> What if it is both?
+> 
+> When do you need this? Seems like you'd always want to monitor both 
+> directions to undo any action done on rising temp. Unless you want a 
+> hysteresis, but this doesn't seem like the best way to implement that.
+> 
 
-Now I have done more tests on am335x. It is not my script but something =
-else.
+The thermal framework is designed in such a manner that I cannot think
+of a use case for both.
+The framework takes care of removing the warming/cooling action when the
+trip point is crossed in the opposite direction. It only needs an
+indication on when to start implementing the
+action.
+For eg. When the temperature crosses/increases above 90 degree, the
+framework will start the cooling action and will continue monitoring
+till the temperature falls below 90 and the cooling action is removed.
+Vice versa when the temperature decreases below say 5 degree, the
+framework should  initiate the warming action and monitor till the
+temperature rises above and remove the warming action.
 
-Trying to read 0x5600fe00 after doing
+So the trip point is really an indication of the temperature crossing a
+threshold in the specified direction.
 
-echo on > /sys/bus/platform/devices/5600fe00.target-module/power/control
+Now this parameter is needed to indicate whether the thermal framework
+has to start implementing the warming/cooling action when the
+temperature  rises above the trip point or falls below the trip point.
 
-gives page faults.
+Till now the framework was always assuming that the cooling action had
+to be implemented when temperature rises above the trip point.
 
-When trying to load the kernel driver, the omap_reset_deassert message =
-has
-gone but the driver does no initialize:
-
-root@letux:~# modprobe pvrsrvkm_omap_am335x_sgx530_125
-[   45.774712] pvrsrvkm_omap_am335x_sgx530_125: module is from the =
-staging directory, the quality is unknown, you have been warned.
-root@letux:~#
-
-Here is the CM/PM register dump after enabling power/control
-
-*** SGX Register Dump ***
-0x44E00900 00000301 CM_GFX_L3_CLKSTCTRL
-0x44E00904 00050000 CM_GFX_GFX_CLKCTRL
-0x44E0090c 00000002 CM_GFX_L4LS_GFX_CLKSTCTR
-0x44E00910 00030000 CM_GFX_MMUCFG_CLKCTRL
-0x44E00914 00030000 CM_GFX_MMUDATA_CLKCTRL
-0x44E0052c 00000000 CM_DPLL.CLKSEL_GFX_FCLK
-0x44E01100 00060047 PM_GFX_PWRSTCTRL
-0x44E01104 00000001 RM_GFX_RSTCTRL
-0x44E01110 00000037 PM_GFX_PWRSTST
-
-BR,
-Nikolaus
-
-
+-- 
+Warm Regards
+Thara
