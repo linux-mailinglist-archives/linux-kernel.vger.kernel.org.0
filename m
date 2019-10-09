@@ -2,208 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56EBED10E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 16:11:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEF0CD10F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 16:13:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731158AbfJIOLR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 10:11:17 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37408 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728019AbfJIOLR (ORCPT
+        id S1731361AbfJIONJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 10:13:09 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:57253 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727769AbfJIONI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 10:11:17 -0400
-Received: by mail-pg1-f194.google.com with SMTP id p1so1498543pgi.4
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 07:11:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+mFbWcHOtLkcPIpKjDWssxMGrTFkKewgx7PhF9+Sg58=;
-        b=VD4XjLevQ4JC+RcPKoUOu8mWdiKJFyeRQJxdx6eRXsI3eVnU8qo17NfexPPIf9BGnv
-         i9PGTrvTsAHBagABhxlJjEOJeGurIVgjJl8bLBZwHCga6Qk2n9JX6t912hLGeIlX3zqx
-         8WlDrndE6qX8GpESc1FpJMAHwC9LkDUuqctmk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+mFbWcHOtLkcPIpKjDWssxMGrTFkKewgx7PhF9+Sg58=;
-        b=fRbALOPbVDCrharCznO0ZDqUBFLNeK4vYtgQse4jBe+3ivzwPazqziAKD5sdd06vfX
-         AzDHNQZn0OEX53XjE8ZJUZbezzfRALqUrXCvQo9l2loQ2dgvh3pGUoxBOnZOri8DXtxk
-         93qcm8gCeud+aMQWtn3vrwY8L9ojo3RpyoQjXF8bLEPuQ3TQPZ8GBqowtzd2cc5JzWbF
-         c1g7K9sDtFm5ky55nqzXQ/wXs+9qtnup86mQZ/AlzCK/H794ZiXIrgoPwalqdhSE9L7/
-         ShvXbDz5gYKlvTY0HaADe94bW93ug5kxhhlvpvvm+4q/tnokO9BFRpz4Ou9awES81cwZ
-         mARw==
-X-Gm-Message-State: APjAAAUop9d5KpO0xuJE3Xs2xrnPXZPTmElNjiEvngB8IJ0/Gl53R2PW
-        cggoPCP+FjKbkngJMTxsQsyzhQ==
-X-Google-Smtp-Source: APXvYqzr1Fxvy4Pq2oGVPPMnE1qU4y1401AWwowkxcxe79xzuV3hRcjLKtFAUILVC9XDDF9tbhoPdA==
-X-Received: by 2002:a17:90a:e001:: with SMTP id u1mr4440003pjy.102.1570630275885;
-        Wed, 09 Oct 2019 07:11:15 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id 1sm3549964pff.39.2019.10.09.07.11.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2019 07:11:15 -0700 (PDT)
-Date:   Wed, 9 Oct 2019 10:11:14 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     "Viktor Rosendahl (BMW)" <viktor.rosendahl@gmail.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 4/4] ftrace: Add an option for tracing console
- latencies
-Message-ID: <20191009141114.GC143258@google.com>
-References: <20191008220824.7911-1-viktor.rosendahl@gmail.com>
- <20191008220824.7911-5-viktor.rosendahl@gmail.com>
+        Wed, 9 Oct 2019 10:13:08 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x99EBPcN006631;
+        Wed, 9 Oct 2019 16:12:57 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=OB/Kw3Xu+9/OMKoLR8YLudGPfymGdZ3on5onGlH4suA=;
+ b=Ci1oD7hg9ivEp3gFRKu+kueOUBRk7BoYYImtpFFbFuLFvf+XWnyyEdQAUuDPF01n62fQ
+ B4yLE0cv+fYP1jxkNCylwPLNLbCQYmsjVIB6b+WtG8OEDdIRQcKQhOjv7XKb+G6YUW1+
+ +QPG9Zng7ccsjGcQ6Q/kdROCLawG8JxOjahLScfiIQ9CHxMz80oTjJwA9IfYs7jnxtJ0
+ lAXc4wZr5IYtCOKNmdCeFAnGCREn4qImagsNAiMg+4UyXpx3kBJEpgS3TVE3PJ/MkC3c
+ Aj9vKDJCez/OpBywgkxMHgKX8WnO+Gena6loTC0GBfCKc2n0GWjmvLBQ4O3SnXNaUKl/ zw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2vegxvxcx6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 09 Oct 2019 16:12:57 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9518A100038;
+        Wed,  9 Oct 2019 16:12:56 +0200 (CEST)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7FB3E21E6AF;
+        Wed,  9 Oct 2019 16:12:56 +0200 (CEST)
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.46) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 9 Oct 2019
+ 16:12:56 +0200
+Received: from localhost (10.48.0.192) by webmail-ga.st.com (10.75.90.48) with
+ Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 9 Oct 2019 16:12:55 +0200
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+To:     <alexandre.torgue@st.com>
+CC:     <robh+dt@kernel.org>, <mcoquelin.stm32@gmail.com>,
+        <mark.rutland@arm.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <fabrice.gasnier@st.com>
+Subject: [PATCH 0/2] Add support for DAC on stm32mp157c-ed1
+Date:   Wed, 9 Oct 2019 16:12:50 +0200
+Message-ID: <1570630372-24579-1-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191008220824.7911-5-viktor.rosendahl@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.48.0.192]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-09_06:2019-10-08,2019-10-09 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 12:08:24AM +0200, Viktor Rosendahl (BMW) wrote:
-> This new trace option "console-latency" will enable the latency
-> tracers to trace the console latencies. Previously this has always been
-> implicitely disabled. I guess this is because they are considered
-> to be well known and unavoidable.
-> 
-> However, for some organizations it may nevertheless be desirable to
-> trace them. Basically, we want to be able to tell that there are
-> latencies in the system under test because someone has incorrectly
-> enabled the serial console.
-> 
-> Signed-off-by: Viktor Rosendahl (BMW) <viktor.rosendahl@gmail.com>
-> ---
->  include/linux/irqflags.h     | 22 ++++++++++++++++++++++
->  kernel/printk/printk.c       |  6 ++++--
->  kernel/trace/trace.h         |  1 +
->  kernel/trace/trace_irqsoff.c | 18 ++++++++++++++++++
->  4 files changed, 45 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/irqflags.h b/include/linux/irqflags.h
-> index 21619c92c377..3de891723331 100644
-> --- a/include/linux/irqflags.h
-> +++ b/include/linux/irqflags.h
-> @@ -13,6 +13,7 @@
->  #define _LINUX_TRACE_IRQFLAGS_H
->  
->  #include <linux/typecheck.h>
-> +#include <linux/types.h>
->  #include <asm/irqflags.h>
->  
->  /* Currently trace_softirqs_on/off is used only by lockdep */
-> @@ -68,9 +69,30 @@ do {						\
->  	defined(CONFIG_PREEMPT_TRACER)
->   extern void stop_critical_timings(void);
->   extern void start_critical_timings(void);
-> + extern bool console_tracing_disabled(void);
-> +
-> +# define console_stop_critical_timings(flag)		\
-> +	do {						\
-> +		typecheck(bool, flag);			\
-> +		flag = console_tracing_disabled();	\
-> +		if (flag)				\
-> +			stop_critical_timings();	\
-> +	} while (0)
-> +
-> +# define console_start_critical_timings(flag)		 \
-> +	do {						 \
-> +		typecheck(bool, flag);			 \
-> +		if (flag)				 \
-> +			start_critical_timings();	 \
-> +	} while (0)
-> +
->  #else
->  # define stop_critical_timings() do { } while (0)
->  # define start_critical_timings() do { } while (0)
-> +# define console_stop_critical_timings(flag)	\
-> +	do { typecheck(bool, flag); } while (0)
-> +# define console_start_critical_timings(flag)	\
-> +	do { typecheck(bool, flag); } while (0)
->  #endif
->  
->  /*
-> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> index ca65327a6de8..f27e96273453 100644
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -2369,6 +2369,7 @@ void console_unlock(void)
->  	static char ext_text[CONSOLE_EXT_LOG_MAX];
->  	static char text[LOG_LINE_MAX + PREFIX_MAX];
->  	unsigned long flags;
-> +	bool cflag;
->  	bool do_cond_resched, retry;
->  
->  	if (console_suspended) {
-> @@ -2469,9 +2470,10 @@ void console_unlock(void)
->  		 */
->  		console_lock_spinning_enable();
->  
-> -		stop_critical_timings();	/* don't trace print latency */
-> +		/* don't trace print latency if it's disabled */
-> +		console_stop_critical_timings(cflag);
->  		call_console_drivers(ext_text, ext_len, text, len);
-> -		start_critical_timings();
-> +		console_start_critical_timings(cflag);
->  
->  		if (console_lock_spinning_disable_and_check()) {
->  			printk_safe_exit_irqrestore(flags);
-> diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-> index 591c7a873235..10d12c8f7f77 100644
-> --- a/kernel/trace/trace.h
-> +++ b/kernel/trace/trace.h
-> @@ -1261,6 +1261,7 @@ extern int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
->  		C(PRINTK_MSGONLY,	"printk-msg-only"),	\
->  		C(CONTEXT_INFO,		"context-info"),   /* Print pid/cpu/time */ \
->  		C(LATENCY_FMT,		"latency-format"),	\
-> +		C(CONSOLE_LATENCY,	"console-latency"),	\
->  		C(RECORD_CMD,		"record-cmd"),		\
->  		C(RECORD_TGID,		"record-tgid"),		\
->  		C(OVERWRITE,		"overwrite"),		\
-> diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
-> index a745b0cee5d3..576e2162114e 100644
-> --- a/kernel/trace/trace_irqsoff.c
-> +++ b/kernel/trace/trace_irqsoff.c
-> @@ -456,6 +456,24 @@ void stop_critical_timings(void)
->  EXPORT_SYMBOL_GPL(stop_critical_timings);
->  NOKPROBE_SYMBOL(stop_critical_timings);
->  
-> +bool console_tracing_disabled(void)
-> +{
-> +	struct trace_array *tr = irqsoff_trace;
-> +	int pc = preempt_count();
-> +
-> +	/*
-> +	 * If tracing is disabled, then the question of whether to trace console
-> +	 * latencies is moot. By always returning false here we save the caller
-> +	 * the calls to start/stop_critical_timings(). These calls would not do
-> +	 * anything anyway.
-> +	 */
+This series adds support for digital-to-analog converter on
+stm32mp157c-ed1 board:
+- define pins that can be used for DAC
+- configure DAC channels to use these
 
-I thought you were going to drop this patch, or at least I had suggested so
-but did not hear a reply from you: https://lkml.org/lkml/2019/10/3/464
+Fabrice Gasnier (2):
+  ARM: dts: stm32: Add DAC pins used on stm32mp157c-ed1
+  ARM: dts: stm32: Add DAC support to stm32mp157c-ed1
 
-Thanks for adding the comments though.
+ arch/arm/boot/dts/stm32mp157-pinctrl.dtsi | 12 ++++++++++++
+ arch/arm/boot/dts/stm32mp157c-ed1.dts     | 13 +++++++++++++
+ 2 files changed, 25 insertions(+)
 
-Steve, what do you think about this patch? I am worried the extra flag may go
-obsolete at some point if the console latencies are fixed and we have yet
-another knob.
+-- 
+2.7.4
 
-thanks,
-
- - Joel
-
-> +	if (!preempt_trace(pc) && !irq_trace())
-> +		return false;
-> +
-> +	return !(tr->trace_flags & TRACE_ITER_CONSOLE_LATENCY);
-> +}
-> +EXPORT_SYMBOL_GPL(console_tracing_disabled);
-> +
->  #ifdef CONFIG_FUNCTION_TRACER
->  static bool function_enabled;
->  
-> -- 
-> 2.17.1
-> 
