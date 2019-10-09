@@ -2,59 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3870D122C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 17:11:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2FD0D122E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 17:12:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731642AbfJIPLh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 11:11:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54260 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729865AbfJIPLh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 11:11:37 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B9CDCAC93;
-        Wed,  9 Oct 2019 15:11:35 +0000 (UTC)
-From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
-To:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: fix kconfig dependency warning related to 53C700_LE_ON_BE
-Date:   Wed,  9 Oct 2019 17:11:28 +0200
-Message-Id: <20191009151128.32411-1-tbogendoerfer@suse.de>
-X-Mailer: git-send-email 2.16.4
+        id S1731658AbfJIPMB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 11:12:01 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:33853 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729644AbfJIPMA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 11:12:00 -0400
+Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1iIDd6-00021H-PU; Wed, 09 Oct 2019 16:11:56 +0100
+Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.2)
+        (envelope-from <ben@rainbowdash.codethink.co.uk>)
+        id 1iIDd6-0007EY-AD; Wed, 09 Oct 2019 16:11:56 +0100
+From:   Ben Dooks <ben.dooks@codethink.co.uk>
+To:     linux-kernel@lists.codethink.co.uk
+Cc:     Ben Dooks <ben.dooks@codethink.co.uk>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] mm: include <linux/huge_mm.h> for is_vma_temporary_stack
+Date:   Wed,  9 Oct 2019 16:11:55 +0100
+Message-Id: <20191009151155.27763-1-ben.dooks@codethink.co.uk>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When building a kernel with SCSI_SNI_53C710 enabled, Kconfig warns:
+Include <linux/huge_mm.h> for the definition of
+is_vma_temporary_stack to fix the following
+sparse warning:
 
-WARNING: unmet direct dependencies detected for 53C700_LE_ON_BE
-  Depends on [n]: SCSI_LOWLEVEL [=y] && SCSI [=y] && SCSI_LASI700 [=n]
-  Selected by [y]:
-  - SCSI_SNI_53C710 [=y] && SCSI_LOWLEVEL [=y] && SNI_RM [=y] && SCSI [=y]
+mm/rmap.c:1673:6: warning: symbol 'is_vma_temporary_stack' was not declared. Should it be static?
 
-Add the missing depends SCSI_SNI_53C710 to 53C700_LE_ON_BE to fix it.
-
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 ---
- drivers/scsi/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Cc: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org
+---
+ mm/rmap.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-index 1b92f3c19ff3..90cf4691b8c3 100644
---- a/drivers/scsi/Kconfig
-+++ b/drivers/scsi/Kconfig
-@@ -898,7 +898,7 @@ config SCSI_SNI_53C710
- 
- config 53C700_LE_ON_BE
- 	bool
--	depends on SCSI_LASI700
-+	depends on SCSI_LASI700 || SCSI_SNI_53C710
- 	default y
- 
- config SCSI_STEX
+diff --git a/mm/rmap.c b/mm/rmap.c
+index d9a23bb773bf..0c7b2a9400d4 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -61,6 +61,7 @@
+ #include <linux/mmu_notifier.h>
+ #include <linux/migrate.h>
+ #include <linux/hugetlb.h>
++#include <linux/huge_mm.h>
+ #include <linux/backing-dev.h>
+ #include <linux/page_idle.h>
+ #include <linux/memremap.h>
 -- 
-2.16.4
+2.23.0
 
