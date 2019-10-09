@@ -2,120 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FD61D0EEA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 14:34:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C61A1D0ED2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 14:32:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731278AbfJIMe2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 08:34:28 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43834 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731229AbfJIMe2 (ORCPT
+        id S1731178AbfJIMcn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 08:32:43 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:43798 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727029AbfJIMcn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 08:34:28 -0400
-Received: by mail-wr1-f66.google.com with SMTP id j18so2732000wrq.10;
-        Wed, 09 Oct 2019 05:34:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=M4DGzZVz3C9CsIT3+orcem5mC7xRelRKri3ygcgFcYg=;
-        b=Z6Vl8jzwQZv1XXQ8Mh9He/cTpu97fQsfQ1cBmapxrThVkgpqVmy7iiglrNrsC5cwvA
-         6IBWyUGhvzVd5dfOS6+lL1zTXjc4zliF5u8ROdz7wF+d4iNr9lc+3q+kGVj91ZHEOJCU
-         KWEBZTD6ETHecKoRnKjnjDsrMTsfHZXE4IasyxVGusXKO6jWu7i2N62HMTD3W1mTxpUt
-         aIEBA3zVKnhpy140JOHqe+f8Tq0cE/s4Enn5W0O54FTnsp1Jvvw1Q5tB7FkVnOsNisXr
-         7mme3cylQ/y7LAc4TxD/ZIps/GWHqcE/hGZ/tggDg4aWu/kUBfnDGjUZtYpFbe2CjSc6
-         Y0mQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=M4DGzZVz3C9CsIT3+orcem5mC7xRelRKri3ygcgFcYg=;
-        b=GxkxmNJYLoEOrb1HJ7jBuSDj1avHb8+wALE6IOuaxHu+zPyB1GWQk7Rf94X/KVzeTU
-         zWdBI3bC2Urlbnq/2dbtEMQeG5U6yWPfj8ICQBf3XRBwyfnKCjRXv0bVLtReYELIxX+x
-         0+nGSIEFHr2I9iWy+k4pUyCjUc49ffxLqOwmp5p7nRDPX0vY6gTGHA6UKzl+jWu1moXH
-         IRxnavb+4Q/NYUMtgOthDRutfsl8oIkvp3jp55rOJa6LEjS7U4nflh8b0u61D+G3uBdG
-         oIJWMKKs7hhN9QoJMM01YNozxseUYftnz6NGdx/t1ThbclRxCmDVAgMm5WxFgETeYAJH
-         xhcw==
-X-Gm-Message-State: APjAAAU8ELRbfMtD6aNa2FYUNADY6lvd7PYAEd20ZVSldr5JURAbmcKs
-        yu9uRJGM5BLE/XdLFhOAbCY=
-X-Google-Smtp-Source: APXvYqwApF/DZjfteDasDL2Kkb76g7OqjJVm+JG00dcX3k7i+hz7lkgviUk2SMygweyq2OJ7IZaCyQ==
-X-Received: by 2002:adf:e284:: with SMTP id v4mr2653792wri.21.1570624466138;
-        Wed, 09 Oct 2019 05:34:26 -0700 (PDT)
-Received: from localhost ([51.15.41.238])
-        by smtp.gmail.com with ESMTPSA id t13sm4438023wra.70.2019.10.09.05.34.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2019 05:34:25 -0700 (PDT)
-Date:   Wed, 9 Oct 2019 13:34:23 +0100
-From:   Stefan Hajnoczi <stefanha@gmail.com>
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     netdev@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
-        linux-hyperv@vger.kernel.org,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        kvm@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
-        Dexuan Cui <decui@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jorgen Hansen <jhansen@vmware.com>
-Subject: Re: [RFC PATCH 08/13] vsock: move vsock_insert_unbound() in the
- vsock_create()
-Message-ID: <20191009123423.GI5747@stefanha-x1.localdomain>
-References: <20190927112703.17745-1-sgarzare@redhat.com>
- <20190927112703.17745-9-sgarzare@redhat.com>
+        Wed, 9 Oct 2019 08:32:43 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x99CWbmh083932;
+        Wed, 9 Oct 2019 07:32:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1570624357;
+        bh=XaZjzqsxGyot7zxeFeRURYCsWaQ2BuhASHwvEDXgv8Y=;
+        h=From:To:CC:Subject:Date;
+        b=k015dyKKFvbVmTk0K9d0NrbKsx1WVw34tsUrBKEKtljCmqHB2zsH9fmN/nCqngx1M
+         OTCOg2JJls88z0JpUms3R6866jQ72687VyHe+bUfWkxJr+jNtUohj4skBgJhv+hrAf
+         UJjFV85+74V2aQigAux/nf/N9koyWFCPyeAie2bU=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x99CWb6v090457
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 9 Oct 2019 07:32:37 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 9 Oct
+ 2019 07:32:34 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 9 Oct 2019 07:32:37 -0500
+Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x99CWbNP081004;
+        Wed, 9 Oct 2019 07:32:37 -0500
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+CC:     Jacopo Mondi <jacopo@jmondi.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Benoit Parrot <bparrot@ti.com>
+Subject: [Patch v4 0/3] media: ov5640: updates
+Date:   Wed, 9 Oct 2019 07:35:07 -0500
+Message-ID: <20191009123510.19106-1-bparrot@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="+PbGPm1eXpwOoWkI"
-Content-Disposition: inline
-In-Reply-To: <20190927112703.17745-9-sgarzare@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch series is a collection of patches we have been carrying for a
+while.
 
---+PbGPm1eXpwOoWkI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+First, it adds support for PIXEL_RATE control which is used by some
+CSI2 receiver driver to properly set-up their DPHY.
 
-On Fri, Sep 27, 2019 at 01:26:58PM +0200, Stefano Garzarella wrote:
-> vsock_insert_unbound() was called only when 'sock' parameter of
-> __vsock_create() was not null. This only happened when
-> __vsock_create() was called by vsock_create().
->=20
-> In order to simplify the multi-transports support, this patch
-> moves vsock_insert_unbound() at the end of vsock_create().
->=20
-> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> ---
->  net/vmw_vsock/af_vsock.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
+Then we fix an issue related to having extra sensor enable/disable in
+the register array for the 1920x1080 mode.
 
-Maybe transports shouldn't call __vsock_create() directly.  They always
-pass NULL as the parent socket, so we could have a more specific
-function that transports call without a parent sock argument.  This
-would eliminate any concern over moving vsock_insert_unbound() out of
-this function.  In any case, I've checked the code and this patch is
-correct.
+Finally we restrict the largest resolution which should only be
+available at the lowest FPS.
 
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+Changes since v3:
+- Fix a potential early pointer dereference in init_controls.
+  Reported by Sakari.
 
---+PbGPm1eXpwOoWkI
-Content-Type: application/pgp-signature; name="signature.asc"
+Changes since v2:
+- Addressed comment from Sakari and Jacopo.
+- Make use of the calc_pixel_rate in set_mode also
+- Cleaned up the pixel_rate ctrl struct
+- Fix the fps condition checking for the max resolution case
 
------BEGIN PGP SIGNATURE-----
+Changes since v1:
+- Addressed comment from Sakari.
+  added a function to calculate the pixel rate and remove the need to
+  cache its value
 
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl2d088ACgkQnKSrs4Gr
-c8jGUgf/flGT/To2png0jPgQV5oe1jDDk+0D39ubcCGjdMLuOwLdwey4BUbOWK3I
-KFEzw7U6CmXNnW15vqqckacUNgL6OXgHKrOxKpiwYvonz2/C0JNLMaTIbsSfcR8u
-sXWnnoihq8NTRIJhSxHFaWgqBLWFW8G3sAfFA2oCIiNI8HQhewIy0Sfh2vfuyypU
-SjCHAwlodeIMuEmeIlTUEd4RKWqZ3dDAOs5xnl87OWUdzTtgmKEccQLZSvJ/t2Qi
-QVVO07S3r7ASe2bpjmTgQuV1ZZ3iz/jyFOYAD3WmE6D6a+afcU+4gUTa9Tbu1TL4
-en7c7jB5XF98CqjwO5kjMLozykqVWg==
-=Fgki
------END PGP SIGNATURE-----
 
---+PbGPm1eXpwOoWkI--
+Benoit Parrot (3):
+  media: ov5640: add PIXEL_RATE control
+  media: ov5640: Fix 1920x1080 mode to remove extra enable/disable
+  media: ov5640: Make 2592x1944 mode only available at 15 fps
+
+ drivers/media/i2c/ov5640.c | 33 +++++++++++++++++++++++++++++----
+ 1 file changed, 29 insertions(+), 4 deletions(-)
+
+-- 
+2.17.1
+
