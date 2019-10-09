@@ -2,44 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14548D156C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:22:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20EC6D156F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:22:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731913AbfJIRWG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 13:22:06 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44016 "EHLO
+        id S1731928AbfJIRWQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 13:22:16 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44320 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731173AbfJIRWF (ORCPT
+        with ESMTP id S1731173AbfJIRWQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 13:22:05 -0400
+        Wed, 9 Oct 2019 13:22:16 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=TKg7v6WJnfalf3/eDZyUsArggkC5Wu/TWTDuseQcCOg=; b=iZcejeOlvIs8
-        AvpDHdDwFddODe7PpldqSNZhqCbEV0+F2Kc1ttGpzZFn63sOlGhxe1d314M8htdGp0KjV3NE+A1Ja
-        ato26IZALx88FURRdVOJBj81FuB99Nx/7FFM+GYZkys4V3arLJg6zw3fFqgbdODaTrXgwjN7YfOqH
-        VFlik=;
+        List-Archive; bh=AgWnjlZAFUrv+6CY3vyh0hr4coqm0wM6sLuijPqMvKY=; b=naffpdgtUjh+
+        fEbhr+ml04umJPZmHH3mWIm8pScv9NwFg6o2FeCt9/KcVVhEdRIF6fvObWddvmfd3SUAm4ZdZfrGI
+        ntgdgr8ITaq8xgtzZmJpGgTDy6271p1cF+79Os0xhT2Eus0rNpKFhgFOh5Hvs1kK268R/VWyF5b8a
+        MSDcc=;
 Received: from 188.31.199.195.threembb.co.uk ([188.31.199.195] helo=fitzroy.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1iIFer-0005Js-J7; Wed, 09 Oct 2019 17:21:54 +0000
+        id 1iIFf5-0005KQ-4t; Wed, 09 Oct 2019 17:22:07 +0000
 Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 3C7EBD03ED3; Wed,  9 Oct 2019 18:21:48 +0100 (BST)
+        id B36F7D03ED4; Wed,  9 Oct 2019 18:22:00 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Daniel Baluta <daniel.baluta@nxp.com>
-Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        kuninori.morimoto.gx@renesas.com, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        perex@perex.cz, tiwai@suse.com
-Subject: Applied "ASoC: simple_card_utils.h: Add missing include" to the asoc tree
-In-Reply-To: <20191009153615.32105-2-daniel.baluta@nxp.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     alexandre.torgue@st.com, broonie@kernel.org, lgirdwood@gmail.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Mark Brown <broonie@kernel.org>, mcoquelin.stm32@gmail.com
+Subject: Applied "regulator: stm32-vrefbuf: use devm_platform_ioremap_resource() to simplify code" to the regulator tree
+In-Reply-To: <20191009150138.11640-1-yuehaibing@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191009172148.3C7EBD03ED3@fitzroy.sirena.org.uk>
-Date:   Wed,  9 Oct 2019 18:21:48 +0100 (BST)
+Message-Id: <20191009172200.B36F7D03ED4@fitzroy.sirena.org.uk>
+Date:   Wed,  9 Oct 2019 18:22:00 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -47,11 +47,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: simple_card_utils.h: Add missing include
+   regulator: stm32-vrefbuf: use devm_platform_ioremap_resource() to simplify code
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.5
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.5
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -72,46 +72,44 @@ to this mail.
 Thanks,
 Mark
 
-From 4bbee14d8e5487e3d2662138e3767cf4678cdf57 Mon Sep 17 00:00:00 2001
-From: Daniel Baluta <daniel.baluta@nxp.com>
-Date: Wed, 9 Oct 2019 18:36:14 +0300
-Subject: [PATCH] ASoC: simple_card_utils.h: Add missing include
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From 73511a90b74c9cfb6509dae63ec4db2d96b7b203 Mon Sep 17 00:00:00 2001
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 9 Oct 2019 23:01:38 +0800
+Subject: [PATCH] regulator: stm32-vrefbuf: use
+ devm_platform_ioremap_resource() to simplify code
 
-When debug is enabled compiler cannot find the definition of
-clk_get_rate resulting in the following error:
+Use devm_platform_ioremap_resource() to simplify the code a bit.
+This is detected by coccinelle.
 
-./include/sound/simple_card_utils.h:168:40: note: previous implicit
-declaration of ‘clk_get_rate’ was here
-   dev_dbg(dev, "%s clk %luHz\n", name, clk_get_rate(dai->clk));
-./include/sound/simple_card_utils.h:168:3: note: in expansion of macro
-‘dev_dbg’
-   dev_dbg(dev, "%s clk %luHz\n", name, clk_get_rate(dai->clk));
-
-Fix this by including the appropriate header.
-
-Fixes: 0580dde59438686d ("ASoC: simple-card-utils: add asoc_simple_debug_info()")
-Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
-Link: https://lore.kernel.org/r/20191009153615.32105-2-daniel.baluta@nxp.com
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Link: https://lore.kernel.org/r/20191009150138.11640-1-yuehaibing@huawei.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- include/sound/simple_card_utils.h | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/regulator/stm32-vrefbuf.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/include/sound/simple_card_utils.h b/include/sound/simple_card_utils.h
-index 985a5f583de4..293ff8115960 100644
---- a/include/sound/simple_card_utils.h
-+++ b/include/sound/simple_card_utils.h
-@@ -8,6 +8,7 @@
- #ifndef __SIMPLE_CARD_UTILS_H
- #define __SIMPLE_CARD_UTILS_H
+diff --git a/drivers/regulator/stm32-vrefbuf.c b/drivers/regulator/stm32-vrefbuf.c
+index 8919a5130bec..bdfaf7edb75a 100644
+--- a/drivers/regulator/stm32-vrefbuf.c
++++ b/drivers/regulator/stm32-vrefbuf.c
+@@ -181,7 +181,6 @@ static const struct regulator_desc stm32_vrefbuf_regu = {
  
-+#include <linux/clk.h>
- #include <sound/soc.h>
+ static int stm32_vrefbuf_probe(struct platform_device *pdev)
+ {
+-	struct resource *res;
+ 	struct stm32_vrefbuf *priv;
+ 	struct regulator_config config = { };
+ 	struct regulator_dev *rdev;
+@@ -192,8 +191,7 @@ static int stm32_vrefbuf_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	priv->dev = &pdev->dev;
  
- #define asoc_simple_init_hp(card, sjack, prefix) \
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	priv->base = devm_ioremap_resource(&pdev->dev, res);
++	priv->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->base))
+ 		return PTR_ERR(priv->base);
+ 
 -- 
 2.20.1
 
