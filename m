@@ -2,146 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C7E3D136B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 18:01:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BBFAD137A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 18:02:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731673AbfJIQBG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 12:01:06 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34852 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731375AbfJIQBF (ORCPT
+        id S1731722AbfJIQCE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 12:02:04 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:42125 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731706AbfJIQCE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 12:01:05 -0400
-Received: by mail-wr1-f65.google.com with SMTP id v8so3694243wrt.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 09:01:03 -0700 (PDT)
+        Wed, 9 Oct 2019 12:02:04 -0400
+Received: by mail-lj1-f196.google.com with SMTP id y23so3021331lje.9
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 09:02:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=bDqDxoFy92WA4ghkXv1lx9zPC55ecQKMRynuRGpc+u0=;
-        b=HaBfOFrHa9oyt36nChd39PrJeZUuOjiwkLqEufxO0FDeZaAM8pWk3w4qC1FGJOimkU
-         6wWBfq2FQ/2E8UwhSjPpYWlZ+oBCdv6+FSOJIHJg4+UDLU1RVGiSXws/q5x6ExjaEtfU
-         zY6UQfEr64W+A634cyy+tMjAFKqRE7kRsq7zQNtKYkuOe0Fk/sI/R66Q9wnewpNnPv5i
-         YFish3WqSGpPEY6BlBJU4lqY8vkSGrKW0vVc6bHEhhpKx/OJhUGrnSdSK/7dpNia+Piu
-         RBrnot2SiL8iXKl9WrBpL0hG05qmasETpP59f8VRzgfBv2358jKef340rHlceZw20cVW
-         r4QQ==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=17Y7y039jET7/TQrdZoED93OrqqyMRwnQxJ9vtZBzO8=;
+        b=c9Atcn/EI08Kf2cBMOvlLq7SNQ707PZ6EdVeCazR/Dm8zc5uaCAs3UNj/GYvUqYqzJ
+         aMXdTfRdgQTYmaPwcj4QiAuKEHKcxMD9ezuazTOGBACs29dqmx3rbJGAvaRpsxX26MTQ
+         fdzuLGgOcX6EDmt6y6XBhXYz14ayEhIMnEfqU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bDqDxoFy92WA4ghkXv1lx9zPC55ecQKMRynuRGpc+u0=;
-        b=k7w1NOh+Pe8QGO1V8BPo7AJkCT1/0SH9yx4UIw2QHyOAXutJBoMEHKnQNhs9p1zKdo
-         frlSJ9TRbqNbF2tJfA1n8fjUrPOYCBcloA4Oz34Z0IdM0b+LAeY0Y5dWzTr88HLrwQrz
-         /3CwlSgzFepJExeKhygzJ9vs6JeoJAd9HOUrVrGtqUeqE+S0KUgEqPErRSuOPUD53uRf
-         Z/VIi3UPdT1QJcqyTHGfY7HhGoonNCmHkotXtV+ZFxaR8QuC4GxlGNJ4FxfdTK2sbU2o
-         S7u1hSVx4QEx4JxzcqBA112qtZLSvQ+GUJBDMBKzSyU8Zf+eOszL9aCKzSImDTJi9PiF
-         IONg==
-X-Gm-Message-State: APjAAAWsMZPTbmtMONVvzPMxpQubxptFb51b7JF3jo26S3Z79wO1lbkn
-        OczAoMuU9yl2vAWgpAjc6RwCtA==
-X-Google-Smtp-Source: APXvYqzS4G4hCzugWk9CK8hEXOZqPw/jgCNwNE5AD8pAOVurhhqma+ZSJFGExlpy2Hxm0bdJ4iPIUw==
-X-Received: by 2002:adf:8123:: with SMTP id 32mr3763237wrm.300.1570636862592;
-        Wed, 09 Oct 2019 09:01:02 -0700 (PDT)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id q124sm3600028wma.5.2019.10.09.09.01.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Oct 2019 09:01:01 -0700 (PDT)
-Subject: Re: [alsa-devel] [PATCH v2 3/5] ASoC: core: add support to
- snd_soc_dai_get_sdw_stream()
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>
-Cc:     devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
-        bgoswami@codeaurora.org, linux-kernel@vger.kernel.org,
-        plai@codeaurora.org, lgirdwood@gmail.com, robh+dt@kernel.org,
-        spapothi@codeaurora.org
-References: <20190813083550.5877-1-srinivas.kandagatla@linaro.org>
- <20190813083550.5877-4-srinivas.kandagatla@linaro.org>
- <ba88e0f9-ae7d-c26e-d2dc-83bf910c2c01@linux.intel.com>
- <c2eecd44-f06a-7287-2862-0382bf697f8d@linaro.org>
- <d2b7773b-d52a-7769-aa5b-ef8c8845d447@linux.intel.com>
- <d7c1fdb2-602f-ecb1-9b32-91b893e7f408@linaro.org>
- <f0228cb4-0a6f-17f3-fe03-9be7f5f2e59d@linux.intel.com>
- <20190813191827.GI5093@sirena.co.uk>
- <cc360858-571a-6a46-1789-1020bcbe4bca@linux.intel.com>
- <20190813195804.GL5093@sirena.co.uk>
- <20190814041142.GU12733@vkoul-mobl.Dlink>
- <99d35a9d-cbd8-f0da-4701-92ef650afe5a@linux.intel.com>
- <5e08f822-3507-6c69-5d83-4ce2a9f5c04f@linaro.org>
- <53bb3105-8e85-a972-fce8-a7911ae4d461@linux.intel.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <95870089-25da-11ea-19fd-0504daa98994@linaro.org>
-Date:   Wed, 9 Oct 2019 17:01:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=17Y7y039jET7/TQrdZoED93OrqqyMRwnQxJ9vtZBzO8=;
+        b=O/ADUof4HfZeySOGs2cZyCQewYG7kmxlVGBreN4Vh3PvzTrViLfkHAZEPGuQngVY+e
+         rm8ApNQP21VHYD2+I4lN0pFCNO7xKekXo4k/vy7DRG8/uX8c50mceXjHp9m/+YOoetke
+         6fwTd1kSHq+dQaTC9fSQs7yodOGDn3+eHs4twIMvUR6yxqiMajr4M2vZAZoay4ZN7rZc
+         zXoS2rp/ZiJF2QkKMlgCWtRfkH3bY3ILMzWprD2gXWtVdJ2XlEr7HqEwjBVqBUV7Dzun
+         f2qufQIr4umw7lpKXpGUmfX7J4ZGxU5zkpKNV/8hFOCfUmUc7lzh19GRGfW3pSJXph9F
+         dsAg==
+X-Gm-Message-State: APjAAAWawGTxHD+LmPdn4Wmmarss8qTpg4EUQB2cId9GMQzAaAff7VgR
+        rCWueRg1zcGqy7MzlF4YgcoN3rf8iSM=
+X-Google-Smtp-Source: APXvYqwnworJRsEBTzFkOkGx/Hj9CljvEwQ/b7Wc9X4koqeEUbW2CNV6wZbJvz/M1aQ0ghMBUU6XnA==
+X-Received: by 2002:a2e:9bd2:: with SMTP id w18mr2861800ljj.140.1570636921923;
+        Wed, 09 Oct 2019 09:02:01 -0700 (PDT)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id t22sm588882lfg.91.2019.10.09.09.02.00
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Oct 2019 09:02:00 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id l21so3063615lje.4
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 09:02:00 -0700 (PDT)
+X-Received: by 2002:a2e:a41a:: with SMTP id p26mr2740656ljn.15.1570636919621;
+ Wed, 09 Oct 2019 09:01:59 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <53bb3105-8e85-a972-fce8-a7911ae4d461@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191008234505.222991-1-swboyd@chromium.org> <20191008235504.GN63675@minitux>
+ <5d9d3ed4.1c69fb81.5a936.2b18@mx.google.com>
+In-Reply-To: <5d9d3ed4.1c69fb81.5a936.2b18@mx.google.com>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Wed, 9 Oct 2019 09:01:22 -0700
+X-Gmail-Original-Message-ID: <CAE=gft6SmWH3-Td-mZZPn-3=EzwexEdYTR00z5NCP-X1sspihA@mail.gmail.com>
+Message-ID: <CAE=gft6SmWH3-Td-mZZPn-3=EzwexEdYTR00z5NCP-X1sspihA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] Avoid regmap debugfs collisions in qcom llcc driver
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Oct 8, 2019 at 6:58 PM Stephen Boyd <swboyd@chromium.org> wrote:
+>
+> Quoting Bjorn Andersson (2019-10-08 16:55:04)
+> > On Tue 08 Oct 16:45 PDT 2019, Stephen Boyd wrote:
+> > >     @@ drivers/soc/qcom/llcc-slice.c
+> > >
+> > >       static struct llcc_drv_data *drv_data = (void *) -EPROBE_DEFER;
+> > >
+> > >     --static const struct regmap_config llcc_regmap_config = {
+> > >     +-static struct regmap_config llcc_regmap_config = {
+> > >      -        .reg_bits = 32,
+> > >      -        .reg_stride = 4,
+> > >      -        .val_bits = 32,
+> > >     @@ drivers/soc/qcom/llcc-slice.c: static struct regmap *qcom_llcc_init_mmio(struct
+> > >       {
+> > >               struct resource *res;
+> > >               void __iomem *base;
+> > >     -+        static struct regmap_config llcc_regmap_config = {
+> > >     ++        struct regmap_config llcc_regmap_config = {
+> >
+> > Now that this isn't static I like the end result better. Not sure about
+> > the need for splitting it in two patches, but if Evan is happy I'll take
+> > it.
+> >
+>
+> Well I split it into bug fix and micro-optimization so backport choices
+> can be made. But yeah, I hope Evan is happy enough to provide a
+> reviewed-by tag!
 
+It's definitely better without the static local since it no longer has
+the cognitive trap, but I still don't really get why we're messing
+with the global v. local aspect of it. We're now inconsistent with
+every other caller of this function, and for what exactly? We've
+traded some data space for a call to memset() and some instructions. I
+would have thought anecdotally that memory was the cheaper thing (ie
+cpu speeds stopped increasing awhile ago, but memory is still getting
+cheaper).
 
-On 09/10/2019 15:29, Pierre-Louis Bossart wrote:
-> 
-> 
-> On 10/9/19 3:32 AM, Srinivas Kandagatla wrote:
->> Hi Pierre,
->>
->> On 14/08/2019 15:09, Pierre-Louis Bossart wrote:
->>>
->>>
->>> On 8/13/19 11:11 PM, Vinod Koul wrote:
->>>> On 13-08-19, 20:58, Mark Brown wrote:
->>>>> On Tue, Aug 13, 2019 at 02:38:53PM -0500, Pierre-Louis Bossart wrote:
->>>>>
->>>>>> Indeed. I don't have a full understanding of that part to be 
->>>>>> honest, nor why
->>>>>> we need something SoundWire-specific. We already abused the 
->>>>>> set_tdm_slot API
->>>>>> to store an HDaudio stream, now we have a rather confusing stream
->>>>>> information for SoundWire and I have about 3 other 'stream' 
->>>>>> contexts in
->>>>>> SOF... I am still doing basic cleanups but this has been on my 
->>>>>> radar for a
->>>>>> while.
->>>>>
->>>>> There is something to be said for not abusing the TDM slot API if 
->>>>> it can
->>>>> make things clearer by using bus-idiomatic mechanisms, but it does 
->>>>> mean
->>>>> everything needs to know about each individual bus :/ .
->>>>
->>>> Here ASoC doesn't need to know about sdw bus. As Srini explained, this
->>>> helps in the case for him to get the stream context and set the stream
->>>> context from the machine driver.
->>>>
->>>> Nothing else is expected to be done from this API. We already do a set
->>>> using snd_soc_dai_set_sdw_stream(). Here we add the 
->>>> snd_soc_dai_get_sdw_stream() to query
->>>
->>> I didn't see a call to snd_soc_dai_set_sdw_stream() in Srini's code?
->>
->>
->> There is a snd_soc_dai_get_sdw_stream() to get stream context and we 
->> add slave streams(amplifier in this case) to that context using 
->> sdw_stream_add_slave() in machine driver[1].
->>
->> Without this helper there is no way to link slave streams to stream 
->> context in non dai based setup like smart speaker amplifiers.
->>
->> Currently this driver is blocked on this patch, If you think there are 
->> other ways to do this, am happy to try them out.
-> 
-> So to be clear, you are *not* using snd_soc_dai_set_sdw_stream?
-Yes, am not using snd_soc_dai_set_sdw_stream().
-
---srini
-> 
-> 
-> 
-> 
-> 
+But either way it's correct, so really it's fine if you ignore me :)
+-Evan
