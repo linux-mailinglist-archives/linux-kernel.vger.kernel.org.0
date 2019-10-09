@@ -2,111 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3504D04B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 02:18:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D891D04C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 02:29:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730024AbfJIASy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 8 Oct 2019 20:18:54 -0400
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:46701 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727051AbfJIASy (ORCPT
+        id S1729907AbfJIA3O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 8 Oct 2019 20:29:14 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:35372 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727051AbfJIA3N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Oct 2019 20:18:54 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 8CC6921AD0;
-        Tue,  8 Oct 2019 20:18:53 -0400 (EDT)
-Received: from imap2 ([10.202.2.52])
-  by compute4.internal (MEProxy); Tue, 08 Oct 2019 20:18:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm3; bh=XnTGS6EOP6i6blqf35sCohVJUtOChfq
-        97RDyhHyjVP8=; b=k334bLsmf3nZcFTvoGADphWQLRg4YnOvWJcbv5/ViJdoR5k
-        c1vZk4WDtE3au4qSQ0bOQ7e2Oty3Gf12e9bFL798kweYwz3j00GawU37okQus2A4
-        FX0Fd5/ma+LEOYhFUkqkepZJdo3U8l2Fmn3pEyzFuJ34CpuI9s1kiQAqgqdoLGa7
-        Y3dU3RCBzuD7xmpE6Llh4E5BWDdQ3MhdOBuFnm0HdNY1q5RyXWqdNeGS3eu75mOR
-        XZZcLH723N3nYyapxZrUSLmlWXuPNLibwbJts7dstq84UKq8G4bm73TrMgFmbNKV
-        FRmaOA4YWSehIrE3liubKN7BLbJeswolf1747vA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=XnTGS6
-        EOP6i6blqf35sCohVJUtOChfq97RDyhHyjVP8=; b=fe9QewgoY1CdSMOVn9Iy9b
-        LxP6J5zHQVSHDbreULfK3aPNsgZukHLiryHHzePS46MvJm5F7HguOYgUXsqoVtgx
-        pQiIn0FUjv2zdpGOSjtZHDsXbDReH5Ju4RYWZh4WynM2E71SVo1+FheCULQHmF0h
-        /83qARjQIWSojk4KS/eilFouppv6PcOky+PFbvFeggp10Y9ZEzm145v6cs50f2SF
-        r3w4XIujwU4WziApbkNsyGnTSvE6xJ1BDLMR2pPCu33XolvEGDX9QT8/I/OrBVha
-        uLFVX+1Bg9GEOHNDB8LOlGgpuCztDq2lQQ840AYt2neh/Qs2jT86a1WINZon2YUg
-        ==
-X-ME-Sender: <xms:bCedXdsdrnUsQjR1kKY8PimpNyMZ-l0OZRlXHuS8hKOBk7_9GkgfNw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedriedtgdefudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvufgtsehttdertderreejnecuhfhrohhmpedftehnughr
-    vgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghnughrvgifsegrjhdrihgurdgruhenucevlhhushhtvghr
-    ufhiiigvpedt
-X-ME-Proxy: <xmx:bCedXZy8sk7W2oCcCyBGnJ3neOvOzOEhSK1JjyFMbK42f1-qL_HStQ>
-    <xmx:bCedXclk8DW4tIKPTG08rp41zNiKoWePrZVjxhUUBC_lwxT0Kx7WTw>
-    <xmx:bCedXXYpazfgIPIC5F0VUy_2SQEanfFaMkOMb5PsYR2ukBQwzhrzxA>
-    <xmx:bSedXVLjDUOgh3UnCeQ3W-e1L40xAuN2IAN7SWk4ATyOiR3E-szLKQ>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 3EF58E00A5; Tue,  8 Oct 2019 20:18:52 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.7-360-g7dda896-fmstable-20191004v2
-Mime-Version: 1.0
-Message-Id: <01c7cafe-8b41-4099-af29-3593e27a1d20@www.fastmail.com>
-In-Reply-To: <CACPK8XcWLCGupAF1EX1LB6A=mQY0s9kjgagr3EKEKJhnbt+j0g@mail.gmail.com>
-References: <20191008115143.14149-1-andrew@aj.id.au>
- <20191008115143.14149-3-andrew@aj.id.au>
- <CACPK8XcWLCGupAF1EX1LB6A=mQY0s9kjgagr3EKEKJhnbt+j0g@mail.gmail.com>
-Date:   Wed, 09 Oct 2019 10:49:45 +1030
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Joel Stanley" <joel@jms.id.au>
-Cc:     netdev <netdev@vger.kernel.org>,
-        "David Miller" <davem@davemloft.net>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        "Benjamin Herrenschmidt" <benh@kernel.crashing.org>
-Subject: =?UTF-8?Q?Re:_[PATCH_2/3]_dt-bindings:_net:_ftgmac100:_Describe_clock_pr?=
- =?UTF-8?Q?operties?=
-Content-Type: text/plain
+        Tue, 8 Oct 2019 20:29:13 -0400
+Received: by mail-qk1-f196.google.com with SMTP id w2so651463qkf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2019 17:29:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=vMfnOWFS7hoWopzdoB/oP+pX4lMqDN2ogIeLAMjJGpM=;
+        b=If0hR/JnkxYsI1Z4+aQDuJsc7pPcOuPTjovsySgEzTR4B3O0xKQ4yCLqc9vEg0ccJr
+         LQLZDlOGBkfL8d+Z4M/3P+eYUbNtvcwt3RItgkkuO4WasVlNdGJDzz4Ncb7/mFshlRxc
+         DBYrZvDlXLHlPjKoC99DM+anc75DH1mDFD7vBfBxRmr1dfBsFr/yBN9Ma2iz/v7sLofo
+         AMgLRfmhjmasCGAWKC92AGecDYvl8hGeT22WF6b9rT0EI/eDlK6YKUhaHR1/WGC7mUuk
+         fRd5oxpVFaDn2MmgdaPP8r8GeOzRd8za+Pk29f6t1RtgK2GMPl4IL9BZOx1zSxD89NRn
+         3JMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=vMfnOWFS7hoWopzdoB/oP+pX4lMqDN2ogIeLAMjJGpM=;
+        b=jp8lNjJWs8HBMFVx6v0tCDWqDsySRFCMtn/dYUCLGtBgxhYnFdSYNlRWV3Dqjat2wp
+         KWLyXQu6zJhsP1AL9eE+0720Drlt9wcnNYyVnz+iCzQFeRUJAiVZwBGW89jepPoi+4Ys
+         +l5et7rBBFgOA+s68w57VX5TI7SDKnYNwBiU3VDXrKLMvHjz1kFqyXLh6QZ+/IF6Fosb
+         psUwB1bfpvOBIxc21ykuNFJdBAbeRC9lqt5dXmF9LIg0dChQC4Q23O/kAUF0lVE6NalV
+         ldV2+U/Venib+119OiNCtWvMW/lwZvaTReNJUdfiyWK0PKXWSVsYLK8YVjax4CiYShww
+         YlYQ==
+X-Gm-Message-State: APjAAAUw7FPGGcrmO0zeQcIcFGHmN3/LSC6WobWMd1WR/M4qmg7wMzBv
+        Iep47RUBPlMMta9F5J7HiqyWvw==
+X-Google-Smtp-Source: APXvYqwQ+sdgsS7xDoPKiu50I19WbFiRgi00VyFLOHwL2uyul3taQAjfTRkwnAgc9Z1koRFgNmhSZQ==
+X-Received: by 2002:a37:a546:: with SMTP id o67mr1029746qke.392.1570580951221;
+        Tue, 08 Oct 2019 17:29:11 -0700 (PDT)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id a11sm193305qkc.123.2019.10.08.17.29.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2019 17:29:10 -0700 (PDT)
+Date:   Tue, 8 Oct 2019 17:28:58 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Huazhong Tan <tanhuazhong@huawei.com>
+Cc:     <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <salil.mehta@huawei.com>,
+        <yisen.zhuang@huawei.com>, <linuxarm@huawei.com>
+Subject: Re: [PATCH net-next 0/6] net: hns3: add some new feature
+Message-ID: <20191008172858.44fd300a@cakuba.netronome.com>
+In-Reply-To: <1570497609-36349-1-git-send-email-tanhuazhong@huawei.com>
+References: <1570497609-36349-1-git-send-email-tanhuazhong@huawei.com>
+Organization: Netronome Systems, Ltd.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Tue, 8 Oct 2019, at 23:12, Joel Stanley wrote:
-> On Tue, 8 Oct 2019 at 11:50, Andrew Jeffery <andrew@aj.id.au> wrote:
-> >
-> > Critically, the AST2600 requires ungating the RMII RCLK if e.g. NCSI is
-> > in use.
-> >
-> > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> > ---
-> >  Documentation/devicetree/bindings/net/ftgmac100.txt | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/net/ftgmac100.txt b/Documentation/devicetree/bindings/net/ftgmac100.txt
-> > index 04cc0191b7dd..c443b0b84be5 100644
-> > --- a/Documentation/devicetree/bindings/net/ftgmac100.txt
-> > +++ b/Documentation/devicetree/bindings/net/ftgmac100.txt
-> > @@ -24,6 +24,12 @@ Optional properties:
-> >  - no-hw-checksum: Used to disable HW checksum support. Here for backward
-> >    compatibility as the driver now should have correct defaults based on
-> >    the SoC.
-> > +- clocks: In accordance with the generic clock bindings. Must describe the MAC
-> > +  IP clock, and optionally an RMII RCLK gate for the AST2600.
+On Tue, 8 Oct 2019 09:20:03 +0800, Huazhong Tan wrote:
+> This patch-set includes some new features for the HNS3 ethernet
+> controller driver.
 > 
->  or AST2500.
+> [patch 01/06] adds support for configuring VF link status on the host.
 > 
-> With that fixed you can add my ack.
+> [patch 02/06] adds support for configuring VF spoof check.
+> 
+> [patch 03/06] adds support for configuring VF trust.
+> 
+> [patch 04/06] adds support for configuring VF bandwidth on the host.
+> 
+> [patch 05/06] adds support for configuring VF MAC on the host.
+> 
+> [patch 06/06] adds support for tx-scatter-gather-fraglist.
 
-I'll do a v2 and fix the comments in the driver patch as well.
-
-Cheers,
-
-Andrew
+Applied.
