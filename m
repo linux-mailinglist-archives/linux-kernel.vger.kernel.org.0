@@ -2,320 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0874D0C03
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 11:59:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA3D3D0BFC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 11:58:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730523AbfJIJ71 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 9 Oct 2019 05:59:27 -0400
-Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:59281 "EHLO
-        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726211AbfJIJ71 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 05:59:27 -0400
-Received: from mailgate01.nec.co.jp ([114.179.233.122])
-        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x999wRWr009524
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 9 Oct 2019 18:58:27 +0900
-Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x999wRrV016566;
-        Wed, 9 Oct 2019 18:58:27 +0900
-Received: from mail02.kamome.nec.co.jp (mail02.kamome.nec.co.jp [10.25.43.5])
-        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x999wQvf017797;
-        Wed, 9 Oct 2019 18:58:27 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.150] [10.38.151.150]) by mail01b.kamome.nec.co.jp with ESMTP id BT-MMP-9281474; Wed, 9 Oct 2019 18:57:22 +0900
-Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
- BPXC22GP.gisp.nec.co.jp ([10.38.151.150]) with mapi id 14.03.0439.000; Wed, 9
- Oct 2019 18:57:22 +0900
-From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To:     David Hildenbrand <david@redhat.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>, Qian Cai <cai@lca.pw>,
-        "Alexey Dobriyan" <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Michal Hocko <mhocko@kernel.org>,
-        Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>,
-        Konstantin Khlebnikov <koct9i@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Anthony Yznaga <anthony.yznaga@oracle.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v1] mm: Fix access of uninitialized memmaps in
- fs/proc/page.c
-Thread-Topic: [PATCH v1] mm: Fix access of uninitialized memmaps in
- fs/proc/page.c
-Thread-Index: AQHVfoGmAHSAUTUjNku3uhYTH+YfcKdRe/+A
-Date:   Wed, 9 Oct 2019 09:57:21 +0000
-Message-ID: <20191009095721.GC20971@hori.linux.bs1.fc.nec.co.jp>
-References: <20191009091205.11753-1-david@redhat.com>
-In-Reply-To: <20191009091205.11753-1-david@redhat.com>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
+        id S1730711AbfJIJ6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 05:58:20 -0400
+Received: from mail-eopbgr00062.outbound.protection.outlook.com ([40.107.0.62]:42751
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726765AbfJIJ6T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 05:58:19 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=j7aBDtWXa2byhqRAYxd0GyuUg90TIXFMbJIJU2WsNkttTdGnwLnsYr83ndFAM7zFL48DgvcSIGXsL4+U7qXj1hTWaf0COPHC+dFQUjpcH2LNiYMRef68nwXjd8vr0LMmZvBVKXCNpdPFdE6xVBF7qfmCFmLh4i5Q5JBCJNUhPGQFJ1JI2vOVbeEIadbkd5IynbVuUpX951mCZfha9FUNVMzg2Et1v9LVi8ebg7+qxKV0ICSBnafyFJ9zIVZWvvMaVxiBnIbqzLbfFgV/QBK1oxPpMYYpyCCNO9dvm0DxbDb4sF/wSSY2TMTn50KgiRkkFmpxkcvoZGTptbIXGTHQnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sNmzcr8h+Dq14in4E/+/TuCB5UrxIML6sZiCudY2ohk=;
+ b=Rwq7vJR0beCX2Djv/wu9GbrxWO4VVk3IfluXDknf9gzoukdppiOQ8gJotFdyQSFdz/ZDvo8n38C4jX/Fap/+5TcxYy2YQftNrllP8XAgB7zvqqLRAYk0VCyItfL3kxLSgwKHZjBP92z8K7zHecr7Mz1T3JVIcA+IZukDRKWqnICIa/jyPsxXEz4DXVTKWLdkLY2CvK8g5s0B02zuthlH8+pn18bagOcP5Uu17mC4nXbG2++/NpL+707EGixqR3X5TgTwVVwHA/w2aOXM6g1AzhFogY4SWv8973DmRh+t4t19TM8eSkOqSmyZJFoh9m5VbbCI6NJZb6XhcHtuaOIlvQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sNmzcr8h+Dq14in4E/+/TuCB5UrxIML6sZiCudY2ohk=;
+ b=KF+3/wiphDrtw5iE9JhFEGnyC7jfP1lEg+S3WQ3gsmyhu4K1LHO8KZ/jqOkTbQnAuT2NcMKXk1oJvwS1dep+/uiLCzSwfQrX/ffCOHBtohrFEFI3RY/WFr84Bd92jKuRc2FnJKTHOICQi7QDwo6oa4OfuvhMGHXBrwW/tEs8U1w=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB4177.eurprd04.prod.outlook.com (52.134.92.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2347.16; Wed, 9 Oct 2019 09:58:15 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::843c:e722:27cb:74e1]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::843c:e722:27cb:74e1%5]) with mapi id 15.20.2327.026; Wed, 9 Oct 2019
+ 09:58:15 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>
+CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH 1/3] clk: imx: imx8mm: mark sys_pll1/2 as fixed clock
+Thread-Topic: [PATCH 1/3] clk: imx: imx8mm: mark sys_pll1/2 as fixed clock
+Thread-Index: AQHVfogREXMSqkErfE+B9jsiOEYyjg==
+Date:   Wed, 9 Oct 2019 09:58:14 +0000
+Message-ID: <1570614940-17239-1-git-send-email-peng.fan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [10.34.125.96]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <6EDCCEB61BB8764189FD68D818A0DB8C@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0PR01CA0007.apcprd01.prod.exchangelabs.com
+ (2603:1096:203:92::19) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7358983f-3931-4223-1bb2-08d74c9f3395
+x-ms-office365-filtering-ht: Tenant
+x-ms-traffictypediagnostic: AM0PR04MB4177:|AM0PR04MB4177:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB41778850B19CEDDD702D5EDC88950@AM0PR04MB4177.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2399;
+x-forefront-prvs: 018577E36E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(39860400002)(366004)(396003)(346002)(376002)(189003)(199004)(476003)(64756008)(478600001)(8676002)(14454004)(81166006)(81156014)(4326008)(5660300002)(66556008)(2906002)(36756003)(66446008)(66476007)(256004)(3846002)(186003)(66946007)(486006)(26005)(6116002)(6486002)(2616005)(305945005)(25786009)(7736002)(316002)(110136005)(66066001)(54906003)(2201001)(6436002)(52116002)(99286004)(6512007)(44832011)(50226002)(102836004)(71190400001)(71200400001)(8936002)(2501003)(86362001)(386003)(6506007)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4177;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 9qVoZZG9qfb0pC7AlSFNfPd5nLEQoDd6UHTuroCOC60N7AMzdXtZfdJuJHP9ldveoYg4BhmzUYSqxS8w4W+kR8m2BB25wdWtVxqrtSJTSYt7Uy/qs+MC5U6u6K3C9EqjRWoF9EG3xTFKeiTPf6DH75hmtBjKBG3DISjd7r2xJMo2IoNautdX1CBiFabPS3FfMmIm3VFiWk1efaeEjmTwL30WKSGL6KLxXCFOishdJ/fyMsBW9AQZMHb9i4rZ0UONeAVKK+djsukLK6NWoRYh2HwymOahh8iIHywphMd2OR7D7eQnWzrEPfgeFseiyI4Zo1eF410bH2FkT4k5f/HXgvwy5zm7vnF3LAPoWkzn+BV9KdnVRgjEAo5H70jfy86gjTC8Uv5GO8e927psUIpESBkPSD+3ZwXpkjcVa3LfMJ4=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7358983f-3931-4223-1bb2-08d74c9f3395
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2019 09:58:14.8763
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: E0zcoTYdvTYkivrYuDz9eDlTFfI48PZLPNRX6WXcQLGkuRJuwblg7YMu8x2bfXlMlgXJcVGEe+NzNKiFwH80oQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4177
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+From: Peng Fan <peng.fan@nxp.com>
 
-On Wed, Oct 09, 2019 at 11:12:04AM +0200, David Hildenbrand wrote:
-> There are various places where we access uninitialized memmaps, namely:
-> - /proc/kpagecount
-> - /proc/kpageflags
-> - /proc/kpagecgroup
-> - memory_failure() - which reuses stable_page_flags() from fs/proc/page.c
+According Architecture definition guide, SYS_PLL1 is fixed at
+800MHz, SYS_PLL2 is fixed at 1000MHz, so let's use imx_clk_fixed
+to register the clocks and drop code that could change the rate.
 
-Ah right, memory_failure is another victim of this bug.
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+ drivers/clk/imx/clk-imx8mm.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
-> 
-> We have initialized memmaps either when the section is online or when
-> the page was initialized to the ZONE_DEVICE. Uninitialized memmaps contain
-> garbage and in the worst case trigger kernel BUGs, especially with
-> CONFIG_PAGE_POISONING.
-> 
-> For example, not onlining a DIMM during boot and calling /proc/kpagecount
-> with CONFIG_PAGE_POISONING:
-> :/# cat /proc/kpagecount > tmp.test
-> [   95.600592] BUG: unable to handle page fault for address: fffffffffffffffe
-> [   95.601238] #PF: supervisor read access in kernel mode
-> [   95.601675] #PF: error_code(0x0000) - not-present page
-> [   95.602116] PGD 114616067 P4D 114616067 PUD 114618067 PMD 0
-> [   95.602596] Oops: 0000 [#1] SMP NOPTI
-> [   95.602920] CPU: 0 PID: 469 Comm: cat Not tainted 5.4.0-rc1-next-20191004+ #11
-> [   95.603547] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.1-0-ga5cab58e9a3f-prebuilt.qemu.4
-> [   95.604521] RIP: 0010:kpagecount_read+0xce/0x1e0
-> [   95.604917] Code: e8 09 83 e0 3f 48 0f a3 02 73 2d 4c 89 e7 48 c1 e7 06 48 03 3d ab 51 01 01 74 1d 48 8b 57 08 480
-> [   95.606450] RSP: 0018:ffffa14e409b7e78 EFLAGS: 00010202
-> [   95.606904] RAX: fffffffffffffffe RBX: 0000000000020000 RCX: 0000000000000000
-> [   95.607519] RDX: 0000000000000001 RSI: 00007f76b5595000 RDI: fffff35645000000
-> [   95.608128] RBP: 00007f76b5595000 R08: 0000000000000001 R09: 0000000000000000
-> [   95.608731] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000140000
-> [   95.609327] R13: 0000000000020000 R14: 00007f76b5595000 R15: ffffa14e409b7f08
-> [   95.609924] FS:  00007f76b577d580(0000) GS:ffff8f41bd400000(0000) knlGS:0000000000000000
-> [   95.610599] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   95.611083] CR2: fffffffffffffffe CR3: 0000000078960000 CR4: 00000000000006f0
-> [   95.611686] Call Trace:
-> [   95.611906]  proc_reg_read+0x3c/0x60
-> [   95.612228]  vfs_read+0xc5/0x180
-> [   95.612505]  ksys_read+0x68/0xe0
-> [   95.612785]  do_syscall_64+0x5c/0xa0
-> [   95.613092]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> Note that there are still two possible races as far as I can see:
-> - pfn_to_online_page() succeeding but the memory getting offlined and
->   removed. get_online_mems() could help once we run into this.
-> - pfn_zone_device() succeeding but the memmap not being fully
->   initialized yet. As the memmap is initialized outside of the memory
->   hoptlug lock, get_online_mems() can't help.
-> 
-> Let's keep the existing interfaces working with ZONE_DEVICE memory. We
-> can later come back and fix these rare races and eventually speed-up the
-> ZONE_DEVICE detection.
+diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
+index 04876ec66127..ae7321ab7837 100644
+--- a/drivers/clk/imx/clk-imx8mm.c
++++ b/drivers/clk/imx/clk-imx8mm.c
+@@ -34,8 +34,6 @@ static const char *dram_pll_bypass_sels[] =3D {"dram_pll"=
+, "dram_pll_ref_sel", };
+ static const char *gpu_pll_bypass_sels[] =3D {"gpu_pll", "gpu_pll_ref_sel"=
+, };
+ static const char *vpu_pll_bypass_sels[] =3D {"vpu_pll", "vpu_pll_ref_sel"=
+, };
+ static const char *arm_pll_bypass_sels[] =3D {"arm_pll", "arm_pll_ref_sel"=
+, };
+-static const char *sys_pll1_bypass_sels[] =3D {"sys_pll1", "sys_pll1_ref_s=
+el", };
+-static const char *sys_pll2_bypass_sels[] =3D {"sys_pll2", "sys_pll2_ref_s=
+el", };
+ static const char *sys_pll3_bypass_sels[] =3D {"sys_pll3", "sys_pll3_ref_s=
+el", };
+=20
+ /* CCM ROOT */
+@@ -325,8 +323,6 @@ static int imx8mm_clocks_probe(struct platform_device *=
+pdev)
+ 	clks[IMX8MM_GPU_PLL_REF_SEL] =3D imx_clk_mux("gpu_pll_ref_sel", base + 0x=
+64, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+ 	clks[IMX8MM_VPU_PLL_REF_SEL] =3D imx_clk_mux("vpu_pll_ref_sel", base + 0x=
+74, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+ 	clks[IMX8MM_ARM_PLL_REF_SEL] =3D imx_clk_mux("arm_pll_ref_sel", base + 0x=
+84, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+-	clks[IMX8MM_SYS_PLL1_REF_SEL] =3D imx_clk_mux("sys_pll1_ref_sel", base + =
+0x94, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+-	clks[IMX8MM_SYS_PLL2_REF_SEL] =3D imx_clk_mux("sys_pll2_ref_sel", base + =
+0x104, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+ 	clks[IMX8MM_SYS_PLL3_REF_SEL] =3D imx_clk_mux("sys_pll3_ref_sel", base + =
+0x114, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+=20
+ 	clks[IMX8MM_AUDIO_PLL1] =3D imx_clk_pll14xx("audio_pll1", "audio_pll1_ref=
+_sel", base, &imx_1443x_pll);
+@@ -336,8 +332,8 @@ static int imx8mm_clocks_probe(struct platform_device *=
+pdev)
+ 	clks[IMX8MM_GPU_PLL] =3D imx_clk_pll14xx("gpu_pll", "gpu_pll_ref_sel", ba=
+se + 0x64, &imx_1416x_pll);
+ 	clks[IMX8MM_VPU_PLL] =3D imx_clk_pll14xx("vpu_pll", "vpu_pll_ref_sel", ba=
+se + 0x74, &imx_1416x_pll);
+ 	clks[IMX8MM_ARM_PLL] =3D imx_clk_pll14xx("arm_pll", "arm_pll_ref_sel", ba=
+se + 0x84, &imx_1416x_pll);
+-	clks[IMX8MM_SYS_PLL1] =3D imx_clk_pll14xx("sys_pll1", "sys_pll1_ref_sel",=
+ base + 0x94, &imx_1416x_pll);
+-	clks[IMX8MM_SYS_PLL2] =3D imx_clk_pll14xx("sys_pll2", "sys_pll2_ref_sel",=
+ base + 0x104, &imx_1416x_pll);
++	clks[IMX8MM_SYS_PLL1] =3D imx_clk_fixed("sys_pll1", 800000000);
++	clks[IMX8MM_SYS_PLL2] =3D imx_clk_fixed("sys_pll2", 1000000000);
+ 	clks[IMX8MM_SYS_PLL3] =3D imx_clk_pll14xx("sys_pll3", "sys_pll3_ref_sel",=
+ base + 0x114, &imx_1416x_pll);
+=20
+ 	/* PLL bypass out */
+@@ -348,8 +344,6 @@ static int imx8mm_clocks_probe(struct platform_device *=
+pdev)
+ 	clks[IMX8MM_GPU_PLL_BYPASS] =3D imx_clk_mux_flags("gpu_pll_bypass", base =
++ 0x64, 28, 1, gpu_pll_bypass_sels, ARRAY_SIZE(gpu_pll_bypass_sels), CLK_SE=
+T_RATE_PARENT);
+ 	clks[IMX8MM_VPU_PLL_BYPASS] =3D imx_clk_mux_flags("vpu_pll_bypass", base =
++ 0x74, 28, 1, vpu_pll_bypass_sels, ARRAY_SIZE(vpu_pll_bypass_sels), CLK_SE=
+T_RATE_PARENT);
+ 	clks[IMX8MM_ARM_PLL_BYPASS] =3D imx_clk_mux_flags("arm_pll_bypass", base =
++ 0x84, 28, 1, arm_pll_bypass_sels, ARRAY_SIZE(arm_pll_bypass_sels), CLK_SE=
+T_RATE_PARENT);
+-	clks[IMX8MM_SYS_PLL1_BYPASS] =3D imx_clk_mux_flags("sys_pll1_bypass", bas=
+e + 0x94, 28, 1, sys_pll1_bypass_sels, ARRAY_SIZE(sys_pll1_bypass_sels), CL=
+K_SET_RATE_PARENT);
+-	clks[IMX8MM_SYS_PLL2_BYPASS] =3D imx_clk_mux_flags("sys_pll2_bypass", bas=
+e + 0x104, 28, 1, sys_pll2_bypass_sels, ARRAY_SIZE(sys_pll2_bypass_sels), C=
+LK_SET_RATE_PARENT);
+ 	clks[IMX8MM_SYS_PLL3_BYPASS] =3D imx_clk_mux_flags("sys_pll3_bypass", bas=
+e + 0x114, 28, 1, sys_pll3_bypass_sels, ARRAY_SIZE(sys_pll3_bypass_sels), C=
+LK_SET_RATE_PARENT);
+=20
+ 	/* PLL out gate */
+@@ -360,8 +354,8 @@ static int imx8mm_clocks_probe(struct platform_device *=
+pdev)
+ 	clks[IMX8MM_GPU_PLL_OUT] =3D imx_clk_gate("gpu_pll_out", "gpu_pll_bypass"=
+, base + 0x64, 11);
+ 	clks[IMX8MM_VPU_PLL_OUT] =3D imx_clk_gate("vpu_pll_out", "vpu_pll_bypass"=
+, base + 0x74, 11);
+ 	clks[IMX8MM_ARM_PLL_OUT] =3D imx_clk_gate("arm_pll_out", "arm_pll_bypass"=
+, base + 0x84, 11);
+-	clks[IMX8MM_SYS_PLL1_OUT] =3D imx_clk_gate("sys_pll1_out", "sys_pll1_bypa=
+ss", base + 0x94, 11);
+-	clks[IMX8MM_SYS_PLL2_OUT] =3D imx_clk_gate("sys_pll2_out", "sys_pll2_bypa=
+ss", base + 0x104, 11);
++	clks[IMX8MM_SYS_PLL1_OUT] =3D imx_clk_gate("sys_pll1_out", "sys_pll1", ba=
+se + 0x94, 11);
++	clks[IMX8MM_SYS_PLL2_OUT] =3D imx_clk_gate("sys_pll2_out", "sys_pll2", ba=
+se + 0x104, 11);
+ 	clks[IMX8MM_SYS_PLL3_OUT] =3D imx_clk_gate("sys_pll3_out", "sys_pll3_bypa=
+ss", base + 0x114, 11);
+=20
+ 	/* SYS PLL fixed output */
+--=20
+2.16.4
 
-Actually, Toshiki is writing code to refactor and optimize the pfn walking
-part, where we find the pfn ranges covered by zone devices by running over
-xarray pgmap_array and use the range info to reduce pointer dereferences
-to speed up pfn walk. I hope he will share it soon.
-
-Thanks,
-Naoya Horiguchi
-
-> This patch now also makes sure we don't dump data
-> about memory blocks that are already offline again.
-> 
-> Reported-by: Qian Cai <cai@lca.pw>
-> Cc: Alexey Dobriyan <adobriyan@gmail.com>
-> Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Konstantin Khlebnikov <koct9i@gmail.com>
-> Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> Cc: Anthony Yznaga <anthony.yznaga@oracle.com>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Logan Gunthorpe <logang@deltatee.com>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-> Cc: linux-fsdevel@vger.kernel.org
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  fs/proc/page.c           | 12 ++++++------
->  include/linux/memremap.h | 11 +++++++++--
->  mm/memory-failure.c      | 22 ++++++++++++++++------
->  mm/memremap.c            | 19 +++++++++++--------
->  4 files changed, 42 insertions(+), 22 deletions(-)
-> 
-> diff --git a/fs/proc/page.c b/fs/proc/page.c
-> index decd3fe39674..76502af461e2 100644
-> --- a/fs/proc/page.c
-> +++ b/fs/proc/page.c
-> @@ -42,7 +42,8 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
->  		return -EINVAL;
->  
->  	while (count > 0) {
-> -		if (pfn_valid(pfn))
-> +		if (pfn_valid(pfn) &&
-> +		    (pfn_to_online_page(pfn) || pfn_zone_device(pfn)))
->  			ppage = pfn_to_page(pfn);
->  		else
->  			ppage = NULL;
-> @@ -97,9 +98,6 @@ u64 stable_page_flags(struct page *page)
->  	if (!page)
->  		return BIT_ULL(KPF_NOPAGE);
->  
-> -	if (pfn_zone_device_reserved(page_to_pfn(page)))
-> -		return BIT_ULL(KPF_RESERVED);
-> -
->  	k = page->flags;
->  	u = 0;
->  
-> @@ -218,7 +216,8 @@ static ssize_t kpageflags_read(struct file *file, char __user *buf,
->  		return -EINVAL;
->  
->  	while (count > 0) {
-> -		if (pfn_valid(pfn))
-> +		if (pfn_valid(pfn) &&
-> +		    (pfn_to_online_page(pfn) || pfn_zone_device(pfn)))
->  			ppage = pfn_to_page(pfn);
->  		else
->  			ppage = NULL;
-> @@ -263,7 +262,8 @@ static ssize_t kpagecgroup_read(struct file *file, char __user *buf,
->  		return -EINVAL;
->  
->  	while (count > 0) {
-> -		if (pfn_valid(pfn))
-> +		if (pfn_valid(pfn) &&
-> +		    (pfn_to_online_page(pfn) || pfn_zone_device(pfn)))
->  			ppage = pfn_to_page(pfn);
->  		else
->  			ppage = NULL;
-> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-> index c676e33205d3..c076bb163c2f 100644
-> --- a/include/linux/memremap.h
-> +++ b/include/linux/memremap.h
-> @@ -123,7 +123,8 @@ static inline struct vmem_altmap *pgmap_altmap(struct dev_pagemap *pgmap)
->  }
->  
->  #ifdef CONFIG_ZONE_DEVICE
-> -bool pfn_zone_device_reserved(unsigned long pfn);
-> +bool pfn_zone_device(unsigned long pfn);
-> +bool __pfn_zone_device(unsigned long pfn, struct dev_pagemap *pgmap);
->  void *memremap_pages(struct dev_pagemap *pgmap, int nid);
->  void memunmap_pages(struct dev_pagemap *pgmap);
->  void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap);
-> @@ -134,7 +135,13 @@ struct dev_pagemap *get_dev_pagemap(unsigned long pfn,
->  unsigned long vmem_altmap_offset(struct vmem_altmap *altmap);
->  void vmem_altmap_free(struct vmem_altmap *altmap, unsigned long nr_pfns);
->  #else
-> -static inline bool pfn_zone_device_reserved(unsigned long pfn)
-> +static inline bool pfn_zone_device(unsigned long pfn)
-> +{
-> +	return false;
-> +}
-> +
-> +static inline bool __pfn_zone_device(unsigned long pfn,
-> +				     struct dev_pagemap *pgmap)
->  {
->  	return false;
->  }
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 7ef849da8278..2b4cc6b67720 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -1161,6 +1161,14 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
->  	loff_t start;
->  	dax_entry_t cookie;
->  
-> +	/* memmaps of driver reserved memory is not initialized */
-> +	if (!__pfn_zone_device(pfn, pgmap)) {
-> +		pr_err("Memory failure: %#lx: driver reserved memory\n",
-> +			pfn);
-> +		rc = -ENXIO;
-> +		goto out;
-> +	}
-> +
->  	/*
->  	 * Prevent the inode from being freed while we are interrogating
->  	 * the address_space, typically this would be handled by
-> @@ -1253,17 +1261,19 @@ int memory_failure(unsigned long pfn, int flags)
->  	if (!sysctl_memory_failure_recovery)
->  		panic("Memory failure on page %lx", pfn);
->  
-> -	if (!pfn_valid(pfn)) {
-> +	p = pfn_to_online_page(pfn);
-> +	if (!p) {
-> +		if (pfn_valid(pfn)) {
-> +			pgmap = get_dev_pagemap(pfn, NULL);
-> +			if (pgmap)
-> +				return memory_failure_dev_pagemap(pfn, flags,
-> +								  pgmap);
-> +		}
->  		pr_err("Memory failure: %#lx: memory outside kernel control\n",
->  			pfn);
->  		return -ENXIO;
->  	}
->  
-> -	pgmap = get_dev_pagemap(pfn, NULL);
-> -	if (pgmap)
-> -		return memory_failure_dev_pagemap(pfn, flags, pgmap);
-> -
-> -	p = pfn_to_page(pfn);
->  	if (PageHuge(p))
->  		return memory_failure_hugetlb(pfn, flags);
->  	if (TestSetPageHWPoison(p)) {
-> diff --git a/mm/memremap.c b/mm/memremap.c
-> index 7fed8bd32a18..9f3bb223aec7 100644
-> --- a/mm/memremap.c
-> +++ b/mm/memremap.c
-> @@ -73,21 +73,24 @@ static unsigned long pfn_next(unsigned long pfn)
->  	return pfn + 1;
->  }
->  
-> +bool __pfn_zone_device(unsigned long pfn, struct dev_pagemap *pgmap)
-> +{
-> +	return pfn >= pfn_first(pgmap) && pfn <= pfn_end(pgmap);
-> +}
-> +
->  /*
-> - * This returns true if the page is reserved by ZONE_DEVICE driver.
-> + * Returns true if the page was initialized to the ZONE_DEVICE (especially,
-> + * is not reserved for driver usage).
->   */
-> -bool pfn_zone_device_reserved(unsigned long pfn)
-> +bool pfn_zone_device(unsigned long pfn)
->  {
->  	struct dev_pagemap *pgmap;
-> -	struct vmem_altmap *altmap;
-> -	bool ret = false;
-> +	bool ret;
->  
->  	pgmap = get_dev_pagemap(pfn, NULL);
->  	if (!pgmap)
-> -		return ret;
-> -	altmap = pgmap_altmap(pgmap);
-> -	if (altmap && pfn < (altmap->base_pfn + altmap->reserve))
-> -		ret = true;
-> +		return false;
-> +	ret = __pfn_zone_device(pfn, pgmap);
->  	put_dev_pagemap(pgmap);
->  
->  	return ret;
-> -- 
-> 2.21.0
-> 
-> 
