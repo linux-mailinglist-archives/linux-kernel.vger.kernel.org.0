@@ -2,112 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68A52D07AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 08:53:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10282D07B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 08:56:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727228AbfJIGx2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 02:53:28 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:60835 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725942AbfJIGx2 (ORCPT
+        id S1727657AbfJIG4n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 02:56:43 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:43442 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725776AbfJIG4n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 02:53:28 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iI5qZ-0006pi-5k; Wed, 09 Oct 2019 08:53:19 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iI5qV-0002hI-D8; Wed, 09 Oct 2019 08:53:15 +0200
-Date:   Wed, 9 Oct 2019 08:53:15 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Anson Huang <Anson.Huang@nxp.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     jslaby@suse.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Linux-imx@nxp.com,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH] tty: serial: imx: Only get second/third IRQ when there
- is more than one IRQ
-Message-ID: <20191009065315.wgdvmkv6skteyul4@pengutronix.de>
+        Wed, 9 Oct 2019 02:56:43 -0400
+Received: by mail-oi1-f193.google.com with SMTP id t84so842680oih.10;
+        Tue, 08 Oct 2019 23:56:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PU6pSC4rpDZQ3hpvHq0TdAZIyHq1I2BJFZ45k90UauQ=;
+        b=aXGk+zTTZtNhTOqe5hG6l45X8ZAGAMnHpjwy2jCFfY7F+cOuD+spDH591CGuMRun35
+         1o+hnr0KF7OM1BJTLX9TMyqJ7Rqr2/mBVqPhv9sTPMbtTA+rIZCrL+O9ZFxAbtU1O6Bc
+         uL87Tf9HAwuq+k0eKbnhHX2hGCPJndBSKt/wdqEmJCssFFaWtvN4OVuBaqHQwCfWAhb0
+         9zQtin41/iNwxhHM8ttgrSQ4ePKciHhWPQXwO1vzSSJXJMgQfkQfo0HnLEEcGZKEIAbv
+         weUNEnafcauv1WcgirUTy6HtMC74BUo8C7KREbaCreo2gm70qfQy+v7S8G0v+G3sB+R6
+         7Niw==
+X-Gm-Message-State: APjAAAUJNeQ9B8/5QGzZgF6BM5jj6nQ8YV866qNsx5JCNgQOKkKZbWny
+        T6dy8eFLv1FsJAW2QxP8IbY4nXDpSFDnoW3z/NM=
+X-Google-Smtp-Source: APXvYqzk0JepZ+39323h3KeMWAoARy2zy0zvOEiZjj4NXFq1sVESz2FopGsJeLg/sq9NCFM5eUSSDs+5Dmi4PItkesg=
+X-Received: by 2002:a05:6808:3b4:: with SMTP id n20mr1049904oie.131.1570604200276;
+ Tue, 08 Oct 2019 23:56:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1570601911-9162-1-git-send-email-Anson.Huang@nxp.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <alpine.DEB.2.21.9999.1910081606370.11044@viisi.sifive.com>
+In-Reply-To: <alpine.DEB.2.21.9999.1910081606370.11044@viisi.sifive.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 9 Oct 2019 08:56:29 +0200
+Message-ID: <CAMuHMdVdPFSU_3VEtO=P73kqLezV5Dmki=N3nxsKibzy-U5pBg@mail.gmail.com>
+Subject: Re: [PATCH] Documentation: admin-guide: add earlycon documentation
+ for the sifive serial driver
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Andreas Schwab <schwab@suse.de>, Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Paul,
 
-On Wed, Oct 09, 2019 at 02:18:31PM +0800, Anson Huang wrote:
-> All i.MX SoCs except i.MX1 have ONLY 1 IRQ, so it is better to check
-> the IRQ count before getting second/third IRQ to avoid below error
-> message during probe:
-> 
-> [    0.726219] imx-uart 30860000.serial: IRQ index 1 not found
-> [    0.731329] imx-uart 30860000.serial: IRQ index 2 not found
+On Wed, Oct 9, 2019 at 1:09 AM Paul Walmsley <paul.walmsley@sifive.com> wrote:
+> Document earlycon usage for the SiFive serial port driver in the same
+> fashion as for the other serial port IP blocks, since the SiFive
+> serial port driver supports it.
+>
+> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+> Reported-by: Andreas Schwab <schwab@suse.de>
+> Cc: Christoph Hellwig <hch@lst.de>
 
-This message was introduced in commit
-7723f4c5ecdb8d832f049f8483beb0d1081cedf6 for 5.4-rc1. I added the
-involved people to the recipents of this mail.
+Thanks for your patch!
 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Why do you need this?
+I believe risc-v is DT-only, so if chosen/stdout-path is set up, just
+passing "earlycon" (without any options) should work.
+
 > ---
->  drivers/tty/serial/imx.c | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-> index 504d81c..081fa82 100644
-> --- a/drivers/tty/serial/imx.c
-> +++ b/drivers/tty/serial/imx.c
-> @@ -2198,6 +2198,7 @@ static int imx_uart_probe(struct platform_device *pdev)
->  	u32 ucr1;
->  	struct resource *res;
->  	int txirq, rxirq, rtsirq;
-> +	int irq_count;
->  
->  	sport = devm_kzalloc(&pdev->dev, sizeof(*sport), GFP_KERNEL);
->  	if (!sport)
-> @@ -2220,9 +2221,17 @@ static int imx_uart_probe(struct platform_device *pdev)
->  	if (IS_ERR(base))
->  		return PTR_ERR(base);
->  
-> +	irq_count = platform_irq_count(pdev);
-> +	if (irq_count < 0)
-> +		return irq_count;
+>  Documentation/admin-guide/kernel-parameters.txt | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index c7ac2f3ac99f..90becb00221b 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -1106,6 +1106,12 @@
+>                         address must be provided, and the serial port must
+>                         already be setup and configured.
+>
+> +               sifive,<addr>
+> +                       Start an early, polled-mode console on a SiFive
+> +                       serial port at the specified address.  The port must
+> +                       already be setup and configured.  Options are not
+> +                       yet supported.
 > +
->  	rxirq = platform_get_irq(pdev, 0);
-> -	txirq = platform_get_irq(pdev, 1);
-> -	rtsirq = platform_get_irq(pdev, 2);
-> +	if (irq_count > 1) {
-> +		txirq = platform_get_irq(pdev, 1);
-> +		rtsirq = platform_get_irq(pdev, 2);
-> +	} else {
-> +		txirq = rtsirq = -ENXIO;
-> +	}
+>         earlyprintk=    [X86,SH,ARM,M68k,S390]
+>                         earlyprintk=vga
+>                         earlyprintk=sclp
 
-The patch is fine given the changed behaviour of platform_get_irq. I
-wonder if it is sensible to introduce a variant of platform_get_irq (say
-platform_get_irq_nowarn) that behaves like __platform_get_irq does
-today. Then the imx driver would just call platform_get_irq_nowarn
-without having to check the number of available irqs first.
+Gr{oetje,eeting}s,
 
-Best regards
-Uwe
+                        Geert
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
