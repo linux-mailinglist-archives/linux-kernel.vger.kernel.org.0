@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CA3ED1650
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:29:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D246D159D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 19:25:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732311AbfJIR3M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 13:29:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48848 "EHLO mail.kernel.org"
+        id S1732351AbfJIRYb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 13:24:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732221AbfJIRYQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 13:24:16 -0400
+        id S1732289AbfJIRYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 13:24:25 -0400
 Received: from sasha-vm.mshome.net (unknown [167.220.2.234])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FC812196E;
-        Wed,  9 Oct 2019 17:24:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69598222BD;
+        Wed,  9 Oct 2019 17:24:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570641856;
-        bh=a+jnrrLUjZCnLTg1MYH2H3uUUeyvZnRqF6KjRTHV+GY=;
+        s=default; t=1570641864;
+        bh=ItEhc048PXZwT136OTNM/zwLx86InmHB7Ps6M9y1Pi8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a80hqOndue49JhE9aBAcvhgUtSd+2kXohLai90K5PFJxng0Ak0Mm4skb1uOwn+AzV
-         d+pLBc7w8Xbqv24cwCgUtdKIoZGZHDwg/7X4nTN2tALigSnlpHc1NJG0ecjNGc45a7
-         /VhK+Q46uz5VZUzSi8d9hc8lXyWTyvkVcZgc17yM=
+        b=hjUy1hkbUAq2BAjjUrnPHVEQRmElwBmeP/ZGKwx90LnOfzLn9+agA4dpDADueOQco
+         gZJujUGLqaUOIh7GWYXG/zRWOTf15emrRubMcVfsM3l/cZEmJUaasMPqIqWkDBzDdJ
+         GxzJ9ONa4GU4AJuzreLUANYKTLWXUbwCnQmrYD1o=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 24/26] r8152: Set macpassthru in reset_resume callback
-Date:   Wed,  9 Oct 2019 13:05:56 -0400
-Message-Id: <20191009170558.32517-24-sashal@kernel.org>
+Cc:     Quinn Tran <qutran@marvell.com>,
+        Himanshu Madhani <hmadhani@marvell.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 04/21] scsi: qla2xxx: Fix unbound sleep in fcport delete path.
+Date:   Wed,  9 Oct 2019 13:05:57 -0400
+Message-Id: <20191009170615.32750-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191009170558.32517-1-sashal@kernel.org>
-References: <20191009170558.32517-1-sashal@kernel.org>
+In-Reply-To: <20191009170615.32750-1-sashal@kernel.org>
+References: <20191009170615.32750-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -44,44 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Quinn Tran <qutran@marvell.com>
 
-[ Upstream commit a54cdeeb04fc719e4c7f19d6e28dba7ea86cee5b ]
+[ Upstream commit c3b6a1d397420a0fdd97af2f06abfb78adc370df ]
 
-r8152 may fail to establish network connection after resume from system
-suspend.
+There are instances, though rare, where a LOGO request cannot be sent out
+and the thread in free session done can wait indefinitely. Fix this by
+putting an upper bound to sleep.
 
-If the USB port connects to r8152 lost its power during system suspend,
-the MAC address was written before is lost. The reason is that The MAC
-address doesn't get written again in its reset_resume callback.
-
-So let's set MAC address again in reset_resume callback. Also remove
-unnecessary lock as no other locking attempt will happen during
-reset_resume.
-
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: https://lore.kernel.org/r/20190912180918.6436-3-hmadhani@marvell.com
+Signed-off-by: Quinn Tran <qutran@marvell.com>
+Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/r8152.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/scsi/qla2xxx/qla_target.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
-index a065a6184f7e4..a291e5f2daef6 100644
---- a/drivers/net/usb/r8152.c
-+++ b/drivers/net/usb/r8152.c
-@@ -4474,10 +4474,9 @@ static int rtl8152_reset_resume(struct usb_interface *intf)
- 	struct r8152 *tp = usb_get_intfdata(intf);
+diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+index 87e04c4a49821..11753ed3433ca 100644
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -996,6 +996,7 @@ static void qlt_free_session_done(struct work_struct *work)
  
- 	clear_bit(SELECTIVE_SUSPEND, &tp->flags);
--	mutex_lock(&tp->control);
- 	tp->rtl_ops.init(tp);
- 	queue_delayed_work(system_long_wq, &tp->hw_phy_work, 0);
--	mutex_unlock(&tp->control);
-+	set_ethernet_addr(tp);
- 	return rtl8152_resume(intf);
- }
+ 	if (logout_started) {
+ 		bool traced = false;
++		u16 cnt = 0;
  
+ 		while (!ACCESS_ONCE(sess->logout_completed)) {
+ 			if (!traced) {
+@@ -1005,6 +1006,9 @@ static void qlt_free_session_done(struct work_struct *work)
+ 				traced = true;
+ 			}
+ 			msleep(100);
++			cnt++;
++			if (cnt > 200)
++				break;
+ 		}
+ 
+ 		ql_dbg(ql_dbg_disc, vha, 0xf087,
 -- 
 2.20.1
 
