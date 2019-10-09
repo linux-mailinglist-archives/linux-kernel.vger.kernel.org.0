@@ -2,131 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 070D4D10B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 16:00:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2CD5D10C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 16:05:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731304AbfJIN60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 09:58:26 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:43584 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725879AbfJIN6Z (ORCPT
+        id S1731234AbfJIOFt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 10:05:49 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43668 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728019AbfJIOFt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 09:58:25 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x99Ds1P4030202;
-        Wed, 9 Oct 2019 13:56:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2019-08-05;
- bh=KuFxysVjGvj9HNkv/L58Cim31ODyPhyJGS4wNznP1v0=;
- b=YrlRJpdq5+RuPMCTXFueXKSo1WJ7EbeZc6ILfpqp/V3RnH82yVBuOjuOB4sGyueRSvx2
- 8Tp0OAIeEap/S0ypRCu3TxosqeqRqypTgJC94SjBYkRY+2m2CDNHBfRPVdprIqUw4yen
- oMS5q6NQgpsXB2Fadibh2DerijspBWuGhdabJx0fUpipZbbm1zM3yPV16BCcr+ewNV6J
- 0hvbFqh8yHJrH8KU2e/DAj+D+KN/3xvlDk0lVcqFjAzQ3A1ogblVGOXi+atCy4N65np0
- wj78tfZuwza1TF12f6hGoOMgbDBkcfAReWANH/58etQVotiJOb+879PzwNGSzpPThHIY FQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2vek4qmq5e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 09 Oct 2019 13:56:50 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x99DraOI032368;
-        Wed, 9 Oct 2019 13:56:49 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 2vgefcr16q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 09 Oct 2019 13:56:49 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x99DuiVK029752;
-        Wed, 9 Oct 2019 13:56:46 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 09 Oct 2019 06:56:44 -0700
-Date:   Wed, 9 Oct 2019 16:56:33 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Markus Elfring <Markus.Elfring@web.de>,
-        kernel-janitors@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Joe Perches <joe@perches.com>,
-        Kees Cook <keescook@chromium.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] string.h: Mark 34 functions with __must_check
-Message-ID: <20191009135522.GA20194@kadam>
-References: <75f70e5e-9ece-d6d1-a2c5-2f3ad79b9ccb@web.de>
- <954c5d70-742f-7b0e-57ad-ea967e93be89@rasmusvillemoes.dk>
+        Wed, 9 Oct 2019 10:05:49 -0400
+Received: by mail-wr1-f66.google.com with SMTP id j18so3153102wrq.10
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 07:05:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=x18qx9JLrk7xXMEFhQwtymWXpXFvSf/vB1abZUNNOK0=;
+        b=tg4CEU2cZkb1tuVUQ8D8LbDUwBjlVtCC5lsmO8qvQ8VDTOwNppN85j+Tnb7zdw3KY8
+         9eD64hjYKii/cqWwHUmTtSWkBfArSyX3YhbHnYgfLYw465h/eU9SoGz+HK7BKxCG8tGV
+         bhzYHHj3aj0G9tSoqeTSK78cmalT2hEKDYhwJtv48OTTK6SE5OU7HPPEQqbYuH+ViSCL
+         oq5T0vCoy+vRtX7M1WSDpIPx9HFKIlel3okg+I9KuJFVBAm41NyQBc7c+KUWhKliYu80
+         ibDqUHDsWL4BSG9jBbnHfm4oRv57WdmEyk4PvHt5g0VA5CgRXd8eRtnu6TFUJG7BPLWd
+         1XCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=x18qx9JLrk7xXMEFhQwtymWXpXFvSf/vB1abZUNNOK0=;
+        b=pXs+Lpq+e+OW93fufF7DqW0Vvbl+mrlKpGdfFQnm00mQvNwg1XVwHbqwWwxmvXoXx4
+         AXD+ySGfTEMcgBFQJz3CoXuT+5+GwS7+FO8vO7sT9ANGfrwclu+Zzi38tPZmA/rpjplr
+         hRCmXuO/ZsMyGZj784k9wyVlFyMfnG4lHCW0n4C9+hXLkpNIlNab1WSNE4EAkrDZ6QPW
+         WVO/9z2qqOiF8E7idNrHte3DdYjg70fdYGYAcrvL0UKD2zDKr3zlqIiA/wPTXoEV0vxT
+         4QISC3gNKzL9qBFv0wJv3oPnrr0PZpkYwwvz02rRYEvFeT8/6hWjhZrhiS8SJIXElN4T
+         34eQ==
+X-Gm-Message-State: APjAAAUNkxqDMzBpA+sevdiMKGUWuyUip6lwFKm2Yxo/Hk3hGUNG+Cax
+        Bpsb66C1RVUWHyCbT1PPHQ==
+X-Google-Smtp-Source: APXvYqymhr/+LiNXP+wOnNIJrM7YqPzMfBuMAkebF2saSDvcgaTrtCuZGp2+EY6kBWfNTjd7dEh43Q==
+X-Received: by 2002:adf:9101:: with SMTP id j1mr2952067wrj.71.1570629569988;
+        Wed, 09 Oct 2019 06:59:29 -0700 (PDT)
+Received: from ninjahub.lan (host-2-102-13-201.as13285.net. [2.102.13.201])
+        by smtp.googlemail.com with ESMTPSA id t83sm3989555wmt.18.2019.10.09.06.59.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 06:59:29 -0700 (PDT)
+From:   Jules Irenge <jbi.octave@gmail.com>
+To:     outreachy-kernel@googlegroups.com
+Cc:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        Jules Irenge <jbi.octave@gmail.com>
+Subject: [PATCH] staging: qlge: fix "alignment should match open parenthesis" check
+Date:   Wed,  9 Oct 2019 14:59:09 +0100
+Message-Id: <20191009135909.19474-1-jbi.octave@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <954c5d70-742f-7b0e-57ad-ea967e93be89@rasmusvillemoes.dk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9404 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=806
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910090133
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9404 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=881 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910090133
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ I haven't reviewed the original patch ]
+Fix "alignment should match open parenthesis" check
+ issued by checkpatch.pl tool:
+"CHECK: Alignment should match open parenthesis".
 
-On Wed, Oct 09, 2019 at 03:26:18PM +0200, Rasmus Villemoes wrote:
-> On 09/10/2019 14.14, Markus Elfring wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Wed, 9 Oct 2019 13:53:59 +0200
-> > 
-> > Several functions return values with which useful data processing
-> > should be performed. These values must not be ignored then.
-> > Thus use the annotation “__must_check” in the shown function declarations.
-> 
-> This _might_ make sense for those that are basically kmalloc() wrappers
-> in one way or another [1]. But what's the point of annotating pure
-> functions such as strchr, strstr, memchr etc? Nobody is calling those
-> for their side effects (they don't have any...), so obviously the return
-> value is used. If somebody does a strcmp() without using the result, so
-> what? OK, it's odd code that might be worth flagging, but I don't think
-> that's the kind of thing one accidentally adds.
+Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
+---
+ drivers/staging/qlge/qlge_dbg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-	if (ret) {
-		-EINVAL;
-	}
-
-People do occasionally make mistakes like this.  It can't hurt to
-warn them as early as possible about nonsense code.
-
-
-> You're also not consistent - strlen() is not annotated. And, for the
-> standard C functions, -Wall already seems to warn about an unused
-> call:
-> 
->  #include <string.h>
-> int f(const char *s)
-> {
-> 	strlen(s);
-> 	return 3;
-> }
-> $ gcc -Wall -o a.o -c a.c
-> a.c: In function ‘f’:
-> a.c:5:2: warning: statement with no effect [-Wunused-value]
->   strlen(s);
->   ^~~~~~~~~
-
-That's because glibc strlen is annotated with __attribute_pure__ which
-means it has no side effects.
-
-regards,
-dan carpenter
+diff --git a/drivers/staging/qlge/qlge_dbg.c b/drivers/staging/qlge/qlge_dbg.c
+index 5599525a19d5..086f067fd899 100644
+--- a/drivers/staging/qlge/qlge_dbg.c
++++ b/drivers/staging/qlge/qlge_dbg.c
+@@ -7,7 +7,7 @@
+ 
+ /* Read a NIC register from the alternate function. */
+ static u32 ql_read_other_func_reg(struct ql_adapter *qdev,
+-						u32 reg)
++				  u32 reg)
+ {
+ 	u32 register_to_read;
+ 	u32 reg_val;
+-- 
+2.21.0
 
