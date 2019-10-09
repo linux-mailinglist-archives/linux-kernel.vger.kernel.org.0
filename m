@@ -2,52 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A18CBD0871
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 09:39:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09A14D087D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 09:41:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729677AbfJIHj2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 03:39:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48254 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbfJIHj1 (ORCPT
+        id S1729778AbfJIHlK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 03:41:10 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:28011 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726336AbfJIHlJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 03:39:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=baiVv4a2Uea2yTZJrebYsEwZaUn70mxXYupOEm3dQbc=; b=qRZLYML8fZIGPOUFVit/FLmvx
-        qgVXvUHJYoCdC+71GLaypG+EIWHXjTQXPpbTF2mxm9WrpMRbP6OJRVJWjFgaiaW/llFXBOJAR78Vs
-        9Q+px+8LlW9mqzCJImURq9QaryTQdwKGtD4cnbhbuoFslmYUkQs3Extmb7giDPFCEMrtrUyQAPIWT
-        sU9OIgrOfYqTm+AVwzxif+67dDyGiyPrTbb8IxwoQhmR1hy8v0P9oxWmwhhPGm4qq+NDnM38pGTbc
-        9xdXEex2JMqcg6uVZDb36+pDd/1yMHL7h5UhJzoV1OSxImjVtAOzjkWdN4KrKTazYF5G4uilXa9hW
-        0Qgz+JOTA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iI6ZC-0006WF-Mu; Wed, 09 Oct 2019 07:39:26 +0000
-Date:   Wed, 9 Oct 2019 00:39:26 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Madalin Bucur <madalin.bucur@nxp.com>
-Cc:     davem@davemloft.net, netdev@vger.kernel.org, roy.pledge@nxp.com,
-        laurentiu.tudor@nxp.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 19/20] dpaa_eth: add dpaa_dma_to_virt()
-Message-ID: <20191009073926.GA6916@infradead.org>
-References: <1570536641-25104-1-git-send-email-madalin.bucur@nxp.com>
- <1570536641-25104-20-git-send-email-madalin.bucur@nxp.com>
+        Wed, 9 Oct 2019 03:41:09 -0400
+X-UUID: 1c0ef69487f141ad80e3b5c84a2adce7-20191009
+X-UUID: 1c0ef69487f141ad80e3b5c84a2adce7-20191009
+Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 397385473; Wed, 09 Oct 2019 15:41:03 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ MTKMBS31N2.mediatek.inc (172.27.4.87) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 9 Oct 2019 15:41:00 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 9 Oct 2019 15:40:58 +0800
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [RESEND PATCH v3 01/11] dt-bindings: phy-mtk-tphy: add two optional properties for u2phy
+Date:   Wed, 9 Oct 2019 15:40:24 +0800
+Message-ID: <1570606834-5644-1-git-send-email-chunfeng.yun@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1570536641-25104-20-git-send-email-madalin.bucur@nxp.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
+X-TM-SNTS-SMTP: D92F16B9EE319C5ADF5B71546DF82E0BFA49E37F44BEABF32811ABA90F90DB2B2000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 03:10:40PM +0300, Madalin Bucur wrote:
-> Centralize the phys_to_virt() calls.
+Add two optional properties, one for tuning J-K voltage by INTR,
+another for disconnect threshold, both of them are related with
+connect detection
 
-You don't need to centralize those, you need to fix them.  Calling
-phys_to_virt on a dma_addr is completely bogus.
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+---
+v3: change commit log
+
+v2: change description
+---
+ Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt b/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
+index a5f7a4f0dbc1..ce6abfbdfbe1 100644
+--- a/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
++++ b/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
+@@ -52,6 +52,8 @@ Optional properties (PHY_TYPE_USB2 port (child) node):
+ - mediatek,eye-vrt	: u32, the selection of VRT reference voltage
+ - mediatek,eye-term	: u32, the selection of HS_TX TERM reference voltage
+ - mediatek,bc12	: bool, enable BC12 of u2phy if support it
++- mediatek,discth	: u32, the selection of disconnect threshold
++- mediatek,intr	: u32, the selection of internal R (resistance)
+ 
+ Example:
+ 
+-- 
+2.23.0
+
