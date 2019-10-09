@@ -2,443 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29D91D1BC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 00:31:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15B6DD1BCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 00:39:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732171AbfJIWbA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 18:31:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57102 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731150AbfJIWbA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 18:31:00 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D564A205F4;
-        Wed,  9 Oct 2019 22:30:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570660258;
-        bh=2+F9LpTg0Tr8IeH6cckJbC5ONwnNDN7TzKuRLtIizec=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=yhDcR1iAPVSzGTpAMaaSTHTmDv5j71HBhzmLqZau27FQH0hG6pyoZhq9mq63YFBsW
-         gnQCkDdmRUR/54ZQDW00ZbxtLVGCIw1h6A6cYIYyT0hKOUh3r+BhRSKVk8cW3ZIcKA
-         Ps/VIJSm53dhpFRMCZwoErodL2qxFZSzvkfMw2nw=
-Date:   Wed, 9 Oct 2019 17:30:56 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     sathyanarayanan.kuppuswamy@linux.intel.com
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com, keith.busch@intel.com
-Subject: Re: [PATCH v1 1/1] PCI/ATS: Optimize pci_prg_resp_pasid_required()
- function
-Message-ID: <20191009223056.GA139157@google.com>
+        id S1732036AbfJIWh4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 18:37:56 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43579 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731134AbfJIWh4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 18:37:56 -0400
+Received: by mail-pf1-f194.google.com with SMTP id a2so2550614pfo.10
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 15:37:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7hfShCs30Z7AfEHrmZa+2z/hnrcGihWEf8CO0VbMhkw=;
+        b=BjDCFFNtvw8rBnYDnAvfTdhQKyJ+HwpU5BjulLJI396Rn7iYAq4OsGOX65aKf5tc+Q
+         a/CQlynNZYVLFz3lfFVSVkMwfz45LOBeAOPi9IoRx0uOvTbk8f+c3/Q/qFRT1Gdnmm0m
+         gncWy7L/ueC0XCafTYNF1dyDgAVFqAaLVMNPeCJzeC+Cldz2VUus8lTL28+HcTWifvrI
+         r4fQZwKyMCD3yaOl983g5rNvT/m3eyo/3wmJo+NzD6T2Dcppg+JACxLAGlBU2ZAI1CeU
+         rp0NWB890qUNRXdK0nAHkyKWP5EqkL0VX76/OZr+gR6KUBsDVsdr6QGTDSmb5s4/RaXr
+         ie3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7hfShCs30Z7AfEHrmZa+2z/hnrcGihWEf8CO0VbMhkw=;
+        b=SHtKG/fxKMgR6AmSIed3jTSW/TEPy4+ZLX32FU/wcbTdGFpdSo1wfoLsk0VXs9sM1V
+         aaADdwIMUaUyANfeY+9rDn39LZV4olAXnRhvnQvW1NKdV3X5Uteo8D3+nmeA77ko2jg8
+         pHM4bQRrM0gvot6LWYEIEOaOPF176CeJeF65DBXnkk3MNMk706UtNY3meKhICISk4Fo7
+         4bSP3NmpBrlz32vyW8YFEsE7DiU1ueV6XwmKGdFxTPtCpHiGcxyRBUWdZ+9dz40G9ioZ
+         loOcwVhpxf2VlyAxL9vnuAdiQsVKDapZSMNGKkDsWRB3QemoFMIHvMnacASvFTb/FGDn
+         a+HQ==
+X-Gm-Message-State: APjAAAV817mhmo/2j7blkluWTEDb+873x8cASXg7W4DAyqDeBQO7wHs7
+        uB5k3/mKElT1Ygjin/cmq1fZBu07YXS5CaXXQbqs2Ka37SI=
+X-Google-Smtp-Source: APXvYqymqTAd6Vk364cIUXias7XWRVd/fxdlL1GbFhKlVGoUAhPHuPD/5xlYwc3vOSkb/8M9pr2ZBqYZAsi381/R2vs=
+X-Received: by 2002:a17:90a:b285:: with SMTP id c5mr6833625pjr.123.1570660673665;
+ Wed, 09 Oct 2019 15:37:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f594928de550e151d3537fdd64099de34ffa30da.1570490792.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1570292505.git.joe@perches.com> <4a904777303fbaea75fe0875b7984c33824f4b68.1570292505.git.joe@perches.com>
+In-Reply-To: <4a904777303fbaea75fe0875b7984c33824f4b68.1570292505.git.joe@perches.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 9 Oct 2019 15:37:42 -0700
+Message-ID: <CAKwvOdm+u9ijMdfPQVZYU3tQCuhMePsvmKXA_kyyAaQUu2y5gA@mail.gmail.com>
+Subject: Re: [PATCH 4/4] scripts/cvt_style.pl: Tool to reformat sources in
+ various ways
+To:     Joe Perches <joe@perches.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Pavel Machek <pavel@ucw.cz>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Shawn Landden <shawn@git.icu>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Miller <davem@davemloft.net>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 07, 2019 at 04:32:42PM -0700, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
-> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> 
-> Currently, pci_prg_resp_pasid_required() function reads the
-> PASID Required bit status from register every time we call
-> the function. Since PASID Required bit is a read-only value,
-> instead of reading it from register every time, read it once and
-> cache it in struct pci_dev.
-> 
-> Also, since we are caching PASID Required bit in pci_pri_init()
-> function, move the caching of PRI Capability check result to the same
-> function. This will group all PRI related caching at one place.
-> 
-> Since "pasid_required" structure member is protected by CONFIG_PRI,
-> its users should also be protected by same #ifdef. So correct the #ifdef
-> dependency of pci_prg_resp_pasid_required() function.
-> 
-> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> Cc: Ashok Raj <ashok.raj@intel.com>
-> Cc: Keith Busch <keith.busch@intel.com>
-> ---
->  drivers/pci/ats.c   | 50 ++++++++++++++++++++++++---------------------
->  include/linux/pci.h |  1 +
->  2 files changed, 28 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/pci/ats.c b/drivers/pci/ats.c
-> index cb4f62da7b8a..2b5df5ea208f 100644
-> --- a/drivers/pci/ats.c
-> +++ b/drivers/pci/ats.c
-> @@ -16,6 +16,24 @@
->  
->  #include "pci.h"
->  
-> +static void pci_pri_init(struct pci_dev *pdev)
-> +{
-> +#ifdef CONFIG_PCI_PRI
-> +	int pos;
-> +	u16 status;
-> +
-> +	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PRI);
-> +	if (!pos)
-> +		return;
-> +
-> +	pdev->pri_cap = pos;
-> +
-> +	pci_read_config_word(pdev, pos + PCI_PRI_STATUS, &status);
-> +	if (status & PCI_PRI_STATUS_PASID)
-> +		pdev->pasid_required = 1;
-> +#endif
-> +}
+On Sat, Oct 5, 2019 at 9:47 AM Joe Perches <joe@perches.com> wrote:
+>
+> Trivial tool to reformat source code in various ways.
+>
+> This is an old tool that was recently updated to convert /* fallthrough */
+> style comments to the new pseudo-keyword fallthrough;
+>
+> Typical command line use is:
+>     $ perl scripts/cvt_style --convert=fallthrough <file list>
 
-I like this patch a lot but:
+It would be cool to include the treewide onliner from your cover sheet
+in this commit message, as I find myself flipping between that and
+this, otherwise the recommended onliner will be lost to LKML (instead
+of being lost to git log). Or in the usage comment at the top of the
+script.
 
-1) You started out with a pci_pri_init(), and I screwed up when I
-suggested that you remove it.  I think it makes a lot of sense to have
-it and call it directly from pci_init_capabilities() just like we do
-for other capabilities.
+>
+> Available conversions:
+>         all
+>         printk_to_pr_level
+>         printk_KERN_DEBUG_to_pr_debug
+>         dev_printk_to_dev_level
+>         dev_printk_KERN_DEBUG_to_dev_dbg
+>         sdev_printk_to_sdev_level
+>         sdev_printk_KERN_DEBUG_to_sdev_dbg
+>         coalesce_formats
+>         cuddle_open_brace
+>         cuddle_else
 
-2) The PCI_PRI/PCI_PASID #ifdef thing is still a mess.  Despite the
-fact that its name contains "pasid", pci_prg_resp_pasid_required()
-only looks at the PRI capability, so I think it should be under #ifdef
-CONFIG_PCI_PRI along with the other PRI stuff.
+I think some of these could use examples of what they do. I can't read
+perl (as we've previously established :P) and I'm not sure what it
+means to cuddle open braces or elses, though they do sound nice.
 
-3) I'm not sure why pci_prg_resp_pasid_required() was under
-CONFIG_PCI_PASID, but it might be related to the fact that it's called
-from code in intel-iommu.c where CONFIG_PCI_PASID is always defined,
-but CONFIG_PCI_PRI may not be.  I think this is an intel-iommu Kconfig
-defect.  I'll post patches to change the Kconfig and to move
-pci_prg_resp_pasid_required() under CONFIG_PCI_PRI.
+>         deparenthesize_returns
+>         space_after_KERN_level
+>         space_after_if_while_for_switch
+>         space_after_for_semicolons
+>         space_after_comma
+>         space_before_pointer
+>         space_around_trigraph
+>         leading_spaces_to_tabs
+>         coalesce_semicolons
+>         remove_trailing_whitespace
+>         remove_whitespace_before_quoted_newline
+>         remove_whitespace_before_trailing_semicolon
+>         remove_whitespace_before_bracket
+>         remove_parenthesis_whitespace
+>         remove_single_statement_braces
+>         remove_whitespace_after_cast
+>         hoist_assigns_from_if
+>         convert_c99_comments
+>         remove_private_data_casts
+>         remove_static_initializations_to_0
+>         remove_true_false_comparisons
+>         remove_NULL_comparisons
+>         remove_trailing_if_semicolons
 
-So I fiddled with all this and updated my pci/virtualization branch
-with the result.
+To Miguel's comment about clang-format, it looks like you can do:
 
-The interdiff from the v8 series is below.  This includes the
-intel-iommu Kconfig and pci_prg_resp_pasid_required() changes (which I
-haven't posted yet), and the branch includes some unrelated follow-on
-patches (which I also haven't posted yet).  Let me know what you
-think.
+Use -style="{key: value, ...}" to set specific
+                              parameters, e.g.:
+                                -style="{BasedOnStyle: llvm, IndentWidth: 8}"
 
-Bjorn
+via: https://clang.llvm.org/docs/ClangFormat.html
+which might make some nice one liners for some of these.
 
->  void pci_ats_init(struct pci_dev *dev)
->  {
->  	int pos;
-> @@ -28,6 +46,8 @@ void pci_ats_init(struct pci_dev *dev)
->  		return;
->  
->  	dev->ats_cap = pos;
-> +
-> +	pci_pri_init(dev);
->  }
->  
->  /**
-> @@ -185,12 +205,8 @@ int pci_enable_pri(struct pci_dev *pdev, u32 reqs)
->  	if (WARN_ON(pdev->pri_enabled))
->  		return -EBUSY;
->  
-> -	if (!pri) {
-> -		pri = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PRI);
-> -		if (!pri)
-> -			return -EINVAL;
-> -		pdev->pri_cap = pri;
-> -	}
-> +	if (!pri)
-> +		return -EINVAL;
->  
->  	pci_read_config_word(pdev, pri + PCI_PRI_STATUS, &status);
->  	if (!(status & PCI_PRI_STATUS_STOPPED))
-> @@ -425,6 +441,7 @@ int pci_pasid_features(struct pci_dev *pdev)
->  }
->  EXPORT_SYMBOL_GPL(pci_pasid_features);
->  
-> +#ifdef CONFIG_PCI_PRI
->  /**
->   * pci_prg_resp_pasid_required - Return PRG Response PASID Required bit
->   *				 status.
-> @@ -432,31 +449,18 @@ EXPORT_SYMBOL_GPL(pci_pasid_features);
->   *
->   * Returns 1 if PASID is required in PRG Response Message, 0 otherwise.
->   *
-> - * Even though the PRG response PASID status is read from PRI Status
-> - * Register, since this API will mainly be used by PASID users, this
-> - * function is defined within #ifdef CONFIG_PCI_PASID instead of
-> - * CONFIG_PCI_PRI.
-> + * Since this API has dependency on both PRI and PASID, protect it
-> + * with both CONFIG_PCI_PRI and CONFIG_PCI_PASID.
->   */
->  int pci_prg_resp_pasid_required(struct pci_dev *pdev)
->  {
-> -	u16 status;
-> -	int pri;
-> -
->  	if (pdev->is_virtfn)
->  		pdev = pci_physfn(pdev);
->  
-> -	pri = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PRI);
-> -	if (!pri)
-> -		return 0;
-> -
-> -	pci_read_config_word(pdev, pri + PCI_PRI_STATUS, &status);
-> -
-> -	if (status & PCI_PRI_STATUS_PASID)
-> -		return 1;
-> -
-> -	return 0;
-> +	return pdev->pasid_required;
->  }
->  EXPORT_SYMBOL_GPL(pci_prg_resp_pasid_required);
-> +#endif /* CONFIG_PCI_PRI */
->  
->  #define PASID_NUMBER_SHIFT	8
->  #define PASID_NUMBER_MASK	(0x1f << PASID_NUMBER_SHIFT)
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 6542100bd2dd..f1131fee7fcd 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -456,6 +456,7 @@ struct pci_dev {
->  #ifdef CONFIG_PCI_PRI
->  	u16		pri_cap;	/* PRI Capability offset */
->  	u32		pri_reqs_alloc; /* Number of PRI requests allocated */
-> +	unsigned int	pasid_required:1; /* PRG Response PASID Required bit status */
->  #endif
->  #ifdef CONFIG_PCI_PASID
->  	u16		pasid_cap;	/* PASID Capability offset */
-> -- 
-> 2.21.0
-> 
 
-diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-index e3842eabcfdd..b183c9f916b0 100644
---- a/drivers/iommu/Kconfig
-+++ b/drivers/iommu/Kconfig
-@@ -207,6 +207,7 @@ config INTEL_IOMMU_SVM
- 	bool "Support for Shared Virtual Memory with Intel IOMMU"
- 	depends on INTEL_IOMMU && X86
- 	select PCI_PASID
-+	select PCI_PRI
- 	select MMU_NOTIFIER
- 	help
- 	  Shared Virtual Memory (SVM) provides a facility for devices
-diff --git a/drivers/pci/ats.c b/drivers/pci/ats.c
-index cb4f62da7b8a..76ae518d55f4 100644
---- a/drivers/pci/ats.c
-+++ b/drivers/pci/ats.c
-@@ -159,6 +159,20 @@ int pci_ats_page_aligned(struct pci_dev *pdev)
- EXPORT_SYMBOL_GPL(pci_ats_page_aligned);
- 
- #ifdef CONFIG_PCI_PRI
-+void pci_pri_init(struct pci_dev *pdev)
-+{
-+	u16 status;
-+
-+	pdev->pri_cap = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PRI);
-+
-+	if (!pdev->pri_cap)
-+		return;
-+
-+	pci_read_config_word(pdev, pdev->pri_cap + PCI_PRI_STATUS, &status);
-+	if (status & PCI_PRI_STATUS_PASID)
-+		pdev->pasid_required = 1;
-+}
-+
- /**
-  * pci_enable_pri - Enable PRI capability
-  * @ pdev: PCI device structure
-@@ -185,12 +199,8 @@ int pci_enable_pri(struct pci_dev *pdev, u32 reqs)
- 	if (WARN_ON(pdev->pri_enabled))
- 		return -EBUSY;
- 
--	if (!pri) {
--		pri = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PRI);
--		if (!pri)
--			return -EINVAL;
--		pdev->pri_cap = pri;
--	}
-+	if (!pri)
-+		return -EINVAL;
- 
- 	pci_read_config_word(pdev, pri + PCI_PRI_STATUS, &status);
- 	if (!(status & PCI_PRI_STATUS_STOPPED))
-@@ -290,9 +300,30 @@ int pci_reset_pri(struct pci_dev *pdev)
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(pci_reset_pri);
-+
-+/**
-+ * pci_prg_resp_pasid_required - Return PRG Response PASID Required bit
-+ *				 status.
-+ * @pdev: PCI device structure
-+ *
-+ * Returns 1 if PASID is required in PRG Response Message, 0 otherwise.
-+ */
-+int pci_prg_resp_pasid_required(struct pci_dev *pdev)
-+{
-+	if (pdev->is_virtfn)
-+		pdev = pci_physfn(pdev);
-+
-+	return pdev->pasid_required;
-+}
-+EXPORT_SYMBOL_GPL(pci_prg_resp_pasid_required);
- #endif /* CONFIG_PCI_PRI */
- 
- #ifdef CONFIG_PCI_PASID
-+void pci_pasid_init(struct pci_dev *pdev)
-+{
-+	pdev->pasid_cap = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PASID);
-+}
-+
- /**
-  * pci_enable_pasid - Enable the PASID capability
-  * @pdev: PCI device structure
-@@ -323,12 +354,8 @@ int pci_enable_pasid(struct pci_dev *pdev, int features)
- 	if (!pdev->eetlp_prefix_path)
- 		return -EINVAL;
- 
--	if (!pasid) {
--		pasid = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PASID);
--		if (!pasid)
--			return -EINVAL;
--		pdev->pasid_cap = pasid;
--	}
-+	if (!pasid)
-+		return -EINVAL;
- 
- 	pci_read_config_word(pdev, pasid + PCI_PASID_CAP, &supported);
- 	supported &= PCI_PASID_CAP_EXEC | PCI_PASID_CAP_PRIV;
-@@ -425,39 +452,6 @@ int pci_pasid_features(struct pci_dev *pdev)
- }
- EXPORT_SYMBOL_GPL(pci_pasid_features);
- 
--/**
-- * pci_prg_resp_pasid_required - Return PRG Response PASID Required bit
-- *				 status.
-- * @pdev: PCI device structure
-- *
-- * Returns 1 if PASID is required in PRG Response Message, 0 otherwise.
-- *
-- * Even though the PRG response PASID status is read from PRI Status
-- * Register, since this API will mainly be used by PASID users, this
-- * function is defined within #ifdef CONFIG_PCI_PASID instead of
-- * CONFIG_PCI_PRI.
-- */
--int pci_prg_resp_pasid_required(struct pci_dev *pdev)
--{
--	u16 status;
--	int pri;
--
--	if (pdev->is_virtfn)
--		pdev = pci_physfn(pdev);
--
--	pri = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PRI);
--	if (!pri)
--		return 0;
--
--	pci_read_config_word(pdev, pri + PCI_PRI_STATUS, &status);
--
--	if (status & PCI_PRI_STATUS_PASID)
--		return 1;
--
--	return 0;
--}
--EXPORT_SYMBOL_GPL(pci_prg_resp_pasid_required);
--
- #define PASID_NUMBER_SHIFT	8
- #define PASID_NUMBER_MASK	(0x1f << PASID_NUMBER_SHIFT)
- /**
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index 3f6947ee3324..ae84d28ba03a 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -456,6 +456,18 @@ static inline void pci_ats_init(struct pci_dev *d) { }
- static inline void pci_restore_ats_state(struct pci_dev *dev) { }
- #endif /* CONFIG_PCI_ATS */
- 
-+#ifdef CONFIG_PCI_PRI
-+void pci_pri_init(struct pci_dev *dev);
-+#else
-+static inline void pci_pri_init(struct pci_dev *dev) { }
-+#endif
-+
-+#ifdef CONFIG_PCI_PASID
-+void pci_pasid_init(struct pci_dev *dev);
-+#else
-+static inline void pci_pasid_init(struct pci_dev *dev) { }
-+#endif
-+
- #ifdef CONFIG_PCI_IOV
- int pci_iov_init(struct pci_dev *dev);
- void pci_iov_release(struct pci_dev *dev);
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 3d5271a7a849..df2b77866f3b 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -2324,6 +2324,12 @@ static void pci_init_capabilities(struct pci_dev *dev)
- 	/* Address Translation Services */
- 	pci_ats_init(dev);
- 
-+	/* Page Request Interface */
-+	pci_pri_init(dev);
-+
-+	/* Process Address Space ID */
-+	pci_pasid_init(dev);
-+
- 	/* Enable ACS P2P upstream forwarding */
- 	pci_enable_acs(dev);
- 
-diff --git a/include/linux/pci-ats.h b/include/linux/pci-ats.h
-index 1ebb88e7c184..a7a2b3d94fcc 100644
---- a/include/linux/pci-ats.h
-+++ b/include/linux/pci-ats.h
-@@ -10,6 +10,7 @@ int pci_enable_pri(struct pci_dev *pdev, u32 reqs);
- void pci_disable_pri(struct pci_dev *pdev);
- void pci_restore_pri_state(struct pci_dev *pdev);
- int pci_reset_pri(struct pci_dev *pdev);
-+int pci_prg_resp_pasid_required(struct pci_dev *pdev);
- 
- #else /* CONFIG_PCI_PRI */
- 
-@@ -31,6 +32,10 @@ static inline int pci_reset_pri(struct pci_dev *pdev)
- 	return -ENODEV;
- }
- 
-+static inline int pci_prg_resp_pasid_required(struct pci_dev *pdev)
-+{
-+	return 0;
-+}
- #endif /* CONFIG_PCI_PRI */
- 
- #ifdef CONFIG_PCI_PASID
-@@ -40,7 +45,6 @@ void pci_disable_pasid(struct pci_dev *pdev);
- void pci_restore_pasid_state(struct pci_dev *pdev);
- int pci_pasid_features(struct pci_dev *pdev);
- int pci_max_pasids(struct pci_dev *pdev);
--int pci_prg_resp_pasid_required(struct pci_dev *pdev);
- 
- #else  /* CONFIG_PCI_PASID */
- 
-@@ -66,11 +70,6 @@ static inline int pci_max_pasids(struct pci_dev *pdev)
- {
- 	return -EINVAL;
- }
--
--static inline int pci_prg_resp_pasid_required(struct pci_dev *pdev)
--{
--	return 0;
--}
- #endif /* CONFIG_PCI_PASID */
- 
- 
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 6542100bd2dd..64d35e730fab 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -456,6 +456,7 @@ struct pci_dev {
- #ifdef CONFIG_PCI_PRI
- 	u16		pri_cap;	/* PRI Capability offset */
- 	u32		pri_reqs_alloc; /* Number of PRI requests allocated */
-+	unsigned int	pasid_required:1; /* PRG Response PASID Required */
- #endif
- #ifdef CONFIG_PCI_PASID
- 	u16		pasid_cap;	/* PASID Capability offset */
+>         network_comments
+>         remove_switchforwhileif_semicolons
+>         detab_else_return
+>         remove_while_while
+>         fallthrough
+> Additional conversions which may not work well:
+>         (enable individually or with --convert=all --broken)
+>         move_labels_to_column_1
+>         space_around_logical_tests
+>         space_around_assign
+>         space_around_arithmetic
+>         CamelCase_to_camel_case
+
+s/camel_case/snake_case/
+
+I'll give the script a run later this week and report back if I can
+find any errors in the resulting build, as in the previous patch
+series. Thanks for the work on this.
+-- 
+Thanks,
+~Nick Desaulniers
