@@ -2,64 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1670AD1B71
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 00:13:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAB64D1B7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 00:15:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732107AbfJIWNs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 18:13:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52950 "EHLO mail.kernel.org"
+        id S1732196AbfJIWPm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 18:15:42 -0400
+Received: from namei.org ([65.99.196.166]:53370 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730675AbfJIWNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 18:13:48 -0400
-Received: from washi1.fujisawa.hgst.com (unknown [199.255.47.10])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A08B120B7C;
-        Wed,  9 Oct 2019 22:13:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570659227;
-        bh=RyPgVqyj3PPw8zKgkDtZVoZJBEN/mwASsfZ3X8viFlg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ob9rAGSf4kNkBMpSCe4SQ3shpy8EKIrmDLXF707Cgz9PzHJA6+ZVX3wqfOwpy3c94
-         4KqzrRhJaQyB3mDz9J4jyRqBVSABi8NN3laK0c/71U1sIEzkZjJGvGLqWrDmNtIGke
-         PqJspaioXzcDujS0cyNGMv6SjJM66iv/A0BGWCEg=
-Date:   Thu, 10 Oct 2019 07:13:44 +0900
-From:   Keith Busch <kbusch@kernel.org>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>, Jens Axboe <axboe@fb.com>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Stephen Bates <sbates@raithlin.com>
-Subject: Re: [PATCH v9 01/12] nvme-core: introduce nvme_ctrl_get_by_path()
-Message-ID: <20191009221344.GB3009@washi1.fujisawa.hgst.com>
-References: <20191009192530.13079-1-logang@deltatee.com>
- <20191009192530.13079-2-logang@deltatee.com>
+        id S1730675AbfJIWPl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 18:15:41 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x99MEi61030164;
+        Wed, 9 Oct 2019 22:14:45 GMT
+Date:   Thu, 10 Oct 2019 09:14:44 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, rostedt@goodmis.org,
+        primiano@google.com, rsavitski@google.com, jeffv@google.com,
+        kernel-team@android.com, Alexei Starovoitov <ast@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        bpf@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-security-module@vger.kernel.org,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Namhyung Kim <namhyung@kernel.org>, selinux@vger.kernel.org,
+        Song Liu <songliubraving@fb.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Yonghong Song <yhs@fb.com>
+Subject: Re: [PATCH RFC] perf_event: Add support for LSM and SELinux checks
+In-Reply-To: <710c5bc0-deca-2649-8351-678e177214e9@schaufler-ca.com>
+Message-ID: <alpine.LRH.2.21.1910100912210.29840@namei.org>
+References: <20191009203657.6070-1-joel@joelfernandes.org> <710c5bc0-deca-2649-8351-678e177214e9@schaufler-ca.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191009192530.13079-2-logang@deltatee.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 01:25:18PM -0600, Logan Gunthorpe wrote:
-> nvme_ctrl_get_by_path() is analagous to blkdev_get_by_path() except it
-> gets a struct nvme_ctrl from the path to its char dev (/dev/nvme0).
-> It makes use of filp_open() to open the file and uses the private
-> data to obtain a pointer to the struct nvme_ctrl. If the fops of the
-> file do not match, -EINVAL is returned.
-> 
-> The purpose of this function is to support NVMe-OF target passthru.
-> 
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-> Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
-> Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+On Wed, 9 Oct 2019, Casey Schaufler wrote:
 
-Looks fine.
+> Please consider making the perf_alloc security blob maintained
+> by the infrastructure rather than the individual modules. This
+> will save it having to be changed later.
 
-Reviewed-by: Keith Busch <kbusch@kernel.org>
+Is anyone planning on using this with full stacking?
+
+If not, we don't need the extra code & complexity. Stacking should only 
+cover what's concretely required by in-tree users.
+
+-- 
+James Morris
+<jmorris@namei.org>
+
