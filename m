@@ -2,92 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F1F6D0791
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 08:44:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DA07D07A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 08:50:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726765AbfJIGoz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 02:44:55 -0400
-Received: from mga01.intel.com ([192.55.52.88]:37246 "EHLO mga01.intel.com"
+        id S1726336AbfJIGur (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 02:50:47 -0400
+Received: from verein.lst.de ([213.95.11.211]:50518 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725914AbfJIGoy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 02:44:54 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2019 23:44:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,273,1566889200"; 
-   d="scan'208";a="368658906"
-Received: from unknown (HELO localhost) ([10.239.159.128])
-  by orsmga005.jf.intel.com with ESMTP; 08 Oct 2019 23:44:51 -0700
-Date:   Wed, 9 Oct 2019 14:46:48 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Jim Mattson <jmattson@google.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH v7 6/7] KVM: x86: Load Guest fpu state when accessing
- MSRs managed by XSAVES
-Message-ID: <20191009064648.GD27851@local-michael-cet-test>
-References: <20190927021927.23057-1-weijiang.yang@intel.com>
- <20190927021927.23057-7-weijiang.yang@intel.com>
- <CALMp9eRouyhkKeadM_w80bisWB-VSBCf3NSei5hZXcDsRR7GJg@mail.gmail.com>
+        id S1725440AbfJIGur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 02:50:47 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 0914168B05; Wed,  9 Oct 2019 08:50:44 +0200 (CEST)
+Date:   Wed, 9 Oct 2019 08:50:43 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: ehci-pci breakage with dma-mapping changes in 5.4-rc2
+Message-ID: <20191009065043.GA30157@lst.de>
+References: <20191007175528.GA21857@lst.de> <20191007175630.GA28861@infradead.org> <20191007175856.GA42018@rani.riverdale.lan> <20191007183206.GA13589@rani.riverdale.lan> <20191007184754.GB31345@lst.de> <20191007221054.GA409402@rani.riverdale.lan> <20191007235401.GA608824@rani.riverdale.lan> <20191008073210.GB9452@lst.de> <20191008115103.GA463127@rani.riverdale.lan> <20191008154731.GA616259@rani.riverdale.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALMp9eRouyhkKeadM_w80bisWB-VSBCf3NSei5hZXcDsRR7GJg@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20191008154731.GA616259@rani.riverdale.lan>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 12:56:30PM -0700, Jim Mattson wrote:
-> On Thu, Sep 26, 2019 at 7:17 PM Yang Weijiang <weijiang.yang@intel.com> wrote:
-> >
-> > From: Sean Christopherson <sean.j.christopherson@intel.com>
-> >
- >  /*
-> >   * Read or write a bunch of msrs. All parameters are kernel addresses.
-> >   *
-> > @@ -3009,11 +3017,23 @@ static int __msr_io(struct kvm_vcpu *vcpu, struct kvm_msrs *msrs,
-> >                     int (*do_msr)(struct kvm_vcpu *vcpu,
-> >                                   unsigned index, u64 *data))
-> >  {
-> > +       bool fpu_loaded = false;
-> >         int i;
-> > +       const u64 cet_bits = XFEATURE_MASK_CET_USER | XFEATURE_MASK_CET_KERNEL;
-> > +       bool cet_xss = kvm_x86_ops->xsaves_supported() &&
-> > +                      (kvm_supported_xss() & cet_bits);
-> 
-> It seems like I've seen a lot of checks like this. Can this be
-> simplified (throughout this series) by sinking the
-> kvm_x86_ops->xsaves_supported() check into kvm_supported_xss()? That
-> is, shouldn't kvm_supported_xss() return 0 if
-> kvm_x86_ops->xsaves_supported() is false?
->
-OK, let me add this check, thank you!
+On Tue, Oct 08, 2019 at 11:47:31AM -0400, Arvind Sankar wrote:
+> Ok, I see that almost nothing actually uses dma_get_required_mask. So if
+> something did need >4Gb space, the IOMMU would allocate it anyway
+> regardless of dma_get_required_mask.
 
-> > -       for (i = 0; i < msrs->nmsrs; ++i)
-> > +       for (i = 0; i < msrs->nmsrs; ++i) {
-> > +               if (!fpu_loaded && cet_xss &&
-> > +                   is_xsaves_msr(entries[i].index)) {
-> > +                       kvm_load_guest_fpu(vcpu);
-> > +                       fpu_loaded = true;
-> > +               }
-> >                 if (do_msr(vcpu, entries[i].index, &entries[i].data))
-> >                         break;
-> > +       }
-> > +       if (fpu_loaded)
-> > +               kvm_put_guest_fpu(vcpu);
-> >
-> >         return i;
-> >  }
-> > --
-> > 2.17.2
-> >
+Yes.  And with the direct mapping it also isn't an issue.
+
+> I'm thinking this means that we actually only needed to change
+> dma_get_required_mask to dma_direct_get_required_mask in
+> iommu_need_mapping, and the rest of the change is unnecessary?
+> 
+> Below is list of stuff calling dma_get_required_mask currently:
+
+I guess that would actually work ok, but I prefer the more verbose
+version as it explain what is going on, and will lead people to do
+the right thing if we split the iommu vs passthrough case into
+different ops (we already had a patch for that out on the list).
+
+> For the drivers that do currently use dma_get_required_mask, I believe
+> we will need to replace most of them with dma_direct_get_required_mask
+> as well to maintain passthrough functionality -- the fusion, scsi, and
+> infinband drivers all seem to be using this call to determine whether to
+> expose the device's 64-bit DMA capability or not. With the change they
+> will think they only need 32-bit DMA, which in turn will disable
+> passthrough on them.
+
+At least for some of the legacy SCSI drivers that is intentional, and
+the reason why dma_get_required_mask was originally added.  On actual
+PCI (and PCI-X, but not PCIe which everyone uses now) the 64-bit
+addressing even if supported is not very efficient as it needs two
+bus cycles.  So we prefer to just use the iommu.
+
+> The etnaviv driver is doing something funky that I'm not sure about, but
+> I *think* that one might want the real physical range as well. The mmc
+> driver I think might be ok with the 32-bit range.
+
+etnaviv is never used on systems with the intel iommu anyway.
+
+> The vmd controller one not sure about.
+
+That just passes through the dma ops to work around really stupid
+intel chipsets.
+
+> In dma-mapping.h, the function is used in dma_addressing_limited, which
+> in turn is used in a couple of amd drm drivers, again not sure about
+> these.
+---end quoted text---
