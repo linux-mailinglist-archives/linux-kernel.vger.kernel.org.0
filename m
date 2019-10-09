@@ -2,97 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03CA5D0A4C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 10:52:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91AD7D0A6A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 10:57:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730565AbfJIIwY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 04:52:24 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:41184 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730406AbfJIIwV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 04:52:21 -0400
-Received: by mail-lj1-f195.google.com with SMTP id f5so1620931ljg.8;
-        Wed, 09 Oct 2019 01:52:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=f04OdU6Fyk3m2zdZCMUEKpGzg4pA3Tu5ccwXrcxWMa0=;
-        b=vPBVAl//lPkqDRQlLMjKuZdWOSz95s6yp3C/B+ltHKl8GcNV8r85ugL9sN1QgKnIrU
-         WnnXRA7G04rnxLe+J5vCllC5fLr1Mi4gYBgtT0ADwWN4zyIQu/Uedr2oXwUop/WKaaMg
-         WWNXqZi6W/tPcxxG7zwAs4AnS0hbOQvJUembAd9dX+kYzmm7fBdYuNfHfOUj+5eeHZvt
-         4Iw1N+d1vBD14mJ4GozTAWfJvtDfE7MifSUkNKNFEtiKYxKX9AmQGk8NWgzpr2P89QtX
-         HN7a1jiU9KLxzBiBkOxEepeWZwa/zwALjN4PsUIzJgWpR4VA+A566hrTqgdf+3s7uh6k
-         bH1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=f04OdU6Fyk3m2zdZCMUEKpGzg4pA3Tu5ccwXrcxWMa0=;
-        b=E1MGvBlMdWW5CwUCwhPLdUc4Dgw5RnJaQCCXQFSWGBsQd3MkRWlQxPtQI8vPxNBpLr
-         Y36hihQJzMFuhhEDfasqwY/sqhb6Uf/qKlhVUBG/tRpyDnYjcvBIbjTqCytKtNY9WvsR
-         CF9GmQT11jUMNOYVOMkC7hv5r6f9VF4fVknKJhKk9OQojj+LPq5PoiHFYaSgzgCPa+10
-         aKtlXjgydRgZtNQ7SjgtA0Z73+9kE+ToKivCzLP9clnYk4FN95E9vKDcALdlrl4YngBH
-         5+77sPYIw7YFHp7u9sOV2Fj1O5n2iYUmJi/Zcj6HkiX8u1QzAUXQ/Cu1YxDFaw4DuxpY
-         t21Q==
-X-Gm-Message-State: APjAAAVETSDkOBSWcznpfupuDcBr4HJBSwco/HpAnPrzSJtfnvl0rPKv
-        wIQk+l4lRdAvgAazQZly8rhd2BI/
-X-Google-Smtp-Source: APXvYqx5wbfdt6yNdn2U6rc1m53le8zF3t+PqSJO6cvPIxeB8MW6r9epDp1r+XLEuOcFdRv3aRzjVg==
-X-Received: by 2002:a2e:880e:: with SMTP id x14mr1584844ljh.42.1570611138277;
-        Wed, 09 Oct 2019 01:52:18 -0700 (PDT)
-Received: from [192.168.2.145] ([94.29.34.231])
-        by smtp.googlemail.com with ESMTPSA id v1sm325809lfa.87.2019.10.09.01.52.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2019 01:52:17 -0700 (PDT)
-Subject: Re: [PATCH v10 12/15] memory: tegra: Introduce Tegra30 EMC driver
-To:     Peter Geis <pgwipeout@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Joseph Lo <josephl@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190811210043.20122-1-digetx@gmail.com>
- <20190811210043.20122-13-digetx@gmail.com>
- <CAMdYzYqNL_KAYwsnWYuz9wf2xT_RM0cWA8jkKATWMX7yuVq7Hw@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <ebd9b2df-e4dd-1207-ad38-fc52cf4e86d4@gmail.com>
-Date:   Wed, 9 Oct 2019 11:52:16 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S1730110AbfJII5q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 04:57:46 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:36830 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725903AbfJII5p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 04:57:45 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 7DF0EA200A797F312905;
+        Wed,  9 Oct 2019 16:57:43 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 9 Oct 2019 16:57:34 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
+        <namhyung@kernel.org>, <mark.rutland@arm.com>, <will@kernel.org>
+CC:     <f.fainelli@gmail.com>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
+        <zhangshaokun@hisilicon.com>, John Garry <john.garry@huawei.com>
+Subject: [PATCH] MAINTAINERS: Add entry for perf tool arm64 pmu-events files
+Date:   Wed, 9 Oct 2019 16:54:33 +0800
+Message-ID: <1570611273-108281-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-In-Reply-To: <CAMdYzYqNL_KAYwsnWYuz9wf2xT_RM0cWA8jkKATWMX7yuVq7Hw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-05.10.2019 19:28, Peter Geis пишет:
-> Tested on the Ouya (tegra30).
-> 
-> Tested-by: Peter Geis <pgwipeout@gmail.com>
-> 
-> On Sun, Aug 11, 2019 at 5:02 PM Dmitry Osipenko <digetx@gmail.com> wrote:
->>
->> Introduce driver for the External Memory Controller (EMC) found on Tegra30
->> chips, it controls the external DRAM on the board. The purpose of this
->> driver is to program memory timing for external memory on the EMC clock
->> rate change.
->>
->> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
+Will and I have an interest in reviewing the pmu-events changes related to
+arm64, so add a specific entry for this.
 
-Peter, thank you very much for the testing!
+Cc: Will Deacon <will@kernel.org>
+Signed-off-by: John Garry <john.garry@huawei.com>
 
-Thierry, could you please pick up this series and other relevant patches
-for 5.5? Thanks in advance!
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 296de2b51c83..6583b02790fe 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12767,6 +12767,13 @@ F:	arch/*/events/*
+ F:	arch/*/events/*/*
+ F:	tools/perf/
+ 
++PERFORMANCE EVENTS SUBSYSTEM ARM64 PMU EVENTS
++R:	John Garry <john.garry@huawei.com>
++R:	Will Deacon <will@kernel.org>
++L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
++S:	Supported
++F:	tools/perf/pmu-events/arch/arm64/
++
+ PERSONALITY HANDLING
+ M:	Christoph Hellwig <hch@infradead.org>
+ L:	linux-abi-devel@lists.sourceforge.net
+-- 
+2.17.1
+
