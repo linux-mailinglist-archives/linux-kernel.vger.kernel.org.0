@@ -2,89 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C666D18D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 21:26:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1AFED18E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2019 21:27:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732215AbfJIT0P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 15:26:15 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:37656 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731974AbfJITZn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 15:25:43 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1iIHaa-0002gD-6f; Wed, 09 Oct 2019 13:25:42 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.92)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1iIHaZ-0003QV-B6; Wed, 09 Oct 2019 13:25:35 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Stephen Bates <sbates@raithlin.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Wed,  9 Oct 2019 13:25:30 -0600
-Message-Id: <20191009192530.13079-14-logang@deltatee.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191009192530.13079-1-logang@deltatee.com>
-References: <20191009192530.13079-1-logang@deltatee.com>
+        id S1732319AbfJIT0f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 15:26:35 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:41960 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731254AbfJIT0b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 15:26:31 -0400
+Received: by mail-oi1-f196.google.com with SMTP id w65so2760752oiw.8;
+        Wed, 09 Oct 2019 12:26:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=E+1Cf+QVyq8bhGJdgpmwKD8ewKz92Myu7dCI2HheZcs=;
+        b=OEvacDBD1nNTxzNXydm1Fi/JV52WJKzGU5Lk2an5FP4A6V65B/rQDrrQfU1QGRCQ0S
+         Zrs0Jgbh0qEaujYFk8He/cvzhz3gg7tG4KgA8UcNbYihwcIz5jbD8yHf5bQPPpyEz/2I
+         sZhdpflWkZGUBiCBkGjpHXoc8O3Ev9CghEAWVKhJ9uIIle7Zy1j5Hv1yo9WWdL6jUF8V
+         6qoEGX8nNPZt7j1wkFD+5TW6D0qVBlqeTDKABi1msx1C7VrPVhpsKsmm+PTJ41/hX0FW
+         ioIZIj8++W3GX9EVE3RKWmPmC9WNF4/m2BBdcPD9gH50uCiY/bYDOZDC67/CProCkQQr
+         Ij7Q==
+X-Gm-Message-State: APjAAAU740lGtAvsv8SOXnNeze78ee3GyLWQmXR8a4sDx0w1GpiMmprC
+        urK6ESwFkhW/hcktHE1blg==
+X-Google-Smtp-Source: APXvYqxhf2oe+tg+UPt4mEDyJD79ww7yyIO3EkWvJYkdvSRE+pnt3LOVSbpBMfctWccSlLhsJ7SMZQ==
+X-Received: by 2002:aca:d402:: with SMTP id l2mr4027557oig.127.1570649190033;
+        Wed, 09 Oct 2019 12:26:30 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 11sm991096otg.62.2019.10.09.12.26.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 12:26:29 -0700 (PDT)
+Date:   Wed, 9 Oct 2019 14:26:28 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Jean-Jacques Hiblot <jjhiblot@ti.com>
+Cc:     jacek.anaszewski@gmail.com, pavel@ucw.cz, sre@kernel.org,
+        mark.rutland@arm.com, lee.jones@linaro.org,
+        daniel.thompson@linaro.org, dmurphy@ti.com,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, tomi.valkeinen@ti.com,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v10 4/6] dts-bindings: leds: Document the naming
+ requirement for LED properties
+Message-ID: <20191009192628.GA24087@bogus>
+References: <20191009085127.22843-1-jjhiblot@ti.com>
+ <20191009085127.22843-5-jjhiblot@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, hch@lst.de, sagi@grimberg.me, kbusch@kernel.org, axboe@fb.com, Chaitanya.Kulkarni@wdc.com, maxg@mellanox.com, sbates@raithlin.com, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,MYRULES_NO_TEXT autolearn=ham autolearn_force=no
-        version=3.4.2
-Subject: [PATCH v9 12/12] nvmet-passthru: support block accounting
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191009085127.22843-5-jjhiblot@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support block disk accounting by setting the RQF_IO_STAT flag
-and gendisk in the request.
+On Wed, Oct 09, 2019 at 10:51:25AM +0200, Jean-Jacques Hiblot wrote:
+> LED properties must be named "leds" in the same way that PWM, clocks or
+> PHY properties are names respectively "pwms", "clocks" and "phys".
+> 
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+> ---
+>  .../devicetree/bindings/leds/common.txt       | 20 ++++++++++++++++---
+>  1 file changed, 17 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+> index 9fa6f9795d50..31b8c1f68d27 100644
+> --- a/Documentation/devicetree/bindings/leds/common.txt
+> +++ b/Documentation/devicetree/bindings/leds/common.txt
+> @@ -10,6 +10,9 @@ can influence the way of the LED device initialization, the LED components
+>  have to be tightly coupled with the LED device binding. They are represented
+>  by child nodes of the parent LED device binding.
+>  
+> +LED properties should be named "leds". The exact meaning of each leds
+> +property must be documented in the device tree binding for each device.
+> +
 
-After this change, IO counts will be reflected correctly in
-/proc/diskstats for drives being used by passthru.
+This is worded oddly. The property is 'leds' and it is always a list of 
+phandles to LED device nodes. It is present in an LED consumer device.
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
----
- drivers/nvme/target/io-cmd-passthru.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+>  
+>  Optional properties for child nodes:
+>  - led-sources : List of device current outputs the LED is connected to. The
+> @@ -165,9 +168,20 @@ led-controller@30 {
+>  		function-enumerator = <2>;
+>          };
+>  
+> -        led@3 {
+> +        bkl_led0: led@3 {
+>  		reg = <3>;
+> -		function = LED_FUNCTION_INDICATOR;
+> -		function-enumerator = <3>;
+> +		function = LED_FUNCTION_BACKLIGHT;
+> +		function-enumerator = <1>;
+>          };
+> +
+> +        bkl_led1: led@4 {
+> +		reg = <4>;
+> +		function = LED_FUNCTION_BACKLIGHT;
+> +		function-enumerator = <2>;
+> +        };
+> +};
+> +
+> +
+> +backlight@40 {
 
-diff --git a/drivers/nvme/target/io-cmd-passthru.c b/drivers/nvme/target/io-cmd-passthru.c
-index c482e55f0fb8..37d06ebcbd0f 100644
---- a/drivers/nvme/target/io-cmd-passthru.c
-+++ b/drivers/nvme/target/io-cmd-passthru.c
-@@ -413,6 +413,9 @@ static struct request *nvmet_passthru_blk_make_request(struct nvmet_req *req,
- 	if (unlikely(IS_ERR(rq)))
- 		return rq;
- 
-+	if (blk_queue_io_stat(q))
-+		rq->rq_flags |= RQF_IO_STAT;
-+
- 	if (req->sg_cnt) {
- 		ret = nvmet_passthru_map_sg(req, rq);
- 		if (unlikely(ret)) {
-@@ -477,7 +480,7 @@ static void nvmet_passthru_execute_cmd(struct nvmet_req *req)
- 
- 	rq->end_io_data = req;
- 	if (req->sq->qid != 0) {
--		blk_execute_rq_nowait(rq->q, NULL, rq, 0,
-+		blk_execute_rq_nowait(rq->q, ns->disk, rq, 0,
- 				      nvmet_passthru_req_done);
- 	} else {
- 		req->p.rq = rq;
--- 
-2.20.1
+Either needs 'reg' or the unit-address dropped.
 
+> +	leds = <&bkl_led0> , <&bkl_led1>;
+
+drop the space            ^
+
+>  };
+> -- 
+> 2.17.1
+> 
