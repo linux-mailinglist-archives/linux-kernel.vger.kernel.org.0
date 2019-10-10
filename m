@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA502D236A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B98AD23E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388525AbfJJImS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:42:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46856 "EHLO mail.kernel.org"
+        id S2389419AbfJJIrC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:47:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388511AbfJJImR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:42:17 -0400
+        id S2389405AbfJJIq6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:46:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D71621BE5;
-        Thu, 10 Oct 2019 08:42:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 293B721BE5;
+        Thu, 10 Oct 2019 08:46:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570696936;
-        bh=sYY95Hr5Vx7uYLpkaAUKFT7rsKYr+ZKBrBYfbzCeno0=;
+        s=default; t=1570697217;
+        bh=q5BxtsgnxxA6emR9f+27ejh2u61bFo5fC+LFUQ3QRZA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sFpj4IeO7dW0YE87fjvz349bwSlJOgFFtXL3eGZpHJWtvdyUhuycbgCaSlp+SEUNV
-         m+h5zUhzORPEkkkHHM5/RAjgL502a8ZTsqrPq3bM8iMW1K6XTNjl/5skfs/E/FwIf2
-         C8elT/R/HY7B/urcL44YUdQDE3sS3XfOOubhLP5k=
+        b=spiqjNozBZIZ7ICqUaBOI/iqduODoiukn49rtdcVPRkVxfp8u7TkNRSt2Fdf5lOq/
+         UNXy7R6PSmNSZx2v5XwcCSS93WpIP5Mnb1yBiKB544yIwGLFsACkSGQVJ+E1PQ88b8
+         limt1XwCBereCcGyR6lxtcgYIupckGrszv8EIuYA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Trond Myklebust <trond.myklebust@hammerspace.com>,
         Anna Schumaker <Anna.Schumaker@Netapp.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 107/148] pNFS: Ensure we do clear the return-on-close layout stateid on fatal errors
+Subject: [PATCH 4.19 061/114] pNFS: Ensure we do clear the return-on-close layout stateid on fatal errors
 Date:   Thu, 10 Oct 2019 10:36:08 +0200
-Message-Id: <20191010083617.658814199@linuxfoundation.org>
+Message-Id: <20191010083609.492793822@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
-References: <20191010083609.660878383@linuxfoundation.org>
+In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
+References: <20191010083544.711104709@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -63,10 +63,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/fs/nfs/pnfs.c b/fs/nfs/pnfs.c
-index 4525d5acae386..0418b198edd3e 100644
+index 4931c3a75f038..c818f9886f618 100644
 --- a/fs/nfs/pnfs.c
 +++ b/fs/nfs/pnfs.c
-@@ -1449,10 +1449,15 @@ void pnfs_roc_release(struct nfs4_layoutreturn_args *args,
+@@ -1426,10 +1426,15 @@ void pnfs_roc_release(struct nfs4_layoutreturn_args *args,
  	const nfs4_stateid *res_stateid = NULL;
  	struct nfs4_xdr_opaque_data *ld_private = args->ld_private;
  
