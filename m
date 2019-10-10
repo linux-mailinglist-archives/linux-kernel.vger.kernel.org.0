@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2B6FD259A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:02:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 560A6D2550
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:01:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388355AbfJJIlb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:41:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45858 "EHLO mail.kernel.org"
+        id S2389494AbfJJI5l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:57:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388342AbfJJIl1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:41:27 -0400
+        id S2388642AbfJJIqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:46:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8C962054F;
-        Thu, 10 Oct 2019 08:41:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 772C22064A;
+        Thu, 10 Oct 2019 08:46:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570696887;
-        bh=uOi64M7D10KweumGcEk7pWtgTYT8TAKC8lUsJlYhmAQ=;
+        s=default; t=1570697185;
+        bh=/PVC3G9/SX/K3Pj3kLvFzj8Bv5bJt9sVHAuZdAS7PY0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ThLi2d0wp4X+T8lrazxv4xx30X2qVZfotrmxuv3n80op3O94BftpIV9Py1/FmFMiJ
-         a4PtTrojpYDsXHnIWYpmYBO1CjI0HdLQJsC0EczyHbfC3BXLMsBjVioVVq0ektmISc
-         tCme/6b+QsZwMr8UA4IaOjoiQtrE5CblvNM2rI08=
+        b=O8QZPhCISnnSv7idzkXqeDDbs3dCIXKiT/EUHctLtPgEI/2vIve/2kGGmrwQPU9Yr
+         mUYk2J55mcdVLzH/5UTWn7QzQkjPPc5Lwgs8g3QgAt05oQwJohHQzXXkzG2GwbvDfv
+         n++wCDPamEjkC+mwyM2Nla4+K16oCEVlFXZtE8Ck=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
         Mimi Zohar <zohar@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 090/148] ima: fix freeing ongoing ahash_request
-Date:   Thu, 10 Oct 2019 10:35:51 +0200
-Message-Id: <20191010083616.787812636@linuxfoundation.org>
+Subject: [PATCH 4.19 050/114] ima: fix freeing ongoing ahash_request
+Date:   Thu, 10 Oct 2019 10:35:57 +0200
+Message-Id: <20191010083608.110575459@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
-References: <20191010083609.660878383@linuxfoundation.org>
+In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
+References: <20191010083544.711104709@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -63,10 +63,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+)
 
 diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index 7532b062be594..73044fc6a9521 100644
+index b7822d2b79736..f63b4bd45d60e 100644
 --- a/security/integrity/ima/ima_crypto.c
 +++ b/security/integrity/ima/ima_crypto.c
-@@ -271,6 +271,11 @@ static int ima_calc_file_hash_atfm(struct file *file,
+@@ -274,6 +274,11 @@ static int ima_calc_file_hash_atfm(struct file *file,
  		if (rc != rbuf_len) {
  			if (rc >= 0)
  				rc = -EINVAL;
