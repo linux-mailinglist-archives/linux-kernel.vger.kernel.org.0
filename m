@@ -2,99 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5056CD21EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 09:39:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A9CCD21E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 09:39:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387466AbfJJHjr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 03:39:47 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59156 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733088AbfJJHgN (ORCPT
+        id S2387437AbfJJHji (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 03:39:38 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:43341 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733091AbfJJHg0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 03:36:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=WpK+tHhD79sRpUxX2TvDfN4NB5JxjZXZLIF/L+pB+ho=; b=B/+yaJLtn2cVn4Y0JCaEnkp8z
-        GCO9Pgjkv1e7IN5X5omdjhKjp0h3cXym7YDQFNfspg0x6rFAZEKgMD469ZTUiT3LZZoOrmuch6kCk
-        r9bUwJEZEjsGkrez/t8rbuuygdXtEpKAt5LaIEgtPcmqbAFStqCgVMqHnyPNj7tK5krrMJOKjgkja
-        5DwsM6zPJ/qSvjzgn/fbscBbwt5w3l03sEwpOpD/0++5ca1IBMSBuQcE8Bj3RgPXcRhBjKRZRVKOz
-        NjpStHdkwSLIs2KTsfXKVZZZ4vvJTNLXJ5haAS6C+mT6/ofAzN+ilh9bGzwmr22Hbpj2uPPf+KtwZ
-        hLPatH60Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iISza-0004Yw-5a; Thu, 10 Oct 2019 07:36:10 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5D6B3301A79;
-        Thu, 10 Oct 2019 09:35:16 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 86BE4202F4F4F; Thu, 10 Oct 2019 09:36:08 +0200 (CEST)
-Date:   Thu, 10 Oct 2019 09:36:08 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-team@fb.com, stable@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: [PATCH bpf-next 2/2] bpf/stackmap: fix A-A deadlock in
- bpf_get_stack()
-Message-ID: <20191010073608.GO2311@hirez.programming.kicks-ass.net>
-References: <20191010061916.198761-1-songliubraving@fb.com>
- <20191010061916.198761-3-songliubraving@fb.com>
+        Thu, 10 Oct 2019 03:36:26 -0400
+Received: by mail-ed1-f66.google.com with SMTP id r9so4505031edl.10
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 00:36:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=j2LxCDafDAW02/WxF7QeZcp0q72h+B7Xlq2HfqSe0sE=;
+        b=EW/Ygj0EAHXhkRDxuxtERiyCDOa0gnnMecZN7ArVqesXfPWt5j+cnDEqjJzxFn9SnB
+         j9tskjx6w94C9tJ7mapr7kCU0T2i8+HA2AIe+JUV2F0DPvq8JpOYq+VgJBevcjD0phY6
+         LpCGiVGUqgYtzICLIaLlmgiFFb3/hPYunPhp8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=j2LxCDafDAW02/WxF7QeZcp0q72h+B7Xlq2HfqSe0sE=;
+        b=VcxwdQDLPa2ZVyQOBo6TJ7+5EDiN4RGZRge7sLi8B0i+2QSR1EpTvH1q8gOusZuV7M
+         CZV5eVaZNg8K8Me+2Y1LdaYs1/3PTJ8MekSZu4E5YPyCVU/Wx2MQOr7Q8pt9Yz4au73R
+         pgFqt7XtFGyhHSUqyKCvsJpVxxHxqINxjpwuFhjNcw3mICdL7BTpUkNUaoNX3KqoU9kE
+         7t46foRBr7R8/d4vr3l0GIFFpicLP3+xFookFKC/CvrCGuLjZQwELjtCMYEGcfp31oEH
+         BEbWIM11a9ZJTMk5rwBHz+qkfmMUPSTKhmDoAUuNcJsUqc16+MAtddZBKb0WtXs7DI7U
+         RT2A==
+X-Gm-Message-State: APjAAAWkU4Mky8QbJHotHxWrm3I+ELhsZavUQKyIduzbWnpc0keW/Y0f
+        ATnESRRHSFZseplTGgk4Qt8v7b+7/R1XRw==
+X-Google-Smtp-Source: APXvYqy4EWm9YVwQ+9VeueqTGv+msdTt/fDVF0LkhaYzz6uvjO2QBXSj2EQPcsgW8wkncd5KokhQvQ==
+X-Received: by 2002:a05:6402:7ca:: with SMTP id u10mr6797832edy.20.1570692983977;
+        Thu, 10 Oct 2019 00:36:23 -0700 (PDT)
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com. [209.85.128.54])
+        by smtp.gmail.com with ESMTPSA id 36sm812733edz.92.2019.10.10.00.36.22
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2019 00:36:22 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 7so5765280wme.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 00:36:22 -0700 (PDT)
+X-Received: by 2002:a1c:2e50:: with SMTP id u77mr6752094wmu.64.1570692982129;
+ Thu, 10 Oct 2019 00:36:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191010061916.198761-3-songliubraving@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191007174505.10681-1-ezequiel@collabora.com>
+ <20191007174505.10681-4-ezequiel@collabora.com> <HE1PR06MB4011204B3FC2DAABB4BD1BACAC9B0@HE1PR06MB4011.eurprd06.prod.outlook.com>
+ <CAAFQd5BEPO3nicr1PzRNWoVEzsvKvv5AkqoMVh2AG7qST+bZdA@mail.gmail.com>
+ <HE1PR06MB40111D7287970183CF6D0DD1AC9A0@HE1PR06MB4011.eurprd06.prod.outlook.com>
+ <CAAFQd5AqYsUJeM5tzOY3WNFRZu74k6Yst3TpxcfB61zZtaHJDA@mail.gmail.com> <HE1PR06MB40112032B360DE217C939FB3AC9A0@HE1PR06MB4011.eurprd06.prod.outlook.com>
+In-Reply-To: <HE1PR06MB40112032B360DE217C939FB3AC9A0@HE1PR06MB4011.eurprd06.prod.outlook.com>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Thu, 10 Oct 2019 16:36:09 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5Bmng7SjS7qEnZkyKik1h4iX7KcDFSC4JSN+dby2+xkwA@mail.gmail.com>
+Message-ID: <CAAFQd5Bmng7SjS7qEnZkyKik1h4iX7KcDFSC4JSN+dby2+xkwA@mail.gmail.com>
+Subject: Re: [PATCH v2 for 5.4 3/4] media: hantro: Fix motion vectors usage condition
+To:     Jonas Karlman <jonas@kwiboo.se>
+Cc:     Ezequiel Garcia <ezequiel@collabora.com>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "kernel@collabora.com" <kernel@collabora.com>,
+        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+        "linux-rockchip@lists.infradead.org" 
+        <linux-rockchip@lists.infradead.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        "fbuergisser@chromium.org" <fbuergisser@chromium.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Douglas Anderson <dianders@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 11:19:16PM -0700, Song Liu wrote:
-> bpf stackmap with build-id lookup (BPF_F_STACK_BUILD_ID) can trigger A-A
-> deadlock on rq_lock():
-> 
-> rcu: INFO: rcu_sched detected stalls on CPUs/tasks:
-> [...]
-> Call Trace:
->  try_to_wake_up+0x1ad/0x590
->  wake_up_q+0x54/0x80
->  rwsem_wake+0x8a/0xb0
->  bpf_get_stack+0x13c/0x150
->  bpf_prog_fbdaf42eded9fe46_on_event+0x5e3/0x1000
->  bpf_overflow_handler+0x60/0x100
->  __perf_event_overflow+0x4f/0xf0
->  perf_swevent_overflow+0x99/0xc0
->  ___perf_sw_event+0xe7/0x120
->  __schedule+0x47d/0x620
->  schedule+0x29/0x90
->  futex_wait_queue_me+0xb9/0x110
->  futex_wait+0x139/0x230
->  do_futex+0x2ac/0xa50
->  __x64_sys_futex+0x13c/0x180
->  do_syscall_64+0x42/0x100
->  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> 
+On Tue, Oct 8, 2019 at 10:57 PM Jonas Karlman <jonas@kwiboo.se> wrote:
+>
+> On 2019-10-08 12:26, Tomasz Figa wrote:
+> > On Tue, Oct 8, 2019 at 3:23 PM Jonas Karlman <jonas@kwiboo.se> wrote:
+> >> On 2019-10-08 05:29, Tomasz Figa wrote:
+> >>> Hi Jonas,
+> >>>
+> >>> On Tue, Oct 8, 2019 at 3:33 AM Jonas Karlman <jonas@kwiboo.se> wrote:
+> >>>> On 2019-10-07 19:45, Ezequiel Garcia wrote:
+> >>>>> From: Francois Buergisser <fbuergisser@chromium.org>
+> >>>>>
+> >>>>> The setting of the motion vectors usage and the setting of motion
+> >>>>> vectors address are currently done under different conditions.
+> >>>>>
+> >>>>> When decoding pre-recorded videos, this results of leaving the motion
+> >>>>> vectors address unset, resulting in faulty memory accesses. Fix it
+> >>>>> by using the same condition everywhere, which matches the profiles
+> >>>>> that support motion vectors.
+> >>>> This does not fully match hantro sdk:
+> >>>>
+> >>>>   enable direct MV writing and POC tables for high/main streams.
+> >>>>   enable it also for any "baseline" stream which have main/high tools enabled.
+> >>>>
+> >>>>   (sps->profile_idc > 66 && sps->constrained_set0_flag == 0) ||
+> >>>>   sps->frame_mbs_only_flag != 1 ||
+> >>>>   sps->chroma_format_idc != 1 ||
+> >>>>   sps->scaling_matrix_present_flag != 0 ||
+> >>>>   pps->entropy_coding_mode_flag != 0 ||
+> >>>>   pps->weighted_pred_flag != 0 ||
+> >>>>   pps->weighted_bi_pred_idc != 0 ||
+> >>>>   pps->transform8x8_flag != 0 ||
+> >>>>   pps->scaling_matrix_present_flag != 0
+> >>> Thanks for double checking this. I can confirm that it's what Hantro
+> >>> SDK does indeed.
+> >>>
+> >>> However, would a stream with sps->profile_idc <= 66 and those other
+> >>> conditions met be still a compliant stream?
+> >> You are correct, if a non-compliant video is having decoding problems it should probably be handled
+> >> on userspace side (by not reporting baseline profile) and not in kernel.
+> >> All my video samples that was having the issue fixed in this patch are now decoded correctly.
+> >>
+> >>>> Above check is used when DIR_MV_BASE should be written.
+> >>>> And WRITE_MVS_E is set to nal_ref_idc != 0 when above is true.
+> >>>>
+> >>>> I think it may be safer to always set DIR_MV_BASE and keep the existing nal_ref_idc check for WRITE_MVS_E.
+> >>> That might have a performance penalty or some other side effects,
+> >>> though. Otherwise Hantro SDK wouldn't have enable it conditionally.
+> >>>
+> >>>> (That is what I did in my "media: hantro: H264 fixes and improvements" series, v2 is incoming)
+> >>>> Or have you found any video that is having issues in such case?
+> >>> We've been running the code with sps->profile_idc > 66 in production
+> >>> for 4 years and haven't seen any reports of a stream that wasn't
+> >>> decoded correctly.
+> >>>
+> >>> If we decide to go with a different behavior, I'd suggest thoroughly
+> >>> verifying the behavior on a big number of streams, including some
+> >>> performance measurements.
+> >> I agree, I would however suggest to change the if statement to the following (or similar)
+> >> as that should be the optimal for performance reasons and match the hantro sdk.
+> >>
+> >> if (sps->profile_idc > 66 && dec_param->nal_ref_idc)
+> > Sorry for my ignorance, but could you elaborate on this? What's the
+> > meaning of nal_ref_idc? I don't see it being checked in the Hantro SDK
+> > condition you mentioned earlier.
+>
+> My somewhat limited understanding of h264 spec is that nal_ref_idc should be 0 for non-reference field/frame/pictures
+> and because of this there should not be any need to write motion vector data as the field/frame should not be referenced.
+>
+> My base for the hantro sdk code is the imx8 imx-vpu-hantro package and it uses (simplified):
+>   SetDecRegister(h264_regs, HWIF_WRITE_MVS_E, nal_ref_idc != 0)
+> for MVC there is an additional condition.
 
-> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-> index 052580c33d26..3b278f6b0c3e 100644
-> --- a/kernel/bpf/stackmap.c
-> +++ b/kernel/bpf/stackmap.c
-> @@ -287,7 +287,7 @@ static void stack_map_get_build_id_offset(struct bpf_stack_build_id *id_offs,
->  	bool irq_work_busy = false;
->  	struct stack_map_irq_work *work = NULL;
-> 
-> -	if (in_nmi()) {
-> +	if (in_nmi() || this_rq_is_locked()) {
->  		work = this_cpu_ptr(&up_read_work);
->  		if (work->irq_work.flags & IRQ_WORK_BUSY)
->  			/* cannot queue more up_read, fallback */
+Aha, completely makes sense. Thanks for clarifying.
 
-This is horrific crap. Just say no to that get_build_id_offset()
-trainwreck.
+Best regards,
+Tomasz
+
+>
+> Regards,
+> Jonas
+>
+> >
+> >> Regards,
+> >> Jonas
+> >>
+> >>> Best regards,
+> >>> Tomasz
+> >>>
+> >>>> Regards,
+> >>>> Jonas
+> >>>>
+> >>>>> Fixes: dea0a82f3d22 ("media: hantro: Add support for H264 decoding on G1")
+> >>>>> Signed-off-by: Francois Buergisser <fbuergisser@chromium.org>
+> >>>>> Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+> >>>>> ---
+> >>>>> v2:
+> >>>>> * New patch.
+> >>>>>
+> >>>>>  drivers/staging/media/hantro/hantro_g1_h264_dec.c | 2 +-
+> >>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>>>
+> >>>>> diff --git a/drivers/staging/media/hantro/hantro_g1_h264_dec.c b/drivers/staging/media/hantro/hantro_g1_h264_dec.c
+> >>>>> index 7ab534936843..c92460407613 100644
+> >>>>> --- a/drivers/staging/media/hantro/hantro_g1_h264_dec.c
+> >>>>> +++ b/drivers/staging/media/hantro/hantro_g1_h264_dec.c
+> >>>>> @@ -35,7 +35,7 @@ static void set_params(struct hantro_ctx *ctx)
+> >>>>>       if (sps->flags & V4L2_H264_SPS_FLAG_MB_ADAPTIVE_FRAME_FIELD)
+> >>>>>               reg |= G1_REG_DEC_CTRL0_SEQ_MBAFF_E;
+> >>>>>       reg |= G1_REG_DEC_CTRL0_PICORD_COUNT_E;
+> >>>>> -     if (dec_param->nal_ref_idc)
+> >>>>> +     if (sps->profile_idc > 66)
+> >>>>>               reg |= G1_REG_DEC_CTRL0_WRITE_MVS_E;
+> >>>>>
+> >>>>>       if (!(sps->flags & V4L2_H264_SPS_FLAG_FRAME_MBS_ONLY) &&
+>
