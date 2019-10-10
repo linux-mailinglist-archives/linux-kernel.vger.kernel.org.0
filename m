@@ -2,72 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 395C5D1DFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 03:28:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9ADBD1E07
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 03:31:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732561AbfJJB2j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 21:28:39 -0400
-Received: from mga17.intel.com ([192.55.52.151]:10466 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731553AbfJJB2j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 21:28:39 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Oct 2019 18:28:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,278,1566889200"; 
-   d="scan'208";a="205932962"
-Received: from local-michael-cet-test.sh.intel.com (HELO localhost) ([10.239.159.128])
-  by orsmga002.jf.intel.com with ESMTP; 09 Oct 2019 18:28:31 -0700
-Date:   Thu, 10 Oct 2019 09:30:27 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Jim Mattson <jmattson@google.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH v7 4/7] KVM: VMX: Load Guest CET via VMCS when CET is
- enabled in Guest
-Message-ID: <20191010013027.GA1196@local-michael-cet-test.sh.intel.com>
-References: <20190927021927.23057-1-weijiang.yang@intel.com>
- <20190927021927.23057-5-weijiang.yang@intel.com>
- <CALMp9eS1V2fRcwogcEkHonvVAgfc9dU=7A4V-D0Rcoc=v82VAw@mail.gmail.com>
- <20191009064339.GC27851@local-michael-cet-test>
- <CALMp9eS+_riWYK=Zvk330YST4G_q_GfN2LfGXWz85aVnyXmsOg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALMp9eS+_riWYK=Zvk330YST4G_q_GfN2LfGXWz85aVnyXmsOg@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        id S1732555AbfJJBbO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 21:31:14 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:35609 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731155AbfJJBbN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 21:31:13 -0400
+Received: by mail-io1-f66.google.com with SMTP id q10so10119931iop.2;
+        Wed, 09 Oct 2019 18:31:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=EECY3Fn7ERfSk3kaNkDc4LWe0Wk5Us4HkrIqZXFVQYs=;
+        b=BpVYwvBLiXdK9jnurSGzV8/RWT0CoEeQztHt9l/+nWHXkVlZMtnKykxW74MRuVw3Qm
+         w0FBKi91ib1bV2MBNW8Ghp3keTncEJbdHL2XHKDYD4rInuLrz8DGLlYMsg6yZdK+D8Im
+         ABs2VErgJuArZbu7KqVjGekm/kUn11Lj6S5nzjct+nmHbWf4w2eEm5ZkkH0e2jSIFWKa
+         4rdv9s6iqF7TS5Q+v1fxVX5SQ2wxfvlr2NIliNlm8Wt4JLjKOHxCVUKpHHdhBLw100j2
+         TaA69t0VZmKgSmIdiUjHQHVGDNadAgpKfTR5qvBLhTAH93Lbfao/71w7BY35Xutfa3ym
+         57YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=EECY3Fn7ERfSk3kaNkDc4LWe0Wk5Us4HkrIqZXFVQYs=;
+        b=lGiVR5Z/a2gRzWJKIA2Lek+iPGOKu8xYjrzRuPIXqQSlrKZeI4e1tATZTJB575xG8E
+         oKnYBwbCQhKd7jHxt1BrF0Jd4ciiAtchhMliyXG4mWkz7/JjDJHD/3KRFQiRQK1aloLz
+         TX/4zwmpskBuQSoDV5MSKQZxigveL1WJByCsDmKLCKR+LaUubs0DAThzklvvgaUhXuV1
+         t9lL5T2frPqgCcDbM+XCUad7tGk4JtIGhjd4piVIbWpRcIla6qsIhCDlGFPXUsJ6jUhp
+         zgYCNcSj5dq6Av7uHCSvigKWpqzmYd9spisk/56+HHS2fUeFDVtDYLJaRyPdWavODsPe
+         vN3A==
+X-Gm-Message-State: APjAAAW8PDZZlOeMXqcgb5y6JsXiAHeee1vxfCGHdjmvJ7YfuygioLkq
+        tCaSAuwMxmdUVjVZx5ekCOE=
+X-Google-Smtp-Source: APXvYqxEHzLMBGtscrLT6MKlC333wTgfQcvHlzq59OkQTbwmLZj2u36d3Rm/smtUBm5BON7GESKAPQ==
+X-Received: by 2002:a02:3081:: with SMTP id q123mr6874353jaq.24.1570671073004;
+        Wed, 09 Oct 2019 18:31:13 -0700 (PDT)
+Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
+        by smtp.googlemail.com with ESMTPSA id z1sm2300510ioe.8.2019.10.09.18.31.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 18:31:12 -0700 (PDT)
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc:     emamd001@umn.edu, kjlu@umn.edu, smccaman@umn.edu,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: bcm2835: Fix memory leak in bcm2835_register_pll
+Date:   Wed,  9 Oct 2019 20:30:58 -0500
+Message-Id: <20191010013101.5364-1-navid.emamdoost@gmail.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 04:08:50PM -0700, Jim Mattson wrote:
-> On Tue, Oct 8, 2019 at 11:41 PM Yang Weijiang <weijiang.yang@intel.com> wrote:
-> >
-> > On Wed, Oct 02, 2019 at 11:54:26AM -0700, Jim Mattson wrote:
-> > > On Thu, Sep 26, 2019 at 7:17 PM Yang Weijiang <weijiang.yang@intel.com> wrote:
-> > > > +       if (cet_on)
-> > > > +               vmcs_set_bits(VM_ENTRY_CONTROLS,
-> > > > +                             VM_ENTRY_LOAD_GUEST_CET_STATE);
-> > >
-> > > Have we ensured that this VM-entry control is supported on the platform?
-> > >
-> > If all the checks pass, is it enought to ensure the control bit supported?
-> 
-> I don't think so. The only way to check to see if a VM-entry control
-> is supported is to check the relevant VMX capability MSR.
->
-It's a bit odd, there's no relevant CET bit in VMX cap. MSR, so I have
-to check like this.
+In the implementation of bcm2835_register_pll(), the allocated memory
+for pll should be released if devm_clk_hw_register() fails.
 
-> BTW, what about the corresponding VM-exit control?
-The kernel supervisor mode CET is not implemented yet, so I don't load host CET
-states on VM-exit, in future, I'll add it.
+Fixes: b19f009d4510 ("clk: bcm2835: Migrate to clk_hw based registration and OF APIs")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+---
+ drivers/clk/bcm/clk-bcm2835.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 802e488fd3c3..99549642110a 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1320,8 +1320,10 @@ static struct clk_hw *bcm2835_register_pll(struct bcm2835_cprman *cprman,
+ 	pll->hw.init = &init;
+ 
+ 	ret = devm_clk_hw_register(cprman->dev, &pll->hw);
+-	if (ret)
++	if (ret) {
++		kfree(pll);
+ 		return NULL;
++	}
+ 	return &pll->hw;
+ }
+ 
+-- 
+2.17.1
+
