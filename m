@@ -2,84 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1B25D2EB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 18:43:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 027DFD2EBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 18:43:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726396AbfJJQn3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 12:43:29 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:40218 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726290AbfJJQn3 (ORCPT
+        id S1726496AbfJJQnv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 12:43:51 -0400
+Received: from mail-io1-f48.google.com ([209.85.166.48]:35263 "EHLO
+        mail-io1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726290AbfJJQnv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 12:43:29 -0400
-Received: by mail-pf1-f194.google.com with SMTP id x127so4256857pfb.7
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 09:43:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=WcFO8qPZ/AFTCPgcIosbPBf6WzJZhu5LC0txwMdDqq0=;
-        b=mHXoFaiWr2KtDyo6AUfULISKrSL60dcxTqzjwiK6Uaub6ukWcxzvR35aRbJ/vlu4UK
-         btOqmAHm7PlUoeM5gAlSvg067gi9jVrpkKoXlKtP6V0vU2ST37HIbIHFg92Bf8qEYVHH
-         +sfpnRnP7n2dw4DiSrshnBTPiQgOvR4ZRzhEw=
+        Thu, 10 Oct 2019 12:43:51 -0400
+Received: by mail-io1-f48.google.com with SMTP id q10so15293094iop.2;
+        Thu, 10 Oct 2019 09:43:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=WcFO8qPZ/AFTCPgcIosbPBf6WzJZhu5LC0txwMdDqq0=;
-        b=CKP9q1YEGDkxm3tQgkDMWyMAiL4bTM0qGorHa+GZm5FQpO74G6zlZdR+UwNR44Inja
-         dVfnzvWG/BmIWEoz06fSFVOWw5+xndbnuIXu9kuRfQPbroF91JlDADa3vq49HhhYXojm
-         K3Jin8fDGOsndKSUEJ84Rw94o1AumlC3BpjQKcQ+Gv+AgRZoUcyTzJ8ORd1I+ACWoagg
-         wq4DohyzXjfr1ff/Q/9JKSVmrn+YVXXxzY373G+B326nkgjaNeWLyBKz7ZchhVfVF6Qx
-         OJN/2av7lku3GyftDfP9+SRcWnYqQd0d4CgVzWQie0HxSpKSeQ7FrpjU2iNySfdyUee6
-         WsXA==
-X-Gm-Message-State: APjAAAUH9Qa7Y74zFw9FdDOhhICIcNyW7WcsqHMQ/PPBVTpV0Pndbjyj
-        xWL0Pl/j6w4mDnE3ZAzbhEvRfA==
-X-Google-Smtp-Source: APXvYqxsqHZmX3PXU0VomobcpD35C37svv1v7Kpb0+mVbvks+MlYD9SD3jPPE8rJ5DviVJ/s9RX1pQ==
-X-Received: by 2002:a62:ed01:: with SMTP id u1mr11730140pfh.122.1570725808519;
-        Thu, 10 Oct 2019 09:43:28 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id l62sm8332515pfl.167.2019.10.10.09.43.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 09:43:27 -0700 (PDT)
-Date:   Thu, 10 Oct 2019 09:43:26 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        libc-alpha@sourceware.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] lib: introduce copy_struct_from_user() helper
-Message-ID: <201910100943.4C6AB66@keescook>
-References: <20191001011055.19283-1-cyphar@cyphar.com>
- <20191001011055.19283-2-cyphar@cyphar.com>
- <87eezkx2y7.fsf@mpe.ellerman.id.au>
- <20191010114007.o3bygjf4jlfk242e@yavin.dot.cyphar.com>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=eDC918nTSS5JgSXrNuvSCpxX8XwXIrnEoxRVv+U2dNY=;
+        b=fqSAJHmR9ew1yHUUgQv+2cSbec+E5B42FPT0SnDU/x7fKw1K90uNJEaRYUFUM5kosC
+         Hll8SxUh6ify4Zs+R0X/1fjgtK69H0IW07+JVEV4DiJWlOhrdUq+8uYkTgoidWxU3+PH
+         n8ybUUQG4GCauzXxyHw/hsPq7YYpmkYet8/kiQlYLN/2obu58w7cuiERsXx5zyh5U8jQ
+         OSnxNv/lKmMSR6u7cxGohWs+IyHycGABInLgldpd8yEMUOMHF2PQsffMn2edVbF8RGdu
+         edeYQvFP7Yjjxl0lSlakaAZen9r6XSJ5EaDtga9dhomsff6k3NOKYRpNyLpNiMH19lyA
+         Y97Q==
+X-Gm-Message-State: APjAAAU/AXIKo1zFOe5PAQP3A2aV3wioPUMZ2hurwRnUctDC1MZLj+ig
+        B3fn7ZX+xFXz1eHRqIRbuBgUHmGrSm6pXaTenRTmnFRPJ9c=
+X-Google-Smtp-Source: APXvYqzrmSb8jVzNyzNTs+R1/p2ZJER6ZZKPujuTjonUbw5qHPwg2O6Sbebgwnh9QJlEVUrbR1dd+PPVlErlKuM3njI=
+X-Received: by 2002:a02:19c1:: with SMTP id b184mr5415455jab.54.1570725830340;
+ Thu, 10 Oct 2019 09:43:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191010114007.o3bygjf4jlfk242e@yavin.dot.cyphar.com>
+From:   Francis Deslauriers <francis.deslauriers@efficios.com>
+Date:   Thu, 10 Oct 2019 12:43:39 -0400
+Message-ID: <CADcCL0iE+VS9O6dYNDHogjs-QYOYpDUbX5D5-iwsdhkk1zPxQg@mail.gmail.com>
+Subject: Tracing Summit 2019 - Videos
+To:     linux-trace-devel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Cc:     info@tracingsummit.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 10:40:07PM +1100, Aleksa Sarai wrote:
-> Yeah, it takes about 5-10s on my laptop. We could switch it to just
-> everything within a 4K block, but the main reason for testing with
-> 2*PAGE_SIZE is to make sure that check_nonzero_user() works across page
-> boundaries. Though we could only do check_nonzero_user() in the region
-> of the page boundary (maybe i E (PAGE_SIZE-512,PAGE_SIZE+512]?)
+Hi all,
+The videos of the Tracing Summit 2019 talks are now available on Youtube [1].
 
-Yeah, I like this idea: just poke at the specific edge-case.
+[1]: https://www.youtube.com/playlist?list=PLuo4E47p5_7ZeRpUZEUyF2kWyA6KzTTkI.
+
+See you all next year!
 
 -- 
-Kees Cook
+Francis Deslauriers
+Computer Engineer
+EfficiOS inc.
