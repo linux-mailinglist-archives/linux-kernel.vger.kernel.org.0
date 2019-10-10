@@ -2,158 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2138D2419
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:50:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9928D2332
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:48:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389741AbfJJItC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:49:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55350 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389731AbfJJIs7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:48:59 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1908D218AC;
-        Thu, 10 Oct 2019 08:48:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697337;
-        bh=FwfZPGAk5k2aXhVoQMbOGLDLpIQ+GKcriv79nfKQ7mo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g2irBCh9gSyiqTT7y7h49ILL6lbUX5su3w+GZGTjrmhYwXz++wsx/LNhfY46eyo7P
-         fCjwmbRf4GgZVrWKzCzjrcQQkuZlPNMVvBY4sWZSHaBhrJXf2ZL7MrbRTyaLF3P3ze
-         8uYxZXsmL+34cOhujsPzMkqtWJET/7ssjOMyEdMQ=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.19 105/114] arm64/speculation: Support mitigations= cmdline option
-Date:   Thu, 10 Oct 2019 10:36:52 +0200
-Message-Id: <20191010083613.783241526@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
-References: <20191010083544.711104709@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S2388038AbfJJIkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:40:05 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37205 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388013AbfJJIkD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:40:03 -0400
+Received: by mail-wr1-f68.google.com with SMTP id p14so6761333wro.4
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 01:40:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=42sItMr/D5Wq+0dBHN6jU3FpIi4hpB3vOynEYa+fIL4=;
+        b=dhYSWNgKFNmhHl0NqJPT5ow3NshhQlWKNtRKhTYeImMosjkghw2gL/3AHxLstTJLOq
+         eWCcECIzT4ogDpaZxN75m/JiyPIULduxX0ro0OQHY+2tFch+y8k/bphJ8nAC+c21WhnV
+         Y626DgddgNawu0J2OpQ1MjSzzPWVJXuCtm1OfUkmP1sZBVTRSqLSf2zV8uck2MlUmSxp
+         DeidlZqJZRkedsTnLiV3oc6+v7KlInIBTdaGYfnoe1fN8SK2Ww+Yv2mGT6zigAvVlWj4
+         Mfo1S8aKgdZF0CkzW1eYAXrOclMiSPcjiCx6/vl+cEEkKjCbJeMYOmTjnm05dgQHw8Gr
+         Df0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=42sItMr/D5Wq+0dBHN6jU3FpIi4hpB3vOynEYa+fIL4=;
+        b=R0Ljlc+zM5LkfwrgOybCxjweyBU8Ye1phqaLvMyACCgcksPPIvrXpcigdI1OtnC/M7
+         M1BMSoOV3p+bmGFmPFPKCVGSKgHiRHTiJJWAvU2p8vcWVxE6kuKZ4lf9eJdLEcskKv7u
+         JJrnxXwvrqQbC3yrNvdLVnQyOsGqbvUeEfji4PnDg7YG16BP/zmZFWNBVuk1BxjFo6e+
+         OkoTFORSS5cMG/1/57w1yqA3tnEJY78qMqXcQYyiwMH1I9eWnkQfzFYguPXhY4uvFWsB
+         mOTCgkcO6fddUKB9RawOz+vvffMSKWl3nY/8m/RrPUJUe6Bw/01q9W5+dO6os55njWHe
+         8SqQ==
+X-Gm-Message-State: APjAAAU3QxaoeGbVK3Vj0P2IDRjdkwBeI4iUf0EwfQFBzPpfxap8rcvO
+        jPmu3Ahj2Hhf9QS71yPPaxBRfvkAONI=
+X-Google-Smtp-Source: APXvYqxXDLcHSE+XNsIjvfnqyotxzvbC5wQAIEmI13p0v9dqe+EUFrm3Bo9qzz0Y1KIqdkqrmlcqIQ==
+X-Received: by 2002:adf:e9c6:: with SMTP id l6mr7270590wrn.156.1570696800479;
+        Thu, 10 Oct 2019 01:40:00 -0700 (PDT)
+Received: from localhost ([85.163.43.78])
+        by smtp.gmail.com with ESMTPSA id m18sm6742626wrg.97.2019.10.10.01.39.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2019 01:39:59 -0700 (PDT)
+Date:   Thu, 10 Oct 2019 10:39:58 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Michal Kubecek <mkubecek@suse.cz>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] genetlink: do not parse attributes for families
+ with zero maxattr
+Message-ID: <20191010083958.GD2223@nanopsycho>
+References: <20191009164432.AD5D1E3785@unicorn.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191009164432.AD5D1E3785@unicorn.suse.cz>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+Wed, Oct 09, 2019 at 06:44:32PM CEST, mkubecek@suse.cz wrote:
+>Commit c10e6cf85e7d ("net: genetlink: push attrbuf allocation and parsing
+>to a separate function") moved attribute buffer allocation and attribute
+>parsing from genl_family_rcv_msg_doit() into a separate function
+>genl_family_rcv_msg_attrs_parse() which, unlike the previous code, calls
+>__nlmsg_parse() even if family->maxattr is 0 (i.e. the family does its own
+>parsing). The parser error is ignored and does not propagate out of
+>genl_family_rcv_msg_attrs_parse() but an error message ("Unknown attribute
+>type") is set in extack and if further processing generates no error or
+>warning, it stays there and is interpreted as a warning by userspace.
+>
+>Dumpit requests are not affected as genl_family_rcv_msg_dumpit() bypasses
+>the call of genl_family_rcv_msg_doit() if family->maxattr is zero. Do the
+>same also in genl_family_rcv_msg_doit().
 
-commit a111b7c0f20e13b54df2fa959b3dc0bdf1925ae6 upstream.
+This is the original code before the changes:
 
-Configure arm64 runtime CPU speculation bug mitigations in accordance
-with the 'mitigations=' cmdline option.  This affects Meltdown, Spectre
-v2, and Speculative Store Bypass.
+        if (ops->doit == NULL)
+                return -EOPNOTSUPP;
 
-The default behavior is unchanged.
+        if (family->maxattr && family->parallel_ops) {
+                attrbuf = kmalloc_array(family->maxattr + 1,
+                                        sizeof(struct nlattr *),
+                                        GFP_KERNEL);
+                if (attrbuf == NULL)
+                        return -ENOMEM;
+        } else
+                attrbuf = family->attrbuf;
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-[will: reorder checks so KASLR implies KPTI and SSBS is affected by cmdline]
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        if (attrbuf) {
+                enum netlink_validation validate = NL_VALIDATE_STRICT;
 
----
- Documentation/admin-guide/kernel-parameters.txt |    8 +++++---
- arch/arm64/kernel/cpu_errata.c                  |    6 +++++-
- arch/arm64/kernel/cpufeature.c                  |    8 +++++++-
- 3 files changed, 17 insertions(+), 5 deletions(-)
+                if (ops->validate & GENL_DONT_VALIDATE_STRICT)
+                        validate = NL_VALIDATE_LIBERAL;
 
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2503,8 +2503,8 @@
- 			http://repo.or.cz/w/linux-2.6/mini2440.git
- 
- 	mitigations=
--			[X86,PPC,S390] Control optional mitigations for CPU
--			vulnerabilities.  This is a set of curated,
-+			[X86,PPC,S390,ARM64] Control optional mitigations for
-+			CPU vulnerabilities.  This is a set of curated,
- 			arch-independent options, each of which is an
- 			aggregation of existing arch-specific options.
- 
-@@ -2513,12 +2513,14 @@
- 				improves system performance, but it may also
- 				expose users to several CPU vulnerabilities.
- 				Equivalent to: nopti [X86,PPC]
-+					       kpti=0 [ARM64]
- 					       nospectre_v1 [PPC]
- 					       nobp=0 [S390]
- 					       nospectre_v1 [X86]
--					       nospectre_v2 [X86,PPC,S390]
-+					       nospectre_v2 [X86,PPC,S390,ARM64]
- 					       spectre_v2_user=off [X86]
- 					       spec_store_bypass_disable=off [X86,PPC]
-+					       ssbd=force-off [ARM64]
- 					       l1tf=off [X86]
- 					       mds=off [X86]
- 
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -19,6 +19,7 @@
- #include <linux/arm-smccc.h>
- #include <linux/psci.h>
- #include <linux/types.h>
-+#include <linux/cpu.h>
- #include <asm/cpu.h>
- #include <asm/cputype.h>
- #include <asm/cpufeature.h>
-@@ -355,6 +356,9 @@ static bool has_ssbd_mitigation(const st
- 
- 	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
- 
-+	if (cpu_mitigations_off())
-+		ssbd_state = ARM64_SSBD_FORCE_DISABLE;
-+
- 	/* delay setting __ssb_safe until we get a firmware response */
- 	if (is_midr_in_range_list(read_cpuid_id(), entry->midr_range_list))
- 		this_cpu_safe = true;
-@@ -600,7 +604,7 @@ check_branch_predictor(const struct arm6
- 	}
- 
- 	/* forced off */
--	if (__nospectre_v2) {
-+	if (__nospectre_v2 || cpu_mitigations_off()) {
- 		pr_info_once("spectrev2 mitigation disabled by command line option\n");
- 		__hardenbp_enab = false;
- 		return false;
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -24,6 +24,7 @@
- #include <linux/stop_machine.h>
- #include <linux/types.h>
- #include <linux/mm.h>
-+#include <linux/cpu.h>
- #include <asm/cpu.h>
- #include <asm/cpufeature.h>
- #include <asm/cpu_ops.h>
-@@ -907,7 +908,7 @@ static bool unmap_kernel_at_el0(const st
- 		MIDR_ALL_VERSIONS(MIDR_CORTEX_A73),
- 		{ /* sentinel */ }
- 	};
--	char const *str = "command line option";
-+	char const *str = "kpti command line option";
- 	bool meltdown_safe;
- 
- 	meltdown_safe = is_midr_in_range_list(read_cpuid_id(), kpti_safe_list);
-@@ -937,6 +938,11 @@ static bool unmap_kernel_at_el0(const st
- 		}
- 	}
- 
-+	if (cpu_mitigations_off() && !__kpti_forced) {
-+		str = "mitigations=off";
-+		__kpti_forced = -1;
-+	}
-+
- 	if (!IS_ENABLED(CONFIG_UNMAP_KERNEL_AT_EL0)) {
- 		pr_info_once("kernel page table isolation disabled by kernel configuration\n");
- 		return false;
+                err = __nlmsg_parse(nlh, hdrlen, attrbuf, family->maxattr,
+                                    family->policy, validate, extack);
+                if (err < 0)
+                        goto out;
+        }
+
+Looks like the __nlmsg_parse() is called no matter if maxattr if 0 or
+not. It is only considered for allocation of attrbuf. This is in-sync
+with the current code.
+
+For dumpit, the check was there:
+
+                        if (family->maxattr) {
+                                unsigned int validate = NL_VALIDATE_STRICT;
+
+                                if (ops->validate &
+                                    GENL_DONT_VALIDATE_DUMP_STRICT)
+                                        validate = NL_VALIDATE_LIBERAL;
+                                rc = __nla_validate(nlmsg_attrdata(nlh, hdrlen),
+                                                    nlmsg_attrlen(nlh, hdrlen),
+                                                    family->maxattr,
+                                                    family->policy,
+                                                    validate, extack);
+                                if (rc)
+                                        return rc;
+                        }
 
 
+
+>
+>Fixes: c10e6cf85e7d ("net: genetlink: push attrbuf allocation and parsing to a separate function")
+>Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+>---
+> net/netlink/genetlink.c | 6 ++++--
+> 1 file changed, 4 insertions(+), 2 deletions(-)
+>
+>diff --git a/net/netlink/genetlink.c b/net/netlink/genetlink.c
+>index ecc2bd3e73e4..c4bf8830eedf 100644
+>--- a/net/netlink/genetlink.c
+>+++ b/net/netlink/genetlink.c
+>@@ -639,21 +639,23 @@ static int genl_family_rcv_msg_doit(const struct genl_family *family,
+> 				    const struct genl_ops *ops,
+> 				    int hdrlen, struct net *net)
+> {
+>-	struct nlattr **attrbuf;
+>+	struct nlattr **attrbuf = NULL;
+> 	struct genl_info info;
+> 	int err;
+> 
+> 	if (!ops->doit)
+> 		return -EOPNOTSUPP;
+> 
+>+	if (!family->maxattr)
+>+		goto no_attrs;
+> 	attrbuf = genl_family_rcv_msg_attrs_parse(family, nlh, extack,
+> 						  ops, hdrlen,
+> 						  GENL_DONT_VALIDATE_STRICT,
+>-						  family->maxattr &&
+> 						  family->parallel_ops);
+> 	if (IS_ERR(attrbuf))
+> 		return PTR_ERR(attrbuf);
+> 
+>+no_attrs:
+> 	info.snd_seq = nlh->nlmsg_seq;
+> 	info.snd_portid = NETLINK_CB(skb).portid;
+> 	info.nlhdr = nlh;
+>-- 
+>2.23.0
+>
