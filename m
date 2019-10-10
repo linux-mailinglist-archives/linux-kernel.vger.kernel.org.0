@@ -2,122 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6870D2425
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:50:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBFD1D2478
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:00:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388397AbfJJIta (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:49:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56012 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389279AbfJJItZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:49:25 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DA58218AC;
-        Thu, 10 Oct 2019 08:49:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697365;
-        bh=7tld6r4njYlcCBmeGgYzIQgVbZE6ybfWh0j0vccDjpc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0a/7PuSsFODGKQKHov/uq4EyH8cC0U6sDB3h+ND6ee2FnAPmskWBpJR0+2ycPCFWA
-         wVbNOZojkCGYgW8tHxI4MDMe6FLgd+dYOJbnTiEa5Xz74nfman2JFYWV2kSocTMYrf
-         uJe/GOKiDdF2Ezscf/6sUCJjndzL6U1w7cdvXTdA=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.19 114/114] nl80211: validate beacon head
-Date:   Thu, 10 Oct 2019 10:37:01 +0200
-Message-Id: <20191010083614.334354467@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
-References: <20191010083544.711104709@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S2387547AbfJJIpc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:45:32 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:6607 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2388082AbfJJIp2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:45:28 -0400
+X-UUID: fca862e4d84f4e6594ed4159528f2e68-20191010
+X-UUID: fca862e4d84f4e6594ed4159528f2e68-20191010
+Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1801377807; Thu, 10 Oct 2019 16:45:19 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31DR.mediatek.inc
+ (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 10 Oct
+ 2019 16:45:16 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 10 Oct 2019 16:45:16 +0800
+Message-ID: <1570697118.32135.20.camel@mhfsdcap03>
+Subject: Re: [PATCH] usb: mtk-xhci: Set the XHCI_NO_64BIT_SUPPORT quirk
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Tomasz Figa <tfiga@chromium.org>
+CC:     <linux-usb@vger.kernel.org>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Changqi Hu <Changqi.Hu@mediatek.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Shik Chen <shik@chromium.org>
+Date:   Thu, 10 Oct 2019 16:45:18 +0800
+In-Reply-To: <20191010075004.192818-1-tfiga@chromium.org>
+References: <20191010075004.192818-1-tfiga@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: B90345DAD5A894277746B2A803C573FB68AC83DB838DD9C7583D5D1E62D8AAD32000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+Hi, Tomasz,
 
-commit f88eb7c0d002a67ef31aeb7850b42ff69abc46dc upstream.
+On Thu, 2019-10-10 at 16:50 +0900, Tomasz Figa wrote:
+> MediaTek XHCI host controller does not support 64-bit addressing despite
+> the AC64 bit of HCCPARAMS1 register being set. The platform-specific
+> glue sets the DMA mask to 32 bits on its own, but it has no effect,
+> because xhci_gen_setup() overrides it according to hardware
+> capabilities.
+> 
+> Use the XHCI_NO_64BIT_SUPPORT quirk to tell the XHCI core to force
+> 32-bit DMA mask instead.
+> 
+> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
+> ---
+>  drivers/usb/host/xhci-mtk.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/usb/host/xhci-mtk.c b/drivers/usb/host/xhci-mtk.c
+> index b18a6baef204a..4d101d52cc11b 100644
+> --- a/drivers/usb/host/xhci-mtk.c
+> +++ b/drivers/usb/host/xhci-mtk.c
+> @@ -395,6 +395,11 @@ static void xhci_mtk_quirks(struct device *dev, struct xhci_hcd *xhci)
+>  	xhci->quirks |= XHCI_SPURIOUS_SUCCESS;
+>  	if (mtk->lpm_support)
+>  		xhci->quirks |= XHCI_LPM_SUPPORT;
+> +	/*
+> +	 * MTK host controller does not support 64-bit addressing, despite
+> +	 * having the AC64 bit of the HCCPARAMS1 register set.
+> +	 */
+> +	xhci->quirks |= XHCI_NO_64BIT_SUPPORT;
+Somes SoCs support 64bits in fact, so can't support this quirk, do you
+encounter any issues without this quirk?
 
-We currently don't validate the beacon head, i.e. the header,
-fixed part and elements that are to go in front of the TIM
-element. This means that the variable elements there can be
-malformed, e.g. have a length exceeding the buffer size, but
-most downstream code from this assumes that this has already
-been checked.
+>  }
 
-Add the necessary checks to the netlink policy.
-
-Cc: stable@vger.kernel.org
-Fixes: ed1b6cc7f80f ("cfg80211/nl80211: add beacon settings")
-Link: https://lore.kernel.org/r/1569009255-I7ac7fbe9436e9d8733439eab8acbbd35e55c74ef@changeid
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- net/wireless/nl80211.c |   38 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
-
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -200,6 +200,38 @@ cfg80211_get_dev_from_info(struct net *n
- 	return __cfg80211_rdev_from_attrs(netns, info->attrs);
- }
- 
-+static int validate_beacon_head(const struct nlattr *attr,
-+				struct netlink_ext_ack *extack)
-+{
-+	const u8 *data = nla_data(attr);
-+	unsigned int len = nla_len(attr);
-+	const struct element *elem;
-+	const struct ieee80211_mgmt *mgmt = (void *)data;
-+	unsigned int fixedlen = offsetof(struct ieee80211_mgmt,
-+					 u.beacon.variable);
-+
-+	if (len < fixedlen)
-+		goto err;
-+
-+	if (ieee80211_hdrlen(mgmt->frame_control) !=
-+	    offsetof(struct ieee80211_mgmt, u.beacon))
-+		goto err;
-+
-+	data += fixedlen;
-+	len -= fixedlen;
-+
-+	for_each_element(elem, data, len) {
-+		/* nothing */
-+	}
-+
-+	if (for_each_element_completed(elem, data, len))
-+		return 0;
-+
-+err:
-+	NL_SET_ERR_MSG_ATTR(extack, attr, "malformed beacon head");
-+	return -EINVAL;
-+}
-+
- /* policy for the attributes */
- static const struct nla_policy nl80211_policy[NUM_NL80211_ATTR] = {
- 	[NL80211_ATTR_WIPHY] = { .type = NLA_U32 },
-@@ -4016,6 +4048,12 @@ static int nl80211_parse_beacon(struct n
- 	memset(bcn, 0, sizeof(*bcn));
- 
- 	if (attrs[NL80211_ATTR_BEACON_HEAD]) {
-+		int ret = validate_beacon_head(attrs[NL80211_ATTR_BEACON_HEAD],
-+					       NULL);
-+
-+		if (ret)
-+			return ret;
-+
- 		bcn->head = nla_data(attrs[NL80211_ATTR_BEACON_HEAD]);
- 		bcn->head_len = nla_len(attrs[NL80211_ATTR_BEACON_HEAD]);
- 		if (!bcn->head_len)
+>  
+>  /* called during probe() after chip reset completes */
+> @@ -488,11 +493,6 @@ static int xhci_mtk_probe(struct platform_device *pdev)
+>  		goto disable_clk;
+>  	}
+>  
+> -	/* Initialize dma_mask and coherent_dma_mask to 32-bits */
+> -	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
+> -	if (ret)
+> -		goto disable_clk;
+> -
+>  	hcd = usb_create_hcd(driver, dev, dev_name(dev));
+>  	if (!hcd) {
+>  		ret = -ENOMEM;
 
 
