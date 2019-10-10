@@ -2,108 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EF7BD3412
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 00:46:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8CDFD3423
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 01:03:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726645AbfJJWqv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 18:46:51 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36290 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726184AbfJJWqu (ORCPT
+        id S1726962AbfJJXC7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 19:02:59 -0400
+Received: from devianza.investici.org ([198.167.222.108]:58355 "EHLO
+        devianza.investici.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726358AbfJJXC7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 18:46:50 -0400
-Received: by mail-pf1-f194.google.com with SMTP id y22so4838482pfr.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 15:46:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=1bKGtbkU276Qic7083jH1GxErr25ze2mM6VPeh2J7GA=;
-        b=DyCP4NZI/zuNYDu7jY/ZZUEXHfDKMSazvkYJ6PuzJxjMRKhp+rAxzK5Dt2H01Pv6+m
-         LlMpUzTq+PUEEJZm/ab4gpJ3nZT0JvOiDbHG3GengQcNOIRuhA8pbDGv4navVXCn01qB
-         xpFAse9TBG8UdMjY262hjIHZRhZAMMC7WV7UM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=1bKGtbkU276Qic7083jH1GxErr25ze2mM6VPeh2J7GA=;
-        b=Qq+GBm3Vx6BKPHWlTHYUxit0caRyTl0hwtcwY49Vmq1gjv/l0m9tCAWPVvEWslK7tI
-         KRujvkl8gp6/DXFfd7EZSVerOVNbvvzQKBqOmdz1RRfiM0h/rtNZkKh194NrviK+w/ME
-         /UWijFmieKOEXYQBr+eCSwwFz4d7VxtsXveJHU6EzHOu5qsPLmUPAN13TifhAA+sXcQ2
-         uWBmcq5XcZERlTxiNxIqWc+LO/pPIHUZwU3y691UUCDbKB+SUybG+Oil8mgmBzf4c8A9
-         B6hbomJOuj5pW8HA6d9cif8LdFUkeHamEexpHvzV7yHyDbX7EivSGX8hEy8BBOAy2ter
-         RtYQ==
-X-Gm-Message-State: APjAAAUqMl/mJYWArpLmb1i+ei/9JwC7+VDitDVeYHp9/ZHrnioV0dVM
-        U+0eYPSRZKwmer5QKsFSDXP9u1Vig7Q=
-X-Google-Smtp-Source: APXvYqzPLTDHvgkpFIsRejZmoidbgu1xjUA2eDPKSvdkhsR2rKQm7kIBl5bRbTqnNTcfRoKBUArVEA==
-X-Received: by 2002:a17:90a:c383:: with SMTP id h3mr13985098pjt.122.1570747609862;
-        Thu, 10 Oct 2019 15:46:49 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id w134sm6554453pfd.4.2019.10.10.15.46.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 15:46:49 -0700 (PDT)
-Date:   Thu, 10 Oct 2019 15:46:48 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Ralf Baechle <ralf@linux-mips.org>
-Cc:     Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] MIPS: OCTEON: Replace SIZEOF_FIELD() macro
-Message-ID: <201910101545.586BCFC@keescook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        Thu, 10 Oct 2019 19:02:59 -0400
+X-Greylist: delayed 583 seconds by postgrey-1.27 at vger.kernel.org; Thu, 10 Oct 2019 19:02:59 EDT
+Received: from mx2.investici.org (localhost [127.0.0.1])
+        by devianza.investici.org (Postfix) with ESMTP id A028AE0629
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 22:53:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=paranoici.org;
+        s=stigmate; t=1570747994;
+        bh=LTkQOaHOhoxVL8eIcU9yAQE+5E+2PKoxTj6B885Ptcc=;
+        h=Date:From:To:Subject:In-Reply-To:References:From;
+        b=nenXF+BEME8vmNZ9S6cpJ2djNgK2JNc34EkJzZspeke/tA8wsf1BYsO7KHCyk3lrd
+         ZYRUW9sRcQbEyuyaeJ51jHWt5XEblkKz0u9fY53qJFK2YchpzmmAtdPoEo4VxZ6wAP
+         0jMUXnw6TnH+ttTJOBuZtXZqaUDY8OPvVUPDUkFo=
+Received: from [198.167.222.108] (mx2.investici.org [198.167.222.108]) (Authenticated sender: invernomuto@paranoici.org) by localhost (Postfix) with ESMTPSA id 8D13DE05FF
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 22:53:14 +0000 (UTC)
+Received: from frx by crunch with local (Exim 4.92.2)
+        (envelope-from <invernomuto@paranoici.org>)
+        id 1iIhJ3-0001UD-PF
+        for linux-kernel@vger.kernel.org; Fri, 11 Oct 2019 00:53:13 +0200
+Date:   Fri, 11 Oct 2019 00:51:03 +0200
+From:   Francesco Poli <invernomuto@paranoici.org>
+To:     linux-kernel@vger.kernel.org
+Subject: Re: Question about sched_prio_to_weight values
+Message-Id: <20191011005103.88df00d60d3f99d66a9d558f@paranoici.org>
+In-Reply-To: <21c11aca-e531-7d72-9a70-f52c12d5d408@arm.com>
+References: <20191007003205.8888ac99da2dd732b6198387@paranoici.org>
+        <506d5ee6-246a-a03d-ea11-227ff4de1467@arm.com>
+        <20191007224143.d21abae57a3f32ac60afd53c@paranoici.org>
+        <21c11aca-e531-7d72-9a70-f52c12d5d408@arm.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA512";
+ boundary="Signature=_Fri__11_Oct_2019_00_51_03_+0200_8jgb4MiSlRj/lIV="
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>
+--Signature=_Fri__11_Oct_2019_00_51_03_+0200_8jgb4MiSlRj/lIV=
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In preparation for switching to a standard sizeof_member() macro to find the
-size of a member of a struct, remove the custom SIZEOF_FIELD() macro and use
-the more common FIELD_SIZEOF() instead. Later patches will globally replace
-FIELD_SIZEOF() and sizeof_field() with the more accurate sizeof_member().
+On Thu, 10 Oct 2019 18:28:36 +0100 Valentin Schneider wrote:
 
-Signed-off-by: Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>
-Link: https://lore.kernel.org/r/20190924105839.110713-4-pankaj.laxminarayan.bharadiya@intel.com
-Co-developed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- arch/mips/cavium-octeon/executive/cvmx-bootmem.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+> On 07/10/2019 21:41, Francesco Poli wrote:
+> > The differences are probably due to the different precision
+> > of the computations: I don't know the precision of those originally
+> > carried out by Ingo Molnar (single precision? double?), but calc(1)
+> > is an arbitrary precision calculator and, by default, performs
+> > calculations with epsilon =3D 1e-20 !
+> >=20
+> > Please note that, except for the first one, all the differing
+> > values obtained with the calc(1) script have slightly better
+> > errors than the ones found in kernel/sched/core.c ...
+> >=20
+>=20
+> As always patches are welcome, but I don't know how much there is to gain
+> from a tiny error correction in those factors.
 
-diff --git a/arch/mips/cavium-octeon/executive/cvmx-bootmem.c b/arch/mips/cavium-octeon/executive/cvmx-bootmem.c
-index ba8f82a29a81..44b506a14666 100644
---- a/arch/mips/cavium-octeon/executive/cvmx-bootmem.c
-+++ b/arch/mips/cavium-octeon/executive/cvmx-bootmem.c
-@@ -44,13 +44,6 @@ static struct cvmx_bootmem_desc *cvmx_bootmem_desc;
- 
- /* See header file for descriptions of functions */
- 
--/**
-- * This macro returns the size of a member of a structure.
-- * Logically it is the same as "sizeof(s::field)" in C++, but
-- * C lacks the "::" operator.
-- */
--#define SIZEOF_FIELD(s, field) sizeof(((s *)NULL)->field)
--
- /**
-  * This macro returns a member of the
-  * cvmx_bootmem_named_block_desc_t structure. These members can't
-@@ -65,7 +58,7 @@ static struct cvmx_bootmem_desc *cvmx_bootmem_desc;
- #define CVMX_BOOTMEM_NAMED_GET_FIELD(addr, field)			\
- 	__cvmx_bootmem_desc_get(addr,					\
- 		offsetof(struct cvmx_bootmem_named_block_desc, field),	\
--		SIZEOF_FIELD(struct cvmx_bootmem_named_block_desc, field))
-+		FIELD_SIZEOF(struct cvmx_bootmem_named_block_desc, field))
- 
- /**
-  * This function is the implementation of the get macros defined
--- 
-2.17.1
+I can of course prepare a patch (a trivial adjustment of some of those
+numbers), if there's interest about it, but I'll leave to you kernel
+hackers to decide whether the modification may be worth doing (I am no
+scheduler expert, I don't even know exactly how to test the scheduler
+and assess whether a given patch is beneficial or not)...
+
+>=20
+> Out of curiosity, what led you to stare at those numbers?
+
+While reading a chapter of a book on operating systems, I encountered
+the nice-level-to-weight mapping, as defined in the CFS: I became
+obsessively curious and wanted by any means to understand how those
+numbers were decided. That's why I was trying to reproduce them with
+some criterion which could make sense.
 
 
--- 
-Kees Cook
+--=20
+ http://www.inventati.org/frx/
+ There's not a second to spare! To the laboratory!
+..................................................... Francesco Poli .
+ GnuPG key fpr =3D=3D CA01 1147 9CD2 EFDF FB82  3925 3E1C 27E1 1F69 BFFE
+
+--Signature=_Fri__11_Oct_2019_00_51_03_+0200_8jgb4MiSlRj/lIV=
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEygERR5zS79/7gjklPhwn4R9pv/4FAl2ftdcACgkQPhwn4R9p
+v/4jaw/+Iz+mbvCjSFyqqsPUZGg40nUOD24w6AyYjqdRvp7DncXWwrFZbkqJUute
+WTyBRKiukggS9PisPvfci201cODhrBHLmD7HCMtjhOFCnLWp2oKjh1jip6J8mr1e
+4w455J53AIr20GUUm4hzrjgKzD9L3+2PZwwpf2oYhNZ1AJmLH7UerEryMYnfsFDl
++V+cikGmlDHZ+rGx7nl1krixry2B1U+Gb9Xhgo3TQsSDn8YTdflJoH2EH1yVwHS2
+nPFMgqphm08IMpKgLufUD5m1xTUE4GVYPqxplJhqqDtHDWfsUtHG8WLonMknZjgP
+z6cyYeARXl1qmymkfMFZ78ejs+nB18JxEGzVsRE4KKXVswmW/n5Rh8pLNOeEEvuJ
+EM/tm0B8VSoMiyGGcng7gl85mrWrQdQHxXGoA9Hpm8RqHM9qI/iGmKdH9jSiIMtV
+bRkt+NECUJFUcrf/mJpJo37ylaoqSwctAAgo7zzb3lwx+0yW3MRMrZsvGplVvvLA
+97p33N2SJPTmfkOnvuR24QF+uvoKaPi9MyCkR/3Y0EVlksfQftfGjC1CQ3Aq73ra
+tjpxthbbnxjtol3/Qke0YB4FNcOvPQiVkacqucrnL0fZ/MBTtT58J5tgFN2GAXiu
+s0SSwi2YaAniN6UwMrlqqokS4Ws6PAxdMDHc9CXNe8CCQxfO7jY=
+=W2Zj
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__11_Oct_2019_00_51_03_+0200_8jgb4MiSlRj/lIV=--
