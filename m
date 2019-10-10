@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 464F6D233C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:48:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C43CD23B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388118AbfJJIk3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:40:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44560 "EHLO mail.kernel.org"
+        id S2389089AbfJJIpM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:45:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387493AbfJJIk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:40:27 -0400
+        id S2388361AbfJJIpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:45:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF46720B7C;
-        Thu, 10 Oct 2019 08:40:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9B5021A4A;
+        Thu, 10 Oct 2019 08:45:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570696827;
-        bh=IzsSl5RJoQIY9CfSt/mZ/FS85qR1vAUixNJ0vwRnrxQ=;
+        s=default; t=1570697108;
+        bh=ym8G2ZdQbDsO+1BvbPg5YIeTwSU9bt9Wg46NbwfNwBo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J1ELj8v9FSHeC3uVqe0Wu8D4u5Z5vB7GL9gS6mlOzNBdwQj6J69EIvmDfP3viMp03
-         BrgJw9UVh/4GDddPVjAhj5JdEpiMfUjR0s0lhdsCpJN8puej99Alm5VSURjkCbhO3t
-         Li/D972vwPPPbM2K6Qg0YwR1GwY7hd7quUXFORiI=
+        b=j6rxFCC1hyf12mI8s0DS5/IeurH3QdfdxmBTIvlltpgUeKhbYK4tpS9CHduaDhBmj
+         8tNfH5fsjuidd1uqv2anWNodpXyMz4K4ytsMrWnN+ybgsbLPRBCTvCWZDhJyNX5NgA
+         xBk4aX31UCDLXKJlZWj8xOlCZjTiJnUN70um+pEo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Adam Ford <aford173@gmail.com>, Jyri Sarha <jsarha@ti.com>
-Subject: [PATCH 5.3 066/148] drm/omap: fix max fclk divider for omap36xx
-Date:   Thu, 10 Oct 2019 10:35:27 +0200
-Message-Id: <20191010083615.450362990@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.19 021/114] crypto: qat - Silence smp_processor_id() warning
+Date:   Thu, 10 Oct 2019 10:35:28 +0200
+Message-Id: <20191010083553.941912256@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
-References: <20191010083609.660878383@linuxfoundation.org>
+In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
+References: <20191010083544.711104709@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,42 +44,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
 
-commit e2c4ed148cf3ec8669a1d90dc66966028e5fad70 upstream.
+commit 1b82feb6c5e1996513d0fb0bbb475417088b4954 upstream.
 
-The OMAP36xx and AM/DM37x TRMs say that the maximum divider for DSS fclk
-(in CM_CLKSEL_DSS) is 32. Experimentation shows that this is not
-correct, and using divider of 32 breaks DSS with a flood or underflows
-and sync losts. Dividers up to 31 seem to work fine.
+It seems that smp_processor_id() is only used for a best-effort
+load-balancing, refer to qat_crypto_get_instance_node(). It's not feasible
+to disable preemption for the duration of the crypto requests. Therefore,
+just silence the warning. This commit is similar to e7a9b05ca4
+("crypto: cavium - Fix smp_processor_id() warnings").
 
-There is another patch to the DT files to limit the divider correctly,
-but as the DSS driver also needs to know the maximum divider to be able
-to iteratively find good rates, we also need to do the fix in the DSS
-driver.
+Silences the following splat:
+BUG: using smp_processor_id() in preemptible [00000000] code: cryptomgr_test/2904
+caller is qat_alg_ablkcipher_setkey+0x300/0x4a0 [intel_qat]
+CPU: 1 PID: 2904 Comm: cryptomgr_test Tainted: P           O    4.14.69 #1
+...
+Call Trace:
+ dump_stack+0x5f/0x86
+ check_preemption_disabled+0xd3/0xe0
+ qat_alg_ablkcipher_setkey+0x300/0x4a0 [intel_qat]
+ skcipher_setkey_ablkcipher+0x2b/0x40
+ __test_skcipher+0x1f3/0xb20
+ ? cpumask_next_and+0x26/0x40
+ ? find_busiest_group+0x10e/0x9d0
+ ? preempt_count_add+0x49/0xa0
+ ? try_module_get+0x61/0xf0
+ ? crypto_mod_get+0x15/0x30
+ ? __kmalloc+0x1df/0x1f0
+ ? __crypto_alloc_tfm+0x116/0x180
+ ? crypto_skcipher_init_tfm+0xa6/0x180
+ ? crypto_create_tfm+0x4b/0xf0
+ test_skcipher+0x21/0xa0
+ alg_test_skcipher+0x3f/0xa0
+ alg_test.part.6+0x126/0x2a0
+ ? finish_task_switch+0x21b/0x260
+ ? __schedule+0x1e9/0x800
+ ? __wake_up_common+0x8d/0x140
+ cryptomgr_test+0x40/0x50
+ kthread+0xff/0x130
+ ? cryptomgr_notify+0x540/0x540
+ ? kthread_create_on_node+0x70/0x70
+ ret_from_fork+0x24/0x50
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Adam Ford <aford173@gmail.com>
+Fixes: ed8ccaef52 ("crypto: qat - Add support for SRIOV")
 Cc: stable@vger.kernel.org
-Link: https://patchwork.freedesktop.org/patch/msgid/20191002122542.8449-1-tomi.valkeinen@ti.com
-Tested-by: Adam Ford <aford173@gmail.com>
-Reviewed-by: Jyri Sarha <jsarha@ti.com>
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/omapdrm/dss/dss.c |    2 +-
+ drivers/crypto/qat/qat_common/adf_common_drv.h |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/omapdrm/dss/dss.c
-+++ b/drivers/gpu/drm/omapdrm/dss/dss.c
-@@ -1090,7 +1090,7 @@ static const struct dss_features omap34x
+--- a/drivers/crypto/qat/qat_common/adf_common_drv.h
++++ b/drivers/crypto/qat/qat_common/adf_common_drv.h
+@@ -95,7 +95,7 @@ struct service_hndl {
  
- static const struct dss_features omap3630_dss_feats = {
- 	.model			=	DSS_MODEL_OMAP3,
--	.fck_div_max		=	32,
-+	.fck_div_max		=	31,
- 	.fck_freq_max		=	173000000,
- 	.dss_fck_multiplier	=	1,
- 	.parent_clk_name	=	"dpll4_ck",
+ static inline int get_current_node(void)
+ {
+-	return topology_physical_package_id(smp_processor_id());
++	return topology_physical_package_id(raw_smp_processor_id());
+ }
+ 
+ int adf_service_register(struct service_hndl *service);
 
 
