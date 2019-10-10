@@ -2,48 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E463CD307B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 20:37:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F414D3086
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 20:37:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbfJJSg4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 14:36:56 -0400
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:33387 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726007AbfJJSgz (ORCPT
+        id S1727015AbfJJShK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 14:37:10 -0400
+Received: from mail-ua1-f74.google.com ([209.85.222.74]:54908 "EHLO
+        mail-ua1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726007AbfJJShJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 14:36:55 -0400
-Received: by mail-pl1-f202.google.com with SMTP id d2so4396095pll.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 11:36:54 -0700 (PDT)
+        Thu, 10 Oct 2019 14:37:09 -0400
+Received: by mail-ua1-f74.google.com with SMTP id t16so1830272uae.21
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 11:37:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=sVYS71JsFcVLaSydirD+S+xHiSXAzbKTw4LNqNx48fs=;
-        b=mQe5f84M2j/mmDSE7zakAWeBxepbx8dmBgD+NaQLXmSvMD9iCqxbuX43aXTM7pJjGZ
-         uVSKlnGrrMyAgoPlxg2V8x/kzzAeU+mAcAtGwE4qSSVDN/pV7PkrLweB+/NHMr1O8Afg
-         xS1rdVax+4sYskD2QIGYLuTJVcvmxZslH0VpClu1zeNhhzecZ5mUpD1Yzycjo2FTe+FU
-         NIUtfRI2uPdEy1npk6Vz1rZa31olbkJfsayRuKaPjy5ANuLj1YXVSKaLePce2MqPnTbF
-         yjQ5fldKRkfJTy9p9IeKKnR/iHoMJ7/qTkx29OEZ7VtyB3/ecn2RHmjAGjDTQMOKZe5U
-         DqMA==
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=YaqmLQ2AmG5MkjwG1uKGGWEDcM1jBGJgalQWwTdiOWs=;
+        b=YYf8do1f3iDFNkLZ4hwmKU/E4AYkle+bLps/g2ay7y0gnfk52HT8FdnOkfK6ICbEDM
+         VZH9NkYoicUnW7n7dxiKmzVzOOU4CWfoxzRQ5y3vJjItnQoxXO3M7uzEoklc3jKsW0OH
+         07zq5qmuyadRYb4BNSV0lPHqkOy2ejfsSnZ/ezxTLrp8twFkIPIWJobmZwTE4RYvTvTY
+         3GzdmgJxYamPqkHnJ6x/iA+WBKtnCBihDnKKulB5nNbXvShPztZ1nutDNl6rgxq+CJZa
+         OOi0dyBp/6rlZiDL8j/jVHfUDfYWHk+VwQFKKRTAFJKgui48SkDeuVGh8kSki2yqGvqW
+         WbNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=sVYS71JsFcVLaSydirD+S+xHiSXAzbKTw4LNqNx48fs=;
-        b=WokXAxdrDmBh8AghOn/be0rSmBMLeBUqOnD7M7EOXM6sc6v9CyURIr6do86Qix2WZa
-         GBYiqFkXXsaun0elzS/lxoKl92K1fAkPHec5eXNVen4MiyG+Q0ZiEMYDoBJhG/shoRzt
-         by1ssUPg8Toxxd4g3YQrcwbFk1Y9hW7umKN8UoUi0Ro3rKL12eaV5x/lh6khTVfJ5SFx
-         +k+RghnczWWRKnfu9rhIW8v53yeBHeIkkbJ04EZtW3uO4kFNb0lgOhsjz/DGPpa3z1TV
-         TiOhl6ixugGW5LNTF9rr3kDeOK0BRgJCchld9mUwRdIG2ZGdAiNASfe6mMdLENQWwQrO
-         tyYw==
-X-Gm-Message-State: APjAAAX9r0Li2c5DBSVELnqn4sjPEQS0yAN6po1PHJimgF7Z6H1Iu/Vb
-        RtvIIgyAJTX6oTF1cdpqo4051BEnK0Rv
-X-Google-Smtp-Source: APXvYqwgFb0Ynu/P6r+/5rFDlO1lVHefNBBwjlLNcJS1GD8sYOKknOl1wbq8Y+xmI2GqXESV4yLJe/lJqtYG
-X-Received: by 2002:a63:2d81:: with SMTP id t123mr12662972pgt.306.1570732613143;
- Thu, 10 Oct 2019 11:36:53 -0700 (PDT)
-Date:   Thu, 10 Oct 2019 11:36:44 -0700
-Message-Id: <20191010183649.23768-1-irogers@google.com>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=YaqmLQ2AmG5MkjwG1uKGGWEDcM1jBGJgalQWwTdiOWs=;
+        b=P/MXCsFxa3Lt6zp+C88pY+tiWTpLYPv+IKWaK97vUSCiIWK/Rt4GfIr9wmYNoKykrW
+         3cDEUk5yHm46wjXY3VFWIHhTO7BQp1VIBEWdNAPmDgXGMyOV2RdsFkCt5rwnOvslHpA3
+         vWXpRUy01Vt8t2fSBN4xw19V5qzAUQUbJCaKhIqWvWO5qcOFn5ug4+8QLiauqsSRQ/j6
+         ayYLludUq28gc3cYAbNCcBhSizIhh54muCgFgglYAmVW60KwsDII3Q7KHYlle+53WiBL
+         +ipWGWYHcbdsUjaPHTplw0r0i44O9kgq+2/38yo36CxSPlKnaDdjyz/HVLGq+X+1sljE
+         8ZbA==
+X-Gm-Message-State: APjAAAW9f3lbMG+Z1b1tfqbxQUqES6Q+IT07qLvPr/rB+hg9JNzOobXt
+        78G1F3bJxMffiX5vu5U/jomtX89pPVPE
+X-Google-Smtp-Source: APXvYqzoASvBJv0R7BfZg5hWRZdTJFX9HCQxa/zym0o2mcryfQ0WJXyukLIlWVCMGByCb7Wx8GGG0HKGUMF4
+X-Received: by 2002:a05:6122:2bb:: with SMTP id 27mr6331211vkq.66.1570732626969;
+ Thu, 10 Oct 2019 11:37:06 -0700 (PDT)
+Date:   Thu, 10 Oct 2019 11:36:45 -0700
+In-Reply-To: <20191010183649.23768-1-irogers@google.com>
+Message-Id: <20191010183649.23768-2-irogers@google.com>
 Mime-Version: 1.0
+References: <20191010183649.23768-1-irogers@google.com>
 X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
-Subject: [PATCH 0/5] Improve objdump parsing, fix LLVM objdump
+Subject: [PATCH 1/5] perf annotate: avoid reallocation in objdump parsing
 From:   Ian Rogers <irogers@google.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
@@ -63,22 +67,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The objdump command line is piped through grep and expand meaning
-failures don't surface. Refactor symbol__disassemble so that it manages
-the memory for the read line, as well as trimming and expanding tabs.
-Correct the objdump flag '--no-show-raw' to be '--no-show-raw-insn'
-which binutils objdump permissively allows but fails with LLVM objdump.
+Objdump output is parsed using getline which allocates memory for the
+read. Getline will realloc if the memory is too small, but currently the
+line is always freed after the call.
+Simplify parse_objdump_line by performing the reading in symbol__disassemble.
 
-Ian Rogers (5):
-  perf annotate: avoid reallocation in objdump parsing
-  perf annotate: use run-command.h to fork objdump
-  perf annotate: don't pipe objdump output through grep
-  perf annotate: don't pipe objdump output through expand
-  perf annotate: fix objdump --no-show-raw-insn flag
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/util/annotate.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
- tools/perf/util/annotate.c | 195 +++++++++++++++++++++++++------------
- 1 file changed, 131 insertions(+), 64 deletions(-)
-
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index e830eadfca2a..1487849a191a 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -1485,24 +1485,17 @@ annotation_line__print(struct annotation_line *al, struct symbol *sym, u64 start
+  * means that it's not a disassembly line so should be treated differently.
+  * The ops.raw part will be parsed further according to type of the instruction.
+  */
+-static int symbol__parse_objdump_line(struct symbol *sym, FILE *file,
++static int symbol__parse_objdump_line(struct symbol *sym,
+ 				      struct annotate_args *args,
+-				      int *line_nr)
++				      char *line, int *line_nr)
+ {
+ 	struct map *map = args->ms.map;
+ 	struct annotation *notes = symbol__annotation(sym);
+ 	struct disasm_line *dl;
+-	char *line = NULL, *parsed_line, *tmp, *tmp2;
+-	size_t line_len;
++	char *parsed_line, *tmp, *tmp2;
+ 	s64 line_ip, offset = -1;
+ 	regmatch_t match[2];
+ 
+-	if (getline(&line, &line_len, file) < 0)
+-		return -1;
+-
+-	if (!line)
+-		return -1;
+-
+ 	line_ip = -1;
+ 	parsed_line = strim(line);
+ 
+@@ -1539,7 +1532,6 @@ static int symbol__parse_objdump_line(struct symbol *sym, FILE *file,
+ 	args->ms.sym  = sym;
+ 
+ 	dl = disasm_line__new(args);
+-	free(line);
+ 	(*line_nr)++;
+ 
+ 	if (dl == NULL)
+@@ -1855,6 +1847,8 @@ static int symbol__disassemble(struct symbol *sym, struct annotate_args *args)
+ 	int lineno = 0;
+ 	int nline;
+ 	pid_t pid;
++	char *line;
++	size_t line_len;
+ 	int err = dso__disassemble_filename(dso, symfs_filename, sizeof(symfs_filename));
+ 
+ 	if (err)
+@@ -1943,18 +1937,26 @@ static int symbol__disassemble(struct symbol *sym, struct annotate_args *args)
+ 		goto out_free_command;
+ 	}
+ 
++	/* Storage for getline. */
++	line = NULL;
++	line_len = 0;
++
+ 	nline = 0;
+ 	while (!feof(file)) {
++		if (getline(&line, &line_len, file) < 0 || !line)
++			break;
++
+ 		/*
+ 		 * The source code line number (lineno) needs to be kept in
+ 		 * across calls to symbol__parse_objdump_line(), so that it
+ 		 * can associate it with the instructions till the next one.
+ 		 * See disasm_line__new() and struct disasm_line::line_nr.
+ 		 */
+-		if (symbol__parse_objdump_line(sym, file, args, &lineno) < 0)
++		if (symbol__parse_objdump_line(sym, args, line, &lineno) < 0)
+ 			break;
+ 		nline++;
+ 	}
++	free(line);
+ 
+ 	if (nline == 0)
+ 		pr_err("No output from %s\n", command);
 -- 
 2.23.0.581.g78d2f28ef7-goog
 
