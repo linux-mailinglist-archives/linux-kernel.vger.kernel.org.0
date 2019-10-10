@@ -2,136 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E236D21CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 09:39:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9355AD21B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 09:38:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733147AbfJJHiK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 03:38:10 -0400
-Received: from mout.web.de ([212.227.15.14]:52717 "EHLO mout.web.de"
+        id S1733158AbfJJHiL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 03:38:11 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36558 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727235AbfJJH0b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 03:26:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1570692351;
-        bh=URPzwdq5QRFI0wpUi5CUlZE+boxu7v7c5HF0H21uNI8=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=BAilBDlmRAYd4TbEUOfa/WEwTV6TbW/TtlmRthHySaLcoMWxnnOjDamAS9IcRWASw
-         YrD5K11r9npCsStaQ5/bYb1Edvtc5s+AuQDYA91jVYR13SHtJCfEfWgJw6QwdTqxeU
-         DCrzvfcpC1NCBD/qPF0Bs9vFT5MlSlgBHhyaCblE=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.135.64.254]) by smtp.web.de (mrweb004
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0Mbdf3-1iZAKp3hyf-00J36z; Thu, 10
- Oct 2019 09:25:51 +0200
-Subject: Re: string.h: Mark 34 functions with __must_check
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        kernel-janitors@vger.kernel.org, kasan-dev@googlegroups.com
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Joe Perches <joe@perches.com>,
-        Kees Cook <keescook@chromium.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>
-References: <75f70e5e-9ece-d6d1-a2c5-2f3ad79b9ccb@web.de>
- <20191009110943.7ff3a08a@gandalf.local.home>
- <ce96b27e-5f7b-fca7-26ae-13729e886d46@web.de>
- <CAHp75VdrUg6nBfYV-ZoiwWhu6caaQB8-FCSeQFH0GrBX33WhVg@mail.gmail.com>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <359bd081-44fb-e9a7-8ba9-bafeeecebc25@web.de>
-Date:   Thu, 10 Oct 2019 09:25:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S1727362AbfJJH1f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 03:27:35 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 676E2877A61;
+        Thu, 10 Oct 2019 07:27:34 +0000 (UTC)
+Received: from [10.36.117.125] (ovpn-117-125.ams2.redhat.com [10.36.117.125])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 16A5D19D70;
+        Thu, 10 Oct 2019 07:27:32 +0000 (UTC)
+Subject: Re: [PATCH v2 2/2] mm/memory-failure.c: Don't access uninitialized
+ memmaps in memory_failure()
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20191009142435.3975-1-david@redhat.com>
+ <20191009142435.3975-3-david@redhat.com>
+ <20191009144323.GH6681@dhcp22.suse.cz>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <5a626821-77e9-e26b-c2ee-219670283bf0@redhat.com>
+Date:   Thu, 10 Oct 2019 09:27:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VdrUg6nBfYV-ZoiwWhu6caaQB8-FCSeQFH0GrBX33WhVg@mail.gmail.com>
+In-Reply-To: <20191009144323.GH6681@dhcp22.suse.cz>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:foB/0idgGkWa2ab0un+ubrR3nFbOcepkKguwEx1GoSMNY40iXY0
- dALqet59vl0aVi2yt4YoqieTFH/m8MA8UZb3RmJFY0ZVkZicm77nKx6hTkrTwz4Uj4/RIPF
- 9ybgAvIs/p1ln2/uyj3bim8I2YenqJrPhww9iXnVhtI6xi8lHASzHfcP4gJ16JqD6xkVICn
- +KI/+GO6xW59PMzfgH9Mw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Yz/aZJCbT+U=:EKBUuu5lulTyfCmit5Peel
- IUxccESV+IC43UOD5fjNXmc4aBfII6AqX2rhPQIXqXadVyol/a/EDBXeDv2PHi1z6TNadqYQ5
- 8jlMAZamV79pO/Ulm46pR4ct9kjwSpQRHu9yDDYaDAkHrEYt+IIwIfTHGI4G1sYzy+ak0CAJp
- 5WQjLFHowEpH1zFO3BG4t64awzXbPuuYmea5dt//AsdbEmBurwA87g9yZDa6VQc6K96KcnPmc
- /U2xm/9IyUliCk2R2M5dCbospDn0az1sjEWkNThlH8jbwtWLJrrDjJmk84oZEb+KPOR7KJmBr
- oUp55ZJRmqY4cyHpHX68D//Y425BaxbTrpzJn3IeR847yd4YCGBZcQQkT9g58PPz05NQs6bSR
- PTC/YlbpekvCbBRl8K/JWRNwcncGEiP8WvtRgIyddCx0GTV5WL1K7hImODC9fCw4lDtRX60K6
- 5NPjbluQKZ1l1JRUubR3D79Of5iysDPJ7GkAI6q5gBsIM8bHaiEqEJC0o068cs1nPFSvmbhGv
- YW9hVxO8ujSWHMi63PMmHXJ+8WB/bj7O0xx+oKvFFAJgVs66LH8DOuuuYS89Foj7ISj4FohCI
- zDbL/pxt2jYrAYcCnLVaGrVlBphM7heXa1ktAGRB8LKhNeYYAaFZ5vtNEloQF7O6PbVV18t2S
- rB9CRH6kIXZ+0UXccQ1/uY9PUZ+u1LsbWakQiEqx9DGl9xUY++22tIJWlJkP63f3t/f58kfdz
- P3U+/uolPDVOZXzdGz/XqGUaRnGR65Zkofbf7ZrEeUABZBnsg8wTG90NRaAJwKy0piBdGukIU
- 1aC+DtcE5zY/8YSYSVlwaDsm/GjXHqDdUEodyhhyTAquxOxldqf+g1gttJRwf95j9OxGJGPIn
- 11NSzr1s/bSYIvPi9ihY9+jc17nYNmpQxQfefZISwt+faYTmBbK8k5/7wyAzOB89o5pOrIDKj
- r0FJKPgRZeTIv34PA9p24JwECjRwXZOOktf+F2p+IO8FB7PsjZlB81RK/7eqlb7O5SvQqhrqW
- zoRwB52QBq7MZ94MRoISh107ZyFyiV1SvWf0kiVX2TJasWN1s6ZWnhim5qOu+nM6zgkY5KtaW
- rPZM5qiL+uiLJrc2H/1CtZZ3Py5OIPvyP+UJQPal0AS7ZEjB8USM1uUGtIdExFegZ0putf63y
- D+9n+I5fC52jbW6Mbmd4sFhh7VkPAd1Cc1o2h09qWJiTO6I9eQSsorqZgEIjFBxn3BEkGbjQ2
- Z7M3jTLsPmyzKh9R8bnkkK75+kKdDZlG5PeDbAky4sMajm+TgocOgT4wS/vs=
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.69]); Thu, 10 Oct 2019 07:27:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/lib/test_kasan.c?id=3Db92a953cb7f727c42a15ac2ea59bf3cf9c39370d#n595
->
-> The *test* word must have given you a clue that the code you a looking
-> at is not an ordinary one.
+On 09.10.19 16:43, Michal Hocko wrote:
+> On Wed 09-10-19 16:24:35, David Hildenbrand wrote:
+>> We should check for pfn_to_online_page() to not access uninitialized
+>> memmaps. Reshuffle the code so we don't have to duplicate the error
+>> message.
+>>
+>> Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: Michal Hocko <mhocko@kernel.org>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>> ---
+>>  mm/memory-failure.c | 14 ++++++++------
+>>  1 file changed, 8 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+>> index 7ef849da8278..e866e6e5660b 100644
+>> --- a/mm/memory-failure.c
+>> +++ b/mm/memory-failure.c
+>> @@ -1253,17 +1253,19 @@ int memory_failure(unsigned long pfn, int flags)
+>>  	if (!sysctl_memory_failure_recovery)
+>>  		panic("Memory failure on page %lx", pfn);
+>>  
+>> -	if (!pfn_valid(pfn)) {
+>> +	p = pfn_to_online_page(pfn);
+>> +	if (!p) {
+>> +		if (pfn_valid(pfn)) {
+>> +			pgmap = get_dev_pagemap(pfn, NULL);
+>> +			if (pgmap)
+>> +				return memory_failure_dev_pagemap(pfn, flags,
+>> +								  pgmap);
+>> +		}
+>>  		pr_err("Memory failure: %#lx: memory outside kernel control\n",
+>>  			pfn);
+>>  		return -ENXIO;
+> 
+> Don't we need that earlier at hwpoison_inject level?
+> 
 
-The proposed extension of function annotations can be tested also together
-with this source file example, can't it?
-Other system configuration variations might become more interesting
-for further software components.
+Theoretically yes, this is another instance. But pfn_to_online_page(pfn)
+alone would not be sufficient as discussed. We would, again, have to
+special-case ZONE_DEVICE via things like get_dev_pagemap() ...
 
-Regards,
-Markus
+But mm/hwpoison-inject.c:hwpoison_inject() is a pure debug feature either way:
+
+	/*
+	 * Note that the below poison/unpoison interfaces do not involve
+	 * hardware status change, hence do not require hardware support.
+	 * They are mainly for testing hwpoison in software level.
+	 */
+
+So it's not that bad compared to memory_failure() called from real HW or
+drivers/base/memory.c:soft_offline_page_store()/hard_offline_page_store()
+
+-- 
+
+Thanks,
+
+David / dhildenb
