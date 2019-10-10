@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A84CBD2577
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:02:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91B4BD2545
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:01:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388637AbfJJIm4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:42:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47490 "EHLO mail.kernel.org"
+        id S2389586AbfJJI4y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:56:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387966AbfJJImt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:42:49 -0400
+        id S2389501AbfJJIrg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:47:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C74282190F;
-        Thu, 10 Oct 2019 08:42:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37AA7222D2;
+        Thu, 10 Oct 2019 08:47:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570696969;
-        bh=Vw4I1uOKtDXm4m/EQIyjHXit44q63Ut92gP2vIDrNS0=;
+        s=default; t=1570697255;
+        bh=d1cwlKNt2mnCdzZ5RHbHyTPGEAf/7X1xqYU1nu09wHU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=USU16GueNDORsBX50TjnHMAnaWSD6PVbBBLjno+Pl9sfEdsZk4Nm3PHe5jPBpQJbI
-         XDrJHVRw5em9AYFeEyi2L7+CLd/jxWZeJxWlvICfQM+XdttCQigkp+tO9yZSvw7HTM
-         jokn0DY+oXcCJ6S5iTJoKxtIhLcaa70B2kc2EWao=
+        b=J88PohXiQdW/9uLb7bFXpEAfjWuY5gOfpIstNLpYBvdZfDPNztjT8GOXGe16smi5G
+         bqLlMbf5SQ7P1puIWyQCReyHPGO5HSj80emCpUFpe1ll/e4jdVcKbEm/Wnn7K+gTmK
+         /bhRZjeH4yhjP8lsib1ZFDJgnHikUT28f3qIsOns=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        zhengbin <zhengbin13@huawei.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
+        stable@vger.kernel.org, Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 118/148] fuse: fix memleak in cuse_channel_open
-Date:   Thu, 10 Oct 2019 10:36:19 +0200
-Message-Id: <20191010083618.222602898@linuxfoundation.org>
+Subject: [PATCH 4.19 074/114] kernel/elfcore.c: include proper prototypes
+Date:   Thu, 10 Oct 2019 10:36:21 +0200
+Message-Id: <20191010083611.841491973@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
-References: <20191010083609.660878383@linuxfoundation.org>
+In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
+References: <20191010083544.711104709@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhengbin <zhengbin13@huawei.com>
+From: Valdis Kletnieks <valdis.kletnieks@vt.edu>
 
-[ Upstream commit 9ad09b1976c562061636ff1e01bfc3a57aebe56b ]
+[ Upstream commit 0f74914071ab7e7b78731ed62bf350e3a344e0a5 ]
 
-If cuse_send_init fails, need to fuse_conn_put cc->fc.
+When building with W=1, gcc properly complains that there's no prototypes:
 
-cuse_channel_open->fuse_conn_init->refcount_set(&fc->count, 1)
-                 ->fuse_dev_alloc->fuse_conn_get
-                 ->fuse_dev_free->fuse_conn_put
+  CC      kernel/elfcore.o
+kernel/elfcore.c:7:17: warning: no previous prototype for 'elf_core_extra_phdrs' [-Wmissing-prototypes]
+    7 | Elf_Half __weak elf_core_extra_phdrs(void)
+      |                 ^~~~~~~~~~~~~~~~~~~~
+kernel/elfcore.c:12:12: warning: no previous prototype for 'elf_core_write_extra_phdrs' [-Wmissing-prototypes]
+   12 | int __weak elf_core_write_extra_phdrs(struct coredump_params *cprm, loff_t offset)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~
+kernel/elfcore.c:17:12: warning: no previous prototype for 'elf_core_write_extra_data' [-Wmissing-prototypes]
+   17 | int __weak elf_core_write_extra_data(struct coredump_params *cprm)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~
+kernel/elfcore.c:22:15: warning: no previous prototype for 'elf_core_extra_data_size' [-Wmissing-prototypes]
+   22 | size_t __weak elf_core_extra_data_size(void)
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~
 
-Fixes: cc080e9e9be1 ("fuse: introduce per-instance fuse_dev structure")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: zhengbin <zhengbin13@huawei.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Provide the include file so gcc is happy, and we don't have potential code drift
+
+Link: http://lkml.kernel.org/r/29875.1565224705@turing-police
+Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/fuse/cuse.c | 1 +
+ kernel/elfcore.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/fs/fuse/cuse.c b/fs/fuse/cuse.c
-index bab7a0db81dd4..f3b7208846506 100644
---- a/fs/fuse/cuse.c
-+++ b/fs/fuse/cuse.c
-@@ -519,6 +519,7 @@ static int cuse_channel_open(struct inode *inode, struct file *file)
- 	rc = cuse_send_init(cc);
- 	if (rc) {
- 		fuse_dev_free(fud);
-+		fuse_conn_put(&cc->fc);
- 		return rc;
- 	}
- 	file->private_data = fud;
+diff --git a/kernel/elfcore.c b/kernel/elfcore.c
+index fc482c8e0bd88..57fb4dcff4349 100644
+--- a/kernel/elfcore.c
++++ b/kernel/elfcore.c
+@@ -3,6 +3,7 @@
+ #include <linux/fs.h>
+ #include <linux/mm.h>
+ #include <linux/binfmts.h>
++#include <linux/elfcore.h>
+ 
+ Elf_Half __weak elf_core_extra_phdrs(void)
+ {
 -- 
 2.20.1
 
