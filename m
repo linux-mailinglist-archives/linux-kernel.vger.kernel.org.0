@@ -2,63 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A732D2CE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 16:51:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A8DFD2CF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 16:53:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726279AbfJJOvX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 10:51:23 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:43469 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbfJJOvX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 10:51:23 -0400
-Received: by mail-io1-f67.google.com with SMTP id v2so14282073iob.10
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 07:51:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linbit-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qSn+IbxhWIYTbk+iRSpPFibjYFIoDZf+e+FxR6Ivkjk=;
-        b=CMiuA1bAsqhGMhz0TB4PodgSVEo3g5QjP1Fu0Ynm021+h5UsusJeQOOrhisvEnWTe2
-         bN+KehzdyJghCtDEti1ENtTDNYHtxdbVMnFtroXadVWscgHy9EnqpRUMRPZWE8JYBSc2
-         JPHuvbI4LJE4TZd/Pw/1XVTuJYrUqb/hpLgI1JT7f7UBdJsJarltl3FjZjxzEyPMDS7T
-         rqOdkZjBx6BrVCCvqgsqX8K+ILXYpkFO+3Xg3bMXhf3denPUNMsxr3V3XQ/eunajRG6/
-         iCjm8UQGXTrr2qURaiQvx0OU5lqNmUr3GMyj0fUvXA2dcdYJpdLnj2qrUhbV1+B8CW1t
-         563w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qSn+IbxhWIYTbk+iRSpPFibjYFIoDZf+e+FxR6Ivkjk=;
-        b=Rroe7PaWTfLhrX0dzXwPoYvTR/HmGL1SlEJOYM/gA6G2ISNIU0AkYtWywNAaSoIeXj
-         RpxUsJpyAf0G4dhOLTszirZb3LaCkEX4FRxTZ2SX0wIpFlMEsLYfEfH9NdKEX7KO20JU
-         DaQdPUGeNz0bWIAYPZk8yPTAH464f6ZlUNbfJGEv3sSq9GT8ClPl8ieJ2oogxvDoNgH0
-         s9XcP1aA8mInHytMYrSUgn2YT0mlz1/OcylncNMfYtti6OSkvzntF9czCdEz5jTwThsW
-         70SgFUVOBqMVRTCEqDthiBmUQOKKS9avHTLedXVU86ILzFj6+p+IC9C6w1MKx4/u5hh7
-         ULzA==
-X-Gm-Message-State: APjAAAX0oDFLzJNRjBOdF7gbd/Tty11s5SASq3L9lqvY2GX9VPpuHEif
-        9b0bOQ7mx85LTEWPSMspb4RrsJ/jNfMiQ0humiUiwg==
-X-Google-Smtp-Source: APXvYqx8HaNdT/+Du1N7u8XZJrZL2oN5WfxqTEykBcboGo9OOgOaPal6nfU64eR4Z/J4NuhEvJLwgogdeek2MthjUQE=
-X-Received: by 2002:a5d:87d2:: with SMTP id q18mr402942ios.46.1570719081321;
- Thu, 10 Oct 2019 07:51:21 -0700 (PDT)
+        id S1726472AbfJJOwg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 10:52:36 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39744 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725901AbfJJOwg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 10:52:36 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0458A64467;
+        Thu, 10 Oct 2019 14:52:36 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-84.rdu2.redhat.com [10.10.121.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2BB4A196B2;
+        Thu, 10 Oct 2019 14:52:35 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH net] rxrpc: Fix possible NULL pointer access in ICMP handling
+From:   David Howells <dhowells@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 10 Oct 2019 15:52:34 +0100
+Message-ID: <157071915431.29197.5055122258964729288.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-References: <20190925150308.6609-1-joel.colledge@linbit.com>
-In-Reply-To: <20190925150308.6609-1-joel.colledge@linbit.com>
-From:   Joel Colledge <joel.colledge@linbit.com>
-Date:   Thu, 10 Oct 2019 16:51:10 +0200
-Message-ID: <CAGNP_+WxQSd_JBoWGn8H2CH1aY3PmZGcgrHziRGKTH8OJz33Vw@mail.gmail.com>
-Subject: Re: [PATCH] scripts/gdb: fix lx-dmesg when CONFIG_PRINTK_CALLER is set
-To:     Jan Kiszka <jan.kiszka@siemens.com>,
-        Kieran Bingham <kbingham@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, leonard.crestez@nxp.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 10 Oct 2019 14:52:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jan and Kieran, maintainers of scripts/gdb/,
-CC: Leonard, most recent contributor to scripts/gdb/linux/dmesg.py
+If an ICMP packet comes in on the UDP socket backing an AF_RXRPC socket as
+the UDP socket is being shut down, rxrpc_error_report() may get called to
+deal with it after sk_user_data on the UDP socket has been cleared, leading
+to a NULL pointer access when this local endpoint record gets accessed.
 
-Could someone look at this fix please? Is there anything I should
-improve in the code or the format of the contribution? Thanks.
+Fix this by just returning immediately if sk_user_data was NULL.
+
+The oops looks like the following:
+
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+...
+RIP: 0010:rxrpc_error_report+0x1bd/0x6a9
+...
+Call Trace:
+ ? sock_queue_err_skb+0xbd/0xde
+ ? __udp4_lib_err+0x313/0x34d
+ __udp4_lib_err+0x313/0x34d
+ icmp_unreach+0x1ee/0x207
+ icmp_rcv+0x25b/0x28f
+ ip_protocol_deliver_rcu+0x95/0x10e
+ ip_local_deliver+0xe9/0x148
+ __netif_receive_skb_one_core+0x52/0x6e
+ process_backlog+0xdc/0x177
+ net_rx_action+0xf9/0x270
+ __do_softirq+0x1b6/0x39a
+ ? smpboot_register_percpu_thread+0xce/0xce
+ run_ksoftirqd+0x1d/0x42
+ smpboot_thread_fn+0x19e/0x1b3
+ kthread+0xf1/0xf6
+ ? kthread_delayed_work_timer_fn+0x83/0x83
+ ret_from_fork+0x24/0x30
+
+Fixes: 17926a79320a ("[AF_RXRPC]: Provide secure RxRPC sockets for use by userspace and kernel both")
+Reported-by: syzbot+611164843bd48cc2190c@syzkaller.appspotmail.com
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
+
+ net/rxrpc/peer_event.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/net/rxrpc/peer_event.c b/net/rxrpc/peer_event.c
+index c97ebdc043e4..61451281d74a 100644
+--- a/net/rxrpc/peer_event.c
++++ b/net/rxrpc/peer_event.c
+@@ -151,6 +151,9 @@ void rxrpc_error_report(struct sock *sk)
+ 	struct rxrpc_peer *peer;
+ 	struct sk_buff *skb;
+ 
++	if (unlikely(!local))
++		return;
++
+ 	_enter("%p{%d}", sk, local->debug_id);
+ 
+ 	/* Clear the outstanding error value on the socket so that it doesn't
+
