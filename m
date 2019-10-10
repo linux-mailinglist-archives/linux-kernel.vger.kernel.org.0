@@ -2,91 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD986D32D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:48:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 091F3D32E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:51:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbfJJUsn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 16:48:43 -0400
-Received: from smtprelay0058.hostedemail.com ([216.40.44.58]:38196 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725867AbfJJUsn (ORCPT
+        id S1727302AbfJJUtb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 16:49:31 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:50649 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbfJJUtb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 16:48:43 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 88169781C;
-        Thu, 10 Oct 2019 20:48:41 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::::::::::::::,RULES_HIT:41:355:379:599:960:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2525:2553:2559:2563:2682:2685:2828:2840:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3871:3872:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:6742:8985:9025:10004:10400:10848:11026:11232:11473:11658:11914:12043:12297:12438:12555:12740:12760:12895:12986:13069:13149:13230:13311:13357:13439:14096:14097:14181:14659:14721:21080:21324:21433:21451:21627:30054:30090:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
-X-HE-Tag: dolls38_4b7237beba646
-X-Filterd-Recvd-Size: 2857
-Received: from XPS-9350.home (unknown [47.151.152.152])
-        (Authenticated sender: joe@perches.com)
-        by omf07.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 10 Oct 2019 20:48:38 +0000 (UTC)
-Message-ID: <4b2ed594c5054138562c80cc94dee8b5398c9064.camel@perches.com>
-Subject: Re: [PATCH 4/4] scripts/cvt_style.pl: Tool to reformat sources in
- various ways
-From:   Joe Perches <joe@perches.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Pavel Machek <pavel@ucw.cz>,
-        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Shawn Landden <shawn@git.icu>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Miller <davem@davemloft.net>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Date:   Thu, 10 Oct 2019 13:48:37 -0700
-In-Reply-To: <201910101338.59F36A33@keescook>
-References: <cover.1570292505.git.joe@perches.com>
-         <4a904777303fbaea75fe0875b7984c33824f4b68.1570292505.git.joe@perches.com>
-         <CANiq72nwDgMgXNczW=JRANzH72=f0ukwVoPaud1d7J4YQLQX=w@mail.gmail.com>
-         <52794b248ba13e88ab4c30c9b6ea55a7be30df5d.camel@perches.com>
-         <201910101338.59F36A33@keescook>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
+        Thu, 10 Oct 2019 16:49:31 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1M4384-1iIfNB2MVs-0001v8; Thu, 10 Oct 2019 22:49:21 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: [PATCH 26/36] ARM: s3c: bast: avoid irq_desc array usage
+Date:   Thu, 10 Oct 2019 22:30:10 +0200
+Message-Id: <20191010203043.1241612-26-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20191010203043.1241612-1-arnd@arndb.de>
+References: <20191010202802.1132272-1-arnd@arndb.de>
+ <20191010203043.1241612-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:wHjpWj5ZU3LsTJEShbn6OIxxBJLNZ6bxgFqjSskTwAPhMhycOBQ
+ zKGRravzyP5344Fi58tfwlJ0a/J2oSdtvQedzmSKzig/5K7I3mD7RJOw7etEuUeXsi5FujS
+ Q6eBl2YRK4cMFIDyK5PmFNLy3BcKqcQhCAicUiwU4niAlE9XHqaM+NSq5uBy6+DBQUsoDSS
+ wPs6E+FLc98tt/2ohXJkw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:2BwSOkcaa5U=:FaBTcKC8FkOGwluHd57eCZ
+ 6kznSKLyXayamvx1d+QnhVPhUiTCg7shvUXniM4JYmmnboJ8v/Bxuy7VnkfP+Xe8TEJ8QkatD
+ SnPTfWpzSzzxVoTOLb2SYTbwYzFY1eDXmtKwJeX/JaQxGWWQPeRPEwRTMfGyYPEcPC5CKiBXn
+ VLEfI/lZYGEKqbUrlc2DJ9/xTPq0uwUlJfhFoffJfNu+zTVjzuQQ8UODovE7Y3v2qRK2LgYnd
+ sqtkLlHg73tM4qyOJ9TV1q+I8b5aglfG4gj+EreFw5WSJuXUNkLq03manPvcIUZiDHA/my5ic
+ RGSdDfmuGE4PuPlP/r5MZuw0xVwgpl/BfVZQy+ypCehGaU+wCOpk+Kvr+y9BFELSefilctwqX
+ HVEaEbbu9kmM2LnKOt/a4BiGIUmE9JgNQszW/W9mBsEFvTAa2BHj7PbfpBS7etjM/KTmGzakX
+ xumtw8IQCSy//t8TUIPlSOSptEx3ebOrpQThSTKLd+ZcqA8Si5ZTF1qSV5gAwTQ9UeE9Yndg9
+ Gt/6vSA9qG4QmrXITlUHd0f6d/jMr3AwmBZ1NgcKufu0BLldzPWoXtC5seXsyHa+OAPx2e5ks
+ cxO5AIw3o+/McG75t3UCBjdgG0xsTU5Zx23A6Cnr38YJhbjGPBDI254NqeF1wdmN76FckaTFG
+ aOnxybQh1wPka3AwPAVNiXcTqo7mYC7M0H2vG/tXkWieaXYYjMOSyHwlx83ZGo9LY34YLZyhi
+ oyaoV/vedy7Mnd5p750f+HZg3r/gDbIjV/U5uV+MyaDcBJFq8sgvb6Z0i1OldXc/PIgEK25Pw
+ 6bojOwOpWFqk+XkVLsuVyQP+jHxD1+J2lKRnkolW4n2v7DJCN4B98FJaLCefmx+Ak6pPxT7J0
+ /3B6K1uS27i9BZnfyYqA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-10-10 at 13:39 -0700, Kees Cook wrote:
-> On Sat, Oct 05, 2019 at 11:35:42PM -0700, Joe Perches wrote:
-[]
-> > I think clang-format could not do this sort of conversion.
-> > Nor could coccinelle or checkpatch.
-> > 
-> > Anyway, it's not really necessary for this particular patch
-> > to be applied, but it's a convenient way to show the script
-> > has the capability to do fallthrough comment conversions.
-> > 
-> > I think it does conversions fairly reasonably but likely
-> > some files could not compile without adding an #include
-> > like:
-> > 
-> > #include <linux/compiler.h>
-> 
-> I think this is a nice tool to add -- at the very least it serves as
-> infrastructure for future similar conversions. And small cleanups can be
-> generated from it for people looking to clean up subsystems, etc.
+Once we move to sparse irqs, the irq_desc[] array is no
+longer accessible, so replace the two uses in bast-irq.c.
+The first one can use irq_to_desc(), the second one seems
+completely unneeded as we already have a pointer to the
+correct descriptor.
 
-Another similar tool that used checkpatch and also compile
-tested and created git commits was reformat_with_checkpatch
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm/mach-s3c24xx/bast-irq.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-https://lore.kernel.org/lkml/1405128087.6751.12.camel@joe-AO725/
-
+diff --git a/arch/arm/mach-s3c24xx/bast-irq.c b/arch/arm/mach-s3c24xx/bast-irq.c
+index 4cec084ae443..b3083ee3ab33 100644
+--- a/arch/arm/mach-s3c24xx/bast-irq.c
++++ b/arch/arm/mach-s3c24xx/bast-irq.c
+@@ -63,7 +63,7 @@ bast_pc104_mask(struct irq_data *data)
+ static void
+ bast_pc104_maskack(struct irq_data *data)
+ {
+-	struct irq_desc *desc = irq_desc + BAST_IRQ_ISA;
++	struct irq_desc *desc = irq_to_desc(BAST_IRQ_ISA);
+ 
+ 	bast_pc104_mask(data);
+ 	desc->irq_data.chip->irq_ack(&desc->irq_data);
+@@ -95,8 +95,6 @@ static void bast_irq_pc104_demux(struct irq_desc *desc)
+ 
+ 	if (unlikely(stat == 0)) {
+ 		/* ack if we get an irq with nothing (ie, startup) */
+-
+-		desc = irq_desc + BAST_IRQ_ISA;
+ 		desc->irq_data.chip->irq_ack(&desc->irq_data);
+ 	} else {
+ 		/* handle the IRQ */
+-- 
+2.20.0
 
