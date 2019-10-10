@@ -2,70 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB8D6D2F89
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 19:28:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 722F2D2F90
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 19:28:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726718AbfJJR2e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 13:28:34 -0400
-Received: from ms.lwn.net ([45.79.88.28]:60706 "EHLO ms.lwn.net"
+        id S1726291AbfJJR2j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 13:28:39 -0400
+Received: from foss.arm.com ([217.140.110.172]:36680 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725862AbfJJR2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 13:28:33 -0400
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 7CBEE2BD;
-        Thu, 10 Oct 2019 17:28:31 +0000 (UTC)
-Date:   Thu, 10 Oct 2019 11:28:30 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Shannon Nelson <snelson@pensando.io>,
-        Pensando Drivers <drivers@pensando.io>,
-        Steve French <sfrench@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-mips@vger.kernel.org, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 1/3] docs: fix some broken references
-Message-ID: <20191010112830.11ce7007@lwn.net>
-In-Reply-To: <b87385b2ac6ce6c75df82062fce2976149bbaa6b.1569330078.git.mchehab+samsung@kernel.org>
-References: <b87385b2ac6ce6c75df82062fce2976149bbaa6b.1569330078.git.mchehab+samsung@kernel.org>
-Organization: LWN.net
+        id S1725862AbfJJR2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 13:28:38 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA45628;
+        Thu, 10 Oct 2019 10:28:37 -0700 (PDT)
+Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 545A83F71A;
+        Thu, 10 Oct 2019 10:28:37 -0700 (PDT)
+Subject: Re: Question about sched_prio_to_weight values
+To:     Francesco Poli <invernomuto@paranoici.org>,
+        linux-kernel@vger.kernel.org
+References: <20191007003205.8888ac99da2dd732b6198387@paranoici.org>
+ <506d5ee6-246a-a03d-ea11-227ff4de1467@arm.com>
+ <20191007224143.d21abae57a3f32ac60afd53c@paranoici.org>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <21c11aca-e531-7d72-9a70-f52c12d5d408@arm.com>
+Date:   Thu, 10 Oct 2019 18:28:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191007224143.d21abae57a3f32ac60afd53c@paranoici.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Sep 2019 10:01:28 -0300
-Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
-
-> There are a number of documentation files that got moved or
-> renamed. update their references.
+On 07/10/2019 21:41, Francesco Poli wrote:
+> The differences are probably due to the different precision
+> of the computations: I don't know the precision of those originally
+> carried out by Ingo Molnar (single precision? double?), but calc(1)
+> is an arbitrary precision calculator and, by default, performs
+> calculations with epsilon = 1e-20 !
 > 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> Please note that, except for the first one, all the differing
+> values obtained with the calc(1) script have slightly better
+> errors than the ones found in kernel/sched/core.c ...
+> 
 
-I've applied this set, thanks.
+As always patches are welcome, but I don't know how much there is to gain
+from a tiny error correction in those factors.
 
-jon
+Out of curiosity, what led you to stare at those numbers?
+
+> 
+> Thanks again for the clarification!
+> Bye.
+> 
