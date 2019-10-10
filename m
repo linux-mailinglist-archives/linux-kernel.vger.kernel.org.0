@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F591D2549
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:01:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55115D2584
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:02:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389369AbfJJI5Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:57:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52914 "EHLO mail.kernel.org"
+        id S2389132AbfJJJAr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 05:00:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387660AbfJJIrE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:47:04 -0400
+        id S2387745AbfJJIma (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:42:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78853218AC;
-        Thu, 10 Oct 2019 08:47:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80C7A2054F;
+        Thu, 10 Oct 2019 08:42:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697223;
+        s=default; t=1570696950;
         bh=WIl6W8ebQcojUGSsK88TdAJ9kurCE2C5egXd6emtgqY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=inGKHgFlGGWVDtXUFxkfOmv3HkuY/YBpORsGv3H4TNaM6wQEBBib8iWalBB0bmbah
-         d1S9DFSf4emTNB3D48bxoeOuap27J8CyJVs+DmLk3WQGEut+07LUurEGj+ShMYj7P9
-         M3HxkUNoQgLp1ngcIVXvDq9UxW5qp53+Xzm5g9p0=
+        b=HKafgU4jWSkcVJs6EoFNkzj2+Fc8CYuqilGhz+ksiALot9lmg08I5ADQODJHr2C1D
+         MgCSseWUEVHhA3wtzGvMWzjRZ9QswFfCKW3soDI92BwgLoc32ZJWreQmIdt5jJBuiU
+         dtRfUCFmaR7nKJ+jCPZYtI17Pjh/7xaOgxcboGTg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -34,12 +34,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 063/114] x86/purgatory: Disable the stackleak GCC plugin for the purgatory
-Date:   Thu, 10 Oct 2019 10:36:10 +0200
-Message-Id: <20191010083609.872858848@linuxfoundation.org>
+Subject: [PATCH 5.3 111/148] x86/purgatory: Disable the stackleak GCC plugin for the purgatory
+Date:   Thu, 10 Oct 2019 10:36:12 +0200
+Message-Id: <20191010083617.862786246@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
-References: <20191010083544.711104709@linuxfoundation.org>
+In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
+References: <20191010083609.660878383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
