@@ -2,40 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63CAAD1E5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 04:21:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1D76D1E61
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 04:23:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732157AbfJJCVD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 22:21:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32810 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726501AbfJJCR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 22:17:29 -0400
-Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C9E0206C0;
-        Thu, 10 Oct 2019 02:17:27 +0000 (UTC)
-Date:   Wed, 9 Oct 2019 22:17:25 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-        Daniel Wagner <dwagner@suse.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Hillf Danton <hdanton@sina.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>
-Subject: Re: [PATCH 1/1] mm/vmalloc: remove preempt_disable/enable when do
- preloading
-Message-ID: <20191009221725.0b83151e@oasis.local.home>
-In-Reply-To: <20191009151901.1be5f7211db291e4bd2da8ca@linux-foundation.org>
-References: <20191009164934.10166-1-urezki@gmail.com>
-        <20191009151901.1be5f7211db291e4bd2da8ca@linux-foundation.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1732654AbfJJCXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 22:23:51 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:32809 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726501AbfJJCXu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 22:23:50 -0400
+Received: by mail-pf1-f193.google.com with SMTP id q10so2891317pfl.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 19:23:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=aBeHMgOj8kOPkp/mXf555NmaRLhdV3k2lpJOHH9DSxs=;
+        b=jpByXRk0Y1OKjPhmlZ2hdsZFkPAOQ4gxO6YktXsyMGFkt8zs5UgN01+ApBKqYIpXVK
+         62tgy3MHc0GouJPG+0KS4EtpqXs+JfTGgCsCibU9/L/p7W3fNz4XIaljkvbpB/GJfOBk
+         SJzZwqA3MxxYuPD6vTbXvuKFe6JaN29BwoL5yZLOVrrCQ90zwiRa/rgewEr4/5yYAsAI
+         mL+IR3MJOlx78/XUXSCB6K42n4pMYMCbsRZt7EJg6wygNXptQ6Q4Y8XPXd/DAQFHP9W2
+         toD8hZQvdaj6HQp4FouvgCR9vfHy4mwckHYbFov78+07qu8WLosCGCekNGILc1gurbXo
+         GFsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=aBeHMgOj8kOPkp/mXf555NmaRLhdV3k2lpJOHH9DSxs=;
+        b=M09BGYMgN1POq+5oe0Y3PtvrnFf0/oxHGZt0EiXVSupa6ZFQZ0mS3xEdXN+S6mtSx/
+         DRLFVLZWJjKJBmcvopOmKMFdPMDQmv6/JyPitnEFQlhfWHm6lt2KTw472dHPlpWFe4UL
+         THCHHrRGmrIYqxp9J7YB4C97QWlz+t6IynECLkp8Cw72uwew1JM6toO7tIS6X6KLku/I
+         uAgHh4pjZUy70B8988X9zhDLvSYDdQLfTOhk8LLPPA1KR+YzROlsDjhArnnhcMe/7Zo5
+         OPlJPFRDLPjQCimmYgRsbnVsJa2BVIOLrtIi2jTT4Dld3iYEfeousKKwvM20uTFndNfa
+         +fsQ==
+X-Gm-Message-State: APjAAAVkPQSeWocbhTqtpS9KPuu2xr2c5DN0HhCAGoLU063d1+V5c2t7
+        n9q27fSJ6gUveHv4aqsa4UuKww==
+X-Google-Smtp-Source: APXvYqwIOi9sHsxYxViE9LtrIeUR0YAWQ5FeFfl7acya6XRrVGkRVJeHhp1JawccOJyWsSkcHBW47g==
+X-Received: by 2002:a17:90a:24ab:: with SMTP id i40mr7955033pje.121.1570674229873;
+        Wed, 09 Oct 2019 19:23:49 -0700 (PDT)
+Received: from cakuba.netronome.com (c-73-202-202-92.hsd1.ca.comcast.net. [73.202.202.92])
+        by smtp.gmail.com with ESMTPSA id n15sm3166468pjt.13.2019.10.09.19.23.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 19:23:49 -0700 (PDT)
+Date:   Wed, 9 Oct 2019 19:23:35 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     <jhs@mojatatu.com>, <xiyou.wangcong@gmail.com>, <jiri@resnulli.us>,
+        <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] act_mirred: Fix mirred_init_module error
+ handling
+Message-ID: <20191009192335.3019d283@cakuba.netronome.com>
+In-Reply-To: <20191009031052.40528-1-yuehaibing@huawei.com>
+References: <20191009031052.40528-1-yuehaibing@huawei.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -44,134 +65,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 9 Oct 2019 15:19:01 -0700
-Andrew Morton <akpm@linux-foundation.org> wrote:
+On Wed, 9 Oct 2019 11:10:52 +0800, YueHaibing wrote:
+> If tcf_register_action failed, mirred_device_notifier
+> should be unregistered.
+> 
+> Fixes: 3b87956ea645 ("net sched: fix race in mirred device removal")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-> On Wed,  9 Oct 2019 18:49:34 +0200 "Uladzislau Rezki (Sony)" <urezki@gmail.com> wrote:
-> 
-> > Get rid of preempt_disable() and preempt_enable() when the
-> > preload is done for splitting purpose. The reason is that
-> > calling spin_lock() with disabled preemtion is forbidden in
-> > CONFIG_PREEMPT_RT kernel.
-> > 
-> > Therefore, we do not guarantee that a CPU is preloaded, instead
-> > we minimize the case when it is not with this change.
-> > 
-> > For example i run the special test case that follows the preload
-> > pattern and path. 20 "unbind" threads run it and each does
-> > 1000000 allocations. Only 3.5 times among 1000000 a CPU was
-> > not preloaded thus. So it can happen but the number is rather
-> > negligible.
-> >
-> > ...
-> >  
-> 
-> A few questions about the resulting alloc_vmap_area():
-> 
-> : static struct vmap_area *alloc_vmap_area(unsigned long size,
-> : 				unsigned long align,
-> : 				unsigned long vstart, unsigned long vend,
-> : 				int node, gfp_t gfp_mask)
-> : {
-> : 	struct vmap_area *va, *pva;
-> : 	unsigned long addr;
-> : 	int purged = 0;
-> : 
-> : 	BUG_ON(!size);
-> : 	BUG_ON(offset_in_page(size));
-> : 	BUG_ON(!is_power_of_2(align));
-> : 
-> : 	if (unlikely(!vmap_initialized))
-> : 		return ERR_PTR(-EBUSY);
-> : 
-> : 	might_sleep();
-> : 
-> : 	va = kmem_cache_alloc_node(vmap_area_cachep,
-> : 			gfp_mask & GFP_RECLAIM_MASK, node);
-> 
-> Why does this use GFP_RECLAIM_MASK?  Please add a comment explaining
-> this.
-> 
-> : 	if (unlikely(!va))
-> : 		return ERR_PTR(-ENOMEM);
-> : 
-> : 	/*
-> : 	 * Only scan the relevant parts containing pointers to other objects
-> : 	 * to avoid false negatives.
-> : 	 */
-> : 	kmemleak_scan_area(&va->rb_node, SIZE_MAX, gfp_mask & GFP_RECLAIM_MASK);
-> : 
-> : retry:
-> : 	/*
-> : 	 * Preload this CPU with one extra vmap_area object. It is used
-> : 	 * when fit type of free area is NE_FIT_TYPE. Please note, it
-> : 	 * does not guarantee that an allocation occurs on a CPU that
-> : 	 * is preloaded, instead we minimize the case when it is not.
-> : 	 * It can happen because of migration, because there is a race
-> : 	 * until the below spinlock is taken.
-> : 	 *
-> : 	 * The preload is done in non-atomic context, thus it allows us
-> : 	 * to use more permissive allocation masks to be more stable under
-> : 	 * low memory condition and high memory pressure.
-> : 	 *
-> : 	 * Even if it fails we do not really care about that. Just proceed
-> : 	 * as it is. "overflow" path will refill the cache we allocate from.
-> : 	 */
-> : 	if (!this_cpu_read(ne_fit_preload_node)) {
-> 
-> Readability nit: local `pva' should be defined here, rather than having
-> function-wide scope.
-> 
-> : 		pva = kmem_cache_alloc_node(vmap_area_cachep, GFP_KERNEL, node);
-> 
-> Why doesn't this honour gfp_mask?  If it's not a bug, please add
-> comment explaining this.
-> 
-> The kmem_cache_alloc() in adjust_va_to_fit_type() omits the caller's
-> gfp_mask also.  If not a bug, please document the unexpected behaviour.
-> 
+Why does the subject say net-next, looks like the bug was introduced
+all the way back in 2.6.36. For fixes for code which is already in
+Linus'es main tree the subject should say [PATCH net]. Those are on the
+fast path to the -rc releases and stable.
 
-These questions appear to be for the code that this patch touches, not
-for the patch itself.
-
-> : 
-> : 		if (this_cpu_cmpxchg(ne_fit_preload_node, NULL,
-> pva)) { : 			if (pva)
-> : 				kmem_cache_free(vmap_area_cachep,
-> pva); : 		}
-> : 	}
-> : 
-> : 	spin_lock(&vmap_area_lock);
-> : 
-> : 	/*
-> : 	 * If an allocation fails, the "vend" address is
-> : 	 * returned. Therefore trigger the overflow path.
-> : 	 */
-> 
-> As for the intent of this patch, why not preallocate the vmap_area
-> outside the spinlock and use it within the spinlock?  Does spin_lock()
-> disable preemption on RT?  I forget, but it doesn't matter much anyway
-
-spin_lock() does not disable preemption on RT. But it does disable
-migration (thus the task should remain on the current CPU).
-
-> - doing this will make the code better in the regular kernel I think? 
-> Something like this:
-> 
-> 	struct vmap_area *pva = NULL;
-> 
-> 	...
-> 
-> 	if (!this_cpu_read(ne_fit_preload_node))
-> 		pva = kmem_cache_alloc_node(vmap_area_cachep, ...);
-> 
-> 	spin_lock(&vmap_area_lock);
-> 
-> 	if (pva && __this_cpu_cmpxchg(ne_fit_preload_node, NULL, pva))
-> 		kmem_cache_free(vmap_area_cachep, pva);
-> 
-
-
-This looks fine to me.
-
--- Steve
+Applied to net, and queued for stable, please let me know if I
+misunderstood the intention here.
