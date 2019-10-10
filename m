@@ -2,71 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CE6FD22B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:26:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F212D22B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:27:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733180AbfJJI0K convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 10 Oct 2019 04:26:10 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:50111 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727389AbfJJI0K (ORCPT
+        id S1731616AbfJJI1J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:27:09 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:56144 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733202AbfJJI1H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:26:10 -0400
-Received: from xps13 (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 5F40D24000D;
-        Thu, 10 Oct 2019 08:26:07 +0000 (UTC)
-Date:   Thu, 10 Oct 2019 10:26:06 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Fuqian Huang <huangfq.daxian@gmail.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: maps: l440gx: Avoid print address to dmesg
-Message-ID: <20191010102606.253ff6b9@xps13>
-In-Reply-To: <20191010080130.25402-1-huangfq.daxian@gmail.com>
-References: <20191010080130.25402-1-huangfq.daxian@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 10 Oct 2019 04:27:07 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1iITm9-0002M8-BR; Thu, 10 Oct 2019 10:26:21 +0200
+Date:   Thu, 10 Oct 2019 10:26:21 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/8] clocksource/drivers/timer-atmel-tcb: add sama5d2
+ support
+Message-ID: <20191010082602.ytfc2tilizruwrts@linutronix.de>
+References: <20191009224006.5021-1-alexandre.belloni@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191009224006.5021-1-alexandre.belloni@bootlin.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Fuqian,
-
-Fuqian Huang <huangfq.daxian@gmail.com> wrote on Thu, 10 Oct 2019
-16:01:30 +0800:
-
-> Avoid print the address of l440gx_map.virt every time l440gx init.
+On 2019-10-10 00:39:58 [+0200], Alexandre Belloni wrote:
+> This series mainly adds sama5d2 support where we need to avoid using
+> clock index 0 because that clock is never enabled by the driver.
 > 
-> Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
-> ---
->  drivers/mtd/maps/l440gx.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/maps/l440gx.c b/drivers/mtd/maps/l440gx.c
-> index 876f12f40018..e7e40bca82d1 100644
-> --- a/drivers/mtd/maps/l440gx.c
-> +++ b/drivers/mtd/maps/l440gx.c
-> @@ -86,7 +86,6 @@ static int __init init_l440gx(void)
->  		return -ENOMEM;
->  	}
->  	simple_map_init(&l440gx_map);
-> -	printk(KERN_NOTICE "window_addr = 0x%08lx\n", (unsigned long)l440gx_map.virt);
->  
->  	/* Setup the pm iobase resource
->  	 * This code should move into some kind of generic bridge
+> There is also a rework of the 32khz clock handling so it is not used for
+> clockevents on 32 bit counter because the increased rate improves the
+> resolution and doesn't have any drawback with that counter width. This
+> replaces a patch that has been carried in the linux-rt tree for a while.
 
+Thank you for doing this!
 
-It looks more like a debug message, maybe turn it into a KERN_DEBUG?
-Usually people do not run their kernels with such a low trace limit.
-
-Thanks,
-Miquèl
+Sebastian
