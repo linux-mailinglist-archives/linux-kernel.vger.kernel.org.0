@@ -2,89 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC667D32C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:47:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7DB2D32CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:48:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726909AbfJJUrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 16:47:06 -0400
-Received: from ozlabs.org ([203.11.71.1]:53717 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725867AbfJJUrG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 16:47:06 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46q36b2fDPz9s7T;
-        Fri, 11 Oct 2019 07:47:03 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1570740424;
-        bh=Q8wZCsEowLDXToR/8OyHPafnAgqCXjOxH+ya9gSX498=;
-        h=Date:From:To:Cc:Subject:From;
-        b=aC6iapOVaCoEHfFDcOoZRP03VRIcH3qQPc/MrjVTsa6eRz1VxHJrV0bOhYhNIWbcv
-         jyhrnwnO1PoYweIDg2o/MWvAYgVP6bejs4jMvkfGYFwNlzJV4inhVHQvCdcadgslNX
-         dtsM0ZZeYqoh9XqWXOzW/lP5wT3XTUaif8N3jy9qHMYGNrzDLbcmq+RTCl7BcjrDtu
-         F9IgMy1DZy5DDMxe4Vk1Wdnee71ypMsI9EKxkua3JfTIJW04BBJnnvy38P01SoqCK9
-         l2EmlN7d9rthEx2CPiOszeaRN4SvE8W4Kj7XQtrFqtRxyJX9iSkiq/O16NCGPG8bRm
-         y/DsAFzsZVqVQ==
-Date:   Fri, 11 Oct 2019 07:47:02 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Benoit Parrot <bparrot@ti.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Subject: linux-next: Fixes tag needs some work in the v4l-dvb tree
-Message-ID: <20191011074702.1ebb98a7@canb.auug.org.au>
+        id S1727417AbfJJUrx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 16:47:53 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:35772 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbfJJUrx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 16:47:53 -0400
+Received: by mail-ot1-f66.google.com with SMTP id z6so6120820otb.2;
+        Thu, 10 Oct 2019 13:47:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=g2NGn0JHqOilhKsSqB3QO+8Vmh7wDxbT9p6+g1mCprE=;
+        b=nJZR9HW9Dv2c46lP46u+OSwROftwwj3BufjhfxcQ8PEb8I6zyaN2nQqahcmzYvqNPZ
+         2ZjKFIqOULnGw0Md7VrTwx5/6GPZy8DflWJjYw4FDA1bOfOvDe/IneAaSD1Kpk2NkHqA
+         6VpqNcJBoT2QxhfRJp3CYJepL5PUN0b2YHCovR4kxxqaQV/tLL4PmTbnRE0pZd3jQFuZ
+         Z27TE0zmGcDs1GJ/yKIU+Pu7RXpoK91Db8Tg6SPWJAxWqBvhuMjwI+x2UliKr++inn7U
+         P6RzafJbGZ4MUGuPbmM50WUAOd9ks6Q64WxluqfpFYZ5b9VknCKk2xOm/mq7tvgG7lKI
+         lEXg==
+X-Gm-Message-State: APjAAAXi0is+a4IOeXDdLF3IaMk3vE5wJ2je3pnhMI15HRRSKzi3HlSp
+        v8gPTrEGYAYS7PWFxHE0HQ==
+X-Google-Smtp-Source: APXvYqwO+SASp9nvuTYNhH5Lei92FxE4O9+patnbNl3BtRfrzxeoEACn9HX6g2Q4lVizs+j/8ybC8A==
+X-Received: by 2002:a9d:6c56:: with SMTP id g22mr9306234otq.89.1570740472180;
+        Thu, 10 Oct 2019 13:47:52 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id v7sm425440oic.9.2019.10.10.13.47.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2019 13:47:51 -0700 (PDT)
+Date:   Thu, 10 Oct 2019 15:47:51 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 8/8] dt-bindings: Add max12xx SPI ADC series as
+ trivial devices
+Message-ID: <20191010204751.GA22206@bogus>
+References: <20191007132657.4190-1-miquel.raynal@bootlin.com>
+ <20191007132657.4190-9-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/3va/phKy7R2mcEmzu9Ea1pT";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191007132657.4190-9-miquel.raynal@bootlin.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/3va/phKy7R2mcEmzu9Ea1pT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Oct 07, 2019 at 03:26:57PM +0200, Miquel Raynal wrote:
+> Update the compatible list with three Maxim ADCs compatibles.
+> 
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> ---
+>  .../bindings/iio/adc/max1027-adc.txt          | 28 +++++++++++++++++++
+>  .../devicetree/bindings/trivial-devices.yaml  |  6 ++++
+>  2 files changed, 34 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/max1027-adc.txt
 
-Hi all,
+Devices are supposed to be documented in one place or the other. So 
+either make max1027-adc.txt a schema or drop it.
 
-In commit
+I'm fine either way. Obviously, trivial-devices.yaml is trivial to add 
+to, but it does leave some ambiguities. Like is an interrupt required, 
+optional or non-existent? What about power supplies? Or what are allowed 
+values for spi-max-frequency.
 
-  e20b248051ca ("media: ti-vpe: vpe: Make sure YUYV is set as default forma=
-t")
-
-Fixes tag
-
-  Fixes: 40cc823f7005 ("media: ti-vpe: Add support for NV21 format")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Did you mean
-
-Fixes: b2bb3d822f2c ("media: ti-vpe: Add support for NV21 format")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/3va/phKy7R2mcEmzu9Ea1pT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl2fmMYACgkQAVBC80lX
-0GzUgAgAh+d2+kD/LY2JUxWc5mPeo6eMjxUxdAXD//GeF9+q2+IQqbTFEMJs/zKD
-ymZ1MPiGflAXRTpj3KpEZ9b5gqSoFwJIvCx6AUrlMxcVkEy/Qcc2sMjR4Fjtq3eB
-EFHSv/aDJT3JgpGrI+2STdfAEPDPMGOCez5bGs8J8g7ZnWpTot4tmZsca/5oMVAX
-z02C3gonu/qnEMUTDWQ5U0HYe8d2aHwnr5RrQ8TU3SZIyfT9tVE2wJhywwe9bnmG
-j5m2jBhqAkIqaWo6f7KZiFzZmKZmWCC29HwkYu9rmYTF671ajyXKsM34BNRAzwEY
-MGREfjjmKkF63m55yDA1OKkuPZNu2A==
-=23iX
------END PGP SIGNATURE-----
-
---Sig_/3va/phKy7R2mcEmzu9Ea1pT--
+Rob
