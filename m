@@ -2,52 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFDCBD3121
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 21:08:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B4EFD312E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 21:13:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727018AbfJJTIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 15:08:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36218 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726489AbfJJTIs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 15:08:48 -0400
-Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3878020659;
-        Thu, 10 Oct 2019 19:08:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570734527;
-        bh=0jkUH/Ad2OiIhYq+UOG5EPpU3+ItDjbe0bA9hPWEABQ=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=tYwoHJF2sL0ZTl80fRjeidFIPf172r/LoZb11riLsNH7WnxtAxCaosYOecm3ku29/
-         WEJWRywHMiVuf6C3AM5RwRJ17aZDqaJoECI1hnUjT6SrAg84YjxNj7116dzvNm6D+4
-         Iv+xjRz3OhN5RTL648NFWMen0OJfkgU6hRVx9J7s=
-Date:   Thu, 10 Oct 2019 21:08:17 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Nicolas Boichat <drinkcat@chromium.org>
-cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dtor@chromium.org, ikjn@chromium.org
-Subject: Re: [PATCH 1/2] HID: google: add magnemite/masterball USB ids
-In-Reply-To: <20191003031800.120237-1-drinkcat@chromium.org>
-Message-ID: <nycvar.YFH.7.76.1910102108020.13160@cbobk.fhfr.pm>
-References: <20191003031800.120237-1-drinkcat@chromium.org>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1727132AbfJJTMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 15:12:49 -0400
+Received: from outgoing-stata.csail.mit.edu ([128.30.2.210]:37943 "EHLO
+        outgoing-stata.csail.mit.edu" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726007AbfJJTMr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 15:12:47 -0400
+X-Greylist: delayed 1315 seconds by postgrey-1.27 at vger.kernel.org; Thu, 10 Oct 2019 15:12:46 EDT
+Received: from [4.30.142.84] (helo=[127.0.1.1])
+        by outgoing-stata.csail.mit.edu with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.82)
+        (envelope-from <srivatsa@csail.mit.edu>)
+        id 1iIdWT-000Zwa-C8; Thu, 10 Oct 2019 14:50:49 -0400
+Subject: [PATCH 1/3] tracing/hwlat: Report total time spent in all NMIs
+ during the sample
+From:   "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
+To:     linux-kernel@vger.kernel.org, rostedt@goodmis.org, mingo@redhat.com
+Cc:     amakhalov@vmware.com, akaher@vmware.com, anishs@vmware.com,
+        bordoloih@vmware.com, srivatsab@vmware.com, srivatsa@csail.mit.edu
+Date:   Thu, 10 Oct 2019 11:50:46 -0700
+Message-ID: <157073343544.17189.13911783866738671133.stgit@srivatsa-ubuntu>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 3 Oct 2019, Nicolas Boichat wrote:
+From: Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
 
-> Add 2 additional hammer-like devices.
+nmi_total_ts is supposed to record the total time spent in *all* NMIs
+that occur on the given CPU during the (active portion of the)
+sampling window. However, the code seems to be overwriting this
+variable for each NMI, thereby only recording the time spent in the
+most recent NMI. Fix it by accumulating the duration instead.
 
-Applied to for-5.4/upstream-fixes.
+Fixes: 7b2c86250122 ("tracing: Add NMI tracing in hwlat detector")
+Cc: stable@vger.kernel.org
+Signed-off-by: Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
+---
 
--- 
-Jiri Kosina
-SUSE Labs
+ kernel/trace/trace_hwlat.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/trace/trace_hwlat.c b/kernel/trace/trace_hwlat.c
+index fa95139..a0251a7 100644
+--- a/kernel/trace/trace_hwlat.c
++++ b/kernel/trace/trace_hwlat.c
+@@ -150,7 +150,7 @@ void trace_hwlat_callback(bool enter)
+ 		if (enter)
+ 			nmi_ts_start = time_get();
+ 		else
+-			nmi_total_ts = time_get() - nmi_ts_start;
++			nmi_total_ts += time_get() - nmi_ts_start;
+ 	}
+ 
+ 	if (enter)
 
