@@ -2,98 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B75ED26A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:50:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1E92D26AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:51:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387579AbfJJJuO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 05:50:14 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40395 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbfJJJuO (ORCPT
+        id S2387757AbfJJJve (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 05:51:34 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53042 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387400AbfJJJve (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 05:50:14 -0400
-Received: by mail-wm1-f66.google.com with SMTP id b24so6050344wmj.5
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 02:50:12 -0700 (PDT)
+        Thu, 10 Oct 2019 05:51:34 -0400
+Received: by mail-wm1-f65.google.com with SMTP id r19so6217906wmh.2;
+        Thu, 10 Oct 2019 02:51:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yNx+8n36uJ0WGHxBC9aaDo5XpCmOIJvnh/6Zg8N6jFk=;
-        b=XnOJV7YI/chmZQMSTTcgcjcrpoZZh39oUa9LFBeXkUiykjjr5JEBgkK+KfCLOJG6O8
-         6+NIc/vyXLmNqfB90MKN8p2Unok1c+fSiHgnwCyrXBJKeaQPqrFkhiy2P/mLshMb4fvb
-         kB1pTofuj/RzTNiCrP5P+CFGWNF9hxdI1rBTBJP7STVGBnVmS1G7saGVLs5yod9EAWcS
-         s7eZ+f9uqQ04q8bq3OcoV3Z9FvZ/0mp2Ibn69cbg0K9ejU+OuHVyhxeUwJhjfdA2m2K9
-         WgkfJfrzns34UQNFKX1MMnVPj95NEovFrbRBNTgc3kzs4zUd37NIBrwK7WMsOH19ho8h
-         xmLw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=aHFN65Csd/xrxQzu8FB0q4K51jhLg6Nw1K88IWkE/Xo=;
+        b=Vg1mOyAkeg4XrF3AGBRhpEcGntwVblb3HyOAvq0hjvwCPZ1Xa0rG0puc+kpoEU5rTg
+         y/lSBvgglRKSzaysmBb+0FAG/RmeWsxwo6xU6V+LqYr2dbddIrUnqaQAG0OL2lEVaQ/t
+         8aobsqUU8Ef/q06+jjhTAWA781m+rYXvePdOXDL62NoADES6NIqFWfW5Q2cJe3EIOWwt
+         L9bcJwUE92+XcyLohC2yrfsGIXl7/uo0MzapJHTaqxEBlnUfTzkxwuGsZpSTFYOF4l6I
+         RA9npQ1GTgYaO0vOowrsJ1i2vDtY+4V6A7HepnfqQof41+dxqFxrLB+ngO3i6cfpbwib
+         mMkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yNx+8n36uJ0WGHxBC9aaDo5XpCmOIJvnh/6Zg8N6jFk=;
-        b=EByYsqZOBP8p3k/YhM7Suh/U+rj7hmTGv6SO1AsEO16pyc3P3tvYc1YH4F79kAOveO
-         8t+AhjUIFodlJCoQZbTp+SWYQWV9SD1c6oAod5iCIsUv2pbbi0/GZA9a4znxrAnYhcOx
-         2MjnQenZnQ+xFClbCXvc9jfRrR/RuAH74U6CWRxjwJXq93+kmKVdgkQ+lzmyjl0W5Ttm
-         sW/1d2bK9QQBR3wN43Eg3aYlS6JZJiGOPtZwAtSWC+sArP4cdaXvHfDyodJRwNeCF/zI
-         XXnmQb2IFJvdQtASz4rTldh2La0iM93/oZBhqQGRCa0i2mJTe20fl7crP7sGR2oCzg3Z
-         hptw==
-X-Gm-Message-State: APjAAAX8ieMKgYfXAJWOb1ejVD9p0X8MavM7McmzGti3HCP/v3vVuSBq
-        7Js9GpuUQllX7MNPLdfMs1oxtg==
-X-Google-Smtp-Source: APXvYqzFLiv9I4jhmsqgSvPdg5cd8l8SX5O0wt8s2GhMRL49oWG4zEBcs3xLTe0L/Aic6+31c8mwog==
-X-Received: by 2002:a1c:20d8:: with SMTP id g207mr6926175wmg.79.1570701011994;
-        Thu, 10 Oct 2019 02:50:11 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id 207sm7788894wme.17.2019.10.10.02.50.11
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=aHFN65Csd/xrxQzu8FB0q4K51jhLg6Nw1K88IWkE/Xo=;
+        b=dYMIvFwHPuKR/3cQ6zGtHKZwA4kSPe6ugqICaHFHsJC+S5RgVgMLH8Y0seOQyyAluw
+         qu3/lwo7WKV/VHNGaQGCLto3enj9Ho9anu+q1MRdb2DTT4MXWAewP4ljOebS6vgjPpKk
+         T1HhhzpEs8suxO2sQgr9nz4DOm9Jh2eLYN5IZxGLNLYwRMfRXaCc5UmSt/4sW9qdFQ08
+         lpw9IDkL45nNbf0a84ogenQd9MFP2gOtLTKLwt5mJnpALnh+RzWmYXB3X5p/tkZD2Jxk
+         Wwvojcz6L05ON2BSpvkBHYKCsImCV5lniQfCtO1Ya6txNT1O6usX7bLZ5bJILl+tqedb
+         Azyw==
+X-Gm-Message-State: APjAAAX0YPHvIkF+LhGJmgqZo2ZBY1BquL8/pu0touE38gCQ8eYunhsX
+        dFcCy7RAd7WgjkAA+RKAANw=
+X-Google-Smtp-Source: APXvYqyPbJZpHATNxhAcfYFLJqGU8BIPoxBObKr+SglCL34kv1hRQlx1GqAHDeBTW+y0t+BA4JtWtw==
+X-Received: by 2002:a1c:e455:: with SMTP id b82mr6835014wmh.41.1570701091565;
+        Thu, 10 Oct 2019 02:51:31 -0700 (PDT)
+Received: from localhost.localdomain ([46.114.37.24])
+        by smtp.googlemail.com with ESMTPSA id o4sm11678251wre.91.2019.10.10.02.51.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 02:50:11 -0700 (PDT)
-Date:   Thu, 10 Oct 2019 10:50:09 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Jason Wessel <jason.wessel@windriver.com>,
-        kgdb-bugreport@lists.sourceforge.net,
-        LKML <linux-kernel@vger.kernel.org>,
-        Patch Tracking <patches@linaro.org>
-Subject: Re: [PATCH v2 3/5] kdb: Remove special case logic from kdb_read()
-Message-ID: <20191010095009.25a5zvoykpmvtktq@holly.lan>
-References: <20191008132043.7966-1-daniel.thompson@linaro.org>
- <20191008132043.7966-4-daniel.thompson@linaro.org>
- <CAD=FV=W9Tdh2hPekzgSYnCqoTX_ms1GY-FXgnxd-uEW0SWbyuw@mail.gmail.com>
- <20191009093049.tnz442bo54bzmzmz@holly.lan>
- <CAD=FV=UuLYPpkJBWbkWoJzv97A6jxRFa4QmmD-0chSrsuT_bPg@mail.gmail.com>
+        Thu, 10 Oct 2019 02:51:30 -0700 (PDT)
+From:   Gon Solo <gonsolo@gmail.com>
+To:     mchehab+samsung@kernel.org
+Cc:     linux-media@vger.kernel.org, mchehab@infradead.org, jp@jpvw.nl,
+        crope@iki.fi, sean@mess.org, linux-kernel@vger.kernel.org,
+        Gon Solo <gonsolo@gmail.com>,
+        Andreas Wendleder <andreas.wendleder@gmail.com>
+Subject: [PATCH 0/4] Add support for Logilink VG0022A.
+Date:   Thu, 10 Oct 2019 11:50:59 +0200
+Message-Id: <20191010095103.3803-1-gonsolo@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191010091848.GA2898@Limone>
+References: <20191010091848.GA2898@Limone>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=UuLYPpkJBWbkWoJzv97A6jxRFa4QmmD-0chSrsuT_bPg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 10:28:36AM -0700, Doug Anderson wrote:
-> On Wed, Oct 9, 2019 at 2:30 AM Daniel Thompson
-> <daniel.thompson@linaro.org> wrote:
-> > > > @@ -741,7 +732,7 @@ int vkdb_printf(enum kdb_msgsrc src, const char *fmt, va_list ap)
-> > > >
-> > > >         /* check for having reached the LINES number of printed lines */
-> > > >         if (kdb_nextline >= linecount) {
-> > > > -               char buf1[16] = "";
-> > > > +               char ch;
-> > >
-> > > The type of "ch" should be the same as returned by kdb_getchar()?
-> > > Either "int" if you're keeping it "int" or "unsigned char"?
-> >
-> > Probably... although the assumption that kdb strings are char * is burnt
-> > in a lot of places so there will still be further tidy up needed.
-> 
-> True.  It doesn't matter a whole lot so if you think it's easier to
-> keep it as char that's OK too.
+These patches add support for the Logilink VG0022A.
 
-After looking at it from a number of angles I think we can have this
-match the return type of kdb_getchar()... but the best way to achieve
-this is to make kdb_getchar() return a unqualified char.
+Signed-off-by: Andreas Wendleder <andreas.wendleder@gmail.com>
 
-That ends up consistent across the sub-system and shouldn't do any
-narrowing that wouldn't already have been happening inside kdb_read().
+Gon Solo (4):
+  si2168: Use bits and convert to kernel-doc format.
+  si2157: Add option for not downloading firmware.
+  af9035: Make speed computation clear.
+  Add support for Logilink VG0022A.
 
+ drivers/media/dvb-frontends/si2168.h      | 47 +++++++++++++----------
+ drivers/media/dvb-frontends/si2168_priv.h | 10 ++---
+ drivers/media/tuners/si2157.c             |  6 +++
+ drivers/media/tuners/si2157.h             | 33 +++++++++-------
+ drivers/media/tuners/si2157_priv.h        |  5 ++-
+ drivers/media/usb/dvb-usb-v2/af9035.c     | 37 ++++++++++++++++--
+ 6 files changed, 92 insertions(+), 46 deletions(-)
 
-Daniel.
+-- 
+2.20.1
+
