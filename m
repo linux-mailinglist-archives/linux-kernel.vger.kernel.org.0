@@ -2,97 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF259D2652
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:29:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24053D2674
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:33:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387689AbfJJJ3d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 05:29:33 -0400
-Received: from mga12.intel.com ([192.55.52.136]:59727 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727320AbfJJJ3c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 05:29:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2019 02:29:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,279,1566889200"; 
-   d="scan'208";a="187899498"
-Received: from sgsxdev001.isng.intel.com (HELO localhost) ([10.226.88.11])
-  by orsmga008.jf.intel.com with ESMTP; 10 Oct 2019 02:29:27 -0700
-From:   Rahul Tanwar <rahul.tanwar@linux.intel.com>
-To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        tony.luck@intel.com, x86@kernel.org
-Cc:     andriy.shevchenko@intel.com, alan@linux.intel.com,
-        linux-kernel@vger.kernel.org, qi-ming.wu@intel.com,
-        chuanhua.lei@linux.intel.com, cheol.yong.kim@intel.com,
-        Rahul Tanwar <rahul.tanwar@linux.intel.com>
-Subject: [PATCH v3 1/1] x86/init: Noop get/set wallclock when platform doesn't support RTC
-Date:   Thu, 10 Oct 2019 17:28:56 +0800
-Message-Id: <b84d9152ce0c1c09896ff4987e691a0715cb02df.1570693058.git.rahul.tanwar@linux.intel.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <cover.1570693058.git.rahul.tanwar@linux.intel.com>
-References: <cover.1570693058.git.rahul.tanwar@linux.intel.com>
-In-Reply-To: <cover.1570693058.git.rahul.tanwar@linux.intel.com>
-References: <cover.1570693058.git.rahul.tanwar@linux.intel.com>
+        id S2388145AbfJJJdl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 05:33:41 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:52516 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387527AbfJJJdl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 05:33:41 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id CA7B4F59873951E77D02;
+        Thu, 10 Oct 2019 17:33:37 +0800 (CST)
+Received: from localhost.localdomain (10.67.165.24) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 10 Oct 2019 17:33:30 +0800
+From:   Yonglong Liu <liuyonglong@huawei.com>
+To:     <davem@davemloft.net>, <hkallweit1@gmail.com>, <andrew@lunn.ch>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
+        <yisen.zhuang@huawei.com>, <shiju.jose@huawei.com>
+Subject: [RFC PATCH net] net: phy: Fix "link partner" information disappear issue
+Date:   Thu, 10 Oct 2019 17:30:08 +0800
+Message-ID: <1570699808-55313-1-git-send-email-liuyonglong@huawei.com>
+X-Mailer: git-send-email 2.8.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.67.165.24]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use wallclock_init() op to detect platforms which does not support RTC and
-noop get/set wallclock ops for such platforms.
+Some drivers just call phy_ethtool_ksettings_set() to set the
+links, for those phy drivers that use genphy_read_status(), if
+autoneg is on, and the link is up, than execute "ethtool -s
+ethx autoneg on" will cause "link partner" information disappear.
 
-Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
-Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
+The call trace is phy_ethtool_ksettings_set()->phy_start_aneg()
+->linkmode_zero(phydev->lp_advertising)->genphy_read_status(),
+the link didn't change, so genphy_read_status() just return, and
+phydev->lp_advertising is zero now.
+
+This patch call genphy_read_lpa() before the link state judgement
+to fix this problem.
+
+Fixes: 88d6272acaaa ("net: phy: avoid unneeded MDIO reads in genphy_read_status")
+Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
 ---
- arch/x86/kernel/x86_init.c | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+ drivers/net/phy/phy_device.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/x86_init.c b/arch/x86/kernel/x86_init.c
-index 18a799c8fa28..4f572fd942eb 100644
---- a/arch/x86/kernel/x86_init.c
-+++ b/arch/x86/kernel/x86_init.c
-@@ -31,6 +31,30 @@ static int __init iommu_init_noop(void) { return 0; }
- static void iommu_shutdown_noop(void) { }
- bool __init bool_x86_init_noop(void) { return false; }
- void x86_op_int_noop(int cpu) { }
-+static int set_rtc_noop(const struct timespec64 *now) { return -EINVAL; }
-+static void get_rtc_noop(struct timespec64 *now) { }
-+
-+static const struct of_device_id of_cmos_match[] = {
-+	{ .compatible = "motorola,mc146818" },
-+	{}
-+};
-+
-+static void x86_wallclock_init(void)
-+{
-+	struct device_node *node;
-+
-+	node = of_find_matching_node(NULL, of_cmos_match);
-+	if (node && !of_device_is_available(node)) {
-+		/*
-+		 * Some products do not support RTC as persistent clock source. This can be
-+		 * optionally indicated by having status property as disabled in the
-+		 * corresponding DT node. Override get/set wallclock routines to noops for
-+		 * such products.
-+		 */
-+		x86_platform.get_wallclock = get_rtc_noop;
-+		x86_platform.set_wallclock = set_rtc_noop;
-+	}
-+}
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index 9d2bbb1..ef3073c 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -1839,6 +1839,10 @@ int genphy_read_status(struct phy_device *phydev)
+ 	if (err)
+ 		return err;
  
- /*
-  * The platform setup functions are preset with the default functions
-@@ -73,7 +97,7 @@ struct x86_init_ops x86_init __initdata = {
- 	.timers = {
- 		.setup_percpu_clockev	= setup_boot_APIC_clock,
- 		.timer_init		= hpet_time_init,
--		.wallclock_init		= x86_init_noop,
-+		.wallclock_init		= x86_wallclock_init,
- 	},
++	err = genphy_read_lpa(phydev);
++	if (err < 0)
++		return err;
++
+ 	/* why bother the PHY if nothing can have changed */
+ 	if (phydev->autoneg == AUTONEG_ENABLE && old_link && phydev->link)
+ 		return 0;
+@@ -1848,10 +1852,6 @@ int genphy_read_status(struct phy_device *phydev)
+ 	phydev->pause = 0;
+ 	phydev->asym_pause = 0;
  
- 	.iommu = {
+-	err = genphy_read_lpa(phydev);
+-	if (err < 0)
+-		return err;
+-
+ 	if (phydev->autoneg == AUTONEG_ENABLE && phydev->autoneg_complete) {
+ 		phy_resolve_aneg_linkmode(phydev);
+ 	} else if (phydev->autoneg == AUTONEG_DISABLE) {
 -- 
-2.11.0
+2.8.1
 
