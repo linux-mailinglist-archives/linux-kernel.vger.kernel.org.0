@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEA5FD2396
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C106FD2398
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388839AbfJJIn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:43:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48874 "EHLO mail.kernel.org"
+        id S2387735AbfJJIoA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:44:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388809AbfJJInz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:43:55 -0400
+        id S2388809AbfJJIn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:43:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A02F21929;
-        Thu, 10 Oct 2019 08:43:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD6DB21A4A;
+        Thu, 10 Oct 2019 08:43:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697034;
-        bh=oAxBDtac3cWfFjVWep7ONNKTlmqGnh7ooTDjepEn/WU=;
+        s=default; t=1570697037;
+        bh=wWycjSe87ABTArlAOL+ByNftzpQs1CTCAGwPbq6zjpw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CwUreg+nEBY8TVpZgoCxxe+4LiIKanN5k9HCTwhSySD4vAwdQW2tsjpk5Li3GzE5C
-         DdAfhz2BzxGBFc3MtbXwfl7TfsQ6DYP/kFfIfzbC2Fsm0dGd3nC1TjAGhpcbnqp2oU
-         3sZqMzPAPgzjBA/9N7UeVqvLp2cUffADZ06WrM6I=
+        b=t5EAKk90js6e4OdjR1ZNh/ySa6lkP8Fjdcz4StJBH4Tig3PJ6N2iXAM82LW3RuRn3
+         Kj91BeTIks52P5UONG9whGYqAASnI2pj0JJ2G5QOUSucGuZoZamlbklFwd2uATPV/i
+         n5P2SdkDG2QNswbHfJ2un+HXRUZjWKnEscmHgeVs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
         Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 5.3 144/148] staging: erofs: some compressed cluster should be submitted for corrupted images
-Date:   Thu, 10 Oct 2019 10:36:45 +0200
-Message-Id: <20191010083621.018382009@linuxfoundation.org>
+Subject: [PATCH 5.3 145/148] staging: erofs: add two missing erofs_workgroup_put for corrupted images
+Date:   Thu, 10 Oct 2019 10:36:46 +0200
+Message-Id: <20191010083621.070554441@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
 References: <20191010083609.660878383@linuxfoundation.org>
@@ -45,56 +45,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Gao Xiang <gaoxiang25@huawei.com>
 
-commit ee45197c807895e156b2be0abcaebdfc116487c8 upstream.
+commit 138e1a0990e80db486ab9f6c06bd5c01f9a97999 upstream.
 
-As reported by erofs_utils fuzzer, a logical page can belong
-to at most 2 compressed clusters, if one compressed cluster
-is corrupted, but the other has been ready in submitting chain.
+As reported by erofs-utils fuzzer, these error handling
+path will be entered to handle corrupted images.
 
-The chain needs to submit anyway in order to keep the page
-working properly (page unlocked with PG_error set, PG_uptodate
-not set).
+Lack of erofs_workgroup_puts will cause unmounting
+unsuccessfully.
 
-Let's fix it now.
+Fix these return values to EFSCORRUPTED as well.
 
 Fixes: 3883a79abd02 ("staging: erofs: introduce VLE decompression support")
 Cc: <stable@vger.kernel.org> # 4.19+
 Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Link: https://lore.kernel.org/r/20190819103426.87579-2-gaoxiang25@huawei.com
-[ Gao Xiang: Manually backport to v5.3.y stable. ]
+Link: https://lore.kernel.org/r/20190819103426.87579-4-gaoxiang25@huawei.com
+[ Gao Xiang: Older kernel versions don't have length validity check
+             and EFSCORRUPTED, thus backport pageofs check for now. ]
 Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/erofs/unzip_vle.c |   11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/staging/erofs/unzip_vle.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 --- a/drivers/staging/erofs/unzip_vle.c
 +++ b/drivers/staging/erofs/unzip_vle.c
-@@ -1498,19 +1498,18 @@ static int z_erofs_vle_normalaccess_read
- 	err = z_erofs_do_read_page(&f, page, &pagepool);
- 	(void)z_erofs_vle_work_iter_end(&f.builder);
+@@ -393,7 +393,11 @@ z_erofs_vle_work_lookup(const struct z_e
+ 	/* if multiref is disabled, `primary' is always true */
+ 	primary = true;
  
--	if (err) {
-+	/* if some compressed cluster ready, need submit them anyway */
-+	z_erofs_submit_and_unzip(&f, &pagepool, true);
-+
-+	if (err)
- 		errln("%s, failed to read, err [%d]", __func__, err);
--		goto out;
--	}
+-	DBG_BUGON(work->pageofs != f->pageofs);
++	if (work->pageofs != f->pageofs) {
++		DBG_BUGON(1);
++		erofs_workgroup_put(egrp);
++		return ERR_PTR(-EIO);
++	}
  
--	z_erofs_submit_and_unzip(&f, &pagepool, true);
--out:
- 	if (f.map.mpage)
- 		put_page(f.map.mpage);
- 
- 	/* clean up the remaining free pages */
- 	put_pages_list(&pagepool);
--	return 0;
-+	return err;
- }
- 
- static int z_erofs_vle_normalaccess_readpages(struct file *filp,
+ 	/*
+ 	 * lock must be taken first to avoid grp->next == NIL between
 
 
