@@ -2,42 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFCE1D25B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:02:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 152E8D25AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:02:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388095AbfJJIkZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:40:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44454 "EHLO mail.kernel.org"
+        id S2388181AbfJJIkr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:40:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387411AbfJJIkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:40:23 -0400
+        id S2388163AbfJJIko (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:40:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58B2F21A4C;
-        Thu, 10 Oct 2019 08:40:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5EE072196E;
+        Thu, 10 Oct 2019 08:40:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570696821;
-        bh=/XgYEavpy/3HYlm+L0OW095hxFwEFZ4l1yMxKgRX3EQ=;
+        s=default; t=1570696843;
+        bh=n/e/vaObw3kyd5fTVUpqKkcLIwSibsqLEzhB8D8JkZ8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vnF/BVoUvbKn+ubGm8sDbwpfq9gaf0Xyc4KFD282Hot/BP4kXlk4Ea3wx72xpBGHi
-         VuDBf9HsBFFOZ4MZ8jN/qoqcYLZP+s1pqgzF1coKNRxlvQdj5nyYM0wtnTyEwLUJZ0
-         HGm1Sa8yz/PSfUOdCIJ5t2k3oN4gpsrQANGYkj00=
+        b=xAMtAQ38DRE7S+bIT7cDqPdzG7LW8pbHbeBJx52Hy4upWweyRGxBF2T11s0TvL79l
+         AI2gopr8q1D0aHYLdqh5vrZWcsWbNWQpOtbXFJUp4k4IJ/ypjtT3+hemIKpWwUngL+
+         GzXoBwggt11kWYZNHmshJaTAXsn0fRQog7AS7DSo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ilia Mirkin <imirkin@alum.mit.edu>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel@daenzer.net>,
-        Alex Deucher <alexdeucher@gmail.com>,
-        Adam Jackson <ajax@redhat.com>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>,
-        Rob Clark <robdclark@gmail.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
-Subject: [PATCH 5.3 064/148] drm/atomic: Take the atomic toys away from X
-Date:   Thu, 10 Oct 2019 10:35:25 +0200
-Message-Id: <20191010083615.346318040@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Subject: [PATCH 5.3 071/148] drm/i915/userptr: Acquire the page lock around set_page_dirty()
+Date:   Thu, 10 Oct 2019 10:35:32 +0200
+Message-Id: <20191010083615.708820027@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
 References: <20191010083609.660878383@linuxfoundation.org>
@@ -50,73 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-commit 26b1d3b527e7bf3e24b814d617866ac5199ce68d upstream.
+commit cb6d7c7dc7ff8cace666ddec66334117a6068ce2 upstream.
 
-The -modesetting ddx has a totally broken idea of how atomic works:
-- doesn't disable old connectors, assuming they get auto-disable like
-  with the legacy setcrtc
-- assumes ASYNC_FLIP is wired through for the atomic ioctl
-- not a single call to TEST_ONLY
+set_page_dirty says:
 
-Iow the implementation is a 1:1 translation of legacy ioctls to
-atomic, which is a) broken b) pointless.
+	For pages with a mapping this should be done under the page lock
+	for the benefit of asynchronous memory errors who prefer a
+	consistent dirty state. This rule can be broken in some special
+	cases, but should be better not to.
 
-We already have bugs in both i915 and amdgpu-DC where this prevents us
-from enabling neat features.
+Under those rules, it is only safe for us to use the plain set_page_dirty
+calls for shmemfs/anonymous memory. Userptr may be used with real
+mappings and so needs to use the locked version (set_page_dirty_lock).
 
-If anyone ever cares about atomic in X we can easily add a new atomic
-level (req->value == 2) for X to get back the shiny toys.
-
-Since these broken versions of -modesetting have been shipping,
-there's really no other way to get out of this bind.
-
-v2:
-- add an informational dmesg output (Rob, Ajax)
-- reorder after the DRIVER_ATOMIC check to avoid useless noise (Ilia)
-- allow req->value > 2 so that X can do another attempt at atomic in
-  the future
-
-v3: Go with paranoid, insist that the X should be first (suggested by
-Rob)
-
-Cc: Ilia Mirkin <imirkin@alum.mit.edu>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Reviewed-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com> (v1)
-Reviewed-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com> (v1)
-Cc: Michel Dänzer <michel@daenzer.net>
-Cc: Alex Deucher <alexdeucher@gmail.com>
-Cc: Adam Jackson <ajax@redhat.com>
-Acked-by: Adam Jackson <ajax@redhat.com>
-Cc: Sean Paul <sean@poorly.run>
-Cc: David Airlie <airlied@linux.ie>
-Cc: Rob Clark <robdclark@gmail.com>
-Acked-by: Rob Clark <robdclark@gmail.com>
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=203317
+Fixes: 5cc9ed4b9a7a ("drm/i915: Introduce mapping of user pages into video memory (userptr) ioctl")
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190905185318.31363-1-daniel.vetter@ffwll.ch
+Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190708140327.26825-1-chris@chris-wilson.co.uk
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/drm_ioctl.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/i915/gem/i915_gem_userptr.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/drm_ioctl.c
-+++ b/drivers/gpu/drm/drm_ioctl.c
-@@ -336,7 +336,12 @@ drm_setclientcap(struct drm_device *dev,
- 	case DRM_CLIENT_CAP_ATOMIC:
- 		if (!drm_core_check_feature(dev, DRIVER_ATOMIC))
- 			return -EOPNOTSUPP;
--		if (req->value > 1)
-+		/* The modesetting DDX has a totally broken idea of atomic. */
-+		if (current->comm[0] == 'X' && req->value == 1) {
-+			pr_info("broken atomic modeset userspace detected, disabling atomic\n");
-+			return -EOPNOTSUPP;
-+		}
-+		if (req->value > 2)
- 			return -EINVAL;
- 		file_priv->atomic = req->value;
- 		file_priv->universal_planes = req->value;
+--- a/drivers/gpu/drm/i915/gem/i915_gem_userptr.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_userptr.c
+@@ -664,7 +664,15 @@ i915_gem_userptr_put_pages(struct drm_i9
+ 
+ 	for_each_sgt_page(page, sgt_iter, pages) {
+ 		if (obj->mm.dirty)
+-			set_page_dirty(page);
++			/*
++			 * As this may not be anonymous memory (e.g. shmem)
++			 * but exist on a real mapping, we have to lock
++			 * the page in order to dirty it -- holding
++			 * the page reference is not sufficient to
++			 * prevent the inode from being truncated.
++			 * Play safe and take the lock.
++			 */
++			set_page_dirty_lock(page);
+ 
+ 		mark_page_accessed(page);
+ 		put_page(page);
 
 
