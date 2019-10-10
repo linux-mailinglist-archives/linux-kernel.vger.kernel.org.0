@@ -2,166 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AEAFD2F44
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 19:09:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB846D2F60
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 19:14:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbfJJRJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 13:09:38 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38938 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbfJJRJi (ORCPT
+        id S1726758AbfJJROp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 13:14:45 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:43950 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726453AbfJJROo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 13:09:38 -0400
-Received: by mail-lj1-f196.google.com with SMTP id y3so6991897ljj.6
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 10:09:37 -0700 (PDT)
+        Thu, 10 Oct 2019 13:14:44 -0400
+Received: by mail-lf1-f68.google.com with SMTP id u3so4963030lfl.10
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 10:14:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=07k4TlcKY0H7BLbXRw8BDYAuoLrXRbYHdEv/KYsqSU4=;
-        b=vFJLATR5phjST86akF50pwuc+J9KFiVUkfzWYX6w0FfuZwKzxtKafM5wRV3MkXQ2lN
-         dg4UQH4RKYQvZV9N/7qlBeAlewyE8XSm5aprbAWf9z6Ea+7ZCjSix3jFa9eaXy6kZ8sf
-         cmSRhxZR/pCzv+T/ofyCa/gUVJBV6kx6BPlM195wXCdK3++s+A3UjD5oqjbqTENhFCM4
-         Nf2y5HWrU4IGa3RSCXshIADHMup8SfjK+hjIwSr025AtgjMZQCLsJIekVDPMwoKjfa6+
-         8DzYnycxGecjC/ui4KRy3JfE01AdRSqjksu0JMm4dnFuEKjeuCDsWm4tBxG8eM9IZjmf
-         yFuA==
+         :cc;
+        bh=bqvz+afB1Rg3ieCrlwoBKML7ipcOdiXJ/q/XXxTUovI=;
+        b=Xol/3a0t0AtCulvKJeuAKS1uo5PWCjeyeDeHYLSA1FXKSnOkgSTF276gwVNHa4nPiN
+         l58RJ3zV8SDjz5HcQUbk/k9PwAg2ytkBSxmhuzf7L/EFmiieyqeQcJuKFBVQbWUjfXE1
+         U4t1RhqK0BT10C1Atodrl5m0eWGZPM7fTB2Dk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=07k4TlcKY0H7BLbXRw8BDYAuoLrXRbYHdEv/KYsqSU4=;
-        b=CMAkE0TJ0/H/kD3MpgVYo965rALFYNu/vpFVvY2//gpC9rn71YCeN/OUBJsUIEI1iq
-         gOJYQ8Yu7E+lijdiC5arvNAthGWMJJa55VKl62cafZLSdEdVDaJuRSwlynPXpT6vCAjX
-         EWH9Cnh5AVTpfH4o6VdZHQtTzCL5k0VuioOawYuwvNORHfq1kt0XxuT27aAxo1g0VncO
-         lDxMGSyl02uCMKNaI+nhhNw4kxZr1GfcC33+tDL3N3+X5DsJFdClV5UWEo+0VyoIskXb
-         pZ/eh+xLNCXgxjfZnWIS841GwiQeoGBZepCkqfMAiek6XKOqzih2xUIsxmKG4qbsnGcz
-         0k7g==
-X-Gm-Message-State: APjAAAUutXNluaYXEWx1PScda0LP76ffIhiFnr+S5wD0VJl5zKQtk9eN
-        Lv43fpItT1Ze0tiV4obfgAdl64HVuQMk4Ag/88efHA==
-X-Google-Smtp-Source: APXvYqzkiTFz9JxPgxjfcvoaXi9BhxI9lFB1zec6ECI6cqMgVTmmfo4fX6mRQgPvTm7htW1vk/7U5Q7/kFuTjD+RbyQ=
-X-Received: by 2002:a2e:8602:: with SMTP id a2mr7211268lji.20.1570727376267;
- Thu, 10 Oct 2019 10:09:36 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=bqvz+afB1Rg3ieCrlwoBKML7ipcOdiXJ/q/XXxTUovI=;
+        b=glodWuALEM8cYbt/zcs/CojeJ1zS2ukvV26k4/OJpiCo+7eHNXvn2iQEqw0cnr5NUr
+         IjjZAFQNGMw1fP013bbzZzEXCPVUBHhSaP7yLolpXB3UEp0ZXRnlrxTTj2ZjjEhiD+gW
+         IbJtzE/UpomgpP2psuQHlV6hg8HEmCbZVJQa8H7pyUalee+n4yT72dexFwa/0Jbq7vL+
+         zfdWKDCLNiiqQQiOqG5UdffngQVlUNXZyXumYXYS3IRdK4NB7TNYgkqgpzzPyVH3JZJV
+         a43nP0CA9AVgShVuYPesU87LQ4g/QckFjvq92o/I+5ePEuBrDNAvx9dn5W4bVLYORcMg
+         /LBw==
+X-Gm-Message-State: APjAAAUbxynaiBWYbMl91nZtUMV48NnuyqI/4heUfIuXgQI+HS5YqGir
+        7Mt0vQWp32Vq4uT0klyRKWJpc4Rhb2s=
+X-Google-Smtp-Source: APXvYqykfUZ1KXLt2GIhlAPtjVj1f587ifOmLFLSItB+wHz601eqS0WjLtgDeYwB920fZOwuMcCDtQ==
+X-Received: by 2002:ac2:4946:: with SMTP id o6mr6313540lfi.86.1570727681525;
+        Thu, 10 Oct 2019 10:14:41 -0700 (PDT)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id q14sm1381586ljc.7.2019.10.10.10.14.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2019 10:14:41 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id w6so4987921lfl.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 10:14:41 -0700 (PDT)
+X-Received: by 2002:a19:f709:: with SMTP id z9mr6611392lfe.170.1570727268603;
+ Thu, 10 Oct 2019 10:07:48 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191010083609.660878383@linuxfoundation.org>
-In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Thu, 10 Oct 2019 22:39:23 +0530
-Message-ID: <CA+G9fYsypoQHnYTeZJgeYecwTtbnVyRf=0y3Gm5EuGwLr2PKrg@mail.gmail.com>
-Subject: Re: [PATCH 5.3 000/148] 5.3.6-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+References: <20191010054140.8483-1-cyphar@cyphar.com> <20191010054140.8483-3-cyphar@cyphar.com>
+In-Reply-To: <20191010054140.8483-3-cyphar@cyphar.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 10 Oct 2019 10:07:32 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh8L50f31vW8BwRUXhLiq3eoCQ3tg8ER4Yp2dzuU1w5rQ@mail.gmail.com>
+Message-ID: <CAHk-=wh8L50f31vW8BwRUXhLiq3eoCQ3tg8ER4Yp2dzuU1w5rQ@mail.gmail.com>
+Subject: Re: [PATCH v14 2/6] namei: LOOKUP_IN_ROOT: chroot-like path resolution
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Aleksa Sarai <asarai@suse.de>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-ia64@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 10 Oct 2019 at 14:09, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Wed, Oct 9, 2019 at 10:42 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
 >
-> This is the start of the stable review cycle for the 5.3.6 release.
-> There are 148 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2277,6 +2277,11 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
 >
-> Responses should be made by Sat 12 Oct 2019 08:29:51 AM UTC.
-> Anything received after that time might be too late.
+>         nd->m_seq = read_seqbegin(&mount_lock);
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.3.6-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-5.3.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+> +       /* LOOKUP_IN_ROOT treats absolute paths as being relative-to-dirfd. */
+> +       if (flags & LOOKUP_IN_ROOT)
+> +               while (*s == '/')
+> +                       s++;
+> +
+>         /* Figure out the starting path and root (if needed). */
+>         if (*s == '/') {
+>                 error = nd_jump_root(nd);
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Hmm. Wouldn't this make more sense all inside the if (*s =- '/') test?
+That way if would be where we check for "should we start at the root",
+which seems to make more sense conceptually.
 
-Summary
-------------------------------------------------------------------------
+That test for '/' currently has a "} else if (..)", but that's
+pointless since it ends with a "return" anyway. So the "else" logic is
+just noise.
 
-kernel: 5.3.6-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-5.3.y
-git commit: e863f125e178f8d2edf7a3a03e7fc144d3af82c2
-git describe: v5.3.5-149-ge863f125e178
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-5.3-oe/bui=
-ld/v5.3.5-149-ge863f125e178
+And if you get rid of the unnecessary else, moving the LOOKUP_IN_ROOT
+inside the if-statement works fine.
 
-No regressions (compared to build v5.3.5)
+So this could be something like
 
-No fixes (compared to build v5.3.5)
+    --- a/fs/namei.c
+    +++ b/fs/namei.c
+    @@ -2194,11 +2196,19 @@ static const char *path_init(struct
+nameidata *nd, unsigned flags)
 
-Ran 23503 total tests in the following environments and test suites.
+        nd->m_seq = read_seqbegin(&mount_lock);
+        if (*s == '/') {
+    -           set_root(nd);
+    -           if (likely(!nd_jump_root(nd)))
+    -                   return s;
+    -           return ERR_PTR(-ECHILD);
+    -   } else if (nd->dfd == AT_FDCWD) {
+    +           /* LOOKUP_IN_ROOT treats absolute paths as being
+relative-to-dirfd. */
+    +           if (!(flags & LOOKUP_IN_ROOT)) {
+    +                   set_root(nd);
+    +                   if (likely(!nd_jump_root(nd)))
+    +                           return s;
+    +                   return ERR_PTR(-ECHILD);
+    +           }
+    +
+    +           /* Skip initial '/' for LOOKUP_IN_ROOT */
+    +           do { s++; } while (*s == '/');
+    +   }
+    +
+    +   if (nd->dfd == AT_FDCWD) {
+                if (flags & LOOKUP_RCU) {
+                        struct fs_struct *fs = current->fs;
+                        unsigned seq;
 
-Environments
---------------
-- dragonboard-410c
-- hi6220-hikey
-- i386
-- juno-r2
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15
-- x86
+instead. The patch ends up slightly bigger (due to the re-indentation)
+but now it handles all the "start at root" in the same place. Doesn't
+that make sense?
 
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libgpiod
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* spectre-meltdown-checker-test
-* ltp-syscalls-tests
-* ltp-timers-tests
-* network-basic-tests
-* perf
-* v4l2-compliance
-* ltp-open-posix-tests
-* kvm-unit-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-* ssuite
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+             Linus
