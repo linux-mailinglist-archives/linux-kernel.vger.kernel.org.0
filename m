@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2594FD29C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 14:44:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8C7ED29C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 14:43:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387799AbfJJMne (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 08:43:34 -0400
-Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:9466 "EHLO
-        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733252AbfJJMnd (ORCPT
+        id S2387846AbfJJMnh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 08:43:37 -0400
+Received: from pio-pvt-msa3.bahnhof.se ([79.136.2.42]:52548 "EHLO
+        pio-pvt-msa3.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387478AbfJJMnf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 08:43:33 -0400
+        Thu, 10 Oct 2019 08:43:35 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id F16513F9E2;
-        Thu, 10 Oct 2019 14:43:29 +0200 (CEST)
-Authentication-Results: ste-pvt-msa2.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=QoS0iZiq;
+        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTP id 94A9E3FC6D;
+        Thu, 10 Oct 2019 14:43:26 +0200 (CEST)
+Authentication-Results: pio-pvt-msa3.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=FfiQOP1H;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at bahnhof.se
 X-Spam-Flag: NO
@@ -26,24 +26,22 @@ X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
         tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
         DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
         autolearn=ham autolearn_force=no
-Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
-        dkim=pass (1024-bit key) header.d=shipmail.org
-Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
-        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id plPePNntgy1S; Thu, 10 Oct 2019 14:43:25 +0200 (CEST)
+Received: from pio-pvt-msa3.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa3.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 7WParr9rbxbQ; Thu, 10 Oct 2019 14:43:25 +0200 (CEST)
 Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
         (Authenticated sender: mb878879)
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 224B83F9B2;
+        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTPA id 241123FC5F;
         Thu, 10 Oct 2019 14:43:25 +0200 (CEST)
 Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id C9A94361140;
+        by mail1.shipmail.org (Postfix) with ESMTPSA id F40CA36144D;
         Thu, 10 Oct 2019 14:43:23 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1570711403; bh=bx8eG09waI9JD3lCmO6ixUtN4UOAIiobzckYp+RwK+E=;
+        t=1570711404; bh=Jp6uxg28xUkNEpHmru5RevIyYSfJ6WqZZg/bHIm5ovQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QoS0iZiq0YlDCgHAWxPOPkY2T3T61y3/B4Mxf0r7zJjzIGhNHYt0R0F+cQ7j27pAJ
-         C0yAm7Sat1n2EkLyWTaJBpkXcXl12nZMDkDNxhePaK6+xQcQ9rI6OImIvjjovvepSU
-         NB2K1cq4nqNN0gD2h8VyzCZcoPQLNfvg8IwdTWRw=
+        b=FfiQOP1HkQAMpu9zfsvm0X20mVokv92bQ4T558LYalT+UU5fKdp9lJBmr+6Cjz5bG
+         1M7rdrmZHATo5kaaWex92+1QD76/QEbZ+ivwLtGIhvgQRDwzpAuAmW7bb/sTMJL+Sf
+         A0Xke7cnbai5BmE+k8FF/LL/hB2/Vug5asMxLGDg=
 From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
         <thomas_os@shipmail.org>
 To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
@@ -59,9 +57,9 @@ Cc:     Thomas Hellstrom <thellstrom@vmware.com>,
         Huang Ying <ying.huang@intel.com>,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Deepak Rawat <drawat@vmware.com>
-Subject: [PATCH v5 6/8] drm/vmwgfx: Use an RBtree instead of linked list for MOB resources
-Date:   Thu, 10 Oct 2019 14:43:12 +0200
-Message-Id: <20191010124314.40067-7-thomas_os@shipmail.org>
+Subject: [PATCH v5 7/8] drm/vmwgfx: Implement an infrastructure for read-coherent resources
+Date:   Thu, 10 Oct 2019 14:43:13 +0200
+Message-Id: <20191010124314.40067-8-thomas_os@shipmail.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191010124314.40067-1-thomas_os@shipmail.org>
 References: <20191010124314.40067-1-thomas_os@shipmail.org>
@@ -75,9 +73,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Hellstrom <thellstrom@vmware.com>
 
-With emulated coherent memory we need to be able to quickly look up
-a resource from the MOB offset. Instead of traversing a linked list with
-O(n) worst case, use an RBtree with O(log n) worst case complexity.
+Similar to write-coherent resources, make sure that from the user-space
+point of view, GPU rendered contents is automatically available for
+reading by the CPU.
 
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Matthew Wilcox <willy@infradead.org>
@@ -92,169 +90,345 @@ Cc: Kirill A. Shutemov <kirill@shutemov.name>
 Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
 Reviewed-by: Deepak Rawat <drawat@vmware.com>
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_bo.c       |  5 ++--
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.h      | 10 +++----
- drivers/gpu/drm/vmwgfx/vmwgfx_resource.c | 33 +++++++++++++++++-------
- 3 files changed, 32 insertions(+), 16 deletions(-)
+ drivers/gpu/drm/vmwgfx/vmwgfx_drv.h           |   7 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_page_dirty.c    |  77 ++++++++++++-
+ drivers/gpu/drm/vmwgfx/vmwgfx_resource.c      | 103 +++++++++++++++++-
+ drivers/gpu/drm/vmwgfx/vmwgfx_resource_priv.h |   2 +
+ drivers/gpu/drm/vmwgfx/vmwgfx_validation.c    |   3 +-
+ 5 files changed, 181 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_bo.c b/drivers/gpu/drm/vmwgfx/vmwgfx_bo.c
-index 869aeaec2f86..18e4b329e563 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_bo.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_bo.c
-@@ -463,6 +463,7 @@ void vmw_bo_bo_free(struct ttm_buffer_object *bo)
- 	struct vmw_buffer_object *vmw_bo = vmw_buffer_object(bo);
- 
- 	WARN_ON(vmw_bo->dirty);
-+	WARN_ON(!RB_EMPTY_ROOT(&vmw_bo->res_tree));
- 	vmw_bo_unmap(vmw_bo);
- 	kfree(vmw_bo);
- }
-@@ -479,6 +480,7 @@ static void vmw_user_bo_destroy(struct ttm_buffer_object *bo)
- 	struct vmw_buffer_object *vbo = &vmw_user_bo->vbo;
- 
- 	WARN_ON(vbo->dirty);
-+	WARN_ON(!RB_EMPTY_ROOT(&vbo->res_tree));
- 	vmw_bo_unmap(vbo);
- 	ttm_prime_object_kfree(vmw_user_bo, prime);
- }
-@@ -514,8 +516,7 @@ int vmw_bo_init(struct vmw_private *dev_priv,
- 	memset(vmw_bo, 0, sizeof(*vmw_bo));
- 	BUILD_BUG_ON(TTM_MAX_BO_PRIORITY <= 3);
- 	vmw_bo->base.priority = 3;
--
--	INIT_LIST_HEAD(&vmw_bo->res_list);
-+	vmw_bo->res_tree = RB_ROOT;
- 
- 	ret = ttm_bo_init(bdev, &vmw_bo->base, size,
- 			  ttm_bo_type_device, placement,
 diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-index 7944dbbbdd72..53f8522ae032 100644
+index 53f8522ae032..729a2e93acf1 100644
 --- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
 +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-@@ -100,7 +100,7 @@ struct vmw_fpriv {
- /**
-  * struct vmw_buffer_object - TTM buffer object with vmwgfx additions
-  * @base: The TTM buffer object
-- * @res_list: List of resources using this buffer object as a backing MOB
-+ * @res_tree: RB tree of resources using this buffer object as a backing MOB
-  * @pin_count: pin depth
-  * @dx_query_ctx: DX context if this buffer object is used as a DX query MOB
-  * @map: Kmap object for semi-persistent mappings
-@@ -109,7 +109,7 @@ struct vmw_fpriv {
-  */
- struct vmw_buffer_object {
- 	struct ttm_buffer_object base;
--	struct list_head res_list;
-+	struct rb_root res_tree;
- 	s32 pin_count;
- 	/* Not ref-counted.  Protected by binding_mutex */
- 	struct vmw_resource *dx_query_ctx;
-@@ -157,8 +157,8 @@ struct vmw_res_func;
-  * pin-count greater than zero. It is not on the resource LRU lists and its
-  * backup buffer is pinned. Hence it can't be evicted.
-  * @func: Method vtable for this resource. Immutable.
-+ * @mob_node; Node for the MOB backup rbtree. Protected by @backup reserved.
-  * @lru_head: List head for the LRU list. Protected by @dev_priv::resource_lock.
-- * @mob_head: List head for the MOB backup list. Protected by @backup reserved.
-  * @binding_head: List head for the context binding list. Protected by
-  * the @dev_priv::binding_mutex
-  * @res_free: The resource destructor.
-@@ -179,8 +179,8 @@ struct vmw_resource {
- 	unsigned long backup_offset;
- 	unsigned long pin_count;
- 	const struct vmw_res_func *func;
-+	struct rb_node mob_node;
- 	struct list_head lru_head;
--	struct list_head mob_head;
- 	struct list_head binding_head;
- 	struct vmw_resource_dirty *dirty;
- 	void (*res_free) (struct vmw_resource *res);
-@@ -733,7 +733,7 @@ void vmw_resource_dirty_update(struct vmw_resource *res, pgoff_t start,
-  */
- static inline bool vmw_resource_mob_attached(const struct vmw_resource *res)
- {
--	return !list_empty(&res->mob_head);
-+	return !RB_EMPTY_NODE(&res->mob_node);
- }
+@@ -680,7 +680,8 @@ extern void vmw_resource_unreference(struct vmw_resource **p_res);
+ extern struct vmw_resource *vmw_resource_reference(struct vmw_resource *res);
+ extern struct vmw_resource *
+ vmw_resource_reference_unless_doomed(struct vmw_resource *res);
+-extern int vmw_resource_validate(struct vmw_resource *res, bool intr);
++extern int vmw_resource_validate(struct vmw_resource *res, bool intr,
++				 bool dirtying);
+ extern int vmw_resource_reserve(struct vmw_resource *res, bool interruptible,
+ 				bool no_backup);
+ extern bool vmw_resource_needs_backup(const struct vmw_resource *res);
+@@ -724,6 +725,8 @@ void vmw_resource_mob_attach(struct vmw_resource *res);
+ void vmw_resource_mob_detach(struct vmw_resource *res);
+ void vmw_resource_dirty_update(struct vmw_resource *res, pgoff_t start,
+ 			       pgoff_t end);
++int vmw_resources_clean(struct vmw_buffer_object *vbo, pgoff_t start,
++			pgoff_t end, pgoff_t *num_prefault);
  
  /**
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_resource.c b/drivers/gpu/drm/vmwgfx/vmwgfx_resource.c
-index e4c97a4cf2ff..328ad46076ff 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_resource.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_resource.c
-@@ -40,11 +40,24 @@
- void vmw_resource_mob_attach(struct vmw_resource *res)
- {
- 	struct vmw_buffer_object *backup = res->backup;
-+	struct rb_node **new = &backup->res_tree.rb_node, *parent = NULL;
+  * vmw_resource_mob_attached - Whether a resource currently has a mob attached
+@@ -1417,6 +1420,8 @@ int vmw_bo_dirty_add(struct vmw_buffer_object *vbo);
+ void vmw_bo_dirty_transfer_to_res(struct vmw_resource *res);
+ void vmw_bo_dirty_clear_res(struct vmw_resource *res);
+ void vmw_bo_dirty_release(struct vmw_buffer_object *vbo);
++void vmw_bo_dirty_unmap(struct vmw_buffer_object *vbo,
++			pgoff_t start, pgoff_t end);
+ vm_fault_t vmw_bo_vm_fault(struct vm_fault *vmf);
+ vm_fault_t vmw_bo_vm_mkwrite(struct vm_fault *vmf);
  
- 	dma_resv_assert_held(res->backup->base.base.resv);
- 	res->used_prio = (res->res_dirty) ? res->func->dirty_prio :
- 		res->func->prio;
--	list_add_tail(&res->mob_head, &backup->res_list);
-+
-+	while (*new) {
-+		struct vmw_resource *this =
-+			container_of(*new, struct vmw_resource, mob_node);
-+
-+		parent = *new;
-+		new = (res->backup_offset < this->backup_offset) ?
-+			&((*new)->rb_left) : &((*new)->rb_right);
-+	}
-+
-+	rb_link_node(&res->mob_node, parent, new);
-+	rb_insert_color(&res->mob_node, &backup->res_tree);
-+
- 	vmw_bo_prio_add(backup, res->used_prio);
- }
- 
-@@ -58,7 +71,8 @@ void vmw_resource_mob_detach(struct vmw_resource *res)
- 
- 	dma_resv_assert_held(backup->base.base.resv);
- 	if (vmw_resource_mob_attached(res)) {
--		list_del_init(&res->mob_head);
-+		rb_erase(&res->mob_node, &backup->res_tree);
-+		RB_CLEAR_NODE(&res->mob_node);
- 		vmw_bo_prio_del(backup, res->used_prio);
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_page_dirty.c b/drivers/gpu/drm/vmwgfx/vmwgfx_page_dirty.c
+index 060c1e492f25..f07aa857587c 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_page_dirty.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_page_dirty.c
+@@ -155,7 +155,6 @@ static void vmw_bo_dirty_scan_mkwrite(struct vmw_buffer_object *vbo)
  	}
  }
-@@ -204,8 +218,8 @@ int vmw_resource_init(struct vmw_private *dev_priv, struct vmw_resource *res,
- 	res->res_free = res_free;
- 	res->dev_priv = dev_priv;
- 	res->func = func;
-+	RB_CLEAR_NODE(&res->mob_node);
- 	INIT_LIST_HEAD(&res->lru_head);
--	INIT_LIST_HEAD(&res->mob_head);
- 	INIT_LIST_HEAD(&res->binding_head);
- 	res->id = -1;
- 	res->backup = NULL;
-@@ -754,19 +768,20 @@ int vmw_resource_validate(struct vmw_resource *res, bool intr)
-  */
- void vmw_resource_unbind_list(struct vmw_buffer_object *vbo)
- {
+ 
 -
--	struct vmw_resource *res, *next;
- 	struct ttm_validate_buffer val_buf = {
- 		.bo = &vbo->base,
- 		.num_shared = 0
- 	};
+ /**
+  * vmw_bo_dirty_scan - Scan for dirty pages and add them to the dirty
+  * tracking structure
+@@ -173,6 +172,53 @@ void vmw_bo_dirty_scan(struct vmw_buffer_object *vbo)
+ 		vmw_bo_dirty_scan_mkwrite(vbo);
+ }
  
- 	dma_resv_assert_held(vbo->base.base.resv);
--	list_for_each_entry_safe(res, next, &vbo->res_list, mob_head) {
--		if (!res->func->unbind)
--			continue;
-+	while (!RB_EMPTY_ROOT(&vbo->res_tree)) {
-+		struct rb_node *node = vbo->res_tree.rb_node;
-+		struct vmw_resource *res =
-+			container_of(node, struct vmw_resource, mob_node);
++/**
++ * vmw_bo_dirty_pre_unmap - write-protect and pick up dirty pages before
++ * an unmap_mapping_range operation.
++ * @vbo: The buffer object,
++ * @start: First page of the range within the buffer object.
++ * @end: Last page of the range within the buffer object + 1.
++ *
++ * If we're using the _PAGETABLE scan method, we may leak dirty pages
++ * when calling unmap_mapping_range(). This function makes sure we pick
++ * up all dirty pages.
++ */
++static void vmw_bo_dirty_pre_unmap(struct vmw_buffer_object *vbo,
++				   pgoff_t start, pgoff_t end)
++{
++	struct vmw_bo_dirty *dirty = vbo->dirty;
++	unsigned long offset = drm_vma_node_start(&vbo->base.base.vma_node);
++	struct address_space *mapping = vbo->base.bdev->dev_mapping;
 +
-+		if (!WARN_ON_ONCE(!res->func->unbind))
-+			(void) res->func->unbind(res, res->res_dirty, &val_buf);
++	if (dirty->method != VMW_BO_DIRTY_PAGETABLE || start >= end)
++		return;
++
++	wp_shared_mapping_range(mapping, start + offset, end - start);
++	clean_record_shared_mapping_range(mapping, start + offset,
++					  end - start, offset,
++					  &dirty->bitmap[0], &dirty->start,
++					  &dirty->end);
++}
++
++/**
++ * vmw_bo_dirty_unmap - Clear all ptes pointing to a range within a bo
++ * @vbo: The buffer object,
++ * @start: First page of the range within the buffer object.
++ * @end: Last page of the range within the buffer object + 1.
++ *
++ * This is similar to ttm_bo_unmap_virtual_locked() except it takes a subrange.
++ */
++void vmw_bo_dirty_unmap(struct vmw_buffer_object *vbo,
++			pgoff_t start, pgoff_t end)
++{
++	unsigned long offset = drm_vma_node_start(&vbo->base.base.vma_node);
++	struct address_space *mapping = vbo->base.bdev->dev_mapping;
++
++	vmw_bo_dirty_pre_unmap(vbo, start, end);
++	unmap_shared_mapping_range(mapping, (offset + start) << PAGE_SHIFT,
++				   (loff_t) (end - start) << PAGE_SHIFT);
++}
++
+ /**
+  * vmw_bo_dirty_add - Add a dirty-tracking user to a buffer object
+  * @vbo: The buffer object
+@@ -401,21 +447,42 @@ vm_fault_t vmw_bo_vm_fault(struct vm_fault *vmf)
+ 	if (ret)
+ 		return ret;
  
--		(void) res->func->unbind(res, res->res_dirty, &val_buf);
- 		res->backup_dirty = true;
- 		res->res_dirty = false;
- 		vmw_resource_mob_detach(res);
++	num_prefault = (vma->vm_flags & VM_RAND_READ) ? 1 :
++		TTM_BO_VM_NUM_PREFAULT;
++
++	if (vbo->dirty) {
++		pgoff_t allowed_prefault;
++		unsigned long page_offset;
++
++		page_offset = vmf->pgoff -
++			drm_vma_node_start(&bo->base.vma_node);
++		if (page_offset >= bo->num_pages ||
++		    vmw_resources_clean(vbo, page_offset,
++					page_offset + PAGE_SIZE,
++					&allowed_prefault)) {
++			ret = VM_FAULT_SIGBUS;
++			goto out_unlock;
++		}
++
++		num_prefault = min(num_prefault, allowed_prefault);
++	}
++
+ 	/*
+-	 * This will cause mkwrite() to be called for each pte on
+-	 * write-enable vmas.
++	 * If we don't track dirty using the MKWRITE method, make sure
++	 * sure the page protection is write-enabled so we don't get
++	 * a lot of unnecessary write faults.
+ 	 */
+ 	if (vbo->dirty && vbo->dirty->method == VMW_BO_DIRTY_MKWRITE)
+ 		prot = vma->vm_page_prot;
+ 	else
+ 		prot = vm_get_page_prot(vma->vm_flags);
+ 
+-	num_prefault = (vma->vm_flags & VM_RAND_READ) ? 0 :
+-		TTM_BO_VM_NUM_PREFAULT;
+ 	ret = ttm_bo_vm_fault_reserved(vmf, prot, num_prefault);
+ 	if (ret == VM_FAULT_RETRY && !(vmf->flags & FAULT_FLAG_RETRY_NOWAIT))
+ 		return ret;
+ 
++out_unlock:
+ 	dma_resv_unlock(bo->base.resv);
++
+ 	return ret;
+ }
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_resource.c b/drivers/gpu/drm/vmwgfx/vmwgfx_resource.c
+index 328ad46076ff..c76faf33972e 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_resource.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_resource.c
+@@ -393,7 +393,8 @@ static int vmw_resource_buf_alloc(struct vmw_resource *res,
+  * should be retried once resources have been freed up.
+  */
+ static int vmw_resource_do_validate(struct vmw_resource *res,
+-				    struct ttm_validate_buffer *val_buf)
++				    struct ttm_validate_buffer *val_buf,
++				    bool dirtying)
+ {
+ 	int ret = 0;
+ 	const struct vmw_res_func *func = res->func;
+@@ -435,6 +436,15 @@ static int vmw_resource_do_validate(struct vmw_resource *res,
+ 	 * the resource.
+ 	 */
+ 	if (res->dirty) {
++		if (dirtying && !res->res_dirty) {
++			pgoff_t start = res->backup_offset >> PAGE_SHIFT;
++			pgoff_t end = __KERNEL_DIV_ROUND_UP
++				(res->backup_offset + res->backup_size,
++				 PAGE_SIZE);
++
++			vmw_bo_dirty_unmap(res->backup, start, end);
++		}
++
+ 		vmw_bo_dirty_transfer_to_res(res);
+ 		return func->dirty_sync(res);
+ 	}
+@@ -679,6 +689,7 @@ static int vmw_resource_do_evict(struct ww_acquire_ctx *ticket,
+  *                         to the device.
+  * @res: The resource to make visible to the device.
+  * @intr: Perform waits interruptible if possible.
++ * @dirtying: Pending GPU operation will dirty the resource
+  *
+  * On succesful return, any backup DMA buffer pointed to by @res->backup will
+  * be reserved and validated.
+@@ -688,7 +699,8 @@ static int vmw_resource_do_evict(struct ww_acquire_ctx *ticket,
+  * Return: Zero on success, -ERESTARTSYS if interrupted, negative error code
+  * on failure.
+  */
+-int vmw_resource_validate(struct vmw_resource *res, bool intr)
++int vmw_resource_validate(struct vmw_resource *res, bool intr,
++			  bool dirtying)
+ {
+ 	int ret;
+ 	struct vmw_resource *evict_res;
+@@ -705,7 +717,7 @@ int vmw_resource_validate(struct vmw_resource *res, bool intr)
+ 	if (res->backup)
+ 		val_buf.bo = &res->backup->base;
+ 	do {
+-		ret = vmw_resource_do_validate(res, &val_buf);
++		ret = vmw_resource_do_validate(res, &val_buf, dirtying);
+ 		if (likely(ret != -EBUSY))
+ 			break;
+ 
+@@ -1005,7 +1017,7 @@ int vmw_resource_pin(struct vmw_resource *res, bool interruptible)
+ 			/* Do we really need to pin the MOB as well? */
+ 			vmw_bo_pin_reserved(vbo, true);
+ 		}
+-		ret = vmw_resource_validate(res, interruptible);
++		ret = vmw_resource_validate(res, interruptible, true);
+ 		if (vbo)
+ 			ttm_bo_unreserve(&vbo->base);
+ 		if (ret)
+@@ -1080,3 +1092,86 @@ void vmw_resource_dirty_update(struct vmw_resource *res, pgoff_t start,
+ 		res->func->dirty_range_add(res, start << PAGE_SHIFT,
+ 					   end << PAGE_SHIFT);
+ }
++
++/**
++ * vmw_resources_clean - Clean resources intersecting a mob range
++ * @vbo: The mob buffer object
++ * @start: The mob page offset starting the range
++ * @end: The mob page offset ending the range
++ * @num_prefault: Returns how many pages including the first have been
++ * cleaned and are ok to prefault
++ */
++int vmw_resources_clean(struct vmw_buffer_object *vbo, pgoff_t start,
++			pgoff_t end, pgoff_t *num_prefault)
++{
++	struct rb_node *cur = vbo->res_tree.rb_node;
++	struct vmw_resource *found = NULL;
++	unsigned long res_start = start << PAGE_SHIFT;
++	unsigned long res_end = end << PAGE_SHIFT;
++	unsigned long last_cleaned = 0;
++
++	/*
++	 * Find the resource with lowest backup_offset that intersects the
++	 * range.
++	 */
++	while (cur) {
++		struct vmw_resource *cur_res =
++			container_of(cur, struct vmw_resource, mob_node);
++
++		if (cur_res->backup_offset >= res_end) {
++			cur = cur->rb_left;
++		} else if (cur_res->backup_offset + cur_res->backup_size <=
++			   res_start) {
++			cur = cur->rb_right;
++		} else {
++			found = cur_res;
++			cur = cur->rb_left;
++			/* Continue to look for resources with lower offsets */
++		}
++	}
++
++	/*
++	 * In order of increasing backup_offset, clean dirty resorces
++	 * intersecting the range.
++	 */
++	while (found) {
++		if (found->res_dirty) {
++			int ret;
++
++			if (!found->func->clean)
++				return -EINVAL;
++
++			ret = found->func->clean(found);
++			if (ret)
++				return ret;
++
++			found->res_dirty = false;
++		}
++		last_cleaned = found->backup_offset + found->backup_size;
++		cur = rb_next(&found->mob_node);
++		if (!cur)
++			break;
++
++		found = container_of(cur, struct vmw_resource, mob_node);
++		if (found->backup_offset >= res_end)
++			break;
++	}
++
++	/*
++	 * Set number of pages allowed prefaulting and fence the buffer object
++	 */
++	*num_prefault = 1;
++	if (last_cleaned > res_start) {
++		struct ttm_buffer_object *bo = &vbo->base;
++
++		*num_prefault = __KERNEL_DIV_ROUND_UP(last_cleaned - res_start,
++						      PAGE_SIZE);
++		vmw_bo_fence_single(bo, NULL);
++		if (bo->moving)
++			dma_fence_put(bo->moving);
++		bo->moving = dma_fence_get
++			(dma_resv_get_excl(bo->base.resv));
++	}
++
++	return 0;
++}
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_resource_priv.h b/drivers/gpu/drm/vmwgfx/vmwgfx_resource_priv.h
+index c85144286cfe..3b7438b2d289 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_resource_priv.h
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_resource_priv.h
+@@ -77,6 +77,7 @@ struct vmw_user_resource_conv {
+  * @dirty_sync:        Upload the dirty mob contents to the resource.
+  * @dirty_add_range:   Add a sequential dirty range to the resource
+  *                     dirty tracker.
++ * @clean:             Clean the resource.
+  */
+ struct vmw_res_func {
+ 	enum vmw_res_type res_type;
+@@ -101,6 +102,7 @@ struct vmw_res_func {
+ 	int (*dirty_sync)(struct vmw_resource *res);
+ 	void (*dirty_range_add)(struct vmw_resource *res, size_t start,
+ 				 size_t end);
++	int (*clean)(struct vmw_resource *res);
+ };
+ 
+ /**
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_validation.c b/drivers/gpu/drm/vmwgfx/vmwgfx_validation.c
+index 71349a7bae90..9aaf807ed73c 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_validation.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_validation.c
+@@ -641,7 +641,8 @@ int vmw_validation_res_validate(struct vmw_validation_context *ctx, bool intr)
+ 		struct vmw_resource *res = val->res;
+ 		struct vmw_buffer_object *backup = res->backup;
+ 
+-		ret = vmw_resource_validate(res, intr);
++		ret = vmw_resource_validate(res, intr, val->dirty_set &&
++					    val->dirty);
+ 		if (ret) {
+ 			if (ret != -ERESTARTSYS)
+ 				DRM_ERROR("Failed to validate resource.\n");
 -- 
 2.21.0
 
