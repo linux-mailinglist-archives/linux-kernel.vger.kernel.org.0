@@ -2,64 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00D7DD286B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 13:52:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFA37D2873
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 13:55:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733112AbfJJLwt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 07:52:49 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:45826 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726923AbfJJLwt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 07:52:49 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 0A6F3BE7D10C9D4D2960;
-        Thu, 10 Oct 2019 19:52:46 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 10 Oct 2019 19:52:37 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>
-CC:     YueHaibing <yuehaibing@huawei.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] drm/vkms: Remove duplicated include from vkms_drv.c
-Date:   Thu, 10 Oct 2019 11:52:13 +0000
-Message-ID: <20191010115213.115706-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1733106AbfJJLzV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 07:55:21 -0400
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:54114 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727737AbfJJLzV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 07:55:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1570708520; x=1602244520;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=oSbuvIYumFWNPpwNonXBRmIndHA8dfEq+3FqeaVrFIs=;
+  b=tBKLJWTdGKNEjyJS2DnflsaM/JgY+PjBiFKi14/utkx/f3Mqj1QDgwAw
+   VGEyQhUFf/7H7SSMEZH5CyG8Oaapn6AuzsOEepSvRJfGP3+FM88aw8Mr6
+   m6iR06nwtVo1tMl/CSuFgrq7e2+IIskg/96sHLyEQjfWGT8BFDW0feyso
+   0=;
+X-IronPort-AV: E=Sophos;i="5.67,280,1566864000"; 
+   d="scan'208";a="427554805"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1e-a70de69e.us-east-1.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 10 Oct 2019 11:55:18 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1e-a70de69e.us-east-1.amazon.com (Postfix) with ESMTPS id 1019AA18FA;
+        Thu, 10 Oct 2019 11:55:04 +0000 (UTC)
+Received: from EX13D01EUB001.ant.amazon.com (10.43.166.194) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 10 Oct 2019 11:55:04 +0000
+Received: from udc4a3e82dbc15a031435.hfa15.amazon.com (10.43.160.48) by
+ EX13D01EUB001.ant.amazon.com (10.43.166.194) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 10 Oct 2019 11:54:54 +0000
+From:   Talel Shenhar <talel@amazon.com>
+To:     <robh+dt@kernel.org>, <maz@kernel.org>, <mark.rutland@arm.com>,
+        <arnd@arndb.de>, <bp@alien8.de>, <mchehab@kernel.org>,
+        <james.morse@arm.com>, <davem@davemloft.net>,
+        <gregkh@linuxfoundation.org>, <paulmck@linux.ibm.com>,
+        <talel@amazon.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-edac@vger.kernel.org>
+CC:     <dwmw@amazon.co.uk>, <benh@kernel.crashing.org>,
+        <hhhawa@amazon.com>, <ronenk@amazon.com>, <jonnyc@amazon.com>,
+        <hanochu@amazon.com>, <amirkl@amazon.com>, <barakw@amazon.com>
+Subject: [PATCH v4 0/2] Amazon's Annapurna Labs Memory Controller EDAC
+Date:   Thu, 10 Oct 2019 14:54:12 +0300
+Message-ID: <1570708454-10784-1-git-send-email-talel@amazon.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
+X-Originating-IP: [10.43.160.48]
+X-ClientProxiedBy: EX13D13UWA002.ant.amazon.com (10.43.160.172) To
+ EX13D01EUB001.ant.amazon.com (10.43.166.194)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove duplicated include.
+This series introduces support for Amazon's Annapurna Labs Memory
+Controller EDAC driver.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/gpu/drm/vkms/vkms_drv.c | 1 -
- 1 file changed, 1 deletion(-)
+Changes since v3:
+=================
+- removed quotation marks and hyphen from compatible
+- added interrupts and interrupt-names description
+- added missing include to dt binding
 
-diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
-index 54703463d966..d1fe144aa289 100644
---- a/drivers/gpu/drm/vkms/vkms_drv.c
-+++ b/drivers/gpu/drm/vkms/vkms_drv.c
-@@ -19,7 +19,6 @@
- #include <drm/drm_drv.h>
- #include <drm/drm_fb_helper.h>
- #include <drm/drm_file.h>
--#include <drm/drm_gem.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_ioctl.h>
- #include <drm/drm_probe_helper.h>
+Changes since v2:
+=================
+- added missing includes
+- aggregated variables to same line
+- removed ranks read
+- added spinlock to mc reporting
+- made irq handler clearer
+- freed irq before freeing device memory
+- changed Kconfig to tristate
+- added COMPILE_TEST to Kconfig
+- converted dt binding to new scheme
+- used devm_platform_ioremap_resource instead of get&ioremap
+
+Changes since v1:
+=================
+- updated dt binding node name and added Rob Reviewed-By
+- removed auto selecting of this driver
 
 
+Talel Shenhar (2):
+  dt-bindings: edac: al-mc-edac: Amazon's Annapurna Labs Memory
+    Controller EDAC
+  EDAC: al-mc-edac: Introduce Amazon's Annapurna Labs Memory Controller
+    EDAC
 
+ .../bindings/edac/amazon,al-mc-edac.yaml           |  50 +++
+ MAINTAINERS                                        |   7 +
+ drivers/edac/Kconfig                               |   7 +
+ drivers/edac/Makefile                              |   1 +
+ drivers/edac/al_mc_edac.c                          | 358 +++++++++++++++++++++
+ 5 files changed, 423 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/edac/amazon,al-mc-edac.yaml
+ create mode 100644 drivers/edac/al_mc_edac.c
 
+-- 
+2.7.4
 
