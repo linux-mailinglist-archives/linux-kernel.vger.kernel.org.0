@@ -2,133 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE1F6D275E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 12:41:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 642F0D2760
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 12:41:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732903AbfJJKk4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 06:40:56 -0400
-Received: from mail-eopbgr710048.outbound.protection.outlook.com ([40.107.71.48]:63857
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726359AbfJJKkz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 06:40:55 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XC66nuo5V/2A14QaStu6Dpf4bm6/X7d2v51iDat9DcyLK3hohGhqRH4OdX2SDoBlSRk0E1dNg7Hdfy3YeVmSGp3QwgUVuf2rCskc5/iA3ZrlImqO0S3XHvMitUueUzLgd9sEM/erjFsr811eUGaBBmgGS8ivCZ/nC5GG5wSfIDKTrUNYSgrZZ91K4sTKvCVsXSOHl2rNiVug7aFLhMoDDal4p80F4El78L3mI33MLCXmSEyJ8YsX/yQsMW3g+NzHjfi8ervblsxd9vNAzJLkcdtZRKWGSMJMSy0UBT3GMngEirTE/9WgcXUTIBQK7nLG8ivKBg1L1GbwflKSYaxvOQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=taJfzhBhgLYSNVx6tza02zms4nw5WV/Fo2B+hydIYmY=;
- b=JipE7C1tWQKs2DzjmBkqtHXzL0MX13awIBfjGOBkVT26+PCA+OJCW2Zu6/5qwaR9XIB7qgIIfsRFEtkl4XumcsjopuF/b6Un8qLM5KGP+7nO7KKS3f8XOTSTnONn8fskLLeHtG4Zw84gdnNjlo7qvcpyby1W1T2vgWyM0WA6nLvfu3QpSKIysgNLTkUYIj/EwymCJYOCyfldX5UVTxEwlmW/x6rPX/gP99en+txImbAJ03PB0T5ridkqSiAOlfFl8PbmVrZhidIMNjJDxiWOeeaSlos7gwm4Yb3NiWM1x29QOgLMW+lIlfW8ZlTzbG6nfBNNPFCbIjp0AI6k09jWZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
+        id S1733007AbfJJKlS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 06:41:18 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:33786 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726359AbfJJKlP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 06:41:15 -0400
+Received: by mail-wm1-f66.google.com with SMTP id r17so6822847wme.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 03:41:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=taJfzhBhgLYSNVx6tza02zms4nw5WV/Fo2B+hydIYmY=;
- b=VyPshbJUq3q6CGKWm9/Q5+mzSLeEZW612nfXxqIYH8RB8k/DaoLkbo1uiDzblRQT7gksVZTVNahgLRbTLJ3/Jjys5dAodKHgSIvfomo30yQp9574+b5dVk2xSmjtb44SJY263JuDopeEExCIkp3Gb+5Jq34B1ZatAwM1gZd/RbQ=
-Received: from DM6PR12MB3868.namprd12.prod.outlook.com (10.255.173.213) by
- DM6PR12MB2793.namprd12.prod.outlook.com (20.176.114.219) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.17; Thu, 10 Oct 2019 10:40:51 +0000
-Received: from DM6PR12MB3868.namprd12.prod.outlook.com
- ([fe80::64dd:646d:6fa1:15a1]) by DM6PR12MB3868.namprd12.prod.outlook.com
- ([fe80::64dd:646d:6fa1:15a1%4]) with mapi id 15.20.2347.016; Thu, 10 Oct 2019
- 10:40:51 +0000
-From:   vishnu <vravulap@amd.com>
-To:     Mark Brown <broonie@kernel.org>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>
-CC:     "RAVULAPATI, VISHNU VARDHAN RAO" 
-        <Vishnuvardhanrao.Ravulapati@amd.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>,
-        Maruthi Srinivas Bayyavarapu <Maruthi.Bayyavarapu@amd.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/7] ASoC: amd: No need PCI-MSI interrupts
-Thread-Topic: [PATCH 1/7] ASoC: amd: No need PCI-MSI interrupts
-Thread-Index: AQHVd/NK02/86+8bwUqA0+UYmDRNb6dGCguAgAABq4CADmkpAA==
-Date:   Thu, 10 Oct 2019 10:40:51 +0000
-Message-ID: <f9b1c3d5-6e02-354f-91b6-3b57e2f88bde@amd.com>
-References: <1569891524-18875-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
- <BN6PR12MB18093C8EDE60811B3D917DEAF79D0@BN6PR12MB1809.namprd12.prod.outlook.com>
- <20191001172941.GC4786@sirena.co.uk>
-In-Reply-To: <20191001172941.GC4786@sirena.co.uk>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: PN1PR0101CA0054.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c00:d::16) To DM6PR12MB3868.namprd12.prod.outlook.com
- (2603:10b6:5:1c8::21)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Vishnuvardhanrao.Ravulapati@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.159.251]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 120a3bf8-715f-4c93-e6cc-08d74d6e519d
-x-ms-office365-filtering-ht: Tenant
-x-ms-traffictypediagnostic: DM6PR12MB2793:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DM6PR12MB2793C4AD344931B17225D558E7940@DM6PR12MB2793.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 018632C080
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(136003)(366004)(396003)(376002)(39860400002)(189003)(199004)(4326008)(6116002)(71190400001)(71200400001)(66476007)(66556008)(64756008)(66446008)(6636002)(66946007)(3846002)(256004)(66066001)(6246003)(99286004)(52116002)(25786009)(14454004)(478600001)(31686004)(7736002)(305945005)(486006)(476003)(54906003)(110136005)(11346002)(2616005)(446003)(76176011)(31696002)(316002)(102836004)(81166006)(81156014)(53546011)(6506007)(8676002)(386003)(8936002)(26005)(186003)(36756003)(6436002)(2906002)(229853002)(5660300002)(6486002)(4744005)(6512007);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB2793;H:DM6PR12MB3868.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: FRpD9649/lvZG3nM/cu4MNhLK77As/TS80Y1pNKHZERrciprotlk9up5jeQlk0Lf+DF5FRChehVHTFde045zwSegB3DNXpkzUvaI08/8xepVU2dN/dxfWTVTfgAUSVuzW8kXSRkAj5BG4VTpuuFvWDKx4MX8e90Db+4790imVQ2RoCcGcfcZqwmLHTbkSfsNPjH0rjZU4tHSwOtyVrb6SkSQXLUemd2xNlNZk0GoKKzosHTkF9a3R/RyuNA/I0Nd7eivn0m8HbZDTi0bXz2e0biURPiGi1e7Nn/VgMcbaSTg9UgcsJT7C5cQUio/LZuEMTl4T06RmeqkI4wcA4UYGb/E6EbKsQC2hty/g0I67V2UP3HFdKVBR77W8c0OEMu7EmTwLz/q526Nf3OZbuyVmgi5XDbnmgPRtG1QRs7+B0E=
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <7882EA1F37EFB7409C1D10251D7901F9@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        d=colorfullife-com.20150623.gappssmtp.com; s=20150623;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-transfer-encoding:content-language;
+        bh=hYbZOE1JoNz+RsgmurwkZwD0VCWNmaMUpSNgQ1K1b/4=;
+        b=P56awIi5VWsNCv0+XM6VyL5UuQ8pBhLrXmLDWwFirV0xxfdcxG+F7R9HtG6FSMK0MZ
+         5MIOS6T1xlSulDJYDM4gkAIr1H2rOFi9iO+C9+gN7TtUo3GKcuTIqm8n6jsrBQSZZNQ+
+         vFJnLJ37QPix/eLtFAPUIYutSZcdNKcQAyjIZNsx3/JdDe7K4SgObZK2QeWw7nftGy05
+         qPmzHWRfmrBc0VoltoX+rGTRwUz7k7oreGQ+2gPigGX+MzPwV2XLGH0gyTKsJF29BLQl
+         HnP11IQozXnsMJjehZ9dO48DieTL96DeGepCua3puMhkieNjXRrM/xBCvvyVx+kfWM9J
+         7fHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-transfer-encoding:content-language;
+        bh=hYbZOE1JoNz+RsgmurwkZwD0VCWNmaMUpSNgQ1K1b/4=;
+        b=hOf60B4R9ZvXGwZrOjJlOc/8KlBKxhuuamKUIPLLH82Z8/pBuCGW1mu02ZVrKEYAi+
+         GvCoudHdMmCYeLDO7vCLqEQYNAxp3l3i1RfxqNqNo6ENjg6ew2p09s3meHSLCpvlXMIr
+         hRpa0aSoNgMjn1vxLqyNVo7yMCrLbx7g5dqqVr2GDFODfdD543QKs7Yp2itq3JkhMWkD
+         LZco1HPNwZwmRBn9h62bJrmxey7QK/X0Zm8wPeTx3zHRoB8CDHXOC47xlOTB/x+v8b/6
+         McFhsyDnwA7YMyAqE9csyi+VS2i3ySifUsWQk+Me6oUTdoVZCTxacFEEEc8oWA6vTm01
+         zb3w==
+X-Gm-Message-State: APjAAAXtD3CYUtN1GqSHb7DL0GhbLWaJTagoU8WvghapxC2jfLo08Jf/
+        whSII6S3Dac3QU953ZwpeHLg+Q==
+X-Google-Smtp-Source: APXvYqyIIo4e4eoNC93zDtMTtTRULBHf81O36ZVITuHV+xgHDdcIMBdVB+cqpXsPZO5Dawn4Aimv/g==
+X-Received: by 2002:a1c:f210:: with SMTP id s16mr6473395wmc.24.1570704073234;
+        Thu, 10 Oct 2019 03:41:13 -0700 (PDT)
+Received: from linux.fritz.box ([2003:d9:9706:1400:7753:8680:b964:812d])
+        by smtp.googlemail.com with ESMTPSA id n7sm5651847wrt.59.2019.10.10.03.41.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2019 03:41:12 -0700 (PDT)
+To:     Waiman Long <longman@redhat.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     1vier1@web.de, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+From:   Manfred Spraul <manfred@colorfullife.com>
+Subject: wake_q memory ordering
+Message-ID: <990690aa-8281-41da-4a46-99bb8f9fec31@colorfullife.com>
+Date:   Thu, 10 Oct 2019 12:41:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 120a3bf8-715f-4c93-e6cc-08d74d6e519d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Oct 2019 10:40:51.0906
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: fNxYOwFaUb2Ita2e52ZT4O4OCdRb5ulajHo9XI2v7fc5uECfIeWsd5OV+by0Urzm9qtsVMvRmEZhoKE8KZFaAQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2793
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
-Please find my inline comments.
 
-Thanks,
-Vishnu
+Waiman Long noticed that the memory barriers in sem_lock() are not 
+really documented, and while adding documentation, I ended up with one 
+case where I'm not certain about the wake_q code:
 
-On 01/10/19 10:59 PM, Mark Brown wrote:
-> On Tue, Oct 01, 2019 at 05:23:43PM +0000, Deucher, Alexander wrote:
->=20
->>> ACP-PCI controller driver does not depends msi interrupts.
->>> So removed msi related pci functions which have no use and does not imp=
-act
->>> on existing functionality.
->=20
->> In general, however, aren't MSIs preferred to legacy interrupts?
->=20
-> As I understand it.  Or at the very least I'm not aware of any situation
-> where they're harmful.  It'd be good to have a clear explanation of why
-> we're removing the support.
+Questions:
+- Does smp_mb__before_atomic() + a (failed) cmpxchg_relaxed provide an
+   ordering guarantee?
+- Is it ok that wake_up_q just writes wake_q->next, shouldn't
+   smp_store_acquire() be used? I.e.: guarantee that wake_up_process()
+   happens after cmpxchg_relaxed(), assuming that a failed cmpxchg_relaxed
+   provides any ordering.
 
-Actually our device is audio device and it does not depends on MSI`s.
-So we thought to remove it as it has no purpose or meaning to have
-this code in our audio based ACP-PCI driver.
+Example:
+- CPU2 never touches lock a. It is just an unrelated wake_q user that also
+   wants to wake up task 1234.
+- I've noticed already that smp_store_acquire() doesn't exist.
+   So smp_store_mb() is required. But from semantical point of view, we 
+would
+   need an ACQUIRE: the wake_up_process() must happen after cmpxchg().
+- May wake_up_q() rely on the spinlocks/memory barriers in try_to_wake_up,
+   or should the function be safe by itself?
 
->> Doesn't the driver have to opt into MSI support?  As such, won't
->> removing this code effectively disable MSI support?
->=20
-> Yes.
+CPU1: /current=1234, inside do_semtimedop()/
+         g_wakee = current;
+         current->state = TASK_INTERRUPTIBLE;
+         spin_unlock(a);
 
+CPU2: / arbitrary kernel thread that uses wake_q /
+                 wake_q_add(&unrelated_q, 1234);
+                 wake_up_q(&unrelated_q);
+                 <...ongoing>
+
+CPU3: / do_semtimedop() + wake_up_sem_queue_prepare() /
+                         spin_lock(a);
+                         wake_q_add(,g_wakee);
+                         < within wake_q_add() >:
+                           smp_mb__before_atomic();
+                           if (unlikely(cmpxchg_relaxed(&node->next, 
+NULL, WAKE_Q_TAIL)))
+                               return false; /* -> this happens */
+
+CPU2:
+                 <within wake_up_q>
+                 1234->wake_q.next = NULL; <<<<<<<<< Ok? Is 
+store_acquire() missing? >>>>>>>>>>>>
+                 wake_up_process(1234);
+                 < within wake_up_process/try_to_wake_up():
+                     raw_spin_lock_irqsave()
+                     smp_mb__after_spinlock()
+                     if(1234->state = TASK_RUNNING) return;
+                  >
+
+
+rewritten:
+
+start condition: A = 1; B = 0;
+
+CPU1:
+     B = 1;
+     RELEASE, unlock LockX;
+
+CPU2:
+     lock LockX, ACQUIRE
+     if (LOAD A == 1) return; /* using cmp_xchg_relaxed */
+
+CPU2:
+     A = 0;
+     ACQUIRE, lock LockY
+     smp_mb__after_spinlock();
+     READ B
+
+Question: is A = 1, B = 0 possible?
+
+--
+
+     Manfred
 
