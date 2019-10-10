@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C43CD23B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF73BD233D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:48:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389089AbfJJIpM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:45:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50708 "EHLO mail.kernel.org"
+        id S2388128AbfJJIkc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:40:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388361AbfJJIpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:45:09 -0400
+        id S2387493AbfJJIka (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:40:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9B5021A4A;
-        Thu, 10 Oct 2019 08:45:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9749720B7C;
+        Thu, 10 Oct 2019 08:40:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697108;
-        bh=ym8G2ZdQbDsO+1BvbPg5YIeTwSU9bt9Wg46NbwfNwBo=;
+        s=default; t=1570696830;
+        bh=AYCAce8R8+1AGpgdpdakmyUkNlhCjR6dQ3fDZMXkhHI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j6rxFCC1hyf12mI8s0DS5/IeurH3QdfdxmBTIvlltpgUeKhbYK4tpS9CHduaDhBmj
-         8tNfH5fsjuidd1uqv2anWNodpXyMz4K4ytsMrWnN+ybgsbLPRBCTvCWZDhJyNX5NgA
-         xBk4aX31UCDLXKJlZWj8xOlCZjTiJnUN70um+pEo=
+        b=j4+fRh/t7nN9GpBhYpv1raWa92g8DzlzxFv3WoiUFp6yHeeYOPvO1EJq5k/kZBtGB
+         QEcWZRLI4jWVqQiu+Urz6mEea64I7hEP5ucrIgW1ZoFSfkdatUGPzt99opcTnDqU+t
+         zWQewcrtARCMHnhE8GZtRUJGZ/N8CfCmz0LHs+sk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.19 021/114] crypto: qat - Silence smp_processor_id() warning
+        stable@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Rob Clark <robdclark@chromium.org>
+Subject: [PATCH 5.3 067/148] drm/msm/dsi: Fix return value check for clk_get_parent
 Date:   Thu, 10 Oct 2019 10:35:28 +0200
-Message-Id: <20191010083553.941912256@linuxfoundation.org>
+Message-Id: <20191010083615.502085657@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
-References: <20191010083544.711104709@linuxfoundation.org>
+In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
+References: <20191010083609.660878383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,68 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+From: Sean Paul <seanpaul@chromium.org>
 
-commit 1b82feb6c5e1996513d0fb0bbb475417088b4954 upstream.
+commit 5fb9b797d5ccf311ae4aba69e86080d47668b5f7 upstream.
 
-It seems that smp_processor_id() is only used for a best-effort
-load-balancing, refer to qat_crypto_get_instance_node(). It's not feasible
-to disable preemption for the duration of the crypto requests. Therefore,
-just silence the warning. This commit is similar to e7a9b05ca4
-("crypto: cavium - Fix smp_processor_id() warnings").
+clk_get_parent returns an error pointer upon failure, not NULL. So the
+checks as they exist won't catch a failure. This patch changes the
+checks and the return values to properly handle an error pointer.
 
-Silences the following splat:
-BUG: using smp_processor_id() in preemptible [00000000] code: cryptomgr_test/2904
-caller is qat_alg_ablkcipher_setkey+0x300/0x4a0 [intel_qat]
-CPU: 1 PID: 2904 Comm: cryptomgr_test Tainted: P           O    4.14.69 #1
-...
-Call Trace:
- dump_stack+0x5f/0x86
- check_preemption_disabled+0xd3/0xe0
- qat_alg_ablkcipher_setkey+0x300/0x4a0 [intel_qat]
- skcipher_setkey_ablkcipher+0x2b/0x40
- __test_skcipher+0x1f3/0xb20
- ? cpumask_next_and+0x26/0x40
- ? find_busiest_group+0x10e/0x9d0
- ? preempt_count_add+0x49/0xa0
- ? try_module_get+0x61/0xf0
- ? crypto_mod_get+0x15/0x30
- ? __kmalloc+0x1df/0x1f0
- ? __crypto_alloc_tfm+0x116/0x180
- ? crypto_skcipher_init_tfm+0xa6/0x180
- ? crypto_create_tfm+0x4b/0xf0
- test_skcipher+0x21/0xa0
- alg_test_skcipher+0x3f/0xa0
- alg_test.part.6+0x126/0x2a0
- ? finish_task_switch+0x21b/0x260
- ? __schedule+0x1e9/0x800
- ? __wake_up_common+0x8d/0x140
- cryptomgr_test+0x40/0x50
- kthread+0xff/0x130
- ? cryptomgr_notify+0x540/0x540
- ? kthread_create_on_node+0x70/0x70
- ret_from_fork+0x24/0x50
-
-Fixes: ed8ccaef52 ("crypto: qat - Add support for SRIOV")
-Cc: stable@vger.kernel.org
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: c4d8cfe516dc ("drm/msm/dsi: add implementation for helper functions")
+Cc: Sibi Sankar <sibis@codeaurora.org>
+Cc: Sean Paul <seanpaul@chromium.org>
+Cc: Rob Clark <robdclark@chromium.org>
+Cc: <stable@vger.kernel.org> # v4.19+
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Rob Clark <robdclark@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/qat/qat_common/adf_common_drv.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/msm/dsi/dsi_host.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/crypto/qat/qat_common/adf_common_drv.h
-+++ b/drivers/crypto/qat/qat_common/adf_common_drv.h
-@@ -95,7 +95,7 @@ struct service_hndl {
+--- a/drivers/gpu/drm/msm/dsi/dsi_host.c
++++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+@@ -421,15 +421,15 @@ static int dsi_clk_init(struct msm_dsi_h
+ 	}
  
- static inline int get_current_node(void)
- {
--	return topology_physical_package_id(smp_processor_id());
-+	return topology_physical_package_id(raw_smp_processor_id());
- }
+ 	msm_host->byte_clk_src = clk_get_parent(msm_host->byte_clk);
+-	if (!msm_host->byte_clk_src) {
+-		ret = -ENODEV;
++	if (IS_ERR(msm_host->byte_clk_src)) {
++		ret = PTR_ERR(msm_host->byte_clk_src);
+ 		pr_err("%s: can't find byte_clk clock. ret=%d\n", __func__, ret);
+ 		goto exit;
+ 	}
  
- int adf_service_register(struct service_hndl *service);
+ 	msm_host->pixel_clk_src = clk_get_parent(msm_host->pixel_clk);
+-	if (!msm_host->pixel_clk_src) {
+-		ret = -ENODEV;
++	if (IS_ERR(msm_host->pixel_clk_src)) {
++		ret = PTR_ERR(msm_host->pixel_clk_src);
+ 		pr_err("%s: can't find pixel_clk clock. ret=%d\n", __func__, ret);
+ 		goto exit;
+ 	}
 
 
