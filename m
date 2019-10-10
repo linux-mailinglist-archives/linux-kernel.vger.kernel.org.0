@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79D15D247E
+	by mail.lfdr.de (Postfix) with ESMTP id 0F951D247D
 	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:00:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389242AbfJJIqE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:46:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51642 "EHLO mail.kernel.org"
+        id S2388537AbfJJIqB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:46:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389221AbfJJIpw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:45:52 -0400
+        id S2389195AbfJJIpz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:45:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F5BB2054F;
-        Thu, 10 Oct 2019 08:45:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 474BE208C3;
+        Thu, 10 Oct 2019 08:45:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697151;
-        bh=6sBvMm2Nw7U7LT3LmRh9xLUiLq7DSI/hufiVDue5SYw=;
+        s=default; t=1570697154;
+        bh=W6M92Isb+KlYhkiKSEa2YPDNu0yiewClyIA+sBF8Ks8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lRohm8QD82Ma77T9xAYGZePXRZ/nd5BeH3R+tZxvftiH33XQlZARXnwxwpaTojRNS
-         V4gkQ986NaU0SELOLn06cncmuGj1amSAhNq1hmbza25h6KQtGlEqs5cRSmNghwiael
-         wcqhI9styfg4ENLGTw8YGkiIEUE6I2QRvrM7dJ+Y=
+        b=ywHehLUtcPYZ3+wyeBYEdzhE318g0BAxA1R7vv2f4QOGFnAmCZGXpi54/cBvHURnz
+         rL0mW8rELZk/hgKCXQ6e0SbQJX2eJ3yTGcbR6tavtuVqit3ijX4rHnBgCUPi09B0fO
+         ld7URGXQ9/c66zuNLJNJz1/68Q9ilYO8vpAKFE5c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sebastian Ott <sebott@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Subject: [PATCH 4.19 004/114] s390/cio: exclude subchannels with no parent from pseudo check
-Date:   Thu, 10 Oct 2019 10:35:11 +0200
-Message-Id: <20191010083546.147426763@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.19 005/114] KVM: PPC: Book3S HV: Fix race in re-enabling XIVE escalation interrupts
+Date:   Thu, 10 Oct 2019 10:35:12 +0200
+Message-Id: <20191010083546.420986718@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
 References: <20191010083544.711104709@linuxfoundation.org>
@@ -43,54 +43,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Gorbik <gor@linux.ibm.com>
+From: Paul Mackerras <paulus@ozlabs.org>
 
-commit ab5758848039de9a4b249d46e4ab591197eebaf2 upstream.
+commit 959c5d5134786b4988b6fdd08e444aa67d1667ed upstream.
 
-ccw console is created early in start_kernel and used before css is
-initialized or ccw console subchannel is registered. Until then console
-subchannel does not have a parent. For that reason assume subchannels
-with no parent are not pseudo subchannels. This fixes the following
-kasan finding:
+Escalation interrupts are interrupts sent to the host by the XIVE
+hardware when it has an interrupt to deliver to a guest VCPU but that
+VCPU is not running anywhere in the system.  Hence we disable the
+escalation interrupt for the VCPU being run when we enter the guest
+and re-enable it when the guest does an H_CEDE hypercall indicating
+it is idle.
 
-BUG: KASAN: global-out-of-bounds in sch_is_pseudo_sch+0x8e/0x98
-Read of size 8 at addr 00000000000005e8 by task swapper/0/0
+It is possible that an escalation interrupt gets generated just as we
+are entering the guest.  In that case the escalation interrupt may be
+using a queue entry in one of the interrupt queues, and that queue
+entry may not have been processed when the guest exits with an H_CEDE.
+The existing entry code detects this situation and does not clear the
+vcpu->arch.xive_esc_on flag as an indication that there is a pending
+queue entry (if the queue entry gets processed, xive_esc_irq() will
+clear the flag).  There is a comment in the code saying that if the
+flag is still set on H_CEDE, we have to abort the cede rather than
+re-enabling the escalation interrupt, lest we end up with two
+occurrences of the escalation interrupt in the interrupt queue.
 
-CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.3.0-rc8-07370-g6ac43dd12538 #2
-Hardware name: IBM 2964 NC9 702 (z/VM 6.4.0)
-Call Trace:
-([<000000000012cd76>] show_stack+0x14e/0x1e0)
- [<0000000001f7fb44>] dump_stack+0x1a4/0x1f8
- [<00000000007d7afc>] print_address_description+0x64/0x3c8
- [<00000000007d75f6>] __kasan_report+0x14e/0x180
- [<00000000018a2986>] sch_is_pseudo_sch+0x8e/0x98
- [<000000000189b950>] cio_enable_subchannel+0x1d0/0x510
- [<00000000018cac7c>] ccw_device_recognition+0x12c/0x188
- [<0000000002ceb1a8>] ccw_device_enable_console+0x138/0x340
- [<0000000002cf1cbe>] con3215_init+0x25e/0x300
- [<0000000002c8770a>] console_init+0x68a/0x9b8
- [<0000000002c6a3d6>] start_kernel+0x4fe/0x728
- [<0000000000100070>] startup_continue+0x70/0xd0
+However, the exit code doesn't do that; it aborts the cede in the sense
+that vcpu->arch.ceded gets cleared, but it still enables the escalation
+interrupt by setting the source's PQ bits to 00.  Instead we need to
+set the PQ bits to 10, indicating that an interrupt has been triggered.
+We also need to avoid setting vcpu->arch.xive_esc_on in this case
+(i.e. vcpu->arch.xive_esc_on seen to be set on H_CEDE) because
+xive_esc_irq() will run at some point and clear it, and if we race with
+that we may end up with an incorrect result (i.e. xive_esc_on set when
+the escalation interrupt has just been handled).
 
-Cc: stable@vger.kernel.org
-Reviewed-by: Sebastian Ott <sebott@linux.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+It is extremely unlikely that having two queue entries would cause
+observable problems; theoretically it could cause queue overflow, but
+the CPU would have to have thousands of interrupts targetted to it for
+that to be possible.  However, this fix will also make it possible to
+determine accurately whether there is an unhandled escalation
+interrupt in the queue, which will be needed by the following patch.
+
+Fixes: 9b9b13a6d153 ("KVM: PPC: Book3S HV: Keep XIVE escalation interrupt masked unless ceded")
+Cc: stable@vger.kernel.org # v4.16+
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20190813100349.GD9567@blackberry
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/cio/css.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/powerpc/kvm/book3s_hv_rmhandlers.S |   36 ++++++++++++++++++++------------
+ 1 file changed, 23 insertions(+), 13 deletions(-)
 
---- a/drivers/s390/cio/css.c
-+++ b/drivers/s390/cio/css.c
-@@ -1213,6 +1213,8 @@ device_initcall(cio_settle_init);
- 
- int sch_is_pseudo_sch(struct subchannel *sch)
- {
-+	if (!sch->dev.parent)
-+		return 0;
- 	return sch == to_css(sch->dev.parent)->pseudo_subchannel;
- }
+--- a/arch/powerpc/kvm/book3s_hv_rmhandlers.S
++++ b/arch/powerpc/kvm/book3s_hv_rmhandlers.S
+@@ -2903,29 +2903,39 @@ kvm_cede_prodded:
+ kvm_cede_exit:
+ 	ld	r9, HSTATE_KVM_VCPU(r13)
+ #ifdef CONFIG_KVM_XICS
+-	/* Abort if we still have a pending escalation */
++	/* are we using XIVE with single escalation? */
++	ld	r10, VCPU_XIVE_ESC_VADDR(r9)
++	cmpdi	r10, 0
++	beq	3f
++	li	r6, XIVE_ESB_SET_PQ_00
++	/*
++	 * If we still have a pending escalation, abort the cede,
++	 * and we must set PQ to 10 rather than 00 so that we don't
++	 * potentially end up with two entries for the escalation
++	 * interrupt in the XIVE interrupt queue.  In that case
++	 * we also don't want to set xive_esc_on to 1 here in
++	 * case we race with xive_esc_irq().
++	 */
+ 	lbz	r5, VCPU_XIVE_ESC_ON(r9)
+ 	cmpwi	r5, 0
+-	beq	1f
++	beq	4f
+ 	li	r0, 0
+ 	stb	r0, VCPU_CEDED(r9)
+-1:	/* Enable XIVE escalation */
+-	li	r5, XIVE_ESB_SET_PQ_00
++	li	r6, XIVE_ESB_SET_PQ_10
++	b	5f
++4:	li	r0, 1
++	stb	r0, VCPU_XIVE_ESC_ON(r9)
++	/* make sure store to xive_esc_on is seen before xive_esc_irq runs */
++	sync
++5:	/* Enable XIVE escalation */
+ 	mfmsr	r0
+ 	andi.	r0, r0, MSR_DR		/* in real mode? */
+ 	beq	1f
+-	ld	r10, VCPU_XIVE_ESC_VADDR(r9)
+-	cmpdi	r10, 0
+-	beq	3f
+-	ldx	r0, r10, r5
++	ldx	r0, r10, r6
+ 	b	2f
+ 1:	ld	r10, VCPU_XIVE_ESC_RADDR(r9)
+-	cmpdi	r10, 0
+-	beq	3f
+-	ldcix	r0, r10, r5
++	ldcix	r0, r10, r6
+ 2:	sync
+-	li	r0, 1
+-	stb	r0, VCPU_XIVE_ESC_ON(r9)
+ #endif /* CONFIG_KVM_XICS */
+ 3:	b	guest_exit_cont
  
 
 
