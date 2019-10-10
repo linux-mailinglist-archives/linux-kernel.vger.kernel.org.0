@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB4FFD23C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98B23D236C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389227AbfJJIpx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:45:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51584 "EHLO mail.kernel.org"
+        id S2388549AbfJJImZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:42:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389207AbfJJIpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:45:49 -0400
+        id S2388540AbfJJImW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:42:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C49762190F;
-        Thu, 10 Oct 2019 08:45:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9150F2054F;
+        Thu, 10 Oct 2019 08:42:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697149;
-        bh=Cj6zVdwil1V9LHOzG+BAeozXgHOjbyNXgx+HXxMd0CM=;
+        s=default; t=1570696942;
+        bh=wD994kTRdn4+4NVQk6oHG8B0XzrmSLQfF/qLv50TiRQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gpb38uxFL7nXHkL6DI2IotmDu+3JgMYdC31shpDY7ki1ziIDRfElbJrfzuX+5RP+0
-         Ax3MKdcu6javwOdYLqu8fUtf674DJMml3J+OLcsLrhSKA1iuhxgVQ6qy9UVPx9ZxA1
-         84omyPo7Hant79wmmpKTsPrMerbkA9+ixzSKvZhA=
+        b=b6X7MUIu4TqJ7L1ZRt3A6iLXdbQNXy4Iu2golCDBEU8TP4zyD1GSM5a93nWekGmOD
+         UHIQbgy36qr8UoxhwXsNXuueeCbd8we8nkuZ4ioo8ADhjkIbIEDUe57B7udoHHFzds
+         NdFt4lsqfVt7yB8cB3lx1xrePaFH5OmLVlCBoYU0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>
-Subject: [PATCH 4.19 035/114] watchdog: imx2_wdt: fix min() calculation in imx2_wdt_set_timeout
-Date:   Thu, 10 Oct 2019 10:35:42 +0200
-Message-Id: <20191010083601.861038621@linuxfoundation.org>
+        =?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?= 
+        <marmarek@invisiblethingslab.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        David Hildenbrand <david@redhat.com>
+Subject: [PATCH 5.3 082/148] xen/balloon: Set pages PageOffline() in balloon_add_region()
+Date:   Thu, 10 Oct 2019 10:35:43 +0200
+Message-Id: <20191010083616.308363319@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
-References: <20191010083544.711104709@linuxfoundation.org>
+In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
+References: <20191010083609.660878383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,53 +48,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+From: David Hildenbrand <david@redhat.com>
 
-commit 144783a80cd2cbc45c6ce17db649140b65f203dd upstream.
+commit c5ad81eb029570c5ca5859539b0679f07a776d25 upstream.
 
-Converting from ms to s requires dividing by 1000, not multiplying. So
-this is currently taking the smaller of new_timeout and 1.28e8,
-i.e. effectively new_timeout.
+We are missing a __SetPageOffline(), which is why we can get
+!PageOffline() pages onto the balloon list, where
+alloc_xenballooned_pages() will complain:
 
-The driver knows what it set max_hw_heartbeat_ms to, so use that
-value instead of doing a division at run-time.
+page:ffffea0003e7ffc0 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0
+flags: 0xffffe00001000(reserved)
+raw: 000ffffe00001000 dead000000000100 dead000000000200 0000000000000000
+raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+page dumped because: VM_BUG_ON_PAGE(!PageOffline(page))
+------------[ cut here ]------------
+kernel BUG at include/linux/page-flags.h:744!
+invalid opcode: 0000 [#1] SMP NOPTI
 
-FWIW, this can easily be tested by booting into a busybox shell and
-doing "watchdog -t 5 -T 130 /dev/watchdog" - without this patch, the
-watchdog fires after 130&127 == 2 seconds.
-
-Fixes: b07e228eee69 "watchdog: imx2_wdt: Fix set_timeout for big timeout values"
-Cc: stable@vger.kernel.org # 5.2 plus anything the above got backported to
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Link: https://lore.kernel.org/r/20190812131356.23039-1-linux@rasmusvillemoes.dk
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Reported-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
+Tested-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
+Fixes: 77c4adf6a6df ("xen/balloon: mark inflated pages PG_offline")
+Cc: stable@vger.kernel.org # v5.1+
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Stefano Stabellini <sstabellini@kernel.org>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/watchdog/imx2_wdt.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/xen/balloon.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/watchdog/imx2_wdt.c
-+++ b/drivers/watchdog/imx2_wdt.c
-@@ -55,7 +55,7 @@
+--- a/drivers/xen/balloon.c
++++ b/drivers/xen/balloon.c
+@@ -688,6 +688,7 @@ static void __init balloon_add_region(un
+ 		/* totalram_pages and totalhigh_pages do not
+ 		   include the boot-time balloon extension, so
+ 		   don't subtract from it. */
++		__SetPageOffline(page);
+ 		__balloon_append(page);
+ 	}
  
- #define IMX2_WDT_WMCR		0x08		/* Misc Register */
- 
--#define IMX2_WDT_MAX_TIME	128
-+#define IMX2_WDT_MAX_TIME	128U
- #define IMX2_WDT_DEFAULT_TIME	60		/* in seconds */
- 
- #define WDOG_SEC_TO_COUNT(s)	((s * 2 - 1) << 8)
-@@ -180,7 +180,7 @@ static int imx2_wdt_set_timeout(struct w
- {
- 	unsigned int actual;
- 
--	actual = min(new_timeout, wdog->max_hw_heartbeat_ms * 1000);
-+	actual = min(new_timeout, IMX2_WDT_MAX_TIME);
- 	__imx2_wdt_set_timeout(wdog, actual);
- 	wdog->timeout = new_timeout;
- 	return 0;
 
 
