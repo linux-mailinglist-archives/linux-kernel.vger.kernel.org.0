@@ -2,181 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F340D1E51
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 04:10:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49279D1E5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 04:21:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732808AbfJJCKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 22:10:04 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:35361 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726469AbfJJCIC (ORCPT
+        id S1732545AbfJJCVC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 22:21:02 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:46278 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726469AbfJJCLw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 22:08:02 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 063B921C24;
-        Wed,  9 Oct 2019 22:07:05 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Wed, 09 Oct 2019 22:07:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=from
-        :to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm3; bh=/ZpOKiZozizLe
-        7jyQflbx5yKpx8pRHgLZdXkZKFa2Hg=; b=dZgCLK1cVP859GF3NSW/Y0RSrwbC+
-        FN6WHktScdyypzOyLWvLPfer0xRg+AccUNGHtweQbl0V/7rEA6A2z8RgwxWlRppf
-        8S8oQR1B+zrbyMIf8BOWXeyVLjJWpVcoP5tp1Kl2zW1UVM6BiPrN1tC8C/T3EPbJ
-        zoH+XdMD4RNeL2vj/WCVYPPERAXhPee3x1xABwjcYtyMHQ5MpO4GgALNv7vLNAfJ
-        WoGSeTEuUTuDBRahmsFtEp1ACAPzIXPeh8p6RIrahJZMUrwuqUyBmm1fPGaCmD/Q
-        kS9g/whN7xNNayUDLGIDx2cTd+UkAnkk1d/YHUSY47PqqjPjn5jSY5BNg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=/ZpOKiZozizLe7jyQflbx5yKpx8pRHgLZdXkZKFa2Hg=; b=GWl/lLxc
-        bDwDADwW7Gay8uPl9LYFTy/HJmEiOslDOI7Ya6VxBCzU1anE7GzrKA5/bgU7XKmi
-        MYRJa/+z0xg7z+u7ZVU7JRnWRplo1BK/YqhSvTxFwKt08o569jAaJZlboXxRCIC2
-        5fvVbsGfe+aji3txbJcfMZfbeoGXVZTy8TQ6kGSztUFh7G16s/zbHTwxDHPgRVYF
-        IEpCo1RsN0JKLc7z63ihfSU36419lAi6YyDpAiVB9vWV66CP4g2DjRV8QfP8ZSV0
-        ekWJ8sjUUbAlaawn/E0AGkUFMdq2LK5jP3brOdCJhLJkv4WN3YFCN1+ovESHkY3/
-        Tb5OvO3WwiRMhg==
-X-ME-Sender: <xms:SJKeXRCDD2boWRBZ06LxfDjlEw_q9PncQjxGkElCbdhbBVBYTOkHDw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedriedvgdehjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecunecujfgurhephffvufffkffojghfggfgsedtkeertd
-    ertddtnecuhfhrohhmpeetnhgurhgvficulfgvfhhfvghrhicuoegrnhgurhgvfiesrghj
-    rdhiugdrrghuqeenucfkphepvddtvddrkedurddukedrfedtnecurfgrrhgrmhepmhgrih
-    hlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgvrhfuihiivgep
-    he
-X-ME-Proxy: <xmx:SZKeXb4ML-jLRL_CgJSaGQz-KUMz2dttoul9go8GTa6Xks3FUKnWPA>
-    <xmx:SZKeXfYNjeSU9jK663vzR-J5NZG5PbGSa0Sc9TKHw3AE3tOizsMu2Q>
-    <xmx:SZKeXa3rV6bSfAAbSxYoiVckK-CUyJnghswk9lTdZFR0KK2AJIj_bQ>
-    <xmx:SZKeXUAV6NAvOGMh1n6aLPgOSbYNwieJ8c5gYee5QWfC6XVgLr_CsQ>
-Received: from mistburn.au.ibm.com (bh02i525f01.au.ibm.com [202.81.18.30])
-        by mail.messagingengine.com (Postfix) with ESMTPA id ECAA080059;
-        Wed,  9 Oct 2019 22:07:01 -0400 (EDT)
-From:   Andrew Jeffery <andrew@aj.id.au>
-To:     netdev@vger.kernel.org
-Cc:     davem@davemloft.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        joel@jms.id.au, benh@kernel.crashing.org,
-        linux-aspeed@lists.ozlabs.org
-Subject: [PATCH v2 3/3] net: ftgmac100: Ungate RCLK for RMII on ASPEED MACs
-Date:   Thu, 10 Oct 2019 12:37:56 +1030
-Message-Id: <20191010020756.4198-4-andrew@aj.id.au>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191010020756.4198-1-andrew@aj.id.au>
-References: <20191010020756.4198-1-andrew@aj.id.au>
+        Wed, 9 Oct 2019 22:11:52 -0400
+Received: by mail-yw1-f66.google.com with SMTP id l64so1469014ywe.13
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 19:11:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=woyaIkIQv6Xs21ozbrL0GY7iKCTuq76f+v68JretALk=;
+        b=dSK/3UR3/ac63/FVph2mecjCuuCfPMnqYKYexzIGXFHLESmymGyJvuEOkNJxmopgLf
+         5xrb/JWTOx3bD1bIQTBrrkOa6GrKrJt1Mcnwrrz2GG5XB59jgbYMVCJf1wDWXFn3NNj1
+         kkSiaomXd8DWEQe6AePVRU47qYr4Nst8PBIv3QVxcCp5RPOHk8JOXsB0rzEVO3wTPtKT
+         eL8RzJgX5Av2Jc0ZJBR50ttog9yzygYjYrEtDm+BpEWEz7el2WE08oF9KSfgINM/QKwK
+         otJ35OkhiqPAhB22Hnq1b2ZIsDIbX1ugGOMFdDCxERwi1Jx7K8YvjslVMFDun/cDyymv
+         G0qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=woyaIkIQv6Xs21ozbrL0GY7iKCTuq76f+v68JretALk=;
+        b=fiE7tegCEP5o1yXxY8dN3xsuqM9Q1550UQoohgF+Ccatnt1WlJdsRctNFK0B4kPA7T
+         Mlk6JSNoB12a1/CViy0KHmuq/+pxh9RefjQxSfcUrurb/X5z2yAMyJKaCNvVT+ncatUr
+         hog/bbJOdj2P51nSJroi2bGmVOShuJK3P5nZcDy2teWehlZ629tPY8ey+4vbd9iJAJ5m
+         DvBPZn4XXXkYu+5+Tutqlw88aLhUOhiNdOQ0zho1cm4H+4bTlFfQpWwDSPs8MrPh+QjW
+         djajidCrhVWKhSfqU3CeVU5jp4Igh9T/QijFn2KvlLKJAF7FvCaalxCTBACqpjn11ZIM
+         scMA==
+X-Gm-Message-State: APjAAAURQkyZIWo7T9S1XcjUwJ0qQMk7HRvHVMZFZWmXaLA77rhmyb0C
+        g16f70UKFmdCXzhJ1B++K8Iz98D3AL6GyMqDReIGl4gtLFE=
+X-Google-Smtp-Source: APXvYqzCRWZDmD2E9YFKDujrVGkDM9cpNNyJ94dqrwW0mY7ENRS6hBWtMFes2xo1pKhFn0Is8FgWCwtUQDcOWPsVbcI=
+X-Received: by 2002:a81:254d:: with SMTP id l74mr5160055ywl.409.1570673511796;
+ Wed, 09 Oct 2019 19:11:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191009192105.GC26530@ZenIV.linux.org.uk> <CAMo8BfKUOmExGRMaUPmcRsy=iyRrguLF6JOLUMegNnzkF9vcvQ@mail.gmail.com>
+ <20191010015606.GD26530@ZenIV.linux.org.uk>
+In-Reply-To: <20191010015606.GD26530@ZenIV.linux.org.uk>
+From:   Max Filippov <jcmvbkbc@gmail.com>
+Date:   Wed, 9 Oct 2019 19:11:40 -0700
+Message-ID: <CAMo8BfLo4hy+WGA7p+7iZaLmmgFOyzMRAtG5dzNj=JEU04GoKA@mail.gmail.com>
+Subject: Re: [PATCH] xtensa: fix {get,put}_user() for 64bit values
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     "open list:TENSILICA XTENSA PORT (xtensa)" 
+        <linux-xtensa@linux-xtensa.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 50MHz RCLK has to be enabled before the RMII interface will function.
+On Wed, Oct 9, 2019 at 6:56 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Wed, Oct 09, 2019 at 06:38:12PM -0700, Max Filippov wrote:
+>
+> > There's also the following code in the callers of this macro, e.g. in
+> > __get_user_nocheck:
+> >
+> >         long __gu_err, __gu_val;                                \
+> >         __get_user_size(__gu_val, (ptr), (size), __gu_err);     \
+> >         (x) = (__force __typeof__(*(ptr)))__gu_val;             \
+> >
+> > the last line is important for sizes 1..4, because it takes care of
+> > sign extension of the value loaded by the assembly.
+> > At the same time the first line doesn't make sense for the size 8
+> > as it will result in value truncation.
+>
+> Right you are...
+>
+> > +       long __gu_err;                                          \
+> > +       __typeof__(*(ptr) + 0) __gu_val;                        \
+>
+> What would __u64 __gu_val; end up with for smaller sizes?
 
-Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
----
-v2: Mainly a rework of error case handling, some changes to comments
+It does good job with little endian cores, i.e. the generated code is
+the same in both cases, but on big endian it looks into wrong register
+of the register pair that represents __gu_val. E.g.:
 
- drivers/net/ethernet/faraday/ftgmac100.c | 50 +++++++++++++++++++-----
- 1 file changed, 40 insertions(+), 10 deletions(-)
+foo_in_s8_out_s8:
+        entry   sp, 32  #
+        mov.n   a7, sp  # a5,
+# /home/jcmvbkbc/ws/tensilica/linux/linux-xtensa/arch/xtensa/kernel/signal.c:518:
+gen_outs(8)
+        movi.n  a8, 0   # __gu_err,
+#APP
+# 518 "/home/jcmvbkbc/ws/tensilica/linux/linux-xtensa/arch/xtensa/kernel/signal.c"
+1
+        1: l8ui  a10, a2, 0                     # __gu_val, p
+2:
+   .section  .fixup,"ax"
+   .align 4
+   .literal_position
+5:
+   movi   a2, 2b                        # __cb
+   movi   a10, 0                        # __gu_val
+   movi   a8, -14                       # __gu_err,
+   jx     a2                            # __cb
+   .previous
+   .section  __ex_table,"a"
+   .long        1b, 5b
+   .previous
+# 0 "" 2
+#NO_APP
+        extui   a2, a11, 0, 8   #, __gu_val
+        retw.n
 
-diff --git a/drivers/net/ethernet/faraday/ftgmac100.c b/drivers/net/ethernet/faraday/ftgmac100.c
-index 9b7af94a40bb..824310253099 100644
---- a/drivers/net/ethernet/faraday/ftgmac100.c
-+++ b/drivers/net/ethernet/faraday/ftgmac100.c
-@@ -90,6 +90,9 @@ struct ftgmac100 {
- 	struct mii_bus *mii_bus;
- 	struct clk *clk;
- 
-+	/* AST2500/AST2600 RMII ref clock gate */
-+	struct clk *rclk;
-+
- 	/* Link management */
- 	int cur_speed;
- 	int cur_duplex;
-@@ -1718,20 +1721,41 @@ static void ftgmac100_ncsi_handler(struct ncsi_dev *nd)
- 		   nd->link_up ? "up" : "down");
- }
- 
--static void ftgmac100_setup_clk(struct ftgmac100 *priv)
-+static int ftgmac100_setup_clk(struct ftgmac100 *priv)
- {
--	priv->clk = devm_clk_get(priv->dev, NULL);
--	if (IS_ERR(priv->clk))
--		return;
-+	struct clk *clk;
-+	int rc;
- 
--	clk_prepare_enable(priv->clk);
-+	clk = devm_clk_get(priv->dev, NULL /* MACCLK */);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+	priv->clk = clk;
-+	rc = clk_prepare_enable(priv->clk);
-+	if (rc)
-+		return rc;
- 
- 	/* Aspeed specifies a 100MHz clock is required for up to
- 	 * 1000Mbit link speeds. As NCSI is limited to 100Mbit, 25MHz
- 	 * is sufficient
- 	 */
--	clk_set_rate(priv->clk, priv->use_ncsi ? FTGMAC_25MHZ :
--			FTGMAC_100MHZ);
-+	rc = clk_set_rate(priv->clk, priv->use_ncsi ? FTGMAC_25MHZ :
-+			  FTGMAC_100MHZ);
-+	if (rc)
-+		goto cleanup_clk;
-+
-+	/* RCLK is for RMII, typically used for NCSI. Optional because its not
-+	 * necessary if it's the AST2400 MAC, or the MAC is configured for
-+	 * RGMII, or the controller is not an ASPEED-based controller.
-+	 */
-+	priv->rclk = devm_clk_get_optional(priv->dev, "RCLK");
-+	rc = clk_prepare_enable(priv->rclk);
-+	if (!rc)
-+		return 0;
-+
-+cleanup_clk:
-+	clk_disable_unprepare(priv->clk);
-+
-+	return rc;
- }
- 
- static int ftgmac100_probe(struct platform_device *pdev)
-@@ -1853,8 +1877,11 @@ static int ftgmac100_probe(struct platform_device *pdev)
- 			goto err_setup_mdio;
- 	}
- 
--	if (priv->is_aspeed)
--		ftgmac100_setup_clk(priv);
-+	if (priv->is_aspeed) {
-+		err = ftgmac100_setup_clk(priv);
-+		if (err)
-+			goto err_ncsi_dev;
-+	}
- 
- 	/* Default ring sizes */
- 	priv->rx_q_entries = priv->new_rx_q_entries = DEF_RX_QUEUE_ENTRIES;
-@@ -1886,8 +1913,10 @@ static int ftgmac100_probe(struct platform_device *pdev)
- 
- 	return 0;
- 
--err_ncsi_dev:
- err_register_netdev:
-+	clk_disable_unprepare(priv->rclk);
-+	clk_disable_unprepare(priv->clk);
-+err_ncsi_dev:
- 	ftgmac100_destroy_mdio(netdev);
- err_setup_mdio:
- 	iounmap(priv->base);
-@@ -1909,6 +1938,7 @@ static int ftgmac100_remove(struct platform_device *pdev)
- 
- 	unregister_netdev(netdev);
- 
-+	clk_disable_unprepare(priv->rclk);
- 	clk_disable_unprepare(priv->clk);
- 
- 	/* There's a small chance the reset task will have been re-queued,
+> I don't have
+> xtensa cross-toolchain at the moment, so I can't check it easily;
+> what does =r constraint generate in such case?
+
+Lower register of the register pair.
+
+> Another thing is, you want to zero it on failure, to avoid an uninitialized
+> value ending up someplace interesting....
+
+Ok, this?
+
+diff --git a/arch/xtensa/include/asm/uaccess.h
+b/arch/xtensa/include/asm/uaccess.h
+index 6792928ba84a..0bdaadf1636e 100644
+--- a/arch/xtensa/include/asm/uaccess.h
++++ b/arch/xtensa/include/asm/uaccess.h
+@@ -100,7 +100,7 @@ do {
+                         \
+        case 4: __put_user_asm(x, ptr, retval, 4, "s32i", __cb); break; \
+        case 8: {                                                       \
+                     __typeof__(*ptr) __v64 = x;                        \
+-                    retval = __copy_to_user(ptr, &__v64, 8);           \
++                    retval = __copy_to_user(ptr, &__v64, 8) ? -EFAULT
+: 0;     \
+                     break;                                             \
+                }                                                       \
+        default: __put_user_bad();                                      \
+@@ -172,7 +172,8 @@ __asm__ __volatile__(
+         \
+
+ #define __get_user_nocheck(x, ptr, size)                       \
+ ({                                                             \
+-       long __gu_err, __gu_val;                                \
++       long __gu_err;                                          \
++       __typeof__(*(ptr) + 0) __gu_val = 0;                    \
+        __get_user_size(__gu_val, (ptr), (size), __gu_err);     \
+        (x) = (__force __typeof__(*(ptr)))__gu_val;             \
+        __gu_err;                                               \
+@@ -180,7 +181,8 @@ __asm__ __volatile__(
+         \
+
+ #define __get_user_check(x, ptr, size)                                 \
+ ({                                                                     \
+-       long __gu_err = -EFAULT, __gu_val = 0;                          \
++       long __gu_err = -EFAULT;                                        \
++       __typeof__(*(ptr) + 0) __gu_val = 0;                            \
+        const __typeof__(*(ptr)) *__gu_addr = (ptr);                    \
+        if (access_ok(__gu_addr, size))                 \
+                __get_user_size(__gu_val, __gu_addr, (size), __gu_err); \
+@@ -198,7 +200,7 @@ do {
+                         \
+        case 1: __get_user_asm(x, ptr, retval, 1, "l8ui", __cb);  break;\
+        case 2: __get_user_asm(x, ptr, retval, 2, "l16ui", __cb); break;\
+        case 4: __get_user_asm(x, ptr, retval, 4, "l32i", __cb);  break;\
+-       case 8: retval = __copy_from_user(&x, ptr, 8);    break;        \
++       case 8: retval = __copy_from_user(&x, ptr, 8) ? -EFAULT : 0;
+ break;  \
+        default: (x) = __get_user_bad();                                \
+        }                                                               \
+ } while (0)
+
+
 -- 
-2.20.1
-
+Thanks.
+-- Max
