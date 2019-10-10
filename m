@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2395D219B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 09:22:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6396CD2198
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 09:22:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733006AbfJJHWI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1733066AbfJJHWI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 10 Oct 2019 03:22:08 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:44522 "EHLO
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:44548 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733042AbfJJHQw (ORCPT
+        with ESMTP id S1733044AbfJJHQ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 03:16:52 -0400
+        Thu, 10 Oct 2019 03:16:59 -0400
 Received: from dhcp-172-31-174-146.wireless.concordia.ca (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 3838A28EBEA;
-        Thu, 10 Oct 2019 08:16:50 +0100 (BST)
-Date:   Thu, 10 Oct 2019 09:16:48 +0200
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id AEEFF290694;
+        Thu, 10 Oct 2019 08:16:57 +0100 (BST)
+Date:   Thu, 10 Oct 2019 09:16:54 +0200
 From:   Boris Brezillon <boris.brezillon@collabora.com>
 To:     <Tudor.Ambarus@microchip.com>
 Cc:     <vigneshr@ti.com>, <marek.vasut@gmail.com>,
@@ -62,7 +62,7 @@ On Tue, 24 Sep 2019 07:46:15 +0000
 > with that.
 > 
 
-Same as for patch 5, this should be split in several patches
+Same as for patch 5, this should be split in several patches.
 
 > Vendors are using both the "Configuration Register" and the
 > "Status Register 2" terminology when referring to the second byte
