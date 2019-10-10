@@ -2,70 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A169D2B5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 15:31:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F09BD2B74
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 15:35:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388175AbfJJNbk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 09:31:40 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:49652 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727797AbfJJNbk (ORCPT
+        id S2388088AbfJJNff (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 09:35:35 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:54313 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728011AbfJJNff (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 09:31:40 -0400
-Received: from dhcp-172-31-174-146.wireless.concordia.ca (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id B004B29098D;
-        Thu, 10 Oct 2019 14:31:38 +0100 (BST)
-Date:   Thu, 10 Oct 2019 15:31:35 +0200
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     Fuqian Huang <huangfq.daxian@gmail.com>
-Cc:     Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH v2] mtd: maps: l440gx: Avoid printing address to dmesg
-Message-ID: <20191010153135.2b363c27@dhcp-172-31-174-146.wireless.concordia.ca>
-In-Reply-To: <20191010084019.5190-1-huangfq.daxian@gmail.com>
-References: <20191010084019.5190-1-huangfq.daxian@gmail.com>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Thu, 10 Oct 2019 09:35:35 -0400
+Received: from [193.96.224.244] (helo=localhost.localdomain)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1iIYbL-0001XF-Re; Thu, 10 Oct 2019 13:35:32 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>, libc-alpha@sourceware.org
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Shuah Khan <shuah@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Roman Gushchin <guro@fb.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        linux-kselftest@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH 1/2] clone3: add CLONE3_CLEAR_SIGHAND
+Date:   Thu, 10 Oct 2019 15:35:17 +0200
+Message-Id: <20191010133518.5420-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 10 Oct 2019 16:40:19 +0800
-Fuqian Huang <huangfq.daxian@gmail.com> wrote:
+Reset all signal handlers of the child not set to SIG_IGN to SIG_DFL.
+Mutually exclusive with CLONE_SIGHAND to not disturb other thread's
+signal handler.
 
-> Avoid printing the address of l440gx_map.virt every time l440gx init.
-> 
-> Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
-> ---
->  drivers/mtd/maps/l440gx.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/maps/l440gx.c b/drivers/mtd/maps/l440gx.c
-> index 876f12f40018..ebe37edc8e88 100644
-> --- a/drivers/mtd/maps/l440gx.c
-> +++ b/drivers/mtd/maps/l440gx.c
-> @@ -86,7 +86,7 @@ static int __init init_l440gx(void)
->  		return -ENOMEM;
->  	}
->  	simple_map_init(&l440gx_map);
-> -	printk(KERN_NOTICE "window_addr = 0x%08lx\n", (unsigned long)l440gx_map.virt);
-> +	printk(KERN_DEBUG "window_addr = 0x%08lx\n", (unsigned long)l440gx_map.virt);
+In the spirit of closer cooperation between glibc developers and kernel
+developers (cf. [2]) this patchset came out of a discussion on the glibc
+mailing list for improving posix_spawn() (cf. [1], [3], [4]). Kernel
+support for this feature has been explicitly requested by glibc and I
+see no reason not to help them with this.
 
-pr_debug() please, and use %p instead of this %lx with a cast.
+The child helper process on Linux posix_spawn must ensure that no signal
+handlers are enabled, so the signal disposition must be either SIG_DFL
+or SIG_IGN. However, it requires a sigprocmask to obtain the current
+signal mask and at least _NSIG sigaction calls to reset the signal
+handlers for each posix_spawn call or complex state tracking that might
+lead to data corruption in glibc. Adding this flags lets glibc avoid
+these problems.
 
->  
->  	/* Setup the pm iobase resource
->  	 * This code should move into some kind of generic bridge
+[1]: https://www.sourceware.org/ml/libc-alpha/2019-10/msg00149.html
+[3]: https://www.sourceware.org/ml/libc-alpha/2019-10/msg00158.html
+[4]: https://www.sourceware.org/ml/libc-alpha/2019-10/msg00160.html
+[2]: https://lwn.net/Articles/799331/
+     '[...] by asking for better cooperation with the C-library projects
+     in general. They should be copied on patches containing ABI
+     changes, for example. I noted that there are often times where
+     C-library developers wish the kernel community had done things
+     differently; how could those be avoided in the future? Members of
+     the audience suggested that more glibc developers should perhaps
+     join the linux-api list. The other suggestion was to "copy Florian
+     on everything".'
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Florian Weimer <fweimer@redhat.com>
+Cc: libc-alpha@sourceware.org
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+ include/uapi/linux/sched.h |  3 +++
+ kernel/fork.c              | 11 ++++++++++-
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/include/uapi/linux/sched.h b/include/uapi/linux/sched.h
+index 99335e1f4a27..c583720f689f 100644
+--- a/include/uapi/linux/sched.h
++++ b/include/uapi/linux/sched.h
+@@ -33,6 +33,9 @@
+ #define CLONE_NEWNET		0x40000000	/* New network namespace */
+ #define CLONE_IO		0x80000000	/* Clone io context */
+ 
++/* Flags for the clone3() syscall */
++#define CLONE3_CLEAR_SIGHAND 0x100000000ULL /* Clear any signal handler and reset to SIG_DFL. */
++
+ #ifndef __ASSEMBLY__
+ /**
+  * struct clone_args - arguments for the clone3 syscall
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 1f6c45f6a734..661f8d1f3881 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1517,6 +1517,11 @@ static int copy_sighand(unsigned long clone_flags, struct task_struct *tsk)
+ 	spin_lock_irq(&current->sighand->siglock);
+ 	memcpy(sig->action, current->sighand->action, sizeof(sig->action));
+ 	spin_unlock_irq(&current->sighand->siglock);
++
++	/* Reset all signal handler not set to SIG_IGN to SIG_DFL. */
++	if (clone_flags & CLONE3_CLEAR_SIGHAND)
++		flush_signal_handlers(tsk, 0);
++
+ 	return 0;
+ }
+ 
+@@ -2567,7 +2572,7 @@ static bool clone3_args_valid(const struct kernel_clone_args *kargs)
+ 	 * All lower bits of the flag word are taken.
+ 	 * Verify that no other unknown flags are passed along.
+ 	 */
+-	if (kargs->flags & ~CLONE_LEGACY_FLAGS)
++	if (kargs->flags & ~(CLONE_LEGACY_FLAGS | CLONE3_CLEAR_SIGHAND))
+ 		return false;
+ 
+ 	/*
+@@ -2577,6 +2582,10 @@ static bool clone3_args_valid(const struct kernel_clone_args *kargs)
+ 	if (kargs->flags & (CLONE_DETACHED | CSIGNAL))
+ 		return false;
+ 
++	if ((kargs->flags & (CLONE_SIGHAND | CLONE3_CLEAR_SIGHAND)) ==
++	    (CLONE_SIGHAND | CLONE3_CLEAR_SIGHAND))
++		return false;
++
+ 	if ((kargs->flags & (CLONE_THREAD | CLONE_PARENT)) &&
+ 	    kargs->exit_signal)
+ 		return false;
+-- 
+2.23.0
 
