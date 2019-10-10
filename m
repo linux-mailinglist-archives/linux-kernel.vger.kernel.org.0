@@ -2,69 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F6B9D3132
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 21:14:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A21DD3127
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 21:12:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbfJJTOK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 15:14:10 -0400
-Received: from outgoing-stata.csail.mit.edu ([128.30.2.210]:38039 "EHLO
-        outgoing-stata.csail.mit.edu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727005AbfJJTOJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 15:14:09 -0400
-Received: from [4.30.142.84] (helo=[127.0.1.1])
-        by outgoing-stata.csail.mit.edu with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.82)
-        (envelope-from <srivatsa@csail.mit.edu>)
-        id 1iIdWx-000aCB-2m; Thu, 10 Oct 2019 14:51:19 -0400
-Subject: [PATCH 3/3] tracing/hwlat: Fix a few trivial nits
-From:   "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
-To:     linux-kernel@vger.kernel.org, rostedt@goodmis.org, mingo@redhat.com
-Cc:     amakhalov@vmware.com, akaher@vmware.com, anishs@vmware.com,
-        bordoloih@vmware.com, srivatsab@vmware.com, srivatsa@csail.mit.edu
-Date:   Thu, 10 Oct 2019 11:51:17 -0700
-Message-ID: <157073346821.17189.8946944856026592247.stgit@srivatsa-ubuntu>
-In-Reply-To: <157073343544.17189.13911783866738671133.stgit@srivatsa-ubuntu>
-References: <157073343544.17189.13911783866738671133.stgit@srivatsa-ubuntu>
-User-Agent: StGit/0.18
+        id S1727065AbfJJTM3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 15:12:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36708 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726007AbfJJTM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 15:12:28 -0400
+Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F19822067B;
+        Thu, 10 Oct 2019 19:12:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570734748;
+        bh=61T0gvjer9CvIGrqUXvutjaRIy5VBi8mdN4C3nBAtAY=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=Xz+BY1Cz/L/bSiaZcPIMJgAA5qcufrtQzY2Q7/J39HVBAhNWr9O9ybnPsc0+DvwwA
+         A9EulqwOK8bZlsqz+dWIq8fa6re7+2mX2A4epi4Uy3IMjfMhaf9pty696Zrs12N8Ac
+         wMXYrf4MPg6JoZOywjx/ByXwohPBJexu4+HypfaA=
+Date:   Thu, 10 Oct 2019 21:11:58 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Nicolas Boichat <drinkcat@chromium.org>
+cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dtor@chromium.org, ikjn@chromium.org
+Subject: Re: [PATCH 2/2] HID: google: Detect base folded usage instead of
+ hard-coding whiskers
+In-Reply-To: <20191003031800.120237-2-drinkcat@chromium.org>
+Message-ID: <nycvar.YFH.7.76.1910102111410.13160@cbobk.fhfr.pm>
+References: <20191003031800.120237-1-drinkcat@chromium.org> <20191003031800.120237-2-drinkcat@chromium.org>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
+On Thu, 3 Oct 2019, Nicolas Boichat wrote:
 
-Update the source file name in the comments, and fix a grammatical
-error.
+> Some other hammer-like device will emit a similar code, let's look for
+> the folded event in HID usage table, instead of hard-coding whiskers
+> in many places.
 
-Signed-off-by: Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
----
+Applied to for-5.5/whiskers. Thanks,
 
- kernel/trace/trace_hwlat.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/trace/trace_hwlat.c b/kernel/trace/trace_hwlat.c
-index 862f4b0..941cb82 100644
---- a/kernel/trace/trace_hwlat.c
-+++ b/kernel/trace/trace_hwlat.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * trace_hwlatdetect.c - A simple Hardware Latency detector.
-+ * trace_hwlat.c - A simple Hardware Latency detector.
-  *
-  * Use this tracer to detect large system latencies induced by the behavior of
-  * certain underlying system hardware or firmware, independent of Linux itself.
-@@ -276,7 +276,7 @@ static void move_to_next_cpu(void)
- 		return;
- 	/*
- 	 * If for some reason the user modifies the CPU affinity
--	 * of this thread, than stop migrating for the duration
-+	 * of this thread, then stop migrating for the duration
- 	 * of the current test.
- 	 */
- 	if (!cpumask_equal(current_mask, current->cpus_ptr))
+-- 
+Jiri Kosina
+SUSE Labs
 
