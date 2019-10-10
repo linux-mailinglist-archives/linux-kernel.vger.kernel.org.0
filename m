@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEADED248E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:00:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DD70D2589
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:02:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389398AbfJJIq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:46:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52706 "EHLO mail.kernel.org"
+        id S2388516AbfJJImR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:42:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389383AbfJJIqw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:46:52 -0400
+        id S2388505AbfJJImO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:42:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6B62218AC;
-        Thu, 10 Oct 2019 08:46:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5564921A4C;
+        Thu, 10 Oct 2019 08:42:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697212;
-        bh=9KK+zWA/y/bDSujiZFJZWo7AuGxM4XHwDzPBWNMWyak=;
+        s=default; t=1570696933;
+        bh=NuHhHXw4QZBdglT0kxOOBHpNOn1XLOOMc9cyecLOYBc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=crjeCEYhwIO8ztkHGm5Brpe2RokHfu2KpQWdGY3c/9xRl150gA72CPE4aL0YdQJ8A
-         4oTxVnwVIydxL3Vlf0OaOrnAnhul0la3/WTOqUnZoClOGsuvZ3Pn4IqRUgy9PX9A6w
-         EcOAj9P5me+1QAN/rPSIXVcZFjNYQenjiM0/2Mfk=
+        b=VXmdMV5T0Blg5SknT5F4OCZkGgelj1rw0yKIcvs1uExynIJmYuh2bHAElvy9sLAjq
+         PG0whQ2LKffoa9Ri4IaeEdKNNbHlQwA9ZISjGTDMOi495Fj0r33h8dXVy7OUCH6tRj
+         qCPB+DyJ1EKt91gBFVnt/8fd5ddPYAQZwjeZ3ZTk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Kuehling <Felix.Kuehling@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 059/114] drm/amdgpu: Fix KFD-related kernel oops on Hawaii
-Date:   Thu, 10 Oct 2019 10:36:06 +0200
-Message-Id: <20191010083609.241241569@linuxfoundation.org>
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Wang Nan <wangnan0@huawei.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 106/148] perf probe: Fix to clear tev->nargs in clear_probe_trace_event()
+Date:   Thu, 10 Oct 2019 10:36:07 +0200
+Message-Id: <20191010083617.608325655@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
-References: <20191010083544.711104709@linuxfoundation.org>
+In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
+References: <20191010083609.660878383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +46,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Felix Kuehling <Felix.Kuehling@amd.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit dcafbd50f2e4d5cc964aae409fb5691b743fba23 ]
+[ Upstream commit 9e6124d9d635957b56717f85219a88701617253f ]
 
-Hawaii needs to flush caches explicitly, submitting an IB in a user
-VMID from kernel mode. There is no s_fence in this case.
+Since add_probe_trace_event() can reuse tf->tevs[i] after calling
+clear_probe_trace_event(), this can make perf-probe crash if the 1st
+attempt of probe event finding fails to find an event argument, and the
+2nd attempt fails to find probe point.
 
-Fixes: eb3961a57424 ("drm/amdgpu: remove fence context from the job")
-Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+E.g.
+  $ perf probe -D "task_pid_nr tsk"
+  Failed to find 'tsk' in this function.
+  Failed to get entry address of warn_bad_vsyscall
+  Segmentation fault (core dumped)
+
+Committer testing:
+
+After the patch:
+
+  $ perf probe -D "task_pid_nr tsk"
+  Failed to find 'tsk' in this function.
+  Failed to get entry address of warn_bad_vsyscall
+  Failed to get entry address of signal_fault
+  Failed to get entry address of show_signal
+  Failed to get entry address of umip_printk
+  Failed to get entry address of __bad_area_nosemaphore
+  <SNIP>
+  Failed to get entry address of sock_set_timeout
+  Failed to get entry address of tcp_recvmsg
+  Probe point 'task_pid_nr' not found.
+    Error: Failed to add events.
+  $
+
+Fixes: 092b1f0b5f9f ("perf probe: Clear probe_trace_event when add_probe_trace_event() fails")
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lore.kernel.org/lkml/156856587999.25775.5145779959474477595.stgit@devnote2
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_ib.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/perf/util/probe-event.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ib.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ib.c
-index 51b5e977ca885..f4e9d1b10e3ed 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ib.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ib.c
-@@ -139,7 +139,8 @@ int amdgpu_ib_schedule(struct amdgpu_ring *ring, unsigned num_ibs,
- 	/* ring tests don't use a job */
- 	if (job) {
- 		vm = job->vm;
--		fence_ctx = job->base.s_fence->scheduled.context;
-+		fence_ctx = job->base.s_fence ?
-+			job->base.s_fence->scheduled.context : 0;
- 	} else {
- 		vm = NULL;
- 		fence_ctx = 0;
+diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+index 8394d48f8b32e..3355c445abedf 100644
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -2329,6 +2329,7 @@ void clear_probe_trace_event(struct probe_trace_event *tev)
+ 		}
+ 	}
+ 	zfree(&tev->args);
++	tev->nargs = 0;
+ }
+ 
+ struct kprobe_blacklist_node {
 -- 
 2.20.1
 
