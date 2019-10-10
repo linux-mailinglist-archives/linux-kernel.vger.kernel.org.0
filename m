@@ -2,111 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34AB2D2CED
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 16:53:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A732D2CE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 16:51:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726450AbfJJOwC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 10:52:02 -0400
-Received: from cmccmta1.chinamobile.com ([221.176.66.79]:2391 "EHLO
-        cmccmta1.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbfJJOwC (ORCPT
+        id S1726279AbfJJOvX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 10:51:23 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:43469 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbfJJOvX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 10:52:02 -0400
-Received: from spf.mail.chinamobile.com (unknown[172.16.121.13]) by rmmx-syy-dmz-app02-12002 (RichMail) with SMTP id 2ee25d9f4569809-229e5; Thu, 10 Oct 2019 22:51:21 +0800 (CST)
-X-RM-TRANSID: 2ee25d9f4569809-229e5
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG: 00000000
-Received: from localhost (unknown[223.105.0.241])
-        by rmsmtp-syy-appsvr07-12007 (RichMail) with SMTP id 2ee75d9f4566e8f-c4fb8;
-        Thu, 10 Oct 2019 22:51:20 +0800 (CST)
-X-RM-TRANSID: 2ee75d9f4566e8f-c4fb8
-From:   Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
-To:     Shuah Khan <shuah@kernel.org>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Simon Horman <horms@verge.net.au>
-Cc:     Julian Anastasov <ja@ssi.bg>, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, lvs-devel@vger.kernel.org,
-        netfilter-devel@vger.kernel.org,
-        Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
-Subject: [PATCH v6 3/3] selftests: netfilter: add ipvs tunnel test case
-Date:   Thu, 10 Oct 2019 22:50:55 +0800
-Message-Id: <1570719055-25110-4-git-send-email-yanhaishuang@cmss.chinamobile.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1570719055-25110-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
-References: <1570719055-25110-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
+        Thu, 10 Oct 2019 10:51:23 -0400
+Received: by mail-io1-f67.google.com with SMTP id v2so14282073iob.10
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 07:51:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linbit-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qSn+IbxhWIYTbk+iRSpPFibjYFIoDZf+e+FxR6Ivkjk=;
+        b=CMiuA1bAsqhGMhz0TB4PodgSVEo3g5QjP1Fu0Ynm021+h5UsusJeQOOrhisvEnWTe2
+         bN+KehzdyJghCtDEti1ENtTDNYHtxdbVMnFtroXadVWscgHy9EnqpRUMRPZWE8JYBSc2
+         JPHuvbI4LJE4TZd/Pw/1XVTuJYrUqb/hpLgI1JT7f7UBdJsJarltl3FjZjxzEyPMDS7T
+         rqOdkZjBx6BrVCCvqgsqX8K+ILXYpkFO+3Xg3bMXhf3denPUNMsxr3V3XQ/eunajRG6/
+         iCjm8UQGXTrr2qURaiQvx0OU5lqNmUr3GMyj0fUvXA2dcdYJpdLnj2qrUhbV1+B8CW1t
+         563w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qSn+IbxhWIYTbk+iRSpPFibjYFIoDZf+e+FxR6Ivkjk=;
+        b=Rroe7PaWTfLhrX0dzXwPoYvTR/HmGL1SlEJOYM/gA6G2ISNIU0AkYtWywNAaSoIeXj
+         RpxUsJpyAf0G4dhOLTszirZb3LaCkEX4FRxTZ2SX0wIpFlMEsLYfEfH9NdKEX7KO20JU
+         DaQdPUGeNz0bWIAYPZk8yPTAH464f6ZlUNbfJGEv3sSq9GT8ClPl8ieJ2oogxvDoNgH0
+         s9XcP1aA8mInHytMYrSUgn2YT0mlz1/OcylncNMfYtti6OSkvzntF9czCdEz5jTwThsW
+         70SgFUVOBqMVRTCEqDthiBmUQOKKS9avHTLedXVU86ILzFj6+p+IC9C6w1MKx4/u5hh7
+         ULzA==
+X-Gm-Message-State: APjAAAX0oDFLzJNRjBOdF7gbd/Tty11s5SASq3L9lqvY2GX9VPpuHEif
+        9b0bOQ7mx85LTEWPSMspb4RrsJ/jNfMiQ0humiUiwg==
+X-Google-Smtp-Source: APXvYqx8HaNdT/+Du1N7u8XZJrZL2oN5WfxqTEykBcboGo9OOgOaPal6nfU64eR4Z/J4NuhEvJLwgogdeek2MthjUQE=
+X-Received: by 2002:a5d:87d2:: with SMTP id q18mr402942ios.46.1570719081321;
+ Thu, 10 Oct 2019 07:51:21 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190925150308.6609-1-joel.colledge@linbit.com>
+In-Reply-To: <20190925150308.6609-1-joel.colledge@linbit.com>
+From:   Joel Colledge <joel.colledge@linbit.com>
+Date:   Thu, 10 Oct 2019 16:51:10 +0200
+Message-ID: <CAGNP_+WxQSd_JBoWGn8H2CH1aY3PmZGcgrHziRGKTH8OJz33Vw@mail.gmail.com>
+Subject: Re: [PATCH] scripts/gdb: fix lx-dmesg when CONFIG_PRINTK_CALLER is set
+To:     Jan Kiszka <jan.kiszka@siemens.com>,
+        Kieran Bingham <kbingham@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, leonard.crestez@nxp.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Test virtual server via ipip tunnel.
+Hi Jan and Kieran, maintainers of scripts/gdb/,
+CC: Leonard, most recent contributor to scripts/gdb/linux/dmesg.py
 
-Tested:
-# selftests: netfilter: ipvs.sh
-# Testing DR mode...
-# Testing NAT mode...
-# Testing Tunnel mode...
-# ipvs.sh: PASS
-ok 6 selftests: netfilter: ipvs.sh
-
-Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
----
-v2: optimize test script
----
- tools/testing/selftests/netfilter/ipvs.sh | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
-
-diff --git a/tools/testing/selftests/netfilter/ipvs.sh b/tools/testing/selftests/netfilter/ipvs.sh
-index 8b2e618..c3b8f90 100755
---- a/tools/testing/selftests/netfilter/ipvs.sh
-+++ b/tools/testing/selftests/netfilter/ipvs.sh
-@@ -168,6 +168,30 @@ test_nat() {
- 	test_service
- }
- 
-+test_tun() {
-+	ip netns exec ns0 ip route add ${vip_v4} via ${gip_v4} dev br0
-+
-+	ip netns exec ns1 modprobe ipip
-+	ip netns exec ns1 ip link set tunl0 up
-+	ip netns exec ns1 sysctl -qw net.ipv4.ip_forward=0
-+	ip netns exec ns1 sysctl -qw net.ipv4.conf.all.send_redirects=0
-+	ip netns exec ns1 sysctl -qw net.ipv4.conf.default.send_redirects=0
-+	ip netns exec ns1 ipvsadm -A -t ${vip_v4}:${port} -s rr
-+	ip netns exec ns1 ipvsadm -a -i -t ${vip_v4}:${port} -r ${rip_v4}:${port}
-+	ip netns exec ns1 ip addr add ${vip_v4}/32 dev lo:1
-+
-+	ip netns exec ns2 modprobe ipip
-+	ip netns exec ns2 ip link set tunl0 up
-+	ip netns exec ns2 sysctl -qw net.ipv4.conf.all.arp_ignore=1
-+	ip netns exec ns2 sysctl -qw net.ipv4.conf.all.arp_announce=2
-+	ip netns exec ns2 sysctl -qw net.ipv4.conf.all.rp_filter=0
-+	ip netns exec ns2 sysctl -qw net.ipv4.conf.tunl0.rp_filter=0
-+	ip netns exec ns2 sysctl -qw net.ipv4.conf.veth21.rp_filter=0
-+	ip netns exec ns2 ip addr add ${vip_v4}/32 dev lo:1
-+
-+	test_service
-+}
-+
- run_tests() {
- 	local errors=
- 
-@@ -183,6 +207,12 @@ run_tests() {
- 	test_nat
- 	errors=$(( $errors + $? ))
- 
-+	echo "Testing Tunnel mode..."
-+	cleanup
-+	setup
-+	test_tun
-+	errors=$(( $errors + $? ))
-+
- 	return $errors
- }
- 
--- 
-1.8.3.1
-
-
-
+Could someone look at this fix please? Is there anything I should
+improve in the code or the format of the contribution? Thanks.
