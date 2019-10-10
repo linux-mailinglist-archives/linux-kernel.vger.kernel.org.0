@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A97ED25A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:02:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C15CDD259C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:02:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387912AbfJJJBi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 05:01:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45708 "EHLO mail.kernel.org"
+        id S2388317AbfJJIlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:41:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388296AbfJJIlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:41:19 -0400
+        id S2388291AbfJJIlR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:41:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A28F521D7A;
-        Thu, 10 Oct 2019 08:41:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02B9621BE5;
+        Thu, 10 Oct 2019 08:41:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570696879;
-        bh=CGfWLHfDS5/I7M2lr6cE4KD8mzrZscQTZT50x3qj0yc=;
+        s=default; t=1570696876;
+        bh=ym8G2ZdQbDsO+1BvbPg5YIeTwSU9bt9Wg46NbwfNwBo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1WhQgIj/1bwX9FidizXpkT1B9+DAsRsQXdhu1RoGzF50eUyxcUecdGvnbkv7o5Jc/
-         iNBJ78IPEL02VDzIIN8BhHAOPx5xDbuuA9US3fm/Dycyn+JNk00Pc+2p4eYsbF2OUo
-         uCpa2yYXB+mFQ+6u4NPUaoDPi1uhTX2OtGZYWM/4=
+        b=tZLBhkN0mMhcgcn2CnbcGm3aLnJWm9fM3pJr1/yhtPGvKhYHm8tTagGIgnN3yML7J
+         RLHbCaDBlOSvoAEEHksp3ht5ugXQFCuctILeUgEOxlCWp0ek8LpORqj50VRiWvW5WQ
+         gs5c93NXpwRqBpue5C2drxf4j7KV83ZbnhinArKo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Erhard F." <erhard_f@mailbox.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 5.3 031/148] powerpc/kasan: Fix shadow area set up for modules.
-Date:   Thu, 10 Oct 2019 10:34:52 +0200
-Message-Id: <20191010083613.034078157@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 5.3 040/148] crypto: qat - Silence smp_processor_id() warning
+Date:   Thu, 10 Oct 2019 10:35:01 +0200
+Message-Id: <20191010083613.576179416@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
 References: <20191010083609.660878383@linuxfoundation.org>
@@ -44,40 +44,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
 
-commit 663c0c9496a69f80011205ba3194049bcafd681d upstream.
+commit 1b82feb6c5e1996513d0fb0bbb475417088b4954 upstream.
 
-When loading modules, from time to time an Oops is encountered during
-the init of shadow area for globals. This is due to the last page not
-always being mapped depending on the exact distance between the start
-and the end of the shadow area and the alignment with the page
-addresses.
+It seems that smp_processor_id() is only used for a best-effort
+load-balancing, refer to qat_crypto_get_instance_node(). It's not feasible
+to disable preemption for the duration of the crypto requests. Therefore,
+just silence the warning. This commit is similar to e7a9b05ca4
+("crypto: cavium - Fix smp_processor_id() warnings").
 
-Fix this by aligning the starting address with the page address.
+Silences the following splat:
+BUG: using smp_processor_id() in preemptible [00000000] code: cryptomgr_test/2904
+caller is qat_alg_ablkcipher_setkey+0x300/0x4a0 [intel_qat]
+CPU: 1 PID: 2904 Comm: cryptomgr_test Tainted: P           O    4.14.69 #1
+...
+Call Trace:
+ dump_stack+0x5f/0x86
+ check_preemption_disabled+0xd3/0xe0
+ qat_alg_ablkcipher_setkey+0x300/0x4a0 [intel_qat]
+ skcipher_setkey_ablkcipher+0x2b/0x40
+ __test_skcipher+0x1f3/0xb20
+ ? cpumask_next_and+0x26/0x40
+ ? find_busiest_group+0x10e/0x9d0
+ ? preempt_count_add+0x49/0xa0
+ ? try_module_get+0x61/0xf0
+ ? crypto_mod_get+0x15/0x30
+ ? __kmalloc+0x1df/0x1f0
+ ? __crypto_alloc_tfm+0x116/0x180
+ ? crypto_skcipher_init_tfm+0xa6/0x180
+ ? crypto_create_tfm+0x4b/0xf0
+ test_skcipher+0x21/0xa0
+ alg_test_skcipher+0x3f/0xa0
+ alg_test.part.6+0x126/0x2a0
+ ? finish_task_switch+0x21b/0x260
+ ? __schedule+0x1e9/0x800
+ ? __wake_up_common+0x8d/0x140
+ cryptomgr_test+0x40/0x50
+ kthread+0xff/0x130
+ ? cryptomgr_notify+0x540/0x540
+ ? kthread_create_on_node+0x70/0x70
+ ret_from_fork+0x24/0x50
 
-Fixes: 2edb16efc899 ("powerpc/32: Add KASAN support")
-Cc: stable@vger.kernel.org # v5.2+
-Reported-by: Erhard F. <erhard_f@mailbox.org>
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/4f887e9b77d0d725cbb52035c7ece485c1c5fc14.1565361881.git.christophe.leroy@c-s.fr
+Fixes: ed8ccaef52 ("crypto: qat - Add support for SRIOV")
+Cc: stable@vger.kernel.org
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/mm/kasan/kasan_init_32.c |    2 +-
+ drivers/crypto/qat/qat_common/adf_common_drv.h |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/mm/kasan/kasan_init_32.c
-+++ b/arch/powerpc/mm/kasan/kasan_init_32.c
-@@ -87,7 +87,7 @@ static int __ref kasan_init_region(void
- 	if (!slab_is_available())
- 		block = memblock_alloc(k_end - k_start, PAGE_SIZE);
+--- a/drivers/crypto/qat/qat_common/adf_common_drv.h
++++ b/drivers/crypto/qat/qat_common/adf_common_drv.h
+@@ -95,7 +95,7 @@ struct service_hndl {
  
--	for (k_cur = k_start; k_cur < k_end; k_cur += PAGE_SIZE) {
-+	for (k_cur = k_start & PAGE_MASK; k_cur < k_end; k_cur += PAGE_SIZE) {
- 		pmd_t *pmd = pmd_offset(pud_offset(pgd_offset_k(k_cur), k_cur), k_cur);
- 		void *va = block ? block + k_cur - k_start : kasan_get_one_page();
- 		pte_t pte = pfn_pte(PHYS_PFN(__pa(va)), PAGE_KERNEL);
+ static inline int get_current_node(void)
+ {
+-	return topology_physical_package_id(smp_processor_id());
++	return topology_physical_package_id(raw_smp_processor_id());
+ }
+ 
+ int adf_service_register(struct service_hndl *service);
 
 
