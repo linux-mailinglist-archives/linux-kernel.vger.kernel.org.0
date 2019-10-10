@@ -2,96 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DF11D24E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:01:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06529D24EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:01:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390141AbfJJIvm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:51:42 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:35198 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390103AbfJJIvf (ORCPT
+        id S2390167AbfJJIvx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:51:53 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36703 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390154AbfJJIvt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:51:35 -0400
-Received: by mail-ot1-f65.google.com with SMTP id z6so4204992otb.2;
-        Thu, 10 Oct 2019 01:51:35 -0700 (PDT)
+        Thu, 10 Oct 2019 04:51:49 -0400
+Received: by mail-wm1-f65.google.com with SMTP id m18so5846731wmc.1;
+        Thu, 10 Oct 2019 01:51:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=iBVy5EpS5miZLPYXy54PXc4Tp3ZcCov2ByS5T+jtyzQ=;
+        b=oPeNcuB6ERNhMIaqdBhqvoaicqED33w2ZnRTPI1p35C5PjIp7M9osj7CbCyJN8zPD3
+         nG6qo00p+0C3GDV4s/9yBSa8mfu9zBhTYIglKOccIfc+j10IBM9F9DXFq4SIfkTQNXaE
+         fE375uuX1MA0BcAHwBvL1otT/gRBtypTz3WyZ+7i2csJ0nBVgikl3eux1lElB7TYwEjv
+         vnJOQVyLrrrEOe4XhskyXBXjBDp+ToI+0IwbqS5sW8lsPH33Lut4ZKWtJHjV9CC7Q/95
+         L1DRvuYRO+1wfp6e/A2OpRyn91sFEAEHtTOOWNqYCTTPsrEmiXvoY2x1H1/G9O06cNzR
+         y76g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5WNy1ElvBlIaPl/GDmtgPQ9owV2ns5U1oFv7ORu9uBU=;
-        b=daVNcE/EVKPZW/LOWlMEgA2sMtNhSisWzXtx24MPYhrcprVMg8tQSbDn9ybR9wzD4m
-         hu1h9il3eQXNkx140R02v9VoejoOMA6O0mFy2+8293nNpP9nKElFvEkJVIpzewace0WZ
-         +K3LlU6b6gi5UwOR1d1KAY3igzfB4DC0Rf7OmtneT3d0YpuN0+32HjZeeVvWoBGK0+6G
-         wrSRiy0OGBLCK+yG84B2g795q7c16DYsNX+scmUNK2oqUiJy6u6KkHEAwPXwwSaKL9pX
-         9ab63t+7oLgErHZV+Rb0HuU3+mQR/tGfe4q1rGVG6iv10N+pJl0MAhPN0mc9PSAp1fv7
-         19Og==
-X-Gm-Message-State: APjAAAWH16C6Ru5oS+trNhYXSiowmK4iF4pCgXUUMY2eoAJQHwNVRXrZ
-        yPxePIVYRx3kD19ipPp6IHHBraTi7heufZUTS8Q=
-X-Google-Smtp-Source: APXvYqybut8NGn1i7VK/T9RwJi5vdWmQ2cqbahMnWy1naHR4DNpIcCrBdMB7F4wtF7phljdYiF7/SfohwtDZ7o5VOz0=
-X-Received: by 2002:a9d:459b:: with SMTP id x27mr6529097ote.167.1570697494577;
- Thu, 10 Oct 2019 01:51:34 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=iBVy5EpS5miZLPYXy54PXc4Tp3ZcCov2ByS5T+jtyzQ=;
+        b=mjkF3uiUAAscIAlyznVnb9dgYJ4+5C+CzPqqTc/UhtyLZRDmwQ3CgYIeKqkKs4u0Kr
+         Dm/GYOVRtWtzjqVoe4Jye8XC+ONzgTwwFcEhe37gWL/cHtlgDox/XQFQLbb1+GGWMpa/
+         fmxHZVqpE0FLB0H+gazJkENW9ZkBpnQQv4dukYW4mZncbv/C56STTSwo5NeFrt03PooW
+         fPZE1+fiwEKlt8Gbe7nk6Qz1BST8fOkZlbwCqah/qHQWxv4cyv1X12A5cXKm/hcceeEd
+         fGTYJAtdce2wREJ1qYWWQDLdSTybQYYhk1meZE+fnA9riuj56LHkMIm/GTyeZSfxeqmI
+         RH0w==
+X-Gm-Message-State: APjAAAVEhW8PI03QOa0a1PhXA6jUmDY9hfT9aCPnG6BCcDfZ+Rk/W8e4
+        ipJXd63/hpD4yJTWSQ+wSdG1Xc58
+X-Google-Smtp-Source: APXvYqyLknqLcUuYq9q/QesWPksjxjSFkRwD5oI5ldv1gDrTXvnqviOQWl53byaUzLuLESgiSA0EPw==
+X-Received: by 2002:a05:600c:2190:: with SMTP id e16mr6254868wme.136.1570697507740;
+        Thu, 10 Oct 2019 01:51:47 -0700 (PDT)
+Received: from AlexGordeev-DPT-VI0092 ([213.86.25.46])
+        by smtp.gmail.com with ESMTPSA id g13sm4032958wrm.42.2019.10.10.01.51.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 10 Oct 2019 01:51:47 -0700 (PDT)
+Date:   Thu, 10 Oct 2019 10:51:45 +0200
+From:   Alexander Gordeev <a.gordeev.box@gmail.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+        Michael Chen <micchen@altera.com>, dmaengine@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dmaengine: avalon: Intel Avalon-MM DMA Interface
+ for PCIe
+Message-ID: <20191010085144.GA14197@AlexGordeev-DPT-VI0092>
+References: <cover.1570558807.git.a.gordeev.box@gmail.com>
+ <3ed3c016b7fbe69e36023e7ee09c53acac8a064c.1570558807.git.a.gordeev.box@gmail.com>
+ <20191009121441.GM25098@kadam>
+ <20191009145811.GA3823@AlexGordeev-DPT-VI0092>
+ <20191009185323.GG13286@kadam>
 MIME-Version: 1.0
-References: <1569514137-2307-1-git-send-email-mario.limonciello@dell.com>
- <97e66464-8407-fd58-21a6-aeb7736dec7b@molgen.mpg.de> <541d9bfa3ccf45b5b07e35e3eebb72ed@AUSX13MPC105.AMER.DELL.COM>
-In-Reply-To: <541d9bfa3ccf45b5b07e35e3eebb72ed@AUSX13MPC105.AMER.DELL.COM>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 10 Oct 2019 10:51:23 +0200
-Message-ID: <CAJZ5v0i6tApHQ-QUS3PNo8BZ7CHaqpZea+z=Layyzt0yhGjVeQ@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: PM: Revert "ACPI / PM: Blacklist Low Power S0 Idle
- _DSM for Dell XPS13 9360"
-To:     Mario Limonciello <Mario.Limonciello@dell.com>
-Cc:     Paul Menzel <pmenzel@molgen.mpg.de>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191009185323.GG13286@kadam>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 8, 2019 at 3:44 AM <Mario.Limonciello@dell.com> wrote:
->
-> > On 26.09.19 18:08, Mario Limonciello wrote:
-> > > This reverts part of
-> > > commit 71630b7a832f ("ACPI / PM: Blacklist Low Power S0 Idle _DSM for
-> > > Dell XPS13 9360") to remove the S0ix blacklist for the XPS 9360.
-> > >
-> > > The problems with this system occurred in one possible NVME SSD when
-> > > putting system into s0ix.  As the NVME sleep behavior has been
-> > > adjusted in d916b1be this is expected to be now resolved.
-> >
-> > 1.  Please add, that it was the Hynix(?) SSD.
-> > 2.  Please add the commit message summary of d916b1be.
-> >
-> >      nvme-pci: use host managed power state for suspend
-> >
->
-> Rafael, let me know if you want me to adjust the commit message and resubmit
-> or if you would just handle this task.
->
-> > > Cc: 'Paul Menzel <pmenzel@molgen.mpg.de>'
-> > > BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=196907
-> > > Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
-> >
-> > Tag it for the stable series? d916b1be (first tag v5.3-rc1) is not tagged for stable.
-> >
->
-> Although Dell arranged a lot of testing with partners I don't feel d916b1be is a stable
-> candidate.  Rafael found a corner case with regards to ASPM configuration last minute
-> in 5.3rcX, I found a another corner case related to order of events and timing around
-> PC10 entry that's getting fixed in 5.4.
->
-> > > ---
-> > > The particular failing configuration was reported by only ever failed
-> > > for Paul Menzel, so hopefully he can test on his failing system.
-> >
-> > I successfully tested Linux 5.4-rc1+ with this commit last Friday on the Dell XPS
-> > 13 9360.
-> >
-> > Tested-by: Paul Menzel <pmenzel@molgen.mpg.de>
-> >
->
-> Well that's great, appreciate your testing and confirmation.
+On Wed, Oct 09, 2019 at 09:53:23PM +0300, Dan Carpenter wrote:
+> > > > +	u32 *rd_flags = hw->dma_desc_table_rd.cpu_addr->flags;
+> > > > +	u32 *wr_flags = hw->dma_desc_table_wr.cpu_addr->flags;
+> > > > +	struct avalon_dma_desc *desc;
+> > > > +	struct virt_dma_desc *vdesc;
+> > > > +	bool rd_done;
+> > > > +	bool wr_done;
+> > > > +
+> > > > +	spin_lock(lock);
+> > > > +
+> > > > +	rd_done = (hw->h2d_last_id < 0);
+> > > > +	wr_done = (hw->d2h_last_id < 0);
+> > > > +
+> > > > +	if (rd_done && wr_done) {
+> > > > +		spin_unlock(lock);
+> > > > +		return IRQ_NONE;
+> > > > +	}
+> > > > +
+> > > > +	do {
+> > > > +		if (!rd_done && rd_flags[hw->h2d_last_id])
+> > > > +			rd_done = true;
+> > > > +
+> > > > +		if (!wr_done && wr_flags[hw->d2h_last_id])
+> > > > +			wr_done = true;
+> > > > +	} while (!rd_done || !wr_done);
+> > > 
+> > > This loop is very strange.  It feels like the last_id indexes needs
+> > > to atomic or protected from racing somehow so we don't do an out of
+> > > bounds read.
 
-Applying, thanks!
+[...]
+
+> You're missing my point.  When we set
+> hw->d2h_last_id = 1;
+[1]
+> ...
+> hw->d2h_last_id = 2;
+[2]
+
+> There is a tiny moment where ->d2h_last_id is transitioning from 1 to 2
+> where its value is unknown.  We're in a busy loop here so we have a
+> decent chance of hitting that 1/1000,000th of a second.  If we happen to
+> hit it at exactly the right time then we're reading from a random
+> address and it will cause an oops.
+> 
+> We have to use atomic_t types or something to handle race conditions.
+
+Err.. I am still missing the point :( In your example I do see a chance
+for a reader to read out 1 at point in time [2] - because of SMP race.
+But what could it be other than 1 or 2?
+
+Anyways, all code paths dealing with h2d_last_id and d2h_last_id indexes
+are protected with a spinlock.
+
+> regards,
+> dan carpenter
+> 
