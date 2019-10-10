@@ -2,39 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E434D24A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:00:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83B76D24CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:00:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389712AbfJJIsz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:48:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55038 "EHLO mail.kernel.org"
+        id S2390040AbfJJIuz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:50:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387657AbfJJIsp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:48:45 -0400
+        id S2390029AbfJJIuu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:50:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 85A192064A;
-        Thu, 10 Oct 2019 08:48:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ECE2421929;
+        Thu, 10 Oct 2019 08:50:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697324;
-        bh=JTeskSJEsytwnsbhj0g3kb2jBcSdMn7bs2/OemONbdE=;
+        s=default; t=1570697449;
+        bh=ltpmpVIfpVjSRY1nFe8HZMAvP9cNBcb938J+Gx1/Yr0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QRYg/2yNrBa1fcpxo1+U0m+F1ucdiKufH2wm27F+f8WV5h4iJ6637p2LrRNeTi3KE
-         /7Mpfmj5u/KCDiw3uIklHH0akNiRIZN+5vnRkbRS1zUPTVnZTpV78GsYioTnNzS5uc
-         OG/NZGGviUTYO1QpSQP/6LvG9Zdlda29GrG97c4U=
+        b=vX92p1J7yuEQP9GK9I1pWdepkhoMDqVkOaYcFrqjP0cA7yZLvz5/orzfQ1+IQwqB9
+         0wdn6ZHJCYBRxLQZ8uIAvxj3geVncRvgGOhDl+luFdQY94HDLA7r/uGxv1PkCjA62c
+         hVAdm67hXUw2OY5APigUENdKU3VCvSoktxHauav0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.19 101/114] arm64: add sysfs vulnerability show for speculative store bypass
-Date:   Thu, 10 Oct 2019 10:36:48 +0200
-Message-Id: <20191010083613.546505028@linuxfoundation.org>
+        stable@vger.kernel.org, loobinliu@tencent.com,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Waiman Long <longman@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>
+Subject: [PATCH 4.14 24/61] Revert "locking/pvqspinlock: Dont wait if vCPU is preempted"
+Date:   Thu, 10 Oct 2019 10:36:49 +0200
+Message-Id: <20191010083504.491883659@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
-References: <20191010083544.711104709@linuxfoundation.org>
+In-Reply-To: <20191010083449.500442342@linuxfoundation.org>
+References: <20191010083449.500442342@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,145 +49,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeremy Linton <jeremy.linton@arm.com>
+From: Wanpeng Li <wanpengli@tencent.com>
 
-[ Upstream commit 526e065dbca6df0b5a130b84b836b8b3c9f54e21 ]
+commit 89340d0935c9296c7b8222b6eab30e67cb57ab82 upstream.
 
-Return status based on ssbd_state and __ssb_safe. If the
-mitigation is disabled, or the firmware isn't responding then
-return the expected machine state based on a whitelist of known
-good cores.
+This patch reverts commit 75437bb304b20 (locking/pvqspinlock: Don't
+wait if vCPU is preempted).  A large performance regression was caused
+by this commit.  on over-subscription scenarios.
 
-Given a heterogeneous machine, the overall machine vulnerability
-defaults to safe but is reset to unsafe when we miss the whitelist
-and the firmware doesn't explicitly tell us the core is safe.
-In order to make that work we delay transitioning to vulnerable
-until we know the firmware isn't responding to avoid a case
-where we miss the whitelist, but the firmware goes ahead and
-reports the core is not vulnerable. If all the cores in the
-machine have SSBS, then __ssb_safe will remain true.
+The test was run on a Xeon Skylake box, 2 sockets, 40 cores, 80 threads,
+with three VMs of 80 vCPUs each.  The score of ebizzy -M is reduced from
+13000-14000 records/s to 1700-1800 records/s:
 
-Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+          Host                Guest                score
+
+vanilla w/o kvm optimizations     upstream    1700-1800 records/s
+vanilla w/o kvm optimizations     revert      13000-14000 records/s
+vanilla w/ kvm optimizations      upstream    4500-5000 records/s
+vanilla w/ kvm optimizations      revert      14000-15500 records/s
+
+Exit from aggressive wait-early mechanism can result in premature yield
+and extra scheduling latency.
+
+Actually, only 6% of wait_early events are caused by vcpu_is_preempted()
+being true.  However, when one vCPU voluntarily releases its vCPU, all
+the subsequently waiters in the queue will do the same and the cascading
+effect leads to bad performance.
+
+kvm optimizations:
+[1] commit d73eb57b80b (KVM: Boost vCPUs that are delivering interrupts)
+[2] commit 266e85a5ec9 (KVM: X86: Boost queue head vCPU to mitigate lock waiter preemption)
+
+Tested-by: loobinliu@tencent.com
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: loobinliu@tencent.com
+Cc: stable@vger.kernel.org
+Fixes: 75437bb304b20 (locking/pvqspinlock: Don't wait if vCPU is preempted)
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/kernel/cpu_errata.c |   42 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
 
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -233,6 +233,7 @@ static int detect_harden_bp_fw(void)
- DEFINE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
- 
- int ssbd_state __read_mostly = ARM64_SSBD_KERNEL;
-+static bool __ssb_safe = true;
- 
- static const struct ssbd_options {
- 	const char	*str;
-@@ -336,6 +337,7 @@ static bool has_ssbd_mitigation(const st
- 	struct arm_smccc_res res;
- 	bool required = true;
- 	s32 val;
-+	bool this_cpu_safe = false;
- 
- 	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
- 
-@@ -344,8 +346,14 @@ static bool has_ssbd_mitigation(const st
- 		goto out_printmsg;
- 	}
- 
-+	/* delay setting __ssb_safe until we get a firmware response */
-+	if (is_midr_in_range_list(read_cpuid_id(), entry->midr_range_list))
-+		this_cpu_safe = true;
-+
- 	if (psci_ops.smccc_version == SMCCC_VERSION_1_0) {
- 		ssbd_state = ARM64_SSBD_UNKNOWN;
-+		if (!this_cpu_safe)
-+			__ssb_safe = false;
- 		return false;
- 	}
- 
-@@ -362,6 +370,8 @@ static bool has_ssbd_mitigation(const st
- 
- 	default:
- 		ssbd_state = ARM64_SSBD_UNKNOWN;
-+		if (!this_cpu_safe)
-+			__ssb_safe = false;
- 		return false;
- 	}
- 
-@@ -370,14 +380,18 @@ static bool has_ssbd_mitigation(const st
- 	switch (val) {
- 	case SMCCC_RET_NOT_SUPPORTED:
- 		ssbd_state = ARM64_SSBD_UNKNOWN;
-+		if (!this_cpu_safe)
-+			__ssb_safe = false;
+---
+ kernel/locking/qspinlock_paravirt.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/kernel/locking/qspinlock_paravirt.h
++++ b/kernel/locking/qspinlock_paravirt.h
+@@ -247,7 +247,7 @@ pv_wait_early(struct pv_node *prev, int
+ 	if ((loop & PV_PREV_CHECK_MASK) != 0)
  		return false;
  
-+	/* machines with mixed mitigation requirements must not return this */
- 	case SMCCC_RET_NOT_REQUIRED:
- 		pr_info_once("%s mitigation not required\n", entry->desc);
- 		ssbd_state = ARM64_SSBD_MITIGATED;
- 		return false;
- 
- 	case SMCCC_RET_SUCCESS:
-+		__ssb_safe = false;
- 		required = true;
- 		break;
- 
-@@ -387,6 +401,8 @@ static bool has_ssbd_mitigation(const st
- 
- 	default:
- 		WARN_ON(1);
-+		if (!this_cpu_safe)
-+			__ssb_safe = false;
- 		return false;
- 	}
- 
-@@ -427,6 +443,14 @@ out_printmsg:
- 	return required;
+-	return READ_ONCE(prev->state) != vcpu_running || vcpu_is_preempted(prev->cpu);
++	return READ_ONCE(prev->state) != vcpu_running;
  }
  
-+/* known invulnerable cores */
-+static const struct midr_range arm64_ssb_cpus[] = {
-+	MIDR_ALL_VERSIONS(MIDR_CORTEX_A35),
-+	MIDR_ALL_VERSIONS(MIDR_CORTEX_A53),
-+	MIDR_ALL_VERSIONS(MIDR_CORTEX_A55),
-+	{},
-+};
-+
- #ifdef CONFIG_ARM64_ERRATUM_1463225
- DEFINE_PER_CPU(int, __in_cortex_a76_erratum_1463225_wa);
- 
-@@ -748,6 +772,7 @@ const struct arm64_cpu_capabilities arm6
- 		.capability = ARM64_SSBD,
- 		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
- 		.matches = has_ssbd_mitigation,
-+		.midr_range_list = arm64_ssb_cpus,
- 	},
- #ifdef CONFIG_ARM64_ERRATUM_1463225
- 	{
-@@ -778,3 +803,20 @@ ssize_t cpu_show_spectre_v2(struct devic
- 
- 	return sprintf(buf, "Vulnerable\n");
- }
-+
-+ssize_t cpu_show_spec_store_bypass(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	if (__ssb_safe)
-+		return sprintf(buf, "Not affected\n");
-+
-+	switch (ssbd_state) {
-+	case ARM64_SSBD_KERNEL:
-+	case ARM64_SSBD_FORCE_ENABLE:
-+		if (IS_ENABLED(CONFIG_ARM64_SSBD))
-+			return sprintf(buf,
-+			    "Mitigation: Speculative Store Bypass disabled via prctl\n");
-+	}
-+
-+	return sprintf(buf, "Vulnerable\n");
-+}
+ /*
 
 
