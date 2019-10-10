@@ -2,99 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFBE5D275F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 12:41:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B7FED277B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 12:50:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732954AbfJJKlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 06:41:15 -0400
-Received: from mga11.intel.com ([192.55.52.93]:49352 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732923AbfJJKlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 06:41:15 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2019 03:41:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,279,1566889200"; 
-   d="scan'208";a="187917759"
-Received: from twinkler-lnx.jer.intel.com ([10.12.91.155])
-  by orsmga008.jf.intel.com with ESMTP; 10 Oct 2019 03:41:13 -0700
-From:   Tomas Winkler <tomas.winkler@intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-kernel@vger.kernel.org,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: [char-misc-next] samples: mei: use hostprogs kbuild constructs
-Date:   Thu, 10 Oct 2019 16:27:10 +0300
-Message-Id: <20191010132710.4075-1-tomas.winkler@intel.com>
-X-Mailer: git-send-email 2.21.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1732095AbfJJKuY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 06:50:24 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38081 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726230AbfJJKuY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 06:50:24 -0400
+Received: by mail-wr1-f68.google.com with SMTP id w12so7281560wro.5;
+        Thu, 10 Oct 2019 03:50:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=nq8aTTwxoQayVKhvN2A/zAYVKjb3yhvqqfb15ovxI+M=;
+        b=Yb24pgwv0com25khkQ7ORavf/pBJRJm3rpESqTdZkOZtcXq+ARHRuW+CRxkr1sJsWR
+         KE6YW+UzKirDnW0aIcPiVPt1kM3xQuxe9FLmpwRkOEIbvRIz2WFALGdAK/UIgoIDiu9t
+         em7GV6TWc4GphRF9D12b5S/BEhygUD3xcY8qR31ht7A8mAwHAFFLzt9FhCUurF/l8zBG
+         okEmUb+TZiaXsP/7OByG0ZtGpNCeCko+fxF9IWuCKAhKnI3+DbNLrpfLW39WFJWuwWYL
+         hQRdMB5eKvDS6YzE/fUs/VxQhyHDom4p0tQ3Z1+g36Mds6PGcJjK4tlb1vTjuKPnqUgF
+         Hulw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=nq8aTTwxoQayVKhvN2A/zAYVKjb3yhvqqfb15ovxI+M=;
+        b=RsrfSRZ09sRN74NA9XKO6PsxyYMTv0f+w+G+Xq9e4KorbqXNP21J6EnId2BTaFaUYr
+         6HH6w1vGUNz/9MSNA3kVOgWPirlDDlzTcfUUKP5Q9Ojrf7NKrBCFpHhhVxe8c2c09vGj
+         kcIm9se0j99/LtG3y4hptFt+NLP7GyNXSeFflZxKSaPgQw/G2BHTwO6tT0Qvi8FPhW3n
+         rc3LlFJsXDVK3RE0v/+EdO0VdYssXhG8kRN8B5QYcgHPkVtUx7Ry8WOjuVXR9F7DjOC6
+         He8kYGsqiCrWd/h7Kbo+Z+SbELKpRY1tUXqpBSXp1b6qGkptuRHBVKDMTNE0nfYB+kMD
+         TxwA==
+X-Gm-Message-State: APjAAAXiw38Qy4tL+3PpZaHrI+fppozq3Iwjrzaye+QmU4AdtmBdjh4B
+        5y9tgwxukLbCExzuzMrlYuL3cF3F
+X-Google-Smtp-Source: APXvYqxNdZDbsK/iylAAYtWtc/CfhmfYlIQCb8cl6+RLKC/VLgmHbsWHZm5/d3QSMOjUDMV90ZJnyw==
+X-Received: by 2002:adf:e3cb:: with SMTP id k11mr8573250wrm.80.1570704620325;
+        Thu, 10 Oct 2019 03:50:20 -0700 (PDT)
+Received: from 640k.localdomain ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id r13sm8259118wrn.0.2019.10.10.03.50.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 10 Oct 2019 03:50:18 -0700 (PDT)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     vkuznets@redhat.com, suleiman@google.com
+Subject: [PATCH] kvm: clear kvmclock MSR on reset
+Date:   Thu, 10 Oct 2019 12:50:17 +0200
+Message-Id: <1570704617-32285-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use hostprogs kbuild constructs to compile
-mei sample program mei-amt-version
+After resetting the vCPU, the kvmclock MSR keeps the previous value but it is
+not enabled.  This can be confusing, so fix it.
 
-Add CONFIG_SAMPLE_INTEL_MEI option to enable/disable
-the feature.
-
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- samples/Kconfig      |  7 +++++++
- samples/Makefile     |  1 +
- samples/mei/Makefile | 12 ++++++------
- 3 files changed, 14 insertions(+), 6 deletions(-)
+ arch/x86/kvm/x86.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/samples/Kconfig b/samples/Kconfig
-index c8dacb4dda80..b663d9d24114 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -169,4 +169,11 @@ config SAMPLE_VFS
- 	  as mount API and statx().  Note that this is restricted to the x86
- 	  arch whilst it accesses system calls that aren't yet in all arches.
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index f26f8be4e621..a55252c69118 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -2533,6 +2533,7 @@ static int kvm_pv_enable_async_pf(struct kvm_vcpu *vcpu, u64 data)
+ static void kvmclock_reset(struct kvm_vcpu *vcpu)
+ {
+ 	vcpu->arch.pv_time_enabled = false;
++	vcpu->arch.time = 0;
+ }
  
-+config SAMPLE_INTEL_MEI
-+	bool "Build example program working with intel mei driver"
-+	depends on INTEL_MEI
-+	help
-+	  Build a sample program to work with mei device.
-+
-+
- endif # SAMPLES
-diff --git a/samples/Makefile b/samples/Makefile
-index 7d6e4ca28d69..d6062ab25347 100644
---- a/samples/Makefile
-+++ b/samples/Makefile
-@@ -20,3 +20,4 @@ obj-$(CONFIG_SAMPLE_TRACE_PRINTK)	+= trace_printk/
- obj-$(CONFIG_VIDEO_PCI_SKELETON)	+= v4l/
- obj-y					+= vfio-mdev/
- subdir-$(CONFIG_SAMPLE_VFS)		+= vfs
-+obj-$(CONFIG_SAMPLE_INTEL_MEI)		+= mei/
-diff --git a/samples/mei/Makefile b/samples/mei/Makefile
-index c7e52e9e92ca..27f37efdadb4 100644
---- a/samples/mei/Makefile
-+++ b/samples/mei/Makefile
-@@ -1,10 +1,10 @@
- # SPDX-License-Identifier: GPL-2.0
--CC := $(CROSS_COMPILE)gcc
--CFLAGS := -I../../usr/include
-+# Copyright (c) 2012-2019, Intel Corporation. All rights reserved.
+ static void kvm_vcpu_flush_tlb(struct kvm_vcpu *vcpu, bool invalidate_gpa)
+@@ -2698,8 +2699,6 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 	case MSR_KVM_SYSTEM_TIME: {
+ 		struct kvm_arch *ka = &vcpu->kvm->arch;
  
--PROGS := mei-amt-version
-+hostprogs-y := mei-amt-version
+-		kvmclock_reset(vcpu);
+-
+ 		if (vcpu->vcpu_id == 0 && !msr_info->host_initiated) {
+ 			bool tmp = (msr == MSR_KVM_SYSTEM_TIME);
  
--all: $(PROGS)
-+HOSTCFLAGS_mei-amt-version.o += -I$(objtree)/usr/include
+@@ -2713,14 +2712,13 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 		kvm_make_request(KVM_REQ_GLOBAL_CLOCK_UPDATE, vcpu);
  
--clean:
--	rm -fr $(PROGS)
-+always := $(hostprogs-y)
-+
-+all: mei-amt-version
+ 		/* we verify if the enable bit is set... */
++		vcpu->arch.pv_time_enabled = false;
+ 		if (!(data & 1))
+ 			break;
+ 
+ 		if (kvm_gfn_to_hva_cache_init(vcpu->kvm,
+ 		     &vcpu->arch.pv_time, data & ~1ULL,
+ 		     sizeof(struct pvclock_vcpu_time_info)))
+-			vcpu->arch.pv_time_enabled = false;
+-		else
+ 			vcpu->arch.pv_time_enabled = true;
+ 
+ 		break;
 -- 
-2.21.0
+1.8.3.1
 
