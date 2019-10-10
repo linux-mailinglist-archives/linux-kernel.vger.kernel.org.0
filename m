@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 589FFD336C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 23:30:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D442D337B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 23:34:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbfJJVa3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 17:30:29 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:33816 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725867AbfJJVa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 17:30:28 -0400
-Received: from ip5f5a6266.dynamic.kabel-deutschland.de ([95.90.98.102] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1iIg0w-0007BZ-RA; Thu, 10 Oct 2019 23:30:26 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Soeren Moch <smoch@web.de>
-Cc:     linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: dts: rockchip: fix RockPro64 sdmmc settings
-Date:   Thu, 10 Oct 2019 23:30:26 +0200
-Message-ID: <2055831.6uBfQfHlXk@phil>
-In-Reply-To: <20191004203213.4995-1-smoch@web.de>
-References: <20191004203213.4995-1-smoch@web.de>
+        id S1727405AbfJJVeP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 17:34:15 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:65291 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbfJJVeP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 17:34:15 -0400
+Received: from 79.184.255.36.ipv4.supernova.orange.pl (79.184.255.36) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
+ id 41120e105ba2e198; Thu, 10 Oct 2019 23:34:13 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Doug Smythies <dsmythies@telus.net>
+Subject: [PATCH 0/4] cpuidle: teo: Fix issues related to disabled idle states
+Date:   Thu, 10 Oct 2019 23:30:40 +0200
+Message-ID: <60416800.X4hXmAfbqi@kreacher>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -33,19 +33,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, 4. Oktober 2019, 22:32:13 CEST schrieb Soeren Moch:
-> According to the RockPro64 schematic [1] the rk3399 sdmmc controller is
-> connected to a microSD (TF card) slot. Remove the cap-mmc-highspeed
-> property of the sdmmc controller, since no mmc card can be connected here.
-> 
-> [1] http://files.pine64.org/doc/rockpro64/rockpro64_v21-SCH.pdf
-> 
-> Fixes: e4f3fb490967 ("arm64: dts: rockchip: add initial dts support for Rockpro64")
-> Signed-off-by: Soeren Moch <smoch@web.de>
+Hi All,
 
-applied as fix for 5.4
+There are a few issues related to the handling of disabled idle states in the
+TEO (Timer-Events-Oriented) cpuidle governor which are addressed by this
+series.
 
-Thanks
-Heiko
+The application of the entire series is exactly equivalent to the testing patch
+at https://lore.kernel.org/lkml/3490479.2dnHFFeJIp@kreacher/ , but IMO it is
+cleaner to split the changes into smaller patches which also allows them to
+be explained more accurately.
+
+Thanks,
+Rafael
+
 
 
