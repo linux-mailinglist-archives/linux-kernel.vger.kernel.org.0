@@ -2,149 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9355AD21B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 09:38:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FE8AD21C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 09:39:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733158AbfJJHiL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 03:38:11 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36558 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727362AbfJJH1f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 03:27:35 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 676E2877A61;
-        Thu, 10 Oct 2019 07:27:34 +0000 (UTC)
-Received: from [10.36.117.125] (ovpn-117-125.ams2.redhat.com [10.36.117.125])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 16A5D19D70;
-        Thu, 10 Oct 2019 07:27:32 +0000 (UTC)
-Subject: Re: [PATCH v2 2/2] mm/memory-failure.c: Don't access uninitialized
- memmaps in memory_failure()
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20191009142435.3975-1-david@redhat.com>
- <20191009142435.3975-3-david@redhat.com>
- <20191009144323.GH6681@dhcp22.suse.cz>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <5a626821-77e9-e26b-c2ee-219670283bf0@redhat.com>
-Date:   Thu, 10 Oct 2019 09:27:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1733169AbfJJHiM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 03:38:12 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:40141 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732945AbfJJH2N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 03:28:13 -0400
+Received: by mail-ed1-f68.google.com with SMTP id v38so4495828edm.7
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 00:28:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vJlsoh59oqAW/FaeFtNhF8aeiLWws7tRN/rM3DPOGVk=;
+        b=c456C2yYsszcTskT+OjzXqm9fVBu3NJ5qlbw7ZUpE1S9D86PePnNay+vuANzmvUm92
+         upiwGqr0jcyA9imn8XkWzMB3rUlysShx8nSJvJZ33ARM0S4QGBjMkBg5Rl/59wXkViik
+         nvCry4o/SQdvSs13kRgdKD0hN8VZvijYv6jQg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vJlsoh59oqAW/FaeFtNhF8aeiLWws7tRN/rM3DPOGVk=;
+        b=see3bW/q/Fr1eTnmf/RguAP9W00rxB7eKiWRrhcsxB4Jv9beT3KSDiexRWGi+dCKtq
+         itrGprq1bJtTaUu1+tBao/5ct8J3tkLnNUBnlO5x6vSJ4UM+hcIjpyrJb0ZjjTFS87l+
+         r+2HdKDC7TanAVlmpekRC/9RKxvPEw6qTfjzOuywidWDg9BUfFRj9jDLEa/SBkwsOOGN
+         a9E5fGEJg7okIsiPCsiI+Ssvx2sl4Ors31B6k6Oig4hPfFeu4DGDQJVRG+Gu09JL+t3y
+         qjNSYVPzIhXKE49sqUdDOEof8/Tp1UWX74dMEeN9y3Wnxvj8nGD7Cj/OOBRFXJzMlNpf
+         qH0Q==
+X-Gm-Message-State: APjAAAVjRPvemL2BLyBuS16OJ6mniB6zFL7H2KhvIdpLFave0O7VyyUc
+        gmp/nyYOYj47iJJSmnJ8yI4BP2AaqgN0SQ==
+X-Google-Smtp-Source: APXvYqwAwV5tXs1xFq98efI3KbXVPaIUG9AQsBnGGO48vlLGH/LzrrVeOujG0SMDpo889Pl/w8NomQ==
+X-Received: by 2002:a17:906:7202:: with SMTP id m2mr6634040ejk.138.1570692490671;
+        Thu, 10 Oct 2019 00:28:10 -0700 (PDT)
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com. [209.85.221.52])
+        by smtp.gmail.com with ESMTPSA id ng5sm589420ejb.9.2019.10.10.00.28.09
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2019 00:28:09 -0700 (PDT)
+Received: by mail-wr1-f52.google.com with SMTP id p14so6465056wro.4
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 00:28:09 -0700 (PDT)
+X-Received: by 2002:adf:fc42:: with SMTP id e2mr7509472wrs.100.1570692489004;
+ Thu, 10 Oct 2019 00:28:09 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191009144323.GH6681@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.69]); Thu, 10 Oct 2019 07:27:34 +0000 (UTC)
+References: <20191007174505.10681-1-ezequiel@collabora.com>
+ <20191007174505.10681-3-ezequiel@collabora.com> <CAAFQd5BNu2ea3ei_imHmEwmdna0+iiSbQSv_SBsdHfP4Uh1h4Q@mail.gmail.com>
+ <HE1PR06MB4011EC9E93ECBB6773252247AC9A0@HE1PR06MB4011.eurprd06.prod.outlook.com>
+ <CAAFQd5CWoAP1psrEW6bVMkRmhFeTvFKtDSLjT7nefc2YiFovqQ@mail.gmail.com>
+ <CAAFQd5AYCiKcA9pGc44L3gGHLPx6iMSb7KywkO8OqVv4gS8KvQ@mail.gmail.com>
+ <CAAFQd5AQXGX_2gmKLfymH5mLG-uVh-v+XXtGXzbfzYzVVV42mA@mail.gmail.com>
+ <HE1PR06MB4011B897EA5497659A19BCC6AC9A0@HE1PR06MB4011.eurprd06.prod.outlook.com>
+ <HE1PR06MB4011D0189027292BD1107CAFAC9A0@HE1PR06MB4011.eurprd06.prod.outlook.com>
+In-Reply-To: <HE1PR06MB4011D0189027292BD1107CAFAC9A0@HE1PR06MB4011.eurprd06.prod.outlook.com>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Thu, 10 Oct 2019 16:27:56 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5C4nH1YmrWy3b281By2ER=SCMYu6NqE=ObAgrq4Kg+yxg@mail.gmail.com>
+Message-ID: <CAAFQd5C4nH1YmrWy3b281By2ER=SCMYu6NqE=ObAgrq4Kg+yxg@mail.gmail.com>
+Subject: Re: [PATCH v2 for 5.4 2/4] media: hantro: Fix H264 max frmsize
+ supported on RK3288
+To:     Jonas Karlman <jonas@kwiboo.se>
+Cc:     "fbuergisser@chromium.org" <fbuergisser@chromium.org>,
+        "kernel@collabora.com" <kernel@collabora.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.10.19 16:43, Michal Hocko wrote:
-> On Wed 09-10-19 16:24:35, David Hildenbrand wrote:
->> We should check for pfn_to_online_page() to not access uninitialized
->> memmaps. Reshuffle the code so we don't have to duplicate the error
->> message.
->>
->> Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: Michal Hocko <mhocko@kernel.org>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
->> ---
->>  mm/memory-failure.c | 14 ++++++++------
->>  1 file changed, 8 insertions(+), 6 deletions(-)
->>
->> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
->> index 7ef849da8278..e866e6e5660b 100644
->> --- a/mm/memory-failure.c
->> +++ b/mm/memory-failure.c
->> @@ -1253,17 +1253,19 @@ int memory_failure(unsigned long pfn, int flags)
->>  	if (!sysctl_memory_failure_recovery)
->>  		panic("Memory failure on page %lx", pfn);
->>  
->> -	if (!pfn_valid(pfn)) {
->> +	p = pfn_to_online_page(pfn);
->> +	if (!p) {
->> +		if (pfn_valid(pfn)) {
->> +			pgmap = get_dev_pagemap(pfn, NULL);
->> +			if (pgmap)
->> +				return memory_failure_dev_pagemap(pfn, flags,
->> +								  pgmap);
->> +		}
->>  		pr_err("Memory failure: %#lx: memory outside kernel control\n",
->>  			pfn);
->>  		return -ENXIO;
-> 
-> Don't we need that earlier at hwpoison_inject level?
-> 
+On Wed, Oct 9, 2019 at 5:39 AM Jonas Karlman <jonas@kwiboo.se> wrote:
+>
+> On 2019-10-08 16:12, Jonas Karlman wrote:
+> > On 2019-10-08 15:53, Tomasz Figa wrote:
+> >> On Tue, Oct 8, 2019 at 10:35 PM Tomasz Figa <tfiga@chromium.org> wrote:
+> >>> On Tue, Oct 8, 2019 at 7:42 PM Tomasz Figa <tfiga@chromium.org> wrote:
+> >>>> On Tue, Oct 8, 2019 at 3:31 PM Jonas Karlman <jonas@kwiboo.se> wrote:
+> >>>>> On 2019-10-08 07:27, Tomasz Figa wrote:
+> >>>>>> Hi Ezequiel, Jonas,
+> >>>>>>
+> >>>>>> On Tue, Oct 8, 2019 at 2:46 AM Ezequiel Garcia <ezequiel@collabora.com> wrote:
+> >>>>>>> From: Jonas Karlman <jonas@kwiboo.se>
+> >>>>>>>
+> >>>>>>> TRM specify supported image size 48x48 to 4096x2304 at step size 16 pixels,
+> >>>>>>> change frmsize max_width/max_height to match TRM.
+> >>>>>>>
+> >>>>>>> Fixes: 760327930e10 ("media: hantro: Enable H264 decoding on rk3288")
+> >>>>>>> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+> >>>>>>> ---
+> >>>>>>> v2:
+> >>>>>>> * No changes.
+> >>>>>>>
+> >>>>>>>  drivers/staging/media/hantro/rk3288_vpu_hw.c | 4 ++--
+> >>>>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+> >>>>>>>
+> >>>>>>> diff --git a/drivers/staging/media/hantro/rk3288_vpu_hw.c b/drivers/staging/media/hantro/rk3288_vpu_hw.c
+> >>>>>>> index 6bfcc47d1e58..ebb017b8a334 100644
+> >>>>>>> --- a/drivers/staging/media/hantro/rk3288_vpu_hw.c
+> >>>>>>> +++ b/drivers/staging/media/hantro/rk3288_vpu_hw.c
+> >>>>>>> @@ -67,10 +67,10 @@ static const struct hantro_fmt rk3288_vpu_dec_fmts[] = {
+> >>>>>>>                 .max_depth = 2,
+> >>>>>>>                 .frmsize = {
+> >>>>>>>                         .min_width = 48,
+> >>>>>>> -                       .max_width = 3840,
+> >>>>>>> +                       .max_width = 4096,
+> >>>>>>>                         .step_width = H264_MB_DIM,
+> >>>>>>>                         .min_height = 48,
+> >>>>>>> -                       .max_height = 2160,
+> >>>>>>> +                       .max_height = 2304,
+> >>>>>> This doesn't match the datasheet I have, which is RK3288 Datasheet Rev
+> >>>>>> 1.4 and which has the values as in current code. What's the one you
+> >>>>>> got the values from?
+> >>>>> The RK3288 TRM vcodec chapter from [1], unknown revision and date, lists 48x48 to 4096x2304 step size 16 pixels under 25.5.1 H.264 decoder.
+> >>>>>
+> >>>>> I can also confirm that one of my test samples (PUPPIES BATH IN 4K) is 4096x2304 and can be decoded after this patch.
+> >>>>> However the decoding speed is not optimal at 400Mhz, if I recall correctly you need to set the VPU1 clock to 600Mhz for 4K decoding on RK3288.
+> >>>>>
+> >>>>> I am not sure if I should include a v2 of this patch in my v2 series, as-is this patch do not apply on master (H264_MB_DIM has changed to MB_DIM in master).
+> >>>>>
+> >>>>> [1] http://www.t-firefly.com/download/firefly-rk3288/docs/TRM/rk3288-chapter-25-video-encoder-decoder-unit-(vcodec).pdf
+> >>>> I checked the RK3288 TRM V1.1 too and it refers to 3840x2160@24fps as
+> >>>> the maximum.
+> >>>>
+> >>>> As for performance, we've actually been getting around 33 fps at 400
+> >>>> MHz with 3840x2160 on our devices (the old RK3288 Asus Chromebook
+> >>>> Flip).
+> >>>>
+> >>>> I guess we might want to check that with Hantro.
+> >>> Could you check the value of bits 10:0 in register at 0x0c8? That
+> >>> should be the maximum supported stream width in the units of 16
+> >>> pixels.
+> >> Correction: The unit is 1 pixel and there are additional 2 most
+> >> significant bits at 0x0d8, 15:14.
+> > I will check this later tonight when I have access to my devices.
+>
+> My Asus Tinker Board S (RK3288-C) is reporting support for 0x780 / 1920 pixels:
+>
+> 0x000  (0) = 0x67313688
+> 0x0c8 (50) = 0xfbb56f80
+> 0x0d8 (54) = 0xe5da0000
+>
 
-Theoretically yes, this is another instance. But pfn_to_online_page(pfn)
-alone would not be sufficient as discussed. We would, again, have to
-special-case ZONE_DEVICE via things like get_dev_pagemap() ...
+Looks like that register doesn't work very well in Rockchip's
+implementation... Thanks for checking anyway.
 
-But mm/hwpoison-inject.c:hwpoison_inject() is a pure debug feature either way:
+I guess we can allow 4096x2304 for the time being and see what happens.
 
-	/*
-	 * Note that the below poison/unpoison interfaces do not involve
-	 * hardware status change, hence do not require hardware support.
-	 * They are mainly for testing hwpoison in software level.
-	 */
+Reviewed-by: Tomasz Figa <tfiga@chromium.org>
 
-So it's not that bad compared to memory_failure() called from real HW or
-drivers/base/memory.c:soft_offline_page_store()/hard_offline_page_store()
-
--- 
-
-Thanks,
-
-David / dhildenb
+Best regards,
+Tomasz
