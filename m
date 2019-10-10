@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2269ED23D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD98AD2381
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389293AbfJJIqO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:46:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51980 "EHLO mail.kernel.org"
+        id S2388711AbfJJInR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:43:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389269AbfJJIqM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:46:12 -0400
+        id S2387767AbfJJInP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:43:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0384208C3;
-        Thu, 10 Oct 2019 08:46:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A6D121D6C;
+        Thu, 10 Oct 2019 08:43:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697171;
-        bh=ULwYx4Q1NCG16srlI3fJS7zmEXdK3GkZILdEY+2LNlY=;
+        s=default; t=1570696993;
+        bh=6aJTqbREb2X6AGt6ZSLFhTjF2AAoUGnOEamyy4LHoCI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B+72YhTuXkOp0DgnemKSAuUU3HRntgcmL0y9by+U3Nd5505MZXOXsiWrBzbOV4VV8
-         Ayr/K2JZTqb9I5U0sv5xmoCUgRb4+6BPkK5DaqUgcG7VJ9eF3q9br6eFJjLnyoT88S
-         kxWOey4vGY8x61OV1gM+dmBR/pa8ctuKDHduOwgs=
+        b=zGsdosJV8HA42rSJqlnHTyQmrrZK7i6anZriQQY7D17boVifKwjtIP23yTrnAQ2Pi
+         ge1JfRuTAxi4DuOm7M3ihzX6z0ZwtR8hRKLYQkmLgYQkIhoSSt7nPGE4ovnPzgF0OV
+         7hQbGGvRzGOyfv9LeP548hwKhmWHKXPhVtvhYJvw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Adam Ford <aford173@gmail.com>, Jyri Sarha <jsarha@ti.com>
-Subject: [PATCH 4.19 037/114] drm/omap: fix max fclk divider for omap36xx
-Date:   Thu, 10 Oct 2019 10:35:44 +0200
-Message-Id: <20191010083603.611123885@linuxfoundation.org>
+        stable@vger.kernel.org, Alexander Aring <alex.aring@gmail.com>,
+        syzbot+f4509a9138a1472e7e80@syzkaller.appspotmail.com,
+        Johan Hovold <johan@kernel.org>,
+        Stefan Schmidt <stefan@datenfreihafen.org>
+Subject: [PATCH 5.3 084/148] ieee802154: atusb: fix use-after-free at disconnect
+Date:   Thu, 10 Oct 2019 10:35:45 +0200
+Message-Id: <20191010083616.434288544@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
-References: <20191010083544.711104709@linuxfoundation.org>
+In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
+References: <20191010083609.660878383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,42 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit e2c4ed148cf3ec8669a1d90dc66966028e5fad70 upstream.
+commit 7fd25e6fc035f4b04b75bca6d7e8daa069603a76 upstream.
 
-The OMAP36xx and AM/DM37x TRMs say that the maximum divider for DSS fclk
-(in CM_CLKSEL_DSS) is 32. Experimentation shows that this is not
-correct, and using divider of 32 breaks DSS with a flood or underflows
-and sync losts. Dividers up to 31 seem to work fine.
+The disconnect callback was accessing the hardware-descriptor private
+data after having having freed it.
 
-There is another patch to the DT files to limit the divider correctly,
-but as the DSS driver also needs to know the maximum divider to be able
-to iteratively find good rates, we also need to do the fix in the DSS
-driver.
-
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Adam Ford <aford173@gmail.com>
-Cc: stable@vger.kernel.org
-Link: https://patchwork.freedesktop.org/patch/msgid/20191002122542.8449-1-tomi.valkeinen@ti.com
-Tested-by: Adam Ford <aford173@gmail.com>
-Reviewed-by: Jyri Sarha <jsarha@ti.com>
+Fixes: 7490b008d123 ("ieee802154: add support for atusb transceiver")
+Cc: stable <stable@vger.kernel.org>     # 4.2
+Cc: Alexander Aring <alex.aring@gmail.com>
+Reported-by: syzbot+f4509a9138a1472e7e80@syzkaller.appspotmail.com
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/omapdrm/dss/dss.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ieee802154/atusb.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/omapdrm/dss/dss.c
-+++ b/drivers/gpu/drm/omapdrm/dss/dss.c
-@@ -1110,7 +1110,7 @@ static const struct dss_features omap34x
+--- a/drivers/net/ieee802154/atusb.c
++++ b/drivers/net/ieee802154/atusb.c
+@@ -1137,10 +1137,11 @@ static void atusb_disconnect(struct usb_
  
- static const struct dss_features omap3630_dss_feats = {
- 	.model			=	DSS_MODEL_OMAP3,
--	.fck_div_max		=	32,
-+	.fck_div_max		=	31,
- 	.fck_freq_max		=	173000000,
- 	.dss_fck_multiplier	=	1,
- 	.parent_clk_name	=	"dpll4_ck",
+ 	ieee802154_unregister_hw(atusb->hw);
+ 
++	usb_put_dev(atusb->usb_dev);
++
+ 	ieee802154_free_hw(atusb->hw);
+ 
+ 	usb_set_intfdata(interface, NULL);
+-	usb_put_dev(atusb->usb_dev);
+ 
+ 	pr_debug("%s done\n", __func__);
+ }
 
 
