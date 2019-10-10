@@ -2,116 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88447D2B84
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 15:39:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90364D2B94
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 15:41:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388225AbfJJNiy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 09:38:54 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33815 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728393AbfJJNix (ORCPT
+        id S2388304AbfJJNl1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 09:41:27 -0400
+Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:46781 "EHLO
+        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388271AbfJJNlZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 09:38:53 -0400
-Received: by mail-wr1-f67.google.com with SMTP id j11so7976378wrp.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 06:38:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dNKHo7wC/215Tc8q4IYUbrHibFKH//hrOf2lUQhIP+k=;
-        b=c4rXOv/U6+AGwyzEaBsCCLbaPQ5PuswG1a6LIjyTlEvCwnrKbXZnR6+HreuUwAWKCh
-         x1F92c0aWJ7Lesa1HUS/neB+6UavBIP9tDmaDAWfVQLY6ATDftbfn+eE8qUA9lSiiwb0
-         gbmHF+AjOTVGA+9uhTCzakVpyAGqzygdFxKJtBqLiwwyaB8uucpBFsrG40IC5MpekjvZ
-         6FJsrXQxcT0U/zEHaiJNH/f62LGjOeH4L9NzahroreQZe3JPH7nD4UqJlS6TyDZvjijF
-         H76aq0v43xsWi50NHm7CBZ8HdwL+3389nJ0QzbZBKWH9vbf5cIGJcguEpIKcuvvoLz49
-         x1dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dNKHo7wC/215Tc8q4IYUbrHibFKH//hrOf2lUQhIP+k=;
-        b=Kwlf87i0cNXOGFucEd9nY9czcPlhIT3I7cKRquCjKPXOJERs4/j2R5OKxsQH76Jwa1
-         MBGz3g8zjOaAssYKZbVrARI6B32FLxP3ndWOmbHw0nQPjrvbKZkCnuyB+z2wwmgftXht
-         FRJDM+bGg8ZG6NMt9ckPeUGAnslZ2QzzSJeFuSvWni3W8OzDu7uF+sncE0cbqNk5pOd+
-         o/ecgBMl5ieG7cWGX2n8uCpX0fe3FK/RpDq7WSR9RpjvQCJMKPj3rkDFtNKWq32KR5dc
-         eGKBpOx8K16NX9GfuWMz0jOWECFqf5efvMWyNcI9JkDEeaT3olHkADhxlUip+Dw3+XGr
-         Rdxw==
-X-Gm-Message-State: APjAAAWYaSD4r5ydWb0aGGSA4u9YAzNagPPABv9x+zUzezyeWgK+8Q1A
-        o+Q8hokWFsFTh1uWdWo4hA1EDg==
-X-Google-Smtp-Source: APXvYqztlBMqNL6y+jP0zl/tFHe7klxsBxWvq4OmxyJphjZ92KRbEFrRmvrcRFKdis6Ee/b8FEfGxw==
-X-Received: by 2002:adf:ea45:: with SMTP id j5mr3800979wrn.392.1570714730051;
-        Thu, 10 Oct 2019 06:38:50 -0700 (PDT)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id q10sm11593228wrd.39.2019.10.10.06.38.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Oct 2019 06:38:49 -0700 (PDT)
-Subject: Re: [PATCH v7 2/2] ASoC: codecs: add wsa881x amplifier support
-To:     Mark Brown <broonie@kernel.org>
-Cc:     spapothi@codeaurora.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, lgirdwood@gmail.com,
-        devicetree@vger.kernel.org, vkoul@kernel.org,
-        pierre-louis.bossart@linux.intel.com
-References: <20191009085108.4950-1-srinivas.kandagatla@linaro.org>
- <20191009085108.4950-3-srinivas.kandagatla@linaro.org>
- <20191009163535.GK2036@sirena.org.uk>
- <95637c0a-8373-0eda-47e5-ac6e529019e5@linaro.org>
- <20191010132314.GQ2036@sirena.org.uk>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <32280055-dd4a-9573-58fa-0076955e9c92@linaro.org>
-Date:   Thu, 10 Oct 2019 14:38:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 10 Oct 2019 09:41:25 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 741453F49B;
+        Thu, 10 Oct 2019 15:41:18 +0200 (CEST)
+Authentication-Results: ste-pvt-msa2.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=Rix0aEWR;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
+        dkim=pass (1024-bit key) header.d=shipmail.org
+Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
+        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id cahSb6bMUdIh; Thu, 10 Oct 2019 15:41:17 +0200 (CEST)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 493113F218;
+        Thu, 10 Oct 2019 15:41:17 +0200 (CEST)
+Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 0DD4D36016C;
+        Thu, 10 Oct 2019 15:41:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1570714877; bh=n0r0/gr5DGR8PKfDTpl5xOseUsgi8gjV64mOMzX31mg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Rix0aEWR6MmQ3IMpwzhAJ7nxL1ZmI7koM15not/pYLFsz5Q96lP3VpexvNYEOq43t
+         IevhIYzceltokMIkYLDVJUA69uoPPp3B95Iuam64ihG5ZXnj5raBIayjng0fq1GQQr
+         3RibwTeSADJ13s7gNhiUWxjcFTy9i5HZh8EHcKEI=
+From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
+        <thomas_os@shipmail.org>
+To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        torvalds@linux-foundation.org, kirill@shutemov.name
+Cc:     =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas_os@shipmail.org>
+Subject: [RFC PATCH 0/4] mm: pagewalk: Rework callback return values and optionally skip the pte level
+Date:   Thu, 10 Oct 2019 15:40:54 +0200
+Message-Id: <20191010134058.11949-1-thomas_os@shipmail.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20191010132314.GQ2036@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series converts all users of pagewalk positive callback return values
+to use negative values instead, so that the positive values are free for
+pagewalk control. Then the return value PAGE_WALK_CONTINUE is introduced.
+That value is intended for callbacks to indicate that they've handled the
+entry and it's not necessary to split and go to a lower level.
+Initially this is implemented only for pmd_entry(), but could (should?)
+at some point be used also for pud_entry().
 
+Finally the mapping_dirty_helpers pagewalk is modified to use the new value
+indicating that it has processed a read-only huge pmd entry and don't want
+it to be split and handled at the pte level.
 
-On 10/10/2019 14:23, Mark Brown wrote:
-> On Thu, Oct 10, 2019 at 10:28:04AM +0100, Srinivas Kandagatla wrote:
->> On 09/10/2019 17:35, Mark Brown wrote:
->>> On Wed, Oct 09, 2019 at 09:51:08AM +0100, Srinivas Kandagatla wrote:
->>>> +static const u8 wsa881x_reg_readable[WSA881X_CACHE_SIZE] = {
-> 
->>>> +static bool wsa881x_readable_register(struct device *dev, unsigned int reg)
->>>> +{
->>>> +	return wsa881x_reg_readable[reg];
-> 
->>> There's no bounds check and that array size is not...
-> 
->> I converted this now to a proper switch statement as other drivers do.
-> 
->>>> +static struct regmap_config wsa881x_regmap_config = {
->>>> +	.reg_bits = 32,
->>>> +	.val_bits = 8,
->>>> +	.cache_type = REGCACHE_RBTREE,
->>>> +	.reg_defaults = wsa881x_defaults,
->>>> +	.num_reg_defaults = ARRAY_SIZE(wsa881x_defaults),
->>>> +	.max_register = WSA881X_MAX_REGISTER,
-> 
->>> ...what regmap has as max_register.  Uusually you'd render as a
->>> switch statement (as you did for volatile) and let the compiler
->>> figure out a sensible way to do the lookup.
-> 
->> Sorry, I did not get your point here.
-> 
->> Are you saying that we can skip max_register in this regmap config ?
->> Then how would max_register in regmap be set?
-> 
-> I'm saying that you appear to be relying on max_register to
-> verify that you're not overflowing the array bounds but you
-> max_register is not set to the same thing as the array size.
-
-Thanks for clarification, I have removed the readable array in new 
-version, removed multiple macros for max register and fixed max_register 
-to point to last register.
-
---srini
-> 
+Note: This series still needs some significant testing and another re-audit
+to verify that there are no more pagewalk users relying on positive return
+values.
