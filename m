@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21A6FD3240
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:42:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2B1DD324E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:42:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727063AbfJJUaB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 16:30:01 -0400
-Received: from mga17.intel.com ([192.55.52.151]:30892 "EHLO mga17.intel.com"
+        id S1727326AbfJJUaY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 16:30:24 -0400
+Received: from mga17.intel.com ([192.55.52.151]:30899 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726804AbfJJU35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 16:29:57 -0400
+        id S1726900AbfJJU36 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 16:29:58 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2019 13:29:51 -0700
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2019 13:29:52 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.67,281,1566889200"; 
-   d="scan'208";a="277902020"
+   d="scan'208";a="277902023"
 Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
   by orsmga001.jf.intel.com with ESMTP; 10 Oct 2019 13:29:51 -0700
 From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
@@ -25,9 +25,9 @@ To:     andriy.shevchenko@intel.com
 Cc:     prarit@redhat.com, platform-driver-x86@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [RESEND][PATCH 02/10] tools/power/x86/intel-speed-select: Base-freq feature auto mode
-Date:   Thu, 10 Oct 2019 13:29:37 -0700
-Message-Id: <20191010202945.73616-3-srinivas.pandruvada@linux.intel.com>
+Subject: [RESEND][PATCH 03/10] tools/power/x86/intel-speed-select: Turbo-freq feature auto mode
+Date:   Thu, 10 Oct 2019 13:29:38 -0700
+Message-Id: <20191010202945.73616-4-srinivas.pandruvada@linux.intel.com>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20191010202945.73616-1-srinivas.pandruvada@linux.intel.com>
 References: <20191010202945.73616-1-srinivas.pandruvada@linux.intel.com>
@@ -36,314 +36,226 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce --auto|-a option to base-freq enable feature, so that it
-does in one step for users who are OK by setting all cores with higher
-base frequency to be set in CLOS 0 and remaining in CLOS 3. This option
-also sets corresponding clos.min to CLOS 0 and CLOS3. In this way, users
-don't have to take multiple steps to enable base-freq feature. For users
-who want more fine grain control, they can always use core-power feature
-to set custom CLOS configuration and assignment.
+Introduce --auto|-a option to turbo-freq enable feature, so that it
+does in one step for users who are OK by setting all passed target cores
+as high priority and set in CLOS 0 and remaining in CLOS 3. In this way,
+users don't have to take multiple steps to enable turbo-freq feature. For
+users who want more fine grain control, they can always use core-power
+feature to set custom CLOS configuration and assignment.
 
-Also adjust cpufreq/scaling_min_freq for higher and lower priority cores.
+While here also print the error to output when clos configuration fails.
 
-For example user can use:
-intel-speed-select base-freq enable --auto
+For example
+intel-speed-select -c 0-4 turbo-freq enable --auto
+
+The above command will enable turbo-freq and core-power feature. Also
+mark CPU 0 to CPU 4 as high priority.
 
 Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 ---
- .../x86/intel-speed-select/isst-config.c      | 232 +++++++++++++++++-
- 1 file changed, 223 insertions(+), 9 deletions(-)
+ .../x86/intel-speed-select/isst-config.c      | 152 ++++++++++++++----
+ 1 file changed, 124 insertions(+), 28 deletions(-)
 
 diff --git a/tools/power/x86/intel-speed-select/isst-config.c b/tools/power/x86/intel-speed-select/isst-config.c
-index 21fcfe621d3a..82502a38446e 100644
+index 82502a38446e..e1ca7c5b8037 100644
 --- a/tools/power/x86/intel-speed-select/isst-config.c
 +++ b/tools/power/x86/intel-speed-select/isst-config.c
-@@ -39,6 +39,7 @@ static unsigned long long fact_trl;
- static int out_format_json;
- static int cmd_help;
- static int force_online_offline;
-+static int auto_mode;
- 
- /* clos related */
- static int current_clos = -1;
-@@ -855,23 +856,227 @@ static void dump_pbf_config(void)
- 	isst_ctdp_display_information_end(outf);
- }
- 
-+static int set_clos_param(int cpu, int clos, int epp, int wt, int min, int max)
-+{
-+	struct isst_clos_config clos_config;
-+	int ret;
-+
-+	ret = isst_pm_get_clos(cpu, clos, &clos_config);
-+	if (ret) {
-+		perror("isst_pm_get_clos");
-+		return ret;
-+	}
-+	clos_config.clos_min = min;
-+	clos_config.clos_max = max;
-+	clos_config.epp = epp;
-+	clos_config.clos_prop_prio = wt;
-+	ret = isst_set_clos(cpu, clos, &clos_config);
-+	if (ret) {
-+		perror("isst_pm_set_clos");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int set_cpufreq_cpuinfo_scaling_min(int cpu, int max)
-+{
-+	char buffer[128], min_freq[16];
-+	int fd, ret, len;
-+
-+	if (!CPU_ISSET_S(cpu, present_cpumask_size, present_cpumask))
-+		return -1;
-+
-+	if (max)
-+		snprintf(buffer, sizeof(buffer),
-+			 "/sys/devices/system/cpu/cpu%d/cpufreq/cpuinfo_max_freq", cpu);
-+	else
-+		snprintf(buffer, sizeof(buffer),
-+			 "/sys/devices/system/cpu/cpu%d/cpufreq/cpuinfo_min_freq", cpu);
-+
-+	fd = open(buffer, O_RDONLY);
-+	if (fd < 0)
-+		return fd;
-+
-+	len = read(fd, min_freq, sizeof(min_freq));
-+	close(fd);
-+
-+	if (len < 0)
-+		return len;
-+
-+	snprintf(buffer, sizeof(buffer),
-+		 "/sys/devices/system/cpu/cpu%d/cpufreq/scaling_min_freq", cpu);
-+
-+	fd = open(buffer, O_WRONLY);
-+	if (fd < 0)
-+		return fd;
-+
-+	len = strlen(min_freq);
-+	ret = write(fd, min_freq, len);
-+	if (ret == -1) {
-+		close(fd);
-+		return ret;
-+	}
-+	close(fd);
-+
-+	return 0;
-+}
-+
-+static void set_scaling_min_to_cpuinfo_max(int cpu)
-+{
-+	int i, pkg_id, die_id;
-+
-+	pkg_id = get_physical_package_id(cpu);
-+	die_id = get_physical_die_id(cpu);
-+	for (i = 0; i < get_topo_max_cpus(); ++i) {
-+		if (pkg_id != get_physical_package_id(i) ||
-+		    die_id != get_physical_die_id(i))
-+			continue;
-+
-+		set_cpufreq_cpuinfo_scaling_min(i, 1);
-+	}
-+}
-+
-+static void set_scaling_min_to_cpuinfo_min(int cpu)
-+{
-+	int i, pkg_id, die_id;
-+
-+	pkg_id = get_physical_package_id(cpu);
-+	die_id = get_physical_die_id(cpu);
-+	for (i = 0; i < get_topo_max_cpus(); ++i) {
-+		if (pkg_id != get_physical_package_id(i) ||
-+		    die_id != get_physical_die_id(i))
-+			continue;
-+
-+		set_cpufreq_cpuinfo_scaling_min(i, 0);
-+	}
-+}
-+
-+static int set_core_priority_and_min(int cpu, int mask_size,
-+				     cpu_set_t *cpu_mask, int min_high,
-+				     int min_low)
-+{
-+	int pkg_id, die_id, ret, i;
-+
-+	if (!CPU_COUNT_S(mask_size, cpu_mask))
-+		return -1;
-+
-+	ret = set_clos_param(cpu, 0, 0, 0, min_high, 0xff);
-+	if (ret)
-+		return ret;
-+
-+	ret = set_clos_param(cpu, 1, 15, 0, min_low, 0xff);
-+	if (ret)
-+		return ret;
-+
-+	ret = set_clos_param(cpu, 2, 15, 0, min_low, 0xff);
-+	if (ret)
-+		return ret;
-+
-+	ret = set_clos_param(cpu, 3, 15, 0, min_low, 0xff);
-+	if (ret)
-+		return ret;
-+
-+	pkg_id = get_physical_package_id(cpu);
-+	die_id = get_physical_die_id(cpu);
-+	for (i = 0; i < get_topo_max_cpus(); ++i) {
-+		int clos;
-+
-+		if (pkg_id != get_physical_package_id(i) ||
-+		    die_id != get_physical_die_id(i))
-+			continue;
-+
-+		if (CPU_ISSET_S(i, mask_size, cpu_mask))
-+			clos = 0;
-+		else
-+			clos = 3;
-+
-+		debug_printf("Associate cpu: %d clos: %d\n", i, clos);
-+		ret = isst_clos_associate(i, clos);
-+		if (ret) {
-+			perror("isst_clos_associate");
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int set_pbf_core_power(int cpu)
-+{
-+	struct isst_pbf_info pbf_info;
-+	struct isst_pkg_ctdp pkg_dev;
-+	int ret;
-+
-+	ret = isst_get_ctdp_levels(cpu, &pkg_dev);
-+	if (ret) {
-+		perror("isst_get_ctdp_levels");
-+		return ret;
-+	}
-+	debug_printf("Current_level: %d\n", pkg_dev.current_level);
-+
-+	ret = isst_get_pbf_info(cpu, pkg_dev.current_level, &pbf_info);
-+	if (ret) {
-+		perror("isst_get_pbf_info");
-+		return ret;
-+	}
-+	debug_printf("p1_high: %d p1_low: %d\n", pbf_info.p1_high,
-+		     pbf_info.p1_low);
-+
-+	ret = set_core_priority_and_min(cpu, pbf_info.core_cpumask_size,
-+					pbf_info.core_cpumask,
-+					pbf_info.p1_high, pbf_info.p1_low);
-+	if (ret) {
-+		perror("set_core_priority_and_min");
-+		return ret;
-+	}
-+
-+	ret = isst_pm_qos_config(cpu, 1, 1);
-+	if (ret) {
-+		perror("isst_pm_qos_config");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static void set_pbf_for_cpu(int cpu, void *arg1, void *arg2, void *arg3,
- 			    void *arg4)
- {
+@@ -1173,40 +1173,58 @@ static void set_fact_for_cpu(int cpu, void *arg1, void *arg2, void *arg3,
  	int ret;
  	int status = *(int *)arg4;
  
 +	if (auto_mode) {
 +		if (status) {
-+			ret = set_pbf_core_power(cpu);
++			ret = isst_pm_qos_config(cpu, 1, 1);
 +			if (ret)
-+				goto disp_result;
++				goto disp_results;
 +		} else {
 +			isst_pm_qos_config(cpu, 0, 0);
 +		}
 +	}
 +
- 	ret = isst_set_pbf_fact_status(cpu, 1, status);
- 	if (ret) {
- 		perror("isst_set_pbf");
+ 	ret = isst_set_pbf_fact_status(cpu, 0, status);
+-	if (ret)
++	if (ret) {
+ 		perror("isst_set_fact");
+-	else {
+-		if (status) {
+-			struct isst_pkg_ctdp pkg_dev;
 +		if (auto_mode)
 +			isst_pm_qos_config(cpu, 0, 0);
- 	} else {
--		if (status)
--			isst_display_result(cpu, outf, "base-freq", "enable",
--					    ret);
--		else
--			isst_display_result(cpu, outf, "base-freq", "disable",
--					    ret);
-+		if (auto_mode) {
-+			if (status)
-+				set_scaling_min_to_cpuinfo_max(cpu);
-+			else
-+				set_scaling_min_to_cpuinfo_min(cpu);
-+		}
- 	}
+ 
+-			ret = isst_get_ctdp_levels(cpu, &pkg_dev);
+-			if (ret) {
+-				isst_display_result(cpu, outf, "turbo-freq",
+-						    "enable", ret);
+-				return;
+-			}
++		goto disp_results;
++	}
 +
-+disp_result:
-+	if (status)
-+		isst_display_result(cpu, outf, "base-freq", "enable",
-+				    ret);
-+	else
-+		isst_display_result(cpu, outf, "base-freq", "disable",
-+				    ret);
++	/* Set TRL */
++	if (status) {
++		struct isst_pkg_ctdp pkg_dev;
++
++		ret = isst_get_ctdp_levels(cpu, &pkg_dev);
++		if (!ret)
+ 			ret = isst_set_trl(cpu, fact_trl);
+-			isst_display_result(cpu, outf, "turbo-freq", "enable",
+-					    ret);
+-		} else {
+-			/* Since we modified TRL during Fact enable, restore it */
+-			isst_set_trl_from_current_tdp(cpu, fact_trl);
+-			isst_display_result(cpu, outf, "turbo-freq", "disable",
+-					    ret);
+-		}
++		if (ret && auto_mode)
++			isst_pm_qos_config(cpu, 0, 0);
++	}
++
++disp_results:
++	if (status) {
++		isst_display_result(cpu, outf, "turbo-freq", "enable", ret);
++	} else {
++		/* Since we modified TRL during Fact enable, restore it */
++		isst_set_trl_from_current_tdp(cpu, fact_trl);
++		isst_display_result(cpu, outf, "turbo-freq", "disable", ret);
+ 	}
  }
  
- static void set_pbf_enable(void)
-@@ -880,7 +1085,10 @@ static void set_pbf_enable(void)
+ static void set_fact_enable(void)
+ {
+-	int status = 1;
++	int status = 1, i, ret;
  
  	if (cmd_help) {
  		fprintf(stderr,
--			"Enable Intel Speed Select Technology base frequency feature [No command arguments are required]\n");
-+			"Enable Intel Speed Select Technology base frequency feature\n");
+ 			"Enable Intel Speed Select Technology Turbo frequency feature\n");
+ 		fprintf(stderr,
+ 			"Optional: -t|--trl : Specify turbo ratio limit\n");
 +		fprintf(stderr,
-+			"\tOptional Arguments: -a|--auto : Use priority of cores to set core-power associations\n");
-+
++			"\tOptional Arguments: -a|--auto : Designate specified target CPUs with");
++		fprintf(stderr, "-C|--cpu option as as high priority using core-power feature\n");
  		exit(0);
  	}
  
-@@ -900,7 +1108,9 @@ static void set_pbf_disable(void)
+@@ -1218,6 +1236,83 @@ static void set_fact_enable(void)
+ 		for_each_online_package_in_set(set_fact_for_cpu, NULL, NULL,
+ 					       NULL, &status);
+ 	isst_ctdp_display_information_end(outf);
++
++	if (auto_mode) {
++		/*
++		 * When we adjust CLOS param, we have to set for siblings also.
++		 * So for the each user specified CPU, also add the sibling
++		 * in the present_cpu_mask.
++		 */
++		for (i = 0; i < get_topo_max_cpus(); ++i) {
++			char buffer[128], sibling_list[128], *cpu_str;
++			int fd, len;
++
++			if (!CPU_ISSET_S(i, target_cpumask_size, target_cpumask))
++				continue;
++
++			snprintf(buffer, sizeof(buffer),
++				 "/sys/devices/system/cpu/cpu%d/topology/thread_siblings_list", i);
++
++			fd = open(buffer, O_RDONLY);
++			if (fd < 0)
++				continue;
++
++			len = read(fd, sibling_list, sizeof(sibling_list));
++			close(fd);
++
++			if (len < 0)
++				continue;
++
++			cpu_str = strtok(sibling_list, ",");
++			while (cpu_str != NULL) {
++				int cpu;
++
++				sscanf(cpu_str, "%d", &cpu);
++				CPU_SET_S(cpu, target_cpumask_size, target_cpumask);
++				cpu_str = strtok(NULL, ",");
++			}
++		}
++
++		for (i = 0; i < get_topo_max_cpus(); ++i) {
++			int clos;
++
++			if (!CPU_ISSET_S(i, present_cpumask_size, present_cpumask))
++				continue;
++
++			ret = set_clos_param(i, 0, 0, 0, 0, 0xff);
++			if (ret)
++				goto error_disp;
++
++			ret = set_clos_param(i, 1, 15, 0, 0, 0xff);
++			if (ret)
++				goto error_disp;
++
++			ret = set_clos_param(i, 2, 15, 0, 0, 0xff);
++			if (ret)
++				goto error_disp;
++
++			ret = set_clos_param(i, 3, 15, 0, 0, 0xff);
++			if (ret)
++				goto error_disp;
++
++			if (CPU_ISSET_S(i, target_cpumask_size, target_cpumask))
++				clos = 0;
++			else
++				clos = 3;
++
++			debug_printf("Associate cpu: %d clos: %d\n", i, clos);
++			ret = isst_clos_associate(i, clos);
++			if (ret)
++				goto error_disp;
++		}
++		isst_display_result(i, outf, "turbo-freq --auto", "enable", 0);
++	}
++
++	return;
++
++error_disp:
++	isst_display_result(i, outf, "turbo-freq --auto", "enable", ret);
++
+ }
  
- 	if (cmd_help) {
+ static void set_fact_disable(void)
+@@ -1229,6 +1324,8 @@ static void set_fact_disable(void)
+ 			"Disable Intel Speed Select Technology turbo frequency feature\n");
  		fprintf(stderr,
--			"Disable Intel Speed Select Technology base frequency feature [No command arguments are required]\n");
-+			"Disable Intel Speed Select Technology base frequency feature\n");
+ 			"Optional: -t|--trl : Specify turbo ratio limit\n");
 +		fprintf(stderr,
 +			"\tOptional Arguments: -a|--auto : Also disable core-power associations\n");
  		exit(0);
  	}
  
-@@ -1420,15 +1630,19 @@ static void parse_cmd_args(int argc, int start, char **argv)
- 		{ "max", required_argument, 0, 'm' },
- 		{ "priority", required_argument, 0, 'p' },
- 		{ "weight", required_argument, 0, 'w' },
-+		{ "auto", no_argument, 0, 'a' },
- 		{ 0, 0, 0, 0 }
- 	};
+@@ -1249,16 +1346,15 @@ static void enable_clos_qos_config(int cpu, void *arg1, void *arg2, void *arg3,
+ 	int status = *(int *)arg4;
  
- 	option_index = start;
+ 	ret = isst_pm_qos_config(cpu, status, clos_priority_type);
+-	if (ret) {
++	if (ret)
+ 		perror("isst_pm_qos_config");
+-	} else {
+-		if (status)
+-			isst_display_result(cpu, outf, "core-power", "enable",
+-					    ret);
+-		else
+-			isst_display_result(cpu, outf, "core-power", "disable",
+-					    ret);
+-	}
++
++	if (status)
++		isst_display_result(cpu, outf, "core-power", "enable",
++				    ret);
++	else
++		isst_display_result(cpu, outf, "core-power", "disable",
++				    ret);
+ }
  
- 	optind = start + 1;
--	while ((opt = getopt_long(argc, argv, "b:l:t:c:d:e:n:m:p:w:ho",
-+	while ((opt = getopt_long(argc, argv, "b:l:t:c:d:e:n:m:p:w:hoa",
- 				  long_options, &option_index)) != -1) {
- 		switch (opt) {
-+		case 'a':
-+			auto_mode = 1;
-+			break;
- 		case 'b':
- 			fact_bucket = atoi(optarg);
- 			break;
+ static void set_clos_enable(void)
 -- 
 2.17.2
 
