@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 309B1D2F66
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 19:15:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF46BD2F68
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 19:15:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbfJJRPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 13:15:36 -0400
-Received: from foss.arm.com ([217.140.110.172]:36346 "EHLO foss.arm.com"
+        id S1726822AbfJJRPj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 13:15:39 -0400
+Received: from foss.arm.com ([217.140.110.172]:36356 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726479AbfJJRPf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 13:15:35 -0400
+        id S1726796AbfJJRPh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 13:15:37 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 76E4C1000;
-        Thu, 10 Oct 2019 10:15:35 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC89C1570;
+        Thu, 10 Oct 2019 10:15:36 -0700 (PDT)
 Received: from dawn-kernel.cambridge.arm.com (unknown [10.1.197.116])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 74C4B3F71A;
-        Thu, 10 Oct 2019 10:15:34 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AA6B13F71A;
+        Thu, 10 Oct 2019 10:15:35 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, will@kernel.org,
         mark.rutland@arm.com, catalin.marinas@arm.com, dave.martin@arm.com,
         Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH 1/3] arm64: cpufeature: Fix the type of no FP/SIMD capability
-Date:   Thu, 10 Oct 2019 18:15:15 +0100
-Message-Id: <20191010171517.28782-2-suzuki.poulose@arm.com>
+Subject: [PATCH 2/3] arm64: nofpsmid: Clear TIF_FOREIGN_FPSTATE flag for early tasks
+Date:   Thu, 10 Oct 2019 18:15:16 +0100
+Message-Id: <20191010171517.28782-3-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191010171517.28782-1-suzuki.poulose@arm.com>
 References: <20191010171517.28782-1-suzuki.poulose@arm.com>
@@ -35,17 +35,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The NO_FPSIMD capability is defined with scope SYSTEM, which implies
-that the "absence" of FP/SIMD on at least one CPU is detected only
-after all the SMP CPUs are brought up. However, we use the status
-of this capability for every context switch. So, let us change
-the scop to LOCAL_CPU to allow the detection of this capability
-as and when the first CPU without FP is brought up.
+We detect the absence of FP/SIMD after we boot the SMP CPUs, and by then
+we have kernel threads running already with TIF_FOREIGN_FPSTATE set which
+could be inherited by early userspace applications (e.g, modprobe triggered
+from initramfs). This could end up in the applications stuck in
+do_nofity_resume() as we never clear the TIF flag, once we now know that
+we don't support FP.
 
-Also, the current type allows hotplugged CPU to be brought up without
-FP/SIMD when all the current CPUs have FP/SIMD and we have the userspace
-up. Fix both of these issues by changing the capability to
-BOOT_RESTRICTED_LOCAL_CPU_FEATURE.
+Fix this by making sure that we clear the TIF_FOREIGN_FPSTATE flag
+for tasks which may have them set, as we would have done in the normal
+case, but avoiding touching the hardware state (since we don't support any).
 
 Fixes: 82e0191a1aa11abf ("arm64: Support systems without FP/ASIMD")
 Cc: Will Deacon <will@kernel.org>
@@ -53,22 +52,60 @@ Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- arch/arm64/kernel/cpufeature.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/kernel/fpsimd.c | 26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 9323bcc40a58..0f9eace6c64b 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -1361,7 +1361,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
- 	{
- 		/* FP/SIMD is not implemented */
- 		.capability = ARM64_HAS_NO_FPSIMD,
--		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
-+		.type = ARM64_CPUCAP_BOOT_RESTRICTED_CPU_LOCAL_FEATURE,
- 		.min_field_value = 0,
- 		.matches = has_no_fpsimd,
- 	},
+diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
+index 37d3912cfe06..dfcdd077aeca 100644
+--- a/arch/arm64/kernel/fpsimd.c
++++ b/arch/arm64/kernel/fpsimd.c
+@@ -1128,12 +1128,19 @@ void fpsimd_bind_state_to_cpu(struct user_fpsimd_state *st, void *sve_state,
+  */
+ void fpsimd_restore_current_state(void)
+ {
+-	if (!system_supports_fpsimd())
+-		return;
+-
+ 	get_cpu_fpsimd_context();
+-
+-	if (test_and_clear_thread_flag(TIF_FOREIGN_FPSTATE)) {
++	/*
++	 * For the tasks that were created before we detected the absence of
++	 * FP/SIMD, the TIF_FOREIGN_FPSTATE could be set via fpsimd_thread_switch()
++	 * and/or could be inherited from the parent(init_task has this set). Even
++	 * though userspace has not run yet, this could be inherited by the
++	 * processes forked from one of those tasks (e.g, modprobe from initramfs).
++	 * If the system doesn't support FP/SIMD, we must clear the flag for the
++	 * tasks mentioned above, to indicate that the FPSTATE is clean (as we
++	 * can't have one) to avoid looping for ever to clear the flag.
++	 */
++	if (test_and_clear_thread_flag(TIF_FOREIGN_FPSTATE) &&
++	    system_supports_fpsimd()) {
+ 		task_fpsimd_load();
+ 		fpsimd_bind_task_to_cpu();
+ 	}
+@@ -1148,17 +1155,16 @@ void fpsimd_restore_current_state(void)
+  */
+ void fpsimd_update_current_state(struct user_fpsimd_state const *state)
+ {
+-	if (!system_supports_fpsimd())
+-		return;
+-
+ 	get_cpu_fpsimd_context();
+ 
+ 	current->thread.uw.fpsimd_state = *state;
+ 	if (system_supports_sve() && test_thread_flag(TIF_SVE))
+ 		fpsimd_to_sve(current);
+ 
+-	task_fpsimd_load();
+-	fpsimd_bind_task_to_cpu();
++	if (system_supports_fpsimd()) {
++		task_fpsimd_load();
++		fpsimd_bind_task_to_cpu();
++	}
+ 
+ 	clear_thread_flag(TIF_FOREIGN_FPSTATE);
+ 
 -- 
 2.21.0
 
