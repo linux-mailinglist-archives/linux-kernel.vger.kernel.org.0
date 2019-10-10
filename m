@@ -2,388 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FC8CD30B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 20:47:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1815D30CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 20:47:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbfJJSpV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 14:45:21 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44850 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727081AbfJJSpO (ORCPT
+        id S1727325AbfJJSqS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 14:46:18 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:38577 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727194AbfJJSpq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 14:45:14 -0400
-Received: by mail-pg1-f193.google.com with SMTP id e10so226824pgd.11
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 11:45:14 -0700 (PDT)
+        Thu, 10 Oct 2019 14:45:46 -0400
+Received: by mail-yb1-f194.google.com with SMTP id r68so2276795ybf.5
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 11:45:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=p2Be0C4qL+ABPGADFRkpPnXO4Go7F19pYM8Im08Sq8E=;
-        b=tYcFtZWv2yx4RwC6Nn/054maUImFg0FD0qzNZBVZPT+wtUbceF898c1iGeFO9jygRo
-         86x5wuxVeccJT/rExh9Ou731JVVyu3pLIbC4zfF6r/L5D91OLj+FofzQXVEW+b/uCTQN
-         8D1hpnH1uTCY6ADyGM/0eqYLb88Hfym304jVMk51oOM0Rz32mUj3X4t0r0Blc5hhMetF
-         yDJIfxKQJS5TmOxI6H7Bbd4g+00rswj21ajFciAL4KjYh7GHSlT88t9YbYUY23AxQiBF
-         2t/9SiE1JNezB8hzl1VypWo34eoWmQyj43ne3rSfNhDMXDYNpTXofcVmyX9I2c1u2SET
-         nJGQ==
+        d=poorly.run; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=A/ttt3bFmMs3oe08RcmXuhu4LizkiCyYFIE0laa45So=;
+        b=IyjR386BAgPPWowRuqUZTRmePv2ormX4YmToHCVqZVPMdy7A3ol3aZwvXdIydzup9K
+         przYrp1X0Hv1wH8j6k0fnoNR5Pl9UkSctcdX23cXDOxQ6R54KO/UfVG7tOVLbwdpuls5
+         oxPa8TshABAWqRdYX5+QCIONLi/e3rSqLbVNV2+bsjDegRpDiCYXWUFhnrD/YsPxXc6l
+         kMw8l9PgWqLd+n+Aqv3piQLUzjoywgzTh7ISxEKBTfPvQQDF5B4Jtfi/qRxqTT42N1cW
+         fJZW3r8z7gW9RgQcC8KX+qOHw9k3xrwWRaXWPBPtauKpuV2lr0qgjs/CMsahE6havdRp
+         qAFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=p2Be0C4qL+ABPGADFRkpPnXO4Go7F19pYM8Im08Sq8E=;
-        b=LbIzhIcqeKshetksoOSezSv0HMwEGiCtqljzLUAq8u3XMafoJIjob/HCU7Z8gBcPTj
-         3AfKQRRa1cZ6LksCxTegvyPheRGyiW2D9k5JXbrv4fJOW7Lq+6gKYsRQYKMr6XgkDHVO
-         ysV3Hyci1MiV/qQlzh9tisfMCX1fFaLc3qkl9nt3P/ThxQkpCO/W6NXYb5AZZJ8QdIE6
-         qNQupTf7CehYBynGtjaknmktVQ+AJf3xTOewFy3FbSuiVhnVfP+f5GgU/LP/uFHJ6JUm
-         t3RFZ0WWBBxPZnn3mdqdKC7ZYCKkfCD7G9P6sviIo63wfHeOKHibdSSc/I8XB9AkMu8B
-         snhg==
-X-Gm-Message-State: APjAAAWv2dCeNeZNRjWuLB4rxFvZKSd1JK5eAtV//oIBB5WPAboJQHJU
-        fiE+c+6UmxJBy4Km1JuOFacDKHyZlYQ=
-X-Google-Smtp-Source: APXvYqxkJChSbMhA9CgcF4eVG1wRhxJAj55AsIEz2RRlPARXBwPAwnxiJzK2GDcXJA1z/IKVMcNYxg==
-X-Received: by 2002:a17:90b:316:: with SMTP id ay22mr12567097pjb.6.1570733113520;
-        Thu, 10 Oct 2019 11:45:13 -0700 (PDT)
-Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id w65sm7541732pfb.106.2019.10.10.11.45.11
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=A/ttt3bFmMs3oe08RcmXuhu4LizkiCyYFIE0laa45So=;
+        b=ACpJVElzmdCXka8t17aZERLguKBsWuSrKpSZT0XP5az5NPL3PUfEv+1gzobeUZywzi
+         5n1HLDE56mytop4dReX1YhT9kHv3stANnlF0drYf6TFGOlUva6zEu659WOWK3U3e/lhZ
+         GVsik0VopuYWrUc1jAKpQG119b44WIz+S739YQmBZgcheO7+vuz2wdAjUj7c+E8Rtkj8
+         oyWeadIdtHGvzN0AyOYaTF9GS67VIciWf0J7IBt7N0jSYXqJ54uKDo51VMDEg6torD4w
+         ot9jc4M+3aEzYMSlO6TLPc70o1hvRTU0kX9E07SSQXhDVLFJDeLCXaTcIbJZaeVBNb+I
+         09vA==
+X-Gm-Message-State: APjAAAVLn78hnb3sOfeeUdgfVevbQwAPNyCz2cyDEZvfL/AYP5Nk7wcW
+        5gSjR1V4j9HcjeHYLLB3fpPbXX0hicQ=
+X-Google-Smtp-Source: APXvYqyh33T1BNbWlgbA1o9hie13mRU+C4O0G5oOi8OvRSwg6vQv6oB4PiTNCKeHDoJbj82grAWYzw==
+X-Received: by 2002:a25:84ce:: with SMTP id x14mr7606863ybm.437.1570733145768;
+        Thu, 10 Oct 2019 11:45:45 -0700 (PDT)
+Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
+        by smtp.gmail.com with ESMTPSA id y129sm1682398ywy.41.2019.10.10.11.45.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 11:45:12 -0700 (PDT)
-From:   John Stultz <john.stultz@linaro.org>
-To:     lkml <linux-kernel@vger.kernel.org>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Liam Mark <lmark@codeaurora.org>,
-        Pratik Patel <pratikp@codeaurora.org>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        Vincent Donnefort <Vincent.Donnefort@arm.com>,
-        Sudipto Paul <Sudipto.Paul@arm.com>,
-        "Andrew F . Davis" <afd@ti.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Chenbo Feng <fengc@google.com>,
-        Alistair Strachan <astrachan@google.com>,
-        Hridya Valsaraju <hridya@google.com>,
-        Hillf Danton <hdanton@sina.com>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH v11 5/5] kselftests: Add dma-heap test
-Date:   Thu, 10 Oct 2019 18:44:58 +0000
-Message-Id: <20191010184458.51039-6-john.stultz@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191010184458.51039-1-john.stultz@linaro.org>
-References: <20191010184458.51039-1-john.stultz@linaro.org>
+        Thu, 10 Oct 2019 11:45:45 -0700 (PDT)
+Date:   Thu, 10 Oct 2019 14:45:44 -0400
+From:   Sean Paul <sean@poorly.run>
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     robdclark@gmail.com, sean@poorly.run, airlied@linux.ie,
+        daniel@ffwll.ch, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/msm/dsi: Implement reset correctly
+Message-ID: <20191010184544.GK85762@art_vandelay>
+References: <20191009213454.32891-1-jeffrey.l.hugo@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191009213454.32891-1-jeffrey.l.hugo@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add very trivial allocation and import test for dma-heaps,
-utilizing the vgem driver as a test importer.
+On Wed, Oct 09, 2019 at 02:34:54PM -0700, Jeffrey Hugo wrote:
+> On msm8998, vblank timeouts are observed because the DSI controller is not
+> reset properly, which ends up stalling the MDP.  This is because the reset
+> logic is not correct per the hardware documentation.
+> 
+> The documentation states that after asserting reset, software should wait
+> some time (no indication of how long), or poll the status register until it
+> returns 0 before deasserting reset.
+> 
+> wmb() is insufficient for this purpose since it just ensures ordering, not
+> timing between writes.  Since asserting and deasserting reset occurs on the
+> same register, ordering is already guaranteed by the architecture, making
+> the wmb extraneous.
+> 
+> Since we would define a timeout for polling the status register to avoid a
+> possible infinite loop, lets just use a static delay of 20 ms, since 16.666
+> ms is the time available to process one frame at 60 fps.
+> 
+> Fixes: a689554ba6ed (drm/msm: Initial add DSI connector support)
+> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+> ---
+> 
+> Rob et al, is it possible for this to go into a 5.4-rc?
+> 
+>  drivers/gpu/drm/msm/dsi/dsi_host.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
+> index 663ff9f4fac9..68ded9b4735d 100644
+> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
+> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+> @@ -986,7 +986,7 @@ static void dsi_sw_reset(struct msm_dsi_host *msm_host)
+>  	wmb(); /* clocks need to be enabled before reset */
+>  
+>  	dsi_write(msm_host, REG_DSI_RESET, 1);
+> -	wmb(); /* make sure reset happen */
+> +	msleep(20); /* make sure reset happen */
 
-A good chunk of this code taken from:
-  tools/testing/selftests/android/ion/ionmap_test.c
-  Originally by Laura Abbott <labbott@redhat.com>
+Could you please pull this out into a #define used for both in case we decide to
+tweak it? I don't want these 2 values to drift.
 
-Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>
-Cc: Liam Mark <lmark@codeaurora.org>
-Cc: Pratik Patel <pratikp@codeaurora.org>
-Cc: Brian Starkey <Brian.Starkey@arm.com>
-Cc: Vincent Donnefort <Vincent.Donnefort@arm.com>
-Cc: Sudipto Paul <Sudipto.Paul@arm.com>
-Cc: Andrew F. Davis <afd@ti.com>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Chenbo Feng <fengc@google.com>
-Cc: Alistair Strachan <astrachan@google.com>
-Cc: Hridya Valsaraju <hridya@google.com>
-Cc: Hillf Danton <hdanton@sina.com>
-Cc: dri-devel@lists.freedesktop.org
-Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Reviewed-by: Brian Starkey <brian.starkey@arm.com>
-Acked-by: Laura Abbott <labbott@redhat.com>
-Tested-by: Ayan Kumar Halder <ayan.halder@arm.com>
-Signed-off-by: John Stultz <john.stultz@linaro.org>
----
-v2:
-* Switched to use reworked dma-heap apis
-v3:
-* Add simple mmap
-* Utilize dma-buf testdev to test importing
-v4:
-* Rework to use vgem
-* Pass in fd_flags to match interface changes
-* Skip . and .. dirs
-v6:
-* Number of style/cleanups suggested by Brian
-v7:
-* Whitespace fixup for checkpatch
-v8:
-* More checkpatch whitespace fixups
-v9:
-* Better handling error returns out to main, suggested
-  by Brian Starkey
-* Switch to using snprintf, suggested by Brian
----
- tools/testing/selftests/dmabuf-heaps/Makefile |   9 +
- .../selftests/dmabuf-heaps/dmabuf-heap.c      | 238 ++++++++++++++++++
- 2 files changed, 247 insertions(+)
- create mode 100644 tools/testing/selftests/dmabuf-heaps/Makefile
- create mode 100644 tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
+Thanks,
+Sean
 
-diff --git a/tools/testing/selftests/dmabuf-heaps/Makefile b/tools/testing/selftests/dmabuf-heaps/Makefile
-new file mode 100644
-index 000000000000..8c4c36e2972d
---- /dev/null
-+++ b/tools/testing/selftests/dmabuf-heaps/Makefile
-@@ -0,0 +1,9 @@
-+# SPDX-License-Identifier: GPL-2.0
-+CFLAGS += -static -O3 -Wl,-no-as-needed -Wall
-+#LDLIBS += -lrt -lpthread -lm
-+
-+# these are all "safe" tests that don't modify
-+# system time or require escalated privileges
-+TEST_GEN_PROGS = dmabuf-heap
-+
-+include ../lib.mk
-diff --git a/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c b/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
-new file mode 100644
-index 000000000000..b36dd9f35c19
---- /dev/null
-+++ b/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
-@@ -0,0 +1,238 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <dirent.h>
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <stdint.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <sys/ioctl.h>
-+#include <sys/mman.h>
-+#include <sys/types.h>
-+
-+#include <linux/dma-buf.h>
-+#include <drm/drm.h>
-+
-+#include "../../../../include/uapi/linux/dma-heap.h"
-+
-+#define DEVPATH "/dev/dma_heap"
-+
-+static int check_vgem(int fd)
-+{
-+	drm_version_t version = { 0 };
-+	char name[5];
-+	int ret;
-+
-+	version.name_len = 4;
-+	version.name = name;
-+
-+	ret = ioctl(fd, DRM_IOCTL_VERSION, &version);
-+	if (ret)
-+		return 0;
-+
-+	return !strcmp(name, "vgem");
-+}
-+
-+static int open_vgem(void)
-+{
-+	int i, fd;
-+	const char *drmstr = "/dev/dri/card";
-+
-+	fd = -1;
-+	for (i = 0; i < 16; i++) {
-+		char name[80];
-+
-+		snprintf(name, 80, "%s%u", drmstr, i);
-+
-+		fd = open(name, O_RDWR);
-+		if (fd < 0)
-+			continue;
-+
-+		if (!check_vgem(fd)) {
-+			close(fd);
-+			fd = -1;
-+			continue;
-+		} else {
-+			break;
-+		}
-+	}
-+	return fd;
-+}
-+
-+static int import_vgem_fd(int vgem_fd, int dma_buf_fd, uint32_t *handle)
-+{
-+	struct drm_prime_handle import_handle = {
-+		.fd = dma_buf_fd,
-+		.flags = 0,
-+		.handle = 0,
-+	 };
-+	int ret;
-+
-+	ret = ioctl(vgem_fd, DRM_IOCTL_PRIME_FD_TO_HANDLE, &import_handle);
-+	if (ret == 0)
-+		*handle = import_handle.handle;
-+	return ret;
-+}
-+
-+static void close_handle(int vgem_fd, uint32_t handle)
-+{
-+	struct drm_gem_close close = {
-+		.handle = handle,
-+	};
-+
-+	ioctl(vgem_fd, DRM_IOCTL_GEM_CLOSE, &close);
-+}
-+
-+static int dmabuf_heap_open(char *name)
-+{
-+	int ret, fd;
-+	char buf[256];
-+
-+	ret = snprintf(buf, 256, "%s/%s", DEVPATH, name);
-+	if (ret < 0) {
-+		printf("snprintf failed!\n");
-+		return ret;
-+	}
-+
-+	fd = open(buf, O_RDWR);
-+	if (fd < 0)
-+		printf("open %s failed!\n", buf);
-+	return fd;
-+}
-+
-+static int dmabuf_heap_alloc(int fd, size_t len, unsigned int flags,
-+			     int *dmabuf_fd)
-+{
-+	struct dma_heap_allocation_data data = {
-+		.len = len,
-+		.fd_flags = O_RDWR | O_CLOEXEC,
-+		.heap_flags = flags,
-+	};
-+	int ret;
-+
-+	if (!dmabuf_fd)
-+		return -EINVAL;
-+
-+	ret = ioctl(fd, DMA_HEAP_IOC_ALLOC, &data);
-+	if (ret < 0)
-+		return ret;
-+	*dmabuf_fd = (int)data.fd;
-+	return ret;
-+}
-+
-+static void dmabuf_sync(int fd, int start_stop)
-+{
-+	struct dma_buf_sync sync = {
-+		.flags = start_stop | DMA_BUF_SYNC_RW,
-+	};
-+	int ret;
-+
-+	ret = ioctl(fd, DMA_BUF_IOCTL_SYNC, &sync);
-+	if (ret)
-+		printf("sync failed %d\n", errno);
-+}
-+
-+#define ONE_MEG (1024 * 1024)
-+
-+static int do_test(char *heap_name)
-+{
-+	int heap_fd = -1, dmabuf_fd = -1, importer_fd = -1;
-+	uint32_t handle = 0;
-+	void *p = NULL;
-+	int ret;
-+
-+	printf("Testing heap: %s\n", heap_name);
-+
-+	heap_fd = dmabuf_heap_open(heap_name);
-+	if (heap_fd < 0)
-+		return;
-+
-+	printf("Allocating 1 MEG\n");
-+	ret = dmabuf_heap_alloc(heap_fd, ONE_MEG, 0, &dmabuf_fd);
-+	if (ret) {
-+		printf("Allocation Failed!\n");
-+		ret = -1;
-+		goto out;
-+	}
-+	/* mmap and write a simple pattern */
-+	p = mmap(NULL,
-+		 ONE_MEG,
-+		 PROT_READ | PROT_WRITE,
-+		 MAP_SHARED,
-+		 dmabuf_fd,
-+		 0);
-+	if (p == MAP_FAILED) {
-+		printf("mmap() failed: %m\n");
-+		ret = -1;
-+		goto out;
-+	}
-+	printf("mmap passed\n");
-+
-+	dmabuf_sync(dmabuf_fd, DMA_BUF_SYNC_START);
-+	memset(p, 1, ONE_MEG / 2);
-+	memset((char *)p + ONE_MEG / 2, 0, ONE_MEG / 2);
-+	dmabuf_sync(dmabuf_fd, DMA_BUF_SYNC_END);
-+
-+	importer_fd = open_vgem();
-+	if (importer_fd < 0) {
-+		ret = importer_fd;
-+		printf("Failed to open vgem\n");
-+		goto out;
-+	}
-+
-+	ret = import_vgem_fd(importer_fd, dmabuf_fd, &handle);
-+	if (ret < 0) {
-+		printf("Failed to import buffer\n");
-+		goto out;
-+	}
-+	printf("import passed\n");
-+
-+	dmabuf_sync(dmabuf_fd, DMA_BUF_SYNC_START);
-+	memset(p, 0xff, ONE_MEG);
-+	dmabuf_sync(dmabuf_fd, DMA_BUF_SYNC_END);
-+	printf("syncs passed\n");
-+
-+	close_handle(importer_fd, handle);
-+	ret = 0;
-+
-+out:
-+	if (p)
-+		munmap(p, ONE_MEG);
-+	if (importer_fd >= 0)
-+		close(importer_fd);
-+	if (dmabuf_fd >= 0)
-+		close(dmabuf_fd);
-+	if (heap_fd >= 0)
-+		close(heap_fd);
-+
-+	return ret;
-+}
-+
-+int main(void)
-+{
-+	DIR *d;
-+	struct dirent *dir;
-+	int ret = -1;
-+
-+	d = opendir(DEVPATH);
-+	if (!d) {
-+		printf("No %s directory?\n", DEVPATH);
-+		return -1;
-+	}
-+
-+	while ((dir = readdir(d)) != NULL) {
-+		if (!strncmp(dir->d_name, ".", 2))
-+			continue;
-+		if (!strncmp(dir->d_name, "..", 3))
-+			continue;
-+
-+		ret = do_test(dir->d_name);
-+		if (ret)
-+			break;
-+	}
-+	closedir(d);
-+
-+	return ret;
-+}
+>  	dsi_write(msm_host, REG_DSI_RESET, 0);
+>  }
+>  
+> @@ -1396,7 +1396,7 @@ static void dsi_sw_reset_restore(struct msm_dsi_host *msm_host)
+>  
+>  	/* dsi controller can only be reset while clocks are running */
+>  	dsi_write(msm_host, REG_DSI_RESET, 1);
+> -	wmb();	/* make sure reset happen */
+> +	msleep(20);	/* make sure reset happen */
+>  	dsi_write(msm_host, REG_DSI_RESET, 0);
+>  	wmb();	/* controller out of reset */
+>  	dsi_write(msm_host, REG_DSI_CTRL, data0);
+> -- 
+> 2.17.1
+> 
+
 -- 
-2.17.1
-
+Sean Paul, Software Engineer, Google / Chromium OS
