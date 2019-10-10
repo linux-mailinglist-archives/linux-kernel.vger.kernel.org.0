@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 263D9D233E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:48:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75E95D23B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388138AbfJJIkf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:40:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44656 "EHLO mail.kernel.org"
+        id S2388400AbfJJIpS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:45:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388130AbfJJIkd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:40:33 -0400
+        id S2388040AbfJJIpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:45:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BCF020B7C;
-        Thu, 10 Oct 2019 08:40:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A66B21A4A;
+        Thu, 10 Oct 2019 08:45:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570696833;
-        bh=CKEUoS5guBiWrctm6vPTH86U8L1Xu99HdNAMHySxioY=;
+        s=default; t=1570697113;
+        bh=VRTYunhUV9afr/tTCD6DJ8MgAzp+H1ZkWoEb2EMleVQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zkLZ5HFOcASfh/3VP/hlgS/wWBRv9XNvCy0PTw8OSAh5tXbEo/IQ0z6JRGafrhmIy
-         52D7jWUbW4JLph7TgwGJx5FOQy6EIcejO0edPbyPVvjM4gJkuOMpVMXB2ROffmoi2Y
-         ViU3x6ia46nyZ7yIDq2r7x8ID2K2jJiSZl217Qr4=
+        b=vwqA2OYLupTHdqwspQjFxH9IkUpnIQtG3/ARvu++Nl9HmsGcJmziuKb2ViJmnD+0h
+         CAqY9kLeurAkyeSfrxOplt3S62oGMwHuxr5XzDO3K4xq7+wzCcyKmmB5al5OGaFD1j
+         i/f70UvOdtINYWJmrUKTJMtSHuWAOJ7rHXuyN5ig=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>
-Subject: [PATCH 5.3 068/148] drm/nouveau/kms/nv50-: Dont create MSTMs for eDP connectors
-Date:   Thu, 10 Oct 2019 10:35:29 +0200
-Message-Id: <20191010083615.554219830@linuxfoundation.org>
+        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.19 023/114] crypto: cavium/zip - Add missing single_release()
+Date:   Thu, 10 Oct 2019 10:35:30 +0200
+Message-Id: <20191010083554.686449141@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
-References: <20191010083609.660878383@linuxfoundation.org>
+In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
+References: <20191010083544.711104709@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,49 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lyude Paul <lyude@redhat.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-commit 698c1aa9f83b618de79e9e5e19a58f70a4a6ae0f upstream.
+commit c552ffb5c93d9d65aaf34f5f001c4e7e8484ced1 upstream.
 
-On the ThinkPad P71, we have one eDP connector exposed along with 5 DP
-connectors, resulting in a total of 11 TMDS encoders. Since the GPU on
-this system is also capable of MST, we create an additional 4 fake MST
-encoders for each DP port. Unfortunately, we also do this for the eDP
-port as well, resulting in:
+When using single_open() for opening, single_release() should be
+used instead of seq_release(), otherwise there is a memory leak.
 
-  1 eDP port: +1 TMDS encoder
-              +4 DPMST encoders
-  5 DP ports: +2 TMDS encoders
-              +4 DPMST encoders
-	      *5 ports
-	      == 35 encoders
-
-Which breaks things, since DRM has a hard coded limit of 32 encoders.
-So, fix this by not creating MSTMs for any eDP connectors. This brings
-us down to 31 encoders, although we can do better.
-
-This fixes driver probing for nouveau on the ThinkPad P71.
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Fixes: 09ae5d37e093 ("crypto: zip - Add Compression/Decompression statistics")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/nouveau/dispnv50/disp.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/crypto/cavium/zip/zip_main.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
-+++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-@@ -1603,7 +1603,8 @@ nv50_sor_create(struct drm_connector *co
- 			nv_encoder->aux = aux;
- 		}
+--- a/drivers/crypto/cavium/zip/zip_main.c
++++ b/drivers/crypto/cavium/zip/zip_main.c
+@@ -593,6 +593,7 @@ static const struct file_operations zip_
+ 	.owner = THIS_MODULE,
+ 	.open  = zip_stats_open,
+ 	.read  = seq_read,
++	.release = single_release,
+ };
  
--		if ((data = nvbios_dp_table(bios, &ver, &hdr, &cnt, &len)) &&
-+		if (nv_connector->type != DCB_CONNECTOR_eDP &&
-+		    (data = nvbios_dp_table(bios, &ver, &hdr, &cnt, &len)) &&
- 		    ver >= 0x40 && (nvbios_rd08(bios, data + 0x08) & 0x04)) {
- 			ret = nv50_mstm_new(nv_encoder, &nv_connector->aux, 16,
- 					    nv_connector->base.base.id,
+ static int zip_clear_open(struct inode *inode, struct file *file)
+@@ -604,6 +605,7 @@ static const struct file_operations zip_
+ 	.owner = THIS_MODULE,
+ 	.open  = zip_clear_open,
+ 	.read  = seq_read,
++	.release = single_release,
+ };
+ 
+ static int zip_regs_open(struct inode *inode, struct file *file)
+@@ -615,6 +617,7 @@ static const struct file_operations zip_
+ 	.owner = THIS_MODULE,
+ 	.open  = zip_regs_open,
+ 	.read  = seq_read,
++	.release = single_release,
+ };
+ 
+ /* Root directory for thunderx_zip debugfs entry */
 
 
