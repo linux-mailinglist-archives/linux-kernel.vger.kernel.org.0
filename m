@@ -2,127 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 640BFD2E1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 17:48:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16909D2E18
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 17:48:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbfJJPqb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 11:46:31 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35311 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726148AbfJJPqa (ORCPT
+        id S1726491AbfJJPqV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 11:46:21 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:21004 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726453AbfJJPqU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 11:46:30 -0400
-Received: by mail-wm1-f65.google.com with SMTP id y21so7317912wmi.0;
-        Thu, 10 Oct 2019 08:46:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=IgNkDcJv0Dsat8rX7/2Xt+TqC2z88O73Ns5IrlBP/xE=;
-        b=ICZMR/kXK4ALkcUdh0QSQSOcz8hympO2L0DXdxYG6WiZRQPIzt56IyYT1bbtChGft6
-         dAA2Hwc9NWTwEc547la4Bm1t9zBeNY8B6I87cY4IFx+tvm6fHm8ThRn3Kyqux9uH7IaX
-         ME04BtFS5DlcH1gRda+qPqDkYpFIEAfm2UT7m6sjMJY2NbXruBXARNNzcEe5Yj7iIiOy
-         3kmTk17xeKP6zVeBSK94fFSNq+luFF+1RSApsYCYdufh4gvHsYEljjEpUg0c2TYKPMqS
-         fiJzSLNXndJy+EKXTqlhjCP70qiIebkd2XBgyZ9drZ5nDsSjL4Oa8zD6KQ4yx7ezuV0Z
-         Adrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=IgNkDcJv0Dsat8rX7/2Xt+TqC2z88O73Ns5IrlBP/xE=;
-        b=I5lGDkcJSvtsIfxFLGwoZ7XxSXTOXKInUDsrTt1vk/9tz3r9GV5kfCGiubi1lLoqxE
-         fFn/IhJJSuxNtAOHuDWeQOGuZlWvMK5qfsjhr057Gb56PHHIwexZWwdYE4KO5gDBfGtE
-         KmOy46lovj1W8ZuJuU8oH1oELQpjSKsbROREnu7RB5zzv3/1UPuLGN+227WmeGtfaY2F
-         MPNI2uhvxMuvT7wpR7A3fRRBtIf4LfmnVwAv9VhguPUlP/6L/X1MUwY0hgMgQ1mNA06n
-         lBO/NC9bXoxww6FWhQ4BR9NDD+E90oSs9sNYJWz8/43OU2YwE5ynI75S7vstiPTesOLh
-         4lrg==
-X-Gm-Message-State: APjAAAVtUhMjYfZ0CLR06wX/TZ6U3sA1rI5/pvTUsiFMAHajul+pV8zZ
-        LI0XYXrajsATnuwGGlm9ux8gkkXO8Zr1ow==
-X-Google-Smtp-Source: APXvYqzHJcOBxuNlsbdIdjGkvOSD9xg1agAV0t9veDiKZfz6DjAcyhslXuWWzb/o5il3Bn07r61zdg==
-X-Received: by 2002:a05:600c:2185:: with SMTP id e5mr8441624wme.78.1570722386439;
-        Thu, 10 Oct 2019 08:46:26 -0700 (PDT)
-Received: from andrea.corp.microsoft.com ([2a01:110:8012:1010:e9a3:da77:7120:dee0])
-        by smtp.gmail.com with ESMTPSA id u25sm6719807wml.4.2019.10.10.08.46.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 08:46:25 -0700 (PDT)
-From:   Andrea Parri <parri.andrea@gmail.com>
-To:     linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        netdev@vger.kernel.org
-Cc:     "K . Y . Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Dexuan Cui <decui@microsoft.com>,
-        Andrea Parri <parri.andrea@gmail.com>
-Subject: [PATCH v2 3/3] Drivers: hv: vmbus: Add module parameter to cap the VMBus version
-Date:   Thu, 10 Oct 2019 17:46:00 +0200
-Message-Id: <20191010154600.23875-4-parri.andrea@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010154600.23875-1-parri.andrea@gmail.com>
-References: <20191010154600.23875-1-parri.andrea@gmail.com>
+        Thu, 10 Oct 2019 11:46:20 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-13-oDfPCZz3PYyTN3ZJuZIDKw-1; Thu, 10 Oct 2019 16:46:16 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Thu, 10 Oct 2019 16:46:15 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 10 Oct 2019 16:46:15 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     "'dsterba@suse.cz'" <dsterba@suse.cz>,
+        Nick Desaulniers <ndesaulniers@google.com>
+CC:     Joe Perches <joe@perches.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Markus Elfring <Markus.Elfring@web.de>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Subject: RE: [PATCH] string.h: Mark 34 functions with __must_check
+Thread-Topic: [PATCH] string.h: Mark 34 functions with __must_check
+Thread-Index: AQHVf3bZWoZwBrQ0EEKCNRVPCPIi9qdUA/tQ
+Date:   Thu, 10 Oct 2019 15:46:15 +0000
+Message-ID: <3b133d6f8742472e8a99a76fb0bd3b11@AcuMS.aculab.com>
+References: <75f70e5e-9ece-d6d1-a2c5-2f3ad79b9ccb@web.de>
+ <20191009110943.7ff3a08a@gandalf.local.home>
+ <CAKwvOdk3OTaAVmbV9Cu+Dzg8zuojjU6ENZfu4cUPaKS2a58d3w@mail.gmail.com>
+ <4d890cae9cbbd873096cb1fadb477cf4632ddb9a.camel@perches.com>
+ <CAKwvOdntBXd3OPiCV5adcDjXor886-XnsSxcStAjYBJpuEBrqQ@mail.gmail.com>
+ <20191010142733.GT2751@twin.jikos.cz>
+In-Reply-To: <20191010142733.GT2751@twin.jikos.cz>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MC-Unique: oDfPCZz3PYyTN3ZJuZIDKw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, Linux guests negotiate the VMBus version with Hyper-V
-and use the highest available VMBus version they can connect to.
-This has some drawbacks: by using the highest available version,
-certain code paths are never executed and can not be tested when
-the guest runs on the newest host.
-
-Add the module parameter "max_version", to upper-bound the VMBus
-versions guests can negotiate.
-
-Suggested-by: Dexuan Cui <decui@microsoft.com>
-Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
----
- drivers/hv/connection.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/drivers/hv/connection.c b/drivers/hv/connection.c
-index 2f6961ac8c996..f60d7330ff3fd 100644
---- a/drivers/hv/connection.c
-+++ b/drivers/hv/connection.c
-@@ -14,6 +14,7 @@
- #include <linux/wait.h>
- #include <linux/delay.h>
- #include <linux/mm.h>
-+#include <linux/module.h>
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
- #include <linux/hyperv.h>
-@@ -55,6 +56,16 @@ static __u32 vmbus_versions[] = {
- 	VERSION_WS2008
- };
- 
-+/*
-+ * Maximal VMBus protocol version guests can negotiate.  Useful to cap the
-+ * VMBus version for testing and debugging purpose.
-+ */
-+static uint max_version = VERSION_WIN10_V5_2;
-+
-+module_param(max_version, uint, S_IRUGO);
-+MODULE_PARM_DESC(max_version,
-+		 "Maximal VMBus protocol version which can be negotiated");
-+
- int vmbus_negotiate_version(struct vmbus_channel_msginfo *msginfo, u32 version)
- {
- 	int ret = 0;
-@@ -237,6 +248,8 @@ int vmbus_connect(void)
- 
- 	for (i = 0; i < ARRAY_SIZE(vmbus_versions); i++) {
- 		version = vmbus_versions[i];
-+		if (version > max_version)
-+			continue;
- 
- 		ret = vmbus_negotiate_version(msginfo, version);
- 		if (ret == -ETIMEDOUT)
--- 
-2.23.0
+RnJvbTogRGF2aWQgU3RlcmJhDQo+IFNlbnQ6IDEwIE9jdG9iZXIgMjAxOSAxNToyOA0KLi4uDQo+
+ID4gQ2FuIHdlIHBpY2sgYSBzdHlsZSBhbmQgZW5mb3JjZSBpdCB2aWEgY2hlY2twYXRjaD8gKEl0
+J3MgcHJvYmFibHkgbm90DQo+ID4gZnVuIHRvIGNoZWNrIGZvciBlYWNoIGZ1bmN0aW9uIGF0dHJp
+YnV0ZSBpbg0KPiA+IGluY2x1ZGUvbGludXgvY29tcGlsZXJfYXR0cmlidXRlcy5oKS4NCj4gDQo+
+IEFueXRoaW5nIHRoYXQgaGFzIHRoZSByZXR1cm4gdHlwZSwgYXR0cmlidXRlcyBhbmQgZnVuY3Rp
+b24gbmFtZSBvbiBvbmUNCj4gbGluZSB3b3JrcyBmb3IgbWUsIGJ1dCBJIGtub3cgdGhhdCB0aGVy
+ZSBhcmUgb3RoZXIgc3R5bGUgcHJlZmVyZW5jZXMNCj4gdGhhdCBwdXQgZnVuY3Rpb24gbmFtZSBh
+cyB0aGUgZmlyc3Qgd29yZCBvbiBhIHNlcGFyYXRlIGxpbmUuDQoNCkhhdmluZyB0aGUgZnVuY3Rp
+b24gbmFtZSBmaXJzdCBtYWtlcyBpdCBtdWNoIGVhc2llciB0byBmaW5kIHRoZSBmdW5jdGlvbiBp
+dHNlbGYuDQpJbiB0aGUgbGludXgga2VybmVsIHRyZWUgc2VhcmNoaW5nIGZvciAnRVhQT1JULipm
+dW5jdGlvbl9uYW1lJyB3b3JrcyBtb3N0IGYgdGhlIHRpbWUuDQoNCj4gTXkgcmVhc29ucyBhcmUg
+Zm9yIGJldHRlciBzZWFyY2ggcmVzdWx0cywgaWUuDQo+IA0KPiAgIGV4dGVudF9tYXAuYzp2b2lk
+IF9fY29sZCBleHRlbnRfbWFwX2V4aXQodm9pZCkNCj4gICBleHRlbnRfbWFwLmg6dm9pZCBfX2Nv
+bGQgZXh0ZW50X21hcF9leGl0KHZvaWQpOw0KPiAgIGZpbGUuYzp2b2lkIF9fY29sZCBidHJmc19h
+dXRvX2RlZnJhZ19leGl0KHZvaWQpDQo+ICAgaW5vZGUuYzp2b2lkIF9fY29sZCBidHJmc19kZXN0
+cm95X2NhY2hlcCh2b2lkKQ0KPiAgIG9yZGVyZWQtZGF0YS5jOnZvaWQgX19jb2xkIG9yZGVyZWRf
+ZGF0YV9leGl0KHZvaWQpDQo+ICAgb3JkZXJlZC1kYXRhLmg6dm9pZCBfX2NvbGQgb3JkZXJlZF9k
+YXRhX2V4aXQodm9pZCk7DQo+IA0KPiBpcyBiZXR0ZXIgdGhhbg0KPiANCj4gICBzZW5kLmM6X19j
+b2xkDQo+ICAgc3VwZXIuYzpfX2NvbGQNCj4gICBzdXBlci5jOl9fY29sZA0KPiAgIHN1cGVyLmM6
+X19jb2xkDQo+IA0KPiB3aGljaCBJIG1pZ2h0IGdldCB0byBmaXggZXZlbnR1YWxseS4NCg0KVGhh
+dCBpcyB3aGF0IC1BMSBpbiBmb3IgOi0pDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJl
+c3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsx
+IDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 
