@@ -2,94 +2,332 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BA80D243B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:50:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A19CBD259E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:02:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388445AbfJJIu1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:50:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37728 "EHLO mx1.redhat.com"
+        id S2388294AbfJJIlW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:41:22 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:45604 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389959AbfJJIuY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:50:24 -0400
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A4DB33DE04
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 08:50:24 +0000 (UTC)
-Received: by mail-wr1-f72.google.com with SMTP id z17so2404839wru.13
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 01:50:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kbUGk/zH7Jd7BlhB+4/oDRz4mPdioNN/Nf5e+ZFx1KA=;
-        b=G+++O+sio+lslwqKpLTAQs4NNqDgVNgfa2t6uxFVBkfyjyFlN9E0Ha2n1xyZat81+O
-         Vqia7vuDCK3Es0mTVOFjpIa+3VkjDI9XD7NKpw1SWehwVknHmFbOyMNzLw99lL7nAq1F
-         XtYarzHWJG/rtT49VhN2qwLKAvVGSPSwfmd/rYgFP6TBbC2rXVC3HtWyeTi0usfW8Q9I
-         KR8cIWS8qHoS56b6WuonLgD1iPhjXOenDVdk+AxTLzE2EqcBVcDBEwTolA5ltQt7d2Z+
-         IbtEYiXruQG6/HbGf0pu9i8KF76zTebvuBIcnqbETckzG8sZ/1ET6xNfEFCkowSdc1xG
-         vvkw==
-X-Gm-Message-State: APjAAAWv18hNjpjxnWKcKYFVMS4mLfOEaIdyKP4YdLNE9ZiXCY2SfW0t
-        oNZNfwWvwQnPlE/husS6dXATNdLJT6GW5g6XswQ+DKrBZtFXypARlHKHtfw4KeITt0AjPXUyl8E
-        tPjp7QTPTX00C7bGPzKTO63uC
-X-Received: by 2002:a5d:6a4e:: with SMTP id t14mr7690214wrw.286.1570697423407;
-        Thu, 10 Oct 2019 01:50:23 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwoCA81jZEGW66oRDsEIESbM+AgkqiF20vI6cPaP0YoBTkJocF4+GdZwig79Aeir6Qomx30bw==
-X-Received: by 2002:a5d:6a4e:: with SMTP id t14mr7690208wrw.286.1570697423217;
-        Thu, 10 Oct 2019 01:50:23 -0700 (PDT)
-Received: from steredhat (host174-200-dynamic.52-79-r.retail.telecomitalia.it. [79.52.200.174])
-        by smtp.gmail.com with ESMTPSA id y8sm6284711wrm.64.2019.10.10.01.50.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 01:50:22 -0700 (PDT)
-Date:   Thu, 10 Oct 2019 10:50:20 +0200
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Stefan Hajnoczi <stefanha@gmail.com>
-Cc:     netdev@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
-        linux-hyperv@vger.kernel.org,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        kvm@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
-        Dexuan Cui <decui@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jorgen Hansen <jhansen@vmware.com>
-Subject: Re: [RFC PATCH 06/13] vsock: add 'struct vsock_sock *' param to
- vsock_core_get_transport()
-Message-ID: <20191010085020.w5mbse7mnpzalhyr@steredhat>
-References: <20190927112703.17745-1-sgarzare@redhat.com>
- <20190927112703.17745-7-sgarzare@redhat.com>
- <20191009115433.GG5747@stefanha-x1.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191009115433.GG5747@stefanha-x1.localdomain>
-User-Agent: NeoMutt/20180716
+        id S2388280AbfJJIlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:41:15 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 378E32008AA;
+        Thu, 10 Oct 2019 10:41:13 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id F275020091A;
+        Thu, 10 Oct 2019 10:41:08 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id B2D7E4031C;
+        Thu, 10 Oct 2019 16:41:03 +0800 (SGT)
+From:   Yuantian Tang <andy.tang@nxp.com>
+To:     shawnguo@kernel.org
+Cc:     leoyang.li@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yuantian Tang <andy.tang@nxp.com>
+Subject: [PATCH v2] arm64: dts: lx2160a: add tmu device node
+Date:   Thu, 10 Oct 2019 16:30:22 +0800
+Message-Id: <20191010083022.6700-1-andy.tang@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 12:54:33PM +0100, Stefan Hajnoczi wrote:
-> On Fri, Sep 27, 2019 at 01:26:56PM +0200, Stefano Garzarella wrote:
-> > -const struct vsock_transport *vsock_core_get_transport(void)
-> > +const struct vsock_transport *vsock_core_get_transport(struct vsock_sock *vsk)
-> >  {
-> >  	/* vsock_register_mutex not taken since only the transport uses this
-> >  	 * function and only while registered.
-> >  	 */
-> > -	return transport_single;
-> 
-> This comment is about protecting transport_single.  It no longer applies
-> when using vsk->transport.  Please drop it.
+Add the TMU (Thermal Monitoring Unit) device node to enable
+TMU feature.
 
-Right, dropped.
+Signed-off-by: Yuantian Tang <andy.tang@nxp.com>
+---
+v2:
+	- sort the node and use micro to replace hardcoded number
 
-> 
-> Otherwise:
-> 
-> Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+ .../arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 108 +++++++++++++++---
+ 1 file changed, 92 insertions(+), 16 deletions(-)
 
-Thanks,
-Stefano
+diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+index 80268c6ed5fb..72054fe1cafe 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+@@ -6,6 +6,7 @@
+ 
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/thermal/thermal.h>
+ 
+ /memreserve/ 0x80000000 0x00010000;
+ 
+@@ -20,7 +21,7 @@
+ 		#size-cells = <0>;
+ 
+ 		// 8 clusters having 2 Cortex-A72 cores each
+-		cpu@0 {
++		cpu0: cpu@0 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a72";
+ 			enable-method = "psci";
+@@ -34,9 +35,10 @@
+ 			i-cache-sets = <192>;
+ 			next-level-cache = <&cluster0_l2>;
+ 			cpu-idle-states = <&cpu_pw20>;
++			#cooling-cells = <2>;
+ 		};
+ 
+-		cpu@1 {
++		cpu1: cpu@1 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a72";
+ 			enable-method = "psci";
+@@ -50,9 +52,10 @@
+ 			i-cache-sets = <192>;
+ 			next-level-cache = <&cluster0_l2>;
+ 			cpu-idle-states = <&cpu_pw20>;
++			#cooling-cells = <2>;
+ 		};
+ 
+-		cpu@100 {
++		cpu100: cpu@100 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a72";
+ 			enable-method = "psci";
+@@ -66,9 +69,10 @@
+ 			i-cache-sets = <192>;
+ 			next-level-cache = <&cluster1_l2>;
+ 			cpu-idle-states = <&cpu_pw20>;
++			#cooling-cells = <2>;
+ 		};
+ 
+-		cpu@101 {
++		cpu101: cpu@101 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a72";
+ 			enable-method = "psci";
+@@ -82,9 +86,10 @@
+ 			i-cache-sets = <192>;
+ 			next-level-cache = <&cluster1_l2>;
+ 			cpu-idle-states = <&cpu_pw20>;
++			#cooling-cells = <2>;
+ 		};
+ 
+-		cpu@200 {
++		cpu200: cpu@200 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a72";
+ 			enable-method = "psci";
+@@ -98,9 +103,10 @@
+ 			i-cache-sets = <192>;
+ 			next-level-cache = <&cluster2_l2>;
+ 			cpu-idle-states = <&cpu_pw20>;
++			#cooling-cells = <2>;
+ 		};
+ 
+-		cpu@201 {
++		cpu201: cpu@201 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a72";
+ 			enable-method = "psci";
+@@ -114,9 +120,10 @@
+ 			i-cache-sets = <192>;
+ 			next-level-cache = <&cluster2_l2>;
+ 			cpu-idle-states = <&cpu_pw20>;
++			#cooling-cells = <2>;
+ 		};
+ 
+-		cpu@300 {
++		cpu300: cpu@300 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a72";
+ 			enable-method = "psci";
+@@ -130,9 +137,10 @@
+ 			i-cache-sets = <192>;
+ 			next-level-cache = <&cluster3_l2>;
+ 			cpu-idle-states = <&cpu_pw20>;
++			#cooling-cells = <2>;
+ 		};
+ 
+-		cpu@301 {
++		cpu301: cpu@301 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a72";
+ 			enable-method = "psci";
+@@ -146,9 +154,10 @@
+ 			i-cache-sets = <192>;
+ 			next-level-cache = <&cluster3_l2>;
+ 			cpu-idle-states = <&cpu_pw20>;
++			#cooling-cells = <2>;
+ 		};
+ 
+-		cpu@400 {
++		cpu400: cpu@400 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a72";
+ 			enable-method = "psci";
+@@ -162,9 +171,10 @@
+ 			i-cache-sets = <192>;
+ 			next-level-cache = <&cluster4_l2>;
+ 			cpu-idle-states = <&cpu_pw20>;
++			#cooling-cells = <2>;
+ 		};
+ 
+-		cpu@401 {
++		cpu401: cpu@401 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a72";
+ 			enable-method = "psci";
+@@ -178,9 +188,10 @@
+ 			i-cache-sets = <192>;
+ 			next-level-cache = <&cluster4_l2>;
+ 			cpu-idle-states = <&cpu_pw20>;
++			#cooling-cells = <2>;
+ 		};
+ 
+-		cpu@500 {
++		cpu500: cpu@500 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a72";
+ 			enable-method = "psci";
+@@ -194,9 +205,10 @@
+ 			i-cache-sets = <192>;
+ 			next-level-cache = <&cluster5_l2>;
+ 			cpu-idle-states = <&cpu_pw20>;
++			#cooling-cells = <2>;
+ 		};
+ 
+-		cpu@501 {
++		cpu501: cpu@501 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a72";
+ 			enable-method = "psci";
+@@ -210,9 +222,10 @@
+ 			i-cache-sets = <192>;
+ 			next-level-cache = <&cluster5_l2>;
+ 			cpu-idle-states = <&cpu_pw20>;
++			#cooling-cells = <2>;
+ 		};
+ 
+-		cpu@600 {
++		cpu600: cpu@600 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a72";
+ 			enable-method = "psci";
+@@ -226,9 +239,10 @@
+ 			i-cache-sets = <192>;
+ 			next-level-cache = <&cluster6_l2>;
+ 			cpu-idle-states = <&cpu_pw20>;
++			#cooling-cells = <2>;
+ 		};
+ 
+-		cpu@601 {
++		cpu601: cpu@601 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a72";
+ 			enable-method = "psci";
+@@ -242,9 +256,10 @@
+ 			i-cache-sets = <192>;
+ 			next-level-cache = <&cluster6_l2>;
+ 			cpu-idle-states = <&cpu_pw20>;
++			#cooling-cells = <2>;
+ 		};
+ 
+-		cpu@700 {
++		cpu700: cpu@700 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a72";
+ 			enable-method = "psci";
+@@ -258,9 +273,10 @@
+ 			i-cache-sets = <192>;
+ 			next-level-cache = <&cluster7_l2>;
+ 			cpu-idle-states = <&cpu_pw20>;
++			#cooling-cells = <2>;
+ 		};
+ 
+-		cpu@701 {
++		cpu701: cpu@701 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a72";
+ 			enable-method = "psci";
+@@ -274,6 +290,7 @@
+ 			i-cache-sets = <192>;
+ 			next-level-cache = <&cluster7_l2>;
+ 			cpu-idle-states = <&cpu_pw20>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cluster0_l2: l2-cache0 {
+@@ -418,6 +435,51 @@
+ 		clock-output-names = "sysclk";
+ 	};
+ 
++	thermal-zones {
++		core_thermal1: core-thermal1 {
++			polling-delay-passive = <1000>;
++			polling-delay = <5000>;
++			thermal-sensors = <&tmu 0>;
++
++			trips {
++				core_cluster_alert: core-cluster-alert {
++					temperature = <85000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
++
++				core_cluster_crit: core-cluster-crit {
++					temperature = <95000>;
++					hysteresis = <2000>;
++					type = "critical";
++				};
++			};
++
++			cooling-maps {
++				map0 {
++					trip = <&core_cluster_alert>;
++					cooling-device =
++						<&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu100 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu101 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu200 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu201 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu300 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu301 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu400 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu401 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu500 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu501 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu600 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu601 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu700 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu701 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				};
++			};
++		};
++	};
++
+ 	soc {
+ 		compatible = "simple-bus";
+ 		#address-cells = <2>;
+@@ -478,6 +540,20 @@
+ 			little-endian;
+ 		};
+ 
++		tmu: tmu@1f80000 {
++			compatible = "fsl,qoriq-tmu";
++			reg = <0x0 0x1f80000 0x0 0x10000>;
++			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
++			fsl,tmu-range = <0x800000e6 0x8001017d>;
++			fsl,tmu-calibration =
++				/* Calibration data group 1 */
++				<0x00000000 0x00000035
++				/* Calibration data group 2 */
++				0x00010001 0x00000154>;
++			little-endian;
++			#thermal-sensor-cells = <1>;
++		};
++
+ 		i2c0: i2c@2000000 {
+ 			compatible = "fsl,vf610-i2c";
+ 			#address-cells = <1>;
+-- 
+2.17.1
+
