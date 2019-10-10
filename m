@@ -2,57 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC387D31D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:15:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BA20D31D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:15:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726583AbfJJUO5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 16:14:57 -0400
-Received: from sonic317-32.consmr.mail.ne1.yahoo.com ([66.163.184.43]:43319
-        "EHLO sonic317-32.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725867AbfJJUO5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 16:14:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1570738495; bh=dRX5d8v++xfAAoPIT3VpAbTnk4dfpHOyQKhLrN2OBJk=; h=Date:From:Reply-To:Subject:From:Subject; b=kFE/00wL2O6RXKjcgIvEOP+39mOWapQgBoAXWKQshiLwHAaxkAGq9ZCarRSFCP8eWnOLFz8Nfh2rM6Y/4eiwUAzHREYkTAcYyjAJEPmzNtSFVy+6DFfA1u21MQs4nvE2cPHGtIyQEbxaYulZYe5NCM773o8AcI+53vqWKPMZdpIb3Eir9ZgquxzWJ3HPphS9lZMZF+gkqB/TMyMaL7//aptOFsGV3nQA/+MOnMVkBmL5W/5nkFEAOxt032a0jvD/Ij34zXSJ3s7bOIQWnaxgFd7ePK42X/jCJs9b7YWUoe6l6uXxkUqpGeqIXUluCDL0XmYVnQDGYxAESk/yqSg30g==
-X-YMail-OSG: UEQ6Ll0VM1mowvJvMqCl55YallAkB.sjy7_WVMH4wSlOi2Hui.o1LiwVDMVdHp1
- 1mCT_CLEPAGtBuvEnfdjFG4EMmOrnsIY8_cGg3NCgvlXkFwLGhq7y3UNiVpJVyugrTGeck_CpDyU
- .hQ.Inzh9Xiygd5EFe9BdPW9RMTtSbJ4yk3JlJhB7_zDU_bj2U1e05_Qw9EvgcB9FmFHi1tVIEUG
- vj2UE2CInyyUpACEHlXs7TM5SqiLyiMqMAMIcRjFt0C3FH4ze6AdiKgvxviYJ8WBdH7uWGbIgyBQ
- 2Ui8SnC96X9sDG5Gej7fXzE.Kpi3jOHNLwxbSPRYOV.cwayKx1nt_C.RJe6xFmmrRHAYdGHJuSGP
- sNgiuNGLwwwOnEpYz5xAfl.4j13LXoCZKXyVgEeOHmVkp8tjvIaM_N1G0w8H4DFGcO_vAb8akj2r
- 9a4jWlB8gXdfXRBvFUg08En3CalCxy8ja_yJcp6oFg18JQkpEKNWC3vMh1G8OFeZUWBaVk8On9iC
- slossbalS67MAUw6X9KSXj8X.xDu2dLETTEP_SfZhRww3Slm8F0kPv2asUkTN0A.b2Q0AYAh6c22
- Fosb9j8rJFcI1jbcOKqVWIIPCTyfRJxo5mChbwkJqaEZmGP71WW8uNA4Fo.W3c3XhLfwAalF66Xi
- eunoPrvAQnZahXVqx6Rl8Fqt549CK4GABgJuP18iBLVtAsPM5MnuS86bGGO7q0awZW6JuIA5AWdl
- _FjNEwJb1_CLBl4mfKBnunvPcv0h9uPapG8.rN6Fy6F.muYGfQHvaNBGzDF1oFJI5pnkQmUPrB5D
- Xs7uHXFwGgnpZae79rakGKjW8T6zBomDc502LWMj39LRSMjSpe0P1rPu2qKhx9AxeDhaFKrbYJDO
- hC3t5JxAcZsOmgQI0oSaMgZQzSMccQRCAZ0WFJaWBmahqkrQDjJlSx6LTZdbnk65NlTIMsfkc_p3
- v9BJz6jo_YC6Gxt5gunC8p3tAlZ8.Oeyduxkks8UTg.MmbAt0MklWAFPE3OamiBAojkGwhgqB2a9
- PV6ACvmQ1yx7_kBxxLgpt5F7d98.b6XWSrJT0DEEDPyJrtv4_xmu26FAMllOjOlba46le7jlSuvC
- g1fNnhn7CD4Z7uyogo5nI2VBLdiB0CxXr3Ecl6LAtygHdWT_9ZGMPHACuBPALb4XZCLX8doqZn6P
- Gw7yTRfsilXR_s6sRKQ4fkqUvqDFVDoHNbXa7mof7lVFteukSQJ7FhB_HTqu5kE4C79IAQRFt9t4
- SGvOo6qoapW9AUdKqx7FaU0cOwN4Bh9bKNnXWYRG73aFdsA--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Thu, 10 Oct 2019 20:14:55 +0000
-Date:   Thu, 10 Oct 2019 20:14:53 +0000 (UTC)
-From:   Miss Abibatu Ali <abibatuali01@gmail.com>
-Reply-To: abibatu22ali@gmail.com
-Message-ID: <1181728683.6620294.1570738493367@mail.yahoo.com>
-Subject: Hello
+        id S1726687AbfJJUPs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 16:15:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58054 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726070AbfJJUPs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 16:15:48 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 45019AF0B;
+        Thu, 10 Oct 2019 20:15:46 +0000 (UTC)
+Received: by unicorn.suse.cz (Postfix, from userid 1000)
+        id E9B3BE378C; Thu, 10 Oct 2019 22:15:44 +0200 (CEST)
+Date:   Thu, 10 Oct 2019 22:15:44 +0200
+From:   Michal Kubecek <mkubecek@suse.cz>
+To:     netdev@vger.kernel.org
+Cc:     Jiri Pirko <jiri@resnulli.us>, David Miller <davem@davemloft.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        John Linville <linville@tuxdriver.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v7 12/17] ethtool: provide link settings with
+ LINKINFO_GET request
+Message-ID: <20191010201544.GI22163@unicorn.suse.cz>
+References: <cover.1570654310.git.mkubecek@suse.cz>
+ <1568f00bf7275f1a872c177e29d5800cd73e50c8.1570654310.git.mkubecek@suse.cz>
+ <20191010155955.GB2901@nanopsycho>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191010155955.GB2901@nanopsycho>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
-I'm "Mrs.Abibatu Ali" married to Mr. Ali ( an International Contractor and Oil Merchant/ jointly in Exposition of Agro  Equipment ) who died in  Burkina Faso attack,  i am 64 years old and diagnosed of cancer for about 2 years ago  and my husband informed me that he deposited the sum of (17.3Million USD Only) with a Finance house) in  UAGADOUGOU BURKINA FASO.
+On Thu, Oct 10, 2019 at 05:59:55PM +0200, Jiri Pirko wrote:
+> Wed, Oct 09, 2019 at 10:59:37PM CEST, mkubecek@suse.cz wrote:
+> 
+> [...]
+> 
+> >+/* prepare_data() handler */
+> 
+> Not sure how valuable are comments like this...
 
-I want you to help me to use this money  for a charity project before I die, for the Poor, Less-privileged and  ORPHANAGES in
-your country.  Please kindly respond
+I'll drop them.
 
-quickly for further details.
+> >+static int linkinfo_prepare(const struct ethnl_req_info *req_base,
+> >+			    struct ethnl_reply_data *reply_base,
+> >+			    struct genl_info *info)
+> >+{
+> >+	struct linkinfo_reply_data *data =
+> >+		container_of(reply_base, struct linkinfo_reply_data, base);
+> 
+> A helper would be nice for this. For req_info too.
 
-Yours fairly friend,
-Mrs. Abibatu Ali 
+Good point.
+
+> >+	struct net_device *dev = reply_base->dev;
+> >+	int ret;
+> >+
+> >+	data->lsettings = &data->ksettings.base;
+> >+
+> >+	ret = ethnl_before_ops(dev);
+> 
+> "before_ops"/"after_ops" sounds odd. Maybe:
+> ethnl_ops_begin
+> ethnl_ops_complete
+> 
+> To me in-line with ethtool_ops names?
+
+OK
+
+> I guess you don't want the caller (ethnl_get_doit/ethnl_get_dumpit)
+> to call this because it might not be needed down in prepare_data()
+> callback, right?
+
+Yes, there are some which do not call any ethtool_ops callbacks, e.g.
+netdev features (ethtool -k / -K).
+
+> >+const struct get_request_ops linkinfo_request_ops = {
+> >+	.request_cmd		= ETHTOOL_MSG_LINKINFO_GET,
+> >+	.reply_cmd		= ETHTOOL_MSG_LINKINFO_GET_REPLY,
+> >+	.hdr_attr		= ETHTOOL_A_LINKINFO_HEADER,
+> >+	.max_attr		= ETHTOOL_A_LINKINFO_MAX,
+> >+	.req_info_size		= sizeof(struct linkinfo_req_info),
+> >+	.reply_data_size	= sizeof(struct linkinfo_reply_data),
+> >+	.request_policy		= linkinfo_get_policy,
+> >+	.all_reqflags		= ETHTOOL_RFLAG_LINKINFO_ALL,
+> >+
+> >+	.prepare_data		= linkinfo_prepare,
+> 
+> Please have the ops with the same name/suffix:
+> 	.request_policy		= linkinfo_reques_policy,
+> 	.prepare_data		= linkinfo_prepare_data,
+> 	.reply_size		= linkinfo_reply_size,
+> 	.fill_reply		= linkinfo_fill_reply,
+> 
+> Same applies of course to the other patches.
+
+OK
+
+Michal
