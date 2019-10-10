@@ -2,55 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1F08D2A96
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 15:14:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDAB7D2AB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 15:16:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388007AbfJJNOG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 09:14:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55932 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727788AbfJJNOG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 09:14:06 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07647206A1;
-        Thu, 10 Oct 2019 13:14:04 +0000 (UTC)
-Date:   Thu, 10 Oct 2019 09:14:03 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     jikos@kernel.org, Joe Lawrence <joe.lawrence@redhat.com>,
-        jpoimboe@redhat.com, mingo@redhat.com,
-        Miroslav Benes <mbenes@suse.cz>, linux-kernel@vger.kernel.org,
-        live-patching@vger.kernel.org
-Subject: Re: [PATCH 0/3] ftrace: Introduce PERMANENT ftrace_ops flag
-Message-ID: <20191010091403.5ecf0fdb@gandalf.local.home>
-In-Reply-To: <20191010085035.emsdks6xecazqc6k@pathway.suse.cz>
-References: <20191007081714.20259-1-mbenes@suse.cz>
-        <20191008193534.GA16675@redhat.com>
-        <20191009112234.bi7lvp4pvmna26vz@pathway.suse.cz>
-        <20191009102654.501ad7c3@gandalf.local.home>
-        <20191010085035.emsdks6xecazqc6k@pathway.suse.cz>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S2388184AbfJJNQA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 09:16:00 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40044 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387975AbfJJNP7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 09:15:59 -0400
+Received: by mail-pg1-f196.google.com with SMTP id d26so3651724pgl.7
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 06:15:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5R0PLgqaQt/LlyIHo4fMN0uBOe621ivStxyy9BRN30w=;
+        b=kqyqbxRRk40GY6BtvCZiSHUTKQ6DamrPeD9RxeaGQVsSyTGqqUJw/1uIK2k7B6rYnU
+         LFHnCczr2Ne15BuewzuUndNP5PkpnzsyX1qJGHBst1DrhfrYa/I0Z22Ry5RYhn0JAoev
+         YZ8KbYsSQUQYB42d2JsZ+bRhYUGpL3SCsnA07nZNiEZH6PFsyEaYCJjHKUl5nlRBHtG7
+         DVk5EG43gjztJR677j6qVUY4LwvZUuutwAXXl1MYhJL1FBrMn8p4BJHc5ejtU7I823+H
+         TKIA17DlA4nx/uYSNqA0dLkZoZWu2qPeXPDi6z/SeX7dAGp68OxgwoaTLEVxeClublyV
+         ac9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5R0PLgqaQt/LlyIHo4fMN0uBOe621ivStxyy9BRN30w=;
+        b=BB3av0n370etQ0kkT4fs8tXlSIT++3RP+UAg8Wpsd2mNXgahWLgBKUhtW0uUBRSu2f
+         TSJSVvKzuHjcHmG6VIBCoICUcD5lGjJB6F8QsWiA6E2kgUNbyROJPpo8N6yy/noaDTE4
+         +VtLyEvjUG2ixSk8BMP4UCe16cKurk4Iu1CXpvwv9F1/9GBLu8jSA3JYX8Ur2ZsJN9Us
+         eNjTfYNCyISPwPYmxwu4SMSks7jkHcPqavMAsey3NQ9tgXlHGV18UqNhMvtANWxn2OJ5
+         wEn/F2Jft5zZPkYz5f4UTqAZyPAAZq4aeGY2+WmJJemwMwIcd2hW38xoDZISEa1/wNXL
+         M/6A==
+X-Gm-Message-State: APjAAAUn7xx3MoAyUIx1QiChCbdPQMeCR0hvgb/6qBlweVL/1xTrHg3k
+        1rHqthO15pyzzQWzzq9RorPbUsiTjr23jw==
+X-Google-Smtp-Source: APXvYqwD7EpaZDerJpsr3Zx2t8DFaiXmyVJfu6eNr2V4XHoPuEij7Cvtmt1GqXfCFQ09S7/+sp6lxw==
+X-Received: by 2002:a65:6205:: with SMTP id d5mr11340562pgv.424.1570713358872;
+        Thu, 10 Oct 2019 06:15:58 -0700 (PDT)
+Received: from wambui.brck.local ([197.254.95.158])
+        by smtp.googlemail.com with ESMTPSA id 2sm8707720pfa.43.2019.10.10.06.15.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2019 06:15:58 -0700 (PDT)
+From:   Wambui Karuga <wambui.karugax@gmail.com>
+To:     outreachy-kernel@googlegroups.com
+Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org,
+        Wambui Karuga <wambui.karugax@gmail.com>
+Subject: [PATCH v3 0/4] staging: rtl8723bs: Style clean-up in rtw_mlme.c
+Date:   Thu, 10 Oct 2019 16:15:28 +0300
+Message-Id: <cover.1570712632.git.wambui.karugax@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 10 Oct 2019 10:50:35 +0200
-Petr Mladek <pmladek@suse.com> wrote:
+This patchset addresses multiple style and formatting issues reported by
+checkpatch.pl in drivers/staging/rtl8723bs/core/rtw_mlme.c
 
-> It will make the flag unusable for other ftrace users. But it
-> will be already be the case when it can't be disabled.
+PATCH v2 of the series corrects the "patchest" mispelling in the
+original cover letter and provides a clearer subject line.
 
-Honestly, I hate that flag. Most people don't even know about it. It
-was added in the beginning of ftrace as a way to stop function tracing
-in the latency tracer. But that use case has been obsoleted by
-328df4759c03e ("tracing: Add function-trace option to disable function
-tracing of latency tracers"). I may just remove the damn thing and only
-add it back if somebody complains about it.
+PATCH v3 of the series incorporates newer changes in rtw_mlme.c
+on staging-testing.
 
--- Steve
+Wambui Karuga (4):
+  staging: rtl8723bs: Remove comparisons to NULL in conditionals
+  staging: rtl8723bs: Remove unnecessary braces for single statements
+  staging: rtl8723bs: Remove comparisons to booleans in conditionals.
+  staging: rtl8723bs: Remove unnecessary blank lines
+
+ drivers/staging/rtl8723bs/core/rtw_mlme.c | 161 +++++++---------------
+ 1 file changed, 50 insertions(+), 111 deletions(-)
+
+-- 
+2.23.0
+
