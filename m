@@ -2,86 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C399DD31D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:14:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC387D31D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:15:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbfJJUOG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 16:14:06 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:55931 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbfJJUOG (ORCPT
+        id S1726583AbfJJUO5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 16:14:57 -0400
+Received: from sonic317-32.consmr.mail.ne1.yahoo.com ([66.163.184.43]:43319
+        "EHLO sonic317-32.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725867AbfJJUO5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 16:14:06 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iIeoz-0004VC-S0; Thu, 10 Oct 2019 22:14:01 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iIeoy-0005K0-BS; Thu, 10 Oct 2019 22:14:00 +0200
-Date:   Thu, 10 Oct 2019 22:14:00 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Matt Helsley <mhelsley@vmware.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, kernel@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 4/8] recordmcount: Rewrite error/success handling
-Message-ID: <20191010201400.k4tcsbx2cqe5wjqs@pengutronix.de>
-References: <cover.1564596289.git.mhelsley@vmware.com>
- <8ba8633d4afe444931f363c8d924bf9565b89a86.1564596289.git.mhelsley@vmware.com>
- <20191009104626.f3hy5dcehdfagxto@pengutronix.de>
- <20191009110538.5909fec6@gandalf.local.home>
- <20191009152217.whklst5vwrwvsjc4@pengutronix.de>
- <20191010122321.7329329f@gandalf.local.home>
+        Thu, 10 Oct 2019 16:14:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1570738495; bh=dRX5d8v++xfAAoPIT3VpAbTnk4dfpHOyQKhLrN2OBJk=; h=Date:From:Reply-To:Subject:From:Subject; b=kFE/00wL2O6RXKjcgIvEOP+39mOWapQgBoAXWKQshiLwHAaxkAGq9ZCarRSFCP8eWnOLFz8Nfh2rM6Y/4eiwUAzHREYkTAcYyjAJEPmzNtSFVy+6DFfA1u21MQs4nvE2cPHGtIyQEbxaYulZYe5NCM773o8AcI+53vqWKPMZdpIb3Eir9ZgquxzWJ3HPphS9lZMZF+gkqB/TMyMaL7//aptOFsGV3nQA/+MOnMVkBmL5W/5nkFEAOxt032a0jvD/Ij34zXSJ3s7bOIQWnaxgFd7ePK42X/jCJs9b7YWUoe6l6uXxkUqpGeqIXUluCDL0XmYVnQDGYxAESk/yqSg30g==
+X-YMail-OSG: UEQ6Ll0VM1mowvJvMqCl55YallAkB.sjy7_WVMH4wSlOi2Hui.o1LiwVDMVdHp1
+ 1mCT_CLEPAGtBuvEnfdjFG4EMmOrnsIY8_cGg3NCgvlXkFwLGhq7y3UNiVpJVyugrTGeck_CpDyU
+ .hQ.Inzh9Xiygd5EFe9BdPW9RMTtSbJ4yk3JlJhB7_zDU_bj2U1e05_Qw9EvgcB9FmFHi1tVIEUG
+ vj2UE2CInyyUpACEHlXs7TM5SqiLyiMqMAMIcRjFt0C3FH4ze6AdiKgvxviYJ8WBdH7uWGbIgyBQ
+ 2Ui8SnC96X9sDG5Gej7fXzE.Kpi3jOHNLwxbSPRYOV.cwayKx1nt_C.RJe6xFmmrRHAYdGHJuSGP
+ sNgiuNGLwwwOnEpYz5xAfl.4j13LXoCZKXyVgEeOHmVkp8tjvIaM_N1G0w8H4DFGcO_vAb8akj2r
+ 9a4jWlB8gXdfXRBvFUg08En3CalCxy8ja_yJcp6oFg18JQkpEKNWC3vMh1G8OFeZUWBaVk8On9iC
+ slossbalS67MAUw6X9KSXj8X.xDu2dLETTEP_SfZhRww3Slm8F0kPv2asUkTN0A.b2Q0AYAh6c22
+ Fosb9j8rJFcI1jbcOKqVWIIPCTyfRJxo5mChbwkJqaEZmGP71WW8uNA4Fo.W3c3XhLfwAalF66Xi
+ eunoPrvAQnZahXVqx6Rl8Fqt549CK4GABgJuP18iBLVtAsPM5MnuS86bGGO7q0awZW6JuIA5AWdl
+ _FjNEwJb1_CLBl4mfKBnunvPcv0h9uPapG8.rN6Fy6F.muYGfQHvaNBGzDF1oFJI5pnkQmUPrB5D
+ Xs7uHXFwGgnpZae79rakGKjW8T6zBomDc502LWMj39LRSMjSpe0P1rPu2qKhx9AxeDhaFKrbYJDO
+ hC3t5JxAcZsOmgQI0oSaMgZQzSMccQRCAZ0WFJaWBmahqkrQDjJlSx6LTZdbnk65NlTIMsfkc_p3
+ v9BJz6jo_YC6Gxt5gunC8p3tAlZ8.Oeyduxkks8UTg.MmbAt0MklWAFPE3OamiBAojkGwhgqB2a9
+ PV6ACvmQ1yx7_kBxxLgpt5F7d98.b6XWSrJT0DEEDPyJrtv4_xmu26FAMllOjOlba46le7jlSuvC
+ g1fNnhn7CD4Z7uyogo5nI2VBLdiB0CxXr3Ecl6LAtygHdWT_9ZGMPHACuBPALb4XZCLX8doqZn6P
+ Gw7yTRfsilXR_s6sRKQ4fkqUvqDFVDoHNbXa7mof7lVFteukSQJ7FhB_HTqu5kE4C79IAQRFt9t4
+ SGvOo6qoapW9AUdKqx7FaU0cOwN4Bh9bKNnXWYRG73aFdsA--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Thu, 10 Oct 2019 20:14:55 +0000
+Date:   Thu, 10 Oct 2019 20:14:53 +0000 (UTC)
+From:   Miss Abibatu Ali <abibatuali01@gmail.com>
+Reply-To: abibatu22ali@gmail.com
+Message-ID: <1181728683.6620294.1570738493367@mail.yahoo.com>
+Subject: Hello
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191010122321.7329329f@gandalf.local.home>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 12:23:21PM -0400, Steven Rostedt wrote:
-> On Wed, 9 Oct 2019 17:22:18 +0200
-> Uwe Kleine-König <u.kleine-koenig@pengutronix.de> wrote:
-> 
-> > > diff --git a/scripts/recordmcount.h b/scripts/recordmcount.h
-> > > index 3796eb37fb12..6dbec46b7703 100644
-> > > --- a/scripts/recordmcount.h
-> > > +++ b/scripts/recordmcount.h
-> > > @@ -389,11 +389,8 @@ static int nop_mcount(Elf_Shdr const *const relhdr,
-> > >  			mcountsym = get_mcountsym(sym0, relp, str0);
-> > >  
-> > >  		if (mcountsym == Elf_r_sym(relp) && !is_fake_mcount(relp)) {
-> > > -			if (make_nop) {
-> > > +			if (make_nop)
-> > >  				ret = make_nop((void *)ehdr, _w(shdr->sh_offset) + _w(relp->r_offset));
-> > > -				if (ret < 0)
-> > > -					return -1;
-> > > -			}  
-> > 
-> > Yes, this patch fixes building for me.
-> 
-> May I add to my patch:
-> 
-> Reported-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> Tested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Hello
+I'm "Mrs.Abibatu Ali" married to Mr. Ali ( an International Contractor and Oil Merchant/ jointly in Exposition of Agro  Equipment ) who died in  Burkina Faso attack,  i am 64 years old and diagnosed of cancer for about 2 years ago  and my husband informed me that he deposited the sum of (17.3Million USD Only) with a Finance house) in  UAGADOUGOU BURKINA FASO.
 
-Yeah, sure.
+I want you to help me to use this money  for a charity project before I die, for the Poor, Less-privileged and  ORPHANAGES in
+your country.  Please kindly respond
 
-Thanks
-Uwe
+quickly for further details.
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Yours fairly friend,
+Mrs. Abibatu Ali 
