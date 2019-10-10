@@ -2,29 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D442D337B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 23:34:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD0D4D3370
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 23:31:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727405AbfJJVeP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 17:34:15 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:65291 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbfJJVeP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 17:34:15 -0400
-Received: from 79.184.255.36.ipv4.supernova.orange.pl (79.184.255.36) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
- id 41120e105ba2e198; Thu, 10 Oct 2019 23:34:13 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Doug Smythies <dsmythies@telus.net>
-Subject: [PATCH 0/4] cpuidle: teo: Fix issues related to disabled idle states
-Date:   Thu, 10 Oct 2019 23:30:40 +0200
-Message-ID: <60416800.X4hXmAfbqi@kreacher>
+        id S1727269AbfJJVbH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 17:31:07 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:33860 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725867AbfJJVbH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 17:31:07 -0400
+Received: from ip5f5a6266.dynamic.kabel-deutschland.de ([95.90.98.102] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1iIg1S-0007Bv-HL; Thu, 10 Oct 2019 23:30:58 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Vivek Unune <npcomplete13@gmail.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, ezequiel@collabora.com,
+        vicencb@gmail.com, akash@openedev.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: rockchip: Fix usb-c on Hugsun X99 TV Box
+Date:   Thu, 10 Oct 2019 23:30:57 +0200
+Message-ID: <1594003.l3tWjkc0Ga@phil>
+In-Reply-To: <20190929032230.24628-1-npcomplete13@gmail.com>
+References: <20190929032230.24628-1-npcomplete13@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -33,19 +35,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+Am Sonntag, 29. September 2019, 05:22:30 CEST schrieb Vivek Unune:
+> Fix usb-c on X99 TV Box. Tested with armbian w/ kernel 5.3
+> 
+> Signed-off-by: Vivek Unune <npcomplete13@gmail.com>
 
-There are a few issues related to the handling of disabled idle states in the
-TEO (Timer-Events-Oriented) cpuidle governor which are addressed by this
-series.
+applied as fix for 5.4
 
-The application of the entire series is exactly equivalent to the testing patch
-at https://lore.kernel.org/lkml/3490479.2dnHFFeJIp@kreacher/ , but IMO it is
-cleaner to split the changes into smaller patches which also allows them to
-be explained more accurately.
-
-Thanks,
-Rafael
-
+Thanks
+Heiko
 
 
