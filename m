@@ -2,102 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A5AAD2B8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 15:41:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A07DD2B99
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 15:42:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388268AbfJJNlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 09:41:24 -0400
-Received: from pio-pvt-msa1.bahnhof.se ([79.136.2.40]:44104 "EHLO
-        pio-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733228AbfJJNlV (ORCPT
+        id S2388363AbfJJNmI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 09:42:08 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38565 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387791AbfJJNmH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 09:41:21 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by pio-pvt-msa1.bahnhof.se (Postfix) with ESMTP id 590523F598;
-        Thu, 10 Oct 2019 15:41:19 +0200 (CEST)
-Authentication-Results: pio-pvt-msa1.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b="X+y/07DC";
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Received: from pio-pvt-msa1.bahnhof.se ([127.0.0.1])
-        by localhost (pio-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Wl0QoKF-zCWb; Thu, 10 Oct 2019 15:41:18 +0200 (CEST)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by pio-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id E9AE93F58C;
-        Thu, 10 Oct 2019 15:41:17 +0200 (CEST)
-Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id 7D18E36016C;
-        Thu, 10 Oct 2019 15:41:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1570714877; bh=PbaGuh2AWzgR/QobTlpM3PYlJJowJXX6P7DMUtKFhwc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X+y/07DCYti5qO8GpDRx7v6qmNnd1qY4d+px/dYzGwT/xp4RIn7PYIWspQ0IqSV5k
-         T4E+F8ZdO3cy4VxhktQQac/74KLcQaOPnohGoQXODFsAYS7v5WSu25HzRX1Bxm9r4R
-         qTMpmKo7XQMCwVieRVRZ2yPsEEPBimGYbC3+eQ7M=
-From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
-        <thomas_os@shipmail.org>
-To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        torvalds@linux-foundation.org, kirill@shutemov.name
-Cc:     Thomas Hellstrom <thellstrom@vmware.com>
-Subject: [RFC PATCH 4/4] mm: mapping_dirty_helpers: Handle huge pmds correctly
-Date:   Thu, 10 Oct 2019 15:40:58 +0200
-Message-Id: <20191010134058.11949-5-thomas_os@shipmail.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191010134058.11949-1-thomas_os@shipmail.org>
-References: <20191010134058.11949-1-thomas_os@shipmail.org>
+        Thu, 10 Oct 2019 09:42:07 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 3so6854566wmi.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 06:42:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BFnPJ9CbG5m+x0gh6lci0Tzu5Dr4+uLZpxV5Yx2Lp/I=;
+        b=2D1Tqf6UFvfY0GQ9zEYDEh2Aun4e/M6ytMMzlnE2j/5GfOvQb2EdFXTY8hL3tUFiK4
+         IKvpLWImL7VIt4bWNW6tdtZjUjstnN9Sw4k+8qSkxy1hm7hP3wzyM9tXrNoehAr2pBfI
+         /pph7Ltzs7VJpXiH5PgtBZQg6RphycW5hmd6eemxlXSu9/bL+7iUvP0l/8E2smERE16U
+         c5a5JCC+dn3i1Kuzymw+jIQ/dEaazHKRi+sULEFpIKz+2f2qySvzK8MEQTuoEX/m8FmZ
+         zndroZ+Qn1ckVlUP4Av//2uOc97O8bKY+D/nzac0m21tJ0UcjUJJbsX0H8QvCCFL0QQv
+         4HKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BFnPJ9CbG5m+x0gh6lci0Tzu5Dr4+uLZpxV5Yx2Lp/I=;
+        b=HPn8ZEt1nij63b/Wm+mc+ZhI18Uv1n8EvaumVwBN2wXOAc6B8M5Jno/T7X1ODTy+7F
+         Dzwcw8ECNZg1cXsJRUP0eHvAatORH3ha1qT4d2eBYWS3kBD1/gEfVPaRzcCh2aCY1t48
+         UfHDp0lhX9dm7Wpi27Ouen84dflzv0T9ulwfHi+y4FQTn/JzayGE37U+jc+9RefhKVka
+         1NXt9oqt4XlYtzs+dxz6qgztcLzFp0BmEb5PlZgm9VFD1B4EgNVjtYUCN3tyUSDnoDH+
+         MbcX0aKM7o6m2UZZCkUl8wGmTrptPU2xJ5BBIWkkRbjapOCbr1KaxCU+qq1eF5hJ6cos
+         YEoQ==
+X-Gm-Message-State: APjAAAUcqz4j2xp0uJqZYjzRtJ2u+PU6KmV6ehhWjbGCjdBBTkCjRK9b
+        z6yfCEunELA15eO7DT4xFGUubg==
+X-Google-Smtp-Source: APXvYqzi+PrehgDRm3UXJf+By4vMypNQE6kgp+vy7T5Pq1WqICHZIHsTblx+rCZ98uH3ZCqj4MEFdQ==
+X-Received: by 2002:a05:600c:2185:: with SMTP id e5mr7960137wme.78.1570714924491;
+        Thu, 10 Oct 2019 06:42:04 -0700 (PDT)
+Received: from localhost ([85.163.43.78])
+        by smtp.gmail.com with ESMTPSA id u1sm4930948wmc.38.2019.10.10.06.42.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2019 06:42:03 -0700 (PDT)
+Date:   Thu, 10 Oct 2019 15:42:03 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Michal Kubecek <mkubecek@suse.cz>
+Cc:     David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        John Linville <linville@tuxdriver.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v7 05/17] ethtool: helper functions for netlink
+ interface
+Message-ID: <20191010134203.GA22798@nanopsycho>
+References: <cover.1570654310.git.mkubecek@suse.cz>
+ <061af34c9f34205ed18a126cef9ebe1534de8bc7.1570654310.git.mkubecek@suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <061af34c9f34205ed18a126cef9ebe1534de8bc7.1570654310.git.mkubecek@suse.cz>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Hellstrom <thellstrom@vmware.com>
+Wed, Oct 09, 2019 at 10:59:15PM CEST, mkubecek@suse.cz wrote:
 
-We always do dirty tracking on the PTE level. This means that any huge
-pmds we encounter should be read-only and not dirty: We can just skip
-those. Write-enabled huge pmds should not exist. They should have been
-split when made write-enabled. Warn and attempt to split them.
+[...]
 
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
----
- mm/mapping_dirty_helpers.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/mm/mapping_dirty_helpers.c b/mm/mapping_dirty_helpers.c
-index 799b9154b48f..f61bb9de1530 100644
---- a/mm/mapping_dirty_helpers.c
-+++ b/mm/mapping_dirty_helpers.c
-@@ -115,11 +115,18 @@ static int clean_record_pte(pte_t *pte, unsigned long addr,
- static int wp_clean_pmd_entry(pmd_t *pmd, unsigned long addr, unsigned long end,
- 			      struct mm_walk *walk)
- {
--	/* Dirty-tracking should be handled on the pte level */
- 	pmd_t pmdval = pmd_read_atomic(pmd);
- 
--	if (pmd_trans_huge(pmdval) || pmd_devmap(pmdval))
--		WARN_ON(pmd_write(pmdval) || pmd_dirty(pmdval));
-+	/*
-+	 * Dirty-tracking should be handled on the pte level, and write-
-+	 * enabled huge PMDS should never have been created. Warn on those.
-+	 * Read-only huge PMDS can't be dirty so we just skip them.
-+	 */
-+	if (pmd_trans_huge(pmdval) || pmd_devmap(pmdval)) {
-+		if (WARN_ON(pmd_write(pmdval) || pmd_dirty(pmdval)))
-+			return 0;
-+		return PAGE_WALK_CONTINUE;
-+	}
- 
- 	return 0;
- }
--- 
-2.21.0
+>+/**
+>+ * ethnl_parse_header() - parse request header
+>+ * @req_info:    structure to put results into
+>+ * @header:      nest attribute with request header
+>+ * @net:         request netns
+>+ * @extack:      netlink extack for error reporting
+>+ * @policy:      netlink attribute policy to validate header; use
+>+ *               @dflt_header_policy (all attributes allowed) if null
+>+ * @require_dev: fail if no device identiified in header
+
+s/identiified/identified/
 
