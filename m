@@ -2,38 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B381D24C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:00:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F52DD24AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:00:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389581AbfJJIuq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:50:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57804 "EHLO mail.kernel.org"
+        id S2389812AbfJJIt1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:49:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390003AbfJJIuj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:50:39 -0400
+        id S2389253AbfJJItV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:49:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BB6B21D71;
-        Thu, 10 Oct 2019 08:50:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F04A0218AC;
+        Thu, 10 Oct 2019 08:49:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697438;
-        bh=H1cMqpA/ZSD3lQumDg4TmgstWNDbbRWCv7t6+fzf990=;
+        s=default; t=1570697359;
+        bh=iRCYfcuP75yrAkaqOar1gJQ+Wf47LzJcu7aECkUYprg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R0u9CpzU8j2UN9NGz4EsNkzUwsnYtGp3S8qQFve87YBBHiIMrVfUzNtxncXMmlqVf
-         kcv7H7DIIq46L3msFd6zi8Xqcnc6OHrO0uXZZ4WIvDRBu5C7h3ShFu9Z5OXuYShzh9
-         WV8ziPmo6ocRymTA+X5uRzdwiAeOxOjIIITWUe/Q=
+        b=IpdHW4FjxypmJTezuKJ9Wrsn/0/0fnLyEq06FjPmcyUjmzn80RGiCfRR+j8Yn9Cct
+         aqwWLGAdjP0JSqNQCK5Jhn6R0TTz2AEjV6mzKzYqQ+t6/VNxzm6ghnTlSLkShPUr+7
+         OiCVuHsnxIjJWw+E+slnkBbmw6htQJ8eepX1zg4s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jack Wang <jinpu.wang@cloud.ionos.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.14 07/61] KVM: nVMX: handle page fault in vmread fix
-Date:   Thu, 10 Oct 2019 10:36:32 +0200
-Message-Id: <20191010083453.935844488@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Stephane Eranian <eranian@google.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 086/114] perf stat: Reset previous counts on repeat with interval
+Date:   Thu, 10 Oct 2019 10:36:33 +0200
+Message-Id: <20191010083612.597359751@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083449.500442342@linuxfoundation.org>
-References: <20191010083449.500442342@linuxfoundation.org>
+In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
+References: <20191010083544.711104709@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,57 +50,168 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jack Wang <jinpu.wang@cloud.ionos.com>
+From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 
-During backport f7eea636c3d5 ("KVM: nVMX: handle page fault in vmread"),
-there was a mistake the exception reference should be passed to function
-kvm_write_guest_virt_system, instead of NULL, other wise, we will get
-NULL pointer deref, eg
+[ Upstream commit b63fd11cced17fcb8e133def29001b0f6aaa5e06 ]
 
-kvm-unit-test triggered a NULL pointer deref below:
-[  948.518437] kvm [24114]: vcpu0, guest rIP: 0x407ef9 kvm_set_msr_common: MSR_IA32_DEBUGCTLMSR 0x3, nop
-[  949.106464] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-[  949.106707] PGD 0 P4D 0
-[  949.106872] Oops: 0002 [#1] SMP
-[  949.107038] CPU: 2 PID: 24126 Comm: qemu-2.7 Not tainted 4.19.77-pserver #4.19.77-1+feature+daily+update+20191005.1625+a4168bb~deb9
-[  949.107283] Hardware name: Dell Inc. Precision Tower 3620/09WH54, BIOS 2.7.3 01/31/2018
-[  949.107549] RIP: 0010:kvm_write_guest_virt_system+0x12/0x40 [kvm]
-[  949.107719] Code: c0 5d 41 5c 41 5d 41 5e 83 f8 03 41 0f 94 c0 41 c1 e0 02 e9 b0 ed ff ff 0f 1f 44 00 00 48 89 f0 c6 87 59 56 00 00 01 48 89 d6 <49> c7 00 00 00 00 00 89 ca 49 c7 40 08 00 00 00 00 49 c7 40 10 00
-[  949.108044] RSP: 0018:ffffb31b0a953cb0 EFLAGS: 00010202
-[  949.108216] RAX: 000000000046b4d8 RBX: ffff9e9f415b0000 RCX: 0000000000000008
-[  949.108389] RDX: ffffb31b0a953cc0 RSI: ffffb31b0a953cc0 RDI: ffff9e9f415b0000
-[  949.108562] RBP: 00000000d2e14928 R08: 0000000000000000 R09: 0000000000000000
-[  949.108733] R10: 0000000000000000 R11: 0000000000000000 R12: ffffffffffffffc8
-[  949.108907] R13: 0000000000000002 R14: ffff9e9f4f26f2e8 R15: 0000000000000000
-[  949.109079] FS:  00007eff8694c700(0000) GS:ffff9e9f51a80000(0000) knlGS:0000000031415928
-[  949.109318] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  949.109495] CR2: 0000000000000000 CR3: 00000003be53b002 CR4: 00000000003626e0
-[  949.109671] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  949.109845] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  949.110017] Call Trace:
-[  949.110186]  handle_vmread+0x22b/0x2f0 [kvm_intel]
-[  949.110356]  ? vmexit_fill_RSB+0xc/0x30 [kvm_intel]
-[  949.110549]  kvm_arch_vcpu_ioctl_run+0xa98/0x1b30 [kvm]
-[  949.110725]  ? kvm_vcpu_ioctl+0x388/0x5d0 [kvm]
-[  949.110901]  kvm_vcpu_ioctl+0x388/0x5d0 [kvm]
-[  949.111072]  do_vfs_ioctl+0xa2/0x620
+When using 'perf stat' with repeat and interval option, it shows wrong
+values for events.
 
-Signed-off-by: Jack Wang <jinpu.wang@cloud.ionos.com>
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
+The wrong values will be shown for the first interval on the second and
+subsequent repetitions.
+
+Without the fix:
+
+  # perf stat -r 3 -I 2000 -e faults -e sched:sched_switch -a sleep 5
+
+     2.000282489                 53      faults
+     2.000282489                513      sched:sched_switch
+     4.005478208              3,721      faults
+     4.005478208              2,666      sched:sched_switch
+     5.025470933                395      faults
+     5.025470933              1,307      sched:sched_switch
+     2.009602825 1,84,46,74,40,73,70,95,47,520      faults 		<------
+     2.009602825 1,84,46,74,40,73,70,95,49,568      sched:sched_switch  <------
+     4.019612206              4,730      faults
+     4.019612206              2,746      sched:sched_switch
+     5.039615484              3,953      faults
+     5.039615484              1,496      sched:sched_switch
+     2.000274620 1,84,46,74,40,73,70,95,47,520      faults		<------
+     2.000274620 1,84,46,74,40,73,70,95,47,520      sched:sched_switch	<------
+     4.000480342              4,282      faults
+     4.000480342              2,303      sched:sched_switch
+     5.000916811              1,322      faults
+     5.000916811              1,064      sched:sched_switch
+  #
+
+prev_raw_counts is allocated when using intervals. This is used when
+calculating the difference in the counts of events when using interval.
+
+The current counts are stored in prev_raw_counts to calculate the
+differences in the next iteration.
+
+On the first interval of the second and subsequent repetitions,
+prev_raw_counts would be the values stored in the last interval of the
+previous repetitions, while the current counts will only be for the
+first interval of the current repetition.
+
+Hence there is a possibility of events showing up as big number.
+
+Fix this by resetting prev_raw_counts whenever perf stat repeats the
+command.
+
+With the fix:
+
+  # perf stat -r 3 -I 2000 -e faults -e sched:sched_switch -a sleep 5
+
+     2.019349347              2,597      faults
+     2.019349347              2,753      sched:sched_switch
+     4.019577372              3,098      faults
+     4.019577372              2,532      sched:sched_switch
+     5.019415481              1,879      faults
+     5.019415481              1,356      sched:sched_switch
+     2.000178813              8,468      faults
+     2.000178813              2,254      sched:sched_switch
+     4.000404621              7,440      faults
+     4.000404621              1,266      sched:sched_switch
+     5.040196079              2,458      faults
+     5.040196079                556      sched:sched_switch
+     2.000191939              6,870      faults
+     2.000191939              1,170      sched:sched_switch
+     4.000414103                541      faults
+     4.000414103                902      sched:sched_switch
+     5.000809863                450      faults
+     5.000809863                364      sched:sched_switch
+  #
+
+Committer notes:
+
+This was broken since the cset introducing the --interval feature, i.e.
+--repeat + --interval wasn't tested at that point, add the Fixes tag so
+that automatic scripts can pick this up.
+
+Fixes: 13370a9b5bb8 ("perf stat: Add interval printing")
+Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Tested-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: stable@vger.kernel.org # v3.9+
+Link: http://lore.kernel.org/lkml/20190904094738.9558-2-srikar@linux.vnet.ibm.com
+[ Fixed up conflicts with libperf, i.e. some perf_{evsel,evlist} lost the 'perf' prefix ]
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/vmx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/builtin-stat.c |  3 +++
+ tools/perf/util/stat.c    | 17 +++++++++++++++++
+ tools/perf/util/stat.h    |  1 +
+ 3 files changed, 21 insertions(+)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -8026,7 +8026,7 @@ static int handle_vmread(struct kvm_vcpu
- 		/* _system ok, nested_vmx_check_permission has verified cpl=0 */
- 		if (kvm_write_guest_virt_system(vcpu, gva, &field_value,
- 						(is_long_mode(vcpu) ? 8 : 4),
--						NULL))
-+						&e))
- 			kvm_inject_page_fault(vcpu, &e);
- 	}
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 11650910e089a..6aae10ff954c7 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -3090,6 +3090,9 @@ int cmd_stat(int argc, const char **argv)
+ 			fprintf(output, "[ perf stat: executing run #%d ... ]\n",
+ 				run_idx + 1);
  
++		if (run_idx != 0)
++			perf_evlist__reset_prev_raw_counts(evsel_list);
++
+ 		status = run_perf_stat(argc, argv, run_idx);
+ 		if (forever && status != -1 && !interval) {
+ 			print_counters(NULL, argc, argv);
+diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
+index a0061e0b0fade..6917ba8a00240 100644
+--- a/tools/perf/util/stat.c
++++ b/tools/perf/util/stat.c
+@@ -154,6 +154,15 @@ static void perf_evsel__free_prev_raw_counts(struct perf_evsel *evsel)
+ 	evsel->prev_raw_counts = NULL;
+ }
+ 
++static void perf_evsel__reset_prev_raw_counts(struct perf_evsel *evsel)
++{
++	if (evsel->prev_raw_counts) {
++		evsel->prev_raw_counts->aggr.val = 0;
++		evsel->prev_raw_counts->aggr.ena = 0;
++		evsel->prev_raw_counts->aggr.run = 0;
++       }
++}
++
+ static int perf_evsel__alloc_stats(struct perf_evsel *evsel, bool alloc_raw)
+ {
+ 	int ncpus = perf_evsel__nr_cpus(evsel);
+@@ -204,6 +213,14 @@ void perf_evlist__reset_stats(struct perf_evlist *evlist)
+ 	}
+ }
+ 
++void perf_evlist__reset_prev_raw_counts(struct perf_evlist *evlist)
++{
++	struct perf_evsel *evsel;
++
++	evlist__for_each_entry(evlist, evsel)
++		perf_evsel__reset_prev_raw_counts(evsel);
++}
++
+ static void zero_per_pkg(struct perf_evsel *counter)
+ {
+ 	if (counter->per_pkg_mask)
+diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
+index 36efb986f7fc6..e19abb1635c4e 100644
+--- a/tools/perf/util/stat.h
++++ b/tools/perf/util/stat.h
+@@ -158,6 +158,7 @@ void perf_stat__collect_metric_expr(struct perf_evlist *);
+ int perf_evlist__alloc_stats(struct perf_evlist *evlist, bool alloc_raw);
+ void perf_evlist__free_stats(struct perf_evlist *evlist);
+ void perf_evlist__reset_stats(struct perf_evlist *evlist);
++void perf_evlist__reset_prev_raw_counts(struct perf_evlist *evlist);
+ 
+ int perf_stat_process_counter(struct perf_stat_config *config,
+ 			      struct perf_evsel *counter);
+-- 
+2.20.1
+
 
 
