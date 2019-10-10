@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15FB4D2571
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:02:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36C29D24B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:00:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389138AbfJJJAK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 05:00:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47962 "EHLO mail.kernel.org"
+        id S2389868AbfJJItw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:49:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388690AbfJJInL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:43:11 -0400
+        id S2389854AbfJJItr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:49:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CFBB21BE5;
-        Thu, 10 Oct 2019 08:43:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 396D12064A;
+        Thu, 10 Oct 2019 08:49:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570696991;
-        bh=8rXf1rcCw3zLras7kS4IMtEFY7Dv0pAdekM63Zo4p1g=;
+        s=default; t=1570697386;
+        bh=qT7Kvrkt0fJUpI1q/8NY3DMs5K2bhyu6Uhpan3ixSC8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QAZozvlpAhRwNkOvmtAsfLrLIovV+7eCJFKd/ZBEQ6gIxfNK0p2pL6v1ShCdjGU1r
-         zy8mZiMjK2eaXlKry8hNa1Njcx5vPuYzSA4/lgged12gJgdtFN4AbDBMyLgV7TYjqa
-         sO2WozRPrfxiqak2PTHmBRhvaiUvWaAH+Q8ZftPQ=
+        b=vJO0ZS7d0bPdmboqFofU6ETySijlhb1NgVP84v0yEHquQXeKtcHau0V/AiJaCEjks
+         BYTwURObVOM/p8T+bEG9KY7LtXOuUEk6j1qXkbvO6O8HZA3FeVEWE2ELAf62ynos/5
+         rXgpAbkasjrh7xCewr1Z3LDZq0kXZYYIXrhvMidM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexei Starovoitov <ast@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 125/148] selftests/bpf: adjust strobemeta loop to satisfy latest clang
+        stable@vger.kernel.org, Ilya Leoshkevich <iii@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+Subject: [PATCH 4.14 01/61] s390/process: avoid potential reading of freed stack
 Date:   Thu, 10 Oct 2019 10:36:26 +0200
-Message-Id: <20191010083618.634149576@linuxfoundation.org>
+Message-Id: <20191010083450.038549745@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
-References: <20191010083609.660878383@linuxfoundation.org>
+In-Reply-To: <20191010083449.500442342@linuxfoundation.org>
+References: <20191010083449.500442342@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -45,51 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrii Nakryiko <andriin@fb.com>
+From: Vasily Gorbik <gor@linux.ibm.com>
 
-[ Upstream commit 4670d68b9254710fdeaf794cad54d8b2c9929e0a ]
+commit 8769f610fe6d473e5e8e221709c3ac402037da6c upstream.
 
-Some recent changes in latest Clang started causing the following
-warning when unrolling strobemeta test case main loop:
+With THREAD_INFO_IN_TASK (which is selected on s390) task's stack usage
+is refcounted and should always be protected by get/put when touching
+other task's stack to avoid race conditions with task's destruction code.
 
-  progs/strobemeta.h:416:2: warning: loop not unrolled: the optimizer was
-  unable to perform the requested transformation; the transformation might
-  be disabled or specified as part of an unsupported transformation
-  ordering [-Wpass-failed=transform-warning]
+Fixes: d5c352cdd022 ("s390: move thread_info into task_struct")
+Cc: stable@vger.kernel.org # v4.10+
+Acked-by: Ilya Leoshkevich <iii@linux.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-This patch simplifies loop's exit condition to depend only on constant
-max iteration number (STROBE_MAX_MAP_ENTRIES), while moving early
-termination logic inside the loop body. The changes are equivalent from
-program logic standpoint, but fixes the warning. It also appears to
-improve generated BPF code, as it fixes previously failing non-unrolled
-strobemeta test cases.
-
-Cc: Alexei Starovoitov <ast@fb.com>
-Signed-off-by: Andrii Nakryiko <andriin@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/bpf/progs/strobemeta.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/s390/kernel/process.c |   22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/progs/strobemeta.h b/tools/testing/selftests/bpf/progs/strobemeta.h
-index 8a399bdfd9203..067eb625d01c5 100644
---- a/tools/testing/selftests/bpf/progs/strobemeta.h
-+++ b/tools/testing/selftests/bpf/progs/strobemeta.h
-@@ -413,7 +413,10 @@ static __always_inline void *read_map_var(struct strobemeta_cfg *cfg,
- #else
- #pragma unroll
- #endif
--	for (int i = 0; i < STROBE_MAX_MAP_ENTRIES && i < map.cnt; ++i) {
-+	for (int i = 0; i < STROBE_MAX_MAP_ENTRIES; ++i) {
-+		if (i >= map.cnt)
-+			break;
+--- a/arch/s390/kernel/process.c
++++ b/arch/s390/kernel/process.c
+@@ -185,20 +185,30 @@ unsigned long get_wchan(struct task_stru
+ 
+ 	if (!p || p == current || p->state == TASK_RUNNING || !task_stack_page(p))
+ 		return 0;
 +
- 		descr->key_lens[i] = 0;
- 		len = bpf_probe_read_str(payload, STROBE_MAX_STR_LEN,
- 					 map.entries[i].key);
--- 
-2.20.1
-
++	if (!try_get_task_stack(p))
++		return 0;
++
+ 	low = task_stack_page(p);
+ 	high = (struct stack_frame *) task_pt_regs(p);
+ 	sf = (struct stack_frame *) p->thread.ksp;
+-	if (sf <= low || sf > high)
+-		return 0;
++	if (sf <= low || sf > high) {
++		return_address = 0;
++		goto out;
++	}
+ 	for (count = 0; count < 16; count++) {
+ 		sf = (struct stack_frame *) sf->back_chain;
+-		if (sf <= low || sf > high)
+-			return 0;
++		if (sf <= low || sf > high) {
++			return_address = 0;
++			goto out;
++		}
+ 		return_address = sf->gprs[8];
+ 		if (!in_sched_functions(return_address))
+-			return return_address;
++			goto out;
+ 	}
+-	return 0;
++out:
++	put_task_stack(p);
++	return return_address;
+ }
+ 
+ unsigned long arch_align_stack(unsigned long sp)
 
 
