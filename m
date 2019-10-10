@@ -2,169 +2,209 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0075FD2200
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 09:42:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B486FD2207
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 09:43:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733186AbfJJHmB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 03:42:01 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35840 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727196AbfJJHmB (ORCPT
+        id S1733219AbfJJHmo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 03:42:44 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37001 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733068AbfJJHmo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 03:42:01 -0400
-Received: by mail-pg1-f193.google.com with SMTP id 23so3129538pgk.3;
-        Thu, 10 Oct 2019 00:42:00 -0700 (PDT)
+        Thu, 10 Oct 2019 03:42:44 -0400
+Received: by mail-wm1-f65.google.com with SMTP id f22so5602218wmc.2;
+        Thu, 10 Oct 2019 00:42:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NURwLHdKTSUja8QJMkMZYKyjuSxICE5fd85HFToXHUo=;
-        b=q1RVugoYID1AntkYDacABjtI5fJI2xoh0kTSCp11ZmTPy2LsAOnqdkLl0dgT/wt0Ek
-         JiPGbQPc0bUJQCNscgMRBLCd2g4y6E6UPh7YTmevt5wTSP3McI3jGC0xuIWsiCZ72TA7
-         qklewgxuJP+GT9GiJyZazmKqlg+3K8MDdsU1drkv2VslNNVYeaywlhRwa6lN+3MsG/Yx
-         NAardTvdjDDzxhCGflO+ITcQs+MH5S6y9SJ5JfOFMsmHHLoWV04JLW5YMMbivlJGzr79
-         VEKnWfxJQa2wECy3tgO0xtCbEFQMNn4Dqp0PJDdGXNhqNPfWfFNalY3Yh/3KfAQiVfZM
-         g1Ww==
+        h=cc:subject:to:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=08k17KhlQj3i14TvkTXgqx7nlrtJgKhJrWWCtMSNNtY=;
+        b=WMwLsbp/MJDVWBIz1F/birkrBBoqRyA0sP0oA7MY5e3eTHyqYDfATumzuxki2GDnZ3
+         zPXs+K+eSLXUPgRGvbTDjeKX8KDhPP1jzm+yYu0zSkMNrcmrwvu5qh1Mdm0nIKL0Ytxn
+         uSKmesNtEPK2gfa4PQtS3L6oKn5QCtLjTkpLqxgpNW4gkZkarzzzyvfBrmhz9WuChAID
+         xMtEyZUbZMiqH3qFIiW8vfaJojnAhk23USXC1SSJOcUF4LFAoTlSQgX9sWD5lsaWxOiG
+         dCYADTepw/wyNISaVqE4oF+/gQBttWuC2iC7i5gQPD2dR4caPuu629Kq9i4J/1mwTy5l
+         5LIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NURwLHdKTSUja8QJMkMZYKyjuSxICE5fd85HFToXHUo=;
-        b=W2H6CtI8rFlFvKQGagb9QdozY4A/jgIVKsqNatB9XA8lqHMKVurm1lgWWFjnzCgQNQ
-         NG64g5VuIYzdOmKoiUW2zqnWwUBBhvIKlIHIEJBZ9pkiReDADMmI8xid56TCODRTgR8l
-         zzMaZ1fekzKZQ7POHJcbKhVPej/Xa2yg2frw9lp4ufk2Ply5PKFijQS8CDGePLLtE4S/
-         NGAXWLMMrxCgp9dYSbNLMvQmxT8DowYbf5LtvAOTaLILb+A2RRMjPXbCw3TQhXpl9Ewn
-         powMPlFJrU8karpQrYOASlw7uof0sX+Yza0Iv2k4hPzmkKv5UFVc1QMQWn4pDvFbJs+P
-         rdKw==
-X-Gm-Message-State: APjAAAUae8LJDZ+5xpsyaWdkypXwim17Y9aAK8/NLtovV3lde3ZpCCWX
-        iArubk1ogRL/x5tnF7hlsbqM/spgmzAvUmpmfSk=
-X-Google-Smtp-Source: APXvYqw0gPatkwLXJe/cmckF2C9gwUV1JDOD+a56x4smY8rrWTgJRDyoijvUakofMAVnEQkAbavjRoG2E7EnvtMD5Z0=
-X-Received: by 2002:a17:90a:b391:: with SMTP id e17mr10016417pjr.132.1570693320245;
- Thu, 10 Oct 2019 00:42:00 -0700 (PDT)
+        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=08k17KhlQj3i14TvkTXgqx7nlrtJgKhJrWWCtMSNNtY=;
+        b=RXLX6Cu273wHlSLZHFZh81SLo6xk8xfXMith/wQtabCny/GfH8M0+IMQGT9n+CYJGA
+         NvOODCWEAVS7NY7Z4L3JBYiaa5hxLL+YuxgmQNdQLw2KFiYEdTVv394OpoY2hmUpq0zh
+         knp/etk9iq6+vUE/X8uTuM+ELK3HT1MX82YLuu93FmpckuWgiYyxAeAmvmK3nizsQI8E
+         vWOZ22N0ryZICKIDgL4hy0M/0zB8U2lZQbqXdJqtfdbPaDvjRnEHal79j4WsWW56/7yG
+         mRmHFkFfodJ4XrjuIVBWCpcznzUVyoDqADWAN/STxlsCj+5BL08B16m5JRpaNzKvC/wc
+         qqFQ==
+X-Gm-Message-State: APjAAAVN93cujuOCh87ClOqa5cJG/IEpxPX7Wk/qQX5kimqVaVzxybaa
+        Eg4+TEz2WEV7DLWxOK3HPmU=
+X-Google-Smtp-Source: APXvYqzFUQwT5Pi0fL72LZz1tzNIGx94KQexXPBs58odhjWJxlJwj7TEnGhHZIka4NkglNZoKVLbKw==
+X-Received: by 2002:a7b:ca4b:: with SMTP id m11mr6016899wml.129.1570693360675;
+        Thu, 10 Oct 2019 00:42:40 -0700 (PDT)
+Received: from [10.0.20.253] ([95.157.63.22])
+        by smtp.gmail.com with ESMTPSA id s1sm6960211wrg.80.2019.10.10.00.42.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2019 00:42:39 -0700 (PDT)
+Cc:     mtk.manpages@gmail.com, Philipp Wendler <ml@philippwendler.de>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian@brauner.io>,
+        Aleksa Sarai <asarai@suse.de>,
+        Reid Priedhorsky <reidpr@lanl.gov>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Yang Bo <rslovers@yandex.com>, Jakub Wilk <jwilk@jwilk.net>,
+        Joseph Sible <josephcsible@gmail.com>,
+        Al Viro <viro@ftp.linux.org.uk>, werner@almesberger.net,
+        linux-man <linux-man@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Containers <containers@lists.linux-foundation.org>,
+        =?UTF-8?Q?St=c3=a9phane_Graber?= <stgraber@ubuntu.com>
+Subject: Re: For review: rewritten pivot_root(2) manual page
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+References: <620c691a-065e-b894-4f06-7453012bc8d3@gmail.com>
+ <d449305b-f87c-f26e-e43f-d193fd8f4332@philippwendler.de>
+ <e51e454c-b0e7-e5d1-7810-e8f023574aa2@gmail.com>
+ <87y2xu71dh.fsf@x220.int.ebiederm.org>
+ <c1e7f140-ca5b-2c8c-7b9d-54b61984cd3b@gmail.com>
+ <87o8yp52oa.fsf@x220.int.ebiederm.org>
+ <7f2907f5-442a-6187-d0ad-e2fd345cd450@gmail.com>
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Message-ID: <7e42c8cd-4c33-b471-9d18-610fa7d6b022@gmail.com>
+Date:   Thu, 10 Oct 2019 09:42:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <cover.1570633189.git.vilhelm.gray@gmail.com> <893c3b4f03266c9496137cc98ac2b1bd27f92c73.1570633189.git.vilhelm.gray@gmail.com>
- <CAK7LNATgW7bXUmqV=3QAaJ0Qu73Kox-TgDCQJb=s0=mwewSCUg@mail.gmail.com>
- <20191009170917.GG32742@smile.fi.intel.com> <CAMuHMdXyyrL4ibKvjMV6r8TuxpmK73=JxsWNEfcRk1NjwsnOjA@mail.gmail.com>
- <CAK7LNASVdqU_6+_iinWStb9ALqLw494pnZKr46fLW+WJ9nUo6A@mail.gmail.com>
- <CAHp75VeLkfNZkqhD8tedJdav81L+VA3Z50Kwcd9h4R7zMwjtvA@mail.gmail.com> <CAMuHMdVs=PgET6=-fKgznETOye_Bxqt6h16Ok0nu6J2vXG-r_w@mail.gmail.com>
-In-Reply-To: <CAMuHMdVs=PgET6=-fKgznETOye_Bxqt6h16Ok0nu6J2vXG-r_w@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 10 Oct 2019 10:41:49 +0300
-Message-ID: <CAHp75Vc8HX=hs2F2R_wOaFM7cFjaX0k_kENybdxSh742PpVkjw@mail.gmail.com>
-Subject: Re: [PATCH v17 01/14] bitops: Introduce the for_each_set_clump8 macro
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        William Breathitt Gray <vilhelm.gray@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux PM mailing list <linux-pm@vger.kernel.org>,
-        Phil Reid <preid@electromag.com.au>,
-        Lukas Wunner <lukas@wunner.de>, sean.nyekjaer@prevas.dk,
-        morten.tiljeset@prevas.dk, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <7f2907f5-442a-6187-d0ad-e2fd345cd450@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 9:29 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Thu, Oct 10, 2019 at 7:49 AM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> > On Thu, Oct 10, 2019 at 5:31 AM Masahiro Yamada
-> > <yamada.masahiro@socionext.com> wrote:
-> > > On Thu, Oct 10, 2019 at 3:54 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > > On Wed, Oct 9, 2019 at 7:09 PM Andy Shevchenko
-> > > > <andriy.shevchenko@linux.intel.com> wrote:
-> > > > > On Thu, Oct 10, 2019 at 01:28:08AM +0900, Masahiro Yamada wrote:
-> > > > > > On Thu, Oct 10, 2019 at 12:27 AM William Breathitt Gray
-> > > > > > <vilhelm.gray@gmail.com> wrote:
-> > > > > > >
-> > > > > > > This macro iterates for each 8-bit group of bits (clump) with set bits,
-> > > > > > > within a bitmap memory region. For each iteration, "start" is set to the
-> > > > > > > bit offset of the found clump, while the respective clump value is
-> > > > > > > stored to the location pointed by "clump". Additionally, the
-> > > > > > > bitmap_get_value8 and bitmap_set_value8 functions are introduced to
-> > > > > > > respectively get and set an 8-bit value in a bitmap memory region.
-> > > > >
-> > > > > > Why is the return type "unsigned long" where you know
-> > > > > > it return the 8-bit value ?
-> > > > >
-> > > > > Because bitmap API operates on unsigned long type. This is not only
-> > > > > consistency, but for sake of flexibility in case we would like to introduce
-> > > > > more calls like clump16 or so.
-> > > >
-> > > > TBH, that doesn't convince me: those functions explicitly take/return an
-> > > > 8-bit value, and have "8" in their name.  The 8-bit value is never
-> > > > really related to, retrieved from, or stored in a full "unsigned long"
-> > > > element of a bitmap, only to/from/in a part (byte) of it.
-> > > >
-> > > > Following your rationale, all of iowrite{8,16,32,64}*() should take an
-> > > > "unsigned long" value, too.
-> > > >
-> > >
-> > > +1
-> > >
-> > > Using u8/u16/u32/u64 looks more consistent with other bitmap helpers.
-> > >
-> > > void bitmap_from_arr32(unsigned long *bitmap, const u32 *buf, unsigned
-> > > int nbits);
-> > > void bitmap_to_arr32(u32 *buf, const unsigned long *bitmap, unsigned int nbits);
-> > > static inline void bitmap_from_u64(unsigned long *dst, u64 mask);
-> > >
-> > >
-> > >
-> > > If you want to see more examples from other parts,
-> >
-> > Geert's and yours examples both are not related. They are about
-> > fixed-width properies when we know that is the part of protocol.
-> > Here we have no protocol which stricts us to the mentioned fixed-width types.
->
-> Yes you have: they are functions to store/retrieve an 8-bit value from
-> the middle of the bitmap, which is reflected in their names ("clump8",
-> "value8").
-> The input/output value is clearly separated from the actual bitmap,
-> which is referenced by the "unsigned long *".
->
-> If you add new "value16" functions, they will be intended to store/retrieve
-> 16-bit values.
+Hello Eric,
 
-And if I add 4-bit, 12-bit or 24-bit values, what should I use?
+I think I just understood something. See below.
 
-> Besides, if retrieving an 8-bit value requires passing an
-> "unsigned long *", the caller needs two variables: one unsigned long to
-> pass the address of, and one u8 to copy the returned value into.
+On 10/9/19 11:01 PM, Michael Kerrisk (man-pages) wrote:
+> Hello Eric,
+> 
+> On 10/9/19 6:00 PM, Eric W. Biederman wrote:
+>> "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com> writes:
+>>
+>>> Hello Eric,
+>>>
+>>> Thank you. I was hoping you might jump in on this thread.
+>>>
+>>> Please see below.
+>>>
+>>> On 10/9/19 10:46 AM, Eric W. Biederman wrote:
+>>>> "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com> writes:
+>>>>
+>>>>> Hello Philipp,
+>>>>>
+>>>>> My apologies that it has taken a while to reply. (I had been hoping
+>>>>> and waiting that a few more people might weigh in on this thread.)
+>>>>>
+>>>>> On 9/23/19 3:42 PM, Philipp Wendler wrote:
+>>>>>> Hello Michael,
+>>>>>>
+>>>>>> Am 23.09.19 um 14:04 schrieb Michael Kerrisk (man-pages):
+>>>>>>
+>>>>>>> I'm considering to rewrite these pieces to exactly
+>>>>>>> describe what the system call does (which I already
+>>>>>>> do in the third paragraph) and remove the "may or may not"
+>>>>>>> pieces in the second paragraph. I'd welcome comments
+>>>>>>> on making that change.
+>>>
+>>> What did you think about my proposal above? To put it in context,
+>>> this was my initial comment in the mail:
+>>>
+>>> [[
+>>> One area of the page that I'm still not really happy with
+>>> is the "vague" wording in the second paragraph and the note
+>>> in the third paragraph about the system call possibly
+>>> changing. These pieces survive (in somewhat modified form)
+>>> from the original page, which was written before the
+>>> system call was released, and it seems there was some
+>>> question about whether the system call might still change
+>>> its behavior with respect to the root directory and current
+>>> working directory of other processes. However, after 19
+>>> years, nothing has changed, and surely it will not in the
+>>> future, since that would constitute an ABI breakage.
+>>> I'm considering to rewrite these pieces to exactly
+>>> describe what the system call does (which I already
+>>> do in the third paragraph) and remove the "may or may not"
+>>> pieces in the second paragraph. I'd welcome comments
+>>> on making that change.
+>>> ]]
+>>>
+>>> And the second and third paragraphs of the manual page currently
+>>> read:
+>>>
+>>> [[
+>>>        pivot_root()  may  or may not change the current root and the cur‐
+>>>        rent working directory of any processes or threads  that  use  the
+>>>        old  root  directory  and which are in the same mount namespace as
+>>>        the caller of pivot_root().  The  caller  of  pivot_root()  should
+>>>        ensure  that  processes  with root or current working directory at
+>>>        the old root operate correctly in either case.   An  easy  way  to
+>>>        ensure  this is to change their root and current working directory
+>>>        to  new_root  before  invoking  pivot_root().   Note   also   that
+>>>        pivot_root()  may  or may not affect the calling process's current
+>>>        working directory.  It is therefore recommended to call chdir("/")
+>>>        immediately after pivot_root().
+>>>
+>>>        The  paragraph  above  is  intentionally vague because at the time
+>>>        when pivot_root() was first implemented, it  was  unclear  whether
+>>>        its  affect  on  other process's root and current working directo‐
+>>>        ries—and the caller's current working  directory—might  change  in
+>>>        the  future.   However, the behavior has remained consistent since
+>>>        this system call was first implemented: pivot_root()  changes  the
+>>>        root  directory  and the current working directory of each process
+>>>        or thread in the same mount namespace to new_root if they point to
+>>>        the  old  root  directory.   (See also NOTES.)  On the other hand,
+>>>        pivot_root() does not change the caller's current  working  direc‐
+>>>        tory  (unless it is on the old root directory), and thus it should
+>>>        be followed by a chdir("/") call.
+>>> ]]
+>>
+>> Apologies I saw that concern I didn't realize it was a questio
+>>
+>> I think it is very reasonable to remove warning the behavior might
+>> change.  We have pivot_root(8) in common use that to use it requires
+>> the semantic of changing processes other than the current process.
+>> Which means any attempt to noticably change the behavior of
+>> pivot_root(2) will break userspace.
+> 
+> Thanks for the confirmation that this change would be okay.
+> I will make this change soon, unless I hear a counterargument.
+> 
+>> Now the documented semantics in behavior above are not quite what
+>> pivot_root(2) does.  It walks all processes on the system and if the
+>> working directory or the root directory refer to the root mount that is
+>> being replaced, then pivot_root(2) will update them.
+>>
+>> In practice the above is limited to a mount namespace.  But something as
+>> simple as "cd /proc/<somepid>/root" can allow a process to have a
+>> working directory in a different mount namespace.
+> 
+> So, I'm not quite clear. Do you mean that something in the existing
+> manual page text should change? If so, could you describe the
+> needed change please?
 
-Why do you need a temporary variable? In some cases it might make
-sense, but in general simple cases I don't see what you may achieve
-with it.
+Okay, I had to sleep on this one. I think what you are saying is
+that is some process, pidX, in mountns X does a "cd /proc/<pidY>/root"
+where pidY is a process in mountns Y, and then some
+process in mountns Y does a pivot_root(), the the CWD of pidX will
+be changed, even though it is in a different mountns. Right?
 
-I looked at bitmap.h and see few functions may have benefited of
-actually eliminating a use of long -> u8 -> long conversion.
+Thanks,
 
-Here is the question what we are mostly doing after we got a clump out
-of bitmap.
-
-> > So, I can tell an opposite, your arguments didn't convince me.
-> >
-> > Imagine the function which does an or / and / xor operation on bitmap.
-> > Now, when I supply unsigned long, I will see
-> > operations on one type in _one_ function independently of the size.
-> > Your proposal will make an unneded churn.
->
-> Depends on what kind of value you will use to do the logical operation
-> with the bitmap:
->   - Full bitmap => unsigned long * + size,
->   - Single bitmap "word" => unsigned long,
->   - 8-bit value => u8,
->   - 16-bit value => u16
+Michael
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
