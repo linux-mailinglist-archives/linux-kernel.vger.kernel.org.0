@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C15CDD259C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:02:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FC40D25E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:08:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388317AbfJJIlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:41:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45630 "EHLO mail.kernel.org"
+        id S2388675AbfJJJCz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 05:02:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388291AbfJJIlR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:41:17 -0400
+        id S1733279AbfJJIjO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:39:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02B9621BE5;
-        Thu, 10 Oct 2019 08:41:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6817121D6C;
+        Thu, 10 Oct 2019 08:39:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570696876;
-        bh=ym8G2ZdQbDsO+1BvbPg5YIeTwSU9bt9Wg46NbwfNwBo=;
+        s=default; t=1570696753;
+        bh=rdcIxeP4m44G4RKG8Wgygl8lX/dUoxoPTmdfFUaKgR8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tZLBhkN0mMhcgcn2CnbcGm3aLnJWm9fM3pJr1/yhtPGvKhYHm8tTagGIgnN3yML7J
-         RLHbCaDBlOSvoAEEHksp3ht5ugXQFCuctILeUgEOxlCWp0ek8LpORqj50VRiWvW5WQ
-         gs5c93NXpwRqBpue5C2drxf4j7KV83ZbnhinArKo=
+        b=MR53nh5fRv5BAFO6rre0kbiF9aUrAWMbXxybj5FpYSv24a6gjnEuwS3wqn1sv290q
+         8Wck1Aa1yOUqnoHEqcxb8ukDMC9LVG+vRaWmpL590OGa7xOpRLlA3BMoxexu6ZkfkS
+         84/7mSlTzwjvQWVStkzVzyaH8iQefP63v08Jmor4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
+        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.3 040/148] crypto: qat - Silence smp_processor_id() warning
-Date:   Thu, 10 Oct 2019 10:35:01 +0200
-Message-Id: <20191010083613.576179416@linuxfoundation.org>
+Subject: [PATCH 5.3 041/148] crypto: skcipher - Unmap pages after an external error
+Date:   Thu, 10 Oct 2019 10:35:02 +0200
+Message-Id: <20191010083613.631776460@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
 References: <20191010083609.660878383@linuxfoundation.org>
@@ -44,68 +43,121 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
 
-commit 1b82feb6c5e1996513d0fb0bbb475417088b4954 upstream.
+commit 0ba3c026e685573bd3534c17e27da7c505ac99c4 upstream.
 
-It seems that smp_processor_id() is only used for a best-effort
-load-balancing, refer to qat_crypto_get_instance_node(). It's not feasible
-to disable preemption for the duration of the crypto requests. Therefore,
-just silence the warning. This commit is similar to e7a9b05ca4
-("crypto: cavium - Fix smp_processor_id() warnings").
+skcipher_walk_done may be called with an error by internal or
+external callers.  For those internal callers we shouldn't unmap
+pages but for external callers we must unmap any pages that are
+in use.
 
-Silences the following splat:
-BUG: using smp_processor_id() in preemptible [00000000] code: cryptomgr_test/2904
-caller is qat_alg_ablkcipher_setkey+0x300/0x4a0 [intel_qat]
-CPU: 1 PID: 2904 Comm: cryptomgr_test Tainted: P           O    4.14.69 #1
-...
-Call Trace:
- dump_stack+0x5f/0x86
- check_preemption_disabled+0xd3/0xe0
- qat_alg_ablkcipher_setkey+0x300/0x4a0 [intel_qat]
- skcipher_setkey_ablkcipher+0x2b/0x40
- __test_skcipher+0x1f3/0xb20
- ? cpumask_next_and+0x26/0x40
- ? find_busiest_group+0x10e/0x9d0
- ? preempt_count_add+0x49/0xa0
- ? try_module_get+0x61/0xf0
- ? crypto_mod_get+0x15/0x30
- ? __kmalloc+0x1df/0x1f0
- ? __crypto_alloc_tfm+0x116/0x180
- ? crypto_skcipher_init_tfm+0xa6/0x180
- ? crypto_create_tfm+0x4b/0xf0
- test_skcipher+0x21/0xa0
- alg_test_skcipher+0x3f/0xa0
- alg_test.part.6+0x126/0x2a0
- ? finish_task_switch+0x21b/0x260
- ? __schedule+0x1e9/0x800
- ? __wake_up_common+0x8d/0x140
- cryptomgr_test+0x40/0x50
- kthread+0xff/0x130
- ? cryptomgr_notify+0x540/0x540
- ? kthread_create_on_node+0x70/0x70
- ret_from_fork+0x24/0x50
+This patch distinguishes between the two cases by checking whether
+walk->nbytes is zero or not.  For internal callers, we now set
+walk->nbytes to zero prior to the call.  For external callers,
+walk->nbytes has always been non-zero (as zero is used to indicate
+the termination of a walk).
 
-Fixes: ed8ccaef52 ("crypto: qat - Add support for SRIOV")
-Cc: stable@vger.kernel.org
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Reported-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Fixes: 5cde0af2a982 ("[CRYPTO] cipher: Added block cipher type")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/qat/qat_common/adf_common_drv.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ crypto/skcipher.c |   42 +++++++++++++++++++++++-------------------
+ 1 file changed, 23 insertions(+), 19 deletions(-)
 
---- a/drivers/crypto/qat/qat_common/adf_common_drv.h
-+++ b/drivers/crypto/qat/qat_common/adf_common_drv.h
-@@ -95,7 +95,7 @@ struct service_hndl {
- 
- static inline int get_current_node(void)
- {
--	return topology_physical_package_id(smp_processor_id());
-+	return topology_physical_package_id(raw_smp_processor_id());
+--- a/crypto/skcipher.c
++++ b/crypto/skcipher.c
+@@ -90,7 +90,7 @@ static inline u8 *skcipher_get_spot(u8 *
+ 	return max(start, end_page);
  }
  
- int adf_service_register(struct service_hndl *service);
+-static void skcipher_done_slow(struct skcipher_walk *walk, unsigned int bsize)
++static int skcipher_done_slow(struct skcipher_walk *walk, unsigned int bsize)
+ {
+ 	u8 *addr;
+ 
+@@ -98,19 +98,21 @@ static void skcipher_done_slow(struct sk
+ 	addr = skcipher_get_spot(addr, bsize);
+ 	scatterwalk_copychunks(addr, &walk->out, bsize,
+ 			       (walk->flags & SKCIPHER_WALK_PHYS) ? 2 : 1);
++	return 0;
+ }
+ 
+ int skcipher_walk_done(struct skcipher_walk *walk, int err)
+ {
+-	unsigned int n; /* bytes processed */
+-	bool more;
++	unsigned int n = walk->nbytes;
++	unsigned int nbytes = 0;
+ 
+-	if (unlikely(err < 0))
++	if (!n)
+ 		goto finish;
+ 
+-	n = walk->nbytes - err;
+-	walk->total -= n;
+-	more = (walk->total != 0);
++	if (likely(err >= 0)) {
++		n -= err;
++		nbytes = walk->total - n;
++	}
+ 
+ 	if (likely(!(walk->flags & (SKCIPHER_WALK_PHYS |
+ 				    SKCIPHER_WALK_SLOW |
+@@ -126,7 +128,7 @@ unmap_src:
+ 		memcpy(walk->dst.virt.addr, walk->page, n);
+ 		skcipher_unmap_dst(walk);
+ 	} else if (unlikely(walk->flags & SKCIPHER_WALK_SLOW)) {
+-		if (err) {
++		if (err > 0) {
+ 			/*
+ 			 * Didn't process all bytes.  Either the algorithm is
+ 			 * broken, or this was the last step and it turned out
+@@ -134,27 +136,29 @@ unmap_src:
+ 			 * the algorithm requires it.
+ 			 */
+ 			err = -EINVAL;
+-			goto finish;
+-		}
+-		skcipher_done_slow(walk, n);
+-		goto already_advanced;
++			nbytes = 0;
++		} else
++			n = skcipher_done_slow(walk, n);
+ 	}
+ 
++	if (err > 0)
++		err = 0;
++
++	walk->total = nbytes;
++	walk->nbytes = 0;
++
+ 	scatterwalk_advance(&walk->in, n);
+ 	scatterwalk_advance(&walk->out, n);
+-already_advanced:
+-	scatterwalk_done(&walk->in, 0, more);
+-	scatterwalk_done(&walk->out, 1, more);
++	scatterwalk_done(&walk->in, 0, nbytes);
++	scatterwalk_done(&walk->out, 1, nbytes);
+ 
+-	if (more) {
++	if (nbytes) {
+ 		crypto_yield(walk->flags & SKCIPHER_WALK_SLEEP ?
+ 			     CRYPTO_TFM_REQ_MAY_SLEEP : 0);
+ 		return skcipher_walk_next(walk);
+ 	}
+-	err = 0;
+-finish:
+-	walk->nbytes = 0;
+ 
++finish:
+ 	/* Short-circuit for the common/fast path. */
+ 	if (!((unsigned long)walk->buffer | (unsigned long)walk->page))
+ 		goto out;
 
 
