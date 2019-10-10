@@ -2,85 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA0A9D2558
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:01:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16A62D2536
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:01:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389300AbfJJI6I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:58:08 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54122 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389237AbfJJIqE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:46:04 -0400
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1CFE1796EE
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 08:46:04 +0000 (UTC)
-Received: by mail-wm1-f70.google.com with SMTP id r21so1471723wme.5
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 01:46:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tR/b93II6w98Y1JcW5QoZrFBl2Ih7JvmORnV8m5CDsk=;
-        b=DOrZ8wYqi+0zPaLCJQvgap/jXVgPclrIrxQz3hVXmi7Qdmnazkfpyhy7tDTv0Hnb9K
-         V0SJVn1hVZRyNbgjX4ls3JBcd6Amtsw+X6GfuDyP1aNVRYRLjl9wHL3bxnSzZlb+R74+
-         11MxRZ9WJecuN9lQUHIms/i6mOrn+CGk4EWJplZwgXYDrCuAvpR7KzeCYjPs0trCoasn
-         VLUpxK/1vTisBGyHwLsZoU/5pXspkK4+8BKLXWgEHZTOA+u9/PmaTvvQV9A89TAOszZT
-         jyX1aadSpAwtuRzM04OWqDBPDAp3ITvI8jCIE/TGEwGmcaN24vKd8bf3jyr8zpdnA6J+
-         1ZKg==
-X-Gm-Message-State: APjAAAX1a6fx0f5dotvkWapDA5diTCdNHnvxI3aiYIEUgY2PMmI+VGHq
-        lHmv8bLu2TnB8YsRf7l7kN2bug5TskiUd01X4i4+LVT/BR9lP+Qi9fac5mtYM0q3eVrynbNF7Wy
-        7/JzVoJfV2XqZSS4hCQr0lR0r
-X-Received: by 2002:adf:e401:: with SMTP id g1mr5700484wrm.211.1570697162834;
-        Thu, 10 Oct 2019 01:46:02 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyrGXBfAqLL3DSANixqvzd6znc5l0D4LZnBiMcWibn1Ag6PBFlGAQzLidI7EwNDBrIbfhWgrA==
-X-Received: by 2002:adf:e401:: with SMTP id g1mr5700471wrm.211.1570697162619;
-        Thu, 10 Oct 2019 01:46:02 -0700 (PDT)
-Received: from steredhat (host174-200-dynamic.52-79-r.retail.telecomitalia.it. [79.52.200.174])
-        by smtp.gmail.com with ESMTPSA id q124sm8324726wma.5.2019.10.10.01.46.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 01:46:01 -0700 (PDT)
-Date:   Thu, 10 Oct 2019 10:45:59 +0200
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Stefan Hajnoczi <stefanha@gmail.com>
-Cc:     netdev@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
-        linux-hyperv@vger.kernel.org,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        kvm@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
-        Dexuan Cui <decui@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jorgen Hansen <jhansen@vmware.com>
-Subject: Re: [RFC PATCH 00/13] vsock: add multi-transports support
-Message-ID: <20191010084559.a4t6v7dopeqffn55@steredhat>
-References: <20190927112703.17745-1-sgarzare@redhat.com>
- <20191009132952.GO5747@stefanha-x1.localdomain>
+        id S2389283AbfJJIze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:55:34 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:41200 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387593AbfJJItY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:49:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Yxy1NmL9jhb0kt0QSZLJCKp5cELj9G+8v2WXfMq0H64=; b=GtwMhN2KWEOuKTLuMv0tQQwDZ
+        GaQnKrfLTi05KNPd6OAnJGQZWnOP2QhIAqO7XRc0cwP/9YJ1DKXGvGESop7J+H6aBG9kmGPnbEbDl
+        lZrFsgsD8ag/KTUu2fuhhW6jx15baV8Ym5X3B4roe9xDP5G32+ax4Ow9iPw6+wRDtMsRhGLgjqzvM
+        +Jmo0B6F6TnxGgJsgv+czSv+hr3ZVl3QAl+JrXv0KCboRhrTDOcWFr60d3EszyDAxUMpNub62Hob/
+        /qTiBSBTUyxhlxvOIhcI2jACLIGfusHy+vCZY1/oKJDg8BKkOkpd5flBFRoc+uHBaeUL58my10RYO
+        d7HmdrjRA==;
+Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:42302)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1iIU8I-0006Yw-RN; Thu, 10 Oct 2019 09:49:15 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1iIU8G-00006h-9b; Thu, 10 Oct 2019 09:49:12 +0100
+Date:   Thu, 10 Oct 2019 09:49:12 +0100
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH 5.3 076/148] mmc: sdhci-of-esdhc: set DMA snooping based
+ on DMA coherence
+Message-ID: <20191010084912.GI25745@shell.armlinux.org.uk>
+References: <20191010083609.660878383@linuxfoundation.org>
+ <20191010083615.965680999@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191009132952.GO5747@stefanha-x1.localdomain>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20191010083615.965680999@linuxfoundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 02:29:52PM +0100, Stefan Hajnoczi wrote:
-> On Fri, Sep 27, 2019 at 01:26:50PM +0200, Stefano Garzarella wrote:
-> > Hi all,
-> > this series adds the multi-transports support to vsock, following
-> > this proposal:
-> > https://www.spinics.net/lists/netdev/msg575792.html
+Hi Greg,
+
+On 5th October, Christian Zigotzky <chzigotzky@xenosoft.de> reported a
+problem with this on PowerPC (at a guess, it looks like there's a
+PowerPC user of this where the DT does not mark the device as
+dma-coherent, but the hardware requires it to be DMA coherent.)
+
+However, despite sending a reply to him within minutes of his email
+arriving, I've heard nothing since, so there's been no progress on
+working out what is really going on.
+
+Given that the reporter hasn't responded to my reply, I'm not sure
+what we should be doing with this... maybe the reporter has solved
+his problem, maybe he was using an incorrect DT, we just don't know.
+
+On Thu, Oct 10, 2019 at 10:35:37AM +0200, Greg Kroah-Hartman wrote:
+> From: Russell King <rmk+kernel@armlinux.org.uk>
 > 
-> Nice series!  I have left a few comments but overall it looks promising.
+> commit 121bd08b029e03404c451bb237729cdff76eafed upstream.
+> 
+> We must not unconditionally set the DMA snoop bit; if the DMA API is
+> assuming that the device is not DMA coherent, and the device snoops the
+> CPU caches, the device can see stale cache lines brought in by
+> speculative prefetch.
+> 
+> This leads to the device seeing stale data, potentially resulting in
+> corrupted data transfers.  Commonly, this results in a descriptor fetch
+> error such as:
+> 
+> mmc0: ADMA error
+> mmc0: sdhci: ============ SDHCI REGISTER DUMP ===========
+> mmc0: sdhci: Sys addr:  0x00000000 | Version:  0x00002202
+> mmc0: sdhci: Blk size:  0x00000008 | Blk cnt:  0x00000001
+> mmc0: sdhci: Argument:  0x00000000 | Trn mode: 0x00000013
+> mmc0: sdhci: Present:   0x01f50008 | Host ctl: 0x00000038
+> mmc0: sdhci: Power:     0x00000003 | Blk gap:  0x00000000
+> mmc0: sdhci: Wake-up:   0x00000000 | Clock:    0x000040d8
+> mmc0: sdhci: Timeout:   0x00000003 | Int stat: 0x00000001
+> mmc0: sdhci: Int enab:  0x037f108f | Sig enab: 0x037f108b
+> mmc0: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00002202
+> mmc0: sdhci: Caps:      0x35fa0000 | Caps_1:   0x0000af00
+> mmc0: sdhci: Cmd:       0x0000333a | Max curr: 0x00000000
+> mmc0: sdhci: Resp[0]:   0x00000920 | Resp[1]:  0x001d8a33
+> mmc0: sdhci: Resp[2]:   0x325b5900 | Resp[3]:  0x3f400e00
+> mmc0: sdhci: Host ctl2: 0x00000000
+> mmc0: sdhci: ADMA Err:  0x00000009 | ADMA Ptr: 0x000000236d43820c
+> mmc0: sdhci: ============================================
+> mmc0: error -5 whilst initialising SD card
+> 
+> but can lead to other errors, and potentially direct the SDHCI
+> controller to read/write data to other memory locations (e.g. if a valid
+> descriptor is visible to the device in a stale cache line.)
+> 
+> Fix this by ensuring that the DMA snoop bit corresponds with the
+> behaviour of the DMA API.  Since the driver currently only supports DT,
+> use of_dma_is_coherent().  Note that device_get_dma_attr() can not be
+> used as that risks re-introducing this bug if/when the driver is
+> converted to ACPI.
+> 
+> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> ---
+>  drivers/mmc/host/sdhci-of-esdhc.c |    7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> --- a/drivers/mmc/host/sdhci-of-esdhc.c
+> +++ b/drivers/mmc/host/sdhci-of-esdhc.c
+> @@ -495,7 +495,12 @@ static int esdhc_of_enable_dma(struct sd
+>  		dma_set_mask_and_coherent(dev, DMA_BIT_MASK(40));
+>  
+>  	value = sdhci_readl(host, ESDHC_DMA_SYSCTL);
+> -	value |= ESDHC_DMA_SNOOP;
+> +
+> +	if (of_dma_is_coherent(dev->of_node))
+> +		value |= ESDHC_DMA_SNOOP;
+> +	else
+> +		value &= ~ESDHC_DMA_SNOOP;
+> +
+>  	sdhci_writel(host, value, ESDHC_DMA_SYSCTL);
+>  	return 0;
+>  }
+> 
+> 
+> 
 
-Thank you very much for the comments!
-
-I'll follow them and respin.
-
-Cheers,
-Stefano
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
