@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8B05D24A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:00:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 430BCD24B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:00:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389669AbfJJIsf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:48:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54652 "EHLO mail.kernel.org"
+        id S2389925AbfJJIuM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:50:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57046 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389120AbfJJIs1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:48:27 -0400
+        id S2389891AbfJJIuJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:50:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B50E208C3;
-        Thu, 10 Oct 2019 08:48:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F809208C3;
+        Thu, 10 Oct 2019 08:50:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697304;
-        bh=oao8EGCviC1uG/vEmaLziTEieGml2DsRK5XwBRMeSjI=;
+        s=default; t=1570697408;
+        bh=HhSofep+VUsQ/9VVJr8Kkbo5ADa9EIyjMwn72tedMOE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wzt4W63e5aEs8+tagvcGuRu+xpgd3IxESPsj8tFtF0GvHyEMzAE8pDbIjMUdJtbxH
-         VmUJ6ziI1wWLzZon3XYhPenzC6eJk6d8Siec0IzKxXaFgX8nwFbme22Q4hskYOYQAz
-         TwaZaIp0QiQtdOwz50kAQXQUTpcG2WHjfh9mnTjg=
+        b=rq51Ohb9BRAFMLd0EjWTRaxW7GKFhkkZ3mtU8A4B0h+YKIXl0q0yPTf/rbWZCBk8u
+         QTrCkHevGPCGjsuafN6//gLkAGz0BuaeGJ9ZyONK4urBBqCnnYMKAEmnxdcCovTKIB
+         +9aoMQGlsBMyYABWhJdId35bCdRheV0vND5yjGJQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeremy Linton <jeremy.linton@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.19 094/114] arm64: add sysfs vulnerability show for meltdown
-Date:   Thu, 10 Oct 2019 10:36:41 +0200
-Message-Id: <20191010083613.091754245@linuxfoundation.org>
+        stable@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Huacai Chen <chenhc@lemote.com>,
+        Yunqiang Su <ysu@wavecomp.com>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org
+Subject: [PATCH 4.14 17/61] MIPS: Treat Loongson Extensions as ASEs
+Date:   Thu, 10 Oct 2019 10:36:42 +0200
+Message-Id: <20191010083459.461605528@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
-References: <20191010083544.711104709@linuxfoundation.org>
+In-Reply-To: <20191010083449.500442342@linuxfoundation.org>
+References: <20191010083449.500442342@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,146 +45,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeremy Linton <jeremy.linton@arm.com>
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
 
-[ Upstream commit 1b3ccf4be0e7be8c4bd8522066b6cbc92591e912 ]
+commit d2f965549006acb865c4638f1f030ebcefdc71f6 upstream.
 
-We implement page table isolation as a mitigation for meltdown.
-Report this to userspace via sysfs.
+Recently, binutils had split Loongson-3 Extensions into four ASEs:
+MMI, CAM, EXT, EXT2. This patch do the samething in kernel and expose
+them in cpuinfo so applications can probe supported ASEs at runtime.
 
-Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Huacai Chen <chenhc@lemote.com>
+Cc: Yunqiang Su <ysu@wavecomp.com>
+Cc: stable@vger.kernel.org # v4.14+
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/kernel/cpufeature.c |   58 +++++++++++++++++++++++++++++++----------
- 1 file changed, 44 insertions(+), 14 deletions(-)
 
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -889,7 +889,7 @@ static bool has_cache_dic(const struct a
- 	return ctr & BIT(CTR_DIC_SHIFT);
- }
+---
+ arch/mips/include/asm/cpu-features.h |   16 ++++++++++++++++
+ arch/mips/include/asm/cpu.h          |    4 ++++
+ arch/mips/kernel/cpu-probe.c         |    6 ++++++
+ arch/mips/kernel/proc.c              |    4 ++++
+ 4 files changed, 30 insertions(+)
+
+--- a/arch/mips/include/asm/cpu-features.h
++++ b/arch/mips/include/asm/cpu-features.h
+@@ -348,6 +348,22 @@
+ #define cpu_has_dsp3		(cpu_data[0].ases & MIPS_ASE_DSP3)
+ #endif
  
--#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+static bool __meltdown_safe = true;
- static int __kpti_forced; /* 0: not forced, >0: forced on, <0: forced off */
- 
- static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
-@@ -908,6 +908,16 @@ static bool unmap_kernel_at_el0(const st
- 		{ /* sentinel */ }
- 	};
- 	char const *str = "command line option";
-+	bool meltdown_safe;
++#ifndef cpu_has_loongson_mmi
++#define cpu_has_loongson_mmi		__ase(MIPS_ASE_LOONGSON_MMI)
++#endif
 +
-+	meltdown_safe = is_midr_in_range_list(read_cpuid_id(), kpti_safe_list);
++#ifndef cpu_has_loongson_cam
++#define cpu_has_loongson_cam		__ase(MIPS_ASE_LOONGSON_CAM)
++#endif
 +
-+	/* Defer to CPU feature registers */
-+	if (has_cpuid_feature(entry, scope))
-+		meltdown_safe = true;
++#ifndef cpu_has_loongson_ext
++#define cpu_has_loongson_ext		__ase(MIPS_ASE_LOONGSON_EXT)
++#endif
 +
-+	if (!meltdown_safe)
-+		__meltdown_safe = false;
- 
- 	/*
- 	 * For reasons that aren't entirely clear, enabling KPTI on Cavium
-@@ -919,6 +929,19 @@ static bool unmap_kernel_at_el0(const st
- 		__kpti_forced = -1;
- 	}
- 
-+	/* Useful for KASLR robustness */
-+	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE) && kaslr_offset() > 0) {
-+		if (!__kpti_forced) {
-+			str = "KASLR";
-+			__kpti_forced = 1;
-+		}
-+	}
++#ifndef cpu_has_loongson_ext2
++#define cpu_has_loongson_ext2		__ase(MIPS_ASE_LOONGSON_EXT2)
++#endif
 +
-+	if (!IS_ENABLED(CONFIG_UNMAP_KERNEL_AT_EL0)) {
-+		pr_info_once("kernel page table isolation disabled by kernel configuration\n");
-+		return false;
-+	}
-+
- 	/* Forced? */
- 	if (__kpti_forced) {
- 		pr_info_once("kernel page table isolation forced %s by %s\n",
-@@ -926,18 +949,10 @@ static bool unmap_kernel_at_el0(const st
- 		return __kpti_forced > 0;
- 	}
+ #ifndef cpu_has_mipsmt
+ #define cpu_has_mipsmt		(cpu_data[0].ases & MIPS_ASE_MIPSMT)
+ #endif
+--- a/arch/mips/include/asm/cpu.h
++++ b/arch/mips/include/asm/cpu.h
+@@ -433,5 +433,9 @@ enum cpu_type_enum {
+ #define MIPS_ASE_MSA		0x00000100 /* MIPS SIMD Architecture */
+ #define MIPS_ASE_DSP3		0x00000200 /* Signal Processing ASE Rev 3*/
+ #define MIPS_ASE_MIPS16E2	0x00000400 /* MIPS16e2 */
++#define MIPS_ASE_LOONGSON_MMI	0x00000800 /* Loongson MultiMedia extensions Instructions */
++#define MIPS_ASE_LOONGSON_CAM	0x00001000 /* Loongson CAM */
++#define MIPS_ASE_LOONGSON_EXT	0x00002000 /* Loongson EXTensions */
++#define MIPS_ASE_LOONGSON_EXT2	0x00004000 /* Loongson EXTensions R2 */
  
--	/* Useful for KASLR robustness */
--	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
--		return true;
--
--	/* Don't force KPTI for CPUs that are not vulnerable */
--	if (is_midr_in_range_list(read_cpuid_id(), kpti_safe_list))
--		return false;
--
--	/* Defer to CPU feature registers */
--	return !has_cpuid_feature(entry, scope);
-+	return !meltdown_safe;
- }
+ #endif /* _ASM_CPU_H */
+--- a/arch/mips/kernel/cpu-probe.c
++++ b/arch/mips/kernel/cpu-probe.c
+@@ -1478,6 +1478,8 @@ static inline void cpu_probe_legacy(stru
+ 			__cpu_name[cpu] = "ICT Loongson-3";
+ 			set_elf_platform(cpu, "loongson3a");
+ 			set_isa(c, MIPS_CPU_ISA_M64R1);
++			c->ases |= (MIPS_ASE_LOONGSON_MMI | MIPS_ASE_LOONGSON_CAM |
++				MIPS_ASE_LOONGSON_EXT);
+ 			break;
+ 		case PRID_REV_LOONGSON3B_R1:
+ 		case PRID_REV_LOONGSON3B_R2:
+@@ -1485,6 +1487,8 @@ static inline void cpu_probe_legacy(stru
+ 			__cpu_name[cpu] = "ICT Loongson-3";
+ 			set_elf_platform(cpu, "loongson3b");
+ 			set_isa(c, MIPS_CPU_ISA_M64R1);
++			c->ases |= (MIPS_ASE_LOONGSON_MMI | MIPS_ASE_LOONGSON_CAM |
++				MIPS_ASE_LOONGSON_EXT);
+ 			break;
+ 		}
  
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
- static void
- kpti_install_ng_mappings(const struct arm64_cpu_capabilities *__unused)
- {
-@@ -962,6 +977,12 @@ kpti_install_ng_mappings(const struct ar
+@@ -1845,6 +1849,8 @@ static inline void cpu_probe_loongson(st
+ 		decode_configs(c);
+ 		c->options |= MIPS_CPU_FTLB | MIPS_CPU_TLBINV | MIPS_CPU_LDPTE;
+ 		c->writecombine = _CACHE_UNCACHED_ACCELERATED;
++		c->ases |= (MIPS_ASE_LOONGSON_MMI | MIPS_ASE_LOONGSON_CAM |
++			MIPS_ASE_LOONGSON_EXT | MIPS_ASE_LOONGSON_EXT2);
+ 		break;
+ 	default:
+ 		panic("Unknown Loongson Processor ID!");
+--- a/arch/mips/kernel/proc.c
++++ b/arch/mips/kernel/proc.c
+@@ -124,6 +124,10 @@ static int show_cpuinfo(struct seq_file
+ 	if (cpu_has_eva)	seq_printf(m, "%s", " eva");
+ 	if (cpu_has_htw)	seq_printf(m, "%s", " htw");
+ 	if (cpu_has_xpa)	seq_printf(m, "%s", " xpa");
++	if (cpu_has_loongson_mmi)	seq_printf(m, "%s", " loongson-mmi");
++	if (cpu_has_loongson_cam)	seq_printf(m, "%s", " loongson-cam");
++	if (cpu_has_loongson_ext)	seq_printf(m, "%s", " loongson-ext");
++	if (cpu_has_loongson_ext2)	seq_printf(m, "%s", " loongson-ext2");
+ 	seq_printf(m, "\n");
  
- 	return;
- }
-+#else
-+static void
-+kpti_install_ng_mappings(const struct arm64_cpu_capabilities *__unused)
-+{
-+}
-+#endif	/* CONFIG_UNMAP_KERNEL_AT_EL0 */
- 
- static int __init parse_kpti(char *str)
- {
-@@ -975,7 +996,6 @@ static int __init parse_kpti(char *str)
- 	return 0;
- }
- early_param("kpti", parse_kpti);
--#endif	/* CONFIG_UNMAP_KERNEL_AT_EL0 */
- 
- #ifdef CONFIG_ARM64_HW_AFDBM
- static inline void __cpu_enable_hw_dbm(void)
-@@ -1196,7 +1216,6 @@ static const struct arm64_cpu_capabiliti
- 		.field_pos = ID_AA64PFR0_EL0_SHIFT,
- 		.min_field_value = ID_AA64PFR0_EL0_32BIT_64BIT,
- 	},
--#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
- 	{
- 		.desc = "Kernel page table isolation (KPTI)",
- 		.capability = ARM64_UNMAP_KERNEL_AT_EL0,
-@@ -1212,7 +1231,6 @@ static const struct arm64_cpu_capabiliti
- 		.matches = unmap_kernel_at_el0,
- 		.cpu_enable = kpti_install_ng_mappings,
- 	},
--#endif
- 	{
- 		/* FP/SIMD is not implemented */
- 		.capability = ARM64_HAS_NO_FPSIMD,
-@@ -1853,3 +1871,15 @@ void cpu_clear_disr(const struct arm64_c
- 	/* Firmware may have left a deferred SError in this register. */
- 	write_sysreg_s(0, SYS_DISR_EL1);
- }
-+
-+ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr,
-+			  char *buf)
-+{
-+	if (__meltdown_safe)
-+		return sprintf(buf, "Not affected\n");
-+
-+	if (arm64_kernel_unmapped_at_el0())
-+		return sprintf(buf, "Mitigation: PTI\n");
-+
-+	return sprintf(buf, "Vulnerable\n");
-+}
+ 	if (cpu_has_mmips) {
 
 
