@@ -2,150 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5969D21B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 09:38:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9AC6D21C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 09:39:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733190AbfJJHiM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 03:38:12 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45188 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732926AbfJJH3I (ORCPT
+        id S1733199AbfJJHiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 03:38:13 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:41782 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733029AbfJJH3U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 03:29:08 -0400
-Received: by mail-pl1-f194.google.com with SMTP id u12so2331058pls.12;
-        Thu, 10 Oct 2019 00:29:08 -0700 (PDT)
+        Thu, 10 Oct 2019 03:29:20 -0400
+Received: by mail-pl1-f195.google.com with SMTP id t10so2347946plr.8
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 00:29:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=ZRrVLXwmpo4xQzXPyPqYPbJsiga9xziaedvCp7FhOE0=;
-        b=FDDOEmTJXVTCe/j4jUtg65bcxfOZ96Hb33qWjaE8DKhPm28ZhA5kCRW9NXghUcH+me
-         KTvCIX5X6m6l1j32jnPXL8/8twUioHrEAk+IshxyxXsavy2lx/PUL4hic5U4LHFgVaUn
-         fa621I3JVaSQyZTwoEKxyH8LGpY2gBRl6jWfk76q/megCp34fZwcsCJ+Tbk287tivvk+
-         o6qmbAfIiBAaLa+eOXhSYPl3w1vjPUuDsYLca27EuDknhq7VAsKxLOOa3sf6L88eXku3
-         FGhmyiLnh53HUF06rIrC1RQT0iTGjr3eommjmnLRNpBf2Am1U7F9o59qwy81suDSpV75
-         1EPw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=05Mh4YPHsTH+RTt+Qtg69xp7FFLkdaUozJGhC0YlXGQ=;
+        b=ER5DZCF2audQq9jfWItaA9FNvhauCu7VAINlpo+d1tC7rNqNG8NL4kwTqwRNVOoAPZ
+         E2qKEmMfAZioOzAH2zZJxQf0ao/IsDfDOyyzWCQfoI4N2loqkj9bRP4jGdY0X6EXb6v3
+         opzkIQIHjYXPvucQaVgIW7zn52d0NTJlYsutLWYgBzgODlh114zqrRGak703hwu7tWOI
+         SQqiqcpyrr2TL6nKvCxCJ8TnWZd91jBrfZYJRj+sqIGH2H65esJz4JNKakl0pCuEsowV
+         9UOqF6i7P6FFuV+zmrA58zzDnlXmM6TvF8GJYAuKSmu8xmyX4iBm0WaaeLmRe553vwo3
+         HOVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ZRrVLXwmpo4xQzXPyPqYPbJsiga9xziaedvCp7FhOE0=;
-        b=dx1UtC/dr30NmH8jPDTaowHtrzkomq59IC+cLd2Q75eYnbxHXBJjdl+E9mGbRQ6DP8
-         F6f7AEcawmTn+zT5DKDlEF5ZzCz5BlRf8vwVdYAEckmQMT5e9gQ5hPx/MhCzZsY4D79l
-         WffbvHdN+diLC7XSx1NF1Nu7p3u6FoTu5s4grZvO4XHa+ajtkGarlqbAEpyg2Tnyv0IL
-         RHnuQrkWG9BnybyqhRNZvqcek2kDXkxOQIR06N5iGaa1smllOzIfSu01Bess3K0X05Oy
-         u9oV0yaReIce4s2nug1KWbz6Jv0iL+r3sEZvMYLuTR44WLqDVn0GBPBZSLrjw1rK5q8i
-         63FA==
-X-Gm-Message-State: APjAAAW+ZZa4+kdaDJ4Vj+N2L0Arm7m+6+HjD2Y1wD5zOlod9d8i+l1T
-        xQ4XZ9xINh1Z/7QS+HtRKpQ=
-X-Google-Smtp-Source: APXvYqyn0W2pI1YMiNV1UgZzss1HUG1vYlIM7U9NlK7YdxNTCuDuWlIW4Ge1hh0t3JyUP1nKi9G1uQ==
-X-Received: by 2002:a17:902:47:: with SMTP id 65mr7783959pla.94.1570692548062;
-        Thu, 10 Oct 2019 00:29:08 -0700 (PDT)
-Received: from localhost.corp.microsoft.com ([167.220.255.39])
-        by smtp.googlemail.com with ESMTPSA id v8sm12673274pje.6.2019.10.10.00.29.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 10 Oct 2019 00:29:07 -0700 (PDT)
-From:   lantianyu1986@gmail.com
-X-Google-Original-From: Tianyu.Lan@microsoft.com
-To:     dan.j.williams@intel.com, dave.hansen@linux.intel.com,
-        mingo@kernel.org, mpe@ellerman.id.au, pasha.tatashin@soleen.com,
-        osalvador@suse.de, richardw.yang@linux.intel.com,
-        Tianyu.Lan@microsoft.com, christophe.leroy@c-s.fr, bp@suse.de,
-        rdunlap@infradead.org, michael.h.kelley@microsoft.com,
-        kys@microsoft.com, sashal@kernel.org
-Cc:     linux-kernel@vger.kernel.org, vkuznets@redhat.com,
-        linux-hyperv@vger.kernel.org
-Subject: [PATCH] mm/resource: Move child to new resource when release mem region.
-Date:   Thu, 10 Oct 2019 15:28:56 +0800
-Message-Id: <20191010072856.20079-1-Tianyu.Lan@microsoft.com>
-X-Mailer: git-send-email 2.14.5
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=05Mh4YPHsTH+RTt+Qtg69xp7FFLkdaUozJGhC0YlXGQ=;
+        b=eEEgVHo8VtB004gc45vmbQj6H9mPBaY/dCkuC4WvXIkmrUn2x/qWTLOayobVXHcdY/
+         wVvC1kk6NiNKb9n1+lT0dTk6knMNO79mRVLusW16iMApVm+SYWyvdasMM22HQj/00N8O
+         UC6zuk+nGQvTlOVXjRAR4vbM9N7SeMMXQkxGkoQRH0PPYetEGGC887ssy7QP160fPCDX
+         CpovggJgaERVtpIczQfpNgOxtL4eC59bGiiLkZsIUftEcXT0b+pisyVFL+5bw16NnuP8
+         YKNzySALkhrjUYymG6M0mbSKzxBFLvoa6InY6sn7j4v9dHDWFxZH16iQiT9qcD3ddYlY
+         Ul+A==
+X-Gm-Message-State: APjAAAUm7VqBb/wf2MvUhTJdWKvYoDsBy3F0g24hDZIUsKpSBUQxBkUK
+        We3Xk9/YWjijDzoiIhfQm+nh/g==
+X-Google-Smtp-Source: APXvYqzNWwK2RGbc8g4ooHkVXyPrtB6leFym4J8u95Vna828pG9j0iBhuG3XemmKc0PtjS4L8ePu2A==
+X-Received: by 2002:a17:902:d90e:: with SMTP id c14mr7904837plz.91.1570692557898;
+        Thu, 10 Oct 2019 00:29:17 -0700 (PDT)
+Received: from localhost ([122.172.151.112])
+        by smtp.gmail.com with ESMTPSA id v8sm12676039pje.6.2019.10.10.00.29.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 10 Oct 2019 00:29:16 -0700 (PDT)
+Date:   Thu, 10 Oct 2019 12:59:13 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Kamil Konieczny <k.konieczny@samsung.com>
+Subject: Re: [PATCH] regulator: core: Skip balancing of the enabled
+ regulators in regulator_enable()
+Message-ID: <20191010072913.jsjdl6uc4qkbmlpa@vireshk-i7>
+References: <86b9b4b5-cca5-9052-7c87-c5679dfffff4@samsung.com>
+ <be8d3280-9855-ed18-b2ab-d7fb28d80b82@gmail.com>
+ <20191008161535.GN4382@sirena.co.uk>
+ <4ad890b7-705e-94f9-2e61-1f3a60984c91@gmail.com>
+ <20191008171747.GS4382@sirena.co.uk>
+ <439154a4-1502-40af-7086-d4e3eb24025f@gmail.com>
+ <CGME20191008180759epcas3p3c367142db499635c71d9601dd3e63956@epcas3p3.samsung.com>
+ <20191008180750.GT4382@sirena.co.uk>
+ <c9e3ff21-ec50-97c2-06cb-b2f44c70eac8@samsung.com>
+ <20191009141352.GC3929@sirena.co.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191009141352.GC3929@sirena.co.uk>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tianyu Lan <Tianyu.Lan@microsoft.com>
+On 09-10-19, 15:13, Mark Brown wrote:
+> On Wed, Oct 09, 2019 at 12:29:00PM +0200, Marek Szyprowski wrote:
+> 
+> > Okay, then what is the conclusion, as I got lost a bit? How do you want 
+> > this issue to be fixed?
+> 
+> We should revert the enable call, it shouldn't be required, and ideally
+> the default balancer could be updated to only make configuration changes
+> if they're actually required which would help avoid triggering any such
+> things in future if we don't absolutely have to.
 
-When release mem region, old mem region may be splited to
-two regions. Current allocate new struct resource for high
-end mem region but not move child resources whose ranges are
-in the high end range to new resource. When adjust old mem
-region's range, adjust_resource() detects child region's range
-is out of new range and return error. Move child resources to
-high end resource before adjusting old mem range.
+Sorry for the delay in responding, just came back after vacations.
 
-Signed-off-by: Tianyu Lan <Tianyu.Lan@microsoft.com>
----
-This patch is to prepare for memory hot-remove function
-in Hyper-V balloon driver.
----
- kernel/resource.c | 38 ++++++++++++++++++++++++++++++++++----
- 1 file changed, 34 insertions(+), 4 deletions(-)
+Should the OPP change be reverted ? Someone going to send that revert to me with
+the required explanation ?
 
-diff --git a/kernel/resource.c b/kernel/resource.c
-index 158f04ec1d4f..7856347adfd2 100644
---- a/kernel/resource.c
-+++ b/kernel/resource.c
-@@ -181,6 +181,38 @@ static struct resource *alloc_resource(gfp_t flags)
- 	return res;
- }
- 
-+static void move_child_to_newresource(struct resource *old,
-+				      struct resource *new)
-+{
-+	struct resource *tmp, **p, **np;
-+
-+	if (!old->child)
-+		return;
-+
-+	p = &old->child;
-+	np = &new->child;
-+
-+	for (;;) {
-+		tmp = *p;
-+		if (!tmp)
-+			break;
-+
-+		if (tmp->start >= new->start && tmp->end <= new->end) {
-+			tmp->parent = new;
-+			*np = tmp;
-+			np = &tmp->sibling;
-+			*p = tmp->sibling;
-+
-+			if (!tmp->sibling)
-+				*np = NULL;
-+			continue;
-+		}
-+
-+		p = &tmp->sibling;
-+	}
-+}
-+
- /* Return the conflict entry if you can't request it */
- static struct resource * __request_resource(struct resource *root, struct resource *new)
- {
-@@ -1231,9 +1263,6 @@ EXPORT_SYMBOL(__release_region);
-  * Note:
-  * - Additional release conditions, such as overlapping region, can be
-  *   supported after they are confirmed as valid cases.
-- * - When a busy memory resource gets split into two entries, the code
-- *   assumes that all children remain in the lower address entry for
-- *   simplicity.  Enhance this logic when necessary.
-  */
- int release_mem_region_adjustable(struct resource *parent,
- 				  resource_size_t start, resource_size_t size)
-@@ -1316,11 +1345,12 @@ int release_mem_region_adjustable(struct resource *parent,
- 			new_res->sibling = res->sibling;
- 			new_res->child = NULL;
- 
-+			move_child_to_newresource(res, new_res);
-+			res->sibling = new_res;
- 			ret = __adjust_resource(res, res->start,
- 						start - res->start);
- 			if (ret)
- 				break;
--			res->sibling = new_res;
- 			new_res = NULL;
- 		}
- 
 -- 
-2.14.5
-
+viresh
