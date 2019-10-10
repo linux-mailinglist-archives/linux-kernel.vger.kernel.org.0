@@ -2,38 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D373D23B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67382D233A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:48:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389024AbfJJIoy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:44:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50320 "EHLO mail.kernel.org"
+        id S2387508AbfJJIkW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:40:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389002AbfJJIow (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:44:52 -0400
+        id S2387411AbfJJIkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:40:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71B7321A4A;
-        Thu, 10 Oct 2019 08:44:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7610218AC;
+        Thu, 10 Oct 2019 08:40:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697092;
-        bh=iIs8NsO0k/7dQiSK4NqID+wPWQI6qa8Agy9tEVixmnU=;
+        s=default; t=1570696819;
+        bh=vbgDH5249EV0bJnz9nY2ORMiQg8hmDmPY9XI8g4iOL4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dr5zTfwLzGz9hKuU6f0oFD19PDlrc7k5uYjX+/lFuCuk0so7UXPdkDoOQemtiO3r2
-         w1A1KFMfcluAdpY/1edjjklFhRDX9PXPqXCHGLBNxs1tOj6Ydp6v8xEbh6razjLduM
-         E5g2Zltgwgdvb8jJH6W+aBbQsa+G3wor7FobRhJ8=
+        b=PfmSO5EGTFl+hibl8zY7iz1ji69f3M0XXP51xU83diZB5R8f1VD/i8Q2GEJoH+i7j
+         taDaiAy4jF3FxXyH0Yp+4zuXJUpehSg4Tp7ObZQE6PcLstdXvyLjpx1z8zzPl+MNX3
+         LiX0CQ1d+1tqwNtuCOdTAsGzvzHFEURPfZcOyHM8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Andrew Donnellan <ajd@linux.ibm.com>
-Subject: [PATCH 4.19 016/114] powerpc/powernv: Restrict OPAL symbol map to only be readable by root
-Date:   Thu, 10 Oct 2019 10:35:23 +0200
-Message-Id: <20191010083551.627049514@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel@daenzer.net>,
+        Alex Deucher <alexdeucher@gmail.com>,
+        Adam Jackson <ajax@redhat.com>, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: [PATCH 5.3 063/148] drm/atomic: Reject FLIP_ASYNC unconditionally
+Date:   Thu, 10 Oct 2019 10:35:24 +0200
+Message-Id: <20191010083615.262955181@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
-References: <20191010083544.711104709@linuxfoundation.org>
+In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
+References: <20191010083609.660878383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,54 +49,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrew Donnellan <ajd@linux.ibm.com>
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-commit e7de4f7b64c23e503a8c42af98d56f2a7462bd6d upstream.
+commit f2cbda2dba11de868759cae9c0d2bab5b8411406 upstream.
 
-Currently the OPAL symbol map is globally readable, which seems bad as
-it contains physical addresses.
+It's never been wired up. Only userspace that tried to use it (and
+didn't actually check whether anything works, but hey it builds) is
+the -modesetting atomic implementation. And we just shut that up.
 
-Restrict it to root.
+If there's anyone else then we need to silently accept this flag no
+matter what, and find a new one. Because once a flag is tainted, it's
+lost.
 
-Fixes: c8742f85125d ("powerpc/powernv: Expose OPAL firmware symbol map")
-Cc: stable@vger.kernel.org # v3.19+
-Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20190503075253.22798-1-ajd@linux.ibm.com
+Reviewed-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Reviewed-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Michel Dänzer <michel@daenzer.net>
+Cc: Alex Deucher <alexdeucher@gmail.com>
+Cc: Adam Jackson <ajax@redhat.com>
+Cc: Sean Paul <sean@poorly.run>
+Cc: David Airlie <airlied@linux.ie>
+Cc: stable@vger.kernel.org
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190903190642.32588-2-daniel.vetter@ffwll.ch
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/platforms/powernv/opal.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/drm_atomic_uapi.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/arch/powerpc/platforms/powernv/opal.c
-+++ b/arch/powerpc/platforms/powernv/opal.c
-@@ -680,7 +680,10 @@ static ssize_t symbol_map_read(struct fi
- 				       bin_attr->size);
- }
+--- a/drivers/gpu/drm/drm_atomic_uapi.c
++++ b/drivers/gpu/drm/drm_atomic_uapi.c
+@@ -1301,8 +1301,7 @@ int drm_mode_atomic_ioctl(struct drm_dev
+ 	if (arg->reserved)
+ 		return -EINVAL;
  
--static BIN_ATTR_RO(symbol_map, 0);
-+static struct bin_attribute symbol_map_attr = {
-+	.attr = {.name = "symbol_map", .mode = 0400},
-+	.read = symbol_map_read
-+};
+-	if ((arg->flags & DRM_MODE_PAGE_FLIP_ASYNC) &&
+-			!dev->mode_config.async_page_flip)
++	if (arg->flags & DRM_MODE_PAGE_FLIP_ASYNC)
+ 		return -EINVAL;
  
- static void opal_export_symmap(void)
- {
-@@ -697,10 +700,10 @@ static void opal_export_symmap(void)
- 		return;
- 
- 	/* Setup attributes */
--	bin_attr_symbol_map.private = __va(be64_to_cpu(syms[0]));
--	bin_attr_symbol_map.size = be64_to_cpu(syms[1]);
-+	symbol_map_attr.private = __va(be64_to_cpu(syms[0]));
-+	symbol_map_attr.size = be64_to_cpu(syms[1]);
- 
--	rc = sysfs_create_bin_file(opal_kobj, &bin_attr_symbol_map);
-+	rc = sysfs_create_bin_file(opal_kobj, &symbol_map_attr);
- 	if (rc)
- 		pr_warn("Error %d creating OPAL symbols file\n", rc);
- }
+ 	/* can't test and expect an event at the same time. */
 
 
