@@ -2,86 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D4D0D2B23
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 15:21:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD3B0D2B31
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 15:23:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727852AbfJJNVT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 09:21:19 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39536 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387669AbfJJNVT (ORCPT
+        id S2388189AbfJJNXX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 09:23:23 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57656 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388013AbfJJNXX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 09:21:19 -0400
-Received: by mail-pg1-f196.google.com with SMTP id e1so3667426pgj.6
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 06:21:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sNkcoz2qQQJzkBN7TPFJIs9Ujhr7nKC1loZQV/g1Ccw=;
-        b=TThZtPzWNwtue6y9ZvOvLq6kR6ynBi2BIcoQKTknfEa20G6yABruMP0e6OSvYmKL1R
-         xy0qmWhh+Dmj0wdywBiBYLDq5/efZroBtm0ys74wBJ363qjZH0aw/8QmT/GqT2lFbcKV
-         xJl81Bb/6SqayixA/EZLwSqDCWirabUa8la2y3XTHjMI2l5KxKQ5FD9eNfwc/srsgnEA
-         eOe8yAUdtzhVwqk+kSss+GeHaoy3FEx/gNw3paIOBUl4GsBPvxuWyEA4DwIMfOS4lbad
-         y0APRmiuziMLmxPC/2afgJiUOqMLawyGSptp0hQerIjkLpff9qUJf9dsj+WDBxzOq23G
-         YN9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sNkcoz2qQQJzkBN7TPFJIs9Ujhr7nKC1loZQV/g1Ccw=;
-        b=NXmUxoguY6vExY9Fcyjj26EPhGHm+MIb0lPSTaNJW3T6t8ObDvQOf6xxQqHTgny/+L
-         0gT+ZXKY6F1d2fHiPxnrNmTBMYLbjjVRfMawVjrhpbwdN3l1RYnhm9rL/gs9nY+TjtT9
-         hEWeH6AvL6ROO/04IIMq+pSmue1nY0Pm08yx8w/8OXL+NvEMEWdAnQeFWrhGeIOS/5zf
-         HeCXT6BRuB0M1LVLsXkQZh0afFirN0+rrhBb7Jwsu7UM3i+Igp53BIUeiod95a1AEqtz
-         aBuH6FhdpJQD80lsy95PLU2PdGOhiaMsvgI3AWFrKPoB73D0d62pXzBjNJLnPpn0s9Ev
-         ViiQ==
-X-Gm-Message-State: APjAAAXpEYn5mw67ej8wKB2co/JMIQx6yTQnzO0/vn8WbW2lhfp2vC0d
-        h8f/I+Zf3nFUgqVTojNkYKw=
-X-Google-Smtp-Source: APXvYqxxC4XA4qnMxZf6DlRr2Y8MbCIXklm2si2jFX3l34k7sQf8bVDhfMiWHlrhxWxuRU0PD4GJig==
-X-Received: by 2002:a63:215c:: with SMTP id s28mr9934229pgm.302.1570713678298;
-        Thu, 10 Oct 2019 06:21:18 -0700 (PDT)
-Received: from wambui.brck.local ([197.254.95.158])
-        by smtp.googlemail.com with ESMTPSA id w189sm6619667pfw.101.2019.10.10.06.21.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 06:21:17 -0700 (PDT)
-From:   Wambui Karuga <wambui.karugax@gmail.com>
-To:     outreachy-kernel@googlegroups.com
-Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org,
-        Wambui Karuga <wambui.karugax@gmail.com>
-Subject: [PATCH] rtl8723bs: Remove comparison to NULL
-Date:   Thu, 10 Oct 2019 16:20:58 +0300
-Message-Id: <20191010132058.20887-1-wambui.karugax@gmail.com>
-X-Mailer: git-send-email 2.23.0
+        Thu, 10 Oct 2019 09:23:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=WociR5V+PwUtDGUiulMlt+az7TEdfqJQTJBOofSQeIw=; b=B88lpczAXQldWnyO8Im9vdCEv
+        daXUQXh+wZyng11oMF3dtD8+xtR1wQDi92EbTcjf757S/kd/3vMN3xUUt1KFVma+wUSvOf9Q5kZrS
+        zZgZmChOHr9R05ehraysEp+s3TpmcKHZiG+YZIG+UMp3R3zkGr37++IozSVUV9WUGhGrY=;
+Received: from fw-tnat-cam3.arm.com ([217.140.106.51] helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1iIYPU-0001Mi-99; Thu, 10 Oct 2019 13:23:16 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id EC10BD0003A; Thu, 10 Oct 2019 14:23:14 +0100 (BST)
+Date:   Thu, 10 Oct 2019 14:23:14 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     spapothi@codeaurora.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, lgirdwood@gmail.com,
+        devicetree@vger.kernel.org, vkoul@kernel.org,
+        pierre-louis.bossart@linux.intel.com
+Subject: Re: [PATCH v7 2/2] ASoC: codecs: add wsa881x amplifier support
+Message-ID: <20191010132314.GQ2036@sirena.org.uk>
+References: <20191009085108.4950-1-srinivas.kandagatla@linaro.org>
+ <20191009085108.4950-3-srinivas.kandagatla@linaro.org>
+ <20191009163535.GK2036@sirena.org.uk>
+ <95637c0a-8373-0eda-47e5-ac6e529019e5@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="8Km4OLyaxUtVIPha"
+Content-Disposition: inline
+In-Reply-To: <95637c0a-8373-0eda-47e5-ac6e529019e5@linaro.org>
+X-Cookie: Be careful!  UGLY strikes 9 out of 10!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove comparison to NULL in drivers/staging/rtl8723bs/core/rtw_ap.c:1449.
-Issue found by checkpatch.pl
 
-Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
----
- drivers/staging/rtl8723bs/core/rtw_ap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--8Km4OLyaxUtVIPha
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_ap.c b/drivers/staging/rtl8723bs/core/rtw_ap.c
-index 80027ac765d0..7117d16a30f9 100644
---- a/drivers/staging/rtl8723bs/core/rtw_ap.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_ap.c
-@@ -1447,7 +1447,7 @@ u8 rtw_ap_set_pairwise_key(struct adapter *padapter, struct sta_info *psta)
- 	u8 res = _SUCCESS;
- 
- 	ph2c = rtw_zmalloc(sizeof(struct cmd_obj));
--	if (ph2c == NULL) {
-+	if (!ph2c) {
- 		res = _FAIL;
- 		goto exit;
- 	}
--- 
-2.23.0
+On Thu, Oct 10, 2019 at 10:28:04AM +0100, Srinivas Kandagatla wrote:
+> On 09/10/2019 17:35, Mark Brown wrote:
+> > On Wed, Oct 09, 2019 at 09:51:08AM +0100, Srinivas Kandagatla wrote:
+> > > +static const u8 wsa881x_reg_readable[WSA881X_CACHE_SIZE] = {
 
+> > > +static bool wsa881x_readable_register(struct device *dev, unsigned int reg)
+> > > +{
+> > > +	return wsa881x_reg_readable[reg];
+
+> > There's no bounds check and that array size is not...
+
+> I converted this now to a proper switch statement as other drivers do.
+
+> > > +static struct regmap_config wsa881x_regmap_config = {
+> > > +	.reg_bits = 32,
+> > > +	.val_bits = 8,
+> > > +	.cache_type = REGCACHE_RBTREE,
+> > > +	.reg_defaults = wsa881x_defaults,
+> > > +	.num_reg_defaults = ARRAY_SIZE(wsa881x_defaults),
+> > > +	.max_register = WSA881X_MAX_REGISTER,
+
+> > ...what regmap has as max_register.  Uusually you'd render as a
+> > switch statement (as you did for volatile) and let the compiler
+> > figure out a sensible way to do the lookup.
+
+> Sorry, I did not get your point here.
+
+> Are you saying that we can skip max_register in this regmap config ?
+> Then how would max_register in regmap be set?
+
+I'm saying that you appear to be relying on max_register to
+verify that you're not overflowing the array bounds but you
+max_register is not set to the same thing as the array size.
+
+--8Km4OLyaxUtVIPha
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2fMMIACgkQJNaLcl1U
+h9A3/Qf6Ar7ffTTO6fQ9eEU2xlK6kaCO7YSeWXTP1fKzuKvQy6Fd/XOsax1HiBF/
+8/H4lV/CNqnW88GwSAgBm7acHnRQwDrq1UkVlImEMNkslEr9q5ANt5CHrUb0DNcW
+TI6RkEi4gJj0nfkBozu9aRww71xEYNR+DPcmb/1rugVUdh1WYmFop9sAImmdn+5d
+zGGIdGTWdDu71UTPmx272j1zd6226SeJw7ONW4lmacud+HlEnAFRV3OBBc+ftGFD
+G6kIhnTS0mnSuzhmGEkyzCTHHuG6Sjv1Co/qRKrV+PdqRPhxPln10rw8N9/Wv55n
+5CXKfA5YtlVQjpfqaSr2fmE3YCtiew==
+=ZHzM
+-----END PGP SIGNATURE-----
+
+--8Km4OLyaxUtVIPha--
