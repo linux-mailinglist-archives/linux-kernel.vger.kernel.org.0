@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 368F6D2399
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D331D2400
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:50:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387874AbfJJIoE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:44:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49012 "EHLO mail.kernel.org"
+        id S2389594AbfJJIsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:48:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54132 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388850AbfJJIoB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:44:01 -0400
+        id S2389046AbfJJIsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:48:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99D652054F;
-        Thu, 10 Oct 2019 08:43:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE7F72064A;
+        Thu, 10 Oct 2019 08:47:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697040;
-        bh=V9YzdNPN6AFK80kaYRmWSmcCKiuPRnSwCqA6BHrZ6nM=;
+        s=default; t=1570697280;
+        bh=rjwl+AHbOzA4w5cg7p5MGmV9yrKN5oTdfaqnQQrJNos=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KfV2exs3INcu4pdHODkny7QrsDySE56JCoYbb1biriT7UJlfiR/4MhRjQ+n7mAZKt
-         6Q+Qach8OCisW7jxsKAK4AolNvYOLcvJurG8t54bHTpEVbWdTs8q6Q31D3dboF4NaO
-         aXdI+WtIRD1D7W3ArIm18v4TGbITsVVVxnNDBx5E=
+        b=JICSppo8XcpxUHtWH+00Z7NyJQA1SRCZr+QrVzjQsFLePJQevtScSxHiRXZhuzbxe
+         mQfh43KxzJxiHFmdFBwyc+C6aN4ymw8yDEJTiNNKZGk8GTkTRV16KReOfFoeI7MxtO
+         AvHGWqp9c0tJ+do9acfqkAryfBxWSlM2b7R5veCA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+da3b7677bb913dc1b737@syzkaller.appspotmail.com,
-        Bart Van Assche <bvanassche@acm.org>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 128/148] blk-mq: move lockdep_assert_held() into elevator_exit
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.19 082/114] powerpc/book3s64/radix: Rename CPU_FTR_P9_TLBIE_BUG feature flag
 Date:   Thu, 10 Oct 2019 10:36:29 +0200
-Message-Id: <20191010083620.131266351@linuxfoundation.org>
+Message-Id: <20191010083612.352065837@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
-References: <20191010083609.660878383@linuxfoundation.org>
+In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
+References: <20191010083544.711104709@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,65 +44,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 
-[ Upstream commit 284b94be1925dbe035ce5218d8b5c197321262c7 ]
+Rename the #define to indicate this is related to store vs tlbie
+ordering issue. In the next patch, we will be adding another feature
+flag that is used to handles ERAT flush vs tlbie ordering issue.
 
-Commit c48dac137a62 ("block: don't hold q->sysfs_lock in elevator_init_mq")
-removes q->sysfs_lock from elevator_init_mq(), but forgot to deal with
-lockdep_assert_held() called in blk_mq_sched_free_requests() which is
-run in failure path of elevator_init_mq().
-
-blk_mq_sched_free_requests() is called in the following 3 functions:
-
-	elevator_init_mq()
-	elevator_exit()
-	blk_cleanup_queue()
-
-In blk_cleanup_queue(), blk_mq_sched_free_requests() is followed exactly
-by 'mutex_lock(&q->sysfs_lock)'.
-
-So moving the lockdep_assert_held() from blk_mq_sched_free_requests()
-into elevator_exit() for fixing the report by syzbot.
-
-Reported-by: syzbot+da3b7677bb913dc1b737@syzkaller.appspotmail.com
-Fixed: c48dac137a62 ("block: don't hold q->sysfs_lock in elevator_init_mq")
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: a5d4b5891c2f ("powerpc/mm: Fixup tlbie vs store ordering issue on POWER9")
+Cc: stable@vger.kernel.org # v4.16+
+Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20190924035254.24612-2-aneesh.kumar@linux.ibm.com
 ---
- block/blk-mq-sched.c | 2 --
- block/blk.h          | 2 ++
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/powerpc/include/asm/cputable.h | 4 ++--
+ arch/powerpc/kernel/dt_cpu_ftrs.c   | 6 +++---
+ arch/powerpc/kvm/book3s_hv_rm_mmu.c | 2 +-
+ arch/powerpc/mm/hash_native_64.c    | 2 +-
+ arch/powerpc/mm/tlb-radix.c         | 4 ++--
+ 5 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
-index c9d183d6c4999..ca22afd47b3dc 100644
---- a/block/blk-mq-sched.c
-+++ b/block/blk-mq-sched.c
-@@ -555,8 +555,6 @@ void blk_mq_sched_free_requests(struct request_queue *q)
- 	struct blk_mq_hw_ctx *hctx;
- 	int i;
+diff --git a/arch/powerpc/include/asm/cputable.h b/arch/powerpc/include/asm/cputable.h
+index 29f49a35d6eec..6a6804c2e1b08 100644
+--- a/arch/powerpc/include/asm/cputable.h
++++ b/arch/powerpc/include/asm/cputable.h
+@@ -212,7 +212,7 @@ static inline void cpu_feature_keys_init(void) { }
+ #define CPU_FTR_POWER9_DD2_1		LONG_ASM_CONST(0x0000080000000000)
+ #define CPU_FTR_P9_TM_HV_ASSIST		LONG_ASM_CONST(0x0000100000000000)
+ #define CPU_FTR_P9_TM_XER_SO_BUG	LONG_ASM_CONST(0x0000200000000000)
+-#define CPU_FTR_P9_TLBIE_BUG		LONG_ASM_CONST(0x0000400000000000)
++#define CPU_FTR_P9_TLBIE_STQ_BUG	LONG_ASM_CONST(0x0000400000000000)
+ #define CPU_FTR_P9_TIDR			LONG_ASM_CONST(0x0000800000000000)
  
--	lockdep_assert_held(&q->sysfs_lock);
--
- 	queue_for_each_hw_ctx(q, hctx, i) {
- 		if (hctx->sched_tags)
- 			blk_mq_free_rqs(q->tag_set, hctx->sched_tags, i);
-diff --git a/block/blk.h b/block/blk.h
-index d5edfd73d45ea..0685c45e3d96e 100644
---- a/block/blk.h
-+++ b/block/blk.h
-@@ -201,6 +201,8 @@ void elv_unregister_queue(struct request_queue *q);
- static inline void elevator_exit(struct request_queue *q,
- 		struct elevator_queue *e)
- {
-+	lockdep_assert_held(&q->sysfs_lock);
-+
- 	blk_mq_sched_free_requests(q);
- 	__elevator_exit(q, e);
+ #ifndef __ASSEMBLY__
+@@ -460,7 +460,7 @@ static inline void cpu_feature_keys_init(void) { }
+ 	    CPU_FTR_CFAR | CPU_FTR_HVMODE | CPU_FTR_VMX_COPY | \
+ 	    CPU_FTR_DBELL | CPU_FTR_HAS_PPR | CPU_FTR_ARCH_207S | \
+ 	    CPU_FTR_TM_COMP | CPU_FTR_ARCH_300 | CPU_FTR_PKEY | \
+-	    CPU_FTR_P9_TLBIE_BUG | CPU_FTR_P9_TIDR)
++	    CPU_FTR_P9_TLBIE_STQ_BUG | CPU_FTR_P9_TIDR)
+ #define CPU_FTRS_POWER9_DD2_0 CPU_FTRS_POWER9
+ #define CPU_FTRS_POWER9_DD2_1 (CPU_FTRS_POWER9 | CPU_FTR_POWER9_DD2_1)
+ #define CPU_FTRS_POWER9_DD2_2 (CPU_FTRS_POWER9 | CPU_FTR_POWER9_DD2_1 | \
+diff --git a/arch/powerpc/kernel/dt_cpu_ftrs.c b/arch/powerpc/kernel/dt_cpu_ftrs.c
+index 2fdc08ab6b9e2..f3b8e04eca9c3 100644
+--- a/arch/powerpc/kernel/dt_cpu_ftrs.c
++++ b/arch/powerpc/kernel/dt_cpu_ftrs.c
+@@ -708,14 +708,14 @@ static __init void update_tlbie_feature_flag(unsigned long pvr)
+ 		if ((pvr & 0xe000) == 0) {
+ 			/* Nimbus */
+ 			if ((pvr & 0xfff) < 0x203)
+-				cur_cpu_spec->cpu_features |= CPU_FTR_P9_TLBIE_BUG;
++				cur_cpu_spec->cpu_features |= CPU_FTR_P9_TLBIE_STQ_BUG;
+ 		} else if ((pvr & 0xc000) == 0) {
+ 			/* Cumulus */
+ 			if ((pvr & 0xfff) < 0x103)
+-				cur_cpu_spec->cpu_features |= CPU_FTR_P9_TLBIE_BUG;
++				cur_cpu_spec->cpu_features |= CPU_FTR_P9_TLBIE_STQ_BUG;
+ 		} else {
+ 			WARN_ONCE(1, "Unknown PVR");
+-			cur_cpu_spec->cpu_features |= CPU_FTR_P9_TLBIE_BUG;
++			cur_cpu_spec->cpu_features |= CPU_FTR_P9_TLBIE_STQ_BUG;
+ 		}
+ 	}
  }
+diff --git a/arch/powerpc/kvm/book3s_hv_rm_mmu.c b/arch/powerpc/kvm/book3s_hv_rm_mmu.c
+index a67cf1cdeda40..7c68d834c94a7 100644
+--- a/arch/powerpc/kvm/book3s_hv_rm_mmu.c
++++ b/arch/powerpc/kvm/book3s_hv_rm_mmu.c
+@@ -452,7 +452,7 @@ static void do_tlbies(struct kvm *kvm, unsigned long *rbvalues,
+ 				     "r" (rbvalues[i]), "r" (kvm->arch.lpid));
+ 		}
+ 
+-		if (cpu_has_feature(CPU_FTR_P9_TLBIE_BUG)) {
++		if (cpu_has_feature(CPU_FTR_P9_TLBIE_STQ_BUG)) {
+ 			/*
+ 			 * Need the extra ptesync to make sure we don't
+ 			 * re-order the tlbie
+diff --git a/arch/powerpc/mm/hash_native_64.c b/arch/powerpc/mm/hash_native_64.c
+index aaa28fd918fe4..0c13561d8b807 100644
+--- a/arch/powerpc/mm/hash_native_64.c
++++ b/arch/powerpc/mm/hash_native_64.c
+@@ -203,7 +203,7 @@ static inline unsigned long  ___tlbie(unsigned long vpn, int psize,
+ 
+ static inline void fixup_tlbie(unsigned long vpn, int psize, int apsize, int ssize)
+ {
+-	if (cpu_has_feature(CPU_FTR_P9_TLBIE_BUG)) {
++	if (cpu_has_feature(CPU_FTR_P9_TLBIE_STQ_BUG)) {
+ 		/* Need the extra ptesync to ensure we don't reorder tlbie*/
+ 		asm volatile("ptesync": : :"memory");
+ 		___tlbie(vpn, psize, apsize, ssize);
+diff --git a/arch/powerpc/mm/tlb-radix.c b/arch/powerpc/mm/tlb-radix.c
+index fef3e1eb3a199..0cddae4263f96 100644
+--- a/arch/powerpc/mm/tlb-radix.c
++++ b/arch/powerpc/mm/tlb-radix.c
+@@ -220,7 +220,7 @@ static inline void fixup_tlbie(void)
+ 	unsigned long pid = 0;
+ 	unsigned long va = ((1UL << 52) - 1);
+ 
+-	if (cpu_has_feature(CPU_FTR_P9_TLBIE_BUG)) {
++	if (cpu_has_feature(CPU_FTR_P9_TLBIE_STQ_BUG)) {
+ 		asm volatile("ptesync": : :"memory");
+ 		__tlbie_va(va, pid, mmu_get_ap(MMU_PAGE_64K), RIC_FLUSH_TLB);
+ 	}
+@@ -230,7 +230,7 @@ static inline void fixup_tlbie_lpid(unsigned long lpid)
+ {
+ 	unsigned long va = ((1UL << 52) - 1);
+ 
+-	if (cpu_has_feature(CPU_FTR_P9_TLBIE_BUG)) {
++	if (cpu_has_feature(CPU_FTR_P9_TLBIE_STQ_BUG)) {
+ 		asm volatile("ptesync": : :"memory");
+ 		__tlbie_lpid_va(va, lpid, mmu_get_ap(MMU_PAGE_64K), RIC_FLUSH_TLB);
+ 	}
 -- 
 2.20.1
 
