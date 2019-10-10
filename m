@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3049AD247B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:00:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A68B2D258E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:02:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389203AbfJJIps (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:45:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51370 "EHLO mail.kernel.org"
+        id S2388453AbfJJImA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:42:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389181AbfJJIpl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:45:41 -0400
+        id S2388411AbfJJIlw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:41:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 792082190F;
-        Thu, 10 Oct 2019 08:45:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E6802054F;
+        Thu, 10 Oct 2019 08:41:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697141;
-        bh=Cbulkmm9GwC8jvTTwza+47Jdqbj9EpfMt2YzOG0dxZc=;
+        s=default; t=1570696912;
+        bh=8Zflg7lZGju3znOPM11CWJ5ivnYcOP2oM1Gv3T3aW9g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=duiBEXZlgIvRQGEbjwj58XRN6Xl7LO6KUPN6PuNDc78Ejx+GAqOA2mRejFEfLvhro
-         unsqfvQCqOIhkP/oDM/2gThzeUjlsRo018F5/f5V5P8k+4TnnocYe/kcTGfFvrir+D
-         8hmTm28DAzipl//eaE0UjOWvvQM2+kbRlAPzR1j0=
+        b=JuoItyXtBDpl+MsVf+au2XXu+aTcSNuGVPGWf9uGYCJlQkEPAvBQB7Ad4VBr8KnWL
+         nShsFiYIhXy+21pzzTDdoHqXAZHvnkMBdcRFOrFB9f7q/nw8icyKICfrwf7ZZHXwO/
+         tienev9MqaoZ2iUoR+AIV0BTMWKqH0sQMl/6xHv0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Li RongQing <lirongqing@baidu.com>,
-        Liang ZhiCheng <liangzhicheng@baidu.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.19 032/114] timer: Read jiffies once when forwarding base clk
-Date:   Thu, 10 Oct 2019 10:35:39 +0200
-Message-Id: <20191010083600.488625019@linuxfoundation.org>
+        stable@vger.kernel.org, "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Tony Lindgren <tony@atomide.com>
+Subject: [PATCH 5.3 081/148] DTS: ARM: gta04: introduce legacy spi-cs-high to make display work again
+Date:   Thu, 10 Oct 2019 10:35:42 +0200
+Message-Id: <20191010083616.242624592@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
-References: <20191010083544.711104709@linuxfoundation.org>
+In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
+References: <20191010083609.660878383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,78 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Li RongQing <lirongqing@baidu.com>
+From: H. Nikolaus Schaller <hns@goldelico.com>
 
-commit e430d802d6a3aaf61bd3ed03d9404888a29b9bf9 upstream.
+commit f1f028ff89cb0d37db299d48e7b2ce19be040d52 upstream.
 
-The timer delayed for more than 3 seconds warning was triggered during
-testing.
+commit 6953c57ab172 "gpio: of: Handle SPI chipselect legacy bindings"
 
-  Workqueue: events_unbound sched_tick_remote
-  RIP: 0010:sched_tick_remote+0xee/0x100
-  ...
-  Call Trace:
-   process_one_work+0x18c/0x3a0
-   worker_thread+0x30/0x380
-   kthread+0x113/0x130
-   ret_from_fork+0x22/0x40
+did introduce logic to centrally handle the legacy spi-cs-high property
+in combination with cs-gpios. This assumes that the polarity
+of the CS has to be inverted if spi-cs-high is missing, even
+and especially if non-legacy GPIO_ACTIVE_HIGH is specified.
 
-The reason is that the code in collect_expired_timers() uses jiffies
-unprotected:
+The DTS for the GTA04 was orginally introduced under the assumption
+that there is no need for spi-cs-high if the gpio is defined with
+proper polarity GPIO_ACTIVE_HIGH.
 
-    if (next_event > jiffies)
-        base->clk = jiffies;
+This was not a problem until gpiolib changed the interpretation of
+GPIO_ACTIVE_HIGH and missing spi-cs-high.
 
-As the compiler is allowed to reload the value base->clk can advance
-between the check and the store and in the worst case advance farther than
-next event. That causes the timer expiry to be delayed until the wheel
-pointer wraps around.
+The effect is that the missing spi-cs-high is now interpreted as CS being
+low (despite GPIO_ACTIVE_HIGH) which turns off the SPI interface when the
+panel is to be programmed by the panel driver.
 
-Convert the code to use READ_ONCE()
+Therefore, we have to add the redundant and legacy spi-cs-high property
+to properly activate CS.
 
-Fixes: 236968383cf5 ("timers: Optimize collect_expired_timers() for NOHZ")
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
-Signed-off-by: Liang ZhiCheng <liangzhicheng@baidu.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/1568894687-14499-1-git-send-email-lirongqing@baidu.com
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/time/timer.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/omap3-gta04.dtsi |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/kernel/time/timer.c
-+++ b/kernel/time/timer.c
-@@ -1590,24 +1590,26 @@ void timer_clear_idle(void)
- static int collect_expired_timers(struct timer_base *base,
- 				  struct hlist_head *heads)
- {
-+	unsigned long now = READ_ONCE(jiffies);
-+
- 	/*
- 	 * NOHZ optimization. After a long idle sleep we need to forward the
- 	 * base to current jiffies. Avoid a loop by searching the bitfield for
- 	 * the next expiring timer.
- 	 */
--	if ((long)(jiffies - base->clk) > 2) {
-+	if ((long)(now - base->clk) > 2) {
- 		unsigned long next = __next_timer_interrupt(base);
+--- a/arch/arm/boot/dts/omap3-gta04.dtsi
++++ b/arch/arm/boot/dts/omap3-gta04.dtsi
+@@ -120,6 +120,7 @@
+ 			spi-max-frequency = <100000>;
+ 			spi-cpol;
+ 			spi-cpha;
++			spi-cs-high;
  
- 		/*
- 		 * If the next timer is ahead of time forward to current
- 		 * jiffies, otherwise forward to the next expiry time:
- 		 */
--		if (time_after(next, jiffies)) {
-+		if (time_after(next, now)) {
- 			/*
- 			 * The call site will increment base->clk and then
- 			 * terminate the expiry loop immediately.
- 			 */
--			base->clk = jiffies;
-+			base->clk = now;
- 			return 0;
- 		}
- 		base->clk = next;
+ 			backlight= <&backlight>;
+ 			label = "lcd";
 
 
