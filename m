@@ -2,220 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD8EAD200E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 07:36:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E509AD2013
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 07:37:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732836AbfJJFgg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 01:36:36 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:56024 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726308AbfJJFgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 01:36:35 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 46pfw06HQhz9tyfl;
-        Thu, 10 Oct 2019 07:36:32 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=cAWnWxoF; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 5tENno9LtAKd; Thu, 10 Oct 2019 07:36:32 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 46pfw05FDkz9tyfk;
-        Thu, 10 Oct 2019 07:36:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1570685792; bh=YYm9/1TIHCKV74jWgKmfH9CH0AXN+FWFle7ZWxDf4Jk=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=cAWnWxoFE2dxXWkpdEJoOOp+daDEmH+J0aci0a4lCwp8IoJnE/Y8ICXdlCICUFm4u
-         7qgfgv1w1zQpl+Fu/yw/hOvNkhlHaQdHgGSyd1mAZLzWYLyLIZSN5K0eZ67LhprH3n
-         Pq3L2G8i8LS1VnhPhAQyvmciCkotb1GXLVo9mWNE=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 847478B788;
-        Thu, 10 Oct 2019 07:36:33 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id GfVFPb1KVR-A; Thu, 10 Oct 2019 07:36:33 +0200 (CEST)
-Received: from po16098vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 38D788B754;
-        Thu, 10 Oct 2019 07:36:33 +0200 (CEST)
-Received: by po16098vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 2404368D6E; Thu, 10 Oct 2019 05:36:33 +0000 (UTC)
-Message-Id: <5ca6639b7c1c21ee4b4138b7cfb31d6245c4195c.1570684298.git.christophe.leroy@c-s.fr>
-In-Reply-To: <f12fb9a6cc52d83ee9ddf15a36ee12ac77e6379f.1570684298.git.christophe.leroy@c-s.fr>
-References: <f12fb9a6cc52d83ee9ddf15a36ee12ac77e6379f.1570684298.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v4 2/2] powerpc/irq: inline call_do_irq() and
- call_do_softirq()
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        segher@kernel.crashing.org
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Thu, 10 Oct 2019 05:36:33 +0000 (UTC)
+        id S1732891AbfJJFhP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 01:37:15 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40758 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726612AbfJJFhP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 01:37:15 -0400
+Received: by mail-pg1-f193.google.com with SMTP id d26so2917141pgl.7;
+        Wed, 09 Oct 2019 22:37:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ld57m95bHJQBRxDnF5FnlK1Sfbx3W7UXVC5v8g98wR4=;
+        b=iXJ5vQVG3nQIDNvzt3AWLSYveRStNbcXZccXNXLBr55Dpz2RUwVzLtlrPVLOTmwc9O
+         JTYO5JlumlbzUVivQqGlauVQBPQmkENIAGljV/VSXMzW3pjS2HvTtNlxSwnVsKKVeFfY
+         VHE1lMB5NNAxqJa3oxlmSN/fYXLpyXeCTtjb5WPFY6CcakSNS8PwIfCFutTz5NWilk1V
+         GuMORY7w/6cTzTHoPQnYrSgaGwxu8a0TRvo4fr5qhlT0rshAgkJwzIRA0EAHdE5UEvpB
+         OV4edPzJeSxrAiF0+6teKeZ+pYqgHG03zZUBeUYVSEngfKvaAw8zQta/AyxumcMc3lkL
+         RpYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ld57m95bHJQBRxDnF5FnlK1Sfbx3W7UXVC5v8g98wR4=;
+        b=krizwEZJNDEFu0evJX6bqjVhtYx3L09DxPCQqE/YT/o713kksM4hMKjcnwHu0hPJ9M
+         FRBYli+ieCNJICHbrX3PCGCZALhqLvd8dmHOz4ZdC5smAdctOddEcfR0RSqa5rP+TTn0
+         jOirKervrboE00UAzuiSeN4cSmwG/zTxOJVsWUoy4AgTG+yr21iXhget+O2MAyM8zcBs
+         fIWeUMSXhsz4Ng3hMhN9zYiTDsrJYOJmKkcogAi+6jm9M+B/sR30uitZxYaMGyPT4ZF/
+         tOduRghtU1iU9u1GMSns9SBoen6aDd5WemfoOTm1i4kKa1x09THnwego/Oybj+FA6A9p
+         JRhg==
+X-Gm-Message-State: APjAAAX7WsXoq29cnqUYKj9eskaMczQIR/6ycxIoZkqeDHEyh/YB/6LC
+        VyAeKmus9Gtockx6pMo/P5abf92DoEbOC39/3gA=
+X-Google-Smtp-Source: APXvYqxH7326Yo5t32GMAyp5NmRX5IOI23GOLXR6jw0wZX0o300BEZOjtWXdIVqF/sN+W8nIFTIlo9LnKM8FVo6N8nw=
+X-Received: by 2002:a63:d0a:: with SMTP id c10mr6760026pgl.203.1570685834587;
+ Wed, 09 Oct 2019 22:37:14 -0700 (PDT)
+MIME-Version: 1.0
+References: <20191009200523.8436-1-stuart.w.hayes@gmail.com> <20191009200523.8436-3-stuart.w.hayes@gmail.com>
+In-Reply-To: <20191009200523.8436-3-stuart.w.hayes@gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 10 Oct 2019 08:37:02 +0300
+Message-ID: <CAHp75Vc1mZ7qxKPGaqDVAQ9d_UjNq9LJDEPWHQHaYCfw7vGrmA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] PCI: pciehp: Wait for PDS if in-band presence is disabled
+To:     Stuart Hayes <stuart.w.hayes@gmail.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Austin Bolen <austin_bolen@dell.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Sinan Kaya <okaya@kernel.org>,
+        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lukas Wunner <lukas@wunner.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-call_do_irq() and call_do_softirq() are quite similar on PPC32 and
-PPC64 and are simple enough to be worth inlining.
+On Wed, Oct 9, 2019 at 11:05 PM Stuart Hayes <stuart.w.hayes@gmail.com> wrote:
+>
+> From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+>
+> When inband presence is disabled, PDS may come up at any time, or not
+> at all. PDS being low may indicate that the card is still mating, and
+> we could expect contact bounce to bring down the link as well.
+>
+> It is reasonable to assume that most cards will mate in a hotplug slot
+> in about a second. Thus, when we know PDS only reflects out-of-band
+> presence, it's worthwhile to wait the extra second or so to make sure
+> the card is properly mated before loading the driver, and to prevent
+> the hotplug code from disabling a device if the presence detect change
+> goes active after the device is enabled.
 
-Inlining them avoids an mflr/mtlr pair plus a save/reload on stack.
+> +static void pcie_wait_for_presence(struct pci_dev *pdev)
+> +{
+> +       int timeout = 1250;
+> +       bool pds;
+> +       u16 slot_status;
+> +
+> +       while (true) {
+> +               pcie_capability_read_word(pdev, PCI_EXP_SLTSTA, &slot_status);
+> +               pds = !!(slot_status & PCI_EXP_SLTSTA_PDS);
+> +               if (pds || timeout <= 0)
+> +                       break;
+> +               msleep(10);
+> +               timeout -= 10;
+> +       }
 
-This is inspired from S390 arch. Several other arches do more or
-less the same. The way sparc arch does seems odd thought.
+Can we avoid infinite loops? They are hard to parse (in most cases,
+and especially when it's a timeout loop)
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Reviewed-by: Segher Boessenkool <segher@kernel.crashing.org>
+unsigned int retries = 125; // 1250 ms
 
----
-v2: no change.
-v3: no change.
-v4:
-- comment reminding the purpose of the inline asm block.
-- added r2 as clobbered reg
----
- arch/powerpc/include/asm/irq.h |  2 --
- arch/powerpc/kernel/irq.c      | 32 ++++++++++++++++++++++++++++++++
- arch/powerpc/kernel/misc_32.S  | 25 -------------------------
- arch/powerpc/kernel/misc_64.S  | 22 ----------------------
- 4 files changed, 32 insertions(+), 49 deletions(-)
+do {
+ ...
+} while (--retries);
 
-diff --git a/arch/powerpc/include/asm/irq.h b/arch/powerpc/include/asm/irq.h
-index 0c6469983c66..10476d5283dc 100644
---- a/arch/powerpc/include/asm/irq.h
-+++ b/arch/powerpc/include/asm/irq.h
-@@ -57,8 +57,6 @@ extern void *mcheckirq_ctx[NR_CPUS];
- extern void *hardirq_ctx[NR_CPUS];
- extern void *softirq_ctx[NR_CPUS];
- 
--void call_do_softirq(void *sp);
--void call_do_irq(struct pt_regs *regs, void *sp);
- extern void do_IRQ(struct pt_regs *regs);
- extern void __init init_IRQ(void);
- extern void __do_irq(struct pt_regs *regs);
-diff --git a/arch/powerpc/kernel/irq.c b/arch/powerpc/kernel/irq.c
-index 04204be49577..d62fe18405a0 100644
---- a/arch/powerpc/kernel/irq.c
-+++ b/arch/powerpc/kernel/irq.c
-@@ -642,6 +642,22 @@ void __do_irq(struct pt_regs *regs)
- 	irq_exit();
- }
- 
-+static inline void call_do_irq(struct pt_regs *regs, void *sp)
-+{
-+	register unsigned long r3 asm("r3") = (unsigned long)regs;
-+
-+	/* Temporarily switch r1 to sp, call __do_irq() then restore r1 */
-+	asm volatile(
-+		"	"PPC_STLU"	1, %2(%1);\n"
-+		"	mr		1, %1;\n"
-+		"	bl		%3;\n"
-+		"	"PPC_LL"	1, 0(1);\n" :
-+		"+r"(r3) :
-+		"b"(sp), "i"(THREAD_SIZE - STACK_FRAME_OVERHEAD), "i"(__do_irq) :
-+		"lr", "xer", "ctr", "memory", "cr0", "cr1", "cr5", "cr6", "cr7",
-+		"r0", "r2", "r4", "r5", "r6", "r7", "r8", "r9", "r10", "r11", "r12");
-+}
-+
- void do_IRQ(struct pt_regs *regs)
- {
- 	struct pt_regs *old_regs = set_irq_regs(regs);
-@@ -686,6 +702,22 @@ void *mcheckirq_ctx[NR_CPUS] __read_mostly;
- void *softirq_ctx[NR_CPUS] __read_mostly;
- void *hardirq_ctx[NR_CPUS] __read_mostly;
- 
-+static inline void call_do_softirq(const void *sp)
-+{
-+	register unsigned long ret asm("r3");
-+
-+	/* Temporarily switch r1 to sp, call __do_softirq() then restore r1 */
-+	asm volatile(
-+		"	"PPC_STLU"	1, %2(%1);\n"
-+		"	mr		1, %1;\n"
-+		"	bl		%3;\n"
-+		"	"PPC_LL"	1, 0(1);\n" :
-+		"=r"(ret) :
-+		"b"(sp), "i"(THREAD_SIZE - STACK_FRAME_OVERHEAD), "i"(__do_softirq) :
-+		"lr", "xer", "ctr", "memory", "cr0", "cr1", "cr5", "cr6", "cr7",
-+		"r0", "r2", "r4", "r5", "r6", "r7", "r8", "r9", "r10", "r11", "r12");
-+}
-+
- void do_softirq_own_stack(void)
- {
- 	void *irqsp = softirq_ctx[smp_processor_id()];
-diff --git a/arch/powerpc/kernel/misc_32.S b/arch/powerpc/kernel/misc_32.S
-index a5422f7782b3..307307b57743 100644
---- a/arch/powerpc/kernel/misc_32.S
-+++ b/arch/powerpc/kernel/misc_32.S
-@@ -33,31 +33,6 @@
- 
- 	.text
- 
--_GLOBAL(call_do_softirq)
--	mflr	r0
--	stw	r0,4(r1)
--	stwu	r1,THREAD_SIZE-STACK_FRAME_OVERHEAD(r3)
--	mr	r1,r3
--	bl	__do_softirq
--	lwz	r1,0(r1)
--	lwz	r0,4(r1)
--	mtlr	r0
--	blr
--
--/*
-- * void call_do_irq(struct pt_regs *regs, void *sp);
-- */
--_GLOBAL(call_do_irq)
--	mflr	r0
--	stw	r0,4(r1)
--	stwu	r1,THREAD_SIZE-STACK_FRAME_OVERHEAD(r4)
--	mr	r1,r4
--	bl	__do_irq
--	lwz	r1,0(r1)
--	lwz	r0,4(r1)
--	mtlr	r0
--	blr
--
- /*
-  * This returns the high 64 bits of the product of two 64-bit numbers.
-  */
-diff --git a/arch/powerpc/kernel/misc_64.S b/arch/powerpc/kernel/misc_64.S
-index b55a7b4cb543..69fd714a5236 100644
---- a/arch/powerpc/kernel/misc_64.S
-+++ b/arch/powerpc/kernel/misc_64.S
-@@ -27,28 +27,6 @@
- 
- 	.text
- 
--_GLOBAL(call_do_softirq)
--	mflr	r0
--	std	r0,16(r1)
--	stdu	r1,THREAD_SIZE-STACK_FRAME_OVERHEAD(r3)
--	mr	r1,r3
--	bl	__do_softirq
--	ld	r1,0(r1)
--	ld	r0,16(r1)
--	mtlr	r0
--	blr
--
--_GLOBAL(call_do_irq)
--	mflr	r0
--	std	r0,16(r1)
--	stdu	r1,THREAD_SIZE-STACK_FRAME_OVERHEAD(r4)
--	mr	r1,r4
--	bl	__do_irq
--	ld	r1,0(r1)
--	ld	r0,16(r1)
--	mtlr	r0
--	blr
--
- 	.section	".toc","aw"
- PPC64_CACHES:
- 	.tc		ppc64_caches[TC],ppc64_caches
+> +
+> +       if (!pds)
+> +               pci_info(pdev, "Presence Detect state not set in 1250 msec\n");
+> +}
+
 -- 
-2.13.3
-
+With Best Regards,
+Andy Shevchenko
