@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50F8AD2369
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 124D6D23E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388506AbfJJImO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:42:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46730 "EHLO mail.kernel.org"
+        id S2389409AbfJJIq7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:46:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388494AbfJJImL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:42:11 -0400
+        id S2389384AbfJJIqz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:46:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA0102190F;
-        Thu, 10 Oct 2019 08:42:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C610208C3;
+        Thu, 10 Oct 2019 08:46:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570696931;
-        bh=67alXanO7YCIs4Cnpue3J69QNuYSm8158GPO0Zhsjto=;
+        s=default; t=1570697215;
+        bh=+DuzRebULHDIvNsak8ePy67Juc3WVmR5apIXYtucy5w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QcEymdV8TKr927JjQAxx2tPv5HNcT6xEJB5xcGTEGoyDrvdkcJuVv3e01brHdglwq
-         ZvftmJpqHWkLa5JiimWb1b86lmg3SxkE/Mf1Jf/tNJGyTKMFUf1EwyBtKNmbXAKvK3
-         H7oMWN//S2I5dIkItLwm/BfmaW+xDqrgvaNdIKr8=
+        b=f2rhz7eN6N4qPflKBqJlgu6oK0tZ59UKhEqH5Wt/LuCOYU7klXBKRAyt4fPw7FmO2
+         MnK2hgWUCf3lfnCzr7Nzr/aFhsgiFwNaY2GxfuVce6Rwkiu9Wd0CpR7HyIc9c6qvde
+         A5q2yeR5n0U5hoeBmBazvwHlaBAAgchRf1y4J1YI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Trek <trek00@inbox.ru>,
         Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 105/148] drm/amdgpu: Check for valid number of registers to read
-Date:   Thu, 10 Oct 2019 10:36:06 +0200
-Message-Id: <20191010083617.557758906@linuxfoundation.org>
+Subject: [PATCH 4.19 060/114] drm/amdgpu: Check for valid number of registers to read
+Date:   Thu, 10 Oct 2019 10:36:07 +0200
+Message-Id: <20191010083609.378816633@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
-References: <20191010083609.660878383@linuxfoundation.org>
+In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
+References: <20191010083544.711104709@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -62,10 +62,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+)
 
 diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
-index 0cf7e8606fd3d..00beba533582c 100644
+index c0396e83f3526..fc93b103f7778 100644
 --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
 +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
-@@ -662,6 +662,9 @@ static int amdgpu_info_ioctl(struct drm_device *dev, void *data, struct drm_file
+@@ -562,6 +562,9 @@ static int amdgpu_info_ioctl(struct drm_device *dev, void *data, struct drm_file
  		if (sh_num == AMDGPU_INFO_MMR_SH_INDEX_MASK)
  			sh_num = 0xffffffff;
  
