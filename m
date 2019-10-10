@@ -2,158 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D38CED200F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 07:37:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FA71D2015
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 07:37:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732874AbfJJFhH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 01:37:07 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:10089
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726612AbfJJFhH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 01:37:07 -0400
-X-IronPort-AV: E=Sophos;i="5.67,279,1566856800"; 
-   d="scan'208";a="322222603"
-Received: from 81-65-53-202.rev.numericable.fr (HELO hadrien) ([81.65.53.202])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2019 07:37:03 +0200
-Date:   Thu, 10 Oct 2019 07:37:03 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Joe Perches <joe@perches.com>
-cc:     Jules Irenge <jbi.octave@gmail.com>,
-        outreachy-kernel@googlegroups.com, gregkh@linuxfoundation.org,
-        GR-Linux-NIC-Dev@marvell.com, netdev@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [Outreachy kernel] [PATCH] staging: qlge: Fix multiple assignments
- warning by splitting the assignement into two each
-In-Reply-To: <f9bdcaeccc9dd131f28a64f4b19136d1c92a27e2.camel@perches.com>
-Message-ID: <alpine.DEB.2.21.1910100734330.3287@hadrien>
-References: <20191009204311.7988-1-jbi.octave@gmail.com>  <alpine.DEB.2.21.1910092248170.2570@hadrien> <f9bdcaeccc9dd131f28a64f4b19136d1c92a27e2.camel@perches.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1732905AbfJJFhf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 01:37:35 -0400
+Received: from mx1.ucr.edu ([138.23.248.2]:9645 "EHLO mx1.ucr.edu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726612AbfJJFhf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 01:37:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
+  t=1570685854; x=1602221854;
+  h=mime-version:from:date:message-id:subject:to;
+  bh=Xy0xPpkULCnt+hL55gCdlyQRWZEjRD9Fr0UAvbyShXo=;
+  b=ACsdhTQFg7zvT7uH/+ezLE1Qu11jrDTiX2z6+84F16kXMqhK07soEneT
+   7F0dLjeZE8tdoNts/3sE9hX7PvqD3G6wYjTyKtMGhdInWD4+LMP2Wz+vy
+   Ln2MVkr1/A29N2ZF2bGSe5bVEmV5ewexsno6ESF7fgf2QUeT/tcf10SVw
+   U22hMcRagKvd0/l9726jb9q/x6pDdoD/PLwAJ5cKv8izYXBVvmonVoRjn
+   z/U1CqDcZo0VQ5QYaDZbuz1mJHju3++Fk+QHDOYdUmoCj/0uxkmk3v+O6
+   7rsCR8Qnifn0hC8Zaj9jOfZnBGO1C4cGd/ggfAPOYjDtrtWixqkJ5A/9H
+   g==;
+IronPort-SDR: yNyCvjYRjCeD0NrapQTiyTN0iPY38/TCVRgfwnYT+vBo8ER3BBTypS9Uwbfeg5pcDr/Z6YMLpR
+ lToDe/3Adb2owXp/juZ3SmSBHL7W0QdIOsYXEaIkOzM9j4GC3Re2EyZFK+1J8InAZOw7N5+2Za
+ 27ntkCgTSx+mwqr4OKAjVJdxniaEt4sRK23YcBKElPHBKQWM5iIZ1gS8VfW0Tm3PasM/HQn3/z
+ SjcmOkO9MzFhqBQQXPISQQa1gYWJsypbUIIJ/NBFFjpk8vJpWj7SdlYmZOipry9/5P68StG+Of
+ 4Os=
+IronPort-PHdr: =?us-ascii?q?9a23=3AmwjKRBWsxB6wcGcqKwX0pV7+6lvV8LGtZVwlr6?=
+ =?us-ascii?q?E/grcLSJyIuqrYbB2Ht8tkgFKBZ4jH8fUM07OQ7/m7HzJaqsfR+Fk5M7V0Hy?=
+ =?us-ascii?q?cfjssXmwFySOWkMmbcaMDQUiohAc5ZX0Vk9XzoeWJcGcL5ekGA6ibqtW1aFR?=
+ =?us-ascii?q?rwLxd6KfroEYDOkcu3y/qy+5rOaAlUmTaxe7x/IAi4oAnLt8Qan4RuJ6Iyxx?=
+ =?us-ascii?q?DUvnZGZuNayH9yK1mOhRj8/MCw/JBi8yRUpf0s8tNLXLv5caolU7FWFSwqPG?=
+ =?us-ascii?q?8p6sLlsxnDVhaP6WAHUmoKiBpIAhPK4w/8U5zsryb1rOt92C2dPc3rUbA5XC?=
+ =?us-ascii?q?mp4ql3RBP0jioMKiU0+3/LhMNukK1boQqhpx1hzI7SfIGVL+d1cqfEcd8HWW?=
+ =?us-ascii?q?ZNQsNdWipcCY2+coQPFfIMMulYoYfzpFUAsAWwChW3CePz1jNFnGP60bEm3+?=
+ =?us-ascii?q?kjFwzNwQwuH8gJsHTRtNj6NqYSUOG1zKnVyjXIcvBZ2Tfn54jJbxsspvGNXL?=
+ =?us-ascii?q?NwccXLyEkjCx/Jg1uLpIz4IzyVzP4BvHaG4Op9TO+ijXMspQJpojW32Msglo?=
+ =?us-ascii?q?3EipgWx13E7yl13Yc4KN+iREN5f9KpFoZbuTuAOItsWMwiRnlluCM9yrIbp5?=
+ =?us-ascii?q?G2ZDMKyJE7xx7HbPyHbpSI7grjVOmPJTd4g2poeLeliBaz9Uis0+n8Vsep3F?=
+ =?us-ascii?q?pToCpIkMfAumoC1xzU7ciHRf998Vm71TmT0ADT7/lIIUEylaXFN54s2qA8mo?=
+ =?us-ascii?q?YXvEjZHSL7mF/6gLKXe0gm4OSl6frrbq3jppCGNo90jg/+Mr4pmsy6Gek5Mg?=
+ =?us-ascii?q?kPX2iB9uS9yLHv4UP0Ta5XjvIqiKnVqo7VKtkGpqKhGQ9azp4j6wqjDzehyN?=
+ =?us-ascii?q?kYmXgHLFRYeBOIloTpOE/BIOr+Dfihh1Shiylrx//YMb37GJnNLWbMkK3nfb?=
+ =?us-ascii?q?lj705Q0g0zzcpQ58EcNrZUBfvpWQfbrtvHCFdtORazxODmBf1+25kYVGbJBb?=
+ =?us-ascii?q?WWZueatV6O+/JqOPGNTJEatSy7KPU/4fPqy3gjlhtVeaivwItSa32iGPliC1?=
+ =?us-ascii?q?uWbGCqgdobF2oO+A0kQ6iiul2DQCNVL0+zVqR0siM7CZO7C57rTZvrnbebmi?=
+ =?us-ascii?q?q3A8sSLktGB1aDAGqgTIKCVL9YYzmVJMBJmSdCSLO7DYItyEf9mhX9zu9WL/?=
+ =?us-ascii?q?jU5ypQh5Lq1ZAh9v/TnBBqrWdcEs+HlWyBUjcnzSszWzYq0fUn8gRGwVCZ3P?=
+ =?us-ascii?q?092qQAGA=3D=3D?=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FRAwDEwp5dh0inVdFlDoZEhE2OXIU?=
+ =?us-ascii?q?XAY1pijQBCAEBAQ4vAQGHGCM4EwIDCQEBBQEBAQEBBQQBAQIQAQEBCA0JCCm?=
+ =?us-ascii?q?FQII6KQGDVRF8AwwCJgIkEgEFASIBNIMAgnikLIEDPIsmgTKIZQEJDYFIEno?=
+ =?us-ascii?q?ojA6CF4ERgmSIPoJeBIE5AQEBlS+WVwEGAoIQFIxUiEUbgioBlxWOLZlPDyO?=
+ =?us-ascii?q?BRoF7MxolfwZngU9PEBSBaY1xWySRSwEB?=
+X-IPAS-Result: =?us-ascii?q?A2FRAwDEwp5dh0inVdFlDoZEhE2OXIUXAY1pijQBCAEBA?=
+ =?us-ascii?q?Q4vAQGHGCM4EwIDCQEBBQEBAQEBBQQBAQIQAQEBCA0JCCmFQII6KQGDVRF8A?=
+ =?us-ascii?q?wwCJgIkEgEFASIBNIMAgnikLIEDPIsmgTKIZQEJDYFIEnoojA6CF4ERgmSIP?=
+ =?us-ascii?q?oJeBIE5AQEBlS+WVwEGAoIQFIxUiEUbgioBlxWOLZlPDyOBRoF7MxolfwZng?=
+ =?us-ascii?q?U9PEBSBaY1xWySRSwEB?=
+X-IronPort-AV: E=Sophos;i="5.67,279,1566889200"; 
+   d="scan'208";a="13447400"
+Received: from mail-lf1-f72.google.com ([209.85.167.72])
+  by smtp1.ucr.edu with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Oct 2019 22:37:31 -0700
+Received: by mail-lf1-f72.google.com with SMTP id o9so1078252lfd.7
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 22:37:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=vkLjkXwl3hWsyvy/ZQWrrN8uTBfkFbAgqdrjHxTVCjA=;
+        b=nWTp/4XAvjPkZd4RXKXX89ct3ktn5F7tde7VJ46t3c75lhyNXEezGM/vi07BTYY7JQ
+         gFmJjysTw5Mj2ODvsbX/xOi3CIQal0Pq+L6MOw00W+KpnnnSnPIyXLVpR5eNeCrhJNs8
+         ///tgYDaGHdSqf7h0kgKw/AbwsHdukHvEZT3rO7nsHZs2/bdxSdxNPRKzznQi1DUeVkl
+         gEvz8fQ3nJcW2P0WyBsozPbEtWYgNobBqg7b3TAAWu92n1T/HyrnJnwXk0RPx+Zc4c1O
+         VxnSDCc3qkZ6tf9ixrZnNMnCy1BXttUs96jDg2wdwf5o5rYHAwhhZk+rjtPV4o/kLWUL
+         /lsw==
+X-Gm-Message-State: APjAAAUJ1sthJoviNUsUSLnBuoDrSQ2jWzfoZ8bz8GI6HwB6s6JoVWWh
+        G5JQp37V+dIcX4XNC6Q3XaueRyLc+CEazSTylk+iX4sirBj+G1UAZ49tGFZ7N6+24jjnC08+vuI
+        fDoqS+gljmnXMWxKHtmdq8cwoO9vQwVZ/poYvX7cpyQ==
+X-Received: by 2002:a2e:6c0e:: with SMTP id h14mr4946620ljc.92.1570685850188;
+        Wed, 09 Oct 2019 22:37:30 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzBa7eGL1/6qnPzIY6RKFJAtUZRnNcZZsQw99WnHp6fw/68G9kF7paHHurL0HqgrVYHa5tUDuOi5ELJRyEjQXc=
+X-Received: by 2002:a2e:6c0e:: with SMTP id h14mr4946609ljc.92.1570685849997;
+ Wed, 09 Oct 2019 22:37:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+From:   Yizhuo Zhai <yzhai003@ucr.edu>
+Date:   Wed, 9 Oct 2019 22:37:04 -0700
+Message-ID: <CABvMjLToYzmCue-TiDhR4Yu4v3+Z+-UV9WhixV7uvwoMh2m5Lw@mail.gmail.com>
+Subject: Potential NULL pointer deference in spi
+To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Zhiyun Qian <zhiyunq@cs.ucr.edu>,
+        Chengyu Song <csong@cs.ucr.edu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi All:
+
+drivers/spi/spi.c:
+
+The function to_spi_device() could return NULL, but some callers
+in this file does not check the return value while directly dereference
+it, which seems potentially unsafe.
+
+Such callers include spidev_release(),  spi_dev_check(),
+driver_override_store(), etc.
 
 
-On Wed, 9 Oct 2019, Joe Perches wrote:
+-- 
+Kind Regards,
 
-> On Wed, 2019-10-09 at 22:48 +0200, Julia Lawall wrote:
-> > On Wed, 9 Oct 2019, Jules Irenge wrote:
-> > > Fix multiple assignments warning " check
-> > >  issued by checkpatch.pl tool:
-> > > "CHECK: multiple assignments should be avoided".
-> []
-> > > diff --git a/drivers/staging/qlge/qlge_dbg.c b/drivers/staging/qlge/qlge_dbg.c
-> []
-> > > @@ -141,8 +141,10 @@ static int ql_get_serdes_regs(struct ql_adapter *qdev,
-> > >  	u32 *direct_ptr, temp;
-> > >  	u32 *indirect_ptr;
-> > >
-> > > -	xfi_direct_valid = xfi_indirect_valid = 0;
-> > > -	xaui_direct_valid = xaui_indirect_valid = 1;
-> > > +	xfi_indirect_valid = 0;
-> > > +	xfi_direct_valid = xfi_indirect_valid;
-> > > +	xaui_indirect_valid = 1;
-> > > +	xaui_direct_valid = xaui_indirect_valid
-> >
-> > Despite checkpatch, I think that the original code was easier to
-> > understand.
->
-> It'd likely be easier to understand if all the
-> <foo>_valid uses were bool and the ql_get_both_serdes
-> <foo>_valid arguments were change to bool from
-> unsigned int as well.
+Yizhuo Zhai
 
-Indeed, given the names and the values, bool would be much better.
-
-> btw: qlge likely is going to be deleted and not updated.
-
-OK.  Jules, if you want to make this change, you can, but it could be
-better to move on to some other driver.
-
-thanks,
-julia
-
->
-> ---
->  drivers/staging/qlge/qlge_dbg.c | 22 ++++++++++------------
->  1 file changed, 10 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/staging/qlge/qlge_dbg.c b/drivers/staging/qlge/qlge_dbg.c
-> index 7e16066a3527..90ab37d4c49d 100644
-> --- a/drivers/staging/qlge/qlge_dbg.c
-> +++ b/drivers/staging/qlge/qlge_dbg.c
-> @@ -112,7 +112,7 @@ static int ql_read_serdes_reg(struct ql_adapter *qdev, u32 reg, u32 *data)
->
->  static void ql_get_both_serdes(struct ql_adapter *qdev, u32 addr,
->  			u32 *direct_ptr, u32 *indirect_ptr,
-> -			unsigned int direct_valid, unsigned int indirect_valid)
-> +			bool direct_valid, bool indirect_valid)
->  {
->  	unsigned int status;
->
-> @@ -136,14 +136,12 @@ static int ql_get_serdes_regs(struct ql_adapter *qdev,
->  				struct ql_mpi_coredump *mpi_coredump)
->  {
->  	int status;
-> -	unsigned int xfi_direct_valid, xfi_indirect_valid, xaui_direct_valid;
-> -	unsigned int xaui_indirect_valid, i;
-> +	bool xfi_direct_valid = false, xfi_indirect_valid = false;
-> +	bool xaui_direct_valid = true, xaui_indirect_valid = true;
-> +	unsigned int i;
->  	u32 *direct_ptr, temp;
->  	u32 *indirect_ptr;
->
-> -	xfi_direct_valid = xfi_indirect_valid = 0;
-> -	xaui_direct_valid = xaui_indirect_valid = 1;
-> -
->  	/* The XAUI needs to be read out per port */
->  	status = ql_read_other_func_serdes_reg(qdev,
->  			XG_SERDES_XAUI_HSS_PCS_START, &temp);
-> @@ -152,7 +150,7 @@ static int ql_get_serdes_regs(struct ql_adapter *qdev,
->
->  	if ((temp & XG_SERDES_ADDR_XAUI_PWR_DOWN) ==
->  				XG_SERDES_ADDR_XAUI_PWR_DOWN)
-> -		xaui_indirect_valid = 0;
-> +		xaui_indirect_valid = false;
->
->  	status = ql_read_serdes_reg(qdev, XG_SERDES_XAUI_HSS_PCS_START, &temp);
->
-> @@ -161,7 +159,7 @@ static int ql_get_serdes_regs(struct ql_adapter *qdev,
->
->  	if ((temp & XG_SERDES_ADDR_XAUI_PWR_DOWN) ==
->  				XG_SERDES_ADDR_XAUI_PWR_DOWN)
-> -		xaui_direct_valid = 0;
-> +		xaui_direct_valid = false;
->
->  	/*
->  	 * XFI register is shared so only need to read one
-> @@ -176,18 +174,18 @@ static int ql_get_serdes_regs(struct ql_adapter *qdev,
->  		/* now see if i'm NIC 1 or NIC 2 */
->  		if (qdev->func & 1)
->  			/* I'm NIC 2, so the indirect (NIC1) xfi is up. */
-> -			xfi_indirect_valid = 1;
-> +			xfi_indirect_valid = true;
->  		else
-> -			xfi_direct_valid = 1;
-> +			xfi_direct_valid = true;
->  	}
->  	if ((temp & XG_SERDES_ADDR_XFI2_PWR_UP) ==
->  					XG_SERDES_ADDR_XFI2_PWR_UP) {
->  		/* now see if i'm NIC 1 or NIC 2 */
->  		if (qdev->func & 1)
->  			/* I'm NIC 2, so the indirect (NIC1) xfi is up. */
-> -			xfi_direct_valid = 1;
-> +			xfi_direct_valid = true;
->  		else
-> -			xfi_indirect_valid = 1;
-> +			xfi_indirect_valid = true;
->  	}
->
->  	/* Get XAUI_AN register block. */
->
->
+Computer Science, Graduate Student
+University of California, Riverside
