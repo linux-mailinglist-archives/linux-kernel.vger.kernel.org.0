@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 152E8D25AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:02:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1669D255F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:01:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388181AbfJJIkr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:40:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44862 "EHLO mail.kernel.org"
+        id S2389223AbfJJI6k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:58:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388163AbfJJIko (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:40:44 -0400
+        id S2387710AbfJJIpa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:45:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5EE072196E;
-        Thu, 10 Oct 2019 08:40:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF51021A4A;
+        Thu, 10 Oct 2019 08:45:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570696843;
-        bh=n/e/vaObw3kyd5fTVUpqKkcLIwSibsqLEzhB8D8JkZ8=;
+        s=default; t=1570697130;
+        bh=WfoyCfdIo3r6xcNuaQI/cVJPvfzJANcGm0c2yQ8l61M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xAMtAQ38DRE7S+bIT7cDqPdzG7LW8pbHbeBJx52Hy4upWweyRGxBF2T11s0TvL79l
-         AI2gopr8q1D0aHYLdqh5vrZWcsWbNWQpOtbXFJUp4k4IJ/ypjtT3+hemIKpWwUngL+
-         GzXoBwggt11kWYZNHmshJaTAXsn0fRQog7AS7DSo=
+        b=2JF/OY2SJvMtYkMekangTKcmu5IFr62atZz7dA3MshOdtmAxnRFAzJKBwW3X5jt9X
+         wPg1jZY1Q0Xi/95QwFSubiyhLTvf+bPwfiqGzaXLXuLU7dImaodjWlSZZbxKX2v2xq
+         poGfMsV2mxvHyJQw91uONgfw6Ev+poNAjQBP1MW4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Subject: [PATCH 5.3 071/148] drm/i915/userptr: Acquire the page lock around set_page_dirty()
-Date:   Thu, 10 Oct 2019 10:35:32 +0200
-Message-Id: <20191010083615.708820027@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Nosthoff <committed@heine.so>,
+        Brian Norris <briannorris@chromium.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [PATCH 4.19 029/114] power: supply: sbs-battery: only return health when battery present
+Date:   Thu, 10 Oct 2019 10:35:36 +0200
+Message-Id: <20191010083559.078712124@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
-References: <20191010083609.660878383@linuxfoundation.org>
+In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
+References: <20191010083544.711104709@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,52 +44,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Michael Nosthoff <committed@heine.so>
 
-commit cb6d7c7dc7ff8cace666ddec66334117a6068ce2 upstream.
+commit fe55e770327363304c4111423e6f7ff3c650136d upstream.
 
-set_page_dirty says:
+when the battery is set to sbs-mode and  no gpio detection is enabled
+"health" is always returning a value even when the battery is not present.
+All other fields return "not present".
+This leads to a scenario where the driver is constantly switching between
+"present" and "not present" state. This generates a lot of constant
+traffic on the i2c.
 
-	For pages with a mapping this should be done under the page lock
-	for the benefit of asynchronous memory errors who prefer a
-	consistent dirty state. This rule can be broken in some special
-	cases, but should be better not to.
+This commit changes the response of "health" to an error when the battery
+is not responding leading to a consistent "not present" state.
 
-Under those rules, it is only safe for us to use the plain set_page_dirty
-calls for shmemfs/anonymous memory. Userptr may be used with real
-mappings and so needs to use the locked version (set_page_dirty_lock).
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=203317
-Fixes: 5cc9ed4b9a7a ("drm/i915: Introduce mapping of user pages into video memory (userptr) ioctl")
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Cc: stable@vger.kernel.org
-Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190708140327.26825-1-chris@chris-wilson.co.uk
+Fixes: 76b16f4cdfb8 ("power: supply: sbs-battery: don't assume MANUFACTURER_DATA formats")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Michael Nosthoff <committed@heine.so>
+Reviewed-by: Brian Norris <briannorris@chromium.org>
+Tested-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/gem/i915_gem_userptr.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/power/supply/sbs-battery.c |   25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
 
---- a/drivers/gpu/drm/i915/gem/i915_gem_userptr.c
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_userptr.c
-@@ -664,7 +664,15 @@ i915_gem_userptr_put_pages(struct drm_i9
+--- a/drivers/power/supply/sbs-battery.c
++++ b/drivers/power/supply/sbs-battery.c
+@@ -323,17 +323,22 @@ static int sbs_get_battery_presence_and_
+ {
+ 	int ret;
  
- 	for_each_sgt_page(page, sgt_iter, pages) {
- 		if (obj->mm.dirty)
--			set_page_dirty(page);
-+			/*
-+			 * As this may not be anonymous memory (e.g. shmem)
-+			 * but exist on a real mapping, we have to lock
-+			 * the page in order to dirty it -- holding
-+			 * the page reference is not sufficient to
-+			 * prevent the inode from being truncated.
-+			 * Play safe and take the lock.
-+			 */
-+			set_page_dirty_lock(page);
+-	if (psp == POWER_SUPPLY_PROP_PRESENT) {
+-		/* Dummy command; if it succeeds, battery is present. */
+-		ret = sbs_read_word_data(client, sbs_data[REG_STATUS].addr);
+-		if (ret < 0)
+-			val->intval = 0; /* battery disconnected */
+-		else
+-			val->intval = 1; /* battery present */
+-	} else { /* POWER_SUPPLY_PROP_HEALTH */
++	/* Dummy command; if it succeeds, battery is present. */
++	ret = sbs_read_word_data(client, sbs_data[REG_STATUS].addr);
++
++	if (ret < 0) { /* battery not present*/
++		if (psp == POWER_SUPPLY_PROP_PRESENT) {
++			val->intval = 0;
++			return 0;
++		}
++		return ret;
++	}
++
++	if (psp == POWER_SUPPLY_PROP_PRESENT)
++		val->intval = 1; /* battery present */
++	else /* POWER_SUPPLY_PROP_HEALTH */
+ 		/* SBS spec doesn't have a general health command. */
+ 		val->intval = POWER_SUPPLY_HEALTH_UNKNOWN;
+-	}
  
- 		mark_page_accessed(page);
- 		put_page(page);
+ 	return 0;
+ }
+@@ -635,6 +640,8 @@ static int sbs_get_property(struct power
+ 		else
+ 			ret = sbs_get_battery_presence_and_health(client, psp,
+ 								  val);
++
++		/* this can only be true if no gpio is used */
+ 		if (psp == POWER_SUPPLY_PROP_PRESENT)
+ 			return 0;
+ 		break;
 
 
