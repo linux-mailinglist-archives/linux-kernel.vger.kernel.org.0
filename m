@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F5F3D236B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C628CD23E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388532AbfJJImW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:42:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46886 "EHLO mail.kernel.org"
+        id S2389428AbfJJIrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:47:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52868 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388511AbfJJImU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:42:20 -0400
+        id S2389416AbfJJIrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:47:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C61CE2190F;
-        Thu, 10 Oct 2019 08:42:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F27CD208C3;
+        Thu, 10 Oct 2019 08:46:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570696939;
-        bh=Y9uQYymY0eFnLevhi+Oh+Vqc/2hn+dwDMy63dOaerEA=;
+        s=default; t=1570697220;
+        bh=aLfiwxh2cGEke7pOc3TnWhzlU9xXH4nxrckrExWMU18=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KVSBX+7Z41l/GG5m4TpsawKvOJJmMaANGz0rDYp3jf03SZdRzUyxLC8G+7LqEUVnB
-         rzIHriLEWNrlnvh1jUkTURh5vEBDQw/6keCxFoo4EM4jeqfaQwnQHcZfsBzIoO8pgq
-         Cc9rHdsr8QmbW5U9450NYtSzxSxSJKXbIvckHuf8=
+        b=HYRBd9qUjIB2XFpRhzu0FxVNGPuK62PvXtM5utPl9fk/1+rKunEAD3TvnBSqDiVqA
+         LV+IHhrg982Y5+OtO0q/XW+DsQX8WPOQf7JeqogkoydXuyS3Bvsk/f9UEpnWoQL0Nd
+         HYafTSMk37f1lswXA27qPp4qoTclDww1f+fCufmE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        stable@vger.kernel.org, Fabrice Gasnier <fabrice.gasnier@st.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 108/148] SUNRPC: Dont try to parse incomplete RPC messages
+Subject: [PATCH 4.19 062/114] pwm: stm32-lp: Add check in case requested period cannot be achieved
 Date:   Thu, 10 Oct 2019 10:36:09 +0200
-Message-Id: <20191010083617.709024171@linuxfoundation.org>
+Message-Id: <20191010083609.636396399@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
-References: <20191010083609.660878383@linuxfoundation.org>
+In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
+References: <20191010083544.711104709@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,61 +46,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trond Myklebust <trondmy@gmail.com>
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
 
-[ Upstream commit 9ba828861c56a21d211d5d10f5643774b1ea330d ]
+[ Upstream commit c91e3234c6035baf5a79763cb4fcd5d23ce75c2b ]
 
-If the copy of the RPC reply into our buffers did not complete, and
-we could end up with a truncated message. In that case, just resend
-the call.
+LPTimer can use a 32KHz clock for counting. It depends on clock tree
+configuration. In such a case, PWM output frequency range is limited.
+Although unlikely, nothing prevents user from requesting a PWM frequency
+above counting clock (32KHz for instance):
+- This causes (prd - 1) = 0xffff to be written in ARR register later in
+the apply() routine.
+This results in badly configured PWM period (and also duty_cycle).
+Add a check to report an error is such a case.
 
-Fixes: a0584ee9aed80 ("SUNRPC: Use struct xdr_stream when decoding...")
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sunrpc/clnt.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/pwm/pwm-stm32-lp.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/net/sunrpc/clnt.c b/net/sunrpc/clnt.c
-index e7fdc400506e8..f7f78566be463 100644
---- a/net/sunrpc/clnt.c
-+++ b/net/sunrpc/clnt.c
-@@ -2482,6 +2482,7 @@ call_decode(struct rpc_task *task)
- 	struct rpc_clnt	*clnt = task->tk_client;
- 	struct rpc_rqst	*req = task->tk_rqstp;
- 	struct xdr_stream xdr;
-+	int err;
- 
- 	dprint_status(task);
- 
-@@ -2504,6 +2505,15 @@ call_decode(struct rpc_task *task)
- 	 * before it changed req->rq_reply_bytes_recvd.
- 	 */
- 	smp_rmb();
+diff --git a/drivers/pwm/pwm-stm32-lp.c b/drivers/pwm/pwm-stm32-lp.c
+index 0059b24cfdc3c..28e1f64134763 100644
+--- a/drivers/pwm/pwm-stm32-lp.c
++++ b/drivers/pwm/pwm-stm32-lp.c
+@@ -58,6 +58,12 @@ static int stm32_pwm_lp_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	/* Calculate the period and prescaler value */
+ 	div = (unsigned long long)clk_get_rate(priv->clk) * state->period;
+ 	do_div(div, NSEC_PER_SEC);
++	if (!div) {
++		/* Clock is too slow to achieve requested period. */
++		dev_dbg(priv->chip.dev, "Can't reach %u ns\n",	state->period);
++		return -EINVAL;
++	}
 +
-+	/*
-+	 * Did we ever call xprt_complete_rqst()? If not, we should assume
-+	 * the message is incomplete.
-+	 */
-+	err = -EAGAIN;
-+	if (!req->rq_reply_bytes_recvd)
-+		goto out;
-+
- 	req->rq_rcv_buf.len = req->rq_private_buf.len;
- 
- 	/* Check that the softirq receive buffer is valid */
-@@ -2512,7 +2522,9 @@ call_decode(struct rpc_task *task)
- 
- 	xdr_init_decode(&xdr, &req->rq_rcv_buf,
- 			req->rq_rcv_buf.head[0].iov_base, req);
--	switch (rpc_decode_header(task, &xdr)) {
-+	err = rpc_decode_header(task, &xdr);
-+out:
-+	switch (err) {
- 	case 0:
- 		task->tk_action = rpc_exit_task;
- 		task->tk_status = rpcauth_unwrap_resp(task, &xdr);
+ 	prd = div;
+ 	while (div > STM32_LPTIM_MAX_ARR) {
+ 		presc++;
 -- 
 2.20.1
 
