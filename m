@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35298D2434
+	by mail.lfdr.de (Postfix) with ESMTP id 9E4F3D2435
 	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:50:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389909AbfJJIuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:50:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56936 "EHLO mail.kernel.org"
+        id S2389444AbfJJIuJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:50:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389891AbfJJIuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:50:04 -0400
+        id S2389426AbfJJIuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:50:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9698821BE5;
-        Thu, 10 Oct 2019 08:50:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62AA921A4C;
+        Thu, 10 Oct 2019 08:50:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697403;
-        bh=ijoVofpHwCNwsxyvazGuC1YK3Ghz5bLC7iROBSKirMY=;
+        s=default; t=1570697405;
+        bh=9On+Gu6ZEr5b3Li89PPgEiHsxO9sWN16AGhIzJ06nkQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K+I6g65iclbuU4KOGRhCnfGJCKTla+4ecmuiLtH0wgsFYFw41qRLu6oiaNtf5/OWt
-         /JBYkDxXI4Yyj6MiIOMKM2a4dZpHrT8k4zg5/NuAmqV0B4fDLDjMLdDOeJOOIdnjyr
-         j/qbE5EtzrI+G+8cug2NF/SvsRHdqcAGpbvxPZqw=
+        b=C/WDcRM/+G/FgnWVNctdJ26ziE709+tael+t+L5ll+VKcl+hpGjFIlR6lMpsSGpG5
+         ihQv/Qx5cswtZPvXUeFTTtgh65gsb2SjekQhRgv8LA1O3IhiVEqafcH4FwkX1YRK9L
+         TkTgbMDdf0hSpEiZrKLetbnEGI4NdrDHfbAvpoFM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 15/61] crypto: cavium/zip - Add missing single_release()
-Date:   Thu, 10 Oct 2019 10:36:40 +0200
-Message-Id: <20191010083457.873303460@linuxfoundation.org>
+Subject: [PATCH 4.14 16/61] crypto: caam - fix concurrency issue in givencrypt descriptor
+Date:   Thu, 10 Oct 2019 10:36:41 +0200
+Message-Id: <20191010083458.828032360@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191010083449.500442342@linuxfoundation.org>
 References: <20191010083449.500442342@linuxfoundation.org>
@@ -43,48 +44,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+From: Horia Geantă <horia.geanta@nxp.com>
 
-commit c552ffb5c93d9d65aaf34f5f001c4e7e8484ced1 upstream.
+commit 48f89d2a2920166c35b1c0b69917dbb0390ebec7 upstream.
 
-When using single_open() for opening, single_release() should be
-used instead of seq_release(), otherwise there is a memory leak.
+IV transfer from ofifo to class2 (set up at [29][30]) is not guaranteed
+to be scheduled before the data transfer from ofifo to external memory
+(set up at [38]:
 
-Fixes: 09ae5d37e093 ("crypto: zip - Add Compression/Decompression statistics")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+[29] 10FA0004           ld: ind-nfifo (len=4) imm
+[30] 81F00010               <nfifo_entry: ofifo->class2 type=msg len=16>
+[31] 14820004           ld: ccb2-datasz len=4 offs=0 imm
+[32] 00000010               data:0x00000010
+[33] 8210010D    operation: cls1-op aes cbc init-final enc
+[34] A8080B04         math: (seqin + math0)->vseqout len=4
+[35] 28000010    seqfifold: skip len=16
+[36] A8080A04         math: (seqin + math0)->vseqin len=4
+[37] 2F1E0000    seqfifold: both msg1->2-last2-last1 len=vseqinsz
+[38] 69300000   seqfifostr: msg len=vseqoutsz
+[39] 5C20000C      seqstr: ccb2 ctx len=12 offs=0
+
+If ofifo -> external memory transfer happens first, DECO will hang
+(issuing a Watchdog Timeout error, if WDOG is enabled) waiting for
+data availability in ofifo for the ofifo -> c2 ififo transfer.
+
+Make sure IV transfer happens first by waiting for all CAAM internal
+transfers to end before starting payload transfer.
+
+New descriptor with jump command inserted at [37]:
+
+[..]
+[36] A8080A04         math: (seqin + math0)->vseqin len=4
+[37] A1000401         jump: jsl1 all-match[!nfifopend] offset=[01] local->[38]
+[38] 2F1E0000    seqfifold: both msg1->2-last2-last1 len=vseqinsz
+[39] 69300000   seqfifostr: msg len=vseqoutsz
+[40] 5C20000C      seqstr: ccb2 ctx len=12 offs=0
+
+[Note: the issue is present in the descriptor from the very beginning
+(cf. Fixes tag). However I've marked it v4.19+ since it's the oldest
+maintained kernel that the patch applies clean against.]
+
+Cc: <stable@vger.kernel.org> # v4.19+
+Fixes: 1acebad3d8db8 ("crypto: caam - faster aead implementation")
+Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/cavium/zip/zip_main.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/crypto/caam/caamalg_desc.c |    9 +++++++++
+ drivers/crypto/caam/caamalg_desc.h |    2 +-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
---- a/drivers/crypto/cavium/zip/zip_main.c
-+++ b/drivers/crypto/cavium/zip/zip_main.c
-@@ -595,6 +595,7 @@ static const struct file_operations zip_
- 	.owner = THIS_MODULE,
- 	.open  = zip_stats_open,
- 	.read  = seq_read,
-+	.release = single_release,
- };
+--- a/drivers/crypto/caam/caamalg_desc.c
++++ b/drivers/crypto/caam/caamalg_desc.c
+@@ -476,6 +476,7 @@ void cnstr_shdsc_aead_givencap(u32 * con
+ 			       const bool is_qi)
+ {
+ 	u32 geniv, moveiv;
++	u32 *wait_cmd;
  
- static int zip_clear_open(struct inode *inode, struct file *file)
-@@ -606,6 +607,7 @@ static const struct file_operations zip_
- 	.owner = THIS_MODULE,
- 	.open  = zip_clear_open,
- 	.read  = seq_read,
-+	.release = single_release,
- };
+ 	/* Note: Context registers are saved. */
+ 	init_sh_desc_key_aead(desc, cdata, adata, is_rfc3686, nonce);
+@@ -566,6 +567,14 @@ copy_iv:
  
- static int zip_regs_open(struct inode *inode, struct file *file)
-@@ -617,6 +619,7 @@ static const struct file_operations zip_
- 	.owner = THIS_MODULE,
- 	.open  = zip_regs_open,
- 	.read  = seq_read,
-+	.release = single_release,
- };
- 
- /* Root directory for thunderx_zip debugfs entry */
+ 	/* Will read cryptlen */
+ 	append_math_add(desc, VARSEQINLEN, SEQINLEN, REG0, CAAM_CMD_SZ);
++
++	/*
++	 * Wait for IV transfer (ofifo -> class2) to finish before starting
++	 * ciphertext transfer (ofifo -> external memory).
++	 */
++	wait_cmd = append_jump(desc, JUMP_JSL | JUMP_TEST_ALL | JUMP_COND_NIFP);
++	set_jump_tgt_here(desc, wait_cmd);
++
+ 	append_seq_fifo_load(desc, 0, FIFOLD_CLASS_BOTH | KEY_VLF |
+ 			     FIFOLD_TYPE_MSG1OUT2 | FIFOLD_TYPE_LASTBOTH);
+ 	append_seq_fifo_store(desc, 0, FIFOST_TYPE_MESSAGE_DATA | KEY_VLF);
+--- a/drivers/crypto/caam/caamalg_desc.h
++++ b/drivers/crypto/caam/caamalg_desc.h
+@@ -12,7 +12,7 @@
+ #define DESC_AEAD_BASE			(4 * CAAM_CMD_SZ)
+ #define DESC_AEAD_ENC_LEN		(DESC_AEAD_BASE + 11 * CAAM_CMD_SZ)
+ #define DESC_AEAD_DEC_LEN		(DESC_AEAD_BASE + 15 * CAAM_CMD_SZ)
+-#define DESC_AEAD_GIVENC_LEN		(DESC_AEAD_ENC_LEN + 7 * CAAM_CMD_SZ)
++#define DESC_AEAD_GIVENC_LEN		(DESC_AEAD_ENC_LEN + 8 * CAAM_CMD_SZ)
+ #define DESC_QI_AEAD_ENC_LEN		(DESC_AEAD_ENC_LEN + 3 * CAAM_CMD_SZ)
+ #define DESC_QI_AEAD_DEC_LEN		(DESC_AEAD_DEC_LEN + 3 * CAAM_CMD_SZ)
+ #define DESC_QI_AEAD_GIVENC_LEN		(DESC_AEAD_GIVENC_LEN + 3 * CAAM_CMD_SZ)
 
 
