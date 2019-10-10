@@ -2,79 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 438C2D34A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 01:51:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB8C4D349D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 01:50:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727331AbfJJXvG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 19:51:06 -0400
-Received: from sender4-of-o54.zoho.com ([136.143.188.54]:21449 "EHLO
-        sender4-of-o54.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725845AbfJJXvF (ORCPT
+        id S1726801AbfJJXuc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 19:50:32 -0400
+Received: from smtprelay0091.hostedemail.com ([216.40.44.91]:48063 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725845AbfJJXub (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 19:51:05 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1570751433; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=hT7cVdAi4Ogoe87/LMc1zcAwrULZmjt3BrSAcC8PTLi07sakUdVtriCqJoMc8eG8HQHYo4+w4+QQ6xqExcbY8gnq3xk1Rjl1RWd+Dv9ifEABjZ7MDrvS4WPl6FXW6Kx3M4UUM6Ut8lnwhVZm+q1rFOrVTbjmvW2XMItcdTTI7UM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1570751433; h=Content-Type:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=yN70WGu1foiEfKceIyoLTb0NvXxZwFhRCRnJxip6P9M=; 
-        b=LtfdSbYVp3wu5n2pzvkIEkD5k4Kx7UJ8qfMvP6QoJ8lC7mx46tXDaStWpTq1eJkM+M/2njPtPz3XWf4pWeCyCjBInvwt051H63fiz89kkL3LHi5boGEEsfg9PgAZU8vrzIh+AHS6nIVRuyDdMy5zHdClC3pzceM6H/HIs+WC8bY=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=didiksetiawan.com;
-        spf=pass  smtp.mailfrom=ds@didiksetiawan.com;
-        dmarc=pass header.from=<ds@didiksetiawan.com> header.from=<ds@didiksetiawan.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1570751433;
-        s=zoho; d=didiksetiawan.com; i=ds@didiksetiawan.com;
-        h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To;
-        l=864; bh=yN70WGu1foiEfKceIyoLTb0NvXxZwFhRCRnJxip6P9M=;
-        b=yqmdtRH7FQ66gm9S6CGLpMoqbJsb3LmjRr0fRpv2T08/63b9EGONtJftxBIO9g3h
-        D+DUIyiUl3vE8z766vmnmyYtd1FnM1sB1QnswbDQmnAqgMwWpXCiCzmldZcSCiuflWW
-        2KBtrZqjcDZ6bKcXA42voazzZAdo4978ureT2heE=
-Received: from thinkpad-e420s (120.188.6.98 [120.188.6.98]) by mx.zohomail.com
-        with SMTPS id 1570751432403510.0797825909775; Thu, 10 Oct 2019 16:50:32 -0700 (PDT)
-Date:   Fri, 11 Oct 2019 06:50:20 +0700
-From:   Didik Setiawan <ds@didiksetiawan.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.14 00/61] 4.14.149-stable review
-Message-ID: <20191010235020.GA23813@thinkpad-e420s>
-References: <20191010083449.500442342@linuxfoundation.org>
+        Thu, 10 Oct 2019 19:50:31 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 4DA0E181D3377;
+        Thu, 10 Oct 2019 23:50:30 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 30,2,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:968:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2693:2828:2898:3138:3139:3140:3141:3142:3353:3622:3653:3865:3866:3868:3871:4321:4605:5007:6117:7576:7875:9391:10004:10400:11026:11232:11233:11473:11658:11914:12043:12296:12297:12438:12555:12740:12760:12895:13439:14096:14097:14181:14659:14721:21080:21451:21505:21627:21740:21972:30054:30064:30070:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
+X-HE-Tag: dock63_3e5b57d448e10
+X-Filterd-Recvd-Size: 3509
+Received: from XPS-9350.home (unknown [47.151.152.152])
+        (Authenticated sender: joe@perches.com)
+        by omf09.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 10 Oct 2019 23:50:28 +0000 (UTC)
+Message-ID: <2231d5f0a82f880e6706e2d0f070328a029c9b21.camel@perches.com>
+Subject: Re: [PATCH v2 3/4] treewide: Use sizeof_member() macro
+From:   Joe Perches <joe@perches.com>
+To:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
+Cc:     Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        netdev@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Date:   Thu, 10 Oct 2019 16:50:27 -0700
+In-Reply-To: <20191010232345.26594-4-keescook@chromium.org>
+References: <20191010232345.26594-1-keescook@chromium.org>
+         <20191010232345.26594-4-keescook@chromium.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191010083449.500442342@linuxfoundation.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 10:36:25AM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.149 release.
-> There are 61 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Thu, 2019-10-10 at 16:23 -0700, Kees Cook wrote:
+> From: Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>
 > 
-> Responses should be made by Sat 12 Oct 2019 08:29:51 AM UTC.
-> Anything received after that time might be too late.
+> Replace all the occurrences of FIELD_SIZEOF() and sizeof_field() with
+> sizeof_member() except at places where these are defined. Later patches
+> will remove the unused definitions.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.149-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
+> This patch is generated using following script:
 > 
-> thanks,
+> EXCLUDE_FILES="include/linux/stddef.h|include/linux/kernel.h"
 > 
-> greg k-h
+> git grep -l -e "\bFIELD_SIZEOF\b" -e "\bsizeof_field\b" | while read file;
+> do
 > 
- 
-Compiled, booted, and no regressions found on my x86_64 system.
+> 	if [[ "$file" =~ $EXCLUDE_FILES ]]; then
+> 		continue
+> 	fi
+> 	sed -i  -e 's/\bFIELD_SIZEOF\b/sizeof_member/g' \
+> 		-e 's/\bsizeof_field\b/sizeof_member/g' \
+> 		$file;
+> done
 
-Thanks,
-Didik Setiawan
+While the sed works, a cocci script would perhaps
+be better as multi line argument realignment would
+also occur.
+
+$ cat sizeof_member.cocci
+@@
+@@
+
+-	FIELD_SIZEOF
++	sizeof_member
+
+@@
+@@
+
+-	sizeof_field
++	sizeof_member
+$
+
+For instance, this sed produces:
+
+diff --git a/crypto/adiantum.c b/crypto/adiantum.c
+@@ -435,10 +435,10 @@ static int adiantum_init_tfm(struct crypto_skcipher *tfm)
+ 
+ 	BUILD_BUG_ON(offsetofend(struct adiantum_request_ctx, u) !=
+ 		     sizeof(struct adiantum_request_ctx));
+-	subreq_size = max(FIELD_SIZEOF(struct adiantum_request_ctx,
++	subreq_size = max(sizeof_member(struct adiantum_request_ctx,
+ 				       u.hash_desc) +
+ 			  crypto_shash_descsize(hash),
+-			  FIELD_SIZEOF(struct adiantum_request_ctx,
++			  sizeof_member(struct adiantum_request_ctx,
+ 				       u.streamcipher_req) +
+ 			  crypto_skcipher_reqsize(streamcipher));
+ 
+
+where the cocci script produces:
+
+--- crypto/adiantum.c
++++ /tmp/cocci-output-22881-d8186c-adiantum.c
+@@ -435,11 +435,11 @@ static int adiantum_init_tfm(struct cryp
+ 
+ 	BUILD_BUG_ON(offsetofend(struct adiantum_request_ctx, u) !=
+ 		     sizeof(struct adiantum_request_ctx));
+-	subreq_size = max(FIELD_SIZEOF(struct adiantum_request_ctx,
+-				       u.hash_desc) +
++	subreq_size = max(sizeof_member(struct adiantum_request_ctx,
++					u.hash_desc) +
+ 			  crypto_shash_descsize(hash),
+-			  FIELD_SIZEOF(struct adiantum_request_ctx,
+-				       u.streamcipher_req) +
++			  sizeof_member(struct adiantum_request_ctx,
++					u.streamcipher_req) +
+ 			  crypto_skcipher_reqsize(streamcipher));
+ 
+ 	crypto_skcipher_set_reqsize(tfm,
+
 
