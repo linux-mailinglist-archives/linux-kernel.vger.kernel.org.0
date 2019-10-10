@@ -2,84 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23265D2BBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 15:51:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72260D2BC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 15:52:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726052AbfJJNvQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 09:51:16 -0400
-Received: from smtp.domeneshop.no ([194.63.252.55]:60773 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725880AbfJJNvP (ORCPT
+        id S1726152AbfJJNvn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 09:51:43 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48866 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726055AbfJJNvm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 09:51:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org
-        ; s=ds201810; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:References:Cc:To:From:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Z9kT8deS5roy+K52zZTsn6tV5HXJkoAJ1yAla/8rmZU=; b=AcworK715AEXg5eIsIVd5jDN9O
-        9PJ+TZmcl1xkVfpSlXl+071b3lkDENK0W6/fevePDKMd2zFClxy1B+AAuBIK2/yDAEoNvqGm7XTg2
-        zvi768iIkqezp/ohhS9tyfEfrhI6dBtG+o4afnxOUH8ZnYyR2qeuv17yISXpu64CkYd/Hf8poQrb5
-        VZuZvyRiEaTtProqjGunHzXDrS8cSuscJAOlRazRz7IvTTwGhdFGDrOwBlaAKw+Ca+vbbv6eZJgRM
-        F+mhx8shxX/zzaMGDu5uPExZbH9YSYzJsd/YFWJgxCXtJ/x4kwz0MrNNB7d0nkZXaxhfcpJQndrxB
-        DG1+b2vA==;
-Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:58426 helo=[192.168.10.177])
-        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        Thu, 10 Oct 2019 09:51:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=V/JXwCim9xHgJaWTIMmCuENQjrQuhOHBfhhfchcy6xI=; b=OLb5MxWlClMtaennmKs5dNMzk
+        WKm8AfEJOMKoj2CQzV8gr+lnf5tOUXnAYmJ4c/gSwuc7iwu+YYKwIaGyUXrZT2x0srTY5W0rEcju2
+        30C4X1niDQHVoFx8GdCfS/c7yRrOcBwAJ4bUh762OIwcaq1dEcH1t3Y3sbhZzwvuehp+0=;
+Received: from fw-tnat-cam3.arm.com ([217.140.106.51] helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
-        (envelope-from <noralf@tronnes.org>)
-        id 1iIYqT-00083M-Tc; Thu, 10 Oct 2019 15:51:09 +0200
-Subject: Re: [PATCH] drm/tiny: Kconfig: Remove always-y THERMAL dep. from
- TINYDRM_REPAPER
-From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-To:     Ulf Magnusson <ulfalizer@gmail.com>, linux-kbuild@vger.kernel.org,
-        yamada.masahiro@socionext.com
-Cc:     david@lechnology.com, airlied@linux.ie,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        hdegoede@redhat.com, tglx@linutronix.de, sam@ravnborg.org,
-        Jason Gunthorpe <jgg@ziepe.ca>
-References: <20190927174218.GA32085@huvuddator>
- <c3b41a7b-ef3b-7960-13a1-d4b8dd6f15b6@tronnes.org>
-Message-ID: <10f6225f-89c0-268e-8ef9-7a6b7c22e911@tronnes.org>
-Date:   Thu, 10 Oct 2019 15:51:06 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1iIYqs-0001Sb-Os; Thu, 10 Oct 2019 13:51:34 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id 6041DD0003A; Thu, 10 Oct 2019 14:51:34 +0100 (BST)
+Date:   Thu, 10 Oct 2019 14:51:34 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Vinod Koul <vkoul@kernel.org>, devicetree@vger.kernel.org,
+        alsa-devel@alsa-project.org, bgoswami@codeaurora.org,
+        plai@codeaurora.org, lgirdwood@gmail.com,
+        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+        spapothi@codeaurora.org
+Subject: Re: [alsa-devel] [PATCH v2 3/5] ASoC: core: add support to
+ snd_soc_dai_get_sdw_stream()
+Message-ID: <20191010135134.GR2036@sirena.org.uk>
+References: <cc360858-571a-6a46-1789-1020bcbe4bca@linux.intel.com>
+ <20190813195804.GL5093@sirena.co.uk>
+ <20190814041142.GU12733@vkoul-mobl.Dlink>
+ <99d35a9d-cbd8-f0da-4701-92ef650afe5a@linux.intel.com>
+ <5e08f822-3507-6c69-5d83-4ce2a9f5c04f@linaro.org>
+ <53bb3105-8e85-a972-fce8-a7911ae4d461@linux.intel.com>
+ <95870089-25da-11ea-19fd-0504daa98994@linaro.org>
+ <2326a155-332e-fda0-b7a2-b48f348e1911@linux.intel.com>
+ <34e4cde8-f2e5-0943-115a-651d86f87c1a@linaro.org>
+ <20191010120337.GB31391@ediswmail.ad.cirrus.com>
 MIME-Version: 1.0
-In-Reply-To: <c3b41a7b-ef3b-7960-13a1-d4b8dd6f15b6@tronnes.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="/o1eWYFqMAfOorY1"
+Content-Disposition: inline
+In-Reply-To: <20191010120337.GB31391@ediswmail.ad.cirrus.com>
+X-Cookie: Be careful!  UGLY strikes 9 out of 10!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--/o1eWYFqMAfOorY1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Den 01.10.2019 12.58, skrev Noralf Trønnes:
-> 
-> 
-> Den 27.09.2019 19.42, skrev Ulf Magnusson:
->> Commit 554b3529fe01 ("thermal/drivers/core: Remove the module Kconfig's
->> option") changed the type of THERMAL from tristate to bool, so
->> THERMAL || !THERMAL is now always y. Remove the redundant dependency.
->>
->> Discovered through Kconfiglib detecting a dependency loop. The C tools
->> simplify the expression to y before running dependency loop detection,
->> and so don't see it. Changing the type of THERMAL back to tristate makes
->> the C tools detect the same loop.
->>
->> Not sure if running dep. loop detection after simplification can be
->> called a bug. Fixing this nit unbreaks Kconfiglib on the kernel at
->> least.
->>
->> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
->> ---
-> 
-> Thanks, applied to drm-misc-next.
-> 
+On Thu, Oct 10, 2019 at 12:03:37PM +0000, Charles Keepax wrote:
 
-This has now been queued for the next -rc pull.
+> Usually aux devices are used for things like analog amplifiers that
+> clearly don't have a digital interface, thus it really makes no sense
+> to have a DAI link connecting them. So I guess my question here
+> would be what is the thinking on making the "smart amplifier" dailess?
+> It feels like having a CODEC to CODEC DAI between the CODEC and
+> the AMP would be a more obvious way to connect the two devices
+> and would presumably avoid the issues being discussed around the
+> patch.
 
-Discussion: https://patchwork.freedesktop.org/patch/319826/
+Or is this a device where for some reason (consistency?) there
+really is no DAI and someone has decided to make an analogue
+amplifier with a soundwire control interface?
 
-Noralf.
+--/o1eWYFqMAfOorY1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2fN2MACgkQJNaLcl1U
+h9BJVQf/VmhKdvjGO+iSItUddcgbReAtHb/ahdMnhBgNm54DlfDRuvW2kr32nZDa
+6nV6JI0UShGgIrN50nZeXoOTJqJudBkKPeN3bA4qdH09K/3KoUUccKcWFF9XGUNi
+C/Ej7gQs/QrIvb2Cs4khYDg3TTzBRQYZgS59UYO0cr/5wQml5uMYCRjwbPTQGkGE
+Z12uk1POwiqB7/+PtYf7Il4yn+ijyQlVF51ZUGIRGMDGWQMHqXwGg/pc9VX6bAM1
+SJ2IDQ6L+pMpu7Jwyq9ymbTRf94gt+yfjLbLR5lUzX1mAC8CSy9CeSb+d7c3jx61
+m3I30E3ocl8sxR6JHqmUUqrsbEB9hg==
+=QvNW
+-----END PGP SIGNATURE-----
+
+--/o1eWYFqMAfOorY1--
