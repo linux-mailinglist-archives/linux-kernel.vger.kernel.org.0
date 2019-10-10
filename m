@@ -2,88 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CD6AD2EE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 18:51:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6498D2EF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 18:53:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726668AbfJJQvd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 12:51:33 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44751 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726397AbfJJQvc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 12:51:32 -0400
-Received: by mail-wr1-f65.google.com with SMTP id z9so8749497wrl.11
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 09:51:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7bu/p1V/jPBVukNh0HzQltOIjl5iBAhuyWFtm99yZ2M=;
-        b=PTeYKlvjW/Mo8h5FYVG1JpGMdBacSGeS1LH4pBUSwmp5OwJXPe6UwEDxq1ax1LPek8
-         9pjVrtmUrmuz1OpOOP4TR7Kb9Qssjw6lwq8y5GorqmLXqAKH4Y2qVaIY2mfTL31YiGn7
-         DczwZWj0zyKBsnc/vLKGCSC6UVeXsNO03NDfzW+MlKnpuq3x9PgEsP6+P9NtikqhObqd
-         vTH/0umRJUAKt5yh5JsXN8LLFXeOb1xo0Xvf+mxkBuPnddm74mc21EyStWmLcLpFIE7b
-         rsE2UJd30z31HZuNXKM6TFecvUF3zkYiNv8XdHwELQRw+flhyLeOI8diV462eevYPqvI
-         Vyjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7bu/p1V/jPBVukNh0HzQltOIjl5iBAhuyWFtm99yZ2M=;
-        b=O+ucFIdUbxVox+jTUD9UCTBAs0G6a8IkQSGX3MH7HiHVt3JOgEvvFvFUwSWr/TGVy6
-         05NxWHRMkaV5ODC5Mkqbq+pO93M2XBotyo3V1jXbwqAm423DuQRHzwtjYYN1nI4U15Uo
-         M6j2VAh6AK+UmqvTfGsiP0Eax75mcByV+K6SFRjkCuxe9b9kQhaQWa51XSwJXEho/b+Q
-         ARADCNrsdKTan51sjzrotpiYApGBTkwKm2N9kHXxCX4DfetlAVc0oJIKuEc8u21pgAf3
-         HHrq29VniN0HWoaYUwue8anT6owNwbL+sKhSzPV6c08tOpfBsqYuz0YyYxDNSJkk7Vxb
-         FVqg==
-X-Gm-Message-State: APjAAAVG8rbJq3IUsPCaCNIWOCNcaepcykjFZiSKQlVbv5CvZq9J4rhT
-        IpfEKD2oDAGJqQEuWXxdy2XWtA==
-X-Google-Smtp-Source: APXvYqx+JMkN3tC8wFFueYa7ICq4JDkKxjd8DhWTdlw1o8w+B0UKdW2izWlRVtwxrOVVrS4Puqf1tA==
-X-Received: by 2002:a05:6000:44:: with SMTP id k4mr9905117wrx.121.1570726290338;
-        Thu, 10 Oct 2019 09:51:30 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id a10sm6846042wrm.52.2019.10.10.09.51.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 09:51:29 -0700 (PDT)
-Date:   Thu, 10 Oct 2019 17:51:27 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        kgdb-bugreport@lists.sourceforge.net,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] kdb: Fixes for btc
-Message-ID: <20191010165127.sms6kanpkivda5rp@holly.lan>
-References: <20190925200220.157670-1-dianders@chromium.org>
+        id S1726690AbfJJQwd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 12:52:33 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:55008 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726038AbfJJQwc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 12:52:32 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0C2831A04B2;
+        Thu, 10 Oct 2019 18:52:29 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F2FF41A0492;
+        Thu, 10 Oct 2019 18:52:28 +0200 (CEST)
+Received: from fsr-ub1664-026.ea.freescale.net (fsr-ub1664-026.ea.freescale.net [10.171.81.59])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 56A922060B;
+        Thu, 10 Oct 2019 18:52:28 +0200 (CEST)
+From:   Stefan-Gabriel Mirea <stefan-gabriel.mirea@nxp.com>
+To:     corbet@lwn.net, robh+dt@kernel.org, mark.rutland@arm.com,
+        gregkh@linuxfoundation.org, catalin.marinas@arm.com,
+        will@kernel.org, shawnguo@kernel.org, leoyang.li@nxp.com
+Cc:     jslaby@suse.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v6 0/5] Add initial support for S32V234-EVB
+Date:   Thu, 10 Oct 2019 19:52:23 +0300
+Message-Id: <1570726348-6420-1-git-send-email-stefan-gabriel.mirea@nxp.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190925200220.157670-1-dianders@chromium.org>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 01:02:16PM -0700, Douglas Anderson wrote:
-> 
-> This series has a few kdb fixes for back tracing on CPUs.  The
-> previous version[1] had only one patch, but while making v3 I found a
-> few cleanups that made sense to break into other pieces.
-> 
-> As with all things kdb / kgdb, this patch set tries to inch us towards
-> a better state of the world but doesn't attempt to solve all known
-> problems.
-> 
-> Please enjoy.
- 
-Applied.
+Hello,
 
-Note: Given this series alters a very long standing behaviour I've queued
-      it for v5.5 rather than add it to a fixes branch. It should land
-      in linux-next shortly.
+NXP's S32V234[1] ("Treerunner") vision microprocessors are targeted for
+high-performance, computationally intensive vision and sensor fusion
+applications that require automotive safety levels. They include leading
+edge Camera Vision modules like APEX-2, ISP and GPU. The S32V234-EVB and
+S32V234-SBC boards are available for customer evaluation.
 
+The following patch series introduces minimal enablement support for the
+NXP S32V234-EVB2[2] board, which leverages most of the SoC capabilities.
+Up to v2, this series also included the fsl_linflexuart driver, which has
+been included in Linux 5.4-rc1[3].
 
-Daniel.
+In the future, we aim to submit multiple drivers upstream, which can be
+found in the kernel of our Auto Linux BSP[4] ("ALB"), starting with basic
+pinmuxing, clock and uSDHC drivers.
+
+For validation, you can use the U-Boot bootloader in the ALB[5], which we
+build and test with our patched version of the Linaro GCC 6.3.1 2017.05
+toolchain for ARM 64-bit, with sources available on [6].
+
+Changes in v6:
+* In the patch 'serial: fsl_linflexuart: Be consistent with the name',
+  avoid updating the definition PORT_LINFLEXUART; that was an independent
+  fix which has been submitted and accepted[9] separately;
+* Avoid using 'base64' as 'Content-Transfer-Encoding'.
+
+Changes in v5:
+* Remove the patch 'dt-bindings: serial: Document Freescale LINFlexD UART'
+  following its acceptance in Linux 5.4-rc1[8];
+* Rebase the other patches on v5.4-rc1.
+
+Changes in v4:
+* Remove the patch 'serial: fsl_linflexuart: Update compatible string'
+  following its acceptance[7];
+* Rebase the patch 'serial: fsl_linflexuart: Be consistent with the name'
+  on the tty-next branch in Greg's tty git tree.
+
+Changes in v3:
+* Remove the patch 'tty: serial: Add linflexuart driver for S32V234'
+  following its acceptance[3];
+* Replace 'Freescale' with 'NXP' in the ARCH_S32 config definition and the
+  'model' property from the device tree;
+* Remove the 'fsl-' prefixes from the dtsi and dts file names;
+* Move the 'model' property from (fsl-)s32v234.dtsi to s32v234-evb.dts;
+* Add newlines between the cpu nodes in s32v234.dtsi;
+* Make use of GIC_SPI, GIC_PPI, GIC_CPU_MASK_SIMPLE and IRQ_TYPE_* in the
+  'interrupts' tuples;
+* Move the 'timer' and 'interrupt-controller' nodes before 'soc' in
+  s32v234.dtsi;
+* Be consistent with the 'LINFlexD' spelling in documentation, strings and
+  comments; add new patch 'serial: fsl_linflexuart: Be consistent with the
+  name' to update the LINFlexD driver as well;
+* Remove from fsl,s32-linflexuart.txt a statement regarding the limitation
+  to UART mode;
+* Make the compatible string SoC specific ("fsl,s32v234-linflexuart"); add
+  new patch 'serial: fsl_linflexuart: Update compatible string' to update
+  the LINFlexD driver as well;
+* In the LINFlexD binding documentation, insert a space between label and
+  node name and remove the 'status' property.
+
+Changes in v2:
+* Update the entry in fsl.yaml to apply to all S32V234 based boards;
+* Add chosen node to dts, with a 'stdout-path' property for earlycon;
+* Remove linflex_verify_port(), because it was only called from
+  uart_set_info(), which was going to always fail at the "baud_base < 9600"
+  check, as we are not using uartclk from uart_port yet;
+* Fix compatible string used in OF_EARLYCON_DECLARE.
+
+[1] https://www.nxp.com/products/processors-and-microcontrollers/arm-based-processors-and-mcus/s32-automotive-platform/vision-processor-for-front-and-surround-view-camera-machine-learning-and-sensor-fusion:S32V234
+[2] https://www.nxp.com/support/developer-resources/evaluation-and-development-boards/ultra-reliable-dev-platforms/s32v-mpus-platforms/s32v-vision-and-sensor-fusion-evaluation-system:S32V234EVB
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=09864c1cdf5c537bd01bff45181406e422ea988c
+[4] https://source.codeaurora.org/external/autobsps32/linux/
+[5] https://source.codeaurora.org/external/autobsps32/u-boot/
+[6] https://source.codeaurora.org/external/s32ds/compiler/gcc/
+[7] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2bd3661ea0eb2056852cbc58c5d96bb4df2f164f
+[8] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0e16feab6cce2b91d2996d4bc4eff01ece577c4a
+[9] https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git/commit/?h=tty-linus&id=47934ef7f1883209120781b59d78eaf8b83e2fb7
+
+Eddy Petrișor (1):
+  dt-bindings: arm: fsl: Add the S32V234-EVB board
+
+Mihaela Martinas (2):
+  arm64: Introduce config for S32
+  arm64: defconfig: Enable configs for S32V234
+
+Stefan-Gabriel Mirea (1):
+  serial: fsl_linflexuart: Be consistent with the name
+
+Stoica Cosmin-Stefan (1):
+  arm64: dts: fsl: Add device tree for S32V234-EVB
+
+ .../admin-guide/kernel-parameters.txt         |   2 +-
+ .../devicetree/bindings/arm/fsl.yaml          |   6 +
+ arch/arm64/Kconfig.platforms                  |   5 +
+ arch/arm64/boot/dts/freescale/Makefile        |   2 +
+ arch/arm64/boot/dts/freescale/s32v234-evb.dts |  25 ++++
+ arch/arm64/boot/dts/freescale/s32v234.dtsi    | 139 ++++++++++++++++++
+ arch/arm64/configs/defconfig                  |   3 +
+ drivers/tty/serial/Kconfig                    |   8 +-
+ drivers/tty/serial/fsl_linflexuart.c          |   4 +-
+ include/uapi/linux/serial_core.h              |   2 +-
+ 10 files changed, 188 insertions(+), 8 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/freescale/s32v234-evb.dts
+ create mode 100644 arch/arm64/boot/dts/freescale/s32v234.dtsi
+
+-- 
+2.22.0
+
