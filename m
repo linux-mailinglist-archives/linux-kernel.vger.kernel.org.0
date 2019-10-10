@@ -2,153 +2,281 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F40C5D20C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 08:29:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EF9FD20D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 08:37:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732917AbfJJG3b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 02:29:31 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:36687 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726983AbfJJG3b (ORCPT
+        id S1732943AbfJJGhE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 02:37:04 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35859 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727218AbfJJGhD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 02:29:31 -0400
-Received: by mail-oi1-f195.google.com with SMTP id k20so3945959oih.3;
-        Wed, 09 Oct 2019 23:29:30 -0700 (PDT)
+        Thu, 10 Oct 2019 02:37:03 -0400
+Received: by mail-wr1-f66.google.com with SMTP id y19so6279296wrd.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 23:37:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=39vL/RjFbpzLu5bkAOs1K86XiNbeAZ4i2GoTlfcf4x4=;
+        b=LG6OY8Ifh2UAofGEue5rrXE+63Iw2DQ4XcKKST6nHpnkTIm+Xi7vYiN9h7p7DhgdGo
+         MetSI9e8ryaSLrYm2j+3toTnDUM1XufXB1rRQ8hzX+ChgU5atdy0v2XTIZy+v+j7N1pT
+         BBRAWQEBjW3nGG4K4RyfL8QaQX7p5UzcdC3kvK50siY0lf6ezCXhioUy7fVNkM7WFsig
+         U1tqB8Ddnvt66XzEbIJ9K9dQCeJKk4AoHEn64Qk3ITT9CWHpiZYThN/hAWwrdfx6K2Rk
+         R5Aj4Ll6e71WIf6oJ0g5fO3DESV3CHMUzmY00XS8Q/9auLi/LY8nOI+llMdnHbVqiWSD
+         DIRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=+Cx2nK6QRBgJuBNcUtpzK8FDH7ngKKIhRfZFf1NmTFQ=;
-        b=kHPIj9KjP0SBjIgczu72EL/eRPNB35Ybua9nkVZSeG5OKbrLqXPWK4rRquBMLAluyK
-         EVb5jjYJvHYTkt1XmoB+2kbtcVEDyuyVkaVu+YNHY65wkCjFVGVcIFbErLVIZlfdYFV1
-         +ULDkchJXV5Sfe6wkuWn6PkGeAKVPvmutHcnlh1r6lQrEkraXax7ZbIpKXDpYbIGpOvn
-         AmmKuugV6T3g9exwUOIJt3kK1/b5pj9oeFIYRfUJFMWwFxKyeGo4YJPR2yHaVDeKl1Jd
-         UTVfZa725Oe45w1o7xout7BhvtvvIQ14ys0keOtbL9MgfVw5wCvybKXtT4okRea88r13
-         RdiA==
-X-Gm-Message-State: APjAAAXoF2R7ndOyiWKrqGvIFKAii27vIQwg76UOjN7hKgQxg1Vl7m4j
-        JnXGqeWUZ1SiKlMt93PgcZqCZ8nxYu20fQP/rDc=
-X-Google-Smtp-Source: APXvYqxmAwoB1fEOxz3+Xl/nikYsLddSYKE5o75tBiCX/ExRRXKw9htkShc664JHnVxtveTq0QU4eZt/Zpliy/z2V/0=
-X-Received: by 2002:a05:6808:3b4:: with SMTP id n20mr5863396oie.131.1570688969834;
- Wed, 09 Oct 2019 23:29:29 -0700 (PDT)
+        bh=39vL/RjFbpzLu5bkAOs1K86XiNbeAZ4i2GoTlfcf4x4=;
+        b=Cya4NqCioFORZphp2xE214BzUM58udT934oarFEJkAYJKL3lYpasb081cjMGnMiEGe
+         cmZrWUsg/LHlMlOFMMgJHf7MF3azRFQOaPudOoggNMcsLA4vAl/rQmtd8s5H3OuNh99R
+         AerDwnlGywZ3mmdZDbQTAO1KDlueeGVLpx4/YfuNpr0TOv9quZPu/cbgkj+RL+Wj8RfV
+         l6lASJkQ5U8I06MHhcqLIEw+UfaPNpeOjPuT4U3CQX7lNxBe1Udi8o9UwtaoMd0Hn4CD
+         i8V/JdheYJVqkKHebjb4OR1tGfXBz5RbpWAfh2uj1RBQ/cxm8gZHblw3/mRZbkzTSsAd
+         WQcQ==
+X-Gm-Message-State: APjAAAUzQFbzUOLtBSl3jFXz4ua+4v3z0gIrwZDhVYZRsiuIMsRYwqDa
+        Y1AexV743DZUEYN+KCF9z6OqsdvmQwlSr39qwMlwTA==
+X-Google-Smtp-Source: APXvYqz2UpiOk7Jsv91cVM9s0b5LHK+kyw4OAekcJw3qQGAv+2SCCXQz/+vZSOLup3set0dvqH15r8Bymf/YQRUCBkU=
+X-Received: by 2002:adf:f5c2:: with SMTP id k2mr7212983wrp.0.1570689420029;
+ Wed, 09 Oct 2019 23:37:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1570633189.git.vilhelm.gray@gmail.com> <893c3b4f03266c9496137cc98ac2b1bd27f92c73.1570633189.git.vilhelm.gray@gmail.com>
- <CAK7LNATgW7bXUmqV=3QAaJ0Qu73Kox-TgDCQJb=s0=mwewSCUg@mail.gmail.com>
- <20191009170917.GG32742@smile.fi.intel.com> <CAMuHMdXyyrL4ibKvjMV6r8TuxpmK73=JxsWNEfcRk1NjwsnOjA@mail.gmail.com>
- <CAK7LNASVdqU_6+_iinWStb9ALqLw494pnZKr46fLW+WJ9nUo6A@mail.gmail.com> <CAHp75VeLkfNZkqhD8tedJdav81L+VA3Z50Kwcd9h4R7zMwjtvA@mail.gmail.com>
-In-Reply-To: <CAHp75VeLkfNZkqhD8tedJdav81L+VA3Z50Kwcd9h4R7zMwjtvA@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 10 Oct 2019 08:29:17 +0200
-Message-ID: <CAMuHMdVs=PgET6=-fKgznETOye_Bxqt6h16Ok0nu6J2vXG-r_w@mail.gmail.com>
-Subject: Re: [PATCH v17 01/14] bitops: Introduce the for_each_set_clump8 macro
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        William Breathitt Gray <vilhelm.gray@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+References: <157066227329.1059972.5659620631541203458.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <157066229757.1059972.16873416956816693344.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <157066229757.1059972.16873416956816693344.stgit@dwillia2-desk3.amr.corp.intel.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 10 Oct 2019 08:36:48 +0200
+Message-ID: <CAKv+Gu89w+HCR2LVnFL5yBQbpy3Gi-rr_0ffrJ9N3fjpY4Jh5w@mail.gmail.com>
+Subject: Re: [PATCH v6 04/12] efi: Common enable/disable infrastructure for
+ EFI soft reservation
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux PM mailing list <linux-pm@vger.kernel.org>,
-        Phil Reid <preid@electromag.com.au>,
-        Lukas Wunner <lukas@wunner.de>, sean.nyekjaer@prevas.dk,
-        morten.tiljeset@prevas.dk, Arnd Bergmann <arnd@arndb.de>
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
-
-On Thu, Oct 10, 2019 at 7:49 AM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Thu, Oct 10, 2019 at 5:31 AM Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
-> > On Thu, Oct 10, 2019 at 3:54 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > On Wed, Oct 9, 2019 at 7:09 PM Andy Shevchenko
-> > > <andriy.shevchenko@linux.intel.com> wrote:
-> > > > On Thu, Oct 10, 2019 at 01:28:08AM +0900, Masahiro Yamada wrote:
-> > > > > On Thu, Oct 10, 2019 at 12:27 AM William Breathitt Gray
-> > > > > <vilhelm.gray@gmail.com> wrote:
-> > > > > >
-> > > > > > This macro iterates for each 8-bit group of bits (clump) with set bits,
-> > > > > > within a bitmap memory region. For each iteration, "start" is set to the
-> > > > > > bit offset of the found clump, while the respective clump value is
-> > > > > > stored to the location pointed by "clump". Additionally, the
-> > > > > > bitmap_get_value8 and bitmap_set_value8 functions are introduced to
-> > > > > > respectively get and set an 8-bit value in a bitmap memory region.
-> > > >
-> > > > > Why is the return type "unsigned long" where you know
-> > > > > it return the 8-bit value ?
-> > > >
-> > > > Because bitmap API operates on unsigned long type. This is not only
-> > > > consistency, but for sake of flexibility in case we would like to introduce
-> > > > more calls like clump16 or so.
-> > >
-> > > TBH, that doesn't convince me: those functions explicitly take/return an
-> > > 8-bit value, and have "8" in their name.  The 8-bit value is never
-> > > really related to, retrieved from, or stored in a full "unsigned long"
-> > > element of a bitmap, only to/from/in a part (byte) of it.
-> > >
-> > > Following your rationale, all of iowrite{8,16,32,64}*() should take an
-> > > "unsigned long" value, too.
-> > >
-> >
-> > +1
-> >
-> > Using u8/u16/u32/u64 looks more consistent with other bitmap helpers.
-> >
-> > void bitmap_from_arr32(unsigned long *bitmap, const u32 *buf, unsigned
-> > int nbits);
-> > void bitmap_to_arr32(u32 *buf, const unsigned long *bitmap, unsigned int nbits);
-> > static inline void bitmap_from_u64(unsigned long *dst, u64 mask);
-> >
-> >
-> >
-> > If you want to see more examples from other parts,
+On Thu, 10 Oct 2019 at 01:19, Dan Williams <dan.j.williams@intel.com> wrote:
 >
-> Geert's and yours examples both are not related. They are about
-> fixed-width properies when we know that is the part of protocol.
-> Here we have no protocol which stricts us to the mentioned fixed-width types.
-
-Yes you have: they are functions to store/retrieve an 8-bit value from
-the middle of the bitmap, which is reflected in their names ("clump8",
-"value8").
-The input/output value is clearly separated from the actual bitmap,
-which is referenced by the "unsigned long *".
-
-If you add new "value16" functions, they will be intended to store/retrieve
-16-bit values.
-
-Besides, if retrieving an 8-bit value requires passing an
-"unsigned long *", the caller needs two variables: one unsigned long to
-pass the address of, and one u8 to copy the returned value into.
-
-> So, I can tell an opposite, your arguments didn't convince me.
+> UEFI 2.8 defines an EFI_MEMORY_SP attribute bit to augment the
+> interpretation of the EFI Memory Types as "reserved for a specific
+> purpose".
 >
-> Imagine the function which does an or / and / xor operation on bitmap.
-> Now, when I supply unsigned long, I will see
-> operations on one type in _one_ function independently of the size.
-> Your proposal will make an unneded churn.
+> The proposed Linux behavior for specific purpose memory is that it is
+> reserved for direct-access (device-dax) by default and not available for
+> any kernel usage, not even as an OOM fallback.  Later, through udev
+> scripts or another init mechanism, these device-dax claimed ranges can
+> be reconfigured and hot-added to the available System-RAM with a unique
+> node identifier. This device-dax management scheme implements "soft" in
+> the "soft reserved" designation by allowing some or all of the
+> reservation to be recovered as typical memory. This policy can be
+> disabled at compile-time with CONFIG_EFI_SOFT_RESERVE=n, or runtime with
+> efi=nosoftreserve.
+>
+> As for this patch, define the common helpers to determine if the
+> EFI_MEMORY_SP attribute should be honored. The determination needs to be
+> made early to prevent the kernel from being loaded into soft-reserved
+> memory, or otherwise allowing early allocations to land there. Follow-on
+> changes are needed per architecture to leverage these helpers in their
+> respective mem-init paths.
+>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 
-Depends on what kind of value you will use to do the logical operation
-with the bitmap:
-  - Full bitmap => unsigned long * + size,
-  - Single bitmap "word" => unsigned long,
-  - 8-bit value => u8,
-  - 16-bit value => u16
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt |    9 ++++++++-
+>  drivers/firmware/efi/Kconfig                    |   21 +++++++++++++++++++++
+>  drivers/firmware/efi/efi.c                      |    9 +++++++++
+>  drivers/firmware/efi/libstub/efi-stub-helper.c  |   19 +++++++++++++++++++
+>  include/linux/efi.h                             |    8 ++++++++
+>  5 files changed, 65 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index c7ac2f3ac99f..47478a730011 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -1168,7 +1168,8 @@
+>                         Format: {"off" | "on" | "skip[mbr]"}
+>
+>         efi=            [EFI]
+> -                       Format: { "old_map", "nochunk", "noruntime", "debug" }
+> +                       Format: { "old_map", "nochunk", "noruntime", "debug",
+> +                                 "nosoftreserve" }
+>                         old_map [X86-64]: switch to the old ioremap-based EFI
+>                         runtime services mapping. 32-bit still uses this one by
+>                         default.
+> @@ -1177,6 +1178,12 @@
+>                         firmware implementations.
+>                         noruntime : disable EFI runtime services support
+>                         debug: enable misc debug output
+> +                       nosoftreserve: The EFI_MEMORY_SP (Specific Purpose)
+> +                       attribute may cause the kernel to reserve the
+> +                       memory range for a memory mapping driver to
+> +                       claim. Specify efi=nosoftreserve to disable this
+> +                       reservation and treat the memory by its base type
+> +                       (i.e. EFI_CONVENTIONAL_MEMORY / "System RAM").
+>
+>         efi_no_storage_paranoia [EFI; X86]
+>                         Using this parameter you can use more than 50% of
+> diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
+> index 178ee8106828..9fa79f9fa0af 100644
+> --- a/drivers/firmware/efi/Kconfig
+> +++ b/drivers/firmware/efi/Kconfig
+> @@ -75,6 +75,27 @@ config EFI_MAX_FAKE_MEM
+>           Ranges can be set up to this value using comma-separated list.
+>           The default value is 8.
+>
+> +config EFI_SOFT_RESERVE
+> +       bool "Reserve EFI Specific Purpose Memory"
+> +       depends on EFI && ACPI_HMAT
+> +       default ACPI_HMAT
+> +       help
+> +         On systems that have mixed performance classes of memory EFI
+> +         may indicate specific purpose memory with an attribute (See
+> +         EFI_MEMORY_SP in UEFI 2.8). A memory range tagged with this
+> +         attribute may have unique performance characteristics compared
+> +         to the system's general purpose "System RAM" pool. On the
+> +         expectation that such memory has application specific usage,
+> +         and its base EFI memory type is "conventional" answer Y to
+> +         arrange for the kernel to reserve it as a "Soft Reserved"
+> +         resource, and set aside for direct-access (device-dax) by
+> +         default. The memory range can later be optionally assigned to
+> +         the page allocator by system administrator policy via the
+> +         device-dax kmem facility. Say N to have the kernel treat this
+> +         memory as "System RAM" by default.
+> +
+> +         If unsure, say Y.
+> +
+>  config EFI_PARAMS_FROM_FDT
+>         bool
+>         help
+> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+> index 68a4ec24b823..911a58be4a36 100644
+> --- a/drivers/firmware/efi/efi.c
+> +++ b/drivers/firmware/efi/efi.c
+> @@ -81,6 +81,12 @@ bool efi_runtime_disabled(void)
+>         return disable_runtime;
+>  }
+>
+> +bool __pure efi_soft_reserve_enabled(void)
+> +{
+> +       return IS_ENABLED(CONFIG_EFI_SOFT_RESERVE) &&
+> +              !efi_enabled(EFI_MEM_NO_SOFT_RESERVE);
+> +}
+> +
+>  static int __init parse_efi_cmdline(char *str)
+>  {
+>         if (!str) {
+> @@ -94,6 +100,9 @@ static int __init parse_efi_cmdline(char *str)
+>         if (parse_option_str(str, "noruntime"))
+>                 disable_runtime = true;
+>
+> +       if (parse_option_str(str, "nosoftreserve"))
+> +               set_bit(EFI_MEM_NO_SOFT_RESERVE, &efi.flags);
+> +
+>         return 0;
+>  }
+>  early_param("efi", parse_efi_cmdline);
+> diff --git a/drivers/firmware/efi/libstub/efi-stub-helper.c b/drivers/firmware/efi/libstub/efi-stub-helper.c
+> index 3caae7f2cf56..5d901c56ac5f 100644
+> --- a/drivers/firmware/efi/libstub/efi-stub-helper.c
+> +++ b/drivers/firmware/efi/libstub/efi-stub-helper.c
+> @@ -32,6 +32,7 @@ static unsigned long __chunk_size = EFI_READ_CHUNK_SIZE;
+>  static int __section(.data) __nokaslr;
+>  static int __section(.data) __quiet;
+>  static int __section(.data) __novamap;
+> +static bool __section(.data) efi_nosoftreserve;
+>
+>  int __pure nokaslr(void)
+>  {
+> @@ -45,6 +46,10 @@ int __pure novamap(void)
+>  {
+>         return __novamap;
+>  }
+> +bool __pure efi_soft_reserve_enabled(void)
+> +{
+> +       return IS_ENABLED(CONFIG_EFI_SOFT_RESERVE) && !efi_nosoftreserve;
+> +}
+>
+>  #define EFI_MMAP_NR_SLACK_SLOTS        8
+>
+> @@ -211,6 +216,10 @@ efi_status_t efi_high_alloc(efi_system_table_t *sys_table_arg,
+>                 if (desc->type != EFI_CONVENTIONAL_MEMORY)
+>                         continue;
+>
+> +               if (efi_soft_reserve_enabled() &&
+> +                   (desc->attribute & EFI_MEMORY_SP))
+> +                       continue;
+> +
+>                 if (desc->num_pages < nr_pages)
+>                         continue;
+>
+> @@ -305,6 +314,10 @@ efi_status_t efi_low_alloc(efi_system_table_t *sys_table_arg,
+>                 if (desc->type != EFI_CONVENTIONAL_MEMORY)
+>                         continue;
+>
+> +               if (efi_soft_reserve_enabled() &&
+> +                   (desc->attribute & EFI_MEMORY_SP))
+> +                       continue;
+> +
+>                 if (desc->num_pages < nr_pages)
+>                         continue;
+>
+> @@ -489,6 +502,12 @@ efi_status_t efi_parse_options(char const *cmdline)
+>                         __novamap = 1;
+>                 }
+>
+> +               if (IS_ENABLED(CONFIG_EFI_SOFT_RESERVE) &&
+> +                   !strncmp(str, "nosoftreserve", 7)) {
+> +                       str += strlen("nosoftreserve");
+> +                       efi_nosoftreserve = 1;
+> +               }
+> +
+>                 /* Group words together, delimited by "," */
+>                 while (*str && *str != ' ' && *str != ',')
+>                         str++;
+> diff --git a/include/linux/efi.h b/include/linux/efi.h
+> index baa275c56401..959c9650018f 100644
+> --- a/include/linux/efi.h
+> +++ b/include/linux/efi.h
+> @@ -1202,6 +1202,7 @@ extern int __init efi_setup_pcdp_console(char *);
+>  #define EFI_DBG                        8       /* Print additional debug info at runtime */
+>  #define EFI_NX_PE_DATA         9       /* Can runtime data regions be mapped non-executable? */
+>  #define EFI_MEM_ATTR           10      /* Did firmware publish an EFI_MEMORY_ATTRIBUTES table? */
+> +#define EFI_MEM_NO_SOFT_RESERVE        11      /* Is the kernel configured to ignore soft reservations? */
+>
+>  #ifdef CONFIG_EFI
+>  /*
+> @@ -1212,6 +1213,8 @@ static inline bool efi_enabled(int feature)
+>         return test_bit(feature, &efi.flags) != 0;
+>  }
+>  extern void efi_reboot(enum reboot_mode reboot_mode, const char *__unused);
+> +
+> +bool __pure efi_soft_reserve_enabled(void);
+>  #else
+>  static inline bool efi_enabled(int feature)
+>  {
+> @@ -1225,6 +1228,11 @@ efi_capsule_pending(int *reset_type)
+>  {
+>         return false;
+>  }
+> +
+> +static inline bool efi_soft_reserve_enabled(void)
+> +{
+> +       return false;
+> +}
+>  #endif
+>
+>  extern int efi_status_to_err(efi_status_t status);
+>
