@@ -2,41 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B20BFD2543
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:01:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FC33D2572
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:02:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388949AbfJJI4s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:56:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53862 "EHLO mail.kernel.org"
+        id S2389267AbfJJJAP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 05:00:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387775AbfJJIrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:47:47 -0400
+        id S2388675AbfJJInJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:43:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2AB2C218AC;
-        Thu, 10 Oct 2019 08:47:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92F2021D7C;
+        Thu, 10 Oct 2019 08:43:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697266;
-        bh=g1EwKsoWRrIPN9pIi5JHek7BXpKp8hPNF+sPHViPCJc=;
+        s=default; t=1570696988;
+        bh=iUtZ+ozD5ageHYgBSvJsnHAVqbiyiKVeoNsJQ9ir0oE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yVFgVeqHqVSBHaMMMVcSgBK6NCukrRb9+DfGN6vD2PX09qP0weYwYmJ/PL2U4vNaw
-         y+b9Kv0D/+naohLSXzVUF4euTKge86RaeEbw5LQ47rs3yLo0qkmI6a0trI3Lsj2Odn
-         c3uHV/YJJiho52LzyjDEhvfLRA0tUTKkSOr5ffvc=
+        b=GHjenvkIcSgfls8aL92KP3wpasmAFTLsbN3LBSbMo6CCHzIFi0znWGn3vmTKiSnSq
+         Rt0Trgfe9TkP4nQt1fCFwPsykSyUHdkvWsw9gq86neBdqgEE+ZsbUshgPPP5gKVf2R
+         PmBx/FF2/qcc7F/syhoonD23f7+kuZ0kK33pgz+U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Michel=20D=C3=A4nzer?= <mdaenzer@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        Jan Kara <jack@suse.cz>, "Tobin C. Harding" <tobin@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Jens Axboe <axboe@kernel.dk>, Joe Perches <joe@perches.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Nitin Gote <nitin.r.gote@intel.com>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        Stephen Kitt <steve@sk2.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 077/114] drm/radeon: Bail earlier when radeon.cik_/si_support=0 is passed
-Date:   Thu, 10 Oct 2019 10:36:24 +0200
-Message-Id: <20191010083612.035029947@linuxfoundation.org>
+Subject: [PATCH 5.3 124/148] include/trace/events/writeback.h: fix -Wstringop-truncation warnings
+Date:   Thu, 10 Oct 2019 10:36:25 +0200
+Message-Id: <20191010083618.574830560@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
-References: <20191010083544.711104709@linuxfoundation.org>
+In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
+References: <20191010083609.660878383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,114 +56,189 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Qian Cai <cai@lca.pw>
 
-[ Upstream commit 9dbc88d013b79c62bd845cb9e7c0256e660967c5 ]
+[ Upstream commit d1a445d3b86c9341ce7a0954c23be0edb5c9bec5 ]
 
-Bail from the pci_driver probe function instead of from the drm_driver
-load function.
+There are many of those warnings.
 
-This avoid /dev/dri/card0 temporarily getting registered and then
-unregistered again, sending unwanted add / remove udev events to
-userspace.
+In file included from ./arch/powerpc/include/asm/paca.h:15,
+                 from ./arch/powerpc/include/asm/current.h:13,
+                 from ./include/linux/thread_info.h:21,
+                 from ./include/asm-generic/preempt.h:5,
+                 from ./arch/powerpc/include/generated/asm/preempt.h:1,
+                 from ./include/linux/preempt.h:78,
+                 from ./include/linux/spinlock.h:51,
+                 from fs/fs-writeback.c:19:
+In function 'strncpy',
+    inlined from 'perf_trace_writeback_page_template' at
+./include/trace/events/writeback.h:56:1:
+./include/linux/string.h:260:9: warning: '__builtin_strncpy' specified
+bound 32 equals destination size [-Wstringop-truncation]
+  return __builtin_strncpy(p, q, size);
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Specifically this avoids triggering the (userspace) bug fixed by this
-plymouth merge-request:
-https://gitlab.freedesktop.org/plymouth/plymouth/merge_requests/59
+Fix it by using the new strscpy_pad() which was introduced in "lib/string:
+Add strscpy_pad() function" and will always be NUL-terminated instead of
+strncpy().  Also, change strlcpy() to use strscpy_pad() in this file for
+consistency.
 
-Note that despite that being an userspace bug, not sending unnecessary
-udev events is a good idea in general.
-
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1490490
-Reviewed-by: Michel Dänzer <mdaenzer@redhat.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Link: http://lkml.kernel.org/r/1564075099-27750-1-git-send-email-cai@lca.pw
+Fixes: 455b2864686d ("writeback: Initial tracing support")
+Fixes: 028c2dd184c0 ("writeback: Add tracing to balance_dirty_pages")
+Fixes: e84d0a4f8e39 ("writeback: trace event writeback_queue_io")
+Fixes: b48c104d2211 ("writeback: trace event bdi_dirty_ratelimit")
+Fixes: cc1676d917f3 ("writeback: Move requeueing when I_SYNC set to writeback_sb_inodes()")
+Fixes: 9fb0a7da0c52 ("writeback: add more tracepoints")
+Signed-off-by: Qian Cai <cai@lca.pw>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Cc: Tobin C. Harding <tobin@kernel.org>
+Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Dave Chinner <dchinner@redhat.com>
+Cc: Fengguang Wu <fengguang.wu@intel.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Joe Perches <joe@perches.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Jann Horn <jannh@google.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Nitin Gote <nitin.r.gote@intel.com>
+Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Cc: Stephen Kitt <steve@sk2.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/radeon/radeon_drv.c | 31 +++++++++++++++++++++++++++++
- drivers/gpu/drm/radeon/radeon_kms.c | 25 -----------------------
- 2 files changed, 31 insertions(+), 25 deletions(-)
+ include/trace/events/writeback.h | 38 +++++++++++++++++---------------
+ 1 file changed, 20 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
-index 25b5407c74b5a..d83310751a8e4 100644
---- a/drivers/gpu/drm/radeon/radeon_drv.c
-+++ b/drivers/gpu/drm/radeon/radeon_drv.c
-@@ -340,8 +340,39 @@ static int radeon_kick_out_firmware_fb(struct pci_dev *pdev)
- static int radeon_pci_probe(struct pci_dev *pdev,
- 			    const struct pci_device_id *ent)
- {
-+	unsigned long flags = 0;
- 	int ret;
+diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
+index aa7f3aeac7408..79095434c1be3 100644
+--- a/include/trace/events/writeback.h
++++ b/include/trace/events/writeback.h
+@@ -66,8 +66,9 @@ DECLARE_EVENT_CLASS(writeback_page_template,
+ 	),
  
-+	if (!ent)
-+		return -ENODEV; /* Avoid NULL-ptr deref in drm_get_pci_dev */
-+
-+	flags = ent->driver_data;
-+
-+	if (!radeon_si_support) {
-+		switch (flags & RADEON_FAMILY_MASK) {
-+		case CHIP_TAHITI:
-+		case CHIP_PITCAIRN:
-+		case CHIP_VERDE:
-+		case CHIP_OLAND:
-+		case CHIP_HAINAN:
-+			dev_info(&pdev->dev,
-+				 "SI support disabled by module param\n");
-+			return -ENODEV;
-+		}
-+	}
-+	if (!radeon_cik_support) {
-+		switch (flags & RADEON_FAMILY_MASK) {
-+		case CHIP_KAVERI:
-+		case CHIP_BONAIRE:
-+		case CHIP_HAWAII:
-+		case CHIP_KABINI:
-+		case CHIP_MULLINS:
-+			dev_info(&pdev->dev,
-+				 "CIK support disabled by module param\n");
-+			return -ENODEV;
-+		}
-+	}
-+
- 	if (vga_switcheroo_client_probe_defer(pdev))
- 		return -EPROBE_DEFER;
+ 	TP_fast_assign(
+-		strncpy(__entry->name,
+-			mapping ? dev_name(inode_to_bdi(mapping->host)->dev) : "(unknown)", 32);
++		strscpy_pad(__entry->name,
++			    mapping ? dev_name(inode_to_bdi(mapping->host)->dev) : "(unknown)",
++			    32);
+ 		__entry->ino = mapping ? mapping->host->i_ino : 0;
+ 		__entry->index = page->index;
+ 	),
+@@ -110,8 +111,8 @@ DECLARE_EVENT_CLASS(writeback_dirty_inode_template,
+ 		struct backing_dev_info *bdi = inode_to_bdi(inode);
  
-diff --git a/drivers/gpu/drm/radeon/radeon_kms.c b/drivers/gpu/drm/radeon/radeon_kms.c
-index 6a8fb6fd183c3..3ff835767ac58 100644
---- a/drivers/gpu/drm/radeon/radeon_kms.c
-+++ b/drivers/gpu/drm/radeon/radeon_kms.c
-@@ -95,31 +95,6 @@ int radeon_driver_load_kms(struct drm_device *dev, unsigned long flags)
- 	struct radeon_device *rdev;
- 	int r, acpi_status;
+ 		/* may be called for files on pseudo FSes w/ unregistered bdi */
+-		strncpy(__entry->name,
+-			bdi->dev ? dev_name(bdi->dev) : "(unknown)", 32);
++		strscpy_pad(__entry->name,
++			    bdi->dev ? dev_name(bdi->dev) : "(unknown)", 32);
+ 		__entry->ino		= inode->i_ino;
+ 		__entry->state		= inode->i_state;
+ 		__entry->flags		= flags;
+@@ -190,8 +191,8 @@ DECLARE_EVENT_CLASS(writeback_write_inode_template,
+ 	),
  
--	if (!radeon_si_support) {
--		switch (flags & RADEON_FAMILY_MASK) {
--		case CHIP_TAHITI:
--		case CHIP_PITCAIRN:
--		case CHIP_VERDE:
--		case CHIP_OLAND:
--		case CHIP_HAINAN:
--			dev_info(dev->dev,
--				 "SI support disabled by module param\n");
--			return -ENODEV;
--		}
--	}
--	if (!radeon_cik_support) {
--		switch (flags & RADEON_FAMILY_MASK) {
--		case CHIP_KAVERI:
--		case CHIP_BONAIRE:
--		case CHIP_HAWAII:
--		case CHIP_KABINI:
--		case CHIP_MULLINS:
--			dev_info(dev->dev,
--				 "CIK support disabled by module param\n");
--			return -ENODEV;
--		}
--	}
--
- 	rdev = kzalloc(sizeof(struct radeon_device), GFP_KERNEL);
- 	if (rdev == NULL) {
- 		return -ENOMEM;
+ 	TP_fast_assign(
+-		strncpy(__entry->name,
+-			dev_name(inode_to_bdi(inode)->dev), 32);
++		strscpy_pad(__entry->name,
++			    dev_name(inode_to_bdi(inode)->dev), 32);
+ 		__entry->ino		= inode->i_ino;
+ 		__entry->sync_mode	= wbc->sync_mode;
+ 		__entry->cgroup_ino	= __trace_wbc_assign_cgroup(wbc);
+@@ -234,8 +235,9 @@ DECLARE_EVENT_CLASS(writeback_work_class,
+ 		__field(unsigned int, cgroup_ino)
+ 	),
+ 	TP_fast_assign(
+-		strncpy(__entry->name,
+-			wb->bdi->dev ? dev_name(wb->bdi->dev) : "(unknown)", 32);
++		strscpy_pad(__entry->name,
++			    wb->bdi->dev ? dev_name(wb->bdi->dev) :
++			    "(unknown)", 32);
+ 		__entry->nr_pages = work->nr_pages;
+ 		__entry->sb_dev = work->sb ? work->sb->s_dev : 0;
+ 		__entry->sync_mode = work->sync_mode;
+@@ -288,7 +290,7 @@ DECLARE_EVENT_CLASS(writeback_class,
+ 		__field(unsigned int, cgroup_ino)
+ 	),
+ 	TP_fast_assign(
+-		strncpy(__entry->name, dev_name(wb->bdi->dev), 32);
++		strscpy_pad(__entry->name, dev_name(wb->bdi->dev), 32);
+ 		__entry->cgroup_ino = __trace_wb_assign_cgroup(wb);
+ 	),
+ 	TP_printk("bdi %s: cgroup_ino=%u",
+@@ -310,7 +312,7 @@ TRACE_EVENT(writeback_bdi_register,
+ 		__array(char, name, 32)
+ 	),
+ 	TP_fast_assign(
+-		strncpy(__entry->name, dev_name(bdi->dev), 32);
++		strscpy_pad(__entry->name, dev_name(bdi->dev), 32);
+ 	),
+ 	TP_printk("bdi %s",
+ 		__entry->name
+@@ -335,7 +337,7 @@ DECLARE_EVENT_CLASS(wbc_class,
+ 	),
+ 
+ 	TP_fast_assign(
+-		strncpy(__entry->name, dev_name(bdi->dev), 32);
++		strscpy_pad(__entry->name, dev_name(bdi->dev), 32);
+ 		__entry->nr_to_write	= wbc->nr_to_write;
+ 		__entry->pages_skipped	= wbc->pages_skipped;
+ 		__entry->sync_mode	= wbc->sync_mode;
+@@ -386,7 +388,7 @@ TRACE_EVENT(writeback_queue_io,
+ 	),
+ 	TP_fast_assign(
+ 		unsigned long *older_than_this = work->older_than_this;
+-		strncpy(__entry->name, dev_name(wb->bdi->dev), 32);
++		strscpy_pad(__entry->name, dev_name(wb->bdi->dev), 32);
+ 		__entry->older	= older_than_this ?  *older_than_this : 0;
+ 		__entry->age	= older_than_this ?
+ 				  (jiffies - *older_than_this) * 1000 / HZ : -1;
+@@ -472,7 +474,7 @@ TRACE_EVENT(bdi_dirty_ratelimit,
+ 	),
+ 
+ 	TP_fast_assign(
+-		strlcpy(__entry->bdi, dev_name(wb->bdi->dev), 32);
++		strscpy_pad(__entry->bdi, dev_name(wb->bdi->dev), 32);
+ 		__entry->write_bw	= KBps(wb->write_bandwidth);
+ 		__entry->avg_write_bw	= KBps(wb->avg_write_bandwidth);
+ 		__entry->dirty_rate	= KBps(dirty_rate);
+@@ -537,7 +539,7 @@ TRACE_EVENT(balance_dirty_pages,
+ 
+ 	TP_fast_assign(
+ 		unsigned long freerun = (thresh + bg_thresh) / 2;
+-		strlcpy(__entry->bdi, dev_name(wb->bdi->dev), 32);
++		strscpy_pad(__entry->bdi, dev_name(wb->bdi->dev), 32);
+ 
+ 		__entry->limit		= global_wb_domain.dirty_limit;
+ 		__entry->setpoint	= (global_wb_domain.dirty_limit +
+@@ -597,8 +599,8 @@ TRACE_EVENT(writeback_sb_inodes_requeue,
+ 	),
+ 
+ 	TP_fast_assign(
+-		strncpy(__entry->name,
+-		        dev_name(inode_to_bdi(inode)->dev), 32);
++		strscpy_pad(__entry->name,
++			    dev_name(inode_to_bdi(inode)->dev), 32);
+ 		__entry->ino		= inode->i_ino;
+ 		__entry->state		= inode->i_state;
+ 		__entry->dirtied_when	= inode->dirtied_when;
+@@ -671,8 +673,8 @@ DECLARE_EVENT_CLASS(writeback_single_inode_template,
+ 	),
+ 
+ 	TP_fast_assign(
+-		strncpy(__entry->name,
+-			dev_name(inode_to_bdi(inode)->dev), 32);
++		strscpy_pad(__entry->name,
++			    dev_name(inode_to_bdi(inode)->dev), 32);
+ 		__entry->ino		= inode->i_ino;
+ 		__entry->state		= inode->i_state;
+ 		__entry->dirtied_when	= inode->dirtied_when;
 -- 
 2.20.1
 
