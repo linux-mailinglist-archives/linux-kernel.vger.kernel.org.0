@@ -2,90 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C170D329A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:43:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF2EBD32AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:47:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727074AbfJJUmr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 16:42:47 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:54777 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726423AbfJJUmq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 16:42:46 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46q31b2707z9s7T;
-        Fri, 11 Oct 2019 07:42:42 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1570740163;
-        bh=qtc1L2zwADd9HeaO41rnLWdsx91qAZrQvTXFUpW/6xA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=J9fW37+bGgkr39aHkWqlrS4qo8fh52uQbHxsfeP9DGcq81a42ccQ6OXJpcLqQFmIP
-         PYuDOj6iVns8dg/3DzPi+BFtdFf4ZInirllYrhOgc9fxAhsU9OFpiyK+h73QvbwAhB
-         vV01OdfWM3ig1PHXsmtpqFb5Apr9sPBeoR+dhIJkQidWvuiOmVTV/HoecY9hmwiSyJ
-         4oS65i7ugI/Vxw9dZumHCTL876wTxcmYEH9XRWb1bAyGKJn71pbl2okD6dSQ3kbZls
-         8kr5+Tlhwz28E8/FAqPDYKVSKos0RDRDrOI9rNaZIkQKH7CpiWDxZ6eLHG5ERJITZm
-         FNsBYq2xIWfSg==
-Date:   Fri, 11 Oct 2019 07:42:42 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg KH <greg@kroah.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lorenzo Bianconi <lorenzo@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: linux-next: Fixes tag needs some work in the staging.current tree
-Message-ID: <20191011074242.3d78c336@canb.auug.org.au>
+        id S1727280AbfJJUnq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 16:43:46 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:39610 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726533AbfJJUnp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 16:43:45 -0400
+Received: by mail-qt1-f196.google.com with SMTP id n7so10685825qtb.6
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 13:43:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=Qnm/xOF1axoKltic9wOhlDvxehnhsqO9AK9SKyqjBMQ=;
+        b=GtW/+rLPRQ8fSLH9IHSYXTdJDHRrh5NBGuGJCy8vNyG0Mm89yc5AVLhmyStQ64cL/a
+         HnbJh2FlMxKowpSAcTU1qA2cV8F4fax78oYTI9G7GzFHIFJIjjmCiyF45F069J8xtBsq
+         FTzcvoIoyKK8FrDmi1rF+IXznTcxHJKy2/Q9TJNTuHivI/SDXajuoRwTtaJzdIzFvaG4
+         fgKB/n9Uxu7Jn2HtGg6CpYx+2exCRXupYtm5QePgFMVgAPnmShQIy7ow0axRMe2CloPK
+         OYUKC8qU82as3jECbuuKO8JzSDFSZ0wQalyI3uEmGxxUx4WX2LT6IbP5c4KM4r+7IqtP
+         xrlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=Qnm/xOF1axoKltic9wOhlDvxehnhsqO9AK9SKyqjBMQ=;
+        b=djthjg9pejv81FaeIpDlulex+2xJAxJz1pU0QDvPggux1qle9nThgnIph0V3Mvls2P
+         eD3Xt5cWr57J8eCSfdwFsGJFz+j5ZkPGcc5D4GfjZtJyqiBlr2CQ3nIW4lV0SgHBtCK5
+         hFSxkQAddXW2dzVl9/BxDjQIsDEHrN3iPp4z3CjiOaDDE9sFjpGD5TnIsu6ugF1rwRRC
+         oveEhveb9/UbRUzvpCsAZwkFRm94N27CHhRyp3T8PTgkLg29m5DxfYb67JeZ/7phTkQm
+         0emQR+1CaJCt4gqlDGwqldxidpPNjFWVJF9wIiJmbgDgQWdhwKJQ2JLnmqeTNlWQXXjM
+         8pPw==
+X-Gm-Message-State: APjAAAXAZP2zSbBy54xmp1kT1I3GJy+bAi9fversdQoDMzAK7GnUklTD
+        qEGdYwSnkOM0FJBzITuzhNnN9g==
+X-Google-Smtp-Source: APXvYqyZrdHLApmMF/CBgXhn6HNdqvblVZ4R6rAbfwsXZm+T2cz+AV0njLlD4/0JZCQok6LgXNieSg==
+X-Received: by 2002:ac8:4311:: with SMTP id z17mr12075001qtm.213.1570740224747;
+        Thu, 10 Oct 2019 13:43:44 -0700 (PDT)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id p22sm3133129qkk.92.2019.10.10.13.43.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2019 13:43:44 -0700 (PDT)
+Date:   Thu, 10 Oct 2019 13:43:26 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Michael Kelley <mikelley@microsoft.com>, davem@davemloft.net,
+        Himadri Pandya <himadrispandya@gmail.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "himadri18.07" <himadri18.07@gmail.com>
+Subject: Re: [PATCH] hv_sock: use HV_HYP_PAGE_SIZE instead of PAGE_SIZE_4K
+Message-ID: <20191010134326.608d363d@cakuba.netronome.com>
+In-Reply-To: <20191010170606.GA1396@sasha-vm>
+References: <20190725051125.10605-1-himadri18.07@gmail.com>
+        <MWHPR21MB078479F82BBA6D3E6527ECECD7DF0@MWHPR21MB0784.namprd21.prod.outlook.com>
+        <20191004154817.GL17454@sasha-vm>
+        <20191010170606.GA1396@sasha-vm>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/9Xgc_Yg8o_=SwmYIH8dZrkT";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/9Xgc_Yg8o_=SwmYIH8dZrkT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, 10 Oct 2019 13:06:06 -0400, Sasha Levin wrote:
+> On Fri, Oct 04, 2019 at 11:48:17AM -0400, Sasha Levin wrote:
+> >On Wed, Jul 31, 2019 at 01:02:03AM +0000, Michael Kelley wrote:  
+> >>From: Himadri Pandya <himadrispandya@gmail.com> Sent: Wednesday, July 24, 2019 10:11 PM  
+> >>>
+> >>>Older windows hosts require the hv_sock ring buffer to be defined
+> >>>using 4K pages. This was achieved by using the symbol PAGE_SIZE_4K
+> >>>defined specifically for this purpose. But now we have a new symbol
+> >>>HV_HYP_PAGE_SIZE defined in hyperv-tlfs which can be used for this.
+> >>>
+> >>>This patch removes the definition of symbol PAGE_SIZE_4K and replaces
+> >>>its usage with the symbol HV_HYP_PAGE_SIZE. This patch also aligns
+> >>>sndbuf and rcvbuf to hyper-v specific page size using HV_HYP_PAGE_SIZE
+> >>>instead of the guest page size(PAGE_SIZE) as hyper-v expects the page
+> >>>size to be 4K and it might not be the case on ARM64 architecture.
+> >>>
+> >>>Signed-off-by: Himadri Pandya <himadri18.07@gmail.com>
+> >>>---
+> >>> net/vmw_vsock/hyperv_transport.c | 21 +++++++++++----------
+> >>> 1 file changed, 11 insertions(+), 10 deletions(-)
+> >>>
+> >>>diff --git a/net/vmw_vsock/hyperv_transport.c b/net/vmw_vsock/hyperv_transport.c
+> >>>index f2084e3f7aa4..ecb5d72d8010 100644
+> >>>--- a/net/vmw_vsock/hyperv_transport.c
+> >>>+++ b/net/vmw_vsock/hyperv_transport.c
+> >>>@@ -13,15 +13,16 @@
+> >>> #include <linux/hyperv.h>
+> >>> #include <net/sock.h>
+> >>> #include <net/af_vsock.h>
+> >>>+#include <asm/hyperv-tlfs.h>
+> >>>  
+> >>
+> >>Reviewed-by:  Michael Kelley <mikelley@microsoft.com>
+> >>
+> >>This patch depends on a prerequisite patch in
+> >>
+> >>  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/hyperv
+> >>
+> >>that defines HV_HYP_PAGE_SIZE.  
+> >
+> >David, the above prerequisite patch is now upstream, so this patch
+> >should be good to go. Would you take it through the net tree or should I
+> >do it via the hyperv tree?  
+> 
+> Ping?
 
-Hi all,
-
-In commit
-
-  85ae3aeedecc ("iio: imu: st_lsm6dsx: forbid 0 sensor sensitivity")
-
-Fixes tag
-
-  Fixes: c8d4066c7246 ("iio: imu: st_lsm6dsx: remove invalid gain value for=
- LSM9DS1")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Did you mean
-
-Fixes: 0f7e17286b45 ("iio: imu: st_lsm6dsx: remove invalid gain value for L=
-SM9DS1")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/9Xgc_Yg8o_=SwmYIH8dZrkT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl2fl8IACgkQAVBC80lX
-0GzPSgf/Y835Kb3HaLqwCX3Inv5fcce69drQlBXOZjvdEmsqgIvVDHtpSYbYnwHW
-I+/eT3Oe4IxvKA1hm+6Lib7p0vQJ446hnP7RVZxdfGg1UwVjSKFH9AEyQgsk9vEc
-laLz5/YzeIdbpUjm6yTv268bvc8+GivTZ6dI393+v3z8anRD1Qkm81Jox0m/I1oc
-AjzMIP/2L97nF/RK9fRoDSDoyKl1b2MwXGvQfTV11ICJLJrUfZoyCuSuVaJ0+muE
-vj8ZO2FvKdUi0xlCGVCAjfG9BRc8QAfg8JiVJDWDr8OKz9OUONEJEqeMwR8ZHWG6
-r/5/sM+HeUTlLJP9UqNJ84T9JRhwQA==
-=wB8a
------END PGP SIGNATURE-----
-
---Sig_/9Xgc_Yg8o_=SwmYIH8dZrkT--
+Is this a fix? It's slightly unclear from the description of the patch.
+I think the best course of action would be reposting it again, with
+either [PATCH net] in the subject and a Fixes tag if it's a fix, or
+[PATCH net-next] otherwise.
