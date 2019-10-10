@@ -2,90 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EC9FD2B16
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 15:19:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39295D2B26
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 15:21:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388370AbfJJNTF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 09:19:05 -0400
-Received: from mail-wr1-f51.google.com ([209.85.221.51]:40589 "EHLO
-        mail-wr1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388329AbfJJNTC (ORCPT
+        id S2388101AbfJJNVe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 09:21:34 -0400
+Received: from laurent.telenet-ops.be ([195.130.137.89]:48816 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387746AbfJJNVe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 09:19:02 -0400
-Received: by mail-wr1-f51.google.com with SMTP id h4so7880217wrv.7;
-        Thu, 10 Oct 2019 06:19:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cU2Z1he193fGQfwYVGWXirAJ34kU3C29gXJ8rRkJamw=;
-        b=vPGKjlfQDkdDEt4C1sBLoyEU4P8EUM8qOBnrSZsBimJeNmaKLK/JhWxhEWBJujWcBk
-         TIoicQuLtu0gL3aHzwrxyTGZrteoEn8ke3zp/bC2itrXLmOk3/ct7dPmd/X8QQqabT1u
-         6upmvGlnnYWezEJZeFz9dFBleVuhZZseRoLlN5njRp5vLP30W8yur6mm8i2T79zyyD1J
-         5+4/CtDyrK0eOI5L+sEp6Gm75DOHhN0Z3c9O9P1cNJl9UaTz2sJV/wTEIQWTzvhD7fPz
-         UZd1h1oporKC8j+1LcFkhkORaf06CCY3JDP/deap43PBVdW5wiCghbMfg3qcfiPVDxwm
-         YOaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cU2Z1he193fGQfwYVGWXirAJ34kU3C29gXJ8rRkJamw=;
-        b=rEGlQJgrq2LmpANuG9fOhrvRSdPL9PKlVNSqvoe3RvXCdjB2hyI4kKI8Uu1+lfM8Mz
-         m3RgT4Z04G6IE9YMvrIiLcDYugf/JkQC3cUZSLTQeOCpDSwq5ggrtDUitSVe1Ib+j0Fg
-         HchJ3+44+Ew0qtzgJaX4Tu7wz17FmjwJCTDUowJvmxwW7UuGdk+DKbamE4NPfsH6y+qf
-         aSrLljbEgKqNlx4gifkur4q0UjUZv/mfVKXElWOq475hhXM8XW8IpMI+N1jFt56ewXU+
-         01/crhZUllP/WzBSU/UqQdSOTDVZDTiL4yascHcAPOGDYdHmFfGLDGsKptYdc0DuIi1o
-         oIgA==
-X-Gm-Message-State: APjAAAWBojZL/c9kNc8zmzdq8yE+YBIbembMjzZRssdtRHTv19RVdYkM
-        0ECVdghcyuEWyyLYjJqi5HWF1sFr
-X-Google-Smtp-Source: APXvYqyY34PXFOxPL+JOw98k0b9U39Y6bs5YHdz8yme77Kl47Ru/r1ga+iLNYRV2qXw3PlaP7QHB9Q==
-X-Received: by 2002:adf:9cca:: with SMTP id h10mr8249674wre.339.1570713540365;
-        Thu, 10 Oct 2019 06:19:00 -0700 (PDT)
-Received: from [192.168.2.202] (pD9EA3280.dip0.t-ipconnect.de. [217.234.50.128])
-        by smtp.gmail.com with ESMTPSA id r65sm7208546wmr.9.2019.10.10.06.18.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2019 06:18:59 -0700 (PDT)
-Subject: Re: [PATCH v2] serdev: Add ACPI devices by ResourceSource field
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Johan Hovold <johan@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-serial@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190924162226.1493407-1-luzmaximilian@gmail.com>
- <03d11e04-aaad-4851-c7d6-feaf62793670@redhat.com>
-From:   Maximilian Luz <luzmaximilian@gmail.com>
-Message-ID: <84883ba0-ec01-9114-5c4a-e468cf85dfec@gmail.com>
-Date:   Thu, 10 Oct 2019 15:18:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
-MIME-Version: 1.0
-In-Reply-To: <03d11e04-aaad-4851-c7d6-feaf62793670@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 10 Oct 2019 09:21:34 -0400
+Received: from ramsan ([84.194.98.4])
+        by laurent.telenet-ops.be with bizsmtp
+        id BpMW2100205gfCL01pMWmZ; Thu, 10 Oct 2019 15:21:32 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iIYNl-0008Qb-Tp; Thu, 10 Oct 2019 15:21:29 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iIXai-0003zW-86; Thu, 10 Oct 2019 14:30:48 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kevin Hilman <khilman@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] MAINTAINERS: Remove Simon as Renesas SoC Co-Maintainer
+Date:   Thu, 10 Oct 2019 14:30:46 +0200
+Message-Id: <20191010123046.15291-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+At the end of the v5.3 upstream kernel development cycle, Simon stepped
+down from his role as Renesas SoC maintainer.
 
-On 10/10/19 12:22 PM, Hans de Goede wrote:
-> This patch looks good to me and it works on my test hw with serial
-> attached BT HCI:
-> 
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-> Tested-by: Hans de Goede <hdegoede@redhat.com>
-> 
-> Regards,
-> 
-> Hans
+Remove his maintainership, git repository, and branch from the
+MAINTAINERS file, and add an entry to the CREDITS file to honor his
+work.
 
-Awesome, thank you!
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ CREDITS     | 4 ++++
+ MAINTAINERS | 4 ----
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-Regards,
+diff --git a/CREDITS b/CREDITS
+index 8b67a85844b55d88..031605d46b4d5cc1 100644
+--- a/CREDITS
++++ b/CREDITS
+@@ -1637,6 +1637,10 @@ S: Panoramastrasse 18
+ S: D-69126 Heidelberg
+ S: Germany
+ 
++N: Simon Horman
++M: horms@verge.net.au
++D: Renesas ARM/ARM64 SoC maintainer
++
+ N: Christopher Horn
+ E: chorn@warwick.net
+ D: Miscellaneous sysctl hacks
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 94ce075907a0b9aa..d44d6732510df746 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2165,12 +2165,10 @@ F:	arch/arm64/boot/dts/realtek/
+ F:	Documentation/devicetree/bindings/arm/realtek.yaml
+ 
+ ARM/RENESAS ARM64 ARCHITECTURE
+-M:	Simon Horman <horms@verge.net.au>
+ M:	Geert Uytterhoeven <geert+renesas@glider.be>
+ M:	Magnus Damm <magnus.damm@gmail.com>
+ L:	linux-renesas-soc@vger.kernel.org
+ Q:	http://patchwork.kernel.org/project/linux-renesas-soc/list/
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git next
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
+ S:	Supported
+ F:	arch/arm64/boot/dts/renesas/
+@@ -2282,12 +2280,10 @@ S:	Maintained
+ F:	drivers/media/platform/s5p-mfc/
+ 
+ ARM/SHMOBILE ARM ARCHITECTURE
+-M:	Simon Horman <horms@verge.net.au>
+ M:	Geert Uytterhoeven <geert+renesas@glider.be>
+ M:	Magnus Damm <magnus.damm@gmail.com>
+ L:	linux-renesas-soc@vger.kernel.org
+ Q:	http://patchwork.kernel.org/project/linux-renesas-soc/list/
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git next
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
+ S:	Supported
+ F:	arch/arm/boot/dts/emev2*
+-- 
+2.17.1
 
-Maximilian
