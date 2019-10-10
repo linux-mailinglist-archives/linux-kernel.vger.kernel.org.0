@@ -2,128 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB8C4D349D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 01:50:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B69A8D34A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 01:52:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726801AbfJJXuc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 19:50:32 -0400
-Received: from smtprelay0091.hostedemail.com ([216.40.44.91]:48063 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725845AbfJJXub (ORCPT
+        id S1727418AbfJJXwX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 19:52:23 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43427 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725845AbfJJXwX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 19:50:31 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 4DA0E181D3377;
-        Thu, 10 Oct 2019 23:50:30 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 30,2,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:968:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2693:2828:2898:3138:3139:3140:3141:3142:3353:3622:3653:3865:3866:3868:3871:4321:4605:5007:6117:7576:7875:9391:10004:10400:11026:11232:11233:11473:11658:11914:12043:12296:12297:12438:12555:12740:12760:12895:13439:14096:14097:14181:14659:14721:21080:21451:21505:21627:21740:21972:30054:30064:30070:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
-X-HE-Tag: dock63_3e5b57d448e10
-X-Filterd-Recvd-Size: 3509
-Received: from XPS-9350.home (unknown [47.151.152.152])
-        (Authenticated sender: joe@perches.com)
-        by omf09.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 10 Oct 2019 23:50:28 +0000 (UTC)
-Message-ID: <2231d5f0a82f880e6706e2d0f070328a029c9b21.camel@perches.com>
-Subject: Re: [PATCH v2 3/4] treewide: Use sizeof_member() macro
-From:   Joe Perches <joe@perches.com>
-To:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
-Cc:     Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        netdev@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Date:   Thu, 10 Oct 2019 16:50:27 -0700
-In-Reply-To: <20191010232345.26594-4-keescook@chromium.org>
-References: <20191010232345.26594-1-keescook@chromium.org>
-         <20191010232345.26594-4-keescook@chromium.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
+        Thu, 10 Oct 2019 19:52:23 -0400
+Received: by mail-pf1-f194.google.com with SMTP id a2so4915568pfo.10
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 16:52:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=cCuaMw8m9UN/5q2abRR9qC4VK+02/Hh9rek8kBa5scw=;
+        b=LAgwFwzKergbnZXxEXYPb1hXuvSekkTrC7KSzmPpq8N7Tlm/RwZaow6B1x/INdMzEb
+         C5hY+EqJPnF+5j4jsbSW1GWM9YdNluPvijodi0lOH5sqI+AWQQx11PduIVqWBJSjL2/o
+         beCGM9mc9uU+o3G2HPcp3dtBZUP9hu7IcFIl5SovfeVSPGnabvT1iXqbi/vFEDIwFME1
+         Vt01jRmATApNrsO2Q4d46DUnaDLJELIkbzZGDKs6AA+FZjbNTt6AB5RfonnH0H5C24+c
+         tsG93YSJfM/GsTQw5Li0P118Ia0EHr9cxWw+kchqsVT99CnLtJflhFFUvY+66wAYvl8i
+         1SQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cCuaMw8m9UN/5q2abRR9qC4VK+02/Hh9rek8kBa5scw=;
+        b=Kumh7odagDkK/zliA0ehx9aRK+DiNzkvhuLG8eTmseOz+Np6Nx5zcOFECYw6JPK+Fo
+         2Z9INy2Mcot6s8ABjdMmIvnZDr5OX+4VUXLYSSumUYQoDbkefAOJtsbvWWd770MuWggN
+         FBCpNEaxZj/j5Cp32n8TDc1NqU9CC9Px5uZznirLBqo0arumrkBfMAhmbHrILPR7I6Jy
+         +ozMVKw8ZH+CyAALRwA73o9QQsoXOOeunzASpgiZtmqBcMQFCNyf+Rvgr6/8APt0z5Z6
+         aRSvt8U1MYsiu7MhSlTO1p4KlQCdmQjxwRjrl+UyLHy4wMYhDzvUoNNFGoQC3MAfRABt
+         TrbA==
+X-Gm-Message-State: APjAAAWPyF68cgFWxW2G8Bob4d7m2gmuDxn6pCgEUQenHJoOxt5awQVy
+        5Qv9Ty5dvHmTVTWBPmTJQk8Yxw==
+X-Google-Smtp-Source: APXvYqwD95JGqzibrj0+hiJ53FXfYwlzs+Nax94WXn3QiMp2CttxGXrUPGbM/+RXAYcNMz6EYxabWQ==
+X-Received: by 2002:a17:90a:b902:: with SMTP id p2mr13370504pjr.62.1570751542284;
+        Thu, 10 Oct 2019 16:52:22 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.79])
+        by smtp.gmail.com with ESMTPSA id t68sm6043305pgt.61.2019.10.10.16.52.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 10 Oct 2019 16:52:21 -0700 (PDT)
+Subject: Re: [PATCH] block: account statistics for passthrough requests
+To:     Logan Gunthorpe <logang@deltatee.com>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>
+References: <20191010233626.15998-1-logang@deltatee.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <303a3cd8-e95f-651d-83c2-d283a89a8208@kernel.dk>
+Date:   Thu, 10 Oct 2019 17:52:18 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
+In-Reply-To: <20191010233626.15998-1-logang@deltatee.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-10-10 at 16:23 -0700, Kees Cook wrote:
-> From: Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>
+On 10/10/19 5:36 PM, Logan Gunthorpe wrote:
+> Presently, passthrough requests are not accounted for because
+> blk_do_io_stat() expressly rejects them. Based on some digging
+> in the history, this doesn't seem like a concious decision but
+> one that evolved from the change from blk_fs_request() to
+> blk_rq_is_passthrough().
 > 
-> Replace all the occurrences of FIELD_SIZEOF() and sizeof_field() with
-> sizeof_member() except at places where these are defined. Later patches
-> will remove the unused definitions.
-> 
-> This patch is generated using following script:
-> 
-> EXCLUDE_FILES="include/linux/stddef.h|include/linux/kernel.h"
-> 
-> git grep -l -e "\bFIELD_SIZEOF\b" -e "\bsizeof_field\b" | while read file;
-> do
-> 
-> 	if [[ "$file" =~ $EXCLUDE_FILES ]]; then
-> 		continue
-> 	fi
-> 	sed -i  -e 's/\bFIELD_SIZEOF\b/sizeof_member/g' \
-> 		-e 's/\bsizeof_field\b/sizeof_member/g' \
-> 		$file;
-> done
+> To support this, call blk_account_io_start() in blk_execute_rq_nowait()
+> and remove the passthrough check in blk_do_io_stat().
 
-While the sed works, a cocci script would perhaps
-be better as multi line argument realignment would
-also occur.
+Looks good to me, applied.
 
-$ cat sizeof_member.cocci
-@@
-@@
-
--	FIELD_SIZEOF
-+	sizeof_member
-
-@@
-@@
-
--	sizeof_field
-+	sizeof_member
-$
-
-For instance, this sed produces:
-
-diff --git a/crypto/adiantum.c b/crypto/adiantum.c
-@@ -435,10 +435,10 @@ static int adiantum_init_tfm(struct crypto_skcipher *tfm)
- 
- 	BUILD_BUG_ON(offsetofend(struct adiantum_request_ctx, u) !=
- 		     sizeof(struct adiantum_request_ctx));
--	subreq_size = max(FIELD_SIZEOF(struct adiantum_request_ctx,
-+	subreq_size = max(sizeof_member(struct adiantum_request_ctx,
- 				       u.hash_desc) +
- 			  crypto_shash_descsize(hash),
--			  FIELD_SIZEOF(struct adiantum_request_ctx,
-+			  sizeof_member(struct adiantum_request_ctx,
- 				       u.streamcipher_req) +
- 			  crypto_skcipher_reqsize(streamcipher));
- 
-
-where the cocci script produces:
-
---- crypto/adiantum.c
-+++ /tmp/cocci-output-22881-d8186c-adiantum.c
-@@ -435,11 +435,11 @@ static int adiantum_init_tfm(struct cryp
- 
- 	BUILD_BUG_ON(offsetofend(struct adiantum_request_ctx, u) !=
- 		     sizeof(struct adiantum_request_ctx));
--	subreq_size = max(FIELD_SIZEOF(struct adiantum_request_ctx,
--				       u.hash_desc) +
-+	subreq_size = max(sizeof_member(struct adiantum_request_ctx,
-+					u.hash_desc) +
- 			  crypto_shash_descsize(hash),
--			  FIELD_SIZEOF(struct adiantum_request_ctx,
--				       u.streamcipher_req) +
-+			  sizeof_member(struct adiantum_request_ctx,
-+					u.streamcipher_req) +
- 			  crypto_skcipher_reqsize(streamcipher));
- 
- 	crypto_skcipher_set_reqsize(tfm,
-
+-- 
+Jens Axboe
 
