@@ -2,102 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2885BD1FD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 06:56:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46B89D1FE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 07:07:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727643AbfJJE4f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 00:56:35 -0400
-Received: from mx1.ucr.edu ([138.23.248.2]:27053 "EHLO mx1.ucr.edu"
+        id S1731917AbfJJFDN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 01:03:13 -0400
+Received: from mx6.ucr.edu ([138.23.62.71]:4896 "EHLO mx6.ucr.edu"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725822AbfJJE4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 00:56:34 -0400
+        id S1727856AbfJJFDM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 01:03:12 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1570683395; x=1602219395;
+  t=1570683793; x=1602219793;
   h=mime-version:from:date:message-id:subject:to;
-  bh=l8fka7UYOSDuLxUdqgi3tx7DvHNj0L8HgAjIPCh+cSg=;
-  b=tkjd0RcGZuHPYaNLbkDNXv5uyop0AZvc4JQX6NUuM/5JUR0p12IjM90I
-   HFrCxXKuDCEcpZU8j8YYv3yt1I7s1IIez/e7W8Mv/IY5mbf6nZh06US3c
-   MO5pfFlNCCgHaxiOlbW2Q/tLmGJCQXt8tQ1VkAYdltEhlJpVr9rNwsbvI
-   Bfeqjf1s34ZSp5mwaRkieUJKJpaoL6RA+vfcY9+hqMrpsmApIfhNVonst
-   TSYoGXyYXkOCNwDnLknVF9shs7f4765Crtr3SCMUETEvdWEi9Iwp73RFl
-   q8dlMYzc1tXuZiD6nE56+aFMF3BIhaZH5iIW+BVOKWNq0Ap00V46yi+ey
-   A==;
-IronPort-SDR: s/qN1uASMRCZWp4JYwc6ThIpqYnJGheojd4O33+jOPR7RfmpoukxfSBrIQOqTLEsQ2upLIOoND
- 7qsvUniZDOGp1+GgaGM1RG27a0MhpYHdCeysze96F37+JRUWfBJKt8bvxSTagvW6XsExV7qyCV
- HegLhvPne8QGtyXk9YTsurN79ebqkGW9YrE/3uIHGzigsc79z8VerswHUFRgTOJWK+/L1UT4ko
- FfPmdYQeqTZpE5LRecmlb50wGfm9SQZuupzlLd0cKw0U3VMkuJgA+nxDuym0H8HonHP2n9g+Pf
- 4bs=
-IronPort-PHdr: =?us-ascii?q?9a23=3AEnSidBMe21SPoefMuFwl6mtUPXoX/o7sNwtQ0K?=
- =?us-ascii?q?IMzox0I/X7rarrMEGX3/hxlliBBdydt6sfzbSM+PG4EUU7or+5+EgYd5JNUx?=
- =?us-ascii?q?JXwe43pCcHRPC/NEvgMfTxZDY7FskRHHVs/nW8LFQHUJ2mPw6arXK99yMdFQ?=
- =?us-ascii?q?viPgRpOOv1BpTSj8Oq3Oyu5pHfeQpFiCezbL9oLRi6swrdu80KjYB/Nqs/1x?=
- =?us-ascii?q?zFr2dSde9L321oP1WTnxj95se04pFu9jlbtuwi+cBdT6j0Zrw0QrNEAjsoNW?=
- =?us-ascii?q?A1/9DrugLYTQST/HscU34ZnQRODgPY8Rz1RJbxsi/9tupgxCmXOND9QL4oVT?=
- =?us-ascii?q?i+6apgVQTlgzkbOTEn7G7Xi9RwjKNFrxKnuxx/2JPfbIWMOPZjYq/RYdYWSG?=
- =?us-ascii?q?xcVchTSiNBGJuxYIQPAeQPPuhWspfzqEcVoBuiGQWhHv/jxiNUinL026Axzu?=
- =?us-ascii?q?QvERvB3AwlB98BsnXUrdT1NKcPVuC+0arHzTXZYPNXxDzw74jJcxEhof6WXL?=
- =?us-ascii?q?J8bdbdxEc0GgPYklqQs5bpMC2I2eQQqmWW6fdrW+G3i2M/tQ19vjyiyt0vh4?=
- =?us-ascii?q?TJnI4Z11HJ+CdjzIs3OdG1TlNwb8S+H5tKrS6aMpN7QsYlQ251pik30qYGuZ?=
- =?us-ascii?q?unfCgSz5Qn2gLfZ+SHc4eW5hLjU/6cITJii3JkfLKznhKy8Ua9xuHlWMm50k?=
- =?us-ascii?q?pGojBKktnLsXAN2BjT5dadRvRh+Ueh3C6D1wHV6u5aPUA5jbTXJ4Ilz7IqlZ?=
- =?us-ascii?q?cesV7PEjL3lUj0lqObdFko9vCt6+v9Y7XmopGcN5VzigH7Kqkvms2+AeQiPQ?=
- =?us-ascii?q?gPQ2SX5eqx2ab+/ULlWrVGlOM5nbTEsJzCP8QUura5AxNJ0oYk8xu/Czam0N?=
- =?us-ascii?q?IFnXgINV5FewyIj5LvO17QJPD1Fum/g1uynzdx3fzGPaPuAo/LLnfdlLftZ7?=
- =?us-ascii?q?F961RTyFl78dcKxZVUA7cHLem7ZULwstHCRks5Ogqyzv3PA9BlxogeViSIGK?=
- =?us-ascii?q?DPdOv3sFSI7+ZnA+6HZ4hd7DP9LPMm4NbtgGU/lFtberOmi99fVnSxEvVjIl?=
- =?us-ascii?q?/RTXPyk9sGDy9eoAY3Uv3mj0PEXTNNT3m3VqM4oDo8DdTiRYzMXIewmKepwi?=
- =?us-ascii?q?i2BNtVa3pAB1TKFm3nM82AWvEReGeXJ+dijDUPVv6mUYBlnRWvshLqjrlqNO?=
- =?us-ascii?q?zZ/gUGup/5ktt4/evekVc17zMwR/ad0nCQSSlNn2oOD2sk3KFuvEpk4lyYl7?=
- =?us-ascii?q?VzmbpVGcEFo7tiUgo8Oo/Bh9d9Dd+6DgnaedGGYF29BMitG3c8Qs9nkPEUZE?=
- =?us-ascii?q?MoKtSwjg3ElxiqCr5dw62ZBJU1qvqH92X6PYBwx2uQh/pptEUvXsYabT7uva?=
- =?us-ascii?q?V47QWGQteRy0g=3D?=
+  bh=JCsL3WIN73xzwLhXOrKo3QlppAA/heL7UqOSuoxaqtM=;
+  b=JOv7jbmPKDdgM50iVtT6t6wnGGU4HabVfP+AG9D3SE/kPSHerbccAiu4
+   f2IrwexOyvbR9Hp6HcKzsgmg57wq8KUEOe7eO07jIdvus06SGuMbWYbVz
+   ArVkM3gq9fhW0mztul1alh1Ihbw4d6C1RrFCcRoav8Zl/lvG6dVeyIvyt
+   GohcE9Gpnrd+7/BWmB/tlD8WN7JnlGGwKYdrMvAlug2uz9zQL1gfucF3/
+   MsfN5Z/YK3BcGM9bvurWkQsTqyzCDDqRDH2BJoQFmD2KoQMqreAwr+PJk
+   OAByZwSGJpFVig949/LDHq0BZebtBN5OWcm8KdwdzlGpPj+eDKo71/vXg
+   g==;
+IronPort-SDR: tvyOjakpVFiZiDacPjztNdydUk+608RGytbBi0LM88Xg5GN0rWzJtn4mg6FgfC3JzdcnUu/GUW
+ J4M9WG4K3RjoOlyenuAdkn+ZpJgodec398GJOjgPQw76SkfoAMdCdW4+Om0L94N672llMufS1p
+ mbIWj7MBHVRuROSMmaoac4tvpihePs5MpCAdPHdmkvwZsbpOaJcKsA2Jvv3C8Q2/Q5+jGIJeJm
+ hnfDTC9ewogTx5yXXJtwYj2rpXVd6vllhgkDTVXNQTe1JCHOwsIZ5+obfgStEEOAqc8b28ke17
+ aW0=
+IronPort-PHdr: =?us-ascii?q?9a23=3AOa0FmxH3JfDpAXjSt0LflZ1GYnF86YWxBRYc79?=
+ =?us-ascii?q?8ds5kLTJ76psmzbnLW6fgltlLVR4KTs6sC17ON9f66Ej1Zqb+681k6OKRWUB?=
+ =?us-ascii?q?EEjchE1ycBO+WiTXPBEfjxciYhF95DXlI2t1uyMExSBdqsLwaK+i764jEdAA?=
+ =?us-ascii?q?jwOhRoLerpBIHSk9631+ev8JHPfglEnjWwba58IRmsrAjdqMYajI9/Jq0s1h?=
+ =?us-ascii?q?bHv3xEdvhMy2h1P1yThRH85smx/J5n7Stdvu8q+tBDX6vnYak2VKRUAzs6PW?=
+ =?us-ascii?q?874s3rrgTDQhCU5nQASGUWkwFHDBbD4RrnQ5r+qCr6tu562CmHIc37SK0/VD?=
+ =?us-ascii?q?q+46t3ThLjlTwKPCAl/m7JlsNwjbpboBO/qBx5347Ue5yeOP5ncq/AYd8WWW?=
+ =?us-ascii?q?9NU8BMXCJDH4y8dZMCAOUBM+hWrIfzukUAogelCAmwGO/i0CNEimPq0aA41e?=
+ =?us-ascii?q?kqDAHI3BYnH9ILqHnbrtT1NaYSUeCoy6nD0DbMb/NM1jf89YPFdRAgoPCMXb?=
+ =?us-ascii?q?1qcMrd1VUjGg3eg1WNtYPlJSmZ2foQvGiG9udtU/+khW0/qwxpvDSj2sMhhp?=
+ =?us-ascii?q?PKi48V0FzI6CR0zYQvKdC6VEJ2Z8OvHoFKuCGALYR2R9svQ2RvuCkn1LILoY?=
+ =?us-ascii?q?W7fC0WyJQ/wB7fduCHf5CI4h39UOaRJi91hHd/d7K+gxa+6EygyuPhWsWt3l?=
+ =?us-ascii?q?ZHrDZJnsPDtnAK0BzT5cyHReVn8ki93jaP0hjf6uBCIU8qiarWM4AtzqI0m5?=
+ =?us-ascii?q?YJsknOHjX6lFj3gaKUbEkp+PSk5/ziYrr8p5+cM4F0ihv5MqQrgsG+AeU5Mg?=
+ =?us-ascii?q?gUUGia5eiwyLPu8FbkQLpWlP06iLfWv43HJcgDvK62HxdV0po/6xa4Fzqm1N?=
+ =?us-ascii?q?UYnX8aLFNKYR6HjJbmO0vIIP/mCfeymEqskDh1yPDcJLHhAYvCLmLFkLj/eb?=
+ =?us-ascii?q?Zx8UlcyBA8zYMX25UBKLYBKfT1V1S5ntHCAVdtMQu0yuDhBc473I4EVkqOBL?=
+ =?us-ascii?q?OUNOXZtlreoqoCJuyFYpIYvH7SMeUg7ffljTdtlFoYdK+00J9RZ2qlG/5vKE?=
+ =?us-ascii?q?WxYHzwj9NHGmAP6E52aPHhgRWpVjNXZ3H6C6Yh7TAyDoXgBoDOQoCqqL2HwC?=
+ =?us-ascii?q?q/WJZRYzYCQnGKDXrsP6GFXeocIB2TOMJlnycfHeylSok8xQ6vug7Syrx7I+?=
+ =?us-ascii?q?6S8Sod49ar99Fx4+Cbqxg28nQgDNqU12alRGZ4k2oVXTgs1eZ4u0Mrjh/J/a?=
+ =?us-ascii?q?FmgvAQLpobwvJNVgogf9aIw+VkBtXaVgvfc9KNT1i6BNOrHWd1BvsvwtAHYk?=
+ =?us-ascii?q?I1NM+jiAvf0iusS+scib2EDZ0wtK3G3n7qO8t8zV7H0rUsix8tRc4ZcSWGj6?=
+ =?us-ascii?q?96vyTJCp/Hjl6C3/KqfKUZmiLX+XaN0HGVlEBeTAN0F67CWCZbLk/Xq8npo1?=
+ =?us-ascii?q?zDVbKqBK88GhVOxNTEKaZQbNDty1JcS7OrPtnCb2+vs3m/CAzOxb6WaofuPW?=
+ =?us-ascii?q?IH02GVDEkCjhBW/nucMwU6LjmurniYDzF0E1/rJUT2/rpQsnS+G3413QGXaA?=
+ =?us-ascii?q?VT17O0skoEl/yVSqtLhZoZsz1npjlpSgXul+nKAsaN8lIyNJ5XZskwtRIejT?=
+ =?us-ascii?q?rU?=
 X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FXAwBKuZ5dgEanVdFlDoZEhE2OW4U?=
- =?us-ascii?q?XAY1pijQBCAEBAQ4vAQGHGCM4EwIDCQEBBQEBAQEBBQQBAQIQAQEJDQkIJ4V?=
- =?us-ascii?q?CgjopAYNVEXwDDAImAiQSAQUBIgEaGoV4pEGBAzyLJoEyiGQBCQ2BSBJ6KIw?=
- =?us-ascii?q?OgheBEYsigl4EgTkBAQGVL5ZXAQYCghAUjFSIRRuCKgGXFY4tmU8PI4FGgXs?=
- =?us-ascii?q?zGiV/BmeBT08QFI9aWySRSwEB?=
-X-IPAS-Result: =?us-ascii?q?A2FXAwBKuZ5dgEanVdFlDoZEhE2OW4UXAY1pijQBCAEBA?=
- =?us-ascii?q?Q4vAQGHGCM4EwIDCQEBBQEBAQEBBQQBAQIQAQEJDQkIJ4VCgjopAYNVEXwDD?=
- =?us-ascii?q?AImAiQSAQUBIgEaGoV4pEGBAzyLJoEyiGQBCQ2BSBJ6KIwOgheBEYsigl4Eg?=
- =?us-ascii?q?TkBAQGVL5ZXAQYCghAUjFSIRRuCKgGXFY4tmU8PI4FGgXszGiV/BmeBT08QF?=
- =?us-ascii?q?I9aWySRSwEB?=
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2E1AwB/up5dgEanVdFlhlKETY5bhRc?=
+ =?us-ascii?q?BmB0BCAEBAQ4vAQGHGCM4EwIDCQEBBQEBAQEBBQQBAQIQAQEJDQkIJ4VCgjo?=
+ =?us-ascii?q?pAYNVEXwPAiYCJBIBBQEiATSFeAWkPYEDPIsmgTKEDAGEWAEJDYFIEnoojA6?=
+ =?us-ascii?q?CF4ERg1CEKIMqgl4EgTkBAQGVL5ZXAQYCghAUjFSIRRuCKpcWji2ZTw8jgUa?=
+ =?us-ascii?q?BezMaJX8GZ4FPTxAUj14BViSRSwEB?=
+X-IPAS-Result: =?us-ascii?q?A2E1AwB/up5dgEanVdFlhlKETY5bhRcBmB0BCAEBAQ4vA?=
+ =?us-ascii?q?QGHGCM4EwIDCQEBBQEBAQEBBQQBAQIQAQEJDQkIJ4VCgjopAYNVEXwPAiYCJ?=
+ =?us-ascii?q?BIBBQEiATSFeAWkPYEDPIsmgTKEDAGEWAEJDYFIEnoojA6CF4ERg1CEKIMqg?=
+ =?us-ascii?q?l4EgTkBAQGVL5ZXAQYCghAUjFSIRRuCKpcWji2ZTw8jgUaBezMaJX8GZ4FPT?=
+ =?us-ascii?q?xAUj14BViSRSwEB?=
 X-IronPort-AV: E=Sophos;i="5.67,278,1566889200"; 
-   d="scan'208";a="13444717"
+   d="scan'208";a="81372901"
 Received: from mail-lf1-f70.google.com ([209.85.167.70])
-  by smtp1.ucr.edu with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Oct 2019 21:56:32 -0700
-Received: by mail-lf1-f70.google.com with SMTP id c7so1051234lfh.9
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 21:56:31 -0700 (PDT)
+  by smtpmx6.ucr.edu with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Oct 2019 22:03:12 -0700
+Received: by mail-lf1-f70.google.com with SMTP id m17so1050081lfl.11
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 22:03:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=qNxdxggCQd3xr6rdB50E8SDcymvAFEfwkLrZ0yN0AVk=;
-        b=j+14EuMEOM/anjvZvs8FdiYl3EyEEnK4opNgiqzpByqOzRqKd8uKZKRVveWTyCPTD7
-         zwoMlGEJNvNelBzSQHMyU2eO80s1FnO+X9GQsym6zaaSV+pqx+CHDXHVIuajLRTzauTg
-         kN0oQTudvkJxPnKKfDqrUr7pP+GDeCoSysuAs0C7Uku7LxAQToT1+YJtcH5yZvohgrBN
-         JudUgqXj09nWLumLLfbC9yWQfKtrY6z6wW1W3ktTrHZrf5exBt0RzNi3sPSHEyKpEQJL
-         cPNcsUFTtNJKt9TS6cPd0JvmqtBhnfL9dSXrX//448TCp35LEUxfQedgK5X24QiRM1Ix
-         2Nmg==
-X-Gm-Message-State: APjAAAWGMKWjAj9679VpSBA3mrrJvoIPqbQvvSxCPV0Si4jituYGtHqn
-        hxpqZkJzZu8Mo43TuRJLnEC74WncJnF/m/Fqv0bxlNyuSf0n5yRBhAa4ay0+fy9XaEPLdsa/cA2
-        u3OVqdhEHsiDjyWpxnzvvzB6D5Uybsz3o7VnjHjZGvQ==
-X-Received: by 2002:a2e:8315:: with SMTP id a21mr4754242ljh.133.1570683389974;
-        Wed, 09 Oct 2019 21:56:29 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqy074NwSC68d15vpYDMj4CmQOd5kqAOtBUwTFkuYJ5w5L2OC3C3LTQnOPqg+KMLwvdE5weYDp2K5PS//xB4CKM=
-X-Received: by 2002:a2e:8315:: with SMTP id a21mr4754231ljh.133.1570683389789;
- Wed, 09 Oct 2019 21:56:29 -0700 (PDT)
+        bh=6pAAPXZ1XbspBXsT/nVNYN754RlatzoTXF5DnMyqcQU=;
+        b=lC086okWEqEhkQJ65+Eetd1F39PJmJcHk0T6iS+bgwWd7U0tkaKGDMza5ZCHgr8FN+
+         Ui5vXNSsyfj3q6w0xQea2NcHjCtH8StFqZ+BnIpC+N4ijPa5K/11RczDPfQB5Xx/yEbG
+         41QGyEXwFkZ9PAmkSt+8gaQDHa87kVnLh7Xs/1E3dLR8BXcBY5IrHZGjELO2icE3BbwD
+         FD3eXtO98phlvvC6WEq6k8lj5NW56YWKNZnbYwYe/lgBm8Ca8ccNJS9uzvkllByUC6H5
+         5mtLKhbAW4UaoSJrlpZVtkHrkjrFrL0pUvtn4JBaEEWbqtc+kqbQajiuGmb2yG4PPxTa
+         aipA==
+X-Gm-Message-State: APjAAAW6XEeQ62g2qEPTYXWVGs+EtEK7PEDd/LEFu7pqWThD4V0QZ89I
+        NzdQPBjEoYhAFnqqNS6+F6dokTcmTayFfDCZmphoJ1abKx5lL2Wam2YQxpwbIRvrVYo2YPv7NdD
+        Tdiagq00b+6JfVpOYi6AUnZdiGLHAgYBoFRKJ5y8EYg==
+X-Received: by 2002:a2e:9a4e:: with SMTP id k14mr4816416ljj.104.1570683789473;
+        Wed, 09 Oct 2019 22:03:09 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqyLbyF0nKrTc3N1NhrBYGj51/xn4jBAjuUiVfEPkbcB6vQTEAA65Ud8oPAk9dQ6WUgeoAyg9+sMf/8vTtEysGQ=
+X-Received: by 2002:a2e:9a4e:: with SMTP id k14mr4816390ljj.104.1570683789247;
+ Wed, 09 Oct 2019 22:03:09 -0700 (PDT)
 MIME-Version: 1.0
 From:   Yizhuo Zhai <yzhai003@ucr.edu>
-Date:   Wed, 9 Oct 2019 21:56:04 -0700
-Message-ID: <CABvMjLRgShsBiod+GVcqirmKeFLN_KfxdDDwGo22YK0wULepwA@mail.gmail.com>
-Subject: Potential NULL pointer deference in mm/memcontrol.c
-To:     Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        cgroups@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Zhiyun Qian <zhiyunq@cs.ucr.edu>,
-        Chengyu Song <csong@cs.ucr.edu>
+Date:   Wed, 9 Oct 2019 22:02:43 -0700
+Message-ID: <CABvMjLThWpQYir0soRDE3W4S6q0S28RTxen8Y-2YAxbRczMCiA@mail.gmail.com>
+Subject: Potential NULL pointer deference in iwlwifi: mvm
+To:     Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Avigail Grinstein <avigail.grinstein@intel.com>,
+        Haim Dreyfuss <haim.dreyfuss@intel.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -105,14 +113,18 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi All:
-mm/memcontrol.c:
-The function mem_cgroup_from_css() could return NULL, but some callers
-in this file
-checks the return value but directly dereference it, which seems
-potentially unsafe.
-Such callers include mem_cgroup_hierarchy_read(),
-mem_cgroup_hierarchy_write(), mem_cgroup_read_u64(),
-mem_cgroup_reset(), etc.
+
+drivers/net/wireless/intel/iwlwifi/mvm/power.c:
+
+The function iwl_mvm_vif_from_mac80211() could return NULL,
+but some callers in this file does not check the return value while
+directly dereference it, which seems potentially unsafe.
+Such callers include iwl_mvm_update_d0i3_power_mode(),
+iwl_mvm_power_configure_uapsd(),
+iwl_mvm_power_allow_uapsd(), etc.
+
+
+
 -- 
 Kind Regards,
 
