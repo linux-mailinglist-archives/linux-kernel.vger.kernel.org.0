@@ -2,95 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2D91D3006
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 20:13:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 022A6D3010
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 20:17:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbfJJSNW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 14:13:22 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:40241 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726387AbfJJSNV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 14:13:21 -0400
-Received: by mail-qk1-f196.google.com with SMTP id y144so6462497qkb.7;
-        Thu, 10 Oct 2019 11:13:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=nhEdCojs+IGVHVpYHr8vIlo3+XqeHqDkpO3pbb3i3gY=;
-        b=veUad5m3bEuSV9Tg6KGXINcNmU+w/q4ZRAHY1SoCHi3kqvf2fEsPmUiSSyz1WiK0sm
-         MuJxOy41RWthtBX4qEKlqFLzIL0OEJFOa1TPvXQo8LRbrWGz4IqdZ5wM2egeeHCsqnyX
-         dQju1Q1M+o44QpktDAbkkJipGQTPnj7l/PEpByJ2/3+Zk6OLjKy2U+Cc5L3D3MRCQ4+4
-         s6mtRoIoBHmK7ZvAJ8evyYm0xxZ1p+IPwfstjgxrfNqCJhPrbb243jT6TOwWc3RA89LL
-         AENNW1g/0fyR8H/7rVxY6GQH+zQwmXsTrj7m276ohY3dgkg7+gbQvP63XVs010HQbQDC
-         eedA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=nhEdCojs+IGVHVpYHr8vIlo3+XqeHqDkpO3pbb3i3gY=;
-        b=sj+eWuaJN38U3GOUr/eq+oDudap6BECvbNbK/wJeUlLMJFe0vx4BqV2lFpz3WEJds8
-         lOGUPJ4sXKliDug8Wq3i6Ohy0e9WoJVYIJrjfKMa/DzwBN38JmQL8Jz0U4AIeHlRwDFp
-         51J/MaHHiy5nu88K1jk9D7Qk6p3DjiNzaweg6JuSlonMq7U7lSNCIJKjVuNe276ecVEr
-         xljEVm7bXyzSmxsp65LizHnix4rGGDmzQP8t0Rh35Wrdy/Vf8dFwJ4OwbF8Hx1LUTV2U
-         SZhsLGjOosu92ZpQ1T7WV0S+ZQaZgbzSSgCVQOz9ACjY8qTbpxBVEqPTrDW5ns2FZDts
-         KKgg==
-X-Gm-Message-State: APjAAAVLsBBrE9L4dY0lxUDrdeEWpTvnSvgrcV4PYMWkNGnV57KWGTHt
-        vVglA11n/TOOWoGhMGm69ZARw/cx7WY=
-X-Google-Smtp-Source: APXvYqwSekl87KP1FWqb1bGCMEhBPT7rz8TJ+HdVIXkSH7Sop42boPG7YIqvxAwlbveQPKGoRRuOUg==
-X-Received: by 2002:a37:278f:: with SMTP id n137mr10874754qkn.423.1570731198638;
-        Thu, 10 Oct 2019 11:13:18 -0700 (PDT)
-Received: from alpha-Inspiron-5480.lan ([170.84.225.105])
-        by smtp.gmail.com with ESMTPSA id 60sm2967275qta.77.2019.10.10.11.13.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 11:13:17 -0700 (PDT)
-From:   Ramon Fontes <ramonreisfontes@gmail.com>
-To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org
-Cc:     johannes@sipsolutions.net, kvalo@codeaurora.org,
-        davem@davemloft.net, Ramon Fontes <ramonreisfontes@gmail.com>
-Subject: [PATCH 2/2] mac80211_hwsim: adding support for OCB
-Date:   Thu, 10 Oct 2019 15:13:07 -0300
-Message-Id: <20191010181307.11821-2-ramonreisfontes@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191010181307.11821-1-ramonreisfontes@gmail.com>
-References: <20191010181307.11821-1-ramonreisfontes@gmail.com>
+        id S1726806AbfJJSRu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 14:17:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40692 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726691AbfJJSRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 14:17:50 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 56503AC16;
+        Thu, 10 Oct 2019 18:17:48 +0000 (UTC)
+Received: by unicorn.suse.cz (Postfix, from userid 1000)
+        id 96806E378C; Thu, 10 Oct 2019 20:17:43 +0200 (CEST)
+Date:   Thu, 10 Oct 2019 20:17:43 +0200
+From:   Michal Kubecek <mkubecek@suse.cz>
+To:     netdev@vger.kernel.org
+Cc:     Jiri Pirko <jiri@resnulli.us>, David Miller <davem@davemloft.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        John Linville <linville@tuxdriver.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v7 13/17] ethtool: add standard notification
+ handler
+Message-ID: <20191010181743.GF22163@unicorn.suse.cz>
+References: <cover.1570654310.git.mkubecek@suse.cz>
+ <ac2fef494116db9d4679f4501f1be6a7898ef724.1570654310.git.mkubecek@suse.cz>
+ <20191010152559.GA2994@nanopsycho>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191010152559.GA2994@nanopsycho>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-OCB (Outside the Context of a BSS) interfaces are necessary for the IEEE 802.11p standard
+On Thu, Oct 10, 2019 at 05:25:59PM +0200, Jiri Pirko wrote:
+> Wed, Oct 09, 2019 at 10:59:40PM CEST, mkubecek@suse.cz wrote:
+> >+static void *ethnl_bcastmsg_put(struct sk_buff *skb, u8 cmd)
+> >+{
+> >+	return genlmsg_put(skb, 0, ++ethnl_bcast_seq, &ethtool_genl_family, 0,
+> >+			   cmd);
+> >+}
+> >+
+> >+static int ethnl_multicast(struct sk_buff *skb, struct net_device *dev)
+> >+{
+> >+	return genlmsg_multicast_netns(&ethtool_genl_family, dev_net(dev), skb,
+> >+				       0, ETHNL_MCGRP_MONITOR, GFP_KERNEL);
+> >+}
+> 
+> No need for these 2 helpers. Just put the code directly into
+> ethnl_std_notify() and make the code easier to read.
 
-Signed-off-by: Ramon Fontes <ramonreisfontes@gmail.com>
----
- drivers/net/wireless/mac80211_hwsim.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+In later patches (not submitted yet), these two will be also called by
+other notification handlers.
 
-diff --git a/drivers/net/wireless/mac80211_hwsim.c b/drivers/net/wireless/mac80211_hwsim.c
-index c20103792..ae41b05e7 100644
---- a/drivers/net/wireless/mac80211_hwsim.c
-+++ b/drivers/net/wireless/mac80211_hwsim.c
-@@ -1570,7 +1570,8 @@ static void mac80211_hwsim_beacon_tx(void *arg, u8 *mac,
- 
- 	if (vif->type != NL80211_IFTYPE_AP &&
- 	    vif->type != NL80211_IFTYPE_MESH_POINT &&
--	    vif->type != NL80211_IFTYPE_ADHOC)
-+	    vif->type != NL80211_IFTYPE_ADHOC &&
-+	    vif->type != NL80211_IFTYPE_OCB)
- 		return;
- 
- 	skb = ieee80211_beacon_get(hw, vif);
-@@ -2745,7 +2746,8 @@ static void mac80211_hwsim_he_capab(struct ieee80211_supported_band *sband)
- 	 BIT(NL80211_IFTYPE_P2P_CLIENT) | \
- 	 BIT(NL80211_IFTYPE_P2P_GO) | \
- 	 BIT(NL80211_IFTYPE_ADHOC) | \
--	 BIT(NL80211_IFTYPE_MESH_POINT))
-+	 BIT(NL80211_IFTYPE_MESH_POINT) | \
-+	 BIT(NL80211_IFTYPE_OCB))
- 
- static int mac80211_hwsim_new_radio(struct genl_info *info,
- 				    struct hwsim_new_radio_params *param)
--- 
-2.17.1
+> >+static const struct get_request_ops *ethnl_std_notify_to_ops(unsigned int cmd)
+> >+{
+> >+	WARN_ONCE(1, "unexpected notification type %u\n", cmd);
+> >+	return NULL;
+> >+}
+> 
+> Why this isn't a table similar to get_requests ?
 
+It's a relic of earlier version before splitting the complex message
+types when the table was rather sparse. I'll change it to a lookup table
+to make it consistent with the rest of the code.
+
+> >+
+> >+/* generic notification handler */
+> >+static void ethnl_std_notify(struct net_device *dev, unsigned int cmd,
+> 
+> Better "common" comparing to "standard", I believe.
+
+That's similar to ethnl_std_parse(), the idea is that this is the
+standard handler for notifications which are triggered without
+additional data and the message is the same as reply to corresponding
+"GET" request (which is generated by the standard ethnl_get_doit()
+handler). Notifications for actions and notifications for SET commands
+which cannot be generated this standard way will have to use their own
+(nonstandard) handler.
+
+Michal
