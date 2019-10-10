@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DF16D232E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:48:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD9B2D23AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388009AbfJJIj4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:39:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43774 "EHLO mail.kernel.org"
+        id S2388988AbfJJIol (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:44:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387995AbfJJIjz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:39:55 -0400
+        id S2388981AbfJJIoj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:44:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 568502190F;
-        Thu, 10 Oct 2019 08:39:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D174B21929;
+        Thu, 10 Oct 2019 08:44:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570696794;
-        bh=64kjopHHDGcUZ+tsArg6NpuzNCg62nqj6+KYCnkP7rA=;
+        s=default; t=1570697078;
+        bh=4afK8F6vHHJNar3do66syd7AcS9iqQO3C13c/1MTg4U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s60ug3Bl6RXAEikoJiaf2HuOdOmAmgfzHauvKJJlEiZdlpNQ1JMzmPB0zExsSTlUD
-         muQIRQTO74228PSmqF2FFTfbXy3n9P/g6vmKdjFQSZoUiiM6eXLvQWn0KXOI8vRUKI
-         93mf0uqzjl3RnHEZG2+vIWMU8bLHeV1TGv4cgT9s=
+        b=N3xAxhFzolhVsHe9uEDNqCE/uGZgN0HZ9DAc6LPnm7Gum0F2H7qfttMLc4KkSlmY6
+         FZXomrGg7vM3lwIDdMsjI+AGvzzME+6MryRFnvO9lC9keodqryh50s2s9i4OOsSxBz
+         fY6iiLKvaFJRZh0djoIabYwf7ZupvNcXVaHS1tlU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jon Derrick <jonathan.derrick@intel.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: [PATCH 5.3 055/148] PCI: vmd: Fix shadow offsets to reflect spec changes
-Date:   Thu, 10 Oct 2019 10:35:16 +0200
-Message-Id: <20191010083614.481390762@linuxfoundation.org>
+        stable@vger.kernel.org, Steev Klimaszewski <steev@kali.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: [PATCH 4.19 011/114] PM / devfreq: tegra: Fix kHz to Hz conversion
+Date:   Thu, 10 Oct 2019 10:35:18 +0200
+Message-Id: <20191010083549.280138494@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
-References: <20191010083609.660878383@linuxfoundation.org>
+In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
+References: <20191010083544.711104709@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,55 +46,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jon Derrick <jonathan.derrick@intel.com>
+From: Dmitry Osipenko <digetx@gmail.com>
 
-commit a1a30170138c9c5157bd514ccd4d76b47060f29b upstream.
+commit 62bacb06b9f08965c4ef10e17875450490c948c0 upstream.
 
-The shadow offset scratchpad was moved to 0x2000-0x2010. Update the
-location to get the correct shadow offset.
+The kHz to Hz is incorrectly converted in a few places in the code,
+this results in a wrong frequency being calculated because devfreq core
+uses OPP frequencies that are given in Hz to clamp the rate, while
+tegra-devfreq gives to the core value in kHz and then it also expects to
+receive value in kHz from the core. In a result memory freq is always set
+to a value which is close to ULONG_MAX because of the bug. Hence the EMC
+frequency is always capped to the maximum and the driver doesn't do
+anything useful. This patch was tested on Tegra30 and Tegra124 SoC's, EMC
+frequency scaling works properly now.
 
-Fixes: 6788958e4f3c ("PCI: vmd: Assign membar addresses from shadow registers")
-Signed-off-by: Jon Derrick <jonathan.derrick@intel.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: stable@vger.kernel.org # v5.2+
+Cc: <stable@vger.kernel.org> # 4.14+
+Tested-by: Steev Klimaszewski <steev@kali.org>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/controller/vmd.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/devfreq/tegra-devfreq.c |   12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
---- a/drivers/pci/controller/vmd.c
-+++ b/drivers/pci/controller/vmd.c
-@@ -31,6 +31,9 @@
- #define PCI_REG_VMLOCK		0x70
- #define MB2_SHADOW_EN(vmlock)	(vmlock & 0x2)
+--- a/drivers/devfreq/tegra-devfreq.c
++++ b/drivers/devfreq/tegra-devfreq.c
+@@ -486,11 +486,11 @@ static int tegra_devfreq_target(struct d
+ {
+ 	struct tegra_devfreq *tegra = dev_get_drvdata(dev);
+ 	struct dev_pm_opp *opp;
+-	unsigned long rate = *freq * KHZ;
++	unsigned long rate;
  
-+#define MB2_SHADOW_OFFSET	0x2000
-+#define MB2_SHADOW_SIZE		16
-+
- enum vmd_features {
- 	/*
- 	 * Device may contain registers which hint the physical location of the
-@@ -578,7 +581,7 @@ static int vmd_enable_domain(struct vmd_
- 		u32 vmlock;
- 		int ret;
- 
--		membar2_offset = 0x2018;
-+		membar2_offset = MB2_SHADOW_OFFSET + MB2_SHADOW_SIZE;
- 		ret = pci_read_config_dword(vmd->dev, PCI_REG_VMLOCK, &vmlock);
- 		if (ret || vmlock == ~0)
- 			return -ENODEV;
-@@ -590,9 +593,9 @@ static int vmd_enable_domain(struct vmd_
- 			if (!membar2)
- 				return -ENOMEM;
- 			offset[0] = vmd->dev->resource[VMD_MEMBAR1].start -
--						readq(membar2 + 0x2008);
-+					readq(membar2 + MB2_SHADOW_OFFSET);
- 			offset[1] = vmd->dev->resource[VMD_MEMBAR2].start -
--						readq(membar2 + 0x2010);
-+					readq(membar2 + MB2_SHADOW_OFFSET + 8);
- 			pci_iounmap(vmd->dev, membar2);
- 		}
+-	opp = devfreq_recommended_opp(dev, &rate, flags);
++	opp = devfreq_recommended_opp(dev, freq, flags);
+ 	if (IS_ERR(opp)) {
+-		dev_err(dev, "Failed to find opp for %lu KHz\n", *freq);
++		dev_err(dev, "Failed to find opp for %lu Hz\n", *freq);
+ 		return PTR_ERR(opp);
  	}
+ 	rate = dev_pm_opp_get_freq(opp);
+@@ -499,8 +499,6 @@ static int tegra_devfreq_target(struct d
+ 	clk_set_min_rate(tegra->emc_clock, rate);
+ 	clk_set_rate(tegra->emc_clock, 0);
+ 
+-	*freq = rate;
+-
+ 	return 0;
+ }
+ 
+@@ -510,7 +508,7 @@ static int tegra_devfreq_get_dev_status(
+ 	struct tegra_devfreq *tegra = dev_get_drvdata(dev);
+ 	struct tegra_devfreq_device *actmon_dev;
+ 
+-	stat->current_frequency = tegra->cur_freq;
++	stat->current_frequency = tegra->cur_freq * KHZ;
+ 
+ 	/* To be used by the tegra governor */
+ 	stat->private_data = tegra;
+@@ -565,7 +563,7 @@ static int tegra_governor_get_target(str
+ 		target_freq = max(target_freq, dev->target_freq);
+ 	}
+ 
+-	*freq = target_freq;
++	*freq = target_freq * KHZ;
+ 
+ 	return 0;
+ }
 
 
