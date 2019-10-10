@@ -2,50 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E53B5D2A30
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 14:59:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46611D2A35
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 14:59:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388005AbfJJM6u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 08:58:50 -0400
-Received: from mail-lj1-f181.google.com ([209.85.208.181]:46501 "EHLO
-        mail-lj1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733300AbfJJM6t (ORCPT
+        id S2388040AbfJJM65 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 08:58:57 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:43445 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728274AbfJJM6u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 08:58:49 -0400
-Received: by mail-lj1-f181.google.com with SMTP id d1so6055210ljl.13;
+        Thu, 10 Oct 2019 08:58:50 -0400
+Received: by mail-lj1-f196.google.com with SMTP id n14so6072783ljj.10;
         Thu, 10 Oct 2019 05:58:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=me5AjClr8sL9m3SIk4xO4Mj+ZHOX0W4gkjY5Nq58ddc=;
-        b=LW8bzndmmobUaDngBIOKCXmxB20WUDCeFCrPH/KfkQdqw6nmeCcx3e6Y7F69MkgGjN
-         ICLod+cHIRyekuT6WFCBTEDOgvszrpnuJD5odxHSWGdvU8Fnfj3nmZxqqnmJBEPzyL/8
-         uG8G6uwfJX/Ang/5NhNKDgZe45Gcs+uwm3oeJFY2r6QKFV8UvgTDrBbkf0UzgQ4j3Hi2
-         LY907UQlmyKzzwKmQkYogre1hIotmfboE6xB7ZjeCVvknoHJLsUFo6RLXgi6l1DinSxs
-         v5wQ8nYWcX3DhAoEOn3ag3Dox46jtPk+Nuw1ImihJUHb/ajJDfx7C4FWXEppd2/gjeDS
-         cvtg==
-X-Gm-Message-State: APjAAAWE4nipAUYFIkeFjo6rXLg62IlL6/brrHFGhrD9qpx1T3/7hTXN
-        9a95sm8JuHhcOD60FSDfyJM=
-X-Google-Smtp-Source: APXvYqyvHoOv9SO9XA+/5htTzTT9dH15Yg60CXh78J3Qwz38m+gvRFcvZR3MVY6EC0rHP0WLO0mkXg==
-X-Received: by 2002:a2e:584b:: with SMTP id x11mr6504493ljd.90.1570712327335;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=sFfJKZrsZ65QHdG/a6Vjdwobjv+Fk7Z1ecZ7AQainIo=;
+        b=PFBusBVRzgPljPc+cHreTsNfSAxkcbWsYhHyRB0TI9kSHuNA+J9TFgSkZvPBF7bEhq
+         AxdKaIfzITQXUCRgNV5BcUynpqGJsdcDA6VqmlfjcSSMbCw/QvO2KtGu8tKpvAB8nkxu
+         00BMrsAUw2jOA/fAmS023KaVFGTVjj31UtjciWx4l5quuEeTylhTY+J1O7j/0gRnw6e7
+         qT+zb6UYnMjoYA7Z1ZBBq6vZOjn76pgtqe9jAUcQNZcBYMR5R288HJcI0u9RPgXvLoP9
+         iEIYCJtQ10HGosng4lOrQnzpwUTNsfggg6tRCL09mmz+vFQayTGws8QxC2gf5U64tRFA
+         urSw==
+X-Gm-Message-State: APjAAAX161qTIt014B/mIdHiMTnW3FEOrpDcGS/oUjjuKYnkXt3OpA1d
+        SuVk9KxvlB9ejMzhh+FGqzs=
+X-Google-Smtp-Source: APXvYqzrMxpqqH/x0hvuWkRUifQkU26w8tdkyxPlpaMcnr1jxd8rdd6qQGWg12N0vXP4j9dc3lkBXQ==
+X-Received: by 2002:a2e:9a43:: with SMTP id k3mr6000549ljj.70.1570712327840;
         Thu, 10 Oct 2019 05:58:47 -0700 (PDT)
 Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
-        by smtp.gmail.com with ESMTPSA id 207sm1488894lfn.0.2019.10.10.05.58.46
+        by smtp.gmail.com with ESMTPSA id c26sm1358291ljj.45.2019.10.10.05.58.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Thu, 10 Oct 2019 05:58:46 -0700 (PDT)
 Received: from johan by xi.terra with local (Exim 4.92.2)
         (envelope-from <johan@xi.terra>)
-        id 1iIY1w-00072o-Ou; Thu, 10 Oct 2019 14:58:57 +0200
+        id 1iIY1x-00072r-HT; Thu, 10 Oct 2019 14:58:57 +0200
 From:   Johan Hovold <johan@kernel.org>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
         Juergen Stuber <starblue@users.sourceforge.net>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 0/2] USB: misc: more disconnect fixes
-Date:   Thu, 10 Oct 2019 14:58:33 +0200
-Message-Id: <20191010125835.27031-1-johan@kernel.org>
+        Johan Hovold <johan@kernel.org>,
+        stable <stable@vger.kernel.org>
+Subject: [PATCH 1/2] USB: ldusb: fix memleak on disconnect
+Date:   Thu, 10 Oct 2019 14:58:34 +0200
+Message-Id: <20191010125835.27031-2-johan@kernel.org>
 X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191010125835.27031-1-johan@kernel.org>
+References: <20191010125835.27031-1-johan@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -53,19 +56,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Turns out we have more gems in these old drivers.
+If disconnect() races with release() after a process has been
+interrupted, release() could end up returning early and the driver would
+fail to free its driver data.
 
-Johan
+Fixes: 2824bd250f0b ("[PATCH] USB: add ldusb driver")
+Cc: stable <stable@vger.kernel.org>     # 2.6.13
+Signed-off-by: Johan Hovold <johan@kernel.org>
+---
+ drivers/usb/misc/ldusb.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-
-Johan Hovold (2):
-  USB: ldusb: fix memleak on disconnect
-  USB: legousbtower: fix memleak on disconnect
-
- drivers/usb/misc/ldusb.c        | 5 +----
- drivers/usb/misc/legousbtower.c | 5 +----
- 2 files changed, 2 insertions(+), 8 deletions(-)
-
+diff --git a/drivers/usb/misc/ldusb.c b/drivers/usb/misc/ldusb.c
+index f3108d85e768..147c90c2a4e5 100644
+--- a/drivers/usb/misc/ldusb.c
++++ b/drivers/usb/misc/ldusb.c
+@@ -380,10 +380,7 @@ static int ld_usb_release(struct inode *inode, struct file *file)
+ 		goto exit;
+ 	}
+ 
+-	if (mutex_lock_interruptible(&dev->mutex)) {
+-		retval = -ERESTARTSYS;
+-		goto exit;
+-	}
++	mutex_lock(&dev->mutex);
+ 
+ 	if (dev->open_count != 1) {
+ 		retval = -ENODEV;
 -- 
 2.23.0
 
