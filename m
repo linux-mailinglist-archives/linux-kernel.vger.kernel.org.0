@@ -2,106 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 599EBD1D7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 02:40:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2438D1D8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 02:43:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732487AbfJJAk0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 20:40:26 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40847 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731155AbfJJAkZ (ORCPT
+        id S1732507AbfJJAnf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 20:43:35 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:41122 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731542AbfJJAne (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 20:40:25 -0400
-Received: by mail-pf1-f193.google.com with SMTP id x127so2727500pfb.7
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 17:40:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UcPd5Jny5aY5aMsPzhLMHUk3eBTerZnA6THOQx3YHYM=;
-        b=CQBl48C9FQrJE5k703Kev1+BQ/3whfu6HOkubrefsdeM3B2i5ly4Dw9keO2geTEGUV
-         s+Ui79CGMEi8TyPD6oEqp7cslGqZKhXLLTCoggJ/CPYtMcY9bWkjwact3xZFKaXvWZYO
-         u5JLNe8rCmmBk2yB39UHSrBbn2Uo+Ciiic/jw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UcPd5Jny5aY5aMsPzhLMHUk3eBTerZnA6THOQx3YHYM=;
-        b=l0GVEM/Eb6BeDe0ZpKd2APkVsZjCij73X0Lrl1rOhTTHCSs3RKoQDHMejcf+xoFqsy
-         mzaTLm/nJ/Bi4NOWSXHaGtuIv3OeX7UnodPiiYnr7chIlIanLvErkUJYaOdFbaYCWNBu
-         YeD2BOjJOCeWShltNiQ8hXYqNl8pHxBAFn7TwX4eituKYzLKQHaWaU2Cf56g9Oq64j5C
-         0pDSEGEjAFhPbKpAHWZ9/pBBjq7az9RttdAFAtd9J2Zly8O3ZCGBNGwIwYKqFDhkyQbS
-         mAeRrznOQfjoxBSAoIknK1KI8PpGe1SQLUK5/Yb4xovyXBDBhA78QxdUp88CoWsl559z
-         jbUA==
-X-Gm-Message-State: APjAAAWD/p8/SH5lKQFBsyAPnuyaU0L/3jKPzlifXeoydD6f+sQtCyPB
-        E8yN69/iStdMd/CuxMv5a1qHGw==
-X-Google-Smtp-Source: APXvYqwiMuTGGeU2xAhSzgcNonr+8WNtJueMfhMlVoTbDTnimhgmwYn+zScwE00Wpmxe8o7Phci6AA==
-X-Received: by 2002:aa7:93a9:: with SMTP id x9mr6675538pff.81.1570668025033;
-        Wed, 09 Oct 2019 17:40:25 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id 22sm3415597pfo.131.2019.10.09.17.40.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2019 17:40:24 -0700 (PDT)
-Date:   Wed, 9 Oct 2019 20:40:23 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     James Morris <jmorris@namei.org>, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, rostedt@goodmis.org,
-        primiano@google.com, rsavitski@google.com, jeffv@google.com,
-        kernel-team@android.com, Alexei Starovoitov <ast@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        bpf@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-security-module@vger.kernel.org,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Namhyung Kim <namhyung@kernel.org>, selinux@vger.kernel.org,
-        Song Liu <songliubraving@fb.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Yonghong Song <yhs@fb.com>
-Subject: Re: [PATCH RFC] perf_event: Add support for LSM and SELinux checks
-Message-ID: <20191010004023.GC96813@google.com>
-References: <20191009203657.6070-1-joel@joelfernandes.org>
- <710c5bc0-deca-2649-8351-678e177214e9@schaufler-ca.com>
- <alpine.LRH.2.21.1910100912210.29840@namei.org>
- <2b94802d-12ea-4f2d-bb65-eda3b3542bb2@schaufler-ca.com>
+        Wed, 9 Oct 2019 20:43:34 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9A0hTsr118568;
+        Wed, 9 Oct 2019 19:43:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1570668209;
+        bh=Yxcoi5EtNXabhjep2Y1KNRL8XZbLwiQgniLFoGc+Jhg=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=OdyqiHvnQzZqyossQxz3sx4kdIAR8VUP6BgxA3SmmHqR/uxK23T0HrTnaq/cZ6A3V
+         j5Oa4KdlAc+mCginCMsMUyWVujETpxXKj7/LAy1rCqME9es7UbdOZIRZ9VpDe7DSHm
+         ymKMUsbpqGwQdvDCDVQ/qbCjWcKxfWXt5OPygy2s=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9A0hT2N004540
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 9 Oct 2019 19:43:29 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 9 Oct
+ 2019 19:43:25 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 9 Oct 2019 19:43:29 -0500
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9A0hTT9004462;
+        Wed, 9 Oct 2019 19:43:29 -0500
+Subject: Re: [PATCH v11 04/16] leds: multicolor: Introduce a multicolor class
+ definition
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+References: <20191008204800.19870-1-dmurphy@ti.com>
+ <20191008204800.19870-5-dmurphy@ti.com>
+ <CAOCOHw5uQL56T_DcZA47721yS1tLsp9cyUEdmiWr+Ccfh7YpRQ@mail.gmail.com>
+ <d6b68a79-235a-0a9b-bbf3-519571646eff@ti.com> <20191009232539.GB571@minitux>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <1b18570f-a5ac-fb34-aed9-7d8422df7e6d@ti.com>
+Date:   Wed, 9 Oct 2019 19:43:10 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2b94802d-12ea-4f2d-bb65-eda3b3542bb2@schaufler-ca.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191009232539.GB571@minitux>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 03:41:56PM -0700, Casey Schaufler wrote:
-> On 10/9/2019 3:14 PM, James Morris wrote:
-> > On Wed, 9 Oct 2019, Casey Schaufler wrote:
-> >
-> >> Please consider making the perf_alloc security blob maintained
-> >> by the infrastructure rather than the individual modules. This
-> >> will save it having to be changed later.
-> > Is anyone planning on using this with full stacking?
-> >
-> > If not, we don't need the extra code & complexity. Stacking should only 
-> > cover what's concretely required by in-tree users.
-> 
-> I don't believe it's any simpler for SELinux to do the allocation
-> than for the infrastructure to do it. I don't see anyone's head
-> exploding over the existing infrastructure allocation of blobs.
-> We're likely to want it at some point, so why not avoid the hassle
-> and delay by doing it the "new" way up front?
-> 
+Bjorn
 
-I don't see how it can be maintained by the users (assuming you meant
-infrastructure as perf_event subsystem). The blob contains a SID which as far
-as I know, is specific to SELinux. Do you have an in-tree example of this?
+On 10/9/19 6:25 PM, Bjorn Andersson wrote:
+> On Wed 09 Oct 13:44 PDT 2019, Dan Murphy wrote:
+>
+>> Bjorn
+>>
+>> On 10/9/19 3:11 PM, Bjorn Andersson wrote:
+>>> On Tue, Oct 8, 2019 at 1:49 PM Dan Murphy <dmurphy@ti.com> wrote:
+>>>> Introduce a multicolor class that groups colored LEDs
+>>>> within a LED node.
+>>>>
+>>>> The multi color class groups monochrome LEDs and allows controlling two
+>>>> aspects of the final combined color: hue and lightness. The former is
+>>>> controlled via <color>_intensity files and the latter is controlled
+>>>> via brightness file.
+>>>>
+>>> Thanks for making progress on this, it's been the one outstanding
+>>> question mark for the long overdue respin of the Qualcomm LPG driver.
+>>> But while it works for the LPG, in that it has outputs named "RGB" I
+>>> have boards with "generic" LED drivers that are connected to RGB LEDs.
+>>> So per your proposed solution we would need to add the additional
+>> You don't have to add the MC class to those drivers.  This is an optional
+>> framework but if you wanted to use the framework for specific devices then
+>> yes you would need to add that support. This is why I did the LP55xx patches
+>> to demonstrate the feasibility since the LP50xx has the MC class
+>> intelligence already.
+>>
+> Correct me if I've misunderstood something, but if I have a product
+> using e.g. lm3533 connected to an RGB LED then the correct way to
+> represent this towards userspace is to introduce the MC class in the
+> lm3533 LED driver, no?
+>
+Not necessarily.  If the RGB LED is to be used as a RGB module and not 
+as independent LEDs.
 
-Further, this is also exactly it is done for BPF objects which I used as a
-reference.
+For instance on smartphones if you had that RGB module connected to the 
+LM3533 and needed to mix colors to give different status indicators then 
+yes you would use the MC class.  As the MC class presents and treats the 
+module as a single LED with individual color mixing control knobs.
 
-thanks,
+If you were using each LED for a separate use cases then you would want 
+to present these as individual LEDs as done today.
 
- - Joel
+
+>> The LP55xx driver can register to the LED class and/or the MC LED class
+>> pending on the DT organization.
+>>
+> Understood.
+>
+>> I don't plan on going through all of TI's RGB drivers and retrofitting them
+>> to the MC class.  I do have to update the GPIO LED driver to use the class
+>> but that work is still pending.
+>>
+>> I may also update the Motorola PCAP driver as well since I have a Droid4 to
+>> test.
+>>
+> My concern with this is that being connected to a RGB LED is not a
+> property of the controller, but the system design and the proposed
+> implementation makes it a property of each controller.
+>
+> I'm not saying that the proposed path is wrong, I'm saying that we have
+> 83 files named leds-*.c in drivers/leds and this adaption needs to
+> happen on each one.
+
+Agreed.  I would expect the adoption to be done on a case by case basis 
+driven by usage and need.
+
+
+>
+>
+> And I'm not saying I expect you to do this.
+
+Phew.  I did not think you were. I will only convert drivers that I can 
+could test.
+
+
+>
+>>> mc_class handling to every single LED driver that might be used to
+>>> sink current into an RGB LED.
+>>>
+>>> I also don't see anything preventing hardware designers from feeding
+>>> single RGB LEDs from multiple different LED controllers, something the
+>>> current proposal would prohibit.
+>> What do you mean by a single RGB LED? Are you referring to a RGB module?
+>>
+>> http://wiki.sunfounder.cc/index.php?title=RGB_LED_Module
+>>
+> Yes
+>
+>> There is no prevention for HW designers to put a driver on each LED output
+>> but I am not sure why they would incur
+>>
+>> the additional BOM cost seems quite silly unless you have an unlimited
+>> budget ;)
+>>
+> So if you have a system with e.g. 8 PWM channels on one PMIC and a
+> single PWM available on a different PMIC then you're saying that the
+> hardware guys would be silly to believe that they can drive 3 RGB LEDS
+> off this?
+
+OK I must have removed my question to you on presenting a use case.   
+Grouping LEDs across multiple devices would an issue yes but we would 
+need a design or hardware to develop a good solution.
+
+
+>
+>> If they did design the system that way then the SW would need to revert back
+>> to the standard LED class as it is done today.
+>>
+> If that is the agreed upon design then I'll continue to adapt my LED
+> drivers to the MC class.
+
+For now this is the basic design. We are willing to take other 
+suggestions.  We appreciate the feedback.
+
+Dan
+
 
