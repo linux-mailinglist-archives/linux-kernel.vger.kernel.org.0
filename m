@@ -2,72 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B98BD29BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 14:41:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2E98D29C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 14:44:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387783AbfJJMlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 08:41:19 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:37584 "EHLO fornost.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733191AbfJJMlS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 08:41:18 -0400
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
-        by fornost.hmeau.com with smtp (Exim 4.89 #2 (Debian))
-        id 1iIXkX-0001OD-Jc; Thu, 10 Oct 2019 23:40:58 +1100
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Thu, 10 Oct 2019 23:40:51 +1100
-Date:   Thu, 10 Oct 2019 23:40:51 +1100
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Pascal van Leeuwen <pvanleeuwen@verimatrix.com>,
-        Pascal van Leeuwen <pascalvanl@gmail.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Eric Biggers <ebiggers@google.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] crypto: inside-secure - Reduce stack usage
-Message-ID: <20191010124051.GA30370@gondor.apana.org.au>
-References: <20190930121520.1388317-1-arnd@arndb.de>
- <20190930121520.1388317-2-arnd@arndb.de>
+        id S2387907AbfJJMno (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 08:43:44 -0400
+Received: from pio-pvt-msa2.bahnhof.se ([79.136.2.41]:46830 "EHLO
+        pio-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387850AbfJJMnj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 08:43:39 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 839293F66E;
+        Thu, 10 Oct 2019 14:43:31 +0200 (CEST)
+Authentication-Results: pio-pvt-msa2.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=NAaNoRX/;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Received: from pio-pvt-msa2.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id t1tejHvEyFaS; Thu, 10 Oct 2019 14:43:25 +0200 (CEST)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 67FB33F260;
+        Thu, 10 Oct 2019 14:43:23 +0200 (CEST)
+Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id C051A36016C;
+        Thu, 10 Oct 2019 14:43:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1570711402; bh=DUBZteFxRv+biRAr6ikt9dxEsTdkCF11hutElrgSLqA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=NAaNoRX/AmaY33dT8r1CHyHyVrTM0aSbQBgT3unS/YYrbVbmH28TCylntbnj5bHyp
+         vW62Rkaoi+tNnDDEwoeMf+bvzonXkVwAq9fW/5jHi7eeo6RnlB51GTaeplfhNxfIE4
+         oFL8fVBbA9mcq5pkN7dRjjF3XeyueXYygpH0zf4k=
+From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
+        <thomas_os@shipmail.org>
+To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        torvalds@linux-foundation.org, kirill@shutemov.name
+Cc:     =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thellstrom@vmware.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rik van Riel <riel@surriel.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Huang Ying <ying.huang@intel.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>
+Subject: [PATCH v5 0/8] Emulated coherent graphics memory take 2
+Date:   Thu, 10 Oct 2019 14:43:06 +0200
+Message-Id: <20191010124314.40067-1-thomas_os@shipmail.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190930121520.1388317-2-arnd@arndb.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 30, 2019 at 02:14:34PM +0200, Arnd Bergmann wrote:
-> safexcel_aead_setkey() contains three large stack variables, totalling
-> slightly more than the 1024 byte warning limit:
-> 
-> drivers/crypto/inside-secure/safexcel_cipher.c:303:12: error: stack frame size of 1032 bytes in function 'safexcel_aead_setkey' [-Werror,-Wframe-larger-than=]
-> 
-> The function already contains a couple of dynamic allocations, so it is
-> likely not performance critical and it can only be called in a context
-> that allows sleeping, so the easiest workaround is to add change it
-> to use dynamic allocations. Combining istate and ostate into a single
-> variable simplifies the allocation at the cost of making it slightly
-> less readable.
-> 
-> Alternatively, it should be possible to shrink these allocations
-> as the extra buffers appear to be largely unnecessary, but doing
-> this would be a much more invasive change.
-> 
-> Fixes: 0e17e3621a28 ("crypto: inside-secure - add support for authenc(hmac(sha*),rfc3686(ctr(aes))) suites")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  .../crypto/inside-secure/safexcel_cipher.c    | 53 ++++++++++++-------
->  1 file changed, 35 insertions(+), 18 deletions(-)
+From: Thomas Hellström <thellstrom@vmware.com>
 
-This patch doesn't apply against the current cryptodev tree.
+Graphics APIs like OpenGL 4.4 and Vulkan require the graphics driver
+to provide coherent graphics memory, meaning that the GPU sees any
+content written to the coherent memory on the next GPU operation that
+touches that memory, and the CPU sees any content written by the GPU
+to that memory immediately after any fence object trailing the GPU
+operation is signaled.
 
-Please respin it.
+Paravirtual drivers that otherwise require explicit synchronization
+needs to do this by hooking up dirty tracking to pagefault handlers
+and buffer object validation.
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Provide mm helpers needed for this and that also allow for huge pmd-
+and pud entries (patch 1-3), and the associated vmwgfx code (patch 4-7).
+
+The code has been tested and exercised by a tailored version of mesa
+where we disable all explicit synchronization and assume graphics memory
+is coherent. The performance loss varies of course; a typical number is
+around 5%.
+
+I would like to merge this code through the DRM tree, so an ack to include
+the new mm helpers in that merge would be greatly appreciated.
+
+Changes since RFC:
+- Merge conflict changes moved to the correct patch. Fixes intra-patchset
+  compile errors.
+- Be more aggressive when turning ttm vm code into helpers. This makes sure
+  we can use a const qualifier on the vmwgfx vm_ops.
+- Reinstate a lost comment an fix an error path that was broken when turning
+  the ttm vm code into helpers.
+- Remove explicit type-casts of struct vm_area_struct::vm_private_data
+- Clarify the locking inversion that makes us not being able to use the mm
+  pagewalk code.
+
+Changes since v1:
+- Removed the vmwgfx maintainer entry for as_dirty_helpers.c, updated
+  commit message accordingly
+- Removed the TTM patches from the series as they are merged separately
+  through DRM.
+Changes since v2:
+- Split out the pagewalk code from as_dirty_helpers.c and document locking.
+- Add pre_vma and post_vma callbacks to the pagewalk code.
+- Remove huge pmd and -pud asserts that would trip when we protect vmas with
+  struct address_space::i_mmap_rwsem rather than with
+  struct vm_area_struct::mmap_sem.
+- Do some naming cleanup in as_dirty_helpers.c
+Changes since v3:
+- Extensive renaming of the dirty helpers including the filename.
+- Update walk_page_mapping() doc.
+- Update the pagewalk code to not unconditionally split pmds if a pte_entry()
+  callback is present. Update the dirty helper pmd_entry accordingly.
+- Use separate walk ops for the dirty helpers.
+- Update the pagewalk code to take the pagetable lock in walk_pte_range.
+Changes since v4:
+- Fix pte pointer confusion in patch 2/8
+- Skip the pagewalk code conditional split patch for now, and update the
+  mapping_dirty_helper accordingly. That problem will be solved in a cleaner
+  way in a follow-up patchset.
+  
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: Jérôme Glisse <jglisse@redhat.com>
+Cc: Kirill A. Shutemov <kirill@shutemov.name>
