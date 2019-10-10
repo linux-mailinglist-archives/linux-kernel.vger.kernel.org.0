@@ -2,160 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AB7AD3176
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 21:37:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69A9FD318A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 21:44:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726112AbfJJThk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 15:37:40 -0400
-Received: from mail-eopbgr50076.outbound.protection.outlook.com ([40.107.5.76]:33679
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        id S1726440AbfJJToC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 15:44:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43698 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725867AbfJJThj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 15:37:39 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ccEkfK0D6foFht/IrtCbeqdREyun3ab5vLsSm3L73PlPWxF+DJEi9rlo4yJ3KW5QSvjC9eOeQTWjJuaZL8m3cxVa1Aqc8KT+nzFeMcNIodU0/Bgt915NeSO0lOnn/fPEcUFosgxKqmPVocqjoSwPcUtd+SmRJP1s+Eq7VdOam81r49PXFlyy9m5kDyvT8sKIUed+pkiZPaFsyOgu16nj1IpKA57KzbxE1q6iL06uA09tIr/XyHqnkdJ/PgDSdqB9JqMGnrJe5o6CLqiDE81AhyND+K8SevShSdjvJcLjcnlFMa048dwvXc0qDjz9amrKMjSH1d+S/Ere8ZwfLMGHHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6mXdB3i5JeOmNo+B9Q4wnLveLWNpISnToCMurGa9awk=;
- b=bhSLVuaijBCXsFD77Q37HX2LpTKPE0ejsD9Sdz5jG/JKMHaYCoYWFsNHEPDuqZksEp3LrZLv4dSrAlJ87k36vkJcEBwpPdfW6lI9h+hylkLNSu0foTGdBZjQcif+or7s6BlZ0a0ChrthHg9qsoI1lCKVu0DY8+cRv+xi6xinytYS8FMs1cuSyhpgAyDFJJsQUqcPuj9yc7h/in2nO8xGxhMJygik/csPqYwdvjyu9ldJBKe5meKL36ZCR17jTjYh9y0Jf1pVQmmoQRZsGN7CLk5fmTJ8sDllGEdbXtFkee1iYkby9Gqm9qPoqKUJddecSwu4Hp0FINBAIDPu78fq4w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6mXdB3i5JeOmNo+B9Q4wnLveLWNpISnToCMurGa9awk=;
- b=kUPo+0QqbklQDa5lf7M1/nD4asxtM5/tOyIdEAYZbiKGVzQL2GRm6cJDmSmXTXqo4FV1CQEsRTpYXxFJDkorBL46Bsmet0JvBtRUYQiHsROytJSPj5TEgDoXU3BRv+2YvAHFXyn/QnZ8gwP9ltu734OSgiGrY26fgqDdp6i+3Cg=
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
- VI1PR04MB5309.eurprd04.prod.outlook.com (20.177.50.79) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.16; Thu, 10 Oct 2019 19:36:55 +0000
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::8c20:60f:5a1c:42ef]) by VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::8c20:60f:5a1c:42ef%3]) with mapi id 15.20.2347.016; Thu, 10 Oct 2019
- 19:36:55 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Jan Kiszka <jan.kiszka@siemens.com>,
-        Joel Colledge <joel.colledge@linbit.com>
-CC:     Kieran Bingham <kbingham@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] scripts/gdb: fix lx-dmesg when CONFIG_PRINTK_CALLER is
- set
-Thread-Topic: [PATCH] scripts/gdb: fix lx-dmesg when CONFIG_PRINTK_CALLER is
- set
-Thread-Index: AQHVc7J2WTi3Jq2z7EqErfeE4WWeNw==
-Date:   Thu, 10 Oct 2019 19:36:55 +0000
-Message-ID: <VI1PR04MB70236211F170522DD456553AEE940@VI1PR04MB7023.eurprd04.prod.outlook.com>
-References: <20190925150308.6609-1-joel.colledge@linbit.com>
- <a87e01b0-73f1-8a86-d7c0-2700e1032b92@siemens.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [89.37.124.34]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7ac3a1b9-5e7c-4a83-205f-08d74db93582
-x-ms-office365-filtering-ht: Tenant
-x-ms-traffictypediagnostic: VI1PR04MB5309:
-x-microsoft-antispam-prvs: <VI1PR04MB53092CFB39B6E4E59D551C31EE940@VI1PR04MB5309.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 018632C080
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(346002)(376002)(136003)(39860400002)(366004)(189003)(199004)(6116002)(316002)(478600001)(26005)(186003)(14454004)(25786009)(110136005)(256004)(8676002)(81156014)(7696005)(305945005)(81166006)(7736002)(86362001)(229853002)(8936002)(99286004)(14444005)(55016002)(9686003)(76176011)(3846002)(6436002)(76116006)(6506007)(446003)(53546011)(6246003)(33656002)(5660300002)(91956017)(66066001)(71190400001)(71200400001)(44832011)(52536014)(66446008)(64756008)(66556008)(66476007)(102836004)(4326008)(476003)(74316002)(66946007)(486006)(2906002)(54906003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5309;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: cuRyvzhXVRHVNOuM6yg4fAcjBs1KEOFMNdJsCWqX4JgCUcpEwMY7TaWYZgKyHBS3CzPwhxC7nBLSEeMr0+9UItKjS7hGSqobGM7xIGI8YU0pM30stpBv5K/c7hJTRbaQ0I876pBx7enLLR/Qwfn/3C4F/JmISghYvEJNQrqt9GwNwYlDhSyxz28p1uovW9uqh9n6qcfK+v/xTGkHHgTnOZw3/hRil9Km08b+UaeX89ldlen0WAP40bCa0EpdNu+HDeyZeB3+GZBHG9xdi+6egW1PaTHKobPL9BMOan4lx+QJOh9DpGMUOd4J8KFeBAQ5sXZgDijWkmIfzoMnsj1fns6kGZi2c71EA45K6XhRJdS0PrKGVGrpsgH20L1LzaGt9Brka1OpAYjzvKvp6+VvmJ0qHP1/dbldl4SKm4qkVX4=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1725867AbfJJToC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 15:44:02 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 36BD2AD54;
+        Thu, 10 Oct 2019 19:30:47 +0000 (UTC)
+Received: by unicorn.suse.cz (Postfix, from userid 1000)
+        id C62E6E378C; Thu, 10 Oct 2019 21:30:44 +0200 (CEST)
+Date:   Thu, 10 Oct 2019 21:30:44 +0200
+From:   Michal Kubecek <mkubecek@suse.cz>
+To:     netdev@vger.kernel.org
+Cc:     Jiri Pirko <jiri@resnulli.us>, David Miller <davem@davemloft.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        John Linville <linville@tuxdriver.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v7 14/17] ethtool: set link settings with
+ LINKINFO_SET request
+Message-ID: <20191010193044.GG22163@unicorn.suse.cz>
+References: <cover.1570654310.git.mkubecek@suse.cz>
+ <aef31ba798d1cfa2ae92d333ad1547f4b528ffa8.1570654310.git.mkubecek@suse.cz>
+ <20191010153754.GA2901@nanopsycho>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7ac3a1b9-5e7c-4a83-205f-08d74db93582
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Oct 2019 19:36:55.7412
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 5rdjWkGttmYwf5JS+XYLinFJtpegisN0dPNv0VmhHdfe8Uwq8LiR4d7qdex4CyIDAV2TGQhkLDH6BKW4zwWp9A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5309
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191010153754.GA2901@nanopsycho>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10.10.2019 18:14, Jan Kiszka wrote:=0A=
-> On 25.09.19 17:03, Joel Colledge wrote:=0A=
->> When CONFIG_PRINTK_CALLER is set, struct printk_log contains an=0A=
->> additional member caller_id. As a result, the offset of the log text is=
-=0A=
->> different.=0A=
->>=0A=
->> This fixes the following error:=0A=
->>=0A=
->>    (gdb) lx-dmesg=0A=
->>    Python Exception <class 'ValueError'> embedded null character:=0A=
->>    Error occurred in Python command: embedded null character=0A=
->>=0A=
->> Signed-off-by: Joel Colledge <joel.colledge@linbit.com>=0A=
->> ---=0A=
->>   scripts/gdb/linux/constants.py.in | 1 +=0A=
->>   scripts/gdb/linux/dmesg.py        | 4 +++-=0A=
->>   2 files changed, 4 insertions(+), 1 deletion(-)=0A=
->>=0A=
->> diff --git a/scripts/gdb/linux/constants.py.in b/scripts/gdb/linux/const=
-ants.py.in=0A=
->> index 2efbec6b6b8d..3c9794a0bf55 100644=0A=
->> --- a/scripts/gdb/linux/constants.py.in=0A=
->> +++ b/scripts/gdb/linux/constants.py.in=0A=
->> @@ -74,4 +74,5 @@ LX_CONFIG(CONFIG_GENERIC_CLOCKEVENTS_BROADCAST)=0A=
->>   LX_CONFIG(CONFIG_HIGH_RES_TIMERS)=0A=
->>   LX_CONFIG(CONFIG_NR_CPUS)=0A=
->>   LX_CONFIG(CONFIG_OF)=0A=
->> +LX_CONFIG(CONFIG_PRINTK_CALLER)=0A=
->>   LX_CONFIG(CONFIG_TICK_ONESHOT)=0A=
->> diff --git a/scripts/gdb/linux/dmesg.py b/scripts/gdb/linux/dmesg.py=0A=
->> index 6d2e09a2ad2f..1352680ef731 100644=0A=
->> --- a/scripts/gdb/linux/dmesg.py=0A=
->> +++ b/scripts/gdb/linux/dmesg.py=0A=
->> @@ -14,6 +14,7 @@=0A=
->>   import gdb=0A=
->>   import sys=0A=
->>   =0A=
->> +from linux import constants=0A=
->>   from linux import utils=0A=
->>   =0A=
->>   =0A=
->> @@ -53,7 +54,8 @@ class LxDmesg(gdb.Command):=0A=
->>                   continue=0A=
->>   =0A=
->>               text_len =3D utils.read_u16(log_buf[pos + 10:pos + 12])=0A=
->> -            text =3D log_buf[pos + 16:pos + 16 + text_len].decode(=0A=
->> +            text_start =3D pos + (20 if constants.LX_CONFIG_PRINTK_CALL=
-ER else 16)=0A=
->> +            text =3D log_buf[text_start:text_start + text_len].decode(=
-=0A=
->>                   encoding=3D'utf8', errors=3D'replace')=0A=
->>               time_stamp =3D utils.read_u64(log_buf[pos:pos + 8])=0A=
-> =0A=
-> Sorry for the delay:=0A=
-> =0A=
-> Reviewed-by: Jan Kiszka <jan.kiszka@siemens.com>=0A=
-> =0A=
-> I suspect we will see more in nearer future with upcoming printk rework..=
-.=0A=
-=0A=
-The patch looks correct but I'm curious: is there a reason this code =0A=
-doesn't use struct printk_log?=0A=
-=0A=
-GDB already knows about struct offsets so there should be no need to =0A=
-handle ifdefs with arithmetic.=0A=
-=0A=
-Is it realistic to use gdb without struct layout info?=0A=
-=0A=
---=0A=
-Regards,=0A=
-Leonard=0A=
+On Thu, Oct 10, 2019 at 05:37:54PM +0200, Jiri Pirko wrote:
+> Wed, Oct 09, 2019 at 10:59:43PM CEST, mkubecek@suse.cz wrote:
+> >Implement LINKINFO_SET netlink request to set link settings queried by
+> >LINKINFO_GET message.
+> >
+> >Only physical port, phy MDIO address and MDI(-X) control can be set,
+> >attempt to modify MDI(-X) status and transceiver is rejected.
+> >
+> >When any data is modified, ETHTOOL_MSG_LINKINFO_NTF message in the same
+> >format as reply to LINKINFO_GET request is sent to notify userspace about
+> >the changes. The same notification is also sent when these settings are
+> >modified using the ioctl interface.
+> >
+> 
+> It is a bit confusing and harder to follow when you have set and notify
+> code in the same patch. Could you please split?
+
+As the notification is composed and sent by ethnl_std_notify() with help
+of the callback functions used to generate the reply to GET request, the
+only notification related changes in this patch are the three calls to
+ethtool_notify() (one in netlink code, two in ioctl code) and the entry
+added to ethnl_notify_handlers[].
+
+But I have no objection to splitting these out into a separate patch,
+except for having sacrifice some of the patches actually implementing
+something so that the series doesn't get too long.
+
+> 
+> [...]
+> 
+> 
+> >+/* LINKINFO_SET */
+> >+
+> >+static const struct nla_policy linkinfo_hdr_policy[ETHTOOL_A_HEADER_MAX + 1] = {
+> >+	[ETHTOOL_A_HEADER_UNSPEC]		= { .type = NLA_REJECT },
+> >+	[ETHTOOL_A_HEADER_DEV_INDEX]		= { .type = NLA_U32 },
+> >+	[ETHTOOL_A_HEADER_DEV_NAME]		= { .type = NLA_NUL_STRING,
+> >+						    .len = IFNAMSIZ - 1 },
+> >+	[ETHTOOL_A_HEADER_GFLAGS]		= { .type = NLA_U32 },
+> >+	[ETHTOOL_A_HEADER_RFLAGS]		= { .type = NLA_REJECT },
+> >+};
+> 
+> This is what I was talking about in the other email. These common attrs
+> should have common policy and should be parsed by generic netlink code
+> by default and be available for ethnl_set_linkinfo() in info->attrs.
+
+NLA_REJECT for ETHTOOL_A_HEADER_RFLAGS is probably an overkill here. If
+I just check that client does not set flags we do not know, I can have
+one universal header policy as well. I'll probably do that.
+
+> >+int ethnl_set_linkinfo(struct sk_buff *skb, struct genl_info *info)
+> >+{
+> >+	struct nlattr *tb[ETHTOOL_A_LINKINFO_MAX + 1];
+> >+	struct ethtool_link_ksettings ksettings = {};
+> >+	struct ethtool_link_settings *lsettings;
+> >+	struct ethnl_req_info req_info = {};
+> >+	struct net_device *dev;
+> >+	bool mod = false;
+> >+	int ret;
+> >+
+> >+	ret = nlmsg_parse(info->nlhdr, GENL_HDRLEN, tb,
+> >+			  ETHTOOL_A_LINKINFO_MAX, linkinfo_set_policy,
+> >+			  info->extack);
+> 
+> Yeah, genl code should do this parse..
+
+Not really. It would only parse the top level - which, in your design,
+would only be the common header. In other words, it would do what is now
+done by the call to nla_parse_nested() inside ethnl_parse_header(). For
+equivalent of this parse, you would still have to call your own
+nla_parse_nested() on the "request specific data" nested attribute.
+
+> >+	if (ret < 0)
+> >+		return ret;
+> >+	ret = ethnl_parse_header(&req_info, tb[ETHTOOL_A_LINKINFO_HEADER],
+> >+				 genl_info_net(info), info->extack,
+> >+				 linkinfo_hdr_policy, true);
+> 
+> and pre_doit should do this one.
+
+...and also (each) start(). Which means you would either duplicate the
+code or introduce the same helper. All you would save would be that one
+call of nla_parse_nested() in ethnl_parse_header().
+
+> >+
+> >+	ret = 0;
+> >+	if (mod) {
+> 
+> 	if (!mod)
+> 		goto out_ops;
+> 
+> ?
+
+OK
+
+> >+		ret = dev->ethtool_ops->set_link_ksettings(dev, &ksettings);
+> >+		if (ret < 0)
+> >+			GENL_SET_ERR_MSG(info, "link settings update failed");
+> >+		else
+> >+			ethtool_notify(dev, ETHTOOL_MSG_LINKINFO_NTF, NULL);
+> >+	}
+> >+
+> >+out_ops:
+> >+	ethnl_after_ops(dev);
+> >+out_rtnl:
+> >+	rtnl_unlock();
+> >+	dev_put(dev);
+> >+	return ret;
+> >+}
+...
+> >@@ -683,6 +688,7 @@ typedef void (*ethnl_notify_handler_t)(struct net_device *dev, unsigned int cmd,
+> > 				       const void *data);
+> > 
+> > static const ethnl_notify_handler_t ethnl_notify_handlers[] = {
+> >+	[ETHTOOL_MSG_LINKINFO_NTF]	= ethnl_std_notify,
+> 
+> Correct me if I'm wrong, but this is the only notification I found in
+> this patchset. Do you expect other then ethnl_std_notify() handler?
+> Bacause otherwise this can ba simplified down to just a single table
+> similar you have for GET.
+
+Yes, there will be other handlers; ethnl_std_notify() can only handle
+the simplest (even if most common) type of notification where caller
+does not pass any information except the device, the notification
+message is exactly the same as reply to corresponding GET request would
+be and that GET request does not have any attributes (so that it can be
+handled with ethnl_get_doit()).
+
+There will be notifications which will need their own handlers, e.g. all
+notifications triggered by an action request (e.g. renegotiation or
+device reset) or notifications triggered by "ethtool -X".
+
+Michal
