@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1669D255F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:01:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3049AD247B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:00:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389223AbfJJI6k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:58:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51106 "EHLO mail.kernel.org"
+        id S2389203AbfJJIps (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:45:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387710AbfJJIpa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:45:30 -0400
+        id S2389181AbfJJIpl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:45:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF51021A4A;
-        Thu, 10 Oct 2019 08:45:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 792082190F;
+        Thu, 10 Oct 2019 08:45:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697130;
-        bh=WfoyCfdIo3r6xcNuaQI/cVJPvfzJANcGm0c2yQ8l61M=;
+        s=default; t=1570697141;
+        bh=Cbulkmm9GwC8jvTTwza+47Jdqbj9EpfMt2YzOG0dxZc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2JF/OY2SJvMtYkMekangTKcmu5IFr62atZz7dA3MshOdtmAxnRFAzJKBwW3X5jt9X
-         wPg1jZY1Q0Xi/95QwFSubiyhLTvf+bPwfiqGzaXLXuLU7dImaodjWlSZZbxKX2v2xq
-         poGfMsV2mxvHyJQw91uONgfw6Ev+poNAjQBP1MW4=
+        b=duiBEXZlgIvRQGEbjwj58XRN6Xl7LO6KUPN6PuNDc78Ejx+GAqOA2mRejFEfLvhro
+         unsqfvQCqOIhkP/oDM/2gThzeUjlsRo018F5/f5V5P8k+4TnnocYe/kcTGfFvrir+D
+         8hmTm28DAzipl//eaE0UjOWvvQM2+kbRlAPzR1j0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Nosthoff <committed@heine.so>,
-        Brian Norris <briannorris@chromium.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCH 4.19 029/114] power: supply: sbs-battery: only return health when battery present
-Date:   Thu, 10 Oct 2019 10:35:36 +0200
-Message-Id: <20191010083559.078712124@linuxfoundation.org>
+        stable@vger.kernel.org, Li RongQing <lirongqing@baidu.com>,
+        Liang ZhiCheng <liangzhicheng@baidu.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.19 032/114] timer: Read jiffies once when forwarding base clk
+Date:   Thu, 10 Oct 2019 10:35:39 +0200
+Message-Id: <20191010083600.488625019@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
 References: <20191010083544.711104709@linuxfoundation.org>
@@ -44,74 +44,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Nosthoff <committed@heine.so>
+From: Li RongQing <lirongqing@baidu.com>
 
-commit fe55e770327363304c4111423e6f7ff3c650136d upstream.
+commit e430d802d6a3aaf61bd3ed03d9404888a29b9bf9 upstream.
 
-when the battery is set to sbs-mode and  no gpio detection is enabled
-"health" is always returning a value even when the battery is not present.
-All other fields return "not present".
-This leads to a scenario where the driver is constantly switching between
-"present" and "not present" state. This generates a lot of constant
-traffic on the i2c.
+The timer delayed for more than 3 seconds warning was triggered during
+testing.
 
-This commit changes the response of "health" to an error when the battery
-is not responding leading to a consistent "not present" state.
+  Workqueue: events_unbound sched_tick_remote
+  RIP: 0010:sched_tick_remote+0xee/0x100
+  ...
+  Call Trace:
+   process_one_work+0x18c/0x3a0
+   worker_thread+0x30/0x380
+   kthread+0x113/0x130
+   ret_from_fork+0x22/0x40
 
-Fixes: 76b16f4cdfb8 ("power: supply: sbs-battery: don't assume MANUFACTURER_DATA formats")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Michael Nosthoff <committed@heine.so>
-Reviewed-by: Brian Norris <briannorris@chromium.org>
-Tested-by: Brian Norris <briannorris@chromium.org>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+The reason is that the code in collect_expired_timers() uses jiffies
+unprotected:
+
+    if (next_event > jiffies)
+        base->clk = jiffies;
+
+As the compiler is allowed to reload the value base->clk can advance
+between the check and the store and in the worst case advance farther than
+next event. That causes the timer expiry to be delayed until the wheel
+pointer wraps around.
+
+Convert the code to use READ_ONCE()
+
+Fixes: 236968383cf5 ("timers: Optimize collect_expired_timers() for NOHZ")
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+Signed-off-by: Liang ZhiCheng <liangzhicheng@baidu.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/1568894687-14499-1-git-send-email-lirongqing@baidu.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/power/supply/sbs-battery.c |   25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+ kernel/time/timer.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/power/supply/sbs-battery.c
-+++ b/drivers/power/supply/sbs-battery.c
-@@ -323,17 +323,22 @@ static int sbs_get_battery_presence_and_
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -1590,24 +1590,26 @@ void timer_clear_idle(void)
+ static int collect_expired_timers(struct timer_base *base,
+ 				  struct hlist_head *heads)
  {
- 	int ret;
++	unsigned long now = READ_ONCE(jiffies);
++
+ 	/*
+ 	 * NOHZ optimization. After a long idle sleep we need to forward the
+ 	 * base to current jiffies. Avoid a loop by searching the bitfield for
+ 	 * the next expiring timer.
+ 	 */
+-	if ((long)(jiffies - base->clk) > 2) {
++	if ((long)(now - base->clk) > 2) {
+ 		unsigned long next = __next_timer_interrupt(base);
  
--	if (psp == POWER_SUPPLY_PROP_PRESENT) {
--		/* Dummy command; if it succeeds, battery is present. */
--		ret = sbs_read_word_data(client, sbs_data[REG_STATUS].addr);
--		if (ret < 0)
--			val->intval = 0; /* battery disconnected */
--		else
--			val->intval = 1; /* battery present */
--	} else { /* POWER_SUPPLY_PROP_HEALTH */
-+	/* Dummy command; if it succeeds, battery is present. */
-+	ret = sbs_read_word_data(client, sbs_data[REG_STATUS].addr);
-+
-+	if (ret < 0) { /* battery not present*/
-+		if (psp == POWER_SUPPLY_PROP_PRESENT) {
-+			val->intval = 0;
-+			return 0;
-+		}
-+		return ret;
-+	}
-+
-+	if (psp == POWER_SUPPLY_PROP_PRESENT)
-+		val->intval = 1; /* battery present */
-+	else /* POWER_SUPPLY_PROP_HEALTH */
- 		/* SBS spec doesn't have a general health command. */
- 		val->intval = POWER_SUPPLY_HEALTH_UNKNOWN;
--	}
- 
- 	return 0;
- }
-@@ -635,6 +640,8 @@ static int sbs_get_property(struct power
- 		else
- 			ret = sbs_get_battery_presence_and_health(client, psp,
- 								  val);
-+
-+		/* this can only be true if no gpio is used */
- 		if (psp == POWER_SUPPLY_PROP_PRESENT)
+ 		/*
+ 		 * If the next timer is ahead of time forward to current
+ 		 * jiffies, otherwise forward to the next expiry time:
+ 		 */
+-		if (time_after(next, jiffies)) {
++		if (time_after(next, now)) {
+ 			/*
+ 			 * The call site will increment base->clk and then
+ 			 * terminate the expiry loop immediately.
+ 			 */
+-			base->clk = jiffies;
++			base->clk = now;
  			return 0;
- 		break;
+ 		}
+ 		base->clk = next;
 
 
