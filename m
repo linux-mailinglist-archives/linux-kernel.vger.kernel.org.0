@@ -2,124 +2,445 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88390D255C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:01:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8135D2567
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:01:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389730AbfJJI6S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:58:18 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:58928 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388555AbfJJI6O (ORCPT
+        id S2389029AbfJJI7h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:59:37 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:43784 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387946AbfJJI7d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:58:14 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9A8vvZA171461;
-        Thu, 10 Oct 2019 08:58:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=qgO5nIjtEA5M7rpWm5uYekrXGaVEyZKGlFAp0lWFa1I=;
- b=QDprH0ZroOSvHkn7uHQUIF+ffXhDgtxsjV+SMa9Se+qqjHdDEchr2SYVh/MxtQVppOzP
- BukBgJwbX8awsCHomiHgunYbIcRid0jDQ82XhYyX+oDzPm1StUyyjjh1xHkA1cK35b2N
- veA8utDGrDlfvklhuQPpWoo/WLexod7WDtjtbjFtMM5+WOGrM/2sPJrdESs9+Jp0njul
- tEeg5hTnNVzZmory2OzfHvzEv+w2R5HkMo26yHy7Q+m871zEu5lC9a+8FIyRHAGdazgE
- eKrlJ9d96mNPYDM+KqL8AHh1UX2TaVn6yPigGY6uLO6V/L9wUvrykhZBRfKaklEZwiAG ag== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2vektrsk4u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Oct 2019 08:58:08 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9A8qnWn078202;
-        Thu, 10 Oct 2019 08:58:08 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2vhrxd8tps-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Oct 2019 08:58:08 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9A8w6PJ023258;
-        Thu, 10 Oct 2019 08:58:06 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 10 Oct 2019 01:58:05 -0700
-Date:   Thu, 10 Oct 2019 11:57:55 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Wambui Karuga <wambui.karugax@gmail.com>
-Cc:     outreachy-kernel@googlegroups.com, devel@driverdev.osuosl.org,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] staging: rtl8723bs: Remove comparisons to booleans
- in conditionals.
-Message-ID: <20191010085755.GD20470@kadam>
-References: <cover.1570678371.git.wambui.karugax@gmail.com>
- <4af8981347a05f0a25fa1540d8753e7040ea2d85.1570678371.git.wambui.karugax@gmail.com>
+        Thu, 10 Oct 2019 04:59:33 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9A8wtvM111374;
+        Thu, 10 Oct 2019 03:58:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1570697935;
+        bh=FZ5m5fs3B8g3OBzN8iroXxEV7WIfFcZBg387gdAKDFo=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=iwV4mp+D6AptkvLFGg/EZjal0oTFYZRm34GDNYRn7i+jZKfvBHvWvpojJ1Ov6mCT9
+         VDDkSh5r8hKyN+frX2QKumbJa8D8P++9nGOsckDUZefI9Cy8QsPoJ9UEZSQyCW069g
+         +N+kmOMT4A0ZzFtXLknJCJchvHDpIzXu5uyIekJg=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9A8wtoY083866
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 10 Oct 2019 03:58:55 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 10
+ Oct 2019 03:58:51 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 10 Oct 2019 03:58:51 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9A8wlcw079738;
+        Thu, 10 Oct 2019 03:58:48 -0500
+Subject: Re: [PATCH v3 15/16] phy: phy-mmp3-usb: add a new driver
+To:     Lubomir Rintel <lkundrak@v3.sk>,
+        "To : Olof Johansson" <olof@lixom.net>
+CC:     "Cc : Rob Herring" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+References: <20190830220743.439670-1-lkundrak@v3.sk>
+ <20190830220743.439670-16-lkundrak@v3.sk>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <cc2dba6e-17df-af14-c5b9-b5148a64dcfb@ti.com>
+Date:   Thu, 10 Oct 2019 14:28:22 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4af8981347a05f0a25fa1540d8753e7040ea2d85.1570678371.git.wambui.karugax@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9405 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910100082
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9405 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910100082
+In-Reply-To: <20190830220743.439670-16-lkundrak@v3.sk>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 06:39:23AM +0300, Wambui Karuga wrote:
->  	if (is_primary_adapter(adapter))
->  		DBG_871X("IsBtDisabled =%d, IsBtControlLps =%d\n", hal_btcoex_IsBtDisabled(adapter), hal_btcoex_IsBtControlLps(adapter));
->  
-> -	if ((adapter_to_pwrctl(adapter)->bFwCurrentInPSMode == true)
-> -		&& (hal_btcoex_IsBtControlLps(adapter) == false)
-> +	if ((adapter_to_pwrctl(adapter)->bFwCurrentInPSMode)
-> +		&& !(hal_btcoex_IsBtControlLps(adapter))
+Hi,
 
-Delete the extra parentheses as well, because they don't make sense when
-we remove the == false comparison.  It's part of doing "one thing" is to
-the whole thing and not leave bits undone.
+On 31/08/19 3:37 AM, Lubomir Rintel wrote:
 
-		&& !hal_btcoex_IsBtControlLps(adapter)
+Change the $subject to "phy: Add USB2 PHY driver for Marvell MMP3 SoC"
+> This is the USB2 PHY as found on the Marvell MMP3 SoC. Based on Marvell GPL
+> release.
 
->  		) {
->  		u8 bEnterPS;
->  
-> @@ -2047,7 +2047,7 @@ static int rtw_check_join_candidate(struct mlme_priv *mlme
->  
->  
->  	/* check bssid, if needed */
-> -	if (mlme->assoc_by_bssid == true) {
-> +	if (mlme->assoc_by_bssid) {
->  		if (memcmp(competitor->network.MacAddress, mlme->assoc_bssid, ETH_ALEN))
->  			goto exit;
->  	}
-> @@ -2805,7 +2805,6 @@ void rtw_update_ht_cap(struct adapter *padapter, u8 *pie, uint ie_len, u8 channe
->  	struct mlme_ext_info *pmlmeinfo = &(pmlmeext->mlmext_info);
->  	u8 cbw40_enable = 0;
->  
-> -
->  	if (!phtpriv->ht_option)
->  		return;
->  
-> @@ -2815,7 +2814,7 @@ void rtw_update_ht_cap(struct adapter *padapter, u8 *pie, uint ie_len, u8 channe
->  	DBG_871X("+rtw_update_ht_cap()\n");
->  
->  	/* maybe needs check if ap supports rx ampdu. */
-> -	if ((phtpriv->ampdu_enable == false) && (pregistrypriv->ampdu_enable == 1)) {
-> +	if (!(phtpriv->ampdu_enable) && pregistrypriv->ampdu_enable == 1) {
+Just have "Add PHY driver for the USB2 PHY found on Marvell MMP3 SoC." here.
+> 
+> While at that, also add a MAINTAINERS entry including the other MMP PHY
+> driver.
 
-Same.
+Adding MAINTAINERS could be a different patch.
+> 
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 
->  		if (pregistrypriv->wifi_spec == 1) {
->  			/* remove this part because testbed AP should disable RX AMPDU */
->  			/* phtpriv->ampdu_enable = false; */
+Once the commit log is fixed:
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
 
-regards,
-dan carpenter
-
+Thanks
+Kishon
+> ---
+>  MAINTAINERS                        |   7 +
+>  drivers/phy/marvell/Kconfig        |  11 ++
+>  drivers/phy/marvell/Makefile       |   1 +
+>  drivers/phy/marvell/phy-mmp3-usb.c | 291 +++++++++++++++++++++++++++++
+>  4 files changed, 310 insertions(+)
+>  create mode 100644 drivers/phy/marvell/phy-mmp3-usb.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 176ef19f0b9db..449349f8f20bf 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -10799,6 +10799,13 @@ F:	arch/arm/boot/dts/mmp*
+>  F:	arch/arm/mach-mmp/
+>  F:	linux/soc/mmp/
+>  
+> +MMP USB PHY DRIVERS
+> +R:	Lubomir Rintel <lkundrak@v3.sk>
+> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> +S:	Maintained
+> +F:	drivers/phy/marvell/phy-mmp3-usb.c
+> +F:	drivers/phy/marvell/phy-pxa-usb.c
+> +
+>  MMU GATHER AND TLB INVALIDATION
+>  M:	Will Deacon <will@kernel.org>
+>  M:	"Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+> diff --git a/drivers/phy/marvell/Kconfig b/drivers/phy/marvell/Kconfig
+> index 0e1642419c0bf..d33ef35b3e51b 100644
+> --- a/drivers/phy/marvell/Kconfig
+> +++ b/drivers/phy/marvell/Kconfig
+> @@ -102,3 +102,14 @@ config PHY_PXA_USB
+>  	  The PHY driver will be used by Marvell udc/ehci/otg driver.
+>  
+>  	  To compile this driver as a module, choose M here.
+> +
+> +config PHY_MMP3_USB
+> +	tristate "Marvell MMP3 USB PHY Driver"
+> +	depends on MACH_MMP3_DT || COMPILE_TEST
+> +	select GENERIC_PHY
+> +	help
+> +	  Enable this to support Marvell MMP3 USB PHY driver for Marvell
+> +	  SoC. This driver will do the PHY initialization and shutdown.
+> +	  The PHY driver will be used by Marvell udc/ehci/otg driver.
+> +
+> +	  To compile this driver as a module, choose M here.
+> diff --git a/drivers/phy/marvell/Makefile b/drivers/phy/marvell/Makefile
+> index 434eb9ca6cc3f..5a106b1549f41 100644
+> --- a/drivers/phy/marvell/Makefile
+> +++ b/drivers/phy/marvell/Makefile
+> @@ -2,6 +2,7 @@
+>  obj-$(CONFIG_ARMADA375_USBCLUSTER_PHY)	+= phy-armada375-usb2.o
+>  obj-$(CONFIG_PHY_BERLIN_SATA)		+= phy-berlin-sata.o
+>  obj-$(CONFIG_PHY_BERLIN_USB)		+= phy-berlin-usb.o
+> +obj-$(CONFIG_PHY_MMP3_USB)		+= phy-mmp3-usb.o
+>  obj-$(CONFIG_PHY_MVEBU_A3700_COMPHY)	+= phy-mvebu-a3700-comphy.o
+>  obj-$(CONFIG_PHY_MVEBU_A3700_UTMI)	+= phy-mvebu-a3700-utmi.o
+>  obj-$(CONFIG_PHY_MVEBU_A38X_COMPHY)	+= phy-armada38x-comphy.o
+> diff --git a/drivers/phy/marvell/phy-mmp3-usb.c b/drivers/phy/marvell/phy-mmp3-usb.c
+> new file mode 100644
+> index 0000000000000..499869595a582
+> --- /dev/null
+> +++ b/drivers/phy/marvell/phy-mmp3-usb.c
+> @@ -0,0 +1,291 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2011 Marvell International Ltd. All rights reserved.
+> + * Copyright (C) 2018,2019 Lubomir Rintel <lkundrak@v3.sk>
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/phy/phy.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/soc/mmp/cputype.h>
+> +
+> +#define USB2_PLL_REG0		0x4
+> +#define USB2_PLL_REG1		0x8
+> +#define USB2_TX_REG0		0x10
+> +#define USB2_TX_REG1		0x14
+> +#define USB2_TX_REG2		0x18
+> +#define USB2_RX_REG0		0x20
+> +#define USB2_RX_REG1		0x24
+> +#define USB2_RX_REG2		0x28
+> +#define USB2_ANA_REG0		0x30
+> +#define USB2_ANA_REG1		0x34
+> +#define USB2_ANA_REG2		0x38
+> +#define USB2_DIG_REG0		0x3C
+> +#define USB2_DIG_REG1		0x40
+> +#define USB2_DIG_REG2		0x44
+> +#define USB2_DIG_REG3		0x48
+> +#define USB2_TEST_REG0		0x4C
+> +#define USB2_TEST_REG1		0x50
+> +#define USB2_TEST_REG2		0x54
+> +#define USB2_CHARGER_REG0	0x58
+> +#define USB2_OTG_REG0		0x5C
+> +#define USB2_PHY_MON0		0x60
+> +#define USB2_RESETVE_REG0	0x64
+> +#define USB2_ICID_REG0		0x78
+> +#define USB2_ICID_REG1		0x7C
+> +
+> +/* USB2_PLL_REG0 */
+> +
+> +/* This is for Ax stepping */
+> +#define USB2_PLL_FBDIV_SHIFT_MMP3		0
+> +#define USB2_PLL_FBDIV_MASK_MMP3		(0xFF << 0)
+> +
+> +#define USB2_PLL_REFDIV_SHIFT_MMP3		8
+> +#define USB2_PLL_REFDIV_MASK_MMP3		(0xF << 8)
+> +
+> +#define USB2_PLL_VDD12_SHIFT_MMP3		12
+> +#define USB2_PLL_VDD18_SHIFT_MMP3		14
+> +
+> +/* This is for B0 stepping */
+> +#define USB2_PLL_FBDIV_SHIFT_MMP3_B0		0
+> +#define USB2_PLL_REFDIV_SHIFT_MMP3_B0		9
+> +#define USB2_PLL_VDD18_SHIFT_MMP3_B0		14
+> +#define USB2_PLL_FBDIV_MASK_MMP3_B0		0x01FF
+> +#define USB2_PLL_REFDIV_MASK_MMP3_B0		0x3E00
+> +
+> +#define USB2_PLL_CAL12_SHIFT_MMP3		0
+> +#define USB2_PLL_CALI12_MASK_MMP3		(0x3 << 0)
+> +
+> +#define USB2_PLL_VCOCAL_START_SHIFT_MMP3	2
+> +
+> +#define USB2_PLL_KVCO_SHIFT_MMP3		4
+> +#define USB2_PLL_KVCO_MASK_MMP3			(0x7<<4)
+> +
+> +#define USB2_PLL_ICP_SHIFT_MMP3			8
+> +#define USB2_PLL_ICP_MASK_MMP3			(0x7<<8)
+> +
+> +#define USB2_PLL_LOCK_BYPASS_SHIFT_MMP3		12
+> +
+> +#define USB2_PLL_PU_PLL_SHIFT_MMP3		13
+> +#define USB2_PLL_PU_PLL_MASK			(0x1 << 13)
+> +
+> +#define USB2_PLL_READY_MASK_MMP3		(0x1 << 15)
+> +
+> +/* USB2_TX_REG0 */
+> +#define USB2_TX_IMPCAL_VTH_SHIFT_MMP3		8
+> +#define USB2_TX_IMPCAL_VTH_MASK_MMP3		(0x7 << 8)
+> +
+> +#define USB2_TX_RCAL_START_SHIFT_MMP3		13
+> +
+> +/* USB2_TX_REG1 */
+> +#define USB2_TX_CK60_PHSEL_SHIFT_MMP3		0
+> +#define USB2_TX_CK60_PHSEL_MASK_MMP3		(0xf << 0)
+> +
+> +#define USB2_TX_AMP_SHIFT_MMP3			4
+> +#define USB2_TX_AMP_MASK_MMP3			(0x7 << 4)
+> +
+> +#define USB2_TX_VDD12_SHIFT_MMP3		8
+> +#define USB2_TX_VDD12_MASK_MMP3			(0x3 << 8)
+> +
+> +/* USB2_TX_REG2 */
+> +#define USB2_TX_DRV_SLEWRATE_SHIFT		10
+> +
+> +/* USB2_RX_REG0 */
+> +#define USB2_RX_SQ_THRESH_SHIFT_MMP3		4
+> +#define USB2_RX_SQ_THRESH_MASK_MMP3		(0xf << 4)
+> +
+> +#define USB2_RX_SQ_LENGTH_SHIFT_MMP3		10
+> +#define USB2_RX_SQ_LENGTH_MASK_MMP3		(0x3 << 10)
+> +
+> +/* USB2_ANA_REG1*/
+> +#define USB2_ANA_PU_ANA_SHIFT_MMP3		14
+> +
+> +/* USB2_OTG_REG0 */
+> +#define USB2_OTG_PU_OTG_SHIFT_MMP3		3
+> +
+> +struct mmp3_usb_phy {
+> +	struct phy *phy;
+> +	void __iomem *base;
+> +};
+> +
+> +static unsigned int u2o_get(void __iomem *base, unsigned int offset)
+> +{
+> +	return readl_relaxed(base + offset);
+> +}
+> +
+> +static void u2o_set(void __iomem *base, unsigned int offset,
+> +		unsigned int value)
+> +{
+> +	u32 reg;
+> +
+> +	reg = readl_relaxed(base + offset);
+> +	reg |= value;
+> +	writel_relaxed(reg, base + offset);
+> +	readl_relaxed(base + offset);
+> +}
+> +
+> +static void u2o_clear(void __iomem *base, unsigned int offset,
+> +		unsigned int value)
+> +{
+> +	u32 reg;
+> +
+> +	reg = readl_relaxed(base + offset);
+> +	reg &= ~value;
+> +	writel_relaxed(reg, base + offset);
+> +	readl_relaxed(base + offset);
+> +}
+> +
+> +static int mmp3_usb_phy_init(struct phy *phy)
+> +{
+> +	struct mmp3_usb_phy *mmp3_usb_phy = phy_get_drvdata(phy);
+> +	void __iomem *base = mmp3_usb_phy->base;
+> +
+> +	if (cpu_is_mmp3_a0()) {
+> +		u2o_clear(base, USB2_PLL_REG0, (USB2_PLL_FBDIV_MASK_MMP3
+> +			| USB2_PLL_REFDIV_MASK_MMP3));
+> +		u2o_set(base, USB2_PLL_REG0,
+> +			0xd << USB2_PLL_REFDIV_SHIFT_MMP3
+> +			| 0xf0 << USB2_PLL_FBDIV_SHIFT_MMP3);
+> +	} else if (cpu_is_mmp3_b0()) {
+> +		u2o_clear(base, USB2_PLL_REG0, USB2_PLL_REFDIV_MASK_MMP3_B0
+> +			| USB2_PLL_FBDIV_MASK_MMP3_B0);
+> +		u2o_set(base, USB2_PLL_REG0,
+> +			0xd << USB2_PLL_REFDIV_SHIFT_MMP3_B0
+> +			| 0xf0 << USB2_PLL_FBDIV_SHIFT_MMP3_B0);
+> +	} else {
+> +		dev_err(&phy->dev, "unsupported silicon revision\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	u2o_clear(base, USB2_PLL_REG1, USB2_PLL_PU_PLL_MASK
+> +		| USB2_PLL_ICP_MASK_MMP3
+> +		| USB2_PLL_KVCO_MASK_MMP3
+> +		| USB2_PLL_CALI12_MASK_MMP3);
+> +	u2o_set(base, USB2_PLL_REG1, 1 << USB2_PLL_PU_PLL_SHIFT_MMP3
+> +		| 1 << USB2_PLL_LOCK_BYPASS_SHIFT_MMP3
+> +		| 3 << USB2_PLL_ICP_SHIFT_MMP3
+> +		| 3 << USB2_PLL_KVCO_SHIFT_MMP3
+> +		| 3 << USB2_PLL_CAL12_SHIFT_MMP3);
+> +
+> +	u2o_clear(base, USB2_TX_REG0, USB2_TX_IMPCAL_VTH_MASK_MMP3);
+> +	u2o_set(base, USB2_TX_REG0, 2 << USB2_TX_IMPCAL_VTH_SHIFT_MMP3);
+> +
+> +	u2o_clear(base, USB2_TX_REG1, USB2_TX_VDD12_MASK_MMP3
+> +		| USB2_TX_AMP_MASK_MMP3
+> +		| USB2_TX_CK60_PHSEL_MASK_MMP3);
+> +	u2o_set(base, USB2_TX_REG1, 3 << USB2_TX_VDD12_SHIFT_MMP3
+> +		| 4 << USB2_TX_AMP_SHIFT_MMP3
+> +		| 4 << USB2_TX_CK60_PHSEL_SHIFT_MMP3);
+> +
+> +	u2o_clear(base, USB2_TX_REG2, 3 << USB2_TX_DRV_SLEWRATE_SHIFT);
+> +	u2o_set(base, USB2_TX_REG2, 2 << USB2_TX_DRV_SLEWRATE_SHIFT);
+> +
+> +	u2o_clear(base, USB2_RX_REG0, USB2_RX_SQ_THRESH_MASK_MMP3);
+> +	u2o_set(base, USB2_RX_REG0, 0xa << USB2_RX_SQ_THRESH_SHIFT_MMP3);
+> +
+> +	u2o_set(base, USB2_ANA_REG1, 0x1 << USB2_ANA_PU_ANA_SHIFT_MMP3);
+> +
+> +	u2o_set(base, USB2_OTG_REG0, 0x1 << USB2_OTG_PU_OTG_SHIFT_MMP3);
+> +
+> +	return 0;
+> +}
+> +
+> +static int mmp3_usb_phy_calibrate(struct phy *phy)
+> +{
+> +	struct mmp3_usb_phy *mmp3_usb_phy = phy_get_drvdata(phy);
+> +	void __iomem *base = mmp3_usb_phy->base;
+> +	int loops;
+> +
+> +	/*
+> +	 * PLL VCO and TX Impedance Calibration Timing:
+> +	 *
+> +	 *                _____________________________________
+> +	 * PU  __________|
+> +	 *                        _____________________________
+> +	 * VCOCAL START _________|
+> +	 *                                 ___
+> +	 * REG_RCAL_START ________________|   |________|_______
+> +	 *               | 200us | 400us  | 40| 400us  | USB PHY READY
+> +	 */
+> +
+> +	udelay(200);
+> +	u2o_set(base, USB2_PLL_REG1, 1 << USB2_PLL_VCOCAL_START_SHIFT_MMP3);
+> +	udelay(400);
+> +	u2o_set(base, USB2_TX_REG0, 1 << USB2_TX_RCAL_START_SHIFT_MMP3);
+> +	udelay(40);
+> +	u2o_clear(base, USB2_TX_REG0, 1 << USB2_TX_RCAL_START_SHIFT_MMP3);
+> +	udelay(400);
+> +
+> +	loops = 0;
+> +	while ((u2o_get(base, USB2_PLL_REG1) & USB2_PLL_READY_MASK_MMP3) == 0) {
+> +		mdelay(1);
+> +		loops++;
+> +		if (loops > 100) {
+> +			dev_err(&phy->dev, "PLL_READY not set after 100mS.\n");
+> +			return -ETIMEDOUT;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct phy_ops mmp3_usb_phy_ops = {
+> +	.init		= mmp3_usb_phy_init,
+> +	.calibrate	= mmp3_usb_phy_calibrate,
+> +	.owner		= THIS_MODULE,
+> +};
+> +
+> +static const struct of_device_id mmp3_usb_phy_of_match[] = {
+> +	{ .compatible = "marvell,mmp3-usb-phy", },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, mmp3_usb_phy_of_match);
+> +
+> +static int mmp3_usb_phy_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct resource *resource;
+> +	struct mmp3_usb_phy *mmp3_usb_phy;
+> +	struct phy_provider *provider;
+> +
+> +	mmp3_usb_phy = devm_kzalloc(dev, sizeof(*mmp3_usb_phy), GFP_KERNEL);
+> +	if (!mmp3_usb_phy)
+> +		return -ENOMEM;
+> +
+> +	resource = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	mmp3_usb_phy->base = devm_ioremap_resource(dev, resource);
+> +	if (IS_ERR(mmp3_usb_phy->base)) {
+> +		dev_err(dev, "failed to remap PHY regs\n");
+> +		return PTR_ERR(mmp3_usb_phy->base);
+> +	}
+> +
+> +	mmp3_usb_phy->phy = devm_phy_create(dev, NULL, &mmp3_usb_phy_ops);
+> +	if (IS_ERR(mmp3_usb_phy->phy)) {
+> +		dev_err(dev, "failed to create PHY\n");
+> +		return PTR_ERR(mmp3_usb_phy->phy);
+> +	}
+> +
+> +	phy_set_drvdata(mmp3_usb_phy->phy, mmp3_usb_phy);
+> +	provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+> +	if (IS_ERR(provider)) {
+> +		dev_err(dev, "failed to register PHY provider\n");
+> +		return PTR_ERR(provider);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver mmp3_usb_phy_driver = {
+> +	.probe		= mmp3_usb_phy_probe,
+> +	.driver		= {
+> +		.name	= "mmp3-usb-phy",
+> +		.of_match_table = mmp3_usb_phy_of_match,
+> +	},
+> +};
+> +module_platform_driver(mmp3_usb_phy_driver);
+> +
+> +MODULE_AUTHOR("Lubomir Rintel <lkundrak@v3.sk>");
+> +MODULE_DESCRIPTION("Marvell MMP3 USB PHY Driver");
+> +MODULE_LICENSE("GPL v2");
+> 
