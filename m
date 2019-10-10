@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E91BD23BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95F4FD2346
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:48:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389142AbfJJIp1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:45:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50980 "EHLO mail.kernel.org"
+        id S2388202AbfJJIkv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:40:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387494AbfJJIpZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:45:25 -0400
+        id S2387576AbfJJIkt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:40:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 253582054F;
-        Thu, 10 Oct 2019 08:45:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA83420B7C;
+        Thu, 10 Oct 2019 08:40:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697124;
-        bh=X1df99eEDsmcqfQWwNpuErLPe5rH8mKR59GykrUYY1Q=;
+        s=default; t=1570696849;
+        bh=U7gRGV/O4IvB29cLMdvtxm+jQ0J8p2tK9b/FYOCtQDw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FXcOx3HB7D26V3SwCrQQ+0T9sZA0k9/lPvkKnnGgDwQoLDc03sINYcSXHfGW1gIO7
-         lO52hBqv/hFfcfg8awU9DaxRxt7d7B+soDEGmvO1Lrm6xd6FkLXL4xNpeWwaxhXf2M
-         yyr0pgNmsH1bLvy/D90wl5kl4jq/oAg5pZ8tO/mY=
+        b=GpNh+JMBon3ubE7i29mMMoEqt2MoETxx49L12acv5kbLp9fg58ndv2OKJuJwQTh0X
+         1sHZk/gPZ6DJnlBgSX/63X/V/UjTFbLuFPxmGmyj389RLFjwxNd4Yu3kcd1HHp5V1i
+         K7Gh6V85sTXIx3XRZ3G/zELfHK6m/A9j8j5IrlKM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Huacai Chen <chenhc@lemote.com>,
-        Yunqiang Su <ysu@wavecomp.com>,
-        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org
-Subject: [PATCH 4.19 027/114] MIPS: Treat Loongson Extensions as ASEs
+        stable@vger.kernel.org, Aaron Hill <aa1ronham@gmail.com>,
+        Lukas Redlinger <rel+kernel@agilox.net>,
+        Oleksii Shevchuk <alxchk@gmail.com>,
+        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 5.3 073/148] mac80211: keep BHs disabled while calling drv_tx_wake_queue()
 Date:   Thu, 10 Oct 2019 10:35:34 +0200
-Message-Id: <20191010083557.446095085@linuxfoundation.org>
+Message-Id: <20191010083615.810908484@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
-References: <20191010083544.711104709@linuxfoundation.org>
+In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
+References: <20191010083609.660878383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,107 +47,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-commit d2f965549006acb865c4638f1f030ebcefdc71f6 upstream.
+commit d8dec42b5c2d2b273bc30b0e073cfbe832d69902 upstream.
 
-Recently, binutils had split Loongson-3 Extensions into four ASEs:
-MMI, CAM, EXT, EXT2. This patch do the samething in kernel and expose
-them in cpuinfo so applications can probe supported ASEs at runtime.
+Drivers typically expect this, as it's the case for almost all cases
+where this is called (i.e. from the TX path). Also, the code in mac80211
+itself (if the driver calls ieee80211_tx_dequeue()) expects this as it
+uses this_cpu_ptr() without additional protection.
 
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Huacai Chen <chenhc@lemote.com>
-Cc: Yunqiang Su <ysu@wavecomp.com>
-Cc: stable@vger.kernel.org # v4.14+
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: linux-mips@vger.kernel.org
+This should fix various reports of the problem:
+https://bugzilla.kernel.org/show_bug.cgi?id=204127
+https://lore.kernel.org/linux-wireless/CAN5HydrWb3o_FE6A1XDnP1E+xS66d5kiEuhHfiGKkLNQokx13Q@mail.gmail.com/
+https://lore.kernel.org/lkml/nycvar.YFH.7.76.1909111238470.473@cbobk.fhfr.pm/
+
+Cc: stable@vger.kernel.org
+Reported-and-tested-by: Jiri Kosina <jkosina@suse.cz>
+Reported-by: Aaron Hill <aa1ronham@gmail.com>
+Reported-by: Lukas Redlinger <rel+kernel@agilox.net>
+Reported-by: Oleksii Shevchuk <alxchk@gmail.com>
+Fixes: 21a5d4c3a45c ("mac80211: add stop/start logic for software TXQs")
+Link: https://lore.kernel.org/r/1569928763-I3e8838c5ecad878e59d4a94eb069a90f6641461a@changeid
+Reviewed-by: Toke Høiland-Jørgensen <toke@redhat.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/include/asm/cpu-features.h |   16 ++++++++++++++++
- arch/mips/include/asm/cpu.h          |    4 ++++
- arch/mips/kernel/cpu-probe.c         |    6 ++++++
- arch/mips/kernel/proc.c              |    4 ++++
- 4 files changed, 30 insertions(+)
+ net/mac80211/util.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
---- a/arch/mips/include/asm/cpu-features.h
-+++ b/arch/mips/include/asm/cpu-features.h
-@@ -387,6 +387,22 @@
- #define cpu_has_dsp3		__ase(MIPS_ASE_DSP3)
- #endif
+--- a/net/mac80211/util.c
++++ b/net/mac80211/util.c
+@@ -247,7 +247,8 @@ static void __ieee80211_wake_txqs(struct
+ 	struct sta_info *sta;
+ 	int i;
  
-+#ifndef cpu_has_loongson_mmi
-+#define cpu_has_loongson_mmi		__ase(MIPS_ASE_LOONGSON_MMI)
-+#endif
-+
-+#ifndef cpu_has_loongson_cam
-+#define cpu_has_loongson_cam		__ase(MIPS_ASE_LOONGSON_CAM)
-+#endif
-+
-+#ifndef cpu_has_loongson_ext
-+#define cpu_has_loongson_ext		__ase(MIPS_ASE_LOONGSON_EXT)
-+#endif
-+
-+#ifndef cpu_has_loongson_ext2
-+#define cpu_has_loongson_ext2		__ase(MIPS_ASE_LOONGSON_EXT2)
-+#endif
-+
- #ifndef cpu_has_mipsmt
- #define cpu_has_mipsmt		__isa_lt_and_ase(6, MIPS_ASE_MIPSMT)
- #endif
---- a/arch/mips/include/asm/cpu.h
-+++ b/arch/mips/include/asm/cpu.h
-@@ -436,5 +436,9 @@ enum cpu_type_enum {
- #define MIPS_ASE_MSA		0x00000100 /* MIPS SIMD Architecture */
- #define MIPS_ASE_DSP3		0x00000200 /* Signal Processing ASE Rev 3*/
- #define MIPS_ASE_MIPS16E2	0x00000400 /* MIPS16e2 */
-+#define MIPS_ASE_LOONGSON_MMI	0x00000800 /* Loongson MultiMedia extensions Instructions */
-+#define MIPS_ASE_LOONGSON_CAM	0x00001000 /* Loongson CAM */
-+#define MIPS_ASE_LOONGSON_EXT	0x00002000 /* Loongson EXTensions */
-+#define MIPS_ASE_LOONGSON_EXT2	0x00004000 /* Loongson EXTensions R2 */
+-	spin_lock_bh(&fq->lock);
++	local_bh_disable();
++	spin_lock(&fq->lock);
  
- #endif /* _ASM_CPU_H */
---- a/arch/mips/kernel/cpu-probe.c
-+++ b/arch/mips/kernel/cpu-probe.c
-@@ -1489,6 +1489,8 @@ static inline void cpu_probe_legacy(stru
- 			__cpu_name[cpu] = "ICT Loongson-3";
- 			set_elf_platform(cpu, "loongson3a");
- 			set_isa(c, MIPS_CPU_ISA_M64R1);
-+			c->ases |= (MIPS_ASE_LOONGSON_MMI | MIPS_ASE_LOONGSON_CAM |
-+				MIPS_ASE_LOONGSON_EXT);
- 			break;
- 		case PRID_REV_LOONGSON3B_R1:
- 		case PRID_REV_LOONGSON3B_R2:
-@@ -1496,6 +1498,8 @@ static inline void cpu_probe_legacy(stru
- 			__cpu_name[cpu] = "ICT Loongson-3";
- 			set_elf_platform(cpu, "loongson3b");
- 			set_isa(c, MIPS_CPU_ISA_M64R1);
-+			c->ases |= (MIPS_ASE_LOONGSON_MMI | MIPS_ASE_LOONGSON_CAM |
-+				MIPS_ASE_LOONGSON_EXT);
- 			break;
+ 	if (sdata->vif.type == NL80211_IFTYPE_AP)
+ 		ps = &sdata->bss->ps;
+@@ -273,9 +274,9 @@ static void __ieee80211_wake_txqs(struct
+ 						&txqi->flags))
+ 				continue;
+ 
+-			spin_unlock_bh(&fq->lock);
++			spin_unlock(&fq->lock);
+ 			drv_wake_tx_queue(local, txqi);
+-			spin_lock_bh(&fq->lock);
++			spin_lock(&fq->lock);
  		}
+ 	}
  
-@@ -1861,6 +1865,8 @@ static inline void cpu_probe_loongson(st
- 		decode_configs(c);
- 		c->options |= MIPS_CPU_FTLB | MIPS_CPU_TLBINV | MIPS_CPU_LDPTE;
- 		c->writecombine = _CACHE_UNCACHED_ACCELERATED;
-+		c->ases |= (MIPS_ASE_LOONGSON_MMI | MIPS_ASE_LOONGSON_CAM |
-+			MIPS_ASE_LOONGSON_EXT | MIPS_ASE_LOONGSON_EXT2);
- 		break;
- 	default:
- 		panic("Unknown Loongson Processor ID!");
---- a/arch/mips/kernel/proc.c
-+++ b/arch/mips/kernel/proc.c
-@@ -124,6 +124,10 @@ static int show_cpuinfo(struct seq_file
- 	if (cpu_has_eva)	seq_printf(m, "%s", " eva");
- 	if (cpu_has_htw)	seq_printf(m, "%s", " htw");
- 	if (cpu_has_xpa)	seq_printf(m, "%s", " xpa");
-+	if (cpu_has_loongson_mmi)	seq_printf(m, "%s", " loongson-mmi");
-+	if (cpu_has_loongson_cam)	seq_printf(m, "%s", " loongson-cam");
-+	if (cpu_has_loongson_ext)	seq_printf(m, "%s", " loongson-ext");
-+	if (cpu_has_loongson_ext2)	seq_printf(m, "%s", " loongson-ext2");
- 	seq_printf(m, "\n");
+@@ -288,12 +289,14 @@ static void __ieee80211_wake_txqs(struct
+ 	    (ps && atomic_read(&ps->num_sta_ps)) || ac != vif->txq->ac)
+ 		goto out;
  
- 	if (cpu_has_mmips) {
+-	spin_unlock_bh(&fq->lock);
++	spin_unlock(&fq->lock);
+ 
+ 	drv_wake_tx_queue(local, txqi);
++	local_bh_enable();
+ 	return;
+ out:
+-	spin_unlock_bh(&fq->lock);
++	spin_unlock(&fq->lock);
++	local_bh_enable();
+ }
+ 
+ static void
 
 
