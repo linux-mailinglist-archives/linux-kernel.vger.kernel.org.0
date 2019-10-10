@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E2D7D2426
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:50:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DFAFD242F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:50:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389828AbfJJItc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:49:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56076 "EHLO mail.kernel.org"
+        id S2389879AbfJJItx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:49:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389816AbfJJIt3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:49:29 -0400
+        id S2389859AbfJJItu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:49:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 393DD2190F;
-        Thu, 10 Oct 2019 08:49:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 160B822473;
+        Thu, 10 Oct 2019 08:49:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697367;
-        bh=2L6z+YucNVtGSXTpTVYqs4wYjrBZz8a4o9AYczD3IjE=;
+        s=default; t=1570697389;
+        bh=Yhhc+Dgashloh3oz5wixN5SOY5Qb/eNUcE8b8BhrcDU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NsrHM7IltGWCClouiMdwlq7ZW6cT8vg15O5mv1e2fnVLaexdrd6/vDpLzZZ5RXO58
-         0HmKicjtn+y9/sVhkB6WmUX2duo2JvXhtKVIKlf5PV8F6jSxWtNcbCNbvImPJFdB74
-         z/8VhqO099UjUK1Sr/ILi7IxBZJb3/aBZjFWw0tM=
+        b=dykGMrGFdKZF/HYePE04D5lj9Yr0H1tj3s8MXatKq5EdT0f4rhVdAXu93oJALRxPH
+         brJlffDX7r+xu778NVsiiWeUDVEou0sP7QiYadiM/VZspetL59IOlUsD5mbK9Dd0Pk
+         X9MNr3XEh7Fjxubd3ko8L06S4MHlYgE2fD5iHMpA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 087/114] drm/i915/userptr: Acquire the page lock around set_page_dirty()
-Date:   Thu, 10 Oct 2019 10:36:34 +0200
-Message-Id: <20191010083612.658211813@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Andrew Donnellan <ajd@linux.ibm.com>
+Subject: [PATCH 4.14 10/61] powerpc/powernv: Restrict OPAL symbol map to only be readable by root
+Date:   Thu, 10 Oct 2019 10:36:35 +0200
+Message-Id: <20191010083455.271171053@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
-References: <20191010083544.711104709@linuxfoundation.org>
+In-Reply-To: <20191010083449.500442342@linuxfoundation.org>
+References: <20191010083449.500442342@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,56 +43,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Andrew Donnellan <ajd@linux.ibm.com>
 
-[ Upstream commit cb6d7c7dc7ff8cace666ddec66334117a6068ce2 ]
+commit e7de4f7b64c23e503a8c42af98d56f2a7462bd6d upstream.
 
-set_page_dirty says:
+Currently the OPAL symbol map is globally readable, which seems bad as
+it contains physical addresses.
 
-	For pages with a mapping this should be done under the page lock
-	for the benefit of asynchronous memory errors who prefer a
-	consistent dirty state. This rule can be broken in some special
-	cases, but should be better not to.
+Restrict it to root.
 
-Under those rules, it is only safe for us to use the plain set_page_dirty
-calls for shmemfs/anonymous memory. Userptr may be used with real
-mappings and so needs to use the locked version (set_page_dirty_lock).
+Fixes: c8742f85125d ("powerpc/powernv: Expose OPAL firmware symbol map")
+Cc: stable@vger.kernel.org # v3.19+
+Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20190503075253.22798-1-ajd@linux.ibm.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=203317
-Fixes: 5cc9ed4b9a7a ("drm/i915: Introduce mapping of user pages into video memory (userptr) ioctl")
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Cc: stable@vger.kernel.org
-Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190708140327.26825-1-chris@chris-wilson.co.uk
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/i915/i915_gem_userptr.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ arch/powerpc/platforms/powernv/opal.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/i915_gem_userptr.c b/drivers/gpu/drm/i915/i915_gem_userptr.c
-index 2c9b284036d10..e13ea2ecd669c 100644
---- a/drivers/gpu/drm/i915/i915_gem_userptr.c
-+++ b/drivers/gpu/drm/i915/i915_gem_userptr.c
-@@ -692,7 +692,15 @@ i915_gem_userptr_put_pages(struct drm_i915_gem_object *obj,
+--- a/arch/powerpc/platforms/powernv/opal.c
++++ b/arch/powerpc/platforms/powernv/opal.c
+@@ -617,7 +617,10 @@ static ssize_t symbol_map_read(struct fi
+ 				       bin_attr->size);
+ }
  
- 	for_each_sgt_page(page, sgt_iter, pages) {
- 		if (obj->mm.dirty)
--			set_page_dirty(page);
-+			/*
-+			 * As this may not be anonymous memory (e.g. shmem)
-+			 * but exist on a real mapping, we have to lock
-+			 * the page in order to dirty it -- holding
-+			 * the page reference is not sufficient to
-+			 * prevent the inode from being truncated.
-+			 * Play safe and take the lock.
-+			 */
-+			set_page_dirty_lock(page);
+-static BIN_ATTR_RO(symbol_map, 0);
++static struct bin_attribute symbol_map_attr = {
++	.attr = {.name = "symbol_map", .mode = 0400},
++	.read = symbol_map_read
++};
  
- 		mark_page_accessed(page);
- 		put_page(page);
--- 
-2.20.1
-
+ static void opal_export_symmap(void)
+ {
+@@ -634,10 +637,10 @@ static void opal_export_symmap(void)
+ 		return;
+ 
+ 	/* Setup attributes */
+-	bin_attr_symbol_map.private = __va(be64_to_cpu(syms[0]));
+-	bin_attr_symbol_map.size = be64_to_cpu(syms[1]);
++	symbol_map_attr.private = __va(be64_to_cpu(syms[0]));
++	symbol_map_attr.size = be64_to_cpu(syms[1]);
+ 
+-	rc = sysfs_create_bin_file(opal_kobj, &bin_attr_symbol_map);
++	rc = sysfs_create_bin_file(opal_kobj, &symbol_map_attr);
+ 	if (rc)
+ 		pr_warn("Error %d creating OPAL symbols file\n", rc);
+ }
 
 
