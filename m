@@ -2,184 +2,241 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2438D1D8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 02:43:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90F50D1D92
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 02:44:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732507AbfJJAnf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 20:43:35 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:41122 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731542AbfJJAne (ORCPT
+        id S1732604AbfJJAoJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 20:44:09 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50502 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731553AbfJJAoI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 20:43:34 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9A0hTsr118568;
-        Wed, 9 Oct 2019 19:43:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1570668209;
-        bh=Yxcoi5EtNXabhjep2Y1KNRL8XZbLwiQgniLFoGc+Jhg=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=OdyqiHvnQzZqyossQxz3sx4kdIAR8VUP6BgxA3SmmHqR/uxK23T0HrTnaq/cZ6A3V
-         j5Oa4KdlAc+mCginCMsMUyWVujETpxXKj7/LAy1rCqME9es7UbdOZIRZ9VpDe7DSHm
-         ymKMUsbpqGwQdvDCDVQ/qbCjWcKxfWXt5OPygy2s=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9A0hT2N004540
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 9 Oct 2019 19:43:29 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 9 Oct
- 2019 19:43:25 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 9 Oct 2019 19:43:29 -0500
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9A0hTT9004462;
-        Wed, 9 Oct 2019 19:43:29 -0500
-Subject: Re: [PATCH v11 04/16] leds: multicolor: Introduce a multicolor class
- definition
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-References: <20191008204800.19870-1-dmurphy@ti.com>
- <20191008204800.19870-5-dmurphy@ti.com>
- <CAOCOHw5uQL56T_DcZA47721yS1tLsp9cyUEdmiWr+Ccfh7YpRQ@mail.gmail.com>
- <d6b68a79-235a-0a9b-bbf3-519571646eff@ti.com> <20191009232539.GB571@minitux>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <1b18570f-a5ac-fb34-aed9-7d8422df7e6d@ti.com>
-Date:   Wed, 9 Oct 2019 19:43:10 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 9 Oct 2019 20:44:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=50od/B3PK0CJO1ZT1qu05XYWV3Ldcc+kIxtp//OtB+E=; b=l8g4s4edagE05Kh3Sqcy98sH/
+        gqt8BJzo0AvezCil0cCxfu/nx/SPgwTNbirqwkXY8R3Bytw6iwSB/OnGeJ+wqIUm/KRszl5rreync
+        a1pTNC/xuTjMuDTU1PjRRP5L2zheXEFBeTJ222Rm3U4uVaTMTziHaI3cvZkeNekDOMam+0au0EcCp
+        pAwJFZEqGuZlrFqxUSVPJ9eD3Zqtsh4qAsIe6tyYul6B8holW4Q+Y4xEGStBngYYpw3SsQnKYpACI
+        PpHpLMRnvH530lUGesEr3FJg5n45i/MHelHXF3oTJtvD0yPbhkLZziAkkA2SVcNwRYAEi0wj29cFX
+        i1TviFx+Q==;
+Received: from [2601:1c0:6280:3f0::9ef4]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iIMYG-0002Wz-Q9; Thu, 10 Oct 2019 00:43:32 +0000
+Subject: Re: [PATCH v3 1/3] x86/boot: Introduce the kernel_info
+To:     Daniel Kiper <daniel.kiper@oracle.com>, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        xen-devel@lists.xenproject.org
+Cc:     ard.biesheuvel@linaro.org, boris.ostrovsky@oracle.com,
+        bp@alien8.de, corbet@lwn.net, dave.hansen@linux.intel.com,
+        luto@kernel.org, peterz@infradead.org, eric.snowberg@oracle.com,
+        hpa@zytor.com, jgross@suse.com, konrad.wilk@oracle.com,
+        mingo@redhat.com, ross.philipson@oracle.com, tglx@linutronix.de
+References: <20191009105358.32256-1-daniel.kiper@oracle.com>
+ <20191009105358.32256-2-daniel.kiper@oracle.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <181249b6-5833-6f29-7d38-6dacc3f8ee62@infradead.org>
+Date:   Wed, 9 Oct 2019 17:43:31 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <20191009232539.GB571@minitux>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191009105358.32256-2-daniel.kiper@oracle.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bjorn
+Hi,
 
-On 10/9/19 6:25 PM, Bjorn Andersson wrote:
-> On Wed 09 Oct 13:44 PDT 2019, Dan Murphy wrote:
->
->> Bjorn
->>
->> On 10/9/19 3:11 PM, Bjorn Andersson wrote:
->>> On Tue, Oct 8, 2019 at 1:49 PM Dan Murphy <dmurphy@ti.com> wrote:
->>>> Introduce a multicolor class that groups colored LEDs
->>>> within a LED node.
->>>>
->>>> The multi color class groups monochrome LEDs and allows controlling two
->>>> aspects of the final combined color: hue and lightness. The former is
->>>> controlled via <color>_intensity files and the latter is controlled
->>>> via brightness file.
->>>>
->>> Thanks for making progress on this, it's been the one outstanding
->>> question mark for the long overdue respin of the Qualcomm LPG driver.
->>> But while it works for the LPG, in that it has outputs named "RGB" I
->>> have boards with "generic" LED drivers that are connected to RGB LEDs.
->>> So per your proposed solution we would need to add the additional
->> You don't have to add the MC class to those drivers.  This is an optional
->> framework but if you wanted to use the framework for specific devices then
->> yes you would need to add that support. This is why I did the LP55xx patches
->> to demonstrate the feasibility since the LP50xx has the MC class
->> intelligence already.
->>
-> Correct me if I've misunderstood something, but if I have a product
-> using e.g. lm3533 connected to an RGB LED then the correct way to
-> represent this towards userspace is to introduce the MC class in the
-> lm3533 LED driver, no?
->
-Not necessarily.  If the RGB LED is to be used as a RGB module and not 
-as independent LEDs.
-
-For instance on smartphones if you had that RGB module connected to the 
-LM3533 and needed to mix colors to give different status indicators then 
-yes you would use the MC class.  As the MC class presents and treats the 
-module as a single LED with individual color mixing control knobs.
-
-If you were using each LED for a separate use cases then you would want 
-to present these as individual LEDs as done today.
+Questions and comments below...
+Thanks.
 
 
->> The LP55xx driver can register to the LED class and/or the MC LED class
->> pending on the DT organization.
->>
-> Understood.
->
->> I don't plan on going through all of TI's RGB drivers and retrofitting them
->> to the MC class.  I do have to update the GPIO LED driver to use the class
->> but that work is still pending.
->>
->> I may also update the Motorola PCAP driver as well since I have a Droid4 to
->> test.
->>
-> My concern with this is that being connected to a RGB LED is not a
-> property of the controller, but the system design and the proposed
-> implementation makes it a property of each controller.
->
-> I'm not saying that the proposed path is wrong, I'm saying that we have
-> 83 files named leds-*.c in drivers/leds and this adaption needs to
-> happen on each one.
+On 10/9/19 3:53 AM, Daniel Kiper wrote:
 
-Agreed.  I would expect the adoption to be done on a case by case basis 
-driven by usage and need.
+> Suggested-by: H. Peter Anvin <hpa@zytor.com>
+> Signed-off-by: Daniel Kiper <daniel.kiper@oracle.com>
+> Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> Reviewed-by: Ross Philipson <ross.philipson@oracle.com>
+> ---
+
+> ---
+>  Documentation/x86/boot.rst             | 121 +++++++++++++++++++++++++++++++++
+>  arch/x86/boot/Makefile                 |   2 +-
+>  arch/x86/boot/compressed/Makefile      |   4 +-
+>  arch/x86/boot/compressed/kernel_info.S |  17 +++++
+>  arch/x86/boot/header.S                 |   1 +
+>  arch/x86/boot/tools/build.c            |   5 ++
+>  arch/x86/include/uapi/asm/bootparam.h  |   1 +
+>  7 files changed, 148 insertions(+), 3 deletions(-)
+>  create mode 100644 arch/x86/boot/compressed/kernel_info.S
+> 
+> diff --git a/Documentation/x86/boot.rst b/Documentation/x86/boot.rst
+> index 08a2f100c0e6..d5323a39f5e3 100644
+> --- a/Documentation/x86/boot.rst
+> +++ b/Documentation/x86/boot.rst
+> @@ -68,8 +68,25 @@ Protocol 2.12	(Kernel 3.8) Added the xloadflags field and extension fields
+>  Protocol 2.13	(Kernel 3.14) Support 32- and 64-bit flags being set in
+>  		xloadflags to support booting a 64-bit kernel from 32-bit
+>  		EFI
+> +
+> +Protocol 2.14:	BURNT BY INCORRECT COMMIT ae7e1238e68f2a472a125673ab506d49158c1889
+> +		(x86/boot: Add ACPI RSDP address to setup_header)
+> +		DO NOT USE!!! ASSUME SAME AS 2.13.
+> +
+> +Protocol 2.15:	(Kernel 5.5) Added the kernel_info.
+>  =============	============================================================
+>  
+> +.. note::
+> +     The protocol version number should be changed only if the setup header
+> +     is changed. There is no need to update the version number if boot_params
+> +     or kernel_info are changed. Additionally, it is recommended to use
+> +     xloadflags (in this case the protocol version number should not be
+> +     updated either) or kernel_info to communicate supported Linux kernel
+> +     features to the boot loader. Due to very limited space available in
+> +     the original setup header every update to it should be considered
+> +     with great care. Starting from the protocol 2.15 the primary way to
+> +     communicate things to the boot loader is the kernel_info.
+> +
+>  
+>  Memory Layout
+>  =============
+> @@ -207,6 +224,7 @@ Offset/Size	Proto		Name			Meaning
+>  0258/8		2.10+		pref_address		Preferred loading address
+>  0260/4		2.10+		init_size		Linear memory required during initialization
+>  0264/4		2.11+		handover_offset		Offset of handover entry point
+> +0268/4		2.15+		kernel_info_offset	Offset of the kernel_info
+>  ===========	========	=====================	============================================
+>  
+>  .. note::
+> @@ -855,6 +873,109 @@ Offset/size:	0x264/4
+>  
+>    See EFI HANDOVER PROTOCOL below for more details.
+>  
+> +============	==================
+> +Field name:	kernel_info_offset
+> +Type:		read
+> +Offset/size:	0x268/4
+> +Protocol:	2.15+
+> +============	==================
+> +
+> +  This field is the offset from the beginning of the kernel image to the
+> +  kernel_info. It is embedded in the Linux image in the uncompressed
+                  ^^
+   What does      It   refer to, please?
+
+> +  protected mode region.
+> +
+> +
+> +The kernel_info
+> +===============
+> +
+> +The relationships between the headers are analogous to the various data
+> +sections:
+> +
+> +  setup_header = .data
+> +  boot_params/setup_data = .bss
+> +
+> +What is missing from the above list? That's right:
+> +
+> +  kernel_info = .rodata
+> +
+> +We have been (ab)using .data for things that could go into .rodata or .bss for
+> +a long time, for lack of alternatives and -- especially early on -- inertia.
+> +Also, the BIOS stub is responsible for creating boot_params, so it isn't
+> +available to a BIOS-based loader (setup_data is, though).
+> +
+> +setup_header is permanently limited to 144 bytes due to the reach of the
+> +2-byte jump field, which doubles as a length field for the structure, combined
+> +with the size of the "hole" in struct boot_params that a protected-mode loader
+> +or the BIOS stub has to copy it into. It is currently 119 bytes long, which
+> +leaves us with 25 very precious bytes. This isn't something that can be fixed
+> +without revising the boot protocol entirely, breaking backwards compatibility.
+> +
+> +boot_params proper is limited to 4096 bytes, but can be arbitrarily extended
+> +by adding setup_data entries. It cannot be used to communicate properties of
+> +the kernel image, because it is .bss and has no image-provided content.
+> +
+> +kernel_info solves this by providing an extensible place for information about
+> +the kernel image. It is readonly, because the kernel cannot rely on a
+> +bootloader copying its contents anywhere, but that is OK; if it becomes
+> +necessary it can still contain data items that an enabled bootloader would be
+> +expected to copy into a setup_data chunk.
+> +
+> +All kernel_info data should be part of this structure. Fixed size data have to
+> +be put before kernel_info_var_len_data label. Variable size data have to be put
+> +behind kernel_info_var_len_data label. Each chunk of variable size data has to
+
+   s/behind/after/
+
+> +be prefixed with header/magic and its size, e.g.:
+> +
+> +  kernel_info:
+> +          .ascii  "LToP"          /* Header, Linux top (structure). */
+> +          .long   kernel_info_var_len_data - kernel_info
+> +          .long   kernel_info_end - kernel_info
+> +          .long   0x01234567      /* Some fixed size data for the bootloaders. */
+> +  kernel_info_var_len_data:
+> +  example_struct:                 /* Some variable size data for the bootloaders. */
+> +          .ascii  "EsTT"          /* Header/Magic. */
+> +          .long   example_struct_end - example_struct
+> +          .ascii  "Struct"
+> +          .long   0x89012345
+> +  example_struct_end:
+> +  example_strings:                /* Some variable size data for the bootloaders. */
+> +          .ascii  "EsTs"          /* Header/Magic. */
+
+Where do the Magic values "EsTT" and "EsTs" come from?
+where are they defined?
+
+> +          .long   example_strings_end - example_strings
+> +          .asciz  "String_0"
+> +          .asciz  "String_1"
+> +  example_strings_end:
+> +  kernel_info_end:
+> +
+> +This way the kernel_info is self-contained blob.
+> +
+> +
+> +Details of the kernel_info Fields
+> +=================================
+> +
+> +============	========
+> +Field name:	header
+> +Offset/size:	0x0000/4
+> +============	========
+> +
+> +  Contains the magic number "LToP" (0x506f544c).
+> +
+> +============	========
+> +Field name:	size
+> +Offset/size:	0x0004/4
+> +============	========
+> +
+> +  This field contains the size of the kernel_info including kernel_info.header.
+> +  It does not count kernel_info.kernel_info_var_len_data size. This field should be
+> +  used by the bootloaders to detect supported fixed size fields in the kernel_info
+> +  and beginning of kernel_info.kernel_info_var_len_data.
+> +
+> +============	========
+> +Field name:	size_total
+> +Offset/size:	0x0008/4
+> +============	========
+> +
+> +  This field contains the size of the kernel_info including kernel_info.header
+> +  and kernel_info.kernel_info_var_len_data.
+> +
+>  
+>  The Image Checksum
+>  ==================
 
 
->
->
-> And I'm not saying I expect you to do this.
-
-Phew.  I did not think you were. I will only convert drivers that I can 
-could test.
-
-
->
->>> mc_class handling to every single LED driver that might be used to
->>> sink current into an RGB LED.
->>>
->>> I also don't see anything preventing hardware designers from feeding
->>> single RGB LEDs from multiple different LED controllers, something the
->>> current proposal would prohibit.
->> What do you mean by a single RGB LED? Are you referring to a RGB module?
->>
->> http://wiki.sunfounder.cc/index.php?title=RGB_LED_Module
->>
-> Yes
->
->> There is no prevention for HW designers to put a driver on each LED output
->> but I am not sure why they would incur
->>
->> the additional BOM cost seems quite silly unless you have an unlimited
->> budget ;)
->>
-> So if you have a system with e.g. 8 PWM channels on one PMIC and a
-> single PWM available on a different PMIC then you're saying that the
-> hardware guys would be silly to believe that they can drive 3 RGB LEDS
-> off this?
-
-OK I must have removed my question to you on presenting a use case.   
-Grouping LEDs across multiple devices would an issue yes but we would 
-need a design or hardware to develop a good solution.
-
-
->
->> If they did design the system that way then the SW would need to revert back
->> to the standard LED class as it is done today.
->>
-> If that is the agreed upon design then I'll continue to adapt my LED
-> drivers to the MC class.
-
-For now this is the basic design. We are willing to take other 
-suggestions.  We appreciate the feedback.
-
-Dan
-
-
+-- 
+~Randy
