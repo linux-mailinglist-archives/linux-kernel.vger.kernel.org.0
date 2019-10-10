@@ -2,113 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6233ED2C36
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 16:15:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A85AD2C29
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 16:11:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726252AbfJJOPI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 10:15:08 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:40592 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726037AbfJJOPH (ORCPT
+        id S1726352AbfJJOLM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 10:11:12 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:34341 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726284AbfJJOLL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 10:15:07 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9AE64WR013966;
-        Thu, 10 Oct 2019 16:07:26 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=STMicroelectronics;
- bh=7yWUXL9Rc0acEqWqS7CkOitYwbC3Jm+sq0bKkZ4qLec=;
- b=1Zmb9dc0kz4QQ+jGoKss208+6ply1VtAYDEuo168rNTXbHccPV5ZMe7qFZ4R1MK+bBQS
- rB3Ak1s5zz7YQPGpUsTT+wUx6uF4z7uqQ4PUuqDTlKTTI+jeT5wOiVotCM6ciOCp90fX
- 2aohlrOx2BQ9OKP2QmgrysZJuDVboIZRcBbcOV8huyW2/EXVtTLy5BdLTwriXBVkQIjB
- qqUoTxiq/nm9zMwcl02s9rLnH+oXcj1qSLdWqPlCKADfVhY5Ridk1JgfSC4HruswpcYd
- QQ9ww6pS6dAqxgDHGDJGnRBzqOkKMiLUotvHuUbrKvf9TsqfOgFmPqXrdhLOiE3hSCzx pQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2vej2pmev3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 10 Oct 2019 16:07:26 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 69AFB100038;
-        Thu, 10 Oct 2019 16:07:24 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag5node2.st.com [10.75.127.14])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2D0AF212523;
-        Thu, 10 Oct 2019 16:07:24 +0200 (CEST)
-Received: from SFHDAG5NODE3.st.com (10.75.127.15) by SFHDAG5NODE2.st.com
- (10.75.127.14) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 10 Oct
- 2019 16:07:23 +0200
-Received: from SFHDAG5NODE3.st.com ([fe80::7c09:5d6b:d2c7:5f47]) by
- SFHDAG5NODE3.st.com ([fe80::7c09:5d6b:d2c7:5f47%20]) with mapi id
- 15.00.1473.003; Thu, 10 Oct 2019 16:07:23 +0200
-From:   Fabien DESSENNE <fabien.dessenne@st.com>
-To:     Johan Hovold <johan@kernel.org>, Rob Clark <robdclark@gmail.com>,
-        "Sean Paul" <sean@poorly.run>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Harald Freudenberger" <freude@linux.ibm.com>
-CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        "Heiko Carstens" <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "freedreno@lists.freedesktop.org" <freedreno@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable <stable@vger.kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: Re: [PATCH 2/4] media: bdisp: fix memleak on release
-Thread-Topic: [PATCH 2/4] media: bdisp: fix memleak on release
-Thread-Index: AQHVf2yqC/jYoGn80Ees298jOdJYjqdTx7KA
-Date:   Thu, 10 Oct 2019 14:07:23 +0000
-Message-ID: <5cb3040c-8c6a-ee38-be4f-b83fa9d98686@st.com>
-References: <20191010131333.23635-1-johan@kernel.org>
- <20191010131333.23635-3-johan@kernel.org>
-In-Reply-To: <20191010131333.23635-3-johan@kernel.org>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.45]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <09FA797EF141D1488C813B9ADD032BE3@st.com>
-Content-Transfer-Encoding: base64
+        Thu, 10 Oct 2019 10:11:11 -0400
+Received: by mail-vs1-f65.google.com with SMTP id d3so4012861vsr.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 07:11:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gA5F+RboE/pq+skSstsxaptbKJRogDAxspae1hZdrlw=;
+        b=r/LIxHSW9Hdinc+D0Q6ii6IgfODtEPA7DG+J3nI5G4dmTYbg0AE8kFbjz4uCjpx4tF
+         QrLKKae+TVAOXVIm8ul1al4xJKrRBf4PHxbHxvzkzylS2dlImR5Ta9ZS8C8LOnIvCi8Z
+         YT/DpA5D0z2tTsdrfvUKjoUGjElPqlkPMxF7J3/BaBDUsUQ+JXlh/jdLQqKjZ2y0T/SN
+         LWPgem2QK0RVDs3oPjUFSY0OULoh/0Qonhqby6SdaZMcuFtH7hOoyOSaj2qJWVhkmJEq
+         J6EH4NlsThcmjNlAM7KIo+XcHU1nBOjHN8nNi0cFMsvnIW5b1HABIkXZX3x+z3765HHV
+         S6LQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gA5F+RboE/pq+skSstsxaptbKJRogDAxspae1hZdrlw=;
+        b=Ss9B2giEw6vr3NYFTi5OwOnaJ/YLPNyvB6g8LkN1vap4HiUMWHh6kaHgBwlrqdR8xF
+         FZFLH1IAH1bXNJEiDEJy+gOkgy4md30TPx0qyW8d4r3w8dL3UxsnuvZLZD1pYJXv/sTV
+         LEaOH+/X0aQdWhnRB2cftDZ3KoQ1ZkElAx78a7Wn2zWCRC5I/gP0IAwLSpxnd5+HylRG
+         SjokXXZSIBMwkdd9vmXRrA5Kz1VWIyRNJgrAeUIzlk9GBkBdjYmteRfX35kUVTvSFbVB
+         Vz2aOn9WwUEPCRlLXp25T+MaAoXKk/uu7p/D7cWA5fP1PFUtJTjZrbjBD+XpDuR5cEY5
+         usMA==
+X-Gm-Message-State: APjAAAVw8QPpE33+N1ZWBomH8HkKOPZz68WXpTG84oXXFfImxRaTU/Zm
+        cd9Kb8N52/TWSnUIi5nG4OSlwk5B3Y/hfH22RlxJXA==
+X-Google-Smtp-Source: APXvYqx8YwXRB2hrYG/fdZo1ha3XH6HrALf+bCVpuuJw5+7mmU3wP8OnkTRknPuULXGYFLMFs7UbggxceKVIPmCeIC8=
+X-Received: by 2002:a67:ef89:: with SMTP id r9mr5830898vsp.200.1570716668861;
+ Thu, 10 Oct 2019 07:11:08 -0700 (PDT)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-10_05:2019-10-10,2019-10-10 signatures=0
+References: <20190722193939.125578-1-dianders@chromium.org> <20190722193939.125578-2-dianders@chromium.org>
+In-Reply-To: <20190722193939.125578-2-dianders@chromium.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 10 Oct 2019 16:10:32 +0200
+Message-ID: <CAPDyKFpKWo4n+nmBXVcDc4TNzFV3vc+3aeKcu_nKaB=hj=RKUQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] mmc: core: Add sdio_trigger_replug() API
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Kalle Valo <kvalo@codeaurora.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ganapathi Bhat <gbhat@marvell.com>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Andreas Fenkart <afenkart@gmail.com>,
+        Brian Norris <briannorris@chromium.org>,
+        Amitkumar Karwar <amitkarwar@gmail.com>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Nishant Sarmukadam <nishants@marvell.com>,
+        netdev <netdev@vger.kernel.org>,
+        Avri Altman <avri.altman@wdc.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Xinming Hu <huxinming820@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgSm9oYW4NCg0KVGhhbmsgeW91IGZvciB0aGUgcGF0Y2gNCg0KQlINCg0KRmFiaWVuDQoNCg0K
-T24gMTAvMTAvMjAxOSAzOjEzIFBNLCBKb2hhbiBIb3ZvbGQgd3JvdGU6DQo+IElmIGEgcHJvY2Vz
-cyBpcyBpbnRlcnJ1cHRlZCB3aGlsZSBhY2Nlc3NpbmcgdGhlIHZpZGVvIGRldmljZSBhbmQgdGhl
-DQo+IGRldmljZSBsb2NrIGlzIGNvbnRlbmRlZCwgcmVsZWFzZSgpIGNvdWxkIHJldHVybiBlYXJs
-eSBhbmQgZmFpbCB0byBmcmVlDQo+IHJlbGF0ZWQgcmVzb3VyY2VzLg0KPg0KPiBOb3RlIHRoYXQg
-dGhlIHJldHVybiB2YWx1ZSBvZiB0aGUgdjRsMiByZWxlYXNlIGZpbGUgb3BlcmF0aW9uIGlzDQo+
-IGlnbm9yZWQuDQo+DQo+IEZpeGVzOiAyOGZmZWViYmI3YmQgKCJbbWVkaWFdIGJkaXNwOiAyRCBi
-bGl0dGVyIGRyaXZlciB1c2luZyB2NGwyIG1lbTJtZW0gZnJhbWV3b3JrIikNCj4gQ2M6IHN0YWJs
-ZSA8c3RhYmxlQHZnZXIua2VybmVsLm9yZz4gICAgICMgNC4yDQo+IENjOiBGYWJpZW4gRGVzc2Vu
-bmUgPGZhYmllbi5kZXNzZW5uZUBzdC5jb20+DQo+IENjOiBIYW5zIFZlcmt1aWwgPGhhbnMudmVy
-a3VpbEBjaXNjby5jb20+DQo+IENjOiBNYXVybyBDYXJ2YWxobyBDaGVoYWIgPG1jaGVoYWJAb3Nn
-LnNhbXN1bmcuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBKb2hhbiBIb3ZvbGQgPGpvaGFuQGtlcm5l
-bC5vcmc+DQpSZXZpZXdlZC1ieTogRmFiaWVuIERlc3Nlbm5lIDxmYWJpZW4uZGVzc2VubmVAc3Qu
-Y29tPg0KPiAtLS0NCj4gICBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL3N0aS9iZGlzcC9iZGlzcC12
-NGwyLmMgfCAzICstLQ0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMiBkZWxl
-dGlvbnMoLSkNCj4NCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vc3RpL2Jk
-aXNwL2JkaXNwLXY0bDIuYyBiL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vc3RpL2JkaXNwL2JkaXNw
-LXY0bDIuYw0KPiBpbmRleCBlOTBmMWJhMzA1NzQuLjY3NWI1ZjJiNGMyZSAxMDA2NDQNCj4gLS0t
-IGEvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9zdGkvYmRpc3AvYmRpc3AtdjRsMi5jDQo+ICsrKyBi
-L2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vc3RpL2JkaXNwL2JkaXNwLXY0bDIuYw0KPiBAQCAtNjUx
-LDggKzY1MSw3IEBAIHN0YXRpYyBpbnQgYmRpc3BfcmVsZWFzZShzdHJ1Y3QgZmlsZSAqZmlsZSkN
-Cj4gICANCj4gICAJZGV2X2RiZyhiZGlzcC0+ZGV2LCAiJXNcbiIsIF9fZnVuY19fKTsNCj4gICAN
-Cj4gLQlpZiAobXV0ZXhfbG9ja19pbnRlcnJ1cHRpYmxlKCZiZGlzcC0+bG9jaykpDQo+IC0JCXJl
-dHVybiAtRVJFU1RBUlRTWVM7DQo+ICsJbXV0ZXhfbG9jaygmYmRpc3AtPmxvY2spOw0KPiAgIA0K
-PiAgIAl2NGwyX20ybV9jdHhfcmVsZWFzZShjdHgtPmZoLm0ybV9jdHgpOw0KPiAgIA==
+On Mon, 22 Jul 2019 at 21:41, Douglas Anderson <dianders@chromium.org> wrote:
+>
+> When using Marvell WiFi SDIO cards, it is not uncommon for Linux WiFi
+> driver to fully lose the communication channel to the firmware running
+> on the card.  Presumably the firmware on the card has a bug or two in
+> it and occasionally crashes.
+>
+> The Marvell WiFi driver attempts to recover from this problem.
+> Specifically the driver has the function mwifiex_sdio_card_reset()
+> which is called when communcation problems are found.  That function
+> attempts to reset the state of things by utilizing the mmc_hw_reset()
+> function.
+>
+> The current solution is a bit complex because the Marvell WiFi driver
+> needs to manually deinit and reinit the WiFi driver around the reset
+> call.  This means it's going through a bunch of code paths that aren't
+> normally tested.  However, complexity isn't our only problem.  The
+> other (bigger) problem is that Marvell WiFi cards are often combo
+> WiFi/Bluetooth cards and Bluetooth runs on a second SDIO func.  While
+> the WiFi driver knows that it should re-init its own state around the
+> mmc_hw_reset() call there is no good way to inform the Bluetooth
+> driver.  That means that in Linux today when you reset the Marvell
+> WiFi driver you lose all Bluetooth communication.  Doh!
+
+Thanks for a nice description to the problem!
+
+In principle it makes mmc_hw_reset() quite questionable to use for
+SDIO func drivers, at all. However, let's consider that for later.
+
+>
+> One way to fix the above problems is to leverage a more standard way
+> to reset the Marvell WiFi card where we go through the same code paths
+> as card unplug and the card plug.  In this patch we introduce a new
+> API call for doing just that: sdio_trigger_replug().  This API call
+> will trigger an unplug of the SDIO card followed by a plug of the
+> card.  As part of this the card will be nicely reset.
+
+I have been thinking back and forth on this, exploring various
+options, perhaps adding some callbacks that the core could invoke to
+inform the SDIO func drivers of what is going on.
+
+Although, in the end this boils done to complexity and I think your
+approach is simply the most superior in regards to this. However, I
+think there is a few things that we can do to even further simply your
+approach, let me comment on the code below.
+
+>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+>
+> Changes in v2:
+> - s/routnine/routine (Brian Norris, Matthias Kaehlcke).
+> - s/contining/containing (Matthias Kaehlcke).
+> - Add Matthias Reviewed-by tag.
+>
+>  drivers/mmc/core/core.c       | 28 ++++++++++++++++++++++++++--
+>  drivers/mmc/core/sdio_io.c    | 20 ++++++++++++++++++++
+>  include/linux/mmc/host.h      | 15 ++++++++++++++-
+>  include/linux/mmc/sdio_func.h |  2 ++
+>  4 files changed, 62 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+> index 221127324709..5da365b1fdb4 100644
+> --- a/drivers/mmc/core/core.c
+> +++ b/drivers/mmc/core/core.c
+> @@ -2161,6 +2161,12 @@ int mmc_sw_reset(struct mmc_host *host)
+>  }
+>  EXPORT_SYMBOL(mmc_sw_reset);
+>
+> +void mmc_trigger_replug(struct mmc_host *host)
+> +{
+> +       host->trigger_replug_state = MMC_REPLUG_STATE_UNPLUG;
+> +       _mmc_detect_change(host, 0, false);
+> +}
+> +
+>  static int mmc_rescan_try_freq(struct mmc_host *host, unsigned freq)
+>  {
+>         host->f_init = freq;
+> @@ -2214,6 +2220,11 @@ int _mmc_detect_card_removed(struct mmc_host *host)
+>         if (!host->card || mmc_card_removed(host->card))
+>                 return 1;
+>
+> +       if (host->trigger_replug_state == MMC_REPLUG_STATE_UNPLUG) {
+> +               mmc_card_set_removed(host->card);
+> +               return 1;
+
+Do you really need to set state of the card to "removed"?
+
+If I understand correctly, what you need is to allow mmc_rescan() to
+run a second time, in particular for non removable cards.
+
+In that path, mmc_rescan should find the card being non-functional,
+thus it should remove it and then try to re-initialize it again. Etc.
+
+Do you want me to send a patch to show you what I mean!?
+
+[...]
+
+Kind regards
+Uffe
