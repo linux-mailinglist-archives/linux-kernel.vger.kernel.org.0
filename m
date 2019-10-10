@@ -2,111 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06AE7D21BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 09:38:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B06D8D21C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 09:38:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733277AbfJJHiX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 03:38:23 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55360 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733069AbfJJHbY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 03:31:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=OlxQtvViaGIK04uNty665d/TS7hsJXcjW09hSoEVw1Q=; b=fgp6B3ox+JD/1k85mnq47JEek
-        nSiHLBJCeaSbOsjtsYMhZ3bUN06f8z3ULeujKl31lUUvy1nlJl/Ifxzh5qogyA4K6tiQmZ6zjLdKM
-        8BX9OC9Uy8urH1tT4P/Rf/6CpSAKobW5EEsI7w3rJ6dkt3IlCTE/wsVjTsSTmyyAD/3sRRqgpJFSb
-        5ViIOGX1yVygLEvyEKK2cR5H4sRUu4LtGBOo9aRYfrXCHAI75way15vQAhWYabBlh1X7yyEv/HItM
-        Pm5NIWinHCF5FTh9p8aveBhCdyM7S/13mIzFTuh6d40CXEWIiQIB36+EwjYEZ3KgcyLCDEHV43986
-        knI3Bvptw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iISux-0002SK-Nn; Thu, 10 Oct 2019 07:31:23 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id CECED3008C1;
-        Thu, 10 Oct 2019 09:30:29 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id BCB1D202F4F4F; Thu, 10 Oct 2019 09:31:21 +0200 (CEST)
-Date:   Thu, 10 Oct 2019 09:31:21 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, Jessica Yu <jeyu@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH] ftrace/module: Allow ftrace to make only loaded module
- text read-write
-Message-ID: <20191010073121.GN2311@hirez.programming.kicks-ass.net>
-References: <20191009223638.60b78727@oasis.local.home>
+        id S1733286AbfJJHiZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 03:38:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43888 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1733070AbfJJHc3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 03:32:29 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D59DAABE3;
+        Thu, 10 Oct 2019 07:32:20 +0000 (UTC)
+Date:   Thu, 10 Oct 2019 09:32:12 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Yunsheng Lin <linyunsheng@huawei.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>, catalin.marinas@arm.com,
+        will@kernel.org, mingo@redhat.com, bp@alien8.de, rth@twiddle.net,
+        ink@jurassic.park.msu.ru, mattst88@gmail.com,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, ysato@users.sourceforge.jp,
+        dalias@libc.org, davem@davemloft.net, ralf@linux-mips.org,
+        paul.burton@mips.com, jhogan@kernel.org, jiaxun.yang@flygoat.com,
+        chenhc@lemote.com, akpm@linux-foundation.org, rppt@linux.ibm.com,
+        anshuman.khandual@arm.com, tglx@linutronix.de, cai@lca.pw,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, x86@kernel.org, dave.hansen@linux.intel.com,
+        luto@kernel.org, len.brown@intel.com, axboe@kernel.dk,
+        dledford@redhat.com, jeffrey.t.kirsher@intel.com,
+        linux-alpha@vger.kernel.org, naveen.n.rao@linux.vnet.ibm.com,
+        mwb@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, tbogendoerfer@suse.de,
+        linux-mips@vger.kernel.org, rafael@kernel.org,
+        gregkh@linuxfoundation.org
+Subject: Re: [PATCH v6] numa: make node_to_cpumask_map() NUMA_NO_NODE aware
+Message-ID: <20191010073212.GB18412@dhcp22.suse.cz>
+References: <20190924120943.GP2349@hirez.programming.kicks-ass.net>
+ <20190924122500.GP23050@dhcp22.suse.cz>
+ <20190924124325.GQ2349@hirez.programming.kicks-ass.net>
+ <20190924125936.GR2349@hirez.programming.kicks-ass.net>
+ <20190924131939.GS23050@dhcp22.suse.cz>
+ <1adcbe68-6753-3497-48a0-cc84ac503372@huawei.com>
+ <20190925104108.GE4553@hirez.programming.kicks-ass.net>
+ <47fa4cee-8528-7c23-c7de-7be1b65aa2ae@huawei.com>
+ <bec80499-86d9-bf1f-df23-9044a8099992@arm.com>
+ <a5f0fc80-8e88-b781-77ce-1213e5d62125@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191009223638.60b78727@oasis.local.home>
+In-Reply-To: <a5f0fc80-8e88-b781-77ce-1213e5d62125@huawei.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 10:36:38PM -0400, Steven Rostedt wrote:
-> From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+On Thu 10-10-19 14:07:21, Yunsheng Lin wrote:
+> On 2019/10/9 20:25, Robin Murphy wrote:
+> > On 2019-10-08 9:38 am, Yunsheng Lin wrote:
+> >> On 2019/9/25 18:41, Peter Zijlstra wrote:
+> >>> On Wed, Sep 25, 2019 at 05:14:20PM +0800, Yunsheng Lin wrote:
+> >>>>  From the discussion above, It seems making the node_to_cpumask_map()
+> >>>> NUMA_NO_NODE aware is the most feasible way to move forwad.
+> >>>
+> >>> That's still wrong.
+> >>
+> >> Hi, Peter
+> >>
+> >> It seems this has trapped in the dead circle.
+> >>
+> >>  From my understanding, NUMA_NO_NODE which means not node numa preference
+> >> is the state to describe the node of virtual device or the physical device
+> >> that has equal distance to all cpu.
+> >>
+> >> We can be stricter if the device does have a nearer node, but we can not
+> >> deny that a device does not have a node numa preference or node affinity,
+> >> which also means the control or data buffer can be allocated at the node where
+> >> the process is running.
+> >>
+> >> As you has proposed, making it -2 and have dev_to_node() warn if the device does
+> >> have a nearer node and not set by the fw is a way to be stricter.
+> >>
+> >> But I think maybe being stricter is not really relevant to NUMA_NO_NODE, because
+> >> we does need a state to describe the device that have equal distance to all node,
+> >> even if it is not physically scalable.
+> >>
+> >> Any better suggestion to move this forward?
+> > 
+> > FWIW (since this is in my inbox), it sounds like the fundamental issue is that NUMA_NO_NODE is conflated for at least two different purposes, so trying to sort that out would be a good first step. AFAICS we have genuine "don't care" cases like alloc_pages_node(), where if the producer says it doesn't matter then the consumer is free to make its own judgement on what to do, and fundamentally different "we expect this thing to have an affinity but it doesn't, so we can't say what's appropriate" cases which could really do with some separate indicator like "NUMA_INVALID_NODE".
+> > 
+> > The tricky part is then bestowed on the producers to decide whether they can downgrade "invalid" to "don't care". You can technically build 'a device' whose internal logic is distributed between nodes and thus appears to have equal affinity - interrupt controllers, for example, may have per-CPU or per-node interfaces that end up looking like that - so although it's unlikely it's not outright nonsensical. Similarly a 'device' that's actually emulated behind a firmware call interface may well effectively have no real affinity.
 > 
-> In the process of using text_poke_bp() for ftrace on x86, when
-> performing the following action:
+> We may set node of the physical device to NUMA_INVALID_NODE when fw does not
+> provide one.
 > 
->  # rmmod snd_hda_codec_hdmi
->  # echo function > /sys/kernel/tracing/current_tracer
->  # modprobe snd_hda_codec_hdmi
-> 
-> It triggered this:
-> 
->  BUG: unable to handle page fault for address: ffffffffa03d0000
->  #PF: supervisor write access in kernel mode
->  #PF: error_code(0x0003) - permissions violation
->  PGD 2a12067 P4D 2a12067 PUD 2a13063 PMD c42bc067 PTE c58a0061
->  Oops: 0003 [#1] PREEMPT SMP KASAN PTI
->  CPU: 1 PID: 1182 Comm: modprobe Not tainted 5.4.0-rc2-test+ #50
->  Hardware name: Hewlett-Packard HP Compaq Pro 6300 SFF/339A, BIOS K01 v03.03 07/14/2016
->  RIP: 0010:memcpy_erms+0x6/0x10
->  Code: 90 90 90 90 eb 1e 0f 1f 00 48 89 f8 48 89 d1 48 c1 e9 03 83 e2 07 f3 48 a5 89 d1 f3 a4 c3 66 0f 1f 44 00 00 48 89 f8 48 89 d1 <f3> a4 c3 0f 1f 80 00 00 00 00 48 89 f8 48 83 fa 20 72 7e 40 38 fe
->  RSP: 0018:ffff8880a10479e0 EFLAGS: 00010246
->  RAX: ffffffffa03d0000 RBX: ffffffffa03d0000 RCX: 0000000000000005
->  RDX: 0000000000000005 RSI: ffffffff8363e160 RDI: ffffffffa03d0000
->  RBP: ffff88807e9ec000 R08: fffffbfff407a001 R09: fffffbfff407a001
->  R10: fffffbfff407a000 R11: ffffffffa03d0004 R12: ffffffff8221f160
->  R13: ffffffffa03d0000 R14: ffff88807e9ec000 R15: ffffffffa0481640
->  FS:  00007eff92e28280(0000) GS:ffff8880d4840000(0000) knlGS:0000000000000000
->  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->  CR2: ffffffffa03d0000 CR3: 00000000a1048001 CR4: 00000000001606e0
->  Call Trace:
->   ftrace_make_call+0x76/0x90
->   ftrace_module_enable+0x493/0x4f0
->   load_module+0x3a31/0x3e10
->   ? ring_buffer_read+0x70/0x70
->   ? module_frob_arch_sections+0x20/0x20
->   ? rb_commit+0xee/0x600
->   ? tracing_generic_entry_update+0xe1/0xf0
->   ? ring_buffer_unlock_commit+0xfb/0x220
->   ? 0xffffffffa0000061
->   ? __do_sys_finit_module+0x11a/0x1b0
->   __do_sys_finit_module+0x11a/0x1b0
->   ? __ia32_sys_init_module+0x40/0x40
->   ? ring_buffer_unlock_commit+0xfb/0x220
->   ? function_trace_call+0x179/0x260
->   ? __do_sys_finit_module+0x1b0/0x1b0
->   ? __do_sys_finit_module+0x1b0/0x1b0
->   ? do_syscall_64+0x58/0x1a0
->   do_syscall_64+0x68/0x1a0
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
->  RIP: 0033:0x7eff92f42efd
-> 
-> The reason is that ftrace_module_enable() is called after the module
-> has set its text to read-only. There's subtle reasons that this needs
-> to be called afterward, and we need to continue to do so.
+> But what do we do about NUMA_INVALID_NODE when alloc_pages_node() is called
+> with nid being NUMA_INVALID_NODE?
 
-Please explain.
+There is nothing sensible the allocator can do. The only point of
+NUMA_INVALID_NODE would be to catch potential misconfiguration and
+report them to users so they can complain to their HW/FS suppliers.
+
+Pushing it to other susbystem doesn't make much sense IMHO because there
+is nothing really actionable. Refusing an allocation altogether sounds
+like a bad plan to me.
+ 
+> If we change the node to default one(like node 0) when node of device is
+> NUMA_INVALID_NODE in device_add(), how do we know the default one(like node 0)
+> is the right one to choose?
+
+Exactly. We cannot really assume any node in that situation.
+ 
+> >From the privous disccusion, the below seems not get to consensus yet:
+> 1) Do we need a state like NUMA_NO_NODE to describe that the device does not
+>    have any numa preference?
+
+This is a traditional meaning MM subsystem is using.
+
+> 2) What do we do if the fw does not provide a node for the device? Should
+>    we guess and pick one for it and how do we do the guessing? Or leave it
+>    as it is and handle it as NUMA_NO_NODE?
+
+As already pointed several times, picking any node is rather error
+prone. You can never assume topology. We used to assume that there
+always be node 0 but that is not really the case (see 3e8589963773
+("memcg: make it work on sparse non-0-node systems")). Nodes might also
+come and go so this might just lead to all sorts of subtle problems.
+
+On the other hand using NUMA_NO_NODE as no preference could only lead to
+slightly sub optimal performance.
+
+I do agree with Peter that reporting a lack of affinity might be useful
+but we shouldn't really try to clever and make up the affinity nilly
+willy.
+-- 
+Michal Hocko
+SUSE Labs
