@@ -2,222 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7279D328B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:43:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 707E7D3291
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:43:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727254AbfJJUjF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 16:39:05 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:59639 "EHLO
+        id S1727392AbfJJUjq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 16:39:46 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:55947 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726132AbfJJUjE (ORCPT
+        with ESMTP id S1726132AbfJJUjp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 16:39:04 -0400
+        Thu, 10 Oct 2019 16:39:45 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MlL5x-1hoan32nCH-00llHL; Thu, 10 Oct 2019 22:38:52 +0200
+ 1MEUaQ-1iKKzT1KnK-00FzQO; Thu, 10 Oct 2019 22:39:37 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>
 Cc:     linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 12/36] ARM: s3c64xx: remove mach/hardware.h
-Date:   Thu, 10 Oct 2019 22:29:56 +0200
-Message-Id: <20191010203043.1241612-12-arnd@arndb.de>
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org
+Subject: [PATCH 13/36] ARM: s3c: move regs-spi.h into spi driver
+Date:   Thu, 10 Oct 2019 22:29:57 +0200
+Message-Id: <20191010203043.1241612-13-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191010203043.1241612-1-arnd@arndb.de>
 References: <20191010202802.1132272-1-arnd@arndb.de>
  <20191010203043.1241612-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:OXe9QnfIOm2QB7E89P7eHTIAVvdAUR8mNrxxSaX9vBslXNpzA9w
- Lg+aJ+KE73cm6jXF7a1hIijERFXs9Yq/KzYJQAoVZk3PGgnOkaO+oS0kOazRYUFMvsVN9xI
- 6zys/ptdflbTnlNoqYrjnMzd98Fn8RfCEglT6NWiG7Sl1sqH3/wb3uRbAh1P6NiYtYrDFH3
- 9IImxelmRSj0RdAu1eiWw==
+X-Provags-ID: V03:K1:3w1t9KxRpboazCGFbUHHyRTgq8anB+CB4R77jmnunv3b/xUCHB4
+ q6DgNwffa+vbuyjv196/F+Tm4Xg7oOWOO704mQ9rv1LSA39GWM20GfooqrVAYwAuO4hxESt
+ DnhdUneq160nDqisp9FQkSUE4x8mw9aJZUv/WkZ2HjFJp47SwG33/0dfw5rF5NMZnlAERre
+ lLAQaHwWHBUzD2nFdeb+w==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:hs2OK14Huk4=:UoqLsaEEin+XUyqgAC0Bbu
- 8DzXYBz0uUZcngn/LCWTOPtv5gd/AuAugN8yEUtvb9+uUz7f/QThRZ2vwWIVx0QGnXhDbvhZQ
- eYNUfVHgkHtL6QlL6RhucARKyWVZaxCPLhiTZ0cHWJBkI4w4DSzSqx9+fWw8WxaNeHRFurbDS
- 28cqGO7FjkfeXVE4l1d7JW2VE2hxlHo4zIWT0KJfzJ6cXjkSDWeF3Cn5tjqdSc+IoEeUYt/KT
- xmLJNHI4KEsaKyMxOS0/TA2Uw+1vJUXeo4ERg6jOSyTqbyotKO4Rf0EJ9HoJ6CPJqHZ80sdOp
- GU8oW68vcNDeuPXFhzd0zHYMIrLHdP1SjJ3id0pDfZWxcnGBA/6cXwjEKVcmxitXXGTTIcEDW
- hOY/xlpijCx2UxAK+aTDa6q9NSL5gPsB1gEOci5+aLt+ZAqBD/qJRwNWiNVWdtl7cpyoM1Rnt
- uCKH7VnmuqTN3hJ3SoqLEw0LmvsTLiwwcjeJyYBXQ60/bDTgcoF0zAPN7zpUiWimGOFeVMhub
- usP/44lqKL7GGu7hG8pTR2BjN8XwJ98RM0plbqpuW3oi/gmnbvSBg3gRjtWfnUfKB464nizoC
- j4rCFQgt1ffip5sIusR2xYZfSoAmVHofEI4MClDtefSLRUUpfr8VRet5kP1EiZ3/hbyIIRp3m
- 85+nUPPm5CHyQZt9b8bfol/8I5BmlDY2XP8ZA9j7VlPePzR0mp3gkn3s/niVv8ndNX93H5yDR
- aE8EgdUvHpF3Q1cLO33KutOMplv/n/61Eg3cBwRbxOiRukZamUlLgQvFW7+yJRZxzac15zSgx
- JJ0ax0++Xvua5WXN1PdKowbvMAlgYNR/6W/9opEZrtYwgGpirLvRFSzWrRDl8bAgk4uksHdeD
- 92rdQipwb7tiSo0bheMQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:D2Xpu3hJhjQ=:UlYrBdqu61lE6ufO+d561Q
+ Bfw1XUpkKtAj070fPyGOPGjL7n7thPkZvxlq6FJqHfGBuMWhNQtVlNK3qQCxx7TIJpxXGBO55
+ S2tSfftKBXA1zvPo9DVrSkPn14yvUwhRNoMJHVhmf1dNTyiYMYBPK8YIu2JgDVKbE6ueZRFyP
+ CwNwZXKQb4SgL8zCdYvI2KdOV5FdySqN0yhnDhzwKkVPwOzpzyh3BG36SfQ5HDDhdOneDmK7b
+ LHe3+SbLc/mHgIE5Gncs+lYo98vEQJ04siZUWGEyqKNT6am1gI5xHZYMo/vdgaCwhGj8hceQI
+ 0StPryl7h1jIKdThg3Pj2XiDEdzhdM+1vAivgH2i6aDk7+v+petjoJfLjTIfLupqjUE5BeSU5
+ jroS8Pu/PuUyzqHGYtfCLw6/Gd7X3AkSpgBX0EQX2qSGW4dgYFfRmqj8LIbNb6WPo1gxS5IFn
+ D4jXIyXnrTRYnOv1j466yYllfqSQI/PDaOUXrZfd4Fmmzr9ACHb6ufFNT8ZK7zJ8fVFpliHR4
+ bDy8ACybE/Xy77m5qD03tsZQ0ow+oYUtvLZI5FxC+7Z07LwDR291mk5MOczTNtaP9laPz7xF/
+ xI1WcX7OJLa52/KgWZKTwireyfx73pbanE43U6sJ7mNgLwCS79xQysGOylpMoUGOC6FZPi4Qt
+ O/F/Rue9E4yI5q1nn97/HVXh20N/LBU4xVXHavk0J8mwmpD/UedJkT3MvV2nxwjATmI1tlu3w
+ 3dt2fUlJP1wsblfsMHy8Yt4BPMG2Zb29XzZ3C1gAsEVVMOGGhfdo+BvcWofCSDocCn2Q162Z/
+ ijP/Ek03rpUSCYREBVJ3vU8Jm7E1a7EQsqeYKVMp8KH/dTm0Je+BDd/amA3vTRFE5GlhsIA7x
+ I1a+2suH/zaEx0hJqmfg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This header is empty and conflicts with the s3c24xx version
-of the same file when we merge the two, so stop including it.
+The file is mostly specific to the driver, the few bits that
+are actually used by the platform code get moved to mach/map.h
+instead.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-s3c64xx/common.c                |  1 -
- arch/arm/mach-s3c64xx/dev-uart.c              |  1 -
- arch/arm/mach-s3c64xx/include/mach/hardware.h | 17 -----------------
- arch/arm/mach-s3c64xx/mach-anw6410.c          |  1 -
- arch/arm/mach-s3c64xx/mach-crag6410.c         |  1 -
- arch/arm/mach-s3c64xx/mach-hmt.c              |  1 -
- arch/arm/mach-s3c64xx/mach-ncp.c              |  1 -
- arch/arm/mach-s3c64xx/mach-smdk6400.c         |  1 -
- arch/arm/mach-s3c64xx/mach-smdk6410.c         |  1 -
- arch/arm/mach-s3c64xx/s3c6400.c               |  1 -
- arch/arm/mach-s3c64xx/s3c6410.c               |  1 -
- 11 files changed, 27 deletions(-)
- delete mode 100644 arch/arm/mach-s3c64xx/include/mach/hardware.h
+ arch/arm/mach-s3c24xx/include/mach/map.h                      | 2 ++
+ arch/arm/mach-s3c24xx/s3c2412.c                               | 1 -
+ arch/arm/plat-samsung/devs.c                                  | 1 -
+ drivers/spi/spi-s3c24xx-fiq.S                                 | 4 +++-
+ .../include/plat/regs-spi.h => drivers/spi/spi-s3c24xx-regs.h | 3 ---
+ drivers/spi/spi-s3c24xx.c                                     | 3 +--
+ 6 files changed, 6 insertions(+), 8 deletions(-)
+ rename arch/arm/plat-samsung/include/plat/regs-spi.h => drivers/spi/spi-s3c24xx-regs.h (95%)
 
-diff --git a/arch/arm/mach-s3c64xx/common.c b/arch/arm/mach-s3c64xx/common.c
-index 13e91074308a..19d544f6808a 100644
---- a/arch/arm/mach-s3c64xx/common.c
-+++ b/arch/arm/mach-s3c64xx/common.c
-@@ -36,7 +36,6 @@
+diff --git a/arch/arm/mach-s3c24xx/include/mach/map.h b/arch/arm/mach-s3c24xx/include/mach/map.h
+index bca93112f57d..a20c9fd0d855 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/map.h
++++ b/arch/arm/mach-s3c24xx/include/mach/map.h
+@@ -86,6 +86,8 @@
+ #define S3C2410_PA_SPI	   (0x59000000)
+ #define S3C2443_PA_SPI0		(0x52000000)
+ #define S3C2443_PA_SPI1		S3C2410_PA_SPI
++#define S3C2410_SPI1		(0x20)
++#define S3C2412_SPI1		(0x100)
  
- #include <mach/map.h>
- #include <mach/irqs.h>
--#include <mach/hardware.h>
- #include <mach/regs-gpio.h>
- #include <mach/gpio-samsung.h>
- 
-diff --git a/arch/arm/mach-s3c64xx/dev-uart.c b/arch/arm/mach-s3c64xx/dev-uart.c
-index 5fb59ad30008..021a2b7926fa 100644
---- a/arch/arm/mach-s3c64xx/dev-uart.c
-+++ b/arch/arm/mach-s3c64xx/dev-uart.c
-@@ -15,7 +15,6 @@
- 
- #include <asm/mach/arch.h>
- #include <asm/mach/irq.h>
--#include <mach/hardware.h>
- #include <mach/map.h>
- #include <mach/irqs.h>
- 
-diff --git a/arch/arm/mach-s3c64xx/include/mach/hardware.h b/arch/arm/mach-s3c64xx/include/mach/hardware.h
-deleted file mode 100644
-index c4ed359474de..000000000000
---- a/arch/arm/mach-s3c64xx/include/mach/hardware.h
-+++ /dev/null
-@@ -1,17 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--/* linux/arch/arm/mach-s3c6400/include/mach/hardware.h
-- *
-- * Copyright 2008 Openmoko, Inc.
-- * Copyright 2008 Simtec Electronics
-- *      Ben Dooks <ben@simtec.co.uk>
-- *      http://armlinux.simtec.co.uk/
-- *
-- * S3C6400 - Hardware support
-- */
--
--#ifndef __ASM_ARCH_HARDWARE_H
--#define __ASM_ARCH_HARDWARE_H __FILE__
--
--/* currently nothing here, placeholder */
--
--#endif /* __ASM_ARCH_IRQ_H */
-diff --git a/arch/arm/mach-s3c64xx/mach-anw6410.c b/arch/arm/mach-s3c64xx/mach-anw6410.c
-index 0d3d5befb806..44858c5aea5d 100644
---- a/arch/arm/mach-s3c64xx/mach-anw6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-anw6410.c
-@@ -30,7 +30,6 @@
- #include <asm/mach/map.h>
- #include <asm/mach/irq.h>
- 
--#include <mach/hardware.h>
- #include <mach/map.h>
- 
- #include <asm/irq.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
-index 8ec6a4f5eb05..da5b50981a14 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
-@@ -44,7 +44,6 @@
- #include <asm/mach-types.h>
- 
- #include <video/samsung_fimd.h>
--#include <mach/hardware.h>
- #include <mach/map.h>
- #include <mach/regs-gpio.h>
- #include <mach/gpio-samsung.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-hmt.c b/arch/arm/mach-s3c64xx/mach-hmt.c
-index bfe9881d12cc..a6634fd9e6c4 100644
---- a/arch/arm/mach-s3c64xx/mach-hmt.c
-+++ b/arch/arm/mach-s3c64xx/mach-hmt.c
-@@ -25,7 +25,6 @@
- #include <asm/mach/irq.h>
- 
- #include <video/samsung_fimd.h>
--#include <mach/hardware.h>
- #include <mach/map.h>
- #include <mach/irqs.h>
- 
-diff --git a/arch/arm/mach-s3c64xx/mach-ncp.c b/arch/arm/mach-s3c64xx/mach-ncp.c
-index 13fea5c86ca3..34a00b33fae9 100644
---- a/arch/arm/mach-s3c64xx/mach-ncp.c
-+++ b/arch/arm/mach-s3c64xx/mach-ncp.c
-@@ -25,7 +25,6 @@
- #include <asm/mach/irq.h>
- 
- #include <mach/irqs.h>
--#include <mach/hardware.h>
- #include <mach/map.h>
- 
- #include <asm/irq.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-smdk6400.c b/arch/arm/mach-s3c64xx/mach-smdk6400.c
-index cbd16843c7d1..885158f0a304 100644
---- a/arch/arm/mach-s3c64xx/mach-smdk6400.c
-+++ b/arch/arm/mach-s3c64xx/mach-smdk6400.c
-@@ -23,7 +23,6 @@
- #include <asm/mach/irq.h>
- 
- #include <mach/irqs.h>
--#include <mach/hardware.h>
- #include <mach/map.h>
- 
+ /* SDI */
+ #define S3C2410_PA_SDI	   (0x5A000000)
+diff --git a/arch/arm/mach-s3c24xx/s3c2412.c b/arch/arm/mach-s3c24xx/s3c2412.c
+index 8fe4d4670dcb..c3fb3e6c0dd8 100644
+--- a/arch/arm/mach-s3c24xx/s3c2412.c
++++ b/arch/arm/mach-s3c24xx/s3c2412.c
+@@ -37,7 +37,6 @@
+ #include <plat/cpu-freq.h>
  #include <plat/devs.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-index 908e5aa831c8..95bdcfe95a53 100644
---- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-@@ -45,7 +45,6 @@
- #include <asm/mach/map.h>
- #include <asm/mach/irq.h>
+ #include <plat/pm.h>
+-#include <plat/regs-spi.h>
  
--#include <mach/hardware.h>
- #include <mach/irqs.h>
+ #include "common.h"
+ #include "nand-core.h"
+diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+index 6e4c1cb07104..fd94a35e22f8 100644
+--- a/arch/arm/plat-samsung/devs.c
++++ b/arch/arm/plat-samsung/devs.c
+@@ -59,7 +59,6 @@
+ #include <linux/platform_data/usb-s3c2410_udc.h>
+ #include <linux/platform_data/usb-ohci-s3c2410.h>
+ #include <plat/usb-phy.h>
+-#include <plat/regs-spi.h>
+ #include <linux/platform_data/asoc-s3c.h>
+ #include <linux/platform_data/spi-s3c64xx.h>
+ 
+diff --git a/drivers/spi/spi-s3c24xx-fiq.S b/drivers/spi/spi-s3c24xx-fiq.S
+index e95d6282109e..9d5f8f1e5e81 100644
+--- a/drivers/spi/spi-s3c24xx-fiq.S
++++ b/drivers/spi/spi-s3c24xx-fiq.S
+@@ -12,10 +12,12 @@
+ 
  #include <mach/map.h>
+ #include <mach/regs-irq.h>
+-#include <plat/regs-spi.h>
  
-diff --git a/arch/arm/mach-s3c64xx/s3c6400.c b/arch/arm/mach-s3c64xx/s3c6400.c
-index 545eea716db8..81233495d548 100644
---- a/arch/arm/mach-s3c64xx/s3c6400.c
-+++ b/arch/arm/mach-s3c64xx/s3c6400.c
-@@ -26,7 +26,6 @@
- #include <asm/mach/map.h>
- #include <asm/mach/irq.h>
+ #include "spi-s3c24xx-fiq.h"
  
--#include <mach/hardware.h>
- #include <asm/irq.h>
++#define S3C2410_SPTDAT           (0x10)
++#define S3C2410_SPRDAT           (0x14)
++
+ 	.text
  
- #include <plat/cpu-freq.h>
-diff --git a/arch/arm/mach-s3c64xx/s3c6410.c b/arch/arm/mach-s3c64xx/s3c6410.c
-index 47e04e019624..9465a6e0f068 100644
---- a/arch/arm/mach-s3c64xx/s3c6410.c
-+++ b/arch/arm/mach-s3c64xx/s3c6410.c
-@@ -27,7 +27,6 @@
- #include <asm/mach/map.h>
- #include <asm/mach/irq.h>
+ 	@ entry to these routines is as follows, with the register names
+diff --git a/arch/arm/plat-samsung/include/plat/regs-spi.h b/drivers/spi/spi-s3c24xx-regs.h
+similarity index 95%
+rename from arch/arm/plat-samsung/include/plat/regs-spi.h
+rename to drivers/spi/spi-s3c24xx-regs.h
+index 607844311566..37b93ff7c7fe 100644
+--- a/arch/arm/plat-samsung/include/plat/regs-spi.h
++++ b/drivers/spi/spi-s3c24xx-regs.h
+@@ -8,9 +8,6 @@
+ #ifndef __ASM_ARCH_REGS_SPI_H
+ #define __ASM_ARCH_REGS_SPI_H
  
--#include <mach/hardware.h>
- #include <asm/irq.h>
+-#define S3C2410_SPI1		(0x20)
+-#define S3C2412_SPI1		(0x100)
+-
+ #define S3C2410_SPCON		(0x00)
  
- #include <plat/cpu-freq.h>
+ #define S3C2410_SPCON_SMOD_DMA	(2 << 5)	/* DMA mode */
+diff --git a/drivers/spi/spi-s3c24xx.c b/drivers/spi/spi-s3c24xx.c
+index 2d6e37f25e2d..2f395e4861f6 100644
+--- a/drivers/spi/spi-s3c24xx.c
++++ b/drivers/spi/spi-s3c24xx.c
+@@ -21,10 +21,9 @@
+ #include <linux/spi/s3c24xx.h>
+ #include <linux/module.h>
+ 
+-#include <plat/regs-spi.h>
+-
+ #include <asm/fiq.h>
+ 
++#include "spi-s3c24xx-regs.h"
+ #include "spi-s3c24xx-fiq.h"
+ 
+ /**
 -- 
 2.20.0
 
