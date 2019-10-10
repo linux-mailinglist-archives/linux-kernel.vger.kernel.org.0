@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27CFFD238A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 368F6D2399
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388758AbfJJInf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:43:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48326 "EHLO mail.kernel.org"
+        id S2387874AbfJJIoE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:44:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387662AbfJJIna (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:43:30 -0400
+        id S2388850AbfJJIoB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:44:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A19572054F;
-        Thu, 10 Oct 2019 08:43:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 99D652054F;
+        Thu, 10 Oct 2019 08:43:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697010;
-        bh=AFahc8G12K7WvzeCEERC3mW1Z1th2gs47ouNqmHB0wA=;
+        s=default; t=1570697040;
+        bh=V9YzdNPN6AFK80kaYRmWSmcCKiuPRnSwCqA6BHrZ6nM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Sc+9X3vQb//tjUPTuy0icNuktk7jqwRz5RGFEFWM381U7MRdoL8bwIB1qYep9RDic
-         AHx4vjVOAkm4mHd69ruYZJYoyGIVRgXgcz3MsWpSAMuVsEGD4f0+hBPwCFmkWmzM+o
-         EHU7DBZXGr1I4OQzk/xQff3O/emiXNNj7jh5LPRg=
+        b=KfV2exs3INcu4pdHODkny7QrsDySE56JCoYbb1biriT7UJlfiR/4MhRjQ+n7mAZKt
+         6Q+Qach8OCisW7jxsKAK4AolNvYOLcvJurG8t54bHTpEVbWdTs8q6Q31D3dboF4NaO
+         aXdI+WtIRD1D7W3ArIm18v4TGbITsVVVxnNDBx5E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrii Nakryiko <andriin@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org,
+        syzbot+da3b7677bb913dc1b737@syzkaller.appspotmail.com,
+        Bart Van Assche <bvanassche@acm.org>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 127/148] libbpf: fix false uninitialized variable warning
-Date:   Thu, 10 Oct 2019 10:36:28 +0200
-Message-Id: <20191010083619.688232806@linuxfoundation.org>
+Subject: [PATCH 5.3 128/148] blk-mq: move lockdep_assert_held() into elevator_exit
+Date:   Thu, 10 Oct 2019 10:36:29 +0200
+Message-Id: <20191010083620.131266351@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
 References: <20191010083609.660878383@linuxfoundation.org>
@@ -44,34 +47,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrii Nakryiko <andriin@fb.com>
+From: Ming Lei <ming.lei@redhat.com>
 
-[ Upstream commit aef70a1f44c0b570e6345c02c2d240471859f0a4 ]
+[ Upstream commit 284b94be1925dbe035ce5218d8b5c197321262c7 ]
 
-Some compilers emit warning for potential uninitialized next_id usage.
-The code is correct, but control flow is too complicated for some
-compilers to figure this out. Re-initialize next_id to satisfy
-compiler.
+Commit c48dac137a62 ("block: don't hold q->sysfs_lock in elevator_init_mq")
+removes q->sysfs_lock from elevator_init_mq(), but forgot to deal with
+lockdep_assert_held() called in blk_mq_sched_free_requests() which is
+run in failure path of elevator_init_mq().
 
-Signed-off-by: Andrii Nakryiko <andriin@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+blk_mq_sched_free_requests() is called in the following 3 functions:
+
+	elevator_init_mq()
+	elevator_exit()
+	blk_cleanup_queue()
+
+In blk_cleanup_queue(), blk_mq_sched_free_requests() is followed exactly
+by 'mutex_lock(&q->sysfs_lock)'.
+
+So moving the lockdep_assert_held() from blk_mq_sched_free_requests()
+into elevator_exit() for fixing the report by syzbot.
+
+Reported-by: syzbot+da3b7677bb913dc1b737@syzkaller.appspotmail.com
+Fixed: c48dac137a62 ("block: don't hold q->sysfs_lock in elevator_init_mq")
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/lib/bpf/btf_dump.c | 1 +
- 1 file changed, 1 insertion(+)
+ block/blk-mq-sched.c | 2 --
+ block/blk.h          | 2 ++
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/lib/bpf/btf_dump.c b/tools/lib/bpf/btf_dump.c
-index 7065bb5b27525..e1357dbb16c24 100644
---- a/tools/lib/bpf/btf_dump.c
-+++ b/tools/lib/bpf/btf_dump.c
-@@ -1213,6 +1213,7 @@ static void btf_dump_emit_type_chain(struct btf_dump *d,
- 				return;
- 			}
+diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
+index c9d183d6c4999..ca22afd47b3dc 100644
+--- a/block/blk-mq-sched.c
++++ b/block/blk-mq-sched.c
+@@ -555,8 +555,6 @@ void blk_mq_sched_free_requests(struct request_queue *q)
+ 	struct blk_mq_hw_ctx *hctx;
+ 	int i;
  
-+			next_id = decls->ids[decls->cnt - 1];
- 			next_t = btf__type_by_id(d->btf, next_id);
- 			multidim = btf_kind_of(next_t) == BTF_KIND_ARRAY;
- 			/* we need space if we have named non-pointer */
+-	lockdep_assert_held(&q->sysfs_lock);
+-
+ 	queue_for_each_hw_ctx(q, hctx, i) {
+ 		if (hctx->sched_tags)
+ 			blk_mq_free_rqs(q->tag_set, hctx->sched_tags, i);
+diff --git a/block/blk.h b/block/blk.h
+index d5edfd73d45ea..0685c45e3d96e 100644
+--- a/block/blk.h
++++ b/block/blk.h
+@@ -201,6 +201,8 @@ void elv_unregister_queue(struct request_queue *q);
+ static inline void elevator_exit(struct request_queue *q,
+ 		struct elevator_queue *e)
+ {
++	lockdep_assert_held(&q->sysfs_lock);
++
+ 	blk_mq_sched_free_requests(q);
+ 	__elevator_exit(q, e);
+ }
 -- 
 2.20.1
 
