@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E57ED23B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0B18D233B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:48:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389050AbfJJIpB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:45:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50454 "EHLO mail.kernel.org"
+        id S2388106AbfJJIk0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:40:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389031AbfJJIo5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:44:57 -0400
+        id S2388088AbfJJIkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:40:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0C8321A4A;
-        Thu, 10 Oct 2019 08:44:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0715721D6C;
+        Thu, 10 Oct 2019 08:40:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697097;
-        bh=xwdNqheqcRTQQsny3ZQqe8QpW7olZHVgeXvOo9Dm6CA=;
+        s=default; t=1570696824;
+        bh=PQpdJK/h9ToD5AevYVxFZxB/f9VAVRWbA53bQfTfcew=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EUzXHc8cG51g2Cr3DDqfghmjemtUJTlGtEF+oBpY2vHZ8WpRsZQ7uJOlATD96fSCF
-         xRDfbLnVgFRTUu2pVnF9CG5KBQjt+1By5FLDTHE6S+2QOlByfITn89ajhMISUA7Dg6
-         LUwOBA1DF2ZoIFzey1iG6MRkS4Uph491TXGThd94=
+        b=iR5sm8Sa76ON4c1T/ffjovAvXJcRQG0nPltDjy76VDxG9wYKnt0KRUh5R+PyjJBJG
+         ei13oh12qDImXHzRToFfi2O+h7j1vyN8n8oyToKR5TlATPMC/b5gCeot/l7oPBJrlw
+         OY5+L8m5cwW5OcaOK5QoNLPkGxWJvEecX702vNNI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.19 018/114] powerpc/book3s64/mm: Dont do tlbie fixup for some hardware revisions
-Date:   Thu, 10 Oct 2019 10:35:25 +0200
-Message-Id: <20191010083552.455982468@linuxfoundation.org>
+        stable@vger.kernel.org, Liviu Dudau <liviu.dudau@arm.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Liviu Dudau <Liviu.Dudau@arm.com>
+Subject: [PATCH 5.3 065/148] drm: mali-dp: Mark expected switch fall-through
+Date:   Thu, 10 Oct 2019 10:35:26 +0200
+Message-Id: <20191010083615.398042278@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
-References: <20191010083544.711104709@linuxfoundation.org>
+In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
+References: <20191010083609.660878383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,81 +44,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+From: Anders Roxell <anders.roxell@linaro.org>
 
-commit 677733e296b5c7a37c47da391fc70a43dc40bd67 upstream.
+commit 28ba1b1da49a20ba8fb767d6ddd7c521ec79a119 upstream.
 
-The store ordering vs tlbie issue mentioned in commit
-a5d4b5891c2f ("powerpc/mm: Fixup tlbie vs store ordering issue on
-POWER9") is fixed for Nimbus 2.3 and Cumulus 1.3 revisions. We don't
-need to apply the fixup if we are running on them
+Now that -Wimplicit-fallthrough is passed to GCC by default, the
+following warnings shows up:
 
-We can only do this on PowerNV. On pseries guest with KVM we still
-don't support redoing the feature fixup after migration. So we should
-be enabling all the workarounds needed, because whe can possibly
-migrate between DD 2.3 and DD 2.2
+../drivers/gpu/drm/arm/malidp_hw.c: In function ‘malidp_format_get_bpp’:
+../drivers/gpu/drm/arm/malidp_hw.c:387:8: warning: this statement may fall
+ through [-Wimplicit-fallthrough=]
+    bpp = 30;
+    ~~~~^~~~
+../drivers/gpu/drm/arm/malidp_hw.c:388:3: note: here
+   case DRM_FORMAT_YUV420_10BIT:
+   ^~~~
+../drivers/gpu/drm/arm/malidp_hw.c: In function ‘malidp_se_irq’:
+../drivers/gpu/drm/arm/malidp_hw.c:1311:4: warning: this statement may fall
+ through [-Wimplicit-fallthrough=]
+    drm_writeback_signal_completion(&malidp->mw_connector, 0);
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../drivers/gpu/drm/arm/malidp_hw.c:1313:3: note: here
+   case MW_START:
+   ^~~~
 
-Fixes: a5d4b5891c2f ("powerpc/mm: Fixup tlbie vs store ordering issue on POWER9")
-Cc: stable@vger.kernel.org # v4.16+
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20190924035254.24612-1-aneesh.kumar@linux.ibm.com
+Rework to add a 'break;' in a case that didn't have it so that
+the compiler doesn't warn about fall-through.
+
+Cc: stable@vger.kernel.org # v5.2+
+Fixes: b8207562abdd ("drm/arm/malidp: Specified the rotation memory requirements for AFBC YUV formats")
+Acked-by: Liviu Dudau <liviu.dudau@arm.com>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Liviu Dudau <Liviu.Dudau@arm.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190730153056.3606-1-anders.roxell@linaro.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/dt_cpu_ftrs.c |   30 ++++++++++++++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/arm/malidp_hw.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/kernel/dt_cpu_ftrs.c
-+++ b/arch/powerpc/kernel/dt_cpu_ftrs.c
-@@ -694,9 +694,35 @@ static bool __init cpufeatures_process_f
- 	return true;
- }
- 
-+/*
-+ * Handle POWER9 broadcast tlbie invalidation issue using
-+ * cpu feature flag.
-+ */
-+static __init void update_tlbie_feature_flag(unsigned long pvr)
-+{
-+	if (PVR_VER(pvr) == PVR_POWER9) {
-+		/*
-+		 * Set the tlbie feature flag for anything below
-+		 * Nimbus DD 2.3 and Cumulus DD 1.3
-+		 */
-+		if ((pvr & 0xe000) == 0) {
-+			/* Nimbus */
-+			if ((pvr & 0xfff) < 0x203)
-+				cur_cpu_spec->cpu_features |= CPU_FTR_P9_TLBIE_BUG;
-+		} else if ((pvr & 0xc000) == 0) {
-+			/* Cumulus */
-+			if ((pvr & 0xfff) < 0x103)
-+				cur_cpu_spec->cpu_features |= CPU_FTR_P9_TLBIE_BUG;
-+		} else {
-+			WARN_ONCE(1, "Unknown PVR");
-+			cur_cpu_spec->cpu_features |= CPU_FTR_P9_TLBIE_BUG;
-+		}
-+	}
-+}
-+
- static __init void cpufeatures_cpu_quirks(void)
- {
--	int version = mfspr(SPRN_PVR);
-+	unsigned long version = mfspr(SPRN_PVR);
- 
- 	/*
- 	 * Not all quirks can be derived from the cpufeatures device tree.
-@@ -715,10 +741,10 @@ static __init void cpufeatures_cpu_quirk
- 
- 	if ((version & 0xffff0000) == 0x004e0000) {
- 		cur_cpu_spec->cpu_features &= ~(CPU_FTR_DAWR);
--		cur_cpu_spec->cpu_features |= CPU_FTR_P9_TLBIE_BUG;
- 		cur_cpu_spec->cpu_features |= CPU_FTR_P9_TIDR;
- 	}
- 
-+	update_tlbie_feature_flag(version);
- 	/*
- 	 * PKEY was not in the initial base or feature node
- 	 * specification, but it should become optional in the next
+--- a/drivers/gpu/drm/arm/malidp_hw.c
++++ b/drivers/gpu/drm/arm/malidp_hw.c
+@@ -385,6 +385,7 @@ int malidp_format_get_bpp(u32 fmt)
+ 		switch (fmt) {
+ 		case DRM_FORMAT_VUY101010:
+ 			bpp = 30;
++			break;
+ 		case DRM_FORMAT_YUV420_10BIT:
+ 			bpp = 15;
+ 			break;
+@@ -1309,7 +1310,7 @@ static irqreturn_t malidp_se_irq(int irq
+ 			break;
+ 		case MW_RESTART:
+ 			drm_writeback_signal_completion(&malidp->mw_connector, 0);
+-			/* fall through to a new start */
++			/* fall through - to a new start */
+ 		case MW_START:
+ 			/* writeback started, need to emulate one-shot mode */
+ 			hw->disable_memwrite(hwdev);
 
 
