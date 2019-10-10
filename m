@@ -2,49 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A24F0D237A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3679FD23F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:50:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388659AbfJJInB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:43:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47624 "EHLO mail.kernel.org"
+        id S2388557AbfJJIrl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:47:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388643AbfJJIm5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:42:57 -0400
+        id S2388546AbfJJIrj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:47:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B53EB2190F;
-        Thu, 10 Oct 2019 08:42:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02C042245A;
+        Thu, 10 Oct 2019 08:47:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570696977;
-        bh=SW5+MJ+dAc9BhA2Qt94J5IT4MmvBAaF7zVFKoytNsbU=;
+        s=default; t=1570697258;
+        bh=kgzfr/vRrO0hm5BZsVAdICd2cayTt5lbLSD11QS0AvY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zkNM18PJaobz8jcnKFd7oARVMwPwKHXSN2wgfRlUKJ0Gb7sfSSW46fyFYFOPNGtVT
-         dOo+siQSFG7D4ogT2XT0vRvT4m9J5iWYSOKX0WQmdZjSgMfJe5eVkVS14xX+ArEQSH
-         2l0U4EiTmk8/XphT/K5iaB6LSNkz+ve+NU2fqLfo=
+        b=13mKZFxWLHEL0aZD3rqNSTFOFTySIZNsKy0vTWMH0j7W2VkbZi+ogxiQiu1syurvN
+         P9EjQ2vGBJHI3Q6uHgxAm1FKqxaeze40c3Ccyr8/s7D4JeIioT5E0MVwP4cajflaSL
+         QiyTQnv07MPgYRb2wboH6TLYq8LobN/ZCBJUd7EE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Chris Metcalf <cmetcalf@ezchip.com>,
-        Christoph Lameter <cl@linux.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Kirill Tkhai <tkhai@yandex.ru>,
+        stable@vger.kernel.org, Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Mike Galbraith <efault@gmx.de>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 120/148] sched/membarrier: Call sync_core only before usermode for same mm
-Date:   Thu, 10 Oct 2019 10:36:21 +0200
-Message-Id: <20191010083618.331652441@linuxfoundation.org>
+Subject: [PATCH 4.19 075/114] perf unwind: Fix libunwind build failure on i386 systems
+Date:   Thu, 10 Oct 2019 10:36:22 +0200
+Message-Id: <20191010083611.905436286@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
-References: <20191010083609.660878383@linuxfoundation.org>
+In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
+References: <20191010083544.711104709@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -54,48 +49,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit 2840cf02fae627860156737e83326df354ee4ec6 ]
+[ Upstream commit 26acf400d2dcc72c7e713e1f55db47ad92010cc2 ]
 
-When the prev and next task's mm change, switch_mm() provides the core
-serializing guarantees before returning to usermode. The only case
-where an explicit core serialization is needed is when the scheduler
-keeps the same mm for prev and next.
+Naresh Kamboju reported, that on the i386 build pr_err()
+doesn't get defined properly due to header ordering:
 
-Suggested-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Chris Metcalf <cmetcalf@ezchip.com>
-Cc: Christoph Lameter <cl@linux.com>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Cc: Kirill Tkhai <tkhai@yandex.ru>
+  perf-in.o: In function `libunwind__x86_reg_id':
+  tools/perf/util/libunwind/../../arch/x86/util/unwind-libunwind.c:109:
+  undefined reference to `pr_err'
+
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mike Galbraith <efault@gmx.de>
-Cc: Paul E. McKenney <paulmck@linux.ibm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Russell King - ARM Linux admin <linux@armlinux.org.uk>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190919173705.2181-4-mathieu.desnoyers@efficios.com
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/sched/mm.h | 2 ++
- 1 file changed, 2 insertions(+)
+ tools/perf/arch/x86/util/unwind-libunwind.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-index 4a7944078cc35..8557ec6642130 100644
---- a/include/linux/sched/mm.h
-+++ b/include/linux/sched/mm.h
-@@ -362,6 +362,8 @@ enum {
+diff --git a/tools/perf/arch/x86/util/unwind-libunwind.c b/tools/perf/arch/x86/util/unwind-libunwind.c
+index 05920e3edf7a7..47357973b55b2 100644
+--- a/tools/perf/arch/x86/util/unwind-libunwind.c
++++ b/tools/perf/arch/x86/util/unwind-libunwind.c
+@@ -1,11 +1,11 @@
+ // SPDX-License-Identifier: GPL-2.0
  
- static inline void membarrier_mm_sync_core_before_usermode(struct mm_struct *mm)
- {
-+	if (current->mm != mm)
-+		return;
- 	if (likely(!(atomic_read(&mm->membarrier_state) &
- 		     MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE)))
- 		return;
+ #include <errno.h>
++#include "../../util/debug.h"
+ #ifndef REMOTE_UNWIND_LIBUNWIND
+ #include <libunwind.h>
+ #include "perf_regs.h"
+ #include "../../util/unwind.h"
+-#include "../../util/debug.h"
+ #endif
+ 
+ #ifdef HAVE_ARCH_X86_64_SUPPORT
 -- 
 2.20.1
 
