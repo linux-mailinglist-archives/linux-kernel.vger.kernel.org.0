@@ -2,63 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24564D3181
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 21:42:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A4B6D318E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 21:44:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726276AbfJJTmE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 15:42:04 -0400
-Received: from namei.org ([65.99.196.166]:53524 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725867AbfJJTmE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 15:42:04 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x9AJf1pp032000;
-        Thu, 10 Oct 2019 19:41:01 GMT
-Date:   Fri, 11 Oct 2019 06:41:01 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, rostedt@goodmis.org,
-        primiano@google.com, rsavitski@google.com, jeffv@google.com,
-        kernel-team@android.com, Alexei Starovoitov <ast@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        bpf@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-security-module@vger.kernel.org,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Namhyung Kim <namhyung@kernel.org>, selinux@vger.kernel.org,
-        Song Liu <songliubraving@fb.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Yonghong Song <yhs@fb.com>
-Subject: Re: [PATCH RFC] perf_event: Add support for LSM and SELinux checks
-In-Reply-To: <dc0cacef-fff5-b837-97a4-ed7336934bf6@schaufler-ca.com>
-Message-ID: <alpine.LRH.2.21.1910110637300.31442@namei.org>
-References: <20191009203657.6070-1-joel@joelfernandes.org> <710c5bc0-deca-2649-8351-678e177214e9@schaufler-ca.com> <alpine.LRH.2.21.1910100912210.29840@namei.org> <2b94802d-12ea-4f2d-bb65-eda3b3542bb2@schaufler-ca.com> <alpine.LRH.2.21.1910101343470.8343@namei.org>
- <dc0cacef-fff5-b837-97a4-ed7336934bf6@schaufler-ca.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1726484AbfJJToI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 15:44:08 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:54378 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbfJJToH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 15:44:07 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id DB451286280
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     linux-rockchip@lists.infradead.org,
+        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+        Sandy Huang <hjc@rock-chips.com>, kernel@collabora.com,
+        Sean Paul <seanpaul@chromium.org>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Ilia Mirkin <imirkin@alum.mit.edu>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ezequiel Garcia <ezequiel@collabora.com>
+Subject: [PATCH v5 0/3] RK3288 Gamma LUT
+Date:   Thu, 10 Oct 2019 16:43:48 -0300
+Message-Id: <20191010194351.17940-1-ezequiel@collabora.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 10 Oct 2019, Casey Schaufler wrote:
+New iteration, seems that we are finally converging.
 
-> > Because it is not necessary.
-> 
-> The logic escapes me, but OK.
+For this v5, we are only doing some changes on
+the gamma_set implementation. As a result, the code
+is more readable. See the changelog in patch 2 for more
+information.
 
-We should only extend the stacking infrastructure to what is concretely 
-required. We don't yet have a use-case for stacking perf_event so we 
-should keep the code as simple as possible. As soon as multiple LSMs 
-determine they need to share the blob, we can convert the code to blob 
-sharing.
+Thanks!
 
+Ezequiel Garcia (3):
+  dt-bindings: display: rockchip: document VOP gamma LUT address
+  drm/rockchip: Add optional support for CRTC gamma LUT
+  ARM: dts: rockchip: Add RK3288 VOP gamma LUT address
+
+ .../display/rockchip/rockchip-vop.txt         |   6 +-
+ arch/arm/boot/dts/rk3288.dtsi                 |   4 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c   | 120 ++++++++++++++++++
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.h   |   2 +
+ drivers/gpu/drm/rockchip/rockchip_vop_reg.c   |   2 +
+ 5 files changed, 131 insertions(+), 3 deletions(-)
 
 -- 
-James Morris
-<jmorris@namei.org>
+2.22.0
 
