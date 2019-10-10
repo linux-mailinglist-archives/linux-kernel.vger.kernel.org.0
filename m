@@ -2,332 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 922BCD21BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 09:38:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06AE7D21BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 09:38:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733266AbfJJHiU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 03:38:20 -0400
-Received: from mail-qk1-f202.google.com ([209.85.222.202]:52732 "EHLO
-        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733064AbfJJHbP (ORCPT
+        id S1733277AbfJJHiX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 03:38:23 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55360 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733069AbfJJHbY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 03:31:15 -0400
-Received: by mail-qk1-f202.google.com with SMTP id g65so4601563qkf.19
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 00:31:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=lRc4gVxiX9A2vAyfTTykUNKX78s0vfyshPhbgF158mw=;
-        b=pKfamWhqA5o/VmlkmrFWgfcuXXifDhh0VT/OCnIoPXQ1CI2I30bQ0Z4/dFIh8cUZaY
-         CAT75zg54Wx7rcLARaqO7cEDGzLh9YhS2evTOdtwod78dy67s2So03fr7SiSKpnqDlMr
-         qmChzb/MGpoYT+eUXEEziwWNvkwbS8efSWDIIzuqjwRz/Bktlxylc3dQoB3Jipa5fV73
-         L8bmKSXZjSZXEw2zSVbOut7BL4znRec1t9HMpadJCLc9M/WY+Tc7rDVWpby5DdUbRfHY
-         eW7xXe2QdysDZ1ywuXNUhHjMnvmHVX0wpr5Xy9key8Q1WDnzjRIzfNv1RdQ0xab2qq7t
-         l/lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=lRc4gVxiX9A2vAyfTTykUNKX78s0vfyshPhbgF158mw=;
-        b=hOr1X2QGRK0oAc4tfmZP65j7JCTVp11f5sOIi34c6tXQesHa5bdVu/+iEZGLvYuGBE
-         QRDHtOO3kL1xmbt7DwhKJk6OH0TIJfMf1oeWDfDwL3R1zI0wNctsorDqV9upopjpTJU7
-         QObohLyYlazS61GcWjaYt0wNfZrSjPjhZYauwHCmoPKdQORMwBu6XxuRfySgh6Q8NrZk
-         hcDGDWdR/w1TQu+pWWqjdMik+TUd5Ah5Wh89BhtaNk1ZvhTkhKDxcnqE7P/t5g5yadRd
-         etjQrYNErHbcbGgbhAWbFIjPyTPIPP5OXyeE6mj7qZySJXZRf8Ohtn4c20S2rxpPpPFt
-         v8YQ==
-X-Gm-Message-State: APjAAAX9bw3pccVb7Kx/xqRH17DuTZmhiP4+QeY3usckJ0RU1SwpbhIe
-        SYD07PdaoR+czrehhDIuk213R5VSgiDOPA==
-X-Google-Smtp-Source: APXvYqxTJ6oZLrEDQCMDaFAXpsBAe3TNsX0YgtXEeErhAIpuxnfa9tVw0IgMH3MwfbGKX98V2thZinTrVlSgdw==
-X-Received: by 2002:ac8:6992:: with SMTP id o18mr8726329qtq.105.1570692673999;
- Thu, 10 Oct 2019 00:31:13 -0700 (PDT)
-Date:   Thu, 10 Oct 2019 16:30:55 +0900
-In-Reply-To: <20191010073055.183635-1-suleiman@google.com>
-Message-Id: <20191010073055.183635-3-suleiman@google.com>
-Mime-Version: 1.0
-References: <20191010073055.183635-1-suleiman@google.com>
-X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
-Subject: [RFC v2 2/2] x86/kvmclock: Introduce kvm-hostclock clocksource.
-From:   Suleiman Souhlal <suleiman@google.com>
-To:     pbonzini@redhat.com, rkrcmar@redhat.com, tglx@linutronix.de
-Cc:     john.stultz@linaro.org, sboyd@kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        ssouhlal@freebsd.org, tfiga@chromium.org, vkuznets@redhat.com,
-        Suleiman Souhlal <suleiman@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 10 Oct 2019 03:31:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=OlxQtvViaGIK04uNty665d/TS7hsJXcjW09hSoEVw1Q=; b=fgp6B3ox+JD/1k85mnq47JEek
+        nSiHLBJCeaSbOsjtsYMhZ3bUN06f8z3ULeujKl31lUUvy1nlJl/Ifxzh5qogyA4K6tiQmZ6zjLdKM
+        8BX9OC9Uy8urH1tT4P/Rf/6CpSAKobW5EEsI7w3rJ6dkt3IlCTE/wsVjTsSTmyyAD/3sRRqgpJFSb
+        5ViIOGX1yVygLEvyEKK2cR5H4sRUu4LtGBOo9aRYfrXCHAI75way15vQAhWYabBlh1X7yyEv/HItM
+        Pm5NIWinHCF5FTh9p8aveBhCdyM7S/13mIzFTuh6d40CXEWIiQIB36+EwjYEZ3KgcyLCDEHV43986
+        knI3Bvptw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iISux-0002SK-Nn; Thu, 10 Oct 2019 07:31:23 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id CECED3008C1;
+        Thu, 10 Oct 2019 09:30:29 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id BCB1D202F4F4F; Thu, 10 Oct 2019 09:31:21 +0200 (CEST)
+Date:   Thu, 10 Oct 2019 09:31:21 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, Jessica Yu <jeyu@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH] ftrace/module: Allow ftrace to make only loaded module
+ text read-write
+Message-ID: <20191010073121.GN2311@hirez.programming.kicks-ass.net>
+References: <20191009223638.60b78727@oasis.local.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191009223638.60b78727@oasis.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When kvm-hostclock is selected, and the host supports it, update our
-timekeeping parameters to be the same as the host.
-This lets us have our time synchronized with the host's,
-even in the presence of host NTP or suspend.
+On Wed, Oct 09, 2019 at 10:36:38PM -0400, Steven Rostedt wrote:
+> From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> 
+> In the process of using text_poke_bp() for ftrace on x86, when
+> performing the following action:
+> 
+>  # rmmod snd_hda_codec_hdmi
+>  # echo function > /sys/kernel/tracing/current_tracer
+>  # modprobe snd_hda_codec_hdmi
+> 
+> It triggered this:
+> 
+>  BUG: unable to handle page fault for address: ffffffffa03d0000
+>  #PF: supervisor write access in kernel mode
+>  #PF: error_code(0x0003) - permissions violation
+>  PGD 2a12067 P4D 2a12067 PUD 2a13063 PMD c42bc067 PTE c58a0061
+>  Oops: 0003 [#1] PREEMPT SMP KASAN PTI
+>  CPU: 1 PID: 1182 Comm: modprobe Not tainted 5.4.0-rc2-test+ #50
+>  Hardware name: Hewlett-Packard HP Compaq Pro 6300 SFF/339A, BIOS K01 v03.03 07/14/2016
+>  RIP: 0010:memcpy_erms+0x6/0x10
+>  Code: 90 90 90 90 eb 1e 0f 1f 00 48 89 f8 48 89 d1 48 c1 e9 03 83 e2 07 f3 48 a5 89 d1 f3 a4 c3 66 0f 1f 44 00 00 48 89 f8 48 89 d1 <f3> a4 c3 0f 1f 80 00 00 00 00 48 89 f8 48 83 fa 20 72 7e 40 38 fe
+>  RSP: 0018:ffff8880a10479e0 EFLAGS: 00010246
+>  RAX: ffffffffa03d0000 RBX: ffffffffa03d0000 RCX: 0000000000000005
+>  RDX: 0000000000000005 RSI: ffffffff8363e160 RDI: ffffffffa03d0000
+>  RBP: ffff88807e9ec000 R08: fffffbfff407a001 R09: fffffbfff407a001
+>  R10: fffffbfff407a000 R11: ffffffffa03d0004 R12: ffffffff8221f160
+>  R13: ffffffffa03d0000 R14: ffff88807e9ec000 R15: ffffffffa0481640
+>  FS:  00007eff92e28280(0000) GS:ffff8880d4840000(0000) knlGS:0000000000000000
+>  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>  CR2: ffffffffa03d0000 CR3: 00000000a1048001 CR4: 00000000001606e0
+>  Call Trace:
+>   ftrace_make_call+0x76/0x90
+>   ftrace_module_enable+0x493/0x4f0
+>   load_module+0x3a31/0x3e10
+>   ? ring_buffer_read+0x70/0x70
+>   ? module_frob_arch_sections+0x20/0x20
+>   ? rb_commit+0xee/0x600
+>   ? tracing_generic_entry_update+0xe1/0xf0
+>   ? ring_buffer_unlock_commit+0xfb/0x220
+>   ? 0xffffffffa0000061
+>   ? __do_sys_finit_module+0x11a/0x1b0
+>   __do_sys_finit_module+0x11a/0x1b0
+>   ? __ia32_sys_init_module+0x40/0x40
+>   ? ring_buffer_unlock_commit+0xfb/0x220
+>   ? function_trace_call+0x179/0x260
+>   ? __do_sys_finit_module+0x1b0/0x1b0
+>   ? __do_sys_finit_module+0x1b0/0x1b0
+>   ? do_syscall_64+0x58/0x1a0
+>   do_syscall_64+0x68/0x1a0
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>  RIP: 0033:0x7eff92f42efd
+> 
+> The reason is that ftrace_module_enable() is called after the module
+> has set its text to read-only. There's subtle reasons that this needs
+> to be called afterward, and we need to continue to do so.
 
-Signed-off-by: Suleiman Souhlal <suleiman@google.com>
----
- arch/x86/Kconfig                    |   9 ++
- arch/x86/include/asm/kvmclock.h     |  12 +++
- arch/x86/kernel/Makefile            |   2 +
- arch/x86/kernel/kvmclock.c          |   5 +-
- arch/x86/kernel/kvmhostclock.c      | 130 ++++++++++++++++++++++++++++
- include/linux/timekeeper_internal.h |   8 ++
- kernel/time/timekeeping.c           |   2 +
- 7 files changed, 167 insertions(+), 1 deletion(-)
- create mode 100644 arch/x86/kernel/kvmhostclock.c
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index d6e1faa28c58..c5b1257ea969 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -839,6 +839,15 @@ config PARAVIRT_TIME_ACCOUNTING
- config PARAVIRT_CLOCK
- 	bool
- 
-+config KVM_HOSTCLOCK
-+	bool "kvmclock uses host timekeeping"
-+	depends on KVM_GUEST
-+	help
-+	  Select this option to make the guest use the same timekeeping
-+	  parameters as the host. This means that time will be almost
-+	  exactly the same between the two. Only works if the host uses "tsc"
-+	  clocksource.
-+
- config JAILHOUSE_GUEST
- 	bool "Jailhouse non-root cell support"
- 	depends on X86_64 && PCI
-diff --git a/arch/x86/include/asm/kvmclock.h b/arch/x86/include/asm/kvmclock.h
-index eceea9299097..de1a590ff97e 100644
---- a/arch/x86/include/asm/kvmclock.h
-+++ b/arch/x86/include/asm/kvmclock.h
-@@ -2,6 +2,18 @@
- #ifndef _ASM_X86_KVM_CLOCK_H
- #define _ASM_X86_KVM_CLOCK_H
- 
-+#include <linux/timekeeper_internal.h>
-+
- extern struct clocksource kvm_clock;
- 
-+unsigned long kvm_get_tsc_khz(void);
-+
-+#ifdef CONFIG_KVM_HOSTCLOCK
-+void kvm_hostclock_init(void);
-+#else
-+static inline void kvm_hostclock_init(void)
-+{
-+}
-+#endif /* KVM_HOSTCLOCK */
-+
- #endif /* _ASM_X86_KVM_CLOCK_H */
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 3578ad248bc9..bc7be935fc5e 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -17,6 +17,7 @@ CFLAGS_REMOVE_tsc.o = -pg
- CFLAGS_REMOVE_paravirt-spinlocks.o = -pg
- CFLAGS_REMOVE_pvclock.o = -pg
- CFLAGS_REMOVE_kvmclock.o = -pg
-+CFLAGS_REMOVE_kvmhostclock.o = -pg
- CFLAGS_REMOVE_ftrace.o = -pg
- CFLAGS_REMOVE_early_printk.o = -pg
- CFLAGS_REMOVE_head64.o = -pg
-@@ -112,6 +113,7 @@ obj-$(CONFIG_AMD_NB)		+= amd_nb.o
- obj-$(CONFIG_DEBUG_NMI_SELFTEST) += nmi_selftest.o
- 
- obj-$(CONFIG_KVM_GUEST)		+= kvm.o kvmclock.o
-+obj-$(CONFIG_KVM_HOSTCLOCK)	+= kvmhostclock.o
- obj-$(CONFIG_PARAVIRT)		+= paravirt.o paravirt_patch.o
- obj-$(CONFIG_PARAVIRT_SPINLOCKS)+= paravirt-spinlocks.o
- obj-$(CONFIG_PARAVIRT_CLOCK)	+= pvclock.o
-diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
-index 904494b924c1..4ab862de9777 100644
---- a/arch/x86/kernel/kvmclock.c
-+++ b/arch/x86/kernel/kvmclock.c
-@@ -125,7 +125,7 @@ static inline void kvm_sched_clock_init(bool stable)
-  * poll of guests can be running and trouble each other. So we preset
-  * lpj here
-  */
--static unsigned long kvm_get_tsc_khz(void)
-+unsigned long kvm_get_tsc_khz(void)
- {
- 	setup_force_cpu_cap(X86_FEATURE_TSC_KNOWN_FREQ);
- 	return pvclock_tsc_khz(this_cpu_pvti());
-@@ -366,5 +366,8 @@ void __init kvmclock_init(void)
- 		kvm_clock.rating = 299;
- 
- 	clocksource_register_hz(&kvm_clock, NSEC_PER_SEC);
-+
-+	kvm_hostclock_init();
-+
- 	pv_info.name = "KVM";
- }
-diff --git a/arch/x86/kernel/kvmhostclock.c b/arch/x86/kernel/kvmhostclock.c
-new file mode 100644
-index 000000000000..9971343c2bed
---- /dev/null
-+++ b/arch/x86/kernel/kvmhostclock.c
-@@ -0,0 +1,130 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * KVM clocksource that uses host timekeeping.
-+ * Copyright (c) 2019 Suleiman Souhlal, Google LLC
-+ */
-+
-+#include <linux/clocksource.h>
-+#include <linux/kvm_para.h>
-+#include <asm/pvclock.h>
-+#include <asm/msr.h>
-+#include <asm/kvmclock.h>
-+#include <linux/timekeeper_internal.h>
-+
-+struct pvclock_timekeeper pv_timekeeper;
-+
-+static bool pv_timekeeper_enabled;
-+static bool pv_timekeeper_present;
-+static int old_vclock_mode;
-+
-+static u64
-+kvm_hostclock_get_cycles(struct clocksource *cs)
-+{
-+	return rdtsc_ordered();
-+}
-+
-+static int
-+kvm_hostclock_enable(struct clocksource *cs)
-+{
-+	pv_timekeeper_enabled = 1;
-+
-+	old_vclock_mode = kvm_clock.archdata.vclock_mode;
-+	kvm_clock.archdata.vclock_mode = VCLOCK_TSC;
-+	return 0;
-+}
-+
-+static void
-+kvm_hostclock_disable(struct clocksource *cs)
-+{
-+	pv_timekeeper_enabled = 0;
-+	kvm_clock.archdata.vclock_mode = old_vclock_mode;
-+}
-+
-+struct clocksource kvm_hostclock = {
-+	.name = "kvm-hostclock",
-+	.read = kvm_hostclock_get_cycles,
-+	.enable = kvm_hostclock_enable,
-+	.disable = kvm_hostclock_disable,
-+	.rating = 401, /* Higher than kvm-clock */
-+	.mask = CLOCKSOURCE_MASK(64),
-+	.flags = CLOCK_SOURCE_IS_CONTINUOUS,
-+};
-+
-+static void
-+pvclock_copy_into_read_base(struct pvclock_timekeeper *pvtk,
-+    struct tk_read_base *tkr, struct pvclock_read_base *pvtkr)
-+{
-+	int shift_diff;
-+
-+	tkr->mask = pvtkr->mask;
-+	tkr->cycle_last = pvtkr->cycle_last + pvtk->tsc_offset;
-+	tkr->mult = pvtkr->mult;
-+	shift_diff = tkr->shift - pvtkr->shift;
-+	tkr->shift = pvtkr->shift;
-+	tkr->xtime_nsec = pvtkr->xtime_nsec;
-+	tkr->base = pvtkr->base;
-+}
-+
-+static u64
-+pvtk_read_begin(struct pvclock_timekeeper *pvtk)
-+{
-+	u64 gen;
-+
-+	gen = pvtk->gen & ~1;
-+	/* Make sure that the gen count is read before the data. */
-+	virt_rmb();
-+
-+	return gen;
-+}
-+
-+static bool
-+pvtk_read_retry(struct pvclock_timekeeper *pvtk, u64 gen)
-+{
-+	/* Make sure that the gen count is re-read after the data. */
-+	virt_rmb();
-+	return unlikely(gen != pvtk->gen);
-+}
-+
-+void
-+kvm_clock_copy_into_tk(struct timekeeper *tk)
-+{
-+	struct pvclock_timekeeper *pvtk;
-+	u64 gen;
-+
-+	if (!pv_timekeeper_enabled)
-+		return;
-+
-+	pvtk = &pv_timekeeper;
-+	do {
-+		gen = pvtk_read_begin(pvtk);
-+		if (!(pv_timekeeper.flags & PVCLOCK_TIMEKEEPER_ENABLED))
-+			return;
-+
-+		pvclock_copy_into_read_base(pvtk, &tk->tkr_mono,
-+		    &pvtk->tkr_mono);
-+		pvclock_copy_into_read_base(pvtk, &tk->tkr_raw, &pvtk->tkr_raw);
-+
-+		tk->xtime_sec = pvtk->xtime_sec;
-+		tk->ktime_sec = pvtk->ktime_sec;
-+		tk->wall_to_monotonic.tv_sec = pvtk->wall_to_monotonic_sec;
-+		tk->wall_to_monotonic.tv_nsec = pvtk->wall_to_monotonic_nsec;
-+		tk->offs_real = pvtk->offs_real;
-+		tk->offs_boot = pvtk->offs_boot;
-+		tk->offs_tai = pvtk->offs_tai;
-+		tk->raw_sec = pvtk->raw_sec;
-+	} while (pvtk_read_retry(pvtk, gen));
-+}
-+
-+void __init
-+kvm_hostclock_init(void)
-+{
-+	unsigned long pa;
-+
-+	pa = __pa(&pv_timekeeper);
-+	wrmsrl(MSR_KVM_TIMEKEEPER_EN, pa);
-+	if (pv_timekeeper.flags & PVCLOCK_TIMEKEEPER_ENABLED) {
-+		pv_timekeeper_present = 1;
-+
-+		clocksource_register_khz(&kvm_hostclock, kvm_get_tsc_khz());
-+	}
-+}
-diff --git a/include/linux/timekeeper_internal.h b/include/linux/timekeeper_internal.h
-index 84ff2844df2a..43b036375cdc 100644
---- a/include/linux/timekeeper_internal.h
-+++ b/include/linux/timekeeper_internal.h
-@@ -153,4 +153,12 @@ static inline void update_vsyscall_tz(void)
- }
- #endif
- 
-+#ifdef CONFIG_KVM_HOSTCLOCK
-+void kvm_clock_copy_into_tk(struct timekeeper *tk);
-+#else
-+static inline void kvm_clock_copy_into_tk(struct timekeeper *tk)
-+{
-+}
-+#endif
-+
- #endif /* _LINUX_TIMEKEEPER_INTERNAL_H */
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index ca69290bee2a..09bcf13b2334 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -2107,6 +2107,8 @@ static void timekeeping_advance(enum timekeeping_adv_mode mode)
- 	clock_set |= accumulate_nsecs_to_secs(tk);
- 
- 	write_seqcount_begin(&tk_core.seq);
-+	kvm_clock_copy_into_tk(tk);
-+
- 	/*
- 	 * Update the real timekeeper.
- 	 *
--- 
-2.23.0.581.g78d2f28ef7-goog
-
+Please explain.
