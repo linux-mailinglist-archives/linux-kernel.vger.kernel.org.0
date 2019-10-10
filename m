@@ -2,131 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A161AD2BB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 15:50:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23265D2BBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 15:51:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726044AbfJJNut (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 09:50:49 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:42916 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725932AbfJJNus (ORCPT
+        id S1726052AbfJJNvQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 09:51:16 -0400
+Received: from smtp.domeneshop.no ([194.63.252.55]:60773 "EHLO
+        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725880AbfJJNvP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 09:50:48 -0400
-Received: by mail-ed1-f65.google.com with SMTP id y91so5519251ede.9
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 06:50:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=o898Z3trs0jH/OlBQbiOm8e/1sEfrvM2Vk3WyyK56M4=;
-        b=TQZ07FMvCXrWciJ7O9lR+yonpxUCVIcHnhmodCVsy5Dh/Y5im2arlnqViBllsFZMoz
-         FX1zMJwHMqtbjlVh/VFK76TKJ5qMTJkhvErbbOvUl3k+Ss1ZPSUdmEOoFoKO4bV2Iigr
-         iZ9kCTkHefQMk+aqix6L1jZn0EltF9d/5eWS4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=o898Z3trs0jH/OlBQbiOm8e/1sEfrvM2Vk3WyyK56M4=;
-        b=jXXN8erfClgIss90vCLxhZvqT1FO7wZv4UOy/S0AwCSRrKNGTPbIyWpjsRG8875C5r
-         nhoN0B6IzXwfwTP3RUw4q+IvPLFm9gDDkRqkZfeWx/8qN+ahaeBWfY1oate6mpVm6ZBz
-         82q7iEZjecYhxO0f4YY9HHXCpPcnjfPdOY+Lw48SuBwyBtrXbt8xWkOaep35RFoWBmnI
-         wNM0dDpT4xJsV59DVUOz85jNxanXRucnhm9PKucUnHA5f2lW7vByfLffF+QPFVxfzIR2
-         rJD/dwMN360uEB6nTYTwT2cTnnWTTSI3XGwnTH9FeMkBQycS8ONNxvowTCEE3sAJyT0W
-         PHuQ==
-X-Gm-Message-State: APjAAAXvjYexhVr8b/5F25NNgv8+cF33mMUcLlN1ERsjQBTK3bxfUr1i
-        ZbGWWawxmMlYn9FiqitQaWhwMg==
-X-Google-Smtp-Source: APXvYqwDTtGo4w8HEdRUZir73TR7uahsebmS6NjOfoevZfEYTOWdmz2kjDkxMdcPaAEi5/omDEtt/g==
-X-Received: by 2002:a17:906:7e17:: with SMTP id e23mr374597ejr.205.1570715446752;
-        Thu, 10 Oct 2019 06:50:46 -0700 (PDT)
-Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
-        by smtp.gmail.com with ESMTPSA id 36sm988776edz.92.2019.10.10.06.50.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 06:50:45 -0700 (PDT)
-Date:   Thu, 10 Oct 2019 15:50:43 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Fabien Dessenne <fabien.dessenne@st.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-s390@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 0/4] treewide: fix interrupted release
-Message-ID: <20191010135043.GA16989@phenom.ffwll.local>
-Mail-Followup-To: Johan Hovold <johan@kernel.org>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Fabien Dessenne <fabien.dessenne@st.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        David Airlie <airlied@linux.ie>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-s390@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20191010131333.23635-1-johan@kernel.org>
+        Thu, 10 Oct 2019 09:51:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org
+        ; s=ds201810; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+        MIME-Version:Date:Message-ID:References:Cc:To:From:Subject:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Z9kT8deS5roy+K52zZTsn6tV5HXJkoAJ1yAla/8rmZU=; b=AcworK715AEXg5eIsIVd5jDN9O
+        9PJ+TZmcl1xkVfpSlXl+071b3lkDENK0W6/fevePDKMd2zFClxy1B+AAuBIK2/yDAEoNvqGm7XTg2
+        zvi768iIkqezp/ohhS9tyfEfrhI6dBtG+o4afnxOUH8ZnYyR2qeuv17yISXpu64CkYd/Hf8poQrb5
+        VZuZvyRiEaTtProqjGunHzXDrS8cSuscJAOlRazRz7IvTTwGhdFGDrOwBlaAKw+Ca+vbbv6eZJgRM
+        F+mhx8shxX/zzaMGDu5uPExZbH9YSYzJsd/YFWJgxCXtJ/x4kwz0MrNNB7d0nkZXaxhfcpJQndrxB
+        DG1+b2vA==;
+Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:58426 helo=[192.168.10.177])
+        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <noralf@tronnes.org>)
+        id 1iIYqT-00083M-Tc; Thu, 10 Oct 2019 15:51:09 +0200
+Subject: Re: [PATCH] drm/tiny: Kconfig: Remove always-y THERMAL dep. from
+ TINYDRM_REPAPER
+From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+To:     Ulf Magnusson <ulfalizer@gmail.com>, linux-kbuild@vger.kernel.org,
+        yamada.masahiro@socionext.com
+Cc:     david@lechnology.com, airlied@linux.ie,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        hdegoede@redhat.com, tglx@linutronix.de, sam@ravnborg.org,
+        Jason Gunthorpe <jgg@ziepe.ca>
+References: <20190927174218.GA32085@huvuddator>
+ <c3b41a7b-ef3b-7960-13a1-d4b8dd6f15b6@tronnes.org>
+Message-ID: <10f6225f-89c0-268e-8ef9-7a6b7c22e911@tronnes.org>
+Date:   Thu, 10 Oct 2019 15:51:06 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191010131333.23635-1-johan@kernel.org>
-X-Operating-System: Linux phenom 5.2.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <c3b41a7b-ef3b-7960-13a1-d4b8dd6f15b6@tronnes.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 03:13:29PM +0200, Johan Hovold wrote:
-> Two old USB drivers had a bug in them which could lead to memory leaks
-> if an interrupted process raced with a disconnect event.
-> 
-> Turns out we had a few more driver in other subsystems with the same
-> kind of bug in them.
-> 
-> Note that all but the s390 patch have only been compile tested, while
-> the s390 one has not even been built.
 
-Random funny idea: Could we do some debug annotations (akin to
-might_sleep) that splats when you might_sleep_interruptible somewhere
-where interruptible sleeps are generally a bad idea? Like in
-fops->release?
 
-Something like non_block_start/end that I've recently done, but for
-interruptible sleeps only? Would need might_sleep_interruptibly()
-annotations and non_interruptly_sleep_start/end annotations.
--Daniel
-
-> 
-> Johan
+Den 01.10.2019 12.58, skrev Noralf Trønnes:
 > 
 > 
-> Johan Hovold (4):
->   drm/msm: fix memleak on release
->   media: bdisp: fix memleak on release
->   media: radio: wl1273: fix interrupt masking on release
->   s390/zcrypt: fix memleak at release
+> Den 27.09.2019 19.42, skrev Ulf Magnusson:
+>> Commit 554b3529fe01 ("thermal/drivers/core: Remove the module Kconfig's
+>> option") changed the type of THERMAL from tristate to bool, so
+>> THERMAL || !THERMAL is now always y. Remove the redundant dependency.
+>>
+>> Discovered through Kconfiglib detecting a dependency loop. The C tools
+>> simplify the expression to y before running dependency loop detection,
+>> and so don't see it. Changing the type of THERMAL back to tristate makes
+>> the C tools detect the same loop.
+>>
+>> Not sure if running dep. loop detection after simplification can be
+>> called a bug. Fixing this nit unbreaks Kconfiglib on the kernel at
+>> least.
+>>
+>> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+>> ---
 > 
->  drivers/gpu/drm/msm/msm_debugfs.c             | 6 +-----
->  drivers/media/platform/sti/bdisp/bdisp-v4l2.c | 3 +--
->  drivers/media/radio/radio-wl1273.c            | 3 +--
->  drivers/s390/crypto/zcrypt_api.c              | 3 +--
->  4 files changed, 4 insertions(+), 11 deletions(-)
-> 
-> -- 
-> 2.23.0
+> Thanks, applied to drm-misc-next.
 > 
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+This has now been queued for the next -rc pull.
+
+Discussion: https://patchwork.freedesktop.org/patch/319826/
+
+Noralf.
