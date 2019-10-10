@@ -2,63 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F05A4D2591
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:02:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37134D2534
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:01:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388442AbfJJIl7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:41:59 -0400
-Received: from mx133-tc.baidu.com ([61.135.168.133]:26301 "EHLO
-        tc-sys-mailedm03.tc.baidu.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1733108AbfJJIlw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:41:52 -0400
-Received: from localhost (cp01-cos-dev01.cp01.baidu.com [10.92.119.46])
-        by tc-sys-mailedm03.tc.baidu.com (Postfix) with ESMTP id 76F3F4500033;
-        Thu, 10 Oct 2019 16:41:39 +0800 (CST)
-From:   Li RongQing <lirongqing@baidu.com>
-To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, tglx@linutronix.de,
-        bp@alien8.de, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH][RFC] perf/x86: avoid false-positives hard lockup
-Date:   Thu, 10 Oct 2019 16:41:38 +0800
-Message-Id: <1570696898-13169-1-git-send-email-lirongqing@baidu.com>
-X-Mailer: git-send-email 1.7.1
+        id S2389830AbfJJIz0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:55:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34328 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388344AbfJJIzZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:55:25 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF0DF2190F;
+        Thu, 10 Oct 2019 08:55:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570697724;
+        bh=i+t7/YEn0t07Cx9UetTXLHhnlWgrYeJ6jGCRIViiryM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1gOm/EnQOOR0P0eHMOb0V71mSg9JTuHfxwOhWbyvT//9zuqEwt0b4wiAlB1zuQy0b
+         NrIPGuHtnebfky9hHyTh6vfO/fwsvLoDn/D0Ka/biY6EDyKW8eX67fphUqwxVXXGeX
+         QaKT34lGpq61SiQsYIlDDqobPwmQBVgOXbjyupmU=
+Date:   Thu, 10 Oct 2019 10:41:40 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Chandra Annamaneni <chandra627@gmail.com>
+Cc:     devel@driverdev.osuosl.org, gneukum1@gmail.com,
+        fabian.krueger@fau.de, linux-kernel@vger.kernel.org,
+        simon@nikanor.nu, dan.carpenter@oracle.com
+Subject: Re: [PATCH] KPC2000: kpc2000_spi.c: Fix style issues (line length)
+Message-ID: <20191010084140.GA365456@kroah.com>
+References: <1570676937-3975-1-git-send-email-chandra627@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1570676937-3975-1-git-send-email-chandra627@gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-if perf counter is used as nmi watchdog, and twice nmi in soft
-watchdog sample period will trigger hard lockup
+On Wed, Oct 09, 2019 at 08:08:57PM -0700, Chandra Annamaneni wrote:
+> Resoved: "WARNING: line over 80 characters" from checkpatch.pl
+> 
+> Signed-off-by: Chandra Annamaneni <chandra627@gmail.com>
+> ---
+>  drivers/staging/kpc2000/kpc2000_spi.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/staging/kpc2000/kpc2000_spi.c b/drivers/staging/kpc2000/kpc2000_spi.c
+> index 3be33c4..ef78b6d 100644
+> --- a/drivers/staging/kpc2000/kpc2000_spi.c
+> +++ b/drivers/staging/kpc2000/kpc2000_spi.c
+> @@ -30,19 +30,19 @@
+>  #include "kpc.h"
+>  
+>  static struct mtd_partition p2kr0_spi0_parts[] = {
+> -	{ .name = "SLOT_0",	.size = 7798784,		.offset = 0,                },
+> -	{ .name = "SLOT_1",	.size = 7798784,		.offset = MTDPART_OFS_NXTBLK},
+> -	{ .name = "SLOT_2",	.size = 7798784,		.offset = MTDPART_OFS_NXTBLK},
+> -	{ .name = "SLOT_3",	.size = 7798784,		.offset = MTDPART_OFS_NXTBLK},
+> -	{ .name = "CS0_EXTRA",	.size = MTDPART_SIZ_FULL,	.offset = MTDPART_OFS_NXTBLK},
+> +	{ .name = "SLOT_0",  .size = 7798784,  .offset = 0,},
+> +	{ .name = "SLOT_1",  .size = 7798784,  .offset = MTDPART_OFS_NXTBLK},
+> +	{ .name = "SLOT_2",  .size = 7798784,  .offset = MTDPART_OFS_NXTBLK},
+> +	{ .name = "SLOT_3",  .size = 7798784,  .offset = MTDPART_OFS_NXTBLK},
+> +	{ .name = "CS0_EXTRA", .size = MTDPART_SIZ_FULL, .offset = MTDPART_OFS_NXTBLK},
+>  };
+>  
+>  static struct mtd_partition p2kr0_spi1_parts[] = {
+> -	{ .name = "SLOT_4",	.size = 7798784,		.offset = 0,                },
+> -	{ .name = "SLOT_5",	.size = 7798784,		.offset = MTDPART_OFS_NXTBLK},
+> -	{ .name = "SLOT_6",	.size = 7798784,		.offset = MTDPART_OFS_NXTBLK},
+> -	{ .name = "SLOT_7",	.size = 7798784,		.offset = MTDPART_OFS_NXTBLK},
+> -	{ .name = "CS1_EXTRA",	.size = MTDPART_SIZ_FULL,	.offset = MTDPART_OFS_NXTBLK},
+> +	{ .name = "SLOT_4",  .size = 7798784,  .offset = 0,},
+> +	{ .name = "SLOT_5",  .size = 7798784,  .offset = MTDPART_OFS_NXTBLK},
+> +	{ .name = "SLOT_6",  .size = 7798784,  .offset = MTDPART_OFS_NXTBLK},
+> +	{ .name = "SLOT_7",  .size = 7798784,  .offset = MTDPART_OFS_NXTBLK},
+> +	{ .name = "CS1_EXTRA",  .size = MTDPART_SIZ_FULL, .offset = MTDPART_OFS_NXTBLK},
+>  };
+>  
+>  static struct flash_platform_data p2kr0_spi0_pdata = {
+> -- 
+> 2.7.4
+> 
 
-make sure left time is not less than soft watchdog period by
-compared with 3/5 period to skip forward, since soft watchdog
-sample period is 2/5 of watchdog_thresh, nmi watchdog sample
-period, computed by set_sample_period
+Hi,
 
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
----
- arch/x86/events/core.c | 4 ++++
- 1 file changed, 4 insertions(+)
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 7b21455d7504..1f5309456d4c 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -1196,7 +1196,11 @@ int x86_perf_event_set_period(struct perf_event *event)
- 	/*
- 	 * If we are way outside a reasonable range then just skip forward:
- 	 */
-+#ifdef CONFIG_HARDLOCKUP_DETECTOR_PERF
-+	if (unlikely(left <= -(period * 3 / 5))) {
-+#else
- 	if (unlikely(left <= -period)) {
-+#endif
- 		left = period;
- 		local64_set(&hwc->period_left, left);
- 		hwc->last_period = period;
--- 
-2.16.2
+You are receiving this message because of the following common error(s)
+as indicated below:
 
+- You sent multiple patches, yet no indication of which ones should be
+  applied in which order.  Greg could just guess, but if you are
+  receiving this email, he guessed wrong and the patches didn't apply.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/SubmittingPatches for a description of how
+  to do this so that Greg has a chance to apply these correctly.
+
+- You did not specify a description of why the patch is needed, or
+  possibly, any description at all, in the email body.  Please read the
+  section entitled "The canonical patch format" in the kernel file,
+  Documentation/SubmittingPatches for what is needed in order to
+  properly describe the change.
+
+- You did not write a descriptive Subject: for the patch, allowing Greg,
+  and everyone else, to know what this patch is all about.  Please read
+  the section entitled "The canonical patch format" in the kernel file,
+  Documentation/SubmittingPatches for what a proper Subject: line should
+  look like.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
