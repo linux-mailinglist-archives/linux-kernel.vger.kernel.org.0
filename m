@@ -2,129 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37134D2534
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:01:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA0A9D2558
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:01:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389830AbfJJIz0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:55:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34328 "EHLO mail.kernel.org"
+        id S2389300AbfJJI6I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:58:08 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54122 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388344AbfJJIzZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:55:25 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2389237AbfJJIqE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:46:04 -0400
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF0DF2190F;
-        Thu, 10 Oct 2019 08:55:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697724;
-        bh=i+t7/YEn0t07Cx9UetTXLHhnlWgrYeJ6jGCRIViiryM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1gOm/EnQOOR0P0eHMOb0V71mSg9JTuHfxwOhWbyvT//9zuqEwt0b4wiAlB1zuQy0b
-         NrIPGuHtnebfky9hHyTh6vfO/fwsvLoDn/D0Ka/biY6EDyKW8eX67fphUqwxVXXGeX
-         QaKT34lGpq61SiQsYIlDDqobPwmQBVgOXbjyupmU=
-Date:   Thu, 10 Oct 2019 10:41:40 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Chandra Annamaneni <chandra627@gmail.com>
-Cc:     devel@driverdev.osuosl.org, gneukum1@gmail.com,
-        fabian.krueger@fau.de, linux-kernel@vger.kernel.org,
-        simon@nikanor.nu, dan.carpenter@oracle.com
-Subject: Re: [PATCH] KPC2000: kpc2000_spi.c: Fix style issues (line length)
-Message-ID: <20191010084140.GA365456@kroah.com>
-References: <1570676937-3975-1-git-send-email-chandra627@gmail.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 1CFE1796EE
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 08:46:04 +0000 (UTC)
+Received: by mail-wm1-f70.google.com with SMTP id r21so1471723wme.5
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 01:46:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tR/b93II6w98Y1JcW5QoZrFBl2Ih7JvmORnV8m5CDsk=;
+        b=DOrZ8wYqi+0zPaLCJQvgap/jXVgPclrIrxQz3hVXmi7Qdmnazkfpyhy7tDTv0Hnb9K
+         V0SJVn1hVZRyNbgjX4ls3JBcd6Amtsw+X6GfuDyP1aNVRYRLjl9wHL3bxnSzZlb+R74+
+         11MxRZ9WJecuN9lQUHIms/i6mOrn+CGk4EWJplZwgXYDrCuAvpR7KzeCYjPs0trCoasn
+         VLUpxK/1vTisBGyHwLsZoU/5pXspkK4+8BKLXWgEHZTOA+u9/PmaTvvQV9A89TAOszZT
+         jyX1aadSpAwtuRzM04OWqDBPDAp3ITvI8jCIE/TGEwGmcaN24vKd8bf3jyr8zpdnA6J+
+         1ZKg==
+X-Gm-Message-State: APjAAAX1a6fx0f5dotvkWapDA5diTCdNHnvxI3aiYIEUgY2PMmI+VGHq
+        lHmv8bLu2TnB8YsRf7l7kN2bug5TskiUd01X4i4+LVT/BR9lP+Qi9fac5mtYM0q3eVrynbNF7Wy
+        7/JzVoJfV2XqZSS4hCQr0lR0r
+X-Received: by 2002:adf:e401:: with SMTP id g1mr5700484wrm.211.1570697162834;
+        Thu, 10 Oct 2019 01:46:02 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqyrGXBfAqLL3DSANixqvzd6znc5l0D4LZnBiMcWibn1Ag6PBFlGAQzLidI7EwNDBrIbfhWgrA==
+X-Received: by 2002:adf:e401:: with SMTP id g1mr5700471wrm.211.1570697162619;
+        Thu, 10 Oct 2019 01:46:02 -0700 (PDT)
+Received: from steredhat (host174-200-dynamic.52-79-r.retail.telecomitalia.it. [79.52.200.174])
+        by smtp.gmail.com with ESMTPSA id q124sm8324726wma.5.2019.10.10.01.46.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2019 01:46:01 -0700 (PDT)
+Date:   Thu, 10 Oct 2019 10:45:59 +0200
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Stefan Hajnoczi <stefanha@gmail.com>
+Cc:     netdev@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
+        linux-hyperv@vger.kernel.org,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        kvm@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
+        Dexuan Cui <decui@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jorgen Hansen <jhansen@vmware.com>
+Subject: Re: [RFC PATCH 00/13] vsock: add multi-transports support
+Message-ID: <20191010084559.a4t6v7dopeqffn55@steredhat>
+References: <20190927112703.17745-1-sgarzare@redhat.com>
+ <20191009132952.GO5747@stefanha-x1.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1570676937-3975-1-git-send-email-chandra627@gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191009132952.GO5747@stefanha-x1.localdomain>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 08:08:57PM -0700, Chandra Annamaneni wrote:
-> Resoved: "WARNING: line over 80 characters" from checkpatch.pl
+On Wed, Oct 09, 2019 at 02:29:52PM +0100, Stefan Hajnoczi wrote:
+> On Fri, Sep 27, 2019 at 01:26:50PM +0200, Stefano Garzarella wrote:
+> > Hi all,
+> > this series adds the multi-transports support to vsock, following
+> > this proposal:
+> > https://www.spinics.net/lists/netdev/msg575792.html
 > 
-> Signed-off-by: Chandra Annamaneni <chandra627@gmail.com>
-> ---
->  drivers/staging/kpc2000/kpc2000_spi.c | 20 ++++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/staging/kpc2000/kpc2000_spi.c b/drivers/staging/kpc2000/kpc2000_spi.c
-> index 3be33c4..ef78b6d 100644
-> --- a/drivers/staging/kpc2000/kpc2000_spi.c
-> +++ b/drivers/staging/kpc2000/kpc2000_spi.c
-> @@ -30,19 +30,19 @@
->  #include "kpc.h"
->  
->  static struct mtd_partition p2kr0_spi0_parts[] = {
-> -	{ .name = "SLOT_0",	.size = 7798784,		.offset = 0,                },
-> -	{ .name = "SLOT_1",	.size = 7798784,		.offset = MTDPART_OFS_NXTBLK},
-> -	{ .name = "SLOT_2",	.size = 7798784,		.offset = MTDPART_OFS_NXTBLK},
-> -	{ .name = "SLOT_3",	.size = 7798784,		.offset = MTDPART_OFS_NXTBLK},
-> -	{ .name = "CS0_EXTRA",	.size = MTDPART_SIZ_FULL,	.offset = MTDPART_OFS_NXTBLK},
-> +	{ .name = "SLOT_0",  .size = 7798784,  .offset = 0,},
-> +	{ .name = "SLOT_1",  .size = 7798784,  .offset = MTDPART_OFS_NXTBLK},
-> +	{ .name = "SLOT_2",  .size = 7798784,  .offset = MTDPART_OFS_NXTBLK},
-> +	{ .name = "SLOT_3",  .size = 7798784,  .offset = MTDPART_OFS_NXTBLK},
-> +	{ .name = "CS0_EXTRA", .size = MTDPART_SIZ_FULL, .offset = MTDPART_OFS_NXTBLK},
->  };
->  
->  static struct mtd_partition p2kr0_spi1_parts[] = {
-> -	{ .name = "SLOT_4",	.size = 7798784,		.offset = 0,                },
-> -	{ .name = "SLOT_5",	.size = 7798784,		.offset = MTDPART_OFS_NXTBLK},
-> -	{ .name = "SLOT_6",	.size = 7798784,		.offset = MTDPART_OFS_NXTBLK},
-> -	{ .name = "SLOT_7",	.size = 7798784,		.offset = MTDPART_OFS_NXTBLK},
-> -	{ .name = "CS1_EXTRA",	.size = MTDPART_SIZ_FULL,	.offset = MTDPART_OFS_NXTBLK},
-> +	{ .name = "SLOT_4",  .size = 7798784,  .offset = 0,},
-> +	{ .name = "SLOT_5",  .size = 7798784,  .offset = MTDPART_OFS_NXTBLK},
-> +	{ .name = "SLOT_6",  .size = 7798784,  .offset = MTDPART_OFS_NXTBLK},
-> +	{ .name = "SLOT_7",  .size = 7798784,  .offset = MTDPART_OFS_NXTBLK},
-> +	{ .name = "CS1_EXTRA",  .size = MTDPART_SIZ_FULL, .offset = MTDPART_OFS_NXTBLK},
->  };
->  
->  static struct flash_platform_data p2kr0_spi0_pdata = {
-> -- 
-> 2.7.4
-> 
+> Nice series!  I have left a few comments but overall it looks promising.
 
-Hi,
+Thank you very much for the comments!
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+I'll follow them and respin.
 
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- You sent multiple patches, yet no indication of which ones should be
-  applied in which order.  Greg could just guess, but if you are
-  receiving this email, he guessed wrong and the patches didn't apply.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/SubmittingPatches for a description of how
-  to do this so that Greg has a chance to apply these correctly.
-
-- You did not specify a description of why the patch is needed, or
-  possibly, any description at all, in the email body.  Please read the
-  section entitled "The canonical patch format" in the kernel file,
-  Documentation/SubmittingPatches for what is needed in order to
-  properly describe the change.
-
-- You did not write a descriptive Subject: for the patch, allowing Greg,
-  and everyone else, to know what this patch is all about.  Please read
-  the section entitled "The canonical patch format" in the kernel file,
-  Documentation/SubmittingPatches for what a proper Subject: line should
-  look like.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+Cheers,
+Stefano
