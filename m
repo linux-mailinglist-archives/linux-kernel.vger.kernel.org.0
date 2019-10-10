@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14B40D23F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:50:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00CACD2384
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388469AbfJJIrp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:47:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53774 "EHLO mail.kernel.org"
+        id S2388727AbfJJInY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:43:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387775AbfJJIrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:47:43 -0400
+        id S2388073AbfJJInW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:43:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9A32224BD;
-        Thu, 10 Oct 2019 08:47:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A39A2190F;
+        Thu, 10 Oct 2019 08:43:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697261;
-        bh=X4xLrAkXyRmsntZUR3zLVRvy/Ws925/vFkVLcH1FPww=;
+        s=default; t=1570697002;
+        bh=BOanT1SW13OnGnjPMS6uXvmdJhRS0NsJ5UKaucbKJNY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X7PLzsIJ91oijFLSciaGO7vz8jj4vKvIu5c1+nSMZwB9u4MS0j9+EYlSt2SzuxNbC
-         FUC4dkl08zIL2kpqDPfhqkoaujh51aO2DjRdirxmLatmHsXpYUISFWc/beBYqLErcr
-         UG+mab2PHQR1gPM8iY5KRtX0pf/N+2CfMZwimUgg=
+        b=POg6CoZfdbdNeAQlwE8pJm5wJrYy9BLnRM6TN6aG2ZHePC7TL3rfNcyKQ/HFhMu/5
+         YUHVB6QlY+5oWZuMjUY3RlY6SENziDFJoLC/g25mRsp07cwYL/udCm2VR0cdHmw38J
+         i1vHxMgSejfHhEcuY5belnNcW+cL0rWKpB6riqF0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiaolin Zhang <xiaolin.zhang@intel.com>,
-        Zhenyu Wang <zhenyuw@linux.intel.com>
-Subject: [PATCH 4.19 040/114] drm/i915/gvt: update vgpu workload head pointer correctly
-Date:   Thu, 10 Oct 2019 10:35:47 +0200
-Message-Id: <20191010083605.378337441@linuxfoundation.org>
+        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 5.3 087/148] cfg80211: initialize on-stack chandefs
+Date:   Thu, 10 Oct 2019 10:35:48 +0200
+Message-Id: <20191010083616.634383014@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
-References: <20191010083544.711104709@linuxfoundation.org>
+In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
+References: <20191010083609.660878383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,80 +43,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaolin Zhang <xiaolin.zhang@intel.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-commit 0a3242bdb47713e09cb004a0ba4947d3edf82d8a upstream.
+commit f43e5210c739fe76a4b0ed851559d6902f20ceb1 upstream.
 
-when creating a vGPU workload, the guest context head pointer should
-be updated correctly by comparing with the exsiting workload in the
-guest worklod queue including the current running context.
+In a few places we don't properly initialize on-stack chandefs,
+resulting in EDMG data to be non-zero, which broke things.
 
-in some situation, there is a running context A and then received 2 new
-vGPU workload context B and A. in the new workload context A, it's head
-pointer should be updated with the running context A's tail.
-
-v2: walk through guest workload list in backward way.
+Additionally, in a few places we rely on the driver to init the
+data completely, but perhaps we shouldn't as non-EDMG drivers
+may not initialize the EDMG data, also initialize it there.
 
 Cc: stable@vger.kernel.org
-Signed-off-by: Xiaolin Zhang <xiaolin.zhang@intel.com>
-Reviewed-by: Zhenyu Wang <zhenyuw@linux.intel.com>
-Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+Fixes: 2a38075cd0be ("nl80211: Add support for EDMG channels")
+Reported-by: Dmitry Osipenko <digetx@gmail.com>
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
+Link: https://lore.kernel.org/r/1569239475-I2dcce394ecf873376c386a78f31c2ec8b538fa25@changeid
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/gvt/scheduler.c |   28 +++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+ net/wireless/nl80211.c     |    4 +++-
+ net/wireless/reg.c         |    2 +-
+ net/wireless/wext-compat.c |    2 +-
+ 3 files changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/i915/gvt/scheduler.c
-+++ b/drivers/gpu/drm/i915/gvt/scheduler.c
-@@ -1276,9 +1276,6 @@ static int prepare_mm(struct intel_vgpu_
- #define same_context(a, b) (((a)->context_id == (b)->context_id) && \
- 		((a)->lrca == (b)->lrca))
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -2597,6 +2597,8 @@ int nl80211_parse_chandef(struct cfg8021
  
--#define get_last_workload(q) \
--	(list_empty(q) ? NULL : container_of(q->prev, \
--	struct intel_vgpu_workload, list))
- /**
-  * intel_vgpu_create_workload - create a vGPU workload
-  * @vgpu: a vGPU
-@@ -1297,7 +1294,7 @@ intel_vgpu_create_workload(struct intel_
- {
- 	struct intel_vgpu_submission *s = &vgpu->submission;
- 	struct list_head *q = workload_q_head(vgpu, ring_id);
--	struct intel_vgpu_workload *last_workload = get_last_workload(q);
-+	struct intel_vgpu_workload *last_workload = NULL;
- 	struct intel_vgpu_workload *workload = NULL;
- 	struct drm_i915_private *dev_priv = vgpu->gvt->dev_priv;
- 	u64 ring_context_gpa;
-@@ -1320,15 +1317,20 @@ intel_vgpu_create_workload(struct intel_
- 	head &= RB_HEAD_OFF_MASK;
- 	tail &= RB_TAIL_OFF_MASK;
+ 	control_freq = nla_get_u32(attrs[NL80211_ATTR_WIPHY_FREQ]);
  
--	if (last_workload && same_context(&last_workload->ctx_desc, desc)) {
--		gvt_dbg_el("ring id %d cur workload == last\n", ring_id);
--		gvt_dbg_el("ctx head %x real head %lx\n", head,
--				last_workload->rb_tail);
--		/*
--		 * cannot use guest context head pointer here,
--		 * as it might not be updated at this time
--		 */
--		head = last_workload->rb_tail;
-+	list_for_each_entry_reverse(last_workload, q, list) {
++	memset(chandef, 0, sizeof(*chandef));
 +
-+		if (same_context(&last_workload->ctx_desc, desc)) {
-+			gvt_dbg_el("ring id %d cur workload == last\n",
-+					ring_id);
-+			gvt_dbg_el("ctx head %x real head %lx\n", head,
-+					last_workload->rb_tail);
-+			/*
-+			 * cannot use guest context head pointer here,
-+			 * as it might not be updated at this time
-+			 */
-+			head = last_workload->rb_tail;
-+			break;
-+		}
- 	}
+ 	chandef->chan = ieee80211_get_channel(&rdev->wiphy, control_freq);
+ 	chandef->width = NL80211_CHAN_WIDTH_20_NOHT;
+ 	chandef->center_freq1 = control_freq;
+@@ -3125,7 +3127,7 @@ static int nl80211_send_iface(struct sk_
  
- 	gvt_dbg_el("ring id %d begin a new workload\n", ring_id);
+ 	if (rdev->ops->get_channel) {
+ 		int ret;
+-		struct cfg80211_chan_def chandef;
++		struct cfg80211_chan_def chandef = {};
+ 
+ 		ret = rdev_get_channel(rdev, wdev, &chandef);
+ 		if (ret == 0) {
+--- a/net/wireless/reg.c
++++ b/net/wireless/reg.c
+@@ -2108,7 +2108,7 @@ static void reg_call_notifier(struct wip
+ 
+ static bool reg_wdev_chan_valid(struct wiphy *wiphy, struct wireless_dev *wdev)
+ {
+-	struct cfg80211_chan_def chandef;
++	struct cfg80211_chan_def chandef = {};
+ 	struct cfg80211_registered_device *rdev = wiphy_to_rdev(wiphy);
+ 	enum nl80211_iftype iftype;
+ 
+--- a/net/wireless/wext-compat.c
++++ b/net/wireless/wext-compat.c
+@@ -797,7 +797,7 @@ static int cfg80211_wext_giwfreq(struct
+ {
+ 	struct wireless_dev *wdev = dev->ieee80211_ptr;
+ 	struct cfg80211_registered_device *rdev = wiphy_to_rdev(wdev->wiphy);
+-	struct cfg80211_chan_def chandef;
++	struct cfg80211_chan_def chandef = {};
+ 	int ret;
+ 
+ 	switch (wdev->iftype) {
 
 
