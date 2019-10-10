@@ -2,35 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08B27D1E95
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 04:41:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E54ADD1E9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 04:43:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732681AbfJJClj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 22:41:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35610 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726435AbfJJClj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 22:41:39 -0400
-Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8EB12086D;
-        Thu, 10 Oct 2019 02:41:36 +0000 (UTC)
-Date:   Wed, 9 Oct 2019 22:41:35 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, mhiramat@kernel.org,
-        bristot@redhat.com, jbaron@akamai.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, jpoimboe@redhat.com
-Subject: Re: [PATCH v3 5/6] x86/ftrace: Use text_poke()
-Message-ID: <20191009224135.2dcf7767@oasis.local.home>
-In-Reply-To: <20191008104335.6fcd78c9@gandalf.local.home>
-References: <20191007081716.07616230.8@infradead.org>
-        <20191007081945.10951536.8@infradead.org>
-        <20191008104335.6fcd78c9@gandalf.local.home>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1732737AbfJJCn0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 22:43:26 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40227 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732447AbfJJCnZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 22:43:25 -0400
+Received: by mail-pf1-f196.google.com with SMTP id x127so2896888pfb.7
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 19:43:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=QWteHAhBVt9oVGOsOtKHsCiYKtX8kIzt6852sk1FamE=;
+        b=iei9S1oj45k0ZQgMqH7H0heioINFqEVoK5QQNnLJC6ig340LF/7lvfzuHdeKQlFK9x
+         6Hkzh1+TJ0ShL8YMEXjqTIzqQykuK+7tNtk94vJ4PDCbixkpd/CwsT+tJo73VoTzALs/
+         3YWHZQoNIZeLzmRb9W51aeEcULryqpcGxo8kCATCoMkcLHktP/FKv3Ju9PHc7WdcrGqO
+         qhS24uqCCsyYuoV3mYvlcqYnea4e3PZbAMiwtrKuLXasFUvy0aiVsLwKeg0yUmpUQano
+         OxYzAZwBbkwSmqpihYxzEX7I6XbxUNWZtxCAn7mGV3WyXxBTngz3tgAri5pGzUmpS68u
+         GvEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=QWteHAhBVt9oVGOsOtKHsCiYKtX8kIzt6852sk1FamE=;
+        b=WANW40sd3R4yBZzgy5yxc+htll/pQOPUzGvly57Pyd8ueECxjiy0O5cmbeQVvo12Mg
+         2yRZJgAOIsvO1J4avNSqVWKfQpEyoJdfZyRz533Y8aEnW47/F6Ri6XsP4h8vHQuqEYhq
+         20Cj5U+5ADLccLRSebNpfdYPkdpVAXcd0otl3W2jFxdVdY3mtlKvuLXTVH6v2vRoNVsS
+         03itxRfeCe80T+ArTDNE12V995LvzACVdh91hmC8BGFpBfoMA421cNbT6wU57StW58Mj
+         t+O31GcDQpJeoqohU1HIa6pedObibI3xrxjXeeeQxYfq7ltMfqk7MkkSsFq1fmusYpTi
+         sTeA==
+X-Gm-Message-State: APjAAAUW79Ef7jTQaF2F+NhFIqeHZd2K902qULwse91GDmpddrwtfZrm
+        aqLV7h3LMTLLSSSzlgpm/85DXw==
+X-Google-Smtp-Source: APXvYqwanEd1qtiJMg/JVqFKEiqK+wQJaWOvm1tyP8JvAOqtrzd2OgCokg0CQcOtJoVJeVXoP6I4vw==
+X-Received: by 2002:aa7:9e8d:: with SMTP id p13mr7146028pfq.171.1570675405027;
+        Wed, 09 Oct 2019 19:43:25 -0700 (PDT)
+Received: from cakuba.netronome.com (c-73-202-202-92.hsd1.ca.comcast.net. [73.202.202.92])
+        by smtp.gmail.com with ESMTPSA id a16sm4961578pfa.53.2019.10.09.19.43.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 19:43:24 -0700 (PDT)
+Date:   Wed, 9 Oct 2019 19:43:11 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Biao Huang <biao.huang@mediatek.com>
+Cc:     <davem@davemloft.net>, Jose Abreu <joabreu@synopsys.com>,
+        <andrew@lunn.ch>, Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <netdev@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <yt.shen@mediatek.com>,
+        <jianguo.zhang@mediatek.com>, <boon.leong.ong@intel.com>
+Subject: Re: [RESEND,PATCH] net: stmmac: dwmac-mediatek: fix wrong delay
+ value issue when resume back
+Message-ID: <20191009194311.55c8cf6e@cakuba.netronome.com>
+In-Reply-To: <20191009073348.5503-1-biao.huang@mediatek.com>
+References: <20191009073348.5503-1-biao.huang@mediatek.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -39,88 +73,15 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 8 Oct 2019 10:43:35 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Wed, 9 Oct 2019 15:33:48 +0800, Biao Huang wrote:
+> mac_delay value will be divided by 550/170 in mt2712_delay_ps2stage(),
+> which is invoked at the beginning of mt2712_set_delay(), and the value
+> should be restored at the end of mt2712_set_delay().
+> Or, mac_delay will be divided again when invoking mt2712_set_delay()
+> when resume back.
+> So, add mt2712_delay_stage2ps() to mt2712_set_delay() to recovery the
+> original mac_delay value.
+> 
+> Signed-off-by: Biao Huang <biao.huang@mediatek.com>
 
-
-> BTW, I'd really like to take this patch series through my tree. That
-> way I can really hammer it, as well as I have code that will be built
-> on top of it.
-
-I did a bit of hammering and found two bugs. One I sent a patch to fix
-(adding a module when tracing is enabled), but the other bug I
-triggered, I'm too tired to debug right now. But figured I'd mention it
-anyway.
-
-If you add on the kernel command line:
-
- ftrace=function ftrace_filter=schedule
-
-You will get this (note, I had KASAN enabled, so it showed more info):
-
-
-
-[    1.274356] ftrace: allocating 34274 entries in 134 pages
-[    1.320059] Starting tracer 'function'
-[    1.323724] ==================================================================
-[    1.330798] BUG: KASAN: null-ptr-deref in __get_locked_pte+0x21/0x210
-[    1.337186] Read of size 8 at addr 0000000000000050 by task swapper/0
-[    1.343579]
-[    1.345049] CPU: 0 PID: 0 Comm: swapper Not tainted 5.4.0-rc2-test+ #50
-[    1.351613] Hardware name: Hewlett-Packard HP Compaq Pro 6300 SFF/339A, BIOS K01 v03.03 07/14/2016
-[    1.360510] Call Trace:
-[    1.362932]  dump_stack+0x7c/0xc0
-[    1.366213]  ? __get_locked_pte+0x21/0x210
-[    1.370272]  ? __get_locked_pte+0x21/0x210
-[    1.374331]  __kasan_report.cold.10+0x5/0x3e
-[    1.378566]  ? __get_locked_pte+0x21/0x210
-[    1.382625]  kasan_report+0xe/0x20
-[    1.385993]  __get_locked_pte+0x21/0x210
-[    1.389880]  ? 0xffffffffa000005c
-[    1.393162]  __text_poke+0x1ca/0x5b0
-[    1.396705]  ? optimize_nops.isra.8+0xd0/0xd0
-[    1.401023]  ? insn_get_length+0x4f/0x70
-[    1.404910]  ? text_poke_loc_init+0x186/0x220
-[    1.409229]  ? text_poke_kgdb+0x10/0x10
-[    1.413031]  ? 0xffffffffa0000000
-[    1.416312]  text_poke_bp_batch+0xb4/0x1e0
-[    1.420372]  ? __text_poke+0x5b0/0x5b0
-[    1.424088]  ? do_raw_spin_lock+0x113/0x1d0
-[    1.428233]  ? 0xffffffffa000005c
-[    1.431515]  ? 0xffffffffa0000000
-[    1.434797]  text_poke_bp+0x7a/0xa0
-[    1.438253]  ? text_poke_queue+0xb0/0xb0
-[    1.442139]  ? 0xffffffffa0000000
-[    1.445421]  ? 0xffffffffa000005c
-[    1.448706]  ? find_vmap_area+0x56/0x80
-[    1.452505]  arch_ftrace_update_trampoline+0x114/0x380
-[    1.457603]  ? ftrace_caller+0x4e/0x4e
-[    1.461316]  ? 0xffffffffa0000091
-[    1.464599]  ? arch_ftrace_update_code+0x10/0x10
-[    1.469179]  ? mutex_lock+0x86/0xd0
-[    1.472634]  ? __mutex_lock_slowpath+0x10/0x10
-[    1.477039]  ? mutex_unlock+0x1d/0x40
-[    1.480668]  ? arch_jump_label_transform_queue+0x7a/0x90
-[    1.485937]  ? __jump_label_update+0x91/0x140
-[    1.490256]  ? mutex_unlock+0x1d/0x40
-[    1.493885]  ? tracing_start_sched_switch.cold.0+0x60/0x60
-[    1.499327]  __register_ftrace_function+0xaf/0xf0
-[    1.503991]  ftrace_startup+0x24/0x130
-[    1.507706]  register_ftrace_function+0x2d/0x80
-[    1.512198]  function_trace_init+0xc1/0x100
-[    1.516346]  tracing_set_tracer+0x1fb/0x3c0
-[    1.520492]  ? free_snapshot+0x50/0x50
-[    1.524205]  ? __kasan_kmalloc.constprop.6+0xc1/0xd0
-[    1.529131]  ? __list_add_valid+0x29/0xa0
-[    1.533106]  register_tracer+0x235/0x26c
-[    1.536993]  early_trace_init+0x29b/0x3a0
-[    1.540967]  start_kernel+0x2a3/0x5f7
-[    1.544595]  ? mem_encrypt_init+0x6/0x6
-[    1.548396]  ? load_ucode_intel_bsp+0x5e/0xa3
-[    1.552715]  ? init_intel_microcode+0xc3/0xc3
-[    1.557036]  ? load_ucode_bsp+0xcc/0x154
-[    1.560923]  secondary_startup_64+0xa4/0xb0
-[    1.565070] ==================================================================
-
-
--- Steve
+Applied, thanks.
