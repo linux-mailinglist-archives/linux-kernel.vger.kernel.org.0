@@ -2,266 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34449D296F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 14:24:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDC24D2979
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 14:29:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733254AbfJJMYx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 08:24:53 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:47055 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1733010AbfJJMYx (ORCPT
+        id S1733287AbfJJM3O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 08:29:14 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:40947 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733082AbfJJM3N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 08:24:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1570710290;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Z1PiOTpfKA6S0H6nQpCOs61aSj3VGg1/5P4RB8zuLvo=;
-        b=Buhty/DMhVQKEN9I6bGn59Icvyj7Gje1rLRQtKryrsfDYjheIKlT+5EFD7CPKdIXv56CqL
-        2QXC6g/44lv6g8gnGEpIkYWR3CApNcEns33bmXh/6RQHjws9TIdvjQ929a0MyelMq4Fm1H
-        xzY7XrmUOaCUuRFAnrxasYEfGcYSvIE=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-137-0hc7sEkwN0OPCsefIiQp9w-1; Thu, 10 Oct 2019 08:24:47 -0400
-Received: by mail-qt1-f198.google.com with SMTP id m20so5537480qtq.16
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 05:24:47 -0700 (PDT)
+        Thu, 10 Oct 2019 08:29:13 -0400
+Received: by mail-qt1-f193.google.com with SMTP id m61so8390327qte.7
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 05:29:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=23//cENVQiVYoGQZus1cpePnZWSeYRa3XeMxkFD7WQg=;
+        b=NH+owc3Bkdk66rd2oxnrLG1lU03Niv3N/GUBSt1/9dRSfQRuHfW4W1igS07q2DzsED
+         fiQrQlVCnB6RH1zol5ooTAqAkk4Xsuck4130IKNNILzVnR6dN+APBVrTF3gt0uibSGgD
+         REgXmU/yULmLNMrOnM+eAoYoNE5cZ/yj3rOWgPhBgTAsd1uDptCc1neDWiXY9TsuUizx
+         bdjyqsenan6mAiId/xeorNg/BvGaBC7aZxP6eqKDfiV8jP3HVR62eHRnxnDBCTnQPotz
+         /ChHSep613KsdqBbI6DYZASrvDT7F3+conY9cWnCzQAvoYhTBLOfZarBcIdBVrbFnPgR
+         g5jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1+C6ea0hNuFJ0RH805lPfk6alhjeCeIJ9+VYkTTd2Ww=;
-        b=A11fp6cob70Hd20wftdOakgTqFCh3ucQEBTUoP+c3awq3NNUMYxdSHdWO9Zhz1S++P
-         2HkXVVK46Ge10VCYAOX6dt4yFxuw4M7DIU+QG07fMlFFJXzEBqCKc9+ptNlkCDjE0g8Y
-         ZqRw/JSOvhh6Feh7p2LNAfUB+UGvujl1tTdzmjoczM8lktdemjzq0hchCdE6+pxrpYIk
-         w9kW4rBKf/ZoPr2OFthV6M3qUOgf3fKyoPVpjhWqK/AuT9cT56OL7trdGPINx9m0eZUo
-         fBNFwAQ10kPmeg9Ibd6U3K1k5caFZIjxrF0eCIyk4OpaFW3b1mcEN/aruBFHx3GA2Y4H
-         8p1w==
-X-Gm-Message-State: APjAAAWyziBtYOEbezZ8pNiBZYFSzrtFi47+l7FY3e3c4w7nJOrIddb8
-        131c0w42FJf2sN/g1erjeg2yh3FsgYw931s+ngIdDw+qcwunY4lKta/Nb6qOUIxEEvryFqlr/fw
-        1kWSlv6Y1VdJz65kqq+XaiN+4wvxT2alFzR/96A2D
-X-Received: by 2002:a37:648d:: with SMTP id y135mr8958856qkb.459.1570710286659;
-        Thu, 10 Oct 2019 05:24:46 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzkMt3NS82xgyIf0scvKcdLuCY5ChVMQq28kCW69B6P3qMz7wQusBovzbRCTAhZgcV4StFli0LR8QN+ughoOuM=
-X-Received: by 2002:a37:648d:: with SMTP id y135mr8958821qkb.459.1570710286350;
- Thu, 10 Oct 2019 05:24:46 -0700 (PDT)
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=23//cENVQiVYoGQZus1cpePnZWSeYRa3XeMxkFD7WQg=;
+        b=Xz3uUUWUEz+DenY2WOyFiEmgokJgvJQyQ2+iYJEkXuRHC0nfQ0mde5vm+RXvpR3NmZ
+         6EQz2bhSo4Yqeup9EMpNQ37750yojA1J7TRbptnuEBv7jBh67fLEW8dyBOracXcLcGO9
+         V0vxz5iPell+duKUurrfC08JVq2XHufNa4GAZqoLnD3Ek3Fosd1g8Ujz5zKKGdRfaXKe
+         FUCrSuMiJ5GeNCnd/LZloxtEOWHI0yXIJ3qBGdlR+B+bemJQhH0k9Y3kgbodtG2zLiuL
+         gd9vHGBYcJ66WvqZD+IZbzPxWCeCRT//DwM/mAFQwTfLB0Yo5Kvs5P7tDaQ0DE2zz2NG
+         t5Pg==
+X-Gm-Message-State: APjAAAVt1LKnpENWzQ7gERY1NzPbTdSLaEXYFahFUs2lCD9QkArLDzuc
+        ou20Pp7VC1DHSzTtt2DX/JE=
+X-Google-Smtp-Source: APXvYqwQH5Jlb64oqJ1zXF4YJOVldcOTFNRXzDkOo7N4G+q3ydZkfiZFyUgO93pSNrWeN0FYBF31hw==
+X-Received: by 2002:a0c:814d:: with SMTP id 71mr9689628qvc.220.1570710552657;
+        Thu, 10 Oct 2019 05:29:12 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.35.50])
+        by smtp.gmail.com with ESMTPSA id t64sm2491824qkc.70.2019.10.10.05.29.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2019 05:29:11 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 175E641199; Thu, 10 Oct 2019 09:29:08 -0300 (-03)
+Date:   Thu, 10 Oct 2019 09:29:08 -0300
+To:     Ian Rogers <irogers@google.com>
+Cc:     Jiri Olsa <jolsa@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Guo Ren <guoren@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>, Mao Han <han_mao@c-sky.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-riscv@lists.infradead.org,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH v3] perf tools: avoid sample_reg_masks being const + weak
+Message-ID: <20191010122908.GA19434@kernel.org>
+References: <20190927214341.170683-1-irogers@google.com>
+ <20191001003623.255186-1-irogers@google.com>
+ <20191008123104.GA16241@krava>
+ <CAP-5=fUSgjyLkZJaHTvdFbzZijy6Gzmx5UZHK_brxVEhFpMG8g@mail.gmail.com>
 MIME-Version: 1.0
-References: <1570625609-11083-1-git-send-email-candlesea@gmail.com>
-In-Reply-To: <1570625609-11083-1-git-send-email-candlesea@gmail.com>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Thu, 10 Oct 2019 14:24:34 +0200
-Message-ID: <CAO-hwJKjZedG6yySDHKQoAmG5DdQ7QPhuaoMN9g0_KmbktD9fA@mail.gmail.com>
-Subject: Re: [PATCH v2] HID: core: check whether usage page item is after
- usage id item
-To:     Candle Sun <candlesea@gmail.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        orson.zhai@unisoc.com,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Candle Sun <candle.sun@unisoc.com>,
-        Nianfu Bai <nianfu.bai@unisoc.com>
-X-MC-Unique: 0hc7sEkwN0OPCsefIiQp9w-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAP-5=fUSgjyLkZJaHTvdFbzZijy6Gzmx5UZHK_brxVEhFpMG8g@mail.gmail.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 9, 2019 at 2:54 PM Candle Sun <candlesea@gmail.com> wrote:
->
-> From: Candle Sun <candle.sun@unisoc.com>
->
-> Upstream commit 58e75155009c ("HID: core: move Usage Page concatenation
-> to Main item") adds support for Usage Page item after Usage ID items
-> (such as keyboards manufactured by Primax).
->
-> Usage Page concatenation in Main item works well for following report
-> descriptor patterns:
->
->     USAGE_PAGE (Keyboard)                   05 07
->     USAGE_MINIMUM (Keyboard LeftControl)    19 E0
->     USAGE_MAXIMUM (Keyboard Right GUI)      29 E7
->     LOGICAL_MINIMUM (0)                     15 00
->     LOGICAL_MAXIMUM (1)                     25 01
->     REPORT_SIZE (1)                         75 01
->     REPORT_COUNT (8)                        95 08
->     INPUT (Data,Var,Abs)                    81 02
->
-> -------------
->
->     USAGE_MINIMUM (Keyboard LeftControl)    19 E0
->     USAGE_MAXIMUM (Keyboard Right GUI)      29 E7
->     LOGICAL_MINIMUM (0)                     15 00
->     LOGICAL_MAXIMUM (1)                     25 01
->     REPORT_SIZE (1)                         75 01
->     REPORT_COUNT (8)                        95 08
->     USAGE_PAGE (Keyboard)                   05 07
->     INPUT (Data,Var,Abs)                    81 02
->
-> But it makes the parser act wrong for the following report
-> descriptor pattern(such as some Gamepads):
->
->     USAGE_PAGE (Button)                     05 09
->     USAGE (Button 1)                        09 01
->     USAGE (Button 2)                        09 02
->     USAGE (Button 4)                        09 04
->     USAGE (Button 5)                        09 05
->     USAGE (Button 7)                        09 07
->     USAGE (Button 8)                        09 08
->     USAGE (Button 14)                       09 0E
->     USAGE (Button 15)                       09 0F
->     USAGE (Button 13)                       09 0D
->     USAGE_PAGE (Consumer Devices)           05 0C
->     USAGE (Back)                            0a 24 02
->     USAGE (HomePage)                        0a 23 02
->     LOGICAL_MINIMUM (0)                     15 00
->     LOGICAL_MAXIMUM (1)                     25 01
->     REPORT_SIZE (1)                         75 01
->     REPORT_COUNT (11)                       95 0B
->     INPUT (Data,Var,Abs)                    81 02
->
-> With Usage Page concatenation in Main item, parser recognizes all the
-> 11 Usages as consumer keys, it is not the HID device's real intention.
->
-> This patch adds usage_page_last to flag whether Usage Page is after
-> Usage ID items. usage_page_last is false default, it is set as true
-> once Usage Page item is encountered and is reverted by next Usage ID
-> item.
->
-> Usage Page concatenation on the currently defined Usage Page will do
-> firstly in Local parsing when Usage ID items encountered.
->
-> When Main item is parsing, concatenation will do again with last
-> defined Usage Page if usage_page_last flag is true.
->
-> Signed-off-by: Candle Sun <candle.sun@unisoc.com>
-> Signed-off-by: Nianfu Bai <nianfu.bai@unisoc.com>
-> ---
-> Changes in v2:
-> - Update patch title
-> - Add GET_COMPLETE_USAGE macro
-> - Change the logic of checking whether to concatenate usage page again
->   in main parsing
-> ---
->  drivers/hid/hid-core.c | 31 +++++++++++++++++++++++++------
->  include/linux/hid.h    |  1 +
->  2 files changed, 26 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-> index 3eaee2c..3394222 100644
-> --- a/drivers/hid/hid-core.c
-> +++ b/drivers/hid/hid-core.c
-> @@ -35,6 +35,8 @@
->
->  #include "hid-ids.h"
->
-> +#define GET_COMPLETE_USAGE(page, id) (((page) << 16) + ((id) & 0xffff))
-> +
->  /*
->   * Version Information
->   */
-> @@ -221,7 +223,15 @@ static int hid_add_usage(struct hid_parser *parser, =
-unsigned usage, u8 size)
->                 hid_err(parser->device, "usage index exceeded\n");
->                 return -1;
->         }
-> -       parser->local.usage[parser->local.usage_index] =3D usage;
-> +
-> +       if (size <=3D 2) {
-> +               parser->local.usage_page_last =3D false;
-> +               parser->local.usage[parser->local.usage_index] =3D
-> +                       GET_COMPLETE_USAGE(parser->global.usage_page, usa=
-ge);
-> +       } else {
-> +               parser->local.usage[parser->local.usage_index] =3D usage;
-> +       }
-> +
->         parser->local.usage_size[parser->local.usage_index] =3D size;
->         parser->local.collection_index[parser->local.usage_index] =3D
->                 parser->collection_stack_ptr ?
-> @@ -366,6 +376,7 @@ static int hid_parser_global(struct hid_parser *parse=
-r, struct hid_item *item)
->
->         case HID_GLOBAL_ITEM_TAG_USAGE_PAGE:
->                 parser->global.usage_page =3D item_udata(item);
-> +               parser->local.usage_page_last =3D true;
->                 return 0;
->
->         case HID_GLOBAL_ITEM_TAG_LOGICAL_MINIMUM:
-> @@ -543,13 +554,21 @@ static int hid_parser_local(struct hid_parser *pars=
-er, struct hid_item *item)
->   * usage value."
->   */
->
-> -static void hid_concatenate_usage_page(struct hid_parser *parser)
-> +static void hid_concatenate_last_usage_page(struct hid_parser *parser)
->  {
->         int i;
-> +       unsigned int usage;
-> +       unsigned int usage_page =3D parser->global.usage_page;
-> +
-> +       if (!parser->local.usage_page_last)
-> +               return;
->
->         for (i =3D 0; i < parser->local.usage_index; i++)
-> -               if (parser->local.usage_size[i] <=3D 2)
-> -                       parser->local.usage[i] +=3D parser->global.usage_=
-page << 16;
-> +               if (parser->local.usage_size[i] <=3D 2) {
-> +                       usage =3D parser->local.usage[i];
-> +                       parser->local.usage[i] =3D
-> +                               GET_COMPLETE_USAGE(usage_page, usage);
-> +               }
->  }
->
->  /*
-> @@ -561,7 +580,7 @@ static int hid_parser_main(struct hid_parser *parser,=
- struct hid_item *item)
->         __u32 data;
->         int ret;
->
-> -       hid_concatenate_usage_page(parser);
-> +       hid_concatenate_last_usage_page(parser);
->
->         data =3D item_udata(item);
->
-> @@ -772,7 +791,7 @@ static int hid_scan_main(struct hid_parser *parser, s=
-truct hid_item *item)
->         __u32 data;
->         int i;
->
-> -       hid_concatenate_usage_page(parser);
-> +       hid_concatenate_last_usage_page(parser);
->
->         data =3D item_udata(item);
->
-> diff --git a/include/linux/hid.h b/include/linux/hid.h
-> index cd41f20..2e0ea2f7 100644
-> --- a/include/linux/hid.h
-> +++ b/include/linux/hid.h
-> @@ -412,6 +412,7 @@ struct hid_local {
->         unsigned usage_minimum;
->         unsigned delimiter_depth;
->         unsigned delimiter_branch;
-> +       bool usage_page_last;      /* whether usage page is after usage i=
-d */
+Em Wed, Oct 09, 2019 at 04:07:37PM -0700, Ian Rogers escreveu:
+> On Tue, Oct 8, 2019 at 5:31 AM Jiri Olsa <jolsa@redhat.com> wrote:
+> > On Mon, Sep 30, 2019 at 05:36:23PM -0700, Ian Rogers wrote:
+> > > Being const + weak breaks with some compilers that constant-propagate
+> > > from the weak symbol. This behavior is outside of the specification, but
+> > > in LLVM is chosen to match GCC's behavior.
+> > >
+> > > LLVM's implementation was set in this patch:
+> > > https://github.com/llvm/llvm-project/commit/f49573d1eedcf1e44893d5a062ac1b72c8419646
+> > > A const + weak symbol is set to be weak_odr:
+> > > https://llvm.org/docs/LangRef.html
+> > > ODR is one definition rule, and given there is one constant definition
+> > > constant-propagation is possible. It is possible to get this code to
+> > > miscompile with LLVM when applying link time optimization. As compilers
+> > > become more aggressive, this is likely to break in more instances.
 
-We don't need that extra flag:
-if you just check on the last element, you can guess that information:
+> > is this just aprecaution or you actualy saw some breakage?
+ 
+> We saw a breakage with clang with thinlto enabled for linking. Our
+> compiler team had recently seen, and were surprised by, a similar
+> issue and were able to dig out the weak ODR issue.
 
-        if ((parser->local.usage[parser->local.usage_index - 1] &
-HID_USAGE_PAGE) >> 16 =3D=3D usage_page)
-              return 0;
+This is useful info, I'll add it to the commit log message.
+ 
+> > > Move the definition of sample_reg_masks to the conditional part of
+> > > perf_regs.h and guard usage with HAVE_PERF_REGS_SUPPORT. This avoids the
+> > > weak symbol.
 
-Let's see the next version before requesting too many changes.
+> > > Fix an issue when HAVE_PERF_REGS_SUPPORT isn't defined from patch v1.
+> > > In v3, add perf_regs.c for architectures that HAVE_PERF_REGS_SUPPORT but
+> > > don't declare sample_regs_masks.
 
-And yes, I agree I need the hid-tools patches or I will not merge this
-patch (and I will advise Jiri to not take it either).
+> > looks good to me (again ;-)), let's see if it passes Arnaldo's farm
 
-Cheers,
-Benjamin
+It passed a few of the usual places where things like this break, I'll
+submit it to a full set of build environments soon, together with what
+is sitting in acme/perf/core.
 
+Thanks,
+
+- Arnaldo
