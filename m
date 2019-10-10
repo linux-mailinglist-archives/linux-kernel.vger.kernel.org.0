@@ -2,151 +2,259 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7602CD3125
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 21:12:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6237BD3129
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 21:12:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbfJJTMF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 15:12:05 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:41454 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726007AbfJJTMF (ORCPT
+        id S1727104AbfJJTMq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 15:12:46 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:33712 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726007AbfJJTMp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 15:12:05 -0400
-Received: by mail-qk1-f193.google.com with SMTP id p10so6627667qkg.8
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 12:12:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=cMt4BJeZJ/Cdi4k5RmrGMFgzosfQx/tqi/Gp7tlgiE0=;
-        b=siQhamaPzLNwjCK9yYUlnIdmeE1f+M/NCQQMpVcDu2E4UsAjo8vctIVi1t+aXjWwyU
-         AgtY1Hjc1bc3GrUjaqAnkG4d8gCt8Kfgqm0soMTLkV750+DW1PkXlNlmyofHY0zP8S+R
-         xyQim62zeYOcyyuUE22hkAwFaNrLYbReAVGn/Swy/0CQDCmoGzSiauZgr7/54pge/Z6z
-         8vlPJ6zTu3R2QmawJ9ofcr8yH9VMQ/Owzd0jBoEe8skF2ZsMeUtNoqWqHZtz+IzBovqf
-         /xDShgOgB9iUxffCKFuRS+e4RyYv3vPk2VW2lzqDDOigT33RIpN00GoyOT+C5OOWmK+F
-         z8Qg==
+        Thu, 10 Oct 2019 15:12:45 -0400
+Received: by mail-oi1-f196.google.com with SMTP id a15so5927730oic.0;
+        Thu, 10 Oct 2019 12:12:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cMt4BJeZJ/Cdi4k5RmrGMFgzosfQx/tqi/Gp7tlgiE0=;
-        b=lkIZRYXvvjB5iYGEsCdo+H9t2P0pwvU5nnfkquz9FynXoQHyYLs26thylHZVwNc4gD
-         SlBJ3L/p3Ez5l4/ymZ9sahgVpRlfUHy4jJTDZlaKkN0UWVo1awz7ktahFh7MGQNlLfjH
-         /WAGaU9/cOuu4bR/EQtstrR6GTQZ1AtnFdmVxE2HqAv9UpX+Iay3HjMZB/t4Ne/L8/qW
-         szt6dYSDqVjsyrlqwFQmHWs9Qwcjn1N5yIibvJ/DY6/Gyu3WoX2zKpcdiZFZeXs3O1vR
-         FYD2RnZ0qtmKefhyW/bp2FVk0CktHWhVcYghWTFYep2cM79yqmLb3AWKRyX00nnyE25j
-         M1TQ==
-X-Gm-Message-State: APjAAAUcnr4MRTnNY+KM7HHXovHX4d/8c9SCoJhcSnMfeVuutebF5tCa
-        b9d/X+kV9G7UdjsdL+9ge8QRFw==
-X-Google-Smtp-Source: APXvYqxqE2/ZPBRIeCe92f8SgM3Qc+KtHwbcwC+/dO/OK33ze9iRMmZDxHMzX8lh2Whzr/ddXr0CSQ==
-X-Received: by 2002:a05:620a:359:: with SMTP id t25mr11456613qkm.171.1570734722899;
-        Thu, 10 Oct 2019 12:12:02 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id d45sm3185134qtc.70.2019.10.10.12.12.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Oct 2019 12:12:02 -0700 (PDT)
-Message-ID: <1570734720.5937.32.camel@lca.pw>
-Subject: Re: [PATCH] mm/page_owner: fix a crash after memory offline
-From:   Qian Cai <cai@lca.pw>
-To:     David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        "mhocko@suse.com" <mhocko@suse.com>
-Date:   Thu, 10 Oct 2019 15:12:00 -0400
-In-Reply-To: <2e36a929-0fc7-d32a-d838-de746ff071fc@redhat.com>
-References: <1570732366-16426-1-git-send-email-cai@lca.pw>
-         <2e36a929-0fc7-d32a-d838-de746ff071fc@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TB0eH3ae3vSi2BTINdu4YWUfxkdAB53RghmO04INfwE=;
+        b=ArSe95mAfCRXqkMIytaj6fYFOTlqU0iiet4ZBsvBJKCLbX5pFyegLfOk9Zw2XyKJt9
+         Y37Izxrxg/OWZ4ju2R5WE+jmSIgLrm4VNKDsJGgcKTHlGELiPfsM3XjsE5OP4B2eESDv
+         bt7nfZRXhFDGrY5t3SYUQ5RVp1UHlGsV7rBitwNGZgBvAQ3+oyfFIj3JgKY57MvsEHn3
+         hyXisd3PjfV9QZE1OIT291GcqmLABdEFBrtmnQKVrYKaA1RkO4EX+RkbNAJwyXVH+1Ly
+         +LLJtkkreadhM0twrcQuCNd5y/3cSTMCQWwlGIVZuF/x0nj0uIrqcIzDSLgTv2ap4KyA
+         mlxg==
+X-Gm-Message-State: APjAAAVbEGi6Dbyf/xPTaxNN2llK5495iT+JNKzN8whta/u34h3z7Jgm
+        08hpgSg2MvVHf3Sku3WNKw==
+X-Google-Smtp-Source: APXvYqzTNwu0JxpmueZM2zdBUYD25a/vLovCXlgQYNf1BmMTJANPQvgzTPJMPVKxRBQ9IHDbu1EaRw==
+X-Received: by 2002:a54:4419:: with SMTP id k25mr8594181oiw.0.1570734762353;
+        Thu, 10 Oct 2019 12:12:42 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id s194sm1910974oie.19.2019.10.10.12.12.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2019 12:12:41 -0700 (PDT)
+Date:   Thu, 10 Oct 2019 14:12:40 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>,
+        =?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3 01/10] dt-bindings: sram: Convert SRAM bindings to
+ json-schema
+Message-ID: <20191010191240.GA15006@bogus>
+References: <20191002164316.14905-1-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191002164316.14905-1-krzk@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-10-10 at 20:55 +0200, David Hildenbrand wrote:
-> On 10.10.19 20:32, Qian Cai wrote:
-> > The linux-next series "mm/memory_hotplug: Shrink zones before removing
-> > memory" [1] seems make a crash easier to reproduce while reading
-> > /proc/pagetypeinfo after offlining a memory section. Fix it by using
-> > pfn_to_online_page() in the PFN walker.
+On Wed, Oct 02, 2019 at 06:43:07PM +0200, Krzysztof Kozlowski wrote:
+> Convert generic mmio-sram bindings to DT schema format using
+> json-schema.  Require the address/size cells to be 1, not equal to root
+> node.
 > 
-> Can you please rephrase the subject+description to describe the actual 
-> problem and drop the reference to the series?
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> ---
+> 
+> Changes since v2:
+> 1. Add Rob as maintainer,
+> 2. Use "contains" for compatible,
+> 3. Fix address and size cells to 1,
+> 4. Add maxitems to reg under children,
+> 5. Remove unneeded string type from label.
+> 
+> Changes since v1:
+> 1. Indent example with four spaces (more readable).
+> ---
+>  .../devicetree/bindings/sram/sram.txt         |  80 -----------
+>  .../devicetree/bindings/sram/sram.yaml        | 134 ++++++++++++++++++
+>  2 files changed, 134 insertions(+), 80 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/sram/sram.txt
+>  create mode 100644 Documentation/devicetree/bindings/sram/sram.yaml
 
-I'd figure it is better for you to post this as you are on the top of this whole
-mess. What do you think?
 
-> 
-> E.g., similar to my recent patches:
-> 
-> "mm/page_owner: Don't access uninitialized memmaps when reading 
-> /proc/pagetypeinfo
-> 
-> Uninitialized memmaps contain garbage and in the worst case trigger 
-> kernel BUGs, especially with CONFIG_PAGE_POISONING. They should not get
-> touched.
-> 
-> For example, when not onlining a memory block that is spanned by a zone 
-> and reading /proc/pagetypeinfo, we can trigger a kernel BUG: ...
-> "
-> 
-> However, you also have to justify why it is okay to no longer consider 
-> ZONE_DEVICE (I think walk_zones_in_node() will skip ZONE_DEVICE due to 
-> assert_populated == true and ZONE_DEVICE will never be populated, 
-> Therefore, we will never end in this code path with ZONE_DEVICE).
-> 
-> 
-> > 
-> > [1] https://lore.kernel.org/linux-mm/20191006085646.5768-1-david@redhat.com/
-> > 
-> > page:ffffea0021200000 is uninitialized and poisoned
-> > raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff ffffffffffffffff
-> > raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff ffffffffffffffff
-> > page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
-> > There is not page extension available.
-> > ------------[ cut here ]------------
-> > kernel BUG at include/linux/mm.h:1107!
-> > RIP: 0010:pagetypeinfo_showmixedcount_print+0x4fb/0x680
-> > Call Trace:
-> >   walk_zones_in_node+0x3a/0xc0
-> >   pagetypeinfo_show+0x260/0x2c0
-> >   seq_read+0x27e/0x710
-> >   proc_reg_read+0x12e/0x190
-> >   __vfs_read+0x50/0xa0
-> >   vfs_read+0xcb/0x1e0
-> >   ksys_read+0xc6/0x160
-> >   __x64_sys_read+0x43/0x50
-> >   do_syscall_64+0xcc/0xaec
-> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > 
-> > Signed-off-by: Qian Cai <cai@lca.pw>
-> > ---
-> >   mm/page_owner.c | 5 ++---
-> >   1 file changed, 2 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/mm/page_owner.c b/mm/page_owner.c
-> > index dee931184788..03a6b19b3cdd 100644
-> > --- a/mm/page_owner.c
-> > +++ b/mm/page_owner.c
-> > @@ -296,11 +296,10 @@ void pagetypeinfo_showmixedcount_print(struct seq_file *m,
-> >   		pageblock_mt = get_pageblock_migratetype(page);
-> >   
-> 
-> What about the pfn_valid() in the outermost loop? You can skip over the 
-> whole pageblock if the first page is not online.
-> 
-> >   		for (; pfn < block_end_pfn; pfn++) {
-> > -			if (!pfn_valid_within(pfn))
-> > +			page = pfn_to_online_page(pfn);
-> > +			if (!page)
-> >   				continue;
-> >   
-> > -			page = pfn_to_page(pfn);
-> > -
-> >   			if (page_zone(page) != zone)
-> >   				continue;
-> >   
-> > 
-> 
+> diff --git a/Documentation/devicetree/bindings/sram/sram.yaml b/Documentation/devicetree/bindings/sram/sram.yaml
+> new file mode 100644
+> index 000000000000..a1c1ec2183f2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sram/sram.yaml
+> @@ -0,0 +1,134 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sram/sram.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Generic on-chip SRAM
+> +
+> +maintainers:
+> +  - Rob Herring <robh@kernel.org>
+> +
+> +description: |+
+> +  Simple IO memory regions to be managed by the genalloc API.
+> +
+> +  Each child of the sram node specifies a region of reserved memory. Each
+> +  child node should use a 'reg' property to specify a specific range of
+> +  reserved memory.
+> +
+> +  Following the generic-names recommended practice, node names should
+> +  reflect the purpose of the node. Unit address (@<address>) should be
+> +  appended to the name.
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^sram(@.*)?"
+> +
+> +  compatible:
+> +    contains:
+> +      enum:
+> +        - mmio-sram
+> +        - atmel,sama5d2-securam
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 1
+> +
+> +  ranges:
+> +    description:
+> +      Should translate from local addresses within the sram to bus addresses.
+> +
+> +  no-memory-wc:
+> +    description:
+> +      The flag indicating, that SRAM memory region has not to be remapped
+> +      as write combining. WC is used by default.
+> +    type: boolean
+> +
+> +patternProperties:
+> +  "^([a-z]*-)?sram@[a-f0-9]$":
+> +    type: object
+> +    description:
+> +      Each child of the sram node specifies a region of reserved memory.
+> +    properties:
+> +      reg:
+> +        description:
+> +          IO mem address range, relative to the SRAM range.
+> +        maxItems: 1
+> +
+> +      compatible:
+> +        $ref: /schemas/types.yaml#/definitions/string
+
+No need to define the type again. We can say 'maxItems: 1' if we really 
+want to force it to 1 entry.
+
+> +        description:
+> +          Should contain a vendor specific string in the form
+> +          <vendor>,[<device>-]<usage>
+> +
+> +      pool:
+> +        description:
+> +          Indicates that the particular reserved SRAM area is addressable
+> +          and in use by another device or devices.
+> +        type: boolean
+> +
+> +      export:
+> +        description:
+> +          Indicates that the reserved SRAM area may be accessed outside
+> +          of the kernel, e.g. by bootloader or userspace.
+> +        type: boolean
+> +
+> +      protect-exec:
+> +        description: |
+> +          Same as 'pool' above but with the additional constraint that code
+> +          will be run from the region and that the memory is maintained as
+> +          read-only, executable during code execution. NOTE: This region must
+> +          be page aligned on start and end in order to properly allow
+> +          manipulation of the page attributes.
+> +        type: boolean
+> +
+> +      label:
+> +        description:
+> +          The name for the reserved partition, if omitted, the label is taken
+> +          from the node name excluding the unit address.
+> +
+> +      clocks:
+
+Shouldn't this be up one level? Looks like this is the only case 
+(Marvell and i.MX are the only ones I see with clocks).
+
+> +        description:
+> +          A list of phandle and clock specifier pair that controls the
+> +          single SRAM clock.
+
+maxItems: 1
+
+> +
+> +    required:
+> +      - reg
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +  - ranges
+
+Does 'additionalProperties' work here and/or in the child node? I guess 
+not if we keep some node names.
+
+> +
+> +examples:
+> +  - |
+> +    sram: sram@5c000000 {
+> +        compatible = "mmio-sram";
+> +        reg = <0x5c000000 0x40000>; /* 256 KiB SRAM at address 0x5c000000 */
+> +
+> +        #address-cells = <1>;
+> +        #size-cells = <1>;
+> +        ranges = <0 0x5c000000 0x40000>;
+> +
+> +        smp-sram@100 {
+> +            compatible = "socvendor,smp-sram";
+> +            reg = <0x100 0x50>;
+> +        };
+> +
+> +        device-sram@1000 {
+> +            reg = <0x1000 0x1000>;
+> +            pool;
+> +        };
+> +
+> +        exported@20000 {
+
+This one doesn't match the pattern. That's fine I guess for dts files, 
+but examples should be good examples.
+
+> +            reg = <0x20000 0x20000>;
+> +            export;
+> +        };
+> +    };
+> -- 
+> 2.17.1
 > 
