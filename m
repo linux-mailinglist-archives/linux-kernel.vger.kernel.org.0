@@ -2,85 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66F21D1FDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 07:07:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99FDAD1FE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 07:07:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727553AbfJJFC7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 01:02:59 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:44256 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726237AbfJJFC7 (ORCPT
+        id S1732812AbfJJFEG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 01:04:06 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45219 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732720AbfJJFEG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 01:02:59 -0400
-Received: by mail-ot1-f65.google.com with SMTP id 21so3737309otj.11
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 22:02:58 -0700 (PDT)
+        Thu, 10 Oct 2019 01:04:06 -0400
+Received: by mail-pf1-f195.google.com with SMTP id y72so3071379pfb.12
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 22:04:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JjW7ziVilYJdZpiDvd1smbXvtrxiM7zdXhwkDBnPRFs=;
-        b=Llr5jUJ4l4/fU1kz0XiobhfE22pYSQy9QUkCVXR/Im1do7QInZf3+ZbdN6EXt2HvMX
-         MPIK59NaM7vsMj7+yuNm60rDrbUsTeGvvh2WBySmlQfzrzGWlbjmXIhCQmtEvTdtHbRf
-         Jp2cLpwsl8Izf6VzJoMv6vu/c7CCJG1OVY7PvdJlaPMDdTH9L6oP9orU6EiW3s7N9bLa
-         biKf/bQL9bE14OWJgLjV8GsIqnF5NepAApH2OOeFzuqZncqfraF0yoqf48GUSe6mFW+Y
-         PwFoyeuut73bMp0lwfvsNYSZnx3R2mkYylApQ8rbkRovj/ljzyvI3EMrEASwCd6o+uG4
-         dU7w==
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:from:to:cc:subject:user-agent:date;
+        bh=RDcgYyHGE7Ugaco0qkuIi9HynTd/fxe2Ca020N/JEPg=;
+        b=Zmt7MuwX3mgqOtO1SLFiulXF3/JFoK87LeyjYNh8GzlLx5Peho4Bfp083Cv/wJtq/p
+         qnNtMYUTITHeIv/R9giQdM6XXx/g4bBwXMGW8Y7lGhTERwMu18oYccSNphKgRGHRwzvM
+         CsD5zrNHrYDnYRquheyibQcOKC0RePR1BdPoA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JjW7ziVilYJdZpiDvd1smbXvtrxiM7zdXhwkDBnPRFs=;
-        b=JQLrQAHe7sQak7beXvZMghAi2LJIZqsM16EaDz+E+RGh1xfaqHjfIHbjfyej7DbPNV
-         OcYeJsXglhCtVJ/MErVJREzItjb/e91MMA356NfU+r5Nm+mSrbDL0sLUqk4WVedipcMV
-         Gy9VOGa5TwuwUUpPzy3IXNIDNYozhLgl4RaQKlnZQI28Zzx4wcA9mJIZw0Wfc5xQUkD9
-         f2jbsr76QPIajEuH0e7L371WxfjnXxvnyFk9iZfLPNcgw66c3IsdXDimdqWRoparLs0T
-         q/USqJNXKf3E3P3UrdXn51yjhTq3RwwGrQLoIOuRgwK9v1wAd4E/y0Ljq4P2BD/w20Lc
-         BUvw==
-X-Gm-Message-State: APjAAAWySzwBOAvZgRtHJ9XTFVl5PBdtD+lc/ZnhCgVbwcRa4YdAma2g
-        BRukk71KgnaxnV++yj3n3zTC6sxZN00e9jSTSRYWUsg6
-X-Google-Smtp-Source: APXvYqwW15SupgQ8irr5DzZotEtjK70n90wen29XCmFPxuANRc9KH8E0GHiNAQbv3hbLw9b3VMQD0d875ShEXQElo5Y=
-X-Received: by 2002:a9d:6e92:: with SMTP id a18mr6062925otr.313.1570683778522;
- Wed, 09 Oct 2019 22:02:58 -0700 (PDT)
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:from:to:cc:subject
+         :user-agent:date;
+        bh=RDcgYyHGE7Ugaco0qkuIi9HynTd/fxe2Ca020N/JEPg=;
+        b=kDnBpR0vwmLejQSdU19ebLa+GGviN2reQEqEuijJsyV83rJ2sMAS8cGdXWZccE0l4t
+         TayjjPYLHIwM+Bi+14Rrxg9s89MN0P/XubcE1hqMYvc5Yv2eheO2ZYp/Ht1v7DjSiMDD
+         fxrMvZlkmH4XPNUA4vUa1qLk9LwbF34MgMTuypj/kmNY++yZjoyk3Ttw0CHreDakdxgf
+         QWYcVIvubUOboNMrfeVCGOHjsv5Lhmv8F+mvGR+8IvN7fqqknxeBlZQwBJgTIhMgJVrk
+         7O+9mxPTUbCVQ67h3ATEztK4MZPAWzipRAOT9CaqA7ntXAUSzRg6iRXl0UbPL2l3naSG
+         32lA==
+X-Gm-Message-State: APjAAAWAWeOHQ/M5EUVO5ipKtOfZhSkTu+j44F4RnOLMBi1ntSywrE+u
+        lytc+C567cWXVH2R1cT8WzvUEg==
+X-Google-Smtp-Source: APXvYqw9/raUa8lawyg+DLKK8BYDVbYecdV9aYm7AXYeJETU44FJ3FlHZKqeiYmyuHb821nDWHBGsw==
+X-Received: by 2002:a63:4624:: with SMTP id t36mr6066126pga.376.1570683844943;
+        Wed, 09 Oct 2019 22:04:04 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id p68sm4911397pfp.9.2019.10.09.22.04.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 22:04:04 -0700 (PDT)
+Message-ID: <5d9ebbc4.1c69fb81.b45e2.25ce@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20190929095659.jzy3gtcj6vgd35j6@XZHOUW.usersys.redhat.com> <20191008165100.GC5694@arrakis.emea.arm.com>
-In-Reply-To: <20191008165100.GC5694@arrakis.emea.arm.com>
-From:   Murphy Zhou <jencce.kernel@gmail.com>
-Date:   Thu, 10 Oct 2019 13:02:46 +0800
-Message-ID: <CADJHv_vLYGCpsUYuSbZn95rRXXsz_nL3NwDDRqRfNrmtcuDk0A@mail.gmail.com>
-Subject: Re: [PATCH] mm/kmemleak: skip late_init if not skip disable
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191009013345.17192-1-clew@codeaurora.org>
+References: <20191009013345.17192-1-clew@codeaurora.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Chris Lew <clew@codeaurora.org>, bjorn.andersson@linaro.org,
+        ohad@wizery.com
+Cc:     aneela@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chris Lew <clew@codeaurora.org>
+Subject: Re: [PATCH] rpmsg: glink: Remove channel decouple from rpdev release
+User-Agent: alot/0.8.1
+Date:   Wed, 09 Oct 2019 22:04:02 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Quoting Chris Lew (2019-10-08 18:33:45)
+> If a channel is being rapidly restarted and the kobj release worker is
+> busy, there is a chance the the rpdev_release function will run after
+> the channel struct itself has been released.
+>=20
+> There should not be a need to decouple the channel from rpdev in the
+> rpdev release since that should only happen from the channel close
+> commands.
+>=20
+> Signed-off-by: Chris Lew <clew@codeaurora.org>
 
-On Wed, Oct 9, 2019 at 12:51 AM Catalin Marinas <catalin.marinas@arm.com> wrote:
->
-> Hi Murphy,
->
-> On Sun, Sep 29, 2019 at 05:56:59PM +0800, Murphy Zhou wrote:
-> > Now if DEFAULT_OFF set to y, kmemleak_init will start the cleanup_work
-> > workqueue. Then late_init call will set kmemleak_initialized to 1, the
-> > cleaup workqueue will try to do cleanup, triggering:
-> >
-> > [24.738773] ==================================================================
-> > [24.742784] BUG: KASAN: global-out-of-bounds in __kmemleak_do_cleanup+0x166/0x180
->
-> I don't think the invocation of kmemleak_do_cleanup() is the issue here.
-> It should be safe schedule the clean-up thread in case kmemleak was
-> disabled from boot. What you probably hit was a bug in
-> __kmemleak_do_cleanup() itself, fixed here:
->
-> http://lkml.kernel.org/r/20191004134624.46216-1-catalin.marinas@arm.com
->
-> With the above patch, I can no longer trigger the KASan warning.
+Fixes tag? The whole thing sounds broken and probably is still racy in
+the face of SMP given that channel->rpdev is tested for "published" or
+not. Can you describe the race that you're closing more?
 
-Got it. Thanks for noticing!
-
->
-> --
-> Catalin
