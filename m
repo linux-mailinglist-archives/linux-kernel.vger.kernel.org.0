@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E168D2327
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:48:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EFFCD2335
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:48:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387947AbfJJIjo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:39:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43432 "EHLO mail.kernel.org"
+        id S2388059AbfJJIkM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:40:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387932AbfJJIjm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:39:42 -0400
+        id S2387411AbfJJIkL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:40:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 920D220B7C;
-        Thu, 10 Oct 2019 08:39:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F8AC218AC;
+        Thu, 10 Oct 2019 08:40:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570696781;
-        bh=lcfvZg2D+nWX4tQ0Ktw0J8gXOf+V1tNFCWd1K6KLb5k=;
+        s=default; t=1570696811;
+        bh=rgUASk+qHXvrsXRxbaZLq2x3+KI4P2PsXhbri1vX0Y8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V6HJcqa5/S3bjVKGlSZlboCxwR2G6lscrz1Q0AcmfgLS+mxbBp5oYlq1nssPy7mnR
-         5wSpEHidhPcqjHzhcnJ9MztHsY68mGyi5hFO7p6k1dSeGjOVEI3iQ+rZlMxo6Kbnxy
-         tRdIvzOCd8cqTS4Dkwp+AnDIKqPPrDAufloiH6KM=
+        b=QsdXqHajKGLdOI9HT80Y1zYt4GIv/Egm99/TXpapE2ir5eYwYWgtRbPoWeP1DeRx1
+         TT6snfE9kClbOnOtMmEqR8SRjPeHerDmfTt6zBLKxHgEt0z/+bV1b1uCNMvjKR1/w1
+         NW7b1eArT6c5dIGuEur8K2s78+AaynOYpfjEwFqM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
         Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 5.3 033/148] powerpc/book3s64/radix: Rename CPU_FTR_P9_TLBIE_BUG feature flag
-Date:   Thu, 10 Oct 2019 10:34:54 +0200
-Message-Id: <20191010083613.161863899@linuxfoundation.org>
+Subject: [PATCH 5.3 034/148] powerpc/mm: Add a helper to select PAGE_KERNEL_RO or PAGE_READONLY
+Date:   Thu, 10 Oct 2019 10:34:55 +0200
+Message-Id: <20191010083613.220293397@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
 References: <20191010083609.660878383@linuxfoundation.org>
@@ -44,110 +43,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit 09ce98cacd51fcd0fa0af2f79d1e1d3192f4cbb0 upstream.
+commit 4c0f5d1eb4072871c34530358df45f05ab80edd6 upstream.
 
-Rename the #define to indicate this is related to store vs tlbie
-ordering issue. In the next patch, we will be adding another feature
-flag that is used to handles ERAT flush vs tlbie ordering issue.
+In a couple of places there is a need to select whether read-only
+protection of shadow pages is performed with PAGE_KERNEL_RO or with
+PAGE_READONLY.
 
-Fixes: a5d4b5891c2f ("powerpc/mm: Fixup tlbie vs store ordering issue on POWER9")
-Cc: stable@vger.kernel.org # v4.16+
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Add a helper to avoid duplicating the choice.
+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: stable@vger.kernel.org
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20190924035254.24612-2-aneesh.kumar@linux.ibm.com
+Link: https://lore.kernel.org/r/9f33f44b9cd741c4a02b3dce7b8ef9438fe2cd2a.1566382750.git.christophe.leroy@c-s.fr
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/include/asm/cputable.h    |    4 ++--
- arch/powerpc/kernel/dt_cpu_ftrs.c      |    6 +++---
- arch/powerpc/kvm/book3s_hv_rm_mmu.c    |    2 +-
- arch/powerpc/mm/book3s64/hash_native.c |    2 +-
- arch/powerpc/mm/book3s64/radix_tlb.c   |    4 ++--
- 5 files changed, 9 insertions(+), 9 deletions(-)
+ arch/powerpc/mm/kasan/kasan_init_32.c |   21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
---- a/arch/powerpc/include/asm/cputable.h
-+++ b/arch/powerpc/include/asm/cputable.h
-@@ -213,7 +213,7 @@ static inline void cpu_feature_keys_init
- #define CPU_FTR_POWER9_DD2_1		LONG_ASM_CONST(0x0000080000000000)
- #define CPU_FTR_P9_TM_HV_ASSIST		LONG_ASM_CONST(0x0000100000000000)
- #define CPU_FTR_P9_TM_XER_SO_BUG	LONG_ASM_CONST(0x0000200000000000)
--#define CPU_FTR_P9_TLBIE_BUG		LONG_ASM_CONST(0x0000400000000000)
-+#define CPU_FTR_P9_TLBIE_STQ_BUG	LONG_ASM_CONST(0x0000400000000000)
- #define CPU_FTR_P9_TIDR			LONG_ASM_CONST(0x0000800000000000)
+--- a/arch/powerpc/mm/kasan/kasan_init_32.c
++++ b/arch/powerpc/mm/kasan/kasan_init_32.c
+@@ -12,6 +12,14 @@
+ #include <asm/code-patching.h>
+ #include <mm/mmu_decl.h>
  
- #ifndef __ASSEMBLY__
-@@ -461,7 +461,7 @@ static inline void cpu_feature_keys_init
- 	    CPU_FTR_CFAR | CPU_FTR_HVMODE | CPU_FTR_VMX_COPY | \
- 	    CPU_FTR_DBELL | CPU_FTR_HAS_PPR | CPU_FTR_ARCH_207S | \
- 	    CPU_FTR_TM_COMP | CPU_FTR_ARCH_300 | CPU_FTR_PKEY | \
--	    CPU_FTR_P9_TLBIE_BUG | CPU_FTR_P9_TIDR)
-+	    CPU_FTR_P9_TLBIE_STQ_BUG | CPU_FTR_P9_TIDR)
- #define CPU_FTRS_POWER9_DD2_0 CPU_FTRS_POWER9
- #define CPU_FTRS_POWER9_DD2_1 (CPU_FTRS_POWER9 | CPU_FTR_POWER9_DD2_1)
- #define CPU_FTRS_POWER9_DD2_2 (CPU_FTRS_POWER9 | CPU_FTR_POWER9_DD2_1 | \
---- a/arch/powerpc/kernel/dt_cpu_ftrs.c
-+++ b/arch/powerpc/kernel/dt_cpu_ftrs.c
-@@ -705,14 +705,14 @@ static __init void update_tlbie_feature_
- 		if ((pvr & 0xe000) == 0) {
- 			/* Nimbus */
- 			if ((pvr & 0xfff) < 0x203)
--				cur_cpu_spec->cpu_features |= CPU_FTR_P9_TLBIE_BUG;
-+				cur_cpu_spec->cpu_features |= CPU_FTR_P9_TLBIE_STQ_BUG;
- 		} else if ((pvr & 0xc000) == 0) {
- 			/* Cumulus */
- 			if ((pvr & 0xfff) < 0x103)
--				cur_cpu_spec->cpu_features |= CPU_FTR_P9_TLBIE_BUG;
-+				cur_cpu_spec->cpu_features |= CPU_FTR_P9_TLBIE_STQ_BUG;
- 		} else {
- 			WARN_ONCE(1, "Unknown PVR");
--			cur_cpu_spec->cpu_features |= CPU_FTR_P9_TLBIE_BUG;
-+			cur_cpu_spec->cpu_features |= CPU_FTR_P9_TLBIE_STQ_BUG;
- 		}
- 	}
++static pgprot_t kasan_prot_ro(void)
++{
++	if (early_mmu_has_feature(MMU_FTR_HPTE_TABLE))
++		return PAGE_READONLY;
++
++	return PAGE_KERNEL_RO;
++}
++
+ static void kasan_populate_pte(pte_t *ptep, pgprot_t prot)
+ {
+ 	unsigned long va = (unsigned long)kasan_early_shadow_page;
+@@ -26,6 +34,7 @@ static int __ref kasan_init_shadow_page_
+ {
+ 	pmd_t *pmd;
+ 	unsigned long k_cur, k_next;
++	pgprot_t prot = kasan_prot_ro();
+ 
+ 	pmd = pmd_offset(pud_offset(pgd_offset_k(k_start), k_start), k_start);
+ 
+@@ -43,10 +52,7 @@ static int __ref kasan_init_shadow_page_
+ 
+ 		if (!new)
+ 			return -ENOMEM;
+-		if (early_mmu_has_feature(MMU_FTR_HPTE_TABLE))
+-			kasan_populate_pte(new, PAGE_READONLY);
+-		else
+-			kasan_populate_pte(new, PAGE_KERNEL_RO);
++		kasan_populate_pte(new, prot);
+ 
+ 		smp_wmb(); /* See comment in __pte_alloc */
+ 
+@@ -103,10 +109,9 @@ static int __ref kasan_init_region(void
+ 
+ static void __init kasan_remap_early_shadow_ro(void)
+ {
+-	if (early_mmu_has_feature(MMU_FTR_HPTE_TABLE))
+-		kasan_populate_pte(kasan_early_shadow_pte, PAGE_READONLY);
+-	else
+-		kasan_populate_pte(kasan_early_shadow_pte, PAGE_KERNEL_RO);
++	pgprot_t prot = kasan_prot_ro();
++
++	kasan_populate_pte(kasan_early_shadow_pte, prot);
+ 
+ 	flush_tlb_kernel_range(KASAN_SHADOW_START, KASAN_SHADOW_END);
  }
---- a/arch/powerpc/kvm/book3s_hv_rm_mmu.c
-+++ b/arch/powerpc/kvm/book3s_hv_rm_mmu.c
-@@ -451,7 +451,7 @@ static void do_tlbies(struct kvm *kvm, u
- 				     "r" (rbvalues[i]), "r" (kvm->arch.lpid));
- 		}
- 
--		if (cpu_has_feature(CPU_FTR_P9_TLBIE_BUG)) {
-+		if (cpu_has_feature(CPU_FTR_P9_TLBIE_STQ_BUG)) {
- 			/*
- 			 * Need the extra ptesync to make sure we don't
- 			 * re-order the tlbie
---- a/arch/powerpc/mm/book3s64/hash_native.c
-+++ b/arch/powerpc/mm/book3s64/hash_native.c
-@@ -199,7 +199,7 @@ static inline unsigned long  ___tlbie(un
- 
- static inline void fixup_tlbie(unsigned long vpn, int psize, int apsize, int ssize)
- {
--	if (cpu_has_feature(CPU_FTR_P9_TLBIE_BUG)) {
-+	if (cpu_has_feature(CPU_FTR_P9_TLBIE_STQ_BUG)) {
- 		/* Need the extra ptesync to ensure we don't reorder tlbie*/
- 		asm volatile("ptesync": : :"memory");
- 		___tlbie(vpn, psize, apsize, ssize);
---- a/arch/powerpc/mm/book3s64/radix_tlb.c
-+++ b/arch/powerpc/mm/book3s64/radix_tlb.c
-@@ -216,7 +216,7 @@ static inline void fixup_tlbie(void)
- 	unsigned long pid = 0;
- 	unsigned long va = ((1UL << 52) - 1);
- 
--	if (cpu_has_feature(CPU_FTR_P9_TLBIE_BUG)) {
-+	if (cpu_has_feature(CPU_FTR_P9_TLBIE_STQ_BUG)) {
- 		asm volatile("ptesync": : :"memory");
- 		__tlbie_va(va, pid, mmu_get_ap(MMU_PAGE_64K), RIC_FLUSH_TLB);
- 	}
-@@ -226,7 +226,7 @@ static inline void fixup_tlbie_lpid(unsi
- {
- 	unsigned long va = ((1UL << 52) - 1);
- 
--	if (cpu_has_feature(CPU_FTR_P9_TLBIE_BUG)) {
-+	if (cpu_has_feature(CPU_FTR_P9_TLBIE_STQ_BUG)) {
- 		asm volatile("ptesync": : :"memory");
- 		__tlbie_lpid_va(va, lpid, mmu_get_ap(MMU_PAGE_64K), RIC_FLUSH_TLB);
- 	}
 
 
