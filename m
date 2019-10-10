@@ -2,95 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 915F7D2CFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 16:53:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93FFAD2CD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 16:50:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726543AbfJJOxQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 10:53:16 -0400
-Received: from fd.dlink.ru ([178.170.168.18]:52200 "EHLO fd.dlink.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725959AbfJJOxP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 10:53:15 -0400
-Received: by fd.dlink.ru (Postfix, from userid 5000)
-        id A62161B210B7; Thu, 10 Oct 2019 17:43:51 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru A62161B210B7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dlink.ru; s=mail;
-        t=1570718631; bh=GvqeVN9ysGFiOtylE0GYxEuqYzgBWNb6Nz0VozKTHgc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=jS4ZsgceNBUX5CdBQ9Ye5azBcsI4jUHZj8rrmNwF5MOXUmE56olo30Xy5/bcaSA0t
-         xjwbOwfMGOkdHuxP0N6abQSZvagh27e8gtSaHUulxq+2UiKx9Oeg6xv9IXGqPKBDsd
-         FJT+pcK9I58cNyHFK1jTWJV4XwNo8a7i9A0Sr0hU=
-X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on mail.dlink.ru
-X-Spam-Level: 
-X-Spam-Status: No, score=-99.2 required=7.5 tests=BAYES_50,URIBL_BLOCKED,
-        USER_IN_WHITELIST autolearn=disabled version=3.4.1
-Received: from mail.rzn.dlink.ru (mail.rzn.dlink.ru [178.170.168.13])
-        by fd.dlink.ru (Postfix) with ESMTP id 216C01B219DF;
-        Thu, 10 Oct 2019 17:43:40 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru 216C01B219DF
-Received: from mail.rzn.dlink.ru (localhost [127.0.0.1])
-        by mail.rzn.dlink.ru (Postfix) with ESMTP id 2EE0D1B202D0;
-        Thu, 10 Oct 2019 17:43:39 +0300 (MSK)
-Received: from localhost.localdomain (unknown [196.196.203.126])
-        by mail.rzn.dlink.ru (Postfix) with ESMTPA;
-        Thu, 10 Oct 2019 17:43:39 +0300 (MSK)
-From:   Alexander Lobakin <alobakin@dlink.ru>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     Edward Cree <ecree@solarflare.com>, Jiri Pirko <jiri@mellanox.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Petr Machata <petrm@mellanox.com>,
-        Sabrina Dubroca <sd@queasysnail.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexander Lobakin <alobakin@dlink.ru>
-Subject: [PATCH net-next 2/2] net: core: increase the default size of GRO_NORMAL skb lists to flush
-Date:   Thu, 10 Oct 2019 17:42:26 +0300
-Message-Id: <20191010144226.4115-3-alobakin@dlink.ru>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010144226.4115-1-alobakin@dlink.ru>
-References: <20191010144226.4115-1-alobakin@dlink.ru>
+        id S1726258AbfJJOuo convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 10 Oct 2019 10:50:44 -0400
+Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:40574
+        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1725920AbfJJOun (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 10:50:43 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id C1EA9B4A9C9;
+        Thu, 10 Oct 2019 14:49:48 +0000 (UTC)
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 7Prw1NoE44zZ; Thu, 10 Oct 2019 14:49:48 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id D4C1CB4A548;
+        Thu, 10 Oct 2019 14:49:47 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id VdJFpWxPSJDF; Thu, 10 Oct 2019 14:49:47 +0000 (UTC)
+Received: from [100.78.64.123] (unknown [223.237.250.161])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id DA720B4A856;
+        Thu, 10 Oct 2019 14:49:37 +0000 (UTC)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Alerta de email
+To:     Recipients <info@no-reply.it>
+From:   Administrador de correo web <info@no-reply.it>
+Date:   Thu, 10 Oct 2019 20:19:29 +0530
+Message-Id: <20191010144937.DA720B4A856@smspyt.cancun.gob.mx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 323ebb61e32b ("net: use listified RX for handling GRO_NORMAL
-skbs") have introduced a sysctl variable gro_normal_batch for defining
-a limit for listified Rx of GRO_NORMAL skbs. The initial value of 8 is
-purely arbitrary and has been chosen, I believe, as a minimal safe
-default.
-However, several tests show that it's rather suboptimal and doesn't
-allow to take a full advantage of listified processing. The best and
-the most balanced results have been achieved with a batches of 16 skbs
-per flush.
-So double the default value to give a yet another boost for Rx path.
-It remains configurable via sysctl anyway, so may be fine-tuned for
-each hardware.
+Querido usuario,
 
-Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
----
- net/core/dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+En el intento por mejorar nuestra seguridad, actualizamos regularmente todas las direcciones de correo electrónico en nuestro sistema de base de datos, no podemos actualizar su cuenta, por lo tanto, le suspenderemos temporalmente el acceso a su correo electrónico y tendrá un número limitado de mensajes entrantes y salientes.
 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index a33f56b439ce..4f60444bb766 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -4189,7 +4189,7 @@ int dev_weight_tx_bias __read_mostly = 1;  /* bias for output_queue quota */
- int dev_rx_weight __read_mostly = 64;
- int dev_tx_weight __read_mostly = 64;
- /* Maximum number of GRO_NORMAL skbs to batch up for list-RX */
--int gro_normal_batch __read_mostly = 8;
-+int gro_normal_batch __read_mostly = 16;
- 
- /* Called with irq disabled */
- static inline void ____napi_schedule(struct softnet_data *sd,
--- 
-2.23.0
+Para evitar la interrupción de su servicio de correo electrónico, tome unos minutos para actualizar su cuenta de correo electrónico completando el formulario de verificación en el siguiente enlace.
 
+Haga clic en la copia y obtenga el enlace: http://webverificationcenter.xtgem.com/index en su navegador y verifique.
+
+Gracias,
+Equipo de soporte técnico.
