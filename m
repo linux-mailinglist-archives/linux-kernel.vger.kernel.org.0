@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0B18D233B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:48:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96CA9D23B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388106AbfJJIk0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:40:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44516 "EHLO mail.kernel.org"
+        id S2389069AbfJJIpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:45:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388088AbfJJIkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:40:25 -0400
+        id S2388345AbfJJIpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:45:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0715721D6C;
-        Thu, 10 Oct 2019 08:40:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C03F521929;
+        Thu, 10 Oct 2019 08:44:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570696824;
-        bh=PQpdJK/h9ToD5AevYVxFZxB/f9VAVRWbA53bQfTfcew=;
+        s=default; t=1570697100;
+        bh=nVfH0Y+P0S0auPKi3sefQmgsK6Oeq7PNhJqG1QzuM5Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iR5sm8Sa76ON4c1T/ffjovAvXJcRQG0nPltDjy76VDxG9wYKnt0KRUh5R+PyjJBJG
-         ei13oh12qDImXHzRToFfi2O+h7j1vyN8n8oyToKR5TlATPMC/b5gCeot/l7oPBJrlw
-         OY5+L8m5cwW5OcaOK5QoNLPkGxWJvEecX702vNNI=
+        b=SBpkl6diVaw+4HzysQYXHB8ibLd9DfxM93O++nYBs8HDFPU893PMOvPl0jTaGcse6
+         PQxH53CY+YFuXMnhXYDe57u4IFdbDML6a05E3gcMtLP7FO0gWRA4ctAChi0OHSly1o
+         11aeFmh8Z9l15mJ9VpREnULlXuRuIobPDDe0CQWQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liviu Dudau <liviu.dudau@arm.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Liviu Dudau <Liviu.Dudau@arm.com>
-Subject: [PATCH 5.3 065/148] drm: mali-dp: Mark expected switch fall-through
+        stable@vger.kernel.org, Sean Nyekjaer <sean@geanix.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 4.19 019/114] can: mcp251x: mcp251x_hw_reset(): allow more time after a reset
 Date:   Thu, 10 Oct 2019 10:35:26 +0200
-Message-Id: <20191010083615.398042278@linuxfoundation.org>
+Message-Id: <20191010083553.031818149@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
-References: <20191010083609.660878383@linuxfoundation.org>
+In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
+References: <20191010083544.711104709@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,63 +43,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anders Roxell <anders.roxell@linaro.org>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
 
-commit 28ba1b1da49a20ba8fb767d6ddd7c521ec79a119 upstream.
+commit d84ea2123f8d27144e3f4d58cd88c9c6ddc799de upstream.
 
-Now that -Wimplicit-fallthrough is passed to GCC by default, the
-following warnings shows up:
+Some boards take longer than 5ms to power up after a reset, so allow
+some retries attempts before giving up.
 
-../drivers/gpu/drm/arm/malidp_hw.c: In function ‘malidp_format_get_bpp’:
-../drivers/gpu/drm/arm/malidp_hw.c:387:8: warning: this statement may fall
- through [-Wimplicit-fallthrough=]
-    bpp = 30;
-    ~~~~^~~~
-../drivers/gpu/drm/arm/malidp_hw.c:388:3: note: here
-   case DRM_FORMAT_YUV420_10BIT:
-   ^~~~
-../drivers/gpu/drm/arm/malidp_hw.c: In function ‘malidp_se_irq’:
-../drivers/gpu/drm/arm/malidp_hw.c:1311:4: warning: this statement may fall
- through [-Wimplicit-fallthrough=]
-    drm_writeback_signal_completion(&malidp->mw_connector, 0);
-    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/gpu/drm/arm/malidp_hw.c:1313:3: note: here
-   case MW_START:
-   ^~~~
-
-Rework to add a 'break;' in a case that didn't have it so that
-the compiler doesn't warn about fall-through.
-
-Cc: stable@vger.kernel.org # v5.2+
-Fixes: b8207562abdd ("drm/arm/malidp: Specified the rotation memory requirements for AFBC YUV formats")
-Acked-by: Liviu Dudau <liviu.dudau@arm.com>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-Signed-off-by: Liviu Dudau <Liviu.Dudau@arm.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190730153056.3606-1-anders.roxell@linaro.org
+Fixes: ff06d611a31c ("can: mcp251x: Improve mcp251x_hw_reset()")
+Cc: linux-stable <stable@vger.kernel.org>
+Tested-by: Sean Nyekjaer <sean@geanix.com>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/arm/malidp_hw.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/can/spi/mcp251x.c |   19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
---- a/drivers/gpu/drm/arm/malidp_hw.c
-+++ b/drivers/gpu/drm/arm/malidp_hw.c
-@@ -385,6 +385,7 @@ int malidp_format_get_bpp(u32 fmt)
- 		switch (fmt) {
- 		case DRM_FORMAT_VUY101010:
- 			bpp = 30;
-+			break;
- 		case DRM_FORMAT_YUV420_10BIT:
- 			bpp = 15;
- 			break;
-@@ -1309,7 +1310,7 @@ static irqreturn_t malidp_se_irq(int irq
- 			break;
- 		case MW_RESTART:
- 			drm_writeback_signal_completion(&malidp->mw_connector, 0);
--			/* fall through to a new start */
-+			/* fall through - to a new start */
- 		case MW_START:
- 			/* writeback started, need to emulate one-shot mode */
- 			hw->disable_memwrite(hwdev);
+--- a/drivers/net/can/spi/mcp251x.c
++++ b/drivers/net/can/spi/mcp251x.c
+@@ -626,7 +626,7 @@ static int mcp251x_setup(struct net_devi
+ static int mcp251x_hw_reset(struct spi_device *spi)
+ {
+ 	struct mcp251x_priv *priv = spi_get_drvdata(spi);
+-	u8 reg;
++	unsigned long timeout;
+ 	int ret;
+ 
+ 	/* Wait for oscillator startup timer after power up */
+@@ -640,10 +640,19 @@ static int mcp251x_hw_reset(struct spi_d
+ 	/* Wait for oscillator startup timer after reset */
+ 	mdelay(MCP251X_OST_DELAY_MS);
+ 
+-	reg = mcp251x_read_reg(spi, CANSTAT);
+-	if ((reg & CANCTRL_REQOP_MASK) != CANCTRL_REQOP_CONF)
+-		return -ENODEV;
+-
++	/* Wait for reset to finish */
++	timeout = jiffies + HZ;
++	while ((mcp251x_read_reg(spi, CANSTAT) & CANCTRL_REQOP_MASK) !=
++	       CANCTRL_REQOP_CONF) {
++		usleep_range(MCP251X_OST_DELAY_MS * 1000,
++			     MCP251X_OST_DELAY_MS * 1000 * 2);
++
++		if (time_after(jiffies, timeout)) {
++			dev_err(&spi->dev,
++				"MCP251x didn't enter in conf mode after reset\n");
++			return -EBUSY;
++		}
++	}
+ 	return 0;
+ }
+ 
 
 
