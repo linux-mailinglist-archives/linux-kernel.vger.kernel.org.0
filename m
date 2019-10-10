@@ -2,142 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6225D269C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:47:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B75ED26A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:50:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387633AbfJJJq7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 05:46:59 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55517 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbfJJJq6 (ORCPT
+        id S2387579AbfJJJuO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 05:50:14 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:40395 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfJJJuO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 05:46:58 -0400
-Received: by mail-wm1-f68.google.com with SMTP id a6so6183512wma.5
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 02:46:56 -0700 (PDT)
+        Thu, 10 Oct 2019 05:50:14 -0400
+Received: by mail-wm1-f66.google.com with SMTP id b24so6050344wmj.5
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 02:50:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=QPp55kuRf3+lyRK+9iqTbgFqqJyrdtmwyo0KQ5EsOTA=;
-        b=dmcCM7YrL1FFyCOdkX+y1T/WzvgfoBjg4nwbGncoILd5jM29jXMJYI8d3gz5Qg7+Uv
-         X2MMdXO36rUXOEFfIrqP6g2AEbh9xym/rSgDhsomXMhWsJH++M3665Vhr1BbhER/TNhy
-         R2khVK7tQeFuRcgXtkANbdKkerbb5w6wHct/FZLlygVdHCOIu+QRBXp+QMdo1z1436vN
-         wAzFCfiKDvqThE1iIP3oPdOP/DjKlrzM+OkEr565JnGrQg0tRFTl/nyVHaYE+02taVpM
-         4CErQcNC3OBu2KmM+xvQU/ApF6Wwc3eS7uqdQPLLP4UuokFYHnACNX5yoGmEL1WQbLKp
-         egPQ==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yNx+8n36uJ0WGHxBC9aaDo5XpCmOIJvnh/6Zg8N6jFk=;
+        b=XnOJV7YI/chmZQMSTTcgcjcrpoZZh39oUa9LFBeXkUiykjjr5JEBgkK+KfCLOJG6O8
+         6+NIc/vyXLmNqfB90MKN8p2Unok1c+fSiHgnwCyrXBJKeaQPqrFkhiy2P/mLshMb4fvb
+         kB1pTofuj/RzTNiCrP5P+CFGWNF9hxdI1rBTBJP7STVGBnVmS1G7saGVLs5yod9EAWcS
+         s7eZ+f9uqQ04q8bq3OcoV3Z9FvZ/0mp2Ibn69cbg0K9ejU+OuHVyhxeUwJhjfdA2m2K9
+         WgkfJfrzns34UQNFKX1MMnVPj95NEovFrbRBNTgc3kzs4zUd37NIBrwK7WMsOH19ho8h
+         xmLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=QPp55kuRf3+lyRK+9iqTbgFqqJyrdtmwyo0KQ5EsOTA=;
-        b=FXf7GyWJlEDq4KPYOUsLmkJViglTNjzPk/SU7wzHrIkz3ETM86uxSVIRz5v7jyqcTW
-         I1ryr0ZaViXasUKoMKPl3fbfiKDbmbAc0EdTcWC2O+J7IbLDCwcUEfMlGOlvC1Doj5dg
-         oRywflLrRUJPn7muTCOu70Vl+tsB2D7SbMbESsb33VTGytnWFLddqdMV9ZyfhnSLYHwN
-         OxGM83PJzCqkribBZdF7+T8iZZnyGFKW8my+/Z00GeUmLZWsUzG2hrdOfEm6ksQiTzaR
-         eArP3p0GP6+YmiaEUHib1se2hsottbLiuFKVAFmg6Q/a6tLrhfKK6zqwD25VttwwMc0w
-         Jirw==
-X-Gm-Message-State: APjAAAX5Ddlwm98WGd1fBaHfh8bHfqd2y4wCL56Ry1QRu/47Xx2KLwqX
-        qvi6QCcbl7KHg3VlpObT5LSAMLIntBT8S+Iu
-X-Google-Smtp-Source: APXvYqxoTwpEg6SSoRFBewcWqiVLIEvIsnjXkyrjzUNSKHI1zz4JFiSD7mp4brU/DXLXplJjnQnvsw==
-X-Received: by 2002:a7b:cb03:: with SMTP id u3mr6799650wmj.126.1570700815618;
-        Thu, 10 Oct 2019 02:46:55 -0700 (PDT)
-Received: from rudolphp (b2b-78-94-0-50.unitymedia.biz. [78.94.0.50])
-        by smtp.gmail.com with ESMTPSA id a2sm5156154wrp.11.2019.10.10.02.46.54
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yNx+8n36uJ0WGHxBC9aaDo5XpCmOIJvnh/6Zg8N6jFk=;
+        b=EByYsqZOBP8p3k/YhM7Suh/U+rj7hmTGv6SO1AsEO16pyc3P3tvYc1YH4F79kAOveO
+         8t+AhjUIFodlJCoQZbTp+SWYQWV9SD1c6oAod5iCIsUv2pbbi0/GZA9a4znxrAnYhcOx
+         2MjnQenZnQ+xFClbCXvc9jfRrR/RuAH74U6CWRxjwJXq93+kmKVdgkQ+lzmyjl0W5Ttm
+         sW/1d2bK9QQBR3wN43Eg3aYlS6JZJiGOPtZwAtSWC+sArP4cdaXvHfDyodJRwNeCF/zI
+         XXnmQb2IFJvdQtASz4rTldh2La0iM93/oZBhqQGRCa0i2mJTe20fl7crP7sGR2oCzg3Z
+         hptw==
+X-Gm-Message-State: APjAAAX8ieMKgYfXAJWOb1ejVD9p0X8MavM7McmzGti3HCP/v3vVuSBq
+        7Js9GpuUQllX7MNPLdfMs1oxtg==
+X-Google-Smtp-Source: APXvYqzFLiv9I4jhmsqgSvPdg5cd8l8SX5O0wt8s2GhMRL49oWG4zEBcs3xLTe0L/Aic6+31c8mwog==
+X-Received: by 2002:a1c:20d8:: with SMTP id g207mr6926175wmg.79.1570701011994;
+        Thu, 10 Oct 2019 02:50:11 -0700 (PDT)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id 207sm7788894wme.17.2019.10.10.02.50.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 02:46:54 -0700 (PDT)
-Message-ID: <6cfca8c34ccd51f12b4418e9a74d8961e32077ed.camel@9elements.com>
-Subject: Re: [PATCH 2/2] firmware: coreboot: Export active CBFS partition
-From:   patrick.rudolph@9elements.com
-To:     Julius Werner <jwerner@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ben Zhang <benzh@chromium.org>,
-        Filipe Brandenburger <filbranden@chromium.org>,
-        Duncan Laurie <dlaurie@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Samuel Holland <samuel@sholland.org>
-Date:   Thu, 10 Oct 2019 11:46:53 +0200
-In-Reply-To: <CAODwPW-mfySMQUejCwT+G45BtOysq_JCRQa8GwoYTkjY_yRwgA@mail.gmail.com>
-References: <20191008115342.28483-1-patrick.rudolph@9elements.com>
-         <20191008115342.28483-2-patrick.rudolph@9elements.com>
-         <5d9d120b.1c69fb81.b6201.1477@mx.google.com>
-         <CAODwPW-mfySMQUejCwT+G45BtOysq_JCRQa8GwoYTkjY_yRwgA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        Thu, 10 Oct 2019 02:50:11 -0700 (PDT)
+Date:   Thu, 10 Oct 2019 10:50:09 +0100
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Jason Wessel <jason.wessel@windriver.com>,
+        kgdb-bugreport@lists.sourceforge.net,
+        LKML <linux-kernel@vger.kernel.org>,
+        Patch Tracking <patches@linaro.org>
+Subject: Re: [PATCH v2 3/5] kdb: Remove special case logic from kdb_read()
+Message-ID: <20191010095009.25a5zvoykpmvtktq@holly.lan>
+References: <20191008132043.7966-1-daniel.thompson@linaro.org>
+ <20191008132043.7966-4-daniel.thompson@linaro.org>
+ <CAD=FV=W9Tdh2hPekzgSYnCqoTX_ms1GY-FXgnxd-uEW0SWbyuw@mail.gmail.com>
+ <20191009093049.tnz442bo54bzmzmz@holly.lan>
+ <CAD=FV=UuLYPpkJBWbkWoJzv97A6jxRFa4QmmD-0chSrsuT_bPg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=UuLYPpkJBWbkWoJzv97A6jxRFa4QmmD-0chSrsuT_bPg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-10-09 at 14:19 -0700, Julius Werner wrote:
-> > Somehow we've gotten /sys/firmware/log to be the coreboot log, and
-> > quite
-> > frankly that blows my mind that this path was accepted upstream.
-> > Userspace has to know it's running on coreboot firmware to know
-> > that
-> > /sys/firmware/log is actually the coreboot log.
+On Wed, Oct 09, 2019 at 10:28:36AM -0700, Doug Anderson wrote:
+> On Wed, Oct 9, 2019 at 2:30 AM Daniel Thompson
+> <daniel.thompson@linaro.org> wrote:
+> > > > @@ -741,7 +732,7 @@ int vkdb_printf(enum kdb_msgsrc src, const char *fmt, va_list ap)
+> > > >
+> > > >         /* check for having reached the LINES number of printed lines */
+> > > >         if (kdb_nextline >= linecount) {
+> > > > -               char buf1[16] = "";
+> > > > +               char ch;
+> > >
+> > > The type of "ch" should be the same as returned by kdb_getchar()?
+> > > Either "int" if you're keeping it "int" or "unsigned char"?
+> >
+> > Probably... although the assumption that kdb strings are char * is burnt
+> > in a lot of places so there will still be further tidy up needed.
 > 
-> Not really sure I understand your concern here? That's the generic
-> node for the log from the mainboard firmware, whatever it is. It was
-> originally added for non-coreboot firmware and that use is still
-> supported. If some other non-coreboot firmware wants to join in, it's
-> welcome to do so -- the interface is separated out enough to make it
-> easy to add more backends.
-> 
-> I do agree that if we want to add other, more coreboot-specific
-> nodes,
-> they should be explicitly namespaced.
-> 
+> True.  It doesn't matter a whole lot so if you think it's easier to
+> keep it as char that's OK too.
 
-I'll add a new namespace called 'coreboot'.
+After looking at it from a number of angles I think we can have this
+match the return type of kdb_getchar()... but the best way to achieve
+this is to make kdb_getchar() return a unqualified char.
 
-> > But I also wonder why this is being exposed by the kernel at all?
-> 
+That ends up consistent across the sub-system and shouldn't do any
+narrowing that wouldn't already have been happening inside kdb_read().
 
-It's difficult for userspace tools to find out how to access the flash
-and then to find the FMAP, which resides somewhere in it on 4KiB boundary.
-The "boot media params" usually give the offset to the FMAP from beginning
-of the flash, but tell nothing about how to access it.
 
-> I share Stephen's concern that I'm not sure this belongs in the
-> kernel
-> at all. There are existing ways for userspace to access this
-> information like the cbmem utility does... if you want it accessible
-> from fwupd, it could chain-call into cbmem or we could factor that
-> functionality out into a library. If you want to get away from using
-> /dev/mem for this, we could maybe add a driver that exports CBMEM or
-> coreboot table areas via sysfs... but then I think that should be a
-> generic driver which makes them all accessible in one go, rather than
-> having to add yet another driver whenever someone needs to parse
-> another coreboot table blob for some reason. We could design an
-> interface like /sys/firmware/coreboot/table/<tag> where every entry
-> in
-> the table gets exported as a binary file.
-
-I don't even consider using binaries that operate on /dev/mem.
-In my opinion CBMEM is something coreboot internal, the OS or userspace
-shouldn't even known about.
-
-> I think a specific sysfs driver only makes sense for things that are
-> human readable and that you'd actually expect a human to want to go
-> read directly, like the log. Maybe exporting FMAP entries one by one
-> like Stephen suggests could be such a case, but I doubt that there's
-> a
-> common enough need for that since there are plenty of existing ways
-> to
-> show FMAP entries from userspace (and if there was a generic
-> interface
-> like /sys/firmware/coreboot/table/37 to access it, we could just add
-> a
-> new flag to the dump_fmap utility to read it from there).
-
-I'll expose the coreboot tables using a sysfs driver, which then can be
-used by coreboot tools instead of accessing /dev/mem. As it holds the
-FMAP and "boot media params" that's all I need for now.
-
-The downside is that the userspace tools need to be keep in sync with
-the binary interface the coreboot tables are providing.
-
+Daniel.
