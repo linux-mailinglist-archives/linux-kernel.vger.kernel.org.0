@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E998ED239D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A141D2416
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:50:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387578AbfJJIoM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:44:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49220 "EHLO mail.kernel.org"
+        id S2388771AbfJJIs6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:48:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388871AbfJJIoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:44:09 -0400
+        id S2388745AbfJJIss (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:48:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9A33218AC;
-        Thu, 10 Oct 2019 08:44:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FF84218AC;
+        Thu, 10 Oct 2019 08:48:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697048;
-        bh=qv0kulbhoW1t2kZ9x0JtcOuqZ0b2dtS8hxMB6oS1WbQ=;
+        s=default; t=1570697326;
+        bh=T4FbpQKPhy3l01rC+LQL19O6vxjqjUvvNx+JZt0oe/w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vGdOZxCH3B+Gpo8E2+2+Iz0CXE2oN2A5javNDMaeDNx4Ces9N6RwunJY8DtlmCCJC
-         9LLLdjMHtxlUNlGCEJvi3wlZbrWag5F3/qZEUyiao7lJkfEq/0d+7q4TIQfoYen86i
-         zsHr2huV/2dD8R5oBBucZpV9K9F/k/h4Iyq4uerE=
+        b=DvVzJZlH6/y+iqSowPXJUyKW6711tKRPd8A/IO2hKjo9IljHTvX6ypUPBYo9+0QAU
+         qNpJl0h3ijLl6zJxeIM1sDL0KR2AWYa06ykcGhDPS2rVWkgVzWc1aLLJjScRrXkO3o
+         pmZPJzJKw49tyrdXgI/L2eGsE897D52X1KxCeAAE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Jiang <dave.jiang@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 148/148] libnvdimm: prevent nvdimm from requesting key when security is disabled
+        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH 4.19 102/114] arm64: ssbs: Dont treat CPUs with SSBS as unaffected by SSB
 Date:   Thu, 10 Oct 2019 10:36:49 +0200
-Message-Id: <20191010083621.227581588@linuxfoundation.org>
+Message-Id: <20191010083613.611304454@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
-References: <20191010083609.660878383@linuxfoundation.org>
+In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
+References: <20191010083544.711104709@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,46 +43,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dave Jiang <dave.jiang@intel.com>
+From: Will Deacon <will.deacon@arm.com>
 
-[ Upstream commit 674f31a352da5e9f621f757b9a89262f486533a0 ]
+[ Upstream commit eb337cdfcd5dd3b10522c2f34140a73a4c285c30 ]
 
-Current implementation attempts to request keys from the keyring even when
-security is not enabled. Change behavior so when security is disabled it
-will skip key request.
+SSBS provides a relatively cheap mitigation for SSB, but it is still a
+mitigation and its presence does not indicate that the CPU is unaffected
+by the vulnerability.
 
-Error messages seen when no keys are installed and libnvdimm is loaded:
+Tweak the mitigation logic so that we report the correct string in sysfs.
 
-    request-key[4598]: Cannot find command to construct key 661489677
-    request-key[4606]: Cannot find command to construct key 34713726
-
-Cc: stable@vger.kernel.org
-Fixes: 4c6926a23b76 ("acpi/nfit, libnvdimm: Add unlock of nvdimm support for Intel DIMMs")
-Signed-off-by: Dave Jiang <dave.jiang@intel.com>
-Link: https://lore.kernel.org/r/156934642272.30222.5230162488753445916.stgit@djiang5-desk3.ch.intel.com
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nvdimm/security.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/kernel/cpu_errata.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/nvdimm/security.c b/drivers/nvdimm/security.c
-index a570f2263a424..5b7ea93edb935 100644
---- a/drivers/nvdimm/security.c
-+++ b/drivers/nvdimm/security.c
-@@ -177,6 +177,10 @@ static int __nvdimm_security_unlock(struct nvdimm *nvdimm)
- 			|| nvdimm->sec.state < 0)
- 		return -EIO;
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -341,15 +341,17 @@ static bool has_ssbd_mitigation(const st
  
-+	/* No need to go further if security is disabled */
-+	if (nvdimm->sec.state == NVDIMM_SECURITY_DISABLED)
-+		return 0;
+ 	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
+ 
++	/* delay setting __ssb_safe until we get a firmware response */
++	if (is_midr_in_range_list(read_cpuid_id(), entry->midr_range_list))
++		this_cpu_safe = true;
 +
- 	if (test_bit(NDD_SECURITY_OVERWRITE, &nvdimm->flags)) {
- 		dev_dbg(dev, "Security operation in progress.\n");
- 		return -EBUSY;
--- 
-2.20.1
-
+ 	if (this_cpu_has_cap(ARM64_SSBS)) {
++		if (!this_cpu_safe)
++			__ssb_safe = false;
+ 		required = false;
+ 		goto out_printmsg;
+ 	}
+ 
+-	/* delay setting __ssb_safe until we get a firmware response */
+-	if (is_midr_in_range_list(read_cpuid_id(), entry->midr_range_list))
+-		this_cpu_safe = true;
+-
+ 	if (psci_ops.smccc_version == SMCCC_VERSION_1_0) {
+ 		ssbd_state = ARM64_SSBD_UNKNOWN;
+ 		if (!this_cpu_safe)
 
 
