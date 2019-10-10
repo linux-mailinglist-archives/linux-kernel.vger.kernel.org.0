@@ -2,97 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE75CD2EB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 18:38:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15FEDD2EB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 18:43:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726514AbfJJQiV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 12:38:21 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:41462 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbfJJQiV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 12:38:21 -0400
-Received: by mail-io1-f65.google.com with SMTP id n26so15108892ioj.8
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 09:38:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ph+cM1wqiv/orbsFFGXeEKlbXh51icoHvALffiLcYf0=;
-        b=MzCP3JEh+/LlXlx0pBedozlo0FoZD5596/N3hdLGFXDY7yle3Gbnuy0SOR+2tzLqTW
-         pJ7aFSAUD2tSeLCAS1SLIU1wJoZQJF33bVsjoTDQT19NMIzC/vf8WRVb7YA7dh79T3wO
-         NU8cD67l6lYlGFfxwNY3bs1mg5iGsqMN1C34M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ph+cM1wqiv/orbsFFGXeEKlbXh51icoHvALffiLcYf0=;
-        b=jKELnuxKbTM/aNGOWwtoH7AOD0YhbA78XyaNBJiueh7lhwbfk6+7jSVFJrsMa+ClNV
-         YVTz4wISCCo/EOQZXhiGB/ZBsMUYOVUCIZMcT/TUN0l1M2lHcL3XySGpgbm34cFMOiOR
-         vrxyTMh7CqdPcx74BkUbpoAiAxbUdfdaMTa0nc8ETo/0KgaWRMqq8ALCPitBFw+r+8Kv
-         l/3XguC5tuKW3KNdyfh5huuiTD72cXqF+h644QXa9yAUfy22D7aWkPH2mS1kN+psaoH/
-         k3mE9JxzpsrmHyZ24s74rP3h0ov8YlQVpkix8ZbMLRhJxfIGLLJjzsQxOMqnvi2s2jdz
-         Notg==
-X-Gm-Message-State: APjAAAX5QM1d2l5vvNyvvhjkJMMhD2RUh1v0QSudULddaIoGVR+66NGQ
-        lk8BQP01g712mYSkSjv2OcxkIzMhhRM=
-X-Google-Smtp-Source: APXvYqzmK8JBKD+E+Ty9wyra12u8uq2W95ROdDI6/mP5v6fLutcTsEz7kZ9TlfVS9GFdT00F3JARog==
-X-Received: by 2002:a02:893:: with SMTP id 141mr11136425jac.36.1570725499971;
-        Thu, 10 Oct 2019 09:38:19 -0700 (PDT)
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com. [209.85.166.47])
-        by smtp.gmail.com with ESMTPSA id a14sm3557914ioo.85.2019.10.10.09.38.18
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2019 09:38:19 -0700 (PDT)
-Received: by mail-io1-f47.google.com with SMTP id b19so15191283iob.4
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 09:38:18 -0700 (PDT)
-X-Received: by 2002:a02:90c7:: with SMTP id c7mr11362682jag.12.1570725498188;
- Thu, 10 Oct 2019 09:38:18 -0700 (PDT)
+        id S1726244AbfJJQnR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 12:43:17 -0400
+Received: from foss.arm.com ([217.140.110.172]:35462 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725901AbfJJQnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 12:43:17 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D4C4C28;
+        Thu, 10 Oct 2019 09:43:16 -0700 (PDT)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.49])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 82A993F71A;
+        Thu, 10 Oct 2019 09:43:14 -0700 (PDT)
+Date:   Thu, 10 Oct 2019 17:43:12 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Jia He <justin.he@arm.com>
+Cc:     Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Suzuki Poulose <Suzuki.Poulose@arm.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>, hejianet@gmail.com,
+        Kaly Xin <Kaly.Xin@arm.com>, nd@arm.com
+Subject: Re: [PATCH v11 1/4] arm64: cpufeature: introduce helper
+ cpu_has_hw_af()
+Message-ID: <20191010164312.GB40923@arrakis.emea.arm.com>
+References: <20191009084246.123354-1-justin.he@arm.com>
+ <20191009084246.123354-2-justin.he@arm.com>
 MIME-Version: 1.0
-References: <20190925200220.157670-1-dianders@chromium.org>
- <20190925125811.v3.3.Id33c06cbd1516b49820faccd80da01c7c4bf15c7@changeid>
- <20191007135459.lj3qc2tqzcv3xcia@holly.lan> <CAD=FV=Vqj9JqGCQX_Foij8EkFtSy8r2wB3uoXNae6PECwNV+CQ@mail.gmail.com>
- <20191010150735.dhrj3pbjgmjrdpwr@holly.lan>
-In-Reply-To: <20191010150735.dhrj3pbjgmjrdpwr@holly.lan>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 10 Oct 2019 09:38:04 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VuOVpvEB60-prMxuPyjcrJ-9O2hyaLKf86c-r9BVocdg@mail.gmail.com>
-Message-ID: <CAD=FV=VuOVpvEB60-prMxuPyjcrJ-9O2hyaLKf86c-r9BVocdg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/4] kdb: Fix "btc <cpu>" crash if the CPU didn't round up
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        kgdb-bugreport@lists.sourceforge.net,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191009084246.123354-2-justin.he@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, Oct 09, 2019 at 04:42:43PM +0800, Jia He wrote:
+> We unconditionally set the HW_AFDBM capability and only enable it on
+> CPUs which really have the feature. But sometimes we need to know
+> whether this cpu has the capability of HW AF. So decouple AF from
+> DBM by a new helper cpu_has_hw_af().
+> 
+> Signed-off-by: Jia He <justin.he@arm.com>
+> Suggested-by: Suzuki Poulose <Suzuki.Poulose@arm.com>
+> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 
-On Thu, Oct 10, 2019 at 8:07 AM Daniel Thompson
-<daniel.thompson@linaro.org> wrote:
-> > Reading through other control flows of the various backtrace commands,
-> > it looks like it is intentional to leave the current task changed when
-> > you explicitly do an action on that task (or a CPU).
-> >
-> > Actually, though, it wasn't clear to me that it ever made sense for
-> > any of these commands to implicitly leave the current task changed.
-> > If you agree, I can send a follow-up patch to change this behavior.
->
-> Personally I don't like implicit changes of state but I might need a bit
-> more thinking to agree (or disagree ;-) ).
+I don't think I reviewed this version of the patch.
 
-I can post up a followup after this series lands and change it.  I
-have a feeling nobody is relying on the old behavior and thus nobody
-will notice but it would be nice to get this cleaner.
+> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+> index 9cde5d2e768f..1a95396ea5c8 100644
+> --- a/arch/arm64/include/asm/cpufeature.h
+> +++ b/arch/arm64/include/asm/cpufeature.h
+> @@ -659,6 +659,20 @@ static inline u32 id_aa64mmfr0_parange_to_phys_shift(int parange)
+>  	default: return CONFIG_ARM64_PA_BITS;
+>  	}
+>  }
+> +
+> +/* Check whether hardware update of the Access flag is supported */
+> +static inline bool cpu_has_hw_af(void)
+> +{
+> +	if (IS_ENABLED(CONFIG_ARM64_HW_AFDBM)) {
 
-BTW: if you want me to spin to fix the commit message typo that Will
-found or add his Ack to the series, let me know.  Otherwise I'll
-assume that the typo can be fixed and Acks added when the patch is
-applied.
+Please just return early here to avoid unnecessary indentation:
 
--Doug
+	if (!IS_ENABLED(CONFIG_ARM64_HW_AFDBM))
+		return false;
+
+> +		u64 mmfr1 = read_cpuid(ID_AA64MMFR1_EL1);
+> +
+> +		return !!cpuid_feature_extract_unsigned_field(mmfr1,
+> +						ID_AA64MMFR1_HADBS_SHIFT);
+
+No need for !!, the return type is a bool already.
+
+Anyway, apart from these nitpicks, the patch is fine you can keep my
+reviewed-by.
+
+If later we noticed a potential performance issue on this path, we can
+turn it into a static label as with other CPU features.
+
+-- 
+Catalin
