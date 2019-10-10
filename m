@@ -2,104 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4C3BD29F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 14:48:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FE6DD29FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 14:50:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387955AbfJJMsB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 08:48:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50332 "EHLO mail.kernel.org"
+        id S2387545AbfJJMuO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 08:50:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733288AbfJJMsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 08:48:00 -0400
-Received: from localhost (173-25-83-245.client.mchsi.com [173.25.83.245])
+        id S1733171AbfJJMuO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 08:50:14 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDE66206B6;
-        Thu, 10 Oct 2019 12:47:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570711680;
-        bh=OcutfbH2J4Mrok55YXxQjXQOL7Vow7GNs62fKAtdayw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ACGbf5WV9FgMZWWHlRDKH+X3xK5rYuizRPwXQReJAkUn1VC9XxSGgBBFZLhyw2Pee
-         htQMV0v/XpiuMKE6r0ZvUpkxAH4YVgA+CrgGtA7IO4oOS66UhYRcARylrcNteIa/nC
-         /eniu9haa7GStSNv0P3F4mKKBcA3E3sWfG9UDKw0=
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     linux-pci@vger.kernel.org
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Mario Limonciello <Mario.Limonciello@dell.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Rajat Jain <rajatja@google.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 1/1] PCI/ASPM: Remove pcie_aspm_enabled() unnecessary locking
-Date:   Thu, 10 Oct 2019 07:47:46 -0500
-Message-Id: <20191010124746.2882-2-helgaas@kernel.org>
-X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
-In-Reply-To: <20191010124746.2882-1-helgaas@kernel.org>
-References: <20191010124746.2882-1-helgaas@kernel.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id 767012067B;
+        Thu, 10 Oct 2019 12:50:13 +0000 (UTC)
+Date:   Thu, 10 Oct 2019 08:50:11 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, Jessica Yu <jeyu@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH] ftrace/module: Allow ftrace to make only loaded module
+ text read-write
+Message-ID: <20191010085011.3734d87b@gandalf.local.home>
+In-Reply-To: <20191010093650.GJ2359@hirez.programming.kicks-ass.net>
+References: <20191009223638.60b78727@oasis.local.home>
+        <20191010073121.GN2311@hirez.programming.kicks-ass.net>
+        <20191010093329.GI2359@hirez.programming.kicks-ass.net>
+        <20191010093650.GJ2359@hirez.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On Thu, 10 Oct 2019 11:36:50 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-The lifetime of the link_state structure (bridge->link_state) is not the
-same as the lifetime of "bridge" itself.  The link_state is allocated by
-pcie_aspm_init_link_state() after children of the bridge have been
-enumerated, and it is deallocated by pcie_aspm_exit_link_state() after all
-children of the bridge (but not the bridge itself) have been removed.
+> > > > The reason is that ftrace_module_enable() is called after the module
+> > > > has set its text to read-only. There's subtle reasons that this needs
+> > > > to be called afterward, and we need to continue to do so.  
+> > > 
+> > > Please explain.  
 
-Previously pcie_aspm_enabled() acquired aspm_lock to ensure that
-link_state was not deallocated while we're looking at it.  But the fact
-that the caller of pcie_aspm_enabled() holds a reference to @pdev means
-there's always at least one child of the bridge, which means link_state
-can't be deallocated.
+I knew you were going to say that ;-)
 
-Remove the unnecessary locking in pcie_aspm_enabled().
+I was too tired last night to go back and see all the issues.
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/pcie/aspm.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+> > 
+> > I don't see any reason what so ever..
+> > 
+> > load_module()
+> >   ...
+> >   complete_formation()
+> >     mutex_lock(&module_mutex);
+> >     ...
+> >     module_enable_ro();
+> >     module_enable_nx();
+> >     module_enable_x();
+> > 
+> >     mod->state = MODULE_STATE_COMING;
+> >     mutex_unlock(&module_mutex);
+> > 
+> >   prepare_coming_module()
+> >     ftrace_module_enable();
+> >     ...
+> > 
+> > IOW, we're doing ftrace_module_enable() immediately after we flip it
+> > RO+X. There is nothing in between that we can possibly rely on.
 
-diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-index 652ef23bba35..f5c7138a34aa 100644
---- a/drivers/pci/pcie/aspm.c
-+++ b/drivers/pci/pcie/aspm.c
-@@ -1172,20 +1172,20 @@ module_param_call(policy, pcie_aspm_set_policy, pcie_aspm_get_policy,
- /**
-  * pcie_aspm_enabled - Check if PCIe ASPM has been enabled for a device.
-  * @pdev: Target device.
-+ *
-+ * Relies on the upstream bridge's link_state being valid.  The link_state
-+ * is deallocated only when the last child of the bridge (i.e., @pdev or a
-+ * sibling) is removed, and the caller should be holding a reference to
-+ * @pdev, so this should be safe.
-  */
- bool pcie_aspm_enabled(struct pci_dev *pdev)
- {
- 	struct pci_dev *bridge = pci_upstream_bridge(pdev);
--	bool ret;
- 
- 	if (!bridge)
- 		return false;
- 
--	mutex_lock(&aspm_lock);
--	ret = bridge->link_state ? !!bridge->link_state->aspm_enabled : false;
--	mutex_unlock(&aspm_lock);
--
--	return ret;
-+	return bridge->link_state ? !!bridge->link_state->aspm_enabled : false;
- }
- EXPORT_SYMBOL_GPL(pcie_aspm_enabled);
- 
--- 
-2.23.0.581.g78d2f28ef7-goog
+One reason for the above is the module_mutex. The lock order is that
+module_mutex may be called inside the ftrace_lock, but not vice-versa.
 
+The ftrace_module_init() was called due to the setting of all modules
+rw when registering a ftrace function while a module was being loaded.
+We may have eliminated this issue on x86 but other archs still call
+set_all_modules_text_rw/ro() when enabling function tracing. Thus, the
+race will still exist there.
+
+See commit a949ae560a511 for the description of it.
+
+After implementing that commit, I found it a bit cleaner to handle
+modules in general by breaking it up into setting nops first, and then
+determining if we need to trace that module.
+
+
+> > 
+> > I was going to put:
+> > 
+> >   blocking_notifier_call_chain(&module_notify_list,
+> > 			       MODULE_STATE_UNFORMED, mod);
+> > 
+> > right before module_enable_ro(), in complete_formation(), for jump_label
+> > and static_call. It looks like ftrace (and possibly klp) want that too.  
+> 
+> Also, you already have ftrace_module_init() right before that. The only
+> thing inbetween ftrace_module_init() and ftrace_module_enable() is
+> verify_exported_symbols() and module_bug_finalize().
+
+Yep, see commit a949ae560a511 about that too.
+
+> 
+> Do you really need that for patching stuff?
+
+Because arm and nds32 still use the set_all_modules_text_rw(), this
+patch would at least remove that for all archs, and only modify the
+text of a module that isn't running yet. Which I thought was a plus.
+
+Just need to be careful about other archs, or we need to at least make
+sure they change too.
+
+-- Steve
