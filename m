@@ -2,130 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30C28D328C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:43:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAF13D329F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:43:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727359AbfJJUjJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 16:39:09 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44353 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726132AbfJJUjJ (ORCPT
+        id S1727255AbfJJUnT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 16:43:19 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:54944 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726076AbfJJUnT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 16:39:09 -0400
-Received: by mail-pg1-f193.google.com with SMTP id e10so403926pgd.11
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 13:39:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=S6k3ViNzJ7YzSO4Rk6x02I91FS8Fe+dk8MkxjwLqK8Q=;
-        b=H3tKHjAt+i0+CQTvoADnXR7F0rxl5YFxMCX0FbptG8IPZY7dVhLhq+z4nTwr3xlJsm
-         NZCxMoKJQ66Pdcz8X9EMKBKlUFSL7NpNQB19aZgVH1zs9Tid11Hci9H3uXP9wcfKvMVB
-         l1buCrnseYmvSt9KY1GGS9m7ffX+mHlOyjQV8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=S6k3ViNzJ7YzSO4Rk6x02I91FS8Fe+dk8MkxjwLqK8Q=;
-        b=fBguylBGtlVLj5pw+KK4iDYHWA670LHxHYtZoUuJyp5u98x7eDUDmDZDQ3Fqzvfk5H
-         ATq6QANZMCR4oCMzK+uPsP0BGGq6kF8k8K3NG36byYqJh5NIzMLwrxKXrzu80jJKG0Pi
-         2YsW9tA85LFqjuQX9DMwbqt6BLZHBBRAsRIxPJD+4DHA6X+tgUmnl/s1KTDtA/SKENJg
-         0HBpfpHu6tjofikl+OR3XKZQfFX4yc45zWXo4PpdUvWTpfdl7+02hmCwF4WbqLljpuWx
-         oYm9p/gYHzux1SlKktVwlTGBdFm/FrN20F5fgXw3IqrOE3mr+fPnyaXBAYtu33/CEEJ5
-         FT4w==
-X-Gm-Message-State: APjAAAW9BWmrMSOyy3cBlWEO42zySP//Ez1JfPFJO2P28dAjnakANkC4
-        NxIGy5WO9+JEQ5ncom87tBgD+A==
-X-Google-Smtp-Source: APXvYqy5p9hU263vrnIMDOktaRZ6ou916sxO2v+ayu3IHxX6tjjtY4ecaAh+JfCCcvfW9uZFmT1dnA==
-X-Received: by 2002:a63:5516:: with SMTP id j22mr12913251pgb.201.1570739948545;
-        Thu, 10 Oct 2019 13:39:08 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id f65sm6116366pgc.90.2019.10.10.13.39.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 13:39:07 -0700 (PDT)
-Date:   Thu, 10 Oct 2019 13:39:06 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Pavel Machek <pavel@ucw.cz>,
-        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Shawn Landden <shawn@git.icu>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Miller <davem@davemloft.net>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Subject: Re: [PATCH 4/4] scripts/cvt_style.pl: Tool to reformat sources in
- various ways
-Message-ID: <201910101338.59F36A33@keescook>
-References: <cover.1570292505.git.joe@perches.com>
- <4a904777303fbaea75fe0875b7984c33824f4b68.1570292505.git.joe@perches.com>
- <CANiq72nwDgMgXNczW=JRANzH72=f0ukwVoPaud1d7J4YQLQX=w@mail.gmail.com>
- <52794b248ba13e88ab4c30c9b6ea55a7be30df5d.camel@perches.com>
+        Thu, 10 Oct 2019 16:43:19 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: tonyk)
+        with ESMTPSA id 653C128D353
+Subject: Re: [PATCH v2 1/1] blk-mq: fill header with kernel-doc
+To:     Bart Van Assche <bvanassche@acm.org>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     axboe@kernel.dk, kernel@collabora.com, krisman@collabora.com
+References: <20191008001416.12656-1-andrealmeid@collabora.com>
+ <16a10539-c0a0-e411-8f9a-1f0830579986@acm.org>
+From:   =?UTF-8?Q?Andr=c3=a9_Almeida?= <andrealmeid@collabora.com>
+Message-ID: <2408cae2-94bf-0b1e-9a87-e4303f44fd68@collabora.com>
+Date:   Thu, 10 Oct 2019 17:41:56 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <52794b248ba13e88ab4c30c9b6ea55a7be30df5d.camel@perches.com>
+In-Reply-To: <16a10539-c0a0-e411-8f9a-1f0830579986@acm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 05, 2019 at 11:35:42PM -0700, Joe Perches wrote:
-> On Sat, 2019-10-05 at 19:31 +0200, Miguel Ojeda wrote:
-> > Hi Joe,
-> 
-> Hello.
-> 
-> > On Sat, Oct 5, 2019 at 6:47 PM Joe Perches <joe@perches.com> wrote:
-> []
-> > > As for the commit itself: while I am sure this tool is very useful
-> > (and certainly you put a *lot* of effort into this tool), I don't see
-> > how it is related to the fallthrough remapping (at least the
-> > non-fallthrough parts).
-> 
-> It's not particularly related.
-> 
-> It's a 10 year old script that I just extended because it's
-> convenient for me.
-> 
-> I think I first posted it in 2011, but I started it as a
-> complement to checkpatch in 2010.
-> 
-> https://lwn.net/Articles/380161/
-> 
-> Doing the regexes for the fallthrough conversions took me
-> a couple hours.
-> 
-> > Also, we should consider whether we want more tools like this now or
-> > simply put the efforts into moving to clang-format.
-> 
-> I think clang-format could not do this sort of conversion.
-> Nor could coccinelle or checkpatch.
-> 
-> Anyway, it's not really necessary for this particular patch
-> to be applied, but it's a convenient way to show the script
-> has the capability to do fallthrough comment conversions.
-> 
-> I think it does conversions fairly reasonably but likely
-> some files could not compile without adding an #include
-> like:
-> 
-> #include <linux/compiler.h>
+Hello Bart,
 
-I think this is a nice tool to add -- at the very least it serves as
-infrastructure for future similar conversions. And small cleanups can be
-generated from it for people looking to clean up subsystems, etc.
+On 10/8/19 3:12 PM, Bart Van Assche wrote:
+> On 10/7/19 5:14 PM, André Almeida wrote:
+...
+> 
+> Bart.
 
--- 
-Kees Cook
+Thanks you for your extensive and detailed feedback. I'm applying those
+changes for v3.
+
+André
