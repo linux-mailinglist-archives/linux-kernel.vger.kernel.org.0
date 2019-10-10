@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BC91D230F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:39:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AB78D2311
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:39:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387820AbfJJIjQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:39:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42486 "EHLO mail.kernel.org"
+        id S2387843AbfJJIjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:39:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387796AbfJJIjM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:39:12 -0400
+        id S2387796AbfJJIjR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:39:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C957C21920;
-        Thu, 10 Oct 2019 08:39:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2636621920;
+        Thu, 10 Oct 2019 08:39:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570696751;
-        bh=1ubGTSIf4g5yWehZPwsLb5vP6YV0ff65tPT/8BFHHbU=;
+        s=default; t=1570696756;
+        bh=VRTYunhUV9afr/tTCD6DJ8MgAzp+H1ZkWoEb2EMleVQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b2urd2PKW193lWRyIMegw+4DaABkcFmjg+df6fFMCuqcNPt7swb2ysPbFjVdSMbTD
-         i/A6jpus30hCRU0GftPoAby49BJHG52sriEut4rTL3dyYP7hIkDgb+AcF1AHl/g7BK
-         SuEfBYZ3q6cWRUmtEUa0z1qn8+A//OXOrbjbmzSk=
+        b=ZjkaaOlUfO48vj4nCCNmMprqCG0tflfntR5jrhNfkth0esSEqm8N7BFFpsGX+ppYm
+         ct6ExSegNWp0x3Aj5EBAs/lJGhFoRrs20go9qIhk754k2eMUblBn44It29E5xM84vK
+         bRX63s+8MjEY6nMjotph4anS4llnO17hHFJ/eTNc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 5.3 032/148] powerpc/book3s64/mm: Dont do tlbie fixup for some hardware revisions
-Date:   Thu, 10 Oct 2019 10:34:53 +0200
-Message-Id: <20191010083613.087192900@linuxfoundation.org>
+        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 5.3 042/148] crypto: cavium/zip - Add missing single_release()
+Date:   Thu, 10 Oct 2019 10:35:03 +0200
+Message-Id: <20191010083613.686679057@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
 References: <20191010083609.660878383@linuxfoundation.org>
@@ -44,81 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-commit 677733e296b5c7a37c47da391fc70a43dc40bd67 upstream.
+commit c552ffb5c93d9d65aaf34f5f001c4e7e8484ced1 upstream.
 
-The store ordering vs tlbie issue mentioned in commit
-a5d4b5891c2f ("powerpc/mm: Fixup tlbie vs store ordering issue on
-POWER9") is fixed for Nimbus 2.3 and Cumulus 1.3 revisions. We don't
-need to apply the fixup if we are running on them
+When using single_open() for opening, single_release() should be
+used instead of seq_release(), otherwise there is a memory leak.
 
-We can only do this on PowerNV. On pseries guest with KVM we still
-don't support redoing the feature fixup after migration. So we should
-be enabling all the workarounds needed, because whe can possibly
-migrate between DD 2.3 and DD 2.2
-
-Fixes: a5d4b5891c2f ("powerpc/mm: Fixup tlbie vs store ordering issue on POWER9")
-Cc: stable@vger.kernel.org # v4.16+
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20190924035254.24612-1-aneesh.kumar@linux.ibm.com
+Fixes: 09ae5d37e093 ("crypto: zip - Add Compression/Decompression statistics")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/dt_cpu_ftrs.c |   30 ++++++++++++++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
+ drivers/crypto/cavium/zip/zip_main.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/powerpc/kernel/dt_cpu_ftrs.c
-+++ b/arch/powerpc/kernel/dt_cpu_ftrs.c
-@@ -691,9 +691,35 @@ static bool __init cpufeatures_process_f
- 	return true;
- }
+--- a/drivers/crypto/cavium/zip/zip_main.c
++++ b/drivers/crypto/cavium/zip/zip_main.c
+@@ -593,6 +593,7 @@ static const struct file_operations zip_
+ 	.owner = THIS_MODULE,
+ 	.open  = zip_stats_open,
+ 	.read  = seq_read,
++	.release = single_release,
+ };
  
-+/*
-+ * Handle POWER9 broadcast tlbie invalidation issue using
-+ * cpu feature flag.
-+ */
-+static __init void update_tlbie_feature_flag(unsigned long pvr)
-+{
-+	if (PVR_VER(pvr) == PVR_POWER9) {
-+		/*
-+		 * Set the tlbie feature flag for anything below
-+		 * Nimbus DD 2.3 and Cumulus DD 1.3
-+		 */
-+		if ((pvr & 0xe000) == 0) {
-+			/* Nimbus */
-+			if ((pvr & 0xfff) < 0x203)
-+				cur_cpu_spec->cpu_features |= CPU_FTR_P9_TLBIE_BUG;
-+		} else if ((pvr & 0xc000) == 0) {
-+			/* Cumulus */
-+			if ((pvr & 0xfff) < 0x103)
-+				cur_cpu_spec->cpu_features |= CPU_FTR_P9_TLBIE_BUG;
-+		} else {
-+			WARN_ONCE(1, "Unknown PVR");
-+			cur_cpu_spec->cpu_features |= CPU_FTR_P9_TLBIE_BUG;
-+		}
-+	}
-+}
-+
- static __init void cpufeatures_cpu_quirks(void)
- {
--	int version = mfspr(SPRN_PVR);
-+	unsigned long version = mfspr(SPRN_PVR);
+ static int zip_clear_open(struct inode *inode, struct file *file)
+@@ -604,6 +605,7 @@ static const struct file_operations zip_
+ 	.owner = THIS_MODULE,
+ 	.open  = zip_clear_open,
+ 	.read  = seq_read,
++	.release = single_release,
+ };
  
- 	/*
- 	 * Not all quirks can be derived from the cpufeatures device tree.
-@@ -712,10 +738,10 @@ static __init void cpufeatures_cpu_quirk
+ static int zip_regs_open(struct inode *inode, struct file *file)
+@@ -615,6 +617,7 @@ static const struct file_operations zip_
+ 	.owner = THIS_MODULE,
+ 	.open  = zip_regs_open,
+ 	.read  = seq_read,
++	.release = single_release,
+ };
  
- 	if ((version & 0xffff0000) == 0x004e0000) {
- 		cur_cpu_spec->cpu_features &= ~(CPU_FTR_DAWR);
--		cur_cpu_spec->cpu_features |= CPU_FTR_P9_TLBIE_BUG;
- 		cur_cpu_spec->cpu_features |= CPU_FTR_P9_TIDR;
- 	}
- 
-+	update_tlbie_feature_flag(version);
- 	/*
- 	 * PKEY was not in the initial base or feature node
- 	 * specification, but it should become optional in the next
+ /* Root directory for thunderx_zip debugfs entry */
 
 
