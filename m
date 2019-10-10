@@ -2,159 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7338D2CF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 16:53:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B34AD2CFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 16:53:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbfJJOxB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 10:53:01 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54816 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbfJJOxB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 10:53:01 -0400
-Received: by mail-wm1-f65.google.com with SMTP id p7so7282471wmp.4
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 07:52:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ogX19xTF57aFe3oLSZTYbHqPylf65sw/BnbPhbpyza4=;
-        b=YLVYojmZHRibGzAKjxCtdNVt6hLytCZAIUouc12/g7OHFSJVb8NVOYj0YBUxQHe3kI
-         snTuCRqGWF2n7c0MYnfyNT3T1rcH7cza8Rg1hQ9xZacfZC4JT5OQtX3dfhuO0cLO8V9T
-         vtG3hxajSr8lDjXfWWjjEvoi7qF+niiC/x/xzUGDiRCYnUu6hg+U/gsY53mgR57oTMoR
-         rV5j+5o1JU0Eox4Q19cutYZyrt6eR3gBSghIdsf8DyVUdNKysyaUl51ymtl6yd+2uumM
-         tcbt5uN4ohwUg+NkP0U3QTW3eXTqk9Ubz+YR/9T2k1qrCG6yX3zDJ+ZFjNtpiXClpgiH
-         OVcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ogX19xTF57aFe3oLSZTYbHqPylf65sw/BnbPhbpyza4=;
-        b=OL6KwMR5UQIuACRLUYB+yV0SiLySyqjqlyK3hBUI5Hs4fviU3EFWXjMA6og0ccvRts
-         UiOx+e4whXh8RcDQFSEwlsijMd0TT5Z/QLlsa3FY2iiLqgH1gcF1sEKLmolIgtf4NlGN
-         pBRPjpkhcnuBc5CYzYvXiozAJYGKvZqLVQQ8z3QqOjKmXTo8QzNLpp64/l0Xu0KF/R77
-         l8wG8sIbnAod015uhdTtCWyLBhvUrKKYsR9HVtqiD+q111Wcn7o6G9qhbWH4BPAiWbnO
-         O8Yh1M1E3KyTgi76nIRVkIHPAW02vRW0wMUJGzzHlC6Bi/2eIDPjA7mAhvEZzIlu3LAE
-         fh2g==
-X-Gm-Message-State: APjAAAVv9OOoXUeC/wgIJSxIVbetL+d02WMgVpKC0ix7VW1QyDhaypKG
-        j1Ik7itbf4lQ1/FMWWBIuFHMFg==
-X-Google-Smtp-Source: APXvYqy+Bih+cBnFUqfiyHx+rF6V6v2BcFAwwwBD4aNU4yH5OgKLOSMFASKwGYJnqnhU8L4hJZeIzQ==
-X-Received: by 2002:a05:600c:2481:: with SMTP id 1mr7649336wms.98.1570719178563;
-        Thu, 10 Oct 2019 07:52:58 -0700 (PDT)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id h17sm8308000wme.6.2019.10.10.07.52.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Oct 2019 07:52:57 -0700 (PDT)
-Subject: Re: [alsa-devel] [PATCH v2 3/5] ASoC: core: add support to
- snd_soc_dai_get_sdw_stream()
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
-        bgoswami@codeaurora.org, linux-kernel@vger.kernel.org,
-        plai@codeaurora.org, robh+dt@kernel.org, lgirdwood@gmail.com,
-        Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>,
-        spapothi@codeaurora.org
-References: <20190813191827.GI5093@sirena.co.uk>
- <cc360858-571a-6a46-1789-1020bcbe4bca@linux.intel.com>
- <20190813195804.GL5093@sirena.co.uk>
- <20190814041142.GU12733@vkoul-mobl.Dlink>
- <99d35a9d-cbd8-f0da-4701-92ef650afe5a@linux.intel.com>
- <5e08f822-3507-6c69-5d83-4ce2a9f5c04f@linaro.org>
- <53bb3105-8e85-a972-fce8-a7911ae4d461@linux.intel.com>
- <95870089-25da-11ea-19fd-0504daa98994@linaro.org>
- <2326a155-332e-fda0-b7a2-b48f348e1911@linux.intel.com>
- <34e4cde8-f2e5-0943-115a-651d86f87c1a@linaro.org>
- <20191010120337.GB31391@ediswmail.ad.cirrus.com>
- <22eff3aa-dfd6-1ee5-8f22-2af492286053@linux.intel.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <e671930b-645a-7ee3-6926-eea39626c0a3@linaro.org>
-Date:   Thu, 10 Oct 2019 15:52:56 +0100
+        id S1726613AbfJJOxZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 10:53:25 -0400
+Received: from foss.arm.com ([217.140.110.172]:32836 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726473AbfJJOxY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 10:53:24 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD3971000;
+        Thu, 10 Oct 2019 07:53:23 -0700 (PDT)
+Received: from [192.168.0.9] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B74B23F6C4;
+        Thu, 10 Oct 2019 07:53:21 -0700 (PDT)
+Subject: Re: [RFC v5 4/6] sched/fair: Tune task wake-up logic to pack small
+ background tasks on fewer cores
+To:     Parth Shah <parth@linux.ibm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Doug Smythies <dsmythies@telus.net>,
+        Quentin Perret <qperret@qperret.net>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+References: <20191007083051.4820-1-parth@linux.ibm.com>
+ <20191007083051.4820-5-parth@linux.ibm.com>
+ <CAKfTPtCgoTJXxbYyza1W55ayw9QeM7fue2e91Xpt804sL9GQWA@mail.gmail.com>
+ <80bb34ec-6358-f4dc-d20d-cde6c9d7e197@linux.ibm.com>
+ <d55c593d-af8e-c8ba-cc0e-c9917df5d593@arm.com>
+ <86dc25e4-9f19-627f-9581-d74608b7f20c@linux.ibm.com>
+ <eef32b9e-1f24-e8a9-cd91-dcc6546a636f@arm.com>
+ <0ee8052e-e7fb-83cb-bf70-3c4855ccca8e@linux.ibm.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <6a620fc4-daf9-dd02-7a81-3d9364bfe162@arm.com>
+Date:   Thu, 10 Oct 2019 16:53:12 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <22eff3aa-dfd6-1ee5-8f22-2af492286053@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <0ee8052e-e7fb-83cb-bf70-3c4855ccca8e@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 10/10/2019 15:01, Pierre-Louis Bossart wrote:
+On 09/10/2019 19:02, Parth Shah wrote:
 > 
->>>> It's been a while since this thread started, and I still don't
->>>> quite get the concepts or logic.
->>>>
->>>> First, I don't understand what the problem with "aux" devices is.
->>>> All the SoundWire stuff is based on the concept of DAI, so I guess
->>>> I am
->>>
->>> That is the actual problem! Some aux devices does not have dais.
->>>
+> 
+> On 10/9/19 7:56 PM, Dietmar Eggemann wrote:
+>> On 09/10/2019 10:57, Parth Shah wrote:
 >>
->> Usually aux devices are used for things like analog amplifiers that
->> clearly don't have a digital interface, thus it really makes no sense
->> to have a DAI link connecting them. So I guess my question here
->> would be what is the thinking on making the "smart amplifier" dailess?
->> It feels like having a CODEC to CODEC DAI between the CODEC and
->> the AMP would be a more obvious way to connect the two devices
->> and would presumably avoid the issues being discussed around the
->> patch.
-> 
-> Ah, now I get it, I missed the point about not having DAIs for the 
-> amplifier.
-> 
-> I will second Charles' point, the code you have in the machine driver at 
+>> [...]
+>>
+>>>> On 07/10/2019 18:53, Parth Shah wrote:
+>>>>>
+>>>>>
+>>>>> On 10/7/19 5:49 PM, Vincent Guittot wrote:
+>>>>>> On Mon, 7 Oct 2019 at 10:31, Parth Shah <parth@linux.ibm.com> wrote:
 
-I agree with Charles,
+[...]
 
-WSA8810/WSA8815 is connected via SoundWire digital interface, so I can 
-try to model this amplifier with dais and see how it ends up.
+> ok. so does that mean TurboSched can still do some good in such systems as
+> well ?
+> I mean save energy even when rd->overutilized==1 by not waking user
+> classified bg tasks on idle core.
 
-I still need to figure out prefixing multiple instances of this 
-Amplifier controls with "Left" and "Right"
+I wouldn't say it is impossible but how likely would it be?
 
-> [1] gets a SoundWire stream context from the SLIMbus codec dai. It's a 
-> bit odd to mix layers this way.
+The Android runtime already classifies its tasks into groups such as
+background, foreground, top-app, etc. It uses existing infrastructure
+like cpusets, taskgroups, util_clamp (or its out-of-tree predecessor
+schedtune) as well as EAS/Energy Model on asymmetric CPU capacity
+systems to map them (differently) onto the CPU topology to achieve the
+best possible performance/energy consumption trade-off.
 
-Yep we have a very mixed setup on this SoC.
+Moreover, Google and Arm are keen getting the concept of 'latency nice'
+upstream so we can map Android Common Kernel's 'prefer idle' feature
+into the mainline energy-aware wu path.
 
-So it looks like this.
-Main WCD934X Codec which is connected via SLIMBus which has SoundWire 
-Controller block along with other analog + digital blocks.
-Again the SoundWire Controller from that WCD934X codec is wired up to 
-WSA881X Smart speaker amplifiers.
-
-
-> 
-> 
-> And if I look at the code below, taken from [1], if you have more than 
-> one codec, then your code looks problematic: data->sruntime would be 
-> overriden and you'd use the info from the last codec dai on the dailink...
-
-This code has been written very much specific to DB845c which has only 
-one codec. But I agree with your point.
-
---srini
-
-> 
-> case SLIMBUS_0_RX...SLIMBUS_6_TX:
->    for (i = 0 ; i < dai_link->num_codecs; i++) {
->      [snip]
->      data->sruntime[cpu_dai->id] =
->      snd_soc_dai_get_sdw_stream(rtd->codec_dais[i], 0); << same 
-> destination for multiple codec_dais...
-> 
-> If you keep the amp dai-less, then the stream concept should be somehow 
-> allocated on the master (or machine) side and passed to the codec dais 
-> that are associated to the same 'stream'.
-> 
-> 
-> [1] 
-> https://git.linaro.org/people/srinivas.kandagatla/linux.git/tree/sound/soc/qcom/db845c.c?h=release/db845c/qcomlt-5.2 
-> 
-> 
+So I'm afraid the question whether TurboSched could make sense on an
+Android system can only be answered by people responsible for future
+Android runtime architecture.
