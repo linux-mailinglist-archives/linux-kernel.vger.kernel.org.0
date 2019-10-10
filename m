@@ -2,81 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00A03D2D3A
+	by mail.lfdr.de (Postfix) with ESMTP id DE5BED2D3C
 	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 17:04:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726191AbfJJPCp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 11:02:45 -0400
-Received: from mga17.intel.com ([192.55.52.151]:4604 "EHLO mga17.intel.com"
+        id S1726395AbfJJPD2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 11:03:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725862AbfJJPCp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 11:02:45 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2019 08:02:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,280,1566889200"; 
-   d="scan'208";a="187989283"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga008.jf.intel.com with ESMTP; 10 Oct 2019 08:02:43 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1iIZxi-00016P-G5; Thu, 10 Oct 2019 23:02:42 +0800
-Date:   Thu, 10 Oct 2019 23:02:32 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Pascal van Leeuwen <pascalvanl@gmail.com>
-Cc:     kbuild-all@01.org, linux-crypto@vger.kernel.org,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] crypto: fix ptr_ret.cocci warnings
-Message-ID: <20191010150232.ntukpjrovpaxhuzh@332d0cec05f4>
-References: <201910102327.eUdiwgpN%lkp@intel.com>
+        id S1725862AbfJJPD2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 11:03:28 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9522B206A1;
+        Thu, 10 Oct 2019 15:03:27 +0000 (UTC)
+Date:   Thu, 10 Oct 2019 11:03:26 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, Jessica Yu <jeyu@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH] ftrace/module: Allow ftrace to make only loaded module
+ text read-write
+Message-ID: <20191010110326.75131dbf@gandalf.local.home>
+In-Reply-To: <20191010105515.5eba7f31@gandalf.local.home>
+References: <20191009223638.60b78727@oasis.local.home>
+        <20191010073121.GN2311@hirez.programming.kicks-ass.net>
+        <20191010093329.GI2359@hirez.programming.kicks-ass.net>
+        <20191010093650.GJ2359@hirez.programming.kicks-ass.net>
+        <20191010122909.GK2359@hirez.programming.kicks-ass.net>
+        <20191010105515.5eba7f31@gandalf.local.home>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201910102327.eUdiwgpN%lkp@intel.com>
-X-Patchwork-Hint: ignore
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: kbuild test robot <lkp@intel.com>
+On Thu, 10 Oct 2019 10:55:15 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-drivers/crypto/inside-secure/safexcel_hash.c:2081:1-3: WARNING: PTR_ERR_OR_ZERO can be used
+> But we have an issue with the state of the module here, as it is still
+> set as MODULE_STATE_UNFORMED. Let's look at what happens if we have:
+> 
+> 
+> 	CPU0				CPU1
+> 	----				----
+>  echo function > current_tracer
+> 				modprobe foo
+> 				  enable foo functions to be traced
+> 				  (foo function records not disabled)
+>  echo nop > current_tracer
+> 
+>    disable all functions being
+>    traced including foo functions
+> 
+>    arch calls set_all_modules_text_rw()
+>     [skips UNFORMED modules, which foo still is ]
+> 
+> 				  set foo's text to read-only
+> 				  foo's state to COMING
+> 
+>    tries to disable foo's functions
+>    foo's text is read-only
+> 
+>    BUG trying to write to ro text!!!
+> 
+> 
+> Like I said, this is very subtle. It may no longer be a bug on x86
+> with your patches, but it will bug on ARM or anything else that still
+> uses set_all_modules_text_rw() in the ftrace prepare code.
 
+I guess I should have commented this, but the big reason for the split
+between ftrace_module_init() and ftrace_module_enable() is that we add
+the nops when the module is still UNFORMED, but we only enable it when
+the module is COMING or beyond, and not UNFORMED.
 
- Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
-
-Generated by: scripts/coccinelle/api/ptr_ret.cocci
-
-Fixes: 38f21b4bab11 ("crypto: inside-secure - Added support for the AES XCBC ahash")
-CC: Pascal van Leeuwen <pascalvanl@gmail.com>
-Signed-off-by: kbuild test robot <lkp@intel.com>
----
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
-head:   504582e8e40b90b8f8c58783e2d1e4f6a2b71a3a
-commit: 38f21b4bab11fc877ff18dd02f77f2c34f1105b9 [3/78] crypto: inside-secure - Added support for the AES XCBC ahash
-
- safexcel_hash.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
---- a/drivers/crypto/inside-secure/safexcel_hash.c
-+++ b/drivers/crypto/inside-secure/safexcel_hash.c
-@@ -2078,10 +2078,7 @@ static int safexcel_xcbcmac_cra_init(str
- 
- 	safexcel_ahash_cra_init(tfm);
- 	ctx->kaes = crypto_alloc_cipher("aes", 0, 0);
--	if (IS_ERR(ctx->kaes))
--		return PTR_ERR(ctx->kaes);
--
--	return 0;
-+	return PTR_ERR_OR_ZERO(ctx->kaes);
- }
- 
- static void safexcel_xcbcmac_cra_exit(struct crypto_tfm *tfm)
+-- Steve
