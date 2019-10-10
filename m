@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA48BD2414
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:50:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FDC9D239A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388754AbfJJIsv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:48:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54916 "EHLO mail.kernel.org"
+        id S2387784AbfJJIoG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:44:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389680AbfJJIsk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:48:40 -0400
+        id S2388851AbfJJIoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:44:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1006D2064A;
-        Thu, 10 Oct 2019 08:48:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4897221D56;
+        Thu, 10 Oct 2019 08:44:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697318;
-        bh=FmzEMjZSelSMOSQZgp2rUdO+aFnsDCvFmd1Q5Ugd5d4=;
+        s=default; t=1570697042;
+        bh=hJa2HHgBksaGk4R8Gj8nbpe3jM7W1po2HhE+oN2/xuY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qmy6nPyi3kVlrkk2x0+Jdm8yqPjfJeBHPyLwqoBNtjO4FT/wrtk+4nbPU9dLRyHeo
-         ZrYgtCPDGh749AZN2tCAUNougzAlFC+t5j3ibFSS7dDKFSK15ZV7gkF+nPkuFUO99g
-         ZBP/6MFO0OPYoVwUJL1cGi0nGO/fuHZ3xbmf7ul0=
+        b=FL+YkWk3CDBFCOn/AFMGB/W8r3G9dtqsB9kICO+x3FwNCx09rkaJ98wEiWJypRxTA
+         Lj/Q95mGk6v0Oa+OXmU0DmihVmB+ljAFt3puumVYLBGI27+pt6VhkCynao/P5UGPOx
+         gzWNKE21aApi0ANSBjXWnMGp9DXGZd5DTJTyIyvA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeremy Linton <jeremy.linton@arm.com>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.19 099/114] arm64: Always enable spectre-v2 vulnerability detection
-Date:   Thu, 10 Oct 2019 10:36:46 +0200
-Message-Id: <20191010083613.410310738@linuxfoundation.org>
+        stable@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 5.3 146/148] staging: erofs: avoid endless loop of invalid lookback distance 0
+Date:   Thu, 10 Oct 2019 10:36:47 +0200
+Message-Id: <20191010083621.122456973@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
-References: <20191010083544.711104709@linuxfoundation.org>
+In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
+References: <20191010083609.660878383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,90 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeremy Linton <jeremy.linton@arm.com>
+From: Gao Xiang <gaoxiang25@huawei.com>
 
-[ Upstream commit 8c1e3d2bb44cbb998cb28ff9a18f105fee7f1eb3 ]
+commit 598bb8913d015150b7734b55443c0e53e7189fc7 upstream.
 
-Ensure we are always able to detect whether or not the CPU is affected
-by Spectre-v2, so that we can later advertise this to userspace.
+As reported by erofs-utils fuzzer, Lookback distance should
+be a positive number, so it should be actually looked back
+rather than spinning.
 
-Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Fixes: 02827e1796b3 ("staging: erofs: add erofs_map_blocks_iter")
+Cc: <stable@vger.kernel.org> # 4.19+
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Link: https://lore.kernel.org/r/20190819103426.87579-7-gaoxiang25@huawei.com
+[ Gao Xiang: Since earlier kernels don't define EFSCORRUPTED,
+             let's use EIO instead. ]
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kernel/cpu_errata.c |   15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ drivers/staging/erofs/zmap.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -87,7 +87,6 @@ cpu_enable_trap_ctr_access(const struct
+--- a/drivers/staging/erofs/zmap.c
++++ b/drivers/staging/erofs/zmap.c
+@@ -350,6 +350,12 @@ static int vle_extent_lookback(struct z_
  
- atomic_t arm64_el2_vector_last_slot = ATOMIC_INIT(-1);
- 
--#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
- #include <asm/mmu_context.h>
- #include <asm/cacheflush.h>
- 
-@@ -225,11 +224,11 @@ static int detect_harden_bp_fw(void)
- 	    ((midr & MIDR_CPU_MODEL_MASK) == MIDR_QCOM_FALKOR_V1))
- 		cb = qcom_link_stack_sanitization;
- 
--	install_bp_hardening_cb(cb, smccc_start, smccc_end);
-+	if (IS_ENABLED(CONFIG_HARDEN_BRANCH_PREDICTOR))
-+		install_bp_hardening_cb(cb, smccc_start, smccc_end);
- 
- 	return 1;
- }
--#endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
- 
- DEFINE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
- 
-@@ -513,7 +512,6 @@ multi_entry_cap_cpu_enable(const struct
- 			caps->cpu_enable(caps);
- }
- 
--#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
- /*
-  * List of CPUs that do not need any Spectre-v2 mitigation at all.
-  */
-@@ -545,6 +543,12 @@ check_branch_predictor(const struct arm6
- 	if (!need_wa)
- 		return false;
- 
-+	if (!IS_ENABLED(CONFIG_HARDEN_BRANCH_PREDICTOR)) {
-+		pr_warn_once("spectrev2 mitigation disabled by kernel configuration\n");
-+		__hardenbp_enab = false;
-+		return false;
-+	}
-+
- 	/* forced off */
- 	if (__nospectre_v2) {
- 		pr_info_once("spectrev2 mitigation disabled by command line option\n");
-@@ -556,7 +560,6 @@ check_branch_predictor(const struct arm6
- 
- 	return (need_wa > 0);
- }
--#endif
- 
- #ifdef CONFIG_HARDEN_EL2_VECTORS
- 
-@@ -715,13 +718,11 @@ const struct arm64_cpu_capabilities arm6
- 		ERRATA_MIDR_ALL_VERSIONS(MIDR_CORTEX_A73),
- 	},
- #endif
--#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
- 	{
- 		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
- 		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
- 		.matches = check_branch_predictor,
- 	},
--#endif
- #ifdef CONFIG_HARDEN_EL2_VECTORS
- 	{
- 		.desc = "EL2 vector hardening",
+ 	switch (m->type) {
+ 	case Z_EROFS_VLE_CLUSTER_TYPE_NONHEAD:
++		if (!m->delta[0]) {
++			errln("invalid lookback distance 0 at nid %llu",
++			      vi->nid);
++			DBG_BUGON(1);
++			return -EIO;
++		}
+ 		return vle_extent_lookback(m, m->delta[0]);
+ 	case Z_EROFS_VLE_CLUSTER_TYPE_PLAIN:
+ 		map->m_flags &= ~EROFS_MAP_ZIPPED;
 
 
