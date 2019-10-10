@@ -2,104 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39295D2B26
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 15:21:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5669D2B20
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 15:20:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388101AbfJJNVe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 09:21:34 -0400
-Received: from laurent.telenet-ops.be ([195.130.137.89]:48816 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387746AbfJJNVe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 09:21:34 -0400
-Received: from ramsan ([84.194.98.4])
-        by laurent.telenet-ops.be with bizsmtp
-        id BpMW2100205gfCL01pMWmZ; Thu, 10 Oct 2019 15:21:32 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1iIYNl-0008Qb-Tp; Thu, 10 Oct 2019 15:21:29 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1iIXai-0003zW-86; Thu, 10 Oct 2019 14:30:48 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kevin Hilman <khilman@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] MAINTAINERS: Remove Simon as Renesas SoC Co-Maintainer
-Date:   Thu, 10 Oct 2019 14:30:46 +0200
-Message-Id: <20191010123046.15291-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        id S2388172AbfJJNUA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 09:20:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59340 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727852AbfJJNUA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 09:20:00 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 456B92064A;
+        Thu, 10 Oct 2019 13:19:58 +0000 (UTC)
+Date:   Thu, 10 Oct 2019 09:19:56 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, mhiramat@kernel.org,
+        bristot@redhat.com, jbaron@akamai.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
+        ard.biesheuvel@linaro.org, jpoimboe@redhat.com
+Subject: Re: [PATCH v3 5/6] x86/ftrace: Use text_poke()
+Message-ID: <20191010091956.48fbcf42@gandalf.local.home>
+In-Reply-To: <20191010092054.GR2311@hirez.programming.kicks-ass.net>
+References: <20191007081716.07616230.8@infradead.org>
+        <20191007081945.10951536.8@infradead.org>
+        <20191008104335.6fcd78c9@gandalf.local.home>
+        <20191009224135.2dcf7767@oasis.local.home>
+        <20191010092054.GR2311@hirez.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At the end of the v5.3 upstream kernel development cycle, Simon stepped
-down from his role as Renesas SoC maintainer.
+On Thu, 10 Oct 2019 11:20:54 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-Remove his maintainership, git repository, and branch from the
-MAINTAINERS file, and add an entry to the CREDITS file to honor his
-work.
+> On Wed, Oct 09, 2019 at 10:41:35PM -0400, Steven Rostedt wrote:
+> > On Tue, 8 Oct 2019 10:43:35 -0400
+> > Steven Rostedt <rostedt@goodmis.org> wrote:
+> > 
+> >   
+> > > BTW, I'd really like to take this patch series through my tree. That
+> > > way I can really hammer it, as well as I have code that will be built
+> > > on top of it.  
+> > 
+> > I did a bit of hammering and found two bugs. One I sent a patch to fix
+> > (adding a module when tracing is enabled), but the other bug I
+> > triggered, I'm too tired to debug right now. But figured I'd mention it
+> > anyway.  
+> 
+> I'm thinking this should fix it... Just not sure this is the right plce,
+> then again, we're doing the same thing in jump_label and static_call, so
+> perhaps we should do it like this.
+> 
+> --- a/arch/x86/kernel/alternative.c
+> +++ b/arch/x86/kernel/alternative.c
+> @@ -1230,10 +1230,15 @@ void text_poke_queue(void *addr, const v
+>   * dynamically allocated memory. This function should be used when it is
+>   * not possible to allocate memory.
+>   */
+> -void text_poke_bp(void *addr, const void *opcode, size_t len, const void *emulate)
+> +void __ref text_poke_bp(void *addr, const void *opcode, size_t len, const void *emulate)
+>  {
+>  	struct text_poke_loc tp;
+>  
+> +	if (unlikely(system_state == SYSTEM_BOOTING)) {
+> +		text_poke_early(addr, opcode, len);
+> +		return;
+> +	}
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- CREDITS     | 4 ++++
- MAINTAINERS | 4 ----
- 2 files changed, 4 insertions(+), 4 deletions(-)
+We need a new system state. SYSTEM_UP ? (Arg, that name is confusing,
+SYSTEM_BOOTING_SMP?) Or perhaps just test num_online_cpus()?
 
-diff --git a/CREDITS b/CREDITS
-index 8b67a85844b55d88..031605d46b4d5cc1 100644
---- a/CREDITS
-+++ b/CREDITS
-@@ -1637,6 +1637,10 @@ S: Panoramastrasse 18
- S: D-69126 Heidelberg
- S: Germany
- 
-+N: Simon Horman
-+M: horms@verge.net.au
-+D: Renesas ARM/ARM64 SoC maintainer
-+
- N: Christopher Horn
- E: chorn@warwick.net
- D: Miscellaneous sysctl hacks
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 94ce075907a0b9aa..d44d6732510df746 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2165,12 +2165,10 @@ F:	arch/arm64/boot/dts/realtek/
- F:	Documentation/devicetree/bindings/arm/realtek.yaml
- 
- ARM/RENESAS ARM64 ARCHITECTURE
--M:	Simon Horman <horms@verge.net.au>
- M:	Geert Uytterhoeven <geert+renesas@glider.be>
- M:	Magnus Damm <magnus.damm@gmail.com>
- L:	linux-renesas-soc@vger.kernel.org
- Q:	http://patchwork.kernel.org/project/linux-renesas-soc/list/
--T:	git git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git next
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
- S:	Supported
- F:	arch/arm64/boot/dts/renesas/
-@@ -2282,12 +2280,10 @@ S:	Maintained
- F:	drivers/media/platform/s5p-mfc/
- 
- ARM/SHMOBILE ARM ARCHITECTURE
--M:	Simon Horman <horms@verge.net.au>
- M:	Geert Uytterhoeven <geert+renesas@glider.be>
- M:	Magnus Damm <magnus.damm@gmail.com>
- L:	linux-renesas-soc@vger.kernel.org
- Q:	http://patchwork.kernel.org/project/linux-renesas-soc/list/
--T:	git git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git next
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
- S:	Supported
- F:	arch/arm/boot/dts/emev2*
--- 
-2.17.1
+	if (unlikely(system_state == SYSTEM_BOOTING &&
+		     num_online_cpus() == 1)
+
+?
+
+Because we can't do the above once we have more than one CPU running.
+
+-- Steve
+
+> +
+>  	text_poke_loc_init(&tp, addr, opcode, len, emulate);
+>  	text_poke_bp_batch(&tp, 1);
+>  }
 
