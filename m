@@ -2,178 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21EF1D289C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 14:02:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 017BED28AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 14:04:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733062AbfJJMCn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 08:02:43 -0400
-Received: from mail-sz.amlogic.com ([211.162.65.117]:56402 "EHLO
-        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727320AbfJJMCn (ORCPT
+        id S1733188AbfJJMEF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 08:04:05 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:32748 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727917AbfJJMEF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 08:02:43 -0400
-Received: from [10.28.18.45] (10.28.18.45) by mail-sz.amlogic.com (10.28.11.5)
- with Microsoft SMTP Server (version=TLS1_2,
+        Thu, 10 Oct 2019 08:04:05 -0400
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9ABwU2S025432;
+        Thu, 10 Oct 2019 07:03:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=PODMain02222019;
+ bh=4byw5jSm2/714LOkmlocLaf87NTPpDf7GI4f/qV1tN4=;
+ b=nDTMNqax1/FPcs2phz9QMiPEquLRhE9ioBRLAhPZzVUxjqO1ZrODSTPWYOY7h4TSsg1N
+ QNKCQ8Ou6V+WW89SobRqYf9biUFNrP2jm5T6FOLOD3uOr4tqAnYqzDYwcSVWcfgJoUBm
+ Ns+aazMoP5FzafQ8B5OtPVeCvqYHYnz2O8I3uRa9P2NGvqwr9Wx3GyS0yiFkbTfxVScr
+ TmwKgYTp259FSbOOVfsSxDkI/dSvv1DfH18eevGE33f5v2LFW9GGaS3Fg7SH1FZinVME
+ Ka/9eNWzxyqgi/tDKYvTLQXCYUTK6jFJdnYaF90B5R1yojFetvSWEuN+EzvWuLvNTXx1 uQ== 
+Authentication-Results: ppops.net;
+        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from ediex02.ad.cirrus.com ([87.246.76.36])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2veqkp7h7x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Thu, 10 Oct 2019 07:03:39 -0500
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Thu, 10 Oct
- 2019 20:02:43 +0800
-Subject: Re: [PATCH v2 2/3] pinctrl: meson-a1: add pinctrl driver for Meson A1
- Soc
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        <linux-gpio@vger.kernel.org>
-CC:     Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Carlo Caione <carlo@caione.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Xingyu Chen <xingyu.chen@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <1570532999-23302-1-git-send-email-qianggui.song@amlogic.com>
- <1570532999-23302-3-git-send-email-qianggui.song@amlogic.com>
- <cca24aa5-07dc-f2d6-885a-09bc8e20b3b6@baylibre.com>
-From:   Qianggui Song <qianggui.song@amlogic.com>
-Message-ID: <a41f0685-a42c-b21c-d0be-e0e1c3ae7c8f@amlogic.com>
-Date:   Thu, 10 Oct 2019 20:02:42 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+ 2019 13:03:37 +0100
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Thu, 10 Oct 2019 13:03:37 +0100
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 903A82A1;
+        Thu, 10 Oct 2019 12:03:37 +0000 (UTC)
+Date:   Thu, 10 Oct 2019 12:03:37 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+CC:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>,
+        <devicetree@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <bgoswami@codeaurora.org>, <plai@codeaurora.org>,
+        <lgirdwood@gmail.com>, <linux-kernel@vger.kernel.org>,
+        <robh+dt@kernel.org>, <spapothi@codeaurora.org>
+Subject: Re: [alsa-devel] [PATCH v2 3/5] ASoC: core: add support to
+ snd_soc_dai_get_sdw_stream()
+Message-ID: <20191010120337.GB31391@ediswmail.ad.cirrus.com>
+References: <20190813191827.GI5093@sirena.co.uk>
+ <cc360858-571a-6a46-1789-1020bcbe4bca@linux.intel.com>
+ <20190813195804.GL5093@sirena.co.uk>
+ <20190814041142.GU12733@vkoul-mobl.Dlink>
+ <99d35a9d-cbd8-f0da-4701-92ef650afe5a@linux.intel.com>
+ <5e08f822-3507-6c69-5d83-4ce2a9f5c04f@linaro.org>
+ <53bb3105-8e85-a972-fce8-a7911ae4d461@linux.intel.com>
+ <95870089-25da-11ea-19fd-0504daa98994@linaro.org>
+ <2326a155-332e-fda0-b7a2-b48f348e1911@linux.intel.com>
+ <34e4cde8-f2e5-0943-115a-651d86f87c1a@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <cca24aa5-07dc-f2d6-885a-09bc8e20b3b6@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.28.18.45]
-X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
- (10.28.11.5)
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <34e4cde8-f2e5-0943-115a-651d86f87c1a@linaro.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-SPF-Result: fail
+X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
+ -all
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 mlxscore=0
+ clxscore=1011 lowpriorityscore=0 suspectscore=0 malwarescore=0
+ mlxlogscore=999 phishscore=0 bulkscore=0 adultscore=0 priorityscore=1501
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1908290000 definitions=main-1910100111
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,Neil
+On Thu, Oct 10, 2019 at 09:50:22AM +0100, Srinivas Kandagatla wrote:
+> On 09/10/2019 19:53, Pierre-Louis Bossart wrote:
+> >On 10/9/19 11:01 AM, Srinivas Kandagatla wrote:
+> >>On 09/10/2019 15:29, Pierre-Louis Bossart wrote:
+> >>>On 10/9/19 3:32 AM, Srinivas Kandagatla wrote:
+> >>>>On 14/08/2019 15:09, Pierre-Louis Bossart wrote:
+> >>>>>On 8/13/19 11:11 PM, Vinod Koul wrote:
+> >>>>>>On 13-08-19, 20:58, Mark Brown wrote:
+> >>>>>>>On Tue, Aug 13, 2019 at 02:38:53PM -0500, Pierre-Louis
+> >>>>>>>>Indeed. I don't have a full understanding of that
+> >>>>>>>>part to be honest, nor why
+> >>>>>>>>we need something SoundWire-specific. We already
+> >>>>>>>>abused the set_tdm_slot API
+> >>>>>>>>to store an HDaudio stream, now we have a rather confusing stream
+> >>>>>>>>information for SoundWire and I have about 3 other
+> >>>>>>>>'stream' contexts in
+> >>>>>>>>SOF... I am still doing basic cleanups but this has
+> >>>>>>>>been on my radar for a
+> >>>>>>>>while.
+> >>>>>>>
+> >>>>>>>There is something to be said for not abusing the TDM
+> >>>>>>>slot API if it can
+> >>>>>>>make things clearer by using bus-idiomatic mechanisms,
+> >>>>>>>but it does mean
+> >>>>>>>everything needs to know about each individual bus :/ .
+> >>>>>>
+> >>>>>>Here ASoC doesn't need to know about sdw bus. As Srini
+> >>>>>>explained, this
+> >>>>>>helps in the case for him to get the stream context and
+> >>>>>>set the stream
+> >>>>>>context from the machine driver.
+> >>>>>>
+> >>>>>>Nothing else is expected to be done from this API. We
+> >>>>>>already do a set
+> >>>>>>using snd_soc_dai_set_sdw_stream(). Here we add the
+> >>>>>>snd_soc_dai_get_sdw_stream() to query
+> >>>>>
+> >>>>>I didn't see a call to snd_soc_dai_set_sdw_stream() in Srini's code?
+> >>>>
+> >>>>
+> >>>>There is a snd_soc_dai_get_sdw_stream() to get stream
+> >>>>context and we add slave streams(amplifier in this case) to
+> >>>>that context using sdw_stream_add_slave() in machine
+> >>>>driver[1].
+> >>>>
+> >>>>Without this helper there is no way to link slave streams to
+> >>>>stream context in non dai based setup like smart speaker
+> >>>>amplifiers.
+> >>>>
+> >>>>Currently this driver is blocked on this patch, If you think
+> >>>>there are other ways to do this, am happy to try them out.
+> >>>
+> >>>So to be clear, you are *not* using snd_soc_dai_set_sdw_stream?
+> >>Yes, am not using snd_soc_dai_set_sdw_stream().
+> >
+> >It's been a while since this thread started, and I still don't
+> >quite get the concepts or logic.
+> >
+> >First, I don't understand what the problem with "aux" devices is.
+> >All the SoundWire stuff is based on the concept of DAI, so I guess
+> >I am
+> 
+> That is the actual problem! Some aux devices does not have dais.
+> 
 
-On 2019/10/8 21:07, Neil Armstrong wrote:
-> Hi,
-> 
-> On 08/10/2019 13:09, Qianggui Song wrote:
->> Add pinctrl driver for Meson A1 Soc which share the same register layout of
->> pinmux with previous Meson-G12A, however there is difference for gpio
->> and pin config register in A1.The main difference is that registers before A1
->> are grouped by function while those of A1 are by bank. The new register layout
->> is as below:
->>
->> /* first bank */	      /* addr */
->> - P_PADCTRL_GPIOP_I         base + 0x00 << 2
->> - P_PADCTRL_GPIOP_O         base + 0x01 << 2
->> - P_PADCTRL_GPIOP_OEN       base + 0x02 << 2
->> - P_PADCTRL_GPIOP_PULL_EN   base + 0x03 << 2
->> - P_PADCTRL_GPIOP_PULL_UP   base + 0x04 << 2
->> - P_PADCTRL_GPIOP_DS        base + 0x05 << 2
->>
->> /* second bank */
->> - P_PADCTRL_GPIOB_I         base + 0x10 << 2
->> - P_PADCTRL_GPIOB_O         base + 0x11 << 2
->> - P_PADCTRL_GPIOB_OEN       base + 0x12 << 2
->> - P_PADCTRL_GPIOB_PULL_EN   base + 0x13 << 2
->> - P_PADCTRL_GPIOB_PULL_UP   base + 0x14 << 2
->> - P_PADCTRL_GPIOB_DS        base + 0x15 << 2
->>
->> Each bank contains at least 6 registers to be configured, if one bank has
->> more than 16 gpios, an extra P_PADCTRL_GPIO[X]_DS_EXT is included. Between
->> two adjacent P_PADCTRL_GPIO[X]_I, there is an offset 0x10, that is to say,
->> for third bank, the offsets will be 0x20,0x21,0x22,0x23,0x24,0x25 according
->> to above register layout.For privous chips, registers are grouped
->> according to their functions while registers of A1 are according to bank.
->>
->> Current Meson pinctrl driver can cover such change by using base address of
->> GPIO as that of drive-strength. While simply giving reg_ds = reg_pullen
->> make wrong value to reg_ds for Socs that do not support drive-strength like
->> AXG.To make things simple, add an extra dt parser function for a1 or later chip
->> and remain the old dt parser function for old Socs.
->>
->> Also note that there is no AO bank in A1.
->>
->> Signed-off-by: Qianggui Song <qianggui.song@amlogic.com>
->> ---
->>  drivers/pinctrl/meson/Kconfig            |   6 +
->>  drivers/pinctrl/meson/Makefile           |   1 +
->>  drivers/pinctrl/meson/pinctrl-meson-a1.c | 942 +++++++++++++++++++++++++++++++
->>  drivers/pinctrl/meson/pinctrl-meson.c    |  16 +-
->>  drivers/pinctrl/meson/pinctrl-meson.h    |   5 +
->>  5 files changed, 969 insertions(+), 1 deletion(-)
->>  create mode 100644 drivers/pinctrl/meson/pinctrl-meson-a1.c
->>
-> 
-> [...]
-> 
->> --- a/drivers/pinctrl/meson/pinctrl-meson.c
->> +++ b/drivers/pinctrl/meson/pinctrl-meson.c
->> @@ -695,6 +695,17 @@ static int meson_pinctrl_parse_dt(struct meson_pinctrl *pc,
->>  	return 0;
->>  }
->>  
->> +int meson_pinctrl_parse_dt_extra(struct meson_pinctrl *pc,
->> +				 struct device_node *node)
->> +{
->> +	int ret;
->> +
->> +	ret = meson_pinctrl_parse_dt(pc, node);
->> +	pc->reg_ds = pc->reg_pullen;
->> +
->> +	return ret;
->> +}
->> +
->>  int meson_pinctrl_probe(struct platform_device *pdev)
->>  {
->>  	struct device *dev = &pdev->dev;
->> @@ -708,7 +719,10 @@ int meson_pinctrl_probe(struct platform_device *pdev)
->>  	pc->dev = dev;
->>  	pc->data = (struct meson_pinctrl_data *) of_device_get_match_data(dev);
->>  
->> -	ret = meson_pinctrl_parse_dt(pc, dev->of_node);
->> +	if (pc->data->parse_dt)
->> +		ret = pc->data->parse_dt(pc, dev->of_node);
->> +	else
->> +		ret = meson_pinctrl_parse_dt(pc, dev->of_node);
->>  	if (ret)
->>  		return ret;
->>  
->> diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
->> index c696f3241a36..ca29efd90aac 100644
->> --- a/drivers/pinctrl/meson/pinctrl-meson.h
->> +++ b/drivers/pinctrl/meson/pinctrl-meson.h
->> @@ -11,6 +11,7 @@
->>  #include <linux/regmap.h>
->>  #include <linux/types.h>
->>  
->> +struct meson_pinctrl;
->>  /**
->>   * struct meson_pmx_group - a pinmux group
->>   *
->> @@ -114,6 +115,7 @@ struct meson_pinctrl_data {
->>  	unsigned int num_banks;
->>  	const struct pinmux_ops *pmx_ops;
->>  	void *pmx_data;
->> +	int (*parse_dt) (struct meson_pinctrl *pc, struct device_node *node);
->>  };
->>  
->>  struct meson_pinctrl {
->> @@ -171,3 +173,6 @@ int meson_pmx_get_groups(struct pinctrl_dev *pcdev,
->>  
->>  /* Common probe function */
->>  int meson_pinctrl_probe(struct platform_device *pdev);
->> +/* Extra dt parser function for register layout grouped by bank */
->> +int meson_pinctrl_parse_dt_extra(struct meson_pinctrl *pc,
->> +				 struct device_node *node);
->>
-> 
-> I think you should add this parse_dt callback in a separate patch.
-> 
-> Neil
-> 
-> .
-> 
-OK, will do it in the next patch set.
+Usually aux devices are used for things like analog amplifiers that
+clearly don't have a digital interface, thus it really makes no sense
+to have a DAI link connecting them. So I guess my question here
+would be what is the thinking on making the "smart amplifier" dailess?
+It feels like having a CODEC to CODEC DAI between the CODEC and
+the AMP would be a more obvious way to connect the two devices
+and would presumably avoid the issues being discussed around the
+patch.
+
+Thanks,
+Charles
