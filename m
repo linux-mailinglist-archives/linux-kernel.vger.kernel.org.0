@@ -2,259 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6237BD3129
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 21:12:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F7ABD3134
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 21:16:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbfJJTMq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 15:12:46 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:33712 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726007AbfJJTMp (ORCPT
+        id S1727034AbfJJTQg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 15:16:36 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:25336 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726489AbfJJTQg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 15:12:45 -0400
-Received: by mail-oi1-f196.google.com with SMTP id a15so5927730oic.0;
-        Thu, 10 Oct 2019 12:12:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TB0eH3ae3vSi2BTINdu4YWUfxkdAB53RghmO04INfwE=;
-        b=ArSe95mAfCRXqkMIytaj6fYFOTlqU0iiet4ZBsvBJKCLbX5pFyegLfOk9Zw2XyKJt9
-         Y37Izxrxg/OWZ4ju2R5WE+jmSIgLrm4VNKDsJGgcKTHlGELiPfsM3XjsE5OP4B2eESDv
-         bt7nfZRXhFDGrY5t3SYUQ5RVp1UHlGsV7rBitwNGZgBvAQ3+oyfFIj3JgKY57MvsEHn3
-         hyXisd3PjfV9QZE1OIT291GcqmLABdEFBrtmnQKVrYKaA1RkO4EX+RkbNAJwyXVH+1Ly
-         +LLJtkkreadhM0twrcQuCNd5y/3cSTMCQWwlGIVZuF/x0nj0uIrqcIzDSLgTv2ap4KyA
-         mlxg==
-X-Gm-Message-State: APjAAAVbEGi6Dbyf/xPTaxNN2llK5495iT+JNKzN8whta/u34h3z7Jgm
-        08hpgSg2MvVHf3Sku3WNKw==
-X-Google-Smtp-Source: APXvYqzTNwu0JxpmueZM2zdBUYD25a/vLovCXlgQYNf1BmMTJANPQvgzTPJMPVKxRBQ9IHDbu1EaRw==
-X-Received: by 2002:a54:4419:: with SMTP id k25mr8594181oiw.0.1570734762353;
-        Thu, 10 Oct 2019 12:12:42 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id s194sm1910974oie.19.2019.10.10.12.12.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 12:12:41 -0700 (PDT)
-Date:   Thu, 10 Oct 2019 14:12:40 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>,
-        =?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3 01/10] dt-bindings: sram: Convert SRAM bindings to
- json-schema
-Message-ID: <20191010191240.GA15006@bogus>
-References: <20191002164316.14905-1-krzk@kernel.org>
+        Thu, 10 Oct 2019 15:16:36 -0400
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9AJEsJG023261;
+        Thu, 10 Oct 2019 12:15:09 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=gpo7u+O5ny4yNfM7OI/xQcXqo0X/HpBcn98U3zR/wZE=;
+ b=VylCZZbFfz5U66fdm957PldU3xOiYKNh6CRrq6UrHiirXjpjg12p4f2xvmi8kx0QKPiW
+ bnhRMNpCGyFI5x+2JjQUKSwHTHx3C4jr4sK4g4imbL7Qb1DA1lFjZVyoFfCxakS5oSKg
+ I0F9LQz3ETIg/8Ay+EqrMLoXaMQisXgTxoo= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2vhy7hbj2v-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Thu, 10 Oct 2019 12:15:09 -0700
+Received: from prn-hub06.TheFacebook.com (2620:10d:c081:35::130) by
+ prn-hub05.TheFacebook.com (2620:10d:c081:35::129) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Thu, 10 Oct 2019 12:15:08 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.30) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Thu, 10 Oct 2019 12:15:07 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=J3gU/Z5Yt0aJCDO4jLjMfyBJM3iFj9b2yJO8QhoLYOk9XLWHGxoQJM6GVtAI5IPtvvlPVL4ldVwo1Tzb5ky3ejiGuWSK0f+jrH4y8yrhguN5CQ/KyAjoRBiStE/fVmJWnr0ZoW7C+M8gzMqXoyezVqYQzf4pBz0OPFnUcao8QnwJUa1hhjCL0U0dlVozwqhzvgTnwXAhIwqcO8PAAgG9KEZmmFdimPG8VRMx+XDw9RILe6/yovxt306eyB7Sdi6yp07dum2F81KPBa7HF/Sti+ZnI88CJU0gmqBS8TkR/lD7LB8JpIkJlwiFZJhLjiHJ/OefZes15dCkcqK8adB9nQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gpo7u+O5ny4yNfM7OI/xQcXqo0X/HpBcn98U3zR/wZE=;
+ b=aK4bKYRZDAUHHE4CmtIARSh32nx+iX+4z4HAbubuBKCpmP1nXqZmwHLgkWcSWQMKOSMVJcOe5CbdgLpSk81C+caeESA4mPj4BgSDu1KUPtckArkLuTMyQ5lOojfrgsuA4wzXH8vLEreB+Yxd1JNL9v3G24agDK7a+i9icvwWpCBavbVN+clpcO5w9l1mpBrLYxCCfozJ+09SIaZ7bsjG92eJ0iU3O/TLlXD9/IfSc9XQiP0qs0YO768oWxG1LpcCQn7M8NgqOsvl5kK4bDXqWonXkYoZFGJ86FbX6PlC7o9cNkeZKfw8RL9gj6gVqBbmA+ue0KNzrVdUlN1w3SaMqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gpo7u+O5ny4yNfM7OI/xQcXqo0X/HpBcn98U3zR/wZE=;
+ b=E6LpWzn7kammUzHBWri+w9BlcjmyszXYOSyfQFR6zIj1pTAcN6nd0y5phoHRrhHA4F4091VQh6jiDyX4OufYBZXtestLYZ/m8Rdc+FFWWvZzj0x7NTzBeHKkkQXkQVl+btjy6NYRobqT8+Kn70Cc915cRgNHE+vSuqG+/MibRZY=
+Received: from BY5PR15MB3636.namprd15.prod.outlook.com (52.133.252.91) by
+ BY5PR15MB3714.namprd15.prod.outlook.com (52.133.252.138) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2347.16; Thu, 10 Oct 2019 19:15:06 +0000
+Received: from BY5PR15MB3636.namprd15.prod.outlook.com
+ ([fe80::7887:4f9c:70df:285c]) by BY5PR15MB3636.namprd15.prod.outlook.com
+ ([fe80::7887:4f9c:70df:285c%4]) with mapi id 15.20.2347.016; Thu, 10 Oct 2019
+ 19:15:06 +0000
+From:   Vijay Khemka <vijaykhemka@fb.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Florian Fainelli <f.fainelli@gmail.com>
+CC:     "David S. Miller" <davem@davemloft.net>,
+        YueHaibing <yuehaibing@huawei.com>, Andrew Lunn <andrew@lunn.ch>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        "Sai Dasari" <sdasari@fb.com>
+Subject: Re: [PATCH] ftgmac100: Disable HW checksum generation on AST2500
+Thread-Topic: [PATCH] ftgmac100: Disable HW checksum generation on AST2500
+Thread-Index: AQHVaCL3HHZ/0IxjZ0GB2KAMVKzdAqcld28AgAEYWwCAK1ZcgIACEkcA
+Date:   Thu, 10 Oct 2019 19:15:06 +0000
+Message-ID: <AF7B985F-6E42-4CD4-B3D0-4B9EA42253C9@fb.com>
+References: <20190910213734.3112330-1-vijaykhemka@fb.com>
+ <bd5eab2e-6ba6-9e27-54d4-d9534da9d5f7@gmail.com>
+ <CACPK8XcS4iKfKigPbPg0BFbmjbT-kdyjiPDXjk1k5XaS5bCdAA@mail.gmail.com>
+ <95e215664612c0487808c02232852ef2188c95a5.camel@kernel.crashing.org>
+In-Reply-To: <95e215664612c0487808c02232852ef2188c95a5.camel@kernel.crashing.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [2620:10d:c090:200::3:7710]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 28bf5bdd-2a55-4b7f-d133-08d74db62950
+x-ms-traffictypediagnostic: BY5PR15MB3714:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BY5PR15MB3714959FA6127C83F4F7B240DD940@BY5PR15MB3714.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 018632C080
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(396003)(376002)(346002)(39860400002)(189003)(199004)(7416002)(36756003)(6486002)(4326008)(33656002)(5660300002)(6436002)(66446008)(2906002)(64756008)(66556008)(66476007)(8936002)(76116006)(6246003)(91956017)(6116002)(66946007)(6512007)(81156014)(305945005)(7736002)(86362001)(81166006)(8676002)(11346002)(186003)(476003)(256004)(76176011)(46003)(71190400001)(71200400001)(99286004)(229853002)(2616005)(14454004)(478600001)(6506007)(53546011)(102836004)(486006)(446003)(316002)(25786009)(110136005)(54906003);DIR:OUT;SFP:1102;SCL:1;SRVR:BY5PR15MB3714;H:BY5PR15MB3636.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: HtRMDOXR41judw596OClkiPN6c5MDr/ivSz1sHNxLgnMGzIDL8UC6oFxz8i/QuJ1ghv46/6G4Xn3368c7gMzIEu4o14lziYpEoVuEbuDRlqmCNb1QYmoAgiPdh+bydCv30tfV8ph9cmZnM6eqipHANPDHxIgGnY/SGH0YULKcFXmcdr6JakTafO/EmEkTvZFavoc488NnliruKTrYrcoUGcYbyuVxjQoW5oqhhiVW4EIuEWI8aqb4tXXeIPvUvH/uO17fokG+lDh4KHn5VuReZZ80YYM+Iq4Aeyr9a/2XsLiZtg2aqz67Lb3XPEgdKjBgNO3DvmGnmOpBOAM+KS14cfKXowaLV7KkP97aiGl//KyzJ4/PZmbVYSjlJsPukUQ+498wl1+IyW4rVQ/BIyieRxVf2kc7cwS8f1GM3rbZUo=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <58A3C6651CCA94419BED4AD9D1693B4D@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191002164316.14905-1-krzk@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28bf5bdd-2a55-4b7f-d133-08d74db62950
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Oct 2019 19:15:06.6814
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: wZEGjViaJHX1nrx4G4wZKro1lCxvyjdlDIIjaTZIDCp7L1DJlg/jpU9Tr7qudiTlQCPJq+hV5CSuvslEWsRkgw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR15MB3714
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-10_06:2019-10-10,2019-10-10 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 suspectscore=0
+ adultscore=0 lowpriorityscore=0 mlxlogscore=999 spamscore=0
+ priorityscore=1501 mlxscore=0 bulkscore=0 impostorscore=0 phishscore=0
+ malwarescore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-1908290000 definitions=main-1910100161
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 06:43:07PM +0200, Krzysztof Kozlowski wrote:
-> Convert generic mmio-sram bindings to DT schema format using
-> json-schema.  Require the address/size cells to be 1, not equal to root
-> node.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> ---
-> 
-> Changes since v2:
-> 1. Add Rob as maintainer,
-> 2. Use "contains" for compatible,
-> 3. Fix address and size cells to 1,
-> 4. Add maxitems to reg under children,
-> 5. Remove unneeded string type from label.
-> 
-> Changes since v1:
-> 1. Indent example with four spaces (more readable).
-> ---
->  .../devicetree/bindings/sram/sram.txt         |  80 -----------
->  .../devicetree/bindings/sram/sram.yaml        | 134 ++++++++++++++++++
->  2 files changed, 134 insertions(+), 80 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sram/sram.txt
->  create mode 100644 Documentation/devicetree/bindings/sram/sram.yaml
-
-
-> diff --git a/Documentation/devicetree/bindings/sram/sram.yaml b/Documentation/devicetree/bindings/sram/sram.yaml
-> new file mode 100644
-> index 000000000000..a1c1ec2183f2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sram/sram.yaml
-> @@ -0,0 +1,134 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sram/sram.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Generic on-chip SRAM
-> +
-> +maintainers:
-> +  - Rob Herring <robh@kernel.org>
-> +
-> +description: |+
-> +  Simple IO memory regions to be managed by the genalloc API.
-> +
-> +  Each child of the sram node specifies a region of reserved memory. Each
-> +  child node should use a 'reg' property to specify a specific range of
-> +  reserved memory.
-> +
-> +  Following the generic-names recommended practice, node names should
-> +  reflect the purpose of the node. Unit address (@<address>) should be
-> +  appended to the name.
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^sram(@.*)?"
-> +
-> +  compatible:
-> +    contains:
-> +      enum:
-> +        - mmio-sram
-> +        - atmel,sama5d2-securam
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 1
-> +
-> +  ranges:
-> +    description:
-> +      Should translate from local addresses within the sram to bus addresses.
-> +
-> +  no-memory-wc:
-> +    description:
-> +      The flag indicating, that SRAM memory region has not to be remapped
-> +      as write combining. WC is used by default.
-> +    type: boolean
-> +
-> +patternProperties:
-> +  "^([a-z]*-)?sram@[a-f0-9]$":
-> +    type: object
-> +    description:
-> +      Each child of the sram node specifies a region of reserved memory.
-> +    properties:
-> +      reg:
-> +        description:
-> +          IO mem address range, relative to the SRAM range.
-> +        maxItems: 1
-> +
-> +      compatible:
-> +        $ref: /schemas/types.yaml#/definitions/string
-
-No need to define the type again. We can say 'maxItems: 1' if we really 
-want to force it to 1 entry.
-
-> +        description:
-> +          Should contain a vendor specific string in the form
-> +          <vendor>,[<device>-]<usage>
-> +
-> +      pool:
-> +        description:
-> +          Indicates that the particular reserved SRAM area is addressable
-> +          and in use by another device or devices.
-> +        type: boolean
-> +
-> +      export:
-> +        description:
-> +          Indicates that the reserved SRAM area may be accessed outside
-> +          of the kernel, e.g. by bootloader or userspace.
-> +        type: boolean
-> +
-> +      protect-exec:
-> +        description: |
-> +          Same as 'pool' above but with the additional constraint that code
-> +          will be run from the region and that the memory is maintained as
-> +          read-only, executable during code execution. NOTE: This region must
-> +          be page aligned on start and end in order to properly allow
-> +          manipulation of the page attributes.
-> +        type: boolean
-> +
-> +      label:
-> +        description:
-> +          The name for the reserved partition, if omitted, the label is taken
-> +          from the node name excluding the unit address.
-> +
-> +      clocks:
-
-Shouldn't this be up one level? Looks like this is the only case 
-(Marvell and i.MX are the only ones I see with clocks).
-
-> +        description:
-> +          A list of phandle and clock specifier pair that controls the
-> +          single SRAM clock.
-
-maxItems: 1
-
-> +
-> +    required:
-> +      - reg
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#address-cells"
-> +  - "#size-cells"
-> +  - ranges
-
-Does 'additionalProperties' work here and/or in the child node? I guess 
-not if we keep some node names.
-
-> +
-> +examples:
-> +  - |
-> +    sram: sram@5c000000 {
-> +        compatible = "mmio-sram";
-> +        reg = <0x5c000000 0x40000>; /* 256 KiB SRAM at address 0x5c000000 */
-> +
-> +        #address-cells = <1>;
-> +        #size-cells = <1>;
-> +        ranges = <0 0x5c000000 0x40000>;
-> +
-> +        smp-sram@100 {
-> +            compatible = "socvendor,smp-sram";
-> +            reg = <0x100 0x50>;
-> +        };
-> +
-> +        device-sram@1000 {
-> +            reg = <0x1000 0x1000>;
-> +            pool;
-> +        };
-> +
-> +        exported@20000 {
-
-This one doesn't match the pattern. That's fine I guess for dts files, 
-but examples should be good examples.
-
-> +            reg = <0x20000 0x20000>;
-> +            export;
-> +        };
-> +    };
-> -- 
-> 2.17.1
-> 
+DQoNCu+7v09uIDEwLzgvMTksIDk6MzcgUE0sICJCZW5qYW1pbiBIZXJyZW5zY2htaWR0IiA8YmVu
+aEBrZXJuZWwuY3Jhc2hpbmcub3JnPiB3cm90ZToNCg0KICAgIE9uIFdlZCwgMjAxOS0wOS0xMSBh
+dCAxNDo0OCArMDAwMCwgSm9lbCBTdGFubGV5IHdyb3RlOg0KICAgID4gSGkgQmVuLA0KICAgID4g
+DQogICAgPiBPbiBUdWUsIDEwIFNlcCAyMDE5IGF0IDIyOjA1LCBGbG9yaWFuIEZhaW5lbGxpIDxm
+LmZhaW5lbGxpQGdtYWlsLmNvbT4NCiAgICA+IHdyb3RlOg0KICAgID4gPiANCiAgICA+ID4gT24g
+OS8xMC8xOSAyOjM3IFBNLCBWaWpheSBLaGVta2Egd3JvdGU6DQogICAgPiA+ID4gSFcgY2hlY2tz
+dW0gZ2VuZXJhdGlvbiBpcyBub3Qgd29ya2luZyBmb3IgQVNUMjUwMCwgc3BlY2lhbGx5IHdpdGgN
+CiAgICA+ID4gPiBJUFY2DQogICAgPiA+ID4gb3ZlciBOQ1NJLiBBbGwgVENQIHBhY2tldHMgd2l0
+aCBJUHY2IGdldCBkcm9wcGVkLiBCeSBkaXNhYmxpbmcNCiAgICA+ID4gPiB0aGlzDQogICAgPiA+
+ID4gaXQgd29ya3MgcGVyZmVjdGx5IGZpbmUgd2l0aCBJUFY2Lg0KICAgID4gPiA+IA0KICAgID4g
+PiA+IFZlcmlmaWVkIHdpdGggSVBWNiBlbmFibGVkIGFuZCBjYW4gZG8gc3NoLg0KICAgID4gPiAN
+CiAgICA+ID4gSG93IGFib3V0IElQdjQsIGRvIHRoZXNlIHBhY2tldHMgaGF2ZSBwcm9ibGVtPyBJ
+ZiBub3QsIGNhbiB5b3UNCiAgICA+ID4gY29udGludWUNCiAgICA+ID4gYWR2ZXJ0aXNpbmcgTkVU
+SUZfRl9JUF9DU1VNIGJ1dCB0YWtlIG91dCBORVRJRl9GX0lQVjZfQ1NVTT8NCiAgICA+ID4gDQog
+ICAgPiA+ID4gDQogICAgPiA+ID4gU2lnbmVkLW9mZi1ieTogVmlqYXkgS2hlbWthIDx2aWpheWto
+ZW1rYUBmYi5jb20+DQogICAgPiA+ID4gLS0tDQogICAgPiA+ID4gIGRyaXZlcnMvbmV0L2V0aGVy
+bmV0L2ZhcmFkYXkvZnRnbWFjMTAwLmMgfCA1ICsrKy0tDQogICAgPiA+ID4gIDEgZmlsZSBjaGFu
+Z2VkLCAzIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQogICAgPiA+ID4gDQogICAgPiA+
+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L2ZhcmFkYXkvZnRnbWFjMTAwLmMN
+CiAgICA+ID4gPiBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L2ZhcmFkYXkvZnRnbWFjMTAwLmMNCiAg
+ICA+ID4gPiBpbmRleCAwMzBmZWQ2NTM5M2UuLjU5MWM5NzI1MDAyYiAxMDA2NDQNCiAgICA+ID4g
+PiAtLS0gYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9mYXJhZGF5L2Z0Z21hYzEwMC5jDQogICAgPiA+
+ID4gKysrIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvZmFyYWRheS9mdGdtYWMxMDAuYw0KICAgID4g
+PiA+IEBAIC0xODM5LDggKzE4MzksOSBAQCBzdGF0aWMgaW50IGZ0Z21hYzEwMF9wcm9iZShzdHJ1
+Y3QNCiAgICA+ID4gPiBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQogICAgPiA+ID4gICAgICAgaWYg
+KHByaXYtPnVzZV9uY3NpKQ0KICAgID4gPiA+ICAgICAgICAgICAgICAgbmV0ZGV2LT5od19mZWF0
+dXJlcyB8PSBORVRJRl9GX0hXX1ZMQU5fQ1RBR19GSUxURVI7DQogICAgPiA+ID4gDQogICAgPiA+
+ID4gLSAgICAgLyogQVNUMjQwMCAgZG9lc24ndCBoYXZlIHdvcmtpbmcgSFcgY2hlY2tzdW0gZ2Vu
+ZXJhdGlvbiAqLw0KICAgID4gPiA+IC0gICAgIGlmIChucCAmJiAob2ZfZGV2aWNlX2lzX2NvbXBh
+dGlibGUobnAsICJhc3BlZWQsYXN0MjQwMC0NCiAgICA+ID4gPiBtYWMiKSkpDQogICAgPiA+ID4g
+KyAgICAgLyogQVNUMjQwMCAgYW5kIEFTVDI1MDAgZG9lc24ndCBoYXZlIHdvcmtpbmcgSFcgY2hl
+Y2tzdW0NCiAgICA+ID4gPiBnZW5lcmF0aW9uICovDQogICAgPiA+ID4gKyAgICAgaWYgKG5wICYm
+IChvZl9kZXZpY2VfaXNfY29tcGF0aWJsZShucCwgImFzcGVlZCxhc3QyNDAwLQ0KICAgID4gPiA+
+IG1hYyIpIHx8DQogICAgPiA+ID4gKyAgICAgICAgICAgICAgICBvZl9kZXZpY2VfaXNfY29tcGF0
+aWJsZShucCwgImFzcGVlZCxhc3QyNTAwLQ0KICAgID4gPiA+IG1hYyIpKSkNCiAgICA+IA0KICAg
+ID4gRG8geW91IHJlY2FsbCB1bmRlciB3aGF0IGNpcmN1bXN0YW5jZXMgd2UgbmVlZCB0byBkaXNh
+YmxlIGhhcmR3YXJlDQogICAgPiBjaGVja3N1bW1pbmc/DQogICAgDQogICAgQW55IG5ld3Mgb24g
+dGhpcyA/IEFTVDI0MDAgaGFzIG5vIEhXIGNoZWNrc3VtIGxvZ2ljIGluIEhXLCBBU1QyNTAwDQog
+ICAgc2hvdWxkIHdvcmsgZm9yIElQVjQgZmluZSwgd2Ugc2hvdWxkIG9ubHkgc2VsZWN0aXZlbHkg
+ZGlzYWJsZSBpdCBmb3INCiAgICBJUFY2Lg0KDQpCZW4sIEkgaGF2ZSBhbHJlYWR5IHNlbnQgdjIg
+Zm9yIHRoaXMgd2l0aCByZXF1ZXN0ZWQgY2hhbmdlIHdoaWNoIG9ubHkgZGlzYWJsZSANCmZvciBJ
+UFY2IGluIEFTVDI1MDAuIEkgY2FuIHNlbmQgaXQgYWdhaW4uDQogICAgDQogICAgQ2FuIHlvdSBk
+byBhbiB1cGRhdGVkIHBhdGNoID8NCiAgICANCiAgICBDaGVlcnMsDQogICAgQmVuLg0KICAgIA0K
+ICAgIA0KDQo=
