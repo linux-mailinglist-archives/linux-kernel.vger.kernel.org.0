@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9693DD2392
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4963D240D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:50:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388819AbfJJInv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:43:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48752 "EHLO mail.kernel.org"
+        id S2389688AbfJJIsi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:48:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388145AbfJJInu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:43:50 -0400
+        id S2389651AbfJJIsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:48:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C105F2054F;
-        Thu, 10 Oct 2019 08:43:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B54632064A;
+        Thu, 10 Oct 2019 08:48:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697029;
-        bh=oW5Rfbl6SsO+qi24/vZmZMOz5+wZgp/IY5u2ko0W1Ek=;
+        s=default; t=1570697310;
+        bh=8/k19fIZ0kkjZNWVifZ4eztuH6N6F6LNK7/z2zqspQM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fQuO2gSo39WWv2TAQMK4EFvN/uItKohonoAiOmZpc07oJirF3YyPzjlWj3TPGWASh
-         BrBESR6gpRleJqRkST3RJg/7yYl4glZRkPrqrGyq9dLRdWqJhjJk9s7miaMevTAtVw
-         LYbVvD5Ob8h1Bvnq3p97TJYnhdqRLf0Il3L6iGsM=
+        b=iP8jm4F8iUj1sU2k2cOVgqnpqWlStKjmZBuX7ppedxWW1X+L/kry5KaSpGxln9uBM
+         sD9ylUVby2ZOPqwJIOVJEs9foRtyFlqGZGD1l+CXI9mmbVWejz11carR8lUrXkvZv2
+         WWw2m1/GmjNdJVFXj72ECgvBopwkdPqZL52D0bFA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Murray <andrew.murray@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH 5.3 142/148] coresight: etm4x: Use explicit barriers on enable/disable
+        stable@vger.kernel.org, Jeremy Linton <jeremy.linton@arm.com>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH 4.19 096/114] arm64: Always enable ssb vulnerability detection
 Date:   Thu, 10 Oct 2019 10:36:43 +0200
-Message-Id: <20191010083620.916764208@linuxfoundation.org>
+Message-Id: <20191010083613.231594675@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
-References: <20191010083609.660878383@linuxfoundation.org>
+In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
+References: <20191010083544.711104709@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,72 +47,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrew Murray <andrew.murray@arm.com>
+From: Jeremy Linton <jeremy.linton@arm.com>
 
-commit 1004ce4c255fc3eb3ad9145ddd53547d1b7ce327 upstream.
+[ Upstream commit d42281b6e49510f078ace15a8ea10f71e6262581 ]
 
-Synchronization is recommended before disabling the trace registers
-to prevent any start or stop points being speculative at the point
-of disabling the unit (section 7.3.77 of ARM IHI 0064D).
+Ensure we are always able to detect whether or not the CPU is affected
+by SSB, so that we can later advertise this to userspace.
 
-Synchronization is also recommended after programming the trace
-registers to ensure all updates are committed prior to normal code
-resuming (section 4.3.7 of ARM IHI 0064D).
-
-Let's ensure these syncronization points are present in the code
-and clearly commented.
-
-Note that we could rely on the barriers in CS_LOCK and
-coresight_disclaim_device_unlocked or the context switch to user
-space - however coresight may be of use in the kernel.
-
-On armv8 the mb macro is defined as dsb(sy) - Given that the etm4x is
-only used on armv8 let's directly use dsb(sy) instead of mb(). This
-removes some ambiguity and makes it easier to correlate the code with
-the TRM.
-
-Signed-off-by: Andrew Murray <andrew.murray@arm.com>
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-[Fixed capital letter for "use" in title]
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Link: https://lore.kernel.org/r/20190829202842.580-11-mathieu.poirier@linaro.org
+Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
+[will: Use IS_ENABLED instead of #ifdef]
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/hwtracing/coresight/coresight-etm4x.c |   15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ arch/arm64/include/asm/cpufeature.h |    4 ----
+ arch/arm64/kernel/cpu_errata.c      |    9 +++++----
+ 2 files changed, 5 insertions(+), 8 deletions(-)
 
---- a/drivers/hwtracing/coresight/coresight-etm4x.c
-+++ b/drivers/hwtracing/coresight/coresight-etm4x.c
-@@ -188,6 +188,13 @@ static int etm4_enable_hw(struct etmv4_d
- 		dev_err(etm_dev,
- 			"timeout while waiting for Idle Trace Status\n");
+--- a/arch/arm64/include/asm/cpufeature.h
++++ b/arch/arm64/include/asm/cpufeature.h
+@@ -525,11 +525,7 @@ static inline int arm64_get_ssbd_state(v
+ #endif
+ }
  
-+	/*
-+	 * As recommended by section 4.3.7 ("Synchronization when using the
-+	 * memory-mapped interface") of ARM IHI 0064D
-+	 */
-+	dsb(sy);
-+	isb();
+-#ifdef CONFIG_ARM64_SSBD
+ void arm64_set_ssbd_mitigation(bool state);
+-#else
+-static inline void arm64_set_ssbd_mitigation(bool state) {}
+-#endif
+ 
+ #endif /* __ASSEMBLY__ */
+ 
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -239,7 +239,6 @@ enable_smccc_arch_workaround_1(const str
+ }
+ #endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
+ 
+-#ifdef CONFIG_ARM64_SSBD
+ DEFINE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
+ 
+ int ssbd_state __read_mostly = ARM64_SSBD_KERNEL;
+@@ -312,6 +311,11 @@ void __init arm64_enable_wa2_handling(st
+ 
+ void arm64_set_ssbd_mitigation(bool state)
+ {
++	if (!IS_ENABLED(CONFIG_ARM64_SSBD)) {
++		pr_info_once("SSBD disabled by kernel configuration\n");
++		return;
++	}
 +
- done:
- 	CS_LOCK(drvdata->base);
+ 	if (this_cpu_has_cap(ARM64_SSBS)) {
+ 		if (state)
+ 			asm volatile(SET_PSTATE_SSBS(0));
+@@ -431,7 +435,6 @@ out_printmsg:
  
-@@ -453,8 +460,12 @@ static void etm4_disable_hw(void *info)
- 	/* EN, bit[0] Trace unit enable bit */
- 	control &= ~0x1;
+ 	return required;
+ }
+-#endif	/* CONFIG_ARM64_SSBD */
  
--	/* make sure everything completes before disabling */
--	mb();
-+	/*
-+	 * Make sure everything completes before disabling, as recommended
-+	 * by section 7.3.77 ("TRCVICTLR, ViewInst Main Control Register,
-+	 * SSTATUS") of ARM IHI 0064D
-+	 */
-+	dsb(sy);
- 	isb();
- 	writel_relaxed(control, drvdata->base + TRCPRGCTLR);
- 
+ #ifdef CONFIG_ARM64_ERRATUM_1463225
+ DEFINE_PER_CPU(int, __in_cortex_a76_erratum_1463225_wa);
+@@ -710,14 +713,12 @@ const struct arm64_cpu_capabilities arm6
+ 		ERRATA_MIDR_RANGE_LIST(arm64_harden_el2_vectors),
+ 	},
+ #endif
+-#ifdef CONFIG_ARM64_SSBD
+ 	{
+ 		.desc = "Speculative Store Bypass Disable",
+ 		.capability = ARM64_SSBD,
+ 		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
+ 		.matches = has_ssbd_mitigation,
+ 	},
+-#endif
+ #ifdef CONFIG_ARM64_ERRATUM_1463225
+ 	{
+ 		.desc = "ARM erratum 1463225",
 
 
