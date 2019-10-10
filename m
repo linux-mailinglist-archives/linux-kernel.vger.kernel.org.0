@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01173D23AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C95ECD2334
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:48:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389001AbfJJIos (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:44:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50110 "EHLO mail.kernel.org"
+        id S2388050AbfJJIkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:40:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388991AbfJJIoo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:44:44 -0400
+        id S2388040AbfJJIkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:40:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5110221D7B;
-        Thu, 10 Oct 2019 08:44:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DAA120B7C;
+        Thu, 10 Oct 2019 08:40:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697083;
-        bh=ZMbD7NQgVZBdafpMiZpRoDV35b8P+1KH5oAe7EgLdW0=;
+        s=default; t=1570696805;
+        bh=Cj6zVdwil1V9LHOzG+BAeozXgHOjbyNXgx+HXxMd0CM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Rin0ukTTuRaDLQYc5DgK5b6tDnVhr16J5IWUFKNLTecUmgI6EkT0aP1VjXRzE6pEN
-         o0KIUQG8nBpz1wcQ3UsIwl0LSS1ENePQ+dEoIwPUvC9wxpUq3p0exsCAzNB0Z7PC2I
-         +cTnjEcW/rCv1O2fgmyRDkjbvqbU0KQuCM+2PSVU=
+        b=ehMEOvsWFr8s/gIdwojZZaTp/IoYht/LG2J3wZg/6lFFnMlYM/DL0FD1N/1sgFg/N
+         Z4bK+utnG1F41GTVvcgnRzKTkq4PN37kFtCJe9tC03BQTbhZSfIBOOd2d2LvV5j/9D
+         nur0+TpDNTlyCk5ZA/w1M3GmWKYY/RghvxGc61+g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.19 013/114] ASoC: sgtl5000: Improve VAG power and mute control
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>
+Subject: [PATCH 5.3 059/148] watchdog: imx2_wdt: fix min() calculation in imx2_wdt_set_timeout
 Date:   Thu, 10 Oct 2019 10:35:20 +0200
-Message-Id: <20191010083550.485368507@linuxfoundation.org>
+Message-Id: <20191010083614.722223370@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
-References: <20191010083544.711104709@linuxfoundation.org>
+In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
+References: <20191010083609.660878383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,332 +45,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
-commit b1f373a11d25fc9a5f7679c9b85799fe09b0dc4a upstream.
+commit 144783a80cd2cbc45c6ce17db649140b65f203dd upstream.
 
-VAG power control is improved to fit the manual [1]. This patch fixes as
-minimum one bug: if customer muxes Headphone to Line-In right after boot,
-the VAG power remains off that leads to poor sound quality from line-in.
+Converting from ms to s requires dividing by 1000, not multiplying. So
+this is currently taking the smaller of new_timeout and 1.28e8,
+i.e. effectively new_timeout.
 
-I.e. after boot:
-  - Connect sound source to Line-In jack;
-  - Connect headphone to HP jack;
-  - Run following commands:
-  $ amixer set 'Headphone' 80%
-  $ amixer set 'Headphone Mux' LINE_IN
+The driver knows what it set max_hw_heartbeat_ms to, so use that
+value instead of doing a division at run-time.
 
-Change VAG power on/off control according to the following algorithm:
-  - turn VAG power ON on the 1st incoming event.
-  - keep it ON if there is any active VAG consumer (ADC/DAC/HP/Line-In).
-  - turn VAG power OFF when there is the latest consumer's pre-down event
-    come.
-  - always delay after VAG power OFF to avoid pop.
-  - delay after VAG power ON if the initiative consumer is Line-In, this
-    prevents pop during line-in muxing.
+FWIW, this can easily be tested by booting into a busybox shell and
+doing "watchdog -t 5 -T 130 /dev/watchdog" - without this patch, the
+watchdog fires after 130&127 == 2 seconds.
 
-According to the data sheet [1], to avoid any pops/clicks,
-the outputs should be muted during input/output
-routing changes.
-
-[1] https://www.nxp.com/docs/en/data-sheet/SGTL5000.pdf
-
-Cc: stable@vger.kernel.org
-Fixes: 9b34e6cc3bc2 ("ASoC: Add Freescale SGTL5000 codec support")
-Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
-Reviewed-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
-Reviewed-by: Cezary Rojewski <cezary.rojewski@intel.com>
-Link: https://lore.kernel.org/r/20190719100524.23300-3-oleksandr.suvorov@toradex.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: b07e228eee69 "watchdog: imx2_wdt: Fix set_timeout for big timeout values"
+Cc: stable@vger.kernel.org # 5.2 plus anything the above got backported to
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/20190812131356.23039-1-linux@rasmusvillemoes.dk
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/codecs/sgtl5000.c |  224 ++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 194 insertions(+), 30 deletions(-)
+ drivers/watchdog/imx2_wdt.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/sound/soc/codecs/sgtl5000.c
-+++ b/sound/soc/codecs/sgtl5000.c
-@@ -31,6 +31,13 @@
- #define SGTL5000_DAP_REG_OFFSET	0x0100
- #define SGTL5000_MAX_REG_OFFSET	0x013A
+--- a/drivers/watchdog/imx2_wdt.c
++++ b/drivers/watchdog/imx2_wdt.c
+@@ -55,7 +55,7 @@
  
-+/* Delay for the VAG ramp up */
-+#define SGTL5000_VAG_POWERUP_DELAY 500 /* ms */
-+/* Delay for the VAG ramp down */
-+#define SGTL5000_VAG_POWERDOWN_DELAY 500 /* ms */
-+
-+#define SGTL5000_OUTPUTS_MUTE (SGTL5000_HP_MUTE | SGTL5000_LINE_OUT_MUTE)
-+
- /* default value of sgtl5000 registers */
- static const struct reg_default sgtl5000_reg_defaults[] = {
- 	{ SGTL5000_CHIP_DIG_POWER,		0x0000 },
-@@ -116,6 +123,13 @@ enum  {
- 	I2S_LRCLK_STRENGTH_HIGH,
- };
+ #define IMX2_WDT_WMCR		0x08		/* Misc Register */
  
-+enum {
-+	HP_POWER_EVENT,
-+	DAC_POWER_EVENT,
-+	ADC_POWER_EVENT,
-+	LAST_POWER_EVENT = ADC_POWER_EVENT
-+};
-+
- /* sgtl5000 private structure in codec */
- struct sgtl5000_priv {
- 	int sysclk;	/* sysclk rate */
-@@ -129,8 +143,109 @@ struct sgtl5000_priv {
- 	u8 micbias_resistor;
- 	u8 micbias_voltage;
- 	u8 lrclk_strength;
-+	u16 mute_state[LAST_POWER_EVENT + 1];
- };
+-#define IMX2_WDT_MAX_TIME	128
++#define IMX2_WDT_MAX_TIME	128U
+ #define IMX2_WDT_DEFAULT_TIME	60		/* in seconds */
  
-+static inline int hp_sel_input(struct snd_soc_component *component)
-+{
-+	return (snd_soc_component_read32(component, SGTL5000_CHIP_ANA_CTRL) &
-+		SGTL5000_HP_SEL_MASK) >> SGTL5000_HP_SEL_SHIFT;
-+}
-+
-+static inline u16 mute_output(struct snd_soc_component *component,
-+			      u16 mute_mask)
-+{
-+	u16 mute_reg = snd_soc_component_read32(component,
-+					      SGTL5000_CHIP_ANA_CTRL);
-+
-+	snd_soc_component_update_bits(component, SGTL5000_CHIP_ANA_CTRL,
-+			    mute_mask, mute_mask);
-+	return mute_reg;
-+}
-+
-+static inline void restore_output(struct snd_soc_component *component,
-+				  u16 mute_mask, u16 mute_reg)
-+{
-+	snd_soc_component_update_bits(component, SGTL5000_CHIP_ANA_CTRL,
-+		mute_mask, mute_reg);
-+}
-+
-+static void vag_power_on(struct snd_soc_component *component, u32 source)
-+{
-+	if (snd_soc_component_read32(component, SGTL5000_CHIP_ANA_POWER) &
-+	    SGTL5000_VAG_POWERUP)
-+		return;
-+
-+	snd_soc_component_update_bits(component, SGTL5000_CHIP_ANA_POWER,
-+			    SGTL5000_VAG_POWERUP, SGTL5000_VAG_POWERUP);
-+
-+	/* When VAG powering on to get local loop from Line-In, the sleep
-+	 * is required to avoid loud pop.
-+	 */
-+	if (hp_sel_input(component) == SGTL5000_HP_SEL_LINE_IN &&
-+	    source == HP_POWER_EVENT)
-+		msleep(SGTL5000_VAG_POWERUP_DELAY);
-+}
-+
-+static int vag_power_consumers(struct snd_soc_component *component,
-+			       u16 ana_pwr_reg, u32 source)
-+{
-+	int consumers = 0;
-+
-+	/* count dac/adc consumers unconditional */
-+	if (ana_pwr_reg & SGTL5000_DAC_POWERUP)
-+		consumers++;
-+	if (ana_pwr_reg & SGTL5000_ADC_POWERUP)
-+		consumers++;
-+
-+	/*
-+	 * If the event comes from HP and Line-In is selected,
-+	 * current action is 'DAC to be powered down'.
-+	 * As HP_POWERUP is not set when HP muxed to line-in,
-+	 * we need to keep VAG power ON.
-+	 */
-+	if (source == HP_POWER_EVENT) {
-+		if (hp_sel_input(component) == SGTL5000_HP_SEL_LINE_IN)
-+			consumers++;
-+	} else {
-+		if (ana_pwr_reg & SGTL5000_HP_POWERUP)
-+			consumers++;
-+	}
-+
-+	return consumers;
-+}
-+
-+static void vag_power_off(struct snd_soc_component *component, u32 source)
-+{
-+	u16 ana_pwr = snd_soc_component_read32(component,
-+					     SGTL5000_CHIP_ANA_POWER);
-+
-+	if (!(ana_pwr & SGTL5000_VAG_POWERUP))
-+		return;
-+
-+	/*
-+	 * This function calls when any of VAG power consumers is disappearing.
-+	 * Thus, if there is more than one consumer at the moment, as minimum
-+	 * one consumer will definitely stay after the end of the current
-+	 * event.
-+	 * Don't clear VAG_POWERUP if 2 or more consumers of VAG present:
-+	 * - LINE_IN (for HP events) / HP (for DAC/ADC events)
-+	 * - DAC
-+	 * - ADC
-+	 * (the current consumer is disappearing right now)
-+	 */
-+	if (vag_power_consumers(component, ana_pwr, source) >= 2)
-+		return;
-+
-+	snd_soc_component_update_bits(component, SGTL5000_CHIP_ANA_POWER,
-+		SGTL5000_VAG_POWERUP, 0);
-+	/* In power down case, we need wait 400-1000 ms
-+	 * when VAG fully ramped down.
-+	 * As longer we wait, as smaller pop we've got.
-+	 */
-+	msleep(SGTL5000_VAG_POWERDOWN_DELAY);
-+}
-+
- /*
-  * mic_bias power on/off share the same register bits with
-  * output impedance of mic bias, when power on mic bias, we
-@@ -162,36 +277,46 @@ static int mic_bias_event(struct snd_soc
- 	return 0;
- }
- 
--/*
-- * As manual described, ADC/DAC only works when VAG powerup,
-- * So enabled VAG before ADC/DAC up.
-- * In power down case, we need wait 400ms when vag fully ramped down.
-- */
--static int power_vag_event(struct snd_soc_dapm_widget *w,
--	struct snd_kcontrol *kcontrol, int event)
-+static int vag_and_mute_control(struct snd_soc_component *component,
-+				 int event, int event_source)
+ #define WDOG_SEC_TO_COUNT(s)	((s * 2 - 1) << 8)
+@@ -180,7 +180,7 @@ static int imx2_wdt_set_timeout(struct w
  {
--	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
--	const u32 mask = SGTL5000_DAC_POWERUP | SGTL5000_ADC_POWERUP;
-+	static const u16 mute_mask[] = {
-+		/*
-+		 * Mask for HP_POWER_EVENT.
-+		 * Muxing Headphones have to be wrapped with mute/unmute
-+		 * headphones only.
-+		 */
-+		SGTL5000_HP_MUTE,
-+		/*
-+		 * Masks for DAC_POWER_EVENT/ADC_POWER_EVENT.
-+		 * Muxing DAC or ADC block have to wrapped with mute/unmute
-+		 * both headphones and line-out.
-+		 */
-+		SGTL5000_OUTPUTS_MUTE,
-+		SGTL5000_OUTPUTS_MUTE
-+	};
-+
-+	struct sgtl5000_priv *sgtl5000 =
-+		snd_soc_component_get_drvdata(component);
+ 	unsigned int actual;
  
- 	switch (event) {
-+	case SND_SOC_DAPM_PRE_PMU:
-+		sgtl5000->mute_state[event_source] =
-+			mute_output(component, mute_mask[event_source]);
-+		break;
- 	case SND_SOC_DAPM_POST_PMU:
--		snd_soc_component_update_bits(component, SGTL5000_CHIP_ANA_POWER,
--			SGTL5000_VAG_POWERUP, SGTL5000_VAG_POWERUP);
--		msleep(400);
-+		vag_power_on(component, event_source);
-+		restore_output(component, mute_mask[event_source],
-+			       sgtl5000->mute_state[event_source]);
- 		break;
--
- 	case SND_SOC_DAPM_PRE_PMD:
--		/*
--		 * Don't clear VAG_POWERUP, when both DAC and ADC are
--		 * operational to prevent inadvertently starving the
--		 * other one of them.
--		 */
--		if ((snd_soc_component_read32(component, SGTL5000_CHIP_ANA_POWER) &
--				mask) != mask) {
--			snd_soc_component_update_bits(component, SGTL5000_CHIP_ANA_POWER,
--				SGTL5000_VAG_POWERUP, 0);
--			msleep(400);
--		}
-+		sgtl5000->mute_state[event_source] =
-+			mute_output(component, mute_mask[event_source]);
-+		vag_power_off(component, event_source);
-+		break;
-+	case SND_SOC_DAPM_POST_PMD:
-+		restore_output(component, mute_mask[event_source],
-+			       sgtl5000->mute_state[event_source]);
- 		break;
- 	default:
- 		break;
-@@ -200,6 +325,41 @@ static int power_vag_event(struct snd_so
+-	actual = min(new_timeout, wdog->max_hw_heartbeat_ms * 1000);
++	actual = min(new_timeout, IMX2_WDT_MAX_TIME);
+ 	__imx2_wdt_set_timeout(wdog, actual);
+ 	wdog->timeout = new_timeout;
  	return 0;
- }
- 
-+/*
-+ * Mute Headphone when power it up/down.
-+ * Control VAG power on HP power path.
-+ */
-+static int headphone_pga_event(struct snd_soc_dapm_widget *w,
-+	struct snd_kcontrol *kcontrol, int event)
-+{
-+	struct snd_soc_component *component =
-+		snd_soc_dapm_to_component(w->dapm);
-+
-+	return vag_and_mute_control(component, event, HP_POWER_EVENT);
-+}
-+
-+/* As manual describes, ADC/DAC powering up/down requires
-+ * to mute outputs to avoid pops.
-+ * Control VAG power on ADC/DAC power path.
-+ */
-+static int adc_updown_depop(struct snd_soc_dapm_widget *w,
-+	struct snd_kcontrol *kcontrol, int event)
-+{
-+	struct snd_soc_component *component =
-+		snd_soc_dapm_to_component(w->dapm);
-+
-+	return vag_and_mute_control(component, event, ADC_POWER_EVENT);
-+}
-+
-+static int dac_updown_depop(struct snd_soc_dapm_widget *w,
-+	struct snd_kcontrol *kcontrol, int event)
-+{
-+	struct snd_soc_component *component =
-+		snd_soc_dapm_to_component(w->dapm);
-+
-+	return vag_and_mute_control(component, event, DAC_POWER_EVENT);
-+}
-+
- /* input sources for ADC */
- static const char *adc_mux_text[] = {
- 	"MIC_IN", "LINE_IN"
-@@ -272,7 +432,10 @@ static const struct snd_soc_dapm_widget
- 			    mic_bias_event,
- 			    SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_PRE_PMD),
- 
--	SND_SOC_DAPM_PGA("HP", SGTL5000_CHIP_ANA_POWER, 4, 0, NULL, 0),
-+	SND_SOC_DAPM_PGA_E("HP", SGTL5000_CHIP_ANA_POWER, 4, 0, NULL, 0,
-+			   headphone_pga_event,
-+			   SND_SOC_DAPM_PRE_POST_PMU |
-+			   SND_SOC_DAPM_PRE_POST_PMD),
- 	SND_SOC_DAPM_PGA("LO", SGTL5000_CHIP_ANA_POWER, 0, 0, NULL, 0),
- 
- 	SND_SOC_DAPM_MUX("Capture Mux", SND_SOC_NOPM, 0, 0, &adc_mux),
-@@ -293,11 +456,12 @@ static const struct snd_soc_dapm_widget
- 				0, SGTL5000_CHIP_DIG_POWER,
- 				1, 0),
- 
--	SND_SOC_DAPM_ADC("ADC", "Capture", SGTL5000_CHIP_ANA_POWER, 1, 0),
--	SND_SOC_DAPM_DAC("DAC", "Playback", SGTL5000_CHIP_ANA_POWER, 3, 0),
--
--	SND_SOC_DAPM_PRE("VAG_POWER_PRE", power_vag_event),
--	SND_SOC_DAPM_POST("VAG_POWER_POST", power_vag_event),
-+	SND_SOC_DAPM_ADC_E("ADC", "Capture", SGTL5000_CHIP_ANA_POWER, 1, 0,
-+			   adc_updown_depop, SND_SOC_DAPM_PRE_POST_PMU |
-+			   SND_SOC_DAPM_PRE_POST_PMD),
-+	SND_SOC_DAPM_DAC_E("DAC", "Playback", SGTL5000_CHIP_ANA_POWER, 3, 0,
-+			   dac_updown_depop, SND_SOC_DAPM_PRE_POST_PMU |
-+			   SND_SOC_DAPM_PRE_POST_PMD),
- };
- 
- /* routes for sgtl5000 */
 
 
