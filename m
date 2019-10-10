@@ -2,107 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7CB7D1E6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 04:27:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 586D4D1E70
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 04:29:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732609AbfJJC1z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 22:27:55 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:34668 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726465AbfJJC1y (ORCPT
+        id S1732703AbfJJC3h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 22:29:37 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:47106 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726501AbfJJC3g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 22:27:54 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9A2IqbR040330;
-        Thu, 10 Oct 2019 02:27:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=wbLroutOnvA812BxPr3bS3A0Ss61AI1f1pLVhnMY4VU=;
- b=oD01xZzzN8C953xNDw0ic8Mj64sNc9HfcKVfx3NWoPOMYql5gqv1QMZg7YYxuhA7n+LE
- APVtN6sixNEmpnBPStXqylYktb8GgDHsiBz4cFABCF9/c4+kgqp+gSQpRVJ263pES0Ls
- Zvcy5APbUspoTtdfU7KUeX/fnelbvhzaltyHz6F6bBX37aAzZ9czkFxZnP5ZMOBd9+G/
- IuOwYu2d0PZky07A5sgXVd3/5DaQbew+tRc0ZEkZReJ7/FTJZpH8vIpnIUXyrbHfg0te
- HZLbM/eYfoGRJi+l6RFjaxq3thFOb9kAlvmEFhomMc2X3DtapxzA8/v866t+tOVyG/XQ 1A== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2vek4qr6my-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Oct 2019 02:27:23 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9A2IWwM019077;
-        Thu, 10 Oct 2019 02:25:23 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2vhrxchwfb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Oct 2019 02:25:23 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9A2PJPT009595;
-        Thu, 10 Oct 2019 02:25:19 GMT
-Received: from [192.168.1.222] (/71.63.128.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 09 Oct 2019 19:25:19 -0700
-Subject: Re: [PATCH -next] userfaultfd: remove set but not used variable 'h'
-To:     Wei Yang <richardw.yang@linux.intel.com>
-Cc:     YueHaibing <yuehaibing@huawei.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Hugh Dickins <hughd@google.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20191009122740.70517-1-yuehaibing@huawei.com>
- <a28da32b-5c26-21e9-4a08-722abf9fbeba@oracle.com>
- <20191010012322.GB2167@richard>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <ba62cc8f-da4d-a316-c968-80871551c863@oracle.com>
-Date:   Wed, 9 Oct 2019 19:25:18 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        Wed, 9 Oct 2019 22:29:36 -0400
+X-Greylist: delayed 35730 seconds by postgrey-1.27 at vger.kernel.org; Wed, 09 Oct 2019 22:29:34 EDT
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id x9A2TQrh010258;
+        Thu, 10 Oct 2019 11:29:27 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x9A2TQrh010258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1570674567;
+        bh=Q7utFN6RzuE8eM4XqhBr6De112exitRV2SZcLvRw+/Y=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=lfR7F1noQwk6SX0ADbu5hKqkv67oZZhkBR8M6ERsWbkWf/LBefvJB7MvjzmMX3W0Q
+         7L83VrJkxM1N+VrTTE4fgeC7YZcwg+yEC6YHciTFMF7TegJxQpPGoMoz8PmTaVxIyr
+         +M8Zy5Fu94jMJYGO9Xv//G91R47IMsjmMAXaGmxZnLQq64JxF9yZfADZo5HMTn1OJp
+         7V5g5Gy99M56A5Z0VFjxSkNCpDWYaB86VII91VcMNjRcvyhn9NikZboIxHeEYyL/q1
+         XSK4qnIPuNqb61MSha+vSHUboZB28OxPNNruQmr1ebGCD2Zat3JKE5DWtAFja4OVoa
+         WHnGEk3JR445Q==
+X-Nifty-SrcIP: [209.85.222.53]
+Received: by mail-ua1-f53.google.com with SMTP id w7so1446634uag.4;
+        Wed, 09 Oct 2019 19:29:27 -0700 (PDT)
+X-Gm-Message-State: APjAAAX1QGhuxHrQAYuy+NsIKjkrzCraAou8bec8dD4x0BNrBUl69egu
+        t1bH4nOZSdR/HWbV/lT8XKrusc9cdFYkTHWU5Jg=
+X-Google-Smtp-Source: APXvYqxJHdHRSk8iJK5J8OgjOjbFblWwYJs3YgddSOljJ0wgWwB7NP2b6e2SsoVqJmZZ8fJTYDM1o8iI6Lmnx9UQtLs=
+X-Received: by 2002:a9f:31c5:: with SMTP id w5mr3361388uad.40.1570674566294;
+ Wed, 09 Oct 2019 19:29:26 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191010012322.GB2167@richard>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9405 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910100021
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9405 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910100021
+References: <cover.1570633189.git.vilhelm.gray@gmail.com> <893c3b4f03266c9496137cc98ac2b1bd27f92c73.1570633189.git.vilhelm.gray@gmail.com>
+ <CAK7LNATgW7bXUmqV=3QAaJ0Qu73Kox-TgDCQJb=s0=mwewSCUg@mail.gmail.com>
+ <20191009170917.GG32742@smile.fi.intel.com> <CAMuHMdXyyrL4ibKvjMV6r8TuxpmK73=JxsWNEfcRk1NjwsnOjA@mail.gmail.com>
+In-Reply-To: <CAMuHMdXyyrL4ibKvjMV6r8TuxpmK73=JxsWNEfcRk1NjwsnOjA@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 10 Oct 2019 11:28:50 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASVdqU_6+_iinWStb9ALqLw494pnZKr46fLW+WJ9nUo6A@mail.gmail.com>
+Message-ID: <CAK7LNASVdqU_6+_iinWStb9ALqLw494pnZKr46fLW+WJ9nUo6A@mail.gmail.com>
+Subject: Re: [PATCH v17 01/14] bitops: Introduce the for_each_set_clump8 macro
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux PM mailing list <linux-pm@vger.kernel.org>,
+        Phil Reid <preid@electromag.com.au>,
+        Lukas Wunner <lukas@wunner.de>, sean.nyekjaer@prevas.dk,
+        morten.tiljeset@prevas.dk, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/9/19 6:23 PM, Wei Yang wrote:
-> On Wed, Oct 09, 2019 at 05:45:57PM -0700, Mike Kravetz wrote:
->> On 10/9/19 5:27 AM, YueHaibing wrote:
->>> Fixes gcc '-Wunused-but-set-variable' warning:
->>>
->>> mm/userfaultfd.c: In function '__mcopy_atomic_hugetlb':
->>> mm/userfaultfd.c:217:17: warning:
->>>  variable 'h' set but not used [-Wunused-but-set-variable]
->>>
->>> It is not used since commit 78911d0e18ac ("userfaultfd: use vma_pagesize
->>> for all huge page size calculation")
->>>
->>
->> Thanks!  That should have been removed with the recent cleanups.
->>
->>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->>
->> Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
-> 
-> If I am correct, this is removed in a recent patch.
+On Thu, Oct 10, 2019 at 3:54 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Andy,
+>
+> On Wed, Oct 9, 2019 at 7:09 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Thu, Oct 10, 2019 at 01:28:08AM +0900, Masahiro Yamada wrote:
+> > > On Thu, Oct 10, 2019 at 12:27 AM William Breathitt Gray
+> > > <vilhelm.gray@gmail.com> wrote:
+> > > >
+> > > > This macro iterates for each 8-bit group of bits (clump) with set bits,
+> > > > within a bitmap memory region. For each iteration, "start" is set to the
+> > > > bit offset of the found clump, while the respective clump value is
+> > > > stored to the location pointed by "clump". Additionally, the
+> > > > bitmap_get_value8 and bitmap_set_value8 functions are introduced to
+> > > > respectively get and set an 8-bit value in a bitmap memory region.
+> >
+> > > Why is the return type "unsigned long" where you know
+> > > it return the 8-bit value ?
+> >
+> > Because bitmap API operates on unsigned long type. This is not only
+> > consistency, but for sake of flexibility in case we would like to introduce
+> > more calls like clump16 or so.
+>
+> TBH, that doesn't convince me: those functions explicitly take/return an
+> 8-bit value, and have "8" in their name.  The 8-bit value is never
+> really related to, retrieved from, or stored in a full "unsigned long"
+> element of a bitmap, only to/from/in a part (byte) of it.
+>
+> Following your rationale, all of iowrite{8,16,32,64}*() should take an
+> "unsigned long" value, too.
+>
 
-I'm having a hard time figuring out what is actually in the latest mmotm
-tree.  Andrew added a build fixup patch ab169389eb5 in linux-next which
-adds the reference to h.  Is there a patch after that to remove the reference?
++1
+
+Using u8/u16/u32/u64 looks more consistent with other bitmap helpers.
+
+void bitmap_from_arr32(unsigned long *bitmap, const u32 *buf, unsigned
+int nbits);
+void bitmap_to_arr32(u32 *buf, const unsigned long *bitmap, unsigned int nbits);
+static inline void bitmap_from_u64(unsigned long *dst, u64 mask);
+
+
+
+If you want to see more examples from other parts,
+
+
+int of_property_read_u8(const struct device_node *np,
+                        const char *propname,
+                        u8 *out_value)
+
+
+int of_property_read_u16(const struct device_node *np,
+                         const char *propname,
+                         u16 *out_value)
+
 
 -- 
-Mike Kravetz
+Best Regards
+Masahiro Yamada
