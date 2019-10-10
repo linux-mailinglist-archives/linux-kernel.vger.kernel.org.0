@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FCA6D249F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:00:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 497DBD257D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:02:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389643AbfJJIs1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:48:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54462 "EHLO mail.kernel.org"
+        id S2388634AbfJJJA1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 05:00:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389625AbfJJIsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:48:17 -0400
+        id S2388614AbfJJImw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:42:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54C4D21D7A;
-        Thu, 10 Oct 2019 08:48:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C47722492;
+        Thu, 10 Oct 2019 08:42:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697296;
-        bh=HtTLYwMSkuU1fMYDyowkG8fljK9blnV/vEYaAIVphrM=;
+        s=default; t=1570696972;
+        bh=ctkmw1M+BK4/k/ZFVsn6InxKW70lswMcW/BIGGD3PCA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OIPLwsiOTRf3MMYpfnu8RLKUc5LUlMnkCCXFwQtsNXhcwbk1yAdL9syntluZ1TXVb
-         SS4iTBpGur2Em87jCn/iBSNJ+dxaUAjecBws966CnEVjScegjk1SkXqngIfv4Pol69
-         E1QEhRc1+Cv5dx/26VZOhEWLCAsMUABm9RMhLufA=
+        b=PG6+aaGssTXbGrY+iRCAsYZUOm3eArZzkph2m0mPlYiFilye/ot+V6xZIJk81ZBOF
+         qgWD77YuN+/z5M2uy/ESkI0WPbIrKn7mKFO5jHDOcdzvJK5zeMWCFquwhoPZx2AOw5
+         vw3bxxI1M5lb81ayuAJja5NPtEBO85/SuXnLxo/A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: [PATCH 4.19 036/114] perf stat: Fix a segmentation fault when using repeat forever
-Date:   Thu, 10 Oct 2019 10:35:43 +0200
-Message-Id: <20191010083602.596987082@linuxfoundation.org>
+        stable@vger.kernel.org, James Dingwall <james@dingwall.me.uk>,
+        Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: [PATCH 5.3 083/148] xen/xenbus: fix self-deadlock after killing user process
+Date:   Thu, 10 Oct 2019 10:35:44 +0200
+Message-Id: <20191010083616.377380735@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
-References: <20191010083544.711104709@linuxfoundation.org>
+In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
+References: <20191010083609.660878383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,104 +44,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+From: Juergen Gross <jgross@suse.com>
 
-commit 443f2d5ba13d65ccfd879460f77941875159d154 upstream.
+commit a8fabb38525c51a094607768bac3ba46b3f4a9d5 upstream.
 
-Observe a segmentation fault when 'perf stat' is asked to repeat forever
-with the interval option.
+In case a user process using xenbus has open transactions and is killed
+e.g. via ctrl-C the following cleanup of the allocated resources might
+result in a deadlock due to trying to end a transaction in the xenbus
+worker thread:
 
-Without fix:
+[ 2551.474706] INFO: task xenbus:37 blocked for more than 120 seconds.
+[ 2551.492215]       Tainted: P           OE     5.0.0-29-generic #5
+[ 2551.510263] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[ 2551.528585] xenbus          D    0    37      2 0x80000080
+[ 2551.528590] Call Trace:
+[ 2551.528603]  __schedule+0x2c0/0x870
+[ 2551.528606]  ? _cond_resched+0x19/0x40
+[ 2551.528632]  schedule+0x2c/0x70
+[ 2551.528637]  xs_talkv+0x1ec/0x2b0
+[ 2551.528642]  ? wait_woken+0x80/0x80
+[ 2551.528645]  xs_single+0x53/0x80
+[ 2551.528648]  xenbus_transaction_end+0x3b/0x70
+[ 2551.528651]  xenbus_file_free+0x5a/0x160
+[ 2551.528654]  xenbus_dev_queue_reply+0xc4/0x220
+[ 2551.528657]  xenbus_thread+0x7de/0x880
+[ 2551.528660]  ? wait_woken+0x80/0x80
+[ 2551.528665]  kthread+0x121/0x140
+[ 2551.528667]  ? xb_read+0x1d0/0x1d0
+[ 2551.528670]  ? kthread_park+0x90/0x90
+[ 2551.528673]  ret_from_fork+0x35/0x40
 
-  # perf stat -r 0 -I 5000 -e cycles -a sleep 10
-  #           time             counts unit events
-       5.000211692  3,13,89,82,34,157      cycles
-      10.000380119  1,53,98,52,22,294      cycles
-      10.040467280       17,16,79,265      cycles
-  Segmentation fault
+Fix this by doing the cleanup via a workqueue instead.
 
-This problem was only observed when we use forever option aka -r 0 and
-works with limited repeats. Calling print_counter with ts being set to
-NULL, is not a correct option when interval is set. Hence avoid
-print_counter(NULL,..)  if interval is set.
-
-With fix:
-
-  # perf stat -r 0 -I 5000 -e cycles -a sleep 10
-   #           time             counts unit events
-       5.019866622  3,15,14,43,08,697      cycles
-      10.039865756  3,15,16,31,95,261      cycles
-      10.059950628     1,26,05,47,158      cycles
-       5.009902655  3,14,52,62,33,932      cycles
-      10.019880228  3,14,52,22,89,154      cycles
-      10.030543876       66,90,18,333      cycles
-       5.009848281  3,14,51,98,25,437      cycles
-      10.029854402  3,15,14,93,04,918      cycles
-       5.009834177  3,14,51,95,92,316      cycles
-
-Committer notes:
-
-Did the 'git bisect' to find the cset introducing the problem to add the
-Fixes tag below, and at that time the problem reproduced as:
-
-  (gdb) run stat -r0 -I500 sleep 1
-  <SNIP>
-  Program received signal SIGSEGV, Segmentation fault.
-  print_interval (prefix=prefix@entry=0x7fffffffc8d0 "", ts=ts@entry=0x0) at builtin-stat.c:866
-  866		sprintf(prefix, "%6lu.%09lu%s", ts->tv_sec, ts->tv_nsec, csv_sep);
-  (gdb) bt
-  #0  print_interval (prefix=prefix@entry=0x7fffffffc8d0 "", ts=ts@entry=0x0) at builtin-stat.c:866
-  #1  0x000000000041860a in print_counters (ts=ts@entry=0x0, argc=argc@entry=2, argv=argv@entry=0x7fffffffd640) at builtin-stat.c:938
-  #2  0x0000000000419a7f in cmd_stat (argc=2, argv=0x7fffffffd640, prefix=<optimized out>) at builtin-stat.c:1411
-  #3  0x000000000045c65a in run_builtin (p=p@entry=0x6291b8 <commands+216>, argc=argc@entry=5, argv=argv@entry=0x7fffffffd640) at perf.c:370
-  #4  0x000000000045c893 in handle_internal_command (argc=5, argv=0x7fffffffd640) at perf.c:429
-  #5  0x000000000045c8f1 in run_argv (argcp=argcp@entry=0x7fffffffd4ac, argv=argv@entry=0x7fffffffd4a0) at perf.c:473
-  #6  0x000000000045cac9 in main (argc=<optimized out>, argv=<optimized out>) at perf.c:588
-  (gdb)
-
-Mostly the same as just before this patch:
-
-  Program received signal SIGSEGV, Segmentation fault.
-  0x00000000005874a7 in print_interval (config=0xa1f2a0 <stat_config>, evlist=0xbc9b90, prefix=0x7fffffffd1c0 "`", ts=0x0) at util/stat-display.c:964
-  964		sprintf(prefix, "%6lu.%09lu%s", ts->tv_sec, ts->tv_nsec, config->csv_sep);
-  (gdb) bt
-  #0  0x00000000005874a7 in print_interval (config=0xa1f2a0 <stat_config>, evlist=0xbc9b90, prefix=0x7fffffffd1c0 "`", ts=0x0) at util/stat-display.c:964
-  #1  0x0000000000588047 in perf_evlist__print_counters (evlist=0xbc9b90, config=0xa1f2a0 <stat_config>, _target=0xa1f0c0 <target>, ts=0x0, argc=2, argv=0x7fffffffd670)
-      at util/stat-display.c:1172
-  #2  0x000000000045390f in print_counters (ts=0x0, argc=2, argv=0x7fffffffd670) at builtin-stat.c:656
-  #3  0x0000000000456bb5 in cmd_stat (argc=2, argv=0x7fffffffd670) at builtin-stat.c:1960
-  #4  0x00000000004dd2e0 in run_builtin (p=0xa30e00 <commands+288>, argc=5, argv=0x7fffffffd670) at perf.c:310
-  #5  0x00000000004dd54d in handle_internal_command (argc=5, argv=0x7fffffffd670) at perf.c:362
-  #6  0x00000000004dd694 in run_argv (argcp=0x7fffffffd4cc, argv=0x7fffffffd4c0) at perf.c:406
-  #7  0x00000000004dda11 in main (argc=5, argv=0x7fffffffd670) at perf.c:531
-  (gdb)
-
-Fixes: d4f63a4741a8 ("perf stat: Introduce print_counters function")
-Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Tested-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: stable@vger.kernel.org # v4.2+
-Link: http://lore.kernel.org/lkml/20190904094738.9558-3-srikar@linux.vnet.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Reported-by: James Dingwall <james@dingwall.me.uk>
+Fixes: fd8aa9095a95c ("xen: optimize xenbus driver for multiple concurrent xenstore accesses")
+Cc: <stable@vger.kernel.org> # 4.11
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/builtin-stat.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/xen/xenbus/xenbus_dev_frontend.c |   20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
 
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -3091,7 +3091,7 @@ int cmd_stat(int argc, const char **argv
- 				run_idx + 1);
+--- a/drivers/xen/xenbus/xenbus_dev_frontend.c
++++ b/drivers/xen/xenbus/xenbus_dev_frontend.c
+@@ -55,6 +55,7 @@
+ #include <linux/string.h>
+ #include <linux/slab.h>
+ #include <linux/miscdevice.h>
++#include <linux/workqueue.h>
  
- 		status = run_perf_stat(argc, argv, run_idx);
--		if (forever && status != -1) {
-+		if (forever && status != -1 && !interval) {
- 			print_counters(NULL, argc, argv);
- 			perf_stat__reset_stats();
- 		}
+ #include <xen/xenbus.h>
+ #include <xen/xen.h>
+@@ -116,6 +117,8 @@ struct xenbus_file_priv {
+ 	wait_queue_head_t read_waitq;
+ 
+ 	struct kref kref;
++
++	struct work_struct wq;
+ };
+ 
+ /* Read out any raw xenbus messages queued up. */
+@@ -300,14 +303,14 @@ static void watch_fired(struct xenbus_wa
+ 	mutex_unlock(&adap->dev_data->reply_mutex);
+ }
+ 
+-static void xenbus_file_free(struct kref *kref)
++static void xenbus_worker(struct work_struct *wq)
+ {
+ 	struct xenbus_file_priv *u;
+ 	struct xenbus_transaction_holder *trans, *tmp;
+ 	struct watch_adapter *watch, *tmp_watch;
+ 	struct read_buffer *rb, *tmp_rb;
+ 
+-	u = container_of(kref, struct xenbus_file_priv, kref);
++	u = container_of(wq, struct xenbus_file_priv, wq);
+ 
+ 	/*
+ 	 * No need for locking here because there are no other users,
+@@ -333,6 +336,18 @@ static void xenbus_file_free(struct kref
+ 	kfree(u);
+ }
+ 
++static void xenbus_file_free(struct kref *kref)
++{
++	struct xenbus_file_priv *u;
++
++	/*
++	 * We might be called in xenbus_thread().
++	 * Use workqueue to avoid deadlock.
++	 */
++	u = container_of(kref, struct xenbus_file_priv, kref);
++	schedule_work(&u->wq);
++}
++
+ static struct xenbus_transaction_holder *xenbus_get_transaction(
+ 	struct xenbus_file_priv *u, uint32_t tx_id)
+ {
+@@ -650,6 +665,7 @@ static int xenbus_file_open(struct inode
+ 	INIT_LIST_HEAD(&u->watches);
+ 	INIT_LIST_HEAD(&u->read_buffers);
+ 	init_waitqueue_head(&u->read_waitq);
++	INIT_WORK(&u->wq, xenbus_worker);
+ 
+ 	mutex_init(&u->reply_mutex);
+ 	mutex_init(&u->msgbuffer_mutex);
 
 
