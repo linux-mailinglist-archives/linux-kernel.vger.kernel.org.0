@@ -2,97 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3442D2AB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 15:15:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1F08D2A96
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 15:14:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388200AbfJJNOx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 09:14:53 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:37325 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388023AbfJJNOj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 09:14:39 -0400
-Received: by mail-lj1-f193.google.com with SMTP id l21so6170980lje.4;
-        Thu, 10 Oct 2019 06:14:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=s1+YBubYAy3yg+TIRBWGGXrMgcLsTM12YLsh849J2aI=;
-        b=GCr/BKYneZjSwP7jPBlb57caufJrp63/BJh+AMpnpy3T46QUyd0PB7z3TKPlz/5xmb
-         06BLf9DqaTSxVW8HGBv20bhkTfNZtZR8/ZFTA+hUJqYmog6w1FhiDCwNc/ii/kuTYizt
-         1PimM7DuCLDTY9YmidqlhDQOOybJdU1GeeR33idUDRiXvaMlSOKfq0EIeC1TwP16Me15
-         q2nHXRk+ucRL+MPVhmEf09UHJgASZSWpxvghJdOUq6UtFXOkeOCPOueXG/DAAzLx1jWq
-         FeDivUhIp5k7UaF5IxOBuak3Jn5g9oZu8YpgU99zIpEjau4XONmzvEjZHwmUhSQIxaFu
-         nzvQ==
-X-Gm-Message-State: APjAAAW4L0Rk+//uheyRhWs5FNdUMoD+vuhWF+tdQSOr3/HjgH7YDwb2
-        eQpkFOFJ9yupSGtwkUw8Ewxs4Y4v
-X-Google-Smtp-Source: APXvYqyGy/J5HJ8vBpZO6LgQKgo1ma21ffDHecTu24LtFMjl2KdmKbxfJ1wNcSxoN50D6wfsye9EWA==
-X-Received: by 2002:a2e:964c:: with SMTP id z12mr6158807ljh.79.1570713277523;
-        Thu, 10 Oct 2019 06:14:37 -0700 (PDT)
-Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
-        by smtp.gmail.com with ESMTPSA id h3sm1238457lfc.26.2019.10.10.06.14.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Oct 2019 06:14:35 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.92.2)
-        (envelope-from <johan@xi.terra>)
-        id 1iIYHF-0006Az-Mh; Thu, 10 Oct 2019 15:14:45 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Fabien Dessenne <fabien.dessenne@st.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Harald Freudenberger <freude@linux.ibm.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-s390@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Johan Hovold <johan@kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4/4] s390/zcrypt: fix memleak at release
-Date:   Thu, 10 Oct 2019 15:13:33 +0200
-Message-Id: <20191010131333.23635-5-johan@kernel.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010131333.23635-1-johan@kernel.org>
-References: <20191010131333.23635-1-johan@kernel.org>
+        id S2388007AbfJJNOG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 09:14:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55932 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727788AbfJJNOG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 09:14:06 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 07647206A1;
+        Thu, 10 Oct 2019 13:14:04 +0000 (UTC)
+Date:   Thu, 10 Oct 2019 09:14:03 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     jikos@kernel.org, Joe Lawrence <joe.lawrence@redhat.com>,
+        jpoimboe@redhat.com, mingo@redhat.com,
+        Miroslav Benes <mbenes@suse.cz>, linux-kernel@vger.kernel.org,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH 0/3] ftrace: Introduce PERMANENT ftrace_ops flag
+Message-ID: <20191010091403.5ecf0fdb@gandalf.local.home>
+In-Reply-To: <20191010085035.emsdks6xecazqc6k@pathway.suse.cz>
+References: <20191007081714.20259-1-mbenes@suse.cz>
+        <20191008193534.GA16675@redhat.com>
+        <20191009112234.bi7lvp4pvmna26vz@pathway.suse.cz>
+        <20191009102654.501ad7c3@gandalf.local.home>
+        <20191010085035.emsdks6xecazqc6k@pathway.suse.cz>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a process is interrupted while accessing the crypto device and the
-global ap_perms_mutex is contented, release() could return early and
-fail to free related resources.
+On Thu, 10 Oct 2019 10:50:35 +0200
+Petr Mladek <pmladek@suse.com> wrote:
 
-Fixes: 00fab2350e6b ("s390/zcrypt: multiple zcrypt device nodes support")
-Cc: stable <stable@vger.kernel.org>     # 4.19
-Cc: Harald Freudenberger <freude@linux.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/s390/crypto/zcrypt_api.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> It will make the flag unusable for other ftrace users. But it
+> will be already be the case when it can't be disabled.
 
-diff --git a/drivers/s390/crypto/zcrypt_api.c b/drivers/s390/crypto/zcrypt_api.c
-index 45bdb47f84c1..9157e728a362 100644
---- a/drivers/s390/crypto/zcrypt_api.c
-+++ b/drivers/s390/crypto/zcrypt_api.c
-@@ -522,8 +522,7 @@ static int zcrypt_release(struct inode *inode, struct file *filp)
- 	if (filp->f_inode->i_cdev == &zcrypt_cdev) {
- 		struct zcdn_device *zcdndev;
- 
--		if (mutex_lock_interruptible(&ap_perms_mutex))
--			return -ERESTARTSYS;
-+		mutex_lock(&ap_perms_mutex);
- 		zcdndev = find_zcdndev_by_devt(filp->f_inode->i_rdev);
- 		mutex_unlock(&ap_perms_mutex);
- 		if (zcdndev) {
--- 
-2.23.0
+Honestly, I hate that flag. Most people don't even know about it. It
+was added in the beginning of ftrace as a way to stop function tracing
+in the latency tracer. But that use case has been obsoleted by
+328df4759c03e ("tracing: Add function-trace option to disable function
+tracing of latency tracers"). I may just remove the damn thing and only
+add it back if somebody complains about it.
 
+-- Steve
