@@ -2,120 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45924D3269
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:43:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5271ED3272
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:43:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbfJJUc2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 16:32:28 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40828 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726132AbfJJUc2 (ORCPT
+        id S1727298AbfJJUeX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 16:34:23 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37368 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726595AbfJJUeX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 16:32:28 -0400
-Received: by mail-ot1-f68.google.com with SMTP id y39so6067439ota.7;
-        Thu, 10 Oct 2019 13:32:27 -0700 (PDT)
+        Thu, 10 Oct 2019 16:34:23 -0400
+Received: by mail-pf1-f196.google.com with SMTP id y5so4639949pfo.4
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 13:34:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=fWk3YhiiJHg8k8ptjSkAx7ItL9F1legAJpF+beihn+4=;
-        b=nzzPZFByrpOo0NvlBOUhGFQUZP2Zqe60DgnyztdpxgMoIpUWkyzpl5Z+TrlaDdjzRi
-         3NCJrGLGAb77NBhiFeC3ttL8yXBov+S8RXCOTej35+cZIUWTtSSc//r2RD4HD5Jfapcv
-         AvFTqMtDmnKbTguqLzRt76FOxK6iU7fhJdWPiPSNZcA5Nhay/TWmbiQn7moWj9jsEwPq
-         tka0fyspeegLizi+iUZSnwGF3Wyvv4G8HsUmOkPnfw2HFjvrEiFoTDAsKWrp6RLXmO3z
-         qs451Dr7MiITaSUZs9icAnNS5Y2nghpjMfHmV10zro8sq+SaayVxdvZ0AuFlXrGg96Br
-         PQ6A==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=qLN+ZaDKXKKqy42TKsmx8NFeuacgz7hdpKcKP23ADmI=;
+        b=a8/BUQSRa5fAL7ua30472Y4U7kNqLVO+XHaBB/Rc2wmWKE9Xj04D00RKSoqyZUda8p
+         AoN69CT8wMJ2+8+9xP0hKg/fExhxNp8lM/hqppiZ2eSLtMQm6/uYroSxKlTzitdKEuQz
+         TwEci32h62j6hKZzmDlEOn92Ch+77FD0Fd8R4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=fWk3YhiiJHg8k8ptjSkAx7ItL9F1legAJpF+beihn+4=;
-        b=WMFaB94NjRL48tFhnbXF898YXn+IuO4Hs53HFPT5EppSvbRij9jNIvDr9i/BYbSrK1
-         Vj2jKUwGSoFW7izP3QJ7p8p0R6U2bTKU8hPLvyg+Ei8mtGCi3jd0x59Zr5QKl2MKG++V
-         0JRroIIqiwXzGMO4Hj8N/YAJ5DTqce8TNiulxNSLeyy6YYAFw144QGzSFr6TBmwWuV96
-         wCo+d9jGuMaqKC7lM1RjV+tXkhor2ZB4pciodc347ra8D1HPWqmofLsw54aiV82Zdrhv
-         FOyOPQXP0pYMXuHa30zH7K/frx7uInzevyMOfR0jxzxM8U7x2C54UGGZCvmMvlkUkNTP
-         avng==
-X-Gm-Message-State: APjAAAXkeCj9m5wwLiFJLs2tU8RDCHNY41q4stRHuJoQ7K8cJzYm7JNm
-        /VviRobJczkrL9SJoXDEfJ4=
-X-Google-Smtp-Source: APXvYqzrg7UULLxw4lPwCZO1r2RsOUHQycSN8nXrqfNDK/es35HP7CtBAATV5kvUXSHuW7tGYPg5cg==
-X-Received: by 2002:a9d:5605:: with SMTP id e5mr9056238oti.150.1570739546944;
-        Thu, 10 Oct 2019 13:32:26 -0700 (PDT)
-Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id l17sm1726636oic.24.2019.10.10.13.32.26
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=qLN+ZaDKXKKqy42TKsmx8NFeuacgz7hdpKcKP23ADmI=;
+        b=cEDVYYB0U1IgS/kRBuAtdiwhoRppGNZt2YrdAxaiWQMtroos/kg6Bntecf1vwsM9bs
+         h17yQ+jYAk+2ASvzF3tswVBElikED/SpR/rQbbwa9HIjinQYbaKONA4UItkSrab20JKe
+         01d3LiivmEDL9s/ouu/3p/mKtQYCDUjRr0kgqMRNa4nfYDN13JFk8IItwAq6OM5KxuBp
+         /LMFmxP1vNsfC5rXbdvgzBtb2VHWo9QvLcEKAkbje3MbueltidH98FeK6yuf2QwPWvJJ
+         VdFwR/HP1d9ZQeOhuZ6anWXzHH8Njbh8FdQcWVNDHUDbrBBDwmjfy/TQ/TEcGVueNXUz
+         ww2g==
+X-Gm-Message-State: APjAAAXiL1+VI3nJh1zgYd6ikWislU08qV+ce3YjrylRWwE3cvvu+a7B
+        h5682sb9yRJ9kYXsCfyoS7Tt6A==
+X-Google-Smtp-Source: APXvYqwEu3drJD2Rf13atiZCcuDu9mkLKlc6Z2P3wFQoHl4Ae6+HQ4EAmBu1c73yaqSQEBRghQ4ujA==
+X-Received: by 2002:a63:311:: with SMTP id 17mr12928079pgd.327.1570739662653;
+        Thu, 10 Oct 2019 13:34:22 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id o9sm5965017pfp.67.2019.10.10.13.34.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 13:32:26 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>
-Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
+        Thu, 10 Oct 2019 13:34:21 -0700 (PDT)
+Date:   Thu, 10 Oct 2019 13:34:20 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Vlad Yasevich <vyasevich@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Pavel Machek <pavel@ucw.cz>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Shawn Landden <shawn@git.icu>, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
         Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] mips: Fix unroll macro when building with Clang
-Date:   Thu, 10 Oct 2019 13:31:59 -0700
-Message-Id: <20191010203159.20565-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.23.0
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Miller <davem@davemloft.net>,
+        clang-built-linux@googlegroups.com, linux-sctp@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH 1/4] net: sctp: Rename fallthrough label to unhandled
+Message-ID: <201910101334.22271AB@keescook>
+References: <cover.1570292505.git.joe@perches.com>
+ <2e0111756153d81d77248bc8356bac78925923dc.1570292505.git.joe@perches.com>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2e0111756153d81d77248bc8356bac78925923dc.1570292505.git.joe@perches.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Building with Clang errors after commit 6baaeadae911 ("MIPS: Provide
-unroll() macro, use it for cache ops") since the GCC_VERSION macro
-is defined in include/linux/compiler-gcc.h, which is only included
-in compiler.h when using GCC:
+On Sat, Oct 05, 2019 at 09:46:41AM -0700, Joe Perches wrote:
+> fallthrough may become a pseudo reserved keyword so this only use of
+> fallthrough is better renamed to allow it.
+> 
+> Signed-off-by: Joe Perches <joe@perches.com>
 
-In file included from arch/mips/kernel/mips-mt.c:20:
-./arch/mips/include/asm/r4kcache.h:254:1: error: use of undeclared
-identifier 'GCC_VERSION'; did you mean 'S_VERSION'?
-__BUILD_BLAST_CACHE(i, icache, Index_Invalidate_I, Hit_Invalidate_I, 32,
-)
-^
-./arch/mips/include/asm/r4kcache.h:219:4: note: expanded from macro
-'__BUILD_BLAST_CACHE'
-                        cache_unroll(32, kernel_cache, indexop,
-                        ^
-./arch/mips/include/asm/r4kcache.h:203:2: note: expanded from macro
-'cache_unroll'
-        unroll(times, _cache_op, insn, op, (addr) + (i++ * (lsize)));
-        ^
-./arch/mips/include/asm/unroll.h:28:15: note: expanded from macro
-'unroll'
-        BUILD_BUG_ON(GCC_VERSION >= 40700 &&                    \
-                     ^
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Use CONFIG_GCC_VERSION, which will always be set by Kconfig.
-Additionally, Clang 8 had improvements around __builtin_constant_p so
-use that as a lower limit for this check with Clang (although MIPS
-wasn't buildable until Clang 9); building a kernel with Clang 9.0.0
-has no issues after this change.
+-Kees
 
-Fixes: 6baaeadae911 ("MIPS: Provide unroll() macro, use it for cache ops")
-Link: https://github.com/ClangBuiltLinux/linux/issues/736
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- arch/mips/include/asm/unroll.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> ---
+>  net/sctp/sm_make_chunk.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/net/sctp/sm_make_chunk.c b/net/sctp/sm_make_chunk.c
+> index e41ed2e0ae7d..48d63956a68c 100644
+> --- a/net/sctp/sm_make_chunk.c
+> +++ b/net/sctp/sm_make_chunk.c
+> @@ -2155,7 +2155,7 @@ static enum sctp_ierror sctp_verify_param(struct net *net,
+>  	case SCTP_PARAM_SET_PRIMARY:
+>  		if (ep->asconf_enable)
+>  			break;
+> -		goto fallthrough;
+> +		goto unhandled;
+>  
+>  	case SCTP_PARAM_HOST_NAME_ADDRESS:
+>  		/* Tell the peer, we won't support this param.  */
+> @@ -2166,11 +2166,11 @@ static enum sctp_ierror sctp_verify_param(struct net *net,
+>  	case SCTP_PARAM_FWD_TSN_SUPPORT:
+>  		if (ep->prsctp_enable)
+>  			break;
+> -		goto fallthrough;
+> +		goto unhandled;
+>  
+>  	case SCTP_PARAM_RANDOM:
+>  		if (!ep->auth_enable)
+> -			goto fallthrough;
+> +			goto unhandled;
+>  
+>  		/* SCTP-AUTH: Secion 6.1
+>  		 * If the random number is not 32 byte long the association
+> @@ -2187,7 +2187,7 @@ static enum sctp_ierror sctp_verify_param(struct net *net,
+>  
+>  	case SCTP_PARAM_CHUNKS:
+>  		if (!ep->auth_enable)
+> -			goto fallthrough;
+> +			goto unhandled;
+>  
+>  		/* SCTP-AUTH: Section 3.2
+>  		 * The CHUNKS parameter MUST be included once in the INIT or
+> @@ -2203,7 +2203,7 @@ static enum sctp_ierror sctp_verify_param(struct net *net,
+>  
+>  	case SCTP_PARAM_HMAC_ALGO:
+>  		if (!ep->auth_enable)
+> -			goto fallthrough;
+> +			goto unhandled;
+>  
+>  		hmacs = (struct sctp_hmac_algo_param *)param.p;
+>  		n_elt = (ntohs(param.p->length) -
+> @@ -2226,7 +2226,7 @@ static enum sctp_ierror sctp_verify_param(struct net *net,
+>  			retval = SCTP_IERROR_ABORT;
+>  		}
+>  		break;
+> -fallthrough:
+> +unhandled:
+>  	default:
+>  		pr_debug("%s: unrecognized param:%d for chunk:%d\n",
+>  			 __func__, ntohs(param.p->type), cid);
+> -- 
+> 2.15.0
+> 
 
-diff --git a/arch/mips/include/asm/unroll.h b/arch/mips/include/asm/unroll.h
-index df1cdcfc5a47..c628747d4ecd 100644
---- a/arch/mips/include/asm/unroll.h
-+++ b/arch/mips/include/asm/unroll.h
-@@ -25,7 +25,8 @@
- 	 * generate reasonable code for the switch statement,	\
- 	 * so we skip the sanity check for those compilers.	\
- 	 */							\
--	BUILD_BUG_ON(GCC_VERSION >= 40700 &&			\
-+	BUILD_BUG_ON((CONFIG_GCC_VERSION >= 40700 ||		\
-+		      CONFIG_CLANG_VERSION >= 80000) &&		\
- 		     !__builtin_constant_p(times));		\
- 								\
- 	switch (times) {					\
 -- 
-2.23.0
-
+Kees Cook
