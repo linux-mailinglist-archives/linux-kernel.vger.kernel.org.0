@@ -2,74 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A9BFD3375
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 23:31:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 118D3D337D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 23:34:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727333AbfJJVbe convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 10 Oct 2019 17:31:34 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:45023 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbfJJVbe (ORCPT
+        id S1727429AbfJJVeT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 17:34:19 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:43958 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726983AbfJJVeO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 17:31:34 -0400
-X-Originating-IP: 91.224.148.103
-Received: from xps13 (unknown [91.224.148.103])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id BAD3A240009;
-        Thu, 10 Oct 2019 21:31:30 +0000 (UTC)
-Date:   Thu, 10 Oct 2019 23:31:29 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 8/8] dt-bindings: Add max12xx SPI ADC series as
- trivial devices
-Message-ID: <20191010233129.67a1d76c@xps13>
-In-Reply-To: <20191010204751.GA22206@bogus>
-References: <20191007132657.4190-1-miquel.raynal@bootlin.com>
-        <20191007132657.4190-9-miquel.raynal@bootlin.com>
-        <20191010204751.GA22206@bogus>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 10 Oct 2019 17:34:14 -0400
+Received: from 79.184.255.36.ipv4.supernova.orange.pl (79.184.255.36) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
+ id e382dcc9448de146; Thu, 10 Oct 2019 23:34:12 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Doug Smythies <dsmythies@telus.net>
+Subject: [PATCH 1/4] cpuidle: teo: Ignore disabled idle states that are too deep
+Date:   Thu, 10 Oct 2019 23:32:17 +0200
+Message-ID: <6803360.ubpITS43T2@kreacher>
+In-Reply-To: <60416800.X4hXmAfbqi@kreacher>
+References: <60416800.X4hXmAfbqi@kreacher>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Rob Herring <robh@kernel.org> wrote on Thu, 10 Oct 2019 15:47:51 -0500:
+Prevent disabled CPU idle state with target residencies beyond the
+anticipated idle duration from being taken into account by the TEO
+governor.
 
-> On Mon, Oct 07, 2019 at 03:26:57PM +0200, Miquel Raynal wrote:
-> > Update the compatible list with three Maxim ADCs compatibles.
-> > 
-> > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> > ---
-> >  .../bindings/iio/adc/max1027-adc.txt          | 28 +++++++++++++++++++
-> >  .../devicetree/bindings/trivial-devices.yaml  |  6 ++++
-> >  2 files changed, 34 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/iio/adc/max1027-adc.txt  
-> 
-> Devices are supposed to be documented in one place or the other. So 
-> either make max1027-adc.txt a schema or drop it.
-> 
-> I'm fine either way. Obviously, trivial-devices.yaml is trivial to add 
-> to, but it does leave some ambiguities. Like is an interrupt required, 
-> optional or non-existent? What about power supplies? Or what are allowed 
-> values for spi-max-frequency.
+Fixes: b26bf6ab716f ("cpuidle: New timer events oriented governor for tickless systems")
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/cpuidle/governors/teo.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Rhaaa... I obviously wanted to drop the *txt file, just forgot to do
-it. As the interrupts are optional I found the trivial device
-description accurate enough.
+Index: linux-pm/drivers/cpuidle/governors/teo.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/governors/teo.c
++++ linux-pm/drivers/cpuidle/governors/teo.c
+@@ -258,6 +258,13 @@ static int teo_select(struct cpuidle_dri
+ 
+ 		if (s->disabled || su->disable) {
+ 			/*
++			 * Ignore disabled states with target residencies beyond
++			 * the anticipated idle duration.
++			 */
++			if (s->target_residency > duration_us)
++				continue;
++
++			/*
+ 			 * If the "early hits" metric of a disabled state is
+ 			 * greater than the current maximum, it should be taken
+ 			 * into account, because it would be a mistake to select
 
-Thanks,
-Miquèl
+
+
