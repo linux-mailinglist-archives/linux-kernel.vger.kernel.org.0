@@ -2,65 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21020D2D65
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 17:15:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A931D2D80
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 17:17:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726438AbfJJPPK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 11:15:10 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:37020 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbfJJPPK (ORCPT
+        id S1726674AbfJJPQp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 11:16:45 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:52808 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725959AbfJJPQo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 11:15:10 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iIa9h-0005FP-MT; Thu, 10 Oct 2019 15:15:05 +0000
-Date:   Thu, 10 Oct 2019 16:15:05 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     David Laight <David.Laight@aculab.com>
-Cc:     'Nathan Chancellor' <natechancellor@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] usercopy structs for v5.4-rc2
-Message-ID: <20191010151505.GH26530@ZenIV.linux.org.uk>
-References: <20191004104116.20418-1-christian.brauner@ubuntu.com>
- <CAHk-=whxf5HVdaXqL6RgHCLzb2LNn3U2n_x4GWQZroCC+evRoA@mail.gmail.com>
- <20191004194330.GA1478788@archlinux-threadripper>
- <d0944174abe24165ac5cb63c52b89c42@AcuMS.aculab.com>
+        Thu, 10 Oct 2019 11:16:44 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9AFBKhQ025036;
+        Thu, 10 Oct 2019 17:16:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=WdF442jlxXHtW99D7VXviowbwCBFKKqETJKUfQQ750w=;
+ b=mm2aIehas26Nib8HsLOMFdpsO23R7o8VnUJ+GWdEZjSLZR9ZOFAHky36iI4Br1lxJ3Sk
+ avwn9mmM/xIpqctgJhEm9dhtDoAAVur2AUA24mzmir1bc7GfdSSENlTsoxZSjM1Hwdhc
+ Y9/ElLzy6dDdBMiJdyB5L0mLKFzGbnEPa5jMvbKMsKX5r6+Bfg/UXc6AmbV6JqTQO4AY
+ 8Jklj38blZDBAAgFPOruDqxcjSdUcSJEi4/Uo81ZOOIsbQpsCxarYtqW4GV0lYAl2b/e
+ mDwA9H2Ajdi8ApxoA9I0ppL9aM69bXJCPv2By43adSY7PAYuJiqsDgbVSOi3MgUE7bl7 3g== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2vej2pmt2t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 10 Oct 2019 17:16:20 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 40B5A10002A;
+        Thu, 10 Oct 2019 17:16:19 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag7node2.st.com [10.75.127.20])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9391E2B433F;
+        Thu, 10 Oct 2019 17:16:19 +0200 (CEST)
+Received: from SFHDAG5NODE3.st.com (10.75.127.15) by SFHDAG7NODE2.st.com
+ (10.75.127.20) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 10 Oct
+ 2019 17:16:19 +0200
+Received: from SFHDAG5NODE3.st.com ([fe80::7c09:5d6b:d2c7:5f47]) by
+ SFHDAG5NODE3.st.com ([fe80::7c09:5d6b:d2c7:5f47%20]) with mapi id
+ 15.00.1473.003; Thu, 10 Oct 2019 17:16:19 +0200
+From:   Fabien DESSENNE <fabien.dessenne@st.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
+CC:     Loic PALLARDY <loic.pallardy@st.com>,
+        Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Subject: RE: [PATCH 0/2] remoteproc: stm32: allow wdg irq to be a wakeup
+ source
+Thread-Topic: [PATCH 0/2] remoteproc: stm32: allow wdg irq to be a wakeup
+ source
+Thread-Index: AQHVXCRbzfqre7GQVUu6MRQERXnqfqdUQtwQ
+Date:   Thu, 10 Oct 2019 15:16:19 +0000
+Message-ID: <1bef12295e864dfa90edfa495803167f@SFHDAG5NODE3.st.com>
+References: <1566833923-16718-1-git-send-email-fabien.dessenne@st.com>
+In-Reply-To: <1566833923-16718-1-git-send-email-fabien.dessenne@st.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.51]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d0944174abe24165ac5cb63c52b89c42@AcuMS.aculab.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-10_05:2019-10-10,2019-10-10 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 07, 2019 at 01:11:46PM +0000, David Laight wrote:
-> From: Nathan Chancellor
-> > Sent: 04 October 2019 20:44
-> ...
-> > > IOW, the code should have just been
-> > >
-> > >         ret = test(umem_src == NULL, "kmalloc failed");
-> > >         if (ret) ...
-> > 
-> > Yes, I had this as the original fix but I tried to keep the same
-> > intention as the original author. I should have gone with my gut. Sorry
-> > for the ugliness, I'll try to be better in the future.
-> 
-> This rather begs the question about why 'usercopy' is ever calling kmalloc() at all.
+Hi
 
-Do you even bother to read what you are commenting upon, or is it simply the
-irresistable pleasure of being seen[*]?
+I Got Rob's Reviewed-by for the bindings. Any further comments for the driv=
+er part?
 
-When a function called 'test_copy_struct_from_user' starts with a couple of
-allocations, one called 'umem_src' and another - 'expected', what could that
-possibly be about?  Something to do with testing copy_struct_from_user(),
-perhaps?  And, taking a wild guess, maybe allocating a buffer or two to
-be somehow used in setting the test up?
+Fabien
 
-Or you could just go and read the damn function, you twit.
+> -----Original Message-----
+> From: Fabien DESSENNE <fabien.dessenne@st.com>
+> Sent: lundi 26 ao=FBt 2019 17:39
+> To: Rob Herring <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>=
+;
+> Maxime Coquelin <mcoquelin.stm32@gmail.com>; Alexandre TORGUE
+> <alexandre.torgue@st.com>; Ohad Ben-Cohen <ohad@wizery.com>; Bjorn
+> Andersson <bjorn.andersson@linaro.org>; devicetree@vger.kernel.org; linux=
+-
+> stm32@st-md-mailman.stormreply.com; linux-arm-kernel@lists.infradead.org;
+> linux-kernel@vger.kernel.org; linux-remoteproc@vger.kernel.org
+> Cc: Fabien DESSENNE <fabien.dessenne@st.com>; Loic PALLARDY
+> <loic.pallardy@st.com>; Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+> Subject: [PATCH 0/2] remoteproc: stm32: allow wdg irq to be a wakeup sour=
+ce
+>=20
+> The watchdog IRQ which notifies the remote processor crash is used by the
+> remoteproc framework to perform a recovery procedure.
+> Since this IRQ may be fired when the Linux system is suspended, this IRQ =
+may
+> be configured to wake up the system.
+>=20
+> Fabien Dessenne (2):
+>   dt-bindings: remoteproc: stm32: add wakeup-source
+>   remoteproc: stm32: wakeup the system by wdg irq
+>=20
+>  .../devicetree/bindings/remoteproc/stm32-rproc.txt |  3 ++
+>  drivers/remoteproc/stm32_rproc.c                   | 47 ++++++++++++++++=
+++++++
+>  2 files changed, 50 insertions(+)
+>=20
+> --
+> 2.7.4
 
-[*] sensu Monty Python, if we are lucky enough
