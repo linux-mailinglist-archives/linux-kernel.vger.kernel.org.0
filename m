@@ -2,104 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0C8FD2BFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 16:02:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C84E9D2C0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 16:04:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726326AbfJJOBq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 10:01:46 -0400
-Received: from mga01.intel.com ([192.55.52.88]:46873 "EHLO mga01.intel.com"
+        id S1726217AbfJJOEP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 10:04:15 -0400
+Received: from mga11.intel.com ([192.55.52.93]:1921 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726108AbfJJOBp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 10:01:45 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1725923AbfJJOEN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 10:04:13 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2019 07:01:44 -0700
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2019 07:04:12 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.67,280,1566889200"; 
-   d="scan'208";a="197257569"
-Received: from unknown (HELO [10.254.187.20]) ([10.254.187.20])
-  by orsmga003.jf.intel.com with ESMTP; 10 Oct 2019 07:01:43 -0700
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: Re: [alsa-devel] [PATCH v2 3/5] ASoC: core: add support to
- snd_soc_dai_get_sdw_stream()
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
-        bgoswami@codeaurora.org, linux-kernel@vger.kernel.org,
-        plai@codeaurora.org, robh+dt@kernel.org, lgirdwood@gmail.com,
-        Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>,
-        spapothi@codeaurora.org
-References: <20190813191827.GI5093@sirena.co.uk>
- <cc360858-571a-6a46-1789-1020bcbe4bca@linux.intel.com>
- <20190813195804.GL5093@sirena.co.uk>
- <20190814041142.GU12733@vkoul-mobl.Dlink>
- <99d35a9d-cbd8-f0da-4701-92ef650afe5a@linux.intel.com>
- <5e08f822-3507-6c69-5d83-4ce2a9f5c04f@linaro.org>
- <53bb3105-8e85-a972-fce8-a7911ae4d461@linux.intel.com>
- <95870089-25da-11ea-19fd-0504daa98994@linaro.org>
- <2326a155-332e-fda0-b7a2-b48f348e1911@linux.intel.com>
- <34e4cde8-f2e5-0943-115a-651d86f87c1a@linaro.org>
- <20191010120337.GB31391@ediswmail.ad.cirrus.com>
-Message-ID: <22eff3aa-dfd6-1ee5-8f22-2af492286053@linux.intel.com>
-Date:   Thu, 10 Oct 2019 09:01:42 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+   d="scan'208";a="194016809"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by fmsmga007.fm.intel.com with ESMTP; 10 Oct 2019 07:04:09 -0700
+Date:   Thu, 10 Oct 2019 22:03:49 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>,
+        Shakeel Butt <shakeelb@google.com>, Qian Cai <cai@lca.pw>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Rik van Riel <riel@surriel.com>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        linux-s390@vger.kernel.org
+Subject: Re: "reuse mergeable anon_vma as parent when fork" causes a crash on
+ s390
+Message-ID: <20191010140349.GA28204@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <1570656570.5937.24.camel@lca.pw>
+ <CALvZod4psOEyYwPOF1UcJoK96LbYBccYhsG0DrKD+CCf8Sc-Yg@mail.gmail.com>
+ <20191010023601.GA4793@richard>
+ <20191010031516.GA5060@richard>
+ <8e0d9999-9ee3-78e5-2737-5a504243413c@yandex-team.ru>
 MIME-Version: 1.0
-In-Reply-To: <20191010120337.GB31391@ediswmail.ad.cirrus.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8e0d9999-9ee3-78e5-2737-5a504243413c@yandex-team.ru>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Oct 10, 2019 at 11:29:44AM +0300, Konstantin Khlebnikov wrote:
+>On 10/10/2019 06.15, Wei Yang wrote:
+>> On Thu, Oct 10, 2019 at 10:36:01AM +0800, Wei Yang wrote:
+>> > Hi, Qian, Shakeel
+>> > 
+>> > Thanks for testing.
+>> > 
+>> > Sounds I missed some case to handle. anon_vma_clone() now would be called in
+>> > vma_adjust, which is a different case when it is introduced.
+>> > 
+>> 
+>> Well, I have to correct my statement. The reason is we may did something more
+>> in anon_vma_clone().
+>> 
+>> Here is a quick fix, while I need to go through all the cases carefully.
+>
+>Oops, I've overlooked this case too.
+>
+>You have to check src->anon_vma
+>otherwise in  __split_vma or copy_vma dst could pick completely random anon_vma.
+>
 
->>> It's been a while since this thread started, and I still don't
->>> quite get the concepts or logic.
->>>
->>> First, I don't understand what the problem with "aux" devices is.
->>> All the SoundWire stuff is based on the concept of DAI, so I guess
->>> I am
->>
->> That is the actual problem! Some aux devices does not have dais.
->>
-> 
-> Usually aux devices are used for things like analog amplifiers that
-> clearly don't have a digital interface, thus it really makes no sense
-> to have a DAI link connecting them. So I guess my question here
-> would be what is the thinking on making the "smart amplifier" dailess?
-> It feels like having a CODEC to CODEC DAI between the CODEC and
-> the AMP would be a more obvious way to connect the two devices
-> and would presumably avoid the issues being discussed around the
-> patch.
+Per my understanding, the root cause is commit 7a3ef208e662 did a little
+further for the reuse case.
 
-Ah, now I get it, I missed the point about not having DAIs for the 
-amplifier.
+We intend to reuse anon_vma on fork, but we also did this when we just want a
+copy of src, like __split_vma(), copy_vma() and __vma_split(). This will lead
+to a random anon_vma and not what we expect.
 
-I will second Charles' point, the code you have in the machine driver at 
-[1] gets a SoundWire stream context from the SLIMbus codec dai. It's a 
-bit odd to mix layers this way.
+A fix patch is sent for this.
 
+>Also checking prev will not hurt, just to be sure.
+>
+>So, something like this should work:
+>
+ >if (!dst->anon_vma && src->anon_vma &&
+>    prev && pprev && pprev->anon_vma == src->anon_vma)
+>      dst->anon_vma = prev->anon_vma;
+>
+>> 
+>> diff --git a/mm/rmap.c b/mm/rmap.c
+>> index 12f6c3d7fd9d..2844f442208d 100644
+>> --- a/mm/rmap.c
+>> +++ b/mm/rmap.c
+>> @@ -271,7 +271,7 @@ int anon_vma_clone(struct vm_area_struct *dst, struct vm_area_struct *src)
+>>           * 1. Parent has vm_prev, which implies we have vm_prev.
+>>           * 2. Parent and its vm_prev have the same anon_vma.
+>>           */
+>> -       if (pprev && pprev->anon_vma == src->anon_vma)
+>> +       if (!dst->anon_vma && pprev && pprev->anon_vma == src->anon_vma)
+>>                  dst->anon_vma = prev->anon_vma;
+>>          list_for_each_entry_reverse(pavc, &src->anon_vma_chain, same_vma) {
+>> 
+>> > BTW, do you have the specific test case? So that I could verify my change. The
+>> > kernel build test doesn't trigger this.
+>> > 
+>> > Thanks a lot :-)
+>> > 
+>> > On Wed, Oct 09, 2019 at 03:21:11PM -0700, Shakeel Butt wrote:
+>> > -- 
+>> > Wei Yang
+>> > Help you, Help me
+>> 
 
-And if I look at the code below, taken from [1], if you have more than 
-one codec, then your code looks problematic: data->sruntime would be 
-overriden and you'd use the info from the last codec dai on the dailink...
-
-case SLIMBUS_0_RX...SLIMBUS_6_TX:
-   for (i = 0 ; i < dai_link->num_codecs; i++) {
-     [snip]
-     data->sruntime[cpu_dai->id] =
-	snd_soc_dai_get_sdw_stream(rtd->codec_dais[i], 0); << same destination 
-for multiple codec_dais...
-
-If you keep the amp dai-less, then the stream concept should be somehow 
-allocated on the master (or machine) side and passed to the codec dais 
-that are associated to the same 'stream'.
-	
-
-[1] 
-https://git.linaro.org/people/srinivas.kandagatla/linux.git/tree/sound/soc/qcom/db845c.c?h=release/db845c/qcomlt-5.2 
-
-
+-- 
+Wei Yang
+Help you, Help me
