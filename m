@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FE9AD3238
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:42:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08EB8D3242
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:42:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbfJJU3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 16:29:53 -0400
-Received: from mga05.intel.com ([192.55.52.43]:42451 "EHLO mga05.intel.com"
+        id S1726783AbfJJUaF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 16:30:05 -0400
+Received: from mga17.intel.com ([192.55.52.151]:30899 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725951AbfJJU3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 16:29:53 -0400
+        id S1726982AbfJJU37 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 16:29:59 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2019 13:29:52 -0700
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2019 13:29:52 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.67,281,1566889200"; 
-   d="scan'208";a="277902035"
+   d="scan'208";a="277902038"
 Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
   by orsmga001.jf.intel.com with ESMTP; 10 Oct 2019 13:29:51 -0700
 From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
@@ -25,9 +25,9 @@ To:     andriy.shevchenko@intel.com
 Cc:     prarit@redhat.com, platform-driver-x86@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [RESEND][PATCH 07/10] tools/power/x86/intel-speed-select: Add check for CascadeLake-N models
-Date:   Thu, 10 Oct 2019 13:29:42 -0700
-Message-Id: <20191010202945.73616-8-srinivas.pandruvada@linux.intel.com>
+Subject: [RESEND][PATCH 08/10] tools/power/x86/intel-speed-select: Implement CascadeLake-N help and command functions structures
+Date:   Thu, 10 Oct 2019 13:29:43 -0700
+Message-Id: <20191010202945.73616-9-srinivas.pandruvada@linux.intel.com>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20191010202945.73616-1-srinivas.pandruvada@linux.intel.com>
 References: <20191010202945.73616-1-srinivas.pandruvada@linux.intel.com>
@@ -38,92 +38,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Prarit Bhargava <prarit@redhat.com>
 
-Three CascadeLake-N models (6252N, 6230N, and 5218N) have SST-PBF support.
+CascadeLake-N only supports SST-BF and needs some of the perf-profile
+commands, and the base-freq commands.
 
-Return an error if the CascadeLake processor is not one of these specific
-models.
+Add help functions, and create an empty command structures (the functions
+will be implemented later in this patchset).  Call these functions
+when running on CascadeLake-N.
 
 Signed-off-by: Prarit Bhargava <prarit@redhat.com>
 Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 ---
- .../x86/intel-speed-select/isst-config.c      | 43 ++++++++++++++++++-
- 1 file changed, 41 insertions(+), 2 deletions(-)
+ .../x86/intel-speed-select/isst-config.c      | 37 ++++++++++++++-----
+ 1 file changed, 27 insertions(+), 10 deletions(-)
 
 diff --git a/tools/power/x86/intel-speed-select/isst-config.c b/tools/power/x86/intel-speed-select/isst-config.c
-index 907b79e16c68..67a866e2dac4 100644
+index 67a866e2dac4..449025c6ea46 100644
 --- a/tools/power/x86/intel-speed-select/isst-config.c
 +++ b/tools/power/x86/intel-speed-select/isst-config.c
-@@ -23,6 +23,7 @@ static int debug_flag;
- static FILE *outf;
- 
- static int cpu_model;
-+static int cpu_stepping;
- 
- #define MAX_CPUS_IN_ONE_REQ 64
- static short max_target_cpus;
-@@ -72,7 +73,16 @@ void debug_printf(const char *format, ...)
- 	va_end(args);
+@@ -1610,6 +1610,10 @@ static void get_clos_assoc(int arg)
+ 	isst_ctdp_display_information_end(outf);
  }
  
--static void update_cpu_model(void)
++static struct process_cmd_struct clx_n_cmds[] = {
++	{ NULL, NULL, NULL, 0 }
++};
 +
-+int is_clx_n_platform(void)
-+{
-+	if (cpu_model == 0x55)
-+		if (cpu_stepping == 0x6 || cpu_stepping == 0x7)
-+			return 1;
-+	return 0;
-+}
+ static struct process_cmd_struct isst_cmds[] = {
+ 	{ "perf-profile", "get-lock-status", get_tdp_locked, 0 },
+ 	{ "perf-profile", "get-config-levels", get_tdp_levels, 0 },
+@@ -1798,12 +1802,15 @@ static void isst_help(void)
+ 		TDP, etc.\n");
+ 	printf("\nCommands : For feature=perf-profile\n");
+ 	printf("\tinfo\n");
+-	printf("\tget-lock-status\n");
+-	printf("\tget-config-levels\n");
+-	printf("\tget-config-version\n");
+-	printf("\tget-config-enabled\n");
+-	printf("\tget-config-current-level\n");
+-	printf("\tset-config-level\n");
 +
-+static int update_cpu_model(void)
- {
- 	unsigned int ebx, ecx, edx;
- 	unsigned int fms, family;
-@@ -82,6 +92,33 @@ static void update_cpu_model(void)
- 	cpu_model = (fms >> 4) & 0xf;
- 	if (family == 6 || family == 0xf)
- 		cpu_model += ((fms >> 16) & 0xf) << 4;
-+
-+	cpu_stepping = fms & 0xf;
-+	/* only three CascadeLake-N models are supported */
-+	if (is_clx_n_platform()) {
-+		FILE *fp;
-+		size_t n = 0;
-+		char *line = NULL;
-+		int ret = 1;
-+
-+		fp = fopen("/proc/cpuinfo", "r");
-+		if (!fp)
-+			err(-1, "cannot open /proc/cpuinfo\n");
-+
-+		while (getline(&line, &n, fp) > 0) {
-+			if (strstr(line, "model name")) {
-+				if (strstr(line, "6252N") ||
-+				    strstr(line, "6230N") ||
-+				    strstr(line, "5218N"))
-+					ret = 0;
-+				break;
-+			}
-+		}
-+		free(line);
-+		fclose(fp);
-+		return ret;
++	if (!is_clx_n_platform()) {
++		printf("\tget-lock-status\n");
++		printf("\tget-config-levels\n");
++		printf("\tget-config-version\n");
++		printf("\tget-config-enabled\n");
++		printf("\tget-config-current-level\n");
++		printf("\tset-config-level\n");
 +	}
-+	return 0;
  }
  
- /* Open a file, and exit on failure */
-@@ -1956,7 +1993,9 @@ static void cmdline(int argc, char **argv)
- 		fprintf(stderr, "Feature name and|or command not specified\n");
- 		exit(0);
- 	}
--	update_cpu_model();
-+	ret = update_cpu_model();
-+	if (ret)
-+		err(-1, "Invalid CPU model (%d)\n", cpu_model);
- 	printf("Intel(R) Speed Select Technology\n");
- 	printf("Executing on CPU model:%d[0x%x]\n", cpu_model, cpu_model);
+ static void pbf_help(void)
+@@ -1853,6 +1860,12 @@ static struct process_cmd_help_struct isst_help_cmds[] = {
+ 	{ NULL, NULL }
+ };
+ 
++static struct process_cmd_help_struct clx_n_help_cmds[] = {
++	{ "perf-profile", isst_help },
++	{ "base-freq", pbf_help },
++	{ NULL, NULL }
++};
++
+ void process_command(int argc, char **argv,
+ 		     struct process_cmd_help_struct *help_cmds,
+ 		     struct process_cmd_struct *cmds)
+@@ -2001,11 +2014,15 @@ static void cmdline(int argc, char **argv)
  	set_max_cpu_num();
+ 	set_cpu_present_cpu_mask();
+ 	set_cpu_target_cpu_mask();
+-	ret = isst_fill_platform_info();
+-	if (ret)
+-		goto out;
+ 
+-	process_command(argc, argv, isst_help_cmds, isst_cmds);
++	if (!is_clx_n_platform()) {
++		ret = isst_fill_platform_info();
++		if (ret)
++			goto out;
++		process_command(argc, argv, isst_help_cmds, isst_cmds);
++	} else {
++		process_command(argc, argv, clx_n_help_cmds, clx_n_cmds);
++	}
+ out:
+ 	free_cpu_set(present_cpumask);
+ 	free_cpu_set(target_cpumask);
 -- 
 2.17.2
 
