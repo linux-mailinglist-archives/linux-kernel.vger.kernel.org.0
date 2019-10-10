@@ -2,241 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52DBFD2978
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 14:29:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6356DD2985
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 14:32:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733139AbfJJM3N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 08:29:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55404 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728172AbfJJM3N (ORCPT
+        id S1733289AbfJJMci (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 08:32:38 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:59476 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726923AbfJJMci (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 08:29:13 -0400
+        Thu, 10 Oct 2019 08:32:38 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=cyGuSzlLK8Ww0fG0pIigUmbAo7iv2JCMlIrCcI1UaGw=; b=s+ewWJ1aI+0TvhFWpyoUsiS8j
-        BQ3MdBlHPwvCQPSMpBcX75ijEm1UAiMKA0sclLRnU/HBpyrhRzW7XfExwcxzXdAuxz+rqlUkyzk4K
-        Q6iypNrLimKvAn6+moYHZI7vs7kOh3pPZRfZNYcoWLfirOOnO1+YNu+JwRlzaKWMys+K4C6MiHVVf
-        kZ+LGZfoMZTVawVqs+r3yb8JIE50VcGoPmPQCCOetVeVgNw9edAp0eheyOkiYDCx9FaPN8UmlV2Vr
-        2363XWsvvHe/0Bo2KY71OQ2RmF2VB+TdmzKceHvnOPVtGeW4D5TJoUYSw2kTkBH+mIAQrLEV+ItC4
-        YAKIR6ZGg==;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=JHl9GmYtentxJL+7m1E2SgJVgP8t2x02tS9jT0BZXPY=; b=kc7eo7i+iGPnb8iSo9NczDvt8Y
+        rHiGsvmqx6erZt14GL+1e78YvnlkwOKyVo5iRHX3aNc6HNbp075D50M0f/3cwgl3k/RKzpL/fn5wM
+        HwmRmVLSPU73hu0+yOml9+pkJbkPL/YWeQLnxcbi+dqHiHAflRV9XbPnwVPP1pQVlh4Wuojy77Zd/
+        +DnGmEl9KT+vM1hdNOW5t7WCXnAqVKqFtFJN8sg3m4cOAF7mqkciZ9RpFPf7r0nm+GjldiZh9Hfok
+        o/4vYmvXXwWQykt36mUK24VRQjx3gApcCdF/ZFsML1vLZHT4ZKAn7tMExucfcapZwXhbBM2KLLz1x
+        3b7Rv0yw==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iIXZ9-00069s-8n; Thu, 10 Oct 2019 12:29:11 +0000
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iIXcD-0007JG-Cc; Thu, 10 Oct 2019 12:32:21 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 461BB301224;
-        Thu, 10 Oct 2019 14:28:17 +0200 (CEST)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 51A1B301224;
+        Thu, 10 Oct 2019 14:31:27 +0200 (CEST)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4D96C202F4F4F; Thu, 10 Oct 2019 14:29:09 +0200 (CEST)
-Date:   Thu, 10 Oct 2019 14:29:09 +0200
+        id 88009205A4300; Thu, 10 Oct 2019 14:32:19 +0200 (CEST)
+Date:   Thu, 10 Oct 2019 14:32:19 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, Jessica Yu <jeyu@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH] ftrace/module: Allow ftrace to make only loaded module
- text read-write
-Message-ID: <20191010122909.GK2359@hirez.programming.kicks-ass.net>
-References: <20191009223638.60b78727@oasis.local.home>
- <20191010073121.GN2311@hirez.programming.kicks-ass.net>
- <20191010093329.GI2359@hirez.programming.kicks-ass.net>
- <20191010093650.GJ2359@hirez.programming.kicks-ass.net>
+To:     Manfred Spraul <manfred@colorfullife.com>
+Cc:     Waiman Long <longman@redhat.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        1vier1@web.de, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: wake_q memory ordering
+Message-ID: <20191010123219.GO2328@hirez.programming.kicks-ass.net>
+References: <990690aa-8281-41da-4a46-99bb8f9fec31@colorfullife.com>
+ <20191010114244.GS2311@hirez.programming.kicks-ass.net>
+ <7af22b09-2ab9-78c9-3027-8281f020e2e8@colorfullife.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20191010093650.GJ2359@hirez.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7af22b09-2ab9-78c9-3027-8281f020e2e8@colorfullife.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 11:36:50AM +0200, Peter Zijlstra wrote:
-> On Thu, Oct 10, 2019 at 11:33:29AM +0200, Peter Zijlstra wrote:
-
-> > I don't see any reason what so ever..
-> > 
-> > load_module()
-> >   ...
-> >   complete_formation()
-> >     mutex_lock(&module_mutex);
-> >     ...
-> >     module_enable_ro();
-> >     module_enable_nx();
-> >     module_enable_x();
-> > 
-> >     mod->state = MODULE_STATE_COMING;
-> >     mutex_unlock(&module_mutex);
-> > 
-> >   prepare_coming_module()
-> >     ftrace_module_enable();
-> >     ...
-> > 
-> > IOW, we're doing ftrace_module_enable() immediately after we flip it
-> > RO+X. There is nothing in between that we can possibly rely on.
-> > 
-> > I was going to put:
-> > 
-> >   blocking_notifier_call_chain(&module_notify_list,
-> > 			       MODULE_STATE_UNFORMED, mod);
-> > 
-> > right before module_enable_ro(), in complete_formation(), for jump_label
-> > and static_call. It looks like ftrace (and possibly klp) want that too.
+On Thu, Oct 10, 2019 at 02:13:47PM +0200, Manfred Spraul wrote:
+> Hi Peter,
 > 
-> Also, you already have ftrace_module_init() right before that. The only
-> thing inbetween ftrace_module_init() and ftrace_module_enable() is
-> verify_exported_symbols() and module_bug_finalize().
+> On 10/10/19 1:42 PM, Peter Zijlstra wrote:
+> > On Thu, Oct 10, 2019 at 12:41:11PM +0200, Manfred Spraul wrote:
+> > > Hi,
+> > > 
+> > > Waiman Long noticed that the memory barriers in sem_lock() are not really
+> > > documented, and while adding documentation, I ended up with one case where
+> > > I'm not certain about the wake_q code:
+> > > 
+> > > Questions:
+> > > - Does smp_mb__before_atomic() + a (failed) cmpxchg_relaxed provide an
+> > >    ordering guarantee?
+> > Yep. Either the atomic instruction implies ordering (eg. x86 LOCK
+> > prefix) or it doesn't (most RISC LL/SC), if it does,
+> > smp_mb__{before,after}_atomic() are a NO-OP and the ordering is
+> > unconditinoal, if it does not, then smp_mb__{before,after}_atomic() are
+> > unconditional barriers.
 > 
-> Do you really need that for patching stuff?
+> And _relaxed() differs from "normal" cmpxchg only for LL/SC architectures,
+> correct?
 
-If you rework the locking slightly, such that you have to call
-ftrace_process_locs() with ftrace_lock already held, then it looks like
-you can squash ftrace_module_enable() right in there.
+Indeed.
 
-There is absolutely no fundamental reason you cannot patch it from
-ftrace_module_init().
+> Therefore smp_mb__{before,after}_atomic() may be combined with
+> cmpxchg_relaxed, to form a full memory barrier, on all archs.
 
-Yes, your code is anal about checking the NOPs, so you first have to
-write NOPs before you can write CALLs, if it is enabled. But afaict you
-really can do all that from ftrace_module_init(), as long as you do it
-all under the same ftrace_lock section.
+Just so.
 
-If you have two sections, like now, then there is indeed that race that
-ftrace can get enabled in between, and all the confusion that that
-brings.
+> > > - Is it ok that wake_up_q just writes wake_q->next, shouldn't
+> > >    smp_store_acquire() be used? I.e.: guarantee that wake_up_process()
+> > >    happens after cmpxchg_relaxed(), assuming that a failed cmpxchg_relaxed
+> > >    provides any ordering.
+> > There is no such thing as store_acquire, it is either load_acquire or
+> > store_release. But just like how we can write load-aquire like
+> > load+smp_mb(), so too I suppose we could write store-acquire like
+> > store+smp_mb(), and that is exactly what is there (through the implied
+> > barrier of wake_up_process()).
+> 
+> Thanks for confirming my assumption:
+> The code is correct, due to the implied barrier inside wake_up_process().
 
-That is, what's fundamentally buggered about something like this?
+It has a comment there, trying to state this.
 
----
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 62a50bf399d6..5f7113f100ce 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -5626,6 +5626,48 @@ static int ftrace_process_locs(struct module *mod,
- 	ftrace_update_code(mod, start_pg);
- 	if (!mod)
- 		local_irq_restore(flags);
-+
-+	if (ftrace_disabled || !mod)
-+		goto out_loop;
-+
-+	do_for_each_ftrace_rec(pg, rec) {
-+		int cnt;
-+		/*
-+		 * do_for_each_ftrace_rec() is a double loop.
-+		 * module text shares the pg. If a record is
-+		 * not part of this module, then skip this pg,
-+		 * which the "break" will do.
-+		 */
-+		if (!within_module_core(rec->ip, mod) &&
-+		    !within_module_init(rec->ip, mod))
-+			break;
-+
-+		cnt = 0;
-+
-+		/*
-+		 * When adding a module, we need to check if tracers are
-+		 * currently enabled and if they are, and can trace this record,
-+		 * we need to enable the module functions as well as update the
-+		 * reference counts for those function records.
-+		 */
-+		if (ftrace_start_up)
-+			cnt += referenced_filters(rec);
-+
-+		/* This clears FTRACE_FL_DISABLED */
-+		rec->flags = cnt;
-+
-+		if (ftrace_start_up && cnt) {
-+			int failed = __ftrace_replace_code(rec, 1);
-+			if (failed) {
-+				ftrace_bug(failed, rec);
-+				goto out_loop;
-+			}
-+		}
-+
-+	} while_for_each_ftrace_rec();
-+
-+ out_loop:
-+
- 	ret = 0;
-  out:
- 	mutex_unlock(&ftrace_lock);
-@@ -5793,73 +5835,6 @@ void ftrace_release_mod(struct module *mod)
- 
- void ftrace_module_enable(struct module *mod)
- {
--	struct dyn_ftrace *rec;
--	struct ftrace_page *pg;
--
--	mutex_lock(&ftrace_lock);
--
--	if (ftrace_disabled)
--		goto out_unlock;
--
--	/*
--	 * If the tracing is enabled, go ahead and enable the record.
--	 *
--	 * The reason not to enable the record immediately is the
--	 * inherent check of ftrace_make_nop/ftrace_make_call for
--	 * correct previous instructions.  Making first the NOP
--	 * conversion puts the module to the correct state, thus
--	 * passing the ftrace_make_call check.
--	 *
--	 * We also delay this to after the module code already set the
--	 * text to read-only, as we now need to set it back to read-write
--	 * so that we can modify the text.
--	 */
--	if (ftrace_start_up)
--		ftrace_arch_code_modify_prepare();
--
--	do_for_each_ftrace_rec(pg, rec) {
--		int cnt;
--		/*
--		 * do_for_each_ftrace_rec() is a double loop.
--		 * module text shares the pg. If a record is
--		 * not part of this module, then skip this pg,
--		 * which the "break" will do.
--		 */
--		if (!within_module_core(rec->ip, mod) &&
--		    !within_module_init(rec->ip, mod))
--			break;
--
--		cnt = 0;
--
--		/*
--		 * When adding a module, we need to check if tracers are
--		 * currently enabled and if they are, and can trace this record,
--		 * we need to enable the module functions as well as update the
--		 * reference counts for those function records.
--		 */
--		if (ftrace_start_up)
--			cnt += referenced_filters(rec);
--
--		/* This clears FTRACE_FL_DISABLED */
--		rec->flags = cnt;
--
--		if (ftrace_start_up && cnt) {
--			int failed = __ftrace_replace_code(rec, 1);
--			if (failed) {
--				ftrace_bug(failed, rec);
--				goto out_loop;
--			}
--		}
--
--	} while_for_each_ftrace_rec();
--
-- out_loop:
--	if (ftrace_start_up)
--		ftrace_arch_code_modify_post_process();
--
-- out_unlock:
--	mutex_unlock(&ftrace_lock);
--
- 	process_cached_mods(mod->name);
- }
- 
+		task->wake_q.next = NULL;
+
+		/*
+		 * wake_up_process() executes a full barrier, which pairs with
+		 * the queueing in wake_q_add() so as not to miss wakeups.
+		 */
+		wake_up_process(task);
