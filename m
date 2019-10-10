@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96CA9D23B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 464F6D233C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:48:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389069AbfJJIpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:45:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50508 "EHLO mail.kernel.org"
+        id S2388118AbfJJIk3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:40:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388345AbfJJIpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:45:00 -0400
+        id S2387493AbfJJIk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:40:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C03F521929;
-        Thu, 10 Oct 2019 08:44:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF46720B7C;
+        Thu, 10 Oct 2019 08:40:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697100;
-        bh=nVfH0Y+P0S0auPKi3sefQmgsK6Oeq7PNhJqG1QzuM5Q=;
+        s=default; t=1570696827;
+        bh=IzsSl5RJoQIY9CfSt/mZ/FS85qR1vAUixNJ0vwRnrxQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SBpkl6diVaw+4HzysQYXHB8ibLd9DfxM93O++nYBs8HDFPU893PMOvPl0jTaGcse6
-         PQxH53CY+YFuXMnhXYDe57u4IFdbDML6a05E3gcMtLP7FO0gWRA4ctAChi0OHSly1o
-         11aeFmh8Z9l15mJ9VpREnULlXuRuIobPDDe0CQWQ=
+        b=J1ELj8v9FSHeC3uVqe0Wu8D4u5Z5vB7GL9gS6mlOzNBdwQj6J69EIvmDfP3viMp03
+         BrgJw9UVh/4GDddPVjAhj5JdEpiMfUjR0s0lhdsCpJN8puej99Alm5VSURjkCbhO3t
+         Li/D972vwPPPbM2K6Qg0YwR1GwY7hd7quUXFORiI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sean Nyekjaer <sean@geanix.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.19 019/114] can: mcp251x: mcp251x_hw_reset(): allow more time after a reset
-Date:   Thu, 10 Oct 2019 10:35:26 +0200
-Message-Id: <20191010083553.031818149@linuxfoundation.org>
+        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Adam Ford <aford173@gmail.com>, Jyri Sarha <jsarha@ti.com>
+Subject: [PATCH 5.3 066/148] drm/omap: fix max fclk divider for omap36xx
+Date:   Thu, 10 Oct 2019 10:35:27 +0200
+Message-Id: <20191010083615.450362990@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
-References: <20191010083544.711104709@linuxfoundation.org>
+In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
+References: <20191010083609.660878383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,57 +43,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marc Kleine-Budde <mkl@pengutronix.de>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-commit d84ea2123f8d27144e3f4d58cd88c9c6ddc799de upstream.
+commit e2c4ed148cf3ec8669a1d90dc66966028e5fad70 upstream.
 
-Some boards take longer than 5ms to power up after a reset, so allow
-some retries attempts before giving up.
+The OMAP36xx and AM/DM37x TRMs say that the maximum divider for DSS fclk
+(in CM_CLKSEL_DSS) is 32. Experimentation shows that this is not
+correct, and using divider of 32 breaks DSS with a flood or underflows
+and sync losts. Dividers up to 31 seem to work fine.
 
-Fixes: ff06d611a31c ("can: mcp251x: Improve mcp251x_hw_reset()")
-Cc: linux-stable <stable@vger.kernel.org>
-Tested-by: Sean Nyekjaer <sean@geanix.com>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+There is another patch to the DT files to limit the divider correctly,
+but as the DSS driver also needs to know the maximum divider to be able
+to iteratively find good rates, we also need to do the fix in the DSS
+driver.
+
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Adam Ford <aford173@gmail.com>
+Cc: stable@vger.kernel.org
+Link: https://patchwork.freedesktop.org/patch/msgid/20191002122542.8449-1-tomi.valkeinen@ti.com
+Tested-by: Adam Ford <aford173@gmail.com>
+Reviewed-by: Jyri Sarha <jsarha@ti.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/spi/mcp251x.c |   19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/omapdrm/dss/dss.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/can/spi/mcp251x.c
-+++ b/drivers/net/can/spi/mcp251x.c
-@@ -626,7 +626,7 @@ static int mcp251x_setup(struct net_devi
- static int mcp251x_hw_reset(struct spi_device *spi)
- {
- 	struct mcp251x_priv *priv = spi_get_drvdata(spi);
--	u8 reg;
-+	unsigned long timeout;
- 	int ret;
+--- a/drivers/gpu/drm/omapdrm/dss/dss.c
++++ b/drivers/gpu/drm/omapdrm/dss/dss.c
+@@ -1090,7 +1090,7 @@ static const struct dss_features omap34x
  
- 	/* Wait for oscillator startup timer after power up */
-@@ -640,10 +640,19 @@ static int mcp251x_hw_reset(struct spi_d
- 	/* Wait for oscillator startup timer after reset */
- 	mdelay(MCP251X_OST_DELAY_MS);
- 
--	reg = mcp251x_read_reg(spi, CANSTAT);
--	if ((reg & CANCTRL_REQOP_MASK) != CANCTRL_REQOP_CONF)
--		return -ENODEV;
--
-+	/* Wait for reset to finish */
-+	timeout = jiffies + HZ;
-+	while ((mcp251x_read_reg(spi, CANSTAT) & CANCTRL_REQOP_MASK) !=
-+	       CANCTRL_REQOP_CONF) {
-+		usleep_range(MCP251X_OST_DELAY_MS * 1000,
-+			     MCP251X_OST_DELAY_MS * 1000 * 2);
-+
-+		if (time_after(jiffies, timeout)) {
-+			dev_err(&spi->dev,
-+				"MCP251x didn't enter in conf mode after reset\n");
-+			return -EBUSY;
-+		}
-+	}
- 	return 0;
- }
- 
+ static const struct dss_features omap3630_dss_feats = {
+ 	.model			=	DSS_MODEL_OMAP3,
+-	.fck_div_max		=	32,
++	.fck_div_max		=	31,
+ 	.fck_freq_max		=	173000000,
+ 	.dss_fck_multiplier	=	1,
+ 	.parent_clk_name	=	"dpll4_ck",
 
 
