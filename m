@@ -2,79 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00E77D32F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:53:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AC0AD330E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 23:06:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727114AbfJJUxc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 16:53:32 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:37091 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726533AbfJJUxc (ORCPT
+        id S1727370AbfJJUyA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 16:54:00 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:56517 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726533AbfJJUyA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 16:53:32 -0400
-Received: by mail-ot1-f66.google.com with SMTP id k32so6129189otc.4;
-        Thu, 10 Oct 2019 13:53:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=e/t0HF/wqJSfNrnwPhBS9XOByD4MLCYu+o03s9uJ830=;
-        b=GFwDQAPTrh/GqeLSUNm8F8lmG/fju0FWQPkCkSh5BL+yThASJMolLaAmYB82YHDsB3
-         pBrwV1mM3VzVlW/5MEDDWDai5CNFCIzvxdMfPdtfdq5wGWcvqz4t5HJq9TvMnci44Udj
-         Pmgke18S1fv7qjznHTzNZWv7EheklQzxh2bdzo0FM68Qm1ZRf4kJZHOUOMvGmh7Mm7sX
-         7eH0ETYfoDb7mNHnX45QOH8/aPoMNh/K/P//8OZaTauL3umBPOW3iEX3iumzCwVy46HC
-         BEpC9oxzTvyj72CaHZYsc0qRY8RSnYBdngPfCfJ+5oFU1NkF8f1q2gkfncZ3xOyd2ZaK
-         x3BA==
-X-Gm-Message-State: APjAAAVa+O+nq86qNc16OkSrGF5pCY06IlDs06eaMMnwnBqVGIPXqT4L
-        TZz/+ydkuERRdeF17deZww==
-X-Google-Smtp-Source: APXvYqws/sj2QT0mQsX1yIjAarwMmwwPfrIx/IFWvphM/0AsdleqskzJS1FEccZSdmd6jvq0Sm7mbw==
-X-Received: by 2002:a9d:6e1a:: with SMTP id e26mr9651172otr.307.1570740809810;
-        Thu, 10 Oct 2019 13:53:29 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id k204sm2029360oif.33.2019.10.10.13.53.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 13:53:29 -0700 (PDT)
-Date:   Thu, 10 Oct 2019 15:53:28 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Andreas Klinger <ak@it-klinger.de>
-Cc:     robh+dt@kernel.org, jic23@kernel.org, mark.rutland@arm.com,
-        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        Thu, 10 Oct 2019 16:54:00 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MHmuE-1iLR8L2rMU-00EtUy; Thu, 10 Oct 2019 22:53:51 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org,
+        Arnd Bergmann <arnd@arndb.de>, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] dt-bindings: iio: maxbotix,mb1232.yaml: transform to
- yaml
-Message-ID: <20191010205328.GA19956@bogus>
-References: <20191007170219.xfipsry5nk4raiem@arbad>
+Subject: [PATCH 31/36] ARM: s3c: cpufreq: use global s3c2412_cpufreq_setrefresh
+Date:   Thu, 10 Oct 2019 22:30:15 +0200
+Message-Id: <20191010203043.1241612-31-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20191010203043.1241612-1-arnd@arndb.de>
+References: <20191010202802.1132272-1-arnd@arndb.de>
+ <20191010203043.1241612-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191007170219.xfipsry5nk4raiem@arbad>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:Fqr+3CFSJ3z4nTjJP8VvOYDnXO9EX8g1sytJseiBmwVd5rPpq97
+ 9sruTvvZ87o0fdD7Cb5YJZoyiUwUQ2d20fjsnrZ2/ti0eYbj94X/VXq060K27XIYEuUjcn6
+ evrUWDq66oQbd8FaGR7d/8oiFeD55KCF/Nb9Hvd7zZcx9COJsqf+8pLR+bTu3F/RE4wig8M
+ bL1N+gwAQac2r4xR8sQsw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:I4aXG3I2BlQ=:WzAJmAR6TpeAp6EuftPE/X
+ G3vu9wKCdQh+X+DtHXLsSX9uM+cjh88bct9q5yhn5vuuMLMgdE3sLrpUc/JVj/kRZdRCP8SO0
+ ZKXiJ7MO0FqsYjgjjlsh1L+JaI+qp/FLi53fjDEWQBGWcI75qofK/YGNBjIqUMj57RMNGRnqN
+ 7+rn+u6/IOwjeqta8QTy2XB12OibL1hQ0MzblW5y19TTqC6vR/w7yGbDVFmDFUEE264k7yMlH
+ Dm11HWnMYWAL92rFyR3nPFm/mK7mpFGRq2qHeLBvlLUOmC+KS3SQgfhU17mmDtXWvr1X0Ea3L
+ IuHcsi9nNRVRC9Bg65Ry9nPskAhZi+id0hJNMsVAjYgPICbS1OZgDbH3viSZYTrEy4G5OY1L+
+ kqNU7mMyDuNyC45HX3xIvfpNr3dM/87I/bRDa5cBnc10UwXI0wTMP2tOG8xcFVNptjWqsc/ps
+ IdlQAV8J37riuHqYb4ZrqyE5uNyfazEn/z0CPNZnDc6drOWgTdw2bbXaSlhm4b70tQKBYfFkx
+ 4KmdS2rSSE7w8a7mVNf6SiCDQNLHA9GPf9aqPCsIJdB5PsDOddoIRC6cc96yITIBuMKLfwqO4
+ 3+WhQudP1iFmGo/CA3TgHH2YzP2hpmpYXy1QMX/RNVBvKgdmNyEiR/yGX1Nal/tMrpLfYMa3Q
+ EDHGD9KLQ/akRINDWbJga9ZSoU4ksWC1BPTk7i7Y2uTvWEmJYMJJAbEMFFucUm6VVV92+bJoj
+ /0fntlkd9YT6tdXyEcBZrbBzOI+sg7spN+zTq8+Kf24a/8k5J0Gzke7kPc+ASlnwsWwnYBM7Z
+ zDcq+Bu2brWvxhzIOAxKtUI1GD47uapI1T0wZxEldPhUU2yWT00FBQMklj84IehO5EzwKQ7BY
+ wi5YZxTT79iCz0e2t4sw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 7 Oct 2019 19:02:20 +0200, Andreas Klinger wrote:
-> transform existing documentation of maxbotix,mb1232 ultrasonic ranger
-> from text documentation format into yaml.
-> 
-> Changes in v3:
-> - add a i2c node around device node to set up #address-cells and
->   #size-cells for omitting error during make dt_binding_check
-> 
-> Changes in v2:
-> - removed description of reg property
-> - added a line:
->   additionalProperties: false
-> 
-> Signed-off-by: Andreas Klinger <ak@it-klinger.de>
-> ---
->  .../bindings/iio/proximity/maxbotix,mb1232.txt     | 29 -----------
->  .../bindings/iio/proximity/maxbotix,mb1232.yaml    | 60 ++++++++++++++++++++++
->  2 files changed, 60 insertions(+), 29 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/iio/proximity/maxbotix,mb1232.txt
->  create mode 100644 Documentation/devicetree/bindings/iio/proximity/maxbotix,mb1232.yaml
-> 
+There are two identical copies of the s3c2412_cpufreq_setrefresh
+function: a static one in the cpufreq driver and a global
+version in iotiming-s3c2412.c.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+As the function requires the use of a hardcoded register address
+from a header that we want to not be visible to drivers, just
+move the existing global function and add a declaration in
+one of the cpufreq header files.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/cpufreq/s3c2412-cpufreq.c            | 23 --------------------
+ include/linux/soc/samsung/s3c-cpufreq-core.h |  1 +
+ 2 files changed, 1 insertion(+), 23 deletions(-)
+
+diff --git a/drivers/cpufreq/s3c2412-cpufreq.c b/drivers/cpufreq/s3c2412-cpufreq.c
+index 38dc9e6db633..a77c63e92e1a 100644
+--- a/drivers/cpufreq/s3c2412-cpufreq.c
++++ b/drivers/cpufreq/s3c2412-cpufreq.c
+@@ -25,8 +25,6 @@
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
+ 
+-#include <mach/s3c2412.h>
+-
+ #include <mach/map.h>
+ 
+ #define S3C2410_CLKREG(x) ((x) + S3C24XX_VA_CLKPWR)
+@@ -156,27 +154,6 @@ static void s3c2412_cpufreq_setdivs(struct s3c_cpufreq_config *cfg)
+ 	clk_set_parent(armclk, cfg->divs.dvs ? hclk : fclk);
+ }
+ 
+-static void s3c2412_cpufreq_setrefresh(struct s3c_cpufreq_config *cfg)
+-{
+-	struct s3c_cpufreq_board *board = cfg->board;
+-	unsigned long refresh;
+-
+-	s3c_freq_dbg("%s: refresh %u ns, hclk %lu\n", __func__,
+-		     board->refresh, cfg->freq.hclk);
+-
+-	/* Reduce both the refresh time (in ns) and the frequency (in MHz)
+-	 * by 10 each to ensure that we do not overflow 32 bit numbers. This
+-	 * should work for HCLK up to 133MHz and refresh period up to 30usec.
+-	 */
+-
+-	refresh = (board->refresh / 10);
+-	refresh *= (cfg->freq.hclk / 100);
+-	refresh /= (1 * 1000 * 1000);	/* 10^6 */
+-
+-	s3c_freq_dbg("%s: setting refresh 0x%08lx\n", __func__, refresh);
+-	__raw_writel(refresh, S3C2412_REFRESH);
+-}
+-
+ /* set the default cpu frequency information, based on an 200MHz part
+  * as we have no other way of detecting the speed rating in software.
+  */
+diff --git a/include/linux/soc/samsung/s3c-cpufreq-core.h b/include/linux/soc/samsung/s3c-cpufreq-core.h
+index 4d22be1031b9..eca942559014 100644
+--- a/include/linux/soc/samsung/s3c-cpufreq-core.h
++++ b/include/linux/soc/samsung/s3c-cpufreq-core.h
+@@ -246,6 +246,7 @@ extern int s3c2412_iotiming_calc(struct s3c_cpufreq_config *cfg,
+ 
+ extern void s3c2412_iotiming_set(struct s3c_cpufreq_config *cfg,
+ 				 struct s3c_iotimings *iot);
++extern void s3c2412_cpufreq_setrefresh(struct s3c_cpufreq_config *cfg);
+ #else
+ #define s3c2412_iotiming_debugfs NULL
+ #define s3c2412_iotiming_calc NULL
+-- 
+2.20.0
+
