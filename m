@@ -2,75 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52A73D2314
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:39:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91D97D22E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:37:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387879AbfJJIj3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:39:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42992 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387430AbfJJIj2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:39:28 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B06E21D7A;
-        Thu, 10 Oct 2019 08:39:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570696767;
-        bh=NROWJEU6vUCbpXiz1egOIyuqyJi8o/fjEm1WAP2iO8k=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H/+3Oj3JxOOsgeqZZpLMxk8j1DnYfKlZTElVCPBr34YyFJ2vbrFifS1VwgEriupRK
-         wfBnilp59wcKjGKekRpeLiOX3NBS5wtka/UG+On8VJTtA/vyeWmgwxtjXlTbsZvYQU
-         ro4O8I/clwyGRQohk5PC5nyVgN+sdt+pyuAA/PF4=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gilad Ben-Yossef <gilad@benyossef.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.3 046/148] crypto: ccree - use the full crypt length value
-Date:   Thu, 10 Oct 2019 10:35:07 +0200
-Message-Id: <20191010083613.938277698@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
-References: <20191010083609.660878383@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1733170AbfJJIhN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:37:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36290 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729932AbfJJIhN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:37:13 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1BA0BB048;
+        Thu, 10 Oct 2019 08:37:11 +0000 (UTC)
+Date:   Thu, 10 Oct 2019 10:37:10 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Peter Oberparleiter <oberpar@linux.ibm.com>, Qian Cai <cai@lca.pw>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Petr Mladek <pmladek@suse.com>, akpm@linux-foundation.org,
+        rostedt@goodmis.org, peterz@infradead.org, linux-mm@kvack.org,
+        john.ogness@linutronix.de, david@redhat.com,
+        linux-kernel@vger.kernel.org,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+Subject: Re: [PATCH v2] mm/page_isolation: fix a deadlock with printk()
+Message-ID: <20191010083710.GF18412@dhcp22.suse.cz>
+References: <20191007144937.GO2381@dhcp22.suse.cz>
+ <20191008074357.f33f6pbs4cw5majk@pathway.suse.cz>
+ <20191008082752.GB6681@dhcp22.suse.cz>
+ <aefe7f75-b0ec-9e99-a77e-87324edb24e0@de.ibm.com>
+ <1570550917.5576.303.camel@lca.pw>
+ <1157b3ae-006e-5b8e-71f0-883918992ecc@linux.ibm.com>
+ <20191009142623.GE6681@dhcp22.suse.cz>
+ <20191010051201.GA78180@jagdpanzerIV>
+ <20191010074049.GD18412@dhcp22.suse.cz>
+ <20191010081629.GA120986@jagdpanzerIV>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191010081629.GA120986@jagdpanzerIV>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gilad Ben-Yossef <gilad@benyossef.com>
+On Thu 10-10-19 17:16:29, Sergey Senozhatsky wrote:
+> On (10/10/19 09:40), Michal Hocko wrote:
+> [..]
+> > > > Considering that console.write is called from essentially arbitrary code
+> > > > path IIUC then all the locks used in this path should be pretty much
+> > > > tail locks or console internal ones without external dependencies.
+> > > 
+> > > That's a good expectation, but I guess it's not always the case.
+> > > 
+> > > One example might be NET console - net subsystem locks, net device
+> > > drivers locks, maybe even some MM locks (skb allocations?).
+> > 
+> > I am not familiar with the netconsole code TBH. If there is absolutely
+> > no way around that then we might have to bite a bullet and consider some
+> > of MM locks a land of no printk.
+> 
+> So this is what netconsole does (before we pass on udp to net device
+> driver code, which *may be* can do more allocations, I don't know):
+> 
+> write_msg()
+>  netpoll_send_udp()
+>   find_skb()
+>    alloc_skb(len, GFP_ATOMIC)
+>     kmem_cache_alloc_node()
+> 
+> You are the right person to ask this question to - how many MM
+> locks are involved when we do GFP_ATOMIC kmem_cache allocation?
+> Is there anything to be concerned about?
 
-commit 7a4be6c113c1f721818d1e3722a9015fe393295c upstream.
-
-In case of AEAD decryption verifcation error we were using the
-wrong value to zero out the plaintext buffer leaving the end of
-the buffer with the false plaintext.
-
-Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
-Fixes: ff27e85a85bb ("crypto: ccree - add AEAD support")
-CC: stable@vger.kernel.org # v4.17+
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/crypto/ccree/cc_aead.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/drivers/crypto/ccree/cc_aead.c
-+++ b/drivers/crypto/ccree/cc_aead.c
-@@ -236,7 +236,7 @@ static void cc_aead_complete(struct devi
- 			/* In case of payload authentication failure, MUST NOT
- 			 * revealed the decrypted message --> zero its memory.
- 			 */
--			cc_zero_sgl(areq->dst, areq_ctx->cryptlen);
-+			cc_zero_sgl(areq->dst, areq->cryptlen);
- 			err = -EBADMSG;
- 		}
- 	} else { /*ENCRYPT*/
-
-
+At least zone->lock might involved. Maybe even more.
+-- 
+Michal Hocko
+SUSE Labs
