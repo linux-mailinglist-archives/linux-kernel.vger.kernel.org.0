@@ -2,106 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBFD1D2478
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:00:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BA80D243B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:50:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387547AbfJJIpc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:45:32 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:6607 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2388082AbfJJIp2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:45:28 -0400
-X-UUID: fca862e4d84f4e6594ed4159528f2e68-20191010
-X-UUID: fca862e4d84f4e6594ed4159528f2e68-20191010
-Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1801377807; Thu, 10 Oct 2019 16:45:19 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31DR.mediatek.inc
- (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 10 Oct
- 2019 16:45:16 +0800
-Received: from [10.17.3.153] (172.27.4.253) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 10 Oct 2019 16:45:16 +0800
-Message-ID: <1570697118.32135.20.camel@mhfsdcap03>
-Subject: Re: [PATCH] usb: mtk-xhci: Set the XHCI_NO_64BIT_SUPPORT quirk
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Tomasz Figa <tfiga@chromium.org>
-CC:     <linux-usb@vger.kernel.org>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Changqi Hu <Changqi.Hu@mediatek.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Shik Chen <shik@chromium.org>
-Date:   Thu, 10 Oct 2019 16:45:18 +0800
-In-Reply-To: <20191010075004.192818-1-tfiga@chromium.org>
-References: <20191010075004.192818-1-tfiga@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S2388445AbfJJIu1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:50:27 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37728 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389959AbfJJIuY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:50:24 -0400
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A4DB33DE04
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 08:50:24 +0000 (UTC)
+Received: by mail-wr1-f72.google.com with SMTP id z17so2404839wru.13
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 01:50:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kbUGk/zH7Jd7BlhB+4/oDRz4mPdioNN/Nf5e+ZFx1KA=;
+        b=G+++O+sio+lslwqKpLTAQs4NNqDgVNgfa2t6uxFVBkfyjyFlN9E0Ha2n1xyZat81+O
+         Vqia7vuDCK3Es0mTVOFjpIa+3VkjDI9XD7NKpw1SWehwVknHmFbOyMNzLw99lL7nAq1F
+         XtYarzHWJG/rtT49VhN2qwLKAvVGSPSwfmd/rYgFP6TBbC2rXVC3HtWyeTi0usfW8Q9I
+         KR8cIWS8qHoS56b6WuonLgD1iPhjXOenDVdk+AxTLzE2EqcBVcDBEwTolA5ltQt7d2Z+
+         IbtEYiXruQG6/HbGf0pu9i8KF76zTebvuBIcnqbETckzG8sZ/1ET6xNfEFCkowSdc1xG
+         vvkw==
+X-Gm-Message-State: APjAAAWv18hNjpjxnWKcKYFVMS4mLfOEaIdyKP4YdLNE9ZiXCY2SfW0t
+        oNZNfwWvwQnPlE/husS6dXATNdLJT6GW5g6XswQ+DKrBZtFXypARlHKHtfw4KeITt0AjPXUyl8E
+        tPjp7QTPTX00C7bGPzKTO63uC
+X-Received: by 2002:a5d:6a4e:: with SMTP id t14mr7690214wrw.286.1570697423407;
+        Thu, 10 Oct 2019 01:50:23 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwoCA81jZEGW66oRDsEIESbM+AgkqiF20vI6cPaP0YoBTkJocF4+GdZwig79Aeir6Qomx30bw==
+X-Received: by 2002:a5d:6a4e:: with SMTP id t14mr7690208wrw.286.1570697423217;
+        Thu, 10 Oct 2019 01:50:23 -0700 (PDT)
+Received: from steredhat (host174-200-dynamic.52-79-r.retail.telecomitalia.it. [79.52.200.174])
+        by smtp.gmail.com with ESMTPSA id y8sm6284711wrm.64.2019.10.10.01.50.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2019 01:50:22 -0700 (PDT)
+Date:   Thu, 10 Oct 2019 10:50:20 +0200
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Stefan Hajnoczi <stefanha@gmail.com>
+Cc:     netdev@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
+        linux-hyperv@vger.kernel.org,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        kvm@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
+        Dexuan Cui <decui@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jorgen Hansen <jhansen@vmware.com>
+Subject: Re: [RFC PATCH 06/13] vsock: add 'struct vsock_sock *' param to
+ vsock_core_get_transport()
+Message-ID: <20191010085020.w5mbse7mnpzalhyr@steredhat>
+References: <20190927112703.17745-1-sgarzare@redhat.com>
+ <20190927112703.17745-7-sgarzare@redhat.com>
+ <20191009115433.GG5747@stefanha-x1.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: B90345DAD5A894277746B2A803C573FB68AC83DB838DD9C7583D5D1E62D8AAD32000:8
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191009115433.GG5747@stefanha-x1.localdomain>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Tomasz,
-
-On Thu, 2019-10-10 at 16:50 +0900, Tomasz Figa wrote:
-> MediaTek XHCI host controller does not support 64-bit addressing despite
-> the AC64 bit of HCCPARAMS1 register being set. The platform-specific
-> glue sets the DMA mask to 32 bits on its own, but it has no effect,
-> because xhci_gen_setup() overrides it according to hardware
-> capabilities.
+On Wed, Oct 09, 2019 at 12:54:33PM +0100, Stefan Hajnoczi wrote:
+> On Fri, Sep 27, 2019 at 01:26:56PM +0200, Stefano Garzarella wrote:
+> > -const struct vsock_transport *vsock_core_get_transport(void)
+> > +const struct vsock_transport *vsock_core_get_transport(struct vsock_sock *vsk)
+> >  {
+> >  	/* vsock_register_mutex not taken since only the transport uses this
+> >  	 * function and only while registered.
+> >  	 */
+> > -	return transport_single;
 > 
-> Use the XHCI_NO_64BIT_SUPPORT quirk to tell the XHCI core to force
-> 32-bit DMA mask instead.
+> This comment is about protecting transport_single.  It no longer applies
+> when using vsk->transport.  Please drop it.
+
+Right, dropped.
+
 > 
-> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
-> ---
->  drivers/usb/host/xhci-mtk.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+> Otherwise:
 > 
-> diff --git a/drivers/usb/host/xhci-mtk.c b/drivers/usb/host/xhci-mtk.c
-> index b18a6baef204a..4d101d52cc11b 100644
-> --- a/drivers/usb/host/xhci-mtk.c
-> +++ b/drivers/usb/host/xhci-mtk.c
-> @@ -395,6 +395,11 @@ static void xhci_mtk_quirks(struct device *dev, struct xhci_hcd *xhci)
->  	xhci->quirks |= XHCI_SPURIOUS_SUCCESS;
->  	if (mtk->lpm_support)
->  		xhci->quirks |= XHCI_LPM_SUPPORT;
-> +	/*
-> +	 * MTK host controller does not support 64-bit addressing, despite
-> +	 * having the AC64 bit of the HCCPARAMS1 register set.
-> +	 */
-> +	xhci->quirks |= XHCI_NO_64BIT_SUPPORT;
-Somes SoCs support 64bits in fact, so can't support this quirk, do you
-encounter any issues without this quirk?
+> Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
 
->  }
-
->  
->  /* called during probe() after chip reset completes */
-> @@ -488,11 +493,6 @@ static int xhci_mtk_probe(struct platform_device *pdev)
->  		goto disable_clk;
->  	}
->  
-> -	/* Initialize dma_mask and coherent_dma_mask to 32-bits */
-> -	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
-> -	if (ret)
-> -		goto disable_clk;
-> -
->  	hcd = usb_create_hcd(driver, dev, dev_name(dev));
->  	if (!hcd) {
->  		ret = -ENOMEM;
-
-
+Thanks,
+Stefano
