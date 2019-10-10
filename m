@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C64D1D243A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:50:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C06E1D241B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:50:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389953AbfJJIuZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:50:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57252 "EHLO mail.kernel.org"
+        id S2389758AbfJJItI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:49:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389110AbfJJIuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:50:20 -0400
+        id S2388165AbfJJItA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:49:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3FED21BE5;
-        Thu, 10 Oct 2019 08:50:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E243F2064A;
+        Thu, 10 Oct 2019 08:48:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697419;
-        bh=85ImHd+iC/uz5AhcNCsQYGkHH6IrmsgFjvEXApBTSiY=;
+        s=default; t=1570697340;
+        bh=AlzBdA8/4AmqnMFPRJWpA+uiooPBTPN0m2UkF6AWhYU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EpRhk0NHbLKSS+4CF+0cK8c4q0c+kc6PPR1DTC3GdxMK3/5GczgZBq1LKXuUeC9wb
-         psqu1Cq/dLrwJqPUnK49/zK7tA4qK9bdbKYt+awR9uj30LJOqhvwdhJYQWrglPxsGL
-         t7ZzV3+gRIdCwH37aB7Jf3wg9tbRtNr6J8bKvD+E=
+        b=HquXPDhJpjAPX2ik2T0iOCJInKwDu987PyCz2MnQ4viivlq8eEf2ailMvCB0WNszc
+         yxnFwByQmcjdPGQUALF2njn0n1epup1+pajh+1yCQ9RWuseySItnPzdOV1YWDP3SwW
+         j31UI5ea4LgWf/HTxqC6/xpCuaMvVPXr1BNY1+yc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>
-Subject: [PATCH 4.14 20/61] watchdog: imx2_wdt: fix min() calculation in imx2_wdt_set_timeout
-Date:   Thu, 10 Oct 2019 10:36:45 +0200
-Message-Id: <20191010083501.872489536@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Sandeen <sandeen@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 106/114] vfs: Fix EOVERFLOW testing in put_compat_statfs64
+Date:   Thu, 10 Oct 2019 10:36:53 +0200
+Message-Id: <20191010083613.843593568@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083449.500442342@linuxfoundation.org>
-References: <20191010083449.500442342@linuxfoundation.org>
+In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
+References: <20191010083544.711104709@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,53 +43,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+From: Eric Sandeen <sandeen@redhat.com>
 
-commit 144783a80cd2cbc45c6ce17db649140b65f203dd upstream.
+commit cc3a7bfe62b947b423fcb2cfe89fcba92bf48fa3 upstream.
 
-Converting from ms to s requires dividing by 1000, not multiplying. So
-this is currently taking the smaller of new_timeout and 1.28e8,
-i.e. effectively new_timeout.
+Today, put_compat_statfs64() disallows nearly any field value over
+2^32 if f_bsize is only 32 bits, but that makes no sense.
+compat_statfs64 is there for the explicit purpose of providing 64-bit
+fields for f_files, f_ffree, etc.  And f_bsize is always only 32 bits.
 
-The driver knows what it set max_hw_heartbeat_ms to, so use that
-value instead of doing a division at run-time.
+As a result, 32-bit userspace gets -EOVERFLOW for i.e.  large file
+counts even with -D_FILE_OFFSET_BITS=64 set.
 
-FWIW, this can easily be tested by booting into a busybox shell and
-doing "watchdog -t 5 -T 130 /dev/watchdog" - without this patch, the
-watchdog fires after 130&127 == 2 seconds.
+In reality, only f_bsize and f_frsize can legitimately overflow
+(fields like f_type and f_namelen should never be large), so test
+only those fields.
 
-Fixes: b07e228eee69 "watchdog: imx2_wdt: Fix set_timeout for big timeout values"
-Cc: stable@vger.kernel.org # 5.2 plus anything the above got backported to
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Link: https://lore.kernel.org/r/20190812131356.23039-1-linux@rasmusvillemoes.dk
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+This bug was discussed at length some time ago, and this is the proposal
+Al suggested at https://lkml.org/lkml/2018/8/6/640.  It seemed to get
+dropped amid the discussion of other related changes, but this
+part seems obviously correct on its own, so I've picked it up and
+sent it, for expediency.
+
+Fixes: 64d2ab32efe3 ("vfs: fix put_compat_statfs64() does not handle errors")
+Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/watchdog/imx2_wdt.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/statfs.c |   17 ++++-------------
+ 1 file changed, 4 insertions(+), 13 deletions(-)
 
---- a/drivers/watchdog/imx2_wdt.c
-+++ b/drivers/watchdog/imx2_wdt.c
-@@ -58,7 +58,7 @@
- 
- #define IMX2_WDT_WMCR		0x08		/* Misc Register */
- 
--#define IMX2_WDT_MAX_TIME	128
-+#define IMX2_WDT_MAX_TIME	128U
- #define IMX2_WDT_DEFAULT_TIME	60		/* in seconds */
- 
- #define WDOG_SEC_TO_COUNT(s)	((s * 2 - 1) << 8)
-@@ -183,7 +183,7 @@ static int imx2_wdt_set_timeout(struct w
+--- a/fs/statfs.c
++++ b/fs/statfs.c
+@@ -304,19 +304,10 @@ COMPAT_SYSCALL_DEFINE2(fstatfs, unsigned
+ static int put_compat_statfs64(struct compat_statfs64 __user *ubuf, struct kstatfs *kbuf)
  {
- 	unsigned int actual;
- 
--	actual = min(new_timeout, wdog->max_hw_heartbeat_ms * 1000);
-+	actual = min(new_timeout, IMX2_WDT_MAX_TIME);
- 	__imx2_wdt_set_timeout(wdog, actual);
- 	wdog->timeout = new_timeout;
- 	return 0;
+ 	struct compat_statfs64 buf;
+-	if (sizeof(ubuf->f_bsize) == 4) {
+-		if ((kbuf->f_type | kbuf->f_bsize | kbuf->f_namelen |
+-		     kbuf->f_frsize | kbuf->f_flags) & 0xffffffff00000000ULL)
+-			return -EOVERFLOW;
+-		/* f_files and f_ffree may be -1; it's okay
+-		 * to stuff that into 32 bits */
+-		if (kbuf->f_files != 0xffffffffffffffffULL
+-		 && (kbuf->f_files & 0xffffffff00000000ULL))
+-			return -EOVERFLOW;
+-		if (kbuf->f_ffree != 0xffffffffffffffffULL
+-		 && (kbuf->f_ffree & 0xffffffff00000000ULL))
+-			return -EOVERFLOW;
+-	}
++
++	if ((kbuf->f_bsize | kbuf->f_frsize) & 0xffffffff00000000ULL)
++		return -EOVERFLOW;
++
+ 	memset(&buf, 0, sizeof(struct compat_statfs64));
+ 	buf.f_type = kbuf->f_type;
+ 	buf.f_bsize = kbuf->f_bsize;
 
 
