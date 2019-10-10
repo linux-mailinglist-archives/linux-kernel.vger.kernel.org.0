@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87C90D23A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91568D238B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388947AbfJJIoa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:44:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49666 "EHLO mail.kernel.org"
+        id S2388768AbfJJInh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:43:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388932AbfJJIo2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:44:28 -0400
+        id S2388113AbfJJIne (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:43:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02B4D2054F;
-        Thu, 10 Oct 2019 08:44:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68E6721D56;
+        Thu, 10 Oct 2019 08:43:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697067;
-        bh=ESmn47NdpDrnRFhWFMS6oHzR/zZ0XeYN/LYzXWP7Urs=;
+        s=default; t=1570697012;
+        bh=NAi1+Bo0JVBgckqyAVTISXOYMwHPgSPKdbHxAFeiRps=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SOqxFBWkKsW+csOq3eB7yI2602UkkrJAmMrMhdg7NAqRx/6xNyIEAEPMFpiUECYD/
-         E3pnk/cWM4Jjnsq1PUfuzQMeTtBxpWDwU5Eb9/o5bJhPXtEzYG3EzwoLoDTkYSfAHk
-         5f84E9YEVKhE9tN1y9iiJrxEOU/pphozqdR7+VWU=
+        b=jWhzIzN04N+klaDBL5JXnDDAJmA0dXmMphJHORUt9Ua2iqrYJ+5R1UfHwGujz7v1N
+         EjsBOsfwEAvKVx7vD8F0pQ0A/akxhIWyLrQisliDCjb0HhGDCuoRmR5aBFbqqn/RtY
+         HPzMX8m/++E3oQcYRdEZkAqoWceW0yDZvf9pr/8U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Michel=20D=C3=A4nzer?= <mdaenzer@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 135/148] drm/radeon: Bail earlier when radeon.cik_/si_support=0 is passed
-Date:   Thu, 10 Oct 2019 10:36:36 +0200
-Message-Id: <20191010083620.545054451@linuxfoundation.org>
+Subject: [PATCH 5.3 136/148] Btrfs: fix selftests failure due to uninitialized i_mode in test inodes
+Date:   Thu, 10 Oct 2019 10:36:37 +0200
+Message-Id: <20191010083620.606605887@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
 References: <20191010083609.660878383@linuxfoundation.org>
@@ -46,114 +44,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-[ Upstream commit 9dbc88d013b79c62bd845cb9e7c0256e660967c5 ]
+[ Upstream commit 9f7fec0ba89108b9385f1b9fb167861224912a4a ]
 
-Bail from the pci_driver probe function instead of from the drm_driver
-load function.
+Some of the self tests create a test inode, setup some extents and then do
+calls to btrfs_get_extent() to test that the corresponding extent maps
+exist and are correct. However btrfs_get_extent(), since the 5.2 merge
+window, now errors out when it finds a regular or prealloc extent for an
+inode that does not correspond to a regular file (its ->i_mode is not
+S_IFREG). This causes the self tests to fail sometimes, specially when
+KASAN, slub_debug and page poisoning are enabled:
 
-This avoid /dev/dri/card0 temporarily getting registered and then
-unregistered again, sending unwanted add / remove udev events to
-userspace.
+  $ modprobe btrfs
+  modprobe: ERROR: could not insert 'btrfs': Invalid argument
 
-Specifically this avoids triggering the (userspace) bug fixed by this
-plymouth merge-request:
-https://gitlab.freedesktop.org/plymouth/plymouth/merge_requests/59
+  $ dmesg
+  [ 9414.691648] Btrfs loaded, crc32c=crc32c-intel, debug=on, assert=on, integrity-checker=on, ref-verify=on
+  [ 9414.692655] BTRFS: selftest: sectorsize: 4096  nodesize: 4096
+  [ 9414.692658] BTRFS: selftest: running btrfs free space cache tests
+  [ 9414.692918] BTRFS: selftest: running extent only tests
+  [ 9414.693061] BTRFS: selftest: running bitmap only tests
+  [ 9414.693366] BTRFS: selftest: running bitmap and extent tests
+  [ 9414.696455] BTRFS: selftest: running space stealing from bitmap to extent tests
+  [ 9414.697131] BTRFS: selftest: running extent buffer operation tests
+  [ 9414.697133] BTRFS: selftest: running btrfs_split_item tests
+  [ 9414.697564] BTRFS: selftest: running extent I/O tests
+  [ 9414.697583] BTRFS: selftest: running find delalloc tests
+  [ 9415.081125] BTRFS: selftest: running find_first_clear_extent_bit test
+  [ 9415.081278] BTRFS: selftest: running extent buffer bitmap tests
+  [ 9415.124192] BTRFS: selftest: running inode tests
+  [ 9415.124195] BTRFS: selftest: running btrfs_get_extent tests
+  [ 9415.127909] BTRFS: selftest: running hole first btrfs_get_extent test
+  [ 9415.128343] BTRFS critical (device (efault)): regular/prealloc extent found for non-regular inode 256
+  [ 9415.131428] BTRFS: selftest: fs/btrfs/tests/inode-tests.c:904 expected a real extent, got 0
 
-Note that despite that being an userspace bug, not sending unnecessary
-udev events is a good idea in general.
+This happens because the test inodes are created without ever initializing
+the i_mode field of the inode, and neither VFS's new_inode() nor the btrfs
+callback btrfs_alloc_inode() initialize the i_mode. Initialization of the
+i_mode is done through the various callbacks used by the VFS to create
+new inodes (regular files, directories, symlinks, tmpfiles, etc), which
+all call btrfs_new_inode() which in turn calls inode_init_owner(), which
+sets the inode's i_mode. Since the tests only uses new_inode() to create
+the test inodes, the i_mode was never initialized.
 
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1490490
-Reviewed-by: Michel Dänzer <mdaenzer@redhat.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+This always happens on a VM I used with kasan, slub_debug and many other
+debug facilities enabled. It also happened to someone who reported this
+on bugzilla (on a 5.3-rc).
+
+Fix this by setting i_mode to S_IFREG at btrfs_new_test_inode().
+
+Fixes: 6bf9e4bd6a2778 ("btrfs: inode: Verify inode mode to avoid NULL pointer dereference")
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=204397
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/radeon/radeon_drv.c | 31 +++++++++++++++++++++++++++++
- drivers/gpu/drm/radeon/radeon_kms.c | 25 -----------------------
- 2 files changed, 31 insertions(+), 25 deletions(-)
+ fs/btrfs/tests/btrfs-tests.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
-index 15d7bebe17294..5cc0fbb04ab14 100644
---- a/drivers/gpu/drm/radeon/radeon_drv.c
-+++ b/drivers/gpu/drm/radeon/radeon_drv.c
-@@ -325,8 +325,39 @@ bool radeon_device_is_virtual(void);
- static int radeon_pci_probe(struct pci_dev *pdev,
- 			    const struct pci_device_id *ent)
+diff --git a/fs/btrfs/tests/btrfs-tests.c b/fs/btrfs/tests/btrfs-tests.c
+index 1e3ba49493995..814a918998ece 100644
+--- a/fs/btrfs/tests/btrfs-tests.c
++++ b/fs/btrfs/tests/btrfs-tests.c
+@@ -51,7 +51,13 @@ static struct file_system_type test_type = {
+ 
+ struct inode *btrfs_new_test_inode(void)
  {
-+	unsigned long flags = 0;
- 	int ret;
- 
-+	if (!ent)
-+		return -ENODEV; /* Avoid NULL-ptr deref in drm_get_pci_dev */
+-	return new_inode(test_mnt->mnt_sb);
++	struct inode *inode;
 +
-+	flags = ent->driver_data;
++	inode = new_inode(test_mnt->mnt_sb);
++	if (inode)
++		inode_init_owner(inode, NULL, S_IFREG);
 +
-+	if (!radeon_si_support) {
-+		switch (flags & RADEON_FAMILY_MASK) {
-+		case CHIP_TAHITI:
-+		case CHIP_PITCAIRN:
-+		case CHIP_VERDE:
-+		case CHIP_OLAND:
-+		case CHIP_HAINAN:
-+			dev_info(&pdev->dev,
-+				 "SI support disabled by module param\n");
-+			return -ENODEV;
-+		}
-+	}
-+	if (!radeon_cik_support) {
-+		switch (flags & RADEON_FAMILY_MASK) {
-+		case CHIP_KAVERI:
-+		case CHIP_BONAIRE:
-+		case CHIP_HAWAII:
-+		case CHIP_KABINI:
-+		case CHIP_MULLINS:
-+			dev_info(&pdev->dev,
-+				 "CIK support disabled by module param\n");
-+			return -ENODEV;
-+		}
-+	}
-+
- 	if (vga_switcheroo_client_probe_defer(pdev))
- 		return -EPROBE_DEFER;
++	return inode;
+ }
  
-diff --git a/drivers/gpu/drm/radeon/radeon_kms.c b/drivers/gpu/drm/radeon/radeon_kms.c
-index 07f7ace42c4ba..e85c554eeaa94 100644
---- a/drivers/gpu/drm/radeon/radeon_kms.c
-+++ b/drivers/gpu/drm/radeon/radeon_kms.c
-@@ -100,31 +100,6 @@ int radeon_driver_load_kms(struct drm_device *dev, unsigned long flags)
- 	struct radeon_device *rdev;
- 	int r, acpi_status;
- 
--	if (!radeon_si_support) {
--		switch (flags & RADEON_FAMILY_MASK) {
--		case CHIP_TAHITI:
--		case CHIP_PITCAIRN:
--		case CHIP_VERDE:
--		case CHIP_OLAND:
--		case CHIP_HAINAN:
--			dev_info(dev->dev,
--				 "SI support disabled by module param\n");
--			return -ENODEV;
--		}
--	}
--	if (!radeon_cik_support) {
--		switch (flags & RADEON_FAMILY_MASK) {
--		case CHIP_KAVERI:
--		case CHIP_BONAIRE:
--		case CHIP_HAWAII:
--		case CHIP_KABINI:
--		case CHIP_MULLINS:
--			dev_info(dev->dev,
--				 "CIK support disabled by module param\n");
--			return -ENODEV;
--		}
--	}
--
- 	rdev = kzalloc(sizeof(struct radeon_device), GFP_KERNEL);
- 	if (rdev == NULL) {
- 		return -ENOMEM;
+ static int btrfs_init_test_fs(void)
 -- 
 2.20.1
 
