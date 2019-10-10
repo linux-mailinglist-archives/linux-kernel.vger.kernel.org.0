@@ -2,113 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A279D32E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:51:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00E77D32F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:53:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbfJJUun (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 16:50:43 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39518 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbfJJUun (ORCPT
+        id S1727114AbfJJUxc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 16:53:32 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:37091 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726533AbfJJUxc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 16:50:43 -0400
-Received: by mail-pf1-f195.google.com with SMTP id v4so4658866pff.6
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 13:50:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=LQ6pH3t2+nQt0O+s8wT+9M4vXr25VmlPpLaWlsXlGXw=;
-        b=d1lSnOGsbxK8JQPtiK7qB8XjTUXyl3oZz+s8gWdvArdeQuGrhSWrxxVqhQaVZBHuud
-         OQyyQYDuEBbtwKcKBVqfp+qsiH2x8KRVreXYUk48jLnU5BN6r3xnmwO9u/4OTKtpntyU
-         H2B5wUC8P4hHUCa+CewEc4rfGooEB4AiSwDZg=
+        Thu, 10 Oct 2019 16:53:32 -0400
+Received: by mail-ot1-f66.google.com with SMTP id k32so6129189otc.4;
+        Thu, 10 Oct 2019 13:53:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=LQ6pH3t2+nQt0O+s8wT+9M4vXr25VmlPpLaWlsXlGXw=;
-        b=rvCfq7mMiaCIgFOh6VzCCM6v1t+Nu8+18qk76UpE7Os1janoQ01NtUDgEn892VGsLF
-         LbVe4LpHMXvLrnxrU2cOeZIkd4GhSZlSi5H5YSbdkJblPV1D4nnMC/B3E7w+Sejwinju
-         iGLblEVJOoRFbjen4ZzI99UdGArdRa7TRSvG/LNBLyHFOVR6dAtBLw5Pc0Fap2HOJrTM
-         h7DSdS0fR1gk1BALBERSMQZBGw/olMKVsHSym7ugiCSY5VT5ZjyCSjMNbLy0SqFty/Gb
-         kr2L2K7LmtutZkV0fkCAlmj8g2DEwI4dDSjkF889xgLlZKHx1WRwWONKF+X5lPsDGGGX
-         U+HQ==
-X-Gm-Message-State: APjAAAWBgO+kh/7fbfNJR555t01EGLF4fVeBtLaWEyq+CaXMQAjDmUgg
-        RZOvUicWmhhf9yOhr3CmIX+waA==
-X-Google-Smtp-Source: APXvYqzpd8lfsXXWfCE6lVUPbLfAoxclgHEQWIzIhep8aHnHrUFaDd4gioUzPGIfQtiMPEUJP+74dg==
-X-Received: by 2002:a63:5fd0:: with SMTP id t199mr12988146pgb.369.1570740642047;
-        Thu, 10 Oct 2019 13:50:42 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id d4sm5684711pjs.9.2019.10.10.13.50.41
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=e/t0HF/wqJSfNrnwPhBS9XOByD4MLCYu+o03s9uJ830=;
+        b=GFwDQAPTrh/GqeLSUNm8F8lmG/fju0FWQPkCkSh5BL+yThASJMolLaAmYB82YHDsB3
+         pBrwV1mM3VzVlW/5MEDDWDai5CNFCIzvxdMfPdtfdq5wGWcvqz4t5HJq9TvMnci44Udj
+         Pmgke18S1fv7qjznHTzNZWv7EheklQzxh2bdzo0FM68Qm1ZRf4kJZHOUOMvGmh7Mm7sX
+         7eH0ETYfoDb7mNHnX45QOH8/aPoMNh/K/P//8OZaTauL3umBPOW3iEX3iumzCwVy46HC
+         BEpC9oxzTvyj72CaHZYsc0qRY8RSnYBdngPfCfJ+5oFU1NkF8f1q2gkfncZ3xOyd2ZaK
+         x3BA==
+X-Gm-Message-State: APjAAAVa+O+nq86qNc16OkSrGF5pCY06IlDs06eaMMnwnBqVGIPXqT4L
+        TZz/+ydkuERRdeF17deZww==
+X-Google-Smtp-Source: APXvYqws/sj2QT0mQsX1yIjAarwMmwwPfrIx/IFWvphM/0AsdleqskzJS1FEccZSdmd6jvq0Sm7mbw==
+X-Received: by 2002:a9d:6e1a:: with SMTP id e26mr9651172otr.307.1570740809810;
+        Thu, 10 Oct 2019 13:53:29 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id k204sm2029360oif.33.2019.10.10.13.53.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 13:50:41 -0700 (PDT)
-Date:   Thu, 10 Oct 2019 13:50:40 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Jan Glauber <jglauber@marvell.com>
-Subject: Re: [PATCH v3 10/10] drivers/lkdtm: Remove references to
- CONFIG_REFCOUNT_FULL
-Message-ID: <201910101350.FD2B60A5A@keescook>
-References: <20191007154703.5574-1-will@kernel.org>
- <20191007154703.5574-11-will@kernel.org>
+        Thu, 10 Oct 2019 13:53:29 -0700 (PDT)
+Date:   Thu, 10 Oct 2019 15:53:28 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Andreas Klinger <ak@it-klinger.de>
+Cc:     robh+dt@kernel.org, jic23@kernel.org, mark.rutland@arm.com,
+        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] dt-bindings: iio: maxbotix,mb1232.yaml: transform to
+ yaml
+Message-ID: <20191010205328.GA19956@bogus>
+References: <20191007170219.xfipsry5nk4raiem@arbad>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191007154703.5574-11-will@kernel.org>
+In-Reply-To: <20191007170219.xfipsry5nk4raiem@arbad>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 07, 2019 at 04:47:03PM +0100, Will Deacon wrote:
-> CONFIG_REFCOUNT_FULL no longer exists, so remove all references to it.
-
-Same thing: I think this can be collapsed into patch 8.
-
-Acked-by: Kees Cook <keescook@chromium.org>
-
--Kees
-
+On Mon, 7 Oct 2019 19:02:20 +0200, Andreas Klinger wrote:
+> transform existing documentation of maxbotix,mb1232 ultrasonic ranger
+> from text documentation format into yaml.
 > 
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Elena Reshetova <elena.reshetova@intel.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Will Deacon <will@kernel.org>
+> Changes in v3:
+> - add a i2c node around device node to set up #address-cells and
+>   #size-cells for omitting error during make dt_binding_check
+> 
+> Changes in v2:
+> - removed description of reg property
+> - added a line:
+>   additionalProperties: false
+> 
+> Signed-off-by: Andreas Klinger <ak@it-klinger.de>
 > ---
->  drivers/misc/lkdtm/refcount.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/misc/lkdtm/refcount.c b/drivers/misc/lkdtm/refcount.c
-> index abf3b7c1f686..de7c5ab528d9 100644
-> --- a/drivers/misc/lkdtm/refcount.c
-> +++ b/drivers/misc/lkdtm/refcount.c
-> @@ -119,7 +119,7 @@ void lkdtm_REFCOUNT_DEC_ZERO(void)
->  static void check_negative(refcount_t *ref, int start)
->  {
->  	/*
-> -	 * CONFIG_REFCOUNT_FULL refuses to move a refcount at all on an
-> +	 * refcount_t refuses to move a refcount at all on an
->  	 * over-sub, so we have to track our starting position instead of
->  	 * looking only at zero-pinning.
->  	 */
-> @@ -202,7 +202,6 @@ static void check_from_zero(refcount_t *ref)
->  
->  /*
->   * A refcount_inc() from zero should pin to zero or saturate and may WARN.
-> - * Only CONFIG_REFCOUNT_FULL provides this protection currently.
->   */
->  void lkdtm_REFCOUNT_INC_ZERO(void)
->  {
-> -- 
-> 2.23.0.581.g78d2f28ef7-goog
+>  .../bindings/iio/proximity/maxbotix,mb1232.txt     | 29 -----------
+>  .../bindings/iio/proximity/maxbotix,mb1232.yaml    | 60 ++++++++++++++++++++++
+>  2 files changed, 60 insertions(+), 29 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/iio/proximity/maxbotix,mb1232.txt
+>  create mode 100644 Documentation/devicetree/bindings/iio/proximity/maxbotix,mb1232.yaml
 > 
 
--- 
-Kees Cook
+Reviewed-by: Rob Herring <robh@kernel.org>
