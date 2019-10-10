@@ -2,44 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3679FD23F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:50:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80D19D237C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388557AbfJJIrl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:47:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53708 "EHLO mail.kernel.org"
+        id S2388047AbfJJInJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:43:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388546AbfJJIrj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:47:39 -0400
+        id S2387600AbfJJInF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:43:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02C042245A;
-        Thu, 10 Oct 2019 08:47:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27C2C21A4A;
+        Thu, 10 Oct 2019 08:43:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697258;
-        bh=kgzfr/vRrO0hm5BZsVAdICd2cayTt5lbLSD11QS0AvY=;
+        s=default; t=1570696982;
+        bh=yGD/7nzqg5tDde1KXThcePa5G7U72K7pfa0Y2PXDuWk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=13mKZFxWLHEL0aZD3rqNSTFOFTySIZNsKy0vTWMH0j7W2VkbZi+ogxiQiu1syurvN
-         P9EjQ2vGBJHI3Q6uHgxAm1FKqxaeze40c3Ccyr8/s7D4JeIioT5E0MVwP4cajflaSL
-         QiyTQnv07MPgYRb2wboH6TLYq8LobN/ZCBJUd7EE=
+        b=AedSd62L3Bns+W5hrcblZ63jwJMJGk5bL03kMEux+cxFDF7yWdXWl0WFN8JxURI/T
+         nqzrYE5OqCanzorX8CQToTNZrK05LqsJ3trqNO8dDUBlyDSUcraDmxxnfXgOoVAcn4
+         /gBD+CKJz95y3PYe1Aw9+IXezl3FoNdV9xw/exDc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@redhat.com>,
+        stable@vger.kernel.org, KeMeng Shi <shikemeng@huawei.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 075/114] perf unwind: Fix libunwind build failure on i386 systems
-Date:   Thu, 10 Oct 2019 10:36:22 +0200
-Message-Id: <20191010083611.905436286@linuxfoundation.org>
+Subject: [PATCH 5.3 122/148] sched/core: Fix migration to invalid CPU in __set_cpus_allowed_ptr()
+Date:   Thu, 10 Oct 2019 10:36:23 +0200
+Message-Id: <20191010083618.460925281@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
-References: <20191010083544.711104709@linuxfoundation.org>
+In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
+References: <20191010083609.660878383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,49 +47,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: KeMeng Shi <shikemeng@huawei.com>
 
-[ Upstream commit 26acf400d2dcc72c7e713e1f55db47ad92010cc2 ]
+[ Upstream commit 714e501e16cd473538b609b3e351b2cc9f7f09ed ]
 
-Naresh Kamboju reported, that on the i386 build pr_err()
-doesn't get defined properly due to header ordering:
+An oops can be triggered in the scheduler when running qemu on arm64:
 
-  perf-in.o: In function `libunwind__x86_reg_id':
-  tools/perf/util/libunwind/../../arch/x86/util/unwind-libunwind.c:109:
-  undefined reference to `pr_err'
+ Unable to handle kernel paging request at virtual address ffff000008effe40
+ Internal error: Oops: 96000007 [#1] SMP
+ Process migration/0 (pid: 12, stack limit = 0x00000000084e3736)
+ pstate: 20000085 (nzCv daIf -PAN -UAO)
+ pc : __ll_sc___cmpxchg_case_acq_4+0x4/0x20
+ lr : move_queued_task.isra.21+0x124/0x298
+ ...
+ Call trace:
+  __ll_sc___cmpxchg_case_acq_4+0x4/0x20
+  __migrate_task+0xc8/0xe0
+  migration_cpu_stop+0x170/0x180
+  cpu_stopper_thread+0xec/0x178
+  smpboot_thread_fn+0x1ac/0x1e8
+  kthread+0x134/0x138
+  ret_from_fork+0x10/0x18
 
-Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
+__set_cpus_allowed_ptr() will choose an active dest_cpu in affinity mask to
+migrage the process if process is not currently running on any one of the
+CPUs specified in affinity mask. __set_cpus_allowed_ptr() will choose an
+invalid dest_cpu (dest_cpu >= nr_cpu_ids, 1024 in my virtual machine) if
+CPUS in an affinity mask are deactived by cpu_down after cpumask_intersects
+check. cpumask_test_cpu() of dest_cpu afterwards is overflown and may pass if
+corresponding bit is coincidentally set. As a consequence, kernel will
+access an invalid rq address associate with the invalid CPU in
+migration_cpu_stop->__migrate_task->move_queued_task and the Oops occurs.
+
+The reproduce the crash:
+
+  1) A process repeatedly binds itself to cpu0 and cpu1 in turn by calling
+  sched_setaffinity.
+
+  2) A shell script repeatedly does "echo 0 > /sys/devices/system/cpu/cpu1/online"
+  and "echo 1 > /sys/devices/system/cpu/cpu1/online" in turn.
+
+  3) Oops appears if the invalid CPU is set in memory after tested cpumask.
+
+Signed-off-by: KeMeng Shi <shikemeng@huawei.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
+Link: https://lkml.kernel.org/r/1568616808-16808-1-git-send-email-shikemeng@huawei.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/arch/x86/util/unwind-libunwind.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/sched/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/arch/x86/util/unwind-libunwind.c b/tools/perf/arch/x86/util/unwind-libunwind.c
-index 05920e3edf7a7..47357973b55b2 100644
---- a/tools/perf/arch/x86/util/unwind-libunwind.c
-+++ b/tools/perf/arch/x86/util/unwind-libunwind.c
-@@ -1,11 +1,11 @@
- // SPDX-License-Identifier: GPL-2.0
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index d38f007afea74..fffe790d98bb2 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1537,7 +1537,8 @@ static int __set_cpus_allowed_ptr(struct task_struct *p,
+ 	if (cpumask_equal(p->cpus_ptr, new_mask))
+ 		goto out;
  
- #include <errno.h>
-+#include "../../util/debug.h"
- #ifndef REMOTE_UNWIND_LIBUNWIND
- #include <libunwind.h>
- #include "perf_regs.h"
- #include "../../util/unwind.h"
--#include "../../util/debug.h"
- #endif
+-	if (!cpumask_intersects(new_mask, cpu_valid_mask)) {
++	dest_cpu = cpumask_any_and(cpu_valid_mask, new_mask);
++	if (dest_cpu >= nr_cpu_ids) {
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
+@@ -1558,7 +1559,6 @@ static int __set_cpus_allowed_ptr(struct task_struct *p,
+ 	if (cpumask_test_cpu(task_cpu(p), new_mask))
+ 		goto out;
  
- #ifdef HAVE_ARCH_X86_64_SUPPORT
+-	dest_cpu = cpumask_any_and(cpu_valid_mask, new_mask);
+ 	if (task_running(rq, p) || p->state == TASK_WAKING) {
+ 		struct migration_arg arg = { p, dest_cpu };
+ 		/* Need help from migration thread: drop lock and wait. */
 -- 
 2.20.1
 
