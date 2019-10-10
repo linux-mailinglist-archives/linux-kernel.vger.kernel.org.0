@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2390D2354
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:48:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB4FFD23C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387650AbfJJIlZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:41:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45778 "EHLO mail.kernel.org"
+        id S2389227AbfJJIpx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:45:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388308AbfJJIlW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:41:22 -0400
+        id S2389207AbfJJIpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:45:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86B332054F;
-        Thu, 10 Oct 2019 08:41:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C49762190F;
+        Thu, 10 Oct 2019 08:45:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570696882;
-        bh=EnWOWXgtHqr3dAFC04IlHKFxsfEX7VQ3jS4M3PIxfbA=;
+        s=default; t=1570697149;
+        bh=Cj6zVdwil1V9LHOzG+BAeozXgHOjbyNXgx+HXxMd0CM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fyo+w8nWTDuxTYaUcJJ59o2qCAB87VhbU16r3d1uSjKCN11oBmjZeEOCusSONlM58
-         W8SjGN69Bxs94l9/P8gWTUN3HG5iBageBg9pp8V/jsNt2cLolMBkDzRZWLfNu42oL9
-         0Qi+ZCUZL8U1KcwhaVrBZemQCQfQvr0kzj7oYLek=
+        b=Gpb38uxFL7nXHkL6DI2IotmDu+3JgMYdC31shpDY7ki1ziIDRfElbJrfzuX+5RP+0
+         Ax3MKdcu6javwOdYLqu8fUtf674DJMml3J+OLcsLrhSKA1iuhxgVQ6qy9UVPx9ZxA1
+         84omyPo7Hant79wmmpKTsPrMerbkA9+ixzSKvZhA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Seth Forshee <seth.forshee@canonical.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 5.3 080/148] sched: Add __ASSEMBLY__ guards around struct clone_args
-Date:   Thu, 10 Oct 2019 10:35:41 +0200
-Message-Id: <20191010083616.174108522@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>
+Subject: [PATCH 4.19 035/114] watchdog: imx2_wdt: fix min() calculation in imx2_wdt_set_timeout
+Date:   Thu, 10 Oct 2019 10:35:42 +0200
+Message-Id: <20191010083601.861038621@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
-References: <20191010083609.660878383@linuxfoundation.org>
+In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
+References: <20191010083544.711104709@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +45,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Seth Forshee <seth.forshee@canonical.com>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
-commit 61129dd29f7962f278b618a2a3e8fdb986a66dc8 upstream.
+commit 144783a80cd2cbc45c6ce17db649140b65f203dd upstream.
 
-The addition of struct clone_args to uapi/linux/sched.h is not protected
-by __ASSEMBLY__ guards, causing a failure to build from source for glibc
-on RISC-V. Add the guards to fix this.
+Converting from ms to s requires dividing by 1000, not multiplying. So
+this is currently taking the smaller of new_timeout and 1.28e8,
+i.e. effectively new_timeout.
 
-Fixes: 7f192e3cd316 ("fork: add clone3")
-Signed-off-by: Seth Forshee <seth.forshee@canonical.com>
-Cc: <stable@vger.kernel.org>
-Acked-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/20190917071853.12385-1-seth.forshee@canonical.com
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+The driver knows what it set max_hw_heartbeat_ms to, so use that
+value instead of doing a division at run-time.
+
+FWIW, this can easily be tested by booting into a busybox shell and
+doing "watchdog -t 5 -T 130 /dev/watchdog" - without this patch, the
+watchdog fires after 130&127 == 2 seconds.
+
+Fixes: b07e228eee69 "watchdog: imx2_wdt: Fix set_timeout for big timeout values"
+Cc: stable@vger.kernel.org # 5.2 plus anything the above got backported to
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/20190812131356.23039-1-linux@rasmusvillemoes.dk
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/uapi/linux/sched.h |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/watchdog/imx2_wdt.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/include/uapi/linux/sched.h
-+++ b/include/uapi/linux/sched.h
-@@ -33,6 +33,7 @@
- #define CLONE_NEWNET		0x40000000	/* New network namespace */
- #define CLONE_IO		0x80000000	/* Clone io context */
+--- a/drivers/watchdog/imx2_wdt.c
++++ b/drivers/watchdog/imx2_wdt.c
+@@ -55,7 +55,7 @@
  
-+#ifndef __ASSEMBLY__
- /*
-  * Arguments for the clone3 syscall
-  */
-@@ -46,6 +47,7 @@ struct clone_args {
- 	__aligned_u64 stack_size;
- 	__aligned_u64 tls;
- };
-+#endif
+ #define IMX2_WDT_WMCR		0x08		/* Misc Register */
  
- /*
-  * Scheduling policies
+-#define IMX2_WDT_MAX_TIME	128
++#define IMX2_WDT_MAX_TIME	128U
+ #define IMX2_WDT_DEFAULT_TIME	60		/* in seconds */
+ 
+ #define WDOG_SEC_TO_COUNT(s)	((s * 2 - 1) << 8)
+@@ -180,7 +180,7 @@ static int imx2_wdt_set_timeout(struct w
+ {
+ 	unsigned int actual;
+ 
+-	actual = min(new_timeout, wdog->max_hw_heartbeat_ms * 1000);
++	actual = min(new_timeout, IMX2_WDT_MAX_TIME);
+ 	__imx2_wdt_set_timeout(wdog, actual);
+ 	wdog->timeout = new_timeout;
+ 	return 0;
 
 
