@@ -2,50 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C922AD2575
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:02:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6AB2D2495
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:00:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388667AbfJJInG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:43:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47678 "EHLO mail.kernel.org"
+        id S2389028AbfJJIrt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:47:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388649AbfJJInA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:43:00 -0400
+        id S2389490AbfJJIro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:47:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76CCB21929;
-        Thu, 10 Oct 2019 08:42:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8829B21929;
+        Thu, 10 Oct 2019 08:47:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570696980;
-        bh=rmFIcT6ApW+UImpgfJcNSApiJXk5nsSOmBRfCxYD6bE=;
+        s=default; t=1570697264;
+        bh=2IvRCIuTDFsSrODDhJpeFt6bL0Q/jSd/PXyjIVZ2fNk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qKAQpfXo8MGjZT/wLCnxrab27F5AqCwKZWqjmfFeReK6g66x9OEHktavj6QtxZ4A0
-         GuAnANsHtj3eeMtXdDjm8G8MScw4wB5tFTsOTiPNtWVxseMVqCwUxMAjJh9R7Thvyu
-         SdK1G72WwNbH+JEsqXcUmI8tKBWz0QVWENnWqHAQ=
+        b=pntox7tm1cWb3zkQkRomvartpr9zLc3zwraZw4pY1G9l8sYWj1ftIWr5Ea8AByjoD
+         YTiMgaEXJzQrEJDQcJoirafxxVZfDrkhST9hbapH1RAgIP6KCymvPIEUttDHDHCNHQ
+         gLP1b6YFb5v/WE8HtsuQbpQYgBbmeEAd5CNpvT7Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Chris Metcalf <cmetcalf@ezchip.com>,
-        Christoph Lameter <cl@linux.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Kirill Tkhai <tkhai@yandex.ru>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mike Galbraith <efault@gmx.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 121/148] sched/membarrier: Fix private expedited registration check
-Date:   Thu, 10 Oct 2019 10:36:22 +0200
-Message-Id: <20191010083618.395675320@linuxfoundation.org>
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 076/114] nfp: flower: fix memory leak in nfp_flower_spawn_vnic_reprs
+Date:   Thu, 10 Oct 2019 10:36:23 +0200
+Message-Id: <20191010083611.968665805@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
-References: <20191010083609.660878383@linuxfoundation.org>
+In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
+References: <20191010083544.711104709@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -55,51 +46,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-[ Upstream commit fc0d77387cb5ae883fd774fc559e056a8dde024c ]
+[ Upstream commit 8ce39eb5a67aee25d9f05b40b673c95b23502e3e ]
 
-Fix a logic flaw in the way membarrier_register_private_expedited()
-handles ready state checks for private expedited sync core and private
-expedited registrations.
+In nfp_flower_spawn_vnic_reprs in the loop if initialization or the
+allocations fail memory is leaked. Appropriate releases are added.
 
-If a private expedited membarrier registration is first performed, and
-then a private expedited sync_core registration is performed, the ready
-state check will skip the second registration when it really should not.
-
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Chris Metcalf <cmetcalf@ezchip.com>
-Cc: Christoph Lameter <cl@linux.com>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Cc: Kirill Tkhai <tkhai@yandex.ru>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mike Galbraith <efault@gmx.de>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Paul E. McKenney <paulmck@linux.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190919173705.2181-2-mathieu.desnoyers@efficios.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: b94524529741 ("nfp: flower: add per repr private data for LAG offload")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sched/membarrier.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/netronome/nfp/flower/main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/sched/membarrier.c b/kernel/sched/membarrier.c
-index aa8d758041088..5110d91b1b0ea 100644
---- a/kernel/sched/membarrier.c
-+++ b/kernel/sched/membarrier.c
-@@ -226,7 +226,7 @@ static int membarrier_register_private_expedited(int flags)
- 	 * groups, which use the same mm. (CLONE_VM but not
- 	 * CLONE_THREAD).
- 	 */
--	if (atomic_read(&mm->membarrier_state) & state)
-+	if ((atomic_read(&mm->membarrier_state) & state) == state)
- 		return 0;
- 	atomic_or(MEMBARRIER_STATE_PRIVATE_EXPEDITED, &mm->membarrier_state);
- 	if (flags & MEMBARRIER_FLAG_SYNC_CORE)
+diff --git a/drivers/net/ethernet/netronome/nfp/flower/main.c b/drivers/net/ethernet/netronome/nfp/flower/main.c
+index 22c572a09b320..c19e88efe958d 100644
+--- a/drivers/net/ethernet/netronome/nfp/flower/main.c
++++ b/drivers/net/ethernet/netronome/nfp/flower/main.c
+@@ -272,6 +272,7 @@ nfp_flower_spawn_vnic_reprs(struct nfp_app *app,
+ 		port = nfp_port_alloc(app, port_type, repr);
+ 		if (IS_ERR(port)) {
+ 			err = PTR_ERR(port);
++			kfree(repr_priv);
+ 			nfp_repr_free(repr);
+ 			goto err_reprs_clean;
+ 		}
 -- 
 2.20.1
 
