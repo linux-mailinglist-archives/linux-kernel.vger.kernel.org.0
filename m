@@ -2,143 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B06D8D21C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 09:38:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78CFAD21BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 09:38:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733286AbfJJHiZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 03:38:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43888 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1733070AbfJJHc3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 03:32:29 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D59DAABE3;
-        Thu, 10 Oct 2019 07:32:20 +0000 (UTC)
-Date:   Thu, 10 Oct 2019 09:32:12 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Yunsheng Lin <linyunsheng@huawei.com>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>, catalin.marinas@arm.com,
-        will@kernel.org, mingo@redhat.com, bp@alien8.de, rth@twiddle.net,
-        ink@jurassic.park.msu.ru, mattst88@gmail.com,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
-        borntraeger@de.ibm.com, ysato@users.sourceforge.jp,
-        dalias@libc.org, davem@davemloft.net, ralf@linux-mips.org,
-        paul.burton@mips.com, jhogan@kernel.org, jiaxun.yang@flygoat.com,
-        chenhc@lemote.com, akpm@linux-foundation.org, rppt@linux.ibm.com,
-        anshuman.khandual@arm.com, tglx@linutronix.de, cai@lca.pw,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        hpa@zytor.com, x86@kernel.org, dave.hansen@linux.intel.com,
-        luto@kernel.org, len.brown@intel.com, axboe@kernel.dk,
-        dledford@redhat.com, jeffrey.t.kirsher@intel.com,
-        linux-alpha@vger.kernel.org, naveen.n.rao@linux.vnet.ibm.com,
-        mwb@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, tbogendoerfer@suse.de,
-        linux-mips@vger.kernel.org, rafael@kernel.org,
-        gregkh@linuxfoundation.org
-Subject: Re: [PATCH v6] numa: make node_to_cpumask_map() NUMA_NO_NODE aware
-Message-ID: <20191010073212.GB18412@dhcp22.suse.cz>
-References: <20190924120943.GP2349@hirez.programming.kicks-ass.net>
- <20190924122500.GP23050@dhcp22.suse.cz>
- <20190924124325.GQ2349@hirez.programming.kicks-ass.net>
- <20190924125936.GR2349@hirez.programming.kicks-ass.net>
- <20190924131939.GS23050@dhcp22.suse.cz>
- <1adcbe68-6753-3497-48a0-cc84ac503372@huawei.com>
- <20190925104108.GE4553@hirez.programming.kicks-ass.net>
- <47fa4cee-8528-7c23-c7de-7be1b65aa2ae@huawei.com>
- <bec80499-86d9-bf1f-df23-9044a8099992@arm.com>
- <a5f0fc80-8e88-b781-77ce-1213e5d62125@huawei.com>
+        id S1733297AbfJJHi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 03:38:26 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:44774 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733071AbfJJHdN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 03:33:13 -0400
+Received: from dhcp-172-31-174-146.wireless.concordia.ca (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 96F5D290783;
+        Thu, 10 Oct 2019 08:33:11 +0100 (BST)
+Date:   Thu, 10 Oct 2019 09:33:08 +0200
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     <Tudor.Ambarus@microchip.com>
+Cc:     <vigneshr@ti.com>, <marek.vasut@gmail.com>,
+        <linux-mtd@lists.infradead.org>, <geert+renesas@glider.be>,
+        <jonas@norrbonn.se>, linux-aspeed@lists.ozlabs.org,
+        andrew@aj.id.au, richard@nod.at, linux-kernel@vger.kernel.org,
+        vz@mleia.com, linux-mediatek@lists.infradead.org, joel@jms.id.au,
+        miquel.raynal@bootlin.com, matthias.bgg@gmail.com,
+        computersforpeace@gmail.com, dwmw2@infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 09/22] mtd: spi-nor: Fix retlen handling in
+ sst_write()
+Message-ID: <20191010093308.2fe94974@dhcp-172-31-174-146.wireless.concordia.ca>
+In-Reply-To: <20190924074533.6618-10-tudor.ambarus@microchip.com>
+References: <20190924074533.6618-1-tudor.ambarus@microchip.com>
+        <20190924074533.6618-10-tudor.ambarus@microchip.com>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a5f0fc80-8e88-b781-77ce-1213e5d62125@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 10-10-19 14:07:21, Yunsheng Lin wrote:
-> On 2019/10/9 20:25, Robin Murphy wrote:
-> > On 2019-10-08 9:38 am, Yunsheng Lin wrote:
-> >> On 2019/9/25 18:41, Peter Zijlstra wrote:
-> >>> On Wed, Sep 25, 2019 at 05:14:20PM +0800, Yunsheng Lin wrote:
-> >>>>  From the discussion above, It seems making the node_to_cpumask_map()
-> >>>> NUMA_NO_NODE aware is the most feasible way to move forwad.
-> >>>
-> >>> That's still wrong.
-> >>
-> >> Hi, Peter
-> >>
-> >> It seems this has trapped in the dead circle.
-> >>
-> >>  From my understanding, NUMA_NO_NODE which means not node numa preference
-> >> is the state to describe the node of virtual device or the physical device
-> >> that has equal distance to all cpu.
-> >>
-> >> We can be stricter if the device does have a nearer node, but we can not
-> >> deny that a device does not have a node numa preference or node affinity,
-> >> which also means the control or data buffer can be allocated at the node where
-> >> the process is running.
-> >>
-> >> As you has proposed, making it -2 and have dev_to_node() warn if the device does
-> >> have a nearer node and not set by the fw is a way to be stricter.
-> >>
-> >> But I think maybe being stricter is not really relevant to NUMA_NO_NODE, because
-> >> we does need a state to describe the device that have equal distance to all node,
-> >> even if it is not physically scalable.
-> >>
-> >> Any better suggestion to move this forward?
-> > 
-> > FWIW (since this is in my inbox), it sounds like the fundamental issue is that NUMA_NO_NODE is conflated for at least two different purposes, so trying to sort that out would be a good first step. AFAICS we have genuine "don't care" cases like alloc_pages_node(), where if the producer says it doesn't matter then the consumer is free to make its own judgement on what to do, and fundamentally different "we expect this thing to have an affinity but it doesn't, so we can't say what's appropriate" cases which could really do with some separate indicator like "NUMA_INVALID_NODE".
-> > 
-> > The tricky part is then bestowed on the producers to decide whether they can downgrade "invalid" to "don't care". You can technically build 'a device' whose internal logic is distributed between nodes and thus appears to have equal affinity - interrupt controllers, for example, may have per-CPU or per-node interfaces that end up looking like that - so although it's unlikely it's not outright nonsensical. Similarly a 'device' that's actually emulated behind a firmware call interface may well effectively have no real affinity.
+On Tue, 24 Sep 2019 07:46:21 +0000
+<Tudor.Ambarus@microchip.com> wrote:
+
+> From: Tudor Ambarus <tudor.ambarus@microchip.com>
 > 
-> We may set node of the physical device to NUMA_INVALID_NODE when fw does not
-> provide one.
+> In case the write of the first byte failed, retlen was incorrectly
+> incremented to *retlen += actual; on the exit path. retlen should be
+> incremented when actual data was written to the flash.
 > 
-> But what do we do about NUMA_INVALID_NODE when alloc_pages_node() is called
-> with nid being NUMA_INVALID_NODE?
+> Rename 'sst_write_err' label to 'out' as it is no longer generic for
+> all the write errors in the sst_write() method, and may introduce
+> confusion.
 
-There is nothing sensible the allocator can do. The only point of
-NUMA_INVALID_NODE would be to catch potential misconfiguration and
-report them to users so they can complain to their HW/FS suppliers.
+Renaming the label is indeed a good thing, but should be done in a
+separate patch.
 
-Pushing it to other susbystem doesn't make much sense IMHO because there
-is nothing really actionable. Refusing an allocation altogether sounds
-like a bad plan to me.
- 
-> If we change the node to default one(like node 0) when node of device is
-> NUMA_INVALID_NODE in device_add(), how do we know the default one(like node 0)
-> is the right one to choose?
+> 
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+> ---
+>  drivers/mtd/spi-nor/spi-nor.c | 22 +++++++++++-----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+> index 0aee068a5835..be5dee622d51 100644
+> --- a/drivers/mtd/spi-nor/spi-nor.c
+> +++ b/drivers/mtd/spi-nor/spi-nor.c
+> @@ -2665,12 +2665,12 @@ static int sst_write(struct mtd_info *mtd, loff_t to, size_t len,
+>  		/* write one byte. */
+>  		ret = spi_nor_write_data(nor, to, 1, buf);
+>  		if (ret < 0)
+> -			goto sst_write_err;
+> +			goto unlock_and_unprep;
+>  		WARN(ret != 1, "While writing 1 byte written %i bytes\n",
+>  		     (int)ret);
+>  		ret = spi_nor_wait_till_ready(nor);
+>  		if (ret)
+> -			goto sst_write_err;
+> +			goto unlock_and_unprep;
+>  	}
+>  	to += actual;
 
-Exactly. We cannot really assume any node in that situation.
- 
-> >From the privous disccusion, the below seems not get to consensus yet:
-> 1) Do we need a state like NUMA_NO_NODE to describe that the device does not
->    have any numa preference?
+Not sure we need this new label, we can just have:
 
-This is a traditional meaning MM subsystem is using.
+	actual = 0;
+	/* Start write from odd address. */
+	if (to % 2) {
+		nor->program_opcode = SPINOR_OP_BP;
 
-> 2) What do we do if the fw does not provide a node for the device? Should
->    we guess and pick one for it and how do we do the guessing? Or leave it
->    as it is and handle it as NUMA_NO_NODE?
+		/* write one byte. */
+		ret = spi_nor_write_data(nor, to, 1, buf);
+		if (ret < 0)
+			goto out;
+		WARN(ret != 1, "While writing 1 byte written %i
+		bytes\n", (int)ret);
+		ret = spi_nor_wait_till_ready(nor);
+		if (ret)
+			goto out;
 
-As already pointed several times, picking any node is rather error
-prone. You can never assume topology. We used to assume that there
-always be node 0 but that is not really the case (see 3e8589963773
-("memcg: make it work on sparse non-0-node systems")). Nodes might also
-come and go so this might just lead to all sorts of subtle problems.
+		to++;
+		actual++;
+	}
 
-On the other hand using NUMA_NO_NODE as no preference could only lead to
-slightly sub optimal performance.
+>  
+> @@ -2681,12 +2681,12 @@ static int sst_write(struct mtd_info *mtd, loff_t to, size_t len,
+>  		/* write two bytes. */
+>  		ret = spi_nor_write_data(nor, to, 2, buf + actual);
+>  		if (ret < 0)
+> -			goto sst_write_err;
+> +			goto out;
+>  		WARN(ret != 2, "While writing 2 bytes written %i bytes\n",
+>  		     (int)ret);
+>  		ret = spi_nor_wait_till_ready(nor);
+>  		if (ret)
+> -			goto sst_write_err;
+> +			goto out;
+>  		to += 2;
+>  		nor->sst_write_second = true;
+>  	}
+> @@ -2694,35 +2694,35 @@ static int sst_write(struct mtd_info *mtd, loff_t to, size_t len,
+>  
+>  	ret = spi_nor_write_disable(nor);
+>  	if (ret)
+> -		goto sst_write_err;
+> +		goto out;
+>  
+>  	ret = spi_nor_wait_till_ready(nor);
+>  	if (ret)
+> -		goto sst_write_err;
+> +		goto out;
+>  
+>  	/* Write out trailing byte if it exists. */
+>  	if (actual != len) {
+>  		ret = spi_nor_write_enable(nor);
+>  		if (ret)
+> -			goto sst_write_err;
+> +			goto out;
+>  
+>  		nor->program_opcode = SPINOR_OP_BP;
+>  		ret = spi_nor_write_data(nor, to, 1, buf + actual);
+>  		if (ret < 0)
+> -			goto sst_write_err;
+> +			goto out;
+>  		WARN(ret != 1, "While writing 1 byte written %i bytes\n",
+>  		     (int)ret);
+>  		ret = spi_nor_wait_till_ready(nor);
+>  		if (ret)
+> -			goto sst_write_err;
+> +			goto out;
+>  
+>  		ret = spi_nor_write_disable(nor);
+>  		if (ret)
+> -			goto sst_write_err;
+> +			goto out;
+>  
+>  		actual += 1;
+>  	}
+> -sst_write_err:
+> +out:
+>  	*retlen += actual;
+>  unlock_and_unprep:
+>  	spi_nor_unlock_and_unprep(nor, SPI_NOR_OPS_WRITE);
 
-I do agree with Peter that reporting a lack of affinity might be useful
-but we shouldn't really try to clever and make up the affinity nilly
-willy.
--- 
-Michal Hocko
-SUSE Labs
