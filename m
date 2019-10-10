@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 986FFD25E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:08:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A97ED25A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:02:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388497AbfJJJDJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 05:03:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41516 "EHLO mail.kernel.org"
+        id S2387912AbfJJJBi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 05:01:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387648AbfJJIig (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:38:36 -0400
+        id S2388296AbfJJIlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:41:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31A3120B7C;
-        Thu, 10 Oct 2019 08:38:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A28F521D7A;
+        Thu, 10 Oct 2019 08:41:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570696715;
-        bh=IHhM2BGlpoHn43ptPAAojk+cLdU1l36SYQs0R+V2Vd8=;
+        s=default; t=1570696879;
+        bh=CGfWLHfDS5/I7M2lr6cE4KD8mzrZscQTZT50x3qj0yc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XOAkLQrZKm1aNQ2R87HEvWy8QZocM2Eaw0iSRsBs2MKNkez4LDM4QsllPAHQ1ZMlB
-         I7BnAZEtv/YV6eGwH9ndgXmk83Xz57I/181HUHh85m3ZrLUt3MM+llWUHQuOz4jh8c
-         1ph6qA20FIRnfXyKmFRRqt/J3M/G4rAYbFR2n2qg=
+        b=1WhQgIj/1bwX9FidizXpkT1B9+DAsRsQXdhu1RoGzF50eUyxcUecdGvnbkv7o5Jc/
+         iNBJ78IPEL02VDzIIN8BhHAOPx5xDbuuA9US3fm/Dycyn+JNk00Pc+2p4eYsbF2OUo
+         uCpa2yYXB+mFQ+6u4NPUaoDPi1uhTX2OtGZYWM/4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        stable@vger.kernel.org, "Erhard F." <erhard_f@mailbox.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
         Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 5.3 026/148] powerpc/ptdump: Fix addresses display on PPC32
-Date:   Thu, 10 Oct 2019 10:34:47 +0200
-Message-Id: <20191010083612.703301291@linuxfoundation.org>
+Subject: [PATCH 5.3 031/148] powerpc/kasan: Fix shadow area set up for modules.
+Date:   Thu, 10 Oct 2019 10:34:52 +0200
+Message-Id: <20191010083613.034078157@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
 References: <20191010083609.660878383@linuxfoundation.org>
@@ -45,36 +46,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit 7c7a532ba3fc51bf9527d191fb410786c1fdc73c upstream.
+commit 663c0c9496a69f80011205ba3194049bcafd681d upstream.
 
-Commit 453d87f6a8ae ("powerpc/mm: Warn if W+X pages found on boot")
-wrongly changed KERN_VIRT_START from 0 to PAGE_OFFSET, leading to a
-shift in the displayed addresses.
+When loading modules, from time to time an Oops is encountered during
+the init of shadow area for globals. This is due to the last page not
+always being mapped depending on the exact distance between the start
+and the end of the shadow area and the alignment with the page
+addresses.
 
-Lets revert that change to resync walk_pagetables()'s addr val and
-pgd_t pointer for PPC32.
+Fix this by aligning the starting address with the page address.
 
-Fixes: 453d87f6a8ae ("powerpc/mm: Warn if W+X pages found on boot")
+Fixes: 2edb16efc899 ("powerpc/32: Add KASAN support")
 Cc: stable@vger.kernel.org # v5.2+
+Reported-by: Erhard F. <erhard_f@mailbox.org>
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/eb4d626514e22f85814830012642329018ef6af9.1565786091.git.christophe.leroy@c-s.fr
+Link: https://lore.kernel.org/r/4f887e9b77d0d725cbb52035c7ece485c1c5fc14.1565361881.git.christophe.leroy@c-s.fr
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/mm/ptdump/ptdump.c |    2 +-
+ arch/powerpc/mm/kasan/kasan_init_32.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/mm/ptdump/ptdump.c
-+++ b/arch/powerpc/mm/ptdump/ptdump.c
-@@ -27,7 +27,7 @@
- #include "ptdump.h"
+--- a/arch/powerpc/mm/kasan/kasan_init_32.c
++++ b/arch/powerpc/mm/kasan/kasan_init_32.c
+@@ -87,7 +87,7 @@ static int __ref kasan_init_region(void
+ 	if (!slab_is_available())
+ 		block = memblock_alloc(k_end - k_start, PAGE_SIZE);
  
- #ifdef CONFIG_PPC32
--#define KERN_VIRT_START	PAGE_OFFSET
-+#define KERN_VIRT_START	0
- #endif
- 
- /*
+-	for (k_cur = k_start; k_cur < k_end; k_cur += PAGE_SIZE) {
++	for (k_cur = k_start & PAGE_MASK; k_cur < k_end; k_cur += PAGE_SIZE) {
+ 		pmd_t *pmd = pmd_offset(pud_offset(pgd_offset_k(k_cur), k_cur), k_cur);
+ 		void *va = block ? block + k_cur - k_start : kasan_get_one_page();
+ 		pte_t pte = pfn_pte(PHYS_PFN(__pa(va)), PAGE_KERNEL);
 
 
