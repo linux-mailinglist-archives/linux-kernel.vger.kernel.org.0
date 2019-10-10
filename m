@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32820D33EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 00:28:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49B06D33E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 00:28:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726526AbfJJW2l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 18:28:41 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45604 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726166AbfJJW2k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726377AbfJJW2k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 10 Oct 2019 18:28:40 -0400
-Received: by mail-pg1-f195.google.com with SMTP id r1so3367879pgj.12
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:47009 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726067AbfJJW2j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 18:28:39 -0400
+Received: by mail-pl1-f196.google.com with SMTP id q24so3465822plr.13
         for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 15:28:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=OcjzQsF45hEBxamHjzpQj8tPOdjVhqexrCUuTV+HOUI=;
-        b=T9i4/VXlqHD33x2rdbjhCXLVnQ+qG4Uv18788Nx+nq3IggKPThAsPRLeMaplN5ymQr
-         tzgwE5GOtA7J3878fNnL1gGphXBatCnK/iXdn7Td14FdsZdDFE++iYuGFaldSRcvcJ+V
-         Lk1LJRRoXS9JwC/Vu3Z12UPnLUhvIT3Svk7rs=
+        bh=czQOnB8XGZh1drUQRgi49wj4hvdzWXuEnHlZa/FCwwU=;
+        b=ns1C9ferSuxgAAnBlGRzPcG45QzbuNtsvk+IK5P1sm83hU4nWyKG3yPWsMyzZXdJNg
+         8L1U7n6L7l4F27SGwiKO6AYQpuWZI4sK4uTbAnc7s2SBIwcp+kTcvUBjhNMO/NTpQrCV
+         vOvaL9h3TsQnCeixMAb107cO508lsauqPytIc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=OcjzQsF45hEBxamHjzpQj8tPOdjVhqexrCUuTV+HOUI=;
-        b=CPgc0QrZeqe4WLEK98daIGalvURTHXvqRs82PzIAHYmzsyrTPItsNE/4zRfYlmZq54
-         jX3mdRi+pxdMC23dZGV2PM/LpBSkA9ueJ3vHCE9DUnhio7SwVx8ZHrcJvjtB+wnLxKn4
-         E1Do6O9EWVCc3DUQ92MG7sjRYpWKY4Xd4EM5hfObinhrAIHJOy2hySb9y591jrXZ2GAW
-         EcQcKS53VuxZqbDQc2uzQ9AoYQbNdHzUjL9jjR5nqQvJNhUXQKWnHIsAD/3KqXy+gy9d
-         uf4Ibby53xnj/RCK1ZnDeX+dnet4bVsDNk4F/eEvHO+VRerHEmeAMXL/j8R8e+PPGGIt
-         ZeQw==
-X-Gm-Message-State: APjAAAWjZjH71UjhJeBky20y4IvniAnWrmpiBersnqkXpDJaPRGqMXZe
-        9cUVUAxro2CmCeV+0Q4d7pM7ag==
-X-Google-Smtp-Source: APXvYqy0miqiQgwRV6iDS1mfqG6ZXytFWuqANBgQeUkcZkLlYk8skOUQdwGEmFZ5Nxpllc2qQsqrjg==
-X-Received: by 2002:a62:2501:: with SMTP id l1mr13115257pfl.148.1570746518172;
-        Thu, 10 Oct 2019 15:28:38 -0700 (PDT)
+        bh=czQOnB8XGZh1drUQRgi49wj4hvdzWXuEnHlZa/FCwwU=;
+        b=MGt3trtFpncdJD+pJJ1f41vOx3JWD8ZQqJ+0NGSZXJTegwobnhICnVX3GvpOxrxIvK
+         0IcPA/8R64q7nkSiq2gm2LAvnGQVzWYz7en7ldIwlPdS6IawL63Dqe9GVVtliUzH1/ry
+         WLVrCKFGeqvX2Y94pJ/jhlfvL8ApNiwoOSC3S3Lh7Wez/KoJIyGXK1nRf69WdOwQu5Nw
+         4xWeFbOTRcY2y9hgKp9Fhef9X/gvTHVmnLBiytA7WBsom9wYu6RhsC10t/Q2HUwiZ6+6
+         1Zv6DxftpoyEkXPk4IN+mSDBoc9YmTEov4ksgHwjtxkiWShGF3SHYnrRwtt+Dph8y3uC
+         X6Tg==
+X-Gm-Message-State: APjAAAUnYNx3LodY4T1oByx9S3ZcCFYJMw8G+iOPHZnctHNjN8PwdY4C
+        JfoAxJF/dlzoofWEKycnVZWPaw==
+X-Google-Smtp-Source: APXvYqyCnXy+P7NSDVP2SOlCeFKxu9djHVTFcrtbCYrEpGlSGxw5IkNB0B1GwgRZrimv5eyU3qcR6A==
+X-Received: by 2002:a17:902:8342:: with SMTP id z2mr11623587pln.309.1570746517679;
+        Thu, 10 Oct 2019 15:28:37 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id m5sm6948794pgt.15.2019.10.10.15.28.36
+        by smtp.gmail.com with ESMTPSA id q143sm3147254pfq.103.2019.10.10.15.28.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 10 Oct 2019 15:28:36 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -55,9 +55,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Dan Carpenter <dan.carpenter@oracle.com>,
         Semmle Security Reports <security-reports@semmle.com>,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/2] dma-mapping: Add vmap checks to dma_map_single()
-Date:   Thu, 10 Oct 2019 15:28:28 -0700
-Message-Id: <20191010222829.21940-2-keescook@chromium.org>
+Subject: [PATCH v3 2/2] usb: core: Remove redundant vmap checks
+Date:   Thu, 10 Oct 2019 15:28:29 -0700
+Message-Id: <20191010222829.21940-3-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191010222829.21940-1-keescook@chromium.org>
 References: <20191010222829.21940-1-keescook@chromium.org>
@@ -66,36 +66,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As we've seen from USB and other areas[1], we need to always do runtime
-checks for DMA operating on memory regions that might be remapped. This
-adds vmap checks (similar to those already in USB but missing in other
-places) into dma_map_single() so all callers benefit from the checking.
+Now that the vmap area checks are being performed in the DMA
+infrastructure directly, there is no need to repeat them in USB.
 
-[1] https://git.kernel.org/linus/3840c5b78803b2b6cc1ff820100a74a092c40cbb
-
-Suggested-by: Laura Abbott <labbott@redhat.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/linux/dma-mapping.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/usb/core/hcd.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index 4a1c4fca475a..ff4e91c66f44 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -583,6 +583,12 @@ static inline unsigned long dma_get_merge_boundary(struct device *dev)
- static inline dma_addr_t dma_map_single_attrs(struct device *dev, void *ptr,
- 		size_t size, enum dma_data_direction dir, unsigned long attrs)
- {
-+	/* DMA must never operate on areas that might be remapped. */
-+	if (unlikely(is_vmalloc_addr(ptr))) {
-+		dev_warn_once(dev, "bad map: %zu bytes in vmalloc\n", size);
-+		return DMA_MAPPING_ERROR;
-+	}
-+
- 	debug_dma_map_single(dev, ptr, size);
- 	return dma_map_page_attrs(dev, virt_to_page(ptr), offset_in_page(ptr),
- 			size, dir, attrs);
+diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
+index f225eaa98ff8..281568d464f9 100644
+--- a/drivers/usb/core/hcd.c
++++ b/drivers/usb/core/hcd.c
+@@ -1410,10 +1410,7 @@ int usb_hcd_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb,
+ 		if (hcd->self.uses_pio_for_control)
+ 			return ret;
+ 		if (hcd_uses_dma(hcd)) {
+-			if (is_vmalloc_addr(urb->setup_packet)) {
+-				WARN_ONCE(1, "setup packet is not dma capable\n");
+-				return -EAGAIN;
+-			} else if (object_is_on_stack(urb->setup_packet)) {
++			if (object_is_on_stack(urb->setup_packet)) {
+ 				WARN_ONCE(1, "setup packet is on stack\n");
+ 				return -EAGAIN;
+ 			}
+@@ -1479,9 +1476,6 @@ int usb_hcd_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb,
+ 					ret = -EAGAIN;
+ 				else
+ 					urb->transfer_flags |= URB_DMA_MAP_PAGE;
+-			} else if (is_vmalloc_addr(urb->transfer_buffer)) {
+-				WARN_ONCE(1, "transfer buffer not dma capable\n");
+-				ret = -EAGAIN;
+ 			} else if (object_is_on_stack(urb->transfer_buffer)) {
+ 				WARN_ONCE(1, "transfer buffer is on stack\n");
+ 				ret = -EAGAIN;
 -- 
 2.17.1
 
