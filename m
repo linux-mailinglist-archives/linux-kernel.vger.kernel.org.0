@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D841D23FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:50:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 663EBD23A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 10:49:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389577AbfJJIr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:47:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54020 "EHLO mail.kernel.org"
+        id S2388954AbfJJIod (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:44:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49756 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389557AbfJJIrz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:47:55 -0400
+        id S2388949AbfJJIob (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:44:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C746218AC;
-        Thu, 10 Oct 2019 08:47:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2F4F21929;
+        Thu, 10 Oct 2019 08:44:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697274;
-        bh=ncORTQ1kXiPJ1Jmsvk7yXBPI49kGK5AYSv8Z5rGFzJQ=;
+        s=default; t=1570697070;
+        bh=d1cwlKNt2mnCdzZ5RHbHyTPGEAf/7X1xqYU1nu09wHU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CJTSBrLW2q9aqONzQBZZ4LvW98BitXJYOThBobD0pOv4S96yvGsvcpJrl5VDXjgOT
-         rOle5Viq1GE/Q73uV5Q4rJk+fX8VPutbYNlDxqWhHsmCbqYSBt2KZMsvNPZHD2Qa+K
-         iRfKwioeF+Mn8KAbypNPYeYe03Dq8okepXuenXaE=
+        b=ltCFWw71eab1LvbsQzZyYEfGa0srBinnJ1Y2owDbH4a3v74i7wnok+4TVFmUJcbPJ
+         SFbtgDPjcwM+XtmIOXZaji8jwboU+c3j2w1YUFuNhKqI95fizd6XzSj0BGS0GFgvUf
+         +qoX4yCBoLKd8F9ce8FuUztOLufCSEDh/Onva80I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-        Xiubo Li <xiubli@redhat.com>,
-        Mike Christie <mchristi@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 080/114] nbd: fix crash when the blksize is zero
+        stable@vger.kernel.org, Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 126/148] kernel/elfcore.c: include proper prototypes
 Date:   Thu, 10 Oct 2019 10:36:27 +0200
-Message-Id: <20191010083612.222117801@linuxfoundation.org>
+Message-Id: <20191010083618.678356038@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
-References: <20191010083544.711104709@linuxfoundation.org>
+In-Reply-To: <20191010083609.660878383@linuxfoundation.org>
+References: <20191010083609.660878383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,85 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+From: Valdis Kletnieks <valdis.kletnieks@vt.edu>
 
-[ Upstream commit 553768d1169a48c0cd87c4eb4ab57534ee663415 ]
+[ Upstream commit 0f74914071ab7e7b78731ed62bf350e3a344e0a5 ]
 
-This will allow the blksize to be set zero and then use 1024 as
-default.
+When building with W=1, gcc properly complains that there's no prototypes:
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
-[fix to use goto out instead of return in genl_connect]
-Signed-off-by: Mike Christie <mchristi@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+  CC      kernel/elfcore.o
+kernel/elfcore.c:7:17: warning: no previous prototype for 'elf_core_extra_phdrs' [-Wmissing-prototypes]
+    7 | Elf_Half __weak elf_core_extra_phdrs(void)
+      |                 ^~~~~~~~~~~~~~~~~~~~
+kernel/elfcore.c:12:12: warning: no previous prototype for 'elf_core_write_extra_phdrs' [-Wmissing-prototypes]
+   12 | int __weak elf_core_write_extra_phdrs(struct coredump_params *cprm, loff_t offset)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~
+kernel/elfcore.c:17:12: warning: no previous prototype for 'elf_core_write_extra_data' [-Wmissing-prototypes]
+   17 | int __weak elf_core_write_extra_data(struct coredump_params *cprm)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~
+kernel/elfcore.c:22:15: warning: no previous prototype for 'elf_core_extra_data_size' [-Wmissing-prototypes]
+   22 | size_t __weak elf_core_extra_data_size(void)
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~
+
+Provide the include file so gcc is happy, and we don't have potential code drift
+
+Link: http://lkml.kernel.org/r/29875.1565224705@turing-police
+Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/nbd.c | 23 ++++++++++++++++++++---
- 1 file changed, 20 insertions(+), 3 deletions(-)
+ kernel/elfcore.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index 21f54c7946a0e..bc2fa4e85f0ca 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -133,6 +133,8 @@ static struct dentry *nbd_dbg_dir;
+diff --git a/kernel/elfcore.c b/kernel/elfcore.c
+index fc482c8e0bd88..57fb4dcff4349 100644
+--- a/kernel/elfcore.c
++++ b/kernel/elfcore.c
+@@ -3,6 +3,7 @@
+ #include <linux/fs.h>
+ #include <linux/mm.h>
+ #include <linux/binfmts.h>
++#include <linux/elfcore.h>
  
- #define NBD_MAGIC 0x68797548
- 
-+#define NBD_DEF_BLKSIZE 1024
-+
- static unsigned int nbds_max = 16;
- static int max_part = 16;
- static int part_shift;
-@@ -1241,6 +1243,14 @@ static void nbd_clear_sock_ioctl(struct nbd_device *nbd,
- 		nbd_config_put(nbd);
- }
- 
-+static bool nbd_is_valid_blksize(unsigned long blksize)
-+{
-+	if (!blksize || !is_power_of_2(blksize) || blksize < 512 ||
-+	    blksize > PAGE_SIZE)
-+		return false;
-+	return true;
-+}
-+
- /* Must be called with config_lock held */
- static int __nbd_ioctl(struct block_device *bdev, struct nbd_device *nbd,
- 		       unsigned int cmd, unsigned long arg)
-@@ -1256,8 +1266,9 @@ static int __nbd_ioctl(struct block_device *bdev, struct nbd_device *nbd,
- 	case NBD_SET_SOCK:
- 		return nbd_add_socket(nbd, arg, false);
- 	case NBD_SET_BLKSIZE:
--		if (!arg || !is_power_of_2(arg) || arg < 512 ||
--		    arg > PAGE_SIZE)
-+		if (!arg)
-+			arg = NBD_DEF_BLKSIZE;
-+		if (!nbd_is_valid_blksize(arg))
- 			return -EINVAL;
- 		nbd_size_set(nbd, arg,
- 			     div_s64(config->bytesize, arg));
-@@ -1337,7 +1348,7 @@ static struct nbd_config *nbd_alloc_config(void)
- 	atomic_set(&config->recv_threads, 0);
- 	init_waitqueue_head(&config->recv_wq);
- 	init_waitqueue_head(&config->conn_wait);
--	config->blksize = 1024;
-+	config->blksize = NBD_DEF_BLKSIZE;
- 	atomic_set(&config->live_connections, 0);
- 	try_module_get(THIS_MODULE);
- 	return config;
-@@ -1773,6 +1784,12 @@ static int nbd_genl_connect(struct sk_buff *skb, struct genl_info *info)
- 	if (info->attrs[NBD_ATTR_BLOCK_SIZE_BYTES]) {
- 		u64 bsize =
- 			nla_get_u64(info->attrs[NBD_ATTR_BLOCK_SIZE_BYTES]);
-+		if (!bsize)
-+			bsize = NBD_DEF_BLKSIZE;
-+		if (!nbd_is_valid_blksize(bsize)) {
-+			ret = -EINVAL;
-+			goto out;
-+		}
- 		nbd_size_set(nbd, bsize, div64_u64(config->bytesize, bsize));
- 	}
- 	if (info->attrs[NBD_ATTR_TIMEOUT]) {
+ Elf_Half __weak elf_core_extra_phdrs(void)
+ {
 -- 
 2.20.1
 
