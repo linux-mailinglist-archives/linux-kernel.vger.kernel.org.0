@@ -2,306 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCA66D271C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 12:22:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69A28D2726
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 12:27:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727207AbfJJKWt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 06:22:49 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:24027 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725971AbfJJKWt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 06:22:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1570702967;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=763TboRhwbFAPE8Tn1DDSJS6cQFbIRSIWcu9+jRDeSw=;
-        b=adWal0lRF3lcO40xwnXiT2qS3BwNW4OXIIdNvypYSvan4baDj4NzzFr7U674FjjLXrjckV
-        rfo5/pPZH5ZgPh+VbqLmqFGnxPhBmRsck5tyY21TLwL6ADrjTTfh6ErRvUkF8jqhGvZWkB
-        3dbiai68V4yGlUvuVkeh8bQC6dfmORk=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-95-mfY-4LF9NViKHPaOt2-A0Q-1; Thu, 10 Oct 2019 06:22:45 -0400
-Received: by mail-ed1-f72.google.com with SMTP id d7so3289452edp.23
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 03:22:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+suHDuntDF5i1uewtQAOqzeVn7++Q9V4dkvIc6Lm+UU=;
-        b=RtByz1JA9ptZl2NM67MsKGEIsUmtyvuT432eGLaxwsD9+AsgxmAb1jp+MPWWoWN7v7
-         5+SS1N4tLsz+xnY2UHobaN7YokuqmStbRMFC2CaXoAYvGkmLTmGlOzDV3a3IJGfULLDh
-         zyNUorSgqoShNaZWEFiJv8pv1pvSGlMquaNJFkIlNrgzFGEilMasUzwQojNW8TDDyxff
-         f27MVO226exZJvfA1h0Q2t7+f7Vdm2EEy/sQXl9yI20q7URPDnjCtLGN7my7LCdmk4GS
-         h42IpreG53mIPPac+GU4tC2STMbYvjhTKF2PhUEt4KzY7QrseXeJUfylwD6/8fjPf9go
-         hN4A==
-X-Gm-Message-State: APjAAAVlBtWyj2Cr2neWG1qogBS6EAU7T5emRqbiGrv00oKoh1M3Fvpd
-        AE0mhmtIfwV53cCqq0q+7lcuhfZju8ZEP2MIO1O8ar1oC0fDAq9q/HUCRjcO5QesXVXJECHZg1E
-        Mczh4pGELKhiBeTG/W/wfIESb
-X-Received: by 2002:a50:ed0b:: with SMTP id j11mr7481334eds.50.1570702964246;
-        Thu, 10 Oct 2019 03:22:44 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwf6PwtzYiLj0NiaSMAUZxbEnhQsSzIhn4y0fznpU9qn8twvN5iMNsQaK5QBv+HbJxfqQFIEQ==
-X-Received: by 2002:a50:ed0b:: with SMTP id j11mr7481313eds.50.1570702963988;
-        Thu, 10 Oct 2019 03:22:43 -0700 (PDT)
-Received: from shalem.localdomain (2001-1c00-0c14-2800-ec23-a060-24d5-2453.cable.dynamic.v6.ziggo.nl. [2001:1c00:c14:2800:ec23:a060:24d5:2453])
-        by smtp.gmail.com with ESMTPSA id my6sm621204ejb.55.2019.10.10.03.22.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2019 03:22:43 -0700 (PDT)
-Subject: Re: [PATCH v2] serdev: Add ACPI devices by ResourceSource field
-To:     Maximilian Luz <luzmaximilian@gmail.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Johan Hovold <johan@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-serial@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190924162226.1493407-1-luzmaximilian@gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <03d11e04-aaad-4851-c7d6-feaf62793670@redhat.com>
-Date:   Thu, 10 Oct 2019 12:22:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S1726823AbfJJK1j convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 10 Oct 2019 06:27:39 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48342 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725601AbfJJK1j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 06:27:39 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0E0DFC010923;
+        Thu, 10 Oct 2019 10:27:39 +0000 (UTC)
+Received: from [10.40.205.87] (unknown [10.40.205.87])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 23F77600C4;
+        Thu, 10 Oct 2019 10:27:20 +0000 (UTC)
+Subject: Re: [PATCH v11 0/6] mm / virtio: Provide support for unused page
+ reporting
+To:     David Hildenbrand <david@redhat.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+        Alexander Duyck <alexander.duyck@gmail.com>,
+        kvm list <kvm@vger.kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Yang Zhang <yang.zhang.wz@gmail.com>,
+        Pankaj Gupta <pagupta@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Rik van Riel <riel@surriel.com>, lcapitulino@redhat.com,
+        "Wang, Wei W" <wei.w.wang@intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>
+References: <20191001152441.27008.99285.stgit@localhost.localdomain>
+ <7233498c-2f64-d661-4981-707b59c78fd5@redhat.com>
+ <1ea1a4e11617291062db81f65745b9c95fd0bb30.camel@linux.intel.com>
+ <8bd303a6-6e50-b2dc-19ab-4c3f176c4b02@redhat.com>
+ <CAKgT0Uf37xAFK2CWqUZJgn7bWznSAi6qncLxBpC55oSpBMG1HQ@mail.gmail.com>
+ <c06b68cb-5e94-ae3e-f84e-48087d675a8f@redhat.com>
+ <CAKgT0Ud6TT=XxqFx6ePHzbUYqMp5FHVPozRvnNZK3tKV7j2xjg@mail.gmail.com>
+ <0a16b11e-ec3b-7196-5b7f-e7395876cf28@redhat.com>
+ <d96f744d2c48f5a96c6962c6a0a89d2429e5cab8.camel@linux.intel.com>
+ <7fc13837-546c-9c4a-1456-753df199e171@redhat.com>
+ <5b6e0b6df46c03bfac906313071ac0362d43c432.camel@linux.intel.com>
+ <c2fd074b-1c86-cd93-41ea-ae1a6b2ca841@redhat.com>
+ <5c640ecb-cfef-2fa6-57aa-1352f1036f4e@redhat.com>
+ <22ce946f7a5cf0b7b4c8058c400d8b9b4c63a5a5.camel@linux.intel.com>
+ <2e1cff42-7b82-c0a0-3007-fde79fefcfa3@redhat.com>
+ <9d8c6fb8-5ba2-9968-bb1c-13f3e92b8896@redhat.com>
+From:   Nitesh Narayan Lal <nitesh@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nitesh@redhat.com; prefer-encrypt=mutual; keydata=
+ mQINBFl4pQoBEADT/nXR2JOfsCjDgYmE2qonSGjkM1g8S6p9UWD+bf7YEAYYYzZsLtbilFTe
+ z4nL4AV6VJmC7dBIlTi3Mj2eymD/2dkKP6UXlliWkq67feVg1KG+4UIp89lFW7v5Y8Muw3Fm
+ uQbFvxyhN8n3tmhRe+ScWsndSBDxYOZgkbCSIfNPdZrHcnOLfA7xMJZeRCjqUpwhIjxQdFA7
+ n0s0KZ2cHIsemtBM8b2WXSQG9CjqAJHVkDhrBWKThDRF7k80oiJdEQlTEiVhaEDURXq+2XmG
+ jpCnvRQDb28EJSsQlNEAzwzHMeplddfB0vCg9fRk/kOBMDBtGsTvNT9OYUZD+7jaf0gvBvBB
+ lbKmmMMX7uJB+ejY7bnw6ePNrVPErWyfHzR5WYrIFUtgoR3LigKnw5apzc7UIV9G8uiIcZEn
+ C+QJCK43jgnkPcSmwVPztcrkbC84g1K5v2Dxh9amXKLBA1/i+CAY8JWMTepsFohIFMXNLj+B
+ RJoOcR4HGYXZ6CAJa3Glu3mCmYqHTOKwezJTAvmsCLd3W7WxOGF8BbBjVaPjcZfavOvkin0u
+ DaFvhAmrzN6lL0msY17JCZo046z8oAqkyvEflFbC0S1R/POzehKrzQ1RFRD3/YzzlhmIowkM
+ BpTqNBeHEzQAlIhQuyu1ugmQtfsYYq6FPmWMRfFPes/4JUU/PQARAQABtCVOaXRlc2ggTmFy
+ YXlhbiBMYWwgPG5pbGFsQHJlZGhhdC5jb20+iQI9BBMBCAAnBQJZeKUKAhsjBQkJZgGABQsJ
+ CAcCBhUICQoLAgQWAgMBAh4BAheAAAoJEKOGQNwGMqM56lEP/A2KMs/pu0URcVk/kqVwcBhU
+ SnvB8DP3lDWDnmVrAkFEOnPX7GTbactQ41wF/xwjwmEmTzLrMRZpkqz2y9mV0hWHjqoXbOCS
+ 6RwK3ri5e2ThIPoGxFLt6TrMHgCRwm8YuOSJ97o+uohCTN8pmQ86KMUrDNwMqRkeTRW9wWIQ
+ EdDqW44VwelnyPwcmWHBNNb1Kd8j3xKlHtnS45vc6WuoKxYRBTQOwI/5uFpDZtZ1a5kq9Ak/
+ MOPDDZpd84rqd+IvgMw5z4a5QlkvOTpScD21G3gjmtTEtyfahltyDK/5i8IaQC3YiXJCrqxE
+ r7/4JMZeOYiKpE9iZMtS90t4wBgbVTqAGH1nE/ifZVAUcCtycD0f3egX9CHe45Ad4fsF3edQ
+ ESa5tZAogiA4Hc/yQpnnf43a3aQ67XPOJXxS0Qptzu4vfF9h7kTKYWSrVesOU3QKYbjEAf95
+ NewF9FhAlYqYrwIwnuAZ8TdXVDYt7Z3z506//sf6zoRwYIDA8RDqFGRuPMXUsoUnf/KKPrtR
+ ceLcSUP/JCNiYbf1/QtW8S6Ca/4qJFXQHp0knqJPGmwuFHsarSdpvZQ9qpxD3FnuPyo64S2N
+ Dfq8TAeifNp2pAmPY2PAHQ3nOmKgMG8Gn5QiORvMUGzSz8Lo31LW58NdBKbh6bci5+t/HE0H
+ pnyVf5xhNC/FuQINBFl4pQoBEACr+MgxWHUP76oNNYjRiNDhaIVtnPRqxiZ9v4H5FPxJy9UD
+ Bqr54rifr1E+K+yYNPt/Po43vVL2cAyfyI/LVLlhiY4yH6T1n+Di/hSkkviCaf13gczuvgz4
+ KVYLwojU8+naJUsiCJw01MjO3pg9GQ+47HgsnRjCdNmmHiUQqksMIfd8k3reO9SUNlEmDDNB
+ XuSzkHjE5y/R/6p8uXaVpiKPfHoULjNRWaFc3d2JGmxJpBdpYnajoz61m7XJlgwl/B5Ql/6B
+ dHGaX3VHxOZsfRfugwYF9CkrPbyO5PK7yJ5vaiWre7aQ9bmCtXAomvF1q3/qRwZp77k6i9R3
+ tWfXjZDOQokw0u6d6DYJ0Vkfcwheg2i/Mf/epQl7Pf846G3PgSnyVK6cRwerBl5a68w7xqVU
+ 4KgAh0DePjtDcbcXsKRT9D63cfyfrNE+ea4i0SVik6+N4nAj1HbzWHTk2KIxTsJXypibOKFX
+ 2VykltxutR1sUfZBYMkfU4PogE7NjVEU7KtuCOSAkYzIWrZNEQrxYkxHLJsWruhSYNRsqVBy
+ KvY6JAsq/i5yhVd5JKKU8wIOgSwC9P6mXYRgwPyfg15GZpnw+Fpey4bCDkT5fMOaCcS+vSU1
+ UaFmC4Ogzpe2BW2DOaPU5Ik99zUFNn6cRmOOXArrryjFlLT5oSOe4IposgWzdwARAQABiQIl
+ BBgBCAAPBQJZeKUKAhsMBQkJZgGAAAoJEKOGQNwGMqM5ELoP/jj9d9gF1Al4+9bngUlYohYu
+ 0sxyZo9IZ7Yb7cHuJzOMqfgoP4tydP4QCuyd9Q2OHHL5AL4VFNb8SvqAxxYSPuDJTI3JZwI7
+ d8JTPKwpulMSUaJE8ZH9n8A/+sdC3CAD4QafVBcCcbFe1jifHmQRdDrvHV9Es14QVAOTZhnJ
+ vweENyHEIxkpLsyUUDuVypIo6y/Cws+EBCWt27BJi9GH/EOTB0wb+2ghCs/i3h8a+bi+bS7L
+ FCCm/AxIqxRurh2UySn0P/2+2eZvneJ1/uTgfxnjeSlwQJ1BWzMAdAHQO1/lnbyZgEZEtUZJ
+ x9d9ASekTtJjBMKJXAw7GbB2dAA/QmbA+Q+Xuamzm/1imigz6L6sOt2n/X/SSc33w8RJUyor
+ SvAIoG/zU2Y76pKTgbpQqMDmkmNYFMLcAukpvC4ki3Sf086TdMgkjqtnpTkEElMSFJC8npXv
+ 3QnGGOIfFug/qs8z03DLPBz9VYS26jiiN7QIJVpeeEdN/LKnaz5LO+h5kNAyj44qdF2T2AiF
+ HxnZnxO5JNP5uISQH3FjxxGxJkdJ8jKzZV7aT37sC+Rp0o3KNc+GXTR+GSVq87Xfuhx0LRST
+ NK9ZhT0+qkiN7npFLtNtbzwqaqceq3XhafmCiw8xrtzCnlB/C4SiBr/93Ip4kihXJ0EuHSLn
+ VujM7c/b4pps
+Organization: Red Hat Inc,
+Message-ID: <46acf37d-7fed-5131-800b-b149bbc3144a@redhat.com>
+Date:   Thu, 10 Oct 2019 06:27:17 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190924162226.1493407-1-luzmaximilian@gmail.com>
+In-Reply-To: <9d8c6fb8-5ba2-9968-bb1c-13f3e92b8896@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Content-Language: en-US
-X-MC-Unique: mfY-4LF9NViKHPaOt2-A0Q-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 10 Oct 2019 10:27:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 24-09-2019 18:22, Maximilian Luz wrote:
-> When registering a serdev controller, ACPI needs to be checked for
-> devices attached to it. Currently, all immediate children of the ACPI
-> node of the controller are assumed to be UART client devices for this
-> controller. Furthermore, these devices are not searched elsewhere.
->=20
-> This is incorrect: Similar to SPI and I2C devices, the UART client
-> device definition (via UARTSerialBusV2) can reside anywhere in the ACPI
-> namespace as resource definition inside the _CRS method and points to
-> the controller via its ResourceSource field. This field may either
-> contain a fully qualified or relative path, indicating the controller
-> device. To address this, we need to walk over the whole ACPI namespace,
-> looking at each resource definition, and match the client device to the
-> controller via this field.
->=20
-> This patch is based on the existing acpi serial bus implementations in
-> drivers/i2c/i2c-core-acpi.c and drivers/spi/spi.c, specifically commit
-> 4c3c59544f33e97cf8557f27e05a9904ead16363 ("spi/acpi: enumerate all SPI
-> slaves in the namespace").
->=20
-> Signed-off-by: Maximilian Luz <luzmaximilian@gmail.com>
+On 10/10/19 3:36 AM, David Hildenbrand wrote:
+> On 09.10.19 21:46, Nitesh Narayan Lal wrote:
+>> On 10/9/19 12:35 PM, Alexander Duyck wrote:
+>>> On Wed, 2019-10-09 at 11:21 -0400, Nitesh Narayan Lal wrote:
+>>>> On 10/7/19 1:06 PM, Nitesh Narayan Lal wrote:
+[...]
+>>>> Ideally I would like to get code review for patches 3 and 4, and spend my
+>>>> time addressing issues reported there. The main things I need input on is
+>>>> if the solution of allowing the list iterators to be reset is good enough
+>>>> to address the compaction issues that were pointed out several releases
+>>>> ago or if I have to look for another solution. Also I have changed things
+>>>> so that page_reporting.h was split over two files with the new one now
+>>>> living in the mm/ folder. By doing that I was hoping to reduce the
+>>>> exposure of the internal state of the free-lists so that essentially all
+>>>> we end up providing is an interface for the notifier to be used by virtio-
+>>>> balloon.
+>> If everyone agrees that what you are proposing is the best way to move
+>> forward then, by all means, lets go ahead with it. :)
+>>
+> Sorry, i didn't get to follow the discussion, caught a cold and my body
+> is still fighting with the last resistance.
 
-Thank you for the new version.
+I hope you feel better soon.
 
-This patch looks good to me and it works on my test hw with serial
-attached BT HCI:
+>
+> Is there any rough summary on how much faster Alexanders approach is
+> compared to some external tracking? For external tracking, there is a
+> lot of optimization potential as far as I can read, however, I think a
+> rough summary should be possible by now "how far we are off".
+>
+> Also, are there benchmarks/setups where both perform the same?
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Tested-by: Hans de Goede <hdegoede@redhat.com>
+So I tried to follow up on the suggestion provided by Alexander to
+recreate his setup and with the posted v12, I did observe a drop in
+will-it-scale/page_fault. Specifically in the number of threads that were
+launched on the nth core.
 
-Regards,
+However, I did not see that degradation after making the changes which I
+suggested previously on top of v12.
 
-Hans
+After those changes as per my observation, both series are introducing more or
+less the same amount of degradation over an unmodified kernel.
 
+In any case, if there are more suggestions, I am open to performing more experiments
+to ensure that there is no further degradation with my series.
 
-
-> ---
-> Changes compared to v1:
-> - Patch now reflects the behavior of the existing ACPI serial bus
->    implementations (drivers/i2c/i2c-core-acpi.c and drivers/spi/spi.c),
->    with a maximum of one serdev client device per ACPI device node
->    allocated.
->=20
-> - Ignores and continues on errors from AML code execution and resource
->    parsing.
->=20
-> Notes:
->    The resource lookup is kept generic (similarly to the implementations
->    it is based on), meaning that it should be fairly simple to extend
->    acpi_serdev_parse_resource and acpi_serdev_check_resources to get and
->    return more information about the serdev client device (e.g. initial
->    baud rate) once this is required.
->=20
->    If multiple device definitions inside a single _CRS block ever become
->    a concern, the lookup function can be instructed as to which
->    UARTSerialBusV2 resource should be considered by spefifying its index
->    in acpi_serdev_lookup.index. This is again based on the I2C
->    implementation. Currently the last resource definition is chosen (i.e.
->    index =3D -1) to reflect the behavior of the other ACPI serial bus
->    implementations.
-> ---
->   drivers/tty/serdev/core.c | 111 +++++++++++++++++++++++++++++++++-----
->   1 file changed, 99 insertions(+), 12 deletions(-)
->=20
-> diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
-> index a0ac16ee6575..226adeec2aed 100644
-> --- a/drivers/tty/serdev/core.c
-> +++ b/drivers/tty/serdev/core.c
-> @@ -552,16 +552,97 @@ static int of_serdev_register_devices(struct serdev=
-_controller *ctrl)
->   }
->  =20
->   #ifdef CONFIG_ACPI
-> +
-> +#define SERDEV_ACPI_MAX_SCAN_DEPTH 32
-> +
-> +struct acpi_serdev_lookup {
-> +=09acpi_handle device_handle;
-> +=09acpi_handle controller_handle;
-> +=09int n;
-> +=09int index;
-> +};
-> +
-> +static int acpi_serdev_parse_resource(struct acpi_resource *ares, void *=
-data)
-> +{
-> +=09struct acpi_serdev_lookup *lookup =3D data;
-> +=09struct acpi_resource_uart_serialbus *sb;
-> +=09acpi_status status;
-> +
-> +=09if (ares->type !=3D ACPI_RESOURCE_TYPE_SERIAL_BUS)
-> +=09=09return 1;
-> +
-> +=09if (ares->data.common_serial_bus.type !=3D ACPI_RESOURCE_SERIAL_TYPE_=
-UART)
-> +=09=09return 1;
-> +
-> +=09if (lookup->index !=3D -1 && lookup->n++ !=3D lookup->index)
-> +=09=09return 1;
-> +
-> +=09sb =3D &ares->data.uart_serial_bus;
-> +
-> +=09status =3D acpi_get_handle(lookup->device_handle,
-> +=09=09=09=09 sb->resource_source.string_ptr,
-> +=09=09=09=09 &lookup->controller_handle);
-> +=09if (ACPI_FAILURE(status))
-> +=09=09return 1;
-> +
-> +=09/*
-> +=09 * NOTE: Ideally, we would also want to retreive other properties her=
-e,
-> +=09 * once setting them before opening the device is supported by serdev=
-.
-> +=09 */
-> +
-> +=09return 1;
-> +}
-> +
-> +static int acpi_serdev_do_lookup(struct acpi_device *adev,
-> +                                 struct acpi_serdev_lookup *lookup)
-> +{
-> +=09struct list_head resource_list;
-> +=09int ret;
-> +
-> +=09lookup->device_handle =3D acpi_device_handle(adev);
-> +=09lookup->controller_handle =3D NULL;
-> +=09lookup->n =3D 0;
-> +
-> +=09INIT_LIST_HEAD(&resource_list);
-> +=09ret =3D acpi_dev_get_resources(adev, &resource_list,
-> +=09=09=09=09     acpi_serdev_parse_resource, lookup);
-> +=09acpi_dev_free_resource_list(&resource_list);
-> +
-> +=09if (ret < 0)
-> +=09=09return -EINVAL;
-> +
-> +=09return 0;
-> +}
-> +
-> +static int acpi_serdev_check_resources(struct serdev_controller *ctrl,
-> +=09=09=09=09       struct acpi_device *adev)
-> +{
-> +=09struct acpi_serdev_lookup lookup;
-> +=09int ret;
-> +
-> +=09if (acpi_bus_get_status(adev) || !adev->status.present)
-> +=09=09return -EINVAL;
-> +
-> +=09/* Look for UARTSerialBusV2 resource */
-> +=09lookup.index =3D -1;=09// we only care for the last device
-> +
-> +=09ret =3D acpi_serdev_do_lookup(adev, &lookup);
-> +=09if (ret)
-> +=09=09return ret;
-> +
-> +=09/* Make sure controller and ResourceSource handle match */
-> +=09if (ACPI_HANDLE(ctrl->dev.parent) !=3D lookup.controller_handle)
-> +=09=09return -ENODEV;
-> +
-> +=09return 0;
-> +}
-> +
->   static acpi_status acpi_serdev_register_device(struct serdev_controller=
- *ctrl,
-> -=09=09=09=09=09    struct acpi_device *adev)
-> +=09=09=09=09=09       struct acpi_device *adev)
->   {
-> -=09struct serdev_device *serdev =3D NULL;
-> +=09struct serdev_device *serdev;
->   =09int err;
->  =20
-> -=09if (acpi_bus_get_status(adev) || !adev->status.present ||
-> -=09    acpi_device_enumerated(adev))
-> -=09=09return AE_OK;
-> -
->   =09serdev =3D serdev_device_alloc(ctrl);
->   =09if (!serdev) {
->   =09=09dev_err(&ctrl->dev, "failed to allocate serdev device for %s\n",
-> @@ -583,7 +664,7 @@ static acpi_status acpi_serdev_register_device(struct=
- serdev_controller *ctrl,
->   }
->  =20
->   static acpi_status acpi_serdev_add_device(acpi_handle handle, u32 level=
-,
-> -=09=09=09=09       void *data, void **return_value)
-> +=09=09=09=09=09  void *data, void **return_value)
->   {
->   =09struct serdev_controller *ctrl =3D data;
->   =09struct acpi_device *adev;
-> @@ -591,22 +672,28 @@ static acpi_status acpi_serdev_add_device(acpi_hand=
-le handle, u32 level,
->   =09if (acpi_bus_get_device(handle, &adev))
->   =09=09return AE_OK;
->  =20
-> +=09if (acpi_device_enumerated(adev))
-> +=09=09return AE_OK;
-> +
-> +=09if (acpi_serdev_check_resources(ctrl, adev))
-> +=09=09return AE_OK;
-> +
->   =09return acpi_serdev_register_device(ctrl, adev);
->   }
->  =20
-> +
->   static int acpi_serdev_register_devices(struct serdev_controller *ctrl)
->   {
->   =09acpi_status status;
-> -=09acpi_handle handle;
->  =20
-> -=09handle =3D ACPI_HANDLE(ctrl->dev.parent);
-> -=09if (!handle)
-> +=09if (!has_acpi_companion(ctrl->dev.parent))
->   =09=09return -ENODEV;
->  =20
-> -=09status =3D acpi_walk_namespace(ACPI_TYPE_DEVICE, handle, 1,
-> +=09status =3D acpi_walk_namespace(ACPI_TYPE_DEVICE, ACPI_ROOT_OBJECT,
-> +=09=09=09=09     SERDEV_ACPI_MAX_SCAN_DEPTH,
->   =09=09=09=09     acpi_serdev_add_device, NULL, ctrl, NULL);
->   =09if (ACPI_FAILURE(status))
-> -=09=09dev_dbg(&ctrl->dev, "failed to enumerate serdev slaves\n");
-> +=09=09dev_warn(&ctrl->dev, "failed to enumerate serdev slaves\n");
->  =20
->   =09if (!ctrl->serdev)
->   =09=09return -ENODEV;
->=20
+-- 
+Thanks
+Nitesh
 
