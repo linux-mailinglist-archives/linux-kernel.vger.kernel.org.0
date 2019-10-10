@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41EC7D1DFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 03:26:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BA5BD1E03
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 03:28:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732596AbfJJB0d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 21:26:33 -0400
-Received: from mga02.intel.com ([134.134.136.20]:11087 "EHLO mga02.intel.com"
+        id S1732620AbfJJB24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 21:28:56 -0400
+Received: from mga07.intel.com ([134.134.136.100]:62021 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731134AbfJJB0d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 21:26:33 -0400
+        id S1732157AbfJJB24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Oct 2019 21:28:56 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Oct 2019 18:26:32 -0700
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Oct 2019 18:28:55 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.67,278,1566889200"; 
-   d="scan'208";a="218862439"
+   d="scan'208";a="218862856"
 Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by fmsmga004.fm.intel.com with ESMTP; 09 Oct 2019 18:26:30 -0700
-Cc:     baolu.lu@linux.intel.com, Arvind Sankar <nivedita@alum.mit.edu>,
-        linux-kernel@vger.kernel.org
+  by fmsmga004.fm.intel.com with ESMTP; 09 Oct 2019 18:28:52 -0700
+Cc:     baolu.lu@linux.intel.com, Christoph Hellwig <hch@lst.de>
 Subject: Re: [PATCH] iommu/vt-d: Return the correct dma mask when we are
  bypassing the IOMMU
-To:     Christoph Hellwig <hch@lst.de>
+To:     Arvind Sankar <nivedita@alum.mit.edu>, linux-kernel@vger.kernel.org
 References: <20191008143357.GA599223@rani.riverdale.lan>
- <76d680ab-a454-4a69-597a-c0edbfc5014b@linux.intel.com>
- <20191009065115.GB30157@lst.de>
 From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <dacd9024-9f62-bba8-9ca5-9edcf2150e30@linux.intel.com>
-Date:   Thu, 10 Oct 2019 09:24:15 +0800
+Message-ID: <85123533-2e9c-af73-3014-782dd6f925cb@linux.intel.com>
+Date:   Thu, 10 Oct 2019 09:26:37 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20191009065115.GB30157@lst.de>
+In-Reply-To: <20191008143357.GA599223@rani.riverdale.lan>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -43,16 +40,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
+Hi,
 
-On 10/9/19 2:51 PM, Christoph Hellwig wrote:
-> On Wed, Oct 09, 2019 at 10:45:15AM +0800, Lu Baolu wrote:
->> Do you mind explaining why we always return 32 bit here?
+On 10/8/19 10:33 PM, Arvind Sankar wrote:
+> We must return a mask covering the full physical RAM when bypassing the
+> IOMMU mapping. Also, in iommu_need_mapping, we need to check using
+> dma_direct_get_required_mask to ensure that the device's dma_mask can
+> cover physical RAM before deciding to bypass IOMMU mapping.
 > 
-> See the comment in dma_get_required_mask().
+> Fixes: 249baa547901 ("dma-mapping: provide a better default ->get_required_mask")
+> Reported-by: Arvind Sankar <nivedita@alum.mit.edu>
+> Tested-by: Arvind Sankar <nivedita@alum.mit.edu>
+> Originally-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Fixed-by: Arvind Sankar <nivedita@alum.mit.edu>
+> Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
+
+This patch looks good to me.
+
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+
+> ---
+>   drivers/iommu/intel-iommu.c | 10 +++++++++-
+>   1 file changed, 9 insertions(+), 1 deletion(-)
 > 
-
-Got it. Thank you.
-
-Best regards,
-Baolu
+> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+> index 3f974919d3bd..79e35b3180ac 100644
+> --- a/drivers/iommu/intel-iommu.c
+> +++ b/drivers/iommu/intel-iommu.c
+> @@ -3471,7 +3471,7 @@ static bool iommu_need_mapping(struct device *dev)
+>   		if (dev->coherent_dma_mask && dev->coherent_dma_mask < dma_mask)
+>   			dma_mask = dev->coherent_dma_mask;
+>   
+> -		if (dma_mask >= dma_get_required_mask(dev))
+> +		if (dma_mask >= dma_direct_get_required_mask(dev))
+>   			return false;
+>   
+>   		/*
+> @@ -3775,6 +3775,13 @@ static int intel_map_sg(struct device *dev, struct scatterlist *sglist, int nele
+>   	return nelems;
+>   }
+>   
+> +static u64 intel_get_required_mask(struct device *dev)
+> +{
+> +	if (!iommu_need_mapping(dev))
+> +		return dma_direct_get_required_mask(dev);
+> +	return DMA_BIT_MASK(32);
+> +}
+> +
+>   static const struct dma_map_ops intel_dma_ops = {
+>   	.alloc = intel_alloc_coherent,
+>   	.free = intel_free_coherent,
+> @@ -3787,6 +3794,7 @@ static const struct dma_map_ops intel_dma_ops = {
+>   	.dma_supported = dma_direct_supported,
+>   	.mmap = dma_common_mmap,
+>   	.get_sgtable = dma_common_get_sgtable,
+> +	.get_required_mask = intel_get_required_mask,
+>   };
+>   
+>   static void
+> 
