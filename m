@@ -2,156 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5271ED3272
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:43:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BD5FD3278
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:43:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727298AbfJJUeX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 16:34:23 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37368 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726595AbfJJUeX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 16:34:23 -0400
-Received: by mail-pf1-f196.google.com with SMTP id y5so4639949pfo.4
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 13:34:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=qLN+ZaDKXKKqy42TKsmx8NFeuacgz7hdpKcKP23ADmI=;
-        b=a8/BUQSRa5fAL7ua30472Y4U7kNqLVO+XHaBB/Rc2wmWKE9Xj04D00RKSoqyZUda8p
-         AoN69CT8wMJ2+8+9xP0hKg/fExhxNp8lM/hqppiZ2eSLtMQm6/uYroSxKlTzitdKEuQz
-         TwEci32h62j6hKZzmDlEOn92Ch+77FD0Fd8R4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=qLN+ZaDKXKKqy42TKsmx8NFeuacgz7hdpKcKP23ADmI=;
-        b=cEDVYYB0U1IgS/kRBuAtdiwhoRppGNZt2YrdAxaiWQMtroos/kg6Bntecf1vwsM9bs
-         h17yQ+jYAk+2ASvzF3tswVBElikED/SpR/rQbbwa9HIjinQYbaKONA4UItkSrab20JKe
-         01d3LiivmEDL9s/ouu/3p/mKtQYCDUjRr0kgqMRNa4nfYDN13JFk8IItwAq6OM5KxuBp
-         /LMFmxP1vNsfC5rXbdvgzBtb2VHWo9QvLcEKAkbje3MbueltidH98FeK6yuf2QwPWvJJ
-         VdFwR/HP1d9ZQeOhuZ6anWXzHH8Njbh8FdQcWVNDHUDbrBBDwmjfy/TQ/TEcGVueNXUz
-         ww2g==
-X-Gm-Message-State: APjAAAXiL1+VI3nJh1zgYd6ikWislU08qV+ce3YjrylRWwE3cvvu+a7B
-        h5682sb9yRJ9kYXsCfyoS7Tt6A==
-X-Google-Smtp-Source: APXvYqwEu3drJD2Rf13atiZCcuDu9mkLKlc6Z2P3wFQoHl4Ae6+HQ4EAmBu1c73yaqSQEBRghQ4ujA==
-X-Received: by 2002:a63:311:: with SMTP id 17mr12928079pgd.327.1570739662653;
-        Thu, 10 Oct 2019 13:34:22 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id o9sm5965017pfp.67.2019.10.10.13.34.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 13:34:21 -0700 (PDT)
-Date:   Thu, 10 Oct 2019 13:34:20 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Joe Perches <joe@perches.com>
+        id S1727085AbfJJUf1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 16:35:27 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:40987 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725867AbfJJUf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 16:35:27 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 46q2s74MH7z9s7T;
+        Fri, 11 Oct 2019 07:35:22 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1570739724;
+        bh=2iGd5ROkda3Y6J2MmH/+8mopajYGf+t5o0Gi5NzAir4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=GAZBtPvkT4x2lVX1/F51NL9iqh/G9zECJz1ThPyE3Am9vWs6VtkB2cz5EMm++Ld0b
+         XDtvZC8nUDjsxxp8CG/eg29+6KhKCBXBOSwBH9tDMHmEFok+UVzPLqWDSwWnIbrJob
+         ZzN0+IqBWa/+9ANOsYUeW3Lux87vC0OLmcpukWZluhKaC5SQQwIw/oy01qshO0ji2P
+         Y5aL1/DeLKNGHifZ75bJ5FSdTDaeOOPpYvOi8t/dR/hvjFc4LCGbhsI4I94sppyZeX
+         3MSrYMyJB1zUt7fG7zFASr8SfxqKHmognaHXWbsQXK6O6O2WDtqqZ+HupiFSv2LO3p
+         vM3fjivBa2P3A==
+Date:   Fri, 11 Oct 2019 07:35:15 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Vlad Yasevich <vyasevich@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Pavel Machek <pavel@ucw.cz>,
-        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Shawn Landden <shawn@git.icu>, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Miller <davem@davemloft.net>,
-        clang-built-linux@googlegroups.com, linux-sctp@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH 1/4] net: sctp: Rename fallthrough label to unhandled
-Message-ID: <201910101334.22271AB@keescook>
-References: <cover.1570292505.git.joe@perches.com>
- <2e0111756153d81d77248bc8356bac78925923dc.1570292505.git.joe@perches.com>
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kevin Hilman <khilman@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: Remove Simon as Renesas SoC Co-Maintainer
+Message-ID: <20191011073515.2933918c@canb.auug.org.au>
+In-Reply-To: <20191010123046.15291-1-geert+renesas@glider.be>
+References: <20191010123046.15291-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2e0111756153d81d77248bc8356bac78925923dc.1570292505.git.joe@perches.com>
+Content-Type: multipart/signed; boundary="Sig_/V3S_2M9Xo6krU8dWBzoccDj";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 05, 2019 at 09:46:41AM -0700, Joe Perches wrote:
-> fallthrough may become a pseudo reserved keyword so this only use of
-> fallthrough is better renamed to allow it.
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
+--Sig_/V3S_2M9Xo6krU8dWBzoccDj
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Hi Geert,
 
--Kees
+On Thu, 10 Oct 2019 14:30:46 +0200 Geert Uytterhoeven <geert+renesas@glider=
+.be> wrote:
+>
+> At the end of the v5.3 upstream kernel development cycle, Simon stepped
+> down from his role as Renesas SoC maintainer.
+>=20
+> Remove his maintainership, git repository, and branch from the
+> MAINTAINERS file, and add an entry to the CREDITS file to honor his
+> work.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> ---
->  net/sctp/sm_make_chunk.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/net/sctp/sm_make_chunk.c b/net/sctp/sm_make_chunk.c
-> index e41ed2e0ae7d..48d63956a68c 100644
-> --- a/net/sctp/sm_make_chunk.c
-> +++ b/net/sctp/sm_make_chunk.c
-> @@ -2155,7 +2155,7 @@ static enum sctp_ierror sctp_verify_param(struct net *net,
->  	case SCTP_PARAM_SET_PRIMARY:
->  		if (ep->asconf_enable)
->  			break;
-> -		goto fallthrough;
-> +		goto unhandled;
->  
->  	case SCTP_PARAM_HOST_NAME_ADDRESS:
->  		/* Tell the peer, we won't support this param.  */
-> @@ -2166,11 +2166,11 @@ static enum sctp_ierror sctp_verify_param(struct net *net,
->  	case SCTP_PARAM_FWD_TSN_SUPPORT:
->  		if (ep->prsctp_enable)
->  			break;
-> -		goto fallthrough;
-> +		goto unhandled;
->  
->  	case SCTP_PARAM_RANDOM:
->  		if (!ep->auth_enable)
-> -			goto fallthrough;
-> +			goto unhandled;
->  
->  		/* SCTP-AUTH: Secion 6.1
->  		 * If the random number is not 32 byte long the association
-> @@ -2187,7 +2187,7 @@ static enum sctp_ierror sctp_verify_param(struct net *net,
->  
->  	case SCTP_PARAM_CHUNKS:
->  		if (!ep->auth_enable)
-> -			goto fallthrough;
-> +			goto unhandled;
->  
->  		/* SCTP-AUTH: Section 3.2
->  		 * The CHUNKS parameter MUST be included once in the INIT or
-> @@ -2203,7 +2203,7 @@ static enum sctp_ierror sctp_verify_param(struct net *net,
->  
->  	case SCTP_PARAM_HMAC_ALGO:
->  		if (!ep->auth_enable)
-> -			goto fallthrough;
-> +			goto unhandled;
->  
->  		hmacs = (struct sctp_hmac_algo_param *)param.p;
->  		n_elt = (ntohs(param.p->length) -
-> @@ -2226,7 +2226,7 @@ static enum sctp_ierror sctp_verify_param(struct net *net,
->  			retval = SCTP_IERROR_ABORT;
->  		}
->  		break;
-> -fallthrough:
-> +unhandled:
->  	default:
->  		pr_debug("%s: unrecognized param:%d for chunk:%d\n",
->  			 __func__, ntohs(param.p->type), cid);
-> -- 
-> 2.15.0
-> 
+So, I will remove Simon's Renesas tree from linux-next and rename the
+renesas-geert tree to be renesas, OK?
 
--- 
-Kees Cook
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/V3S_2M9Xo6krU8dWBzoccDj
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl2flgMACgkQAVBC80lX
+0Gz6jggAkWH/aV4Ww6HxXnXq0XbwNVDhJTIfgpJ61ST9eggCpm1c3p4KHKvkd9s0
+JLpzxz4Z/Yx9WkuDbHmRgnIoWu5U7AoJt6OfU0N3S8sciHM7OhuS5CbtZDusADXh
+oFKDnFgnu+/c1onbP5to9IHSHzRtQm9cX72LfHJilKcgN94th7E6aRo/iouS9VMB
+K0XFx+YHgqlKglpzvcT52G1jT10r+nfi30g/FqGMWB91PfPEoZDWTqg9ldcwMJiq
+NpTqOMO+QGCe0rsZbvj/n9JI4kvIVrk4E9lFK1oStJfkqfDWAyPHlqTCWWxuLvxJ
+ccioAcApaMOtA+AjwEMyv+nIFfr0mw==
+=qwbp
+-----END PGP SIGNATURE-----
+
+--Sig_/V3S_2M9Xo6krU8dWBzoccDj--
