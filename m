@@ -2,105 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2B9CD1E41
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 04:08:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F597D1E46
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 04:09:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732684AbfJJCIX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 9 Oct 2019 22:08:23 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:60763 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726465AbfJJCGW (ORCPT
+        id S1732722AbfJJCJr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 9 Oct 2019 22:09:47 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39583 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726524AbfJJCHr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Oct 2019 22:06:22 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 80EF421E90;
-        Wed,  9 Oct 2019 22:06:21 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Wed, 09 Oct 2019 22:06:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=from
-        :to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=fm3; bh=BbKe8lAB6aLlCjfJZgxJtnIxN4
-        5+vPNsWUwa92cPHoM=; b=IkjsmFJDTlGNZMhcdiYMZUiNjofp+H76r88IYAzXiN
-        WuTBqVVhfNGstxu50I3HT4g3wnANmqXqGnHN7lMrjfRe6QZOj6UqI8vA/N/CDJlT
-        /9KQfZ37JV1y92ZVwV51YzXAF2EKohI3H/PGpsexi2NNQEoYPQsDrXM4W0m26B+h
-        P8z2Jws7+5JFGcahZGYX9KNUe6XJtH94F2+B7hoQTfswArnzbBnVmzg1mc4Q8pdR
-        bsFyXaZ4yw+Nxqkaep0r7JoWva0TrUL0V3ihhpKGXSIQi7JVIVsW/TrTNvr/Z/nm
-        EQfR4cC//S5UvMj5T2FHWFypJtQw/6B9UESI+yMj8m4A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=BbKe8lAB6aLlCjfJZ
-        gxJtnIxN45+vPNsWUwa92cPHoM=; b=xopbKxbvIBWIRZ2xt2xLRt6jYHaIeBghS
-        uxIRxQk+aXuQIzqAqNbEgpy1mtAuUH3vRP21B2tC3O3YXUSdIFoIBDr+ATx5OAM7
-        s0ur2yMDmvuhfCN0tuMsJjGkRpfJ9O1kd9WJX2/Q2XZqu2KTegLI2MBlOpHk6pT5
-        +hJs8pCPEzjrvVgQzO5YaNsvD2V9DaztoJ9/FefK/Qc6jlWGuI5CfOIgEKya8nWw
-        PTt2kRHj1Kq18+5PBIFtYxSc6iUhz6sG/nwSA5nJMSEexiej/knNZ2IaLXcUAixS
-        1jfOFdrpl9dTftpXayl4ynrGqhjZyFXlvXofJVv42LqoPpCt6fUrA==
-X-ME-Sender: <xms:HZKeXQII42Z69vCLC3eQl4QskYdZGdvDyYSNlH8kP8f6mr2Cih8c7A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedriedvgdehjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecunecujfgurhephffvufffkffoggfgsedtkeertdertd
-    dtnecuhfhrohhmpeetnhgurhgvficulfgvfhhfvghrhicuoegrnhgurhgvfiesrghjrdhi
-    ugdrrghuqeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvtddvrdekud
-    drudekrdeftdenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvgifsegrjhdrihgu
-    rdgruhenucevlhhushhtvghrufhiiigvpedu
-X-ME-Proxy: <xmx:HZKeXatCnlPNFR-ESBZ4AC0xo6CjE9-Q-CtPma4Z6E1NciFDbKvWBA>
-    <xmx:HZKeXdQSDGMF0a4wjnCwi5-NKVucxhimWnp-RD3cB_lvE_4-To8-Fg>
-    <xmx:HZKeXQOyv-U6SiPDk-1uTm6J8yuVjUuooDJdNCCdOeyB4ACqj-GwSA>
-    <xmx:HZKeXVzii6CfDaNDRUM0xX_ObCob9TA4uzy6bETopK6S16Y8g5R5-w>
-Received: from mistburn.au.ibm.com (bh02i525f01.au.ibm.com [202.81.18.30])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 02CF580061;
-        Wed,  9 Oct 2019 22:06:17 -0400 (EDT)
-From:   Andrew Jeffery <andrew@aj.id.au>
-To:     linux-clk@vger.kernel.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, joel@jms.id.au,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v2 0/2] clk: ast2600: Expose RMII RCLK for MACs 1-4
-Date:   Thu, 10 Oct 2019 12:37:23 +1030
-Message-Id: <20191010020725.3990-1-andrew@aj.id.au>
-X-Mailer: git-send-email 2.20.1
+        Wed, 9 Oct 2019 22:07:47 -0400
+Received: by mail-lj1-f194.google.com with SMTP id y3so4477467ljj.6
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 19:07:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=LVTlFWjjXqkfqHeR1S0u6EjRM0YYyhBOrAMAs/nOEWk=;
+        b=BeieFAWyjI1F3VJRLfbX4p2jjIhtEOLplHRHxqZshN8p2DRirvoI5LMUtdoTMVa0jF
+         hNeeEl7AXyvjUh3O8eAOPH51FAs5ujKoALbPurD6W8Utd4Owa6wJx/+3HVjzZH2kn5KZ
+         mdnrWEWC7X8bEP6QvZMTajKS25sCA3oFM31pg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=LVTlFWjjXqkfqHeR1S0u6EjRM0YYyhBOrAMAs/nOEWk=;
+        b=G4XUkYULLM4rk9FCWnxgchy4i2oE9Va84yfsSZuE46aOvRl+rIknyOYHmLIv7iJ+P7
+         U4DjQAgxjdPOFxm68g9zS33He+DHjgtoC8Z8GiuE7YdYq3lxzM2jufh4TP6UO5epz86t
+         r/FCkAjVNpECMhm61KfuQx5HBkJcx3K2epe7vcm7Q3/YpkR0GJ86Wh2ikPvPvcKhRYvP
+         v3I0bFVENeIGRAjZcsskb+KLrW9csxUdRULEH/SOxQeuDhurov93z+aA06CTxRg/DBiE
+         /qXgTy1/5YM90p8mDM8eDVKQ7zS53SasdoPFyCYTpA29/N36r/4h63OET+7JAJKN6ehk
+         qfJw==
+X-Gm-Message-State: APjAAAXCk8Ox3t0PCr9SI/tjwLpbWTJzVOnYUzhAyvRi6XYU2cpn7U45
+        XfcpFOQz8tF7/KeT/GE9K5KZtI3DtIo=
+X-Google-Smtp-Source: APXvYqyxsMaolCfjbvpazrqRZy5MlKOG4EKv35fFDqLQWKV3sQU8xuHn/sbKczSg6/2JqKU3Ys+eHw==
+X-Received: by 2002:a2e:7312:: with SMTP id o18mr4230249ljc.32.1570673263515;
+        Wed, 09 Oct 2019 19:07:43 -0700 (PDT)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id b19sm829129lji.41.2019.10.09.19.07.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Oct 2019 19:07:42 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id v24so4503688ljj.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2019 19:07:41 -0700 (PDT)
+X-Received: by 2002:a2e:29dd:: with SMTP id p90mr4334806ljp.26.1570673261288;
+ Wed, 09 Oct 2019 19:07:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191008091508.2682-1-thomas_os@shipmail.org> <20191008091508.2682-4-thomas_os@shipmail.org>
+ <20191009152737.p42w7w456zklxz72@box> <CAHk-=wh4waroKr-Xtcv+5pTxBcHxGEj-g73eQvXVawML_C0EXw@mail.gmail.com>
+ <03d85a6a-e24a-82f4-93b8-86584b463471@shipmail.org> <CAHk-=whhdRSqjX5wy1LzFYnOG58UztpifkNvbxBcTVbT3Mzv4g@mail.gmail.com>
+ <MN2PR05MB6141B981C2CAB4955D59747EA1950@MN2PR05MB6141.namprd05.prod.outlook.com>
+ <CAHk-=wgy-ULe8UmEDn9gCCmTtw65chS0h309WrTaQhK3RAXM-A@mail.gmail.com>
+ <c054849e-1e24-6b27-6a54-740ea9d17054@shipmail.org> <CAHk-=wgmr-BPMTnSuKrAMoHL_A0COV_sZkdcNB9aosYfouA_fw@mail.gmail.com>
+ <80f25292-585c-7729-2a23-7c46b3309a1a@shipmail.org> <CAHk-=wg6n_nGRtJd4MeXZrA5QrrVViJeO4x2w37KDbcDmTh3dg@mail.gmail.com>
+ <6d3ef513-ca9d-9778-10da-86f368a57cd0@shipmail.org>
+In-Reply-To: <6d3ef513-ca9d-9778-10da-86f368a57cd0@shipmail.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 9 Oct 2019 19:07:24 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wimOMuhBVrxYneQ5bawFNeGW1h_D3cxN80pitDKgfBx0A@mail.gmail.com>
+Message-ID: <CAHk-=wimOMuhBVrxYneQ5bawFNeGW1h_D3cxN80pitDKgfBx0A@mail.gmail.com>
+Subject: Re: [PATCH v4 3/9] mm: pagewalk: Don't split transhuge pmds when a
+ pmd_entry is present
+To:     =?UTF-8?Q?Thomas_Hellstr=C3=B6m_=28VMware=29?= 
+        <thomas_os@shipmail.org>
+Cc:     Thomas Hellstrom <thellstrom@vmware.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rik van Riel <riel@surriel.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Huang Ying <ying.huang@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Wed, Oct 9, 2019 at 6:10 PM Thomas Hellstr=C3=B6m (VMware)
+<thomas_os@shipmail.org> wrote:
+>
+> Your original patch does exactly the same!
 
-This series is similar to that for the AST2500 but I've split the patches out
-as the AST2600 driver is new for 5.4 and I'm hoping we have a chance of
-slipping them in. Maybe we can get both series in, but I thought decoupling
-them might make it more manageable if not.
+Oh, no. You misread my original patch.
 
-Regardless, the blurb:
+Look again.
 
-This series is two small changes enable kernel support for controlling the RMII
-RCLK gate on AST2600-based systems. RMII is commonly used for NCSI, which
-itself is commonly used for BMC-based designs to reduce cabling requirements
-for the platform. NCSI support for the AST2600 is not yet implemented in
-u-boot and so unlike the AST2500 the kernel can't rely on RCLK already being
-ungated.
+The logic in my original patch was very different. It said that
 
-v2: Rename some macros and clocks based on feedback from Joel
+ - *if* we have a pmd_entry function, then we obviously call that one.
 
-v1 can be found here: https://lore.kernel.org/linux-clk/20191008113553.13662-1-andrew@aj.id.au/
+    And if - after calling the pmd_entry function - we are still a
+hugepage, then we skip the pte_entry case entirely.
 
-Please review!
+   And part of skipping is obviously "don't split" - but it never had
+that "don't split and then call the pte walker" case.
 
-Andrew
+ - and if we *don't* have a pmd_entry function, but we do have a
+pte_entry function, then we always split before calling it.
 
-Andrew Jeffery (2):
-  dt-bindings: clock: Add AST2600 RMII RCLK gate definitions
-  clk: ast2600: Add RMII RCLK gates for all four MACs
+Notice the difference?
 
- drivers/clk/clk-ast2600.c                 | 47 ++++++++++++++++++++++-
- include/dt-bindings/clock/ast2600-clock.h |  4 ++
- 2 files changed, 50 insertions(+), 1 deletion(-)
+So instead of looking at the return value of the pmd_entry() function,
+the approach of that suggested patch was to basically say that if the
+pmd_entry function wants us to go another level deeper and it was a
+hugepmd, it needed to split the pmd to make that happen.
 
--- 
-2.20.1
+That's actually very different from what your patch did. My original
+patch never tried to walk the pte level without having one - either it
+*checked* that it had one, or it split.
 
+But I see where you might have misread the patch, particularly if you
+only looked at it as a patch, not as the end result of the patch.
+
+The end result of that patch was this:
+
+                if (ops->pmd_entry) {
+                        err =3D ops->pmd_entry(pmd, addr, next, walk);
+                        if (err)
+                                break;
+                        /* No pte level walking? */
+                        if (!ops->pte_entry)
+                                continue;
+                        /* No pte level at all? */
+                        if (is_swap_pmd(*pmd) || pmd_trans_huge(*pmd)
+|| pmd_devmap(*pmd))
+                                continue;
+                } else {
+                        if (!ops->pte_entry)
+                                continue;
+
+                        split_huge_pmd(walk->vma, pmd, addr);
+                        if (pmd_trans_unstable(pmd))
+                                goto again;
+                }
+                err =3D walk_pte_range(pmd, addr, next, walk);
+
+and look at thew two different sides of the if-statement: if they get
+to "walk_pte_range()", both cases wil have verified that there
+actually _is_ a pte level. They will just have done it differently. -
+the "we didn't have a pmd function" will have split the pmd if it was
+a hugepmd, while the "we do have a pmd_entry" case will just check
+whether it's still a huge-pmd, and done a "continue" if it was and
+never even tried to walk the ptes.
+
+But I think the "change pmd_entry to have a sane return code" is a
+simpler and more flexible model, and then the pmd_entry code can just
+let the pte walker split the pmd if needed.
+
+So I liked that part of your patch.
+
+           Linus
