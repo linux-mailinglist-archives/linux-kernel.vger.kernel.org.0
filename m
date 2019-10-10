@@ -2,169 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB846D2F60
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 19:14:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C855D2F49
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 19:10:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726758AbfJJROp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 13:14:45 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:43950 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726453AbfJJROo (ORCPT
+        id S1726683AbfJJRKS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 13:10:18 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51610 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726291AbfJJRKS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 13:14:44 -0400
-Received: by mail-lf1-f68.google.com with SMTP id u3so4963030lfl.10
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 10:14:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bqvz+afB1Rg3ieCrlwoBKML7ipcOdiXJ/q/XXxTUovI=;
-        b=Xol/3a0t0AtCulvKJeuAKS1uo5PWCjeyeDeHYLSA1FXKSnOkgSTF276gwVNHa4nPiN
-         l58RJ3zV8SDjz5HcQUbk/k9PwAg2ytkBSxmhuzf7L/EFmiieyqeQcJuKFBVQbWUjfXE1
-         U4t1RhqK0BT10C1Atodrl5m0eWGZPM7fTB2Dk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bqvz+afB1Rg3ieCrlwoBKML7ipcOdiXJ/q/XXxTUovI=;
-        b=glodWuALEM8cYbt/zcs/CojeJ1zS2ukvV26k4/OJpiCo+7eHNXvn2iQEqw0cnr5NUr
-         IjjZAFQNGMw1fP013bbzZzEXCPVUBHhSaP7yLolpXB3UEp0ZXRnlrxTTj2ZjjEhiD+gW
-         IbJtzE/UpomgpP2psuQHlV6hg8HEmCbZVJQa8H7pyUalee+n4yT72dexFwa/0Jbq7vL+
-         zfdWKDCLNiiqQQiOqG5UdffngQVlUNXZyXumYXYS3IRdK4NB7TNYgkqgpzzPyVH3JZJV
-         a43nP0CA9AVgShVuYPesU87LQ4g/QckFjvq92o/I+5ePEuBrDNAvx9dn5W4bVLYORcMg
-         /LBw==
-X-Gm-Message-State: APjAAAUbxynaiBWYbMl91nZtUMV48NnuyqI/4heUfIuXgQI+HS5YqGir
-        7Mt0vQWp32Vq4uT0klyRKWJpc4Rhb2s=
-X-Google-Smtp-Source: APXvYqykfUZ1KXLt2GIhlAPtjVj1f587ifOmLFLSItB+wHz601eqS0WjLtgDeYwB920fZOwuMcCDtQ==
-X-Received: by 2002:ac2:4946:: with SMTP id o6mr6313540lfi.86.1570727681525;
-        Thu, 10 Oct 2019 10:14:41 -0700 (PDT)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
-        by smtp.gmail.com with ESMTPSA id q14sm1381586ljc.7.2019.10.10.10.14.41
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2019 10:14:41 -0700 (PDT)
-Received: by mail-lf1-f50.google.com with SMTP id w6so4987921lfl.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 10:14:41 -0700 (PDT)
-X-Received: by 2002:a19:f709:: with SMTP id z9mr6611392lfe.170.1570727268603;
- Thu, 10 Oct 2019 10:07:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191010054140.8483-1-cyphar@cyphar.com> <20191010054140.8483-3-cyphar@cyphar.com>
-In-Reply-To: <20191010054140.8483-3-cyphar@cyphar.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 10 Oct 2019 10:07:32 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh8L50f31vW8BwRUXhLiq3eoCQ3tg8ER4Yp2dzuU1w5rQ@mail.gmail.com>
-Message-ID: <CAHk-=wh8L50f31vW8BwRUXhLiq3eoCQ3tg8ER4Yp2dzuU1w5rQ@mail.gmail.com>
-Subject: Re: [PATCH v14 2/6] namei: LOOKUP_IN_ROOT: chroot-like path resolution
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
+        Thu, 10 Oct 2019 13:10:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2ORhkw5GPRBxZuF/xlv/BjcMDmGKtcdp+AMxb3+giRk=; b=Do8hAovh7JWYg3ucRGcXnRKlp
+        Hk/Mdo6HvHbjjzVB2oeN73Lg3ScBEwJ7yLS2xEExgXEBE42Ov7eTrryiUc+6flTBzVMEVyngCfmr0
+        7DveBBO5dhInqtgUEe9a8uF1I+nODwJYoFohx1pWitYKqMGQnFzbQK9pZt+qPCF7MLYHxa6iEwG/W
+        8B6jY4hY9N4UfA4dnrnri9GsVVNzoPzINpuJzJ263r3CONhT24WWKWVS0iUkTf0g+msab95XEwsqm
+        robs5JYWD7vsNoTe5jx1EFbG3TPye9jJ4o0v+nT1wPbMgJAT9He3Ach8nHO3p/htt4/oIuFjVH/eV
+        AslgJc8fw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iIbwl-0004bm-V5; Thu, 10 Oct 2019 17:09:52 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E0E243013A4;
+        Thu, 10 Oct 2019 19:08:56 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 29D5A21492B14; Thu, 10 Oct 2019 19:09:49 +0200 (CEST)
+Date:   Thu, 10 Oct 2019 19:09:49 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        primiano@google.com, rsavitski@google.com, jeffv@google.com,
+        kernel-team@android.com, Alexei Starovoitov <ast@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        bpf@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
         Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
+        James Morris <jmorris@namei.org>, Jiri Olsa <jolsa@redhat.com>,
         Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        Aleksa Sarai <asarai@suse.de>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        alpha <linux-alpha@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        GNU C Library <libc-alpha@sourceware.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-ia64@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        linux-security-module@vger.kernel.org,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Namhyung Kim <namhyung@kernel.org>, selinux@vger.kernel.org,
+        Song Liu <songliubraving@fb.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Yonghong Song <yhs@fb.com>
+Subject: Re: [PATCH RFC] perf_event: Add support for LSM and SELinux checks
+Message-ID: <20191010170949.GR2328@hirez.programming.kicks-ass.net>
+References: <20191009203657.6070-1-joel@joelfernandes.org>
+ <20191010081251.GP2311@hirez.programming.kicks-ass.net>
+ <20191010151333.GE96813@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191010151333.GE96813@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 9, 2019 at 10:42 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
->
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -2277,6 +2277,11 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
->
->         nd->m_seq = read_seqbegin(&mount_lock);
->
-> +       /* LOOKUP_IN_ROOT treats absolute paths as being relative-to-dirfd. */
-> +       if (flags & LOOKUP_IN_ROOT)
-> +               while (*s == '/')
-> +                       s++;
-> +
->         /* Figure out the starting path and root (if needed). */
->         if (*s == '/') {
->                 error = nd_jump_root(nd);
+On Thu, Oct 10, 2019 at 11:13:33AM -0400, Joel Fernandes wrote:
+> On Thu, Oct 10, 2019 at 10:12:51AM +0200, Peter Zijlstra wrote:
+> > +static inline int perf_allow_tracepoint(struct perf_event_attr *attr)
+> >  {
+> > -	return sysctl_perf_event_paranoid > 1;
+> > +	if (sysctl_perf_event_paranoid > -1 && !capable(CAP_SYS_ADMIN))
+> > +		return -EPERM;
+> > +
+> 
+> Here the sysctl check of > -1 also is now coupled with a CAP_SYS_ADMIN check.
+> However..
+> 
+> > +	return security_perf_event_open(attr, PERF_SECURITY_TRACEPOINT);
+> 
+> >  }
+> >  
+> > --- a/kernel/events/core.c
+> > +++ b/kernel/events/core.c
 
-Hmm. Wouldn't this make more sense all inside the if (*s =- '/') test?
-That way if would be where we check for "should we start at the root",
-which seems to make more sense conceptually.
+> > @@ -5862,14 +5859,8 @@ static int perf_mmap(struct file *file,
+> >  	lock_limit >>= PAGE_SHIFT;
+> >  	locked = atomic64_read(&vma->vm_mm->pinned_vm) + extra;
+> >  
+> > -	if (locked > lock_limit) {
+> > -		if (perf_paranoid_tracepoint_raw() && !capable(CAP_IPC_LOCK)) {
+> > -			ret = -EPERM;
+> > -			goto unlock;
+> > -		}
+> > -
+> > -		ret = security_perf_event_open(&event->attr,
+> > -					       PERF_SECURITY_TRACEPOINT);
+> > +	if (locked > lock_limit && !capable(CAP_IPC_LOCK)) {
+> > +		ret = perf_allow_tracepoint(&event->attr);
+> 
+> In previous code, this check did not involve a check for CAP_SYS_ADMIN.
+> 
+> I am Ok with adding the CAP_SYS_ADMIN check as well which does make sense to
+> me for tracepoint access. But it is still a change in the logic so I wanted
+> to bring it up.
+> 
+> Let me know any other thoughts and then I'll post a new patch.
 
-That test for '/' currently has a "} else if (..)", but that's
-pointless since it ends with a "return" anyway. So the "else" logic is
-just noise.
+Yes, I did notice, I found it weird.
 
-And if you get rid of the unnecessary else, moving the LOOKUP_IN_ROOT
-inside the if-statement works fine.
+If you have CAP_IPC_LIMIT you should be able to bust mlock memory
+limits, so I don't see why we should further relate that to paranoid.
 
-So this could be something like
+The way I wrote it, we also allow to bust the limit if we have disabled
+all paranoid checks. Which makes some sense I suppose.
 
-    --- a/fs/namei.c
-    +++ b/fs/namei.c
-    @@ -2194,11 +2196,19 @@ static const char *path_init(struct
-nameidata *nd, unsigned flags)
+The original commit is this:
 
-        nd->m_seq = read_seqbegin(&mount_lock);
-        if (*s == '/') {
-    -           set_root(nd);
-    -           if (likely(!nd_jump_root(nd)))
-    -                   return s;
-    -           return ERR_PTR(-ECHILD);
-    -   } else if (nd->dfd == AT_FDCWD) {
-    +           /* LOOKUP_IN_ROOT treats absolute paths as being
-relative-to-dirfd. */
-    +           if (!(flags & LOOKUP_IN_ROOT)) {
-    +                   set_root(nd);
-    +                   if (likely(!nd_jump_root(nd)))
-    +                           return s;
-    +                   return ERR_PTR(-ECHILD);
-    +           }
-    +
-    +           /* Skip initial '/' for LOOKUP_IN_ROOT */
-    +           do { s++; } while (*s == '/');
-    +   }
-    +
-    +   if (nd->dfd == AT_FDCWD) {
-                if (flags & LOOKUP_RCU) {
-                        struct fs_struct *fs = current->fs;
-                        unsigned seq;
-
-instead. The patch ends up slightly bigger (due to the re-indentation)
-but now it handles all the "start at root" in the same place. Doesn't
-that make sense?
-
-             Linus
+  459ec28ab404 ("perf_counter: Allow mmap if paranoid checks are turned off")
