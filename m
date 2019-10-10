@@ -2,66 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DFA6D2F58
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 19:13:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6D54D2F65
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 19:15:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726740AbfJJRNM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 13:13:12 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47952 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726131AbfJJRNL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 13:13:11 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C7B03B061;
-        Thu, 10 Oct 2019 17:13:09 +0000 (UTC)
-Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id 14DB1E378C; Thu, 10 Oct 2019 19:13:07 +0200 (CEST)
-Date:   Thu, 10 Oct 2019 19:13:07 +0200
-From:   Michal Kubecek <mkubecek@suse.cz>
-To:     netdev@vger.kernel.org
-Cc:     Jiri Pirko <jiri@resnulli.us>, David Miller <davem@davemloft.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        John Linville <linville@tuxdriver.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v7 05/17] ethtool: helper functions for netlink
- interface
-Message-ID: <20191010171307.GC22163@unicorn.suse.cz>
-References: <cover.1570654310.git.mkubecek@suse.cz>
- <061af34c9f34205ed18a126cef9ebe1534de8bc7.1570654310.git.mkubecek@suse.cz>
- <20191010134203.GA22798@nanopsycho>
+        id S1726762AbfJJRPf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 13:15:35 -0400
+Received: from foss.arm.com ([217.140.110.172]:36338 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726479AbfJJRPe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 13:15:34 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4252928;
+        Thu, 10 Oct 2019 10:15:34 -0700 (PDT)
+Received: from dawn-kernel.cambridge.arm.com (unknown [10.1.197.116])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3EA723F71A;
+        Thu, 10 Oct 2019 10:15:33 -0700 (PDT)
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, will@kernel.org,
+        mark.rutland@arm.com, catalin.marinas@arm.com, dave.martin@arm.com,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH 0/3] arm64: Fix support for systems without FP/SIMD
+Date:   Thu, 10 Oct 2019 18:15:14 +0100
+Message-Id: <20191010171517.28782-1-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191010134203.GA22798@nanopsycho>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 03:42:03PM +0200, Jiri Pirko wrote:
-> Wed, Oct 09, 2019 at 10:59:15PM CEST, mkubecek@suse.cz wrote:
-> 
-> [...]
-> 
-> 
-> >+/**
-> >+ * ethnl_parse_header() - parse request header
-> >+ * @req_info:    structure to put results into
-> >+ * @header:      nest attribute with request header
-> >+ * @net:         request netns
-> >+ * @extack:      netlink extack for error reporting
-> >+ * @policy:      netlink attribute policy to validate header; use
-> >+ *               @dflt_header_policy (all attributes allowed) if null
-> >+ * @require_dev: fail if no device identiified in header
-> 
-> s/identiified/identified/
+This series fixes the original support for systems without FP/SIMD.
+We have three set of issues with the current code :
 
-Will fix.
+1) We detect the absence of FP/SIMD after the SMP cpus are brought
+online (i.e, SYSTEM scope). This means, some of the early kernel threads
+could run with their TIF_FOREIGN_FPSTATE flag set which might be
+inherited by applications forked by them (e.g, modprobe from initramfs).
 
-Michal
+Also we allow a hotplugged CPU to boot successfully even if it doesn't
+have the FP/SIMD when we have decided otherwise at boot and have now
+advertised the ELF HWCAP for the userspace.
+Fix this by turning this to a BOOT_RESTRICTED_CPU_LOCAL feature to
+allow the detection of the feature the very moment a CPU turns up
+without FP/SIMD and also prevent a conflict after SMP boot.
+
+2) As mentioned above, some tasks could have the TIF flag set,
+which will never be cleared after we detect the capability.
+Thus they could get stuck indefinitely in do_notfiy_resume().
+Fix this by clearing the TIF flag for such tasks but continuing
+to avoid the save/restore of the FP state.
+
+3) The compat ELF_HWCAP bits are statically initialised to indicate
+that the FP/SIMD support is available. This must be updated dynamically
+to provide the correct flags to the userspace.
+
+Tested with a 32bit Debian Jessie fs on Fast model (with and without
+FP support).
+
+Suzuki K Poulose (3):
+  arm64: cpufeature: Fix the type of no FP/SIMD capability
+  arm64: nofpsmid: Clear TIF_FOREIGN_FPSTATE flag for early tasks
+  arm64: cpufeature: Set the FP/SIMD compat HWCAP bits properly
+
+ arch/arm64/kernel/cpufeature.c | 39 ++++++++++++++++++++++++++++++----
+ arch/arm64/kernel/fpsimd.c     | 26 ++++++++++++++---------
+ 2 files changed, 51 insertions(+), 14 deletions(-)
+
+-- 
+2.21.0
+
