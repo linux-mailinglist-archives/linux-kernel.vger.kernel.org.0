@@ -2,183 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5AB8D32DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:49:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45924D3269
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 22:43:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727450AbfJJUtS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 16:49:18 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:49133 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726643AbfJJUtR (ORCPT
+        id S1727090AbfJJUc2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 16:32:28 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:40828 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726132AbfJJUc2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 16:49:17 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MmQUL-1hrtCu1NLt-00iTUZ; Thu, 10 Oct 2019 22:49:09 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>
-Cc:     linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: [PATCH 25/36] ARM: s3c: spi: avoid hardcoding fiq number in driver
-Date:   Thu, 10 Oct 2019 22:30:09 +0200
-Message-Id: <20191010203043.1241612-25-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20191010203043.1241612-1-arnd@arndb.de>
-References: <20191010202802.1132272-1-arnd@arndb.de>
- <20191010203043.1241612-1-arnd@arndb.de>
+        Thu, 10 Oct 2019 16:32:28 -0400
+Received: by mail-ot1-f68.google.com with SMTP id y39so6067439ota.7;
+        Thu, 10 Oct 2019 13:32:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fWk3YhiiJHg8k8ptjSkAx7ItL9F1legAJpF+beihn+4=;
+        b=nzzPZFByrpOo0NvlBOUhGFQUZP2Zqe60DgnyztdpxgMoIpUWkyzpl5Z+TrlaDdjzRi
+         3NCJrGLGAb77NBhiFeC3ttL8yXBov+S8RXCOTej35+cZIUWTtSSc//r2RD4HD5Jfapcv
+         AvFTqMtDmnKbTguqLzRt76FOxK6iU7fhJdWPiPSNZcA5Nhay/TWmbiQn7moWj9jsEwPq
+         tka0fyspeegLizi+iUZSnwGF3Wyvv4G8HsUmOkPnfw2HFjvrEiFoTDAsKWrp6RLXmO3z
+         qs451Dr7MiITaSUZs9icAnNS5Y2nghpjMfHmV10zro8sq+SaayVxdvZ0AuFlXrGg96Br
+         PQ6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fWk3YhiiJHg8k8ptjSkAx7ItL9F1legAJpF+beihn+4=;
+        b=WMFaB94NjRL48tFhnbXF898YXn+IuO4Hs53HFPT5EppSvbRij9jNIvDr9i/BYbSrK1
+         Vj2jKUwGSoFW7izP3QJ7p8p0R6U2bTKU8hPLvyg+Ei8mtGCi3jd0x59Zr5QKl2MKG++V
+         0JRroIIqiwXzGMO4Hj8N/YAJ5DTqce8TNiulxNSLeyy6YYAFw144QGzSFr6TBmwWuV96
+         wCo+d9jGuMaqKC7lM1RjV+tXkhor2ZB4pciodc347ra8D1HPWqmofLsw54aiV82Zdrhv
+         FOyOPQXP0pYMXuHa30zH7K/frx7uInzevyMOfR0jxzxM8U7x2C54UGGZCvmMvlkUkNTP
+         avng==
+X-Gm-Message-State: APjAAAXkeCj9m5wwLiFJLs2tU8RDCHNY41q4stRHuJoQ7K8cJzYm7JNm
+        /VviRobJczkrL9SJoXDEfJ4=
+X-Google-Smtp-Source: APXvYqzrg7UULLxw4lPwCZO1r2RsOUHQycSN8nXrqfNDK/es35HP7CtBAATV5kvUXSHuW7tGYPg5cg==
+X-Received: by 2002:a9d:5605:: with SMTP id e5mr9056238oti.150.1570739546944;
+        Thu, 10 Oct 2019 13:32:26 -0700 (PDT)
+Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id l17sm1726636oic.24.2019.10.10.13.32.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2019 13:32:26 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] mips: Fix unroll macro when building with Clang
+Date:   Thu, 10 Oct 2019 13:31:59 -0700
+Message-Id: <20191010203159.20565-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
+X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:s0CwvLUh0Zt1aNpPMIdJtPmyIE+SbFYN5oqxY6XwHzTwnI47DgP
- uoljIHRqhWICxbKhJ3Dy+1+bu0FYJTFGu/+ZCpSR80FWv7/E3LWo79CZLild1X6EkhmA2po
- VHPUq5C+3BzgWtzLxHk1KNXpvPBXxxQSkABs9SWef4/Ls/Dg/a91FmPdRUfuWv8a9TUza+7
- KgM+bsyOeLgUpJTP6GE8A==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:4CkTuF8oOdw=:85gFcnpN2VJXr2f5InQsnA
- VNxi7IexHlaXQVNxbACwbr9wFnDR6vQVm3FLC+fZpbvKHddPWYm2A0MZAT5wySowUafjGqErL
- yiFIeJ18+6C1jX17EwyZEtw5rlPx2zCulYdiPdk5s0UB3FDo6X/8CWGKHNVS6jDKyUlJKA4aJ
- GyB5XHhh8sJyCaFqljrEsvf8AMUc2pzjElCVAJJ2wGfTZotQUDxlMRkgCSxX98eIZANU1584E
- aKwfTGZvXJeYIp2ozFvJL72lvXHzY00Ul4MKHhOtYwt8KrK29KH+5Dy0qMp9b5yWABORy7LXW
- cgs0Q9CciwS7bxa5GhfrGgcwU3S1pl8WcbKW0I0fqqAFV4CxEtmdo+JEi2EzIBigVhzCXXWab
- vM8asAqtDMhZqmORz64vPD+KM0hFATjmGNXUyJAI1eTFKT1Hw7ffngX02fJynbAIV+iaPJAwk
- uPRFvSKqblOKGGJ9iA3kal/NiO9euAnsL2eZ/HyW8fmeUYxTxn8jpkLrPz+T85y+vs9J8gY5C
- u5ojweam7qNeSsictVCH2zACJhdUQnBK6fWNhmlFgFrLfP23sw1gW8FLuN7slUmBKSSRWDHDY
- U2EEP0CZPm/uFoKDvOPjrrYNTrkDcKsR4EBBVQsnU9k4Vaz0dIaraWvvmDvY+dg5aMbCd8lhX
- WlcTBOnrKQ23759pdqLM9JV+QSXmJBoO8Tan67RQxsdF92HFR5E+Ku3MRBEOZkH3XkwlJIuaD
- zpHBLMdH9+Hh0Odt+wc1DFCtI4FXeJtAN89h/YNMOwoIvUYWfsKduh8fzVTzg0wjwgMUbjhwp
- z6vRFs5gDeJtNrKFqprqpQE5tPD1IPLe69c81tQu7OWntE78TNoJT4JpPgoz7HuHZYQ0KBKv2
- Af15ynf6YXKickTItCFQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The IRQ_EINT0 constant is a platform detail that is
-defined in mach/irqs.h and not visible to drivers once
-that header is made private.
+Building with Clang errors after commit 6baaeadae911 ("MIPS: Provide
+unroll() macro, use it for cache ops") since the GCC_VERSION macro
+is defined in include/linux/compiler-gcc.h, which is only included
+in compiler.h when using GCC:
 
-Since the same calculation already happens in s3c24xx_set_fiq,
-just return the value from there.
+In file included from arch/mips/kernel/mips-mt.c:20:
+./arch/mips/include/asm/r4kcache.h:254:1: error: use of undeclared
+identifier 'GCC_VERSION'; did you mean 'S_VERSION'?
+__BUILD_BLAST_CACHE(i, icache, Index_Invalidate_I, Hit_Invalidate_I, 32,
+)
+^
+./arch/mips/include/asm/r4kcache.h:219:4: note: expanded from macro
+'__BUILD_BLAST_CACHE'
+                        cache_unroll(32, kernel_cache, indexop,
+                        ^
+./arch/mips/include/asm/r4kcache.h:203:2: note: expanded from macro
+'cache_unroll'
+        unroll(times, _cache_op, insn, op, (addr) + (i++ * (lsize)));
+        ^
+./arch/mips/include/asm/unroll.h:28:15: note: expanded from macro
+'unroll'
+        BUILD_BUG_ON(GCC_VERSION >= 40700 &&                    \
+                     ^
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Use CONFIG_GCC_VERSION, which will always be set by Kconfig.
+Additionally, Clang 8 had improvements around __builtin_constant_p so
+use that as a lower limit for this check with Clang (although MIPS
+wasn't buildable until Clang 9); building a kernel with Clang 9.0.0
+has no issues after this change.
+
+Fixes: 6baaeadae911 ("MIPS: Provide unroll() macro, use it for cache ops")
+Link: https://github.com/ClangBuiltLinux/linux/issues/736
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- arch/arm/mach-s3c24xx/irq-s3c24xx.c | 12 +++++++++---
- drivers/spi/spi-s3c24xx.c           | 18 ++----------------
- include/linux/spi/s3c24xx.h         |  2 +-
- 3 files changed, 12 insertions(+), 20 deletions(-)
+ arch/mips/include/asm/unroll.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-s3c24xx/irq-s3c24xx.c b/arch/arm/mach-s3c24xx/irq-s3c24xx.c
-index b0e879ee14c1..3965347cacf0 100644
---- a/arch/arm/mach-s3c24xx/irq-s3c24xx.c
-+++ b/arch/arm/mach-s3c24xx/irq-s3c24xx.c
-@@ -376,14 +376,17 @@ asmlinkage void __exception_irq_entry s3c24xx_handle_irq(struct pt_regs *regs)
- /**
-  * s3c24xx_set_fiq - set the FIQ routing
-  * @irq: IRQ number to route to FIQ on processor.
-+ * @ack_ptr: pointer to a location for storing the bit mask
-  * @on: Whether to route @irq to the FIQ, or to remove the FIQ routing.
-  *
-  * Change the state of the IRQ to FIQ routing depending on @irq and @on. If
-  * @on is true, the @irq is checked to see if it can be routed and the
-  * interrupt controller updated to route the IRQ. If @on is false, the FIQ
-  * routing is cleared, regardless of which @irq is specified.
-+ *
-+ * returns the mask value for the register.
-  */
--int s3c24xx_set_fiq(unsigned int irq, bool on)
-+int s3c24xx_set_fiq(unsigned int irq, u32 *ack_ptr, bool on)
- {
- 	u32 intmod;
- 	unsigned offs;
-@@ -391,15 +394,18 @@ int s3c24xx_set_fiq(unsigned int irq, bool on)
- 	if (on) {
- 		offs = irq - FIQ_START;
- 		if (offs > 31)
--			return -EINVAL;
-+			return 0;
- 
- 		intmod = 1 << offs;
- 	} else {
- 		intmod = 0;
- 	}
- 
-+	if (ack_ptr)
-+		*ack_ptr = intmod;
- 	writel_relaxed(intmod, S3C2410_INTMOD);
--	return 0;
-+
-+	return intmod;
- }
- 
- EXPORT_SYMBOL_GPL(s3c24xx_set_fiq);
-diff --git a/drivers/spi/spi-s3c24xx.c b/drivers/spi/spi-s3c24xx.c
-index 464146fc8420..58025876a081 100644
---- a/drivers/spi/spi-s3c24xx.c
-+++ b/drivers/spi/spi-s3c24xx.c
-@@ -229,17 +229,6 @@ struct spi_fiq_code {
- 	u8	data[0];
- };
- 
--/**
-- * ack_bit - turn IRQ into IRQ acknowledgement bit
-- * @irq: The interrupt number
-- *
-- * Returns the bit to write to the interrupt acknowledge register.
-- */
--static inline u32 ack_bit(unsigned int irq)
--{
--	return 1 << (irq - IRQ_EINT0);
--}
--
- /**
-  * s3c24xx_spi_tryfiq - attempt to claim and setup FIQ for transfer
-  * @hw: The hardware state.
-@@ -256,6 +245,7 @@ static void s3c24xx_spi_tryfiq(struct s3c24xx_spi *hw)
- 	struct pt_regs regs;
- 	enum spi_fiq_mode mode;
- 	struct spi_fiq_code *code;
-+	u32 *ack_ptr = NULL;
- 	int ret;
- 
- 	if (!hw->fiq_claimed) {
-@@ -282,8 +272,6 @@ static void s3c24xx_spi_tryfiq(struct s3c24xx_spi *hw)
- 	set_fiq_regs(&regs);
- 
- 	if (hw->fiq_mode != mode) {
--		u32 *ack_ptr;
--
- 		hw->fiq_mode = mode;
- 
- 		switch (mode) {
-@@ -303,12 +291,10 @@ static void s3c24xx_spi_tryfiq(struct s3c24xx_spi *hw)
- 		BUG_ON(!code);
- 
- 		ack_ptr = (u32 *)&code->data[code->ack_offset];
--		*ack_ptr = ack_bit(hw->irq);
--
- 		set_fiq_handler(&code->data, code->length);
- 	}
- 
--	s3c24xx_set_fiq(hw->irq, true);
-+	s3c24xx_set_fiq(hw->irq, ack_ptr, true);
- 
- 	hw->fiq_mode = mode;
- 	hw->fiq_inuse = 1;
-diff --git a/include/linux/spi/s3c24xx.h b/include/linux/spi/s3c24xx.h
-index c91d10b82f08..440a71593162 100644
---- a/include/linux/spi/s3c24xx.h
-+++ b/include/linux/spi/s3c24xx.h
-@@ -20,6 +20,6 @@ struct s3c2410_spi_info {
- 	void (*set_cs)(struct s3c2410_spi_info *spi, int cs, int pol);
- };
- 
--extern int s3c24xx_set_fiq(unsigned int irq, bool on);
-+extern int s3c24xx_set_fiq(unsigned int irq, u32 *ack_ptr, bool on);
- 
- #endif /* __LINUX_SPI_S3C24XX_H */
+diff --git a/arch/mips/include/asm/unroll.h b/arch/mips/include/asm/unroll.h
+index df1cdcfc5a47..c628747d4ecd 100644
+--- a/arch/mips/include/asm/unroll.h
++++ b/arch/mips/include/asm/unroll.h
+@@ -25,7 +25,8 @@
+ 	 * generate reasonable code for the switch statement,	\
+ 	 * so we skip the sanity check for those compilers.	\
+ 	 */							\
+-	BUILD_BUG_ON(GCC_VERSION >= 40700 &&			\
++	BUILD_BUG_ON((CONFIG_GCC_VERSION >= 40700 ||		\
++		      CONFIG_CLANG_VERSION >= 80000) &&		\
+ 		     !__builtin_constant_p(times));		\
+ 								\
+ 	switch (times) {					\
 -- 
-2.20.0
+2.23.0
 
