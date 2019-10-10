@@ -2,106 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12711D2B54
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 15:29:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41F9CD2B6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 15:34:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388062AbfJJN3x convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 10 Oct 2019 09:29:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48462 "EHLO mx1.suse.de"
+        id S2388219AbfJJNde (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 09:33:34 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3689 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727489AbfJJN3w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 09:29:52 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 17B43AC40;
-        Thu, 10 Oct 2019 13:29:50 +0000 (UTC)
-Date:   Thu, 10 Oct 2019 15:29:49 +0200
-From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
-To:     Jakub Kicinski <jakub.kicinski@netronome.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        netdev@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Subject: Re: [PATCH v8 3/5] mfd: ioc3: Add driver for SGI IOC3 chip
-Message-Id: <20191010152949.f5049c2728beffa38f07c924@suse.de>
-In-Reply-To: <20191009201714.19296e3f@cakuba.netronome.com>
-References: <20191009101713.12238-1-tbogendoerfer@suse.de>
-        <20191009101713.12238-4-tbogendoerfer@suse.de>
-        <20191009201714.19296e3f@cakuba.netronome.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8BIT
+        id S2387788AbfJJNdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 09:33:32 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 62C01F00E599A21331DA;
+        Thu, 10 Oct 2019 21:33:26 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 10 Oct 2019 21:33:18 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <catalin.marinas@arm.com>, <will@kernel.org>, <rjw@rjwysocki.net>,
+        <lenb@kernel.org>, <robert.moore@intel.com>,
+        <erik.schmauss@intel.com>, <sudeep.holla@arm.com>,
+        <rrichter@marvell.com>, <jeremy.linton@arm.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+        <linuxarm@huawei.com>, <gregkh@linuxfoundation.org>,
+        <guohanjun@huawei.com>, <wanghuiqiang@huawei.com>,
+        John Garry <john.garry@huawei.com>
+Subject: [RFC PATCH 0/3] ACPI, arm64: Backport for ACPI PPTT 6.3 thread flag for stable 4.19.x
+Date:   Thu, 10 Oct 2019 21:29:49 +0800
+Message-ID: <1570714192-236724-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 9 Oct 2019 20:17:14 -0700
-Jakub Kicinski <jakub.kicinski@netronome.com> wrote:
+This series is a backport of the ACPI PPTT 6.3 thread flag feature for
+supporting arm64 systems.
 
-> On Wed,  9 Oct 2019 12:17:10 +0200, Thomas Bogendoerfer wrote:
-> [...]
-> > +static int ioc3_cad_duo_setup(struct ioc3_priv_data *ipd)
-> > +{
-> > +	int ret;
-> > +
-> > +	ret = ioc3_irq_domain_setup(ipd, ipd->pdev->irq);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = ioc3_eth_setup(ipd, true);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	return ioc3_kbd_setup(ipd);
-> > +}
-> 
-> None of these setup calls have a "cleanup" or un-setup call. Is this
-> really okay? I know nothing about MFD, but does mfd_add_devices() not
-> require a remove for example? Doesn't the IRQ handling need cleanup?
+The background is that some arm64 implementations are broken, in that they
+incorrectly advertise that a CPU is mutli-threaded, when it is not - the
+HiSilicon Taishanv110 rev 2, aka tsv110, being an example.
 
-good catch, I'll add that.
+This leads to the system topology being incorrect. The reason being that
+arm64 topology code uses a combination of ACPI PPTT (Processor Properties
+Topology Table) and the system MPIDR (Multiprocessor Affinity Register) MT
+bit to determine the topology.
 
-> > +	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
-> > +	if (ret) {
-> > +		dev_warn(&pdev->dev,
-> > +			 "Failed to set 64-bit DMA mask, trying 32-bit\n");
-> > +		ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
-> > +		if (ret) {
-> > +			dev_err(&pdev->dev, "Can't set DMA mask, aborting\n");
-> > +			return ret;
-> 
-> So failing here we don't care about disabling the pci deivce..
+Until ACPI 6.3, the PPTT did not have any method to determine whether
+a CPU was multi-threaded, so only the MT bit is used - hence the
+broken topology for some systems.
 
-fixed in the next version.
+In ACPI 6.3, a PPTT thread flag was introduced, which - when supported -
+would be used by the kernel to determine really if a CPU is multi-threaded
+or not, so that we don't get incorrect topology.
 
-> > +
-> > +	/*
-> > +	 * Map all IOC3 registers.  These are shared between subdevices
-> > +	 * so the main IOC3 module manages them.
-> > +	 */
-> > +	regs = pci_ioremap_bar(pdev, 0);
-> 
-> This doesn't seem unmapped on error paths, nor remove?
+Note: I'm sending this as an RFC before sending to stable proper. I also
+have a 5.2 and 5.3 backport which are almost the same, and only
+significant change being that the ACPICA patch is not required.
 
-will fix.
+Erik Schmauss (1):
+  ACPICA: ACPI 6.3: PPTT add additional fields in Processor Structure
+    Flags
 
-Thank you for the review.
+Jeremy Linton (2):
+  ACPI/PPTT: Add support for ACPI 6.3 thread flag
+  arm64: topology: Use PPTT to determine if PE is a thread
 
-Thomas.
+ arch/arm64/kernel/topology.c | 19 ++++++++++---
+ drivers/acpi/pptt.c          | 52 ++++++++++++++++++++++++++++++++++++
+ include/acpi/actbl2.h        |  7 +++--
+ include/linux/acpi.h         |  5 ++++
+ 4 files changed, 77 insertions(+), 6 deletions(-)
 
 -- 
-SUSE Software Solutions Germany GmbH
-HRB 247165 (AG München)
-Geschäftsführer: Felix Imendörffer
+2.17.1
+
