@@ -2,206 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ED5DD2D04
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 16:55:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1EA1D2D09
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 16:56:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726168AbfJJOzT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 10:55:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35850 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725971AbfJJOzS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 10:55:18 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA78B214E0;
-        Thu, 10 Oct 2019 14:55:16 +0000 (UTC)
-Date:   Thu, 10 Oct 2019 10:55:15 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, Jessica Yu <jeyu@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH] ftrace/module: Allow ftrace to make only loaded module
- text read-write
-Message-ID: <20191010105515.5eba7f31@gandalf.local.home>
-In-Reply-To: <20191010122909.GK2359@hirez.programming.kicks-ass.net>
-References: <20191009223638.60b78727@oasis.local.home>
-        <20191010073121.GN2311@hirez.programming.kicks-ass.net>
-        <20191010093329.GI2359@hirez.programming.kicks-ass.net>
-        <20191010093650.GJ2359@hirez.programming.kicks-ass.net>
-        <20191010122909.GK2359@hirez.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726372AbfJJO4y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 10:56:54 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36941 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725988AbfJJO4y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 10:56:54 -0400
+Received: by mail-wm1-f65.google.com with SMTP id f22so7124127wmc.2;
+        Thu, 10 Oct 2019 07:56:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lTfHJ7yUGYRYqVVh4x2cICyXwZILXfSRCuaBZOgCdJc=;
+        b=Rp+8he4eprVcCaammm3Fo286/DVneMspe9y/b+zADwf3la3OoYVE/WO2rePexxpgIS
+         O923Rsjah2MbLaBDaY5rb1o7IJjSVZvIxsNKwwkmVoOGS7thk4ALI3hDaE6cYt/s/gcW
+         eJkD1nXBAA65mhgctIrQPZF/PPEiQAZl/JOzKFdsf84XAmiq6mrvIEnvlrsoycQrsS2O
+         aMmQNRBkPTkBgwp15MrGCKhROpfgxnC99oexvwJkCtjcQ60dnKA4tuEtMd/oLccsFJxZ
+         JjrGGn65DkhbkDvtw4zOsYfjHH481fZ4R8fBqFZssChCft0bVLm2pFkZAzj3qETPoNTW
+         TqEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lTfHJ7yUGYRYqVVh4x2cICyXwZILXfSRCuaBZOgCdJc=;
+        b=q8nyUfc/l1B+P2fh08UBio0sJosnf15u/daLdRnZzt0iATUC6Ch2U06Bx/Chak7qZd
+         luk0f0e1oRcBg366f9Hx2sbtK5EJ41ohg86Clcha2mLhhEmvDry1poOqohr3tqDDnWXf
+         4w2dlF57iuK/cN24vmW2KdmyS0PylBgcb/CcnBQpM9CfLgMsHN8B/sX1icVgveQJuR0v
+         4b4n37hcYn6wybsZwUfrAZMsOCpVveyc/sRmAuZGFc0J92Zn0Y/oIaXgFZJ2++O9UlVv
+         4fyIRHRF5sZY2SM8+Pdp0xPQa8Rn9sKOls+NrgeJXB2T4v2D7Mq+OKjCOhU/XolsEBaI
+         DNCQ==
+X-Gm-Message-State: APjAAAUIb0rm3127Sw4oXNFk4On9wbP23rNS8OHCh5SBHCqqjq7lOvpi
+        Y5lqxzUWuhAamcArIzaX/a7JtgaaHcoSAWDcLK2+3fXk
+X-Google-Smtp-Source: APXvYqwfu52iVlB3wyrUfhJzMP8NRttLWty7tQ4fsmlTIkxoKw0CUktp6JbWKQQJDYB9AesoMR3oHUYAoISfXJg776c=
+X-Received: by 2002:a05:600c:2185:: with SMTP id e5mr8246288wme.78.1570719411937;
+ Thu, 10 Oct 2019 07:56:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20191010143232.GA13560@harukaze> <CAOCk7Nrs5W-saDLAovHP_cZbFf8sp7zA=V0iz3VkFjttv=BEmA@mail.gmail.com>
+In-Reply-To: <CAOCk7Nrs5W-saDLAovHP_cZbFf8sp7zA=V0iz3VkFjttv=BEmA@mail.gmail.com>
+From:   Paolo Pisati <p.pisati@gmail.com>
+Date:   Thu, 10 Oct 2019 16:56:40 +0200
+Message-ID: <CAMmgNdYS51ZxPDic9fvpTZkEPDP=oAVrkwTvrDsUz2_5ga4dyA@mail.gmail.com>
+Subject: Re: msm8996: sdhci-msm: apq8096-db820c sdhci fails to init - "Timeout
+ waiting for hardware interrupt."
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     MSM <linux-arm-msm@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 10 Oct 2019 14:29:09 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+On Thu, Oct 10, 2019 at 4:36 PM Jeffrey Hugo <jeffrey.l.hugo@gmail.com> wrote:
+>
+> I'm using sdhci-msm on msm8998, so its not completely broken upstream.
+>
+> What speed card are you trying to use?
 
-> Yes, your code is anal about checking the NOPs, so you first have to
+Sandisk SDHC 4 - i forgot to mention that the sd slot / card works
+fine when using the qcomlt-4.14 branch[1], so it's definitely not an
+hardware issue.
 
-Yep, because being paranoid about modifying code is always good ;-)
-
-> write NOPs before you can write CALLs, if it is enabled. But afaict you
-> really can do all that from ftrace_module_init(), as long as you do it
-> all under the same ftrace_lock section.
-> 
-> If you have two sections, like now, then there is indeed that race that
-> ftrace can get enabled in between, and all the confusion that that
-> brings.
-> 
-> That is, what's fundamentally buggered about something like this?
-> 
-> ---
-> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> index 62a50bf399d6..5f7113f100ce 100644
-> --- a/kernel/trace/ftrace.c
-> +++ b/kernel/trace/ftrace.c
-> @@ -5626,6 +5626,48 @@ static int ftrace_process_locs(struct module *mod,
->  	ftrace_update_code(mod, start_pg);
->  	if (!mod)
->  		local_irq_restore(flags);
-> +
-> +	if (ftrace_disabled || !mod)
-> +		goto out_loop;
-> +
-> +	do_for_each_ftrace_rec(pg, rec) {
-
-[snip]
-
-> +
-> +		if (ftrace_start_up && cnt) {
-> +			int failed = __ftrace_replace_code(rec, 1);
-
-OK, so basically this moves the enabling of function tracing from
-within the ftrace_module_enable() code without releasing the
-ftrace_lock mutex.
-
-But we have an issue with the state of the module here, as it is still
-set as MODULE_STATE_UNFORMED. Let's look at what happens if we have:
-
-
-	CPU0				CPU1
-	----				----
- echo function > current_tracer
-				modprobe foo
-				  enable foo functions to be traced
-				  (foo function records not disabled)
- echo nop > current_tracer
-
-   disable all functions being
-   traced including foo functions
-
-   arch calls set_all_modules_text_rw()
-    [skips UNFORMED modules, which foo still is ]
-
-				  set foo's text to read-only
-				  foo's state to COMING
-
-   tries to disable foo's functions
-   foo's text is read-only
-
-   BUG trying to write to ro text!!!
-
-
-Like I said, this is very subtle. It may no longer be a bug on x86
-with your patches, but it will bug on ARM or anything else that still
-uses set_all_modules_text_rw() in the ftrace prepare code.
-
--- Steve
-
-
-
-
-> +			if (failed) {
-> +				ftrace_bug(failed, rec);
-> +				goto out_loop;
-> +			}
-> +		}
-> +
-> +	} while_for_each_ftrace_rec();
-> +
-> + out_loop:
-> +
->  	ret = 0;
->   out:
->  	mutex_unlock(&ftrace_lock);
-> @@ -5793,73 +5835,6 @@ void ftrace_release_mod(struct module *mod)
->  
->  void ftrace_module_enable(struct module *mod)
->  {
-> -	struct dyn_ftrace *rec;
-> -	struct ftrace_page *pg;
-> -
-> -	mutex_lock(&ftrace_lock);
-> -
-> -	if (ftrace_disabled)
-> -		goto out_unlock;
-> -
-> -	/*
-> -	 * If the tracing is enabled, go ahead and enable the record.
-> -	 *
-> -	 * The reason not to enable the record immediately is the
-> -	 * inherent check of ftrace_make_nop/ftrace_make_call for
-> -	 * correct previous instructions.  Making first the NOP
-> -	 * conversion puts the module to the correct state, thus
-> -	 * passing the ftrace_make_call check.
-> -	 *
-> -	 * We also delay this to after the module code already set the
-> -	 * text to read-only, as we now need to set it back to read-write
-> -	 * so that we can modify the text.
-> -	 */
-> -	if (ftrace_start_up)
-> -		ftrace_arch_code_modify_prepare();
-> -
-> -	do_for_each_ftrace_rec(pg, rec) {
-> -		int cnt;
-> -		/*
-> -		 * do_for_each_ftrace_rec() is a double loop.
-> -		 * module text shares the pg. If a record is
-> -		 * not part of this module, then skip this pg,
-> -		 * which the "break" will do.
-> -		 */
-> -		if (!within_module_core(rec->ip, mod) &&
-> -		    !within_module_init(rec->ip, mod))
-> -			break;
-> -
-> -		cnt = 0;
-> -
-> -		/*
-> -		 * When adding a module, we need to check if tracers are
-> -		 * currently enabled and if they are, and can trace this record,
-> -		 * we need to enable the module functions as well as update the
-> -		 * reference counts for those function records.
-> -		 */
-> -		if (ftrace_start_up)
-> -			cnt += referenced_filters(rec);
-> -
-> -		/* This clears FTRACE_FL_DISABLED */
-> -		rec->flags = cnt;
-> -
-> -		if (ftrace_start_up && cnt) {
-> -			int failed = __ftrace_replace_code(rec, 1);
-> -			if (failed) {
-> -				ftrace_bug(failed, rec);
-> -				goto out_loop;
-> -			}
-> -		}
-> -
-> -	} while_for_each_ftrace_rec();
-> -
-> - out_loop:
-> -	if (ftrace_start_up)
-> -		ftrace_arch_code_modify_post_process();
-> -
-> - out_unlock:
-> -	mutex_unlock(&ftrace_lock);
-> -
->  	process_cached_mods(mod->name);
->  }
->  
-
+1: http://git.linaro.org/landing-teams/working/qualcomm/kernel.git
