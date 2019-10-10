@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 885F6D251F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:01:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C17D2D2533
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2019 11:01:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389989AbfJJIyK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 04:54:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57956 "EHLO mail.kernel.org"
+        id S2389837AbfJJIzU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 04:55:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390020AbfJJIuo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:50:44 -0400
+        id S2389824AbfJJIta (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 04:49:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DCFD222BE;
-        Thu, 10 Oct 2019 08:50:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2130218AC;
+        Thu, 10 Oct 2019 08:49:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570697444;
-        bh=I6/6pJHbXOXxKmeOfdPcM5EIQbL1be+Fe2jPyAx4KTc=;
+        s=default; t=1570697370;
+        bh=65FrNbLESZ8v+zraZfQvP46y83UiFJA0O6qpT20PisE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=plIX2m7QfVGCNdZqo6OZiRR6ziBFPKb1fkJ9iqMJMRqo1Gwk3qhF2xBCL3Q+jZiVM
-         CZBkDfLIBW6qnfgzKA0gnR5airfWzqwQzvkQMpSxKatDA/xEbNjOK6xYNgMSPdfvi+
-         KveS5DylkDandLko4+/W07RI1xb/UzkPSWg1WQB8=
+        b=S9V3g4RNqdV6SfBc0gPm2i2kBCVq2eTF07IBg1VghzMhg4TTLAyqYsTbaqXbkT38I
+         QXos9BKf5Qgc6dN+bGqi3ICGTvccv+8eHAiEJ4fVsTuMQ5EXXYFgyAIEy9vaSgqvqQ
+         fu3TjTjdoQfQeiHnMj1T7MSdH9QqhUv+Nj3hPcKw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Igor Opaniuk <igor.opaniuk@toradex.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 09/61] ASoC: Define a set of DAPM pre/post-up events
-Date:   Thu, 10 Oct 2019 10:36:34 +0200
-Message-Id: <20191010083454.834064082@linuxfoundation.org>
+        stable@vger.kernel.org, Vincent Chen <vincent.chen@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        David Abdurachmanov <david.abdurachmanov@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 088/114] riscv: Avoid interrupts being erroneously enabled in handle_exception()
+Date:   Thu, 10 Oct 2019 10:36:35 +0200
+Message-Id: <20191010083612.720750989@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191010083449.500442342@linuxfoundation.org>
-References: <20191010083449.500442342@linuxfoundation.org>
+In-Reply-To: <20191010083544.711104709@linuxfoundation.org>
+References: <20191010083544.711104709@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,36 +46,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+From: Vincent Chen <vincent.chen@sifive.com>
 
-commit cfc8f568aada98f9608a0a62511ca18d647613e2 upstream.
+[ Upstream commit c82dd6d078a2bb29d41eda032bb96d05699a524d ]
 
-Prepare to use SND_SOC_DAPM_PRE_POST_PMU definition to
-reduce coming code size and make it more readable.
+When the handle_exception function addresses an exception, the interrupts
+will be unconditionally enabled after finishing the context save. However,
+It may erroneously enable the interrupts if the interrupts are disabled
+before entering the handle_exception.
 
+For example, one of the WARN_ON() condition is satisfied in the scheduling
+where the interrupt is disabled and rq.lock is locked. The WARN_ON will
+trigger a break exception and the handle_exception function will enable the
+interrupts before entering do_trap_break function. During the procedure, if
+a timer interrupt is pending, it will be taken when interrupts are enabled.
+In this case, it may cause a deadlock problem if the rq.lock is locked
+again in the timer ISR.
+
+Hence, the handle_exception() can only enable interrupts when the state of
+sstatus.SPIE is 1.
+
+This patch is tested on HiFive Unleashed board.
+
+Signed-off-by: Vincent Chen <vincent.chen@sifive.com>
+Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
+[paul.walmsley@sifive.com: updated to apply]
+Fixes: bcae803a21317 ("RISC-V: Enable IRQ during exception handling")
+Cc: David Abdurachmanov <david.abdurachmanov@sifive.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
-Reviewed-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Reviewed-by: Igor Opaniuk <igor.opaniuk@toradex.com>
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
-Link: https://lore.kernel.org/r/20190719100524.23300-2-oleksandr.suvorov@toradex.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/sound/soc-dapm.h |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/riscv/kernel/entry.S | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/include/sound/soc-dapm.h
-+++ b/include/sound/soc-dapm.h
-@@ -349,6 +349,8 @@ struct device;
- #define SND_SOC_DAPM_WILL_PMD   0x80    /* called at start of sequence */
- #define SND_SOC_DAPM_PRE_POST_PMD \
- 				(SND_SOC_DAPM_PRE_PMD | SND_SOC_DAPM_POST_PMD)
-+#define SND_SOC_DAPM_PRE_POST_PMU \
-+				(SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU)
+diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+index fa2c08e3c05e6..a03821b2656aa 100644
+--- a/arch/riscv/kernel/entry.S
++++ b/arch/riscv/kernel/entry.S
+@@ -171,9 +171,13 @@ ENTRY(handle_exception)
+ 	move a1, s4 /* scause */
+ 	tail do_IRQ
+ 1:
+-	/* Exceptions run with interrupts enabled */
++	/* Exceptions run with interrupts enabled or disabled
++	   depending on the state of sstatus.SR_SPIE */
++	andi t0, s1, SR_SPIE
++	beqz t0, 1f
+ 	csrs sstatus, SR_SIE
  
- /* convenience event type detection */
- #define SND_SOC_DAPM_EVENT_ON(e)	\
++1:
+ 	/* Handle syscalls */
+ 	li t0, EXC_SYSCALL
+ 	beq s4, t0, handle_syscall
+-- 
+2.20.1
+
 
 
