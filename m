@@ -2,152 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BAA3D3BE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 11:05:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE29ED3BF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 11:11:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727593AbfJKJFT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 05:05:19 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:51448 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726948AbfJKJFT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 05:05:19 -0400
-Received: from 79.184.255.36.ipv4.supernova.orange.pl (79.184.255.36) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
- id 903db73bb3920c92; Fri, 11 Oct 2019 11:05:17 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Yin Fengwei <fengwei.yin@intel.com>
-Cc:     Len Brown <lenb@kernel.org>,
-        "open list:ACPI" <linux-acpi@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RESEND] ACPI / processor_idle: use dead loop instead of io port access for wait
-Date:   Fri, 11 Oct 2019 11:05:16 +0200
-Message-ID: <12278756.3dKznOqol2@kreacher>
-In-Reply-To: <20190909073937.31554-1-fengwei.yin@intel.com>
-References: <20190909073937.31554-1-fengwei.yin@intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        id S1727509AbfJKJLc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 05:11:32 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:35650 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726585AbfJKJLc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 05:11:32 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E4D7020050C;
+        Fri, 11 Oct 2019 11:11:29 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5F190200509;
+        Fri, 11 Oct 2019 11:11:24 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 6715F402D2;
+        Fri, 11 Oct 2019 17:11:17 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        aisheng.dong@nxp.com, gustavo@embeddedor.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] clk: imx7ulp: Correct DDR clock mux options
+Date:   Fri, 11 Oct 2019 17:09:00 +0800
+Message-Id: <1570784940-5965-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry for the delay.
+In the latest reference manual Rev.0,06/2019, the DDR clock mux
+is extended to 2 bits, and the clock options are also changed,
+correct them accordingly.
 
-On Monday, September 9, 2019 9:39:37 AM CEST Yin Fengwei wrote:
-> In function acpi_idle_do_entry(), we do an io port access to guarantee
-> hardware behavior. But it could trigger unnecessary vmexit for
-> virtualization environemnt.
+Fixes: b1260067ac3d ("clk: imx: add imx7ulp clk driver")
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+This patch should be based on https://patchwork.kernel.org/patch/11185029/
+---
+ drivers/clk/imx/clk-imx7ulp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Is this a theoretical problem, or do you actually see it?
-
-If you see it, I'd like to have a pointer to a bug report regarding it
-or similar.
-
-> From the comments of this part of code, we could use busy wait instead
-> of io port access to guarantee hardware behavior and avoid unnecessary
-> vmexit.
-> 
-> Signed-off-by: Yin Fengwei <fengwei.yin@intel.com>
-> ---
->  drivers/acpi/processor_idle.c | 33 ++++++++++++++++++++++++++++++---
->  1 file changed, 30 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
-> index ed56c6d20b08..676553228e8f 100644
-> --- a/drivers/acpi/processor_idle.c
-> +++ b/drivers/acpi/processor_idle.c
-> @@ -55,6 +55,8 @@ struct cpuidle_driver acpi_idle_driver = {
->  };
->  
->  #ifdef CONFIG_ACPI_PROCESSOR_CSTATE
-> +static struct timespec64 dummy_delta = {0L, 0L};
-> +
->  static
->  DEFINE_PER_CPU(struct acpi_processor_cx * [CPUIDLE_STATE_MAX], acpi_cstate);
->  
-> @@ -64,6 +66,18 @@ static int disabled_by_idle_boot_param(void)
->  		boot_option_idle_override == IDLE_HALT;
->  }
->  
-> +static void dummy_wait(void)
-> +{
-> +	struct timespec64 now, target;
-> +
-> +	ktime_get_real_ts64(&now);
-> +	target = timespec64_add(now, dummy_delta);
-> +
-> +	do {
-> +		ktime_get_real_ts64(&now);
-> +	} while (timespec64_compare(&now, &target) < 0);
-> +}
-
-Why not to use ndelay() instead of this? ->
-
-> +
->  /*
->   * IBM ThinkPad R40e crashes mysteriously when going into C2 or C3.
->   * For now disable this. Probably a bug somewhere else.
-> @@ -660,8 +674,12 @@ static void __cpuidle acpi_idle_do_entry(struct acpi_processor_cx *cx)
->  		inb(cx->address);
->  		/* Dummy wait op - must do something useless after P_LVL2 read
->  		   because chipsets cannot guarantee that STPCLK# signal
-> -		   gets asserted in time to freeze execution properly. */
-> -		inl(acpi_gbl_FADT.xpm_timer_block.address);
-> +		   gets asserted in time to freeze execution properly.
-> +
-> +		   Previously, we do io port access here which could trigger
-> +		   unnecessary trap to HV for virtualization env. We use dead
-> +		   loop here to avoid the impact to virtualization env. */
-> +		dummy_wait();
->  	}
->  }
->  
-> @@ -683,7 +701,7 @@ static int acpi_idle_play_dead(struct cpuidle_device *dev, int index)
->  		else if (cx->entry_method == ACPI_CSTATE_SYSTEMIO) {
->  			inb(cx->address);
->  			/* See comment in acpi_idle_do_entry() */
-> -			inl(acpi_gbl_FADT.xpm_timer_block.address);
-> +			dummy_wait();
->  		} else
->  			return -ENODEV;
->  	}
-> @@ -902,6 +920,7 @@ static inline void acpi_processor_cstate_first_run_checks(void)
->  {
->  	acpi_status status;
->  	static int first_run;
-> +	struct timespec64 ts0, ts1;
->  
->  	if (first_run)
->  		return;
-> @@ -912,6 +931,13 @@ static inline void acpi_processor_cstate_first_run_checks(void)
->  			  max_cstate);
->  	first_run++;
->  
-> +	/* profiling the time used for dummy wait op */
-> +	ktime_get_real_ts64(&ts0);
-> +	inl(acpi_gbl_FADT.xpm_timer_block.address);
-> +	ktime_get_real_ts64(&ts1);
-
--> And simply measure the number of nsecs this takes?
-
-> +
-> +	dummy_delta = timespec64_sub(ts1, ts0);
-> +
->  	if (acpi_gbl_FADT.cst_control && !nocst) {
->  		status = acpi_os_write_port(acpi_gbl_FADT.smi_command,
->  					    acpi_gbl_FADT.cst_control, 8);
-> @@ -920,6 +946,7 @@ static inline void acpi_processor_cstate_first_run_checks(void)
->  					"Notifying BIOS of _CST ability failed"));
->  	}
->  }
-> +
->  #else
->  
->  static inline int disabled_by_idle_boot_param(void) { return 0; }
-> 
-
-
-
+diff --git a/drivers/clk/imx/clk-imx7ulp.c b/drivers/clk/imx/clk-imx7ulp.c
+index b2c5866..c4b78a2 100644
+--- a/drivers/clk/imx/clk-imx7ulp.c
++++ b/drivers/clk/imx/clk-imx7ulp.c
+@@ -25,7 +25,7 @@ static const char * const spll_sels[]		= { "spll", "spll_pfd_sel", };
+ static const char * const apll_pfd_sels[]	= { "apll_pfd0", "apll_pfd1", "apll_pfd2", "apll_pfd3", };
+ static const char * const apll_sels[]		= { "apll", "apll_pfd_sel", };
+ static const char * const scs_sels[]		= { "dummy", "sosc", "sirc", "firc", "dummy", "apll_sel", "spll_sel", "dummy", };
+-static const char * const ddr_sels[]		= { "apll_pfd_sel", "upll", };
++static const char * const ddr_sels[]		= { "apll_pfd_sel", "dummy", "dummy", "dummy", };
+ static const char * const nic_sels[]		= { "firc", "ddr_clk", };
+ static const char * const periph_plat_sels[]	= { "dummy", "nic1_bus_clk", "nic1_clk", "ddr_clk", "apll_pfd2", "apll_pfd1", "apll_pfd0", "upll", };
+ static const char * const periph_bus_sels[]	= { "dummy", "sosc_bus_clk", "mpll", "firc_bus_clk", "rosc", "nic1_bus_clk", "nic1_clk", "spll_bus_clk", };
+@@ -118,7 +118,7 @@ static void __init imx7ulp_clk_scg1_init(struct device_node *np)
+ 	clks[IMX7ULP_CLK_SYS_SEL]	= imx_clk_hw_mux2("scs_sel", base + 0x14, 24, 4, scs_sels, ARRAY_SIZE(scs_sels));
+ 	clks[IMX7ULP_CLK_HSRUN_SYS_SEL] = imx_clk_hw_mux2("hsrun_scs_sel", base + 0x1c, 24, 4, scs_sels, ARRAY_SIZE(scs_sels));
+ 	clks[IMX7ULP_CLK_NIC_SEL]	= imx_clk_hw_mux2("nic_sel", base + 0x40, 28, 1, nic_sels, ARRAY_SIZE(nic_sels));
+-	clks[IMX7ULP_CLK_DDR_SEL]	= imx_clk_hw_mux_flags("ddr_sel", base + 0x30, 24, 1, ddr_sels, ARRAY_SIZE(ddr_sels), CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE);
++	clks[IMX7ULP_CLK_DDR_SEL]	= imx_clk_hw_mux_flags("ddr_sel", base + 0x30, 24, 2, ddr_sels, ARRAY_SIZE(ddr_sels), CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE);
+ 
+ 	clks[IMX7ULP_CLK_CORE_DIV]	= imx_clk_hw_divider_flags("divcore",	"scs_sel",  base + 0x14, 16, 4, CLK_SET_RATE_PARENT);
+ 	clks[IMX7ULP_CLK_HSRUN_CORE_DIV] = imx_clk_hw_divider_flags("hsrun_divcore", "hsrun_scs_sel", base + 0x1c, 16, 4, CLK_SET_RATE_PARENT);
+-- 
+2.7.4
 
