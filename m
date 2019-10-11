@@ -2,144 +2,246 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA162D34C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 02:03:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A59A7D34CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 02:06:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbfJKADl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 20:03:41 -0400
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:37555 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726290AbfJKADl (ORCPT
+        id S1727474AbfJKAGW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 20:06:22 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36427 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726096AbfJKAGW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 20:03:41 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 0B7B0220BA;
-        Thu, 10 Oct 2019 20:03:40 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Thu, 10 Oct 2019 20:03:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        subject:to:cc:references:from:message-id:date:mime-version
-        :in-reply-to:content-type:content-transfer-encoding; s=fm3; bh=u
-        Rr/kFsIZaHy8HYqLPJ1ymRYxil+0WCAOjr/vPbR/yI=; b=TW5X1FawG9/vU9ewM
-        rj+MktaT10lfOWvseyOQw8LeApUvz/hXJGIc4BssTigcyN50+4QEavXZjyh/gaFo
-        pvUbU6CtieOnRC1AoiTVdtm0fWQfjdrgebdM1YZ95qAOINSKAEyDLZ7+ZErWXo4W
-        MpmJ4D4dNotk4Ki7vIFWMitrMw0lEsHJvbEGpOg2QjU2i9I371OOxWXRijtftH1x
-        rEL92mOceX0XDaZLe2ybetFcuQYBr8k49SY1y70XQ2xVLWRhA33FODjrgY4V9BnX
-        1+/ghsAPqHTW4d5bV65FZEtxaF0Y6mMWVaFk/FFQf3mpp9zAGfDNuzdn2RSXo8G5
-        wXJpQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=uRr/kFsIZaHy8HYqLPJ1ymRYxil+0WCAOjr/vPbR/
-        yI=; b=dv8mhG6bkghcqQrxe6LT3iLVXIOTLUuxDBvF6Lz3abzYR/Xrz+FU2sd/z
-        urBBpIXQLWSDelgvaRRqyLpQgJffRzJEyqSruTd9OYbGNhxezyzRf3pFJPWm8Gcc
-        nZ5PdUkjM5hF4heeWSFVqBYx9nG4lKCKVIeXqrpyA/HgVKBsJLmgyIhRSEwV9amU
-        exMjCym7z/5j3RjIZ6LAaQwkD7Q1SOFIKtPxSA0ojcqKI0GexoVNwF7djlR8KS6C
-        yFanffc0IFJUTnLh81eMQBBEA2fZs4WNKV7coU0cBcBGbi1aSnH+9Y5CNBZ3AUvj
-        8DUmGs6TqXDlr4ZQlx2mdG2qxgAPA==
-X-ME-Sender: <xms:28afXduWUYsZFSvy7-SvT5CMydLKpkswjPGFojPb-ygTVzbXIpxvYA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrieeggddvlecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefuvfhfhffkffgfgggjtgfgsehtjeertddtfeejnecuhfhrohhmpefurghmuhgv
-    lhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucfkph
-    epjedtrddufeehrddugeekrdduhedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehsrghm
-    uhgvlhesshhhohhllhgrnhgurdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:28afXZ1RLSi-zSTIlCLOUhaJubk7CT7GjYbCBEoBRB3urDvyE3pqKg>
-    <xmx:28afXcDgYWYmt_J7euix69o6uNQqa76PcC72VFUKjQWflJGKJP3zyA>
-    <xmx:28afXVuhVW-qkndwC7uJ0bTLqQk2Ep1w1CDkV3zGRRS-JU_YKNLM4w>
-    <xmx:3MafXWFKE1pyeLy5tXkk-Tr7PaqPbjqWAl6hlEFSLm6nx9nieJS_LA>
-Received: from [192.168.50.162] (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 0386A8005A;
-        Thu, 10 Oct 2019 20:03:38 -0400 (EDT)
-Subject: Re: [PATCH 2/2] firmware: coreboot: Export active CBFS partition
-To:     Julius Werner <jwerner@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Patrick Rudolph <patrick.rudolph@9elements.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ben Zhang <benzh@chromium.org>,
-        Filipe Brandenburger <filbranden@chromium.org>,
-        Duncan Laurie <dlaurie@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20191008115342.28483-1-patrick.rudolph@9elements.com>
- <20191008115342.28483-2-patrick.rudolph@9elements.com>
- <5d9d120b.1c69fb81.b6201.1477@mx.google.com>
- <CAODwPW-mfySMQUejCwT+G45BtOysq_JCRQa8GwoYTkjY_yRwgA@mail.gmail.com>
-From:   Samuel Holland <samuel@sholland.org>
-Message-ID: <b14dd18b-e737-b7dd-77db-023a4b379802@sholland.org>
-Date:   Thu, 10 Oct 2019 19:03:38 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <CAODwPW-mfySMQUejCwT+G45BtOysq_JCRQa8GwoYTkjY_yRwgA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 10 Oct 2019 20:06:22 -0400
+Received: by mail-pg1-f195.google.com with SMTP id 23so4704340pgk.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 17:06:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=9StLK2MlJr7BNY6TFoL2FLdWEIH7MyJyYVIq4dGaZdM=;
+        b=nSazSiolb/UE6P+d6rHzH+plQd9BvPZ3YU+Man7WIT3R8sZhs7kVHXwU9QaLRP510Y
+         dorUYmhg3KsIFCy/xwIiMTBtYQUTSPbAS/cxZFArOFUrePZF8eMYBvFWZOPX367uO7AQ
+         tOtSHwKalmk9pRcI3vDDcxSyHH7wzEBksWqjA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=9StLK2MlJr7BNY6TFoL2FLdWEIH7MyJyYVIq4dGaZdM=;
+        b=gk5JcEyglN5bpF6R21o9GERBs0QjrJ5cLX3vuMr58llpHdfdtAcoVXnyjaLBS60rJD
+         8jIsySO8OrKd29cwTNfpTvJjFjPxTaQ6HDvHWGqX7R77aMQHopUFn2dpUIhaoS6Zzrqx
+         3jW45dgGREsPANujprcJKDieCNGkCynoeHelvvwHapdTdcROZOuK/1nBsefBU0Oi+2T5
+         P1H3e77kZkudAbpEWYowY90aq72BpopSaYa7fLg9+8WyE/a28LA0F5dcoaH2xDOQLbKg
+         Slnk3i2xVLoLliwXKtN7q2fR38iiKhPobq2+Q2XL7OgfEaMzAA7o58sSUHP4+p8ct6BM
+         Sriw==
+X-Gm-Message-State: APjAAAXGMpg6dl/zDMyebMJ8xnSUFd7drPIgZ14qd6GMNd2y5cZERizT
+        L357oTc2JAFus3nZE2GU+7fcuA==
+X-Google-Smtp-Source: APXvYqy+BFNMKOyCmMISgn+NdoeMQkp/Wa9i8qIO2BPfpxRyHkLNqvDw/R+5rHogT97/j7uz2d63Lg==
+X-Received: by 2002:a17:90a:20cb:: with SMTP id f69mr13865338pjg.110.1570752380991;
+        Thu, 10 Oct 2019 17:06:20 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id y2sm6740817pfe.126.2019.10.10.17.06.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2019 17:06:20 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Will Deacon <will@kernel.org>, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-c6x-dev@linux-c6x.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Michal Simek <monstr@monstr.eu>, linux-parisc@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 00/29] vmlinux.lds.h: Refactor EXCEPTION_TABLE and NOTES
+Date:   Thu, 10 Oct 2019 17:05:40 -0700
+Message-Id: <20191011000609.29728-1-keescook@chromium.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/9/19 4:19 PM, Julius Werner wrote:
->> Somehow we've gotten /sys/firmware/log to be the coreboot log, and quite
->> frankly that blows my mind that this path was accepted upstream.
->> Userspace has to know it's running on coreboot firmware to know that
->> /sys/firmware/log is actually the coreboot log.
-> 
-> Not really sure I understand your concern here? That's the generic
-> node for the log from the mainboard firmware, whatever it is. It was
-> originally added for non-coreboot firmware and that use is still
-> supported. If some other non-coreboot firmware wants to join in, it's
-> welcome to do so -- the interface is separated out enough to make it
-> easy to add more backends.
-> 
-> I do agree that if we want to add other, more coreboot-specific nodes,
-> they should be explicitly namespaced.
-> 
->> But I also wonder why this is being exposed by the kernel at all?
-> 
-> I share Stephen's concern that I'm not sure this belongs in the kernel
-> at all. There are existing ways for userspace to access this
-> information like the cbmem utility does... if you want it accessible
-> from fwupd, it could chain-call into cbmem or we could factor that
-> functionality out into a library. If you want to get away from using
-> /dev/mem for this, we could maybe add a driver that exports CBMEM or
-> coreboot table areas via sysfs... but then I think that should be a
-> generic driver which makes them all accessible in one go, rather than
-> having to add yet another driver whenever someone needs to parse
-> another coreboot table blob for some reason. We could design an
-> interface like /sys/firmware/coreboot/table/<tag> where every entry in
-> the table gets exported as a binary file.
-> 
-> I think a specific sysfs driver only makes sense for things that are
-> human readable and that you'd actually expect a human to want to go
-> read directly, like the log. Maybe exporting FMAP entries one by one
-> like Stephen suggests could be such a case, but I doubt that there's a
-> common enough need for that since there are plenty of existing ways to
-> show FMAP entries from userspace (and if there was a generic interface
-> like /sys/firmware/coreboot/table/37 to access it, we could just add a
-> new flag to the dump_fmap utility to read it from there)
-There's already a node in sysfs for every coreboot table entry:
+Arch maintainers: please send Acks (if you haven't already) for your
+respective linker script changes; the intention is for this series to
+land via -tip.
 
-  /sys/bus/coreboot/devices/corebootN
+v1: https://lore.kernel.org/lkml/20190926175602.33098-1-keescook@chromium.org
+v2: clean up commit messages, rename RO_EXCEPTION_TABLE (bp)
 
-where N is the index of the entry in the coreboot table. I suggest
 
-1) Rename the devices based on their tag instead of their position in the table,
-   so the names are stable and meaningful. I don't know why I didn't do that in
-   the first place. Doing that gives you a device kobject you can hang
-   additional sysfs attributes off of.
-2) If we want userspace to have access to the raw binary table entry (which
-   sounds like a good idea to me), add that sysfs attribute in
-   coreboot_table_populate() after creating each device. That way it would be
-   present regardless of whether or not there's a specific driver loaded for
-   that table entry.
+This series works to move the linker sections for NOTES and
+EXCEPTION_TABLE into the RO_DATA area, where they belong on most
+(all?) architectures. The problem being addressed was the discovery
+by Rick Edgecombe that the exception table was accidentally marked
+executable while he was developing his execute-only-memory series. When
+permissions were flipped from readable-and-executable to only-executable,
+the exception table became unreadable, causing things to explode rather
+badly. :)
 
-This solves the immediate problem of needing /dev/mem to access coreboot tables,
-while leaving open the possibility of writing kernel drivers in the future if
-that would be more beneficial than parsing the data in userspace (i.e. if the
-kernel can do something more with the data than just exporting it).
+Roughly speaking, the steps are:
 
-Samuel
+- regularize the linker names for PT_NOTE and PT_LOAD program headers
+  (to "note" and "text" respectively)
+- regularize restoration of linker section to program header assignment
+  (when PT_NOTE exists)
+- move NOTES into RO_DATA
+- finish macro naming conversions for RO_DATA and RW_DATA
+- move EXCEPTION_TABLE into RO_DATA on architectures where this is clear
+- clean up some x86-specific reporting of kernel memory resources
+- switch x86 linker fill byte from x90 (NOP) to 0xcc (INT3), just because
+  I finally realized what that trailing ": 0x9090" meant -- and we should
+  trap, not slide, if execution lands in section padding
+
+Thanks!
+
+-Kees
+
+Kees Cook (29):
+  powerpc: Rename "notes" PT_NOTE to "note"
+  powerpc: Remove PT_NOTE workaround
+  powerpc: Rename PT_LOAD identifier "kernel" to "text"
+  alpha: Rename PT_LOAD identifier "kernel" to "text"
+  ia64: Rename PT_LOAD identifier "code" to "text"
+  s390: Move RO_DATA into "text" PT_LOAD Program Header
+  x86: Restore "text" Program Header with dummy section
+  vmlinux.lds.h: Provide EMIT_PT_NOTE to indicate export of .notes
+  vmlinux.lds.h: Move Program Header restoration into NOTES macro
+  vmlinux.lds.h: Move NOTES into RO_DATA
+  vmlinux.lds.h: Replace RODATA with RO_DATA
+  vmlinux.lds.h: Replace RO_DATA_SECTION with RO_DATA
+  vmlinux.lds.h: Replace RW_DATA_SECTION with RW_DATA
+  vmlinux.lds.h: Allow EXCEPTION_TABLE to live in RO_DATA
+  x86: Actually use _etext for end of text segment
+  x86: Move EXCEPTION_TABLE to RO_DATA segment
+  alpha: Move EXCEPTION_TABLE to RO_DATA segment
+  arm64: Move EXCEPTION_TABLE to RO_DATA segment
+  c6x: Move EXCEPTION_TABLE to RO_DATA segment
+  h8300: Move EXCEPTION_TABLE to RO_DATA segment
+  ia64: Move EXCEPTION_TABLE to RO_DATA segment
+  microblaze: Move EXCEPTION_TABLE to RO_DATA segment
+  parisc: Move EXCEPTION_TABLE to RO_DATA segment
+  powerpc: Move EXCEPTION_TABLE to RO_DATA segment
+  xtensa: Move EXCEPTION_TABLE to RO_DATA segment
+  x86/mm: Remove redundant &s on addresses
+  x86/mm: Report which part of kernel image is freed
+  x86/mm: Report actual image regions in /proc/iomem
+  x86: Use INT3 instead of NOP for linker fill bytes
+
+ arch/alpha/kernel/vmlinux.lds.S      | 18 +++++-----
+ arch/arc/kernel/vmlinux.lds.S        |  6 ++--
+ arch/arm/kernel/vmlinux-xip.lds.S    |  4 +--
+ arch/arm/kernel/vmlinux.lds.S        |  4 +--
+ arch/arm64/kernel/vmlinux.lds.S      |  9 ++---
+ arch/c6x/kernel/vmlinux.lds.S        |  8 ++---
+ arch/csky/kernel/vmlinux.lds.S       |  5 ++-
+ arch/h8300/kernel/vmlinux.lds.S      |  9 ++---
+ arch/hexagon/kernel/vmlinux.lds.S    |  5 ++-
+ arch/ia64/kernel/vmlinux.lds.S       | 20 +++++------
+ arch/m68k/kernel/vmlinux-nommu.lds   |  4 +--
+ arch/m68k/kernel/vmlinux-std.lds     |  2 +-
+ arch/m68k/kernel/vmlinux-sun3.lds    |  2 +-
+ arch/microblaze/kernel/vmlinux.lds.S |  8 ++---
+ arch/mips/kernel/vmlinux.lds.S       | 15 ++++----
+ arch/nds32/kernel/vmlinux.lds.S      |  5 ++-
+ arch/nios2/kernel/vmlinux.lds.S      |  5 ++-
+ arch/openrisc/kernel/vmlinux.lds.S   |  7 ++--
+ arch/parisc/kernel/vmlinux.lds.S     | 11 +++---
+ arch/powerpc/kernel/vmlinux.lds.S    | 37 ++++---------------
+ arch/riscv/kernel/vmlinux.lds.S      |  5 ++-
+ arch/s390/kernel/vmlinux.lds.S       | 12 +++----
+ arch/sh/kernel/vmlinux.lds.S         |  3 +-
+ arch/sparc/kernel/vmlinux.lds.S      |  3 +-
+ arch/um/include/asm/common.lds.S     |  3 +-
+ arch/unicore32/kernel/vmlinux.lds.S  |  5 ++-
+ arch/x86/include/asm/processor.h     |  2 +-
+ arch/x86/include/asm/sections.h      |  1 -
+ arch/x86/kernel/setup.c              | 12 ++++++-
+ arch/x86/kernel/vmlinux.lds.S        | 16 ++++-----
+ arch/x86/mm/init.c                   |  8 ++---
+ arch/x86/mm/init_64.c                | 16 +++++----
+ arch/x86/mm/pti.c                    |  2 +-
+ arch/xtensa/kernel/vmlinux.lds.S     |  8 ++---
+ include/asm-generic/vmlinux.lds.h    | 53 ++++++++++++++++++++--------
+ 35 files changed, 159 insertions(+), 174 deletions(-)
+
+-- 
+2.17.1
+
+
+Kees Cook (29):
+  powerpc: Rename "notes" PT_NOTE to "note"
+  powerpc: Remove PT_NOTE workaround
+  powerpc: Rename PT_LOAD identifier "kernel" to "text"
+  alpha: Rename PT_LOAD identifier "kernel" to "text"
+  ia64: Rename PT_LOAD identifier "code" to "text"
+  s390: Move RO_DATA into "text" PT_LOAD Program Header
+  x86: Restore "text" Program Header with dummy section
+  vmlinux.lds.h: Provide EMIT_PT_NOTE to indicate export of .notes
+  vmlinux.lds.h: Move Program Header restoration into NOTES macro
+  vmlinux.lds.h: Move NOTES into RO_DATA
+  vmlinux.lds.h: Replace RODATA with RO_DATA
+  vmlinux.lds.h: Replace RO_DATA_SECTION with RO_DATA
+  vmlinux.lds.h: Replace RW_DATA_SECTION with RW_DATA
+  vmlinux.lds.h: Allow EXCEPTION_TABLE to live in RO_DATA
+  x86: Actually use _etext for end of text segment
+  x86: Move EXCEPTION_TABLE to RO_DATA segment
+  alpha: Move EXCEPTION_TABLE to RO_DATA segment
+  arm64: Move EXCEPTION_TABLE to RO_DATA segment
+  c6x: Move EXCEPTION_TABLE to RO_DATA segment
+  h8300: Move EXCEPTION_TABLE to RO_DATA segment
+  ia64: Move EXCEPTION_TABLE to RO_DATA segment
+  microblaze: Move EXCEPTION_TABLE to RO_DATA segment
+  parisc: Move EXCEPTION_TABLE to RO_DATA segment
+  powerpc: Move EXCEPTION_TABLE to RO_DATA segment
+  xtensa: Move EXCEPTION_TABLE to RO_DATA segment
+  x86/mm: Remove redundant &s on addresses
+  x86/mm: Report which part of kernel image is freed
+  x86/mm: Report actual image regions in /proc/iomem
+  x86: Use INT3 instead of NOP for linker fill bytes
+
+ arch/alpha/kernel/vmlinux.lds.S      | 18 +++++-----
+ arch/arc/kernel/vmlinux.lds.S        |  6 ++--
+ arch/arm/kernel/vmlinux-xip.lds.S    |  4 +--
+ arch/arm/kernel/vmlinux.lds.S        |  4 +--
+ arch/arm64/kernel/vmlinux.lds.S      | 10 +++---
+ arch/c6x/kernel/vmlinux.lds.S        |  8 ++---
+ arch/csky/kernel/vmlinux.lds.S       |  5 ++-
+ arch/h8300/kernel/vmlinux.lds.S      |  9 ++---
+ arch/hexagon/kernel/vmlinux.lds.S    |  5 ++-
+ arch/ia64/kernel/vmlinux.lds.S       | 20 +++++------
+ arch/m68k/kernel/vmlinux-nommu.lds   |  4 +--
+ arch/m68k/kernel/vmlinux-std.lds     |  2 +-
+ arch/m68k/kernel/vmlinux-sun3.lds    |  2 +-
+ arch/microblaze/kernel/vmlinux.lds.S |  8 ++---
+ arch/mips/kernel/vmlinux.lds.S       | 15 ++++----
+ arch/nds32/kernel/vmlinux.lds.S      |  5 ++-
+ arch/nios2/kernel/vmlinux.lds.S      |  5 ++-
+ arch/openrisc/kernel/vmlinux.lds.S   |  7 ++--
+ arch/parisc/kernel/vmlinux.lds.S     | 11 +++---
+ arch/powerpc/kernel/vmlinux.lds.S    | 37 ++++---------------
+ arch/riscv/kernel/vmlinux.lds.S      |  5 ++-
+ arch/s390/kernel/vmlinux.lds.S       | 12 +++----
+ arch/sh/kernel/vmlinux.lds.S         |  3 +-
+ arch/sparc/kernel/vmlinux.lds.S      |  3 +-
+ arch/um/include/asm/common.lds.S     |  3 +-
+ arch/unicore32/kernel/vmlinux.lds.S  |  5 ++-
+ arch/x86/include/asm/processor.h     |  2 +-
+ arch/x86/include/asm/sections.h      |  1 -
+ arch/x86/kernel/setup.c              | 12 ++++++-
+ arch/x86/kernel/vmlinux.lds.S        | 16 ++++-----
+ arch/x86/mm/init.c                   |  8 ++---
+ arch/x86/mm/init_64.c                | 16 +++++----
+ arch/x86/mm/pti.c                    |  2 +-
+ arch/xtensa/kernel/vmlinux.lds.S     |  8 ++---
+ include/asm-generic/vmlinux.lds.h    | 53 ++++++++++++++++++++--------
+ 35 files changed, 159 insertions(+), 175 deletions(-)
+
+-- 
+2.17.1
+
