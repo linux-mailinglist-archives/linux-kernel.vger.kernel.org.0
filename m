@@ -2,112 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF44FD3E34
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 13:20:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3781D3E3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 13:20:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727829AbfJKLUT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 07:20:19 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60418 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727541AbfJKLUT (ORCPT
+        id S1727946AbfJKLU4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 07:20:56 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39409 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727198AbfJKLUz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 07:20:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=XyJkLzK1tgqObp/ZMiScyNde0WPBzRBi2jcUwb+sE58=; b=D61ONBQoro8pAOe2yUr9ihwlv
-        xdMLOvh0S8seCDUh1REvjyqi7eqxDHtxid2eqWC6bQ2PdGvQjYaPVr6Uf6GYKu3H2OO6PcocKOikq
-        6O5JwobwzI8kHpsqmw/RRpzkNuYPxyYymgcnYqcjnmlkwDJyjk6r3mU8Beb1/WXoSPca05aXyqDgP
-        n/lFoPmjJZYKxvQbF2a8/vbXhF2y72p+tQpFZcwgoiP1jEIV4j+6V7Fx2YhNvfh05xwQlxzfCC6OB
-        NRXj2nlE+Nxo6aeOBg2NWRPQ3Mq/YeEkzgy0Fe0dTBssaB0gNZFR8EIJNuLFoBy7L3htKbvaRUPCp
-        0iT/2ViRQ==;
-Received: from 177.17.141.107.dynamic.adsl.gvt.net.br ([177.17.141.107] helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iIsxz-0007RH-Lh; Fri, 11 Oct 2019 11:20:15 +0000
-Date:   Fri, 11 Oct 2019 08:20:11 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Robert Richter <rrichter@marvell.com>
-Cc:     Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 17/19] EDAC, ghes: Remove intermediate buffer
- pvt->detail_location
-Message-ID: <20191011082011.5d95e7f3@coco.lan>
-In-Reply-To: <20191010202418.25098-18-rrichter@marvell.com>
-References: <20191010202418.25098-1-rrichter@marvell.com>
-        <20191010202418.25098-18-rrichter@marvell.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Fri, 11 Oct 2019 07:20:55 -0400
+Received: by mail-lj1-f196.google.com with SMTP id y3so9446408ljj.6;
+        Fri, 11 Oct 2019 04:20:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EtNnfZSNIM+FE/Ouxm1KBXCTSzFBGzlbFpsvpsa6fzI=;
+        b=D2OqE7PnNRoUmWNbgTg4s/KS8g6W7Ej8Lz/BB12Px1dRFIkn9T/mePVU+H/hIHV56J
+         64v5oYuvA2yBVwR0KjYpdXT/oXajCzphVepm43ADpOGt2tkvfG7g+ZFrAf7vUYqBiwfu
+         EjGV7zGmT3Co3lrzt/KGm2dHBVc8id1bTLHciUJIAOh8xvd9figVUKdPFEFHeguDB88M
+         MtLMtaaxHw6QUzwR1PJNwwgfViWo4DK6326sFZVy7QzQuw4tbK0TeUnOf345R0Q4EuZa
+         CAzVC4ECxAv5aVbB5KLueckmLSFulPvJYY6CEPwIjImSvxfmQszWMcLYYEHWMSGewiS8
+         AtEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EtNnfZSNIM+FE/Ouxm1KBXCTSzFBGzlbFpsvpsa6fzI=;
+        b=gvq9R9vyMHd5xIHJO9sVkhc4ZHKQeCSaRWUZ2xA3jBiJUgBc+YYvBlczanXf/YAu+s
+         dobcfRPRkdoHOEt3psHklGU1OMO1SneU1tlqQOEcvndWs4XO8g+myWz+vkfQMunBYay9
+         0NwjHVDQrdlK9UkvJuafIYBl1kbURhmCjK5QDg7i3P8l+FBKFCc0wWTRW8XOtSS5DPEc
+         B2qyrDZV4IN54K7APTcrPTZ1Cw8N/7tip4TOys8nSep3Ea41gNhr9rpVHoNffZxmi78p
+         KwW7YNsPFscGy8urQcVs9kr3EJ0hx40CErLjM36zlSgYcd0u4xrMTlNXgWbUEVooVl4y
+         CxTA==
+X-Gm-Message-State: APjAAAWXJs2vlbMg+eBjL4QkIgFeVVUDz8urHFYzMXJKjCa6WhMcgDt6
+        TxGfG3U+kxKWePQnb5fkOSbzVrcPF6bDiYCFuNBhmlYZ
+X-Google-Smtp-Source: APXvYqzE/zVDPjPyTom42qRHj6q37hTnXXPuz3aalIoov7655nQZiN5T5dR7/JP1C+tRL0z2N/CI/hjBxsug7ERVx48=
+X-Received: by 2002:a2e:42d6:: with SMTP id h83mr8801587ljf.21.1570792852255;
+ Fri, 11 Oct 2019 04:20:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <1570784940-5965-1-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1570784940-5965-1-git-send-email-Anson.Huang@nxp.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Fri, 11 Oct 2019 08:20:43 -0300
+Message-ID: <CAOMZO5D_Yxzq83zKGM=qUbBjP3c4UB9_GRBAAcMDEvzTYMuyfA@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx7ulp: Correct DDR clock mux options
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        NXP Linux Team <Linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, 10 Oct 2019 20:25:38 +0000
-Robert Richter <rrichter@marvell.com> escreveu:
+On Fri, Oct 11, 2019 at 6:11 AM Anson Huang <Anson.Huang@nxp.com> wrote:
+>
+> In the latest reference manual Rev.0,06/2019, the DDR clock mux
+> is extended to 2 bits, and the clock options are also changed,
+> correct them accordingly.
+>
+> Fixes: b1260067ac3d ("clk: imx: add imx7ulp clk driver")
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-> detail_location[] is used to collect two location strings so they can
-> be passed as one to trace_mc_event(). Instead of having an extra copy
-> step, assemble the location string in other_detail[] from the
-> beginning.
-> 
-> Using other_detail[] to call trace_mc_event() is now the same as in
-> edac_mc.c and code can be unified.
-> 
-> Reviewed-by: James Morse <james.morse@arm.com>
-> Signed-off-by: Robert Richter <rrichter@marvell.com>
-
-Reviewed-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-
-> ---
->  drivers/edac/ghes_edac.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/edac/ghes_edac.c b/drivers/edac/ghes_edac.c
-> index 97242cf18a88..8d9d3c4dbebb 100644
-> --- a/drivers/edac/ghes_edac.c
-> +++ b/drivers/edac/ghes_edac.c
-> @@ -21,8 +21,7 @@ struct ghes_edac_pvt {
->  	struct mem_ctl_info *mci;
->  
->  	/* Buffers for the error handling routine */
-> -	char detail_location[240];
-> -	char other_detail[160];
-> +	char other_detail[400];
->  	char msg[80];
->  };
->  
-> @@ -356,6 +355,8 @@ void ghes_edac_report_mem_error(int sev, struct cper_sec_mem_err *mem_err)
->  
->  	/* All other fields are mapped on e->other_detail */
->  	p = pvt->other_detail;
-> +	p += snprintf(p, sizeof(pvt->other_detail),
-> +		"APEI location: %s ", e->location);
->  	if (mem_err->validation_bits & CPER_MEM_VALID_ERROR_STATUS) {
->  		u64 status = mem_err->error_status;
->  
-> @@ -436,12 +437,10 @@ void ghes_edac_report_mem_error(int sev, struct cper_sec_mem_err *mem_err)
->  	grain_bits = fls_long(e->grain - 1);
->  
->  	/* Generate the trace event */
-> -	snprintf(pvt->detail_location, sizeof(pvt->detail_location),
-> -		 "APEI location: %s %s", e->location, e->other_detail);
->  	trace_mc_event(e->type, e->msg, e->label, e->error_count,
->  		       mci->mc_idx, e->top_layer, e->mid_layer, e->low_layer,
->  		       (e->page_frame_number << PAGE_SHIFT) | e->offset_in_page,
-> -		       grain_bits, e->syndrome, pvt->detail_location);
-> +		       grain_bits, e->syndrome, e->other_detail);
->  
->  	dimm = edac_get_dimm_by_index(mci, e->top_layer);
->  
-
-
-
-Thanks,
-Mauro
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
