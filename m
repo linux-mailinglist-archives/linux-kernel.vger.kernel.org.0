@@ -2,163 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A6ECD3F65
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 14:22:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A021FD3F6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 14:23:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728015AbfJKMV7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 08:21:59 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44100 "EHLO mx1.redhat.com"
+        id S1728066AbfJKMXo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 08:23:44 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43700 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727198AbfJKMV6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 08:21:58 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727974AbfJKMXn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 08:23:43 -0400
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D5B4885537;
-        Fri, 11 Oct 2019 12:21:57 +0000 (UTC)
-Received: from krava.redhat.com (unknown [10.40.206.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id ED3A76012A;
-        Fri, 11 Oct 2019 12:21:55 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Andi Kleen <ak@linux.intel.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>
-Subject: [PATCH] perf tools: Propagate CFLAGS to libperf
-Date:   Fri, 11 Oct 2019 14:21:55 +0200
-Message-Id: <20191011122155.15738-1-jolsa@kernel.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id 1487C2A09A7
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 12:23:43 +0000 (UTC)
+Received: by mail-ed1-f69.google.com with SMTP id 34so5661796edf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 05:23:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=H2MBbbJ40+7c+zCxtdMVPxmyJTAgLs4tX+z2yWBAoJY=;
+        b=YNPwsuURRfr/wJ7i9F5IbvWxbAoiCp/ypxFHQVxbuoih8cNlAUqh/yiU2182fxnvYm
+         vUcS9uGYj7jxp8xcDq8dE+vxiBRfAu+ATMJ+/muD8ykf47S5Q4KkQjdDn4eNr5x6d5Cu
+         gyh6IobjdpxjRN2wmZasKtkNwKYIb4XLP7w/kg/gQ1goOLUcnSnpY6ovO/0hr89irF27
+         py3m6mHqpBwkgY9sH6fnhn0Pax6x2XkJpBcQ54ePmK2VHwgSC/sAlBWg6jiy+7ZlTaox
+         UZ7/7f7gBcQXSmRhNlIp9mqcCrWJ4EmraHINVEJlH4uz4xAJODzFNSuGzo0z2yAkwPBS
+         hvUQ==
+X-Gm-Message-State: APjAAAXebsnsRf9dXpzCuATq8LwSSQtwLpRWoO3DUz0XXZXke2TooXPV
+        l71mq7ovkgmsXTGY4kGW/dUQP+GCpKzasJRBHAqjTwD1X+A6HtpNQYhBQfwqLb69iYfe38UzOBg
+        P9EgO8vkKfvrlK52rSh3JTsYD
+X-Received: by 2002:a17:906:5407:: with SMTP id q7mr13791852ejo.24.1570796621422;
+        Fri, 11 Oct 2019 05:23:41 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxcuwNfu7eBCa+wJQza/bR/XzgJiVyFoOkqeJ3Q9NTMa95W6G9v3z1bhtpv9pyERQVnbX9Tyg==
+X-Received: by 2002:a17:906:5407:: with SMTP id q7mr13791826ejo.24.1570796621125;
+        Fri, 11 Oct 2019 05:23:41 -0700 (PDT)
+Received: from localhost ([2a02:2450:102e:d85:877d:43b4:dd8f:144d])
+        by smtp.gmail.com with ESMTPSA id lw23sm1095531ejb.68.2019.10.11.05.23.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2019 05:23:40 -0700 (PDT)
+From:   Christian Kellner <ckellner@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-api@vger.kernel.org,
+        Christian Kellner <christian@kellner.me>,
+        Christian Brauner <christian@brauner.io>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, Michal Hocko <mhocko@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>
+Subject: [PATCH v3 1/2] pidfd: show pids for nested pid namespaces in fdinfo
+Date:   Fri, 11 Oct 2019 14:23:20 +0200
+Message-Id: <20191011122323.7770-1-ckellner@redhat.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20191009160532.20674-1-ckellner@redhat.com>
+References: <20191009160532.20674-1-ckellner@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 11 Oct 2019 12:21:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andi reported that 'make DEBUG=1' does not propagate
-to the libbperf code. It's true also for the other
-flags. Changing the code to propagate the global
-build flags to libperf compilation.
+From: Christian Kellner <christian@kellner.me>
 
-Reported-by: Andi Kleen <ak@linux.intel.com>
-Link: http://lkml.kernel.org/n/tip-sgq5yeyvitp655s2iq3e75ls@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+The fdinfo file for a process file descriptor already contains the
+pid of the process in the callers namespaces. Additionally, if pid
+namespaces are configured, show the process ids of the process in
+all nested namespaces in the same format as in the procfs status
+file, i.e. "NSPid:\t%d\%d...". This allows the easy identification
+of the processes in nested namespaces.
+
+Signed-off-by: Christian Kellner <christian@kellner.me>
 ---
- tools/perf/Makefile.config | 28 +++++++++++++++-------------
- tools/perf/Makefile.perf   |  2 +-
- tools/perf/lib/core.c      |  3 ++-
- 3 files changed, 18 insertions(+), 15 deletions(-)
 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index 46f7fba2306c..063202c53b64 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -188,7 +188,7 @@ endif
+Changes in v2:
+- Moved into separate function to avoid multiple ifdefs as suggested
+  by Michal Hocko
+Changes in v3:
+- Helper function takes struct pid_namespace *ns param and got a new
+  name
+
+ kernel/fork.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/kernel/fork.c b/kernel/fork.c
+index bcdf53125210..183950aad82b 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1695,12 +1695,27 @@ static int pidfd_release(struct inode *inode, struct file *file)
+ }
  
- # Treat warnings as errors unless directed not to
- ifneq ($(WERROR),0)
--  CFLAGS += -Werror
-+  CORE_CFLAGS += -Werror
-   CXXFLAGS += -Werror
- endif
- 
-@@ -198,9 +198,9 @@ endif
- 
- ifeq ($(DEBUG),0)
- ifeq ($(CC_NO_CLANG), 0)
--  CFLAGS += -O3
-+  CORE_CFLAGS += -O3
- else
--  CFLAGS += -O6
-+  CORE_CFLAGS += -O6
- endif
- endif
- 
-@@ -245,12 +245,12 @@ FEATURE_CHECK_LDFLAGS-libaio = -lrt
- 
- FEATURE_CHECK_LDFLAGS-disassembler-four-args = -lbfd -lopcodes -ldl
- 
--CFLAGS += -fno-omit-frame-pointer
--CFLAGS += -ggdb3
--CFLAGS += -funwind-tables
--CFLAGS += -Wall
--CFLAGS += -Wextra
--CFLAGS += -std=gnu99
-+CORE_CFLAGS += -fno-omit-frame-pointer
-+CORE_CFLAGS += -ggdb3
-+CORE_CFLAGS += -funwind-tables
-+CORE_CFLAGS += -Wall
-+CORE_CFLAGS += -Wextra
-+CORE_CFLAGS += -std=gnu99
- 
- CXXFLAGS += -std=gnu++11 -fno-exceptions -fno-rtti
- CXXFLAGS += -Wall
-@@ -272,12 +272,12 @@ include $(FEATURES_DUMP)
- endif
- 
- ifeq ($(feature-stackprotector-all), 1)
--  CFLAGS += -fstack-protector-all
-+  CORE_CFLAGS += -fstack-protector-all
- endif
- 
- ifeq ($(DEBUG),0)
-   ifeq ($(feature-fortify-source), 1)
--    CFLAGS += -D_FORTIFY_SOURCE=2
-+    CORE_CFLAGS += -D_FORTIFY_SOURCE=2
-   endif
- endif
- 
-@@ -301,10 +301,12 @@ INC_FLAGS += -I$(src-perf)/util
- INC_FLAGS += -I$(src-perf)
- INC_FLAGS += -I$(srctree)/tools/lib/
- 
--CFLAGS   += $(INC_FLAGS)
-+CORE_CFLAGS += -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE
+ #ifdef CONFIG_PROC_FS
++static inline void print_pidfd_nspid(struct seq_file *m, struct pid *pid,
++				     struct pid_namespace *ns)
++{
++#ifdef CONFIG_PID_NS
++	int i;
 +
-+CFLAGS   += $(CORE_CFLAGS) $(INC_FLAGS)
- CXXFLAGS += $(INC_FLAGS)
- 
--CFLAGS += -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE
-+LIBPERF_CFLAGS := $(CORE_CFLAGS) $(EXTRA_CFLAGS)
- 
- ifeq ($(feature-sync-compare-and-swap), 1)
-   CFLAGS += -DHAVE_SYNC_COMPARE_AND_SWAP_SUPPORT
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index 45c14dc24f4b..a099a8a89447 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -769,7 +769,7 @@ $(LIBBPF)-clean:
- 	$(Q)$(MAKE) -C $(BPF_DIR) O=$(OUTPUT) clean >/dev/null
- 
- $(LIBPERF): FORCE
--	$(Q)$(MAKE) -C $(LIBPERF_DIR) O=$(OUTPUT) $(OUTPUT)libperf.a
-+	$(Q)$(MAKE) -C $(LIBPERF_DIR) EXTRA_CFLAGS="$(LIBPERF_CFLAGS)" O=$(OUTPUT) $(OUTPUT)libperf.a
- 
- $(LIBPERF)-clean:
- 	$(call QUIET_CLEAN, libperf)
-diff --git a/tools/perf/lib/core.c b/tools/perf/lib/core.c
-index d0b9ae422b9f..58fc894b76c5 100644
---- a/tools/perf/lib/core.c
-+++ b/tools/perf/lib/core.c
-@@ -5,11 +5,12 @@
- #include <stdio.h>
- #include <stdarg.h>
- #include <unistd.h>
-+#include <linux/compiler.h>
- #include <perf/core.h>
- #include <internal/lib.h>
- #include "internal.h"
- 
--static int __base_pr(enum libperf_print_level level, const char *format,
-+static int __base_pr(enum libperf_print_level level __maybe_unused, const char *format,
- 		     va_list args)
++	seq_puts(m, "\nNSpid:");
++	for (i = ns->level; i <= pid->level; i++) {
++		ns = pid->numbers[i].ns;
++		seq_put_decimal_ull(m, "\t", pid_nr_ns(pid, ns));
++	}
++#endif
++}
++
+ static void pidfd_show_fdinfo(struct seq_file *m, struct file *f)
  {
- 	return vfprintf(stderr, format, args);
+ 	struct pid_namespace *ns = proc_pid_ns(file_inode(m->file));
+ 	struct pid *pid = f->private_data;
+ 
+ 	seq_put_decimal_ull(m, "Pid:\t", pid_nr_ns(pid, ns));
++	print_pidfd_nspid(m, pid, ns);
+ 	seq_putc(m, '\n');
+ }
+ #endif
 -- 
 2.21.0
 
