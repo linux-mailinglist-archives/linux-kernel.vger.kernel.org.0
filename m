@@ -2,266 +2,254 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD96CD3B2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 10:31:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55208D3B36
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 10:33:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727136AbfJKIbP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 04:31:15 -0400
-Received: from mail-eopbgr140070.outbound.protection.outlook.com ([40.107.14.70]:45050
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726710AbfJKIbP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 04:31:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vc5EzkiT6pm5A7kfwvn7ljic7GPKetn1aiDrllkA8qA=;
- b=BkTC3HDYzI/BegczSywSYKJNP4wpz+04vj7acM9Zy2QMlH7wZuUTbnxNmpW4bxZr3axmB4XYPI/DNm1T4UvJCH6mme7XjuqkwAkLK2yOD9s8NCpHYbqfhYLzJ+MNSZytqGmfIeHpe1FXtMZcVKRld5GvaHeNUG6PzEf0r4Wwkvc=
-Received: from DB7PR08CA0014.eurprd08.prod.outlook.com (2603:10a6:5:16::27) by
- VI1PR0801MB1661.eurprd08.prod.outlook.com (2603:10a6:800:56::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2305.20; Fri, 11 Oct
- 2019 08:31:07 +0000
-Received: from AM5EUR03FT005.eop-EUR03.prod.protection.outlook.com
- (2a01:111:f400:7e08::200) by DB7PR08CA0014.outlook.office365.com
- (2603:10a6:5:16::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2327.25 via Frontend
- Transport; Fri, 11 Oct 2019 08:31:06 +0000
-Authentication-Results: spf=temperror (sender IP is 63.35.35.123)
- smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
- header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=none action=none
- header.from=arm.com;
-Received-SPF: TempError (protection.outlook.com: error in processing during
- lookup of arm.com: DNS Timeout)
-Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- AM5EUR03FT005.mail.protection.outlook.com (10.152.16.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2305.15 via Frontend Transport; Fri, 11 Oct 2019 08:31:05 +0000
-Received: ("Tessian outbound 081de437afc7:v33"); Fri, 11 Oct 2019 08:30:54 +0000
-X-CheckRecipientChecked: true
-X-CR-MTA-CID: 68e6a326f6d64bf2
-X-CR-MTA-TID: 64aa7808
-Received: from b8ac5cc8525d.2 (ip-172-16-0-2.eu-west-1.compute.internal [104.47.12.54])
-        by 64aa7808-outbound-1.mta.getcheckrecipient.com id D47967A5-922A-49B0-970D-B7D8BFE0AD2C.1;
-        Fri, 11 Oct 2019 08:30:49 +0000
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04lp2054.outbound.protection.outlook.com [104.47.12.54])
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id b8ac5cc8525d.2
-    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
-    Fri, 11 Oct 2019 08:30:49 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XiCdfVf81Pu8oCFEA3uNK6zlRncaKdZPEO4XMTtUcw6AM2z4Zx/vbnDQ6rI8IOcApvvZ5um6iU6kltFey+KB4EvAkt1jhn+TJ8Zz2J4priaM/AZHv8tJJWpJ8imwsYQpJGYoBkXuIOGmckxCa28zdDcz0oVr4JpmCYKqgQ+sLOd05PEOML8G8s68xs1Sdkd5PSsuMHIJeZYIfTEgph2EV8Zd+slr6NxoZix16noqhFGtqSTKUfY7L2no997q+ChmZjhX2T/+oqLEnNQPgAxwH1AJfiqa805E1tVp/YSOM4oy1gKpm3B/YPk+kbSAcZKL8stf5LwO8hxYaxneW+elNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vc5EzkiT6pm5A7kfwvn7ljic7GPKetn1aiDrllkA8qA=;
- b=kX/PZsTqQsejQdN5Onn7ElE5mcjDpgNaU8u2+jVRRdpjF1uQqKHkwUmgAmRId9SK6REdEFik48NRMG0Qvnp/Lx8oU4jYmi4c8663jrQiVAAXcPd88fHmLiiLtEMq4f9zWpc16a0MBjzJMHhsELumrDAhRyVbf+HceBK4d2V39VZb4nrMEvkZ66WW/aiNISAXyoMd3U1htvbJ5ez+iwFQVvM6/uEvZjoMOgb0HZhsoYUNV7SuxPHtcxK1FmpMnOn4DYAa/NDmu21Hw3CPjAyv0KHufP6miytL7S9H9YtV00funmlIkNb2XGCaRg3WTZKAe0TPjeeN1CMXIK8Gm74pTQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vc5EzkiT6pm5A7kfwvn7ljic7GPKetn1aiDrllkA8qA=;
- b=BkTC3HDYzI/BegczSywSYKJNP4wpz+04vj7acM9Zy2QMlH7wZuUTbnxNmpW4bxZr3axmB4XYPI/DNm1T4UvJCH6mme7XjuqkwAkLK2yOD9s8NCpHYbqfhYLzJ+MNSZytqGmfIeHpe1FXtMZcVKRld5GvaHeNUG6PzEf0r4Wwkvc=
-Received: from VI1PR08MB4078.eurprd08.prod.outlook.com (20.178.127.92) by
- VI1PR08MB2910.eurprd08.prod.outlook.com (10.175.245.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.18; Fri, 11 Oct 2019 08:30:47 +0000
-Received: from VI1PR08MB4078.eurprd08.prod.outlook.com
- ([fe80::7d25:d1f2:e3eb:868b]) by VI1PR08MB4078.eurprd08.prod.outlook.com
- ([fe80::7d25:d1f2:e3eb:868b%6]) with mapi id 15.20.2347.016; Fri, 11 Oct 2019
- 08:30:47 +0000
-From:   Mihail Atanassov <Mihail.Atanassov@arm.com>
-To:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
-CC:     Liviu Dudau <Liviu.Dudau@arm.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "sean@poorly.run" <sean@poorly.run>,
-        "imirkin@alum.mit.edu" <imirkin@alum.mit.edu>,
-        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
-        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
-        "Thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
-        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
-        Ayan Halder <Ayan.Halder@arm.com>,
-        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
-        "Yiqi Kang (Arm Technology China)" <Yiqi.Kang@arm.com>,
-        nd <nd@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Ben Davis <Ben.Davis@arm.com>,
-        "Oscar Zhang (Arm Technology China)" <Oscar.Zhang@arm.com>,
-        "Channing Chen (Arm Technology China)" <Channing.Chen@arm.com>
-Subject: Re: [PATCH v2 2/4] drm/komeda: Add drm_lut_to_fgamma_coeffs()
-Thread-Topic: [PATCH v2 2/4] drm/komeda: Add drm_lut_to_fgamma_coeffs()
-Thread-Index: AQHVf/cgyUi1BihLGUqjRrTFJfR086dVHGuA
-Date:   Fri, 11 Oct 2019 08:30:47 +0000
-Message-ID: <2583309.pvr1AVrQub@e123338-lin>
-References: <20191011054459.17984-1-james.qian.wang@arm.com>
- <20191011054459.17984-3-james.qian.wang@arm.com>
-In-Reply-To: <20191011054459.17984-3-james.qian.wang@arm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [217.140.106.54]
-x-clientproxiedby: CWLP123CA0016.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:401:56::28) To VI1PR08MB4078.eurprd08.prod.outlook.com
- (2603:10a6:803:e5::28)
-Authentication-Results-Original: spf=none (sender IP is )
- smtp.mailfrom=Mihail.Atanassov@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-X-MS-Office365-Filtering-Correlation-Id: a67d1d86-eaaf-45b9-12af-08d74e255b98
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-TrafficTypeDiagnostic: VI1PR08MB2910:|VI1PR08MB2910:|VI1PR0801MB1661:
-x-ms-exchange-transport-forked: True
-X-Microsoft-Antispam-PRVS: <VI1PR0801MB166165C69814C9786C5715E78F970@VI1PR0801MB1661.eurprd08.prod.outlook.com>
-x-checkrecipientrouted: true
-x-ms-oob-tlc-oobclassifiers: OLM:5797;OLM:5797;
-x-forefront-prvs: 0187F3EA14
-X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(7916004)(4636009)(366004)(396003)(136003)(376002)(346002)(39860400002)(189003)(199004)(54906003)(6246003)(6506007)(76176011)(6486002)(6436002)(305945005)(476003)(7736002)(6116002)(386003)(186003)(102836004)(14454004)(52116002)(2906002)(9686003)(26005)(3846002)(25786009)(229853002)(256004)(14444005)(99286004)(486006)(316002)(33716001)(86362001)(6512007)(66066001)(5660300002)(66446008)(478600001)(71200400001)(71190400001)(4326008)(11346002)(6862004)(66476007)(66946007)(446003)(81156014)(81166006)(64756008)(6636002)(8936002)(8676002)(66556008)(39026011);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB2910;H:VI1PR08MB4078.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original: v3HSXOnWBvbx/rHxYcbssxlPTwtInk5jUjn6udN7OLHDWycfstavx0RIu5NDDM/W69P2MUreQxq7Yjb1sSX7BoRnNcgjnq49+U2wTpY50bEl0Q385kpHQuUhjqwCC9dx+mg1mJoaJ8XOLU/rAD622C+0TJqAA7kXS75jLayVY3J781L0vJwCMYqjc1lEZjWPE4QoKhDWPJfL0iYeV49iE5fIIMHIjnYePhsUfKJmrKGtybtn0eizdI+aN9E5X5VfKZQd6s+ePwXWjCqY8oBb1dv13D56pjftfFDl+JMR35W4E2Flf5tVozMr9gF1lzdTHlP7F9tyakrSplFCZVJzjw1P2HZAH6J4BLcg508P43E4bO4+pVA9o/m4RByBUOeIpZ+waPJHqc1NYM3J+UjJz5lqtpTCZ+DCTkupmI57Zds=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <FAD8E2F806A05C4497900F5001DA7AA2@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1727163AbfJKIde (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 04:33:34 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:49692 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726310AbfJKIde (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 04:33:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1570782812;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=lv2n8RzBNjzNOOEAtify7kjX8BgxZSVCxmsWP+/vN9Q=;
+        b=PG6UTeBg8LPb2CpANfkRJtmym7bFl6ow/frk7Y9rii51q0mOKwvvsBmw5e5rr1iyiiS/1t
+        ClVUBdOjqwVYn3+JV8OVs3Jb+C21ajji2PD9LrCc9oyG+Hag9o1oXKgKWpKHr7yZzPv7HH
+        zMGB14HO9nlstALEVQEnl9IL5il0YAY=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-180-9ENhuOPcORSwlvQlczllBA-1; Fri, 11 Oct 2019 04:33:29 -0400
+Received: by mail-qk1-f199.google.com with SMTP id z128so8219787qke.8
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 01:33:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=g1m12iP4A4oey/2qiBNQwWMQi5T63Im+boUgNroy/4M=;
+        b=C5SaD29VeWsYoClFH9hSOByjvZKAmnAjzCXxRMy1ccNW1T1lUyLDB3AdEdA4h2ECt8
+         rtV6tzKLclmPBMB2XXy51nJi6+Io2u27l38kqyCiO9EURVR4aJxESTQBpknNO+L2BRSL
+         OBEk74me0tPiMo7oGreHdPSH1f3hio1UGlyxXt+tYSsp0Y47Z+3UsINPiJRy6fDFHVG4
+         sPouSshBs3QBCzXjrMESyLtDsg3eSc9aWrC29X12ZrblGPag6KdCDW0M4SpGCuygLfq5
+         S20YvHMyjyYibAxo4O7oUMAZI9zNN5oJbljxTlUD+muo1qHI9kVg1t6RRs1hn8tEZ21g
+         bsNA==
+X-Gm-Message-State: APjAAAUVSsapTC3wqTqc7hzMwI9l91In2pAjvLTDR+nvgO9bylqSwBTC
+        DCiFGr1v+Y8vJ79FF1uQMiWsr8shBvo/d3ZHdAvvr7ZPoyYtrsMDKSXFsFtgT8F8p8VuZ2c9nxa
+        XtunvmboLmFu6GzavdpnPlhv21j654LpmpW4aYh7/
+X-Received: by 2002:ac8:38bb:: with SMTP id f56mr15339768qtc.154.1570782808778;
+        Fri, 11 Oct 2019 01:33:28 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwrBUY7D0ncicSSgdQf9OCKamMf2CWq0DECsBnwxxQ9O17fpMOJkRIhh72Qx77LcJrpX+6z4uE9OgoeJF5BZj4=
+X-Received: by 2002:ac8:38bb:: with SMTP id f56mr15339749qtc.154.1570782808537;
+ Fri, 11 Oct 2019 01:33:28 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB2910
-Original-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Mihail.Atanassov@arm.com; 
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: AM5EUR03FT005.eop-EUR03.prod.protection.outlook.com
-X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(7916004)(136003)(39860400002)(396003)(376002)(346002)(189003)(199004)(6486002)(26005)(476003)(5660300002)(305945005)(76176011)(6246003)(186003)(126002)(8936002)(6506007)(97756001)(8746002)(50466002)(14444005)(486006)(336012)(102836004)(63350400001)(478600001)(26826003)(7736002)(46406003)(9686003)(6512007)(47776003)(386003)(14454004)(22756006)(316002)(229853002)(36906005)(54906003)(70206006)(11346002)(4326008)(6636002)(33716001)(446003)(99286004)(76130400001)(25786009)(3846002)(23726003)(6116002)(6862004)(81166006)(81156014)(70586007)(356004)(2906002)(86362001)(66066001)(8676002)(39026011);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0801MB1661;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:TempError;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;MX:1;A:1;
-X-MS-Office365-Filtering-Correlation-Id-Prvs: d53e749e-0c48-4ba4-f78d-08d74e255094
-NoDisclaimer: True
-X-Forefront-PRVS: 0187F3EA14
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: cENdKHJj5mp9zc03b99qtXf3DGW8MMxEXmNWBG2Hj9R9lcQpTI6NfnmsLjWSbxSR5vKOPxMcu0eWqk3VDeddEQMAbHafFOw70AgOADkC38kq92w8kdfK6HAJw8gGRPcTnocKCJRJlCln823jSxcMm6VdegMCItiRjn9pIVs4NLgtciypNtbOcJZELOTlISLTan5QU48CrSZ5byR4CM1RPxdDSjJUmuZulei+55dX2RLyVdSmTWlQtGt+5Opro7IwlYJP0YsDtUNRYrFQf7SpFqdLt5qo8bxJ8fpZt8T6ZJCEKe3YcmENP5yobSyXpJDO4JFV4jwqkbqtQ5nx4Pski9KoBdN0WL2ye7OQzkpwsf0N+fIZhKYThnV62adnzV3xHVdQOffaOALmQU+Juv3tMdmuVZLmjMXeGK+c9qacjQY=
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Oct 2019 08:31:05.3093
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a67d1d86-eaaf-45b9-12af-08d74e255b98
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0801MB1661
+References: <jCmT1QOunDmSu59iO1T1xj2-WfFeGhMn_i5knEWTCoph9VH1oxjpYf3Q6CWH7BRrq1NTVYBsAVJcIgu8azAEmFZJA8PzLfH3bHBcWNbFqeY=@protonmail.com>
+In-Reply-To: <jCmT1QOunDmSu59iO1T1xj2-WfFeGhMn_i5knEWTCoph9VH1oxjpYf3Q6CWH7BRrq1NTVYBsAVJcIgu8azAEmFZJA8PzLfH3bHBcWNbFqeY=@protonmail.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Fri, 11 Oct 2019 10:33:17 +0200
+Message-ID: <CAO-hwJ+AMmNUOhas+vq6K4sRcCspyJuAefKO8oomAH4=CDHoJw@mail.gmail.com>
+Subject: Re: [PATCH v4 3/4] HID: logitech: Add feature 0x0001: FeatureSet
+To:     Mazin Rezk <mnrzk@protonmail.com>
+Cc:     "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "jikos@kernel.org" <jikos@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Filipe_La=C3=ADns?= <lains@archlinux.org>
+X-MC-Unique: 9ENhuOPcORSwlvQlczllBA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, 11 October 2019 06:45:35 BST james qian wang (Arm Technology Chi=
-na) wrote:
-> This function is used to convert drm 3dlut to komeda HW required 1d curve
-> coeffs values.
->=20
-> Signed-off-by: james qian wang (Arm Technology China) <james.qian.wang@ar=
-m.com>
+On Fri, Oct 11, 2019 at 2:57 AM Mazin Rezk <mnrzk@protonmail.com> wrote:
+>
+> On Saturday, October 5, 2019 9:04 PM, Mazin Rezk <mnrzk@protonmail.com> w=
+rote:
+>
+> > This patch adds support for the 0x0001 (FeatureSet) feature. This featu=
+re
+> > is used to look up the feature ID of a feature index on a device and li=
+st
+> > the total count of features on the device.
+> >
+> > I also added the hidpp20_get_features function which iterates through a=
+ll
+> > feature indexes on the device and stores a map of them in features an
+> > hidpp_device struct. This function runs when an HID++ 2.0 device is pro=
+bed.
+>
+> Changes in the version:
+>  - Renamed hidpp20_featureset_get_feature to
+>    hidpp20_featureset_get_feature_id.
+>
+>  - Re-ordered hidpp20_featureset_get_count and
+>    hidpp20_featureset_get_feature_id based on their command IDs.
+>
+>  - Made feature_count initialize to 0 before running hidpp20_get_features=
+.
+
+I still need to decide whether or not we need to take this one. We
+historically did not do this to mimic the Windows driver at the time.
+However, the driver is full of quirks that could be detected instead
+of hardcoded thanks to this functions. So we might want to switch to
+auto-detection of those quirks so we can keep 'quirks' for actual
+defects that can't be auto-detected.
+
+But, if we want to go this route, we need to actually make use of it.
+So this patch should be part of a series where we use it, not added by
+its own.
+
+Can you drop it from the series?
+And maybe possibly work on a cleanup of some of the auto detection,
+like the HIDPP_QUIRK_HI_RES_SCROLL_X2121 which you can easily test?
+But this would need to happen in a second series, once this one gets
+merged in.
+
+Cheers,
+Benjamin
+
+>
+> Signed-off-by: Mazin Rezk <mnrzk@protonmail.com>
 > ---
->  .../arm/display/komeda/komeda_color_mgmt.c    | 52 +++++++++++++++++++
->  .../arm/display/komeda/komeda_color_mgmt.h    |  9 +++-
->  2 files changed, 60 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.c b/dri=
-vers/gpu/drm/arm/display/komeda/komeda_color_mgmt.c
-> index 9d14a92dbb17..c180ce70c26c 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.c
-> @@ -65,3 +65,55 @@ const s32 *komeda_select_yuv2rgb_coeffs(u32 color_enco=
-ding, u32 color_range)
-> =20
->  	return coeffs;
+>  drivers/hid/hid-logitech-hidpp.c | 90 ++++++++++++++++++++++++++++++++
+>  1 file changed, 90 insertions(+)
+>
+> diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-=
+hidpp.c
+> index a0efa8a43213..2062be922c08 100644
+> --- a/drivers/hid/hid-logitech-hidpp.c
+> +++ b/drivers/hid/hid-logitech-hidpp.c
+> @@ -190,6 +190,9 @@ struct hidpp_device {
+>
+>         struct hidpp_battery battery;
+>         struct hidpp_scroll_counter vertical_wheel_counter;
+> +
+> +       u16 *features;
+> +       u8 feature_count;
+>  };
+>
+>  /* HID++ 1.0 error codes */
+> @@ -911,6 +914,82 @@ static int hidpp_root_get_protocol_version(struct hi=
+dpp_device *hidpp)
+>         return 0;
 >  }
+>
+> +/* ---------------------------------------------------------------------=
+----- */
+> +/* 0x0001: FeatureSet                                                   =
+      */
+> +/* ---------------------------------------------------------------------=
+----- */
 > +
-> +struct gamma_curve_sector {
-> +	u32 boundary_start;
-> +	u32 num_of_segments;
-> +	u32 segment_width;
-> +};
+> +#define HIDPP_PAGE_FEATURESET                          0x0001
 > +
-> +struct gamma_curve_segment {
-> +	u32 start;
-> +	u32 end;
-> +};
+> +#define CMD_FEATURESET_GET_COUNT                       0x00
+> +#define CMD_FEATURESET_GET_FEATURE                     0x11
 > +
-> +static struct gamma_curve_sector sector_tbl[] =3D {
-[bikeshed] I'd name this fgamma_sector_tbl (didn't the previous version
-of this patch stack have an gamma_curve_sector for igamma?).
-> +	{ 0,    4,  4   },
-> +	{ 16,   4,  4   },
-> +	{ 32,   4,  8   },
-> +	{ 64,   4,  16  },
-> +	{ 128,  4,  32  },
-> +	{ 256,  4,  64  },
-> +	{ 512,  16, 32  },
-> +	{ 1024, 24, 128 },
-> +};
-> +
-> +static void
-> +drm_lut_to_coeffs(struct drm_property_blob *lut_blob, u32 *coeffs,
-> +		  struct gamma_curve_sector *sector_tbl, u32 num_sectors)
+> +static int hidpp20_featureset_get_count(struct hidpp_device *hidpp,
+> +       u8 feature_index, u8 *count)
 > +{
-> +	struct drm_color_lut *lut;
-> +	u32 i, j, in, num =3D 0;
+> +       struct hidpp_report response;
+> +       int ret;
 > +
-> +	if (!lut_blob)
-> +		return;
+> +       ret =3D hidpp_send_fap_command_sync(hidpp, feature_index,
+> +               CMD_FEATURESET_GET_COUNT, NULL, 0, &response);
 > +
-> +	lut =3D lut_blob->data;
+> +       if (ret)
+> +               return ret;
 > +
-> +	for (i =3D 0; i < num_sectors; i++) {
-> +		for (j =3D 0; j < sector_tbl[i].num_of_segments; j++) {
-> +			in =3D sector_tbl[i].boundary_start +
-> +			     j * sector_tbl[i].segment_width;
+> +       *count =3D response.fap.params[0];
 > +
-> +			coeffs[num++] =3D drm_color_lut_extract(lut[in].red,
-> +						KOMEDA_COLOR_PRECISION);
-> +		}
-> +	}
-> +
-> +	coeffs[num] =3D BIT(KOMEDA_COLOR_PRECISION);
+> +       return ret;
 > +}
 > +
-> +void drm_lut_to_fgamma_coeffs(struct drm_property_blob *lut_blob, u32 *c=
-oeffs)
+> +static int hidpp20_featureset_get_feature_id(struct hidpp_device *hidpp,
+> +       u8 featureset_index, u8 feature_index, u16 *feature_id)
 > +{
-> +	drm_lut_to_coeffs(lut_blob, coeffs, sector_tbl, ARRAY_SIZE(sector_tbl))=
+> +       struct hidpp_report response;
+> +       int ret;
+> +
+> +       ret =3D hidpp_send_fap_command_sync(hidpp, featureset_index,
+> +               CMD_FEATURESET_GET_FEATURE, &feature_index, 1, &response)=
 ;
-> +}
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.h b/dri=
-vers/gpu/drm/arm/display/komeda/komeda_color_mgmt.h
-> index a2df218f58e7..08ab69281648 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.h
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.h
-> @@ -11,7 +11,14 @@
->  #include <drm/drm_color_mgmt.h>
-> =20
->  #define KOMEDA_N_YUV2RGB_COEFFS		12
-> +#define KOMEDA_N_RGB2YUV_COEFFS		12
-> +#define KOMEDA_COLOR_PRECISION		12
-> +#define KOMEDA_N_GAMMA_COEFFS		65
-> +#define KOMEDA_COLOR_LUT_SIZE		BIT(KOMEDA_COLOR_PRECISION)
-> +#define KOMEDA_N_CTM_COEFFS		9
-[nit] The alignment with the group above seems a bit off.
 > +
-> +void drm_lut_to_fgamma_coeffs(struct drm_property_blob *lut_blob, u32 *c=
-oeffs);
-> =20
->  const s32 *komeda_select_yuv2rgb_coeffs(u32 color_encoding, u32 color_ra=
-nge);
-> =20
-> -#endif
-> +#endif /*_KOMEDA_COLOR_MGMT_H_*/
->=20
-Reviewed-by: Mihail Atanassov <mihail.atanassov@arm.com>
-
---=20
-Mihail
-
-
+> +       if (ret)
+> +               return ret;
+> +
+> +       *feature_id =3D (response.fap.params[0] << 8) | response.fap.para=
+ms[1];
+> +
+> +       return ret;
+> +}
+> +
+> +static int hidpp20_get_features(struct hidpp_device *hidpp)
+> +{
+> +       int ret;
+> +       u8 featureset_index, featureset_type;
+> +       u8 i;
+> +
+> +       ret =3D hidpp_root_get_feature(hidpp, HIDPP_PAGE_FEATURESET,
+> +                                    &featureset_index, &featureset_type)=
+;
+> +
+> +       if (ret =3D=3D -ENOENT) {
+> +               hid_warn(hidpp->hid_dev, "Unable to retrieve feature set.=
+");
+> +               return 0;
+> +       }
+> +
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret =3D hidpp20_featureset_get_count(hidpp, featureset_index,
+> +               &hidpp->feature_count);
+> +
+> +       if (ret)
+> +               return ret;
+> +
+> +       hidpp->features =3D devm_kzalloc(&hidpp->hid_dev->dev,
+> +                       hidpp->feature_count * sizeof(u16), GFP_KERNEL);
+> +
+> +       for (i =3D 0; i < hidpp->feature_count && !ret; i++)
+> +               ret =3D hidpp20_featureset_get_feature_id(hidpp, features=
+et_index,
+> +                               i, &(hidpp->features[i]));
+> +
+> +       return ret;
+> +}
+> +
+>  /* ---------------------------------------------------------------------=
+----- */
+>  /* 0x0005: GetDeviceNameType                                            =
+      */
+>  /* ---------------------------------------------------------------------=
+----- */
+> @@ -3625,6 +3704,17 @@ static int hidpp_probe(struct hid_device *hdev, co=
+nst struct hid_device_id *id)
+>                 hidpp_overwrite_name(hdev);
+>         }
+>
+> +       /* Cache feature indexes and IDs to check reports faster */
+> +       hidpp->feature_count =3D 0;
+> +
+> +       if (hidpp->protocol_major >=3D 2) {
+> +               if (hidpp20_get_features(hidpp)) {
+> +                       hid_err(hdev, "%s:hidpp20_get_features returned e=
+rror\n",
+> +                               __func__);
+> +                       goto hid_hw_init_fail;
+> +               }
+> +       }
+> +
+>         if (connected && (hidpp->quirks & HIDPP_QUIRK_CLASS_WTP)) {
+>                 ret =3D wtp_get_config(hidpp);
+>                 if (ret)
+> --
+> 2.23.0
 
