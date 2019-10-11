@@ -2,119 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A74FCD4390
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 16:57:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BB21D4392
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 16:58:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727807AbfJKO5Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 10:57:25 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:39589 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726331AbfJKO5Y (ORCPT
+        id S1727839AbfJKO6S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 10:58:18 -0400
+Received: from smtprelay0067.hostedemail.com ([216.40.44.67]:53639 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726331AbfJKO6S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 10:57:24 -0400
-Received: by mail-qk1-f193.google.com with SMTP id 4so9127962qki.6
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 07:57:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YbBp9VvPkD8eNpJBRQ5STbltfPRFXxYXYzjmjuU0B34=;
-        b=MHcwt0R9n6g9OcUmpGOacsNQ3PLbzo+CSC08LXsvnHZ0MI4NxEONsfXpXUZCFj+nee
-         xTaFgzuj8zSkufJo3VL2rKeg1RmKDKz5S63aP2m6rutf3WAmRO6zxIEEG0dhbtpwfmic
-         DVIvuJSOEDEru4SJkHlRLrAmHN+LD8zrHUzDToLJ8DnkdOp679Zyr/1FS+ydZGoyAwma
-         T85YTUKUtdaaDMm9Pc7jt29TBzKwUJC0jdK8/S4oVVirU6ut50SDG0HpI0hEpUwI+o6i
-         QGfWuI0EqKffPiAkS51NsS2NjbnOdSBIhBxtmSw8jldSfsNGvN8qVD0nkAVX1L+aq4+h
-         DkNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YbBp9VvPkD8eNpJBRQ5STbltfPRFXxYXYzjmjuU0B34=;
-        b=LzRAeYkcHVaY1o85LyB8Pj91/HmQw1cHextAJHi2SXIe371fjPWQZQ41WMxjNB+4Ll
-         1+PfMrV/0Db4WtWz3LIIjCNwRgteNwIswJfSreej973z3FouoAP2stsM1ElI5hzGDoVA
-         wM43YDL+SF30zVCVW9vMtrkUvW7LW0vBjkdPdjEOuBcv/mq5v3rZl4IIyom9PMm4Uw6A
-         WQxDLNPUU5fh3teT90ek/4T48CndhSskE98E7sqFZ79jwPX2MVmxqPkYFycdNhwKkQ/u
-         x98s0BlfiYrVLSklkZpw4ucDjuBbIlX7SLZwbwLVZVtUausR5mcxtPGw+Zb9OWvmqf8Z
-         l5Mw==
-X-Gm-Message-State: APjAAAWBSLm8WB3nz96dVai7NC+8WHWgtgMpeClEDJjJ9cttHmwOnqmQ
-        YqOeChJVzKmpcMoH4mySdDHK99/8BX8=
-X-Google-Smtp-Source: APXvYqwW3ebcRvrTy8tgu7bWsHJGSY9ufsTTMd5PUS1NSfcaT9aY86IEEBpS0O4460EIDp7UF7T8IQ==
-X-Received: by 2002:a05:620a:2152:: with SMTP id m18mr16157791qkm.354.1570805843289;
-        Fri, 11 Oct 2019 07:57:23 -0700 (PDT)
-Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id q64sm4759497qkb.32.2019.10.11.07.57.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2019 07:57:22 -0700 (PDT)
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
-        peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@microsoft.com,
-        thiruan@microsoft.com, bryankel@microsoft.com,
-        tee-dev@lists.linaro.org, ilias.apalodimas@linaro.org,
-        sumit.garg@linaro.org, rdunlap@infradead.org
-Subject: [PATCH] ftpm: add shutdown call back
-Date:   Fri, 11 Oct 2019 10:57:21 -0400
-Message-Id: <20191011145721.59257-1-pasha.tatashin@soleen.com>
-X-Mailer: git-send-email 2.23.0
+        Fri, 11 Oct 2019 10:58:18 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id E08F618224D97;
+        Fri, 11 Oct 2019 14:58:16 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:421:599:960:968:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2194:2199:2393:2559:2562:2828:2890:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3873:4042:4250:4321:5007:8603:10004:10400:11026:11232:11658:11914:12043:12048:12296:12297:12740:12760:12895:13069:13153:13228:13311:13357:13439:14659:14721:21080:21450:21627:30001:30054:30070:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
+X-HE-Tag: use83_825e07cff5843
+X-Filterd-Recvd-Size: 2064
+Received: from XPS-9350.home (unknown [47.151.152.152])
+        (Authenticated sender: joe@perches.com)
+        by omf15.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 11 Oct 2019 14:58:15 +0000 (UTC)
+Message-ID: <4eaca9a1bcbf9d87c1fb3c9135876c3ecb72a91b.camel@perches.com>
+Subject: Re: [PATCH v1] ipmi: use %*ph to print small buffer
+From:   Joe Perches <joe@perches.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Corey Minyard <minyard@acm.org>,
+        openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 11 Oct 2019 07:58:14 -0700
+In-Reply-To: <20191011145213.65082-1-andriy.shevchenko@linux.intel.com>
+References: <20191011145213.65082-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: thiruan <thiruan@microsoft.com>
+On Fri, 2019-10-11 at 17:52 +0300, Andy Shevchenko wrote:
+> Use %*ph format to print small buffer as hex string.
+> 
+> The change is safe since the specifier can handle up to 64 bytes and taking
+> into account the buffer size of 100 bytes on stack the function has never been
+> used to dump more than 32 bytes. Note, this also avoids potential buffer
+> overflow if the length of the input buffer is bigger.
+[]
+> diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+[]
+> @@ -48,14 +48,7 @@ static int handle_one_recv_msg(struct ipmi_smi *intf,
+>  static void ipmi_debug_msg(const char *title, unsigned char *data,
+>  			   unsigned int len)
+>  {
+> -	int i, pos;
+> -	char buf[100];
+> -
+> -	pos = snprintf(buf, sizeof(buf), "%s: ", title);
+> -	for (i = 0; i < len; i++)
+> -		pos += snprintf(buf + pos, sizeof(buf) - pos,
+> -				" %2.2x", data[i]);
+> -	pr_debug("%s\n", buf);
+> +	pr_debug("%s: %*ph\n", title, len, buf);
+>  }
+>  #else
+>  static void ipmi_debug_msg(const char *title, unsigned char *data,
 
-add shutdown call back to close existing session with fTPM TA
-to support kexec scenario.
+Now you might as well remove the #ifdef DEBUG above this
+and the empty function in the #else too.
 
-Signed-off-by: Thirupathaiah Annapureddy <thiruan@microsoft.com>
-Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
----
- drivers/char/tpm/tpm_ftpm_tee.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
-
-diff --git a/drivers/char/tpm/tpm_ftpm_tee.c b/drivers/char/tpm/tpm_ftpm_tee.c
-index 6640a14dbe48..c245be6f4015 100644
---- a/drivers/char/tpm/tpm_ftpm_tee.c
-+++ b/drivers/char/tpm/tpm_ftpm_tee.c
-@@ -328,6 +328,27 @@ static int ftpm_tee_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+/**
-+ * ftpm_tee_shutdown - shutdown the TPM device
-+ * @pdev: the platform_device description.
-+ *
-+ * Return:
-+ * 	none.
-+ */
-+static void ftpm_tee_shutdown(struct platform_device *pdev)
-+{
-+	struct ftpm_tee_private *pvt_data = dev_get_drvdata(&pdev->dev);
-+
-+	/* Free the shared memory pool */
-+	tee_shm_free(pvt_data->shm);
-+
-+	/* close the existing session with fTPM TA*/
-+	tee_client_close_session(pvt_data->ctx, pvt_data->session);
-+
-+	/* close the context with TEE driver */
-+	tee_client_close_context(pvt_data->ctx);
-+}
-+
- static const struct of_device_id of_ftpm_tee_ids[] = {
- 	{ .compatible = "microsoft,ftpm" },
- 	{ }
-@@ -341,6 +362,7 @@ static struct platform_driver ftpm_tee_driver = {
- 	},
- 	.probe = ftpm_tee_probe,
- 	.remove = ftpm_tee_remove,
-+	.shutdown = ftpm_tee_shutdown,
- };
- 
- module_platform_driver(ftpm_tee_driver);
--- 
-2.23.0
 
