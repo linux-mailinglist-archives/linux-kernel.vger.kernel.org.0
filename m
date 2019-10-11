@@ -2,101 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2485AD4326
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 16:42:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97474D433E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 16:44:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727480AbfJKOmn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 10:42:43 -0400
-Received: from foss.arm.com ([217.140.110.172]:34514 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726174AbfJKOml (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 10:42:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7DC51142F;
-        Fri, 11 Oct 2019 07:42:40 -0700 (PDT)
-Received: from bogus (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5F2DC3F68E;
-        Fri, 11 Oct 2019 07:42:39 -0700 (PDT)
-Date:   Fri, 11 Oct 2019 15:42:33 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: ARM Juno r1 + CONFIG_PROVE_LOCKING=y => boot failure
-Message-ID: <20191011144233.GA2438@bogus>
-References: <CGME20191011092604eucas1p1ca11ab9c4c7508776914b0eb4f35e69b@eucas1p1.samsung.com>
- <33a83dce-e9f0-7814-923b-763d33e70257@samsung.com>
- <20191011100521.GA5122@bogus>
- <7655fb41-cd13-0bc4-e656-040e0875bab8@arm.com>
- <2bf88cd2-9c4f-11dc-4b70-f717de891cff@samsung.com>
- <20191011131058.GA26061@bogus>
- <0b02b15f-38be-7a63-14cc-eabd288782eb@samsung.com>
- <20191011134354.GA31516@bogus>
+        id S1727670AbfJKOnw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 10:43:52 -0400
+Received: from relay10.mail.gandi.net ([217.70.178.230]:44439 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726551AbfJKOnw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 10:43:52 -0400
+Received: from xps13.stephanxp.local (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 167AE240008;
+        Fri, 11 Oct 2019 14:43:48 +0000 (UTC)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     <devicetree@vger.kernel.org>, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH v4 0/8] Introduce max12xx ADC support
+Date:   Fri, 11 Oct 2019 16:43:39 +0200
+Message-Id: <20191011144347.19146-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191011134354.GA31516@bogus>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 02:43:54PM +0100, Sudeep Holla wrote:
-> On Fri, Oct 11, 2019 at 03:15:32PM +0200, Marek Szyprowski wrote:
-> > Hi Sudeep
-> >
-> > On 11.10.2019 15:10, Sudeep Holla wrote:
-> > > On Fri, Oct 11, 2019 at 03:02:42PM +0200, Marek Szyprowski wrote:
-> > >> Hi James,
-> > >>
-> > >> On 11.10.2019 12:38, James Morse wrote:
-> > >>> Hi guys,
-> > >>>
-> > >>> On 11/10/2019 11:05, Sudeep Holla wrote:
-> > >>>> On Fri, Oct 11, 2019 at 11:26:04AM +0200, Marek Szyprowski wrote:
-> > >>>>> Recently I've got access to ARM Juno R1 board and did some tests with
-> > >>>>> current mainline kernel on it. I'm a bit surprised that enabling
-> > >>>>> CONFIG_PROVE_LOCKING causes a boot failure on this board. After enabling
-> > >>>>> this Kconfig option, I get no single message from the kernel, although I
-> > >>>>> have earlycon enabled.
-> > >>>> I don't have Juno R1 but I tried defconfig + CONFIG_PROVE_LOCKING and
-> > >>>> it boots fine.
-> > >>> I just tried this on my r1, v5.4-rc1 with this configuration worked just fine.
-> > >>>
-> > >>> My cmdline is:
-> > >>> | root=/dev/sda6 loglevel=9 earlycon=pl011,0x7ff80000 hugepagesz=2M hugepages=512
-> > >>> | crashkernel=1G console=ttyAMA0 resume=/dev/sda2 no_console_suspend efi=debug
-> > >>>
-> > >> That is a bit strange. Here is a boot log from v5.4-rc1 with pure
-> > >> defconfig: https://paste.debian.net/1105851/
-> > >>
-> > > I see from the boot log that both Image.gz and dtb being loaded at the
-> > > same address 0x82000000, will u-boot uncompress it elsewhere after loading
-> > > it ? Just for my understanding.
-> >
-> > tftp downloads Image.gz to 0x82000000, then decompress it to
-> > $kernel_addr to save transfer time
-> >
-> > my bootcmd is:
-> >
-> > tftp ${fdt_addr} juno/Image.gz; unzip ${fdt_addr} ${kernel_addr}; tftp
-> > ${fdt_addr} juno/juno-r1.dtb; booti ${kernel_addr} - ${fdt_addr};
-> >
+Hello, here is a patchset updating the existing max1027.c driver (for
+10-bit max1027/29/31 ADCs) with a few corrections/improvements and
+then introducing their 12-bit cousins named max1227/29/31.
 
-If your ${kernel_addr}=0x80000000 or within first 32MB, then it will override
-DTB with the image size I had(35MB). Even if kernel fits 32MB, there is a
-chance that .bss lies beyond 32MB and it will be cleared during boot resulting
-in DTB corruption(Andre P reminded me this)
+As on my hardware setup the "start conversion" and "end of conversion"
+pin are not wired (which is absolutely fine for this chip), I also
+updated the driver and the bindings to support optional interrupts. In
+this case, triggered buffers are not available and the user must poll
+the value from sysfs.
 
-Can you try setting $${fdt_addr} to 0x84000000 to begin with ?
+Thanks,
+Miquèl
 
---
-Regards,
-Sudeep
+
+Changes in v4:
+==============
+* In the v3, I removed the bindings documentation for the max10xx
+  devices, in favor of the trivial devices bindings. Unfortunately, I
+  didn't spot that in the following patch adding support for the
+  max12xx series, I was adding the compatibles to the trivial devices
+  list but also re-introducing the bindings documentation with the
+  three new compatibles. Just drop this part of the last patch to only
+  have the trivial devices file, not the specific bindings. All the
+  rest is the same.
+
+Changes in v3:
+==============
+* Updated the commit message of the patch adding debugfs read access
+  to better explain why I decided to limit the number of bytes read to
+  two.
+* Updated the macros to define the number of channels per device as
+  proposed by Jonathan.
+* Re-used the realbits entry instead of adding my own (called .depth).
+* Started doing DT-bindings yaml conversion, but realized that after
+  the first patch offering the interrupt as optional, the
+  documentation was fitting pretty well the trivial devices
+  representation. Dropped the specific bindings files and updated the
+  trivial devices list instead.
+
+Changes in v2:
+==============
+* Removed the addition of three compatibles from patch 4 (the
+  preparation patch) to add these lines back in patch 5 (the actual
+  introduction).
+
+
+Miquel Raynal (8):
+  iio: adc: max1027: Add debugfs register read support
+  iio: adc: max1027: Make it optional to use interrupts
+  iio: adc: max1027: Reset the device at probe time
+  iio: adc: max1027: Prepare the introduction of different resolutions
+  iio: adc: max1027: Introduce 12-bit devices support
+  dt-bindings: iio: adc: max1027: Mark interrupts as optional
+  dt-bindings: Add 1027/1029/1031 SPI ADCs as trivial devices
+  dt-bindings: Add max12xx SPI ADC series as trivial devices
+
+ .../bindings/iio/adc/max1027-adc.txt          |  20 --
+ .../devicetree/bindings/trivial-devices.yaml  |  12 ++
+ drivers/iio/adc/Kconfig                       |   4 +-
+ drivers/iio/adc/max1027.c                     | 180 +++++++++++-------
+ 4 files changed, 125 insertions(+), 91 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/iio/adc/max1027-adc.txt
+
+-- 
+2.20.1
 
