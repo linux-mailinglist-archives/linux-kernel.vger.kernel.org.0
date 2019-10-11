@@ -2,68 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D88EAD40B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 15:13:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A43BD40BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 15:13:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728326AbfJKNMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 09:12:49 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:39447 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728068AbfJKNMs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 09:12:48 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 46qSzx30QXz1rdjb;
-        Fri, 11 Oct 2019 15:12:45 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 46qSzx0Xm2z1qqkW;
-        Fri, 11 Oct 2019 15:12:45 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id 1iBTdqjoxA5y; Fri, 11 Oct 2019 15:12:44 +0200 (CEST)
-X-Auth-Info: P6pHhQefh826x5I3OGRMQajpdWG1pcG3yVxAquADxtTDkGfuDnxuuMluprMpWmf5
-Received: from igel.home (ppp-46-244-181-31.dynamic.mnet-online.de [46.244.181.31])
+        id S1728444AbfJKNM5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 09:12:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46136 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728404AbfJKNM4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 09:12:56 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Fri, 11 Oct 2019 15:12:43 +0200 (CEST)
-Received: by igel.home (Postfix, from userid 1000)
-        id 4F2242C01FC; Fri, 11 Oct 2019 15:12:43 +0200 (CEST)
-From:   Andreas Schwab <schwab@linux-m68k.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     <timur@kernel.org>, <nicoleotsuka@gmail.com>,
-        <Xiubo.Lee@gmail.com>, <festevam@gmail.com>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
-        <alsa-devel@alsa-project.org>, <linuxppc-dev@lists.ozlabs.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH -next] ASoC: fsl_mqs: fix old-style function declaration
-References: <20191011105606.19428-1-yuehaibing@huawei.com>
-X-Yow:  I'll show you MY telex number if you show me YOURS...
-Date:   Fri, 11 Oct 2019 15:12:43 +0200
-In-Reply-To: <20191011105606.19428-1-yuehaibing@huawei.com>
-        (yuehaibing@huawei.com's message of "Fri, 11 Oct 2019 18:56:06 +0800")
-Message-ID: <87mue7ifxw.fsf@igel.home>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+        by mail.kernel.org (Postfix) with ESMTPSA id A38B9206A1;
+        Fri, 11 Oct 2019 13:12:55 +0000 (UTC)
+Date:   Fri, 11 Oct 2019 09:12:54 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [RFC][PATCH] kprobes/x86: While list ftrace locations in kprobe
+ blacklist areas
+Message-ID: <20191011091254.3c4dd543@gandalf.local.home>
+In-Reply-To: <20191011173929.9462a1414ff3a94ec93d6e98@kernel.org>
+References: <20191010175216.4ceb3cf1@gandalf.local.home>
+        <20191011173929.9462a1414ff3a94ec93d6e98@kernel.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Okt 11 2019, YueHaibing <yuehaibing@huawei.com> wrote:
+On Fri, 11 Oct 2019 17:39:29 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-> gcc warn about this:
->
-> sound/soc/fsl/fsl_mqs.c:146:1: warning:
->  static is not at beginning of declaration [-Wold-style-declaration]
+> Hi Steve,
+> 
+> On Thu, 10 Oct 2019 17:52:16 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > 
+> > I noticed some of my old tests failing on kprobes, and realized that
+> > this was due to black listing irq_entry functions on x86 from being
+> > used by kprobes. IIRC, this was due to the cr2 being corrupted and
+> > such, and I believe other things were to cause. But black listing all
+> > irq_entry code is a big hammer to this.  
+> 
+> OK, I think if we can use ftrace for hooking, probing on "that address"
+> is good, but the function body still can not be probed.
+> 
+> > 
+> >  (See commit 0eae81dc9f026 "x86/kprobes: Prohibit probing on IRQ
+> >  handlers directly" for more details)
+> > 
+> > Anyway, if kprobes is using ftrace as a hook, there shouldn't be any
+> > problems here. If we white list ftrace locations in the range of
+> > kprobe_add_area_blacklist(), it should be safe.  
+> 
+> Agreed.
+> 
+> > 
+> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > ---
+> > diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+> > index d9770a5393c8..9d28a279282c 100644
+> > --- a/kernel/kprobes.c
+> > +++ b/kernel/kprobes.c
+> > @@ -2124,6 +2124,11 @@ int kprobe_add_area_blacklist(unsigned long start, unsigned long end)
+> >  	int ret = 0;
+> >  
+> >  	for (entry = start; entry < end; entry += ret) {
+> > +#ifdef CONFIG_KPROBES_ON_FTRACE
+> > +		/* We are safe if using ftrace */
+> > +		if (ftrace_location(entry))
+> > +			continue;
+> > +#endif  
+> 
+> Have you tested the patch? it doesn't measure the entry function's size.
+> (kprobe_add_ksym_blacklist(entry) returns the function size)
 
-It's not a function, though.
+Yeah, I tested the patch, but it is obviously buggy. It fixed the issue
+I was having (was able to test against do_IRQ ;-)
 
-Andreas.
+> 
+> Could you do this in kprobe_add_ksym_blacklist()?
+> Instead of continue, increment ent->start_addr by MCOUNT size(?) will be OK.
+> (Note that since each blacklist symbol is managed independently, you can make
+>  a "gap" between them as a safe area)
 
--- 
-Andreas Schwab, schwab@linux-m68k.org
-GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
-"And now for something completely different."
+OK, I'll move it to kprobe_add_ksym_blacklist.
+
+-- Steve
+
+> 
+> Thank you,
+> 
+> >  		ret = kprobe_add_ksym_blacklist(entry);
+> >  		if (ret < 0)
+> >  			return ret;  
+> 
+> 
+
