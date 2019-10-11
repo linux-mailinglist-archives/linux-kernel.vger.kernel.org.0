@@ -2,59 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBF93D4207
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 16:02:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71388D421B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 16:05:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728302AbfJKOCu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 10:02:50 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:36334 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727950AbfJKOCu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 10:02:50 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 76EFCB49CA212EB64715;
-        Fri, 11 Oct 2019 22:02:47 +0800 (CST)
-Received: from [127.0.0.1] (10.133.213.239) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Fri, 11 Oct 2019
- 22:02:44 +0800
-Subject: Re: [PATCH -next] ASoC: fsl_mqs: fix old-style function declaration
-To:     Andreas Schwab <schwab@linux-m68k.org>
-References: <20191011105606.19428-1-yuehaibing@huawei.com>
- <87mue7ifxw.fsf@igel.home>
-CC:     <timur@kernel.org>, <nicoleotsuka@gmail.com>,
-        <Xiubo.Lee@gmail.com>, <festevam@gmail.com>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
-        <alsa-devel@alsa-project.org>, <linuxppc-dev@lists.ozlabs.org>,
-        <linux-kernel@vger.kernel.org>
-From:   Yuehaibing <yuehaibing@huawei.com>
-Message-ID: <35eea200-2f74-05f8-c5e6-729f7f60cd44@huawei.com>
-Date:   Fri, 11 Oct 2019 22:02:43 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        id S1728308AbfJKOFS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 10:05:18 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:56762 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727950AbfJKOFR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 10:05:17 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9BE10P4032018;
+        Fri, 11 Oct 2019 16:05:03 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=Qn5aFd2HVDlFPaJf/8ibkjRYXsR+9F43fhoUK4LTDXA=;
+ b=VB1+1CFORogfEpYP7u+ZAdtbfhLJgn+Cjz8PKuwSMIYaAHeFCfONEnxOxA2dJ7wQxt8L
+ +w8SuHVSTip9ePKFuFME50ii8MZU2OoOuoKuvK7iDqqFWGMSkA4CKQydXUSCB+wFDCCH
+ fVDU2f/8FttnmHE9sWZ4ygAxRpdLzgL+HSCeOJEhgfrDY2h95fgk7nOwQIMVEqe5n7Aj
+ As00dShZy8FqGQr98HNM8Y1Y5dKOyI4JegSAILhD5qoZAXWoCBSKiYvR4W7AcpgehU9x
+ gf7g5/nzXsZFevTakp7GdF87uhFiIASCqzslWuI/QQooiLMl1LqT9bo1fOLxoZ/GXK5s EA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2vej2ptntt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Oct 2019 16:05:03 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AE77F10002A;
+        Fri, 11 Oct 2019 16:05:02 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 801CC22251F;
+        Fri, 11 Oct 2019 16:05:02 +0200 (CEST)
+Received: from localhost (10.75.127.51) by SFHDAG6NODE2.st.com (10.75.127.17)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 11 Oct 2019 16:05:02
+ +0200
+From:   Pascal Paillet <p.paillet@st.com>
+To:     <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <p.paillet@st.com>
+Subject: [PATCH 0/4] update regulator configuration for stm32mp157 boards
+Date:   Fri, 11 Oct 2019 16:04:41 +0200
+Message-ID: <20191011140445.32288-1-p.paillet@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <87mue7ifxw.fsf@igel.home>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG7NODE2.st.com (10.75.127.20) To SFHDAG6NODE2.st.com
+ (10.75.127.17)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-11_08:2019-10-10,2019-10-11 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/10/11 21:12, Andreas Schwab wrote:
-> On Okt 11 2019, YueHaibing <yuehaibing@huawei.com> wrote:
-> 
->> gcc warn about this:
->>
->> sound/soc/fsl/fsl_mqs.c:146:1: warning:
->>  static is not at beginning of declaration [-Wold-style-declaration]
-> 
-> It's not a function, though.
+The goal of this patch-set is to
+- add support of PWR blok regulators on the stm32mp157 boards
+- undapte various regulator configurations
 
-Oh..., will fix this, thanks!
+Pascal Paillet (4):
+  ARM: dts: stm32: add PWR regulators support on stm32mp157
+  ARM: dts: stm32: change default minimal buck1 value on stm32mp157
+  ARM: dts: stm32: Fix active discharge usage on stm32mp157
+  ARM: dts: stm32: disable active-discharge for vbus_otg on
+    stm32mp157a-avenger96
 
-> 
-> Andreas.
-> 
+ arch/arm/boot/dts/stm32mp157a-avenger96.dts |  8 +++++--
+ arch/arm/boot/dts/stm32mp157a-dk1.dts       |  9 ++++++--
+ arch/arm/boot/dts/stm32mp157c-dk2.dts       |  8 -------
+ arch/arm/boot/dts/stm32mp157c-ed1.dts       | 25 ++++++---------------
+ arch/arm/boot/dts/stm32mp157c.dtsi          | 23 +++++++++++++++++++
+ 5 files changed, 43 insertions(+), 30 deletions(-)
+
+-- 
+2.17.1
 
