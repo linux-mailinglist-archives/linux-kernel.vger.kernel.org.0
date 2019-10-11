@@ -2,75 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B763AD458D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 18:38:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0A74D459F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 18:41:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728459AbfJKQiX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 12:38:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40468 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726728AbfJKQiW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 12:38:22 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 630182089F;
-        Fri, 11 Oct 2019 16:38:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570811901;
-        bh=UIrbTvOv9QKqF83S/AKjXmvyctYGwMKLVkq82CPwi70=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dmjMtTFOJvWQ6edtMZcA75r3UwgB6An3fwXeO5WVg5bAjWA+vxuvA2jLyUenphRZi
-         TdfHqtMIUido8alCVmhsFAyJ+hfhOOxOJfDCOwcF/knhNSUKKpPy28rLYF7x8UUl10
-         i7ndEnHFQ00z5rHi7sRdmONTMFWujnvnUf16EOlg=
-Date:   Fri, 11 Oct 2019 18:38:19 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Peter Jones <pjones@redhat.com>,
-        Dave Olsthoorn <dave@bewaar.me>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH v7 0/8] efi/firmware/platform-x86: Add EFI embedded fw
- support
-Message-ID: <20191011163819.GA1295750@kroah.com>
-References: <20191004145056.43267-1-hdegoede@redhat.com>
- <20191011141036.GK16384@42.do-not-panic.com>
- <7fed4882-efa7-18d0-1ef6-9138fbdddfc4@redhat.com>
- <20191011153823.GS16384@42.do-not-panic.com>
+        id S1728354AbfJKQlt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 12:41:49 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:40291 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726983AbfJKQlt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 12:41:49 -0400
+Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1iIxz5-000225-Gt; Fri, 11 Oct 2019 17:41:43 +0100
+Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.2)
+        (envelope-from <ben@rainbowdash.codethink.co.uk>)
+        id 1iIxz4-0000BP-SJ; Fri, 11 Oct 2019 17:41:42 +0100
+From:   Ben Dooks <ben.dooks@codethink.co.uk>
+To:     linux-kernel@lists.codethink.co.uk
+Cc:     Ben Dooks <ben.dooks@codethink.co.uk>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] arm: topology: only build cpu_corepower_mask if needed
+Date:   Fri, 11 Oct 2019 17:41:42 +0100
+Message-Id: <20191011164142.659-1-ben.dooks@codethink.co.uk>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191011153823.GS16384@42.do-not-panic.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 03:38:23PM +0000, Luis Chamberlain wrote:
-> On Fri, Oct 11, 2019 at 04:31:26PM +0200, Hans de Goede wrote:
-> > Hi,
-> > 
-> > On 10/11/19 4:10 PM, Luis Chamberlain wrote:
-> > > Hey Hans, thanks for staying on top of this and follow up! For some
-> > > reason the universe conspired against your first and last patch ([1/8],
-> > > [8/8]), and I never got them. Could you bounce these or resend in case
-> > > others confirm they also didn't get it?
-> > 
-> > I have received feedback from others on the first patch, so at least
-> > that one has reached others. I've bounced patches 1 and 8 to you.
-> 
-> Thanks, can you also bounce the feedback received?
+The cpu_corepower_mask() is only needed if CONFIG_SCHED_MC is
+enabled, so remove the warning about it not being used by
+ifdef-ing it out.
 
-That is what lore.kernel.org is for...
+fixes the following build warning:
+
+arch/arm/kernel/topology.c:184:30: warning: ‘cpu_corepower_mask’ defined but not used [-Wunused-function]
+  184 | static const struct cpumask *cpu_corepower_mask(int cpu)
+
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+---
+KernelVersion: 5.4-rc3
+
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: linux-kernel@vger.kernel.org
+---
+ arch/arm/kernel/topology.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm/kernel/topology.c b/arch/arm/kernel/topology.c
+index 05d4223d5493..61f9a28f4bfb 100644
+--- a/arch/arm/kernel/topology.c
++++ b/arch/arm/kernel/topology.c
+@@ -177,6 +177,7 @@ static inline void parse_dt_topology(void) {}
+ static inline void update_cpu_capacity(unsigned int cpuid) {}
+ #endif
+ 
++#ifdef CONFIG_SCHED_MC
+ /*
+  * The current assumption is that we can power gate each core independently.
+  * This will be superseded by DT binding once available.
+@@ -185,6 +186,7 @@ static const struct cpumask *cpu_corepower_mask(int cpu)
+ {
+ 	return &cpu_topology[cpu].thread_sibling;
+ }
++#endif
+ 
+ /*
+  * store_cpu_topology is called at boot when only one cpu is running
+-- 
+2.23.0
+
