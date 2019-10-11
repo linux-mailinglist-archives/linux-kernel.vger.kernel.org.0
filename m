@@ -2,117 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2162FD37A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 05:00:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B10C4D37AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 05:00:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726686AbfJKC76 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 22:59:58 -0400
-Received: from mga14.intel.com ([192.55.52.115]:60510 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726116AbfJKC76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 22:59:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2019 19:59:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,282,1566889200"; 
-   d="scan'208";a="219252094"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by fmsmga004.fm.intel.com with ESMTP; 10 Oct 2019 19:59:14 -0700
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
-        jglisse@redhat.com, mike.kravetz@oracle.com, riel@surriel.com,
-        khlebnikov@yandex-team.ru, cai@lca.pw, shakeelb@google.com
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Wei Yang <richardw.yang@linux.intel.com>
-Subject: [Patch v3 2/2] mm/rmap.c: reuse mergeable anon_vma as parent when fork
-Date:   Fri, 11 Oct 2019 10:58:41 +0800
-Message-Id: <20191011025841.16801-2-richardw.yang@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191011025841.16801-1-richardw.yang@linux.intel.com>
-References: <20191011025841.16801-1-richardw.yang@linux.intel.com>
+        id S1726826AbfJKDAU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 23:00:20 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44207 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726714AbfJKDAT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 23:00:19 -0400
+Received: by mail-pg1-f193.google.com with SMTP id e10so913926pgd.11
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 20:00:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=nP3GB4eev/Uw/7TzzPBf7q6vVOFurBjXFqfQUZ+MDGI=;
+        b=KzBWLKoFEXWJXPLXk8rihO70idubrVY0AvebVOxegnFY86QJmJGnQAku+lqeexuYjB
+         9G74EjZ5ZvlXtWdwx6WwfpqvWL6VZhkBTLucMGD8v4+2hORNhyJnUiBwwpBCF8JxvYyl
+         Y/VEUCQaO4qMcQjX25jnBmyNowejWuBTvCczZAtLpuYiP3fyFPOQUIuwfkc7KI12BXX2
+         EwM6/7cZLGE5aW9q4v+KkZG7M4Ko8VEfRigsYkPSfXxu8CCT86YN8Kz/jywZSNG+JnPs
+         /EYL79jv7SvwRhbBYvBe5MtI4NC0fHqrZX5X0RP9DTqt0mKF84SdidfQjH90hJrCfHuU
+         JAsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=nP3GB4eev/Uw/7TzzPBf7q6vVOFurBjXFqfQUZ+MDGI=;
+        b=ohGCm3ogQa8yVG3YMEY2ExMj2vKmphCPmeaaTwTMH8GYH/d2pzy2yBpb+cbepK1/uK
+         d5aBBZl2Ms0DCRFkrsf0QhjKUtza62TWCsMmOtlQ9L9ZlKeDF+N8TjiD04H9PN9/SYDw
+         z0NopZ9upq73eMskvx6ZWNAf2qjxCOxOXaDErEogo7gV2RUAGHyLevBYOiie31pBJpJl
+         pOlTkiceRt/qcQ6GYj0dkFz+mg/cZjhBEd2dt2YXndqs9GYY/gPm9gr0EoFkthF5CF+0
+         eW9B5WkxosPZAwRb1UfLV2Xwtt30O2NCpLo3KgtywpX7Tffq8Z+wP8r8zC4XN3dhUdo3
+         LZLw==
+X-Gm-Message-State: APjAAAWteYt1wjnYfOUXfJAT6Na/WmHymI1j3IjosZ+GPoLCKKS6XGRV
+        R+AgEwHUJA222gvQpus+lZFxkQ==
+X-Google-Smtp-Source: APXvYqyC7PSkR8RT7VypdyqNldAyGXeW91322WLbhsrNNwrkgAMBn6eiIibb+JzCUjR+ko/vo+L6ow==
+X-Received: by 2002:a65:688a:: with SMTP id e10mr13223631pgt.122.1570762818461;
+        Thu, 10 Oct 2019 20:00:18 -0700 (PDT)
+Received: from cakuba.netronome.com (c-73-202-202-92.hsd1.ca.comcast.net. [73.202.202.92])
+        by smtp.gmail.com with ESMTPSA id q6sm8505284pgn.44.2019.10.10.20.00.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2019 20:00:18 -0700 (PDT)
+Date:   Thu, 10 Oct 2019 20:00:02 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        netdev@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Subject: Re: [PATCH v9 3/5] mfd: ioc3: Add driver for SGI IOC3 chip
+Message-ID: <20191010200002.5fe5f34f@cakuba.netronome.com>
+In-Reply-To: <20191010145953.21327-4-tbogendoerfer@suse.de>
+References: <20191010145953.21327-1-tbogendoerfer@suse.de>
+        <20191010145953.21327-4-tbogendoerfer@suse.de>
+Organization: Netronome Systems, Ltd.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In function __anon_vma_prepare(), we will try to find anon_vma if it is
-possible to reuse it. While on fork, the logic is different.
+On Thu, 10 Oct 2019 16:59:49 +0200, Thomas Bogendoerfer wrote:
+>  	dev = alloc_etherdev(sizeof(struct ioc3_private));
+> -	if (!dev) {
+> -		err = -ENOMEM;
+> -		goto out_disable;
+> -	}
+> -
+> -	if (pci_using_dac)
+> -		dev->features |= NETIF_F_HIGHDMA;
 
-Since commit 5beb49305251 ("mm: change anon_vma linking to fix
-multi-process server scalability issue"), function anon_vma_clone()
-tries to allocate new anon_vma for child process. But the logic here
-will allocate a new anon_vma for each vma, even in parent this vma
-is mergeable and share the same anon_vma with its sibling. This may do
-better for scalability issue, while it is not necessary to do so
-especially after interval tree is used.
+Looks like the NETIF_F_HIGHDMA feature will not longer be set, is that
+okay?
 
-Commit 7a3ef208e662 ("mm: prevent endless growth of anon_vma hierarchy")
-tries to reuse some anon_vma by counting child anon_vma and attached
-vmas. While for those mergeable anon_vmas, we can just reuse it and not
-necessary to go through the logic.
-
-After this change, kernel build test reduces 20% anon_vma allocation.
-
-Do the same kernel build test, it shows run time in sys reduced 11.5%.
-
-Origin:
-
-real    2m50.467s
-user    17m52.002s
-sys     1m51.953s
-
-real    2m48.662s
-user    17m55.464s
-sys     1m50.553s
-
-real    2m51.143s
-user    17m59.687s
-sys     1m53.600s
-
-Patched:
-
-real	2m40.080s
-user	17m4.644s
-sys	1m39.321s
-
-real	2m39.967s
-user	17m2.445s
-sys	1m38.850s
-
-real	2m40.581s
-user	17m1.975s
-sys	1m39.065s
-
-Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
----
- mm/rmap.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/mm/rmap.c b/mm/rmap.c
-index fc0aba7fb9b9..0dd5f8b04a48 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -269,6 +269,18 @@ int anon_vma_clone(struct vm_area_struct *dst, struct vm_area_struct *src)
- 	struct anon_vma_chain *avc, *pavc;
- 	struct anon_vma *root = NULL;
- 	bool reuse = !dst->anon_vma && src->anon_vma;
-+	struct vm_area_struct *prev = dst->vm_prev, *pprev = src->vm_prev;
-+
-+	/*
-+	 * If parent share anon_vma with its vm_prev, keep this sharing in in
-+	 * child.
-+	 *
-+	 * 1. Parent has vm_prev, which implies we have vm_prev.
-+	 * 2. Parent and its vm_prev have the same anon_vma.
-+	 */
-+	if (reuse && pprev && pprev->anon_vma == src->anon_vma)
-+		dst->anon_vma = prev->anon_vma;
-+
- 
- 	list_for_each_entry_reverse(pavc, &src->anon_vma_chain, same_vma) {
- 		struct anon_vma *anon_vma;
--- 
-2.17.1
+> -	err = pci_request_regions(pdev, "ioc3");
+> -	if (err)
+> -		goto out_free;
+> +	if (!dev)
+> +		return -ENOMEM;
+>  
+>  	SET_NETDEV_DEV(dev, &pdev->dev);
+>  
+>  	ip = netdev_priv(dev);
+> -	ip->dev = dev;
+> -	ip->dma_dev = &pdev->dev;
+> -
+> -	dev->irq = pdev->irq;
+> +	ip->dma_dev = pdev->dev.parent;
+> +	ip->regs = devm_platform_ioremap_resource(pdev, 0);
+> +	if (!ip->regs) {
+> +		err = -ENOMEM;
+> +		goto out_free;
+> +	}
 
