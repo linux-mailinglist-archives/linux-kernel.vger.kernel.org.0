@@ -2,162 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D11E2D3DE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 13:03:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DAA8D3DEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 13:07:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727629AbfJKLDX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 07:03:23 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40978 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726935AbfJKLDX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 07:03:23 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 063E5883856;
-        Fri, 11 Oct 2019 11:03:22 +0000 (UTC)
-Received: from [10.40.205.236] (unknown [10.40.205.236])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7C7E35DAAE;
-        Fri, 11 Oct 2019 11:03:01 +0000 (UTC)
-From:   Nitesh Narayan Lal <nitesh@redhat.com>
-To:     Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, virtio-dev@lists.oasis-open.org,
-        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
-        Pankaj Gupta <pagupta@redhat.com>,
-        "Wang, Wei W" <wei.w.wang@intel.com>,
-        Yang Zhang <yang.zhang.wz@gmail.com>,
-        Rik van Riel <riel@surriel.com>,
-        David Hildenbrand <david@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>, dodgen@google.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>,
-        john.starks@microsoft.com, Dave Hansen <dave.hansen@intel.com>,
-        Michal Hocko <mhocko@suse.com>, cohuck@redhat.com
-Subject: Re: [RFC][Patch v12 1/2] mm: page_reporting: core infrastructure
-References: <20190812131235.27244-1-nitesh@redhat.com>
- <20190812131235.27244-2-nitesh@redhat.com>
- <CAKgT0UeKxCYtg6+aCPyxJcAGrBgvCWziUpZM6Tmw-9PSChcGVA@mail.gmail.com>
-Organization: Red Hat Inc,
-Message-ID: <be33c1fe-ce15-aaef-3f15-617fc5b792f4@redhat.com>
-Date:   Fri, 11 Oct 2019 07:02:56 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAKgT0UeKxCYtg6+aCPyxJcAGrBgvCWziUpZM6Tmw-9PSChcGVA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.69]); Fri, 11 Oct 2019 11:03:22 +0000 (UTC)
+        id S1727649AbfJKLHi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 07:07:38 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:40782 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727198AbfJKLHi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 07:07:38 -0400
+Received: by mail-qk1-f195.google.com with SMTP id y144so8468630qkb.7
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 04:07:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=fhRFmkHyAxoggsqD4KnxC3QDzsYkibgJooXeMf6to+g=;
+        b=LuF/o/OotnzHUK7u//h5FxCIivoOI1UcqVDmEJc+VucVnEfMsq7uIGsE5qS9GSqnjV
+         lCTVQBnPMNdbT1GxpAIsToXKYMZwDSrLKNJXM8pEM3JKM8VBZqo4175fiedNPYXy+8wk
+         mS6P5kXgvYi6uoLSYC9U3RUba0bM+gCqAN6i8EmtfNp+b1x16vj90EPrbUmk2WARWwt9
+         4pV3fPd4RhlwQ/Dsida87/VGb6WfNqBszt56gQ5YNcqSHIGlR2Yw/+bloaRTlp5aYTbU
+         Z+4uEdoT5xIZvyJ/FdBW1YJaLrowOqV29YOcnMvuAy1sLUjhFIC1YzVircFa5pQeHujv
+         j0tQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=fhRFmkHyAxoggsqD4KnxC3QDzsYkibgJooXeMf6to+g=;
+        b=Q7E9h4pVWqARd5nPN/R7l6XtFPOCQN8H6WuO9xbIsMcMWhpK1V6GG1FCESE4ymOKtr
+         kFPXBdNGQDb92qRFTd5R85KNmkjozFXdzuKbYp077iztfKHjVBt+HBa+6eX1oPTnNBlx
+         AoZonf0Hi21Fo3L2HypnUCT+dCqaKnU9WgvjAaqhARRNsjMlLSD2nloj7j/aLYpXivta
+         QSo8iFtF/52mLyj1RfoAWERt6XqOuGeRK/MhCMTnpzZH2VAY8Ya3bdHTYS5VovC/R/la
+         tOwhO1sa4bSatV5m43JUfuK5qmSxSdxtU3ANKv9+XIumvqeDfBXy/DrUYuh4rvQZpOgB
+         je3Q==
+X-Gm-Message-State: APjAAAVuEvq/XC5xRNhE9+k39Y8w/XQczdD//sWUoQZ1LjvkzsjfOWLF
+        UE05oGULMIH9EQfYuhH7f0+Y2g==
+X-Google-Smtp-Source: APXvYqwf26+beDRiEznayQ9n1JDIBxpwPJNF1cRZSuh9K01KYUk4RZUYpdSAydkHfTPC7Z+HVii53g==
+X-Received: by 2002:a37:4553:: with SMTP id s80mr848341qka.334.1570792055855;
+        Fri, 11 Oct 2019 04:07:35 -0700 (PDT)
+Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id k2sm3893462qti.24.2019.10.11.04.07.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Oct 2019 04:07:35 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Qian Cai <cai@lca.pw>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] mm/page_owner: fix a crash after memory offline
+Date:   Fri, 11 Oct 2019 07:07:34 -0400
+Message-Id: <668C1E6F-C119-4BFB-9B9E-7E5568453855@lca.pw>
+References: <dbf95ea6-fe44-41c5-7f5a-a780e5ff42ba@redhat.com>
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, "mhocko@suse.com" <mhocko@suse.com>
+In-Reply-To: <dbf95ea6-fe44-41c5-7f5a-a780e5ff42ba@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+X-Mailer: iPhone Mail (17A860)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/10/19 4:36 PM, Alexander Duyck wrote:
-> On Mon, Aug 12, 2019 at 6:13 AM Nitesh Narayan Lal <nitesh@redhat.com> wrote:
-> <snip>
->
->> +static int process_free_page(struct page *page,
->> +                            struct page_reporting_config *phconf, int count)
->> +{
->> +       int mt, order, ret = 0;
->> +
->> +       mt = get_pageblock_migratetype(page);
->> +       order = page_private(page);
->> +       ret = __isolate_free_page(page, order);
->> +
->> +       if (ret) {
->> +               /*
->> +                * Preserving order and migratetype for reuse while
->> +                * releasing the pages back to the buddy.
->> +                */
->> +               set_pageblock_migratetype(page, mt);
->> +               set_page_private(page, order);
->> +
->> +               sg_set_page(&phconf->sg[count++], page,
->> +                           PAGE_SIZE << order, 0);
->> +       }
->> +
->> +       return count;
->> +}
->> +
->> +/**
->> + * scan_zone_bitmap - scans the bitmap for the requested zone.
->> + * @phconf: page reporting configuration object initialized by the backend.
->> + * @zone: zone for which page reporting is requested.
->> + *
->> + * For every page marked in the bitmap it checks if it is still free if so it
->> + * isolates and adds them to a scatterlist. As soon as the number of isolated
->> + * pages reach the threshold set by the backend, they are reported to the
->> + * hypervisor by the backend. Once the hypervisor responds after processing
->> + * they are returned back to the buddy for reuse.
->> + */
->> +static void scan_zone_bitmap(struct page_reporting_config *phconf,
->> +                            struct zone *zone)
->> +{
->> +       unsigned long setbit;
->> +       struct page *page;
->> +       int count = 0;
->> +
->> +       sg_init_table(phconf->sg, phconf->max_pages);
->> +
->> +       for_each_set_bit(setbit, zone->bitmap, zone->nbits) {
->> +               /* Process only if the page is still online */
->> +               page = pfn_to_online_page((setbit << PAGE_REPORTING_MIN_ORDER) +
->> +                                         zone->base_pfn);
->> +               if (!page)
->> +                       continue;
->> +
->> +               spin_lock(&zone->lock);
->> +
->> +               /* Ensure page is still free and can be processed */
->> +               if (PageBuddy(page) && page_private(page) >=
->> +                   PAGE_REPORTING_MIN_ORDER)
->> +                       count = process_free_page(page, phconf, count);
->> +
->> +               spin_unlock(&zone->lock);
->> +               /* Page has been processed, adjust its bit and zone counter */
->> +               clear_bit(setbit, zone->bitmap);
->> +               atomic_dec(&zone->free_pages);
->> +
->> +               if (count == phconf->max_pages) {
->> +                       /* Report isolated pages to the hypervisor */
->> +                       phconf->report(phconf, count);
->> +
->> +                       /* Return processed pages back to the buddy */
->> +                       return_isolated_page(zone, phconf);
->> +
->> +                       /* Reset for next reporting */
->> +                       sg_init_table(phconf->sg, phconf->max_pages);
->> +                       count = 0;
->> +               }
->> +       }
->> +       /*
->> +        * If the number of isolated pages does not meet the max_pages
->> +        * threshold, we would still prefer to report them as we have already
->> +        * isolated them.
->> +        */
->> +       if (count) {
->> +               sg_mark_end(&phconf->sg[count - 1]);
->> +               phconf->report(phconf, count);
->> +
->> +               return_isolated_page(zone, phconf);
->> +       }
->> +}
->> +
-> So one thing that occurred to me is that this code is missing checks
-> so that it doesn't try to hint isolated pages. With the bitmap
-> approach you need an additional check so that you aren't pulling
-> isolated pages out and reporting them.
 
-I think you mean that we should not report pages of type MIGRATE_ISOLATE.
 
-The current code on which I am working, I have added the
-is_migrate_isolate_page() check
-to ensure that I am not processing these pages.
+> On Oct 11, 2019, at 5:57 AM, David Hildenbrand <david@redhat.com> wrote:
+>=20
+> You mean, I found the key to an unlimited amount of undetected BUGs, so I s=
+hould fix them? ;)
 
--- 
-Thanks
-Nitesh
+No, it is more of for the sake of consistency, and the fact that all those b=
+ugs are only starting to show up only recently after applied to your series,=
+ so you will probably explain for a better changelog why that fact is not im=
+portant.
+
+>=20
+> In case you don't have time to explore all the dirty details, I can take i=
+t from here. Just let me know.
+
+Indeed, I will appreciate that if I don=E2=80=99t need to dig all those dirt=
+y details again myself.=
