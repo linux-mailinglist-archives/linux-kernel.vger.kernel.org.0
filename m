@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FAE6D3528
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 02:07:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB98CD3539
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 02:08:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727783AbfJKAHZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 20:07:25 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44622 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727500AbfJKAGZ (ORCPT
+        id S1727802AbfJKAHc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 20:07:32 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35014 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727499AbfJKAGY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 20:06:25 -0400
-Received: by mail-pf1-f193.google.com with SMTP id q21so4923080pfn.11
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 17:06:24 -0700 (PDT)
+        Thu, 10 Oct 2019 20:06:24 -0400
+Received: by mail-pg1-f193.google.com with SMTP id p30so4699620pgl.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 17:06:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=WqLTzjTdYtu13eBI1Hsh3syPKd5R5C/bZSENvznkqN8=;
-        b=fUPnxPNkLbKz79eLdwRoDJjW70ASz4RGYombh+MpItuFQQCQWGWcKvPqy4gl6E62bz
-         YXcrXM4MjXChDuBwxAdJsCaz9rjKO2RPeC3DbmTKU7AZ15ypootuMHyTiE2LYXks+fRY
-         MfiZIZu5Q++w2SE3zrFSij8n4HmJ+XDt2oi0w=
+        bh=7dmckIaKuL5uoyVhYLyxQgvD7laB8s0ddXfS7YNycCU=;
+        b=Zkm/RKe8e+Liv+qZ7ZPm9kwWeSr+NIaspEW7t3lmnI5dNpUpSo6dTzux6vNvY1O0iZ
+         mXmbpcaYzINbphQms11pCzDFWcPo5ulCRYCfFRW5DOq8KNnHUZoPg9cYONZAaxdOzKmE
+         WYECp/MY1nFT0o4uteh9HzWwnmK7DhrJcJDFU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=WqLTzjTdYtu13eBI1Hsh3syPKd5R5C/bZSENvznkqN8=;
-        b=HNXaNmccnZt0yXQtkQvo2bwAgnRC238lgwKtY1iWEl4BGvpNhHzJ0CP9ePOMmIUY5d
-         1WE8IjRW4wLnYx+P3XjAu+HF9ezSt+pTtrS/R6fQpdYjUXoSuIbXhiMiaA0HrvT0JUnE
-         6b7KIgQMY9yVirFCiXoYsIaYNRCvxW0Mo5oTEXuevxFOpMsyjdOcdmHPjxbODouEVQ6R
-         YRkWUd8+V2y2e+qSG9FSECRWOh7T3oWEsfm3iY39kqrnh9QjWzJ45Es0dwp9yVcQ+zW+
-         HZSmZkMikqU2vsDLhFx9ZpnI4z2oob1H17ggFzKze97F2SR6foQ43Mk42kWJCRtomTLY
-         pNyw==
-X-Gm-Message-State: APjAAAW/0k2xv8drA0FRPeIaK/25hDq/L4tSr30gIYtPnfMKWrYoQswo
-        uzH0kX7sa95TYtk/UZR1xZEw2Q==
-X-Google-Smtp-Source: APXvYqwSvIKQzn0Wh29UPciSLsyXo4RVbmYIVzpELs7182W3aoZycw+TLoXbSJd3JfRFzRbTSmYlrw==
-X-Received: by 2002:a63:fb0a:: with SMTP id o10mr13787651pgh.258.1570752384285;
-        Thu, 10 Oct 2019 17:06:24 -0700 (PDT)
+        bh=7dmckIaKuL5uoyVhYLyxQgvD7laB8s0ddXfS7YNycCU=;
+        b=LxKjz/2e9a1JAt28AZQd8fWKVy+Ue54bP6NlV0V7niRUOO5GJ1uN0yiE0adtT8HBqA
+         0W+qWNje2R8nek6rLihrdPnJGbsSAOVqMDXSXAaQFcaWmV/fq7xPpyR4ODO8PiXuvZO2
+         XrtT/p9m4AovrhwJYUxl0+GIPCjly7Zx6HtayppmlaRnWA8j4OL2ad8dhKXJjHeTFqRz
+         DTssR+izEVCmNKvkjifHSSt6vWKNYY6t1scD9QgOWKW99oVdf8tIV+aWJcv1WKIGq0o5
+         e0SucwWI0wmxR44v8oGeEBkbJKlYhl2YbL+CkUc3ISJmV37meOoH6IvdM/p2CjNyUUdk
+         ntTg==
+X-Gm-Message-State: APjAAAWC8gm5o4ddYe6pPcpQS+5EqUspZngw6+qM2i+Y5fpjXmP6fR+D
+        M7nRYasqBNQFn+stHcZNwm5CQg==
+X-Google-Smtp-Source: APXvYqy8lBsu/lNnf25rns+8k/zkBM8oQHwDv9L6rfwj03NX/IG4fGJ+vORVfGqdbtbZOe/1C8n/Lw==
+X-Received: by 2002:a63:554b:: with SMTP id f11mr13613094pgm.151.1570752381593;
+        Thu, 10 Oct 2019 17:06:21 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id e192sm9402924pfh.83.2019.10.10.17.06.19
+        by smtp.gmail.com with ESMTPSA id o42sm12777771pjo.32.2019.10.10.17.06.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 10 Oct 2019 17:06:20 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -59,9 +59,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Michal Simek <monstr@monstr.eu>, linux-parisc@vger.kernel.org,
         linux-xtensa@linux-xtensa.org, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 01/29] powerpc: Rename "notes" PT_NOTE to "note"
-Date:   Thu, 10 Oct 2019 17:05:41 -0700
-Message-Id: <20191011000609.29728-2-keescook@chromium.org>
+Subject: [PATCH v2 02/29] powerpc: Remove PT_NOTE workaround
+Date:   Thu, 10 Oct 2019 17:05:42 -0700
+Message-Id: <20191011000609.29728-3-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191011000609.29728-1-keescook@chromium.org>
 References: <20191011000609.29728-1-keescook@chromium.org>
@@ -70,38 +70,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Program Header identifiers are internal to the linker scripts. In
-preparation for moving the NOTES segment declaration into RO_DATA,
-standardize the identifier for the PT_NOTE entry to "note" as used by
-all other architectures that emit PT_NOTE.
+In preparation for moving NOTES into RO_DATA, remove the PT_NOTE
+workaround since the kernel requires at least gcc 4.6 now.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- arch/powerpc/kernel/vmlinux.lds.S | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/powerpc/kernel/vmlinux.lds.S | 24 ++----------------------
+ 1 file changed, 2 insertions(+), 22 deletions(-)
 
 diff --git a/arch/powerpc/kernel/vmlinux.lds.S b/arch/powerpc/kernel/vmlinux.lds.S
-index 060a1acd7c6d..81e672654789 100644
+index 81e672654789..a3c8492b2b19 100644
 --- a/arch/powerpc/kernel/vmlinux.lds.S
 +++ b/arch/powerpc/kernel/vmlinux.lds.S
-@@ -19,7 +19,7 @@ ENTRY(_stext)
- 
+@@ -20,20 +20,6 @@ ENTRY(_stext)
  PHDRS {
  	kernel PT_LOAD FLAGS(7); /* RWX */
--	notes PT_NOTE FLAGS(0);
-+	note PT_NOTE FLAGS(0);
- 	dummy PT_NOTE FLAGS(0);
+ 	note PT_NOTE FLAGS(0);
+-	dummy PT_NOTE FLAGS(0);
+-
+-	/* binutils < 2.18 has a bug that makes it misbehave when taking an
+-	   ELF file with all segments at load address 0 as input.  This
+-	   happens when running "strip" on vmlinux, because of the AT() magic
+-	   in this linker script.  People using GCC >= 4.2 won't run into
+-	   this problem, because the "build-id" support will put some data
+-	   into the "notes" segment (at a non-zero load address).
+-
+-	   To work around this, we force some data into both the "dummy"
+-	   segment and the kernel segment, so the dummy segment will get a
+-	   non-zero load address.  It's not enough to always create the
+-	   "notes" segment, since if nothing gets assigned to it, its load
+-	   address will be zero.  */
+ }
  
- 	/* binutils < 2.18 has a bug that makes it misbehave when taking an
-@@ -177,7 +177,7 @@ SECTIONS
- #endif
+ #ifdef CONFIG_PPC64
+@@ -178,14 +164,8 @@ SECTIONS
  	EXCEPTION_TABLE(0)
  
--	NOTES :kernel :notes
-+	NOTES :kernel :note
+ 	NOTES :kernel :note
+-
+-	/* The dummy segment contents for the bug workaround mentioned above
+-	   near PHDRS.  */
+-	.dummy : AT(ADDR(.dummy) - LOAD_OFFSET) {
+-		LONG(0)
+-		LONG(0)
+-		LONG(0)
+-	} :kernel :dummy
++	/* Restore program header away from PT_NOTE. */
++	.dummy : { *(.dummy) } :kernel
  
- 	/* The dummy segment contents for the bug workaround mentioned above
- 	   near PHDRS.  */
+ /*
+  * Init sections discarded at runtime
 -- 
 2.17.1
 
