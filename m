@@ -2,126 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8178CD3560
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 02:13:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC8D7D354B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 02:10:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727786AbfJKANE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 20:13:04 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37002 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727687AbfJKANB (ORCPT
+        id S1727419AbfJKAKz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 20:10:55 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:46158 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726474AbfJKAKy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 20:13:01 -0400
-Received: by mail-pf1-f196.google.com with SMTP id y5so4959490pfo.4
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 17:13:01 -0700 (PDT)
+        Thu, 10 Oct 2019 20:10:54 -0400
+Received: by mail-ot1-f66.google.com with SMTP id 89so6461877oth.13
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 17:10:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Wn91QvvOWXGcdAukdBFPOsAS+V9wjbJFfxE/dszqFsM=;
-        b=TKF/H7IXE7UJDzb3rMUleub9owN4KR+Kc5MridCe/6j0nlzZqoEI/zttKy0QHihDrJ
-         2ZeHmtUNHexo6bQLRtT0gDvTipRD0K5TGW8Q7FVWpvhcmLBUGnPT1TySO+nYDUITKTZu
-         3WNoDW0bVMFt0uCMT6eBCSnH00RkY54ViUTLk=
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=CuWkKPMdB1z+o+XfUfQqodALV/gMtOa1+iT3xGY2djM=;
+        b=V+/1YHgBwaJ9G2xcvRbf0wcjQADYe+tc7H7ZIRB7G1sOOk836UV02AeFA/O5/6uGBT
+         9nDajgKdzPf7ZRtDvF31VQ/FHVVJPLSPoOv22VRoezeLKolwFKGjdfKlG+IlwzA2e8n2
+         0BW9sJtbOq5sGr4eL8Jh8x9OwG5s2bJ0qO7A9RjB3P3Lz0K+nT2EsqZ2QL3ADcDUbv2P
+         sdm0g5BsD4mHrgJT8Br7uZ9O2tAWROQhhddwUZnJlGb/AC0vtckBaGv9BJqIJXfa4Huc
+         SJNgdhq8vYH/xOX+be8gAGhR7ND7CBqEAEVlFn72LIH0B3Hv8u1e94R8e+YZnU3QUU3d
+         TWCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Wn91QvvOWXGcdAukdBFPOsAS+V9wjbJFfxE/dszqFsM=;
-        b=C5rrr9CgHmtOCdf+B4eckmGhGe8AjUR29jkV+yq00SROu5ILCtbKrSdyxvucDqlRsR
-         DNDJX8ub1aCcX4dMXDF9wpBgN4iQZmqmmf+VrcfH9vjHzyVjpKflsHzm6KTWQeix81od
-         JY2UjPnBhD/m/mH7f6AlwB+AMdfX91Zvy/sUYxhMniBRrNCo8h0alcRNhgRjDb4BYtfe
-         EOpRFRIhpH8W6aqiz15I5P/xzFiPKhQwCBnEmEzQlGXpvLOru9grzGtB55uuwSzSPLgt
-         dIzsxqZwRZznLD4OXr2z/Z7FvjNionJela+/a3l1kYrYIZik+z6sbCslP3eViYKmGwi1
-         WDiw==
-X-Gm-Message-State: APjAAAUTpCht84+PoVrmJqsSsYxqlJ5tjh+m386dtgE87cZhurCIrdXj
-        bqy58uRqRs1P5hHDwXItA7Ec8w==
-X-Google-Smtp-Source: APXvYqwhzx8QmNWMryCruzS69inQpCD817u3s0gzfMeJwk1Bb2iOQgca7Hto534MUkNuyGvUJAkyfA==
-X-Received: by 2002:a17:90a:ff0f:: with SMTP id ce15mr14913883pjb.14.1570752780484;
-        Thu, 10 Oct 2019 17:13:00 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id y144sm7993803pfb.188.2019.10.10.17.12.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 17:12:56 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Will Deacon <will@kernel.org>, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-c6x-dev@linux-c6x.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Michal Simek <monstr@monstr.eu>, linux-parisc@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 29/29] x86: Use INT3 instead of NOP for linker fill bytes
-Date:   Thu, 10 Oct 2019 17:06:09 -0700
-Message-Id: <20191011000609.29728-30-keescook@chromium.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191011000609.29728-1-keescook@chromium.org>
-References: <20191011000609.29728-1-keescook@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=CuWkKPMdB1z+o+XfUfQqodALV/gMtOa1+iT3xGY2djM=;
+        b=tnn6WxzO68e9SMaJUqoRQRybjRiQuoNirXJU2IYtr8zKEqUln3/swCHN1gEi/2AnSc
+         uD5AkYDIKO5XVljcAoAmbpFWnLr1A7nFyHcf/B1KQT+CjuTDyS8D0nzNQr6iCgUa9nfb
+         bVt1OYarT4QDXPgRFfb44iaLPdUX90nhoAGsQA5H+T9k4wzhfEAin9kzPp97t9WmrO5E
+         OVV1mZ0DpsOmaJ4w+p5za4Dj1R76C0aAK6IkdOwwE3/V3acXk51rPolSbCsdagpzqLlI
+         OHKB+FvLzbSFFa8lgrnzrfW9QJSXf84GoT/pOnDbmODnmrEwB3X93YoAJUC2oBRqH7OL
+         mPvw==
+X-Gm-Message-State: APjAAAXWJiEXPNJZ0iPr/JosON4lCMoP+kJ9ygeZrM9aYj6NS/NS/UkC
+        +JYVhJRoiDM1ZM1mg+JcaY4RpIMRHApOdw+uSozFkg==
+X-Google-Smtp-Source: APXvYqxZtpd1aw+WFgfMgVMfM/xQ2kYk0LHsr36Je/tEarbEcU93KFwlv3DkanirryaTd1tkYOZSPT3ZJwWCtI5udb4=
+X-Received: by 2002:a05:6830:1685:: with SMTP id k5mr10285631otr.250.1570752651991;
+ Thu, 10 Oct 2019 17:10:51 -0700 (PDT)
+MIME-Version: 1.0
+References: <20191010023205.8071-1-hui.song_1@nxp.com>
+In-Reply-To: <20191010023205.8071-1-hui.song_1@nxp.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Fri, 11 Oct 2019 02:10:41 +0200
+Message-ID: <CAMpxmJXyoMu-Z0E0wejLSrgW3aE73fHxHxS3kANBoVY+FhfmGg@mail.gmail.com>
+Subject: Re: [PATCH v7] gpio/mpc8xxx: change irq handler from chained to normal
+To:     Hui Song <hui.song_1@nxp.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of using 0x90 (NOP) to fill bytes between functions, which makes
-it easier to sloppily target functions in function pointer overwrite
-attacks, fill with 0xCC (INT3) to force a trap. Also drop the space
-between "=" and the value to better match the binutils documentation
-https://sourceware.org/binutils/docs/ld/Output-Section-Fill.html#Output-Section-Fill
+czw., 10 pa=C5=BA 2019 o 04:42 Hui Song <hui.song_1@nxp.com> napisa=C5=82(a=
+):
+>
+> From: Song Hui <hui.song_1@nxp.com>
+>
+> More than one gpio controllers can share one interrupt, change the
+> driver to request shared irq.
+>
+> While this will work, it will mess up userspace accounting of the number
+> of interrupts per second in tools such as vmstat.  The reason is that
+> for every GPIO interrupt, /proc/interrupts records the count against GIC
+> interrupt 68 or 69, as well as the GPIO itself.  So, for every GPIO
+> interrupt, the total number of interrupts that the system has seen
+> increments by two.
+>
+> Signed-off-by: Laurentiu Tudor <Laurentiu.Tudor@nxp.com>
+> Signed-off-by: Alex Marginean <alexandru.marginean@nxp.com>
+> Signed-off-by: Song Hui <hui.song_1@nxp.com>
+> ---
+> Changes in v7:
+>         - make unsigned int convert to unsigned long.
+> Changes in v6:
+>         - change request_irq to devm_request_irq and add commit message.
+> Changes in v5:
+>         - add traverse every bit function.
+> Changes in v4:
+>         - convert 'pr_err' to 'dev_err'.
+> Changes in v3:
+>         - update the patch description.
+> Changes in v2:
+>         - delete the compatible of ls1088a.
+>  drivers/gpio/gpio-mpc8xxx.c | 29 +++++++++++++++++++----------
+>  1 file changed, 19 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
+> index 16a47de..5a0f030 100644
+> --- a/drivers/gpio/gpio-mpc8xxx.c
+> +++ b/drivers/gpio/gpio-mpc8xxx.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/irq.h>
+>  #include <linux/gpio/driver.h>
+>  #include <linux/bitops.h>
+> +#include <linux/interrupt.h>
+>
+>  #define MPC8XXX_GPIO_PINS      32
+>
+> @@ -127,20 +128,20 @@ static int mpc8xxx_gpio_to_irq(struct gpio_chip *gc=
+, unsigned offset)
+>                 return -ENXIO;
+>  }
+>
+> -static void mpc8xxx_gpio_irq_cascade(struct irq_desc *desc)
+> +static irqreturn_t mpc8xxx_gpio_irq_cascade(int irq, void *data)
+>  {
+> -       struct mpc8xxx_gpio_chip *mpc8xxx_gc =3D irq_desc_get_handler_dat=
+a(desc);
+> -       struct irq_chip *chip =3D irq_desc_get_chip(desc);
+> +       struct mpc8xxx_gpio_chip *mpc8xxx_gc =3D data;
+>         struct gpio_chip *gc =3D &mpc8xxx_gc->gc;
+> -       unsigned int mask;
+> +       unsigned long mask;
+> +       int i;
+>
+>         mask =3D gc->read_reg(mpc8xxx_gc->regs + GPIO_IER)
+>                 & gc->read_reg(mpc8xxx_gc->regs + GPIO_IMR);
+> -       if (mask)
+> +       for_each_set_bit(i, &mask, 32)
+>                 generic_handle_irq(irq_linear_revmap(mpc8xxx_gc->irq,
+> -                                                    32 - ffs(mask)));
+> -       if (chip->irq_eoi)
+> -               chip->irq_eoi(&desc->irq_data);
+> +                                                    31 - i));
 
-Example "objdump -d" before:
+This will now fit in 80 characters.
 
-...
-ffffffff810001e0 <start_cpu0>:
-ffffffff810001e0:       48 8b 25 e1 b1 51 01    mov 0x151b1e1(%rip),%rsp        # ffffffff8251b3c8 <initial_stack>
-ffffffff810001e7:       e9 d5 fe ff ff          jmpq   ffffffff810000c1 <secondary_startup_64+0x91>
-ffffffff810001ec:       90                      nop
-ffffffff810001ed:       90                      nop
-ffffffff810001ee:       90                      nop
-ffffffff810001ef:       90                      nop
+Bart
 
-ffffffff810001f0 <__startup_64>:
-...
-
-After:
-
-...
-ffffffff810001e0 <start_cpu0>:
-ffffffff810001e0:       48 8b 25 41 79 53 01    mov 0x1537941(%rip),%rsp        # ffffffff82537b28 <initial_stack>
-ffffffff810001e7:       e9 d5 fe ff ff          jmpq   ffffffff810000c1 <secondary_startup_64+0x91>
-ffffffff810001ec:       cc                      int3
-ffffffff810001ed:       cc                      int3
-ffffffff810001ee:       cc                      int3
-ffffffff810001ef:       cc                      int3
-
-ffffffff810001f0 <__startup_64>:
-...
-
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- arch/x86/kernel/vmlinux.lds.S | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index b06d6e1188de..3a1a819da137 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -144,7 +144,7 @@ SECTIONS
- 		*(.text.__x86.indirect_thunk)
- 		__indirect_thunk_end = .;
- #endif
--	} :text = 0x9090
-+	} :text =0xcccc
- 
- 	/* End of text section, which should occupy whole number of pages */
- 	_etext = .;
--- 
-2.17.1
-
+> +
+> +       return IRQ_HANDLED;
+>  }
+>
+>  static void mpc8xxx_irq_unmask(struct irq_data *d)
+> @@ -409,8 +410,16 @@ static int mpc8xxx_probe(struct platform_device *pde=
+v)
+>         if (devtype->gpio_dir_in_init)
+>                 devtype->gpio_dir_in_init(gc);
+>
+> -       irq_set_chained_handler_and_data(mpc8xxx_gc->irqn,
+> -                                        mpc8xxx_gpio_irq_cascade, mpc8xx=
+x_gc);
+> +       ret =3D devm_request_irq(&pdev->dev, mpc8xxx_gc->irqn,
+> +                              mpc8xxx_gpio_irq_cascade,
+> +                              IRQF_NO_THREAD | IRQF_SHARED, "gpio-cascad=
+e",
+> +                              mpc8xxx_gc);
+> +       if (ret) {
+> +               dev_err(&pdev->dev, "%s: failed to devm_request_irq(%d), =
+ret =3D %d\n",
+> +                       np->full_name, mpc8xxx_gc->irqn, ret);
+> +               goto err;
+> +       }
+> +
+>         return 0;
+>  err:
+>         iounmap(mpc8xxx_gc->regs);
+> --
+> 2.9.5
+>
