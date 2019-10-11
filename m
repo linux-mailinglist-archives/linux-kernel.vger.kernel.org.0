@@ -2,111 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA88DD4325
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 16:42:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31F4CD432B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 16:43:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbfJKOmk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 10:42:40 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55682 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726174AbfJKOmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 10:42:38 -0400
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 45B6C7E423
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 14:35:02 +0000 (UTC)
-Received: by mail-wr1-f69.google.com with SMTP id c17so4428096wro.18
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 07:35:02 -0700 (PDT)
+        id S1727565AbfJKOnG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 10:43:06 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:41661 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726332AbfJKOnF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 10:43:05 -0400
+Received: by mail-ot1-f68.google.com with SMTP id g13so8145845otp.8
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 07:43:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DTilIw9kuA9/ZhCVKjq7t0Q6xQINI3VdWiZdaAX92yU=;
+        b=KjTfLZ9sbaX0HivZiN4cHJnsOpK3hFTGS5Y8ZzYKXwLkTQReEEf7cMwCEFQC5QY2xs
+         0x/rLue2CD9ODblikQU95h7c2+Oz+4QpD2iYBR0F87gvmOctZK4TghAsjbxxEALSeJAw
+         QSRqYZT2bsJzFz666Wdsp+28CNHvmfteiNpMgNTHM2Q3uf+/DVBzn9BZIMLz+iU3VAWA
+         6bkCF5b+Y7OUMjrLQOIK6Xq8AG6zY6g6pIzy7fHojmIymTQFECpIk0yReHvLhzHih0F6
+         zB5E+R6W1FaMSvJ1bGepGXiDzg/FuLWHUQeFgBrjnBf0E1vX1S8ejyo7sDbilV+w0zcZ
+         VI3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BMhlHZig+1RhiRk7V7Pz4VOZHaUmDl77u5gqUPus1Vw=;
-        b=GCGa2PaK+1MpsCfLPct9Bbtpd9zTo629K47SJcJYAbTgoJJE/fz9De6OIoGnKEMir4
-         oHdQnehokw7BAfALnDr6kTkyAjU0RBARQPUe8mo+7EzCo6KRRDzwxDZcYx4gvpYTRpNE
-         pmrN/dAIwQhQcR2apafLdQKBALA7lk01zjrLoRkeH5nnTvP84ZpefvLbKL++nJ2Vr/Pc
-         /L+2fsmhLMcT3pRDaVEXG+OlYneUOOa7kwRQW0IL92M/PAjDgHWt+eyS5ATl5m3YDvXs
-         LsClV2KAWBkc+gHieBscIDw2xW/fg2KW14ULZxjKhJlwosCBTeP8dh7VGS4Vf7MVzEE3
-         d4Aw==
-X-Gm-Message-State: APjAAAXVXzXEz+LlM2UrKqkVqn/9ZKdUhJguIqnsEYXMYidMyRuKpvlw
-        Amt3E/CxKNecbIcalnOK5nmoYiB9ZDPllx/ti9+8f7va6mIKjs5v9G5r4+DLFHtIJnr5pfB4ihY
-        YttsU2N6HDUcTXmWCeCiZ3W1k
-X-Received: by 2002:adf:dd88:: with SMTP id x8mr3048524wrl.140.1570804500916;
-        Fri, 11 Oct 2019 07:35:00 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqx+Irj2vNmRio/nFmNCYUOj5zRQn/cFuQoq8tEJPRY6eLYwjr9hshihDbQlKDa3IF+n7XZANw==
-X-Received: by 2002:adf:dd88:: with SMTP id x8mr3048504wrl.140.1570804500699;
-        Fri, 11 Oct 2019 07:35:00 -0700 (PDT)
-Received: from steredhat (host174-200-dynamic.52-79-r.retail.telecomitalia.it. [79.52.200.174])
-        by smtp.gmail.com with ESMTPSA id g185sm12205685wme.10.2019.10.11.07.34.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2019 07:35:00 -0700 (PDT)
-Date:   Fri, 11 Oct 2019 16:34:57 +0200
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     netdev@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        Jorgen Hansen <jhansen@vmware.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Adit Ranadive <aditr@vmware.com>,
-        Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 0/2] vsock: don't allow half-closed socket in the
- host transports
-Message-ID: <20191011143457.4ujt3gg7oxco6gld@steredhat>
-References: <20191011130758.22134-1-sgarzare@redhat.com>
- <20191011101408-mutt-send-email-mst@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DTilIw9kuA9/ZhCVKjq7t0Q6xQINI3VdWiZdaAX92yU=;
+        b=p4tb5CbAPvcSgl6H0JY1dWFOyAGzHATjiK7637kjhU6LJo2FdjrTcEW1g69Nm0l7Zq
+         pNuXjJH2ftXMemToTuMZWlacfYVHhfW51aOL7bKccT+sMr7cwaamGMD0HX2O1ZDFHNBC
+         +Y90RkspDF+BXYg0fpbRhCWokxvefnSCL3meiPbRhKgyBPVy7+5AcsxMiZIyERh7Wb9Y
+         SUCuyVpoFvxh09xLAEEOpu5whf66dYwgxPqrk1eEv9ocX5VINJyUkpitrzYvTdr6VBGT
+         8emVsVp/CxP7UrkTVU6G72OxfCUPT3N5jewzeHq1DLCCNrn+ydBftu7iSJGhM6MTEPHx
+         iUEQ==
+X-Gm-Message-State: APjAAAXcNqG9i6P7MYT1PYX4G4k8ULQ1fcHSZ1pJtdAs7qzSdoR1cDIF
+        mK+EeP5mmVgr5HapvNVkfZYDSbTybB/uUD1v8OUfLA==
+X-Google-Smtp-Source: APXvYqwbudi4rN4fTGWZokyloO/sdPo8umpYpvPsXhd6DJ//G8XqDY9mywrjwmYrdj4F50rvy8xzyKsE7vc8ZY7tDOQ=
+X-Received: by 2002:a9d:3ee:: with SMTP id f101mr12615074otf.126.1570804528988;
+ Fri, 11 Oct 2019 07:35:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191011101408-mutt-send-email-mst@kernel.org>
-User-Agent: NeoMutt/20180716
+References: <157066227329.1059972.5659620631541203458.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <157066230358.1059972.1736585303527133478.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <CAKv+Gu8ih2RffZHdwAnHZicL_v8CxV9WnCy+uA1jSSyh58xapA@mail.gmail.com>
+ <CAPcyv4iQ5Np3dDH=-a_7gPnWKBCHXGit2PN-h=Jw_eqj7Lb2BQ@mail.gmail.com>
+ <CAKv+Gu9co_FTVYWNZsXF0H+fV1K76pZX4Yv11ANE6NwDBT3pBQ@mail.gmail.com>
+ <CAPcyv4iCpA_a7272HXVwBY3NqR1RbyuoXbQOPWG2xFHgqN8-iA@mail.gmail.com> <CAKv+Gu-EOaEmiT_ZA8RBatWAWNVXnNgv-wLJSp5b-zhvof3D6g@mail.gmail.com>
+In-Reply-To: <CAKv+Gu-EOaEmiT_ZA8RBatWAWNVXnNgv-wLJSp5b-zhvof3D6g@mail.gmail.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 11 Oct 2019 07:35:18 -0700
+Message-ID: <CAPcyv4jHTrrfNnBNw_H_4wGWGsg1QF1582BcN-078K5KCBhNBA@mail.gmail.com>
+Subject: Re: [PATCH v6 05/12] x86/efi: EFI soft reservation to E820 enumeration
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        kbuild test robot <lkp@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 10:19:13AM -0400, Michael S. Tsirkin wrote:
-> On Fri, Oct 11, 2019 at 03:07:56PM +0200, Stefano Garzarella wrote:
-> > We are implementing a test suite for the VSOCK sockets and we discovered
-> > that vmci_transport never allowed half-closed socket on the host side.
-> > 
-> > As Jorgen explained [1] this is due to the implementation of VMCI.
-> > 
-> > Since we want to have the same behaviour across all transports, this
-> > series adds a section in the "Implementation notes" to exaplain this
-> > behaviour, and changes the vhost_transport to behave the same way.
-> > 
-> > [1] https://patchwork.ozlabs.org/cover/847998/#1831400
-> 
-> Half closed sockets are very useful, and lots of
-> applications use tricks to swap a vsock for a tcp socket,
-> which might as a result break.
+On Thu, Oct 10, 2019 at 10:52 PM Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+>
+> On Fri, 11 Oct 2019 at 04:39, Dan Williams <dan.j.williams@intel.com> wrote:
+> >
+> > On Thu, Oct 10, 2019 at 11:41 AM Ard Biesheuvel
+> > <ard.biesheuvel@linaro.org> wrote:
+> > >
+> > > On Thu, 10 Oct 2019 at 20:31, Dan Williams <dan.j.williams@intel.com> wrote:
+> > > >
+> > > > On Wed, Oct 9, 2019 at 11:45 PM Ard Biesheuvel
+> > > > <ard.biesheuvel@linaro.org> wrote:
+> > > > >
+> > > > > On Thu, 10 Oct 2019 at 01:19, Dan Williams <dan.j.williams@intel.com> wrote:
+> > > > > >
+> > > > > > UEFI 2.8 defines an EFI_MEMORY_SP attribute bit to augment the
+> > > > > > interpretation of the EFI Memory Types as "reserved for a specific
+> > > > > > purpose".
+> > > > > >
+> > > > > > The proposed Linux behavior for specific purpose memory is that it is
+> > > > > > reserved for direct-access (device-dax) by default and not available for
+> > > > > > any kernel usage, not even as an OOM fallback.  Later, through udev
+> > > > > > scripts or another init mechanism, these device-dax claimed ranges can
+> > > > > > be reconfigured and hot-added to the available System-RAM with a unique
+> > > > > > node identifier. This device-dax management scheme implements "soft" in
+> > > > > > the "soft reserved" designation by allowing some or all of the
+> > > > > > reservation to be recovered as typical memory. This policy can be
+> > > > > > disabled at compile-time with CONFIG_EFI_SOFT_RESERVE=n, or runtime with
+> > > > > > efi=nosoftreserve.
+> > > > > >
+> > > > > > This patch introduces 2 new concepts at once given the entanglement
+> > > > > > between early boot enumeration relative to memory that can optionally be
+> > > > > > reserved from the kernel page allocator by default. The new concepts
+> > > > > > are:
+> > > > > >
+> > > > > > - E820_TYPE_SOFT_RESERVED: Upon detecting the EFI_MEMORY_SP
+> > > > > >   attribute on EFI_CONVENTIONAL memory, update the E820 map with this
+> > > > > >   new type. Only perform this classification if the
+> > > > > >   CONFIG_EFI_SOFT_RESERVE=y policy is enabled, otherwise treat it as
+> > > > > >   typical ram.
+> > > > > >
+> > > > > > - IORES_DESC_SOFT_RESERVED: Add a new I/O resource descriptor for
+> > > > > >   a device driver to search iomem resources for application specific
+> > > > > >   memory. Teach the iomem code to identify such ranges as "Soft Reserved".
+> > > > > >
+> > > > > > A follow-on change integrates parsing of the ACPI HMAT to identify the
+> > > > > > node and sub-range boundaries of EFI_MEMORY_SP designated memory. For
+> > > > > > now, just identify and reserve memory of this type.
+> > > > > >
+> > > > > > Cc: <x86@kernel.org>
+> > > > > > Cc: Borislav Petkov <bp@alien8.de>
+> > > > > > Cc: Ingo Molnar <mingo@redhat.com>
+> > > > > > Cc: "H. Peter Anvin" <hpa@zytor.com>
+> > > > > > Cc: Darren Hart <dvhart@infradead.org>
+> > > > > > Cc: Andy Shevchenko <andy@infradead.org>
+> > > > > > Cc: Andy Lutomirski <luto@kernel.org>
+> > > > > > Cc: Peter Zijlstra <peterz@infradead.org>
+> > > > > > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > > > > > Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> > > > > > Reported-by: kbuild test robot <lkp@intel.com>
+> > > > > > Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+> > > > > > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> > > > >
+> > > > > For the EFI changes
+> > > > >
+> > > > > Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> > > > >
+> > > > > although I must admit I don't follow the enum add_efi_mode logic 100%
+> > > >
+> > > > I'm open to suggestions as I'm not sure it's the best possible
+> > > > organization. The do_add_efi_memmap() routine has the logic to
+> > > > translate EFI to E820, but unless "add_efi_memmap" is specified on the
+> > > > kernel command line the EFI memory map is ignored. For
+> > > > soft-reservation support I want to reuse do_add_efi_memmap(), but
+> > > > otherwise avoid any other side effects of considering the EFI map.
+> > > > What I'm missing is the rationale for why "add_efi_memmap" is required
+> > > > before considering the EFI memory map.
+> > > >
+> > > > If there is a negative side effect to always using the EFI map then
+> > > > the new "add_efi_mode" designation constrains it to just the
+> > > > soft-reservation case.
+> > > >
+> > >
+> > > Could we make the presence of any EFI_MEMORY_SP regions imply
+> > > add_efi_memmap? That way, it is guaranteed that we don't regress
+> > > existing systems, while establishing clear and unambiguous semantics
+> > > for new systems that rely on these changes in order to be able to use
+> > > the special purpose memory as intended.
+> >
+> > In fact that's how it works. EFI_MEMORY_SP is unconditionally added.
+> > Other EFI memory types are optionally added with the add_efi_memmap
+> > option.
+>
+> That is not what I meant.
+>
+> Why not behave as if 'add_efi_memmap' was passed if any EFI_MEMORY_SP
+> regions exist?
 
-Got it!
-
-> 
-> If VMCI really cares it can implement an ioctl to
-> allow applications to detect that half closed sockets aren't supported.
-> 
-> It does not look like VMCI wants to bother (users do not read
-> kernel implementation notes) so it does not really care.
-> So why do we want to cripple other transports intentionally?
-
-The main reason is that we are developing the test suite and we noticed
-the miss match. Since we want to make sure that applications behave in
-the same way on different transports, we thought we would solve it that
-way.
-
-But what you are saying (also in the reply of the patches) is actually
-quite right. Not being publicized, applications do not expect this behavior,
-so please discard this series.
-
-My problem during the tests, was trying to figure out if half-closed
-sockets were supported or not, so as you say adding an IOCTL or maybe
-better a getsockopt() could solve the problem.
-
-What do you think?
-
-Thanks,
-Stefano
+Hmm, ok, on the assumption that any platform that is modern enough to
+specify EFI_MEMORY_SP likely does not need the opt-in? I can get on
+board with that. It's also simple enough to undo if it causes problems
+in practice.
