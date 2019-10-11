@@ -2,167 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9991BD3738
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 03:40:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD6D5D3758
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 03:49:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbfJKBjp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 21:39:45 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:30639 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727532AbfJKBjo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 21:39:44 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20191011013941epoutp0359d8de98908c83e572c16a658b31c804~MdA-CQtGo0976209762epoutp03K
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 01:39:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20191011013941epoutp0359d8de98908c83e572c16a658b31c804~MdA-CQtGo0976209762epoutp03K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1570757981;
-        bh=FLiLxeLnYPsqkocvnQZ7jVry7G7CObnrO9EAQ2IVVsk=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=dtnWhUTeajq58uzTao948KpLsufEFjNCKuXLUM0Q9KiyZGpQmxwUQstgd+svpron3
-         eruwlplcDBU1aXSIou2qi1CfpXJwdldVegXR9pssOpUC6PnzHx0ghOkSAOMVKioZSQ
-         xPLO08sdJV2Xb5plWySD5tmtmfDctNjIG5+MAXKk=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191011013940epcas1p19e420ea129c9d89ecaf4f0c83d910b5a~MdA_cNSaL0730507305epcas1p1j;
-        Fri, 11 Oct 2019 01:39:40 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.152]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 46q9cB0P25zMqYlh; Fri, 11 Oct
-        2019 01:39:38 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        13.C3.04144.45DDF9D5; Fri, 11 Oct 2019 10:39:32 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191011013931epcas1p2b9c547ee3cb8cc383791590104796e82~MdA2NlQvX0996609966epcas1p22;
-        Fri, 11 Oct 2019 01:39:31 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191011013931epsmtrp2f648c8987246ebd42bc9d031a8ae924e~MdA2M9oXT1193611936epsmtrp2O;
-        Fri, 11 Oct 2019 01:39:31 +0000 (GMT)
-X-AuditID: b6c32a35-2dfff70000001030-46-5d9fdd54cd71
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        11.5F.03889.35DDF9D5; Fri, 11 Oct 2019 10:39:31 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191011013931epsmtip2e5343484b72b1832aefbab4d213e1d0f~MdA1-1lD22054720547epsmtip2j;
-        Fri, 11 Oct 2019 01:39:31 +0000 (GMT)
-Subject: Re: [PATCH] extcon: sm5502: Reset registers during initialization
-To:     Stephan Gerhold <stephan@gerhold.net>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc:     linux-kernel@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <7432858f-3a22-b7f6-ec02-4e44dc9e71b5@samsung.com>
-Date:   Fri, 11 Oct 2019 10:44:34 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.9.0
+        id S1727916AbfJKBtK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 21:49:10 -0400
+Received: from mga14.intel.com ([192.55.52.115]:56798 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727584AbfJKBtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 21:49:09 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2019 18:49:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,282,1566889200"; 
+   d="scan'208";a="395597624"
+Received: from unknown (HELO localhost) ([10.239.159.128])
+  by fmsmga006.fm.intel.com with ESMTP; 10 Oct 2019 18:49:07 -0700
+Date:   Fri, 11 Oct 2019 09:51:01 +0800
+From:   Yang Weijiang <weijiang.yang@intel.com>
+To:     Jim Mattson <jmattson@google.com>
+Cc:     Yang Weijiang <weijiang.yang@intel.com>,
+        kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Subject: Re: [PATCH v7 3/7] KVM: VMX: Pass through CET related MSRs to Guest
+Message-ID: <20191011015101.GA11232@local-michael-cet-test>
+References: <20190927021927.23057-1-weijiang.yang@intel.com>
+ <20190927021927.23057-4-weijiang.yang@intel.com>
+ <CALMp9eT3HJ3S6Mzzntje2Kb4m-y86GvkhaNXun-mLJukEy6wbA@mail.gmail.com>
+ <20191009061509.GB27851@local-michael-cet-test>
+ <CALMp9eT-6HGQSKpDGBD6poujSXc-KckaR__Re3RiiMuVse1t8Q@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20191010154720.52330-1-stephan@gerhold.net>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0gUURTm7uyOo7U2rZpnJXSdHqSg7qhra2gJhUgFSklEJjas19XcFzNr
-        tIWhSb4oyx6Qqzam2MM/1qKigigamkRhWGKFZWkYCUpaEVbU7o6R/75z7nfOd75zD0WoysgQ
-        qsBix7yFMzGkn7xrKEIblTklZmsnKlT68d4GUv+m9B6pn2yMTyHSypv2pNV0tKG0ZVdoBnGs
-        MCkfc7mY12CLwZpbYDEmMwcO5+zN0SVo2Sg2Ub+T0Vg4M05m9h3MiEotMLllGM0pzlTkTmVw
-        gsDE7E7irUV2rMm3CvZkBttyTbZEW7TAmYUiizHaYDXvYrXaWJ2beKIwX1xZRLa7qtPnP7qI
-        ErTsX40oCuh4GC4trEZ+lIruRtBaLvpIwRKCqc6a1eA7gqeLX1E18vVWjL37RUgPfQjqGluR
-        FCwimH5QT3pYAfR+uN086uPRCKQzoXMo3pMmaA2svHUpPJikI6H/06SXvoEOh5c/ZrwCSno3
-        zPVUyDxYTm+DV7MePkUF0UfhyTdOomyE0bpZuQf70onwR7yDpPbB8HpWlEk4DMo6671zAj1A
-        whNnk0IysA8ezt1aNRMAn0c6fCQcAssLfaSEz8L90UekVFyJoKN/bLU4Dvpbr8k8AxF0BLT3
-        xkjpcOj52bg6hD8sfLuokNarhMpylUTZAuPTUzIJq6Glooq8ghjnGjvONRacayw4/4s1IXkb
-        2oRtgtmIBdbGrv1rF/IeYKSuG11/dnAQ0RRi1itvhonZKgV3SnCYBxFQBBOobHY2ZKuUuZzj
-        DOatOXyRCQuDSOdedi0REmSwus/ZYs9hdbFxcXH6eDZBx7JMsFKB3H1oI2fHhRjbMP+vTkb5
-        hpQg0V88kO5Xf26PNXTIUWxMUbc8L3hx1ZSK1Znamb4HBnWQo3NE83h8uql7PnMurbwiqz3G
-        eSnvSDhWJ0Y3Fl//Ke64sO5GXixeudwwukQEh2ePbUyIKXt/Mosfbv79LN0wkvJYc8jCT1Z1
-        fZnP2z6QpKRSP/yZqLtW/bz2+OaSrYxcyOfYSIIXuL8Ee9J8lgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrALMWRmVeSWpSXmKPExsWy7bCSvG7w3fmxBj9nyVpc3jWHzeJ24wo2
-        ixtzTRyYPdoW2Hv0bVnF6PF5k1wAcxSXTUpqTmZZapG+XQJXxvxf7xkLlgtVND3dxNzA+Jmv
-        i5GTQ0LAROLC/T/MXYxcHEICuxkltr47zAaRkJSYdvEoUIIDyBaWOHy4GKLmLaPEoddrwWqE
-        BbwkFi46yQ5iiwiESFw7tZAZxGYWUJD4dW8TK0RDD6NEy6FXTCAJNgEtif0vboA18wsoSlz9
-        8ZgRxOYVsJN4vrMdrIZFQFXi5hOQZk4OUYEIiefbb0DVCEqcnPmEBcTmFLCU+D9/GSPEMnWJ
-        P/MuQS0Wl7j1ZD4ThC0v0bx1NvMERuFZSNpnIWmZhaRlFpKWBYwsqxglUwuKc9Nziw0LjPJS
-        y/WKE3OLS/PS9ZLzczcxguNBS2sH44kT8YcYBTgYlXh4Z8jPjxViTSwrrsw9xCjBwawkwrto
-        1pxYId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rzy+ccihQTSE0tSs1NTC1KLYLJMHJxSDYyNroa2
-        h5/tK56yYGP/v2iOqXnBsbK7WP/yqPw8njlX2G+C0ONd9232Jxy/cM3eunGCNq+3Q33vixmF
-        3naFMU3O+vk6dn4O31alqVjlzvrWoJ97e9431bVBbU7XZ7A88z01v3TqzebQb0uXTDo3b5/g
-        lfuF0X36p/yZixl3qa7kYO2UShDznabEUpyRaKjFXFScCACCW38ngwIAAA==
-X-CMS-MailID: 20191011013931epcas1p2b9c547ee3cb8cc383791590104796e82
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191010154845epcas4p2c3aa5f0afd9fad05c0ab88d99792415a
-References: <CGME20191010154845epcas4p2c3aa5f0afd9fad05c0ab88d99792415a@epcas4p2.samsung.com>
-        <20191010154720.52330-1-stephan@gerhold.net>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALMp9eT-6HGQSKpDGBD6poujSXc-KckaR__Re3RiiMuVse1t8Q@mail.gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19. 10. 11. 오전 12:47, Stephan Gerhold wrote:
-> On some devices (e.g. Samsung Galaxy A5 (2015)), the bootloader
-> seems to keep interrupts enabled for SM5502 when booting Linux.
-> Changing the cable state (i.e. plugging in a cable) - until the driver
-> is loaded - will therefore produce an interrupt that is never read.
+On Thu, Oct 10, 2019 at 12:04:40PM -0700, Jim Mattson wrote:
+> On Tue, Oct 8, 2019 at 11:13 PM Yang Weijiang <weijiang.yang@intel.com> wrote:
+> >
+> > On Wed, Oct 02, 2019 at 11:18:32AM -0700, Jim Mattson wrote:
+> > > On Thu, Sep 26, 2019 at 7:17 PM Yang Weijiang <weijiang.yang@intel.com> wrote:
+> > > >
+> > > > CET MSRs pass through Guest directly to enhance performance.
+> > > > CET runtime control settings are stored in MSR_IA32_{U,S}_CET,
+> > > > Shadow Stack Pointer(SSP) are stored in MSR_IA32_PL{0,1,2,3}_SSP,
+> > > > SSP table base address is stored in MSR_IA32_INT_SSP_TAB,
+> > > > these MSRs are defined in kernel and re-used here.
+> > >
+> > > All of these new guest MSRs will have to be enumerated by
+> > > KVM_GET_MSR_INDEX_LIST.
+> > >
+> > Since CET feature is Intel platform specific, but looks like KVM_GET_MSR_INDEX_LIST
+> > fetchs x86 common MSRs, I have patch in QEMU to support CET
+> > MSRs, the patch is here:
+> > https://patchwork.ozlabs.org/patch/1058265/
 > 
-> In this situation, the cable state will be stuck forever on the
-> initial state because SM5502 stops sending interrupts.
-> This can be avoided by clearing those pending interrupts after
-> the driver has been loaded.
-> 
-> One way to do this is to reset all registers to default state
-> by writing to SM5502_REG_RESET. This ensures that we start from
-> a clean state, with all interrupts disabled.
-> 
-> Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
-> ---
->  drivers/extcon/extcon-sm5502.c | 4 ++++
->  drivers/extcon/extcon-sm5502.h | 2 ++
->  2 files changed, 6 insertions(+)
-> 
-> diff --git a/drivers/extcon/extcon-sm5502.c b/drivers/extcon/extcon-sm5502.c
-> index dc43847ad2b0..b3d93baf4fc5 100644
-> --- a/drivers/extcon/extcon-sm5502.c
-> +++ b/drivers/extcon/extcon-sm5502.c
-> @@ -65,6 +65,10 @@ struct sm5502_muic_info {
->  /* Default value of SM5502 register to bring up MUIC device. */
->  static struct reg_data sm5502_reg_data[] = {
->  	{
-> +		.reg = SM5502_REG_RESET,
-> +		.val = SM5502_REG_RESET_MASK,
-> +		.invert = true,
-> +	}, {
->  		.reg = SM5502_REG_CONTROL,
->  		.val = SM5502_REG_CONTROL_MASK_INT_MASK,
->  		.invert = false,
-> diff --git a/drivers/extcon/extcon-sm5502.h b/drivers/extcon/extcon-sm5502.h
-> index 9dbb634d213b..ce1f1ec310c4 100644
-> --- a/drivers/extcon/extcon-sm5502.h
-> +++ b/drivers/extcon/extcon-sm5502.h
-> @@ -237,6 +237,8 @@ enum sm5502_reg {
->  #define DM_DP_SWITCH_UART			((DM_DP_CON_SWITCH_UART <<SM5502_REG_MANUAL_SW1_DP_SHIFT) \
->  						| (DM_DP_CON_SWITCH_UART <<SM5502_REG_MANUAL_SW1_DM_SHIFT))
->  
-> +#define SM5502_REG_RESET_MASK			(0x1)
-> +
->  /* SM5502 Interrupts */
->  enum sm5502_irq {
->  	/* INT1 */
-> 
+> Qemu is not the only user of kvm. All possible guest MSRs for the
+> platform *must* be enumerated by KVM_GET_MSR_INDEX_LIST. A number of
+> Intel-specific MSRs are already enumerated.
+>
+Sure, will do that, thank you!
 
-Applied it. Thanks.
+> > > > MSR_IA32_U_CET and MSR_IA32_PL3_SSP are used for user mode protection,
+> > > > the contents could differ from process to process, therefore,
+> > > > kernel needs to save/restore them during context switch, it makes
+> > > > sense to pass through them so that the guest kernel can
+> > > > use xsaves/xrstors to operate them efficiently. Other MSRs are used
+> > > > for non-user mode protection. See CET spec for detailed info.
+> > >
+> > > I assume that XSAVES & XRSTORS bypass the MSR permission bitmap, like
+> > > other instructions that manipulate MSRs (e.g. SWAPGS, RDTSCP, etc.).
+> > > Is the guest OS likely to use RDMSR/WRMSR to access these MSRs?
+> > >
+> > Yes, exactly, you may check the CET kernel code.
+> >
+> > > > The difference between CET VMCS state fields and xsave components is that,
+> > > > the former used for CET state storage during VMEnter/VMExit,
+> > > > whereas the latter used for state retention between Guest task/process
+> > > > switch.
+> > > >
+> > > > Co-developed-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
+> > > > Signed-off-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
+> > > > Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> > > > ---
+> > > >  arch/x86/kvm/cpuid.c   |  1 +
+> > > >  arch/x86/kvm/cpuid.h   |  2 ++
+> > > >  arch/x86/kvm/vmx/vmx.c | 39 +++++++++++++++++++++++++++++++++++++++
+> > > >  3 files changed, 42 insertions(+)
+> > > >
+> > > > diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> > > > index 1aa86b87b6ab..0a47b9e565be 100644
+> > > > --- a/arch/x86/kvm/cpuid.c
+> > > > +++ b/arch/x86/kvm/cpuid.c
+> > > > @@ -66,6 +66,7 @@ u64 kvm_supported_xss(void)
+> > > >  {
+> > > >         return KVM_SUPPORTED_XSS & kvm_x86_ops->supported_xss();
+> > > >  }
+> > > > +EXPORT_SYMBOL_GPL(kvm_supported_xss);
+> > > >
+> > > >  #define F(x) bit(X86_FEATURE_##x)
+> > > >
+> > > > diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
+> > > > index d78a61408243..1d77b880084d 100644
+> > > > --- a/arch/x86/kvm/cpuid.h
+> > > > +++ b/arch/x86/kvm/cpuid.h
+> > > > @@ -27,6 +27,8 @@ bool kvm_cpuid(struct kvm_vcpu *vcpu, u32 *eax, u32 *ebx,
+> > > >
+> > > >  int cpuid_query_maxphyaddr(struct kvm_vcpu *vcpu);
+> > > >
+> > > > +u64 kvm_supported_xss(void);
+> > > > +
+> > > >  static inline int cpuid_maxphyaddr(struct kvm_vcpu *vcpu)
+> > > >  {
+> > > >         return vcpu->arch.maxphyaddr;
+> > > > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> > > > index a84198cff397..f720baa7a9ba 100644
+> > > > --- a/arch/x86/kvm/vmx/vmx.c
+> > > > +++ b/arch/x86/kvm/vmx/vmx.c
+> > > > @@ -7001,6 +7001,43 @@ static void update_intel_pt_cfg(struct kvm_vcpu *vcpu)
+> > > >                 vmx->pt_desc.ctl_bitmask &= ~(0xfULL << (32 + i * 4));
+> > > >  }
+> > > >
+> > > > +static void vmx_intercept_cet_msrs(struct kvm_vcpu *vcpu)
+> > >
+> > > Nit: It seems like this function adjusts the MSR permission bitmap so
+> > > as *not* to intercept the CET MSRs.
+> > >
+> > OK, will rename it.
+> > > > +{
+> > > > +       struct vcpu_vmx *vmx = to_vmx(vcpu);
+> > > > +       unsigned long *msr_bitmap;
+> > > > +       u64 kvm_xss;
+> > > > +       bool cet_en;
+> > > > +
+> > > > +       msr_bitmap = vmx->vmcs01.msr_bitmap;
+> > >
+> > > What about nested guests? (i.e. vmcs02).
+> > >
+> > Hmm, I need to check the nested case, thank you.
+> >
+> > > > +       kvm_xss = kvm_supported_xss();
+> > > > +       cet_en = guest_cpuid_has(vcpu, X86_FEATURE_SHSTK) ||
+> > > > +                guest_cpuid_has(vcpu, X86_FEATURE_IBT);
+> > > > +       /*
+> > > > +        * U_CET is a must for USER CET, per CET spec., U_CET and PL3_SPP are
+> > > > +        * a bundle for USER CET xsaves.
+> > > > +        */
+> > > > +       if (cet_en && (kvm_xss & XFEATURE_MASK_CET_USER)) {
+> > > > +               vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_U_CET, MSR_TYPE_RW);
+> > > > +               vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_PL3_SSP, MSR_TYPE_RW);
+> > > > +       }
+> > >
+> > > Since this is called from vmx_cpuid_update, what happens if cet_en was
+> > > previously true and now it's false?
+> > >
+> > Yes, it's likely, but guest CPUID usually is fixed before
+> > guest is launched, do you have any suggestion?
+> 
+> How about an else clause?
+>
+OK, will add else clauses on the MSRs. thank you.
 
-When you send the patch on later, you better to specify the version
-on patch title as following:
-	[PATCH v2] extcon: sm5502: Reset registers during initialization
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+> > > > +       /*
+> > > > +        * S_CET is a must for KERNEL CET, PL0_SSP ... PL2_SSP are a bundle
+> > > > +        * for CET KERNEL xsaves.
+> > > > +        */
+> > > > +       if (cet_en && (kvm_xss & XFEATURE_MASK_CET_KERNEL)) {
+> > > > +               vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_S_CET, MSR_TYPE_RW);
+> > > > +               vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_PL0_SSP, MSR_TYPE_RW);
+> > > > +               vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_PL1_SSP, MSR_TYPE_RW);
+> > > > +               vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_PL2_SSP, MSR_TYPE_RW);
+> > > > +
+> > > > +               /* SSP_TAB only available for KERNEL SHSTK.*/
+> > > > +               if (guest_cpuid_has(vcpu, X86_FEATURE_SHSTK))
+> > > > +                       vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_INT_SSP_TAB,
+> > > > +                                                     MSR_TYPE_RW);
+> > > > +       }
+> > > > +}
+> > > > +
+> > > >  static void vmx_cpuid_update(struct kvm_vcpu *vcpu)
+> > > >  {
+> > > >         struct vcpu_vmx *vmx = to_vmx(vcpu);
+> > > > @@ -7025,6 +7062,8 @@ static void vmx_cpuid_update(struct kvm_vcpu *vcpu)
+> > > >         if (boot_cpu_has(X86_FEATURE_INTEL_PT) &&
+> > > >                         guest_cpuid_has(vcpu, X86_FEATURE_INTEL_PT))
+> > > >                 update_intel_pt_cfg(vcpu);
+> > > > +
+> > > > +       vmx_intercept_cet_msrs(vcpu);
+> > > >  }
+> > > >
+> > > >  static void vmx_set_supported_cpuid(u32 func, struct kvm_cpuid_entry2 *entry)
+> > > > --
+> > > > 2.17.2
+> > > >
