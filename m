@@ -2,112 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7222D3DFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 13:09:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E5B2D3DF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 13:07:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727865AbfJKLJh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 07:09:37 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:41834 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727226AbfJKLJh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 07:09:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=hd7DeC8X5msMUThPgUPk7q3GKjl3k7DCzGsETcIzACA=; b=fIqW+zhpMmwxyXiudCtqbZKiv
-        Rua75ufe08S0TzPUEwj66GcMdVNwwXbpRvk/iuPTQFxNLhZfz9f/bcY7LcVq1L/D371z5dZ5KrrEB
-        oc3/AjbaMA2CBmd5sSo2S/ZVR2gHpFAPNvWN3fh6LhzM619VRjxxMdHaohZv+P+MUPzNyuBpEGXNf
-        EtQIKhx10aE9evxbyVJUpnod+Mej41MZaXZSPfZdsdffT4XspS1ArVx2SpMc3SdV4mpZat1evXRc8
-        BR5kPNhKGk3QyzdMI3aKXY1Hb8NJUzlavX+ANPjzLdc7zzIhQXA5VjNKkzlMm0Z5u2RM9yLdwSGC4
-        vw5Mfg1XQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iIsne-0006qb-Ky; Fri, 11 Oct 2019 11:09:35 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 9B9193013A4;
-        Fri, 11 Oct 2019 13:08:40 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 115BE20230369; Fri, 11 Oct 2019 13:09:33 +0200 (CEST)
-Date:   Fri, 11 Oct 2019 13:09:33 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, Jessica Yu <jeyu@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH] ftrace/module: Allow ftrace to make only loaded module
- text read-write
-Message-ID: <20191011110933.GX2328@hirez.programming.kicks-ass.net>
-References: <20191009223638.60b78727@oasis.local.home>
- <20191010073121.GN2311@hirez.programming.kicks-ass.net>
- <20191010093329.GI2359@hirez.programming.kicks-ass.net>
- <20191010093650.GJ2359@hirez.programming.kicks-ass.net>
- <20191010122909.GK2359@hirez.programming.kicks-ass.net>
- <20191010105515.5eba7f31@gandalf.local.home>
- <20191010170111.GQ2328@hirez.programming.kicks-ass.net>
- <20191010132013.7f3388bc@gandalf.local.home>
+        id S1727810AbfJKLHs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 07:07:48 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:49958 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727198AbfJKLHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 07:07:48 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 84E421BF4096B01C14F3;
+        Fri, 11 Oct 2019 19:07:45 +0800 (CST)
+Received: from huawei.com (10.90.53.225) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Fri, 11 Oct 2019
+ 19:07:35 +0800
+From:   yu kuai <yukuai3@huawei.com>
+To:     <darrick.wong@oracle.com>, <bfoster@redhat.com>,
+        <dchinner@redhat.com>
+CC:     <linux-xfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yukuai3@huawei.com>, <zhengbin13@huawei.com>,
+        <yi.zhang@huawei.com>, <zhangxiaoxu5@huawei.com>
+Subject: [PATCH] xfs: fix wrong struct type in ioctl definition whih cmd XFS_IOC_GETBMAPAX
+Date:   Fri, 11 Oct 2019 19:14:46 +0800
+Message-ID: <1570792486-84374-1-git-send-email-yukuai3@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191010132013.7f3388bc@gandalf.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 01:20:13PM -0400, Steven Rostedt wrote:
-> Hmm, I'm lost at what the below is trying to do with respect to the
-> above.
+ioctl expect 'getbmapx' as the 'arg' when the cmd is XFS_IOC_GETBMAPX.
+But the definition in 'xfs_fs.h' is 'getbmap'
 
-The below is an alternative approach for the module load issue. It
-accepts we patch 'late' and then uses text_poke_bp().
+So, change it to 'getbmapx'
 
-It works. We can then look at moving all that patching to
-ftrace_module_init() later when we figure out how to do it across
-architectures.
+Signed-off-by: yu kuai <yukuai3@huawei.com>
+---
+ fs/xfs/libxfs/xfs_fs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > --- a/arch/x86/kernel/ftrace.c
-> > +++ b/arch/x86/kernel/ftrace.c
-> > @@ -34,6 +34,8 @@
-> >  
-> >  #ifdef CONFIG_DYNAMIC_FTRACE
-> >  
-> > +static int ftrace_poke_late = 0;
-> > +
-> >  int ftrace_arch_code_modify_prepare(void)
-> >      __acquires(&text_mutex)
-> >  {
-> > @@ -43,12 +45,15 @@ int ftrace_arch_code_modify_prepare(void
-> >  	 * ftrace has it set to "read/write".
-> >  	 */
-> >  	mutex_lock(&text_mutex);
-> > +	ftrace_poke_late = 1;
-> >  	return 0;
-> >  }
-> >  
-> >  int ftrace_arch_code_modify_post_process(void)
-> >      __releases(&text_mutex)
-> >  {
-> > +	text_poke_finish();
-> > +	ftrace_poke_late = 0;
-> >  	mutex_unlock(&text_mutex);
-> >  	return 0;
-> >  }
-> > @@ -116,7 +121,10 @@ ftrace_modify_code_direct(unsigned long
-> >  		return ret;
-> >  
-> >  	/* replace the text with the new text */
-> > -	text_poke_early((void *)ip, new_code, MCOUNT_INSN_SIZE);
-> > +	if (ftrace_poke_late)
-> > +		text_poke_queue((void *)ip, new_code, MCOUNT_INSN_SIZE, NULL);
-> > +	else
-> > +		text_poke_early((void *)ip, new_code, MCOUNT_INSN_SIZE);
-> >  	return 0;
-> >  }
-> >  
-> 
+diff --git a/fs/xfs/libxfs/xfs_fs.h b/fs/xfs/libxfs/xfs_fs.h
+index 39dd2b9..cad245a 100644
+--- a/fs/xfs/libxfs/xfs_fs.h
++++ b/fs/xfs/libxfs/xfs_fs.h
+@@ -764,7 +764,7 @@ struct xfs_scrub_metadata {
+ #define XFS_IOC_FSGETXATTRA	_IOR ('X', 45, struct fsxattr)
+ /*	XFS_IOC_SETBIOSIZE ---- deprecated 46	   */
+ /*	XFS_IOC_GETBIOSIZE ---- deprecated 47	   */
+-#define XFS_IOC_GETBMAPX	_IOWR('X', 56, struct getbmap)
++#define XFS_IOC_GETBMAPX	_IOWR('X', 56, struct getbmapx)
+ #define XFS_IOC_ZERO_RANGE	_IOW ('X', 57, struct xfs_flock64)
+ #define XFS_IOC_FREE_EOFBLOCKS	_IOR ('X', 58, struct xfs_fs_eofblocks)
+ /*	XFS_IOC_GETFSMAP ------ hoisted 59         */
+-- 
+2.7.4
+
