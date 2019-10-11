@@ -2,81 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7E38D39A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 08:49:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF9ADD39A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 08:52:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727601AbfJKGtY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 02:49:24 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35946 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726481AbfJKGtY (ORCPT
+        id S1727506AbfJKGvv convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 11 Oct 2019 02:51:51 -0400
+Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:53918 "EHLO
+        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726481AbfJKGvv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 02:49:24 -0400
-Received: by mail-pf1-f193.google.com with SMTP id y22so5489235pfr.3;
-        Thu, 10 Oct 2019 23:49:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lI3FmveMxynn8iWgzzKvDCiGa3J1be8OYxVDzXPfJSc=;
-        b=D2UM+LCn4BVU41xDnmNgrqg5ccUwK+ssZ9iPB8fnVAq8LBzuIPXuTdkrZg3GfzMD7r
-         PaXnKlymynij21lOqOTX2zG4+0GVULLFIM872lKhPwFHB/yQ2Kh0iupeXlUjKqFXqdrt
-         VUpwuUpg2IZAE7hHDt/xoyrSqIfGX+gZ+u8UsQTEAB7BIAqzii4HGDJf0PYAdI2tJZ5W
-         hFVkRHh5bJ0GNgGT0OvJFTRw0Upe+px+4gkM+vIBtI281JYDVYWqCJLCdg4Kd5fjmujF
-         CvEs2mLMo+mRvSFnV4GGbnHflFL55jU5wvs6+uHy/zNtEOn15qcOPEU2pwF8MQviUu8e
-         OjKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lI3FmveMxynn8iWgzzKvDCiGa3J1be8OYxVDzXPfJSc=;
-        b=Dfhn7C4n9GfWpGFKTef59v3NxzTCrN/jaJtv8282YP+h/kWCdxTWl11jj7I4B9u/Tt
-         jDY5I8ky3czGEYpUW0XRi/3Nw9FthC/uEzZzmgRO3HGM/w8kCRuHUSKHVyBBbNG0cjGf
-         plh42W+v6jsQq+Y/C+9Xp69i5JMNwd6gTYtlfTP1EglKNBBBJ/Hj7RCb1lMepQc+DsXU
-         HJ8DxhDAbqtVfe6PdGUJQlZjEWl8tQMrRgJJT6I1DtFu6bnL6oIVwTNCSunqiUL13mxw
-         kVM5X9CNodKYGmALK432fc8wNzXG4buvvGykEOTrq9Z+CdRKqI9nJbJ1gOyGIWeaXDgM
-         AM3w==
-X-Gm-Message-State: APjAAAXS7zt9H2/+PI67jLFki3y3jLraBdgC0KyxiIhU2uhcAvnLJU4G
-        9W5q2odfE+uoxEckgukFHMZ45uSAoHXIaO5nnXM=
-X-Google-Smtp-Source: APXvYqxF4rgMB7mne3YjI7BIX+QLFeyDlO+TStNyEyk5w4cEM+xVJbqKgH+/enJJhaB4QOx7heUTxxME91AQep5JZug=
-X-Received: by 2002:a62:e206:: with SMTP id a6mr14818167pfi.64.1570776563039;
- Thu, 10 Oct 2019 23:49:23 -0700 (PDT)
+        Fri, 11 Oct 2019 02:51:51 -0400
+Received: from mailgate02.nec.co.jp ([114.179.233.122])
+        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x9B6pbYx017817
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 11 Oct 2019 15:51:37 +0900
+Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x9B6pb4S023079;
+        Fri, 11 Oct 2019 15:51:37 +0900
+Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
+        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x9B6oWag017958;
+        Fri, 11 Oct 2019 15:51:37 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.151] [10.38.151.151]) by mail02.kamome.nec.co.jp with ESMTP id BT-MMP-9398317; Fri, 11 Oct 2019 15:50:37 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC23GP.gisp.nec.co.jp ([10.38.151.151]) with mapi id 14.03.0439.000; Fri,
+ 11 Oct 2019 15:50:37 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     David Hildenbrand <david@redhat.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH v2 2/2] mm/memory-failure.c: Don't access uninitialized
+ memmaps in memory_failure()
+Thread-Topic: [PATCH v2 2/2] mm/memory-failure.c: Don't access uninitialized
+ memmaps in memory_failure()
+Thread-Index: AQHVfq1QC/9/3IlYuEK91tWnhgAEnKdSbnGAgABy8ACAAYrDAA==
+Date:   Fri, 11 Oct 2019 06:50:36 +0000
+Message-ID: <20191011065036.GB30500@hori.linux.bs1.fc.nec.co.jp>
+References: <20191009142435.3975-1-david@redhat.com>
+ <20191009142435.3975-3-david@redhat.com>
+ <20191010002619.GB3585@hori.linux.bs1.fc.nec.co.jp>
+ <134d4f03-a40a-fe62-fb93-53d209a91d2e@redhat.com>
+In-Reply-To: <134d4f03-a40a-fe62-fb93-53d209a91d2e@redhat.com>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.34.125.96]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <D19DDD501EA4B140AC1A4B2E53DBD620@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20191009200523.8436-1-stuart.w.hayes@gmail.com>
- <20191009200523.8436-3-stuart.w.hayes@gmail.com> <CAHp75Vc1mZ7qxKPGaqDVAQ9d_UjNq9LJDEPWHQHaYCfw7vGrmA@mail.gmail.com>
- <CAHp75VfNjnAxua6ESx1Vp=57O=pVM10P1UK8bGNQUk7FeY=Dmw@mail.gmail.com> <CAL5oW02uRk-ZLMaE6Skt7rX6xy=sQNttfSZ2N1JRBXPfjJpZNg@mail.gmail.com>
-In-Reply-To: <CAL5oW02uRk-ZLMaE6Skt7rX6xy=sQNttfSZ2N1JRBXPfjJpZNg@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 11 Oct 2019 09:49:11 +0300
-Message-ID: <CAHp75VfEpH4Nv0J+wc3vhFWXYgVLcFdOr263dAFRZiz_ZEfZrw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] PCI: pciehp: Wait for PDS if in-band presence is disabled
-To:     Stuart Hayes <stuart.w.hayes@gmail.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Austin Bolen <austin_bolen@dell.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
-        Sinan Kaya <okaya@kernel.org>,
-        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lukas Wunner <lukas@wunner.de>
-Content-Type: text/plain; charset="UTF-8"
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 11:37 PM Stuart Hayes <stuart.w.hayes@gmail.com> wrote:
+On Thu, Oct 10, 2019 at 09:17:42AM +0200, David Hildenbrand wrote:
+> On 10.10.19 02:26, Naoya Horiguchi wrote:
+> > On Wed, Oct 09, 2019 at 04:24:35PM +0200, David Hildenbrand wrote:
+> >> We should check for pfn_to_online_page() to not access uninitialized
+> >> memmaps. Reshuffle the code so we don't have to duplicate the error
+> >> message.
+> >>
+> >> Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> >> Cc: Andrew Morton <akpm@linux-foundation.org>
+> >> Cc: Michal Hocko <mhocko@kernel.org>
+> >> Signed-off-by: David Hildenbrand <david@redhat.com>
+> >> ---
+> >>  mm/memory-failure.c | 14 ++++++++------
+> >>  1 file changed, 8 insertions(+), 6 deletions(-)
+> >>
+> >> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> >> index 7ef849da8278..e866e6e5660b 100644
+> >> --- a/mm/memory-failure.c
+> >> +++ b/mm/memory-failure.c
+> >> @@ -1253,17 +1253,19 @@ int memory_failure(unsigned long pfn, int flags)
+> >>  	if (!sysctl_memory_failure_recovery)
+> >>  		panic("Memory failure on page %lx", pfn);
+> >>  
+> >> -	if (!pfn_valid(pfn)) {
+> >> +	p = pfn_to_online_page(pfn);
+> >> +	if (!p) {
+> >> +		if (pfn_valid(pfn)) {
+> >> +			pgmap = get_dev_pagemap(pfn, NULL);
+> >> +			if (pgmap)
+> >> +				return memory_failure_dev_pagemap(pfn, flags,
+> >> +								  pgmap);
+> >> +		}
+> >>  		pr_err("Memory failure: %#lx: memory outside kernel control\n",
+> >>  			pfn);
+> >>  		return -ENXIO;
+> >>  	}
+> >>  
+> >> -	pgmap = get_dev_pagemap(pfn, NULL);
+> >> -	if (pgmap)
+> >> -		return memory_failure_dev_pagemap(pfn, flags, pgmap);
+> >> -
+> >> -	p = pfn_to_page(pfn);
+> > 
+> > This change seems to assume that memory_failure_dev_pagemap() is never
+> > called for online pages. Is it an intended behavior?
+> > Or the concept "online pages" is not applicable to zone device pages?
+> 
+> Yes, that's the real culprit. ZONE_DEVICE/devmem pages are never online
+> (SECTION_IS_ONLINE). The terminology "online" only applies to pages that
+> were given to the buddy. And as we support sup-section hotadd for
+> devmem, we cannot easily make use of the section flag it. I already
+> proposed somewhere to convert SECTION_IS_ONLINE to a subsection bitmap
+> and call it something like pfn_active().
+> 
+> pfn_online() would then be "pfn_active() && zone != ZONE_DEVICE". And we
+> could use pfn_active() everywhere to test for initialized memmaps (well,
+> besides some special cases like device reserved memory that does not
+> span full sub-sections). Until now, nobody volunteered and I have other
+> things to do.
 
-> Thank you for the feedback!  An infinite loop is used several other places in
-> this driver--this keeps the style similar.  I can change it as you suggest,
-> though, if that would be preferable to consistency.
+Thank you for explanation.  I'm not sure how hard now but we try to do this.
+You fix the problem from online/offline viewpoint now, and leave remaining
+part untouched. I agree with that approach, and the suggested change looks
+good to me.
 
-Better to start the change now. I'll look into the file and see how we
-can improve the rest.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Acked-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
