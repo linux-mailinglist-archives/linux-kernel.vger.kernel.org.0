@@ -2,77 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29E9CD4442
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 17:30:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7489BD4448
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 17:31:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728128AbfJKPaY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 11:30:24 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:40873 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726827AbfJKPaX (ORCPT
+        id S1728173AbfJKPbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 11:31:06 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:38108 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726705AbfJKPbG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 11:30:23 -0400
-Received: by mail-oi1-f195.google.com with SMTP id k9so8331679oib.7;
-        Fri, 11 Oct 2019 08:30:22 -0700 (PDT)
+        Fri, 11 Oct 2019 11:31:06 -0400
+Received: by mail-yw1-f68.google.com with SMTP id s6so3619245ywe.5
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 08:31:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=mxX6ZfMEu9UblL7e3DTkotuZrSFsmDbCoebjzwcL8h0=;
+        b=ufYqM9IQiYWJXmizW9EncXRMAuDKV9ixLq/HSNFNpNZkGyWPmgPmKChqyOWtlvaJz2
+         g171+ritEahrlLdJp1/aQUN77kRibcDDDwNCbo1kCC7dMbYiIJm8FjDvrXt0BigYOpqM
+         vxCWKhAfox0ET7SmICRFSnzf1UwkwSa/pULtSsJlSPL1imZcNtZ2ZxNcvzlubz3Fio+i
+         Z0+zDzeaG/fXw9rtujEMs1vg88g+XvC0vcVF7sOA8Flf5dsgLysz9Xi/cfy0IzepX0wX
+         tZ7vvGrcZJ6cA8xJ5YMjLE1j0APNWiCpGkJ7Ter0ruivx4Mva/2M1NJ4EF66JZS06BLC
+         4/cQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IlY2+yeW416JGr4DtEVYz+C96Dhs+gm3/zcCLQ8sBOQ=;
-        b=N4ghlBebqu13t+4BxB9hZxdakTRywht11hIlFhHQWdE66rUpdZ4jToRicFzCWIJoNu
-         0oDyXQqG2m7wDc6JLSo2mlQRrqzQDTgWLD3W3W/ImwjuXUqxctrdG2qEs0RN7I5Nd8zB
-         XTZ198RK0+X2mdMd/Qs/WB+Bq9Z4v4eL9R7fJESzblEP0Ha14dAn2LprTPorbWcoh8OO
-         wzaVPAzwyJS+YHNRQRY8eUB/tTnWRCRJNcWKnHxCgOSZRXdNBAO4/YU5oX95lS9hWD3Z
-         8F8rN5r+RoCzcbpGdoUYxcvnnJGbo0sSogGq3BCiwJyOujTEpBmtOCVQ8Wf3U0OihIHC
-         qSlA==
-X-Gm-Message-State: APjAAAWKHtVBmRcg37h8sfeOl4uYgdaMFMPmZWUb8WGRP9qaacl/yAdF
-        IiNrFLcRanJTbh3JS2Eijw==
-X-Google-Smtp-Source: APXvYqwZweugxncUG7CPGNcm/LK2vvZBo2mMRKKh78w/KX0EXUj40FYs6ODtK25SX3OUSCKzB3WjEg==
-X-Received: by 2002:aca:f5c1:: with SMTP id t184mr9829490oih.88.1570807822538;
-        Fri, 11 Oct 2019 08:30:22 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id z16sm2668403otq.78.2019.10.11.08.30.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2019 08:30:21 -0700 (PDT)
-Date:   Fri, 11 Oct 2019 10:30:21 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Martin Kaiser <martin@kaiser.cx>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Martin Kaiser <martin@kaiser.cx>
-Subject: Re: [PATCH v2 2/2] dt-bindings: display: clps711x-fb: fix
- native-mode setting
-Message-ID: <20191011153021.GA10765@bogus>
-References: <20190918193853.25689-1-martin@kaiser.cx>
- <20191005130921.12874-1-martin@kaiser.cx>
- <20191005130921.12874-3-martin@kaiser.cx>
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=mxX6ZfMEu9UblL7e3DTkotuZrSFsmDbCoebjzwcL8h0=;
+        b=KuMf1P3gv+alpkZiCdGXIBYZmm+hWwioMvW0CyMQMBOyA0S/f2oajBVEKG9yuhzjEz
+         cOTQeDWUW+AnNB7WT2fd9JtzD+a6XowRaP3e6FcE2sUdPIyEc2ekOJ4UfgE433dUvt2k
+         ooZ86RWaB1DyfaO9vPOB3OTbVbiqQXru1SiwBXFzeMlsN46s7crpwLpaPe0RirV+jzcp
+         rhTciU5MZiG+vQkPuhyLZcVXDX1ynvRyiVbprvJ+sedfn+7PMV9HcPgt7sNnAi1sWZ7y
+         8VvYdv4L+C/v1YjAJ8g5KIItVbvs227MiAUQ2bZ4af9AIOAtK/TL8wSnh14lFYL7af8L
+         R7IQ==
+X-Gm-Message-State: APjAAAVf7TQHrJv/uuX6u9WAaE5fTd15WEZJOAVpwsD0RJrfLV2xI1uc
+        JDAOs1+rz8+FtuK5QNHFT/m8ig==
+X-Google-Smtp-Source: APXvYqz6suOMvjy8hdUWKuD9/89Nspymjqm4b1UZYQ8wE1NHnKF8NkD1PtR18YIcumQ9lLTUYrRm2w==
+X-Received: by 2002:a81:a30d:: with SMTP id a13mr2662067ywh.278.1570807865387;
+        Fri, 11 Oct 2019 08:31:05 -0700 (PDT)
+Received: from [192.168.1.44] (67.216.151.25.pool.hargray.net. [67.216.151.25])
+        by smtp.gmail.com with ESMTPSA id d63sm2313883ywe.55.2019.10.11.08.31.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 11 Oct 2019 08:31:04 -0700 (PDT)
+Subject: Re: [PATCH v2 08/12] arm64: BTI: Decode BYTPE bits when printing
+ PSTATE
+To:     Dave Martin <Dave.Martin@arm.com>, linux-kernel@vger.kernel.org
+Cc:     Andrew Jones <drjones@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        =?UTF-8?Q?Kristina_Mart=c5=a1enko?= <kristina.martsenko@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Paul Elliott <paul.elliott@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sudakshina Das <sudi.das@arm.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Amit Kachhap <amit.kachhap@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1570733080-21015-1-git-send-email-Dave.Martin@arm.com>
+ <1570733080-21015-9-git-send-email-Dave.Martin@arm.com>
+From:   Richard Henderson <richard.henderson@linaro.org>
+Openpgp: preference=signencrypt
+Message-ID: <18c9318c-d122-b534-b526-318935d9e2cc@linaro.org>
+Date:   Fri, 11 Oct 2019 11:31:02 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191005130921.12874-3-martin@kaiser.cx>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1570733080-21015-9-git-send-email-Dave.Martin@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat,  5 Oct 2019 15:09:21 +0200, Martin Kaiser wrote:
-> Move the native-mode setting inside the display-timing node. Outside of
-> display-timing, it is ignored.
-> 
-> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
-> ---
-> changes in v2
->  fix the example in this binding as well
-> 
->  Documentation/devicetree/bindings/display/cirrus,clps711x-fb.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+On 10/10/19 2:44 PM, Dave Martin wrote:
+>  #define PSR_IL_BIT		(1 << 20)
+> -#define PSR_BTYPE_CALL		(2 << PSR_BTYPE_SHIFT)
+> +
+> +/* Convenience names for the values of PSTATE.BTYPE */
+> +#define PSR_BTYPE_NONE		(0b00 << PSR_BTYPE_SHIFT)
+> +#define PSR_BTYPE_JC		(0b01 << PSR_BTYPE_SHIFT)
+> +#define PSR_BTYPE_C		(0b10 << PSR_BTYPE_SHIFT)
+> +#define PSR_BTYPE_J		(0b11 << PSR_BTYPE_SHIFT)
 
-Applied, thanks.
+It'd be nice to sort this patch earlier, so that ...
 
-Rob
+> diff --git a/arch/arm64/kernel/signal.c b/arch/arm64/kernel/signal.c
+> index 4a3bd32..452ac5b 100644
+> --- a/arch/arm64/kernel/signal.c
+> +++ b/arch/arm64/kernel/signal.c
+> @@ -732,7 +732,7 @@ static void setup_return(struct pt_regs *regs, struct k_sigaction *ka,
+>  
+>  	if (system_supports_bti()) {
+>  		regs->pstate &= ~PSR_BTYPE_MASK;
+> -		regs->pstate |= PSR_BTYPE_CALL;
+> +		regs->pstate |= PSR_BTYPE_C;
+>  	}
+>  
+>  	if (ka->sa.sa_flags & SA_RESTORER)
+
+... setup_return does not need to be adjusted a second time.
+
+I don't see any other conflicts vs patch 5.
+
+
+r~
