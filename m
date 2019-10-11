@@ -2,79 +2,369 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FA6AD3C9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 11:45:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6D02D3CA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 11:46:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727836AbfJKJpc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 05:45:32 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:34704 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726863AbfJKJpc (ORCPT
+        id S1727847AbfJKJqA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 05:46:00 -0400
+Received: from regular1.263xmail.com ([211.150.70.204]:52686 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726863AbfJKJqA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 05:45:32 -0400
-Received: from v22018046084765073.goodsrv.de ([185.183.158.195] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1iIrUH-0004RM-Md; Fri, 11 Oct 2019 09:45:29 +0000
-Date:   Fri, 11 Oct 2019 11:45:28 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-um@lists.infradead.org, luto@kernel.org, oleg@redhat.com,
-        tglx@linutronix.de, wad@chromium.org, x86@kernel.org,
-        Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH v1] seccomp: simplify secure_computing()
-Message-ID: <20191011094527.ftevtkeitjqafhdd@wittgenstein>
-References: <20190920131907.6886-1-christian.brauner@ubuntu.com>
- <20190924064420.6353-1-christian.brauner@ubuntu.com>
- <201910101450.0B13B7F@keescook>
+        Fri, 11 Oct 2019 05:46:00 -0400
+Received: from localhost (unknown [192.168.167.152])
+        by regular1.263xmail.com (Postfix) with ESMTP id 7B01C27E;
+        Fri, 11 Oct 2019 17:45:47 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-SKE-CHECKED: 1
+X-ABS-CHECKED: 1
+Received: from [172.16.10.69] (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P22861T139794705123072S1570787144832077_;
+        Fri, 11 Oct 2019 17:45:45 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <7cc1003947bb0f35c1c59cc23f449ef6>
+X-RL-SENDER: hjc@rock-chips.com
+X-SENDER: hjc@rock-chips.com
+X-LOGIN-NAME: hjc@rock-chips.com
+X-FST-TO: nd@arm.com
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Subject: Re: [PATCH v2 1/3] drm: Add some new format DRM_FORMAT_NVXX_10
+To:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+Cc:     =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>,
+        nd <nd@arm.com>
+References: <1569486289-152061-2-git-send-email-hjc@rock-chips.com>
+ <20190930104849.GA1208@intel.com>
+ <2c46d532-f810-392d-b9c0-3b9aaccae7f4@rock-chips.com>
+ <20191008113338.GP1208@intel.com>
+ <a5fa3d8e-9e8e-8aa8-8abb-f00e8357acb5@rock-chips.com>
+ <eafa5b37-e132-ad37-3876-384ac5ec9584@rock-chips.com>
+ <20191011064433.GA18503@jamwan02-TSP300>
+ <5c932cb6-fdfb-88db-3757-4c1b602d4778@rock-chips.com>
+ <20191011072250.GA20592@jamwan02-TSP300>
+ <f4828cab-da7e-1658-51e7-0d123cfdbdf9@rock-chips.com>
+ <20191011083247.GA22224@jamwan02-TSP300>
+From:   "sandy.huang" <hjc@rock-chips.com>
+Message-ID: <dd1afe6b-9762-e8dc-c281-b0c0ff31891c@rock-chips.com>
+Date:   Fri, 11 Oct 2019 17:45:45 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <201910101450.0B13B7F@keescook>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20191011083247.GA22224@jamwan02-TSP300>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 02:53:24PM -0700, Kees Cook wrote:
-> On Tue, Sep 24, 2019 at 08:44:20AM +0200, Christian Brauner wrote:
-> > Afaict, the struct seccomp_data argument to secure_computing() is unused
-> > by all current callers. So let's remove it.
-> > The argument was added in [1]. It was added because having the arch
-> > supply the syscall arguments used to be faster than having it done by
-> > secure_computing() (cf. Andy's comment in [2]). This is not true anymore
-> > though.
-> 
-> Yes; thanks for cleaning this up!
-> 
-> > diff --git a/arch/s390/kernel/ptrace.c b/arch/s390/kernel/ptrace.c
-> > index ad71132374f0..ed80bdfbf5fe 100644
-> > --- a/arch/s390/kernel/ptrace.c
-> > +++ b/arch/s390/kernel/ptrace.c
-> > @@ -439,7 +439,7 @@ static int poke_user(struct task_struct *child, addr_t addr, addr_t data)
-> >  long arch_ptrace(struct task_struct *child, long request,
-> >  		 unsigned long addr, unsigned long data)
-> >  {
-> > -	ptrace_area parea; 
-> > +	ptrace_area parea;
-> >  	int copied, ret;
-> >  
-> >  	switch (request) {
-> 
-> If this were whitespace cleanup in kernel/seccomp.c, I'd take it without
-> flinching. As this is only tangentially related and in an arch
-> directory, I've dropped this hunk out of a cowardly fear of causing
-> (a likely very unlikely) merge conflict.
-> 
-> I'd rather we globally clean up trailing whitespace at the end of -rc1
-> and ask Linus to run some crazy script. :)
+Hi, james, ville syrjala, david,
 
-Oh that was on accident probably. It usally happens because I have vim
-do whitespace fixups automatically and then they end up slipping in...
-Sorry. Thanks for removing it! :)
+在 2019/10/11 下午4:32, james qian wang (Arm Technology China) 写道:
+> On Fri, Oct 11, 2019 at 03:32:17PM +0800, sandy.huang wrote:
+>> 在 2019/10/11 下午3:22, james qian wang (Arm Technology China) 写道:
+>>> On Fri, Oct 11, 2019 at 03:07:22PM +0800, sandy.huang wrote:
+>>>> 在 2019/10/11 下午2:44, james qian wang (Arm Technology China) 写道:
+>>>>> On Fri, Oct 11, 2019 at 11:35:53AM +0800, sandy.huang wrote:
+>>>>>> Hi james.qian.wang,
+>>>>>>
+>>>>>>        Thank for you remind, fou some unknow reason, i miss the the mail from
+>>>>>> you:(, i get this message from https://patchwork.kernel.org/patch/11161937/
+>>>>>>
+>>>>>> sorry about that.
+>>>>>>
+>>>>>>        About the format block describe, I also found some unreasonable,  this
+>>>>>> format need 2 line aligned, so the block_h need to sed as 2, and the
+>>>>>> char_per_block need set as w * h * 10 for y plane, and w * h * 2 * 10 for uv
+>>>>>> plane, so the following describe maybe more correct, thanks.
+>>>>>>
+>>>>>>            { .format = DRM_FORMAT_NV12_10,        .depth = 0, .num_planes = 2,
+>>>>>>              .char_per_block = { 10, 10, 0 }, .block_w = { 4, 2, 0 }, .block_h
+>>>>>> = { 2, 2, 0 },
+>>>>>>              .hsub = 2, .vsub = 2, .is_yuv = true},
+>>>>> Hi Sandy:
+>>>>> I think for such NV12 YUV-422 (hsub = 2, vsub = 2) 2x2 subsampled format
+>>>>> the block size can be:
+>>>>>
+>>>>> the Y plane:  2x2;
+>>>>> The UV plane: 1x2; (H direction sample 1 Cb and 1Cr, V direction 2 lines got 2)
+>>>>>
+>>>>> Then:
+>>>>>
+>>>>> .char_per_block = {5, 5, 0} block_w = {2, 1, 0}. block_h = {2, 2, 0};
+>>>>>
+>>>>> Thanks
+>>>>> James
+>>>> Hi James,
+>>>>
+>>>> If the block_w is 2 pixel, one line size at block is 2*10 bit %8 != 0,
+>>> Hi Sandy:
+>>> you got a mistake here, the bpp of UV plane is 20, 10bit Cb + 10 bit Cr.
+>> here is for y plane.
+> Sorry, Are we talking about the block size calcaltion here ?
+>
+> block_size = block_w * block_h * plane_bpp
+>
+> for you Y plane a 2x2 block is: 2 x 2 * 10 bpp = 40bits
+>
+> And the block info is for computing the minimum pitch, and don't
+> consider the specific hardware alignment here.
+>
+> see: drm_format_info_min_pitch()
+>
+> If you hardware need alignment, you need to put that consideration into your
+> specific driver.
+>
+> James.
 
-Christian
+Hi david and ville syrjala,
+
+     Do you have any Suggestions?
+
+     James think Y plane 2x2 block size is enough to describe this 
+format, but i prefer to use 4x2 block size, this can include the 
+alignment message.
+
+just like the malidp_de_plane_check()@malidp_plane.c have the following  
+code, here use the block size to check alignment.
+
+     block_w = drm_format_info_block_width(fb->format, 0);
+     block_h = drm_format_info_block_height(fb->format, 0);
+     if (fb->width % block_w || fb->height % block_h) {
+         DRM_DEBUG_KMS("Buffer width/height needs to be a multiple of 
+tile sizes");
+         return -EINVAL;
+     }
+     if ((state->src_x >> 16) % block_w || (state->src_y >> 16) % block_h) {
+         DRM_DEBUG_KMS("Plane src_x/src_y needs to be a multiple of tile 
+sizes");
+         return -EINVAL;
+     }
+
+can you give me some suggestions?
+
+thanks,
+
+sandy.huang
+
+>
+>>>> although we use block to describe this format, but actually the data is
+>>>> still stored one line by one line, still need 4 pixel aligned. so i think
+>>>> here need use 4pixel*2line for per block
+>>> I think this is your hardware specific requirement.
+>>>
+>>> Thanks
+>>> James
+>> yes, this is a new format first used at rockchip platform.
+>>
+>>
+>> Thanks,
+>>
+>> sandy.huang
+>>
+>>>> Thanks,
+>>>>
+>>>> sandy.huang.
+>>>>
+>>>>>>              .hsub = 2, .vsub = 2, .is_yuv = true},
+>>>>>>            { .format = DRM_FORMAT_NV21_10,        .depth = 0, .num_planes = 2,
+>>>>>>              .char_per_block = { 10, 10, 0 }, .block_w = { 4, 2, 0 }, .block_h
+>>>>>> = { 2, 2, 0 },
+>>>>>>              .hsub = 2, .vsub = 2, .is_yuv = true},
+>>>>>>            { .format = DRM_FORMAT_NV16_10,        .depth = 0, .num_planes = 2,
+>>>>>>              .char_per_block = { 10, 10, 0 }, .block_w = { 4, 2, 0 }, .block_h
+>>>>>> = { 2, 2, 0 },
+>>>>>>              .hsub = 2, .vsub = 1, .is_yuv = true},
+>>>>>>            { .format = DRM_FORMAT_NV61_10,        .depth = 0, .num_planes = 2,
+>>>>>>              .char_per_block = { 10, 10, 0 }, .block_w = { 4, 2, 0 }, .block_h
+>>>>>> = { 2, 2, 0 },
+>>>>>>              .hsub = 2, .vsub = 1, .is_yuv = true},
+>>>>>>            { .format = DRM_FORMAT_NV24_10,        .depth = 0, .num_planes = 2,
+>>>>>>              .char_per_block = { 10, 10, 0 }, .block_w = { 4, 2, 0 }, .block_h
+>>>>>> = { 2, 2, 0 },
+>>>>>>              .hsub = 1, .vsub = 1, .is_yuv = true},
+>>>>>>            { .format = DRM_FORMAT_NV42_10,        .depth = 0, .num_planes = 2,
+>>>>>>              .char_per_block = { 10, 10, 0 }, .block_w = { 4, 2, 0 }, .block_h
+>>>>>> = { 2, 2, 0 },
+>>>>>>              .hsub = 1, .vsub = 1, .is_yuv = true},
+>>>>>>
+>>>>>>
+>>>>>>>>              { .format = DRM_FORMAT_P016,        .depth = 0,  .num_planes =
+>>>>>> 2,
+>>>>>>>>                .char_per_block = { 2, 4, 0 }, .block_w = { 1, 0, 0 },
+>>>>>> .block_h = { 1, 0, 0 },
+>>>>>>>>                .hsub = 2, .vsub = 2, .is_yuv = true},
+>>>>>>>> +        { .format = DRM_FORMAT_NV12_10,        .depth = 0,  .num_planes
+>>>>>> = 2,
+>>>>>>>> +          .char_per_block = { 5, 10, 0 }, .block_w = { 4, 4, 0 },
+>>>>>> .block_h = { 4, 4, 0 },
+>>>>>>
+>>>>>>> Hi Sandy:
+>>>>>>> Their is a problem here for char_per_block size of plane[0]:
+>>>>>>> Since: 5 * 8 != 4 * 4 * 10;
+>>>>>>> Seems you mis-set the block_w/h, per your block size the block is 2x2, and
+>>>>>> it should be:
+>>>>>>>      .char_per_block = { 5, 10, 0 }, .block_w = { 2, 2, 0 }, .block_h = { 2,
+>>>>>> 2, 0 },
+>>>>>>
+>>>>>>> Best Regards:
+>>>>>>> James
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> 在 2019/10/8 下午7:49, sandy.huang 写道:
+>>>>>>> 在 2019/10/8 下午7:33, Ville Syrjälä 写道:
+>>>>>>>> On Tue, Oct 08, 2019 at 10:40:20AM +0800, sandy.huang wrote:
+>>>>>>>>> Hi ville syrjala,
+>>>>>>>>>
+>>>>>>>>> 在 2019/9/30 下午6:48, Ville Syrjälä 写道:
+>>>>>>>>>> On Thu, Sep 26, 2019 at 04:24:47PM +0800, Sandy Huang wrote:
+>>>>>>>>>>> These new format is supported by some rockchip socs:
+>>>>>>>>>>>
+>>>>>>>>>>> DRM_FORMAT_NV12_10/DRM_FORMAT_NV21_10
+>>>>>>>>>>> DRM_FORMAT_NV16_10/DRM_FORMAT_NV61_10
+>>>>>>>>>>> DRM_FORMAT_NV24_10/DRM_FORMAT_NV42_10
+>>>>>>>>>>>
+>>>>>>>>>>> Signed-off-by: Sandy Huang <hjc@rock-chips.com>
+>>>>>>>>>>> ---
+>>>>>>>>>>>       drivers/gpu/drm/drm_fourcc.c  | 18 ++++++++++++++++++
+>>>>>>>>>>>       include/uapi/drm/drm_fourcc.h | 14 ++++++++++++++
+>>>>>>>>>>>       2 files changed, 32 insertions(+)
+>>>>>>>>>>>
+>>>>>>>>>>> diff --git a/drivers/gpu/drm/drm_fourcc.c
+>>>>>>>>>>> b/drivers/gpu/drm/drm_fourcc.c
+>>>>>>>>>>> index c630064..ccd78a3 100644
+>>>>>>>>>>> --- a/drivers/gpu/drm/drm_fourcc.c
+>>>>>>>>>>> +++ b/drivers/gpu/drm/drm_fourcc.c
+>>>>>>>>>>> @@ -261,6 +261,24 @@ const struct drm_format_info
+>>>>>>>>>>> *__drm_format_info(u32 format)
+>>>>>>>>>>>               { .format = DRM_FORMAT_P016,        .depth =
+>>>>>>>>>>> 0,  .num_planes = 2,
+>>>>>>>>>>>                 .char_per_block = { 2, 4, 0 }, .block_w = {
+>>>>>>>>>>> 1, 0, 0 }, .block_h = { 1, 0, 0 },
+>>>>>>>>>>>                 .hsub = 2, .vsub = 2, .is_yuv = true},
+>>>>>>>>>>> +        { .format = DRM_FORMAT_NV12_10,        .depth =
+>>>>>>>>>>> 0,  .num_planes = 2,
+>>>>>>>>>>> +          .char_per_block = { 5, 10, 0 }, .block_w = {
+>>>>>>>>>>> 4, 4, 0 }, .block_h = { 4, 4, 0 },
+>>>>>>>>>>> +          .hsub = 2, .vsub = 2, .is_yuv = true},
+>>>>>>>>>>> +        { .format = DRM_FORMAT_NV21_10,        .depth =
+>>>>>>>>>>> 0,  .num_planes = 2,
+>>>>>>>>>>> +          .char_per_block = { 5, 10, 0 }, .block_w = {
+>>>>>>>>>>> 4, 4, 0 }, .block_h = { 4, 4, 0 },
+>>>>>>>>>>> +          .hsub = 2, .vsub = 2, .is_yuv = true},
+>>>>>>>>>>> +        { .format = DRM_FORMAT_NV16_10,        .depth =
+>>>>>>>>>>> 0,  .num_planes = 2,
+>>>>>>>>>>> +          .char_per_block = { 5, 10, 0 }, .block_w = {
+>>>>>>>>>>> 4, 4, 0 }, .block_h = { 4, 4, 0 },
+>>>>>>>>>>> +          .hsub = 2, .vsub = 1, .is_yuv = true},
+>>>>>>>>>>> +        { .format = DRM_FORMAT_NV61_10,        .depth =
+>>>>>>>>>>> 0,  .num_planes = 2,
+>>>>>>>>>>> +          .char_per_block = { 5, 10, 0 }, .block_w = {
+>>>>>>>>>>> 4, 4, 0 }, .block_h = { 4, 4, 0 },
+>>>>>>>>>>> +          .hsub = 2, .vsub = 1, .is_yuv = true},
+>>>>>>>>>>> +        { .format = DRM_FORMAT_NV24_10,        .depth =
+>>>>>>>>>>> 0,  .num_planes = 2,
+>>>>>>>>>>> +          .char_per_block = { 5, 10, 0 }, .block_w = {
+>>>>>>>>>>> 4, 4, 0 }, .block_h = { 4, 4, 0 },
+>>>>>>>>>>> +          .hsub = 1, .vsub = 1, .is_yuv = true},
+>>>>>>>>>>> +        { .format = DRM_FORMAT_NV42_10,        .depth =
+>>>>>>>>>>> 0,  .num_planes = 2,
+>>>>>>>>>>> +          .char_per_block = { 5, 10, 0 }, .block_w = {
+>>>>>>>>>>> 4, 4, 0 }, .block_h = { 4, 4, 0 },
+>>>>>>>>>>> +          .hsub = 1, .vsub = 1, .is_yuv = true},
+>>>>>>>>>>>               { .format = DRM_FORMAT_P210,        .depth = 0,
+>>>>>>>>>>>                 .num_planes = 2, .char_per_block = { 2, 4, 0 },
+>>>>>>>>>>>                 .block_w = { 1, 0, 0 }, .block_h = { 1, 0,
+>>>>>>>>>>> 0 }, .hsub = 2,
+>>>>>>>>>>> diff --git a/include/uapi/drm/drm_fourcc.h
+>>>>>>>>>>> b/include/uapi/drm/drm_fourcc.h
+>>>>>>>>>>> index 3feeaa3..08e2221 100644
+>>>>>>>>>>> --- a/include/uapi/drm/drm_fourcc.h
+>>>>>>>>>>> +++ b/include/uapi/drm/drm_fourcc.h
+>>>>>>>>>>> @@ -238,6 +238,20 @@ extern "C" {
+>>>>>>>>>>>       #define DRM_FORMAT_NV42        fourcc_code('N', 'V',
+>>>>>>>>>>> '4', '2') /* non-subsampled Cb:Cr plane */
+>>>>>>>>>>>          /*
+>>>>>>>>>>> + * 2 plane YCbCr
+>>>>>>>>>>> + * index 0 = Y plane, Y3:Y2:Y1:Y0 10:10:10:10
+>>>>>>>>>>> + * index 1 = Cb:Cr plane,
+>>>>>>>>>>> Cb3:Cr3:Cb2:Cr2:Cb1:Cr1:Cb0:Cr0 10:10:10:10:10:10:10:10
+>>>>>>>>>>> + * or
+>>>>>>>>>>> + * index 1 = Cr:Cb plane,
+>>>>>>>>>>> Cr3:Cb3:Cr2:Cb2:Cr1:Cb1:Cr0:Cb0 10:10:10:10:10:10:10:10
+>>>>>>>>>> So now you're defining it as some kind of byte aligned block.
+>>>>>>>>>> With that specifying endianness would now make sense since
+>>>>>>>>>> otherwise this tells us absolutely nothing about the memory
+>>>>>>>>>> layout.
+>>>>>>>>>>
+>>>>>>>>>> So I'd either do that, or go back to not specifying anything and
+>>>>>>>>>> use some weasel words like "mamory layout is implementation defined"
+>>>>>>>>>> which of course means no one can use it for anything that involves
+>>>>>>>>>> any kind of cross vendor stuff.
+>>>>>>>>> /*
+>>>>>>>>>       * 2 plane YCbCr
+>>>>>>>>>       * index 0 = Y plane, [39: 0] Y3:Y2:Y1:Y0 10:10:10:10 little endian
+>>>>>>>>>       * index 1 = Cb:Cr plane, [79: 0] Cb3:Cr3:Cb2:Cr2:Cb1:Cr1:Cb0:Cr0
+>>>>>>>>> 10:10:10:10:10:10:10:10  little endian
+>>>>>>>>>       * or
+>>>>>>>>>       * index 1 = Cr:Cb plane, [79: 0] Cr3:Cb3:Cr2:Cb2:Cr1:Cb1:Cr0:Cb0
+>>>>>>>>> 10:10:10:10:10:10:10:10  little endian
+>>>>>>>>>       */
+>>>>>>>>>
+>>>>>>>>> Is this description ok?
+>>>>>>>> Seems OK to me, if it actually describes the format correctly.
+>>>>>>>>
+>>>>>>>> Though I'm not sure why the CbCr is defines as an 80bit block
+>>>>>>>> and Y has a 40bit block. 40bits should be enough for CbCr as well.
+>>>>>>>>
+>>>>>>> well, this is taken into account yuv444,  4 y point corresponding with 4
+>>>>>>> uv point.
+>>>>>>>
+>>>>>>> if only describes the layout memory, here can change to 40bit block.
+>>>>>>>
+>>>>>>> thanks.
+>>>>>>>
+>>>>>>>>>>> + */
+>>>>>>>>>>> +#define DRM_FORMAT_NV12_10    fourcc_code('N', 'A',
+>>>>>>>>>>> '1', '2') /* 2x2 subsampled Cr:Cb plane */
+>>>>>>>>>>> +#define DRM_FORMAT_NV21_10    fourcc_code('N', 'A',
+>>>>>>>>>>> '2', '1') /* 2x2 subsampled Cb:Cr plane */
+>>>>>>>>>>> +#define DRM_FORMAT_NV16_10    fourcc_code('N', 'A',
+>>>>>>>>>>> '1', '6') /* 2x1 subsampled Cr:Cb plane */
+>>>>>>>>>>> +#define DRM_FORMAT_NV61_10    fourcc_code('N', 'A',
+>>>>>>>>>>> '6', '1') /* 2x1 subsampled Cb:Cr plane */
+>>>>>>>>>>> +#define DRM_FORMAT_NV24_10    fourcc_code('N', 'A',
+>>>>>>>>>>> '2', '4') /* non-subsampled Cr:Cb plane */
+>>>>>>>>>>> +#define DRM_FORMAT_NV42_10    fourcc_code('N', 'A',
+>>>>>>>>>>> '4', '2') /* non-subsampled Cb:Cr plane */
+>>>>>>>>>>> +
+>>>>>>>>>>> +/*
+>>>>>>>>>>>        * 2 plane YCbCr MSB aligned
+>>>>>>>>>>>        * index 0 = Y plane, [15:0] Y:x [10:6] little endian
+>>>>>>>>>>>        * index 1 = Cr:Cb plane, [31:0] Cr:x:Cb:x
+>>>>>>>>>>> [10:6:10:6] little endian
+>>>>>>>>>>> -- 
+>>>>>>>>>>> 2.7.4
+>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>> _______________________________________________
+>>>>>>>>>>> dri-devel mailing list
+>>>>>>>>>>> dri-devel@lists.freedesktop.org
+>>>>>>>>>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>>>>>>> _______________________________________________
+>>>>>>> dri-devel mailing list
+>>>>>>> dri-devel@lists.freedesktop.org
+>>>>>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+
