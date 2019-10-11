@@ -2,170 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CF9AD3940
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 08:16:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 033F9D3934
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 08:11:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727350AbfJKGPt convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 11 Oct 2019 02:15:49 -0400
-Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:45482 "EHLO
-        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727066AbfJKGPs (ORCPT
+        id S1727232AbfJKGLI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 02:11:08 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38278 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726287AbfJKGLI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 02:15:48 -0400
-Received: from mailgate01.nec.co.jp ([114.179.233.122])
-        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x9B6FatW020534
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 11 Oct 2019 15:15:36 +0900
-Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x9B6FZuR002915;
-        Fri, 11 Oct 2019 15:15:36 +0900
-Received: from mail02.kamome.nec.co.jp (mail02.kamome.nec.co.jp [10.25.43.5])
-        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x9B6E396014848;
-        Fri, 11 Oct 2019 15:15:35 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.147] [10.38.151.147]) by mail02.kamome.nec.co.jp with ESMTP id BT-MMP-9394841; Fri, 11 Oct 2019 15:02:51 +0900
-Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
- BPXC19GP.gisp.nec.co.jp ([10.38.151.147]) with mapi id 14.03.0439.000; Fri,
- 11 Oct 2019 15:02:50 +0900
-From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To:     David Hildenbrand <david@redhat.com>
-CC:     Michal Hocko <mhocko@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v2 2/2] mm/memory-failure.c: Don't access uninitialized
- memmaps in memory_failure()
-Thread-Topic: [PATCH v2 2/2] mm/memory-failure.c: Don't access uninitialized
- memmaps in memory_failure()
-Thread-Index: AQHVfq1QC/9/3IlYuEK91tWnhgAEnKdRy5KAgAEYjwCAAAI1AIAABLgAgAABxQCAAXH3gA==
-Date:   Fri, 11 Oct 2019 06:02:49 +0000
-Message-ID: <20191011060249.GA30500@hori.linux.bs1.fc.nec.co.jp>
-References: <20191009142435.3975-1-david@redhat.com>
- <20191009142435.3975-3-david@redhat.com>
- <20191009144323.GH6681@dhcp22.suse.cz>
- <5a626821-77e9-e26b-c2ee-219670283bf0@redhat.com>
- <20191010073526.GC18412@dhcp22.suse.cz>
- <18383432-c74a-9ce5-a3c6-1e57d54cb629@redhat.com>
- <52e81b85-c460-5b99-a297-e065caab3a16@redhat.com>
-In-Reply-To: <52e81b85-c460-5b99-a297-e065caab3a16@redhat.com>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.34.125.96]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <89CA1456C580664C8DA0362F03F6C601@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
+        Fri, 11 Oct 2019 02:11:08 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 3so8926137wmi.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 23:11:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8nnHdbTQ16topfNyNvCbsM6+K1YLerkiNwgQ4142ujw=;
+        b=Mc2YpNHQOWFIW4IjHMeujvyMfto0miF/ys2ftnO5wl6IlW4k1M5P/hgrU6QF+S+zne
+         c6Q0jb1kdLTV8/wjXqKQ7ThP7kePqzQCf5emF+o3ZPpbnOGoXwOOIQ4X5m4VHjRhEsqR
+         TuIY0oElP34DrB86M37i9Iu7BMeH2Y8hcGotJp5gSQ0eGKFkxqOAfoCWCi2nepDbZA7j
+         VHMRVQu8ez9H3dpvpN8KzlJX3McvczI1g5xUKtLj9TZJShDHUenKhRE3KfmvxzV6rq0r
+         ujqbClIcRYWHW0TqYcGvnErylMA5Q9MFf0Y1Z9NG+NRsROq4GA+TbCD5FTpWUBbncFeQ
+         ByAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8nnHdbTQ16topfNyNvCbsM6+K1YLerkiNwgQ4142ujw=;
+        b=lVWYmaTV68GpkWdMWi1DcAHfxkPDRWuuxPhK34h82u+lx6a/24It1bfPs3XTx2Ge1y
+         KYZ5q2yv6n9vMuid8CdQKWcB8dMTgmN/CbGE/smkRt0x9a0WK/ppXa4gCQw0cON4ZMuH
+         3IBiJKfAKqEWTv5wKyMhP+Sk8VhotVkjl+M1kaGDQoJVc92PGNySpWOnVCJTsvOkHFU4
+         bx0z3Ye8BTOAy3/yoX5QK/tAiSugNUn3eQFN3PqpC9lbLejYfUS0kGINZDsOayk1Pelg
+         PnbCv2fk/TEPuvR0KK/yhj3kQo27e8DCh7lrKScV/5mEVKIDYhi+tyRhz/T+JRHza0bG
+         fAWw==
+X-Gm-Message-State: APjAAAWGui5A2aveGS4k5v4O19VPhRCoA9Dz2ysAFtr2ugavVtG7bhZe
+        OhnZQCh9pLK56fZ1zIUnvYvaIg==
+X-Google-Smtp-Source: APXvYqzJmfJGGAPKwvnppyTzbfzLxh8vOPMMhMObO6CIiiO7HVL4AbgLA3hiYEFwpH+Q9aMHW9SiOQ==
+X-Received: by 2002:a7b:c44f:: with SMTP id l15mr1703059wmi.121.1570774266123;
+        Thu, 10 Oct 2019 23:11:06 -0700 (PDT)
+Received: from localhost (jirka.pirko.cz. [84.16.102.26])
+        by smtp.gmail.com with ESMTPSA id m7sm9545306wrv.40.2019.10.10.23.11.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2019 23:11:05 -0700 (PDT)
+Date:   Fri, 11 Oct 2019 08:11:05 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>
+Cc:     Michal Kubecek <mkubecek@suse.cz>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2] genetlink: do not parse attributes for
+ families with zero maxattr
+Message-ID: <20191011061105.GF2901@nanopsycho>
+References: <20191010103402.36408E378C@unicorn.suse.cz>
+ <20191010102102.3bc8515d@cakuba.netronome.com>
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191010102102.3bc8515d@cakuba.netronome.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 09:58:40AM +0200, David Hildenbrand wrote:
-> On 10.10.19 09:52, David Hildenbrand wrote:
-> > On 10.10.19 09:35, Michal Hocko wrote:
-> >> On Thu 10-10-19 09:27:32, David Hildenbrand wrote:
-> >>> On 09.10.19 16:43, Michal Hocko wrote:
-> >>>> On Wed 09-10-19 16:24:35, David Hildenbrand wrote:
-> >>>>> We should check for pfn_to_online_page() to not access uninitialized
-> >>>>> memmaps. Reshuffle the code so we don't have to duplicate the error
-> >>>>> message.
-> >>>>>
-> >>>>> Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> >>>>> Cc: Andrew Morton <akpm@linux-foundation.org>
-> >>>>> Cc: Michal Hocko <mhocko@kernel.org>
-> >>>>> Signed-off-by: David Hildenbrand <david@redhat.com>
-> >>>>> ---
-> >>>>>  mm/memory-failure.c | 14 ++++++++------
-> >>>>>  1 file changed, 8 insertions(+), 6 deletions(-)
-> >>>>>
-> >>>>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> >>>>> index 7ef849da8278..e866e6e5660b 100644
-> >>>>> --- a/mm/memory-failure.c
-> >>>>> +++ b/mm/memory-failure.c
-> >>>>> @@ -1253,17 +1253,19 @@ int memory_failure(unsigned long pfn, int flags)
-> >>>>>  	if (!sysctl_memory_failure_recovery)
-> >>>>>  		panic("Memory failure on page %lx", pfn);
-> >>>>>  
-> >>>>> -	if (!pfn_valid(pfn)) {
-> >>>>> +	p = pfn_to_online_page(pfn);
-> >>>>> +	if (!p) {
-> >>>>> +		if (pfn_valid(pfn)) {
-> >>>>> +			pgmap = get_dev_pagemap(pfn, NULL);
-> >>>>> +			if (pgmap)
-> >>>>> +				return memory_failure_dev_pagemap(pfn, flags,
-> >>>>> +								  pgmap);
-> >>>>> +		}
-> >>>>>  		pr_err("Memory failure: %#lx: memory outside kernel control\n",
-> >>>>>  			pfn);
-> >>>>>  		return -ENXIO;
-> >>>>
-> >>>> Don't we need that earlier at hwpoison_inject level?
-> >>>>
-> >>>
-> >>> Theoretically yes, this is another instance. But pfn_to_online_page(pfn)
-> >>> alone would not be sufficient as discussed. We would, again, have to
-> >>> special-case ZONE_DEVICE via things like get_dev_pagemap() ...
-> >>>
-> >>> But mm/hwpoison-inject.c:hwpoison_inject() is a pure debug feature either way:
-> >>>
-> >>> 	/*
-> >>> 	 * Note that the below poison/unpoison interfaces do not involve
-> >>> 	 * hardware status change, hence do not require hardware support.
-> >>> 	 * They are mainly for testing hwpoison in software level.
-> >>> 	 */
-> >>>
-> >>> So it's not that bad compared to memory_failure() called from real HW or
-> >>> drivers/base/memory.c:soft_offline_page_store()/hard_offline_page_store()
-> >>
-> >> Yes, this is just a toy. And yes we need to handle zone device pages
-> >> here because a) people likely want to test MCE behavior even on these
-> >> pages and b) HW can really trigger MCEs there as well. I was just
-> >> pointing that the patch is likely incomplete.
-> >>
-> > 
-> > I rather think this deserves a separate patch as it is a separate
-> > interface :)
-> > 
-> > I do wonder why hwpoison_inject() has to perform so much extra work
-> > compared to other memory_failure() users. This smells like legacy
-> > leftovers to me, but I might be wrong. The interface is fairly old,
-> > though. Does anybody know why we need this magic? I can spot quite some
-> > duplicate checks/things getting performed.
+Thu, Oct 10, 2019 at 07:21:02PM CEST, jakub.kicinski@netronome.com wrote:
+>On Thu, 10 Oct 2019 12:34:02 +0200 (CEST), Michal Kubecek wrote:
+>> Commit c10e6cf85e7d ("net: genetlink: push attrbuf allocation and parsing
+>> to a separate function") moved attribute buffer allocation and attribute
+>> parsing from genl_family_rcv_msg_doit() into a separate function
+>> genl_family_rcv_msg_attrs_parse() which, unlike the previous code, calls
+>> __nlmsg_parse() even if family->maxattr is 0 (i.e. the family does its own
+>> parsing). The parser error is ignored and does not propagate out of
+>> genl_family_rcv_msg_attrs_parse() but an error message ("Unknown attribute
+>> type") is set in extack and if further processing generates no error or
+>> warning, it stays there and is interpreted as a warning by userspace.
+>> 
+>> Dumpit requests are not affected as genl_family_rcv_msg_dumpit() bypasses
+>> the call of genl_family_rcv_msg_doit() if family->maxattr is zero. Do the
+>> same also in genl_family_rcv_msg_doit().
+>> 
+>> Fixes: c10e6cf85e7d ("net: genetlink: push attrbuf allocation and parsing to a separate function")
+>> Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+>> ---
+>>  net/netlink/genetlink.c | 9 +++++----
+>>  1 file changed, 5 insertions(+), 4 deletions(-)
+>> 
+>> diff --git a/net/netlink/genetlink.c b/net/netlink/genetlink.c
+>> index ecc2bd3e73e4..1f14e55ad3ad 100644
+>> --- a/net/netlink/genetlink.c
+>> +++ b/net/netlink/genetlink.c
+>> @@ -639,21 +639,23 @@ static int genl_family_rcv_msg_doit(const struct genl_family *family,
+>>  				    const struct genl_ops *ops,
+>>  				    int hdrlen, struct net *net)
+>>  {
+>> -	struct nlattr **attrbuf;
+>> +	struct nlattr **attrbuf = NULL;
+>>  	struct genl_info info;
+>>  	int err;
+>>  
+>>  	if (!ops->doit)
+>>  		return -EOPNOTSUPP;
+>>  
+>> +	if (!family->maxattr)
+>> +		goto no_attrs;
+>>  	attrbuf = genl_family_rcv_msg_attrs_parse(family, nlh, extack,
+>>  						  ops, hdrlen,
+>>  						  GENL_DONT_VALIDATE_STRICT,
+>> -						  family->maxattr &&
+>>  						  family->parallel_ops);
+>>  	if (IS_ERR(attrbuf))
+>>  		return PTR_ERR(attrbuf);
+>>  
+>> +no_attrs:
+>
+>The use of a goto statement as a replacement for an if is making me
+>uncomfortable. 
+>
+>Looks like both callers of genl_family_rcv_msg_attrs_parse() jump
+>around it if !family->maxattr and then check the result with IS_ERR().
+>
+>Would it not make more sense to have genl_family_rcv_msg_attrs_parse()
+>return NULL if !family->maxattr?
 
-It concerns me too, this *is* an old legacy code. I guess it was left as-is
-because no one complained about it.  That's not good, so I'll do some cleanup.
+Okay. Sounds fine to me.
 
-> > 
-> > Naiive me would just make the interface perform the same as
-> > hard_offline_page_store(). But most probably I am not getting the real
-> > purpose of both different interfaces.
-
-Maybe for historical reason, we have these slightly different interfaces:
-
-- corrupt-pfn
-  - purely for debugging purpose
-  - paired with unpoison-pfn
-  - used by in-kernel tool tools/vm/page-types.c
-- hard_offline_page
-  - paired with soft_offline_page
-  - used by other userspace tools like mcelog
-
-But these don't explain why implemented differently, so I think that both
-should be written in the same manner.
-
-> > 
-> > HWPOISON_INJECT is only selected for DEBUG_KERNEL, so I would have
-> > guessed that fixing this is not urgent.
-> > 
-> > BTW: mm/memory-failure.c:soft_offline_page() also looks wrong and needs
-> > fixing to make sure we access initialized memmaps.
-> > 
-> 
-> To be more precise, soft_offline_page_store() needs a
-> pfn_to_online_page() check. Will send a patch.
-
-Thanks for finding this.
-
-- Naoya Horiguchi
+>
+>Just wondering, if you guys prefer this version I can apply..
+>
+>>  	info.snd_seq = nlh->nlmsg_seq;
+>>  	info.snd_portid = NETLINK_CB(skb).portid;
+>>  	info.nlhdr = nlh;
+>> @@ -676,8 +678,7 @@ static int genl_family_rcv_msg_doit(const struct genl_family *family,
+>>  		family->post_doit(ops, skb, &info);
+>>  
+>>  out:
+>> -	genl_family_rcv_msg_attrs_free(family, attrbuf,
+>> -				       family->maxattr && family->parallel_ops);
+>> +	genl_family_rcv_msg_attrs_free(family, attrbuf, family->parallel_ops);
+>>  
+>>  	return err;
+>>  }
