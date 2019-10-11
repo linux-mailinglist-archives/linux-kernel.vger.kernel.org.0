@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11D46D3589
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 02:13:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ACF9D355E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 02:13:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727862AbfJKANa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 20:13:30 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33612 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727635AbfJKAM7 (ORCPT
+        id S1727684AbfJKANB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 20:13:01 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36997 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727628AbfJKAM7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 10 Oct 2019 20:12:59 -0400
-Received: by mail-pf1-f195.google.com with SMTP id q10so4967521pfl.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 17:12:59 -0700 (PDT)
+Received: by mail-pf1-f194.google.com with SMTP id y5so4959444pfo.4
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 17:12:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=l+J574mlC+dRmZJG9pHhpppQFEze5VvTPTaNiTnbyaQ=;
-        b=C1PlvZ+0BEdj9jtliX0A0Huqq47ruf9nBVH5STuBjosSplWIN8Wr5Bj0uznajZR412
-         88yKrget+DCqKxVlllcxd6K5szWGkcPAUypn6xoncOXOV6R6YV83ztEsCSkeh78n0AI2
-         yKxfXdh2vdcul3D71BzoL2J/wyWHTxCQ4Jyq0=
+        bh=BONbSwO3yUZE8RnSGxOUsa1O5SfUej1bEo+UUtcRz+8=;
+        b=WAsHYQawMi4SZmZgp8/tZRHbrTyjaN/efP/1ePAdIKhuzenhHAkQSemi72oSFyzy5T
+         BUP8VJmLQCYcSjbNgTQmhLF0rh39giv7Aj/ab5NbcDAnNRa5xqPwvle+ummM9Ru1MTnT
+         6FSY7l03L75U7xLgPLADUTO/JJnoTeuiDWO4o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=l+J574mlC+dRmZJG9pHhpppQFEze5VvTPTaNiTnbyaQ=;
-        b=ATZpXo+g74+MoK/zUxkM6W7fnpds1RQw7jCV/onqRx0ywszeU+Kn8GunrpbyEFrJ9l
-         E2SMIBGu4yV9HeH10w3/57UuXdewVPDs4T748QLfJFHvxN0b5XrQP3vyON3+OkUbfzFD
-         jEVtX+WljRGhBCJG/qmdHD9i3VL0o/xcBPVPFT5zM3o574Af7QXwOpUyBz8TBzKrh2Wj
-         F3EZ9B2TZ26KEs1s1lRpEzrIuomZ5rq+Qr5luZ3X+NucgzbJnAZ82C2t+i/T49ccKMqy
-         HHIwfCDDwDw08mwIuLJKBygTAwyTtzQ+9D2Bri8ULFlCT8V23yo6LcDKoWazWCLfBSmd
-         YrTw==
-X-Gm-Message-State: APjAAAVpTPstGOpQo2O5nrX8nlKM5JSsn2K5lMAjRWtqETAi0wmM7G1d
-        JUK56tKP87eHXwN/75pU3p4+zA==
-X-Google-Smtp-Source: APXvYqy4PLu05rX5bRRgJJfyDhm9F1ghOcCs3VwNTK0YfAFFK8MX8ZPUgv1lA3bQ8SclnhiYx4k3qw==
-X-Received: by 2002:a63:44f:: with SMTP id 76mr14137515pge.164.1570752778758;
+        bh=BONbSwO3yUZE8RnSGxOUsa1O5SfUej1bEo+UUtcRz+8=;
+        b=jFq0mZguAUpmm4tFkDE8XFgLJKWP9iEq6hvV95KYEzPK63ktZc6Yy9BEINKJHLpZov
+         VOtRn/oSBo5wQfIcCMDl+X/7jlYMwdLmVE6dZlDV1OCJaskx5pMKMOp1PQkBF6K87XSx
+         FCsbBun2t/Gx2TjlOVTVzGlts0mrMHm5zlYDtN+/XdEMXZgullTiVogvALoTq7MiYJBl
+         I/jg0C4cTO8TDGWhLQe6fZzvys8wZH28WgPXALkF/81QvedwEPKkP2LFd3XrnXh/D7xI
+         TIziNaSrzVZ4/QylddcYJLLdGdKrFEEOAkt6UH6tbw+1A3ipY8qtcEqBfZoLBoshd8av
+         trJg==
+X-Gm-Message-State: APjAAAURDMG4KLiLhW9h9SQeTNEk3pafMGasNbsTPiMgyqeEBrjZh4pE
+        KdMSeapn9xqYD2mN8ofx1oEL0w==
+X-Google-Smtp-Source: APXvYqxI99kv+xtRG2LlmRclYNJDw1iNLuQgHN4M3GLkprM+ZRb8jXZUnF9huFcBlH1wmB6a5xQwdw==
+X-Received: by 2002:a62:5284:: with SMTP id g126mr13294604pfb.95.1570752778224;
         Thu, 10 Oct 2019 17:12:58 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id a8sm7285998pfa.182.2019.10.10.17.12.53
+        by smtp.gmail.com with ESMTPSA id d5sm5379454pjw.31.2019.10.10.17.12.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 10 Oct 2019 17:12:56 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -59,9 +59,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Michal Simek <monstr@monstr.eu>, linux-parisc@vger.kernel.org,
         linux-xtensa@linux-xtensa.org, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 19/29] c6x: Move EXCEPTION_TABLE to RO_DATA segment
-Date:   Thu, 10 Oct 2019 17:05:59 -0700
-Message-Id: <20191011000609.29728-20-keescook@chromium.org>
+Subject: [PATCH v2 21/29] ia64: Move EXCEPTION_TABLE to RO_DATA segment
+Date:   Thu, 10 Oct 2019 17:06:01 -0700
+Message-Id: <20191011000609.29728-22-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191011000609.29728-1-keescook@chromium.org>
 References: <20191011000609.29728-1-keescook@chromium.org>
@@ -74,32 +74,29 @@ Since the EXCEPTION_TABLE is read-only, collapse it into RO_DATA.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- arch/c6x/kernel/vmlinux.lds.S | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/ia64/kernel/vmlinux.lds.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/c6x/kernel/vmlinux.lds.S b/arch/c6x/kernel/vmlinux.lds.S
-index a3547f9d415b..ac99ba0864bf 100644
---- a/arch/c6x/kernel/vmlinux.lds.S
-+++ b/arch/c6x/kernel/vmlinux.lds.S
-@@ -5,6 +5,9 @@
-  *  Copyright (C) 2010, 2011 Texas Instruments Incorporated
-  *  Mark Salter <msalter@redhat.com>
-  */
-+
-+#define RO_EXCEPTION_TABLE_ALIGN	16
-+
- #include <asm-generic/vmlinux.lds.h>
+diff --git a/arch/ia64/kernel/vmlinux.lds.S b/arch/ia64/kernel/vmlinux.lds.S
+index 11d5115bc44d..1ec6b703c5b4 100644
+--- a/arch/ia64/kernel/vmlinux.lds.S
++++ b/arch/ia64/kernel/vmlinux.lds.S
+@@ -6,6 +6,7 @@
  #include <asm/thread_info.h>
- #include <asm/page.h>
-@@ -80,8 +83,6 @@ SECTIONS
- 		*(.gnu.warning)
- 	}
  
+ #define EMITS_PT_NOTE
++#define RO_EXCEPTION_TABLE_ALIGN	16
+ 
+ #include <asm-generic/vmlinux.lds.h>
+ 
+@@ -70,7 +71,6 @@ SECTIONS {
+ 	/*
+ 	 * Read-only data
+ 	 */
 -	EXCEPTION_TABLE(16)
--
- 	RO_DATA(PAGE_SIZE)
- 	.const :
- 	{
+ 
+ 	/* MCA table */
+ 	. = ALIGN(16);
 -- 
 2.17.1
 
