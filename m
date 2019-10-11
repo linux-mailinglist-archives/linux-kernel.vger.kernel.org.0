@@ -2,84 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EFADD456C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 18:29:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA819D4586
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 18:37:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727990AbfJKQ36 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 12:29:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39118 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726331AbfJKQ36 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 12:29:58 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B46B206A1;
-        Fri, 11 Oct 2019 16:29:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570811397;
-        bh=fnuGUPlEYnveHJBCoFm6BNlgI5r2U57EfCBDivju0X0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OomCe3cnkNKTi9sl0Vi5Ay7Kjv8WBCQ1b6XD1IwK/cm0Z+poV3hmYgh7RkrBqwCoM
-         pjntqLBD5FtPdil6R7y2/5GQGrCBGjJDN/rnwS1X4L1SuTDzWaZMxCS07pnlNkO1A9
-         MsvzOVh7vA25gXMtLUEaPzD9qiGr3zcnOdprfiRU=
-Date:   Fri, 11 Oct 2019 17:29:51 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Yong Wu <yong.wu@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Evan Green <evgreen@chromium.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Tomasz Figa <tfiga@google.com>,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, youlin.pei@mediatek.com,
-        Nicolas Boichat <drinkcat@chromium.org>, anan.sun@mediatek.com,
-        cui.zhang@mediatek.com, chao.hao@mediatek.com
-Subject: Re: [PATCH v2 3/4] iommu/mediatek: Use writel for TLB range
- invalidation
-Message-ID: <20191011162950.yg4o77mlaicacne5@willie-the-truck>
-References: <1570627143-29441-1-git-send-email-yong.wu@mediatek.com>
- <1570627143-29441-3-git-send-email-yong.wu@mediatek.com>
+        id S1728391AbfJKQh1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 12:37:27 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45229 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726331AbfJKQh0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 12:37:26 -0400
+Received: by mail-lf1-f66.google.com with SMTP id r134so7483646lff.12
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 09:37:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tMiHtB5ZlwenoYg0oyx0g7MXemkZFkoKB6mCSzMxar0=;
+        b=WvTdQO3PPBIwZwj1t370syw4bWNuRNNu5X9kUBY4nmpGylmSdsm9EeaCjpU7Vnv8Yx
+         RIBTnDZKFaNEeN2w5TKDtE/axPzbYs2ol1oaGAlHshlDH+Wbx81Cy8oDxPhDJcEJ+mEJ
+         6/WqNX914YOM138DOaNAdg7ENVxoQn93vF7Gw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tMiHtB5ZlwenoYg0oyx0g7MXemkZFkoKB6mCSzMxar0=;
+        b=sJ0D1NSsWz+d8N+DlJgPCZ04dAuTRkA5TFSCXzfA4Rd/yhvxzR0SHrTFEqlePI4+m8
+         5Cf08yRVMUKdeF9HkMX3A4Tt2azB/eXxrxm09m7CFkzTubIYmBNCk9cNk0jhAE/jMGRm
+         daXvcO8DnPbNt96NFZpluTv8eWfC1hZZ2ShiOmi1pHcNlunld5+9iv/Cvg9WsidWSC5D
+         81Ih9c/gD0EkhpGg/H3gHbRrXn1Y9mkijg5v/An+UIwdf0I8y0+8PFBW38dOOsgBzQ+t
+         42ZylwMlWT/fjAhl89uO4eUau5JeEDBNWTNAzl1GcKtOFxJbknvgmj189lDnGtRtNA5s
+         sAXA==
+X-Gm-Message-State: APjAAAWQOUWo/2aUL49a6KiPOWAb4ZSofpq/eogBEYyssPPeyvqFBbUf
+        mW5eOB33AQCE/O3a71eCWPdqU67j5z0=
+X-Google-Smtp-Source: APXvYqyg1q17vJoHbDN99xiY9gfppbh415TZeqN5vGCaijzLWsMHFgyb046ogjnpRulXLbhli1Yeig==
+X-Received: by 2002:ac2:4556:: with SMTP id j22mr9311569lfm.87.1570811844434;
+        Fri, 11 Oct 2019 09:37:24 -0700 (PDT)
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
+        by smtp.gmail.com with ESMTPSA id 25sm2158865lje.58.2019.10.11.09.37.24
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Oct 2019 09:37:24 -0700 (PDT)
+Received: by mail-lf1-f44.google.com with SMTP id t8so7451607lfc.13
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 09:37:24 -0700 (PDT)
+X-Received: by 2002:ac2:5924:: with SMTP id v4mr9294065lfi.29.1570811416172;
+ Fri, 11 Oct 2019 09:30:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1570627143-29441-3-git-send-email-yong.wu@mediatek.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <cover.1570292505.git.joe@perches.com>
+In-Reply-To: <cover.1570292505.git.joe@perches.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 11 Oct 2019 09:29:59 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whOF8heTGz5tfzYUBp_UQQzSWNJ_50M7-ECXkfFRDQWFA@mail.gmail.com>
+Message-ID: <CAHk-=whOF8heTGz5tfzYUBp_UQQzSWNJ_50M7-ECXkfFRDQWFA@mail.gmail.com>
+Subject: Re: [PATCH 0/4] treewide: Add 'fallthrough' pseudo-keyword
+To:     Joe Perches <joe@perches.com>
+Cc:     linux-sctp@vger.kernel.org,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Pavel Machek <pavel@ucw.cz>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Shawn Landden <shawn@git.icu>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Miller <davem@davemloft.net>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vlad Yasevich <vyasevich@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 09:19:02PM +0800, Yong Wu wrote:
-> Use writel for the register F_MMU_INV_RANGE which is for triggering the
-> HW work. We expect all the setting(iova_start/iova_end...) have already
-> been finished before F_MMU_INV_RANGE.
-> 
-> Signed-off-by: Anan.Sun <anan.sun@mediatek.com>
-> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-> ---
-> This is a improvement rather than fixing a issue.
-> ---
->  drivers/iommu/mtk_iommu.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-> index 24a13a6..607f92c 100644
-> --- a/drivers/iommu/mtk_iommu.c
-> +++ b/drivers/iommu/mtk_iommu.c
-> @@ -187,8 +187,7 @@ static void mtk_iommu_tlb_add_flush(unsigned long iova, size_t size,
->  		writel_relaxed(iova, data->base + REG_MMU_INVLD_START_A);
->  		writel_relaxed(iova + size - 1,
->  			       data->base + REG_MMU_INVLD_END_A);
-> -		writel_relaxed(F_MMU_INV_RANGE,
-> -			       data->base + REG_MMU_INVALIDATE);
-> +		writel(F_MMU_INV_RANGE, data->base + REG_MMU_INVALIDATE);
+On Sat, Oct 5, 2019 at 9:46 AM Joe Perches <joe@perches.com> wrote:
+>
+> Add 'fallthrough' pseudo-keyword to enable the removal of comments
+> like '/* fallthrough */'.
 
-I don't understand this change.
+I applied patches 1-3 to my tree just to make it easier for people to
+start doing this. Maybe some people want to do the conversion on their
+own subsystem rather than with a global script, but even if not, this
+looks better as a "prepare for the future" series and I feel that if
+we're doing the "fallthrough" thing eventually, the sooner we do the
+prepwork the better.
 
-Why is it an "improvement" and which accesses are you ordering with the
-writel?
+I'm a tiny bit worried that the actual conversion is just going to
+cause lots of pain for the stable people, but I'll not worry about it
+_too_ much. If the stable people decide that it's too painful for them
+to deal with the comment vs keyword model, they may want to backport
+these three patches too.
 
-Will
+            Linus
