@@ -2,56 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4A30D3728
+	by mail.lfdr.de (Postfix) with ESMTP id 55920D3727
 	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 03:30:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728441AbfJKBZd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 21:25:33 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34286 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728111AbfJKBYF (ORCPT
+        id S1728430AbfJKBZ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 21:25:29 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36268 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728146AbfJKBYK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 21:24:05 -0400
-Received: by mail-wr1-f65.google.com with SMTP id j11so9979673wrp.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 18:24:04 -0700 (PDT)
+        Thu, 10 Oct 2019 21:24:10 -0400
+Received: by mail-wr1-f68.google.com with SMTP id y19so9966020wrd.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 18:24:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=iERz2FP0YlBkmC86yLcDq0+jGuy+OmV9tA9oUfgYUPk=;
-        b=SREuUiH93YhFhC5Wk6DuJA9lF09LZo9G/0AScXGNMdjd1BAJugvPWp9DnSl59RjMnX
-         qO2tvfFUKsFRHnB2WaGSHnb3jBBJQPhKVQwAanWssnis5KKeFRSsM64yuAWb8DheWK8U
-         aXp4L6DhBB1BdwVZaGR1tACkG5ee/jky6efQuwP3ywWnZvyZPj+voEsEspZoG7JDF0RY
-         UvJnKILLbNjhLJSolk3xGp75sE9yeVobfbJowSY4HQJyqSxCxjc2+/lJ+8KWDPZ/kVFN
-         JZTj0STi6gFrmMQ1Y9L8W8C2QjIuFA705SFattbbMHANa1pUd0hqIsvMltaGmBxQHcFm
-         MUjA==
+        bh=KKMvh3TVCiPMPLUBrZ3DHVUeq/BZpRss8YldgguRDNM=;
+        b=m7aym05tTiVEW8U1ykPTY+A/LOE4gvvek69lIq/4PpKGDPfT3+/Kt+ZpetJnkh1YGd
+         7XM3EdcLTNR+BmjKy8hQQLLADfjPPjJYtbMjWTSc60pPhhOygzO4lRJefAEufF8u2tj+
+         Zo4rvanU/aEaHbTL+jTfxuNz6I4QLLLpo/QREZYctp6NPL+z9j0rtsqfJRtbubHAk/B1
+         /U9IqwzC2QsLFdVf8NTGGTG9VqlZpXa3JGi4Kmuid763iykAUaCvhZQhUHaxU79PZxRe
+         qlX0rHeHw44k4bqyvFX2+4o9OL5AUrVYT+CRgHM0iUyY7WvEQnoZuH6H4bsg2etUgNMA
+         peFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=iERz2FP0YlBkmC86yLcDq0+jGuy+OmV9tA9oUfgYUPk=;
-        b=N/340Aqy3BXZ7EcPrlv3z6n9MkzAX/nPeeHm8k7hEjYB+R/JtO9n32O+/z+hwyA+3x
-         1Uwg/VmNbUK8LNCiJ/JTYzGoybVrFePzt6Yy7nCgACjgzcXh1ZM2nOdPaU65hqlbshVR
-         x332MOZNgDFS3fV64q09j3OGOw94Ljbdal+V1EKa2fVLWDseW6A1J9FkZ7NOGSqUnbap
-         uBM2VoFm5YMOR2pvJSbKrwCp/g8YvKNgYvQlfCECSVZgvVmlS5jXfOk3MYtKovW7Dew7
-         MLhJMhAEFWPf1Gx2AEEyYWCwIvxpAGSn46iM7c4p28hG7us/DJIkrTrckL4DZFP2LnuC
-         1yOQ==
-X-Gm-Message-State: APjAAAVyh+84eBjwLpsXtVU26LB6Hyzbdl806PVF4unGr8Tux5XZaGF6
-        alz7U3tMwY0fJl3l2hrtqY+Kv+umqn4=
-X-Google-Smtp-Source: APXvYqy1yEYoyp6noua76ezIvjrnsLos8kkhjoGHWWcb1oezxvWWE8mjNfmD1TtOtdyK+apMpaHcng==
-X-Received: by 2002:adf:f145:: with SMTP id y5mr153370wro.330.1570757043333;
-        Thu, 10 Oct 2019 18:24:03 -0700 (PDT)
+        bh=KKMvh3TVCiPMPLUBrZ3DHVUeq/BZpRss8YldgguRDNM=;
+        b=nuqjHCA69+8a6BnyrUtDAKmf+6a9pkCjnYvz5ySbJlkOsMuDNNnHZaIYkVPtIm4MlV
+         ZBBvdVzmcx9CH34I07Tnj/6mZlo0arZe5vx4KHY0PuXHVCgj3SBIN6+R80zBy6gUaQ5m
+         8g1DTvUBUCoVOLyYv5zeUN5AS8rlLJIOo9nKsn+tARyX6Qt0sSoXTH07Yeg9Q1O9xMvR
+         ve6YJUYZx7gek9vWCsgMMB87r8poLI6dAKhjCA0vUFDN8po/ahifvUIyp1QnHg7Z7O1c
+         Xyq56pdRhHYZBbPX2glWlpph3e08MUq+QduJAt3CreNRpfMCKCfcumWyeqlPpyw/+UYY
+         pchA==
+X-Gm-Message-State: APjAAAVJ9YzdhsSDgEQwNQFJLJ092B0Mx42ZvMefi2qWr6xv/G4uhAGa
+        Qvtsn17ktI7TnpmvPCo3ycC8O4JswF4=
+X-Google-Smtp-Source: APXvYqw4a04uZei2tOzW3S+dsdzWXGmB8SvL6s8OUzgP0pHH3Ux+4fpM/CZNoPFzdba5emQeKfZbbg==
+X-Received: by 2002:a5d:6b0a:: with SMTP id v10mr10189124wrw.32.1570757047992;
+        Thu, 10 Oct 2019 18:24:07 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:8084:ea2:c100:228:f8ff:fe6f:83a8])
-        by smtp.gmail.com with ESMTPSA id l13sm7699795wmj.25.2019.10.10.18.24.01
+        by smtp.gmail.com with ESMTPSA id l13sm7699795wmj.25.2019.10.10.18.24.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 18:24:02 -0700 (PDT)
+        Thu, 10 Oct 2019 18:24:07 -0700 (PDT)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
+        Andrei Vagin <avagin@openvz.org>,
         Dmitry Safonov <dima@arista.com>,
         Adrian Reber <adrian@lisas.de>,
-        Andrei Vagin <avagin@openvz.org>,
         Andy Lutomirski <luto@kernel.org>,
         Arnd Bergmann <arnd@arndb.de>,
         Christian Brauner <christian.brauner@ubuntu.com>,
@@ -66,9 +65,9 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Vincenzo Frascino <vincenzo.frascino@arm.com>,
         containers@lists.linux-foundation.org, criu@openvz.org,
         linux-api@vger.kernel.org, x86@kernel.org
-Subject: [PATCHv7 12/33] posix-timers: Make timer_settime() time namespace aware
-Date:   Fri, 11 Oct 2019 02:23:20 +0100
-Message-Id: <20191011012341.846266-13-dima@arista.com>
+Subject: [PATCHv7 15/33] posix-timers: Make clock_nanosleep() time namespace aware
+Date:   Fri, 11 Oct 2019 02:23:23 +0100
+Message-Id: <20191011012341.846266-16-dima@arista.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191011012341.846266-1-dima@arista.com>
 References: <20191011012341.846266-1-dima@arista.com>
@@ -79,41 +78,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrei Vagin <avagin@gmail.com>
+From: Andrei Vagin <avagin@openvz.org>
 
-Wire timer_settime() syscall into time namespace virtualization.
-
-sys_timer_settime() calls the ktime->timer_set() callback. Right now,
-common_timer_set() is the only implementation for the callback.
-
-There user-supplied timer's value is converted from timespec64 to ktime
-and then timens_ktime_to_host() can be used to convert namespace's time
-to the host time.
-
-Inside a time namespace kernel's time differ on a fixed offset from
-a user-supplied, but only absolute values (TIMER_ABSTIME) must
-be converted.
+clock_nanosleep() accepts absolute values of expiration time, if the
+TIMER_ABSTIME flag is set. This value is in the task time namespace,
+which has to be converted to the host time namespace.
 
 Signed-off-by: Andrei Vagin <avagin@openvz.org>
 Co-developed-by: Dmitry Safonov <dima@arista.com>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- kernel/time/posix-timers.c | 2 ++
- 1 file changed, 2 insertions(+)
+ kernel/time/posix-stubs.c  | 12 ++++++++++--
+ kernel/time/posix-timers.c | 17 +++++++++++++++--
+ 2 files changed, 25 insertions(+), 4 deletions(-)
 
+diff --git a/kernel/time/posix-stubs.c b/kernel/time/posix-stubs.c
+index 2ccefc9ce184..47ee2684d250 100644
+--- a/kernel/time/posix-stubs.c
++++ b/kernel/time/posix-stubs.c
+@@ -129,6 +129,7 @@ SYSCALL_DEFINE4(clock_nanosleep, const clockid_t, which_clock, int, flags,
+ 		struct __kernel_timespec __user *, rmtp)
+ {
+ 	struct timespec64 t;
++	ktime_t texp;
+ 
+ 	switch (which_clock) {
+ 	case CLOCK_REALTIME:
+@@ -147,7 +148,10 @@ SYSCALL_DEFINE4(clock_nanosleep, const clockid_t, which_clock, int, flags,
+ 		rmtp = NULL;
+ 	current->restart_block.nanosleep.type = rmtp ? TT_NATIVE : TT_NONE;
+ 	current->restart_block.nanosleep.rmtp = rmtp;
+-	return hrtimer_nanosleep(timespec64_to_ktime(t), flags & TIMER_ABSTIME ?
++	texp = timespec64_to_ktime(t);
++	if (flags & TIMER_ABSTIME)
++		texp = timens_ktime_to_host(clockid, texp);
++	return hrtimer_nanosleep(texp, flags & TIMER_ABSTIME ?
+ 				 HRTIMER_MODE_ABS : HRTIMER_MODE_REL,
+ 				 which_clock);
+ }
+@@ -215,6 +219,7 @@ SYSCALL_DEFINE4(clock_nanosleep_time32, clockid_t, which_clock, int, flags,
+ 		struct old_timespec32 __user *, rmtp)
+ {
+ 	struct timespec64 t;
++	ktime texp;
+ 
+ 	switch (which_clock) {
+ 	case CLOCK_REALTIME:
+@@ -233,7 +238,10 @@ SYSCALL_DEFINE4(clock_nanosleep_time32, clockid_t, which_clock, int, flags,
+ 		rmtp = NULL;
+ 	current->restart_block.nanosleep.type = rmtp ? TT_COMPAT : TT_NONE;
+ 	current->restart_block.nanosleep.compat_rmtp = rmtp;
+-	return hrtimer_nanosleep(timespec64_to_ktime(t), flags & TIMER_ABSTIME ?
++	texp = timespec64_to_ktime(t);
++	if (flags & TIMER_ABSTIME)
++		texp = timens_ktime_to_host(clockid, texp);
++	return hrtimer_nanosleep(texp, flags & TIMER_ABSTIME ?
+ 				 HRTIMER_MODE_ABS : HRTIMER_MODE_REL,
+ 				 which_clock);
+ }
 diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-index d8b5bd4cbae1..6e350cc8f600 100644
+index c0ae1f6d2add..ccae99a645e1 100644
 --- a/kernel/time/posix-timers.c
 +++ b/kernel/time/posix-timers.c
-@@ -885,6 +885,8 @@ int common_timer_set(struct k_itimer *timr, int flags,
+@@ -1228,6 +1228,19 @@ static int common_nsleep(const clockid_t which_clock, int flags,
+ 				 which_clock);
+ }
  
- 	timr->it_interval = timespec64_to_ktime(new_setting->it_interval);
- 	expires = timespec64_to_ktime(new_setting->it_value);
++static int common_nsleep_timens(const clockid_t which_clock, int flags,
++			 const struct timespec64 *rqtp)
++{
++	ktime_t texp = timespec64_to_ktime(*rqtp);
++
 +	if (flags & TIMER_ABSTIME)
-+		expires = timens_ktime_to_host(timr->it_clock, expires);
- 	sigev_none = timr->it_sigev_notify == SIGEV_NONE;
- 
- 	kc->timer_arm(timr, expires, flags & TIMER_ABSTIME, sigev_none);
++		texp = timens_ktime_to_host(which_clock, texp);
++
++	return hrtimer_nanosleep(texp, flags & TIMER_ABSTIME ?
++				 HRTIMER_MODE_ABS : HRTIMER_MODE_REL,
++				 which_clock);
++}
++
+ SYSCALL_DEFINE4(clock_nanosleep, const clockid_t, which_clock, int, flags,
+ 		const struct __kernel_timespec __user *, rqtp,
+ 		struct __kernel_timespec __user *, rmtp)
+@@ -1305,7 +1318,7 @@ static const struct k_clock clock_monotonic = {
+ 	.clock_getres		= posix_get_hrtimer_res,
+ 	.clock_get_timespec	= posix_get_monotonic_timespec,
+ 	.clock_get_ktime	= posix_get_monotonic_ktime,
+-	.nsleep			= common_nsleep,
++	.nsleep			= common_nsleep_timens,
+ 	.timer_create		= common_timer_create,
+ 	.timer_set		= common_timer_set,
+ 	.timer_get		= common_timer_get,
+@@ -1354,7 +1367,7 @@ static const struct k_clock clock_boottime = {
+ 	.clock_getres		= posix_get_hrtimer_res,
+ 	.clock_get_ktime	= posix_get_boottime_ktime,
+ 	.clock_get_timespec	= posix_get_boottime_timespec,
+-	.nsleep			= common_nsleep,
++	.nsleep			= common_nsleep_timens,
+ 	.timer_create		= common_timer_create,
+ 	.timer_set		= common_timer_set,
+ 	.timer_get		= common_timer_get,
 -- 
 2.23.0
 
