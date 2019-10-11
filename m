@@ -2,312 +2,232 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5C82D4754
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 20:17:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCC82D4744
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 20:15:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728809AbfJKSRb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 14:17:31 -0400
-Received: from mga02.intel.com ([134.134.136.20]:33733 "EHLO mga02.intel.com"
+        id S1728708AbfJKSPU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 14:15:20 -0400
+Received: from foss.arm.com ([217.140.110.172]:39190 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728701AbfJKSRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 14:17:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2019 11:17:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,285,1566889200"; 
-   d="scan'208";a="193606520"
-Received: from askelkar-mobl.amr.corp.intel.com (HELO [10.254.181.148]) ([10.254.181.148])
-  by fmsmga008.fm.intel.com with ESMTP; 11 Oct 2019 11:17:28 -0700
-Subject: Re: [PATCH v3 2/2] soundwire: qcom: add support for SoundWire
- controller
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        robh@kernel.org, vkoul@kernel.org
-Cc:     broonie@kernel.org, bgoswami@codeaurora.org,
-        devicetree@vger.kernel.org, lgirdwood@gmail.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        spapothi@codeaurora.org
-References: <20191011154423.2506-1-srinivas.kandagatla@linaro.org>
- <20191011154423.2506-3-srinivas.kandagatla@linaro.org>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <9d00c94b-1bce-9fdf-55fe-ee681466a97a@linux.intel.com>
-Date:   Fri, 11 Oct 2019 12:50:42 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        id S1728470AbfJKSPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 14:15:19 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6EFAB142F;
+        Fri, 11 Oct 2019 11:15:18 -0700 (PDT)
+Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3D16A3F703;
+        Fri, 11 Oct 2019 11:15:16 -0700 (PDT)
+Subject: Re: [PATCH v3 08/17] arm64, trans_pgd: make trans_pgd_map_page
+ generic
+To:     Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc:     James Morris <jmorris@namei.org>, Sasha Levin <sashal@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        kexec mailing list <kexec@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>, will@kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        linux-mm <linux-mm@kvack.org>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <20190821183204.23576-1-pasha.tatashin@soleen.com>
+ <20190821183204.23576-9-pasha.tatashin@soleen.com>
+ <62fc9ed9-1740-d40b-bc72-6d1911ef1f24@arm.com>
+ <CA+CK2bAPA=L+KeWve=2PbNEh+B9mXRzTGr1iQqRCkOAs5dU-Qg@mail.gmail.com>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <ba96ab95-af8b-895e-e515-a94a63dd056a@arm.com>
+Date:   Fri, 11 Oct 2019 19:15:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191011154423.2506-3-srinivas.kandagatla@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <CA+CK2bAPA=L+KeWve=2PbNEh+B9mXRzTGr1iQqRCkOAs5dU-Qg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Pavel,
 
-> +static int qcom_swrm_cmd_fifo_wr_cmd(struct qcom_swrm_ctrl *ctrl, u8 cmd_data,
-> +				     u8 dev_addr, u16 reg_addr)
-> +{
-> +	DECLARE_COMPLETION_ONSTACK(comp);
-> +	unsigned long flags;
-> +	u32 val;
-> +	int ret;
-> +
-> +	spin_lock_irqsave(&ctrl->comp_lock, flags);
-> +	ctrl->comp = &comp;
-> +	spin_unlock_irqrestore(&ctrl->comp_lock, flags);
-> +	val = SWRM_REG_VAL_PACK(cmd_data, dev_addr,
-> +				SWRM_SPECIAL_CMD_ID, reg_addr);
-> +	ret = ctrl->reg_write(ctrl, SWRM_CMD_FIFO_WR_CMD, val);
-> +	if (ret)
-> +		goto err;
-> +
-> +	ret = wait_for_completion_timeout(ctrl->comp,
-> +					  msecs_to_jiffies(TIMEOUT_MS));
-> +
-> +	if (!ret)
-> +		ret = SDW_CMD_IGNORED;
-> +	else
-> +		ret = SDW_CMD_OK;
+On 06/09/2019 19:58, Pavel Tatashin wrote:
+> On Fri, Sep 6, 2019 at 11:20 AM James Morse <james.morse@arm.com> wrote:
+>> On 21/08/2019 19:31, Pavel Tatashin wrote:
+>>> Currently, trans_pgd_map_page has assumptions that are relevant to
+>>> hibernate. But, to make it generic we must allow it to use any allocator
 
-It's odd to report CMD_IGNORED on a timeout. CMD_IGNORED is a valid 
-answer that should be retrieved immediately. You probably need to 
-translate the soundwire errors into -ETIMEOUT or something.
+>>> and also, can't assume that entries do not exist in the page table
+>>> already.
 
-> +err:
-> +	spin_lock_irqsave(&ctrl->comp_lock, flags);
-> +	ctrl->comp = NULL;
-> +	spin_unlock_irqrestore(&ctrl->comp_lock, flags);
-> +
-> +	return ret;
-> +}
-> +
-> +static int qcom_swrm_cmd_fifo_rd_cmd(struct qcom_swrm_ctrl *ctrl,
-> +				     u8 dev_addr, u16 reg_addr,
-> +				     u32 len, u8 *rval)
-> +{
-> +	int i, ret;
-> +	u32 val;
-> +	DECLARE_COMPLETION_ONSTACK(comp);
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&ctrl->comp_lock, flags);
-> +	ctrl->comp = &comp;
-> +	spin_unlock_irqrestore(&ctrl->comp_lock, flags);
-> +
-> +	val = SWRM_REG_VAL_PACK(len, dev_addr, SWRM_SPECIAL_CMD_ID, reg_addr);
-> +	ret = ctrl->reg_write(ctrl, SWRM_CMD_FIFO_RD_CMD, val);
-> +	if (ret)
-> +		goto err;
-> +
-> +	ret = wait_for_completion_timeout(ctrl->comp,
-> +					  msecs_to_jiffies(TIMEOUT_MS));
-> +
-> +	if (!ret) {
-> +		ret = SDW_CMD_IGNORED;
-> +		goto err;
-> +	} else {
-> +		ret = SDW_CMD_OK;
-> +	}
+[...]
 
-same comment on reporting SDW_CMD_IGNORED on timeout, this is very odd.
+>> Please don't use the page tables as an array: this is what the offset helpers are for.
+> 
+> Sure, I can use:
+> 
+> pte_offset_kernel()
+> pmd_offset()
+> pud_offset()
+> pgd_offset_raw()
 
-> +
-> +	for (i = 0; i < len; i++) {
-> +		ret = ctrl->reg_read(ctrl, SWRM_CMD_FIFO_RD_FIFO_ADDR, &val);
-> +		if (ret)
-> +			return ret;
-> +
-> +		rval[i] = val & 0xFF;
-> +	}
-> +
-> +err:
-> +	spin_lock_irqsave(&ctrl->comp_lock, flags);
-> +	ctrl->comp = NULL;
-> +	spin_unlock_irqrestore(&ctrl->comp_lock, flags);
-> +
-> +	return ret;
-> +} > +
+> The code becomes a little less efficient, because offsets return
+> pointer to the entry after READ_ONCE, and we need to use another
+> READ_ONCE() to read its content to parse its value in for example
+> pud_table(), pud_none() etc . In my case we use READ_ONCE() only one
+> time  per entry and operate on the content multiple times. Also,
+> because of unfortunate differences in macro names, the code become a
+> little less symmetric. Still, I can change the code to use _offsets
+> here. Please let me know if you still think it is better to use them
+> here.
 
-[snip]
+We should make this as clearly readable as possible, that way reviewers can spot the bugs.
+Using the helpers makes this more maintainable, as the helpers may be where strange things
+like 52bit VA get implemented.
 
-> +static irqreturn_t qcom_swrm_irq_handler(int irq, void *dev_id)
-> +{
-> +	struct qcom_swrm_ctrl *ctrl = dev_id;
-> +	u32 sts, value;
-> +	unsigned long flags;
-> +
-> +	ctrl->reg_read(ctrl, SWRM_INTERRUPT_STATUS, &sts);
-> +
-> +	if (sts & SWRM_INTERRUPT_STATUS_CMD_ERROR) {
-> +		ctrl->reg_read(ctrl, SWRM_CMD_FIFO_STATUS, &value);
-> +		dev_err_ratelimited(ctrl->dev,
-> +				    "CMD error, fifo status 0x%x\n",
-> +				     value);
-> +		ctrl->reg_write(ctrl, SWRM_CMD_FIFO_CMD, 0x1);
-> +	}
-> +
-> +	if ((sts & SWRM_INTERRUPT_STATUS_NEW_SLAVE_ATTACHED) ||
-> +	    sts & SWRM_INTERRUPT_STATUS_CHANGE_ENUM_SLAVE_STATUS)
-> +		schedule_work(&ctrl->slave_work);
-> +
-> +	ctrl->reg_write(ctrl, SWRM_INTERRUPT_CLEAR, sts);
-> +
-> +	if (sts & SWRM_INTERRUPT_STATUS_SPECIAL_CMD_ID_FINISHED) {
-> +		spin_lock_irqsave(&ctrl->comp_lock, flags);
-> +		if (ctrl->comp)
-> +			complete(ctrl->comp);
-> +		spin_unlock_irqrestore(&ctrl->comp_lock, flags);
+Making it fast is the compilers job. I agree it can't remove READ_ONCE()es, but I think
+the difference between one and two READ_ONCE()es per leaf-entry is insignificant when we
+go on to copy megabytes worth of data.
 
 
-Wouldn't it be simpler if you declared the completion structure as part 
-of your controller definitions, as done for the Intel stuff?
+>> The copy_p?d() functions should decide if they should manipulate _this_ entry based on
+>> _this_ entry and the kernel configuration. This is only really done in _copy_pte(), which
+>> is where it should stay.
+> 
+> I am sorry, I do not understand this comment. Could you please
+> elaborate what would you like me to change.
 
-[snip]
+Consider the current _copy_pte():
+|	} else if (debug_pagealloc_enabled() && !pte_none(pte)) {
+|		/*
+|		 * debug_pagealloc will removed the PTE_VALID bit if
+|		 * the page isn't in use by the resume kernel. It may have
+|		 * been in use by the original kernel, in which case we need
+|		 * to put it back in our copy to do the restore.
+|		 *
+|		 * Before marking this entry valid, check the pfn should
+|		 * be mapped.
+|		 */
+|		BUG_ON(!pfn_valid(pte_pfn(pte)));
+|
+|		set_pte(dst_ptep, pte_mkpresent(pte_mkwrite(pte)));
+|	}
 
-> +static void qcom_swrm_stream_free_ports(struct qcom_swrm_ctrl *ctrl,
-> +					struct sdw_stream_runtime *stream)
-> +{
-> +	struct sdw_master_runtime *m_rt;
-> +	struct sdw_port_runtime *p_rt;
-> +	unsigned long *port_mask;
-> +
-> +	mutex_lock(&ctrl->port_lock);
+From this it is very obvious that we only put the valid bits back into the page table if
+debug_pagealloc is enabled and the not-valid PTE's PFN points to memory that was part of
+the linear map.
 
-is this lock to avoid races between alloc/free? if yes maybe document it?
+If this logic gets moved apart, and strung together with global variables, its not at all
+clear what happens.
 
-> +
-> +	list_for_each_entry(m_rt, &stream->master_list, stream_node) {
-> +		if (m_rt->direction == SDW_DATA_DIR_RX)
-> +			port_mask = &ctrl->dout_port_mask;
-> +		else
-> +			port_mask = &ctrl->din_port_mask;
-> +
-> +		list_for_each_entry(p_rt, &m_rt->port_list, port_node)
-> +			clear_bit(p_rt->num - 1, port_mask);
-> +	}
-> +
-> +	mutex_unlock(&ctrl->port_lock);
-> +}
-> +
-> +static int qcom_swrm_stream_alloc_ports(struct qcom_swrm_ctrl *ctrl,
-> +					struct sdw_stream_runtime *stream,
-> +				       struct snd_pcm_hw_params *params,
-> +				       int direction)
-> +{
-> +	struct sdw_port_config pconfig[QCOM_SDW_MAX_PORTS];
-> +	struct sdw_stream_config sconfig;
-> +	struct sdw_master_runtime *m_rt;
-> +	struct sdw_slave_runtime *s_rt;
-> +	struct sdw_port_runtime *p_rt;
-> +	unsigned long *port_mask;
-> +	int i, maxport, pn, nports = 0, ret = 0;
-> +
-> +	mutex_lock(&ctrl->port_lock);
-> +	list_for_each_entry(m_rt, &stream->master_list, stream_node) {
-> +		if (m_rt->direction == SDW_DATA_DIR_RX) {
-> +			maxport = ctrl->num_dout_ports;
-> +			port_mask = &ctrl->dout_port_mask;
-> +		} else {
-> +			maxport = ctrl->num_din_ports;
-> +			port_mask = &ctrl->din_port_mask;
-> +		}
-> +
-> +		list_for_each_entry(s_rt, &m_rt->slave_rt_list, m_rt_node) {
-> +			list_for_each_entry(p_rt, &s_rt->port_list, port_node) {
-> +				/* Port numbers start from 1 - 14*/
-> +				pn = find_first_zero_bit(port_mask, maxport);
-> +				if (pn > (maxport - 1)) {
-> +					dev_err(ctrl->dev, "All ports busy\n");
-> +					ret = -EBUSY;
-> +					goto err;
-> +				}
-> +				set_bit(pn, port_mask);
-> +				pconfig[nports].num = pn + 1;
-> +				pconfig[nports].ch_mask = p_rt->ch_mask;
-> +				nports++;
-> +			}
-> +		}
-> +	}
-> +
-> +	if (direction == SNDRV_PCM_STREAM_CAPTURE)
-> +		sconfig.direction = SDW_DATA_DIR_TX;
-> +	else
-> +		sconfig.direction = SDW_DATA_DIR_RX;
-> +
-> +	sconfig.ch_count = 1;
-> +	sconfig.frame_rate = params_rate(params);
-> +	sconfig.type = stream->type;
-> +	sconfig.bps = 1;
 
-Should probably add a note that hw_params is ignored since it's PDM 
-content, so only 1ch 1bit data.
+>>> diff --git a/arch/arm64/include/asm/trans_pgd.h b/arch/arm64/include/asm/trans_pgd.h
+>>> index c7b5402b7d87..e3d022b1b526 100644
+>>> --- a/arch/arm64/include/asm/trans_pgd.h
+>>> +++ b/arch/arm64/include/asm/trans_pgd.h
+>>> @@ -11,10 +11,45 @@
+>>>  #include <linux/bits.h>
+>>>  #include <asm/pgtable-types.h>
+>>>
+>>> +/*
+>>> + * trans_alloc_page
+>>> + *   - Allocator that should return exactly one uninitilaized page, if this
+>>> + *    allocator fails, trans_pgd returns -ENOMEM error.
+>>> + *
+>>> + * trans_alloc_arg
+>>> + *   - Passed to trans_alloc_page as an argument
+>>
+>> This is very familiar.
+> 
+> Sorry, What do you mean?
 
-> +	sdw_stream_add_master(&ctrl->bus, &sconfig, pconfig,
-> +			      nports, stream);
-> +err:
-> +	if (ret) {
-> +		for (i = 0; i < nports; i++)
-> +			clear_bit(pconfig[i].num - 1, port_mask);
-> +	}
-> +
-> +	mutex_unlock(&ctrl->port_lock);
-> +
-> +	return ret;
-> +}
-> +
+This stuff used to take a pointer to a function that allocates a page, and an argument for
+that allocator ... until patch 2 when you squashed it all in... only to undo it here. This
+looks like churn.
 
-[snip]
 
-> +static int qcom_swrm_hw_free(struct snd_pcm_substream *substream,
-> +			     struct snd_soc_dai *dai)
-> +{
-> +	struct qcom_swrm_ctrl *ctrl = dev_get_drvdata(dai->dev);
-> +	struct sdw_stream_runtime *sruntime = ctrl->sruntime[dai->id];
-> +
-> +	qcom_swrm_stream_free_ports(ctrl, sruntime);
-> +	sdw_stream_remove_master(&ctrl->bus, sruntime);
-> +	sdw_deprepare_stream(sruntime);
-> +	sdw_disable_stream(sruntime);
+>>> + * trans_flags
 
-Should is be the reverse order? Removing ports/master before disabling 
-doesn't seem too good.
+[...]
 
-> +
-> +	return 0;
-> +}
-> +
+> I re-evaluated "flags", and figured that they are indeed not needed.
+> So, I will embed them into the code directly.
 
-> +static int qcom_swrm_register_dais(struct qcom_swrm_ctrl *ctrl)
-> +{
-> +	int num_dais = ctrl->num_dout_ports + ctrl->num_din_ports;
-> +	struct snd_soc_dai_driver *dais;
-> +	struct snd_soc_pcm_stream *stream;
-> +	struct device *dev = ctrl->dev;
-> +	int i;
-> +
-> +	/* PDM dais are only tested for now */
-> +	dais = devm_kcalloc(dev, num_dais, sizeof(*dais), GFP_KERNEL);
-> +	if (!dais)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < num_dais; i++) {
-> +		dais[i].name = devm_kasprintf(dev, GFP_KERNEL, "SDW Pin%d", i);
-> +		if (!dais[i].name)
-> +			return -ENOMEM;
-> +
-> +		if (i < ctrl->num_dout_ports) {
-> +			stream = &dais[i].playback;
-> +			stream->stream_name = devm_kasprintf(dev, GFP_KERNEL,
-> +							     "SDW Tx%d", i);
-> +		} else {
-> +			stream = &dais[i].capture;
-> +			stream->stream_name = devm_kasprintf(dev, GFP_KERNEL,
-> +							     "SDW Rx%d", i);
-> +		}
+Great!
 
-For the Intel stuff, we removed the stream_name assignment since it 
-conflicted with the DAI widgets added by the topology. Since the code 
-looks inspired by the Intel DAI handling, you should look into this.
 
+
+>>> diff --git a/arch/arm64/mm/trans_pgd.c b/arch/arm64/mm/trans_pgd.c
+>>> index 00b62d8640c2..dbabccd78cc4 100644
+>>> --- a/arch/arm64/mm/trans_pgd.c
+>>> +++ b/arch/arm64/mm/trans_pgd.c
+>>> @@ -17,6 +17,16 @@
+>>>  #include <asm/pgtable.h>
+>>>  #include <linux/suspend.h>
+
+>>>
+>>> -int trans_pgd_map_page(pgd_t *trans_pgd, void *page, unsigned long dst_addr,
+>>> -                    pgprot_t pgprot)
+>>> +int trans_pgd_map_page(struct trans_pgd_info *info, pgd_t *trans_pgd,
+>>> +                    void *page, unsigned long dst_addr, pgprot_t pgprot)
+>>>  {
+>>> -     pgd_t *pgdp;
+>>> -     pud_t *pudp;
+>>> -     pmd_t *pmdp;
+>>> -     pte_t *ptep;
+>>> -
+>>> -     pgdp = pgd_offset_raw(trans_pgd, dst_addr);
+>>> -     if (pgd_none(READ_ONCE(*pgdp))) {
+>>> -             pudp = (void *)get_safe_page(GFP_ATOMIC);
+>>> -             if (!pudp)
+>>> +     int pgd_idx = pgd_index(dst_addr);
+>>> +     int pud_idx = pud_index(dst_addr);
+>>> +     int pmd_idx = pmd_index(dst_addr);
+>>> +     int pte_idx = pte_index(dst_addr);
+>>
+>> Yuck.
+>>
+> 
+> What's wrong with pre-calculating indices? :)
+
+The only thing to do with them is access the page tables as a C array. This stuff is the
+business of the helpers, please use them. Its a maintenance headache if you don't.
+
+
+>>> -     pudp = pud_offset(pgdp, dst_addr);
+>>> -     if (pud_none(READ_ONCE(*pudp))) {
+>>> -             pmdp = (void *)get_safe_page(GFP_ATOMIC);
+>>> -             if (!pmdp)
+>>> +     pudp = __va(pgd_page_paddr(pgd));
+>>> +     pud = READ_ONCE(pudp[pud_idx]);
+>>> +     if (pud_sect(pud)) {
+>>> +             return -ENXIO;
+>>> +     } else if (pud_none(pud) || pud_sect(pud)) {
+>>> +             pmd_t *t = trans_alloc(info);
+>>> +
+>>> +             if (!t)
+>>>                       return -ENOMEM;
+>>
+>> Choke on block mappings? This should never happen because this function should only create
+>> the tables necessary to map one page. Not a block mapping in sight.
+>>
+>> (see my comments on patch 6)
+
+> I can remove this, but what should I replace it with BUG() or silently
+> ignore, and assume no huge page hre? I thought the idea is not to use
+> BUG() calls in kernel code, and return errors instead. If, in the
+> future PUD size mappings are added, how is that going to be detected?
+
+...if in the future...
+
+Could your turn RODATA_FULL_DEFAULT_ENABLED off in your kernel config, then check debugfs
+kernel_page_tables export. You should see blocks mappings for the large contiguous blocks
+of memory.
+
+
+Thanks,
+
+James
