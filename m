@@ -2,169 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1606DD38E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 07:53:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53A7AD38F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 07:55:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727294AbfJKFwW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 01:52:22 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44135 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727265AbfJKFwU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 01:52:20 -0400
-Received: by mail-wr1-f67.google.com with SMTP id z9so10374876wrl.11
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 22:52:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SZfiDMytUZRJp44lJpGIhXKb56niFoQv8fJMmHQ6k+Q=;
-        b=H62q2teOwJH5ebK+zs5CnU01YkWWT2VVaSnRzpi2uNOFHPYqzvw8c+8vmsqsn8mEAg
-         d7JIoYPTS5haAA47mcEKlL6FBZSEcSQVPZ+NCEczpYto9FAcv2n7guL8eTYTTKrrd3VH
-         gITCMTT4lshS5kOo3GfKuz03OO2sfIMmTNdcE2Tmy1+Ve6QnGkliu9IJ9nz01woccUz+
-         4M87ZSxrzyTgUhYE//yN8vBlfwAsyrsAS+SO1EXwrDSrsaYtLVjXffkr/vsgIQfnrYpH
-         z/UHWQS/OJKUc4bZP/BMzgLgHxmIFH2xzOcF7Hop9ZfUzmKZY5eQWVlkxsbG1AsVkrE5
-         b3lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SZfiDMytUZRJp44lJpGIhXKb56niFoQv8fJMmHQ6k+Q=;
-        b=GkVYjUTZcKqk+CMvofbjH4U8rSJx9DmLmIDzIG2gzbxA2Vgze1N8BGvN2QTHEt6AqO
-         qT49QCeM66SoDpyEaexEiXw6gjflbC86fCEAmxf301l8akK5HwtqMkQMG3P+IXiKfdkS
-         Lhmx9DwHs92nAc/8gJKIqpcK4AxrdFB2Uv1KEzjZVjlK6rFS3W8E5DAVvrpCg0jpQtZj
-         aQy0QplwaYYa7AL0DYtJJ3Ody7Auual3OtF9uHuTV14aNFT3oFb7khE9VFwtjS4DQCpP
-         XSkASlEdyalbSR6bdirg5Riup5qd5MeEjMpxoGzOYAVV8SXtVGt1dr+4+5+ycouMxTFw
-         9jPw==
-X-Gm-Message-State: APjAAAWfJt1qV6DiC+j2t2M/g6oPBR2B9uLdN68z84vK9wpYjeP2dkHz
-        U5YVpZB4t4GgXIvbvCiT2kees5O5uGpxjdeIGeTHwg==
-X-Google-Smtp-Source: APXvYqxxiTj6vtkq39Hatr4ltQFAfwTxn9rdWjyu3eWv1M6qMg4Lklqb1C8QY9amZYuQKQWADLkS8EJvB1MJpjdGZik=
-X-Received: by 2002:adf:9f08:: with SMTP id l8mr10987816wrf.325.1570773138350;
- Thu, 10 Oct 2019 22:52:18 -0700 (PDT)
+        id S1726866AbfJKFzg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 01:55:36 -0400
+Received: from szxga08-in.huawei.com ([45.249.212.255]:54992 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726116AbfJKFzf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 01:55:35 -0400
+Received: from DGGEMM405-HUB.china.huawei.com (unknown [172.30.72.55])
+        by Forcepoint Email with ESMTP id 4F38FF226CE0EBD03314;
+        Fri, 11 Oct 2019 13:55:32 +0800 (CST)
+Received: from dggeme760-chm.china.huawei.com (10.3.19.106) by
+ DGGEMM405-HUB.china.huawei.com (10.3.20.213) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Fri, 11 Oct 2019 13:55:31 +0800
+Received: from [127.0.0.1] (10.57.37.248) by dggeme760-chm.china.huawei.com
+ (10.3.19.106) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 11
+ Oct 2019 13:55:31 +0800
+Subject: Re: [RFC PATCH net] net: phy: Fix "link partner" information
+ disappear issue
+To:     Heiner Kallweit <hkallweit1@gmail.com>, <davem@davemloft.net>,
+        <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
+        <yisen.zhuang@huawei.com>, <shiju.jose@huawei.com>
+References: <1570699808-55313-1-git-send-email-liuyonglong@huawei.com>
+ <ee969d27-debe-9bc4-92f2-fe5b04c36a39@gmail.com>
+From:   Yonglong Liu <liuyonglong@huawei.com>
+Message-ID: <670bd6ac-54ee-ecfa-c108-fcf48a3a7dc8@huawei.com>
+Date:   Fri, 11 Oct 2019 13:55:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <157066227329.1059972.5659620631541203458.stgit@dwillia2-desk3.amr.corp.intel.com>
- <157066230358.1059972.1736585303527133478.stgit@dwillia2-desk3.amr.corp.intel.com>
- <CAKv+Gu8ih2RffZHdwAnHZicL_v8CxV9WnCy+uA1jSSyh58xapA@mail.gmail.com>
- <CAPcyv4iQ5Np3dDH=-a_7gPnWKBCHXGit2PN-h=Jw_eqj7Lb2BQ@mail.gmail.com>
- <CAKv+Gu9co_FTVYWNZsXF0H+fV1K76pZX4Yv11ANE6NwDBT3pBQ@mail.gmail.com> <CAPcyv4iCpA_a7272HXVwBY3NqR1RbyuoXbQOPWG2xFHgqN8-iA@mail.gmail.com>
-In-Reply-To: <CAPcyv4iCpA_a7272HXVwBY3NqR1RbyuoXbQOPWG2xFHgqN8-iA@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 11 Oct 2019 07:52:05 +0200
-Message-ID: <CAKv+Gu-EOaEmiT_ZA8RBatWAWNVXnNgv-wLJSp5b-zhvof3D6g@mail.gmail.com>
-Subject: Re: [PATCH v6 05/12] x86/efi: EFI soft reservation to E820 enumeration
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        kbuild test robot <lkp@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <ee969d27-debe-9bc4-92f2-fe5b04c36a39@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.37.248]
+X-ClientProxiedBy: dggeme715-chm.china.huawei.com (10.1.199.111) To
+ dggeme760-chm.china.huawei.com (10.3.19.106)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 Oct 2019 at 04:39, Dan Williams <dan.j.williams@intel.com> wrote:
->
-> On Thu, Oct 10, 2019 at 11:41 AM Ard Biesheuvel
-> <ard.biesheuvel@linaro.org> wrote:
-> >
-> > On Thu, 10 Oct 2019 at 20:31, Dan Williams <dan.j.williams@intel.com> wrote:
-> > >
-> > > On Wed, Oct 9, 2019 at 11:45 PM Ard Biesheuvel
-> > > <ard.biesheuvel@linaro.org> wrote:
-> > > >
-> > > > On Thu, 10 Oct 2019 at 01:19, Dan Williams <dan.j.williams@intel.com> wrote:
-> > > > >
-> > > > > UEFI 2.8 defines an EFI_MEMORY_SP attribute bit to augment the
-> > > > > interpretation of the EFI Memory Types as "reserved for a specific
-> > > > > purpose".
-> > > > >
-> > > > > The proposed Linux behavior for specific purpose memory is that it is
-> > > > > reserved for direct-access (device-dax) by default and not available for
-> > > > > any kernel usage, not even as an OOM fallback.  Later, through udev
-> > > > > scripts or another init mechanism, these device-dax claimed ranges can
-> > > > > be reconfigured and hot-added to the available System-RAM with a unique
-> > > > > node identifier. This device-dax management scheme implements "soft" in
-> > > > > the "soft reserved" designation by allowing some or all of the
-> > > > > reservation to be recovered as typical memory. This policy can be
-> > > > > disabled at compile-time with CONFIG_EFI_SOFT_RESERVE=n, or runtime with
-> > > > > efi=nosoftreserve.
-> > > > >
-> > > > > This patch introduces 2 new concepts at once given the entanglement
-> > > > > between early boot enumeration relative to memory that can optionally be
-> > > > > reserved from the kernel page allocator by default. The new concepts
-> > > > > are:
-> > > > >
-> > > > > - E820_TYPE_SOFT_RESERVED: Upon detecting the EFI_MEMORY_SP
-> > > > >   attribute on EFI_CONVENTIONAL memory, update the E820 map with this
-> > > > >   new type. Only perform this classification if the
-> > > > >   CONFIG_EFI_SOFT_RESERVE=y policy is enabled, otherwise treat it as
-> > > > >   typical ram.
-> > > > >
-> > > > > - IORES_DESC_SOFT_RESERVED: Add a new I/O resource descriptor for
-> > > > >   a device driver to search iomem resources for application specific
-> > > > >   memory. Teach the iomem code to identify such ranges as "Soft Reserved".
-> > > > >
-> > > > > A follow-on change integrates parsing of the ACPI HMAT to identify the
-> > > > > node and sub-range boundaries of EFI_MEMORY_SP designated memory. For
-> > > > > now, just identify and reserve memory of this type.
-> > > > >
-> > > > > Cc: <x86@kernel.org>
-> > > > > Cc: Borislav Petkov <bp@alien8.de>
-> > > > > Cc: Ingo Molnar <mingo@redhat.com>
-> > > > > Cc: "H. Peter Anvin" <hpa@zytor.com>
-> > > > > Cc: Darren Hart <dvhart@infradead.org>
-> > > > > Cc: Andy Shevchenko <andy@infradead.org>
-> > > > > Cc: Andy Lutomirski <luto@kernel.org>
-> > > > > Cc: Peter Zijlstra <peterz@infradead.org>
-> > > > > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > > > > Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > > > > Reported-by: kbuild test robot <lkp@intel.com>
-> > > > > Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
-> > > > > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> > > >
-> > > > For the EFI changes
-> > > >
-> > > > Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > > >
-> > > > although I must admit I don't follow the enum add_efi_mode logic 100%
-> > >
-> > > I'm open to suggestions as I'm not sure it's the best possible
-> > > organization. The do_add_efi_memmap() routine has the logic to
-> > > translate EFI to E820, but unless "add_efi_memmap" is specified on the
-> > > kernel command line the EFI memory map is ignored. For
-> > > soft-reservation support I want to reuse do_add_efi_memmap(), but
-> > > otherwise avoid any other side effects of considering the EFI map.
-> > > What I'm missing is the rationale for why "add_efi_memmap" is required
-> > > before considering the EFI memory map.
-> > >
-> > > If there is a negative side effect to always using the EFI map then
-> > > the new "add_efi_mode" designation constrains it to just the
-> > > soft-reservation case.
-> > >
-> >
-> > Could we make the presence of any EFI_MEMORY_SP regions imply
-> > add_efi_memmap? That way, it is guaranteed that we don't regress
-> > existing systems, while establishing clear and unambiguous semantics
-> > for new systems that rely on these changes in order to be able to use
-> > the special purpose memory as intended.
->
-> In fact that's how it works. EFI_MEMORY_SP is unconditionally added.
-> Other EFI memory types are optionally added with the add_efi_memmap
-> option.
 
-That is not what I meant.
 
-Why not behave as if 'add_efi_memmap' was passed if any EFI_MEMORY_SP
-regions exist?
+On 2019/10/11 3:17, Heiner Kallweit wrote:
+> On 10.10.2019 11:30, Yonglong Liu wrote:
+>> Some drivers just call phy_ethtool_ksettings_set() to set the
+>> links, for those phy drivers that use genphy_read_status(), if
+>> autoneg is on, and the link is up, than execute "ethtool -s
+>> ethx autoneg on" will cause "link partner" information disappear.
+>>
+>> The call trace is phy_ethtool_ksettings_set()->phy_start_aneg()
+>> ->linkmode_zero(phydev->lp_advertising)->genphy_read_status(),
+>> the link didn't change, so genphy_read_status() just return, and
+>> phydev->lp_advertising is zero now.
+>>
+> I think that clearing link partner advertising info in
+> phy_start_aneg() is questionable. If advertising doesn't change
+> then phy_config_aneg() basically is a no-op. Instead we may have
+> to clear the link partner advertising info in genphy_read_lpa()
+> if aneg is disabled or aneg isn't completed (basically the same
+> as in genphy_c45_read_lpa()). Something like:
+> 
+> if (!phydev->autoneg_complete) { /* also covers case that aneg is disabled */
+> 	linkmode_zero(phydev->lp_advertising);
+> } else if (phydev->autoneg == AUTONEG_ENABLE) {
+> 	...
+> }
+> 
+
+If clear the link partner advertising info in genphy_read_lpa() and
+genphy_c45_read_lpa(), for the drivers that use genphy_read_status()
+is ok, but for those drivers that use there own read_status() may
+have problem, like aqr_read_status(), it will update lp_advertising
+first, and than call genphy_c45_read_status(), so will cause
+lp_advertising lost.
+
+Another question, please see genphy_c45_read_status(), if clear the
+link partner advertising info in genphy_c45_read_lpa(), if autoneg is
+off, phydev->lp_advertising will not clear.
+
+>> This patch call genphy_read_lpa() before the link state judgement
+>> to fix this problem.
+>>
+>> Fixes: 88d6272acaaa ("net: phy: avoid unneeded MDIO reads in genphy_read_status")
+>> Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
+>> ---
+>>  drivers/net/phy/phy_device.c | 8 ++++----
+>>  1 file changed, 4 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+>> index 9d2bbb1..ef3073c 100644
+>> --- a/drivers/net/phy/phy_device.c
+>> +++ b/drivers/net/phy/phy_device.c
+>> @@ -1839,6 +1839,10 @@ int genphy_read_status(struct phy_device *phydev)
+>>  	if (err)
+>>  		return err;
+>>  
+>> +	err = genphy_read_lpa(phydev);
+>> +	if (err < 0)
+>> +		return err;
+>> +
+>>  	/* why bother the PHY if nothing can have changed */
+>>  	if (phydev->autoneg == AUTONEG_ENABLE && old_link && phydev->link)
+>>  		return 0;
+>> @@ -1848,10 +1852,6 @@ int genphy_read_status(struct phy_device *phydev)
+>>  	phydev->pause = 0;
+>>  	phydev->asym_pause = 0;
+>>  
+>> -	err = genphy_read_lpa(phydev);
+>> -	if (err < 0)
+>> -		return err;
+>> -
+>>  	if (phydev->autoneg == AUTONEG_ENABLE && phydev->autoneg_complete) {
+>>  		phy_resolve_aneg_linkmode(phydev);
+>>  	} else if (phydev->autoneg == AUTONEG_DISABLE) {
+>>
+> 
+> 
+> .
+> 
+
