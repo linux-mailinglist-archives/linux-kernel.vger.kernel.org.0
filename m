@@ -2,187 +2,363 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAEC2D427A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 16:14:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C68A0D428A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 16:16:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728395AbfJKOOK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 10:14:10 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:43001 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728033AbfJKOOJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 10:14:09 -0400
-Received: from v22018046084765073.goodsrv.de ([185.183.158.195] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1iIvgE-0004E0-5z; Fri, 11 Oct 2019 14:14:06 +0000
-Date:   Fri, 11 Oct 2019 16:14:05 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Thibaut Sautereau <thibaut@sautereau.fr>, dhowells@redhat.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>
-Subject: Re: NULL pointer deref in put_fs_context with unprivileged LXC
-Message-ID: <20191011141403.ghjptf4nrttgg7jd@wittgenstein>
-References: <20191010213512.GA875@gandi.net>
+        id S1728372AbfJKOQi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 10:16:38 -0400
+Received: from mout.web.de ([212.227.17.11]:47347 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728149AbfJKOQi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 10:16:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1570803376;
+        bh=0DEX5VKWVD9x0e8Dn9x3ribmYstuDtlwcI1P1OnQ6rU=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=i1AIlfALDwep6ZQaOUtsSBpdZ1qDGsP6XdYvANP1aNC71Qs1pUctRrbsFeFMgk5l1
+         MQPwMkVEecrz8GKQsLtgkglDBNSb7hAkF35oFyH+Ua8S1kdvgCw/kpw/TolKXfgTlH
+         sbkwu/UdrwCkCKF8bFt6PuI45JFLPw6lEcuFr6to=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.43.108] ([89.204.138.232]) by smtp.web.de (mrweb103
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0MPHKO-1iNLYe1XyC-004PiP; Fri, 11
+ Oct 2019 16:16:16 +0200
+Subject: Re: [PATCH 3/3] arm64: dts: rockchip: fix RockPro64 sdmmc settings
+To:     Robin Murphy <robin.murphy@arm.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Cc:     "linux-rockchip@lists.infradead.org" 
+        <linux-rockchip@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20191003215036.15023-1-smoch@web.de>
+ <20191003215036.15023-3-smoch@web.de>
+ <31181f3c-20ec-e717-1f7e-8b35cd54d96d@arm.com>
+ <a8b20c45-0426-ee42-4efc-52e56ea6bb20@web.de>
+ <120e2dbc-55eb-2205-b00f-7e50928ec706@rock-chips.com>
+ <1c452b8b-853f-8f58-5f3a-0bbecbe20557@web.de>
+ <fc7dce53-ad39-26e3-7c19-ab60ff4cc332@arm.com>
+ <0c6fdb65-be2a-68e3-a686-14ce9b0a00a4@rock-chips.com>
+ <e4aaddc2-441b-b835-380e-374a3d935474@web.de>
+ <HE1PR06MB40115FDF385886FDDE122CD6AC970@HE1PR06MB4011.eurprd06.prod.outlook.com>
+ <13064e01-9472-fc4d-2c7f-c186fa2a9a91@web.de>
+ <64a7d056-28d0-b6d8-6148-b98b58265c08@arm.com>
+From:   Soeren Moch <smoch@web.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=smoch@web.de; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <6c2e6523-dc0a-1ad6-ffd3-7ef63c6f7df9@web.de>
+Date:   Fri, 11 Oct 2019 16:16:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <64a7d056-28d0-b6d8-6148-b98b58265c08@arm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191010213512.GA875@gandi.net>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-GB
+X-Provags-ID: V03:K1:ZQUTbzEI4Q5cpX8IwRbTN8abRrd/bc+5Mj+9i+H0ysvZ6N964S5
+ xt6UFDf8NpiC2NjlADMVOWeSpE6f3FUlyDed+SRBGoKnQ+m8Gto1Aj8smtYFxkk0cOY+K4t
+ htC04GE/PwkdsmBBKPBI27lFS3cpQEtfEzyBLTteAMxEc5952zJUrZSfu+RHXuur2K3s0AN
+ 8ex1cWDOdPqQ6x8oeNCow==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:yjAgu2sz3ZE=:dxY8g2JmlpjdGOlBabf7Wt
+ 1ZO4GbucEpmTjHJg6qt0uol5KjXipm2sIkqAfiDJNw3PI2joaXYM3r1EaK8uKed4cVp2c+FFC
+ 9teAXPQDB/IdmTYdnobxIftyo1LxCC1vIM09pWfgSeo4Z9C7T8Osk7WOx6tawy04KsXnpGVhD
+ gywzKa3zzaJJ2U2ftQcehxP77IoT0+dLBG2hUeyBahpwBquApAksDwwkURVXaE6/VAOL960Z1
+ c4Gs7/cksMyxXZFC9r6BO/R07yz9XJblQQU1AO3YUN02XbaZ0SWZeIG9IANt/O9X9dztQ1Hxw
+ SXFyCUPG71tLhgPc0Ez/m9N8298DOfvZXVZaFydCR4qntOmAqykqWQyQVVhEV+w+jrUG6m8dy
+ 0WJEd+Be2Qw0Go8s7W1SBNJTIXsbTF3hZkSYMnwmHfE8anUy+6/r0BODHEeEsvvnghtWkcAze
+ HQFyCqdzWCZWma6KhHQL8uaGC+zo2RS550dprwTwo4nt5yI3/mK77CqmY6Biqfd3G/lTM/8Bv
+ +J1U4l3sRqA5jcOeBojvI7sTfr+8348AttU7JrQkD8IgLckE9ORxvqakpIIYwU9xaLUdKfLkD
+ R0Sv7tMqT+N2aONkrZwBDcwDLfiiEsxObBSEr4ls6VS+kpCfW3HSjgnMA1nQklBXJHspcdhjD
+ Kg5uONFNr4AROTyUPtsrAL9npJZHhhGQ++N5vSMSe6jbBrUYl0IU5jvPiXsmudtZ5kE7aqz+0
+ gmcUgIKW3EpEaRZuBowrNsAENZmMYI3j618aVj2fYJCpYyEudy99168SAHhIPYYiLpZgaygFK
+ IUUvW4lhb2E7sxD5SQdJwcHFPQdwMk4E2TqgBlPbQJflfSHcArU6Klu9YlI3uJ9NpZQ/CvggN
+ W3whHTHWadG3INX/MmlKvPux9vFYh+F94xFvf2q+EoeYs6F16T1pEfXO+K1VCdMgJWbzWXphU
+ Z456j7GxHEG0jhjWoCK452MRtAcsq0fL+yzRw4S/bq/ma3yCmL9ywRMA/AAS8W6bj1nQ7ci0d
+ tbyubmCpdPbs2xI5215MYWNR9d3twTiPK3TMqS7cP3PQslH51qCqzuf+1pdwrebeLPgaZKuue
+ Ec+NuP5wTRbPE63o8t5m1UrgxDHMkKDSk1J8IP6gTenEEwG2ddyhl1lcZM4lpqq9tT/Fo7xeY
+ JqCzmrD+33vZHCzNWl4xkzj2xj2XHqy8hTx1KLMlrsN8Npy7VAShV1/WVnfFXTgN/xpjpxpOI
+ 8n9GBan8+a+j/sa3mAm9xiDpHa1kI/oNRdKaOTQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 11:35:12PM +0200, Thibaut Sautereau wrote:
-> Since v5.1 and as of v5.3.5, I get the following oops every single time
-> I start an *unprivileged* LXC container:
-> 
-> 	BUG: kernel NULL pointer dereference, address: 0000000000000043
-> 	#PF: supervisor read access in kernel mode
-> 	#PF: error_code(0x0000) - not-present page
-> 	PGD 0 P4D 0 
-> 	Oops: 0000 [#1] SMP PTI
-> 	CPU: 3 PID: 3789 Comm: systemd Tainted: G                T 5.3.5 #5
-> 	RIP: 0010:put_fs_context+0x13/0x180
-> 	Code: e4 31 c9 eb c8 e8 1d d6 dc ff 66 66 2e 0f 1f 84 00 00 00 00 00 66 90 41 54 55 48 89 fd 53 48 8b b>
-> 	RSP: 0018:ffffc90000777e10 EFLAGS: 00010286
-> 	RAX: 00000000fffffff3 RBX: 0000000000000000 RCX: ffffc90000777d6c
-> 	RDX: 0000000000000000 RSI: ffff8884062331e8 RDI: fffffffffffffff3
-> 	RBP: ffff8883e772dc00 R08: ffff88840d6bc680 R09: 0000000000000001
-> 	R10: 0000000000000000 R11: 0000000000000001 R12: fffffffffffffff3
-> 	R13: ffff888405ad2860 R14: ffff8883e772dc00 R15: 0000000000000027
-> 	FS:  00007998d1444980(0000) GS:ffff88840f980000(0000) knlGS:0000000000000000
-> 	CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> 	CR2: 0000000000000043 CR3: 000000040d236003 CR4: 00000000001606e0
-> 	Call Trace:
-> 	 do_mount+0x2f6/0xab0
-> 	 ksys_mount+0x79/0xc0
-> 	 __x64_sys_mount+0x1d/0x30
-> 	 do_syscall_64+0x68/0x666
-> 	 entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 	RIP: 0033:0x7998d23aafea
-> 	Code: 48 8b 0d a9 0e 0c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 4>
-> 	RSP: 002b:00007ffd4b0c8bc8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-> 	RAX: ffffffffffffffda RBX: 00005ae352a55a30 RCX: 00007998d23aafea
-> 	RDX: 00005ae3529fe0b3 RSI: 00005ae3529fe0d5 RDI: 00005ae3529fe0b3
-> 	RBP: 0000000000000007 R08: 00005ae3529fe0ca R09: 00005ae35433fb20
-> 	R10: 000000000000000e R11: 0000000000000246 R12: 00000000fffffffe
-> 	R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000001
-> 	Modules linked in:
-> 	CR2: 0000000000000043
-> 	---[ end trace 66de701522a6be46 ]---
-> 	RIP: 0010:put_fs_context+0x13/0x180
-> 	Code: e4 31 c9 eb c8 e8 1d d6 dc ff 66 66 2e 0f 1f 84 00 00 00 00 00 66 90 41 54 55 48 89 fd 53 48 8b b>
-> 	RSP: 0018:ffffc90000777e10 EFLAGS: 00010286
-> 	RAX: 00000000fffffff3 RBX: 0000000000000000 RCX: ffffc90000777d6c
-> 	RDX: 0000000000000000 RSI: ffff8884062331e8 RDI: fffffffffffffff3
-> 	RBP: ffff8883e772dc00 R08: ffff88840d6bc680 R09: 0000000000000001
-> 	R10: 0000000000000000 R11: 0000000000000001 R12: fffffffffffffff3
-> 	R13: ffff888405ad2860 R14: ffff8883e772dc00 R15: 0000000000000027
-> 	FS:  00007998d1444980(0000) GS:ffff88840f980000(0000) knlGS:0000000000000000
-> 	CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> 	CR2: 0000000000000043 CR3: 000000040d236003 CR4: 00000000001606e0
-> 
-> According to GDB:
-> 	$ gdb fs/fs_context.o
-> 	(gdb) l *put_fs_context+0x13
-> 	0xa53 is in put_fs_context (fs/fs_context.c:494).
-> 	489	void put_fs_context(struct fs_context *fc)
-> 	490	{
-> 	491		struct super_block *sb;
-> 	492
-> 	493		if (fc->root) {
-> 	494			sb = fc->root->d_sb;
-> 	495			dput(fc->root);
-> 	496			fc->root = NULL;
-> 	497			deactivate_super(sb);
-> 	498		}
-> 
-> 	$ gdb fs/namespace.o
-> 	(gdb) l *do_mount+0x2f6
-> 	0x5506 is in do_mount (fs/namespace.c:2796).
-> 	2791			err = vfs_get_tree(fc);
-> 	2792		if (!err)
-> 	2793			err = do_new_mount_fc(fc, path, mnt_flags);
-> 	2794
-> 	2795		put_fs_context(fc);
-> 	2796		return err;
-> 	2797	}
-> 	2798
-> 	2799	int finish_automount(struct vfsmount *m, struct path *path)
-> 	2800	{
-> 
-> 
-> I don't face this issue when starting the same container as a
-> privileged one. I tried to strace the container when launched in
-> foreground and the following snippet may be related to the problem:
-> 
-> 	[pid 35813] openat(AT_FDCWD, "/sys/fs", O_RDONLY|O_CLOEXEC|O_PATH|O_DIRECTORY) = 4
-> 	[pid 35813] name_to_handle_at(4, "cgroup", {handle_bytes=128}, 0x7ffcdf6ebac4, AT_SYMLINK_FOLLOW) = -1 EOPNOTSUPP (Operation not supported)
-> 	[pid 35813] name_to_handle_at(4, "", {handle_bytes=128}, 0x7ffcdf6ebac4, AT_EMPTY_PATH) = -1 EOPNOTSUPP (Operation not supported)
-> 	[pid 35813] openat(4, "cgroup", O_RDONLY|O_CLOEXEC|O_PATH) = 5
-> 	[pid 35813] openat(AT_FDCWD, "/proc/self/fdinfo/5", O_RDONLY|O_CLOEXEC) = 6
-> 	[pid 35813] fstat(6, {st_mode=S_IFREG|0400, st_size=0, ...}) = 0
-> 	[pid 35813] fstat(6, {st_mode=S_IFREG|0400, st_size=0, ...}) = 0
-> 	[pid 35813] read(6, "pos:\t0\nflags:\t012000000\nmnt_id:\t"..., 2048) = 36
-> 	[pid 35813] read(6, "", 1024)           = 0
-> 	[pid 35813] close(6)                    = 0
-> 	[pid 35813] close(5)                    = 0
-> 	[pid 35813] openat(AT_FDCWD, "/proc/self/fdinfo/4", O_RDONLY|O_CLOEXEC) = 5
-> 	[pid 35813] fstat(5, {st_mode=S_IFREG|0400, st_size=0, ...}) = 0
-> 	[pid 35813] fstat(5, {st_mode=S_IFREG|0400, st_size=0, ...}) = 0
-> 	[pid 35813] read(5, "pos:\t0\nflags:\t012200000\nmnt_id:\t"..., 2048) = 36
-> 	[pid 35813] read(5, "", 1024)           = 0
-> 	[pid 35813] close(5)                    = 0
-> 	[pid 35813] newfstatat(4, "cgroup", {st_mode=S_IFDIR|0555, st_size=0, ...}, 0) = 0
-> 	[pid 35813] newfstatat(4, "", {st_mode=S_IFDIR|0755, st_size=0, ...}, AT_EMPTY_PATH) = 0
-> 	[pid 35813] close(4)                    = 0
-> 	[pid 35813] stat("/sys/fs", {st_mode=S_IFDIR|0755, st_size=0, ...}) = 0
-> 	[pid 35813] mkdir("/sys/fs/cgroup", 0755) = -1 EEXIST (File exists)
-> 	[pid 35813] stat("/sys/fs/cgroup", {st_mode=S_IFDIR|0555, st_size=0, ...}) = 0
-> 	[pid 35813] mount("tmpfs", "/sys/fs/cgroup", "tmpfs", MS_NOSUID|MS_NODEV|MS_NOEXEC|MS_STRICTATIME, "mode=755") = 0
-> 	[pid 35813] statfs("/sys/fs/cgroup/", {f_type=TMPFS_MAGIC, f_bsize=4096, f_blocks=2032290, f_bfree=2032290, f_bavail=2032290, f_files=2032290, f_ffree=2032289, f_fsid={val=[0, 0]}, f_namelen=255, f_frsize=4096, f_flags=ST_VALID|ST_NOSUID|ST_NODEV|ST_NOEXEC}) = 0
-> 	[pid 35813] statfs("/sys/fs/cgroup/unified/", 0x7ffcdf6ebc10) = -1 ENOENT (No such file or directory)
-> 	[pid 35813] statfs("/sys/fs/cgroup/systemd/", 0x7ffcdf6ebc10) = -1 ENOENT (No such file or directory)
-> 	[pid 35813] openat(AT_FDCWD, "/proc/1/cmdline", O_RDONLY|O_CLOEXEC) = 4
-> 	[pid 35813] prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=8192*1024, rlim_max=RLIM64_INFINITY}) = 0
-> 	[pid 35813] mmap(NULL, 2101248, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7999ced5b000
-> 	[pid 35813] fstat(4, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
-> 	[pid 35813] read(4, "/sbin/init\0", 1024) = 11
-> 	[pid 35813] read(4, "", 1024)           = 0
-> 	[pid 35813] mremap(0x7999ced5b000, 2101248, 4096, MREMAP_MAYMOVE) = 0x7999ced5b000
-> 	[pid 35813] close(4)                    = 0
-> 	[pid 35813] munmap(0x7999ced5b000, 4096) = 0
-> 	[pid 35813] openat(AT_FDCWD, "/", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4
-> 	[pid 35813] openat(4, "sys", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 5
-> 	[pid 35813] fstat(5, {st_mode=S_IFDIR|0555, st_size=0, ...}) = 0
-> 	[pid 35813] close(4)                    = 0
-> 	[pid 35813] openat(5, "fs", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 4
-> 	[pid 35813] fstat(4, {st_mode=S_IFDIR|0755, st_size=0, ...}) = 0
-> 	[pid 35813] close(5)                    = 0
-> 	[pid 35813] openat(4, "cgroup", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = 5
-> 	[pid 35813] fstat(5, {st_mode=S_IFDIR|0755, st_size=40, ...}) = 0
-> 	[pid 35813] close(4)                    = 0
-> 	[pid 35813] openat(5, "unified", O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_PATH) = -1 ENOENT (No such file or directory)
-> 	[pid 35813] close(5)                    = 0
-> 	[pid 35813] stat("/sys/fs/cgroup", {st_mode=S_IFDIR|0755, st_size=40, ...}) = 0
-> 	[pid 35813] mkdir("/sys/fs/cgroup/unified", 0755) = 0
-> 	[pid 35813] mount("cgroup2", "/sys/fs/cgroup/unified", "cgroup2", MS_NOSUID|MS_NODEV|MS_NOEXEC, "nsdelegate") = ?
-> 	[pid 35813] +++ killed by SIGKILL +++
-> 
-> I've been trying to reproduce by playing with user namespaces and
-> cgroup2 mounts but I didn't succeed. Only an lxc-start of an
-> unprivileged container causes an oops (every single time). I wanted to
-> dive into the code but I hadn't looked at this part of the kernel since
-> the recent rework of file system mounting internals, thus I've been
-> postponing that for weeks now and I thought it was time to report the
-> bug anyway. Sorry for the lack of more detailed info :/
+On 11.10.19 15:00, Robin Murphy wrote:
+> On 11/10/2019 12:40, Soeren Moch wrote:
+>> On 11.10.19 10:22, Jonas Karlman wrote:
+>>> On 2019-10-04 19:24, S=C3=B6ren Moch wrote:
+>>>> On 04.10.19 17:33, Shawn Lin wrote:
+>>>>> On 2019/10/4 22:20, Robin Murphy wrote:
+>>>>>> On 04/10/2019 04:39, Soeren Moch wrote:
+>>>>>>> On 04.10.19 04:13, Shawn Lin wrote:
+>>>>>>>> On 2019/10/4 8:53, Soeren Moch wrote:
+>>>>>>>>> On 04.10.19 02:01, Robin Murphy wrote:
+>>>>>>>>>> On 2019-10-03 10:50 pm, Soeren Moch wrote:
+>>>>>>>>>>> According to the RockPro64 schematic [1] the rk3399 sdmmc
+>>>>>>>>>>> controller is
+>>>>>>>>>>> connected to a microSD (TF card) slot, which cannot be
+>>>>>>>>>>> switched to
+>>>>>>>>>>> 1.8V.
+>>>>>>>>>> Really? AFAICS the SDMMC0 wiring looks pretty much identical
+>>>>>>>>>> to the
+>>>>>>>>>> NanoPC-T4 schematic (it's the same reference design, after all=
+),
+>>>>>>>>>> and I
+>>>>>>>>>> know that board can happily drive a UHS-I microSD card with 1.=
+8v
+>>>>>>>>>> I/Os,
+>>>>>>>>>> because mine's doing so right now.
+>>>>>>>>>>
+>>>>>>>>>> Robin.
+>>>>>>>>> OK, the RockPro64 does not allow a card reset (power cycle) sin=
+ce
+>>>>>>>>> VCC3V0_SD is directly connected to VCC3V3_SYS (via R89555), the=
 
-No worries.
-Let's add David to this.
+>>>>>>>>> SDMMC0_PWH_H signal is not connected. So the card fails to
+>>>>>>>>> identify
+>>>>>>>>> itself after suspend or reboot when switched to 1.8V operation.=
 
-Thanks
-Christian
+>>>>>> Ah, thanks for clarifying - I did overlook the subtlety that U12 a=
+nd
+>>>>>> friends have "NC" as alternative part numbers, even though they
+>>>>>> aren't actually marked as DNP. So it's still not so much "cannot b=
+e
+>>>>>> switched" as "switching can lead to other problems".
+>>>>>>
+>>>>>>>> I believe we addressed this issue long time ago, please check:
+>>>>>>>>
+>>>>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.g=
+it/commit/?id=3D6a11fc47f175c8d87018e89cb58e2d36c66534cb
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>> Thanks for the pointer.
+>>>>>>> In this case I guess I should use following patch instead:
+>>>>>>>
+>>>>>>> --- rk3399-rockpro64.dts.bak =C2=A0=C2=A0 2019-10-03 22:14:00.067=
+745799 +0200
+>>>>>>> +++ rk3399-rockpro64.dts=C2=A0=C2=A0=C2=A0 2019-10-04 00:02:50.04=
+7892366 +0200
+>>>>>>> @@ -619,6 +619,8 @@
+>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 max-frequency =3D <150000000=
+>;
+>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pinctrl-names =3D "default";=
+
+>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pinctrl-0 =3D <&sdmmc_clk &s=
+dmmc_cmd &sdmmc_bus4>;
+>>>>>>> +=C2=A0=C2=A0=C2=A0 sd-uhs-sdr104;
+>>>>>>> +=C2=A0=C2=A0=C2=A0 vqmmc-supply =3D <&vcc_sdio>;
+>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 status =3D "okay";
+>>>>>>> =C2=A0=C2=A0=C2=A0};
+>>>>>>> When I do so, the sd card is detected as SDR104, but a reboot
+>>>>>>> hangs:
+>>>>>>>
+>>>>>>> Boot1: 2018-06-26, version: 1.14
+>>>>>>> CPUId =3D 0x0
+>>>>>>> ChipType =3D 0x10, 286
+>>>>>>> Spi_ChipId =3D c84018
+>>>>>>> no find rkpartition
+>>>>>>> SpiBootInit:ffffffff
+>>>>>>> mmc: ERROR: SDHCI ERR:cmd:0x102,stat:0x18000
+>>>>>>> mmc: ERROR: Card did not respond to voltage select!
+>>>>>>> emmc reinit
+>>>>>>> mmc: ERROR: SDHCI ERR:cmd:0x102,stat:0x18000
+>>>>>>> mmc: ERROR: Card did not respond to voltage select!
+>>>>>>> emmc reinit
+>>>>>>> mmc: ERROR: SDHCI ERR:cmd:0x102,stat:0x18000
+>>>>>>> mmc: ERROR: Card did not respond to voltage select!
+>>>>>>> SdmmcInit=3D2 1
+>>>>>>> mmc0:cmd5,32
+>>>>>>> mmc0:cmd7,32
+>>>>>>> mmc0:cmd5,32
+>>>>>>> mmc0:cmd7,32
+>>>>>>> mmc0:cmd5,32
+>>>>>>> mmc0:cmd7,32
+>>>>>>> SdmmcInit=3D0 1
+>>>>>>>
+>>>>>>> So I guess I should use a different miniloader for this reboot to=
+
+>>>>>>> work!?
+>>>>>>> Or what else could be wrong here?
+>>>>>> Hmm, I guess this is "the Tinkerboard problem" again - the patch
+>>>>>> above would be OK if we could get as far as the kernel, but can't
+>>>>>> help if the
+>>>>> I didn't realize that SD was used as boot medium for RockPro64, but=
+ I
+>>>>> did patch the vendor tree to solve the issue for Tinkerboard, see
+>>>>> https://github.com/rockchip-linux/kernel/commit/a4ccde21f5a9f04f996=
+fb02479cb9f16d3dc8dc0
+>>>>>
+>>>>>
+>>>>>
+>>>>> My initial plan was to patching upstream kernel by adding
+>>>>> ->shutdown,but
+>>>>> never finish it.
+>>>>>
+>>>>>> offending card is itself the boot medium. There was a proposal her=
+e:
+>>>>>>
+>>>>>> https://patchwork.kernel.org/patch/10817217/
+>>>>> This RFC also looks good to me, but seems it needs volunteers
+>>>>> to push it again.
+>>>> Oh, I think this is a totally wrong way.
+>>>>
+>>>> While this might work for some cards, setting the controller's i/o
+>>>> voltage to 3.3V while leaving the card at 1.8V configuration is
+>>>> totally
+>>>> against the specification, can lead to all kinds of strange behaviou=
+r
+>>>> and even cause hardware damage. It also would actively defend the
+>>>> purpose of the above mentioned patch (6a11fc4) where the kernel
+>>>> guesses
+>>>> the i/o voltage from the card configuration and switches the
+>>>> controller
+>>>> accordingly. We would end up with a 1.8V card and controller
+>>>> configuration and a regulator voltage of 3.3V. This would only work
+>>>> with
+>>>> good luck. Even if the kernel driver would switch the regulator
+>>>> back to
+>>>> 1.8V in this case, the voltage mismatch remains in the bootloader wh=
+en
+>>>> this card contains the boot image.
+>>>>
+>>>> The only sane way I see to handle this is implementing the same
+>>>> workaround (mode guessing) also in the bootloader (rockchip miniload=
+er
+>>>> and u-boot SPL since both bootloader chains are supported for this
+>>>> board).
+>>>>
+>>>> Or maybe I miss something?
+>>> Thanks for your input, I have made a new series [1] with a similar
+>>> approach but is limited to dw_mmc-rockchip
+>>> and only changes the regulator at power_off after the regulator has
+>>> been disabled (the vqmmc regulator in affected devices is always-on).=
+
+>> Thanks for your work on this. Unfortunately I still think that this is=
+
+>> the wrong approach.
+>> I see several problems in your patch series:
+>> - You introduced GPIO0_PA1 as regulator enable for RockPro64.
+>> Unfortunately Pine64 decided to disable this regulator on Board Versio=
+n
+>> 2.1 (real product version), see above. I have no idea why they did thi=
+s.
+>> - You changed the i/o voltage from 3.0V to 3.3V. This is not allowed o=
+n
+>> RK3399 I/O bank F.
+>>
+>> Changing the i/o voltage to 3.0V/3.3V while the sd card is configured
+>> for 1.8V is against the specification and dangerous. While experimenti=
+ng
+>> with different images (ayufan, armbian) for my newly bought RockPro64 =
+I
+>> killed a SD card (32GB Samsung UHS-I). I cannot reconstruct the exact
+>> circumstances, but I'm pretty sure this happened due to the voltage
+>> mismatch. Of course I'm not keen to experiment further with this and
+>> kill more sd cards. This is not just an theoretical issue.
+>>> To my knowledge the problem is not with the rockchip miniloader or
+>>> u-boot SPL, it is the initial boot rom that tries to load
+>>> the miniloader/SPL from a SD-card, so nothing that can be updated.
+>> What I observed on my RockPro64:
+>> The ROM bootloader always was able to load the next stage, maybe due t=
+o
+>> the low initial clock of 400kHz? Also the ROM bootloader cannot change=
+
+>> voltage regulator settings. So if the i/o voltage still is at 1.8V and=
+
+>> matching the sd card setting, there is no problem for the ROM
+>> bootloader.
+>
+> Hmm, that makes me wonder if the problem might be not so much that the
+> level of SDMMC0_VDD itself stays at 1.8V, but that at some point after
+> the bootrom the GRF_IO_VSEL bit gets reset so the controller just
+> stops being able to read anything as logic-high.
+Would be great if someone from Rockchip could give some insights whether
+and when during reboot GRF_IO_VSEL is reset (ATF before reboot, some SoC
+soft-reset, ROM bootloader, rkminiloader, something different), Shawn?
+Or gets this VSEL changed only when switching the voltage regulator (via
+io_domains,sdmmc-supply)?
+
+Soeren
+>
+> Robin.
+>
+>> So I think the normal reboot handling should be:
+>> If the sd card can be switched off (preferred solution), do so and res=
+et
+>> the controller i/o voltage to 3.0V/3.3V.
+>> If the sd card can not be switched off, make sure to leave the
+>> controller i/o voltage at the current setting. Make sure in later boot=
+
+>> stages to not change the controller i/o voltage to 3.0V/3.3V when the
+>> card is configured for 1.8V. According to the patch mentioned above th=
+is
+>> behaviour already is implemented in linux, we also need this for the
+>> bootloaders.
+>>
+>> Regards,
+>> Soeren
+>>>
+>>> I have observed this issue on the following devices, and the patches
+>>> at [1] makes it possible to reboot from SD-card after UHS has been
+>>> enabled.
+>>> - Asus Tinker Board (RK3288)
+>>> - Rockchip Sapphire Board (RK3399)
+>>> - Radxa Rock Pi 4 (RK3399)
+>>> - Pine64 RockPro64 (RK3399)
+>>> All of the above seem to use the RK808 regulator for sd io voltage.
+>>>
+>>> The ROC-RK3328-CC did not have this issue and seem to automatically
+>>> reset to 3.3v.
+>>>
+>>> [1]
+>>> https://github.com/Kwiboo/linux-rockchip/compare/next-20191011...next=
+-20191011-mmc
+>>>
+>>> Regards,
+>>> Jonas
+>>>
+>>>> Soeren
+>>>>
+>>>>
+>>>>>> although I'm not sure what if any progress has been made since the=
+n.
+>>>>>>
+>>>>>> Robin.
+>>>>>>
+>>
+>>
+
+
