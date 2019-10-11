@@ -2,96 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7B45D423E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 16:06:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40ACFD4243
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 16:06:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728676AbfJKOGH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 10:06:07 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48740 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728483AbfJKOFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 10:05:51 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E55A510C051D;
-        Fri, 11 Oct 2019 14:05:50 +0000 (UTC)
-Received: from krava (unknown [10.40.206.21])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 6CFEB45A3;
-        Fri, 11 Oct 2019 14:05:49 +0000 (UTC)
-Date:   Fri, 11 Oct 2019 16:05:48 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Andi Kleen <andi@firstfloor.org>
-Cc:     acme@kernel.org, jolsa@kernel.org, linux-kernel@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH] perf data: Fix babeltrace detection
-Message-ID: <20191011140548.GA20544@krava>
-References: <20191007174120.12330-1-andi@firstfloor.org>
- <20191008115240.GE10009@krava>
- <20191008142143.ts5se4pzwfnfnbsh@two.firstfloor.org>
+        id S1728723AbfJKOGS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 10:06:18 -0400
+Received: from inca-roads.misterjones.org ([213.251.177.50]:60603 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728691AbfJKOGP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 10:06:15 -0400
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why)
+        by cheepnis.misterjones.org with esmtpsa (TLSv1.2:AES256-GCM-SHA384:256)
+        (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1iIvYa-0007hw-Ao; Fri, 11 Oct 2019 16:06:12 +0200
+Date:   Fri, 11 Oct 2019 15:06:10 +0100
+From:   Marc Zyngier <maz@kernel.org>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
+        rnayak@codeaurora.org, suzuki.poulose@arm.com,
+        catalin.marinas@arm.com, linux-kernel@vger.kernel.org,
+        jeremy.linton@arm.com, bjorn.andersson@linaro.org,
+        linux-arm-msm@vger.kernel.org, andrew.murray@arm.com,
+        will@kernel.org, Dave.Martin@arm.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: Relax CPU features sanity checking on heterogeneous
+ architectures
+Message-ID: <20191011150610.4e528a2d@why>
+In-Reply-To: <20191011135431.GB33537@lakrids.cambridge.arm.com>
+References: <b3606e76af42f7ecf65b1bfc2a5ed30a@codeaurora.org>
+        <20191011105010.GA29364@lakrids.cambridge.arm.com>
+        <20191011143343.541da66c@why>
+        <20191011135431.GB33537@lakrids.cambridge.arm.com>
+Organization: Approximate
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191008142143.ts5se4pzwfnfnbsh@two.firstfloor.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.65]); Fri, 11 Oct 2019 14:05:51 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: mark.rutland@arm.com, saiprakash.ranjan@codeaurora.org, rnayak@codeaurora.org, suzuki.poulose@arm.com, catalin.marinas@arm.com, linux-kernel@vger.kernel.org, jeremy.linton@arm.com, bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org, andrew.murray@arm.com, will@kernel.org, Dave.Martin@arm.com, linux-arm-kernel@lists.infradead.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 07:21:44AM -0700, Andi Kleen wrote:
-> On Tue, Oct 08, 2019 at 01:52:40PM +0200, Jiri Olsa wrote:
-> > On Mon, Oct 07, 2019 at 10:41:20AM -0700, Andi Kleen wrote:
-> > > From: Andi Kleen <ak@linux.intel.com>
+On Fri, 11 Oct 2019 14:54:31 +0100
+Mark Rutland <mark.rutland@arm.com> wrote:
+
+> On Fri, Oct 11, 2019 at 02:33:43PM +0100, Marc Zyngier wrote:
+> > On Fri, 11 Oct 2019 11:50:11 +0100
+> > Mark Rutland <mark.rutland@arm.com> wrote:
+> >   
+> > > Hi,
 > > > 
-> > > The symbol the feature file checks for is now actually in -lbabeltrace,
-> > > not -lbabeltrace-ctf, at least as of libbabeltrace-1.5.6-2.fc30.x86_64
+> > > On Fri, Oct 11, 2019 at 11:19:00AM +0530, Sai Prakash Ranjan wrote:  
+> > > > On latest QCOM SoCs like SM8150 and SC7180 with big.LITTLE arch, below
+> > > > warnings are observed during bootup of big cpu cores.    
 > > > 
-> > > Always add both libraries to fix the feature detection.
+> > > For reference, which CPUs are in those SoCs?
+> > >   
+> > > > SM8150:
+> > > > 
+> > > > [    0.271177] CPU features: SANITY CHECK: Unexpected variation in
+> > > > SYS_ID_AA64PFR0_EL1. Boot CPU: 0x00000011112222, CPU4: 0x00000011111112    
+> > > 
+> > > The differing fields are EL3, EL2, and EL1: the boot CPU supports
+> > > AArch64 and AArch32 at those exception levels, while the secondary only
+> > > supports AArch64.
+> > > 
+> > > Do we handle this variation in KVM?  
 > > 
-> > well, we link with libbabeltrace-ctf.so which links with libbabeltrace.so
-> > 
-> > I guess we can link it as well, but where do you see it fail?
+> > We do, at least at vcpu creation time (see kvm_reset_vcpu). But if one
+> > of the !AArch32 CPU comes in late in the game (after we've started a
+> > guest), all bets are off (we'll schedule the 32bit guest on that CPU,
+> > enter the guest, immediately take an Illegal Exception Return, and
+> > return to userspace with KVM_EXIT_FAIL_ENTRY).  
 > 
-> On FC30 the .so file is just a symlink, so it doesn't pull
-> in the other library.
+> Ouch. We certainly can't remove the warning untill we deal with that
+> somehow, then.
+
+Indeed. Same thing applies for hot-removing the AArch32-capable CPUs,
+by the way. You'd end-up in a situation where guests can't run, despite
+the initial contract that we're happy that configuration.
+
+> > Not sure we could do better, given the HW. My preference would be to
+> > fail these CPUs if they aren't present at boot time.  
 > 
-> $ gcc test-libbabeltrace.c -lbabeltrace-ctf
-> /usr/bin/ld:
-> /usr/lib/gcc/x86_64-redhat-linux/9/../../../../lib64/libbabeltrace-ctf.so:
-> undefined reference to `bt_packet_seek_get_error'
-> /usr/bin/ld:
-> /usr/lib/gcc/x86_64-redhat-linux/9/../../../../lib64/libbabeltrace-ctf.so:
-> undefined reference to `bt_packet_seek_set_error'
-> collect2: error: ld returned 1 exit status
-
-I'm confused,
-the test-libbabeltrace.c checks for bt_ctf_stream_class_get_packet_context_type
-which is in libbabeltrace-ctf:
-
-	[jolsa@dell-r440-01 feature]$ nm -D /usr/lib64/libbabeltrace-ctf.so | grep bt_ctf_stream_class_get_packet_context_type
-	0000000000032960 T bt_ctf_stream_class_get_packet_context_type
-	[jolsa@dell-r440-01 feature]$ cat /etc/redhat-release 
-	Fedora release 30 (Thirty)
-	[jolsa@dell-r440-01 feature]$ rpm -qa | grep  libbabeltrace-1.5.6-2.fc30.x86_64
-	libbabeltrace-1.5.6-2.fc30.x86_64
-
-I also get proper feature detection on F30:
-
-	$ make VF=1
-	...                 libbabeltrace: [ on  ]
-
-
-jirka
-
+> I agree; I think we need logic to check the ID register fields against
+> their EXACT, {LOWER,HIGHER}_SAFE, etc rules regardless of whether we
+> have an associated cap. That can then abort a late onlining of a CPU
+> which violates those rules w.r.t. the finalised system value.
 > 
-> $ ls -l /usr/lib64/libbabeltrace-ctf.so
-> lrwxrwxrwx 1 root root 26 Jan 31  2019 /usr/lib64/libbabeltrace-ctf.so
-> -> libbabeltrace-ctf.so.1.0.0
-> 
-> $ rpm -qf /usr/lib64/libbabeltrace-ctf.so
-> libbabeltrace-devel-1.5.6-2.fc30.x86_64
-> 
-> -Andi
+> I suspect that we may want to split the notion of
+> safe-for-{user,kernel-guest} in the feature tables, as if nothing else
+> it will force us to consider those cases separately when adding new
+> stuff.
+
+Probably. There are bizarre overlaps, in the sense that some
+capabilities (such as this AArch32 EL1 support) are firmly kernel
+related, and yet have a direct impact on userspace. KVM blurs the lines
+in "interesting" ways... :-(.
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
