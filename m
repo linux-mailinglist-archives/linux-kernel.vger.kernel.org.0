@@ -2,94 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADCB4D3C21
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 11:19:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30785D3C26
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 11:20:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727543AbfJKJTo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 05:19:44 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:44156 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726863AbfJKJTn (ORCPT
+        id S1727662AbfJKJUD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 05:20:03 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:37179 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727125AbfJKJUD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 05:19:43 -0400
-Received: by mail-ot1-f66.google.com with SMTP id 21so7360520otj.11;
-        Fri, 11 Oct 2019 02:19:42 -0700 (PDT)
+        Fri, 11 Oct 2019 05:20:03 -0400
+Received: by mail-ua1-f68.google.com with SMTP id w7so2831283uag.4
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 02:20:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=TFXaZXUVnWUo7FUoeyK+pimFP0T4TRsHMwFzrX99AMw=;
+        b=qrLANnnPzdE4J92iqNq5PD6fjNxUOyVwpzFp6BQ5hiBx78tosvQ9MWO+uZ2mjESNV/
+         4guvp0g5b5GIxWNCETw0OzGJxu3nigYwbkoaHXJVkm8X8BQWsi1ETz5Hp4ab3h/Y1Pxv
+         8FqXstBi5Zgpfo4QSwhnhVFaj+/m9NuDX0vh8paTuTg5mmfRNlBSQmdIqeJlxrXv8Dcb
+         zi6cEQhXSnWvu/8W8298JU3aS5Qw5i5NmpINkMf0N5taz58b+IOhMSkrqcvZqGxulcJ7
+         xkZFN2+7ek3+shHZUc58s+5P2X66/b785Ifhaav6eOeZftbD/dYtOqT9oi1YiQArBQGB
+         mFgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2T/zHCiz5lRoZLCCsEBaHrm43xLEtwr/JLAYUvgdwzE=;
-        b=rY3Uf9LdWgDBPCwqd0My70ixRNRbWYt9jmFcAzct/2Ytmoe4DkGa8BbaoMIeGEKdFR
-         t34MKotWVmuCHtD1xmOdvRmSZmqnmijOzXam6yRSRs0lskZvp4LzmRIPiQuFYbBEgRLn
-         xgl/Li70P0BXy19+uRoaLjIFF+TlXeqsvOe3vxnJvPABEGeGLfgstnqKqios3zicV+Tk
-         gJslr5+YODcCqUPpTLOQonRps+lQaBf1K8Yk5PatVJrdakdRrznSR0ZQ/2SzUTJRW2zU
-         eUjS9wvzRAuZzwLgZ1PxfAPlnoVQNY52od7z6+azmp/ddMgX7ccZThXDPZcTRTaH724Q
-         rVzw==
-X-Gm-Message-State: APjAAAW9xCJNZSKIm+W1gm4Py4m2UDOXqjZxPUknVrL9cIVGBUmjMMWp
-        1qeqsWxQZEYVN3QxsV9Hnt4FGjtG4OyGhOZz0SU=
-X-Google-Smtp-Source: APXvYqzLdkyO6uQN8+aYqrrf0f1ZoJ5UC4uoBKWGKBUzVnWDCeCgMeWJjJBH6Q06m328j8fpzF+F7jTX6lgsPrk7ois=
-X-Received: by 2002:a05:6830:1685:: with SMTP id k5mr11530897otr.250.1570785582416;
- Fri, 11 Oct 2019 02:19:42 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=TFXaZXUVnWUo7FUoeyK+pimFP0T4TRsHMwFzrX99AMw=;
+        b=ItO+y74YVC8hGYJKpg+WbkyoEh+fQKO8vYNA5qBOlCZH1S26KgHlRMYrw3NF9BXW2R
+         gpBHb8OdU9uy9k0ROuKJLEjh2sY0+4PRsADJTy8+JW9G/pacMlN8eKsyJPJh5N+pKEQi
+         4qJ4hl4CfX/DhYnyjjzIeo8ZMNScdjdgiYmatgTiFMYGdlp/9EQ5Jj24RdT+ag2E0uCj
+         aE938UudR+LOLyAA9aqRAKRNTdc1hWark+qmcn/1fE+dGCdxC/dtytXOvaOM5Ri7VI21
+         Ld96hd/X22yWJxuNiY6UEcc1fGVoMpaFtOQDsyLjxZ+vEEP7PJBH5UdBBPjz9llif2eN
+         30Cw==
+X-Gm-Message-State: APjAAAUzLy1nzbov9gogOZMjqg6BZHb9IrRKNxoKkCgxzfDW5c6OYcs0
+        Y6bxEzdhQTOk/YvJS0AkYVWeOq8eAUn5XIZxgX9sRHbzaFc=
+X-Google-Smtp-Source: APXvYqyQ3FT1Trdnl3pRYnMIjP5Zd82IeXfo65Gui+/IKtSdpKl6Aoqf1C1vdv4yLGqhhiPMy+wDoFtLD80uce34w6Y=
+X-Received: by 2002:ab0:d82:: with SMTP id i2mr6008603uak.34.1570785602088;
+ Fri, 11 Oct 2019 02:20:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191010123046.15291-1-geert+renesas@glider.be>
- <20191011073515.2933918c@canb.auug.org.au> <fc7ec17b-c61b-842e-13d9-1e154ce2a654@cogentembedded.com>
-In-Reply-To: <fc7ec17b-c61b-842e-13d9-1e154ce2a654@cogentembedded.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 11 Oct 2019 11:19:30 +0200
-Message-ID: <CAMuHMdVurk2akpKFAGKoNN2YxPMBMx2VrvUfTfCX-AiUaFAcxQ@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Remove Simon as Renesas SoC Co-Maintainer
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kevin Hilman <khilman@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20191010140615.26460-1-oshpigelman@habana.ai> <20191010140950.GA27176@infradead.org>
+ <AM6PR0202MB338206146804E2E2BC18C67FB8940@AM6PR0202MB3382.eurprd02.prod.outlook.com>
+ <20191011081055.GA9052@infradead.org>
+In-Reply-To: <20191011081055.GA9052@infradead.org>
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+Date:   Fri, 11 Oct 2019 12:19:36 +0300
+Message-ID: <CAFCwf11hYWYNeROT8zpW+fcALijcTUuGVk-NoWvxzCORvd+dew@mail.gmail.com>
+Subject: Re: [PATCH 1/2] habanalabs: support vmalloc memory mapping
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Omer Shpigelman <oshpigelman@habana.ai>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sergei,
-
-On Fri, Oct 11, 2019 at 11:00 AM Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> On 10.10.2019 23:35, Stephen Rothwell wrote:
-> >> At the end of the v5.3 upstream kernel development cycle, Simon stepped
-> >> down from his role as Renesas SoC maintainer.
-> >>
-> >> Remove his maintainership, git repository, and branch from the
-> >> MAINTAINERS file, and add an entry to the CREDITS file to honor his
-> >> work.
-> >>
-> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> > So, I will remove Simon's Renesas tree from linux-next and rename the
-> > renesas-geert tree to be renesas, OK?
+On Fri, Oct 11, 2019 at 11:10 AM Christoph Hellwig <hch@infradead.org> wrot=
+e:
 >
->     I thought Geert's new repo is called renesas-devel?
+> On Thu, Oct 10, 2019 at 07:54:07PM +0000, Omer Shpigelman wrote:
+> > The is_vmalloc_addr checks are for user pointers and for memory which w=
+as allocated by the driver with vmalloc_user.
+>
+> This does not make any sense whatsoever.  vmalloc_user returns a kernel
+> address, it just does a GFP_USER instead of GFP_KERNEL allocation, which
+> is just accounting differences.
+>
+> > > > Mapping vmalloc memory is needed for Gaudi ASIC.
+> > >
+> > > How does that ASIC pass in the vmalloc memory?  I don't fully underst=
+and
+> > > the code, but it seems like the addresses are fed from ioctl, which m=
+eans
+> > > they only come from userspace.
+> >
+> > The user pointers are indeed fed from ioctl for DMA purpose, but as I w=
+rote above the vmalloc memory is allocated by the driver with vmalloc_user =
+which will be mmapped later on in order to create a shared buffer between t=
+he driver and the userspace process.
+>
+> Again, you can't pass pointers obtained from vmalloc* to userspace.  You
+> can map the underlying pages into user pagetables, but is_vmalloc_addr
+> won't know that.  I think you guys need to read up on virtual memory 101
+> first and then come back and actually explain what you are trying to do.
 
-The repository is called "renesas-devel".
-The branch Stephen pulls is "next" (colloquially called "renesas-next" ;-)
-The linux-next-specific handle Stephen uses is called "renesas".
+Hi Christoph,
+I think the confusion here is because this is only a pre-requisite
+patch, which doesn't show the full code of how we use vmalloc_user.
+So I want to describe the full flow here and please tell me if and
+what we are doing wrong.
 
-Cfr. "git show next-20191011:Next/Trees | grep renesas".
+We first allocate, using vmalloc_user, a certain memory block that
+will be used by the ASIC and the user (ASIC is producer, user is
+consumer).
+After we use vmalloc_user, we map the *kernel* pointer we got from the
+vmalloc_user() to the ASIC MMU. We reuse our driver's generic code
+path to map host memory to ASIC MMU and that's why we need the patch
+above. The user does NOT send us the pointer. He doesn't have this
+pointer. It is internal to the kernel driver. To do this reuse, we
+added a call to the is_vmalloc_addr(), so the function will know if it
+is called to work on user pointers, or on vmalloc *kernel* pointers.
 
-I hope this clears up the confusion...
+What the user does get is an opaque handle. Later he calls mmap() with
+our FD and this handle. In the driver, we do remap_vmalloc_range() on
+the *kernel* pointer we retrieved using the opaque handle we got from
+the user, and return a valid user-space process address that points to
+this memory block, so the user can access it.
 
-Gr{oetje,eeting}s,
+AFAIK from my GPU days, this is totally valid. The user does NOT see
+kernel pointers. There is total separation between kernel and user
+pointers. User get pointers only by calling mmap(). We NEVER return a
+pointer to a user in an IOCTL. Only through mmap.
+Please tell me if you see a problem here. If you need more details,
+I'll happy to provide them.
 
-                        Geert
+Side note:
+The reason the driver allocates the memory block and not the user
+itself (like we did so far in all our code), is because this block is
+mapped to our ASIC internal MMU using a priviliged ASID. I don't want
+to give the user a uapi that will enable him to request to map memory
+to the ASIC using a priviliged ASID. Therefore, the kernel driver does
+it internally.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+Oded
