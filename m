@@ -2,70 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92E98D4327
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 16:42:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA88DD4325
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 16:42:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727549AbfJKOmp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 10:42:45 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:43039 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727382AbfJKOmm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 10:42:42 -0400
-Received: by mail-ot1-f65.google.com with SMTP id o44so8138268ota.10;
-        Fri, 11 Oct 2019 07:42:42 -0700 (PDT)
+        id S1727352AbfJKOmk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 10:42:40 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55682 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726174AbfJKOmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 10:42:38 -0400
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 45B6C7E423
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 14:35:02 +0000 (UTC)
+Received: by mail-wr1-f69.google.com with SMTP id c17so4428096wro.18
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 07:35:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eiwBs2aJ/mxnZiUA2T54VE8T9eC0Arc2KX94A7JP/5U=;
-        b=dOMDwTkBVgzcr2fdtWsAZTS0m+gUr7fFLNrBoZ5jvh48nO+Npq1DW+dEVMA75dBQfV
-         XfGHz0sknsX0z5osvoSofh0qMCgNGOLTrAcud2odM3e/fzCGg9mx+Q+Emyw/GrYkasv/
-         NrnVJdwsc+G7/p086fzyO4mhAfjyl3VJgASbnpYjn6j9jclQyQN2c0hfNO56WkfyK0n+
-         ZKPHy5d/lVSiMrwkbDcJFsBrpO3Tdfi9lJ9OarW70RFjcfbNGuobDArOvPILF0L3s3Tj
-         vpGMfIpE8tN9reO36RE0bEZEbIIVEttPquCIr2cIjcbauTfjYLqxcGIquL2SVDvdQloK
-         zyZg==
-X-Gm-Message-State: APjAAAU8sr7RimQzY/wlXDU3/O0fJnwyTg/rwyKCI2/daUFI2Lq/rVTp
-        zGgTSjkvrXfklvK9WDwfTg==
-X-Google-Smtp-Source: APXvYqwfFLJ2vEbDguubnzCO2vBMLOijjMMqSQQJyn3yDzXCWnF6G0GmEZ9o9LSY6OLxopwzgwi1TA==
-X-Received: by 2002:a05:6830:2001:: with SMTP id e1mr12633047otp.69.1570804480323;
-        Fri, 11 Oct 2019 07:34:40 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id k24sm2576532oic.29.2019.10.11.07.34.39
+        bh=BMhlHZig+1RhiRk7V7Pz4VOZHaUmDl77u5gqUPus1Vw=;
+        b=GCGa2PaK+1MpsCfLPct9Bbtpd9zTo629K47SJcJYAbTgoJJE/fz9De6OIoGnKEMir4
+         oHdQnehokw7BAfALnDr6kTkyAjU0RBARQPUe8mo+7EzCo6KRRDzwxDZcYx4gvpYTRpNE
+         pmrN/dAIwQhQcR2apafLdQKBALA7lk01zjrLoRkeH5nnTvP84ZpefvLbKL++nJ2Vr/Pc
+         /L+2fsmhLMcT3pRDaVEXG+OlYneUOOa7kwRQW0IL92M/PAjDgHWt+eyS5ATl5m3YDvXs
+         LsClV2KAWBkc+gHieBscIDw2xW/fg2KW14ULZxjKhJlwosCBTeP8dh7VGS4Vf7MVzEE3
+         d4Aw==
+X-Gm-Message-State: APjAAAXVXzXEz+LlM2UrKqkVqn/9ZKdUhJguIqnsEYXMYidMyRuKpvlw
+        Amt3E/CxKNecbIcalnOK5nmoYiB9ZDPllx/ti9+8f7va6mIKjs5v9G5r4+DLFHtIJnr5pfB4ihY
+        YttsU2N6HDUcTXmWCeCiZ3W1k
+X-Received: by 2002:adf:dd88:: with SMTP id x8mr3048524wrl.140.1570804500916;
+        Fri, 11 Oct 2019 07:35:00 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqx+Irj2vNmRio/nFmNCYUOj5zRQn/cFuQoq8tEJPRY6eLYwjr9hshihDbQlKDa3IF+n7XZANw==
+X-Received: by 2002:adf:dd88:: with SMTP id x8mr3048504wrl.140.1570804500699;
+        Fri, 11 Oct 2019 07:35:00 -0700 (PDT)
+Received: from steredhat (host174-200-dynamic.52-79-r.retail.telecomitalia.it. [79.52.200.174])
+        by smtp.gmail.com with ESMTPSA id g185sm12205685wme.10.2019.10.11.07.34.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2019 07:34:39 -0700 (PDT)
-Date:   Fri, 11 Oct 2019 09:34:39 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     mripard@kernel.org, wens@csie.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, mchehab@kernel.org, hverkuil@xs4all.nl,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 2/6] clk: sunxi-ng: h3: Export MBUS clock
-Message-ID: <20191011143439.GA24106@bogus>
-References: <20190929161653.160158-1-jernej.skrabec@siol.net>
- <20190929161653.160158-3-jernej.skrabec@siol.net>
+        Fri, 11 Oct 2019 07:35:00 -0700 (PDT)
+Date:   Fri, 11 Oct 2019 16:34:57 +0200
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     netdev@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        Jorgen Hansen <jhansen@vmware.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Adit Ranadive <aditr@vmware.com>,
+        Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net 0/2] vsock: don't allow half-closed socket in the
+ host transports
+Message-ID: <20191011143457.4ujt3gg7oxco6gld@steredhat>
+References: <20191011130758.22134-1-sgarzare@redhat.com>
+ <20191011101408-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190929161653.160158-3-jernej.skrabec@siol.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191011101408-mutt-send-email-mst@kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 29 Sep 2019 18:16:49 +0200, Jernej Skrabec wrote:
-> MBUS clock will be referenced in MBUS controller node.
->
-> Export it.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  drivers/clk/sunxi-ng/ccu-sun8i-h3.h      | 4 ----
->  include/dt-bindings/clock/sun8i-h3-ccu.h | 2 +-
->  2 files changed, 1 insertion(+), 5 deletions(-)
->
+On Fri, Oct 11, 2019 at 10:19:13AM -0400, Michael S. Tsirkin wrote:
+> On Fri, Oct 11, 2019 at 03:07:56PM +0200, Stefano Garzarella wrote:
+> > We are implementing a test suite for the VSOCK sockets and we discovered
+> > that vmci_transport never allowed half-closed socket on the host side.
+> > 
+> > As Jorgen explained [1] this is due to the implementation of VMCI.
+> > 
+> > Since we want to have the same behaviour across all transports, this
+> > series adds a section in the "Implementation notes" to exaplain this
+> > behaviour, and changes the vhost_transport to behave the same way.
+> > 
+> > [1] https://patchwork.ozlabs.org/cover/847998/#1831400
+> 
+> Half closed sockets are very useful, and lots of
+> applications use tricks to swap a vsock for a tcp socket,
+> which might as a result break.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Got it!
+
+> 
+> If VMCI really cares it can implement an ioctl to
+> allow applications to detect that half closed sockets aren't supported.
+> 
+> It does not look like VMCI wants to bother (users do not read
+> kernel implementation notes) so it does not really care.
+> So why do we want to cripple other transports intentionally?
+
+The main reason is that we are developing the test suite and we noticed
+the miss match. Since we want to make sure that applications behave in
+the same way on different transports, we thought we would solve it that
+way.
+
+But what you are saying (also in the reply of the patches) is actually
+quite right. Not being publicized, applications do not expect this behavior,
+so please discard this series.
+
+My problem during the tests, was trying to figure out if half-closed
+sockets were supported or not, so as you say adding an IOCTL or maybe
+better a getsockopt() could solve the problem.
+
+What do you think?
+
+Thanks,
+Stefano
