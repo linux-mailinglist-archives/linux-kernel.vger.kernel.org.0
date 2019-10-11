@@ -2,116 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71A09D44A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 17:44:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D1FBD44B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 17:47:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728179AbfJKPow (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 11:44:52 -0400
-Received: from foss.arm.com ([217.140.110.172]:36292 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726521AbfJKPov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 11:44:51 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1F8AE142F;
-        Fri, 11 Oct 2019 08:44:50 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3844B3F68E;
-        Fri, 11 Oct 2019 08:44:47 -0700 (PDT)
-Date:   Fri, 11 Oct 2019 16:44:45 +0100
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Paul Elliott <paul.elliott@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        linux-arch@vger.kernel.org, Eugene Syromiatnikov <esyr@redhat.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Florian Weimer <fweimer@redhat.com>,
-        linux-kernel@vger.kernel.org, Sudakshina Das <sudi.das@arm.com>
-Subject: Re: [PATCH v2 05/12] arm64: Basic Branch Target Identification
- support
-Message-ID: <20191011154444.GN27757@arm.com>
-References: <1570733080-21015-1-git-send-email-Dave.Martin@arm.com>
- <1570733080-21015-6-git-send-email-Dave.Martin@arm.com>
- <20191011151028.GE33537@lakrids.cambridge.arm.com>
- <4e09ca54-f353-9448-64ed-4ba1e38c6ebc@linaro.org>
- <20191011153225.GL27757@arm.com>
- <20191011154043.GG33537@lakrids.cambridge.arm.com>
+        id S1728185AbfJKPrj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 11:47:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60278 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727399AbfJKPri (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 11:47:38 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B9B39B229;
+        Fri, 11 Oct 2019 15:47:36 +0000 (UTC)
+Date:   Fri, 11 Oct 2019 08:46:23 -0700
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Manfred Spraul <manfred@colorfullife.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Waiman Long <longman@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        1vier1@web.de, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: wake_q memory ordering
+Message-ID: <20191011154623.zawmihahq6dria7u@linux-p48b>
+References: <990690aa-8281-41da-4a46-99bb8f9fec31@colorfullife.com>
+ <20191010114244.GS2311@hirez.programming.kicks-ass.net>
+ <7af22b09-2ab9-78c9-3027-8281f020e2e8@colorfullife.com>
+ <20191010123219.GO2328@hirez.programming.kicks-ass.net>
+ <20191010192508.3yvpc5r6oqjq5tbr@linux-p48b>
+ <0312fc72-74f1-ea3e-8301-f94bba742735@colorfullife.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20191011154043.GG33537@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <0312fc72-74f1-ea3e-8301-f94bba742735@colorfullife.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 04:40:43PM +0100, Mark Rutland wrote:
-> On Fri, Oct 11, 2019 at 04:32:26PM +0100, Dave Martin wrote:
-> > On Fri, Oct 11, 2019 at 11:25:33AM -0400, Richard Henderson wrote:
-> > > On 10/11/19 11:10 AM, Mark Rutland wrote:
-> > > > On Thu, Oct 10, 2019 at 07:44:33PM +0100, Dave Martin wrote:
-> > > >> @@ -730,6 +730,11 @@ static void setup_return
-> > > >>  	regs->regs[29] = (unsigned long)&user->next_frame->fp;
-> > > >>  	regs->pc = (unsigned long)ka->sa.sa_handler;
-> > > >>  
-> > > >> +	if (system_supports_bti()) {
-> > > >> +		regs->pstate &= ~PSR_BTYPE_MASK;
-> > > >> +		regs->pstate |= PSR_BTYPE_CALL;
-> > > >> +	}
-> > > >> +
-> > > > 
-> > > > I think we might need a comment as to what we're trying to ensure here.
-> > > > 
-> > > > I was under the (perhaps mistaken) impression that we'd generate a
-> > > > pristine pstate for a signal handler, and it's not clear to me that we
-> > > > must ensure the first instruction is a target instruction.
-> > > 
-> > > I think it makes sense to treat entry into a signal handler as a call.  Code
-> > > that has been compiled for BTI, and whose page has been marked with PROT_BTI,
-> > > will already have the pauth/bti markup at the beginning of the signal handler
-> > > function; we might as well verify that.
-> > > 
-> > > Otherwise sigaction becomes a hole by which an attacker can force execution to
-> > > start at any arbitrary address.
-> > 
-> > Ack, that's the intended rationale -- I also outlined this in the commit
-> > message.
-> 
-> Ah, sorry. I evidently did not read that thoroughly enough.
-> 
-> > Does this sound reasonable?
-> > 
-> > 
-> > Either way, I feel we should do this: any function in a PROT_BTI page
-> > should have a suitable landing pad.  There's no reason I can see why
-> > a protection given to any other callback function should be omitted
-> > for a signal handler.
-> > 
-> > Note, if the signal handler isn't in a PROT_BTI page then overriding
-> > BTYPE here will not trigger a Branch Target exception.
-> > 
-> > I'm happy to drop a brief comment into the code also, once we're
-> > agreed on what the code should be doing.
-> 
-> So long as there's a comment as to why, I have no strong feelings here.
-> :)
+On Fri, 11 Oct 2019, Manfred Spraul wrote:
+>I don't know. The new documentation would not have answered my 
+>question (is it ok to combine smp_mb__before_atomic() with 
+>atomic_relaxed()?). And it copies content already present in 
+>atomic_t.txt.
 
-OK, I think it's worth a brief comment in the code either way, so I'll
-add something.
+Well, the _relaxed (and release/acquire) extentions refer to a
+_successful_ operation (LL/SC), and whether it has barriers on
+each of the sides before and after. I thought you were mainly
+worried about the failed CAS scenario, not the relaxed itself.
 
-Cheers
----Dave
+I don't know how this copies content from atomic_t.txt, at no
+point does it talk about failed CAS.
+
+>
+>Thus: I would prefer if the first sentence of the paragraph is 
+>replaced: The list of operations should end with "...", and it should 
+>match what is in atomic_t.txt
+
+I'll see about combining some of your changes in patch 5/5 of
+your new series, but have to say I still prefer my documentation
+change.
+
+Thanks,
+Davidlohr
