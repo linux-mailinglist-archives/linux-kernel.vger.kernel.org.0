@@ -2,88 +2,221 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43643D3DB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 12:50:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EFDCD3DBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 12:51:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbfJKKuf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 06:50:35 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37088 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726935AbfJKKuf (ORCPT
+        id S1727846AbfJKKvA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 06:51:00 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:32844 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726935AbfJKKvA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 06:50:35 -0400
-Received: by mail-wr1-f66.google.com with SMTP id p14so11373611wro.4
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 03:50:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UvBObGs24ppq9+dm8IY3Q9jkyhFjMei+3Zo/di/pUQM=;
-        b=d//8cxIagooDlSGw8dT7yc3zbGRQhk/RehIU1YPibmqgc2c1n9tw+ovrtWmQeTUtqP
-         tXqw8+AwoaR58/KnHk9YAqG6EysLCF1XoWB4sW4PyXkFV0A5JiizLsRCSYMlVTsAse+T
-         m0x5qqVAAeN46YXc6BqMlVLco+LsVf4jPUIMO4wmSe4yXS8ETFE28jwv2DrpWUrBzFAx
-         DhcvFAsfNrB9P6bRIW26mGK5loYFmAodG3N/p7PURpbVkdFmOEODhPsO8rWhx8JE8IsR
-         5/MflwDFPB8o37GO763ATWTi/kD6ciryRaNicSh4FcBfgjR23nPiLSe3R9aJMzEP2o0+
-         OwQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UvBObGs24ppq9+dm8IY3Q9jkyhFjMei+3Zo/di/pUQM=;
-        b=KiG6fagpee+lmx9i9EwiQG6NnJ/uM/klmJ9e/bgvTiTnyIDhg68xjmR1HBfAn5bOtc
-         MlxhawHgX1utiNAhCPBoDaEDFY03AYN4r9Y3ilCg94bfY02XDaRoAXlXAZUTO44+vQd0
-         wJ5Ian2AWvfYVIgZRe6VX7VIbyqWZtad6z2jLy5w+JAMwtfDvVmZupe9e96g2XgeoiEX
-         3qCD78UnoQTDj1ZAbBfT63Wl1Qru325zzL4RxqEq3WtGSSiAp0ZFktuDa0a43XjSw1I5
-         PtUj0LlTCB6WyDQfgKA20DqsG5IxvNc78ajba4rZst+uHKuc2WPo4HVo9My9P5W5W+nZ
-         UfGg==
-X-Gm-Message-State: APjAAAXZ07VO5Zp8A6q/nbxsXJYzmXzI54MUDVMg/JRsrGiFaXT7F62+
-        Ku2RcJYjuXe3RqzTGhuSgjQ=
-X-Google-Smtp-Source: APXvYqzGbmV50U7hM6zfU1kYVjk15MREcXJcbJp8vnDpqX7AnjvbT9+lVoiF+ByKsF8iZLWpuLgpyA==
-X-Received: by 2002:a5d:6506:: with SMTP id x6mr12232167wru.366.1570791033119;
-        Fri, 11 Oct 2019 03:50:33 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id a3sm7975586wmj.35.2019.10.11.03.50.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2019 03:50:32 -0700 (PDT)
-Date:   Fri, 11 Oct 2019 12:50:30 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Sami Tolvanen <samitolvanen@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Kees Cook <keescook@chromium.org>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RESEND PATCH v2 0/5] x86: fix syscall function type mismatches
-Message-ID: <20191011105030.GA37952@gmail.com>
-References: <20190913210018.125266-1-samitolvanen@google.com>
- <20191008224049.115427-1-samitolvanen@google.com>
- <CALCETrUAQ0of6bViOCmSu6qyoswTL+ThPOo3++9v_f-ek4CtEw@mail.gmail.com>
+        Fri, 11 Oct 2019 06:51:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=1DSgmq9rOYhjzebuDsQlC00oGl36gQOPXQEF36cqBOA=; b=t3oc8qWsA+ED2UeWVqU5ERq0t
+        cnpnn+lF/rgtKJyQMd/QAfyG3QhwALfc6iu1+FY5NngMkLXExQK/r9WB8WxGz0oyvLH8Nts7cFfK7
+        oqGF7YkMOczXrLyTeJJzRx3lcukZ8GjG+cT62OosEGXNd7qEzqH+qnejWwTRPEjtUyNBTNUrUnAa6
+        5b66XzusuFS+QMQ69w6PnRzF/4vDXa6M5i+9G01Hnk9OHsptva6Hga9vPRvWVDXBXDGyq49qIz/ST
+        eFmdtN9IrVNUSgs2GEAjQpdgkjxwwS2DaCzE60t6UzfQsDA+DwXK7j2aIpdiurmkDsjt79n0dA9/0
+        27R/cG1cA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iIsVW-00028N-MU; Fri, 11 Oct 2019 10:50:51 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id BA505305E4E;
+        Fri, 11 Oct 2019 12:49:55 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 609E9201DF214; Fri, 11 Oct 2019 12:50:48 +0200 (CEST)
+Date:   Fri, 11 Oct 2019 12:50:48 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, mhiramat@kernel.org,
+        bristot@redhat.com, jbaron@akamai.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
+        ard.biesheuvel@linaro.org, jpoimboe@redhat.com
+Subject: Re: [PATCH v3 5/6] x86/ftrace: Use text_poke()
+Message-ID: <20191011105048.GM2359@hirez.programming.kicks-ass.net>
+References: <20191008104335.6fcd78c9@gandalf.local.home>
+ <20191009224135.2dcf7767@oasis.local.home>
+ <20191010092054.GR2311@hirez.programming.kicks-ass.net>
+ <20191010091956.48fbcf42@gandalf.local.home>
+ <20191010140513.GT2311@hirez.programming.kicks-ass.net>
+ <20191010115449.22044b53@gandalf.local.home>
+ <20191010172819.GS2328@hirez.programming.kicks-ass.net>
+ <20191010134830.72ccef3d@gandalf.local.home>
+ <20191011104552.GW2328@hirez.programming.kicks-ass.net>
+ <20191011104712.GL2359@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrUAQ0of6bViOCmSu6qyoswTL+ThPOo3++9v_f-ek4CtEw@mail.gmail.com>
+In-Reply-To: <20191011104712.GL2359@hirez.programming.kicks-ass.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Andy Lutomirski <luto@kernel.org> wrote:
-
-> On Tue, Oct 8, 2019 at 3:41 PM Sami Tolvanen <samitolvanen@google.com> wrote:
-> >
-> > This patch set changes x86 syscall wrappers and related functions to
-> > use function types that match sys_call_ptr_t. This fixes indirect call
-> > mismatches with Control-Flow Integrity (CFI) checking.
+On Fri, Oct 11, 2019 at 12:47:12PM +0200, Peter Zijlstra wrote:
+> On Fri, Oct 11, 2019 at 12:45:52PM +0200, Peter Zijlstra wrote:
+> > +	if (!ops->trampoline) {
+> > +		ops->trampoline = create_trampoline(ops, &size, ftrace_ops_get_func(ops));
 > 
-> tglx, I'm pretty happy with this series.  Do you need anything else
-> from me or do you want to just pick it up in -tip?
+> And now that I look at what I send, I see we already pass ops, so no
+> need to pass ftrace_ops_get_func().
+> 
+> Let me respin that.
 
-Thomas is on vacation - I've picked up the series, it looks good!
-I've added your Acked-by to the #3,#4,#5 patches as well.
-
-Thanks,
-
-	Ingo
+---
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -1209,10 +1209,15 @@ void text_poke_finish(void)
+ 	text_poke_flush(NULL);
+ }
+ 
+-void text_poke_queue(void *addr, const void *opcode, size_t len, const void *emulate)
++void __ref text_poke_queue(void *addr, const void *opcode, size_t len, const void *emulate)
+ {
+ 	struct text_poke_loc *tp;
+ 
++	if (unlikely(system_state == SYSTEM_BOOTING)) {
++		text_poke_early(addr, opcode, len);
++		return;
++	}
++
+ 	text_poke_flush(addr);
+ 
+ 	tp = &tp_vec[tp_vec_nr++];
+@@ -1230,10 +1235,15 @@ void text_poke_queue(void *addr, const v
+  * dynamically allocated memory. This function should be used when it is
+  * not possible to allocate memory.
+  */
+-void text_poke_bp(void *addr, const void *opcode, size_t len, const void *emulate)
++void __ref text_poke_bp(void *addr, const void *opcode, size_t len, const void *emulate)
+ {
+ 	struct text_poke_loc tp;
+ 
++	if (unlikely(system_state == SYSTEM_BOOTING)) {
++		text_poke_early(addr, opcode, len);
++		return;
++	}
++
+ 	text_poke_loc_init(&tp, addr, opcode, len, emulate);
+ 	text_poke_bp_batch(&tp, 1);
+ }
+--- a/arch/x86/kernel/ftrace.c
++++ b/arch/x86/kernel/ftrace.c
+@@ -34,6 +34,8 @@
+ 
+ #ifdef CONFIG_DYNAMIC_FTRACE
+ 
++static int ftrace_poke_late = 0;
++
+ int ftrace_arch_code_modify_prepare(void)
+     __acquires(&text_mutex)
+ {
+@@ -43,12 +45,15 @@ int ftrace_arch_code_modify_prepare(void
+ 	 * ftrace has it set to "read/write".
+ 	 */
+ 	mutex_lock(&text_mutex);
++	ftrace_poke_late = 1;
+ 	return 0;
+ }
+ 
+ int ftrace_arch_code_modify_post_process(void)
+     __releases(&text_mutex)
+ {
++	text_poke_finish();
++	ftrace_poke_late = 0;
+ 	mutex_unlock(&text_mutex);
+ 	return 0;
+ }
+@@ -116,7 +121,10 @@ ftrace_modify_code_direct(unsigned long
+ 		return ret;
+ 
+ 	/* replace the text with the new text */
+-	text_poke_early((void *)ip, new_code, MCOUNT_INSN_SIZE);
++	if (ftrace_poke_late)
++		text_poke_queue((void *)ip, new_code, MCOUNT_INSN_SIZE, NULL);
++	else
++		text_poke_early((void *)ip, new_code, MCOUNT_INSN_SIZE);
+ 	return 0;
+ }
+ 
+@@ -313,6 +321,7 @@ create_trampoline(struct ftrace_ops *ops
+ 	unsigned long start_offset;
+ 	unsigned long end_offset;
+ 	unsigned long op_offset;
++	unsigned long call_offset;
+ 	unsigned long offset;
+ 	unsigned long npages;
+ 	unsigned long size;
+@@ -329,10 +338,12 @@ create_trampoline(struct ftrace_ops *ops
+ 		start_offset = (unsigned long)ftrace_regs_caller;
+ 		end_offset = (unsigned long)ftrace_regs_caller_end;
+ 		op_offset = (unsigned long)ftrace_regs_caller_op_ptr;
++		call_offset = (unsigned long)ftrace_regs_call;
+ 	} else {
+ 		start_offset = (unsigned long)ftrace_caller;
+ 		end_offset = (unsigned long)ftrace_epilogue;
+ 		op_offset = (unsigned long)ftrace_caller_op_ptr;
++		call_offset = (unsigned long)ftrace_call;
+ 	}
+ 
+ 	size = end_offset - start_offset;
+@@ -389,6 +400,15 @@ create_trampoline(struct ftrace_ops *ops
+ 	/* put in the new offset to the ftrace_ops */
+ 	memcpy(trampoline + op_offset, &op_ptr, OP_REF_SIZE);
+ 
++	/* put in the call to the function */
++	mutex_lock(&text_mutex);
++	call_offset -= start_offset;
++	memcpy(trampoline + call_offset,
++	       text_gen_insn(CALL_INSN_OPCODE,
++			     trampoline + call_offset,
++			     ftrace_ops_get_func(ops)), CALL_INSN_SIZE);
++	mutex_unlock(&text_mutex);
++
+ 	/* ALLOC_TRAMP flags lets us know we created it */
+ 	ops->flags |= FTRACE_OPS_FL_ALLOC_TRAMP;
+ 
+@@ -426,23 +446,23 @@ void arch_ftrace_update_trampoline(struc
+ 	unsigned int size;
+ 	const char *new;
+ 
+-	if (ops->trampoline) {
+-		/*
+-		 * The ftrace_ops caller may set up its own trampoline.
+-		 * In such a case, this code must not modify it.
+-		 */
+-		if (!(ops->flags & FTRACE_OPS_FL_ALLOC_TRAMP))
+-			return;
+-	} else {
++	if (!ops->trampoline) {
+ 		ops->trampoline = create_trampoline(ops, &size);
+ 		if (!ops->trampoline)
+ 			return;
+ 		ops->trampoline_size = size;
++		return;
+ 	}
+ 
++	/*
++	 * The ftrace_ops caller may set up its own trampoline.
++	 * In such a case, this code must not modify it.
++	 */
++	if (!(ops->flags & FTRACE_OPS_FL_ALLOC_TRAMP))
++		return;
++
+ 	offset = calc_trampoline_call_offset(ops->flags & FTRACE_OPS_FL_SAVE_REGS);
+ 	ip = ops->trampoline + offset;
+-
+ 	func = ftrace_ops_get_func(ops);
+ 
+ 	mutex_lock(&text_mutex);
