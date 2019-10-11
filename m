@@ -2,143 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06085D39F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 09:22:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE4F6D39FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 09:24:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727685AbfJKHV5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 03:21:57 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37460 "EHLO mx1.redhat.com"
+        id S1727687AbfJKHYB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 03:24:01 -0400
+Received: from mga02.intel.com ([134.134.136.20]:57004 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726679AbfJKHV5 (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 03:21:57 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 16C7310DCC95;
-        Fri, 11 Oct 2019 07:21:57 +0000 (UTC)
-Received: from krava (unknown [10.40.205.65])
-        by smtp.corp.redhat.com (Postfix) with SMTP id F048C60BE1;
-        Fri, 11 Oct 2019 07:21:54 +0000 (UTC)
-Date:   Fri, 11 Oct 2019 09:21:54 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     "Jin, Yao" <yao.jin@linux.intel.com>
-Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Andi Kleen <ak@linux.intel.com>, jolsa@kernel.org,
-        peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
-        kan.liang@intel.com, yao.jin@intel.com
-Subject: Re: [PATCH v1 0/2] perf stat: Support --all-kernel and --all-user
-Message-ID: <20191011072154.GC6795@krava>
-References: <20190925020218.8288-1-yao.jin@linux.intel.com>
- <20190929151022.GA16309@krava>
- <20190930182136.GD8560@tassilo.jf.intel.com>
- <20190930192800.GA13904@kernel.org>
- <20191001021755.GF8560@tassilo.jf.intel.com>
- <8a1cbcf6-2de7-3036-1c86-f3af6af077e2@linux.intel.com>
- <20191010080052.GB9616@krava>
- <9df9e60f-4998-32f2-f743-ebb0fdea4c0a@linux.intel.com>
- <20191010123309.GB19434@kernel.org>
- <03b5fffb-fedf-19e6-5a23-bcf2bbf4ef98@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <03b5fffb-fedf-19e6-5a23-bcf2bbf4ef98@linux.intel.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.64]); Fri, 11 Oct 2019 07:21:57 +0000 (UTC)
+        id S1726679AbfJKHYB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 03:24:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2019 00:24:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,283,1566889200"; 
+   d="scan'208";a="200708984"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by FMSMGA003.fm.intel.com with ESMTP; 11 Oct 2019 00:23:58 -0700
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
+        jglisse@redhat.com, mike.kravetz@oracle.com, riel@surriel.com,
+        khlebnikov@yandex-team.ru, cai@lca.pw, shakeelb@google.com
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Wei Yang <richardw.yang@linux.intel.com>
+Subject: [Patch v4 1/2] mm/rmap.c: don't reuse anon_vma if we just want a copy
+Date:   Fri, 11 Oct 2019 15:22:55 +0800
+Message-Id: <20191011072256.16275-1-richardw.yang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 10:50:35AM +0800, Jin, Yao wrote:
-> 
-> 
-> On 10/10/2019 8:33 PM, Arnaldo Carvalho de Melo wrote:
-> > Em Thu, Oct 10, 2019 at 04:33:57PM +0800, Jin, Yao escreveu:
-> > > 
-> > > 
-> > > On 10/10/2019 4:00 PM, Jiri Olsa wrote:
-> > > > On Thu, Oct 10, 2019 at 02:46:36PM +0800, Jin, Yao wrote:
-> > > > > 
-> > > > > 
-> > > > > On 10/1/2019 10:17 AM, Andi Kleen wrote:
-> > > > > > > > I think it's useful. Makes it easy to do kernel/user break downs.
-> > > > > > > > perf record should support the same.
-> > > > > > > 
-> > > > > > > Don't we have this already with:
-> > > > > > > 
-> > > > > > > [root@quaco ~]# perf stat -e cycles:u,instructions:u,cycles:k,instructions:k -a -- sleep 1
-> > > > > > 
-> > > > > > This only works for simple cases. Try it for --topdown or multiple -M metrics.
-> > > > > > 
-> > > > > > -Andi
-> > > > > > 
-> > > > > 
-> > > > > Hi Arnaldo, Jiri,
-> > > > > 
-> > > > > We think it should be very useful if --all-user / --all-kernel can be
-> > > > > specified together, so that we can get a break down between user and kernel
-> > > > > easily.
-> > > > > 
-> > > > > But yes, the patches for supporting this new semantics is much complicated
-> > > > > than the patch which just follows original perf-record behavior. I fully
-> > > > > understand this concern.
-> > > > > 
-> > > > > So if this new semantics can be accepted, that would be very good. But if
-> > > > > you think the new semantics is too complicated, I'm also fine for posting a
-> > > > > new patch which just follows the perf-record behavior.
-> > > > 
-> > > > I still need to think a bit more about this.. did you consider
-> > > > other options like cloning of the perf_evlist/perf_evsel and
-> > > > changing just the exclude* bits? might be event worse actualy ;-)
-> > > > 
-> > > 
-> > > That should be another approach, but it might be a bit more complicated than
-> > > just appending ":u"/":k" modifiers to the event name string.
-> > > 
-> > > > or maybe if we add modifier we could add extra events/groups
-> > > > within the parser.. like:
-> > > > 
-> > > >     "{cycles,instructions}:A,{cache-misses,cache-references}:A,cycles:A"
-> > > > 
-> > > > but that might be still more complicated then what you did
-> > > > 
-> > > 
-> > > Yes agree.
-> > > 
-> > > > also please add the perf record changes so we have same code
-> > > > and logic for both if we are going to change it
-> > > If this new semantics can be accepted, I'd like to add perf record
-> > > supporting as well. :)
-> > 
-> > Changes in semantics should be avoided, when we add an option already
-> > present in some other tool, we should strive to keep the semantics, so
-> > that people can reuse their knowledge and just switch tools to go from
-> > sampling to counting, say.
-> > 
-> 
-> Yes, that makes sense. We need to try our best to keep the original
-> semantics. I will post a patch for perf-stat which just follows the
-> semantics in perf-record.
-> 
-> > So if at all possible, and without having really looked deep in this
-> > specific case, I would prefer that new semantics come with a new syntax,
-> > would that be possible?
-> > 
-> 
-> Yes, that's possible. Maybe we can use a new option for automatically adding
-> two copies of the events (one copy for user and the other copy for kernel).
-> The option something like "--all-space"?
+Before commit 7a3ef208e662 ("mm: prevent endless growth of anon_vma
+hierarchy"), anon_vma_clone() doesn't change dst->anon_vma. While after
+this commit, anon_vma_clone() will try to reuse an exist one on forking.
 
-some other ideas:
+But this commit go a little bit further for the case not forking.
+anon_vma_clone() is called from __vma_split(), __split_vma(), copy_vma()
+and anon_vma_fork(). For the first three places, the purpose here is get
+a copy of src and we don't expect to touch dst->anon_vma even it is
+NULL. While after that commit, it is possible to reuse an anon_vma when
+dst->anon_vma is NULL. This is not we intend to have.
 
-	--all
-	--uk
-	--both
-	--full
-	-e {cycles,cache-misses}:A,cycles,instructions:A
-	-e {cycles,cache-misses}:B,cycles,instructions:B
-	--duplicate-every-event-or-group-of-events-for-each-address-space ;-)
+This patch stop reuse anon_vma for non-fork cases.
 
-jirka
+Fix commit 7a3ef208e662 ("mm: prevent endless growth of anon_vma
+hierarchy")
+
+Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+
+---
+v4:
+  * check dst->anon_vma in each iteration
+v3:
+  * use dst->anon_vma and src->anon_vma to get reuse state
+    pointed by Konstantin Khlebnikov
+---
+ mm/rmap.c | 24 +++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
+
+diff --git a/mm/rmap.c b/mm/rmap.c
+index d9a23bb773bf..c34414567474 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -250,13 +250,19 @@ static inline void unlock_anon_vma_root(struct anon_vma *root)
+  * Attach the anon_vmas from src to dst.
+  * Returns 0 on success, -ENOMEM on failure.
+  *
+- * If dst->anon_vma is NULL this function tries to find and reuse existing
+- * anon_vma which has no vmas and only one child anon_vma. This prevents
+- * degradation of anon_vma hierarchy to endless linear chain in case of
+- * constantly forking task. On the other hand, an anon_vma with more than one
+- * child isn't reused even if there was no alive vma, thus rmap walker has a
+- * good chance of avoiding scanning the whole hierarchy when it searches where
+- * page is mapped.
++ * anon_vma_clone() is called by __vma_split(), __split_vma(), copy_vma() and
++ * anon_vma_fork(). The first three want an exact copy of src, while the last
++ * one, anon_vma_fork(), may try to reuse an existing anon_vma to prevent
++ * endless growth of anon_vma. Since dst->anon_vma is set to NULL before call,
++ * we can identify this case by checking (!dst->anon_vma && src->anon_vma).
++ *
++ * If (!dst->anon_vma && src->anon_vma) is true, this function tries to find
++ * and reuse existing anon_vma which has no vmas and only one child anon_vma.
++ * This prevents degradation of anon_vma hierarchy to endless linear chain in
++ * case of constantly forking task. On the other hand, an anon_vma with more
++ * than one child isn't reused even if there was no alive vma, thus rmap
++ * walker has a good chance of avoiding scanning the whole hierarchy when it
++ * searches where page is mapped.
+  */
+ int anon_vma_clone(struct vm_area_struct *dst, struct vm_area_struct *src)
+ {
+@@ -286,8 +292,8 @@ int anon_vma_clone(struct vm_area_struct *dst, struct vm_area_struct *src)
+ 		 * will always reuse it. Root anon_vma is never reused:
+ 		 * it has self-parent reference and at least one child.
+ 		 */
+-		if (!dst->anon_vma && anon_vma != src->anon_vma &&
+-				anon_vma->degree < 2)
++		if (!dst->anon_vma && src->anon_vma &&
++		    anon_vma != src->anon_vma && anon_vma->degree < 2)
+ 			dst->anon_vma = anon_vma;
+ 	}
+ 	if (dst->anon_vma)
+-- 
+2.17.1
+
