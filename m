@@ -2,96 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7D1BD48C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 21:56:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FAD4D48D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 22:05:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729025AbfJKTym (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 15:54:42 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42822 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728783AbfJKTyl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 15:54:41 -0400
-Received: by mail-pl1-f196.google.com with SMTP id e5so4920138pls.9;
-        Fri, 11 Oct 2019 12:54:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=wR9gk7f7LQI8N0A6dgx60ziHzjDwckLFFEMs2dKM4BM=;
-        b=UsziRYCy9h9ocWBlAxA5rbHCkgGu/F3u/vq+Ismt0llvtRlNiUqYtUuxqw8zJxce81
-         HBQTnX/OevmAqjn9ik7PpugKZTobiaBa7LJnEfxIuboni7nSO3ayl2y5ogGlLuL7R17S
-         bEOxbSoEHapKG8Nmbbxg843BiNimJzfeNQMtxyvpR0ILWrm8FDrUhKEpO4GuGK2uQMRb
-         99OxJ7XZ2va4++MM3/qdHU9oudT7+E8C2ySrfSy4nZpqvATx80L1dk4FBFTCcSwiLzp5
-         qW+8WVWNk04xYiHhMhYGv/B7uk0dUE/EpZ9I7uvlgfLema1eEi/98Q2waG0AJUIGRCGj
-         x1iQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=wR9gk7f7LQI8N0A6dgx60ziHzjDwckLFFEMs2dKM4BM=;
-        b=k04VIzavVdJ2BlwwFWb7ldYiipbK0M5Kx1/hz3/fAr9MdV5OwhYZr2ApLytqDlYbPz
-         Em0DTUQ9Lizq9cS7EXSYBYWeP2VTzOBfVOaJvctU5+WpKZ3KzdHPhj9MCRRlOg+HnabN
-         lRUBjsl4OSl0TM2qQptvGaA9c621NCYY79Q7KMUzzGKfIJ9Oo7aFZhqDwn3fIX9mqIHu
-         HHzjGIrPhDDcQFXWgJFGtk2A7WzHnZG8GxPyXG23EC7ko8hnsih/djPRkJVAaDG0NSk2
-         i1K7l7t2+EtCajS59EXyQ4im0kXrwSlPVyueJDyTj13MAYYLm3E4nWzu2nvO2FJtCITj
-         45FQ==
-X-Gm-Message-State: APjAAAUIegTW6vn/qv3TzwwPrtWASrQxLBoFDEYJeFQjDXqgScQRDrDc
-        wiTQDjOzKvgo8oB0pmKyPalJV6op
-X-Google-Smtp-Source: APXvYqxyZfJzwF2oft1YUUxDysnpuKRZhmXyQphoP0wQ0zPsDYT9S2e55nGUUSoSoV5JTxMyqf3Mrw==
-X-Received: by 2002:a17:902:9305:: with SMTP id bc5mr2192737plb.238.1570823681005;
-        Fri, 11 Oct 2019 12:54:41 -0700 (PDT)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id a8sm9880213pff.5.2019.10.11.12.54.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2019 12:54:40 -0700 (PDT)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     netdev@vger.kernel.org
-Cc:     phil@raspberrypi.org, jonathan@raspberrypi.org,
-        matthias.bgg@kernel.org, linux-rpi-kernel@lists.infradead.org,
-        wahrenst@gmx.net, nsaenzjulienne@suse.de,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Doug Berger <opendmb@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        bcm-kernel-feedback-list@broadcom.com (open list:BROADCOM GENET
-        ETHERNET DRIVER), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net] net: bcmgenet: Set phydev->dev_flags only for internal PHYs
-Date:   Fri, 11 Oct 2019 12:53:49 -0700
-Message-Id: <20191011195349.9661-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1729059AbfJKT56 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 15:57:58 -0400
+Received: from relay.sw.ru ([185.231.240.75]:44562 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728783AbfJKT55 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 15:57:57 -0400
+Received: from [172.16.25.5]
+        by relay.sw.ru with esmtp (Exim 4.92.2)
+        (envelope-from <aryabinin@virtuozzo.com>)
+        id 1iJ12k-00055b-MW; Fri, 11 Oct 2019 22:57:42 +0300
+Subject: Re: [PATCH v8 1/5] kasan: support backing vmalloc space with real
+ shadow memory
+To:     Daniel Axtens <dja@axtens.net>, kasan-dev@googlegroups.com,
+        linux-mm@kvack.org, x86@kernel.org, glider@google.com,
+        luto@kernel.org, linux-kernel@vger.kernel.org,
+        mark.rutland@arm.com, dvyukov@google.com, christophe.leroy@c-s.fr
+Cc:     linuxppc-dev@lists.ozlabs.org, gor@linux.ibm.com
+References: <20191001065834.8880-1-dja@axtens.net>
+ <20191001065834.8880-2-dja@axtens.net>
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
+Message-ID: <352cb4fa-2e57-7e3b-23af-898e113bbe22@virtuozzo.com>
+Date:   Fri, 11 Oct 2019 22:57:28 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20191001065834.8880-2-dja@axtens.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-phydev->dev_flags is entirely dependent on the PHY device driver which
-is going to be used, setting the internal GENET PHY revision in those
-bits only makes sense when drivers/net/phy/bcm7xxx.c is the PHY driver
-being used.
 
-Fixes: 487320c54143 ("net: bcmgenet: communicate integrated PHY revision to PHY driver")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/net/ethernet/broadcom/genet/bcmmii.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/genet/bcmmii.c b/drivers/net/ethernet/broadcom/genet/bcmmii.c
-index 970e478a9017..94d1dd5d56bf 100644
---- a/drivers/net/ethernet/broadcom/genet/bcmmii.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmmii.c
-@@ -273,11 +273,12 @@ int bcmgenet_mii_probe(struct net_device *dev)
- 	struct bcmgenet_priv *priv = netdev_priv(dev);
- 	struct device_node *dn = priv->pdev->dev.of_node;
- 	struct phy_device *phydev;
--	u32 phy_flags;
-+	u32 phy_flags = 0;
- 	int ret;
+On 10/1/19 9:58 AM, Daniel Axtens wrote:
  
- 	/* Communicate the integrated PHY revision */
--	phy_flags = priv->gphy_rev;
-+	if (priv->internal_phy)
-+		phy_flags = priv->gphy_rev;
- 
- 	/* Initialize link state variables that bcmgenet_mii_setup() uses */
- 	priv->old_link = -1;
--- 
-2.17.1
+>  core_initcall(kasan_memhotplug_init);
+>  #endif
+> +
+> +#ifdef CONFIG_KASAN_VMALLOC
+> +static int kasan_populate_vmalloc_pte(pte_t *ptep, unsigned long addr,
+> +				      void *unused)
+> +{
+> +	unsigned long page;
+> +	pte_t pte;
+> +
+> +	if (likely(!pte_none(*ptep)))
+> +		return 0;
+> +
+> +	page = __get_free_page(GFP_KERNEL);
+> +	if (!page)
+> +		return -ENOMEM;
+> +
+> +	memset((void *)page, KASAN_VMALLOC_INVALID, PAGE_SIZE);
+> +	pte = pfn_pte(PFN_DOWN(__pa(page)), PAGE_KERNEL);
+> +
+> +	/*
+> +	 * Ensure poisoning is visible before the shadow is made visible
+> +	 * to other CPUs.
+> +	 */
+> +	smp_wmb();
 
+I'm not quite understand what this barrier do and why it needed.
+And if it's really needed there should be a pairing barrier
+on the other side which I don't see.
+
+> +
+> +	spin_lock(&init_mm.page_table_lock);
+> +	if (likely(pte_none(*ptep))) {
+> +		set_pte_at(&init_mm, addr, ptep, pte);
+> +		page = 0;
+> +	}
+> +	spin_unlock(&init_mm.page_table_lock);
+> +	if (page)
+> +		free_page(page);
+> +	return 0;
+> +}
+> +
+
+
+...
+
+> @@ -754,6 +769,8 @@ merge_or_add_vmap_area(struct vmap_area *va,
+>  	}
+>  
+>  insert:
+> +	kasan_release_vmalloc(orig_start, orig_end, va->va_start, va->va_end);
+> +
+>  	if (!merged) {
+>  		link_va(va, root, parent, link, head);
+>  		augment_tree_propagate_from(va);
+> @@ -2068,6 +2085,22 @@ static struct vm_struct *__get_vm_area_node(unsigned long size,
+>  
+>  	setup_vmalloc_vm(area, va, flags, caller);
+>  
+> +	/*
+> +	 * For KASAN, if we are in vmalloc space, we need to cover the shadow
+> +	 * area with real memory. If we come here through VM_ALLOC, this is
+> +	 * done by a higher level function that has access to the true size,
+> +	 * which might not be a full page.
+> +	 *
+> +	 * We assume module space comes via VM_ALLOC path.
+> +	 */
+> +	if (is_vmalloc_addr(area->addr) && !(area->flags & VM_ALLOC)) {
+> +		if (kasan_populate_vmalloc(area->size, area)) {
+> +			unmap_vmap_area(va);
+> +			kfree(area);
+> +			return NULL;
+> +		}
+> +	}
+> +
+>  	return area;
+>  }
+>  
+> @@ -2245,6 +2278,9 @@ static void __vunmap(const void *addr, int deallocate_pages)
+>  	debug_check_no_locks_freed(area->addr, get_vm_area_size(area));
+>  	debug_check_no_obj_freed(area->addr, get_vm_area_size(area));
+>  
+> +	if (area->flags & VM_KASAN)
+> +		kasan_poison_vmalloc(area->addr, area->size);
+> +
+>  	vm_remove_mappings(area, deallocate_pages);
+>  
+>  	if (deallocate_pages) {
+> @@ -2497,6 +2533,9 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
+>  	if (!addr)
+>  		return NULL;
+>  
+> +	if (kasan_populate_vmalloc(real_size, area))
+> +		return NULL;
+> +
+
+KASAN itself uses __vmalloc_node_range() to allocate and map shadow in memory online callback.
+So we should either skip non-vmalloc and non-module addresses here or teach kasan's memory online/offline
+callbacks to not use __vmalloc_node_range() (do something similar to kasan_populate_vmalloc() perhaps?). 
