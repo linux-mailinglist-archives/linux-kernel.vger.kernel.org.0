@@ -2,132 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1D63D3FA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 14:38:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 311C4D3FC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 14:41:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728129AbfJKMi4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 08:38:56 -0400
-Received: from david.siemens.de ([192.35.17.14]:60674 "EHLO david.siemens.de"
+        id S1728192AbfJKMlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 08:41:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727929AbfJKMi4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 08:38:56 -0400
-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-        by david.siemens.de (8.15.2/8.15.2) with ESMTPS id x9BCclJW017188
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 11 Oct 2019 14:38:48 +0200
-Received: from [139.25.68.37] ([139.25.68.37])
-        by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id x9BCcleW014598;
-        Fri, 11 Oct 2019 14:38:47 +0200
-Subject: Re: [PATCH v2] scripts/gdb: fix lx-dmesg when CONFIG_PRINTK_CALLER is
- set
-To:     Joel Colledge <joel.colledge@linbit.com>
-Cc:     Leonard Crestez <leonard.crestez@nxp.com>,
-        Kieran Bingham <kbingham@kernel.org>,
-        linux-kernel@vger.kernel.org
-References: <VI1PR04MB70236211F170522DD456553AEE940@VI1PR04MB7023.eurprd04.prod.outlook.com>
- <20191011122409.23868-1-joel.colledge@linbit.com>
-From:   Jan Kiszka <jan.kiszka@siemens.com>
-Message-ID: <c4ae19a8-54c0-98a6-16bd-48f7ce5689f9@siemens.com>
-Date:   Fri, 11 Oct 2019 14:38:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S1728002AbfJKMlX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 08:41:23 -0400
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D471E21D82;
+        Fri, 11 Oct 2019 12:41:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570797683;
+        bh=0ntoZW7nIQaS0RptBTqn8yRQKbcwYPW6mrTC+nExxQQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=dR100AmRHlPwX27kUrp1Lauf3ohIZVPT1aokTFmN/cMb52PIZCHr7cnR8lnpbjLqj
+         dicgfF0TpW4nEd2mwFBiZJjqOSCarxIGU+A6CE1Bvzn5Lxu1fFt6mtmei+4dyZVSSl
+         CSrZCRsYHokj3EuztdAzqWaGGTOBWJxfSIjVmNCk=
+Received: by mail-qk1-f178.google.com with SMTP id u184so8729069qkd.4;
+        Fri, 11 Oct 2019 05:41:22 -0700 (PDT)
+X-Gm-Message-State: APjAAAUd2UBXEtHJcOxwdG1FbIT5dJXmJhSM6AqXDoXVp/OTrGmmbf3x
+        oH9VcV9ON0woIWvIcZL5SFVNK3kgafadNTw6IQ==
+X-Google-Smtp-Source: APXvYqxSOLHC3OhXJjaOJaRAYwJ7GF4/t7229zQiP9PqqmGtuF/Yddz3rOt3p/MLumF2OTaUmi8AujpP8UblZE39o8w=
+X-Received: by 2002:a05:620a:12f1:: with SMTP id f17mr15407013qkl.152.1570797681944;
+ Fri, 11 Oct 2019 05:41:21 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191011122409.23868-1-joel.colledge@linbit.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191002151907.15986-1-benjamin.gaignard@st.com>
+In-Reply-To: <20191002151907.15986-1-benjamin.gaignard@st.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 11 Oct 2019 07:41:10 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+p6rYun-zOwK49=QSfuJGMpiXj5UfASdXhjmOX1cudWQ@mail.gmail.com>
+Message-ID: <CAL_Jsq+p6rYun-zOwK49=QSfuJGMpiXj5UfASdXhjmOX1cudWQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: hwlock: Convert stm32 hwspinlock bindings to json-schema
+To:     Benjamin Gaignard <benjamin.gaignard@st.com>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>, devicetree@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11.10.19 14:24, Joel Colledge wrote:
-> When CONFIG_PRINTK_CALLER is set, struct printk_log contains an
-> additional member caller_id. This affects the offset of the log text.
-> Account for this by using the type information from gdb to determine all
-> the offsets instead of using hardcoded values.
-> 
-> This fixes following error:
-> 
->    (gdb) lx-dmesg
->    Python Exception <class 'ValueError'> embedded null character:
->    Error occurred in Python command: embedded null character
-> 
-> Signed-off-by: Joel Colledge <joel.colledge@linbit.com>
+On Wed, Oct 2, 2019 at 10:19 AM Benjamin Gaignard
+<benjamin.gaignard@st.com> wrote:
+>
+> Convert the STM32 hwspinlock binding to DT schema format using json-schema
+>
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
 > ---
-> Changes in v2:
-> - use type information from gdb instead of hardcoded offsets
-> 
-> Thanks for the idea about using the struct layout info from gdb, Leonard. I can't see any reason we shouldn't use that here, since most of the other commands use it. LxDmesg has used hardcoded offsets since scripts/gdb was introduced, so I assume it just ended up like that during the initial development of the tool. Here is a version of the fix using offsets from gdb.
-
-That's not unlikely, indeed. lx-dmesg was one of the very first features 
-I've implemented back then, and it definitely predated things like 
-CachedType.
-
-> 
->   scripts/gdb/linux/dmesg.py | 16 ++++++++++++----
->   1 file changed, 12 insertions(+), 4 deletions(-)
-> 
-> diff --git a/scripts/gdb/linux/dmesg.py b/scripts/gdb/linux/dmesg.py
-> index 6d2e09a2ad2f..8f5d899029b7 100644
-> --- a/scripts/gdb/linux/dmesg.py
-> +++ b/scripts/gdb/linux/dmesg.py
-> @@ -16,6 +16,8 @@ import sys
->   
->   from linux import utils
->   
-> +printk_log_type = utils.CachedType("struct printk_log")
+>  .../bindings/hwlock/st,stm32-hwspinlock.txt        | 23 -----------
+>  .../bindings/hwlock/st,stm32-hwspinlock.yaml       | 48 ++++++++++++++++++++++
+>  2 files changed, 48 insertions(+), 23 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
+>  create mode 100644 Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt b/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
+> deleted file mode 100644
+> index adf4f000ea3d..000000000000
+> --- a/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
+> +++ /dev/null
+> @@ -1,23 +0,0 @@
+> -STM32 Hardware Spinlock Device Binding
+> --------------------------------------
+> -
+> -Required properties :
+> -- compatible : should be "st,stm32-hwspinlock".
+> -- reg : the register address of hwspinlock.
+> -- #hwlock-cells : hwlock users only use the hwlock id to represent a specific
+> -       hwlock, so the number of cells should be <1> here.
+> -- clock-names : Must contain "hsem".
+> -- clocks : Must contain a phandle entry for the clock in clock-names, see the
+> -       common clock bindings.
+> -
+> -Please look at the generic hwlock binding for usage information for consumers,
+> -"Documentation/devicetree/bindings/hwlock/hwlock.txt"
+> -
+> -Example of hwlock provider:
+> -       hwspinlock@4c000000 {
+> -               compatible = "st,stm32-hwspinlock";
+> -               #hwlock-cells = <1>;
+> -               reg = <0x4c000000 0x400>;
+> -               clocks = <&rcc HSEM>;
+> -               clock-names = "hsem";
+> -       };
+> diff --git a/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.yaml b/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.yaml
+> new file mode 100644
+> index 000000000000..64e169702515
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.yaml
+> @@ -0,0 +1,48 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/hwlock/st,stm32-hwspinlock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
->   
->   class LxDmesg(gdb.Command):
->       """Print Linux kernel log buffer."""
-> @@ -42,9 +44,14 @@ class LxDmesg(gdb.Command):
->               b = utils.read_memoryview(inf, log_buf_addr, log_next_idx)
->               log_buf = a.tobytes() + b.tobytes()
->   
-> +        length_offset = printk_log_type.get_type()['len'].bitpos // 8
-
-Does bitpos really use a non-int type? Otherwise, plain '/' suffices.
-
-> +        text_len_offset = printk_log_type.get_type()['text_len'].bitpos // 8
-> +        time_stamp_offset = printk_log_type.get_type()['ts_nsec'].bitpos // 8
-> +        text_offset = printk_log_type.get_type().sizeof
+> +title: STMicroelectronics STM32 Hardware Spinlock bindings
 > +
->           pos = 0
->           while pos < log_buf.__len__():
-> -            length = utils.read_u16(log_buf[pos + 8:pos + 10])
-> +            length = utils.read_u16(log_buf[pos + length_offset:pos + length_offset + 2])
+> +maintainers:
+> +  - Benjamin Gaignard <benjamin.gaignard@st.com>
+> +  - Fabien Dessenne <fabien.dessenne@st.com>
+> +
+> +properties:
+> +  "#hwlock-cells": true
 
-Overlong line.
+const: 1
 
->               if length == 0:
->                   if log_buf_2nd_half == -1:
->                       gdb.write("Corrupted log buffer!\n")
-> @@ -52,10 +59,11 @@ class LxDmesg(gdb.Command):
->                   pos = log_buf_2nd_half
->                   continue
->   
-> -            text_len = utils.read_u16(log_buf[pos + 10:pos + 12])
-> -            text = log_buf[pos + 16:pos + 16 + text_len].decode(
-> +            text_len = utils.read_u16(log_buf[pos + text_len_offset:pos + text_len_offset + 2])
+> +
+> +  compatible:
+> +    const: st,stm32-hwspinlock
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: Module Clock
 
-Here as well. Better use some temp vars to break up the expressions. 
-Helps with readability.
+Don't need a description for a single item.
 
-> +            text = log_buf[pos + text_offset:pos + text_offset + text_len].decode(
->                   encoding='utf8', errors='replace')
-> -            time_stamp = utils.read_u64(log_buf[pos:pos + 8])
-> +            time_stamp = utils.read_u64(
-> +                log_buf[pos + time_stamp_offset:pos + time_stamp_offset + 8])
->   
->               for line in text.splitlines():
->                   msg = u"[{time:12.6f}] {line}\n".format(
-> 
+maxItems: 1
 
-Looks good otherwise.
+> +
+> +  clock-names:
+> +    items:
+> +      - const: hsem
+> +
+> +required:
+> +  - "#hwlock-cells"
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
 
-Jan
+Add a:
 
--- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+additionalProperties: false
+
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/stm32mp1-clks.h>
+> +    hwspinlock@4c000000 {
+> +        compatible = "st,stm32-hwspinlock";
+> +        #hwlock-cells = <1>;
+> +        reg = <0x4c000000 0x400>;
+> +        clocks = <&rcc HSEM>;
+> +        clock-names = "hsem";
+> +    };
+> +
+> +...
+> --
+> 2.15.0
+>
