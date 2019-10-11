@@ -2,190 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCC99D43B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 17:05:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8087D43BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 17:06:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727750AbfJKPF6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 11:05:58 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54590 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726692AbfJKPF5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 11:05:57 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A635DB19D;
-        Fri, 11 Oct 2019 15:05:55 +0000 (UTC)
-From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
-To:     Joshua Kinard <kumba@gentoo.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org
-Subject: [PATCH 3/3] rtc: ds1685: add indirect access method and remove plat_read/plat_write
-Date:   Fri, 11 Oct 2019 17:05:45 +0200
-Message-Id: <20191011150546.9186-3-tbogendoerfer@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20191011150546.9186-1-tbogendoerfer@suse.de>
-References: <20191011150546.9186-1-tbogendoerfer@suse.de>
+        id S1727947AbfJKPGS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 11:06:18 -0400
+Received: from mail.andi.de1.cc ([85.214.55.253]:53308 "EHLO mail.andi.de1.cc"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726595AbfJKPGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 11:06:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
+        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=oFnh+7aofaF0FzctP338voKSyncR9/qqjW/7qmv+uiI=; b=d+8mNidNz2g3CT4o7emVa8Iv9
+        j4mlf6bjNdTPBL6ebgONqPnBkPA4X2BnpvGPs8RpZLkZDOHEzE1xl4SKtDn/FV3olLmSNsafpsl3m
+        oxBlYV4T3I+iCYIBwhsjqlT08Qg/jpeTmwflO6zo1G6uYgW9Xa7QtwUQ9v7LvM9v7gijg=;
+Received: from p5dcb30f2.dip0.t-ipconnect.de ([93.203.48.242] helo=localhost)
+        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1iIwUX-0004ul-2F; Fri, 11 Oct 2019 17:06:05 +0200
+Received: from localhost ([::1])
+        by localhost with esmtp (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1iIwUV-0008KW-R0; Fri, 11 Oct 2019 17:06:03 +0200
+Date:   Fri, 11 Oct 2019 17:05:53 +0200
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Marco Felsch <m.felsch@pengutronix.de>, mark.rutland@arm.com,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com,
+        manivannan.sadhasivam@linaro.org, andrew.smirnov@gmail.com,
+        marex@denx.de, angus@akkea.ca, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        j.neuschaefer@gmx.net,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>
+Subject: Re: [PATCH v3 2/3] ARM: dts: add Netronix E60K02 board common file
+Message-ID: <20191011170147.1b3c4b25@kemnade.info>
+In-Reply-To: <20191011142927.GA11490@bogus>
+References: <20191010192357.27884-1-andreas@kemnade.info>
+        <20191010192357.27884-3-andreas@kemnade.info>
+        <20191011065609.6irap7elicatmsgg@pengutronix.de>
+        <20191011094148.1376430e@aktux>
+        <20191011142927.GA11490@bogus>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/pKsq_nhga4Bcf+WxR+iqaqg"; protocol="application/pgp-signature"
+X-Spam-Score: -1.0 (-)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use of provided plat_read/plat_write introduces the problem of possible
-different lifetime of rtc driver and plat_XXX function provider. As
-this was only intended for SGI Octane (IP30) this patchset implements
-a register indirect access method for IP30 and introduces an
-access_type field in platform data to select how registers are
-accessed. And since there are no resource allocating stunts needed
-anymore it also gets rid of alloc_io_resources from platform data.
+--Sig_/pKsq_nhga4Bcf+WxR+iqaqg
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
----
- arch/mips/sgi-ip32/ip32-platform.c |  2 +-
- drivers/rtc/rtc-ds1685.c           | 67 ++++++++++++++++++++++++--------------
- include/linux/rtc/ds1685.h         |  8 +++--
- 3 files changed, 48 insertions(+), 29 deletions(-)
+On Fri, 11 Oct 2019 09:29:27 -0500
+Rob Herring <robh@kernel.org> wrote:
 
-diff --git a/arch/mips/sgi-ip32/ip32-platform.c b/arch/mips/sgi-ip32/ip32-platform.c
-index 5a2a82148d8d..c3909bd8dd1a 100644
---- a/arch/mips/sgi-ip32/ip32-platform.c
-+++ b/arch/mips/sgi-ip32/ip32-platform.c
-@@ -115,7 +115,7 @@ ip32_rtc_platform_data[] = {
- 		.bcd_mode = true,
- 		.no_irq = false,
- 		.uie_unsupported = false,
--		.alloc_io_resources = true,
-+		.access_type = ds1685_reg_direct,
- 		.plat_prepare_poweroff = ip32_prepare_poweroff,
- 	},
- };
-diff --git a/drivers/rtc/rtc-ds1685.c b/drivers/rtc/rtc-ds1685.c
-index 349a8d1caca1..9c5d064ebb6c 100644
---- a/drivers/rtc/rtc-ds1685.c
-+++ b/drivers/rtc/rtc-ds1685.c
-@@ -59,6 +59,32 @@ ds1685_write(struct ds1685_priv *rtc, int reg, u8 value)
- }
- /* ----------------------------------------------------------------------- */
- 
-+/* Indirect read/write functions */
-+
-+/**
-+ * ds1685_indir_read - read a value from an rtc register.
-+ * @rtc: pointer to the ds1685 rtc structure.
-+ * @reg: the register address to read.
-+ */
-+static u8
-+ds1685_indir_read(struct ds1685_priv *rtc, int reg)
-+{
-+	writeb(reg, rtc->regs);
-+	return readb(rtc->data);
-+}
-+
-+/**
-+ * ds1685_indir_write - write a value to an rtc register.
-+ * @rtc: pointer to the ds1685 rtc structure.
-+ * @reg: the register address to write.
-+ * @value: value to write to the register.
-+ */
-+static void
-+ds1685_indir_write(struct ds1685_priv *rtc, int reg, u8 value)
-+{
-+	writeb(reg, rtc->regs);
-+	writeb(value, rtc->data);
-+}
- 
- /* ----------------------------------------------------------------------- */
- /* Inlined functions */
-@@ -1062,16 +1088,25 @@ ds1685_rtc_probe(struct platform_device *pdev)
- 	if (!rtc)
- 		return -ENOMEM;
- 
--	/*
--	 * Allocate/setup any IORESOURCE_MEM resources, if required.  Not all
--	 * platforms put the RTC in an easy-access place.  Like the SGI Octane,
--	 * which attaches the RTC to a "ByteBus", hooked to a SuperIO chip
--	 * that sits behind the IOC3 PCI metadevice.
--	 */
--	if (pdata->alloc_io_resources) {
-+	/* Setup resources and access functions */
-+	switch (pdata->access_type) {
-+	case ds1685_reg_direct:
-+		rtc->regs = devm_platform_ioremap_resource(pdev, 0);
-+		if (IS_ERR(rtc->regs))
-+			return PTR_ERR(rtc->regs);
-+		rtc->read = ds1685_read;
-+		rtc->write = ds1685_write;
-+		break;
-+	case ds1685_reg_indirect:
- 		rtc->regs = devm_platform_ioremap_resource(pdev, 0);
- 		if (IS_ERR(rtc->regs))
- 			return PTR_ERR(rtc->regs);
-+		rtc->data = devm_platform_ioremap_resource(pdev, 1);
-+		if (IS_ERR(rtc->data))
-+			return PTR_ERR(rtc->data);
-+		rtc->read = ds1685_indir_read;
-+		rtc->write = ds1685_indir_write;
-+		break;
- 	}
- 
- 	/* Get the register step size. */
-@@ -1080,24 +1115,6 @@ ds1685_rtc_probe(struct platform_device *pdev)
- 	else
- 		rtc->regstep = 1;
- 
--	/* Platform read function, else default if mmio setup */
--	if (pdata->plat_read)
--		rtc->read = pdata->plat_read;
--	else
--		if (pdata->alloc_io_resources)
--			rtc->read = ds1685_read;
--		else
--			return -ENXIO;
--
--	/* Platform write function, else default if mmio setup */
--	if (pdata->plat_write)
--		rtc->write = pdata->plat_write;
--	else
--		if (pdata->alloc_io_resources)
--			rtc->write = ds1685_write;
--		else
--			return -ENXIO;
--
- 	/* Platform pre-shutdown function, if defined. */
- 	if (pdata->plat_prepare_poweroff)
- 		rtc->prepare_poweroff = pdata->plat_prepare_poweroff;
-diff --git a/include/linux/rtc/ds1685.h b/include/linux/rtc/ds1685.h
-index 101c7adc05a2..67ee9d20cc5a 100644
---- a/include/linux/rtc/ds1685.h
-+++ b/include/linux/rtc/ds1685.h
-@@ -42,6 +42,7 @@
- struct ds1685_priv {
- 	struct rtc_device *dev;
- 	void __iomem *regs;
-+	void __iomem *data;
- 	u32 regstep;
- 	int irq_num;
- 	bool bcd_mode;
-@@ -70,12 +71,13 @@ struct ds1685_rtc_platform_data {
- 	const bool bcd_mode;
- 	const bool no_irq;
- 	const bool uie_unsupported;
--	const bool alloc_io_resources;
--	u8 (*plat_read)(struct ds1685_priv *, int);
--	void (*plat_write)(struct ds1685_priv *, int, u8);
- 	void (*plat_prepare_poweroff)(void);
- 	void (*plat_wake_alarm)(void);
- 	void (*plat_post_ram_clear)(void);
-+	enum {
-+		ds1685_reg_direct,
-+		ds1685_reg_indirect
-+	} access_type;
- };
- 
- 
--- 
-2.16.4
+> On Fri, Oct 11, 2019 at 09:41:48AM +0200, Andreas Kemnade wrote:
+> > On Fri, 11 Oct 2019 08:56:09 +0200
+> > Marco Felsch <m.felsch@pengutronix.de> wrote:
+> >  =20
+> > > Hi Andreas,
+> > >=20
+> > > On 19-10-10 21:23, Andreas Kemnade wrote: =20
+> > > > The Netronix board E60K02 can be found some several Ebook-Readers,
+> > > > at least the Kobo Clara HD and the Tolino Shine 3. The board
+> > > > is equipped with different SoCs requiring different pinmuxes.
+> > > >=20
+> > > > For now the following peripherals are included:
+> > > > - LED
+> > > > - Power Key
+> > > > - Cover (gpio via hall sensor)
+> > > > - RC5T619 PMIC (the kernel misses support for rtc and charger
+> > > >   subdevices).
+> > > > - Backlight via lm3630a
+> > > > - Wifi sdio chip detection (mmc-powerseq and stuff)
+> > > >=20
+> > > > It is based on vendor kernel but heavily reworked due to many
+> > > > changed bindings.
+> > > >=20
+> > > > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> > > > ---
+> > > > Changes in v3:
+> > > > - better led name
+> > > > - correct memory size
+> > > > - comments about missing devices
+> > > >=20
+> > > > Changes in v2:
+> > > > - reordered, was 1/3
+> > > > - moved pinmuxes to their actual users, not the parents
+> > > >   of them
+> > > > - removed some already-disabled stuff
+> > > > - minor cleanups   =20
+> > >=20
+> > > You won't change the muxing, so a this dtsi can be self contained?
+> > >  =20
+> > So you want me to put a big=20
+> > #if defined(MX6SLL)  =20
+>=20
+> Not sure what the comment meant, but no, don't do this. C defines in dts=
+=20
+> files are for symbolic names for numbers and assembling bitfields and=20
+> that's it.
 
+yes, that is also my opinion. For now, there is only one user
+of this .dtsi, but I have another one in preparation. That is the
+reason for splitting things between .dts and .dtsi to avoid such ugly
+ifdefs
+
+Regards,
+Andreas
+
+--Sig_/pKsq_nhga4Bcf+WxR+iqaqg
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEPIWxmAFyOaBcwCpFl4jFM1s/ye8FAl2gmlEACgkQl4jFM1s/
+ye9vKhAAos4YjS29TrFqk0UVc9rEP9svrO1m9mcIy34GAw1S8lPgrTQHk6CxjNYF
+o2gTG/mcofsy1ngPu7kk625wYMDVzwP8ZXtM7N4DxYLS80vEKq56nkhrBnqIUCvb
+Rv+8Sbo0TU4VAES/Hl2yjzl5XBiT6gPajB0BJE4WDSA+lHoZwRDpLz+4QbYlufTG
+wJmiDj03mNOGU+UoQ6oruSYW9TQCbiGyx+W/nQGmxEBsT700acHt9A6WPvLeQBYi
+nqKVtfVpd6uxxe58mJWEePFF9vEJNe2+FkSg9mMvSZd1SwfNfENw3XqYFb0V8xQ3
+ZK8ZWp0ohC5Pa/+fSUlkKFOrPL/PDmK9arKOpj1+IHUg/HIUKW/PN+lzYK8d8Pw/
+XKwmUkf4d8rMUyebbrmZgZmAA1V0lArO63RnWLY1COMo3x8whIx7TEjR7lCwi6ht
+/p0k4uUw6tzdTsNDLhNNZs8jSY1fFWVJYdX5syspQGy9txQHmZCeDI7+qdleskUA
+n7gJj7BslbrK5tmcC6kL2T8ZR8KtrEQjeeHM4UpuNh++7C9tkW44OGN/RP7ytcCr
+4T3r21EoF1vNcIV9baRHD7iu74tbuvV8LW/hhsi7CBl2kKHDA1Q4uRaPIfF30wwD
+8MwIW7K6JPxJvHlMbHOelBk1vI24MbMyXA4KjFewQDmZPfZK5AQ=
+=icrB
+-----END PGP SIGNATURE-----
+
+--Sig_/pKsq_nhga4Bcf+WxR+iqaqg--
