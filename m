@@ -2,160 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DFC2D4776
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 20:21:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEDB1D4778
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 20:21:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728880AbfJKSVI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 14:21:08 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:40803 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728666AbfJKSVI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 14:21:08 -0400
-Received: by mail-ot1-f67.google.com with SMTP id y39so8763143ota.7
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 11:21:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NzPNFjQAnsNKPF9to6rHis9Bc+uXElpyCzjzqc3xUoA=;
-        b=IvMSiekARullkWXq/ftFjAcZMOjhvs+6/3a4OtqHQasin2qPvykrRKbGv9Usd7sy12
-         ulb1mILf15cAPtN3I1Lbzb5DoSzaj4lLXvjYOXl+AFJJFvuStN5KhZz958qQCHlX7mlK
-         VzHJuU70gtQqiB3R6rIak9sy8QzqKM0ZqN+BCeDpDj0EbFbKWeSIaBU13d0ph7rPOpDu
-         L+3GRaUTlBevjN29xui9vM2NZnUIvEgM01iz5UGGj7gdV/in5n/l7L23RrV0Xr5Sn/8j
-         UqEkK4i8d6pyYcxEedHJ9Pl5viAr8XW64yXzmgQzO7iMzWXg9tCcbpaVCdLOYR3E7YjK
-         tQxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NzPNFjQAnsNKPF9to6rHis9Bc+uXElpyCzjzqc3xUoA=;
-        b=D6lqKZF1/yLsYUjkdQwxOYUpiNjTontWPTVk+sNmMOjvcuiexMHKUAEPQ3jBAD733S
-         HQhISkg6kNfw8/rH2RFF6mChA8IGZ88D7azQzZBK1qulqjFm5ppB9AEAWUhy/OtMwq14
-         ILkEcVOCIb7pVoCD2/Z0ZTTK/+6Ri6uTFSVuENDvMJmOdqUspDdIkcSyUufnsy98eixr
-         pnSlDI7lxJi4npAqUhBMjMIqoh5llIG2SG6qAjtDkvgCCNelg0EtZdlC4vNa0EaFs47v
-         0sjAF/s9kiIyZnlTQXiSwtlq2V04bY3xkTd+yaKSqC+FCTpMSgCcdRDVXo4OCiF0BCST
-         z15w==
-X-Gm-Message-State: APjAAAVDMIjEO4IRk6Jrf9H4xXqtn10321/mYxyMk42HSRKk7SCi3K3r
-        70H7P5nE8KP7cgMgEnUcG0owqu0BOm9BxAy/I5KziQ==
-X-Google-Smtp-Source: APXvYqzdnyAgT/2B3EV+6PwhAKTjGeyVIet5s9sy4vmnfPUelbIpY/41Ijbdobh8yEQZadta3Qs7UMppdkBOA/JYl94=
-X-Received: by 2002:a05:6830:10cc:: with SMTP id z12mr6088889oto.110.1570818066578;
- Fri, 11 Oct 2019 11:21:06 -0700 (PDT)
+        id S1728740AbfJKSVo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 14:21:44 -0400
+Received: from mga18.intel.com ([134.134.136.126]:30728 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728472AbfJKSVn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 14:21:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2019 11:21:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,285,1566889200"; 
+   d="scan'208";a="207480147"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
+  by fmsmga001.fm.intel.com with ESMTP; 11 Oct 2019 11:21:42 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 70186300322; Fri, 11 Oct 2019 11:21:42 -0700 (PDT)
+From:   Andi Kleen <andi@firstfloor.org>
+To:     acme@kernel.org
+Cc:     jolsa@kernel.org, linux-kernel@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>
+Subject: [PATCH 1/2] perf script: Fix --reltime with --time
+Date:   Fri, 11 Oct 2019 11:21:39 -0700
+Message-Id: <20191011182140.8353-1-andi@firstfloor.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20191009160532.20674-1-ckellner@redhat.com> <20191011122323.7770-1-ckellner@redhat.com>
- <CAG48ez1xNonmxwa3DRD44WJiComOHRxdHud5+LWea3OXzr4hkg@mail.gmail.com>
- <20191011151700.hdvztoxonpvogadv@wittgenstein> <CAG48ez2_YX0eXQP_YP2Ya20AxRGg9uGFjjkuSBxAV=hxvM9VZw@mail.gmail.com>
- <20191011165851.gf5i6qw2fwbunshr@wittgenstein>
-In-Reply-To: <20191011165851.gf5i6qw2fwbunshr@wittgenstein>
-From:   Jann Horn <jannh@google.com>
-Date:   Fri, 11 Oct 2019 20:20:39 +0200
-Message-ID: <CAG48ez1hk9d-qAPcRy9QOgNuO8u3Y_hu_3=GZoFYLY+oMdo8xg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] pidfd: show pids for nested pid namespaces in fdinfo
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Christian Kellner <ckellner@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Christian Kellner <christian@kellner.me>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, Michal Hocko <mhocko@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 6:58 PM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
-> On Fri, Oct 11, 2019 at 05:30:03PM +0200, Jann Horn wrote:
-> > On Fri, Oct 11, 2019 at 5:17 PM Christian Brauner
-> > <christian.brauner@ubuntu.com> wrote:
-> > >
-> > > On Fri, Oct 11, 2019 at 04:55:59PM +0200, Jann Horn wrote:
-> > > > On Fri, Oct 11, 2019 at 2:23 PM Christian Kellner <ckellner@redhat.com> wrote:
-> > > > > The fdinfo file for a process file descriptor already contains the
-> > > > > pid of the process in the callers namespaces. Additionally, if pid
-> > > > > namespaces are configured, show the process ids of the process in
-> > > > > all nested namespaces in the same format as in the procfs status
-> > > > > file, i.e. "NSPid:\t%d\%d...". This allows the easy identification
-> > > > > of the processes in nested namespaces.
-> > > > [...]
-> > > > >  #ifdef CONFIG_PROC_FS
-> > > > > +static inline void print_pidfd_nspid(struct seq_file *m, struct pid *pid,
-> > > > > +                                    struct pid_namespace *ns)
-> > > >
-> > > > `ns` is the namespace of the PID namespace of the procfs instance
-> > > > through which the file descriptor is being viewed.
-> > > >
-> > > > > +{
-> > > > > +#ifdef CONFIG_PID_NS
-> > > > > +       int i;
-> > > > > +
-> > > > > +       seq_puts(m, "\nNSpid:");
-> > > > > +       for (i = ns->level; i <= pid->level; i++) {
-> > > >
-> > > > ns->level is the level of the PID namespace associated with the procfs
-> > > > instance through which the file descriptor is being viewed. pid->level
-> > > > is the level of the PID associated with the pidfd.
-> > > >
-> > > > > +               ns = pid->numbers[i].ns;
-> > > > > +               seq_put_decimal_ull(m, "\t", pid_nr_ns(pid, ns));
-> > > > > +       }
-> > > > > +#endif
-> > > > > +}
-> > > >
-> > > > I think you assumed that `ns` is always going to contain `pid`.
-> > > > However, that's not the case. Consider the following scenario:
-> > > >
-> > > >  - the init_pid_ns has two child PID namespaces, A and B (each with
-> > > > its own mount namespace and procfs instance)
-> > > >  - process P1 lives in A
-> > > >  - process P2 lives in B
-> > > >  - P1 opens a pidfd for itself
-> > > >  - P1 passes the pidfd to P2 (e.g. via a unix domain socket)
-> > > >  - P2 reads /proc/self/fdinfo/$pidfd
-> > > >
-> > > > Now the loop will print the ID of P1 in A. I don't think that's what
-> > > > you intended? You might want to bail out if "pid_nr_ns(pid, ns) == 0",
-> > > > or something like that.
-> > >
-> > > I assumed the same thing happens when you pass around an fd for
-> > > /proc/self/status and that's why I didn't object to this behavior.
-> >
-> > I don't see how /proc/$pid/status is relevant. In the
-> > /proc/$pid/status case, the output is the list of PIDs starting at the
-> > PID namespace the procfs is associated with; and the process is always
-> > contained in that namespace, which also means that the first PID
-> > listed is the one in the PID namespace of the procfs instance. In the
-> > pidfd case, the process is not necessarily contained in that
-> > namespace, and the output doesn't make sense.
->
-> I might be misreading what you're saying.
-> (Maybe I'm doing something obviously wrong.)
-> If I compile the following two programs:
-> b2: https://paste.ubuntu.com/p/xthMsCXy3s/
-> c2: https://paste.ubuntu.com/p/y5HSzyMQJr/
->
-> Then in shell1
-> sudo unshare --mount --pid --fork --mount-proc
->
-> and in shell2
-> sudo unshare --mount --pid --fork --mount-proc
->
-> and run b2 in shell1 and c2 in shell2 which sends around an fd for
-> /proc/b2/status to c2. Now c2 reads b2's status file via the fd it
-> received. The c2 will see the pid of b2 in b2's pid namespace even
-> though the process is not contained in the pid namespace of c2.
+From: Andi Kleen <ak@linux.intel.com>
 
-Because the reader doesn't matter; the perspective you have on the
-system is defined by which pidns the procfs instance you're looking
-through is associated with, and here you're looking through shell1's
-procfs. It's normal that when you look through another procfs, you see
-PIDs differently.
+My earlier patch to just enable --reltime with --time was a little too optimistic.
+The --time parsing would accept absolute time, which is very confusing to the user.
+
+Support relative time in --time parsing too. This only works with recent perf
+record that records the first sample time. Otherwise we error out.
+
+Fixes: 3714437d3fcc ("perf script: Allow --time with --reltime")
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+---
+ tools/perf/builtin-script.c  |  5 +++--
+ tools/perf/util/time-utils.c | 27 ++++++++++++++++++++++++---
+ tools/perf/util/time-utils.h |  5 +++++
+ 3 files changed, 32 insertions(+), 5 deletions(-)
+
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index 1c797a948ada..f86c5cce5b2c 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -3864,10 +3864,11 @@ int cmd_script(int argc, const char **argv)
+ 		goto out_delete;
+ 
+ 	if (script.time_str) {
+-		err = perf_time__parse_for_ranges(script.time_str, session,
++		err = perf_time__parse_for_ranges_reltime(script.time_str, session,
+ 						  &script.ptime_range,
+ 						  &script.range_size,
+-						  &script.range_num);
++						  &script.range_num,
++						  reltime);
+ 		if (err < 0)
+ 			goto out_delete;
+ 
+diff --git a/tools/perf/util/time-utils.c b/tools/perf/util/time-utils.c
+index 9796a2e43f67..302443921681 100644
+--- a/tools/perf/util/time-utils.c
++++ b/tools/perf/util/time-utils.c
+@@ -458,10 +458,11 @@ bool perf_time__ranges_skip_sample(struct perf_time_interval *ptime_buf,
+ 	return true;
+ }
+ 
+-int perf_time__parse_for_ranges(const char *time_str,
++int perf_time__parse_for_ranges_reltime(const char *time_str,
+ 				struct perf_session *session,
+ 				struct perf_time_interval **ranges,
+-				int *range_size, int *range_num)
++				int *range_size, int *range_num,
++				bool reltime)
+ {
+ 	bool has_percent = strchr(time_str, '%');
+ 	struct perf_time_interval *ptime_range;
+@@ -471,7 +472,7 @@ int perf_time__parse_for_ranges(const char *time_str,
+ 	if (!ptime_range)
+ 		return -ENOMEM;
+ 
+-	if (has_percent) {
++	if (has_percent || reltime) {
+ 		if (session->evlist->first_sample_time == 0 &&
+ 		    session->evlist->last_sample_time == 0) {
+ 			pr_err("HINT: no first/last sample time found in perf data.\n"
+@@ -479,7 +480,9 @@ int perf_time__parse_for_ranges(const char *time_str,
+ 			       "(if '--buildid-all' is enabled, please set '--timestamp-boundary').\n");
+ 			goto error;
+ 		}
++	}
+ 
++	if (has_percent) {
+ 		num = perf_time__percent_parse_str(
+ 				ptime_range, size,
+ 				time_str,
+@@ -492,6 +495,15 @@ int perf_time__parse_for_ranges(const char *time_str,
+ 	if (num < 0)
+ 		goto error_invalid;
+ 
++	if (reltime) {
++		int i;
++
++		for (i = 0; i < num; i++) {
++			ptime_range[i].start += session->evlist->first_sample_time;
++			ptime_range[i].end += session->evlist->first_sample_time;
++		}
++	}
++
+ 	*range_size = size;
+ 	*range_num = num;
+ 	*ranges = ptime_range;
+@@ -504,6 +516,15 @@ int perf_time__parse_for_ranges(const char *time_str,
+ 	return ret;
+ }
+ 
++int perf_time__parse_for_ranges(const char *time_str,
++				struct perf_session *session,
++				struct perf_time_interval **ranges,
++				int *range_size, int *range_num)
++{
++	return perf_time__parse_for_ranges_reltime(time_str, session, ranges,
++					range_size, range_num, false);
++}
++
+ int timestamp__scnprintf_usec(u64 timestamp, char *buf, size_t sz)
+ {
+ 	u64  sec = timestamp / NSEC_PER_SEC;
+diff --git a/tools/perf/util/time-utils.h b/tools/perf/util/time-utils.h
+index 4f42988eb2f7..1142b0bddd5e 100644
+--- a/tools/perf/util/time-utils.h
++++ b/tools/perf/util/time-utils.h
+@@ -26,6 +26,11 @@ bool perf_time__ranges_skip_sample(struct perf_time_interval *ptime_buf,
+ 
+ struct perf_session;
+ 
++int perf_time__parse_for_ranges_reltime(const char *str, struct perf_session *session,
++				struct perf_time_interval **ranges,
++				int *range_size, int *range_num,
++				bool reltime);
++
+ int perf_time__parse_for_ranges(const char *str, struct perf_session *session,
+ 				struct perf_time_interval **ranges,
+ 				int *range_size, int *range_num);
+-- 
+2.21.0
+
