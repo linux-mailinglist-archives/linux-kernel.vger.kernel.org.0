@@ -2,47 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB36DD3C25
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 11:20:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F49CD3C27
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 11:20:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbfJKJUD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 05:20:03 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38142 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726863AbfJKJUC (ORCPT
+        id S1727680AbfJKJUI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 05:20:08 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35818 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727125AbfJKJUH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 05:20:02 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 3so9471763wmi.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 02:20:01 -0700 (PDT)
+        Fri, 11 Oct 2019 05:20:07 -0400
+Received: by mail-wr1-f67.google.com with SMTP id v8so11048991wrt.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 02:20:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=JePE8ClpvmkdREqAemoY5/Xc8Y8z7AI4rivC6NTKD84=;
-        b=Jm+pwRG0HzWyJjQGN+1v3eL2WIqd5IsEwLRdxn/PV5CkmMnZpTcCwdw/MI9JFaAQxH
-         5Bme0bpmr00gbYIaw5o1SqfSl3V3VgAjFwPXzemCtKQpeZUpAsWfaq9pjhv9UsgC0cCe
-         Y3uB5VEEmmL+i605dBiywQX/4xlOpr5emrQLVTambUIj6xa8Jnr6oZ+U4cGK48S3bcA5
-         fqEL/ctyy9UvxO9K94DZ4q56v8nnxOkcC+2OG2PslOJfYFu+6V8FjiP9Uyov4jCiHjOi
-         zoJfRSbt2cFf5Wf0uzmWlgihH8n3o/hVgZl+ZLC81fteGXF9rM+oMOWbrX+XZIl3R0lB
-         L+ZA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=qTreiY0r3fTwoJUxRJnyLrebcRQRT7U9Xfdqs5o+giI=;
+        b=mHYydlo2SqywtwYM3g8rRTyOTaZ2DBvRJEpZhZPD1tC+iz0x4R6WeN6JaUYRAztMUG
+         gn2u58+m9hI4YnuqqyWMWrdrjhVE1t8obVZLZLJ0xA//K0dsZVu0ikMZdLAH7IouHwcG
+         HR7xJuoCu5fYsYytFqGykH4pl2m8vh6QoCfCoKZqz5oZMeZnMuZAsk83mbmZtzI1KWbt
+         mGDZMm/X3kDPWmPqyjO+n3mRwqVKNmDmfZcM6Yf9u8ecAATx3RHDpnr7HY7ok3hmys+q
+         ey0hxGyhjdsIZ0L+aD+db2hK+1U/lH/EqOF3Lbc6P6vhE1k0ygypHyF84DO/VYncpPLL
+         twTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=JePE8ClpvmkdREqAemoY5/Xc8Y8z7AI4rivC6NTKD84=;
-        b=oYDB3NOWKzT61YOzHRHltgleiLAua3ib8v4o8M1zrBfOR4SI80ycczcMT3PCEFyrBB
-         9FknD/SKEDuu+kFdbEbHr0CXL57G4JQmqmiCZpahpU3nDRlXvkIyPnCA0SEyYXH12GsS
-         b6ZJmQ+Z6h3nV1zw+ghizS41XmVTPnNdEceZrF0JFJVqR2dxOsba1J0OQbidA1JW33iQ
-         FKyoCqZd7HUVzkO+8GX1dyTVxCrUc24Q9yQvVbucH7Ds5kV9m5uze9ZwBA4kDCTgLAWc
-         pYNpbIfeZykzUS0fpfLmT0d2q7gsuXOIkw4PjX8qjCTzsfWiz/jAF4De30sd5WQ/pRhQ
-         MD9g==
-X-Gm-Message-State: APjAAAXRcVy6MLMnI4R+3sT1TyCei2uWZaie+pPqmYas+hqgeJfuI96v
-        pOB7Ut+d19a/Hh/ZxtuTTWFduw==
-X-Google-Smtp-Source: APXvYqy81ucKBfLp4NPCr9YZdfPcNx5llAgGpYyda7UMIIHcQZiTmWkdGca5oeZff4YN1u74EfpbXg==
-X-Received: by 2002:a05:600c:2201:: with SMTP id z1mr2463573wml.169.1570785600656;
-        Fri, 11 Oct 2019 02:20:00 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=qTreiY0r3fTwoJUxRJnyLrebcRQRT7U9Xfdqs5o+giI=;
+        b=ZIZCMrSmD6b2c7zREPql5fKZ4Nj31QFjkuUHY3B1DJXxsuPRPfK3ie9yudscl0TPEc
+         /2pBzDN5kkPR24vA2w+ndXCOm/Tvc3agxj+bgdLYjwfxpkXEt6cgy7KC9ulrWuywtJdH
+         dqPOfWKLuqgvPcbo4OJw8qf4WMeWkAYZZCdnjzhgLeMaBKlMkZfai/0dfAjzBmAlBRHe
+         HI3WKIfeN2tyq75MIypv776uF5O/uoOWCC17AEkx/rN5TImjOO/LhO6OswBKosAOz0Pn
+         dyGiRI6eeiIJpQxY7mkWmhezEmAEifuHq+IcydwAJTx9YPKyrT+9Mteg3GDOSbwWSF87
+         RD3w==
+X-Gm-Message-State: APjAAAXzl5vVqucQUrK38SroajiREyFxAH7OfAtYr2wfQlwOs8A4c3Tf
+        dyK3c7eaTOL9XQEdTFjx8kPuPA==
+X-Google-Smtp-Source: APXvYqzjVDPoOSUpWe+tgBg9Peazn8a4pRxoFsJ08U3LOhCp/ABBxPZg05ZafUWWf6lvLvlVJaQRvw==
+X-Received: by 2002:adf:ed52:: with SMTP id u18mr13058979wro.16.1570785604033;
+        Fri, 11 Oct 2019 02:20:04 -0700 (PDT)
 Received: from localhost.localdomain (li2042-79.members.linode.com. [172.105.81.79])
-        by smtp.gmail.com with ESMTPSA id u10sm8603492wmm.0.2019.10.11.02.19.57
+        by smtp.gmail.com with ESMTPSA id u10sm8603492wmm.0.2019.10.11.02.20.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2019 02:19:59 -0700 (PDT)
+        Fri, 11 Oct 2019 02:20:03 -0700 (PDT)
 From:   Leo Yan <leo.yan@linaro.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -51,36 +52,63 @@ To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
         linux-kernel@vger.kernel.org
 Cc:     Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v1 1/2] perf test: Report failure for mmap events
-Date:   Fri, 11 Oct 2019 17:19:41 +0800
-Message-Id: <20191011091942.29841-1-leo.yan@linaro.org>
+Subject: [PATCH v1 2/2] perf test: Avoid infinite loop for task exit case
+Date:   Fri, 11 Oct 2019 17:19:42 +0800
+Message-Id: <20191011091942.29841-2-leo.yan@linaro.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191011091942.29841-1-leo.yan@linaro.org>
+References: <20191011091942.29841-1-leo.yan@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When fail to mmap events in task exit case, it misses to set 'err' to
--1; thus the testing will not report failure for it.
+When execute task exit testing case, Perf tool stucks in this case and
+doesn't return back on Arm64 Juno board.
 
-This patch sets 'err' to -1 when fails to mmap events, thus Perf tool
-can report correct result.
+After dig into this issue, since Juno board has Arm's big.LITTLE CPUs,
+thus the PMUs are not compatible between the big CPUs and little CPUs.
+This leads to PMU event cannot be enabled properly when the traced task
+is migrated from one variant's CPU to another variant.  Finally, the
+test case runs into infinite loop for cannot read out any event data
+after return from polling.
+
+Eventually, we need to work out formal solution to allow PMU events can
+be freely migrated from one CPU variant to another, but this is a
+difficult task and a different topic.  This patch tries to fix the Perf
+test case to avoid infinite loop, when the testing detects 1000 times
+retrying for reading empty events, it will directly bail out and return
+failure.  This allows the Perf tool can continue its other test cases.
 
 Signed-off-by: Leo Yan <leo.yan@linaro.org>
 ---
- tools/perf/tests/task-exit.c | 1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/tests/task-exit.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/tools/perf/tests/task-exit.c b/tools/perf/tests/task-exit.c
-index bce3a4cb4c89..ca0a6ca43b13 100644
+index ca0a6ca43b13..d85c9f608564 100644
 --- a/tools/perf/tests/task-exit.c
 +++ b/tools/perf/tests/task-exit.c
-@@ -110,6 +110,7 @@ int test__task_exit(struct test *test __maybe_unused, int subtest __maybe_unused
- 	if (evlist__mmap(evlist, 128) < 0) {
- 		pr_debug("failed to mmap events: %d (%s)\n", errno,
- 			 str_error_r(errno, sbuf, sizeof(sbuf)));
-+		err = -1;
- 		goto out_delete_evlist;
+@@ -53,6 +53,7 @@ int test__task_exit(struct test *test __maybe_unused, int subtest __maybe_unused
+ 	struct perf_cpu_map *cpus;
+ 	struct perf_thread_map *threads;
+ 	struct mmap *md;
++	int retry_count = 0;
+ 
+ 	signal(SIGCHLD, sig_handler);
+ 
+@@ -132,6 +133,13 @@ int test__task_exit(struct test *test __maybe_unused, int subtest __maybe_unused
+ out_init:
+ 	if (!exited || !nr_exit) {
+ 		evlist__poll(evlist, -1);
++
++		if (retry_count++ > 1000) {
++			pr_debug("Failed after retrying 1000 times\n");
++			err = -1;
++			goto out_free_maps;
++		}
++
+ 		goto retry;
  	}
  
 -- 
