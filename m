@@ -2,129 +2,262 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6276FD436C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 16:51:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA3B8D4372
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 16:52:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727554AbfJKOvz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 10:51:55 -0400
-Received: from foss.arm.com ([217.140.110.172]:34842 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726174AbfJKOvz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 10:51:55 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 614DB142F;
-        Fri, 11 Oct 2019 07:51:54 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 607CF3F68E;
-        Fri, 11 Oct 2019 07:51:51 -0700 (PDT)
-Date:   Fri, 11 Oct 2019 15:51:49 +0100
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>
-Cc:     Paul Elliott <paul.elliott@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        linux-arch@vger.kernel.org, Eugene Syromiatnikov <esyr@redhat.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Andrew Jones <drjones@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Florian Weimer <fweimer@redhat.com>,
-        linux-kernel@vger.kernel.org, Sudakshina Das <sudi.das@arm.com>,
-        Suzuki Poulose <suzuki.poulose@arm.com>
-Subject: Re: [PATCH v2 04/12] arm64: docs: cpu-feature-registers: Document
- ID_AA64PFR1_EL1
-Message-ID: <20191011145148.GK27757@arm.com>
-References: <1570733080-21015-1-git-send-email-Dave.Martin@arm.com>
- <1570733080-21015-5-git-send-email-Dave.Martin@arm.com>
- <87zhi7l8qz.fsf@linaro.org>
+        id S1727675AbfJKOwX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 10:52:23 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:29760 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727587AbfJKOwW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 10:52:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1570805540;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=LjOMlr04CDEWM+WiRuQ0QvBbFcIyJJ1BMad1vbnZ+hQ=;
+        b=CNOnOzJmqRH5mhETW8/dcXcNZ8wjAxMVe9sSSw/z6uNlT+0K7ScTwRsDIXoJb9Jx699O/G
+        nOD1ROJKKPVrxu5alHaNCrJAlUwimisv+KTh0TnaY9Pea8P5l1OXih0KFeOZkztT9GIg8y
+        Q+0NFkDEilDLrPBkTAeDM1xw+KN2uNA=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-302-2PuEUBfPNq6YoOomPvurlA-1; Fri, 11 Oct 2019 10:52:16 -0400
+Received: by mail-qt1-f197.google.com with SMTP id m19so9665021qtm.13
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 07:52:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SZ0bfU2716rhby1DyBXCXfWn03SSsmBdmRdt0EnLS1k=;
+        b=CnIALHlpS1HxBA6atwG/0kn5yzCn+d+Ypz+72Q9630d3BnsimQgu/tgamk4bAwfZob
+         bek0NBW+5EsWNWsPTKLLq3YDdSdhn93jFqCGuHwx14HkBMW2rMuzX3cw+nvxvhOldx5x
+         +xCM1I5h57KP4WvTWBgg5h80wlXwVWn0JZdAx9u/wRgvQrS9P9TCRNOKsS56J3t7zciw
+         UOt0cvpjFz6WecT5SBuQoUI9evuH9BJz+gW+rllAtaofPyY9We0ibBdwLTjyoBfcUKvN
+         UCYV7oqQ+HWJSsff8Bos7haGkd0BGnSbn2y+H+rt5c0DyjgM2Lr0J2XXlCyKBSG7tLJI
+         W11Q==
+X-Gm-Message-State: APjAAAVbDGjUWKSb53yK8IApqMBLO/Qtijj7gemPFvAs8PUquqPsBtBq
+        EKMK99jsrZk177svEgcvelxNL+IAcx/bUvBTUW4Dj3im3Hgi3db78LPOipExvkCYNiHWZrWnL1h
+        WBFlt0GpIx+1V1o601fyIfVtVHLw85YdiP+tzKPOn
+X-Received: by 2002:ae9:f306:: with SMTP id p6mr16072324qkg.169.1570805536491;
+        Fri, 11 Oct 2019 07:52:16 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzTfHCZ3UlZd2fgDUgIL/k7ZBTcdoSj99nnvjVsUswVePU8Cqx6eoHwfnLCLhbgJCWU7048/TDkRczOka2mx9A=
+X-Received: by 2002:ae9:f306:: with SMTP id p6mr16072285qkg.169.1570805536178;
+ Fri, 11 Oct 2019 07:52:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87zhi7l8qz.fsf@linaro.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20191007051240.4410-1-andrew.smirnov@gmail.com> <20191007051240.4410-2-andrew.smirnov@gmail.com>
+In-Reply-To: <20191007051240.4410-2-andrew.smirnov@gmail.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Fri, 11 Oct 2019 16:52:04 +0200
+Message-ID: <CAO-hwJ+jPGa5Z7=Lopsc23m8UOqGWB0=tN+DcotykseAPM7_7w@mail.gmail.com>
+Subject: Re: [PATCH 1/3] HID: logitech-hidpp: use devres to manage FF private data
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        Henrik Rydberg <rydberg@bitmath.org>,
+        Sam Bazely <sambazley@fastmail.com>,
+        "Pierre-Loup A . Griffais" <pgriffais@valvesoftware.com>,
+        Austin Palmer <austinp@valvesoftware.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "3.8+" <stable@vger.kernel.org>
+X-MC-Unique: 2PuEUBfPNq6YoOomPvurlA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 02:19:48PM +0100, Alex Bennée wrote:
-> 
-> Dave Martin <Dave.Martin@arm.com> writes:
-> 
-> > Commit d71be2b6c0e1 ("arm64: cpufeature: Detect SSBS and advertise
-> > to userspace") exposes ID_AA64PFR1_EL1 to userspace, but didn't
-> > update the documentation to match.
-> >
-> > Add it.
-> >
-> > Signed-off-by: Dave Martin <Dave.Martin@arm.com>
-> >
-> > ---
-> >
-> > Note to maintainers:
-> >
-> >  * This patch has been racing with various other attempts to fix
-> >    the same documentation in the meantime.
-> >
-> >    Since this patch only fixes the documenting for pre-existing
-> >    features, it can safely be dropped if appropriate.
-> >
-> >    The _new_ documentation relating to BTI feature reporting
-> >    is in a subsequent patch, and needs to be retained.
-> > ---
-> >  Documentation/arm64/cpu-feature-registers.rst | 15 +++++++++++----
-> >  1 file changed, 11 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/Documentation/arm64/cpu-feature-registers.rst b/Documentation/arm64/cpu-feature-registers.rst
-> > index 2955287..b86828f 100644
-> > --- a/Documentation/arm64/cpu-feature-registers.rst
-> > +++ b/Documentation/arm64/cpu-feature-registers.rst
-> > @@ -168,8 +168,15 @@ infrastructure:
-> >       +------------------------------+---------+---------+
-> >
-> >
-> > -  3) MIDR_EL1 - Main ID Register
-> > +  3) ID_AA64PFR1_EL1 - Processor Feature Register 1
-> > +     +------------------------------+---------+---------+
-> > +     | Name                         |  bits   | visible |
-> > +     +------------------------------+---------+---------+
-> > +     | SSBS                         | [7-4]   |    y    |
-> > +     +------------------------------+---------+---------+
-> > +
-> >
-> > +  4) MIDR_EL1 - Main ID Register
-> >       +------------------------------+---------+---------+
-> >       | Name                         |  bits   | visible |
-> >       +------------------------------+---------+---------+
-> > @@ -188,7 +195,7 @@ infrastructure:
-> >     as available on the CPU where it is fetched and is not a system
-> >     wide safe value.
-> >
-> > -  4) ID_AA64ISAR1_EL1 - Instruction set attribute register 1
-> > +  5) ID_AA64ISAR1_EL1 - Instruction set attribute register 1
-> 
-> If I'm not mistaken .rst has support for auto-enumeration if the #
-> character is used. That might reduce the pain of re-numbering in future.
+Hi Andrey,
 
-Ack, though it would be good to go one better and generate this document
-from the cpufeature.c tables (or from some common source).  The numbers
-are relatively easy to maintain -- remembering to update the document
-at all seems the bigger maintenance headache right now.
+On Mon, Oct 7, 2019 at 7:13 AM Andrey Smirnov <andrew.smirnov@gmail.com> wr=
+ote:
+>
+> To simplify resource management in commit that follows as well as to
+> save a couple of extra kfree()s and simplify hidpp_ff_deinit() switch
+> driver code to use devres to manage the life-cycle of FF private data.
+>
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Cc: Jiri Kosina <jikos@kernel.org>
+> Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+> Cc: Henrik Rydberg <rydberg@bitmath.org>
+> Cc: Sam Bazely <sambazley@fastmail.com>
+> Cc: Pierre-Loup A. Griffais <pgriffais@valvesoftware.com>
+> Cc: Austin Palmer <austinp@valvesoftware.com>
+> Cc: linux-input@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: stable@vger.kernel.org
 
-I think this particular patch is superseded by similar fixes from other
-people, just not in torvalds/master yet.
+This patch doesn't seem to fix any error, is there a reason to send it
+to stable? (besides as a dependency of the rest of the series).
 
-[...]
+> ---
+>  drivers/hid/hid-logitech-hidpp.c | 53 +++++++++++++++++---------------
+>  1 file changed, 29 insertions(+), 24 deletions(-)
+>
+> diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-=
+hidpp.c
+> index 0179f7ed77e5..58eb928224e5 100644
+> --- a/drivers/hid/hid-logitech-hidpp.c
+> +++ b/drivers/hid/hid-logitech-hidpp.c
+> @@ -2079,6 +2079,11 @@ static void hidpp_ff_destroy(struct ff_device *ff)
+>         struct hidpp_ff_private_data *data =3D ff->private;
+>
+>         kfree(data->effect_ids);
 
-Cheers
----Dave
+Is there any reasons we can not also devm alloc data->effect_ids?
+
+> +       /*
+> +        * Set private to NULL to prevent input_ff_destroy() from
+> +        * freeing our devres allocated memory
+
+Ouch. There is something wrong here: input_ff_destroy() calls
+kfree(ff->private), when the data has not been allocated by
+input_ff_create(). This seems to lack a little bit of symmetry.
+
+> +        */
+> +       ff->private =3D NULL;
+>  }
+>
+>  static int hidpp_ff_init(struct hidpp_device *hidpp, u8 feature_index)
+> @@ -2090,7 +2095,7 @@ static int hidpp_ff_init(struct hidpp_device *hidpp=
+, u8 feature_index)
+>         const u16 bcdDevice =3D le16_to_cpu(udesc->bcdDevice);
+>         struct ff_device *ff;
+>         struct hidpp_report response;
+> -       struct hidpp_ff_private_data *data;
+> +       struct hidpp_ff_private_data *data =3D hidpp->private_data;
+>         int error, j, num_slots;
+>         u8 version;
+>
+> @@ -2129,18 +2134,13 @@ static int hidpp_ff_init(struct hidpp_device *hid=
+pp, u8 feature_index)
+>                 return error;
+>         }
+>
+> -       data =3D kzalloc(sizeof(*data), GFP_KERNEL);
+> -       if (!data)
+> -               return -ENOMEM;
+>         data->effect_ids =3D kcalloc(num_slots, sizeof(int), GFP_KERNEL);
+> -       if (!data->effect_ids) {
+> -               kfree(data);
+> +       if (!data->effect_ids)
+>                 return -ENOMEM;
+> -       }
+> +
+>         data->wq =3D create_singlethread_workqueue("hidpp-ff-sendqueue");
+>         if (!data->wq) {
+>                 kfree(data->effect_ids);
+> -               kfree(data);
+>                 return -ENOMEM;
+>         }
+>
+> @@ -2199,28 +2199,15 @@ static int hidpp_ff_init(struct hidpp_device *hid=
+pp, u8 feature_index)
+>         return 0;
+>  }
+>
+> -static int hidpp_ff_deinit(struct hid_device *hid)
+> +static void hidpp_ff_deinit(struct hid_device *hid)
+>  {
+> -       struct hid_input *hidinput =3D list_entry(hid->inputs.next, struc=
+t hid_input, list);
+> -       struct input_dev *dev =3D hidinput->input;
+> -       struct hidpp_ff_private_data *data;
+> -
+> -       if (!dev) {
+> -               hid_err(hid, "Struct input_dev not found!\n");
+> -               return -EINVAL;
+> -       }
+> +       struct hidpp_device *hidpp =3D hid_get_drvdata(hid);
+> +       struct hidpp_ff_private_data *data =3D hidpp->private_data;
+>
+>         hid_info(hid, "Unloading HID++ force feedback.\n");
+> -       data =3D dev->ff->private;
+> -       if (!data) {
+
+I am pretty sure we might need to keep a test on data not being null.
+
+> -               hid_err(hid, "Private data not found!\n");
+> -               return -EINVAL;
+> -       }
+>
+>         destroy_workqueue(data->wq);
+>         device_remove_file(&hid->dev, &dev_attr_range);
+> -
+> -       return 0;
+>  }
+
+This whole hunk seems unrelated to the devm change.
+Can you extract a patch that just stores hidpp_ff_private_data in
+hidpp->private_data and then cleans up hidpp_ff_deinit() before
+switching it to devm? (or maybe not, see below)
+
+After a few more thoughts, I don't think this mixing of devm and non
+devm is a good idea:
+we could say that the hidpp_ff_private_data and its effect_ids are
+both children of the input_dev, not the hid_device. And we would
+expect the whole thing to simplify with devm, but it's not, because ff
+is not supposed to be used with devm.
+
+I have a feeling the whole ff logic is wrong in term of where things
+should be cleaned up, but I can not come up with a good hint on where
+to start. For example, destroy_workqueue() is called in
+hidpp_ff_deinit() where it might be racy, and maybe we should call it
+in hidpp_ff_destroy()...
+
+Last, you should base this patch on top of the for-next branch, we
+recently merged a fix for the FF drivers in the HID subsystem:
+https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git/commit/?h=3Dfor=
+-next&id=3Dd9d4b1e46d9543a82c23f6df03f4ad697dab361b
+
+Would it be too complex to drop this patch from the series and do a
+proper follow up cleanup series that might not need to go to stable?
+
+Cheers,
+Benjamin
+
+>
+>
+> @@ -2725,6 +2712,20 @@ static int k400_connect(struct hid_device *hdev, b=
+ool connected)
+>
+>  #define HIDPP_PAGE_G920_FORCE_FEEDBACK                 0x8123
+>
+> +static int g920_allocate(struct hid_device *hdev)
+> +{
+> +       struct hidpp_device *hidpp =3D hid_get_drvdata(hdev);
+> +       struct hidpp_ff_private_data *data;
+> +
+> +       data =3D devm_kzalloc(&hdev->dev, sizeof(*data), GFP_KERNEL);
+> +       if (!data)
+> +               return -ENOMEM;
+> +
+> +       hidpp->private_data =3D data;
+> +
+> +       return 0;
+> +}
+> +
+>  static int g920_get_config(struct hidpp_device *hidpp)
+>  {
+>         u8 feature_type;
+> @@ -3561,6 +3562,10 @@ static int hidpp_probe(struct hid_device *hdev, co=
+nst struct hid_device_id *id)
+>                 ret =3D k400_allocate(hdev);
+>                 if (ret)
+>                         return ret;
+> +       } else if (hidpp->quirks & HIDPP_QUIRK_CLASS_G920) {
+> +               ret =3D g920_allocate(hdev);
+> +               if (ret)
+> +                       return ret;
+>         }
+>
+>         INIT_WORK(&hidpp->work, delayed_work_cb);
+> --
+> 2.21.0
+>
+
