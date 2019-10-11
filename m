@@ -2,45 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1468D3534
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 02:08:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5055D351F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 02:07:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727792AbfJKAH1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 20:07:27 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45788 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727520AbfJKAGZ (ORCPT
+        id S1727754AbfJKAHR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 20:07:17 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45788 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727548AbfJKAG1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 20:06:25 -0400
-Received: by mail-pg1-f195.google.com with SMTP id r1so3497686pgj.12
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 17:06:24 -0700 (PDT)
+        Thu, 10 Oct 2019 20:06:27 -0400
+Received: by mail-pg1-f193.google.com with SMTP id r1so3497712pgj.12
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 17:06:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7MxClQbH59XRrbTRajW1Gh8uACzcU2+htsVcXyM7D1g=;
-        b=TBJeuKMY2z8zTRQ1bFw/ImZS5YFoYQAHk+uSCJMry9jQKOeGheQ5i7gXGHU01GWcTB
-         uOgoFqPErAXZia+mP12x9qnkRfY1Ys9PjUB5SmB5We4kWHLZQ5n99yhQi0dIKcFUZu6/
-         hILLkVhE9upOn1PuRtaesOlh4SL00TV9kLm5U=
+        bh=9QIZQEEx86BzYrPbnl0U6tW2XkUfCUBHfootbZQ3f/s=;
+        b=h/B19WCkyL+xymsA4HFl8hqcGsybKIgVl1/uhhhVSgPKYo6NP7vZ5rRibvBcc9cHi0
+         dKUj61YWLvd6Paq9o21PGCwAwApZ0KSVPAqMWPWlFGYXaNSsjI/dS7B2W11htDcOzgnE
+         DitiicKTEnEB0ngjDQf+AmKVkG49ZOcGoE0gQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=7MxClQbH59XRrbTRajW1Gh8uACzcU2+htsVcXyM7D1g=;
-        b=IomQNa+VujFjGuY+4XhjPnYADzJW7gY3xpoXHfjlbxXRSc3oDLwhBs+FI5RKl39ORb
-         k9G9JXeIaWxTbqMJ1VqwyCeJSrVNLcZ1cM4/6Nxw6x4pgbVBAPfe2NbDitLFoXfhIjjy
-         gpcBt8VSgZGJmPvSyewmMpVS0vCXGMyt/13XrNnaZcdROcnn2i1bBZiDD4MV0ouiBwAO
-         Bzq6yggCGIdNA8vGbqrtq0kUCJSa6lMwTc0tcwN2cJDpLnb+rOsStrxJoNjFPEIWFSAl
-         LNLGAgpGeacGxOxOwbGt4P37w7bgX2UBHbVf+bIIx/CRD5aF8gWgVdjjS19P7DiG/Vtx
-         L4pQ==
-X-Gm-Message-State: APjAAAX439azLk/BXNGH4jwgPRTgoa5dszbNkjLM3GS4pw82FXWPH2wx
-        nstec0Jh1sxFXLHxlXWchhyDxA==
-X-Google-Smtp-Source: APXvYqwg7IWyK5GALjp45zOGgCtbjryTtA5MoWvVIZiHDTE9GJEt+Ue8rYJCs4VD37qrCGGbQgqtBg==
-X-Received: by 2002:a62:5bc1:: with SMTP id p184mr12930072pfb.180.1570752383534;
-        Thu, 10 Oct 2019 17:06:23 -0700 (PDT)
+        bh=9QIZQEEx86BzYrPbnl0U6tW2XkUfCUBHfootbZQ3f/s=;
+        b=A4TQRKHtZerNNswlFEd9n5Rnu14K9FbaUZXtuHeKYRE213pPzDr/u9o02ROzlKvFhy
+         7j8iIqKDlSmUkN0sVeZs4v0f2MQOay16rzlRr3LiczZaUYoUj0510egFuZAHoR4QCOfO
+         RwDeYB81waZcJ3UfoE4eUWrs+6ci8VE2q6iGd1teCtNvFLk419O0nlMtHS0ky7LqG2cz
+         3fH7r5aVIBWC3IUMo0BsALfp9YNxUey/3xbaHiCLsU+0T4DxmDpWpCDsWIJgKT6ECFUi
+         Izk2ihnQrZDU0pzxCx78YD4diDUnlfBAkfqx2MqtwaiZahMFKLTnxADj5hNLdhCfT0SG
+         H1dg==
+X-Gm-Message-State: APjAAAU8kflyRWT+F5n0tAVZGTzb5qgQLIZM0Ifu9Jdf85JkrrGhUPJV
+        W3qd+px7SFMUFe8mr4oSxkBfWQ==
+X-Google-Smtp-Source: APXvYqx4W7fel1DIaEF8YA2JM9DuPiq7TPvvITPEvxb/fDK3Ll5VL5/FYyAVhRaQT1eulT76dS3lTQ==
+X-Received: by 2002:a62:3387:: with SMTP id z129mr13444661pfz.185.1570752385625;
+        Thu, 10 Oct 2019 17:06:25 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id d5sm5372814pjw.31.2019.10.10.17.06.19
+        by smtp.gmail.com with ESMTPSA id 127sm8449250pfw.6.2019.10.10.17.06.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 17:06:20 -0700 (PDT)
+        Thu, 10 Oct 2019 17:06:24 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Borislav Petkov <bp@alien8.de>
 Cc:     Kees Cook <keescook@chromium.org>,
@@ -59,9 +59,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Michal Simek <monstr@monstr.eu>, linux-parisc@vger.kernel.org,
         linux-xtensa@linux-xtensa.org, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 04/29] alpha: Rename PT_LOAD identifier "kernel" to "text"
-Date:   Thu, 10 Oct 2019 17:05:44 -0700
-Message-Id: <20191011000609.29728-5-keescook@chromium.org>
+Subject: [PATCH v2 05/29] ia64: Rename PT_LOAD identifier "code" to "text"
+Date:   Thu, 10 Oct 2019 17:05:45 -0700
+Message-Id: <20191011000609.29728-6-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191011000609.29728-1-keescook@chromium.org>
 References: <20191011000609.29728-1-keescook@chromium.org>
@@ -71,45 +71,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 In preparation for moving NOTES into RO_DATA, rename the linker script
-internal identifier for the PT_LOAD Program Header from "kernel" to
-"text" to match other architectures.
+internal identifier for the PT_LOAD Program Header from "code" to "text"
+to match other architectures.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- arch/alpha/kernel/vmlinux.lds.S | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/ia64/kernel/vmlinux.lds.S | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/alpha/kernel/vmlinux.lds.S b/arch/alpha/kernel/vmlinux.lds.S
-index c4b5ceceab52..781090cacc96 100644
---- a/arch/alpha/kernel/vmlinux.lds.S
-+++ b/arch/alpha/kernel/vmlinux.lds.S
-@@ -8,7 +8,7 @@
- OUTPUT_FORMAT("elf64-alpha")
- OUTPUT_ARCH(alpha)
- ENTRY(__start)
--PHDRS { kernel PT_LOAD; note PT_NOTE; }
-+PHDRS { text PT_LOAD; note PT_NOTE; }
+diff --git a/arch/ia64/kernel/vmlinux.lds.S b/arch/ia64/kernel/vmlinux.lds.S
+index d9d4e21107cd..2c4f23c390ad 100644
+--- a/arch/ia64/kernel/vmlinux.lds.S
++++ b/arch/ia64/kernel/vmlinux.lds.S
+@@ -13,7 +13,7 @@ ENTRY(phys_start)
  jiffies = jiffies_64;
- SECTIONS
- {
-@@ -27,14 +27,14 @@ SECTIONS
- 		LOCK_TEXT
- 		*(.fixup)
- 		*(.gnu.warning)
--	} :kernel
-+	} :text
- 	swapper_pg_dir = SWAPPER_PGD;
- 	_etext = .;	/* End of text section */
  
--	NOTES :kernel :note
-+	NOTES :text :note
- 	.dummy : {
- 		*(.dummy)
--	} :kernel
+ PHDRS {
+-	code   PT_LOAD;
++	text   PT_LOAD;
+ 	percpu PT_LOAD;
+ 	data   PT_LOAD;
+ 	note   PT_NOTE;
+@@ -36,7 +36,7 @@ SECTIONS {
+ 	phys_start = _start - LOAD_OFFSET;
+ 
+ 	code : {
+-	} :code
++	} :text
+ 	. = KERNEL_START;
+ 
+ 	_text = .;
+@@ -68,9 +68,9 @@ SECTIONS {
+ 	/*
+ 	 * Read-only data
+ 	 */
+-	NOTES :code :note       /* put .notes in text and mark in PT_NOTE  */
++	NOTES :text :note       /* put .notes in text and mark in PT_NOTE  */
+ 	code_continues : {
+-	} : code               /* switch back to regular program...  */
++	} :text                /* switch back to regular program...  */
+ 
+ 	EXCEPTION_TABLE(16)
+ 
+@@ -102,9 +102,9 @@ SECTIONS {
+ 		__start_unwind = .;
+ 		*(.IA_64.unwind*)
+ 		__end_unwind = .;
+-	} :code :unwind
++	} :text :unwind
+ 	code_continues2 : {
+-	} : code
 +	} :text
  
  	RODATA
- 	EXCEPTION_TABLE(16)
+ 
+@@ -214,7 +214,7 @@ SECTIONS {
+ 	_end = .;
+ 
+ 	code : {
+-	} :code
++	} :text
+ 
+ 	STABS_DEBUG
+ 	DWARF_DEBUG
 -- 
 2.17.1
 
