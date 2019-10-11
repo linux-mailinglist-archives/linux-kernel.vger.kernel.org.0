@@ -2,294 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF34DD3D18
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 12:14:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B22D3D3D1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 12:15:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727897AbfJKKOp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 06:14:45 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58136 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726458AbfJKKOo (ORCPT
+        id S1727774AbfJKKPk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 06:15:40 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:64302 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726458AbfJKKPj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 06:14:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=sYW2G59BLUYOgygOgznvvM9/G1KSWe/B6yIvdP1T0lY=; b=GM5n0Q07pLWYbJN1VsLl1aB4h
-        d/cEnZ2AWalUULXQp6auzuM1KsO0WBHhdG8gqeA2uJKvGPXdeFu2sMuK6TVfmCTBoJBhYYL2asVoX
-        Fabky0xNUIMwfHEIwacDhyi5oO+dBfThHJo+ZteqkAfPEc+QHs/sSQ+l6klS2hseHqwqfgjh3JDpD
-        yJCEaSOhwQg3gNG1TsKpgfVv+pxWkaoSpHNpSYA/7X06mD946Hy9BHfVOw9O2oT1fxqxz5MbnO1eB
-        fqV+XmLrKT9Ooj9OWfwtNEfnT2Zw5NL8Iul2/olgrqXZ9J7/isN0tYFSlJfTm7wfAi0mxWrUIFrlw
-        G+q3HEaFw==;
-Received: from 177.17.141.107.dynamic.adsl.gvt.net.br ([177.17.141.107] helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iIrwY-0001iw-5x; Fri, 11 Oct 2019 10:14:42 +0000
-Date:   Fri, 11 Oct 2019 07:14:37 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Robert Richter <rrichter@marvell.com>
-Cc:     Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 03/19] EDAC: Introduce mci_for_each_dimm() iterator
-Message-ID: <20191011071437.4712eaa4@coco.lan>
-In-Reply-To: <20191010202418.25098-4-rrichter@marvell.com>
-References: <20191010202418.25098-1-rrichter@marvell.com>
-        <20191010202418.25098-4-rrichter@marvell.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Fri, 11 Oct 2019 06:15:39 -0400
+Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x9BAF3O6061629;
+        Fri, 11 Oct 2019 19:15:03 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav403.sakura.ne.jp);
+ Fri, 11 Oct 2019 19:15:03 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav403.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126227201116.bbtec.net [126.227.201.116])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x9BAEwA6061563
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Fri, 11 Oct 2019 19:15:02 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: unregister_netdevice: waiting for DEV to become free (2)
+To:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+References: <00000000000056268e05737dcb95@google.com>
+ <0000000000007d22100573d66078@google.com>
+Cc:     syzbot <syzbot+30209ea299c09d8785c9@syzkaller.appspotmail.com>,
+        ddstreet@ieee.org, dvyukov@google.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, bpf@vger.kernel.org
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <063a57ba-7723-6513-043e-ee99c5797271@I-love.SAKURA.ne.jp>
+Date:   Fri, 11 Oct 2019 19:14:54 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <0000000000007d22100573d66078@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, 10 Oct 2019 20:25:10 +0000
-Robert Richter <rrichter@marvell.com> escreveu:
+Hello.
 
-> Introduce the mci_for_each_dimm() iterator. It returns a pointer to a
-> struct dimm_info. This makes the declaration and use of an index
-> obsolete and avoids access to internal data of struct mci (direct
-> array access etc).
-> 
-> Signed-off-by: Robert Richter <rrichter@marvell.com>
+I noticed that syzbot is reporting that refcount incremented by bpf(BPF_MAP_UPDATE_ELEM)
+syscall is not decremented when unregister_netdevice() is called. Is this a BPF bug?
 
-Reviewed-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Kernel: 9e208aa06c2109b45eec6be049a8e47034748c20 on linux.git
+Config: https://syzkaller.appspot.com/text?tag=KernelConfig&x=73c2aace7604ab7
+Reproducer: https://syzkaller.appspot.com/text?tag=ReproC&x=1215afaf600000
+Debug printk patch:
+----------------------------------------
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index 9eda1c31d1f7..542a47fe6998 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -3732,10 +3732,7 @@ void netdev_run_todo(void);
+  *
+  * Release reference to device to allow it to be freed.
+  */
+-static inline void dev_put(struct net_device *dev)
+-{
+-	this_cpu_dec(*dev->pcpu_refcnt);
+-}
++extern void dev_put(struct net_device *dev);
+ 
+ /**
+  *	dev_hold - get reference to device
+@@ -3743,10 +3740,7 @@ static inline void dev_put(struct net_device *dev)
+  *
+  * Hold reference to device to keep it from being freed.
+  */
+-static inline void dev_hold(struct net_device *dev)
+-{
+-	this_cpu_inc(*dev->pcpu_refcnt);
+-}
++extern void dev_hold(struct net_device *dev);
+ 
+ /* Carrier loss detection, dial on demand. The functions netif_carrier_on
+  * and _off may be called from IRQ context, but it is caller
+diff --git a/net/core/dev.c b/net/core/dev.c
+index bf3ed413abaf..21f82aa92fad 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -8968,8 +8968,8 @@ static void netdev_wait_allrefs(struct net_device *dev)
+ 		refcnt = netdev_refcnt_read(dev);
+ 
+ 		if (refcnt && time_after(jiffies, warning_time + 10 * HZ)) {
+-			pr_emerg("unregister_netdevice: waiting for %s to become free. Usage count = %d\n",
+-				 dev->name, refcnt);
++			pr_emerg("unregister_netdevice: waiting for %s to become free. Usage count = %d %px\n",
++				 dev->name, refcnt, dev);
+ 			warning_time = jiffies;
+ 		}
+ 	}
+@@ -9930,3 +9930,24 @@ static int __init net_dev_init(void)
+ }
+ 
+ subsys_initcall(net_dev_init);
++
++
++void dev_put(struct net_device *dev)
++{
++	this_cpu_dec(*dev->pcpu_refcnt);
++	if (!strcmp(dev->name, "bridge_slave_0")) {
++		printk("dev_put: %px %d", dev, netdev_refcnt_read(dev));
++		dump_stack();
++	}
++}
++EXPORT_SYMBOL(dev_put);
++
++void dev_hold(struct net_device *dev)
++{
++	if (!strcmp(dev->name, "bridge_slave_0")) {
++		printk("dev_hold: %px %d", dev, netdev_refcnt_read(dev));
++		dump_stack();
++	}
++	this_cpu_inc(*dev->pcpu_refcnt);
++}
++EXPORT_SYMBOL(dev_hold);
+----------------------------------------
 
-> ---
->  drivers/edac/edac_mc.c       | 19 +++++++++++--------
->  drivers/edac/edac_mc_sysfs.c | 29 ++++++++++++-----------------
->  drivers/edac/ghes_edac.c     |  8 ++++----
->  drivers/edac/i5100_edac.c    | 13 +++++--------
->  include/linux/edac.h         |  7 +++++++
->  5 files changed, 39 insertions(+), 37 deletions(-)
-> 
-> diff --git a/drivers/edac/edac_mc.c b/drivers/edac/edac_mc.c
-> index 72088d49b03b..c5240bb4c6c0 100644
-> --- a/drivers/edac/edac_mc.c
-> +++ b/drivers/edac/edac_mc.c
-> @@ -145,15 +145,18 @@ static void edac_mc_dump_channel(struct rank_info *chan)
->  	edac_dbg(4, "    channel->dimm = %p\n", chan->dimm);
->  }
->  
-> -static void edac_mc_dump_dimm(struct dimm_info *dimm, int number)
-> +static void edac_mc_dump_dimm(struct dimm_info *dimm)
->  {
->  	char location[80];
->  
-> +	if (!dimm->nr_pages)
-> +		return;
-> +
->  	edac_dimm_info_location(dimm, location, sizeof(location));
->  
->  	edac_dbg(4, "%s%i: %smapped as virtual row %d, chan %d\n",
->  		 dimm->mci->csbased ? "rank" : "dimm",
-> -		 number, location, dimm->csrow, dimm->cschannel);
-> +		 dimm->idx, location, dimm->csrow, dimm->cschannel);
->  	edac_dbg(4, "  dimm = %p\n", dimm);
->  	edac_dbg(4, "  dimm->label = '%s'\n", dimm->label);
->  	edac_dbg(4, "  dimm->nr_pages = 0x%x\n", dimm->nr_pages);
-> @@ -702,6 +705,7 @@ EXPORT_SYMBOL_GPL(edac_get_owner);
->  int edac_mc_add_mc_with_groups(struct mem_ctl_info *mci,
->  			       const struct attribute_group **groups)
->  {
-> +	struct dimm_info *dimm;
->  	int ret = -EINVAL;
->  	edac_dbg(0, "\n");
->  
-> @@ -726,9 +730,9 @@ int edac_mc_add_mc_with_groups(struct mem_ctl_info *mci,
->  				if (csrow->channels[j]->dimm->nr_pages)
->  					edac_mc_dump_channel(csrow->channels[j]);
->  		}
-> -		for (i = 0; i < mci->tot_dimms; i++)
-> -			if (mci->dimms[i]->nr_pages)
-> -				edac_mc_dump_dimm(mci->dimms[i], i);
-> +
-> +		mci_for_each_dimm(mci, dimm)
-> +			edac_mc_dump_dimm(dimm);
->  	}
->  #endif
->  	mutex_lock(&mem_ctls_mutex);
-> @@ -1086,6 +1090,7 @@ void edac_mc_handle_error(const enum hw_event_mc_err_type type,
->  			  const char *msg,
->  			  const char *other_detail)
->  {
-> +	struct dimm_info *dimm;
->  	char *p;
->  	int row = -1, chan = -1;
->  	int pos[EDAC_MAX_LAYERS] = { top_layer, mid_layer, low_layer };
-> @@ -1146,9 +1151,7 @@ void edac_mc_handle_error(const enum hw_event_mc_err_type type,
->  	p = e->label;
->  	*p = '\0';
->  
-> -	for (i = 0; i < mci->tot_dimms; i++) {
-> -		struct dimm_info *dimm = mci->dimms[i];
-> -
-> +	mci_for_each_dimm(mci, dimm) {
->  		if (top_layer >= 0 && top_layer != dimm->location[0])
->  			continue;
->  		if (mid_layer >= 0 && mid_layer != dimm->location[1])
-> diff --git a/drivers/edac/edac_mc_sysfs.c b/drivers/edac/edac_mc_sysfs.c
-> index 91e4c8f155af..0367554e7437 100644
-> --- a/drivers/edac/edac_mc_sysfs.c
-> +++ b/drivers/edac/edac_mc_sysfs.c
-> @@ -621,8 +621,7 @@ static const struct device_type dimm_attr_type = {
->  
->  /* Create a DIMM object under specifed memory controller device */
->  static int edac_create_dimm_object(struct mem_ctl_info *mci,
-> -				   struct dimm_info *dimm,
-> -				   int index)
-> +				   struct dimm_info *dimm)
->  {
->  	int err;
->  	dimm->mci = mci;
-> @@ -632,9 +631,9 @@ static int edac_create_dimm_object(struct mem_ctl_info *mci,
->  
->  	dimm->dev.parent = &mci->dev;
->  	if (mci->csbased)
-> -		dev_set_name(&dimm->dev, "rank%d", index);
-> +		dev_set_name(&dimm->dev, "rank%d", dimm->idx);
->  	else
-> -		dev_set_name(&dimm->dev, "dimm%d", index);
-> +		dev_set_name(&dimm->dev, "dimm%d", dimm->idx);
->  	dev_set_drvdata(&dimm->dev, dimm);
->  	pm_runtime_forbid(&mci->dev);
->  
-> @@ -916,7 +915,8 @@ static const struct device_type mci_attr_type = {
->  int edac_create_sysfs_mci_device(struct mem_ctl_info *mci,
->  				 const struct attribute_group **groups)
->  {
-> -	int i, err;
-> +	struct dimm_info *dimm;
-> +	int err;
->  
->  	/* get the /sys/devices/system/edac subsys reference */
->  	mci->dev.type = &mci_attr_type;
-> @@ -940,13 +940,12 @@ int edac_create_sysfs_mci_device(struct mem_ctl_info *mci,
->  	/*
->  	 * Create the dimm/rank devices
->  	 */
-> -	for (i = 0; i < mci->tot_dimms; i++) {
-> -		struct dimm_info *dimm = mci->dimms[i];
-> +	mci_for_each_dimm(mci, dimm) {
->  		/* Only expose populated DIMMs */
->  		if (!dimm->nr_pages)
->  			continue;
->  
-> -		err = edac_create_dimm_object(mci, dimm, i);
-> +		err = edac_create_dimm_object(mci, dimm);
->  		if (err)
->  			goto fail_unregister_dimm;
->  	}
-> @@ -961,12 +960,9 @@ int edac_create_sysfs_mci_device(struct mem_ctl_info *mci,
->  	return 0;
->  
->  fail_unregister_dimm:
-> -	for (i--; i >= 0; i--) {
-> -		struct dimm_info *dimm = mci->dimms[i];
-> -		if (!dimm->nr_pages)
-> -			continue;
-> -
-> -		device_unregister(&dimm->dev);
-> +	mci_for_each_dimm(mci, dimm) {
-> +		if (device_is_registered(&dimm->dev))
-> +			device_unregister(&dimm->dev);
->  	}
->  	device_unregister(&mci->dev);
->  
-> @@ -978,7 +974,7 @@ int edac_create_sysfs_mci_device(struct mem_ctl_info *mci,
->   */
->  void edac_remove_sysfs_mci_device(struct mem_ctl_info *mci)
->  {
-> -	int i;
-> +	struct dimm_info *dimm;
->  
->  	edac_dbg(0, "\n");
->  
-> @@ -989,8 +985,7 @@ void edac_remove_sysfs_mci_device(struct mem_ctl_info *mci)
->  	edac_delete_csrow_objects(mci);
->  #endif
->  
-> -	for (i = 0; i < mci->tot_dimms; i++) {
-> -		struct dimm_info *dimm = mci->dimms[i];
-> +	mci_for_each_dimm(mci, dimm) {
->  		if (dimm->nr_pages == 0)
->  			continue;
->  		edac_dbg(1, "unregistering device %s\n", dev_name(&dimm->dev));
-> diff --git a/drivers/edac/ghes_edac.c b/drivers/edac/ghes_edac.c
-> index fb31e80dfe94..842080d7b33a 100644
-> --- a/drivers/edac/ghes_edac.c
-> +++ b/drivers/edac/ghes_edac.c
-> @@ -82,11 +82,11 @@ static void ghes_edac_count_dimms(const struct dmi_header *dh, void *arg)
->  static int get_dimm_smbios_index(u16 handle)
->  {
->  	struct mem_ctl_info *mci = ghes_pvt->mci;
-> -	int i;
-> +	struct dimm_info *dimm;
->  
-> -	for (i = 0; i < mci->tot_dimms; i++) {
-> -		if (mci->dimms[i]->smbios_handle == handle)
-> -			return i;
-> +	mci_for_each_dimm(mci, dimm) {
-> +		if (dimm->smbios_handle == handle)
-> +			return dimm->idx;
->  	}
->  	return -1;
->  }
-> diff --git a/drivers/edac/i5100_edac.c b/drivers/edac/i5100_edac.c
-> index 134586753311..0ddc41e47a96 100644
-> --- a/drivers/edac/i5100_edac.c
-> +++ b/drivers/edac/i5100_edac.c
-> @@ -846,20 +846,17 @@ static void i5100_init_interleaving(struct pci_dev *pdev,
->  
->  static void i5100_init_csrows(struct mem_ctl_info *mci)
->  {
-> -	int i;
->  	struct i5100_priv *priv = mci->pvt_info;
-> +	struct dimm_info *dimm;
->  
-> -	for (i = 0; i < mci->tot_dimms; i++) {
-> -		struct dimm_info *dimm;
-> -		const unsigned long npages = i5100_npages(mci, i);
-> -		const unsigned int chan = i5100_csrow_to_chan(mci, i);
-> -		const unsigned int rank = i5100_csrow_to_rank(mci, i);
-> +	mci_for_each_dimm(mci, dimm) {
-> +		const unsigned long npages = i5100_npages(mci, dimm->idx);
-> +		const unsigned int chan = i5100_csrow_to_chan(mci, dimm->idx);
-> +		const unsigned int rank = i5100_csrow_to_rank(mci, dimm->idx);
->  
->  		if (!npages)
->  			continue;
->  
-> -		dimm = edac_get_dimm(mci, chan, rank, 0);
-> -
->  		dimm->nr_pages = npages;
->  		dimm->grain = 32;
->  		dimm->dtype = (priv->mtr[chan][rank].width == 4) ?
-> diff --git a/include/linux/edac.h b/include/linux/edac.h
-> index 79c5564ee314..8beb6e834be9 100644
-> --- a/include/linux/edac.h
-> +++ b/include/linux/edac.h
-> @@ -599,6 +599,13 @@ struct mem_ctl_info {
->  	u16 fake_inject_count;
->  };
->  
-> +#define mci_for_each_dimm(mci, dimm)				\
-> +	for ((dimm) = (mci)->dimms[0];				\
-> +	     (dimm);						\
-> +	     (dimm) = (dimm)->idx + 1 < (mci)->tot_dimms	\
-> +		     ? (mci)->dimms[(dimm)->idx + 1]		\
-> +		     : NULL)
-> +
->  /**
->   * edac_get_dimm_by_index - Get DIMM info from a memory controller
->   *                          given by an index
+----------------------------------------
+Oct 11 14:33:06 ubuntu kernel: [  114.251175][ T8866] dev_hold: ffff888091fd2000 100
+Oct 11 14:33:06 ubuntu kernel: [  114.251185][ T8866] CPU: 3 PID: 8866 Comm: a.out Not tainted 5.4.0-rc2+ #217
+Oct 11 14:33:06 ubuntu kernel: [  114.251199][ T8866] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 04/13/2018
+Oct 11 14:33:06 ubuntu kernel: [  114.251208][ T8866] Call Trace:
+Oct 11 14:33:06 ubuntu kernel: [  114.251232][ T8866]  dump_stack+0x154/0x1c5
+Oct 11 14:33:06 ubuntu kernel: [  114.251253][ T8866]  dev_hold+0x73/0x80
+Oct 11 14:33:06 ubuntu kernel: [  114.251267][ T8866]  dev_get_by_index+0x1b3/0x2d0
+Oct 11 14:33:06 ubuntu kernel: [  114.251280][ T8866]  __dev_map_alloc_node+0x1c7/0x360
+Oct 11 14:33:06 ubuntu kernel: [  114.251299][ T8866]  dev_map_hash_update_elem+0x485/0x670
+Oct 11 14:33:06 ubuntu kernel: [  114.251320][ T8866]  __do_sys_bpf+0x35d6/0x38c0
+Oct 11 14:33:06 ubuntu kernel: [  114.251337][ T8866]  ? bpf_prog_load+0x1470/0x1470
+Oct 11 14:33:06 ubuntu kernel: [  114.251351][ T8866]  ? do_wp_page+0x3c8/0x1310
+Oct 11 14:33:06 ubuntu kernel: [  114.251364][ T8866]  ? finish_mkwrite_fault+0x300/0x300
+Oct 11 14:33:06 ubuntu kernel: [  114.251381][ T8866]  ? find_held_lock+0x35/0x1e0
+Oct 11 14:33:06 ubuntu kernel: [  114.251397][ T8866]  ? __do_page_fault+0x504/0xb60
+Oct 11 14:33:06 ubuntu kernel: [  114.251413][ T8866]  ? lock_downgrade+0x900/0x900
+Oct 11 14:33:06 ubuntu kernel: [  114.251426][ T8866]  ? __pmd_alloc+0x410/0x410
+Oct 11 14:33:06 ubuntu kernel: [  114.251446][ T8866]  ? __kasan_check_write+0x14/0x20
+Oct 11 14:33:06 ubuntu kernel: [  114.251457][ T8866]  ? up_read+0x1b6/0x7a0
+Oct 11 14:33:06 ubuntu kernel: [  114.251471][ T8866]  ? down_read_nested+0x480/0x480
+Oct 11 14:33:06 ubuntu kernel: [  114.251494][ T8866]  ? do_syscall_64+0x26/0x6a0
+Oct 11 14:33:06 ubuntu kernel: [  114.251507][ T8866]  ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Oct 11 14:33:06 ubuntu kernel: [  114.251515][ T8866]  ? do_syscall_64+0x26/0x6a0
+Oct 11 14:33:06 ubuntu kernel: [  114.251528][ T8866]  __x64_sys_bpf+0x73/0xb0
+Oct 11 14:33:06 ubuntu kernel: [  114.251541][ T8866]  do_syscall_64+0xde/0x6a0
+Oct 11 14:33:06 ubuntu kernel: [  114.251559][ T8866]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+(...snipped...)
+Oct 11 14:33:10 ubuntu kernel: [  117.459637][ T9584] dev_hold: ffff888091fd2000 200
+Oct 11 14:33:10 ubuntu kernel: [  117.459644][ T9584] CPU: 4 PID: 9584 Comm: a.out Not tainted 5.4.0-rc2+ #217
+Oct 11 14:33:10 ubuntu kernel: [  117.459652][ T9584] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 04/13/2018
+Oct 11 14:33:10 ubuntu kernel: [  117.459656][ T9584] Call Trace:
+Oct 11 14:33:10 ubuntu kernel: [  117.459669][ T9584]  dump_stack+0x154/0x1c5
+Oct 11 14:33:10 ubuntu kernel: [  117.459682][ T9584]  dev_hold+0x73/0x80
+Oct 11 14:33:10 ubuntu kernel: [  117.459695][ T9584]  dev_get_by_index+0x1b3/0x2d0
+Oct 11 14:33:10 ubuntu kernel: [  117.459706][ T9584]  __dev_map_alloc_node+0x1c7/0x360
+Oct 11 14:33:10 ubuntu kernel: [  117.459720][ T9584]  dev_map_hash_update_elem+0x485/0x670
+Oct 11 14:33:10 ubuntu kernel: [  117.459749][ T9584]  __do_sys_bpf+0x35d6/0x38c0
+Oct 11 14:33:10 ubuntu kernel: [  117.459762][ T9584]  ? bpf_prog_load+0x1470/0x1470
+Oct 11 14:33:10 ubuntu kernel: [  117.459769][ T9584]  ? do_wp_page+0x3c8/0x1310
+Oct 11 14:33:10 ubuntu kernel: [  117.459778][ T9584]  ? finish_mkwrite_fault+0x300/0x300
+Oct 11 14:33:10 ubuntu kernel: [  117.459787][ T9584]  ? find_held_lock+0x35/0x1e0
+Oct 11 14:33:10 ubuntu kernel: [  117.459797][ T9584]  ? __do_page_fault+0x504/0xb60
+Oct 11 14:33:10 ubuntu kernel: [  117.459807][ T9584]  ? lock_downgrade+0x900/0x900
+Oct 11 14:33:10 ubuntu kernel: [  117.459814][ T9584]  ? __pmd_alloc+0x410/0x410
+Oct 11 14:33:10 ubuntu kernel: [  117.459828][ T9584]  ? __kasan_check_write+0x14/0x20
+Oct 11 14:33:10 ubuntu kernel: [  117.459835][ T9584]  ? up_read+0x1b6/0x7a0
+Oct 11 14:33:10 ubuntu kernel: [  117.459846][ T9584]  ? down_read_nested+0x480/0x480
+Oct 11 14:33:10 ubuntu kernel: [  117.459862][ T9584]  ? do_syscall_64+0x26/0x6a0
+Oct 11 14:33:10 ubuntu kernel: [  117.459871][ T9584]  ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Oct 11 14:33:10 ubuntu kernel: [  117.459878][ T9584]  ? do_syscall_64+0x26/0x6a0
+Oct 11 14:33:10 ubuntu kernel: [  117.459891][ T9584]  __x64_sys_bpf+0x73/0xb0
+Oct 11 14:33:10 ubuntu kernel: [  117.459901][ T9584]  do_syscall_64+0xde/0x6a0
+Oct 11 14:33:10 ubuntu kernel: [  117.459911][ T9584]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+(...snipped...)
+Oct 11 14:33:26 ubuntu kernel: [  134.146838][T13860] dev_hold: ffff888091fd2000 850
+Oct 11 14:33:26 ubuntu kernel: [  134.146847][T13860] CPU: 4 PID: 13860 Comm: a.out Not tainted 5.4.0-rc2+ #217
+Oct 11 14:33:26 ubuntu kernel: [  134.146853][T13860] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 04/13/2018
+Oct 11 14:33:26 ubuntu kernel: [  134.146859][T13860] Call Trace:
+Oct 11 14:33:26 ubuntu kernel: [  134.146872][T13860]  dump_stack+0x154/0x1c5
+Oct 11 14:33:26 ubuntu kernel: [  134.146885][T13860]  dev_hold+0x73/0x80
+Oct 11 14:33:26 ubuntu kernel: [  134.146893][T13860]  dev_get_by_index+0x1b3/0x2d0
+Oct 11 14:33:26 ubuntu kernel: [  134.146903][T13860]  __dev_map_alloc_node+0x1c7/0x360
+Oct 11 14:33:26 ubuntu kernel: [  134.146918][T13860]  dev_map_hash_update_elem+0x485/0x670
+Oct 11 14:33:26 ubuntu kernel: [  134.146932][T13860]  __do_sys_bpf+0x35d6/0x38c0
+Oct 11 14:33:26 ubuntu kernel: [  134.146944][T13860]  ? bpf_prog_load+0x1470/0x1470
+Oct 11 14:33:26 ubuntu kernel: [  134.146953][T13860]  ? do_wp_page+0x3c8/0x1310
+Oct 11 14:33:26 ubuntu kernel: [  134.146964][T13860]  ? finish_mkwrite_fault+0x300/0x300
+Oct 11 14:33:26 ubuntu kernel: [  134.146975][T13860]  ? find_held_lock+0x35/0x1e0
+Oct 11 14:33:26 ubuntu kernel: [  134.146985][T13860]  ? __do_page_fault+0x504/0xb60
+Oct 11 14:33:26 ubuntu kernel: [  134.146994][T13860]  ? lock_downgrade+0x900/0x900
+Oct 11 14:33:26 ubuntu kernel: [  134.147002][T13860]  ? __pmd_alloc+0x410/0x410
+Oct 11 14:33:26 ubuntu kernel: [  134.147017][T13860]  ? __kasan_check_write+0x14/0x20
+Oct 11 14:33:26 ubuntu kernel: [  134.147024][T13860]  ? up_read+0x1b6/0x7a0
+Oct 11 14:33:26 ubuntu kernel: [  134.147033][T13860]  ? down_read_nested+0x480/0x480
+Oct 11 14:33:26 ubuntu kernel: [  134.147048][T13860]  ? do_syscall_64+0x26/0x6a0
+Oct 11 14:33:26 ubuntu kernel: [  134.147056][T13860]  ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Oct 11 14:33:26 ubuntu kernel: [  134.147063][T13860]  ? do_syscall_64+0x26/0x6a0
+Oct 11 14:33:26 ubuntu kernel: [  134.147074][T13860]  __x64_sys_bpf+0x73/0xb0
+Oct 11 14:33:26 ubuntu kernel: [  134.147084][T13860]  do_syscall_64+0xde/0x6a0
+Oct 11 14:33:26 ubuntu kernel: [  134.147095][T13860]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+(...snipped...)
+Oct 11 14:33:41 ubuntu kernel: [  148.384539][ T4514] unregister_netdevice: waiting for bridge_slave_0 to become free. Usage count = 850 ffff888091fd2000
+----------------------------------------
 
-
-
-Thanks,
-Mauro
