@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53BE0D3E35
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 13:20:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B36CAD3E39
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 13:20:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727982AbfJKLUV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 07:20:21 -0400
-Received: from mail-wm1-f43.google.com ([209.85.128.43]:52816 "EHLO
-        mail-wm1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727477AbfJKLUT (ORCPT
+        id S1727931AbfJKLUU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 07:20:20 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54357 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727226AbfJKLUT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 11 Oct 2019 07:20:19 -0400
-Received: by mail-wm1-f43.google.com with SMTP id r19so10023332wmh.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 04:20:17 -0700 (PDT)
+Received: by mail-wm1-f67.google.com with SMTP id p7so10022189wmp.4
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 04:20:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=colorfullife-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8FUzCXKMgFlRWZSYjz6SB7CgHl35Q9I/1MXzksfCd2M=;
-        b=J1tLsBFLJvqruEsBrGtzikhkMUsPFoBu7PTBR9Aor74VABITwmub6lm3lbGj3o6hx3
-         sLXUnyjEw24VLTbWji8uSjR5LHxpXOd/P1faFWwu2D/2WrWzz6JLq0S/0qmjwVxhiQjK
-         pKYBxuMjn8WMrCSRHLYpgXACm5gtmDyhgeyIiJ0HFVUIW0r1QiwBNstk2qoYE7jT+t7q
-         +gf9D5EqFxmUmHjeYSraRQUiwB3DcGwBLqp3qwA/MNbtKyW1eb7UtElm+bkJ/rHGRZMv
-         ybwGRQXkjvmpDbfd0owHx9/S5TgKYvkLtA9zl9m/l+rPJysN9JudIHF4ZS/KhodEJl+b
-         Ix6g==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=fPvm5aKUo3m6VNUgMDaYDplQQ9+Y7qvr7iXnVapNqxw=;
+        b=0QpWmJT3DMoGSvj9aESlR0hwdw5Ii86mJL9w/2qZ8Gp/B0PfF59v1jfPslInshWm+c
+         +eF0+aK+OK7KiQIimaFgI5ZkvO/PK5agOuk2isVINYlpfgFD3SdOhUqG9UemAQGn9mj0
+         lJE6aDaOMTCyp+1k6FndB/evKKVh2Kyfv/7IgL7tw3ya+UlmIRQeruFrQ6p1CYFWldoQ
+         op2v4O6trr+9rhU8tQyMPeWQSkTa1MIBOpDCMuF6AFr2gNRlsle7Cf5R1Fvjpl2HvjZH
+         sV7X/fZHfcHXw0uddKP/3F8eVg18qfx0d+GcO4nuvzFEWoFJph2YK0Yiay3CXMruaxz9
+         /EVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8FUzCXKMgFlRWZSYjz6SB7CgHl35Q9I/1MXzksfCd2M=;
-        b=cdYvnW3bqpUoaFl0Yz253Ad/sDtuP433s+9RLcK9ZUg4Bn9UQKaOIFE7JjdPuKMa9q
-         03QZEXvatJuqfetue6oJJVhFPOUm/TSlkeDYLcVdKFIg51qp53IAYJJHiTLklPHUAW+q
-         iAonRzvbmrkOB/e8lli50LkPPhHd7lYVGWHIZ5YduQPt4aPx+E29Ufc/E3/qBhiQKvD2
-         EM402JnD6Tj5bP9m23fCgRpPwxgX2PdBlPO8FYl+t3UC8fHd51AEmalAek5HU/ZZyPsC
-         UoUuSBssr83tDqzOzkyZsMBbtsnTfo2/XzWNDjIux4KGIgWpS/vR44WLxSV9SyGCRIUq
-         daSQ==
-X-Gm-Message-State: APjAAAVdaj011y3VVzX1ejgPWthz/aIrN8/PL5ncFIkrvwlbQGDX4qQN
-        p6WSP+66U59hnXkyFIMSChi+beakLz4=
-X-Google-Smtp-Source: APXvYqwk+ygknJKIqirZvNsgW6OwfjyDNvKxMAOqWXDIZyFUBV8VLnoRDN0jpl/9Ehcp1VF9EMYkcA==
-X-Received: by 2002:a05:600c:2481:: with SMTP id 1mr2690748wms.98.1570792816248;
-        Fri, 11 Oct 2019 04:20:16 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=fPvm5aKUo3m6VNUgMDaYDplQQ9+Y7qvr7iXnVapNqxw=;
+        b=HhLat8gbHqiY1GxzpG7EqsU9O7Uboyavo6ipUyuqdscVRr6HuajUUg49pLls/Ok9Sn
+         P6YYoPlSxrXCGoAs9WABDVpA4eVZsu4rux1EPZQf3GdoBgT/CBUSq2B7EFDSzmjGKQln
+         vu15Fkd0H76v61Gv5EOKNWREEOhDZBjcdVZR57DMvaOGJYIsBodQ69hOJwPFCO3z/ym+
+         C2ebHtq3w1/Xxvu+dRs631XSaNBiqWJvBhsnxSivpjXuxZmFaiiw39XC4eE/TY+u5xeL
+         fznqCTkgfTgUin3yi1W7+lT+4ou5LwUauZ5wXuY18ThPSLOIBNSEZyjCIOb9hZPVxwjP
+         Mt0Q==
+X-Gm-Message-State: APjAAAVe0PCys9Exa7alilQQ1ft+UtKD9h51eT26R4Yf3ZP7MHKyboy3
+        vbOQLk1ZQ685XVIxSVn2YcpWIPPe81c=
+X-Google-Smtp-Source: APXvYqw5V0EY8E7i0OWKHDkL0CgWxMqJOgMhRYPICBdFfcmyVxuHTqUldeOUDQDtEzQ7YXPavSkekQ==
+X-Received: by 2002:a05:600c:34b:: with SMTP id u11mr2725338wmd.172.1570792817334;
+        Fri, 11 Oct 2019 04:20:17 -0700 (PDT)
 Received: from linux.fritz.box (p200300D99705BE00E22045ECB41D901D.dip0.t-ipconnect.de. [2003:d9:9705:be00:e220:45ec:b41d:901d])
-        by smtp.googlemail.com with ESMTPSA id 63sm12781226wri.25.2019.10.11.04.20.14
+        by smtp.googlemail.com with ESMTPSA id 63sm12781226wri.25.2019.10.11.04.20.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2019 04:20:15 -0700 (PDT)
+        Fri, 11 Oct 2019 04:20:16 -0700 (PDT)
 From:   Manfred Spraul <manfred@colorfullife.com>
 To:     LKML <linux-kernel@vger.kernel.org>,
         Davidlohr Bueso <dave@stgolabs.net>,
@@ -53,10 +53,12 @@ Cc:     1vier1@web.de, Andrew Morton <akpm@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Jonathan Corbet <corbet@lwn.net>,
         Manfred Spraul <manfred@colorfullife.com>
-Subject: [PATCH 0/3] Clarify/standardize memory barriers for ipc
-Date:   Fri, 11 Oct 2019 13:20:04 +0200
-Message-Id: <20191011112009.2365-1-manfred@colorfullife.com>
+Subject: [PATCH 1/5] wake_q: Cleanup + Documentation update.
+Date:   Fri, 11 Oct 2019 13:20:05 +0200
+Message-Id: <20191011112009.2365-2-manfred@colorfullife.com>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20191011112009.2365-1-manfred@colorfullife.com>
+References: <20191011112009.2365-1-manfred@colorfullife.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,44 +66,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+1) wake_q_add() contains a memory barrier, and callers such as
+ipc/mqueue.c rely on this barrier.
+Unfortunately, this is documented in ipc/mqueue.c, and not in the
+description of wake_q_add().
+Therefore: Update the documentation.
+Removing/updating ipc/mqueue.c will happen with the next patch in the
+series.
 
-Partially based on the findings from Waiman Long:
+2) wake_up_q() relies on the memory barrier in try_to_wake_up().
+Add a comment, to simplify searching.
 
-a) The memory barriers in ipc are not properly documented, and at least
-for some architectures insufficient:
-Reading the xyz->status is only a control barrier, thus
-smp_acquire__after_ctrl_dep() was missing in mqueue.c and msg.c
-sem.c contained a full smp_mb(), which is not required.
+3) wake_q.next is accessed without synchroniyation by wake_q_add(),
+using cmpxchg_relaxed(), and by wake_up_q().
+Therefore: Use WRITE_ONCE in wake_up_q(), to ensure that the
+compiler doesn't perform any tricks.
 
-Patch 1: Document that wake_q_add() contains a barrier.
+Signed-off-by: Manfred Spraul <manfred@colorfullife.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+---
+ kernel/sched/core.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-b) wake_q_add() provides a memory barrier, ipc/mqueue.c relies on this.
-Move the documentation to wake_q_add(), instead writing it in ipc/mqueue.c
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index dd05a378631a..2cf3f7321303 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -440,8 +440,11 @@ static bool __wake_q_add(struct wake_q_head *head, struct task_struct *task)
+  * @task: the task to queue for 'later' wakeup
+  *
+  * Queue a task for later wakeup, most likely by the wake_up_q() call in the
+- * same context, _HOWEVER_ this is not guaranteed, the wakeup can come
+- * instantly.
++ * same context, _HOWEVER_ this is not guaranteed. Especially, the wakeup
++ * may happen before the function returns.
++ *
++ * What is guaranteed is that there is a memory barrier before the wakeup,
++ * callers may rely on this barrier.
+  *
+  * This function must be used as-if it were wake_up_process(); IOW the task
+  * must be ready to be woken at this location.
+@@ -486,11 +489,14 @@ void wake_up_q(struct wake_q_head *head)
+ 		BUG_ON(!task);
+ 		/* Task can safely be re-inserted now: */
+ 		node = node->next;
+-		task->wake_q.next = NULL;
++
++		WRITE_ONCE(task->wake_q.next, NULL);
+ 
+ 		/*
+ 		 * wake_up_process() executes a full barrier, which pairs with
+ 		 * the queueing in wake_q_add() so as not to miss wakeups.
++		 * The barrier is the smp_mb__after_spinlock() in
++		 * try_to_wake_up().
+ 		 */
+ 		wake_up_process(task);
+ 		put_task_struct(task);
+-- 
+2.21.0
 
-Patch 2-4: Update the ipc code, especially add missing
-           smp_mb__after_ctrl_dep().
-
-c) [optional]
-Clarify that smp_mb__{before,after}_atomic() are compatible with all
-RMW atomic operations, not just the operations that do not return a value.
-
-Patch 5: Documentation for smp_mb__{before,after}_atomic().
-
-From my point of view, patch 1 is a prerequisite for patches 2-4:
-If the barrier is not part of the documented API, then ipc should not rely
-on it, i.e. then I would propose to replace the WRITE_ONCE with
-smp_store_release().
-
-Open issues:
-- More testing. I did some tests, but doubt that the tests would be
-  sufficient to show issues with regards to incorrect memory barriers.
-
-- Should I add a "Fixes:" or "Cc:stable"? The only issues that I see are
-  the missing smp_mb__after_ctrl_dep(), and WRITE_ONCE() vs.
-  "ptr = NULL".
-
-What do you think?
-
---
-	Manfred
