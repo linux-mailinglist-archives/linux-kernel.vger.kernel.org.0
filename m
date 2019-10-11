@@ -2,89 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57820D4A3A
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 00:12:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97E8AD4A3B
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 00:16:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729380AbfJKWMf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 18:12:35 -0400
-Received: from mx2a.mailbox.org ([80.241.60.219]:24435 "EHLO mx2a.mailbox.org"
+        id S1729397AbfJKWQf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 18:16:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728719AbfJKWMf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 18:12:35 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        id S1729124AbfJKWQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 18:16:35 -0400
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx2a.mailbox.org (Postfix) with ESMTPS id 013FEA2475;
-        Sat, 12 Oct 2019 00:12:31 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
-        with ESMTP id awj_3okSA5oP; Sat, 12 Oct 2019 00:12:26 +0200 (CEST)
-Date:   Sat, 12 Oct 2019 09:12:08 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Michael Kerrisk <mtk.manpages@gmail.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>, libc-alpha@sourceware.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Shuah Khan <shuah@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Roman Gushchin <guro@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 1/2] clone3: add CLONE3_CLEAR_SIGHAND
-Message-ID: <20191011221208.5eglbazksfigliob@yavin.dot.cyphar.com>
-References: <20191010133518.5420-1-christian.brauner@ubuntu.com>
- <CAHO5Pa3V7fDb_+U-v+LB+TeAU0vfJyUMs9mD4ZqUtbLpZcD4nA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="dznhhg5jfs2k76ol"
-Content-Disposition: inline
-In-Reply-To: <CAHO5Pa3V7fDb_+U-v+LB+TeAU0vfJyUMs9mD4ZqUtbLpZcD4nA@mail.gmail.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id A53F9206CD;
+        Fri, 11 Oct 2019 22:16:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570832195;
+        bh=M1UCWtUQBgIjYG4651k6EPCtET4bBtdbxlyASuHK0mo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=CPXMhtAQCg6yCVsqHqY7yrIWbqdBfmUiop4Rh8U1wiqL+qqTxu2kcQyM0ztXuLOi9
+         gcrmh6X3VluuEsKamMJVzIlILQjiX8ukDnY4x1wSAnsZEyKPZZ1vsEXEk4+6/KtU1b
+         /cP8xYxgIvk2o3RrgxFPDoJdCmJkJWhCofl1nW9U=
+Date:   Fri, 11 Oct 2019 15:16:34 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Subject: Re: [PATCH v1] drivers/base/memory.c: Don't access uninitialized
+ memmaps in soft_offline_page_store()
+Message-Id: <20191011151634.0b566c9e32e8d0e11181d025@linux-foundation.org>
+In-Reply-To: <20191010141200.8985-1-david@redhat.com>
+References: <20191010141200.8985-1-david@redhat.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 10 Oct 2019 16:12:00 +0200 David Hildenbrand <david@redhat.com> wrote:
 
---dznhhg5jfs2k76ol
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Uninitialized memmaps contain garbage and in the worst case trigger kernel
+> BUGs, especially with CONFIG_PAGE_POISONING. They should not get
+> touched.
+> 
+> Right now, when trying to soft-offline a PFN that resides on a memory
+> block that was never onlined, one gets a misleading error with
+> CONFIG_PAGE_POISONING:
+>   :/# echo 5637144576 > /sys/devices/system/memory/soft_offline_page
+>   [   23.097167] soft offline: 0x150000 page already poisoned
+> 
+> But the actual result depends on the garbage in the memmap.
+> 
+> soft_offline_page() can only work with online pages, it returns -EIO in
+> case of ZONE_DEVICE. Make sure to only forward pages that are online
+> (iow, managed by the buddy) and, therefore, have an initialized memmap.
+> 
+> Add a check against pfn_to_online_page() and similarly return -EIO.
+> 
+> Fixes: f1dd2cd13c4b ("mm, memory_hotplug: do not associate hotadded memory to zones until online") # visible after d0dc12e86b319
 
-On 2019-10-11, Michael Kerrisk <mtk.manpages@gmail.com> wrote:
-> Why CLONE3_CLEAR_SIGHAND rather than just CLONE_CLEAR_SIGHAND?
+Should this be cc:stable?
 
-There are no more flag bits left for the classic clone()/clone2() (the
-last one was used up by CLONE_PIDFD) -- thus this flag is clone3()-only.
+What is the relationship between this and some similar fixes in the
+series "mm/memory_hotplug: Shrink zones before removing memory", v6?
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+Should any of the patches in "mm/memory_hotplug: Shrink zones before
+removing memory", v6 be cc:stable?
 
---dznhhg5jfs2k76ol
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXaD+NAAKCRCdlLljIbnQ
-EsXLAP4svXcWl20h3G+bd587VKul6LgrZoHh8ME/zbe/4bqIygD+KiTbpJcNbA2S
-nyKwJIJkd/7LCZoh82sx/bDaoiDAdAQ=
-=scKk
------END PGP SIGNATURE-----
-
---dznhhg5jfs2k76ol--
