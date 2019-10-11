@@ -2,157 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C1CCD38A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 07:17:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7480FD38AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 07:21:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbfJKFQF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 01:16:05 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40091 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726099AbfJKFQF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 01:16:05 -0400
-Received: by mail-pg1-f196.google.com with SMTP id d26so5082099pgl.7
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 22:16:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=axtens.net; s=google;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=JNE3qIp3GwZhiIaVERKeTReBCbfaT6qnnngWA97+jmk=;
-        b=AOu22roDAjo2Iw+3ow0fVFNymLA4XBqbwMDgFJZyPjBxC4xlTXYjrRBrz2nneQ5BxF
-         sbxK7nQd39Xz28F4U95JzmCvqagYnkud8AjfEHFfy1gzZ0Xf5ELRIiKXZHiGMtS6LAgp
-         5GYBEWP2o+WH4nxjrWEq08XdmsoVQ9uFUxcWY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=JNE3qIp3GwZhiIaVERKeTReBCbfaT6qnnngWA97+jmk=;
-        b=A7j5Hj6BYfCtYQ4qZWoAZxaN+0Za3vwyWlVfnd+NAzMpGMaEuZkFhWHejtOi/PeW3m
-         4liz8Kb7MX4PZGl376PADzQYiIj9ys4qikblY3L+cZvnjAnCi2hb399TzQg1xMkzjhrJ
-         s7BweAGKtIUDnXuokHHkyqXxGM3XQymosgdvaqg4fI3UMGyBSYIv2d05+uGfn/imJGe5
-         u9svTO2RsebjU0HaemQL+KRrtRtwLb2N0nvwHRJPGMFWOnxzpeueImZ5J4Bx/+3gN9o6
-         Em5AhI9aQvgsr9LCSHa5QQaWjpimhjIQwFC7VBQWKgdHrizJeFmL/TPBmlpUwouuhmk4
-         kcSw==
-X-Gm-Message-State: APjAAAWLgzAM/SeVjacHC8yOGPTj1DCdZ8NY8PQvp4PUGUhFgCMKCzQt
-        i7VWAza+3dMHv4J6VHLd7i7e/tZ2sJ0zJw==
-X-Google-Smtp-Source: APXvYqyssA7gSzANSBd3uHeJuSuJcZZ6Tgu3LYuU0Dw0BEbm5M5u9xetMF08ol8pUsyxy0slgFZujw==
-X-Received: by 2002:aa7:8dd9:: with SMTP id j25mr12341886pfr.94.1570770964627;
-        Thu, 10 Oct 2019 22:16:04 -0700 (PDT)
-Received: from localhost (ppp167-251-205.static.internode.on.net. [59.167.251.205])
-        by smtp.gmail.com with ESMTPSA id x125sm7795793pfb.93.2019.10.10.22.16.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 22:16:03 -0700 (PDT)
-From:   Daniel Axtens <dja@axtens.net>
-To:     Uladzislau Rezki <urezki@gmail.com>
-Cc:     kasan-dev@googlegroups.com, linux-mm@kvack.org, x86@kernel.org,
-        aryabinin@virtuozzo.com, glider@google.com, luto@kernel.org,
-        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        dvyukov@google.com, christophe.leroy@c-s.fr,
-        linuxppc-dev@lists.ozlabs.org, gor@linux.ibm.com
-Subject: Re: [PATCH v8 1/5] kasan: support backing vmalloc space with real shadow memory
-In-Reply-To: <20191007080209.GA22997@pc636>
-References: <20191001065834.8880-1-dja@axtens.net> <20191001065834.8880-2-dja@axtens.net> <20191007080209.GA22997@pc636>
-Date:   Fri, 11 Oct 2019 16:15:59 +1100
-Message-ID: <87sgnzuak0.fsf@dja-thinkpad.axtens.net>
+        id S1726358AbfJKFV1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 01:21:27 -0400
+Received: from mga18.intel.com ([134.134.136.126]:60995 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726099AbfJKFV1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 01:21:27 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2019 22:21:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,282,1566889200"; 
+   d="scan'208";a="200682314"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by FMSMGA003.fm.intel.com with ESMTP; 10 Oct 2019 22:21:24 -0700
+Date:   Fri, 11 Oct 2019 13:21:07 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     Wei Yang <richardw.yang@linux.intel.com>
+Cc:     akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
+        jglisse@redhat.com, mike.kravetz@oracle.com, riel@surriel.com,
+        khlebnikov@yandex-team.ru, cai@lca.pw, shakeelb@google.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [Patch v3 1/2] mm/rmap.c: don't reuse anon_vma if we just want a
+ copy
+Message-ID: <20191011052107.GA22714@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <20191011025841.16801-1-richardw.yang@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191011025841.16801-1-richardw.yang@linux.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Uladzislau,
-
-
-> Looking at it one more, i think above part of code is a bit wrong
-> and should be separated from merge_or_add_vmap_area() logic. The
-> reason is to keep it simple and do only what it is supposed to do:
-> merging or adding.
+On Fri, Oct 11, 2019 at 10:58:40AM +0800, Wei Yang wrote:
+>Before commit 7a3ef208e662 ("mm: prevent endless growth of anon_vma
+>hierarchy"), anon_vma_clone() doesn't change dst->anon_vma. While after
+>this commit, anon_vma_clone() will try to reuse an exist one on forking.
 >
-> Also the kasan_release_vmalloc() gets called twice there and looks like
-> a duplication. Apart of that, merge_or_add_vmap_area() can be called via
-> recovery path when vmap/vmaps is/are not even setup. See percpu
-> allocator.
+>But this commit go a little bit further for the case not forking.
+>anon_vma_clone() is called from __vma_split(), __split_vma(), copy_vma()
+>and anon_vma_fork(). For the first three places, the purpose here is get
+>a copy of src and we don't expect to touch dst->anon_vma even it is
+>NULL. While after that commit, it is possible to reuse an anon_vma when
+>dst->anon_vma is NULL. This is not we intend to have.
 >
-> I guess your part could be moved directly to the __purge_vmap_area_lazy()
-> where all vmaps are lazily freed. To do so, we also need to modify
-> merge_or_add_vmap_area() to return merged area:
-
-Thanks for the review. I've integrated your snippet - it seems to work
-fine, and I agree that it is much simpler and clearer. so I've rolled it
-in to v9 which I will post soon.
-
-Regards,
-Daniel
-
+>This patch stop reuse anon_vma for non-fork cases.
 >
-> <snip>
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index e92ff5f7dd8b..fecde4312d68 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -683,7 +683,7 @@ insert_vmap_area_augment(struct vmap_area *va,
->   * free area is inserted. If VA has been merged, it is
->   * freed.
->   */
-> -static __always_inline void
-> +static __always_inline struct vmap_area *
->  merge_or_add_vmap_area(struct vmap_area *va,
->         struct rb_root *root, struct list_head *head)
->  {
-> @@ -750,7 +750,10 @@ merge_or_add_vmap_area(struct vmap_area *va,
->  
->                         /* Free vmap_area object. */
->                         kmem_cache_free(vmap_area_cachep, va);
-> -                       return;
-> +
-> +                       /* Point to the new merged area. */
-> +                       va = sibling;
-> +                       merged = true;
->                 }
->         }
->  
-> @@ -759,6 +762,8 @@ merge_or_add_vmap_area(struct vmap_area *va,
->                 link_va(va, root, parent, link, head);
->                 augment_tree_propagate_from(va);
->         }
-> +
-> +       return va;
->  }
->  
->  static __always_inline bool
-> @@ -1172,7 +1177,7 @@ static void __free_vmap_area(struct vmap_area *va)
->         /*
->          * Merge VA with its neighbors, otherwise just add it.
->          */
-> -       merge_or_add_vmap_area(va,
-> +       (void) merge_or_add_vmap_area(va,
->                 &free_vmap_area_root, &free_vmap_area_list);
->  }
->  
-> @@ -1279,15 +1284,20 @@ static bool __purge_vmap_area_lazy(unsigned long start, unsigned long end)
->         spin_lock(&vmap_area_lock);
->         llist_for_each_entry_safe(va, n_va, valist, purge_list) {
->                 unsigned long nr = (va->va_end - va->va_start) >> PAGE_SHIFT;
-> +               unsigned long orig_start = va->va_start;
-> +               unsigned long orig_end = va->va_end;
->  
->                 /*
->                  * Finally insert or merge lazily-freed area. It is
->                  * detached and there is no need to "unlink" it from
->                  * anything.
->                  */
-> -               merge_or_add_vmap_area(va,
-> +               va = merge_or_add_vmap_area(va,
->                         &free_vmap_area_root, &free_vmap_area_list);
->  
-> +               kasan_release_vmalloc(orig_start,
-> +                       orig_end, va->va_start, va->va_end);
-> +
->                 atomic_long_sub(nr, &vmap_lazy_nr);
->  
->                 if (atomic_long_read(&vmap_lazy_nr) < resched_threshold)
-> <snip>
+>Fix commit 7a3ef208e662 ("mm: prevent endless growth of anon_vma
+>hierarchy")
 >
-> --
-> Vlad Rezki
+>Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+>
+>---
+>v3:
+>  * use dst->anon_vma and src->anon_vma to get reuse state
+>    pointed by Konstantin Khlebnikov
+>---
+> mm/rmap.c | 12 +++++++++---
+> 1 file changed, 9 insertions(+), 3 deletions(-)
+>
+>diff --git a/mm/rmap.c b/mm/rmap.c
+>index d9a23bb773bf..fc0aba7fb9b9 100644
+>--- a/mm/rmap.c
+>+++ b/mm/rmap.c
+>@@ -250,7 +250,13 @@ static inline void unlock_anon_vma_root(struct anon_vma *root)
+>  * Attach the anon_vmas from src to dst.
+>  * Returns 0 on success, -ENOMEM on failure.
+>  *
+>- * If dst->anon_vma is NULL this function tries to find and reuse existing
+>+ * anon_vma_clone() is called by __vma_split(), __split_vma(), copy_vma() and
+>+ * anon_vma_fork(). The first three want an exact copy of src, while the last
+>+ * one, anon_vma_fork(), may try to reuse an existing anon_vma to prevent
+>+ * endless growth of anon_vma. Since dst->anon_vma is set to NULL before call,
+>+ * we can identify this case by (reuse = !dst->anon_vma && src->anon_vma).
+>+ *
+>+ * If reuse is true, this function tries to find and reuse existing
+>  * anon_vma which has no vmas and only one child anon_vma. This prevents
+>  * degradation of anon_vma hierarchy to endless linear chain in case of
+>  * constantly forking task. On the other hand, an anon_vma with more than one
+>@@ -262,6 +268,7 @@ int anon_vma_clone(struct vm_area_struct *dst, struct vm_area_struct *src)
+> {
+> 	struct anon_vma_chain *avc, *pavc;
+> 	struct anon_vma *root = NULL;
+>+	bool reuse = !dst->anon_vma && src->anon_vma;
+> 
+> 	list_for_each_entry_reverse(pavc, &src->anon_vma_chain, same_vma) {
+> 		struct anon_vma *anon_vma;
+>@@ -286,8 +293,7 @@ int anon_vma_clone(struct vm_area_struct *dst, struct vm_area_struct *src)
+> 		 * will always reuse it. Root anon_vma is never reused:
+> 		 * it has self-parent reference and at least one child.
+> 		 */
+>-		if (!dst->anon_vma && anon_vma != src->anon_vma &&
+>-				anon_vma->degree < 2)
+>+		if (reuse && anon_vma != src->anon_vma && anon_vma->degree < 2)
+> 			dst->anon_vma = anon_vma;
+
+What a shame.
+
+dst->anon_vma would be changed in the loop, so we only need to assign it when
+dst->anon_vma == NULL.
+
+> 	}
+> 	if (dst->anon_vma)
+>-- 
+>2.17.1
+
+-- 
+Wei Yang
+Help you, Help me
