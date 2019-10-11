@@ -2,84 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03EF9D406B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 15:07:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8B13D4096
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 15:09:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728214AbfJKNHQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 09:07:16 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:54945 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727709AbfJKNHQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 09:07:16 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9BD6lwL021879;
-        Fri, 11 Oct 2019 15:07:02 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=klfGUH5dxwRvx6PXzWgeW52/ZQWuSqdDdFx4SGnAlS4=;
- b=RZB1+1VtH8UvSPqj7nDzvpZlumAZiVIzoig/VFcxT54qxXkZWDZON8vjwBaTLhl5PlGJ
- WDWaMKcgESwxdVae5WLci4JjHy5lB8wUTumrgkEHc1xRJ3PWE+r4tmjPxckHkIUuhYf9
- 5TK0GxjGBS912OgSj9qSUli+xSB2IyM5KMpRghBRfIkNw5XRDJBuBciZzdjbe3TNUspc
- GUKxKsMMGusLEhzzc8obDfM6Gz7l0Qr3pA612YQ24qYXwo9JFTxJwc4ktPl53anyEyLw
- BouNE3Oxaiq/wF87KVUr3WZOonHy5YInEJVYit9LFLJe7C+tepsJtPs07FwqgjPxgTaI WQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2vegxw9x0p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 11 Oct 2019 15:07:02 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8B3D7100034;
-        Fri, 11 Oct 2019 15:07:01 +0200 (CEST)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 781192BE25F;
-        Fri, 11 Oct 2019 15:07:01 +0200 (CEST)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 11 Oct
- 2019 15:07:01 +0200
-Received: from localhost (10.201.20.122) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 11 Oct 2019 15:07:00
- +0200
-From:   Benjamin Gaignard <benjamin.gaignard@st.com>
-To:     <alexandre.torgue@st.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>
-CC:     <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH] ARM: dts: stm32f469: remove useless interrupt from dsi node
-Date:   Fri, 11 Oct 2019 15:06:58 +0200
-Message-ID: <20191011130658.23670-1-benjamin.gaignard@st.com>
-X-Mailer: git-send-email 2.15.0
+        id S1728560AbfJKNIL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 09:08:11 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:13287 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728511AbfJKNIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 09:08:07 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0B6553082128;
+        Fri, 11 Oct 2019 13:08:07 +0000 (UTC)
+Received: from steredhat.redhat.com (ovpn-117-54.ams2.redhat.com [10.36.117.54])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AD59C60600;
+        Fri, 11 Oct 2019 13:07:59 +0000 (UTC)
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     virtualization@lists.linux-foundation.org,
+        Jorgen Hansen <jhansen@vmware.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Adit Ranadive <aditr@vmware.com>,
+        Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net 0/2] vsock: don't allow half-closed socket in the host transports
+Date:   Fri, 11 Oct 2019 15:07:56 +0200
+Message-Id: <20191011130758.22134-1-sgarzare@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.20.122]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-11_08:2019-10-10,2019-10-11 signatures=0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 11 Oct 2019 13:08:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DSI driver doesn't use interrupt, remove it from the node since it
-breaks yaml check.
+We are implementing a test suite for the VSOCK sockets and we discovered
+that vmci_transport never allowed half-closed socket on the host side.
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
----
- arch/arm/boot/dts/stm32f469.dtsi | 1 -
- 1 file changed, 1 deletion(-)
+As Jorgen explained [1] this is due to the implementation of VMCI.
 
-diff --git a/arch/arm/boot/dts/stm32f469.dtsi b/arch/arm/boot/dts/stm32f469.dtsi
-index 5ae5213f68cb..be002e8a78ac 100644
---- a/arch/arm/boot/dts/stm32f469.dtsi
-+++ b/arch/arm/boot/dts/stm32f469.dtsi
-@@ -8,7 +8,6 @@
- 		dsi: dsi@40016c00 {
- 			compatible = "st,stm32-dsi";
- 			reg = <0x40016c00 0x800>;
--			interrupts = <92>;
- 			resets = <&rcc STM32F4_APB2_RESET(DSI)>;
- 			reset-names = "apb";
- 			clocks = <&rcc 1 CLK_F469_DSI>, <&clk_hse>;
+Since we want to have the same behaviour across all transports, this
+series adds a section in the "Implementation notes" to exaplain this
+behaviour, and changes the vhost_transport to behave the same way.
+
+[1] https://patchwork.ozlabs.org/cover/847998/#1831400
+
+Stefano Garzarella (2):
+  vsock: add half-closed socket details in the implementation notes
+  vhost/vsock: don't allow half-closed socket in the host
+
+ drivers/vhost/vsock.c    | 17 ++++++++++++++++-
+ net/vmw_vsock/af_vsock.c |  4 ++++
+ 2 files changed, 20 insertions(+), 1 deletion(-)
+
 -- 
-2.15.0
+2.21.0
 
