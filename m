@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CE5CD49AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 23:07:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60B9CD49AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 23:08:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728773AbfJKVH3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 17:07:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54106 "EHLO mail.kernel.org"
+        id S1729160AbfJKVIh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 17:08:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726642AbfJKVH2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 17:07:28 -0400
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        id S1726642AbfJKVIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 17:08:37 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D48C72084C;
-        Fri, 11 Oct 2019 21:07:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570828048;
-        bh=aQMqDlsnoBTIz0mNGHdEi8HmeClEvJuYXYfeLOP/bAI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=YRWc3z0XqFMKcdH8YJASJPrb1Wb0U8qvQeSzLrWcrT31F5Bp45QNgFpqyH/3fy5Cb
-         j745e1AEeuxk6HOXuVMrjUydGry1k7sg7pu4vJnmlj9esz0RTRQwJkff6arYHIt9tx
-         UewnqgSFeed2oEBxvkDx7/FEtAK7fmjTmxr3ApQ8=
-Date:   Fri, 11 Oct 2019 14:07:27 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     David Gow <davidgow@google.com>
-Cc:     David Gow <davidgow@google.com>, shuah@kernel.org,
-        brendanhiggins@google.com, keescook@chromium.org,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH linux-kselftest/test v2] lib/list-test: add a test for
- the 'list' doubly linked list
-Message-Id: <20191011140727.49160042fafa20d5867f8df7@linux-foundation.org>
-In-Reply-To: <20191010185631.26541-1-davidgow@google.com>
-References: <20191010185631.26541-1-davidgow@google.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
+        by mail.kernel.org (Postfix) with ESMTPSA id A32092084C;
+        Fri, 11 Oct 2019 21:08:35 +0000 (UTC)
+Date:   Fri, 11 Oct 2019 17:08:33 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        James Morris James Morris <jmorris@namei.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ben Hutchings <ben@decadent.org.uk>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] tracefs: Do not allocate and free proxy_ops for
+ lockdown
+Message-ID: <20191011170833.2312857c@gandalf.local.home>
+In-Reply-To: <CAHk-=whC6Ji=fWnjh2+eS4b15TnbsS4VPVtvBOwCy1jjEG_JHQ@mail.gmail.com>
+References: <20191011135458.7399da44@gandalf.local.home>
+        <CAHk-=wj7fGPKUspr579Cii-w_y60PtRaiDgKuxVtBAMK0VNNkA@mail.gmail.com>
+        <20191011162518.2f8c99ca@gandalf.local.home>
+        <CAHk-=whC6Ji=fWnjh2+eS4b15TnbsS4VPVtvBOwCy1jjEG_JHQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -44,28 +43,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 10 Oct 2019 11:56:31 -0700 David Gow <davidgow@google.com> wrote:
+On Fri, 11 Oct 2019 13:46:11 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-> Add a KUnit test for the kernel doubly linked list implementation in
-> include/linux/list.h
+> On Fri, Oct 11, 2019 at 1:25 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > OK, so I tried this approach, and there's a bit more than just a "few"
+> > extra cases that use tracing_open_generic().  
 > 
-> Each test case (list_test_x) is focused on testing the behaviour of the
-> list function/macro 'x'. None of the tests pass invalid lists to these
-> macros, and so should behave identically with DEBUG_LIST enabled and
-> disabled.
+> Yeah, that's more than I would have expected.
 > 
-> Note that, at present, it only tests the list_ types (not the
-> singly-linked hlist_), and does not yet test all of the
-> list_for_each_entry* macros (and some related things like
-> list_prepare_entry).
+> That said, you also did what I consider a somewhat over-done conversion.
 > 
-> ...
->
->  MAINTAINERS       |   5 +
->  lib/Kconfig.debug |  12 +
->  lib/Makefile      |   3 +
->  lib/list-test.c   | 738 ++++++++++++++++++++++++++++++++++++++++++++++
+> Just do
+> 
+>    static inline bool tracefs_lockdown_or_disabled(void)
+>    { return tracing_disabled || security_locked_down(LOCKDOWN_TRACEFS); }
+> 
+> and ignore the pointless return value (we know it's EPERM, and we
+> really don't care).
+> 
+> And then several of those conversions just turn into oneliner
+> 
+> -       if (tracing_disabled)
+> +       if (tracefs_lockdown_or_disabled())
+>                  return -ENODEV;
 
-Should this be lib/kunit/list-test.c?
+OK, so this is similar to what I just sent. But instead I made it into
+a function that combines tracing_disabled and the locked_down, plus, it
+did the reference update for the trace_array if needed (which in doing
+this exercise, I think I found a couple of places that need the ref
+count update).
+
+> 
+> patches instead.
+> 
+> I'm also not sure why you bothered with a lot of the files that don't
+> currently even have that "tracing_disabled" logic at all. Yeah, they
+> show pre-existing tracing info, but even if you locked down _after_
+> starting some tracing, that's probably what you want. You just don't
+> want people to be able to add new trace events.
+
+I guess just preventing new traces would be good enough (or anything
+that records data), as well as seeing that recorded data.
+
+Note, the tracing_disabled was added in case the ring buffer got
+corrupted, and we wanted to prevent the system from crashing if someone
+read the corrupted ring buffer. In the over 10 years of having that
+check, I don't recall a single instance of someone triggering it :-/
 
 
+> 
+> For example, maybe you want to have lockdown after you've booted, but
+> still show boot time traces?
+> 
+> I dunno. I feel like you re-did the original patch, and the original
+> patch was designed for "least line impact" rather than for anything
+> else.
+> 
+> I also suspect that if you *actually* do lockdown at early boot (which
+> is presumably one common case), then all you need is to do
+> 
+>     --- a/fs/tracefs/inode.c
+>     +++ b/fs/tracefs/inode.c
+>     @@ -418,6 +418,9 @@ struct dentry *tracefs_create_file(
+>         struct dentry *dentry;
+>         struct inode *inode;
+> 
+>     +   if (security_locked_down(LOCKDOWN_TRACEFS))
+>     +           return NULL;
+>     +
+
+Sounds reasonable.
+
+>         if (!(mode & S_IFMT))
+>                 mode |= S_IFREG;
+>         BUG_ON(!S_ISREG(mode));
+> 
+> and the "open-time check" is purely for "we did lockdown _after_ boot,
+> but then you might well want to be able to read the existing trace
+> information that you did before you locked down.
+> 
+> Again - I think trying to emulate exactly what that broken lockdown
+> patch did is not really what you should aim for.
+> 
+> That patch was not only buggy, it really wasn't about what people
+> really necessarily _want_, as about "we don't want to deal with
+> tracing, so here's a minimal patch that doesn't even work".
+
+OK. My new approach is to:
+
+1) revert the tracefs lockdown patch
+2) Add my tracing_check_open_get_tr() patch (and consolidate the calls)
+ (fix up anything that should have this too)
+3) Add the lockdown to the tracing_check_open_get_tr() routine, and be
+   done with it.
+
+-- Steve
