@@ -2,201 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE25CD3EDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 13:52:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15013D3F15
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 13:57:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728254AbfJKLvy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 07:51:54 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46350 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728238AbfJKLvw (ORCPT
+        id S1727922AbfJKL5d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 07:57:33 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37928 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727198AbfJKL5d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 07:51:52 -0400
-Received: by mail-wr1-f65.google.com with SMTP id o18so11545413wrv.13
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 04:51:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=kodoLoyPrKRnVAF+K+EdOTtW7yGJ3QkaMW1QSIvhoF0=;
-        b=jGbJQ5JMqNq8n2Maht6D+4YbnqkUTKgpChRW0VgtygxZ5Vi2/uo3cM/jodo2JKSxGE
-         PCozf/Cr4DlbczByFjrow+g0c6LBsYXk93zMLCVE8Shl+/U3nDf74dCYDar4WYVyednQ
-         JOlLW6sFTVF9xFiD/v/Djp6E1oG1wniynomgyTWBVPolp94ggS3BNKCb+XlRU2kaLvTo
-         Kk87dNDMdxbP5uHhIpa4Vh7EctvMgr+kr9vwyuk2aFZTJUdi/4K+0gDgS+Gzq7/4/hNX
-         evInzJ9b0BFxVhaukUkam6IIkEo5Vwka8ruoo+kqPXvo7zzjSRg1FGgC3eiDWkTyYGqi
-         /63A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=kodoLoyPrKRnVAF+K+EdOTtW7yGJ3QkaMW1QSIvhoF0=;
-        b=lWEDC3KBIHKPoeRiy2SF0LVKvQtgBnv8k918p8hJwx57WlV6nV4SCe/hevAmMlJqEr
-         GYqFP/tQC6uaCEgNcQFD2OFu7wSasxAW2SSyEeG0sThx3sEemYAi/XjJvr/uplAojYJE
-         NpoiYQzJEP39tRRmi7uC/NwTBbFjWer2mJ4OvqjnskzFOfRfByIKYkxEgICtmDH4zZeZ
-         bdWE3C7yVdKbTd/DM3u+KFZiYoflCtuylOYgRVn9c2zkgiFAZNemd1R3Ytxn0yTddLWp
-         J06p308l6EbQkmopCb1OiFHFbU7V0705rxbzKFxodMeDKpy+Tk+G6UKi/BoQOSMqyL/y
-         bT1w==
-X-Gm-Message-State: APjAAAV7UFj3+/2oKr4YwKJVuQCSSxxeorVNxjDeZAQCgtrCGYaNNPS+
-        zrFdT5qq9ynKtnjR/0+r0Uczd5Gf+05Ia2X41Pkf17BviYUPTA==
-X-Google-Smtp-Source: APXvYqxXLXYceWRVQghxCNJD0DAXY2PJ4HKrMEkj4VUYjozp4rA/GfJ6cV2QjV+pUcYyiKzcDgwgUQu+Axfy520GlHI=
-X-Received: by 2002:a5d:5142:: with SMTP id u2mr12967653wrt.221.1570794708517;
- Fri, 11 Oct 2019 04:51:48 -0700 (PDT)
+        Fri, 11 Oct 2019 07:57:33 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 173FC60ADE; Fri, 11 Oct 2019 11:57:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1570795052;
+        bh=EPYe5kTBBGci2tg48EPs5GLHdxzLBPQNaqpnWCbvN0A=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=dcyAOLXlc63HacOqTCRkTOezC44jm2EsyeUorxd4Y2Czh0nylMKLnukFv2yIPyDC6
+         gSEkVyhOQ9ZCuAADkDBMe2oepgpoWIS6GeGE5xrcy8lb2+J7dP2OL3jy6rJbjCP01C
+         +IHbZyPOYgUzaj0GS9Nt+pRHzcpRXpJGfgV2qm1w=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID,SPF_NONE autolearn=no
+        autolearn_force=no version=3.4.0
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B19BB602EE;
+        Fri, 11 Oct 2019 11:57:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1570795051;
+        bh=EPYe5kTBBGci2tg48EPs5GLHdxzLBPQNaqpnWCbvN0A=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=eCT6yiCW4z23JIr4WE8iA1QhYZu/HoLLv/OdH8G5QEa5TVLcY4VigfBIS5uGhmp5d
+         ds0tQP+w3Vc91Niy04tYYt51RBcWIsQeY182WQVCX9JPWZIQEo5T4etyqE2VxVguwl
+         07Ii9gVVw/vvgqEa50iIDZK8TnIqgB7yHP0PYHaI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B19BB602EE
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <0000000000007d25ff059457342d@google.com> <b8b1e4fef9f3ece63909c38b3302621d76770caa.camel@gmail.com>
-In-Reply-To: <b8b1e4fef9f3ece63909c38b3302621d76770caa.camel@gmail.com>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Fri, 11 Oct 2019 13:51:37 +0200
-Message-ID: <CAG_fn=WsN0d8VO6=4jtDP9rHqBMp0zBvJQ7qrvQhZkkaj6NNsg@mail.gmail.com>
-Subject: Re: KMSAN: uninit-value in alauda_check_media
-To:     Jaskaran Singh <jaskaransingh7654321@gmail.com>
-Cc:     syzbot <syzbot+e7d46eb426883fb97efd@syzkaller.appspotmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        usb-storage@lists.one-eyed-alien.net
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] ath10k: Correct error check of dma_map_single()
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20191010162653.141303-1-bjorn.andersson@linaro.org>
+References: <20191010162653.141303-1-bjorn.andersson@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        stable@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20191011115732.173FC60ADE@smtp.codeaurora.org>
+Date:   Fri, 11 Oct 2019 11:57:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 1:23 PM Jaskaran Singh
-<jaskaransingh7654321@gmail.com> wrote:
->
-> On Mon, 2019-10-07 at 12:39 -0700, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following crash on:
-> >
-> > HEAD commit:    1e76a3e5 kmsan: replace __GFP_NO_KMSAN_SHADOW with
-> > kmsan_i..
-> > git tree:       https://github.com/google/kmsan.git master
-> > console output:
-> > https://syzkaller.appspot.com/x/log.txt?x=3D1204cc63600000
-> > kernel config:
-> > https://syzkaller.appspot.com/x/.config?x=3Df03c659d0830ab8d
-> > dashboard link:
-> > https://syzkaller.appspot.com/bug?extid=3De7d46eb426883fb97efd
-> > compiler:       clang version 9.0.0 (/home/glider/llvm/clang
-> > 80fee25776c2fb61e74c1ecb1a523375c2500b69)
-> > syz repro:
-> > https://syzkaller.appspot.com/x/repro.syz?x=3D123c860d600000
-> > C reproducer:
-> > https://syzkaller.appspot.com/x/repro.c?x=3D110631b7600000
-> >
-> > IMPORTANT: if you fix the bug, please add the following tag to the
-> > commit:
-> > Reported-by: syzbot+e7d46eb426883fb97efd@syzkaller.appspotmail.com
-> >
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> > BUG: KMSAN: uninit-value in alauda_transport+0x462/0x57f0
-> > drivers/usb/storage/alauda.c:1137
-> > CPU: 0 PID: 12279 Comm: usb-storage Not tainted 5.3.0-rc7+ #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine,
-> > BIOS
-> > Google 01/01/2011
-> > Call Trace:
-> >   __dump_stack lib/dump_stack.c:77 [inline]
-> >   dump_stack+0x191/0x1f0 lib/dump_stack.c:113
-> >   kmsan_report+0x13a/0x2b0 mm/kmsan/kmsan_report.c:108
-> >   __msan_warning+0x73/0xe0 mm/kmsan/kmsan_instr.c:250
-> >   alauda_check_media+0x344/0x3310 drivers/usb/storage/alauda.c:460
-> >   alauda_transport+0x462/0x57f0 drivers/usb/storage/alauda.c:1137
-> >   usb_stor_invoke_transport+0xf5/0x27e0
-> > drivers/usb/storage/transport.c:606
-> >   usb_stor_transparent_scsi_command+0x5d/0x70
-> > drivers/usb/storage/protocol.c:108
-> >   usb_stor_control_thread+0xca6/0x11a0 drivers/usb/storage/usb.c:380
-> >   kthread+0x4b5/0x4f0 kernel/kthread.c:256
-> >   ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
-> >
-> > Local variable description: ----status@alauda_check_media
-> > Variable was created at:
-> >   alauda_check_media+0x8e/0x3310 drivers/usb/storage/alauda.c:454
-> >   alauda_transport+0x462/0x57f0 drivers/usb/storage/alauda.c:1137
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> > Kernel panic - not syncing: panic_on_warn set ...
-> > CPU: 0 PID: 12279 Comm: usb-storage Tainted:
-> > G    B             5.3.0-rc7+
-> > #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine,
-> > BIOS
-> > Google 01/01/2011
-> > Call Trace:
-> >   __dump_stack lib/dump_stack.c:77 [inline]
-> >   dump_stack+0x191/0x1f0 lib/dump_stack.c:113
-> >   panic+0x3c9/0xc1e kernel/panic.c:219
-> >   kmsan_report+0x2a2/0x2b0 mm/kmsan/kmsan_report.c:131
-> >   __msan_warning+0x73/0xe0 mm/kmsan/kmsan_instr.c:250
-> >   alauda_check_media+0x344/0x3310 drivers/usb/storage/alauda.c:460
-> >   alauda_transport+0x462/0x57f0 drivers/usb/storage/alauda.c:1137
-> >   usb_stor_invoke_transport+0xf5/0x27e0
-> > drivers/usb/storage/transport.c:606
-> >   usb_stor_transparent_scsi_command+0x5d/0x70
-> > drivers/usb/storage/protocol.c:108
-> >   usb_stor_control_thread+0xca6/0x11a0 drivers/usb/storage/usb.c:380
-> >   kthread+0x4b5/0x4f0 kernel/kthread.c:256
-> >   ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
-> > Kernel Offset: disabled
-> > Rebooting in 86400 seconds..
-> >
-> >
-> > ---
-> > This bug is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> >
-> > syzbot will keep track of this bug report. See:
-> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> > syzbot can test patches for this bug, for details see:
-> > https://goo.gl/tpsmEJ#testing-patches
->
-> #syz test: https://github.com/google/kmsan.git 1e76a3e5
-This didn't work, let's try with the master:
-#syz test: https://github.com/google/kmsan.git master
+Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
 
->
-> diff --git a/drivers/usb/storage/alauda.c
-> b/drivers/usb/storage/alauda.c
-> index ddab2cd3d2e7..bb309b9ad65b 100644
-> --- a/drivers/usb/storage/alauda.c
-> +++ b/drivers/usb/storage/alauda.c
-> @@ -452,7 +452,7 @@ static int alauda_init_media(struct us_data *us)
->  static int alauda_check_media(struct us_data *us)
->  {
->         struct alauda_info *info =3D (struct alauda_info *) us->extra;
-> -       unsigned char status[2];
-> +       unsigned char *status =3D us->iobuf;
->         int rc;
->
->         rc =3D alauda_get_media_status(us, status);
->
-> --
-> You received this message because you are subscribed to the Google Groups=
- "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgi=
-d/syzkaller-bugs/b8b1e4fef9f3ece63909c38b3302621d76770caa.camel%40gmail.com=
-.
+> The return value of dma_map_single() should be checked for errors using
+> dma_mapping_error(), rather than testing for NULL. Correct this.
+> 
+> Fixes: 1807da49733e ("ath10k: wmi: add management tx by reference support over wmi")
+> Cc: stable@vger.kernel.org
+> Reported-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
+Did this fix any real bug? Or is this just something found during code review?
 
+-- 
+https://patchwork.kernel.org/patch/11183923/
 
---=20
-Alexander Potapenko
-Software Engineer
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
-
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
