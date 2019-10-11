@@ -2,65 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD904D4367
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 16:50:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6276FD436C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 16:51:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727523AbfJKOuo convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 11 Oct 2019 10:50:44 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:44204 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726174AbfJKOuo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 10:50:44 -0400
-Received: by mail-oi1-f194.google.com with SMTP id w6so8172950oie.11;
-        Fri, 11 Oct 2019 07:50:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=gryLhIXL4l6QqVF4jY3/Zduxk2LABaCpupxRbGKjliY=;
-        b=d30V+8FIO1t3w+baoSS+aweEqKKAmyJe75JDm0mJ2aXXlezDSHdW86uquvP77GpQXa
-         OPWPIrXiwOPfEWiHRf/2jHoi0jOB28bEHsvrslb4O95NquJap7+NzFTKACXx0C1tk7TT
-         ecRhLCn6jRzPIdBxpgwSyjtGM22E0HSrgCFyXmZdO2Qkaq2Wfz0TpfOAXm+TrqiHAvit
-         sPB4f0BE5pKULbBrNSVADwYGjR98gPgyCakcLdnORCuYh+StRMZ3ADIJAgV2t07hfkE2
-         YpHTT81Amy/sfXmDfgSNCadAi0MCJE2KYwVH8lWhWdyVp7QpHtXeneilE9gCPeM+4ANB
-         zveg==
-X-Gm-Message-State: APjAAAVvVuNppd4iASDcBNymVfFb3h0CS6nNhcb+x3UiqagPaHiufC2L
-        HTbzfLq5AZz9oMIiIRwdzXdmrks=
-X-Google-Smtp-Source: APXvYqw4tg27DOTO+ilupZjHUfUpz2Sf7rFACQOxDJK44IZFRl4/ElfBF+Wwbk3Nyc8kNUvRcmX/Yg==
-X-Received: by 2002:aca:abd2:: with SMTP id u201mr12259123oie.105.1570805443172;
-        Fri, 11 Oct 2019 07:50:43 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id v7sm1182819oic.9.2019.10.11.07.50.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2019 07:50:42 -0700 (PDT)
-Date:   Fri, 11 Oct 2019 09:50:42 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Laurentiu Palcu <laurentiu.palcu@nxp.com>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, agx@sigxcpu.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Laurentiu Palcu <laurentiu.palcu@nxp.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 4/5] dt-bindings: display: imx: add bindings for DCSS
-Message-ID: <20191011145042.GA15680@bogus>
-References: <1570025100-5634-1-git-send-email-laurentiu.palcu@nxp.com>
- <1570025100-5634-5-git-send-email-laurentiu.palcu@nxp.com>
+        id S1727554AbfJKOvz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 10:51:55 -0400
+Received: from foss.arm.com ([217.140.110.172]:34842 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726174AbfJKOvz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 10:51:55 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 614DB142F;
+        Fri, 11 Oct 2019 07:51:54 -0700 (PDT)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 607CF3F68E;
+        Fri, 11 Oct 2019 07:51:51 -0700 (PDT)
+Date:   Fri, 11 Oct 2019 15:51:49 +0100
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>
+Cc:     Paul Elliott <paul.elliott@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Amit Kachhap <amit.kachhap@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        linux-arch@vger.kernel.org, Eugene Syromiatnikov <esyr@redhat.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Andrew Jones <drjones@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Florian Weimer <fweimer@redhat.com>,
+        linux-kernel@vger.kernel.org, Sudakshina Das <sudi.das@arm.com>,
+        Suzuki Poulose <suzuki.poulose@arm.com>
+Subject: Re: [PATCH v2 04/12] arm64: docs: cpu-feature-registers: Document
+ ID_AA64PFR1_EL1
+Message-ID: <20191011145148.GK27757@arm.com>
+References: <1570733080-21015-1-git-send-email-Dave.Martin@arm.com>
+ <1570733080-21015-5-git-send-email-Dave.Martin@arm.com>
+ <87zhi7l8qz.fsf@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <1570025100-5634-5-git-send-email-laurentiu.palcu@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87zhi7l8qz.fsf@linaro.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-:u?wc??m5?^?㞾?}4-??z{b???r?+?׀u???ا????#????ek ?????W?J????^?(???h}??-??z{b???r?Z????+?jW.?\?oۊwb??v+)????l?b?&??,?&??ξ????????????????W???!jxw΢?ǫ?*'??+y?^??^?M:???r鞞֭???u??q?ky?ۊwb??v+)????l?b?&??,?&?????u????ޮ?????G???h
+On Fri, Oct 11, 2019 at 02:19:48PM +0100, Alex Benn�e wrote:
+> 
+> Dave Martin <Dave.Martin@arm.com> writes:
+> 
+> > Commit d71be2b6c0e1 ("arm64: cpufeature: Detect SSBS and advertise
+> > to userspace") exposes ID_AA64PFR1_EL1 to userspace, but didn't
+> > update the documentation to match.
+> >
+> > Add it.
+> >
+> > Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+> >
+> > ---
+> >
+> > Note to maintainers:
+> >
+> >  * This patch has been racing with various other attempts to fix
+> >    the same documentation in the meantime.
+> >
+> >    Since this patch only fixes the documenting for pre-existing
+> >    features, it can safely be dropped if appropriate.
+> >
+> >    The _new_ documentation relating to BTI feature reporting
+> >    is in a subsequent patch, and needs to be retained.
+> > ---
+> >  Documentation/arm64/cpu-feature-registers.rst | 15 +++++++++++----
+> >  1 file changed, 11 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/Documentation/arm64/cpu-feature-registers.rst b/Documentation/arm64/cpu-feature-registers.rst
+> > index 2955287..b86828f 100644
+> > --- a/Documentation/arm64/cpu-feature-registers.rst
+> > +++ b/Documentation/arm64/cpu-feature-registers.rst
+> > @@ -168,8 +168,15 @@ infrastructure:
+> >       +------------------------------+---------+---------+
+> >
+> >
+> > -  3) MIDR_EL1 - Main ID Register
+> > +  3) ID_AA64PFR1_EL1 - Processor Feature Register 1
+> > +     +------------------------------+---------+---------+
+> > +     | Name                         |  bits   | visible |
+> > +     +------------------------------+---------+---------+
+> > +     | SSBS                         | [7-4]   |    y    |
+> > +     +------------------------------+---------+---------+
+> > +
+> >
+> > +  4) MIDR_EL1 - Main ID Register
+> >       +------------------------------+---------+---------+
+> >       | Name                         |  bits   | visible |
+> >       +------------------------------+---------+---------+
+> > @@ -188,7 +195,7 @@ infrastructure:
+> >     as available on the CPU where it is fetched and is not a system
+> >     wide safe value.
+> >
+> > -  4) ID_AA64ISAR1_EL1 - Instruction set attribute register 1
+> > +  5) ID_AA64ISAR1_EL1 - Instruction set attribute register 1
+> 
+> If I'm not mistaken .rst has support for auto-enumeration if the #
+> character is used. That might reduce the pain of re-numbering in future.
+
+Ack, though it would be good to go one better and generate this document
+from the cpufeature.c tables (or from some common source).  The numbers
+are relatively easy to maintain -- remembering to update the document
+at all seems the bigger maintenance headache right now.
+
+I think this particular patch is superseded by similar fixes from other
+people, just not in torvalds/master yet.
+
+[...]
+
+Cheers
+---Dave
