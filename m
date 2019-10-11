@@ -2,76 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA931D4440
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 17:30:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9855CD4444
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 17:30:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728098AbfJKPaL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 11:30:11 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:38802 "EHLO
+        id S1728158AbfJKPab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 11:30:31 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:42043 "EHLO
         mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726328AbfJKPaL (ORCPT
+        with ESMTP id S1726827AbfJKPaa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 11:30:11 -0400
-Received: by mail-oi1-f194.google.com with SMTP id m16so8330153oic.5;
-        Fri, 11 Oct 2019 08:30:11 -0700 (PDT)
+        Fri, 11 Oct 2019 11:30:30 -0400
+Received: by mail-oi1-f194.google.com with SMTP id i185so8305440oif.9
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 08:30:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=G65rnrPhLbwiKa12jxK6VsnV1tu58T/eP6dY6zrzvZM=;
+        b=axMZJb56FTNco00uonEJke76cy2AQd2gHUV3BqSx2OB0U6z6GuUjQ/Xz6xiljm5g5Z
+         lW6rWqLQwABKmQ3T7lwpMck0t6kyXZ5t7+incgZFUVfOJ76gcLCkthIk+XDFt9lHczAC
+         nktxww/gmoLYI6OOJY4ZZRSwXdcoT/+Rp8la7qB1uV8Ir/rkNeVYs4rrDBatIyui1oQ0
+         EebxyMVyHzNptgHHQHUH9c8utm6XDIp/POf1aKlASei1mcB37YHRw6a48R6YDxMiFyMM
+         gyT8fjsL/3HGGKf84fttmBK6bz4mOXpQDT+vUlJJfYdBoc9ont8aU7zgzfPQZ5v1aaj3
+         IL9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=c0RmIaIYlsHlHoHCRHVl9+9lkSFQiZD24NJsXUdq5dE=;
-        b=I/ihoWihPyGjxIJfndgEkvdWQO+evb+w2VeBPiBuhxgV6Cd6JBElkabTVWUXb7vghU
-         yrsgitPsu8vlABBOpxjsNciXRbOiUlQyW0O7NOWdqNmk5e3/SuYV1dreVxs0A+rTUl6i
-         7vFVCykjGms18SJaSLAzlH9d7ef2F2HI0hj6yi0pwGOxOxRvpO/stPhwCWKFm0A5X9J9
-         EclJYREJ6shwNzWsWdc8ZUMhnerx4JvTaWtOmjb1Odmuux0hdxLca177kYwgJ1W9UpJ7
-         x/8Kup9zK+oKHheictTLd/CGXIby+xA6vbJFSbs7f3uxXGd+eDT2M7pvo/K4WcsvaRw4
-         P64A==
-X-Gm-Message-State: APjAAAVC4CUgAm0fac0k9SfTxylDgQk1FmDqMn1JLSRpuVifzG/gUcix
-        BZ5GZ720vGiNJZ3s/gdG2g==
-X-Google-Smtp-Source: APXvYqxEBkIB8HeA9nyxw2DqeQtU+M0+yBlWyz40opogflPnTQ/+drXWdB97qZnjTL3j/pd9hhE/vQ==
-X-Received: by 2002:a05:6808:114:: with SMTP id b20mr12951071oie.114.1570807810537;
-        Fri, 11 Oct 2019 08:30:10 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id t18sm2819235otd.60.2019.10.11.08.30.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2019 08:30:09 -0700 (PDT)
-Date:   Fri, 11 Oct 2019 10:30:09 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Martin Kaiser <martin@kaiser.cx>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Martin Kaiser <martin@kaiser.cx>
-Subject: Re: [PATCH v2 1/2] dt-bindings: display: imx: fix native-mode setting
-Message-ID: <20191011153009.GA10322@bogus>
-References: <20190918193853.25689-1-martin@kaiser.cx>
- <20191005130921.12874-1-martin@kaiser.cx>
- <20191005130921.12874-2-martin@kaiser.cx>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=G65rnrPhLbwiKa12jxK6VsnV1tu58T/eP6dY6zrzvZM=;
+        b=iPv26K9oco91ln6y7F9LpVCqclvW3NZIOvivHSulLItyas/IL1cJnLkLhymGyXrnPV
+         C1d1A89OHI4ecPDw6rmEOW6oNBB8kkzLGMRzrdDcunHfzmjiashnBH983SRSMkRkARKl
+         O7A5MS+BHVWp6CWsRbbbpY7L0doVsgKB6YT/bzajgESaJD5RytsIpe4fzISECCmBl0Kx
+         j6hkoIsCfT27ELV9DIir5UhweyfNwOMso6qFBvqS3z7pVAH9pgrBURXgs68VMJS1U986
+         jIb87AL0K2vYP3K6rb9uP8tNp+CohUwbueImm4dx6WAdjEuUT8GhHuX8XllnsjdCnhPQ
+         73vQ==
+X-Gm-Message-State: APjAAAX4MLwLETXyU7qObs39gYqdMtWZwtRHLkeMAPULYHRadJN3O5bA
+        3/As0gHx2XvdCo6cawFbYx1+10nDk5fJUL0LJGlYqg==
+X-Google-Smtp-Source: APXvYqztJ6TtWV/CrITLOCN+D+HZbp0PNRoBL4ZgaP0aQOPkhKOlPy6vMt3rYNP9qXdAzUUGPhAq8/WORY/3Xm8vQzI=
+X-Received: by 2002:aca:da41:: with SMTP id r62mr12192042oig.47.1570807829434;
+ Fri, 11 Oct 2019 08:30:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191005130921.12874-2-martin@kaiser.cx>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191009160532.20674-1-ckellner@redhat.com> <20191011122323.7770-1-ckellner@redhat.com>
+ <CAG48ez1xNonmxwa3DRD44WJiComOHRxdHud5+LWea3OXzr4hkg@mail.gmail.com> <20191011151700.hdvztoxonpvogadv@wittgenstein>
+In-Reply-To: <20191011151700.hdvztoxonpvogadv@wittgenstein>
+From:   Jann Horn <jannh@google.com>
+Date:   Fri, 11 Oct 2019 17:30:03 +0200
+Message-ID: <CAG48ez2_YX0eXQP_YP2Ya20AxRGg9uGFjjkuSBxAV=hxvM9VZw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] pidfd: show pids for nested pid namespaces in fdinfo
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Christian Kellner <ckellner@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Christian Kellner <christian@kellner.me>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, Michal Hocko <mhocko@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat,  5 Oct 2019 15:09:20 +0200, Martin Kaiser wrote:
-> Move the native-mode setting inside the display-timing node. Outside of
-> display-timing, it is ignored.
-> 
-> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
-> ---
-> changes in v2
->  move parts of the commit message into the cover letter
-> 
->  Documentation/devicetree/bindings/display/imx/fsl,imx-fb.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+On Fri, Oct 11, 2019 at 5:17 PM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+>
+> On Fri, Oct 11, 2019 at 04:55:59PM +0200, Jann Horn wrote:
+> > On Fri, Oct 11, 2019 at 2:23 PM Christian Kellner <ckellner@redhat.com> wrote:
+> > > The fdinfo file for a process file descriptor already contains the
+> > > pid of the process in the callers namespaces. Additionally, if pid
+> > > namespaces are configured, show the process ids of the process in
+> > > all nested namespaces in the same format as in the procfs status
+> > > file, i.e. "NSPid:\t%d\%d...". This allows the easy identification
+> > > of the processes in nested namespaces.
+> > [...]
+> > >  #ifdef CONFIG_PROC_FS
+> > > +static inline void print_pidfd_nspid(struct seq_file *m, struct pid *pid,
+> > > +                                    struct pid_namespace *ns)
+> >
+> > `ns` is the namespace of the PID namespace of the procfs instance
+> > through which the file descriptor is being viewed.
+> >
+> > > +{
+> > > +#ifdef CONFIG_PID_NS
+> > > +       int i;
+> > > +
+> > > +       seq_puts(m, "\nNSpid:");
+> > > +       for (i = ns->level; i <= pid->level; i++) {
+> >
+> > ns->level is the level of the PID namespace associated with the procfs
+> > instance through which the file descriptor is being viewed. pid->level
+> > is the level of the PID associated with the pidfd.
+> >
+> > > +               ns = pid->numbers[i].ns;
+> > > +               seq_put_decimal_ull(m, "\t", pid_nr_ns(pid, ns));
+> > > +       }
+> > > +#endif
+> > > +}
+> >
+> > I think you assumed that `ns` is always going to contain `pid`.
+> > However, that's not the case. Consider the following scenario:
+> >
+> >  - the init_pid_ns has two child PID namespaces, A and B (each with
+> > its own mount namespace and procfs instance)
+> >  - process P1 lives in A
+> >  - process P2 lives in B
+> >  - P1 opens a pidfd for itself
+> >  - P1 passes the pidfd to P2 (e.g. via a unix domain socket)
+> >  - P2 reads /proc/self/fdinfo/$pidfd
+> >
+> > Now the loop will print the ID of P1 in A. I don't think that's what
+> > you intended? You might want to bail out if "pid_nr_ns(pid, ns) == 0",
+> > or something like that.
+>
+> I assumed the same thing happens when you pass around an fd for
+> /proc/self/status and that's why I didn't object to this behavior.
 
-Applied, thanks.
-
-Rob
+I don't see how /proc/$pid/status is relevant. In the
+/proc/$pid/status case, the output is the list of PIDs starting at the
+PID namespace the procfs is associated with; and the process is always
+contained in that namespace, which also means that the first PID
+listed is the one in the PID namespace of the procfs instance. In the
+pidfd case, the process is not necessarily contained in that
+namespace, and the output doesn't make sense.
