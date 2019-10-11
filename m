@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D822D48FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 22:23:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11CD8D48FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 22:23:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729277AbfJKUHa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 16:07:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43654 "EHLO mail.kernel.org"
+        id S1729292AbfJKUHe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 16:07:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43728 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729055AbfJKUH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 16:07:29 -0400
+        id S1729055AbfJKUHe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 16:07:34 -0400
 Received: from quaco.ghostprotocols.net (189-94-137-67.3g.claro.net.br [189.94.137.67])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1983021D7C;
-        Fri, 11 Oct 2019 20:07:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B348222C3;
+        Fri, 11 Oct 2019 20:07:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570824448;
-        bh=HRU6WzGIPI6xOURl4Pr07yFsC5FYkOx97aRhyWrt9EI=;
+        s=default; t=1570824453;
+        bh=cLOfjP0Af14EmY17HRyTtfiR30BI2YM7lVdlnBsb6kw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CZXOUPF1+YFivm2/JyzxzNE+qXqIgXK5pfci5aEt7xjfOs0ouERqSEaounlj5mH7v
-         dTe3BnwXOZ+KwYGixjHFrN1vejCufikdaj7JMGmp4fEZIHxw0d2ZSReGTRGdPnSuG7
-         tcB6F+rLJBmmj5OWkxGgAR0Jn5KXUieDjvfJipAw=
+        b=RIUQO/hMN6q4nSKGn9r4L4i4i27q8bF4uk0J+fRh7Ejf3bLuvZfDiLJt4VG89yWQa
+         ZK+Gh1+CbpDdd1KOaD/8E5F/n9NTQZWURh8/Ss5lZWq1yNeFq2ci5XPKMpNY+xmwil
+         7gW8I0xLhND0iCE1tHR57HTRK1207WBCflLswYaw=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -32,9 +32,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Adrian Hunter <adrian.hunter@intel.com>,
         Jiri Olsa <jolsa@redhat.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 12/69] perf scripts python: exported-sql-viewer.py: Tidy up Call tree call_time
-Date:   Fri, 11 Oct 2019 17:05:02 -0300
-Message-Id: <20191011200559.7156-13-acme@kernel.org>
+Subject: [PATCH 13/69] perf scripts python: exported-sql-viewer.py: Add ability for Call tree to open at a specified task and time
+Date:   Fri, 11 Oct 2019 17:05:03 -0300
+Message-Id: <20191011200559.7156-14-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191011200559.7156-1-acme@kernel.org>
 References: <20191011200559.7156-1-acme@kernel.org>
@@ -47,70 +47,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Adrian Hunter <adrian.hunter@intel.com>
 
-Record call_time on tree nodes and re-name the misnamed "count" parameter.
+Add ability for Call tree to open at a specified task and time.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lore.kernel.org/lkml/20190821083216.1340-5-adrian.hunter@intel.com
+Link: http://lore.kernel.org/lkml/20190821083216.1340-6-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/scripts/python/exported-sql-viewer.py | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ .../scripts/python/exported-sql-viewer.py     | 44 ++++++++++++++++++-
+ 1 file changed, 43 insertions(+), 1 deletion(-)
 
 diff --git a/tools/perf/scripts/python/exported-sql-viewer.py b/tools/perf/scripts/python/exported-sql-viewer.py
-index 0dcc9a03b1b0..06b8d55977bc 100755
+index 06b8d55977bc..a5af52f422e6 100755
 --- a/tools/perf/scripts/python/exported-sql-viewer.py
 +++ b/tools/perf/scripts/python/exported-sql-viewer.py
-@@ -794,15 +794,16 @@ class CallGraphModel(CallGraphModelBase):
+@@ -1094,7 +1094,7 @@ class CallGraphWindow(TreeWindowBase):
  
- class CallTreeLevelTwoPlusItemBase(CallGraphLevelItemBase):
+ class CallTreeWindow(TreeWindowBase):
  
--	def __init__(self, glb, params, row, comm_id, thread_id, calls_id, time, insn_cnt, cyc_cnt, branch_count, parent_item):
-+	def __init__(self, glb, params, row, comm_id, thread_id, calls_id, call_time, time, insn_cnt, cyc_cnt, branch_count, parent_item):
- 		super(CallTreeLevelTwoPlusItemBase, self).__init__(glb, params, row, parent_item)
- 		self.comm_id = comm_id
- 		self.thread_id = thread_id
- 		self.calls_id = calls_id
-+		self.call_time = call_time
-+		self.time = time
- 		self.insn_cnt = insn_cnt
- 		self.cyc_cnt = cyc_cnt
- 		self.branch_count = branch_count
--		self.time = time
+-	def __init__(self, glb, parent=None):
++	def __init__(self, glb, parent=None, thread_at_time=None):
+ 		super(CallTreeWindow, self).__init__(parent)
  
- 	def Select(self):
- 		self.query_done = True
-@@ -839,17 +840,17 @@ class CallTreeLevelTwoPlusItemBase(CallGraphLevelItemBase):
+ 		self.model = LookupCreateModel("Call Tree", lambda x=glb: CallTreeModel(x))
+@@ -1112,6 +1112,48 @@ class CallTreeWindow(TreeWindowBase):
  
- class CallTreeLevelThreeItem(CallTreeLevelTwoPlusItemBase):
+ 		AddSubWindow(glb.mainwindow.mdi_area, self, "Call Tree")
  
--	def __init__(self, glb, params, row, comm_id, thread_id, calls_id, name, dso, count, time, insn_cnt, cyc_cnt, branch_count, parent_item):
--		super(CallTreeLevelThreeItem, self).__init__(glb, params, row, comm_id, thread_id, calls_id, time, insn_cnt, cyc_cnt, branch_count, parent_item)
-+	def __init__(self, glb, params, row, comm_id, thread_id, calls_id, name, dso, call_time, time, insn_cnt, cyc_cnt, branch_count, parent_item):
-+		super(CallTreeLevelThreeItem, self).__init__(glb, params, row, comm_id, thread_id, calls_id, call_time, time, insn_cnt, cyc_cnt, branch_count, parent_item)
- 		dso = dsoname(dso)
- 		if self.params.have_ipc:
- 			insn_pcnt = PercentToOneDP(insn_cnt, parent_item.insn_cnt)
- 			cyc_pcnt = PercentToOneDP(cyc_cnt, parent_item.cyc_cnt)
- 			br_pcnt = PercentToOneDP(branch_count, parent_item.branch_count)
- 			ipc = CalcIPC(cyc_cnt, insn_cnt)
--			self.data = [ name, dso, str(count), str(time), PercentToOneDP(time, parent_item.time), str(insn_cnt), insn_pcnt, str(cyc_cnt), cyc_pcnt, ipc, str(branch_count), br_pcnt ]
-+			self.data = [ name, dso, str(call_time), str(time), PercentToOneDP(time, parent_item.time), str(insn_cnt), insn_pcnt, str(cyc_cnt), cyc_pcnt, ipc, str(branch_count), br_pcnt ]
- 		else:
--			self.data = [ name, dso, str(count), str(time), PercentToOneDP(time, parent_item.time), str(branch_count), PercentToOneDP(branch_count, parent_item.branch_count) ]
-+			self.data = [ name, dso, str(call_time), str(time), PercentToOneDP(time, parent_item.time), str(branch_count), PercentToOneDP(branch_count, parent_item.branch_count) ]
- 		self.dbid = calls_id
++		if thread_at_time:
++			self.DisplayThreadAtTime(*thread_at_time)
++
++	def DisplayThreadAtTime(self, comm_id, thread_id, time):
++		parent = QModelIndex()
++		for dbid in (comm_id, thread_id):
++			found = False
++			n = self.model.rowCount(parent)
++			for row in xrange(n):
++				child = self.model.index(row, 0, parent)
++				if child.internalPointer().dbid == dbid:
++					found = True
++					self.view.setCurrentIndex(child)
++					parent = child
++					break
++			if not found:
++				return
++		found = False
++		while True:
++			n = self.model.rowCount(parent)
++			if not n:
++				return
++			last_child = None
++			for row in xrange(n):
++				child = self.model.index(row, 0, parent)
++				child_call_time = child.internalPointer().call_time
++				if child_call_time < time:
++					last_child = child
++				elif child_call_time == time:
++					self.view.setCurrentIndex(child)
++					return
++				elif child_call_time > time:
++					break
++			if not last_child:
++				if not found:
++					child = self.model.index(0, 0, parent)
++					self.view.setCurrentIndex(child)
++				return
++			found = True
++			self.view.setCurrentIndex(last_child)
++			parent = last_child
++
+ # Child data item  finder
  
- # Call tree data model level two item
-@@ -857,7 +858,7 @@ class CallTreeLevelThreeItem(CallTreeLevelTwoPlusItemBase):
- class CallTreeLevelTwoItem(CallTreeLevelTwoPlusItemBase):
- 
- 	def __init__(self, glb, params, row, comm_id, thread_id, pid, tid, parent_item):
--		super(CallTreeLevelTwoItem, self).__init__(glb, params, row, comm_id, thread_id, 0, 0, 0, 0, 0, parent_item)
-+		super(CallTreeLevelTwoItem, self).__init__(glb, params, row, comm_id, thread_id, 0, 0, 0, 0, 0, 0, parent_item)
- 		if self.params.have_ipc:
- 			self.data = [str(pid) + ":" + str(tid), "", "", "", "", "", "", "", "", "", "", ""]
- 		else:
+ class ChildDataItemFinder():
 -- 
 2.21.0
 
