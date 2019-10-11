@@ -2,168 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D88F6D54CC
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2019 08:23:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E06AD54EB
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2019 09:36:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728445AbfJMGXz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 13 Oct 2019 02:23:55 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38273 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726698AbfJMGXz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Oct 2019 02:23:55 -0400
-Received: by mail-pf1-f195.google.com with SMTP id h195so8533606pfe.5;
-        Sat, 12 Oct 2019 23:23:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=5eAeBtymwWzWnzR8l2A7/RM2ROOsOpGfG8hUMk0mlW4=;
-        b=jda3HR+16RcTF8c7KGYZ0KkV/GcM59GIC22PWLPJ41jQCCMx42ZTbC4Go+SHG8uOsN
-         zD9Y6ltddf5wAXAAqaXYBIzuwb0254PeqmwRU1ryVYncbuN1YiWeSv/0cRvM5Y7QPtQX
-         Kq0uqHCYZNcjoL/vO3Xq+sH43Kwa7vyHBlFpQ1ro9JmciFdzKqpcAhK+UTS9ELKxTX4I
-         7RMgQeosY7P4DblvMYeNUqGPzdGwjrpKc7VtqpJDxjZUHLYLY/qNW7DjSKg56qSO+qDL
-         FSU/CUlxp9ndOU4uXrfCMpPk0/yMiR2IyIDVvrBEBfLt7wTLucCsh3IcMFvfpQMp+R8I
-         wxGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=5eAeBtymwWzWnzR8l2A7/RM2ROOsOpGfG8hUMk0mlW4=;
-        b=mp2QKsmj+bIaJTQcR17zhPIZEutpo88/bXaE5kNuvVZi7EopB0DtANidT9STCZBXRT
-         3N7tcCY834ZU3q6lSyLhuMtiuIKM4T181869TWYFO5vbavv7MjaQA2nxA+KJ19xGsIBs
-         n/9iYJVySTfma4R+DZS5Qg2Ttq/VEUfx/DnbDWKLmNUf08hgcm2VpJt4beWnuH4tWAob
-         LZVpHOfkaQZpZLbFMpiKpSDXg18Mt6qNpugb+Cv89U6IlpgMi3CvWzQoSihQPF7dyNHU
-         PCVRk/2avwqCeQYH5mIqB/QMp0POl0Aj8hikS9P0NjiZz6Hhmb/VlU7AjLFaG9euCmN6
-         5Zkw==
-X-Gm-Message-State: APjAAAWHKV/rfOV91j6Lie60e27ezrjK3h0i0NgzMMXKadhtH1mvzI9D
-        aUeuM1p/03K+8ZbkDAD+2riIYJk2nWWN7B8n6Rc=
-X-Google-Smtp-Source: APXvYqz+Ib92xlYbc0zQ+h/EYI9nkOxpO/3BtsUfc5FLQoeJMoxYAVC+P7oRwWch8D5uw/KNqkXhnbHTrzxfZKf4Qxk=
-X-Received: by 2002:a17:90a:b391:: with SMTP id e17mr29194193pjr.132.1570947834316;
- Sat, 12 Oct 2019 23:23:54 -0700 (PDT)
+        id S1728827AbfJMHgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 13 Oct 2019 03:36:03 -0400
+Received: from [206.81.8.171] ([206.81.8.171]:56546 "EHLO varon.localdomain"
+        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728198AbfJMHgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Oct 2019 03:36:01 -0400
+Received: from 127.0.0.1 (varon [127.0.0.1])
+        by varon.localdomain (Postfix) with SMTP id 290C355D635;
+        Fri, 11 Oct 2019 10:21:17 +0000 (UTC)
+Received: from (HELO 1iqb) [176.71.184.19] by 127.0.0.1 for <linhao63@jlonline.com>; Fri, 11 Oct 2019 03:19:21 -0700
+Message-ID: <4-806$5o5$$r$as6q109r731c@hkg.so2qo8>
+From:   "Mr Barrister Hans Erich" <dave@dbsoundfactory.com>
+Reply-To: "Mr Barrister Hans Erich" <dave@dbsoundfactory.com>
+To:     linhao63@jlonline.com
+Subject: RE:PERSONAL LETTER FROM MRS RASHIA AMIRA ??
+Date:   Fri, 11 Oct 19 03:19:21 GMT
+X-Mailer: Microsoft Outlook IMO, Build 9.0.2416 (9.0.2910.0)
 MIME-Version: 1.0
-References: <20191012171114.6589-1-j.neuschaefer@gmx.net> <20191012171114.6589-2-j.neuschaefer@gmx.net>
-In-Reply-To: <20191012171114.6589-2-j.neuschaefer@gmx.net>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sun, 13 Oct 2019 09:23:42 +0300
-Message-ID: <CAHp75VfJLDd315SUx+s6WN6-mp-gUSZmhDbydU91_oe0pLbYwg@mail.gmail.com>
-Subject: Re: [PATCH 2/4] docs: admin-guide: Move Dell RBU document from driver-api
-To:     =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Cc:     Linux Documentation List <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Stuart Hayes <stuart.w.hayes@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Shobhit Kukreti <shobhitkukreti@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Sinan Kaya <okaya@kernel.org>, Takashi Iwai <tiwai@suse.de>,
-        Ayman Bagabas <ayman.bagabas@gmail.com>,
-        Matan Ziv-Av <matan@svgalib.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        Peng Hao <peng.hao2@zte.com.cn>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/alternative;
+        boundary="C.F387.BA..3D"
+X-Priority: 3
+X-MSMail-Priority: Normal
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 12, 2019 at 8:17 PM Jonathan Neusch=C3=A4fer
-<j.neuschaefer@gmx.net> wrote:
->
-> This document describes how an admin can use the dell_rbu driver, rather
-> than any in-kernel API details.
 
-Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+--C.F387.BA..3D
+Content-Type: text/plain;
+Content-Transfer-Encoding: quoted-printable
 
-> Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-> ---
->  Documentation/{driver-api =3D> admin-guide}/dell_rbu.rst | 0
->  Documentation/admin-guide/index.rst                    | 1 +
->  Documentation/driver-api/index.rst                     | 1 -
->  drivers/platform/x86/Kconfig                           | 2 +-
->  drivers/platform/x86/dell_rbu.c                        | 2 +-
->  5 files changed, 3 insertions(+), 3 deletions(-)
->  rename Documentation/{driver-api =3D> admin-guide}/dell_rbu.rst (100%)
->
-> diff --git a/Documentation/driver-api/dell_rbu.rst b/Documentation/admin-=
-guide/dell_rbu.rst
-> similarity index 100%
-> rename from Documentation/driver-api/dell_rbu.rst
-> rename to Documentation/admin-guide/dell_rbu.rst
-> diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-gu=
-ide/index.rst
-> index 545ea26364b7..4405b7485312 100644
-> --- a/Documentation/admin-guide/index.rst
-> +++ b/Documentation/admin-guide/index.rst
-> @@ -72,6 +72,7 @@ configure specific aspects of kernel behavior to your l=
-iking.
->     clearing-warn-once
->     cpu-load
->     cputopology
-> +   dell_rbu
->     device-mapper/index
->     efi-stub
->     ext4
-> diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-ap=
-i/index.rst
-> index 2b3b6949381e..6a3ac50f51f0 100644
-> --- a/Documentation/driver-api/index.rst
-> +++ b/Documentation/driver-api/index.rst
-> @@ -72,7 +72,6 @@ available subsections can be seen below.
->     connector
->     console
->     dcdbas
-> -   dell_rbu
->     edid
->     eisa
->     ipmb
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index ae21d08c65e8..a890f47fbeec 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -259,7 +259,7 @@ config DELL_RBU
->          DELL system. Note you need a Dell OpenManage or Dell Update pack=
-age (DUP)
->          supporting application to communicate with the BIOS regarding th=
-e new
->          image for the image update to take effect.
-> -        See <file:Documentation/driver-api/dell_rbu.rst> for more detail=
-s on the driver.
-> +        See <file:Documentation/admin-guide/dell_rbu.rst> for more detai=
-ls on the driver.
->
->
->  config FUJITSU_LAPTOP
-> diff --git a/drivers/platform/x86/dell_rbu.c b/drivers/platform/x86/dell_=
-rbu.c
-> index 3691391fea6b..7d5453326b43 100644
-> --- a/drivers/platform/x86/dell_rbu.c
-> +++ b/drivers/platform/x86/dell_rbu.c
-> @@ -24,7 +24,7 @@
->   * on every time the packet data is written. This driver requires an
->   * application to break the BIOS image in to fixed sized packet chunks.
->   *
-> - * See Documentation/driver-api/dell_rbu.rst for more info.
-> + * See Documentation/admin-guide/dell_rbu.rst for more info.
->   */
->  #include <linux/init.h>
->  #include <linux/module.h>
-> --
-> 2.20.1
->
+Greetings
+
+My name is Barrister Hans Erich.
+
+I have a client who is interested to invest in your country, she is a well=
+ known politician in her country and deserve a lucrative investment partne=
+rship with you outside her country without any delay   Please can you mana=
+ge such investment please Kindly reply for further details.
+
+Your full nameS -----------
 
 
---=20
-With Best Regards,
-Andy Shevchenko
+Your urgent response will be appreciated
+
+Thank you and God bless you.
+
+Barrister Hans Erich
+
+Yours sincerely,
+Barrister Hans Erich
+
+--C.F387.BA..3D--
+
