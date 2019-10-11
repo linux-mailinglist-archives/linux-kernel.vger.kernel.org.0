@@ -2,91 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE3DBD4602
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 19:00:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED22BD4608
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 19:01:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728500AbfJKRAp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 13:00:45 -0400
-Received: from mail-pg1-f179.google.com ([209.85.215.179]:44243 "EHLO
-        mail-pg1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728086AbfJKRAo (ORCPT
+        id S1728626AbfJKRBG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 13:01:06 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:40000 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726331AbfJKRBF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 13:00:44 -0400
-Received: by mail-pg1-f179.google.com with SMTP id e10so2135180pgd.11;
-        Fri, 11 Oct 2019 10:00:44 -0700 (PDT)
+        Fri, 11 Oct 2019 13:01:05 -0400
+Received: by mail-ot1-f67.google.com with SMTP id y39so8551661ota.7;
+        Fri, 11 Oct 2019 10:01:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OKGWBUoxMayF3T/j4ufkanWg28YnrdRQH1PezhJ8qHw=;
-        b=M4/RsPfmEy7qjawshMo2QYhzuBUHg/p7I+k81pq6WhxxPXFsPj8YGZat22X+o1OX5D
-         AgePYsdSIM16j27C/X5IEQAgQ457nYqnK8CSXn8Ydj+p1Rg8wJbinEHgtVF2DxmYrqYS
-         moYOjiwVM/99HS7MJhfUudJ48YUkZLle+O7mk48vxtHuSxkyRjgNCaJ+r8xYIoIi1r7k
-         M17YKO7Ln0kkJ+QLigixmJDzT58w+8JQntBUiaQMWjQYf8G+qFi85IHsEAKhIRWIrC51
-         kLwLjii++ixcXIHrvs+S8RuyyzYiL1XuXYBHxbRi9sPFUakMdwFRxUrJr0cBva5daIOD
-         65pQ==
-X-Gm-Message-State: APjAAAWjvCgf4Wsuo3LN7ZSJUjQSeTgg+WoMzVMgute9ftABOMEIs4kd
-        Rjt2lVvOe9+APaRJ7k1DPEXHP25w
-X-Google-Smtp-Source: APXvYqwFac5zhGscS4LGq/zNcTYHsmwYguLxLfTV758NqKQPjgyn5vnlMT2VObNhextpjTbXZ6lFlw==
-X-Received: by 2002:aa7:98c9:: with SMTP id e9mr17932097pfm.142.1570813243804;
-        Fri, 11 Oct 2019 10:00:43 -0700 (PDT)
-Received: from desktop-bart.svl.corp.google.com ([2620:15c:2cd:202:4308:52a3:24b6:2c60])
-        by smtp.gmail.com with ESMTPSA id x72sm13692986pfc.89.2019.10.11.10.00.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Oct 2019 10:00:42 -0700 (PDT)
-Subject: Re: [PATCH v2 1/1] blk-mq: fill header with kernel-doc
-To:     =?UTF-8?Q?Andr=c3=a9_Almeida?= <andrealmeid@collabora.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        axboe@kernel.dk, kernel@collabora.com
-References: <20191008001416.12656-1-andrealmeid@collabora.com>
- <854l0j19go.fsf@collabora.com> <6aa48cd2-5f23-a4be-f777-d65bf755a976@acm.org>
- <85zhibyt14.fsf@collabora.com> <86de2c88-5812-4a87-b5d8-1b7b1808d013@acm.org>
- <8e20f2c6-c165-5b5f-7497-9472913d0ba8@collabora.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <66011772-9f04-dfc3-611e-7dc820d9263f@acm.org>
-Date:   Fri, 11 Oct 2019 10:00:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=39fE6RD4L7ek9/ZP7eb4uAgC4lVSQDHBffdSIup/Xc0=;
+        b=uWrvKw8ik0tMq2wuXoBiCXwaRTFuvKz7eyfZRSQU52Rn/PDHoB3SjXjDs1LtJgtgFt
+         YZeKmf4Of+0f7k3mbIquBX1iHujiLQ7D4cVj0R8ItLreSUUZY6iCfMVctHckp9+NGUss
+         diNzwv3CEuQ+W0/o8XOPWuvPBPFz/3xjnAd69YYjL2XFF02HuOyb9sZssKgQEhwyU4nI
+         vZ+xlcvwCMv5UpSJLFNqGIuARobg5mjysvNVPNkYP5LOv6My7cRrYi0/7HlkYtJTrFPc
+         wK4Yn9dJ29YgsTN2lL7xUZLs+mfn8HvasWjSXtmAH6RxEQVJXmkcqqjJLRn1qq44NyAS
+         oYKA==
+X-Gm-Message-State: APjAAAVeMWPvMBXPZNWRxEaRwlo8WoG6D4k8k5V/NvKT09sJjlHlAaZ9
+        fTX7uEda4/1HROuVIGqylQ==
+X-Google-Smtp-Source: APXvYqwqGqT7uiHwhdBc7sqpGqwD6vjshKpmaDTSjaMTHJz7K2u/gcWBWDVEgXQTXZ2+vioVbwWrOg==
+X-Received: by 2002:a05:6830:119a:: with SMTP id u26mr13662087otq.166.1570813265021;
+        Fri, 11 Oct 2019 10:01:05 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 91sm2915769otn.36.2019.10.11.10.01.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2019 10:01:04 -0700 (PDT)
+Date:   Fri, 11 Oct 2019 12:01:03 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Andrew Jeffery <andrew@aj.id.au>
+Cc:     linux-clk@vger.kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, joel@jms.id.au, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Add AST2500 RMII RCLK
+ definitions
+Message-ID: <20191011170103.GA14903@bogus>
+References: <20191010020655.3776-1-andrew@aj.id.au>
+ <20191010020655.3776-2-andrew@aj.id.au>
 MIME-Version: 1.0
-In-Reply-To: <8e20f2c6-c165-5b5f-7497-9472913d0ba8@collabora.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191010020655.3776-2-andrew@aj.id.au>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/10/19 1:38 PM, André Almeida wrote:
-> Seems that it's not clear for me the role of these members. Could you
-> please check if those definitions make sense for you?
+On Thu, 10 Oct 2019 12:36:54 +1030, Andrew Jeffery wrote:
+> The AST2500 has an explicit gate for the RMII RCLK for each of the two
+> MACs.
 > 
-> - hctx->dispatch: This queue is used for requests that are ready to be
-> dispatched to the hardware but for some reason (e.g. lack of resources,
-> the hardware is to busy and can't get more requests) could not be sent
-> to the hardware. As soon as the driver can send new requests, those
-> queued at this list will be sent first for a more fair dispatch. Since
-> those requests are at the hctx, they can't be requeued or rescheduled
-> anymore.
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> ---
+> v2: Drop "_GATE" from symbol names
 > 
-> - request_queue->requeue_list: This list is used when it's not possible
-> to send the request to the associated hctx. This can happen if the
-> associated CPU or hctx is not available anymore. When requeueing those
-> requests, it will be possible to send them to new and function queues.
+>  include/dt-bindings/clock/aspeed-clock.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-Hi André,
-
-The hctx->dispatch description looks mostly fine. Can the following part 
-be left out since it looks confusing to me: "Since those requests are at 
-the hctx, they can't be requeued or rescheduled anymore."
-
-How about changing the requeue_list description into the following: 
-"requests requeued by a call to blk_mq_requeue_request()".
-
-Thanks,
-
-Bart.
-
-
+Acked-by: Rob Herring <robh@kernel.org>
