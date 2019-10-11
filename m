@@ -2,92 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 245E9D4363
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 16:49:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4720D436A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 16:51:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727518AbfJKOtc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 10:49:32 -0400
-Received: from smtprelay0096.hostedemail.com ([216.40.44.96]:36664 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726331AbfJKOtc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 10:49:32 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id B2613182CED34;
-        Fri, 11 Oct 2019 14:49:30 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:2898:2911:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3870:3871:3872:3873:3874:4321:4425:5007:7903:10004:10400:10967:11026:11232:11473:11658:11914:12114:12295:12297:12438:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21627:30012:30054:30070:30090:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
-X-HE-Tag: fire56_35c25ae377705
-X-Filterd-Recvd-Size: 2749
-Received: from XPS-9350.home (unknown [47.151.152.152])
-        (Authenticated sender: joe@perches.com)
-        by omf08.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 11 Oct 2019 14:49:29 +0000 (UTC)
-Message-ID: <15ecc8a684334ee97b38d81a3af88e189d72ff21.camel@perches.com>
-Subject: Re: [PATCH 05/19] EDAC, mc: Reduce indentation level in
- edac_mc_handle_error()
-From:   Joe Perches <joe@perches.com>
-To:     Robert Richter <rrichter@marvell.com>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Fri, 11 Oct 2019 07:49:28 -0700
-In-Reply-To: <20191011120824.y52pbji6qx6rstjr@rric.localdomain>
-References: <20191010202418.25098-1-rrichter@marvell.com>
-         <20191010202418.25098-6-rrichter@marvell.com>
-         <19dc4500bbfbb9d09f9730764a2b59353534358d.camel@perches.com>
-         <20191011071920.3fb8c45c@coco.lan>
-         <414f6658c088b9ac96ec4dad1ef751610dd83ce3.camel@perches.com>
-         <20191011120824.y52pbji6qx6rstjr@rric.localdomain>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
+        id S1727329AbfJKOvZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 10:51:25 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3740 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726174AbfJKOvZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 10:51:25 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 6F2C0AAA4191A7AE6E81;
+        Fri, 11 Oct 2019 22:35:55 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Fri, 11 Oct 2019
+ 22:35:45 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <timur@kernel.org>, <nicoleotsuka@gmail.com>,
+        <Xiubo.Lee@gmail.com>, <festevam@gmail.com>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>
+CC:     <alsa-devel@alsa-project.org>, <linuxppc-dev@lists.ozlabs.org>,
+        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH v2 -next] ASoC: fsl_mqs: Move static keyword to the front of declarations
+Date:   Fri, 11 Oct 2019 22:35:38 +0800
+Message-ID: <20191011143538.15300-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+In-Reply-To: <20191011105606.19428-1-yuehaibing@huawei.com>
+References: <20191011105606.19428-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-10-11 at 12:08 +0000, Robert Richter wrote:
-> On 11.10.19 03:50:23, Joe Perches wrote:
-> > On Fri, 2019-10-11 at 07:20 -0300, Mauro Carvalho Chehab wrote:
-> > > Em Thu, 10 Oct 2019 15:10:53 -0700 Joe Perches <joe@perches.com> escreveu:
-> > > > On Thu, 2019-10-10 at 20:25 +0000, Robert Richter wrote:
-> > > > > Reduce the indentation level in edac_mc_handle_error() a bit by using
-> > > > > continue. No functional changes.  
-> > > > 
-> > > > Seems fine, but trivially below:
-> > > > 
-> > > > > diff --git a/drivers/edac/edac_mc.c b/drivers/edac/edac_mc.c  
-> > > > []
-> > > > > @@ -1171,37 +1171,38 @@ void edac_mc_handle_error(const enum hw_event_mc_err_type type,  
-> > > > []
-> > > > > +		strcpy(p, dimm->label);
-> > > > > +		p += strlen(p);
-> > > > > +		*p = '\0';  
-> > > > 
-> > > > This *p = '\0' is unnecessary as the strcpy already did that.
-> > > 
-> > > True, but better to put it on a separate patch, as it makes
-> > > easier to review if you don't mix code de-indent with changes.
-> > > 
-> > > Also, maybe there are other occurrences of this pattern.
-> > 
-> > Maybe 80 or so uses of paired
-> > 
-> > 	strcpy(foo, bar);
-> > 	strlen(foo)
-> > 
-> > where another function like stpcpy, which doesn't exist
-> > in the kernel, could have been used.
-> 
-> Under drivers/edac/ I found this one place only.
-> 
-> So I could create a separate patch as a oneliner with that (trivial)
-> change?
+gcc warn about this:
 
-Of course yes.
+sound/soc/fsl/fsl_mqs.c:146:1: warning:
+ static is not at beginning of declaration [-Wold-style-declaration]
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: Fix patch title
+---
+ sound/soc/fsl/fsl_mqs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/fsl/fsl_mqs.c b/sound/soc/fsl/fsl_mqs.c
+index f7fc44e..0c813a4 100644
+--- a/sound/soc/fsl/fsl_mqs.c
++++ b/sound/soc/fsl/fsl_mqs.c
+@@ -143,7 +143,7 @@ static void fsl_mqs_shutdown(struct snd_pcm_substream *substream,
+ 				   MQS_EN_MASK, 0);
+ }
+ 
+-const static struct snd_soc_component_driver soc_codec_fsl_mqs = {
++static const struct snd_soc_component_driver soc_codec_fsl_mqs = {
+ 	.idle_bias_on = 1,
+ 	.non_legacy_dai_naming	= 1,
+ };
+-- 
+2.7.4
+
 
