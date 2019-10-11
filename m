@@ -2,198 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FE09D3E86
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 13:33:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E87C8D3E91
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 13:36:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727904AbfJKLd5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 07:33:57 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:49125 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727198AbfJKLd5 (ORCPT
+        id S1727951AbfJKLgb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 07:36:31 -0400
+Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:40548 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727226AbfJKLga (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 07:33:57 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191011113355euoutp01eef7edc2737ae290c01fa5a19a84e7bc~MlH0YCinx0779907799euoutp01M
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 11:33:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191011113355euoutp01eef7edc2737ae290c01fa5a19a84e7bc~MlH0YCinx0779907799euoutp01M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1570793635;
-        bh=4ZYRzf6XeFviC24JG3kc+6eo4xAoGOrUhYOqB4a0MZc=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=AXVdnsFS+UnP18yoy2NrwZ4s+czvJHklYPMz9cA3QL1qSh3DFSTF0py5ncO4lIroR
-         ePxxM5LCUVBNmx84kXEgV+30KVU54eWpJp8vQS4KiWhknyvDN7mPuGCJ0SoP1K/BuC
-         ejyGLdWpZogtAEgIebD29Q4xZCjNQ8aY14ggSaL4=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191011113354eucas1p14d4a819a030bba87cbecc0a6f4bb24f2~MlH0BB75m1526815268eucas1p16;
-        Fri, 11 Oct 2019 11:33:54 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 7A.62.04374.2A860AD5; Fri, 11
-        Oct 2019 12:33:54 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191011113354eucas1p219e79f62d780540027a1350ea3a016ea~MlHzrtVVx0387903879eucas1p2G;
-        Fri, 11 Oct 2019 11:33:54 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191011113354eusmtrp2deb37900f27cecd2eded4d8c644dd6ba~MlHzrEwdA0746607466eusmtrp2g;
-        Fri, 11 Oct 2019 11:33:54 +0000 (GMT)
-X-AuditID: cbfec7f5-4ddff70000001116-93-5da068a2d7ba
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 64.A3.04117.2A860AD5; Fri, 11
-        Oct 2019 12:33:54 +0100 (BST)
-Received: from [106.120.51.15] (unknown [106.120.51.15]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191011113353eusmtip1e76cf8e6c1eea71f16851db13000461b~MlHzEpiRd3093230932eusmtip15;
-        Fri, 11 Oct 2019 11:33:53 +0000 (GMT)
-Subject: Re: [PATCH] devfreq: exynos-bus: workaround dev_pm_opp_set_rate()
- errors on Exynos5422/5800 SoCs
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        k.konieczny@partner.samsung.com
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <0ce56e65-d989-18f8-af84-2fbd74ba20aa@samsung.com>
-Date:   Fri, 11 Oct 2019 13:33:53 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
-        Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <4f14d3af-e455-d05b-fc03-cba58e001f41@samsung.com>
-Content-Transfer-Encoding: 8bit
+        Fri, 11 Oct 2019 07:36:30 -0400
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+        by mx0a-0016f401.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9BBU1fI018939;
+        Fri, 11 Oct 2019 04:36:16 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version; s=pfpt0818;
+ bh=/7WaXvM10v3YP+xsBuVRFyMDKsoHjVR6YoZDBj+dVpw=;
+ b=bn0gn7G/Ug1Gpt9f89J264bKDtAN7tLGmXNHfPe2LKP+Tsaj+B+1kFB+giHzIn4CLo0B
+ JYlae2gR6aBSfQVvU+0az9gXW7tNuXsq6p8mFIzjsZdPMpHbcT3hZYMDXhqwdueOINRI
+ Ep+txStvpISjGqk6kNWQQPPr3/es6Eaug70NSRqcnPGs5W2YuWEud5AaxE9YOG/O5Z/U
+ FA82AI5sRnS2Ht/fzyqlHQTPOrOnNChKjsnFgeVfsy/Y5jymSDTXWXkkRxMNni7KDRJB
+ Vc4kS0C+T00uhrdHGIJ/HoRgiW+mdC9lctLA9fSzzd30TH1QyDh50gboG8DPguQSSdRz og== 
+Received: from sc-exch04.marvell.com ([199.233.58.184])
+        by mx0a-0016f401.pphosted.com with ESMTP id 2vjj6v1dwe-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Fri, 11 Oct 2019 04:36:16 -0700
+Received: from SC-EXCH03.marvell.com (10.93.176.83) by SC-EXCH04.marvell.com
+ (10.93.176.84) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Fri, 11 Oct
+ 2019 04:36:15 -0700
+Received: from NAM02-BL2-obe.outbound.protection.outlook.com (104.47.38.55) by
+ SC-EXCH03.marvell.com (10.93.176.83) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3 via Frontend Transport; Fri, 11 Oct 2019 04:36:15 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IUKVhiQLhQJrgAycBJjpeDMeHYOuz5ydHHSV5qOqvdHx+6U9PAKgNtCKFTjVTL7fTiQO71kirFdl7zlNGRIbNNXPGuaU2A5+iHa2mlcsoqdEWAWWr/KrNY2yGzRgutGyVO4fjjuOGzZ1IfhY03eD1RCCtCfieKQP4Z1pdIqQBf/lZ4Awdvdo1oFSO8VZFcMHqel4ldld2UozuleA7cuuacFCrpJQfgAco78f76CfVIU0C6TzfymzJa6Kn1/MoAKSusNU8phv8Woz0yyAOTDKsKNIylD0jKu9b48T602knbImnzNZJelk/xNVx6ih15wAA2A4P62OpajnacYzNHZMGw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/7WaXvM10v3YP+xsBuVRFyMDKsoHjVR6YoZDBj+dVpw=;
+ b=NsfhkI5aaYGpP/RlrAGo5B66K24QnUhibxUdICbTg5ri19nLumoNp1v8U+gr1B7nzvamEpO+J8MGPNt76z8O8GSAnT98K+CrioUetbsVkYMkKfpPDffHFr9MiEVjeq4HGMy0JAA5EVr/Jgkjhn2Oq6R1jeb1sL1WKQNCAhkho4xoEJ/cN9dNtaPrg3O4pg+SPZ5mYS6ZLquIZLLG3fV3RIr7PDvLlIWGkfbBF0YoQNs+hePUsQx4dEDDtzQ5DTHSXAvjXQjQ1UFshz39AvfRPtgMhqtarvGOQPvjOWRjRPBqoBH/xFyCA2SiT+IuQllRUs2OVKFOrjiO7qIHX5QGhA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=marvell.onmicrosoft.com; s=selector2-marvell-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/7WaXvM10v3YP+xsBuVRFyMDKsoHjVR6YoZDBj+dVpw=;
+ b=c0xeLvT0M1ZHT6f8gP1Qs3W//ALRSYeoyWScu3aOXeAOoQyBqYwW3s4kYbo1Iko2a1UNvX8ArA72o72efSvKjR/bkeDMzxukAvdZ3n0SY9wOENNRtkyY3hncdRntP99K86u8QcYtZkCvVGUE1N2zERRj6rietmUCfhLTTyNfFZE=
+Received: from MN2PR18MB3408.namprd18.prod.outlook.com (10.255.237.10) by
+ MN2PR18MB3088.namprd18.prod.outlook.com (20.179.21.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2327.25; Fri, 11 Oct 2019 11:36:13 +0000
+Received: from MN2PR18MB3408.namprd18.prod.outlook.com
+ ([fe80::d16d:8855:c030:2763]) by MN2PR18MB3408.namprd18.prod.outlook.com
+ ([fe80::d16d:8855:c030:2763%3]) with mapi id 15.20.2347.021; Fri, 11 Oct 2019
+ 11:36:13 +0000
+From:   Robert Richter <rrichter@marvell.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+CC:     Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
+        "James Morse" <james.morse@arm.com>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 02/19] EDAC: Remove EDAC_DIMM_OFF() macro
+Thread-Topic: [PATCH 02/19] EDAC: Remove EDAC_DIMM_OFF() macro
+Thread-Index: AQHVf6jOVfuHIna6UUqSRNg3t3vfNadVOH+AgAAYUYA=
+Date:   Fri, 11 Oct 2019 11:36:13 +0000
+Message-ID: <20191011113605.kthxq5g27qqsbsu4@rric.localdomain>
+References: <20191010202418.25098-1-rrichter@marvell.com>
+ <20191010202418.25098-3-rrichter@marvell.com>
+ <20191011070903.546d865f@coco.lan>
+In-Reply-To: <20191011070903.546d865f@coco.lan>
+Accept-Language: en-US
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPKsWRmVeSWpSXmKPExsWy7djP87qLMhbEGrycrWKxccZ6VovrX56z
-        WvTt+89o0f/4NbPF+fMb2C3ONr1ht9j0+BqrxeVdc9gsPvceYbSYcX4fk8XtxhVsDtwem1Z1
-        snlsXlLvcfDdHiaPvi2rGD0+b5ILYI3isklJzcksSy3St0vgyjg8dSNjwSq5it73P5gbGM9L
-        dDFyckgImEjcuPGSrYuRi0NIYAWjxIFd/cwQzhdGibXt5xkhnM+MEg93nWOEaWlb+YcJIrEc
-        qOrWWmaQhJDAW0aJZf8sQWxhgWyJb6eXgcVFBDwl/n6YwwLSwCxwm0mi99MvFpAEm4ChRNfb
-        LjYQm1fATmLp7k9MIDaLgKpE65Hf7CC2qECsxL0fx5khagQlTs58AtbLKWAv8aPpEFg9s4C8
-        RPPW2cwQtrjErSfzwa6TELjELnH+wmaos10kWk/1M0HYwhKvjm9hh7BlJP7vhGloBvrz3Fp2
-        CKeHUeJy0wyobmuJw8cvsnYxcgCt0JRYv0sfIuwo8fb+ZUaQsIQAn8SNt4IQR/BJTNo2nRki
-        zCvR0SYEUa0mMev4Ori1By9cYp7AqDQLyWuzkLwzC8k7sxD2LmBkWcUonlpanJueWmycl1qu
-        V5yYW1yal66XnJ+7iRGYrE7/O/51B+O+P0mHGAU4GJV4eGfIz48VYk0sK67MPcQowcGsJMK7
-        aNacWCHelMTKqtSi/Pii0pzU4kOM0hwsSuK81QwPooUE0hNLUrNTUwtSi2CyTBycUg2MR7pr
-        3gXpBere2WKZKzPtmfUeGclLe032i4Vob+gqm23w1c1vIbfF/xl/fEM8Iy60C5d+tWwU1fnd
-        p2d+w/WCXOb7PaVNyg4lO5/pn/hfeEXwh0WE1MNOK4+HF69Uy16Ouhl0lL3nAdcK265ZUa4J
-        TckVzyb8itbcwMDMHpAlpG7Vt6z8d6ASS3FGoqEWc1FxIgAnZEJLUgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrIIsWRmVeSWpSXmKPExsVy+t/xu7qLMhbEGrzZxWexccZ6VovrX56z
-        WvTt+89o0f/4NbPF+fMb2C3ONr1ht9j0+BqrxeVdc9gsPvceYbSYcX4fk8XtxhVsDtwem1Z1
-        snlsXlLvcfDdHiaPvi2rGD0+b5ILYI3SsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaP
-        tTIyVdK3s0lJzcksSy3St0vQyzg8dSNjwSq5it73P5gbGM9LdDFyckgImEi0rfzD1MXIxSEk
-        sJRRYtqhZ0wQCRmJk9MaWCFsYYk/17rYIIpeM0r8XT2JHSQhLJAt8e30MmYQW0TAU+Lvhzks
-        IEXMAneZJNZ9+wA19iyjxIN5MxlBqtgEDCW63oKM4uTgFbCTWLr7E9g6FgFVidYjv4GmcnCI
-        CsRKbNprBlEiKHFy5hMWEJtTwF7iR9MhsHJmATOJeZsfMkPY8hLNW2dD2eISt57MZ5rAKDQL
-        SfssJC2zkLTMQtKygJFlFaNIamlxbnpusZFecWJucWleul5yfu4mRmB0bjv2c8sOxq53wYcY
-        BTgYlXh4Z8jPjxViTSwrrsw9xCjBwawkwrto1pxYId6UxMqq1KL8+KLSnNTiQ4ymQL9NZJYS
-        Tc4HJo68knhDU0NzC0tDc2NzYzMLJXHeDoGDMUIC6YklqdmpqQWpRTB9TBycUg2Mh082Vy59
-        HWMUWpPRlPXXqMqwNW6vVfM8h0OTGLkj7KMiN//wl6uKvr9q6YdFWT3zTYvY5KSC7yzJNvEM
-        OVP36vnju0qmh9ZZNW2ZbqnlNpfz+0G+26w+/TKR7VWMXr5PSo88MfZTlxHZXDNn1rlDoSn/
-        zZxP6Mr8YDL5aX7YNf2q8lW2a8+VWIozEg21mIuKEwF9HHsT5AIAAA==
-X-CMS-MailID: 20191011113354eucas1p219e79f62d780540027a1350ea3a016ea
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191008134950eucas1p15cfef5800efc10d5b18ec5eb37dde60b
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20191008134950eucas1p15cfef5800efc10d5b18ec5eb37dde60b
-References: <CGME20191008134950eucas1p15cfef5800efc10d5b18ec5eb37dde60b@eucas1p1.samsung.com>
-        <20191008134923.30123-1-k.konieczny@partner.samsung.com>
-        <4f14d3af-e455-d05b-fc03-cba58e001f41@samsung.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HE1PR0202CA0048.eurprd02.prod.outlook.com
+ (2603:10a6:3:e4::34) To MN2PR18MB3408.namprd18.prod.outlook.com
+ (2603:10b6:208:165::10)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [31.208.96.227]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 17936e3f-3ba0-48c6-5f11-08d74e3f3823
+x-ms-traffictypediagnostic: MN2PR18MB3088:
+x-microsoft-antispam-prvs: <MN2PR18MB3088EAE912833E8D04F9EC51D9970@MN2PR18MB3088.namprd18.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-forefront-prvs: 0187F3EA14
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(346002)(396003)(39860400002)(366004)(136003)(189003)(199004)(446003)(4744005)(386003)(71190400001)(26005)(81166006)(53546011)(186003)(5660300002)(52116002)(6916009)(81156014)(11346002)(478600001)(8676002)(6506007)(256004)(476003)(71200400001)(6246003)(1076003)(14454004)(25786009)(66476007)(486006)(64756008)(66556008)(66446008)(66946007)(102836004)(86362001)(76176011)(305945005)(6512007)(7736002)(9686003)(66066001)(229853002)(54906003)(4326008)(6436002)(3846002)(6116002)(99286004)(8936002)(2906002)(6486002)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR18MB3088;H:MN2PR18MB3408.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: marvell.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: U7ErKwgD6l6Xbw+GJsUNzYbntwXqLGwQBXtYUm3qFOFFgk2rdE5xYEUuqYfcCA/2KnhyAXkvx+6d+43SpC19sKxkGtzDSdsOLZereuLyICmvenE5sCvU9ByDU9PazVM1leEf6l7wiTaqICzt6FA1Cyy8YslpEQ46CJbIjEx/q/a2f9KozxsGJOi8ULoCRBmWAhRyJKBZm8JlrSk0P1rAqEbTtAcNKgCk7L4P7o+s1fnt/VNFw1pN38utTJm/bAU/L/+a0H3839qdcPfWAtMAqclaj2Xg/sX1Jz5Efqcoizc71bMDmizKfd5VCU0/jrVM3GgYb8JIJD5g0YGzZgYAfvh+8dCzz49uaMuL6zJEDQy7/CE5ampUbdamifds4KnplOOKX6oIOFykcs/rp30PC0DjPKxVa98Lxk8kyBxsIC4=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <6157D1F5F17F504CB525708C8D3DA382@namprd18.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 17936e3f-3ba0-48c6-5f11-08d74e3f3823
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Oct 2019 11:36:13.0811
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: eH+QJcH5X+IHBLr/b3TwPA6MYj6Gg2v97DqtlAsRjlWu3UGmPg8j+vlmeZkUrhoB6RevuFhrp27rsNhAvBaeaw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB3088
+X-OriginatorOrg: marvell.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-11_07:2019-10-10,2019-10-11 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chanwoo,
+Thanks for review.
 
-On 10.10.2019 04:50, Chanwoo Choi wrote:
-> On 2019년 10월 08일 22:49, k.konieczny@partner.samsung.com wrote:
->> Commit 4294a779bd8d ("PM / devfreq: exynos-bus: Convert to use
->> dev_pm_opp_set_rate()") introduced errors:
->> exynos-bus: new bus device registered: soc:bus_wcore ( 84000 KHz ~ 400000 KHz)
->> exynos-bus: new bus device registered: soc:bus_noc ( 67000 KHz ~ 100000 KHz)
->> exynos-bus: new bus device registered: soc:bus_fsys_apb (100000 KHz ~ 200000 KHz)
->> ...
->> exynos-bus soc:bus_wcore: dev_pm_opp_set_rate: failed to find current OPP for freq 532000000 (-34)
->> exynos-bus soc:bus_noc: dev_pm_opp_set_rate: failed to find current OPP for freq 111000000 (-34)
->> exynos-bus soc:bus_fsys_apb: dev_pm_opp_set_rate: failed to find current OPP for freq 222000000 (-34)
->>
->> They are caused by incorrect PLL assigned to clock source, which results
->> in clock rate outside of OPP range. Add workaround for this in
->> exynos_bus_parse_of() by adjusting clock rate to those present in OPP.
-> If the clock caused this issue, you can set the initial clock on DeviceTree
-> with assigned-clock-* properties. Because the probe time of clock driver
-> is early than the any device drivers.
->
-> It is not proper to fix the clock issue on other device driver.
-> I think you can fix it by using the supported clock properties.
+On 11.10.19 07:09:03, Mauro Carvalho Chehab wrote:
+> Em Thu, 10 Oct 2019 20:25:07 +0000
+> Robert Richter <rrichter@marvell.com> escreveu:
+>=20
+> > The EDAC_DIMM_OFF() macro takes 5 arguments to get the DIMM's index.
+> > This can be much simplified now as the offset is already stored in
+> > struct dimm_info. Use it directly and completely remove the
+> > EDAC_DIMM_OFF() macro.
+>=20
+> Ah, now I understand why you added the dimm idx field. One more reason
+> why to split it on a separate patch (or perhaps merge it here).
 
-This issue is about something completely different. The OPPs defined in 
-DT cannot be applied, because it is not possible to derive the needed 
-clock rate from the bootloader-configured clock topology (mainly due to 
-lack of common divisor values for some of the parent clocks). Some time 
-ago Lukasz tried initially to redefine this clock topology using 
-assigned-clock-rates/parents properties (see 
-https://lkml.org/lkml/2019/7/15/276), but it has limitations and some 
-such changes has to be done in bootloader. Until this is resolved, 
-devfreq simply cannot set some of the defined OPPs.
+Right, it needs to be part of the this patch.
 
-This issue was there from the beginning, recent Kamil's patch only 
-revealed it. In fact it was even worse - devfreq and common clock 
-framework silently set lower clock than the given OPP defined.
-
->> Fixes: 4294a779bd8d ("PM / devfreq: exynos-bus: Convert to use dev_pm_opp_set_rate()")
->> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
->> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
->> ---
->>   drivers/devfreq/exynos-bus.c | 14 +++++++++++---
->>   1 file changed, 11 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
->> index c832673273a2..37bd34d5625b 100644
->> --- a/drivers/devfreq/exynos-bus.c
->> +++ b/drivers/devfreq/exynos-bus.c
->> @@ -243,7 +243,7 @@ static int exynos_bus_parse_of(struct device_node *np,
->>   {
->>   	struct device *dev = bus->dev;
->>   	struct dev_pm_opp *opp;
->> -	unsigned long rate;
->> +	unsigned long rate, opp_rate;
->>   	int ret;
->>   
->>   	/* Get the clock to provide each bus with source clock */
->> @@ -267,13 +267,21 @@ static int exynos_bus_parse_of(struct device_node *np,
->>   	}
->>   
->>   	rate = clk_get_rate(bus->clk);
->> -
->> -	opp = devfreq_recommended_opp(dev, &rate, 0);
->> +	opp_rate = rate;
->> +	opp = devfreq_recommended_opp(dev, &opp_rate, 0);
->>   	if (IS_ERR(opp)) {
->>   		dev_err(dev, "failed to find dev_pm_opp\n");
->>   		ret = PTR_ERR(opp);
->>   		goto err_opp;
->>   	}
->> +	/*
->> +	 * FIXME: U-boot leaves clock source at incorrect PLL, this results
->> +	 * in clock rate outside defined OPP rate. Work around this bug by
->> +	 * setting clock rate to recommended one.
->> +	 */
->> +	if (rate > opp_rate)
->> +		clk_set_rate(bus->clk, opp_rate);
->> +
->>   	bus->curr_freq = dev_pm_opp_get_freq(opp);
->>   	dev_pm_opp_put(opp);
->>   
->>
->
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+-Robert
