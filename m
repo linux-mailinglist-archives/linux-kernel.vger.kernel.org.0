@@ -2,78 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3781D3E3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 13:20:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9480D3E43
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 13:22:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727946AbfJKLU4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 07:20:56 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39409 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727198AbfJKLUz (ORCPT
+        id S1728061AbfJKLV6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 07:21:58 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:38420 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727198AbfJKLV5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 07:20:55 -0400
-Received: by mail-lj1-f196.google.com with SMTP id y3so9446408ljj.6;
-        Fri, 11 Oct 2019 04:20:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EtNnfZSNIM+FE/Ouxm1KBXCTSzFBGzlbFpsvpsa6fzI=;
-        b=D2OqE7PnNRoUmWNbgTg4s/KS8g6W7Ej8Lz/BB12Px1dRFIkn9T/mePVU+H/hIHV56J
-         64v5oYuvA2yBVwR0KjYpdXT/oXajCzphVepm43ADpOGt2tkvfG7g+ZFrAf7vUYqBiwfu
-         EjGV7zGmT3Co3lrzt/KGm2dHBVc8id1bTLHciUJIAOh8xvd9figVUKdPFEFHeguDB88M
-         MtLMtaaxHw6QUzwR1PJNwwgfViWo4DK6326sFZVy7QzQuw4tbK0TeUnOf345R0Q4EuZa
-         CAzVC4ECxAv5aVbB5KLueckmLSFulPvJYY6CEPwIjImSvxfmQszWMcLYYEHWMSGewiS8
-         AtEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EtNnfZSNIM+FE/Ouxm1KBXCTSzFBGzlbFpsvpsa6fzI=;
-        b=gvq9R9vyMHd5xIHJO9sVkhc4ZHKQeCSaRWUZ2xA3jBiJUgBc+YYvBlczanXf/YAu+s
-         dobcfRPRkdoHOEt3psHklGU1OMO1SneU1tlqQOEcvndWs4XO8g+myWz+vkfQMunBYay9
-         0NwjHVDQrdlK9UkvJuafIYBl1kbURhmCjK5QDg7i3P8l+FBKFCc0wWTRW8XOtSS5DPEc
-         B2qyrDZV4IN54K7APTcrPTZ1Cw8N/7tip4TOys8nSep3Ea41gNhr9rpVHoNffZxmi78p
-         KwW7YNsPFscGy8urQcVs9kr3EJ0hx40CErLjM36zlSgYcd0u4xrMTlNXgWbUEVooVl4y
-         CxTA==
-X-Gm-Message-State: APjAAAWXJs2vlbMg+eBjL4QkIgFeVVUDz8urHFYzMXJKjCa6WhMcgDt6
-        TxGfG3U+kxKWePQnb5fkOSbzVrcPF6bDiYCFuNBhmlYZ
-X-Google-Smtp-Source: APXvYqzE/zVDPjPyTom42qRHj6q37hTnXXPuz3aalIoov7655nQZiN5T5dR7/JP1C+tRL0z2N/CI/hjBxsug7ERVx48=
-X-Received: by 2002:a2e:42d6:: with SMTP id h83mr8801587ljf.21.1570792852255;
- Fri, 11 Oct 2019 04:20:52 -0700 (PDT)
+        Fri, 11 Oct 2019 07:21:57 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 795F2802A4; Fri, 11 Oct 2019 13:21:39 +0200 (CEST)
+Date:   Fri, 11 Oct 2019 13:21:06 +0200
+From:   Pavel Machek <pavel@denx.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH 4.19 082/114] powerpc/book3s64/radix: Rename
+ CPU_FTR_P9_TLBIE_BUG feature flag
+Message-ID: <20191011112106.GA28994@amd>
+References: <20191010083544.711104709@linuxfoundation.org>
+ <20191010083612.352065837@linuxfoundation.org>
 MIME-Version: 1.0
-References: <1570784940-5965-1-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1570784940-5965-1-git-send-email-Anson.Huang@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Fri, 11 Oct 2019 08:20:43 -0300
-Message-ID: <CAOMZO5D_Yxzq83zKGM=qUbBjP3c4UB9_GRBAAcMDEvzTYMuyfA@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx7ulp: Correct DDR clock mux options
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <Linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="PNTmBPCT7hxwcZjr"
+Content-Disposition: inline
+In-Reply-To: <20191010083612.352065837@linuxfoundation.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 6:11 AM Anson Huang <Anson.Huang@nxp.com> wrote:
->
-> In the latest reference manual Rev.0,06/2019, the DDR clock mux
-> is extended to 2 bits, and the clock options are also changed,
-> correct them accordingly.
->
-> Fixes: b1260067ac3d ("clk: imx: add imx7ulp clk driver")
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+--PNTmBPCT7hxwcZjr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> From: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+>=20
+> Rename the #define to indicate this is related to store vs tlbie
+> ordering issue. In the next patch, we will be adding another feature
+> flag that is used to handles ERAT flush vs tlbie ordering issue.
+>=20
+> Fixes: a5d4b5891c2f ("powerpc/mm: Fixup tlbie vs store ordering issue on =
+POWER9")
+> Cc: stable@vger.kernel.org # v4.16+
+> Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+> Link:
+> https://lore.kernel.org/r/20190924035254.24612-2-aneesh.kumar@linux.ibm.c=
+om
+
+Apparently this is upstream commit
+09ce98cacd51fcd0fa0af2f79d1e1d3192f4cbb0 , but the changelog does not
+say so.
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--PNTmBPCT7hxwcZjr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl2gZaIACgkQMOfwapXb+vK/gQCfQ8U3ZXfQ5R+I1xfv+CI2oqBJ
+88AAnRfzH4negiIU+ZglUzpRMysY31HV
+=5f+A
+-----END PGP SIGNATURE-----
+
+--PNTmBPCT7hxwcZjr--
