@@ -2,101 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56E08D3E13
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 13:16:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F0EBD3E1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 13:17:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727851AbfJKLQL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 07:16:11 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39877 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727709AbfJKLQL (ORCPT
+        id S1727911AbfJKLRh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 07:17:37 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44458 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727226AbfJKLRh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 07:16:11 -0400
-Received: by mail-lj1-f193.google.com with SMTP id y3so9432587ljj.6
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 04:16:08 -0700 (PDT)
+        Fri, 11 Oct 2019 07:17:37 -0400
+Received: by mail-pf1-f194.google.com with SMTP id q21so5886642pfn.11;
+        Fri, 11 Oct 2019 04:17:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:organization:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Ooy01geSvoqL+GgWiguG5Arr/pkbSR9LEwm6vQ6trlA=;
-        b=FJGDUtGWD6dezMdpfiI3yfqw/RLXa3Cf5Y5p0xGMYaiScNsHdq6GDzLNWh5p1En1q0
-         eRQtdLRr1/D6U7+Q85XT3rS2ISqQiuliJAmkF/J0fC9tO1mut3EkSl4ckQrODTRDbJdU
-         SE36sc3svSCPDdHSMN0uQY3JTiTL9xr8ZTzeE4IQ0z4WYKvesc1H+lJWGNS1B3UvJgJx
-         arlORLWtfcvJ3hdtQRMkK1TK2MtcjnIxaexR8VaF/1B+qtq7HkJxYQivLhERG8DBNbBl
-         hQfb0LW2/xY1uof3a5oa/f9swp/JrzNMd0ITcgQudf+WS9jFD7yBHeENt5IvXwF77pU0
-         to2g==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=VlmC3FzMBaeFdi8vKdtcQ+jsZk6Q6WwIVRbhfWm5BOY=;
+        b=hmEs5ubVyP+9yFN5vhfrZRNiRHGIm/4+9CF0qg7KeaatHP681U9J2YkTTARsVVGmLH
+         /LgKw8pGN1EhJggSGOPRQD20+b7RxlPK8kqokgmODoNJ+fk3KB81GItuVE8Z1jHNaVPd
+         IjvYk0LsvlUx7KuNlXd+2AcFc+6QW9379pLGyYpWobN94jjnal3+vxAnKiPnfDfe5icw
+         sO6k22ic/4fex3wCD9Cmax/JozcCKN1IG2jE7cJtMKbok0Xf2PRwsvmt9Xm2l1ZlYq4f
+         NDgT8hPAbl/aajx10ahKrGqV3dcOzaCNkUfx4e7xi5NrZJR2ZAwCurCiilDj5n3PNaa7
+         zzCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=Ooy01geSvoqL+GgWiguG5Arr/pkbSR9LEwm6vQ6trlA=;
-        b=pHPtJIWicz+H4xhTjn+ZIAdB1WaxrSTM1rwd6rKgNKMbYAZKcIx2PoXz2F3EKyOZkk
-         nfVZ05vL9rprPowFCEQy93hEsqB3Vj/Rtzkw2uzEiHvcWDLMiOP2B4cgVXY9JXtSYWji
-         IZWa/5VHDSgRmKluTkGl14+Ari1sohZlBlyLjjxeH9WgGiH0UccGPMHpOsTKuTOhIVqx
-         EirPuV+/of2FXvsdHzoKV4S1zqxs5oFkEu/mCIoVtDbIS9+77sWSoirjxwHuIoQ8JcVp
-         ovvl6i6hlx2pdU+UGJvVsf11FNBU76fqG60VXQqDOVA3vlgBHhquR2uZFx+rz9ns3I+q
-         6sVQ==
-X-Gm-Message-State: APjAAAW5aZtQjydkXPPR4bVbAssu0pG/Jna5qZSSrHAkenoS3xbeZlRs
-        +AlCiQTzJtnZnT15aA2j6Bz+kQ==
-X-Google-Smtp-Source: APXvYqz+u6eneONfnjvqqaE8Uh0If4lrYaqqjy+4UFFpkLHI7cc3rLwOyRGvWtm0ePCkEkvTKscC4w==
-X-Received: by 2002:a2e:569a:: with SMTP id k26mr9075699lje.256.1570792567730;
-        Fri, 11 Oct 2019 04:16:07 -0700 (PDT)
-Received: from wasted.cogentembedded.com ([2a00:1fa0:4430:5cc6:e6ed:2da1:4d7:1d29])
-        by smtp.gmail.com with ESMTPSA id q26sm1857253lfd.53.2019.10.11.04.16.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 11 Oct 2019 04:16:06 -0700 (PDT)
-Subject: Re: [PATCH v5 bpf-next 09/15] samples/bpf: use own flags but not
- HOSTCFLAGS
-To:     ast@kernel.org, daniel@iogearbox.net, yhs@fb.com,
-        davem@davemloft.net, jakub.kicinski@netronome.com, hawk@kernel.org,
-        john.fastabend@gmail.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        clang-built-linux@googlegroups.com, ilias.apalodimas@linaro.org
-References: <20191011002808.28206-1-ivan.khoronzhuk@linaro.org>
- <20191011002808.28206-10-ivan.khoronzhuk@linaro.org>
- <99f76e2f-ed76-77e0-a470-36ae07567111@cogentembedded.com>
- <20191011095715.GB3689@khorivan>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <3fb88a06-5253-1e48-9bea-2d31a443250b@cogentembedded.com>
-Date:   Fri, 11 Oct 2019 14:16:05 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=VlmC3FzMBaeFdi8vKdtcQ+jsZk6Q6WwIVRbhfWm5BOY=;
+        b=H54xXsAxGjnR4dtzj7L3XxSzO4wk8WnjYRiFFuq4yAZQNly6LikKzAetFZr9WzrgNv
+         lPqzvETThFt4eBCAwQf23a4MVkYCxsSa+NP7ql1bP3/u3iw55X8EL/QUb3QhbX42QURT
+         +SwZgX3xtlRD40VDR7LwuNis59vLQm4MKFwAVa2BVUiLTtGrqUMwLjJxsrx3Qg6mNFLW
+         l0xCd6xrjtxRmK98zFOeKaaHbdMCzeeNA4UrqV2LomUyfEWuGCiqOhx8hdBiheBfgHT7
+         NJmaK/KAI6OfUYKob5yx3Y2qNKhkMQ5ZdicqrtMFW0Xrho8NyMSMDlJDuxcYDdRgP2Pr
+         ap9w==
+X-Gm-Message-State: APjAAAVCDtd0trp9SB9sbFKOGCdbMIqa0pnGBTYBWWaBKTh+DBp5OyrY
+        1PHZ7GGx9ixodZmhV6dBC+9Utzel7pw=
+X-Google-Smtp-Source: APXvYqycn+7rVl7i80zdVMHgTMFIdpglnAHKiinGYoPqmz3pQhM0QUTxiW30A0mKr8IkfwBAaIX17w==
+X-Received: by 2002:a17:90a:730a:: with SMTP id m10mr17082622pjk.78.1570792656558;
+        Fri, 11 Oct 2019 04:17:36 -0700 (PDT)
+Received: from localhost ([2402:3a80:139e:d60:aa0c:2692:c558:75f5])
+        by smtp.gmail.com with ESMTPSA id w14sm22001108pge.56.2019.10.11.04.17.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2019 04:17:36 -0700 (PDT)
+Date:   Fri, 11 Oct 2019 16:47:32 +0530
+From:   Jas K <jaskaransingh7654321@gmail.com>
+To:     syzbot+e7d46eb426883fb97efd@syzkaller.appspotmail.com
+Cc:     stern@rowland.harvard.edu, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: KMSAN: uninit-value in alauda_check_media
+Message-ID: <20191011111732.GA25982@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <20191011095715.GB3689@khorivan>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/11/2019 12:57 PM, Ivan Khoronzhuk wrote:
+Hi, just taking a crack at this. Hope you guys don't mind.
 
->>> While compiling natively, the host's cflags and ldflags are equal to
->>> ones used from HOSTCFLAGS and HOSTLDFLAGS. When cross compiling it
->>> should have own, used for target arch. While verification, for arm,
->>
->>   While verifying.
-> While verification stage.
+#syz test: https://github.com/google/kasan.git 1e76a3e5
 
-   While *in* verification stage, "while" doesn't combine with nouns w/o
-a preposition.
-
->>> arm64 and x86_64 the following flags were used always:
->>>
->>> -Wall -O2
->>> -fomit-frame-pointer
->>> -Wmissing-prototypes
->>> -Wstrict-prototypes
->>>
->>> So, add them as they were verified and used before adding
->>> Makefile.target and lets omit "-fomit-frame-pointer" as were proposed
->>> while review, as no sense in such optimization for samples.
->>>
->>> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
->> [...]
-
-MBR, Sergei
+diff --git a/drivers/usb/storage/alauda.c b/drivers/usb/storage/alauda.c
+index ddab2cd3d2e7..bb309b9ad65b 100644
+--- a/drivers/usb/storage/alauda.c
++++ b/drivers/usb/storage/alauda.c
+@@ -452,7 +452,7 @@ static int alauda_init_media(struct us_data *us)
+ static int alauda_check_media(struct us_data *us)
+ {
+ 	struct alauda_info *info = (struct alauda_info *) us->extra;
+-	unsigned char status[2];
++	unsigned char *status = us->iobuf;
+ 	int rc;
+ 
+ 	rc = alauda_get_media_status(us, status);
