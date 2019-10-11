@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAF52D371F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 03:30:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0BBCD371D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 03:30:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728397AbfJKBZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 21:25:10 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:32999 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728237AbfJKBYY (ORCPT
+        id S1728387AbfJKBZE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 21:25:04 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53122 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728240AbfJKBYZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 21:24:24 -0400
-Received: by mail-wr1-f67.google.com with SMTP id b9so9995686wrs.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 18:24:22 -0700 (PDT)
+        Thu, 10 Oct 2019 21:24:25 -0400
+Received: by mail-wm1-f65.google.com with SMTP id r19so8704310wmh.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 18:24:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=vmqV2OM13rN8g9gqwuFQcG1AzY2kvl68qXweRe9btYY=;
-        b=RKtDHonTyK0sInyXe7q4IAP0UAFPpt2iYIJSb4NBAyqX4KDr2rkltPXrZXLKCAn31t
-         Lf1kCT4wGGXqCRuEmtvRsHfkBnaf/9lHVNdkmCGG3HNKJ/ItU/vQClHo/qjb1MexbkbZ
-         O5agLhB9srSGfpRqN7jq4pFEGxwcv3dFki7/cFpIKsvwS0oId6J8FQFGKHjsO0FwhkwU
-         XeabN3inSXjkfULEysQLgjGlCXEVB779fXrlAFpk/PRHeXPh4IArrMUQKCVIY8JudJ9R
-         HrOan2FF5oOrQNm2BvRgCe9yTEVaaQwc34y+PzWX/kmuA1e338AY9rS/u2XnQf7gpiJi
-         ZBzQ==
+        bh=gWD0ajueU3FDZugFOeZjcuv8DzQScIgD3lk4LddX0o0=;
+        b=EhcGaFKYu218GQzSN/qZhWvFpix+VaufF9g+EZNmmiCDUnuO0vUw4GvIPdOPE8FOCB
+         el7ZfzJwXT0tUV0pELO7ZUfUuXCer6YUVxCGH16my851zEWcBJcWE62P6IMus4ddnggb
+         DEJqUNgY7nV7hkPNdj83DNUcQ7zBrl8TC29sjPYGGw53BFsdZDi/1S9tnpORZ4bEqv6w
+         7Bc8rDvZRgVBgd5tbBovpUtXew9lMC6GkZF6x5TSceo9LhKwbfo7iEPzv9sK9zwTvDC7
+         q6nBlxZul6lqD0abv9A0axw/EfMou/IDI91CjVQL1o/SGw4Ko/kYQCHdICmoIlGqwLOQ
+         1AmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=vmqV2OM13rN8g9gqwuFQcG1AzY2kvl68qXweRe9btYY=;
-        b=i1daY4Xg01KVL1nWKqNgZ66dSedTNuAWIcke73I33Z/AlcPHA4w5Xs8ZIdHBRHDMZx
-         JRD43NDG+zZWedJ7WGQ/vOHEyrWHVM6XkPlY+A1iqaxwB8mbd61yDvLphInhVU7V37wK
-         EF8TpUDKqr+yB0jlfIVfcoLtEZKjIE5rdsdBGijfwHAr9wc/pB+wGeCah1gWnIpSma74
-         r+wwYOnFccGjk0RGfDOw+/Z0ZerILZSS/cYnwW9koJZ7iU0r3+XlFwSemSXEYvPKEobt
-         jMtFuFH2m2flH45nuya3Tw2YNax2kXmlcohnYIsru6HxTYSXx2jP3UZb8Jg9mqUahDDJ
-         SfQQ==
-X-Gm-Message-State: APjAAAUPJqOvAh7Y6oYL0rLZt20jOV9KM5ukTwSzPlAT6Ez4IQZgnWu8
-        vBhPAfj6+JXdlG6itsDAJkifYFfA4mc=
-X-Google-Smtp-Source: APXvYqxjMvKf23uxoAePg8zl7LYOV5o9nNZkcYnQ2Q4YPUsDdmCOTGtfRnbYn3XkuqD0FGyTthfm+Q==
-X-Received: by 2002:a5d:6942:: with SMTP id r2mr10262902wrw.363.1570757061939;
-        Thu, 10 Oct 2019 18:24:21 -0700 (PDT)
+        bh=gWD0ajueU3FDZugFOeZjcuv8DzQScIgD3lk4LddX0o0=;
+        b=aaPwsewzBzGQRVPEH/QzSZs4NsvAYYQW7Gy0T/BBKGbe/VokCwwGZmJSVOy6ISUU6A
+         iQx9maBtA3oXR8PjrEajPQJ679Yo2/WBn8YIi95jkmoNOi964Pe1cF4QycWoSi7c0qhJ
+         crytrt75DAP5xIJFWujAeMZKA8boM2I/FuVQWZ29HVJ+T2CycfsUVp4/QOqvToIqBCzo
+         IWD1sluw95m3cZX0hFbzv8jThvVnJBArx5FHIon+teh8Trt0Yeb9K9d5PNdnzuMqYriu
+         QolE1i04KhjaOWSsRdTOk0A+McpO2fD6Yqkl6dAl1PVHek4AqKRY/X4jOxL07M8pDZJs
+         bdZQ==
+X-Gm-Message-State: APjAAAVgAMJ/Z9Akr0J+EOjS1hASGe4X7+rxjY5lIyG7ytz2I3nsav1F
+        6Vp3oHzPTqEbO6LAz0T86CGToUiSP0s=
+X-Google-Smtp-Source: APXvYqyZbqU/RKBZIpBR6d31fGxswiRSAKkGg3hbg5igkpPVS7ppB+tsdItS7JKB0oBlnmSzkfAP3A==
+X-Received: by 2002:a1c:bc07:: with SMTP id m7mr958262wmf.103.1570757063384;
+        Thu, 10 Oct 2019 18:24:23 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:8084:ea2:c100:228:f8ff:fe6f:83a8])
-        by smtp.gmail.com with ESMTPSA id l13sm7699795wmj.25.2019.10.10.18.24.20
+        by smtp.gmail.com with ESMTPSA id l13sm7699795wmj.25.2019.10.10.18.24.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 18:24:21 -0700 (PDT)
+        Thu, 10 Oct 2019 18:24:22 -0700 (PDT)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
@@ -66,9 +66,9 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         containers@lists.linux-foundation.org, criu@openvz.org,
         linux-api@vger.kernel.org, x86@kernel.org,
         Andrei Vagin <avagin@gmail.com>
-Subject: [PATCHv7 24/33] x86/vdso: On timens page fault prefault also VVAR page
-Date:   Fri, 11 Oct 2019 02:23:32 +0100
-Message-Id: <20191011012341.846266-25-dima@arista.com>
+Subject: [PATCHv7 25/33] x86/vdso: Zap vvar pages on switch a time namspace
+Date:   Fri, 11 Oct 2019 02:23:33 +0100
+Message-Id: <20191011012341.846266-26-dima@arista.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191011012341.846266-1-dima@arista.com>
 References: <20191011012341.846266-1-dima@arista.com>
@@ -79,47 +79,121 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As timens page has offsets to data on VVAR page VVAR is going
-to be accessed shortly. Set it up with timens in one page fault
-as optimization.
+The VVAR page layout depends on whether a task belongs to the root or
+non-root time namespace. Whenever a task changes its namespace, the VVAR
+page tables are cleared and then they will re-faulted with a
+corresponding layout.
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Co-developed-by: Andrei Vagin <avagin@gmail.com>
 Signed-off-by: Andrei Vagin <avagin@gmail.com>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- arch/x86/entry/vdso/vma.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ arch/x86/entry/vdso/vma.c      | 27 +++++++++++++++++++++++++++
+ include/linux/time_namespace.h |  3 +++
+ kernel/time/namespace.c        | 10 ++++++++++
+ 3 files changed, 40 insertions(+)
 
 diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
-index f6e13ab29d94..d6cb8a16f368 100644
+index d6cb8a16f368..57ada3e95f8d 100644
 --- a/arch/x86/entry/vdso/vma.c
 +++ b/arch/x86/entry/vdso/vma.c
-@@ -169,8 +169,23 @@ static vm_fault_t vvar_fault(const struct vm_special_mapping *sm,
- 		 * offset.
- 		 * See also the comment near timens_setup_vdso_data().
- 		 */
--		if (timens_page)
-+		if (timens_page) {
-+			unsigned long addr;
-+			vm_fault_t err;
-+
-+			/*
-+			 * Optimization: inside time namespace pre-fault
-+			 * VVAR page too. As on timens page there are only
-+			 * offsets for clocks on VVAR, it'll be faulted
-+			 * shortly by VDSO code.
-+			 */
-+			addr = vmf->address + (image->sym_timens_page - sym_offset);
-+			err = vmf_insert_pfn(vma, addr, pfn);
-+			if (unlikely(err & VM_FAULT_ERROR))
-+				return err;
-+
- 			pfn = page_to_pfn(timens_page);
-+		}
+@@ -50,6 +50,7 @@ void __init init_vdso_image(const struct vdso_image *image)
+ 						image->alt_len));
+ }
  
- 		return vmf_insert_pfn(vma, vmf->address, pfn);
- 	} else if (sym_offset == image->sym_pvclock_page) {
++static const struct vm_special_mapping vvar_mapping;
+ struct linux_binprm;
+ 
+ static vm_fault_t vdso_fault(const struct vm_special_mapping *sm,
+@@ -127,6 +128,32 @@ static struct page *find_timens_vvar_page(struct vm_area_struct *vma)
+ 
+ 	return NULL;
+ }
++
++/*
++ * The vvar page layout depends on whether a task belongs to the root or
++ * non-root time namespace. Whenever a task changes its namespace, the VVAR
++ * page tables are cleared and then they will re-faulted with a
++ * corresponding layout.
++ * See also the comment near timens_setup_vdso_data() for details.
++ */
++int vdso_join_timens(struct task_struct *task, struct time_namespace *ns)
++{
++	struct mm_struct *mm = task->mm;
++	struct vm_area_struct *vma;
++
++	if (down_write_killable(&mm->mmap_sem))
++		return -EINTR;
++
++	for (vma = mm->mmap; vma; vma = vma->vm_next) {
++		unsigned long size = vma->vm_end - vma->vm_start;
++
++		if (vma_is_special_mapping(vma, &vvar_mapping))
++			zap_page_range(vma, vma->vm_start, size);
++	}
++
++	up_write(&mm->mmap_sem);
++	return 0;
++}
+ #else
+ static inline struct page *find_timens_vvar_page(struct vm_area_struct *vma)
+ {
+diff --git a/include/linux/time_namespace.h b/include/linux/time_namespace.h
+index c479cfda2c3e..dcf3dbf2836b 100644
+--- a/include/linux/time_namespace.h
++++ b/include/linux/time_namespace.h
+@@ -30,6 +30,9 @@ struct time_namespace {
+ extern struct time_namespace init_time_ns;
+ 
+ #ifdef CONFIG_TIME_NS
++extern int vdso_join_timens(struct task_struct *task,
++			    struct time_namespace *ns);
++
+ static inline struct time_namespace *get_time_ns(struct time_namespace *ns)
+ {
+ 	kref_get(&ns->kref);
+diff --git a/kernel/time/namespace.c b/kernel/time/namespace.c
+index e14cd1ca387d..0dc0742ed1ee 100644
+--- a/kernel/time/namespace.c
++++ b/kernel/time/namespace.c
+@@ -280,6 +280,7 @@ static void timens_put(struct ns_common *ns)
+ static int timens_install(struct nsproxy *nsproxy, struct ns_common *new)
+ {
+ 	struct time_namespace *ns = to_time_ns(new);
++	int err;
+ 
+ 	if (!current_is_single_threaded())
+ 		return -EUSERS;
+@@ -290,6 +291,10 @@ static int timens_install(struct nsproxy *nsproxy, struct ns_common *new)
+ 
+ 	timens_set_vvar_page(current, ns);
+ 
++	err = vdso_join_timens(current, ns);
++	if (err)
++		return err;
++
+ 	get_time_ns(ns);
+ 	put_time_ns(nsproxy->time_ns);
+ 	nsproxy->time_ns = ns;
+@@ -304,6 +309,7 @@ int timens_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk)
+ {
+ 	struct ns_common *nsc = &nsproxy->time_ns_for_children->ns;
+ 	struct time_namespace *ns = to_time_ns(nsc);
++	int err;
+ 
+ 	/* create_new_namespaces() already incremented the ref counter */
+ 	if (nsproxy->time_ns == nsproxy->time_ns_for_children)
+@@ -311,6 +317,10 @@ int timens_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk)
+ 
+ 	timens_set_vvar_page(tsk, ns);
+ 
++	err = vdso_join_timens(tsk, ns);
++	if (err)
++		return err;
++
+ 	get_time_ns(ns);
+ 	put_time_ns(nsproxy->time_ns);
+ 	nsproxy->time_ns = ns;
 -- 
 2.23.0
 
