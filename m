@@ -2,87 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D044D3DB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 12:50:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 493F6D3DB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 12:50:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727723AbfJKKuM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 06:50:12 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46162 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726290AbfJKKuL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 06:50:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=+GYaGvn6aQG4ujRHeTb1+lopvEhjRcfgUQWj4NEdRZ0=; b=oFF+nMW8ULTocBKQP7Rg0G0OD
-        ULnpmBNgzEV4j+EqDbOV/8Kdzb2mh5FWrQeFQm7wEwX6fdvC1FsK8ujWRciwYHXfBbq3oXwwe+HGq
-        Baau7aDhUJjlC4PE6unDctPMCzjGx3HIrkGX42kkWsJ45W2xe8WLLJQIaNMl1O16Npsb0=;
-Received: from fw-tnat-cam7.arm.com ([217.140.106.55] helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1iIsUk-0005Sr-Uf; Fri, 11 Oct 2019 10:50:03 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 3111DD0019E; Fri, 11 Oct 2019 11:50:01 +0100 (BST)
-Date:   Fri, 11 Oct 2019 11:50:01 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 20/36] ASoC: samsung: s3c2412-i2s: avoid hardcoded
- S3C2410_PA_IIS
-Message-ID: <20191011105001.GG4741@sirena.org.uk>
-References: <20191010202802.1132272-1-arnd@arndb.de>
- <20191010203043.1241612-1-arnd@arndb.de>
- <20191010203043.1241612-20-arnd@arndb.de>
+        id S1727828AbfJKKuk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 06:50:40 -0400
+Received: from foss.arm.com ([217.140.110.172]:56332 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726935AbfJKKuj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 06:50:39 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E3FF28;
+        Fri, 11 Oct 2019 03:50:38 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 039E23F703;
+        Fri, 11 Oct 2019 03:50:36 -0700 (PDT)
+Date:   Fri, 11 Oct 2019 11:50:11 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Cc:     suzuki.poulose@arm.com, linux-arm-kernel@lists.infradead.org,
+        catalin.marinas@arm.com, will@kernel.org, Dave.Martin@arm.com,
+        andrew.murray@arm.com, jeremy.linton@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org
+Subject: Re: Relax CPU features sanity checking on heterogeneous architectures
+Message-ID: <20191011105010.GA29364@lakrids.cambridge.arm.com>
+References: <b3606e76af42f7ecf65b1bfc2a5ed30a@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="rV8arf8D5Dod9UkK"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191010203043.1241612-20-arnd@arndb.de>
-X-Cookie: Void where prohibited by law.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <b3606e76af42f7ecf65b1bfc2a5ed30a@codeaurora.org>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---rV8arf8D5Dod9UkK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Fri, Oct 11, 2019 at 11:19:00AM +0530, Sai Prakash Ranjan wrote:
+> On latest QCOM SoCs like SM8150 and SC7180 with big.LITTLE arch, below
+> warnings are observed during bootup of big cpu cores.
 
-On Thu, Oct 10, 2019 at 10:30:04PM +0200, Arnd Bergmann wrote:
-> The constant requires indirectly including a machine header file,
-> but it's not actually used any more since commit 87b132bc0315 ("ASoC:
-> samsung: s3c24{xx,12}-i2s: port to use generic dmaengine API"), so
-> remove it completely.
+For reference, which CPUs are in those SoCs?
 
-Acked-by: Mark Brown <broonie@kernel.org>
+> SM8150:
+> 
+> [    0.271177] CPU features: SANITY CHECK: Unexpected variation in
+> SYS_ID_AA64PFR0_EL1. Boot CPU: 0x00000011112222, CPU4: 0x00000011111112
 
---rV8arf8D5Dod9UkK
-Content-Type: application/pgp-signature; name="signature.asc"
+The differing fields are EL3, EL2, and EL1: the boot CPU supports
+AArch64 and AArch32 at those exception levels, while the secondary only
+supports AArch64.
 
------BEGIN PGP SIGNATURE-----
+Do we handle this variation in KVM?
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2gXlgACgkQJNaLcl1U
-h9DRDwf/Z97B2zjL3Z9O+QU4Fp9jlers2KrllaRLXhvKAvYYwb8JNWOGuedCmQDi
-C6Gj9aBSXHmzjjFCM08/QJMG8u6TcM5H2gCjEVFOiRCMqP5DPX5qCIiiQ0SnBrdi
-G78NJlKJRTR9kLnVYFd8DRx4fOHelhaH0X7n5EPUliwMpydcV81iL9zttP39m5+h
-bTSe5rNrUxE6oNaq/1Ud7YFogrTUUSHQugLgRHDwsGakNFIYpP7HYvd9lYfAlX0C
-dz+DUqy/Yq8FJMN3SUlsUyNx3X1LVOkKbKCiKbcwoYIaXy+YyNCPAja8eRtrWVZU
-tdnsAgWDN5OszUmItgS481uI9UwV6Q==
-=6yUg
------END PGP SIGNATURE-----
+> [    0.271184] CPU features: SANITY CHECK: Unexpected variation in
+> SYS_ID_ISAR4_EL1. Boot CPU: 0x00000000011142, CPU4: 0x00000000010142
 
---rV8arf8D5Dod9UkK--
+The differing field is (AArch32) SMC: present on the boot CPU, but
+missing on the secondary CPU.
+
+This is mandated to be zero when AArch32 isn' implemented at EL1.
+
+> [    0.271189] CPU features: SANITY CHECK: Unexpected variation in
+> SYS_ID_PFR1_EL1. Boot CPU: 0x00000010011011, CPU4: 0x00000010010000
+
+The differing fields are (AArch32) Virtualization, Security, and
+ProgMod: all present on the boot CPU, but missing on the secondary
+CPU.
+
+All mandated to be zero when AArch32 isn' implemented at EL1.
+
+> SC7180:
+> 
+> [    0.812770] CPU features: SANITY CHECK: Unexpected variation in
+> SYS_CTR_EL0. Boot CPU: 0x00000084448004, CPU6: 0x0000009444c004
+
+The differing fields are:
+
+* IDC: present only on the secondary CPU. This is a worrying mismatch
+  because it could mean that required cache maintenance is missed in
+  some cases. Does the secondary CPU definitely broadcast PoU
+  maintenance to the boot CPU that requires it?
+
+* L1Ip: VIPT on the boot CPU, PIPT on the secondary CPU.
+
+> [    0.812838] CPU features: SANITY CHECK: Unexpected variation in
+> SYS_ID_AA64MMFR2_EL1. Boot CPU: 0x00000000001011, CPU6: 0x00000000000011
+
+The differing field is IESB: presend on the boot CPU, missing on the
+secondary CPU.
+
+> [    0.812876] CPU features: SANITY CHECK: Unexpected variation in
+> SYS_ID_AA64PFR0_EL1. Boot CPU: 0x00000011112222, CPU6: 0x1100000011111112
+> [    0.812924] CPU features: SANITY CHECK: Unexpected variation in
+> SYS_ID_ISAR4_EL1. Boot CPU: 0x00000000011142, CPU6: 0x00000000010142
+> [    0.812950] CPU features: SANITY CHECK: Unexpected variation in
+> SYS_ID_PFR0_EL1. Boot CPU: 0x00000010000131, CPU6: 0x00000010010131
+> [    0.812977] CPU features: SANITY CHECK: Unexpected variation in
+> SYS_ID_PFR1_EL1. Boot CPU: 0x00000010011011, CPU6: 0x00000010010000
+
+These are the same story as for SM8150.
+
+> Can we relax some sanity checking for these by making it FTR_NONSTRICT or by
+> some other means? I just tried below roughly for SM8150 but I guess this is
+> not correct,
+> maybe for ftr_generic_32bits we should be checking bootcpu and nonboot cpu
+> partnum(to identify big.LITTLE) and then make it nonstrict?
+> These are all my wild assumptions, please correct me if I am wrong.
+
+Before we make any changes, we need to check whether we do actually
+handle this variation in a safe way, and we need to consider what this
+means w.r.t. late CPU hotplug.
+
+Even if we can handle variation at boot time, once we've determined the
+set of system-wide features we cannot allow those to regress, and I
+believe we'll need new code to enforce that. I don't think it's
+sufficient to mark these as NONSTRICT, though we might do that with
+other changes.
+
+We shouldn't look at the part number at all here. We care about
+variation across CPUs regardless of whether this is big.LITTLE or some
+variation in tie-offs, etc.
+
+Thanks,
+Mark.
+
+> 
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index cabebf1a7976..207197692caa 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -164,8 +164,8 @@ static const struct arm64_ftr_bits ftr_id_aa64pfr0[] = {
+>         S_ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE,
+> ID_AA64PFR0_FP_SHIFT, 4, ID_AA64PFR0_FP_NI),
+>         /* Linux doesn't care about the EL3 */
+>         ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE,
+> ID_AA64PFR0_EL3_SHIFT, 4, 0),
+> -       ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE,
+> ID_AA64PFR0_EL2_SHIFT, 4, 0),
+> -       ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE,
+> ID_AA64PFR0_EL1_SHIFT, 4, ID_AA64PFR0_EL1_64BIT_ONLY),
+> +       ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE,
+> ID_AA64PFR0_EL2_SHIFT, 4, 0),
+> +       ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE,
+> ID_AA64PFR0_EL1_SHIFT, 4, ID_AA64PFR0_EL1_64BIT_ONLY),
+>         ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE,
+> ID_AA64PFR0_EL0_SHIFT, 4, ID_AA64PFR0_EL0_64BIT_ONLY),
+>         ARM64_FTR_END,
+>  };
+> @@ -345,10 +345,10 @@ static const struct arm64_ftr_bits
+> ftr_generic_32bits[] = {
+>         ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 24, 4, 0),
+>         ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 20, 4, 0),
+>         ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 16, 4, 0),
+> -       ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 12, 4, 0),
+> +       ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, 12, 4, 0),
+>         ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 8, 4, 0),
+> -       ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 4, 4, 0),
+> -       ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 0, 4, 0),
+> +       ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, 4, 4, 0),
+> +       ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, 0, 4, 0),
+>         ARM64_FTR_END,
+>  };
+> 
+> 
+> Thanks,
+> Sai
+> 
+> -- 
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+> of Code Aurora Forum, hosted by The Linux Foundation
