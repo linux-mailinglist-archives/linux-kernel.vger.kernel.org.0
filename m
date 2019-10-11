@@ -2,93 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A2A9D47D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 20:48:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D64CD47FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 20:53:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728828AbfJKSs0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 14:48:26 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:46714 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728374AbfJKSs0 (ORCPT
+        id S1728824AbfJKSxb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 14:53:31 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40212 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728666AbfJKSxa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 14:48:26 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9BIiGNX067169;
-        Fri, 11 Oct 2019 18:47:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=rpJscLwPGAkcPkqG6xTibJV0h75UV6LbBcqJXO4tp4A=;
- b=D7RikZpnJzDBUu5h49Wd31aSymia6cOyPJLcWIYLHXKit3u6Xc2f4XkjgbuDeY/d2MnA
- X0TDfnTEb4OjqBvDVFRsp1S2xv82VW4stdUj9/l6jTh9L91iMK5GPq5Gyc8wlGAawLWz
- b2lZRGHL1BivdM4S/SdtC0OjF9RNC5X7jAxYq9KMDRfDLmEOG55c++azMyaaNZIJY/5J
- +0c6jKJCwpCuhAmqcBkdFTVsV3/yY8A+KFJz5Q/p1pwdLKZzHG0JBAKPx5qc6WLCnmgN
- /ANI0q2R+yUPEX6EGE5TfSfu7QFtFFbOi8TPIvex8HWf0K/cxFYLQbFcMJaQO5EuK/XX ew== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2vejkv3fjn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 11 Oct 2019 18:47:46 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9BIlkoC071640;
-        Fri, 11 Oct 2019 18:47:46 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2vj9qvhpqq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 11 Oct 2019 18:47:46 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9BIlWIC013390;
-        Fri, 11 Oct 2019 18:47:32 GMT
-Received: from char.us.oracle.com (/10.152.32.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 11 Oct 2019 18:47:32 +0000
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id 564936A00F3; Fri, 11 Oct 2019 14:50:50 -0400 (EDT)
-Date:   Fri, 11 Oct 2019 14:50:50 -0400
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     Roman Kagan <rkagan@virtuozzo.com>,
-        Suleiman Souhlal <suleiman@google.com>, pbonzini@redhat.com,
-        rkrcmar@redhat.com, tglx@linutronix.de, john.stultz@linaro.org,
-        sboyd@kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, ssouhlal@freebsd.org, tfiga@chromium.org,
-        vkuznets@redhat.com
-Subject: Re: [RFC v2 0/2] kvm: Use host timekeeping in guest.
-Message-ID: <20191011185050.GJ691@char.us.oracle.com>
-References: <20191010073055.183635-1-suleiman@google.com>
- <20191010103939.GA12088@rkaganb.sw.ru>
+        Fri, 11 Oct 2019 14:53:30 -0400
+Received: by mail-wr1-f68.google.com with SMTP id h4so13041988wrv.7
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 11:53:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=colorfullife-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=05KOvLjc5zFyzaBcZAgAR6rz8smCnLy1J7OW18pqNLk=;
+        b=Jh974XNOv3aS3Msl4Ss2rDJoqG+fYkW6LI3XXtp4c47JLv0+0433gBN6VlVEqmoMOf
+         0EQ23DKrt2Hyw4opT/Q0t+e/j+BgYAbaE9aAZJlKBGzPDXp/eRJG/OGvBjlQeAv5dVsR
+         ZyFyoF2VBDx5zcdz0+45gRJaiMwd/RgI4CJD1Nys50QE7y0oSgrpc0nGbfYZ5GWMBFgO
+         SqfY4s3VeswBAeaDjvzgrETnpfY6bgObCo/8DAxR87gdU1zJ9+bxgPQmt4QcArRTN1n/
+         KcOTv9mvfv1bPDMBxXtH98j+AsvOEyF+Atf7dXyaqJXSq8uMjn0YbZSGhbEo7C9eMMbQ
+         fqPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=05KOvLjc5zFyzaBcZAgAR6rz8smCnLy1J7OW18pqNLk=;
+        b=JcG2igLmFZ8UGpJ0TKOiqmfqDHLIlJMAZjVcU5t3La9SyMEMkVX2iW5auL4rGiPc9m
+         XZY4/+zx7ty4PUigSsHsdRSE695VtXoOU8IDnmOhXk6LuPEaOBbHWvI6n9b1mHCq0v1z
+         IfZIvpqwETMpqBpgiHWOOczahyZZHFOUK5BdL6WpOR9KV3Ok1NRIBUp2umYdFG1s51Im
+         EzmMkqtGf3CWHN3rCOJvyc3YdqccPqkBNT7vTGRK/7jX+ahs77LJJZ/UBeSreVKMHW3n
+         /dScHtxiFSp1FlnlYvo+Ri+E9D8MEsx43sVdD/a5TfJQOujNm1l1mEZKtAkzAMChkDF1
+         mDRg==
+X-Gm-Message-State: APjAAAVudE0EK9/idJhHIDjh8/+iawcMQTaMqXwszMYbYKunGuoYhKpk
+        eoZpS0t3YkP/WWPgZCUibHti9w==
+X-Google-Smtp-Source: APXvYqzcnC2JP/LaMxL34MrGkGvYEZKjWgAyUxw4W3Qw60xoE0+a+PgQO8+EMLdEXHw11aeqW398RQ==
+X-Received: by 2002:adf:a35b:: with SMTP id d27mr105309wrb.358.1570820007959;
+        Fri, 11 Oct 2019 11:53:27 -0700 (PDT)
+Received: from linux-2.fritz.box (p200300D99705BE00E22045ECB41D901D.dip0.t-ipconnect.de. [2003:d9:9705:be00:e220:45ec:b41d:901d])
+        by smtp.googlemail.com with ESMTPSA id q124sm17771401wma.5.2019.10.11.11.53.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Oct 2019 11:53:26 -0700 (PDT)
+Subject: Re: [PATCH 2/5] ipc/mqueue.c: Update/document memory barriers
+To:     Davidlohr Bueso <dave@stgolabs.net>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Waiman Long <longman@redhat.com>, 1vier1@web.de,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>
+References: <20191011112009.2365-1-manfred@colorfullife.com>
+ <20191011112009.2365-3-manfred@colorfullife.com>
+ <20191011165527.bsdiw6gu2sk7yrnl@linux-p48b>
+From:   Manfred Spraul <manfred@colorfullife.com>
+Message-ID: <5e08cb89-563c-4763-dd88-94edaf9d883b@colorfullife.com>
+Date:   Fri, 11 Oct 2019 20:53:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191010103939.GA12088@rkaganb.sw.ru>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9407 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=18 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=979
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910110158
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9407 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=18 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910110157
+In-Reply-To: <20191011165527.bsdiw6gu2sk7yrnl@linux-p48b>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-.snip..
-> I wonder how feasible it is to map the host's vdso into the guest and
-> thus make the guest use the *same* (as opposed to "synchronized") clock
-> as the host's userspace?  Another benefit is that it's essentially an
-> ABI so is not changed as liberally as internal structures like
-> timekeeper, etc.  There is probably certain complication in handling the
-> syscall fallback in the vdso when used in the guest kernel, though.
-> 
-> You'll also need to ensure neither tsc scaling and nor offsetting is
-> applied to the VM once this clock is enabled.
+On 10/11/19 6:55 PM, Davidlohr Bueso wrote:
+> On Fri, 11 Oct 2019, Manfred Spraul wrote:
+>
+>> Update and document memory barriers for mqueue.c:
+>> - ewp->state is read without any locks, thus READ_ONCE is required.
+>
+> In general we relied on the barrier for not needing READ/WRITE_ONCE,
+> but I agree this scenario should be better documented with them.
 
-This is how Xen does it - you can register the hypervisor to timestamp
-your vDSO regions if you want it. See xen_setup_vsyscall_time_info
+After reading core-api/atomic_ops.rst:
 
-> 
-> Roman.
+ > _ONCE() should be used. [...] Alternatively, you can place a barrier.
+
+So both approaches are ok.
+
+Let's follow the "should", i.e.: all operations on the ->state variables 
+to READ_ONCE()/WRITE_ONCE().
+
+Then we have a standard, and since we can follow the "should", we should 
+do that.
+
+> Similarly imo, the 'state' should also need them for write, even if
+> under the lock -- consistency and documentation, for example.
+>
+Ok, so let's convert everything to _ONCE. (assuming that my analysis 
+below is incorrect)
+> In addition, I think it makes sense to encapsulate some of the
+> pipelined send/recv operations, that also can allow us to keep
+> the barrier comments in pipelined_send(), which I wonder why
+> you chose to remove. Something like so, before your changes:
+>
+I thought that the simple "memory barrier is provided" is enough, so I 
+had removed the comment.
+
+
+But you are right, there are two different scenarios:
+
+1) thread already in another wake_q, wakeup happens immediately after 
+the cmpxchg_relaxed().
+
+This scenario is safe, due to the smp_mb__before_atomic() in wake_q_add()
+
+2) thread woken up but e.g. a timeout, see ->state=STATE_READY, returns 
+to user space, calls sys_exit.
+
+This must not happen before get_task_struct acquired a reference.
+
+And this appears to be unsafe: get_task_struct() is refcount_inc(), 
+which is refcount_inc_checked(), which is according to lib/refcount.c 
+fully unordered.
+
+Thus: ->state=STATE_READY can execute before the refcount increase.
+
+Thus: ->state=STATE_READY needs a smp_store_release(), correct?
+
+> diff --git a/ipc/mqueue.c b/ipc/mqueue.c
+> index 3d920ff15c80..be48c0ba92f7 100644
+> --- a/ipc/mqueue.c
+> +++ b/ipc/mqueue.c
+> @@ -918,17 +918,12 @@ SYSCALL_DEFINE1(mq_unlink, const char __user *, 
+> u_name)
+>  * The same algorithm is used for senders.
+>  */
+>
+> -/* pipelined_send() - send a message directly to the task waiting in
+> - * sys_mq_timedreceive() (without inserting message into a queue).
+> - */
+> -static inline void pipelined_send(struct wake_q_head *wake_q,
+> +static inline void __pipelined_op(struct wake_q_head *wake_q,
+>                   struct mqueue_inode_info *info,
+> -                  struct msg_msg *message,
+> -                  struct ext_wait_queue *receiver)
+> +                  struct ext_wait_queue *this)
+> {
+> -    receiver->msg = message;
+> -    list_del(&receiver->list);
+> -    wake_q_add(wake_q, receiver->task);
+> +    list_del(&this->list);
+> +    wake_q_add(wake_q, this->task);
+>     /*
+>      * Rely on the implicit cmpxchg barrier from wake_q_add such
+>      * that we can ensure that updating receiver->state is the last
+> @@ -937,7 +932,19 @@ static inline void pipelined_send(struct 
+> wake_q_head *wake_q,
+>      * yet, at that point we can later have a use-after-free
+>      * condition and bogus wakeup.
+>      */
+> -    receiver->state = STATE_READY;
+> +        this->state = STATE_READY;
+> +}
+> +
+> +/* pipelined_send() - send a message directly to the task waiting in
+> + * sys_mq_timedreceive() (without inserting message into a queue).
+> + */
+> +static inline void pipelined_send(struct wake_q_head *wake_q,
+> +                  struct mqueue_inode_info *info,
+> +                  struct msg_msg *message,
+> +                  struct ext_wait_queue *receiver)
+> +{
+> +    receiver->msg = message;
+> +    __pipelined_op(wake_q, info, receiver);
+> }
+>
+> /* pipelined_receive() - if there is task waiting in sys_mq_timedsend()
+> @@ -955,9 +962,7 @@ static inline void pipelined_receive(struct 
+> wake_q_head *wake_q,
+>     if (msg_insert(sender->msg, info))
+>         return;
+>
+> -    list_del(&sender->list);
+> -    wake_q_add(wake_q, sender->task);
+> -    sender->state = STATE_READY;
+> +    __pipelined_op(wake_q, info, sender);
+> }
+>
+> static int do_mq_timedsend(mqd_t mqdes, const char __user *u_msg_ptr,
+
+I would merge that into the series, ok?
+
+--
+
+     Manfred
+
