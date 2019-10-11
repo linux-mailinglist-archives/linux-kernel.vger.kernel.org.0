@@ -2,149 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 080C1D38EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 07:53:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15DB1D38E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 07:53:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727327AbfJKFw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 01:52:28 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:47957 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727265AbfJKFw1 (ORCPT
+        id S1726964AbfJKFwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 01:52:05 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39563 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726116AbfJKFwF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 01:52:27 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iInqC-0008KX-1r; Fri, 11 Oct 2019 07:51:52 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iInq9-0001Vy-3U; Fri, 11 Oct 2019 07:51:49 +0200
-Date:   Fri, 11 Oct 2019 07:51:49 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Olof Johansson <olof@lixom.net>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Faiz Abbas <faiz_abbas@ti.com>, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH 11/36] ARM: s5pv210: split from plat-samsung
-Message-ID: <20191011055149.4dudr4tk2znpt65u@pengutronix.de>
-References: <20191010202802.1132272-1-arnd@arndb.de>
- <20191010203043.1241612-1-arnd@arndb.de>
- <20191010203043.1241612-11-arnd@arndb.de>
+        Fri, 11 Oct 2019 01:52:05 -0400
+Received: by mail-pf1-f196.google.com with SMTP id v4so5401441pff.6
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 22:52:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dqoYfCwSTXnrPu65kXilGlo/9dFlyTd0Onso9PljAiY=;
+        b=ja7WMJKGVFeDsPWZbD3eP1exBEeovUc3M+srrumG9lw3FwxPytgJHMp2h+5wPHfp4P
+         SdmJLxFcems22RCyDedMqYYNd9v9pGiObyicT27agrzJwjPRRGAjShWGQYXC9lpCLX41
+         cXwHULtTCwFBrw788774u+HOOhU9GgLQgD/Nkei0T5fXFT41E2m28WF2i6933wTeE87R
+         7Y/fskU+WTmOITSiHW2DGdQArGwT4p9dPsA7f01SKq+dqTmH+C2+vqPM3fq3957cdWaa
+         w2IS4QTGqQd3x2vKDaPLGZrLSRGMm9bGoWY5u4yLOl1UgZG/pjqjyFvU8NQTQWtx+0PB
+         PFLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dqoYfCwSTXnrPu65kXilGlo/9dFlyTd0Onso9PljAiY=;
+        b=Fy68Z3zu3Levxj9N9bAmC9sQu8oGKNoOZggELZCOkS/OOjyMqnJIObJyab83GRGtHm
+         Lr++UEINbLMhFaUKfUk3FRx/x+7uFC3CraKR2bG0Nk3ikUgNYFO0Xn6n2Re0YoKjv1KH
+         4wK21zUJZpKboCcx1ZIpOG9Ly5Ysayn2t45O8CZUXnrF3UuqRLMWsjmm+4CvYSD3LR92
+         P4VEvoTXp4q/GZfwrXsUIOUM8YSq/k0wyWnIUuh3AnFVTrtOuKcrcyp0T52BnWOYQ+na
+         MLaasr/LMDX6pr5ueZNdl3jNlEolSXnqGfzuYw1Yhh1p8qfBveIhyil6WmDLRAZsgAgk
+         Ky6Q==
+X-Gm-Message-State: APjAAAVmv1GxZ0B9bmIM+WSvDUEsAjJP1kj0dcvdF+EwgoBpN7xh20kb
+        VEevb0zhFcwGu05LWOjmGho=
+X-Google-Smtp-Source: APXvYqx8srCZR27sA18/99NHofX5apHWWzDqgtZO8ISutoswAwDwdHzSweW0oDlcLt0TqEls65/gcA==
+X-Received: by 2002:a63:f44e:: with SMTP id p14mr14548314pgk.2.1570773124323;
+        Thu, 10 Oct 2019 22:52:04 -0700 (PDT)
+Received: from localhost.localdomain ([45.52.215.209])
+        by smtp.gmail.com with ESMTPSA id i184sm10257782pge.5.2019.10.10.22.52.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2019 22:52:03 -0700 (PDT)
+From:   Chandra Annamaneni <chandra627@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     gneukum1@gmail.com, dan.carpenter@oracle.com,
+        fabian.krueger@fau.de, michael.scheiderer@fau.de,
+        chandra627@gmail.com, simon@nikanor.nu, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/5] KPC2000: kpc2000_spi.c: Fix style issues (line length)
+Date:   Thu, 10 Oct 2019 22:51:51 -0700
+Message-Id: <20191011055155.4985-1-chandra627@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191010203043.1241612-11-arnd@arndb.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 10:29:55PM +0200, Arnd Bergmann wrote:
-> These can be build completely independently, so split
-> the two Kconfig symbols.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Resoved: "WARNING: line over 80 characters" from checkpatch.pl
 
-I'd mention the two symbols' names you're working on in the commit log.
-I guess it's about PLAT_SAMSUNG and ARCH_S5PV210. And I wouldn't call it
-"split" which IMHO suggests there was only one symbol before.
+Signed-off-by: Chandra Annamaneni <chandra627@gmail.com>
+---
+ drivers/staging/kpc2000/kpc2000_spi.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-Maybe:
-
-	Don't imply PLAT_SAMSUNG if ARCH_S5PV210 is enabled
-
-would be a better subject line?
-
-> ---
->  arch/arm/Kconfig.debug        | 6 +++---
->  arch/arm/Makefile             | 1 -
->  arch/arm/plat-samsung/Kconfig | 2 +-
->  drivers/mmc/host/Kconfig      | 2 +-
->  drivers/pwm/Kconfig           | 2 +-
->  drivers/spi/Kconfig           | 2 +-
->  drivers/tty/serial/Kconfig    | 2 +-
->  sound/soc/samsung/Kconfig     | 2 +-
->  8 files changed, 9 insertions(+), 10 deletions(-)
-> 
-> diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-> index 9c4f2d6deb06..4c4e97ae4fcb 100644
-> --- a/arch/arm/Kconfig.debug
-> +++ b/arch/arm/Kconfig.debug
-> @@ -998,7 +998,7 @@ choice
->  		  via SCIFA4 on Renesas SH-Mobile AG5 (SH73A0).
->  
->  	config DEBUG_S3C_UART0
-> -		depends on PLAT_SAMSUNG || ARCH_EXYNOS
-> +		depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS
->  		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
->  		select DEBUG_S3C24XX_UART if ARCH_S3C24XX
->  		select DEBUG_S3C64XX_UART if ARCH_S3C64XX
-> @@ -1010,7 +1010,7 @@ choice
->  		  by the boot-loader before use.
->  
->  	config DEBUG_S3C_UART1
-> -		depends on PLAT_SAMSUNG || ARCH_EXYNOS
-> +		depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS
->  		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
->  		select DEBUG_S3C24XX_UART if ARCH_S3C24XX
->  		select DEBUG_S3C64XX_UART if ARCH_S3C64XX
-> @@ -1022,7 +1022,7 @@ choice
->  		  by the boot-loader before use.
->  
->  	config DEBUG_S3C_UART2
-> -		depends on PLAT_SAMSUNG || ARCH_EXYNOS
-> +		depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS
->  		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
->  		select DEBUG_S3C24XX_UART if ARCH_S3C24XX
->  		select DEBUG_S3C64XX_UART if ARCH_S3C64XX
-> diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-> index f492d7c338fe..a1bc15cda751 100644
-> --- a/arch/arm/Makefile
-> +++ b/arch/arm/Makefile
-> @@ -235,7 +235,6 @@ machine-$(CONFIG_PLAT_SPEAR)		+= spear
->  # by CONFIG_* macro name.
->  plat-$(CONFIG_ARCH_OMAP)	+= omap
->  plat-$(CONFIG_ARCH_S3C64XX)	+= samsung
-> -plat-$(CONFIG_ARCH_S5PV210)	+= samsung
-
-Would it make more sense to make this
-
-	plat-$(PLAT_SAMSUNG) += samsung
-
-(in a separate patch)? Hmm, it seems there is no plat-y for
-PLAT_S3C24XX=y builds. Is this intended? If yes, the directory name
-containing "samsung" suggests something that seems untrue.
-
-Best regards
-Uwe
-
+diff --git a/drivers/staging/kpc2000/kpc2000_spi.c b/drivers/staging/kpc2000/kpc2000_spi.c
+index 3be33c450cab..81d79b116ce0 100644
+--- a/drivers/staging/kpc2000/kpc2000_spi.c
++++ b/drivers/staging/kpc2000/kpc2000_spi.c
+@@ -30,19 +30,19 @@
+ #include "kpc.h"
+ 
+ static struct mtd_partition p2kr0_spi0_parts[] = {
+-	{ .name = "SLOT_0",	.size = 7798784,		.offset = 0,                },
+-	{ .name = "SLOT_1",	.size = 7798784,		.offset = MTDPART_OFS_NXTBLK},
+-	{ .name = "SLOT_2",	.size = 7798784,		.offset = MTDPART_OFS_NXTBLK},
+-	{ .name = "SLOT_3",	.size = 7798784,		.offset = MTDPART_OFS_NXTBLK},
+-	{ .name = "CS0_EXTRA",	.size = MTDPART_SIZ_FULL,	.offset = MTDPART_OFS_NXTBLK},
++	{ .name = "SLOT_0",  .size = 7798784,  .offset = 0,                },
++	{ .name = "SLOT_1",  .size = 7798784,  .offset = MTDPART_OFS_NXTBLK},
++	{ .name = "SLOT_2",  .size = 7798784,  .offset = MTDPART_OFS_NXTBLK},
++	{ .name = "SLOT_3",  .size = 7798784,  .offset = MTDPART_OFS_NXTBLK},
++	{ .name = "CS0_EXTRA",  .size = MTDPART_SIZ_FULL,  .offset = MTDPART_OFS_NXTBLK},
+ };
+ 
+ static struct mtd_partition p2kr0_spi1_parts[] = {
+-	{ .name = "SLOT_4",	.size = 7798784,		.offset = 0,                },
+-	{ .name = "SLOT_5",	.size = 7798784,		.offset = MTDPART_OFS_NXTBLK},
+-	{ .name = "SLOT_6",	.size = 7798784,		.offset = MTDPART_OFS_NXTBLK},
+-	{ .name = "SLOT_7",	.size = 7798784,		.offset = MTDPART_OFS_NXTBLK},
+-	{ .name = "CS1_EXTRA",	.size = MTDPART_SIZ_FULL,	.offset = MTDPART_OFS_NXTBLK},
++	{ .name = "SLOT_4",  .size = 7798784,  .offset = 0,},
++	{ .name = "SLOT_5",  .size = 7798784,  .offset = MTDPART_OFS_NXTBLK},
++	{ .name = "SLOT_6",  .size = 7798784,  .offset = MTDPART_OFS_NXTBLK},
++	{ .name = "SLOT_7",  .size = 7798784,  .offset = MTDPART_OFS_NXTBLK},
++	{ .name = "CS1_EXTRA",  .size = MTDPART_SIZ_FULL,  .offset = MTDPART_OFS_NXTBLK},
+ };
+ 
+ static struct flash_platform_data p2kr0_spi0_pdata = {
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.20.1
+
