@@ -2,81 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12837D3FDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 14:46:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93F5DD3FDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 14:45:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728197AbfJKMp5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 08:45:57 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:52122 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727855AbfJKMp5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 08:45:57 -0400
-Received: from zn.tnic (p200300EC2F0C8D0008DB7A6AE61C42DD.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:8d00:8db:7a6a:e61c:42dd])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1E04D1EC0691;
-        Fri, 11 Oct 2019 14:45:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1570797952;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=AAcyDCTqqzYlKcpYjXKbpiiH12SJEMrDiA4bMwrmUT8=;
-        b=Ey8qAUkWBmsw5rMm51KrX/Pc4X4n/906MQsN7qq/wttE9gQ1/S/BCyhlTgNYoVcA+FuN03
-        4KOjRjl/W/WMrPRP9Ede4qWIc08Tf+Z7LUKeh6Bnrwm/c6Kx4k6PVPoX+9tduW/8Hy8b2Z
-        7qdRp1BoC7SU7hlWIcgRtIBdu5EWbhk=
-Date:   Fri, 11 Oct 2019 14:45:44 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jiri Slaby <jslaby@suse.cz>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/asm: Make more symbols local
-Message-ID: <20191011124544.GA8824@zn.tnic>
-References: <20191011092213.31470-1-jslaby@suse.cz>
+        id S1728177AbfJKMpn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 08:45:43 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:38154 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728147AbfJKMpn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 08:45:43 -0400
+Received: by mail-ed1-f68.google.com with SMTP id l21so8574641edr.5
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 05:45:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=THhY/1EGBLynF46Z73peTNxgaGDlKI+6GP0+2FXk1Ng=;
+        b=n44cT7lO4rFbJWSui7nkMhtOmcD58/YEEM6gDMqOIGKg6m4xltmk1OmrLg8Ay/C90p
+         NT8AxiGcmIzLZqgiK7yhbW/lR36g5QXs9B4NvSOcgTgqcy0eo7CnGqYLCu8fYCqqNp4y
+         TSQ4B18sj3LAIW9pJ4A3z4YtcOb2ZsbnmhiA/9fGuKREgPPxUXBeonRmwGjN6g8iBkFN
+         rz4npojrDH1SHrDSUBLM/o/bz6usKSFcVwqIzbI51vCem+3CsnJtPoSvUiFUg+VB3vVP
+         SBHQj3fnYZQZ054lbAaSb1WSoaaPvtzL6xZooechaqDCYnzOt+tKa0jUxd/7AqxPuGRo
+         okmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=THhY/1EGBLynF46Z73peTNxgaGDlKI+6GP0+2FXk1Ng=;
+        b=CWu0adAz3Nod4SXRhVHzPR2tkkMdJeW3VQJqOb4021Ben3/B/Pjaq7yX5LY0HS1P3R
+         L2yd5eItnhHwrVGUZdVA9BzsBqsSNh+/hfLguYvsjYstuN/cXT49ahcEy2tZ1rrBy5xi
+         877EKV1wZQoVPJPM1aeWAwLnnFPmEovi6WKWSW1mtX0v4jsJ3e27Cgc5FwsLJacyg3sK
+         lHrdvYjlDdZv4NqownainTFW59Wvj575WSf0YoH6YNi9SKsKCi/T4rjd5/kPFz+No2mf
+         DfN3lABiAYSJsCob4x07S+eIgfgI94HkrSzSzfrRkO+/nvhUE2qKB+9pDm9BkNR+CEmP
+         5CcA==
+X-Gm-Message-State: APjAAAXeaE5svvvHDi9+3cIEwj6w+Qt9hxhrhZZas5zf42dAi1SaVMqI
+        iucLXaeMZ2jYHhG78RyeMeSpBj8WL1EmsuNAH+Y7pg==
+X-Google-Smtp-Source: APXvYqy3nGLibHdKisoYfTTSDKKkcwK6O7yckg02ABEzONB7OV+W/kXsaZilpbqhNZPBbZY2VH1MkCkYrA2kpd2E8t0=
+X-Received: by 2002:a17:906:48d4:: with SMTP id d20mr8779018ejt.246.1570797941402;
+ Fri, 11 Oct 2019 05:45:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191011092213.31470-1-jslaby@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191010143232.GA13560@harukaze> <20191011060130.GA12357@onstation.org>
+ <20191011112245.GA10461@harukaze>
+In-Reply-To: <20191011112245.GA10461@harukaze>
+From:   Loic Poulain <loic.poulain@linaro.org>
+Date:   Fri, 11 Oct 2019 14:47:05 +0200
+Message-ID: <CAMZdPi9hTQQcFHMRkj2R9t-P9AiPh01hKGPP5_F8T+MUuckVHA@mail.gmail.com>
+Subject: Re: msm8996: sdhci-msm: apq8096-db820c sdhci fails to init - "Timeout
+ waiting for hardware interrupt."
+To:     Paolo Pisati <p.pisati@gmail.com>
+Cc:     Brian Masney <masneyb@onstation.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 11:22:13AM +0200, Jiri Slaby wrote:
-> During the assembly cleanup patchset reveiew, I found more symbols which
+Hi,
 
-"review"
+On Fri, 11 Oct 2019 at 13:22, Paolo Pisati <p.pisati@gmail.com> wrote:
+>
+> On Fri, Oct 11, 2019 at 02:01:30AM -0400, Brian Masney wrote:
+> > I encountered that same error working on the Nexus 5 support upstream.
+> > Here's the fix:
+> >
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=03864e57770a9541e7ff3990bacf2d9a2fffcd5d
+>
+> No dice, same exact problem.
+>
+> But the patch is present downstream[1]:
+>
+> commit c26727f853308dc4a6645dad09e9565429f8604f
+> Author: Loic Poulain <loic.poulain@linaro.org>
+> Date:   Wed Dec 12 17:51:48 2018 +0100
+>
+> arm64: dts: apq8096-db820c: Increase load on l21 for SDCARD
+>
+> In the same way as for msm8974-hammerhead, l21 load, used for SDCARD
+> VMMC, needs to be increased in order to prevent any voltage drop issues
+> (due to limited current) happening with some SDCARDS or during specific
+> operations (e.g. write).
+>
+> Fixes: 660a9763c6a9 (arm64: dts: qcom: db820c: Add pm8994 regulator node)
+> Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
+>
+>
+> so it's probably worth carrying it.
 
-> are used only locally. So make them really local by prepending ".L" to
-> them. Namely:
-> * wakeup_idt is used only in realmode/rm/wakeup_asm.S.
-> * in_pm32 is used only in boot/pmjump.S.
-> * retint_user is used only in entry/entry_64.S, perhaps since commit
->   2ec67971facc ("x86/entry/64/compat: Remove most of the fast system
->   call machinery"), where entry_64_compat's caller was removed.
-> 
-> Drop GLOBAL from all of them too. I do not see more candidates in the
-> series.
-> 
-> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: x86@kernel.org
-> ---
->  arch/x86/boot/pmjump.S            | 6 +++---
->  arch/x86/entry/entry_64.S         | 4 ++--
->  arch/x86/realmode/rm/wakeup_asm.S | 6 +++---
->  3 files changed, 8 insertions(+), 8 deletions(-)
+I've sent it to LKML, but it has never landed (and I've never followed-up).
 
-other than that:
-
-Acked-by: Borislav Petkov <bp@suse.de>
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Regards,
+Loic
