@@ -2,252 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3663AD3F6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 14:23:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 719C3D3F68
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 14:23:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728087AbfJKMXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 08:23:50 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56598 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728070AbfJKMXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 08:23:50 -0400
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7BD5580F83
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 12:23:49 +0000 (UTC)
-Received: by mail-ed1-f70.google.com with SMTP id c23so5636669edb.14
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 05:23:49 -0700 (PDT)
+        id S1728025AbfJKMXf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 08:23:35 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45756 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727198AbfJKMXf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 08:23:35 -0400
+Received: by mail-wr1-f67.google.com with SMTP id r5so11664298wrm.12
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 05:23:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=R2syL0YW+TeHAd/jZ19BY501P3Ze8eSUts4hhsrlbTg=;
+        b=MdmGDn+RPpTN1sIesf3XhQOrqh33u0TrgoP2gSZ8orSGCtJjwhJpCAEXcl9mb9mrWx
+         KsPGLx2e2QdgGf1g5jnTXTiwC1VvFT0CxS4vB+w8iW1BdmqkgZDiM4wdq7lvf+dlf1Jz
+         vOh+GR18Aer/0dOMhZRG+BH9R57WLWThrrC9S+bUDud6eyigoKRH/kIqe79bysPPWwVq
+         3/6hoXfMx3W+JjlXPoUb4kRuDOqHDUrKZBgqCKl+K4GvvPdQ/998vZ0iWIcL33p8S9F/
+         uvgpLQQbCMPur8ttpcN2FwHMax8ISTC697dIzuXhP1ZIfuVzDQKBRgadvIcP7V0R/MTt
+         PnTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3cPBHk1mEoebcHg5P34RWIFsyAjZtXn8ix58sCjirqg=;
-        b=fR7ZWgP2NIdvjBvjuekbIZ3CUFLXIdhG5ORE8xVhpdYKHRgOzaOfAjpXD53jICzgOY
-         3yFE17uYukntNgruNtFeHv730R/FKArQdgsA3OUP5nR2AlqRd/G+s52p4mIFD7Hn0rPg
-         MP2o6ZAjEsLoOtWeHgSeScj8zvwYeEAD2JsAY2pEAKwR5V5LCu4jqSGSNAmKKMqGIcT6
-         WzzcaRByQwqdA4uFOkr+KaJn4HPXin6QNzQgLZ9HCvB9fJKuuGkLfuunV61bF9goUv1S
-         H/ubgF8LLvrxy0HFN7U5dfjXKZjqYxRD8Gm5dtd7d+C5+S+vzGc6TGPJBjcAH8jKjxbm
-         5Qdg==
-X-Gm-Message-State: APjAAAV5dEymAIR7IdOn6r4KDcTYHly3NOuMONP3R+X8r6TKVgJDJydQ
-        IVfkaFpIIdbgDyQWbwzBJvSglT7s723v21krSAQqN0ZD/H0x3upyutBGaLoD1e1dOMX2NCYvIv8
-        1BGCRd+C8KkGMAzjw6Ab4wTsI
-X-Received: by 2002:aa7:d6cd:: with SMTP id x13mr13234265edr.272.1570796627954;
-        Fri, 11 Oct 2019 05:23:47 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqx3FaL2QqsIQ6t673/hPHNxo+RsW5gKJLm6+xJjO1xTQgAVjVXfuzs53s1wKTr2WV9wc/xbwQ==
-X-Received: by 2002:aa7:d6cd:: with SMTP id x13mr13234239edr.272.1570796627703;
-        Fri, 11 Oct 2019 05:23:47 -0700 (PDT)
-Received: from localhost ([2a02:2450:102e:d85:877d:43b4:dd8f:144d])
-        by smtp.gmail.com with ESMTPSA id w21sm1533538eda.90.2019.10.11.05.23.46
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=R2syL0YW+TeHAd/jZ19BY501P3Ze8eSUts4hhsrlbTg=;
+        b=kiw5FIqdkA8xKkS3oNJyXPP9YpRDKU38pNCmpTvHdGgqa0RKOIusuejeGIENxjqTL/
+         KciJNc1t3H9/ubbi411xe3MltyMUenNMuAQcxZWAf8mhol0IldIQmv6s/V6Lydu/F4Zl
+         4jf6FOKCRfnIWu28kIcNzH3mRDnYZ5ws7iHX3b257L2Tx4pvB4Mi1dRLCH1KEG3ttcWY
+         yzKA7ZKBLZbypTbtmkR5iyrcxtHXc1BQv/yvW0iu1HIq35vjWJxPHN6yEcVnTcPbm/cZ
+         OTac0AGHtXzAoqWi0WaJNMsa7xDxTc1SUVmSEpW4iSVMptUvX1thjO8Dp3b5/u8Ww58y
+         9Zew==
+X-Gm-Message-State: APjAAAWzyOWGjVNiBaZDnLSYco3wZ1fxVS3eISdVqolgPQIg6Owovggv
+        U185qvNt/NBANndBgEo/xnUB1w==
+X-Google-Smtp-Source: APXvYqwVVTPqEFScgyagl6Zg7GstkjAmqaiWUrDab1xs8aw1wGbEDjQMh+7jovkqImHb+sxNiZEIAQ==
+X-Received: by 2002:adf:f98b:: with SMTP id f11mr3017198wrr.350.1570796613172;
+        Fri, 11 Oct 2019 05:23:33 -0700 (PDT)
+Received: from apalos.home (ppp-94-65-93-45.home.otenet.gr. [94.65.93.45])
+        by smtp.gmail.com with ESMTPSA id f18sm7670788wrv.38.2019.10.11.05.23.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2019 05:23:47 -0700 (PDT)
-From:   Christian Kellner <ckellner@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-api@vger.kernel.org,
-        Christian Kellner <christian@kellner.me>,
-        Christian Brauner <christian@brauner.io>,
-        Shuah Khan <shuah@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, Michal Hocko <mhocko@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH v3 2/2] pidfd: add tests for NSpid info in fdinfo
-Date:   Fri, 11 Oct 2019 14:23:21 +0200
-Message-Id: <20191011122323.7770-2-ckellner@redhat.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191011122323.7770-1-ckellner@redhat.com>
-References: <20191009160532.20674-1-ckellner@redhat.com>
- <20191011122323.7770-1-ckellner@redhat.com>
+        Fri, 11 Oct 2019 05:23:32 -0700 (PDT)
+Date:   Fri, 11 Oct 2019 15:23:29 +0300
+From:   Ilias Apalodimas <ilias.apalodimas@linaro.org>
+To:     Alexander Lobakin <alobakin@dlink.ru>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Edward Cree <ecree@solarflare.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Petr Machata <petrm@mellanox.com>,
+        Sabrina Dubroca <sd@queasysnail.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 0/2] net: core: use listified Rx for GRO_NORMAL
+ in napi_gro_receive()
+Message-ID: <20191011122329.GA8373@apalos.home>
+References: <20191010144226.4115-1-alobakin@dlink.ru>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191010144226.4115-1-alobakin@dlink.ru>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian Kellner <christian@kellner.me>
+Hi Alexander,
 
-Add tests that check that if pid namespaces are configured the fdinfo
-file of a pidfd contains an NSpid: entry containing the process id
-in the current and additionally all nested namespaces.
+On Thu, Oct 10, 2019 at 05:42:24PM +0300, Alexander Lobakin wrote:
+> Hi Dave,
+> 
+> This series was written as a continuation to commit 323ebb61e32b
+> ("net: use listified RX for handling GRO_NORMAL skbs"), and also takes
+> an advantage of listified Rx for GRO. This time, however, we're
+> targeting at a way more common and used function, napi_gro_receive().
+> 
+> There are about ~100 call sites of this function, including gro_cells
+> and mac80211, so even wireless systems will benefit from it.
+> The only driver that cares about the return value is
+> ethernet/socionext/netsec, and only for updating statistics. I don't
+> believe that this change can break its functionality, but anyway,
+> we have plenty of time till next merge window to pay this change
+> a proper attention.
 
-Signed-off-by: Christian Kellner <christian@kellner.me>
----
- tools/testing/selftests/pidfd/Makefile        |  2 +-
- tools/testing/selftests/pidfd/pidfd.h         | 12 +++
- .../selftests/pidfd/pidfd_fdinfo_test.c       | 98 +++++++++++++++++++
- tools/testing/selftests/pidfd/pidfd_test.c    | 12 ---
- 4 files changed, 111 insertions(+), 13 deletions(-)
- create mode 100644 tools/testing/selftests/pidfd/pidfd_fdinfo_test.c
+I don't think this will break anything on the netsec driver. Dropped packets
+will still be properly accounted for
 
-diff --git a/tools/testing/selftests/pidfd/Makefile b/tools/testing/selftests/pidfd/Makefile
-index 7550f08822a3..43db1b98e845 100644
---- a/tools/testing/selftests/pidfd/Makefile
-+++ b/tools/testing/selftests/pidfd/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- CFLAGS += -g -I../../../../usr/include/ -pthread
- 
--TEST_GEN_PROGS := pidfd_test pidfd_open_test pidfd_poll_test pidfd_wait
-+TEST_GEN_PROGS := pidfd_test pidfd_fdinfo_test pidfd_open_test pidfd_poll_test pidfd_wait
- 
- include ../lib.mk
- 
-diff --git a/tools/testing/selftests/pidfd/pidfd.h b/tools/testing/selftests/pidfd/pidfd.h
-index c6bc68329f4b..2946d788645b 100644
---- a/tools/testing/selftests/pidfd/pidfd.h
-+++ b/tools/testing/selftests/pidfd/pidfd.h
-@@ -84,4 +84,16 @@ static inline int sys_pidfd_send_signal(int pidfd, int sig, siginfo_t *info,
- 	return syscall(__NR_pidfd_send_signal, pidfd, sig, info, flags);
- }
- 
-+static pid_t pidfd_clone(int flags, int *pidfd, int (*fn)(void *))
-+{
-+	size_t stack_size = 1024;
-+	char *stack[1024] = { 0 };
-+
-+#ifdef __ia64__
-+	return __clone2(fn, stack, stack_size, flags | SIGCHLD, NULL, pidfd);
-+#else
-+	return clone(fn, stack + stack_size, flags | SIGCHLD, NULL, pidfd);
-+#endif
-+}
-+
- #endif /* __PIDFD_H */
-diff --git a/tools/testing/selftests/pidfd/pidfd_fdinfo_test.c b/tools/testing/selftests/pidfd/pidfd_fdinfo_test.c
-new file mode 100644
-index 000000000000..fbae502ad8ad
---- /dev/null
-+++ b/tools/testing/selftests/pidfd/pidfd_fdinfo_test.c
-@@ -0,0 +1,98 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <linux/types.h>
-+#include <sched.h>
-+#include <signal.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <syscall.h>
-+#include <sys/wait.h>
-+
-+#include "pidfd.h"
-+#include "../kselftest.h"
-+
-+static int child_fdinfo_nspid_test(void *args)
-+{
-+	ksft_print_msg("Child: pid %d\n", getpid());
-+	return 0;
-+}
-+
-+static int compare_fdinfo_nspid(int pidfd, char *expect, size_t len)
-+{
-+	char path[512];
-+	FILE *f;
-+	size_t n = 0;
-+	ssize_t k;
-+	char *line = NULL;
-+	int r = -1;
-+
-+	snprintf(path, sizeof(path), "/proc/self/fdinfo/%d", pidfd);
-+
-+	f = fopen(path, "re");
-+	if (!f)
-+		return -1;
-+
-+	while ((k = getline(&line, &n, f)) != -1) {
-+		if (strncmp(line, "NSpid:", 6))
-+			continue;
-+
-+		line[k - 1] = '\0';
-+		ksft_print_msg("Child: fdinfo NSpid line: '%s'.\n", line);
-+		r = strncmp(line + 6, expect, len);
-+		break;
-+	}
-+
-+	free(line);
-+	fclose(f);
-+
-+	return r;
-+}
-+
-+static void test_pidfd_fdinfo_nspid(void)
-+{
-+	char expect[512];
-+	int pid, pidfd = 0;
-+	int n, r;
-+	const char *test_name = "pidfd check for NSpid information in fdinfo";
-+
-+	pid = pidfd_clone(CLONE_PIDFD | CLONE_NEWPID | CLONE_NEWUSER, &pidfd,
-+			  child_fdinfo_nspid_test);
-+	if (pid < 0)
-+		ksft_exit_fail_msg(
-+			"%s test: pidfd_clone failed (ret %d, errno %d)\n",
-+			test_name, pid, errno);
-+
-+	ksft_print_msg("Parent: child-pid: %d\n", pid);
-+
-+	/* The child will have pid 1 in the new pid namespace,
-+	 * so the line must be 'NSPid:\t<pid>\t1'
-+	 */
-+	n = snprintf(expect, sizeof(expect), "\t%d\t%d", pid, 1);
-+	r = compare_fdinfo_nspid(pidfd, expect, n);
-+
-+	(void)close(pidfd);
-+
-+	if (wait_for_pid(pid))
-+		ksft_exit_fail_msg(
-+			"%s test: waitpid failed (ret %d, errno %d)\n",
-+			test_name, r, errno);
-+
-+	if (r != 0)
-+		ksft_exit_fail_msg("%s test: Failed\n", test_name);
-+	else
-+		ksft_test_result_pass("%s test: Passed\n", test_name);
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	ksft_print_header();
-+	ksft_set_plan(1);
-+
-+	test_pidfd_fdinfo_nspid();
-+
-+	return ksft_exit_pass();
-+}
-diff --git a/tools/testing/selftests/pidfd/pidfd_test.c b/tools/testing/selftests/pidfd/pidfd_test.c
-index 7aff2d3b42c0..9cf0b6b3e389 100644
---- a/tools/testing/selftests/pidfd/pidfd_test.c
-+++ b/tools/testing/selftests/pidfd/pidfd_test.c
-@@ -27,18 +27,6 @@
- 
- #define MAX_EVENTS 5
- 
--static pid_t pidfd_clone(int flags, int *pidfd, int (*fn)(void *))
--{
--	size_t stack_size = 1024;
--	char *stack[1024] = { 0 };
--
--#ifdef __ia64__
--	return __clone2(fn, stack, stack_size, flags | SIGCHLD, NULL, pidfd);
--#else
--	return clone(fn, stack + stack_size, flags | SIGCHLD, NULL, pidfd);
--#endif
--}
--
- static int signal_received;
- 
- static void set_signal_received_on_sigusr1(int sig)
--- 
-2.21.0
+> 
+> Besides having this functionality implemented for napi_gro_frags()
+> users, the main reason is the solid performance boost that has been
+> shown during tests on 1-core MIPS board (with not yet mainlined
+> driver):
+> 
+> * no batching (5.4-rc2): ~450/450 Mbit/s
+> * with gro_normal_batch == 8: ~480/480 Mbit/s
+> * with gro_normal_batch == 16: ~500/500 Mbit/s
+> 
+> Applies on top of net-next.
+> Thanks.
+> 
+> Alexander Lobakin (2):
+>   net: core: use listified Rx for GRO_NORMAL in napi_gro_receive()
+>   net: core: increase the default size of GRO_NORMAL skb lists to flush
+> 
+>  net/core/dev.c | 51 +++++++++++++++++++++++++-------------------------
+>  1 file changed, 26 insertions(+), 25 deletions(-)
+> 
+> -- 
+> 2.23.0
+> 
 
+Thanks
+/Ilias
