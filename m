@@ -2,44 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B66B3D389D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 07:11:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04125D38A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 07:17:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726365AbfJKFLM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 01:11:12 -0400
-Received: from mout.web.de ([212.227.15.3]:56023 "EHLO mout.web.de"
+        id S1726725AbfJKFQi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 01:16:38 -0400
+Received: from mout.web.de ([212.227.15.4]:46871 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726174AbfJKFLL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 01:11:11 -0400
+        id S1726099AbfJKFQi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 01:16:38 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1570770031;
-        bh=bHP1391Tn3hiQf+u74TmLzs4J7Ywj2qN7r225cmc4Yw=;
+        s=dbaedf251592; t=1570770956;
+        bh=bdfZdfv0kDFiJjag8bHGUhUdVn4C4VGy8330bt1MT9A=;
         h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=svVx+c/QZso9nJlT2iqhrw9hJkGvLai/RbZHEBJwRtqkF5TRV5m4hHfZVpLkAzVrU
-         mudQngS1vHTWGiLQ+9xqFC4/jN8m3lbjGSCaZYzW3skIbeHSU11O7uTHWxwUxBbTag
-         Cp7TFeFyVXYEZqywvAmxAWxCb7W86NvCTkQQ1GcE=
+        b=nsU0TBpJW+ShOJ5XqcmvvjFyUy3YPVdNAxGWs0rsbaTBqSE9gfVFB+eXtOYXr60nR
+         BkLXSpBY8xJina3TRetCdM5Bj6LIFw35GjCgcUt5pnvUReffnrez6OHgAuvilOiCom
+         e1yf6aRNS2exOhMAlp8EQVXacRHHd/npa1Jy9Pkc=
 X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([2.244.164.92]) by smtp.web.de (mrweb003
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0LyDqv-1hyQAN2tbp-015cZM; Fri, 11
- Oct 2019 07:00:31 +0200
-Subject: Re: string.h: Mark 34 functions with __must_check
-To:     Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org
-Cc:     David Sterba <dsterba@suse.cz>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
+Received: from [192.168.1.2] ([2.244.164.92]) by smtp.web.de (mrweb001
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MaJc8-1icfbw0kEi-00Jsim; Fri, 11
+ Oct 2019 07:15:56 +0200
+Subject: Re: Searching for missing variable checks
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        kernel-janitors@vger.kernel.org,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Joe Perches <joe@perches.com>,
         Kees Cook <keescook@chromium.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
+        Navid Emamdoost <emamd001@umn.edu>,
+        Stephen McCamant <smccaman@umn.edu>,
+        Coccinelle <cocci@systeme.lip6.fr>
+Cc:     LKML <linux-kernel@vger.kernel.org>
 References: <75f70e5e-9ece-d6d1-a2c5-2f3ad79b9ccb@web.de>
- <20191009110943.7ff3a08a@gandalf.local.home>
- <CAKwvOdk3OTaAVmbV9Cu+Dzg8zuojjU6ENZfu4cUPaKS2a58d3w@mail.gmail.com>
- <4d890cae9cbbd873096cb1fadb477cf4632ddb9a.camel@perches.com>
- <CAKwvOdntBXd3OPiCV5adcDjXor886-XnsSxcStAjYBJpuEBrqQ@mail.gmail.com>
- <20191010142733.GT2751@twin.jikos.cz>
- <9b331c1184aca8a32b9132d29957cd5e8bef1c1d.camel@perches.com>
+ <954c5d70-742f-7b0e-57ad-ea967e93be89@rasmusvillemoes.dk>
 From:   Markus Elfring <Markus.Elfring@web.de>
 Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
@@ -84,49 +83,53 @@ Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
  x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
  pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <adc2ab99-1a5b-d381-e96c-6801e18f3735@web.de>
-Date:   Fri, 11 Oct 2019 07:00:19 +0200
+Message-ID: <dd1adf86-1bc1-2ffe-1af8-3d7082c5a468@web.de>
+Date:   Fri, 11 Oct 2019 07:15:53 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <9b331c1184aca8a32b9132d29957cd5e8bef1c1d.camel@perches.com>
+In-Reply-To: <954c5d70-742f-7b0e-57ad-ea967e93be89@rasmusvillemoes.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Provags-ID: V03:K1:ZwigmNmZ2KJ2R0OmEJ1Z2yAT5oFulCEJ+yK0n5qf5HMXsNNhHbr
- HD2h6yY8QXqcgLqFEMKaRM+WZYeoSb7GcvEZqRK2Iq0CQef44NKGIpuSh32DDEc4kpScI28
- cFk+gHi49hIKRj2NDt7x41ZgWlPjKkhNGytVZyDII/jJvHvs9WFjp+IzjLnjrAC0cD9NLqk
- //VE1jDI3L1Bipy+PXqvA==
+X-Provags-ID: V03:K1:T/VUbhIi6SXgqdz3828YL5FmNXv409l4EkBDA1njed6Ts4T1WRY
+ 1h86oiKchdYB9Q8OkV5VT9oqYRsggXOkXJLGdWo5ativOnLHqXB486YFdX0i+m/gMtUH0B9
+ urb4LWdfCHfsSiZt2E3EROGQpl2IezgPrrBZ1DYpeP2PjODj5D+YijBeLELtDEEIFki+ewH
+ mYT3pjEdAxjdQ2qTnp+MA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ekItsbdebGk=:O6L0xmDHb1WRP4AOigTnR2
- 5ftCSvBlkaDRr2I/b+GtiLYXowmW/2QA8Pt6R8tJtCuXnjdbhZr+BgExuZN7dPfGFBoyiohMC
- Pjfgm9t/4liL9N/Fk1Vmsmxm829RWP/UiBzExv6rKJqlpSR++mnAV1YD6thzc3Te7F3Yge7nQ
- MfxVJE/pQQu6nJqmABDRoQaiOw3tQlmZjY+Yn1XQwQIQ7kJzSlzwey+ymoPv6vGTNtT7nwo6M
- oGzJLF4ucJFhdIr/htCU4JS2BDd4w/QelmYB8Yp+dnB+qWFHg0T6EWGTRQdvoiXi6eNMESMOQ
- XV4bZvpquKWX1/RKO/DPrC3z3rGi1WzRGk05cvlfdto6aPdFo+HI9X7AqaP/Nux1XWh16+lTr
- N1qavuOOAZ8Vd7+p8qg2YDvGktrpsjktPDTj0y4AZs9HWaCPw9KBjl4FYiKlruMfVtqIvzHcs
- XYBquxKDYP437726VcKzvDEhfjPkag57VGwLjK8B5iig+UP7tP2r+/CUbU72TzHv4/MvD5Hlj
- K6za+bJuEU8berk9BYdVdtmdy39bo+VhNl8fyzVe8jcU3QyBcE81o+riQZ8G9nls1DvKHBcwA
- gLJeLEbkB0BSwyx2wOJYQd2BZnvxeKqLfgbmuQyCcaz0v5GOJhx4hp5i/9m92OydA+WFfanFs
- oa8vAZzHT1YsPXUtW3M8LJvV6aNEcuiPDY9lRD5u0qwVfzvP+x+9/jHO7DK+QHKWbfZFTol9H
- N/DR7E3wr/cdfrF2jjF3tXEHfSIDgUE5lBK1CPsTiLvmCskdFBm8iHlzIpYUmci4ii6NUAC7X
- 29j814tNT1QddhMW/3vj3biKDcJwlhKTei5LcLjMYibWdImks3izxsgSr2BvhA9+REdeOMesw
- d/xvRKBHzP2Rxe7crLbh+U+mUq04w0wJcYl4oti3ETqqNQhAuUOvVD62Hf3n43XsfwJCVf8un
- 7kRBwYHypxgB+Mkrs1qQeKOEzH5totqxXBZ65bRASQvWyW5GZmsv3jhvCiahDRJ4y51MEUpci
- XKO+B3EnSd7CUzRLxizJsCNwme7xgvdOV2y/FFVJe9TW0K4XCiXeyfduNRYsvruHzKIwmXww2
- mn9anJzAE5yCO9Me33X1u510USMGFuxHHE8keFLibo2DWRMqZylywcIxy+bLq2Y0n2XW0YD/j
- yXwQCYJiP8NbdLZIba5+jj8AfEfbJFfUzTsuGLuP2aoj5rqHONwMGGLkXvmMqeuwMVjrhCbHe
- j05UjcSqQAM3yI+7mFC/v4M+pAm+rg5QBdxzBEil2Z9r2tEkx4h37pi8u55U=
+X-UI-Out-Filterresults: notjunk:1;V03:K0:zfP7ojbHTrg=:vep1Nd6qZ0lRDogOPNrJy3
+ Zscr2NbH2d1CJCAiCzoNi7Zly+nIy2oIvKDQ7jcDvjUEHl/a6YyicJrCdOVx5Cbq8EZqAfrLB
+ vsUSElXYc9vE10r1EBbDmSSpQ+ENSK6ivo4b9HB7r/ub8oQ26h5F/1SSNYeQGHvjbs0YS6GiD
+ 6FP3+Z5ZBMyMEJmpVZ7w0igzm4LOhUaqWG3bJz1xywz0AMOnJBpAZCjNLEWizdIP84+MH6Sqg
+ 46S1fZb9MjjY1qU438rL6/ARnJCkrf1wh9dv3+NnfiIFkPw7U4ljDcvhXJodoDvFkTrMMrCoI
+ CXh3k+I2MeUXrKym/vEGYI7kJArI4r6zsDncxkrUU8l3ZkTYo05orSiSxb2BUeAZWszjbrJlc
+ JG/zKgVAzCHzGMGFoA+nKxFXIItj5JGukQqPbAy39I6x/sTxBGS/mU7CIH/CPtXtDTkbz7xHY
+ 25CGw11S7rHbAurQ5k5yFgsEXkISGOCTZvwrAPODx/JcfJDoWMgjIVDWF8pRO9rT1zWbORr0r
+ tR1ByF01qjbL8jr0NrBjgusmvG3EQm5nuwaztCzNZWYEMJrgbCwJ37e+niiJYZc97nw4FTtBC
+ GDagekI3qTR6MA65gZGZiF+zn34TyRvQHc5XoEMfzBEsrp8g2QVpxVGfUYrcy/AqoDzOssnh6
+ BONJ52aymyqyHbO/SXS0Qlb56BG6KWLFn4BXy41bRY8kDNVTKR3uqewVEaHinPXuGoOc4C9Rg
+ dal02KTBnjmZyvTsmiL6jCJt+81/wLhZXtgBQr/xFy2l4ZFh+zjiMmQ8YaRnTal5XkjnFzM4V
+ cQhn4+FLB+E0B3XcfF5awn57xhZA5wEYtPx80BL+fM9PKV6Td5eg5m+2EP7v0wLgsPcJggfiJ
+ UCm56y3infpr2IQs+PVGLyVDcjCW2T2jDEPp+x/hAekc2UAp55WbC9Sr3Ag8G0/S25IdAYEUt
+ L9w8Snez1W2gOGVu8Xh/IywBGoDUDRgQijcHGuUG7eYiv2ZGbjkXeJphnYl4nl0oyxFlqi/3R
+ MhetKoiDS0GRUCh+a9VitXGdTvlEI7dUuPHYccRNuzI8i8YVHWyLl9p+wYB7wCu0V7DTejOe+
+ ZcBRM2bn0TbrR3ybEVCJiJGt+e3EZfPqcLUdOqiG93AJOaq9/NttPdAzqPbEwPSMcOBeXDkBt
+ y6SSqBEOPmyjFQF/queYieKDh/YO0H5bZZuwuZ+S7xC2gL01OplRnc2O1qszEAAMT0BOGp3HI
+ 9N1WxzcCPAtaDGoWzSEsBCbSASZgGfZaGfb+7XMzf40tu++7DJS7/0jc8jeY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +our $PositionalAttribute	= qr{
-> +			__must_check|
-> +			__printf|
+> The problem is the __must_check does not mean that the
+> return value must be followed by a comparison to NULL and bailing out
+> (that can't really be checked), it simply ensures the return value is
+> assigned somewhere or used in an if(). So foo->bar = kstrdup() not
+> followed by a check of foo->bar won't warn.
 
-I suggest to put all key words which share the leading underscores
-into another alternation for an improved regular expression.
+Higher level source code analysis tools like the semantic patch language
+(Coccinelle software) can help to find such missing checks.
+Would you like to point any additional development tools out
+for this purpose?
 
 Regards,
 Markus
