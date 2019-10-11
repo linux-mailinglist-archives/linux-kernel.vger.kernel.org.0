@@ -2,90 +2,237 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C24C1D43C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 17:06:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E41D3D43CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 17:08:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728034AbfJKPGu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 11:06:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46846 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726332AbfJKPGt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 11:06:49 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73948206CD;
-        Fri, 11 Oct 2019 15:06:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570806409;
-        bh=6u22eQMxqkrsYk72ZwygUnfNpqOnzMaqtO/hpkzgc8c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gfj56F35BeBeTrdkFO1TJu+G+xclftJXP4w4kK9upDLZRbPSLicd41mwki/Hg83QN
-         O4i4TaJuwCW3ss0Y8vLI+1XUroo2bhG3bJrFsc0msSE2EgzGAFz5h84D4vlqpRwFDi
-         TaC4qIJ6XesoFJkISOqyIomFVrooVe45EL00i82I=
-Date:   Fri, 11 Oct 2019 17:06:46 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Andrey Konovalov <andreyknvl@google.com>,
-        Jaskaran Singh <jaskaransingh7654321@gmail.com>,
-        syzbot <syzbot+e7d46eb426883fb97efd@syzkaller.appspotmail.com>,
-        Alexander Potapenko <glider@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        usb-storage@lists.one-eyed-alien.net
-Subject: Re: KMSAN: uninit-value in alauda_check_media
-Message-ID: <20191011150646.GA1240544@kroah.com>
-References: <CAAeHK+zR=S1cyaYfehyUDrpMGMXvxgLEeS8V2ze2HkwYUp6bjg@mail.gmail.com>
- <Pine.LNX.4.44L0.1910111039380.1529-100000@iolanthe.rowland.org>
+        id S1727917AbfJKPIS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 11:08:18 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37016 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726328AbfJKPIS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 11:08:18 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 54C4C29102D
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: Re: [PATCH v4] wilco_ec: Add Dell's USB PowerShare Policy control
+To:     Nick Crews <ncrews@chromium.org>,
+        Daniel Campello <campello@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Benson Leung <bleung@chromium.org>,
+        Raul E Rangel <rrangel@chromium.org>
+References: <20191008161749.1.I4476e6e2b1026ff388eb11813310264e25aa9cc9@changeid>
+ <CAHX4x85WTGKMDn22T6SmaemVS1km8yNRgXNj3AgyAzB=69B3nA@mail.gmail.com>
+Message-ID: <8a4d9abb-7230-7e65-ceb7-e2983c8486cc@collabora.com>
+Date:   Fri, 11 Oct 2019 17:08:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1910111039380.1529-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <CAHX4x85WTGKMDn22T6SmaemVS1km8yNRgXNj3AgyAzB=69B3nA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 10:53:47AM -0400, Alan Stern wrote:
-> On Fri, 11 Oct 2019, Andrey Konovalov wrote:
-> 
-> > On Fri, Oct 11, 2019 at 4:08 PM Alan Stern <stern@rowland.harvard.edu> wrote:
-> 
-> > > Now yes, it's true that defining status as an array on the stack is
-> > > also a bug, since USB transfer buffers are not allowed to be stack
-> > > variables.
-> > 
-> > Hi Alan,
-> > 
-> > I'm curious, what is the reason for disallowing that? Should we try to
-> > somehow detect such cases automatically?
-> 
-> Transfer buffers are read and written by DMA.  On systems that don't
-> have cache-coherent DMA controllers, it is essential that the CPU does
-> not access any cache line involved in a DMA transfer while the transfer
-> is in progress.  Otherwise the data in the cache would be different
-> from the data in the buffer, leading to corruption.
-> 
-> (In theory it would be okay for the CPU to read (not write!) a cache
-> line assigned to a buffer for a DMA write (not read!) transfer.  But
-> even doing that isn't really a good idea.)
-> 
-> (Also, this isn't an issue for x86 architectures, because x86 has 
-> cache-coherent DMA.  But it is an issue on other architectures.)
-> 
-> In practice, this means transfer buffers have to be allocated by
-> something like kmalloc, so that they occupies their own separate set of
-> cache lines.  Buffers on the stack obviously don't satisfy this
-> requirement.
-> 
-> At some point there was a discussion about automatically detecting when
-> on-stack (or otherwise invalid) buffers are used for DMA transfers.  I
-> don't recall what the outcome was.
+Hi Daniel, Nick
 
-A patchset from Kees was sent, but it needs a bit more work...
+On 9/10/19 17:00, Nick Crews wrote:
+> On Tue, Oct 8, 2019 at 4:18 PM Daniel Campello <campello@chromium.org> wrote:
+>>
+>> USB PowerShare is a policy which affects charging via the special
+>> USB PowerShare port (marked with a small lightning bolt or battery icon)
+>> when in low power states:
+>> - In S0, the port will always provide power.
+>> - In S0ix, if usb_charge is enabled, then power will be supplied to
+>>   the port when on AC or if battery is > 50%. Else no power is supplied.
+>> - In S5, if usb_charge is enabled, then power will be supplied to
+>>   the port when on AC. Else no power is supplied.
+>>
+>> Signed-off-by: Daniel Campello <campello@chromium.org>
+>> Signed-off-by: Nick Crews <ncrews@chromium.org>
+>> ---
+>>
+>> v4 changes:
+>> - Renamed from usb_power_share to usb_charge to match existing feature
+>> in other platforms in the kernel (i.e., sony-laptop, samsung-laptop,
+>> lg-laptop)
+> 
+> Daniel and I put in considerable effort trying to get this integrated
+> with the USB subsystem. However, it was becoming much too
+> complicated, so we hoped that if we made this more consistent
+> with the three existing examples it would be acceptable.
+> 
 
-thanks,
+Agree, let's land as is for now. Prefixed the patch subject with
+"platform/chrome: ", replaced tabs for space in the documentation (to be
+coherent with the rest of the file) and queued for autobuilders to play with. If
+all goes well will be applied for 5.5.
 
-greg k-h
+Thanks,
+ Enric
+
+
+> Thanks for the thoughts,
+> Nick
+> 
+>> v3 changes:
+>> - Drop a silly blank line
+>> - Use val > 1 instead of val != 0 && val != 1
+>> v2 changes:
+>> - Move documentation to Documentation/ABI/testing/sysfs-platform-wilco-ec
+>> - Zero out reserved bytes in requests.
+>>
+>>  .../ABI/testing/sysfs-platform-wilco-ec       | 17 ++++
+>>  drivers/platform/chrome/wilco_ec/sysfs.c      | 91 +++++++++++++++++++
+>>  2 files changed, 108 insertions(+)
+>>
+>> diff --git a/Documentation/ABI/testing/sysfs-platform-wilco-ec b/Documentation/ABI/testing/sysfs-platform-wilco-ec
+>> index 8827a734f933..bb7ba67cae97 100644
+>> --- a/Documentation/ABI/testing/sysfs-platform-wilco-ec
+>> +++ b/Documentation/ABI/testing/sysfs-platform-wilco-ec
+>> @@ -31,6 +31,23 @@ Description:
+>>                 Output will a version string be similar to the example below:
+>>                 08B6
+>>
+>> +What:          /sys/bus/platform/devices/GOOG000C\:00/usb_charge
+>> +Date:          October 2019
+>> +KernelVersion: 5.5
+>> +Description:
+>> +               Control the USB PowerShare Policy. USB PowerShare is a policy
+>> +               which affects charging via the special USB PowerShare port
+>> +               (marked with a small lightning bolt or battery icon) when in
+>> +               low power states:
+>> +               - In S0, the port will always provide power.
+>> +               - In S0ix, if usb_charge is enabled, then power will be
+>> +                 supplied to the port when on AC or if battery is > 50%.
+>> +                 Else no power is supplied.
+>> +               - In S5, if usb_charge is enabled, then power will be supplied
+>> +                 to the port when on AC. Else no power is supplied.
+>> +
+>> +               Input should be either "0" or "1".
+>> +
+>>  What:          /sys/bus/platform/devices/GOOG000C\:00/version
+>>  Date:          May 2019
+>>  KernelVersion: 5.3
+>> diff --git a/drivers/platform/chrome/wilco_ec/sysfs.c b/drivers/platform/chrome/wilco_ec/sysfs.c
+>> index 3b86a21005d3..f0d174b6bb21 100644
+>> --- a/drivers/platform/chrome/wilco_ec/sysfs.c
+>> +++ b/drivers/platform/chrome/wilco_ec/sysfs.c
+>> @@ -23,6 +23,26 @@ struct boot_on_ac_request {
+>>         u8 reserved7;
+>>  } __packed;
+>>
+>> +#define CMD_USB_CHARGE 0x39
+>> +
+>> +enum usb_charge_op {
+>> +       USB_CHARGE_GET = 0,
+>> +       USB_CHARGE_SET = 1,
+>> +};
+>> +
+>> +struct usb_charge_request {
+>> +       u8 cmd;         /* Always CMD_USB_CHARGE */
+>> +       u8 reserved;
+>> +       u8 op;          /* One of enum usb_charge_op */
+>> +       u8 val;         /* When setting, either 0 or 1 */
+>> +} __packed;
+>> +
+>> +struct usb_charge_response {
+>> +       u8 reserved;
+>> +       u8 status;      /* Set by EC to 0 on success, other value on failure */
+>> +       u8 val;         /* When getting, set by EC to either 0 or 1 */
+>> +} __packed;
+>> +
+>>  #define CMD_EC_INFO                    0x38
+>>  enum get_ec_info_op {
+>>         CMD_GET_EC_LABEL        = 0,
+>> @@ -131,12 +151,83 @@ static ssize_t model_number_show(struct device *dev,
+>>
+>>  static DEVICE_ATTR_RO(model_number);
+>>
+>> +static int send_usb_charge(struct wilco_ec_device *ec,
+>> +                               struct usb_charge_request *rq,
+>> +                               struct usb_charge_response *rs)
+>> +{
+>> +       struct wilco_ec_message msg;
+>> +       int ret;
+>> +
+>> +       memset(&msg, 0, sizeof(msg));
+>> +       msg.type = WILCO_EC_MSG_LEGACY;
+>> +       msg.request_data = rq;
+>> +       msg.request_size = sizeof(*rq);
+>> +       msg.response_data = rs;
+>> +       msg.response_size = sizeof(*rs);
+>> +       ret = wilco_ec_mailbox(ec, &msg);
+>> +       if (ret < 0)
+>> +               return ret;
+>> +       if (rs->status)
+>> +               return -EIO;
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static ssize_t usb_charge_show(struct device *dev,
+>> +                                   struct device_attribute *attr, char *buf)
+>> +{
+>> +       struct wilco_ec_device *ec = dev_get_drvdata(dev);
+>> +       struct usb_charge_request rq;
+>> +       struct usb_charge_response rs;
+>> +       int ret;
+>> +
+>> +       memset(&rq, 0, sizeof(rq));
+>> +       rq.cmd = CMD_USB_CHARGE;
+>> +       rq.op = USB_CHARGE_GET;
+>> +
+>> +       ret = send_usb_charge(ec, &rq, &rs);
+>> +       if (ret < 0)
+>> +               return ret;
+>> +
+>> +       return sprintf(buf, "%d\n", rs.val);
+>> +}
+>> +
+>> +static ssize_t usb_charge_store(struct device *dev,
+>> +                                    struct device_attribute *attr,
+>> +                                    const char *buf, size_t count)
+>> +{
+>> +       struct wilco_ec_device *ec = dev_get_drvdata(dev);
+>> +       struct usb_charge_request rq;
+>> +       struct usb_charge_response rs;
+>> +       int ret;
+>> +       u8 val;
+>> +
+>> +       ret = kstrtou8(buf, 10, &val);
+>> +       if (ret < 0)
+>> +               return ret;
+>> +       if (val > 1)
+>> +               return -EINVAL;
+>> +
+>> +       memset(&rq, 0, sizeof(rq));
+>> +       rq.cmd = CMD_USB_CHARGE;
+>> +       rq.op = USB_CHARGE_SET;
+>> +       rq.val = val;
+>> +
+>> +       ret = send_usb_charge(ec, &rq, &rs);
+>> +       if (ret < 0)
+>> +               return ret;
+>> +
+>> +       return count;
+>> +}
+>> +
+>> +static DEVICE_ATTR_RW(usb_charge);
+>>
+>>  static struct attribute *wilco_dev_attrs[] = {
+>>         &dev_attr_boot_on_ac.attr,
+>>         &dev_attr_build_date.attr,
+>>         &dev_attr_build_revision.attr,
+>>         &dev_attr_model_number.attr,
+>> +       &dev_attr_usb_charge.attr,
+>>         &dev_attr_version.attr,
+>>         NULL,
+>>  };
+>> --
+>> 2.23.0.581.g78d2f28ef7-goog
+>>
