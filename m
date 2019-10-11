@@ -2,188 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BC33D394A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 08:22:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50A9AD394D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 08:24:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727261AbfJKGV4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 02:21:56 -0400
-Received: from regular1.263xmail.com ([211.150.70.205]:57576 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbfJKGV4 (ORCPT
+        id S1727361AbfJKGYU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 02:24:20 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:38586 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbfJKGYU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 02:21:56 -0400
-Received: from localhost (unknown [192.168.167.13])
-        by regular1.263xmail.com (Postfix) with ESMTP id AA6E6501;
-        Fri, 11 Oct 2019 14:21:40 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED4: 1
-X-ANTISPAM-LEVEL: 2
-X-SKE-CHECKED: 1
-X-ABS-CHECKED: 1
-Received: from [172.16.10.69] (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P1498T139875987117824S1570774899902158_;
-        Fri, 11 Oct 2019 14:21:41 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <05d49b8d9eedd73368abb06786516ead>
-X-RL-SENDER: hjc@rock-chips.com
-X-SENDER: hjc@rock-chips.com
-X-LOGIN-NAME: hjc@rock-chips.com
-X-FST-TO: ben.davis@arm.com
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Subject: Re: [PATCH v2 4/4] drm/komeda: Adds gamma and color-transform support
- for DOU-IPS
-To:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
-        Liviu Dudau <Liviu.Dudau@arm.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "sean@poorly.run" <sean@poorly.run>,
-        "imirkin@alum.mit.edu" <imirkin@alum.mit.edu>
-Cc:     nd <nd@arm.com>, Ayan Halder <Ayan.Halder@arm.com>,
-        "Oscar Zhang (Arm Technology China)" <Oscar.Zhang@arm.com>,
-        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
-        Mihail Atanassov <Mihail.Atanassov@arm.com>,
-        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
-        "Channing Chen (Arm Technology China)" <Channing.Chen@arm.com>,
-        "Yiqi Kang (Arm Technology China)" <Yiqi.Kang@arm.com>,
-        "Thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
-        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
-        Ben Davis <Ben.Davis@arm.com>
-References: <20191011054240.17782-1-james.qian.wang@arm.com>
- <20191011054240.17782-5-james.qian.wang@arm.com>
-From:   "sandy.huang" <hjc@rock-chips.com>
-Message-ID: <08492df8-11d9-c580-94f6-7868602c12c3@rock-chips.com>
-Date:   Fri, 11 Oct 2019 14:21:39 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Fri, 11 Oct 2019 02:24:20 -0400
+Received: by mail-ot1-f66.google.com with SMTP id e11so7031722otl.5;
+        Thu, 10 Oct 2019 23:24:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wqH28Wgy5XWdZC93SRfUsKq/9YOvOsGCUjreqzk83Gk=;
+        b=SJjqbeKRZWQlUkXWH70iUjsZ0E1wBNX1Lbm3s9Rc2b+Ur7N9ZyNHjtA8iYFny8tkpD
+         j12pMHt413P5RXs1yNirV2iOjyNX/wMQqw+n8OCLBwvmiq6LLzz1uOhTItff30ifjP+z
+         GdEmp3P+03h2S9YusjstKG4MR8I2T1BYFfB0/d1ZdpGYIASRo5zHPb0ky+vgysYT3ryh
+         mOkdvHaGLy9lETLOrjRve9Ae3S0xXhTGAsaETwKeevMwzPORGMljvrkl3FxrmLoQZATa
+         QcKRHtjweBoC9U+31Z8lIrISNElQ0NNWsGP3Fa2EwzU/WAuli5JCOUXQHbZKp0opQuau
+         +i6A==
+X-Gm-Message-State: APjAAAUfeW8oI9cUOT1pnlY5N8pHu9hhBdox4v6+rmXthqlkGC4hSSEw
+        6GQKvbR7cgb4ostmlwFDvPnLmT02m60DrDXzp48=
+X-Google-Smtp-Source: APXvYqwxOor4RfihqgN3JVbtlFkewd5BTf8h1xQOCtR1ReSQo5uAggV1fh25p047jHcSVf4NgTkIHSsDZwiQ7Gum/WI=
+X-Received: by 2002:a05:6830:1b75:: with SMTP id d21mr11190915ote.145.1570775059475;
+ Thu, 10 Oct 2019 23:24:19 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191011054240.17782-5-james.qian.wang@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20191010123046.15291-1-geert+renesas@glider.be> <20191011073515.2933918c@canb.auug.org.au>
+In-Reply-To: <20191011073515.2933918c@canb.auug.org.au>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 11 Oct 2019 08:24:06 +0200
+Message-ID: <CAMuHMdXNQtSzGMyxF18A_yxNJt9k28M82u4TUXHS9kXOcgoMYA@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Remove Simon as Renesas SoC Co-Maintainer
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kevin Hilman <khilman@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Stephen,
 
-在 2019/10/11 下午1:43, james qian wang (Arm Technology China) 写道:
-> From: "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>
+On Thu, Oct 10, 2019 at 10:35 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> On Thu, 10 Oct 2019 14:30:46 +0200 Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+> > At the end of the v5.3 upstream kernel development cycle, Simon stepped
+> > down from his role as Renesas SoC maintainer.
+> >
+> > Remove his maintainership, git repository, and branch from the
+> > MAINTAINERS file, and add an entry to the CREDITS file to honor his
+> > work.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 >
-> Adds gamma and color-transform support for DOU-IPS.
-> Adds two caps members fgamma_coeffs and ctm_coeffs to komeda_improc_state.
-> If color management changed, set gamma and color-transform accordingly.
->
-> Signed-off-by: Lowry Li (Arm Technology China) <lowry.li@arm.com>
-> ---
->   .../arm/display/komeda/d71/d71_component.c    | 24 +++++++++++++++++++
->   .../gpu/drm/arm/display/komeda/komeda_crtc.c  |  2 ++
->   .../drm/arm/display/komeda/komeda_pipeline.h  |  3 +++
->   .../display/komeda/komeda_pipeline_state.c    |  6 +++++
->   4 files changed, 35 insertions(+)
->
-> diff --git a/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c b/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c
-> index c3d29c0b051b..e7e5a8e4430e 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c
-> @@ -942,15 +942,39 @@ static int d71_merger_init(struct d71_dev *d71,
->   static void d71_improc_update(struct komeda_component *c,
->   			      struct komeda_component_state *state)
->   {
-> +	struct drm_crtc_state *crtc_st = state->crtc->state;
->   	struct komeda_improc_state *st = to_improc_st(state);
-> +	struct d71_pipeline *pipe = to_d71_pipeline(c->pipeline);
->   	u32 __iomem *reg = c->reg;
->   	u32 index;
-> +	u32 mask = 0, ctrl = 0;
->   
->   	for_each_changed_input(state, index)
->   		malidp_write32(reg, BLK_INPUT_ID0 + index * 4,
->   			       to_d71_input_id(state, index));
->   
->   	malidp_write32(reg, BLK_SIZE, HV_SIZE(st->hsize, st->vsize));
-> +
-> +	if (crtc_st->color_mgmt_changed) {
-> +		mask |= IPS_CTRL_FT | IPS_CTRL_RGB;
-> +
-> +		if (crtc_st->gamma_lut) {
-> +			malidp_write_group(pipe->dou_ft_coeff_addr, FT_COEFF0,
-> +					   KOMEDA_N_GAMMA_COEFFS,
-> +					   st->fgamma_coeffs);
-> +			ctrl |= IPS_CTRL_FT; /* enable gamma */
-> +		}
-> +
-> +		if (crtc_st->ctm) {
-> +			malidp_write_group(reg, IPS_RGB_RGB_COEFF0,
-> +					   KOMEDA_N_CTM_COEFFS,
-> +					   st->ctm_coeffs);
-> +			ctrl |= IPS_CTRL_RGB; /* enable gamut */
-> +		}
-> +	}
-> +
-> +	if (mask)
-> +		malidp_write32_mask(reg, BLK_CONTROL, mask, ctrl);
->   }
-There is no need or no method to disable/bypass the gamma and gamut?
->   
->   static void d71_improc_dump(struct komeda_component *c, struct seq_file *sf)
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-> index 9beeda04818b..406b9d0ca058 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-> @@ -590,6 +590,8 @@ static int komeda_crtc_add(struct komeda_kms_dev *kms,
->   
->   	crtc->port = kcrtc->master->of_output_port;
->   
-> +	drm_crtc_enable_color_mgmt(crtc, 0, true, KOMEDA_COLOR_LUT_SIZE);
-> +
->   	return err;
->   }
->   
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
-> index b322f52ba8f2..c5ab8096c85d 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
-> @@ -11,6 +11,7 @@
->   #include <drm/drm_atomic.h>
->   #include <drm/drm_atomic_helper.h>
->   #include "malidp_utils.h"
-> +#include "komeda_color_mgmt.h"
->   
->   #define KOMEDA_MAX_PIPELINES		2
->   #define KOMEDA_PIPELINE_MAX_LAYERS	4
-> @@ -324,6 +325,8 @@ struct komeda_improc {
->   struct komeda_improc_state {
->   	struct komeda_component_state base;
->   	u16 hsize, vsize;
-> +	u32 fgamma_coeffs[KOMEDA_N_GAMMA_COEFFS];
-> +	u32 ctm_coeffs[KOMEDA_N_CTM_COEFFS];
->   };
->   
->   /* display timing controller */
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
-> index 0ba9c6aa3708..4a40b37eb1a6 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
-> @@ -756,6 +756,12 @@ komeda_improc_validate(struct komeda_improc *improc,
->   	st->hsize = dflow->in_w;
->   	st->vsize = dflow->in_h;
->   
-> +	if (kcrtc_st->base.color_mgmt_changed) {
-> +		drm_lut_to_fgamma_coeffs(kcrtc_st->base.gamma_lut,
-> +					 st->fgamma_coeffs);
-> +		drm_ctm_to_coeffs(kcrtc_st->base.ctm, st->ctm_coeffs);
-> +	}
-> +
->   	komeda_component_add_input(&st->base, &dflow->input, 0);
->   	komeda_component_set_output(&dflow->input, &improc->base, 0);
->   
+> So, I will remove Simon's Renesas tree from linux-next and rename the
+> renesas-geert tree to be renesas, OK?
 
+Thanks, that's exactly what I intended to happen ;-)
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
