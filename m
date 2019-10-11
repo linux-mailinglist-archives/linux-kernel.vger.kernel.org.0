@@ -2,76 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EFDFD3BF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 11:11:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96A07D3C11
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 11:16:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727324AbfJKJLP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 05:11:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60098 "EHLO mail.kernel.org"
+        id S1727131AbfJKJQp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 05:16:45 -0400
+Received: from foss.arm.com ([217.140.110.172]:54162 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726585AbfJKJLP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 05:11:15 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AE5B21D6C;
-        Fri, 11 Oct 2019 09:11:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570785073;
-        bh=0b+19Hn7UbHkSSxLN4MXTvyEt2kAc48uoFb/JWDbo/I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ocPh3/IRZQVb6NWWmgiy3Ewp0AlBTKWgVUlOD9k5lB1EdxY2kvluEZsmwGLFROwKo
-         MK4ylNgMuOO+WVtdy0wLIimkuRJYbSy/adKfmNBJ3iilOZ2IXKLLU9JltHeihqpe1z
-         QVufYp25TN4xae0NxTIaWAOUMesGXjxOu5+P9D94=
-Date:   Fri, 11 Oct 2019 11:11:10 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Chandra Annamaneni <chandra627@gmail.com>
-Cc:     devel@driverdev.osuosl.org, gneukum1@gmail.com,
-        michael.scheiderer@fau.de, fabian.krueger@fau.de,
-        linux-kernel@vger.kernel.org,
-        Simon =?iso-8859-1?Q?Sandstr=F6m?= <simon@nikanor.nu>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH 2/5] KPC2000: kpc2000_spi.c: Fix style issues (missing
- blank line)
-Message-ID: <20191011091110.GA1124173@kroah.com>
-References: <20191011055155.4985-1-chandra627@gmail.com>
- <20191011055155.4985-2-chandra627@gmail.com>
- <20191011063321.GB986093@kroah.com>
- <CAEge-i7Va8NrVGYzssFqvuGEwV=xPu9VL5_ZewXn2985QbEmcw@mail.gmail.com>
+        id S1726555AbfJKJQo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 05:16:44 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2597A337;
+        Fri, 11 Oct 2019 02:16:44 -0700 (PDT)
+Received: from [192.168.1.123] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6239F3F703;
+        Fri, 11 Oct 2019 02:16:42 -0700 (PDT)
+Subject: Re: [PATCH 0/2] iommu/arm-smmu: Add an optional "input-address-size"
+ property
+To:     Nicolin Chen <nicoleotsuka@gmail.com>, joro@8bytes.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, will@kernel.org
+Cc:     vdumpa@nvidia.com, iommu@lists.linux-foundation.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20191011034609.13319-1-nicoleotsuka@gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <e99e07c2-88c6-e4d8-af80-c46d36bc6cd0@arm.com>
+Date:   Fri, 11 Oct 2019 10:16:28 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEge-i7Va8NrVGYzssFqvuGEwV=xPu9VL5_ZewXn2985QbEmcw@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191011034609.13319-1-nicoleotsuka@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2019-10-11 4:46 am, Nicolin Chen wrote:
+> This series of patches add an optional DT property to allow an SoC to
+> specify how many bits being physically connected to its SMMU instance,
+> depending on the SoC design.
 
-A: Because it messes up the order in which people normally read text.
-Q: Why is top-posting such a bad thing?
-A: Top-posting.
-Q: What is the most annoying thing in e-mail?
+This has come up before, and it doesn't work in general because a single 
+SMMU instance can have many master interfaces, with potentially 
+different sizes of address bus wired up to each. It's also a 
+conceptually-wrong approach anyway, since this isn't a property of the 
+SMMU; it's a property of the interconnect(s) upstream of the SMMU.
 
-A: No.
-Q: Should I include quotations after my reply?
+IIRC you were working on Tegra - if so, Thierry already has a plan, see 
+this thread: 
+https://lore.kernel.org/linux-arm-kernel/20190930133510.GA1904140@ulmo/
 
-http://daringfireball.net/2007/07/on_top
+Robin.
 
-On Fri, Oct 11, 2019 at 02:02:32AM -0700, Chandra Annamaneni wrote:
-> The first set of patches were in a single commit. I started from scratch
-> and built these patches from 5 different commits. Don't know if the first
-> set of patches are relevant anymore.
-
-They are not relevant to being applied, but this patch series has
-changed based on the comments you received from the previous patch(s).
-So it is relevant to how you got to this set of patches.
-
-This makes it easier for reviewers to understand what changed and what
-they need to focus on, or ignore, in your new set of patches.  This
-isn't for you, it is for the people you are sending these patches to.
-
-thanks,
-
-greg k-h
+> 
+> Nicolin Chen (2):
+>    dt-bindings: arm-smmu: Add an optional "input-address-size" property
+>    iommu/arm-smmu: Read optional "input-address-size" property
+> 
+>   Documentation/devicetree/bindings/iommu/arm,smmu.txt |  7 +++++++
+>   drivers/iommu/arm-smmu.c                             | 10 ++++++++--
+>   2 files changed, 15 insertions(+), 2 deletions(-)
+> 
