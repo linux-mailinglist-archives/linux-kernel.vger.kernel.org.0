@@ -2,119 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE7F3D408B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 15:09:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03EF9D406B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 15:07:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728482AbfJKNH6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 09:07:58 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:36954 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728258AbfJKNHY (ORCPT
+        id S1728214AbfJKNHQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 09:07:16 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:54945 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727709AbfJKNHQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 09:07:24 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9BD7MQQ078510;
-        Fri, 11 Oct 2019 08:07:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1570799242;
-        bh=nbVVUZ3Qhf2Oih+Vzfzrpge7klNd8/7wkUn5sxV3aTo=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=fWxihbeX8lPzOUIk/Ss8mFTGZ73O3uXFhknmu+vttKtqvjWjTCkHQgFBNskZGDbF5
-         RvxdpYyr6ugJ+bfbZDUgEZQrtVTggKGAWrXTjIGYiOrb1N37FyjL5Wqm0lcCutDSm+
-         idn/2HsV3ngmCxYyADRjw7tyC9BjLalGWminJhZE=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9BD7MP0078730
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 11 Oct 2019 08:07:22 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 11
- Oct 2019 08:07:17 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 11 Oct 2019 08:07:17 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9BD7LWV118600;
-        Fri, 11 Oct 2019 08:07:21 -0500
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v12 16/16] leds: lp5523: Fix checkpatch issues in the code
-Date:   Fri, 11 Oct 2019 08:06:57 -0500
-Message-ID: <20191011130657.4713-17-dmurphy@ti.com>
-X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
-In-Reply-To: <20191011130657.4713-1-dmurphy@ti.com>
-References: <20191011130657.4713-1-dmurphy@ti.com>
+        Fri, 11 Oct 2019 09:07:16 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9BD6lwL021879;
+        Fri, 11 Oct 2019 15:07:02 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=klfGUH5dxwRvx6PXzWgeW52/ZQWuSqdDdFx4SGnAlS4=;
+ b=RZB1+1VtH8UvSPqj7nDzvpZlumAZiVIzoig/VFcxT54qxXkZWDZON8vjwBaTLhl5PlGJ
+ WDWaMKcgESwxdVae5WLci4JjHy5lB8wUTumrgkEHc1xRJ3PWE+r4tmjPxckHkIUuhYf9
+ 5TK0GxjGBS912OgSj9qSUli+xSB2IyM5KMpRghBRfIkNw5XRDJBuBciZzdjbe3TNUspc
+ GUKxKsMMGusLEhzzc8obDfM6Gz7l0Qr3pA612YQ24qYXwo9JFTxJwc4ktPl53anyEyLw
+ BouNE3Oxaiq/wF87KVUr3WZOonHy5YInEJVYit9LFLJe7C+tepsJtPs07FwqgjPxgTaI WQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2vegxw9x0p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Oct 2019 15:07:02 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8B3D7100034;
+        Fri, 11 Oct 2019 15:07:01 +0200 (CEST)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 781192BE25F;
+        Fri, 11 Oct 2019 15:07:01 +0200 (CEST)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 11 Oct
+ 2019 15:07:01 +0200
+Received: from localhost (10.201.20.122) by webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 11 Oct 2019 15:07:00
+ +0200
+From:   Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     <alexandre.torgue@st.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>
+CC:     <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH] ARM: dts: stm32f469: remove useless interrupt from dsi node
+Date:   Fri, 11 Oct 2019 15:06:58 +0200
+Message-ID: <20191011130658.23670-1-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Originating-IP: [10.201.20.122]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-11_08:2019-10-10,2019-10-11 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix checkpatch errors and warnings for the LP5523.c device
-driver.
+DSI driver doesn't use interrupt, remove it from the node since it
+breaks yaml check.
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
 ---
- drivers/leds/leds-lp5523.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ arch/arm/boot/dts/stm32f469.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-index 5d6002e4d657..3c7c2e68e137 100644
---- a/drivers/leds/leds-lp5523.c
-+++ b/drivers/leds/leds-lp5523.c
-@@ -23,13 +23,13 @@
- 
- #define LP5523_PROGRAM_LENGTH		32	/* bytes */
- /* Memory is used like this:
--   0x00 engine 1 program
--   0x10 engine 2 program
--   0x20 engine 3 program
--   0x30 engine 1 muxing info
--   0x40 engine 2 muxing info
--   0x50 engine 3 muxing info
--*/
-+ * 0x00 engine 1 program
-+ * 0x10 engine 2 program
-+ * 0x20 engine 3 program
-+ * 0x30 engine 1 muxing info
-+ * 0x40 engine 2 muxing info
-+ * 0x50 engine 3 muxing info
-+ */
- #define LP5523_MAX_LEDS			9
- 
- /* Registers */
-@@ -326,7 +326,7 @@ static int lp5523_update_program_memory(struct lp55xx_chip *chip,
- 					const u8 *data, size_t size)
- {
- 	u8 pattern[LP5523_PROGRAM_LENGTH] = {0};
--	unsigned cmd;
-+	unsigned int cmd;
- 	char c[3];
- 	int nrchars;
- 	int ret;
-@@ -468,6 +468,7 @@ static int lp5523_mux_parse(const char *buf, u16 *mux, size_t len)
- static void lp5523_mux_to_array(u16 led_mux, char *array)
- {
- 	int i, pos = 0;
-+
- 	for (i = 0; i < LP5523_MAX_LEDS; i++)
- 		pos += sprintf(array + pos, "%x", LED_ACTIVE(led_mux, i));
- 
-@@ -506,7 +507,7 @@ static int lp5523_load_mux(struct lp55xx_chip *chip, u16 mux, int nr)
- 	if (ret)
- 		return ret;
- 
--	ret = lp55xx_write(chip, LP5523_REG_PROG_MEM , (u8)(mux >> 8));
-+	ret = lp55xx_write(chip, LP5523_REG_PROG_MEM, (u8)(mux >> 8));
- 	if (ret)
- 		return ret;
- 
+diff --git a/arch/arm/boot/dts/stm32f469.dtsi b/arch/arm/boot/dts/stm32f469.dtsi
+index 5ae5213f68cb..be002e8a78ac 100644
+--- a/arch/arm/boot/dts/stm32f469.dtsi
++++ b/arch/arm/boot/dts/stm32f469.dtsi
+@@ -8,7 +8,6 @@
+ 		dsi: dsi@40016c00 {
+ 			compatible = "st,stm32-dsi";
+ 			reg = <0x40016c00 0x800>;
+-			interrupts = <92>;
+ 			resets = <&rcc STM32F4_APB2_RESET(DSI)>;
+ 			reset-names = "apb";
+ 			clocks = <&rcc 1 CLK_F469_DSI>, <&clk_hse>;
 -- 
-2.22.0.214.g8dca754b1e
+2.15.0
 
