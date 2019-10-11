@@ -2,55 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78B43D4065
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 15:06:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CABB9D407C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 15:09:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728194AbfJKNGV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 09:06:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33288 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727855AbfJKNGV (ORCPT
+        id S1728284AbfJKNHZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 09:07:25 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:41592 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728147AbfJKNHX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 09:06:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=0KOxJqjgY7dUI6kvFq+KguD5cvSrEqK7JOmumHWOcEQ=; b=VEWMtwN4bymxkS7HkfwQmsmjy
-        IjAi13JDizXtG6xzigzl7f2KzggGbjsUls84LBDJRjYabdjaNvtO8qsQCNV5ZmZPljopdVTPUulTT
-        sqJsGWRYpYBBEL01pE586MYMe8XzuwzOpxChno2mOgmnhuQJNJRUxrAoema+WU3oEC4kJugUK633Y
-        GSZS+ZM5ZiEy0A37g4KgSBMNdgjNr3PzCLcwpYwsnEx/9A210GQZEExqDe1r3ckQ76RDLQikrM4lh
-        +MAE6OQspWTSfeVEHwFjc1lJFtYeavn4WBZQ6mVdALHpD89Iid0nPmuQF6qObplYoXhTwm0GFE5Ay
-        g0J690Lgw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iIucZ-0000NO-9X; Fri, 11 Oct 2019 13:06:15 +0000
-Date:   Fri, 11 Oct 2019 06:06:15 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     yu kuai <yukuai3@huawei.com>
-Cc:     darrick.wong@oracle.com, bfoster@redhat.com, dchinner@redhat.com,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        zhengbin13@huawei.com, yi.zhang@huawei.com, zhangxiaoxu5@huawei.com
-Subject: Re: [PATCH] xfs: fix wrong struct type in ioctl definition whih cmd
- XFS_IOC_GETBMAPAX
-Message-ID: <20191011130615.GA27614@infradead.org>
-References: <1570792486-84374-1-git-send-email-yukuai3@huawei.com>
+        Fri, 11 Oct 2019 09:07:23 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9BD7IHf033359;
+        Fri, 11 Oct 2019 08:07:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1570799238;
+        bh=N3d4fsd58jS0rKBNueYjJBO2F8q1L3xywii7E5kK4rY=;
+        h=From:To:CC:Subject:Date;
+        b=V9mkCl7MuO8MWTdmkrPK92QHGvVI9m8E3R89+4xZTEBRtahNG0WjzZCmHhX4FaHpb
+         0hqgfP9nv3S7kk2u5XFCG4vpSrouZBtTEa6Xh99a9Z7N7zZ0U+5U1pXS3Acj4wjV5Y
+         WUYMu/sv/9nHvcUhc3Ilt+9nIlWLf371KRs/daXI=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9BD7IDK078673
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 11 Oct 2019 08:07:18 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 11
+ Oct 2019 08:07:14 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 11 Oct 2019 08:07:18 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9BD7IeT106100;
+        Fri, 11 Oct 2019 08:07:18 -0500
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v12 00/16] Multicolor Framework v12
+Date:   Fri, 11 Oct 2019 08:06:41 -0500
+Message-ID: <20191011130657.4713-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1570792486-84374-1-git-send-email-yukuai3@huawei.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 07:14:46PM +0800, yu kuai wrote:
-> ioctl expect 'getbmapx' as the 'arg' when the cmd is XFS_IOC_GETBMAPX.
-> But the definition in 'xfs_fs.h' is 'getbmap'
+Hello
 
-Strictly speaking that is true.  But changing this defintion will break
-existing userspace given that _IOWR encodes the structure size.  If you
-had reported this 16 years earlier we could have fixed it.
+Minor changes per review comments.
+https://lore.kernel.org/patchwork/project/lkml/list/?series=413385
+
+Rebased the series on top of Pavel's next branch.
+
+Multicolor changes:
+Rename led_mc_calc_brightness to led_mc_calc_color_components
+Updated the binding example for the function from STATUS to CHARGING
+
+LP50xx changes:
+None
+
+LP55xx changes:
+Changed color_component array allocation from COLOR_MAX_ID to MAX_GROUPED_CHANNELS
+Updated MC API to call led_mc_calc_color_components
+
+Dan
+
+Dan Murphy (16):
+  dt: bindings: Add multicolor class dt bindings documention
+  dt-bindings: leds: Add multicolor ID to the color ID list
+  leds: Add multicolor ID to the color ID list
+  leds: multicolor: Introduce a multicolor class definition
+  dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers
+  leds: lp50xx: Add the LP50XX family of the RGB LED driver
+  dt: bindings: lp55xx: Be consistent in the document with LED acronym
+  dt: bindings: lp55xx: Update binding for Multicolor Framework
+  ARM: dts: n900: Add reg property to the LP5523 channel node
+  ARM: dts: imx6dl-yapp4: Add reg property to the lp5562 channel node
+  ARM: dts: ste-href: Add reg property to the LP5521 channel nodes
+  leds: lp55xx: Add multicolor framework support to lp55xx
+  leds: lp5523: Update the lp5523 code to add intensity function
+  leds: lp5521: Add multicolor framework intensity support
+  leds: lp55xx: Fix checkpatch file permissions issues
+  leds: lp5523: Fix checkpatch issues in the code
+
+ .../ABI/testing/sysfs-class-led-multicolor    |  36 +
+ .../bindings/leds/leds-class-multicolor.txt   |  98 +++
+ .../devicetree/bindings/leds/leds-lp50xx.txt  | 148 ++++
+ .../devicetree/bindings/leds/leds-lp55xx.txt  | 155 +++-
+ Documentation/leds/index.rst                  |   1 +
+ Documentation/leds/leds-class-multicolor.rst  |  96 +++
+ arch/arm/boot/dts/imx6dl-yapp4-common.dtsi    |  14 +-
+ arch/arm/boot/dts/omap3-n900.dts              |  29 +-
+ arch/arm/boot/dts/ste-href.dtsi               |  22 +-
+ drivers/leds/Kconfig                          |  22 +
+ drivers/leds/Makefile                         |   2 +
+ drivers/leds/led-class-multicolor.c           | 271 ++++++
+ drivers/leds/led-core.c                       |   1 +
+ drivers/leds/leds-lp50xx.c                    | 799 ++++++++++++++++++
+ drivers/leds/leds-lp5521.c                    |  20 +
+ drivers/leds/leds-lp5523.c                    |  39 +-
+ drivers/leds/leds-lp55xx-common.c             | 198 ++++-
+ drivers/leds/leds-lp55xx-common.h             |   9 +
+ include/dt-bindings/leds/common.h             |   3 +-
+ include/linux/led-class-multicolor.h          | 143 ++++
+ include/linux/platform_data/leds-lp55xx.h     |   7 +
+ 21 files changed, 2020 insertions(+), 93 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-led-multicolor
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-lp50xx.txt
+ create mode 100644 Documentation/leds/leds-class-multicolor.rst
+ create mode 100644 drivers/leds/led-class-multicolor.c
+ create mode 100644 drivers/leds/leds-lp50xx.c
+ create mode 100644 include/linux/led-class-multicolor.h
+
+-- 
+2.22.0.214.g8dca754b1e
+
