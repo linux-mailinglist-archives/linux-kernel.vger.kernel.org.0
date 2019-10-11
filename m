@@ -2,55 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF9D4D431F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 16:42:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2485AD4326
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 16:42:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727128AbfJKOmV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 10:42:21 -0400
-Received: from mga05.intel.com ([192.55.52.43]:33234 "EHLO mga05.intel.com"
+        id S1727480AbfJKOmn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 10:42:43 -0400
+Received: from foss.arm.com ([217.140.110.172]:34514 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726174AbfJKOmV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 10:42:21 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2019 07:42:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,284,1566889200"; 
-   d="scan'208";a="207439430"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 11 Oct 2019 07:42:17 -0700
-Received: by lahna (sSMTP sendmail emulation); Fri, 11 Oct 2019 17:42:17 +0300
-Date:   Fri, 11 Oct 2019 17:42:16 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
-        kernel-janitors@vger.kernel.org,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [v3] thunderbolt: Fix to check the return value of kmemdup
-Message-ID: <20191011144216.GI2819@lahna.fi.intel.com>
-References: <20190325212523.11799-1-pakki001@umn.edu>
- <f2960ada-7e06-33d1-1533-78989a3e1d2a@web.de>
- <20191011133557.GF2819@lahna.fi.intel.com>
- <c12d7c9c-8212-ba9b-252f-7dbb61698550@web.de>
+        id S1726174AbfJKOml (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 10:42:41 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7DC51142F;
+        Fri, 11 Oct 2019 07:42:40 -0700 (PDT)
+Received: from bogus (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5F2DC3F68E;
+        Fri, 11 Oct 2019 07:42:39 -0700 (PDT)
+Date:   Fri, 11 Oct 2019 15:42:33 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: ARM Juno r1 + CONFIG_PROVE_LOCKING=y => boot failure
+Message-ID: <20191011144233.GA2438@bogus>
+References: <CGME20191011092604eucas1p1ca11ab9c4c7508776914b0eb4f35e69b@eucas1p1.samsung.com>
+ <33a83dce-e9f0-7814-923b-763d33e70257@samsung.com>
+ <20191011100521.GA5122@bogus>
+ <7655fb41-cd13-0bc4-e656-040e0875bab8@arm.com>
+ <2bf88cd2-9c4f-11dc-4b70-f717de891cff@samsung.com>
+ <20191011131058.GA26061@bogus>
+ <0b02b15f-38be-7a63-14cc-eabd288782eb@samsung.com>
+ <20191011134354.GA31516@bogus>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c12d7c9c-8212-ba9b-252f-7dbb61698550@web.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191011134354.GA31516@bogus>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 04:13:22PM +0200, Markus Elfring wrote:
-> Would you like to reconsider also the addition of the function call
-> “tb_sw_warn(sw, "cannot allocate memory for switch\n")”?
+On Fri, Oct 11, 2019 at 02:43:54PM +0100, Sudeep Holla wrote:
+> On Fri, Oct 11, 2019 at 03:15:32PM +0200, Marek Szyprowski wrote:
+> > Hi Sudeep
+> >
+> > On 11.10.2019 15:10, Sudeep Holla wrote:
+> > > On Fri, Oct 11, 2019 at 03:02:42PM +0200, Marek Szyprowski wrote:
+> > >> Hi James,
+> > >>
+> > >> On 11.10.2019 12:38, James Morse wrote:
+> > >>> Hi guys,
+> > >>>
+> > >>> On 11/10/2019 11:05, Sudeep Holla wrote:
+> > >>>> On Fri, Oct 11, 2019 at 11:26:04AM +0200, Marek Szyprowski wrote:
+> > >>>>> Recently I've got access to ARM Juno R1 board and did some tests with
+> > >>>>> current mainline kernel on it. I'm a bit surprised that enabling
+> > >>>>> CONFIG_PROVE_LOCKING causes a boot failure on this board. After enabling
+> > >>>>> this Kconfig option, I get no single message from the kernel, although I
+> > >>>>> have earlycon enabled.
+> > >>>> I don't have Juno R1 but I tried defconfig + CONFIG_PROVE_LOCKING and
+> > >>>> it boots fine.
+> > >>> I just tried this on my r1, v5.4-rc1 with this configuration worked just fine.
+> > >>>
+> > >>> My cmdline is:
+> > >>> | root=/dev/sda6 loglevel=9 earlycon=pl011,0x7ff80000 hugepagesz=2M hugepages=512
+> > >>> | crashkernel=1G console=ttyAMA0 resume=/dev/sda2 no_console_suspend efi=debug
+> > >>>
+> > >> That is a bit strange. Here is a boot log from v5.4-rc1 with pure
+> > >> defconfig: https://paste.debian.net/1105851/
+> > >>
+> > > I see from the boot log that both Image.gz and dtb being loaded at the
+> > > same address 0x82000000, will u-boot uncompress it elsewhere after loading
+> > > it ? Just for my understanding.
+> >
+> > tftp downloads Image.gz to 0x82000000, then decompress it to
+> > $kernel_addr to save transfer time
+> >
+> > my bootcmd is:
+> >
+> > tftp ${fdt_addr} juno/Image.gz; unzip ${fdt_addr} ${kernel_addr}; tftp
+> > ${fdt_addr} juno/juno-r1.dtb; booti ${kernel_addr} - ${fdt_addr};
+> >
 
-For that I already have a patch as part of my USB4 support v2 series.
+If your ${kernel_addr}=0x80000000 or within first 32MB, then it will override
+DTB with the image size I had(35MB). Even if kernel fits 32MB, there is a
+chance that .bss lies beyond 32MB and it will be cleared during boot resulting
+in DTB corruption(Andre P reminded me this)
+
+Can you try setting $${fdt_addr} to 0x84000000 to begin with ?
+
+--
+Regards,
+Sudeep
+
