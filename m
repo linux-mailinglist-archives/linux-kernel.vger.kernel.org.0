@@ -2,110 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B10C4D37AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 05:00:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A02ED37B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 05:09:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbfJKDAU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 23:00:20 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44207 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726714AbfJKDAT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 23:00:19 -0400
-Received: by mail-pg1-f193.google.com with SMTP id e10so913926pgd.11
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 20:00:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=nP3GB4eev/Uw/7TzzPBf7q6vVOFurBjXFqfQUZ+MDGI=;
-        b=KzBWLKoFEXWJXPLXk8rihO70idubrVY0AvebVOxegnFY86QJmJGnQAku+lqeexuYjB
-         9G74EjZ5ZvlXtWdwx6WwfpqvWL6VZhkBTLucMGD8v4+2hORNhyJnUiBwwpBCF8JxvYyl
-         Y/VEUCQaO4qMcQjX25jnBmyNowejWuBTvCczZAtLpuYiP3fyFPOQUIuwfkc7KI12BXX2
-         EwM6/7cZLGE5aW9q4v+KkZG7M4Ko8VEfRigsYkPSfXxu8CCT86YN8Kz/jywZSNG+JnPs
-         /EYL79jv7SvwRhbBYvBe5MtI4NC0fHqrZX5X0RP9DTqt0mKF84SdidfQjH90hJrCfHuU
-         JAsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=nP3GB4eev/Uw/7TzzPBf7q6vVOFurBjXFqfQUZ+MDGI=;
-        b=ohGCm3ogQa8yVG3YMEY2ExMj2vKmphCPmeaaTwTMH8GYH/d2pzy2yBpb+cbepK1/uK
-         d5aBBZl2Ms0DCRFkrsf0QhjKUtza62TWCsMmOtlQ9L9ZlKeDF+N8TjiD04H9PN9/SYDw
-         z0NopZ9upq73eMskvx6ZWNAf2qjxCOxOXaDErEogo7gV2RUAGHyLevBYOiie31pBJpJl
-         pOlTkiceRt/qcQ6GYj0dkFz+mg/cZjhBEd2dt2YXndqs9GYY/gPm9gr0EoFkthF5CF+0
-         eW9B5WkxosPZAwRb1UfLV2Xwtt30O2NCpLo3KgtywpX7Tffq8Z+wP8r8zC4XN3dhUdo3
-         LZLw==
-X-Gm-Message-State: APjAAAWteYt1wjnYfOUXfJAT6Na/WmHymI1j3IjosZ+GPoLCKKS6XGRV
-        R+AgEwHUJA222gvQpus+lZFxkQ==
-X-Google-Smtp-Source: APXvYqyC7PSkR8RT7VypdyqNldAyGXeW91322WLbhsrNNwrkgAMBn6eiIibb+JzCUjR+ko/vo+L6ow==
-X-Received: by 2002:a65:688a:: with SMTP id e10mr13223631pgt.122.1570762818461;
-        Thu, 10 Oct 2019 20:00:18 -0700 (PDT)
-Received: from cakuba.netronome.com (c-73-202-202-92.hsd1.ca.comcast.net. [73.202.202.92])
-        by smtp.gmail.com with ESMTPSA id q6sm8505284pgn.44.2019.10.10.20.00.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 20:00:18 -0700 (PDT)
-Date:   Thu, 10 Oct 2019 20:00:02 -0700
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        netdev@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Subject: Re: [PATCH v9 3/5] mfd: ioc3: Add driver for SGI IOC3 chip
-Message-ID: <20191010200002.5fe5f34f@cakuba.netronome.com>
-In-Reply-To: <20191010145953.21327-4-tbogendoerfer@suse.de>
-References: <20191010145953.21327-1-tbogendoerfer@suse.de>
-        <20191010145953.21327-4-tbogendoerfer@suse.de>
-Organization: Netronome Systems, Ltd.
+        id S1726716AbfJKDGP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 23:06:15 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3692 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726076AbfJKDGP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Oct 2019 23:06:15 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 4CC76DC55C64BDC9EEB5;
+        Fri, 11 Oct 2019 11:06:08 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 11 Oct 2019 11:05:58 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <jerome.pouiller@silabs.com>, <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>, <zhongjiang@huawei.com>
+Subject: [PATCH] staging: wfx: fix an undefined reference error when CONFIG_MMC=m
+Date:   Fri, 11 Oct 2019 11:02:19 +0800
+Message-ID: <1570762939-8735-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 10 Oct 2019 16:59:49 +0200, Thomas Bogendoerfer wrote:
->  	dev = alloc_etherdev(sizeof(struct ioc3_private));
-> -	if (!dev) {
-> -		err = -ENOMEM;
-> -		goto out_disable;
-> -	}
-> -
-> -	if (pci_using_dac)
-> -		dev->features |= NETIF_F_HIGHDMA;
+I hit the following error when compile the kernel.
 
-Looks like the NETIF_F_HIGHDMA feature will not longer be set, is that
-okay?
+drivers/staging/wfx/main.o: In function `wfx_core_init':
+/home/z00352263/linux-next/linux-next/drivers/staging/wfx/main.c:488: undefined reference to `sdio_register_driver'
+drivers/staging/wfx/main.o: In function `wfx_core_exit':
+/home/z00352263/linux-next/linux-next/drivers/staging/wfx/main.c:496: undefined reference to `sdio_unregister_driver'
+drivers/staging/wfx/main.o:(.debug_addr+0x1a8): undefined reference to `sdio_register_driver'
+drivers/staging/wfx/main.o:(.debug_addr+0x6f0): undefined reference to `sdio_unregister_driver'
 
-> -	err = pci_request_regions(pdev, "ioc3");
-> -	if (err)
-> -		goto out_free;
-> +	if (!dev)
-> +		return -ENOMEM;
->  
->  	SET_NETDEV_DEV(dev, &pdev->dev);
->  
->  	ip = netdev_priv(dev);
-> -	ip->dev = dev;
-> -	ip->dma_dev = &pdev->dev;
-> -
-> -	dev->irq = pdev->irq;
-> +	ip->dma_dev = pdev->dev.parent;
-> +	ip->regs = devm_platform_ioremap_resource(pdev, 0);
-> +	if (!ip->regs) {
-> +		err = -ENOMEM;
-> +		goto out_free;
-> +	}
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ drivers/staging/wfx/Kconfig  | 3 ++-
+ drivers/staging/wfx/Makefile | 5 +++--
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/staging/wfx/Kconfig b/drivers/staging/wfx/Kconfig
+index 9b8a1c7..4d045513 100644
+--- a/drivers/staging/wfx/Kconfig
++++ b/drivers/staging/wfx/Kconfig
+@@ -1,7 +1,8 @@
+ config WFX
+ 	tristate "Silicon Labs wireless chips WF200 and further"
+ 	depends on MAC80211
+-	depends on (SPI || MMC)
++	depends on SPI
++	select MMC
+ 	help
+ 	  This is a driver for Silicons Labs WFxxx series (WF200 and further)
+ 	  chipsets. This chip can be found on SPI or SDIO buses.
+diff --git a/drivers/staging/wfx/Makefile b/drivers/staging/wfx/Makefile
+index 0d9c1ed..fc30b49 100644
+--- a/drivers/staging/wfx/Makefile
++++ b/drivers/staging/wfx/Makefile
+@@ -17,8 +17,9 @@ wfx-y := \
+ 	key.o \
+ 	main.o \
+ 	sta.o \
+-	debug.o
++	debug.o \
++	bus_sdio.o
++
+ wfx-$(CONFIG_SPI) += bus_spi.o
+-wfx-$(subst m,y,$(CONFIG_MMC)) += bus_sdio.o
+ 
+ obj-$(CONFIG_WFX) += wfx.o
+-- 
+1.7.12.4
 
