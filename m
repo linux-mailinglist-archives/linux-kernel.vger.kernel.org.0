@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 308DFD35DF
+	by mail.lfdr.de (Postfix) with ESMTP id 9F967D35E0
 	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 02:29:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727784AbfJKA2k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 20:28:40 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35502 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727721AbfJKA2h (ORCPT
+        id S1727814AbfJKA2l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 20:28:41 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46740 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727743AbfJKA2j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 20:28:37 -0400
-Received: by mail-lj1-f196.google.com with SMTP id m7so8057200lji.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 17:28:36 -0700 (PDT)
+        Thu, 10 Oct 2019 20:28:39 -0400
+Received: by mail-lf1-f65.google.com with SMTP id t8so5685196lfc.13
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 17:28:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=oHm0qgs35bdRmF9F1S/p3tYJstCeeDVx8Vw6XCI5qDc=;
-        b=oZoFP4EBvirEOvHM9IfrnbIXJxjTZbSW136oc9UH1jI/wbPjjRATuu7MjU2Rqqkd/z
-         Q12GzulFKtOI+LJ0qj+5jNMmCVsXsm6Du5YO8D0p+tYMDdRNKcMbUISq9/l6pXtBklWP
-         janUJ6/iEWpc64Iuj0bEjCQprSWEhsxeyDw24v0xm1+sb7yVT1l1O4BSA94dZdZnN8fq
-         0Rdo69y1azsmEHPwIxAdFVnnYGhRyV/skW/4qKuKKE+kQCbdICf5xLj3qVQDQgwjUp4z
-         Em25qhXc2WFbbf826EgIg8xT5txDZCz845v5RT3V5P6kDssmNHcAoUYNkrA4/cxF2U5r
-         wUhA==
+        bh=dPicZ6dKiXggVDaTmZsHbexmmGF0NBX0XkLCl2NE9e8=;
+        b=t3MFZlp7JrKOCwmfn7u1hOiMi68CPBBmhejF5DP7FCApB0OUHnL1e1Vz0PnjgoLIqj
+         wAkQ0GsgS4/ldLyAt8/zw9mgK+sFqHd4lVWktvbzEARep/C0sshXBBKSEaDAGcVo0/6V
+         8BTYD9LaGz/q/C5QeVOsLb/AKAwgJehXdhpIyM/J8HjfAaW5Btm4K7VJtZpNYWUEfCbY
+         V7wShmtXIoIbmuXnBXoESSkwV7otaZ4ffWiRKF6rodq/UYfP4y6E9PWlD7sMelgEXZIG
+         kjdyeC45fhvQOlabnZHkFElf7V9BeT+hBH7v0X8MgAM1mpO27+xgEXiqHAKtawGnSvK1
+         yzqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=oHm0qgs35bdRmF9F1S/p3tYJstCeeDVx8Vw6XCI5qDc=;
-        b=hEQFkUSR1rYv4w52tTaOZ8qD7KTVCUSEy1xKFUt1zSI6V5nRWdGxnB0bG+zaS2c+kr
-         67rCSP00T33S3daAcm2a4lHnyIM+WIhPHSMghbhscYqnw8mTvyq7ozTVcx6SJDqeLVl3
-         U51wAUOumCSrOcztN2MAWx9DLW/U5v6OO14ecAuZV08mCnHBgwj/ubryxB+5C+TG1pLk
-         dOCQbTWCIyfK7Sx0c8XCt9gkBO5ErZOagov+mp5EnXl1kycBrrmwmXe/AArBQn9ISHrf
-         94v0lG4AS16xRON4welQn/ztAC2RVoXVsuuaOOPiVSHym/6VPUU+b5rD+11CkKp1ecyj
-         I/Xw==
-X-Gm-Message-State: APjAAAWFA38y9/e/KFaPViZWGP9BSuZdkb6Tp7EEQasHKNN6ZyX5qAyS
-        KVjBpnuusQ0329EV0QMGEni6KQ==
-X-Google-Smtp-Source: APXvYqwTPy70ROgoZDQ55cPuYWUZQKFCSMSQwfrSkuApAs28Wn8XuDBpgk6VAGN8GXArn8LtVqlcmA==
-X-Received: by 2002:a2e:658f:: with SMTP id e15mr7832403ljf.254.1570753715857;
-        Thu, 10 Oct 2019 17:28:35 -0700 (PDT)
+        bh=dPicZ6dKiXggVDaTmZsHbexmmGF0NBX0XkLCl2NE9e8=;
+        b=G/jd0FJGo2pW3POHlZiHx6z21dqm0irLv/xz/VcaGSkCZuOfnPUaCw3VMe3MP57kwn
+         VqwxoZ+eDdQVa2kxucjDtCBFLgk06+KjPYLfFRTre+okrTccEgFYUjaoKQKX15o4V89K
+         VAq1sL7AdEQ5p8b1KdLNJDrvH+XH7zC295cyxVak7Q/MLh9azH9kxhvVnD26pg4Rc5fr
+         Ld3V/Id6w93zSKqMDSdApjIwG739u2A8Xe89B1U5qYLIQbF9lZ4sVJGzij86/z0b1nbL
+         so5Q4c6sLZvDnrMDhnNBIMxbMBDjqg7ffvtBHsl6rsyRAjPFziz2JFler07CVMjoPxBF
+         OTeA==
+X-Gm-Message-State: APjAAAUBcvRICIvIoCIBMTlJaPO5wYfbSPdUmnsqj79p6nqAyhyFveDH
+        yNW6gM2fcR8vMpPtzpgNT8HGtw==
+X-Google-Smtp-Source: APXvYqzLwdRMPb489Yj1aqW3Q1PJbqbKOk1Y8p49pmLW2Luy9x6kzXc2gUyxjMp2Ov4+EzwjU94LOg==
+X-Received: by 2002:a19:c392:: with SMTP id t140mr7564752lff.156.1570753717149;
+        Thu, 10 Oct 2019 17:28:37 -0700 (PDT)
 Received: from localhost.localdomain (88-201-94-178.pool.ukrtel.net. [178.94.201.88])
-        by smtp.gmail.com with ESMTPSA id 126sm2367010lfh.45.2019.10.10.17.28.34
+        by smtp.gmail.com with ESMTPSA id 126sm2367010lfh.45.2019.10.10.17.28.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 17:28:35 -0700 (PDT)
+        Thu, 10 Oct 2019 17:28:36 -0700 (PDT)
 From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 To:     ast@kernel.org, daniel@iogearbox.net, yhs@fb.com,
         davem@davemloft.net, jakub.kicinski@netronome.com, hawk@kernel.org,
@@ -52,9 +52,9 @@ Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
         bpf@vger.kernel.org, clang-built-linux@googlegroups.com,
         ilias.apalodimas@linaro.org, sergei.shtylyov@cogentembedded.com,
         Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [PATCH v5 bpf-next 11/15] libbpf: don't use cxx to test_libpf target
-Date:   Fri, 11 Oct 2019 03:28:04 +0300
-Message-Id: <20191011002808.28206-12-ivan.khoronzhuk@linaro.org>
+Subject: [PATCH v5 bpf-next 12/15] libbpf: add C/LDFLAGS to libbpf.so and test_libpf targets
+Date:   Fri, 11 Oct 2019 03:28:05 +0300
+Message-Id: <20191011002808.28206-13-ivan.khoronzhuk@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191011002808.28206-1-ivan.khoronzhuk@linaro.org>
 References: <20191011002808.28206-1-ivan.khoronzhuk@linaro.org>
@@ -63,100 +63,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No need to use C++ for test_libbpf target when libbpf is on C and it
-can be tested with C, after this change the CXXFLAGS in makefiles can
-be avoided, at least in bpf samples, when sysroot is used, passing
-same C/LDFLAGS as for lib.
+In case of C/LDFLAGS there is no way to pass them correctly to build
+command, for instance when --sysroot is used or external libraries
+are used, like -lelf, wich can be absent in toolchain. This can be
+used for samples/bpf cross-compiling allowing to get elf lib from
+sysroot.
 
-Add "return 0" in test_libbpf to avoid warn, but also remove spaces at
-start of the lines to keep same style and avoid warns while apply.
-
-Acked-by: Andrii Nakryiko <andriin@fb.com>
 Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 ---
- tools/lib/bpf/Makefile                         | 18 +++++-------------
- .../lib/bpf/{test_libbpf.cpp => test_libbpf.c} | 14 ++++++++------
- 2 files changed, 13 insertions(+), 19 deletions(-)
- rename tools/lib/bpf/{test_libbpf.cpp => test_libbpf.c} (61%)
+ tools/lib/bpf/Makefile | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/tools/lib/bpf/Makefile b/tools/lib/bpf/Makefile
-index 1270955e4845..46280b5ad48d 100644
+index 46280b5ad48d..75b538577c17 100644
 --- a/tools/lib/bpf/Makefile
 +++ b/tools/lib/bpf/Makefile
-@@ -52,7 +52,7 @@ ifndef VERBOSE
- endif
+@@ -174,8 +174,9 @@ bpf_helper_defs.h: $(srctree)/include/uapi/linux/bpf.h
+ $(OUTPUT)libbpf.so: $(OUTPUT)libbpf.so.$(LIBBPF_VERSION)
  
- FEATURE_USER = .libbpf
--FEATURE_TESTS = libelf libelf-mmap bpf reallocarray cxx
-+FEATURE_TESTS = libelf libelf-mmap bpf reallocarray
- FEATURE_DISPLAY = libelf bpf
+ $(OUTPUT)libbpf.so.$(LIBBPF_VERSION): $(BPF_IN)
+-	$(QUIET_LINK)$(CC) --shared -Wl,-soname,libbpf.so.$(LIBBPF_MAJOR_VERSION) \
+-				    -Wl,--version-script=$(VERSION_SCRIPT) $^ -lelf -o $@
++	$(QUIET_LINK)$(CC) $(LDFLAGS) \
++		--shared -Wl,-soname,libbpf.so.$(LIBBPF_MAJOR_VERSION) \
++		-Wl,--version-script=$(VERSION_SCRIPT) $^ -lelf -o $@
+ 	@ln -sf $(@F) $(OUTPUT)libbpf.so
+ 	@ln -sf $(@F) $(OUTPUT)libbpf.so.$(LIBBPF_MAJOR_VERSION)
  
- INCLUDES = -I. -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(ARCH)/include/uapi -I$(srctree)/tools/include/uapi
-@@ -142,15 +142,7 @@ GLOBAL_SYM_COUNT = $(shell readelf -s --wide $(BPF_IN) | \
- VERSIONED_SYM_COUNT = $(shell readelf -s --wide $(OUTPUT)libbpf.so | \
- 			      grep -Eo '[^ ]+@LIBBPF_' | cut -d@ -f1 | sort -u | wc -l)
- 
--CMD_TARGETS = $(LIB_TARGET) $(PC_FILE)
--
--CXX_TEST_TARGET = $(OUTPUT)test_libbpf
--
--ifeq ($(feature-cxx), 1)
--	CMD_TARGETS += $(CXX_TEST_TARGET)
--endif
--
--TARGETS = $(CMD_TARGETS)
-+CMD_TARGETS = $(LIB_TARGET) $(PC_FILE) $(OUTPUT)test_libbpf
- 
- all: fixdep
- 	$(Q)$(MAKE) all_cmd
-@@ -190,8 +182,8 @@ $(OUTPUT)libbpf.so.$(LIBBPF_VERSION): $(BPF_IN)
- $(OUTPUT)libbpf.a: $(BPF_IN)
+@@ -183,7 +184,7 @@ $(OUTPUT)libbpf.a: $(BPF_IN)
  	$(QUIET_LINK)$(RM) $@; $(AR) rcs $@ $^
  
--$(OUTPUT)test_libbpf: test_libbpf.cpp $(OUTPUT)libbpf.a
--	$(QUIET_LINK)$(CXX) $(INCLUDES) $^ -lelf -o $@
-+$(OUTPUT)test_libbpf: test_libbpf.c $(OUTPUT)libbpf.a
-+	$(QUIET_LINK)$(CC) $(INCLUDES) $^ -lelf -o $@
+ $(OUTPUT)test_libbpf: test_libbpf.c $(OUTPUT)libbpf.a
+-	$(QUIET_LINK)$(CC) $(INCLUDES) $^ -lelf -o $@
++	$(QUIET_LINK)$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDES) $^ -lelf -o $@
  
  $(OUTPUT)libbpf.pc:
  	$(QUIET_GEN)sed -e "s|@PREFIX@|$(prefix)|" \
-@@ -266,7 +258,7 @@ config-clean:
- 	$(Q)$(MAKE) -C $(srctree)/tools/build/feature/ clean >/dev/null
- 
- clean:
--	$(call QUIET_CLEAN, libbpf) $(RM) $(TARGETS) $(CXX_TEST_TARGET) \
-+	$(call QUIET_CLEAN, libbpf) $(RM) $(CMD_TARGETS) \
- 		*.o *~ *.a *.so *.so.$(LIBBPF_MAJOR_VERSION) .*.d .*.cmd \
- 		*.pc LIBBPF-CFLAGS bpf_helper_defs.h
- 	$(call QUIET_CLEAN, core-gen) $(RM) $(OUTPUT)FEATURE-DUMP.libbpf
-diff --git a/tools/lib/bpf/test_libbpf.cpp b/tools/lib/bpf/test_libbpf.c
-similarity index 61%
-rename from tools/lib/bpf/test_libbpf.cpp
-rename to tools/lib/bpf/test_libbpf.c
-index fc134873bb6d..f0eb2727b766 100644
---- a/tools/lib/bpf/test_libbpf.cpp
-+++ b/tools/lib/bpf/test_libbpf.c
-@@ -7,12 +7,14 @@
- 
- int main(int argc, char *argv[])
- {
--    /* libbpf.h */
--    libbpf_set_print(NULL);
-+	/* libbpf.h */
-+	libbpf_set_print(NULL);
- 
--    /* bpf.h */
--    bpf_prog_get_fd_by_id(0);
-+	/* bpf.h */
-+	bpf_prog_get_fd_by_id(0);
- 
--    /* btf.h */
--    btf__new(NULL, 0);
-+	/* btf.h */
-+	btf__new(NULL, 0);
-+
-+	return 0;
- }
 -- 
 2.17.1
 
