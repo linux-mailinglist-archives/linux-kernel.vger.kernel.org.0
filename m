@@ -2,90 +2,260 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB052D3607
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 02:32:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71FE9D360D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 02:32:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727993AbfJKA3k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 10 Oct 2019 20:29:40 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:39235 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727569AbfJKA22 (ORCPT
+        id S1727545AbfJKAbe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 10 Oct 2019 20:31:34 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:40507 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726429AbfJKAbe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Oct 2019 20:28:28 -0400
-Received: by mail-lf1-f65.google.com with SMTP id 72so5725524lfh.6
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 17:28:25 -0700 (PDT)
+        Thu, 10 Oct 2019 20:31:34 -0400
+Received: by mail-lj1-f193.google.com with SMTP id 7so8029245ljw.7
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 17:31:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=X+OYdLBkIYv08X2eKXt3TCPXQ11so0VYCO7f1mswfR4=;
-        b=YKc0wBOK5kw1DdbXCuiOee6bbytIkRtP7xcVtvuTLj4UdL6r5TUv6DcZgG/ZDsLP69
-         ulWquw4+7tsUAsKSiFy2Cfty4cW+bXLlKps9odJRuCeWnw/lGdGvLR5rkISefH9Phe91
-         /CAtfzmy5wtryrSDvREOHdPKvSRLjAPu5s7+k7zxv+jQtm2PN0fja1E8kM5N4INyKxLu
-         /Vf7ncX5Q0YaTUYo17CjLST2nR75D+SCZ8tWLmJkPS9ENAAQArYJ0M+MYo6mSMcqEXu7
-         Tnhwc+jAV+FrQNEWwOXtNudFWCGl6uLf0ZpPNG8Nqh7N9/l5U6zwHP+DruNqbB9COdF4
-         akmA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6KQIXJS5Udq31xzSnClQQSZeps+FhrzYgeAcUAUA6PU=;
+        b=JeuC2gx/w7gTNLQ92rY9af/8CotmQsFCuqZDiZ9wsZ4VAsaw/TD2OdFD3Vu+FohN4r
+         oeAkelE3JN/HqpmVpTh6dM1qyfOglJI4J2qyus/w1lucezztBOV+uSy8DP0pLac60lWo
+         8Oe65x/igi99IVKwWzf0erDJ3oOV6YoqbRV0Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=X+OYdLBkIYv08X2eKXt3TCPXQ11so0VYCO7f1mswfR4=;
-        b=a3b1aM3+uhHLMhJbogNVPG5d78SNr/MAl455ONTCsTxYeNczeJ2iXAGPpWuuU6LKfy
-         PQzM/1tUPnUH+KNd1ECMZlmDvop6WPI0P9m2jcsv4xYyhHD8ZAVVicQ0ZsN/DtKabi1X
-         LBYKhURfXj7Pbvt9x2ohryQfk5ul+OmAnLTj9FJTkg0K/XIANvTpkg9pfQ54XG4zkn0M
-         QB6QKZUeRBLWWHq+TOgOtq38177xciyEGoCy1W73LH9g7/RRcb+3Z8grHt67A1RRX92s
-         4tHUKj+de8Ah/g2Zsgr7MOPqoypDk7rfK/GYQol1gx3Risfli7FPHvDA5Utdn6xNQzKG
-         Ecyg==
-X-Gm-Message-State: APjAAAW4Y7VTKhFa/7Hhg01/OqparMLzun6k/Z2rQbN1Ug8dPDS1xais
-        bpRsGYgDQbFCcssK8aYS9AVuuQ==
-X-Google-Smtp-Source: APXvYqzxfrVPEHNBW9hrD6Av/hCkqGzGXRR9boh0fDIihTSKCgluCdKMc7ty+RTqXr4lDuRPE/0FPQ==
-X-Received: by 2002:ac2:41d4:: with SMTP id d20mr7390173lfi.24.1570753705056;
-        Thu, 10 Oct 2019 17:28:25 -0700 (PDT)
-Received: from localhost.localdomain (88-201-94-178.pool.ukrtel.net. [178.94.201.88])
-        by smtp.gmail.com with ESMTPSA id 126sm2367010lfh.45.2019.10.10.17.28.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 17:28:24 -0700 (PDT)
-From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To:     ast@kernel.org, daniel@iogearbox.net, yhs@fb.com,
-        davem@davemloft.net, jakub.kicinski@netronome.com, hawk@kernel.org,
-        john.fastabend@gmail.com
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, clang-built-linux@googlegroups.com,
-        ilias.apalodimas@linaro.org, sergei.shtylyov@cogentembedded.com,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [PATCH v5 bpf-next 03/15] samples/bpf: use --target from cross-compile
-Date:   Fri, 11 Oct 2019 03:27:56 +0300
-Message-Id: <20191011002808.28206-4-ivan.khoronzhuk@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191011002808.28206-1-ivan.khoronzhuk@linaro.org>
-References: <20191011002808.28206-1-ivan.khoronzhuk@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6KQIXJS5Udq31xzSnClQQSZeps+FhrzYgeAcUAUA6PU=;
+        b=cyr8gKtQFx+OaksLlPgwj0Q5kxqtl4QFoezas7jD4QTGFzkBvC8pDQ8QJZvUXYosfk
+         FPSEcfgfZsU923vhP1Cn76PwEuOPgjall+2KGzcCwkJgHWevZkfTJaIYvKfyEiKkpqt+
+         aGHOcSDH0s3Rga6RO2XZBCZwX98GdOdcmI/GgUANa4hJOsXdxxAt+BLr+sg9Lh4klkqE
+         1HKgbsa088iIRPE3OQ0C7tsk0pbOxcGQGpFFpofzeF1rruhYF3Do1EzqIxitovr4jTlp
+         EM+Q/7F4cgjAwskZzVgzM+7sEmpDRrD9sg3WYgpgDyEB1upvlh37iggKfuord3wl92iL
+         nQ9g==
+X-Gm-Message-State: APjAAAUwTqx6bdkwicouJ6ea9msyRytyesfUz7jntrc5X5roDXxUpUug
+        +/LAKQTh+vc8DTBMCTij3e9/u0E+mmw=
+X-Google-Smtp-Source: APXvYqz6wSJkWSFoW3ihilT7ScbwUjJ0SJDNMr2lb3v3onY1e61cPRhCp+Hy8giO0xVddbWsgYJ1hA==
+X-Received: by 2002:a2e:8ec2:: with SMTP id e2mr7115733ljl.126.1570753891460;
+        Thu, 10 Oct 2019 17:31:31 -0700 (PDT)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id k7sm1550329lja.19.2019.10.10.17.31.30
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2019 17:31:30 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id f5so8033588ljg.8
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2019 17:31:30 -0700 (PDT)
+X-Received: by 2002:a2e:2b91:: with SMTP id r17mr7894454ljr.1.1570753889932;
+ Thu, 10 Oct 2019 17:31:29 -0700 (PDT)
+MIME-Version: 1.0
+References: <20191007012437.GK26530@ZenIV.linux.org.uk> <CAHk-=whKJfX579+2f-CHc4_YmEmwvMe_Csr0+CPfLAsSAdfDoA@mail.gmail.com>
+ <20191007025046.GL26530@ZenIV.linux.org.uk> <CAHk-=whraNSys_Lj=Ut1EA=CJEfw2Uothh+5-WL+7nDJBegWcQ@mail.gmail.com>
+ <CAHk-=witTXMGsc9ZAK4hnKnd_O7u8b1eiou-6cfjt4aOcWvruQ@mail.gmail.com>
+ <20191008032912.GQ26530@ZenIV.linux.org.uk> <CAHk-=wiAyZmsEp6oQQgHiuaDU0bLj=OVHSGV_OfvHRSXNPYABw@mail.gmail.com>
+ <CAHk-=wgOWxqwqCFuP_Bw=Hxxf9njeHJs0OLNGNc63peNd=kRqw@mail.gmail.com>
+ <20191010195504.GI26530@ZenIV.linux.org.uk> <CAHk-=wgWRQo0m7TUCK4T_J-3Vqte+p-FWzvT3CB1jJHgX-KctA@mail.gmail.com>
+ <20191011001104.GJ26530@ZenIV.linux.org.uk>
+In-Reply-To: <20191011001104.GJ26530@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 10 Oct 2019 17:31:13 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgg3jzkk-jObm1FLVYGS8JCTiKppEnA00_QX7Wsm5ieLQ@mail.gmail.com>
+Message-ID: <CAHk-=wgg3jzkk-jObm1FLVYGS8JCTiKppEnA00_QX7Wsm5ieLQ@mail.gmail.com>
+Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to unsafe_put_user()
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="000000000000a3dcf4059497a30d"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For cross compiling the target triple can be inherited from
-cross-compile prefix as it's done in CLANG_FLAGS from kernel makefile.
-So copy-paste this decision from kernel Makefile.
+--000000000000a3dcf4059497a30d
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Andrii Nakryiko <andriin@fb.com>
-Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
----
- samples/bpf/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Oct 10, 2019 at 5:11 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Thu, Oct 10, 2019 at 03:12:49PM -0700, Linus Torvalds wrote:
+>
+> > But I've not gotten around to rewriting those disgusting sequences to
+> > the unsafe_get/put_user() model. I did look at it, and it requires
+> > some changes exactly *because* the _ex() functions are broken and
+> > continue, but also because the current code ends up also doing other
+> > things inside the try/catch region that you're not supposed to do in a
+> > user_access_begin/end() region .
+>
+> Hmm...  Which one was that?  AFAICS, we have
+>         do_sys_vm86: only get_user_ex()
+>         restore_sigcontext(): get_user_ex(), set_user_gs()
+>         ia32_restore_sigcontext(): get_user_ex()
 
-diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
-index 045fa43842e6..9c8c9872004d 100644
---- a/samples/bpf/Makefile
-+++ b/samples/bpf/Makefile
-@@ -195,7 +195,7 @@ BTF_PAHOLE ?= pahole
- # Detect that we're cross compiling and use the cross compiler
- ifdef CROSS_COMPILE
- HOSTCC = $(CROSS_COMPILE)gcc
--CLANG_ARCH_ARGS = -target $(ARCH)
-+CLANG_ARCH_ARGS = --target=$(notdir $(CROSS_COMPILE:%-=%))
- endif
- 
- # Don't evaluate probes and warnings if we need to run make recursively
--- 
-2.17.1
+Try this patch.
 
+It works fine (well, it worked fine the lastr time I tried this, I
+might have screwed something up just now: I re-created the patch since
+I hadn't saved it).
+
+It's nice and clean, and does
+
+ 1 file changed, 9 insertions(+), 91 deletions(-)
+
+by just deleting all the nasty *_ex() macros entirely, replacing them
+with unsafe_get/put_user() calls.
+
+And now those try/catch regions actually work like try/catch regions,
+and a fault branches to the catch.
+
+BUT.
+
+It does change semantics, and you get warnings like
+
+  arch/x86/ia32/ia32_signal.c: In function =E2=80=98ia32_restore_sigcontext=
+=E2=80=99:
+  arch/x86/ia32/ia32_signal.c:114:9: warning: =E2=80=98buf=E2=80=99 may be =
+used
+uninitialized in this function [-Wmaybe-uninitialized]
+    114 |  err |=3D fpu__restore_sig(buf, 1);
+        |         ^~~~~~~~~~~~~~~~~~~~~~~~
+  arch/x86/ia32/ia32_signal.c:64:27: warning: =E2=80=98ds=E2=80=99 may be u=
+sed
+uninitialized in this function [-Wmaybe-uninitialized]
+     64 |  unsigned int pre =3D (seg) | 3;  \
+        |                           ^
+  arch/x86/ia32/ia32_signal.c:74:18: note: =E2=80=98ds=E2=80=99 was declare=
+d here
+...
+  arch/x86/kernel/signal.c: In function =E2=80=98restore_sigcontext=E2=80=
+=99:
+  arch/x86/kernel/signal.c:152:9: warning: =E2=80=98buf=E2=80=99 may be use=
+d
+uninitialized in this function [-Wmaybe-uninitialized]
+    152 |  err |=3D fpu__restore_sig(buf, IS_ENABLED(CONFIG_X86_32));
+        |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+because it's true: those things reall may not be initialized, because
+the catch thing could have jumped out.
+
+So the code actually needs to properly return the error early, or
+initialize the segments that didn't get loaded to 0, or something.
+
+And when I posted that, Luto said "just get rid of the get_user_ex()
+entirely, instead of changing semantics of the existing ones to be
+sane.
+
+Which is probably right. There aren't that many.
+
+I *thought* there were also cases of us doing some questionably things
+inside the get_user_try sections, but those seem to have gotten fixed
+already independently, so it's really just the "make try/catch really
+try/catch" change that needs some editing of our current broken stuff
+that depends on it not actually *catching* exceptions, but on just
+continuing on to the next one.
+
+                Linus
+
+--000000000000a3dcf4059497a30d
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_k1ldzs220>
+X-Attachment-Id: f_k1ldzs220
+
+IGFyY2gveDg2L2luY2x1ZGUvYXNtL3VhY2Nlc3MuaCB8IDEwMCArKysrLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKSwg
+OTEgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvYXJjaC94ODYvaW5jbHVkZS9hc20vdWFjY2Vz
+cy5oIGIvYXJjaC94ODYvaW5jbHVkZS9hc20vdWFjY2Vzcy5oCmluZGV4IDYxZDkzZjA2MmEzNi4u
+ZTg3ZDg5MTFkYzUzIDEwMDY0NAotLS0gYS9hcmNoL3g4Ni9pbmNsdWRlL2FzbS91YWNjZXNzLmgK
+KysrIGIvYXJjaC94ODYvaW5jbHVkZS9hc20vdWFjY2Vzcy5oCkBAIC0xOTMsMjMgKzE5MywxMiBA
+QCBfX3R5cGVvZl9fKF9fYnVpbHRpbl9jaG9vc2VfZXhwcihzaXplb2YoeCkgPiBzaXplb2YoMFVM
+KSwgMFVMTCwgMFVMKSkKIAkJICAgICA6IDogIkEiICh4KSwgInIiIChhZGRyKQkJCVwKIAkJICAg
+ICA6IDogbGFiZWwpCiAKLSNkZWZpbmUgX19wdXRfdXNlcl9hc21fZXhfdTY0KHgsIGFkZHIpCQkJ
+CQlcCi0JYXNtIHZvbGF0aWxlKCJcbiIJCQkJCQlcCi0JCSAgICAgIjE6CW1vdmwgJSVlYXgsMCgl
+MSlcbiIJCQlcCi0JCSAgICAgIjI6CW1vdmwgJSVlZHgsNCglMSlcbiIJCQlcCi0JCSAgICAgIjM6
+IgkJCQkJCVwKLQkJICAgICBfQVNNX0VYVEFCTEVfRVgoMWIsIDJiKQkJCQlcCi0JCSAgICAgX0FT
+TV9FWFRBQkxFX0VYKDJiLCAzYikJCQkJXAotCQkgICAgIDogOiAiQSIgKHgpLCAiciIgKGFkZHIp
+KQotCiAjZGVmaW5lIF9fcHV0X3VzZXJfeDgoeCwgcHRyLCBfX3JldF9wdSkJCQkJXAogCWFzbSB2
+b2xhdGlsZSgiY2FsbCBfX3B1dF91c2VyXzgiIDogIj1hIiAoX19yZXRfcHUpCVwKIAkJICAgICA6
+ICJBIiAoKHR5cGVvZigqKHB0cikpKSh4KSksICJjIiAocHRyKSA6ICJlYngiKQogI2Vsc2UKICNk
+ZWZpbmUgX19wdXRfdXNlcl9nb3RvX3U2NCh4LCBwdHIsIGxhYmVsKSBcCiAJX19wdXRfdXNlcl9n
+b3RvKHgsIHB0ciwgInEiLCAiIiwgImVyIiwgbGFiZWwpCi0jZGVmaW5lIF9fcHV0X3VzZXJfYXNt
+X2V4X3U2NCh4LCBhZGRyKQlcCi0JX19wdXRfdXNlcl9hc21fZXgoeCwgYWRkciwgInEiLCAiIiwg
+ImVyIikKICNkZWZpbmUgX19wdXRfdXNlcl94OCh4LCBwdHIsIF9fcmV0X3B1KSBfX3B1dF91c2Vy
+X3goOCwgeCwgcHRyLCBfX3JldF9wdSkKICNlbmRpZgogCkBAIC0yODksMzEgKzI3OCw2IEBAIGRv
+IHsJCQkJCQkJCQlcCiAJfQkJCQkJCQkJXAogfSB3aGlsZSAoMCkKIAotLyoKLSAqIFRoaXMgZG9l
+c24ndCBkbyBfX3VhY2Nlc3NfYmVnaW4vZW5kIC0gdGhlIGV4Y2VwdGlvbiBoYW5kbGluZwotICog
+YXJvdW5kIGl0IG11c3QgZG8gdGhhdC4KLSAqLwotI2RlZmluZSBfX3B1dF91c2VyX3NpemVfZXgo
+eCwgcHRyLCBzaXplKQkJCQlcCi1kbyB7CQkJCQkJCQkJXAotCV9fY2hrX3VzZXJfcHRyKHB0cik7
+CQkJCQkJXAotCXN3aXRjaCAoc2l6ZSkgewkJCQkJCQlcCi0JY2FzZSAxOgkJCQkJCQkJXAotCQlf
+X3B1dF91c2VyX2FzbV9leCh4LCBwdHIsICJiIiwgImIiLCAiaXEiKTsJCVwKLQkJYnJlYWs7CQkJ
+CQkJCVwKLQljYXNlIDI6CQkJCQkJCQlcCi0JCV9fcHV0X3VzZXJfYXNtX2V4KHgsIHB0ciwgInci
+LCAidyIsICJpciIpOwkJXAotCQlicmVhazsJCQkJCQkJXAotCWNhc2UgNDoJCQkJCQkJCVwKLQkJ
+X19wdXRfdXNlcl9hc21fZXgoeCwgcHRyLCAibCIsICJrIiwgImlyIik7CQlcCi0JCWJyZWFrOwkJ
+CQkJCQlcCi0JY2FzZSA4OgkJCQkJCQkJXAotCQlfX3B1dF91c2VyX2FzbV9leF91NjQoKF9fdHlw
+ZW9mX18oKnB0cikpKHgpLCBwdHIpOwlcCi0JCWJyZWFrOwkJCQkJCQlcCi0JZGVmYXVsdDoJCQkJ
+CQkJXAotCQlfX3B1dF91c2VyX2JhZCgpOwkJCQkJXAotCX0JCQkJCQkJCVwKLX0gd2hpbGUgKDAp
+Ci0KICNpZmRlZiBDT05GSUdfWDg2XzMyCiAjZGVmaW5lIF9fZ2V0X3VzZXJfYXNtX3U2NCh4LCBw
+dHIsIHJldHZhbCwgZXJycmV0KQkJCVwKICh7CQkJCQkJCQkJXApAQCAtMzM0LDEzICsyOTgsOSBA
+QCBkbyB7CQkJCQkJCQkJXAogCQkgICAgIDogIm0iIChfX20oX19wdHIpKSwgIm0iIF9fbSgoKHUz
+MiBfX3VzZXIgKikoX19wdHIpKSArIDEpLAlcCiAJCSAgICAgICAiaSIgKGVycnJldCksICIwIiAo
+cmV0dmFsKSk7CQkJXAogfSkKLQotI2RlZmluZSBfX2dldF91c2VyX2FzbV9leF91NjQoeCwgcHRy
+KQkJCSh4KSA9IF9fZ2V0X3VzZXJfYmFkKCkKICNlbHNlCiAjZGVmaW5lIF9fZ2V0X3VzZXJfYXNt
+X3U2NCh4LCBwdHIsIHJldHZhbCwgZXJycmV0KSBcCiAJIF9fZ2V0X3VzZXJfYXNtKHgsIHB0ciwg
+cmV0dmFsLCAicSIsICIiLCAiPXIiLCBlcnJyZXQpCi0jZGVmaW5lIF9fZ2V0X3VzZXJfYXNtX2V4
+X3U2NCh4LCBwdHIpIFwKLQkgX19nZXRfdXNlcl9hc21fZXgoeCwgcHRyLCAicSIsICIiLCAiPXIi
+KQogI2VuZGlmCiAKICNkZWZpbmUgX19nZXRfdXNlcl9zaXplKHgsIHB0ciwgc2l6ZSwgcmV0dmFs
+LCBlcnJyZXQpCQkJXApAQCAtMzkwLDQxICszNTAsNiBAQCBkbyB7CQkJCQkJCQkJXAogCQkgICAg
+IDogIj1yIiAoZXJyKSwgbHR5cGUoeCkJCQkJXAogCQkgICAgIDogIm0iIChfX20oYWRkcikpLCAi
+aSIgKGVycnJldCksICIwIiAoZXJyKSkKIAotLyoKLSAqIFRoaXMgZG9lc24ndCBkbyBfX3VhY2Nl
+c3NfYmVnaW4vZW5kIC0gdGhlIGV4Y2VwdGlvbiBoYW5kbGluZwotICogYXJvdW5kIGl0IG11c3Qg
+ZG8gdGhhdC4KLSAqLwotI2RlZmluZSBfX2dldF91c2VyX3NpemVfZXgoeCwgcHRyLCBzaXplKQkJ
+CQlcCi1kbyB7CQkJCQkJCQkJXAotCV9fY2hrX3VzZXJfcHRyKHB0cik7CQkJCQkJXAotCXN3aXRj
+aCAoc2l6ZSkgewkJCQkJCQlcCi0JY2FzZSAxOgkJCQkJCQkJXAotCQlfX2dldF91c2VyX2FzbV9l
+eCh4LCBwdHIsICJiIiwgImIiLCAiPXEiKTsJCVwKLQkJYnJlYWs7CQkJCQkJCVwKLQljYXNlIDI6
+CQkJCQkJCQlcCi0JCV9fZ2V0X3VzZXJfYXNtX2V4KHgsIHB0ciwgInciLCAidyIsICI9ciIpOwkJ
+XAotCQlicmVhazsJCQkJCQkJXAotCWNhc2UgNDoJCQkJCQkJCVwKLQkJX19nZXRfdXNlcl9hc21f
+ZXgoeCwgcHRyLCAibCIsICJrIiwgIj1yIik7CQlcCi0JCWJyZWFrOwkJCQkJCQlcCi0JY2FzZSA4
+OgkJCQkJCQkJXAotCQlfX2dldF91c2VyX2FzbV9leF91NjQoeCwgcHRyKTsJCQkJXAotCQlicmVh
+azsJCQkJCQkJXAotCWRlZmF1bHQ6CQkJCQkJCVwKLQkJKHgpID0gX19nZXRfdXNlcl9iYWQoKTsJ
+CQkJCVwKLQl9CQkJCQkJCQlcCi19IHdoaWxlICgwKQotCi0jZGVmaW5lIF9fZ2V0X3VzZXJfYXNt
+X2V4KHgsIGFkZHIsIGl0eXBlLCBydHlwZSwgbHR5cGUpCQkJXAotCWFzbSB2b2xhdGlsZSgiMToJ
+bW92Iml0eXBlIiAlMSwlInJ0eXBlIjBcbiIJCVwKLQkJICAgICAiMjpcbiIJCQkJCQlcCi0JCSAg
+ICAgIi5zZWN0aW9uIC5maXh1cCxcImF4XCJcbiIJCQkJXAotICAgICAgICAgICAgICAgICAgICAg
+IjM6eG9yIml0eXBlIiAlInJ0eXBlIjAsJSJydHlwZSIwXG4iCQlcCi0JCSAgICAgIiAgam1wIDJi
+XG4iCQkJCQlcCi0JCSAgICAgIi5wcmV2aW91c1xuIgkJCQkJXAotCQkgICAgIF9BU01fRVhUQUJM
+RV9FWCgxYiwgM2IpCQkJCVwKLQkJICAgICA6IGx0eXBlKHgpIDogIm0iIChfX20oYWRkcikpKQot
+CiAjZGVmaW5lIF9fcHV0X3VzZXJfbm9jaGVjayh4LCBwdHIsIHNpemUpCQkJXAogKHsJCQkJCQkJ
+CVwKIAlfX2xhYmVsX18gX19wdV9sYWJlbDsJCQkJCVwKQEAgLTQ4MCwyNyArNDA1LDI1IEBAIHN0
+cnVjdCBfX2xhcmdlX3N0cnVjdCB7IHVuc2lnbmVkIGxvbmcgYnVmWzEwMF07IH07CiAJcmV0dmFs
+ID0gX19wdXRfdXNlcl9mYWlsZWQoeCwgYWRkciwgaXR5cGUsIHJ0eXBlLCBsdHlwZSwgZXJycmV0
+KTsJXAogfSB3aGlsZSAoMCkKIAotI2RlZmluZSBfX3B1dF91c2VyX2FzbV9leCh4LCBhZGRyLCBp
+dHlwZSwgcnR5cGUsIGx0eXBlKQkJCVwKLQlhc20gdm9sYXRpbGUoIjE6CW1vdiJpdHlwZSIgJSJy
+dHlwZSIwLCUxXG4iCQlcCi0JCSAgICAgIjI6XG4iCQkJCQkJXAotCQkgICAgIF9BU01fRVhUQUJM
+RV9FWCgxYiwgMmIpCQkJCVwKLQkJICAgICA6IDogbHR5cGUoeCksICJtIiAoX19tKGFkZHIpKSkK
+LQogLyoKICAqIHVhY2Nlc3NfdHJ5IGFuZCBjYXRjaAogICovCiAjZGVmaW5lIHVhY2Nlc3NfdHJ5
+CWRvIHsJCQkJCQlcCi0JY3VycmVudC0+dGhyZWFkLnVhY2Nlc3NfZXJyID0gMDsJCQkJXAorCV9f
+bGFiZWxfXyBfX3VhY2Nlc3NfY2F0Y2hfZWZhdWx0OwkJCQlcCiAJX191YWNjZXNzX2JlZ2luKCk7
+CQkJCQkJXAogCWJhcnJpZXIoKTsKIAogI2RlZmluZSB1YWNjZXNzX3RyeV9ub3NwZWMgZG8gewkJ
+CQkJCVwKLQljdXJyZW50LT50aHJlYWQudWFjY2Vzc19lcnIgPSAwOwkJCQlcCisJX19sYWJlbF9f
+IF9fdWFjY2Vzc19jYXRjaF9lZmF1bHQ7CQkJCVwKIAlfX3VhY2Nlc3NfYmVnaW5fbm9zcGVjKCk7
+CQkJCQlcCiAKICNkZWZpbmUgdWFjY2Vzc19jYXRjaChlcnIpCQkJCQkJXAogCV9fdWFjY2Vzc19l
+bmQoKTsJCQkJCQlcCi0JKGVycikgfD0gKGN1cnJlbnQtPnRocmVhZC51YWNjZXNzX2VyciA/IC1F
+RkFVTFQgOiAwKTsJCVwKKwkoZXJyKSA9IDA7CQkJCQkJCVwKKwlicmVhazsJCQkJCQkJCVwKK19f
+dWFjY2Vzc19jYXRjaF9lZmF1bHQ6CQkJCQkJCVwKKwlfX3VhY2Nlc3NfZW5kKCk7CQkJCQkJXAor
+CShlcnIpID0gLUVGQVVMVDsJCQkJCQlcCiB9IHdoaWxlICgwKQogCiAvKioKQEAgLTU2MiwxNyAr
+NDg1LDEyIEBAIHN0cnVjdCBfX2xhcmdlX3N0cnVjdCB7IHVuc2lnbmVkIGxvbmcgYnVmWzEwMF07
+IH07CiAjZGVmaW5lIGdldF91c2VyX3RyeQkJdWFjY2Vzc190cnlfbm9zcGVjCiAjZGVmaW5lIGdl
+dF91c2VyX2NhdGNoKGVycikJdWFjY2Vzc19jYXRjaChlcnIpCiAKLSNkZWZpbmUgZ2V0X3VzZXJf
+ZXgoeCwgcHRyKQlkbyB7CQkJCQlcCi0JdW5zaWduZWQgbG9uZyBfX2d1ZV92YWw7CQkJCQlcCi0J
+X19nZXRfdXNlcl9zaXplX2V4KChfX2d1ZV92YWwpLCAocHRyKSwgKHNpemVvZigqKHB0cikpKSk7
+CVwKLQkoeCkgPSAoX19mb3JjZSBfX3R5cGVvZl9fKCoocHRyKSkpX19ndWVfdmFsOwkJCVwKLX0g
+d2hpbGUgKDApCisjZGVmaW5lIGdldF91c2VyX2V4KHgsIHB0cikJdW5zYWZlX2dldF91c2VyKHgs
+IHB0ciwgX191YWNjZXNzX2NhdGNoX2VmYXVsdCkKIAogI2RlZmluZSBwdXRfdXNlcl90cnkJCXVh
+Y2Nlc3NfdHJ5CiAjZGVmaW5lIHB1dF91c2VyX2NhdGNoKGVycikJdWFjY2Vzc19jYXRjaChlcnIp
+CiAKLSNkZWZpbmUgcHV0X3VzZXJfZXgoeCwgcHRyKQkJCQkJCVwKLQlfX3B1dF91c2VyX3NpemVf
+ZXgoKF9fdHlwZW9mX18oKihwdHIpKSkoeCksIChwdHIpLCBzaXplb2YoKihwdHIpKSkKKyNkZWZp
+bmUgcHV0X3VzZXJfZXgoeCwgcHRyKQl1bnNhZmVfcHV0X3VzZXIoeCwgcHRyLCBfX3VhY2Nlc3Nf
+Y2F0Y2hfZWZhdWx0KQogCiBleHRlcm4gdW5zaWduZWQgbG9uZwogY29weV9mcm9tX3VzZXJfbm1p
+KHZvaWQgKnRvLCBjb25zdCB2b2lkIF9fdXNlciAqZnJvbSwgdW5zaWduZWQgbG9uZyBuKTsK
+--000000000000a3dcf4059497a30d--
