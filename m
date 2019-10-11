@@ -2,92 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D029CD3AD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 10:21:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F9C3D3AE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 10:22:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727478AbfJKIUL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 04:20:11 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37897 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727411AbfJKIUL (ORCPT
+        id S1727528AbfJKIV2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 04:21:28 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:41245 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726983AbfJKIVZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 04:20:11 -0400
-Received: by mail-wr1-f65.google.com with SMTP id y18so1363059wrn.5;
-        Fri, 11 Oct 2019 01:20:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=iY3VbFT46lw+lo2paBwupDTtrpw99cdmsvZfo9TjTQU=;
-        b=SmkwSbfvxqDKQwKKDk5EWy2klDAogSzP3rzKKTLnMiF9wnXzUJgSCUH6AGsYpLNWDL
-         NrVQTzA7aYIwU9/oHM0YuzVdhp+A0xWxAZ4rWMiX8BEljjJNkqBgZRbVUS1n12s3IDeS
-         qDXqQzq0xHDLjUR5wWlgTLQjFg9QHl21UKY+muIzQ97ljNKPnMoqhRGw2CfpOUWAH8b0
-         ZINz6BwjakkMasDWtmhP0hLvFSfBxaPLBsT5TkeOyYwXx4kKvyL4NIYXhyVdoO2KRs5V
-         3NO4iNVI7saRskIYnZq1n3ucrUNWYSgf2QvLKTJ+kiLmasrP1TcqzDS+64tzJkrrPI9Z
-         KVcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iY3VbFT46lw+lo2paBwupDTtrpw99cdmsvZfo9TjTQU=;
-        b=rvCJiEVXYDq7r2CrXgYCKChlkKxJrcQ1Bfebt1lmfl74zZGEZMmUEqjW1ooG46wzg3
-         7D1P+hJH6cs+Pw2VlRjwNQ9iEmjeA/fHX8vWW/at/q262Zjabg/xREWH36e2kt2qrXO+
-         WAk1KjfnoPl4I0ArU4+aFlVKK4+QVw/nbbzHfUCIVIiHC2e7yy9Gy5t8K2iWECysBDYr
-         hh4UfNbsI2ZsQHmoUAcGsEzmA0FdKESkCe9Gz5IU86hl4G6C1gIq+CLv6zRRP+KW20d4
-         dkys7xipRFmZQyt9OtDrOqh8CCORaI86jIv8xF1JZTgUedg8cvLQPM1+xmDUwduwQ6Dx
-         Zd/A==
-X-Gm-Message-State: APjAAAX6BuTvCBM/5LdXa07Sj29wOYN5TElEN2FAV8nakPB2wFy4ExQF
-        QvFQt3TL178+NVtwbyMnhO4=
-X-Google-Smtp-Source: APXvYqx4BP+NACn/f0HWVAabhBN703zVanaofrdx1aXskPCoLsynKeocseYiViIe4gyYbkJjTss6aw==
-X-Received: by 2002:adf:f0c8:: with SMTP id x8mr12614050wro.206.1570782009029;
-        Fri, 11 Oct 2019 01:20:09 -0700 (PDT)
-Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id f3sm7531556wrq.53.2019.10.11.01.20.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 11 Oct 2019 01:20:08 -0700 (PDT)
-Date:   Fri, 11 Oct 2019 10:20:05 +0200
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     catalin.marinas@arm.com, davem@davemloft.net,
-        herbert@gondor.apana.org.au, linux@armlinux.org.uk,
-        mark.rutland@arm.com, robh+dt@kernel.org, wens@csie.org,
-        will@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 02/11] crypto: Add Allwinner sun8i-ce Crypto Engine
-Message-ID: <20191011082005.GA4641@Red>
-References: <20191010182328.15826-1-clabbe.montjoie@gmail.com>
- <20191010182328.15826-3-clabbe.montjoie@gmail.com>
- <20191011075705.j5bqw2w6jmcrv5dz@gilmour>
+        Fri, 11 Oct 2019 04:21:25 -0400
+X-UUID: 683957e80d3f4b828ae9e3cf2535bbf0-20191011
+X-UUID: 683957e80d3f4b828ae9e3cf2535bbf0-20191011
+Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        (envelope-from <biao.huang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1514359459; Fri, 11 Oct 2019 16:21:11 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31DR.mediatek.inc
+ (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 11 Oct
+ 2019 16:21:07 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 11 Oct 2019 16:21:07 +0800
+Message-ID: <1570782069.5044.12.camel@mhfsdcap03>
+Subject: Re: [PATCH] net: stmmac: disable/enable ptp_ref_clk in
+ suspend/resume flow
+From:   biao huang <biao.huang@mediatek.com>
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>
+CC:     <davem@davemloft.net>, Jose Abreu <joabreu@synopsys.com>,
+        <andrew@lunn.ch>, Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <netdev@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <yt.shen@mediatek.com>,
+        <jianguo.zhang@mediatek.com>, <boon.leong.ong@intel.com>,
+        <yong.wu@mediatek.com>
+Date:   Fri, 11 Oct 2019 16:21:09 +0800
+In-Reply-To: <20191010160103.63c3c0ed@cakuba.netronome.com>
+References: <20191009085649.6736-1-biao.huang@mediatek.com>
+         <20191010160103.63c3c0ed@cakuba.netronome.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191011075705.j5bqw2w6jmcrv5dz@gilmour>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 830FACAF2A292503757689C34417C3AFCD74A88CD9AC4330D44496E1DBE6BC492000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 09:57:05AM +0200, Maxime Ripard wrote:
-> On Thu, Oct 10, 2019 at 08:23:19PM +0200, Corentin Labbe wrote:
-> > +	ce->reset = devm_reset_control_get_optional(&pdev->dev, "bus");
-> > +	if (IS_ERR(ce->reset)) {
-> > +		if (PTR_ERR(ce->reset) == -EPROBE_DEFER)
-> > +			return PTR_ERR(ce->reset);
-> > +		dev_err(&pdev->dev, "No reset control found\n");
-> > +		return PTR_ERR(ce->reset);
-> > +	}
+Appreciate your comments!
+
+On Thu, 2019-10-10 at 16:01 -0700, Jakub Kicinski wrote:
+> On Wed, 9 Oct 2019 16:56:49 +0800, Biao Huang wrote:
+> > disable ptp_ref_clk in suspend flow, and enable it in resume flow.
+> > 
+> > Signed-off-by: Biao Huang <biao.huang@mediatek.com>
+> > ---
+> >  drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > index c7c9e5f162e6..b592aeecc3dd 100644
+> > --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > @@ -4469,6 +4469,8 @@ int stmmac_suspend(struct device *dev)
+> >  		stmmac_mac_set(priv, priv->ioaddr, false);
+> >  		pinctrl_pm_select_sleep_state(priv->device);
+> >  		/* Disable clock in case of PWM is off */
+> > +		if (priv->plat->clk_ptp_ref)
+> > +			clk_disable_unprepare(priv->plat->clk_ptp_ref);
 > 
-> There's only one reset so you don't need that name.
+> I don't know much embedded, but it seems like this should perhaps just
+> be clk_disable() without the unprepare? stmmac_hw_teardown() is called
+> when driver is removed so it needs to unprepare as well.
 > 
-> And I'm not sure why you're using the optional variant, it's required
-> by your binding.
+> Please feel free to explain to me why this needs to be
+> clk_disable_unprepare(), as I said - not an expert.
+> 
+As our clock owner's advice, there are prepare/unprepare clk_ops for
+pll, but no enable/disable clk_ops for it, and pll will be off only when
+the prepare reference count decrease to 0.
+
+so for the sake of power saving, we'd better call clk_disable_unprepare
+to turn the parent pll off.
+
+> Also - if this is a bug fix and you'd like to have it backported to
+> older releases you need to add a Fixes tag.
+> 
+Thanks for the reminder, I'll add the fixes tag in the next version.
+> Thanks!
+> 
+> >  		clk_disable(priv->plat->pclk);
+> >  		clk_disable(priv->plat->stmmac_clk);
+maybe it should be clk_disable_unprepare(priv->plat->pclk);
+		   clk_disable_unprepare(priv->plat->stmmac_clk);
+> >  	}
+> > @@ -4535,6 +4537,8 @@ int stmmac_resume(struct device *dev)
+> >  		/* enable the clk previously disabled */
+> >  		clk_enable(priv->plat->stmmac_clk);
+> >  		clk_enable(priv->plat->pclk);
+> > +		if (priv->plat->clk_ptp_ref)
+> > +			clk_prepare_enable(priv->plat->clk_ptp_ref);
+> >  		/* reset the phy so that it's ready */
+> >  		if (priv->mii)
+> >  			stmmac_mdio_reset(priv->mii);
 > 
 
 
-Hello
-
-It will be fixed
-
-Regards
