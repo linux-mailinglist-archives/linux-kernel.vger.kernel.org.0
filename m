@@ -2,64 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CADF5D4622
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 19:03:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F078D462D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 19:05:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728542AbfJKRDe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 13:03:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54964 "EHLO mail.kernel.org"
+        id S1728629AbfJKRFR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 13:05:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726331AbfJKRDe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 13:03:34 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1727984AbfJKRFQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 13:05:16 -0400
+Received: from linux-8ccs (ip5f5adbed.dynamic.kabel-deutschland.de [95.90.219.237])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 289462054F;
-        Fri, 11 Oct 2019 17:03:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB14B2054F;
+        Fri, 11 Oct 2019 17:05:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570813413;
-        bh=1Hli6rSRTCC/5zc4mgxTswUrMtvRKAPnA9Ms67W/ABY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ye8s7tCi6sJHRJtRWPU6AAEb1vVyRqOXKd+9IyJiKTx9U21ByZqia4mUiFnUVy/Jt
-         hicP8wd7MooFkafAiGAbaRMFI91U5rclGyzw6xXmPYM+4g5NOBpLCOx6w3PHlrpdq2
-         GvMu03Wz4bEWhnr9FJ4zU351tEGuPGKoJxRvqx9Y=
-Date:   Fri, 11 Oct 2019 19:03:31 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     Jerome.Pouiller@silabs.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND v2] staging: wfx: fix an undefined reference error
- when CONFIG_MMC=m
-Message-ID: <20191011170331.GA1296994@kroah.com>
-References: <1570811647-64905-1-git-send-email-zhongjiang@huawei.com>
+        s=default; t=1570813516;
+        bh=wQr9Xw1bo34AcsQZottMZdr1xDK0NOPvZ+QopSy8uTE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=UdFLX1G7OocXQprUHRZk3ow7pupXx1gjGEmrVvCfIvBG0joH28HVFJuO7s4ZM6ypx
+         qH0yXlcVMaajpL6FKgKtHgzO8NAvS0ETRq/Q/nVES5cTun0hCQ5yNqo1yXqlTWEaDY
+         j4AZOnjrnmNBwOOrDWmycSztkbP0/4yOyVILyS+Y=
+Date:   Fri, 11 Oct 2019 19:05:06 +0200
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Matthias Maennich <maennich@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Modules fixes for v5.4-rc3
+Message-ID: <20191011170506.GA19908@linux-8ccs>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <1570811647-64905-1-git-send-email-zhongjiang@huawei.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+X-OS:   Linux linux-8ccs 4.12.14-lp150.12.28-default x86_64
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 12, 2019 at 12:34:07AM +0800, zhong jiang wrote:
-> I hit the following error when compile the kernel.
-> 
-> drivers/staging/wfx/main.o: In function `wfx_core_init':
-> /home/z00352263/linux-next/linux-next/drivers/staging/wfx/main.c:488: undefined reference to `sdio_register_driver'
-> drivers/staging/wfx/main.o: In function `wfx_core_exit':
-> /home/z00352263/linux-next/linux-next/drivers/staging/wfx/main.c:496: undefined reference to `sdio_unregister_driver'
-> drivers/staging/wfx/main.o:(.debug_addr+0x1a8): undefined reference to `sdio_register_driver'
-> drivers/staging/wfx/main.o:(.debug_addr+0x6f0): undefined reference to `sdio_unregister_driver'
-> 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->  drivers/staging/wfx/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Linus,
 
-What changed from v1?  Always put that below the --- line.
+Please pull this set of fixes for v5.4-rc3, consisting of code
+cleanups and kbuild/namespace related fixups from Masahiro. Most
+importantly, it fixed a namespace-related modpost issue for external
+module builds. Details can be found in the signed tag.
 
-v3 please?
+Thanks,
 
-thanks,
+Jessica
 
-greg k-h
+-----
+
+The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
+
+  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/jeyu/linux.git tags/modules-for-v5.4-rc3
+
+for you to fetch changes up to fcfacb9f83745d9fa97937b8bc94a73bb0607912:
+
+  doc: move namespaces.rst from kbuild/ to core-api/ (2019-10-08 17:40:01 +0200)
+
+----------------------------------------------------------------
+Modules fixes for v5.4-rc3
+
+- Fix broken external module builds due to a modpost bug in read_dump(),
+  where the namespace was not being strdup'd and sym->namespace would be
+  set to bogus data.
+- Various namespace-related kbuild fixes and cleanups thanks to
+  Masahiro Yamada.
+
+Signed-off-by: Jessica Yu <jeyu@kernel.org>
+
+----------------------------------------------------------------
+Masahiro Yamada (7):
+      module: swap the order of symbol.namespace
+      modpost: fix broken sym->namespace for external module builds
+      module: rename __kstrtab_ns_* to __kstrtabns_* to avoid symbol conflict
+      kbuild: fix build error of 'make nsdeps' in clean tree
+      nsdeps: fix hashbang of scripts/nsdeps
+      nsdeps: make generated patches independent of locale
+      doc: move namespaces.rst from kbuild/ to core-api/
+
+YueHaibing (1):
+      scripts: add_namespace: Fix coccicheck failed
+
+ Documentation/core-api/index.rst                   |  1 +
+ .../symbol-namespaces.rst}                         |  0
+ MAINTAINERS                                        |  1 +
+ Makefile                                           |  2 +-
+ include/linux/export.h                             | 10 ++++----
+ scripts/coccinelle/misc/add_namespace.cocci        |  2 ++
+ scripts/mod/modpost.c                              | 29 +++++++++++-----------
+ scripts/nsdeps                                     |  4 +--
+ 8 files changed, 27 insertions(+), 22 deletions(-)
+ rename Documentation/{kbuild/namespaces.rst => core-api/symbol-namespaces.rst} (100%)
