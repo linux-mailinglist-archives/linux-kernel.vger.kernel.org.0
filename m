@@ -2,93 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3624CD4284
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 16:15:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 990EDD4294
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 16:18:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728453AbfJKOPv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 10:15:51 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:44798 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728149AbfJKOPv (ORCPT
+        id S1728320AbfJKOSz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 10:18:55 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36550 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728153AbfJKOSz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 10:15:51 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9BEFmYP096153;
-        Fri, 11 Oct 2019 09:15:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1570803348;
-        bh=I7dmdvdBlPphNfATj/muSzDDbXFjLuTMgHnQzMfBLp8=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=l6CJwqg679RNJl0FUVfo3oadknuvU8IJbRG0ebFSmgkqfMg5tr3YOMUUiYap2Pfsi
-         9eK2uBb7YW+yQirefJRTxo1QzN/ze4nHN7bNJv8Gs4InfEpjHt1V15HfLJ6JcZofjd
-         qaEnz7eugmgjmKcsWboGXirqYYS3Z97+qyQS4ztc=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9BEFm9Y066706;
-        Fri, 11 Oct 2019 09:15:48 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 11
- Oct 2019 09:15:43 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 11 Oct 2019 09:15:43 -0500
-Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with SMTP id x9BEFlkk101141;
-        Fri, 11 Oct 2019 09:15:47 -0500
-Date:   Fri, 11 Oct 2019 09:18:23 -0500
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Colin King <colin.king@canonical.com>
-CC:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        <linux-media@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][next] media: ti-vpe: vpe: use r2y instead of y2r,
- copy-paste error
-Message-ID: <20191011141823.kyxz32c2p24rr3d3@ti.com>
-References: <20191011132940.8995-1-colin.king@canonical.com>
+        Fri, 11 Oct 2019 10:18:55 -0400
+Received: by mail-pf1-f194.google.com with SMTP id y22so6193954pfr.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 07:18:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yoMVKHDANohlAdb5zxdvxg69/UYoMm/KT4X5akubYBQ=;
+        b=s2PJBxVJnHyxvp02+EPM0NjgLYSIErC3ATW/gLjj6sCJChtumFuP3RLAMLnlytff8F
+         MLdft2AlNFUwHPdwA/nblu1C65sucd+8MGLormcw+3s/xs0TxY/LZ1ODwE0QTAZZlznV
+         SCwnYQkAOxEPib8d0YZ9+7uCEVlvg8G1GQhX9vz5wfJ9f3MC56LSOKCtSjBIc2p5SGEC
+         XVxX+fvw+3flvwDDRjHZFivvW4bSH9NlNcsEB4KyUtSwSvkahr4ml5Hc2RxrwHWT8jt+
+         e6/WnEVklyDJresRyc6VHRoIN2gLOcNl8VOZma2j1L4i90wjSij5yUH9/9+8hAaXHuJM
+         VnJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yoMVKHDANohlAdb5zxdvxg69/UYoMm/KT4X5akubYBQ=;
+        b=X4X5Ukel2kJO8c2VS96RyqA1b8RmloCdn3wOLRuynGr9bJQZ7cF2+X04mUTzi6PWZu
+         GGIsvJ6NIfOjLl/2k019duHOILUr21Vkd8D1vZhAnyBViepB4zNJb/A49nIrtb5FfdRk
+         LFgvrysv0vaZAacPejMZoDPwuWhRgNy2yNudRX3HvjTGhsR4EmF0S1N9X4qc1P7qSsx4
+         xirutjm7L/MRa3k8txLs34cVUMFetJeC2wcOHhIuVlHQ3tsUhIuCaYS8QPy61XiUhMRy
+         FOVKmmUytgilhy1C/T0vTfsS+weZO1f5P9vdER2sgMXBlizPiZxJGyiQuM5a9hzPUl4U
+         l+nA==
+X-Gm-Message-State: APjAAAXbMcS5pD3/T+bYm+Xh4FzvcRuJJ7kOQrCtSsYlrU+uhbjdmCJK
+        VDNd93OqthwZDvaICYutyG519mqKYrz1WGHIhTstVQ==
+X-Google-Smtp-Source: APXvYqz+pdf+0dBDvFeDuFmond5Ww8v6pIafG+BQPs2OXn5tOXrf1XKQ4eXbGsrVt2JBXKhjFEIBEufmQ1IHn4H+DIM=
+X-Received: by 2002:a65:4c03:: with SMTP id u3mr17200592pgq.440.1570803533488;
+ Fri, 11 Oct 2019 07:18:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20191011132940.8995-1-colin.king@canonical.com>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <b8b1e4fef9f3ece63909c38b3302621d76770caa.camel@gmail.com> <Pine.LNX.4.44L0.1910111003100.1529-100000@iolanthe.rowland.org>
+In-Reply-To: <Pine.LNX.4.44L0.1910111003100.1529-100000@iolanthe.rowland.org>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Fri, 11 Oct 2019 16:18:42 +0200
+Message-ID: <CAAeHK+zR=S1cyaYfehyUDrpMGMXvxgLEeS8V2ze2HkwYUp6bjg@mail.gmail.com>
+Subject: Re: KMSAN: uninit-value in alauda_check_media
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     Jaskaran Singh <jaskaransingh7654321@gmail.com>,
+        syzbot <syzbot+e7d46eb426883fb97efd@syzkaller.appspotmail.com>,
+        Alexander Potapenko <glider@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        usb-storage@lists.one-eyed-alien.net
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote on Fri [2019-Oct-11 14:29:40 +0100]:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There appears to be a copy-paste error on the access of
-> csc_coeffs.y2r.r601.full.coeff, I believe csc_coeffs.2yr.r601.full.coeff
-> should be used instead. This is a moot point as the code is never
-> reached, but at least use the correct structure element.
-> 
-> Addresses-Coverity: ("Copy-paste error")
-> Fixes: 3ff3a712a9ea ("media: ti-vpe: vpe: don't rely on colorspace member for conversion")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/media/platform/ti-vpe/csc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/ti-vpe/csc.c b/drivers/media/platform/ti-vpe/csc.c
-> index bd923bee4a31..834114a4eebe 100644
-> --- a/drivers/media/platform/ti-vpe/csc.c
-> +++ b/drivers/media/platform/ti-vpe/csc.c
-> @@ -238,7 +238,7 @@ void csc_set_coeff(struct csc_data *csc, u32 *csc_reg0,
->  				coeff = csc_coeffs.r2y.r709.limited.coeff;
->  		} else {
->  			/* Should never reach this, but it keeps gcc happy */
-> -			coeff = csc_coeffs.y2r.r601.full.coeff;
-> +			coeff = csc_coeffs.r2y.r601.full.coeff;
->  		}
->  	} else {
->  		*csc_reg5 |= CSC_BYPASS;
+On Fri, Oct 11, 2019 at 4:08 PM Alan Stern <stern@rowland.harvard.edu> wrote:
+>
+> On Fri, 11 Oct 2019, Jaskaran Singh wrote:
+>
+> > On Mon, 2019-10-07 at 12:39 -0700, syzbot wrote:
+> > > Hello,
+> > >
+> > > syzbot found the following crash on:
+> > >
+> > > HEAD commit:    1e76a3e5 kmsan: replace __GFP_NO_KMSAN_SHADOW with
+> > > kmsan_i..
+> > > git tree:       https://github.com/google/kmsan.git master
+> > > console output:
+> > > https://syzkaller.appspot.com/x/log.txt?x=1204cc63600000
+> > > kernel config:
+> > > https://syzkaller.appspot.com/x/.config?x=f03c659d0830ab8d
+> > > dashboard link:
+> > > https://syzkaller.appspot.com/bug?extid=e7d46eb426883fb97efd
+> > > compiler:       clang version 9.0.0 (/home/glider/llvm/clang
+> > > 80fee25776c2fb61e74c1ecb1a523375c2500b69)
+> > > syz repro:
+> > > https://syzkaller.appspot.com/x/repro.syz?x=123c860d600000
+> > > C reproducer:
+> > > https://syzkaller.appspot.com/x/repro.c?x=110631b7600000
+> > >
+> > > IMPORTANT: if you fix the bug, please add the following tag to the
+> > > commit:
+> > > Reported-by: syzbot+e7d46eb426883fb97efd@syzkaller.appspotmail.com
+> > >
+> > > =====================================================
+> > > BUG: KMSAN: uninit-value in alauda_transport+0x462/0x57f0
+> > > drivers/usb/storage/alauda.c:1137
+> > > CPU: 0 PID: 12279 Comm: usb-storage Not tainted 5.3.0-rc7+ #0
+> > > Hardware name: Google Google Compute Engine/Google Compute Engine,
+> > > BIOS
+> > > Google 01/01/2011
+> > > Call Trace:
+> > >   __dump_stack lib/dump_stack.c:77 [inline]
+> > >   dump_stack+0x191/0x1f0 lib/dump_stack.c:113
+> > >   kmsan_report+0x13a/0x2b0 mm/kmsan/kmsan_report.c:108
+> > >   __msan_warning+0x73/0xe0 mm/kmsan/kmsan_instr.c:250
+> > >   alauda_check_media+0x344/0x3310 drivers/usb/storage/alauda.c:460
+> > >   alauda_transport+0x462/0x57f0 drivers/usb/storage/alauda.c:1137
+> > >   usb_stor_invoke_transport+0xf5/0x27e0
+> > > drivers/usb/storage/transport.c:606
+> > >   usb_stor_transparent_scsi_command+0x5d/0x70
+> > > drivers/usb/storage/protocol.c:108
+> > >   usb_stor_control_thread+0xca6/0x11a0 drivers/usb/storage/usb.c:380
+> > >   kthread+0x4b5/0x4f0 kernel/kthread.c:256
+> > >   ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
+>
+>
+> > #syz test: https://github.com/google/kmsan.git 1e76a3e5
+> >
+> > diff --git a/drivers/usb/storage/alauda.c
+> > b/drivers/usb/storage/alauda.c
+> > index ddab2cd3d2e7..bb309b9ad65b 100644
+> > --- a/drivers/usb/storage/alauda.c
+> > +++ b/drivers/usb/storage/alauda.c
+> > @@ -452,7 +452,7 @@ static int alauda_init_media(struct us_data *us)
+> >  static int alauda_check_media(struct us_data *us)
+> >  {
+> >       struct alauda_info *info = (struct alauda_info *) us->extra;
+> > -     unsigned char status[2];
+> > +     unsigned char *status = us->iobuf;
+> >       int rc;
+> >
+> >       rc = alauda_get_media_status(us, status);
 
-Reviewed-by: Benoit Parrot <bparrot.ti.com>
+[...]
 
-> -- 
-> 2.20.1
-> 
+> Now yes, it's true that defining status as an array on the stack is
+> also a bug, since USB transfer buffers are not allowed to be stack
+> variables.
+
+Hi Alan,
+
+I'm curious, what is the reason for disallowing that? Should we try to
+somehow detect such cases automatically?
+
+Thanks!
