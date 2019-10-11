@@ -2,105 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1056D3DE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 13:04:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 144D1D3DDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 13:00:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbfJKLEq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 07:04:46 -0400
-Received: from os.inf.tu-dresden.de ([141.76.48.99]:38610 "EHLO
-        os.inf.tu-dresden.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727592AbfJKLEq (ORCPT
+        id S1727874AbfJKLAm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 07:00:42 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:33738 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726885AbfJKLAm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 07:04:46 -0400
-X-Greylist: delayed 1372 seconds by postgrey-1.27 at vger.kernel.org; Fri, 11 Oct 2019 07:04:45 EDT
-Received: from [141.76.29.166] (helo=[172.26.144.86])
-        by os.inf.tu-dresden.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.3)
-        id 1iIsMq-0005eE-L3; Fri, 11 Oct 2019 12:41:52 +0200
-Subject: Re: [PATCH 10/10] Replace tasklets with workqueues
-From:   Maksym Planeta <mplaneta@os.inf.tu-dresden.de>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Moni Shoua <monis@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190722151426.5266-1-mplaneta@os.inf.tu-dresden.de>
- <20190722151426.5266-11-mplaneta@os.inf.tu-dresden.de>
- <20190722153205.GG7607@ziepe.ca>
- <21a4daf9-c77e-ec80-9da0-78ab512d248d@os.inf.tu-dresden.de>
- <20190725185006.GD7467@ziepe.ca>
- <385139f2-0d31-1148-95c0-a6e6768ab413@os.inf.tu-dresden.de>
-Message-ID: <995754de-5ec4-0a62-991e-2ea77a6bc622@os.inf.tu-dresden.de>
-Date:   Fri, 11 Oct 2019 12:41:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Fri, 11 Oct 2019 07:00:42 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9BAwqRu041513;
+        Fri, 11 Oct 2019 11:00:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=RU6H+u3W39wz6yAaxIiIbW2yjZ/yh1LsvlPU+bZjROg=;
+ b=MuWL7oGHEXrLsuUyyIEUiZNUPGnntbBNgjYDTnj+opzbl0ww0EbjHrQFZ7N47eJ140UB
+ k4kWd7wZxq/9oU5RlavY/dSNVB+REVwZ1sA4+jc2MViCFEBdRU8aOYlk5PIg8Zd8yuY9
+ UvrlvUuNmXgkyZyYcgCAQNGXRcVvli0dBrvZZhaAY60r3pNhINV4siUy1EACmSRwxFRt
+ FibTfKtoIrRf6pZpC2O7M9OQKUu6PyVJaX30S18uVBpFGTk5ZldsL2ZeSHln4ovh7viT
+ L7n+/qhxdMurKJocp48sgz9+juQnx4lLUA7ULMxDM06i4a78le22hOCBhBvykLl5iuK2 mg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2vekts0m1y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 11 Oct 2019 11:00:35 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9BAxSAo171121;
+        Fri, 11 Oct 2019 11:00:34 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2vjdykryvq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 11 Oct 2019 11:00:34 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9BB0RDr004965;
+        Fri, 11 Oct 2019 11:00:27 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 11 Oct 2019 11:00:26 +0000
+Date:   Fri, 11 Oct 2019 14:00:20 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Wambui Karuga <wambui.karugax@gmail.com>
+Cc:     outreachy-kernel@googlegroups.com, devel@driverdev.osuosl.org,
+        isdn@linux-pingi.de, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH] staging: isdn: remove assignment in if conditionals
+Message-ID: <20191011110019.GC4774@kadam>
+References: <20191011072044.7022-1-wambui.karugax@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <385139f2-0d31-1148-95c0-a6e6768ab413@os.inf.tu-dresden.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191011072044.7022-1-wambui.karugax@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9406 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=750
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910110105
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9406 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=832 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910110105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This ISDN stuff is going to be deleted soon.  Just leave it as is.
 
-this is a kind reminder regarding the patchset. I added description of 
-races in the original email.
+regards,
+dan carpenter
 
-On 30/07/2019 21:20, Maksym Planeta wrote:
-> 
-> 
-> On 25/07/2019 20:50, Jason Gunthorpe wrote:
->> On Thu, Jul 25, 2019 at 04:36:20PM +0200, Maksym Planeta wrote:
->>> Is this one better?
->>>
->>> Replace tasklets with workqueues in rxe driver. The reason for this
->>> replacement is that tasklets are supposed to run atomically, although 
->>> the
->>> actual code may block.
->>>
->>> Modify the SKB destructor for outgoing SKB's to schedule QP tasks 
->>> only if
->>> the QP is not destroyed itself.
->>>
->>> Add a variable "pending_skb_down" to ensure that reference counting 
->>> for a QP
->>> is decremented only when QP access related to this skb is over.
->>>
->>> Separate part of pool element cleanup code to allow this code to be 
->>> called
->>> in the very end of cleanup, even if some of cleanup is scheduled for
->>> asynchronous execution. Example, when it was happening is destructor 
->>> for a
->>> QP.
->>>
->>> Disallow calling of task functions "directly". This allows to 
->>> simplify logic
->>> inside rxe_task.c
->>>
->>> Schedule rxe_qp_do_cleanup onto high-priority system workqueue, 
->>> because this
->>> function can be scheduled from normal system workqueue.
->>>
->>> Before destroying a QP, wait until all references to this QP are gone.
->>> Previously the problem was that outgoing SKBs could be freed after 
->>> the QP
->>> these SKBs refer to is destroyed.
->>>
->>> Add blocking rxe_run_task to replace __rxe_do_task that was calling task
->>> function directly.
->>
->> Mostly but it would also be good to describe the use after free and
->> races more specifically
->>
-> 
-> These situations are described in the cover letter (PATCH 00/10). Do you 
-> need a more detailed description than that?
-> 
->> Jason
->>
-> 
-
--- 
-Regards,
-Maksym Planeta
