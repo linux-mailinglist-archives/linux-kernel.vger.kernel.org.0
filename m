@@ -2,31 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12DD6D3E4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 13:22:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D904D3E55
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 13:22:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728118AbfJKLWO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 07:22:14 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:60370 "EHLO
+        id S1727289AbfJKLW2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 07:22:28 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:60360 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728087AbfJKLWM (ORCPT
+        with ESMTP id S1728086AbfJKLWK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 07:22:12 -0400
+        Fri, 11 Oct 2019 07:22:10 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iIszi-0007D1-Pg; Fri, 11 Oct 2019 13:22:02 +0200
+        id 1iIszi-0007D2-Uk; Fri, 11 Oct 2019 13:22:03 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 657391C0178;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 947A51C0324;
         Fri, 11 Oct 2019 13:22:02 +0200 (CEST)
 Date:   Fri, 11 Oct 2019 11:22:02 -0000
-From:   "tip-bot2 for Andy Lutomirski" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Sami Tolvanen" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/entry] syscalls/x86: Wire up COMPAT_SYSCALL_DEFINE0
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
+Subject: [tip: x86/entry] syscalls/x86: Use the correct function type in
+ SYSCALL_DEFINE0
+Cc:     Sami Tolvanen <samitolvanen@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
         Borislav Petkov <bp@alien8.de>,
         "H . Peter Anvin" <hpa@zytor.com>,
         Kees Cook <keescook@chromium.org>,
@@ -34,10 +35,10 @@ Cc:     Andy Lutomirski <luto@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-In-Reply-To: <20191008224049.115427-3-samitolvanen@google.com>
-References: <20191008224049.115427-3-samitolvanen@google.com>
+In-Reply-To: <20191008224049.115427-2-samitolvanen@google.com>
+References: <20191008224049.115427-2-samitolvanen@google.com>
 MIME-Version: 1.0
-Message-ID: <157079292227.9978.612006427333892080.tip-bot2@tip-bot2>
+Message-ID: <157079292253.9978.17704020212301082450.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -53,101 +54,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/entry branch of tip:
 
-Commit-ID:     cf3b83e19d7c928e05a5d193c375463182c6029a
-Gitweb:        https://git.kernel.org/tip/cf3b83e19d7c928e05a5d193c375463182c6029a
-Author:        Andy Lutomirski <luto@kernel.org>
-AuthorDate:    Tue, 08 Oct 2019 15:40:46 -07:00
+Commit-ID:     8661d769ab77c675b5eb6c3351a372b9fbc1bf40
+Gitweb:        https://git.kernel.org/tip/8661d769ab77c675b5eb6c3351a372b9fbc1bf40
+Author:        Sami Tolvanen <samitolvanen@google.com>
+AuthorDate:    Tue, 08 Oct 2019 15:40:45 -07:00
 Committer:     Ingo Molnar <mingo@kernel.org>
 CommitterDate: Fri, 11 Oct 2019 12:49:18 +02:00
 
-syscalls/x86: Wire up COMPAT_SYSCALL_DEFINE0
+syscalls/x86: Use the correct function type in SYSCALL_DEFINE0
 
-x86 has special handling for COMPAT_SYSCALL_DEFINEx, but there was
-no override for COMPAT_SYSCALL_DEFINE0.  Wire it up so that we can
-use it for rt_sigreturn.
+Although a syscall defined using SYSCALL_DEFINE0 doesn't accept
+parameters, use the correct function type to avoid type mismatches
+with Control-Flow Integrity (CFI) checking.
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+Acked-by: Andy Lutomirski <luto@kernel.org>
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: H . Peter Anvin <hpa@zytor.com>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20191008224049.115427-3-samitolvanen@google.com
+Link: https://lkml.kernel.org/r/20191008224049.115427-2-samitolvanen@google.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/include/asm/syscall_wrapper.h | 32 +++++++++++++++++++++++--
- 1 file changed, 30 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/syscall_wrapper.h | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
 diff --git a/arch/x86/include/asm/syscall_wrapper.h b/arch/x86/include/asm/syscall_wrapper.h
-index 90eb70d..3dab048 100644
+index e046a40..90eb70d 100644
 --- a/arch/x86/include/asm/syscall_wrapper.h
 +++ b/arch/x86/include/asm/syscall_wrapper.h
-@@ -28,13 +28,21 @@
-  * kernel/sys_ni.c and SYS_NI in kernel/time/posix-stubs.c to cover this
-  * case as well.
+@@ -48,12 +48,13 @@
+  * To keep the naming coherent, re-define SYSCALL_DEFINE0 to create an alias
+  * named __ia32_sys_*()
   */
-+#define __IA32_COMPAT_SYS_STUB0(x, name)				\
-+	asmlinkage long __ia32_compat_sys_##name(const struct pt_regs *regs);\
-+	ALLOW_ERROR_INJECTION(__ia32_compat_sys_##name, ERRNO);		\
-+	asmlinkage long __ia32_compat_sys_##name(const struct pt_regs *regs)\
-+	{								\
-+		return __se_compat_sys_##name();			\
-+	}
+-#define SYSCALL_DEFINE0(sname)					\
+-	SYSCALL_METADATA(_##sname, 0);				\
+-	asmlinkage long __x64_sys_##sname(void);		\
+-	ALLOW_ERROR_INJECTION(__x64_sys_##sname, ERRNO);	\
+-	SYSCALL_ALIAS(__ia32_sys_##sname, __x64_sys_##sname);	\
+-	asmlinkage long __x64_sys_##sname(void)
 +
- #define __IA32_COMPAT_SYS_STUBx(x, name, ...)				\
- 	asmlinkage long __ia32_compat_sys##name(const struct pt_regs *regs);\
- 	ALLOW_ERROR_INJECTION(__ia32_compat_sys##name, ERRNO);		\
- 	asmlinkage long __ia32_compat_sys##name(const struct pt_regs *regs)\
- 	{								\
- 		return __se_compat_sys##name(SC_IA32_REGS_TO_ARGS(x,__VA_ARGS__));\
--	}								\
-+	}
++#define SYSCALL_DEFINE0(sname)						\
++	SYSCALL_METADATA(_##sname, 0);					\
++	asmlinkage long __x64_sys_##sname(const struct pt_regs *__unused);\
++	ALLOW_ERROR_INJECTION(__x64_sys_##sname, ERRNO);		\
++	SYSCALL_ALIAS(__ia32_sys_##sname, __x64_sys_##sname);		\
++	asmlinkage long __x64_sys_##sname(const struct pt_regs *__unused)
  
- #define __IA32_SYS_STUBx(x, name, ...)					\
- 	asmlinkage long __ia32_sys##name(const struct pt_regs *regs);	\
-@@ -76,15 +84,24 @@
-  * of the x86-64-style parameter ordering of x32 syscalls. The syscalls common
-  * with x86_64 obviously do not need such care.
+ #define COND_SYSCALL(name)						\
+ 	cond_syscall(__x64_sys_##name);					\
+@@ -181,11 +182,11 @@
+  * macros to work correctly.
   */
-+#define __X32_COMPAT_SYS_STUB0(x, name, ...)				\
-+	asmlinkage long __x32_compat_sys_##name(const struct pt_regs *regs);\
-+	ALLOW_ERROR_INJECTION(__x32_compat_sys_##name, ERRNO);		\
-+	asmlinkage long __x32_compat_sys_##name(const struct pt_regs *regs)\
-+	{								\
-+		return __se_compat_sys_##name();\
-+	}
-+
- #define __X32_COMPAT_SYS_STUBx(x, name, ...)				\
- 	asmlinkage long __x32_compat_sys##name(const struct pt_regs *regs);\
- 	ALLOW_ERROR_INJECTION(__x32_compat_sys##name, ERRNO);		\
- 	asmlinkage long __x32_compat_sys##name(const struct pt_regs *regs)\
- 	{								\
- 		return __se_compat_sys##name(SC_X86_64_REGS_TO_ARGS(x,__VA_ARGS__));\
--	}								\
-+	}
+ #ifndef SYSCALL_DEFINE0
+-#define SYSCALL_DEFINE0(sname)					\
+-	SYSCALL_METADATA(_##sname, 0);				\
+-	asmlinkage long __x64_sys_##sname(void);		\
+-	ALLOW_ERROR_INJECTION(__x64_sys_##sname, ERRNO);	\
+-	asmlinkage long __x64_sys_##sname(void)
++#define SYSCALL_DEFINE0(sname)						\
++	SYSCALL_METADATA(_##sname, 0);					\
++	asmlinkage long __x64_sys_##sname(const struct pt_regs *__unused);\
++	ALLOW_ERROR_INJECTION(__x64_sys_##sname, ERRNO);		\
++	asmlinkage long __x64_sys_##sname(const struct pt_regs *__unused)
+ #endif
  
- #else /* CONFIG_X86_X32 */
-+#define __X32_COMPAT_SYS_STUB0(x, name)
- #define __X32_COMPAT_SYS_STUBx(x, name, ...)
- #endif /* CONFIG_X86_X32 */
- 
-@@ -95,6 +112,17 @@
-  * mapping of registers to parameters, we need to generate stubs for each
-  * of them.
-  */
-+#define COMPAT_SYSCALL_DEFINE0(name)					\
-+	static long __se_compat_sys_##name(void);			\
-+	static inline long __do_compat_sys_##name(void);		\
-+	__IA32_COMPAT_SYS_STUB0(x, name)				\
-+	__X32_COMPAT_SYS_STUB0(x, name)					\
-+	static long __se_compat_sys_##name(void)			\
-+	{								\
-+		return __do_compat_sys_##name();			\
-+	}								\
-+	static inline long __do_compat_sys_##name(void)
-+
- #define COMPAT_SYSCALL_DEFINEx(x, name, ...)					\
- 	static long __se_compat_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__));	\
- 	static inline long __do_compat_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__));\
+ #ifndef COND_SYSCALL
