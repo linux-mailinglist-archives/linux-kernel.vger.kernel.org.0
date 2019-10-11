@@ -2,103 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DABE3D3B42
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 10:35:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DC5BD3B58
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 10:39:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727457AbfJKIfE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 04:35:04 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:4298 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726397AbfJKIfE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 04:35:04 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5da03ebb0000>; Fri, 11 Oct 2019 01:35:07 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 11 Oct 2019 01:35:03 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 11 Oct 2019 01:35:03 -0700
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 11 Oct
- 2019 08:35:03 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 11 Oct 2019 08:35:03 +0000
-Received: from moonraker.nvidia.com (Not Verified[10.21.133.51]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5da03eb60001>; Fri, 11 Oct 2019 01:35:03 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] mailbox: tegra: Fix superfluous IRQ error message
-Date:   Fri, 11 Oct 2019 09:34:59 +0100
-Message-ID: <20191011083459.11551-1-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-X-NVConfidentiality: public
-MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1570782907; bh=uduV90yZCZOVYnuJjhT4IRL+/1ynquThjrPfX23FAWk=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=Ce3U5tmiHnuM/llBKs2xBAhzGod5yJQAxo1HoOAUtGb5EYCfNdcNcmy5+t8IFilTj
-         Uh8rIkKTJmfwJCTGae2xVJpAami5cX+1UkYJGFLFNEoW3NtUlfjXw39XXLpfnOb6IV
-         Slc8poAudWP5sFdt+c1cYhkzJVjMKESnb5SemM3s0VhoMseOhI2co5XPjOgMMLH14J
-         U8z0LhfiWKU5w6mP2ql7sQmtbGw9+n2ZImHwXC7Mtdx/iu1E7MdHiNLCoDpMKuFT0i
-         ysr5iWxBYnj1wnkyi8TNaZrdSYGYzxOANJGPHbRJRYNXnFufALZRZlyILDzRTWmEvL
-         TWChwkLcOwQCA==
+        id S1727247AbfJKIjS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 04:39:18 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:33578 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726555AbfJKIjS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 04:39:18 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 58ADC1A0546;
+        Fri, 11 Oct 2019 10:39:16 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C9BE61A052E;
+        Fri, 11 Oct 2019 10:39:10 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id D2B01402D2;
+        Fri, 11 Oct 2019 16:39:03 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        aisheng.dong@nxp.com, gustavo@embeddedor.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] clk: imx7ulp: Correct system clock source option #7
+Date:   Fri, 11 Oct 2019 16:36:46 +0800
+Message-Id: <1570783006-28099-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 7723f4c5ecdb ("driver core: platform: Add an error message to
-platform_get_irq*()") added an error message to avoid drivers having
-to print an error message when IRQ lookup fails. However, there are
-some cases where IRQs are optional and so new optional versions of
-the platform_get_irq*() APIs have been added for these cases.
+In the latest reference manual Rev.0,06/2019, the SCG1's system
+clock source option #7 is no longer from upll, it is reserved,
+update clock driver accordingly.
 
-The IRQs for Tegra HSP module are optional because not all instances
-of the module have the doorbell and all of the shared interrupts.
-Hence, since the above commit was applied the following error messages
-are now seen on Tegra194 ...
-
- ERR KERN tegra-hsp c150000.hsp: IRQ doorbell not found
- ERR KERN tegra-hsp c150000.hsp: IRQ shared0 not found
-
-The Tegra HSP driver deliberately does not fail if these are not found
-and so fix the above errors by updating the Tegra HSP driver to use
-the platform_get_irq_byname_optional() API.
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Fixes: b1260067ac3d ("clk: imx: add imx7ulp clk driver")
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- drivers/mailbox/tegra-hsp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/imx/clk-imx7ulp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-index 4c5ba35d48d4..834b35dc3b13 100644
---- a/drivers/mailbox/tegra-hsp.c
-+++ b/drivers/mailbox/tegra-hsp.c
-@@ -657,7 +657,7 @@ static int tegra_hsp_probe(struct platform_device *pdev)
- 	hsp->num_db = (value >> HSP_nDB_SHIFT) & HSP_nINT_MASK;
- 	hsp->num_si = (value >> HSP_nSI_SHIFT) & HSP_nINT_MASK;
- 
--	err = platform_get_irq_byname(pdev, "doorbell");
-+	err = platform_get_irq_byname_optional(pdev, "doorbell");
- 	if (err >= 0)
- 		hsp->doorbell_irq = err;
- 
-@@ -677,7 +677,7 @@ static int tegra_hsp_probe(struct platform_device *pdev)
- 			if (!name)
- 				return -ENOMEM;
- 
--			err = platform_get_irq_byname(pdev, name);
-+			err = platform_get_irq_byname_optional(pdev, name);
- 			if (err >= 0) {
- 				hsp->shared_irqs[i] = err;
- 				count++;
+diff --git a/drivers/clk/imx/clk-imx7ulp.c b/drivers/clk/imx/clk-imx7ulp.c
+index 2022d9b..b2c5866 100644
+--- a/drivers/clk/imx/clk-imx7ulp.c
++++ b/drivers/clk/imx/clk-imx7ulp.c
+@@ -24,7 +24,7 @@ static const char * const spll_pfd_sels[]	= { "spll_pfd0", "spll_pfd1", "spll_pf
+ static const char * const spll_sels[]		= { "spll", "spll_pfd_sel", };
+ static const char * const apll_pfd_sels[]	= { "apll_pfd0", "apll_pfd1", "apll_pfd2", "apll_pfd3", };
+ static const char * const apll_sels[]		= { "apll", "apll_pfd_sel", };
+-static const char * const scs_sels[]		= { "dummy", "sosc", "sirc", "firc", "dummy", "apll_sel", "spll_sel", "upll", };
++static const char * const scs_sels[]		= { "dummy", "sosc", "sirc", "firc", "dummy", "apll_sel", "spll_sel", "dummy", };
+ static const char * const ddr_sels[]		= { "apll_pfd_sel", "upll", };
+ static const char * const nic_sels[]		= { "firc", "ddr_clk", };
+ static const char * const periph_plat_sels[]	= { "dummy", "nic1_bus_clk", "nic1_clk", "ddr_clk", "apll_pfd2", "apll_pfd1", "apll_pfd0", "upll", };
 -- 
-2.17.1
+2.7.4
 
