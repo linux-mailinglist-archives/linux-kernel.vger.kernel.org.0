@@ -2,70 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 700F5D3FD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 14:45:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12837D3FDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2019 14:46:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728135AbfJKMo7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 08:44:59 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3695 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727589AbfJKMo6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 08:44:58 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 7A4318DD6829E73B8D62;
-        Fri, 11 Oct 2019 20:44:56 +0800 (CST)
-Received: from [127.0.0.1] (10.177.251.225) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Fri, 11 Oct 2019
- 20:44:53 +0800
-To:     <atul.gupta@chelsio.com>, <herbert@gondor.apana.org.au>,
-        <davem@davemloft.net>
-CC:     <willy@infradead.org>, <kstewart@linuxfoundation.org>,
-        <ira.weiny@intel.com>, <akpm@linux-foundation.org>,
-        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From:   Yunfeng Ye <yeyunfeng@huawei.com>
-Subject: [PATCH] crypto: chtls - remove the redundant check in chtls_recvmsg()
-Message-ID: <3c88d0b1-b6c6-9641-ffdf-20104a684402@huawei.com>
-Date:   Fri, 11 Oct 2019 20:44:53 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1728197AbfJKMp5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 08:45:57 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:52122 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727855AbfJKMp5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 08:45:57 -0400
+Received: from zn.tnic (p200300EC2F0C8D0008DB7A6AE61C42DD.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:8d00:8db:7a6a:e61c:42dd])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1E04D1EC0691;
+        Fri, 11 Oct 2019 14:45:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1570797952;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=AAcyDCTqqzYlKcpYjXKbpiiH12SJEMrDiA4bMwrmUT8=;
+        b=Ey8qAUkWBmsw5rMm51KrX/Pc4X4n/906MQsN7qq/wttE9gQ1/S/BCyhlTgNYoVcA+FuN03
+        4KOjRjl/W/WMrPRP9Ede4qWIc08Tf+Z7LUKeh6Bnrwm/c6Kx4k6PVPoX+9tduW/8Hy8b2Z
+        7qdRp1BoC7SU7hlWIcgRtIBdu5EWbhk=
+Date:   Fri, 11 Oct 2019 14:45:44 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jiri Slaby <jslaby@suse.cz>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/asm: Make more symbols local
+Message-ID: <20191011124544.GA8824@zn.tnic>
+References: <20191011092213.31470-1-jslaby@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.251.225]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191011092213.31470-1-jslaby@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A warning message reported by a static analysis tool:
-  "
-  Either the condition 'if(skb)' is redundant or there is possible null
-  pointer dereference: skb.
-  "
+On Fri, Oct 11, 2019 at 11:22:13AM +0200, Jiri Slaby wrote:
+> During the assembly cleanup patchset reveiew, I found more symbols which
 
-Remove the unused redundant check.
+"review"
 
-Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
----
- drivers/crypto/chelsio/chtls/chtls_io.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> are used only locally. So make them really local by prepending ".L" to
+> them. Namely:
+> * wakeup_idt is used only in realmode/rm/wakeup_asm.S.
+> * in_pm32 is used only in boot/pmjump.S.
+> * retint_user is used only in entry/entry_64.S, perhaps since commit
+>   2ec67971facc ("x86/entry/64/compat: Remove most of the fast system
+>   call machinery"), where entry_64_compat's caller was removed.
+> 
+> Drop GLOBAL from all of them too. I do not see more candidates in the
+> series.
+> 
+> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: x86@kernel.org
+> ---
+>  arch/x86/boot/pmjump.S            | 6 +++---
+>  arch/x86/entry/entry_64.S         | 4 ++--
+>  arch/x86/realmode/rm/wakeup_asm.S | 6 +++---
+>  3 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/crypto/chelsio/chtls/chtls_io.c b/drivers/crypto/chelsio/chtls/chtls_io.c
-index 0891ab8..0125f4e 100644
---- a/drivers/crypto/chelsio/chtls/chtls_io.c
-+++ b/drivers/crypto/chelsio/chtls/chtls_io.c
-@@ -1841,8 +1841,7 @@ int chtls_recvmsg(struct sock *sk, struct msghdr *msg, size_t len,
- 			tp->urg_data = 0;
+other than that:
 
- 		if (avail + offset >= skb->len) {
--			if (likely(skb))
--				chtls_free_skb(sk, skb);
-+			chtls_free_skb(sk, skb);
- 			buffers_freed++;
+Acked-by: Borislav Petkov <bp@suse.de>
 
- 			if  (copied >= target &&
 -- 
-2.7.4.3
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
