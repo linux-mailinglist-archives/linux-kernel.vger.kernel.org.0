@@ -2,97 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ACFFD50D1
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 18:04:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 367C9D50D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 18:05:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729354AbfJLQEx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 12 Oct 2019 12:04:53 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:34241 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729257AbfJLQCw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Oct 2019 12:02:52 -0400
-Received: by mail-qt1-f196.google.com with SMTP id 3so18611807qta.1
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2019 09:02:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=115n8fVPcb6FFdMlLEXy4f+oj6Xj6AxVK8mXd42SbSI=;
-        b=CGxTjducfs3i9fL9ZR/VcEs9UZRrWGrQ2h8205POiIL9yO/40CKYwPWD71NnFVxR5l
-         N6obY98Vpq4vgEOSnYTswhKpfbN/U6HjKuojF3XjAVOFHqO7hVtA0rg8tsB9ETz7oC/N
-         TIQz7gc5w0oatZqPJnwX57eKBIMYj/OowfUdngO85pbGuB/VTIyC10dEXpmRvaoaVZmf
-         Oj9NQp6s+EndxjTshCZlxqlmj0e80CAXX2bcLfQULS7n11/NCfv15eJ56YHj/WchAWXH
-         al6sFAZOZG11qrPIUTuqTjX+GRry17qnGDjAhq13inFg5F2GTgaxexcMYrx14XBTPXNi
-         SfgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=115n8fVPcb6FFdMlLEXy4f+oj6Xj6AxVK8mXd42SbSI=;
-        b=WtvDlFnVABtgKnCv3YlSAqBhqaF7AHKlhCX1q8pf5G/v0P6d/vN73XJsL3WanaVt6G
-         taxTlJmCmQMrTYh9f2ozNoI1oQqi0/Af1o16hdFws8SRe2S1rIWt1KodkxEQiZ/vqlDM
-         7yvCif1eaIZFMMWejc02Fg8egoR6ENrDYPpGvKTiWWd0a0v+0DVALUOeZPIT8kaGYfUA
-         xtPB3nRO+ApJnkTwJPkHQVZ7riFtC+oAWNQEVUSy65riUVu3m40DOUVzneo9qjTLBhc1
-         I8aA1tGt+KtLWyyUNcG5O5mPZaQezGz7HRqTXXq8vyoZoHzbosB72TWE5stszTcswFC+
-         O/eg==
-X-Gm-Message-State: APjAAAXhbrFXTPY/0GdWEgzOOSzMqBwzh0fYr1zSxF0wDY4jcqYi7Rp2
-        4zE9ablnp8HeRIpqrhzCvMrJc5AMSreQ7cCuhjw=
-X-Google-Smtp-Source: APXvYqxIJ55vEKe7JqfFUqWpUX+HFLn9NxIYRwXDaTvESKfz64imklWfqUOF8EfZgXOON5gnn+AQtKzCyF5Mx07h2to=
-X-Received: by 2002:ad4:4342:: with SMTP id q2mr22403420qvs.42.1570896171755;
- Sat, 12 Oct 2019 09:02:51 -0700 (PDT)
+        id S1729424AbfJLQFE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 12 Oct 2019 12:05:04 -0400
+Received: from mout.web.de ([212.227.15.4]:53007 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727262AbfJLQEc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Oct 2019 12:04:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1570896257;
+        bh=OLEXXVfve/Mn5qOXyqXGU5UQD25/gN2N9FJAnOdynQo=;
+        h=X-UI-Sender-Class:To:From:Subject:Cc:Date;
+        b=sJDOD02wHxRvR0HLbLlzPOhA2+i1S8gpYVHOfavP/cvrq2DXrOUJtOpKT+bQiMagl
+         ZGibU2BelHoZnWpXddGVQq5nNp62qpQlVBr3/soHYX8ReeccJN3rptaenvSxzlmSbG
+         V4K5E/DKnkvgEJ5pd2LTVAuWXCum/Ordqp9wdz4k=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.132.155.250]) by smtp.web.de (mrweb004
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MMZck-1iRY9X1pYU-008HQo; Sat, 12
+ Oct 2019 18:04:17 +0200
+To:     nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Subject: drm/nouveau: Checking a kmemdup() call in
+ nouveau_connector_of_detect()
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
+        Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>,
+        Stephen McCamant <smccaman@umn.edu>
+Message-ID: <5ff56ca3-0e20-2820-f981-d2d37dded133@web.de>
+Date:   Sat, 12 Oct 2019 18:04:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Received: by 2002:a0c:f245:0:0:0:0:0 with HTTP; Sat, 12 Oct 2019 09:02:51
- -0700 (PDT)
-Reply-To: ayishagddafio@mail.com
-From:   Aisha Gadafi <aishagddafi680@gmail.com>
-Date:   Sat, 12 Oct 2019 09:02:51 -0700
-Message-ID: <CAO3Jird+CkVKKsRDZ6WE7Ba9BpHx23EnoiaCOxEDFx1xpK7KSA@mail.gmail.com>
-Subject: Dear Friend (Assalamu Alaikum),
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:eSnIYSIfwQ+qZ88AQSHhpkJEQSkiQV8bWwDZf3F/859qwwhUw2p
+ yjCEEUP2esK1O7eoNBr+i2vPIvHTcJKyh/9qIA6rC7yig/ErwTU4gVgD1jwFG72yLowrxvC
+ EZ+Xn1E6Br2aEk5op+xfHL+vpOsBkCiP0+GUvtvTyuGYlRhFgLuyj1O8rF2kL6XpwXVdhJ4
+ SQOrJ1nQazQiiF3oBgnGA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:TGctBN2vpf0=:Zm0dRMNMZuTyFvygAuu02A
+ F9VWPbYChpxZwCmUIkNRdvOVLJQnxefkbpM1KuYofME+BWFRgBw1VlFC7ZVcweFcVGykeM8R1
+ mSoX1mUYuLqn1dtHTLwhnwgX9NafAI7fzSDs9ZaIT3bBpJgVv735Gp2EQHbin3UGVBzJ7xdFF
+ M42tRX+yXFznT6q0ptDrWWHhZ9o3URJ87SLN+EgmV3jmuCLYYlzam8p47i8aJPkWY7YE5M7dY
+ nQpnNsssy1rQaG7g7zZx4jCpGf0Ctnkypl3A7xWvN9BrabtdnxxMs94UuToZoIN3r13FvSX8g
+ Tc7yquinUVopfAWTBEntKYYXywTnIgNjG6L+0Hu2ZPNrB5TuemO7Z2qDltY8lLTc/C6anJZ4B
+ KFlkew493gdqV5EdaGy0JeFIcaW/PJipetSMmvKyMCiIbJvVA6rrawH2O/VkBOnf2imlG+It6
+ 5VptJTTjm2coejql5g9rioBYY/D+wv2Crl3KxPlbZ2qapeaCqL1Tmh/sp9yMYDaXdGS8UdVs2
+ T/pmXrt+pKi9bvXG8/fXVABrA0vPJPcBsykNWyaG3cmB6ojvn7GcI4eVquhtULfPjFDkZkQm3
+ 19KpklM7Jy38gJItXaBpSALijAA+2IQpAAAjaoOBWFiwjAGP+jQMXBDboc7JouNFJJt5AzA60
+ TWC+OAa9dK7QMvmjGG3wRBYKnrUYw6TaySdNr3+NXkvxFr93sP5XiIy2o1x6xiW4JntYkBLeE
+ cFhnzrzs3jMjSQAv+EqXRQgYW1fmY59xnSuk1n774vJx/SzjDlb5SCA754kL/cC+gMdTC7v5T
+ LUzV4pGJuMEUD94ipy+Hz6SQJPe5Juu2Eq203B0azkWXKeG2Snotj/d0y6ZYd4dxz49I51l0I
+ 4G413AJJ8eXTgA6BtJuDd3WYvIYb6CDRy6uKIpsYCoT8zKb8yvNfxCgMv/EnxiWpTKiWUiL0z
+ OJi5Tyv+s/kgUErWiPRr5KmZX2Nk6wSUak079Ors5vsqr3gNjPQvONr4xZBPEvcr7UlEaqM8D
+ hvxdMYtflQTBYTnIAQC/f6qu/cxE15+7meOntNU4bEMpyCmhhkCqEEs8udiBts+T20Fi54Y2H
+ FHnF+R1G3M0Kt//M422ZtfAGVAhNF7wg4QnuAPjo3dMox+pPjw9eZ+Xcd9y0+PWp6LGRBhnZe
+ c8+X1RcSTq/sINC/x7DwgivPeu3WMd4RaV6PhXwgXMlxVJutkOUXO0lMQNEBc/7xd70uOXOUr
+ IlCc1dzWnvwBzkacPLuwDFHBNpQ162igkmIJdobG5vQVHOIfpn65FNtt+cs0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=20
-Lieber Freund (Assalamu Alaikum),
+Hello,
 
-Ich bin vor einer privaten Suche auf Ihren E-Mail-Kontakt gesto=C3=9Fen
-Ihre Hilfe. Mein Name ist Aisha Al-Qaddafi, alleinerziehende Mutter und Wit=
-we
-mit drei Kindern. Ich bin die einzige biologische Tochter des sp=C3=A4ten L=
-ibyers
-Pr=C3=A4sident (Oberst Muammar Gaddafi).
+I tried another script for the semantic patch language out.
+This source code analysis approach points out that the implementation
+of the function =E2=80=9Cnouveau_connector_of_detect=E2=80=9D contains sti=
+ll
+an unchecked call of the function =E2=80=9Ckmemdup=E2=80=9D.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/dr=
+ivers/gpu/drm/nouveau/nouveau_connector.c?id=3D1c0cc5f1ae5ee5a6913704c0d75=
+a6e99604ee30a#n476
+https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/gpu/drm/nouveau/n=
+ouveau_connector.c#L476
 
-Ich habe Investmentfonds im Wert von siebenundzwanzig Millionen und
-f=C3=BCnfhunderttausend
-United State Dollar (27.500.000,00 $) und ich brauche eine
-vertrauensw=C3=BCrdige Investition
-Manager / Partner wegen meines aktuellen Fl=C3=BCchtlingsstatus bin ich jed=
-och
-Interesse an Ihnen f=C3=BCr die Unterst=C3=BCtzung von Investitionsprojekte=
-n in
-Ihrem Land, kann sein
-Von dort aus k=C3=B6nnen wir in n=C3=A4chster Zukunft eine Gesch=C3=A4ftsbe=
-ziehung aufbauen.
+How do you think about to improve it?
 
-Ich bin gerne bereit, mit Ihnen das Verh=C3=A4ltnis der Beteiligungsquote z=
-u teilen
-st=C3=BCtzen Sie sich auf die zuk=C3=BCnftigen Investitionen, die Gewinne e=
-rzielen.
-
-Wenn Sie bereit sind, dieses Projekt in meinem Namen durchzuf=C3=BChren,
-antworten Sie bitte dringend
-Damit ich Ihnen mehr Informationen =C3=BCber die Investmentfonds geben kann=
-.
-
-Ihre dringende Antwort wird gesch=C3=A4tzt. Schreiben Sie mir an diese
-E-Mail-Adresse (
-ayishagddafio@mail.com ) zur weiteren Diskussion.
-
-Freundliche Gr=C3=BC=C3=9Fe
-Frau Aisha Al-Gaddafi
-Antwort an: ayishagddafio@mail.com
+Regards,
+Markus
