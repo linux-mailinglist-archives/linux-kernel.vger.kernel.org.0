@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38A00D520A
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 21:18:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5251AD5206
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 21:18:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729783AbfJLTQk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 12 Oct 2019 15:16:40 -0400
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:33112 "EHLO
-        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729708AbfJLTQX (ORCPT
+        id S1729747AbfJLTQa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 12 Oct 2019 15:16:30 -0400
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:34228 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729711AbfJLTQY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Oct 2019 15:16:23 -0400
-Received: by mail-pl1-f201.google.com with SMTP id d2so8000625pll.0
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2019 12:16:21 -0700 (PDT)
+        Sat, 12 Oct 2019 15:16:24 -0400
+Received: by mail-pf1-f202.google.com with SMTP id a1so10252705pfn.1
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2019 12:16:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=iOxLSyvauwwhumHzgnG9xPoY+bBy9JSBRyXvMmFSrNY=;
-        b=vU+VS9/Xc5ZZqcPsDEq08NdpvWhOfJ7V11CiZ4nhL2PcL/QGvs8KlCAI5hMoeF6KXe
-         J22BspMsEAuiLiJIPH9KeY/UtlpL5m2+iYdd2QjCwngE1+BYX4B5aB6DBGTGa51xcRRZ
-         p7auEWHT1k/rJ01trWIMLQO1ktUHOm7ANrHV+EA5oZSdYDeUGDY3HHR10CbCtI6QG7oQ
-         FBllhGH81W5jXFSqnF65x0M2rxSJwcQ8Ng0mS9KTEI40+Mi263JknxSzFdEPG2lk53hR
-         pxOLF0KEwfV3qblCcW2h0SnwDGbQdhR13Xq+gSVwFlRPNwOmkP1KRthADORsOvx3xHVR
-         wpmw==
+        bh=rndXJobaj7s7XR7/GcIAJKh9KiC/uTxb0FRgsTRBuNU=;
+        b=UjzTDsp1v7Pubz24Y7XNFt2EfyIgRfB0QPsy4lwxZqSA25R8SP2JyFxFwcMc7sGNif
+         uE92sAIwVTmLb6UoEij3KFtI4e5FKiWTVQHxM80R21s1nBH97wr3yQuTvaKnB0PRFXx4
+         YB0CiOoInpXL9ISsfQggztQmFFIsXkVPORagAXt9ecqmIiGDWQ54n+4AaX0+rfXPBGeo
+         ohuC1nfuU21BsFaPI8JnTgx4US6JLUPklBiVQAQ7NbzYUlg0HPCbZkiUJ30TYIk7RCPA
+         ni+1cdZgsW47/cygSgeFIvF7YEBfM0i7CiepmeQiqkTLRW7G0vNDkucOjP8XknuCld+9
+         hUoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=iOxLSyvauwwhumHzgnG9xPoY+bBy9JSBRyXvMmFSrNY=;
-        b=asfCmzSiUWNR7RhzNOr3YOZ/nxmJ/fxAweKheSJEmJoa5xBzyqlnDfuytbREyUT1D2
-         5J5Jq9mVk4eCcq577J5CUYSZTySx5+JtC9YtC/6+toaKfsd4O/AHpvmFtKyMCn4u0hn9
-         3kPj4HhjzaZZ1I2pgwhnwgphyyHHLtWPn4hSCx9b/EvACobbN+LnzdhAkOfWAsf59awF
-         2l73vmyHFtiMPTXbzNB/8X3vd1/fI6sCeZfD3+NbR873ortrSwgylioQ42DqxjLQ4Zs3
-         clB2/YvatkrzWx77RE9g2eID2dfv/DnC5Xk2d4ruNYMfDdsmpjlwO0yxYAqLoJdL9eGv
-         xIQA==
-X-Gm-Message-State: APjAAAXbFyTSnnu8rOMqQyIqQQCgPs+uvvAeFFwzvxgDPeYudhKrDibT
-        nOWH1sF4B6yXyvqkYyDxvvzQpxiynUI=
-X-Google-Smtp-Source: APXvYqyFl3qNDCqMy0PcJvX0enVhF6M9h9yutHE9ydYGe5euA4uri/08PLCdEMnDDfadqf0JFdrojOzW2zo=
-X-Received: by 2002:a63:1e1f:: with SMTP id e31mr3212172pge.303.1570907781014;
- Sat, 12 Oct 2019 12:16:21 -0700 (PDT)
-Date:   Sat, 12 Oct 2019 12:16:00 -0700
+        bh=rndXJobaj7s7XR7/GcIAJKh9KiC/uTxb0FRgsTRBuNU=;
+        b=tPglfSsKgEEpnzZ3kyR0pADmT1heIk8Lkm2CedP44xN/a57H0g5iAv4D7UUZdnyV84
+         6soQJAv+M/0IKmJq4jJ87nFvb6OGBsh0UpLkY9AOwMaSpjrSh1VH5pOybVIjXOXFQVrd
+         mpnrogT4yWTbD2BuJ/zCulrR/xyk7V0FjF6pa28UQYx4hB39e4DjGSxCSDe7cKK0jH3n
+         gT38WDCZBDjaOooiHwDNzBXcCeF7c11WR+Ov1IqWfUcFpWrDj8tZkQ7KS36xNciB/a35
+         9LXWft0PFWjT+1Y8kjaV71zq36fw4k1ftxqipmAOd4eeBUNCwDXhxM1Fa4TiMtgSrinF
+         flqw==
+X-Gm-Message-State: APjAAAUFiTLMP5tCuw5hRELP8ZkLl58+1hou0Uk6sACQMUSbzxJD0S1O
+        zt5cNvqW2nuQ1GjR5Ytl8NzU7FtZMXA=
+X-Google-Smtp-Source: APXvYqz6eiHLYmfCq8q467gPeGBdl/RKcDM8B/ZEjvbdGzPZ2a2CSS9rdnakqc9yLjanGkG9aZK+4D2nfMU=
+X-Received: by 2002:a63:e0d:: with SMTP id d13mr24069788pgl.439.1570907782899;
+ Sat, 12 Oct 2019 12:16:22 -0700 (PDT)
+Date:   Sat, 12 Oct 2019 12:16:01 -0700
 In-Reply-To: <20191012191602.45649-1-dancol@google.com>
-Message-Id: <20191012191602.45649-6-dancol@google.com>
+Message-Id: <20191012191602.45649-7-dancol@google.com>
 Mime-Version: 1.0
 References: <20191012191602.45649-1-dancol@google.com>
 X-Mailer: git-send-email 2.23.0.700.g56cf767bdb-goog
-Subject: [PATCH 5/7] Let userfaultfd opt out of handling kernel-mode faults
+Subject: [PATCH 6/7] Allow users to require UFFD_SECURE
 From:   Daniel Colascione <dancol@google.com>
 To:     linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
         lokeshgidra@google.com, dancol@google.com, nnk@google.com
@@ -58,62 +58,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-userfaultfd handles page faults from both user and kernel code.  Add a
-new UFFD_USER_MODE_ONLY flag for userfaultfd(2) that makes the
-resulting userfaultfd object refuse to handle faults from kernel mode,
-treating these faults as if SIGBUS were always raised, causing the
-kernel code to fail with EFAULT.
-
-A future patch adds a knob allowing administrators to give some
-processes the ability to create userfaultfd file objects only if they
-pass UFFD_USER_MODE_ONLY, reducing the likelihood that these processes
-will exploit userfaultfd's ability to delay kernel page faults to open
-timing windows for future exploits.
+This change adds 2 as an allowable value for
+unprivileged_userfaultfd. (Previously, this sysctl could be either 0
+or 1.) When unprivileged_userfaultfd is 2, users with CAP_SYS_PTRACE
+may create userfaultfd with or without UFFD_SECURE, but users without
+CAP_SYS_PTRACE must pass UFFD_SECURE to userfaultfd in order for the
+system call to succeed, effectively forcing them to opt into
+additional security checks.
 
 Signed-off-by: Daniel Colascione <dancol@google.com>
 ---
- fs/userfaultfd.c                 | 5 ++++-
- include/uapi/linux/userfaultfd.h | 6 ++++++
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ Documentation/admin-guide/sysctl/vm.rst | 6 ++++--
+ fs/userfaultfd.c                        | 4 +++-
+ kernel/sysctl.c                         | 2 +-
+ 3 files changed, 8 insertions(+), 4 deletions(-)
 
+diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
+index 64aeee1009ca..6664eec7bd35 100644
+--- a/Documentation/admin-guide/sysctl/vm.rst
++++ b/Documentation/admin-guide/sysctl/vm.rst
+@@ -842,8 +842,10 @@ unprivileged_userfaultfd
+ 
+ This flag controls whether unprivileged users can use the userfaultfd
+ system calls.  Set this to 1 to allow unprivileged users to use the
+-userfaultfd system calls, or set this to 0 to restrict userfaultfd to only
+-privileged users (with SYS_CAP_PTRACE capability).
++userfaultfd system calls, or set this to 0 to restrict userfaultfd to
++only privileged users (with SYS_CAP_PTRACE capability).  If set to 2,
++unprivileged (non-SYS_CAP_PTRACE) users may use userfaultfd only if
++they pass the UFFD_SECURE, enabling MAC security checks.
+ 
+ The default value is 1.
+ 
 diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 1123089c3d55..986d23b2cd33 100644
+index 986d23b2cd33..aaed9347973e 100644
 --- a/fs/userfaultfd.c
 +++ b/fs/userfaultfd.c
-@@ -389,6 +389,9 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
- 
- 	if (ctx->features & UFFD_FEATURE_SIGBUS)
- 		goto out;
-+	if ((vmf->flags & FAULT_FLAG_USER) == 0 &&
-+	    ctx->flags & UFFD_USER_MODE_ONLY)
-+		goto out;
- 
- 	/*
- 	 * If it's already released don't get it. This avoids to loop
-@@ -1959,7 +1962,7 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
- {
+@@ -1963,8 +1963,10 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
  	struct userfaultfd_ctx *ctx;
  	int fd;
--	static const int uffd_flags = UFFD_SECURE;
-+	static const int uffd_flags = UFFD_SECURE | UFFD_USER_MODE_ONLY;
+ 	static const int uffd_flags = UFFD_SECURE | UFFD_USER_MODE_ONLY;
++	bool need_cap_check = sysctl_unprivileged_userfaultfd == 0 ||
++		(sysctl_unprivileged_userfaultfd == 2 && !(flags & UFFD_SECURE));
  
- 	if (!sysctl_unprivileged_userfaultfd && !capable(CAP_SYS_PTRACE))
+-	if (!sysctl_unprivileged_userfaultfd && !capable(CAP_SYS_PTRACE))
++	if (need_cap_check && !capable(CAP_SYS_PTRACE))
  		return -EPERM;
-diff --git a/include/uapi/linux/userfaultfd.h b/include/uapi/linux/userfaultfd.h
-index 12d7d40d7f25..eadd1497e7b5 100644
---- a/include/uapi/linux/userfaultfd.h
-+++ b/include/uapi/linux/userfaultfd.h
-@@ -239,4 +239,10 @@ struct uffdio_zeropage {
-  * Create a userfaultfd with MAC security checks enabled.
-  */
- #define UFFD_SECURE 1
-+
-+/*
-+ * Create a userfaultfd that can handle page faults only in user mode.
-+ */
-+#define UFFD_USER_MODE_ONLY 2
-+
- #endif /* _LINUX_USERFAULTFD_H */
+ 
+ 	BUG_ON(!current->mm);
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 00fcea236eba..fc98d5df344e 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1738,7 +1738,7 @@ static struct ctl_table vm_table[] = {
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec_minmax,
+ 		.extra1		= SYSCTL_ZERO,
+-		.extra2		= SYSCTL_ONE,
++		.extra2		= &two,
+ 	},
+ #endif
+ 	{ }
 -- 
 2.23.0.700.g56cf767bdb-goog
 
