@@ -2,103 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3AAED4C8F
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 05:55:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2BFBD4CA5
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 06:10:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728217AbfJLDzP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 23:55:15 -0400
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:49751 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726269AbfJLDzO (ORCPT
+        id S1728582AbfJLEJv convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 12 Oct 2019 00:09:51 -0400
+Received: from sender4-op-o14.zoho.com ([136.143.188.14]:17416 "EHLO
+        sender4-op-o14.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728396AbfJLEJv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 23:55:14 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R751e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=aaron.lu@linux.alibaba.com;NM=1;PH=DS;RN=21;SR=0;TI=SMTPD_---0TenDtwe_1570852503;
-Received: from aaronlu(mailfrom:aaron.lu@linux.alibaba.com fp:SMTPD_---0TenDtwe_1570852503)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 12 Oct 2019 11:55:09 +0800
-Date:   Sat, 12 Oct 2019 11:55:03 +0800
-From:   Aaron Lu <aaron.lu@linux.alibaba.com>
-To:     Vineeth Remanan Pillai <vpillai@digitalocean.com>
-Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
-        Julien Desfossez <jdesfossez@digitalocean.com>,
-        Dario Faggioli <dfaggioli@suse.com>,
-        "Li, Aubrey" <aubrey.li@linux.intel.com>,
-        Aubrey Li <aubrey.intel@gmail.com>,
-        Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Turner <pjt@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        =?iso-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
-Message-ID: <20191012035503.GA113034@aaronlu>
-References: <CANaguZCH-jjHrWwycU3vz6RfNkW9xN+DoRkHnL3n8-DneNV3FQ@mail.gmail.com>
- <20190912123532.GB16200@aaronlu>
- <CANaguZBTiLQiRQU9MJR2Qys8S2S=-PTe66_ZPi5DVzpPbJ93zw@mail.gmail.com>
- <CANaguZDOb+rVcDPMS+SR1DKc73fnctkBK0EbfBrf90dztr8t=Q@mail.gmail.com>
- <20191010135436.GA67897@aaronlu>
- <CANaguZDCtmXpm_rpTkjsfPPBscHCwz4u1OHwUt3XztzgLJa_jA@mail.gmail.com>
- <20191011073338.GA125778@aaronlu>
- <CANaguZCkKQTmgye+9nQhzQqYBrsnCmcjA46TPmLwN60vvMQ_7w@mail.gmail.com>
- <20191011114851.GA8750@aaronlu>
- <CANaguZBgv5N2Spv-Ldio5Umn6qU7dC0Px66sL9s11W7SK3f4Hg@mail.gmail.com>
+        Sat, 12 Oct 2019 00:09:51 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1570853383; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=oXaclZr+VrF425thVZGSlC3VqKjp/BQxbM4FYqQAS14LUohnYwbk4K35IMa8Sx2oO8QmP5fR89JHs3idumWrMOCnXqHfsWWqrmIzbyED/6blLYgRq6bc9fDjdBzn000CXm1+6keP2DB3FgLkmubS1Ne8kQEJWO54XPPvZFB098M=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1570853383; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To; 
+        bh=3t0KcqUengCbxkgvjOossht4GKUHcCzitqU1dmTGMJU=; 
+        b=E8fMBJcZovgqbB4aw92vOIb8MnH4U532hxyw268keKxk/NfHcw3ZvJEr19FhJevMT+uCYBLtOiZtJfGG2+XoEIQhvhOe1S4RO31QExRFiiTkFlE4f7/q6lIwQ6oUBzyho9AcnSauUq3jz/pJYVq9nM2nuV7zUoU88cQKFC2r4qg=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=dlrobertson.com;
+        spf=pass  smtp.mailfrom=dan@dlrobertson.com;
+        dmarc=pass header.from=<dan@dlrobertson.com> header.from=<dan@dlrobertson.com>
+Received: from nessie.verizon.net (pool-100-15-144-194.washdc.fios.verizon.net [100.15.144.194]) by mx.zohomail.com
+        with SMTPS id 1570853381986565.1916973927841; Fri, 11 Oct 2019 21:09:41 -0700 (PDT)
+From:   Dan Robertson <dan@dlrobertson.com>
+To:     Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc:     devicetree@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, Dan Robertson <dan@dlrobertson.com>
+Message-ID: <20191012035420.13904-1-dan@dlrobertson.com>
+Subject: [PATCH v2 0/2] iio: add driver for Bosch BMA400 accelerometer
+Date:   Sat, 12 Oct 2019 03:54:18 +0000
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANaguZBgv5N2Spv-Ldio5Umn6qU7dC0Px66sL9s11W7SK3f4Hg@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8BIT
+X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 08:10:30AM -0400, Vineeth Remanan Pillai wrote:
-> > Thanks for the clarification.
-> >
-> > Yes, this is the initialization issue I mentioned before when core
-> > scheduling is initially enabled. rq1's vruntime is bumped the first time
-> > update_core_cfs_rq_min_vruntime() is called and if there are already
-> > some tasks queued, new tasks queued on rq1 will be starved to some extent.
-> >
-> > Agree that this needs fix. But we shouldn't need do this afterwards.
-> >
-> > So do I understand correctly that patch1 is meant to solve the
-> > initialization issue?
-> 
-> I think we need this update logic even after initialization. I mean, core
-> runqueue's min_vruntime can get updated every time when the core
-> runqueue's min_vruntime changes with respect to the sibling's min_vruntime.
-> So, whenever this update happens, we would need to propagate the changes
-> down the tree right? Please let me know if I am visualizing it wrong.
+This patchset adds a IIO driver for the Bosch BMA400 3-axes ultra low-power
+accelerometer.  The initial implementation of the driver adds read support for
+the acceleration and temperature data registers. The driver also has support
+for reading and writing to the output data rate, oversampling ratio, and scale
+configuration registers.
 
-I don't think we need do the normalization afterwrads and it appears
-we are on the same page regarding core wide vruntime.
+A huge thanks to the reviewers of the first version of the patchet!
 
-The intent of my patch is to treat all the root level sched entities of
-the two siblings as if they are in a single cfs_rq of the core. With a
-core wide min_vruntime, the core scheduler can decide which sched entity
-to run next. And the individual sched entity's vruntime shouldn't be
-changed based on the change of core wide min_vruntime, or faireness can
-hurt(if we add or reduce vruntime of a sched entity, its credit will
-change).
+Cheers,
 
-The weird thing about my patch is, the min_vruntime is often increased,
-it doesn't point to the smallest value as in a traditional cfs_rq. This
-probabaly can be changed to follow the tradition, I don't quite remember
-why I did this, will need to check this some time later.
+ - Dan
 
-All those sub cfs_rq's sched entities are not interesting. Because once
-we decided which sched entity in the root level cfs_rq should run next,
-we can then pick the final next task from there(using the usual way). In
-other words, to make scheduler choose the correct candidate for the core,
-we only need worry about sched entities on both CPU's root level cfs_rqs.
+Changes in v2:
 
-Does this make sense?
+ * Implemented iio_info -> read_avail
+ * Stylistic changes
+ * Implemented devicetree bindings
+
+Dan Robertson (2):
+  dt-bindings: iio: accel: bma400: add bindings
+  iio: (bma400) add driver for the BMA400
+
+ .../devicetree/bindings/iio/accel/bma400.txt  |  16 +
+ drivers/iio/accel/Kconfig                     |  19 +
+ drivers/iio/accel/Makefile                    |   2 +
+ drivers/iio/accel/bma400.h                    |  86 ++
+ drivers/iio/accel/bma400_core.c               | 839 ++++++++++++++++++
+ drivers/iio/accel/bma400_i2c.c                |  58 ++
+ 6 files changed, 1020 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/accel/bma400.txt
+ create mode 100644 drivers/iio/accel/bma400.h
+ create mode 100644 drivers/iio/accel/bma400_core.c
+ create mode 100644 drivers/iio/accel/bma400_i2c.c
+
+
+
