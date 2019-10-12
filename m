@@ -2,130 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B754D4D4E
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 07:50:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1235D4D53
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 07:54:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728879AbfJLFuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 12 Oct 2019 01:50:18 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33720 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728801AbfJLFuQ (ORCPT
+        id S1728000AbfJLFyt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 12 Oct 2019 01:54:49 -0400
+Received: from sender4-pp-o94.zoho.com ([136.143.188.94]:25453 "EHLO
+        sender4-pp-o94.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726947AbfJLFyt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Oct 2019 01:50:16 -0400
-Received: by mail-wr1-f66.google.com with SMTP id b9so14030294wrs.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 22:50:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=colorfullife-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=tUFfEqssaOurroMZxJeXFrxni1ka8JYLCPlMCPkng/8=;
-        b=QEhBf8C0IAfzPSfOfrDRxQYkKq/VqXAlAodXaGkh1Amy/6QWwmkVr3/mNG/aiGKbKn
-         TmlmF+lFjt3Py2zZR+248+NzL9GbEmrZWkwpUAm7n2X+QtDNOFTcX2XlfQ/5GXan3ZyV
-         TSURpmW/NukWxWLLyOHg1EHB94YAGasTsmXBCyJesh/wEpbYDqz7aIrP5tOR9Hxn8X6G
-         wAVYIVWq68asKZmDDH1Ga4H5eQQ1Tj4+3iZFcwnSFCFJzCuCtp3ZSqeouXlApF6ZzuM8
-         d99TuYz2Pe4n3gTJ4q67eyG9vxRsv4eO/fJ0oHKYwYyHBl9T5ltEUiu3tXlVmyDU0N39
-         GHPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=tUFfEqssaOurroMZxJeXFrxni1ka8JYLCPlMCPkng/8=;
-        b=nBh8g+ffYM76yfJq9GW4pVSO/wdCn7OIpSz6xb2iuTzLcv91MAHSsah2RFhGCIZ79j
-         xrPVjkLRJ8DbirLmoutETgEIdyWHZDKx3m8UjDoBszXaPME3UmpXHK7CnSEEdSnQy5fm
-         1Be0rZcC2i0ck7sjI8ZR4mtai+r2r46mb3PaaRFAYHgQW43lvTmHSmnG7zToK2yHg+nY
-         wUXTAX7EwYosyLpWxzQtxK8UfjM04/arwhygvW8E/lWgBoSMqfM8IP0I6ROvZU4UbnPf
-         9iWTN/dMEbDenxA4RrlBQVKbvYmDtuc3RBIipz9ALM2mP0AdszlCtunIZJi/qBz0/LoA
-         af9Q==
-X-Gm-Message-State: APjAAAUwungsAdtUwzuUnK0T2GOiLC0/Jy8OU2m+8YYFfbysNYjjxReG
-        e+6mtKRV1+SBiOd8/9YjcNycfa+YTqfNoA==
-X-Google-Smtp-Source: APXvYqzV0Hdp2ixn0MfFr/2aq9NwoS0W7itSV2KJ1yajVEVzE7UMP+8Hfpolf2WZ/E0FN+RBIgFXYg==
-X-Received: by 2002:adf:e403:: with SMTP id g3mr14930705wrm.294.1570859414317;
-        Fri, 11 Oct 2019 22:50:14 -0700 (PDT)
-Received: from linux.fritz.box (p200300D9973AD600F159A589C745B52A.dip0.t-ipconnect.de. [2003:d9:973a:d600:f159:a589:c745:b52a])
-        by smtp.googlemail.com with ESMTPSA id z4sm9344955wrh.93.2019.10.11.22.50.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2019 22:50:13 -0700 (PDT)
-From:   Manfred Spraul <manfred@colorfullife.com>
-To:     LKML <linux-kernel@vger.kernel.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Waiman Long <longman@redhat.com>
-Cc:     1vier1@web.de, Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Manfred Spraul <manfred@colorfullife.com>
-Subject: [PATCH 6/6] Documentation/memory-barriers.txt: Clarify cmpxchg()
-Date:   Sat, 12 Oct 2019 07:49:58 +0200
-Message-Id: <20191012054958.3624-7-manfred@colorfullife.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191012054958.3624-1-manfred@colorfullife.com>
-References: <20191012054958.3624-1-manfred@colorfullife.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sat, 12 Oct 2019 01:54:49 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1570859669; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=Y76ct1mfQm+gDOsrT21k7qyXHKNKngAALnBxIDdOsKm4DT4iVNnv9G9e+eZ7TwwZ9iavijfIkJ88meIlcfaqLEkYEmA3gunZ3VKAWxfL5zXDQdpTKacH8GSUMb74m0DMLGZ+uIQhZ+wSuCWCMFYFWwWr0grZw0ksqCOo0dY9fww=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1570859669; h=Cc:Date:From:In-Reply-To:Message-ID:References:Subject:To; 
+        bh=JDuVST2VkoELe/2fG86SHmz85muqhMXcSmVMfw/sb5w=; 
+        b=baP9rOd/Xog7SKVOe4ZmkyEq5qKbRA9cgdVRki93HE/tRG3p+S98Ow3M1U3jE/ZHrYdQPmpKFCs+iIY/wFmU+aL69GNkWicit8CEDKueKJiYFJFLsQp6YVY/h/zgZnQVhzODw+/DWRfFPK+ckB7AzqHx9kRJsHP3AXqE0Lp7O/Y=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=zoho.com;
+        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
+        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zapps768; d=zoho.com; 
+  h=from:to:cc:subject:date:message-id:in-reply-to:references; 
+  b=t3F/21qWHx7tFz4TiIDtcBKT6bgE14jHVahb/9weBPum3exvgpPjfqed16YADKrh4H6ah+55qY5j
+    gjS5VbNeXYgZUXbSES/DWU7VARxSBu5wQeliP8fd8NkBO8iJwp1F  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1570859669;
+        s=zm2019; d=zoho.com; i=zhouyanjie@zoho.com;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; l=62;
+        bh=JDuVST2VkoELe/2fG86SHmz85muqhMXcSmVMfw/sb5w=;
+        b=byBCG3DmYd00DaaA1qfTdI7AGkDRBE63eWSg51FD/63MniTr5ZC/EWKGR4jkS0eZ
+        EU7Jrj0hXG93VKDWCHUw7y3r+gNISnVnyD4Mub/I1YAMajiC29RKbpAJia1UpKiXIKf
+        GTD7WcKuBMMxuKTUmIQ/jFvYwmP+CujOK/Pd2vIo=
+Received: from zhouyanjie-virtual-machine.localdomain (182.148.156.27 [182.148.156.27]) by mx.zohomail.com
+        with SMTPS id 1570859669265686.4608330592291; Fri, 11 Oct 2019 22:54:29 -0700 (PDT)
+From:   Zhou Yanjie <zhouyanjie@zoho.com>
+To:     linux-mips@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, jason@lakedaemon.net,
+        paul.burton@mips.com, allison@lohutok.net, syq@debian.org,
+        rfontana@redhat.com, tglx@linutronix.de, paul@crapouillou.net,
+        maz@kernel.org
+Subject: Add process for more than one irq at the same time v6
+Date:   Sat, 12 Oct 2019 13:53:45 +0800
+Message-Id: <1570859630-50942-1-git-send-email-zhouyanjie@zoho.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1548517123-60058-1-git-send-email-zhouyanjie@zoho.com>
+References: <1548517123-60058-1-git-send-email-zhouyanjie@zoho.com>
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The documentation in memory-barriers.txt claims that
-smp_mb__{before,after}_atomic() are for atomic ops that do not return a
-value.
+v5->v6: add my Signed-off-by for patches from Paul Cercueil.
 
-This is misleading and doesn't match the example in atomic_t.txt,
-and e.g. smp_mb__before_atomic() may and is used together with
-cmpxchg_relaxed() in the wake_q code.
-
-The purpose of e.g. smp_mb__before_atomic() is to "upgrade" a following
-RMW atomic operation to a full memory barrier.
-The return code of the atomic operation has no impact, so all of the
-following examples are valid:
-
-1)
-	smp_mb__before_atomic();
-	atomic_add();
-
-2)
-	smp_mb__before_atomic();
-	atomic_xchg_relaxed();
-
-3)
-	smp_mb__before_atomic();
-	atomic_fetch_add_relaxed();
-
-Invalid would be:
-	smp_mb__before_atomic();
-	atomic_set();
-
-Signed-off-by: Manfred Spraul <manfred@colorfullife.com>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Peter Zijlstra <peterz@infradead.org>
----
- Documentation/memory-barriers.txt | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/Documentation/memory-barriers.txt b/Documentation/memory-barriers.txt
-index 1adbb8a371c7..52076b057400 100644
---- a/Documentation/memory-barriers.txt
-+++ b/Documentation/memory-barriers.txt
-@@ -1873,12 +1873,13 @@ There are some more advanced barrier functions:
-  (*) smp_mb__before_atomic();
-  (*) smp_mb__after_atomic();
- 
--     These are for use with atomic (such as add, subtract, increment and
--     decrement) functions that don't return a value, especially when used for
--     reference counting.  These functions do not imply memory barriers.
-+     These are for use with atomic RMW functions (such as add, subtract,
-+     increment, decrement, failed conditional operations, ...) that do
-+     not imply memory barriers, but where the code needs a memory barrier,
-+     for example when used for reference counting.
- 
--     These are also used for atomic bitop functions that do not return a
--     value (such as set_bit and clear_bit).
-+     These are also used for atomic RMW bitop functions that do imply a full
-+     memory barrier (such as set_bit and clear_bit).
- 
-      As an example, consider a piece of code that marks an object as being dead
-      and then decrements the object's reference count:
--- 
-2.21.0
 
