@@ -2,56 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBFAFD52E2
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 23:40:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C36ED52F7
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 23:58:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729758AbfJLVkH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 12 Oct 2019 17:40:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39704 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729671AbfJLVkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Oct 2019 17:40:06 -0400
-Subject: Re: [GIT PULL] Please pull powerpc/linux.git powerpc-5.4-3 tag
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570916406;
-        bh=3oP6+/0+rNNfPfZP75AUY0sO+HAX3rC8+O4Z4holfXE=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=VCpt0shdQFi1XqIhY9MAiIUahUjKTlvbZ+04d6YjqlQw5omJrxYivUUZIMru4s2Ek
-         fgvjOWdc6JdMDMOsJwQeY2do6tJGoZzj8jWG7gsHU8SsT41fJx1Y8PQj4YHfEJfeGZ
-         9M6KgEcrQ/GzLkF81EMjkpSa8D3vhj+uEgUnpXgw=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <87r23iurdg.fsf@mpe.ellerman.id.au>
-References: <87r23iurdg.fsf@mpe.ellerman.id.au>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <87r23iurdg.fsf@mpe.ellerman.id.au>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git
- tags/powerpc-5.4-3
-X-PR-Tracked-Commit-Id: 2272905a4580f26630f7d652cc33935b59f96d4c
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: db60a5a035aa8692dc7cee293356bdcc078fa7b7
-Message-Id: <157091640632.3377.10259916414495442367.pr-tracker-bot@kernel.org>
-Date:   Sat, 12 Oct 2019 21:40:06 +0000
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>, arnd@arndb.de,
-        desnesn@linux.ibm.com, emmanuel.nicolet@gmail.com,
-        jniethe5@gmail.com, ldufour@linux.ibm.com,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        sfr@canb.auug.org.au
+        id S1729041AbfJLV6M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 12 Oct 2019 17:58:12 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:34648 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727115AbfJLV6L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Oct 2019 17:58:11 -0400
+X-Greylist: delayed 599 seconds by postgrey-1.27 at vger.kernel.org; Sat, 12 Oct 2019 17:58:10 EDT
+Received: from trochilidae.cardiotech.int (unknown [37.17.234.113])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 99D1F5C0D8D;
+        Sat, 12 Oct 2019 23:48:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1570916890;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:
+         content-transfer-encoding:content-transfer-encoding:in-reply-to:
+         references; bh=f/t8Q8PGSqofmfNW09b8VZFKc3Ztm+m+ybxpjgknMqg=;
+        b=z96AWkk+HA9+UnfVpjbAhaZKP7yRQublTuv1zeEABptBJw7eKebmKBznU3eh8VyXVT/DMM
+        rmA9OOrng6E60IWcW2PniLkJ9Gi/pGwsDvOR5NeBp/XQ8eCHl8CC0Q/f95+lH/EeY8GTgU
+        TXQy/Fdz/+JbrwprU6Suq6FX9Lqb4Eo=
+From:   Stefan Agner <stefan@agner.ch>
+To:     mark.rutland@arm.com, lorenzo.pieralisi@arm.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Stefan Agner <stefan.agner@toradex.com>
+Subject: [PATCH] drivers: firmware: psci: use kernel restart handler functionality
+Date:   Sat, 12 Oct 2019 23:47:35 +0200
+Message-Id: <20191012214735.1127009-1-stefan@agner.ch>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 12 Oct 2019 22:37:15 +1100:
+From: Stefan Agner <stefan.agner@toradex.com>
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-5.4-3
+Use the kernels restart handler to register the PSCI system reset
+capability. The restart handler use notifier chains along with
+priorities. This allows to use restart handlers with higher priority
+(in case available) while still supporting PSCI.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/db60a5a035aa8692dc7cee293356bdcc078fa7b7
+Since the ARM handler had priority over the kernels restart handler
+before this patch, use a slightly elevated priority of 160 to make
+sure PSCI is used before most of the other handlers are called.
 
-Thank you!
+Signed-off-by: Stefan Agner <stefan.agner@toradex.com>
+---
+ drivers/firmware/psci/psci.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
+index 84f4ff351c62..d8677b54132f 100644
+--- a/drivers/firmware/psci/psci.c
++++ b/drivers/firmware/psci/psci.c
+@@ -82,6 +82,7 @@ static u32 psci_function_id[PSCI_FN_MAX];
+ 
+ static u32 psci_cpu_suspend_feature;
+ static bool psci_system_reset2_supported;
++static struct notifier_block psci_restart_handler;
+ 
+ static inline bool psci_has_ext_power_state(void)
+ {
+@@ -250,7 +251,8 @@ static int get_set_conduit_method(struct device_node *np)
+ 	return 0;
+ }
+ 
+-static void psci_sys_reset(enum reboot_mode reboot_mode, const char *cmd)
++static int psci_sys_reset(struct notifier_block *this,
++			    unsigned long reboot_mode, void *cmd)
+ {
+ 	if ((reboot_mode == REBOOT_WARM || reboot_mode == REBOOT_SOFT) &&
+ 	    psci_system_reset2_supported) {
+@@ -263,6 +265,8 @@ static void psci_sys_reset(enum reboot_mode reboot_mode, const char *cmd)
+ 	} else {
+ 		invoke_psci_fn(PSCI_0_2_FN_SYSTEM_RESET, 0, 0, 0);
+ 	}
++
++	return NOTIFY_DONE;
+ }
+ 
+ static void psci_sys_poweroff(void)
+@@ -411,6 +415,8 @@ static void __init psci_init_smccc(void)
+ 
+ static void __init psci_0_2_set_functions(void)
+ {
++	int ret;
++
+ 	pr_info("Using standard PSCI v0.2 function IDs\n");
+ 	psci_ops.get_version = psci_get_version;
+ 
+@@ -431,7 +437,14 @@ static void __init psci_0_2_set_functions(void)
+ 
+ 	psci_ops.migrate_info_type = psci_migrate_info_type;
+ 
+-	arm_pm_restart = psci_sys_reset;
++	psci_restart_handler.notifier_call = psci_sys_reset;
++	psci_restart_handler.priority = 160;
++
++	ret = register_restart_handler(&psci_restart_handler);
++	if (ret) {
++		pr_err("Cannot register restart handler, %d\n", ret);
++		return;
++	}
+ 
+ 	pm_power_off = psci_sys_poweroff;
+ }
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.23.0
+
