@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFB2BD4DC9
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 08:54:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79FB1D4DC2
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 08:54:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729173AbfJLGxf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 12 Oct 2019 02:53:35 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:33850 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728842AbfJLGxK (ORCPT
+        id S1729051AbfJLGxL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 12 Oct 2019 02:53:11 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33854 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729016AbfJLGxL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Oct 2019 02:53:10 -0400
-Received: by mail-wm1-f66.google.com with SMTP id y135so10776125wmc.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 23:53:07 -0700 (PDT)
+        Sat, 12 Oct 2019 02:53:11 -0400
+Received: by mail-wm1-f68.google.com with SMTP id y135so10776174wmc.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 23:53:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=e5zHV1yxkD6dbvO/5O4DOC0P97SiQKMYMWVdcBqIV28=;
-        b=MfsX1wPMA6F6IS8Pcpw3SsuC+GiBazsQyIjCf6hugUalSLbHrI9BMSj60fA6l3sjka
-         9XWTPWpQa0K5GHkYDjp84oOK4Gq8ToUHdePTHvmbaWIjJ4W8X6J+PJy8BXe1S1GSSXUF
-         yZsxdZtVX51rWN8TiOLneS419TGoDPs5GQOQhqBzT6GqMIkKw6L78czFfUa7EQ7ujJlB
-         SsHIdobSBEUQq+813GlXAd5SXsPcfbJGzAegHV5LHWV1gTneSqWImasUwKzVr72AmLoR
-         uYHzLyZXA5j2+edcMmT3xVvN1fGxjhaHDOyDKPntpz4omwSIeEbSypJOvGojZWuJkHZL
-         rTtw==
+        bh=MOqGp6N62GYRWc7Fsvh/EkbvR/AOeQrVY/a8V3x3WKI=;
+        b=middy/KXn66SPa/ZVSSjJQb1uEc7zwjKuunyzcH+4pvfWYkDB+7mFIqXayXvFj6QEr
+         g9zzy4B7MvvEmifCJM1Zk8vMVy9jj2ML2RZnHMcW49IBikJCbilxBWJMUFh3mIMKLtFI
+         GGrhK1qHWMjrjHxAVOJFguHBgGtbobrmMPgQQz45U9lZ/Jb3Jk35kwMkb3LKMhA9J+/U
+         nJa5UMAOcWs/9U1v8iFWosAkk5eKmWd1UHwl+oGtaSwwVtbKTmpqsB4ua9DiBHEdiq5X
+         tiTSCoa8oiUMQPTqQ0KB2BUIeLK3ceuI9vh6agO+v7Al2FxLZQ9p7SmTfvYVn6XQGMxM
+         4x/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=e5zHV1yxkD6dbvO/5O4DOC0P97SiQKMYMWVdcBqIV28=;
-        b=SV4cX/pFnVQY04mTvbvAq/Tngyvrfk6DQ2KRXfr+Uy/n8VOWpyiGKSG8bgZVpn5HMh
-         mFtS6DcW1kjsGnbhUALJFa73Kdhhve+JSvDPLEqZz6I9vaoL3RBq2tCLr69oQR5rVuMj
-         y0ge1r8x3b8Xjc3oNHUSsLogziJLJHswSeK9Wes8VNzFAdE9vpgchhyIdUHcLxMrgeQH
-         T3dY//1EHjr6sbQxYBHnqFQOHblx7xaRrtUyzewyoO65moSHge64K99vUjPyBiEPOslB
-         HgkCRVD3DevKxuChe45tKob9UFRNSM31+jXWtLDMLdaVftDXE5JXbo/6i+/qfkeCg2+h
-         YFhA==
-X-Gm-Message-State: APjAAAU/CmBdwnrmFP9PoadDet0YqU/YVOxalrYEnO6hqclvpzVZdUzR
-        uuGMs1rbEWiW9IZ03dtFvOpXbQ==
-X-Google-Smtp-Source: APXvYqwAmVof87d4Ec0oSQ3TUSiJj0A02O5HMzExy/fyCkfLvVFl+kwHvFJ7Zf7D0va6frBuKVmwOw==
-X-Received: by 2002:a7b:c7c1:: with SMTP id z1mr5690097wmk.61.1570863186531;
-        Fri, 11 Oct 2019 23:53:06 -0700 (PDT)
+        bh=MOqGp6N62GYRWc7Fsvh/EkbvR/AOeQrVY/a8V3x3WKI=;
+        b=HIJsFU12IUlmNqQc7047UgPoHJ97ySfvN6QQEnHb5cqR0qReoW4fPTZ4YPQsSv+B7U
+         lCrO2Gx2do/JWKk/r5p7nZ+i4EVGBWYcvuMbS4lBu+pFoobwQQVpauTcLwE64ddpTAxB
+         /2auqWszKowg4YLQ3v5NZzF3IWxexJsxnUIw2is8gGz/tDMV+AiQMWxIkD18Udh2RZ23
+         CZASdYqeL8kVIJFiV4Rw55CC3Rx/SBKVRAdERiSWdieGF4ylkGcBA/2DeMPwyjAZKUMp
+         BnfGpqaZ3hLezajxQ0+ujYy7J0ew2mNjmF7SualzqexW8yY+CNg0KL6ggW9LFz+X7hzr
+         96UQ==
+X-Gm-Message-State: APjAAAXfMP9GWcMNp1jdP7wJwPLcuAF1XqxEwe9KNOLam5fI3zCCCMwA
+        jiKDsJzbw7Ra+mqjzK7/HiTNRA==
+X-Google-Smtp-Source: APXvYqx6jtdvvFGmYfIrdErsFC0VLmpAU1ALugDQxnVp+LABDSDGC1SLJ68sxolh+TBJr2bQEoBEuQ==
+X-Received: by 2002:a1c:a697:: with SMTP id p145mr5714929wme.24.1570863188994;
+        Fri, 11 Oct 2019 23:53:08 -0700 (PDT)
 Received: from mai.imgcgcw.net ([2a01:e34:ed2f:f020:f437:29a8:ed69:7bab])
-        by smtp.gmail.com with ESMTPSA id z5sm17450497wrs.54.2019.10.11.23.53.04
+        by smtp.gmail.com with ESMTPSA id z5sm17450497wrs.54.2019.10.11.23.53.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2019 23:53:05 -0700 (PDT)
+        Fri, 11 Oct 2019 23:53:06 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     rui.zhang@intel.com, edubezval@gmail.com
 Cc:     daniel.lezcano@linaro.org, linux-kernel@vger.kernel.org,
         amit.kucheria@linaro.org
-Subject: [PATCH 04/11] thermal: Move trip point structure definition to private header
-Date:   Sat, 12 Oct 2019 08:52:48 +0200
-Message-Id: <20191012065255.23249-4-daniel.lezcano@linaro.org>
+Subject: [PATCH 05/11] thermal: Move set_trips function to the internal header
+Date:   Sat, 12 Oct 2019 08:52:49 +0200
+Message-Id: <20191012065255.23249-5-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191012065255.23249-1-daniel.lezcano@linaro.org>
 References: <20191012065255.23249-1-daniel.lezcano@linaro.org>
@@ -59,67 +59,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The struct thermal_trip is only used by the thermal internals, it is
-pointless to export the definition in the global header.
+The function is not used in other place than the thermal directory. It
+does not make sense to export its definition in the global header as
+there is no use of it.
 
-Move the structure to the thermal_core.h internal header.
+Move its the definition in the internal header and allow better
+self-encapsulation.
 
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/thermal/thermal_core.h | 13 +++++++++++++
- include/linux/thermal.h        | 15 ---------------
- 2 files changed, 13 insertions(+), 15 deletions(-)
+ drivers/thermal/thermal_core.h | 2 ++
+ include/linux/thermal.h        | 3 ---
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/thermal/thermal_core.h b/drivers/thermal/thermal_core.h
-index 5953bb527ec2..6f6e0dcba4f2 100644
+index 6f6e0dcba4f2..301f5603def1 100644
 --- a/drivers/thermal/thermal_core.h
 +++ b/drivers/thermal/thermal_core.h
-@@ -58,6 +58,19 @@ int power_actor_get_min_power(struct thermal_cooling_device *cdev,
- 			      struct thermal_zone_device *tz, u32 *min_power);
- int power_actor_set_power(struct thermal_cooling_device *cdev,
- 			  struct thermal_instance *ti, u32 power);
-+/**
-+ * struct thermal_trip - representation of a point in temperature domain
-+ * @np: pointer to struct device_node that this trip point was created from
-+ * @temperature: temperature value in miliCelsius
-+ * @hysteresis: relative hysteresis in miliCelsius
-+ * @type: trip point type
-+ */
-+struct thermal_trip {
-+	struct device_node *np;
-+	int temperature;
-+	int hysteresis;
-+	enum thermal_trip_type type;
-+};
- 
- /*
-  * This structure is used to describe the behavior of
-diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-index fae9ff2b079a..88e1faa3d72c 100644
---- a/include/linux/thermal.h
-+++ b/include/linux/thermal.h
-@@ -343,21 +343,6 @@ struct thermal_zone_of_device_ops {
- 	int (*set_trip_temp)(void *, int, int);
+@@ -72,6 +72,8 @@ struct thermal_trip {
+ 	enum thermal_trip_type type;
  };
  
--/**
-- * struct thermal_trip - representation of a point in temperature domain
-- * @np: pointer to struct device_node that this trip point was created from
-- * @temperature: temperature value in miliCelsius
-- * @hysteresis: relative hysteresis in miliCelsius
-- * @type: trip point type
-- */
--
--struct thermal_trip {
--	struct device_node *np;
--	int temperature;
--	int hysteresis;
--	enum thermal_trip_type type;
--};
--
- /* Function declarations */
- #ifdef CONFIG_THERMAL_OF
- struct thermal_zone_device *
++void thermal_zone_set_trips(struct thermal_zone_device *tz);
++
+ /*
+  * This structure is used to describe the behavior of
+  * a certain cooling device on a certain trip point
+diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+index 88e1faa3d72c..761d77571533 100644
+--- a/include/linux/thermal.h
++++ b/include/linux/thermal.h
+@@ -398,7 +398,6 @@ int thermal_zone_unbind_cooling_device(struct thermal_zone_device *, int,
+ 				       struct thermal_cooling_device *);
+ void thermal_zone_device_update(struct thermal_zone_device *,
+ 				enum thermal_notify_event);
+-void thermal_zone_set_trips(struct thermal_zone_device *);
+ 
+ struct thermal_cooling_device *thermal_cooling_device_register(const char *,
+ 		void *, const struct thermal_cooling_device_ops *);
+@@ -444,8 +443,6 @@ static inline int thermal_zone_unbind_cooling_device(
+ static inline void thermal_zone_device_update(struct thermal_zone_device *tz,
+ 					      enum thermal_notify_event event)
+ { }
+-static inline void thermal_zone_set_trips(struct thermal_zone_device *tz)
+-{ }
+ static inline struct thermal_cooling_device *
+ thermal_cooling_device_register(char *type, void *devdata,
+ 	const struct thermal_cooling_device_ops *ops)
 -- 
 2.17.1
 
