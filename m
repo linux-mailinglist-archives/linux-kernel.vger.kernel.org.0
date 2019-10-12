@@ -2,190 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD63CD5147
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 19:11:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07F11D5155
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 19:17:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729538AbfJLRLo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 12 Oct 2019 13:11:44 -0400
-Received: from mout.gmx.net ([212.227.15.15]:54471 "EHLO mout.gmx.net"
+        id S1729570AbfJLRRk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 12 Oct 2019 13:17:40 -0400
+Received: from mout.gmx.net ([212.227.17.20]:52487 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729069AbfJLRLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Oct 2019 13:11:43 -0400
+        id S1727262AbfJLRRj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Oct 2019 13:17:39 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1570900286;
-        bh=Uz2pP5hTF599V0iyIbkgS2qh4IzWWNUk/fRR8WwX2H4=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
-        b=R/fz1DxnVZV0/WJDRE1tCfl2+PKDAFB48F4EAN/imrZ0EU6gAhPu3egDQ9Pf3Evm1
-         B9H1y0euYzFTkQFdtuEFOIKk5OTdXeOUGX2WjYHETw+Gwhb+gzRswx/B6vPhxYjKil
-         rikj3ef99sRnnZvJw0zMqv3h2DefVF29+LYYGtVU=
+        s=badeba3b8450; t=1570900304;
+        bh=e3clNQm4ZApZXbVyy9UxDQAm7LQllONhhohiXcd0Ths=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=TrHzkcD4erXW1naB1U30dr/sFOjzk8wWtig3neo9mkrsPNi/aGxMNBRswoNj6j0j/
+         67bnrZ62bKAEKwhu/sqzrSJZXTJC8zXp1S6zxXdbL7rNMLypDAgroci6UVdUzsY5Bp
+         /zcdUUwSoVdNvHZ0VqOpj1eHED3EK6VT0pox/bt8=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([213.196.244.109]) by mail.gmx.com (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mplc7-1hjUvI3Tkz-00qDFZ; Sat, 12
- Oct 2019 19:11:25 +0200
+Received: from longitude ([213.196.244.109]) by mail.gmx.com (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MXGvG-1iZP5C1BQE-00Ylo3; Sat, 12
+ Oct 2019 19:11:44 +0200
 From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
 To:     linux-doc@vger.kernel.org
 Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
         Jonathan Corbet <corbet@lwn.net>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Stuart Hayes <stuart.w.hayes@gmail.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
         Shobhit Kukreti <shobhitkukreti@gmail.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH RFC 1/4] docs: admin-guide: Sort the "unordered guides" to avoid merge conflicts
-Date:   Sat, 12 Oct 2019 19:11:09 +0200
-Message-Id: <20191012171114.6589-1-j.neuschaefer@gmx.net>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Sinan Kaya <okaya@kernel.org>, Takashi Iwai <tiwai@suse.de>,
+        Ayman Bagabas <ayman.bagabas@gmail.com>,
+        Matan Ziv-Av <matan@svgalib.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        Peng Hao <peng.hao2@zte.com.cn>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Subject: [PATCH 2/4] docs: admin-guide: Move Dell RBU document from driver-api
+Date:   Sat, 12 Oct 2019 19:11:10 +0200
+Message-Id: <20191012171114.6589-2-j.neuschaefer@gmx.net>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191012171114.6589-1-j.neuschaefer@gmx.net>
+References: <20191012171114.6589-1-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:5B34xg+6308ya7WPHDCaXqtJ8xGXo98JxaTSCcGd78rRDNlfA2S
- b3B2/5ic+4m87a83vVcTwUedCy33Y4I6iQPXbrhNigLS3IWxQyxGvHN6XUtPGfq7cr8xwDo
- 0sFDDLYZv8cJ5EqvHChiY3bFpiM33AGpRHqnSbgH67+lLHojaE4XQLMH6BnDx1/RTv8n2Ek
- RDBNYIIWTMJj99n46ru8g==
+X-Provags-ID: V03:K1:fm39Z6FB7YORX6RwhW9apc74hTkQlLRNNeSCCmUs+5m61yB9A7R
+ PF2/4mDs8VpT4Q9zpngqHyWtfYnYQjOUh1njbVcQu+SQ7MKwVN2GjVySo44zjEFCZeRLXeV
+ L7F/l2QcymwnpkHhz/NYzMz9z1WDVADqA0qmyxir16CxzO81vx9JM73fVTktuGusxPGTkWS
+ jFw7XrE2Sh63MyZEkzNnA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:5HByb3ZDp1E=:k08/BnDMmpK0zJYQ62e57h
- VEBseg4VmzEUiwvnrAYX08k9zI64wn8UhkKmt1nza7lsAvhghCLxV7QiP7RtP6HvzwfRkyvru
- NqhUEvVk+MJbGIfJJtFTubecx0AtG8QN+SiwRdBD7T+fZ1TAHbnnTEZTA0aQL86Oc6BxqlAy0
- 3Ti3smwOYtmh12yLTolutBuFyMdbJZ7SGD5aayRLbVprxSgng3UIZcBDvZF2KIK9OhVrz5Uix
- MZNP8Nd7hRhwcimIjh+ri5Qt6+gC5mUjQJmgeynj4zQ1oh1o/WvJA019gaUdmmRVDHAzlQhtX
- 5QdQ3XtbsqCJVhmpPLiShCLXxCOcgM6yWrT9LRuenGqQoGd2FTrKhG0o0A8GHo+BAEF+TO0vO
- 30Z9F4Dy6w3O8MCvSi6tEFXg1pdeK53HcKC4/UtUJlaj/0QIVWu9rc7lO6h4IVE0WrLIO+NoF
- ZrkwVDPOos0NAmSOeQ3z44PtbYcTm5W/cZXCx8kC5vKmw1gK9FLPqNkKK8F+KHvpNAJIPCXAW
- Jgm1c3rHSWfuY9FSy3lxFYXbD8iS4CzvzQs/q8ZYGnNNU0RuhbHZnI3LHDiFP6Dah3QvT58PY
- /mpf8rAA/xvq677a9Q1M3CfaEYX/U8i48h7CtnTgoz7VW04chbAtYxcNwMrkxpyhzZAoH6nWJ
- vbeQNArTn6FQWB1PuMy0nJk8DEyHOwE7oL7ty+1ju4HyHyJU9dDHIjyKWmevR12PIRRpw5CGe
- 1rG9+0BSsSwlHii6e13gyDlSr94abjz8O9t2OJEIvy7TFdtwpSa7siJgwXfBb7+dZq0LAlMeU
- lZVqFUWTJmkwS+YPx6q7p0tFgjiR64Y0yNqe0W3IlHovKYCWkIuhNxmpW892sA8r9dHLEm7xO
- vFpnS/zDweEiVv4gul67VZKAqssouTsaHj8NV8NiMCLYnxVnYLJhAPsD+zhYj5m56P4WpgNEp
- gdSmbWI+HMxASjc5D7SOpBrBI9BccJbUnUw/tTcjLpu+J6qUBeDzIZNBAQHYX7LMw8Ey2sAml
- VuBZApRtNcZDQq18TD3yTwk+6xHoTD3KNamfvKmcnzhL0OuVVpSP4clyPmMGGuSGzJ2pAuzGu
- Bm6y12E6XSoNYhzAQ2ijcrxWAVrhUM4GaFUwu+vJ3kFYWQocx1dKnXdDgC2hEsW7PqlOlMBc0
- jDe32vlcfHjwuyRmq58FZZ9cnRQZW13876sOIz8zg1m9h4OefRW/gAPBq2baiarsycoqbdL1o
- EkOiz19+NDOJNJkLUoukd1iNNhwr5bKRhaGbhNM1LRyhiHSrRFlb0Fx3AvWI=
+X-UI-Out-Filterresults: notjunk:1;V03:K0:NUvq5Dkwz0k=:8NbpyClq5gdZLaxOZiQbZ0
+ Pm7ksBZpbvZ/17ieQWQjytpMdWZ3ZR9ZwGvG3WfzdBpHzQnIM3uANB5J6NDD0YT30jJUMtub8
+ JWIn+SZkSllf49TfIcjNEOlglOAPTVvO0TzIEZNI3Ip7sad4+JCiJFROEg7KKpDIfPEnhOt/t
+ uP/YUfeJIcphUSDCUTGv7gEXnOkiCS0D4BRy6pPbwV+RQ0VYDPMbKHpyGAlSxtCgJSdLKvbFa
+ iMMc3b9+duARDXbPqmSij+C9xIeqoAYHoTCzAZZGd18pdx3gB8bhDkJAU9nx5cjyYT/bnN+oB
+ H+SvPWc9JljSRz60LTMLryNQm0vIcZZ5nRfqrXDaCppefEvSZ2Pf//AbMkZtGdY42oM7/FQ+B
+ KyiA5lQqzj3dHcs1ssRNVg90XQR7HJI6NKlLOZzi15Sb666cxQEokAT8o8pomOEtrwTGJYg5g
+ ioymUilSqY4wf1sYL8LvlHckcpRzfWbVjws9KafxkT2krrQDruEoXX6Upd/9S+ds5CscP9Wyt
+ BR3niPhb0qmmedvgjSSFaIG4IUl91gay3ORJNAAczpL046f+W+fN/LxsJNAytQ6uOFCR3IJKQ
+ yrgPRd5UYMZ/6foXWfgpMmaUyzMJBCoUKe0vrJmmTyWsbAULCvPfzS0r86PpB+e1b6b6afsaO
+ QuLhwPAS6v3IUqtMgrzOlGwEzgQBJlK/O/a/uXOxdCgGM0jVlDAdoaS55l9Dxxw5USEdKTBvS
+ RCAg8+ilNVP3FAIg+cjPN/oBR68Zwg/67Tow8E5FVyavjAtc/BvwpF18p7aoordsMBKQj55Q/
+ U67IUaLr3BQJDuASopq/qkno80dTN77mt6hcIqLW6wi0duQTIIps05KgWr9B+kWDqFhTFhnhO
+ VFouCbp3nKW/ndcsUExLgn8dQ4CYI3wIlGcTkONtDS9pyxcV8xweHhQHJZLAr1zM2HVS/UtwL
+ qXv6j6dTUwV433Tn/UGWLPKg0BkSs9HoXqw6sZTGEJd2nAc3KdDptZHfCYtved+xfVv6I+GpT
+ frBW3CwQ6imsLq50Cl4j60NqCVcR3MzanjQmZXdfIlo2GonP5L2l12rDtspP0HcyGh/IDE2Wu
+ ZOQlwjmoS8xHBvbqWz3WBgYe8+K6wNnb3LrQSUZcAsQmUhHAQ01IS8KkahdSLPrVKbnTlQpEP
+ EOIslqlBIejgGznXocDuE9xlWNeFlS7SHlEszKMnMYzSYG+//ir9KWnMpTHgDM8uOrjjdz3Dn
+ LJFSzj2Yn+awq6C/h26JfQQHr27G90Xa4ECjCiuH7Z2ILoChpoK5arO3jlTc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the "unordered guides" linked in admin-guide/index.rst are not
-supposed to be in any particular order, let's sort them alphabetically
-to avoid the risk of merge conflicts by spreading newly added lines more
-evenly.
+This document describes how an admin can use the dell_rbu driver, rather
+than any in-kernel API details.
 
 Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
 =2D--
+ Documentation/{driver-api =3D> admin-guide}/dell_rbu.rst | 0
+ Documentation/admin-guide/index.rst                    | 1 +
+ Documentation/driver-api/index.rst                     | 1 -
+ drivers/platform/x86/Kconfig                           | 2 +-
+ drivers/platform/x86/dell_rbu.c                        | 2 +-
+ 5 files changed, 3 insertions(+), 3 deletions(-)
+ rename Documentation/{driver-api =3D> admin-guide}/dell_rbu.rst (100%)
 
-Upon a second look, I noticed that the list wasn't completely unordered:
-binfmt-misc is grouped with java and mono, the filesystems are grouped
-together.
-
-For the filesystems, I think they should be moved to the filesystems/
-directory, and the binfmt documents could perhaps be explicitly grouped
-too. But perhaps the loss of this grouping-by-position is reason enough
-to drop this patch for now.
-=2D--
- Documentation/admin-guide/index.rst | 64 ++++++++++++++---------------
- 1 file changed, 32 insertions(+), 32 deletions(-)
-
+diff --git a/Documentation/driver-api/dell_rbu.rst b/Documentation/admin-g=
+uide/dell_rbu.rst
+similarity index 100%
+rename from Documentation/driver-api/dell_rbu.rst
+rename to Documentation/admin-guide/dell_rbu.rst
 diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-gui=
 de/index.rst
-index 34cc20ee7f3a..545ea26364b7 100644
+index 545ea26364b7..4405b7485312 100644
 =2D-- a/Documentation/admin-guide/index.rst
 +++ b/Documentation/admin-guide/index.rst
-@@ -57,60 +57,60 @@ configure specific aspects of kernel behavior to your =
-liking.
- .. toctree::
-    :maxdepth: 1
-
--   initrd
--   cgroup-v2
--   cgroup-v1/index
--   serial-console
--   braille-console
--   parport
--   md
--   module-signing
--   rapidio
--   sysrq
--   unicode
--   vga-softcursor
--   binfmt-misc
--   mono
--   java
--   ras
--   bcache
--   blockdev/index
--   ext4
--   binderfs
--   cifs/index
--   xfs
--   jfs
--   ufs
--   pm/index
--   thunderbolt
--   LSM/index
--   mm/index
--   namespaces/index
--   perf-security
-    acpi/index
-    aoe/index
-+   auxdisplay/index
-+   bcache
-+   binderfs
-+   binfmt-misc
-+   blockdev/index
-+   braille-console
-    btmrvl
-+   cgroup-v1/index
-+   cgroup-v2
-+   cifs/index
+@@ -72,6 +72,7 @@ configure specific aspects of kernel behavior to your li=
+king.
     clearing-warn-once
     cpu-load
     cputopology
++   dell_rbu
     device-mapper/index
     efi-stub
-+   ext4
-    gpio/index
-    highuid
-    hw_random
-+   initrd
-    iostats
-+   java
-+   jfs
-    kernel-per-CPU-kthreads
-    laptops/index
--   auxdisplay/index
-    lcd-panel-cgram
-    ldm
-    lockup-watchdogs
-+   LSM/index
-+   md
-+   mm/index
-+   module-signing
-+   mono
-+   namespaces/index
-    numastat
-+   parport
-+   perf-security
-+   pm/index
-    pnp
-+   rapidio
-+   ras
-    rtc
-+   serial-console
-    svga
--   wimax/index
-+   sysrq
-+   thunderbolt
-+   ufs
-+   unicode
-+   vga-softcursor
-    video-output
-+   wimax/index
-+   xfs
+    ext4
+diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api=
+/index.rst
+index 2b3b6949381e..6a3ac50f51f0 100644
+=2D-- a/Documentation/driver-api/index.rst
++++ b/Documentation/driver-api/index.rst
+@@ -72,7 +72,6 @@ available subsections can be seen below.
+    connector
+    console
+    dcdbas
+-   dell_rbu
+    edid
+    eisa
+    ipmb
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index ae21d08c65e8..a890f47fbeec 100644
+=2D-- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -259,7 +259,7 @@ config DELL_RBU
+ 	 DELL system. Note you need a Dell OpenManage or Dell Update package (DU=
+P)
+ 	 supporting application to communicate with the BIOS regarding the new
+ 	 image for the image update to take effect.
+-	 See <file:Documentation/driver-api/dell_rbu.rst> for more details on th=
+e driver.
++	 See <file:Documentation/admin-guide/dell_rbu.rst> for more details on t=
+he driver.
 
- .. only::  subproject and html
 
+ config FUJITSU_LAPTOP
+diff --git a/drivers/platform/x86/dell_rbu.c b/drivers/platform/x86/dell_r=
+bu.c
+index 3691391fea6b..7d5453326b43 100644
+=2D-- a/drivers/platform/x86/dell_rbu.c
++++ b/drivers/platform/x86/dell_rbu.c
+@@ -24,7 +24,7 @@
+  * on every time the packet data is written. This driver requires an
+  * application to break the BIOS image in to fixed sized packet chunks.
+  *
+- * See Documentation/driver-api/dell_rbu.rst for more info.
++ * See Documentation/admin-guide/dell_rbu.rst for more info.
+  */
+ #include <linux/init.h>
+ #include <linux/module.h>
 =2D-
 2.20.1
 
