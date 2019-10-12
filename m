@@ -2,100 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49934D4E1C
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 09:48:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D9C0D4E21
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 09:52:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728895AbfJLHst (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 12 Oct 2019 03:48:49 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48142 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726728AbfJLHst (ORCPT
+        id S1728939AbfJLHwu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 12 Oct 2019 03:52:50 -0400
+Received: from hera.iit.uni-miskolc.hu ([193.6.5.4]:44428 "EHLO
+        hera.iit.uni-miskolc.hu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728111AbfJLHwt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Oct 2019 03:48:49 -0400
-Received: from [213.220.153.21] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1iJC8p-00051r-DP; Sat, 12 Oct 2019 07:48:43 +0000
-Date:   Sat, 12 Oct 2019 09:48:42 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Shuah Khan <shuah@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Roman Gushchin <guro@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 1/2] clone3: add CLONE3_CLEAR_SIGHAND
-Message-ID: <20191012074840.4to7lh4zbt4wup74@wittgenstein>
-References: <20191010133518.5420-1-christian.brauner@ubuntu.com>
- <CAHO5Pa3V7fDb_+U-v+LB+TeAU0vfJyUMs9mD4ZqUtbLpZcD4nA@mail.gmail.com>
- <20191011221208.5eglbazksfigliob@yavin.dot.cyphar.com>
- <CAKgNAkhgGhGi-hMJt3UxYYDuyOZLx7c-eucpD5V7js+hsyv2CQ@mail.gmail.com>
+        Sat, 12 Oct 2019 03:52:49 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by hera.iit.uni-miskolc.hu (Postfix) with ESMTP id 0683F12A;
+        Sat, 12 Oct 2019 09:52:46 +0200 (CEST)
+X-Virus-Scanned: Kamavis at iit.uni-miskolc.hu
+Received: from hera.iit.uni-miskolc.hu ([127.0.0.1])
+        by localhost (hera.iit.uni-miskolc.hu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id wMQPC2Y434Ps; Sat, 12 Oct 2019 09:52:37 +0200 (CEST)
+Received: from titan.hitronhub.home (unknown [IPv6:2a02:8109:a180:54c:226:9eff:fe30:2af8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: szucst@iit.uni-miskolc.hu)
+        by hera.iit.uni-miskolc.hu (Postfix) with ESMTPSA id 47339125;
+        Sat, 12 Oct 2019 09:52:37 +0200 (CEST)
+From:   =?UTF-8?q?Tam=C3=A1s=20Sz=C5=B1cs?= <tszucs@protonmail.ch>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Tam=C3=A1s=20Sz=C5=B1cs?= <tszucs@protonmail.ch>
+Subject: [PATCH 0/1] arm64: tegra: enable SDIO on Jetson Nano M.2 Key E
+Date:   Sat, 12 Oct 2019 09:52:12 +0200
+Message-Id: <20191012075213.4880-1-tszucs@protonmail.ch>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAKgNAkhgGhGi-hMJt3UxYYDuyOZLx7c-eucpD5V7js+hsyv2CQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 12, 2019 at 08:53:34AM +0200, Michael Kerrisk (man-pages) wrote:
-> Hello Aleksa,
-> 
-> On Sat, 12 Oct 2019 at 00:12, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> >
-> > On 2019-10-11, Michael Kerrisk <mtk.manpages@gmail.com> wrote:
-> > > Why CLONE3_CLEAR_SIGHAND rather than just CLONE_CLEAR_SIGHAND?
+Hi All,
 
-I don't care much how we name this apart from the "_CLEAR_SIGHAND"
-suffix. But see for a little rationale below.
+Changes here have been tested with various u-blox SDIO Wi-Fi modules.
+It would be great to have support upstream.
 
-> >
-> > There are no more flag bits left for the classic clone()/clone2() (the
-> > last one was used up by CLONE_PIDFD) -- thus this flag is clone3()-only.
-> 
-> Yes, I understand that. But, I'm not sure that the "3" in the prefix
-> is necessary. "CLONE_" still seems better to me.
-> 
-> Consider this: sometime in the near future we will probably have time
-> namespaces. The new flag for those namespaces will only be usable with
-> clone3(). It should NOT be called CLONE3_NEWTIME, but rather
-> CLONE_NEWTIME (or similar), because that same flag will presumably
-> also be used in other APIs such as unshare() and setns(). (Hmm -- I
+Kind regards,
+Tamas
 
-There are some noteable differences though. CLONE_NEWTIME takes the
-CSIGNAL bit which is in the range of a 32bit integer and thus useable by
-unshare() too. The same does not hold for CLONE{3}_CLEAR_SIGHAND. You
-can't pass it to unshare(). unshare() also just deals with
-namespace-relevant stuff so CLONE{3}_CLEAR_SIGHAND doesn't make much
-sense there.
+Tamás Szűcs (1):
+  arm64: tegra: enable SDIO on Jetson Nano M.2 Key E
 
-> wonder if we are going to need a new unshare2() or some such...)
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-We still have one 32bit bit left (CLONE_DETACHED) which we can't reuse
-with clone()/clone2() but we can reuse with clone3(). We can simply
-earmark it for namespace-related stuff and thus still have one bit left
-for unshare() before we have to go for unshare2() (If we have to go
-there at all since I'm not sure how much more namespaces we can come up
-with.).
+-- 
+2.20.1
 
-Christian
