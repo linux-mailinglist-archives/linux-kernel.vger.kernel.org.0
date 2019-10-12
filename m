@@ -2,77 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C2D1D4F2B
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 12:57:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3711D4F31
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 12:59:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729055AbfJLK5i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 12 Oct 2019 06:57:38 -0400
-Received: from mout.gmx.net ([212.227.17.21]:49593 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726555AbfJLK5h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Oct 2019 06:57:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1570877848;
-        bh=vBB10BE9403hAvmcNQMwxU1XPTEAQgdMIr6WWEgfJo8=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=gB9RKGd6IosHf1HbMIDSdsqgcsTCZruKdaMJYk5GTqL9p5AehAstEXxcePwlurXmQ
-         Y6eo7u6c839YRiCG8xuUWflMrcsRJgxSaB8kV64gdUTVRSyN+f5cgm1ZxjDL5OolyI
-         8PsRBXpxcPNxfNrSxVvNlexMomY5eHIUuUPuNUFo=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [192.168.1.162] ([37.4.249.112]) by mail.gmx.com (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M2wKq-1iMYTM0MJQ-003Kf3; Sat, 12
- Oct 2019 12:57:28 +0200
-Subject: Re: [PATCH] mailmap: Add Simon Arlott (replacement for expired email
- address)
-To:     Simon Arlott <simon@octiron.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc:     trivial@kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        Eric Anholt <eric@anholt.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>
-References: <ab8c62db-b207-9aa1-e99c-16f9eb4152df@simon.arlott.org.uk>
-From:   Stefan Wahren <wahrenst@gmx.net>
-Message-ID: <939abb19-e02c-bfe6-deb5-57c72569dbb3@gmx.net>
-Date:   Sat, 12 Oct 2019 12:57:26 +0200
+        id S1729201AbfJLK7T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 12 Oct 2019 06:59:19 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33840 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726793AbfJLK7S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Oct 2019 06:59:18 -0400
+Received: by mail-pf1-f193.google.com with SMTP id b128so7615756pfa.1;
+        Sat, 12 Oct 2019 03:59:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6fUiD8LPGpZDa0Tf3+BA1bwVbaY9YN/1BL2mRpt5n4k=;
+        b=LhiGFfmH7SMf3b0HVzYAS3u8ZxHPRzoBjeavwfU0XlyOzqZRdG74ZFCFS+v3mwwHpd
+         oAcyHLvA4MLhwCCk6ssCCkl7M+nJVB1H8zJniiQ3gbHjbnBBNa7Gbfv6AZXzCGMnlJWA
+         KTXO54X4VixcYMXoWFp5JgTgxvZ6hZajIeCeoLOkFtmXiyjfCdZAns9jjTnD7PpNOo2z
+         k2+98N20AefoXaivNZtZRhvfPtKGbHiGf0qvpfY0/jAus1uNAHvo9mxIaCw6za4EOvlc
+         l8xbGDtRk/+lvoNgN5/Fe4+tts6wlGktkmiXc8uXFwQng6FrYAnDc+hThNwoMbLyrKzB
+         GHlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6fUiD8LPGpZDa0Tf3+BA1bwVbaY9YN/1BL2mRpt5n4k=;
+        b=QAaTQ2k6fF6gz42gKx+pG0eVBlqLYHt9dj5+RIXQU4Iq7AeMbHUrRuAPmEJKqD3nWz
+         qqedibHdYB6l0Zslhh9maLCGiTU1ubqpHAUzZXtbaRYNngFJsL1/O3gq3O2mv4XEYqIA
+         KuMyRKUm9weNPodJ+26ywAMHNgWGbJT/KlN5GnHgQtImYk+HLahwgQ4fAv9Yr8+XtV4Z
+         P82RyzCrkQyvq5Kyz20nl7/R4XZ2eOrrHoyKWtRi/zdavbKc/SMm508Ub56PKWDYaTp8
+         R/UePPm52D154xeLhR6QIahZwAoIp7sItNUlIxLwPaU/bKjhWpxplUhv5nTWzXXMOV+K
+         xEUw==
+X-Gm-Message-State: APjAAAUDgCEghPWRkDIZ2UwuHVpJK/e0KxSe2oQH4lXY5HBxCf/p1hf+
+        SJOYocU4LJK+UuLWIqbva2QW5fMW
+X-Google-Smtp-Source: APXvYqztSVZQajvqBQQ7ZBMUAnu7VZ8xuM7iDkFGCsXPOxf2MmeJ+xKiIIE/3D77RYOnL/P8spxHGw==
+X-Received: by 2002:a63:33c7:: with SMTP id z190mr21314005pgz.67.1570877957779;
+        Sat, 12 Oct 2019 03:59:17 -0700 (PDT)
+Received: from [192.168.86.235] (c-73-241-150-70.hsd1.ca.comcast.net. [73.241.150.70])
+        by smtp.gmail.com with ESMTPSA id f17sm10481049pgd.8.2019.10.12.03.59.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 12 Oct 2019 03:59:17 -0700 (PDT)
+Subject: Re: [PATCH net] net: sched: act_mirred: drop skb's dst_entry in
+ ingress redirection
+To:     Zhiyuan Hou <zhiyuan2048@linux.alibaba.com>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        "David S . Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191012071620.8595-1-zhiyuan2048@linux.alibaba.com>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <2d816fb6-befb-aaeb-328b-539507022a22@gmail.com>
+Date:   Sat, 12 Oct 2019 03:59:15 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <ab8c62db-b207-9aa1-e99c-16f9eb4152df@simon.arlott.org.uk>
+In-Reply-To: <20191012071620.8595-1-zhiyuan2048@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Provags-ID: V03:K1:2v73v2zjEvQWzL+Z5hlCtbfVOjDl80r57EaKRWYG79ekP3os+qq
- 4o1mMiwOvtxNhOhRBND6oR0KenT83x5XNIIaBk9tkChjmIX5pZxiD4DG409cJ4ZFCCkFeIg
- TdGMMDYkaDvT4bcH6zCzPhi0yHMzX8QeOH4sa5wlXb49T8++xURnO2T05AeDwsRSbKq1EqX
- jq8fT42KdKSm+pWR1vXPw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:v7qs8VYykWo=:Odq16Fk0o+r+oLjNaJ8Wmo
- NnjxG2sp/VcDqC/KaAPHzEZ3E55/F+R2vLfPoBMZ+FfuwoyRgDGjIRbOidi+TCDmBovy8RB60
- 3t8p5xmRUvv7KeJcyPBwwnm3qt5W7CCi9LUBjQxXiiTOpmhw7D6f8s6AXqbzsg2gh/YSX8Vkl
- 0npOThOnMG3lEST3NyFfhMiXHvqfww2aVCSNhQNXUdRkI4gutI7Ao7Utr6NjygysI6eqUbW6s
- OMKcTsupb3oKfe4yisfJFJUFuGkoT1X08W1uVdmMqlVbBVzV0eeaOfqrkbh1J1oWr59U1PuFj
- 9LvdYfR9ODFx6MvgzQv9N3uNxDCiNeVDQLNnmX0mwpuk7TeDbMUNHVzrEg/jaKZvf+LJ0NAKj
- wYalEPrb3NQbgVpogo0ATu+cLnK6YYQqheYyRVt5MOdEBu3FzKfqx2fGeRulAgBZDTT4CQzr1
- hjYl0c9ysNbcZ+YMUtUn0yD/oZUKaGo7ZKPtAL/lV4SbhWKsH4V2hIi9KNJ9ZxGzlobFQvORq
- iuYVbEPg9Aw1QAlv8OrfMxzTmL2xbO1OcG+A5h16BI0QVT2x0P9qJaUtE7RAHM7/PPClSK/4x
- amYvjiN693tzy9iKTAmHc8aaQrDs9dAGJinV000wU+re9dt+QVsG5wngUw4C8jlV+GCEz1zE4
- wuucHe68LZQ4aGP7ALC+2DGQuxUWvmdBZi+a7YZK+6EHemzrgik2EFlXSmHsAse7+qNFYVuDi
- BfTiERZcsUu5a9c+DIUYTnkqyTWb7KDJYy/d2uX5khLMx1IYSwcwRAxfhMUQmD2imoYsgF2Vs
- q9gHwaltgrS/c7cBGsfcjX28sir6ou0ZkatITE3Rar/xSq8WcHcdHuVncg45LAoxUedv0p03b
- YCqhHd7t3biYHBvqBelAuQV3AJKVSd4THnMFQP50Eon9EedVfLiLTn64o2TIETgeNoYWM6A6e
- 0POYl9EALVC/oUuRXBv6APPAZEebYIAPUaZIfRLHYPb2gl/YI6izsRsfgH+3+nJOUsbNh7+6t
- Z5yucUIh36qfjhEO+SzGXULT7wXhDS0k6X65uOfXXx7GbMAKmsKg8x2ESM8KTaD8dTSNO3zGD
- 01fPuZ15qz/+0mZ0vDvKSJllYA633SziIYhQHyhVmZI/y2v7O/VfgsfpuyOC2eFOBkgfK1LyT
- fCelG0hcovpQ6X06XZDhZBxiRjiKdwiGMGwTm/BXb9BtM5WhHclJWq4U5Oq8/4HBU+7T4h81f
- ++QdfYe9jOCNlMbLegN/6V0W1D7DRFgGhyjm7cSLd2upcxrm05OpiDvgo+2E=
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 22.08.19 um 21:01 schrieb Simon Arlott:
-> Add replacement email address for the one on my expired domain.
->
-> Signed-off-by: Simon Arlott <simon@octiron.net>
+
+
+On 10/12/19 12:16 AM, Zhiyuan Hou wrote:
+> In act_mirred's ingress redirection, if the skb's dst_entry is valid
+> when call function netif_receive_skb, the fllowing l3 stack process
+> (ip_rcv_finish_core) will check dst_entry and skip the routing
+> decision. Using the old dst_entry is unexpected and may discard the
+> skb in some case. For example dst->dst_input points to dst_discard.
+> 
+> This patch drops the skb's dst_entry before calling netif_receive_skb
+> so that the skb can be made routing decision like a normal ingress
+> skb.
+> 
+> Signed-off-by: Zhiyuan Hou <zhiyuan2048@linux.alibaba.com>
 > ---
-Applied to bcm2835-maintainers-next
+>  net/sched/act_mirred.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/net/sched/act_mirred.c b/net/sched/act_mirred.c
+> index 9ce073a05414..6108a64c0cd5 100644
+> --- a/net/sched/act_mirred.c
+> +++ b/net/sched/act_mirred.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/gfp.h>
+>  #include <linux/if_arp.h>
+>  #include <net/net_namespace.h>
+> +#include <net/dst.h>
+>  #include <net/netlink.h>
+>  #include <net/pkt_sched.h>
+>  #include <net/pkt_cls.h>
+> @@ -298,8 +299,10 @@ static int tcf_mirred_act(struct sk_buff *skb, const struct tc_action *a,
+>  
+>  	if (!want_ingress)
+>  		err = dev_queue_xmit(skb2);
+> -	else
+> +	else {
+> +		skb_dst_drop(skb2);
+>  		err = netif_receive_skb(skb2);
+> +	}
+>  
+>  	if (err) {
+>  out:
+> 
+
+Why is dst_discard used ?
+
+This could actually drop packets, for loopback.
+
+A Fixes: tag would tremendously help, I wonder if you are not working around
+the other issue Wei was tracking yesterday ( https://www.spinics.net/lists/netdev/msg604397.html )
+
