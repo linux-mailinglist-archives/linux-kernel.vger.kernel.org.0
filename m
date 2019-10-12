@@ -2,69 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69937D52B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 23:32:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECB8DD52E0
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 23:40:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729795AbfJLVcU convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 12 Oct 2019 17:32:20 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:46566 "EHLO gloria.sntech.de"
+        id S1729643AbfJLVkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 12 Oct 2019 17:40:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729169AbfJLVcU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Oct 2019 17:32:20 -0400
-Received: from ip5f5a6266.dynamic.kabel-deutschland.de ([95.90.98.102] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1iJOzm-0000bP-6Y; Sat, 12 Oct 2019 23:32:14 +0200
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
-        Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>,
-        Stephen McCamant <smccaman@umn.edu>
-Subject: Re: clk: rockchip: Checking a kmemdup() call in rockchip_clk_register_pll()
-Date:   Sat, 12 Oct 2019 23:32:12 +0200
-Message-ID: <5801053.xxhhKtLrcJ@diego>
-In-Reply-To: <e96505a8-b554-f61e-3940-0b9e9c7850ff@web.de>
-References: <e96505a8-b554-f61e-3940-0b9e9c7850ff@web.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+        id S1729296AbfJLVkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Oct 2019 17:40:05 -0400
+Subject: Re: [GIT PULL] s390 updates for 5.4-rc3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570916405;
+        bh=Bqk5XYFvPmYMqGXGvb3ZS0BE6cigGHuc5IgL4TPeKfo=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=BKUsa9cKt5i22m5t6eqLQFLRzJNuYpqd0oMx6v4Z94quuGMTc3j25ePmhAaU4NMT/
+         BY/q8u0YgFRv4aGyQ03dp2lvxU4vo980gw2psn/JwLKwbiK3rNvxPTL455LAjeaWmW
+         4qy7lww7f7hZ1aZh12UVy7rmbYg9sSgAXfpjbuVc=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <your-ad-here.call-01570875939-ext-1686@work.hours>
+References: <your-ad-here.call-01570875939-ext-1686@work.hours>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <your-ad-here.call-01570875939-ext-1686@work.hours>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-5.4-4
+X-PR-Tracked-Commit-Id: 062795fcdcb2d22822fb42644b1d76a8ad8439b3
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: f154988a905e5cad9d1a20d4c4aeb176968fe3be
+Message-Id: <157091640502.3377.2210428493105655595.pr-tracker-bot@kernel.org>
+Date:   Sat, 12 Oct 2019 21:40:05 +0000
+To:     Vasily Gorbik <gor@linux.ibm.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Markus,
+The pull request you sent on Sat, 12 Oct 2019 12:25:39 +0200:
 
-Am Samstag, 12. Oktober 2019, 15:55:44 CEST schrieb Markus Elfring:
-> I tried another script for the semantic patch language out.
-> This source code analysis approach points out that the implementation
-> of the function “rockchip_clk_register_pll” contains also a call
-> of the function “kmemdup”.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/rockchip/clk-pll.c?id=1c0cc5f1ae5ee5a6913704c0d75a6e99604ee30a#n913
-> https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/clk/rockchip/clk-pll.c#L913
-> 
-> * Do you find the usage of the format string “%s: could not allocate
->   rate table for %s\n” still appropriate at this place?
+> git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-5.4-4
 
-If there is an internal "no-memory" output from inside kmemdup now,
-I guess the one in the clock driver would be a duplicate and could go away.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/f154988a905e5cad9d1a20d4c4aeb176968fe3be
 
-> * Is there a need to adjust the error handling here?
+Thank you!
 
-There is no need for additional error handling. Like if the rate-table
-could not be duplicated, the clock will still report the correct clockrate
-you can just not set a new rate.
-
-And for a system it's always better to have the clock driver present
-than for all device-drivers to fail probing. Especially as this start as
-core clock driver, so there is no deferring possible.
-
-Heiko
-
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
