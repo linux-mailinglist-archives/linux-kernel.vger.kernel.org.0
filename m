@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50C51D4DC8
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 08:54:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6980D4DC7
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 08:54:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729153AbfJLGx1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 12 Oct 2019 02:53:27 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36595 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729071AbfJLGxP (ORCPT
+        id S1729136AbfJLGxT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 12 Oct 2019 02:53:19 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33324 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729076AbfJLGxQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Oct 2019 02:53:15 -0400
-Received: by mail-wr1-f68.google.com with SMTP id y19so14100605wrd.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 23:53:14 -0700 (PDT)
+        Sat, 12 Oct 2019 02:53:16 -0400
+Received: by mail-wm1-f65.google.com with SMTP id r17so10769351wme.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 23:53:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=vSl/Ur1B9aK/gm2LM58l+jZvn+wzF8KR6Icoca7PTeo=;
-        b=tswCzgp7QkQx0AP2oQ0KYfFcbz/UIZZxnLtlyPNgDA7tENRvpjRyuCnTZ7UFzWxhTr
-         1m2Ss6xAd8iS0646KxYUqPFBdvXU9TZTBudSnjwtJb+SKPXK1TzQIblugN4gJQjc2bKE
-         5naSLq++3TK/v3kcpGvacmM+TvsEdaRUGggltf4NdJrLIVP6BEj5pSrbykk35z5fwvmc
-         ciuN1/a13/o8llkNXw3L+PbtGBiZLFkg6tUOeoxqk3TwIthUH+zQdlfDCazhuZrcxVTm
-         QDRrqiLAVXeGxF78BC27idXeRQH9Bb6d2eun8lxyd/ZINpbRpwh1XtQbQxVoGl2HDh2r
-         HvVg==
+        bh=xYNaygMbd21QTie4NeAZZNYx9YnNHVu9c1OqSN5Gf6U=;
+        b=I3IF44u6t3ND7sZz0+JegnRFquaT8wyBcQgZnDZYJjkOm53dtMN0u1YYnfeakndm2/
+         06GVx9P7IrJCWVCmZTQcoEcd+O49axRKnh9rKDTKwlGLQuR0OH1weuknLJJRoUTOgUE7
+         txg7zComQk04jZrPEDMG/Swz34kMNuE9Y8KAkJ0Iduk7ZgZRKtIOwhyISwSEVDsl2NdL
+         kiwxJ5k4eTLAN65B66iw97wG5XugayifItdeMlmEeOeZBrpJxjFgcHluDbLeGdZozWU6
+         l4HYPilQfM7o2TFoMiwdUJzCR0O4k7fHZY7krwPIRChVfnim3RP9W2t82O4zhVEjzUoo
+         83Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=vSl/Ur1B9aK/gm2LM58l+jZvn+wzF8KR6Icoca7PTeo=;
-        b=dzk3Gnu1esbWTfVGBuEz06BfGS0uy4nTWS61/LBaq5i1UUO7UZ61M9gphXDNBa6S4D
-         pmfRnWA31fTGKW+jmvM7sADVzoJha25sZVUTWT9b4jmDeOMi+MRkoHsVdbP9KqCN0Vay
-         W01BDt0yFdzy0Wna1r6oD4dncD586waXc5M42zzeeglBmgBgG8jXg/aO7umE+XtxnPxF
-         MpuBrA7PEnmBf57pE9zCJQHMqlxzQuch6brYTmz6uM09W/LnC5r5L45vcrV3sgKOaYqf
-         VdIxpE+ibE7DwwxtQo3qXuQGKpTxTHQL+hSqUX/gUjGQrosZdb/M/VyUj+N4B+zjTHje
-         AAvw==
-X-Gm-Message-State: APjAAAW0U8y0rZYoQrAHqUGFHwkLzX1d297NcmVGcp2mQ0uUrUhSSTrd
-        cd0O3ooy9BHmnU2JGLo3XiC/bA==
-X-Google-Smtp-Source: APXvYqzI7Fh1Q2MyXWRXGOrHUSPGd/7iRe01YUbb3EDulz+HoQFnXPt+p/31MQeoWP+ge2vhX7E+DA==
-X-Received: by 2002:a5d:53c2:: with SMTP id a2mr16296403wrw.10.1570863193492;
-        Fri, 11 Oct 2019 23:53:13 -0700 (PDT)
+        bh=xYNaygMbd21QTie4NeAZZNYx9YnNHVu9c1OqSN5Gf6U=;
+        b=TWxsMujOCMNczXQGDK6keK+baJTF8+tHqQM3V6xRIE+A2B9KMWYUcpqsAW+2B4ReId
+         Ps8jSWn6NHY2ySNrAg48vpyByKMIWnqjexkWvxIS3SGkn7lGyvjuDvXAnfXibICJEP6y
+         G6uZfC2G7kr3XvJWD1gv3H2qiMI/wFG4Qa5MIS7r0GqPK1tqAtqLxE2Cx7DmnuhO6s+d
+         ixlXzqZH0DdkAFyTO9kU/EeJC9eIdPQWXz529V9+MXGllbK3d1gHx104QK5/+HiDaHSn
+         MbiLQBqSwrjwASraL4YAdWhYV03ZxvH66S12PXquy789nRvr8OnFdwDI/RDJCUPCHktL
+         YcRw==
+X-Gm-Message-State: APjAAAVGSI9NgoFyQWzoW8nHkNpPFYHYEzCdbluSlrXrFcIxyyYmJdj6
+        OUxtH5+QDTn6PBFnfdYVlVdyZg==
+X-Google-Smtp-Source: APXvYqwTWU6dUXRzmsADNPqH3uiAuNFMSSR3fadd88y/t2XXcKUagh0ynAT+0klnLvTo5WTSUT7USA==
+X-Received: by 2002:a1c:2e50:: with SMTP id u77mr6567745wmu.64.1570863194641;
+        Fri, 11 Oct 2019 23:53:14 -0700 (PDT)
 Received: from mai.imgcgcw.net ([2a01:e34:ed2f:f020:f437:29a8:ed69:7bab])
-        by smtp.gmail.com with ESMTPSA id z5sm17450497wrs.54.2019.10.11.23.53.12
+        by smtp.gmail.com with ESMTPSA id z5sm17450497wrs.54.2019.10.11.23.53.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2019 23:53:12 -0700 (PDT)
+        Fri, 11 Oct 2019 23:53:13 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     rui.zhang@intel.com, edubezval@gmail.com
 Cc:     daniel.lezcano@linaro.org, linux-kernel@vger.kernel.org,
         amit.kucheria@linaro.org
-Subject: [PATCH 09/11] thermal: Remove stubs for thermal_zone_[un]bind_cooling_device
-Date:   Sat, 12 Oct 2019 08:52:53 +0200
-Message-Id: <20191012065255.23249-9-daniel.lezcano@linaro.org>
+Subject: [PATCH 10/11] thermal: Remove thermal_zone_device_update() stub
+Date:   Sat, 12 Oct 2019 08:52:54 +0200
+Message-Id: <20191012065255.23249-10-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191012065255.23249-1-daniel.lezcano@linaro.org>
 References: <20191012065255.23249-1-daniel.lezcano@linaro.org>
@@ -59,35 +59,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All callers of the functions depends on THERMAL, it is pointless to
-define stubs. Remove them.
+All users of the function depends on THERMAL, no stub is
+needed. Remove it.
 
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- include/linux/thermal.h | 10 ----------
- 1 file changed, 10 deletions(-)
+ include/linux/thermal.h | 3 ---
+ 1 file changed, 3 deletions(-)
 
 diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-index d77baa523093..ae72fe771e07 100644
+index ae72fe771e07..8daa179918a1 100644
 --- a/include/linux/thermal.h
 +++ b/include/linux/thermal.h
-@@ -427,16 +427,6 @@ static inline struct thermal_zone_device *thermal_zone_device_register(
+@@ -427,9 +427,6 @@ static inline struct thermal_zone_device *thermal_zone_device_register(
  static inline void thermal_zone_device_unregister(
  	struct thermal_zone_device *tz)
  { }
--static inline int thermal_zone_bind_cooling_device(
--	struct thermal_zone_device *tz, int trip,
--	struct thermal_cooling_device *cdev,
--	unsigned long upper, unsigned long lower,
--	unsigned int weight)
--{ return -ENODEV; }
--static inline int thermal_zone_unbind_cooling_device(
--	struct thermal_zone_device *tz, int trip,
--	struct thermal_cooling_device *cdev)
--{ return -ENODEV; }
- static inline void thermal_zone_device_update(struct thermal_zone_device *tz,
- 					      enum thermal_notify_event event)
- { }
+-static inline void thermal_zone_device_update(struct thermal_zone_device *tz,
+-					      enum thermal_notify_event event)
+-{ }
+ static inline struct thermal_cooling_device *
+ thermal_cooling_device_register(char *type, void *devdata,
+ 	const struct thermal_cooling_device_ops *ops)
 -- 
 2.17.1
 
