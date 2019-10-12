@@ -2,81 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B8D4D530E
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2019 00:32:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2689CD5318
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2019 00:35:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727762AbfJLWcA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 12 Oct 2019 18:32:00 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36166 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727109AbfJLWcA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Oct 2019 18:32:00 -0400
-Received: by mail-pg1-f193.google.com with SMTP id 23so7859795pgk.3
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2019 15:32:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=EUytYsgismnGdLjrYT1f0D/ivlcB+VQ8GRyrP/oYfX8=;
-        b=VBs+QBoVHJCnP5YQqA8mNk1nKouTo1snowQoHzOd1ZorebOzDaje0mcjZNemM9Oy9W
-         avsbJPGLxOIZIJq7gtHlkv/c1E9VUV7XXZPQZ/76Nt3ATijiguEpuIERlb2yw4a+6AuE
-         C5E9PYji+e67bpXWCgnFAifbEemiShfNMLyv0Hugcp8tRNh2Ih7x4Fa4uChKgaSbReoT
-         4E0z17sWgGQPlh6RERptdtr9FHZgEolPD6nNkFJt0xcwc8tym6J0GpQMKR/ZssX7ipKq
-         npB9e/vnZ9VxEzoBKpr2P23jKUvXU4ldADZJgJ4Uh7xfH+No7pn/1ED0hCgd4Mom0hVk
-         jKTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=EUytYsgismnGdLjrYT1f0D/ivlcB+VQ8GRyrP/oYfX8=;
-        b=eukeYcPWuAtOHKrdsFcMhWYGbAu7AmI7/hRwffvuMlfDQ4M52Yxr8M5uknG2Gh1JD8
-         z+eSl0Lyu+vPze9DiELGiPDqPhUqA2G4TOBJQQ/YPdyed+kQxEUDzjgBLfw5KA8eZcyH
-         sKKEhXGKjoC1cuPUeNfwn1p8PIVcq4YeholxkRHjWc7hueF8k02/sjfwAz5ipU0FDxrs
-         O4U4rpOWgcGH3cwhJ62YeuZ/BlSTRfVOcDBSkgbaIL9UOuI9g/Vv5WEeV8kqPNXtpLGx
-         RbAwJSN96G8TZqSs1RReGw+bE9xwVe2hC/GkNqklIhdzq6/ux6QhxdjWotVxj92dTEfn
-         yq1g==
-X-Gm-Message-State: APjAAAVXVQfbPWRcccoZFnk9hr/eOLUQvvl1U3VCCmpM6jKA+xDTXlzj
-        ZJWHyRRZrTiznJqgbHbaDs8HEg==
-X-Google-Smtp-Source: APXvYqzwerfAMCLkzfc6iw/hQmNINLGN5bzPoTAZm4z5/mB1dyyOaS8uYz7N4ku1A1iKIynFmulEig==
-X-Received: by 2002:a17:90a:1617:: with SMTP id n23mr26521029pja.75.1570919519713;
-        Sat, 12 Oct 2019 15:31:59 -0700 (PDT)
-Received: from cakuba.netronome.com ([2601:646:8e00:e18::2])
-        by smtp.gmail.com with ESMTPSA id v28sm17346964pgn.17.2019.10.12.15.31.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Oct 2019 15:31:59 -0700 (PDT)
-Date:   Sat, 12 Oct 2019 15:31:56 -0700
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Jiri Pirko <jiri@resnulli.us>
-Subject: Re: [PATCH] netdevsim: Fix error handling in nsim_fib_init and
- nsim_fib_exit
-Message-ID: <20191012153156.01d962f1@cakuba.netronome.com>
-In-Reply-To: <20191011094653.18796-1-yuehaibing@huawei.com>
-References: <20191011094653.18796-1-yuehaibing@huawei.com>
-Organization: Netronome Systems, Ltd.
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1728427AbfJLWfG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 12 Oct 2019 18:35:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45484 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727188AbfJLWfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Oct 2019 18:35:05 -0400
+Subject: Re: [GIT PULL] x86 license updates
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570919705;
+        bh=ugcqHNytv2Q3vfS0TJjEYZFf5ZestxPEgi9sk60ciak=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=hY2ikw9PDtpieYzCi/TdvtCtI2PvoeJx7bLaFF8CAbkvi87sioeGqymqvmxs6JkSX
+         cuJsSGtdX5pwd0Hz80PCNgV3+vZd6JJbkdFOPtJQcXwuPmkMx5CXQUvvBPmpXWzXz0
+         sYlVb/slu9lb77qhIYk8viLFgHOaXBIfovjnHXT8=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20191012115257.GA95775@gmail.com>
+References: <20191012115257.GA95775@gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20191012115257.GA95775@gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
+ core-urgent-for-linus
+X-PR-Tracked-Commit-Id: 6184488a19be96d89cb6c36fb4bc277198309484
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: e9ec3588a9372dfb9b04afcddb199ad9e2be0044
+Message-Id: <157091970499.17047.5783303918228667628.pr-tracker-bot@kernel.org>
+Date:   Sat, 12 Oct 2019 22:35:04 +0000
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 Oct 2019 17:46:53 +0800, YueHaibing wrote:
-> In nsim_fib_init(), if register_fib_notifier failed, nsim_fib_net_ops
-> should be unregistered before return.
-> 
-> In nsim_fib_exit(), unregister_fib_notifier should be called before
-> nsim_fib_net_ops be unregistered, otherwise may cause use-after-free:
-> 
-> BUG: KASAN: use-after-free in nsim_fib_event_nb+0x342/0x570 [netdevsim]
-> Read of size 8 at addr ffff8881daaf4388 by task kworker/0:3/3499
-> 
+The pull request you sent on Sat, 12 Oct 2019 13:52:57 +0200:
 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: 59c84b9fcf42 ("netdevsim: Restore per-network namespace accounting for fib entries")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-urgent-for-linus
 
-Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/e9ec3588a9372dfb9b04afcddb199ad9e2be0044
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
