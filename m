@@ -2,130 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7616D520B
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 21:18:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD876D5222
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 21:25:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729798AbfJLTRL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 12 Oct 2019 15:17:11 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:37001 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729678AbfJLTRK (ORCPT
+        id S1729649AbfJLTXw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 12 Oct 2019 15:23:52 -0400
+Received: from nms02.ip-net.mgrs.ru ([178.237.242.9]:56412 "EHLO
+        nms02.ip-net.mgrs.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728579AbfJLTXv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Oct 2019 15:17:10 -0400
-Received: by mail-io1-f65.google.com with SMTP id b19so28561399iob.4;
-        Sat, 12 Oct 2019 12:17:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=nnXOz+PRi58QoHjbu8c9O+WK1XkBB4tTUc2/yDJUsyM=;
-        b=nS7hNDn8VxzSjURlBE78kATwaL7qPglBjODaQGeiluWc7L3KMJe9YDZ1nbMjCPg2k1
-         NmdpST3hzIfFgjjtm2k71t7RDTL5skpsie5QY7FAslM77IIOl0JgTi9qvN5Effnmvm4F
-         QTb+x6j7CdtoOqx0Ko0vBaWDwGLJt3fUamR6zgAoIXZSs+BG6kUPAhNPbypt9dl0GbBi
-         6avvmlrRrLi3bU+ixPrRNh7CE6AxmSB4ZJTTTGxLBW8ymbvXkKkbKXHdhMDf3sn6Saua
-         tCmiBnq8pNsZV5EM1pikTlxsuxSKlPYCnEuij0vSYKUvTLc171zWgrvQIwYl/pejOLK2
-         DmXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=nnXOz+PRi58QoHjbu8c9O+WK1XkBB4tTUc2/yDJUsyM=;
-        b=sDG5bxhIBLDfZI5mxYUEmWfeW3th7DcKTP3Cwq3u0se8/60cmEVuo7PK1lVOcG/T6/
-         0spyhpeBBjGcs+lHCMayXs4eyFlm1bdscu0vBERzplM4buFCBePfFXZGfk2MOaBCBhOa
-         u2BtFuQhT+Mh2d/f/Hhti79/kG3vQjZ7PGv62KamnGiMcb1gYpa3bhC3PfHJo7KBSXva
-         Lv6X+rZmj6OaKzNV5gHWzoY3RZ7LOaBvgcZorDgeV03v4TV4Xn78FdJrB15A4wMRerCk
-         04A+yMoJgUj5jNmgI1AWE9Gux2IILW5jF+pV6t5FYkiAo/dZtBtjCcvf2HuPMB7Z/9pN
-         x7gg==
-X-Gm-Message-State: APjAAAVP/O3PHaCzRPdRHGy0z+RpbPBmB7oqkAOWD2mvm1kW3LAkjdIt
-        n7qLm5ivd7zhskxmV7VUsNwHAn0PQQEPQ2Zfs1w=
-X-Google-Smtp-Source: APXvYqxrom5F5F07hOHPrw4GFvS2e6x6PfewZxqWfECjkUV75TnmcPI1mn3HAIFnkC8yXUkttiOV5Yh5LUUXo7eNKzc=
-X-Received: by 2002:a02:a11e:: with SMTP id f30mr26789400jag.95.1570907829709;
- Sat, 12 Oct 2019 12:17:09 -0700 (PDT)
+        Sat, 12 Oct 2019 15:23:51 -0400
+Received: from User (localhost.localdomain [127.0.0.1])
+        by nms02.ip-net.mgrs.ru (Postfix) with SMTP id C89BE4E11B8;
+        Sat, 12 Oct 2019 08:16:19 +0300 (MSK)
+Reply-To: <kepe19655@aol.com>
+From:   "Mr. Henk Boelens" <info@wholeearth.com>
+To:     henkboelens2016@contractor.net
+Subject: GOOD DAY?
+Date:   Fri, 11 Oct 2019 22:17:04 -0700
 MIME-Version: 1.0
-References: <20191004190938.15353-1-navid.emamdoost@gmail.com>
- <540321eb-7699-1d51-59d5-dde5ffcb8fc4@web.de> <CAEkB2ETtVwtmkpup65D3wqyLn=84ZHt0QRo0dJK5GsV=-L=qVw@mail.gmail.com>
- <2abf545b-023b-853a-95ef-ce99e1896a5d@web.de> <3fd6aa8b-2529-7ff5-3e19-05267101b2a4@web.de>
-In-Reply-To: <3fd6aa8b-2529-7ff5-3e19-05267101b2a4@web.de>
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-Date:   Sat, 12 Oct 2019 14:16:58 -0500
-Message-ID: <CAEkB2ERCGJ6abNXfPNX7nbwkwD7qYTPYjYsNGzZwynn5CbPCzg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] drm/imx: Fix error handling for a kmemdup() call in imx_pd_bind()
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     dri-devel@lists.freedesktop.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Fabio Estevam <festevam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Peter Senna Tschudin <peter.senna@collabora.com>,
-        Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
-        Stephen McCamant <smccaman@umn.edu>,
-        Rob Herring <robh@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+        charset="Windows-1251"
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+X-MSMail-Priority: Normal
+X-Mailer: Microsoft Outlook Express 6.00.2600.0000
+X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
+Message-Id: <20191012051620.C89BE4E11B8@nms02.ip-net.mgrs.ru>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 12, 2019 at 4:07 AM Markus Elfring <Markus.Elfring@web.de> wrot=
-e:
->
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 12 Oct 2019 10:30:21 +0200
->
-> The return value from a call of the function =E2=80=9Ckmemdup=E2=80=9D wa=
-s not checked
-> in this function implementation. Thus add the corresponding error handlin=
-g.
->
-> Fixes: 19022aaae677dfa171a719e9d1ff04823ce65a65 ("staging: drm/imx: Add p=
-arallel display support")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/gpu/drm/imx/parallel-display.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/imx/parallel-display.c b/drivers/gpu/drm/imx=
-/parallel-display.c
-> index 35518e5de356..39c4798f56b6 100644
-> --- a/drivers/gpu/drm/imx/parallel-display.c
-> +++ b/drivers/gpu/drm/imx/parallel-display.c
-> @@ -210,8 +210,13 @@ static int imx_pd_bind(struct device *dev, struct de=
-vice *master, void *data)
->                 return -ENOMEM;
->
->         edidp =3D of_get_property(np, "edid", &imxpd->edid_len);
-> -       if (edidp)
-> +       if (edidp) {
->                 imxpd->edid =3D kmemdup(edidp, imxpd->edid_len, GFP_KERNE=
-L);
-> +               if (!imxpd->edid) {
-> +                       devm_kfree(dev, imxpd);
+Western Associate Bank
+Bank Address:Tower Building 83 Hull Road
+Oxwich Brussels Belgium
 
-You should not try to free imxpd here as it is a resource-managed
-allocation via devm_kzalloc(). It means memory allocated with this
-function is
- automatically freed on driver detach. So, this patch introduces a double-f=
-ree.
+Dear Friend
 
-> +                       return -ENOMEM;
-> +               }
-> +       }
->
->         ret =3D of_property_read_string(np, "interface-pix-fmt", &fmt);
->         if (!ret) {
-> --
-> 2.23.0
->
+Please accept my apologies if this request does not meet your personal ethics as it is not intended to cause you any embarrassment in what ever form. I got your
+contact email address from the internet directory and decided to contact you for this transaction that is based on trust and your outstanding. I have an interesting business proposal for you that will be of immense benefit to both of us. Although this may be hard for you to believe because i know that there is absolutely going to be a great doubt and distrust in your heart in respect of this email as this might sound strange to you and coupled with the fact that, so many individuals have taken possession of the Internet to facilitate their nefarious deeds, thereby making it extremely difficult for genuine and legitimate persons to get attention and recognition. Please grant me the benefit of doubt and hear me out.
 
+My name is Henk Boelens . I work with Western Associate Bank here in Belgium as a branch bank manager. I discovered an abandoned sum of GBP 19,850,000.00 (Nineteen Million Eight Hundred And Fifty Thousand British Pounds) in an account that belongs to one of our foreign customers Late Dr. Erin Jacobson, an American citizen who unfortunately lost his life and his entire family in Montana plane crash on March 23, 2009, on their way to a group ski vacation. The choice of contacting you is aroused from the geographical nature of where you live, particularly due to the sensitivity of this transaction and the confidentiality herein. Now our bank has been waiting for any of the relatives to come up for the claim but nobody has done that. I personally tried to locate any member of his family but have been unsuccessful in locating the relatives for 7 years now, i have also checked the deposit documents and discovered that he did not declare any next of kin on the deposit.
 
---=20
-Navid.
+Now the Management of our bank as instructed me to look for the next of kin or they will convert the funds into the Government Treasury Account as unclaimed funds and the funds will be wasted. Therefore, I cannot claim these funds without presenting a foreigner to stand as next of kin. This is reason why I contacted you to seek your consent to present you as an next of kin so that the funds will be release to you, then we share it 55% for me and 45% for you because am not a
+greedy person and is deal between me and you.
+
+I have employed the service of an Attorney who will secure all necessary legal documents that could be used to back up this claim. All the attorney need to do is to fill in your names to the documents and legalize it in the Court here to prove you as the legitimate next of kin to the late depositor Dr. Erin Jacobson then the bank will release the funds to you as the rightful beneficiary.
+
+This is a fair deal without any risk attached either on your part or on my part as long as we comply with the laws governing the claiming of funds in our establishment. All I require is your honest co-operation to enable us see this deal through, and with my position in the bank as a bank manager, I will do every thing possible to protect your interest and to make sure everything workout successfully.
+
+If you are interested in this deal, kindly send me your complete information, your full names and address, Your Private telephone and Fax numbers, and Cell phone so that the attorney will start processing the necessary paperwork that would facilitate the release of the funds to you.
+
+Mr. Henk Boelens
