@@ -2,227 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4428D4FF7
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 15:19:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29975D5002
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 15:20:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729219AbfJLNTX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 12 Oct 2019 09:19:23 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:50579 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726839AbfJLNTW (ORCPT
+        id S1729378AbfJLNTg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 12 Oct 2019 09:19:36 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:34815 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729308AbfJLNTe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Oct 2019 09:19:22 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 5so12900193wmg.0
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2019 06:19:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=rxHrJ/JpCRNsDy9V0LejjC9vWznRZlLfOv0/K8fe7r8=;
-        b=mD3xPYzG/Ane2VrfdWSaVrJIO6ZETvdaSI4bpkkjbBlFkyg/jVbZydb86kpCoRf/FJ
-         MUvvQT+fES01PQzbFIwg8usVFCF0YZrliDLHLAEMuMQMrvbjnyv15JiSygAMFM7Bu800
-         qjKxBCXJUWMHj4mhxfvZ3rg14b+Fs9Fd7hX7lo0iqx94m8REur8a3EbkgqjnMBzfZauK
-         +4QqhHDlqvWKlfwF3WQw1dFq75346cdeLe2BbVFOtJtIije9UN0yyMhBosLBUFeNG29S
-         pRC3L8nElFKJbJ/pFxHJZzzVg5XmuuJRi10qdJUlxtiiCka73V0yKv6VlkKWkGY/e78h
-         2eYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=rxHrJ/JpCRNsDy9V0LejjC9vWznRZlLfOv0/K8fe7r8=;
-        b=QWTBdswuLvoyCm5CEbbXUNXvGZ6wZqTm2cgpGQXwUEDnNgKU/EIulTT+4+bV2hWq7z
-         kTDxqW5XmVbMrT4NLLtoKq6EittVobiZi+rELyhypWzflS850LbHf01WrdQg6MrSGawx
-         Gz2q0qMYS01osXkpZPq9e6wz192+xZk7BVPXA977a1H2E3yShyt1iseAdHVx8WlDg4G+
-         R7k+ylAmt+HehpkLF0fg7jhgzOgSfUrtTxH9wYU7vAeZMpc7DVyXUtDvB3eCEjYsEsVX
-         FAhYyweu/at7FMXpoUIgG8/NRy4V0t09OsJgk2BF0gWb82sg7hkyB7LBoMbOeR4Rleju
-         RS1g==
-X-Gm-Message-State: APjAAAUM2jjuRHWtGWIalCTfciK6vynexAFMgFChINprok/0dqws8qS8
-        nSCKhR3Yv/FSyBV3vvEZdcA=
-X-Google-Smtp-Source: APXvYqxhpsZdQy8DkIy4CBzm8R2X1KmsOwlcMYVqFSHnRjv+TGQbv2Hrk77OrggjKuF5jvwLQcNSxw==
-X-Received: by 2002:a7b:c3d2:: with SMTP id t18mr7770972wmj.52.1570886359504;
-        Sat, 12 Oct 2019 06:19:19 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id e9sm19800697wme.3.2019.10.12.06.19.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Oct 2019 06:19:18 -0700 (PDT)
-Date:   Sat, 12 Oct 2019 15:19:16 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] x86 fixes
-Message-ID: <20191012131916.GA26964@gmail.com>
+        Sat, 12 Oct 2019 09:19:34 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iJHIk-0000aC-JR; Sat, 12 Oct 2019 15:19:18 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id EE1D81C0137;
+        Sat, 12 Oct 2019 15:19:17 +0200 (CEST)
+Date:   Sat, 12 Oct 2019 13:19:17 -0000
+From:   "tip-bot2 for Kan Liang" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/urgent] perf/x86/cstate: Add Tiger Lake CPU support
+Cc:     Kan Liang <kan.liang@linux.intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <1570549810-25049-10-git-send-email-kan.liang@linux.intel.com>
+References: <1570549810-25049-10-git-send-email-kan.liang@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Message-ID: <157088635784.9978.3826421032925829975.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+The following commit has been merged into the perf/urgent branch of tip:
 
-Please pull the latest x86-urgent-for-linus git tree from:
+Commit-ID:     52e92f409dede388b7dc3ee13491fbf7a80db935
+Gitweb:        https://git.kernel.org/tip/52e92f409dede388b7dc3ee13491fbf7a80db935
+Author:        Kan Liang <kan.liang@linux.intel.com>
+AuthorDate:    Tue, 08 Oct 2019 08:50:10 -07:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Sat, 12 Oct 2019 15:13:09 +02:00
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-for-linus
+perf/x86/cstate: Add Tiger Lake CPU support
 
-   # HEAD: 8d7c6ac3b2371eb1cbc9925a88f4d10efff374de x86/cpu: Add Comet Lake to the Intel CPU models header
+Tiger Lake is the followon to Ice Lake. From the perspective of Intel
+cstate residency counters, there is nothing changed compared with
+Ice Lake.
 
-A handful of fixes: a kexec linking fix, an AMD MWAITX fix, a vmware 
-guest support fix when built under Clang, and new CPU model number 
-definitions.
+Share icl_cstates with Ice Lake.
+Update the comments for Tiger Lake.
 
+The External Design Specification (EDS) is not published yet. It comes
+from an authoritative internal source.
 
-  out-of-topic modifications in x86-urgent-for-linus:
-  -----------------------------------------------------
-  include/linux/string.h             # bec500777089: lib/string: Make memzero_exp
-  lib/string.c                       # bec500777089: lib/string: Make memzero_exp
+The patch has been tested on real hardware.
 
- Thanks,
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/1570549810-25049-10-git-send-email-kan.liang@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/events/intel/cstate.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-	Ingo
-
------------------->
-Arvind Sankar (1):
-      lib/string: Make memzero_explicit() inline instead of external
-
-Janakarajan Natarajan (1):
-      x86/asm: Fix MWAITX C-state hint value
-
-Kan Liang (1):
-      x86/cpu: Add Comet Lake to the Intel CPU models header
-
-Sami Tolvanen (1):
-      x86/cpu/vmware: Use the full form of INL in VMWARE_PORT
-
-
- arch/x86/include/asm/intel-family.h |  3 +++
- arch/x86/include/asm/mwait.h        |  2 +-
- arch/x86/kernel/cpu/vmware.c        |  2 +-
- arch/x86/lib/delay.c                |  4 ++--
- include/linux/string.h              | 21 ++++++++++++++++++++-
- lib/string.c                        | 21 ---------------------
- 6 files changed, 27 insertions(+), 26 deletions(-)
-
-diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
-index f04622500da3..c606c0b70738 100644
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -83,6 +83,9 @@
- #define INTEL_FAM6_TIGERLAKE_L		0x8C
- #define INTEL_FAM6_TIGERLAKE		0x8D
+diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
+index 4d232ac..e1daf41 100644
+--- a/arch/x86/events/intel/cstate.c
++++ b/arch/x86/events/intel/cstate.c
+@@ -50,44 +50,44 @@
+  *	MSR_CORE_C6_RESIDENCY: CORE C6 Residency Counter
+  *			       perf code: 0x02
+  *			       Available model: SLM,AMT,NHM,WSM,SNB,IVB,HSW,BDW,
+- *						SKL,KNL,GLM,CNL,KBL,CML,ICL
++ *						SKL,KNL,GLM,CNL,KBL,CML,ICL,TGL
+  *			       Scope: Core
+  *	MSR_CORE_C7_RESIDENCY: CORE C7 Residency Counter
+  *			       perf code: 0x03
+  *			       Available model: SNB,IVB,HSW,BDW,SKL,CNL,KBL,CML,
+- *						ICL
++ *						ICL,TGL
+  *			       Scope: Core
+  *	MSR_PKG_C2_RESIDENCY:  Package C2 Residency Counter.
+  *			       perf code: 0x00
+  *			       Available model: SNB,IVB,HSW,BDW,SKL,KNL,GLM,CNL,
+- *						KBL,CML,ICL
++ *						KBL,CML,ICL,TGL
+  *			       Scope: Package (physical package)
+  *	MSR_PKG_C3_RESIDENCY:  Package C3 Residency Counter.
+  *			       perf code: 0x01
+  *			       Available model: NHM,WSM,SNB,IVB,HSW,BDW,SKL,KNL,
+- *						GLM,CNL,KBL,CML,ICL
++ *						GLM,CNL,KBL,CML,ICL,TGL
+  *			       Scope: Package (physical package)
+  *	MSR_PKG_C6_RESIDENCY:  Package C6 Residency Counter.
+  *			       perf code: 0x02
+  *			       Available model: SLM,AMT,NHM,WSM,SNB,IVB,HSW,BDW
+- *						SKL,KNL,GLM,CNL,KBL,CML,ICL
++ *						SKL,KNL,GLM,CNL,KBL,CML,ICL,TGL
+  *			       Scope: Package (physical package)
+  *	MSR_PKG_C7_RESIDENCY:  Package C7 Residency Counter.
+  *			       perf code: 0x03
+  *			       Available model: NHM,WSM,SNB,IVB,HSW,BDW,SKL,CNL,
+- *						KBL,CML,ICL
++ *						KBL,CML,ICL,TGL
+  *			       Scope: Package (physical package)
+  *	MSR_PKG_C8_RESIDENCY:  Package C8 Residency Counter.
+  *			       perf code: 0x04
+- *			       Available model: HSW ULT,KBL,CNL,CML,ICL
++ *			       Available model: HSW ULT,KBL,CNL,CML,ICL,TGL
+  *			       Scope: Package (physical package)
+  *	MSR_PKG_C9_RESIDENCY:  Package C9 Residency Counter.
+  *			       perf code: 0x05
+- *			       Available model: HSW ULT,KBL,CNL,CML,ICL
++ *			       Available model: HSW ULT,KBL,CNL,CML,ICL,TGL
+  *			       Scope: Package (physical package)
+  *	MSR_PKG_C10_RESIDENCY: Package C10 Residency Counter.
+  *			       perf code: 0x06
+- *			       Available model: HSW ULT,KBL,GLM,CNL,CML,ICL
++ *			       Available model: HSW ULT,KBL,GLM,CNL,CML,ICL,TGL
+  *			       Scope: Package (physical package)
+  *
+  */
+@@ -645,6 +645,8 @@ static const struct x86_cpu_id intel_cstates_match[] __initconst = {
  
-+#define INTEL_FAM6_COMETLAKE		0xA5
-+#define INTEL_FAM6_COMETLAKE_L		0xA6
-+
- /* "Small Core" Processors (Atom) */
- 
- #define INTEL_FAM6_ATOM_BONNELL		0x1C /* Diamondville, Pineview */
-diff --git a/arch/x86/include/asm/mwait.h b/arch/x86/include/asm/mwait.h
-index e28f8b723b5c..9d5252c9685c 100644
---- a/arch/x86/include/asm/mwait.h
-+++ b/arch/x86/include/asm/mwait.h
-@@ -21,7 +21,7 @@
- #define MWAIT_ECX_INTERRUPT_BREAK	0x1
- #define MWAITX_ECX_TIMER_ENABLE		BIT(1)
- #define MWAITX_MAX_LOOPS		((u32)-1)
--#define MWAITX_DISABLE_CSTATES		0xf
-+#define MWAITX_DISABLE_CSTATES		0xf0
- 
- static inline void __monitor(const void *eax, unsigned long ecx,
- 			     unsigned long edx)
-diff --git a/arch/x86/kernel/cpu/vmware.c b/arch/x86/kernel/cpu/vmware.c
-index 9735139cfdf8..46d732696c1c 100644
---- a/arch/x86/kernel/cpu/vmware.c
-+++ b/arch/x86/kernel/cpu/vmware.c
-@@ -49,7 +49,7 @@
- #define VMWARE_CMD_VCPU_RESERVED 31
- 
- #define VMWARE_PORT(cmd, eax, ebx, ecx, edx)				\
--	__asm__("inl (%%dx)" :						\
-+	__asm__("inl (%%dx), %%eax" :					\
- 		"=a"(eax), "=c"(ecx), "=d"(edx), "=b"(ebx) :		\
- 		"a"(VMWARE_HYPERVISOR_MAGIC),				\
- 		"c"(VMWARE_CMD_##cmd),					\
-diff --git a/arch/x86/lib/delay.c b/arch/x86/lib/delay.c
-index b7375dc6898f..c126571e5e2e 100644
---- a/arch/x86/lib/delay.c
-+++ b/arch/x86/lib/delay.c
-@@ -113,8 +113,8 @@ static void delay_mwaitx(unsigned long __loops)
- 		__monitorx(raw_cpu_ptr(&cpu_tss_rw), 0, 0);
- 
- 		/*
--		 * AMD, like Intel, supports the EAX hint and EAX=0xf
--		 * means, do not enter any deep C-state and we use it
-+		 * AMD, like Intel's MWAIT version, supports the EAX hint and
-+		 * EAX=0xf0 means, do not enter any deep C-state and we use it
- 		 * here in delay() to minimize wakeup latency.
- 		 */
- 		__mwaitx(MWAITX_DISABLE_CSTATES, delay, MWAITX_ECX_TIMER_ENABLE);
-diff --git a/include/linux/string.h b/include/linux/string.h
-index b2f9df7f0761..b6ccdc2c7f02 100644
---- a/include/linux/string.h
-+++ b/include/linux/string.h
-@@ -227,7 +227,26 @@ static inline bool strstarts(const char *str, const char *prefix)
- }
- 
- size_t memweight(const void *ptr, size_t bytes);
--void memzero_explicit(void *s, size_t count);
-+
-+/**
-+ * memzero_explicit - Fill a region of memory (e.g. sensitive
-+ *		      keying data) with 0s.
-+ * @s: Pointer to the start of the area.
-+ * @count: The size of the area.
-+ *
-+ * Note: usually using memset() is just fine (!), but in cases
-+ * where clearing out _local_ data at the end of a scope is
-+ * necessary, memzero_explicit() should be used instead in
-+ * order to prevent the compiler from optimising away zeroing.
-+ *
-+ * memzero_explicit() doesn't need an arch-specific version as
-+ * it just invokes the one of memset() implicitly.
-+ */
-+static inline void memzero_explicit(void *s, size_t count)
-+{
-+	memset(s, 0, count);
-+	barrier_data(s);
-+}
- 
- /**
-  * kbasename - return the last part of a pathname.
-diff --git a/lib/string.c b/lib/string.c
-index cd7a10c19210..08ec58cc673b 100644
---- a/lib/string.c
-+++ b/lib/string.c
-@@ -748,27 +748,6 @@ void *memset(void *s, int c, size_t count)
- EXPORT_SYMBOL(memset);
- #endif
- 
--/**
-- * memzero_explicit - Fill a region of memory (e.g. sensitive
-- *		      keying data) with 0s.
-- * @s: Pointer to the start of the area.
-- * @count: The size of the area.
-- *
-- * Note: usually using memset() is just fine (!), but in cases
-- * where clearing out _local_ data at the end of a scope is
-- * necessary, memzero_explicit() should be used instead in
-- * order to prevent the compiler from optimising away zeroing.
-- *
-- * memzero_explicit() doesn't need an arch-specific version as
-- * it just invokes the one of memset() implicitly.
-- */
--void memzero_explicit(void *s, size_t count)
--{
--	memset(s, 0, count);
--	barrier_data(s);
--}
--EXPORT_SYMBOL(memzero_explicit);
--
- #ifndef __HAVE_ARCH_MEMSET16
- /**
-  * memset16() - Fill a memory area with a uint16_t
+ 	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE_L, icl_cstates),
+ 	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE,   icl_cstates),
++	X86_CSTATES_MODEL(INTEL_FAM6_TIGERLAKE_L, icl_cstates),
++	X86_CSTATES_MODEL(INTEL_FAM6_TIGERLAKE, icl_cstates),
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(x86cpu, intel_cstates_match);
