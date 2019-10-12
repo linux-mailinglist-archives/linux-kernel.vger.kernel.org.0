@@ -2,228 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43896D4C56
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 05:08:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BC43D4C58
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 05:08:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727856AbfJLDH4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 23:07:56 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:22971 "EHLO
+        id S1728221AbfJLDIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 23:08:02 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:37237 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727587AbfJLDHz (ORCPT
+        with ESMTP id S1727896AbfJLDIA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 23:07:55 -0400
-X-UUID: 211e86fed14241ec87e46723ee631fe7-20191012
-X-UUID: 211e86fed14241ec87e46723ee631fe7-20191012
-Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        Fri, 11 Oct 2019 23:08:00 -0400
+X-UUID: cfbfcefb92fc43e5aed137a2b7424aa6-20191012
+X-UUID: cfbfcefb92fc43e5aed137a2b7424aa6-20191012
+Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
         (envelope-from <jitao.shi@mediatek.com>)
         (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1339549916; Sat, 12 Oct 2019 11:07:48 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N1.mediatek.inc
- (172.27.4.75) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sat, 12 Oct
- 2019 11:07:46 +0800
+        with ESMTP id 1211227749; Sat, 12 Oct 2019 11:07:52 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33DR.mediatek.inc
+ (172.27.6.106) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sat, 12 Oct
+ 2019 11:07:50 +0800
 Received: from mszsdclx1018.gcn.mediatek.inc (172.27.4.253) by
  MTKCAS36.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
- 15.0.1395.4 via Frontend Transport; Sat, 12 Oct 2019 11:07:45 +0800
+ 15.0.1395.4 via Frontend Transport; Sat, 12 Oct 2019 11:07:49 +0800
 From:   Jitao Shi <jitao.shi@mediatek.com>
 To:     Sam Ravnborg <sam@ravnborg.org>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
+        "Daniel Vetter" <daniel@ffwll.ch>,
         <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
 CC:     <srv_heupstream@mediatek.com>, <yingjoe.chen@mediatek.com>,
         <eddie.huang@mediatek.com>, <cawa.cheng@mediatek.com>,
         <bibby.hsieh@mediatek.com>, <linux-mediatek@lists.infradead.org>,
         <ck.hu@mediatek.com>, <stonea168@163.com>,
         Jitao Shi <jitao.shi@mediatek.com>
-Subject: [PATCH v7 4/8] drm/panel: support for auo,kd101n80-45na wuxga dsi video mode panel
-Date:   Sat, 12 Oct 2019 11:07:16 +0800
-Message-ID: <20191012030720.27127-5-jitao.shi@mediatek.com>
+Subject: [PATCH v7 5/8] dt-bindings: display: panel: add boe tv101wum-n53 panel documentation
+Date:   Sat, 12 Oct 2019 11:07:17 +0800
+Message-ID: <20191012030720.27127-6-jitao.shi@mediatek.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191012030720.27127-1-jitao.shi@mediatek.com>
 References: <20191012030720.27127-1-jitao.shi@mediatek.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
-X-TM-SNTS-SMTP: 3293A786B18C77DCA1B533F34E143959039A4E396C5B2CC907EC01FABA3A25D82000:8
+X-TM-AS-Product-Ver: SMEX-12.5.0.1684-8.5.1010-24970.000
+X-TM-AS-Result: No-3.344400-8.000000-10
+X-TMASE-MatchedRID: LDQTIb3AkScn3vOf0l6OFgPZZctd3P4By733NwuklsIHQvT9S3vHUDgK
+        6rBjXxyiwmiM4j3WsDwWIvAeOZ6lZBhzK7qAlTSLCLQsumV/5S9V3dLaYUoCPSS30GKAkBxWie3
+        MY7Xv0phqry+54H7wDufAOkxShVgK5TDi4+38dPYgCPGiZqtI8Gp5nbEBTsLkrNaeJrYvUQiKWS
+        pN2IMPKUPNs5J6pUBWmkLIyx+kbq+tsBhZwL3bDR23b+lJHvPAhdipnqZWlN6LT3esmGQfwEtTy
+        K8ZTWCGZI1BYYTjZ96AMuqetGVetr9k4V4N5ceA3QfwsVk0UbsIoUKaF27lxa+VNt27m34VrKYl
+        gqznSc4xP9Zy6unRStfmgibWsLHGTgsevC4sB+C0btMs1U/nhob6DPwnZOM0denzLfRnwSvqqRM
+        MGfOl4nWznloeB3HaPQzwIbfiR5AMD9LTK+5Nny0c7FwZxihenqg/VrSZEiM=
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--3.344400-8.000000
+X-TMASE-Version: SMEX-12.5.0.1684-8.5.1010-24970.000
+X-TM-SNTS-SMTP: 6D9C4C56DB1E911528170B75A9D921C0E5DB4CF1DAD720447BBF5B3C009627462000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Auo,kd101n80-45na's connector is same as boe,tv101wum-nl6.
-The most codes can be reuse.
-So auo,kd101n80-45na and boe,tv101wum-nl6 use one driver file.
-Add the different parts in driver data.
+Add dcumentation for boe,tv101wum-n53, which is mipi dsi video panel
+and resolution is 1200x1920.
 
 Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
 ---
- drivers/gpu/drm/panel/Kconfig                 |  6 +-
- .../gpu/drm/panel/panel-boe-tv101wum-nl6.c    | 86 ++++++++++++++++---
- 2 files changed, 75 insertions(+), 17 deletions(-)
+ .../display/panel/boe,tv101wum-n53.yaml       | 67 +++++++++++++++++++
+ 1 file changed, 67 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/boe,tv101wum-n53.yaml
 
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index afcadb3585fb..0e887c978796 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -19,13 +19,13 @@ config DRM_PANEL_ARM_VERSATILE
- 	  in the Versatile family syscon registers.
- 
- config DRM_PANEL_BOE_TV101WUM_NL6
--	tristate "BOE TV101WUM 1200x1920 panel"
-+	tristate "BOE TV101WUM and AUO KD101N80 45NA 1200x1920 panel"
- 	depends on OF
- 	depends on DRM_MIPI_DSI
- 	depends on BACKLIGHT_CLASS_DEVICE
- 	help
--	  Say Y here if you want to support for BOE TV101WUM WUXGA PANEL
--	  DSI Video Mode panel
-+	  Say Y here if you want to support for BOE TV101WUM and AUO KD101N80
-+	  45NA WUXGA PANEL DSI Video Mode panel
- 
- config DRM_PANEL_LVDS
- 	tristate "Generic LVDS panel driver"
-diff --git a/drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c b/drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c
-index af68236ea0e8..e6457f87bc61 100644
---- a/drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c
-+++ b/drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c
-@@ -35,6 +35,7 @@ struct panel_desc {
- 	enum mipi_dsi_pixel_format format;
- 	const struct panel_init_cmd *init_cmds;
- 	unsigned int lanes;
-+	bool discharge_on_disable;
- };
- 
- struct boe_panel {
-@@ -372,6 +373,15 @@ static const struct panel_init_cmd boe_init_cmd[] = {
- 	{},
- };
- 
-+static const struct panel_init_cmd auo_kd101n80_45na_init_cmd[] = {
-+	_INIT_DELAY_CMD(24),
-+	_INIT_DCS_CMD(0x11),
-+	_INIT_DELAY_CMD(120),
-+	_INIT_DCS_CMD(0x29),
-+	_INIT_DELAY_CMD(120),
-+	{},
-+};
+diff --git a/Documentation/devicetree/bindings/display/panel/boe,tv101wum-n53.yaml b/Documentation/devicetree/bindings/display/panel/boe,tv101wum-n53.yaml
+new file mode 100644
+index 000000000000..ceeba8d95486
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/boe,tv101wum-n53.yaml
+@@ -0,0 +1,67 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/panel/boe,tv101wum-n53.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- static inline struct boe_panel *to_boe_panel(struct drm_panel *panel)
- {
- 	return container_of(panel, struct boe_panel, base);
-@@ -452,20 +462,30 @@ static int boe_panel_unprepare(struct drm_panel *panel)
- 	if (!boe->prepared)
- 		return 0;
- 
--	ret = boe_panel_off(boe);
--	if (ret < 0) {
--		dev_err(panel->dev, "failed to set panel off: %d\n", ret);
--		return ret;
-+	if (boe->desc->discharge_on_disable) {
-+		msleep(150);
-+		regulator_disable(boe->avee);
-+		regulator_disable(boe->avdd);
-+		usleep_range(5000, 7000);
-+		gpiod_set_value(boe->enable_gpio, 0);
-+		usleep_range(5000, 7000);
-+		regulator_disable(boe->pp1800);
-+	} else {
-+		ret = boe_panel_off(boe);
-+		if (ret < 0) {
-+			dev_err(panel->dev, "failed to set panel off: %d\n",
-+				ret);
-+			return ret;
-+		}
-+		msleep(150);
-+		gpiod_set_value(boe->enable_gpio, 0);
-+		usleep_range(500, 1000);
-+		regulator_disable(boe->avee);
-+		regulator_disable(boe->avdd);
-+		usleep_range(5000, 7000);
-+		regulator_disable(boe->pp1800);
- 	}
- 
--	msleep(150);
--	gpiod_set_value(boe->enable_gpio, 0);
--	usleep_range(500, 1000);
--	regulator_disable(boe->avee);
--	regulator_disable(boe->avdd);
--	usleep_range(5000, 7000);
--	regulator_disable(boe->pp1800);
--
- 	boe->prepared = false;
- 
- 	return 0;
-@@ -495,10 +515,14 @@ static int boe_panel_prepare(struct drm_panel *panel)
- 	if (ret < 0)
- 		goto poweroffavdd;
- 
--	msleep(100);
-+	usleep_range(5000, 10000);
- 
- 	gpiod_set_value(boe->enable_gpio, 1);
--	usleep_range(10000, 12000);
-+	usleep_range(1000, 2000);
-+	gpiod_set_value(boe->enable_gpio, 0);
-+	usleep_range(1000, 2000);
-+	gpiod_set_value(boe->enable_gpio, 1);
-+	usleep_range(6000, 10000);
- 
- 	ret = boe_panel_init(boe);
- 	if (ret < 0) {
-@@ -530,6 +554,8 @@ static int boe_panel_enable(struct drm_panel *panel)
- 	if (boe->enabled)
- 		return 0;
- 
-+	msleep(130);
++title: BOE TV101WUM-N53 DSI Display Panel
 +
- 	ret = backlight_enable(boe->backlight);
- 	if (ret) {
- 		dev_err(panel->dev, "Failed to enable backlight %d\n",
-@@ -567,6 +593,35 @@ static const struct panel_desc boe_tv101wum_nl6_desc = {
- 	.mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_SYNC_PULSE |
- 		      MIPI_DSI_MODE_LPM,
- 	.init_cmds = boe_init_cmd,
-+	.discharge_on_disable = false,
-+};
++maintainers:
++  - Thierry Reding <thierry.reding@gmail.com>
++  - Sam Ravnborg <sam@ravnborg.org>
++  - Rob Herring <robh+dt@kernel.org>
 +
-+static const struct drm_display_mode auo_kd101n80_45na_default_mode = {
-+	.clock = 157000,
-+	.hdisplay = 1200,
-+	.hsync_start = 1200 + 80,
-+	.hsync_end = 1200 + 80 + 24,
-+	.htotal = 1200 + 80 + 24 + 36,
-+	.vdisplay = 1920,
-+	.vsync_start = 1920 + 16,
-+	.vsync_end = 1920 + 16 + 4,
-+	.vtotal = 1920 + 16 + 4 + 16,
-+	.vrefresh = 60,
-+};
++properties:
++  compatible:
++        const: boe,tv101wum-n53
 +
-+static const struct panel_desc auo_kd101n80_45na_desc = {
-+	.modes = &auo_kd101n80_45na_default_mode,
-+	.bpc = 8,
-+	.size = {
-+		.width_mm = 135,
-+		.height_mm = 216,
-+	},
-+	.lanes = 4,
-+	.format = MIPI_DSI_FMT_RGB888,
-+	.mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_SYNC_PULSE |
-+		      MIPI_DSI_MODE_LPM,
-+	.init_cmds = auo_kd101n80_45na_init_cmd,
-+	.discharge_on_disable = true,
- };
- 
- static int boe_panel_get_modes(struct drm_panel *panel)
-@@ -693,6 +748,9 @@ static const struct of_device_id boe_of_match[] = {
- 	{ .compatible = "boe,tv101wum-nl6",
- 	  .data = &boe_tv101wum_nl6_desc
- 	},
-+	{ .compatible = "auo,kd101n80-45na",
-+	  .data = &auo_kd101n80_45na_desc
-+	},
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, boe_of_match);
++  reg:
++    description: the virtual channel number of a DSI peripheral
++
++  enable-gpios:
++    description: a GPIO spec for the enable pin
++
++  pp1800-supply:
++    description: core voltage supply
++
++  avdd-supply:
++    description: phandle of the regulator that provides positive voltage
++
++  avee-supply:
++    description: phandle of the regulator that provides negative voltage
++
++  backlight:
++    description: phandle of the backlight device attached to the panel
++
++required:
++ - compatible
++ - reg
++ - enable-gpios
++ - pp1800-supply
++ - avdd-supply
++ - avee-supply
++ - backlight
++
++additionalProperties: false
++
++examples:
++  - |
++    &dsi {
++        panel@0 {
++            compatible = "boe,tv101wum-n53";
++            reg = <0>;
++            enable-gpios = <&pio 45 0>;
++            avdd-supply = <&ppvarn_lcd>;
++            avee-supply = <&ppvarp_lcd>;
++            pp1800-supply = <&pp1800_lcd>;
++            backlight = <&backlight_lcd0>;
++            status = "okay";
++            port {
++                panel_in: endpoint {
++                    remote-endpoint = <&dsi_out>;
++                };
++            };
++        };
++    };
++
++...
 -- 
 2.21.0
 
