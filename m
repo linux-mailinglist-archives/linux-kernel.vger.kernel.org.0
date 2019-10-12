@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6BD0D4D4D
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 07:50:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF99DD4D4F
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 07:50:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728853AbfJLFuR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 12 Oct 2019 01:50:17 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35415 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726728AbfJLFuP (ORCPT
+        id S1728894AbfJLFuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 12 Oct 2019 01:50:19 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52809 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728111AbfJLFuQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Oct 2019 01:50:15 -0400
-Received: by mail-wm1-f66.google.com with SMTP id y21so11981672wmi.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 22:50:13 -0700 (PDT)
+        Sat, 12 Oct 2019 01:50:16 -0400
+Received: by mail-wm1-f68.google.com with SMTP id r19so12273089wmh.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 22:50:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=colorfullife-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=4tXLMVGJIE9Jxpvve7tewtR9gLv8cIbCDc7DcOjctPc=;
-        b=oMX4WwduOz92KCEBHmqOWtpgO3X4JBYymVpV4vRqs7vNufbPgMzT/TEmli4itA1C/D
-         LTqu+DhZz4MdULs4r/xO7GiVThRI5nBrKKgYr3LpBOhhewat01JjoMLLyqK0aqSCW3b0
-         MmpT3WnJK2cavWHPyaek+HDIO2f5tXB1kkNyAzGa/pJ1DZ4gzE0TznQHRoZh+0XFvNBo
-         S5qfe+O772s2/WreGQFFkuuu+6ohW3rPqmIdPYc4+veZXyB/QI1BeEQrAIspq4Uc41EB
-         pBiWsCk8nVeaa7H/xHsD8GcUyXopW+YBkiqXjP9IuGgxs9AG2JIZSCGglWi1j/4FOji+
-         hq/Q==
+        bh=1YVt5skJ0S8FZYsxyok5h6CoZAqlpvdtkf/3zVP+yms=;
+        b=WbxJYINVGRbREW/OcfhzXgmOAk4d3yQyQratAXUdzaBm1BN3xQWsv2XPAIOjt6r6LZ
+         baOgSA3taNp4FOhNq7pKEgOx2GrW9i7hGXG4nTVR7Kgi00XuxVCSmX9NEvjNJX/Tj1PA
+         FT1v9OsWeHdRNpvA85K+BIiSmzBJKyxpeq9sVzfYaCHNXPB3ihcx9qSr4S8z2wiHuG2k
+         S9f2jpW8QvAhsjZMOrdiu2LtCkt4P3X6ZHjNXPRi1jGVXGAlhXym2oMlp7bI69tjCn5a
+         CthFJmmQRj1X+Ey2Xj3KOCBecxxPNDPYbxz+92VKUEChmfr7ktuZ1FyUrIoULIXgotOp
+         soJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=4tXLMVGJIE9Jxpvve7tewtR9gLv8cIbCDc7DcOjctPc=;
-        b=SCMC7I57KKB5TamtH+lhMfAjKQlQ0drXhXbYedG8X3dA+dn91oN7E0UZwQewg+AjQX
-         CnZY+hXTQhFG0prD2zcIDZi0+hY5OJNEoz9JFhOc8DxhI63yaTPOs7zvhMz9g3Xceb6F
-         jYY8fkrHJWM4fK2d6FSBIV12Lhz3k2VUqyYDXbQmWPWvGvQ7cUdVHYpiMbgtmfsHJHse
-         f72Wo3lhxKYNfHFcTxhgmy0UPjgIxgvlgVWTh4m6pQ4T9bgHcPNehd7grLVtnIGM4Y4w
-         Lmn27X98u29liTeyfp4j/wLRmYsnRVQGHpb2awXIjEJ8TSvmFI1p7F/bIVFUeIXsXRFw
-         tnEw==
-X-Gm-Message-State: APjAAAWdUca1dj3HB2DOPL4aRKlHCqTKf6qBTQCB/SQgljhHk8RRj7m0
-        Oro7AItYrLjyOfXYTzY0OkJ2J/mSCxXY4Q==
-X-Google-Smtp-Source: APXvYqyv1o4T8TS7SGKfR+ZCLcVIoi8jFtdmBcH0HzYGH/ecWuqDyfrBvA2GHO6UchmcTHu+qggdEw==
-X-Received: by 2002:a05:600c:24c9:: with SMTP id 9mr6318292wmu.174.1570859412505;
-        Fri, 11 Oct 2019 22:50:12 -0700 (PDT)
+        bh=1YVt5skJ0S8FZYsxyok5h6CoZAqlpvdtkf/3zVP+yms=;
+        b=J7L9fkbEUgg4FNIgynL3L9SoAgY6ymlTCgYsCB3gCV5/euX1So+8SQr+1VRHh5KdUx
+         Mrt5f5xcXJwNUAh3p1YRZDZoAUBNJgjQqo4WawzhCDz0Ydq+PBz0t+qLqGCbco2N1721
+         AuHLjMmaqalJaAxZWhixYy4VaQel1Q48u1OKkzJxVQajmNySaiLVAikGG+IAD0eLkXqi
+         4qc0rv0A0dHYqfiontuFheyDPtWBWSp95OPzb5SSluHdDqPWwGFpDyZiOJKQ7V/pRjMz
+         ysmeFuSD7PrzixlVxx/DRDj3hPf7MRKnl6+H09Joj49+4hS5IrmbNKUq1t2A40xelKc6
+         ILcg==
+X-Gm-Message-State: APjAAAUJ6bhlJbB+d/lyAD4aiRm8/7eK00iaLHI/XNFH5jdwMPagxn0m
+        2Dob1Rhx1Ncvzn0raMIQjIhOTurxShrxwA==
+X-Google-Smtp-Source: APXvYqw5I5tia15ZAYdzuC16pko0QpYJG90rjju9qldCLQg6ldkaa/YJNiXdxvu7GRVCOjUcNvam4Q==
+X-Received: by 2002:a1c:a8c7:: with SMTP id r190mr5510517wme.148.1570859413451;
+        Fri, 11 Oct 2019 22:50:13 -0700 (PDT)
 Received: from linux.fritz.box (p200300D9973AD600F159A589C745B52A.dip0.t-ipconnect.de. [2003:d9:973a:d600:f159:a589:c745:b52a])
-        by smtp.googlemail.com with ESMTPSA id z4sm9344955wrh.93.2019.10.11.22.50.11
+        by smtp.googlemail.com with ESMTPSA id z4sm9344955wrh.93.2019.10.11.22.50.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2019 22:50:12 -0700 (PDT)
+        Fri, 11 Oct 2019 22:50:13 -0700 (PDT)
 From:   Manfred Spraul <manfred@colorfullife.com>
 To:     LKML <linux-kernel@vger.kernel.org>,
         Davidlohr Bueso <dave@stgolabs.net>,
@@ -53,9 +53,9 @@ Cc:     1vier1@web.de, Andrew Morton <akpm@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Jonathan Corbet <corbet@lwn.net>,
         Manfred Spraul <manfred@colorfullife.com>
-Subject: [PATCH 4/6] ipc/msg.c: Update and document memory barriers.
-Date:   Sat, 12 Oct 2019 07:49:56 +0200
-Message-Id: <20191012054958.3624-5-manfred@colorfullife.com>
+Subject: [PATCH 5/6] ipc/sem.c: Document and update memory barriers
+Date:   Sat, 12 Oct 2019 07:49:57 +0200
+Message-Id: <20191012054958.3624-6-manfred@colorfullife.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191012054958.3624-1-manfred@colorfullife.com>
 References: <20191012054958.3624-1-manfred@colorfullife.com>
@@ -66,119 +66,139 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Transfer findings from ipc/mqueue.c:
-- A control barrier was missing for the lockless receive case
-  So in theory, not yet initialized data may have been copied
-  to user space - obviously only for architectures where
-  control barriers are not NOP.
+The patch documents and updates the memory barriers in ipc/sem.c:
+- Add smp_store_release() to wake_up_sem_queue_prepare() and
+  document why it is needed.
 
-- use smp_store_release(). In theory, the refount
-  may have been decreased to 0 already when wake_q_add()
-  tries to get a reference.
+- Read q->status using READ_ONCE+smp_acquire__after_ctrl_dep().
+  as the pair for the barrier inside wake_up_sem_queue_prepare().
+
+- Add comments to all barriers, and mention the rules in the block
+  regarding locking.
 
 Signed-off-by: Manfred Spraul <manfred@colorfullife.com>
 Cc: Waiman Long <longman@redhat.com>
 Cc: Davidlohr Bueso <dave@stgolabs.net>
 ---
- ipc/msg.c | 44 ++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 38 insertions(+), 6 deletions(-)
+ ipc/sem.c | 63 ++++++++++++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 51 insertions(+), 12 deletions(-)
 
-diff --git a/ipc/msg.c b/ipc/msg.c
-index 8dec945fa030..e6b20a7e6341 100644
---- a/ipc/msg.c
-+++ b/ipc/msg.c
-@@ -184,6 +184,10 @@ static inline void ss_add(struct msg_queue *msq,
+diff --git a/ipc/sem.c b/ipc/sem.c
+index ec97a7072413..c6c5954a2030 100644
+--- a/ipc/sem.c
++++ b/ipc/sem.c
+@@ -205,7 +205,9 @@ static int sysvipc_sem_proc_show(struct seq_file *s, void *it);
+  *
+  * Memory ordering:
+  * Most ordering is enforced by using spin_lock() and spin_unlock().
+- * The special case is use_global_lock:
++ *
++ * Exceptions:
++ * 1) use_global_lock:
+  * Setting it from non-zero to 0 is a RELEASE, this is ensured by
+  * using smp_store_release().
+  * Testing if it is non-zero is an ACQUIRE, this is ensured by using
+@@ -214,6 +216,24 @@ static int sysvipc_sem_proc_show(struct seq_file *s, void *it);
+  * this smp_load_acquire(), this is guaranteed because the smp_load_acquire()
+  * is inside a spin_lock() and after a write from 0 to non-zero a
+  * spin_lock()+spin_unlock() is done.
++ *
++ * 2) queue.status:
++ * Initialization is done while holding sem_lock(), so no further barrier is
++ * required.
++ * Setting it to a result code is a RELEASE, this is ensured by both a
++ * smp_store_release() (for case a) and while holding sem_lock()
++ * (for case b).
++ * The AQUIRE when reading the result code without holding sem_lock() is
++ * achieved by using READ_ONCE() + smp_acquire__after_ctrl_dep().
++ * (case a above).
++ * Reading the result code while holding sem_lock() needs no further barriers,
++ * the locks inside sem_lock() enforce ordering (case b above)
++ *
++ * 3) current->state:
++ * current->state is set to TASK_INTERRUPTIBLE while holding sem_lock().
++ * The wakeup is handled using the wake_q infrastructure. wake_q wakeups may
++ * happen immediately after calling wake_q_add. As wake_q_add() is called
++ * when holding sem_lock(), no further barriers are required.
+  */
+ 
+ #define sc_semmsl	sem_ctls[0]
+@@ -766,15 +786,24 @@ static int perform_atomic_semop(struct sem_array *sma, struct sem_queue *q)
+ static inline void wake_up_sem_queue_prepare(struct sem_queue *q, int error,
+ 					     struct wake_q_head *wake_q)
  {
- 	mss->tsk = current;
- 	mss->msgsz = msgsz;
 +	/*
-+	 * No memory barrier required: we did ipc_lock_object(),
-+	 * and the waker obtains that lock before calling wake_q_add().
++	 * When the wakeup is performed, q->sleeper->state is read and later
++	 * set to TASK_RUNNING. This may happen at any time, even before
++	 * wake_q_add() returns. Memory ordering for q->sleeper->state is
++	 * enforced by sem_lock(): we own sem_lock now (that was the ACQUIRE),
++	 * and q->sleeper wrote q->sleeper->state before calling sem_unlock()
++	 * (->RELEASE).
 +	 */
- 	__set_current_state(TASK_INTERRUPTIBLE);
- 	list_add_tail(&mss->list, &msq->q_senders);
+ 	wake_q_add(wake_q, q->sleeper);
+ 	/*
+-	 * Rely on the above implicit barrier, such that we can
+-	 * ensure that we hold reference to the task before setting
+-	 * q->status. Otherwise we could race with do_exit if the
+-	 * task is awoken by an external event before calling
+-	 * wake_up_process().
++	 * Here, we need a barrier to protect the refcount increase inside
++	 * wake_q_add().
++	 * case a: The barrier inside wake_q_add() pairs with
++	 *         READ_ONCE(q->status) + smp_acquire__after_ctrl_dep() in
++	 *         do_semtimedop().
++	 * case b: nothing, ordering is enforced by the locks in sem_lock().
+ 	 */
+-	WRITE_ONCE(q->status, error);
++	smp_store_release(&q->status, error);
  }
-@@ -238,7 +242,14 @@ static void expunge_all(struct msg_queue *msq, int res,
  
- 	list_for_each_entry_safe(msr, t, &msq->q_receivers, r_list) {
- 		wake_q_add(wake_q, msr->r_tsk);
--		WRITE_ONCE(msr->r_msg, ERR_PTR(res));
-+
-+		/*
-+		 * The barrier is required to ensure that the refcount increase
-+		 * inside wake_q_add() is completed before the state is updated.
-+		 *
-+		 * The barrier pairs with READ_ONCE()+smp_mb__after_ctrl_dep().
-+		 */
-+		smp_store_release(&msr->r_msg, ERR_PTR(res));
+ static void unlink_queue(struct sem_array *sma, struct sem_queue *q)
+@@ -2148,9 +2177,11 @@ static long do_semtimedop(int semid, struct sembuf __user *tsops,
  	}
- }
  
-@@ -798,13 +809,17 @@ static inline int pipelined_send(struct msg_queue *msq, struct msg_msg *msg,
- 			list_del(&msr->r_list);
- 			if (msr->r_maxsize < msg->m_ts) {
- 				wake_q_add(wake_q, msr->r_tsk);
--				WRITE_ONCE(msr->r_msg, ERR_PTR(-E2BIG));
-+
-+				/* See expunge_all regarding memory barrier */
-+				smp_store_release(&msr->r_msg, ERR_PTR(-E2BIG));
- 			} else {
- 				ipc_update_pid(&msq->q_lrpid, task_pid(msr->r_tsk));
- 				msq->q_rtime = ktime_get_real_seconds();
+ 	do {
++		/* memory ordering ensured by the lock in sem_lock() */
+ 		WRITE_ONCE(queue.status, -EINTR);
+ 		queue.sleeper = current;
  
- 				wake_q_add(wake_q, msr->r_tsk);
--				WRITE_ONCE(msr->r_msg, msg);
-+
-+				/* See expunge_all regarding memory barrier */
-+				smp_store_release(&msr->r_msg, msg);
- 				return 1;
- 			}
- 		}
-@@ -1154,7 +1169,11 @@ static long do_msgrcv(int msqid, void __user *buf, size_t bufsz, long msgtyp, in
- 			msr_d.r_maxsize = INT_MAX;
- 		else
- 			msr_d.r_maxsize = bufsz;
--		msr_d.r_msg = ERR_PTR(-EAGAIN);
-+
-+		/* memory barrier not require due to ipc_lock_object() */
-+		WRITE_ONCE(msr_d.r_msg, ERR_PTR(-EAGAIN));
-+
-+		/* memory barrier not required, we own ipc_lock_object() */
++		/* memory ordering is ensured by the lock in sem_lock() */
  		__set_current_state(TASK_INTERRUPTIBLE);
- 
- 		ipc_unlock_object(&msq->q_perm);
-@@ -1183,8 +1202,21 @@ static long do_msgrcv(int msqid, void __user *buf, size_t bufsz, long msgtyp, in
- 		 * signal) it will either see the message and continue ...
- 		 */
- 		msg = READ_ONCE(msr_d.r_msg);
--		if (msg != ERR_PTR(-EAGAIN))
-+		if (msg != ERR_PTR(-EAGAIN)) {
-+			/*
-+			 * Memory barrier for msr_d.r_msg
+ 		sem_unlock(sma, locknum);
+ 		rcu_read_unlock();
+@@ -2174,12 +2205,16 @@ static long do_semtimedop(int semid, struct sembuf __user *tsops,
+ 		error = READ_ONCE(queue.status);
+ 		if (error != -EINTR) {
+ 			/*
+-			 * User space could assume that semop() is a memory
+-			 * barrier: Without the mb(), the cpu could
+-			 * speculatively read in userspace stale data that was
+-			 * overwritten by the previous owner of the semaphore.
++			 * Memory barrier for queue.status, case a):
 +			 * The smp_acquire__after_ctrl_dep(), together with the
 +			 * READ_ONCE() above pairs with the barrier inside
-+			 * wake_q_add().
-+			 * The barrier protects the accesses to the message in
-+			 * do_msg_fill(). In addition, the barrier protects user
-+			 * space, too: User space may assume that all data from
-+			 * the CPU that sent the message is visible.
-+			 */
++			 * wake_up_sem_queue_prepare().
++			 * The barrier protects user space, too: User space may
++			 * assume that all data from the CPU that did the wakeup
++			 * semop() is visible on the wakee CPU when the sleeping
++			 * semop() returns.
+ 			 */
+-			smp_mb();
 +			smp_acquire__after_ctrl_dep();
-+
- 			goto out_unlock1;
-+		}
+ 			goto out_free;
+ 		}
  
- 		 /*
- 		  * ... or see -EAGAIN, acquire the lock to check the message
-@@ -1192,7 +1224,7 @@ static long do_msgrcv(int msqid, void __user *buf, size_t bufsz, long msgtyp, in
- 		  */
- 		ipc_lock_object(&msq->q_perm);
+@@ -2189,6 +2224,10 @@ static long do_semtimedop(int semid, struct sembuf __user *tsops,
+ 		if (!ipc_valid_object(&sma->sem_perm))
+ 			goto out_unlock_free;
  
--		msg = msr_d.r_msg;
-+		msg = READ_ONCE(msr_d.r_msg);
- 		if (msg != ERR_PTR(-EAGAIN))
- 			goto out_unlock0;
++		/*
++		 * No necessity for any barrier:
++		 * We are protect by sem_lock() (case b)
++		 */
+ 		error = READ_ONCE(queue.status);
  
+ 		/*
 -- 
 2.21.0
 
