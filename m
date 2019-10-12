@@ -2,145 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91018D5140
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 19:06:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78527D5150
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 19:16:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729532AbfJLRGN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 12 Oct 2019 13:06:13 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:35669 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729503AbfJLRE1 (ORCPT
+        id S1729525AbfJLRQU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 12 Oct 2019 13:16:20 -0400
+Received: from sender4-op-o14.zoho.com ([136.143.188.14]:17411 "EHLO
+        sender4-op-o14.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729280AbfJLRQT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Oct 2019 13:04:27 -0400
-Received: by mail-oi1-f195.google.com with SMTP id x3so10608242oig.2;
-        Sat, 12 Oct 2019 10:04:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rP2t/LBVNBNs923tLQ/euikPJ6CdXKk3Hw0OLg9mnNc=;
-        b=OKmnsEQinsQaVlvcpJfxqprZkrDpAcxp7rWc5H2rgGI2Yqex6zznrW3UVJbnXo0XB+
-         vAQfCXbK+Zt6CGRaTy1ncqq1ZQY6vf/x6kB+MTAm38Z8KKbBEmnGaajLwmPOzjvADSAD
-         wejjJxxm/6Dv2dEc7JUrrYJUy280j3GaXEL3lMzlu6enYVE2PR+u66cT3ufTKG7zgReZ
-         iViEYeJLLdcMTJ/P+AItb5xLn4BC9wHsUT4cSYwiUAgqVXgXNk5peldRDR/bf85cGI3B
-         nu6tVMC/FZNgrN3CUHha0aA6//18Nh3i6K/BrkVClOBpQgeP9Gob6LPAg3c8+d5rK4Jk
-         Gf1Q==
-X-Gm-Message-State: APjAAAVzY66cwzHxlvD1DSJsqCt9L6cyOjC95RGcCh7TA/mtZIceGxPo
-        88HLZTXf6I8AGl5anTTgrqUNWkUmCB521VGKQi4=
-X-Google-Smtp-Source: APXvYqzHxrDb8yjxMxNoPRgVaBbW6eg+ZQ/JE5DaEurrjKygIWAkXQpZZxoKr2Wk2F9zyrQqyZV0rN3uLbvCLDKmPqM=
-X-Received: by 2002:aca:882:: with SMTP id 124mr17492705oii.54.1570899866442;
- Sat, 12 Oct 2019 10:04:26 -0700 (PDT)
+        Sat, 12 Oct 2019 13:16:19 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1570899183; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=K+1e2/BFHXnRReb+f3XBc3FGfdWHDXmhlOtSs5lRq1CFVXB+4RA2tuFOL1yG6VSYp7CrRinIFMlqsvYSlPoptLpSmGz/J0/6JnoERQ3OH1M2klMHvYKJWLHs4VEbAIgnpk4xhWI5QiXysomDxyTnEVSDJGMjx+lNrt26mn3zsR4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1570899183; h=Content-Type:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=H490T33NOXsNv5uW2IbnnmW85uAQoogCvlGuJzkeYHg=; 
+        b=HQtCAaVnSdO0rh2dh99uiPOqQR4dskSaQCfd2LmK/0VtKLYycoKarAIS8YJo++5RKqHUrlW4gTZpFsFZbReaRdh4wU+9wntR7Oo0ev7xCYQuSLFtH18IduOwPtgVIgoj7nR26o6gOwCP/OfoX4IxrXlfsPf7pPiAGxhxBXSBjdA=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=dlrobertson.com;
+        spf=pass  smtp.mailfrom=dan@dlrobertson.com;
+        dmarc=pass header.from=<dan@dlrobertson.com> header.from=<dan@dlrobertson.com>
+Received: from nessie (pool-100-15-144-194.washdc.fios.verizon.net [100.15.144.194]) by mx.zohomail.com
+        with SMTPS id 157089918141952.24960803847944; Sat, 12 Oct 2019 09:53:01 -0700 (PDT)
+Date:   Sat, 12 Oct 2019 16:38:39 +0000
+From:   Dan Robertson <dan@dlrobertson.com>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     linux-iio@vger.kernel.org,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        devicetree@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v2 2/2] iio: (bma400) add driver for the BMA400
+Message-ID: <20191012163839.GB15972@nessie>
+References: <20191012035420.13904-1-dan@dlrobertson.com>
+ <20191012035420.13904-3-dan@dlrobertson.com>
+ <20191012104033.006b33f9@archlinux>
+ <20191012153556.GA15972@nessie>
+ <20191012173344.7d25fd02@archlinux>
 MIME-Version: 1.0
-References: <20191002194346.GA3792@localhost.localdomain> <CAKv+Gu9_xX3RgDNGB=T83vhg_snMKe0F2YPKp1S2o2toNHHZZQ@mail.gmail.com>
- <20191010174710.GA2405@localhost.localdomain> <CAMuHMdVriPMVWdNOD4ytZQFPmad7CvD_4utbw1PxMJBua1TSfQ@mail.gmail.com>
- <20191011094322.GA3065@localhost.localdomain> <CAMuHMdUMkyyCZACyJ7dvd4SaicpN77g5pFd0aGEzQW_q7m3Q0g@mail.gmail.com>
- <20191011125446.GA2170@localhost.localdomain>
-In-Reply-To: <20191011125446.GA2170@localhost.localdomain>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Sat, 12 Oct 2019 19:04:15 +0200
-Message-ID: <CAMuHMdWALc_hneRaiwQbMWUXe=LnVqU7dkkWibV0cqb8Gc5e0g@mail.gmail.com>
-Subject: Re: [PATCH] Ask user input only when CONFIG_X86 or
- CONFIG_COMPILE_TEST is set to y
-To:     Narendra K <Narendra.K@dell.com>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Mario Limonciello <Mario.Limonciello@dell.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ZfOjI3PrQbgiZnxM"
+Content-Disposition: inline
+In-Reply-To: <20191012173344.7d25fd02@archlinux>
+User-Agent: Mutt/1.12.2 (2019-09-21)
+X-Zoho-Virus-Status: 1
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Narendra,
 
-On Fri, Oct 11, 2019 at 2:55 PM <Narendra.K@dell.com> wrote:
-> On Fri, Oct 11, 2019 at 12:01:25PM +0200, Geert Uytterhoeven wrote:
-> > > > > > > -       bool "EFI Runtime Configuration Interface Table Version 2 Support"
-> > > > > > > +       bool
-> > > > > > > +       prompt "EFI RCI Table Version 2 Support" if X86 || COMPILE_TEST
-> > > >
-> > > > Why the split of bool and prompt?
-> > > > Why not simply add a single line "depends on X86 || COMPILE_TEST"?
+--ZfOjI3PrQbgiZnxM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, Oct 12, 2019 at 05:33:44PM +0100, Jonathan Cameron wrote:
+> On Sat, 12 Oct 2019 15:35:56 +0000
+> Dan Robertson <dan@dlrobertson.com> wrote:
+> > On Sat, Oct 12, 2019 at 10:40:33AM +0100, Jonathan Cameron wrote:
 > > >
-> > > It is because of the findings shared in [1]. Please let me know your
-> > > thoughts on the findings.
-> >
-> > So you want to prevent the user from seeing a prompt for an option he may
-> > or may not need to enable, when running "make oldconfig"?
->
-> Geert,
->
-> > The code in question is entirely architecture agnostic, and defaults
-> > to 'n', so I am not convinced this is needed. (It came up in the
-> > review as well)
->
-> >> "make oldconfig" still asks me the question on e.g. arm64, where it is
-> >> irrelevant, until arm64 variants of the hardware show up.
->
-> >> So IMHO it should have "depends on X86 || COMPILE_TEST".
->
-> From the discussion in [1] and [2](pasted a part of it above), my understanding
-> of the issue you reported is that 'make oldconfig' asks the user a question for arm64
-> though the EFI_RCI2_TABLE is not relevant for arm64. From the tests,
-> it seemed like adding "depends on X86 || COMPILE_TEST" does not fix the
-> issue, splitting bool into bool + prompt fixes it.
->
-> Please let me know if I am missing any detail in the issue you reported.
+> > > Silly question.  Why is soft_reset preferred to sleep mode? =20
+> >=20
+> > Not a silly question. I actually debated this when initially implementi=
+ng the
+> > driver. The datasheet describes soft-reset behavior in section 4.9, the
+> > following snippet from the datasheet is particularly relevant:
+> >=20
+> > > The softreset performs a fundamental reset to the device which is lar=
+gely
+> > > equivalent to a power cycle. Following a delay, all user configuration
+> > > settings are overwritten with their default state... =20
+> >=20
+> > Sleep mode is the default power-mode, so the only real difference would=
+ be that
+> > the oversampling ratio, sampling frequency, and scale would all be rese=
+t to
+> > their defaults with a soft-reset. If we just set the power-mode to slee=
+p mode,
+> > the user configuration registers would be preserved.
+> >=20
+> > I can add a comment about the behavior of a softreset in bma400_remove.
+> I'd just not do it.  That way there is only the putting it to sleep path.
+> We normally assume that we don't know the state during startup and aren't
+> as careful on remove to make sure things are in a default state.
+>=20
+> That way you only need a single path in the remove function. If sleep mode
+> fails you are probably broken anyway.
 
-Adding a "depends on X86 || COMPILE_TEST" should fix the issue, as
-X86 is never set on arm64, nor on any other architecture than X86.
-If COMPILE_TEST=y, it's normal expected behavior to show the question.
+Sounds good. That does make remove much easier if the device is not ready f=
+or a
+command. I'll remove this in the next patchset version.
 
-> With the way EFI_RCI2_TABLE is currently defined, my understanding is
-> that 'make oldconfig' does not set the EFI_RCI2_TABLE to 'y' by default
-> on arm64, but it asks the user the question. User has to say 'y' if he
-> wants it to be set to 'y', else by default 'n' is set. This behavior is
-> as expected.
+Cheers,
 
-If the option doesn't make sense on arm64 (more broadly: on non-X86),
-it should depend on X86 || COMPILE_TEST, to avoid spamming the user
-with (zillions of) options that do not matter for his platform.
+ - Dan
 
-> > One common approach is to let the Kconfig symbol for the platform (not for
-> > all of X86!) select EFI_RCI2_TABLE.
-> > That way it will be enabled automatically when needed.
->
-> We did not intend to enable EFI_RCI2_TABLE option by default even on all
-> X86 systems from the begining. As a result, we chose to set it to 'n' by
-> default and added the guidance in 'help' section to say 'y' for Dell EMC
-> PowerEdge systems.
+--ZfOjI3PrQbgiZnxM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Good.
+-----BEGIN PGP SIGNATURE-----
 
->> > Another approach is to not force the option on, but guide the user towards
-> > enabling it, by adding "default y if <platform_symbol>".
->
-> As mentioned above, we want to keep the default to n.
+iQIzBAEBCAAdFiEEF5dO2RaKc5C+SCJ9RcSmUsR+QqUFAl2iAYYACgkQRcSmUsR+
+QqWfehAApr+GUxN8hPr6rvlGNCYOUAsH0xR5O1yDbOBeJ+KNTRu4yqOci19XXRvu
+oZh7eexWE+Jg3cqomkO4MBTqFbcE8fSMVsRS1g/dBSmIjP8t7elUXkyo0+u8BKhM
+BrPP/W9WnGQmj0m9crH9GYmAUh00KG1eG8JfPV/iO4Nj25FzyjidDgVdUb7+pieK
+EE85HRYLxc4EjbgiR5aFfHrHS7gFv0k/JZYGpTseL93VmHkRWEXYGemvEMJeu/GY
++ZdHTL5kSyrQDsWOsc12B3uWxDbaVT0t6afEiaS0wHC5FeWg/axvldCO/SXaMSVy
+FUUH9+kIbS1CofTosjTsEopz8gEvmfM+Gn2n4PoP3R8GPzQJYDB1JSanJBwJlUKX
+70+27TdX1HQq7iapt5QvjeQfarCGCrcWX7fQs3Z8uJxeGX2+WgElE1K58Cy1pe+c
+Z9DgLY1Baqb+njAWe5WAuLXaIBMsrbuJyu4jmanYdLD5OEkokbSdhht0Gcm2rRnp
+jErnlJHmQNZ9U9fv87nM6hAbHorj1ABasLvc2nyCAlQyGUaYnzXvYEXMLqBGAmie
+7Cjv2gd53aoLyfFq1F4Yy6ETWmo/0lzRPS9+Lv/jgPyr4z7Lch3tZEFAmQMRHz8P
+WEza1Op588Do/vFarcCzQgHlPNfY1HS7P3J6ae2oFIB33cil8hc=
+=0oSI
+-----END PGP SIGNATURE-----
 
-OK.
+--ZfOjI3PrQbgiZnxM--
 
-> > Without the "|| COMPILE_TEST", you cannot enable compile-testing of
-> > the driver on non-x86 platforms with EFI.
->
-> Ok. We could keep the check. Could we make it independent of platforms
-> by adding 'defbool y if COMPILE_TEST' ?
-
-Please don't do that, as it with always enable the driver if COMPILE_TEST=y,
-without providing a way to opt-out for the user.
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
