@@ -2,145 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAA25D4DC5
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 08:54:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8791D4DCB
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 08:54:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729123AbfJLGxS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 12 Oct 2019 02:53:18 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36409 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729089AbfJLGxR (ORCPT
+        id S1729189AbfJLGxs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 12 Oct 2019 02:53:48 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35414 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728821AbfJLGxs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Oct 2019 02:53:17 -0400
-Received: by mail-wm1-f68.google.com with SMTP id m18so12065119wmc.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 23:53:16 -0700 (PDT)
+        Sat, 12 Oct 2019 02:53:48 -0400
+Received: by mail-ed1-f67.google.com with SMTP id v8so10565719eds.2;
+        Fri, 11 Oct 2019 23:53:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=rteKuts6TNa3FcVuHWLA6WnDYTAfCMs6+nc1PCbFmJQ=;
-        b=SQgl+K6sNR2uq9Qca5Iss6ihuLcJTBrMZ1pAbWVUadX7jFw+xcyB0QURWWUWVz8y2R
-         d99mU5a8wP26+xSf5dAuLaIfgAGbyEWKlpkFdDvL9AnTQXBPsgXqTZuwQ7yB7TAvzpF4
-         PAFnjYconaxdhsxvJvcj7V5kj+A2WzqaQCeefz+SrhM24rnCfY7OtsTLYuwegJDbbpp+
-         Zgfcf+3+qiHn9pqT+Vf047SH0nn7Z5wvxH+WSaTexklqKncnCF60c7Fay1GwGpsMM2dC
-         2jeFi4yUYLf1axQGOLXljZILelt4MWu1EFqtg0Qi++1uYucz/8TGhK9I6YTSxPwfPCSa
-         M2mA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=BHDcnsQSrbWE+Pwo7S+n8GHA2q4eny0JAFUJGKe7xZ8=;
+        b=PbU0a8kowD3t6HBy71saesdP3fKlVa1vMs/phqLjOSTHNJKbukN3u4Tyw9JBYTjfGK
+         KmjzoK9sb6/xvZtwS8NTny6aibTAjo9w830m/FVcOSEmeFlewHjgCWFjLA+mAYpESwL2
+         dCI6N/Gk/gs51Hlh21r0vZZsjgEB0Xj3xfhVTiAE7Z3rTQzx0kpRLu4Ux+XjL/NMf940
+         VUgjoXAcZq/oplrXxk6tTvgQiYQpyrsxkI8Td0rRZh/q3On+yiAM62rjCwjOMjTAfn7y
+         4Xh6Dw1JvVN8hkEQh/TnEtedqvIlQc7gU9wdiJtJkm05Mjs+2zdTWXCclY3CwXFrxap+
+         xM6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=rteKuts6TNa3FcVuHWLA6WnDYTAfCMs6+nc1PCbFmJQ=;
-        b=F0oC2INftrxQTK6ceJw+KZAE8+u1ay0sejNIBM5dvXdCLQNWSIp6rd8J/8xi+uvk6s
-         EC3f8iYcNezJtHA98ZVqDCphcnR96Gjl/76wuc1f729yJ3fjj9kE5iVfU0ESB7Oq4oU2
-         k+aQBMcmmZqSzz7uPqEopS1rKhqAOpnbvkE3YZ4O2p57sIdr1LeTW6igbA8UX75ZbHUp
-         KodTHd46K2umQn40TVHVZqVsvqQydBo1nZeb71wU6fPc9ZrorjKHJHUghm3Qjb9brpIS
-         BYufwYP7BNClixlhxDQDd2GwkbwUWNbxfzB0U/ZMGXKdTTBF/ezwMhwZprmnHMxNYwGk
-         Ywtw==
-X-Gm-Message-State: APjAAAWhmHg0aK1eOBqao+JhU5jOQtfOnmJG5SdeVocjqMn+IxCSakpb
-        BCNfrksSWnPgtIEgo3wmMA3xYQ==
-X-Google-Smtp-Source: APXvYqz6H1BO1YpWsenMxjKC4aURJk8ZH0MHXxOpWMBnGfL5Wm3zMrGzi5T1mv6BUGtzelW11wzF0g==
-X-Received: by 2002:a1c:9dcf:: with SMTP id g198mr6384737wme.101.1570863195695;
-        Fri, 11 Oct 2019 23:53:15 -0700 (PDT)
-Received: from mai.imgcgcw.net ([2a01:e34:ed2f:f020:f437:29a8:ed69:7bab])
-        by smtp.gmail.com with ESMTPSA id z5sm17450497wrs.54.2019.10.11.23.53.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2019 23:53:15 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     rui.zhang@intel.com, edubezval@gmail.com
-Cc:     daniel.lezcano@linaro.org, linux-kernel@vger.kernel.org,
-        amit.kucheria@linaro.org
-Subject: [PATCH 11/11] thermal: Move thermal governor structure to internal header
-Date:   Sat, 12 Oct 2019 08:52:55 +0200
-Message-Id: <20191012065255.23249-11-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191012065255.23249-1-daniel.lezcano@linaro.org>
-References: <20191012065255.23249-1-daniel.lezcano@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=BHDcnsQSrbWE+Pwo7S+n8GHA2q4eny0JAFUJGKe7xZ8=;
+        b=P86Q/i/6HQ0AhQAEuqsV1U12x+nQA6XvmfWvWsgIUWaxY0HqYwYTgql8x+mcqsMVGn
+         oZ48u9C/20AKMiJU3eUhFdjG5kva2IBa1OjAR3dN+jkux1HrNjoaRWh4w1AP3pfloaWP
+         um20eo6OieRHVp304VSQ/xzm9k54IDaDXWqplLQbqiWkujU8U/vSNDo0FFMXDZZyBBcC
+         VamOG6sYku0Aj9/X80AtDOJTLVozVAsAiSTYGU4ug7b/gPmyS+2HzB/2UVe3jmszwqAv
+         yFqVY1JXCUSegqvR4FZwnUGMMtJ0qwaH+gKf4nNlW9vhAsdmB2kUX8Y4Xr+e24ptrHQc
+         obEw==
+X-Gm-Message-State: APjAAAUtWAm3bCK2E8fP+doT6mrakWLDMNJlzxA5paeKI8B4l9JzF93O
+        +6WO74RvSk/LlVvT3fTJkqU8xKAyhr1rPb1kk5s=
+X-Google-Smtp-Source: APXvYqzh1JhXn6wt25rBXxwiyzDYbOv7kAXqapBl3dI3xpJuHLNnt136lJlkwVriE3147d0sP1DVJNPzWbR1pVBgw1k=
+X-Received: by 2002:a17:906:792:: with SMTP id l18mr17349024ejc.170.1570863226323;
+ Fri, 11 Oct 2019 23:53:46 -0700 (PDT)
+MIME-Version: 1.0
+References: <20191010133518.5420-1-christian.brauner@ubuntu.com>
+ <CAHO5Pa3V7fDb_+U-v+LB+TeAU0vfJyUMs9mD4ZqUtbLpZcD4nA@mail.gmail.com> <20191011221208.5eglbazksfigliob@yavin.dot.cyphar.com>
+In-Reply-To: <20191011221208.5eglbazksfigliob@yavin.dot.cyphar.com>
+Reply-To: mtk.manpages@gmail.com
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Date:   Sat, 12 Oct 2019 08:53:34 +0200
+Message-ID: <CAKgNAkhgGhGi-hMJt3UxYYDuyOZLx7c-eucpD5V7js+hsyv2CQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clone3: add CLONE3_CLEAR_SIGHAND
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Shuah Khan <shuah@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Roman Gushchin <guro@fb.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The thermal governor structure is a big structure where no
-user should change value inside except via helper functions.
+Hello Aleksa,
 
-Move the structure to the internal header thus preventing external
-code to be tempted by hacking the structure's variables.
+On Sat, 12 Oct 2019 at 00:12, Aleksa Sarai <cyphar@cyphar.com> wrote:
+>
+> On 2019-10-11, Michael Kerrisk <mtk.manpages@gmail.com> wrote:
+> > Why CLONE3_CLEAR_SIGHAND rather than just CLONE_CLEAR_SIGHAND?
+>
+> There are no more flag bits left for the classic clone()/clone2() (the
+> last one was used up by CLONE_PIDFD) -- thus this flag is clone3()-only.
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/thermal/thermal_core.h | 20 ++++++++++++++++++++
- include/linux/thermal.h        | 21 +--------------------
- 2 files changed, 21 insertions(+), 20 deletions(-)
+Yes, I understand that. But, I'm not sure that the "3" in the prefix
+is necessary. "CLONE_" still seems better to me.
 
-diff --git a/drivers/thermal/thermal_core.h b/drivers/thermal/thermal_core.h
-index c75309d858ce..e54150fa4c5b 100644
---- a/drivers/thermal/thermal_core.h
-+++ b/drivers/thermal/thermal_core.h
-@@ -46,6 +46,26 @@ struct thermal_attr {
- 	char name[THERMAL_NAME_LENGTH];
- };
- 
-+/**
-+ * struct thermal_governor - structure that holds thermal governor information
-+ * @name:	name of the governor
-+ * @bind_to_tz: callback called when binding to a thermal zone.  If it
-+ *		returns 0, the governor is bound to the thermal zone,
-+ *		otherwise it fails.
-+ * @unbind_from_tz:	callback called when a governor is unbound from a
-+ *			thermal zone.
-+ * @throttle:	callback called for every trip point even if temperature is
-+ *		below the trip point temperature
-+ * @governor_list:	node in thermal_governor_list (in thermal_core.c)
-+ */
-+struct thermal_governor {
-+	char name[THERMAL_NAME_LENGTH];
-+	int (*bind_to_tz)(struct thermal_zone_device *tz);
-+	void (*unbind_from_tz)(struct thermal_zone_device *tz);
-+	int (*throttle)(struct thermal_zone_device *tz, int trip);
-+	struct list_head	governor_list;
-+};
-+
- static inline bool cdev_is_power_actor(struct thermal_cooling_device *cdev)
- {
- 	return cdev->ops->get_requested_power && cdev->ops->state2power &&
-diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-index 8daa179918a1..04264e8a2bce 100644
---- a/include/linux/thermal.h
-+++ b/include/linux/thermal.h
-@@ -45,6 +45,7 @@
- 
- struct thermal_zone_device;
- struct thermal_cooling_device;
-+struct thermal_governor;
- struct thermal_instance;
- struct thermal_attr;
- 
-@@ -206,26 +207,6 @@ struct thermal_zone_device {
- 	enum thermal_notify_event notify_event;
- };
- 
--/**
-- * struct thermal_governor - structure that holds thermal governor information
-- * @name:	name of the governor
-- * @bind_to_tz: callback called when binding to a thermal zone.  If it
-- *		returns 0, the governor is bound to the thermal zone,
-- *		otherwise it fails.
-- * @unbind_from_tz:	callback called when a governor is unbound from a
-- *			thermal zone.
-- * @throttle:	callback called for every trip point even if temperature is
-- *		below the trip point temperature
-- * @governor_list:	node in thermal_governor_list (in thermal_core.c)
-- */
--struct thermal_governor {
--	char name[THERMAL_NAME_LENGTH];
--	int (*bind_to_tz)(struct thermal_zone_device *tz);
--	void (*unbind_from_tz)(struct thermal_zone_device *tz);
--	int (*throttle)(struct thermal_zone_device *tz, int trip);
--	struct list_head	governor_list;
--};
--
- /* Structure that holds binding parameters for a zone */
- struct thermal_bind_params {
- 	struct thermal_cooling_device *cdev;
+Consider this: sometime in the near future we will probably have time
+namespaces. The new flag for those namespaces will only be usable with
+clone3(). It should NOT be called CLONE3_NEWTIME, but rather
+CLONE_NEWTIME (or similar), because that same flag will presumably
+also be used in other APIs such as unshare() and setns(). (Hmm -- I
+wonder if we are going to need a new unshare2() or some such...)
+
+Thanks,
+
+Michael
+
+
 -- 
-2.17.1
-
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
