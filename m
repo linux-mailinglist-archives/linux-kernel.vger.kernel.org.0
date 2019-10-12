@@ -2,56 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD876D5222
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 21:25:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F0EAD520F
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 21:20:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729649AbfJLTXw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 12 Oct 2019 15:23:52 -0400
-Received: from nms02.ip-net.mgrs.ru ([178.237.242.9]:56412 "EHLO
-        nms02.ip-net.mgrs.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728579AbfJLTXv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Oct 2019 15:23:51 -0400
-Received: from User (localhost.localdomain [127.0.0.1])
-        by nms02.ip-net.mgrs.ru (Postfix) with SMTP id C89BE4E11B8;
-        Sat, 12 Oct 2019 08:16:19 +0300 (MSK)
-Reply-To: <kepe19655@aol.com>
-From:   "Mr. Henk Boelens" <info@wholeearth.com>
-To:     henkboelens2016@contractor.net
-Subject: GOOD DAY?
-Date:   Fri, 11 Oct 2019 22:17:04 -0700
+        id S1729814AbfJLTSw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 12 Oct 2019 15:18:52 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39264 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729692AbfJLTSv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Oct 2019 15:18:51 -0400
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 46D4AC05683F
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2019 19:18:51 +0000 (UTC)
+Received: by mail-qk1-f200.google.com with SMTP id k67so12708092qkc.3
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2019 12:18:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=XSSfcNJSuQK6tbBIRVqD8nyyhs8/n5qs+oek7V16gWg=;
+        b=Ia9Yf/2bHIx2uUedYtuDQsmxB4ApzT/ua0V+as9YcHlR9xG8m+mBFLy+JVMk5csP3o
+         53oGm+K6sUHyOiHieosf64f7UGfElcziTeXWTavGVl+lx8ns+EKBAnFgNL2pbcNmULZz
+         SwiYBfyw7dp57FepOQ/N/3PStw5KPicxMfQSewUUrUseuvR/OcAeYojwcrx65kXp+1Yn
+         AdVFPw5vvj8e5F84bOUuPXMlQTK+CiW68lYnEcOi/xqGDq1fETmsK20+Pg61Q0jany4z
+         mLHmsjhAncNPCVhxULxEmR3kEf2+1BzWCgzKcdycnc7xai5Bdv9MpsJUBtRcLcMq0eaY
+         OyvA==
+X-Gm-Message-State: APjAAAX1YBNrsZ6MsjNl2DJtUTUab23TODIThQiVWWF41OMhkp6+XJM3
+        DedxlA00WfcJ4vVFrUcpcZUJaQZMwpxuXlAkGK7cDgKIFh5cV77nOZRavjWyAXfuUeHEPYUyXQ6
+        FzFmuyoyRJIBSHYLfdSG179Wf
+X-Received: by 2002:a37:b8f:: with SMTP id 137mr21665702qkl.466.1570907930052;
+        Sat, 12 Oct 2019 12:18:50 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqyYVcRWvZEcwbiX5JXr6fNk4W01ojqCtNq7uXnEznHUo/iukXYBpKClYnD6en9lTNPNSsx0Ow==
+X-Received: by 2002:a37:b8f:: with SMTP id 137mr21665681qkl.466.1570907929802;
+        Sat, 12 Oct 2019 12:18:49 -0700 (PDT)
+Received: from redhat.com (bzq-79-176-10-77.red.bezeqint.net. [79.176.10.77])
+        by smtp.gmail.com with ESMTPSA id x55sm7350774qta.74.2019.10.12.12.18.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 12 Oct 2019 12:18:48 -0700 (PDT)
+Date:   Sat, 12 Oct 2019 15:18:44 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, Jason Wang <jasowang@redhat.com>
+Subject: [PATCH RFC v2 0/2] vhost: ring format independence
+Message-ID: <20191012191820.8050-1-mst@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="Windows-1251"
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-X-MSMail-Priority: Normal
-X-Mailer: Microsoft Outlook Express 6.00.2600.0000
-X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
-Message-Id: <20191012051620.C89BE4E11B8@nms02.ip-net.mgrs.ru>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email 2.22.0.678.g13338e74b8
+X-Mutt-Fcc: =sent
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Western Associate Bank
-Bank Address:Tower Building 83 Hull Road
-Oxwich Brussels Belgium
+This adds infrastructure required for supporting
+multiple ring formats.
 
-Dear Friend
+The idea is as follows: we convert descriptors to an
+independent format first, and process that converting to
+iov later.
 
-Please accept my apologies if this request does not meet your personal ethics as it is not intended to cause you any embarrassment in what ever form. I got your
-contact email address from the internet directory and decided to contact you for this transaction that is based on trust and your outstanding. I have an interesting business proposal for you that will be of immense benefit to both of us. Although this may be hard for you to believe because i know that there is absolutely going to be a great doubt and distrust in your heart in respect of this email as this might sound strange to you and coupled with the fact that, so many individuals have taken possession of the Internet to facilitate their nefarious deeds, thereby making it extremely difficult for genuine and legitimate persons to get attention and recognition. Please grant me the benefit of doubt and hear me out.
+The point is that we have a tight loop that fetches
+descriptors, which is good for cache utilization.
+This will also allow all kind of batching tricks -
+e.g. it seems possible to keep SMAP disabled while
+we are fetching multiple descriptors.
 
-My name is Henk Boelens . I work with Western Associate Bank here in Belgium as a branch bank manager. I discovered an abandoned sum of GBP 19,850,000.00 (Nineteen Million Eight Hundred And Fifty Thousand British Pounds) in an account that belongs to one of our foreign customers Late Dr. Erin Jacobson, an American citizen who unfortunately lost his life and his entire family in Montana plane crash on March 23, 2009, on their way to a group ski vacation. The choice of contacting you is aroused from the geographical nature of where you live, particularly due to the sensitivity of this transaction and the confidentiality herein. Now our bank has been waiting for any of the relatives to come up for the claim but nobody has done that. I personally tried to locate any member of his family but have been unsuccessful in locating the relatives for 7 years now, i have also checked the deposit documents and discovered that he did not declare any next of kin on the deposit.
+This seems to perform exactly the same as the original
+code already based on a microbenchmark.
+More testing would be very much appreciated.
 
-Now the Management of our bank as instructed me to look for the next of kin or they will convert the funds into the Government Treasury Account as unclaimed funds and the funds will be wasted. Therefore, I cannot claim these funds without presenting a foreigner to stand as next of kin. This is reason why I contacted you to seek your consent to present you as an next of kin so that the funds will be release to you, then we share it 55% for me and 45% for you because am not a
-greedy person and is deal between me and you.
+Biggest TODO before this first step is ready to go in is to
+batch indirect descriptors as well.
 
-I have employed the service of an Attorney who will secure all necessary legal documents that could be used to back up this claim. All the attorney need to do is to fill in your names to the documents and legalize it in the Court here to prove you as the legitimate next of kin to the late depositor Dr. Erin Jacobson then the bank will release the funds to you as the rightful beneficiary.
+Integrating into vhost-net is basically
+s/vhost_get_vq_desc/vhost_get_vq_desc_batch/ -
+or add a module parameter like I did in the test module.
 
-This is a fair deal without any risk attached either on your part or on my part as long as we comply with the laws governing the claiming of funds in our establishment. All I require is your honest co-operation to enable us see this deal through, and with my position in the bank as a bank manager, I will do every thing possible to protect your interest and to make sure everything workout successfully.
 
-If you are interested in this deal, kindly send me your complete information, your full names and address, Your Private telephone and Fax numbers, and Cell phone so that the attorney will start processing the necessary paperwork that would facilitate the release of the funds to you.
+Changes from v1:
+	- typo fixes
 
-Mr. Henk Boelens
+Michael S. Tsirkin (2):
+  vhost: option to fetch descriptors through an independent struct
+  vhost: batching fetches
+
+ drivers/vhost/test.c  |  19 ++-
+ drivers/vhost/vhost.c | 333 +++++++++++++++++++++++++++++++++++++++++-
+ drivers/vhost/vhost.h |  20 ++-
+ 3 files changed, 365 insertions(+), 7 deletions(-)
+
+-- 
+MST
+
