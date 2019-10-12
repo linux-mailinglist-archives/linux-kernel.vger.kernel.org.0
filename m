@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29975D5002
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 15:20:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1288AD5004
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 15:20:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729378AbfJLNTg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 12 Oct 2019 09:19:36 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:34815 "EHLO
+        id S1729395AbfJLNTl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 12 Oct 2019 09:19:41 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:34811 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729308AbfJLNTe (ORCPT
+        with ESMTP id S1729279AbfJLNTd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Oct 2019 09:19:34 -0400
+        Sat, 12 Oct 2019 09:19:33 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iJHIk-0000aC-JR; Sat, 12 Oct 2019 15:19:18 +0200
+        id 1iJHIk-0000aH-PP; Sat, 12 Oct 2019 15:19:18 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id EE1D81C0137;
-        Sat, 12 Oct 2019 15:19:17 +0200 (CEST)
-Date:   Sat, 12 Oct 2019 13:19:17 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 6EFB61C03AD;
+        Sat, 12 Oct 2019 15:19:18 +0200 (CEST)
+Date:   Sat, 12 Oct 2019 13:19:18 -0000
 From:   "tip-bot2 for Kan Liang" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf/x86/cstate: Add Tiger Lake CPU support
+Subject: [tip: perf/urgent] perf/x86/cstate: Update C-state counters for Ice Lake
 Cc:     Kan Liang <kan.liang@linux.intel.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <1570549810-25049-10-git-send-email-kan.liang@linux.intel.com>
-References: <1570549810-25049-10-git-send-email-kan.liang@linux.intel.com>
+In-Reply-To: <1570549810-25049-7-git-send-email-kan.liang@linux.intel.com>
+References: <1570549810-25049-7-git-send-email-kan.liang@linux.intel.com>
 MIME-Version: 1.0
-Message-ID: <157088635784.9978.3826421032925829975.tip-bot2@tip-bot2>
+Message-ID: <157088635839.9978.945206340439005382.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -50,102 +50,119 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     52e92f409dede388b7dc3ee13491fbf7a80db935
-Gitweb:        https://git.kernel.org/tip/52e92f409dede388b7dc3ee13491fbf7a80db935
+Commit-ID:     f1857a2467755e5faa3c727d7146b6db960abee1
+Gitweb:        https://git.kernel.org/tip/f1857a2467755e5faa3c727d7146b6db960abee1
 Author:        Kan Liang <kan.liang@linux.intel.com>
-AuthorDate:    Tue, 08 Oct 2019 08:50:10 -07:00
+AuthorDate:    Tue, 08 Oct 2019 08:50:07 -07:00
 Committer:     Ingo Molnar <mingo@kernel.org>
 CommitterDate: Sat, 12 Oct 2019 15:13:09 +02:00
 
-perf/x86/cstate: Add Tiger Lake CPU support
+perf/x86/cstate: Update C-state counters for Ice Lake
 
-Tiger Lake is the followon to Ice Lake. From the perspective of Intel
-cstate residency counters, there is nothing changed compared with
-Ice Lake.
+There is no Core C3 C-State counter for Ice Lake.
+Package C8/C9/C10 C-State counters are added for Ice Lake.
 
-Share icl_cstates with Ice Lake.
-Update the comments for Tiger Lake.
-
-The External Design Specification (EDS) is not published yet. It comes
-from an authoritative internal source.
-
-The patch has been tested on real hardware.
+Introduce a new event list, icl_cstates, for Ice Lake.
+Update the comments accordingly.
 
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/1570549810-25049-10-git-send-email-kan.liang@linux.intel.com
+Fixes: f08c47d1f86c ("perf/x86/intel/cstate: Add Icelake support")
+Link: https://lkml.kernel.org/r/1570549810-25049-7-git-send-email-kan.liang@linux.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/events/intel/cstate.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+ arch/x86/events/intel/cstate.c | 36 ++++++++++++++++++++++-----------
+ 1 file changed, 25 insertions(+), 11 deletions(-)
 
 diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
-index 4d232ac..e1daf41 100644
+index 21c65e1..4d232ac 100644
 --- a/arch/x86/events/intel/cstate.c
 +++ b/arch/x86/events/intel/cstate.c
-@@ -50,44 +50,44 @@
+@@ -50,43 +50,44 @@
   *	MSR_CORE_C6_RESIDENCY: CORE C6 Residency Counter
   *			       perf code: 0x02
   *			       Available model: SLM,AMT,NHM,WSM,SNB,IVB,HSW,BDW,
-- *						SKL,KNL,GLM,CNL,KBL,CML,ICL
-+ *						SKL,KNL,GLM,CNL,KBL,CML,ICL,TGL
+- *						SKL,KNL,GLM,CNL,KBL,CML
++ *						SKL,KNL,GLM,CNL,KBL,CML,ICL
   *			       Scope: Core
   *	MSR_CORE_C7_RESIDENCY: CORE C7 Residency Counter
   *			       perf code: 0x03
-  *			       Available model: SNB,IVB,HSW,BDW,SKL,CNL,KBL,CML,
-- *						ICL
-+ *						ICL,TGL
+- *			       Available model: SNB,IVB,HSW,BDW,SKL,CNL,KBL,CML
++ *			       Available model: SNB,IVB,HSW,BDW,SKL,CNL,KBL,CML,
++ *						ICL
   *			       Scope: Core
   *	MSR_PKG_C2_RESIDENCY:  Package C2 Residency Counter.
   *			       perf code: 0x00
   *			       Available model: SNB,IVB,HSW,BDW,SKL,KNL,GLM,CNL,
-- *						KBL,CML,ICL
-+ *						KBL,CML,ICL,TGL
+- *						KBL,CML
++ *						KBL,CML,ICL
   *			       Scope: Package (physical package)
   *	MSR_PKG_C3_RESIDENCY:  Package C3 Residency Counter.
   *			       perf code: 0x01
   *			       Available model: NHM,WSM,SNB,IVB,HSW,BDW,SKL,KNL,
-- *						GLM,CNL,KBL,CML,ICL
-+ *						GLM,CNL,KBL,CML,ICL,TGL
+- *						GLM,CNL,KBL,CML
++ *						GLM,CNL,KBL,CML,ICL
   *			       Scope: Package (physical package)
   *	MSR_PKG_C6_RESIDENCY:  Package C6 Residency Counter.
   *			       perf code: 0x02
   *			       Available model: SLM,AMT,NHM,WSM,SNB,IVB,HSW,BDW
-- *						SKL,KNL,GLM,CNL,KBL,CML,ICL
-+ *						SKL,KNL,GLM,CNL,KBL,CML,ICL,TGL
+- *						SKL,KNL,GLM,CNL,KBL,CML
++ *						SKL,KNL,GLM,CNL,KBL,CML,ICL
   *			       Scope: Package (physical package)
   *	MSR_PKG_C7_RESIDENCY:  Package C7 Residency Counter.
   *			       perf code: 0x03
   *			       Available model: NHM,WSM,SNB,IVB,HSW,BDW,SKL,CNL,
-- *						KBL,CML,ICL
-+ *						KBL,CML,ICL,TGL
+- *						KBL,CML
++ *						KBL,CML,ICL
   *			       Scope: Package (physical package)
   *	MSR_PKG_C8_RESIDENCY:  Package C8 Residency Counter.
   *			       perf code: 0x04
-- *			       Available model: HSW ULT,KBL,CNL,CML,ICL
-+ *			       Available model: HSW ULT,KBL,CNL,CML,ICL,TGL
+- *			       Available model: HSW ULT,KBL,CNL,CML
++ *			       Available model: HSW ULT,KBL,CNL,CML,ICL
   *			       Scope: Package (physical package)
   *	MSR_PKG_C9_RESIDENCY:  Package C9 Residency Counter.
   *			       perf code: 0x05
-- *			       Available model: HSW ULT,KBL,CNL,CML,ICL
-+ *			       Available model: HSW ULT,KBL,CNL,CML,ICL,TGL
+- *			       Available model: HSW ULT,KBL,CNL,CML
++ *			       Available model: HSW ULT,KBL,CNL,CML,ICL
   *			       Scope: Package (physical package)
   *	MSR_PKG_C10_RESIDENCY: Package C10 Residency Counter.
   *			       perf code: 0x06
-- *			       Available model: HSW ULT,KBL,GLM,CNL,CML,ICL
-+ *			       Available model: HSW ULT,KBL,GLM,CNL,CML,ICL,TGL
+- *			       Available model: HSW ULT,KBL,GLM,CNL,CML
++ *			       Available model: HSW ULT,KBL,GLM,CNL,CML,ICL
   *			       Scope: Package (physical package)
   *
   */
-@@ -645,6 +645,8 @@ static const struct x86_cpu_id intel_cstates_match[] __initconst = {
+@@ -546,6 +547,19 @@ static const struct cstate_model cnl_cstates __initconst = {
+ 				  BIT(PERF_CSTATE_PKG_C10_RES),
+ };
  
- 	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE_L, icl_cstates),
- 	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE,   icl_cstates),
-+	X86_CSTATES_MODEL(INTEL_FAM6_TIGERLAKE_L, icl_cstates),
-+	X86_CSTATES_MODEL(INTEL_FAM6_TIGERLAKE, icl_cstates),
++static const struct cstate_model icl_cstates __initconst = {
++	.core_events		= BIT(PERF_CSTATE_CORE_C6_RES) |
++				  BIT(PERF_CSTATE_CORE_C7_RES),
++
++	.pkg_events		= BIT(PERF_CSTATE_PKG_C2_RES) |
++				  BIT(PERF_CSTATE_PKG_C3_RES) |
++				  BIT(PERF_CSTATE_PKG_C6_RES) |
++				  BIT(PERF_CSTATE_PKG_C7_RES) |
++				  BIT(PERF_CSTATE_PKG_C8_RES) |
++				  BIT(PERF_CSTATE_PKG_C9_RES) |
++				  BIT(PERF_CSTATE_PKG_C10_RES),
++};
++
+ static const struct cstate_model slm_cstates __initconst = {
+ 	.core_events		= BIT(PERF_CSTATE_CORE_C1_RES) |
+ 				  BIT(PERF_CSTATE_CORE_C6_RES),
+@@ -629,8 +643,8 @@ static const struct x86_cpu_id intel_cstates_match[] __initconst = {
+ 
+ 	X86_CSTATES_MODEL(INTEL_FAM6_ATOM_GOLDMONT_PLUS, glm_cstates),
+ 
+-	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE_L, snb_cstates),
+-	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE,   snb_cstates),
++	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE_L, icl_cstates),
++	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE,   icl_cstates),
  	{ },
  };
  MODULE_DEVICE_TABLE(x86cpu, intel_cstates_match);
