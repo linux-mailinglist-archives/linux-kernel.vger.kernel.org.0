@@ -2,176 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59A35D50C2
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 17:50:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ACFFD50D1
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 18:04:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729381AbfJLPua (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 12 Oct 2019 11:50:30 -0400
-Received: from sender4-op-o14.zoho.com ([136.143.188.14]:17409 "EHLO
-        sender4-op-o14.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728111AbfJLPu3 (ORCPT
+        id S1729354AbfJLQEx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 12 Oct 2019 12:04:53 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:34241 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729257AbfJLQCw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Oct 2019 11:50:29 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1570895418; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=eIthmr2DE1iqsL+l7kiWklE9vhLgqPMOKFc7m/1+q9s33jP/iHKV1WsrarYHYh0kWRkvBQIdDr/eEjaTRxHiyIgkmWWg18hOXhRaJmG3ETMVWBJ6riBMWQPP/Bg6eOKRtG9egD1LrFzKLpqOfcz3XxHFnCF0WmgeVj+aD096ZTc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1570895418; h=Content-Type:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=XT1UzgCGaseEWEDYLymVrPJuvAsUptmGPsOVyIfBiZQ=; 
-        b=NdkOyMY5QgBckJzBRt89/Ku04gFXGA1s9En1Rz2gtO+GhMHkgap+Z1qY79U8aZSgGlH4AU85X7i8t8j0KMBa3+6CFSGh30IrdyfBKCdt9Fatn4MBs3gJv4aTplI8YUuq120KB8hPDdzYX75CngPZD8+TGWVQd0JVru6VED4ZNYU=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=dlrobertson.com;
-        spf=pass  smtp.mailfrom=dan@dlrobertson.com;
-        dmarc=pass header.from=<dan@dlrobertson.com> header.from=<dan@dlrobertson.com>
-Received: from nessie (pool-100-15-144-194.washdc.fios.verizon.net [100.15.144.194]) by mx.zohomail.com
-        with SMTPS id 1570895418054430.6876645675419; Sat, 12 Oct 2019 08:50:18 -0700 (PDT)
-Date:   Sat, 12 Oct 2019 15:35:56 +0000
-From:   Dan Robertson <dan@dlrobertson.com>
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     linux-iio@vger.kernel.org,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        devicetree@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v2 2/2] iio: (bma400) add driver for the BMA400
-Message-ID: <20191012153556.GA15972@nessie>
-References: <20191012035420.13904-1-dan@dlrobertson.com>
- <20191012035420.13904-3-dan@dlrobertson.com>
- <20191012104033.006b33f9@archlinux>
+        Sat, 12 Oct 2019 12:02:52 -0400
+Received: by mail-qt1-f196.google.com with SMTP id 3so18611807qta.1
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2019 09:02:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=115n8fVPcb6FFdMlLEXy4f+oj6Xj6AxVK8mXd42SbSI=;
+        b=CGxTjducfs3i9fL9ZR/VcEs9UZRrWGrQ2h8205POiIL9yO/40CKYwPWD71NnFVxR5l
+         N6obY98Vpq4vgEOSnYTswhKpfbN/U6HjKuojF3XjAVOFHqO7hVtA0rg8tsB9ETz7oC/N
+         TIQz7gc5w0oatZqPJnwX57eKBIMYj/OowfUdngO85pbGuB/VTIyC10dEXpmRvaoaVZmf
+         Oj9NQp6s+EndxjTshCZlxqlmj0e80CAXX2bcLfQULS7n11/NCfv15eJ56YHj/WchAWXH
+         al6sFAZOZG11qrPIUTuqTjX+GRry17qnGDjAhq13inFg5F2GTgaxexcMYrx14XBTPXNi
+         SfgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=115n8fVPcb6FFdMlLEXy4f+oj6Xj6AxVK8mXd42SbSI=;
+        b=WtvDlFnVABtgKnCv3YlSAqBhqaF7AHKlhCX1q8pf5G/v0P6d/vN73XJsL3WanaVt6G
+         taxTlJmCmQMrTYh9f2ozNoI1oQqi0/Af1o16hdFws8SRe2S1rIWt1KodkxEQiZ/vqlDM
+         7yvCif1eaIZFMMWejc02Fg8egoR6ENrDYPpGvKTiWWd0a0v+0DVALUOeZPIT8kaGYfUA
+         xtPB3nRO+ApJnkTwJPkHQVZ7riFtC+oAWNQEVUSy65riUVu3m40DOUVzneo9qjTLBhc1
+         I8aA1tGt+KtLWyyUNcG5O5mPZaQezGz7HRqTXXq8vyoZoHzbosB72TWE5stszTcswFC+
+         O/eg==
+X-Gm-Message-State: APjAAAXhbrFXTPY/0GdWEgzOOSzMqBwzh0fYr1zSxF0wDY4jcqYi7Rp2
+        4zE9ablnp8HeRIpqrhzCvMrJc5AMSreQ7cCuhjw=
+X-Google-Smtp-Source: APXvYqxIJ55vEKe7JqfFUqWpUX+HFLn9NxIYRwXDaTvESKfz64imklWfqUOF8EfZgXOON5gnn+AQtKzCyF5Mx07h2to=
+X-Received: by 2002:ad4:4342:: with SMTP id q2mr22403420qvs.42.1570896171755;
+ Sat, 12 Oct 2019 09:02:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="EeQfGwPcQSOJBaQU"
-Content-Disposition: inline
-In-Reply-To: <20191012104033.006b33f9@archlinux>
-User-Agent: Mutt/1.12.2 (2019-09-21)
-X-Zoho-Virus-Status: 1
-X-ZohoMailClient: External
+Received: by 2002:a0c:f245:0:0:0:0:0 with HTTP; Sat, 12 Oct 2019 09:02:51
+ -0700 (PDT)
+Reply-To: ayishagddafio@mail.com
+From:   Aisha Gadafi <aishagddafi680@gmail.com>
+Date:   Sat, 12 Oct 2019 09:02:51 -0700
+Message-ID: <CAO3Jird+CkVKKsRDZ6WE7Ba9BpHx23EnoiaCOxEDFx1xpK7KSA@mail.gmail.com>
+Subject: Dear Friend (Assalamu Alaikum),
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--=20
+Lieber Freund (Assalamu Alaikum),
 
---EeQfGwPcQSOJBaQU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Ich bin vor einer privaten Suche auf Ihren E-Mail-Kontakt gesto=C3=9Fen
+Ihre Hilfe. Mein Name ist Aisha Al-Qaddafi, alleinerziehende Mutter und Wit=
+we
+mit drei Kindern. Ich bin die einzige biologische Tochter des sp=C3=A4ten L=
+ibyers
+Pr=C3=A4sident (Oberst Muammar Gaddafi).
 
-Thanks again everyone for the informative feedback!
+Ich habe Investmentfonds im Wert von siebenundzwanzig Millionen und
+f=C3=BCnfhunderttausend
+United State Dollar (27.500.000,00 $) und ich brauche eine
+vertrauensw=C3=BCrdige Investition
+Manager / Partner wegen meines aktuellen Fl=C3=BCchtlingsstatus bin ich jed=
+och
+Interesse an Ihnen f=C3=BCr die Unterst=C3=BCtzung von Investitionsprojekte=
+n in
+Ihrem Land, kann sein
+Von dort aus k=C3=B6nnen wir in n=C3=A4chster Zukunft eine Gesch=C3=A4ftsbe=
+ziehung aufbauen.
 
-On Sat, Oct 12, 2019 at 10:31:07AM +0100, Jonathan Cameron wrote:
-> Apologies for not pointing this out in V1 but all new IIO bindings need
-> to be in the yaml format rather than plain text.
+Ich bin gerne bereit, mit Ihnen das Verh=C3=A4ltnis der Beteiligungsquote z=
+u teilen
+st=C3=BCtzen Sie sich auf die zuk=C3=BCnftigen Investitionen, die Gewinne e=
+rzielen.
 
-No problem. I'll use the yaml format in v3.
+Wenn Sie bereit sind, dieses Projekt in meinem Namen durchzuf=C3=BChren,
+antworten Sie bitte dringend
+Damit ich Ihnen mehr Informationen =C3=BCber die Investmentfonds geben kann=
+.
 
-On Fri, Oct 11, 2019 at 11:11:31PM -0700, Randy Dunlap wrote:
-> > +config BMA400
-> > +	tristate "Bosch BMA400 3-Axis Accelerometer Driver"
-> > +	depends on I2C
-> > +	select REGMAP
-> > +	select BMA400_I2C if (I2C)
->
-> Since this already has "depends on I2C", the "if (I2C)" above is not needed.
-> Or maybe BMA400 alone does not depend on I2C?
+Ihre dringende Antwort wird gesch=C3=A4tzt. Schreiben Sie mir an diese
+E-Mail-Adresse (
+ayishagddafio@mail.com ) zur weiteren Diskussion.
 
-Good catch. I'll remove the I2C depends from BMA400_I2C.
-
-On Sat, Oct 12, 2019 at 10:39:54AM +0300, Andy Shevchenko wrote:
-> On Sat, Oct 12, 2019 at 10:07 AM Randy Dunlap <rdunlap@infradead.org> wrote:
-> > On 10/11/19 8:54 PM, Dan Robertson wrote:
->
-> > > +config BMA400_I2C
-> > > +     tristate
-> > > +     depends on BMA400
-> > > +     depends on I2C
-> > > +     select REGMAP_I2C
-> > > +
-> >
-> > The bma400_i2c driver seems to use some OF interfaces.
-> > Should it also depend on OF?
->
-> Please, avoid unnecessary and strict dependencies when it's limiting
-> the area of use the driver.
-> The driver does not depend to OF. Why to stick with OF?
->
-> The actual change has to be done is to switch from
->
-> > #include <linux/of.h>
->
-> to
->
-> #include <linux/mod_devicetable.h>
-
-Ah! Did not know about mod_devicetable.h. I'll make this change in the next
-version.
-
-On Sat, Oct 12, 2019 at 10:40:33AM +0100, Jonathan Cameron wrote:
-> > +static const struct attribute_group bma400_attrs_group = {
-> > +	.attrs = bma400_attributes,
->
-> No need to supply any attrs at all if the core is doing everything
-> for you, so get rid of these.
-
-Good catch.
-
-> > +int bma400_probe(struct device *dev,
-> > +		 struct regmap *regmap,
-> > +		 const char *name)
->
-> Try to avoid unnecessary line breaks.  There are stilly only
-> so many lines on a computer monitor :)
-
-Will do. I'll do a quick audit of the patchset for other short lines, but
-please don't hesitate to point out others you may find.
-
-> > +		/*
-> > +		 * If the softreset failed, try to put the device in
-> > +		 * sleep mode, but still report the error.
-> > +		 */
->
-> Silly question.  Why is soft_reset preferred to sleep mode?
-
-Not a silly question. I actually debated this when initially implementing the
-driver. The datasheet describes soft-reset behavior in section 4.9, the
-following snippet from the datasheet is particularly relevant:
-
-> The softreset performs a fundamental reset to the device which is largely
-> equivalent to a power cycle. Following a delay, all user configuration
-> settings are overwritten with their default state...
-
-Sleep mode is the default power-mode, so the only real difference would be that
-the oversampling ratio, sampling frequency, and scale would all be reset to
-their defaults with a soft-reset. If we just set the power-mode to sleep mode,
-the user configuration registers would be preserved.
-
-I can add a comment about the behavior of a softreset in bma400_remove.
-
-Cheers,
-
- - Dan
-
---EeQfGwPcQSOJBaQU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEF5dO2RaKc5C+SCJ9RcSmUsR+QqUFAl2h8tUACgkQRcSmUsR+
-QqXXexAAn6WqMzmR61/5wDBZCnPZnCbvs880K5bAC0hhlTwqhCdRpMAguG3eOYuA
-wEV3sAxYBuZRfbHF2RTVX9X0SBZm3upvKS79KXZepW86Ksr38ih2MhtKvMiIgZuV
-wVxhE2yUfJamnzZQrATpTheZLHJEfnUvsnP5SxJi/At/2UeEBZUtUrmZHK48t0T5
-4PumqOS2C460mavQE4sWne3afeDrizMH9VLwF6G9faK/o3TZcBjvlEWjrRSznA25
-8oXQGOHbh+EenHOFSnDkblEWPTLxcd8iVZkbIHvtpTgLVQ7ZMKh3dKq05N7jlrgZ
-7eYYi/KA04VTsqJJ2GAs4paiNUVKbDxwebRb5AqwJSr3O0NOm6zuWc4WAc/G6yWe
-TF7noDatfBWCu2cbxF5ukNEQ62gs7H2HvEb9wFfvoM6Ufau44fg5JsQhWb144+8T
-ZVMe4UQExdKAVoxtwdijODhQLzkeQsoVB6Zbcs7UgLWjvDCIGcp3HhN5U1KZ+Z/k
-HacIvMwTpegBme9wHgnSh0/mwElGPtDWhJoUYDvKxn8VUincQHiuXy67c2ZSETTU
-bcEhcLi6dD0tv2OPRlR5chBpneyNDVD6OOjLYXSjaR/Xd53a+YCtCAN+uximSt+Y
-0s3RFPM9MJplihfKAuidkap0SBJEyIlJ8Hcj8A5+5vXmc37EKjg=
-=KrGT
------END PGP SIGNATURE-----
-
---EeQfGwPcQSOJBaQU--
-
+Freundliche Gr=C3=BC=C3=9Fe
+Frau Aisha Al-Gaddafi
+Antwort an: ayishagddafio@mail.com
