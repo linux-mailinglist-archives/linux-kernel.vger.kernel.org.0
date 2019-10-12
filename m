@@ -2,68 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DFC1D4C39
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 04:50:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97CA6D4C53
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 05:08:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728735AbfJLCts (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 11 Oct 2019 22:49:48 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:41616 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727072AbfJLCts (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Oct 2019 22:49:48 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 9FE7F4877BBA4613FA4E;
-        Sat, 12 Oct 2019 10:49:46 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Sat, 12 Oct 2019
- 10:49:45 +0800
-Message-ID: <5DA13F48.4010406@huawei.com>
-Date:   Sat, 12 Oct 2019 10:49:44 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        id S1726865AbfJLDHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 11 Oct 2019 23:07:41 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:53678 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726269AbfJLDHl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Oct 2019 23:07:41 -0400
+X-UUID: f4786114ad30410caee12130dced414c-20191012
+X-UUID: f4786114ad30410caee12130dced414c-20191012
+Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        (envelope-from <jitao.shi@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 735632940; Sat, 12 Oct 2019 11:07:32 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N2.mediatek.inc
+ (172.27.4.76) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sat, 12 Oct
+ 2019 11:07:30 +0800
+Received: from mszsdclx1018.gcn.mediatek.inc (172.27.4.253) by
+ MTKCAS36.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
+ 15.0.1395.4 via Frontend Transport; Sat, 12 Oct 2019 11:07:29 +0800
+From:   Jitao Shi <jitao.shi@mediatek.com>
+To:     Sam Ravnborg <sam@ravnborg.org>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+CC:     <srv_heupstream@mediatek.com>, <yingjoe.chen@mediatek.com>,
+        <eddie.huang@mediatek.com>, <cawa.cheng@mediatek.com>,
+        <bibby.hsieh@mediatek.com>, <linux-mediatek@lists.infradead.org>,
+        <ck.hu@mediatek.com>, <stonea168@163.com>,
+        Jitao Shi <jitao.shi@mediatek.com>
+Subject: [PATCH v7 0/8] add driver for "boe, tv101wum-nl6", "boe, tv101wum-n53", "auo, kd101n80-45na" and "auo, b101uan08.3" panels
+Date:   Sat, 12 Oct 2019 11:07:12 +0800
+Message-ID: <20191012030720.27127-1-jitao.shi@mediatek.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     <Jerome.Pouiller@silabs.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RESEND v2] staging: wfx: fix an undefined reference error
- when CONFIG_MMC=m
-References: <1570811647-64905-1-git-send-email-zhongjiang@huawei.com> <20191011170331.GA1296994@kroah.com>
-In-Reply-To: <20191011170331.GA1296994@kroah.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-TM-SNTS-SMTP: F7B07B99A81EF4E5D242E6BC593B327DF1589564B8DF92733C3F20695BD5F6C22000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/10/12 1:03, Greg KH wrote:
-> On Sat, Oct 12, 2019 at 12:34:07AM +0800, zhong jiang wrote:
->> I hit the following error when compile the kernel.
->>
->> drivers/staging/wfx/main.o: In function `wfx_core_init':
->> /home/z00352263/linux-next/linux-next/drivers/staging/wfx/main.c:488: undefined reference to `sdio_register_driver'
->> drivers/staging/wfx/main.o: In function `wfx_core_exit':
->> /home/z00352263/linux-next/linux-next/drivers/staging/wfx/main.c:496: undefined reference to `sdio_unregister_driver'
->> drivers/staging/wfx/main.o:(.debug_addr+0x1a8): undefined reference to `sdio_register_driver'
->> drivers/staging/wfx/main.o:(.debug_addr+0x6f0): undefined reference to `sdio_unregister_driver'
->>
->> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
->> ---
->>  drivers/staging/wfx/Makefile | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
-> What changed from v1?  Always put that below the --- line.
->
-> v3 please?
-Fine,  I will repost in v3.  Thanks,
+Changes since v6:
+ - fix boe_panel_init err uninit.
+ - adjust the delay of backlight on.
 
-Sincerely,
-zhong jiang
-> thanks,
->
-> greg k-h
->
-> .
->
+Changes since v5:
+ - covert the documents to yaml
+ - fine tune boe, tv101wum-n53 panel video timine
 
+Changes since v4:
+ - add auo,b101uan08.3 panel for this driver.
+ - add boe,tv101wum-n53 panel for this driver.
+
+Changes since v3:
+ - remove check enable_gpio.
+ - fine tune the auo,kd101n80-45na panel's power on timing.
+
+Changes since v2:
+ - correct the panel size
+ - remove blank line in Kconfig
+ - move auo,kd101n80-45na panel driver in this series.
+
+Changes since v1:
+
+ - update typo nl6 -> n16.
+ - update new panel config and makefile are added in alphabetically order.
+ - add the panel mode and panel info in driver data.
+ - merge auo,kd101n80-45a and boe,tv101wum-nl6 in one driver
+
+Jitao Shi (8):
+  dt-bindings: display: panel: Add BOE tv101wum-n16 panel bindings
+  drm/panel: support for BOE tv101wum-nl6 wuxga dsi video mode panel
+  dt-bindings: display: panel: add auo kd101n80-45na panel bindings
+  drm/panel: support for auo,kd101n80-45na wuxga dsi video mode panel
+  dt-bindings: display: panel: add boe tv101wum-n53 panel documentation
+  drm/panel: support for boe,tv101wum-n53 wuxga dsi video mode panel
+  dt-bindings: display: panel: add AUO auo,b101uan08.3 panel
+    documentation
+  drm/panel: support for auo,b101uan08.3 wuxga dsi video mode panel
+
+ .../display/panel/auo,b101uan08.3.yaml        |  67 ++
+ .../display/panel/auo,kd101n80-45na.yaml      |  67 ++
+ .../display/panel/boe,tv101wum-n53.yaml       |  67 ++
+ .../display/panel/boe,tv101wum-nl6.yaml       |  67 ++
+ drivers/gpu/drm/panel/Kconfig                 |   9 +
+ drivers/gpu/drm/panel/Makefile                |   1 +
+ .../gpu/drm/panel/panel-boe-tv101wum-nl6.c    | 880 ++++++++++++++++++
+ 7 files changed, 1158 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/auo,b101uan08.3.yaml
+ create mode 100644 Documentation/devicetree/bindings/display/panel/auo,kd101n80-45na.yaml
+ create mode 100644 Documentation/devicetree/bindings/display/panel/boe,tv101wum-n53.yaml
+ create mode 100644 Documentation/devicetree/bindings/display/panel/boe,tv101wum-nl6.yaml
+ create mode 100644 drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c
+
+-- 
+2.21.0
 
