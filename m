@@ -2,152 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75780D4DBA
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 08:52:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8678D4DBB
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2019 08:53:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728993AbfJLGwX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 12 Oct 2019 02:52:23 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47568 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727117AbfJLGwX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Oct 2019 02:52:23 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3BDCD3082B02;
-        Sat, 12 Oct 2019 06:52:23 +0000 (UTC)
-Received: from t460p.redhat.com (ovpn-117-172.phx2.redhat.com [10.3.117.172])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6301060A97;
-        Sat, 12 Oct 2019 06:52:22 +0000 (UTC)
-From:   Scott Wood <swood@redhat.com>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Waiman Long <longman@redhat.com>,
-        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Scott Wood <swood@redhat.com>
-Subject: [PATCH RT v2 3/3] sched: migrate_enable: Use stop_one_cpu_nowait()
-Date:   Sat, 12 Oct 2019 01:52:14 -0500
-Message-Id: <20191012065214.28109-4-swood@redhat.com>
-In-Reply-To: <20191012065214.28109-1-swood@redhat.com>
-References: <20191012065214.28109-1-swood@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Sat, 12 Oct 2019 06:52:23 +0000 (UTC)
+        id S1728799AbfJLGxF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 12 Oct 2019 02:53:05 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42624 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726728AbfJLGxE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Oct 2019 02:53:04 -0400
+Received: by mail-wr1-f65.google.com with SMTP id n14so14052098wrw.9
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2019 23:53:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=fQ6eXPgRmlE7QGLNLnLPlmdGjpBQkjzBBl5+6F7Plow=;
+        b=jU5Rkt5CwB2Du/Izd0rvUMrNTYl9HEaywmBiUBUFvNDZQsYZ/Cndo7r4wzeHZeIDLD
+         oqwHjIA5jt/MArvAd9DQ4RRs8BQoswRY8SZdq/LloTX46frlz4BHmM2fXhqhkgQ+Py87
+         gqQ1ZwJjNg0igFl/2fYpefAMB+v/1rG6x9gSxSlRjVOmqzKQ6grihz/vAgqApwBjkZJE
+         a4l9E5EMIPdnZDOch1UDcDA42xBfHYQiBdhEdY/YYncYhRTfzRq3/KXlmyRr5wJ17hBV
+         HrPfjfBOt8X3dFvItCzme5S2m+rJ6gCGkLG+iPTvsCqJe31onu/m4L++r/AG98qiPToc
+         Fv8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=fQ6eXPgRmlE7QGLNLnLPlmdGjpBQkjzBBl5+6F7Plow=;
+        b=kq66XDMS1osCow6WMsLSJW19srN6RZOk2ooepcriZ+hi5kL+0jx2t2sQmeAiGP/HT5
+         aBOcc8ZteMyQysGwRUU0Dmobs6Lc0SaU6jR7oeW2uNhGmpwr5W5X6jnrGMtiFgmWYe14
+         na5zJW5ADzonUOV0OfcCvtJsvmi+nADm8alwFsN9si0ZKSQE6nq3+qms6rYN6tlrRH5j
+         4KMeczpOXdiEfxh/sDbb/U7YBNNutOJe0xIP+47pSwxewI5HcggMBDahPxSAg5fDoCSr
+         5q6TQ/Dx7RZcHYWvzPYBJQiUr0zDyymVyFf9Qc2SZpGFYEiZcPMY8xZG9IyARejHv73O
+         aLOw==
+X-Gm-Message-State: APjAAAU+QZeTMgrajBjBdiPHXw6SKQphvLoof8rBf7rYkmZZeo8w9/3P
+        1NpEi+o8Ok3ttZFySvxLvpeM2A==
+X-Google-Smtp-Source: APXvYqzaOIyDjy7+Z2K/tCHPciYbgcwG4Xp1G7o1F4bQvEUm/3grxzCzaQ02XbFr4tCjAXNBddAOiQ==
+X-Received: by 2002:a5d:6b03:: with SMTP id v3mr16898131wrw.182.1570863182430;
+        Fri, 11 Oct 2019 23:53:02 -0700 (PDT)
+Received: from mai.imgcgcw.net ([2a01:e34:ed2f:f020:f437:29a8:ed69:7bab])
+        by smtp.gmail.com with ESMTPSA id z5sm17450497wrs.54.2019.10.11.23.53.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2019 23:53:01 -0700 (PDT)
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+To:     rui.zhang@intel.com, edubezval@gmail.com
+Cc:     daniel.lezcano@linaro.org, linux-kernel@vger.kernel.org,
+        amit.kucheria@linaro.org
+Subject: [PATCH 01/11] thermal: Move default governor config option to the internal header
+Date:   Sat, 12 Oct 2019 08:52:45 +0200
+Message-Id: <20191012065255.23249-1-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-migrate_enable() can be called with current->state != TASK_RUNNING.
-Avoid clobbering the existing state by using stop_one_cpu_nowait().
-Since we're stopping the current cpu, we know that we won't get
-past __schedule() until migration_cpu_stop() has run (at least up to
-the point of migrating us to another cpu).
+The default governor set at compilation time is a thermal internal
+business, no need to export to the global thermal header.
 
-Signed-off-by: Scott Wood <swood@redhat.com>
+Move the config options to the internal header.
+
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- include/linux/stop_machine.h |  2 ++
- kernel/sched/core.c          | 22 +++++++++++++---------
- kernel/stop_machine.c        |  7 +++++--
- 3 files changed, 20 insertions(+), 11 deletions(-)
+ drivers/thermal/thermal_core.h | 11 +++++++++++
+ include/linux/thermal.h        | 11 -----------
+ 2 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/include/linux/stop_machine.h b/include/linux/stop_machine.h
-index 6d3635c86dbe..82fc686ddd9e 100644
---- a/include/linux/stop_machine.h
-+++ b/include/linux/stop_machine.h
-@@ -26,6 +26,8 @@ struct cpu_stop_work {
- 	cpu_stop_fn_t		fn;
- 	void			*arg;
- 	struct cpu_stop_done	*done;
-+	/* Did not run due to disabled stopper; for nowait debug checks */
-+	bool			disabled;
- };
+diff --git a/drivers/thermal/thermal_core.h b/drivers/thermal/thermal_core.h
+index 207b0cda70da..f1206d67047f 100644
+--- a/drivers/thermal/thermal_core.h
++++ b/drivers/thermal/thermal_core.h
+@@ -12,6 +12,17 @@
+ #include <linux/device.h>
+ #include <linux/thermal.h>
  
- int stop_one_cpu(unsigned int cpu, cpu_stop_fn_t fn, void *arg);
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 5cb2a519b8bf..6383ade320f2 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1051,6 +1051,7 @@ static struct rq *move_queued_task(struct rq *rq, struct rq_flags *rf,
- struct migration_arg {
- 	struct task_struct *task;
- 	int dest_cpu;
-+	bool done;
- };
- 
- /*
-@@ -1086,6 +1087,11 @@ static int migration_cpu_stop(void *data)
- 	struct task_struct *p = arg->task;
- 	struct rq *rq = this_rq();
- 	struct rq_flags rf;
-+	int dest_cpu = arg->dest_cpu;
++/* Default Thermal Governor */
++#if defined(CONFIG_THERMAL_DEFAULT_GOV_STEP_WISE)
++#define DEFAULT_THERMAL_GOVERNOR       "step_wise"
++#elif defined(CONFIG_THERMAL_DEFAULT_GOV_FAIR_SHARE)
++#define DEFAULT_THERMAL_GOVERNOR       "fair_share"
++#elif defined(CONFIG_THERMAL_DEFAULT_GOV_USER_SPACE)
++#define DEFAULT_THERMAL_GOVERNOR       "user_space"
++#elif defined(CONFIG_THERMAL_DEFAULT_GOV_POWER_ALLOCATOR)
++#define DEFAULT_THERMAL_GOVERNOR       "power_allocator"
++#endif
 +
-+	/* We don't look at arg after this point. */
-+	smp_mb();
-+	arg->done = true;
+ /* Initial state of a cooling device during binding */
+ #define THERMAL_NO_TARGET -1UL
  
- 	/*
- 	 * The original target CPU might have gone down and we might
-@@ -1108,9 +1114,9 @@ static int migration_cpu_stop(void *data)
- 	 */
- 	if (task_rq(p) == rq) {
- 		if (task_on_rq_queued(p))
--			rq = __migrate_task(rq, &rf, p, arg->dest_cpu);
-+			rq = __migrate_task(rq, &rf, p, dest_cpu);
- 		else
--			p->wake_cpu = arg->dest_cpu;
-+			p->wake_cpu = dest_cpu;
- 	}
- 	rq_unlock(rq, &rf);
- 	raw_spin_unlock(&p->pi_lock);
-@@ -7392,6 +7398,7 @@ void migrate_enable(void)
- 	WARN_ON(smp_processor_id() != cpu);
- 	if (!is_cpu_allowed(p, cpu)) {
- 		struct migration_arg arg = { p };
-+		struct cpu_stop_work work;
- 		struct rq_flags rf;
+diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+index e45659c75920..a389d4621814 100644
+--- a/include/linux/thermal.h
++++ b/include/linux/thermal.h
+@@ -43,17 +43,6 @@
+ #define MILLICELSIUS_TO_DECI_KELVIN_WITH_OFFSET(t, off) (((t) / 100) + (off))
+ #define MILLICELSIUS_TO_DECI_KELVIN(t) MILLICELSIUS_TO_DECI_KELVIN_WITH_OFFSET(t, 2732)
  
- 		rq = task_rq_lock(p, &rf);
-@@ -7399,13 +7406,10 @@ void migrate_enable(void)
- 		arg.dest_cpu = select_fallback_rq(cpu, p);
- 		task_rq_unlock(rq, p, &rf);
- 
--		preempt_lazy_enable();
--		preempt_enable();
+-/* Default Thermal Governor */
+-#if defined(CONFIG_THERMAL_DEFAULT_GOV_STEP_WISE)
+-#define DEFAULT_THERMAL_GOVERNOR       "step_wise"
+-#elif defined(CONFIG_THERMAL_DEFAULT_GOV_FAIR_SHARE)
+-#define DEFAULT_THERMAL_GOVERNOR       "fair_share"
+-#elif defined(CONFIG_THERMAL_DEFAULT_GOV_USER_SPACE)
+-#define DEFAULT_THERMAL_GOVERNOR       "user_space"
+-#elif defined(CONFIG_THERMAL_DEFAULT_GOV_POWER_ALLOCATOR)
+-#define DEFAULT_THERMAL_GOVERNOR       "power_allocator"
+-#endif
 -
--		sleeping_lock_inc();
--		stop_one_cpu(task_cpu(p), migration_cpu_stop, &arg);
--		sleeping_lock_dec();
--		return;
-+		stop_one_cpu_nowait(task_cpu(p), migration_cpu_stop,
-+				    &arg, &work);
-+		__schedule(true);
-+		WARN_ON_ONCE(!arg.done && !work.disabled);
- 	}
- 
- out:
-diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
-index 2b5a6754646f..fa53a472dd44 100644
---- a/kernel/stop_machine.c
-+++ b/kernel/stop_machine.c
-@@ -85,8 +85,11 @@ static bool cpu_stop_queue_work(unsigned int cpu, struct cpu_stop_work *work)
- 	enabled = stopper->enabled;
- 	if (enabled)
- 		__cpu_stop_queue_work(stopper, work, &wakeq);
--	else if (work->done)
--		cpu_stop_signal_done(work->done);
-+	else {
-+		work->disabled = true;
-+		if (work->done)
-+			cpu_stop_signal_done(work->done);
-+	}
- 	raw_spin_unlock_irqrestore(&stopper->lock, flags);
- 
- 	wake_up_q(&wakeq);
+ struct thermal_zone_device;
+ struct thermal_cooling_device;
+ struct thermal_instance;
 -- 
-1.8.3.1
+2.17.1
 
