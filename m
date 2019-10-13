@@ -2,63 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF02AD56BB
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2019 18:04:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D75DD56C5
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2019 18:15:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728789AbfJMQEV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 13 Oct 2019 12:04:21 -0400
-Received: from mail-lf1-f42.google.com ([209.85.167.42]:39184 "EHLO
-        mail-lf1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbfJMQEV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Oct 2019 12:04:21 -0400
-Received: by mail-lf1-f42.google.com with SMTP id 72so10126220lfh.6;
-        Sun, 13 Oct 2019 09:04:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=zK6MqX6awnsKT7h/tz4aHU7zt4FnJHX3hmpDCllT6Qw=;
-        b=DQVT+xwVXNkS8BcdFwj+B3rQ5myl1sGpj7Ey3kqz10L8eM2ZplADf0Ie1kAr8AYD4B
-         iesKdYPQILt49OqKHwk8CPhH7yiNUTvLeIaJAf/N4Uo5X9h3jyPsQWeJJSoQsRabR0pU
-         HRAfXUzdvrS1PNTG2YHwbkwalMjNDHgpe2A5jLTD8pexL0SQqUoLZY07tNVFYyAxgBB8
-         oJLZSFv59MzwPlJrmDkqPf8CwK3MF81bKB+4wHQImNlmq7jNjBW6rHVTJBb3hfwrmz8s
-         yh1rK05n1M7fFHew0ZiOwhXGxjjplMLYU3YfUuHHahktTlEV74MtpEezKlbLMvqtr8re
-         n4pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=zK6MqX6awnsKT7h/tz4aHU7zt4FnJHX3hmpDCllT6Qw=;
-        b=sL4xb2MjaMER+/LGnNL+oeZgze0JPVznKzRLvoAy/QJtX1mpNRxbo2BkmmnCl0MpMP
-         bVZkxI+pBnVjiQosCFAs0uzZlmBeO46TYXHLiLfwCKwNI1Qit1WfTCCwXuOPdyYMO+ha
-         XGil0i/HIp2gJ4Abi2AqP10EiOpN30z3N7MsXUEWJZ3qCRl7vZG0DEdP3UHz0coLxpiR
-         dnre2qXhW1hIIPHUe3cTUnWdbRY4+bTc2YtyV/FfynUuCSG5rI57V9QW0W6NQVSpNYsS
-         WwJp3gYcLYJbC9X8yLrhUb/dv1Ml/Mxz27axIjav55hlzwxg4URdoWCwwNuoulBrPM+q
-         CgCg==
-X-Gm-Message-State: APjAAAVd2uzlDIbvU40z0eEeFBEGFFrQxvzo6t/o22A8JFdrN6LtBsX5
-        B1da8tqXCF1IfSvaYJtgb4U2vYHOo5sFIGIAhgV1HzSQM3Y=
-X-Google-Smtp-Source: APXvYqzHMTIEIS4nmMsvZMMjqLm0FoWqMVdZH+80rMlvYaJmaw4RAZSsrMi38lQGZITbHK3Rn3e5SvNazId2jpSY2gI=
-X-Received: by 2002:ac2:5595:: with SMTP id v21mr2646279lfg.168.1570982658932;
- Sun, 13 Oct 2019 09:04:18 -0700 (PDT)
-MIME-Version: 1.0
-From:   Andrew Macks <andypoo@gmail.com>
-Date:   Sun, 13 Oct 2019 19:04:12 +0300
-Message-ID: <CAFeYvHUoZdM5kY6LCfUiy6pVVf4VU_SWHtKeyevYenC3FZ7mng@mail.gmail.com>
-Subject: Regression in 4.14.147, 4.19.76, 5.2.18 leading to kernel panic on
- btrfs root fs mount
-To:     stable@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1729133AbfJMQPG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 13 Oct 2019 12:15:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59680 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726085AbfJMQPG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Oct 2019 12:15:06 -0400
+Subject: Re: [GIT PULL] mtd: Fixes for v5.4-rc3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570983305;
+        bh=l3PUiyUzcVRzu9ZjGfW0o+6z6+yhGNHQ5vU+b73MK9I=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=NxpLRAMRt5/vZ0IFd4MiE3R5jGRHjoQPnytwfCie1n7paj61EVBmB4QKcVBUYYS+T
+         aqiUNURruczlQIjZpUWMGqmgZHOUCxZ87fxJQiNKF9zBrBxGd2DT+hoV5KjKSWwnl/
+         TWF2t8iAZG4Ru/E13JQdVky1OMoKfGKSzqWXwpnM=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <1615396520.21318.1570912156820.JavaMail.zimbra@nod.at>
+References: <1615396520.21318.1570912156820.JavaMail.zimbra@nod.at>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <1615396520.21318.1570912156820.JavaMail.zimbra@nod.at>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git
+ tags/fixes-for-5.4-rc3
+X-PR-Tracked-Commit-Id: df8fed831cbcdce7b283b2d9c1aadadcf8940d05
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 71b1b5532b9c58f260911ee59c7b3007d6d673a5
+Message-Id: <157098330559.26372.16017055334585777960.pr-tracker-bot@kernel.org>
+Date:   Sun, 13 Oct 2019 16:15:05 +0000
+To:     Richard Weinberger <richard@nod.at>
+Cc:     torvalds <torvalds@linux-foundation.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        miquel.raynal@bootlin.com, vigneshr@ti.com,
+        Tudor Ambarus <Tudor.Ambarus@microchip.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Was not sure the correct way to escalate this quickly enough.  I
-unfortunately discovered this issue while upgrading a server (remotely) to
-4.19.78 (longterm).
+The pull request you sent on Sat, 12 Oct 2019 22:29:16 +0200 (CEST):
 
-*Bug 205181* <https://bugzilla.kernel.org/show_bug.cgi?id=205181> - kernel
-panic when accessing btrfs root device with f2fs in kernel
-https://bugzilla.kernel.org/show_bug.cgi?id=205181
+> git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git tags/fixes-for-5.4-rc3
 
-Andrew.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/71b1b5532b9c58f260911ee59c7b3007d6d673a5
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
