@@ -2,36 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F89ED561B
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2019 14:10:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AA30D561E
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2019 14:10:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729052AbfJMMJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 13 Oct 2019 08:09:59 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:41910 "EHLO
+        id S1729093AbfJMMK3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 13 Oct 2019 08:10:29 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:41952 "EHLO
         atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728620AbfJMMJ7 (ORCPT
+        with ESMTP id S1728620AbfJMMK3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Oct 2019 08:09:59 -0400
+        Sun, 13 Oct 2019 08:10:29 -0400
 Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 43A738023D; Sun, 13 Oct 2019 14:09:41 +0200 (CEST)
-Date:   Sun, 13 Oct 2019 14:09:52 +0200
+        id AA7C780262; Sun, 13 Oct 2019 14:10:11 +0200 (CEST)
+Date:   Sun, 13 Oct 2019 14:10:20 +0200
 From:   Pavel Machek <pavel@ucw.cz>
-To:     Jean-Jacques Hiblot <jjhiblot@ti.com>
-Cc:     jacek.anaszewski@gmail.com, sre@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, lee.jones@linaro.org,
-        daniel.thompson@linaro.org, dmurphy@ti.com,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, tomi.valkeinen@ti.com
-Subject: Re: [PATCH v9 3/5] leds: Add managed API to get a LED from a device
- driver
-Message-ID: <20191013120952.GL5653@amd>
-References: <20191007124437.20367-1-jjhiblot@ti.com>
- <20191007124437.20367-4-jjhiblot@ti.com>
+To:     Ricardo Ribalda Delgado <ribalda@kernel.org>
+Cc:     Sakari Ailus <sakari.ailus@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 0/6] ad5820: Multiple fixes
+Message-ID: <20191013121020.GM5653@amd>
+References: <20191007132856.27948-1-ribalda@kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="zH41lVBEV8cLJnCl"
+        protocol="application/pgp-signature"; boundary="iUV/lbBrmPtUT9dM"
 Content-Disposition: inline
-In-Reply-To: <20191007124437.20367-4-jjhiblot@ti.com>
+In-Reply-To: <20191007132856.27948-1-ribalda@kernel.org>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -39,80 +35,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---zH41lVBEV8cLJnCl
+--iUV/lbBrmPtUT9dM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
-
-> If the LED is acquired by a consumer device with devm_led_get(), it is
-> automatically released when the device is detached.
+On Mon 2019-10-07 15:28:50, Ricardo Ribalda Delgado wrote:
+> -Support for enable-pin, of-autoload, enable-gpios and ad5821 and ad5823
 >=20
-> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
-> ---
->  drivers/leds/led-class.c | 49 ++++++++++++++++++++++++++++++++++++++++
->  include/linux/leds.h     |  2 ++
->  2 files changed, 51 insertions(+)
+> For some reason these patchset was lost in translation for a year ;)
 >=20
-> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index 1d1f1d546dc7..639224392ffa 100644
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-> @@ -264,6 +264,55 @@ void led_put(struct led_classdev *led_cdev)
->  }
->  EXPORT_SYMBOL_GPL(led_put);
-> =20
-> +static void devm_led_release(struct device *dev, void *res)
-> +{
-> +	struct led_classdev **p =3D res;
-> +
-> +	led_put(*p);
-> +}
-> +
-> +/**
-> + * devm_of_led_get - Resource-managed request of a LED device
-> + * @dev:	LED consumer
-> + * @index:	index of the LED to obtain in the consumer
-> + *
-> + * The device node of the device is parse to find the request LED device.
-> + * The LED device returned from this function is automatically released
-> + * on driver detach.
-> + *
-> + * @return a pointer to a LED device or ERR_PTR(errno) on failure.
-> + */
-> +struct led_classdev *__must_check devm_of_led_get(struct device *dev,
-> +						  int index)
-> +{
-> +	struct led_classdev *led;
-> +	struct led_classdev **dr;
-> +
-> +	if (!dev)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	/* Consummer not using device tree? */
+>=20
+> v8: I screwed up sending v7, I sent it from a dirty directory
+> and clicked on send-all without checking what was under v7*. Sorry :(
+> This made patchwork very unhappy. I send v8 to make patchwork happy and
+> hopefuly also the maintainer. Sorry again
 
-Typo "consumer". I may fix it before applying the patch.
+Ok, this is a LED, but I assume it needs to go in using media
+tree. Good luck! :-).
 
-Best regards,
 									Pavel
-
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---zH41lVBEV8cLJnCl
+--iUV/lbBrmPtUT9dM
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAl2jFBAACgkQMOfwapXb+vLi0ACghzv7nZ4xe3dVsGeLJ7I8UIbL
-ZHoAoLAAx5gbRTPv4Bm9i1/pPNfJgf7j
-=R/Sy
+iEYEARECAAYFAl2jFCwACgkQMOfwapXb+vKumwCeLBeJP9ErxUe2GUYsar2FhSYt
+fq8AoMH87mnqnjYtBSgq9pJMjtITnYEC
+=PuDS
 -----END PGP SIGNATURE-----
 
---zH41lVBEV8cLJnCl--
+--iUV/lbBrmPtUT9dM--
