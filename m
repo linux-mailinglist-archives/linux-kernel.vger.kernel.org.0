@@ -2,87 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9975D5679
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2019 16:17:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2FD8D568B
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2019 17:05:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729282AbfJMORt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 13 Oct 2019 10:17:49 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3743 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729032AbfJMORt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Oct 2019 10:17:49 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 18ED857509FEEFA08F42;
-        Sun, 13 Oct 2019 22:17:45 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Sun, 13 Oct 2019
- 22:17:43 +0800
-Message-ID: <5DA33206.6090104@huawei.com>
-Date:   Sun, 13 Oct 2019 22:17:42 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        id S1729249AbfJMPDv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 13 Oct 2019 11:03:51 -0400
+Received: from mail-40130.protonmail.ch ([185.70.40.130]:54024 "EHLO
+        mail-40130.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726797AbfJMPDu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Oct 2019 11:03:50 -0400
+Date:   Sun, 13 Oct 2019 15:03:40 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=default; t=1570979027;
+        bh=ZY+k0n65ZYFALI9OssOg3Hb+Hk/n1wmTXgo3wim5LVY=;
+        h=Date:To:From:Reply-To:Subject:Feedback-ID:From;
+        b=LGaA9eww2nMmgPdZY5mWgyk7Hg6iBn1QdocCflqZQRZ9xRGWGJvHZtSydg0pgxM2/
+         DC0RHNFa46MbCrINiD8oTtJxv5n1RIUO49epd8vzmkJoTZe7KjXXg03x6eJ6tS/Bv8
+         ZcQDbGNH7qdKIJb9J2imODY6xOIsznXaJeb14Ga0=
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
+Reply-To: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
+Subject: Re: (was Fair Trade O.S.) 0SS Varanger Sys
+Message-ID: <ngFN3CiE-YNVpXWy9yJrbp6s9GHpvQWe9n2TaJ3vbEFpjp_u-S__qyrggSmOmqKjEVrGKVdfV9NLHWa6s7jW_V915P2pMHqlXlOqgKUO7Fs=@protonmail.com>
+Feedback-ID: jE8CP55NmWCGfbi9g5qzrOGkxuwuSXpchSI6fmYzjd5UEveHXeJrmiWc0_sgJdqIHM8YAKf9EEyPwffaRmhZ0A==:Ext:ProtonMail
 MIME-Version: 1.0
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     <Jerome.Pouiller@silabs.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] staging: wfx: fix an undefined reference error when
- CONFIG_MMC=m
-References: <1570877693-52711-1-git-send-email-zhongjiang@huawei.com> <20191012153245.GA2155778@kroah.com>
-In-Reply-To: <20191012153245.GA2155778@kroah.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/10/12 23:32, Greg KH wrote:
-> On Sat, Oct 12, 2019 at 06:54:53PM +0800, zhong jiang wrote:
->> I hit the following error when compile the kernel.
->>
->> drivers/staging/wfx/main.o: In function `wfx_core_init':
->> /home/z00352263/linux-next/linux-next/drivers/staging/wfx/main.c:488: undefined reference to `sdio_register_driver'
->> drivers/staging/wfx/main.o: In function `wfx_core_exit':
->> /home/z00352263/linux-next/linux-next/drivers/staging/wfx/main.c:496: undefined reference to `sdio_unregister_driver'
->> drivers/staging/wfx/main.o:(.debug_addr+0x1a8): undefined reference to `sdio_register_driver'
->> drivers/staging/wfx/main.o:(.debug_addr+0x6f0): undefined reference to `sdio_unregister_driver'
->>
->> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
->> ---
->> v2->v3:
->>     We'd better not use #ifdef in .c file to use IS_ENABLED instead.
->>
->> v1->v2:
->>     We should prefer to current dependencies rather than force to enable. 
->>
->>  drivers/staging/wfx/Makefile | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/staging/wfx/Makefile b/drivers/staging/wfx/Makefile
->> index 0d9c1ed..77d68b7 100644
->> --- a/drivers/staging/wfx/Makefile
->> +++ b/drivers/staging/wfx/Makefile
->> @@ -19,6 +19,6 @@ wfx-y := \
->>  	sta.o \
->>  	debug.o
->>  wfx-$(CONFIG_SPI) += bus_spi.o
->> -wfx-$(subst m,y,$(CONFIG_MMC)) += bus_sdio.o
->> +wfx-$(CONFIG_MMC) += bus_sdio.o
->>  
->>  obj-$(CONFIG_WFX) += wfx.o
-> How does this change any of the existing logic?  What does this really
-> change to solve the issue?  I thought you were going to fix this up as I
-> suggested in my last email?
-Yep,  It's my stupid fault.  I disable the CONFIG_SPI to test the issue.  :-(
+Unviersalized this a bit, and a graceful name. OSS, the Zero Sense Scrutiny=
+. Anything with zero sense does not need to be in an O.S.
 
-Thanks,
-zhong jiang
-> thanks,
+
+Sent with ProtonMail Secure Email.
+
+=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
+ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
+On Sunday 13. October 2019 kl. 07:56, Ywe C=C3=A6rlyn <ywecrn@protonmail.co=
+m> wrote:
+
+> Now also added 0yZ to its title, meaning 0 triune god, and 0 jesus on a c=
+ross. - I think that is what everybody here wants!
 >
-> greg k-h
+> Sent with ProtonMail Secure Email.
 >
-> .
+> =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original =
+Message =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
+> On Wednesday 9. October 2019 kl. 09:52, Ywe C=C3=A6rlyn ywecrn@protonmail=
+.com wrote:
 >
+> > Ok, I think I have a fully and complete view of operating systems philo=
+sophy.
+> > Basically a good O.S. philosophy can be traced back to 1000 A.D. and th=
+e Saxons forcing the bible, and "god" on people in Norway. Still Norway nev=
+er really did not become un-varangian.
+> > Today contemplating a background on a good O.S. based on my research, I=
+ understand that varangian culture was quite good, and building further on =
+it, ridding oneself of the christian trinitarian god, we can also have a go=
+od O.S.
+> > Therefore the system is now named Varanger Sys, with Cider as the origi=
+nal drink of T=C3=B3r. And the EDM culture of the 90s that Norway was large=
+ly influental in, I have named =C3=9App Varanger EDM, that went all the way=
+ up to Kygo (and Maren), that represents types already established in the 9=
+0s, which I was part of. Very Norwegian, Scandinavian, probably European, a=
+nd maybe other places. And we fully support EU.
+> > This is the final basis of my operating system philosophy, and cultural=
+ aspect. Small changes may come, if it improves things.
+> > Best Greetings,
+> > Ywe C=C3=A6rlyn
+> > Lead & Philosophy
+> > Varanger Sys
+> > https://www.youtube.com/channel/UCR3gmLVjHS5A702wo4bol_Q
 
 
