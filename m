@@ -2,108 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D835BD585C
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2019 23:46:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85E25D5863
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2019 23:50:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729486AbfJMVoo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 13 Oct 2019 17:44:44 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:53461 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728777AbfJMVoo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Oct 2019 17:44:44 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id B6E3E80220; Sun, 13 Oct 2019 23:44:26 +0200 (CEST)
-Date:   Sun, 13 Oct 2019 23:44:41 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Andrew Macks <andypoo@gmail.com>, stable@kernel.org,
-        Greg KH <greg@kroah.com>,
-        kernel list <linux-kernel@vger.kernel.org>
-Cc:     Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: Regression in longterm 4.19: f2fs: use generic
- EFSBADCRC/EFSCORRUPTED
-Message-ID: <20191013214440.GA20196@amd>
-References: <CAFeYvHWC=RZJr2ZSAvRy=r1kAJU8YW-hxkZ3uBAd2OQEerKmag@mail.gmail.com>
- <CAFeYvHXQQPfu+r0kLpTXWRZJr8SFF1QyUWzOkjJYFE2_UVSrUA@mail.gmail.com>
+        id S1729605AbfJMVuL convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 13 Oct 2019 17:50:11 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:50466 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728982AbfJMVuK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Oct 2019 17:50:10 -0400
+Received: from i59f7e0c5.versanet.de ([89.247.224.197] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1iJlkV-0004sv-Rh; Sun, 13 Oct 2019 23:50:00 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        kernel-janitors@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
+        Navid Emamdoost <emamd001@umn.edu>,
+        Stephen McCamant <smccaman@umn.edu>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: clk: rockchip: Checking a kmemdup() call in rockchip_clk_register_pll()
+Date:   Sun, 13 Oct 2019 23:49:54 +0200
+Message-ID: <2588953.0pqkEXWxhN@phil>
+In-Reply-To: <29d12079-d888-e090-da5a-c407c13d696b@web.de>
+References: <e96505a8-b554-f61e-3940-0b9e9c7850ff@web.de> <5801053.xxhhKtLrcJ@diego> <29d12079-d888-e090-da5a-c407c13d696b@web.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="8t9RHnE3ZwKMSgU+"
-Content-Disposition: inline
-In-Reply-To: <CAFeYvHXQQPfu+r0kLpTXWRZJr8SFF1QyUWzOkjJYFE2_UVSrUA@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---8t9RHnE3ZwKMSgU+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat 2019-10-12 21:55:24, Andrew Macks wrote:
-> Sorry for version typo in the previous message.
->=20
-> In addition to 4.19, the issue was also backported to 4.14 and 5.2.
->=20
-> 4.14, 4.19 and 5.2 are all missing the EINVAL fix from 5.3.
-
-Ouch.
-
-Well, when I seen the patch, I thought "looks like the bug is not
-serious enough for -stable". I guess I should have spoken up.
-
-Anyway, I guess we need to either revert  59a5cea41dd0a or backport
-38fb6d0ea34299d97b too....
-
-So I guess Greg and lists need to be cc-ed... and=20
-
-Thanks for the report and sorry for the trouble....
-
-								Pavel
-
-
-> Andrew.
->=20
-> On Sat, 12 Oct 2019 at 21:39, Andrew Macks <andypoo@gmail.com> wrote:
->=20
-> > Hi - there is a nasty regression which was recently introduced into
-> > longterm 4.19.76.
+Am Sonntag, 13. Oktober 2019, 10:45:09 CEST schrieb Markus Elfring:
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/rockchip/clk-pll.c?id=1c0cc5f1ae5ee5a6913704c0d75a6e99604ee30a#n913
+> >> https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/clk/rockchip/clk-pll.c#L913
+> >>
+> >> * Do you find the usage of the format string “%s: could not allocate
+> >>   rate table for %s\n” still appropriate at this place?
 > >
-> > 59a5cea41dd0ae706ab83f8ecd64199aadefb493 was committed to 4.19, however=
- it
-> > introduces a regression that filesystems no longer mount if do_mounts
-> > iterates through them after F2FS.  This surfaced on one of my servers as
-> > F2FS superblock check happens before btrfs mount is attempted.
+> > If there is an internal "no-memory" output from inside kmemdup now,
+> > I guess the one in the clock driver would be a duplicate and could go away.
+> 
+> How do you think about to recheck information sources around
+> the Linux allocation failure report?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id=da94001239cceb93c132a31928d6ddc4214862d5#n878
+> 
+> 
+> >> * Is there a need to adjust the error handling here?
 > >
-> > With this code, my server panicked after kernel upgrade as btrfs mount
-> > wasn't attempted.
-> >
-> > This issue has already been fixed in 5.3 with this patch in July, but it
-> > was missed from the 4.19 backport.
-> >
-> > 38fb6d0ea34299d97b031ed64fe994158b6f8eb3
-> > f2fs: use EINVAL for superblock with invalid magic
-> >
-> > Andypoo.
-> >
+> > There is no need for additional error handling.
+> 
+> If you would like to omit the macro call “WARN”, I would expect also
+> to express a corresponding null pointer check.
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+So I guess we want something like the change at the bottom.
 
---8t9RHnE3ZwKMSgU+
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+> > Like if the rate-table could not be duplicated,
+> > the clock will still report the correct clockrate
+> > you can just not set a new rate.
+> 
+> How much will a different system configuration matter finally?
+> (Do you really want to treat this setting as “optional”?)
+> 
+> > And for a system it's always better to have the clock driver present
+> > than for all device-drivers to fail probing. Especially as this start as
+> > core clock driver, so there is no deferring possible.
+> 
+> I imagine that such a view can be clarified further.
 
-iEYEARECAAYFAl2jmsgACgkQMOfwapXb+vL2NwCeNwJGQVue06R4Q3nOP1MkrMaU
-sH4AnihqqfajtmJ6pQ+zd3t/bRJfqAEf
-=eLSo
------END PGP SIGNATURE-----
+The core soc clock driver gets initialized through CLK_OF_DECLARE(),
+aka real early during boot. So if the kmemdup fails there can not be
+any -EPROBE_DEFER, as there is no kernel-driver-model running yet.
 
---8t9RHnE3ZwKMSgU+--
+All other components of the system of course depend on the clock-
+controller being available, so that way the system can at least come
+up further so that people might be able to debug their issue further.
+
+The other option would be to panic, but the kernel should not
+panic if other options are available - and continuing with a static
+pll frequency is less invasive in the error case.
+
+Heiko
+
+------ 8< -------
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index 198417d56300..17bfac611e79 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -909,14 +909,16 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 		for (len = 0; rate_table[len].rate != 0; )
+ 			len++;
+ 
+-		pll->rate_count = len;
+ 		pll->rate_table = kmemdup(rate_table,
+ 					pll->rate_count *
+ 					sizeof(struct rockchip_pll_rate_table),
+ 					GFP_KERNEL);
+-		WARN(!pll->rate_table,
+-			"%s: could not allocate rate table for %s\n",
+-			__func__, name);
++
++		/*
++		 * Set num rates to 0 if kmemdup fails. That way the clock
++		 * at least can report its rate and stays usable.
++		 */
++		pll->rate_count = pll->rate_table ? len : 0;
+ 	}
+ 
+ 	switch (pll_type) {
+
+
+
