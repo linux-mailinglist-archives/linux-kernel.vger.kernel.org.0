@@ -2,79 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35953D54BF
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2019 07:56:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB31DD54C8
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2019 08:17:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728432AbfJMF4Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 13 Oct 2019 01:56:24 -0400
-Received: from mail-40130.protonmail.ch ([185.70.40.130]:36659 "EHLO
-        mail-40130.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726698AbfJMF4Y (ORCPT
+        id S1728338AbfJMGRY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 13 Oct 2019 02:17:24 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42240 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726698AbfJMGRY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Oct 2019 01:56:24 -0400
-Date:   Sun, 13 Oct 2019 05:56:16 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=default; t=1570946180;
-        bh=nwNLb+7A2TG518+csLV8si8cBAAgPa+NNLRoF0cJOfI=;
-        h=Date:To:From:Reply-To:Subject:Feedback-ID:From;
-        b=ws4TgYUUIiwtJ7/v09OXxvMGy1DABX6u8Cz+zD0u6SSSvuxr9EHUw6jw40bYAA2RD
-         uUT2IYoUgYPQ1vi6O/Smqmq2sHjZJFbvjRQt8rfy5V16WJsYggFkaSqMDwwpFibUgw
-         FNjQZTmneLDOwNKiMHVCb5m5oqJAvjUVmZXr8b6Y=
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Reply-To: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Subject: Re: (was Fair Trade O.S.) 0yZ Varanger Sys
-Message-ID: <Xe7SAArvz77hnGDgROpVyH1cl5ci1GhMHMUBfMOZR4iL3hblgDxaOxp09VVgLaBkqUaCWp3UbrMdbyZ3ei_95rA0uPYE8LmsXjdJs3jvdW8=@protonmail.com>
-Feedback-ID: jE8CP55NmWCGfbi9g5qzrOGkxuwuSXpchSI6fmYzjd5UEveHXeJrmiWc0_sgJdqIHM8YAKf9EEyPwffaRmhZ0A==:Ext:ProtonMail
+        Sun, 13 Oct 2019 02:17:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
+        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gHDvwzjyh2BcK8+v9tZOTrs2Kje82quoZLnRHBlDXkU=; b=hiDKVgsUJTt9/HS9pfII/xtxF
+        fxGAQgT84/R/BNoKl1dm12dqUnbSJlJkREH7N+VymmjqUAxkhEMiNLQTuKCaQg8BAYcQHkyFTXCGW
+        bgZrXRrsjX/IrJXKib/APthnGqPlf6AeJNf6bSdXCmwyqkunHiMirpQ3W/iqnZ36DtS5OuBRHfjw6
+        DtoKOlFNbYzzACAb1+Mq6EyVw9EQ/x0AMQjTqzj5LmZLdjDsvaEwJBFZbDgdTimnSZ8+1DtuKJiWc
+        unVbBy+Z+FU5lcM7lovuaycEFCMRyiiSdhHEWzAn6XN4NMP98tWqNe685Caizo2Qa88z7zm9Iiwuh
+        NNVvpI7sA==;
+Received: from [2601:1c0:6280:3f0::9ef4]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iJXBw-00013e-Fe; Sun, 13 Oct 2019 06:17:20 +0000
+Subject: Re: [PATCH] writeback: Fix a warning while "make xmldocs"
+To:     Masanari Iida <standby24x7@gmail.com>, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        tj@kernel.org, axboe@kernel.dk
+References: <20191013040837.14766-1-standby24x7@gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <fcb2c42a-9ee9-7f59-0543-eca6e188ac00@infradead.org>
+Date:   Sat, 12 Oct 2019 23:17:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM autolearn=ham
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
+In-Reply-To: <20191013040837.14766-1-standby24x7@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now also added 0yZ to its title, meaning 0 triune god, and 0 jesus on a cro=
-ss. - I think that is what everybody here wants!
+On 10/12/19 9:08 PM, Masanari Iida wrote:
+> This patch fix following warning.
+> ./fs/fs-writeback.c:918: warning: Excess function parameter
+> 'nr_pages' description in 'cgroup_writeback_by_id'
+> 
+> Signed-off-by: Masanari Iida <standby24x7@gmail.com>
+> ---
+>  fs/fs-writeback.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index e88421d9a48d..8461a6322039 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -905,7 +905,7 @@ static void bdi_split_work_to_wbs(struct backing_dev_info *bdi,
+>   * cgroup_writeback_by_id - initiate cgroup writeback from bdi and memcg IDs
+>   * @bdi_id: target bdi id
+>   * @memcg_id: target memcg css id
+> - * @nr_pages: number of pages to write, 0 for best-effort dirty flushing
+> + * @nr: number of pages to write, 0 for best-effort dirty flushing
+>   * @reason: reason why some writeback work initiated
+>   * @done: target wb_completion
+>   *
+> 
 
+https://lore.kernel.org/linux-fsdevel/756645ac-0ce8-d47e-d30a-04d9e4923a4f@infradead.org/
 
-Sent with ProtonMail Secure Email.
+Andrew has already added this to his patches.
 
-=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
-ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
-On Wednesday 9. October 2019 kl. 09:52, Ywe C=C3=A6rlyn <ywecrn@protonmail.=
-com> wrote:
-
-> Ok, I think I have a fully and complete view of operating systems philoso=
-phy.
->
-> Basically a good O.S. philosophy can be traced back to 1000 A.D. and the =
-Saxons forcing the bible, and "god" on people in Norway. Still Norway never=
- really did not become un-varangian.
-> Today contemplating a background on a good O.S. based on my research, I u=
-nderstand that varangian culture was quite good, and building further on it=
-, ridding oneself of the christian trinitarian god, we can also have a good=
- O.S.
->
-> Therefore the system is now named Varanger Sys, with Cider as the origina=
-l drink of T=C3=B3r. And the EDM culture of the 90s that Norway was largely=
- influental in, I have named =C3=9App Varanger EDM, that went all the way u=
-p to Kygo (and Maren), that represents types already established in the 90s=
-, which I was part of. Very Norwegian, Scandinavian, probably European, and=
- maybe other places. And we fully support EU.
->
-> This is the final basis of my operating system philosophy, and cultural a=
-spect. Small changes may come, if it improves things.
->
-> Best Greetings,
-> Ywe C=C3=A6rlyn
-> Lead & Philosophy
-> Varanger Sys
->
-> https://www.youtube.com/channel/UCR3gmLVjHS5A702wo4bol_Q
-
-
+-- 
+~Randy
