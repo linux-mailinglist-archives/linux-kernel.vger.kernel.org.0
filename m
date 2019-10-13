@@ -2,139 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CD09D5528
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2019 10:08:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0D21D5552
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2019 10:27:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729086AbfJMIIZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 13 Oct 2019 04:08:25 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45436 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728984AbfJMIIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Oct 2019 04:08:19 -0400
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 22BDFC0568FD
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2019 08:08:19 +0000 (UTC)
-Received: by mail-qk1-f198.google.com with SMTP id b67so13794113qkc.1
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2019 01:08:19 -0700 (PDT)
+        id S1728537AbfJMI1D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 13 Oct 2019 04:27:03 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36377 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728073AbfJMI1D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Oct 2019 04:27:03 -0400
+Received: by mail-wm1-f68.google.com with SMTP id m18so13827949wmc.1
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2019 01:27:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=XrKArI22TbaXTpRRWMHp6kqWcuEnD9M+cArfNWS2v/M=;
+        b=ND0Tq8uOyX79oTJxMZX4wHmFe5awTU4tQ0OU6c+OMeDb4TUDn1YhwyhTGIzENcDo6X
+         D9Aw7TtMZVLxSEZrM57hDlkGvbSDTTz3W2fq7gSK3OODuwAFs7OEN0xNjnay7UfmX6ug
+         Pwq17DqkY8cAbxaNCumWI0IGUlsZw6E6eOZXeDzu6RWisJuChfO4/HEZnhdaBwAoOXEj
+         vfudEjgFpzA6DgXCpcrcC3o8eocxh+LQRHlQIyOCxeTNwUqAfpnzhe8UY85D1xq9rXmZ
+         JjOm4dSTKn1dYGC+lkcT4c0NKdcY9Svbs79fonJOewUqcchKC97EIp/04xQvQh0PsAv5
+         ZuZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=3CYitd93iDHtPl2boSl3Eyofj0PvtzXYhyw7uXbmPmo=;
-        b=OZBN9alIHs8/HWXKKwWmMtBWOJ61ejcMypG505I6c1FJAGp0KbLHkDQOUBBvpo6M0U
-         rJHaVD2dqc6qFlETnP3R1fkr89sHpteHLcUb+jsYVVhvu75wSpbNBkzJe7yP+xHfYlYx
-         arOC0GII2FcOe9MPu8Ex+a42kFPOmgyYqXRv/4bGT5JzOP6XXqhlk9dKKcFwIrIwJB9t
-         K15bYFxu5D1L5LYnUG0m0uuRe7unZjzXeWHZQhY7pxF61kHqBrF7WroPl0X3b2JdGEBM
-         TJuOsaQZsgqRymoLP2gczchVO56TW1IV31WQ9tADRSyrPaZiEkuK9VqQ9u0DJJHmEkYe
-         Hscw==
-X-Gm-Message-State: APjAAAVPNyC3z5KFOjNoXx7QFACbytNfv4clqX5G10ZtSeYHBVMTPWxU
-        parT8T1kRNFMVELqavCYiM7C+isDV6WOYw0WHw1Cg0Ur3KYHBPwc+ittcQgQhfSdlL+Abzq5VSq
-        pznBV3SFI7oehwsgNHoqOTAac
-X-Received: by 2002:a37:9d10:: with SMTP id g16mr24681937qke.29.1570954098118;
-        Sun, 13 Oct 2019 01:08:18 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyaJ+QpLI1pMBCIJvuv7x0tuYvQpGl6FL4TAAJwm3gJXchv9/ST+/UasjDNh9TYNk8GtdJuXQ==
-X-Received: by 2002:a37:9d10:: with SMTP id g16mr24681925qke.29.1570954097874;
-        Sun, 13 Oct 2019 01:08:17 -0700 (PDT)
-Received: from redhat.com (bzq-79-176-10-77.red.bezeqint.net. [79.176.10.77])
-        by smtp.gmail.com with ESMTPSA id f10sm6455018qtj.3.2019.10.13.01.08.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Oct 2019 01:08:17 -0700 (PDT)
-Date:   Sun, 13 Oct 2019 04:08:13 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, Jason Wang <jasowang@redhat.com>
-Subject: [PATCH RFC v3 4/4] vhost/net: add an option to test new code
-Message-ID: <20191013080742.16211-5-mst@redhat.com>
-References: <20191013080742.16211-1-mst@redhat.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=XrKArI22TbaXTpRRWMHp6kqWcuEnD9M+cArfNWS2v/M=;
+        b=iIyWiHheawy2A/0/VH1v8z61VriXOo4hJa31V++5Qbz58u140rVgEtmJy8sV9xpQYM
+         9E4idIkQS1T3vRI8nLJRZsYawNGeE3knmHbxR3Ow+5/z8w3dMylQSibYbG4yTwK9bbnQ
+         sglzELm1WLgCBzdo1pT/GW776V6mBIDHU5LZj6wpQN9cmNzGNRfwXm3GtHS1oR1XTJUi
+         zhq2jlawMUHxqA1W5C9VmDVRGy5oSCrCJgv9oOe7NWJe5/ByYv84P/+tvbWTH2fn3dMN
+         At5d2+B+wrZYrRMhuDcQZwTWyIl4s9G4SnSZYp/XjLf92Nj7th84i1/LRhvg9mSzDcrf
+         0REQ==
+X-Gm-Message-State: APjAAAVyFAHYURVfsQEJ6poQsLENTTnrViC7fOri9yxZ6qvduhIAqIpT
+        y0gZfUalyGWw2+aCWKpJfVJimfgf
+X-Google-Smtp-Source: APXvYqwDMRUJtGfB/2Di1PCfLTYvrQQ9edaAlJwyEIx/GpcAbCLW4HyH6a79O5/aKJASu/Pi5DECVw==
+X-Received: by 2002:a7b:c3d2:: with SMTP id t18mr11185175wmj.52.1570955220714;
+        Sun, 13 Oct 2019 01:27:00 -0700 (PDT)
+Received: from [192.168.1.20] (host86-143-38-66.range86-143.btcentralplus.com. [86.143.38.66])
+        by smtp.googlemail.com with ESMTPSA id a3sm27883733wmc.3.2019.10.13.01.26.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 13 Oct 2019 01:26:59 -0700 (PDT)
+Subject: Re: Linux 5.3.6
+To:     Gabriel C <nix.or.die@gmail.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <48afc878-5424-7554-cd02-4175ec12eaea@googlemail.com>
+ <CAEJqkgjAMkoiAQeitQ1gdEpmZWvdqQE+fAsQU4W7M7JGxHboyQ@mail.gmail.com>
+From:   Chris Clayton <chris2553@googlemail.com>
+Message-ID: <1b29b820-06e5-fed4-2dd3-a66ceded73c8@googlemail.com>
+Date:   Sun, 13 Oct 2019 09:26:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191013080742.16211-1-mst@redhat.com>
-X-Mailer: git-send-email 2.22.0.678.g13338e74b8
-X-Mutt-Fcc: =sent
+In-Reply-To: <CAEJqkgjAMkoiAQeitQ1gdEpmZWvdqQE+fAsQU4W7M7JGxHboyQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a writeable module parameter that tests
-the new code. Note: no effort was made to ensure
-things work correctly if the parameter is changed
-while the device is open. Make sure to
-close the device before changing its value.
 
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
----
- drivers/vhost/net.c | 32 +++++++++++++++++++++++++-------
- 1 file changed, 25 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index 1a2dd53caade..122b666ec1f2 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -35,6 +35,9 @@
- 
- #include "vhost.h"
- 
-+static int newcode = 0;
-+module_param(newcode, int, 0644);
-+
- static int experimental_zcopytx = 0;
- module_param(experimental_zcopytx, int, 0444);
- MODULE_PARM_DESC(experimental_zcopytx, "Enable Zero Copy TX;"
-@@ -565,8 +568,14 @@ static int vhost_net_tx_get_vq_desc(struct vhost_net *net,
- 	struct vhost_virtqueue *rvq = &rnvq->vq;
- 	struct vhost_virtqueue *tvq = &tnvq->vq;
- 
--	int r = vhost_get_vq_desc(tvq, tvq->iov, ARRAY_SIZE(tvq->iov),
--				  out_num, in_num, NULL, NULL);
-+	int r;
-+
-+	if (newcode)
-+		r = vhost_get_vq_desc_batch(tvq, tvq->iov, ARRAY_SIZE(tvq->iov),
-+					    out_num, in_num, NULL, NULL);
-+	else
-+		r = vhost_get_vq_desc(tvq, tvq->iov, ARRAY_SIZE(tvq->iov),
-+				      out_num, in_num, NULL, NULL);
- 
- 	if (r == tvq->num && tvq->busyloop_timeout) {
- 		/* Flush batched packets first */
-@@ -575,8 +584,12 @@ static int vhost_net_tx_get_vq_desc(struct vhost_net *net,
- 
- 		vhost_net_busy_poll(net, rvq, tvq, busyloop_intr, false);
- 
--		r = vhost_get_vq_desc(tvq, tvq->iov, ARRAY_SIZE(tvq->iov),
--				      out_num, in_num, NULL, NULL);
-+		if (newcode)
-+			r = vhost_get_vq_desc_batch(tvq, tvq->iov, ARRAY_SIZE(tvq->iov),
-+						    out_num, in_num, NULL, NULL);
-+		else
-+			r = vhost_get_vq_desc(tvq, tvq->iov, ARRAY_SIZE(tvq->iov),
-+					      out_num, in_num, NULL, NULL);
- 	}
- 
- 	return r;
-@@ -1046,9 +1059,14 @@ static int get_rx_bufs(struct vhost_virtqueue *vq,
- 			r = -ENOBUFS;
- 			goto err;
- 		}
--		r = vhost_get_vq_desc(vq, vq->iov + seg,
--				      ARRAY_SIZE(vq->iov) - seg, &out,
--				      &in, log, log_num);
-+		if (newcode)
-+			r = vhost_get_vq_desc_batch(vq, vq->iov + seg,
-+						    ARRAY_SIZE(vq->iov) - seg, &out,
-+						    &in, log, log_num);
-+		else
-+			r = vhost_get_vq_desc(vq, vq->iov + seg,
-+					      ARRAY_SIZE(vq->iov) - seg, &out,
-+					      &in, log, log_num);
- 		if (unlikely(r < 0))
- 			goto err;
- 
--- 
-MST
+On 12/10/2019 21:55, Gabriel C wrote:
+> Am Sa., 12. Okt. 2019 um 21:16 Uhr schrieb Chris Clayton
+> <chris2553@googlemail.com>:
+>>
+>>
+>>> I'm announcing the release of the 5.3.6 kernel.
+>>
+>>
+>> 5.3.6 build fails here with:
+>>
+>> arch/x86/entry/vdso/vdso64.so.dbg: undefined symbols found
+>>   CC      arch/x86/kernel/cpu/mce/threshold.o
+>> make[3]: *** [arch/x86/entry/vdso/Makefile:59: arch/x86/entry/vdso/vdso64.so.dbg] Error 1
+>> make[3]: *** Deleting file 'arch/x86/entry/vdso/vdso64.so.dbg'
+>> make[2]: *** [scripts/Makefile.build:497: arch/x86/entry/vdso] Error 2
+>> make[1]: *** [scripts/Makefile.build:497: arch/x86/entry] Error 2
+>> make[1]: *** Waiting for unfinished jobs....
+>>
+> 
+> What is your default linker ?
+> 
+> Also does make LD=ld.bfd fixes that for you ?
+> 
 
+Thanks, Gabriel. The default linker is gold, but your suggestion above fixed the build. I think I'll set the default to
+LD.bfd.
+
+> See https://bugzilla.kernel.org/show_bug.cgi?id=204951
+> 
+> BR,
+> 
+> Gabriel C.
+> 
