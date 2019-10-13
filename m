@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF6D8D5867
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2019 23:57:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7809D586F
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2019 23:58:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729223AbfJMV5y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 13 Oct 2019 17:57:54 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:50526 "EHLO gloria.sntech.de"
+        id S1729519AbfJMV6h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 13 Oct 2019 17:58:37 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:50620 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727492AbfJMV5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Oct 2019 17:57:54 -0400
+        id S1727492AbfJMV6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Oct 2019 17:58:37 -0400
 Received: from i59f7e0c5.versanet.de ([89.247.224.197] helo=phil.localnet)
         by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <heiko@sntech.de>)
-        id 1iJlry-0004uB-PY; Sun, 13 Oct 2019 23:57:43 +0200
+        id 1iJlsm-0004vN-BX; Sun, 13 Oct 2019 23:58:32 +0200
 From:   Heiko Stuebner <heiko@sntech.de>
-To:     Ben Dooks <ben.dooks@codethink.co.uk>
-Cc:     linux-kernel@lists.codethink.co.uk,
-        Sandy Huang <hjc@rock-chips.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org,
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/rockchip: include rockchip_drm_drv.h
-Date:   Sun, 13 Oct 2019 23:57:36 +0200
-Message-ID: <12674451.zEyZYcXUJe@phil>
-In-Reply-To: <20191009132134.18384-1-ben.dooks@codethink.co.uk>
-References: <20191009132134.18384-1-ben.dooks@codethink.co.uk>
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Sandy Huang <hjc@rock-chips.com>,
+        Zheng Yang <zhengyang@rock-chips.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, Johan Jonker <jbx6244@gmail.com>
+Subject: Re: [PATCH] drm/rockchip/rk3066: Use devm_platform_ioremap_resource() in rk3066_hdmi_bind()
+Date:   Sun, 13 Oct 2019 23:58:26 +0200
+Message-ID: <12988569.FbAFs2EWry@phil>
+In-Reply-To: <0666bc0b-6624-21a0-47c4-b78e2a3b3ad5@web.de>
+References: <0666bc0b-6624-21a0-47c4-b78e2a3b3ad5@web.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -38,13 +40,15 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mittwoch, 9. Oktober 2019, 15:21:34 CEST schrieb Ben Dooks:
-> Include rockchip_drm_drv.h for definition of vop_platform_driver
-> to avoid the following sparse warning:
+Am Samstag, 21. September 2019, 20:40:16 CEST schrieb Markus Elfring:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 21 Sep 2019 20:32:25 +0200
 > 
-> drivers/gpu/drm/rockchip/rockchip_vop_reg.c:982:24: warning: symbol 'vop_platform_driver' was not declared. Should it be static?
+> Simplify this function implementation by using a known wrapper function.
 > 
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
 applied to drm-misc-next
 
