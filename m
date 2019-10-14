@@ -2,92 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 616FED6991
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 20:38:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8890D69A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 20:43:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732873AbfJNSh6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 14:37:58 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:33008 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728392AbfJNSh6 (ORCPT
+        id S1732040AbfJNSnY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 14:43:24 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34391 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726169AbfJNSnY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 14:37:58 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9EIbtM3130441;
-        Mon, 14 Oct 2019 13:37:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1571078275;
-        bh=gjpe0/tPdjeJbD6c0yP9qpUnp8n/wsrLxgxIz+sbP64=;
-        h=From:To:CC:Subject:Date;
-        b=BRq3c+PlhEgCqEv7DyeL7aC1gjybRH4gu7HwQylBeqVScBl5DiKs4NbvG33uXdf7B
-         AIL+vaopmZbK+tMyzVzZOoWZ+LXxAVhYsf8SeBhNv560F61yjo1F/396hL+E7tFxOL
-         jde/s3EdZ26stbKXdAD3UXzEE51unTjFpj5u1OQk=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9EIbtsv021834
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 14 Oct 2019 13:37:55 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 14
- Oct 2019 13:37:55 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 14 Oct 2019 13:37:49 -0500
-Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9EIbqfI014449;
-        Mon, 14 Oct 2019 13:37:53 -0500
-From:   Faiz Abbas <faiz_abbas@ti.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
-CC:     <ulf.hansson@linaro.org>, <asutoshd@codeaurora.org>,
-        <riteshh@codeaurora.org>, <adrian.hunter@intel.com>,
-        <faiz_abbas@ti.com>
-Subject: [RFC] mmc: cqhci: commit descriptors before setting the doorbell
-Date:   Tue, 15 Oct 2019 00:08:49 +0530
-Message-ID: <20191014183849.14864-1-faiz_abbas@ti.com>
-X-Mailer: git-send-email 2.19.2
+        Mon, 14 Oct 2019 14:43:24 -0400
+Received: by mail-pg1-f196.google.com with SMTP id k20so3235231pgi.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 11:43:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=amREymzw1c6IsU6bF35CaFvFb2Rgm1/hiMFDrclp26M=;
+        b=XK+t4wD79Ig4XGQ4KNdIg9ZVoBmi2QaekTMsU8vIwP32GqyVTKnznyb7UAYapnT37+
+         IGoq46ttsalEit36po3g3a5Lq8LjvNj6jGaacY3w0J3KRdhr9ugyweQAt8WB0PcozswI
+         qiKwxFZ+EH4NgXEd5a1jurV2477AM8DxKkkWk6bvRE8IzqVLhgLBjSr61VOhV9BGzRBM
+         qSURxpI4BjxrK/ralolypJPuECgp98diaQrXcAgVydZ6lu+wmEwsI3cnyczcZGd7y2ME
+         Vq3M/J40MNlo209NJQfcVrYX8aclXLFe5QjZb8HgV0+99B8NiRSfiiTVtRHcC1OYafps
+         8/OQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=amREymzw1c6IsU6bF35CaFvFb2Rgm1/hiMFDrclp26M=;
+        b=GLmSYVDwgGqrr4SgOEevVCp2NHJ7MDD8j/Ex1qFh5Lq/bftGd2Mc/5LHxIx7zhGxzM
+         pOlG1j2T6bAd9MD7eXLaMyVK3GA91iK6DU/Uk1Yp5v+/6iS5sVvf4sKmwKkasGCn2GUm
+         /62mMhppkgfq9eSY2vVBmd8LR/SoHMKTbwvw419hgdFSJgJRNBcHeVJTzX4O0qs8bhUI
+         g8QcO1cMtVIdGD1c/coD4yaiDSLOoTLe3n2Tgxns3oV1pMRqECHp9eFg4jgcY4esHwsF
+         JNTt0IzoZgbEKSNBAx4SVHTdcN1ZcG067RIsD36gCx7uLH8A5cPIav3HR889zHm7ZrZD
+         JcPw==
+X-Gm-Message-State: APjAAAUepy6VH2OpM9SA199xbacb8DYk4vr5KP5mx75cPp8QSR29MXYt
+        j4g6jdT+Mb6SdqZfB2IlxRs=
+X-Google-Smtp-Source: APXvYqycaefK5rF/bgwFS26ZwLJNFQ3sCrNf1OMFZGNcsDq/+L0n63OCH9D2loyEuczmKh42TzZDXA==
+X-Received: by 2002:a63:e802:: with SMTP id s2mr34339525pgh.188.1571078603482;
+        Mon, 14 Oct 2019 11:43:23 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id c26sm16932953pfo.173.2019.10.14.11.43.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2019 11:43:22 -0700 (PDT)
+Date:   Mon, 14 Oct 2019 11:43:20 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/bridge: ti-tfp410: switch to using
+ fwnode_gpiod_get_index()
+Message-ID: <20191014184320.GA161094@dtor-ws>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a write memory barrier to make sure that descriptors are actually
-written to memory before ringing the doorbell.
+Instead of fwnode_get_named_gpiod() that I plan to hide away, let's use
+the new fwnode_gpiod_get_index() that mimics gpiod_get_index(), but
+works with arbitrary firmware node.
 
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
 
-This patch fixes a very infrequent ADMA error (1 out of 100 times) that
-I have been seeing after enabling command queuing for J721e.
-Also looking at memory-barriers.txt and this commit[1],
-it looks like we should be doing this before any descriptor write
-followed by a doorbell ring operation. It'll be nice if someone with more
-expertise in memory barriers can comment.
+Andrzej, Neil,
 
-[1] ad1a1b9cd67a ("scsi: ufs: commit descriptors before setting the
-    doorbell")
+This depends on the new code that can be bound in
+ib-fwnode-gpiod-get-index immutable branch of Linus' Walleij tree:
 
- drivers/mmc/host/cqhci.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+        git pull git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git ib-fwnode-gpiod-get-index
 
-diff --git a/drivers/mmc/host/cqhci.c b/drivers/mmc/host/cqhci.c
-index f7bdae5354c3..5047f7343ffc 100644
---- a/drivers/mmc/host/cqhci.c
-+++ b/drivers/mmc/host/cqhci.c
-@@ -611,7 +611,8 @@ static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 	cq_host->slot[tag].flags = 0;
+I hope that it would be possible to pull in this immutable branch and
+not wait until after 5.5 merge window, or, alternatively, merge through
+Linus Walleij's tree.
+
+Thanks!
+
+ drivers/gpu/drm/bridge/ti-tfp410.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/ti-tfp410.c b/drivers/gpu/drm/bridge/ti-tfp410.c
+index aa3198dc9903..6f6d6d1e60ae 100644
+--- a/drivers/gpu/drm/bridge/ti-tfp410.c
++++ b/drivers/gpu/drm/bridge/ti-tfp410.c
+@@ -285,8 +285,8 @@ static int tfp410_get_connector_properties(struct tfp410 *dvi)
+ 	else
+ 		dvi->connector_type = DRM_MODE_CONNECTOR_DVID;
  
- 	cq_host->qcnt += 1;
--
-+	/* Make sure descriptors are ready before ringing the doorbell */
-+	wmb();
- 	cqhci_writel(cq_host, 1 << tag, CQHCI_TDBR);
- 	if (!(cqhci_readl(cq_host, CQHCI_TDBR) & (1 << tag)))
- 		pr_debug("%s: cqhci: doorbell not set for tag %d\n",
+-	dvi->hpd = fwnode_get_named_gpiod(&connector_node->fwnode,
+-					"hpd-gpios", 0, GPIOD_IN, "hpd");
++	dvi->hpd = fwnode_gpiod_get_index(&connector_node->fwnode,
++					  "hpd", 0, GPIOD_IN, "hpd");
+ 	if (IS_ERR(dvi->hpd)) {
+ 		ret = PTR_ERR(dvi->hpd);
+ 		dvi->hpd = NULL;
 -- 
-2.19.2
+2.23.0.700.g56cf767bdb-goog
 
+
+-- 
+Dmitry
