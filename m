@@ -2,127 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43CA9D6668
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:46:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 470EED6678
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:49:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387832AbfJNPqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 11:46:44 -0400
-Received: from foss.arm.com ([217.140.110.172]:47392 "EHLO foss.arm.com"
+        id S1729992AbfJNPtA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 11:49:00 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33996 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387802AbfJNPql (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 11:46:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CCF6C28;
-        Mon, 14 Oct 2019 08:46:40 -0700 (PDT)
-Received: from [10.1.197.57] (e110467-lin.cambridge.arm.com [10.1.197.57])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C04823F718;
-        Mon, 14 Oct 2019 08:46:39 -0700 (PDT)
-Subject: Re: [PATCH] drm/panfrost: DMA map all pages shared with the GPU
-To:     Steven Price <steven.price@arm.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        dri-devel@lists.freedesktop.org
-References: <20191014151616.14099-1-steven.price@arm.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <99f279c5-e93d-ade6-cd97-56b3078da755@arm.com>
-Date:   Mon, 14 Oct 2019 16:46:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727038AbfJNPtA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 11:49:00 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 282BB3079B77;
+        Mon, 14 Oct 2019 15:49:00 +0000 (UTC)
+Received: from krava.redhat.com (unknown [10.40.205.218])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CF88D5D9C9;
+        Mon, 14 Oct 2019 15:48:57 +0000 (UTC)
+From:   Jiri Olsa <jolsa@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: [PATCH] perf jvmti: Link in tools/lib/ctype.o
+Date:   Mon, 14 Oct 2019 17:48:56 +0200
+Message-Id: <20191014154856.25306-1-jolsa@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20191014151616.14099-1-steven.price@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 14 Oct 2019 15:49:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/10/2019 16:16, Steven Price wrote:
-> Pages shared with the GPU are (often) not cache coherent with the CPU so
-> cache maintenance is required to flush the CPU's caches. This was
-> already done when mapping pages on fault, but wasn't previously done
-> when mapping a freshly allocated page.
-> 
-> Fix this by moving the call to dma_map_sg() into mmu_map_sg() ensuring
-> that it is always called when pages are mapped onto the GPU. Since
-> mmu_map_sg() can now fail the code also now has to handle an error
-> return.
-> 
-> Not performing this cache maintenance can cause errors in the GPU output
-> (CPU caches are later flushed and overwrite the GPU output). In theory
-> it also allows the GPU (and by extension user space) to observe the
-> memory contents prior to sanitization.
+The libperf-jvmti.so links already with tools/lib/string.o
+to use strlcpy. However the string.o depends on ctype.o
+so we need to link it in as well.
 
-For the non-heap case, aren't the pages already supposed to be mapped by 
-drm_gem_shmem_get_pages_sgt()?
+Fixes: 79743bc927f6 ("perf jvmti: Link against tools/lib/string.o to have weak strlcpy()")
+Link: http://lkml.kernel.org/n/tip-zitavtnkcu2guqwfgtp7n7bg@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/perf/jvmti/Build | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-(Hmm, maybe I should try hooking up the GPU SMMU on my Juno to serve as 
-a cheeky DMA-API-mishap detector...)
+diff --git a/tools/perf/jvmti/Build b/tools/perf/jvmti/Build
+index 1e148bbdf820..7de7f90bf3fb 100644
+--- a/tools/perf/jvmti/Build
++++ b/tools/perf/jvmti/Build
+@@ -3,6 +3,7 @@ jvmti-y += jvmti_agent.o
+ 
+ # For strlcpy
+ jvmti-y += libstring.o
++jvmti-y += libctype.o
+ 
+ CFLAGS_jvmti         = -fPIC -DPIC -I$(JDIR)/include -I$(JDIR)/include/linux
+ CFLAGS_REMOVE_jvmti  = -Wmissing-declarations
+@@ -15,3 +16,7 @@ CFLAGS_libstring.o += -Wno-unused-parameter -DETC_PERFCONFIG="BUILD_STR($(ETC_PE
+ $(OUTPUT)jvmti/libstring.o: ../lib/string.c FORCE
+ 	$(call rule_mkdir)
+ 	$(call if_changed_dep,cc_o_c)
++
++$(OUTPUT)jvmti/libctype.o: ../lib/ctype.c FORCE
++	$(call rule_mkdir)
++	$(call if_changed_dep,cc_o_c)
+-- 
+2.21.0
 
-Robin.
-
-> Fixes: f3ba91228e8e ("drm/panfrost: Add initial panfrost driver")
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
->   drivers/gpu/drm/panfrost/panfrost_mmu.c | 20 ++++++++++++--------
->   1 file changed, 12 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/panfrost/panfrost_mmu.c
-> index bdd990568476..0495e48c238d 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
-> @@ -248,6 +248,9 @@ static int mmu_map_sg(struct panfrost_device *pfdev, struct panfrost_mmu *mmu,
->   	struct io_pgtable_ops *ops = mmu->pgtbl_ops;
->   	u64 start_iova = iova;
->   
-> +	if (!dma_map_sg(pfdev->dev, sgt->sgl, sgt->nents, DMA_BIDIRECTIONAL))
-> +		return -EINVAL;
-> +
->   	for_each_sg(sgt->sgl, sgl, sgt->nents, count) {
->   		unsigned long paddr = sg_dma_address(sgl);
->   		size_t len = sg_dma_len(sgl);
-> @@ -275,6 +278,7 @@ int panfrost_mmu_map(struct panfrost_gem_object *bo)
->   	struct panfrost_device *pfdev = to_panfrost_device(obj->dev);
->   	struct sg_table *sgt;
->   	int prot = IOMMU_READ | IOMMU_WRITE;
-> +	int ret;
->   
->   	if (WARN_ON(bo->is_mapped))
->   		return 0;
-> @@ -286,10 +290,12 @@ int panfrost_mmu_map(struct panfrost_gem_object *bo)
->   	if (WARN_ON(IS_ERR(sgt)))
->   		return PTR_ERR(sgt);
->   
-> -	mmu_map_sg(pfdev, bo->mmu, bo->node.start << PAGE_SHIFT, prot, sgt);
-> -	bo->is_mapped = true;
-> +	ret = mmu_map_sg(pfdev, bo->mmu, bo->node.start << PAGE_SHIFT,
-> +			 prot, sgt);
-> +	if (ret == 0)
-> +		bo->is_mapped = true;
->   
-> -	return 0;
-> +	return ret;
->   }
->   
->   void panfrost_mmu_unmap(struct panfrost_gem_object *bo)
-> @@ -503,12 +509,10 @@ int panfrost_mmu_map_fault_addr(struct panfrost_device *pfdev, int as, u64 addr)
->   	if (ret)
->   		goto err_pages;
->   
-> -	if (!dma_map_sg(pfdev->dev, sgt->sgl, sgt->nents, DMA_BIDIRECTIONAL)) {
-> -		ret = -EINVAL;
-> +	ret = mmu_map_sg(pfdev, bo->mmu, addr,
-> +			 IOMMU_WRITE | IOMMU_READ | IOMMU_NOEXEC, sgt);
-> +	if (ret)
->   		goto err_map;
-> -	}
-> -
-> -	mmu_map_sg(pfdev, bo->mmu, addr, IOMMU_WRITE | IOMMU_READ | IOMMU_NOEXEC, sgt);
->   
->   	bo->is_mapped = true;
->   
-> 
