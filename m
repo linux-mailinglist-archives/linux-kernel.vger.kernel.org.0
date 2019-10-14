@@ -2,120 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C1F7D65C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:02:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A948AD65CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:04:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733172AbfJNPCz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 11:02:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50076 "EHLO mail.kernel.org"
+        id S1733229AbfJNPEp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 11:04:45 -0400
+Received: from mga14.intel.com ([192.55.52.115]:58874 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732566AbfJNPCz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 11:02:55 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69AFD2133F;
-        Mon, 14 Oct 2019 15:02:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571065374;
-        bh=xAz/E30ln4PaVxA2LxqmAdU7rS99ejibxgpoMmxFkVo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Pf/zweZKXSuPvzgFMmtNCTNSumUDU7Jtuw5EZievu7smrXdaOy62G8kU3j21PPLEU
-         tf2iVUhQr1MLGUr1nG1c/BzqebzboMHSE99IRWkZh+JeFITczQZpWmMAW3SXwodK9Y
-         4mGcNgsOEWSdPdoMjm5p8v4EcyXd0c50LPdjzVyU=
-Subject: Re: [PATCH v2] cpupower : Handle set and info subcommands correctly
-To:     Abhishek <huntbag@linux.vnet.ibm.com>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     trenn@suse.com, ego@linux.vnet.ibm.com, shuah <shuah@kernel.org>
-References: <20190913080712.26383-1-huntbag@linux.vnet.ibm.com>
- <2614b112-5e19-96dc-179b-8d4e3b8c8858@kernel.org>
- <9f493ef7-8222-3e12-5068-41ea76e660a2@kernel.org>
- <b65b1063-941b-2838-4564-f6a6c40509c6@linux.vnet.ibm.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <64ac5ebd-ddc7-1563-bab9-ab3266279563@kernel.org>
-Date:   Mon, 14 Oct 2019 09:02:39 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1732854AbfJNPEo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 11:04:44 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Oct 2019 08:04:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,296,1566889200"; 
+   d="scan'208";a="370149654"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga005.jf.intel.com with ESMTP; 14 Oct 2019 08:04:41 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1iK1to-00036I-Pi; Mon, 14 Oct 2019 23:04:40 +0800
+Date:   Mon, 14 Oct 2019 23:04:27 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Pankaj Sharma <pankj.sharma@samsung.com>
+Cc:     kbuild-all@lists.01.org, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        wg@grandegger.com, mkl@pengutronix.de, davem@davemloft.net,
+        eugen.hristev@microchip.com, ludovic.desroches@microchip.com,
+        pankaj.dubey@samsung.com, rcsekar@samsung.com,
+        Pankaj Sharma <pankj.sharma@samsung.com>,
+        Sriram Dash <sriram.dash@samsung.com>
+Subject: Re: [PATCH] can: m_can: add support for handling arbitration error
+Message-ID: <201910142340.H1Itv6kZ%lkp@intel.com>
+References: <1571052844-22633-1-git-send-email-pankj.sharma@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <b65b1063-941b-2838-4564-f6a6c40509c6@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1571052844-22633-1-git-send-email-pankj.sharma@samsung.com>
+X-Patchwork-Hint: ignore
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/14/19 3:38 AM, Abhishek wrote:
-> Hi Shuah,
-> 
-> 
-> On 10/04/2019 03:45 AM, shuah wrote:
->> Hi Abhishek,
->>
->> On 10/3/19 8:38 AM, shuah wrote:
->>> On 9/13/19 2:07 AM, Abhishek Goel wrote:
->>>> Cpupower tool has set and info options which are being used only by
->>>> x86 machines. This patch removes support for these two subcommands
->>>> from generic cpupower utility. Thus, these two subcommands will now be
->>>> available only for intel.
->>>> This removes the ambiguous error message while using set option in case
->>>> of using non-intel systems.
->>>>
->>>> Without this patch on a non-intel box:
->>>>
->>>> root@ubuntu:~# cpupower info
->>>> System does not support Intel's performance bias setting
->>>>
->>>> root@ubuntu:~# cpupower set -b 10
->>>> Error setting perf-bias value on CPU
->>>>
->>>> With this patch on a non-intel box:
->>>>
->>>> root@ubuntu:~# cpupower info
->>>> Supported commands are:
->>>>          frequency-info
->>>>          frequency-set
->>>>          idle-info
->>>>          idle-set
->>>>          monitor
->>>>          help
->>>>
->>>> Same result for set subcommand.
->>>>
->>>> This patch does not affect results on a intel box.
->>>>
->>>> Signed-off-by: Abhishek Goel <huntbag@linux.vnet.ibm.com>
->>>> Acked-by: Thomas Renninger <trenn@suse.de>
->>>> ---
->>>>
->>>> changes from v1:
->>>>     Instead of bailing out early in set and info commands, in V2, we
->>>>     are cutting out support for these two commands for non-intel
->>>>     systems.
->>>
->>> thanks. I will get this in for 5.4-rc3 veru likely. Definitely in 5.4
->>>
->>
->> Okay I almost applied this and decided it needs improvements.
->>
->> I don't like using #if defined(__x86_64__) || defined(__i386__)
->>
->> tools/power/cpupower/utils/cpupower.c main() already does this
->> dynamically using uname(). Please use the same logic do this,
->> instead of adding compile time code.
->>
->> thanks,
->> -- Shuah
-> 
-> Do you want the decision to be taken in cpupower-set and cpupower-info
-> file as was done in v1 but using uname() by identifying the architecture
-> there itself?
-> 
+Hi Pankaj,
 
-As I recall my objection to the v1 was that it is making the call very
-early and bails out. Ideally, I would like to see the change as part
-of set/info handling and then print out appropriate message.
+Thank you for the patch! Perhaps something to improve:
 
-thanks,
--- Shuah
+[auto build test WARNING on net/master]
+[cannot apply to v5.4-rc3 next-20191014]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+
+url:    https://github.com/0day-ci/linux/commits/Pankaj-Sharma/can-m_can-add-support-for-handling-arbitration-error/20191014-193532
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+
+
+coccinelle warnings: (new ones prefixed by >>)
+
+>> drivers/net/can/m_can/m_can.c:783:9-10: WARNING: return of 0/1 in function 'is_protocol_err' with return type bool
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
