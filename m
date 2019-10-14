@@ -2,67 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CBD2D592F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 02:58:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60CB0D5928
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 02:58:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729828AbfJNA6p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 13 Oct 2019 20:58:45 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:41186 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729782AbfJNA6o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Oct 2019 20:58:44 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B23DB1A0355;
-        Mon, 14 Oct 2019 02:58:42 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 31FDB1A002D;
-        Mon, 14 Oct 2019 02:58:37 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 38683402C7;
-        Mon, 14 Oct 2019 08:58:30 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        aisheng.dong@nxp.com, gustavo@embeddedor.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V2] clk: imx7ulp: Correct system clock source option #7
-Date:   Mon, 14 Oct 2019 08:56:05 +0800
-Message-Id: <1571014565-4807-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1729711AbfJNA62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 13 Oct 2019 20:58:28 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:40827 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729180AbfJNA62 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Oct 2019 20:58:28 -0400
+Received: by mail-qk1-f194.google.com with SMTP id y144so14443140qkb.7
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2019 17:58:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=Ihrs3Pg5HE6QePZaT7iUT0zjNIjsbvtTYiDG5magk4s=;
+        b=G7LsScocnkXwBxNsvTBec9ReA/Gd8FscaNKEWxdOF2CZietA8b134hh0NsGqz6qepb
+         TGwbfr0ka3i83h6WSkZPK1yEJzgJKPAmxso9QPpZm/dfeVW9O+l6MRoPvP2ow7yfSLyk
+         QcJo1dSx9HVS1UDkD+dm3VaalZDr0nL3iNFhjhqOz9IGbGFNLCiRjlR5bkJNElwS5evb
+         fPj5mUrQ6x1G5fChgcPHxnXMZDbAvJH0+ASNmKT8tb1JA4CCy4H6wm10j2N4+k+FG47g
+         EWHduUEtdX9tCRdLX34G70OZJI7PUdDT1/XHRORBNDzxFNJxnA9BroaXiYNrxvJyaOv0
+         k9oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Ihrs3Pg5HE6QePZaT7iUT0zjNIjsbvtTYiDG5magk4s=;
+        b=TYcmpkDeH3wrpP0ISRF/9gq5aLf4Rw+dzYxY2JqI72wpNJxlDh879wYkuUcC3203/u
+         xzi/39okfL100XDLum5zqNRAxlkZdvb7bhnoQxKAEFGM98V4hR3EJQBOW/YIaCROiQkS
+         n9FtH3fY41bcaTYw1WkeSNvVHWxWV609tdJOrdG4nVI5EC7FwgTjDeoxj8SGzoWl2h2Z
+         jGL1xlDVqLvmKAs0/PofJqED2iQf54AKR72wqKmf4BGH9WmpN1Gep1WET/BonUBoUgP1
+         xe02kyB8MlAtyPfK7H2hWs/lnQ57DaOZK0xACmwob+HDDAFZ4Q99wNBTMvvqQ+2P3kcC
+         i+lg==
+X-Gm-Message-State: APjAAAX34Orv25w8MiM50LYly56m7E1/ee2DtWvodSWLs1vE8anl0x9S
+        T+v8Cicdkn/VFgfWNASCIxTw7w==
+X-Google-Smtp-Source: APXvYqxkiH78odMQYBr8ZpKxcq/qtEIUn5E1xdW9ABmsgZ6M4G0Lq/F3OlUjQ64WYpzLUYkB6a7tkQ==
+X-Received: by 2002:ae9:f204:: with SMTP id m4mr25117640qkg.300.1571014707191;
+        Sun, 13 Oct 2019 17:58:27 -0700 (PDT)
+Received: from Thara-Work-Ubuntu.fios-router.home (pool-71-255-246-27.washdc.fios.verizon.net. [71.255.246.27])
+        by smtp.googlemail.com with ESMTPSA id c185sm7663901qkf.122.2019.10.13.17.58.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 13 Oct 2019 17:58:26 -0700 (PDT)
+From:   Thara Gopinath <thara.gopinath@linaro.org>
+To:     mingo@redhat.com, peterz@infradead.org, ionela.voinescu@arm.com,
+        vincent.guittot@linaro.org, rui.zhang@intel.com,
+        edubezval@gmail.com
+Cc:     linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
+        javi.merino@kernel.org, daniel.lezcano@linaro.org
+Subject: [Patch v3 0/7] Introduce Thermal Pressure
+Date:   Sun, 13 Oct 2019 20:58:18 -0400
+Message-Id: <1571014705-19646-1-git-send-email-thara.gopinath@linaro.org>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the latest reference manual Rev.0,06/2019, the SCS's option #7
-is no longer from upll, it is reserved, update clock driver accordingly.
+Thermal governors can respond to an overheat event of a cpu by
+capping the cpu's maximum possible frequency. This in turn
+means that the maximum available compute capacity of the
+cpu is restricted. But today in the kernel, task scheduler is 
+not notified of capping of maximum frequency of a cpu.
+In other words, scheduler is unware of maximum capacity
+restrictions placed on a cpu due to thermal activity.
+This patch series attempts to address this issue.
+The benefits identified are better task placement among available
+cpus in event of overheating which in turn leads to better
+performance numbers.
 
-Fixes: b1260067ac3d ("clk: imx: add imx7ulp clk driver")
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
----
-Changes since V1:
-	- no code change, just improve commit log using SCS instead of SCG1.
----
- drivers/clk/imx/clk-imx7ulp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The reduction in the maximum possible capacity of a cpu due to a 
+thermal event can be considered as thermal pressure. Instantaneous
+thermal pressure is hard to record and can sometime be erroneous
+as there can be mismatch between the actual capping of capacity
+and scheduler recording it. Thus solution is to have a weighted
+average per cpu value for thermal pressure over time.
+The weight reflects the amount of time the cpu has spent at a
+capped maximum frequency. Since thermal pressure is recorded as
+an average, it must be decayed periodically. Exisiting algorithm
+in the kernel scheduler pelt framework is re-used to calculate
+the weighted average. This patch series also defines a sysctl
+inerface to allow for a configurable decay period.
 
-diff --git a/drivers/clk/imx/clk-imx7ulp.c b/drivers/clk/imx/clk-imx7ulp.c
-index 2022d9b..b2c5866 100644
---- a/drivers/clk/imx/clk-imx7ulp.c
-+++ b/drivers/clk/imx/clk-imx7ulp.c
-@@ -24,7 +24,7 @@ static const char * const spll_pfd_sels[]	= { "spll_pfd0", "spll_pfd1", "spll_pf
- static const char * const spll_sels[]		= { "spll", "spll_pfd_sel", };
- static const char * const apll_pfd_sels[]	= { "apll_pfd0", "apll_pfd1", "apll_pfd2", "apll_pfd3", };
- static const char * const apll_sels[]		= { "apll", "apll_pfd_sel", };
--static const char * const scs_sels[]		= { "dummy", "sosc", "sirc", "firc", "dummy", "apll_sel", "spll_sel", "upll", };
-+static const char * const scs_sels[]		= { "dummy", "sosc", "sirc", "firc", "dummy", "apll_sel", "spll_sel", "dummy", };
- static const char * const ddr_sels[]		= { "apll_pfd_sel", "upll", };
- static const char * const nic_sels[]		= { "firc", "ddr_clk", };
- static const char * const periph_plat_sels[]	= { "dummy", "nic1_bus_clk", "nic1_clk", "ddr_clk", "apll_pfd2", "apll_pfd1", "apll_pfd0", "upll", };
+Regarding testing, basic build, boot and sanity testing have been
+performed on db845c platform with debian file system.
+Further, dhrystone and hackbench tests have been
+run with the thermal pressure algorithm. During testing, due to
+constraints of step wise governor in dealing with big little systems,
+trip point 0 temperature was made assymetric between cpus in little
+cluster and big cluster; the idea being that
+big core will heat up and cpu cooling device will throttle the
+frequency of the big cores faster, there by limiting the maximum available
+capacity and the scheduler will spread out tasks to little cores as well.
+
+Test Results
+
+Hackbench: 1 group , 30000 loops, 10 runs       
+                                               Result         SD             
+                                               (Secs)     (% of mean)     
+ No Thermal Pressure                            14.03       2.69%           
+ Thermal Pressure PELT Algo. Decay : 32 ms      13.29       0.56%         
+ Thermal Pressure PELT Algo. Decay : 64 ms      12.57       1.56%           
+ Thermal Pressure PELT Algo. Decay : 128 ms     12.71       1.04%         
+ Thermal Pressure PELT Algo. Decay : 256 ms     12.29       1.42%           
+ Thermal Pressure PELT Algo. Decay : 512 ms     12.42       1.15%  
+
+
+Dhrystone Run Time  : 20 threads, 3000 MLOOPS
+                                                 Result      SD             
+                                                 (Secs)    (% of mean)     
+ No Thermal Pressure                              9.452      4.49%
+ Thermal Pressure PELT Algo. Decay : 32 ms        8.793      5.30%
+ Thermal Pressure PELT Algo. Decay : 64 ms        8.981      5.29%
+ Thermal Pressure PELT Algo. Decay : 128 ms       8.647      6.62%
+ Thermal Pressure PELT Algo. Decay : 256 ms       8.774      6.45%
+ Thermal Pressure PELT Algo. Decay : 512 ms       8.603      5.41%  
+
+A Brief History
+
+The first version of this patch-series was posted with resuing
+PELT algorithm to decay thermal pressure signal. The discussions
+that followed were around whether intanteneous thermal pressure
+solution is better and whether a stand-alone algortihm to accumulate
+and decay thermal pressure is more appropriate than re-using the
+PELT framework. 
+Tests on Hikey960 showed the stand-alone algorithm performing slightly
+better than resuing PELT algorithm and V2 was posted with the stand
+alone algorithm. Test results were shared as part of this series.
+Discussions were around re-using PELT algorithm and running
+further tests with more granular decay period.
+
+For some time after this development was impeded due to hardware
+unavailability, some other unforseen and possibly unfortunate events.
+For this version, h/w was switched from hikey960 to db845c.
+Also Instantaneous thermal pressure was never tested as part of this
+cycle as it is clear that weighted average is a better implementation.
+The non-PELT algorithm never gave any conclusive results to prove that it
+is better than reusing PELT algorithm, in this round of testing.
+Also reusing PELT algorithm means thermal pressure tracks the
+other utilization signals in the scheduler.
+
+Thara Gopinath (7):
+  sched/pelt.c: Add support to track thermal pressure
+  sched: Add infrastructure to store and update instantaneous thermal
+    pressure
+  sched: Initialize per cpu thermal pressure structure
+  sched/fair: Enable CFS periodic tick to update thermal pressure
+  sched/fair: update cpu_capcity to reflect thermal pressure
+  thermal/cpu-cooling: Update thermal pressure in case of a maximum
+    frequency capping
+  sched: thermal: Enable tuning of decay period
+
+ drivers/base/arch_topology.c  |  1 +
+ drivers/thermal/cpu_cooling.c | 31 +++++++++++++++--
+ include/linux/sched.h         | 14 ++++++++
+ include/linux/sched/sysctl.h  |  1 +
+ kernel/sched/Makefile         |  2 +-
+ kernel/sched/core.c           |  2 ++
+ kernel/sched/fair.c           |  6 ++++
+ kernel/sched/pelt.c           | 13 +++++++
+ kernel/sched/pelt.h           |  7 ++++
+ kernel/sched/sched.h          |  1 +
+ kernel/sched/thermal.c        | 80 +++++++++++++++++++++++++++++++++++++++++++
+ kernel/sched/thermal.h        | 13 +++++++
+ kernel/sysctl.c               |  7 ++++
+ 13 files changed, 175 insertions(+), 3 deletions(-)
+ create mode 100644 kernel/sched/thermal.c
+ create mode 100644 kernel/sched/thermal.h
+
 -- 
-2.7.4
+2.1.4
 
