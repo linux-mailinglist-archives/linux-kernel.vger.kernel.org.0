@@ -2,163 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 029ECD65A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 16:55:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7CCAD659C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 16:52:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733109AbfJNOxl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 10:53:41 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36301 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732915AbfJNOxl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 10:53:41 -0400
-Received: by mail-pl1-f196.google.com with SMTP id j11so8128694plk.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 07:53:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=1MUs5IRxVEkbGv3sc+yn4Je2yBcMqr3MnSyvIzQazqY=;
-        b=e19VT+QkTrL09IPRbvNbIjgVDVmfKGoEdPHG8hvoY+zeaxRxiPFmYgnwSgNneZJ6Ig
-         aqsgSHuKeGBnVy1h+jLqb2ET03NBzBxuUGcMoDB5TR6ggb4zHC5LRbGgrTRYoyRh6Gq9
-         F2+7X8pLp4wX9kKpEVzSYVqklGwLFh5VCqdMec83L8kF/wshA5ICryBSjBtuawyyn3qS
-         MfiXgnOWrTSd/E74uL+BaRL32fHFom7EXuKeP8X1o9hXW470rW0yKMTMVvdw8sk4F7Bq
-         C3qdR2VleztgJnZhmSSgLQiMF2u5TKv8irBisb4FM0Hj7rzppWysiwNqSmRokZrajRgv
-         Ku2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=1MUs5IRxVEkbGv3sc+yn4Je2yBcMqr3MnSyvIzQazqY=;
-        b=MxUIKbq78QQMjBRbAiDvC9Sb61xSskVXjEb7LjmLi04sqvq9yVdRl5A5CrwQb2Z4zI
-         gEvSultwj8xUwagZKok748mgvrImAEokChlnYGm20VOinVBe8BhSLFW83e07kL//eLpL
-         d4eb8zMq+KLUIArcI51XTXbz4EFwaijuItbhBN5QDuZW03RH+ziSB6Dq2l0SfYWS4flp
-         cDJUOHVP9Oqp3pLQeeaCgbGosh3V1paEClC4t/FImmnc4MTp2T2txEQIvoFg5GqmPE3S
-         XIET7C1L5cDy4NoWRHaz78Pb3GIOqt971qUcoOmO/yqUffnA3TsOsW0CufiQWEnunIF0
-         siWA==
-X-Gm-Message-State: APjAAAWez1HDJdmHAZM/OMoKm1TzER1EKNjMj0knADy6wEznLvc6Kl53
-        j8V74LtrQaKvwziIvUlty0TvuCv2M12k88m+WxE=
-X-Google-Smtp-Source: APXvYqykP9Q55Rbz0tYEa868JGtVQIwHkjlwiUOysgV8+EQwJs8sR102EDcyTL5zK2/Kg+R4hPwwoSPk+vSfptoBfOY=
-X-Received: by 2002:a17:902:b288:: with SMTP id u8mr29152440plr.119.1571064820195;
- Mon, 14 Oct 2019 07:53:40 -0700 (PDT)
+        id S1733065AbfJNOwI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 10:52:08 -0400
+Received: from foss.arm.com ([217.140.110.172]:46180 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732457AbfJNOwI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 10:52:08 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D970E337;
+        Mon, 14 Oct 2019 07:52:07 -0700 (PDT)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F16313F68E;
+        Mon, 14 Oct 2019 07:52:06 -0700 (PDT)
+Date:   Mon, 14 Oct 2019 15:52:04 +0100
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     mark.rutland@arm.com, catalin.marinas@arm.com, will@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/3] arm64: cpufeature: Fix the type of no FP/SIMD
+ capability
+Message-ID: <20191014145204.GS27757@arm.com>
+References: <20191010171517.28782-1-suzuki.poulose@arm.com>
+ <20191010171517.28782-2-suzuki.poulose@arm.com>
+ <20191011113620.GG27757@arm.com>
+ <4ba5c423-4e2a-d810-cd36-32a16ad42c91@arm.com>
+ <20191011142137.GH27757@arm.com>
+ <418b0c4b-cbcd-4263-276d-1e9edc5eee0b@arm.com>
 MIME-Version: 1.0
-References: <CAJPHfYNx31=JjKiSEvihk_NszAWGuB-CKP84SAgx4EGsKrJxfA@mail.gmail.com>
- <alpine.DEB.2.21.1910141430310.2531@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1910141430310.2531@nanos.tec.linutronix.de>
-From:   Yi Zheng <goodmenzy@gmail.com>
-Date:   Mon, 14 Oct 2019 22:51:52 +0800
-Message-ID: <CAJPHfYMvTCAGztnhVS7moyO2xMThmnmD7x0auLAMvw1rdEfHcg@mail.gmail.com>
-Subject: Re: Maybe a bug in kernel/irq/chip.c unmask_irq(), device IRQ masked
- unexpectedly. (re-formated the mail body, sorry)
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-        Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>,
-        Zheng Yi <yzheng@techyauld.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <418b0c4b-cbcd-4263-276d-1e9edc5eee0b@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Thomas
+On Fri, Oct 11, 2019 at 06:28:43PM +0100, Suzuki K Poulose wrote:
+> 
+> 
+> On 11/10/2019 15:21, Dave Martin wrote:
+> >On Fri, Oct 11, 2019 at 01:13:18PM +0100, Suzuki K Poulose wrote: > Hi Dave
+> >>
+> >>On 11/10/2019 12:36, Dave Martin wrote:
+> >>>On Thu, Oct 10, 2019 at 06:15:15PM +0100, Suzuki K Poulose wrote:
+> >>>>The NO_FPSIMD capability is defined with scope SYSTEM, which implies
+> >>>>that the "absence" of FP/SIMD on at least one CPU is detected only
+> >>>>after all the SMP CPUs are brought up. However, we use the status
+> >>>>of this capability for every context switch. So, let us change
+> >>>>the scop to LOCAL_CPU to allow the detection of this capability
+> >>>>as and when the first CPU without FP is brought up.
+> >>>>
+> >>>>Also, the current type allows hotplugged CPU to be brought up without
+> >>>>FP/SIMD when all the current CPUs have FP/SIMD and we have the userspace
+> >>>>up. Fix both of these issues by changing the capability to
+> >>>>BOOT_RESTRICTED_LOCAL_CPU_FEATURE.
+> >>>>
+> >>>>Fixes: 82e0191a1aa11abf ("arm64: Support systems without FP/ASIMD")
+> >>>>Cc: Will Deacon <will@kernel.org>
+> >>>>Cc: Mark Rutland <mark.rutland@arm.com>
+> >>>>Cc: Catalin Marinas <catalin.marinas@arm.com>
+> >>>>Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> >>>>---
+> >>>>  arch/arm64/kernel/cpufeature.c | 2 +-
+> >>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>>
+> >>>>diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> >>>>index 9323bcc40a58..0f9eace6c64b 100644
+> >>>>--- a/arch/arm64/kernel/cpufeature.c
+> >>>>+++ b/arch/arm64/kernel/cpufeature.c
+> >>>>@@ -1361,7 +1361,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+> >>>>  	{
+> >>>>  		/* FP/SIMD is not implemented */
+> >>>>  		.capability = ARM64_HAS_NO_FPSIMD,
+> >>>>-		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+> >>>>+		.type = ARM64_CPUCAP_BOOT_RESTRICTED_CPU_LOCAL_FEATURE,
+> >>>
+> >>>ARM64_HAS_NO_FPSIMD is really a disability, not a capability.
+> >>>
+> >>>Although we have other things that smell like this (CPU errata for
+> >>>example), I wonder whether inverting the meaning in the case would
+> >>>make the situation easier to understand.
+> >>
+> >>Yes, it is indeed a disability, more on that below.
+> >>
+> >>>
+> >>>So, we'd have ARM64_HAS_FPSIMD, with a minimum (signed) feature field
+> >>>value of 0.  Then this just looks like an ARM64_CPUCAP_SYSTEM_FEATURE
+> >>>IIUC.  We'd just need to invert the sense of the check in
+> >>>system_supports_fpsimd().
+> >>
+> >>This is particularly something we want to avoid with this patch. We want
+> >>to make sure that we have the up-to-date status of the disability right
+> >>when it happens. i.e, a CPU without FP/SIMD is brought up. With SYSTEM_FEATURE
+> >>you have to wait until we bring all the CPUs up. Also, for HAS_FPSIMD,
+> >>you must wait until all the CPUs are up, unlike the negated capability.
+> >
+> >I don't see why waiting for the random defective early CPU to come up is
+> >better than waiting for all the early CPUs to come up and then deciding.
+> >
+> >Kernel-mode NEON aside, the status of this cap should not matter until
+> >we enter userspace for the first time.
+> >
+> >The only issue is if e.g., crypto drivers that can use kernel-mode NEON
+> >probe for it before all early CPUs are up, and so cache the wrong
+> >decision.  The current approach doesn't cope with that anyway AFAICT.
+> 
+> This approach does in fact. With LOCAL_CPU scope, the moment a defective
+> CPU turns up, we mark the "capability" and thus the kernel cannot use
+> the neon then onwards, unlike the existing case where we have time till
+> we boot all the CPUs (even when the boot CPU may be defective).
 
-I canceled that patch. In my testing, that will not fix the problem.
-Why the IRQ is unexpectedly masked, that is not an easy bug for me.
-More time need to hacking the driver/kernel code.
+I guess that makes sense.
 
-Thanks for your reply.
+I'm now wondering what happens if anything tries to use kernel-mode NEON
+before SVE is initialised -- which doesn't happen until cpufeatures
+configures the system features.
 
-Thomas Gleixner <tglx@linutronix.de> =E4=BA=8E2019=E5=B9=B410=E6=9C=8814=E6=
-=97=A5=E5=91=A8=E4=B8=80 =E4=B8=8B=E5=8D=888:34=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Tue, 8 Oct 2019, Yi Zheng wrote:
-> >      There is some defects on IRQ processing:
-> >
-> >      (1) At the beginning of handle_level_irq(), the IRQ-28 is masked, =
-and ACK
-> >          action is executed: On my machine, it runs the 'else' branch:
-> >
-> >             static inline void mask_ack_irq(struct irq_desc *desc)
-> >             {
-> >                 if (desc->irq_data.chip->irq_mask_ack) {
-> >                         desc->irq_data.chip->irq_mask_ack(&desc->irq_da=
-ta);
-> >                         irq_state_set_masked(desc);
-> >                 } else {
-> >                         mask_irq(desc);
-> >                         if (desc->irq_data.chip->irq_ack)
-> >                                 desc->irq_data.chip->irq_ack(&desc->irq=
-_data);
-> >                 }
-> >             }
-> >
-> >          It is an 2-steps procedure:
-> >          1. mask_irq()
-> >          2. desc->irq_data.chip->irq_ack()
-> >
-> >          the 2nd step, the function ptr is omap_mask_ack_irq(), which
-> >          _MASK_ the hardware INTC-IRQ-32 and then do the real ACK actio=
-n.
->
-> Sure. Where is the problem?
->
-> >      (2) mask_irq()/unmask_irq() are not atomic actions: They check the
-> >          IRQD_IRQ_MASKED flag firstly, and then mask/unmask the irq by =
-calling
-> >          the function ptrs which installed by irq controller drv.  Then=
-, those 2
-> >          functions set/clear the IRQD_IRQ_MASKED flag.
-> >
-> >          I think the sequence of the hw/sw action should be mirrored re=
-versed:
-> >          mask_irq():
-> >             check IRQD_IRQ_MASKED;
-> >             set hardware IRQ mask register;
-> >             set software IRQD_IRQ_MASKED flag;
-> >
-> >          unmask_irq():
-> >             check IRQD_IRQ_MASKED;
-> >             /* NOTE: should before the hw unmask action!! */
-> >             clear software IRQD_IRQ_MASKED flag;
-> >             clear hardware IRQ mask register;
-> >
-> >          The current unmask_irq(), hw-mask action runs before sw-mask a=
-ction,
-> >          which gives an very small time window. That cause an unexpecte=
-d
-> >          iterated IRQ.
->
-> It's completely irrelevant because _ALL_ those operations run with
-> irq_desc->lock held. So nothing can actually observe that state.
->
-> >      Here is my the detail of my analyzing of handle_level_irq():
-> >
-> >      (1) Let record the HW-IRQ-Controller Status and the SW-Flag IRQD_I=
-RQ_MASKED
-> >          pair as following: (hw-mask, sw-mask).
-> >
-> >      (2) In the 1st level of IRQ-28 ISR calling, in unmask_irq(), after=
- the HW
-> >          unmask action, and before the sw-flag IRQD_IRQ_MASKED is clear=
-ed, there
-> >          is a VERY SMALL TIME WINDOW, in which, another IRQ-28 may trig=
-gered.
-> >
-> >          In that time window, the mask status is (0, 1), which is no an=
- valid
-> >          value.
->
-> Again. Irrelevant because not observable.
->
-> >       My fixup is in the attachment, which remove the unexpected time w=
-indow of
-> >       IRQ iteration.
->
-> Please don't send attachments. See Documentation/process/submitting-patch=
-es.rst
->
-> Thanks,
->
->         tglx
->
+I don't think your proposed change makes anything worse here, but it may
+need looking into.
+
+Cheers
+---Dave
