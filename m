@@ -2,131 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44CC0D64CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 16:11:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54D64D64D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 16:12:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732497AbfJNOLk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 10:11:40 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:36178 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732352AbfJNOLk (ORCPT
+        id S1732533AbfJNOLy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 10:11:54 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:41492 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732117AbfJNOLx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 10:11:40 -0400
-Received: by mail-qt1-f193.google.com with SMTP id o12so25637485qtf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 07:11:39 -0700 (PDT)
+        Mon, 14 Oct 2019 10:11:53 -0400
+Received: by mail-qt1-f195.google.com with SMTP id v52so25591238qtb.8
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 07:11:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
+        d=soleen.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=RPqNisl9/8QhR/3iXJbzR+QEtNfA52rxWMvfvk5p5zc=;
-        b=aSWuI0vRPOVGeRISG8BLLKfORFzmyEYzKkJMBuq7BCRTARwtZULQ8UbJ9yX0TvNxi/
-         TMSJB/bPg9ODd9Im0S+l56qjZ5r6n4iQ+VhSG3HQRzpYrO2Xyi6Manupy+hEF2MJclNE
-         slte3qL/nvtpdZUwmIU+3q/f0WKmgGPlePThjZ7ZAKyRwN4u8luWqNxFkkdM6wwpggSr
-         pHMQrutyWjDmJW6BmMKmlXel6OsLOCPDbxTlLZDRDTdZVDLxED1u2xwIHS5/mTrdhGCQ
-         fCsSuzSdWH/ndiomv3sW/rGi4jIyUQ52krIszORdr4+BVunABwCZVdgCQH8K+3zNZg4V
-         AfFw==
+        bh=IvIenCJzHo+g6OuA9cd9X9mP9xzIp/N5yCxiJYUBY1E=;
+        b=IKeG2jczIn2/hbGefzwpalyXwOL8I+IESSyz5oZ01wurpwW2JDCrN4F/0afk8J0ICv
+         x1Jln5cdJNzG+zcDKpTfDcARI48mI/w3twXA2UfxL7uboKEegSKBC8rYgI1cwq/Z9Dwj
+         zeiwXie7Jk+bgfZucCxYe2J3hZwv86IqqE0v0d4lf/RnDH2MzKMKaNd57qSEuw13OV9q
+         6uQUvOvuJaq1frTPCkrQSrK3+k8uePioSqhhIf5vn9rblfzNF/5TlyodPDjrSEgn8DTf
+         35hWJ5qnW2h1CXcNLNDNA3elqgdoRB1BbEueSd+dLvA9/ROKf+tQ/nVzL0rjsedbjt9Y
+         bTwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RPqNisl9/8QhR/3iXJbzR+QEtNfA52rxWMvfvk5p5zc=;
-        b=lA4+TaxyY9CW/rgdShjSXuZnqEzdTfHxsrUbIrpT2w11lGn+Rgf0yo5eCr0PLP8Occ
-         zchJ8jwoZpRbv2FcGLIhhIHY1qwGPalkEnV0qKKoD7/VO6jrzatVXFx3qJ+Gt8Zg2x/U
-         j5ecn0P/fLBDixpHofV4/d5OGlpwggC7+TN/4HZPv2enZn/l1HCst/FuKgdpXcuhBb9O
-         TTbN87+eyow33hVnf4v8v/rQYdhHQvdWOzlwXR2QqWghVwJ8rPMEx0XM4LxXkg09YoBL
-         TSAq/28AMo6D6gf9Q9sM4ToPGYJKPyyfnJ9DexRiEel6u+Lc3siRQu7aJ57xkA87Es7d
-         /7iQ==
-X-Gm-Message-State: APjAAAUuAMmfJIuYvkwwRDsZ45fTR2XocCLxJV32XQUV0LNZtBvU9h8Z
-        a7c/GCnmCtug8i6ES6O9Jlw=
-X-Google-Smtp-Source: APXvYqwbYzyiJbi1P52sPo+JYT0X6U0C5f4qZBL7L0+I2GaNY9kSzIfSOlHemPV8pCGZ3TZGVZUdtg==
-X-Received: by 2002:ac8:5243:: with SMTP id y3mr13900733qtn.74.1571062299155;
-        Mon, 14 Oct 2019 07:11:39 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id w73sm8581241qkb.111.2019.10.14.07.11.38
+        bh=IvIenCJzHo+g6OuA9cd9X9mP9xzIp/N5yCxiJYUBY1E=;
+        b=U00SNU0DE26yJ1M531vh3QN273h6aeMpBfl31N3mmb/256IllHVlH/jBxalqHrp+Ji
+         4ehSFtEUxWx4FetwVQwOHDKXNyf2cf9U3Uj4wdXbjGI7gpa22MxX1NSrpjT/sAPT3yls
+         4XL/LQicXNYkfi3Hl+HryNMJzVAacR1e6Bbp0ZQeaZI60teRPArzwNf6YtVwJ5PXD2rS
+         j02NGGpaXH6ZcGczZOWqA5fMXM8+QedYeHGdndJUSSBGE1iVG0m0DARao5Fq3e6WpbSG
+         Gmp3NH9pWTS44byY/lMY1YDot0qQUquex0hRYXt6THVzOPDv8QYRQLvjPZ1bbttLScby
+         gxbg==
+X-Gm-Message-State: APjAAAWaA19bJcOsiz8O2Yw535Oojx0IehOv9GVsdI8LdqmotArZ6tWN
+        EpreOjTKbH9MVRYXq1B1GlVqcG8I0vo=
+X-Google-Smtp-Source: APXvYqwXMuAgZT5Grv+lwbM536hV1aSfFcio2x7Rt1wCSc7KtXRsEK1CgTF9G8o1bR+6eWoKeEuNzQ==
+X-Received: by 2002:a0c:e5c1:: with SMTP id u1mr31058635qvm.206.1571062312767;
+        Mon, 14 Oct 2019 07:11:52 -0700 (PDT)
+Received: from soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net ([40.117.208.181])
+        by smtp.gmail.com with ESMTPSA id x19sm8223186qkf.26.2019.10.14.07.11.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2019 07:11:38 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 6C8B14DD66; Mon, 14 Oct 2019 11:11:36 -0300 (-03)
-Date:   Mon, 14 Oct 2019 11:11:36 -0300
-To:     Leo Yan <leo.yan@linaro.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] perf test: Avoid infinite loop for task exit case
-Message-ID: <20191014141136.GD19627@kernel.org>
-References: <20191011091942.29841-1-leo.yan@linaro.org>
- <20191011091942.29841-2-leo.yan@linaro.org>
+        Mon, 14 Oct 2019 07:11:51 -0700 (PDT)
+Date:   Mon, 14 Oct 2019 14:11:50 +0000
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+To:     James Morse <james.morse@arm.com>
+Cc:     jmorris@namei.org, sashal@kernel.org, ebiederm@xmission.com,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        corbet@lwn.net, catalin.marinas@arm.com, will@kernel.org,
+        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
+        vladimir.murzin@arm.com, matthias.bgg@gmail.com,
+        bhsharma@redhat.com, linux-mm@kvack.org, mark.rutland@arm.com
+Subject: Re: [PATCH v6 02/17] arm64: hibernate: pass the allocated pgdp to
+ ttbr0
+Message-ID: <20191014141150.xt6z3gs3cu3rl3go@soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net>
+References: <20191004185234.31471-1-pasha.tatashin@soleen.com>
+ <20191004185234.31471-3-pasha.tatashin@soleen.com>
+ <bb937db3-f23a-809b-4ad8-ca86f689554d@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191011091942.29841-2-leo.yan@linaro.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <bb937db3-f23a-809b-4ad8-ca86f689554d@arm.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Oct 11, 2019 at 05:19:42PM +0800, Leo Yan escreveu:
-> When execute task exit testing case, Perf tool stucks in this case and
-> doesn't return back on Arm64 Juno board.
+On 19-10-11 19:17:22, James Morse wrote:
+> > Fixes: 0194e760f7d2 ("arm64: hibernate: avoid potential TLB conflict")
 > 
-> After dig into this issue, since Juno board has Arm's big.LITTLE CPUs,
-> thus the PMUs are not compatible between the big CPUs and little CPUs.
-> This leads to PMU event cannot be enabled properly when the traced task
-> is migrated from one variant's CPU to another variant.  Finally, the
-> test case runs into infinite loop for cannot read out any event data
-> after return from polling.
+> (That was a 'break before make' fix, the affected code comes from:
+>  82869ac57b5d (""arm64: kernel: Add support for hibernate/suspend-to-disk))
 > 
-> Eventually, we need to work out formal solution to allow PMU events can
-> be freely migrated from one CPU variant to another, but this is a
-> difficult task and a different topic.  This patch tries to fix the Perf
-> test case to avoid infinite loop, when the testing detects 1000 times
-> retrying for reading empty events, it will directly bail out and return
-> failure.  This allows the Perf tool can continue its other test cases.
-
-Thanks, applied.
-
-- Arnaldo
- 
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
->  tools/perf/tests/task-exit.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+> But, it works in all one circumstances its used: we know all the top bits will be zero.
+> I agree its by accident and we should fix it.
 > 
-> diff --git a/tools/perf/tests/task-exit.c b/tools/perf/tests/task-exit.c
-> index ca0a6ca43b13..d85c9f608564 100644
-> --- a/tools/perf/tests/task-exit.c
-> +++ b/tools/perf/tests/task-exit.c
-> @@ -53,6 +53,7 @@ int test__task_exit(struct test *test __maybe_unused, int subtest __maybe_unused
->  	struct perf_cpu_map *cpus;
->  	struct perf_thread_map *threads;
->  	struct mmap *md;
-> +	int retry_count = 0;
->  
->  	signal(SIGCHLD, sig_handler);
->  
-> @@ -132,6 +133,13 @@ int test__task_exit(struct test *test __maybe_unused, int subtest __maybe_unused
->  out_init:
->  	if (!exited || !nr_exit) {
->  		evlist__poll(evlist, -1);
-> +
-> +		if (retry_count++ > 1000) {
-> +			pr_debug("Failed after retrying 1000 times\n");
-> +			err = -1;
-> +			goto out_free_maps;
-> +		}
-> +
->  		goto retry;
->  	}
->  
-> -- 
-> 2.17.1
+> I don't think we should send it to stable.
+> Please drop the fixes tag, with that:
 
--- 
+OK
 
-- Arnaldo
+> Reviewed-by: James Morse <james.morse@arm.com>
+Thank you!
+
+Pasha
