@@ -2,107 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90310D6B14
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 23:11:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1078DD6B20
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 23:18:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732440AbfJNVLW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 17:11:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59526 "EHLO mail.kernel.org"
+        id S2387743AbfJNVSf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 17:18:35 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:55954 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726304AbfJNVLV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 17:11:21 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        id S1731672AbfJNVSf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 17:18:35 -0400
+Received: from zn.tnic (p200300EC2F065800329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2f06:5800:329c:23ff:fea6:a903])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC78421835;
-        Mon, 14 Oct 2019 21:11:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571087480;
-        bh=JgFZzVhxDxKCkbGmPDJ8Nrc3QpdnihzJLD4tr532a8U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=msRqZ/oggpCbPZDM2Tpesp6lTEm+uQxjNWlJ242zMDjrXfeJ00daTlfKGBgKoFTkM
-         A+H3h/i6o2FcH9H8FXOzYHLkBfp5gGPo1cuUY8sQHD6llRwnlv3FFRuTeiU2//dBnz
-         5k8Yimuf7yQuul1dB+h/BgTF8xIG3JWeT6skUOxc=
-Date:   Mon, 14 Oct 2019 22:11:14 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Yong Wu <yong.wu@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Evan Green <evgreen@chromium.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Tomasz Figa <tfiga@google.com>,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, youlin.pei@mediatek.com,
-        Nicolas Boichat <drinkcat@chromium.org>, anan.sun@mediatek.com,
-        cui.zhang@mediatek.com, chao.hao@mediatek.com
-Subject: Re: [PATCH v2 3/4] iommu/mediatek: Use writel for TLB range
- invalidation
-Message-ID: <20191014211113.jq5qwe5pfonyocr3@willie-the-truck>
-References: <1570627143-29441-1-git-send-email-yong.wu@mediatek.com>
- <1570627143-29441-3-git-send-email-yong.wu@mediatek.com>
- <20191011162950.yg4o77mlaicacne5@willie-the-truck>
- <1570861427.19130.65.camel@mhfsdcap03>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 00BA01EC0C31;
+        Mon, 14 Oct 2019 23:18:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1571087913;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=lJDIS6qAo6rnwlSCT9/pbXVO7qJtsNwnZrYxxlfr9S4=;
+        b=J0FjW/tGdfErf5SSe4pHEpVZ0cPl22tHByaKRtdroYDaim+Z4f4i0OG2FVLwpvpp67Y+EC
+        lJEkYbrpqpqTUNWnYf8JHpBpmOja0+SLZeMvrsxC/GcTY9lJKXVo8GxVPd1d6DID2SYbFf
+        a1mIpKcPwyEZKUVsSzPSjRcWn7aIWw4=
+Date:   Mon, 14 Oct 2019 23:18:25 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Kairui Song <kasong@redhat.com>, linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
+        x86@kernel.org, linux-efi@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v3] x86, efi: never relocate kernel below lowest
+ acceptable address
+Message-ID: <20191014211825.GJ4715@zn.tnic>
+References: <20191012034421.25027-1-kasong@redhat.com>
+ <20191014101419.GA4715@zn.tnic>
+ <20191014202111.GP15552@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1570861427.19130.65.camel@mhfsdcap03>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20191014202111.GP15552@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 12, 2019 at 02:23:47PM +0800, Yong Wu wrote:
-> On Fri, 2019-10-11 at 17:29 +0100, Will Deacon wrote:
-> > On Wed, Oct 09, 2019 at 09:19:02PM +0800, Yong Wu wrote:
-> > > Use writel for the register F_MMU_INV_RANGE which is for triggering the
-> > > HW work. We expect all the setting(iova_start/iova_end...) have already
-> > > been finished before F_MMU_INV_RANGE.
-> > > 
-> > > Signed-off-by: Anan.Sun <anan.sun@mediatek.com>
-> > > Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-> > > ---
-> > > This is a improvement rather than fixing a issue.
-> > > ---
-> > >  drivers/iommu/mtk_iommu.c | 3 +--
-> > >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-> > > index 24a13a6..607f92c 100644
-> > > --- a/drivers/iommu/mtk_iommu.c
-> > > +++ b/drivers/iommu/mtk_iommu.c
-> > > @@ -187,8 +187,7 @@ static void mtk_iommu_tlb_add_flush(unsigned long iova, size_t size,
-> > >  		writel_relaxed(iova, data->base + REG_MMU_INVLD_START_A);
-> > >  		writel_relaxed(iova + size - 1,
-> > >  			       data->base + REG_MMU_INVLD_END_A);
-> > > -		writel_relaxed(F_MMU_INV_RANGE,
-> > > -			       data->base + REG_MMU_INVALIDATE);
-> > > +		writel(F_MMU_INV_RANGE, data->base + REG_MMU_INVALIDATE);
-> > 
-> > I don't understand this change.
-> > 
-> > Why is it an "improvement" and which accesses are you ordering with the
-> > writel?
-> 
-> The register(F_MMU_INV_RANGE) will trigger HW to begin flush range. HW
-> expect the other register iova_start/end/flush_type always is ready
-> before trigger. thus I'd like use writel to guarantee the previous
-> register has been finished.
+On Mon, Oct 14, 2019 at 11:21:11PM +0300, Jarkko Sakkinen wrote:
+> Was there a section in the patch submission documentation to point out
+> when people send patches with all the possible twists for an acronym?
 
-Given that these are all MMIO writes to the same device, then
-writel_relaxed() should give you the ordering you need. If you look at
-memory_barriers.txt, it says:
+I don't think so.
 
-  | they [readX_relaxed() and writeX_relaxed()] are still guaranteed to
-  | be ordered with respect to other accesses from the same CPU thread
-  | to the same peripheral when operating on __iomem pointers mapped
-  | with the default I/O attributes.
+> This is giving me constantly gray hairs with TPM patches.
 
-> I didn't see the writel_relaxed cause some error in practice, we only
-> think writel is necessary here in theory. so call it "improvement".
+Well, I'm slowly getting tired of repeating the same crap over and over
+again about how important it is to document one's changes and to write
+good commit messages. The most repeated answers I'm simply putting into
+canned reply templates because, well, saying it once or twice is not
+enough anymore. :-\
 
-Ok, but I don't think it's needed in this case.
+And yeah, I see your pain. Same here, actually.
 
-Will
+In the acronym case, I'd probably add a regex to my patch massaging
+script and convert those typos automatically and be done with it.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
