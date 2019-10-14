@@ -2,139 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A78C2D61F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 14:04:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87593D61FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 14:05:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731867AbfJNMEa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 08:04:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44740 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731086AbfJNME3 (ORCPT
+        id S1731900AbfJNMFg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 08:05:36 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35078 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730369AbfJNMFf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 08:04:29 -0400
+        Mon, 14 Oct 2019 08:05:35 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=BmOPp+taOY8BR2ZI4WdO4QCUS5J7kKdc3aPpY7kmwn8=; b=Uc6WYHXLwfjraqivEtUghKj+Q
-        liuPacftC6E9Kj4e210AAaELBD8U9RTvKqc5qtKAY22DB83lPFlXKHUdM29+MY4QWkaOQ8XQjm7Zt
-        EgqVXwm/990d10P74/CiMNTqzLYXkDcxVTKaJIp+VpX98Coxtzcg/pPA/ZSAZ/a2XC2RMSlTIC0qu
-        Gg6BZKvGHuPJFrs2hqbd74b1TyK3itJ9lQT+LqtMCyIA0ZYKmebuyKcJPjIAPIwxjIXo9/PyGk5zS
-        JWGpjkSXVzzF1SDfulKWazjjW4KcoMKQnnBifQTQQT+G7eKt4eoPAPvv0T6I2OTt8tTrbcG7LyX6b
-        CHhAvKUiw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iJz5O-0004Ef-Il; Mon, 14 Oct 2019 12:04:26 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 6BF57305E42;
-        Mon, 14 Oct 2019 14:03:29 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4900C2829A4C5; Mon, 14 Oct 2019 14:04:23 +0200 (CEST)
-Date:   Mon, 14 Oct 2019 14:04:23 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Manfred Spraul <manfred@colorfullife.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Waiman Long <longman@redhat.com>, 1vier1@web.de,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH 1/6] wake_q: Cleanup + Documentation update.
-Message-ID: <20191014120423.GD2328@hirez.programming.kicks-ass.net>
-References: <20191012054958.3624-1-manfred@colorfullife.com>
- <20191012054958.3624-2-manfred@colorfullife.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191012054958.3624-2-manfred@colorfullife.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=T57gFAQ2HL0OrNojxYT6RFsspIHb42s2lXo+OYKN3oU=; b=qn+OlOED4Bqj
+        8Fv1zdAGKWWZJCAl7bXukw7iCCsS86IVOk6Mc697BCVuVlyI5GBGOmiMeEE9XE0ZIsA0ucaybSXqm
+        nKaikyzKNfIiccC5JDwiL+VAehIFfeFonC2FpRJ8UOp9yVraGm0018xuq4i3Xl6EfsREU4OKoipca
+        iOpJQ=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iJz5u-0007WM-UW; Mon, 14 Oct 2019 12:04:58 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id D43862741EED; Mon, 14 Oct 2019 13:04:57 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
+        festevam@gmail.com, lgirdwood@gmail.com,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Mark Brown <broonie@kernel.org>, nicoleotsuka@gmail.com,
+        Nicolin Chen <nicoleotsuka@gmail.com>, perex@perex.cz,
+        timur@kernel.org, tiwai@suse.com, Xiubo.Lee@gmail.com
+Subject: Applied "ASoC: fsl_mqs: Move static keyword to the front of declarations" to the asoc tree
+In-Reply-To: <20191011143538.15300-1-yuehaibing@huawei.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20191014120457.D43862741EED@ypsilon.sirena.org.uk>
+Date:   Mon, 14 Oct 2019 13:04:57 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 12, 2019 at 07:49:53AM +0200, Manfred Spraul wrote:
-> 1) wake_q_add() contains a memory barrier, and callers such as
-> ipc/mqueue.c rely on this barrier.
-> Unfortunately, this is documented in ipc/mqueue.c, and not in the
-> description of wake_q_add().
-> Therefore: Update the documentation.
-> Removing/updating ipc/mqueue.c will happen with the next patch in the
-> series.
-> 
-> 2) wake_q_add() ends with get_task_struct(), which is an
-> unordered refcount increase. Add a clear comment that the callers
-> are responsible for a barrier: most likely spin_unlock() or
-> smp_store_release().
-> 
-> 3) wake_up_q() relies on the memory barrier in try_to_wake_up().
-> Add a comment, to simplify searching.
-> 
-> 4) wake_q.next is accessed without synchroniyation by wake_q_add(),
-> using cmpxchg_relaxed(), and by wake_up_q().
-> Therefore: Use WRITE_ONCE in wake_up_q(), to ensure that the
-> compiler doesn't perform any tricks.
-> 
-> Signed-off-by: Manfred Spraul <manfred@colorfullife.com>
-> Cc: Davidlohr Bueso <dave@stgolabs.net>
-> ---
->  kernel/sched/core.c | 17 ++++++++++++++---
->  1 file changed, 14 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index dd05a378631a..60ae574317fd 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -440,8 +440,16 @@ static bool __wake_q_add(struct wake_q_head *head, struct task_struct *task)
->   * @task: the task to queue for 'later' wakeup
->   *
->   * Queue a task for later wakeup, most likely by the wake_up_q() call in the
-> - * same context, _HOWEVER_ this is not guaranteed, the wakeup can come
-> - * instantly.
-> + * same context, _HOWEVER_ this is not guaranteed. Especially, the wakeup
-> + * may happen before the function returns.
-> + *
-> + * What is guaranteed is that there is a memory barrier before the wakeup,
-> + * callers may rely on this barrier.
+The patch
 
-I would like to stress that this (wake_q_add) provides the same ordering
-guarantees as a 'normal' wakeup.
+   ASoC: fsl_mqs: Move static keyword to the front of declarations
 
-> + *
-> + * On the other hand, the caller must guarantee that @task does not disappear
-> + * before wake_q_add() completed. wake_q_add() does not contain any memory
-> + * barrier to ensure ordering, thus the caller may need to use
-> + * smp_store_release().
+has been applied to the asoc tree at
 
-Like Davidlohr, I'm slightly puzzled by this last paragraph.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.5
 
->   *
->   * This function must be used as-if it were wake_up_process(); IOW the task
->   * must be ready to be woken at this location.
-> @@ -486,11 +494,14 @@ void wake_up_q(struct wake_q_head *head)
->  		BUG_ON(!task);
->  		/* Task can safely be re-inserted now: */
->  		node = node->next;
-> -		task->wake_q.next = NULL;
-> +
-> +		WRITE_ONCE(task->wake_q.next, NULL);
->  
->  		/*
->  		 * wake_up_process() executes a full barrier, which pairs with
->  		 * the queueing in wake_q_add() so as not to miss wakeups.
-> +		 * The barrier is the smp_mb__after_spinlock() in
-> +		 * try_to_wake_up().
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-We already have wake_up_process() documented as implying this barrier;
-why do we want to mention the specifics here? That is, have a look at
-the comments before try_to_wake_up().
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
->  		 */
->  		wake_up_process(task);
->  		put_task_struct(task);
-> -- 
-> 2.21.0
-> 
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From dd79841ca66ff509660880237dc286d7f116a766 Mon Sep 17 00:00:00 2001
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 11 Oct 2019 22:35:38 +0800
+Subject: [PATCH] ASoC: fsl_mqs: Move static keyword to the front of
+ declarations
+
+gcc warn about this:
+
+sound/soc/fsl/fsl_mqs.c:146:1: warning:
+ static is not at beginning of declaration [-Wold-style-declaration]
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Link: https://lore.kernel.org/r/20191011143538.15300-1-yuehaibing@huawei.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/fsl/fsl_mqs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/fsl/fsl_mqs.c b/sound/soc/fsl/fsl_mqs.c
+index f7fc44e8fb27..0c813a45bba7 100644
+--- a/sound/soc/fsl/fsl_mqs.c
++++ b/sound/soc/fsl/fsl_mqs.c
+@@ -143,7 +143,7 @@ static void fsl_mqs_shutdown(struct snd_pcm_substream *substream,
+ 				   MQS_EN_MASK, 0);
+ }
+ 
+-const static struct snd_soc_component_driver soc_codec_fsl_mqs = {
++static const struct snd_soc_component_driver soc_codec_fsl_mqs = {
+ 	.idle_bias_on = 1,
+ 	.non_legacy_dai_naming	= 1,
+ };
+-- 
+2.20.1
+
