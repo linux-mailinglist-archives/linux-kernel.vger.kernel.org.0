@@ -2,128 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9BABD5FC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 12:08:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B237BD5FCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 12:09:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731281AbfJNKIg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 06:08:36 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:33409 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730880AbfJNKIf (ORCPT
+        id S1731377AbfJNKJc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 06:09:32 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:34157 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730880AbfJNKJb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 06:08:35 -0400
-Received: from [212.86.36.32] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1iJxH8-000093-VJ; Mon, 14 Oct 2019 10:08:27 +0000
-Date:   Mon, 14 Oct 2019 12:08:26 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Shuah Khan <shuah@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Roman Gushchin <guro@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 1/2] clone3: add CLONE3_CLEAR_SIGHAND
-Message-ID: <20191014100824.sc4aqfktbn6go736@wittgenstein>
-References: <20191010133518.5420-1-christian.brauner@ubuntu.com>
- <CAHO5Pa3V7fDb_+U-v+LB+TeAU0vfJyUMs9mD4ZqUtbLpZcD4nA@mail.gmail.com>
- <20191011221208.5eglbazksfigliob@yavin.dot.cyphar.com>
- <CAKgNAkhgGhGi-hMJt3UxYYDuyOZLx7c-eucpD5V7js+hsyv2CQ@mail.gmail.com>
- <20191012074840.4to7lh4zbt4wup74@wittgenstein>
- <b3fce4a4-10a8-befe-a438-f16dfa0cdb6b@gmail.com>
+        Mon, 14 Oct 2019 06:09:31 -0400
+Received: by mail-wm1-f65.google.com with SMTP id y135so14136035wmc.1;
+        Mon, 14 Oct 2019 03:09:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=o2MGbH0sl7jl/AOs9onFYSQLsVIpoiec9/okAKmAn3E=;
+        b=DNlqi/Qbk92sYsfunZrpAJH79XZwsdm0TzASMQNGdRoO7DIEf+JObAoz6guoOquWx1
+         2yhAU33ZVi0MXMmaeLEGM7KmyHm0qqpa08f+jKeTuhKpTBEwJhDhSI8t5UT9M7RMv60D
+         Zh3DNr1me+EspD/8ZvY2CwKjlzszCJxeXi0aRmlD41+bEryy9N9LCDC4etF69rJr4c6e
+         FuKse1xUsVu8mNWUIH6do8L9uxtvhR8kJy10hNZoVbFPkawHxSYOP4f8Z6Si4el9rL2x
+         2N4ZdxmYBV4dKsBbLLxi19b4x+gf45GKndPNmdAwoV7ZNBWhyqDY99bA/FCH/mmgj496
+         Pvbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=o2MGbH0sl7jl/AOs9onFYSQLsVIpoiec9/okAKmAn3E=;
+        b=mGfuWmONuKeDlIUVo1xpWf+rcMzjszoXGdTVGOJyj6k+DxskW6+emHxqtVVmeAuol+
+         hAbNmbu8IjH8ehWxBVejHRQMn2GzP3WWvilG0F6DDuX+ItUuGJZprE2mZ9jBwbQkudFf
+         Z/lV4fwh4PEqxOAs2vouaiQyWkEHPcAvYGp/pBKhNrS9Xhh02cG9L318z5A1QJgH/dad
+         A5torJCiCy7IBRM6UlCxMD50QcnmdxJZTNVqtcUjNYOpfSKEY29Ta/0Z2rcsl+AMj4ii
+         w7fGwZUTfAm9i5EjmS7E4MECIcU10w6PBclDSvBuRFtBBoLIwPB2XkiUg85SAZAAxsef
+         DT+g==
+X-Gm-Message-State: APjAAAWLiQIL6EEQzOeIIXdD8N4C0hklgYOwXjo/peImBQNlibahhCSi
+        SA3Bnykw2gvoSxs0Bn/mJd0=
+X-Google-Smtp-Source: APXvYqzssuGzVNBk2ayLJQK0M+PP70+MlYJlryvhbvu4J9Bzn9tkYOLIwMBLalOfn6xeyS8rK+XAYA==
+X-Received: by 2002:a1c:a708:: with SMTP id q8mr13162577wme.86.1571047768995;
+        Mon, 14 Oct 2019 03:09:28 -0700 (PDT)
+Received: from andrea.guest.corp.microsoft.com ([2a01:110:8012:1012:484d:bbc3:12dc:348b])
+        by smtp.gmail.com with ESMTPSA id l7sm17686122wrv.77.2019.10.14.03.09.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2019 03:09:28 -0700 (PDT)
+Date:   Mon, 14 Oct 2019 12:09:25 +0200
+From:   Andrea Parri <parri.andrea@gmail.com>
+To:     Michael Kelley <mikelley@microsoft.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        vkuznets <vkuznets@redhat.com>, Dexuan Cui <decui@microsoft.com>
+Subject: Re: [PATCH v2 2/3] Drivers: hv: vmbus: Enable VMBus protocol
+ versions 4.1, 5.1 and 5.2
+Message-ID: <20191014100925.GB11206@andrea.guest.corp.microsoft.com>
+References: <20191010154600.23875-1-parri.andrea@gmail.com>
+ <20191010154600.23875-3-parri.andrea@gmail.com>
+ <DM5PR21MB0137ACE07DCD2A6BBEC83665D7960@DM5PR21MB0137.namprd21.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b3fce4a4-10a8-befe-a438-f16dfa0cdb6b@gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <DM5PR21MB0137ACE07DCD2A6BBEC83665D7960@DM5PR21MB0137.namprd21.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 12, 2019 at 01:46:54PM +0200, Michael Kerrisk (man-pages) wrote:
-> On 10/12/19 9:48 AM, Christian Brauner wrote:
-> > On Sat, Oct 12, 2019 at 08:53:34AM +0200, Michael Kerrisk (man-pages) wrote:
-> >> Hello Aleksa,
-> >>
-> >> On Sat, 12 Oct 2019 at 00:12, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> >>>
-> >>> On 2019-10-11, Michael Kerrisk <mtk.manpages@gmail.com> wrote:
-> >>>> Why CLONE3_CLEAR_SIGHAND rather than just CLONE_CLEAR_SIGHAND?
+> > @@ -182,15 +182,21 @@ static inline u32 hv_get_avail_to_write_percent(
+> >   * 2 . 4  (Windows 8)
+> >   * 3 . 0  (Windows 8 R2)
+> >   * 4 . 0  (Windows 10)
+> > + * 4 . 1  (Windows 10 RS3)
+> >   * 5 . 0  (Newer Windows 10)
+> > + * 5 . 1  (Windows 10 RS4)
+> > + * 5 . 2  (Windows Server 2019, RS5)
+> >   */
 > > 
-> > I don't care much how we name this apart from the "_CLEAR_SIGHAND"
-> > suffix. But see for a little rationale below.
-> > 
-> >>>
-> >>> There are no more flag bits left for the classic clone()/clone2() (the
-> >>> last one was used up by CLONE_PIDFD) -- thus this flag is clone3()-only.
-> >>
-> >> Yes, I understand that. But, I'm not sure that the "3" in the prefix
-> >> is necessary. "CLONE_" still seems better to me.
-> >>
-> >> Consider this: sometime in the near future we will probably have time
-> >> namespaces. The new flag for those namespaces will only be usable with
-> >> clone3(). It should NOT be called CLONE3_NEWTIME, but rather
-> >> CLONE_NEWTIME (or similar), because that same flag will presumably
-> >> also be used in other APIs such as unshare() and setns(). (Hmm -- I
-> > 
-> > There are some noteable differences though. CLONE_NEWTIME takes the
-> > CSIGNAL bit which is in the range of a 32bit integer and thus useable by
-> > unshare() too. The same does not hold for CLONE{3}_CLEAR_SIGHAND. You
-> > can't pass it to unshare(). unshare() also just deals with
-> > namespace-relevant stuff so CLONE{3}_CLEAR_SIGHAND doesn't make much
-> > sense there.
+> >  #define VERSION_WS2008  ((0 << 16) | (13))
+> >  #define VERSION_WIN7    ((1 << 16) | (1))
+> >  #define VERSION_WIN8    ((2 << 16) | (4))
+> >  #define VERSION_WIN8_1    ((3 << 16) | (0))
+> > -#define VERSION_WIN10	((4 << 16) | (0))
+> > +#define VERSION_WIN10_V4 ((4 << 16) | (0))
 > 
-> Sure, but going forward there's very likely to be more CLONE flags
-> for whatever reason, and some will be usable just in clone3()
-> while others will be more widely used (in other APIs such as
-> unshare() and setns()). Using two different prefixes for these
-> flags (CLONE_/CLONE3_) would be just confusing. AFAICS, the CLONE3_
+> I would recommend not changing the symbol name for version 4.0.
+> The change makes it more consistent with the later VERSION_WIN10_*
+> symbols, but it doesn't fundamentally add any clarity and I'm not sure
+> it's worth the churn in the other files that have to be touched. It's a
+> judgment call, and that's just my input.
 
-I do agree with that part. And as I said in my previous mail, I don't
-care about the prefix.
+My fingers were itching:  ;-) I've reverted this change, following
+your recommendation.
 
-> prefix really provides no advantage, but does have the potential to
-> cause confusion down the track for the aforementioned reasons.
-> (Furthermore... Shudder! What if there's a clone4() one day. I
-> know you might say: "won't happen, we got things right this time",
-> but API history suggests that "right" now not infrequently becomes
-> "oops" later.) I do recommend CLONE_ for all the flags...
-
-I do love your trust in our ability to design syscalls (//Cc Aleksa ;)). :)
-
-> 
-> >> wonder if we are going to need a new unshare2() or some such...)
-> > 
-> > We still have one 32bit bit left (CLONE_DETACHED) which we can't reuse
-> > with clone()/clone2() but we can reuse with clone3(). We can simply
-> > earmark it for namespace-related stuff and thus still have one bit left
-> > for unshare() before we have to go for unshare2() (If we have to go
-> > there at all since I'm not sure how much more namespaces we can come up
-> > with.).
-> 
-> I'm sure there'll be more namespaces...
-
-Let's hope not. :) Anyway, no real reason to do unshare2() any time
-soon. :)
-
-Christian
+Thanks,
+  Andrea
