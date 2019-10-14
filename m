@@ -2,145 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F39F8D5CE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 09:59:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64760D5D04
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 10:02:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730301AbfJNH6l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 03:58:41 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:44202 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730281AbfJNH6j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 03:58:39 -0400
-Received: by mail-pf1-f194.google.com with SMTP id q21so9907644pfn.11
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 00:58:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=QVRHT5pDxuvkIfhkJROJMokZUW2BLlyY/F+bHkNxqRo=;
-        b=Hw6W642xH1aROaObhBlIVPsu/fTpXv1b3H39oxGbXRFLKlZMFQNVzm/PeUsIRcyVO1
-         zFSz5IqF/qhd7w/CIawaKAsOENgjYRt3UFZqRFFTL49U+18twCrxef7/EDjwtrx2KMDs
-         /Wr+mDjiRbrgNYuI0LhMdjB3jrNL9ioEZ3sBA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=QVRHT5pDxuvkIfhkJROJMokZUW2BLlyY/F+bHkNxqRo=;
-        b=OgpSWQSuT6ribOnw8HBwAF7IwOHJ/tr0EPN7fHMbag2ZT3TKwQ5fNh7iwJd9IbUl18
-         6WlAiGkM2IZSMLDVPX+ywZJl1vO8BnKGcTqFNmSn4LEIQitrzX1ZUgZpZ1XeSbUzruuE
-         4NM0vL99GFCOgveSG6vdgIEpurdjSCP9tcfAG7NivGGhcTTkbQfF52fq62xmm83K0pr7
-         mQcX4Wbl9TkEXFHXjmgxpekeA5vhwOMmNHYE+roCx7ReAFX0eokDQANF0uwPPBrG+4jY
-         S3kL3mA/Vb5TLoNy+PY7wdkio0v5hhO4a77jrfl6CQH8f7Wf1zXmL+PZEIjQKSeEc3qa
-         9zNw==
-X-Gm-Message-State: APjAAAWFGGcaX9/AMeu5VbCLDL+l/KaxyMjgvqfQiaALyGkkTJd+SBAr
-        GWZLvwsxVEA6nb6q5+o6Z77lO9T2CoU=
-X-Google-Smtp-Source: APXvYqyX//1pTCjDs2s0kZc2grJXGSArCyBFdJ8I3SvUS7+iXEEXvhoXvyTt3zB+/7qKoGAQmAo4Uw==
-X-Received: by 2002:a17:90a:6302:: with SMTP id e2mr33759632pjj.20.1571039918605;
-        Mon, 14 Oct 2019 00:58:38 -0700 (PDT)
-Received: from pihsun-z840.tpe.corp.google.com ([2401:fa00:1:10:7889:7a43:f899:134c])
-        by smtp.googlemail.com with ESMTPSA id q76sm36695998pfc.86.2019.10.14.00.58.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2019 00:58:38 -0700 (PDT)
-From:   Pi-Hsun Shih <pihsun@chromium.org>
-Cc:     Pi-Hsun Shih <pihsun@chromium.org>,
-        Eddie Huang <eddie.huang@mediatek.com>,
-        Erin Lo <erin.lo@mediatek.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC
-        support),
-        linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC
-        support), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v20 4/4] arm64: dts: mt8183: add scp node
-Date:   Mon, 14 Oct 2019 15:58:09 +0800
-Message-Id: <20191014075812.181942-5-pihsun@chromium.org>
-X-Mailer: git-send-email 2.23.0.700.g56cf767bdb-goog
-In-Reply-To: <20191014075812.181942-1-pihsun@chromium.org>
-References: <20191014075812.181942-1-pihsun@chromium.org>
+        id S1730073AbfJNICD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 04:02:03 -0400
+Received: from fd.dlink.ru ([178.170.168.18]:60580 "EHLO fd.dlink.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726637AbfJNICD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 04:02:03 -0400
+Received: by fd.dlink.ru (Postfix, from userid 5000)
+        id 3D6051B20A35; Mon, 14 Oct 2019 11:01:59 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru 3D6051B20A35
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dlink.ru; s=mail;
+        t=1571040119; bh=gdm2EEbYYtK0LBeSCJG8+CJkJpdqV/u9GSpbaHJHXVk=;
+        h=From:To:Cc:Subject:Date;
+        b=CrCPART2dsE7/fDiOhL8iGBGyfp1e8msUlVn45j7mWrcDNzdgVTSPlO25RKFpwdtB
+         YQ22QeZoaLctDSwmRJjdG1ng730uqlN9gseD3/9mysbHTt4ISUXAe/Cha+yDqYJYW7
+         CcMTdndFm60ZkVXL1RmCEPgprtc/UOTdcJK/Fc74=
+X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on mail.dlink.ru
+X-Spam-Level: 
+X-Spam-Status: No, score=-99.2 required=7.5 tests=BAYES_50,URIBL_BLOCKED,
+        USER_IN_WHITELIST autolearn=disabled version=3.4.1
+Received: from mail.rzn.dlink.ru (mail.rzn.dlink.ru [178.170.168.13])
+        by fd.dlink.ru (Postfix) with ESMTP id 0A4B91B202B0;
+        Mon, 14 Oct 2019 11:01:52 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru 0A4B91B202B0
+Received: from mail.rzn.dlink.ru (localhost [127.0.0.1])
+        by mail.rzn.dlink.ru (Postfix) with ESMTP id 492221B217C5;
+        Mon, 14 Oct 2019 11:01:50 +0300 (MSK)
+Received: from localhost.localdomain (unknown [196.196.203.126])
+        by mail.rzn.dlink.ru (Postfix) with ESMTPA;
+        Mon, 14 Oct 2019 11:01:50 +0300 (MSK)
+From:   Alexander Lobakin <alobakin@dlink.ru>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     Edward Cree <ecree@solarflare.com>, Jiri Pirko <jiri@mellanox.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Petr Machata <petrm@mellanox.com>,
+        Sabrina Dubroca <sd@queasysnail.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Alexander Lobakin <alobakin@dlink.ru>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 net-next] net: core: use listified Rx for GRO_NORMAL in napi_gro_receive()
+Date:   Mon, 14 Oct 2019 11:00:33 +0300
+Message-Id: <20191014080033.12407-1-alobakin@dlink.ru>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eddie Huang <eddie.huang@mediatek.com>
+Commit 323ebb61e32b4 ("net: use listified RX for handling GRO_NORMAL
+skbs") made use of listified skb processing for the users of
+napi_gro_frags().
+The same technique can be used in a way more common napi_gro_receive()
+to speed up non-merged (GRO_NORMAL) skbs for a wide range of drivers
+including gro_cells and mac80211 users.
+This slightly changes the return value in cases where skb is being
+dropped by the core stack, but it seems to have no impact on related
+drivers' functionality.
+gro_normal_batch is left untouched as it's very individual for every
+single system configuration and might be tuned in manual order to
+achieve an optimal performance.
 
-Add scp node to mt8183 and mt8183-evb
-
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
-Signed-off-by: Eddie Huang <eddie.huang@mediatek.com>
+Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
+Acked-by: Edward Cree <ecree@solarflare.com>
 ---
-Changes from v19 ... v14:
- - No change.
+ net/core/dev.c | 49 +++++++++++++++++++++++++------------------------
+ 1 file changed, 25 insertions(+), 24 deletions(-)
 
-Changes from v13:
- - Change the size of the cfg register region.
-
-Changes from v12 ... v10:
- - No change.
-
-Changes from v9:
- - Remove extra reserve-memory-vpu_share node.
-
-Changes from v8:
- - New patch.
----
- arch/arm64/boot/dts/mediatek/mt8183-evb.dts | 11 +++++++++++
- arch/arm64/boot/dts/mediatek/mt8183.dtsi    | 12 ++++++++++++
- 2 files changed, 23 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-index 1fb195c683c3..ddb7a7ac9655 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-@@ -24,6 +24,17 @@ memory@40000000 {
- 	chosen {
- 		stdout-path = "serial0:921600n8";
- 	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+		scp_mem_reserved: scp_mem_region {
-+			compatible = "shared-dma-pool";
-+			reg = <0 0x50000000 0 0x2900000>;
-+			no-map;
-+		};
-+	};
- };
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 8bc3dce71fc0..74f593986524 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -5884,6 +5884,26 @@ struct packet_offload *gro_find_complete_by_type(__be16 type)
+ }
+ EXPORT_SYMBOL(gro_find_complete_by_type);
  
- &auxadc {
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index 97f84aa9fc6e..3dd1b76bbaf5 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -269,6 +269,18 @@ clocks = <&topckgen CLK_TOP_MUX_PMICSPI>,
- 			clock-names = "spi", "wrap";
- 		};
- 
-+		scp: scp@10500000 {
-+			compatible = "mediatek,mt8183-scp";
-+			reg = <0 0x10500000 0 0x80000>,
-+			      <0 0x105c0000 0 0x19080>;
-+			reg-names = "sram", "cfg";
-+			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&infracfg CLK_INFRA_SCPSYS>;
-+			clock-names = "main";
-+			memory-region = <&scp_mem_reserved>;
-+			status = "disabled";
-+		};
++/* Pass the currently batched GRO_NORMAL SKBs up to the stack. */
++static void gro_normal_list(struct napi_struct *napi)
++{
++	if (!napi->rx_count)
++		return;
++	netif_receive_skb_list_internal(&napi->rx_list);
++	INIT_LIST_HEAD(&napi->rx_list);
++	napi->rx_count = 0;
++}
 +
- 		auxadc: auxadc@11001000 {
- 			compatible = "mediatek,mt8183-auxadc",
- 				     "mediatek,mt8173-auxadc";
++/* Queue one GRO_NORMAL SKB up for list processing. If batch size exceeded,
++ * pass the whole batch up to the stack.
++ */
++static void gro_normal_one(struct napi_struct *napi, struct sk_buff *skb)
++{
++	list_add_tail(&skb->list, &napi->rx_list);
++	if (++napi->rx_count >= gro_normal_batch)
++		gro_normal_list(napi);
++}
++
+ static void napi_skb_free_stolen_head(struct sk_buff *skb)
+ {
+ 	skb_dst_drop(skb);
+@@ -5891,12 +5911,13 @@ static void napi_skb_free_stolen_head(struct sk_buff *skb)
+ 	kmem_cache_free(skbuff_head_cache, skb);
+ }
+ 
+-static gro_result_t napi_skb_finish(gro_result_t ret, struct sk_buff *skb)
++static gro_result_t napi_skb_finish(struct napi_struct *napi,
++				    struct sk_buff *skb,
++				    gro_result_t ret)
+ {
+ 	switch (ret) {
+ 	case GRO_NORMAL:
+-		if (netif_receive_skb_internal(skb))
+-			ret = GRO_DROP;
++		gro_normal_one(napi, skb);
+ 		break;
+ 
+ 	case GRO_DROP:
+@@ -5928,7 +5949,7 @@ gro_result_t napi_gro_receive(struct napi_struct *napi, struct sk_buff *skb)
+ 
+ 	skb_gro_reset_offset(skb);
+ 
+-	ret = napi_skb_finish(dev_gro_receive(napi, skb), skb);
++	ret = napi_skb_finish(napi, skb, dev_gro_receive(napi, skb));
+ 	trace_napi_gro_receive_exit(ret);
+ 
+ 	return ret;
+@@ -5974,26 +5995,6 @@ struct sk_buff *napi_get_frags(struct napi_struct *napi)
+ }
+ EXPORT_SYMBOL(napi_get_frags);
+ 
+-/* Pass the currently batched GRO_NORMAL SKBs up to the stack. */
+-static void gro_normal_list(struct napi_struct *napi)
+-{
+-	if (!napi->rx_count)
+-		return;
+-	netif_receive_skb_list_internal(&napi->rx_list);
+-	INIT_LIST_HEAD(&napi->rx_list);
+-	napi->rx_count = 0;
+-}
+-
+-/* Queue one GRO_NORMAL SKB up for list processing.  If batch size exceeded,
+- * pass the whole batch up to the stack.
+- */
+-static void gro_normal_one(struct napi_struct *napi, struct sk_buff *skb)
+-{
+-	list_add_tail(&skb->list, &napi->rx_list);
+-	if (++napi->rx_count >= gro_normal_batch)
+-		gro_normal_list(napi);
+-}
+-
+ static gro_result_t napi_frags_finish(struct napi_struct *napi,
+ 				      struct sk_buff *skb,
+ 				      gro_result_t ret)
 -- 
-2.23.0.700.g56cf767bdb-goog
+2.23.0
 
