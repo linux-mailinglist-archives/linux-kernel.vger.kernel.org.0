@@ -2,88 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6402D671B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 18:20:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CE09D6729
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 18:22:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388011AbfJNQUe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 12:20:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36714 "EHLO mail.kernel.org"
+        id S2388066AbfJNQVh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 12:21:37 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36442 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729271AbfJNQUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 12:20:33 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2388054AbfJNQVf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 12:21:35 -0400
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 011522133F;
-        Mon, 14 Oct 2019 16:20:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571070033;
-        bh=oZaj+ScZ6I1k6tX7lCFyDcuNyxoMhfnp8ALm8sIP41Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mf39s8I0HuBnOrqaQwqxpXSJtLitEorvrbW7QyKsEExq5XMosHsONryJU3khI7odT
-         Nl53TdSUelOxp03w2YWpW8c1aYJyiXdvhIWR8Boi/Uw/HkVPhrPKNV9bToaQU/m5bc
-         QdbAAGbVyfW1QxTKBrVX0O1ICYlJ4dh6bIfpVa/g=
-Date:   Mon, 14 Oct 2019 17:20:29 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Hanjun Guo <guohanjun@huawei.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        John Garry <john.garry@huawei.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 3/3] arm64: configs: unset CPU_BIG_ENDIAN
-Message-ID: <20191014162028.eixypo7vlsb3pdgn@willie-the-truck>
-References: <20190926193030.5843-1-anders.roxell@linaro.org>
- <20190926193030.5843-5-anders.roxell@linaro.org>
- <bf5db3a5-96da-752c-49ea-d0de899882d5@huawei.com>
- <CADYN=9LB9RHgRkQj=HcKDz1x9jqmT464Kseh2wZU5VvcLit+bQ@mail.gmail.com>
- <d978673e-cbd1-5ab5-b2a4-cdb407d0f98c@huawei.com>
- <CAK8P3a0kBz1-i-3miCo1vMuoM39ivXa3oxOE9VnCqDO-nfNOxw@mail.gmail.com>
- <20191011102747.lpbaur2e4nqyf7sw@willie-the-truck>
- <73701e9f-bee1-7ae8-2277-7a3576171cd4@huawei.com>
- <CAK8P3a1C8cFB6DS9eVXTEiTQu1kPzy65JvL=BxqEe5MTkds8sQ@mail.gmail.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 1805661D25
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 16:21:35 +0000 (UTC)
+Received: by mail-ed1-f70.google.com with SMTP id o92so10515798edb.9
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 09:21:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=jxJEiUicI74qFOY0JqtAedGKYBHKAdl/AbcmF2fazs4=;
+        b=tBux/4PxfTJi6kaez8Ug0aRed1pQFUbU0upxtBf4oOHRJS3weQ2l8rrDVEBWHPue7e
+         41kWdCh5JaepRHKxjhbTO23aal1LfJyiIfy2/lqWlYbGV7UYlQJM5OLl1btmIAEZSleC
+         pgG1urPXxzcGf7adauFsty0B3anekBiaZ8HCE/CdQ8XkMQ0V9Xvk70YsQ89QrVnlMuXS
+         TJKaFrwdYeS+m8dQYFgl9bLOENmA9Brubaq3s3mpDZHEfPfav6hq73d7eFDuBr5hFF81
+         t3U3I/MUg7J4CQ4aAOiclcUhMskDuKODmpFk840Y2k5AlIlgpe2c/zFVUwRu7tbldkgT
+         kwRA==
+X-Gm-Message-State: APjAAAVwG2r8di6GWqlURB7UQ7sH2Qv4Wr3sCG1jRPnhFG3tuowjXZXR
+        gOqWGnfpfTb7wfxFhN/9NBWNaeQ4rDygkYGvxQNwAo1b+1wGthaR5o3A5gvq52OkdGTMHDujC6Z
+        27p9q0ZmGdJlgbwKoWUJ4Z7Ui
+X-Received: by 2002:a50:9fcd:: with SMTP id c71mr28967496edf.139.1571070093513;
+        Mon, 14 Oct 2019 09:21:33 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqyS0BF2XOi6OkeE1vgAAFwd+MqDj2BjN62Hn0mRr5YldhvLlYO8SB+mZW2bhY6FBZyMdUT7hQ==
+X-Received: by 2002:a50:9fcd:: with SMTP id c71mr28967464edf.139.1571070093258;
+        Mon, 14 Oct 2019 09:21:33 -0700 (PDT)
+Received: from localhost ([2a02:2450:102e:d85:877d:43b4:dd8f:144d])
+        by smtp.gmail.com with ESMTPSA id u11sm202672ejz.48.2019.10.14.09.21.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2019 09:21:32 -0700 (PDT)
+From:   Christian Kellner <ckellner@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-api@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Christian Kellner <christian@kellner.me>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Brauner <christian@brauner.io>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, Michal Hocko <mhocko@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>
+Subject: [PATCH v4 1/2] pidfd: add NSpid entries to fdinfo
+Date:   Mon, 14 Oct 2019 18:20:32 +0200
+Message-Id: <20191014162034.2185-1-ckellner@redhat.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20191011122323.7770-1-ckellner@redhat.com>
+References: <20191011122323.7770-1-ckellner@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1C8cFB6DS9eVXTEiTQu1kPzy65JvL=BxqEe5MTkds8sQ@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 12, 2019 at 04:05:57PM +0200, Arnd Bergmann wrote:
-> On Sat, Oct 12, 2019 at 9:33 AM Hanjun Guo <guohanjun@huawei.com> wrote:
-> >
-> > On 2019/10/11 18:27, Will Deacon wrote:
-> > [...]
-> > >
-> > > Does anybody use BIG_ENDIAN? If we're not even building it then maybe we
-> > > should get rid of it altogether on arm64. I don't know of any supported
-> > > userspace that supports it or any CPUs that are unable to run little-endian
-> > > binaries.
-> >
-> > FWIW, massive telecommunication products (based on ARM64) form Huawei are using
-> > BIG_ENDIAN, and will use BIG_ENDIAN in the near future as well.
-> 
-> Ok, thanks for the information -- that definitely makes it clear that
-> it cannot go
-> away anytime soon (though it doesn't stop us from change the
-> allmodconfig default
-> if we decide that's a good idea).
+From: Christian Kellner <christian@kellner.me>
 
-Agreed on both counts.
+Currently, the fdinfo file contains the Pid field which shows the
+pid a given pidfd refers to in the pid namespace of the procfs
+instance. If pid namespaces are configured, also show an NSpid field
+for easy retrieval of the pid in all descendant pid namespaces. If
+the pid namespace of the process is not a descendant of the pid
+namespace of the procfs instance 0 will be shown as its first NSpid
+entry and no other entries will be shown. Add a block comment to
+pidfd_show_fdinfo with a detailed explanation of Pid and NSpid fields.
 
-> Do you know if there are currently any patches against mainline to
-> make big-endian
-> work in products, or is everything working out of the box?
+Co-developed-by: Christian Brauner <christian.brauner@ubuntu.com>
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+Signed-off-by: Christian Kellner <christian@kellner.me>
+---
+Changes in v4:
+- Reworked to properly handle the case where the pidfd is from a
+  different branch in the pid namespace hierarchy; also add block
+  comment with an in-depth explanation (Christian Brauner)
 
-I suspect "everything" is probably much narrower in scope than for
-little-endian configurations simply because of the lack of distribution
-support and associated testing. If the companies using it are willing
-to contribute back fixes as they run into problems, then that's probably
-the best we can hope for.
+ kernel/fork.c | 53 ++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 52 insertions(+), 1 deletion(-)
 
-Will
+diff --git a/kernel/fork.c b/kernel/fork.c
+index bcdf53125210..782986962d47 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1695,12 +1695,63 @@ static int pidfd_release(struct inode *inode, struct file *file)
+ }
+ 
+ #ifdef CONFIG_PROC_FS
++/**
++ * pidfd_show_fdinfo - print information about a pidfd
++ * @m: proc fdinfo file
++ * @f: file referencing a pidfd
++ *
++ * Pid:
++ * This function will print the pid that a given pidfd refers to in the
++ * pid namespace of the procfs instance.
++ * If the pid namespace of the process is not a descendant of the pid
++ * namespace of the procfs instance 0 will be shown as its pid. This is
++ * similar to calling getppid() on a process whose parent is outside of
++ * its pid namespace.
++ *
++ * NSpid:
++ * If pid namespaces are supported then this function will also print
++ * the pid of a given pidfd refers to for all descendant pid namespaces
++ * starting from the current pid namespace of the instance, i.e. the
++ * Pid field and the first entry in the NSpid field will be identical.
++ * If the pid namespace of the process is not a descendant of the pid
++ * namespace of the procfs instance 0 will be shown as its first NSpid
++ * entry and no others will be shown.
++ * Note that this differs from the Pid and NSpid fields in
++ * /proc/<pid>/status where Pid and NSpid are always shown relative to
++ * the  pid namespace of the procfs instance. The difference becomes
++ * obvious when sending around a pidfd between pid namespaces from a
++ * different branch of the tree, i.e. where no ancestoral relation is
++ * present between the pid namespaces:
++ * - create two new pid namespaces ns1 and ns2 in the initial pid
++ *   namespace (also take care to create new mount namespaces in the
++ *   new pid namespace and mount procfs)
++ * - create a process with a pidfd in ns1
++ * - send pidfd from ns1 to ns2
++ * - read /proc/self/fdinfo/<pidfd> and observe that both Pid and NSpid
++ *   have exactly one entry, which is 0
++ */
+ static void pidfd_show_fdinfo(struct seq_file *m, struct file *f)
+ {
+ 	struct pid_namespace *ns = proc_pid_ns(file_inode(m->file));
+ 	struct pid *pid = f->private_data;
++	pid_t nr = pid_nr_ns(pid, ns);
++
++	seq_put_decimal_ull(m, "Pid:\t", nr);
+ 
+-	seq_put_decimal_ull(m, "Pid:\t", pid_nr_ns(pid, ns));
++#ifdef CONFIG_PID_NS
++	seq_put_decimal_ull(m, "\nNSpid:\t", nr);
++	if (nr) {
++		int i;
++
++		/* If nr is non-zero it means that 'pid' is valid and that
++		 * ns, i.e. the pid namespace associated with the procfs
++		 * instance, is in the pid namespace hierarchy of pid.
++		 * Start at one below the already printed level.
++		 */
++		for (i = ns->level + 1; i <= pid->level; i++)
++			seq_put_decimal_ull(m, "\t", pid->numbers[i].nr);
++	}
++#endif
+ 	seq_putc(m, '\n');
+ }
+ #endif
+-- 
+2.21.0
+
