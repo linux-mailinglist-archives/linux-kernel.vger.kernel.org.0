@@ -2,108 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D80CDD5B0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 08:10:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F284DD5B13
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 08:15:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729924AbfJNGJK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 02:09:10 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:39783 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725936AbfJNGJJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 02:09:09 -0400
-Received: by mail-io1-f70.google.com with SMTP id f9so25012602ioh.6
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2019 23:09:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=zQBM4sNdfY9lXEhTYJI3wv+fJOdi3XC1aRMZjKKZaxQ=;
-        b=plOvKtlkq+ybpoU6CewVAYqTmu+RlciyjEwjZDzMuncXgWltyBQXKGrdZtT0Zh2bvr
-         cQK7Xgs+yW121BGZy/wqhqKttduDx4/6JwHlqplWVQ2WHd6afskAzY9gUkV2pUuX5gCn
-         19z1wAdssaHz2ff48sTPZuw7pvdIIbi4jkEfvHI6M7RT2He4790rdg49KrBeOL7aj75f
-         NH9sxLrKV3gMWmEVqtDfg/rx0r0vZXjQ59ayA+o+mOuSQ2NEhA55KWcnUq1JJa6BtbOm
-         3/rmv5oQQ7hObKCzNeH3tricJqlsIbTn6jtYlzu6jnt48W4Nvgs+BGKqAHDi2FTyuIxn
-         BwNQ==
-X-Gm-Message-State: APjAAAWDNHjulBfhc8Ioh/rSjSLU8qymPOX9x0PB5pL28iYTUaBhHlCg
-        8Cbv1RNZ+ubI3qsityTl+rZsKTzlRs/fiuKh1FLFFyRRs22G
-X-Google-Smtp-Source: APXvYqzQuk+mVzhjXHf9pdN8U7BiJdE7QK4fif11iLX2O42GRxlbZEh98BVmU0BsiMl/sKmzWp5A7VXyglZcmjJIJYpDjq2d24HD
+        id S1729971AbfJNGNO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 02:13:14 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3705 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725936AbfJNGNO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 02:13:14 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 92DBC18C626919661A6C;
+        Mon, 14 Oct 2019 14:13:11 +0800 (CST)
+Received: from [127.0.0.1] (10.177.223.23) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Mon, 14 Oct 2019
+ 14:13:03 +0800
+Subject: Re: [PATCH 3/3] arm64: configs: unset CPU_BIG_ENDIAN
+To:     Arnd Bergmann <arnd@arndb.de>
+CC:     Will Deacon <will@kernel.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        John Garry <john.garry@huawei.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20190926193030.5843-1-anders.roxell@linaro.org>
+ <20190926193030.5843-5-anders.roxell@linaro.org>
+ <bf5db3a5-96da-752c-49ea-d0de899882d5@huawei.com>
+ <CADYN=9LB9RHgRkQj=HcKDz1x9jqmT464Kseh2wZU5VvcLit+bQ@mail.gmail.com>
+ <d978673e-cbd1-5ab5-b2a4-cdb407d0f98c@huawei.com>
+ <CAK8P3a0kBz1-i-3miCo1vMuoM39ivXa3oxOE9VnCqDO-nfNOxw@mail.gmail.com>
+ <20191011102747.lpbaur2e4nqyf7sw@willie-the-truck>
+ <73701e9f-bee1-7ae8-2277-7a3576171cd4@huawei.com>
+ <CAK8P3a1C8cFB6DS9eVXTEiTQu1kPzy65JvL=BxqEe5MTkds8sQ@mail.gmail.com>
+From:   Hanjun Guo <guohanjun@huawei.com>
+Message-ID: <e6df09ba-a016-65c0-5b56-f7b91a7c9dd8@huawei.com>
+Date:   Mon, 14 Oct 2019 14:12:03 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-X-Received: by 2002:a02:e48:: with SMTP id 69mr36639829jae.17.1571033349017;
- Sun, 13 Oct 2019 23:09:09 -0700 (PDT)
-Date:   Sun, 13 Oct 2019 23:09:09 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b2de3a0594d8b4ca@google.com>
-Subject: WARNING in drm_mode_createblob_ioctl
-From:   syzbot <syzbot+fb77e97ebf0612ee6914@syzkaller.appspotmail.com>
-To:     airlied@linux.ie, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, sean@poorly.run,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <CAK8P3a1C8cFB6DS9eVXTEiTQu1kPzy65JvL=BxqEe5MTkds8sQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.223.23]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Arnd,
 
-syzbot found the following crash on:
+On 2019/10/12 22:05, Arnd Bergmann wrote:
+> On Sat, Oct 12, 2019 at 9:33 AM Hanjun Guo <guohanjun@huawei.com> wrote:
+>>
+>> On 2019/10/11 18:27, Will Deacon wrote:
+>> [...]
+>>>
+>>> Does anybody use BIG_ENDIAN? If we're not even building it then maybe we
+>>> should get rid of it altogether on arm64. I don't know of any supported
+>>> userspace that supports it or any CPUs that are unable to run little-endian
+>>> binaries.
+>>
+>> FWIW, massive telecommunication products (based on ARM64) form Huawei are using
+>> BIG_ENDIAN, and will use BIG_ENDIAN in the near future as well.
+> 
+> Ok, thanks for the information -- that definitely makes it clear that
+> it cannot go
+> away anytime soon (though it doesn't stop us from change the
+> allmodconfig default
+> if we decide that's a good idea).
 
-HEAD commit:    8ada228a Add linux-next specific files for 20191011
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1423a87f600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7cf4eed5fe42c31a
-dashboard link: https://syzkaller.appspot.com/bug?extid=fb77e97ebf0612ee6914
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+I agree with you.
 
-Unfortunately, I don't have any reproducer for this crash yet.
+> 
+> Do you know if there are currently any patches against mainline to
+> make big-endian
+> work in products, or is everything working out of the box?
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+fb77e97ebf0612ee6914@syzkaller.appspotmail.com
+We are not using mainline kernel for product, but LTS 4.4 is working
+fine, and also we tested LTS 4.19 kernel without any other big-endian
+patches, the latest big-endian bug we found is this:
 
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 30449 at include/linux/thread_info.h:150  
-check_copy_size include/linux/thread_info.h:150 [inline]
-WARNING: CPU: 1 PID: 30449 at include/linux/thread_info.h:150  
-copy_from_user include/linux/uaccess.h:143 [inline]
-WARNING: CPU: 1 PID: 30449 at include/linux/thread_info.h:150  
-drm_mode_createblob_ioctl+0x398/0x490 drivers/gpu/drm/drm_property.c:800
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 1 PID: 30449 Comm: syz-executor.5 Not tainted 5.4.0-rc2-next-20191011  
-#0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  panic+0x2e3/0x75c kernel/panic.c:221
-  __warn.cold+0x2f/0x35 kernel/panic.c:582
-  report_bug+0x289/0x300 lib/bug.c:195
-  fixup_bug arch/x86/kernel/traps.c:174 [inline]
-  fixup_bug arch/x86/kernel/traps.c:169 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:267
-  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:286
-  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
-RIP: 0010:check_copy_size include/linux/thread_info.h:150 [inline]
-RIP: 0010:copy_from_user include/linux/uaccess.h:143 [inline]
-RIP: 0010:drm_mode_createblob_ioctl+0x398/0x490  
-drivers/gpu/drm/drm_property.c:800
-Code: c1 ea 03 80 3c 02 00 0f 85 ed 00 00 00 49 89 5d 00 e8 3c 28 cb fd 4c  
-89 f7 e8 64 92 9e 03 31 c0 e9 75 fd ff ff e8 28 28 cb fd <0f> 0b e8 21 28  
-cb fd 4d 85 e4 b8 f2 ff ff ff 0f 84 5b fd ff ff 89
-RSP: 0018:ffff8880584efaa8 EFLAGS: 00010246
-RAX: 0000000000040000 RBX: ffff8880a3a90000 RCX: ffffc900109da000
-RDX: 0000000000040000 RSI: ffffffff83a7eaf8 RDI: 0000000000000007
-RBP: ffff8880584efae8 R08: ffff888096c40080 R09: ffffed1014752110
-R10: ffffed101475210f R11: ffff8880a3a9087f R12: ffffc90014907000
-R13: ffff888028aa0000 R14: 000000009a6c7969 R15: ffffc90014907058
+a6002ec5a8c6 arm64: opcodes.h: Add arm big-endian config options before including arm header
 
+The running kernel code covered but Huawei's telecommunication products
+is limited, but I think ARM64 arch code is working fine for big-endian.
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Thanks
+Hanjun
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
