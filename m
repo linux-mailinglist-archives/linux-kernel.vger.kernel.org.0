@@ -2,20 +2,20 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FDB7D5B6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 08:36:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD61FD5B71
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 08:36:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729975AbfJNGft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 02:35:49 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51028 "EHLO mx1.suse.de"
+        id S1730061AbfJNGgd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 02:36:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51340 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726406AbfJNGft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 02:35:49 -0400
+        id S1726406AbfJNGgc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 02:36:32 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7FB56AD5F;
-        Mon, 14 Oct 2019 06:35:47 +0000 (UTC)
-Date:   Sun, 13 Oct 2019 23:34:33 -0700
+        by mx1.suse.de (Postfix) with ESMTP id 36BE7B0BD;
+        Mon, 14 Oct 2019 06:36:31 +0000 (UTC)
+Date:   Sun, 13 Oct 2019 23:35:11 -0700
 From:   Davidlohr Bueso <dave@stgolabs.net>
 To:     Manfred Spraul <manfred@colorfullife.com>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
@@ -23,14 +23,14 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH 1/6] wake_q: Cleanup + Documentation update.
-Message-ID: <20191014063433.dy72ybjikfnxcufv@linux-p48b>
+Subject: Re: [PATCH 2/6] ipc/mqueue.c: Remove duplicated code
+Message-ID: <20191014063511.dpbu3u6qoxr3ogn5@linux-p48b>
 References: <20191012054958.3624-1-manfred@colorfullife.com>
- <20191012054958.3624-2-manfred@colorfullife.com>
+ <20191012054958.3624-3-manfred@colorfullife.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20191012054958.3624-2-manfred@colorfullife.com>
+In-Reply-To: <20191012054958.3624-3-manfred@colorfullife.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -39,79 +39,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Sat, 12 Oct 2019, Manfred Spraul wrote:
 
->1) wake_q_add() contains a memory barrier, and callers such as
->ipc/mqueue.c rely on this barrier.
->Unfortunately, this is documented in ipc/mqueue.c, and not in the
->description of wake_q_add().
->Therefore: Update the documentation.
->Removing/updating ipc/mqueue.c will happen with the next patch in the
->series.
+>Patch entirely from Davidlohr:
+>pipelined_send() and pipelined_receive() are identical, so merge them.
 >
->2) wake_q_add() ends with get_task_struct(), which is an
->unordered refcount increase. Add a clear comment that the callers
->are responsible for a barrier: most likely spin_unlock() or
->smp_store_release().
->
->3) wake_up_q() relies on the memory barrier in try_to_wake_up().
->Add a comment, to simplify searching.
->
->4) wake_q.next is accessed without synchroniyation by wake_q_add(),
->using cmpxchg_relaxed(), and by wake_up_q().
->Therefore: Use WRITE_ONCE in wake_up_q(), to ensure that the
->compiler doesn't perform any tricks.
->
+
+Sorry, yeah feel free to add my:
+
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+
 >Signed-off-by: Manfred Spraul <manfred@colorfullife.com>
 >Cc: Davidlohr Bueso <dave@stgolabs.net>
 >---
-> kernel/sched/core.c | 17 ++++++++++++++---
-> 1 file changed, 14 insertions(+), 3 deletions(-)
+> ipc/mqueue.c | 31 ++++++++++++++++++-------------
+> 1 file changed, 18 insertions(+), 13 deletions(-)
 >
->diff --git a/kernel/sched/core.c b/kernel/sched/core.c
->index dd05a378631a..60ae574317fd 100644
->--- a/kernel/sched/core.c
->+++ b/kernel/sched/core.c
->@@ -440,8 +440,16 @@ static bool __wake_q_add(struct wake_q_head *head, struct task_struct *task)
->  * @task: the task to queue for 'later' wakeup
->  *
->  * Queue a task for later wakeup, most likely by the wake_up_q() call in the
->- * same context, _HOWEVER_ this is not guaranteed, the wakeup can come
->- * instantly.
->+ * same context, _HOWEVER_ this is not guaranteed. Especially, the wakeup
->+ * may happen before the function returns.
->+ *
->+ * What is guaranteed is that there is a memory barrier before the wakeup,
->+ * callers may rely on this barrier.
->+ *
->+ * On the other hand, the caller must guarantee that @task does not disappear
->+ * before wake_q_add() completed. wake_q_add() does not contain any memory
->+ * barrier to ensure ordering, thus the caller may need to use
->+ * smp_store_release().
-
-This is why we have wake_q_add_safe(). I think this last paragraph is unnecessary
-and confusing.
-
-Thanks,
-Davidlohr
-
->  *
->  * This function must be used as-if it were wake_up_process(); IOW the task
->  * must be ready to be woken at this location.
->@@ -486,11 +494,14 @@ void wake_up_q(struct wake_q_head *head)
-> 		BUG_ON(!task);
-> 		/* Task can safely be re-inserted now: */
-> 		node = node->next;
->-		task->wake_q.next = NULL;
+>diff --git a/ipc/mqueue.c b/ipc/mqueue.c
+>index 3d920ff15c80..be48c0ba92f7 100644
+>--- a/ipc/mqueue.c
+>+++ b/ipc/mqueue.c
+>@@ -918,17 +918,12 @@ SYSCALL_DEFINE1(mq_unlink, const char __user *, u_name)
+>  * The same algorithm is used for senders.
+>  */
+>
+>-/* pipelined_send() - send a message directly to the task waiting in
+>- * sys_mq_timedreceive() (without inserting message into a queue).
+>- */
+>-static inline void pipelined_send(struct wake_q_head *wake_q,
+>+static inline void __pipelined_op(struct wake_q_head *wake_q,
+> 				  struct mqueue_inode_info *info,
+>-				  struct msg_msg *message,
+>-				  struct ext_wait_queue *receiver)
+>+				  struct ext_wait_queue *this)
+> {
+>-	receiver->msg = message;
+>-	list_del(&receiver->list);
+>-	wake_q_add(wake_q, receiver->task);
+>+	list_del(&this->list);
+>+	wake_q_add(wake_q, this->task);
+> 	/*
+> 	 * Rely on the implicit cmpxchg barrier from wake_q_add such
+> 	 * that we can ensure that updating receiver->state is the last
+>@@ -937,7 +932,19 @@ static inline void pipelined_send(struct wake_q_head *wake_q,
+> 	 * yet, at that point we can later have a use-after-free
+> 	 * condition and bogus wakeup.
+> 	 */
+>-	receiver->state = STATE_READY;
+>+        this->state = STATE_READY;
+>+}
 >+
->+		WRITE_ONCE(task->wake_q.next, NULL);
+>+/* pipelined_send() - send a message directly to the task waiting in
+>+ * sys_mq_timedreceive() (without inserting message into a queue).
+>+ */
+>+static inline void pipelined_send(struct wake_q_head *wake_q,
+>+				  struct mqueue_inode_info *info,
+>+				  struct msg_msg *message,
+>+				  struct ext_wait_queue *receiver)
+>+{
+>+	receiver->msg = message;
+>+	__pipelined_op(wake_q, info, receiver);
+> }
 >
-> 		/*
-> 		 * wake_up_process() executes a full barrier, which pairs with
-> 		 * the queueing in wake_q_add() so as not to miss wakeups.
->+		 * The barrier is the smp_mb__after_spinlock() in
->+		 * try_to_wake_up().
-> 		 */
-> 		wake_up_process(task);
-> 		put_task_struct(task);
+> /* pipelined_receive() - if there is task waiting in sys_mq_timedsend()
+>@@ -955,9 +962,7 @@ static inline void pipelined_receive(struct wake_q_head *wake_q,
+> 	if (msg_insert(sender->msg, info))
+> 		return;
+>
+>-	list_del(&sender->list);
+>-	wake_q_add(wake_q, sender->task);
+>-	sender->state = STATE_READY;
+>+	__pipelined_op(wake_q, info, sender);
+> }
+>
+> static int do_mq_timedsend(mqd_t mqdes, const char __user *u_msg_ptr,
 >-- 
 >2.21.0
 >
