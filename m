@@ -2,144 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE7C1D659A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 16:52:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 029ECD65A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 16:55:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733041AbfJNOvr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 10:51:47 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34764 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731121AbfJNOvr (ORCPT
+        id S1733109AbfJNOxl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 10:53:41 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:36301 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732915AbfJNOxl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 10:51:47 -0400
-Received: by mail-lj1-f194.google.com with SMTP id j19so16966684lja.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 07:51:45 -0700 (PDT)
+        Mon, 14 Oct 2019 10:53:41 -0400
+Received: by mail-pl1-f196.google.com with SMTP id j11so8128694plk.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 07:53:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Zl9j9N5g2XhcKzAZ6Cx7QAGYoUWVq9aZXTcu8wQiQfw=;
-        b=PPtoDEJU0h4JnPMhPXkDkcYF4Pe2xnFKY77WyJmgnbwx/opDkf3EnHO/aSkQgb+Rr4
-         U98tG+8u0Tj7hHDt1NIwZ6GLdUyKZfOTmkitZvXvH4Bt1ylpX7zMVXakUeWYk41ID0EK
-         zq9ybPcOqkAU/37IUUlahKQeGr4nLG6cVkfBDWAzfGnw8ZaI4g16fIhpigjPNxQ09z47
-         5BCHqsNVgO5pf9c+DUShNywqEcUVgeIdyQHSXWM6Qjw8dbzv5jfw6ZyO/DnJLDbJsPbs
-         Qmy1Ki/10/Rh/k2iimoH7RrpMju9RUlqC91/56ewTgfbkpPd4zCYxzJ8+Ijcntg6Ysqr
-         0vFg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=1MUs5IRxVEkbGv3sc+yn4Je2yBcMqr3MnSyvIzQazqY=;
+        b=e19VT+QkTrL09IPRbvNbIjgVDVmfKGoEdPHG8hvoY+zeaxRxiPFmYgnwSgNneZJ6Ig
+         aqsgSHuKeGBnVy1h+jLqb2ET03NBzBxuUGcMoDB5TR6ggb4zHC5LRbGgrTRYoyRh6Gq9
+         F2+7X8pLp4wX9kKpEVzSYVqklGwLFh5VCqdMec83L8kF/wshA5ICryBSjBtuawyyn3qS
+         MfiXgnOWrTSd/E74uL+BaRL32fHFom7EXuKeP8X1o9hXW470rW0yKMTMVvdw8sk4F7Bq
+         C3qdR2VleztgJnZhmSSgLQiMF2u5TKv8irBisb4FM0Hj7rzppWysiwNqSmRokZrajRgv
+         Ku2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Zl9j9N5g2XhcKzAZ6Cx7QAGYoUWVq9aZXTcu8wQiQfw=;
-        b=g6Qqsf0OTDOeihmKN3L1NG61EnACeFnl3nGx9BjuIglFmUWxpWbLUObMxi5a0hsdfa
-         xIv0Tp9UYBk34I/YhhF6tKGGHTT4cjeVs79X3cCRwC6L8CjUBROwJqJLzvu/U6x2wTeG
-         qPkjfv13Ny7Azvsz1GJ0Ww11Peur1tG+oe/Wd2GZHhHcq8c56UQe84ELF7azZGvZ4PU9
-         Og1tBbc+mImRPw8K6sV7dKryTZxShvG09FFUP7tEl3+bK9V1/QTAnG3S52p6ISZH/jDy
-         j/vlHC9zapWFm8JxqpRUUXra8k1yxDFgDGOV7cLhRqur4s5pgUSY5nVg5G9z4DZv326B
-         WWkg==
-X-Gm-Message-State: APjAAAVwycka6myveXd3Bry+erxUrCLSYmarsrHbtmZ4GPnfJb6fY391
-        DQ0TsuPS/Y8S/4FJr3JzOhOIIQ==
-X-Google-Smtp-Source: APXvYqxUae3JOmHFPaEKUaEnf5tp7Lf4ZMZcnxinA7FNO7P2TrxkuYeHXeDS4ymI6ZKdgD2Ldu2SxQ==
-X-Received: by 2002:a2e:a0ca:: with SMTP id f10mr18271484ljm.83.1571064705032;
-        Mon, 14 Oct 2019 07:51:45 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id x2sm4397741ljj.94.2019.10.14.07.51.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2019 07:51:44 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 70CAA101145; Mon, 14 Oct 2019 17:51:43 +0300 (+03)
-Date:   Mon, 14 Oct 2019 17:51:43 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Cc:     John Hubbard <jhubbard@nvidia.com>,
-        kbuild test robot <lkp@intel.com>, kbuild-all@lists.01.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 2/2] mm/gup: fix a misnamed "write" argument: should be
- "flags"
-Message-ID: <20191014145143.hyi6fj6s6uquohzj@box>
-References: <20191013221155.382378-3-jhubbard@nvidia.com>
- <201910141316.DHpeevy3%lkp@intel.com>
- <d431c2cf-22bf-13be-05e5-c93512ac9ae5@nvidia.com>
- <20191014135234.7ak32pfir6du3xae@box>
- <acc39afa-ae6f-0eb9-fa31-1b63f8f86b2e@linux.ibm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=1MUs5IRxVEkbGv3sc+yn4Je2yBcMqr3MnSyvIzQazqY=;
+        b=MxUIKbq78QQMjBRbAiDvC9Sb61xSskVXjEb7LjmLi04sqvq9yVdRl5A5CrwQb2Z4zI
+         gEvSultwj8xUwagZKok748mgvrImAEokChlnYGm20VOinVBe8BhSLFW83e07kL//eLpL
+         d4eb8zMq+KLUIArcI51XTXbz4EFwaijuItbhBN5QDuZW03RH+ziSB6Dq2l0SfYWS4flp
+         cDJUOHVP9Oqp3pLQeeaCgbGosh3V1paEClC4t/FImmnc4MTp2T2txEQIvoFg5GqmPE3S
+         XIET7C1L5cDy4NoWRHaz78Pb3GIOqt971qUcoOmO/yqUffnA3TsOsW0CufiQWEnunIF0
+         siWA==
+X-Gm-Message-State: APjAAAWez1HDJdmHAZM/OMoKm1TzER1EKNjMj0knADy6wEznLvc6Kl53
+        j8V74LtrQaKvwziIvUlty0TvuCv2M12k88m+WxE=
+X-Google-Smtp-Source: APXvYqykP9Q55Rbz0tYEa868JGtVQIwHkjlwiUOysgV8+EQwJs8sR102EDcyTL5zK2/Kg+R4hPwwoSPk+vSfptoBfOY=
+X-Received: by 2002:a17:902:b288:: with SMTP id u8mr29152440plr.119.1571064820195;
+ Mon, 14 Oct 2019 07:53:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <acc39afa-ae6f-0eb9-fa31-1b63f8f86b2e@linux.ibm.com>
-User-Agent: NeoMutt/20180716
+References: <CAJPHfYNx31=JjKiSEvihk_NszAWGuB-CKP84SAgx4EGsKrJxfA@mail.gmail.com>
+ <alpine.DEB.2.21.1910141430310.2531@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1910141430310.2531@nanos.tec.linutronix.de>
+From:   Yi Zheng <goodmenzy@gmail.com>
+Date:   Mon, 14 Oct 2019 22:51:52 +0800
+Message-ID: <CAJPHfYMvTCAGztnhVS7moyO2xMThmnmD7x0auLAMvw1rdEfHcg@mail.gmail.com>
+Subject: Re: Maybe a bug in kernel/irq/chip.c unmask_irq(), device IRQ masked
+ unexpectedly. (re-formated the mail body, sorry)
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
+        Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>,
+        Zheng Yi <yzheng@techyauld.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 14, 2019 at 08:14:04PM +0530, Aneesh Kumar K.V wrote:
-> On 10/14/19 7:22 PM, Kirill A. Shutemov wrote:
-> > On Sun, Oct 13, 2019 at 11:43:10PM -0700, John Hubbard wrote:
-> > > On 10/13/19 11:12 PM, kbuild test robot wrote:
-> > > > Hi John,
-> > > > 
-> > > > Thank you for the patch! Yet something to improve:
-> > > > 
-> > > > [auto build test ERROR on linus/master]
-> > > > [cannot apply to v5.4-rc3 next-20191011]
-> > > > [if your patch is applied to the wrong git tree, please drop us a note to help
-> > > > improve the system. BTW, we also suggest to use '--base' option to specify the
-> > > > base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-> > > > 
-> > > > url:    https://github.com/0day-ci/linux/commits/John-Hubbard/gup-c-gup_benchmark-c-trivial-fixes-before-the-storm/20191014-114158
-> > > > config: powerpc-defconfig (attached as .config)
-> > > > compiler: powerpc64-linux-gcc (GCC) 7.4.0
-> > > > reproduce:
-> > > >           wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-> > > >           chmod +x ~/bin/make.cross
-> > > >           # save the attached .config to linux build tree
-> > > >           GCC_VERSION=7.4.0 make.cross ARCH=powerpc
-> > > > 
-> > > > If you fix the issue, kindly add following tag
-> > > > Reported-by: kbuild test robot <lkp@intel.com>
-> > > > 
-> > > > All errors (new ones prefixed by >>):
-> > > > 
-> > > >      mm/gup.c: In function 'gup_hugepte':
-> > > > > > mm/gup.c:1990:33: error: 'write' undeclared (first use in this function); did you mean 'writeq'?
-> > > >        if (!pte_access_permitted(pte, write))
-> > > >                                       ^~~~~
-> > > >                                       writeq
-> > > >      mm/gup.c:1990:33: note: each undeclared identifier is reported only once for each function it appears in
-> > > > 
-> > > 
-> > > OK, so this shows that my cross-compiler test scripts are faulty lately,
-> > > sorry I missed this.
-> > > 
-> > > But more importantly, the above missed case is an example of when "write" really
-> > > means "write", as opposed to meaning flags.
-> > > 
-> > > Please put this patch on hold or drop it, until we hear from the authors as to how
-> > > they would like to resolve this. I suspect it will end up as something like:
-> > > 
-> > > 	bool write = (flags & FOLL_WRITE);
-> > > 
-> > > ...perhaps?
-> > 
-> > Just use
-> > 
-> > 	if (!pte_access_permitted(pte, flags & FOLL_WRITE))
-> > 
-> > as we have in gup_pte_range().
-> > 
-> > And add:
-> > 
-> > Fixes: cbd34da7dc9a ("mm: move the powerpc hugepd code to mm/gup.c")
-> > 
-> 
-> b798bec4741bdd80224214fdd004c8e52698e42 isn't this the commit that need to
-> be mentioned in the Fixes: tag?
+Hi, Thomas
 
-Ah. Okay, I see you point. Yes, this is the sourch of the breakage.
+I canceled that patch. In my testing, that will not fix the problem.
+Why the IRQ is unexpectedly masked, that is not an easy bug for me.
+More time need to hacking the driver/kernel code.
 
--- 
- Kirill A. Shutemov
+Thanks for your reply.
+
+Thomas Gleixner <tglx@linutronix.de> =E4=BA=8E2019=E5=B9=B410=E6=9C=8814=E6=
+=97=A5=E5=91=A8=E4=B8=80 =E4=B8=8B=E5=8D=888:34=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Tue, 8 Oct 2019, Yi Zheng wrote:
+> >      There is some defects on IRQ processing:
+> >
+> >      (1) At the beginning of handle_level_irq(), the IRQ-28 is masked, =
+and ACK
+> >          action is executed: On my machine, it runs the 'else' branch:
+> >
+> >             static inline void mask_ack_irq(struct irq_desc *desc)
+> >             {
+> >                 if (desc->irq_data.chip->irq_mask_ack) {
+> >                         desc->irq_data.chip->irq_mask_ack(&desc->irq_da=
+ta);
+> >                         irq_state_set_masked(desc);
+> >                 } else {
+> >                         mask_irq(desc);
+> >                         if (desc->irq_data.chip->irq_ack)
+> >                                 desc->irq_data.chip->irq_ack(&desc->irq=
+_data);
+> >                 }
+> >             }
+> >
+> >          It is an 2-steps procedure:
+> >          1. mask_irq()
+> >          2. desc->irq_data.chip->irq_ack()
+> >
+> >          the 2nd step, the function ptr is omap_mask_ack_irq(), which
+> >          _MASK_ the hardware INTC-IRQ-32 and then do the real ACK actio=
+n.
+>
+> Sure. Where is the problem?
+>
+> >      (2) mask_irq()/unmask_irq() are not atomic actions: They check the
+> >          IRQD_IRQ_MASKED flag firstly, and then mask/unmask the irq by =
+calling
+> >          the function ptrs which installed by irq controller drv.  Then=
+, those 2
+> >          functions set/clear the IRQD_IRQ_MASKED flag.
+> >
+> >          I think the sequence of the hw/sw action should be mirrored re=
+versed:
+> >          mask_irq():
+> >             check IRQD_IRQ_MASKED;
+> >             set hardware IRQ mask register;
+> >             set software IRQD_IRQ_MASKED flag;
+> >
+> >          unmask_irq():
+> >             check IRQD_IRQ_MASKED;
+> >             /* NOTE: should before the hw unmask action!! */
+> >             clear software IRQD_IRQ_MASKED flag;
+> >             clear hardware IRQ mask register;
+> >
+> >          The current unmask_irq(), hw-mask action runs before sw-mask a=
+ction,
+> >          which gives an very small time window. That cause an unexpecte=
+d
+> >          iterated IRQ.
+>
+> It's completely irrelevant because _ALL_ those operations run with
+> irq_desc->lock held. So nothing can actually observe that state.
+>
+> >      Here is my the detail of my analyzing of handle_level_irq():
+> >
+> >      (1) Let record the HW-IRQ-Controller Status and the SW-Flag IRQD_I=
+RQ_MASKED
+> >          pair as following: (hw-mask, sw-mask).
+> >
+> >      (2) In the 1st level of IRQ-28 ISR calling, in unmask_irq(), after=
+ the HW
+> >          unmask action, and before the sw-flag IRQD_IRQ_MASKED is clear=
+ed, there
+> >          is a VERY SMALL TIME WINDOW, in which, another IRQ-28 may trig=
+gered.
+> >
+> >          In that time window, the mask status is (0, 1), which is no an=
+ valid
+> >          value.
+>
+> Again. Irrelevant because not observable.
+>
+> >       My fixup is in the attachment, which remove the unexpected time w=
+indow of
+> >       IRQ iteration.
+>
+> Please don't send attachments. See Documentation/process/submitting-patch=
+es.rst
+>
+> Thanks,
+>
+>         tglx
+>
