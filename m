@@ -2,55 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72B6DD6143
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 13:28:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A20E3D616F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 13:37:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730352AbfJNL2E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 07:28:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37268 "EHLO mail.kernel.org"
+        id S1730454AbfJNLg7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 07:36:59 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:47746 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726351AbfJNL2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 07:28:04 -0400
-Received: from dragon (li937-157.members.linode.com [45.56.119.157])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E27C820673;
-        Mon, 14 Oct 2019 11:27:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571052483;
-        bh=/g4g30a0MH8QiC/8al6h1905rB2c81+BAd/3ru+5no4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=A6Jm6xk50F5hvw+poB+ZUbqYUv86aDPsufPT52Xu2bdWNUh+s3ahjQB3gUJeDCjMH
-         K8fnALvjJGElgK9R1g/+7hC4AOO2EOabbzM/4oKavcLhWl/gGAp5tUYZMntkcRNlRX
-         fPCVMqQjiSJPHFMTzEEEsAzBlB7n5dZfQSwvYgJ8=
-Date:   Mon, 14 Oct 2019 19:27:49 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Laurentiu Palcu <laurentiu.palcu@nxp.com>
-Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>, agx@sigxcpu.org,
-        l.stach@pengutronix.de, Abel Vesa <abel.vesa@nxp.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] clk: imx8mq: Add VIDEO2_PLL clock
-Message-ID: <20191014112748.GM12262@dragon>
-References: <1570025100-5634-1-git-send-email-laurentiu.palcu@nxp.com>
- <1570025100-5634-2-git-send-email-laurentiu.palcu@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1570025100-5634-2-git-send-email-laurentiu.palcu@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1729930AbfJNLg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 07:36:59 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3B4D7200178;
+        Mon, 14 Oct 2019 13:36:57 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 51E262003CE;
+        Mon, 14 Oct 2019 13:36:53 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 2FCDA402AE;
+        Mon, 14 Oct 2019 19:36:48 +0800 (SGT)
+From:   Biwen Li <biwen.li@nxp.com>
+To:     peda@axentia.se, leoyang.li@nxp.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Biwen Li <biwen.li@nxp.com>
+Subject: [PATCH 1/2] dt-bindings: i2c: replace property i2c-mux-idle-disconnect
+Date:   Mon, 14 Oct 2019 19:25:57 +0800
+Message-Id: <20191014112558.3881-1-biwen.li@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 05:04:53PM +0300, Laurentiu Palcu wrote:
-> This clock is needed by DCSS when high resolutions are used.
-> 
-> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@nxp.com>
-> CC: Abel Vesa <abel.vesa@nxp.com>
+This replaces property i2c-mux-idle-disconnect with idle-state
 
-Applied, thanks.
+Signed-off-by: Biwen Li <biwen.li@nxp.com>
+---
+ Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.txt | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.txt b/Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.txt
+index 30ac6a60f041..f2db517b1635 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.txt
++++ b/Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.txt
+@@ -25,9 +25,7 @@ Required Properties:
+ Optional Properties:
+ 
+   - reset-gpios: Reference to the GPIO connected to the reset input.
+-  - i2c-mux-idle-disconnect: Boolean; if defined, forces mux to disconnect all
+-    children in idle state. This is necessary for example, if there are several
+-    multiplexers on the bus and the devices behind them use same I2C addresses.
++  - idle-state: Please refer to Documentation/devicetree/bindings/mux/mux-controller.txt
+   - interrupts: Interrupt mapping for IRQ.
+   - interrupt-controller: Marks the device node as an interrupt controller.
+   - #interrupt-cells : Should be two.
+-- 
+2.17.1
+
