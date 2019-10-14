@@ -2,169 +2,266 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24536D69B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 20:47:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA09BD69B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 20:48:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732479AbfJNSqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 14:46:44 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:12699 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731507AbfJNSqn (ORCPT
+        id S1732668AbfJNSsf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 14:48:35 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:46913 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731506AbfJNSsf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 14:46:43 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5da4c2930001>; Mon, 14 Oct 2019 11:46:43 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 14 Oct 2019 11:46:41 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 14 Oct 2019 11:46:41 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 14 Oct
- 2019 18:46:40 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 14 Oct 2019 18:46:41 +0000
-Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5da4c2900003>; Mon, 14 Oct 2019 11:46:40 -0700
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     Christoph Hellwig <hch@infradead.org>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        kbuild test robot <lkp@intel.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v2 2/2] mm/gup: fix a misnamed "write" argument, and a related bug
-Date:   Mon, 14 Oct 2019 11:46:39 -0700
-Message-ID: <20191014184639.1512873-3-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191014184639.1512873-1-jhubbard@nvidia.com>
-References: <20191014184639.1512873-1-jhubbard@nvidia.com>
+        Mon, 14 Oct 2019 14:48:35 -0400
+Received: by mail-pl1-f196.google.com with SMTP id q24so8365753plr.13
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 11:48:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=sjM15tTgKj3X6UIGIKv9yo7y4Z0++2yHpJVAwICI39U=;
+        b=FINe/HkyYgzCZMpzzJa0VdHcrhwqPEOVm8IYAmsjZctp7jETjAd66xmj9RZqGvrPmj
+         H+FXIhIyR9JSZsKbgRmxWh8p28fI2KaUWsusFrvNmbNdsTSE3WiaTc27SDDPElkItf6I
+         z/5s0o92bcyT34XUr1rDgKnW/+LXvtxg1VAP8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sjM15tTgKj3X6UIGIKv9yo7y4Z0++2yHpJVAwICI39U=;
+        b=VjOyqrsV0RHk6ebMJrPABsb5/CXDW9QSK/B4wWbBLP7M7WDxokQb0BbC2jzhvT4tfe
+         oQ1BHDsG27PTC0d/wch5UavJg+NRoRz6V2yZYrCzajglNgaaVJDErDlgUCcy6gvvmGUO
+         wktP8hNubVquPQCVi7QhHNRwU3b1DHlAAVY6xB7+Jjo5unWTi0x74pWEhINL52tzyfS/
+         WV9QWq//H4mmjuZqGu3xAml7wr6q6I6c+XC1q3qur0jOVi7zY2aTPk+UR501hkR/jz2x
+         HBJDm5fQpezw7dvAdVBfZ4tyA1qNzsFktgN/qKaGJ7/XYyoyaGD8ImgBQjZS7RTBjhYq
+         WIOw==
+X-Gm-Message-State: APjAAAXKolFTIX1WGFGfhl/4DjDjcAfQs6Eq8QFZWjjkrODkjDxAiE1f
+        3VUB9VeNIUPEQe3VLxk6CtfGBA==
+X-Google-Smtp-Source: APXvYqzR872QIebmrMRQzexybPQBLDCvqPQOvZpwTZP2NY+lIhk2vjsBWna0jd+hGgKFRTdxl/i3zA==
+X-Received: by 2002:a17:902:aa91:: with SMTP id d17mr30610336plr.69.1571078913729;
+        Mon, 14 Oct 2019 11:48:33 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id j26sm18406495pgl.38.2019.10.14.11.48.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2019 11:48:33 -0700 (PDT)
+Date:   Mon, 14 Oct 2019 14:48:32 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Lai Jiangshan <laijs@linux.alibaba.com>
+Cc:     Lai Jiangshan <jiangshanlai@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        David Sterba <dsterba@suse.com>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] rcu: make PREEMPT_RCU to be a decoration of TREE_RCU
+Message-ID: <20191014184832.GA125935@google.com>
+References: <20191013125959.3280-1-laijs@linux.alibaba.com>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1571078803; bh=skAqYRFCTEBaQBD0vznLHEXuI8b4CNYHQBQAfVdjZLE=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
-         Content-Transfer-Encoding:Content-Type;
-        b=F+Jh8WoVbLh4BP2uRlLg/lpa7hRTJwIR4UVAG0JOWt3OhDukegfSL1+0nhZ2Tjr8u
-         kwMC9Z5xV+4IyqEYvGtWMi8NM4+iO6qwyJn6cQRtB8FuHfPTqwMdJPICrB0GSEmnE1
-         upns7fy41N12jeX5vQAwBPSMsZrectB2D1sRKeXRQ5X1l5B5iyZPccAE4AIqNyv2Yl
-         FiV/fWKyijg/uxtWfY1nRguEx8OQiMbveltK93po9qwuN1Y0TER+2WFy7RBdMdnYpd
-         E7zvscD+UqgY+BOVWfWdOAp9WfIM4tlfzUVnBFVY9yot1Br6vkXY+uzdP5AnbhM1gZ
-         hpU4zjElW6RSQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191013125959.3280-1-laijs@linux.alibaba.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In several routines, the "flags" argument is incorrectly
-named "write". Change it to "flags".
+On Sun, Oct 13, 2019 at 12:59:57PM +0000, Lai Jiangshan wrote:
+> Currently PREEMPT_RCU and TREE_RCU are "contrary" configs
+> when they can't be both on. But PREEMPT_RCU is actually a kind
+> of TREE_RCU in the implementation. It seams to be appropriate
+> to make PREEMPT_RCU to be a decorative option of TREE_RCU.
+> 
 
-Also, in one place, the misnaming led to an actual bug:
-"flags & FOLL_WRITE" is required, rather than just "flags".
-(That problem was flagged by krobot, in v1 of this patch.)
+Looks like a nice simplification and so far I could not poke any holes in the
+code...
 
-Also, change the flags argument from int, to unsigned int.
+I am in support of this patch for further review and testing. Thanks!
 
-You can see that this was a simple oversight, because the
-calling code passes "flags" to the fifth argument:
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-gup_pgd_range():
-    ...
-    if (!gup_huge_pd(__hugepd(pgd_val(pgd)), addr,
-		    PGDIR_SHIFT, next, flags, pages, nr))
+thanks,
 
-...which, until this patch, the callees referred to as "write".
+ - Joel
 
-Also, change two lines to avoid checkpatch line length
-complaints, and another line to fix another oversight
-that checkpatch called out: missing "int" on pdshift.
 
-Fixes: b798bec4741b ("mm/gup: change write parameter to flags in fast walk"=
-)
-Reported-by: kbuild test robot <lkp@intel.com>
-Suggested-by: Kirill A. Shutemov <kirill@shutemov.name>
-Suggested-by: Ira Weiny <ira.weiny@intel.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- mm/gup.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/mm/gup.c b/mm/gup.c
-index 23a9f9c9d377..8f236a335ae9 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1973,7 +1973,8 @@ static unsigned long hugepte_addr_end(unsigned long a=
-ddr, unsigned long end,
- }
-=20
- static int gup_hugepte(pte_t *ptep, unsigned long sz, unsigned long addr,
--		       unsigned long end, int write, struct page **pages, int *nr)
-+		       unsigned long end, unsigned int flags,
-+		       struct page **pages, int *nr)
- {
- 	unsigned long pte_end;
- 	struct page *head, *page;
-@@ -1986,7 +1987,7 @@ static int gup_hugepte(pte_t *ptep, unsigned long sz,=
- unsigned long addr,
-=20
- 	pte =3D READ_ONCE(*ptep);
-=20
--	if (!pte_access_permitted(pte, write))
-+	if (!pte_access_permitted(pte, flags & FOLL_WRITE))
- 		return 0;
-=20
- 	/* hugepages are never "special" */
-@@ -2023,7 +2024,7 @@ static int gup_hugepte(pte_t *ptep, unsigned long sz,=
- unsigned long addr,
- }
-=20
- static int gup_huge_pd(hugepd_t hugepd, unsigned long addr,
--		unsigned int pdshift, unsigned long end, int write,
-+		unsigned int pdshift, unsigned long end, unsigned int flags,
- 		struct page **pages, int *nr)
- {
- 	pte_t *ptep;
-@@ -2033,7 +2034,7 @@ static int gup_huge_pd(hugepd_t hugepd, unsigned long=
- addr,
- 	ptep =3D hugepte_offset(hugepd, addr, pdshift);
- 	do {
- 		next =3D hugepte_addr_end(addr, end, sz);
--		if (!gup_hugepte(ptep, sz, addr, end, write, pages, nr))
-+		if (!gup_hugepte(ptep, sz, addr, end, flags, pages, nr))
- 			return 0;
- 	} while (ptep++, addr =3D next, addr !=3D end);
-=20
-@@ -2041,7 +2042,7 @@ static int gup_huge_pd(hugepd_t hugepd, unsigned long=
- addr,
- }
- #else
- static inline int gup_huge_pd(hugepd_t hugepd, unsigned long addr,
--		unsigned pdshift, unsigned long end, int write,
-+		unsigned int pdshift, unsigned long end, unsigned int flags,
- 		struct page **pages, int *nr)
- {
- 	return 0;
-@@ -2049,7 +2050,8 @@ static inline int gup_huge_pd(hugepd_t hugepd, unsign=
-ed long addr,
- #endif /* CONFIG_ARCH_HAS_HUGEPD */
-=20
- static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
--		unsigned long end, unsigned int flags, struct page **pages, int *nr)
-+			unsigned long end, unsigned int flags,
-+			struct page **pages, int *nr)
- {
- 	struct page *head, *page;
- 	int refs;
---=20
-2.23.0
-
+> Signed-off-by: Lai Jiangshan <jiangshanlai@gmail.com>
+> Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
+> ---
+>  include/linux/rcupdate.h   |  4 ++--
+>  include/trace/events/rcu.h |  4 ++--
+>  kernel/rcu/Kconfig         | 13 +++++++------
+>  kernel/rcu/Makefile        |  1 -
+>  kernel/rcu/rcu.h           |  2 +-
+>  kernel/rcu/update.c        |  2 +-
+>  kernel/sysctl.c            |  2 +-
+>  7 files changed, 14 insertions(+), 14 deletions(-)
+> 
+> diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+> index 75a2eded7aa2..1eee9f6c27f9 100644
+> --- a/include/linux/rcupdate.h
+> +++ b/include/linux/rcupdate.h
+> @@ -167,7 +167,7 @@ do { \
+>   * TREE_RCU and rcu_barrier_() primitives in TINY_RCU.
+>   */
+>  
+> -#if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU)
+> +#if defined(CONFIG_TREE_RCU)
+>  #include <linux/rcutree.h>
+>  #elif defined(CONFIG_TINY_RCU)
+>  #include <linux/rcutiny.h>
+> @@ -583,7 +583,7 @@ do {									      \
+>   * read-side critical section that would block in a !PREEMPT kernel.
+>   * But if you want the full story, read on!
+>   *
+> - * In non-preemptible RCU implementations (TREE_RCU and TINY_RCU),
+> + * In non-preemptible RCU implementations (pure TREE_RCU and TINY_RCU),
+>   * it is illegal to block while in an RCU read-side critical section.
+>   * In preemptible RCU implementations (PREEMPT_RCU) in CONFIG_PREEMPTION
+>   * kernel builds, RCU read-side critical sections may be preempted,
+> diff --git a/include/trace/events/rcu.h b/include/trace/events/rcu.h
+> index 694bd040cf51..1ce15c5be4c8 100644
+> --- a/include/trace/events/rcu.h
+> +++ b/include/trace/events/rcu.h
+> @@ -41,7 +41,7 @@ TRACE_EVENT(rcu_utilization,
+>  	TP_printk("%s", __entry->s)
+>  );
+>  
+> -#if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU)
+> +#if defined(CONFIG_TREE_RCU)
+>  
+>  /*
+>   * Tracepoint for grace-period events.  Takes a string identifying the
+> @@ -425,7 +425,7 @@ TRACE_EVENT_RCU(rcu_fqs,
+>  		  __entry->cpu, __entry->qsevent)
+>  );
+>  
+> -#endif /* #if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU) */
+> +#endif /* #if defined(CONFIG_TREE_RCU) */
+>  
+>  /*
+>   * Tracepoint for dyntick-idle entry/exit events.  These take a string
+> diff --git a/kernel/rcu/Kconfig b/kernel/rcu/Kconfig
+> index 7644eda17d62..0303934e6ef0 100644
+> --- a/kernel/rcu/Kconfig
+> +++ b/kernel/rcu/Kconfig
+> @@ -7,7 +7,7 @@ menu "RCU Subsystem"
+>  
+>  config TREE_RCU
+>  	bool
+> -	default y if !PREEMPTION && SMP
+> +	default y if SMP
+>  	help
+>  	  This option selects the RCU implementation that is
+>  	  designed for very large SMP system with hundreds or
+> @@ -17,6 +17,7 @@ config TREE_RCU
+>  config PREEMPT_RCU
+>  	bool
+>  	default y if PREEMPTION
+> +	select TREE_RCU
+>  	help
+>  	  This option selects the RCU implementation that is
+>  	  designed for very large SMP systems with hundreds or
+> @@ -78,7 +79,7 @@ config TASKS_RCU
+>  	  user-mode execution as quiescent states.
+>  
+>  config RCU_STALL_COMMON
+> -	def_bool ( TREE_RCU || PREEMPT_RCU )
+> +	def_bool TREE_RCU
+>  	help
+>  	  This option enables RCU CPU stall code that is common between
+>  	  the TINY and TREE variants of RCU.  The purpose is to allow
+> @@ -86,13 +87,13 @@ config RCU_STALL_COMMON
+>  	  making these warnings mandatory for the tree variants.
+>  
+>  config RCU_NEED_SEGCBLIST
+> -	def_bool ( TREE_RCU || PREEMPT_RCU || TREE_SRCU )
+> +	def_bool ( TREE_RCU || TREE_SRCU )
+>  
+>  config RCU_FANOUT
+>  	int "Tree-based hierarchical RCU fanout value"
+>  	range 2 64 if 64BIT
+>  	range 2 32 if !64BIT
+> -	depends on (TREE_RCU || PREEMPT_RCU) && RCU_EXPERT
+> +	depends on TREE_RCU && RCU_EXPERT
+>  	default 64 if 64BIT
+>  	default 32 if !64BIT
+>  	help
+> @@ -112,7 +113,7 @@ config RCU_FANOUT_LEAF
+>  	int "Tree-based hierarchical RCU leaf-level fanout value"
+>  	range 2 64 if 64BIT
+>  	range 2 32 if !64BIT
+> -	depends on (TREE_RCU || PREEMPT_RCU) && RCU_EXPERT
+> +	depends on TREE_RCU && RCU_EXPERT
+>  	default 16
+>  	help
+>  	  This option controls the leaf-level fanout of hierarchical
+> @@ -187,7 +188,7 @@ config RCU_BOOST_DELAY
+>  
+>  config RCU_NOCB_CPU
+>  	bool "Offload RCU callback processing from boot-selected CPUs"
+> -	depends on TREE_RCU || PREEMPT_RCU
+> +	depends on TREE_RCU
+>  	depends on RCU_EXPERT || NO_HZ_FULL
+>  	default n
+>  	help
+> diff --git a/kernel/rcu/Makefile b/kernel/rcu/Makefile
+> index 020e8b6a644b..82d5fba48b2f 100644
+> --- a/kernel/rcu/Makefile
+> +++ b/kernel/rcu/Makefile
+> @@ -9,6 +9,5 @@ obj-$(CONFIG_TINY_SRCU) += srcutiny.o
+>  obj-$(CONFIG_RCU_TORTURE_TEST) += rcutorture.o
+>  obj-$(CONFIG_RCU_PERF_TEST) += rcuperf.o
+>  obj-$(CONFIG_TREE_RCU) += tree.o
+> -obj-$(CONFIG_PREEMPT_RCU) += tree.o
+>  obj-$(CONFIG_TINY_RCU) += tiny.o
+>  obj-$(CONFIG_RCU_NEED_SEGCBLIST) += rcu_segcblist.o
+> diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
+> index 8fd4f82c9b3d..4149ba76824f 100644
+> --- a/kernel/rcu/rcu.h
+> +++ b/kernel/rcu/rcu.h
+> @@ -452,7 +452,7 @@ enum rcutorture_type {
+>  	INVALID_RCU_FLAVOR
+>  };
+>  
+> -#if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU)
+> +#if defined(CONFIG_TREE_RCU)
+>  void rcutorture_get_gp_data(enum rcutorture_type test_type, int *flags,
+>  			    unsigned long *gp_seq);
+>  void rcutorture_record_progress(unsigned long vernum);
+> diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+> index 1861103662db..34a7452b25fd 100644
+> --- a/kernel/rcu/update.c
+> +++ b/kernel/rcu/update.c
+> @@ -435,7 +435,7 @@ struct debug_obj_descr rcuhead_debug_descr = {
+>  EXPORT_SYMBOL_GPL(rcuhead_debug_descr);
+>  #endif /* #ifdef CONFIG_DEBUG_OBJECTS_RCU_HEAD */
+>  
+> -#if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU) || defined(CONFIG_RCU_TRACE)
+> +#if defined(CONFIG_TREE_RCU) || defined(CONFIG_RCU_TRACE)
+>  void do_trace_rcu_torture_read(const char *rcutorturename, struct rcu_head *rhp,
+>  			       unsigned long secs,
+>  			       unsigned long c_old, unsigned long c)
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 00fcea236eba..2ace158a4d72 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -1268,7 +1268,7 @@ static struct ctl_table kern_table[] = {
+>  		.proc_handler	= proc_do_static_key,
+>  	},
+>  #endif
+> -#if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU)
+> +#if defined(CONFIG_TREE_RCU)
+>  	{
+>  		.procname	= "panic_on_rcu_stall",
+>  		.data		= &sysctl_panic_on_rcu_stall,
+> -- 
+> 2.20.1
+> 
