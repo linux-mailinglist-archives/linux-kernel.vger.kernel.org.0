@@ -2,178 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B451ED5DC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 10:45:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 982AFD5DD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 10:48:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730555AbfJNIpy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 04:45:54 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38056 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730439AbfJNIpx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 04:45:53 -0400
-Received: by mail-ed1-f67.google.com with SMTP id l21so14093018edr.5
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 01:45:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=qfgrbYH1+Qt6+4oZT3BPWRVcTmbUQJZWhnOi/NpBY/4=;
-        b=FVKPK+Fc3WT2iladk3fxhpqANtN8IWklmkrylPuR/vKDuX04/NiuzR5mDdRCcufjoM
-         g/pwRVuRLc0GLqQcnnBg+lWu/WTSrzZovsRQtzQbjm3HZwp5JF098kLwpJGXb52o5wEs
-         x0AYnJu4yuMIOT/n+l5F+OSNJTUoDT0zJfMM0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=qfgrbYH1+Qt6+4oZT3BPWRVcTmbUQJZWhnOi/NpBY/4=;
-        b=I2hmT5U8JDh5RVKtTNPYJ2i/a2nseWGj9UOWOpjallUcWRQPZ/xBYxieWIKbvkEIo+
-         Jus24Xlw5yRgpt5KunSL5XJDL2t5CnyAsX3gCBbmS4NedWRMTJAS+hZyXI9KLMksEvPb
-         0ecmWpWFT42zwFzuAnCA/UcGLjKchFVaSbRHHME9cf4dfgZXflQPxQqP2C/AWBTAIKvx
-         MOy4YjDlO9MyPXTidEZwTsjGUfyD0YfYn918tD60Nx6HVZ97fVtGPpR8wlt7sE4I69mI
-         8iT1X2lEPndiDP0Qt63kxPvhTmnsZ+MiJiA7WXJ7ci5yJUAZU2g4CYPAZopxMLdVVCel
-         Ly7g==
-X-Gm-Message-State: APjAAAXPShdUcimdkwC7zRXJYM83js2CWctiYXhH4j/xGWg6I370tpgH
-        ScNH9oLTDObIdNHB6YVXp/8Uag==
-X-Google-Smtp-Source: APXvYqxMYI9P+ELFrNEs6vU+Obg/0CR90yO1CX8yikQurVmanWbIPtM+hfjhnpszkt+MYSlR3cHx8A==
-X-Received: by 2002:a50:f296:: with SMTP id f22mr27071657edm.69.1571042750453;
-        Mon, 14 Oct 2019 01:45:50 -0700 (PDT)
-Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
-        by smtp.gmail.com with ESMTPSA id q9sm2233587eja.31.2019.10.14.01.45.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2019 01:45:49 -0700 (PDT)
-Date:   Mon, 14 Oct 2019 10:45:47 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, Sean Paul <sean@poorly.run>,
-        amd-gfx@lists.freedesktop.org,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
-        <ville.syrjala@linux.intel.com>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-        David Francis <David.Francis@amd.com>,
-        Mario Kleiner <mario.kleiner.de@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/6] drm/amdgpu/dm/mst: Report possible_crtcs
- incorrectly, for now
-Message-ID: <20191014084547.GC11828@phenom.ffwll.local>
-Mail-Followup-To: Lyude Paul <lyude@redhat.com>,
-        Sean Paul <sean@poorly.run>, amd-gfx@lists.freedesktop.org,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-        David Francis <David.Francis@amd.com>,
-        Mario Kleiner <mario.kleiner.de@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20190926225122.31455-1-lyude@redhat.com>
- <20190926225122.31455-6-lyude@redhat.com>
- <20190927152741.GU218215@art_vandelay>
- <20191009150155.GD16989@phenom.ffwll.local>
- <2d813b2fdf39756ebee087d97f9ee4b2965f4193.camel@redhat.com>
+        id S1730594AbfJNIsQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 04:48:16 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45024 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730565AbfJNIsQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 04:48:16 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C6D49ACFA;
+        Mon, 14 Oct 2019 08:48:13 +0000 (UTC)
+Received: by unicorn.suse.cz (Postfix, from userid 1000)
+        id D0998E3935; Mon, 14 Oct 2019 10:48:09 +0200 (CEST)
+Date:   Mon, 14 Oct 2019 10:48:09 +0200
+From:   Michal Kubecek <mkubecek@suse.cz>
+To:     netdev@vger.kernel.org
+Cc:     Jiri Pirko <jiri@resnulli.us>, David Miller <davem@davemloft.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        John Linville <linville@tuxdriver.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v7 14/17] ethtool: set link settings with
+ LINKINFO_SET request
+Message-ID: <20191014084809.GA8493@unicorn.suse.cz>
+References: <cover.1570654310.git.mkubecek@suse.cz>
+ <aef31ba798d1cfa2ae92d333ad1547f4b528ffa8.1570654310.git.mkubecek@suse.cz>
+ <20191012163309.GA2219@nanopsycho>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2d813b2fdf39756ebee087d97f9ee4b2965f4193.camel@redhat.com>
-X-Operating-System: Linux phenom 5.2.0-2-amd64 
+In-Reply-To: <20191012163309.GA2219@nanopsycho>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 04:51:13PM -0400, Lyude Paul wrote:
-> a little late but: i915 does have this hack (or rather-possible_crtcs with MST
-> in i915 has been broken for a while and got fixed, but had to get reverted
-> because of this issue), it's where this originally came from.
-
-Hm since this is widespread I think we should check for this when we
-register connectors (either in drm_dev_register, or hotplugged ones). I
-think just validating that all encoder->possible_crtc match and WARN_ON if
-not would be really good.
-
-2nd option would be to do that in the GETENCODERS ioctl. That would at
-least keep the encoders useful for driver-internal stuff. We could then
-un-revert the i915 patch again.
-
-Either way I think we should have this hack + comment with links to the
-offending userspace in common code, not duplicated over all drivers.
--Daniel
-
+On Sat, Oct 12, 2019 at 06:33:09PM +0200, Jiri Pirko wrote:
+> Wed, Oct 09, 2019 at 10:59:43PM CEST, mkubecek@suse.cz wrote:
 > 
-> On Wed, 2019-10-09 at 17:01 +0200, Daniel Vetter wrote:
-> > On Fri, Sep 27, 2019 at 11:27:41AM -0400, Sean Paul wrote:
-> > > On Thu, Sep 26, 2019 at 06:51:07PM -0400, Lyude Paul wrote:
-> > > > This commit is seperate from the previous one to make it easier to
-> > > > revert in the future. Basically, there's multiple userspace applications
-> > > > that interpret possible_crtcs very wrong:
-> > > > 
-> > > > https://gitlab.freedesktop.org/xorg/xserver/merge_requests/277
-> > > > https://gitlab.gnome.org/GNOME/mutter/issues/759
-> > > > 
-> > > > While work is ongoing to fix these issues in userspace, we need to
-> > > > report ->possible_crtcs incorrectly for now in order to avoid
-> > > > introducing a regression in in userspace. Once these issues get fixed,
-> > > > this commit should be reverted.
-> > > > 
-> > > > Signed-off-by: Lyude Paul <lyude@redhat.com>
-> > > > Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> > > > ---
-> > > >  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 11 +++++++++++
-> > > >  1 file changed, 11 insertions(+)
-> > > > 
-> > > > diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> > > > b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> > > > index b404f1ae6df7..fe8ac801d7a5 100644
-> > > > --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> > > > +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> > > > @@ -4807,6 +4807,17 @@ static int amdgpu_dm_crtc_init(struct
-> > > > amdgpu_display_manager *dm,
-> > > >  	if (!acrtc->mst_encoder)
-> > > >  		goto fail;
-> > > >  
-> > > > +	/*
-> > > > +	 * FIXME: This is a hack to workaround the following issues:
-> > > > +	 *
-> > > > +	 * https://gitlab.gnome.org/GNOME/mutter/issues/759
-> > > > +	 * https://gitlab.freedesktop.org/xorg/xserver/merge_requests/277
-> > > > +	 *
-> > > > +	 * One these issues are closed, this should be removed
-> > > 
-> > > Even when these issues are closed, we'll still be introducing a regression
-> > > if we
-> > > revert this change. Time for actually_possible_crtcs? :)
-> > > 
-> > > You also might want to briefly explain the u/s bug in case the links go
-> > > sour.
-> > > 
-> > > > +	 */
-> > > > +	acrtc->mst_encoder->base.possible_crtcs =
-> > > > +		amdgpu_dm_get_encoder_crtc_mask(dm->adev);
-> > > 
-> > > Why don't we put this hack in amdgpu_dm_dp_create_fake_mst_encoder()?
-> > 
-> > If we don't have the same hack for i915 mst I think we shouldn't merge
-> > this ... broken userspace is broken.
-> > -Daniel
-> -- 
-> Cheers,
-> 	Lyude Paul
+> [...]
 > 
+> >+static const struct nla_policy linkinfo_hdr_policy[ETHTOOL_A_HEADER_MAX + 1] = {
+> >+	[ETHTOOL_A_HEADER_UNSPEC]		= { .type = NLA_REJECT },
+> >+	[ETHTOOL_A_HEADER_DEV_INDEX]		= { .type = NLA_U32 },
+> >+	[ETHTOOL_A_HEADER_DEV_NAME]		= { .type = NLA_NUL_STRING,
+> >+						    .len = IFNAMSIZ - 1 },
+> 
+> Please make ETHTOOL_A_HEADER_DEV_NAME accept alternative names as well.
+> Just s/IFNAMSIZ/ALTIFNAMSIZ should be enough.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Yes, definitely. I focused on (finally) submitting v7 so I didn't left
+testing how it plays with altnames for later.
+
+Michal 
+
+> >+	[ETHTOOL_A_HEADER_GFLAGS]		= { .type = NLA_U32 },
+> >+	[ETHTOOL_A_HEADER_RFLAGS]		= { .type = NLA_REJECT },
+> >+};
+> 
+> [...]
