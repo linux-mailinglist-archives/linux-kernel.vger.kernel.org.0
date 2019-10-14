@@ -2,96 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CDF3D5EB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 11:22:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 794EAD5EBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 11:23:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730891AbfJNJWV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 05:22:21 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45200 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730778AbfJNJWU (ORCPT
+        id S1730844AbfJNJXm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 05:23:42 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:24986 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730676AbfJNJXm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 05:22:20 -0400
-Received: by mail-pf1-f196.google.com with SMTP id y72so10032791pfb.12;
-        Mon, 14 Oct 2019 02:22:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TC2+yBE1e1TW1803J0hwiR3w1U8Tt2d/K4s4HsSBGNI=;
-        b=WCbXRL4Iu+JEu2SQ4JFzy71ExxWDu8U4DNA57Mkp+PKu4Cz9VBSyoV/5X6pXNXaiPD
-         DDthlPC7f66ZJbQnMn2Dd+MVXft3zwA2pCeQGyDI/HM9H4SjLzbOehkyiU1S9zA3E6SO
-         I1jRgOvKHRGopRAclaTEMRIg4IVHaNNDHgy4sTs30AKp7Ij8hIolZIDTMWy7g7QZUWax
-         QTuC5bFBjZkIKunkgeOJ7oMEnNc+0NyQ5D+vKp+qnDE72oQ4Kp5G9VkVqzvngAh+47Hd
-         ep+TohyImGC8SBie7sVziTWXwP9ljAwgVRMAMd4IlZwJ9HT5MVqbZp4jzbLUfirf1lMr
-         ZlMQ==
-X-Gm-Message-State: APjAAAWh1UCo1wINM11SnGMZOo17D4Fr1D06C9l+jIC/Tkc06tTH64pc
-        SxvscsAQl65BSiCf1L2PQos=
-X-Google-Smtp-Source: APXvYqyjC/Y1Gw4qt/B40j2VP+yRTueZa4UHCuOIUcLRPr9er+3d5llcSv3ZgbzhnB9y74rDy7Xyrg==
-X-Received: by 2002:a65:53c4:: with SMTP id z4mr1556834pgr.155.1571044938307;
-        Mon, 14 Oct 2019 02:22:18 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id q2sm19933776pfg.144.2019.10.14.02.22.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2019 02:22:17 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 70BBC4021A; Mon, 14 Oct 2019 09:22:16 +0000 (UTC)
-Date:   Mon, 14 Oct 2019 09:22:16 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Peter Jones <pjones@redhat.com>,
-        Dave Olsthoorn <dave@bewaar.me>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH v7 0/8] efi/firmware/platform-x86: Add EFI embedded fw
- support
-Message-ID: <20191014092216.GA16384@42.do-not-panic.com>
-References: <20191004145056.43267-1-hdegoede@redhat.com>
- <20191011141036.GK16384@42.do-not-panic.com>
- <7fed4882-efa7-18d0-1ef6-9138fbdddfc4@redhat.com>
- <20191011153823.GS16384@42.do-not-panic.com>
- <20191011163819.GA1295750@kroah.com>
+        Mon, 14 Oct 2019 05:23:42 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9E9Biq9022257;
+        Mon, 14 Oct 2019 11:23:19 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=gEmBsIEorhGPSpDkFEP6FJmifXJuypR7WyitQNE9F3U=;
+ b=IFqMGZb+TTWAv7lhNQiinPV3XsSxyxdw6e/u3hIocGh75+SUDJ52xgajrfxq2PIxOZ9T
+ O/U6R+Jk1PL8X2a1Kxh476tABtb5XWgeTuzzMLOjTWKqWFgF13XVn6vSP01kvLgxkbav
+ 2el7XkOb22YokGc/v7MlbkVdH6c8JdVperl5hlEvgPqbGv/zUAY1P1cxdzoKUmIiwOp4
+ nm+m8Z0ld5DRzlauPqP7gJ13kRXhUzZBfOcy/e8JTmNn4MvsHcm5cEDH2dFyazqlBDSn
+ gquyoiW7aRZhBEmlakpzjvIYpxaF/tgEROKMNBbwAsjDy3bPYnW2iyZMZ3Kkfs/k+/Lr BA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2vk3y9hshw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 14 Oct 2019 11:23:19 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B2A6510002A;
+        Mon, 14 Oct 2019 11:23:18 +0200 (CEST)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A2F032B189A;
+        Mon, 14 Oct 2019 11:23:18 +0200 (CEST)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 14 Oct
+ 2019 11:23:18 +0200
+Received: from localhost (10.201.20.122) by Webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 14 Oct 2019 11:23:18
+ +0200
+From:   Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     <daniel.lezcano@linaro.org>, <tglx@linutronix.de>,
+        <robh+dt@kernel.org>, <alexandre.torgue@st.com>
+CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH v3] dt-bindings: timer: Convert stm32 timer bindings to json-schema
+Date:   Mon, 14 Oct 2019 11:23:16 +0200
+Message-ID: <20191014092316.24337-1-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191011163819.GA1295750@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.201.20.122]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-14_06:2019-10-10,2019-10-14 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 06:38:19PM +0200, Greg Kroah-Hartman wrote:
-> On Fri, Oct 11, 2019 at 03:38:23PM +0000, Luis Chamberlain wrote:
-> > On Fri, Oct 11, 2019 at 04:31:26PM +0200, Hans de Goede wrote:
-> > > Hi,
-> > > 
-> > > On 10/11/19 4:10 PM, Luis Chamberlain wrote:
-> > > > Hey Hans, thanks for staying on top of this and follow up! For some
-> > > > reason the universe conspired against your first and last patch ([1/8],
-> > > > [8/8]), and I never got them. Could you bounce these or resend in case
-> > > > others confirm they also didn't get it?
-> > > 
-> > > I have received feedback from others on the first patch, so at least
-> > > that one has reached others. I've bounced patches 1 and 8 to you.
-> > 
-> > Thanks, can you also bounce the feedback received?
-> 
-> That is what lore.kernel.org is for...
+Convert the STM32 timer binding to DT schema format using json-schema
 
-If I have feedback on an email which I did not get I cannot easily reply to it.
-In the future I'd like lore to let me bounce emails from a thread to me,
-but that is not possible today AFAICT?
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+---
+changes in v3:
+- use (GPL-2.0-only OR BSD-2-Clause) license
+- fix identation
+- add additionalProperties: false
 
-  Luis
+ .../devicetree/bindings/timer/st,stm32-timer.txt   | 22 ----------
+ .../devicetree/bindings/timer/st,stm32-timer.yaml  | 47 ++++++++++++++++++++++
+ 2 files changed, 47 insertions(+), 22 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/timer/st,stm32-timer.txt
+ create mode 100644 Documentation/devicetree/bindings/timer/st,stm32-timer.yaml
+
+diff --git a/Documentation/devicetree/bindings/timer/st,stm32-timer.txt b/Documentation/devicetree/bindings/timer/st,stm32-timer.txt
+deleted file mode 100644
+index 8ef28e70d6e8..000000000000
+--- a/Documentation/devicetree/bindings/timer/st,stm32-timer.txt
++++ /dev/null
+@@ -1,22 +0,0 @@
+-. STMicroelectronics STM32 timer
+-
+-The STM32 MCUs family has several general-purpose 16 and 32 bits timers.
+-
+-Required properties:
+-- compatible : Should be "st,stm32-timer"
+-- reg : Address and length of the register set
+-- clocks : Reference on the timer input clock
+-- interrupts : Reference to the timer interrupt
+-
+-Optional properties:
+-- resets: Reference to a reset controller asserting the timer
+-
+-Example:
+-
+-timer5: timer@40000c00 {
+-	compatible = "st,stm32-timer";
+-	reg = <0x40000c00 0x400>;
+-	interrupts = <50>;
+-	resets = <&rrc 259>;
+-	clocks = <&clk_pmtr1>;
+-};
+diff --git a/Documentation/devicetree/bindings/timer/st,stm32-timer.yaml b/Documentation/devicetree/bindings/timer/st,stm32-timer.yaml
+new file mode 100644
+index 000000000000..176aa3c9baf8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/st,stm32-timer.yaml
+@@ -0,0 +1,47 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/timer/st,stm32-timer.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: STMicroelectronics STM32 general-purpose 16 and 32 bits timers bindings
++
++maintainers:
++  - Benjamin Gaignard <benjamin.gaignard@st.com>
++
++properties:
++  compatible:
++    const: st,stm32-timer
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/clock/stm32mp1-clks.h>
++    timer: timer@40000c00 {
++        compatible = "st,stm32-timer";
++        reg = <0x40000c00 0x400>;
++        interrupts = <50>;
++        clocks = <&clk_pmtr1>;
++    };
++
++...
+-- 
+2.15.0
+
