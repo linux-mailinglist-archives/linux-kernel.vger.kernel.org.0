@@ -2,44 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFEB6D5F0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 11:36:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF50BD5F16
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 11:38:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731006AbfJNJgW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 05:36:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54468 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730667AbfJNJgW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 05:36:22 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5221DBD2E;
-        Mon, 14 Oct 2019 09:36:21 +0000 (UTC)
-Date:   Mon, 14 Oct 2019 11:36:36 +0200
-From:   Jean Delvare <jdelvare@suse.de>
-To:     Linux I2C <linux-i2c@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 0/4] Instantiate SPD EEPROMs at boot on x86
-Message-ID: <20191014113636.57b5ce89@endymion>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        id S1731028AbfJNJiT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 05:38:19 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:64170 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730778AbfJNJiQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 05:38:16 -0400
+Received: from 79.184.254.38.ipv4.supernova.orange.pl (79.184.254.38) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
+ id 4db2488d3af89f8f; Mon, 14 Oct 2019 11:38:14 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     "Yin, Fengwei" <fengwei.yin@intel.com>
+Cc:     Len Brown <lenb@kernel.org>,
+        "open list:ACPI" <linux-acpi@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RESEND] ACPI / processor_idle: use dead loop instead of io port access for wait
+Date:   Mon, 14 Oct 2019 11:38:13 +0200
+Message-ID: <3727681.FYoUZqeJdN@kreacher>
+In-Reply-To: <8a65bf97-c066-8e5e-ba82-75e2a6fd5b45@intel.com>
+References: <20190909073937.31554-1-fengwei.yin@intel.com> <12278756.3dKznOqol2@kreacher> <8a65bf97-c066-8e5e-ba82-75e2a6fd5b45@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is my work to let decode-dimms work out of the box on most x86
-desktop and laptop systems.
+On Friday, October 11, 2019 3:30:41 PM CEST Yin, Fengwei wrote:
+> 
+> On 10/11/2019 5:05 PM, Rafael J. Wysocki wrote:
+> > Sorry for the delay.
+> No problem.
+> 
+> > 
+> > On Monday, September 9, 2019 9:39:37 AM CEST Yin Fengwei wrote:
+> >> In function acpi_idle_do_entry(), we do an io port access to guarantee
+> >> hardware behavior. But it could trigger unnecessary vmexit for
+> >> virtualization environemnt.
+> > 
+> > Is this a theoretical problem, or do you actually see it?
+> > 
+> > If you see it, I'd like to have a pointer to a bug report regarding it
+> > or similar.
+> We did see this issue when we run linux as guest with ACRN hypervisor
+> instead of kvm or xen. In our case, we export all native C states to
+> guest and let guest choose which C state it will enter.
+> 
+> And we observed many pm timer port access when guest tried to enter
+> deeper C state (Yes, we emulate pm timer so pm timer access will trigger
+> vmexit).
 
-[PATCH 1/4] firmware: dmi: Remember the memory type
-[PATCH 2/4] firmware: dmi: Add dmi_memdev_handle
-[PATCH 3/4] i2c: smbus: Add a way to instantiate SPD EEPROMs automatically
-[PATCH 4/4] i2c: i801: Instantiate SPD EEPROMs automatically
+Can you please put this information into the changelog of your patch?
 
--- 
-Jean Delvare
-SUSE L3 Support
+It works very well as a rationale for me. :-)
+
+
+
