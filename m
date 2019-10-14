@@ -2,81 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5357D65CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:04:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37606D65D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:05:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733201AbfJNPEo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 11:04:44 -0400
-Received: from mga14.intel.com ([192.55.52.115]:58874 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732854AbfJNPEn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 11:04:43 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Oct 2019 08:04:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,296,1566889200"; 
-   d="scan'208";a="195016178"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga007.fm.intel.com with ESMTP; 14 Oct 2019 08:04:41 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1iK1to-00035y-Oc; Mon, 14 Oct 2019 23:04:40 +0800
-Date:   Mon, 14 Oct 2019 23:04:28 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Pankaj Sharma <pankj.sharma@samsung.com>
-Cc:     kbuild-all@lists.01.org, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        wg@grandegger.com, mkl@pengutronix.de, davem@davemloft.net,
-        eugen.hristev@microchip.com, ludovic.desroches@microchip.com,
-        pankaj.dubey@samsung.com, rcsekar@samsung.com,
-        Pankaj Sharma <pankj.sharma@samsung.com>,
-        Sriram Dash <sriram.dash@samsung.com>
-Subject: [PATCH] can: m_can: fix boolreturn.cocci warnings
-Message-ID: <20191014150428.xhhc43ovkxm6oxf2@332d0cec05f4>
-References: <1571052844-22633-1-git-send-email-pankj.sharma@samsung.com>
+        id S1733249AbfJNPFO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 11:05:14 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49918 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733173AbfJNPFO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 11:05:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=5I0CZjdT/2pnYNFsgHQmuSO9JIMdOamZSLZFBh5OmRw=; b=o99ZYYOVu1tmiw7Abm9PzOv3P
+        Va9JabPCGjikdbIolMWRy/pW42cZP+ZM0EGsWhlC9EWWSQ2xEHJEsHRaRCceD3xwlAr8q5LB0dYt7
+        tA3HjseMFc96j7CH8yS07sFe9QNgMOAxK64wSelG8GjP8iCqmRyfBm1KsFtXUVxfT9SvpvJOAQ168
+        dML17pRW7isucTPVwXPzK0bvMrmmdNsQ0BDrkbgCvxQfq/bSDneEKjIA4ux9VkKu1ZFSPD/KDY12A
+        buIK92g4TXyyeoSXOMsXfZj1Fz/P89yXBay4uJO5eVqr3rTXlmPtuGPFLga7bI1V3eLvt8xE3of2w
+        0O6hI4Mrw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iK1uE-0007fP-VL; Mon, 14 Oct 2019 15:05:06 +0000
+Date:   Mon, 14 Oct 2019 08:05:06 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Walter Wu <walter-zh.wu@mediatek.com>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        kasan-dev@googlegroups.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, wsd_upstream@mediatek.com
+Subject: Re: [PATCH 1/2] kasan: detect negative size in memory operation
+ function
+Message-ID: <20191014150506.GX32665@bombadil.infradead.org>
+References: <20191014103632.17930-1-walter-zh.wu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1571052844-22633-1-git-send-email-pankj.sharma@samsung.com>
-X-Patchwork-Hint: ignore
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20191014103632.17930-1-walter-zh.wu@mediatek.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: kbuild test robot <lkp@intel.com>
+On Mon, Oct 14, 2019 at 06:36:32PM +0800, Walter Wu wrote:
+> @@ -110,8 +111,9 @@ void *memset(void *addr, int c, size_t len)
+>  #undef memmove
+>  void *memmove(void *dest, const void *src, size_t len)
+>  {
+> -	check_memory_region((unsigned long)src, len, false, _RET_IP_);
+> -	check_memory_region((unsigned long)dest, len, true, _RET_IP_);
+> +	if (!check_memory_region((unsigned long)src, len, false, _RET_IP_) ||
+> +	!check_memory_region((unsigned long)dest, len, true, _RET_IP_))
 
-drivers/net/can/m_can/m_can.c:783:9-10: WARNING: return of 0/1 in function 'is_protocol_err' with return type bool
+This indentation is wrong.  Should be:
++	if (!check_memory_region((unsigned long)src, len, false, _RET_IP_) ||
++	    !check_memory_region((unsigned long)dest, len, true, _RET_IP_))
 
- Return statements in functions returning bool should use
- true/false instead of 1/0.
-Generated by: scripts/coccinelle/misc/boolreturn.cocci
-
-Fixes: 46946163ac61 ("can: m_can: add support for handling arbitration error")
-CC: Pankaj Sharma <pankj.sharma@samsung.com>
-Signed-off-by: kbuild test robot <lkp@intel.com>
----
-
-url:    https://github.com/0day-ci/linux/commits/Pankaj-Sharma/can-m_can-add-support-for-handling-arbitration-error/20191014-193532
-
- m_can.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- a/drivers/net/can/m_can/m_can.c
-+++ b/drivers/net/can/m_can/m_can.c
-@@ -780,9 +780,9 @@ static inline bool is_lec_err(u32 psr)
- static inline bool is_protocol_err(u32 irqstatus)
- {
- 	if (irqstatus & IR_ERR_LEC_31X)
--		return 1;
-+		return true;
- 	else
--		return 0;
-+		return false;
- }
- 
- static int m_can_handle_protocol_error(struct net_device *dev, u32 irqstatus)
+(also in one subsequent function)
