@@ -2,215 +2,208 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87AE3D5FDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 12:16:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB3A6D5FE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 12:18:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731405AbfJNKQr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 06:16:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50866 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730860AbfJNKQq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 06:16:46 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1731439AbfJNKSC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 06:18:02 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51396 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730860AbfJNKSC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 06:18:02 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A6E21607C3; Mon, 14 Oct 2019 10:17:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1571048279;
+        bh=ULCuz7f6VakLd7Q+JCOH3uihZpD9OWkyMMR/NSXqYhA=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Ltaj/sHmP1xtO19+PnT9DfF62zn04MREtdsblsRioWxWL0NYaBMLCUmSZo61sMQ9V
+         yTw611uKf9jkIqNq3nEI+7pQc7RYZtg9Z7uoByPG/he9YWS52PrJZQGppI2LLovs4l
+         eroT3Ka1HV0OSKzKKFRaHh8ZSp1bYUEhUE4XXKEo=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from [10.206.28.9] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BEDF6206A3;
-        Mon, 14 Oct 2019 10:16:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571048205;
-        bh=HvxC/CtHDl0P6TKWd5+t40HL3OMhJyXpqKMzr7RI3qM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=NvF+Mthu1tt9Fp9xaXLNy+BBv8lyWroNWIPGfy1sA/zKIk2+PfeB5pAbgLVbwQPED
-         rRDlxw9T8xtpNJfKsn1I898F/6Diu+MnhrfZp0LiiWHZrqo8Lm9N+3G3YjKX10u/W9
-         ZS4Bx5puyAKi4Wz5fnNoWtf1WOrI9Oa7QzeVmATg=
-Date:   Mon, 14 Oct 2019 12:16:42 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] powerpc: pseries: no need to check return value of
- debugfs_create functions
-Message-ID: <20191014101642.GA30179@kroah.com>
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id F16EE60610;
+        Mon, 14 Oct 2019 10:17:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1571048278;
+        bh=ULCuz7f6VakLd7Q+JCOH3uihZpD9OWkyMMR/NSXqYhA=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=gNPJM5ohIGYFxVa5T6fl4WVvVezImvSgVMF17qXOLcFudxisbAHmNuxpNGjnxzYnK
+         ObrhsM9gE73fVDproXDjOOewv44/raWFhwhQb8mTRozTHex64Lqx86+xMaQeyza6U4
+         lh+X8u5eiStxjXjulJ5yRhorZFwYD92Gad5lrGZo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F16EE60610
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v3 2/3] dt-bindings: clk: qcom: Add YAML schemas for the
+ GCC clock bindings
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>, robh+dt@kernel.org
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20190918095018.17979-1-tdas@codeaurora.org>
+ <20190918095018.17979-3-tdas@codeaurora.org>
+ <20190918212614.448FC20882@mail.kernel.org>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <a6d37020-61e3-826b-f281-3e51cba4668b@codeaurora.org>
+Date:   Mon, 14 Oct 2019 15:47:52 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20190918212614.448FC20882@mail.kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When calling debugfs functions, there is no need to ever check the
-return value.  The function can work or not, but the code logic should
-never do something different based on this.
+Hi Stephen,
 
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
-Note, I can take this in my driver-core tree as I have some later
-debugfs core cleanups that depend on this, if no one objects.
+Thanks for your review.
 
-thanks,
+On 9/19/2019 2:56 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2019-09-18 02:50:17)
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+>> new file mode 100644
+>> index 000000000000..056a7977c458
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+>> @@ -0,0 +1,157 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/qcom,gcc.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm Global Clock & Reset Controller Binding
+>> +
+>> +maintainers:
+>> +  - Stephen Boyd <sboyd@kernel.org>
+> 
+> Why am I the maintainer? Shouldn't this be you?
+> 
+>> +
+>> +properties:
+>> +  "#clock-cells":
+>> +    const: 1
+>> +
+>> +  "#reset-cells":
+>> +    const: 1
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  compatible :
+>> +     enum:
+>> +       - qcom,gcc-apq8064
+>> +       - qcom,gcc-apq8084
+>> +       - qcom,gcc-ipq8064
+>> +       - qcom,gcc-ipq4019
+>> +       - qcom,gcc-ipq8074
+>> +       - qcom,gcc-msm8660
+>> +       - qcom,gcc-msm8916
+>> +       - qcom,gcc-msm8960
+>> +       - qcom,gcc-msm8974
+>> +       - qcom,gcc-msm8974pro
+>> +       - qcom,gcc-msm8974pro-ac
+>> +       - qcom,gcc-msm8994
+>> +       - qcom,gcc-msm8996
+>> +       - qcom,gcc-msm8998
+>> +       - qcom,gcc-mdm9615
+>> +       - qcom,gcc-qcs404
+>> +       - qcom,gcc-sdm630
+>> +       - qcom,gcc-sdm660
+>> +       - qcom,gcc-sdm845
+>> +       - qcom,gcc-sm8150
+>> +       - qcom,gcc-sc7180
+>> +
+>> +  clocks:
+>> +    minItems: 1
+>> +    maxItems: 3
+>> +    items:
+>> +      - description: Board XO source
+>> +      - description: Board active XO source
+>> +      - description: Sleep clock source(optional)
+> 
+> Why is sleep clk optional?
+> 
 
-greg k-h
+Will remove optional.
 
- arch/powerpc/platforms/pseries/dtl.c         | 38 ++++----------------
- arch/powerpc/platforms/pseries/hvCall_inst.c | 12 ++-----
- arch/powerpc/platforms/pseries/lpar.c        | 15 +-------
- 3 files changed, 10 insertions(+), 55 deletions(-)
+>> +
+>> +  clock-names:
+>> +    minItems: 1
+>> +    maxItems: 3
+>> +    items:
+>> +      - const: bi_tcxo
+>> +      - const: bi_tcxo_ao
+>> +      - const: sleep_clk
+>> +
+>> +  nvmem-cells:
+>> +    minItems: 1
+>> +    maxItems: 2
+>> +    description:
+>> +      Qualcomm TSENS (thermal sensor device) on some devices can
+> 
+> Can this be restricted to certain compatible strings where this is the
+> case? I'd like to be able to confirm that the compatibles that expect to
+> see the nvmem actually have it.
+> 
 
-diff --git a/arch/powerpc/platforms/pseries/dtl.c b/arch/powerpc/platforms/pseries/dtl.c
-index 2b87480f2837..eab8aa293743 100644
---- a/arch/powerpc/platforms/pseries/dtl.c
-+++ b/arch/powerpc/platforms/pseries/dtl.c
-@@ -19,7 +19,6 @@
- 
- struct dtl {
- 	struct dtl_entry	*buf;
--	struct dentry		*file;
- 	int			cpu;
- 	int			buf_entries;
- 	u64			last_idx;
-@@ -320,46 +319,28 @@ static const struct file_operations dtl_fops = {
- 
- static struct dentry *dtl_dir;
- 
--static int dtl_setup_file(struct dtl *dtl)
-+static void dtl_setup_file(struct dtl *dtl)
- {
- 	char name[10];
- 
- 	sprintf(name, "cpu-%d", dtl->cpu);
- 
--	dtl->file = debugfs_create_file(name, 0400, dtl_dir, dtl, &dtl_fops);
--	if (!dtl->file)
--		return -ENOMEM;
--
--	return 0;
-+	debugfs_create_file(name, 0400, dtl_dir, dtl, &dtl_fops);
- }
- 
- static int dtl_init(void)
- {
--	struct dentry *event_mask_file, *buf_entries_file;
--	int rc, i;
-+	int i;
- 
- 	if (!firmware_has_feature(FW_FEATURE_SPLPAR))
- 		return -ENODEV;
- 
- 	/* set up common debugfs structure */
- 
--	rc = -ENOMEM;
- 	dtl_dir = debugfs_create_dir("dtl", powerpc_debugfs_root);
--	if (!dtl_dir) {
--		printk(KERN_WARNING "%s: can't create dtl root dir\n",
--				__func__);
--		goto err;
--	}
- 
--	event_mask_file = debugfs_create_x8("dtl_event_mask", 0600,
--				dtl_dir, &dtl_event_mask);
--	buf_entries_file = debugfs_create_u32("dtl_buf_entries", 0400,
--				dtl_dir, &dtl_buf_entries);
--
--	if (!event_mask_file || !buf_entries_file) {
--		printk(KERN_WARNING "%s: can't create dtl files\n", __func__);
--		goto err_remove_dir;
--	}
-+	debugfs_create_x8("dtl_event_mask", 0600, dtl_dir, &dtl_event_mask);
-+	debugfs_create_u32("dtl_buf_entries", 0400, dtl_dir, &dtl_buf_entries);
- 
- 	/* set up the per-cpu log structures */
- 	for_each_possible_cpu(i) {
-@@ -367,16 +348,9 @@ static int dtl_init(void)
- 		spin_lock_init(&dtl->lock);
- 		dtl->cpu = i;
- 
--		rc = dtl_setup_file(dtl);
--		if (rc)
--			goto err_remove_dir;
-+		dtl_setup_file(dtl);
- 	}
- 
- 	return 0;
--
--err_remove_dir:
--	debugfs_remove_recursive(dtl_dir);
--err:
--	return rc;
- }
- machine_arch_initcall(pseries, dtl_init);
-diff --git a/arch/powerpc/platforms/pseries/hvCall_inst.c b/arch/powerpc/platforms/pseries/hvCall_inst.c
-index bcc1b67417a8..c40c62ec432e 100644
---- a/arch/powerpc/platforms/pseries/hvCall_inst.c
-+++ b/arch/powerpc/platforms/pseries/hvCall_inst.c
-@@ -129,7 +129,6 @@ static void probe_hcall_exit(void *ignored, unsigned long opcode, long retval,
- static int __init hcall_inst_init(void)
- {
- 	struct dentry *hcall_root;
--	struct dentry *hcall_file;
- 	char cpu_name_buf[CPU_NAME_BUF_SIZE];
- 	int cpu;
- 
-@@ -145,17 +144,12 @@ static int __init hcall_inst_init(void)
- 	}
- 
- 	hcall_root = debugfs_create_dir(HCALL_ROOT_DIR, NULL);
--	if (!hcall_root)
--		return -ENOMEM;
- 
- 	for_each_possible_cpu(cpu) {
- 		snprintf(cpu_name_buf, CPU_NAME_BUF_SIZE, "cpu%d", cpu);
--		hcall_file = debugfs_create_file(cpu_name_buf, 0444,
--						 hcall_root,
--						 per_cpu(hcall_stats, cpu),
--						 &hcall_inst_seq_fops);
--		if (!hcall_file)
--			return -ENOMEM;
-+		debugfs_create_file(cpu_name_buf, 0444, hcall_root,
-+				    per_cpu(hcall_stats, cpu),
-+				    &hcall_inst_seq_fops);
- 	}
- 
- 	return 0;
-diff --git a/arch/powerpc/platforms/pseries/lpar.c b/arch/powerpc/platforms/pseries/lpar.c
-index b53359258d99..284b2eb4a669 100644
---- a/arch/powerpc/platforms/pseries/lpar.c
-+++ b/arch/powerpc/platforms/pseries/lpar.c
-@@ -1995,24 +1995,11 @@ static int __init vpa_debugfs_init(void)
- 		return 0;
- 
- 	vpa_dir = debugfs_create_dir("vpa", powerpc_debugfs_root);
--	if (!vpa_dir) {
--		pr_warn("%s: can't create vpa root dir\n", __func__);
--		return -ENOMEM;
--	}
- 
- 	/* set up the per-cpu vpa file*/
- 	for_each_possible_cpu(i) {
--		struct dentry *d;
--
- 		sprintf(name, "cpu-%ld", i);
--
--		d = debugfs_create_file(name, 0400, vpa_dir, (void *)i,
--					&vpa_fops);
--		if (!d) {
--			pr_warn("%s: can't create per-cpu vpa file\n",
--					__func__);
--			return -ENOMEM;
--		}
-+		debugfs_create_file(name, 0400, vpa_dir, (void *)i, &vpa_fops);
- 	}
- 
- 	return 0;
+I will add this in the next patch.
+
+>> +      be part of GCC and hence the TSENS properties can also be part
+>> +      of the GCC/clock-controller node.
+>> +      For more details on the TSENS properties please refer
+>> +      Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+>> +
+>> +  nvmem-cell-names:
+>> +    minItems: 1
+>> +    maxItems: 2
+>> +    description:
+>> +      Names for each nvmem-cells specified.
+>> +    items:
+>> +      - const: calib
+>> +      - const: calib_backup
+>> +
+>> +  "#thermal-sensor-cells":
+>> +    const: 1
+> 
+> Same for this one.
+> 
+>> +
+>> +  "#power-domain-cells":
+>> +    const: 1
+>> +
+>> +  protected-clocks:
+>> +    description:
+>> +       Protected clock specifier list as per common clock binding
+>> +
+>> +required:
+>> +  - "#clock-cells"
+>> +  - "#reset-cells"
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - clock-names
+>> +
+>> +examples:
+
 -- 
-2.23.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
+--
