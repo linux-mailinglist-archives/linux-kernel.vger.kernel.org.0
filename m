@@ -2,198 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D75AD6676
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:48:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43CA9D6668
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:46:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387839AbfJNPrE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 11:47:04 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:38392 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731070AbfJNPrD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 11:47:03 -0400
-Received: by mail-oi1-f196.google.com with SMTP id m16so14131547oic.5
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 08:47:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+d/ANv1Sk5IA8SJFgYWLVzJmUF0sZPRMkbEU6RlJbuU=;
-        b=RbIgsQ3JeEoO2SUOr8czjyqwoTyu9r8YhfgWisemdpxK2TD1dtv+aT7vlxPqIla1pI
-         HC10AunLc1raT9aMtGsv8cMVAagR08qwBHnCigIE1cpkkHwxDsfvxdLIp05rI+qIS1hU
-         Y7ekzDFMeu+RxKMZwPncW2tvPmij9/iW1nQVTpJlhVclDUl/F99UBtfouYxkJiw7aE1E
-         7c1p3klAtJjlAxLA7XT3gvqi34CrNTAKfxstdablRwFGe5qKrNAV5qNlctCGjafPirMM
-         dCBbBrDTnm82fyaf3uoxEEJhlyuUK4d1y1NZ4JL5nFUkjYjw1lnxCpVqLo51fya8aPHW
-         Py/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references;
-        bh=+d/ANv1Sk5IA8SJFgYWLVzJmUF0sZPRMkbEU6RlJbuU=;
-        b=EukRDUDWa/I/QzkTyWY1/UwvPWkHKwsqjZSW0ApBwF0Jr1uQTj7FG5tJl0zZuu1k/t
-         ahvLNQnNdseTQm83zfZ1N+MfC8QOJK59qGHdw+g1E2b7AjKeL6zmrLSDG9zaerDLCB6X
-         VV7ZIw88HKpO9+EqROerWJqn99EfgCZaJkiNcyug9nsJHPG0Za8644Xlnu+EexuVUcVA
-         F4avS58hS/cfoxlqT8hHELXA6hBPzs8sbDKvRtteyQN9xy5F+CF8WXrUOhgnIZwlH7Zv
-         zgWXz7nQMD2lP4nCeBriUzGdRNGZz7E63FLKF9U6f0BeYdDtbWLojTE0dt+7Ipv878Dt
-         oIIg==
-X-Gm-Message-State: APjAAAU9GvcRKNa7+aW2Jt9QdQ3f9xP3o67mT2CADQnfGU2/ExNHpAAI
-        67KSiJI0o6gqo0VGaTIc/w==
-X-Google-Smtp-Source: APXvYqwI0Z1cxSpz1w0mNked6Bo5WZ8GaCPKDgxLt7TEcEY/EZGe/CNHeNQtWH8abrD4+mF/fnVJCg==
-X-Received: by 2002:aca:5ed7:: with SMTP id s206mr23826167oib.134.1571068022560;
-        Mon, 14 Oct 2019 08:47:02 -0700 (PDT)
-Received: from serve.minyard.net ([47.184.136.59])
-        by smtp.gmail.com with ESMTPSA id o23sm5832035ote.67.2019.10.14.08.47.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2019 08:47:02 -0700 (PDT)
-Received: from t560.minyard.net (unknown [192.168.27.180])
-        by serve.minyard.net (Postfix) with ESMTPA id 7FEA1180044;
-        Mon, 14 Oct 2019 15:47:01 +0000 (UTC)
-From:   minyard@acm.org
-To:     tony camuso <tcamuso@redhat.com>
-Cc:     openipmi-developer@lists.sourceforge.net,
-        Corey Minyard <minyard@acm.org>, linux-kernel@vger.kernel.org,
-        Corey Minyard <cminyard@mvista.com>
-Subject: [PATCH] ipmi: Don't allow device module unload when in use
-Date:   Mon, 14 Oct 2019 10:46:32 -0500
-Message-Id: <20191014154632.11103-1-minyard@acm.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191014134141.GA25427@t560>
-References: <20191014134141.GA25427@t560>
+        id S2387832AbfJNPqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 11:46:44 -0400
+Received: from foss.arm.com ([217.140.110.172]:47392 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387802AbfJNPql (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 11:46:41 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CCF6C28;
+        Mon, 14 Oct 2019 08:46:40 -0700 (PDT)
+Received: from [10.1.197.57] (e110467-lin.cambridge.arm.com [10.1.197.57])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C04823F718;
+        Mon, 14 Oct 2019 08:46:39 -0700 (PDT)
+Subject: Re: [PATCH] drm/panfrost: DMA map all pages shared with the GPU
+To:     Steven Price <steven.price@arm.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh@kernel.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        dri-devel@lists.freedesktop.org
+References: <20191014151616.14099-1-steven.price@arm.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <99f279c5-e93d-ade6-cd97-56b3078da755@arm.com>
+Date:   Mon, 14 Oct 2019 16:46:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20191014151616.14099-1-steven.price@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Corey Minyard <cminyard@mvista.com>
+On 14/10/2019 16:16, Steven Price wrote:
+> Pages shared with the GPU are (often) not cache coherent with the CPU so
+> cache maintenance is required to flush the CPU's caches. This was
+> already done when mapping pages on fault, but wasn't previously done
+> when mapping a freshly allocated page.
+> 
+> Fix this by moving the call to dma_map_sg() into mmu_map_sg() ensuring
+> that it is always called when pages are mapped onto the GPU. Since
+> mmu_map_sg() can now fail the code also now has to handle an error
+> return.
+> 
+> Not performing this cache maintenance can cause errors in the GPU output
+> (CPU caches are later flushed and overwrite the GPU output). In theory
+> it also allows the GPU (and by extension user space) to observe the
+> memory contents prior to sanitization.
 
-If something has the IPMI driver open, don't allow the device
-module to be unloaded.  Before it would unload and the user would
-get errors on use.
+For the non-heap case, aren't the pages already supposed to be mapped by 
+drm_gem_shmem_get_pages_sgt()?
 
-This change is made on user request, and it makes it consistent
-with the I2C driver, which has the same behavior.
+(Hmm, maybe I should try hooking up the GPU SMMU on my Juno to serve as 
+a cheeky DMA-API-mishap detector...)
 
-It does change things a little bit with respect to kernel users.
-If the ACPI or IPMI watchdog (or any other kernel user) has
-created a user, then the device module cannot be unloaded.  Before
-it could be unloaded,
+Robin.
 
-This does not affect hot-plug.  If the device goes away (it's on
-something removable that is removed or is hot-removed via sysfs)
-then it still behaves as it did before.
-
-Reported-by: tony camuso <tcamuso@redhat.com>
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
----
-Tony, here is a suggested change for this.  Can you look it over and
-see if it looks ok?
-
-Thanks,
-
--corey
-
- drivers/char/ipmi/ipmi_msghandler.c | 23 ++++++++++++++++-------
- include/linux/ipmi_smi.h            | 12 ++++++++----
- 2 files changed, 24 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-index 2aab80e19ae0..15680de18625 100644
---- a/drivers/char/ipmi/ipmi_msghandler.c
-+++ b/drivers/char/ipmi/ipmi_msghandler.c
-@@ -448,6 +448,8 @@ enum ipmi_stat_indexes {
- 
- #define IPMI_IPMB_NUM_SEQ	64
- struct ipmi_smi {
-+	struct module *owner;
-+
- 	/* What interface number are we? */
- 	int intf_num;
- 
-@@ -1220,6 +1222,11 @@ int ipmi_create_user(unsigned int          if_num,
- 	if (rv)
- 		goto out_kfree;
- 
-+	if (!try_module_get(intf->owner)) {
-+		rv = -ENODEV;
-+		goto out_kfree;
-+	}
-+	
- 	/* Note that each existing user holds a refcount to the interface. */
- 	kref_get(&intf->refcount);
- 
-@@ -1349,6 +1356,7 @@ static void _ipmi_destroy_user(struct ipmi_user *user)
- 	}
- 
- 	kref_put(&intf->refcount, intf_free);
-+	module_put(intf->owner);
- }
- 
- int ipmi_destroy_user(struct ipmi_user *user)
-@@ -2459,7 +2467,7 @@ static int __get_device_id(struct ipmi_smi *intf, struct bmc_device *bmc)
-  * been recently fetched, this will just use the cached data.  Otherwise
-  * it will run a new fetch.
-  *
-- * Except for the first time this is called (in ipmi_register_smi()),
-+ * Except for the first time this is called (in ipmi_add_smi()),
-  * this will always return good data;
-  */
- static int __bmc_get_device_id(struct ipmi_smi *intf, struct bmc_device *bmc,
-@@ -3377,10 +3385,11 @@ static void redo_bmc_reg(struct work_struct *work)
- 	kref_put(&intf->refcount, intf_free);
- }
- 
--int ipmi_register_smi(const struct ipmi_smi_handlers *handlers,
--		      void		       *send_info,
--		      struct device            *si_dev,
--		      unsigned char            slave_addr)
-+int ipmi_add_smi(struct module         *owner,
-+		 const struct ipmi_smi_handlers *handlers,
-+		 void		       *send_info,
-+		 struct device         *si_dev,
-+		 unsigned char         slave_addr)
- {
- 	int              i, j;
- 	int              rv;
-@@ -3406,7 +3415,7 @@ int ipmi_register_smi(const struct ipmi_smi_handlers *handlers,
- 		return rv;
- 	}
- 
--
-+	intf->owner = owner;
- 	intf->bmc = &intf->tmp_bmc;
- 	INIT_LIST_HEAD(&intf->bmc->intfs);
- 	mutex_init(&intf->bmc->dyn_mutex);
-@@ -3514,7 +3523,7 @@ int ipmi_register_smi(const struct ipmi_smi_handlers *handlers,
- 
- 	return rv;
- }
--EXPORT_SYMBOL(ipmi_register_smi);
-+EXPORT_SYMBOL(ipmi_add_smi);
- 
- static void deliver_smi_err_response(struct ipmi_smi *intf,
- 				     struct ipmi_smi_msg *msg,
-diff --git a/include/linux/ipmi_smi.h b/include/linux/ipmi_smi.h
-index 4dc66157d872..deec18b8944a 100644
---- a/include/linux/ipmi_smi.h
-+++ b/include/linux/ipmi_smi.h
-@@ -224,10 +224,14 @@ static inline int ipmi_demangle_device_id(uint8_t netfn, uint8_t cmd,
-  * is called, and the lower layer must get the interface from that
-  * call.
-  */
--int ipmi_register_smi(const struct ipmi_smi_handlers *handlers,
--		      void                     *send_info,
--		      struct device            *dev,
--		      unsigned char            slave_addr);
-+int ipmi_add_smi(struct module            *owner,
-+		 const struct ipmi_smi_handlers *handlers,
-+		 void                     *send_info,
-+		 struct device            *dev,
-+		 unsigned char            slave_addr);
-+
-+#define ipmi_register_smi(handlers, send_info, dev, slave_addr) \
-+	ipmi_add_smi(THIS_MODULE, handlers, send_info, dev, slave_addr)
- 
- /*
-  * Remove a low-level interface from the IPMI driver.  This will
--- 
-2.17.1
-
+> Fixes: f3ba91228e8e ("drm/panfrost: Add initial panfrost driver")
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+>   drivers/gpu/drm/panfrost/panfrost_mmu.c | 20 ++++++++++++--------
+>   1 file changed, 12 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> index bdd990568476..0495e48c238d 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> @@ -248,6 +248,9 @@ static int mmu_map_sg(struct panfrost_device *pfdev, struct panfrost_mmu *mmu,
+>   	struct io_pgtable_ops *ops = mmu->pgtbl_ops;
+>   	u64 start_iova = iova;
+>   
+> +	if (!dma_map_sg(pfdev->dev, sgt->sgl, sgt->nents, DMA_BIDIRECTIONAL))
+> +		return -EINVAL;
+> +
+>   	for_each_sg(sgt->sgl, sgl, sgt->nents, count) {
+>   		unsigned long paddr = sg_dma_address(sgl);
+>   		size_t len = sg_dma_len(sgl);
+> @@ -275,6 +278,7 @@ int panfrost_mmu_map(struct panfrost_gem_object *bo)
+>   	struct panfrost_device *pfdev = to_panfrost_device(obj->dev);
+>   	struct sg_table *sgt;
+>   	int prot = IOMMU_READ | IOMMU_WRITE;
+> +	int ret;
+>   
+>   	if (WARN_ON(bo->is_mapped))
+>   		return 0;
+> @@ -286,10 +290,12 @@ int panfrost_mmu_map(struct panfrost_gem_object *bo)
+>   	if (WARN_ON(IS_ERR(sgt)))
+>   		return PTR_ERR(sgt);
+>   
+> -	mmu_map_sg(pfdev, bo->mmu, bo->node.start << PAGE_SHIFT, prot, sgt);
+> -	bo->is_mapped = true;
+> +	ret = mmu_map_sg(pfdev, bo->mmu, bo->node.start << PAGE_SHIFT,
+> +			 prot, sgt);
+> +	if (ret == 0)
+> +		bo->is_mapped = true;
+>   
+> -	return 0;
+> +	return ret;
+>   }
+>   
+>   void panfrost_mmu_unmap(struct panfrost_gem_object *bo)
+> @@ -503,12 +509,10 @@ int panfrost_mmu_map_fault_addr(struct panfrost_device *pfdev, int as, u64 addr)
+>   	if (ret)
+>   		goto err_pages;
+>   
+> -	if (!dma_map_sg(pfdev->dev, sgt->sgl, sgt->nents, DMA_BIDIRECTIONAL)) {
+> -		ret = -EINVAL;
+> +	ret = mmu_map_sg(pfdev, bo->mmu, addr,
+> +			 IOMMU_WRITE | IOMMU_READ | IOMMU_NOEXEC, sgt);
+> +	if (ret)
+>   		goto err_map;
+> -	}
+> -
+> -	mmu_map_sg(pfdev, bo->mmu, addr, IOMMU_WRITE | IOMMU_READ | IOMMU_NOEXEC, sgt);
+>   
+>   	bo->is_mapped = true;
+>   
+> 
