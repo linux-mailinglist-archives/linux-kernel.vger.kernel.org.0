@@ -2,125 +2,314 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D739D59AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 04:51:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11D11D59B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 04:53:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729917AbfJNCv2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 13 Oct 2019 22:51:28 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:46216 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729901AbfJNCv0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Oct 2019 22:51:26 -0400
-Received: by mail-oi1-f193.google.com with SMTP id k25so12526927oiw.13
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2019 19:51:25 -0700 (PDT)
+        id S1729827AbfJNCxj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 13 Oct 2019 22:53:39 -0400
+Received: from mail-eopbgr740130.outbound.protection.outlook.com ([40.107.74.130]:23472
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729494AbfJNCxi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Oct 2019 22:53:38 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dUCJlufzAi5V7pv6bammKlOiI04/7V93LFIcao462VVxotDgeTdNQetSBh5E4lioS4LA13FHC42T14Brgc2mvKQsZAnoTklyEIzOUDcVneGvsfwf01szu7aInsd/Tvtdh5Iwmmuedc1Jytb5njuIkQkDDcqMs0GrYqNm5fMgNs7gROkz89DW3j+3dDcGI5yO8mA+o5Xv8Nv9xo47PRLDvHJM0ou+XtGmLgqvAUysbONkRR79XWCDqhvJAvxH6w3T2hyulF4+nCDOIjO0IATvmkN2CAMhSO/9ZyD2C/ugoL7SwOhbWm32bsb6o4cYkTSfwJmKxrUmja51D0oa7nyH8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hpP7ocOwyme+KvszB4vYQpewzyYmu7E4aS6LnB6QbcE=;
+ b=QbiZbPpVL/KU+m6EbpQ2SYUHp2wtmdQR5+DH27EyteU3t+ooQo6fyBYuDUPPV4ZjlaTXRV5pL+IJXmkrWRf5I6q/AzHAGvWZpZc4qwkQt7ld3F9cjvImT91l/lSEx+FU51L/edDXmzKjPec8AzfigOm8gz9aMLfK/36Z1sd92Vdp3aDjJmXciuVtBruD6JIsngpbBdhUFrl83v3UPx18REmgSX0h2y5BqV0lphCJrPmT7YNLumoNwD75L/AXYCHkDUtjF79B37z8fexmBK2fqyMIvDNkJPM6lcKCJEmPQPcyg5/ZUhz8pQaLDMzztA+8vSkO7Bhvf1rQD4+/a69s0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=analogixsemi.com; dmarc=pass action=none
+ header.from=analogixsemi.com; dkim=pass header.d=analogixsemi.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ELg5bkMi+FoappyTCFIUx1Rg8zAW2tMRA+teB43Z1gY=;
-        b=DAHcZpcHRxIEH+BjxCNkrpahqtOtpNE8Wov9Ku5GbbLrWCYS6wZZY8TxY5xsTvnRcI
-         cx/tv3jnL40q4qAna6T/lHY6gVi2sQk9AMYAbtRLOt5DOGVB8MDmRowbngBngLe11bHw
-         /W3qsCzLy6Q5QynUELtKB6qPYh4pb3q2CS7qxjMfjBbr+Swzlgc9B7GtkNilk3l/rIrG
-         CxPEjXn8sulp19LAonhdDj+koKA2aU0diP1aofLiHm7E7SZqb/sbIiAn4xY29E7fVKWP
-         6xnU+o2lELxjR137GkPGzDjV3Uwef9cz96XbN9OUWi8VAZrm2GCQrCRjkd2h99eFgc5h
-         Cs3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ELg5bkMi+FoappyTCFIUx1Rg8zAW2tMRA+teB43Z1gY=;
-        b=KNfPDNHfnTMCLRUkrusOkQSedp4oU9XsF5Xx9a5LJg6Gdhaz+fovY2ppTQs4SfI1WT
-         nq8cOsSkCn9yeVVP3CLG8/zBNz2a9WOGpE0nAmcLyIpTZa1ur/lS9l+n41i/2ArmE/47
-         DKOfMxXYb3o65PB7CVKBCIegFcAcjsM/xWIENak1ZQlGPVdOyckoNVxxKsWLoEc3CJ/r
-         Ykfi3TwVZsxDg0UxLmHfFdP3X+I6XjSyrqaMUkyudiHDs22wt1MWzJr04LtoAlKqqOW8
-         GtwIM9sWgPed/Qdzcy8hcnKSCEiu6nL1SDsf9kuJOSkTOn+bbee0wL9Z2LyoGfAOylv0
-         BfAg==
-X-Gm-Message-State: APjAAAWOffPhOSTQjckv1b5afUx+HIJnAYbiJ6XE6PCZGCdAkONfMInQ
-        988TY191xOEJKDzOUQvs4Uo=
-X-Google-Smtp-Source: APXvYqxidzN5tutwxdHg98hmZURUZDkArUJX8YnsN19/vfIrWs3pMFVf3dOO84FGEF13ujyo5Vsozg==
-X-Received: by 2002:a54:418c:: with SMTP id 12mr22608906oiy.154.1571021484434;
-        Sun, 13 Oct 2019 19:51:24 -0700 (PDT)
-Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id 11sm5612491otg.62.2019.10.13.19.51.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Oct 2019 19:51:23 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH v4 3/3] powerpc/prom_init: Use -ffreestanding to avoid a reference to bcmp
-Date:   Sun, 13 Oct 2019 19:51:01 -0700
-Message-Id: <20191014025101.18567-4-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191014025101.18567-1-natechancellor@gmail.com>
-References: <20190911182049.77853-1-natechancellor@gmail.com>
- <20191014025101.18567-1-natechancellor@gmail.com>
+ d=Analogixsemi.onmicrosoft.com; s=selector2-Analogixsemi-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hpP7ocOwyme+KvszB4vYQpewzyYmu7E4aS6LnB6QbcE=;
+ b=kFInHfcThUNiX652RZ8ryLFURIAteqRAX076A6ZnOqH7p2+SGkp8vNOcQ8tGRGsciKsEbxKcIibc4iMRUzHOSjmuepcG5CpMtXqwZd/QV4n0acTwabp4q3I91uDvgyDZEOG5soEx/uzA4/jqISOuk08jFpJv+dosDm3d79FUMOk=
+Received: from SN6PR04MB4543.namprd04.prod.outlook.com (52.135.120.29) by
+ SN6PR04MB3791.namprd04.prod.outlook.com (52.135.81.24) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2347.16; Mon, 14 Oct 2019 02:53:33 +0000
+Received: from SN6PR04MB4543.namprd04.prod.outlook.com
+ ([fe80::c55e:6c70:adbb:cf87]) by SN6PR04MB4543.namprd04.prod.outlook.com
+ ([fe80::c55e:6c70:adbb:cf87%5]) with mapi id 15.20.2347.021; Mon, 14 Oct 2019
+ 02:53:33 +0000
+From:   Xin Ji <xji@analogixsemi.com>
+To:     Andrzej Hajda <a.hajda@samsung.com>
+CC:     "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Sheng Pan <span@analogixsemi.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: drm/bridge: anx7625: MIPI to DP
+ transmitter binding
+Thread-Topic: [PATCH v2 1/2] dt-bindings: drm/bridge: anx7625: MIPI to DP
+ transmitter binding
+Thread-Index: AQHVf9qi2ZQPn8IAhkqsNtop++SEM6dVTGmAgAQo94A=
+Date:   Mon, 14 Oct 2019 02:53:33 +0000
+Message-ID: <20191014025322.GA2390@xin-VirtualBox>
+References: <cover.1570760115.git.xji@analogixsemi.com>
+ <CGME20191011022154epcas3p1a719423a23f8bf193b6136e853e66b04@epcas3p1.samsung.com>
+ <75bb8a47d2c3c1f979c6d62158c21988b846e79b.1570760115.git.xji@analogixsemi.com>
+ <3c6067de-9f3c-b93c-f263-fa5dd09c3270@samsung.com>
+In-Reply-To: <3c6067de-9f3c-b93c-f263-fa5dd09c3270@samsung.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HK0P153CA0024.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:203:18::36) To SN6PR04MB4543.namprd04.prod.outlook.com
+ (2603:10b6:805:a8::29)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=xji@analogixsemi.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [114.247.245.252]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 536e5202-1e21-4dbe-78ec-08d75051b33e
+x-ms-traffictypediagnostic: SN6PR04MB3791:
+x-ms-exchange-purlcount: 3
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <SN6PR04MB3791AF83122ACDA5C238C202C7900@SN6PR04MB3791.namprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 01901B3451
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(136003)(39840400004)(376002)(396003)(346002)(366004)(189003)(199004)(6512007)(9686003)(6306002)(54906003)(186003)(99286004)(26005)(7736002)(33656002)(8936002)(52116002)(25786009)(6486002)(53546011)(2906002)(229853002)(76176011)(6506007)(386003)(6436002)(1076003)(102836004)(107886003)(6916009)(4326008)(11346002)(256004)(8676002)(71190400001)(71200400001)(81166006)(478600001)(81156014)(446003)(7416002)(86362001)(33716001)(66556008)(64756008)(66446008)(966005)(66066001)(316002)(66946007)(66476007)(6116002)(14454004)(5660300002)(476003)(486006)(3846002)(305945005)(6246003);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR04MB3791;H:SN6PR04MB4543.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: analogixsemi.com does not
+ designate permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: xsomvpfWCxbKmmVoa69tYSEK/MwbI0srJR/+DAlcbkkIqlmE9xfsnaA+h+FnOmXI/XcVjVMCM936thWXWZh+jUVYuCcQvwAAQyyCOs7Bcbkwz2rTKr08auw0V+/wTHjEp+TSNdb4kE+fgnY0s8TC25WlubrdLHpMM6D25Z0t5AM9Yom1WKToymHMEpxe32AZ0JDaAmG/+XHk2EzZD6UoDSiMdS5YZq/NoFMQsHWB25EbazBu+rqIaN9UybBBE2y4X+Xtuf4gW8DV5fNm8syVII+zw7RpJ6oYhG1w9nxgTAWwCP1IKAagJ7UrjxgBnAUu+TJNHVfyp4B9R1dpiQPBEe8fRllpgVnVkyq/4eRDMwXpGVvKY46OO4hCOxQyVphgepF2VRwj4XqbsT1fKVZslj69osuj+rVA9QYiLoCuXCDK25IJZf2mMJXGoCD1FRpktywkz4hxBmQzbqVUaiAPUg==
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <7D2EC0DAA8B81945BC9C60B8717ED260@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: analogixsemi.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 536e5202-1e21-4dbe-78ec-08d75051b33e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Oct 2019 02:53:33.3629
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b099b0b4-f26c-4cf5-9a0f-d5be9acab205
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: O95mewymmSIHyYBWGfqtRqRyaF/SovpzxFGYeU5tbthdRGUiRXKJqea9U8Vd8BwsQzNHqyH19AmSIs+Lb+i0dg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB3791
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-r374662 gives LLVM the ability to convert certain loops into a reference
-to bcmp as an optimization; this breaks prom_init_check.sh:
+Hi Andrzej Hajda, please check my comment below.
 
-  CALL    arch/powerpc/kernel/prom_init_check.sh
-Error: External symbol 'bcmp' referenced from prom_init.c
-make[2]: *** [arch/powerpc/kernel/Makefile:196: prom_init_check] Error 1
+Thanks,
+Xin
 
-bcmp is defined in lib/string.c as a wrapper for memcmp so this could be
-added to the whitelist. However, commit 450e7dd4001f ("powerpc/prom_init:
-don't use string functions from lib/") copied memcmp as prom_memcmp to
-avoid KASAN instrumentation so having bcmp be resolved to regular memcmp
-would break that assumption. Furthermore, because the compiler is the
-one that inserted bcmp, we cannot provide something like prom_bcmp.
-
-To prevent LLVM from being clever with optimizations like this, use
--ffreestanding to tell LLVM we are not hosted so it is not free to make
-transformations like this.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/647
-Link: https://github.com/llvm/llvm-project/commit/76cdcf25b883751d83402baea6316772aa73865c
-Reviewed-by: Nick Desaulneris <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
-
-v1 -> v3:
-
-* New patch in the series
-
-v3 -> v4:
-
-* Rebase on v5.4-rc3.
-
-* Add Nick's reviewed-by tag.
-
-* Update the LLVM commit reference to the latest applied version (r374662)
-  as it was originally committed as r370454, reverted in r370788, and
-  reapplied as r374662.
-
- arch/powerpc/kernel/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/kernel/Makefile b/arch/powerpc/kernel/Makefile
-index f1f362146135..7f0ee465dfb6 100644
---- a/arch/powerpc/kernel/Makefile
-+++ b/arch/powerpc/kernel/Makefile
-@@ -21,7 +21,7 @@ CFLAGS_prom_init.o += $(DISABLE_LATENT_ENTROPY_PLUGIN)
- CFLAGS_btext.o += $(DISABLE_LATENT_ENTROPY_PLUGIN)
- CFLAGS_prom.o += $(DISABLE_LATENT_ENTROPY_PLUGIN)
- 
--CFLAGS_prom_init.o += $(call cc-option, -fno-stack-protector)
-+CFLAGS_prom_init.o += $(call cc-option, -fno-stack-protector) -ffreestanding
- 
- ifdef CONFIG_FUNCTION_TRACER
- # Do not trace early boot code
--- 
-2.23.0
-
+On Fri, Oct 11, 2019 at 01:21:43PM +0200, Andrzej Hajda wrote:
+> On 11.10.2019 04:21, Xin Ji wrote:
+> > The ANX7625 is an ultra-low power 4K Mobile HD Transmitter designed
+> > for portable device. It converts MIPI to DisplayPort 1.3 4K.
+> >
+> > You can add support to your board with binding.
+> >
+> > Example:
+> > 	anx7625_bridge: encoder@58 {
+> > 		compatible =3D "analogix,anx7625";
+> > 		reg =3D <0x58>;
+> > 		status =3D "okay";
+> > 		panel-flags =3D <1>;
+> > 		enable-gpios =3D <&pio 45 GPIO_ACTIVE_HIGH>;
+> > 		reset-gpios =3D <&pio 73 GPIO_ACTIVE_HIGH>;
+> > 		#address-cells =3D <1>;
+> > 		#size-cells =3D <0>;
+> >
+> > 		port@0 {
+> > 		  reg =3D <0>;
+> > 		  anx_1_in: endpoint {
+> > 		    remote-endpoint =3D <&mipi_dsi>;
+> > 		  };
+> > 		};
+> >
+> > 		port@3 {
+> > 		  reg =3D <3>;
+> > 		  anx_1_out: endpoint {
+> > 		    remote-endpoint =3D <&panel_in>;
+> > 		  };
+> > 		};
+> > 	};
+> >
+> > Signed-off-by: Xin Ji <xji@analogixsemi.com>
+> > ---
+> >  .../bindings/display/bridge/anx7625.yaml           | 96 ++++++++++++++=
+++++++++
+> >  1 file changed, 96 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/display/bridge/an=
+x7625.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/display/bridge/anx7625.y=
+aml b/Documentation/devicetree/bindings/display/bridge/anx7625.yaml
+> > new file mode 100644
+> > index 0000000..fc84683
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/display/bridge/anx7625.yaml
+> > @@ -0,0 +1,96 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +# Copyright 2019 Analogix Semiconductor, Inc.
+> > +%YAML 1.2
+> > +---
+> > +$id: "http://devicetree.org/schemas/display/bridge/anx7625.yaml#"
+> > +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> > +
+> > +title: Analogix ANX7625 SlimPort (4K Mobile HD Transmitter)
+> > +
+> > +maintainers:
+> > +  - Xin Ji <xji@analogixsemi.com>
+> > +
+> > +description: |
+> > +  The ANX7625 is an ultra-low power 4K Mobile HD Transmitter
+> > +  designed for portable devices.
+> > +
+> > +properties:
+> > +  "#address-cells": true
+> > +  "#size-cells": true
+> > +
+> > +  compatible:
+> > +    items:
+> > +      - const: analogix,anx7625
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  panel-flags:
+> > +    description: indicate the panel is internal or external
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +
+> > +  enable-gpios:
+> > +    description: used for power on chip control, POWER_EN pin D2.
+> > +    maxItems: 1
+> > +
+> > +  reset-gpios:
+> > +    description: used for reset chip control, RESET_N pin B7.
+> > +    maxItems: 1
+> > +
+> > +  port@0:
+> > +    type: object
+> > +    description:
+> > +      A port node pointing to MIPI DSI host port node.
+> > +
+> > +  port@1:
+> > +    type: object
+> > +    description:
+> > +      A port node pointing to MIPI DPI host port node.
+> > +
+> > +  port@2:
+> > +    type: object
+> > +    description:
+> > +      A port node pointing to external connector port node.
+> > +
+> > +  port@3:
+> > +    type: object
+> > +    description:
+> > +      A port node pointing to eDP port node.
+>=20
+>=20
+> Decrypting available product brief[1], there are following physical lines=
+:
+>=20
+> Input:
+>=20
+> - MIPI DSI/DPI - video data, are DSI and DPI lines shared?
+>=20
+> - I2S - audio data,
+>=20
+> - I2C - control line,
+>=20
+> - ALERT/INTP - interrupt,
+>=20
+> - USB 3.1 SSRc/Tx - for USB forwarding,
+>=20
+> Output:
+>=20
+> - SS1, SS2,
+>=20
+> - SBU/AUX,
+>=20
+> - CC1/2.
+At this application, we didn't use CC1/2 line, we only use the video
+format convert(MIPI to DP) feature on anx7625.
+>=20
+>=20
+> Having this information I try to understand ports defined by you:
+>=20
+> - port@2 you have defined as pointing to external port, but here the
+> port should be rather subnode of ANX7625 - the chip has CC lines, see
+> beginning of [2].
+The port@2 is for Chromium book external port low power mode control,
+the driver according this port to register external connector
+notify interface to receive "connect/disconnect" event to do low power
+control.
+>=20
+> - port@3 describes SS1, SS2 and SBU/AUX lines together, am I right? In
+> USB-C binding SBU and SS lines are represented by different ports,
+> different approach, but maybe better in this case.
+>=20
+>=20
+> Maybe it would be good to add 2nd example with USB-C port.
+No need to add 2nd example with USB-C port, as I said, we didn't use the
+USB Type-C PD feature at anx7625.
+>=20
+>=20
+> [1]:
+> https://www.analogix.com/system/files/AA-002291-PB-6-ANX7625_ProductBrief=
+.pdf
+>=20
+> [2]: Documentation/devicetree/bindings/connector/usb-connector.txt
+>=20
+>=20
+> Regards
+>=20
+> Andrzej
+>=20
+>=20
+> > +
+> > +required:
+> > +  - "#address-cells"
+> > +  - "#size-cells"
+> > +  - compatible
+> > +  - reg
+> > +  - port@0
+> > +  - port@3
+> > +
+> > +example:
+> > +  - |
+> > +    anx7625_bridge: encoder@58 {
+> > +        compatible =3D "analogix,anx7625";
+> > +        reg =3D <0x58>;
+> > +        status =3D "okay";
+> > +        panel-flags =3D <1>;
+> > +        enable-gpios =3D <&pio 45 GPIO_ACTIVE_HIGH>;
+> > +        reset-gpios =3D <&pio 73 GPIO_ACTIVE_HIGH>;
+> > +        #address-cells =3D <1>;
+> > +        #size-cells =3D <0>;
+> > +
+> > +        port@0 {
+> > +          reg =3D <0>;
+> > +          anx_1_in: endpoint {
+> > +            remote-endpoint =3D <&mipi_dsi>;
+> > +          };
+> > +        };
+> > +
+> > +        port@3 {
+> > +          reg =3D <3>;
+> > +          anx_1_out: endpoint {
+> > +            remote-endpoint =3D <&panel_in>;
+> > +          };
+> > +        };
+> > +    };
+>=20
