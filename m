@@ -2,184 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17718D5C2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 09:18:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5987DD5C45
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 09:24:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730291AbfJNHSo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 03:18:44 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:51195 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729928AbfJNHSn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 03:18:43 -0400
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20191014071840epoutp01d62346939d912c7e1c8b4f66490c69ad~Nck0bA1Hb0451804518epoutp01d
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 07:18:40 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20191014071840epoutp01d62346939d912c7e1c8b4f66490c69ad~Nck0bA1Hb0451804518epoutp01d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1571037520;
-        bh=70p8clwBJRo2VRjh+IGIX8nmmtwD5MjLFQuDV0QZp5s=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=VHRjOlCddbYuUIpLRTkhPNsF8QzZHSufJ2Sh8NI5X+ry9Lhog8aacseea1D6Utirg
-         9ui429ysZCuanJt3IbWFwhxf+jDdlw7LIU0kfSQpYHbfP4zpbGU4wsCbUk8Yicf45v
-         Svut7ZrBl+F5M+13QvO0Fn4Xkbu4wIfw4NKXZmXA=
-Received: from epsmges5p2new.samsung.com (unknown [182.195.42.74]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20191014071839epcas5p2a34d3c8731f8787b954ff672cc2e2017~Nckz13Ga41122211222epcas5p2N;
-        Mon, 14 Oct 2019 07:18:39 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        2B.FB.04660.F4124AD5; Mon, 14 Oct 2019 16:18:39 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191014071838epcas5p2901e45c978e5a9d6dfbdde2dadea6d9d~Ncky9ZKX52493324933epcas5p2E;
-        Mon, 14 Oct 2019 07:18:38 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191014071838epsmtrp16278063aaaac544dd27c81e379535559~Ncky8mMmM0123701237epsmtrp18;
-        Mon, 14 Oct 2019 07:18:38 +0000 (GMT)
-X-AuditID: b6c32a4a-5f7ff70000001234-59-5da4214fe6f8
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        AA.7C.03889.E4124AD5; Mon, 14 Oct 2019 16:18:38 +0900 (KST)
-Received: from ubuntu.sa.corp.samsungelectronics.net (unknown
-        [107.108.83.125]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191014071837epsmtip252086bfc3e64bde5f3eb68942e36db34~Nckxc148H1930319303epsmtip21;
-        Mon, 14 Oct 2019 07:18:37 +0000 (GMT)
-From:   Pankaj Dubey <pankaj.dubey@samsung.com>
-To:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     bhelgaas@google.com, andrew.murray@arm.com,
-        lorenzo.pieralisi@arm.com, gustavo.pimentel@synopsys.com,
-        jingoohan1@gmail.com, vidyas@nvidia.com,
-        Anvesh Salveru <anvesh.s@samsung.com>,
-        Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v2] PCI: dwc: Add support to add GEN3 related equalization
- quirks
-Date:   Mon, 14 Oct 2019 12:48:29 +0530
-Message-Id: <1571037509-20284-1-git-send-email-pankaj.dubey@samsung.com>
-X-Mailer: git-send-email 2.7.4
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLIsWRmVeSWpSXmKPExsWy7bCmlq6/4pJYgx1fDSya/29ntTi7ayGr
-        xZKmDItddzvYLVZ8mclucXnXHDaLs/OOs1m8+f2C3WLR1i/sFte28zpweayZt4bRY+esu+we
-        CzaVevQ2v2Pz6NuyitFjy/7PjB6fN8kFsEdx2aSk5mSWpRbp2yVwZVx5Mp+t4IRkxafWfWwN
-        jI9Fuxg5OCQETCQ23vLtYuTiEBLYzShx7O1jdgjnE6NE47ejjBDON0aJpqYtTDAdTxqsIOJ7
-        GSWaZ0xhgXBamCTmT1/J2sXIycEmoCvx5P1cZhBbRMBaouHVKlaQImaB54wSV/dfZQRJCAsE
-        S2w7vArMZhFQlXi77zIbiM0r4CHx6mwTWLOEgJzEzXOdUPYKNokZPxUhrnCROL69BiIsLPHq
-        +BZ2CFtK4mV/G5SdL/Fj8SRmkL0SAi2MEpOPz2WFSNhLHLgyhwVkDrOApsT6XfogYWYBPone
-        30+gnuSV6GgTgqhWk/j+/AzUBTISD5uXMkHYHhIPvjeygNhCArESrxb/Z5nAKDMLYegCRsZV
-        jJKpBcW56anFpgVGeanlesWJucWleel6yfm5mxjBiUDLawfjsnM+hxgFOBiVeHgV0hbHCrEm
-        lhVX5h5ilOBgVhLhZZiwIFaINyWxsiq1KD++qDQntfgQozQHi5I47yTWqzFCAumJJanZqakF
-        qUUwWSYOTqkGxv2PEt1OVroHfNS/uLrsW0vs/ZR2F2fWDczzmktfGX6s0t/A/rnl3+PQ7LUt
-        m/mKOI7/j73i6DT19enaT/M/dVeprD7ddUnGWcxbsGjLhHcmV6ODuuyXZKX7Zk43WmZbqc0Z
-        lcjJsLXHc1Ebf/G50vd1kvq7rzbc/quy4dK2miKpY4ffyJaKKLEUZyQaajEXFScCAFb7PdYA
-        AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrILMWRmVeSWpSXmKPExsWy7bCSvK6f4pJYg+53JhbN/7ezWpzdtZDV
-        YklThsWuux3sFiu+zGS3uLxrDpvF2XnH2Sze/H7BbrFo6xd2i2vbeR24PNbMW8PosXPWXXaP
-        BZtKPXqb37F59G1ZxeixZf9nRo/Pm+QC2KO4bFJSczLLUov07RK4Mq48mc9WcEKy4lPrPrYG
-        xseiXYwcHBICJhJPGqy6GDk5hAR2M0osX8EIYksIyEhMXr2CFcIWllj57zl7FyMXUE0Tk8TD
-        /dfBitgEdCWevJ/LDGKLCNhKNPztYAYpYhZ4zygxf8MVsCJhgUCJW4tOsYHYLAKqEm/3XQaz
-        eQU8JF6dbWKG2CAncfNcJ/MERp4FjAyrGCVTC4pz03OLDQuM8lLL9YoTc4tL89L1kvNzNzGC
-        A05LawfjiRPxhxgFOBiVeHhPJC+OFWJNLCuuzD3EKMHBrCTCyzBhQawQb0piZVVqUX58UWlO
-        avEhRmkOFiVxXvn8Y5FCAumJJanZqakFqUUwWSYOTqkGRpuH7UIJz34GSQm+n5jQ/jhcertZ
-        n8DujapHT52ydGkUSJvvaqP6XDvy66/AvW1Tr3nMY2A6wv1pTkb4g6At4n82MG7e69Rm92+a
-        T+vs6vzbIWahbY5zHCyEhWOlPvvOLbsiWL5FcnK15FONc2aBNQm8XmJW1pINRVvevGpRMit6
-        Kd94oUlQiaU4I9FQi7moOBEAiYoU7jQCAAA=
-X-CMS-MailID: 20191014071838epcas5p2901e45c978e5a9d6dfbdde2dadea6d9d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20191014071838epcas5p2901e45c978e5a9d6dfbdde2dadea6d9d
-References: <CGME20191014071838epcas5p2901e45c978e5a9d6dfbdde2dadea6d9d@epcas5p2.samsung.com>
+        id S1730316AbfJNHYZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 03:24:25 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:51228 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730143AbfJNHYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 03:24:24 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1C11020037F;
+        Mon, 14 Oct 2019 09:24:23 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C26DF2000B6;
+        Mon, 14 Oct 2019 09:24:18 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 2892D402FF;
+        Mon, 14 Oct 2019 15:24:13 +0800 (SGT)
+From:   Wen He <wen.he_1@nxp.com>
+To:     linux-devel@linux.nxdi.nxp.com, Shawn Guo <shawnguo@kernel.org>,
+        Li Yang <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Wen He <wen.he_1@nxp.com>
+Subject: [v3] arm64: dts: ls1028a: Update the property of the DT node dpclk
+Date:   Mon, 14 Oct 2019 15:13:27 +0800
+Message-Id: <20191014071327.28961-1-wen.he_1@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anvesh Salveru <anvesh.s@samsung.com>
+Update the property #clock-cells = <1> to #clock-cells = <0> of the
+dpclk, since the Display output pixel clock driver provides single
+clock output.
 
-In some platforms, PCIe PHY may have issues which will prevent linkup
-to happen in GEN3 or higher speed. In case equalization fails, link will
-fallback to GEN1.
-
-DesignWare controller gives flexibility to disable GEN3 equalization
-completely or only phase 2 and 3 of equalization.
-
-This patch enables the DesignWare driver to disable the PCIe GEN3
-equalization by enabling one of the following quirks:
- - DWC_EQUALIZATION_DISABLE: To disable GEN3 equalization all phases
- - DWC_EQ_PHASE_2_3_DISABLE: To disable GEN3 equalization phase 2 & 3
-
-Platform drivers can set these quirks via "quirk" variable of "dw_pcie"
-struct.
-
-Signed-off-by: Anvesh Salveru <anvesh.s@samsung.com>
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
-Reviewed-by: Vidya Sagar <vidyas@nvidia.com>
+Signed-off-by: Wen He <wen.he_1@nxp.com>
 ---
-Changes w.r.t v1:
- - Rebased on latest linus/master
- - Added Reviewed-by and Acked-by
+change in v3:
+        - according the maintainer correction node name
+        - update the commit message
 
- drivers/pci/controller/dwc/pcie-designware.c | 12 ++++++++++++
- drivers/pci/controller/dwc/pcie-designware.h |  9 +++++++++
- 2 files changed, 21 insertions(+)
+ arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-index 820488d..e247d6d 100644
---- a/drivers/pci/controller/dwc/pcie-designware.c
-+++ b/drivers/pci/controller/dwc/pcie-designware.c
-@@ -556,4 +556,16 @@ void dw_pcie_setup(struct dw_pcie *pci)
- 		       PCIE_PL_CHK_REG_CHK_REG_START;
- 		dw_pcie_writel_dbi(pci, PCIE_PL_CHK_REG_CONTROL_STATUS, val);
- 	}
-+
-+	if (pci->quirk & DWC_EQUALIZATION_DISABLE) {
-+		val = dw_pcie_readl_dbi(pci, PCIE_PORT_GEN3_RELATED);
-+		val |= PORT_LOGIC_GEN3_EQ_DISABLE;
-+		dw_pcie_writel_dbi(pci, PCIE_PORT_GEN3_RELATED, val);
-+	}
-+
-+	if (pci->quirk & DWC_EQ_PHASE_2_3_DISABLE) {
-+		val = dw_pcie_readl_dbi(pci, PCIE_PORT_GEN3_RELATED);
-+		val |= PORT_LOGIC_GEN3_EQ_PHASE_2_3_DISABLE;
-+		dw_pcie_writel_dbi(pci, PCIE_PORT_GEN3_RELATED, val);
-+	}
- }
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index 5a18e94..7d3fe6f 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -29,6 +29,10 @@
- #define LINK_WAIT_MAX_IATU_RETRIES	5
- #define LINK_WAIT_IATU			9
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+index 51fa8f57fdac..616b150a15aa 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+@@ -82,7 +82,7 @@
+ 	dpclk: clock-controller@f1f0000 {
+ 		compatible = "fsl,ls1028a-plldig";
+ 		reg = <0x0 0xf1f0000 0x0 0xffff>;
+-		#clock-cells = <1>;
++		#clock-cells = <0>;
+ 		clocks = <&osc_27m>;
+ 	};
  
-+/* Parameters for GEN3 related quirks */
-+#define DWC_EQUALIZATION_DISABLE	BIT(1)
-+#define DWC_EQ_PHASE_2_3_DISABLE	BIT(2)
-+
- /* Synopsys-specific PCIe configuration registers */
- #define PCIE_PORT_LINK_CONTROL		0x710
- #define PORT_LINK_MODE_MASK		GENMASK(21, 16)
-@@ -60,6 +64,10 @@
- #define PCIE_MSI_INTR0_MASK		0x82C
- #define PCIE_MSI_INTR0_STATUS		0x830
- 
-+#define PCIE_PORT_GEN3_RELATED		0x890
-+#define PORT_LOGIC_GEN3_EQ_PHASE_2_3_DISABLE	BIT(9)
-+#define PORT_LOGIC_GEN3_EQ_DISABLE		BIT(16)
-+
- #define PCIE_ATU_VIEWPORT		0x900
- #define PCIE_ATU_REGION_INBOUND		BIT(31)
- #define PCIE_ATU_REGION_OUTBOUND	0
-@@ -253,6 +261,7 @@ struct dw_pcie {
- 	struct dw_pcie_ep	ep;
- 	const struct dw_pcie_ops *ops;
- 	unsigned int		version;
-+	unsigned int		quirk;
- };
- 
- #define to_dw_pcie_from_pp(port) container_of((port), struct dw_pcie, pp)
+@@ -665,7 +665,7 @@
+ 		interrupts = <0 222 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <0 223 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "DE", "SE";
+-		clocks = <&dpclk 0>, <&clockgen 2 2>, <&clockgen 2 2>,
++		clocks = <&dpclk>, <&clockgen 2 2>, <&clockgen 2 2>,
+ 			 <&clockgen 2 2>;
+ 		clock-names = "pxlclk", "mclk", "aclk", "pclk";
+ 		arm,malidp-output-port-lines = /bits/ 8 <8 8 8>;
 -- 
-2.7.4
+2.17.1
 
