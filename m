@@ -2,65 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A799D6518
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 16:26:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9749FD651D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 16:27:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732727AbfJNO0Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 10:26:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40630 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732262AbfJNO0Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 10:26:24 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EDACCB8F7;
-        Mon, 14 Oct 2019 14:26:20 +0000 (UTC)
-Date:   Mon, 14 Oct 2019 16:26:20 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Miroslav Benes <mbenes@suse.cz>
-Cc:     rostedt@goodmis.org, jikos@kernel.org, joe.lawrence@redhat.com,
-        jpoimboe@redhat.com, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
-Subject: Re: [PATCH v2] ftrace: Introduce PERMANENT ftrace_ops flag
-Message-ID: <20191014142620.dg3oiush5twd26ly@pathway.suse.cz>
-References: <20191014105923.29607-1-mbenes@suse.cz>
+        id S1732778AbfJNO1b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 10:27:31 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33752 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732598AbfJNO1b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 10:27:31 -0400
+Received: by mail-lj1-f195.google.com with SMTP id a22so16882388ljd.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 07:27:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TgrcIbV4YUcVsIR4rlX/SsLkjeCAujElMOWkAWBGi7g=;
+        b=PFwXYPlRDvYa3/dGwTKj7ZAZAODdkGeZkahGFcaIo1u/nGTYOL7m7VcGZZUunTzFaz
+         1S3TSJnzqxerg1TLxpuWDhfW0RMHlLKVT6JjxjZCCvDsAapO3NG3aILKJ+SXG35ALoIR
+         DqL0GcSZP08B2NLEK36AEiG2tOuW3ek5rSVHWCCEKHLP07PUFA1kEyp5iAXg8LuUZbQn
+         nWRpzhICZcFNltFUQ8PAbpLhvnxyqFr8qP0WbTPPn6RhSqViDb+WfTVKbOEfLKBfOpSx
+         xncS8QOM/yhuqRPY5VuKE47uRU1nmbidY+bI7RaLjtg1btUjHfHpEU6u2KDtVsTGmIj0
+         00TA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TgrcIbV4YUcVsIR4rlX/SsLkjeCAujElMOWkAWBGi7g=;
+        b=UTBNyw4JyGXUCpVuFsLXqkd5k7zCcvHZMCyd7U3JM8I9OXlnoYR70gxTweSae4Dms0
+         m8P6Azn0U6dEG8Jieq8k47uBUynl1RG6jI0Q86iEIfaz9wCO8hKd7t1DZTt0i3uNg6dc
+         NZeo7jpXnHbYCTfC3JzrsIBUoeXKF0HmbuOBppUMTGKHDemmH3x/G5XmGL88hrltLorD
+         d0Vwzl8NGXr4Xrj7UU3CR9+RJSMydXYn3daEj6QFtpfanufduHpXZ1/fKjgPSUDcVL8F
+         zorB1sIFmIr5Eha28VrKAUgydFg+ueUUw20kRuTo21xIvSCLP3FoR2eOICq1Kui8CFqp
+         K1WA==
+X-Gm-Message-State: APjAAAVbCaA260OT7kYhJblBr0fJRhPpBpsN+wZAfOorYh7FR4WJ7QiG
+        /HiaAAFgCkWxQOvjfDweMXM=
+X-Google-Smtp-Source: APXvYqxZ9RrwgIeT0+NIEPfGYmuMqEMTvaHl9/8Jdp7w4rDkTn9aVL+blgOdno1eQyX/+0XKkN31WQ==
+X-Received: by 2002:a2e:95d9:: with SMTP id y25mr19225662ljh.217.1571063248736;
+        Mon, 14 Oct 2019 07:27:28 -0700 (PDT)
+Received: from pc636 ([37.139.158.167])
+        by smtp.gmail.com with ESMTPSA id s26sm4339518lfc.60.2019.10.14.07.27.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2019 07:27:27 -0700 (PDT)
+From:   Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date:   Mon, 14 Oct 2019 16:27:19 +0200
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Uladzislau Rezki <urezki@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Daniel Wagner <dwagner@suse.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Hillf Danton <hdanton@sina.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>
+Subject: Re: [PATCH 1/1] mm/vmalloc: remove preempt_disable/enable when do
+ preloading
+Message-ID: <20191014142719.GA17874@pc636>
+References: <20191009164934.10166-1-urezki@gmail.com>
+ <20191009151901.1be5f7211db291e4bd2da8ca@linux-foundation.org>
+ <20191009221725.0b83151e@oasis.local.home>
+ <20191010151749.GA14740@pc636>
+ <20191011165515.a25e7d1c22e6b5e3e6fb69da@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191014105923.29607-1-mbenes@suse.cz>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20191011165515.a25e7d1c22e6b5e3e6fb69da@linux-foundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2019-10-14 12:59:23, Miroslav Benes wrote:
-> Livepatch uses ftrace for redirection to new patched functions. It means
-> that if ftrace is disabled, all live patched functions are disabled as
-> well. Toggling global 'ftrace_enabled' sysctl thus affect it directly.
-> It is not a problem per se, because only administrator can set sysctl
-> values, but it still may be surprising.
+On Fri, Oct 11, 2019 at 04:55:15PM -0700, Andrew Morton wrote:
+> On Thu, 10 Oct 2019 17:17:49 +0200 Uladzislau Rezki <urezki@gmail.com> wrote:
 > 
-> Introduce PERMANENT ftrace_ops flag to amend this. If the
-> FTRACE_OPS_FL_PERMANENT is set on any ftrace ops, the tracing cannot be
-> disabled by disabling ftrace_enabled. Equally, a callback with the flag
-> set cannot be registered if ftrace_enabled is disabled.
+> > > > : 	 * The preload is done in non-atomic context, thus it allows us
+> > > > : 	 * to use more permissive allocation masks to be more stable under
+> > > > : 	 * low memory condition and high memory pressure.
+> > > > : 	 *
+> > > > : 	 * Even if it fails we do not really care about that. Just proceed
+> > > > : 	 * as it is. "overflow" path will refill the cache we allocate from.
+> > > > : 	 */
+> > > > : 	if (!this_cpu_read(ne_fit_preload_node)) {
+> > > > 
+> > > > Readability nit: local `pva' should be defined here, rather than having
+> > > > function-wide scope.
+> > > > 
+> > > > : 		pva = kmem_cache_alloc_node(vmap_area_cachep, GFP_KERNEL, node);
+> > > > 
+> > > > Why doesn't this honour gfp_mask?  If it's not a bug, please add
+> > > > comment explaining this.
+> > > > 
+> > But there is a comment, if understand you correctly:
+> > 
+> > <snip>
+> > * Even if it fails we do not really care about that. Just proceed
+> > * as it is. "overflow" path will refill the cache we allocate from.
+> > <snip>
 > 
-> Signed-off-by: Miroslav Benes <mbenes@suse.cz>
+> My point is that the alloc_vmap_area() caller passed us a gfp_t but
+> this code ignores it, as does adjust_va_to_fit_type().  These *look*
+> like potential bugs.  If not, they should be commented so they don't
+> look like bugs any more ;)
+> 
+I got it, there was misunderstanding from my side :) I agree.
 
-Looks fine to me. I finally understand which ftrace_enabled toggle
-we are talking about ;-)
+In the first case i should have used and respect the passed "gfp_mask",
+like below:
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index f48cd0711478..880b6e8cdeae 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -1113,7 +1113,8 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
+                 * Just proceed as it is. If needed "overflow" path
+                 * will refill the cache we allocate from.
+                 */
+-               pva = kmem_cache_alloc_node(vmap_area_cachep, GFP_KERNEL, node);
++               pva = kmem_cache_alloc_node(vmap_area_cachep,
++                               gfp_mask & GFP_RECLAIM_MASK, node);
+ 
+        spin_lock(&vmap_area_lock);
 
-> ---
-> - return codes. I chose EBUSY, because it seemed the least
->   inappropriate. I usually pick the wrong one, so suggestions are
->   welcome.
+It should be sent as a separate patch, i think.
 
--EBUSY is perfectly fine in ftrace_enable_sysctl(). It is not ideal
-in __register_ftrace_function(). But it still looks better than
--ENODEV there.
+As for adjust_va_to_fit_type(), i can add a comment, since we can not
+sleep there and the case is one per 1000000 or even lower with your proposal.
 
-Best Regards,
-Petr
+Does it sound good?
+
+Thank you!
+
+--
+Vlad Rezki
