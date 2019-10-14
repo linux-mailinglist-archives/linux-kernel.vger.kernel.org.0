@@ -2,107 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00742D64C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 16:09:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B638ED64CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 16:12:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732452AbfJNOJZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 10:09:25 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:40610 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732117AbfJNOJY (ORCPT
+        id S1732469AbfJNOLn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 10:11:43 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:15734 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732349AbfJNOLk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 10:09:24 -0400
-Received: by mail-qt1-f196.google.com with SMTP id m61so25587864qte.7
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 07:09:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yAcIvBMtUdPHiad0mmFNXbdJ5+29FjH6f8+sQBfeFbg=;
-        b=XqWE+kdpccpCUNVtt97XV5xKVZBuFHgfWRjuCd53b4DtIfrCls6fdrtHlanBSg0Ra/
-         xVHDM7gsRSKK9E7mPE5GWpKWutiXp0nC2YcL1adUCdvK0qxC69TN6/CMUEkgjqOxMZfA
-         ZYyBhBfn4IxiAkiYRHnID3xpQGRD82xxo1sjQqkgPBXPZL8tAcLCXPewmDxJeMN9ovGD
-         JiIcp9FP2z3pSOnbgwbRYyPkn0RUUyOInBvRXrgRNTHvJpBVXPVt2JOmy6vcUR/j9xPz
-         HEWlvHFBdF3LX5NcTfliwSXkubMYng0POwpwNy4FBchYIvrW5EoAmCZ7kdNK4T0E/MUT
-         2eow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yAcIvBMtUdPHiad0mmFNXbdJ5+29FjH6f8+sQBfeFbg=;
-        b=GRGDZtvSPAjmuW2FV3SKGhfN1CrtxRrXthzefiL3O9RepJV4HGXmxNYtZ+P64f+tlE
-         FNnrfReFyMnAXnagWj9AlyW1h55FIhPoxVdTKl44BSHUj0rNhD/7SQiCxg025Xb3zwIT
-         by+Vt6dy5NEPKNbVM18f4rDS1Mkt1rFvyFqVkMKjxlb8z2IQ9ofUjq3fO70kQnZ1T0WM
-         HKKiujQq3LwMXJ0mfVnp0307HTQi1vNKP+XjYlcuE0qEzJW/yJX2XbeOCyy27vpXdKdH
-         StnRvodx9sTwN7ho29nJAyeNLJVnBgfxR3yy27q3advwGZmfSUY70nJI7QgXFVi2M/qo
-         WAsA==
-X-Gm-Message-State: APjAAAXBA2G7e365usYoxdcMqjX9EYzoU3u8mv77KMqDAD1K57YYzsCJ
-        GKNLkmB4IzLWIU/jRyB8GQ4=
-X-Google-Smtp-Source: APXvYqw3U9b7SX42wxgWbUJn0mOZBFeE+P8qcZJ//LpsTz0sgpE7gvLjd+lqwwIdL39hC9yhe2sPrQ==
-X-Received: by 2002:ac8:17d9:: with SMTP id r25mr33053710qtk.9.1571062163593;
-        Mon, 14 Oct 2019 07:09:23 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id 44sm9682625qtu.45.2019.10.14.07.09.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2019 07:09:23 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 100A74DD66; Mon, 14 Oct 2019 11:09:21 -0300 (-03)
-Date:   Mon, 14 Oct 2019 11:09:21 -0300
-To:     Leo Yan <leo.yan@linaro.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] perf test: Report failure for mmap events
-Message-ID: <20191014140921.GC19627@kernel.org>
-References: <20191011091942.29841-1-leo.yan@linaro.org>
+        Mon, 14 Oct 2019 10:11:40 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9EE4xcu027729;
+        Mon, 14 Oct 2019 16:11:30 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=FBKBmbXbb2VMQYvWLF+7xp5vpVM8m1N8lwxubX8nusg=;
+ b=lfM2QVEbPrG1yuEed4Bj9p8yJWBLMyggg8Ntw17yX18Zst/c3+ER4dhmHQGq7SmiDB3j
+ N+uVFgqtlUZvycLnlNTgiOxgCHylEmKACtn8fa6WlQpcOPZ6OD58udeBHiYJatzC0OFw
+ JdZQOLuWWxQwallCvbJ5F/Ez4boCYNJ92QBLERb3RYaEjm6gVjb/ADQxzk7yS6Ss33WF
+ Q8DThHoRNaQlkqguPnFJ3k/nKVduUi//+oTg5Ls+Q9rrCeePA5oNqXMMJGrX+ng+C/TD
+ OkRFGM8SMuIkOhs90ylGI9GwA2gKqf8pfAzwLXz7Ec8t0p/QA6u3dyVkwo9+G0izwG1r EQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2vk3y9k51b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 14 Oct 2019 16:11:30 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B751410002A;
+        Mon, 14 Oct 2019 16:11:29 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A182F2C7EBD;
+        Mon, 14 Oct 2019 16:11:29 +0200 (CEST)
+Received: from SFHDAG3NODE3.st.com (10.75.127.9) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 14 Oct
+ 2019 16:11:29 +0200
+Received: from SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476]) by
+ SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476%20]) with mapi id
+ 15.00.1347.000; Mon, 14 Oct 2019 16:11:29 +0200
+From:   Benjamin GAIGNARD <benjamin.gaignard@st.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+CC:     "fweisbec@gmail.com" <fweisbec@gmail.com>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>
+Subject: Re: [PATCH] tick: check if broadcast device could really be stopped
+Thread-Topic: [PATCH] tick: check if broadcast device could really be stopped
+Thread-Index: AQHVfrsEmc79HQHAz0CZKn5VsbroAadZ/p0AgAAE/ACAAAdCgIAACLIA
+Date:   Mon, 14 Oct 2019 14:11:29 +0000
+Message-ID: <16f7e8e9-eefe-5973-a08a-3e1823d20034@st.com>
+References: <20191009160246.17898-1-benjamin.gaignard@st.com>
+ <alpine.DEB.2.21.1910141441350.2531@nanos.tec.linutronix.de>
+ <a4b4b785-c471-a3c2-2c41-01bd9865e479@st.com>
+ <alpine.DEB.2.21.1910141535500.2531@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1910141535500.2531@nanos.tec.linutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.51]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <3FBD4E9FC443504BA1D025EEB71ED12C@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191011091942.29841-1-leo.yan@linaro.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-14_08:2019-10-11,2019-10-14 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Oct 11, 2019 at 05:19:41PM +0800, Leo Yan escreveu:
-> When fail to mmap events in task exit case, it misses to set 'err' to
-> -1; thus the testing will not report failure for it.
-> 
-> This patch sets 'err' to -1 when fails to mmap events, thus Perf tool
-> can report correct result.
-
-Thanks, applied and added:
-
-Fixes: d723a55096b8 ("perf test: Add test case for checking number of EXIT events")
-
-
- 
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
->  tools/perf/tests/task-exit.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/tools/perf/tests/task-exit.c b/tools/perf/tests/task-exit.c
-> index bce3a4cb4c89..ca0a6ca43b13 100644
-> --- a/tools/perf/tests/task-exit.c
-> +++ b/tools/perf/tests/task-exit.c
-> @@ -110,6 +110,7 @@ int test__task_exit(struct test *test __maybe_unused, int subtest __maybe_unused
->  	if (evlist__mmap(evlist, 128) < 0) {
->  		pr_debug("failed to mmap events: %d (%s)\n", errno,
->  			 str_error_r(errno, sbuf, sizeof(sbuf)));
-> +		err = -1;
->  		goto out_delete_evlist;
->  	}
->  
-> -- 
-> 2.17.1
-
--- 
-
-- Arnaldo
+DQpPbiAxMC8xNC8xOSAzOjQwIFBNLCBUaG9tYXMgR2xlaXhuZXIgd3JvdGU6DQo+IE9uIE1vbiwg
+MTQgT2N0IDIwMTksIEJlbmphbWluIEdBSUdOQVJEIHdyb3RlOg0KPj4gT24gMTAvMTQvMTkgMjo1
+NiBQTSwgVGhvbWFzIEdsZWl4bmVyIHdyb3RlOg0KPj4+IE9uIFdlZCwgOSBPY3QgMjAxOSwgQmVu
+amFtaW4gR2FpZ25hcmQgd3JvdGU6DQo+Pj4+IEBAIC03OCw3ICs3OCw3IEBAIHN0YXRpYyBib29s
+IHRpY2tfY2hlY2tfYnJvYWRjYXN0X2RldmljZShzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2aWNlICpj
+dXJkZXYsDQo+Pj4+ICAgIHsNCj4+Pj4gICAgCWlmICgobmV3ZGV2LT5mZWF0dXJlcyAmIENMT0NL
+X0VWVF9GRUFUX0RVTU1ZKSB8fA0KPj4+PiAgICAJICAgIChuZXdkZXYtPmZlYXR1cmVzICYgQ0xP
+Q0tfRVZUX0ZFQVRfUEVSQ1BVKSB8fA0KPj4+PiAtCSAgICAobmV3ZGV2LT5mZWF0dXJlcyAmIENM
+T0NLX0VWVF9GRUFUX0MzU1RPUCkpDQo+Pj4+ICsJICAgIHRpY2tfYnJvYWRjYXN0X2NvdWxkX3N0
+b3AobmV3ZGV2KSkNCj4+PiBOby4gVGhpcyBtaWdodCBiZSBjYWxsZWQgX2JlZm9yZV8gYSBjcHVp
+ZGxlIGRyaXZlciBpcyBhdmFpbGFibGUgYW5kIHRoZW4NCj4+PiB3aGVuIHRoYXQgZHJpdmVyIGlz
+IGxvYWRlZCBhbmQgZ29lcyBkZWVwLCBldmVyeXRoaW5nIGdvZXMgc291dGguDQo+PiBXaGF0IGNv
+dWxkIGJlIHRoZSBzb2x1dGlvbiB0byBsZXQga25vdyB0byB0aWNrIGJyb2FkY2FzdCBmcmFtZXdv
+cmsgdGhhdA0KPj4gdGhpcyBkZXZpY2UNCj4+DQo+PiB3aWxsIG5vdCBiZSBzdG9wcGVkIChiZWNh
+dXNlIENQVSB3b24ndCBnbyBpbiBpZGxlKSA/DQo+Pg0KPj4gSSBoYXZlIHRyaWVkIHRvIHB1dCAi
+YWx3YXlzLW9uIiBwcm9wZXJ0eSBvbiBEVCBidXQgaXQgd2FzIGEgTkFDSyB0b286DQo+Pg0KPj4g
+aHR0cHM6Ly9sa21sLm9yZy9sa21sLzIwMTkvOS8yNy8xNjQNCj4+DQo+PiBEbyBJIGhhdmUgbWlz
+cyBhIGZsYWcgc29tZXdoZXJlID8NCj4gSSBkb24ndCB1bmRlcnN0YW5kIHdoYXQgeW91IGFyZSB0
+cnlpbmcgdG8gYWNoaWV2ZSBoZXJlLiBJZiB0aGUgdGljayBkZXZpY2UsDQo+IGkuZS4gdGhlIGNv
+bXBhcmF0b3Igc3RvcHMgd29ya2luZyBpbiBkZWVwIGlkbGUgc3RhdGVzLCB0aGVuIHRoZSBkZXZp
+Y2UgaGFzDQo+IHJpZ2h0ZnVsbHkgdGhlIENMT0NLX0VWVF9GRUFUX0MzU1RPUCAobWlzKWZlYXR1
+cmUgc2V0LiBXaGljaCBtZWFucyB0aGF0IHRoZQ0KPiBzeXN0ZW0gbmVlZHMgYSBmYWxsYmFjayBk
+ZXZpY2UgZm9yIHRoZSBkZWVwIGlkbGUgY2FzZS4gSWYgdGhlcmUgaXMgbm8NCj4gcGh5c2ljYWwg
+ZmFsbGJhY2sgZGV2aWNlIHRoZW4geW91IHNob3VsZCBlbmFibGUgdGhlIGhydGltZXIgYmFzZWQg
+YnJvYWRjYXN0DQo+IHBzZXVkbyB0aWNrIGRldmljZS4NCj4NCj4gSWYgdGhlIENQVXMgbmV2ZXIg
+Z28gZGVlcCBpZGxlIGJlY2F1c2UgdGhlcmUgaXMgbm8gaWRsZSBkcml2ZXIgbG9hZGVkIG9yDQo+
+IHRoZSBkZWVwIHBvd2VyIHN0YXRlIGluIHdoaWNoIHRoZSBjb21wYXJhdG9yIHN0b3BzIHdvcmtp
+bmcgaXMgbmV2ZXINCj4gcmVhY2hlZCwgdGhlbiB0aGUgYnJvYWRjYXN0IGhydGltZXIgd2lsbCBu
+ZXZlciBiZSB1c2VkLiBJdCBqdXN0IGVhdHMgYSBiaXQNCj4gb2YgbWVtb3J5IGFuZCBhIGZldyBl
+eHRyYSBpbnN0cnVjdGlvbnMuDQoNClNpbmNlIENQVXMgd29uJ3QgZ28gaW4gZGVlcCBpZGxlIEkg
+ZG9uJ3Qgd2FudCB0byBnZXQgYSBicm9hZGNhc3QgdGltZXINCg0KYnV0IG9ubHkgYW4gaHJ0aW1l
+ciB0byBnZXQgYWNjdXJlIGxhdGVuY2llcyBmb3IgdGhlIHNjaGVkdWxlci4NCg0KV2hlbiBhcmNo
+IGFybSB0aW1lciBkb2Vzbid0IHNldCBDTE9DS19FVlRfRkVBVF9DM1NUT1AgZmxhZywgbXkgc3lz
+dGVtDQoNCmdvdCBhIGhydGltZXIgYW5kIGV2ZXJ5dGhpbmcgZ29lcyB3ZWxsLiBJZiBhcmNoIGFy
+bSB0aW1lciBzZXQgDQpDTE9DS19FVlRfRkVBVF9DM1NUT1ANCg0KaHJ0aW1lciBkaXNhcHBlYXIg
+KGV4Y2VwdCBpZiBJIGFkZCBhbiBhZGRpdGlvbmFsIGJyb2FkY2FzdCB0aW1lcikuDQoNCldoYXQg
+aXMgdGhlIGxpbmsgYmV0d2VlbiB0aWNrIGJyb2FkY2FzdCB0aW1lciBhbmQgaHJ0aW1lciA/IERv
+ZXMgYXJjaCANCmFybSB0aW1lciBjb3VsZCBvbmx5DQoNCmltcGxlbWVudCB0aGVtIGF0IHRoZSBz
+YW1lIHRpbWUgPw0KDQpCZW5qYW1pbg0KDQo+DQo+IFRoYW5rcywNCj4NCj4gCXRnbHgNCj4=
