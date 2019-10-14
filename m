@@ -2,127 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 166FFD6B3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 23:26:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB20CD6B23
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 23:20:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388961AbfJNV0y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 17:26:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33766 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387750AbfJNV0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 17:26:49 -0400
-Received: from earth.universe (eth-west-pareq2-46-193-2-41.wb.wifirst.net [46.193.2.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC19121721;
-        Mon, 14 Oct 2019 21:26:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571088408;
-        bh=Rz8xhmL935mXLtSudYn8Yr1PvTUCjNWwAoCjj8yI2QU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RtIJQllrBy84L7sEf7yZJPleBJieDdrmJp+JZFafMLwgj1hir8qaGHMg7mLI57x7b
-         feOHpfR8QSh2iK5kyt430OLvgPI9KQNfF+dBkXYBfQaenzFnRWbda/23AWQXGn2Uyw
-         xmB8qrjCC2yS7grSoCGzYdRaD4lOSwxi5njohQ0U=
-Received: by earth.universe (Postfix, from userid 1000)
-        id 1147F3C0CAA; Mon, 14 Oct 2019 08:59:13 +0200 (CEST)
-Date:   Mon, 14 Oct 2019 08:59:13 +0200
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc:     nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        ludovic.desroches@microchip.com, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] power: reset: at91-poweroff: lookup for proper PMC DT
- node
-Message-ID: <20191014065913.k244l6gdgfiu4jsk@earth.universe>
-References: <1569493537-7612-1-git-send-email-claudiu.beznea@microchip.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="d46ovw6gybmflark"
-Content-Disposition: inline
-In-Reply-To: <1569493537-7612-1-git-send-email-claudiu.beznea@microchip.com>
-User-Agent: NeoMutt/20180716
+        id S2387840AbfJNVUZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 17:20:25 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37165 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731044AbfJNVUY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 17:20:24 -0400
+Received: by mail-pg1-f195.google.com with SMTP id p1so10784235pgi.4;
+        Mon, 14 Oct 2019 14:20:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=6hnKN1qn6JLpTqGZTLDM/rpkhCTaFPjWHHLh+2/f/Ls=;
+        b=MVcxx5lEPiPXy0DHx260IoTJwTaCJ6QPc7Arebc7m+Hk1VlzFGhyl01W/WYXQl0wmS
+         dH65hOmAds130pc5TI7O/K/iuc4d6K7hVEJrlo0QleOR63G3X2mub+pRTcTcL1T0CAJ7
+         W5xFbnQWJ6yTX8gNWThqzLQdN5JGZS3ZMthdqCEgeqBbnZnjiahYXfierXrhzPnmKh80
+         SfV/1xOORL+YR6MPGbz4gL1sd+EWi8TJcAkyekyldLrtNZPNCdJU/+jEEBLEk/r7vqpW
+         9aYt/kwrpy5CS01LQkY6zzS4rvBbOXuhC522FXfXkYT9iHDVmfHCScH+tEM8qeWWDjd3
+         cKOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=6hnKN1qn6JLpTqGZTLDM/rpkhCTaFPjWHHLh+2/f/Ls=;
+        b=GC3zwxhvw10QI6/Q9+yEb19gQV5NGCFxnIPcLJ9zAS6QPX6yKhapxYigkJ4PMdjNKl
+         X5o/aE0G66heODyYQijVez2gf6p9b1fYVTWR2FbBaq0Q5X5xdWAADboylFsTtaC+RT7E
+         cnMZvoakquUfbJzwLY2aCaFYyD6WlIzB/A4KRomaY4HjV9ApcLJ9IgYRiZxe6Pmxt8hc
+         6tlQpyJUrtk5Y8i7mydfieOGWkRMC3ToCnbXt+SucJ608W+xkp0dM8x/mcAKQLqeuTGo
+         Bf0Q1od6LFVLjmT02zQYn6wqhAIw12dC4mcea2aXJxeRcBdE5CcTbgjJGnZpxGweUYxy
+         F8hA==
+X-Gm-Message-State: APjAAAWW16QpyQfbivsANO43QS1ljju02ConVthTp1j/KU8RnfCSZQaU
+        OESZfjkwjOeE+a2E+bt8rwlxkmmu
+X-Google-Smtp-Source: APXvYqzBR113HjB6MReVbbJeiZmCPs00mQalASCCL13ftvB8BJ/UzpoGqFzbr+p7eXz0cKDxydPlrA==
+X-Received: by 2002:a17:90a:8592:: with SMTP id m18mr38885129pjn.118.1571088023647;
+        Mon, 14 Oct 2019 14:20:23 -0700 (PDT)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id c69sm1286528pga.69.2019.10.14.14.20.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2019 14:20:21 -0700 (PDT)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     phil@raspberrypi.org, jonathan@raspberrypi.org,
+        matthias.bgg@kernel.org, linux-rpi-kernel@lists.infradead.org,
+        wahrenst@gmx.net, nsaenzjulienne@suse.de,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Doug Berger <opendmb@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        bcm-kernel-feedback-list@broadcom.com (open list:BROADCOM GENET
+        ETHERNET DRIVER), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next v2] net: bcmgenet: Generate a random MAC if none is valid
+Date:   Mon, 14 Oct 2019 14:20:00 -0700
+Message-Id: <20191014212000.27712-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Instead of having a hard failure and stopping the driver's probe
+routine, generate a random Ethernet MAC address to keep going.
 
---d46ovw6gybmflark
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+Changes in v2:
 
-Hi,
+- provide a message that a random MAC is used, the same message that
+  bcmsysport.c uses
 
-On Thu, Sep 26, 2019 at 01:25:37PM +0300, Claudiu Beznea wrote:
-> Driver has been enabled also for SAM9X60. At the moment the patch which d=
-id
-> this has been sent to mainline the PMC for SAM9X60 wasn't integrated.
-> SAM9X60 has a new PMC compatible (see commit 01e2113de9a5
-> ("clk: at91: add sam9x60 pmc driver")). Do to this we have to
-> look for proper PMC compatible here, in SHDWC driver.
->=20
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> ---
+ drivers/net/ethernet/broadcom/genet/bcmgenet.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-Thanks, queued.
+diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.c b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+index 12cb77ef1081..dd4e4f1dd384 100644
+--- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
++++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+@@ -3461,16 +3461,10 @@ static int bcmgenet_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
+ 
+-	if (dn) {
++	if (dn)
+ 		macaddr = of_get_mac_address(dn);
+-		if (IS_ERR(macaddr)) {
+-			dev_err(&pdev->dev, "can't find MAC address\n");
+-			err = -EINVAL;
+-			goto err;
+-		}
+-	} else {
++	else
+ 		macaddr = pd->mac_address;
+-	}
+ 
+ 	priv->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->base)) {
+@@ -3482,7 +3476,12 @@ static int bcmgenet_probe(struct platform_device *pdev)
+ 
+ 	SET_NETDEV_DEV(dev, &pdev->dev);
+ 	dev_set_drvdata(&pdev->dev, dev);
+-	ether_addr_copy(dev->dev_addr, macaddr);
++	if (IS_ERR_OR_NULL(macaddr) || !is_valid_ether_addr(macaddr)) {
++		dev_warn(&pdev->dev, "using random Ethernet MAC\n");
++		eth_hw_addr_random(dev);
++	} else {
++		ether_addr_copy(dev->dev_addr, macaddr);
++	}
+ 	dev->watchdog_timeo = 2 * HZ;
+ 	dev->ethtool_ops = &bcmgenet_ethtool_ops;
+ 	dev->netdev_ops = &bcmgenet_netdev_ops;
+-- 
+2.17.1
 
--- Sebastian
-
->  drivers/power/reset/at91-sama5d2_shdwc.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/power/reset/at91-sama5d2_shdwc.c b/drivers/power/res=
-et/at91-sama5d2_shdwc.c
-> index e341cc5c0ea6..1c18f465a245 100644
-> --- a/drivers/power/reset/at91-sama5d2_shdwc.c
-> +++ b/drivers/power/reset/at91-sama5d2_shdwc.c
-> @@ -269,6 +269,12 @@ static const struct of_device_id at91_shdwc_of_match=
-[] =3D {
->  };
->  MODULE_DEVICE_TABLE(of, at91_shdwc_of_match);
-> =20
-> +static const struct of_device_id at91_pmc_ids[] =3D {
-> +	{ .compatible =3D "atmel,sama5d2-pmc" },
-> +	{ .compatible =3D "microchip,sam9x60-pmc" },
-> +	{ /* Sentinel. */ }
-> +};
-> +
->  static int __init at91_shdwc_probe(struct platform_device *pdev)
->  {
->  	struct resource *res;
-> @@ -313,7 +319,7 @@ static int __init at91_shdwc_probe(struct platform_de=
-vice *pdev)
-> =20
->  	at91_shdwc_dt_configure(pdev);
-> =20
-> -	np =3D of_find_compatible_node(NULL, NULL, "atmel,sama5d2-pmc");
-> +	np =3D of_find_matching_node(NULL, at91_pmc_ids);
->  	if (!np) {
->  		ret =3D -ENODEV;
->  		goto clk_disable;
-> --=20
-> 2.7.4
->=20
-
---d46ovw6gybmflark
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl2kHMAACgkQ2O7X88g7
-+pq7ohAAmySmtlvTEoMtu+Eg6ZkyLhWE91QzJjC093TI4eHPf9Qq1kRKpJvzf7w4
-ft7/1dtdHaMh3WZ7QnzcqTRvYWuHqjWQn3vF/gNuuXkCbo0LBUI+zuJozc6+83Xp
-XMRehD0muqSMEEPaceJAXw1uUiTn2oygLr5mDYBZpZtShk5qF5aNBRWccf8V1Npj
-ZeZOj/whAqHAR5ixz3XaKOYuC9w5LWn63IrmTCtbWeJkuR3pfcjSJJkOH9MH3TYR
-TipTLYjdsMGfrT6YWAFH/ay5dKKUALWYnyxkAwyis/BZuaxtUuJwLuEpXAd2WO6Q
-qBrAI3XMeWvf2csWXiJ/o6Dp1TnPWh4bNwaBM3McBNbgWdPNpfYZxH1db/GpXbds
-ipP/ntBN/DKtQ07VfK/2JziQ3D+bR7fi5aTueLo+5+WtzlV/poBLooTWVMRWfRQn
-ljaAUWw4EkIy2W97u1/u4ZRQHbNw8FUT2zn/zlOaDDA+HGMYU0etfb7aaY45QCUe
-nzQaC+QkMvKLFJe+LYnkN7ZP+Aj28pP+A4Bejc14qN4p7PHwqPWHTHF7v/SfKS5T
-xXc5lezAd+uBvTZkUpXEFBw/lW3RJFgF4HbiOaU6soNYW6IhXOgKrn57GYPuOuZE
-XYk2VReN/wl+jhjh96z3rM51pdkSJT9eOOxNhOQTs3diaOvsPBY=
-=lBa6
------END PGP SIGNATURE-----
-
---d46ovw6gybmflark--
