@@ -2,120 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6795D5BC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 08:58:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28280D5BD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 09:04:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730115AbfJNG65 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 02:58:57 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:39078 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726618AbfJNG65 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 02:58:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571036335;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:openpgp:openpgp;
-        bh=fTMccw4yJmRrZCZ9gNo4nMTzO7ADWuT1mX49M7Icnho=;
-        b=GSzuaDH4hBbNRrMzEddHmRc8SWoPZu6y61Pe4Qa5+lbI5jHGkZfFVGJ9JDPqc3j0eJHhL8
-        D9SsC1MSbfYfXw7dY1o1oGMvxsWvbjpg1LsO1GVHf5gHroXkQp67qbjkSQ5a7MlXuIRlh4
-        dJmPbURqx1RqgR9nc8n9XeZ0GfwSOQY=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-384-yd4KCcsvO3CHBrvODvz8Og-1; Mon, 14 Oct 2019 02:58:54 -0400
-Received: by mail-wr1-f70.google.com with SMTP id k2so8086325wrn.7
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2019 23:58:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qg9GPSpE2649WBDEVbobtu+jtSwl5swPTKuvxOPA1Ww=;
-        b=B6v4Fl8s+ej3ICAW3a6x8aJ6irPCd3J7rzgrteA7OETGBlrbku+FFPfSCCskrGqsO7
-         BcZDOsqCY0mncOLXB0xKFzxSLdNSO/j3HjM3yC3sjP43yZmjmqIFZuDqcpHO/p5o9YpY
-         eE5hDey9qXx9z9Zh+U9yHhn6GsXFADQuNC+U8MDfTlF7pKbZNiFa4NfJYScjZNMHKQ3n
-         jz5q+kDMR0HcpaBP+vOa9KnTpP8sJntXpqtDGMC1EpcYWSz87rn56vn++8C8NyZCxiVO
-         uNjYH4nRki3ynUQZxxZi6FsBxW/jUN/8LzWW6rsiM46STPwh4o6wB9WB9/zsdGBfjEG6
-         5MxA==
-X-Gm-Message-State: APjAAAUwQRkiLRBSIWCoD2finHjsexIPtIELfMEun6chsyE898PxTN5h
-        o1qpyPKSMLwoDOBynQSIJD0E1gpQXivglQSXNOU37EWhSZMaUATlk+qt8LjYiEr0CP9gZdcBGlR
-        ETrYkkfdQNUuG7pLYcyaREmMl
-X-Received: by 2002:a1c:106:: with SMTP id 6mr12661924wmb.134.1571036333211;
-        Sun, 13 Oct 2019 23:58:53 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqx2OUyyPpyXE9W0ygYy2lBrXHn8KLvNfyvMNxm3vCpYPWzXJRiYFSSA6PpWL9tHhL0NCFDn6Q==
-X-Received: by 2002:a1c:106:: with SMTP id 6mr12661909wmb.134.1571036332956;
-        Sun, 13 Oct 2019 23:58:52 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:ddc7:c53c:581a:7f3e? ([2001:b07:6468:f312:ddc7:c53c:581a:7f3e])
-        by smtp.gmail.com with ESMTPSA id q19sm35151293wra.89.2019.10.13.23.58.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 13 Oct 2019 23:58:52 -0700 (PDT)
-Subject: Re: [RFC PATCH v3 4/6] psci: Add hvc call service for ptp_kvm.
-To:     "Jianyong Wu (Arm Technology China)" <Jianyong.Wu@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "yangbo.lu@nxp.com" <yangbo.lu@nxp.com>,
-        "john.stultz@linaro.org" <john.stultz@linaro.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
-        "richardcochran@gmail.com" <richardcochran@gmail.com>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Suzuki Poulose <Suzuki.Poulose@arm.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Steve Capper <Steve.Capper@arm.com>,
-        "Kaly Xin (Arm Technology China)" <Kaly.Xin@arm.com>,
-        "Justin He (Arm Technology China)" <Justin.He@arm.com>,
-        nd <nd@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190918080716.64242-1-jianyong.wu@arm.com>
- <20190918080716.64242-5-jianyong.wu@arm.com>
- <83ed7fac-277f-a31e-af37-8ec134f39d26@redhat.com>
- <HE1PR0801MB1676F57B317AE85E3B934B32F48E0@HE1PR0801MB1676.eurprd08.prod.outlook.com>
- <629538ea-13fb-e666-8df6-8ad23f114755@redhat.com>
- <HE1PR0801MB167639E2F025998058A77F86F4890@HE1PR0801MB1676.eurprd08.prod.outlook.com>
- <ef6ab8bd-41ad-88f8-9cfd-dc749ca65310@redhat.com>
- <a1b554b8-4417-5305-3419-fe71a8c50842@kernel.org>
- <56a5b885-62c8-c4ef-e2f8-e945c0eb700e@redhat.com>
- <HE1PR0801MB1676115C248E6DF09F9DD5A6F4950@HE1PR0801MB1676.eurprd08.prod.outlook.com>
- <1cc145ca-1af2-d46f-d530-0ae434005f0b@redhat.com>
- <HE1PR0801MB1676B1AD68544561403C3196F4950@HE1PR0801MB1676.eurprd08.prod.outlook.com>
- <6b8b59b2-a07e-7e33-588c-1da7658e3f1e@redhat.com>
- <HE1PR0801MB167635A4AA59FD93C45872E4F4900@HE1PR0801MB1676.eurprd08.prod.outlook.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <fc847a82-49cb-c931-617c-82ef5531963e@redhat.com>
-Date:   Mon, 14 Oct 2019 08:58:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <HE1PR0801MB167635A4AA59FD93C45872E4F4900@HE1PR0801MB1676.eurprd08.prod.outlook.com>
-Content-Language: en-US
-X-MC-Unique: yd4KCcsvO3CHBrvODvz8Og-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
+        id S1730242AbfJNHEs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 03:04:48 -0400
+Received: from smtp.taarnby.dk ([62.243.124.255]:49692 "EHLO smtp.taarnby.dk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726500AbfJNHEs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 03:04:48 -0400
+X-Greylist: delayed 902 seconds by postgrey-1.27 at vger.kernel.org; Mon, 14 Oct 2019 03:04:47 EDT
+Received: from smtp.taarnby.dk (127.0.0.1) id hkgf0u0171sv; Mon, 14 Oct 2019 08:49:44 +0200 (envelope-from <mms.as@taarnby.dk>)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=taarnby.dk; s=myhappydkimselector1; i=@taarnby.dk; h=Received:
+        Received:Received:Received:From:To:Subject:Thread-Topic:
+        Thread-Index:Date:Message-ID:Accept-Language:Content-Language:
+        Content-Type:Content-Transfer-Encoding:MIME-Version; bh=SlSWe+bY
+        OiCZqEHrwNWVTPvgtUntih8PbGsTuVcDYl8=; b=yYFaXw5f8eOtX/+K3uPA9RhB
+        wErWKF6E4myeNCNOh2xLCQwOdr0xq4bz6HCmrP2ccUcCewjPIDweW7ewwYP3/GSK
+        P+G46MxYLcrDYpqFUyGHAI9YKPSYJnfmJcGSo1DIc7gPfOjOfpDrvLDbQzwgoS6M
+        YlbC5fVVXb4SSaxzWRU2G/Ols14XvccBzc18rAyaK/AmzDJBx3Bm7V1yLOOJpjd6
+        jo4GA6dcMmq7HV7X80TeUMafI7TH80wmpnoJAVZbQ6czTOAUgoJ12wVP6/i5M40M
+        TOYosIh8EKft/h9Wppd0xOHRxgjjnoqvm1hgkg1YUPSzRtTLigrGxWPKJxXN9g==
+Received: from myhappyseposerver ([10.2.2.48])
+        by smtp.taarnby.dk ([192.168.254.7]) (SonicWall 10.0.2.1713)
+        with ESMTP id o201910140649440068105-3; Mon, 14 Oct 2019 08:49:44 +0200
+Received: from tkmail03.taarnby.dk ([10.2.2.49])
+          by myhappyseposerver (JAMES SMTP Server 2.3.2-1) with SMTP ID 471;
+          Mon, 14 Oct 2019 08:49:41 +0200 (CEST)
+Received: from tkmail03.taarnby.dk (10.2.2.49) by tkmail03.taarnby.dk
+ (10.2.2.49) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Mon, 14 Oct
+ 2019 08:49:41 +0200
+Received: from tkmail03.taarnby.dk ([fe80::a022:c900:dc8:d08a]) by
+ tkmail03.taarnby.dk ([fe80::a022:c900:dc8:d08a%3]) with mapi id
+ 15.01.1779.002; Mon, 14 Oct 2019 08:49:41 +0200
+From:   Marlene Stolle <mms.as@taarnby.dk>
+To:     "no-reply@Microsoft.net" <no-reply@Microsoft.net>
+Subject: =?iso-8859-1?Q?Beachten_Sie,_dass_Ihr_E-Mail-Postfachkonto_jetzt_dringend?=
+ =?iso-8859-1?Q?_=FCberpr=FCft_werden_muss?=
+Thread-Topic: =?iso-8859-1?Q?Beachten_Sie,_dass_Ihr_E-Mail-Postfachkonto_jetzt_dringend?=
+ =?iso-8859-1?Q?_=FCberpr=FCft_werden_muss?=
+Thread-Index: AQHVgltI2h/FxP+GZ0OJxstdlLJ4Tg==
+Date:   Mon, 14 Oct 2019 06:49:41 +0000
+Message-ID: <49a688fc86134bb4a7260d6ef8d4d6fa@taarnby.dk>
+Accept-Language: da-DK, en-US
+Content-Language: da-DK
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [192.168.254.46]
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Mlf-DSE-Version: 5781
+X-Mlf-Rules-Version: s20191003201001; ds20171117204456;
+        di20190815003105; ri20160318003319; fs20191009002405
+X-Mlf-Smartnet-Version: 20190423194748
+X-Mlf-Version: 10.0.2.1713
+X-Mlf-License: BSV_C_AP____
+X-Mlf-UniqueId: o201910140649440068105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/10/19 07:50, Jianyong Wu (Arm Technology China) wrote:
->>
->> John (Stultz), does that sound good to you?  The context is that Jianyon=
-g
->> would like to add a hypercall that returns a (cycles,
->> nanoseconds) pair to the guest.  On x86 we're relying on the vclock_mode
->> field that is already there for the vDSO, but being able to just use
->> ktime_get_snapshot would be much nicer.
->>
-> Could I add struct clocksource to system_time_snapshot struct in next ver=
-sion of my patch set?
+MICROSOFT DRINGENDE MITTEILUNG
 
-Yes, I say go ahead.  At least it will get closer to a final design.
 
-Paolo
+Beachten Sie, dass Ihr E-Mail-Postfachkonto jetzt dringend =FCberpr=FCft we=
+rden muss, damit etwa 20 Ihrer eingehenden Nachrichten freigegeben werden, =
+die derzeit ausgesetzt sind. Klicken Sie unten auf =DCberpr=FCfen, um Ihr K=
+onto jetzt zu =FCberpr=FCfen.
 
+
+=DCBERPR=DCFEN<http://2e3e.000webhostapp.com/>
+
+
+Microsoft Verification Team
+
+
+Copyright =A9 2019 Microsoft .Inc. Alle Rechte vorbehalten.
+
+
+
+________________________________
+G=F8r dig selv en online tjeneste - sig farvel til k=F8er, ventetoner og =
+=E5bningstider og goddag til digital selvbetjening.
+
+P=E5 www.borger.dk og www.taarnby.dk har du adgang til digital selvbetjenin=
+g og digital post d=F8gnet rundt - og n=F8glen er dit NemID.
