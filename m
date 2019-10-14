@@ -2,71 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 095F2D638B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 15:15:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E117BD6392
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 15:16:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730988AbfJNNPw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 09:15:52 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43696 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725989AbfJNNPv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 09:15:51 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D931B3082E4E;
-        Mon, 14 Oct 2019 13:15:51 +0000 (UTC)
-Received: from prarit.bos.redhat.com (prarit-guest.khw1.lab.eng.bos.redhat.com [10.16.200.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 64D786046B;
-        Mon, 14 Oct 2019 13:15:51 +0000 (UTC)
-Subject: Re: [PATCH v3 0/6] Add CascadeLake-N Support
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        andriy.shevchenko@intel.com
-Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191007193100.36934-1-srinivas.pandruvada@linux.intel.com>
-From:   Prarit Bhargava <prarit@redhat.com>
-Message-ID: <67aaedb2-dc74-7a60-7345-1c160e6b08e5@redhat.com>
-Date:   Mon, 14 Oct 2019 09:15:50 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1731517AbfJNNQN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 09:16:13 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38785 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727789AbfJNNQM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 09:16:12 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1iK0Cn-0005Vt-14; Mon, 14 Oct 2019 13:16:09 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Jaroslav Kysela <perex@perex.cz>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] PNP: fix unintended sign extension on left shifts
+Date:   Mon, 14 Oct 2019 14:16:08 +0100
+Message-Id: <20191014131608.31335-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20191007193100.36934-1-srinivas.pandruvada@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Mon, 14 Oct 2019 13:15:51 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Shifting a u8 left will cause the value to be promoted to an integer. If
+the top bit of the u8 is set then the following conversion to a 64 bit
+resource_size_t will sign extend the value causing the upper 32 bits
+to be set in the result.
 
-On 10/7/19 3:30 PM, Srinivas Pandruvada wrote:
-> Add support for SST-BF on CascadeLake-N support.  The CascadeLake-N
-> processor only support SST-BF and not other SST functionality.
->
+Fix this by casting the u8 value to a resource_size_t before the shift.
+Original commit is pre-git history.
 
-Sorry Srinivas, was away from keyboard all last week :(
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pnp/isapnp/core.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-> v3:
-> Fix crash due to geline
+diff --git a/drivers/pnp/isapnp/core.c b/drivers/pnp/isapnp/core.c
+index 179b737280e1..c947b1673041 100644
+--- a/drivers/pnp/isapnp/core.c
++++ b/drivers/pnp/isapnp/core.c
+@@ -511,10 +511,14 @@ static void __init isapnp_parse_mem32_resource(struct pnp_dev *dev,
+ 	unsigned char flags;
+ 
+ 	isapnp_peek(tmp, size);
+-	min = (tmp[4] << 24) | (tmp[3] << 16) | (tmp[2] << 8) | tmp[1];
+-	max = (tmp[8] << 24) | (tmp[7] << 16) | (tmp[6] << 8) | tmp[5];
+-	align = (tmp[12] << 24) | (tmp[11] << 16) | (tmp[10] << 8) | tmp[9];
+-	len = (tmp[16] << 24) | (tmp[15] << 16) | (tmp[14] << 8) | tmp[13];
++	min = ((resource_size_t)tmp[4] << 24) | (tmp[3] << 16) |
++              (tmp[2] << 8) | tmp[1];
++	max = ((resource_size_t)tmp[8] << 24) | (tmp[7] << 16) |
++              (tmp[6] << 8) | tmp[5];
++	align = ((resource_size_t)tmp[12] << 24) | (tmp[11] << 16) |
++              (tmp[10] << 8) | tmp[9];
++	len = ((resource_size_t)tmp[16] << 24) | (tmp[15] << 16) |
++              (tmp[14] << 8) | tmp[13];
+ 	flags = tmp[0];
+ 	pnp_register_mem_resource(dev, option_flags,
+ 				  min, max, align, len, flags);
+@@ -532,8 +536,10 @@ static void __init isapnp_parse_fixed_mem32_resource(struct pnp_dev *dev,
+ 	unsigned char flags;
+ 
+ 	isapnp_peek(tmp, size);
+-	base = (tmp[4] << 24) | (tmp[3] << 16) | (tmp[2] << 8) | tmp[1];
+-	len = (tmp[8] << 24) | (tmp[7] << 16) | (tmp[6] << 8) | tmp[5];
++	base = ((resource_size_t)tmp[4] << 24) | (tmp[3] << 16) |
++	       (tmp[2] << 8) | tmp[1];
++	len = ((resource_size_t)tmp[8] << 24) | (tmp[7] << 16) |
++              (tmp[6] << 8) | tmp[5];
+ 	flags = tmp[0];
+ 	pnp_register_mem_resource(dev, option_flags, base, base, 0, len, flags);
+ }
+-- 
+2.20.1
 
-^^^ curious how you hit this?  I was repeatedly testing and couldn't
-get it to happen.
-
-> Fix display to perf-profile info and base-freq info command
-> Fix output for coremask
-> Fix base frequency CPU list. This should be displayed for a package
-> Auto mode support for base-freq enable/disable
-> One of the patch for config only change folded to next one where it is
-> used.
->
-> The patch 1 has nothing to do with the CLX-N. It saves some bytes in the
-> size.
->
-
-Reviewed-by: Prarit Bhargava <prarit@redhat.com>
-
-P.
