@@ -2,123 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C89CCD665C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:45:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D265DD6661
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:46:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387697AbfJNPpA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 11:45:00 -0400
-Received: from mail-eopbgr70132.outbound.protection.outlook.com ([40.107.7.132]:54596
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731441AbfJNPpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 11:45:00 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KH8959pyPBV/Y/4K7tkZfcNkxT8SiRKDZN/rbkWVk64mjhb0kRQWj+dE4uxCimlmv+9KVW9s/mw8IWlgrvOD4Vfis/5EFdQPS3fmbkEqektdfEd27f5c9zWaTzx2CnS9QBb/JKOi88HyeLmgKsR+tDcEEfeJZQfhQym+pegmCzunm7XqAdOMtB6Bj6AycaBbaNO5HiCoj2EkXVOuDwYjMnBgClPAqjsS0gO8ebcdE1qLIhxIJDpOzGCbYYq+iPFctfCstmkVbI5JVjcXbjM6nekvktHMZl7Btu8N0zokwRJqKE6ZFf0Xa3b7m37j0CHVxCLkkauXmBqmN/bwn/LRhQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6gnetPydixSebPjmtxhIprsT1HkC5LDiSmII5Yp3xMc=;
- b=I4DEunfzY5WNOMnQ4pg2YyCSVvCey6fA0H0j919fT/+TA5RE4s9lwMiVROeKU1/TjQEAdcbB6OhU1ZCAmXK3otftjFHLnOJZkDypO8b+0ukcXCnfToJUz5a9a1ORgqD8TP0JyE97qocF5WJE5nPcDwptFkizgXjD6mOmgeOn8h/BPiUGvXf5ufZ7D2vUfTpAT7kTG1o80J/OEU9h9LERhDdLYNlTjkuJPmVkhPsX+bkJM7K0hX2OXE6eQrlSg7IgD5FdIBEFHHjqQlyWBYZ+uWWI+qZpNlU8FPywqZlRj7arkL6MLH7ljKOHedGT8rCcdFiL8hrbG72TgXpSwOjHDg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=axentia.se; dmarc=pass action=none header.from=axentia.se;
- dkim=pass header.d=axentia.se; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6gnetPydixSebPjmtxhIprsT1HkC5LDiSmII5Yp3xMc=;
- b=Rf6TfnsfLLiDFQ7eU4buFkzEFtsBBjsGZqvr1sQ5M5jzIrrce+TxLVjn67MvPB8OhsEQGsHGqyprREZ3CLq/TJWGj89+ZNhvvlS4mpaJ7RU7mkCBMHBztWPZcC0/ZdwbDiGMIU9mKLTTMUS8Kh1eJF1vfCPpkPBKA4UauEldexE=
-Received: from DB3PR0202MB3434.eurprd02.prod.outlook.com (52.134.66.158) by
- DB3PR0202MB3322.eurprd02.prod.outlook.com (52.134.66.161) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.21; Mon, 14 Oct 2019 15:44:54 +0000
-Received: from DB3PR0202MB3434.eurprd02.prod.outlook.com
- ([fe80::c5b8:6014:87a4:1afe]) by DB3PR0202MB3434.eurprd02.prod.outlook.com
- ([fe80::c5b8:6014:87a4:1afe%7]) with mapi id 15.20.2347.021; Mon, 14 Oct 2019
- 15:44:54 +0000
-From:   Peter Rosin <peda@axentia.se>
-To:     Biwen Li <biwen.li@nxp.com>,
-        "leoyang.li@nxp.com" <leoyang.li@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-CC:     "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: i2c: replace property
- i2c-mux-idle-disconnect
-Thread-Topic: [PATCH 1/2] dt-bindings: i2c: replace property
- i2c-mux-idle-disconnect
-Thread-Index: AQHVgoOxjsLBvN5sZEONd8v0noOXt6daR5EA
-Date:   Mon, 14 Oct 2019 15:44:54 +0000
-Message-ID: <4124752f-19a2-e3c1-7887-07ba66a79c29@axentia.se>
-References: <20191014112558.3881-1-biwen.li@nxp.com>
-In-Reply-To: <20191014112558.3881-1-biwen.li@nxp.com>
-Accept-Language: en-US, sv-SE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-x-originating-ip: [213.112.138.100]
-x-clientproxiedby: HE1PR09CA0056.eurprd09.prod.outlook.com
- (2603:10a6:7:3c::24) To DB3PR0202MB3434.eurprd02.prod.outlook.com
- (2603:10a6:8:5::30)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peda@axentia.se; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 19a1f116-51b8-45a6-1e70-08d750bd755e
-x-ms-traffictypediagnostic: DB3PR0202MB3322:
-x-microsoft-antispam-prvs: <DB3PR0202MB3322116254A7A498DB5F61CCBC900@DB3PR0202MB3322.eurprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 01901B3451
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(346002)(39830400003)(366004)(136003)(199004)(189003)(186003)(6246003)(110136005)(316002)(58126008)(54906003)(2906002)(26005)(6512007)(446003)(11346002)(8936002)(386003)(102836004)(508600001)(6506007)(53546011)(4326008)(66066001)(86362001)(66446008)(66556008)(99286004)(64756008)(256004)(71190400001)(31686004)(4001150100001)(6486002)(65806001)(3846002)(7736002)(52116002)(6116002)(66946007)(71200400001)(486006)(76176011)(65956001)(66476007)(81166006)(476003)(229853002)(36756003)(2616005)(6436002)(81156014)(25786009)(305945005)(14454004)(31696002)(5660300002)(2501003)(8676002);DIR:OUT;SFP:1102;SCL:1;SRVR:DB3PR0202MB3322;H:DB3PR0202MB3434.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: axentia.se does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ZqXjPhUArv+8NAG/OIxQ9bMZ4nlJRagXxgAv1RR2AjAgccOTPngV7gBpegrowL/5ZY0yVKlh11vi7lROy0+2v/TxSoEBYfsDnDPo+hoA8IxIZfmK1AMk49k+ozvKv5l8QpSZ68wQ4S0fOsxfNJHUV+9DgcIqRhZaXNP8evw44jYgy6JACw1bn/PiiZ5wEN17zcziR3xI3nmou5OOllkawXmF4JLkINMH7JiEP9SPRphcYlTx0Qn/7GONpBdZ0PrLmpaDt8MBZ8jcRml3XWtHTxUOOMDPwFTLSikUKR51PlRLspiOkMTbIWnoiVYrhRF3MW3n5QBxqH84Oa3FgGFrXZqNmT6kl9B8u3rEQGQwLTyPfuBBDkWz18fKCZl2Ig3guPm9gKhpPeua9bQUhR9hxIM5JG6cN6J2nIcZSc2g9tU=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <317733F89A582E43892671097717F529@eurprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S2387720AbfJNPpn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 11:45:43 -0400
+Received: from foss.arm.com ([217.140.110.172]:47346 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729997AbfJNPpn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 11:45:43 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C8B328;
+        Mon, 14 Oct 2019 08:45:42 -0700 (PDT)
+Received: from dawn-kernel.cambridge.arm.com (unknown [10.1.197.116])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9F6F13F718;
+        Mon, 14 Oct 2019 08:45:41 -0700 (PDT)
+Subject: Re: [PATCH 1/3] arm64: cpufeature: Fix the type of no FP/SIMD
+ capability
+To:     Dave Martin <Dave.Martin@arm.com>
+Cc:     mark.rutland@arm.com, catalin.marinas@arm.com, will@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20191010171517.28782-1-suzuki.poulose@arm.com>
+ <20191010171517.28782-2-suzuki.poulose@arm.com>
+ <20191011113620.GG27757@arm.com>
+ <4ba5c423-4e2a-d810-cd36-32a16ad42c91@arm.com>
+ <20191011142137.GH27757@arm.com>
+ <418b0c4b-cbcd-4263-276d-1e9edc5eee0b@arm.com>
+ <20191014145204.GS27757@arm.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <12e002e7-42e8-c205-e42c-3348359d2f98@arm.com>
+Date:   Mon, 14 Oct 2019 16:45:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-Network-Message-Id: 19a1f116-51b8-45a6-1e70-08d750bd755e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Oct 2019 15:44:54.7526
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yvZ1b4qtqs2sp32VitXCxwAqzVu0TZDLR+o8W4rNcdqZ5mBx3RDw9/V69Iye41Hv
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0202MB3322
+In-Reply-To: <20191014145204.GS27757@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjAxOS0xMC0xNCAxMzoyNSwgQml3ZW4gTGkgd3JvdGU6DQo+IFRoaXMgcmVwbGFjZXMgcHJv
-cGVydHkgaTJjLW11eC1pZGxlLWRpc2Nvbm5lY3Qgd2l0aCBpZGxlLXN0YXRlDQo+IA0KPiBTaWdu
-ZWQtb2ZmLWJ5OiBCaXdlbiBMaSA8Yml3ZW4ubGlAbnhwLmNvbT4NCj4gLS0tDQo+ICBEb2N1bWVu
-dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvaTJjL2kyYy1tdXgtcGNhOTU0eC50eHQgfCA0ICst
-LS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMyBkZWxldGlvbnMoLSkNCj4g
-DQo+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvaTJjL2ky
-Yy1tdXgtcGNhOTU0eC50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvaTJj
-L2kyYy1tdXgtcGNhOTU0eC50eHQNCj4gaW5kZXggMzBhYzZhNjBmMDQxLi5mMmRiNTE3YjE2MzUg
-MTAwNjQ0DQo+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9pMmMvaTJj
-LW11eC1wY2E5NTR4LnR4dA0KPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3MvaTJjL2kyYy1tdXgtcGNhOTU0eC50eHQNCj4gQEAgLTI1LDkgKzI1LDcgQEAgUmVxdWlyZWQg
-UHJvcGVydGllczoNCj4gIE9wdGlvbmFsIFByb3BlcnRpZXM6DQo+ICANCj4gICAgLSByZXNldC1n
-cGlvczogUmVmZXJlbmNlIHRvIHRoZSBHUElPIGNvbm5lY3RlZCB0byB0aGUgcmVzZXQgaW5wdXQu
-DQo+IC0gIC0gaTJjLW11eC1pZGxlLWRpc2Nvbm5lY3Q6IEJvb2xlYW47IGlmIGRlZmluZWQsIGZv
-cmNlcyBtdXggdG8gZGlzY29ubmVjdCBhbGwNCj4gLSAgICBjaGlsZHJlbiBpbiBpZGxlIHN0YXRl
-LiBUaGlzIGlzIG5lY2Vzc2FyeSBmb3IgZXhhbXBsZSwgaWYgdGhlcmUgYXJlIHNldmVyYWwNCj4g
-LSAgICBtdWx0aXBsZXhlcnMgb24gdGhlIGJ1cyBhbmQgdGhlIGRldmljZXMgYmVoaW5kIHRoZW0g
-dXNlIHNhbWUgSTJDIGFkZHJlc3Nlcy4NCj4gKyAgLSBpZGxlLXN0YXRlOiBQbGVhc2UgcmVmZXIg
-dG8gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL211eC9tdXgtY29udHJvbGxlci50
-eHQNCj4gICAgLSBpbnRlcnJ1cHRzOiBJbnRlcnJ1cHQgbWFwcGluZyBmb3IgSVJRLg0KPiAgICAt
-IGludGVycnVwdC1jb250cm9sbGVyOiBNYXJrcyB0aGUgZGV2aWNlIG5vZGUgYXMgYW4gaW50ZXJy
-dXB0IGNvbnRyb2xsZXIuDQo+ICAgIC0gI2ludGVycnVwdC1jZWxscyA6IFNob3VsZCBiZSB0d28u
-DQo+IA0KDQpZb3UgY2FuJ3QganVzdCByZW1vdmUgaTJjLW11eC1pZGxlLWRpc2Nvbm5lY3QuIEl0
-IG5lZWRzIHRvIHJlbWFpbiwgYW5kIHRoZQ0KZHJpdmVyIG5lZWRzIHRvIG1haW50YWluIHN1cHBv
-cnQgZm9yIHRoaXMgaW4gY2FzZSBhIG5ldyBrZXJuZWwgaXMgcnVubmluZw0Kd2l0aCBhbiBvbGQg
-ZGV2aWNldHJlZS4NCg0KQ2hlZXJzLA0KUGV0ZXINCg==
+
+
+On 14/10/2019 15:52, Dave Martin wrote:
+> On Fri, Oct 11, 2019 at 06:28:43PM +0100, Suzuki K Poulose wrote:
+>>
+>>
+>> On 11/10/2019 15:21, Dave Martin wrote:
+>>> On Fri, Oct 11, 2019 at 01:13:18PM +0100, Suzuki K Poulose wrote: > Hi Dave
+>>>>
+>>>> On 11/10/2019 12:36, Dave Martin wrote:
+>>>>> On Thu, Oct 10, 2019 at 06:15:15PM +0100, Suzuki K Poulose wrote:
+>>>>>> The NO_FPSIMD capability is defined with scope SYSTEM, which implies
+>>>>>> that the "absence" of FP/SIMD on at least one CPU is detected only
+>>>>>> after all the SMP CPUs are brought up. However, we use the status
+>>>>>> of this capability for every context switch. So, let us change
+>>>>>> the scop to LOCAL_CPU to allow the detection of this capability
+>>>>>> as and when the first CPU without FP is brought up.
+>>>>>>
+>>>>>> Also, the current type allows hotplugged CPU to be brought up without
+>>>>>> FP/SIMD when all the current CPUs have FP/SIMD and we have the userspace
+>>>>>> up. Fix both of these issues by changing the capability to
+>>>>>> BOOT_RESTRICTED_LOCAL_CPU_FEATURE.
+>>>>>>
+>>>>>> Fixes: 82e0191a1aa11abf ("arm64: Support systems without FP/ASIMD")
+>>>>>> Cc: Will Deacon <will@kernel.org>
+>>>>>> Cc: Mark Rutland <mark.rutland@arm.com>
+>>>>>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>>>>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>>>>> ---
+>>>>>>   arch/arm64/kernel/cpufeature.c | 2 +-
+>>>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+>>>>>> index 9323bcc40a58..0f9eace6c64b 100644
+>>>>>> --- a/arch/arm64/kernel/cpufeature.c
+>>>>>> +++ b/arch/arm64/kernel/cpufeature.c
+>>>>>> @@ -1361,7 +1361,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+>>>>>>   	{
+>>>>>>   		/* FP/SIMD is not implemented */
+>>>>>>   		.capability = ARM64_HAS_NO_FPSIMD,
+>>>>>> -		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+>>>>>> +		.type = ARM64_CPUCAP_BOOT_RESTRICTED_CPU_LOCAL_FEATURE,
+>>>>>
+>>>>> ARM64_HAS_NO_FPSIMD is really a disability, not a capability.
+>>>>>
+>>>>> Although we have other things that smell like this (CPU errata for
+>>>>> example), I wonder whether inverting the meaning in the case would
+>>>>> make the situation easier to understand.
+>>>>
+>>>> Yes, it is indeed a disability, more on that below.
+>>>>
+>>>>>
+>>>>> So, we'd have ARM64_HAS_FPSIMD, with a minimum (signed) feature field
+>>>>> value of 0.  Then this just looks like an ARM64_CPUCAP_SYSTEM_FEATURE
+>>>>> IIUC.  We'd just need to invert the sense of the check in
+>>>>> system_supports_fpsimd().
+>>>>
+>>>> This is particularly something we want to avoid with this patch. We want
+>>>> to make sure that we have the up-to-date status of the disability right
+>>>> when it happens. i.e, a CPU without FP/SIMD is brought up. With SYSTEM_FEATURE
+>>>> you have to wait until we bring all the CPUs up. Also, for HAS_FPSIMD,
+>>>> you must wait until all the CPUs are up, unlike the negated capability.
+>>>
+>>> I don't see why waiting for the random defective early CPU to come up is
+>>> better than waiting for all the early CPUs to come up and then deciding.
+>>>
+>>> Kernel-mode NEON aside, the status of this cap should not matter until
+>>> we enter userspace for the first time.
+>>>
+>>> The only issue is if e.g., crypto drivers that can use kernel-mode NEON
+>>> probe for it before all early CPUs are up, and so cache the wrong
+>>> decision.  The current approach doesn't cope with that anyway AFAICT.
+>>
+>> This approach does in fact. With LOCAL_CPU scope, the moment a defective
+>> CPU turns up, we mark the "capability" and thus the kernel cannot use
+>> the neon then onwards, unlike the existing case where we have time till
+>> we boot all the CPUs (even when the boot CPU may be defective).
+> 
+> I guess that makes sense.
+> 
+> I'm now wondering what happens if anything tries to use kernel-mode NEON
+> before SVE is initialised -- which doesn't happen until cpufeatures
+> configures the system features.
+> 
+> I don't think your proposed change makes anything worse here, but it may
+> need looking into.
+
+We could throw in a WARN_ON() in kernel_neon() to make sure that the SVE
+is initialised ?
+
+Suzuki
