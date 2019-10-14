@@ -2,152 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19ED1D619C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 13:46:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89E56D61A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 13:47:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731066AbfJNLqh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 07:46:37 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54018 "EHLO mx1.redhat.com"
+        id S1731324AbfJNLrq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 07:47:46 -0400
+Received: from foss.arm.com ([217.140.110.172]:41490 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730593AbfJNLqh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 07:46:37 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A35CC801673;
-        Mon, 14 Oct 2019 11:46:35 +0000 (UTC)
-Received: from thinkpad.redhat.com (ovpn-116-247.ams2.redhat.com [10.36.116.247])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5186619C6A;
-        Mon, 14 Oct 2019 11:46:33 +0000 (UTC)
-From:   Laurent Vivier <lvivier@redhat.com>
+        id S1730369AbfJNLrq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 07:47:46 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8A4DE337;
+        Mon, 14 Oct 2019 04:47:45 -0700 (PDT)
+Received: from e113632-lin.cambridge.arm.com (unknown [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4EE483F68E;
+        Mon, 14 Oct 2019 04:47:44 -0700 (PDT)
+From:   Valentin Schneider <valentin.schneider@arm.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Matt Mackall <mpm@selenic.com>,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-crypto@vger.kernel.org, Laurent Vivier <lvivier@redhat.com>
-Subject: [PATCH] hwrng: core - Fix use-after-free warning in hwrng_register()
-Date:   Mon, 14 Oct 2019 13:46:32 +0200
-Message-Id: <20191014114632.10875-1-lvivier@redhat.com>
+Cc:     mingo@kernel.org, peterz@infradead.org, vincent.guittot@linaro.org,
+        Dietmar.Eggemann@arm.com, morten.rasmussen@arm.com,
+        qperret@qperret.net, stable@vger.kernel.org
+Subject: [PATCH] sched/topology: Disable sched_asym_cpucapacity on domain destruction
+Date:   Mon, 14 Oct 2019 12:47:10 +0100
+Message-Id: <20191014114710.22142-1-valentin.schneider@arm.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.67]); Mon, 14 Oct 2019 11:46:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit daae28debcb0 has moved add_early_randomness() out of the
-rng_mutex and tries to protect the reference of the new rng device
-by incrementing the reference counter.
+While the static key is correctly initialized as being disabled, it will
+remain forever enabled once turned on. This means that if we start with an
+asymmetric system and hotplug out enough CPUs to end up with an SMP system,
+the static key will remain set - which is obviously wrong. We should detect
+this and turn off things like misfit migration and EAS wakeups.
 
-But in hwrng_register(), the function can be called with a new device
-that is not set as the current_rng device and the reference has not been
-initialized. This patch fixes the problem by not using the reference
-counter when the device is not the current one: the reference counter
-is only meaningful in the case of the current rng device and a device
-is not used if it is not the current one (except in hwrng_register())
+Having that key enabled should also mandate
 
-The problem has been reported by Marek Szyprowski on ARM 32bit
-Exynos5420-based Chromebook Peach-Pit board:
+  per_cpu(sd_asym_cpucapacity, cpu) != NULL
 
-WARNING: CPU: 3 PID: 1 at lib/refcount.c:156 hwrng_register+0x13c/0x1b4
-refcount_t: increment on 0; use-after-free.
-Modules linked in:
-CPU: 3 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc1-00061-gdaae28debcb0
-Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[<c01124c8>] (unwind_backtrace) from [<c010dfb8>] (show_stack+0x10/0x14)
-[<c010dfb8>] (show_stack) from [<c0ae86d8>] (dump_stack+0xa8/0xd4)
-[<c0ae86d8>] (dump_stack) from [<c0127428>] (__warn+0xf4/0x10c)
-[<c0127428>] (__warn) from [<c01274b4>] (warn_slowpath_fmt+0x74/0xb8)
-[<c01274b4>] (warn_slowpath_fmt) from [<c054729c>] (hwrng_register+0x13c/0x1b4)
-[<c054729c>] (hwrng_register) from [<c0547e54>] (tpm_chip_register+0xc4/0x274)
-...
+for all CPUs, but this is obviously not true with the above.
 
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Fixes: daae28debcb0 ("hwrng: core - move add_early_randomness() out of rng_mutex")
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Laurent Vivier <lvivier@redhat.com>
+On top of that, sched domain rebuilds first lead to attaching the NULL
+domain to the affected CPUs, which means there will be a window where the
+static key is set but the sd_asym_cpucapacity shortcut points to NULL even
+if asymmetry hasn't been hotplugged out.
+
+Disable the static key when destroying domains, and let
+build_sched_domains() (re) enable it as needed.
+
+Cc: <stable@vger.kernel.org>
+Fixes: df054e8445a4 ("sched/topology: Add static_key for asymmetric CPU capacity optimizations")
+Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
 ---
- drivers/char/hw_random/core.c | 33 ++++++++++++++++-----------------
- 1 file changed, 16 insertions(+), 17 deletions(-)
+ kernel/sched/topology.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/char/hw_random/core.c b/drivers/char/hw_random/core.c
-index 29f50c045c92..d85c6e18a2d2 100644
---- a/drivers/char/hw_random/core.c
-+++ b/drivers/char/hw_random/core.c
-@@ -471,17 +471,15 @@ static void start_khwrngd(void)
- int hwrng_register(struct hwrng *rng)
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index b5667a273bf6..c49ae57a0611 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -2123,7 +2123,8 @@ static void detach_destroy_domains(const struct cpumask *cpu_map)
  {
- 	int err = -EINVAL;
--	struct hwrng *old_rng, *new_rng, *tmp;
-+	struct hwrng *tmp;
- 	struct list_head *rng_list_ptr;
-+	bool is_new_current = false;
+ 	int i;
  
- 	if (!rng->name || (!rng->data_read && !rng->read))
- 		goto out;
- 
- 	mutex_lock(&rng_mutex);
- 
--	old_rng = current_rng;
--	new_rng = NULL;
--
- 	/* Must not register two RNGs with the same name. */
- 	err = -EEXIST;
- 	list_for_each_entry(tmp, &rng_list, list) {
-@@ -500,9 +498,8 @@ int hwrng_register(struct hwrng *rng)
- 	}
- 	list_add_tail(&rng->list, rng_list_ptr);
- 
--	err = 0;
--	if (!old_rng ||
--	    (!cur_rng_set_by_user && rng->quality > old_rng->quality)) {
-+	if (!current_rng ||
-+	    (!cur_rng_set_by_user && rng->quality > current_rng->quality)) {
- 		/*
- 		 * Set new rng as current as the new rng source
- 		 * provides better entropy quality and was not
-@@ -511,15 +508,14 @@ int hwrng_register(struct hwrng *rng)
- 		err = set_current_rng(rng);
- 		if (err)
- 			goto out_unlock;
-+		/* to use current_rng in add_early_randomness() we need
-+		 * to take a ref
-+		 */
-+		is_new_current = true;
-+		kref_get(&rng->ref);
- 	}
--
--	new_rng = rng;
--	kref_get(&new_rng->ref);
--out_unlock:
- 	mutex_unlock(&rng_mutex);
--
--	if (new_rng) {
--		if (new_rng != old_rng || !rng->init) {
-+	if (is_new_current || !rng->init) {
- 		/*
- 		 * Use a new device's input to add some randomness to
- 		 * the system.  If this rng device isn't going to be
-@@ -527,10 +523,13 @@ int hwrng_register(struct hwrng *rng)
- 		 * called yet by set_current_rng(); so only use the
- 		 * randomness from devices that don't need an init callback
- 		 */
--			add_early_randomness(new_rng);
--		}
--		put_rng(new_rng);
-+		add_early_randomness(rng);
- 	}
-+	if (is_new_current)
-+		put_rng(rng);
-+	return 0;
-+out_unlock:
-+	mutex_unlock(&rng_mutex);
- out:
- 	return err;
- }
--- 
-2.21.0
++	static_branch_disable_cpuslocked(&sched_asym_cpucapacity);
++
+ 	rcu_read_lock();
+ 	for_each_cpu(i, cpu_map)
+ 		cpu_attach_domain(NULL, &def_root_domain, i);
+--
+2.22.0
 
