@@ -2,46 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87593D61FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 14:05:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FBE0D61F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 14:05:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731900AbfJNMFg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 08:05:36 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35078 "EHLO
+        id S1731872AbfJNMFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 08:05:15 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34456 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730369AbfJNMFf (ORCPT
+        with ESMTP id S1730369AbfJNMFO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 08:05:35 -0400
+        Mon, 14 Oct 2019 08:05:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=T57gFAQ2HL0OrNojxYT6RFsspIHb42s2lXo+OYKN3oU=; b=qn+OlOED4Bqj
-        8Fv1zdAGKWWZJCAl7bXukw7iCCsS86IVOk6Mc697BCVuVlyI5GBGOmiMeEE9XE0ZIsA0ucaybSXqm
-        nKaikyzKNfIiccC5JDwiL+VAehIFfeFonC2FpRJ8UOp9yVraGm0018xuq4i3Xl6EfsREU4OKoipca
-        iOpJQ=;
+        List-Archive; bh=HTqny5PVHvnmykrT7/i1QnwbFEAoZl4BaIh7+Q4ZBD8=; b=ZkvZ04JyHUqK
+        EKhKl9qgVeJw+aFrjyJIXS7+NcnGa5tQma35pvSFybaP2Kua7HqT/YESsko4VZlh983J/GaiDxM/o
+        BK/JqULa93WSTPO2lLgkrwv9FGxqdVQ7840MOw8WdgGlK4bgQPdRmuVY9say3n4huwkdDYLkQ5Q2q
+        qZpm4=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iJz5u-0007WM-UW; Mon, 14 Oct 2019 12:04:58 +0000
+        id 1iJz5u-0007WR-MS; Mon, 14 Oct 2019 12:04:58 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id D43862741EED; Mon, 14 Oct 2019 13:04:57 +0100 (BST)
+        id 236F02741EF2; Mon, 14 Oct 2019 13:04:58 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     YueHaibing <yuehaibing@huawei.com>
 Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        festevam@gmail.com, lgirdwood@gmail.com,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Mark Brown <broonie@kernel.org>, nicoleotsuka@gmail.com,
-        Nicolin Chen <nicoleotsuka@gmail.com>, perex@perex.cz,
-        timur@kernel.org, tiwai@suse.com, Xiubo.Lee@gmail.com
-Subject: Applied "ASoC: fsl_mqs: Move static keyword to the front of declarations" to the asoc tree
-In-Reply-To: <20191011143538.15300-1-yuehaibing@huawei.com>
+        ckeepax@opensource.cirrus.com, enric.balletbo@collabora.com,
+        Hulk Robot <hulkci@huawei.com>, krzk@kernel.org,
+        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        npoushin@opensource.cirrus.com, nuno.sa@analog.com,
+        paul@crapouillou.net, perex@perex.cz, piotrs@opensource.cirrus.com,
+        rf@opensource.wolfsonmicro.com, tiwai@suse.com
+Subject: Applied "ASoC: adau7118: Fix Kconfig warning without CONFIG_I2C" to the asoc tree
+In-Reply-To: <20191011150042.20096-1-yuehaibing@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191014120457.D43862741EED@ypsilon.sirena.org.uk>
-Date:   Mon, 14 Oct 2019 13:04:57 +0100 (BST)
+Message-Id: <20191014120458.236F02741EF2@ypsilon.sirena.org.uk>
+Date:   Mon, 14 Oct 2019 13:04:58 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -49,7 +51,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: fsl_mqs: Move static keyword to the front of declarations
+   ASoC: adau7118: Fix Kconfig warning without CONFIG_I2C
 
 has been applied to the asoc tree at
 
@@ -74,38 +76,41 @@ to this mail.
 Thanks,
 Mark
 
-From dd79841ca66ff509660880237dc286d7f116a766 Mon Sep 17 00:00:00 2001
+From de729862cc0f0b46dd3a3c11079240ea4e13b97d Mon Sep 17 00:00:00 2001
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 11 Oct 2019 22:35:38 +0800
-Subject: [PATCH] ASoC: fsl_mqs: Move static keyword to the front of
- declarations
+Date: Fri, 11 Oct 2019 23:00:42 +0800
+Subject: [PATCH] ASoC: adau7118: Fix Kconfig warning without CONFIG_I2C
 
-gcc warn about this:
+When building a kernel without CONFIG_I2C, Kconfig warns:
 
-sound/soc/fsl/fsl_mqs.c:146:1: warning:
- static is not at beginning of declaration [-Wold-style-declaration]
+WARNING: unmet direct dependencies detected for REGMAP_I2C
+  Depends on [n]: I2C [=n]
+  Selected by [y]:
+  - SND_SOC_ADAU7118_I2C [=y] && SOUND [=y] && !UML && SND [=y] && SND_SOC [=y]
 
+Add missing I2C dependency to SND_SOC_ADAU7118_I2C to fix this.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: ca514c0f12b0 ("ASOC: Add ADAU7118 8 Channel PDM-to-I2S/TDM Converter driver")
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
-Link: https://lore.kernel.org/r/20191011143538.15300-1-yuehaibing@huawei.com
+Link: https://lore.kernel.org/r/20191011150042.20096-1-yuehaibing@huawei.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/fsl/fsl_mqs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/codecs/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/fsl/fsl_mqs.c b/sound/soc/fsl/fsl_mqs.c
-index f7fc44e8fb27..0c813a45bba7 100644
---- a/sound/soc/fsl/fsl_mqs.c
-+++ b/sound/soc/fsl/fsl_mqs.c
-@@ -143,7 +143,7 @@ static void fsl_mqs_shutdown(struct snd_pcm_substream *substream,
- 				   MQS_EN_MASK, 0);
- }
+diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+index f4747ebc251e..5a706102db04 100644
+--- a/sound/soc/codecs/Kconfig
++++ b/sound/soc/codecs/Kconfig
+@@ -416,6 +416,7 @@ config SND_SOC_ADAU7118_HW
  
--const static struct snd_soc_component_driver soc_codec_fsl_mqs = {
-+static const struct snd_soc_component_driver soc_codec_fsl_mqs = {
- 	.idle_bias_on = 1,
- 	.non_legacy_dai_naming	= 1,
- };
+ config SND_SOC_ADAU7118_I2C
+ 	tristate "Analog Devices ADAU7118 8 Channel PDM-to-I2S/TDM Converter - I2C"
++	depends on I2C
+ 	select SND_SOC_ADAU7118
+ 	select REGMAP_I2C
+ 	help
 -- 
 2.20.1
 
