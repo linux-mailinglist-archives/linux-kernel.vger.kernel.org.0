@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55A3BD63EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 15:22:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0586D6407
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 15:24:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731298AbfJNNWT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 09:22:19 -0400
-Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:43352 "EHLO
-        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727789AbfJNNWS (ORCPT
+        id S1732056AbfJNNWg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 09:22:36 -0400
+Received: from pio-pvt-msa3.bahnhof.se ([79.136.2.42]:35916 "EHLO
+        pio-pvt-msa3.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731714AbfJNNWZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 09:22:18 -0400
+        Mon, 14 Oct 2019 09:22:25 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id F1CF43F71B;
-        Mon, 14 Oct 2019 15:22:15 +0200 (CEST)
-Authentication-Results: ste-pvt-msa1.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=UQVesyL9;
+        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTP id C75733FAC2;
+        Mon, 14 Oct 2019 15:22:17 +0200 (CEST)
+Authentication-Results: pio-pvt-msa3.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=dFjtJ11m;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at bahnhof.se
 X-Spam-Flag: NO
@@ -26,27 +26,27 @@ X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
         tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
         DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
         autolearn=ham autolearn_force=no
-Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
-        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id wYrT4GHhr-9o; Mon, 14 Oct 2019 15:22:15 +0200 (CEST)
+Received: from pio-pvt-msa3.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa3.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id nUUmjEQB9-bi; Mon, 14 Oct 2019 15:22:14 +0200 (CEST)
 Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
         (Authenticated sender: mb878879)
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id C92EC3F6C6;
+        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTPA id C7AF53F615;
         Mon, 14 Oct 2019 15:22:12 +0200 (CEST)
 Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id EC4FC360162;
-        Mon, 14 Oct 2019 15:22:11 +0200 (CEST)
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 1D38936804E;
+        Mon, 14 Oct 2019 15:22:12 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1571059332; bh=hV+XVq7EUXh8y1VcYcoa8HQXtDcCKb0r7kHhhlkJX1U=;
-        h=From:To:Cc:Subject:Date:From;
-        b=UQVesyL9nEZpc05sLIm1aMteXfE9aDLWe5wiDDkRsK7yq48Xn+4Ic3NU1b7WmhX86
-         gmU/TgMwyhEgfks7MjB8aX7ylth0HJlibkaHsFhk5L1bcHGHEdnXQ/TtgmOejCHOPS
-         S1PV9c6taNCu/QHe3Y/u2/f3/cM3DwqIJqAYQ7mI=
+        t=1571059332; bh=/VtZki6GCsW+3DEzZB0xqCHXTb7savVZuIvitIAE654=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=dFjtJ11mVBt3zcz894RV4MVRMdH56hMURYx7V41/Rikmp02dKm9HSxu2JaVDMRrPa
+         vL2epK1DFdr3O+X7H16Yy6s5YRkk9vJXp7F7v5XBjlWFYuN3J8wdmYFDpWdA7OA7Yj
+         XneoqM0pEyFFaBUoVGROS/sc/prNVPjk+Cmwgles=
 From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
         <thomas_os@shipmail.org>
 To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
 Cc:     torvalds@linux-foundation.org,
-        =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thellstrom@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Matthew Wilcox <willy@infradead.org>,
         Will Deacon <will.deacon@arm.com>,
@@ -57,10 +57,12 @@ Cc:     torvalds@linux-foundation.org,
         Huang Ying <ying.huang@intel.com>,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         "Kirill A . Shutemov" <kirill@shutemov.name>
-Subject: [PATCH v6 0/8] Emulated coherent graphics memory take 2
-Date:   Mon, 14 Oct 2019 15:21:56 +0200
-Message-Id: <20191014132204.7721-1-thomas_os@shipmail.org>
+Subject: [PATCH v6 1/8] mm: Remove BUG_ON mmap_sem not held from xxx_trans_huge_lock()
+Date:   Mon, 14 Oct 2019 15:21:57 +0200
+Message-Id: <20191014132204.7721-2-thomas_os@shipmail.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191014132204.7721-1-thomas_os@shipmail.org>
+References: <20191014132204.7721-1-thomas_os@shipmail.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -69,68 +71,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Hellström <thellstrom@vmware.com>
+From: Thomas Hellstrom <thellstrom@vmware.com>
 
-Graphics APIs like OpenGL 4.4 and Vulkan require the graphics driver
-to provide coherent graphics memory, meaning that the GPU sees any
-content written to the coherent memory on the next GPU operation that
-touches that memory, and the CPU sees any content written by the GPU
-to that memory immediately after any fence object trailing the GPU
-operation is signaled.
+The caller needs to make sure that the vma is not torn down during the
+lock operation and can also use the i_mmap_rwsem for file-backed vmas.
+Remove the BUG_ON. We could, as an alternative, add a test that either
+vma->vm_mm->mmap_sem or vma->vm_file->f_mapping->i_mmap_rwsem are held.
 
-Paravirtual drivers that otherwise require explicit synchronization
-needs to do this by hooking up dirty tracking to pagefault handlers
-and buffer object validation.
-
-Provide mm helpers needed for this and that also allow for huge pmd-
-and pud entries (patch 1-3), and the associated vmwgfx code (patch 4-7).
-
-The code has been tested and exercised by a tailored version of mesa
-where we disable all explicit synchronization and assume graphics memory
-is coherent. The performance loss varies of course; a typical number is
-around 5%.
-
-I would like to merge this code through the DRM tree, so an ack to include
-the new mm helpers in that merge would be greatly appreciated.
-
-Changes since RFC:
-- Merge conflict changes moved to the correct patch. Fixes intra-patchset
-  compile errors.
-- Be more aggressive when turning ttm vm code into helpers. This makes sure
-  we can use a const qualifier on the vmwgfx vm_ops.
-- Reinstate a lost comment an fix an error path that was broken when turning
-  the ttm vm code into helpers.
-- Remove explicit type-casts of struct vm_area_struct::vm_private_data
-- Clarify the locking inversion that makes us not being able to use the mm
-  pagewalk code.
-
-Changes since v1:
-- Removed the vmwgfx maintainer entry for as_dirty_helpers.c, updated
-  commit message accordingly
-- Removed the TTM patches from the series as they are merged separately
-  through DRM.
-Changes since v2:
-- Split out the pagewalk code from as_dirty_helpers.c and document locking.
-- Add pre_vma and post_vma callbacks to the pagewalk code.
-- Remove huge pmd and -pud asserts that would trip when we protect vmas with
-  struct address_space::i_mmap_rwsem rather than with
-  struct vm_area_struct::mmap_sem.
-- Do some naming cleanup in as_dirty_helpers.c
-Changes since v3:
-- Extensive renaming of the dirty helpers including the filename.
-- Update walk_page_mapping() doc.
-- Update the pagewalk code to not unconditionally split pmds if a pte_entry()
-  callback is present. Update the dirty helper pmd_entry accordingly.
-- Use separate walk ops for the dirty helpers.
-- Update the pagewalk code to take the pagetable lock in walk_pte_range.
-Changes since v4:
-- Fix pte pointer confusion in patch 2/8
-- Skip the pagewalk code conditional split patch for now, and update the
-  mapping_dirty_helper accordingly. That problem will be solved in a cleaner
-  way in a follow-up patchset.
-Changes since v5:
-- Fix tlb flushing when we have other pending tlb flushes.
-  
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Matthew Wilcox <willy@infradead.org>
 Cc: Will Deacon <will.deacon@arm.com>
@@ -141,3 +88,32 @@ Cc: Michal Hocko <mhocko@suse.com>
 Cc: Huang Ying <ying.huang@intel.com>
 Cc: Jérôme Glisse <jglisse@redhat.com>
 Cc: Kirill A. Shutemov <kirill@shutemov.name>
+Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+Acked-by: Kirill A. Shutemov <kirill@shutemov.name>
+---
+ include/linux/huge_mm.h | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index 93d5cf0bc716..0b84e13e88e2 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -216,7 +216,6 @@ static inline int is_swap_pmd(pmd_t pmd)
+ static inline spinlock_t *pmd_trans_huge_lock(pmd_t *pmd,
+ 		struct vm_area_struct *vma)
+ {
+-	VM_BUG_ON_VMA(!rwsem_is_locked(&vma->vm_mm->mmap_sem), vma);
+ 	if (is_swap_pmd(*pmd) || pmd_trans_huge(*pmd) || pmd_devmap(*pmd))
+ 		return __pmd_trans_huge_lock(pmd, vma);
+ 	else
+@@ -225,7 +224,6 @@ static inline spinlock_t *pmd_trans_huge_lock(pmd_t *pmd,
+ static inline spinlock_t *pud_trans_huge_lock(pud_t *pud,
+ 		struct vm_area_struct *vma)
+ {
+-	VM_BUG_ON_VMA(!rwsem_is_locked(&vma->vm_mm->mmap_sem), vma);
+ 	if (pud_trans_huge(*pud) || pud_devmap(*pud))
+ 		return __pud_trans_huge_lock(pud, vma);
+ 	else
+-- 
+2.20.1
+
