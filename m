@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4074CD5B72
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 08:38:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83AF8D5B73
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 08:38:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729993AbfJNGif (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 02:38:35 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:15746 "EHLO
+        id S1730084AbfJNGir (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 02:38:47 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:14999 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726406AbfJNGif (ORCPT
+        with ESMTP id S1726406AbfJNGiq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 02:38:35 -0400
-X-UUID: 3c212a6db640499e8e73f90b78eabc5a-20191014
-X-UUID: 3c212a6db640499e8e73f90b78eabc5a-20191014
+        Mon, 14 Oct 2019 02:38:46 -0400
+X-UUID: 965587b301ae4fe8b34476f710e1f97a-20191014
+X-UUID: 965587b301ae4fe8b34476f710e1f97a-20191014
 Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
         (envelope-from <yong.wu@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 89117099; Mon, 14 Oct 2019 14:38:30 +0800
+        with ESMTP id 219309049; Mon, 14 Oct 2019 14:38:40 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 14 Oct 2019 14:38:26 +0800
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 14 Oct 2019 14:38:36 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 14 Oct 2019 14:38:26 +0800
+ Transport; Mon, 14 Oct 2019 14:38:36 +0800
 From:   Yong Wu <yong.wu@mediatek.com>
 To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Joerg Roedel <joro@8bytes.org>,
@@ -38,48 +38,42 @@ CC:     Evan Green <evgreen@chromium.org>,
         <youlin.pei@mediatek.com>, Nicolas Boichat <drinkcat@chromium.org>,
         <anan.sun@mediatek.com>, <cui.zhang@mediatek.com>,
         <chao.hao@mediatek.com>, <edison.hsieh@mediatek.com>
-Subject: [PATCH v3 0/7] Improve tlb range flush
-Date:   Mon, 14 Oct 2019 14:38:14 +0800
-Message-ID: <1571035101-4213-1-git-send-email-yong.wu@mediatek.com>
+Subject: [PATCH v3 1/7] iommu/mediatek: Correct the flush_iotlb_all callback
+Date:   Mon, 14 Oct 2019 14:38:15 +0800
+Message-ID: <1571035101-4213-2-git-send-email-yong.wu@mediatek.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1571035101-4213-1-git-send-email-yong.wu@mediatek.com>
+References: <1571035101-4213-1-git-send-email-yong.wu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-TM-SNTS-SMTP: F2C1779EB7F8A022E9DB73FE5ECD4AFF3BC684C1A4ADE5CDE1EA95C108C9BBB32000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset mainly fixes a tlb flush timeout issue and use the new
-iommu_gather to re-implement the tlb flush flow. and several clean up
-patches about the tlb_flush.
+Use the correct tlb_flush_all instead of the original one.
 
-change note:
-v3:
-   1. Use the gather to implement the tlb_flush suggested from Tomasz.
-   2. add some clean up patches.
+Fixes: 4d689b619445 ("iommu/io-pgtable-arm-v7s: Convert to IOMMU API TLB sync")
+Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+---
+ drivers/iommu/mtk_iommu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v2:
-https://lore.kernel.org/linux-iommu/1570627143-29441-1-git-send-email-yong.wu@mediatek.com/T/#t
-   1. rebase on v5.4-rc1
-   2. only split to several patches.
-
-v1:
-https://lore.kernel.org/linux-iommu/CAAFQd5C3U7pZo4SSUJ52Q7E+0FaUoORQFbQC5RhCHBhi=NFYTw@mail.gmail.com/T/#t
-
-Yong Wu (7):
-  iommu/mediatek: Correct the flush_iotlb_all callback
-  iommu/mediatek: Add pgtlock in the iotlb_sync
-  iommu/mediatek: Use gather to achieve the tlb range flush
-  iommu/mediatek: Delete the leaf in the tlb flush
-  iommu/mediatek: Move the tlb_sync into tlb_flush
-  iommu/mediatek: Use writel for TLB range invalidation
-  iommu/mediatek: Reduce the tlb flush timeout value
-
- drivers/iommu/mtk_iommu.c | 77 +++++++++++++++++++++++------------------------
- drivers/iommu/mtk_iommu.h |  2 +-
- 2 files changed, 38 insertions(+), 41 deletions(-)
-
+diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
+index 67a483c..76b9388 100644
+--- a/drivers/iommu/mtk_iommu.c
++++ b/drivers/iommu/mtk_iommu.c
+@@ -447,7 +447,7 @@ static size_t mtk_iommu_unmap(struct iommu_domain *domain,
+ 
+ static void mtk_iommu_flush_iotlb_all(struct iommu_domain *domain)
+ {
+-	mtk_iommu_tlb_sync(mtk_iommu_get_m4u_data());
++	mtk_iommu_tlb_flush_all(mtk_iommu_get_m4u_data());
+ }
+ 
+ static void mtk_iommu_iotlb_sync(struct iommu_domain *domain,
 -- 
 1.9.1
 
