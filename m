@@ -2,105 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B848ED6907
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 20:03:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C454BD6914
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 20:06:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388670AbfJNSCj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 14:02:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59816 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731877AbfJNSCi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 14:02:38 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E0584B6D8;
-        Mon, 14 Oct 2019 18:02:36 +0000 (UTC)
-Date:   Mon, 14 Oct 2019 20:02:52 +0200
-From:   Jean Delvare <jdelvare@suse.de>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@lists.01.org, Linux I2C <linux-i2c@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH 4/4] i2c: i801: Instantiate SPD EEPROMs automatically
-Message-ID: <20191014200252.7cc9c800@endymion>
-In-Reply-To: <201910141830.Jm52N2ts%lkp@intel.com>
-References: <20191014114146.08b58f16@endymion>
-        <201910141830.Jm52N2ts%lkp@intel.com>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        id S1732623AbfJNSGs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 14:06:48 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34794 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730577AbfJNSGr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 14:06:47 -0400
+Received: by mail-wr1-f66.google.com with SMTP id j11so20805074wrp.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 11:06:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=colorfullife-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=d8qguTNaXd9xxzskZ/Dz2SrzHXRZLxG/w2gsuCMt93M=;
+        b=wn6ZqUtp45aInNmoFktexEPADp4TBr0iWmSKfbRi7fCYk1IuNRM9uh+WQ8yO+SM5W2
+         ZdqrnCLF2d0qTbIqlPknJVP8Yk34WXE+KGIpeTb7/diwcHu8XcdBB96/24uGpDfPU7ik
+         YuqjmiM+XnKmjw44IunG15FoHBcmHGQnPn2kpgvFUTJI3QIcdRsX4pmn4hpLAPX2TMrU
+         Fp4Yyw9DtLgWteU4yHz3qLCvjxxqGph9JtoSxLAHnPX/O/b9lEte5L07eNUDS1obpipn
+         /cHnBrqiy6r4opnAhatCdebunBzIcLBvrNQOsNnMC5KE5YLW+X6s4oMSIMXE8Hg2n83b
+         zkQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=d8qguTNaXd9xxzskZ/Dz2SrzHXRZLxG/w2gsuCMt93M=;
+        b=uXpuZwSZ2kVuq4eyZSV6HVMk9F0PDzRSVatocGGqwXuPCmtxc4NZY19Oq8n8J/FkvJ
+         MIhAT9PVi7Q+U/mS5hguwKkaSU7Xlmp4edOc4K4p4nKjpdtiKaQiRbrZIf+ovSrXQzEz
+         Cwftir+RsEbqCYgS/nVihnp77rUkhlGzPplu7OZJsi5xGpZEPc8bT7hS9LmP+zge9Nfl
+         49wEbPe0eqq2+ORosdg4FLec+NlSKpno09mBLKTukEVFTCtSQjxPs62U3Ef//zv2nCmQ
+         qt0pvaUJMoycAXW2Le3m8SfNQ9+mzTMd7AxQ1tt98yjtt99RpwxNZlHHdAmRpUY2ZbYo
+         +itg==
+X-Gm-Message-State: APjAAAWtQ990eyLythPPPWjlWTmr1f8NnI4EaaM0g1wE16Cn4MqKehls
+        Em0wktStMdizkYwazFttXsOPZg==
+X-Google-Smtp-Source: APXvYqz2tD7rVwm4Mxl2WDgKpvhyJXoU3WYSHvcRkx8K+zPUSp8bUBjZzi666/4MKX+H5GO1Ne5Bvw==
+X-Received: by 2002:adf:dbd2:: with SMTP id e18mr13793254wrj.268.1571076404973;
+        Mon, 14 Oct 2019 11:06:44 -0700 (PDT)
+Received: from linux.fritz.box (p200300D997049C00EA2FE58343581C38.dip0.t-ipconnect.de. [2003:d9:9704:9c00:ea2f:e583:4358:1c38])
+        by smtp.googlemail.com with ESMTPSA id q19sm38062085wra.89.2019.10.14.11.06.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2019 11:06:44 -0700 (PDT)
+Subject: Re: [PATCH 3/6] ipc/mqueue.c: Update/document memory barriers
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Waiman Long <longman@redhat.com>, 1vier1@web.de,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>
+References: <20191012054958.3624-1-manfred@colorfullife.com>
+ <20191012054958.3624-4-manfred@colorfullife.com>
+ <20191014125911.GF2328@hirez.programming.kicks-ass.net>
+ <20191014135832.GO2359@hirez.programming.kicks-ass.net>
+From:   Manfred Spraul <manfred@colorfullife.com>
+Message-ID: <575dbddb-355c-f667-92ca-d39b893c5ab1@colorfullife.com>
+Date:   Mon, 14 Oct 2019 20:06:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20191014135832.GO2359@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 14 Oct 2019 18:22:15 +0800, kbuild test robot wrote:
-> Hi Jean,
-> 
-> I love your patch! Yet something to improve:
-> 
-> [auto build test ERROR on linus/master]
-> [cannot apply to v5.4-rc3 next-20191011]
-> [if your patch is applied to the wrong git tree, please drop us a note to help
-> improve the system. BTW, we also suggest to use '--base' option to specify the
-> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Jean-Delvare/Instantiate-SPD-EEPROMs-at-boot-on-x86/20191014-174252
-> config: i386-defconfig (attached as .config)
-> compiler: gcc-7 (Debian 7.4.0-13) 7.4.0
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=i386 
-> 
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
-> 
-> All errors (new ones prefixed by >>):
-> 
->    drivers/i2c/busses/i2c-i801.c: In function 'i801_probe_optional_slaves':
-> >> drivers/i2c/busses/i2c-i801.c:1319:11: error: 'struct i801_priv' has no member named 'mux_drvdata'  
->      if (!priv->mux_drvdata)
->               ^~
-> 
-> vim +1319 drivers/i2c/busses/i2c-i801.c
-> 
->   1295	
->   1296	/* Register optional slaves */
->   1297	static void i801_probe_optional_slaves(struct i801_priv *priv)
->   1298	{
->   1299		/* Only register slaves on main SMBus channel */
->   1300		if (priv->features & FEATURE_IDF)
->   1301			return;
->   1302	
->   1303		if (apanel_addr) {
->   1304			struct i2c_board_info info;
->   1305	
->   1306			memset(&info, 0, sizeof(struct i2c_board_info));
->   1307			info.addr = apanel_addr;
->   1308			strlcpy(info.type, "fujitsu_apanel", I2C_NAME_SIZE);
->   1309			i2c_new_device(&priv->adapter, &info);
->   1310		}
->   1311	
->   1312		if (dmi_name_in_vendors("FUJITSU"))
->   1313			dmi_walk(dmi_check_onboard_devices, &priv->adapter);
->   1314	
->   1315		if (is_dell_system_with_lis3lv02d())
->   1316			register_dell_lis3lv02d_i2c_device(priv);
->   1317	
->   1318		/* Instantiate SPD EEPROMs unless the SMBus is multiplexed */
-> > 1319		if (!priv->mux_drvdata)  
->   1320			i2c_register_spd(&priv->adapter);
->   1321	}
->   1322	#else
->   1323	static void __init input_apanel_init(void) {}
->   1324	static void i801_probe_optional_slaves(struct i801_priv *priv) {}
->   1325	#endif	/* CONFIG_X86 && CONFIG_DMI */
->   1326	
+Hi Peter,
 
-Fixed, thanks.
+On 10/14/19 3:58 PM, Peter Zijlstra wrote:
+> On Mon, Oct 14, 2019 at 02:59:11PM +0200, Peter Zijlstra wrote:
+>> On Sat, Oct 12, 2019 at 07:49:55AM +0200, Manfred Spraul wrote:
+>>
+>>>   	for (;;) {
+>>> +		/* memory barrier not required, we hold info->lock */
+>>>   		__set_current_state(TASK_INTERRUPTIBLE);
+>>>   
+>>>   		spin_unlock(&info->lock);
+>>>   		time = schedule_hrtimeout_range_clock(timeout, 0,
+>>>   			HRTIMER_MODE_ABS, CLOCK_REALTIME);
+>>>   
+>>> +		if (READ_ONCE(ewp->state) == STATE_READY) {
+>>> +			/*
+>>> +			 * Pairs, together with READ_ONCE(), with
+>>> +			 * the barrier in __pipelined_op().
+>>> +			 */
+>>> +			smp_acquire__after_ctrl_dep();
+>>>   			retval = 0;
+>>>   			goto out;
+>>>   		}
+>>>   		spin_lock(&info->lock);
+>>> +
+>>> +		/* we hold info->lock, so no memory barrier required */
+>>> +		if (READ_ONCE(ewp->state) == STATE_READY) {
+>>>   			retval = 0;
+>>>   			goto out_unlock;
+>>>   		}
+>>> @@ -925,14 +933,12 @@ static inline void __pipelined_op(struct wake_q_head *wake_q,
+>>>   	list_del(&this->list);
+>>>   	wake_q_add(wake_q, this->task);
+>>>   	/*
+>>> +	 * The barrier is required to ensure that the refcount increase
+>>> +	 * inside wake_q_add() is completed before the state is updated.
+>> fails to explain *why* this is important.
+>>
+>>> +	 *
+>>> +	 * The barrier pairs with READ_ONCE()+smp_mb__after_ctrl_dep().
+>>>   	 */
+>>> +        smp_store_release(&this->state, STATE_READY);
+>> You retained the whitespace damage.
+>>
+>> And I'm terribly confused by this code, probably due to the lack of
+>> 'why' as per the above. What is this trying to do?
+>>
+>> Are we worried about something like:
+>>
+>> 	A			B				C
+>>
+>>
+>> 				wq_sleep()
+>> 				  schedule_...();
+>>
+>> 								/* spuriuos wakeup */
+>> 								wake_up_process(B)
+>>
+>> 	wake_q_add(A)
+>> 	  if (cmpxchg()) // success
+>>
+>> 	->state = STATE_READY (reordered)
+>>
+>> 				  if (READ_ONCE() == STATE_READY)
+>> 				    goto out;
+>>
+>> 				exit();
+>>
+>>
+>> 	    get_task_struct() // UaF
+>>
+>>
+>> Can we put the exact and full race in the comment please?
 
--- 
-Jean Delvare
-SUSE L3 Support
+Yes, I'll do that. Actually, two threads are sufficient:
+
+A                    B
+
+WRITE_ONCE(wait.state, STATE_NONE);
+schedule_hrtimeout()
+
+                       wake_q_add(A)
+                       if (cmpxchg()) // success
+                       ->state = STATE_READY (reordered)
+
+<timeout returns>
+if (wait.state == STATE_READY) return;
+sysret to user space
+sys_exit()
+
+                       get_task_struct() // UaF
+
+
+> Like Davidlohr already suggested, elsewhere we write it like so:
+>
+>
+> --- a/ipc/mqueue.c
+> +++ b/ipc/mqueue.c
+> @@ -930,15 +930,10 @@ static inline void __pipelined_op(struct
+>   				  struct mqueue_inode_info *info,
+>   				  struct ext_wait_queue *this)
+>   {
+> +	get_task_struct(this->task);
+>   	list_del(&this->list);
+> -	wake_q_add(wake_q, this->task);
+> -	/*
+> -	 * The barrier is required to ensure that the refcount increase
+> -	 * inside wake_q_add() is completed before the state is updated.
+> -	 *
+> -	 * The barrier pairs with READ_ONCE()+smp_mb__after_ctrl_dep().
+> -	 */
+> -        smp_store_release(&this->state, STATE_READY);
+> +	smp_store_release(&this->state, STATE_READY);
+> +	wake_q_add_safe(wake_q, this->task);
+>   }
+>   
+>   /* pipelined_send() - send a message directly to the task waiting in
+
+Much better, I'll rewrite it and then resend the series.
+
+--
+
+     Manfred
+
