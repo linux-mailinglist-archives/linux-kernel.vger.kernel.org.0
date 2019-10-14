@@ -2,99 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C588FD6905
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 20:03:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 102CAD690C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 20:03:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732435AbfJNSCe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 14:02:34 -0400
-Received: from foss.arm.com ([217.140.110.172]:50392 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726589AbfJNSCe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 14:02:34 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 344A528;
-        Mon, 14 Oct 2019 11:02:33 -0700 (PDT)
-Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F083A3F6C4;
-        Mon, 14 Oct 2019 11:02:29 -0700 (PDT)
-Subject: Re: [PATCH V4 0/2] Add support for arm64 to carry ima measurement
-To:     Prakhar Srivastava <prsriva@linux.microsoft.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-        mark.rutland@arm.com, jean-philippe@linaro.org, arnd@arndb.de,
-        takahiro.akashi@linaro.org, sboyd@kernel.org,
-        catalin.marinas@arm.com, zohar@linux.ibm.com,
-        yamada.masahiro@socionext.com, kristina.martsenko@arm.org,
-        duwe@lst.de, bauerman@linux.ibm.com, james.morse@arm.org,
-        tglx@linutronix.de, allison@lohutok.net
-References: <20191011003600.22090-1-prsriva@linux.microsoft.com>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <87d92514-e5e4-a79f-467f-f24a4ed279b6@arm.com>
-Date:   Mon, 14 Oct 2019 19:02:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2388712AbfJNSCr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 14:02:47 -0400
+Received: from mail-pg1-f173.google.com ([209.85.215.173]:43363 "EHLO
+        mail-pg1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388677AbfJNSCo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 14:02:44 -0400
+Received: by mail-pg1-f173.google.com with SMTP id i32so10520372pgl.10;
+        Mon, 14 Oct 2019 11:02:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZkhwpizpfA2VexKlQ2oEQcLnbCJP2Qs7hnm+bKZkprs=;
+        b=iqV1EbgfIrrK/aEn7NY5hcsODJgKghSw3zb0g8qpNu/bxk467ktNsNq30MoFBVM8uJ
+         X9f9RvUeREb/UaN2RNdUpjgVbwJ/nWJVfCHTu4lzIk1qnzPb2onKunKl42JESCjMODG/
+         VGMR2oyaPLm/ancVzJ7VQmoka9YQTnDOj61YUsJ+BVk+t8yVvTg6b8NuVQMQ21RvKZqL
+         EpjfJh1D/Ve0ebvy2ixjspdRP2AZQXLd1LQKePb7NBiGyhybK77eCpJwcaYovkTWJuHZ
+         jCzNhhC0sxgsomND5b2+0V/EWZu4vDM3+fYx4msdr/5MawxBxYHeYqLLLwpRVumP177m
+         +2IA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZkhwpizpfA2VexKlQ2oEQcLnbCJP2Qs7hnm+bKZkprs=;
+        b=CDHqkT6iV6Z6q5H3KNg67494VHIop/M47EhxmCs3SUprvUWi5GKorQdoD8133W4eIX
+         Zt4KPmyfPew4QHnym6CcINeyVL+l4CnGCSREqlX2bhawXNp3scZGYZE0/KX/gJltlcHn
+         4hzsLFjQzrCYz65TZHfHk8uvlxAqNj4W3hQLB3GparIWxiVjslwyE3TJadu12UQdbAET
+         AZIx3XQJZtonmtvJaSKrFBxLyu/wqhyLWVWNNXGHnAy0Dpscuam7H1J29OfcP3H8YiFt
+         FIrj8HP4EH7d6aCOPkAFMFKD6/RktydP+1KhM+cBuFIRFf6TO/mDeT7DpO0lTe+KDovu
+         brEQ==
+X-Gm-Message-State: APjAAAVzm5sNNb/uhnpRSlcErom9GWmjYjZEcZoV8JLScI1gmWgGLVaN
+        wWsSTXi4S/TwPhaSlYICD0qVuOLZOSHetLpcyQA=
+X-Google-Smtp-Source: APXvYqxQWcD3OZMgZ13RjzFx9gulMAp7gBH5qy/phpsNrfeg4mjyuhODypsbiToUIfMbUrmcL7a7VzAvGwM09e8wTLs=
+X-Received: by 2002:a63:6b06:: with SMTP id g6mr34436310pgc.104.1571076163157;
+ Mon, 14 Oct 2019 11:02:43 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191011003600.22090-1-prsriva@linux.microsoft.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <00000000000079edde0594d77dd6@google.com> <8a375be8-5a08-4cb5-cd7a-a847a1ec9b31@gmail.com>
+In-Reply-To: <8a375be8-5a08-4cb5-cd7a-a847a1ec9b31@gmail.com>
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Mon, 14 Oct 2019 11:02:31 -0700
+Message-ID: <CAM_iQpUG4_xABqCdjwm77QRhYYh=5B5dV69_ac5SjEuwJa4qNw@mail.gmail.com>
+Subject: Re: INFO: task hung in addrconf_verify_work (2)
+To:     Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     syzbot <syzbot+cf0adbb9c28c8866c788@syzkaller.appspotmail.com>,
+        Alexei Starovoitov <ast@kernel.org>, bpf@vger.kernel.org,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Miller <davem@davemloft.net>,
+        David Ahern <dsahern@gmail.com>, hawk@kernel.org,
+        Ido Schimmel <idosch@mellanox.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Kubecek <mkubecek@suse.cz>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        Petr Machata <petrm@mellanox.com>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Song Liu <songliubraving@fb.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>, yhs@fb.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Prakhar,
+On Sun, Oct 13, 2019 at 10:37 PM Eric Dumazet <eric.dumazet@gmail.com> wrote:
+> Infinite loop because tcf_add_notify() returns -EAGAIN as the message can not be delivered to the socket,
+> since its SO_RCVBUF has been set to 0.
 
-(You've CC'd a few folk who work for 'arm.org'...)
+Interesting corner case...
 
-On 11/10/2019 01:35, Prakhar Srivastava wrote:
-> Add support to carry ima measurement log
-> to the next kexec'ed session triggered via kexec_file_load.
+>
+> Perhaps we need this patch ?
 
-I don't know much about 'ima', I'm assuming its the list of 'stuff' that has already been
-fed into the TPM as part of SecureBoot. Please forgive the stupid questions,
+This patch looks reasonable to me, as the -EAGAIN here is mainly (if not
+totally) for the locking retry logic.
 
-
-> Currently during kexec the kernel file signatures are/can be validated
-> prior to actual load, the information(PE/ima signature) is not carried
-> to the next session. This lead to loss of information.
-> 
-> Carrying forward the ima measurement log to the next kexec'ed session 
-> allows a verifying party to get the entire runtime event log since the
-> last full reboot, since that is when PCRs were last reset.
-
-Hmm, You're adding this as a linux-specific thing in the chosen node, which points at a
-memreserve.
-
-The question that normally needs answering when adding to the stuff we have to treat as
-ABI over kexec is: how would this work from a bootloader that isn't kexec? Does it need to
-work for non-linux OS?
-
-Changing anything other than the chosen node of the DT isn't something the kernel should
-be doing. I suspect if you need reserved memory for this stuff, it should be carved out by
-the bootloader, and like all other memreserves: should not be moved or deleted.
-
-('fdt_delete_mem_rsv()' is a terrifying idea, we depend on the memreserve nodes to tell
-use which 'memory' we shouldn't touch!)
-
-
-Sharing with powerpc is a great starting point ... but, how does this work for ACPI systems?
-How does this work if I keep kexecing between ACPI and DT?
-
-I'd prefer it we only had one way this works on arm64, so whatever we do has to cover both.
-
-Does ima work without UEFI secure-boot?
-If not, the Linux-specific UEFI 'memreserve' table might be a better fit, this would be
-the same for both DT and ACPI systems. Given U-boot supports the UEFI API too, its
-probably the right thing to do regardless of secure-boot.
-
-It looks like x86 doesn't support this either yet. If we have to add something to support
-ACPI, it would be good if it covers both firmware mechanisms for arm64, and works for x86
-in the same way.
-
-(How does this thing interact with EFI's existing efi_tpm_eventlog_init()?)
-
-
-Thanks,
-
-James
+Thanks.
