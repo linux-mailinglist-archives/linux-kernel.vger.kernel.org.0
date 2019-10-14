@@ -2,124 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E9FCD608A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 12:49:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2251D6097
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 12:51:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731647AbfJNKtO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 06:49:14 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:52200 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731235AbfJNKtO (ORCPT
+        id S1731742AbfJNKvf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 06:51:35 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:48649 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731449AbfJNKve (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 06:49:14 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9EAnA94083798;
-        Mon, 14 Oct 2019 05:49:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1571050150;
-        bh=CO22/vweVUdYki61a8n0uM9ME48CwXyB/hDV+RVN4oU=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=RMjhVzS3ImQaDnsTaTt16b6L6ZSW7UhdttuuVGxn90u2Om5Fkhb90WXomFar68Hha
-         oFaX03A70w7ylblGHwmKMRcgXAAcUeuzwnK3oPNU4ai0AfmuAhwoxk2EGXqOZnBn1n
-         fzqfwk2Dde2zfqpLClBSoxnudBYWyzCsjsAfsGoI=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9EAnA5F129483
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 14 Oct 2019 05:49:10 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 14
- Oct 2019 05:49:04 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 14 Oct 2019 05:49:04 -0500
-Received: from [10.250.99.146] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9EAn8ft120141;
-        Mon, 14 Oct 2019 05:49:08 -0500
-Subject: Re: [PATCH v5 3/3] leds: Add control of the voltage/current regulator
- to the LED core
-To:     Pavel Machek <pavel@ucw.cz>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>
-CC:     <daniel.thompson@linaro.org>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <dmurphy@ti.com>,
-        <tomi.valkeinen@ti.com>
-References: <20190923102059.17818-1-jjhiblot@ti.com>
- <20190923102059.17818-4-jjhiblot@ti.com>
- <3e648fab-638f-4aa0-dda9-8ddba6562751@gmail.com> <20191013120937.GK5653@amd>
-From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
-Message-ID: <eb8c0df1-0d5b-11d0-9965-3192fa5675f3@ti.com>
-Date:   Mon, 14 Oct 2019 12:49:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Mon, 14 Oct 2019 06:51:34 -0400
+Received: from 79.184.254.38.ipv4.supernova.orange.pl (79.184.254.38) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
+ id 9c378dd1878789af; Mon, 14 Oct 2019 12:51:32 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PCI <linux-pci@vger.kernel.org>
+Cc:     Daniel Drake <drake@endlessm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH] PCI: PM: Consolidate runtime resume and system resume paths
+Date:   Mon, 14 Oct 2019 12:51:31 +0200
+Message-ID: <3118349.722IRLjr4b@kreacher>
+In-Reply-To: <CAD8Lp44TYxrMgPLkHCqF9hv6smEurMXvmmvmtyFhZ6Q4SE+dig@mail.gmail.com>
+References: <20190927090202.1468-1-drake@endlessm.com> <4883845.KNzyzeMIEj@kreacher> <CAD8Lp44TYxrMgPLkHCqF9hv6smEurMXvmmvmtyFhZ6Q4SE+dig@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20191013120937.GK5653@amd>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-On 13/10/2019 14:09, Pavel Machek wrote:
-> Hi!
->
->> I must say I'm not a big fan of this change.
->> It adds a bunch of code to the LED core and gives small
->> functionality in a reward. It may also influence maximum
->> software blinking rate, so I'd rather avoid calling
->> regulator_enable/disable when timer trigger is set.
->>
->> It will of course require more code.
->>
->> Since AFAIR Pavel was original proponent of this change then
->> I'd like to see his opinion before we move on to discussing
->> possible improvements to this patch.
-> Was I?
->
-> Okay, this series looks quite confusing to me. First, 1/3 looks
-> "interesting" (would have to analyze it way more).
->
-> Second, 3/3... So we have a LED driver _and_ a regulator? So yes, the
-> chip driving a LED is usually ... voltage/current regulator. What is
-> second regulator doing there? Is that a common setup?
+There is an arbitrary difference between the system resume and
+runtime resume code paths for PCI devices regarding the delay to
+apply when switching the devices from D3cold to D0.
 
-This is quite common with current-sink LED drivers.
+Namely, pci_restore_standard_config() used in the runtime resume
+code path calls pci_set_power_state() which in turn invokes
+__pci_start_power_transition() to power up the device through the
+platform firmware and that function applies the transition delay
+(as per PCI Express Base Specification Revision 2.0, Section 6.6.1).
+However, pci_pm_default_resume_early() used in the system resume
+code path calls pci_power_up() which doesn't apply the delay at
+all and that causes issues to occur during resume from
+suspend-to-idle on some systems where the delay is required.
 
-The setup looks like this:
+Since there is no reason for that difference to exist, modify
+pci_pm_default_resume_early() to invoke pci_restore_standard_config()
+instead of pci_power_up() and drop the latter, but in order to
+prevent the ACPI power state values (cached by the ACPI layer) from
+becoming stale in some cases during resume from suspend-to-RAM
+(ACPI S3), as per commit cc2893b6af52 ("PCI: Ensure we re-enable
+devices on resume"), refresh the ACPI power state information in
+pci_pm_default_resume_early() in that case.
 
-+-----------+
-|           |
-| Regulator |
-|           +------------------------+
-|           |                        |
-+-----------+                      __|__
-                                    \   /
-          +---------------------+    \ / led
-          |                     |     V
-          |    Led Driver       |   --+--
-          |                     |     |
-          |                     |     |
-          |                +----------+
-          |              \      |
-          |               \     |
-          |                +    |
-          |                |    |
-          +---------------------+
-                           |
-                        +--+--+
-                        ///////
+[Note that while this change should take the issue originally
+ addressed by commit cc2893b6af52 ("PCI: Ensure we re-enable devices
+ on resume") into account in a generally safer way, an alternative
+ would be to make pci_power_up() use __pci_start_power_transition()
+ instead of calling platform_pci_set_power_state() directly.]
+
+Fixes: db288c9c5f9d ("PCI / PM: restore the original behavior of pci_set_power_state()")
+Reported-by: Daniel Drake <drake@endlessm.com> 
+Tested-by: Daniel Drake <drake@endlessm.com> 
+Link: https://lore.kernel.org/linux-pm/CAD8Lp44TYxrMgPLkHCqF9hv6smEurMXvmmvmtyFhZ6Q4SE+dig@mail.gmail.com/T/#m21be74af263c6a34f36e0fc5c77c5449d9406925
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/pci/pci-driver.c |    8 +++++---
+ drivers/pci/pci.c        |   15 ---------------
+ drivers/pci/pci.h        |    1 -
+ 3 files changed, 5 insertions(+), 19 deletions(-)
+
+Index: linux-pm/drivers/pci/pci-driver.c
+===================================================================
+--- linux-pm.orig/drivers/pci/pci-driver.c
++++ linux-pm/drivers/pci/pci-driver.c
+@@ -523,9 +523,10 @@ static int pci_restore_standard_config(s
+ 
+ static void pci_pm_default_resume_early(struct pci_dev *pci_dev)
+ {
+-	pci_power_up(pci_dev);
+-	pci_restore_state(pci_dev);
+-	pci_pme_restore(pci_dev);
++	if (pm_resume_via_firmware())
++		pci_refresh_power_state(pci_dev);
++
++	pci_restore_standard_config(pci_dev);
+ }
+ 
+ /*
+@@ -713,6 +714,7 @@ static void pci_pm_complete(struct devic
+ 		pci_power_t pre_sleep_state = pci_dev->current_state;
+ 
+ 		pci_refresh_power_state(pci_dev);
++		pci_update_current_state(pci_dev, pci_dev->current_state);
+ 		/*
+ 		 * On platforms with ACPI this check may also trigger for
+ 		 * devices sharing power resources if one of those power
+Index: linux-pm/drivers/pci/pci.c
+===================================================================
+--- linux-pm.orig/drivers/pci/pci.c
++++ linux-pm/drivers/pci/pci.c
+@@ -954,21 +954,6 @@ void pci_refresh_power_state(struct pci_
+ {
+ 	if (platform_pci_power_manageable(dev))
+ 		platform_pci_refresh_power_state(dev);
+-
+-	pci_update_current_state(dev, dev->current_state);
+-}
+-
+-/**
+- * pci_power_up - Put the given device into D0 forcibly
+- * @dev: PCI device to power up
+- */
+-void pci_power_up(struct pci_dev *dev)
+-{
+-	if (platform_pci_power_manageable(dev))
+-		platform_pci_set_power_state(dev, PCI_D0);
+-
+-	pci_raw_set_power_state(dev, PCI_D0);
+-	pci_update_current_state(dev, PCI_D0);
+ }
+ 
+ /**
+Index: linux-pm/drivers/pci/pci.h
+===================================================================
+--- linux-pm.orig/drivers/pci/pci.h
++++ linux-pm/drivers/pci/pci.h
+@@ -85,7 +85,6 @@ struct pci_platform_pm_ops {
+ int pci_set_platform_pm(const struct pci_platform_pm_ops *ops);
+ void pci_update_current_state(struct pci_dev *dev, pci_power_t state);
+ void pci_refresh_power_state(struct pci_dev *dev);
+-void pci_power_up(struct pci_dev *dev);
+ void pci_disable_enabled_device(struct pci_dev *dev);
+ int pci_finish_runtime_suspend(struct pci_dev *dev);
+ void pcie_clear_root_pme_status(struct pci_dev *dev);
 
 
-Only the regulator usually does not supply only one LED.
 
-JJ
-
-
->
-> Best regards,
-> 								Pavel
-> 								
