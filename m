@@ -2,102 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEC48D5B6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 08:36:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19A0AD5B83
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 08:40:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730034AbfJNGfz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 02:35:55 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33041 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729708AbfJNGfz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 02:35:55 -0400
-Received: by mail-wr1-f66.google.com with SMTP id b9so18228014wrs.0
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2019 23:35:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=GvpQINBRtnsk3Hgc3bizCMfarTOiEUB/HuuJj/ggrWU=;
-        b=nOs8xNNfP5A0QMSW5zsDOZjJp+utPBfYPsBSPF/uk3DzbcwiGmcKhanUNGdIYx8E0f
-         iQf6iYwosenEaOPuJzeEjdXEzrrZunh/iHI6GdzKCsHq8JcHnaedcnGjzCA6LSL/cRvq
-         /F6MXsVF/1XmTNW3fl9RcI/UNjjsNDj46gv1xnFatsz/KBaQJqp5MIhZdJoiD9og9alw
-         +808tRm0w5rl9Aram+vg9HWqdjiMgXnYQ3fBI4j4Rvqkgrp4lMxdhG7MZuV6xxmAdarX
-         spNze2nlC4WFSJsUxNvi643yqZD7QFR0MMDxCe3yGcj0reqjUMvf86oHXllHgRH031gk
-         Orbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=GvpQINBRtnsk3Hgc3bizCMfarTOiEUB/HuuJj/ggrWU=;
-        b=cOPC8YHrNXuJtCcrwyd29FF2OiwtwyiVX8AvyDYv4+gIOxY/ENIBqvIj3xtDToibed
-         Teavd/gaEMkrQd+UCjHhG1GOYz2oyvQZSfdUI9d0dCijLJcMD1ozZ/aSvFPcvl71AW8B
-         oEvw+GiPxanAMjX6kwH3SYPMz1H9qIdExl6fhNM1UtrqQGogUQyqYViLjEKC2G/MvWqI
-         S/B6uUthpXrJ+5s3TN5l/9u5u+ST+zNnoTu+cgJ+5kaqkvnj+P6L50VnAuUY2OqGPGbc
-         lsaWr6oeP5gqHWOWXp9qNZJPcVrOcz6AyPvsPhYlHPuiH3GlBwROQesETDRhGmiGTX8A
-         ea0A==
-X-Gm-Message-State: APjAAAXHdZDSiTIIed9G6uBQA7Ru1hPHB6GjlppBa2RxYLAroJgRZfsZ
-        BWHCbJ5OpJOTUuL9w2LKEhM6ew==
-X-Google-Smtp-Source: APXvYqy3wWPhvikBho5fzy4fPTMUVp7W/hmEmfUL8Jw/xKFwppmve6yfrbW+zi5LpCX9adYitQJ4Dw==
-X-Received: by 2002:adf:f452:: with SMTP id f18mr23583380wrp.187.1571034953291;
-        Sun, 13 Oct 2019 23:35:53 -0700 (PDT)
-Received: from dell ([2.27.167.11])
-        by smtp.gmail.com with ESMTPSA id c17sm20111997wrc.60.2019.10.13.23.35.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 13 Oct 2019 23:35:52 -0700 (PDT)
-Date:   Mon, 14 Oct 2019 07:35:53 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Kiran Gunda <kgunda@codeaurora.org>, bjorn.andersson@linaro.org,
-        jingoohan1@gmail.com, b.zolnierkie@samsung.com,
-        dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org,
-        jacek.anaszewski@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dan Murphy <dmurphy@ti.com>, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH V6 2/8] backlight: qcom-wled: restructure the qcom-wled
- bindings
-Message-ID: <20191014063553.GA4545@dell>
-References: <1569825553-26039-1-git-send-email-kgunda@codeaurora.org>
- <1569825553-26039-3-git-send-email-kgunda@codeaurora.org>
- <20191013121045.GN5653@amd>
+        id S1730152AbfJNGj1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 02:39:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52446 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726646AbfJNGj1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 02:39:27 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B7317AD29;
+        Mon, 14 Oct 2019 06:39:24 +0000 (UTC)
+Date:   Sun, 13 Oct 2019 23:38:10 -0700
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Manfred Spraul <manfred@colorfullife.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Waiman Long <longman@redhat.com>, 1vier1@web.de,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH 3/6] ipc/mqueue.c: Update/document memory barriers
+Message-ID: <20191014063810.2delhkndor5v6bkp@linux-p48b>
+References: <20191012054958.3624-1-manfred@colorfullife.com>
+ <20191012054958.3624-4-manfred@colorfullife.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191013121045.GN5653@amd>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191012054958.3624-4-manfred@colorfullife.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 13 Oct 2019, Pavel Machek wrote:
+On Sat, 12 Oct 2019, Manfred Spraul wrote:
 
-> On Mon 2019-09-30 12:09:07, Kiran Gunda wrote:
-> > Restructure the qcom-wled bindings for the better readability.
-> > 
-> > Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
-> > Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-> > Acked-by: Pavel Machek <pavel@ucw.cz>
-> 
-> I applied 1,2 to my branch, it should appear in -next shortly.
+>Update and document memory barriers for mqueue.c:
+>- ewp->state is read without any locks, thus READ_ONCE is required.
+>
+>- add smp_aquire__after_ctrl_dep() after the READ_ONCE, we need
+>  acquire semantics if the value is STATE_READY.
+>
+>- add an explicit memory barrier to __pipelined_op(), the
+>  refcount must have been increased before the updated state becomes
+>  visible
+>
+>- document why __set_current_state() may be used:
+>  Reading task->state cannot happen before the wake_q_add() call,
+>  which happens while holding info->lock. Thus the spin_unlock()
+>  is the RELEASE, and the spin_lock() is the ACQUIRE.
+>
+>For completeness: there is also a 3 CPU szenario, if the to be woken
+     		   	    	     	 ^^^ scenario
 
-Doesn't patch 1 have outstanding review comments on it from Dan?
+>up task is already on another wake_q.
+>Then:
+>- CPU1: spin_unlock() of the task that goes to sleep is the RELEASE
+>- CPU2: the spin_lock() of the waker is the ACQUIRE
+>- CPU2: smp_mb__before_atomic inside wake_q_add() is the RELEASE
+>- CPU3: smp_mb__after_spinlock() inside try_to_wake_up() is the ACQUIRE
+>
+>Signed-off-by: Manfred Spraul <manfred@colorfullife.com>
+>Cc: Waiman Long <longman@redhat.com>
+>Cc: Davidlohr Bueso <dave@stgolabs.net>
 
-If you're going to apply them, you need to send out an immutable
-branch for me to pull from.
+Without considering the smp_store_release() in __pipelined_op(), feel
+free to add my:
 
-> yaml conversion can be done in a followup...
-> 
-> Best regards,
+Reviewed-by: Davidlohr Bueso <dbueso@suse.de>
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+>---
+> ipc/mqueue.c | 32 +++++++++++++++++++++-----------
+> 1 file changed, 21 insertions(+), 11 deletions(-)
+>
+>diff --git a/ipc/mqueue.c b/ipc/mqueue.c
+>index be48c0ba92f7..b80574822f0a 100644
+>--- a/ipc/mqueue.c
+>+++ b/ipc/mqueue.c
+>@@ -646,18 +646,26 @@ static int wq_sleep(struct mqueue_inode_info *info, int sr,
+> 	wq_add(info, sr, ewp);
+>
+> 	for (;;) {
+>+		/* memory barrier not required, we hold info->lock */
+> 		__set_current_state(TASK_INTERRUPTIBLE);
+>
+> 		spin_unlock(&info->lock);
+> 		time = schedule_hrtimeout_range_clock(timeout, 0,
+> 			HRTIMER_MODE_ABS, CLOCK_REALTIME);
+>
+>-		if (ewp->state == STATE_READY) {
+>+		if (READ_ONCE(ewp->state) == STATE_READY) {
+>+			/*
+>+			 * Pairs, together with READ_ONCE(), with
+>+			 * the barrier in __pipelined_op().
+>+			 */
+>+			smp_acquire__after_ctrl_dep();
+> 			retval = 0;
+> 			goto out;
+> 		}
+> 		spin_lock(&info->lock);
+>-		if (ewp->state == STATE_READY) {
+>+
+>+		/* we hold info->lock, so no memory barrier required */
+>+		if (READ_ONCE(ewp->state) == STATE_READY) {
+> 			retval = 0;
+> 			goto out_unlock;
+> 		}
+>@@ -925,14 +933,12 @@ static inline void __pipelined_op(struct wake_q_head *wake_q,
+> 	list_del(&this->list);
+> 	wake_q_add(wake_q, this->task);
+> 	/*
+>-	 * Rely on the implicit cmpxchg barrier from wake_q_add such
+>-	 * that we can ensure that updating receiver->state is the last
+>-	 * write operation: As once set, the receiver can continue,
+>-	 * and if we don't have the reference count from the wake_q,
+>-	 * yet, at that point we can later have a use-after-free
+>-	 * condition and bogus wakeup.
+>+	 * The barrier is required to ensure that the refcount increase
+>+	 * inside wake_q_add() is completed before the state is updated.
+>+	 *
+>+	 * The barrier pairs with READ_ONCE()+smp_mb__after_ctrl_dep().
+> 	 */
+>-        this->state = STATE_READY;
+>+        smp_store_release(&this->state, STATE_READY);
+> }
+>
+> /* pipelined_send() - send a message directly to the task waiting in
+>@@ -1049,7 +1055,9 @@ static int do_mq_timedsend(mqd_t mqdes, const char __user *u_msg_ptr,
+> 		} else {
+> 			wait.task = current;
+> 			wait.msg = (void *) msg_ptr;
+>-			wait.state = STATE_NONE;
+>+
+>+			/* memory barrier not required, we hold info->lock */
+>+			WRITE_ONCE(wait.state, STATE_NONE);
+> 			ret = wq_sleep(info, SEND, timeout, &wait);
+> 			/*
+> 			 * wq_sleep must be called with info->lock held, and
+>@@ -1152,7 +1160,9 @@ static int do_mq_timedreceive(mqd_t mqdes, char __user *u_msg_ptr,
+> 			ret = -EAGAIN;
+> 		} else {
+> 			wait.task = current;
+>-			wait.state = STATE_NONE;
+>+
+>+			/* memory barrier not required, we hold info->lock */
+>+			WRITE_ONCE(wait.state, STATE_NONE);
+> 			ret = wq_sleep(info, RECV, timeout, &wait);
+> 			msg_ptr = wait.msg;
+> 		}
+>-- 
+>2.21.0
+>
