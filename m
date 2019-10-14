@@ -2,67 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F11CFD6B28
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 23:21:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6589FD6B30
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 23:25:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387965AbfJNVVE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 17:21:04 -0400
-Received: from mga18.intel.com ([134.134.136.126]:21857 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731044AbfJNVVD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 17:21:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Oct 2019 14:21:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,296,1566889200"; 
-   d="scan'208";a="185610162"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
-  by orsmga007.jf.intel.com with ESMTP; 14 Oct 2019 14:21:03 -0700
-From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     tony.luck@intel.com, bp@alien8.de, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, bberg@redhat.com
-Cc:     x86@kernel.org, linux-edac@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hdegoede@redhat.com,
-        ckellner@redhat.com,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH 2/2] x86, mce: Add additional kernel boot parameter
-Date:   Mon, 14 Oct 2019 14:21:01 -0700
-Message-Id: <20191014212101.25719-2-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20191014212101.25719-1-srinivas.pandruvada@linux.intel.com>
-References: <2c2b65c23be3064504566c5f621c1f37bf7e7326.camel@redhat.com>
- <20191014212101.25719-1-srinivas.pandruvada@linux.intel.com>
+        id S1731054AbfJNVZi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 17:25:38 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36404 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729930AbfJNVZi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 17:25:38 -0400
+Received: by mail-lj1-f195.google.com with SMTP id v24so18041645ljj.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 14:25:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wJ7ap/mJ4LnJlcvrkffAc0aZKRdl3/lTtd2w5VVgMTc=;
+        b=XvlM80LDSXmna1BJMSr5a/bmzis83k48RX5xlT4Z9K98g8V5GLTTt8PvAwFY5M687C
+         PLBSSyOO5XIVomNz6DBKoWIwuu4cbQ2Nnq0ApENs0GgqowU/HaeG33u+lJOl56QUkUWX
+         T8z4L6EcQT6iT+9nWO4ttuxmwCWZJioPwud8oVqdCrIaq4xHbrDmmtW3ceMiM0OKQ5c7
+         MnyIVoLoN/Dc8/SdqXiiuTAXx0AjFg3O7lT60uXtcnt1grLBjkn95fwsckLX27KEtyfo
+         9Bl1PkjY3WMRmrdu/bx2vA1Ix9fN955h0yXVUDq6tIv41l0/DY5c70ttDk03gvPkr4Qg
+         eBIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wJ7ap/mJ4LnJlcvrkffAc0aZKRdl3/lTtd2w5VVgMTc=;
+        b=LUOhFNtLX2h8EzBgHgIxwx4aMZ9BoauyIamd+rv5ybltIvgk0AdrVX67ky6cKYmBYP
+         TnIaDgxevz5t3Fe5CnnDCiJFpLOiR/Cc+/kmyhEDrWS5zbYOj+WOuilmKXwdG7VvQebK
+         Jtz0AQdWgVnsWafEHU6+U+B+m67zEKSZa4Q6r8atwNuANAi41fZEP/Apo7T0inMQaQwW
+         x3Phv8QEJBlp5LYl00x4tEOtOYaVtkzbLfv3BQGj4ggpjUZJFkUdIfpAdMk04AtiFXmo
+         nSKnKasfILarh2nvlVqHa2opDCwtNDvc3pmAP+eWaWEUKdGgaDX24tbVkCC5Nf5sZ3v6
+         vCHQ==
+X-Gm-Message-State: APjAAAVTf26fruyXltBb/xww7ch3KreM1MZftzywAMC5twNNToAnwnDJ
+        USf8IlxzhXy9qSX0KclpHh4=
+X-Google-Smtp-Source: APXvYqwrn/wHJNPs+Z3jEe7EFcLkK+LStFk07lBcqoiLWtIOcwAWjmYTRHgxAOvVccvdGxBdPJ9T7w==
+X-Received: by 2002:a2e:9b8a:: with SMTP id z10mr20223163lji.80.1571088336158;
+        Mon, 14 Oct 2019 14:25:36 -0700 (PDT)
+Received: from octofox.cadence.com (jcmvbkbc-1-pt.tunnel.tserv24.sto1.ipv6.he.net. [2001:470:27:1fa::2])
+        by smtp.gmail.com with ESMTPSA id m15sm4429434ljh.50.2019.10.14.14.25.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2019 14:25:35 -0700 (PDT)
+From:   Max Filippov <jcmvbkbc@gmail.com>
+To:     linux-xtensa@linux-xtensa.org, Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Chris Zankel <chris@zankel.net>, linux-kernel@vger.kernel.org,
+        Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PATCH v3 0/3] xtensa: fix {get,put}_user() for 64bit values
+Date:   Mon, 14 Oct 2019 14:25:10 -0700
+Message-Id: <20191014212513.17661-1-jcmvbkbc@gmail.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add one boot option to specify thermal throttle warning. The default
-interval is 8 seconds.
+Hello,
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- Documentation/admin-guide/kernel-parameters.txt | 5 +++++
- 1 file changed, 5 insertions(+)
+this series fixes return value, out-of-bound stack access and value
+truncation in xtensa implementation of {get,put}_user() for 64bit
+values. It also cleans up naming of assembly parameters in
+__{get,put}_user_asm and __check_align_{1,2,4}.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index a84a83f8881e..6dce92ac28d0 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -5334,6 +5334,11 @@
- 			as generic guest with no PV drivers. Currently support
- 			XEN HVM, KVM, HYPER_V and VMWARE guest.
- 
-+	x86_therm_warn_delay=	[X86] Specify threshold to warn user about an
-+			active thermal throttling condition in milli seconds.
-+			If the thermal throttling is still active after this
-+			interval, this event is logged in the kernel logs.
-+
- 	xirc2ps_cs=	[NET,PCMCIA]
- 			Format:
- 			<irq>,<irq_mask>,<io>,<full_duplex>,<do_sound>,<lockup_hack>[,<irq2>[,<irq3>[,<irq4>]]]
+Changes v2->v3:
+- fix assembly argument constraint for error code
+- rearrange result zero-initialization for error paths in __get_user_asm
+
+Changes v1->v2:
+- initialize result when access_ok check fails in __get_user_check
+- initialize result in __get_user_asm for unaligned access
+
+Al Viro (1):
+  xtensa: fix {get,put}_user() for 64bit values
+
+Max Filippov (2):
+  xtensa: clean up assembly arguments in uaccess macros
+  xtensa: fix type conversion in __get_user_[no]check
+
+ arch/xtensa/include/asm/uaccess.h | 94 +++++++++++++++++--------------
+ 1 file changed, 53 insertions(+), 41 deletions(-)
+
 -- 
-2.17.2
+2.20.1
 
