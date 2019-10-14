@@ -2,93 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A38CCD6A38
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 21:35:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8805ED6A47
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 21:41:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388911AbfJNTfm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 15:35:42 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:45548 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730288AbfJNTfm (ORCPT
+        id S2388928AbfJNTln (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 15:41:43 -0400
+Received: from gateway34.websitewelcome.com ([192.185.149.46]:37074 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730254AbfJNTln (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 15:35:42 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 23C5E8EE0F8;
-        Mon, 14 Oct 2019 12:35:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1571081742;
-        bh=AeRuRcgM6jscchlt/EXJEwv9Uv2Dq7fTNJi3DQhxtxw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=tdwb3VA4RFihblvfgH6wj+gJHfLvE95a2w5DUQQ3O4PvaBZS0aX4Chqn5r2mod4ZK
-         DpLucBC2smnnVeboQBjJapGpZhdokOImzlN9uwtUPpMhQs/YaiB39+Mm5AowPMOOKY
-         DY3rN3U6t+d3h3gRaGzfemXbXcoA88ojaS9vmoO8=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id t2U2D3im5XpM; Mon, 14 Oct 2019 12:35:41 -0700 (PDT)
-Received: from [172.16.1.194] (unknown [63.64.162.234])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id AACDD8EE0F5;
-        Mon, 14 Oct 2019 12:35:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1571081741;
-        bh=AeRuRcgM6jscchlt/EXJEwv9Uv2Dq7fTNJi3DQhxtxw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=KKv6+fAG3nOUpTYC+dp5azBBF2qZEopErYDj496XRdjscaajHPterWrmN9iupLYB6
-         N0h6xyDHIuqWo31ROLiPDlDenF3y2K++wriPTrtm8wQoN5EYPvCqg3EiDOJPzqA6wq
-         5hPuXM1y+sP+l2GYhl0NQ3W9DzahKWji7gtNdC3E=
-Message-ID: <1571081740.3728.12.camel@HansenPartnership.com>
-Subject: Re: [PATCH v2] tpm: use GFP kernel for tpm_buf allocations
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-integrity@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>
-Date:   Mon, 14 Oct 2019 12:35:40 -0700
-In-Reply-To: <20191014193224.GF15552@linux.intel.com>
-References: <1570809779.24157.1.camel@HansenPartnership.com>
-         <20191014193224.GF15552@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 14 Oct 2019 15:41:43 -0400
+X-Greylist: delayed 1367 seconds by postgrey-1.27 at vger.kernel.org; Mon, 14 Oct 2019 15:41:41 EDT
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id F2DD111EDDA4
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 14:18:52 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id K5roiAb0q3Qi0K5roigJxJ; Mon, 14 Oct 2019 14:18:52 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Z6hy7j2bf2J0P83dPxoUJpQb5DqOP18QhotJKCAr1Fk=; b=T+ZcWALctqO2RNH+PdtNf3wdXf
+        xxQgqYhkamefp5TT7wBcrfhixu+fVcq+nWT3UGYiz9SXenkq8HXJdIbENEk7rb3aO6vbUhf3FQEUD
+        3lho4t1+FKXgfExwK3Sa8WOLN+lHYRy9JW0rusqrsypXCnDr85+YlMQrgLPSZGeQm7dglGByDvSwu
+        CNie5O6UWiNqGYUQdItd/UAgmCW+jxofPvvcoR4FrCDdxS7qdIQw3WMHzBJiSBxvppEe05VZXqGeI
+        hVkmz3Y0QhmmNNG7XVU9Tl5siVzjJQ65elzEAg+anzaXbUjns60laMlVoq9zvajdpAZF092P8/yWp
+        xk7s8JqQ==;
+Received: from [187.192.22.73] (port=54766 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1iK5rm-000wQV-S6; Mon, 14 Oct 2019 14:18:51 -0500
+Date:   Mon, 14 Oct 2019 14:18:30 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, Roland Stigge <stigge@antcom.de>
+Cc:     linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] usb: udc: lpc32xx: fix bad bit shift operation
+Message-ID: <20191014191830.GA10721@embeddedor>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.22.73
+X-Source-L: No
+X-Exim-ID: 1iK5rm-000wQV-S6
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.22.73]:54766
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 9
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-10-14 at 22:32 +0300, Jarkko Sakkinen wrote:
-> On Fri, Oct 11, 2019 at 09:02:59AM -0700, James Bottomley wrote:
-> > The current code uses GFP_HIGHMEM, which is wrong because
-> > GFP_HIGHMEM
-> > (on 32 bit systems) is memory ordinarily inaccessible to the kernel
-> > and should only be used for allocations affecting userspace.  In
-> > order
-> > to make highmem visible to the kernel on 32 bit it has to be
-> > kmapped,
-> > which consumes valuable entries in the kmap region.  Since the
-> > tpm_buf
-> > is only ever used in the kernel, switch to using a GFP_KERNEL
-> > allocation so as not to waste kmap space on 32 bits.
-> > 
-> > Fixes: a74f8b36352e (tpm: introduce tpm_buf)
-> > Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.c
-> > om>
-> 
-> I'll apply this without a fixes tag as there is no failing system.
-> Agree that it was not the best design decision to use GFP_HIGHMEM.
+It seems that the right variable to use in this case is *i*, instead of
+*n*, otherwise there is an undefined behavior when right shifiting by more
+than 31 bits when multiplying n by 8; notice that *n* can take values
+equal or greater than 4 (4, 8, 16, ...).
 
-I don't really mind either way.  The function of the fixes tag isn't to
-say there was a fatal bug it's to say if you think you're fixing
-something where was the origin of the problem, however minor the
-problem is.
+Also, notice that under the current conditions (bl = 3), we are skiping
+the handling of bytes 3, 7, 31... So, fix this by updating this logic
+and limit *bl* up to 4 instead of up to 3.
 
-I do agree that Sasha's autosel stuff does seem to be triggering off
-Fixes and we don't want to see hundreds of autosel patches trying to
-apply this to older trees, so removing the fixes tag to avoid this is
-fine with me.
+This fix is based on function udc_stuff_fifo().
 
-James
+Addresses-Coverity-ID: 1454834 ("Bad bit shift operation")
+Fixes: 24a28e428351 ("USB: gadget driver for LPC32xx")
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/usb/gadget/udc/lpc32xx_udc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/usb/gadget/udc/lpc32xx_udc.c b/drivers/usb/gadget/udc/lpc32xx_udc.c
+index 2b1f3cc7819b..bf6c81e2f8cc 100644
+--- a/drivers/usb/gadget/udc/lpc32xx_udc.c
++++ b/drivers/usb/gadget/udc/lpc32xx_udc.c
+@@ -1177,11 +1177,11 @@ static void udc_pop_fifo(struct lpc32xx_udc *udc, u8 *data, u32 bytes)
+ 			tmp = readl(USBD_RXDATA(udc->udp_baseaddr));
+ 
+ 			bl = bytes - n;
+-			if (bl > 3)
+-				bl = 3;
++			if (bl > 4)
++				bl = 4;
+ 
+ 			for (i = 0; i < bl; i++)
+-				data[n + i] = (u8) ((tmp >> (n * 8)) & 0xFF);
++				data[n + i] = (u8) ((tmp >> (i * 8)) & 0xFF);
+ 		}
+ 		break;
+ 
+-- 
+2.23.0
 
