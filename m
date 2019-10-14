@@ -2,72 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B22AFD6A4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 21:46:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F09CDD6A56
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 21:50:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388936AbfJNTqV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 15:46:21 -0400
-Received: from mga14.intel.com ([192.55.52.115]:11869 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730254AbfJNTqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 15:46:20 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Oct 2019 12:46:19 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,296,1566889200"; 
-   d="scan'208";a="199501034"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
-  by orsmga006.jf.intel.com with ESMTP; 14 Oct 2019 12:46:19 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 07FE93001C0; Mon, 14 Oct 2019 12:46:19 -0700 (PDT)
-Date:   Mon, 14 Oct 2019 12:46:19 -0700
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>
-Subject: Re: [PATCH 3/3] perf tools: Make 'struct map_shared' truly shared
-Message-ID: <20191014194619.GS9933@tassilo.jf.intel.com>
-References: <20191013151427.11941-1-jolsa@kernel.org>
- <20191013151427.11941-4-jolsa@kernel.org>
- <20191014031054.GJ9933@tassilo.jf.intel.com>
- <20191014192049.GB15890@krava>
+        id S1730112AbfJNTuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 15:50:02 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:44534 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726452AbfJNTuC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 15:50:02 -0400
+Received: by mail-oi1-f193.google.com with SMTP id w6so14712201oie.11;
+        Mon, 14 Oct 2019 12:50:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NxhCCxPZ2FpXlTCWZLPNlVYro5ejAF3sMPqwp32yhUc=;
+        b=btv/iedE1rCUiL+e7RFcXH/DGQCrkYZdcWsxG7XnmANNmx0WF1sFioozo2HJRn1rok
+         EX9yXki6w1I2s4vrW/U6AQC45o/BergFspE1fE5rV7yj63PdbaBYXYHogzD21liUWo9E
+         H+GhIfEWdTwyq/F/kfza1lsrScaY6OGemWJZG9ZTISzkXY5OOl7RBW5frKgJnzsoUfiu
+         5Uy0Ssxi238kRehJVJP4heV3wDos/HrVjCgWin6C5UNB+S9s96TAiQwTArCdgtQIJhIC
+         1WqDU30A0WrEKO/k2u4uAIfLg9pJDUw8VrVg8SHEPs+6YPOLge85S6nxe3iZKHXbf5mj
+         vYVA==
+X-Gm-Message-State: APjAAAXRG3YFiXzD94GEMKxA9r6KhWtSWJtNhclwcyyYMj7CqiOBaZa1
+        xS8XxHI1lqjiSwnRmp2RRw==
+X-Google-Smtp-Source: APXvYqz8cLeQnVPXfJbn0yMhk9Ft8PU/gotpH8mO+4vzmJUPaFtR7C1fUMAwi6LrI3V2N7Rln4VRXw==
+X-Received: by 2002:aca:370b:: with SMTP id e11mr25053138oia.96.1571082601381;
+        Mon, 14 Oct 2019 12:50:01 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id f205sm5792922oib.11.2019.10.14.12.50.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2019 12:50:00 -0700 (PDT)
+Date:   Mon, 14 Oct 2019 14:50:00 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     srinivas.kandagatla@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        christoph.muellner@theobroma-systems.com,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH 1/2] dt-bindings: nvmem: add binding for Rockchip OTP
+ controller
+Message-ID: <20191014195000.GA17233@bogus>
+References: <20190925184957.14338-1-heiko@sntech.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191014192049.GB15890@krava>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190925184957.14338-1-heiko@sntech.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > We may need a COW operation for this (hopefully rare) case.
+On Wed, 25 Sep 2019 20:49:56 +0200, Heiko Stuebner wrote:
+> Newer Rockchip SoCs use a different IP for accessing special one-
+> time-programmable memory, so add a binding for these controllers.
 > 
-> so the jitted mmaps are inserted into the data file
-> and processed during report where they can overload
-> existing maps - thats detected before addition in:
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  .../bindings/nvmem/rockchip-otp.txt           | 25 +++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/nvmem/rockchip-otp.txt
 > 
->   thread__insert_map
->     map_groups__fixup_overlappings
->       - which uses COW way -> map__clone(map, false);
->         to create new map
-> 
-> other fixups to maps are being done only for kernel maps,
-> where we dont have a problem, because there's only one copy
 
-I assume the same is true for /tmp/perf-* processing?
-
-Thanks for looking into it.
-
-
-
--Andi
+Reviewed-by: Rob Herring <robh@kernel.org>
