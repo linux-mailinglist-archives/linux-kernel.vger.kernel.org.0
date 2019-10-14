@@ -2,122 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DDE8D651C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 16:27:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF058D6521
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 16:28:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732757AbfJNO1Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 10:27:25 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:46331 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732598AbfJNO1Z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 10:27:25 -0400
-Received: by mail-qk1-f196.google.com with SMTP id 201so16019411qkd.13;
-        Mon, 14 Oct 2019 07:27:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3V+PGu2Pyj0zf4ZH2iF3KZ1fNITKR1WxcgLIFZ54C7g=;
-        b=APROephVsfFNzX2RVV5DyBkL9ZJGsxrkxzBGUtyFJ7I8pBb4A8Sh6bJetLf6WyV2AN
-         Eee4AwmioqqgfSgaXepYXZhtPufDugC6Fa85A4h0lPF7uSUibJ6EOwPnSRpTQ0ymL1o5
-         S3MUd0aFrt4Vjc3NFteCHGzmcyUzce2BQMFhBjNX74sNh6ryu6RJxKjN6V7UKvXnhmM3
-         yvI20uJs3FXq3VWDq5h5H2SQ2iW933iJoxuPep3vGhJIRf0DcGqw/fDafVBX2zV7C5JQ
-         hWUSRDXLcIQmmgQxjl/Q5mnlY++YLMqZNSLBfzaR01qNnFdgWS8qFXH5PzDiIbcauk2s
-         Uu4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3V+PGu2Pyj0zf4ZH2iF3KZ1fNITKR1WxcgLIFZ54C7g=;
-        b=C53EmAr+yssfYx/Ksh/00FYI3GjpbDr6NsJkLy2pZMBiKMsULxQAbuBHRU0Dqd2fQw
-         uAzuwXaXUJNz7+MSE1VVDdVcMMyqTRYdCRYSf84rxaXNhICf4gHQCzD7iqW1ISf2uZwE
-         Hc/xp1uldmZosdhflGo8rYHttQGWA+dihurDvj2adc68QW6NKTSJ5JtLTN/hXSUIubt5
-         kxc9Zl8Yai138y775me0WGktDrhsTZgEjD7ChC1S3O56DYAMJ+gn330Q8DBSVbDtTIVT
-         0qM8VpcX5V43Mlxxrdz97RBaA8ct1dVJmBUE4XN/2y/+NGLO0aQI/1/PhByb5onzxhxb
-         KSmg==
-X-Gm-Message-State: APjAAAXljaet7oJXnnjmkRbZwlSFJhSIT8JYwi11/sUscRl1CstLrARh
-        EwIjBDMpPNKDuJkgD5u6KcBv13R1
-X-Google-Smtp-Source: APXvYqxtbBj724cxF+nTluv34uda4ZWEiUHW17e92CGKh33IW7olw+eu5Sy9x+hAjyZTIsHt0V7kIQ==
-X-Received: by 2002:ae9:e84e:: with SMTP id a75mr30732432qkg.2.1571063242380;
-        Mon, 14 Oct 2019 07:27:22 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id d134sm8102386qkg.133.2019.10.14.07.27.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2019 07:27:21 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id B39B54DD66; Mon, 14 Oct 2019 11:27:19 -0300 (-03)
-Date:   Mon, 14 Oct 2019 11:27:19 -0300
-To:     Thomas Richter <tmricht@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        gor@linux.ibm.com, heiko.carstens@de.ibm.com
-Subject: Re: [PATCH] perf jvmti: Link against tools/lib/ctype.h to have weak
- strlcpy()
-Message-ID: <20191014142719.GK19627@kernel.org>
-References: <20191008093841.59387-1-tmricht@linux.ibm.com>
+        id S1732793AbfJNO1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 10:27:51 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:55168 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732589AbfJNO1v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 10:27:51 -0400
+Received: from zn.tnic (p200300EC2F065800329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2f06:5800:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DC5C21EC06FB;
+        Mon, 14 Oct 2019 16:27:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1571063270;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=xnAbQTxxzd5rIOcOu5tUVs/ScOLib3p+kaJk8MwESRY=;
+        b=KSqc/zaDPn6v9D5UIZq9wrxPldVUwvdMSEseyWU7S5Wq/+7aEXMA7XiWEAm3lz9KWt35s7
+        TCA02Fe5YQlnylwhNI0ui27bYkekf7quKcxw2ZwFDr4y0ZfIvvkSwdMtoDbXG0IIAskTJb
+        SB+xxSNls49Nxb1eG9A3O9cgVQ24noY=
+Date:   Mon, 14 Oct 2019 16:27:42 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jiri Slaby <jslaby@suse.cz>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 07/28] x86/boot: Annotate local functions
+Message-ID: <20191014142742.GD4715@zn.tnic>
+References: <20191011115108.12392-1-jslaby@suse.cz>
+ <20191011115108.12392-8-jslaby@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191008093841.59387-1-tmricht@linux.ibm.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191011115108.12392-8-jslaby@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Oct 08, 2019 at 11:38:41AM +0200, Thomas Richter escreveu:
-> The build of file libperf-jvmti.so succeeds but the resulting
-> object fails to load:
+On Fri, Oct 11, 2019 at 01:50:47PM +0200, Jiri Slaby wrote:
+> .Lrelocated, .Lpaging_enabled, .Lno_longmode, and .Lin_pm32 are
+> self-standing local functions, annotate them as such and preserve "no
+> alignment".
 > 
->  # ~/linux/tools/perf/perf record -k mono -- java  \
->       -XX:+PreserveFramePointer \
->       -agentpath:/root/linux/tools/perf/libperf-jvmti.so \
->        hog 100000 123450
->   Error occurred during initialization of VM
->   Could not find agent library /root/linux/tools/perf/libperf-jvmti.so
->       in absolute path, with error:
->       /root/linux/tools/perf/libperf-jvmti.so: undefined symbol: _ctype
-> 
-> Add the missing _ctype symbol into the build script.
-> 
-> Fixes: c5d048240e49 ("perf jvmti: Link against tools/lib/string.h to have weak strlcpy()")
+> The annotations do not generate anything yet.
 
-Thanks, applied.
-
-- Arnaldo
- 
-> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-> ---
->  tools/perf/jvmti/Build | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/jvmti/Build b/tools/perf/jvmti/Build
-> index 1e148bbdf820..202cadaaf097 100644
-> --- a/tools/perf/jvmti/Build
-> +++ b/tools/perf/jvmti/Build
-> @@ -2,7 +2,7 @@ jvmti-y += libjvmti.o
->  jvmti-y += jvmti_agent.o
->  
->  # For strlcpy
-> -jvmti-y += libstring.o
-> +jvmti-y += libstring.o libctype.o
->  
->  CFLAGS_jvmti         = -fPIC -DPIC -I$(JDIR)/include -I$(JDIR)/include/linux
->  CFLAGS_REMOVE_jvmti  = -Wmissing-declarations
-> @@ -15,3 +15,7 @@ CFLAGS_libstring.o += -Wno-unused-parameter -DETC_PERFCONFIG="BUILD_STR($(ETC_PE
->  $(OUTPUT)jvmti/libstring.o: ../lib/string.c FORCE
->  	$(call rule_mkdir)
->  	$(call if_changed_dep,cc_o_c)
-> +
-> +$(OUTPUT)jvmti/libctype.o: ../lib/ctype.c FORCE
-> +	$(call rule_mkdir)
-> +	$(call if_changed_dep,cc_o_c)
-> -- 
-> 2.21.0
+So the annotation is only documentational, right?
 
 -- 
+Regards/Gruss,
+    Boris.
 
-- Arnaldo
+https://people.kernel.org/tglx/notes-about-netiquette
