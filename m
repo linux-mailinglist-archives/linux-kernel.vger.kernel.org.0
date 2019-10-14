@@ -2,89 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C182BD5F18
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 11:38:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA960D5F1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 11:39:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731041AbfJNJin (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 05:38:43 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55162 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730872AbfJNJin (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 05:38:43 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7AB86BD30;
-        Mon, 14 Oct 2019 09:38:41 +0000 (UTC)
-Date:   Mon, 14 Oct 2019 11:38:57 +0200
-From:   Jean Delvare <jdelvare@suse.de>
-To:     Linux I2C <linux-i2c@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 2/4] firmware: dmi: Add dmi_memdev_handle
-Message-ID: <20191014113857.1166bef6@endymion>
-In-Reply-To: <20191014113636.57b5ce89@endymion>
-References: <20191014113636.57b5ce89@endymion>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        id S1731071AbfJNJjl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 05:39:41 -0400
+Received: from mga05.intel.com ([192.55.52.43]:14702 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730968AbfJNJjl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 05:39:41 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Oct 2019 02:39:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,295,1566889200"; 
+   d="scan'208";a="194175343"
+Received: from alinamex-mobl3.ger.corp.intel.com (HELO [10.252.56.163]) ([10.252.56.163])
+  by fmsmga008.fm.intel.com with ESMTP; 14 Oct 2019 02:39:38 -0700
+Subject: Re: WARNING in drm_mode_createblob_ioctl
+To:     syzbot <syzbot+fb77e97ebf0612ee6914@syzkaller.appspotmail.com>,
+        airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, mripard@kernel.org, sean@poorly.run,
+        syzkaller-bugs@googlegroups.com
+References: <000000000000b2de3a0594d8b4ca@google.com>
+ <20191014091635.GI11828@phenom.ffwll.local>
+From:   syzbot <syzbot+fb77e97ebf0612ee6914@syzkaller.appspotmail.com>
+Message-ID: <67fb1a91-7ef3-9036-2d1b-877e394bcab2@linux.intel.com>
+Date:   Mon, 14 Oct 2019 11:39:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20191014091635.GI11828@phenom.ffwll.local>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a utility function dmi_memdev_handle() which returns the DMI
-handle associated with a given memory slot. This will allow kernel
-drivers to iterate over the memory slots.
+Op 14-10-2019 om 11:16 schreef Daniel Vetter:
+> On Sun, Oct 13, 2019 at 11:09:09PM -0700, syzbot wrote:
+>> Hello,
+>>
+>> syzbot found the following crash on:
+>>
+>> HEAD commit:    8ada228a Add linux-next specific files for 20191011
+>> git tree:       linux-next
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=1423a87f600000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=7cf4eed5fe42c31a
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=fb77e97ebf0612ee6914
+>> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+>>
+>> Unfortunately, I don't have any reproducer for this crash yet.
+> Hm only thing that could go wrong is how we allocate the target for the
+> user_copy, which is an argument directly from the ioctl parameter struct.
+> Does syzbot not track that? We use the standard linux ioctl struct
+> encoding in drm.
+>
+> Otherwise I have no idea why it can't create a reliable reproducer for
+> this ... I'm also not seeing the bug, all the input validation we have
+> seems correct :-/
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
----
- drivers/firmware/dmi_scan.c |   16 ++++++++++++++++
- include/linux/dmi.h         |    2 ++
- 2 files changed, 18 insertions(+)
+I would like to see the entire dmesg?
 
---- linux-5.3.orig/drivers/firmware/dmi_scan.c	2019-10-10 11:33:02.871034637 +0200
-+++ linux-5.3/drivers/firmware/dmi_scan.c	2019-10-10 11:45:37.275549638 +0200
-@@ -1151,3 +1151,19 @@ u8 dmi_memdev_type(u16 handle)
- 	return 0x0;	/* Not a valid value */
- }
- EXPORT_SYMBOL_GPL(dmi_memdev_type);
-+
-+/**
-+ *	dmi_memdev_handle - get the DMI handle of a memory slot
-+ *	@slot: slot number
-+ *
-+ *	Return the DMI handle associated with a given memory slot, or %0xFFFF
-+ *      if there is no such slot.
-+ */
-+u16 dmi_memdev_handle(int slot)
-+{
-+	if (dmi_memdev && slot >= 0 && slot < dmi_memdev_nr)
-+		return dmi_memdev[slot].handle;
-+
-+	return 0xffff;	/* Not a valid value */
-+}
-+EXPORT_SYMBOL_GPL(dmi_memdev_handle);
---- linux-5.3.orig/include/linux/dmi.h	2019-10-10 11:33:02.871034637 +0200
-+++ linux-5.3/include/linux/dmi.h	2019-10-10 11:34:46.146337207 +0200
-@@ -114,6 +114,7 @@ extern bool dmi_match(enum dmi_field f,
- extern void dmi_memdev_name(u16 handle, const char **bank, const char **device);
- extern u64 dmi_memdev_size(u16 handle);
- extern u8 dmi_memdev_type(u16 handle);
-+extern u16 dmi_memdev_handle(int slot);
- 
- #else
- 
-@@ -144,6 +145,7 @@ static inline void dmi_memdev_name(u16 h
- 		const char **device) { }
- static inline u64 dmi_memdev_size(u16 handle) { return ~0ul; }
- static inline u8 dmi_memdev_type(u16 handle) { return 0x0; }
-+static inline u16 dmi_memdev_handle(int slot) { return 0xffff; }
- static inline const struct dmi_system_id *
- 	dmi_first_match(const struct dmi_system_id *list) { return NULL; }
- 
+in particular because it's likely WARN(1, "Buffer overflow detected (%d < %lu)!\n", size, count),
 
--- 
-Jean Delvare
-SUSE L3 Support
+so I'd like to see the size it thinks for both..
+
+> -Daniel
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+fb77e97ebf0612ee6914@syzkaller.appspotmail.com
+>>
+>> ------------[ cut here ]------------
+>> WARNING: CPU: 1 PID: 30449 at include/linux/thread_info.h:150
+>> check_copy_size include/linux/thread_info.h:150 [inline]
+>> WARNING: CPU: 1 PID: 30449 at include/linux/thread_info.h:150 copy_from_user
+>> include/linux/uaccess.h:143 [inline]
+>> WARNING: CPU: 1 PID: 30449 at include/linux/thread_info.h:150
+>> drm_mode_createblob_ioctl+0x398/0x490 drivers/gpu/drm/drm_property.c:800
+>> Kernel panic - not syncing: panic_on_warn set ...
+>> CPU: 1 PID: 30449 Comm: syz-executor.5 Not tainted 5.4.0-rc2-next-20191011
+>> #0
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+>> Google 01/01/2011
+>> Call Trace:
+>>  __dump_stack lib/dump_stack.c:77 [inline]
+>>  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+>>  panic+0x2e3/0x75c kernel/panic.c:221
+>>  __warn.cold+0x2f/0x35 kernel/panic.c:582
+>>  report_bug+0x289/0x300 lib/bug.c:195
+>>  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+>>  fixup_bug arch/x86/kernel/traps.c:169 [inline]
+>>  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:267
+>>  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:286
+>>  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
+>> RIP: 0010:check_copy_size include/linux/thread_info.h:150 [inline]
+>> RIP: 0010:copy_from_user include/linux/uaccess.h:143 [inline]
+>> RIP: 0010:drm_mode_createblob_ioctl+0x398/0x490
+>> drivers/gpu/drm/drm_property.c:800
+>> Code: c1 ea 03 80 3c 02 00 0f 85 ed 00 00 00 49 89 5d 00 e8 3c 28 cb fd 4c
+>> 89 f7 e8 64 92 9e 03 31 c0 e9 75 fd ff ff e8 28 28 cb fd <0f> 0b e8 21 28 cb
+>> fd 4d 85 e4 b8 f2 ff ff ff 0f 84 5b fd ff ff 89
+>> RSP: 0018:ffff8880584efaa8 EFLAGS: 00010246
+>> RAX: 0000000000040000 RBX: ffff8880a3a90000 RCX: ffffc900109da000
+>> RDX: 0000000000040000 RSI: ffffffff83a7eaf8 RDI: 0000000000000007
+>> RBP: ffff8880584efae8 R08: ffff888096c40080 R09: ffffed1014752110
+>> R10: ffffed101475210f R11: ffff8880a3a9087f R12: ffffc90014907000
+>> R13: ffff888028aa0000 R14: 000000009a6c7969 R15: ffffc90014907058
+>>
+>>
+>> ---
+>> This bug is generated by a bot. It may contain errors.
+>> See https://goo.gl/tpsmEJ for more information about syzbot.
+>> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>>
+>> syzbot will keep track of this bug report. See:
+>> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+
