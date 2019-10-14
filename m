@@ -2,249 +2,219 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8AD4D5F35
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 11:44:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5AD7D5F42
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 11:47:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731061AbfJNJoB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 05:44:01 -0400
-Received: from mail-eopbgr10060.outbound.protection.outlook.com ([40.107.1.60]:41444
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731016AbfJNJoA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 05:44:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IwHhXvt95GLMYq8v+LyaFwefKl1dUvimCCsOJm2miew=;
- b=zA42F4+nFXt2/teRr364Pu6NQKHBln7KZ7XfJ8Xk609i/aBMw1UUo8YFOvekQWJcJEtMPLKIXMX/Xz2DFA+2dhekZoCksKjbmIAT3QomUKt6zMqqxEo7n79b73i27pSWx+edZ+3Fl+d8OZqTJXADf7i1mlDBVhLuuoUwx2dJzto=
-Received: from VI1PR08CA0212.eurprd08.prod.outlook.com (2603:10a6:802:15::21)
- by VI1PR0802MB2399.eurprd08.prod.outlook.com (2603:10a6:800:bb::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2347.18; Mon, 14 Oct
- 2019 09:43:55 +0000
-Received: from DB5EUR03FT041.eop-EUR03.prod.protection.outlook.com
- (2a01:111:f400:7e0a::207) by VI1PR08CA0212.outlook.office365.com
- (2603:10a6:802:15::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2347.22 via Frontend
- Transport; Mon, 14 Oct 2019 09:43:55 +0000
-Authentication-Results: spf=temperror (sender IP is 63.35.35.123)
- smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
- header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=none action=none
- header.from=arm.com;
-Received-SPF: TempError (protection.outlook.com: error in processing during
- lookup of arm.com: DNS Timeout)
-Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- DB5EUR03FT041.mail.protection.outlook.com (10.152.21.4) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.2305.15 via Frontend Transport; Mon, 14 Oct 2019 09:43:52 +0000
-Received: ("Tessian outbound 081de437afc7:v33"); Mon, 14 Oct 2019 09:43:48 +0000
-X-CheckRecipientChecked: true
-X-CR-MTA-CID: 3e5736c89d469c85
-X-CR-MTA-TID: 64aa7808
-Received: from ea05d2ded876.2 (ip-172-16-0-2.eu-west-1.compute.internal [104.47.10.52])
-        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 009FD6CE-8152-4893-A351-13EBEFD9070A.1;
-        Mon, 14 Oct 2019 09:43:42 +0000
-Received: from EUR03-DB5-obe.outbound.protection.outlook.com (mail-db5eur03lp2052.outbound.protection.outlook.com [104.47.10.52])
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id ea05d2ded876.2
-    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384);
-    Mon, 14 Oct 2019 09:43:42 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AgyFpF2T1Fk9I7SHJbpgE7Urwkc0KNPsu5Vw+5Rlt7RxHkYh3ezGGD27gwCKz1cDqZgWyjFIc6EUfHAjmM+82ISPtOrl+cL0lfIm1ugddJJ4xc32ZDx2a6DZiyex+hECltdWY2nsDQimar/pxfTRpXlRR6IHzJeANWG839lxSGOU5+WmhafX/vZgS/C8eUhrxjqzixmUYrIsiVadYAatssxPHBQsPdziJ3btQSjf081HGmiQ2AOESLh2/Qgdw5zkBwmWsE/VvPdEpDIgmB3Jfg3DT1lEGkF/uoFKp2Hf5DftN5U2jN/089sqd5tvBD7MYu1O387ZB9jVOPe+31qGzg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IwHhXvt95GLMYq8v+LyaFwefKl1dUvimCCsOJm2miew=;
- b=ND4JDKq4w4Cb/pi9EsY8qOUcLMP0karaboM/k9AeQnGdHMtj6wGp0pYULj3sfoJkBZZ0HY8EQP9LEPM6C/kpqIj7kmAA0iCkL3bFqA4SB2k9cpPa+aoJ/mvXkppEXQY70BTmiuXeCNg+/vOdR0Z6E1z8hXnq7YUyicaapTgO9ELTr+YnOA4hnRDTCvHEvNC/CYRO8Zk+UaBGYqyiO0b8o6OyoJV3xVlcfLSnfQDsNPUvpB5DxhtJ/KG0oxCrtx8chG7D3LIsqnLbbcgYkbnIPCN3D5ks9JeeqeTmNi2ywTXVzePYCIgsfZ0manhgMnrFTKI9kRSkaB0fpd2eHWfvgw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IwHhXvt95GLMYq8v+LyaFwefKl1dUvimCCsOJm2miew=;
- b=zA42F4+nFXt2/teRr364Pu6NQKHBln7KZ7XfJ8Xk609i/aBMw1UUo8YFOvekQWJcJEtMPLKIXMX/Xz2DFA+2dhekZoCksKjbmIAT3QomUKt6zMqqxEo7n79b73i27pSWx+edZ+3Fl+d8OZqTJXADf7i1mlDBVhLuuoUwx2dJzto=
-Received: from VE1PR08MB5006.eurprd08.prod.outlook.com (10.255.159.31) by
- VE1PR08MB4781.eurprd08.prod.outlook.com (10.255.114.138) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.21; Mon, 14 Oct 2019 09:43:40 +0000
-Received: from VE1PR08MB5006.eurprd08.prod.outlook.com
- ([fe80::40ed:7ed3:90cf:ece5]) by VE1PR08MB5006.eurprd08.prod.outlook.com
- ([fe80::40ed:7ed3:90cf:ece5%3]) with mapi id 15.20.2347.021; Mon, 14 Oct 2019
- 09:43:40 +0000
-From:   "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
-To:     Mihail Atanassov <Mihail.Atanassov@arm.com>
-CC:     Liviu Dudau <Liviu.Dudau@arm.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "sean@poorly.run" <sean@poorly.run>,
-        "imirkin@alum.mit.edu" <imirkin@alum.mit.edu>,
-        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
-        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
-        "Thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
-        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
-        Ayan Halder <Ayan.Halder@arm.com>,
-        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
-        "Yiqi Kang (Arm Technology China)" <Yiqi.Kang@arm.com>,
-        nd <nd@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Ben Davis <Ben.Davis@arm.com>,
-        "Oscar Zhang (Arm Technology China)" <Oscar.Zhang@arm.com>,
-        "Channing Chen (Arm Technology China)" <Channing.Chen@arm.com>
-Subject: Re: [PATCH v2 1/4] drm: Add a new helper
- drm_color_ctm_s31_32_to_qm_n()
-Thread-Topic: [PATCH v2 1/4] drm: Add a new helper
- drm_color_ctm_s31_32_to_qm_n()
-Thread-Index: AQHVf/cV8wl8pZbk8kmsplok4zd2G6dVG1eAgATMaQA=
-Date:   Mon, 14 Oct 2019 09:43:39 +0000
-Message-ID: <20191014094332.GA15094@jamwan02-TSP300>
-References: <20191011054459.17984-1-james.qian.wang@arm.com>
- <20191011054459.17984-2-james.qian.wang@arm.com>
- <1622787.6FTe1jSl1W@e123338-lin>
-In-Reply-To: <1622787.6FTe1jSl1W@e123338-lin>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mutt/1.10.1 (2018-07-13)
-x-originating-ip: [113.29.88.7]
-x-clientproxiedby: HK2P15301CA0024.APCP153.PROD.OUTLOOK.COM
- (2603:1096:202:1::34) To VE1PR08MB5006.eurprd08.prod.outlook.com
- (2603:10a6:803:113::31)
-Authentication-Results-Original: spf=none (sender IP is )
- smtp.mailfrom=james.qian.wang@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-X-MS-Office365-Filtering-Correlation-Id: cca437c9-8b43-42da-07de-08d7508b05d4
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-TrafficTypeDiagnostic: VE1PR08MB4781:|VE1PR08MB4781:|VI1PR0802MB2399:
-x-ms-exchange-transport-forked: True
-X-Microsoft-Antispam-PRVS: <VI1PR0802MB23995569C1E6EA8FEFB2A611B3900@VI1PR0802MB2399.eurprd08.prod.outlook.com>
-x-checkrecipientrouted: true
-x-ms-oob-tlc-oobclassifiers: OLM:3044;OLM:3044;
-x-forefront-prvs: 01901B3451
-X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(7916004)(4636009)(396003)(376002)(346002)(366004)(39860400002)(136003)(199004)(189003)(2906002)(33656002)(6512007)(9686003)(66066001)(71190400001)(476003)(71200400001)(386003)(6506007)(76176011)(7736002)(486006)(305945005)(229853002)(446003)(25786009)(26005)(102836004)(55236004)(186003)(11346002)(99286004)(86362001)(478600001)(8936002)(14444005)(8676002)(6436002)(81166006)(81156014)(52116002)(33716001)(6636002)(3846002)(6486002)(58126008)(6116002)(54906003)(256004)(6246003)(5660300002)(66476007)(66946007)(66556008)(316002)(1076003)(4326008)(14454004)(66446008)(64756008)(6862004);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR08MB4781;H:VE1PR08MB5006.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original: scWtQ5gxG3QR61ygsrric09dtjBuEFHzjqUl2LGZlyi99BQ7udepCEpaZS1eOzWX855Be/9ssONV+VvnYSZl0fTWfQD3ZBMiq9+MSEedxAleYI2BI3cEJHNSdRhAc2vKURmSsUQvTEgAHf1mwGSy1bQYK/4sHW5RhCdMWvqA/jB3HYqfAHMBZvXM65qJTadQHGeg/S6VorR695P8BVxbhYbnJnpDpqQMhLhwngzTJX7gavK0Kjlt4dSkhfP1nKGvlkw/VflzdDpq9RPVK0Oxn9fdpanCqVfrBTv9uS8w9EyHb+JRi6p/klBtH2UK0/Epf9ubJZG9EHVNlNiktuGFD0LI5eYfERz8teiuO3pi9DfRSvh8ggGarsTEtStGwIkoL9aS0wEafxhQhUAG514x0oJPwdxcTjndJOreJkfIe/Q=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <7382987736F7BD4E86B193C4D25E9A02@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1731116AbfJNJro (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 05:47:44 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:33349 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730915AbfJNJro (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 05:47:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571046461;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nT2RrZtaq6JmJmsrID6t8B00LKO1nf8nFaNNyvXimHw=;
+        b=JHMIPH9JPBbeoxRVge8e3RjpH/Pgwr3B+89R5tZfFl82p+Do0kGVZun68fzRss2A6GWyLG
+        McrARU/Li1wlNZMllIpOf6bjwaszhi/6byqDgzCaMUWZi+4qfNDkNdJW16yBXZADo5i/gD
+        ggdCx4oDIMekDzVzWOkfnO1UdtRDhGc=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-319-sERe_wB8MdSiPMwMQv60wA-1; Mon, 14 Oct 2019 05:47:40 -0400
+Received: by mail-qt1-f200.google.com with SMTP id s14so17424964qtn.4
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 02:47:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tikxGi43a/ogHMQeUvt4yKFgetbCPvcttFBIabbyj28=;
+        b=pKOWiYRC/NWK44unEajgE1sY5bjv7ufLSEQtC6wbSBtWCjDLMvO08u6+badNx7Wjhy
+         2PWUzVoRYDWpAMWuIvmyKqL00BHIMCMcgm/Hv/Faiskk0mNQAHw+SuBmJTXMRQPEFgoz
+         Wgb6to61waIyuc0Djew31I0vEWpZbL2eo87CCCNCbIMfqB5x0gjO32JA58qWzFS55h/a
+         G6STM6G/SSyClxm1u3FLVAzqmzcp7woPTK99GoKxbYag9319Ep4lJBSkgw/Jx9+/i2E4
+         2Pai29fl+jZgRLjpA5ZtYtQRj/nh6eDi+Qq/ykb0ZQCxHRHfAmKxiRIIkRU2Jf7+WzG8
+         pMMA==
+X-Gm-Message-State: APjAAAXWRhMtKJ0AcF7u8RN5SjjGBLIw3Wc1gKuRbIoO3RSCkjyoHge4
+        pTsXRGWBKaBmbwOJyMrSvKkZd8TGuEiz0lrfKOasqL3S4tOICOjJ9GwyZYyjIzuhWoF1tTP/9eB
+        giT5FbQzFN5nN+bs5YzcTNXEDfRWGxORGrMMvi64n
+X-Received: by 2002:a05:620a:1116:: with SMTP id o22mr28156590qkk.170.1571046459959;
+        Mon, 14 Oct 2019 02:47:39 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqyvbOFBLvfatVqxwW5o/shLYzkTaBsdCKuYpQDE01FDeDZTKqGCvPGRPGzVzTMn3Bd8hBCS7VgMz21JW+/5Pmo=
+X-Received: by 2002:a05:620a:1116:: with SMTP id o22mr28156570qkk.170.1571046459697;
+ Mon, 14 Oct 2019 02:47:39 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR08MB4781
-Original-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=james.qian.wang@arm.com; 
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: DB5EUR03FT041.eop-EUR03.prod.protection.outlook.com
-X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(7916004)(4636009)(136003)(39860400002)(346002)(376002)(396003)(199004)(189003)(305945005)(22756006)(86362001)(476003)(126002)(63350400001)(25786009)(1076003)(26005)(33716001)(229853002)(11346002)(446003)(6116002)(14454004)(3846002)(50466002)(23726003)(46406003)(7736002)(486006)(478600001)(5660300002)(26826003)(97756001)(2906002)(356004)(9686003)(14444005)(33656002)(58126008)(316002)(6512007)(6486002)(4326008)(102836004)(99286004)(47776003)(386003)(6506007)(8676002)(54906003)(76176011)(70206006)(70586007)(186003)(76130400001)(8936002)(6862004)(81156014)(6636002)(81166006)(8746002)(66066001)(336012)(6246003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0802MB2399;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:TempError;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;A:1;MX:1;
-X-MS-Office365-Filtering-Correlation-Id-Prvs: 88f8d0bd-c23c-4678-d397-08d7508afddb
-NoDisclaimer: True
-X-Forefront-PRVS: 01901B3451
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: VusNihEOudRV+eghGupSqS3nvSjAvYTj7BalpfiDICewo7N5GvCskeQ9up5NYoKx1OGnKQvJCi55nnr2piWLDjHVLGLrWzGbO8fD0QANircgd3sowGB9+dOE9dQuc0ue8ghG7ojkCT0rTHoLB91rX1DMpYjzhJ1RO0aH94VhiRXipgWFDnyigOY2QmgDN0blZ2QoCJBr/TWhTgdZZyQBT7v9jeKbDJRxYqbn8nMmsvEYA4QczIpvpHbBa5tPCx4RUOCJT1hQClW03C6P+0ImKNAGV5PLu5eD5gh/P8JVW1FVmsxLtCKjyLT093tRZFPuoAUtkPCHqXhyT358Q9FpYbDqo49w9lXWW8oHDW88pEZ8lFUI/X4aIMvBEDhOz9f6f+FFVRQqVpIjh/Sr1tocrTuEne/pFa4hWVeJVFFtTag=
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2019 09:43:52.4152
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cca437c9-8b43-42da-07de-08d7508b05d4
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0802MB2399
+References: <20191007051240.4410-1-andrew.smirnov@gmail.com>
+ <20191007051240.4410-4-andrew.smirnov@gmail.com> <CAO-hwJJ8tp4Rqte-umv9e=S5evR5oJTErsNR0Wk-z8wcbtR0wg@mail.gmail.com>
+ <CAHQ1cqHCYiaEXck3LMGBwYiHVDQcF=XuF=kHJ4f_v1ea6hDR2g@mail.gmail.com>
+ <CAO-hwJ+HZEhn_riNwrODKSySt4aP4RzZq+omYDAF-7q5dLQR1Q@mail.gmail.com> <CAHQ1cqHNca22fAWMnLFBuD-txb7MvdFrY9bY2A9uViq4P5Cikg@mail.gmail.com>
+In-Reply-To: <CAHQ1cqHNca22fAWMnLFBuD-txb7MvdFrY9bY2A9uViq4P5Cikg@mail.gmail.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Mon, 14 Oct 2019 11:47:28 +0200
+Message-ID: <CAO-hwJK65mHghXDkb4=b5e04eoG6gMiU2AuV=pLUWU8xN_yJ2w@mail.gmail.com>
+Subject: Re: [PATCH 3/3] HID: logitech-hidpp: add G920 device validation quirk
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Mazin Rezk <mnrzk@protonmail.com>
+Cc:     "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        Sam Bazely <sambazley@fastmail.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Henrik Rydberg <rydberg@bitmath.org>,
+        "Pierre-Loup A . Griffais" <pgriffais@valvesoftware.com>,
+        Austin Palmer <austinp@valvesoftware.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "3.8+" <stable@vger.kernel.org>
+X-MC-Unique: sERe_wB8MdSiPMwMQv60wA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 08:26:53AM +0000, Mihail Atanassov wrote:
-> Hi James,
->=20
-> On Friday, 11 October 2019 06:45:27 BST james qian wang (Arm Technology C=
-hina) wrote:
-> > Add a new helper function drm_color_ctm_s31_32_to_qm_n() for driver to
-> > convert S31.32 sign-magnitude to Qm.n 2's complement that supported by
-> > hardware.
-> >=20
-> > Signed-off-by: james qian wang (Arm Technology China) <james.qian.wang@=
-arm.com>
-> > ---
-> >  drivers/gpu/drm/drm_color_mgmt.c | 23 +++++++++++++++++++++++
-> >  include/drm/drm_color_mgmt.h     |  2 ++
-> >  2 files changed, 25 insertions(+)
-> >=20
-> > diff --git a/drivers/gpu/drm/drm_color_mgmt.c b/drivers/gpu/drm/drm_col=
-or_mgmt.c
-> > index 4ce5c6d8de99..3d533d0b45af 100644
-> > --- a/drivers/gpu/drm/drm_color_mgmt.c
-> > +++ b/drivers/gpu/drm/drm_color_mgmt.c
-> > @@ -132,6 +132,29 @@ uint32_t drm_color_lut_extract(uint32_t user_input=
-, uint32_t bit_precision)
-> >  }
-> >  EXPORT_SYMBOL(drm_color_lut_extract);
-> >=20
-> > +/**
-> > + * drm_color_ctm_s31_32_to_qm_n
-> > + *
-> > + * @user_input: input value
-> > + * @m: number of integer bits, the m must <=3D 31
-> > + * @n: number of fractinal bits the n must <=3D 32
+On Sat, Oct 12, 2019 at 1:33 AM Andrey Smirnov <andrew.smirnov@gmail.com> w=
+rote:
+>
+> On Fri, Oct 11, 2019 at 3:33 PM Benjamin Tissoires
+> <benjamin.tissoires@redhat.com> wrote:
+> >
+> > On Fri, Oct 11, 2019 at 9:39 PM Andrey Smirnov <andrew.smirnov@gmail.co=
+m> wrote:
+> > >
+> > > On Fri, Oct 11, 2019 at 7:56 AM Benjamin Tissoires
+> > > <benjamin.tissoires@redhat.com> wrote:
+> > > >
+> > > > On Mon, Oct 7, 2019 at 7:13 AM Andrey Smirnov <andrew.smirnov@gmail=
+.com> wrote:
+> > > > >
+> > > > > G920 device only advertises REPORT_ID_HIDPP_LONG and
+> > > > > REPORT_ID_HIDPP_VERY_LONG in its HID report descriptor, so queryi=
+ng
+> > > > > for REPORT_ID_HIDPP_SHORT with optional=3Dfalse will always fail =
+and
+> > > > > prevent G920 to be recognized as a valid HID++ device.
+> > > > >
+> > > > > Modify hidpp_validate_device() to check only REPORT_ID_HIDPP_LONG=
+ with
+> > > > > optional=3Dfalse on G920 to fix this.
+> > > > >
+> > > > > Fixes: fe3ee1ec007b ("HID: logitech-hidpp: allow non HID++ device=
+s to be handled by this module")
+> > > > > Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=3D204191
+> > > > > Reported-by: Sam Bazely <sambazley@fastmail.com>
+> > > > > Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> > > > > Cc: Jiri Kosina <jikos@kernel.org>
+> > > > > Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+> > > > > Cc: Henrik Rydberg <rydberg@bitmath.org>
+> > > > > Cc: Sam Bazely <sambazley@fastmail.com>
+> > > > > Cc: Pierre-Loup A. Griffais <pgriffais@valvesoftware.com>
+> > > > > Cc: Austin Palmer <austinp@valvesoftware.com>
+> > > > > Cc: linux-input@vger.kernel.org
+> > > > > Cc: linux-kernel@vger.kernel.org
+> > > > > Cc: stable@vger.kernel.org
+> > > > > ---
+> > > > >  drivers/hid/hid-logitech-hidpp.c | 6 ++++++
+> > > > >  1 file changed, 6 insertions(+)
+> > > > >
+> > > > > diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-l=
+ogitech-hidpp.c
+> > > > > index cadf36d6c6f3..f415bf398e17 100644
+> > > > > --- a/drivers/hid/hid-logitech-hidpp.c
+> > > > > +++ b/drivers/hid/hid-logitech-hidpp.c
+> > > > > @@ -3511,6 +3511,12 @@ static bool hidpp_validate_report(struct h=
+id_device *hdev, int id,
+> > > > >
+> > > > >  static bool hidpp_validate_device(struct hid_device *hdev)
+> > > > >  {
+> > > > > +       struct hidpp_device *hidpp =3D hid_get_drvdata(hdev);
+> > > > > +
+> > > > > +       if (hidpp->quirks & HIDPP_QUIRK_CLASS_G920)
+> > > > > +               return hidpp_validate_report(hdev, REPORT_ID_HIDP=
+P_LONG,
+> > > > > +                                            HIDPP_REPORT_SHORT_L=
+ENGTH, false);
+> > > > > +
+> > > >
+> > > > with https://patchwork.kernel.org/patch/11184749/ we also have a ne=
+ed
+> > > > for such a trick for BLE mice.
+> > > >
+> > > > I wonder if we should not have a more common way of validating the =
+devices
+> > > >
+> > >
+> > > What about just checking for:
+> > >
+> > > hidpp_validate_report(REPORT_ID_HIDPP_SHORT,
+> > >                                     HIDPP_REPORT_SHORT_LENGTH, true) =
+||
+> > > hidpp_validate_report(hdev, REPORT_ID_HIDPP_LONG,
+> > >                                     HIDPP_REPORT_LONG_LENGTH, true);
+> > >
+> > > and probably dropping the "optional" argument for
+> > > hidpp_validate_report()? Original code allows there to be devices
+> > > supporting shorts reports only, but it seems that devices that suppor=
+t
+> > > only long reports are legitimate too, so maybe the only "invalid"
+> > > combination is if both are invalid length or missing?
+> >
+> > Well, the problem is we also want to detect 2 things:
+> > - devices that do not have any of the HID++ collections, and handle
+> > them as generic ones (the second mouse/keyboard collection in the
+> > gaming mice should still be exported by the driver, or this will kill
+> > the macros / rebinding capabilities
+> > - malicious devices that pretends to have a HID++ collection but want
+> > to trigger a buffer overflow by having a shorter than expected report
+> > length
+> >
+> > Point 2 above should still be fine, but point 1 is why we have the
+> > enforcement of the HID++ short report in the first place.
+> >
+>
+> It sounds like the result of hidpp_validate_report() can't really be
+> contained in a bool. If we modify it to return -EINVAL for bogus
+> report length, -ENOTSUPP if report ID is not supported and 0 if
+> everything is valid we should be able to capture all valid permutation
+> by checking for with
+>
+> int id_short =3D hidpp_validate_report(ID_SHORT);
+> int id_long  =3D hidpp_validate_report(ID_LONG);
+>
+> return (!id_short && !id_long) || (id_short =3D=3D -ENOTSUPP && !id_long)
+> || (id_long =3D=3D -ENOTSUPP && !id_short)
+>
+> no?
 
-@m: number of integer bits, only support m <=3D 31
-@n: number of fractinal bitsm only support n <=3D 32
+Sounds like a good idea.
 
-> > + *
-> > + * Convert and clamp S31.32 sign-magnitude to Qm.n 2's complement.
-> > + */
-> > +uint64_t drm_color_ctm_s31_32_to_qm_n(uint64_t user_input,
-> > +				      uint32_t m, uint32_t n)
-> > +{
-> > +	u64 mag =3D (user_input & ~BIT_ULL(63)) >> (32 - n);
-> This doesn't account for n > 32, which is perfectly possible (e.g. Q1.63)=
-.
-> > +	bool negative =3D !!(user_input & BIT_ULL(63));
-> > +	s64 val;
-> > +
-> > +	/* the range of signed 2s complement is [-2^n+m, 2^n+m - 1] */
-> > +	val =3D clamp_val(mag, 0, negative ? BIT(n + m) : BIT(n + m) - 1);
-> This also doesn't account for n + m =3D=3D 64.
+There is a few changes I'd like to do on this proposal:
+- ideally, we should also check on very long HID++ reports, but as
+d71b18f7c79993 ("HID: logitech-hidpp: do not hardcode very long report
+length") mentioned, we should probably ensure that those very long
+reports are at least bigger than HIDPP_REPORT_LONG_LENGTH and shorter
+than HIDPP_REPORT_VERY_LONG_MAX_LENGTH.
 
-Yes the func is only for support m <=3D 31, n <=3D 32
+- the boolean operation has a risk of being quite hard to follow if we
+now have 3 IDs to check. So we would need a few comments for each
+operation to explain which is which.
 
-But I'm not sure, how to handle the unsupport case ?
-Maybe just mention it in Doc is enough.
+- maybe we should exit earlier if any of the id_short, id_long or
+id_very_long is -EINVAL, as this should be detected has a hard failure
 
-> > +
-> > +	return negative ? 0ll - val : val;
-> > +}
-> > +EXPORT_SYMBOL(drm_color_ctm_s31_32_to_qm_n);
-> > +
-> >  /**
-> >   * drm_crtc_enable_color_mgmt - enable color management properties
-> >   * @crtc: DRM CRTC
-> > diff --git a/include/drm/drm_color_mgmt.h b/include/drm/drm_color_mgmt.=
-h
-> > index d1c662d92ab7..60fea5501886 100644
-> > --- a/include/drm/drm_color_mgmt.h
-> > +++ b/include/drm/drm_color_mgmt.h
-> > @@ -30,6 +30,8 @@ struct drm_crtc;
-> >  struct drm_plane;
-> >=20
-> >  uint32_t drm_color_lut_extract(uint32_t user_input, uint32_t bit_preci=
-sion);
-> > +uint64_t drm_color_ctm_s31_32_to_qm_n(uint64_t user_input,
-> > +				      uint32_t m, uint32_t n);
-> >=20
-> >  void drm_crtc_enable_color_mgmt(struct drm_crtc *crtc,
-> >  				uint degamma_lut_size,
-> > --
-> > 2.20.1
-> >=20
->=20
->=20
-> --=20
-> Mihail
->=20
->=20
+- the choice of the return codes should be changed:
+  * ENOTSUPP is defined for the NFSv3 protocol, and I think ENOENT (no
+such file or directory) or ENXIO (No such device or address) might be
+better
+  * EINVAL is for an invalid argument of a function, and here the
+argument is correct, but the device is not. Maybe EBADR (Invalid
+request descriptor)?
+
+If we can get this patch in stable soon, this would also help of the
+BLE series Mazin is currently working on.
+
+Cheers,
+Benjamin
+
