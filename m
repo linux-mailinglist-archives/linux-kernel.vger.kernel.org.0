@@ -2,93 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40091D65A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 16:56:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAB9CD65B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 16:58:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733023AbfJNOzj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 10:55:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36918 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731121AbfJNOzj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 10:55:39 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8EE99BE43;
-        Mon, 14 Oct 2019 14:55:37 +0000 (UTC)
-Date:   Mon, 14 Oct 2019 16:55:52 +0200
-From:   Jean Delvare <jdelvare@suse.de>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@lists.01.org, Linux I2C <linux-i2c@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH 3/4] i2c: smbus: Add a way to instantiate SPD EEPROMs
- automatically
-Message-ID: <20191014165552.1e8ddedc@endymion>
-In-Reply-To: <201910141823.bXxWHSkl%lkp@intel.com>
-References: <20191014113950.1f989ba6@endymion>
-        <201910141823.bXxWHSkl%lkp@intel.com>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        id S1733113AbfJNO6H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 10:58:07 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:41625 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732606AbfJNO6H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 10:58:07 -0400
+Received: by mail-lf1-f66.google.com with SMTP id r2so12019672lfn.8
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 07:58:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tkMPQ0LrWyijz11NY5m0dmZYPiuXzrUEUbYC0qMqHT0=;
+        b=C+OAQ9IKKfx8e2rgas2AZ/0OGtlN4cljS5G/pxMlqfJVHoV9hGaOFEZXBC6WZgyz5g
+         6bQfXmBG1AwfT8bPzH56YybQxmcQ/ojzp4XFbBO2fgPtl2211m1hUna+mID/Ts6vRoNV
+         fP5dmjjtLtkd/JWDSlrMUZM0Gb2CExkVb8loj4Uoej2q98lBhBLnsG0Sgeg2xRyUD5JI
+         CZxxPfWamLz/Jp3UwnStL0Na13rkuarQ2VlpFIHgP7zCvejyFaymFXbasLe54gwTOjl0
+         UFheRmi8QXQ4TIodN4AkDokdrprbIfbZPgj84p8Ao0G8PONXh5YoGl5LUuJg6T8dFJnm
+         6Fhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tkMPQ0LrWyijz11NY5m0dmZYPiuXzrUEUbYC0qMqHT0=;
+        b=M445rda1cpw1OzO+BnpcZk1EAgqoPo52Zl744vAE46m/9uyz1f3SnZu3HCOncAxZL0
+         cCaSjQmpR004wOYkQPsRiq8urAfENrzXdZ0s6B8TXb8hAmpvdeQm6MBXI1G8taCG6SNP
+         WVXfFUZ+4e4LHRsEGT7PHW4IeikwCotniO8ENdWlpA86TlwbfHa4FWUIW2Mb1FF60jvi
+         66d+TYJo/z6OItwzCJg2uGFO3wfuUtbepyEuQLBEI63RsJeU1DS1KOSfV2ca/Ur+nf96
+         MwvvHLjaeOFx5L8oL6pv2NcvXVxa4E5t2stJMLq/BQjU+wAtRIIvzZH6/mFB+Z1qr2L4
+         FhMA==
+X-Gm-Message-State: APjAAAWOnMW1TScwVBggvqpDQqDLY11USdqobdvQNbFs4WNDRN39WFzp
+        cxjjWOJkvkDitheqI3VCUkYZb4LM8ig64CGCpmORCA==
+X-Google-Smtp-Source: APXvYqyver79gBl47T+XusZQVNebkHis2dYvxUgZLilvocoQWhgpFd2wvwu3K2QPqmBF3HGmydaXZADiOqjHGU+7srw=
+X-Received: by 2002:a19:7409:: with SMTP id v9mr16419666lfe.125.1571065084369;
+ Mon, 14 Oct 2019 07:58:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20190620150555.15717-1-patrick.bellasi@arm.com>
+ <CAKfTPtDTfyBvfwE6_gtjxJoPNS6YGQ7rrLcjg_M-jr=YSc+FNA@mail.gmail.com>
+ <20190628100751.lpcwsouacsi2swkm@e110439-lin> <20190628123800.GS3419@hirez.programming.kicks-ass.net>
+ <20190628140057.7aujh2wsk7wtqib3@e110439-lin> <20190802094725.ploqfarz7fj7vrtp@e110439-lin>
+ <20191014145218.GI2328@hirez.programming.kicks-ass.net>
+In-Reply-To: <20191014145218.GI2328@hirez.programming.kicks-ass.net>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Mon, 14 Oct 2019 16:57:52 +0200
+Message-ID: <CAKfTPtDK-KSVz6HSr185yEj2TzZrNRx5FG_pUpp0-rxHWsXurQ@mail.gmail.com>
+Subject: Re: [PATCH] sched/fair: util_est: fast ramp-up EWMA on utilization increases
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Patrick Bellasi <patrick.bellasi@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Douglas Raillard <douglas.raillard@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 14 Oct 2019 18:21:50 +0800, kbuild test robot wrote:
-> Hi Jean,
-> 
-> I love your patch! Perhaps something to improve:
-> 
-> [auto build test WARNING on linus/master]
-> [cannot apply to v5.4-rc3 next-20191011]
-> [if your patch is applied to the wrong git tree, please drop us a note to help
-> improve the system. BTW, we also suggest to use '--base' option to specify the
-> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Jean-Delvare/Instantiate-SPD-EEPROMs-at-boot-on-x86/20191014-174252
-> config: sparc64-allmodconfig (attached as .config)
-> compiler: sparc64-linux-gcc (GCC) 7.4.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         GCC_VERSION=7.4.0 make.cross ARCH=sparc64 
-> 
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
-> 
-> All warnings (new ones prefixed by >>):
-> 
->    In file included from drivers/i2c/i2c-core-base.c:24:0:
->    include/linux/i2c-smbus.h: In function 'i2c_register_spd':
-> >> include/linux/i2c-smbus.h:52:9: warning: 'return' with a value, in function returning void  
->      return 0;
->             ^
->    include/linux/i2c-smbus.h:50:13: note: declared here
->     static void i2c_register_spd(struct i2c_adapter *adap)
->                 ^~~~~~~~~~~~~~~~
->    In file included from drivers/i2c/i2c-core-base.c:24:0:
->    At top level:
->    include/linux/i2c-smbus.h:50:13: warning: 'i2c_register_spd' defined but not used [-Wunused-function]
-> 
-> vim +/return +52 include/linux/i2c-smbus.h
-> 
->     46	
->     47	#if IS_ENABLED(CONFIG_I2C_SMBUS) && IS_ENABLED(CONFIG_DMI)
->     48	void i2c_register_spd(struct i2c_adapter *adap);
->     49	#else
->     50	static void i2c_register_spd(struct i2c_adapter *adap)
->     51	{
->   > 52		return 0;  
->     53	}
->     54	#endif
->     55	
+On Mon, 14 Oct 2019 at 16:52, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+>
+> The energy aware schedutil patches remimded me this was still pending.
+>
+> On Fri, Aug 02, 2019 at 10:47:25AM +0100, Patrick Bellasi wrote:
+> > Hi Peter, Vincent,
+> > is there anything different I can do on this?
+>
+> I think both Vincent and me are basically fine with the patch, it was
+> the Changelog/explanation for it that sat uneasy.
 
-Fixed, thanks Elliot.
+I agree
 
--- 
-Jean Delvare
-SUSE L3 Support
+>
+> Specifically I think the 'confusion' around the PELT invariance stuff
+> doesn't help.
+>
+> I think that if you present it simply as making util_est directly follow
+> upward motion and only decay on downward -- and the rationale for it --
+> then it should be fine.
+>
+>
