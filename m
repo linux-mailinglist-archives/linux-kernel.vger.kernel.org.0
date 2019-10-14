@@ -2,102 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D28B7D6082
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 12:47:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F64DD608B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 12:49:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731677AbfJNKrM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 06:47:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57472 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731441AbfJNKrM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 06:47:12 -0400
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33B63207FF;
-        Mon, 14 Oct 2019 10:47:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571050031;
-        bh=vpT/FdAQ44SBsZqxdUofQB31bkhK8wj8sizQkj6Rfqo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=F0VN86+4Hapr2bz8SmKNW0OAHIY5s6XTT+UUe+ks4FaZJU8axqfv6lRn4n2yxnJjN
-         bQxyixquGe2nnkcmufn+A+wO7T++zcOQaj0v01N1kW1XAfCoNz/6RDCmT2E2wAY3yX
-         KAkSdaQeLsqLdUEQknpou+rGkikvp6Ew36LzuQHs=
-Date:   Mon, 14 Oct 2019 12:47:08 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc:     catalin.marinas@arm.com, davem@davemloft.net,
-        herbert@gondor.apana.org.au, linux@armlinux.org.uk,
-        mark.rutland@arm.com, robh+dt@kernel.org, wens@csie.org,
-        will@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 00/11] crypto: add sun8i-ce driver for Allwinner
- crypto engine
-Message-ID: <20191014104708.cur6zbabmozhwu5o@gilmour>
-References: <20191012184852.28329-1-clabbe.montjoie@gmail.com>
+        id S1731689AbfJNKtd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 06:49:33 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34686 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731235AbfJNKtd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 06:49:33 -0400
+Received: by mail-pf1-f195.google.com with SMTP id b128so10206753pfa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 03:49:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=G8gq+lqSm5yWW7F43kBEhlO9mPcNo/sio34AqrTnoDs=;
+        b=CIR2++nx6vd8Bz16k75idHqdvJPPUggJHKxR0wLUTH39CO7V5PzsdoM/D4Cl+k7hyo
+         Gw7UFJe+mT5+cXWe9dIZ72glFDdSIFAbDa+G1XpiS+HtlwHLCMDZjNMrkE/g9VPFFBp+
+         R3mcqDEhevL++epc29HvSaFesu8qAIF86+zutNohVYL+deOc2iccMu4XOocxhlbYeCVN
+         7sMr5J6c50ESBVVdbsDa/VHCZzLy+oa8WGngXomAn3NyGRHltavsgM3JaDRkSnL6diQX
+         YpOHyVJ5xETzTd3DzAft0NjYBLENis2h6cIfRDAawqTlsEABmHhWWpnfazaEWWQqyX/T
+         fKgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=G8gq+lqSm5yWW7F43kBEhlO9mPcNo/sio34AqrTnoDs=;
+        b=uRPJtsS/ESOtKecPLZRjfrdmgHWMctvxyA2Dft2KJtcau0NpF2k5RFaj4fxexA5JrU
+         8XfPEzjw+yzwLIMMkqzkDeOxwZJAg08mpXIAXJC/MQjlw2gLmUkEOIFzT5CHSGqMaLxi
+         RJFgfkf3mqXfta9WkV85meU75sjn4ZAjlOf4kOABDMl8PhOrbcrqdgpC7UHvau/NHwxK
+         aZoT0BG6hB84XjZ8RuYmubheIJGDTQV74BWGlwONXJSuv4OLZ0Wcq7F6OjjrfZcot7E4
+         LdkvzT8FBKEWWGF8HzX7x6rO2CmuIu8jRwOmmvffBQ3oJ3o8yp5DHgvrr1i29kew4DFq
+         CJTA==
+X-Gm-Message-State: APjAAAVWtO0eZgTmYK1tzYv5ogEUhh+gx3OMUJ3nHlXJWDMJNwcv3kNg
+        zIX3glu29a7wz/ZBCyV5IYU=
+X-Google-Smtp-Source: APXvYqxK+ACvb4vfK9cMbR0YJ3hmK6bo06YPieT5XWqEJ3eDQ98ONnljFCgnR5I1vhonY95PgbLgOA==
+X-Received: by 2002:a17:90a:8002:: with SMTP id b2mr715256pjn.39.1571050172348;
+        Mon, 14 Oct 2019 03:49:32 -0700 (PDT)
+Received: from localhost ([211.246.68.186])
+        by smtp.gmail.com with ESMTPSA id m68sm18688281pfb.122.2019.10.14.03.49.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2019 03:49:31 -0700 (PDT)
+Date:   Mon, 14 Oct 2019 19:47:17 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Vitaly Wool <vitalywool@gmail.com>
+Cc:     Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Streetman <ddstreet@ieee.org>,
+        Minchan Kim <minchan@kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Shakeel Butt <shakeelb@google.com>,
+        Henry Burns <henrywolfeburns@gmail.com>,
+        Theodore Ts'o <tytso@thunk.org>
+Subject: Re: [PATCH 3/3] zram: use common zpool interface
+Message-ID: <20191014104717.GA43868@jagdpanzerIV>
+References: <20191010230414.647c29f34665ca26103879c4@gmail.com>
+ <20191010232030.af6444879413e76a780cd27e@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jcraal7cz45esj3i"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191012184852.28329-1-clabbe.montjoie@gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20191010232030.af6444879413e76a780cd27e@gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On (10/10/19 23:20), Vitaly Wool wrote:
+[..]
+>  static const char *default_compressor = "lzo-rle";
+>  
+> +#define BACKEND_PAR_BUF_SIZE	32
+> +static char backend_par_buf[BACKEND_PAR_BUF_SIZE];
 
---jcraal7cz45esj3i
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+We can have multiple zram devices (zram0 .. zramN), I guess it
+would make sense not to force all devices to use one particular
+allocator (e.g. see comp_algorithm_store()).
 
-Hi,
+If the motivation for the patch set is that zsmalloc does not
+perform equally well for various data access patterns, then the
+same is true for any other allocator. Thus, I think, we need to
+have a per-device 'allocator' knob.
 
-On Sat, Oct 12, 2019 at 08:48:41PM +0200, Corentin Labbe wrote:
-> Hello
->
-> This patch serie adds support for the Allwinner crypto engine.
-> The Crypto Engine is the third generation of Allwinner cryptogaphic offloader.
-> The first generation is the Security System already handled by the
-> sun4i-ss driver.
-> The second is named also Security System and is present on A80 and A83T
-> SoCs, originaly this driver supported it also, but supporting both IP bringing
-> too much complexity and another driver (sun8i-ss) will came for it.
->
-> For the moment, the driver support only DES3/AES in ECB/CBC mode.
-> Patchs for CTR/CTS/XTS, RSA and RNGs will came later.
->
-> This serie is tested with CRYPTO_MANAGER_EXTRA_TESTS
-> and tested on:
-> sun50i-a64-bananapi-m64
-> sun50i-a64-pine64-plus
-> sun50i-h5-libretech-all-h3-cc
-> sun50i-h6-pine-h64
-> sun8i-h2-plus-libretech-all-h3-cc
-> sun8i-h2-plus-orangepi-r1
-> sun8i-h2-plus-orangepi-zero
-> sun8i-h3-libretech-all-h3-cc
-> sun8i-h3-orangepi-pc
-> sun8i-r40-bananapi-m2-ultra
-
-for the drivers/crypto part
-Acked-by: Maxime Ripard <mripard@kernel.org>
-
-I'll merge the dt and defconfig bits when Herbert will be ok with the
-changes.
-
-Maxime
-
---jcraal7cz45esj3i
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXaRSLAAKCRDj7w1vZxhR
-xbAiAQCXNw9TZ+NI9M/ffhLEMVuGBoKDSMxJpeuryNZeejUpbAEAotBuhlogZFYt
-6gcqR7k6JoRm4LKGytJt02QqNsKkQAI=
-=JdiC
------END PGP SIGNATURE-----
-
---jcraal7cz45esj3i--
+	-ss
