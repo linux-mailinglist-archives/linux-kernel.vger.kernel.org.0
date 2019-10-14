@@ -2,90 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0951ED68C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 19:43:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AC01D68AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 19:40:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731572AbfJNRmE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 13:42:04 -0400
-Received: from sender4-op-o14.zoho.com ([136.143.188.14]:17433 "EHLO
-        sender4-op-o14.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731171AbfJNRmE (ORCPT
+        id S2388612AbfJNRk2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 13:40:28 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41729 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730046AbfJNRk1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 13:42:04 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1571074914; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=UoaKiyg+jQdvyC/HhihkyXN4vATpVe1FzZda6S9x50vCOlNQChj6l5iHpkER9D0llDqinnyxy87QDh7AsSbYI1R6tUS+Yc9N7XUd++mhMtwEWC+9LCdXQcb9LeLrP0ZdX4fxoCd47YXj6CNUBOKbiY5hUS2bVtB9waqVcpz06YA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1571074914; h=Content-Type:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=sz/CQBl0duYZalGaCIYiBg7xruUCOAaCokFPhXphtJM=; 
-        b=MIsc+Kk2VqXzXnM1/cUjHBsaqsKYgb2HxWrSK+t+42eapnh/VsbfRGsIXElno0vaxJa1iowXYn4GToHUFGt38z6/otN6+GyHtkfx6HBY0NnXaSehiir4wtcEnVozzp+HZhYuTXTAL9zh1KqHpQPbRvGTTnuK/VaYCyvTnxwobak=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=dlrobertson.com;
-        spf=pass  smtp.mailfrom=dan@dlrobertson.com;
-        dmarc=pass header.from=<dan@dlrobertson.com> header.from=<dan@dlrobertson.com>
-Received: from nessie (pool-100-15-144-194.washdc.fios.verizon.net [100.15.144.194]) by mx.zohomail.com
-        with SMTPS id 1571074913103134.03014784679272; Mon, 14 Oct 2019 10:41:53 -0700 (PDT)
-Date:   Mon, 14 Oct 2019 17:27:31 +0000
-From:   Dan Robertson <dan@dlrobertson.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        devicetree@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: iio: accel: bma400: add bindings
-Message-ID: <20191014172731.GA30646@nessie>
-References: <20191012192525.21040-1-dan@dlrobertson.com>
- <20191012192525.21040-2-dan@dlrobertson.com>
- <20191014171521.GA29335@bogus>
+        Mon, 14 Oct 2019 13:40:27 -0400
+Received: by mail-pg1-f193.google.com with SMTP id t3so10492818pga.8;
+        Mon, 14 Oct 2019 10:40:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qcbvr0gc2NuqSES9wh8FIsoaBFNjSsQ88EI5O4USk5E=;
+        b=Ft42jQI9Iyk9a4wn1mA3+91FTLsH2+OzbibTCMdg6HAwmiZOqoeBLK1gMPhppdw5FT
+         8EZi+TRRTJF3O2T3yyUas1T/Lv8v+TsyveORxmQu+PAdCqp7nJdwZLp1ssgHvt75JOQh
+         DUBU+i0AfaLlboL3gdmDuTPQLrXpdu0+JmjDghprHn3hgcS0z0wbJTBKc9C2VSWI7J3z
+         F9HTZCLOVDeSdHMHb4E6XnV4EecTxJDET/Z+ez+wuFG1H7v1XAdhB8t8172PbsXNKK7b
+         ok2BhCbKIQqKHkE4hB68QZiSwfXmzjL2WbfvNnAziNsTf/AmUZqWlZ7hKmEG4e7JEPxZ
+         S9jQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qcbvr0gc2NuqSES9wh8FIsoaBFNjSsQ88EI5O4USk5E=;
+        b=Yox7dwwsdqFyxnT972mHbx6wZ7krgmVvzjiYwbATUrFqdTI1/TdSy2F21FcxzvIMqr
+         ZsFI639zmdKmt7Q7Pe0e0FFjKsnDkWQE6/ZpRokyT8xR4LhpsCydWtakdfjFsaZMTmAW
+         DKjtIbX7zKwXku5F2JRC7zC8fzieWbWL1/DDT0V9CR/txNyWkIHiVJsS36boFdBGQ/TJ
+         9jP52pXi7OlfI3FGmlAvwZPbpZ8K4j8NSYYkI5uRR79EX42QK8wl8eZCEgqGYAUpnE+T
+         UrIqAqwndYBRUdXpwK/GsbnU4WjgZB8hPmvmSJ1UQf8ZmTOUTO0L6bQdwr/xyCdrSlpu
+         Br+A==
+X-Gm-Message-State: APjAAAX2v6271sO1I2FSODKZQL7a4fgZGxRKAVvc1GKayjHrG4iI+SDK
+        2f1VahfJuXT6slcFanYlDfU/znVz
+X-Google-Smtp-Source: APXvYqwy3aNJ/+XgfAIlcNSQrUIZNlIR4utB8bAQRqPTTqGkTuqj5WZTo+9m9HZEYiyfa2SCttvWYw==
+X-Received: by 2002:a63:131b:: with SMTP id i27mr18157179pgl.209.1571074826258;
+        Mon, 14 Oct 2019 10:40:26 -0700 (PDT)
+Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id k66sm18784535pjb.11.2019.10.14.10.40.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2019 10:40:25 -0700 (PDT)
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>
+Subject: [PATCH v2 0/3] net: phy: switch to using fwnode_gpiod_get_index
+Date:   Mon, 14 Oct 2019 10:40:19 -0700
+Message-Id: <20191014174022.94605-1-dmitry.torokhov@gmail.com>
+X-Mailer: git-send-email 2.23.0.700.g56cf767bdb-goog
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
-Content-Disposition: inline
-In-Reply-To: <20191014171521.GA29335@bogus>
-User-Agent: Mutt/1.12.2 (2019-09-21)
-X-Zoho-Virus-Status: 1
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series switches phy drivers form using fwnode_get_named_gpiod() and
+gpiod_get_from_of_node() that are scheduled to be removed in favor
+of fwnode_gpiod_get_index() that behaves more like standard
+gpiod_get_index() and will potentially handle secondary software
+nodes in cases we need to augment platform firmware.
 
---cNdxnHkX5QqsyA0e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Linus, as David would prefer not to pull in the immutable branch but
+rather route the patches through the tree that has the new API, could
+you please take them with his ACKs?
 
-> Fails 'make dt_binding_check':
+Thanks!
 
-Thanks for the note. Should running `make dt_binding_check` be added to
-`Documentation/devicetree/bindings/submitting-patches.rst`?
+v2:
+        - rebased on top of Linus' W devel branch
+        - added David's ACKs
 
-Cheers,
+Dmitry Torokhov (3):
+  net: phylink: switch to using fwnode_gpiod_get_index()
+  net: phy: fixed_phy: fix use-after-free when checking link GPIO
+  net: phy: fixed_phy: switch to using fwnode_gpiod_get_index
 
- - Dan
+ drivers/net/phy/fixed_phy.c | 11 ++++-------
+ drivers/net/phy/phylink.c   |  4 ++--
+ 2 files changed, 6 insertions(+), 9 deletions(-)
 
---cNdxnHkX5QqsyA0e
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEF5dO2RaKc5C+SCJ9RcSmUsR+QqUFAl2kr/cACgkQRcSmUsR+
-QqWFXg/9FsPJaiW55rPeVJ+BAFKW2BQd/QKN+TynZB/aEydTO/ohevd2G/u2C2Ak
-4z1zFgAqBumsGcEeoy7P1PpIaqLiJ1WBOr4H87bGGIRvjHvyTVStldh6hIQ/k7PI
-WbK9+no+FJ/Wwjgdcyty1Ni6lp8shMtJexTynIeymvYPKnC9LvdUp5buGe7FylRS
-F69iFget4xN9QciFFr27mq0wx+RtSOM5L42stvTjz8SBj/TMTUt9ROuwgr3TlPUN
-lUJT+nOQAhZZPT4vXsAgte5D2Fl+KmOi459cmqoshotihZnmZRmWYgLHpKFM4dju
-AEl4acLIMopFdBM9jFBJCLBb/lQbIlX3mf4E6rR2bBGt49Vc3x/yGKgddj9s+wyp
-8Xq5rlAplIZf+enrooHLxAXeUM2I1IizdZooGFY00zAXo7ZxpwNcyvL2g4iC/ezY
-wuNjaKuboGWCLbnKYi5CJrTSTUSt8pqVH+KFm58W5gPQrW2ZwFilDZYs1ZqM2inM
-/hhGAgBHP0U7p7cQZr4jr+qp6Idinns3RQCsYcZv1iRre4MSnmx3B5i7iOjjzlcn
-HCofz25ssaz6fDOA1bRhl6bhPhlXeQ5JGc+q1ELIp4Bawoc/05LtAPznIOlBEEqj
-UMO5CAycCKUG5FdtrTLXOYaHOsYHM9biuBKIuXd/ZxipDQ/VSQA=
-=36QZ
------END PGP SIGNATURE-----
-
---cNdxnHkX5QqsyA0e--
+-- 
+2.23.0.700.g56cf767bdb-goog
 
