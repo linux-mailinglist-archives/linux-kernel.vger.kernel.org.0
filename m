@@ -2,64 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2721FD67D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 18:57:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 911F3D67D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 18:58:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388275AbfJNQ5j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 12:57:39 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:49074 "EHLO mail.skyhub.de"
+        id S2388303AbfJNQ5t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 12:57:49 -0400
+Received: from foss.arm.com ([217.140.110.172]:49048 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727083AbfJNQ5j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 12:57:39 -0400
-Received: from zn.tnic (p200300EC2F065800329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2f06:5800:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D53A71EC06FB;
-        Mon, 14 Oct 2019 18:57:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1571072258;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=0YE7H57bfJwdjx4DkWtJCZeY4gQA/uBCTTivUvijTW0=;
-        b=HMg/sOnzha2w7Dwsz9tzp1Cw6eE554QdB3OYsG3P1NDa7/qXmeZuZ4zQiKv1QWj+E8Drlb
-        F1aXW2lV32y84+KkyzjXBhMyB9GPZtYbDt3c4W8I1m7ppzgej4eoEsjKeRfATzVa8yBRE4
-        0y2WbT83RFVHxKbtkVbpu41nntdlZ54=
-Date:   Mon, 14 Oct 2019 18:57:35 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     John Garry <john.garry@huawei.com>
-Cc:     James Morse <james.morse@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        tony.luck@intel.com, Robert Richter <rrichter@marvell.com>,
-        linux-edac@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: edac KASAN warning in experimental arm64 allmodconfig boot
-Message-ID: <20191014165735.GF4715@zn.tnic>
-References: <304df85b-8b56-b77e-1a11-aa23769f2e7c@huawei.com>
- <dc974549-6ea4-899d-7f3a-b2fcfafe1528@arm.com>
- <a5e3c4eb-57ed-d4bc-a771-47472c5fb088@huawei.com>
+        id S1727083AbfJNQ5s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 12:57:48 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 09EFC28;
+        Mon, 14 Oct 2019 09:57:48 -0700 (PDT)
+Received: from dawn-kernel.cambridge.arm.com (unknown [10.1.197.116])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3D09D3F718;
+        Mon, 14 Oct 2019 09:57:47 -0700 (PDT)
+Subject: Re: [PATCH] arm64: cpufeature: Don't expose ZFR0 to userspace when
+ SVE is not enabled
+To:     Will Deacon <will@kernel.org>, Julien Grall <julien.grall@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        catalin.marinas@arm.com, Dave.Martin@arm.com
+References: <20191014102113.16546-1-julien.grall@arm.com>
+ <20191014164313.hu2dnf5rokntzhhp@willie-the-truck>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <223c22d0-cfe3-4aed-6a8f-b80e44cb6548@arm.com>
+Date:   Mon, 14 Oct 2019 17:57:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <a5e3c4eb-57ed-d4bc-a771-47472c5fb088@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191014164313.hu2dnf5rokntzhhp@willie-the-truck>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 14, 2019 at 05:56:02PM +0100, John Garry wrote:
-> BTW, I am not sure if my response to Boris was rejected due to attachments,
-> as but it is here:
+
+
+On 14/10/2019 17:43, Will Deacon wrote:
+> On Mon, Oct 14, 2019 at 11:21:13AM +0100, Julien Grall wrote:
+>> The kernel may not support SVE if CONFIG_ARM64_SVE is not set and
+>> will hide the feature from the from userspace.
 > 
-> https://lore.kernel.org/linux-edac/dc974549-6ea4-899d-7f3a-b2fcfafe1528@arm.com/T/#ma0e122ca0eda9d80e869af179352f75037146d3c
+> I don't understand this sentence.
+> 
+>> Unfortunately, the fields of ID_AA64ZFR0_EL1 are still exposed and could
+>> lead to undefined behavior in userspace.
+> 
+> Undefined in what way? Generally, we can't stop exposing things that
+> we've exposed previously in case somebody has started relying on them, so
+> this needs better justification.
 
-No, all good. It went through.
+We still expose them with this patch, but zero them out, if the SVE is not
+supported. When SVE is enabled, we expose them as usual.
 
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Cheers
+Suzuki
