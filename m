@@ -2,135 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AE01D665E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:45:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3ED83D6657
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:44:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387710AbfJNPpb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 11:45:31 -0400
-Received: from mga11.intel.com ([192.55.52.93]:23599 "EHLO mga11.intel.com"
+        id S2387669AbfJNPoG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 11:44:06 -0400
+Received: from foss.arm.com ([217.140.110.172]:47290 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729997AbfJNPpa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 11:45:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Oct 2019 08:45:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,296,1566889200"; 
-   d="scan'208";a="199434999"
-Received: from rtnitta-mobl1.amr.corp.intel.com (HELO [10.251.134.135]) ([10.251.134.135])
-  by orsmga006.jf.intel.com with ESMTP; 14 Oct 2019 08:45:28 -0700
-Subject: Re: [alsa-devel] [PATCH v3 2/2] soundwire: qcom: add support for
- SoundWire controller
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        robh@kernel.org, vkoul@kernel.org
-Cc:     broonie@kernel.org, bgoswami@codeaurora.org,
-        devicetree@vger.kernel.org, lgirdwood@gmail.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        spapothi@codeaurora.org
-References: <20191011154423.2506-1-srinivas.kandagatla@linaro.org>
- <20191011154423.2506-3-srinivas.kandagatla@linaro.org>
- <9d00c94b-1bce-9fdf-55fe-ee681466a97a@linux.intel.com>
- <d053a17e-3d6d-e3b6-f988-485e77c30e3b@linaro.org>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <1a1a4ac0-388c-8999-47a2-6d6f7471ab93@linux.intel.com>
-Date:   Mon, 14 Oct 2019 10:43:54 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1731441AbfJNPoG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 11:44:06 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 60DE228;
+        Mon, 14 Oct 2019 08:44:03 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C9CCC3F718;
+        Mon, 14 Oct 2019 08:44:01 -0700 (PDT)
+Date:   Mon, 14 Oct 2019 16:43:59 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Daniel Axtens <dja@axtens.net>
+Cc:     kasan-dev@googlegroups.com, linux-mm@kvack.org, x86@kernel.org,
+        aryabinin@virtuozzo.com, glider@google.com, luto@kernel.org,
+        linux-kernel@vger.kernel.org, dvyukov@google.com,
+        christophe.leroy@c-s.fr, linuxppc-dev@lists.ozlabs.org,
+        gor@linux.ibm.com
+Subject: Re: [PATCH v8 1/5] kasan: support backing vmalloc space with real
+ shadow memory
+Message-ID: <20191014154359.GC20438@lakrids.cambridge.arm.com>
+References: <20191001065834.8880-1-dja@axtens.net>
+ <20191001065834.8880-2-dja@axtens.net>
 MIME-Version: 1.0
-In-Reply-To: <d053a17e-3d6d-e3b6-f988-485e77c30e3b@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191001065834.8880-2-dja@axtens.net>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 10/14/19 4:04 AM, Srinivas Kandagatla wrote:
-> Thanks Pierre for taking time to review the patch.
+On Tue, Oct 01, 2019 at 04:58:30PM +1000, Daniel Axtens wrote:
+> Hook into vmalloc and vmap, and dynamically allocate real shadow
+> memory to back the mappings.
 > 
-> On 11/10/2019 18:50, Pierre-Louis Bossart wrote:
->>
->>> +static int qcom_swrm_cmd_fifo_wr_cmd(struct qcom_swrm_ctrl *ctrl, u8 
->>> cmd_data,
->>> +                     u8 dev_addr, u16 reg_addr)
->>> +{
->>> +    DECLARE_COMPLETION_ONSTACK(comp);
->>> +    unsigned long flags;
->>> +    u32 val;
->>> +    int ret;
->>> +
->>> +    spin_lock_irqsave(&ctrl->comp_lock, flags);
->>> +    ctrl->comp = &comp;
->>> +    spin_unlock_irqrestore(&ctrl->comp_lock, flags);
->>> +    val = SWRM_REG_VAL_PACK(cmd_data, dev_addr,
->>> +                SWRM_SPECIAL_CMD_ID, reg_addr);
->>> +    ret = ctrl->reg_write(ctrl, SWRM_CMD_FIFO_WR_CMD, val);
->>> +    if (ret)
->>> +        goto err;
->>> +
->>> +    ret = wait_for_completion_timeout(ctrl->comp,
->>> +                      msecs_to_jiffies(TIMEOUT_MS));
->>> +
->>> +    if (!ret)
->>> +        ret = SDW_CMD_IGNORED;
->>> +    else
->>> +        ret = SDW_CMD_OK;
->>
->> It's odd to report CMD_IGNORED on a timeout. CMD_IGNORED is a valid 
->> answer that should be retrieved immediately. You probably need to 
->> translate the soundwire errors into -ETIMEOUT or something.
+> Most mappings in vmalloc space are small, requiring less than a full
+> page of shadow space. Allocating a full shadow page per mapping would
+> therefore be wasteful. Furthermore, to ensure that different mappings
+> use different shadow pages, mappings would have to be aligned to
+> KASAN_SHADOW_SCALE_SIZE * PAGE_SIZE.
 > 
-> In this controller we have no way to know if the command is ignored or 
-> timedout, so All the commands that did not receive response either due 
-> to ignore or timeout are currently detected with out any response 
-> interrupt in given timeout.
-
-ok. It's still very odd. a CMD_IGNORED is a required answer e.g. when 
-there is no device0 left to enumerate, when a device has fallen off the 
-bus or when accessing a non-implemented register.
-
->>> +static int qcom_swrm_register_dais(struct qcom_swrm_ctrl *ctrl)
->>> +{
->>> +    int num_dais = ctrl->num_dout_ports + ctrl->num_din_ports;
->>> +    struct snd_soc_dai_driver *dais;
->>> +    struct snd_soc_pcm_stream *stream;
->>> +    struct device *dev = ctrl->dev;
->>> +    int i;
->>> +
->>> +    /* PDM dais are only tested for now */
->>> +    dais = devm_kcalloc(dev, num_dais, sizeof(*dais), GFP_KERNEL);
->>> +    if (!dais)
->>> +        return -ENOMEM;
->>> +
->>> +    for (i = 0; i < num_dais; i++) {
->>> +        dais[i].name = devm_kasprintf(dev, GFP_KERNEL, "SDW Pin%d", i);
->>> +        if (!dais[i].name)
->>> +            return -ENOMEM;
->>> +
->>> +        if (i < ctrl->num_dout_ports) {
->>> +            stream = &dais[i].playback;
->>> +            stream->stream_name = devm_kasprintf(dev, GFP_KERNEL,
->>> +                                 "SDW Tx%d", i);
->>> +        } else {
->>> +            stream = &dais[i].capture;
->>> +            stream->stream_name = devm_kasprintf(dev, GFP_KERNEL,
->>> +                                 "SDW Rx%d", i);
->>> +        }
->>
->> For the Intel stuff, we removed the stream_name assignment since it 
->> conflicted with the DAI widgets added by the topology. Since the code 
->> looks inspired by the Intel DAI handling, you should look into this.
+> Instead, share backing space across multiple mappings. Allocate a
+> backing page when a mapping in vmalloc space uses a particular page of
+> the shadow region. This page can be shared by other vmalloc mappings
+> later on.
 > 
-> Yes, this code was inspired by Intel's DAI handling, I will take a look 
-> a look at latest code and update accordingly.
+> We hook in to the vmap infrastructure to lazily clean up unused shadow
+> memory.
+> 
+> To avoid the difficulties around swapping mappings around, this code
+> expects that the part of the shadow region that covers the vmalloc
+> space will not be covered by the early shadow page, but will be left
+> unmapped. This will require changes in arch-specific code.
+> 
+> This allows KASAN with VMAP_STACK, and may be helpful for architectures
+> that do not have a separate module space (e.g. powerpc64, which I am
+> currently working on). It also allows relaxing the module alignment
+> back to PAGE_SIZE.
+> 
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=202009
+> Acked-by: Vasily Gorbik <gor@linux.ibm.com>
+> Signed-off-by: Daniel Axtens <dja@axtens.net>
+> [Mark: rework shadow allocation]
+> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
 
+Sorry to point this out so late, but your S-o-B should come last in the
+chain per Documentation/process/submitting-patches.rst. Judging by the
+rest of that, I think you want something like:
 
-FWIW, the stream handling seems to have issues as well, specifically the 
-'deprepare' part, we are currently working around errors with 
-suspend-resume, see e.g. experimental branch at 
-https://github.com/thesofproject/linux/pull/1314
+Co-developed-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com> [shadow rework]
+Signed-off-by: Daniel Axtens <dja@axtens.net>
 
+... leaving yourself as the Author in the headers.
+
+Sorry to have made that more complicated!
+
+[...]
+
+> +static int kasan_depopulate_vmalloc_pte(pte_t *ptep, unsigned long addr,
+> +					void *unused)
+> +{
+> +	unsigned long page;
+> +
+> +	page = (unsigned long)__va(pte_pfn(*ptep) << PAGE_SHIFT);
+> +
+> +	spin_lock(&init_mm.page_table_lock);
+> +
+> +	if (likely(!pte_none(*ptep))) {
+> +		pte_clear(&init_mm, addr, ptep);
+> +		free_page(page);
+> +	}
+
+There should be TLB maintenance between clearing the PTE and freeing the
+page here.
+
+Thanks,
+Mark.
