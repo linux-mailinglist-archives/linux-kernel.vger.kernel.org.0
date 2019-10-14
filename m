@@ -2,71 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 992ADD661B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:30:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41C95D661E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:30:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387531AbfJNPaD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 11:30:03 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58862 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387515AbfJNPaD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 11:30:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=W51lL8Jtv2NG/exKYIb6hikzWtRX+qP9y7Uom+OcL0c=; b=JDycHWRT9WVmXuQwehUiAzPjY
-        mEHlDQ1sVpgwq9Z/9YhLaOOpN5RQ5qCc1tbelHkwf7b3QNAMqUyxClMEa7aP1QkhRrcKYNXhxvZ9j
-        D8YMFs45C3H/bpcIjWztYJFtpW1ndwLxk/3nasUSd2g4DI6rTJ9brT1xdh6merTuMZxuXGeri/qIW
-        B4VWGlywkt3cDuJTHQcEp6bH784+mrTGmO83jNc6MJv2Qhxf4IY9156HlvFLTCAE/aJlB3DmxF1nF
-        /WprKPaL2jT3CFt0Ux6wkvcNuzp8m0Jlw6yxpb6JNdGsOlfvfDva2LSOh2Gnmo/soNgn/LHwmv0t1
-        o7yhPoVXw==;
-Received: from [2601:1c0:6280:3f0::9ef4]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iK2IM-0008UT-RO; Mon, 14 Oct 2019 15:30:02 +0000
-Subject: Re: linux-next: Tree for Oct 14 (insn_decoder_test)
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Masami Hiramatsu <mhiramat@redhat.com>
-References: <20191014174707.469f596f@canb.auug.org.au>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <2d83682b-6206-4992-63cc-342d61641c0a@infradead.org>
-Date:   Mon, 14 Oct 2019 08:30:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S2387560AbfJNPaW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 11:30:22 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51624 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387516AbfJNPaW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 11:30:22 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id E38C5F1D64FFFA942B0A;
+        Mon, 14 Oct 2019 23:30:17 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Mon, 14 Oct 2019
+ 23:30:14 +0800
+Message-ID: <5DA49486.6010209@huawei.com>
+Date:   Mon, 14 Oct 2019 23:30:14 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-In-Reply-To: <20191014174707.469f596f@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+To:     Jerome Pouiller <Jerome.Pouiller@silabs.com>
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RESEND v2] staging: wfx: fix an undefined reference error
+ when CONFIG_MMC=m
+References: <1570811647-64905-1-git-send-email-zhongjiang@huawei.com> <5DA13F17.6090409@huawei.com> <2927969.oKuMf0pyRb@pc-42> <2864258.2Qbmp6UNZe@pc-42>
+In-Reply-To: <2864258.2Qbmp6UNZe@pc-42>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.177.29.68]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/13/19 11:47 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20191011:
-> 
+On 2019/10/14 18:06, Jerome Pouiller wrote:
+> On Monday 14 October 2019 11:53:19 CEST Jérôme Pouiller wrote:
+> [...]
+>> Hello Zhong,
+>>
+>> Now, I see the problem. It happens when CONFIG_MMC=m and CONFIG_WFX=y
+>> (if CONFIG_WFX=m, it works).
+>>
+>> I think the easiest way to solve problem is to disallow CONFIG_WFX=y if 
+>> CONFIG_MMC=m.
+>>
+>> This solution impacts users who want to use SPI bus with configuration:
+>> CONFIG_WFX=y + CONFIG_SPI=y + CONFIG_MMC=m. However, I think this is a
+>> twisted case. So, I think it won't be missed.
+>>
+>> I think that patch below do the right thing:
+>>
+>> -----8<----------8<----------------------8<-----------------
+>>
+>> diff --git i/drivers/staging/wfx/Kconfig w/drivers/staging/wfx/Kconfig
+>> index 9b8a1c7a9e90..833f3b05b6b4 100644
+>> --- i/drivers/staging/wfx/Kconfig
+>> +++ w/drivers/staging/wfx/Kconfig
+>> @@ -1,7 +1,7 @@
+>>  config WFX
+>>         tristate "Silicon Labs wireless chips WF200 and further"
+>>         depends on MAC80211
+>> -       depends on (SPI || MMC)
+>> +       depends on (MMC=m && m) || MMC=y || (SPI && MMC!=m)
+>>         help
+>>           This is a driver for Silicons Labs WFxxx series (WF200 and further)
+>>           chipsets. This chip can be found on SPI or SDIO buses.
+>>
+>>
+>>
+> An alternative (more understandable?):
+>
+> diff --git i/drivers/staging/wfx/Kconfig w/drivers/staging/wfx/Kconfig
+> index 9b8a1c7a9e90..83ee4d0ca8c6 100644
+> --- i/drivers/staging/wfx/Kconfig
+> +++ w/drivers/staging/wfx/Kconfig
+> @@ -1,6 +1,7 @@
+>  config WFX
+>         tristate "Silicon Labs wireless chips WF200 and further"
+>         depends on MAC80211
+> +       depends on MMC || !MMC # do not allow WFX=y if MMC=m
+>         depends on (SPI || MMC)
+>         help
+>           This is a driver for Silicons Labs WFxxx series (WF200 and further)
+>
+>
+It's better and clear.  Thanks
 
-on x86_64:
+sincerely,
+zhong jiang
 
-  HOSTCC  arch/x86/tools/insn_decoder_test
-  HOSTCC  arch/x86/tools/insn_sanity
-  TEST    posttest
-arch/x86/tools/insn_decoder_test: warning: Found an x86 instruction decoder bug, please report this.
-arch/x86/tools/insn_decoder_test: warning: ffffffff81000bf1:	f7 0b 00 01 08 00    	testl  $0x80100,(%rbx)
-arch/x86/tools/insn_decoder_test: warning: objdump says 6 bytes, but insn_get_length() says 2
-arch/x86/tools/insn_decoder_test: warning: Decoded and checked 11913894 instructions with 1 failures
-  TEST    posttest
-arch/x86/tools/insn_sanity: Success: decoded and checked 1000000 random instructions with 0 errors (seed:0x871ce29c)
-
-
--- 
-~Randy
