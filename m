@@ -2,231 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FA89D688A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 19:35:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0C10D6894
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 19:38:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388547AbfJNRex (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 13:34:53 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43489 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730180AbfJNRex (ORCPT
+        id S1730451AbfJNRiG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 13:38:06 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:34454 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730039AbfJNRiF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 13:34:53 -0400
-Received: by mail-wr1-f68.google.com with SMTP id j18so20671197wrq.10
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 10:34:49 -0700 (PDT)
+        Mon, 14 Oct 2019 13:38:05 -0400
+Received: by mail-oi1-f195.google.com with SMTP id 83so14447308oii.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 10:38:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=goZ9xr3ZvDzSv2nJz6yrf4HXNzE2UZomKxVxc5DO9BY=;
-        b=vHl8FZk3irxNcBHFS6WDvNRLbzSI+2dM7zbxblpP7TrH699NnU4A9rTupP3aIW6xLI
-         1s3nVKqg749HwtV8wrwNj90Rz/dzdgcEmIkULO5n8TlL+B6U1do2uDthDToVn3+D0YP2
-         9KgM6aqtUcji4E1xaPX9PywJHKS7Cs+v8hJnM9lZJWyE2XoCv2GwTYJru5+SC4Z8hfl/
-         rv+8BvLK+Z/9arnhKtio+xT6q+iTiwV6I9bGi04EUmqVK2PkXEHChONF6QBNgpvEGZB4
-         wKKgOeuVaw+6Alc/huUKGS08Csjskopiso9M5JfZMRrALxCYDFSX/ZxvrWlPdwdadWeU
-         8vGA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QSCO5aB2fA+02qEUEaBs4WEazb7/tnATGJJwnHFP2CY=;
+        b=snBxDpYBkjPomhnffO2N88geBv6vgoB9wKs2Yu2t62CUJb0JWltYMS6AaF4WKv/NlB
+         bLY6NAVQMq1lkCZPK3JKlFYPciGoE2cW/Qx8fbOFeI8HOrJtlgl3g4GSJLAGrRQ0zliB
+         y7XfpND078dDkIKkQmM05NgKIQYQTHUonOhrDjy70Rwn1wGzOb4gn5gdhxpD/DrIDAOX
+         UAyTRjasN9llYMhvUu+3xjF3E5Vkl3HkJ9lVC44s0rfPNVNPt1fqHyC5T3flTuk2nIKC
+         wEo3r9449VLdpTdbOp9NpQ+N4KSwh0KVpmpiQB+VxUT7ncoubTL7ejieKOnBbdEQem50
+         1zBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=goZ9xr3ZvDzSv2nJz6yrf4HXNzE2UZomKxVxc5DO9BY=;
-        b=pvIvPtl9VrF2fuY5dcWh47nnoBP6luxf6ADTalsl2QkpEHGxG90jXZYg0wmSRy58Tm
-         mpvVIBtsUPm1+uRuLPsgklemOnivljJciRDiJlFuiRNCW7+bJCQInVvsdmuNY7bVIVgJ
-         c4l2J0/qCeyqF8XJRpIKbpKeohjY88eNKblmapLEEzJKZL30Gn17u+tr1ZG+4mus/EHG
-         qHxv3+UbeEgPk1W8B0jalTlrAqHitDaQkSCZKf4JHi4Op2/R2czv5i8412xiDnibAgRN
-         k3NCne9fht1tt7Mqw493GkRyu3hdGBw9jR8wxYwdb2UbexzVWcR408nj59Tw7gBWOw8B
-         M55A==
-X-Gm-Message-State: APjAAAUghdUnhPfGnE9JjddDRzHdmiWCLZPmpL/PYxcxZ5O2VmPodmpy
-        vAsQzDY+ihY+B7pxha8ROOyVKQ==
-X-Google-Smtp-Source: APXvYqx6o+W6CiM2QYYNE1LOP02RBlpY0Gjx6cCk2+/iSWkz3HaCQgW35hyYYEVSjE7RAe42vaKioA==
-X-Received: by 2002:a05:6000:1204:: with SMTP id e4mr12865496wrx.23.1571074488594;
-        Mon, 14 Oct 2019 10:34:48 -0700 (PDT)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id g185sm26164302wme.10.2019.10.14.10.34.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Oct 2019 10:34:47 -0700 (PDT)
-Subject: Re: [PATCH v3 1/2] dt-bindings: soundwire: add bindings for Qcom
- controller
-To:     Rob Herring <robh@kernel.org>
-Cc:     vkoul@kernel.org, broonie@kernel.org, bgoswami@codeaurora.org,
-        pierre-louis.bossart@linux.intel.com, devicetree@vger.kernel.org,
-        lgirdwood@gmail.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, spapothi@codeaurora.org
-References: <20191011154423.2506-1-srinivas.kandagatla@linaro.org>
- <20191011154423.2506-2-srinivas.kandagatla@linaro.org>
- <20191014171241.GA24989@bogus>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <76be1a0d-43ea-44c3-ef6c-9f9a2025c7a2@linaro.org>
-Date:   Mon, 14 Oct 2019 18:34:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QSCO5aB2fA+02qEUEaBs4WEazb7/tnATGJJwnHFP2CY=;
+        b=tjGCtfAHlIT501hD9euHqZ5WGMqF5fq1l5lW5JbI4pG2/Jmg1YRx5arGKXQEJulY9f
+         QpUg9OTCcqkcGPm85CVe0RcHL209NCj1rLsnzjnHlikJ5I7LVXw9duxPcgXOr7v1gSnQ
+         sp34UoqUs07dqjVlmAYr7VlhmtWDoDvgO14MlSxZg37m/62P3ociS6cXHIIcHTpXZMzm
+         C99PxKhobwkGpO0gSJD/FVfcWIrpZ8S/4ayrFqjkWsicb9Hgzs7oe9sHShMyxEvqb5QP
+         0kUAlSYQu1ybZ9L+UmiTSiIi+LuLa4vuAurh48nECC/GjblAEJ2323lwS4nrJ6iCkpqv
+         8tag==
+X-Gm-Message-State: APjAAAUwoh6GS6jbB1cRuhkt9MV0knwbm+XXE4iwXiUEKa6iDQc3fDNV
+        xzxMSRB05PZslCW/tCMUWI0+V06sRZlUMxOFoLYIaQ==
+X-Google-Smtp-Source: APXvYqztx76pi31dpiCrP7KHa3pI9SHJTfDuzi9ExMRTPyT4Eeto/zDYD3BIljiOAlRPGJD1fyGVBZ5ggSkrm3My2vg=
+X-Received: by 2002:aca:f403:: with SMTP id s3mr25678430oih.23.1571074681984;
+ Mon, 14 Oct 2019 10:38:01 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191014171241.GA24989@bogus>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190715191804.112933-1-hridya@google.com> <CAG48ez0dSd4q06YXOnkzmM8BkfQGTtYE6j60_YRdC5fmrTm8jw@mail.gmail.com>
+ <CAG48ez2ez1bb=3o3h1KSahPU6QcdXhbh=Z2aX4Mte24H4901_g@mail.gmail.com>
+In-Reply-To: <CAG48ez2ez1bb=3o3h1KSahPU6QcdXhbh=Z2aX4Mte24H4901_g@mail.gmail.com>
+From:   Hridya Valsaraju <hridya@google.com>
+Date:   Mon, 14 Oct 2019 10:37:25 -0700
+Message-ID: <CA+wgaPNPSOzEf-p8wsorqGe=eEbhFLkW6gYfYP1MaCqhQBvrnw@mail.gmail.com>
+Subject: Re: [PATCH] binder: prevent transactions to context manager from its
+ own process.
+To:     Jann Horn <jannh@google.com>
+Cc:     Todd Kjos <tkjos@android.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Christian Brauner <christian@brauner.io>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        kernel-team <kernel-team@android.com>,
+        syzbot+8b3c354d33c4ac78bfad@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Rob for taking time to review,
+On Fri, Oct 11, 2019 at 3:11 PM Jann Horn <jannh@google.com> wrote:
+>
+> On Fri, Oct 11, 2019 at 11:59 PM Jann Horn <jannh@google.com> wrote:
+> > (I think you could also let A receive a handle
+> > to itself and then transact with itself, but I haven't tested that.)
+>
+> Ignore this sentence, that's obviously wrong because same-binder_proc
+> nodes will always show up as a binder, not a handle.
 
-On 14/10/2019 18:12, Rob Herring wrote:
-> On Fri, Oct 11, 2019 at 04:44:22PM +0100, Srinivas Kandagatla wrote:
->> This patch adds bindings for Qualcomm soundwire controller.
->>
->> Qualcomm SoundWire Master controller is present in most Qualcomm SoCs
->> either integrated as part of WCD audio codecs via slimbus or
->> as part of SOC I/O.
->>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->> ---
->>   .../bindings/soundwire/qcom,sdw.txt           | 167 ++++++++++++++++++
->>   1 file changed, 167 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/soundwire/qcom,sdw.txt
-> 
-> Next time, do a DT schema.
-> 
-Sure! I can do that in next version!
-
->> diff --git a/Documentation/devicetree/bindings/soundwire/qcom,sdw.txt b/Documentation/devicetree/bindings/soundwire/qcom,sdw.txt
->> new file mode 100644
->> index 000000000000..436547f3b155
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/soundwire/qcom,sdw.txt
->> @@ -0,0 +1,167 @@
->> +Qualcomm SoundWire Controller Bindings
->> +
->> +
->> +This binding describes the Qualcomm SoundWire Controller along with its
->> +board specific bus parameters.
->> +
->> +- compatible:
->> +	Usage: required
->> +	Value type: <stringlist>
->> +	Definition: must be "qcom,soundwire-v<MAJOR>.<MINOR>.<STEP>",
->> +		    Example:
->> +			"qcom,soundwire-v1.3.0"
->> +			"qcom,soundwire-v1.5.0"
->> +			"qcom,soundwire-v1.6.0"
-> 
-> This needs to be the actual versions supported, not examples. Elsewhere
-> in QCom bindings, we've used standard SoC specific compatibles as there
-> never tends to be many SoCs with the same version. Anything different
-> here?
-> 
-
-These values of MAJOR MINOR and STEP are defined as part of IP spec. And 
-most of the QCom IPs follow such scheme. We can read back these values 
-from the Hardware registers.
-
-Having SoC Names here might not be very efficient here.
-We have used such compatibles on may QCom IPs, like BAM DMA, SLIMBus and 
-other drivers.
-
->> +- reg:
->> +	Usage: required
->> +	Value type: <prop-encoded-array>
->> +	Definition: the base address and size of SoundWire controller
->> +		    address space.
->> +
->> +- interrupts:
->> +	Usage: required
->> +	Value type: <prop-encoded-array>
->> +	Definition: should specify the SoundWire Controller IRQ
->> +
->> +- clock-names:
->> +	Usage: required
->> +	Value type: <stringlist>
->> +	Definition: should be "iface" for SoundWire Controller interface clock
->> +
->> +- clocks:
->> +	Usage: required
->> +	Value type: <prop-encoded-array>
->> +	Definition: should specify the SoundWire Controller interface clock
->> +
->> +- #sound-dai-cells:
->> +	Usage: required
->> +	Value type: <u32>
->> +	Definition: must be 1 for digital audio interfaces on the controller.
->> +
->> +- qcom,dout-ports:
->> +	Usage: required
->> +	Value type: <u32>
->> +	Definition: must be count of data out ports
-> 
-> Up to how many?
-> 
->> +
->> +- qcom,din-ports:
->> +	Usage: required
->> +	Value type: <u32>
->> +	Definition: must be count of data in ports
-> 
-> Up to how many?
-
-Up to 15 data ports in total
-
-> 
->> +
-...
-
->> +Note:
->> +	More Information on detail of encoding of these fields can be
->> +found in MIPI Alliance SoundWire 1.0 Specifications.
->> +
->> += SoundWire devices
->> +Each subnode of the bus represents SoundWire device attached to it.
->> +The properties of these nodes are defined by the individual bindings.
-> 
-> Is there some sort of addressing that needs to be defined?
-> 
-Thanks, Looks like I missed that here.
-
-it should be something like this,
-
-#address-cells = <2>;
-#size-cells = <0>;
-
-Will add the in next version.
-
-
->> +
->> += EXAMPLE
->> +The following example represents a SoundWire controller on DB845c board
->> +which has controller integrated inside WCD934x codec on SDM845 SoC.
->> +
->> +soundwire: soundwire@c85 {
->> +	compatible = "qcom,soundwire-v1.3.0";
->> +	reg = <0xc85 0x20>;
->> +	interrupts = <20 IRQ_TYPE_EDGE_RISING>;
->> +	clocks = <&wcc>;
->> +	clock-names = "iface";
->> +	#sound-dai-cells = <1>;
->> +	qcom,dports-type = <0>;
->> +	qcom,dout-ports	= <6>;
->> +	qcom,din-ports	= <2>;
->> +	qcom,ports-sinterval-low = /bits/ 8  <0x07 0x1F 0x3F 0x7 0x1F 0x3F 0x0F 0x0F>;
->> +	qcom,ports-offset1 = /bits/ 8 <0x01 0x02 0x0C 0x6 0x12 0x0D 0x07 0x0A >;
->> +	qcom,ports-offset2 = /bits/ 8 <0x00 0x00 0x1F 0x00 0x00 0x1F 0x00 0x00>;
->> +
->> +	/* Left Speaker */
->> +	left{
-> 
-> space       ^
->> +		....
->> +	};
->> +
->> +	/* Right Speaker */
->> +	right{
-> 
-> ditto
-> 
->> +		....
->> +	};
->> +};
->> -- 
->> 2.21.0
->>
+Thank you for the email and steps to reproduce the issue Jann. I need
+some time to take a look at the same and I will get back to you once I
+understand it and hopefully have a fix. We do want to disallow
+same-process transactions. Here is a little bit more of context for
+the patch: https://lkml.org/lkml/2018/3/28/173
