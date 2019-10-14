@@ -2,53 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02ED4D653B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 16:32:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E01BD653D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 16:33:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732707AbfJNOcr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 10:32:47 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:38294 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731121AbfJNOcq (ORCPT
+        id S1732810AbfJNOdE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 10:33:04 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:38346 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731121AbfJNOdD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 10:32:46 -0400
-Received: by mail-qt1-f195.google.com with SMTP id j31so25712488qta.5
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 07:32:46 -0700 (PDT)
+        Mon, 14 Oct 2019 10:33:03 -0400
+Received: by mail-qt1-f194.google.com with SMTP id j31so25713842qta.5
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 07:33:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Jh1Xv42HTTtwmxhqCtdsejKM5Dntl522tkuHl33kJk4=;
-        b=P3sNmpyIcNeZD8fTLdWrBX33rU5etmRObYsN7svAbj/KLbvBzmApjwe6VGVsBMYkrc
-         MSZSn2Xa52REQ+SucE4Qjb8+3zVJ+6UXGOhtbBgSzrTrn0dT60miOIrGkxtwDdy8o22Y
-         j0LLclmpkGiH4Y6AQPrBIONh3tvZOZdxXpZygb5HvpxN8O/Ud4IYcq5dT28vs/vxaFvc
-         iIDv29xAYBdGNemMkERNjs0KNPKweyp7uw2nLPTqW4nalduFQQ5vKO1be46GRSukIhzp
-         TnipCB10FhP1HcjZr5B1YmKFkn+0oIDWk0OQpTP1clVP77fd4SnA4f38CIq8eBGiQ+qO
-         nQSQ==
+        bh=lhb0CAAW9Vb27xAG0hrpBqjko/4KesG+1qmqJasPplE=;
+        b=YGISSYCxqNj4LZ0pTXTQb4Ol+zJLX0xDR1k0kusL+ftupVzKo5XLvuxExaTUoF7Dwu
+         PfuE3ZcyyfuGB358iQ60d5DbbcP85UlXpmioxYbkGdtuiUvIPsk1+H6nmrBrCQ5g5sgb
+         I1YNvkPhaWKFsZydhbwCejH632z5U4okTdMJSlYzlcYcEDLBHfPqcdEs7cBQ2vk9hS1o
+         WrkGfHn140jkchZQ9k8MzKWZRoWRea5CM/HKlZ1f3EzhEfRx4Kwa4YxOQPhV41XKUTCV
+         /RzuHPig+xFjE+CEcxOG0Jkyb3NR/yK4L3AODwxRItsoDRBXRMO2o+Dzx4FCUdQWinra
+         gLgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Jh1Xv42HTTtwmxhqCtdsejKM5Dntl522tkuHl33kJk4=;
-        b=nK5yDkU8tcZmkF4uf9bv+gaDL5pBxD67CJF3+J2X3trbBs0TI+NZ3YMqaGxk70Bcmu
-         U3jWG9r4L6+CZ1I5kX01g58LtjxOe/WsLE0TcYfM+X/OG9V/5SyzwIoMieh3CAN78kJ4
-         egcFoK2appg74mk+4ZsuJLWuKEFc5X1T5T0d/WqlJDZ46r1UuQp0MKFySRWc5aEanZwS
-         UCf4NPLOQHcyuQm7K/oSw0vlRmuV1SYgKOw1tXS6GJ9iUOK3NE6kW6BOJH9x553rVxpO
-         ABZfTpSwbStbM9AWAb9SuXvuJszTYJmXjtOvHaOAi5w0IqdIQOY4aJaaz3uW0XSdyz1p
-         kfGw==
-X-Gm-Message-State: APjAAAXfusOd8HVUoZa0wb2O/U4zl8UEIaL3GI3AVMbLnNzR1+fG3H0W
-        so+m2xhLLss/XlAr5t/tZwJGmPe1VUBNA92LmBR2lQ==
-X-Google-Smtp-Source: APXvYqzsoWPEP43Z3L5Dz9F518H/l7kj+qgoYmNx43PzKG2znUoHJURuJXgYUPmIPO7QICQ5OslDnJsAKHNNAKXjEkE=
-X-Received: by 2002:aed:2a3b:: with SMTP id c56mr34156048qtd.343.1571063565275;
- Mon, 14 Oct 2019 07:32:45 -0700 (PDT)
+        bh=lhb0CAAW9Vb27xAG0hrpBqjko/4KesG+1qmqJasPplE=;
+        b=ZMmBc/a+UvzLuYbvpToc0/+kAoRytU+pvuZVee03o215IjkNQWXOpYJX0GGREyRm/Z
+         VL6oWBQNNWNnWjqmWKHE+zfTYgcyuFRaQMImNSvGRkZSZSv5h6ZDkSeZ1n/PQGO6Su2/
+         XjJeMa7sRwDwEoa4AvFqWgCkIbWUHG6t4lOstuqytLXJsXpiRDB7exwSJev2og5Vo7BN
+         ijoXnGOhqV9O2LnMtaVBwaBQSY4puodI+Mz2ff1nfjt9MAA23rl3bKtJmTN6xo9bV1PB
+         Ke4+w4vHSB296SDgpaA3xpAagPc/tT5nRPwum2w1bq4W5KnDmgMxDjff6kKFZOQbvvoY
+         5zPA==
+X-Gm-Message-State: APjAAAUzD0NV0JTw2ZcWfHOORxbssZA3ZvO8scH1MCxrgkyU+Ifpa9ks
+        HcVykF/Izvn3RDHAMV8bW+R2mw+EDEIzc9jMz3f6Ml975yU=
+X-Google-Smtp-Source: APXvYqzqApQH0vYoqWCT/6nEdWxRtz9wDSy1LZGDtLWmC+LY2R2iGNq+ZZTWMXAN+eZZctaIQ1Ow8N95LIXXdI2Af8w=
+X-Received: by 2002:a05:6214:841:: with SMTP id dg1mr30723344qvb.55.1571063582732;
+ Mon, 14 Oct 2019 07:33:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191012065255.23249-1-daniel.lezcano@linaro.org> <20191012065255.23249-11-daniel.lezcano@linaro.org>
-In-Reply-To: <20191012065255.23249-11-daniel.lezcano@linaro.org>
+References: <20191012065255.23249-1-daniel.lezcano@linaro.org> <20191012065255.23249-5-daniel.lezcano@linaro.org>
+In-Reply-To: <20191012065255.23249-5-daniel.lezcano@linaro.org>
 From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Mon, 14 Oct 2019 20:02:34 +0530
-Message-ID: <CAP245DVpV3-qkawjAyHYk5Ke9W_uoFy3FEHMM5z3036WD2dh6w@mail.gmail.com>
-Subject: Re: [PATCH 11/11] thermal: Move thermal governor structure to
- internal header
+Date:   Mon, 14 Oct 2019 20:02:51 +0530
+Message-ID: <CAP245DWwMcCHbeh0t7MizmxK4fr9jZvdVeVYYRLGJcCcA=QFcg@mail.gmail.com>
+Subject: Re: [PATCH 05/11] thermal: Move set_trips function to the internal header
 To:     Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc:     Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>,
@@ -62,94 +61,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Sat, Oct 12, 2019 at 12:23 PM Daniel Lezcano
 <daniel.lezcano@linaro.org> wrote:
 >
-> The thermal governor structure is a big structure where no
-> user should change value inside except via helper functions.
+> The function is not used in other place than the thermal directory. It
+
+Grammar nit: is not used any place other than the thermal directory
+
+> does not make sense to export its definition in the global header as
+> there is no use of it.
 >
-> Move the structure to the internal header thus preventing external
-> code to be tempted by hacking the structure's variables.
+> Move its the definition in the internal header and allow better
+> self-encapsulation.
+
+Grammar nit: Move the definition to the internal header
+
+If you respin please fix the same for other patches in the series.
+
+
+
+
 >
 > Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 > ---
->  drivers/thermal/thermal_core.h | 20 ++++++++++++++++++++
->  include/linux/thermal.h        | 21 +--------------------
->  2 files changed, 21 insertions(+), 20 deletions(-)
+>  drivers/thermal/thermal_core.h | 2 ++
+>  include/linux/thermal.h        | 3 ---
+>  2 files changed, 2 insertions(+), 3 deletions(-)
 >
 > diff --git a/drivers/thermal/thermal_core.h b/drivers/thermal/thermal_core.h
-> index c75309d858ce..e54150fa4c5b 100644
+> index 6f6e0dcba4f2..301f5603def1 100644
 > --- a/drivers/thermal/thermal_core.h
 > +++ b/drivers/thermal/thermal_core.h
-> @@ -46,6 +46,26 @@ struct thermal_attr {
->         char name[THERMAL_NAME_LENGTH];
+> @@ -72,6 +72,8 @@ struct thermal_trip {
+>         enum thermal_trip_type type;
 >  };
 >
-> +/**
-> + * struct thermal_governor - structure that holds thermal governor information
-> + * @name:      name of the governor
-> + * @bind_to_tz: callback called when binding to a thermal zone.  If it
-> + *             returns 0, the governor is bound to the thermal zone,
-> + *             otherwise it fails.
-> + * @unbind_from_tz:    callback called when a governor is unbound from a
-> + *                     thermal zone.
-> + * @throttle:  callback called for every trip point even if temperature is
-> + *             below the trip point temperature
-> + * @governor_list:     node in thermal_governor_list (in thermal_core.c)
-> + */
-> +struct thermal_governor {
-> +       char name[THERMAL_NAME_LENGTH];
-> +       int (*bind_to_tz)(struct thermal_zone_device *tz);
-> +       void (*unbind_from_tz)(struct thermal_zone_device *tz);
-> +       int (*throttle)(struct thermal_zone_device *tz, int trip);
-> +       struct list_head        governor_list;
-> +};
+> +void thermal_zone_set_trips(struct thermal_zone_device *tz);
 > +
->  static inline bool cdev_is_power_actor(struct thermal_cooling_device *cdev)
->  {
->         return cdev->ops->get_requested_power && cdev->ops->state2power &&
+>  /*
+>   * This structure is used to describe the behavior of
+>   * a certain cooling device on a certain trip point
 > diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-> index 8daa179918a1..04264e8a2bce 100644
+> index 88e1faa3d72c..761d77571533 100644
 > --- a/include/linux/thermal.h
 > +++ b/include/linux/thermal.h
-> @@ -45,6 +45,7 @@
+> @@ -398,7 +398,6 @@ int thermal_zone_unbind_cooling_device(struct thermal_zone_device *, int,
+>                                        struct thermal_cooling_device *);
+>  void thermal_zone_device_update(struct thermal_zone_device *,
+>                                 enum thermal_notify_event);
+> -void thermal_zone_set_trips(struct thermal_zone_device *);
 >
->  struct thermal_zone_device;
->  struct thermal_cooling_device;
-> +struct thermal_governor;
->  struct thermal_instance;
->  struct thermal_attr;
->
-> @@ -206,26 +207,6 @@ struct thermal_zone_device {
->         enum thermal_notify_event notify_event;
->  };
->
-> -/**
-> - * struct thermal_governor - structure that holds thermal governor information
-> - * @name:      name of the governor
-
-AFAICT, some drivers actually like to specify what governor to use
-when calling thermal_zone_device_register(), by passing the
-thermal_zone_params parameter. You will probably need to provide for
-helper functions to return the value of governor name, I think.
-
-> - * @bind_to_tz: callback called when binding to a thermal zone.  If it
-> - *             returns 0, the governor is bound to the thermal zone,
-> - *             otherwise it fails.
-> - * @unbind_from_tz:    callback called when a governor is unbound from a
-> - *                     thermal zone.
-> - * @throttle:  callback called for every trip point even if temperature is
-> - *             below the trip point temperature
-> - * @governor_list:     node in thermal_governor_list (in thermal_core.c)
-> - */
-> -struct thermal_governor {
-> -       char name[THERMAL_NAME_LENGTH];
-> -       int (*bind_to_tz)(struct thermal_zone_device *tz);
-> -       void (*unbind_from_tz)(struct thermal_zone_device *tz);
-> -       int (*throttle)(struct thermal_zone_device *tz, int trip);
-> -       struct list_head        governor_list;
-> -};
-> -
->  /* Structure that holds binding parameters for a zone */
->  struct thermal_bind_params {
->         struct thermal_cooling_device *cdev;
+>  struct thermal_cooling_device *thermal_cooling_device_register(const char *,
+>                 void *, const struct thermal_cooling_device_ops *);
+> @@ -444,8 +443,6 @@ static inline int thermal_zone_unbind_cooling_device(
+>  static inline void thermal_zone_device_update(struct thermal_zone_device *tz,
+>                                               enum thermal_notify_event event)
+>  { }
+> -static inline void thermal_zone_set_trips(struct thermal_zone_device *tz)
+> -{ }
+>  static inline struct thermal_cooling_device *
+>  thermal_cooling_device_register(char *type, void *devdata,
+>         const struct thermal_cooling_device_ops *ops)
 > --
 > 2.17.1
 >
