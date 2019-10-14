@@ -2,139 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0933D68A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 19:39:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0951ED68C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 19:43:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388600AbfJNRjs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 13:39:48 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52779 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730046AbfJNRjr (ORCPT
+        id S1731572AbfJNRmE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 13:42:04 -0400
+Received: from sender4-op-o14.zoho.com ([136.143.188.14]:17433 "EHLO
+        sender4-op-o14.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731171AbfJNRmE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 13:39:47 -0400
-Received: by mail-wm1-f65.google.com with SMTP id r19so18138534wmh.2;
-        Mon, 14 Oct 2019 10:39:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lNZVpaEdmaJY1w+xpL+K9ZqQ92uD6Jfe5E6lniBjnvM=;
-        b=oY+W6FwfNZXtwQq+WhORdLOdfo+f4fhwM0p+Ers5h6CPfgtbEn9ww93kXBSsw2v60b
-         SMIu2UNR6PLQJQdTuB5CZKPD7tjM5zgAWc2F3LP1dYBp/mIWLyzvE+gzbroEFBRI7Dst
-         6kA8qKfdBDN33wxGZAOv+JGy3RovTItDZE4cjypr4TRa0AKUIYcxwviSXAuFpdNyQ3Ic
-         P5h5NDYnWvzIBkjBiYMxqf/jo1ONlCR+e27uF8WQwLTB2ZtajymWafYs1NlkszKw2+og
-         TjPkHU05jpgk0QnsRcXQ7aScuZgRRwSgOc6g7Xs1OdMStDrlfb3Y5KlSoZ09BW/JEGMk
-         I4Vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lNZVpaEdmaJY1w+xpL+K9ZqQ92uD6Jfe5E6lniBjnvM=;
-        b=D9UR3CoXewCGhtbjhNp34fGFEoYQeY1C08Ur0JPIb9bI9tC0tg0LxwIKVvB4xLKB6e
-         0aq4/IBm8QDfn+qcaHpt60v5AtjusUAU2lj0nOK5ZOxOJSKv10+neSU1TZGa8O/O/bqp
-         32eWqvoMfQyQUxWBmVxREsemXCJCdtfC/KgQJCJyeJV0HaPjfeOKvRkj1lL9oDkyIVXu
-         k97sJogKI5l/K39xei8qd7osC0kPI+Bcn4FL9scjcU0ark+p6iTChbpA8pXCdr35hzxB
-         kssXscgxJ5FrqLZ1v2kdpDnlYtvKVy9he1VBJNajjIm+DxtcYd9BGGlf6yHPHTo99VsJ
-         TdAA==
-X-Gm-Message-State: APjAAAXbTx4aqa4NX5v1jZvpPcd8EV5kecf0r6cREKI2vsnWVybpzwoU
-        c7+Yr5nynSeN/Hy+nNA46p4=
-X-Google-Smtp-Source: APXvYqxufY2enniRnRIxytq9WOwNI0dKAeSWrxef8cqdYzIseEmMuayKHSwg/1yhpjk+WboQkw4UeQ==
-X-Received: by 2002:a1c:bc07:: with SMTP id m7mr16018252wmf.117.1571074784999;
-        Mon, 14 Oct 2019 10:39:44 -0700 (PDT)
-Received: from localhost ([51.15.41.238])
-        by smtp.gmail.com with ESMTPSA id p5sm25687450wmi.4.2019.10.14.10.39.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2019 10:39:44 -0700 (PDT)
-Date:   Mon, 14 Oct 2019 18:39:42 +0100
-From:   Stefan Hajnoczi <stefanha@gmail.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org,
-        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
-        alex.williamson@redhat.com, mst@redhat.com, tiwei.bie@intel.com,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        cohuck@redhat.com, maxime.coquelin@redhat.com,
-        cunming.liang@intel.com, zhihong.wang@intel.com,
-        rob.miller@broadcom.com, xiao.w.wang@intel.com,
-        haotian.wang@sifive.com, zhenyuw@linux.intel.com,
-        zhi.a.wang@intel.com, jani.nikula@linux.intel.com,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        airlied@linux.ie, daniel@ffwll.ch, farman@linux.ibm.com,
-        pasic@linux.ibm.com, sebott@linux.ibm.com, oberpar@linux.ibm.com,
-        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
-        borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
-        freude@linux.ibm.com, lingshan.zhu@intel.com, idos@mellanox.com,
-        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
-        christophe.de.dinechin@gmail.com, kevin.tian@intel.com
-Subject: Re: [PATCH V3 6/7] virtio: introduce a mdev based transport
-Message-ID: <20191014173942.GB5359@stefanha-x1.localdomain>
-References: <20191011081557.28302-1-jasowang@redhat.com>
- <20191011081557.28302-7-jasowang@redhat.com>
+        Mon, 14 Oct 2019 13:42:04 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1571074914; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=UoaKiyg+jQdvyC/HhihkyXN4vATpVe1FzZda6S9x50vCOlNQChj6l5iHpkER9D0llDqinnyxy87QDh7AsSbYI1R6tUS+Yc9N7XUd++mhMtwEWC+9LCdXQcb9LeLrP0ZdX4fxoCd47YXj6CNUBOKbiY5hUS2bVtB9waqVcpz06YA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1571074914; h=Content-Type:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=sz/CQBl0duYZalGaCIYiBg7xruUCOAaCokFPhXphtJM=; 
+        b=MIsc+Kk2VqXzXnM1/cUjHBsaqsKYgb2HxWrSK+t+42eapnh/VsbfRGsIXElno0vaxJa1iowXYn4GToHUFGt38z6/otN6+GyHtkfx6HBY0NnXaSehiir4wtcEnVozzp+HZhYuTXTAL9zh1KqHpQPbRvGTTnuK/VaYCyvTnxwobak=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=dlrobertson.com;
+        spf=pass  smtp.mailfrom=dan@dlrobertson.com;
+        dmarc=pass header.from=<dan@dlrobertson.com> header.from=<dan@dlrobertson.com>
+Received: from nessie (pool-100-15-144-194.washdc.fios.verizon.net [100.15.144.194]) by mx.zohomail.com
+        with SMTPS id 1571074913103134.03014784679272; Mon, 14 Oct 2019 10:41:53 -0700 (PDT)
+Date:   Mon, 14 Oct 2019 17:27:31 +0000
+From:   Dan Robertson <dan@dlrobertson.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        devicetree@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: iio: accel: bma400: add bindings
+Message-ID: <20191014172731.GA30646@nessie>
+References: <20191012192525.21040-1-dan@dlrobertson.com>
+ <20191012192525.21040-2-dan@dlrobertson.com>
+ <20191014171521.GA29335@bogus>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ftEhullJWpWg/VHq"
+        protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
 Content-Disposition: inline
-In-Reply-To: <20191011081557.28302-7-jasowang@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191014171521.GA29335@bogus>
+User-Agent: Mutt/1.12.2 (2019-09-21)
+X-Zoho-Virus-Status: 1
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---ftEhullJWpWg/VHq
+--cNdxnHkX5QqsyA0e
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Oct 11, 2019 at 04:15:56PM +0800, Jason Wang wrote:
-> +struct virtio_mdev_device {
-> +	struct virtio_device vdev;
-> +	struct mdev_device *mdev;
-> +	unsigned long version;
-> +
-> +	struct virtqueue **vqs;
-> +	/* The lock to protect virtqueue list */
-> +	spinlock_t lock;
-> +	struct list_head virtqueues;
+> Fails 'make dt_binding_check':
 
-Is this a list of struct virtio_mdev_vq_info?  Please document the
-actual type in a comment.
+Thanks for the note. Should running `make dt_binding_check` be added to
+`Documentation/devicetree/bindings/submitting-patches.rst`?
 
-> +static int virtio_mdev_find_vqs(struct virtio_device *vdev, unsigned nvqs,
-> +				struct virtqueue *vqs[],
-> +				vq_callback_t *callbacks[],
-> +				const char * const names[],
-> +				const bool *ctx,
-> +				struct irq_affinity *desc)
-> +{
-> +	struct virtio_mdev_device *vm_dev = to_virtio_mdev_device(vdev);
-> +	struct mdev_device *mdev = vm_get_mdev(vdev);
-> +	const struct virtio_mdev_device_ops *ops = mdev_get_dev_ops(mdev);
-> +	struct virtio_mdev_callback cb;
-> +	int i, err, queue_idx = 0;
-> +
-> +	vm_dev->vqs = kmalloc_array(queue_idx, sizeof(*vm_dev->vqs),
-> +				    GFP_KERNEL);
+Cheers,
 
-kmalloc_array(0, ...)?  I would have expected nvqs instead of queue_idx
-(0).
+ - Dan
 
-What is this the purpose of vm_dev->vqs and does anything ever access it?
-
---ftEhullJWpWg/VHq
+--cNdxnHkX5QqsyA0e
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl2kst4ACgkQnKSrs4Gr
-c8hQqggAsLqAScuEZRHgMYUxIlc4Hpdh283rOQFgRgPfZqq3hQ/nzKTqbn1k7DnZ
-MaXQk/GXc1/mFzEwjGVoMOJ+NiZKpj5xuVN9HqKEuDuBooykO5wKnbwkm6kAs/gG
-/10A4I5fkyOUHB+xRkaM/3g9UJgo/yB/oI7yQonKFI3VNQc/Q0vcAWUkUbyoZyZA
-WO5IJoOR9nF7g6kkYLT0ik26WZFVsBruKTsifLsCJTCQMWo8dJpvgJpGvo/k07YZ
-kWYC8J+K/SRA9gpvDBCfkPRQGMgq7CiE0C+VfoGVo11TuFd6FlkjjYmBIPXYek98
-rK1ONn6f4qY+67eRJ77oiNeFsj4eYw==
-=7Qm5
+iQIzBAEBCAAdFiEEF5dO2RaKc5C+SCJ9RcSmUsR+QqUFAl2kr/cACgkQRcSmUsR+
+QqWFXg/9FsPJaiW55rPeVJ+BAFKW2BQd/QKN+TynZB/aEydTO/ohevd2G/u2C2Ak
+4z1zFgAqBumsGcEeoy7P1PpIaqLiJ1WBOr4H87bGGIRvjHvyTVStldh6hIQ/k7PI
+WbK9+no+FJ/Wwjgdcyty1Ni6lp8shMtJexTynIeymvYPKnC9LvdUp5buGe7FylRS
+F69iFget4xN9QciFFr27mq0wx+RtSOM5L42stvTjz8SBj/TMTUt9ROuwgr3TlPUN
+lUJT+nOQAhZZPT4vXsAgte5D2Fl+KmOi459cmqoshotihZnmZRmWYgLHpKFM4dju
+AEl4acLIMopFdBM9jFBJCLBb/lQbIlX3mf4E6rR2bBGt49Vc3x/yGKgddj9s+wyp
+8Xq5rlAplIZf+enrooHLxAXeUM2I1IizdZooGFY00zAXo7ZxpwNcyvL2g4iC/ezY
+wuNjaKuboGWCLbnKYi5CJrTSTUSt8pqVH+KFm58W5gPQrW2ZwFilDZYs1ZqM2inM
+/hhGAgBHP0U7p7cQZr4jr+qp6Idinns3RQCsYcZv1iRre4MSnmx3B5i7iOjjzlcn
+HCofz25ssaz6fDOA1bRhl6bhPhlXeQ5JGc+q1ELIp4Bawoc/05LtAPznIOlBEEqj
+UMO5CAycCKUG5FdtrTLXOYaHOsYHM9biuBKIuXd/ZxipDQ/VSQA=
+=36QZ
 -----END PGP SIGNATURE-----
 
---ftEhullJWpWg/VHq--
+--cNdxnHkX5QqsyA0e--
+
