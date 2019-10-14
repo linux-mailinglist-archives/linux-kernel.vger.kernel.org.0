@@ -2,195 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8EAED6618
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:29:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CFF0D661C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:30:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387513AbfJNP35 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 11:29:57 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39684 "EHLO mx1.redhat.com"
+        id S2387542AbfJNPaG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 11:30:06 -0400
+Received: from foss.arm.com ([217.140.110.172]:46950 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729905AbfJNP34 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 11:29:56 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 22CA9308FB9A;
-        Mon, 14 Oct 2019 15:29:56 +0000 (UTC)
-Received: from krava (unknown [10.40.205.218])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 39238196AE;
-        Mon, 14 Oct 2019 15:29:54 +0000 (UTC)
-Date:   Mon, 14 Oct 2019 17:29:53 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Changbin Du <changbin.du@gmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] perf: add support for logging debug messages to
- file
-Message-ID: <20191014152953.GD9700@krava>
-References: <20191008123554.6796-1-changbin.du@gmail.com>
- <20191008123554.6796-3-changbin.du@gmail.com>
+        id S2387516AbfJNPaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 11:30:03 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EB9C028;
+        Mon, 14 Oct 2019 08:30:02 -0700 (PDT)
+Received: from dawn-kernel.cambridge.arm.com (unknown [10.1.197.116])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 25D5B3F68E;
+        Mon, 14 Oct 2019 08:30:02 -0700 (PDT)
+Subject: Re: [PATCH] arm64: cpufeature: Don't expose ZFR0 to userspace when
+ SVE is not enabled
+To:     Julien Grall <julien.grall@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     catalin.marinas@arm.com, will@kernel.org, Dave.Martin@arm.com
+References: <20191014102113.16546-1-julien.grall@arm.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <82ee2a7c-1061-f954-4ff1-3dfb94ec3419@arm.com>
+Date:   Mon, 14 Oct 2019 16:30:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191008123554.6796-3-changbin.du@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 14 Oct 2019 15:29:56 +0000 (UTC)
+In-Reply-To: <20191014102113.16546-1-julien.grall@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 08:35:54PM +0800, Changbin Du wrote:
-> When in TUI mode, it is impossible to show all the debug messages to
-> console. This make it hard to debug perf issues using debug messages.
-> This patch adds support for logging debug messages to file to resolve
-> this problem.
-> 
-> The usage is:
-> perf -debug verbose=2,file=~/perf.log COMMAND
-> 
-> Signed-off-by: Changbin Du <changbin.du@gmail.com>
-> 
-> --
-> v4: fix another segfault.
-> v3: fix a segfault issue.
+Hi Julien,
 
-hi,
-no crash this time ;-) some questions below
+Some minor nits in the description.
 
+On 14/10/2019 11:21, Julien Grall wrote:
+> The kernel may not support SVE if CONFIG_ARM64_SVE is not set and
+> will hide the feature from the from userspace.
+> 
+> Unfortunately, the fields of ID_AA64ZFR0_EL1 are still exposed and could
+> lead to undefined behavior in userspace.
+> 
+> The kernel should not used the register when CONFIG_SVE is disabled.
+
+s/used/use ?
+
+> Therefore, we only need to hidden them from the userspace.
+
+s/hidden/hide ?
+
+With the above:
+
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+
+> 
+> Signed-off-by: Julien Grall <julien.grall@arm.com>
+> Fixes: 06a916feca2b ('arm64: Expose SVE2 features for userspace')
 > ---
->  tools/perf/Documentation/perf.txt | 15 ++++++-----
->  tools/perf/util/debug.c           | 44 ++++++++++++++++++++++++++++---
->  2 files changed, 49 insertions(+), 10 deletions(-)
+>   arch/arm64/kernel/cpufeature.c | 15 ++++++++++-----
+>   1 file changed, 10 insertions(+), 5 deletions(-)
 > 
-> diff --git a/tools/perf/Documentation/perf.txt b/tools/perf/Documentation/perf.txt
-> index c05a94b2488e..a6b19661e5c3 100644
-> --- a/tools/perf/Documentation/perf.txt
-> +++ b/tools/perf/Documentation/perf.txt
-> @@ -16,14 +16,17 @@ OPTIONS
->  	Setup debug variable (see list below) in value
->  	range (0, 10). Use like:
->  	  --debug verbose   # sets verbose = 1
-> -	  --debug verbose=2 # sets verbose = 2
-> +	  --debug verbose=2,file=~/perf.log
-> +	                    # sets verbose = 2 and save log to file
->  
->  	List of debug variables allowed to set:
-> -	  verbose=level		- general debug messages
-> -	  ordered-events=level	- ordered events object debug messages
-> -	  data-convert=level	- data convert command debug messages
-> -	  stderr		- write debug output (option -v) to stderr
-> -				  in browser mode
-> +	  verbose=level         - general debug messages
-> +	  ordered-events=level  - ordered events object debug messages
-> +	  data-convert=level    - data convert command debug messages
-> +	  stderr                - write debug output (option -v) to stderr
-> +	                          in browser mode
-> +	  file=path             - write debug output to log file (stderr and
-> +	                          file options are exclusive)
->  
->  --buildid-dir::
->  	Setup buildid cache directory. It has higher priority than
-> diff --git a/tools/perf/util/debug.c b/tools/perf/util/debug.c
-> index df82ad9cd16d..5cc2479d63ea 100644
-> --- a/tools/perf/util/debug.c
-> +++ b/tools/perf/util/debug.c
-> @@ -6,6 +6,7 @@
->  #include <stdarg.h>
->  #include <stdio.h>
->  #include <stdlib.h>
-> +#include <errno.h>
->  #include <sys/wait.h>
->  #include <api/debug.h>
->  #include <linux/kernel.h>
-> @@ -26,7 +27,7 @@
->  int verbose;
->  bool dump_trace = false, quiet = false;
->  int debug_ordered_events;
-> -static bool redirect_to_stderr;
-> +static FILE *log_file;
->  int debug_data_convert;
->  
->  int veprintf(int level, int var, const char *fmt, va_list args)
-> @@ -34,8 +35,10 @@ int veprintf(int level, int var, const char *fmt, va_list args)
->  	int ret = 0;
->  
->  	if (var >= level) {
-> -		if (use_browser >= 1 && !redirect_to_stderr)
-> +		if (use_browser >= 1 && !log_file)
->  			ui_helpline__vshow(fmt, args);
-> +		else if (log_file)
-> +			ret = vfprintf(log_file, fmt, args);
->  		else
->  			ret = vfprintf(stderr, fmt, args);
->  	}
-> @@ -197,6 +200,24 @@ static int str2loglevel(const char *vstr)
->  	return v;
->  }
->  
-> +static void flush_log(void)
-> +{
-> +	if (log_file)
-> +		fflush(log_file);
-> +}
-> +
-> +static void set_log_output(FILE *f)
-> +{
-> +	if (f == log_file)
-> +		return;
-> +
-> +	if (log_file && log_file != stderr)
-> +		fclose(log_file);
-> +
-> +	log_file = f;
-> +	atexit(flush_log);
-> +}
-> +
->  int perf_debug_option(const char *str)
->  {
->  	char *sep, *vstr;
-> @@ -218,8 +239,23 @@ int perf_debug_option(const char *str)
->  		else if (!strcmp(opt, "data-convert"))
->  			debug_data_convert = str2loglevel(vstr);
->  		else if (!strcmp(opt, "stderr"))
-> -			redirect_to_stderr = true;
-
-do you ned to fflush stderr? I thought it's unbuffered
-
-> -		else {
-> +			set_log_output(stderr);
-> +		else if (!strcmp(opt, "file")) {
-> +			FILE *f;
-> +
-> +			if (!vstr)
-> +				vstr = (char *)"perf.log";
-
-you did not mention in doc that perf.log is default
-
-> +
-> +			f = fopen(vstr, "a");
-> +			if (!f) {
-> +				pr_err("Can not create log file: %s\n",
-> +				       strerror(errno));
-> +				free(dstr);
-> +				return -1;
-> +			}
-> +			fprintf(f, "\n===========perf log===========\n");
-
-is this necessary?
-
-jirka
-
-> +			set_log_output(f);
-> +		} else {
->  			fprintf(stderr, "unkown debug option '%s'\n", opt);
->  			free(dstr);
->  			return -1;
-> -- 
-> 2.20.1
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index cabebf1a7976..80f459ad0190 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -176,11 +176,16 @@ static const struct arm64_ftr_bits ftr_id_aa64pfr1[] = {
+>   };
+>   
+>   static const struct arm64_ftr_bits ftr_id_aa64zfr0[] = {
+> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ZFR0_SM4_SHIFT, 4, 0),
+> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ZFR0_SHA3_SHIFT, 4, 0),
+> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ZFR0_BITPERM_SHIFT, 4, 0),
+> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ZFR0_AES_SHIFT, 4, 0),
+> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ZFR0_SVEVER_SHIFT, 4, 0),
+> +	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_SVE),
+> +		       FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ZFR0_SM4_SHIFT, 4, 0),
+> +	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_SVE),
+> +		       FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ZFR0_SHA3_SHIFT, 4, 0),
+> +	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_SVE),
+> +		       FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ZFR0_BITPERM_SHIFT, 4, 0),
+> +	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_SVE),
+> +		       FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ZFR0_AES_SHIFT, 4, 0),
+> +	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_SVE),
+> +		       FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ZFR0_SVEVER_SHIFT, 4, 0),
+>   	ARM64_FTR_END,
+>   };
+>   
 > 
