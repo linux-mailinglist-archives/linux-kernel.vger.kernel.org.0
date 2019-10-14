@@ -2,245 +2,276 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02495D667E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:50:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63D1AD6687
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:51:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730208AbfJNPuW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 11:50:22 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38629 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730000AbfJNPuW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 11:50:22 -0400
-Received: by mail-lj1-f196.google.com with SMTP id b20so17154017ljj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 08:50:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HhOsQy6UHZi94Qo2wix25ACjhisSG2e6KieU8k6VH3Q=;
-        b=C0zDPBy8mKMNrihW6Sq0nwwwQIZChvyeeM+Dbnsl3m0ERXia0RgQ2VralaYgTsV2rb
-         XO/figIHm4DV1I7V51KkKqqXU5zNAhSKtVFBKblzH+AQbjgHYo/hmCq4Q00DRhgkX301
-         B/xIl+49oYAiJZa73xrXGMqPks7u4JYH3Vn5d6maOgyZArcIUGECCuW2B2lOAC4wXwIb
-         VEJMbW7wmlMB3WX6NVdXOgI0E/CzJ6MMU2XsfeGHlYLb3JixQ5StsB5MqPuBMpJGwZPl
-         kaV0VDMwsM34T3qi1jWJWTOYLLhwy7CZciEDHbr4NHIBqU/ftO8ZT0Sph4tF7yYLDKzm
-         IAFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HhOsQy6UHZi94Qo2wix25ACjhisSG2e6KieU8k6VH3Q=;
-        b=cU0XLWIHBpQDleMTAEUVMo5a6YH8zIcT++i7fV3gnrFX70h0rzCXNE8qgvjpn6nNoN
-         eX8h4Op/jLOqZuJWJw9f7WGjohtAPUep7c7eDrlYXp7CSyqp1G39s/0mLaYwGtIQEpaV
-         YQ1KaRkFtW3GbrOKnKt0zypH/P4CoXr1X+3wBv3pGptKUPhB21XYlivYU+bZB19XAcI9
-         qrYarrYuhKE5w6Tz09uRlXm2IddeJelVClXJhjwbWt+Krg6RlEbdP5bYMMsxWQEQnkdh
-         7YYOyg/uXtlJufnqQpRhXOswHq3q8Cm3sKu2ZQuoHNrNDh8S6kuC1+ZJmhVV6iNoXIIA
-         9TQg==
-X-Gm-Message-State: APjAAAWvM8QpVkU5plTN5QAP5tuja6ysmEFfLehBOYT11ilvtHoOdFjb
-        LeAjW9MIlUNrOh9Da6JTUkFDNPEfNMiF7/RdX+ztpw==
-X-Google-Smtp-Source: APXvYqyGGT4p5iD0whTneLAnUP1BEE6yVINOsWRZ/mAzh6C/av4Aihrjic4w07E8SB/KbIKOL67TvhL/4M/jaV2ewnM=
-X-Received: by 2002:a05:651c:112e:: with SMTP id e14mr18845994ljo.193.1571068217836;
- Mon, 14 Oct 2019 08:50:17 -0700 (PDT)
+        id S1730745AbfJNPuc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 11:50:32 -0400
+Received: from mail-eopbgr80047.outbound.protection.outlook.com ([40.107.8.47]:9758
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730429AbfJNPub (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 11:50:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/gIoCbjfgqtqX+bf6NrJTLFtDvb/O9kJZlsrfNurJFY=;
+ b=IWlm4dFvuW+eglH9+0khhh/Qr1HPbnqtR8NNHxs6OKF3oG/4v3gfjGN3qGeOdceNDHjdxgeKznqXdu0dqjhrtSXCSHgV53pFUIFG69oIBMwG8ths8kwBEZHWj86onJYCIbwIDV/dmwswH0hCmdEKDCnvDd1A0POdv/4+0tnKUJM=
+Received: from VI1PR0802CA0019.eurprd08.prod.outlook.com
+ (2603:10a6:800:aa::29) by AM6PR08MB4740.eurprd08.prod.outlook.com
+ (2603:10a6:20b:ca::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2347.17; Mon, 14 Oct
+ 2019 15:50:25 +0000
+Received: from VE1EUR03FT053.eop-EUR03.prod.protection.outlook.com
+ (2a01:111:f400:7e09::205) by VI1PR0802CA0019.outlook.office365.com
+ (2603:10a6:800:aa::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2347.16 via Frontend
+ Transport; Mon, 14 Oct 2019 15:50:25 +0000
+Authentication-Results: spf=temperror (sender IP is 63.35.35.123)
+ smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
+ header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=none action=none
+ header.from=arm.com;
+Received-SPF: TempError (protection.outlook.com: error in processing during
+ lookup of arm.com: DNS Timeout)
+Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
+ VE1EUR03FT053.mail.protection.outlook.com (10.152.19.198) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.2305.15 via Frontend Transport; Mon, 14 Oct 2019 15:50:23 +0000
+Received: ("Tessian outbound 081de437afc7:v33"); Mon, 14 Oct 2019 15:50:21 +0000
+X-CheckRecipientChecked: true
+X-CR-MTA-CID: 8119e232b0fe8f23
+X-CR-MTA-TID: 64aa7808
+Received: from f04d66514384.1 (ip-172-16-0-2.eu-west-1.compute.internal [104.47.13.51])
+        by 64aa7808-outbound-1.mta.getcheckrecipient.com id B68B8034-31D8-47AA-86D7-01A5309BBCBD.1;
+        Mon, 14 Oct 2019 15:50:14 +0000
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04lp2051.outbound.protection.outlook.com [104.47.13.51])
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id f04d66514384.1
+    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
+    Mon, 14 Oct 2019 15:50:14 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jjRm4oIjgf/3UMpbtjiF5QoTwaxP+RuPM3aSRKC/J0GFkmxhVOdOQaiatDSJpqUtP4N1UKGOO0RiDN0yMFCmIBqjCghhFBrzHmac3Mfee/+s2gpJuhD7L4m7+TAg5gklbUwzkqVvu1WfjcnicS+4ZmU7k0zFZMcbpNedgYprQ7dW/06TJOi1t3kbdaEjvxJnQyhGnSuNJQknepN5OuDz8BSzbPuUaQq0FrAFyUHEqH4XYxJVHv3gM3f3hNTtV1fP51eJHf4ivWTNhBmZS0CfVcJRw1gE+3IhJdUWkfRkfYzhcmVZp125+90HCsj+YHa5xSrrmO9i3dfP590nQ1EvvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ek5v3vIQfWWOoJ30aMK/1wdUl++wjXgDbrSO6LB123A=;
+ b=Mr2FzGgcYk06yULthAlLZVZEFLqJ0wWujo2jyUlhNKE1aMF8UDwcpuemmPgngAp4a9dCS68hesh2ZvzVt6+c1UNb9lg5CUO7D5QghSJrhn/si86crHlUTBS/qyd3R06IWX4r9rHMPdYUlqjP1OAI1U8lFN3BUF0WrEoS4wc9CMB+feWmhz+qs8/kJcoPWFZpk1mubI074xAzWJvBsKKTzJ9hsoXySOZn/dDBkylts8nnPxa5WWCO9UdtO+HWOq7lBU6vx0Ek038EUldWlopS8ZaN8mb4FfFFi1kyyXaEspLj+N20L+ZWwsBbgal73MGDxXkgpkxTpvdR2a+3R48EKQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ek5v3vIQfWWOoJ30aMK/1wdUl++wjXgDbrSO6LB123A=;
+ b=8TaBfm8kOhbfvqcqpKlSYHyA6qcdk3yDmsWpZkwTe/bWqbXwpKsudxymsugfQd8nTV+JD2FqToH/mxFhM59LiXryRBwGt081SdB30/HuXvhyiKEXBHwsTn+AKprBUOGjBl7S93e1CtORK6MwHHgG3fchajFN2dTtWvHHMkWczgM=
+Received: from AM4PR08MB2802.eurprd08.prod.outlook.com (10.171.188.27) by
+ AM4SPR01MB269.eurprd08.prod.outlook.com (10.171.191.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2347.16; Mon, 14 Oct 2019 15:50:12 +0000
+Received: from AM4PR08MB2802.eurprd08.prod.outlook.com
+ ([fe80::f888:998d:df8e:7445]) by AM4PR08MB2802.eurprd08.prod.outlook.com
+ ([fe80::f888:998d:df8e:7445%7]) with mapi id 15.20.2347.021; Mon, 14 Oct 2019
+ 15:50:12 +0000
+From:   Dave P Martin <Dave.Martin@arm.com>
+To:     Suzuki Poulose <Suzuki.Poulose@arm.com>
+CC:     Mark Rutland <Mark.Rutland@arm.com>,
+        Catalin Marinas <Catalin.Marinas@arm.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: Re: [PATCH 1/3] arm64: cpufeature: Fix the type of no FP/SIMD
+ capability
+Thread-Topic: [PATCH 1/3] arm64: cpufeature: Fix the type of no FP/SIMD
+ capability
+Thread-Index: AQHVf45d3fyKFJDtg0OjKsHZE3QEVqdVYdoA///5kQCAADSdgIAAI4OAgASb/gD///42AIAAAUIA
+Date:   Mon, 14 Oct 2019 15:50:11 +0000
+Message-ID: <20191014155009.GM24047@e103592.cambridge.arm.com>
+References: <20191010171517.28782-1-suzuki.poulose@arm.com>
+ <20191010171517.28782-2-suzuki.poulose@arm.com>
+ <20191011113620.GG27757@arm.com>
+ <4ba5c423-4e2a-d810-cd36-32a16ad42c91@arm.com>
+ <20191011142137.GH27757@arm.com>
+ <418b0c4b-cbcd-4263-276d-1e9edc5eee0b@arm.com>
+ <20191014145204.GS27757@arm.com>
+ <12e002e7-42e8-c205-e42c-3348359d2f98@arm.com>
+In-Reply-To: <12e002e7-42e8-c205-e42c-3348359d2f98@arm.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mutt/1.5.23 (2014-03-12)
+x-originating-ip: [217.140.106.54]
+x-clientproxiedby: LO2P265CA0277.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a1::25) To AM4PR08MB2802.eurprd08.prod.outlook.com
+ (2603:10a6:205:7::27)
+Authentication-Results-Original: spf=none (sender IP is )
+ smtp.mailfrom=Dave.Martin@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+X-MS-Office365-Filtering-Correlation-Id: 84d233e5-93f3-4055-5b23-08d750be39dd
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-TrafficTypeDiagnostic: AM4SPR01MB269:|AM4SPR01MB269:|AM6PR08MB4740:
+x-ms-exchange-transport-forked: True
+X-Microsoft-Antispam-PRVS: <AM6PR08MB47406B60172DAD42C8CACF92FE900@AM6PR08MB4740.eurprd08.prod.outlook.com>
+x-checkrecipientrouted: true
+x-ms-oob-tlc-oobclassifiers: OLM:10000;OLM:10000;
+x-forefront-prvs: 01901B3451
+X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(346002)(136003)(396003)(376002)(199004)(189003)(478694002)(81166006)(6486002)(8676002)(81156014)(8936002)(186003)(6512007)(6436002)(52116002)(7736002)(66476007)(66556008)(64756008)(53546011)(386003)(66446008)(66946007)(6506007)(66066001)(76176011)(6862004)(86362001)(6636002)(99286004)(11346002)(476003)(446003)(6246003)(229853002)(486006)(478600001)(25786009)(71190400001)(71200400001)(256004)(4326008)(14444005)(3846002)(1076003)(6116002)(316002)(14454004)(58126008)(102836004)(305945005)(26005)(54906003)(33656002)(2906002)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4SPR01MB269;H:AM4PR08MB2802.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Untrusted: BCL:0;
+X-Microsoft-Antispam-Message-Info-Original: Y83Br3Jmc12ncqAFfysjY4O0c1V1x/SElCo4YIoRT1SpjBMaom7J/C+ZvJykCFZkRNlzZzfCXH7TZSCHdzTeYD7rl/PrtQKSxOrMl8GoNwqprfoftARukvUKGQ/UozZGZ6Y9cynZNHVdls1As4UHPUv+9mecyLWpwxzBo5srqWi0GSi3KKmltNj59Q5rIooiBNXcxepajWBiLIhjjhb8A6qBrax/y0czAMr8hQVqvLmqqwHwzk6M4W4w3Yib68CfFISqhhE3tBVHQZSK5z0wKl+HEWTAhmxh8uofRLGjwDiktNTs7E6UwOPoGnPdoIEuQ4Dfn8vxrINilRdGuUCgl4zrksyvp4vcR1TO80eEkZMpIvQeTk7nG6VqK3XXCJX4eh3Djnj/f2fCWT4kgAZQ2fATryHYEk82Gfe/krpnyrU=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <5A941A56EE2B9D47B90996BFD5A1EE55@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <1571014705-19646-1-git-send-email-thara.gopinath@linaro.org> <1571014705-19646-3-git-send-email-thara.gopinath@linaro.org>
-In-Reply-To: <1571014705-19646-3-git-send-email-thara.gopinath@linaro.org>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Mon, 14 Oct 2019 17:50:06 +0200
-Message-ID: <CAKfTPtD13=7VNvZBt9nMwMTg=_2xfJsEAApfFKagwKikh9g6-Q@mail.gmail.com>
-Subject: Re: [Patch v3 2/7] sched: Add infrastructure to store and update
- instantaneous thermal pressure
-To:     Thara Gopinath <thara.gopinath@linaro.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ionela Voinescu <ionela.voinescu@arm.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Amit Kachhap <amit.kachhap@gmail.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4SPR01MB269
+Original-Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Dave.Martin@arm.com; 
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: VE1EUR03FT053.eop-EUR03.prod.protection.outlook.com
+X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(376002)(346002)(396003)(39860400002)(136003)(199004)(189003)(40434004)(478694002)(6862004)(305945005)(81166006)(3846002)(86362001)(4326008)(6636002)(356004)(33656002)(1076003)(46406003)(58126008)(7736002)(8936002)(76176011)(81156014)(8746002)(36906005)(6116002)(99286004)(6512007)(107886003)(6246003)(6486002)(229853002)(8676002)(316002)(23726003)(54906003)(186003)(26005)(6506007)(386003)(76130400001)(70586007)(22756006)(5024004)(14444005)(53546011)(70206006)(14454004)(446003)(97756001)(11346002)(336012)(26826003)(63350400001)(486006)(47776003)(476003)(126002)(2906002)(50466002)(5660300002)(25786009)(102836004)(66066001)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR08MB4740;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:TempError;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;A:1;MX:1;
+X-MS-Office365-Filtering-Correlation-Id-Prvs: ebbc2d65-6d87-4666-2987-08d750be328c
+X-Forefront-PRVS: 01901B3451
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 2SunpzZo9MDk8qnI9Q4uvdTSSMRcx4bB+NjfMcT0q95U8Pq+1B+VSjy0+qYkRDRFpIRIXsHdUXdOte9UIPv5WdO/X6egjiwyDvXD9FpUsHeVQN1X3VfpUvPjtC9pqm1WTOl3Z7QO8JSvJF6fKCcvg7MHYAQJsf+0FENrPUwV8q7viVtXTO8jRZeGok7YwZyqfulJ5M9fTkTtJhUmDuObLOjLat89oEH5+Ld0IHOlqohB9pScrfsJNlLM7Aiid4NxCPv12V36ZlrFqLQfsxmGrXlVyw0RzFD0g1z4CFw2ZSSaap4z7HngWAlfPvEjRDK50Cx6ttyydmxKRtu1hjZtMZnWlFGVXH3sr20C5Lg/uwD0qxbz3yRwSd4grsUyiA650Z6/S0TIOXYEUcR4/WeizJmKv30NRaeQuIsDrgcnBc4=
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2019 15:50:23.9980
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 84d233e5-93f3-4055-5b23-08d750be39dd
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR08MB4740
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thara,
+On Mon, Oct 14, 2019 at 04:45:40PM +0100, Suzuki K Poulose wrote:
+>
+>
+> On 14/10/2019 15:52, Dave Martin wrote:
+> > On Fri, Oct 11, 2019 at 06:28:43PM +0100, Suzuki K Poulose wrote:
+> >>
+> >>
+> >> On 11/10/2019 15:21, Dave Martin wrote:
+> >>> On Fri, Oct 11, 2019 at 01:13:18PM +0100, Suzuki K Poulose wrote: > H=
+i Dave
+> >>>>
+> >>>> On 11/10/2019 12:36, Dave Martin wrote:
+> >>>>> On Thu, Oct 10, 2019 at 06:15:15PM +0100, Suzuki K Poulose wrote:
+> >>>>>> The NO_FPSIMD capability is defined with scope SYSTEM, which impli=
+es
+> >>>>>> that the "absence" of FP/SIMD on at least one CPU is detected only
+> >>>>>> after all the SMP CPUs are brought up. However, we use the status
+> >>>>>> of this capability for every context switch. So, let us change
+> >>>>>> the scop to LOCAL_CPU to allow the detection of this capability
+> >>>>>> as and when the first CPU without FP is brought up.
+> >>>>>>
+> >>>>>> Also, the current type allows hotplugged CPU to be brought up with=
+out
+> >>>>>> FP/SIMD when all the current CPUs have FP/SIMD and we have the use=
+rspace
+> >>>>>> up. Fix both of these issues by changing the capability to
+> >>>>>> BOOT_RESTRICTED_LOCAL_CPU_FEATURE.
+> >>>>>>
+> >>>>>> Fixes: 82e0191a1aa11abf ("arm64: Support systems without FP/ASIMD"=
+)
+> >>>>>> Cc: Will Deacon <will@kernel.org>
+> >>>>>> Cc: Mark Rutland <mark.rutland@arm.com>
+> >>>>>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> >>>>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> >>>>>> ---
+> >>>>>>   arch/arm64/kernel/cpufeature.c | 2 +-
+> >>>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>>>>
+> >>>>>> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cp=
+ufeature.c
+> >>>>>> index 9323bcc40a58..0f9eace6c64b 100644
+> >>>>>> --- a/arch/arm64/kernel/cpufeature.c
+> >>>>>> +++ b/arch/arm64/kernel/cpufeature.c
+> >>>>>> @@ -1361,7 +1361,7 @@ static const struct arm64_cpu_capabilities a=
+rm64_features[] =3D {
+> >>>>>>        {
+> >>>>>>                /* FP/SIMD is not implemented */
+> >>>>>>                .capability =3D ARM64_HAS_NO_FPSIMD,
+> >>>>>> -              .type =3D ARM64_CPUCAP_SYSTEM_FEATURE,
+> >>>>>> +              .type =3D ARM64_CPUCAP_BOOT_RESTRICTED_CPU_LOCAL_FE=
+ATURE,
+> >>>>>
+> >>>>> ARM64_HAS_NO_FPSIMD is really a disability, not a capability.
+> >>>>>
+> >>>>> Although we have other things that smell like this (CPU errata for
+> >>>>> example), I wonder whether inverting the meaning in the case would
+> >>>>> make the situation easier to understand.
+> >>>>
+> >>>> Yes, it is indeed a disability, more on that below.
+> >>>>
+> >>>>>
+> >>>>> So, we'd have ARM64_HAS_FPSIMD, with a minimum (signed) feature fie=
+ld
+> >>>>> value of 0.  Then this just looks like an ARM64_CPUCAP_SYSTEM_FEATU=
+RE
+> >>>>> IIUC.  We'd just need to invert the sense of the check in
+> >>>>> system_supports_fpsimd().
+> >>>>
+> >>>> This is particularly something we want to avoid with this patch. We =
+want
+> >>>> to make sure that we have the up-to-date status of the disability ri=
+ght
+> >>>> when it happens. i.e, a CPU without FP/SIMD is brought up. With SYST=
+EM_FEATURE
+> >>>> you have to wait until we bring all the CPUs up. Also, for HAS_FPSIM=
+D,
+> >>>> you must wait until all the CPUs are up, unlike the negated capabili=
+ty.
+> >>>
+> >>> I don't see why waiting for the random defective early CPU to come up=
+ is
+> >>> better than waiting for all the early CPUs to come up and then decidi=
+ng.
+> >>>
+> >>> Kernel-mode NEON aside, the status of this cap should not matter unti=
+l
+> >>> we enter userspace for the first time.
+> >>>
+> >>> The only issue is if e.g., crypto drivers that can use kernel-mode NE=
+ON
+> >>> probe for it before all early CPUs are up, and so cache the wrong
+> >>> decision.  The current approach doesn't cope with that anyway AFAICT.
+> >>
+> >> This approach does in fact. With LOCAL_CPU scope, the moment a defecti=
+ve
+> >> CPU turns up, we mark the "capability" and thus the kernel cannot use
+> >> the neon then onwards, unlike the existing case where we have time til=
+l
+> >> we boot all the CPUs (even when the boot CPU may be defective).
+> >
+> > I guess that makes sense.
+> >
+> > I'm now wondering what happens if anything tries to use kernel-mode NEO=
+N
+> > before SVE is initialised -- which doesn't happen until cpufeatures
+> > configures the system features.
+> >
+> > I don't think your proposed change makes anything worse here, but it ma=
+y
+> > need looking into.
+>
+> We could throw in a WARN_ON() in kernel_neon() to make sure that the SVE
+> is initialised ?
 
-On Mon, 14 Oct 2019 at 02:58, Thara Gopinath <thara.gopinath@linaro.org> wrote:
->
-> Add thermal.c and thermal.h files that provides interface
-> APIs to initialize, update/average, track, accumulate and decay
-> thermal pressure per cpu basis. A per cpu structure max_capacity_info is
-> introduced to keep track of instantaneous per cpu thermal pressure.
-> Thermal pressure is the delta between max_capacity and cap_capacity.
-> API update_periodic_maxcap is called for periodic accumulate and decay
-> of the thermal pressure. It is to to be called from a periodic tick
-> function. This API calculates the delta between max_capacity and
-> cap_capacity and passes on the delta to update_thermal_avg to do the
-> necessary accumulate, decay and average. API update_maxcap_capacity is for
-> the system to update the thermal pressure by updating cap_capacity.
-> Considering, update_periodic_maxcap reads cap_capacity and
-> update_maxcap_capacity writes into cap_capacity, one can argue for
-> some sort of locking mechanism to avoid a stale value.
-> But considering update_periodic_maxcap can be called from a system
-> critical path like scheduler tick function, a locking mechanism is not
-> ideal. This means that it is possible the value used to
-> calculate average thermal pressure for a cpu can be stale for upto 1
-> tick period.
->
-> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
-> ---
->  include/linux/sched.h  | 14 +++++++++++
->  kernel/sched/Makefile  |  2 +-
->  kernel/sched/thermal.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++++++
->  kernel/sched/thermal.h | 13 ++++++++++
->  4 files changed, 94 insertions(+), 1 deletion(-)
->  create mode 100644 kernel/sched/thermal.c
->  create mode 100644 kernel/sched/thermal.h
->
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 2c2e56b..875ce2b 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -1983,6 +1983,20 @@ static inline void rseq_syscall(struct pt_regs *regs)
->
->  #endif
->
-> +#ifdef CONFIG_SMP
-> +void update_maxcap_capacity(int cpu, u64 capacity);
-> +
-> +void populate_max_capacity_info(void);
-> +#else
-> +static inline void update_maxcap_capacity(int cpu, u64 capacity)
-> +{
-> +}
-> +
-> +static inline void populate_max_capacity_info(void)
-> +{
-> +}
-> +#endif
-> +
->  const struct sched_avg *sched_trace_cfs_rq_avg(struct cfs_rq *cfs_rq);
->  char *sched_trace_cfs_rq_path(struct cfs_rq *cfs_rq, char *str, int len);
->  int sched_trace_cfs_rq_cpu(struct cfs_rq *cfs_rq);
-> diff --git a/kernel/sched/Makefile b/kernel/sched/Makefile
-> index 21fb5a5..4d3b820 100644
-> --- a/kernel/sched/Makefile
-> +++ b/kernel/sched/Makefile
-> @@ -20,7 +20,7 @@ obj-y += core.o loadavg.o clock.o cputime.o
->  obj-y += idle.o fair.o rt.o deadline.o
->  obj-y += wait.o wait_bit.o swait.o completion.o
->
-> -obj-$(CONFIG_SMP) += cpupri.o cpudeadline.o topology.o stop_task.o pelt.o
-> +obj-$(CONFIG_SMP) += cpupri.o cpudeadline.o topology.o stop_task.o pelt.o thermal.o
->  obj-$(CONFIG_SCHED_AUTOGROUP) += autogroup.o
->  obj-$(CONFIG_SCHEDSTATS) += stats.o
->  obj-$(CONFIG_SCHED_DEBUG) += debug.o
-> diff --git a/kernel/sched/thermal.c b/kernel/sched/thermal.c
-> new file mode 100644
-> index 0000000..5f0b2d4
-> --- /dev/null
-> +++ b/kernel/sched/thermal.c
-> @@ -0,0 +1,66 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Sceduler Thermal Interactions
-> + *
-> + *  Copyright (C) 2018 Linaro, Inc., Thara Gopinath <thara.gopinath@linaro.org>
-> + */
-> +
-> +#include <linux/sched.h>
-> +#include "sched.h"
-> +#include "pelt.h"
-> +#include "thermal.h"
-> +
-> +struct max_capacity_info {
-> +       unsigned long max_capacity;
-> +       unsigned long cap_capacity;
-> +};
-> +
-> +static DEFINE_PER_CPU(struct max_capacity_info, max_cap);
-> +
-> +void update_maxcap_capacity(int cpu, u64 capacity)
-> +{
-> +       struct max_capacity_info *__max_cap;
-> +       unsigned long __capacity;
-> +
-> +       __max_cap = (&per_cpu(max_cap, cpu));
-> +       if (!__max_cap) {
-> +               pr_err("no max_capacity_info structure for cpu %d\n", cpu);
-> +               return;
-> +       }
-> +
-> +       /* Normalize the capacity */
-> +       __capacity = (capacity * arch_scale_cpu_capacity(cpu)) >>
-> +                                                       SCHED_CAPACITY_SHIFT;
-> +       pr_debug("updating cpu%d capped capacity from %lu to %lu\n", cpu, __max_cap->cap_capacity, __capacity);
-> +
-> +       __max_cap->cap_capacity = __capacity;
-> +}
-> +
-> +void populate_max_capacity_info(void)
-> +{
-> +       struct max_capacity_info *__max_cap;
-> +       u64 capacity;
-> +       int cpu;
-> +
-> +       for_each_possible_cpu(cpu) {
-> +               __max_cap = (&per_cpu(max_cap, cpu));
-> +               if (!__max_cap)
-> +                       continue;
-> +               capacity = arch_scale_cpu_capacity(cpu);
-> +               __max_cap->max_capacity = capacity;
-> +               __max_cap->cap_capacity = capacity;
-> +               pr_debug("cpu %d max capacity set to %ld\n", cpu, __max_cap->max_capacity);
-> +       }
-> +}
+Could do, at least as an experiment.
 
-everything above seems to be there for the cpu cooling device and
-should be included in it instead. The scheduler only need the capacity
-capping
-The cpu cooling device should just set the delta capacity in the
-per-cpu variable (see my comment below)
+Ard, do you have any thoughts on this?
 
-> +
-> +void update_periodic_maxcap(struct rq *rq)
-> +{
-> +       struct max_capacity_info *__max_cap = (&per_cpu(max_cap, cpu_of(rq)));
-> +       unsigned long delta;
-> +
-> +       if (!__max_cap)
-> +               return;
-> +
-> +       delta = __max_cap->max_capacity - __max_cap->cap_capacity;
-
-Why don't you just save the delta in the per_cpu variable instead of
-the struct max_capacity_info ? You have to compute the delta every
-tick whereas we can expect it to not change that much compared to the
-number of tick
-
-> +       update_thermal_avg(rq_clock_task(rq), rq, delta);
-> +}
-> diff --git a/kernel/sched/thermal.h b/kernel/sched/thermal.h
-> new file mode 100644
-> index 0000000..5657cb4
-> --- /dev/null
-> +++ b/kernel/sched/thermal.h
-> @@ -0,0 +1,13 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Scheduler thermal interaction internal methods.
-> + */
-> +
-> +#ifdef CONFIG_SMP
-> +void update_periodic_maxcap(struct rq *rq);
-> +
-> +#else
-> +static inline void update_periodic_maxcap(struct rq *rq)
-> +{
-> +}
-> +#endif
-> --
-> 2.1.4
->
+Cheers
+---Dave
+IMPORTANT NOTICE: The contents of this email and any attachments are confid=
+ential and may also be privileged. If you are not the intended recipient, p=
+lease notify the sender immediately and do not disclose the contents to any=
+ other person, use it for any purpose, or store or copy the information in =
+any medium. Thank you.
