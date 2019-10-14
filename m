@@ -2,106 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 814ECD5D0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 10:03:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64FC0D5D18
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 10:05:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730157AbfJNIDd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 04:03:33 -0400
-Received: from mail-eopbgr80083.outbound.protection.outlook.com ([40.107.8.83]:44263
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725936AbfJNIDc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 04:03:32 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dFaigwrMYoPlv6wmn9ArzBfArZNTpR9NZsN2S3A+HLOU7Df7Rpho4Cubpc68PArUPmlp8ZRpczCphJfAvI/fq6DxAm2TGrz5/VW27/uEctvwnQniEIXUBfe/BDdBSn59ltDQVPlRsSfI3dDx9/s6TTW9sqEttl8KzDOEDKedE3BptMEOTCYsEEWGZ79JBDBWyzZ4WYPigIdv/cSxqTO6SNPzzvNfcQJcF/gG7GHXesCt4BZhM8R9vUehBcXGPAHRAGXejtm3YtwUwGtpjorbfOh+WkYA9pjaOYVZqe8ieNFYjYCzx/rbU4NBuubmoAnMf1frs+RBFdwJmRn+5x8edg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mghH0qUr+aorSqe0THnJLTPlSNTh3RUcYxaLM12aSqg=;
- b=ZZJkOTr+p/A2Mp5PzNMP1chgFQ2kzMort4oOlm9q59Po5SdMXyVuzzvxKVjlxPZKK8ejOCAa5C5w1HAwH/yvK4BkQBatNIUOUWb16rGFzlEnIfOel/3+32uCNFIh+cAmjFGEdy4LshEHMbEl2PYVVVJ91gny2xutXNP01k+QEjXmPyni4O3a4WE+hvqzYDB1q88/RfF4YgEx3h6vwc/bLTZDhoExHrXtE1GXOuU7gloSlQaMDNOvXhDHYDqcsdBuupfVVz8bFKA0dGaOU80PSzf4mxMQxXOaacJkbuId//8uzESwLxDMgTwg+dwZSB+m1pdnmV8PXP7yc0uqOtniOw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mghH0qUr+aorSqe0THnJLTPlSNTh3RUcYxaLM12aSqg=;
- b=ei7q9Pw8+3BkU3lr+V0PB6WAdDZf4j2F/jWc/6gGYSAK1QVyKvo1Ktc8oVXETf3C31v/bYBORwlBJd0NvapxqfO2QkpCKn4iURRM83gy99IzcqjdhnlaNJG5rV4+0F379qJYR5LPKz1nP88qgLV+zaQaD0h0wdDxdqn7aSZoPGc=
-Received: from VI1PR04MB6237.eurprd04.prod.outlook.com (20.179.24.74) by
- VI1PR04MB5951.eurprd04.prod.outlook.com (20.178.123.85) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.16; Mon, 14 Oct 2019 08:03:28 +0000
-Received: from VI1PR04MB6237.eurprd04.prod.outlook.com
- ([fe80::79d2:e4fd:999e:51d2]) by VI1PR04MB6237.eurprd04.prod.outlook.com
- ([fe80::79d2:e4fd:999e:51d2%5]) with mapi id 15.20.2347.021; Mon, 14 Oct 2019
- 08:03:28 +0000
-From:   Laurentiu Palcu <laurentiu.palcu@nxp.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "agx@sigxcpu.org" <agx@sigxcpu.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: Re: [PATCH v2 4/5] dt-bindings: display: imx: add bindings for
- DCSS
-Thread-Topic: Re: [PATCH v2 4/5] dt-bindings: display: imx: add bindings for
- DCSS
-Thread-Index: AQHVgmXcD7fEdW9cjEycMUHo/JX/xA==
-Date:   Mon, 14 Oct 2019 08:03:28 +0000
-Message-ID: <20191014080327.GB14065@fsr-ub1664-121>
-References: <1570025100-5634-1-git-send-email-laurentiu.palcu@nxp.com>
- <1570025100-5634-5-git-send-email-laurentiu.palcu@nxp.com>
- <20191011145042.GA15680@bogus>
-In-Reply-To: <20191011145042.GA15680@bogus>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=laurentiu.palcu@nxp.com; 
-x-originating-ip: [89.37.124.34]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 4d4f8dc8-13c3-4863-f606-08d7507cff54
-x-ms-office365-filtering-ht: Tenant
-x-ms-traffictypediagnostic: VI1PR04MB5951:|VI1PR04MB5951:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR04MB5951CB33C3E06507F2EFA00BFF900@VI1PR04MB5951.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1728;
-x-forefront-prvs: 01901B3451
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(4636009)(366004)(346002)(376002)(396003)(39860400002)(136003)(189003)(199004)(6916009)(7416002)(26005)(305945005)(486006)(44832011)(4326008)(316002)(99286004)(76176011)(7736002)(1076003)(54906003)(4744005)(5660300002)(25786009)(11346002)(476003)(2906002)(33656002)(446003)(6506007)(6116002)(3846002)(86362001)(186003)(102836004)(478600001)(256004)(91956017)(81156014)(66946007)(8676002)(81166006)(6512007)(14454004)(9686003)(71190400001)(71200400001)(6436002)(66556008)(66476007)(66446008)(64756008)(229853002)(33716001)(66066001)(6486002)(6246003)(8936002)(76116006);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5951;H:VI1PR04MB6237.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 96R1WNudbfmRGzJC1us6rdE+Rrzr34AJCNDKE1nyzby7agLzgIknfOzboUsgmDvgQW2h2anKnQvRHA44kNp3gyHVxzSZcktdWv9B1rbmo60lzB7661qnIjNl+78x5JvzxTmEJTAhgZIOcMy1Bp0NYxkdtC0A/ApVoqoV6cF6d8wE0gGd4uXLeQRh7voTY0qulkVFGaJNppuVzgrqN1Tbt8rtjJHuELvDu6dklIKpLQHzNJWw5W3kDo6k5o5dj08mgwOTg0Izq7SEzhpZfZDQns3QZ3UmGXzgs1NdiFubZPpsVCvWiVmKEExAxF1HIa6uAAZp/3TlZoFoIEgk1r9P0XTxC6ELAsA6wlAsySGwotcO3W8OHBBN/Q5YecQk2+UEbHBoSwpojK+EmtxS+H8Ve1qMgO4KqR7Q3gOVaZ1tyvg=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3066FF801F56084A93888E509A157F7D@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1730245AbfJNIF1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 04:05:27 -0400
+Received: from mout.web.de ([212.227.15.14]:36661 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725934AbfJNIF1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 04:05:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1571040311;
+        bh=OGjufwiW0pXEZluoeOgHqIAhCn21wMcUPBSvUVvZxmE=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=hPNDOaBRdzhyL9s2TfiV0KGt5MMMwCV/nH11rpfoH8tgxnFO9LKdYycF7EIgSko0p
+         QWzurst2Y4kMv3zO5mKNTTbV+pt7VdSy9JkfF7rIEfyjwKFsxDm5nadpS5+xIxqO+a
+         TlRFRe30J9n79rq62FxJJSYF3d9pKns+0w0pnTHQ=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.135.26.106]) by smtp.web.de (mrweb004
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0LyftH-1hxq520yX9-016BFJ; Mon, 14
+ Oct 2019 10:05:11 +0200
+Subject: Re: clk: samsung: Checking a kmemdup() call in
+ _samsung_clk_register_pll()
+To:     Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
+        Navid Emamdoost <emamd001@umn.edu>,
+        Stephen McCamant <smccaman@umn.edu>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <CGME20191012141739epcas3p31e41c151b30d49c94aeb933aa42dc9f7@epcas3p3.samsung.com>
+ <c1bc5e4d-0802-4485-2c07-248bab2a3330@web.de>
+ <725ace30-a4a7-25dd-2351-f007bb8b35ed@samsung.com>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <ecfa721b-4176-71cb-85de-2aefe0b3d30a@web.de>
+Date:   Mon, 14 Oct 2019 10:05:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d4f8dc8-13c3-4863-f606-08d7507cff54
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Oct 2019 08:03:28.4140
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pIsxVCLvXl77z3Sf9FdPJg8coHy0fLA+0Z+H9EN6vOBWwlTQ5yuzf6WV0xywMFBZSyYoOGUABLjHyFWsUC3MMg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5951
+In-Reply-To: <725ace30-a4a7-25dd-2351-f007bb8b35ed@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:wzczU0IDlNWoj1CKYrjczAsbMgABJicD3urzHjsmqf8lH3lA9Su
+ 3mYY4AEQxrbS8tiBelf4zSLk5dBksNwWJsxUpM70X9ced5E6O6uO2BwPIbKzz/WwpLSKMUZ
+ 1/p1LMJXcJmyXk5mVrGUzUWxKnA8aTkI8b/LyOPP0aNstvBzOborGywUlkzQgc4UWSevY8e
+ hqHDBZGA94BJl2ULSyTcQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:qHVKHWSMC4s=:lmBZuD5jEWPwkI4C6vktrp
+ jqeK0VzlDHkNm4osgm1EIGM96fzYCGroEx1Z73uYnQWT27uwjoIHQnBUpp/Rm0TgOK0yWO/Ox
+ yjJpmrazSp4B6Ugv01choi0O4GmKZQ8BbhKD6icN21aaQ3PdUbJ42fDSel+eNdLpmZseNd8DH
+ UQpmIQ8pmlb7e0j69WX0lEg5cYdxPn9t0fX9ohfODaRCgmY1LXveF4KViyVtuPSCd5mNNXu4p
+ NR36IuHck26RPuRvs6Gr4DfLwLwE/wjKu8/heB5S+CXgCJqqACgO7HsIhf6HvZnfDSCAiRLL3
+ 918cWE9F5V7Jk0bLPKkhnBMl4LpTwBbYGvpuDY082AQxBrMx2fiaV8TOzDu4csz7Fx7NwxhiD
+ bZiLucxSmH+6ctNGTvaGpK/Z0nsYzR6mt8no9szXAydUgpc3VgemOGUhROzlOGDAS0vCFmsN2
+ yojFE62HlGfeT6yaYlFsryKnJ2rA8KMZ3Y1JwRwWiXrJiwSL2siM23jiZP3o5/tcehDPQ/Oj+
+ YNFB5uPYYh5DLb8+AKeaPE2/3rqcevV/ls/l3L3iC6clnF6oAip6pDCtHA9rYfvIxKiGOynaB
+ 6un/iiHzv0aCFHUy1IxP8QdK7XDcQoHwozxL/Ixe6mRtzSHR4jJOKhWG99gNIk0k0nrBNCygd
+ M4n3RBZJseMUPb+G5DODe8+3G7LjyOYLt/aeW3J5mHNSpzsvQxYwKFqdSs7u8cZzxrx26lZN8
+ cClzEBDcvtNwkhIiBDn2ArovvT19q7kUCMD3ogUGg7rRgskFRnWJ2acADc6ZU09YHCpcnv2WD
+ j2hxS+YoRkKCNob9HltLbTyCMNCnGvkhMhQCWvPbw233J9nFhy5NuPJEk5ziDEMMw4TL/9zDh
+ yBa46MShd/QD/yPjH/6I96+vCYmahdYUk27kqSm/GgVSQ21VsNT1Qu/7vDjSXbz9whwVhzG2I
+ 4ruff6RtIOrF5J+gQnreyoTYwh2K5CwOB+mF8CJCG5mToq/8n6gZZMZQ+vxwfy7D1Jyjb1fJC
+ VmdyLpxGqy8b8RhqJDck2B15mQLz5m90HPsqdAUCM5zYhi7KyvJ4Cgmty4z6QzV7PDZOUXAZ1
+ L6hVZh5rgmnCikw2xuA9sr8zz/jHih3nxF6dZ0Wg8pgoM/uWuj9flmlL5Hjnb6wz+sOkJK59q
+ gSTgcOhH+4F5ruaR0Abv/FDaWTSofQ1dNEnybiFRNnnE1HcdTqvjxFplBQt13CHeBdB/OMILF
+ vaUPLfnZvhvDScBMuiDyMCWdOrpzLMWgPwOscRugJvmfMZaZKwwKT45LQmPw=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgUm9iLA0KDQpPbiBGcmksIE9jdCAxMSwgMjAxOSBhdCAwOTo1MDo0MkFNIC0wNTAwLCBSb2Ig
-SGVycmluZyB3cm90ZToNCj4gOnU/d2M/P201P14/456+P300LT8/entiPz8/cj8rP9eAdT8/P9in
-Pz8/PyMXPz8DPz9layA/Pz8/P1c/Sj8/Pz9ePyg/Pz9ofT8/LT8/entiPz8/cj9aPz8/Pys/alcu
-PxpcP2/bindiPyA/dispPz8/P2x/PxpiPx8mPz8sPyY/P86+Pz8/Pz8/Pz8/Pz8/Pz8/P1c/Pz8h
-anged86iP8erPyonPz8reT9ePz9eP006Pz8/cumentatPz8/dT8/cT9reT/bindiPyA/dispPz8/
-P2x/PxpiPx8mPz8sPyY/Pxc/Pz8edT8/Pz/erj8/Pz8bP0c/Pz9oDQoNCk9rISBOb3Qgc3VyZSBo
-b3cgdG8gYWRkcmVzcyB0aGlzIHRob3VnaC4uLiA6KQ0KDQpUaGFua3MsDQpsYXVyZW50aXU=
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/drivers/clk/samsung/clk-pll.c?id=3D1c0cc5f1ae5ee5a6913704c0d75a6e99604ee3=
+0a#n1275
+>> https://protect2.fireeye.com/url?k=3D7e77b0ebee9a0c3e.7e763ba4-43f341fd=
+fe1d32b1&u=3Dhttps://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/clk/=
+samsung/clk-pll.c#L1275
+=E2=80=A6
+> drivers/clk/samsung/clk-pll.c considers the case of 'pll->rate_table is =
+NULL'
+> So, maybe just show the warning message if failed to allocate memory
+> of 'pll->rate_table'.
+
+How do you think about to recheck information sources around
+the Linux allocation failure report?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/coding-style.rst?id=3Dda94001239cceb93c132a31928d6ddc4=
+214862d5#n878
+
+
+> Bu, IMHO, the error handling is necessary in order to support
+> what 'pll_clk->rate_table' isn't NULL.
+
+Can an other error handling strategy make sense at this place?
+
+Regards,
+Markus
