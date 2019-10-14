@@ -2,80 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F9DBD6979
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 20:32:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A500D6982
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 20:34:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388834AbfJNSb4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 14:31:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42800 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388816AbfJNSby (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 14:31:54 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4484DBB80;
-        Mon, 14 Oct 2019 18:31:53 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Robin Murphy <robin.murphy@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Eric Anholt <eric@anholt.net>, Stefan Wahren <wahrenst@gmx.net>
-Cc:     hch@infradead.org, mbrugger@suse.com,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH RFC 5/5] ARM: bcm2711: use dma-direct
-Date:   Mon, 14 Oct 2019 20:31:07 +0200
-Message-Id: <20191014183108.24804-6-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191014183108.24804-1-nsaenzjulienne@suse.de>
-References: <20191014183108.24804-1-nsaenzjulienne@suse.de>
+        id S1730651AbfJNSed (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 14:34:33 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:40294 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729942AbfJNSec (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 14:34:32 -0400
+Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1iK5Ao-0005Xr-Rk; Mon, 14 Oct 2019 20:34:26 +0200
+Date:   Mon, 14 Oct 2019 20:34:15 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Benjamin GAIGNARD <benjamin.gaignard@st.com>
+cc:     "fweisbec@gmail.com" <fweisbec@gmail.com>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>
+Subject: Re: [PATCH] tick: check if broadcast device could really be
+ stopped
+In-Reply-To: <c3565734-05e3-0a9d-1101-92c4be476ae6@st.com>
+Message-ID: <alpine.DEB.2.21.1910142032590.1880@nanos.tec.linutronix.de>
+References: <20191009160246.17898-1-benjamin.gaignard@st.com> <alpine.DEB.2.21.1910141441350.2531@nanos.tec.linutronix.de> <a4b4b785-c471-a3c2-2c41-01bd9865e479@st.com> <alpine.DEB.2.21.1910141535500.2531@nanos.tec.linutronix.de> <16f7e8e9-eefe-5973-a08a-3e1823d20034@st.com>
+ <alpine.DEB.2.21.1910141620100.2531@nanos.tec.linutronix.de> <c3565734-05e3-0a9d-1101-92c4be476ae6@st.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Raspberry Pi 4 supports up to 4GB of memory yet most of its devices
-are only able to address the fist GB. Enable dma-direct for that board
-in order to benefit from swiotlb's bounce buffering mechanism.
+On Mon, 14 Oct 2019, Benjamin GAIGNARD wrote:
+> On 10/14/19 4:28 PM, Thomas Gleixner wrote:
+> > Unless you have a solution which works under all circumstances (and the
+> > current patch definitely does not) then you have to deal with the
+> > requirement of the broadcast timer (either physical or software based).
+> 
+> If I follow you I need, for my system, a software based broadcast timer 
+> (tick-broadcast-hrtimer ?).
 
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
----
- arch/arm/mach-bcm/Kconfig   | 1 +
- arch/arm/mach-bcm/bcm2711.c | 1 +
- 2 files changed, 2 insertions(+)
+Yes, if you don't have a physical one.
+ 
+> If that is correct I 'just' need to add a call to
+> tick_setup_hrtimer_broadcast() in arch/arm/kernel/time.c
 
-diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
-index e4e25f287ad7..fd7d725d596c 100644
---- a/arch/arm/mach-bcm/Kconfig
-+++ b/arch/arm/mach-bcm/Kconfig
-@@ -163,6 +163,7 @@ config ARCH_BCM2835
- 	select ARM_ERRATA_411920 if ARCH_MULTI_V6
- 	select ARM_GIC if ARCH_MULTI_V7
- 	select ZONE_DMA if ARCH_MULTI_V7
-+	select SWIOTLB if ARCH_MULTI_V7
- 	select ARM_TIMER_SP804
- 	select HAVE_ARM_ARCH_TIMER if ARCH_MULTI_V7
- 	select TIMER_OF
-diff --git a/arch/arm/mach-bcm/bcm2711.c b/arch/arm/mach-bcm/bcm2711.c
-index dbe296798647..67d98cb0533f 100644
---- a/arch/arm/mach-bcm/bcm2711.c
-+++ b/arch/arm/mach-bcm/bcm2711.c
-@@ -19,6 +19,7 @@ DT_MACHINE_START(BCM2711, "BCM2711")
- #ifdef CONFIG_ZONE_DMA
- 	.dma_zone_size	= SZ_1G,
- #endif
-+	.dma_direct = true,
- 	.dt_compat = bcm2711_compat,
- 	.smp = smp_ops(bcm2836_smp_ops),
- MACHINE_END
--- 
-2.23.0
+Correct.
 
+Thanks,
+
+	tglx
