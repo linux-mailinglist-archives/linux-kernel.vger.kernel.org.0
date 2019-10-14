@@ -2,250 +2,256 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF8D9D6044
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 12:33:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7979ED6041
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 12:33:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731554AbfJNKc6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 06:32:58 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:51700 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731519AbfJNKc4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 06:32:56 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 1BCE92ADD03FD824A3F2;
-        Mon, 14 Oct 2019 18:32:52 +0800 (CST)
-Received: from localhost (10.202.226.61) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Mon, 14 Oct 2019
- 18:32:43 +0800
-Date:   Mon, 14 Oct 2019 11:32:31 +0100
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     Zhangfei Gao <zhangfei.gao@linaro.org>
-CC:     reg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, <grant.likely@arm.com>,
-        jean-philippe <jean-philippe@linaro.org>,
-        <ilias.apalodimas@linaro.org>, <francois.ozog@linaro.org>,
-        <kenneth-lee-2012@foxmail.com>, Wangzhou <wangzhou1@hisilicon.com>,
-        <linux-accelerators@lists.ozlabs.org>,
-        <linux-kernel@vger.kernel.org>,
-        Kenneth Lee <liguozhu@hisilicon.com>,
-        "Zaibo Xu" <xuzaibo@huawei.com>
-Subject: Re: [PATCH v5 2/3] uacce: add uacce driver
-Message-ID: <20191014113231.00002967@huawei.com>
-In-Reply-To: <1571035735-31882-3-git-send-email-zhangfei.gao@linaro.org>
-References: <1571035735-31882-1-git-send-email-zhangfei.gao@linaro.org>
-        <1571035735-31882-3-git-send-email-zhangfei.gao@linaro.org>
-Organization: Huawei
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; i686-w64-mingw32)
+        id S1731530AbfJNKcy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 06:32:54 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39750 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731127AbfJNKcw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 06:32:52 -0400
+Received: by mail-pg1-f196.google.com with SMTP id p12so528388pgn.6;
+        Mon, 14 Oct 2019 03:32:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oUxiYEyAMUiFlWbyACYeVt4wto4jVAv/PYKjqVKaLG8=;
+        b=XICH1u057uohUq/74Alm2nHi/+fOFgDV9WgjiihVfT5Sg76syBDQB3ZizG8huP+Yqk
+         o821IEmlgdEDJyukPm/4YrmYKCkR0RMC0E7iFXRbAWBXXOc9Xl0m3ft6nVju7VuSvJ7B
+         69PzTbwPmu3Rp4LVY8Sk87PE/6NEGvbB5PWT+UbOobPlpn9YcfrulAkpId+OH/Mbe7P3
+         BivHa4t5N5eQKSHmVk+NuQejn4ttzhysNf0KBjesKMH+xz1zduMXH9LdprxgihaPPWnk
+         xyivPrh4aAvXUWB/FL/ZO1as5PHUK91l/iDsn131+Lq4sMUXUpTtsX/qqrqf9ZotcohT
+         13bQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oUxiYEyAMUiFlWbyACYeVt4wto4jVAv/PYKjqVKaLG8=;
+        b=TKj5Eu36VTEFPff/y3Y9JzZdDUrlOJzJ/1b9EV6V/mwlXTe6xrkm0dkv9Dr502JNuX
+         3+nFuSDvvcm5cpnpSvdAwHSvmOI1g7hFDj4/ntazfn8vuoKTg+lKsrt/wVTwv7lRGcDs
+         X69Eisf8XMl/cKxQElKwDYWOr6neIIOW1N2oPGt6GvpihLpotX8gADgZtLr3GZP+5g5e
+         5M4OR9uw9BtLY6wnGnBfDugORwyDAHshHBbnQna9N4fx84KRIQbzsoGsZRmacQxRt1+K
+         FAl4NCED3+HRzPA0fLq36QkyRgmBHgWEYHKKowOf3JpInRgzhKDEg+5RihnkexLTZl//
+         Bm9w==
+X-Gm-Message-State: APjAAAXhFwKDgeLn4Q9HBMWfjmD+7bAM4JtvxuStFQIp+9LhtZ7/kIrk
+        G34vvDH/+NSVq0umEzwpoiO+qPLq7NB6Illo/e+rLtFI1CiVBw==
+X-Google-Smtp-Source: APXvYqysfkJBTv2Dw4llgWLXQHvvNBR+K9ynrLKorQlC8QRg5naab0Mh9FSNkA9wPHO01T9BqLztip8qsulciJzZkLU=
+X-Received: by 2002:a63:82:: with SMTP id 124mr33805671pga.112.1571049171202;
+ Mon, 14 Oct 2019 03:32:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.61]
-X-CFilter-Loop: Reflected
+References: <20191014090910.9701-1-jgross@suse.com> <20191014090910.9701-3-jgross@suse.com>
+In-Reply-To: <20191014090910.9701-3-jgross@suse.com>
+From:   Paul Durrant <pdurrant@gmail.com>
+Date:   Mon, 14 Oct 2019 11:32:40 +0100
+Message-ID: <CACCGGhAYRk6gy7dDqP5QqNJBJamT4wSc5muwR0LUoUEVv_O+=g@mail.gmail.com>
+Subject: Re: [PATCH 2/2] xen/netback: cleanup init and deinit code
+To:     Juergen Gross <jgross@suse.com>
+Cc:     xen-devel <xen-devel@lists.xenproject.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Wei Liu <wei.liu@kernel.org>,
+        Paul Durrant <paul@xen.org>,
+        "David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 14 Oct 2019 14:48:54 +0800
-Zhangfei Gao <zhangfei.gao@linaro.org> wrote:
+On Mon, 14 Oct 2019 at 10:09, Juergen Gross <jgross@suse.com> wrote:
+>
+> Do some cleanup of the netback init and deinit code:
+>
+> - add an omnipotent queue deinit function usable from
+>   xenvif_disconnect_data() and the error path of xenvif_connect_data()
+> - only install the irq handlers after initializing all relevant items
+>   (especially the kthreads related to the queue)
+> - there is no need to use get_task_struct() after creating a kthread
+>   and using put_task_struct() again after having stopped it.
+> - use kthread_run() instead of kthread_create() to spare the call of
+>   wake_up_process().
 
-> From: Kenneth Lee <liguozhu@hisilicon.com>
-> 
-> Uacce (Unified/User-space-access-intended Accelerator Framework) targets to
-> provide Shared Virtual Addressing (SVA) between accelerators and processes.
-> So accelerator can access any data structure of the main cpu.
-> This differs from the data sharing between cpu and io device, which share
-> data content rather than address.
-> Since unified address, hardware and user space of process can share the
-> same virtual address in the communication.
-> 
-> Uacce create a chrdev for every registration, the queue is allocated to
-> the process when the chrdev is opened. Then the process can access the
-> hardware resource by interact with the queue file. By mmap the queue
-> file space to user space, the process can directly put requests to the
-> hardware without syscall to the kernel space.
-> 
-> Signed-off-by: Kenneth Lee <liguozhu@hisilicon.com>
-> Signed-off-by: Zaibo Xu <xuzaibo@huawei.com>
-> Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
-> Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
+I guess the reason it was done that way was to ensure that queue->task
+and queue->dealloc_task would be set before the relevant threads
+executed, but I don't see anywhere relying on this so I guess change
+is safe. The rest of it looks fine.
 
-Hi,
+>
+> Signed-off-by: Juergen Gross <jgross@suse.com>
 
-Some superficial comments from me.
+Reviewed-by: Paul Durrant <paul@xen.org>
 
-Thanks,
-
-Jonathan
-
-
-...
-
-> +/*
-> + * While user space releases a queue, all the relatives on the queue
-> + * should be released immediately by this putting.
-
-This one needs rewording but I'm not quite sure what
-relatives are in this case.
- 
-> + */
-> +static long uacce_put_queue(struct uacce_queue *q)
+> ---
+>  drivers/net/xen-netback/interface.c | 114 +++++++++++++++++-------------------
+>  1 file changed, 54 insertions(+), 60 deletions(-)
+>
+> diff --git a/drivers/net/xen-netback/interface.c b/drivers/net/xen-netback/interface.c
+> index 103ed00775eb..68dd7bb07ca6 100644
+> --- a/drivers/net/xen-netback/interface.c
+> +++ b/drivers/net/xen-netback/interface.c
+> @@ -626,6 +626,38 @@ int xenvif_connect_ctrl(struct xenvif *vif, grant_ref_t ring_ref,
+>         return err;
+>  }
+>
+> +static void xenvif_disconnect_queue(struct xenvif_queue *queue)
 > +{
-> +	struct uacce_device *uacce = q->uacce;
+> +       if (queue->tx_irq) {
+> +               unbind_from_irqhandler(queue->tx_irq, queue);
+> +               if (queue->tx_irq == queue->rx_irq)
+> +                       queue->rx_irq = 0;
+> +               queue->tx_irq = 0;
+> +       }
 > +
-> +	mutex_lock(&uacce_mutex);
+> +       if (queue->rx_irq) {
+> +               unbind_from_irqhandler(queue->rx_irq, queue);
+> +               queue->rx_irq = 0;
+> +       }
 > +
-> +	if ((q->state == UACCE_Q_STARTED) && uacce->ops->stop_queue)
-> +		uacce->ops->stop_queue(q);
+> +       if (queue->task) {
+> +               kthread_stop(queue->task);
+> +               queue->task = NULL;
+> +       }
 > +
-> +	if ((q->state == UACCE_Q_INIT || q->state == UACCE_Q_STARTED) &&
-> +	     uacce->ops->put_queue)
-> +		uacce->ops->put_queue(q);
+> +       if (queue->dealloc_task) {
+> +               kthread_stop(queue->dealloc_task);
+> +               queue->dealloc_task = NULL;
+> +       }
 > +
-> +	q->state = UACCE_Q_ZOMBIE;
-> +	mutex_unlock(&uacce_mutex);
+> +       if (queue->napi.poll) {
+> +               netif_napi_del(&queue->napi);
+> +               queue->napi.poll = NULL;
+> +       }
 > +
-> +	return 0;
+> +       xenvif_unmap_frontend_data_rings(queue);
 > +}
 > +
-..
-
+>  int xenvif_connect_data(struct xenvif_queue *queue,
+>                         unsigned long tx_ring_ref,
+>                         unsigned long rx_ring_ref,
+> @@ -651,13 +683,27 @@ int xenvif_connect_data(struct xenvif_queue *queue,
+>         netif_napi_add(queue->vif->dev, &queue->napi, xenvif_poll,
+>                         XENVIF_NAPI_WEIGHT);
+>
+> +       queue->stalled = true;
 > +
-> +static ssize_t qfrs_size_show(struct device *dev,
-> +				struct device_attribute *attr, char *buf)
-> +{
-> +	struct uacce_device *uacce = to_uacce_device(dev);
-> +	unsigned long size;
-> +	int i, ret;
+> +       task = kthread_run(xenvif_kthread_guest_rx, queue,
+> +                          "%s-guest-rx", queue->name);
+> +       if (IS_ERR(task))
+> +               goto kthread_err;
+> +       queue->task = task;
 > +
-> +	for (i = 0, ret = 0; i < UACCE_QFRT_MAX; i++) {
-> +		size = uacce->qf_pg_size[i] << PAGE_SHIFT;
-> +		if (i == UACCE_QFRT_SS)
-> +			break;
-> +		ret += sprintf(buf + ret, "%lu\t", size);
-> +	}
-> +	ret += sprintf(buf + ret, "%lu\n", size);
+> +       task = kthread_run(xenvif_dealloc_kthread, queue,
+> +                          "%s-dealloc", queue->name);
+> +       if (IS_ERR(task))
+> +               goto kthread_err;
+> +       queue->dealloc_task = task;
 > +
-> +	return ret;
-> +}
-
-This may break the sysfs rule of one thing per file.  If you have
-multiple regions, they should probably each have their own file
-to give their size.
-
-> +
-> +static DEVICE_ATTR_RO(id);
-> +static DEVICE_ATTR_RO(api);
-> +static DEVICE_ATTR_RO(numa_distance);
-> +static DEVICE_ATTR_RO(node_id);
-> +static DEVICE_ATTR_RO(flags);
-> +static DEVICE_ATTR_RO(available_instances);
-> +static DEVICE_ATTR_RO(algorithms);
-> +static DEVICE_ATTR_RO(qfrs_size);
-> +
-> +static struct attribute *uacce_dev_attrs[] = {
-> +	&dev_attr_id.attr,
-> +	&dev_attr_api.attr,
-> +	&dev_attr_node_id.attr,
-> +	&dev_attr_numa_distance.attr,
-> +	&dev_attr_flags.attr,
-> +	&dev_attr_available_instances.attr,
-> +	&dev_attr_algorithms.attr,
-> +	&dev_attr_qfrs_size.attr,
-> +	NULL,
-> +};
-> +ATTRIBUTE_GROUPS(uacce_dev);
-> +
-...
-
-> +
-> +/**
-> + * uacce_unregister - unregisters a uacce
-> + * @uacce: the accelerator to unregister
-> + *
-> + * Unregister an accelerator that wat previously successully registered with
-
-wat -> was
-successully -> successfully
-
-
-> + * uacce_register().
-> + */
-> +void uacce_unregister(struct uacce_device *uacce)
-> +{
-> +	mutex_lock(&uacce_mutex);
-> +
-> +	if (uacce->flags & UACCE_DEV_SVA)
-> +		iommu_dev_disable_feature(uacce->pdev, IOMMU_DEV_FEAT_SVA);
-> +
-> +	uacce_unset_iommu_domain(uacce);
-> +	cdev_device_del(uacce->cdev, &uacce->dev);
-> +	idr_remove(&uacce_idr, uacce->dev_id);
-> +	put_device(&uacce->dev);
-> +
-> +	mutex_unlock(&uacce_mutex);
-> +}
-> +EXPORT_SYMBOL_GPL(uacce_unregister);
-> +
-...
-> diff --git a/include/linux/uacce.h b/include/linux/uacce.h
-> new file mode 100644
-> index 0000000..9137f3d
-> --- /dev/null
-> +++ b/include/linux/uacce.h
-> @@ -0,0 +1,167 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> +#ifndef _LINUX_UACCE_H
-> +#define _LINUX_UACCE_H
-> +
-> +#include <linux/cdev.h>
-> +#include <uapi/misc/uacce/uacce.h>
-> +
-> +#define UACCE_NAME		"uacce"
-> +
-> +struct uacce_queue;
-> +struct uacce_device;
-> +
-> +/* uacce queue file flag, requires different operation */
-> +#define UACCE_QFRF_MAP		BIT(0)	/* map to current queue */
-> +#define UACCE_QFRF_MMAP		BIT(1)	/* map to user space */
-> +#define UACCE_QFRF_KMAP		BIT(2)	/* map to kernel space */
-> +#define UACCE_QFRF_DMA		BIT(3)	/* use dma api for the region */
-> +#define UACCE_QFRF_SELFMT	BIT(4)	/* self maintained qfr */
-> +
-
-...
-
-> +/**
-> + * struct uacce_queue
-> + * @uacce: pointer to uacce
-> + * @priv: private pointer
-> + * @wait: wait queue head
-> + * @pasid: pasid of the queue
-> + * @handle: iommu_sva handle return from iommu_sva_bind_device
-> + * @list: share list for qfr->qs
-> + * @mm: current->mm
-> + * @qfrs: pointer of qfr regions
-
-Missing state.  Make sure to run
-./scripts/kernel-doc FILENAME > /dev/null and
-fix any errors that show up.
-
-> + */
-> +struct uacce_queue {
-> +	struct uacce_device *uacce;
-> +	void *priv;
-> +	wait_queue_head_t wait;
-> +	int pasid;
-> +	struct iommu_sva *handle;
-> +	struct list_head list;
-> +	struct mm_struct *mm;
-> +	struct uacce_qfile_region *qfrs[UACCE_QFRT_MAX];
-> +	enum uacce_q_state state;
-> +};
-...
-
-Thanks,
-
-Jonathan
-
+>         if (tx_evtchn == rx_evtchn) {
+>                 /* feature-split-event-channels == 0 */
+>                 err = bind_interdomain_evtchn_to_irqhandler(
+>                         queue->vif->domid, tx_evtchn, xenvif_interrupt, 0,
+>                         queue->name, queue);
+>                 if (err < 0)
+> -                       goto err_unmap;
+> +                       goto err;
+>                 queue->tx_irq = queue->rx_irq = err;
+>                 disable_irq(queue->tx_irq);
+>         } else {
+> @@ -668,7 +714,7 @@ int xenvif_connect_data(struct xenvif_queue *queue,
+>                         queue->vif->domid, tx_evtchn, xenvif_tx_interrupt, 0,
+>                         queue->tx_irq_name, queue);
+>                 if (err < 0)
+> -                       goto err_unmap;
+> +                       goto err;
+>                 queue->tx_irq = err;
+>                 disable_irq(queue->tx_irq);
+>
+> @@ -678,47 +724,18 @@ int xenvif_connect_data(struct xenvif_queue *queue,
+>                         queue->vif->domid, rx_evtchn, xenvif_rx_interrupt, 0,
+>                         queue->rx_irq_name, queue);
+>                 if (err < 0)
+> -                       goto err_tx_unbind;
+> +                       goto err;
+>                 queue->rx_irq = err;
+>                 disable_irq(queue->rx_irq);
+>         }
+>
+> -       queue->stalled = true;
+> -
+> -       task = kthread_create(xenvif_kthread_guest_rx,
+> -                             (void *)queue, "%s-guest-rx", queue->name);
+> -       if (IS_ERR(task)) {
+> -               pr_warn("Could not allocate kthread for %s\n", queue->name);
+> -               err = PTR_ERR(task);
+> -               goto err_rx_unbind;
+> -       }
+> -       queue->task = task;
+> -       get_task_struct(task);
+> -
+> -       task = kthread_create(xenvif_dealloc_kthread,
+> -                             (void *)queue, "%s-dealloc", queue->name);
+> -       if (IS_ERR(task)) {
+> -               pr_warn("Could not allocate kthread for %s\n", queue->name);
+> -               err = PTR_ERR(task);
+> -               goto err_rx_unbind;
+> -       }
+> -       queue->dealloc_task = task;
+> -
+> -       wake_up_process(queue->task);
+> -       wake_up_process(queue->dealloc_task);
+> -
+>         return 0;
+>
+> -err_rx_unbind:
+> -       unbind_from_irqhandler(queue->rx_irq, queue);
+> -       queue->rx_irq = 0;
+> -err_tx_unbind:
+> -       unbind_from_irqhandler(queue->tx_irq, queue);
+> -       queue->tx_irq = 0;
+> -err_unmap:
+> -       xenvif_unmap_frontend_data_rings(queue);
+> -       netif_napi_del(&queue->napi);
+> +kthread_err:
+> +       pr_warn("Could not allocate kthread for %s\n", queue->name);
+> +       err = PTR_ERR(task);
+>  err:
+> +       xenvif_disconnect_queue(queue);
+>         return err;
+>  }
+>
+> @@ -746,30 +763,7 @@ void xenvif_disconnect_data(struct xenvif *vif)
+>         for (queue_index = 0; queue_index < num_queues; ++queue_index) {
+>                 queue = &vif->queues[queue_index];
+>
+> -               netif_napi_del(&queue->napi);
+> -
+> -               if (queue->task) {
+> -                       kthread_stop(queue->task);
+> -                       put_task_struct(queue->task);
+> -                       queue->task = NULL;
+> -               }
+> -
+> -               if (queue->dealloc_task) {
+> -                       kthread_stop(queue->dealloc_task);
+> -                       queue->dealloc_task = NULL;
+> -               }
+> -
+> -               if (queue->tx_irq) {
+> -                       if (queue->tx_irq == queue->rx_irq)
+> -                               unbind_from_irqhandler(queue->tx_irq, queue);
+> -                       else {
+> -                               unbind_from_irqhandler(queue->tx_irq, queue);
+> -                               unbind_from_irqhandler(queue->rx_irq, queue);
+> -                       }
+> -                       queue->tx_irq = 0;
+> -               }
+> -
+> -               xenvif_unmap_frontend_data_rings(queue);
+> +               xenvif_disconnect_queue(queue);
+>         }
+>
+>         xenvif_mcast_addr_list_free(vif);
+> --
+> 2.16.4
+>
