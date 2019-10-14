@@ -2,79 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02DA4D5B85
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 08:40:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07E52D5B91
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 08:41:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730173AbfJNGjg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 02:39:36 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:59293 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726406AbfJNGjf (ORCPT
+        id S1730179AbfJNGlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 02:41:24 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:35692 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729656AbfJNGlY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 02:39:35 -0400
-X-UUID: ed55d01c9188469f805706ca7db98295-20191014
-X-UUID: ed55d01c9188469f805706ca7db98295-20191014
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <yong.wu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1114695393; Mon, 14 Oct 2019 14:39:30 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 14 Oct 2019 14:39:27 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 14 Oct 2019 14:39:26 +0800
-From:   Yong Wu <yong.wu@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Will Deacon <will.deacon@arm.com>
-CC:     Evan Green <evgreen@chromium.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Tomasz Figa <tfiga@google.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, <yong.wu@mediatek.com>,
-        <youlin.pei@mediatek.com>, Nicolas Boichat <drinkcat@chromium.org>,
-        <anan.sun@mediatek.com>, <cui.zhang@mediatek.com>,
-        <chao.hao@mediatek.com>, <edison.hsieh@mediatek.com>
-Subject: [PATCH v3 7/7] iommu/mediatek: Reduce the tlb flush timeout value
-Date:   Mon, 14 Oct 2019 14:38:21 +0800
-Message-ID: <1571035101-4213-8-git-send-email-yong.wu@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1571035101-4213-1-git-send-email-yong.wu@mediatek.com>
-References: <1571035101-4213-1-git-send-email-yong.wu@mediatek.com>
+        Mon, 14 Oct 2019 02:41:24 -0400
+Received: by mail-oi1-f196.google.com with SMTP id x3so12875489oig.2;
+        Sun, 13 Oct 2019 23:41:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YmHAlPJNVe0RaMoOleYG+ZxdJLOlVMYXDAcLrgl89ew=;
+        b=mMjClXjIlgilzv9aeGNBsGfFREt8uBuy3j8ZKIq/wY8sXbYaQTQvxLGnjPDrDocKTD
+         wMq0fV7nJTR97D5gFOQc/ji3PG88ob2rB//dwaBiX/gfeuQtjj74mSUu8XDS2xzcIYeV
+         +RAnk4lx8sq08f4Iz0P8GqXgxWCxN1yV1knHo7uD7sk9lewDFH9hhgypQAG2xUOmHGnY
+         9+Mzywr4uxih/KniumVh48LCK7Lt8CU5M1qHeqqzcuuzM4jZYm0yqyDjBzq94AgAybRI
+         je6bTakz4LXDmW+jZc7ZLD9zOUgbYpwhm3ZGyROU+Kv7ou+sxmrQGa7UZEdmewenFS/y
+         fstg==
+X-Gm-Message-State: APjAAAXUViP67+EHTB+Hr05nv/rSpmQkmeJ8gVS22b8con4vyyqvUGIH
+        0rISuZ1laKLyQCdcjLzNYwlNA5EZvJbZ0v/VzaI=
+X-Google-Smtp-Source: APXvYqzE0ltBaWgdjMHwdV0pHZ9UuO8beeBBO703E9xjvPug1OfxEJ9ZMzOEEO9Q1xUOr3wRPwgpZKZOEMMMFsr1Hpk=
+X-Received: by 2002:aca:cf58:: with SMTP id f85mr22254983oig.153.1571035281478;
+ Sun, 13 Oct 2019 23:41:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 48748A048541F6C83B435A62F409553627F6DD0F6DA3E74D7B897F19B48032702000:8
-X-MTK:  N
+References: <20191013185643.GA2583@localhost.localdomain>
+In-Reply-To: <20191013185643.GA2583@localhost.localdomain>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 14 Oct 2019 08:41:10 +0200
+Message-ID: <CAMuHMdVa_UaaKEf5sSDs+8AWJL7=X5JVPWuW23qtWqK9fpEecA@mail.gmail.com>
+Subject: Re: [PATCH v1] Ask user input only when CONFIG_X86 or
+ CONFIG_COMPILE_TEST is set to y
+To:     Narendra K <Narendra.K@dell.com>
+Cc:     linux-efi <linux-efi@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Mario Limonciello <Mario.Limonciello@dell.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        James Morse <james.morse@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reduce the tlb timeout value from 100000us to 1000us. the original value
-is so long that affect the multimedia performance. This is only a minor
-improvement rather than fixing a issue.
+Hi Narendra,
 
-Signed-off-by: Yong Wu <yong.wu@mediatek.com>
----
- drivers/iommu/mtk_iommu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Sun, Oct 13, 2019 at 8:57 PM <Narendra.K@dell.com> wrote:
+> From: Narendra K <Narendra.K@dell.com>
+>
+> For the EFI_RCI2_TABLE kconfig option, 'make oldconfig' asks the user
+> for input on platforms where the option may not be applicable. This patch
+> modifies the kconfig option to ask the user for input only when CONFIG_X86
+> or CONFIG_COMPILE_TEST is set to y.
+>
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Fix-suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-index d285457..c9d49af 100644
---- a/drivers/iommu/mtk_iommu.c
-+++ b/drivers/iommu/mtk_iommu.c
-@@ -191,7 +191,7 @@ static void mtk_iommu_tlb_flush_range_sync(unsigned long iova, size_t size,
- 
- 		/* tlb sync */
- 		ret = readl_poll_timeout_atomic(data->base + REG_MMU_CPE_DONE,
--						tmp, tmp != 0, 10, 100000);
-+						tmp, tmp != 0, 10, 1000);
- 		if (ret) {
- 			dev_warn(data->dev,
- 				 "Partial TLB flush timed out, falling back to full flush\n");
+Suggested-by: ...?
+
+> Signed-off-by: Narendra K <Narendra.K@dell.com>
+
+Thanks for your patch!
+
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-1.9.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
