@@ -2,69 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8274FD65A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 16:55:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C13AD65A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 16:55:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733102AbfJNOxY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 10:53:24 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45448 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733046AbfJNOxX (ORCPT
+        id S1733125AbfJNOxm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 10:53:42 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:38648 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733085AbfJNOxl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 10:53:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=aprOO2dgw1K43UzA/6LtwK92aryQcTNoIiM6Tk9Yuj0=; b=GcuQCSLcFZ4lgc/il9+oqzW/f
-        4gUDA7S7Z3j1/6y7jQ6vbvJ/yTshB+YvutZLbxbH42VvXA8GhmXqbu24MXfUbEx1gAHSBwk8pNxO0
-        QhXBbHHTtG5VRp9B5aDLijCZOmeDl+Q297LtT3NlY4DEvUV2ofghK2Xl/ebBLzJJSoqWyYwlpL5xd
-        O2klhThUbQeYjh99M8U2dNfLzg0EzhSHj/4C4croiVT4MCZcBOB7EiRose7VfbheFjKGuu9e8oFrO
-        /PtXVv9l9jdhywElSitniWBwbkWbakeT5IGI+MMt6gF2nneH8KPI008DHYaqVjdJslanDH8BHjgXJ
-        2dZSJLjZg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iK1in-0002Bn-Rb; Mon, 14 Oct 2019 14:53:18 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C4EB4305BD3;
-        Mon, 14 Oct 2019 16:52:21 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D959A2023039A; Mon, 14 Oct 2019 16:53:15 +0200 (CEST)
-Date:   Mon, 14 Oct 2019 16:53:15 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Douglas RAILLARD <douglas.raillard@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        mingo@redhat.com, rjw@rjwysocki.net, viresh.kumar@linaro.org,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, qperret@qperret.net,
-        patrick.bellasi@matbug.net, dh.han@samsung.com
-Subject: Re: [RFC PATCH v3 0/6] sched/cpufreq: Make schedutil energy aware
-Message-ID: <20191014145315.GZ2311@hirez.programming.kicks-ass.net>
-References: <20191011134500.235736-1-douglas.raillard@arm.com>
+        Mon, 14 Oct 2019 10:53:41 -0400
+Received: by mail-qt1-f193.google.com with SMTP id j31so25809066qta.5
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 07:53:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google;
+        h=date:from:to:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PW4dLGOu0G6vmgzC0OiOGD0cErQ2nKSsOL/RWiAFO5U=;
+        b=cRxAVTCLGwQVzpxkkGI3xpEq9eB35FTosT9zUTaFO98lmY9LYe61TmdjvWvNyq1bF1
+         fU+caLmvr2eX60OFJmQQXudIZ/yvbE7rChdr2JJ4CJYl+H4Fx8SH+3ktrWQ0v+g8stPQ
+         t6VAd5zuydGWSKG+CaJ9HMtwNsDy74/VQqVtBcehCw3J3NFVldOR40wUsh3Sl0yx2rvB
+         Mdpk3RLXgsX7HaZSsRz9SdkvFEfPJMaYy6mFAtvQsppmX7yifZOszzgtwI+i1lR/pdbx
+         xrlXvqU5th1+RSDNsPdu836nIQDIpQepahEuXF/Jny8jEm4vBMNMurEZCQGvGrrlRzQM
+         WIXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PW4dLGOu0G6vmgzC0OiOGD0cErQ2nKSsOL/RWiAFO5U=;
+        b=iTZG5LuHMC8T9/VmwNV69+n0lwDENSnl9NG6vra2NO13y785DVk2UETMA5MEL1w6US
+         in9m7jPMxogjbwbRKb4f066y9dbx512rkuKexxUdGDMkXvD5rAEqZzO11ty4VmAf1gfD
+         l2QpYEPQq1jTLuvupHIqs9OqHV63nwzCRVS5oTbh4PrXZgUgb2pw8RSBohn45HwDR1aS
+         W6nplwwzV8Po53UjGcx4YTys+AGVTS4ruN/vSXRM6+gcmtOlFFmsjIH8WyYaqigufYvT
+         9xutTHbJ5KUPn0aVLQ0RSXH0gnLb5heu3RO/RD9Xv0u2aNnfKNfgdDC/YoKSLkE3TxZL
+         lcZA==
+X-Gm-Message-State: APjAAAUsfCmqGAI6/Ilp8smNN6SWtBv+dju0Om616GxcUdFI8oH7kN8L
+        5k8YI5vt4Aw6oC9NPVy4VBu3oHUg3Sc=
+X-Google-Smtp-Source: APXvYqyjHl+VvE+l5oagDo8fcPwf+f3sMtn5/JVWfT9V7LYxkEutHjZ5jV7ENvkRMxVpMDHTN/tlYQ==
+X-Received: by 2002:ac8:29c8:: with SMTP id 8mr31511933qtt.32.1571064821043;
+        Mon, 14 Oct 2019 07:53:41 -0700 (PDT)
+Received: from soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net ([40.117.208.181])
+        by smtp.gmail.com with ESMTPSA id h68sm7959128qkd.35.2019.10.14.07.53.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2019 07:53:40 -0700 (PDT)
+Date:   Mon, 14 Oct 2019 14:53:38 +0000
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+To:     jmorris@namei.org, sashal@kernel.org, linux-kernel@vger.kernel.org,
+        catalin.marinas@arm.com, will@kernel.org, steve.capper@arm.com,
+        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
+        james.morse@arm.com, vladimir.murzin@arm.com, mark.rutland@arm.com,
+        tglx@linutronix.de
+Subject: Re: [PATCH] arm64: hibernate: check pgd table allocation
+Message-ID: <20191014145338.hc7dm6ypzvzrgxrw@soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net>
+References: <20191014144824.159061-1-pasha.tatashin@soleen.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191011134500.235736-1-douglas.raillard@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191014144824.159061-1-pasha.tatashin@soleen.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 02:44:54PM +0100, Douglas RAILLARD wrote:
-> This has been ligthly tested with a rtapp task ramping from 10% to 75%
-> utilisation on a big core. Results are improved by fast ramp-up
-> EWMA [1], since it greatly reduces the oscillation in frequency at first
-> idle when ramping up.
+On 19-10-14 10:48:24, Pavel Tatashin wrote:
+> There is a bug in create_safe_exec_page(), when page table is allocated
+> it is not checked that table is allocated successfully:
 > 
-> [1] [PATCH] sched/fair: util_est: fast ramp-up EWMA on utilization increases
->     Message-ID: <20190620150555.15717-1-patrick.bellasi@arm.com>
->     https://lore.kernel.org/lkml/20190620150555.15717-1-patrick.bellasi@arm.com/
+> But it is dereferenced in: pgd_none(READ_ONCE(*pgdp)).  Check that
+> allocation was successful.
+> 
+> Fixes: 82869ac57b5d ("arm64: kernel: Add support for hibernate/suspend-to-disk")
+> 
+> Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
 
+Forgot to include nit from James Morse: remove empty lines between tags.
+If required, I will send out an updated patch, otherwise it can be taken
+as is.
 
-I don't really see anything fundamentally weird here. Any actual numbers
-or other means of quantifying the improvement these patches bring?
+Thank you,
+Pasha
