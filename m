@@ -2,86 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDFDBD6602
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:17:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85A7CD6604
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:18:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387454AbfJNPRW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 11:17:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53208 "EHLO mail.kernel.org"
+        id S2387460AbfJNPSf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 11:18:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53318 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732397AbfJNPRW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 11:17:22 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1732422AbfJNPSf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 11:18:35 -0400
+Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3BAC120854;
-        Mon, 14 Oct 2019 15:17:21 +0000 (UTC)
-Date:   Mon, 14 Oct 2019 11:17:19 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Miroslav Benes <mbenes@suse.cz>
-Cc:     mingo@redhat.com, jpoimboe@redhat.com, jikos@kernel.org,
-        pmladek@suse.com, joe.lawrence@redhat.com,
-        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
-Subject: Re: [PATCH v2] ftrace: Introduce PERMANENT ftrace_ops flag
-Message-ID: <20191014111719.141bd4fa@gandalf.local.home>
-In-Reply-To: <20191014105923.29607-1-mbenes@suse.cz>
-References: <20191014105923.29607-1-mbenes@suse.cz>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DA6A20854;
+        Mon, 14 Oct 2019 15:18:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571066314;
+        bh=ALQ5UxywvT//9lJbbkXZTePou3aJF/KOrmc5NuILAzA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ipcAyOIkQUw8FOCSpqQIXtDBtmugpggpjixPI+iKZz9DGOR6RYat4PZa2gKKmimhW
+         0McYtPtG7QRKI5KFh2nJ9O2UTf5K0s80uBqUHoaAV9JaihnIkiuJu2bF4N8Z3UrlNB
+         1O1swvkJIQdh7JYQUyUc8hsE5jkgqGYibjoLADm0=
+From:   Dinh Nguyen <dinguyen@kernel.org>
+To:     p.zabel@pengutronix.de
+Cc:     dinguyen@kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCHv2] reset: build simple reset controller driver for Agilex
+Date:   Mon, 14 Oct 2019 10:18:27 -0500
+Message-Id: <20191014151827.9486-1-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 14 Oct 2019 12:59:23 +0200
-Miroslav Benes <mbenes@suse.cz> wrote:
+The Intel SoCFPGA Agilex platform shares the same reset controller that
+is on the Stratix10.
 
->  int
->  ftrace_enable_sysctl(struct ctl_table *table, int write,
->  		     void __user *buffer, size_t *lenp,
-> @@ -6740,8 +6754,6 @@ ftrace_enable_sysctl(struct ctl_table *table, int write,
->  	if (ret || !write || (last_ftrace_enabled == !!ftrace_enabled))
->  		goto out;
->  
-> -	last_ftrace_enabled = !!ftrace_enabled;
-> -
->  	if (ftrace_enabled) {
->  
->  		/* we are starting ftrace again */
-> @@ -6752,12 +6764,19 @@ ftrace_enable_sysctl(struct ctl_table *table, int write,
->  		ftrace_startup_sysctl();
->  
->  	} else {
-> +		if (is_permanent_ops_registered()) {
-> +			ftrace_enabled = last_ftrace_enabled;
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+---
+v2: rebase to v5.4-rc1
+---
+ drivers/reset/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Although this is not incorrect, but may be somewhat confusing.
-
-At this location, last_ftrace_enabled is always true.
-
-I'm thinking this would be better to simply set it to false here.
-
-
-> +			ret = -EBUSY;
-> +			goto out;
-> +		}
-> +
->  		/* stopping ftrace calls (just send to ftrace_stub) */
->  		ftrace_trace_function = ftrace_stub;
->  
->  		ftrace_shutdown_sysctl();
->  	}
->  
-> +	last_ftrace_enabled = !!ftrace_enabled;
->   out:
-
-And move the assignment of last_ftrace_enabled to after the "out:"
-label.
-
--- Steve
-
->  	mutex_unlock(&ftrace_lock);
->  	return ret;
+diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+index 7b07281aa0ae..46f7986c3587 100644
+--- a/drivers/reset/Kconfig
++++ b/drivers/reset/Kconfig
+@@ -129,7 +129,7 @@ config RESET_SCMI
+ 
+ config RESET_SIMPLE
+ 	bool "Simple Reset Controller Driver" if COMPILE_TEST
+-	default ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED || ARCH_BITMAIN || ARC
++	default ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED || ARCH_BITMAIN || ARC || ARCH_AGILEX
+ 	help
+ 	  This enables a simple reset controller driver for reset lines that
+ 	  that can be asserted and deasserted by toggling bits in a contiguous,
+-- 
+2.20.0
 
