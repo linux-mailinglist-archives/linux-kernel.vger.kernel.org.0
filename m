@@ -2,75 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEE66D663B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:38:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66DF1D6642
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:39:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731344AbfJNPi2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 11:38:28 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:40614 "EHLO
+        id S2387651AbfJNPjQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 11:39:16 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:33370 "EHLO
         mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728905AbfJNPi1 (ORCPT
+        with ESMTP id S1730005AbfJNPjP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 11:38:27 -0400
-Received: by mail-oi1-f195.google.com with SMTP id k9so14110978oib.7;
-        Mon, 14 Oct 2019 08:38:27 -0700 (PDT)
+        Mon, 14 Oct 2019 11:39:15 -0400
+Received: by mail-oi1-f195.google.com with SMTP id a15so14133510oic.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 08:39:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hUnyvpuP6/HkBMSiwtb5MS7vmorhboIr5Cucxcuf8O4=;
+        b=tf3Get4qoIzO39iWyOCRegFp1wY/dzAobHeBdf2VA+8pw3oS7q1F2IvIw6nkg3OFX8
+         F52Y2qTRW1vOzUC69B3PjcYdqNMNkS8ARtcRvIhTZhp0Y9EvPL3iiCtc3KuWJUMDZBbr
+         4KjUbkltVWZcLU3sPz2wnmO7B8UNdUOXLyK3DcO+64luJBp44YYRzG3XBXo+PPoIvusg
+         aMefEtXMJnH1iBF71IodEUiM/Q1k0gqyau8N9LGuq7lcmSrtL8I1gGq0Pn5RjwpM3+hS
+         i1FPYiz/Ahj0pNmlgA1mBNABGuSVs+2gCKHOWqwIa871YMYgf/FRN55VJS4lUKxCsi5B
+         0WZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Go8wBn6px0Q/kUPhFS3kBvMqinIxTjZFlx2oReSfcvQ=;
-        b=Dw9+cEyegj6W2xQ/zrOHfV1r4qtIJ6APQeyRBJ9gEyB/8TIK0JbMV81MZRNJmcM3k1
-         RkzEYEJ5/BX/m3xtG8OK6ofqs3vGpGh1kXMb/MdFBUR2UR+R6a3CZ+aUlWgr1Xm1aDvV
-         DcTvQOiJ8fg8zeYTbBMpDRNJZkmUFUm22KjsyaOBq/b3AEm7fZhzQYkuTYoPwFjaX5Xr
-         5yFje3oAdoby6s84dU9fOeTNkYlyMDreuvia72KkDnSIY+d1pk2qcdoXA++LG9yyXtda
-         K7zJ/paTUKy9+fFJCuMLw9n+rtj73V9X2CyR3NwAJlhONGcZzPzOiQa+eFsuEdmp/BxN
-         PscQ==
-X-Gm-Message-State: APjAAAXz5szFbTk95YE7HkhonYaTjmHHyabfMGGPSlZrXP+6gUk0jEiT
-        uF9eYZOfk9gkkefEQLcm1w==
-X-Google-Smtp-Source: APXvYqyOoP+jhZiuuS60szCF24/or5bMxSsvTBV0B2ZidbzyBLZc894W76mYyoWU4KW9tpZdLj7PpA==
-X-Received: by 2002:aca:4c56:: with SMTP id z83mr25516527oia.113.1571067506740;
-        Mon, 14 Oct 2019 08:38:26 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id z12sm5420766oth.71.2019.10.14.08.38.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2019 08:38:25 -0700 (PDT)
-Date:   Mon, 14 Oct 2019 10:38:25 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH v4 7/8] dt-bindings: Add 1027/1029/1031 SPI ADCs as
- trivial devices
-Message-ID: <20191014153825.GA26261@bogus>
-References: <20191011144347.19146-1-miquel.raynal@bootlin.com>
- <20191011144347.19146-8-miquel.raynal@bootlin.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hUnyvpuP6/HkBMSiwtb5MS7vmorhboIr5Cucxcuf8O4=;
+        b=VXFTE7beO9c0IMuHRSkHTCmsZKmpVQgm3bRIR04tZQ858vEo0x+BZptGgN+gkgsflB
+         FioPSocOTFOzdFkrjf/u+fnpPJ7Cos03GTTHXu2CueQGJYWPpE4IvESS5pTsyb4MoDbH
+         9kqnPqWSnKE6QlRXTRWHHdzTmSGJFk8BaW6kJFVmbyINq7XbjA/88XamWuv0qQDUqvm/
+         3IOHIG1rki38s/c724YldwezS1jazODoFjx023PYar1Dcbt9KkHUAPzuK7jzvNtbTYSg
+         /TrUVulUoKCp5Df8mcPPeQ3iS6HAoxAT1E1cqC44Nbwd4lvCRsdvX4cnPOEZGZN/T85u
+         wsWA==
+X-Gm-Message-State: APjAAAWAsPIvpRCwEYJrGux3r+cZqD3OrrUNNoJO5aYuQ93+1lTQ4LPx
+        u93wpFwDIXx3G7wmhBC9j/SLVGrRAUeyZR8EQ891eA==
+X-Google-Smtp-Source: APXvYqzlapnRWtDbK3b6aprG708THmDneKBseQVBxn9YWloRQP7Qc5j44+rxOMdffE3xnRJL3og0OsxxQYOLitd7CLk=
+X-Received: by 2002:aca:da41:: with SMTP id r62mr24035154oig.47.1571067553182;
+ Mon, 14 Oct 2019 08:39:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191011144347.19146-8-miquel.raynal@bootlin.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191012191602.45649-1-dancol@google.com> <20191012191602.45649-2-dancol@google.com>
+In-Reply-To: <20191012191602.45649-2-dancol@google.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 14 Oct 2019 17:38:45 +0200
+Message-ID: <CAG48ez3yOPAC3mTJdQ5_8aARQPe+siid5jaa8U+aMtfj-bUJ2g@mail.gmail.com>
+Subject: Re: [PATCH 1/7] Add a new flags-accepting interface for anonymous inodes
+To:     Daniel Colascione <dancol@google.com>
+Cc:     Linux API <linux-api@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Nick Kralevich <nnk@google.com>, nosh@google.com,
+        Tim Murray <timmurray@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 Oct 2019 16:43:46 +0200, Miquel Raynal wrote:
-> In the same time, remove the dedicated bindings file which is now
-> useless.
-> 
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
->  .../bindings/iio/adc/max1027-adc.txt          | 22 -------------------
->  .../devicetree/bindings/trivial-devices.yaml  |  6 +++++
->  2 files changed, 6 insertions(+), 22 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/iio/adc/max1027-adc.txt
-> 
+On Sat, Oct 12, 2019 at 9:16 PM Daniel Colascione <dancol@google.com> wrote:
+> Add functions forwarding from the old names to the new ones so we
+> don't need to change any callers.
 
-Acked-by: Rob Herring <robh@kernel.org>
+This patch does more than the commit message says; it also refactors
+the body of the function. (I would've moved that refactoring over into
+patch 2, but I guess this works, too.)
+
+[...]
+> -struct file *anon_inode_getfile(const char *name,
+> -                               const struct file_operations *fops,
+> -                               void *priv, int flags)
+> +struct file *anon_inode_getfile2(const char *name,
+> +                                const struct file_operations *fops,
+> +                                void *priv, int flags, int anon_inode_flags)
+
+(AFAIK, normal kernel style is to slap a "__" prefix in front of the
+function name instead of appending a digit, but I guess it doesn't
+really matter.)
+
+>  {
+> +       struct inode *inode;
+>         struct file *file;
+>
+> -       if (IS_ERR(anon_inode_inode))
+> -               return ERR_PTR(-ENODEV);
+> -
+> -       if (fops->owner && !try_module_get(fops->owner))
+> -               return ERR_PTR(-ENOENT);
+> +       if (anon_inode_flags)
+> +               return ERR_PTR(-EINVAL);
+>
+> +       inode = anon_inode_inode;
+> +       if (IS_ERR(inode))
+> +               return ERR_PTR(-ENODEV);
+>         /*
+> -        * We know the anon_inode inode count is always greater than zero,
+> -        * so ihold() is safe.
+> +        * We know the anon_inode inode count is always
+> +        * greater than zero, so ihold() is safe.
+>          */
+
+This looks like maybe you started editing the comment, then un-did the
+change, but left the modified line wrapping in your patch? Please
+avoid that - code changes with no real reason make "git blame" output
+more annoying and create trouble when porting patches between kernel
+versions.
+
+[...]
+>  EXPORT_SYMBOL_GPL(anon_inode_getfile);
+> +EXPORT_SYMBOL_GPL(anon_inode_getfile2);
+[...]
+>  EXPORT_SYMBOL_GPL(anon_inode_getfd);
+> +EXPORT_SYMBOL_GPL(anon_inode_getfd2);
+
+Since anon_inode_getfd() is now a static inline function in
+include/linux/anon_inodes.h, exporting it doesn't make sense anymore.
+Same for anon_inode_getfile().
+
+[...]
+> +#define ANON_INODE_SECURE 1
+
+That #define belongs in a later patch, right?
