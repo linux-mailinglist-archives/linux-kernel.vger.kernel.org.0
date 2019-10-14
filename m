@@ -2,142 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4D77D592E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 02:58:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1C27D5935
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 03:04:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729796AbfJNA6j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 13 Oct 2019 20:58:39 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:36721 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729755AbfJNA6h (ORCPT
+        id S1729731AbfJNBEn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 13 Oct 2019 21:04:43 -0400
+Received: from mail-pf1-f171.google.com ([209.85.210.171]:46020 "EHLO
+        mail-pf1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729626AbfJNBEn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Oct 2019 20:58:37 -0400
-Received: by mail-qt1-f196.google.com with SMTP id o12so23149369qtf.3
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2019 17:58:37 -0700 (PDT)
+        Sun, 13 Oct 2019 21:04:43 -0400
+Received: by mail-pf1-f171.google.com with SMTP id y72so9385167pfb.12;
+        Sun, 13 Oct 2019 18:04:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=aPyEagV1DxsvKL/RZo3njz7RJXo5X1hyEh5ILDelpv8=;
-        b=JEUmMaVvI1LTbq3LGF/EHz2CBzkv+GbwvnLMnASrc+hIV9wAca7MyTEh6eTobXhfHE
-         Q+Ca96u2yVxistrNN4nSIttKWMZAiGhjYxHE77kJtMg0Fq3B7kgItwp0zzgctcRMzCIQ
-         pTxOgNH2GVIWWo/X+ghPkmT6MPxxVvXV+Pa7tFIpr6H+oVMT4+oKmwkodX63ZPfQ9naB
-         bWXkxqp6QL3TBDPXGj5sXeGa0xGNkuN4ZaIQqDLYHK1vx2zyXzfRCheESeEG2c9ANJW3
-         rDLndBM3+sVJpeXsvRP4XoSU/uhEUqmQ09mzeqwPJZhfuuWnKWQ2vg/YvS2eXhUM/KG1
-         +IJA==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YzG3KM3RT2WWNMNWSIDxDogfU5yp9qDqHwkm5rPExKs=;
+        b=Xhkqgi1Pg/bppNNm0DoT+I/QPfD+8v7ZAeEmVw+dVIt79iCpgLXod8EG0HnFiGjokO
+         CuaHrtaqxJcY9198X7ib/qFW9RUQDUfd/Pvr/dqt6tNJ1uOZtFG+yUbT0LzCvr/Le6m6
+         cjDnTgH0Zrgz5IDgR5mGuRg0D3ar+f4zvoUR8Kx6WqycUiZG293+xoAYbxEjxmCS7rQt
+         zmsnKgxxTIpKbKdjF1gWqTMcM9Qte3CmYTg67Fq77wnWXWHXTxqyJ0eqLYRR5J3MM7G8
+         xF7HFUCXY4UHIkl+6vQl9AhGVEjxm8Tctb545B51jSoUiq18aWQgkh3zJCASWYFG9ewT
+         WKHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=aPyEagV1DxsvKL/RZo3njz7RJXo5X1hyEh5ILDelpv8=;
-        b=rw/mEP63PmdmRUJCUzs/hp3EwV5HfGaE93SwMxKNlwM7UukCiu/Q5KODFzw4o1ZfdJ
-         dYrMsjhV2AU/CI6USuO3gVgQGS78xSw93SDDAbf7YOT80d1b+Y5mAuay9r2Jklf5Oarx
-         AOC7QsZXgmmWibB4nRwNrZU7ptJXUzncEnbfzoRGIQOYnrt124GDOgVPsLbETQ79TV+0
-         qL3ytuC9yzRxdzmIlIIt+5Jrks1dsL3aOq+glInTTpoJtid1pnZqZk0rxWI3LO15dUr1
-         cXjmxcPCmRvXt2TUzU/SKIgfP6E1VBC3UXZIIhcjjP7U9Kqx6Lz0w/0FconJMdtE1LyG
-         m4Pg==
-X-Gm-Message-State: APjAAAWumtn+klowBlkM61lkZSNZPHVMBqiDzSQtl+rSFZT4YSjUTZnD
-        LpDw/OrHEnX38ng3bzt9YIsSkg==
-X-Google-Smtp-Source: APXvYqzkg42eNImOPKjj+twry1oYkan3yacXziqUZevwWM3AKG6aCw79uYsL1yZlNwbv3Kephhv5cg==
-X-Received: by 2002:ac8:363c:: with SMTP id m57mr30156349qtb.290.1571014716532;
-        Sun, 13 Oct 2019 17:58:36 -0700 (PDT)
-Received: from Thara-Work-Ubuntu.fios-router.home (pool-71-255-246-27.washdc.fios.verizon.net. [71.255.246.27])
-        by smtp.googlemail.com with ESMTPSA id c185sm7663901qkf.122.2019.10.13.17.58.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 13 Oct 2019 17:58:35 -0700 (PDT)
-From:   Thara Gopinath <thara.gopinath@linaro.org>
-To:     mingo@redhat.com, peterz@infradead.org, ionela.voinescu@arm.com,
-        vincent.guittot@linaro.org, rui.zhang@intel.com,
-        edubezval@gmail.com
-Cc:     linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
-        javi.merino@kernel.org, daniel.lezcano@linaro.org
-Subject: [Patch v3 7/7] sched: thermal: Enable tuning of decay period
-Date:   Sun, 13 Oct 2019 20:58:25 -0400
-Message-Id: <1571014705-19646-8-git-send-email-thara.gopinath@linaro.org>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1571014705-19646-1-git-send-email-thara.gopinath@linaro.org>
-References: <1571014705-19646-1-git-send-email-thara.gopinath@linaro.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YzG3KM3RT2WWNMNWSIDxDogfU5yp9qDqHwkm5rPExKs=;
+        b=ECvVPsa8WnEU3vsXuS7hlNVZAfzsAEjD6f2aYOqTHpi1myOe3IsAgd813Gg//HzUjR
+         PXyAGxFToPzg2DDpo13Cg+FkKFNUILA3FN6DmRL1KJdMOgl2+5MNSQCQZejTZKSEcWV/
+         MuVQ4BIW+z+qMBAMvm3oE+XZLxOer0GUDgwjwR4y8GCX5A0Uyci0IhSCn6kRHHCIcHut
+         3inucNpxbldmqpqJUqCz+oQeEs7n2EF+kqTZIphR2OVm6hq+dVpHDBFp6z3BiIcehFGi
+         0zBZ3D4N3NToOOoen8rX1b3mC/AxqAHPKXV94iryI2w6vYC76yV0qIqmU1yCbJje7PAQ
+         UNMQ==
+X-Gm-Message-State: APjAAAU03XbJimW2TQhynCDCwpbFg82ZAuCU4s/AW1y/RafpJWqp3iQT
+        sMyOZvtprkR+tyKj2LQDocq8WWOT
+X-Google-Smtp-Source: APXvYqxh6x4IIGtg0eAAor/Q+e0C8x7y9NUoVPUDkBYKRvhscp/49KtncVxz64zOYRV4aVztRUEHmQ==
+X-Received: by 2002:aa7:90da:: with SMTP id k26mr29685604pfk.145.1571015082344;
+        Sun, 13 Oct 2019 18:04:42 -0700 (PDT)
+Received: from [192.168.86.235] (c-73-241-150-70.hsd1.ca.comcast.net. [73.241.150.70])
+        by smtp.gmail.com with ESMTPSA id b3sm14592521pfd.125.2019.10.13.18.04.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 13 Oct 2019 18:04:41 -0700 (PDT)
+Subject: Re: [PATCH] net: core: datagram: tidy up copy functions a bit
+To:     Vito Caputo <vcaputo@pengaru.com>
+Cc:     davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191012115509.jrqe43yozs7kknv5@shells.gnugeneration.com>
+ <8fab6f9c-70a6-02fd-5b2d-66a013c10a4f@gmail.com>
+ <20191013200158.mhvwkdnsjk7ecuqu@shells.gnugeneration.com>
+ <6864f888-1b62-36c5-6ac5-d5db01c5fcfb@gmail.com>
+ <20191013224148.omivenr6fwmq66fe@shells.gnugeneration.com>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <1a031958-97e7-a16e-7dd7-034262e68d66@gmail.com>
+Date:   Sun, 13 Oct 2019 18:04:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20191013224148.omivenr6fwmq66fe@shells.gnugeneration.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thermal pressure follows pelt signas which means the
-decay period for thermal pressure is the default pelt
-decay period. Depending on soc charecteristics and thermal
-activity, it might be beneficial to decay thermal pressure
-slower, but still in-tune with the pelt signals.
-One way to achieve this slow decay is to right shift the now
-run time.
 
-Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
----
- include/linux/sched/sysctl.h |  1 +
- kernel/sched/thermal.c       | 16 +++++++++++++++-
- kernel/sysctl.c              |  7 +++++++
- 3 files changed, 23 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
-index d4f6215..f4c4afd 100644
---- a/include/linux/sched/sysctl.h
-+++ b/include/linux/sched/sysctl.h
-@@ -41,6 +41,7 @@ extern unsigned int sysctl_numa_balancing_scan_size;
- #ifdef CONFIG_SCHED_DEBUG
- extern __read_mostly unsigned int sysctl_sched_migration_cost;
- extern __read_mostly unsigned int sysctl_sched_nr_migrate;
-+extern __read_mostly unsigned int sysctl_sched_thermal_decay_coeff;
- 
- int sched_proc_update_handler(struct ctl_table *table, int write,
- 		void __user *buffer, size_t *length,
-diff --git a/kernel/sched/thermal.c b/kernel/sched/thermal.c
-index 5f0b2d4..2a00488 100644
---- a/kernel/sched/thermal.c
-+++ b/kernel/sched/thermal.c
-@@ -10,6 +10,19 @@
- #include "pelt.h"
- #include "thermal.h"
- 
-+/**
-+ * By default the decay is the default pelt decay period.
-+ * The decay coefficient can change is decay period in
-+ * multiples of 32.
-+ *   Decay coefficient    Decay period(ms)
-+ *	0			32
-+ *	1			64
-+ *	2			128
-+ *	3			256
-+ *	4			512
-+ */
-+unsigned int sysctl_sched_thermal_decay_coeff __read_mostly;
-+
- struct max_capacity_info {
- 	unsigned long max_capacity;
- 	unsigned long cap_capacity;
-@@ -62,5 +75,6 @@ void update_periodic_maxcap(struct rq *rq)
- 		return;
- 
- 	delta = __max_cap->max_capacity - __max_cap->cap_capacity;
--	update_thermal_avg(rq_clock_task(rq), rq, delta);
-+	update_thermal_avg((rq_clock_task(rq) >>
-+			   sysctl_sched_thermal_decay_coeff), rq, delta);
- }
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 00fcea2..5056c08 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -376,6 +376,13 @@ static struct ctl_table kern_table[] = {
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec,
- 	},
-+	{
-+		.procname	= "sched_thermal_decay_coeff",
-+		.data		= &sysctl_sched_thermal_decay_coeff,
-+		.maxlen		= sizeof(unsigned int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	},
- #ifdef CONFIG_SCHEDSTATS
- 	{
- 		.procname	= "sched_schedstats",
--- 
-2.1.4
+On 10/13/19 3:41 PM, Vito Caputo wrote:
+
+> I read it, thank you for your responses.
+> 
+> Do you have any guidance to offer someone wanting to contribute with 1-2
+> hours available per day?  I don't want to cause a nuisance, but would
+> like to help where I can.  My flawed assumption was that small, isolated
+> hygienic contributions without functionally changing anything would be
+> appropriate.
+
+I suggest you look at the syzkaller huge queue of bugs.
+
+You will learn more interesting stuff, and you will help the community
+in a more quantifiable way.
+
+https://syzkaller.appspot.com/upstream
+
 
