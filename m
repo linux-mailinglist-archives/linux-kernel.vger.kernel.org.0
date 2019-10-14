@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0485AD6675
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:48:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9F53D6667
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:46:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387790AbfJNPqk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 11:46:40 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39318 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729997AbfJNPqh (ORCPT
+        id S2387816AbfJNPqm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 11:46:42 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38748 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387766AbfJNPqj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 11:46:37 -0400
-Received: by mail-wr1-f68.google.com with SMTP id r3so20322770wrj.6
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 08:46:36 -0700 (PDT)
+        Mon, 14 Oct 2019 11:46:39 -0400
+Received: by mail-wr1-f66.google.com with SMTP id y18so10857155wrn.5
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 08:46:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=NXVuAHcqUdvW3hoXUr87/ZG8r6N5TpAF9zjL4wdSLjs=;
-        b=z0fLFZdiPdt8jFM79h6y29ec5MdAp59EkR64ijJkc1qehMaqn2x6FJkeo/NnmuHEHk
-         j0o5v8iPg0+KK7JLooF72uFuacfEAcb5FywnYGz7gOgd/bdQjzM6xIdbn517084et/Xp
-         Bq9Xot8YchrJLHTDzrMGZvXI0Q7d5flJhYIIQifqmAN2SKlNNbYDtyYTLoM83wZjUy9M
-         HMEivEnl+VO0Sw0i7PmvinffXtQ6t0u+p+lPg5N9W6YSlxKWX/msc+74g9VSRDOp6Jra
-         Ei0/RMsmyksc/XTq8VdmV1LYgxKtE8T6SUbWEuQ1FrPqweF1N6srFJdGMEz+FfxIRraP
-         31PA==
+        bh=1Av3ioNZKtn1IoIkmuPv2cbQ6HyfD+1rS28OweGIOdo=;
+        b=YM1MA4Ug496qhJG5JvBKwtecmdfgxLvwt5inayWrP/lErf4KHykJ7C09zxlGL0sWGR
+         0BnL+DDPzZ1Ou6v+pY6BgmI+BkfA78ismkjLcC6D2QSxNMhAOLEdIMUDYx5gQLr652V1
+         uVl2mEp4TXv7sAqmay1F1z/HsX4N4Sr0bs6/d5bYPqBsaHPxgjSDzqufNnCbIUMpKGCp
+         1ElUPBkbaWpiV8m2jBrqZCkeNk+J4bHJvy0gNwI/KQy3DQ6D+mmqKgIr+F1qwg6I9LOK
+         9ddvnBHnmgIdnTjWTelfyj2NDxWX2akx+aLMXaYRmYL+10Vwxzpb0Y+5um9HeV4sSNYz
+         hm/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=NXVuAHcqUdvW3hoXUr87/ZG8r6N5TpAF9zjL4wdSLjs=;
-        b=aqK2RBMrVFZw7hMkn2QdTGrf/849sbeogpTjkiKd8mlhoFCWOSJZDEkdMDyxR4fGEO
-         PmrAaJ2TTXAhKmpCozfrl+AwRnzu725TNPaqN1ew3FQhGsKD4r0d8DwpgkS6M5bW83Tf
-         W6dqqEEDx3nCGN85wOTZLeamBFibuOUH8RVV4G35o2pbiqN9q5dOzkba3uEwcpPBDeck
-         6pcJrEwmbMrSwZiM7pc7qLmyZ5otUuQGuaROVqGrtacbvIvjmr6z65GWhl1F1W7QsLxm
-         2D6Ci2b+tKCEfhddMTG7qjQFjrpsfPyYrBGcCS+b7B5cTXIsEtUltCokzVGrxatwxu6u
-         2UdA==
-X-Gm-Message-State: APjAAAXg0xKbV1uLfPQV5fSyo3MCzHw48vbXwcCeRi0XxQ85DlsvKL6N
-        VOT3P0KmgE40YkW98BhM0gAiBg==
-X-Google-Smtp-Source: APXvYqx5FADHfzYt8ud++1U/l8HJVf0n/fufR09PMBReCszMIQDI28Ic5gABp6oUYxd229QF8PVDnQ==
-X-Received: by 2002:adf:fa12:: with SMTP id m18mr26744805wrr.248.1571067995742;
-        Mon, 14 Oct 2019 08:46:35 -0700 (PDT)
+        bh=1Av3ioNZKtn1IoIkmuPv2cbQ6HyfD+1rS28OweGIOdo=;
+        b=H7ayTKVYqiieF0xQAOLqGKBq6h5OxEjPzaiI9TJcpR+KA2xDf2b1Ii4oCoIf73TzVe
+         N0ORFgGzIsIiQBCrS6zM0/FAihWf2g3cN66SsWCfvKYj1OvQV7b2GKQ+SBXOvSAd5UUh
+         +zvFD6Yo9qtrOnXHrXd/Y2Pe4AZcYCvXGjysIr9Ezck4NCVMZ11bc4RQ1dIIiZJxSsnG
+         sVy+i4BUzTbcwqdbMXnLqaNirn/0mkzg5ZClYXHfOp1O90KGvNyIE20Nja0EwFMH0Y1d
+         5jnW48ol2+kS1cDC/sapWAd1UouLSdf2770X/EKrbIYtHp4LBB1XN8n3d9kYbuBOcY3T
+         wvtQ==
+X-Gm-Message-State: APjAAAVKmgGZXbfit+FJnzXz3vGJoX2GZofqgMXoOejels4CizBU5wgb
+        EJB4o2bLCTZ0Kka7MsaEQuJhvw==
+X-Google-Smtp-Source: APXvYqzYJrKpnk39yJydikl6aLQWQKXotCoJvyK9bK+1KGh5xXAPc24eb58KOqbLaiBk+LpAw9+nCQ==
+X-Received: by 2002:a5d:5271:: with SMTP id l17mr27011147wrc.19.1571067996855;
+        Mon, 14 Oct 2019 08:46:36 -0700 (PDT)
 Received: from wychelm.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id q22sm16539738wmj.5.2019.10.14.08.46.33
+        by smtp.gmail.com with ESMTPSA id q22sm16539738wmj.5.2019.10.14.08.46.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2019 08:46:34 -0700 (PDT)
+        Mon, 14 Oct 2019 08:46:36 -0700 (PDT)
 From:   Daniel Thompson <daniel.thompson@linaro.org>
 To:     Jason Wessel <jason.wessel@windriver.com>,
         Douglas Anderson <dianders@chromium.org>
 Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
         kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org,
         patches@linaro.org
-Subject: [PATCH v3 4/5] kdb: Improve handling of characters from different input sources
-Date:   Mon, 14 Oct 2019 16:46:25 +0100
-Message-Id: <20191014154626.351-5-daniel.thompson@linaro.org>
+Subject: [PATCH v3 5/5] kdb: Tweak escape handling for vi users
+Date:   Mon, 14 Oct 2019 16:46:26 +0100
+Message-Id: <20191014154626.351-6-daniel.thompson@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191014154626.351-1-daniel.thompson@linaro.org>
 References: <20191014154626.351-1-daniel.thompson@linaro.org>
@@ -64,82 +64,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently if an escape timer is interrupted by a character from a
-different input source then the new character is discarded and the
-function returns '\e' (which will be discarded by the level above).
-It is hard to see why this would ever be the desired behaviour.
-Fix this to return the new character rather than the '\e'.
+Currently if sequences such as "\ehelp\r" are delivered to the console then
+the h gets eaten by the escape handling code. Since pressing escape
+becomes something of a nervous twitch for vi users (and that escape doesn't
+have much effect at a shell prompt) it is more helpful to emit the 'h' than
+the '\e'.
 
-This is a bigger refactor than might be expected because the new
-character needs to go through escape sequence detection.
+We don't simply choose to emit the final character for all escape sequences
+since that will do odd things for unsupported escape sequences (in
+other words we retain the existing behaviour once we see '\e[').
 
 Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
 ---
- kernel/debug/kdb/kdb_io.c | 39 +++++++++++++++++++--------------------
- 1 file changed, 19 insertions(+), 20 deletions(-)
+ kernel/debug/kdb/kdb_io.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
-index 39476616295e..f9839566c7d6 100644
+index f9839566c7d6..5e71bb2596ed 100644
 --- a/kernel/debug/kdb/kdb_io.c
 +++ b/kernel/debug/kdb/kdb_io.c
-@@ -125,10 +125,10 @@ char kdb_getchar(void)
- {
- #define ESCAPE_UDELAY 1000
- #define ESCAPE_DELAY (2*1000000/ESCAPE_UDELAY) /* 2 seconds worth of udelays */
--	char escape_data[5];	/* longest vt100 escape sequence is 4 bytes */
--	char *ped = escape_data;
-+	char buf[4];	/* longest vt100 escape sequence is 4 bytes */
-+	char *pbuf = buf;
- 	int escape_delay = 0;
--	get_char_func *f, *f_escape = NULL;
-+	get_char_func *f, *f_prev = NULL;
- 	int key;
+@@ -161,8 +161,8 @@ char kdb_getchar(void)
  
- 	for (f = &kdb_poll_funcs[0]; ; ++f) {
-@@ -148,27 +148,26 @@ char kdb_getchar(void)
- 			continue;
- 		}
- 
--		if (escape_delay == 0 && key == '\e') {
-+		/*
-+		 * When the first character is received (or we get a change
-+		 * input source) we set ourselves up to handle an escape
-+		 * sequences (just in case).
-+		 */
-+		if (f_prev != f) {
-+			f_prev = f;
-+			pbuf = buf;
- 			escape_delay = ESCAPE_DELAY;
--			ped = escape_data;
--			f_escape = f;
--		}
--		if (escape_delay) {
--			if (f_escape != f)
--				return '\e';
--
--			*ped++ = key;
--			key = kdb_handle_escape(escape_data,
--						     ped - escape_data);
--			if (key < 0)
--				return '\e';
--			if (key == 0)
--				continue;
- 		}
- 
--		break;	/* A key to process */
-+		*pbuf++ = key;
-+		key = kdb_handle_escape(buf, pbuf - buf);
-+		if (key < 0) /* no escape sequence; return first character */
-+			return buf[0];
-+		if (key > 0)
-+			return key;
+ 		*pbuf++ = key;
+ 		key = kdb_handle_escape(buf, pbuf - buf);
+-		if (key < 0) /* no escape sequence; return first character */
+-			return buf[0];
++		if (key < 0) /* no escape sequence; return best character */
++			return buf[pbuf - buf == 2 ? 1 : 0];
+ 		if (key > 0)
+ 			return key;
  	}
--	return key;
-+
-+	unreachable();
- }
- 
- /*
 -- 
 2.21.0
 
