@@ -2,103 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB382D5CEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 09:59:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28A03D5CD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 09:57:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730334AbfJNH6r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 03:58:47 -0400
-Received: from mail-pg1-f173.google.com ([209.85.215.173]:44955 "EHLO
-        mail-pg1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728772AbfJNH6p (ORCPT
+        id S1730020AbfJNH5a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 03:57:30 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35975 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726169AbfJNH5a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 03:58:45 -0400
-Received: by mail-pg1-f173.google.com with SMTP id e10so5627242pgd.11
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 00:58:45 -0700 (PDT)
+        Mon, 14 Oct 2019 03:57:30 -0400
+Received: by mail-wr1-f68.google.com with SMTP id y19so18483417wrd.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 00:57:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=y50RYUfHeI2he8tBZWuhHfSekRhLtbksYVRqOP2O+os=;
-        b=dIkMInmTpj1JrGLM5HMmR344M6bRmXAeYAMiVi8arb1/TJiPi/qUU0epeb2VIbDM4G
-         LV3tlygKC4jC/jZvI/TTi1aSMecsChNYTb6670nu93b6lUDkYL20QDgOWQLg7FTCeez4
-         X8Zy9epQLServXDvDch8Pk3PiKVzYr6g96SSq+yK5zc5ImZYUoncGr9E/hXE1UiCYKiB
-         +eJ5zOPomeSEH68qwDViDJScGl1/s35QWBNtfxK/BCDsB8akxoVVse1MfiXLl/gWOB57
-         IqRHEKdJM1AE9swDJi3rcCokwXduEo8RYy7FP6TrgWhL62naqVU5cXxMuEEmSgXFMq9V
-         rl3Q==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=wlueTYL+8qZ9KSvaC2J4g2+SKGmj7tj869xGKKDwlhM=;
+        b=EFZRMeDamau/PtjDTr3QllzMuLdqjBy/NYciSuFN+qIKgsX0Ot88ouA4V4VQ6UOMQG
+         rWcI4kDhiK/io9dxf0zDYfHtSar7xjwL5WQEmucaF+ZqA2yfOGgkG8MlP4eq8kYcYh6M
+         BV2DH+dladA+Iwa/7WEfoQWfy5qiHAzjwQP36mGz/BOraRyD/CEjY8f3SjfBYhYHafeo
+         3Y8ostev2sEjqCZQ75hoFrs+xlgITGw50ztSPEyHM6GZprKYHasX7j9i5s5o+UIcbCB+
+         Zv1gq2qmSvnoO7wpK3/3tyJGIUuBRXfHCXi/FCDYEkw/P4cXcx/KgDIBfW+E8PittOnW
+         iSQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=y50RYUfHeI2he8tBZWuhHfSekRhLtbksYVRqOP2O+os=;
-        b=MKlKHLSOZ8ZuP5HFjx6KWQ4YXfqGzkCx8ovTwmKdw3O5YycqWrOnx5ZTXo8OTU05bQ
-         6z1b5QoeusZxLR14uefNK6zZJGjsd2gM/01jpICoLnmxozw+Zort8Wjizl4ti//ibuge
-         9AfT9XHQhVIXRuzuHX72Y4bAQe6NNuahNEt3ChW0ZvFoDw7NG9+9MDovzOqR01SzqDPP
-         3EkGJaxWBO4+dTjGF7mSUF0sSGkJK/HWrGJrgLVMCf6q9nCRD2H2akxkR/b+hpwPPUGK
-         vLvV2969KL43h+6FJq0EuG26PJ7GBmlHlY1bpx0oJmM8yTWuSbBYVUNubwtddueOZr0A
-         ZKmQ==
-X-Gm-Message-State: APjAAAWD4HBoOOfRR3evPndLJWM0xodi+1D6FDPX7ReKUvOHWFkLp2Gq
-        BVCqkRk0D6Qtvj31Ta3kFHlLjA==
-X-Google-Smtp-Source: APXvYqz1elBbSRERXVRjYUz8rt7tmJgHaye/RY5uPh+nlyfBFC3t6Ntdv7LmkGs0yOyrkFPOBQvtXg==
-X-Received: by 2002:a62:3685:: with SMTP id d127mr159897pfa.179.1571039924723;
-        Mon, 14 Oct 2019 00:58:44 -0700 (PDT)
-Received: from localhost.localdomain (111-241-168-233.dynamic-ip.hinet.net. [111.241.168.233])
-        by smtp.gmail.com with ESMTPSA id j126sm16583137pfb.186.2019.10.14.00.58.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2019 00:58:43 -0700 (PDT)
-From:   Green Wan <green.wan@sifive.com>
-Cc:     linux-hackers@sifive.com, Green Wan <green.wan@sifive.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Yash Shah <yash.shah@sifive.com>,
-        Bin Meng <bmeng.cn@gmail.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [RFC v2 4/4] MAINTAINERS: Add Green as SiFive PDMA driver maintainer
-Date:   Mon, 14 Oct 2019 15:54:27 +0800
-Message-Id: <20191014075502.15105-5-green.wan@sifive.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191014075502.15105-1-green.wan@sifive.com>
-References: <20191014075502.15105-1-green.wan@sifive.com>
-To:     unlisted-recipients:; (no To-header on input)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=wlueTYL+8qZ9KSvaC2J4g2+SKGmj7tj869xGKKDwlhM=;
+        b=j8+OTBNcqRXCOM0fjqo0RESrEUtaOsjS3rzj7KeDDr6RiIpAZ0BdU2eifSFr6VppLk
+         m354+Wu7nMt7vMUMRHyK5xIx7uKgdYTi/fD77WzT+XQa7mfflyJZ2s9Hb15gQIjTy9ak
+         H8hFIplI1aJ3SgH+7bak3/BdboRBrY4Jw/JoXjPxqTGdx8Jk+zOnpv3sccL0Dk+luuKR
+         etQ0Rx8Fx2JtclRpCfGWG2q/EOBbgE9obGw+75BEHJ6BfMuAMVuDsvxvJISekbgvn1TK
+         vt7lS9zXJo0vhk41j8Kdc44iYBGxJecjv1VeDGi8YmVvsgVrJ+HCZEi+QFKM1vPG3RBR
+         5qcQ==
+X-Gm-Message-State: APjAAAWdYp/r6x6zlew4bBZRqIBKD5A1E50X81+WfR/tY6mWVo9ZekSh
+        cgd+vAXFN9b3X8K8kkSbs9+LDw==
+X-Google-Smtp-Source: APXvYqz1dQ+ediHiuUw3Ev4YeRHAcaUSBjOankgR/wtJRQ2BlmnBskvUcofomJfjQciB18XzBY6BAA==
+X-Received: by 2002:adf:f5c2:: with SMTP id k2mr26018100wrp.0.1571039847065;
+        Mon, 14 Oct 2019 00:57:27 -0700 (PDT)
+Received: from dell ([2.27.167.11])
+        by smtp.gmail.com with ESMTPSA id r2sm39324299wma.1.2019.10.14.00.57.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Oct 2019 00:57:26 -0700 (PDT)
+Date:   Mon, 14 Oct 2019 08:57:25 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Jean-Jacques Hiblot <jjhiblot@ti.com>
+Cc:     jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
+        mark.rutland@arm.com, daniel.thompson@linaro.org, dmurphy@ti.com,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, tomi.valkeinen@ti.com
+Subject: Re: [PATCH v7 5/5] backlight: add led-backlight driver
+Message-ID: <20191014075725.GI4545@dell>
+References: <20190918145730.22805-1-jjhiblot@ti.com>
+ <20190918145730.22805-6-jjhiblot@ti.com>
+ <20191004143900.GO18429@dell>
+ <cef282ee-3659-3bc3-da25-db02f843d61c@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cef282ee-3659-3bc3-da25-db02f843d61c@ti.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update MAINTAINERS for SiFive PDMA driver.
+On Fri, 04 Oct 2019, Jean-Jacques Hiblot wrote:
 
-Signed-off-by: Green Wan <green.wan@sifive.com>
----
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+> Hi Lee,
+> 
+> On 04/10/2019 16:39, Lee Jones wrote:
+> > On Wed, 18 Sep 2019, Jean-Jacques Hiblot wrote:
+> > 
+> > > From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> > > 
+> > > This patch adds a led-backlight driver (led_bl), which is similar to
+> > > pwm_bl except the driver uses a LED class driver to adjust the
+> > > brightness in the HW. Multiple LEDs can be used for a single backlight.
+> > > 
+> > > Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> > > Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+> > > Acked-by: Pavel Machek <pavel@ucw.cz>
+> > > Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+> > > ---
+> > >   drivers/video/backlight/Kconfig  |   7 +
+> > >   drivers/video/backlight/Makefile |   1 +
+> > >   drivers/video/backlight/led_bl.c | 260 +++++++++++++++++++++++++++++++
+> > >   3 files changed, 268 insertions(+)
+> > >   create mode 100644 drivers/video/backlight/led_bl.c
+> > Applied, thanks.
+> 
+> It will break the build because it relies on functions not yet in the LED
+> core (devm_led_get() for v7 or devm_of_led_get() for v8)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a69e6db80c79..62d5b249be65 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14778,6 +14778,12 @@ F:	drivers/media/usb/siano/
- F:	drivers/media/usb/siano/
- F:	drivers/media/mmc/siano/
- 
-+SIFIVE PDMA DRIVER
-+M:	Green Wan <green.wan@sifive.com>
-+S:	Maintained
-+F:	drivers/dma/sf-pdma/
-+F:	Documentation/devicetree/bindings/dma/sifive,fu540-c000-pdma.yaml
-+
- SIFIVE DRIVERS
- M:	Palmer Dabbelt <palmer@sifive.com>
- M:	Paul Walmsley <paul.walmsley@sifive.com>
+You're right, un-applied, thanks.
+
 -- 
-2.17.1
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
