@@ -2,152 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C68E7D5F10
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 11:36:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C829D5F08
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 11:35:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731021AbfJNJg1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 05:36:27 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:55190 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730667AbfJNJg0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 05:36:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=LsMYLS/Y8cXFlMO0GSn0Yr3BGu1XV5VAX95XcUxBpz0=; b=XvAnoRVKvYRsEt/t8d+FAEQPl
-        B2q8swT9UjlU8sRDS9hAToqyHzJLXEvw6tO47ML5EE88nfG6Cs+/lglrJiXTvJsdGiwk7Gn3B+fOg
-        d/KVk71GetGtHjFPkZmmNP9hpm3XNZPvZKHXKJtyG7MXCIxjQO+9ogr3UoyhzPcBvUkXJ/2FGwzjo
-        MT6aDZxByHv6N7QmSF865+Q8m+FdLf45V1GFwZm+UvbwvUKCoYXYwRB7Z7buZsr8Uk/Y1Vjd9nu88
-        SBtwYHS6X1OCWrTuYhgDYfYKmmcGs4/l3uPYqMJ7urLlxx9FG5EHeWRdIq4jHkLNqjUvIcQ2btmcQ
-        ytw851Dow==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iJwlY-0005EW-2w; Mon, 14 Oct 2019 09:35:48 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 717FC300F3F;
-        Mon, 14 Oct 2019 11:34:50 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 555A926530285; Mon, 14 Oct 2019 11:35:44 +0200 (CEST)
-Date:   Mon, 14 Oct 2019 11:35:44 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        primiano@google.com, rsavitski@google.com, jeffv@google.com,
-        kernel-team@android.com, Alexei Starovoitov <ast@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        bpf@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Morris <jmorris@namei.org>, Jiri Olsa <jolsa@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-security-module@vger.kernel.org,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Namhyung Kim <namhyung@kernel.org>, selinux@vger.kernel.org,
-        Song Liu <songliubraving@fb.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Yonghong Song <yhs@fb.com>
-Subject: Re: [PATCH] perf_event: Add support for LSM and SELinux checks
-Message-ID: <20191014093544.GB2328@hirez.programming.kicks-ass.net>
-References: <20191011160330.199604-1-joel@joelfernandes.org>
+        id S1730975AbfJNJfu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 05:35:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54044 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730889AbfJNJfu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 05:35:50 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 58CECBCF9;
+        Mon, 14 Oct 2019 09:35:47 +0000 (UTC)
+Subject: Re: [PATCH] mm: mempolicy: fix the absence of the last bit of
+ nodemask
+To:     Michal Hocko <mhocko@kernel.org>, Pan Zhang <zhangpan26@huawei.com>
+Cc:     akpm@linux-foundation.org, rientjes@google.com, jgg@ziepe.ca,
+        aarcange@redhat.com, yang.shi@linux.alibaba.com,
+        zhongjiang@huawei.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Cristopher Lameter <cl@linux.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <1570882789-20579-1-git-send-email-zhangpan26@huawei.com>
+ <20191014091243.GD317@dhcp22.suse.cz>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <e91614fa-4fc4-5e66-e8a9-3eede916e71f@suse.cz>
+Date:   Mon, 14 Oct 2019 11:35:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191011160330.199604-1-joel@joelfernandes.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191014091243.GD317@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 12:03:30PM -0400, Joel Fernandes (Google) wrote:
+On 10/14/19 11:12 AM, Michal Hocko wrote:
+>> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+>> index 4ae967b..a23509f 100644
+>> --- a/mm/mempolicy.c
+>> +++ b/mm/mempolicy.c
+>> @@ -1328,9 +1328,11 @@ static int get_nodes(nodemask_t *nodes, const unsigned long __user *nmask,
+>>  	unsigned long nlongs;
+>>  	unsigned long endmask;
+>>  
+>> -	--maxnode;
+>>  	nodes_clear(*nodes);
+>> -	if (maxnode == 0 || !nmask)
+>> +	/*
+>> +	 * If the user specified only one node, no need to set nodemask
+>> +	 */
+>> +	if (maxnode - 1 == 0 || !nmask)
+>>  		return 0;
+>>  	if (maxnode > PAGE_SIZE*BITS_PER_BYTE)
+>>  		return -EINVAL;
+> 
+> I am afraid this is a wrong fix. It is really hard to grasp the code but my
+> understanding is that the caller is supposed to provide maxnode larger
+> than than the nodemask. So if you want 2 nodes then maxnode should be 3.
+> Have a look at the libnuma (which is a reference implementation)
+> 
+> static void setpol(int policy, struct bitmask *bmp)
+> {
+> 	if (set_mempolicy(policy, bmp->maskp, bmp->size + 1) < 0)
+> 		numa_error("set_mempolicy");
+> }
+> 
+> The semantic is quite awkward but it is that way for years.
 
-> @@ -4761,6 +4762,7 @@ int perf_event_release_kernel(struct perf_event *event)
->  	}
->  
->  no_ctx:
-> +	security_perf_event_free(event);
->  	put_event(event); /* Must be the 'last' reference */
->  	return 0;
->  }
+Yes, unfortunately. Too late to change. We could just update the
+manpages at this point.
 
-> @@ -10553,11 +10568,16 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
->  		}
->  	}
->  
-> +	err = security_perf_event_alloc(event);
-> +	if (err)
-> +		goto err_security;
-> +
->  	/* symmetric to unaccount_event() in _free_event() */
->  	account_event(event);
->  
->  	return event;
->  
-> +err_security:
->  err_addr_filters:
->  	kfree(event->addr_filter_ranges);
->  
+get_mempolicy(2) says:
+ maxnode specifies the number of node IDs that can be stored into
+nodemask—that is, the maximum node ID plus one.
 
-There's a bunch of problems here I think:
+- Since node ID starts with 0, it should be actually "plus two".
 
- - err_security is named wrong; the naming scheme is to name the label
-   after the last thing that succeeded / first thing that needs to be
-   undone.
+set_mempolicy(2) says:
+ nodemask  points to a bit mask of node IDs that contains up to maxnode
+bits.
 
- - per that, you're forgetting to undo 'get_callchain_buffers()'
-
- - perf_event_release_kernel() is not a full match to
-   perf_event_alloc(), inherited events get created by
-   perf_event_alloc() but never pass through
-   perf_event_release_kernel().
-
-
-I'm thinking the below patch on top should ammend these issues; please
-verify.
-
----
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -4540,6 +4540,8 @@ static void _free_event(struct perf_even
- 
- 	unaccount_event(event);
- 
-+	security_perf_event_free(event);
-+
- 	if (event->rb) {
- 		/*
- 		 * Can happen when we close an event with re-directed output.
-@@ -4774,7 +4776,6 @@ int perf_event_release_kernel(struct per
- 	}
- 
- no_ctx:
--	security_perf_event_free(event);
- 	put_event(event); /* Must be the 'last' reference */
- 	return 0;
- }
-@@ -10595,14 +10596,18 @@ perf_event_alloc(struct perf_event_attr
- 
- 	err = security_perf_event_alloc(event);
- 	if (err)
--		goto err_security;
-+		goto err_callchain_buffer;
- 
- 	/* symmetric to unaccount_event() in _free_event() */
- 	account_event(event);
- 
- 	return event;
- 
--err_security:
-+err_callchain_buffer:
-+	if (!event->parent) {
-+		if (event->attr.sample_type & PERF_SAMPLE_CALLCHAIN)
-+			put_callchain_buffers();
-+	}
- err_addr_filters:
- 	kfree(event->addr_filter_ranges);
- 
+- should be also clarified.
