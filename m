@@ -2,178 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB700D6B36
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 23:25:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBFD7D6B4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 23:36:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732417AbfJNVZs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 17:25:48 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:33596 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731991AbfJNVZr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 17:25:47 -0400
-Received: by mail-lj1-f193.google.com with SMTP id a22so18064489ljd.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 14:25:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=X+lnbWcSkcDwPIsFytYHP4Lin40lipRFRetqvAeDiCM=;
-        b=scqM8yUc9u0hD5FGyP5x5ZQyMVArfUYBT1caCY/s8upxKS+OADZendXPcbkjtgDwRX
-         fBFDle84CvSkmCmqz15j5h0ZqbWYwMaPeIwxyszbynwibdmhrGPkdSgWErQQ4/9uycRh
-         g3iGC1AVqaoZ858izFhwlF3rLg9NLYZSQcg7s2BpXH8QlGXUFwMfx1iJIZVYKe9ouONH
-         PIh9UCVG8MFqKHJFE+QIiBR7LdCC38n5zBoNrPq2CGVxFZ/Remz1ddPUDyfp0aRsB7dD
-         uETEqRTsC6MpSm33eY7rHVMdCKs4xnOsW3J9bx77uV/bUA+MYXW9x6WO99WJCHwEzefc
-         a5qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=X+lnbWcSkcDwPIsFytYHP4Lin40lipRFRetqvAeDiCM=;
-        b=lnWf57efTl6CLjqgHzv+nHHfpfz+3HJASQ4TuPf4/W7k1soYsc51k8y9V9S92pFdAP
-         xrKPHwDUGreQqoa3YLI4QbeDdVcuAiyI2mrw15DRKipuV9rsOm8b7QgbCkcHXyLK4wKW
-         8WoP8cHmPFibqA9Vt7x40n1nvt6h6+Vr0LVZHkoMFvV+tl9RyX0VvuKagsftjeLDLUMY
-         U7CsExZXANw9AzNX2rSkTFFcrHoNnjoyxlxN8xoMDvxfLaR9ObWWI3DhxzRW7qPXX7AW
-         j0683vtRGRh2MjYfnLbzxm96upt4EkEy0GolyIIprHqu4j52BX8DHVpPiM8+lShdUrV4
-         8Lzw==
-X-Gm-Message-State: APjAAAWIZNl7XtAuJpQy1B8I5hU4XN+rPcA3IW9JDfi2OZf/DEvc/Vya
-        ga+7vZpjsBJkHrmLIcqs6BE=
-X-Google-Smtp-Source: APXvYqyrzFu8ETl5LAaaK0h64UqKgnHlFkkwLUVOG5U6g1GetDVSV9F+30JsVszl8VEwx7hu2cZS/A==
-X-Received: by 2002:a05:651c:8b:: with SMTP id 11mr20114009ljq.100.1571088344747;
-        Mon, 14 Oct 2019 14:25:44 -0700 (PDT)
-Received: from octofox.cadence.com (jcmvbkbc-1-pt.tunnel.tserv24.sto1.ipv6.he.net. [2001:470:27:1fa::2])
-        by smtp.gmail.com with ESMTPSA id m15sm4429434ljh.50.2019.10.14.14.25.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2019 14:25:44 -0700 (PDT)
-From:   Max Filippov <jcmvbkbc@gmail.com>
-To:     linux-xtensa@linux-xtensa.org, Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Chris Zankel <chris@zankel.net>, linux-kernel@vger.kernel.org,
-        Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH v3 3/3] xtensa: fix type conversion in __get_user_[no]check
-Date:   Mon, 14 Oct 2019 14:25:13 -0700
-Message-Id: <20191014212513.17661-4-jcmvbkbc@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191014212513.17661-1-jcmvbkbc@gmail.com>
-References: <20191014212513.17661-1-jcmvbkbc@gmail.com>
+        id S2387968AbfJNVg2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 17:36:28 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:58740 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731408AbfJNVg2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 17:36:28 -0400
+Received: from zn.tnic (p200300EC2F065800329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2f06:5800:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 151951EC0C8E;
+        Mon, 14 Oct 2019 23:36:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1571088987;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=kNhe2TlSQJMPOaQ79SSPMH5z8CjruZRN7lsslQeR9v0=;
+        b=qlk6q3ZGBCFUJ3QdCxqIp35pdSKnkmMIS8hIIwHstgjAw/lsgw0T8tPl6ToLftvpiFL+sQ
+        C5IKqg+PB0ERoPcSGNqmspiyC71MTjiFzo/F/OX2kXYdHQ8c/x7q2w63WrrfDsyaoLdnV+
+        JjMJQ3iZKbvKJjeYwG8jp4yH12v1VLs=
+Date:   Mon, 14 Oct 2019 23:36:18 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc:     tony.luck@intel.com, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, bberg@redhat.com, x86@kernel.org,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hdegoede@redhat.com, ckellner@redhat.com
+Subject: Re: [PATCH 1/2] x86, mce, therm_throt: Optimize logging of thermal
+ throttle messages
+Message-ID: <20191014213618.GK4715@zn.tnic>
+References: <2c2b65c23be3064504566c5f621c1f37bf7e7326.camel@redhat.com>
+ <20191014212101.25719-1-srinivas.pandruvada@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191014212101.25719-1-srinivas.pandruvada@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__get_user_[no]check uses temporary buffer of type long to store result
-of __get_user_size and do sign extension on it when necessary. This
-doesn't work correctly for 64-bit data. Fix it by moving temporary
-buffer/sign extension logic to __get_user_asm.
+On Mon, Oct 14, 2019 at 02:21:00PM -0700, Srinivas Pandruvada wrote:
+> Some modern systems have very tight thermal tolerances. Because of this
+> they may cross thermal thresholds when running normal workloads (even
+> during boot). The CPU hardware will react by limiting power/frequency
+> and using duty cycles to bring the temperature back into normal range.
+> 
+> Thus users may see a "critical" message about the "temperature above
+> threshold" which is soon followed by "temperature/speed normal". These
+> messages are rate limited, but still may repeat every few minutes.
+> 
+> The solution here is to set a timeout when the temperature first exceeds
+> the threshold. If the CPU returns to normal before the timeout fires,
+> we skip printing any messages. If we reach the timeout, then there may be
+> a real thermal issue (e.g. inoperative or blocked fan) and we print the
+> message (together with a count of how many thermal events have occurred).
+> A rate control method is used to avoid printing repeatedly on these broken
+> systems.
+> 
+> Some experimentation with fans enabled showed that temperature returned
+> to normal on a laptop in ~4 seconds. With fans disabled it took over 10
+> seconds. Default timeout is thus set to 8 seconds, but may be changed
+> with kernel boot parameter: "x86_therm_warn_delay". This default interval
+> is twice of typical sampling interval for cooling using running average
+> power limit from user space thermal control softwares.
+> 
+> In addition a new sysfs attribute is added to show what is the maximum
+> amount of time in miili-seconds the system was in throttled state. This
+> will allow to change x86_therm_warn_delay, if required.
 
-Don't do assignment of __get_user_bad result to (x) as it may not always
-be integer-compatible now and issue warning even when it's going to be
-optimized. Instead do (x) = 0; and call __get_user_bad separately.
+This description is already *begging* for this delay value to be
+automatically set by the kernel. Putting yet another knob in front of
+the user who doesn't have a clue most of the time shows one more time
+that we haven't done our job properly by asking her to know what we
+already do.
 
-Zero initialize __x in __get_user_asm and use '+' constraint for its
-assembly argument, so that its value is preserved in error cases. This
-may add at most 1 cycle to the fast path, but saves an instruction and
-two padding bytes in the fixup section for each use of this macro and
-works for both misaligned store and store exception.
+IOW, a simple history feedback mechanism which sets the timeout based on
+the last couple of values is much smarter. The thing would have a max
+value, of course, which, when exceeded should mean an anomaly, etc, but
+almost anything else is better than merely asking the user to make an
+educated guess.
 
-Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
----
-Changes v2->v3:
-- rearrange result zero-initialization for error paths in __get_user_asm
+> Suggested-by: Alan Cox <alan@linux.intel.com>
+> Commit-comment-by: Tony Luck <tony.luck@intel.com>
+  ^^^^^^^^^^^^^^^^^^
 
-Changes v1->v2:
-- initialize result when access_ok check fails in __get_user_check
+What's that?
 
- arch/xtensa/include/asm/uaccess.h | 55 ++++++++++++++++---------------
- 1 file changed, 29 insertions(+), 26 deletions(-)
-
-diff --git a/arch/xtensa/include/asm/uaccess.h b/arch/xtensa/include/asm/uaccess.h
-index da4d35445063..3f80386f1883 100644
---- a/arch/xtensa/include/asm/uaccess.h
-+++ b/arch/xtensa/include/asm/uaccess.h
-@@ -172,19 +172,19 @@ __asm__ __volatile__(					\
- 
- #define __get_user_nocheck(x, ptr, size)			\
- ({								\
--	long __gu_err, __gu_val;				\
--	__get_user_size(__gu_val, (ptr), (size), __gu_err);	\
--	(x) = (__force __typeof__(*(ptr)))__gu_val;		\
-+	long __gu_err;						\
-+	__get_user_size((x), (ptr), (size), __gu_err);		\
- 	__gu_err;						\
- })
- 
- #define __get_user_check(x, ptr, size)					\
- ({									\
--	long __gu_err = -EFAULT, __gu_val = 0;				\
-+	long __gu_err = -EFAULT;					\
- 	const __typeof__(*(ptr)) *__gu_addr = (ptr);			\
--	if (access_ok(__gu_addr, size))			\
--		__get_user_size(__gu_val, __gu_addr, (size), __gu_err);	\
--	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
-+	if (access_ok(__gu_addr, size))					\
-+		__get_user_size((x), __gu_addr, (size), __gu_err);	\
-+	else								\
-+		(x) = 0;						\
- 	__gu_err;							\
- })
- 
-@@ -208,7 +208,7 @@ do {									\
- 		}							\
- 		break;							\
- 	}								\
--	default: (x) = __get_user_bad();				\
-+	default: (x) = 0; __get_user_bad();				\
- 	}								\
- } while (0)
- 
-@@ -218,24 +218,27 @@ do {									\
-  * __check_align_* macros still work.
-  */
- #define __get_user_asm(x_, addr_, err_, align, insn, cb) \
--__asm__ __volatile__(				\
--	__check_align_##align			\
--	"1: "insn"  %[x], %[addr], 0	\n"	\
--	"2:				\n"	\
--	"   .section  .fixup,\"ax\"	\n"	\
--	"   .align 4			\n"	\
--	"   .literal_position		\n"	\
--	"5:				\n"	\
--	"   movi   %[tmp], 2b		\n"	\
--	"   movi   %[x], 0		\n"	\
--	"   movi   %[err], %[efault]	\n"	\
--	"   jx     %[tmp]		\n"	\
--	"   .previous			\n"	\
--	"   .section  __ex_table,\"a\"	\n"	\
--	"   .long	1b, 5b		\n"	\
--	"   .previous"				\
--	:[err] "+r"(err_), [tmp] "=r"(cb), [x] "=r"(x_)\
--	:[addr] "r"(addr_), [efault] "i"(-EFAULT))
-+do {							\
-+	u32 __x = 0;					\
-+	__asm__ __volatile__(				\
-+		__check_align_##align			\
-+		"1: "insn"  %[x], %[addr], 0	\n"	\
-+		"2:				\n"	\
-+		"   .section  .fixup,\"ax\"	\n"	\
-+		"   .align 4			\n"	\
-+		"   .literal_position		\n"	\
-+		"5:				\n"	\
-+		"   movi   %[tmp], 2b		\n"	\
-+		"   movi   %[err], %[efault]	\n"	\
-+		"   jx     %[tmp]		\n"	\
-+		"   .previous			\n"	\
-+		"   .section  __ex_table,\"a\"	\n"	\
-+		"   .long	1b, 5b		\n"	\
-+		"   .previous"				\
-+		:[err] "+r"(err_), [tmp] "=r"(cb), [x] "+r"(__x) \
-+		:[addr] "r"(addr_), [efault] "i"(-EFAULT)); \
-+	(x_) = (__force __typeof__(*(addr_)))__x;	\
-+} while (0)
- 
- 
- /*
 -- 
-2.20.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
