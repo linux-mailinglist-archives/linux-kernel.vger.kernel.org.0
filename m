@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94406D5929
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 02:58:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71A03D5931
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 02:58:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729727AbfJNA6b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 13 Oct 2019 20:58:31 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:38170 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729180AbfJNA6a (ORCPT
+        id S1729840AbfJNA6w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 13 Oct 2019 20:58:52 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:35156 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729714AbfJNA6b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Oct 2019 20:58:30 -0400
-Received: by mail-qk1-f193.google.com with SMTP id x4so10535100qkx.5
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2019 17:58:29 -0700 (PDT)
+        Sun, 13 Oct 2019 20:58:31 -0400
+Received: by mail-qk1-f196.google.com with SMTP id w2so14483585qkf.2
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2019 17:58:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=C71Hj3FAfJPFhO85jZclZxmP3ymeCuJHViUF1xnpygY=;
-        b=oaGiw5aRw1A3F2kzXrr8txWWSNefUqvDNAIn8wXNSXOxnO1CCmOe/9tE3yoWerx37U
-         dwdZmO0/ga+WVga9PPZdx/QioTC9cM05Q5BnrrFnnWPRVTcGk6VjvE1ZBX9DnHkDm403
-         YlJDOo3VvV2PfRQ9IurFnFzIrks1x49Hv7/4HRJVRAYR3fZAJ+rXL1UDlBOZbb5tR62o
-         V5YiNDviL1ZVzJvPxD0RInYdQKjTFQLxSiK3eljUc6HahTasuJ1AtA/GKA6TroSK2jQB
-         zv8vkZ5iS/sDvqDE2CJVGn8ZPpX13vXuV8Nhz81aE8eJKEj6qbagG3xi+c7AOeQLe7C2
-         fUKQ==
+        bh=HXCk7WFSvFXYWs/yCn2J75WJ4FkUD1kjnWRu7u1SlbU=;
+        b=IfEBTd6pxtYseUl5ivLDlRrw2pUdcU14DsbG/j4fNMOQ7tnNYxM6AGyj/63cnSz+P8
+         3S5iRysN1BOvSLTH+0xS8ZnI0qfeQtGfrvsxnCSuU+nmXtDv+4i9RZxwJ9yVV8sNmqF4
+         bAsqXta4BvcufRImA76CJwCaN8P24CCjCgftvx3+avEFRPeq86WOhoj+DY0xznixF4aK
+         +C669lUh5fqWkx243UocpT5Tgqx6MUp9+P5oSApv67EnQUQ89NiN6WaEvU0emeyguVof
+         DW9zfIswCPmOogOCbfxZ04O0y0iMfYFkTc224qRJtCq5VmoUY8aheoEDFOiZu+vwyJC+
+         K1Hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=C71Hj3FAfJPFhO85jZclZxmP3ymeCuJHViUF1xnpygY=;
-        b=jkkLfr4UFseN2S0fgwLuQ/FIfSeIB5KAd44hkYWa74qp8cVPwh6Luehzvf9JNyVfRE
-         aoPqPFIRewymd8aWoKNWquy26pLJqNtlb4r8ghjwUOcMea0SbXMvYgDK9zfqmpyJ6YgB
-         +PxIMDxb4oPa22hYyF97a3RTdi3ci2LrxEcyjIMlb37hzbgchLsR2oixDi1kAOeQqgeM
-         TSqXmUAihs7nK1+rN5no+W0X8stQXJeqc/4ZoA59XrQL+jI08zlhaCPdHoNR+R7Y+Ybc
-         Fe6B3W8NPsbn5ONO1S+SHvtO+9ee5v+y70O24Ztui7JFohAh3J6o0FOqoHnXV5aPXNrf
-         YrLg==
-X-Gm-Message-State: APjAAAWmQGKgFZW9l40tX2M/Hwq9b/LmUN+IJtF6zmOnkn/ajK5C1JIt
-        IEB2AZbuhUnoaj7faM551aJWjA==
-X-Google-Smtp-Source: APXvYqxacNxQw7eCDmvVQZa/5/5oibxwe1D6o6oFPnGTWKgnL08CIfYCF4wr4eNEviNWw+44kiNAbg==
-X-Received: by 2002:a37:a8d5:: with SMTP id r204mr27828397qke.464.1571014708568;
-        Sun, 13 Oct 2019 17:58:28 -0700 (PDT)
+        bh=HXCk7WFSvFXYWs/yCn2J75WJ4FkUD1kjnWRu7u1SlbU=;
+        b=RtSfqHRdcy24uPgT5kMSCRqAkEEgwSfGU0AKfBTzvZqhz6EcTyUGUMS4x60slw8IcH
+         lvg9VxE0bNUtB7NWH63FLFqnKNGIxRMXbioQifNi0n+Bg/RaV6zdInXR383b95UclCsx
+         ARah1ROgdfCYsc+C9Bb5Ub6Bfb1cQEm7NQ/Aef+E0FVAtxT+UWyUCB0Uyk/dd7NgE2Ja
+         +CtEFWL6POaPXKsv1kojWRgumd1OCmkbST8eCWchssVsWK7UXoeQerjCHguAYPypk+x1
+         0g+7f8dUnSPf/B6TJ0ccaZV19g5KG4nxira/HaN9Sbmduzk7TXdTcxOJDUZO2xssgP7X
+         YIag==
+X-Gm-Message-State: APjAAAXuZhjajSM01Hh9Mimau3KZr1e+pyroAuG5g+xsmCiHnvAeu+/a
+        SUO9HxMslSQLq1/7P1TJIBWUYw==
+X-Google-Smtp-Source: APXvYqy69L3uW98ouB3FOFnzj3MHsc4HwzvQZSr4swhJjCk8coZAAPKeHVuVUhzMPG9dtps1e3fXBg==
+X-Received: by 2002:a37:4dca:: with SMTP id a193mr27620584qkb.292.1571014710026;
+        Sun, 13 Oct 2019 17:58:30 -0700 (PDT)
 Received: from Thara-Work-Ubuntu.fios-router.home (pool-71-255-246-27.washdc.fios.verizon.net. [71.255.246.27])
-        by smtp.googlemail.com with ESMTPSA id c185sm7663901qkf.122.2019.10.13.17.58.27
+        by smtp.googlemail.com with ESMTPSA id c185sm7663901qkf.122.2019.10.13.17.58.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 13 Oct 2019 17:58:28 -0700 (PDT)
+        Sun, 13 Oct 2019 17:58:29 -0700 (PDT)
 From:   Thara Gopinath <thara.gopinath@linaro.org>
 To:     mingo@redhat.com, peterz@infradead.org, ionela.voinescu@arm.com,
         vincent.guittot@linaro.org, rui.zhang@intel.com,
         edubezval@gmail.com
 Cc:     linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
         javi.merino@kernel.org, daniel.lezcano@linaro.org
-Subject: [Patch v3 1/7] sched/pelt.c: Add support to track thermal pressure
-Date:   Sun, 13 Oct 2019 20:58:19 -0400
-Message-Id: <1571014705-19646-2-git-send-email-thara.gopinath@linaro.org>
+Subject: [Patch v3 2/7] sched: Add infrastructure to store and update instantaneous thermal pressure
+Date:   Sun, 13 Oct 2019 20:58:20 -0400
+Message-Id: <1571014705-19646-3-git-send-email-thara.gopinath@linaro.org>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1571014705-19646-1-git-send-email-thara.gopinath@linaro.org>
 References: <1571014705-19646-1-git-send-email-thara.gopinath@linaro.org>
@@ -61,84 +61,165 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Extrapolating on the exisitng framework to track rt/dl utilization using
-pelt signals, add a similar mechanism to track thermal pressue. The
-difference here from rt/dl utilization tracking is that, instead of
-tracking time spent by a cpu running a rt/dl task through util_avg,
-the average thermal pressure is tracked through load_avg.
-In order to track average thermal pressure, a new sched_avg variable
-avg_thermal is introduced. Function update_thermal_avg can be called
-to do the periodic bookeeping (accumulate, decay and average)
-of the thermal pressure.
+Add thermal.c and thermal.h files that provides interface
+APIs to initialize, update/average, track, accumulate and decay
+thermal pressure per cpu basis. A per cpu structure max_capacity_info is
+introduced to keep track of instantaneous per cpu thermal pressure.
+Thermal pressure is the delta between max_capacity and cap_capacity.
+API update_periodic_maxcap is called for periodic accumulate and decay
+of the thermal pressure. It is to to be called from a periodic tick
+function. This API calculates the delta between max_capacity and
+cap_capacity and passes on the delta to update_thermal_avg to do the
+necessary accumulate, decay and average. API update_maxcap_capacity is for
+the system to update the thermal pressure by updating cap_capacity.
+Considering, update_periodic_maxcap reads cap_capacity and
+update_maxcap_capacity writes into cap_capacity, one can argue for
+some sort of locking mechanism to avoid a stale value.
+But considering update_periodic_maxcap can be called from a system
+critical path like scheduler tick function, a locking mechanism is not
+ideal. This means that it is possible the value used to
+calculate average thermal pressure for a cpu can be stale for upto 1
+tick period.
 
 Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
 ---
- kernel/sched/pelt.c  | 13 +++++++++++++
- kernel/sched/pelt.h  |  7 +++++++
- kernel/sched/sched.h |  1 +
- 3 files changed, 21 insertions(+)
+ include/linux/sched.h  | 14 +++++++++++
+ kernel/sched/Makefile  |  2 +-
+ kernel/sched/thermal.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ kernel/sched/thermal.h | 13 ++++++++++
+ 4 files changed, 94 insertions(+), 1 deletion(-)
+ create mode 100644 kernel/sched/thermal.c
+ create mode 100644 kernel/sched/thermal.h
 
-diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
-index a96db50..f06aae3 100644
---- a/kernel/sched/pelt.c
-+++ b/kernel/sched/pelt.c
-@@ -353,6 +353,19 @@ int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
- 	return 0;
- }
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 2c2e56b..875ce2b 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1983,6 +1983,20 @@ static inline void rseq_syscall(struct pt_regs *regs)
  
-+int update_thermal_avg(u64 now, struct rq *rq, u64 capacity)
+ #endif
+ 
++#ifdef CONFIG_SMP
++void update_maxcap_capacity(int cpu, u64 capacity);
++
++void populate_max_capacity_info(void);
++#else
++static inline void update_maxcap_capacity(int cpu, u64 capacity)
 +{
-+	if (___update_load_sum(now, &rq->avg_thermal,
-+			       capacity,
-+			       capacity,
-+			       capacity)) {
-+		___update_load_avg(&rq->avg_thermal, 1, 1);
-+		return 1;
++}
++
++static inline void populate_max_capacity_info(void)
++{
++}
++#endif
++
+ const struct sched_avg *sched_trace_cfs_rq_avg(struct cfs_rq *cfs_rq);
+ char *sched_trace_cfs_rq_path(struct cfs_rq *cfs_rq, char *str, int len);
+ int sched_trace_cfs_rq_cpu(struct cfs_rq *cfs_rq);
+diff --git a/kernel/sched/Makefile b/kernel/sched/Makefile
+index 21fb5a5..4d3b820 100644
+--- a/kernel/sched/Makefile
++++ b/kernel/sched/Makefile
+@@ -20,7 +20,7 @@ obj-y += core.o loadavg.o clock.o cputime.o
+ obj-y += idle.o fair.o rt.o deadline.o
+ obj-y += wait.o wait_bit.o swait.o completion.o
+ 
+-obj-$(CONFIG_SMP) += cpupri.o cpudeadline.o topology.o stop_task.o pelt.o
++obj-$(CONFIG_SMP) += cpupri.o cpudeadline.o topology.o stop_task.o pelt.o thermal.o
+ obj-$(CONFIG_SCHED_AUTOGROUP) += autogroup.o
+ obj-$(CONFIG_SCHEDSTATS) += stats.o
+ obj-$(CONFIG_SCHED_DEBUG) += debug.o
+diff --git a/kernel/sched/thermal.c b/kernel/sched/thermal.c
+new file mode 100644
+index 0000000..5f0b2d4
+--- /dev/null
++++ b/kernel/sched/thermal.c
+@@ -0,0 +1,66 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Sceduler Thermal Interactions
++ *
++ *  Copyright (C) 2018 Linaro, Inc., Thara Gopinath <thara.gopinath@linaro.org>
++ */
++
++#include <linux/sched.h>
++#include "sched.h"
++#include "pelt.h"
++#include "thermal.h"
++
++struct max_capacity_info {
++	unsigned long max_capacity;
++	unsigned long cap_capacity;
++};
++
++static DEFINE_PER_CPU(struct max_capacity_info, max_cap);
++
++void update_maxcap_capacity(int cpu, u64 capacity)
++{
++	struct max_capacity_info *__max_cap;
++	unsigned long __capacity;
++
++	__max_cap = (&per_cpu(max_cap, cpu));
++	if (!__max_cap) {
++		pr_err("no max_capacity_info structure for cpu %d\n", cpu);
++		return;
 +	}
 +
-+	return 0;
++	/* Normalize the capacity */
++	__capacity = (capacity * arch_scale_cpu_capacity(cpu)) >>
++							SCHED_CAPACITY_SHIFT;
++	pr_debug("updating cpu%d capped capacity from %lu to %lu\n", cpu, __max_cap->cap_capacity, __capacity);
++
++	__max_cap->cap_capacity = __capacity;
 +}
 +
- #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
- /*
-  * irq:
-diff --git a/kernel/sched/pelt.h b/kernel/sched/pelt.h
-index afff644..01c5436 100644
---- a/kernel/sched/pelt.h
-+++ b/kernel/sched/pelt.h
-@@ -6,6 +6,7 @@ int __update_load_avg_se(u64 now, struct cfs_rq *cfs_rq, struct sched_entity *se
- int __update_load_avg_cfs_rq(u64 now, struct cfs_rq *cfs_rq);
- int update_rt_rq_load_avg(u64 now, struct rq *rq, int running);
- int update_dl_rq_load_avg(u64 now, struct rq *rq, int running);
-+int update_thermal_avg(u64 now, struct rq *rq, u64 capacity);
- 
- #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
- int update_irq_load_avg(struct rq *rq, u64 running);
-@@ -175,6 +176,12 @@ update_rq_clock_pelt(struct rq *rq, s64 delta) { }
- static inline void
- update_idle_rq_clock_pelt(struct rq *rq) { }
- 
-+static inline int
-+update_thermal_avg(u64 now, struct rq *rq, u64 capacity)
++void populate_max_capacity_info(void)
 +{
-+	return 0;
++	struct max_capacity_info *__max_cap;
++	u64 capacity;
++	int cpu;
++
++	for_each_possible_cpu(cpu) {
++		__max_cap = (&per_cpu(max_cap, cpu));
++		if (!__max_cap)
++			continue;
++		capacity = arch_scale_cpu_capacity(cpu);
++		__max_cap->max_capacity = capacity;
++		__max_cap->cap_capacity = capacity;
++		pr_debug("cpu %d max capacity set to %ld\n", cpu, __max_cap->max_capacity);
++	}
 +}
 +
- #endif
- 
- 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 0db2c1b..d5d82c8 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -944,6 +944,7 @@ struct rq {
- #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
- 	struct sched_avg	avg_irq;
- #endif
-+	struct sched_avg	avg_thermal;
- 	u64			idle_stamp;
- 	u64			avg_idle;
- 
++void update_periodic_maxcap(struct rq *rq)
++{
++	struct max_capacity_info *__max_cap = (&per_cpu(max_cap, cpu_of(rq)));
++	unsigned long delta;
++
++	if (!__max_cap)
++		return;
++
++	delta = __max_cap->max_capacity - __max_cap->cap_capacity;
++	update_thermal_avg(rq_clock_task(rq), rq, delta);
++}
+diff --git a/kernel/sched/thermal.h b/kernel/sched/thermal.h
+new file mode 100644
+index 0000000..5657cb4
+--- /dev/null
++++ b/kernel/sched/thermal.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Scheduler thermal interaction internal methods.
++ */
++
++#ifdef CONFIG_SMP
++void update_periodic_maxcap(struct rq *rq);
++
++#else
++static inline void update_periodic_maxcap(struct rq *rq)
++{
++}
++#endif
 -- 
 2.1.4
 
