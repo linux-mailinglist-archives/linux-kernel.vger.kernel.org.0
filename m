@@ -2,111 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E19CBD6329
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 14:57:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62817D6334
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 15:00:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731782AbfJNM4t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 08:56:49 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38001 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730526AbfJNM4s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 08:56:48 -0400
-Received: by mail-pf1-f195.google.com with SMTP id h195so10373776pfe.5
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 05:56:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pyS+DrympKyI4FdnI2r2kXlN0WEKP6R4E5v/Ib2pOHo=;
-        b=YDp68Zyk2ywgMVsWqmix1nrW5hNei5h6TonrN8JMUKCArSSX9z2yuhp6zSoI4u/aGS
-         Xk0HT/EcCVmQUXT3Z+9YEwyX+TYybN5z2TdKIeWK89+vNPpbrhA13RvNNu3xMjvTp4CN
-         N2u/L72QjH7otjbNBSQpt0PcNU/fq78yjMo/qGJJBXUWpiO2DkkEopyZxiUYGq5E73NH
-         2lhvsHl2DpJmfdY9RpXvZBF/X91ezHas6607xDXtRhie+kQkivFpiQrWBPkhpLhrQnlV
-         JjRdZlL/6kpuzoLgRGQ2tKBPfpOGmL2e1u/WXtIImnsi2RCBvaFdc8WNEuQ5qDi32GIP
-         pJkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pyS+DrympKyI4FdnI2r2kXlN0WEKP6R4E5v/Ib2pOHo=;
-        b=pb0s7BjiPrA0cBVGaCpyZuZud6Byk6/Op3RlPH1KMJbVyEArVW2CtbCrgOa+K5HbGj
-         mH782+vPhY8tkTVTn2N97Lx74oMbZoKbAjSxghXdyiTVyic9zL1Jyx3ASQYK/ZpHwFYo
-         HbRzE3BMewW9KXM44AfetO7K1n5J5uTR/kV1SJG5sIfGPPcjcJ52lm/SiLVgEdJW9w53
-         8fFsD78Ez/OJNuRX/QULqTXq78tsnHoSVTiAPOmP72LN/mthZ3pz3bo0byhyYrRr+GYI
-         JYEfMnasn3lsY46rLdkWcDQCNYNyX6DSZ4TKRSLtkKEa1JuobnhAZ8cutPB7QCFlNGqz
-         G56g==
-X-Gm-Message-State: APjAAAU4wCHtqb7JNLCu2dokXlN7eUopxhxQStbQR3X8jLuPmiZRrS8G
-        mRkRQ0a0FvswGiJJ+XAH5SLYUlEjtbOzw2DR9aJ6WA==
-X-Google-Smtp-Source: APXvYqxE5OPcn3OUgyHT/ky5G2661dzw3FQJAA1da5dBNfVi6+WKL5gqbxEQO874AQKIgeroPf+VvwnmMXE495YiMCM=
-X-Received: by 2002:a65:4c03:: with SMTP id u3mr33085293pgq.440.1571057807365;
- Mon, 14 Oct 2019 05:56:47 -0700 (PDT)
+        id S1732003AbfJNNAM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 09:00:12 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:53618 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730126AbfJNNAL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 09:00:11 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 40342F1A9E89E082ED4E;
+        Mon, 14 Oct 2019 21:00:08 +0800 (CST)
+Received: from localhost.localdomain (10.67.165.24) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 14 Oct 2019 21:00:02 +0800
+From:   Yonglong Liu <liuyonglong@huawei.com>
+To:     <davem@davemloft.net>, <hkallweit1@gmail.com>, <andrew@lunn.ch>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
+        <yisen.zhuang@huawei.com>, <shiju.jose@huawei.com>
+Subject: [RFC PATCH V2 net] net: phy: Fix "link partner" information disappear issue
+Date:   Mon, 14 Oct 2019 20:56:37 +0800
+Message-ID: <1571057797-37602-1-git-send-email-liuyonglong@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-References: <CAAeHK+zR=S1cyaYfehyUDrpMGMXvxgLEeS8V2ze2HkwYUp6bjg@mail.gmail.com>
- <Pine.LNX.4.44L0.1910111039380.1529-100000@iolanthe.rowland.org> <20191011150646.GA1240544@kroah.com>
-In-Reply-To: <20191011150646.GA1240544@kroah.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Mon, 14 Oct 2019 14:56:36 +0200
-Message-ID: <CAAeHK+yCdTUtTMbH6r_r=hmS+Tk5mk6=nyRVuOFz6yvYSySKPA@mail.gmail.com>
-Subject: Re: KMSAN: uninit-value in alauda_check_media
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Jaskaran Singh <jaskaransingh7654321@gmail.com>,
-        syzbot <syzbot+e7d46eb426883fb97efd@syzkaller.appspotmail.com>,
-        Alexander Potapenko <glider@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        usb-storage@lists.one-eyed-alien.net
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.67.165.24]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 5:06 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Fri, Oct 11, 2019 at 10:53:47AM -0400, Alan Stern wrote:
-> > On Fri, 11 Oct 2019, Andrey Konovalov wrote:
-> >
-> > > On Fri, Oct 11, 2019 at 4:08 PM Alan Stern <stern@rowland.harvard.edu> wrote:
-> >
-> > > > Now yes, it's true that defining status as an array on the stack is
-> > > > also a bug, since USB transfer buffers are not allowed to be stack
-> > > > variables.
-> > >
-> > > Hi Alan,
-> > >
-> > > I'm curious, what is the reason for disallowing that? Should we try to
-> > > somehow detect such cases automatically?
-> >
-> > Transfer buffers are read and written by DMA.  On systems that don't
-> > have cache-coherent DMA controllers, it is essential that the CPU does
-> > not access any cache line involved in a DMA transfer while the transfer
-> > is in progress.  Otherwise the data in the cache would be different
-> > from the data in the buffer, leading to corruption.
-> >
-> > (In theory it would be okay for the CPU to read (not write!) a cache
-> > line assigned to a buffer for a DMA write (not read!) transfer.  But
-> > even doing that isn't really a good idea.)
-> >
-> > (Also, this isn't an issue for x86 architectures, because x86 has
-> > cache-coherent DMA.  But it is an issue on other architectures.)
-> >
-> > In practice, this means transfer buffers have to be allocated by
-> > something like kmalloc, so that they occupies their own separate set of
-> > cache lines.  Buffers on the stack obviously don't satisfy this
-> > requirement.
-> >
-> > At some point there was a discussion about automatically detecting when
-> > on-stack (or otherwise invalid) buffers are used for DMA transfers.  I
-> > don't recall what the outcome was.
->
-> A patchset from Kees was sent, but it needs a bit more work...
+Some drivers just call phy_ethtool_ksettings_set() to set the
+links, for those phy drivers that use genphy_read_status(), if
+autoneg is on, and the link is up, than execute "ethtool -s
+ethx autoneg on" will cause "link partner" information disappear.
 
-Hi Greg,
+The call trace is phy_ethtool_ksettings_set()->phy_start_aneg()
+->linkmode_zero(phydev->lp_advertising)->genphy_read_status(),
+the link didn't change, so genphy_read_status() just return, and
+phydev->lp_advertising is zero now.
 
-Could you send a link to the patchset?
+This patch moves the clear operation of lp_advertising from
+phy_start_aneg() to genphy_read_lpa()/genphy_c45_read_lpa(), and
+if autoneg on and autoneg not complete, just clear what the
+generic functions care about.
 
-Thanks!
+Fixes: 88d6272acaaa ("net: phy: avoid unneeded MDIO reads in genphy_read_status")
+Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
+
+---
+change log:
+V2: moves the clear operation of lp_advertising from
+phy_start_aneg() to genphy_read_lpa()/genphy_c45_read_lpa(), and
+if autoneg on and autoneg not complete, just clear what the
+generic functions care about. Suggested by Heiner Kallweit.
+---
+---
+ drivers/net/phy/phy-c45.c    |  2 ++
+ drivers/net/phy/phy.c        |  3 ---
+ drivers/net/phy/phy_device.c | 12 +++++++++++-
+ 3 files changed, 13 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/phy/phy-c45.c b/drivers/net/phy/phy-c45.c
+index 7935593..a1caeee 100644
+--- a/drivers/net/phy/phy-c45.c
++++ b/drivers/net/phy/phy-c45.c
+@@ -323,6 +323,8 @@ int genphy_c45_read_pma(struct phy_device *phydev)
+ {
+ 	int val;
+ 
++	linkmode_zero(phydev->lp_advertising);
++
+ 	val = phy_read_mmd(phydev, MDIO_MMD_PMAPMD, MDIO_CTRL1);
+ 	if (val < 0)
+ 		return val;
+diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
+index 119e6f4..105d389b 100644
+--- a/drivers/net/phy/phy.c
++++ b/drivers/net/phy/phy.c
+@@ -572,9 +572,6 @@ int phy_start_aneg(struct phy_device *phydev)
+ 	if (AUTONEG_DISABLE == phydev->autoneg)
+ 		phy_sanitize_settings(phydev);
+ 
+-	/* Invalidate LP advertising flags */
+-	linkmode_zero(phydev->lp_advertising);
+-
+ 	err = phy_config_aneg(phydev);
+ 	if (err < 0)
+ 		goto out_unlock;
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index 9d2bbb1..4b43466 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -1787,7 +1787,14 @@ int genphy_read_lpa(struct phy_device *phydev)
+ {
+ 	int lpa, lpagb;
+ 
+-	if (phydev->autoneg == AUTONEG_ENABLE && phydev->autoneg_complete) {
++	if (phydev->autoneg == AUTONEG_ENABLE) {
++		if (!phydev->autoneg_complete) {
++			mii_stat1000_mod_linkmode_lpa_t(phydev->lp_advertising,
++							0);
++			mii_lpa_mod_linkmode_lpa_t(phydev->lp_advertising, 0);
++			return 0;
++		}
++
+ 		if (phydev->is_gigabit_capable) {
+ 			lpagb = phy_read(phydev, MII_STAT1000);
+ 			if (lpagb < 0)
+@@ -1816,6 +1823,9 @@ int genphy_read_lpa(struct phy_device *phydev)
+ 
+ 		mii_lpa_mod_linkmode_lpa_t(phydev->lp_advertising, lpa);
+ 	}
++	else {
++		linkmode_zero(phydev->lp_advertising);
++	}
+ 
+ 	return 0;
+ }
+-- 
+2.8.1
+
