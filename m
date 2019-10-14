@@ -2,79 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81477D5D1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 10:05:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82E72D5D11
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 10:04:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730277AbfJNIFu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 04:05:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51592 "EHLO mail.kernel.org"
+        id S1730174AbfJNIEi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 04:04:38 -0400
+Received: from mga12.intel.com ([192.55.52.136]:33045 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725934AbfJNIFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 04:05:49 -0400
-Received: from localhost (unknown [122.167.124.160])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1EC802054F;
-        Mon, 14 Oct 2019 08:05:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571040348;
-        bh=JMX1LApY2fbKeVzv4AKmUzSaxbEE2mGrMc7ILY5Utmc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0HX2BXwBBUVV6EdFcDo4PS3xZqvONejrn/66/Ku4UC2V64qZHV/jxFo+KCNiX6hlm
-         Bo0H90rxwYt9Gfhi5DTuBZjNx5l3SP+sAE1qPoUNivDYdOBs5i3rf/jwZVV55t3fe2
-         pHNsxzdfIhJtHxQuNRZDdojM3EnLMsDbsASy6uv8=
-Date:   Mon, 14 Oct 2019 13:35:44 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Robin Gong <yibin.gong@nxp.com>
-Cc:     "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "J.Lambrecht@TELEVIC.com" <J.Lambrecht@televic.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] dmaengine: imx-sdma: fix kernel hangs with SLUB slab
- allocator
-Message-ID: <20191014080544.GM2654@vkoul-mobl>
-References: <1569347584-3478-1-git-send-email-yibin.gong@nxp.com>
- <20191014080215.GL2654@vkoul-mobl>
+        id S1725934AbfJNIEi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 04:04:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Oct 2019 01:04:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,295,1566889200"; 
+   d="scan'208";a="220032491"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
+  by fmsmga004.fm.intel.com with ESMTP; 14 Oct 2019 01:04:37 -0700
+Subject: Re: [PATCH] xhci: Don't use soft retry if slot id > 0
+To:     Bernhard Gebetsberger <bernhard.gebetsberger@gmx.at>
+Cc:     Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191013003313.3497-1-bernhard.gebetsberger@gmx.at>
+From:   Mathias Nyman <mathias.nyman@linux.intel.com>
+Message-ID: <84476602-7551-b667-9803-55016e477b02@linux.intel.com>
+Date:   Mon, 14 Oct 2019 11:06:40 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191014080215.GL2654@vkoul-mobl>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191013003313.3497-1-bernhard.gebetsberger@gmx.at>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14-10-19, 13:32, Vinod Koul wrote:
-> On 24-09-19, 09:49, Robin Gong wrote:
-> > Illegal memory will be touch if SDMA_SCRIPT_ADDRS_ARRAY_SIZE_V3
-> > (41) exceed the size of structure sdma_script_start_addrs(40),
-> > thus cause memory corrupt such as slob block header so that kernel
-> > trap into while() loop forever in slob_free(). Please refer to below
-> > code piece in imx-sdma.c:
-> > for (i = 0; i < sdma->script_number; i++)
-> > 	if (addr_arr[i] > 0)
-> > 		saddr_arr[i] = addr_arr[i]; /* memory corrupt here */
-> > That issue was brought by commit a572460be9cf ("dmaengine: imx-sdma: Add
-> > support for version 3 firmware") because SDMA_SCRIPT_ADDRS_ARRAY_SIZE_V3
-> > (38->41 3 scripts added) not align with script number added in
-> > sdma_script_start_addrs(2 scripts).
+On 13.10.2019 3.33, Bernhard Gebetsberger wrote:
+> According to the xhci specification(chapter 4.6.8.1) soft retry
+> shouldn't be used if the slot id is higher than 0. Currently some usb
+> devices break on some systems because soft retry is being used when
+> there is a transaction error, without checking the slot id.
 > 
-> Applied, thanks
+That is not correct
 
-And after applying I noticed the patch title is not apt. The patch title
-should reflect the change and not the cause or result.
+Specs say that soft retry should not be used if we are dealing with a
+FS/LS device behind a HS hub, this can be checked from the "TT Hub Slot ID"
+field in the slot context, which we do.
 
-So I have modified the title to: "dmaengine: imx-sdma: fix size check
-for sdma script_number"
+In xhci all devices have a slot id, so this change would prevent
+soft retry almost completely.
 
-Thanks
--- 
-~Vinod
+Specs 4.6.8.1:
+"Soft Retry attempts shall not be performed if the device is behind a
+TT in a HS Hub (i.e. TT Hub Slot ID > ‘0’)."
+
+-Mathias
