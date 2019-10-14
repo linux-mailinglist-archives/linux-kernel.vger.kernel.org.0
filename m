@@ -2,88 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8967CD5EE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 11:31:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73D10D5EEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 11:32:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730924AbfJNJbT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 05:31:19 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52528 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730667AbfJNJbS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 05:31:18 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2DDB03082E24;
-        Mon, 14 Oct 2019 09:31:18 +0000 (UTC)
-Received: from [10.36.116.28] (ovpn-116-28.ams2.redhat.com [10.36.116.28])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4890F5C1D4;
-        Mon, 14 Oct 2019 09:31:15 +0000 (UTC)
-Subject: Re: [PATCH v6 03/10] mm/memory_hotplug: Don't access uninitialized
- memmaps in shrink_pgdat_span()
-To:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        linux-ia64@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        x86@kernel.org, Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Wei Yang <richardw.yang@linux.intel.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
-References: <20191006085646.5768-1-david@redhat.com>
- <20191006085646.5768-4-david@redhat.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <3d8be627-bfd6-1336-689d-345a2ed67118@redhat.com>
-Date:   Mon, 14 Oct 2019 11:31:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        id S1730945AbfJNJcJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 05:32:09 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:45603 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730766AbfJNJcJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 05:32:09 -0400
+Received: by mail-oi1-f194.google.com with SMTP id o205so13166361oib.12
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 02:32:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=6jj0LWwH0UFM3yMv+6fFI2lCptwbKbPuAlHLCa4o8Ig=;
+        b=NO3t0VB09BjOrJIJjTivWi5amIrIxMpEZHxW8JEMb7N33MHXcv2aUag32CQYCcUUZ9
+         TXOAKv95c2Il0Lepkm7etvCMnBAFcixRuzsaO3Elhy5zGvuL2xr5BBYDQJyd5ssczCQi
+         5ir4r96u7LL4WEoovLW3Pgq8MLXqS9SMUP87tzhVCZPHY9DeDE3PMfxr/0t9YYs9wkEU
+         y2DqQ/KfgC1tN7ljkGGHGiZtWkUEL9osHuc+zwl/pfgSZdAv/s/HfWVgBS8JsGsRtixa
+         f1sd4T8c63v5FMTZMshOYphoAFyln5CRWyAwUh2PfdVKKJhGhH7MFE8FLFecl7JsFnwM
+         h0tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=6jj0LWwH0UFM3yMv+6fFI2lCptwbKbPuAlHLCa4o8Ig=;
+        b=DnQH5w8N+qChJ5t9TkRFV8cpxBpInLPrrff53i8t9iXwI2b0kRbi5lQuTVY6SB+4lY
+         XfcjBzL07G83rSyfmorNvHRwJ/5uoeoaTYln3YE9MOh8ckMjwHCT5h3u9TpMr/b9XcmV
+         z44b7PP+TQlZ1egFMAflGOvWsVm6iZPudueFQik81Od5DO9MChANinxEbg1QT8S55QOw
+         mdhk+AE9Uzg6NmeHKG7NamvlJBWnYjZ06DiDR/h6p/d/IwfcrEzxs1BNYguTMNtvgfMf
+         aTfeWwMhoyoZpmITZuXBVK0XOvnP73vYZ3zknqDAopW/iha1rE5kvE55qhgU8ADAzBjO
+         U8CA==
+X-Gm-Message-State: APjAAAXjmn3T1eCdvro+95pq5p65NSNy632HIbRt7J+fK1aiX6849TrM
+        LpQSC81Sd9q2H7lG2O/YlFnD+GT8SPzGX33PdjyR6g==
+X-Google-Smtp-Source: APXvYqxRKShhWlAHrBWW8AcT8K9wqgTiCGHYZ3NkSoXSBgR+9wF9VJwmTWZrYvxCdQsGGuXlq7/dpsZkhsl9lpRkn+U=
+X-Received: by 2002:aca:f492:: with SMTP id s140mr499222oih.83.1571045528182;
+ Mon, 14 Oct 2019 02:32:08 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191006085646.5768-4-david@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Mon, 14 Oct 2019 09:31:18 +0000 (UTC)
+References: <000001d5824d$c8b2a060$5a17e120$@codeaurora.org>
+ <CACT4Y+aAicvQ1FYyOVbhJy62F4U6R_PXr+myNghFh8PZixfYLQ@mail.gmail.com>
+ <CANpmjNOx7fuLLBasdEgnOCJepeufY4zo_FijsoSg0hfVgN7Ong@mail.gmail.com> <002801d58271$f5d01db0$e1705910$@codeaurora.org>
+In-Reply-To: <002801d58271$f5d01db0$e1705910$@codeaurora.org>
+From:   Marco Elver <elver@google.com>
+Date:   Mon, 14 Oct 2019 11:31:56 +0200
+Message-ID: <CANpmjNPVK00wsrpcVPFjudpqE-4-AVnZY0Pk-WMXTtqZTMXoOw@mail.gmail.com>
+Subject: Re: KCSAN Support on ARM64 Kernel
+To:     sgrover@codeaurora.org
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Will Deacon <willdeacon@google.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06.10.19 10:56, David Hildenbrand wrote:
-> We might use the nid of memmaps that were never initialized. For
-> example, if the memmap was poisoned, we will crash the kernel in
-> pfn_to_nid() right now. Let's use the calculated boundaries of the separate
-> zones instead. This now also avoids having to iterate over a whole bunch of
-> subsections again, after shrinking one zone.
-> 
-> Before commit d0dc12e86b31 ("mm/memory_hotplug: optimize memory
-> hotplug"), the memmap was initialized to 0 and the node was set to the
-> right value. After that commit, the node might be garbage.
-> 
-> We'll have to fix shrink_zone_span() next.
-> 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Wei Yang <richardw.yang@linux.intel.com>
-> Fixes: d0dc12e86b31 ("mm/memory_hotplug: optimize memory hotplug")
+Hi Sachin,
 
-@Andrew, can you convert that to
-
-Fixes: f1dd2cd13c4b ("mm, memory_hotplug: do not associate hotadded memory to zones until online") # visible after d0dc12e86b319
-
-and add
-
-Cc: stable@vger.kernel.org # v4.13+
-
--- 
+My plan was to send patches upstream within the month.
 
 Thanks,
+-- Marco
 
-David / dhildenb
+On Mon, 14 Oct 2019 at 11:30, <sgrover@codeaurora.org> wrote:
+>
+> Hi Marco,
+>
+> When can we expect upstream of KCSAN on kernel mainline. Any timeline?
+>
+> Regards,
+> Sachin Grover
+>
+> -----Original Message-----
+> From: Marco Elver <elver@google.com>
+> Sent: Monday, 14 October, 2019 2:40 PM
+> To: Dmitry Vyukov <dvyukov@google.com>
+> Cc: sgrover@codeaurora.org; kasan-dev <kasan-dev@googlegroups.com>; LKML =
+<linux-kernel@vger.kernel.org>; Paul E. McKenney <paulmck@linux.ibm.com>; W=
+ill Deacon <willdeacon@google.com>; Andrea Parri <parri.andrea@gmail.com>; =
+Alan Stern <stern@rowland.harvard.edu>; Mark Rutland <mark.rutland@arm.com>
+> Subject: Re: KCSAN Support on ARM64 Kernel
+>
+> On Mon, 14 Oct 2019 at 10:40, Dmitry Vyukov <dvyukov@google.com> wrote:
+> >
+> > On Mon, Oct 14, 2019 at 7:11 AM <sgrover@codeaurora.org> wrote:
+> > >
+> > > Hi Dmitry,
+> > >
+> > > I am from Qualcomm Linux Security Team, just going through KCSAN and =
+found that there was a thread for arm64 support (https://lkml.org/lkml/2019=
+/9/20/804).
+> > >
+> > > Can you please tell me if KCSAN is supported on ARM64 now? Can I just=
+ rebase the KCSAN branch on top of our let=E2=80=99s say android mainline k=
+ernel, enable the config and run syzkaller on that for finding race conditi=
+ons?
+> > >
+> > > It would be very helpful if you reply, we want to setup this for find=
+ing issues on our proprietary modules that are not part of kernel mainline.
+> > >
+> > > Regards,
+> > >
+> > > Sachin Grover
+> >
+> > +more people re KCSAN on ARM64
+>
+> KCSAN does not yet have ARM64 support. Once it's upstream, I would expect=
+ that Mark's patches (from repo linked in LKML thread) will just cleanly ap=
+ply to enable ARM64 support.
+>
+> Thanks,
+> -- Marco
+>
