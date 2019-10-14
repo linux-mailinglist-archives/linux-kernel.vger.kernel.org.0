@@ -2,316 +2,488 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B276D5E60
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 11:13:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C59BD5E72
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 11:16:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730749AbfJNJNr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 05:13:47 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:56835 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730621AbfJNJNr (ORCPT
+        id S1730767AbfJNJQw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 05:16:52 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:53394 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730438AbfJNJQv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 05:13:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571044425;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=34II/on4waWLD+AT6/fHfeUHDpP5c8H+QWQEVyMZsQg=;
-        b=OOUv8RSsdKS0w6QsbRl9OYfDh4vaC3Lc71rvj1LSNsn6zue162QEq/dfisEf365iPyL+nR
-        fPENwgmPVsHIIFDWRLlrTCxjhZGYjL+q6F7n0YLrI0i0BKlyEIq2d+6P/uxQLfyub41wMH
-        U+KrZvDX5J/XO6eiTGcJfeZt063TF8A=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-214-SVCXnFl_PwazEbgyf1yFXw-1; Mon, 14 Oct 2019 05:13:44 -0400
-Received: by mail-qk1-f199.google.com with SMTP id 10so16416145qka.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 02:13:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kkqamdzMGjTC8Hhxob4h4wgXhNnIZdao0EdTy0NL9nA=;
-        b=E2rmvr1KIwh8s4nKtJ7Rki3WppKhiTijcAc5eyiIITgF7nuMnoB9H+hMB3JqybKCyj
-         uR5bmwpObWeUV+qWcT/3Qd/3iYiihlb2d/e3KHlXIQzbPBmHAaHwT2wvBLlC1K0AGF8X
-         N2n/d8/kTHch7wbAi/d4UTyPnGK6p+QVBO5O8MEmz8J20xmepWC9TfBpgC7/z/iQdt0V
-         nH/15eMZUxj930A1KuCJMQn0Ie/WUYDzEKBtyWOa1acC0ibiJs0Q3ejSWEFnHIihOakN
-         KOI57GycsPXqywfFodWXGfljt0bWw2hYjgOgOTndkePxhA6Zraw9RqGdQFk5qIX5Q1/z
-         CnKg==
-X-Gm-Message-State: APjAAAWMiaiSuBI3ergYivJGn5aj7Pcj9R0LfsRahGWFBwhd65i+hEoW
-        zH8W0jkNcrOTfLwAGt7YxsM/KZJauYghLLswfmEbCtnCMcHwqI9YBiWOpXtXk8U1mWySXhDf/Ss
-        TH7OWnPQWZ3YsWBhEWEvk5HWZH1o5sqZcXbPCNMq/
-X-Received: by 2002:a0c:abcc:: with SMTP id k12mr30518437qvb.101.1571044423951;
-        Mon, 14 Oct 2019 02:13:43 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxEvE/lalSm0r+wnMFwJlARJrtv9KhQRdQyG3r2+1sU2VEF5jndY+oC4t9v5CAWIkdk0XxwI4rHTsTS2S3sDIA=
-X-Received: by 2002:a0c:abcc:: with SMTP id k12mr30518406qvb.101.1571044423645;
- Mon, 14 Oct 2019 02:13:43 -0700 (PDT)
+        Mon, 14 Oct 2019 05:16:51 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9E9AxsD005158;
+        Mon, 14 Oct 2019 11:16:29 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=TzO0r7o9/PEJtHkBtvTCBw9/8HDV911fk/ic2F7L7qI=;
+ b=ghgp2c9WgGSHHr5+nhz/mDKH9QxNkZNlGYAFPeZiUoB6atMaTVmIL2laHfb6b6AwMc1Y
+ 3G/tQxjkh5VCuP7HU6LcjWwN0bbujUYUhBk6x4U6IkbwlhECSOCH3Z83/EuOEwlujUZR
+ Y7jO+59CCrKjENVwgm32vP6qG3m1YCy4FU3WBFuTsYOGiBw/K0A2Xk+asjqwD6jJzroj
+ 6ZhmqHHH32C/bDY6fQfIPA2F3u4aEwuk3CsXG5nIXMH3tWp5R9Knkt/vd/vgDxVImW1g
+ kga6ffoywByXhC+D6GkpZeorFvUBR2t8yeLlz77G8v8bolD/O8vGW86pKepK5GSUv35Z dw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2vk5qj1bqv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 14 Oct 2019 11:16:29 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id BF127100034;
+        Mon, 14 Oct 2019 11:16:26 +0200 (CEST)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8D3992B8C45;
+        Mon, 14 Oct 2019 11:16:26 +0200 (CEST)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 14 Oct
+ 2019 11:16:26 +0200
+Received: from localhost (10.201.20.122) by Webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 14 Oct 2019 11:16:25
+ +0200
+From:   Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     <airlied@linux.ie>, <daniel@ffwll.ch>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <alexandre.torgue@st.com>,
+        <yannick.fertre@st.com>, <philippe.cornu@st.com>
+CC:     <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH v3] dt-bindings: display: Convert stm32 display bindings to json-schema
+Date:   Mon, 14 Oct 2019 11:16:22 +0200
+Message-ID: <20191014091622.23562-1-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
 MIME-Version: 1.0
-References: <20191007051240.4410-1-andrew.smirnov@gmail.com>
- <20191007051240.4410-2-andrew.smirnov@gmail.com> <CAO-hwJ+jPGa5Z7=Lopsc23m8UOqGWB0=tN+DcotykseAPM7_7w@mail.gmail.com>
- <20191011182617.GE229325@dtor-ws> <CAO-hwJLH6SMkLb1kZGj1E+BUHJ+ZsE1n+d=xeJgsvTCjHH1Wzw@mail.gmail.com>
- <20191011203303.GF229325@dtor-ws> <20191011203509.GG229325@dtor-ws>
- <20191011213349.GJ229325@dtor-ws> <CAO-hwJ+mMco-gw4Wt=cCAb5v1XymTiS2HNtzQqtmqMoRCiuueQ@mail.gmail.com>
- <20191011232354.GK229325@dtor-ws>
-In-Reply-To: <20191011232354.GK229325@dtor-ws>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Mon, 14 Oct 2019 11:13:32 +0200
-Message-ID: <CAO-hwJJPDcTF_zWy4-MFm7_PLjx2BaUWh8pmoYq42zrqtQcbsg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] HID: logitech-hidpp: use devres to manage FF private data
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Henrik Rydberg <rydberg@bitmath.org>,
-        Sam Bazely <sambazley@fastmail.com>,
-        "Pierre-Loup A . Griffais" <pgriffais@valvesoftware.com>,
-        Austin Palmer <austinp@valvesoftware.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "3.8+" <stable@vger.kernel.org>
-X-MC-Unique: SVCXnFl_PwazEbgyf1yFXw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [10.201.20.122]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-14_06:2019-10-10,2019-10-14 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 12, 2019 at 1:24 AM Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
->
-> On Sat, Oct 12, 2019 at 12:48:42AM +0200, Benjamin Tissoires wrote:
-> > On Fri, Oct 11, 2019 at 11:34 PM Dmitry Torokhov
-> > <dmitry.torokhov@gmail.com> wrote:
-> > >
-> > > On Fri, Oct 11, 2019 at 01:35:09PM -0700, Dmitry Torokhov wrote:
-> > > > On Fri, Oct 11, 2019 at 01:33:03PM -0700, Dmitry Torokhov wrote:
-> > > > > On Fri, Oct 11, 2019 at 09:25:52PM +0200, Benjamin Tissoires wrot=
-e:
-> > > > > > On Fri, Oct 11, 2019 at 8:26 PM Dmitry Torokhov
-> > > > > > <dmitry.torokhov@gmail.com> wrote:
-> > > > > > >
-> > > > > > > On Fri, Oct 11, 2019 at 04:52:04PM +0200, Benjamin Tissoires =
-wrote:
-> > > > > > > > Hi Andrey,
-> > > > > > > >
-> > > > > > > > On Mon, Oct 7, 2019 at 7:13 AM Andrey Smirnov <andrew.smirn=
-ov@gmail.com> wrote:
-> > > > > > > > >
-> > > > > > > > > To simplify resource management in commit that follows as=
- well as to
-> > > > > > > > > save a couple of extra kfree()s and simplify hidpp_ff_dei=
-nit() switch
-> > > > > > > > > driver code to use devres to manage the life-cycle of FF =
-private data.
-> > > > > > > > >
-> > > > > > > > > Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> > > > > > > > > Cc: Jiri Kosina <jikos@kernel.org>
-> > > > > > > > > Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> > > > > > > > > Cc: Henrik Rydberg <rydberg@bitmath.org>
-> > > > > > > > > Cc: Sam Bazely <sambazley@fastmail.com>
-> > > > > > > > > Cc: Pierre-Loup A. Griffais <pgriffais@valvesoftware.com>
-> > > > > > > > > Cc: Austin Palmer <austinp@valvesoftware.com>
-> > > > > > > > > Cc: linux-input@vger.kernel.org
-> > > > > > > > > Cc: linux-kernel@vger.kernel.org
-> > > > > > > > > Cc: stable@vger.kernel.org
-> > > > > > > >
-> > > > > > > > This patch doesn't seem to fix any error, is there a reason=
- to send it
-> > > > > > > > to stable? (besides as a dependency of the rest of the seri=
-es).
-> > > > > > > >
-> > > > > > > > > ---
-> > > > > > > > >  drivers/hid/hid-logitech-hidpp.c | 53 +++++++++++++++++-=
---------------
-> > > > > > > > >  1 file changed, 29 insertions(+), 24 deletions(-)
-> > > > > > > > >
-> > > > > > > > > diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/h=
-id/hid-logitech-hidpp.c
-> > > > > > > > > index 0179f7ed77e5..58eb928224e5 100644
-> > > > > > > > > --- a/drivers/hid/hid-logitech-hidpp.c
-> > > > > > > > > +++ b/drivers/hid/hid-logitech-hidpp.c
-> > > > > > > > > @@ -2079,6 +2079,11 @@ static void hidpp_ff_destroy(struc=
-t ff_device *ff)
-> > > > > > > > >         struct hidpp_ff_private_data *data =3D ff->privat=
-e;
-> > > > > > > > >
-> > > > > > > > >         kfree(data->effect_ids);
-> > > > > > > >
-> > > > > > > > Is there any reasons we can not also devm alloc data->effec=
-t_ids?
-> > > > > > > >
-> > > > > > > > > +       /*
-> > > > > > > > > +        * Set private to NULL to prevent input_ff_destro=
-y() from
-> > > > > > > > > +        * freeing our devres allocated memory
-> > > > > > > >
-> > > > > > > > Ouch. There is something wrong here: input_ff_destroy() cal=
-ls
-> > > > > > > > kfree(ff->private), when the data has not been allocated by
-> > > > > > > > input_ff_create(). This seems to lack a little bit of symme=
-try.
-> > > > > > >
-> > > > > > > Yeah, ff and ff-memless essentially take over the private dat=
-a assigned
-> > > > > > > to them. They were done before devm and the lifetime of the "=
-private"
-> > > > > > > data pieces was tied to the lifetime of the input device to s=
-implify
-> > > > > > > error handling and teardown.
-> > > > > >
-> > > > > > Yeah, that stealing of the pointer is not good :)
-> > > > > > But OTOH, it helps
-> > > > > >
-> > > > > > >
-> > > > > > > Maybe we should clean it up a bit... I'm open to suggestions.
-> > > > > >
-> > > > > > The problem I had when doing the review was that there is no ea=
-sy way
-> > > > > > to have a "devm_input_ff_create_()", because the way it's built=
- is
-> > > > > > already "devres-compatible": the destroy gets called by input c=
-ore.
-> > > > >
-> > > > > I do not think we want devm_input_ff_create() explicitly, I think=
- the
-> > > > > fact that you can "build up" an input device by allocating it, th=
-en
-> > > > > adding slots, poller, ff support, etc, and input core cleans it u=
-p is
-> > > > > all good. It is just the ownership if the driver-private data blo=
-ck is
-> > > > > not very obvious and is not compatible with allocating via devm.
-> > > > >
-> > > > > >
-> > > > > > So I don't have a good answer to simplify in a transparent mann=
-er
-> > > > > > without breaking the API.
-> > > > > >
-> > > > > > >
-> > > > > > > In this case maybe best way is to get rid of hidpp_ff_destroy=
-() and not
-> > > > > > > set ff->private and rely on devm to free the buffers. One can=
- get to
-> > > > > > > device private data from ff methods via input_get_drvdata() s=
-ince they
-> > > > > > > all (except destroy) are passed input device pointer.
-> > > > > >
-> > > > > > Sounds like a good idea. However, it seems there might be a rac=
-e when
-> > > > > > removing the workqueue:
-> > > > > > the workqueue gets deleted in hidpp_remove, when the input node=
- will
-> > > > > > be freed by devres, so after the call of hidpp_remove.
-> > > > >
-> > > > > Yeah, well, that is a common issue with mixing devm and normal re=
-sources
-> > > > > (and workqueue here is that "normal" resource), and we should eit=
-her:
-> > > > >
-> > > > > - not use devm
-> > > > > - use devm_add_action_or_reset() to work in custom actions that w=
-ork
-> > > > >   freeing of non-managed resources into devm flow.
-> > > >
-> > > > Actually, there is a door #3: use system workqueue. After all the w=
-ork
-> > > > that Tejun done on workqueues it is very rare that one actually nee=
-ds
-> > > > a dedicated workqueue (as works usually execute on one if the syste=
-m
-> > > > worker threads that are shared with other workqueues anyway).
-> > >
-> > > And additional note about devm:
-> > >
-> > > I think all HID input drivers that are using devm in probe, but do no=
-t
-> > > have proper remove() function (and maybe even some with remove) are
-> > > broken: hid_device_remove() calls hid_hw_stop() which potentially wil=
-l
-> > > shut off the transport. This happens before devm starts unwinding, so
-> > > we still can be trying to communicate with the device in question, bu=
-t
-> > > the transport is gone.
-> >
-> > Well, that is by design. A driver is supposed to call hid_hw_start()
-> > at the very end of its .probe(). And the supposed rule is that in the
-> > specific .remove(), you are to call first hid_hw_stop() to stop the
-> > transport layer underneath. That also means that in the HID subsystem,
-> > at least, you are not supposed to talk to the device during the devm
-> > teardown of the allocated data.
-> >
-> > If you really need to communicate with the device during tear down,
-> > then you are supposed to write your own .remove, in which you control
-> > where the hid_hw_stop() happens.
-> >
-> > We might have overlooked one or two, but I think we are on a good basis=
- for now.
->
-> You have to be _very_ careful there. For example, we can take a look at
-> hid-elan.c. If you notice, it uses devm_led_classdev_register() to
-> create "mute" led and it needs to talk over HID to control it;s
-> brightness/state. So the driver has custom remove() and calls
-> hid_hw_stop() from it. But the LED will be unregistered much later (in
-> the depth of the driver core) so users of LED subsystem are free to send
-> requests through and the driver will try to talk to the device even
-> after hid_hw_stop() is called and the io_started/driver_input_lock is
-> reset/released.
->
-> I am sure there are more such examples.
+Convert the STM32 display binding to DT schema format using json-schema.
+Split the original bindings in two yaml files:
+- one for display controller (ltdc)
+- one for DSI controller
 
-Yep, this is problematic. There is no guard in
-elan_mute_led_set_brigtness() which tells us that the bus has been
-stopped, so we likely have an issue here.
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+---
+changes in v3:
+- use (GPL-2.0-only OR BSD-2-Clause) license
 
-Note that a .remove() that just calls hid_hw_stop() should be removed,
-as hid core can do it for us.
+changes in v2:
+- use BSD-2-Clause license
+- add panel property
+- fix identation
+- remove pinctrl-names: true
+- remove pinctrl-[0-9]+: true
+- rework ports block to include port@0 and port@1
+- use const for #adress-cells and #size-cells
+- add additionalProperties: false
 
->
-> >
-> > >
-> > > io_started/driver_input_lock is broken on removal as well as we relea=
-se
-> > > the lock when driver may very well be still talking to the device in
-> > > devm teardown actions.
-> >
-> > Again, this is not supposed to happen. Once hid_hw_stop() is called,
-> > we do not have access to the transport, so drivers can't talk to the
-> > device. So releasing/clearing the locks is supposed to be safe now.
->
-> Except that it is hard to enforce once you throw in devm.
->
-> >
-> > >
-> > > I think we have similar kind of issues in other buses as well (i2c, s=
-pi,
-> > > etc). For example, in i2c we remove the device from power domain befo=
-re
-> > > we actually complete devm unwinding.
-> > >
-> >
-> > I agree that this looks bad.
-> >
-> > I would need to have a better look at it on Monday. Time to go on week
-> > end (this jet lag doesn't help me to go to sleep...)
->
-> I wonder if every bus should open a new devm group for device and
-> manually release it after calling ->remove(). That would ensure that all
-> devm resouces allocated by drivers will be freed before we start
-> executing bus-specific code.
->
+ .../devicetree/bindings/display/st,stm32-dsi.yaml  | 151 +++++++++++++++++++++
+ .../devicetree/bindings/display/st,stm32-ltdc.txt  | 144 --------------------
+ .../devicetree/bindings/display/st,stm32-ltdc.yaml |  81 +++++++++++
+ 3 files changed, 232 insertions(+), 144 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/st,stm32-dsi.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/st,stm32-ltdc.txt
+ create mode 100644 Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
 
-That would be indeed useful. There is no reasons I can think of for a
-resource to be created during the .probe() of a device that should
-stick around after its .remove().
-
-In the Elan case above, it won't solve all of the issues, as there
-will still be a tiny window where the resource will get access to the
-bus when it has been stopped.
-Maybe adding an other group when we call hid_hw_start() that will be
-freed by hid_hw_stop() before the actual stop to the bus could come to
-the rescue....
-
-Cheers,
-Benjamin
+diff --git a/Documentation/devicetree/bindings/display/st,stm32-dsi.yaml b/Documentation/devicetree/bindings/display/st,stm32-dsi.yaml
+new file mode 100644
+index 000000000000..8dd727c7533e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/st,stm32-dsi.yaml
+@@ -0,0 +1,151 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/st,stm32-dsi.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: STMicroelectronics STM32 DSI host controller
++
++maintainers:
++  - Philippe Cornu <philippe.cornu@st.com>
++  - Yannick Fertre <yannick.fertre@st.com>
++
++description:
++  The STMicroelectronics STM32 DSI controller uses the Synopsys DesignWare MIPI-DSI host controller.
++
++properties:
++  compatible:
++    const: st,stm32-dsi
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: Module Clock
++      - description: DSI bus clock
++      - description: Pixel clock
++    minItems: 2
++    maxItems: 3
++
++  clock-names:
++    items:
++      - const: pclk
++      - const: ref
++      - const: px_clk
++    minItems: 2
++    maxItems: 3
++
++  resets:
++    maxItems: 1
++
++  reset-names:
++    items:
++      - const: apb
++
++  phy-dsi-supply:
++    maxItems: 1
++    description:
++        Phandle of the regulator that provides the supply voltage.
++
++  ports:
++    type: object
++    description:
++      A node containing DSI input & output port nodes with endpoint
++      definitions as documented in
++      Documentation/devicetree/bindings/media/video-interfaces.txt
++      Documentation/devicetree/bindings/graph.txt
++    properties:
++      port@0:
++        type: object
++        description:
++          DSI input port node, connected to the ltdc rgb output port.
++
++      port@1:
++        type: object
++        description:
++          DSI output port node, connected to a panel or a bridge input port"
++
++patternProperties:
++  "^(panel|panel-dsi)@[0-9]$":
++    type: object
++    description:
++      A node containing the panel or bridge description as documented in
++      Documentation/devicetree/bindings/display/mipi-dsi-bus.txt
++    properties:
++      port@0:
++        type: object
++        description:
++          Panel or bridge port node, connected to the DSI output port (port@1)
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++required:
++  - "#address-cells"
++  - "#size-cells"
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - ports
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/clock/stm32mp1-clks.h>
++    #include <dt-bindings/reset/stm32mp1-resets.h>
++    #include <dt-bindings/gpio/gpio.h>
++    dsi: dsi@5a000000 {
++        compatible = "st,stm32-dsi";
++        reg = <0x5a000000 0x800>;
++        clocks = <&rcc DSI_K>, <&clk_hse>, <&rcc DSI_PX>;
++        clock-names = "pclk", "ref", "px_clk";
++        resets = <&rcc DSI_R>;
++        reset-names = "apb";
++        phy-dsi-supply = <&reg18>;
++        
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        ports {
++              #address-cells = <1>;
++              #size-cells = <0>;
++
++              port@0 {
++                    reg = <0>;
++                    dsi_in: endpoint {
++                        remote-endpoint = <&ltdc_ep1_out>;
++                    };
++              };
++
++              port@1 {
++                    reg = <1>;
++                    dsi_out: endpoint {
++                        remote-endpoint = <&panel_in>;
++                    };
++              };
++        };
++
++        panel-dsi@0 {
++              compatible = "orisetech,otm8009a";
++              reg = <0>;
++              reset-gpios = <&gpioe 4 GPIO_ACTIVE_LOW>;
++              power-supply = <&v3v3>;
++
++              port {
++                    panel_in: endpoint {
++                        remote-endpoint = <&dsi_out>;
++                    };
++              };
++        };
++    };
++
++...
++
++
+diff --git a/Documentation/devicetree/bindings/display/st,stm32-ltdc.txt b/Documentation/devicetree/bindings/display/st,stm32-ltdc.txt
+deleted file mode 100644
+index 60c54da4e526..000000000000
+--- a/Documentation/devicetree/bindings/display/st,stm32-ltdc.txt
++++ /dev/null
+@@ -1,144 +0,0 @@
+-* STMicroelectronics STM32 lcd-tft display controller
+-
+-- ltdc: lcd-tft display controller host
+-  Required properties:
+-  - compatible: "st,stm32-ltdc"
+-  - reg: Physical base address of the IP registers and length of memory mapped region.
+-  - clocks: A list of phandle + clock-specifier pairs, one for each
+-    entry in 'clock-names'.
+-  - clock-names: A list of clock names. For ltdc it should contain:
+-      - "lcd" for the clock feeding the output pixel clock & IP clock.
+-  - resets: reset to be used by the device (defined by use of RCC macro).
+-  Required nodes:
+-  - Video port for DPI RGB output: ltdc has one video port with up to 2
+-    endpoints:
+-      - for external dpi rgb panel or bridge, using gpios.
+-      - for internal dpi input of the MIPI DSI host controller.
+-      Note: These 2 endpoints cannot be activated simultaneously.
+-
+-* STMicroelectronics STM32 DSI controller specific extensions to Synopsys
+-  DesignWare MIPI DSI host controller
+-
+-The STMicroelectronics STM32 DSI controller uses the Synopsys DesignWare MIPI
+-DSI host controller. For all mandatory properties & nodes, please refer
+-to the related documentation in [5].
+-
+-Mandatory properties specific to STM32 DSI:
+-- #address-cells: Should be <1>.
+-- #size-cells: Should be <0>.
+-- compatible: "st,stm32-dsi".
+-- clock-names:
+-  - phy pll reference clock string name, must be "ref".
+-- resets: see [5].
+-- reset-names: see [5].
+-
+-Mandatory nodes specific to STM32 DSI:
+-- ports: A node containing DSI input & output port nodes with endpoint
+-  definitions as documented in [3] & [4].
+-  - port@0: DSI input port node, connected to the ltdc rgb output port.
+-  - port@1: DSI output port node, connected to a panel or a bridge input port.
+-- panel or bridge node: A node containing the panel or bridge description as
+-  documented in [6].
+-  - port: panel or bridge port node, connected to the DSI output port (port@1).
+-Optional properties:
+-- phy-dsi-supply: phandle of the regulator that provides the supply voltage.
+-
+-Note: You can find more documentation in the following references
+-[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+-[2] Documentation/devicetree/bindings/reset/reset.txt
+-[3] Documentation/devicetree/bindings/media/video-interfaces.txt
+-[4] Documentation/devicetree/bindings/graph.txt
+-[5] Documentation/devicetree/bindings/display/bridge/dw_mipi_dsi.txt
+-[6] Documentation/devicetree/bindings/display/mipi-dsi-bus.txt
+-
+-Example 1: RGB panel
+-/ {
+-	...
+-	soc {
+-	...
+-		ltdc: display-controller@40016800 {
+-			compatible = "st,stm32-ltdc";
+-			reg = <0x40016800 0x200>;
+-			interrupts = <88>, <89>;
+-			resets = <&rcc STM32F4_APB2_RESET(LTDC)>;
+-			clocks = <&rcc 1 CLK_LCD>;
+-			clock-names = "lcd";
+-
+-			port {
+-				ltdc_out_rgb: endpoint {
+-				};
+-			};
+-		};
+-	};
+-};
+-
+-Example 2: DSI panel
+-
+-/ {
+-	...
+-	soc {
+-	...
+-		ltdc: display-controller@40016800 {
+-			compatible = "st,stm32-ltdc";
+-			reg = <0x40016800 0x200>;
+-			interrupts = <88>, <89>;
+-			resets = <&rcc STM32F4_APB2_RESET(LTDC)>;
+-			clocks = <&rcc 1 CLK_LCD>;
+-			clock-names = "lcd";
+-
+-			port {
+-				ltdc_out_dsi: endpoint {
+-					remote-endpoint = <&dsi_in>;
+-				};
+-			};
+-		};
+-
+-
+-		dsi: dsi@40016c00 {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-			compatible = "st,stm32-dsi";
+-			reg = <0x40016c00 0x800>;
+-			clocks = <&rcc 1 CLK_F469_DSI>, <&clk_hse>;
+-			clock-names = "pclk", "ref";
+-			resets = <&rcc STM32F4_APB2_RESET(DSI)>;
+-			reset-names = "apb";
+-			phy-dsi-supply = <&reg18>;
+-
+-			ports {
+-				#address-cells = <1>;
+-				#size-cells = <0>;
+-
+-				port@0 {
+-					reg = <0>;
+-					dsi_in: endpoint {
+-						remote-endpoint = <&ltdc_out_dsi>;
+-					};
+-				};
+-
+-				port@1 {
+-					reg = <1>;
+-					dsi_out: endpoint {
+-						remote-endpoint = <&dsi_in_panel>;
+-					};
+-				};
+-
+-			};
+-
+-			panel-dsi@0 {
+-				reg = <0>; /* dsi virtual channel (0..3) */
+-				compatible = ...;
+-				enable-gpios = ...;
+-
+-				port {
+-					dsi_in_panel: endpoint {
+-						remote-endpoint = <&dsi_out>;
+-					};
+-				};
+-
+-			};
+-
+-		};
+-
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml b/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
+new file mode 100644
+index 000000000000..94a4137f7236
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
+@@ -0,0 +1,81 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/st,stm32-ltdc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: STMicroelectronics STM32 lcd-tft display controller
++
++maintainers:
++  - Philippe Cornu <philippe.cornu@st.com>
++  - Yannick Fertre <yannick.fertre@st.com>
++
++properties:
++  compatible:
++    const: st,stm32-ltdc
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    minItems: 2
++    maxItems: 2
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    items:
++      - const: lcd
++
++  resets:
++    maxItems: 1
++
++  port:
++    type: object
++    description:
++      "Video port for DPI RGB output. 
++      ltdc has one video port with up to 2 endpoints:
++      - for external dpi rgb panel or bridge, using gpios.
++      - for internal dpi input of the MIPI DSI host controller.
++      Note: These 2 endpoints cannot be activated simultaneously.
++      Please refer to the bindings defined in
++      Documentation/devicetree/bindings/media/video-interfaces.txt."
++
++  dma-ranges:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++  - resets
++  - port
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/clock/stm32mp1-clks.h>
++    #include <dt-bindings/reset/stm32mp1-resets.h>
++    ltdc: display-controller@40016800 {
++        compatible = "st,stm32-ltdc";
++        reg = <0x5a001000 0x400>;
++        interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&rcc LTDC_PX>;
++        clock-names = "lcd";
++        resets = <&rcc LTDC_R>;
++
++        port {
++             ltdc_out_dsi: endpoint {
++                     remote-endpoint = <&dsi_in>;
++             };
++        };
++    };
++
++...
++
+-- 
+2.15.0
 
