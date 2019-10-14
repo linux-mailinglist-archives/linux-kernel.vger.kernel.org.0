@@ -2,74 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 885C5D67B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 18:50:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13910D67C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 18:54:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388251AbfJNQue (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 12:50:34 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:37676 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730192AbfJNQud (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 12:50:33 -0400
-Received: by mail-ot1-f67.google.com with SMTP id k32so14372927otc.4;
-        Mon, 14 Oct 2019 09:50:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=u73GdQ2NeXgwoifIBxxjF/dVKgD9qkpO8Mhoo1TliII=;
-        b=nFSiqPUfAENj+PMgjl/CFLLcP4cprfswuxulDU3mC+OxEjpQli9X4mo4VUrJvcmA7/
-         CbhvjxeYaZqcn3GVB9gPfKKRgAFEffmfvA8eC9D26tYehtI/qoC2+bW5whcbt/6j0LWH
-         Kzp6qJF2HT6sWuc2f/CIgZmnxmmU5lIHKD0hLnLEmoDyBnu/Hdeu9kupBQOEjzi4foUG
-         7uqNCGnf+XJyB5ryvIDvMdfR1IoncpS7gYASzHFncwE6wxy9NgW4m+UkNCOjjV3D1aDW
-         PyeCP/M+JK/yGGrrO39zsD5t5rgxBAH+g0tT8pu7Wr2CVZcb/jOum74YlVqAoNN//kxh
-         u/eA==
-X-Gm-Message-State: APjAAAVKyNJjMxxrhpLKGpLjS/P+Lp0YXcudLwTC9AptgvrvzROo3ffh
-        gv9uNO8DrWRt/zwqxgEpDA==
-X-Google-Smtp-Source: APXvYqxvRt58KnjLizEjrt5U3N72GR4Jk1juC+HoJ6underOBPtaEVHnJGDwXyIWm+a6vNM/NaOCpA==
-X-Received: by 2002:a05:6830:1693:: with SMTP id k19mr2225402otr.233.1571071831337;
-        Mon, 14 Oct 2019 09:50:31 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id h5sm5847055oth.29.2019.10.14.09.50.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2019 09:50:30 -0700 (PDT)
-Date:   Mon, 14 Oct 2019 11:50:30 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette =?iso-8859-1?Q?=A0?= 
-        <mturquette@baylibre.com>, David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH v4 4/5] dt-bindings: clock: Introduce QCOM GCC clock
- bindings
-Message-ID: <20191014165030.GA22526@bogus>
-References: <20191014102308.27441-1-tdas@codeaurora.org>
- <20191014102308.27441-5-tdas@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191014102308.27441-5-tdas@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2388036AbfJNQyA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 12:54:00 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:16851 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727083AbfJNQyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 12:54:00 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 46sPlh5Rfnz9vBK2;
+        Mon, 14 Oct 2019 18:53:52 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=smvGD9Gq; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id mS0_ARcL3Rjz; Mon, 14 Oct 2019 18:53:52 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 46sPlh3ySvz9vBJy;
+        Mon, 14 Oct 2019 18:53:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1571072032; bh=F+FqcoHNzTzUli2Rd3wOSO58hJBknlQ50ktIOzFIMx0=;
+        h=From:Subject:To:Cc:Date:From;
+        b=smvGD9Gq+OGPg0XkhvxiDvGLTKuTFKYycUPbI8fZElapLKBIncGL56ViH2eptl89A
+         nMQMMN8z1FnfbKTPosH20g+GYfevOwQtg0X4084aowt9U/JhV/IUOPiAWa7g1hKR3P
+         TTaNZ3WS9F9fIxhjfXzmn3Jd3fdaqIDhNPv62cM4=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 08C858B89C;
+        Mon, 14 Oct 2019 18:53:58 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id H2ksinrXYDvu; Mon, 14 Oct 2019 18:53:57 +0200 (CEST)
+Received: from po16098vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 808A38B88F;
+        Mon, 14 Oct 2019 18:53:55 +0200 (CEST)
+Received: by po16098vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id B0F9668DED; Mon, 14 Oct 2019 16:51:28 +0000 (UTC)
+Message-Id: <067a1b09f15f421d40797c2d04c22d4049a1cee8.1571071875.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc/32s: fix allow/prevent_user_access() when crossing
+ segment boundaries.
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Mon, 14 Oct 2019 16:51:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 14 Oct 2019 15:53:07 +0530, Taniya Das wrote:
-> Add device tree bindings for Global clock subsystem clock
-> controller for Qualcomm Technology Inc's SC7180 SoCs.
-> 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  .../devicetree/bindings/clock/qcom,gcc.yaml   |  14 ++
->  include/dt-bindings/clock/qcom,gcc-sc7180.h   | 155 ++++++++++++++++++
->  2 files changed, 169 insertions(+)
->  create mode 100644 include/dt-bindings/clock/qcom,gcc-sc7180.h
-> 
+Make sure starting addr is aligned to segment boundary so that when
+incrementing the segment, the starting address of the new segment is
+below the end address. Otherwise the last segment might get  missed.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Fixes: a68c31fc01ef ("powerpc/32s: Implement Kernel Userspace Access Protection")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/include/asm/book3s/32/kup.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/powerpc/include/asm/book3s/32/kup.h b/arch/powerpc/include/asm/book3s/32/kup.h
+index 677e9babef80..f9dc597b0b86 100644
+--- a/arch/powerpc/include/asm/book3s/32/kup.h
++++ b/arch/powerpc/include/asm/book3s/32/kup.h
+@@ -91,6 +91,7 @@
+ 
+ static inline void kuap_update_sr(u32 sr, u32 addr, u32 end)
+ {
++	addr &= 0xf0000000;	/* align addr to start of segment */
+ 	barrier();	/* make sure thread.kuap is updated before playing with SRs */
+ 	while (addr < end) {
+ 		mtsrin(sr, addr);
+-- 
+2.13.3
+
