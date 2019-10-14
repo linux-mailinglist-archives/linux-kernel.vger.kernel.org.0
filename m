@@ -2,187 +2,242 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B005D5D83
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 10:31:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AE21D5D89
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 10:32:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730494AbfJNIbD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 04:31:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34860 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725936AbfJNIbC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 04:31:02 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C3511ACE3;
-        Mon, 14 Oct 2019 08:30:59 +0000 (UTC)
-Subject: Re: [PATCH v2] mm/page_owner: Don't access uninitialized memmaps when
- reading /proc/pagetypeinfo
-To:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, Qian Cai <cai@lca.pw>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20191011140638.8160-1-david@redhat.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- mQINBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
- KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
- 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
- 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
- tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
- Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
- 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
- LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
- 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
- BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABtCBWbGFzdGltaWwg
- QmFia2EgPHZiYWJrYUBzdXNlLmN6PokCVAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
- AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJcbbyGBQkH8VTqAAoJECJPp+fMgqZkpGoP
- /1jhVihakxw1d67kFhPgjWrbzaeAYOJu7Oi79D8BL8Vr5dmNPygbpGpJaCHACWp+10KXj9yz
- fWABs01KMHnZsAIUytVsQv35DMMDzgwVmnoEIRBhisMYOQlH2bBn/dqBjtnhs7zTL4xtqEcF
- 1hoUFEByMOey7gm79utTk09hQE/Zo2x0Ikk98sSIKBETDCl4mkRVRlxPFl4O/w8dSaE4eczH
- LrKezaFiZOv6S1MUKVKzHInonrCqCNbXAHIeZa3JcXCYj1wWAjOt9R3NqcWsBGjFbkgoKMGD
- usiGabetmQjXNlVzyOYdAdrbpVRNVnaL91sB2j8LRD74snKsV0Wzwt90YHxDQ5z3M75YoIdl
- byTKu3BUuqZxkQ/emEuxZ7aRJ1Zw7cKo/IVqjWaQ1SSBDbZ8FAUPpHJxLdGxPRN8Pfw8blKY
- 8mvLJKoF6i9T6+EmlyzxqzOFhcc4X5ig5uQoOjTIq6zhLO+nqVZvUDd2Kz9LMOCYb516cwS/
- Enpi0TcZ5ZobtLqEaL4rupjcJG418HFQ1qxC95u5FfNki+YTmu6ZLXy+1/9BDsPuZBOKYpUm
- 3HWSnCS8J5Ny4SSwfYPH/JrtberWTcCP/8BHmoSpS/3oL3RxrZRRVnPHFzQC6L1oKvIuyXYF
- rkybPXYbmNHN+jTD3X8nRqo+4Qhmu6SHi3VquQENBFsZNQwBCACuowprHNSHhPBKxaBX7qOv
- KAGCmAVhK0eleElKy0sCkFghTenu1sA9AV4okL84qZ9gzaEoVkgbIbDgRbKY2MGvgKxXm+kY
- n8tmCejKoeyVcn9Xs0K5aUZiDz4Ll9VPTiXdf8YcjDgeP6/l4kHb4uSW4Aa9ds0xgt0gP1Xb
- AMwBlK19YvTDZV5u3YVoGkZhspfQqLLtBKSt3FuxTCU7hxCInQd3FHGJT/IIrvm07oDO2Y8J
- DXWHGJ9cK49bBGmK9B4ajsbe5GxtSKFccu8BciNluF+BqbrIiM0upJq5Xqj4y+Xjrpwqm4/M
- ScBsV0Po7qdeqv0pEFIXKj7IgO/d4W2bABEBAAGJA3IEGAEKACYWIQSpQNQ0mSwujpkQPVAi
- T6fnzIKmZAUCWxk1DAIbAgUJA8JnAAFACRAiT6fnzIKmZMB0IAQZAQoAHRYhBKZ2GgCcqNxn
- k0Sx9r6Fd25170XjBQJbGTUMAAoJEL6Fd25170XjDBUH/2jQ7a8g+FC2qBYxU/aCAVAVY0NE
- YuABL4LJ5+iWwmqUh0V9+lU88Cv4/G8fWwU+hBykSXhZXNQ5QJxyR7KWGy7LiPi7Cvovu+1c
- 9Z9HIDNd4u7bxGKMpn19U12ATUBHAlvphzluVvXsJ23ES/F1c59d7IrgOnxqIcXxr9dcaJ2K
- k9VP3TfrjP3g98OKtSsyH0xMu0MCeyewf1piXyukFRRMKIErfThhmNnLiDbaVy6biCLx408L
- Mo4cCvEvqGKgRwyckVyo3JuhqreFeIKBOE1iHvf3x4LU8cIHdjhDP9Wf6ws1XNqIvve7oV+w
- B56YWoalm1rq00yUbs2RoGcXmtX1JQ//aR/paSuLGLIb3ecPB88rvEXPsizrhYUzbe1TTkKc
- 4a4XwW4wdc6pRPVFMdd5idQOKdeBk7NdCZXNzoieFntyPpAq+DveK01xcBoXQ2UktIFIsXey
- uSNdLd5m5lf7/3f0BtaY//f9grm363NUb9KBsTSnv6Vx7Co0DWaxgC3MFSUhxzBzkJNty+2d
- 10jvtwOWzUN+74uXGRYSq5WefQWqqQNnx+IDb4h81NmpIY/X0PqZrapNockj3WHvpbeVFAJ0
- 9MRzYP3x8e5OuEuJfkNnAbwRGkDy98nXW6fKeemREjr8DWfXLKFWroJzkbAVmeIL0pjXATxr
- +tj5JC0uvMrrXefUhXTo0SNoTsuO/OsAKOcVsV/RHHTwCDR2e3W8mOlA3QbYXsscgjghbuLh
- J3oTRrOQa8tUXWqcd5A0+QPo5aaMHIK0UAthZsry5EmCY3BrbXUJlt+23E93hXQvfcsmfi0N
- rNh81eknLLWRYvMOsrbIqEHdZBT4FHHiGjnck6EYx/8F5BAZSodRVEAgXyC8IQJ+UVa02QM5
- D2VL8zRXZ6+wARKjgSrW+duohn535rG/ypd0ctLoXS6dDrFokwTQ2xrJiLbHp9G+noNTHSan
- ExaRzyLbvmblh3AAznb68cWmM3WVkceWACUalsoTLKF1sGrrIBj5updkKkzbKOq5gcC5AQ0E
- Wxk1NQEIAJ9B+lKxYlnKL5IehF1XJfknqsjuiRzj5vnvVrtFcPlSFL12VVFVUC2tT0A1Iuo9
- NAoZXEeuoPf1dLDyHErrWnDyn3SmDgb83eK5YS/K363RLEMOQKWcawPJGGVTIRZgUSgGusKL
- NuZqE5TCqQls0x/OPljufs4gk7E1GQEgE6M90Xbp0w/r0HB49BqjUzwByut7H2wAdiNAbJWZ
- F5GNUS2/2IbgOhOychHdqYpWTqyLgRpf+atqkmpIJwFRVhQUfwztuybgJLGJ6vmh/LyNMRr8
- J++SqkpOFMwJA81kpjuGR7moSrUIGTbDGFfjxmskQV/W/c25Xc6KaCwXah3OJ40AEQEAAYkC
- PAQYAQoAJhYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJbGTU1AhsMBQkDwmcAAAoJECJPp+fM
- gqZkPN4P/Ra4NbETHRj5/fM1fjtngt4dKeX/6McUPDIRuc58B6FuCQxtk7sX3ELs+1+w3eSV
- rHI5cOFRSdgw/iKwwBix8D4Qq0cnympZ622KJL2wpTPRLlNaFLoe5PkoORAjVxLGplvQIlhg
- miljQ3R63ty3+MZfkSVsYITlVkYlHaSwP2t8g7yTVa+q8ZAx0NT9uGWc/1Sg8j/uoPGrctml
- hFNGBTYyPq6mGW9jqaQ8en3ZmmJyw3CHwxZ5FZQ5qc55xgshKiy8jEtxh+dgB9d8zE/S/UGI
- E99N/q+kEKSgSMQMJ/CYPHQJVTi4YHh1yq/qTkHRX+ortrF5VEeDJDv+SljNStIxUdroPD29
- 2ijoaMFTAU+uBtE14UP5F+LWdmRdEGS1Ah1NwooL27uAFllTDQxDhg/+LJ/TqB8ZuidOIy1B
- xVKRSg3I2m+DUTVqBy7Lixo73hnW69kSjtqCeamY/NSu6LNP+b0wAOKhwz9hBEwEHLp05+mj
- 5ZFJyfGsOiNUcMoO/17FO4EBxSDP3FDLllpuzlFD7SXkfJaMWYmXIlO0jLzdfwfcnDzBbPwO
- hBM8hvtsyq8lq8vJOxv6XD6xcTtj5Az8t2JjdUX6SF9hxJpwhBU0wrCoGDkWp4Bbv6jnF7zP
- Nzftr4l8RuJoywDIiJpdaNpSlXKpj/K6KrnyAI/joYc7
-Message-ID: <c741894f-bae8-25ae-189e-2fe37ccda149@suse.cz>
-Date:   Mon, 14 Oct 2019 10:30:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        id S1730507AbfJNIcf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 04:32:35 -0400
+Received: from mga12.intel.com ([192.55.52.136]:34525 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730233AbfJNIce (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 04:32:34 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Oct 2019 01:32:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,295,1566889200"; 
+   d="scan'208";a="225012217"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga002.fm.intel.com with ESMTP; 14 Oct 2019 01:32:31 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1iJvmJ-0000Jr-Dk; Mon, 14 Oct 2019 16:32:31 +0800
+Date:   Mon, 14 Oct 2019 16:32:20 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     ivan.lazeev@gmail.com
+Cc:     kbuild-all@lists.01.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vanya Lazeev <ivan.lazeev@gmail.com>
+Subject: Re: [PATCH v6] tpm_crb: fix fTPM on AMD Zen+ CPUs
+Message-ID: <201910141623.SRwaPnfk%lkp@intel.com>
+References: <20191002201212.32395-1-ivan.lazeev@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20191011140638.8160-1-david@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191002201212.32395-1-ivan.lazeev@gmail.com>
+X-Patchwork-Hint: ignore
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/11/19 4:06 PM, David Hildenbrand wrote:
-> From: Qian Cai <cai@lca.pw>
-> 
-> Uninitialized memmaps contain garbage and in the worst case trigger
-> kernel BUGs, especially with CONFIG_PAGE_POISONING. They should not get
-> touched.
-> 
-> For example, when not onlining a memory block that is spanned by a zone
-> and reading /proc/pagetypeinfo with CONFIG_DEBUG_VM_PGFLAGS and
-> CONFIG_PAGE_POISONING, we can trigger a kernel BUG:
-> 
-> :/# echo 1 > /sys/devices/system/memory/memory40/online
-> :/# echo 1 > /sys/devices/system/memory/memory42/online
-> :/# cat /proc/pagetypeinfo > test.file
->   [   42.489856] page:fffff2c585200000 is uninitialized and poisoned
->   [   42.489861] raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff ffffffffffffffff
->   [   42.492235] raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff ffffffffffffffff
->   [   42.493501] page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
->   [   42.494533] There is not page extension available.
->   [   42.495358] ------------[ cut here ]------------
->   [   42.496163] kernel BUG at include/linux/mm.h:1107!
->   [   42.497069] invalid opcode: 0000 [#1] SMP NOPTI
-> 
-> Please not that this change does not affect ZONE_DEVICE, because
-> pagetypeinfo_showmixedcount_print() is called from
-> mm/vmstat.c:pagetypeinfo_showmixedcount() only for populated zones, and
-> ZONE_DEVICE is never populated (zone->present_pages always 0).
-> 
-> Fixes: f1dd2cd13c4b ("mm, memory_hotplug: do not associate hotadded memory to zones until online") # visible after d0dc12e86b319
-> Signed-off-by: Qian Cai <cai@lca.pw>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-> Cc: Miles Chen <miles.chen@mediatek.com>
-> Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> Cc: Qian Cai <cai@lca.pw>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> [ move check to outer loop, add comment, rephrase description ]
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+Hi,
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Thank you for the patch! Perhaps something to improve:
 
-> ---
-> 
-> Cai asked me to follow up on:
-> 	[PATCH] mm/page_owner: fix a crash after memory offline
-> 
-> ---
->  mm/page_owner.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/page_owner.c b/mm/page_owner.c
-> index dee931184788..7d149211f6be 100644
-> --- a/mm/page_owner.c
-> +++ b/mm/page_owner.c
-> @@ -284,7 +284,8 @@ void pagetypeinfo_showmixedcount_print(struct seq_file *m,
->  	 * not matter as the mixed block count will still be correct
->  	 */
->  	for (; pfn < end_pfn; ) {
-> -		if (!pfn_valid(pfn)) {
-> +		page = pfn_to_online_page(pfn);
-> +		if (!page) {
->  			pfn = ALIGN(pfn + 1, MAX_ORDER_NR_PAGES);
->  			continue;
->  		}
-> @@ -292,13 +293,13 @@ void pagetypeinfo_showmixedcount_print(struct seq_file *m,
->  		block_end_pfn = ALIGN(pfn + 1, pageblock_nr_pages);
->  		block_end_pfn = min(block_end_pfn, end_pfn);
->  
-> -		page = pfn_to_page(pfn);
->  		pageblock_mt = get_pageblock_migratetype(page);
->  
->  		for (; pfn < block_end_pfn; pfn++) {
->  			if (!pfn_valid_within(pfn))
->  				continue;
->  
-> +			/* The pageblock is online, no need to recheck. */
->  			page = pfn_to_page(pfn);
->  
->  			if (page_zone(page) != zone)
-> 
+[auto build test WARNING on jss-tpmdd/next]
+[cannot apply to v5.4-rc3 next-20191011]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
 
+url:    https://github.com/0day-ci/linux/commits/ivan-lazeev-gmail-com/tpm_crb-fix-fTPM-on-AMD-Zen-CPUs/20191003-054300
+base:   git://git.infradead.org/users/jjs/linux-tpmdd next
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-rc1-43-g0ccb3b4-dirty
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/char/tpm/tpm_crb.c:507:62: sparse: sparse: Using plain integer as NULL pointer
+
+vim +507 drivers/char/tpm/tpm_crb.c
+
+   501	
+   502	static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+   503			      struct acpi_table_tpm2 *buf)
+   504	{
+   505		struct list_head acpi_resource_list;
+   506		struct resource iores_array[TPM_CRB_MAX_RESOURCES];
+ > 507		void __iomem *iobase_array[TPM_CRB_MAX_RESOURCES] = {0};
+   508		struct resource *iores_range[] = {
+   509			iores_array,
+   510			iores_array + TPM_CRB_MAX_RESOURCES
+   511		};
+   512		struct device *dev = &device->dev;
+   513		struct resource *iores;
+   514		void __iomem **iobase_ptr;
+   515		int num_resources, i;
+   516		u32 pa_high, pa_low;
+   517		u64 cmd_pa;
+   518		u32 cmd_size;
+   519		__le64 __rsp_pa;
+   520		u64 rsp_pa;
+   521		u32 rsp_size;
+   522		int ret;
+   523	
+   524		INIT_LIST_HEAD(&acpi_resource_list);
+   525		ret = acpi_dev_get_resources(device, &acpi_resource_list,
+   526					     crb_check_resource, iores_range);
+   527		if (ret < 0)
+   528			return ret;
+   529		acpi_dev_free_resource_list(&acpi_resource_list);
+   530	
+   531		if (iores_range[0] == iores_array) {
+   532			dev_err(dev, FW_BUG "TPM2 ACPI table does not define a memory resource\n");
+   533			return -EINVAL;
+   534		} else if (!iores_range[0]) {
+   535			dev_warn(dev, "TPM2 ACPI table defines too many memory resources\n");
+   536			iores_range[0] = iores_range[1];
+   537		}
+   538	
+   539		num_resources = iores_range[0] - iores_array;
+   540	
+   541		iores = NULL;
+   542		iobase_ptr = NULL;
+   543		for (i = 0; i < num_resources; ++i) {
+   544			if (buf->control_address >= iores_array[i].start &&
+   545			    buf->control_address + sizeof(struct crb_regs_tail) - 1 <=
+   546			    iores_array[i].end) {
+   547				iores = iores_array + i;
+   548				iobase_ptr = iobase_array + i;
+   549				break;
+   550			}
+   551		}
+   552	
+   553		priv->regs_t = crb_map_res(dev, iores, iobase_ptr, buf->control_address,
+   554					   sizeof(struct crb_regs_tail));
+   555	
+   556		if (IS_ERR(priv->regs_t))
+   557			return PTR_ERR(priv->regs_t);
+   558	
+   559		/* The ACPI IO region starts at the head area and continues to include
+   560		 * the control area, as one nice sane region except for some older
+   561		 * stuff that puts the control area outside the ACPI IO region.
+   562		 */
+   563		if ((priv->sm == ACPI_TPM2_COMMAND_BUFFER) ||
+   564		    (priv->sm == ACPI_TPM2_MEMORY_MAPPED)) {
+   565			if (iores &&
+   566			    buf->control_address == iores->start +
+   567			    sizeof(*priv->regs_h))
+   568				priv->regs_h = *iobase_ptr;
+   569			else
+   570				dev_warn(dev, FW_BUG "Bad ACPI memory layout");
+   571		}
+   572	
+   573		ret = __crb_request_locality(dev, priv, 0);
+   574		if (ret)
+   575			return ret;
+   576	
+   577		/*
+   578		 * PTT HW bug w/a: wake up the device to access
+   579		 * possibly not retained registers.
+   580		 */
+   581		ret = __crb_cmd_ready(dev, priv);
+   582		if (ret)
+   583			goto out_relinquish_locality;
+   584	
+   585		pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
+   586		pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
+   587		cmd_pa = ((u64)pa_high << 32) | pa_low;
+   588		cmd_size = ioread32(&priv->regs_t->ctrl_cmd_size);
+   589	
+   590		iores = NULL;
+   591		iobase_ptr = NULL;
+   592		for (i = 0; i < num_resources; ++i) {
+   593			if (cmd_pa >= iores_array[i].start &&
+   594			    cmd_pa <= iores_array[i].end) {
+   595				iores = iores_array + i;
+   596				iobase_ptr = iobase_array + i;
+   597				break;
+   598			}
+   599		}
+   600	
+   601		if (iores)
+   602			cmd_size = crb_fixup_cmd_size(dev, iores, cmd_pa, cmd_size);
+   603	
+   604		dev_dbg(dev, "cmd_hi = %X cmd_low = %X cmd_size %X\n",
+   605			pa_high, pa_low, cmd_size);
+   606	
+   607		priv->cmd = crb_map_res(dev, iores, iobase_ptr,	cmd_pa, cmd_size);
+   608		if (IS_ERR(priv->cmd)) {
+   609			ret = PTR_ERR(priv->cmd);
+   610			goto out;
+   611		}
+   612	
+   613		memcpy_fromio(&__rsp_pa, &priv->regs_t->ctrl_rsp_pa, 8);
+   614		rsp_pa = le64_to_cpu(__rsp_pa);
+   615		rsp_size = ioread32(&priv->regs_t->ctrl_rsp_size);
+   616	
+   617		iores = NULL;
+   618		iobase_ptr = NULL;
+   619		for (i = 0; i < num_resources; ++i) {
+   620			if (rsp_pa >= iores_array[i].start &&
+   621			    rsp_pa <= iores_array[i].end) {
+   622				iores = iores_array + i;
+   623				iobase_ptr = iobase_array + i;
+   624				break;
+   625			}
+   626		}
+   627	
+   628		if (iores)
+   629			rsp_size = crb_fixup_cmd_size(dev, iores, rsp_pa, rsp_size);
+   630	
+   631		if (cmd_pa != rsp_pa) {
+   632			priv->rsp = crb_map_res(dev, iores, iobase_ptr,
+   633						rsp_pa, rsp_size);
+   634			ret = PTR_ERR_OR_ZERO(priv->rsp);
+   635			goto out;
+   636		}
+   637	
+   638		/* According to the PTP specification, overlapping command and response
+   639		 * buffer sizes must be identical.
+   640		 */
+   641		if (cmd_size != rsp_size) {
+   642			dev_err(dev, FW_BUG "overlapping command and response buffer sizes are not identical");
+   643			ret = -EINVAL;
+   644			goto out;
+   645		}
+   646	
+   647		priv->rsp = priv->cmd;
+   648	
+   649	out:
+   650		if (!ret)
+   651			priv->cmd_size = cmd_size;
+   652	
+   653		__crb_go_idle(dev, priv);
+   654	
+   655	out_relinquish_locality:
+   656	
+   657		__crb_relinquish_locality(dev, priv, 0);
+   658	
+   659		return ret;
+   660	}
+   661	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
