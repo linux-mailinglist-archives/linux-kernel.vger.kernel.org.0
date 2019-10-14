@@ -2,65 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9AA9D698E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 20:38:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2B81D699B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 20:39:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731903AbfJNShY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 14:37:24 -0400
-Received: from mga11.intel.com ([192.55.52.93]:35204 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728392AbfJNShY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 14:37:24 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Oct 2019 11:37:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,296,1566889200"; 
-   d="scan'208";a="201538235"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by FMSMGA003.fm.intel.com with ESMTP; 14 Oct 2019 11:37:23 -0700
-Date:   Mon, 14 Oct 2019 11:37:23 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     Xiaoyao Li <xiaoyao.li@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Jim Mattson <jmattson@google.com>
-Subject: Re: [PATCH] KVM: X86: Make fpu allocation a common function
-Message-ID: <20191014183723.GE22962@linux.intel.com>
-References: <20191014162247.61461-1-xiaoyao.li@intel.com>
- <87y2xn462e.fsf@vitty.brq.redhat.com>
+        id S1732035AbfJNSjA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 14:39:00 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:40320 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731291AbfJNSi6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 14:38:58 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iK5F7-0005bI-2o; Mon, 14 Oct 2019 20:38:53 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A6EAA1C010B;
+        Mon, 14 Oct 2019 20:38:47 +0200 (CEST)
+Date:   Mon, 14 Oct 2019 18:38:47 -0000
+From:   "tip-bot2 for Marc Zyngier" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/urgent] irqchip/sifive-plic: Switch to fasteoi flow
+Cc:     Marc Zyngier <maz@kernel.org>, Palmer Dabbelt <palmer@sifive.com>,
+        Darius Rad <darius@bluespec.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        stable@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
+In-Reply-To: <8636gxskmj.wl-maz@kernel.org>
+References: <8636gxskmj.wl-maz@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87y2xn462e.fsf@vitty.brq.redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Message-ID: <157107832749.12254.5664038799279181370.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 14, 2019 at 06:58:49PM +0200, Vitaly Kuznetsov wrote:
-> Xiaoyao Li <xiaoyao.li@intel.com> writes:
-> 
-> > They are duplicated codes to create vcpu.arch.{user,guest}_fpu in VMX
-> > and SVM. Make them common functions.
-> >
-> > No functional change intended.
-> 
-> Would it rather make sense to move this code to
-> kvm_arch_vcpu_create()/kvm_arch_vcpu_destroy() instead?
+The following commit has been merged into the irq/urgent branch of tip:
 
-Does it make sense?  Yes.  Would it actually work?  No.  Well, not without
-other shenanigans.
+Commit-ID:     bb0fed1c60cccbe4063b455a7228818395dac86e
+Gitweb:        https://git.kernel.org/tip/bb0fed1c60cccbe4063b455a7228818395dac86e
+Author:        Marc Zyngier <maz@kernel.org>
+AuthorDate:    Sun, 15 Sep 2019 15:17:45 +01:00
+Committer:     Marc Zyngier <maz@kernel.org>
+CommitterDate: Wed, 18 Sep 2019 12:29:52 +01:00
 
-FPU allocation can't be placed after the call to .create_vcpu() becuase
-it's consumed in kvm_arch_vcpu_init().   FPU allocation can't come before
-.create_vcpu() because the vCPU struct itself hasn't been allocated.  The
-latter could be solved by passed the FPU pointer into .create_vcpu(), but
-that's a bit ugly and is not a precedent we want to set.
+irqchip/sifive-plic: Switch to fasteoi flow
 
-At a glance, FPU allocation can be moved to kvm_arch_vcpu_init(), maybe
-right before the call to fx_init().
+The SiFive PLIC interrupt controller seems to have all the HW
+features to support the fasteoi flow, but the driver seems to be
+stuck in a distant past. Bring it into the 21st century.
+
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Tested-by: Palmer Dabbelt <palmer@sifive.com> (QEMU Boot)
+Tested-by: Darius Rad <darius@bluespec.com> (on 2 HW PLIC implementations)
+Tested-by: Paul Walmsley <paul.walmsley@sifive.com> (HiFive Unleashed)
+Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/8636gxskmj.wl-maz@kernel.org
+---
+ drivers/irqchip/irq-sifive-plic.c | 29 +++++++++++++++--------------
+ 1 file changed, 15 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
+index cf75596..3e51dee 100644
+--- a/drivers/irqchip/irq-sifive-plic.c
++++ b/drivers/irqchip/irq-sifive-plic.c
+@@ -97,7 +97,7 @@ static inline void plic_irq_toggle(const struct cpumask *mask,
+ 	}
+ }
+ 
+-static void plic_irq_enable(struct irq_data *d)
++static void plic_irq_unmask(struct irq_data *d)
+ {
+ 	unsigned int cpu = cpumask_any_and(irq_data_get_affinity_mask(d),
+ 					   cpu_online_mask);
+@@ -106,7 +106,7 @@ static void plic_irq_enable(struct irq_data *d)
+ 	plic_irq_toggle(cpumask_of(cpu), d->hwirq, 1);
+ }
+ 
+-static void plic_irq_disable(struct irq_data *d)
++static void plic_irq_mask(struct irq_data *d)
+ {
+ 	plic_irq_toggle(cpu_possible_mask, d->hwirq, 0);
+ }
+@@ -125,10 +125,8 @@ static int plic_set_affinity(struct irq_data *d,
+ 	if (cpu >= nr_cpu_ids)
+ 		return -EINVAL;
+ 
+-	if (!irqd_irq_disabled(d)) {
+-		plic_irq_toggle(cpu_possible_mask, d->hwirq, 0);
+-		plic_irq_toggle(cpumask_of(cpu), d->hwirq, 1);
+-	}
++	plic_irq_toggle(cpu_possible_mask, d->hwirq, 0);
++	plic_irq_toggle(cpumask_of(cpu), d->hwirq, 1);
+ 
+ 	irq_data_update_effective_affinity(d, cpumask_of(cpu));
+ 
+@@ -136,14 +134,18 @@ static int plic_set_affinity(struct irq_data *d,
+ }
+ #endif
+ 
++static void plic_irq_eoi(struct irq_data *d)
++{
++	struct plic_handler *handler = this_cpu_ptr(&plic_handlers);
++
++	writel(d->hwirq, handler->hart_base + CONTEXT_CLAIM);
++}
++
+ static struct irq_chip plic_chip = {
+ 	.name		= "SiFive PLIC",
+-	/*
+-	 * There is no need to mask/unmask PLIC interrupts.  They are "masked"
+-	 * by reading claim and "unmasked" when writing it back.
+-	 */
+-	.irq_enable	= plic_irq_enable,
+-	.irq_disable	= plic_irq_disable,
++	.irq_mask	= plic_irq_mask,
++	.irq_unmask	= plic_irq_unmask,
++	.irq_eoi	= plic_irq_eoi,
+ #ifdef CONFIG_SMP
+ 	.irq_set_affinity = plic_set_affinity,
+ #endif
+@@ -152,7 +154,7 @@ static struct irq_chip plic_chip = {
+ static int plic_irqdomain_map(struct irq_domain *d, unsigned int irq,
+ 			      irq_hw_number_t hwirq)
+ {
+-	irq_set_chip_and_handler(irq, &plic_chip, handle_simple_irq);
++	irq_set_chip_and_handler(irq, &plic_chip, handle_fasteoi_irq);
+ 	irq_set_chip_data(irq, NULL);
+ 	irq_set_noprobe(irq);
+ 	return 0;
+@@ -188,7 +190,6 @@ static void plic_handle_irq(struct pt_regs *regs)
+ 					hwirq);
+ 		else
+ 			generic_handle_irq(irq);
+-		writel(hwirq, claim);
+ 	}
+ 	csr_set(sie, SIE_SEIE);
+ }
