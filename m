@@ -2,147 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C046D5E6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 11:16:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F093D5E75
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 11:17:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730738AbfJNJQk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 05:16:40 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:39041 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730691AbfJNJQj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 05:16:39 -0400
-Received: by mail-ed1-f65.google.com with SMTP id a15so14151362edt.6
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 02:16:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=d8Jpp+ZNyeMIECLhU8stIu5ojWvnBY0aBAMY/MpsQ2k=;
-        b=b4CjXUhaDh5V5oSXdLp/N67GUtShbU8b5VZIcqzq+wEro6yUGpwdYVnICq9N5M6nhJ
-         LlieGbgdTyq7BMwUYDZ/uzN6u+XXNRaLJp9Idz+cgPdc5xMZWiR8EtNKrhuJvWyTvI+H
-         JBxzlPf6+MC9ADl4y7sVAeie/ybms+opGMWy4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=d8Jpp+ZNyeMIECLhU8stIu5ojWvnBY0aBAMY/MpsQ2k=;
-        b=CsEffUM/Jl3bTrdqVhCaKc0Wg4zckCZ6fWILE2khnr6DZwqwYnCLCLKAsWvfa0XM4W
-         h8afK0iCXJbhaTm+ECq558HBQfNVn8Iy6kk2sjqqOt2GZuEDqdOr9Dy2z5pDqgIP1Vu2
-         0eMI98V4xMatGYntxfQF0/exXjdqI/9d/TpUKikNCbs9k1UA6kIXVehNxF3HgS5mvrt9
-         g2Ik5LP8JtcymTKX/55qiEiJAR0R3687q0e6MEj+Uj4hc+jBqoVyHaMXWLHfc2hjgcX4
-         4/xUmD5MwYVarG+MSDYDwumB37pScQXwF4e7DsryncsOecUbgHgCM7R3Xyhpm+OewSQ5
-         E9/Q==
-X-Gm-Message-State: APjAAAV+uNxUIPgTnqn4+TNJn/MD4SCtWe5lv/gm2izbwYkp+waLYsa+
-        Ebr9YOHQFlM9cPFvvcjkbcBOdQ==
-X-Google-Smtp-Source: APXvYqzV5ULbBVu4tlr7KIdPTRWorn11s+O/SdFjTBjSfIeo8Hcbdl95adE/jj1Lg/k1T3ENwiaOhg==
-X-Received: by 2002:aa7:c556:: with SMTP id s22mr27059909edr.105.1571044598174;
-        Mon, 14 Oct 2019 02:16:38 -0700 (PDT)
-Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
-        by smtp.gmail.com with ESMTPSA id gx14sm2239181ejb.38.2019.10.14.02.16.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2019 02:16:37 -0700 (PDT)
-Date:   Mon, 14 Oct 2019 11:16:35 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     syzbot <syzbot+fb77e97ebf0612ee6914@syzkaller.appspotmail.com>
-Cc:     airlied@linux.ie, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, sean@poorly.run,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: WARNING in drm_mode_createblob_ioctl
-Message-ID: <20191014091635.GI11828@phenom.ffwll.local>
-Mail-Followup-To: syzbot <syzbot+fb77e97ebf0612ee6914@syzkaller.appspotmail.com>,
-        airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, sean@poorly.run,
-        syzkaller-bugs@googlegroups.com
-References: <000000000000b2de3a0594d8b4ca@google.com>
+        id S1730782AbfJNJRe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 05:17:34 -0400
+Received: from mout.gmx.net ([212.227.17.21]:42751 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730438AbfJNJRe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 05:17:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1571044643;
+        bh=4WxnJGGhPUp8zJdSS6vkKY+4fSuwHopgQ3qM6bfXxxU=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=eSu6PjSHSn8VWGUz9PPVC0eNVQXrCsbTltfazX4Zp37ELfuZ1ylgJ0KYEdkYLg4gI
+         EzSfn8w9VnuCtajJWX5oOPs/qp2KHc2RAKVY5RulilYh51BcI/SZSYszpRVGSf6cvD
+         RKeOFmwac3sysWbmXbN1ozUV7AoahpV8sHnC7bNo=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [10.0.0.132] ([212.88.11.189]) by mail.gmx.com (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M4JmT-1iKDSc3Na5-000IBB; Mon, 14
+ Oct 2019 11:17:23 +0200
+Subject: Re: [PATCH] xhci: Don't use soft retry if slot id > 0
+To:     Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc:     Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191013003313.3497-1-bernhard.gebetsberger@gmx.at>
+ <84476602-7551-b667-9803-55016e477b02@linux.intel.com>
+From:   Bernhard Gebetsberger <bernhard.gebetsberger@gmx.at>
+Message-ID: <8319a117-ed96-53f8-48ae-907c6c34898d@gmx.at>
+Date:   Mon, 14 Oct 2019 11:17:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000b2de3a0594d8b4ca@google.com>
-X-Operating-System: Linux phenom 5.2.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <84476602-7551-b667-9803-55016e477b02@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+X-Provags-ID: V03:K1:GoxKe0s5Fo0XSTngGJAuRCkv+kTx0jXMfIYt275HkW7XJ2oKno2
+ MldDbYZjHNoo0X5/NFjStH/XB4m7xaxtkCQ4NK2LMcvPBbsqSJQRkJ3nCJrdn/46FdzGS5b
+ 60lHuCnG8Bo9aMXAohgWX+327aWxyRKPzQlHgMWJdLErIEu7lDzu5ET02M6uS3Oz4l1MH7F
+ jKKq9vQlxLU6mpvJiPl+w==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:SKqbYSAIWHI=:Ea0pQxGQUgg/7puz61glmk
+ tehrz1IgWj0PfaFWpFmYM0E9ZgJcRPrpTIqBjI5GWr9czeGtFYbEOPE+J7Y1ZDH2vtt0crekj
+ 899nfPtJGZJVESWroUAYdF7b/wN/hA+wV3te0wAw1et9gFo72rfUBvw1tqzkoPheYihcDm2zd
+ fqtd5HS4METMLy5vQFdJ9Q3mTHvvVtsegtWoz0IAokUPtlKgVPSsdo6fs+VEVMF9xZouz2MXw
+ otRPBmY+h8iydmnfASH4ntEleFOeoXtdhcc6wHYWAb4cxxC42AKEqoGZf8L0CPqsBEit7OaOf
+ FOmFJ+dqJdS6xmKOfjewDh4Uk8LmzB7TCGpdO0j5/XRiglsgc8+HwR6iMahfRK7TBy/+9ZHbD
+ yJ6jfzADehWfzfO0WkZTuNlWNRX2BwZf49PcF7q9pGCEGM+IHn0i1ZeLuYIkuQtFOp4zsH1/R
+ yJH2w0SHt5V6NceTDHH57QVrA/0MbtsUQ1oOMBaCs5fAVFuIt1InsacQ/9ik7AB9JUSDOBrc9
+ 7gEdjlOU//sEx+gLx/sbMgVhwNpcG9QRh2ic9csa/0/I+iXRiAX9zHahxMz+gENRsOubq8TnB
+ wzNNoXvOfs20d6Dou04uV9XlVLlHAf9hzhQFnmKJ1h9IjFd7Na4bml8w3EiBxsuvSASpqrrtM
+ Nn8j/4zFvF5Z+fDUmO8URb7PoSghPrM6arWEHG5+SdL/LEi8+VRigYtcA+toY2maIr97CAc0g
+ cpM+a799wFi1G4fwsR0ZVli5MV66xZUTCuqsukxGaPEyJ89XrdVz2QFy+/s8OQTawYXDrr3Zr
+ wYS8soooZQdop8ap2C32ByUoEqdKRztHCr7LgFAFxtAzu4nX8NK59FSHld1UD4B8YNspGJMAg
+ +ZhRLVBWB6o0OtGJZ6a7Ve1oCPr8x6DO8oNcg7j/Yhi0l3l8d5/6LoV47VX+eXk1NJ62tWosW
+ wsJodljg0l+/FRnpMU08RoLlq2/OobO7q4AWcHuc84hvxiC9hVB6q+a0Jlg13AONgz2LsvI9i
+ jg+rDs9HmfkTT+ONFmgOimzDkQUp2nI33A/5o0M3dfecAD2tw8lmYLMsnJd4QCm/9YZyNqtnQ
+ brqi198yY+obYQ1e7RRVSo2z9MYNEmkJoabvgQ48EF34f54eRx7liht/YOdSslGaDXQw1yNP9
+ f/M1a8/0q3Hr8LzNLZ2nY3r/6Qhah6Ok/UY7vvMA/M+z0FG58b57t3JZoQ+CME5V33rZjxBQx
+ 5vm35zKU9RXXS2IcGuhL1DQZ62xhMw1GIE1UQDq4LqO3izuadsaQPvrtOMsE=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 13, 2019 at 11:09:09PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    8ada228a Add linux-next specific files for 20191011
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1423a87f600000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=7cf4eed5fe42c31a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=fb77e97ebf0612ee6914
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> 
-> Unfortunately, I don't have any reproducer for this crash yet.
+Am 14.10.19 um 10:06 schrieb Mathias Nyman:
+> On 13.10.2019 3.33, Bernhard Gebetsberger wrote:
+>> According to the xhci specification(chapter 4.6.8.1) soft retry
+>> shouldn't be used if the slot id is higher than 0. Currently some usb
+>> devices break on some systems because soft retry is being used when
+>> there is a transaction error, without checking the slot id.
+>>
+> That is not correct
+>
+> Specs say that soft retry should not be used if we are dealing with a
+> FS/LS device behind a HS hub, this can be checked from the "TT Hub Slot =
+ID"
+> field in the slot context, which we do.
+>
+> In xhci all devices have a slot id, so this change would prevent
+> soft retry almost completely.
+>
+> Specs 4.6.8.1:
+> "Soft Retry attempts shall not be performed if the device is behind a
+> TT in a HS Hub (i.e. TT Hub Slot ID > =E2=80=980=E2=80=99)."
+>
+> -Mathias
+Thanks for the explanation, I have misunderstood that part from the xhci
 
-Hm only thing that could go wrong is how we allocate the target for the
-user_copy, which is an argument directly from the ioctl parameter struct.
-Does syzbot not track that? We use the standard linux ioctl struct
-encoding in drm.
+spec. Sorry.
 
-Otherwise I have no idea why it can't create a reliable reproducer for
-this ... I'm also not seeing the bug, all the input validation we have
-seems correct :-/
--Daniel
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+fb77e97ebf0612ee6914@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 30449 at include/linux/thread_info.h:150
-> check_copy_size include/linux/thread_info.h:150 [inline]
-> WARNING: CPU: 1 PID: 30449 at include/linux/thread_info.h:150 copy_from_user
-> include/linux/uaccess.h:143 [inline]
-> WARNING: CPU: 1 PID: 30449 at include/linux/thread_info.h:150
-> drm_mode_createblob_ioctl+0x398/0x490 drivers/gpu/drm/drm_property.c:800
-> Kernel panic - not syncing: panic_on_warn set ...
-> CPU: 1 PID: 30449 Comm: syz-executor.5 Not tainted 5.4.0-rc2-next-20191011
-> #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
->  panic+0x2e3/0x75c kernel/panic.c:221
->  __warn.cold+0x2f/0x35 kernel/panic.c:582
->  report_bug+0x289/0x300 lib/bug.c:195
->  fixup_bug arch/x86/kernel/traps.c:174 [inline]
->  fixup_bug arch/x86/kernel/traps.c:169 [inline]
->  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:267
->  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:286
->  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
-> RIP: 0010:check_copy_size include/linux/thread_info.h:150 [inline]
-> RIP: 0010:copy_from_user include/linux/uaccess.h:143 [inline]
-> RIP: 0010:drm_mode_createblob_ioctl+0x398/0x490
-> drivers/gpu/drm/drm_property.c:800
-> Code: c1 ea 03 80 3c 02 00 0f 85 ed 00 00 00 49 89 5d 00 e8 3c 28 cb fd 4c
-> 89 f7 e8 64 92 9e 03 31 c0 e9 75 fd ff ff e8 28 28 cb fd <0f> 0b e8 21 28 cb
-> fd 4d 85 e4 b8 f2 ff ff ff 0f 84 5b fd ff ff 89
-> RSP: 0018:ffff8880584efaa8 EFLAGS: 00010246
-> RAX: 0000000000040000 RBX: ffff8880a3a90000 RCX: ffffc900109da000
-> RDX: 0000000000040000 RSI: ffffffff83a7eaf8 RDI: 0000000000000007
-> RBP: ffff8880584efae8 R08: ffff888096c40080 R09: ffffed1014752110
-> R10: ffffed101475210f R11: ffff8880a3a9087f R12: ffffc90014907000
-> R13: ffff888028aa0000 R14: 000000009a6c7969 R15: ffffc90014907058
-> 
-> 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+- Bernhard
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+
+
