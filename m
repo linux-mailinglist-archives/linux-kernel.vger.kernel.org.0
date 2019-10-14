@@ -2,121 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 900E1D6A34
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 21:34:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14FFED6A39
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 21:36:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388908AbfJNTeC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 15:34:02 -0400
-Received: from mga14.intel.com ([192.55.52.115]:11242 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730297AbfJNTeB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 15:34:01 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Oct 2019 12:34:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,296,1566889200"; 
-   d="scan'208";a="370222922"
-Received: from kridax-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.7.178])
-  by orsmga005.jf.intel.com with ESMTP; 14 Oct 2019 12:33:52 -0700
-Date:   Mon, 14 Oct 2019 22:33:50 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     dhowells@redhat.com, peterhuewe@gmx.de, keyrings@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org, herbert@gondor.apana.org.au,
-        davem@davemloft.net, jgg@ziepe.ca, arnd@arndb.de,
-        gregkh@linuxfoundation.org, jejb@linux.ibm.com,
-        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
-        jsnitsel@redhat.com, linux-kernel@vger.kernel.org,
-        daniel.thompson@linaro.org
-Subject: Re: [Patch v7 0/4] Create and consolidate trusted keys subsystem
-Message-ID: <20191014193350.GG15552@linux.intel.com>
-References: <1570425935-7435-1-git-send-email-sumit.garg@linaro.org>
- <20191011123757.GD3129@linux.intel.com>
+        id S2388921AbfJNTf6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 15:35:58 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45252 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730288AbfJNTf6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 15:35:58 -0400
+Received: by mail-ot1-f66.google.com with SMTP id 41so14787452oti.12
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 12:35:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XrWcyp1buzweQbMvYgKZmE2h0wYSbiCvDrJ+ITMmwAc=;
+        b=IJFXJjCibwKfNUOiQCp1JlGMkAtgvORwOi6fntAkmdXV7TAwwnpvaaFCjdTORnzFRQ
+         mrmc27Pefqh5bqAq/aqfeXOcM5cy4gaIqkOeD/butl4CuorwZ6n6bQxP5QyGnMkbCw3m
+         R9tGK7fIZyyCYHKBHUA3lqZVHt6kax2el+WpHGHLmkOnW/hNrlSY+6Y5q6G7eLq/7ogl
+         B8xjA3BLnldSklthJd4STJn9cZYlDYwfNkx+NbRQsSOL7/0z3R0WP8e1nW7XOwQXzQ1B
+         9u95uhgqJp3zCE9up+1EqEkfWNojZ+TclzSFpgIL5ENLTOwD4wxGNQMATLmDsuYVuNhb
+         GiDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XrWcyp1buzweQbMvYgKZmE2h0wYSbiCvDrJ+ITMmwAc=;
+        b=FDgdwkUh4cJq33wmd8sZDInDrBbfeKFrbXe+LYJcqaCtXUIqqk+sahdau7IMHzT1tO
+         bpI7TQsVcUh+IoODzAJ8PAlEtMMD3mb1tvjvH+0o5EgniAudJeVaNpsiy8tjtIDgK5t2
+         R9U5KrcAn+zTrvNWuctv8wASQv0mqQL1XzNsz451TRQj5JCBC8FjX2u+aznxwYF1kdaQ
+         hnPe5iy6K3gbEByC9Bs3SEandZ2T0O9Rnk7CBiwzE18PqrIno2YV7gAX9KRfZoWZCbus
+         tNgB86yUhbdMWgD29tJLVfw8Kt0lX05dYkJo4vyVY+VfWQDAPpp295ckUh3eRDK60aTn
+         fc8w==
+X-Gm-Message-State: APjAAAWwKx6Uh1xsYx6kYjQbULfZGUSjWqTYQ6zszYfKo0YkFxIK2bdW
+        KUBMJSmB8iUgPxB62KLEJVUrco8Bcl+NwLWa71hr7A==
+X-Google-Smtp-Source: APXvYqwzoS/csv409X8Yf9La00JPxKWIxu4wbj0FyCwv2f8S5eKwddkMYEcCIX/87xgRi3XqvhpLLQDlG3a6xO+8SK8=
+X-Received: by 2002:a9d:75d0:: with SMTP id c16mr10442901otl.32.1571081757198;
+ Mon, 14 Oct 2019 12:35:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191011123757.GD3129@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190715191804.112933-1-hridya@google.com> <CAG48ez0dSd4q06YXOnkzmM8BkfQGTtYE6j60_YRdC5fmrTm8jw@mail.gmail.com>
+ <CAG48ez2ez1bb=3o3h1KSahPU6QcdXhbh=Z2aX4Mte24H4901_g@mail.gmail.com> <CA+wgaPNPSOzEf-p8wsorqGe=eEbhFLkW6gYfYP1MaCqhQBvrnw@mail.gmail.com>
+In-Reply-To: <CA+wgaPNPSOzEf-p8wsorqGe=eEbhFLkW6gYfYP1MaCqhQBvrnw@mail.gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 14 Oct 2019 21:35:30 +0200
+Message-ID: <CAG48ez1w0MGaQdssdX7nZamPF_JmwR4g_Aj6cmHuojLfXAigfA@mail.gmail.com>
+Subject: Re: [PATCH] binder: prevent transactions to context manager from its
+ own process.
+To:     Hridya Valsaraju <hridya@google.com>
+Cc:     Todd Kjos <tkjos@android.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Christian Brauner <christian@brauner.io>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        kernel-team <kernel-team@android.com>,
+        syzbot+8b3c354d33c4ac78bfad@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 03:37:57PM +0300, Jarkko Sakkinen wrote:
-> On Mon, Oct 07, 2019 at 10:55:31AM +0530, Sumit Garg wrote:
-> > This patch-set does restructuring of trusted keys code to create and
-> > consolidate trusted keys subsystem.
-> > 
-> > Also, patch #2 replaces tpm1_buf code used in security/keys/trusted.c and
-> > crypto/asymmertic_keys/asym_tpm.c files to use the common tpm_buf code.
-> > 
-> > Changes in v7:
-> > 1. Rebased to top of tpmdd/master
-> > 2. Patch #4: update tpm2 trusted keys code to use tpm_send() instead of
-> >    tpm_transmit_cmd() which is an internal function.
-> > 
-> > Changes in v6:
-> > 1. Switch TPM asymmetric code also to use common tpm_buf code. These
-> >    changes required patches #1 and #2 update, so I have dropped review
-> >    tags from those patches.
-> > 2. Incorporated miscellaneous comments from Jarkko.
-> > 
-> > Changes in v5:
-> > 1. Drop 5/5 patch as its more relavant along with TEE patch-set.
-> > 2. Add Reviewed-by tag for patch #2.
-> > 3. Fix build failure when "CONFIG_HEADER_TEST" and
-> >    "CONFIG_KERNEL_HEADER_TEST" config options are enabled.
-> > 4. Misc changes to rename files.
-> > 
-> > Changes in v4:
-> > 1. Separate patch for export of tpm_buf code to include/linux/tpm.h
-> > 2. Change TPM1.x trusted keys code to use common tpm_buf
-> > 3. Keep module name as trusted.ko only
-> > 
-> > Changes in v3:
-> > 
-> > Move TPM2 trusted keys code to trusted keys subsystem.
-> > 
-> > Changes in v2:
-> > 
-> > Split trusted keys abstraction patch for ease of review.
-> > 
-> > Sumit Garg (4):
-> >   tpm: Move tpm_buf code to include/linux/
-> >   KEYS: Use common tpm_buf for trusted and asymmetric keys
-> >   KEYS: trusted: Create trusted keys subsystem
-> >   KEYS: trusted: Move TPM2 trusted keys code
-> > 
-> >  crypto/asymmetric_keys/asym_tpm.c                  | 101 +++----
-> >  drivers/char/tpm/tpm-interface.c                   |  56 ----
-> >  drivers/char/tpm/tpm.h                             | 226 ---------------
-> >  drivers/char/tpm/tpm2-cmd.c                        | 307 --------------------
-> >  include/Kbuild                                     |   1 -
-> >  include/keys/{trusted.h => trusted_tpm.h}          |  49 +---
-> >  include/linux/tpm.h                                | 251 ++++++++++++++--
-> >  security/keys/Makefile                             |   2 +-
-> >  security/keys/trusted-keys/Makefile                |   8 +
-> >  .../{trusted.c => trusted-keys/trusted_tpm1.c}     |  96 +++----
-> >  security/keys/trusted-keys/trusted_tpm2.c          | 314 +++++++++++++++++++++
-> >  11 files changed, 652 insertions(+), 759 deletions(-)
-> >  rename include/keys/{trusted.h => trusted_tpm.h} (77%)
-> >  create mode 100644 security/keys/trusted-keys/Makefile
-> >  rename security/keys/{trusted.c => trusted-keys/trusted_tpm1.c} (94%)
-> >  create mode 100644 security/keys/trusted-keys/trusted_tpm2.c
-> > 
-> > -- 
-> > 2.7.4
-> > 
-> 
-> I fixed a merge conflict caused by James' commit. Already pushed.
-> Compiling test kernel ATM i.e. tested-by's will follow later.
+On Mon, Oct 14, 2019 at 7:38 PM Hridya Valsaraju <hridya@google.com> wrote:
+> On Fri, Oct 11, 2019 at 3:11 PM Jann Horn <jannh@google.com> wrote:
+> > On Fri, Oct 11, 2019 at 11:59 PM Jann Horn <jannh@google.com> wrote:
+> > > (I think you could also let A receive a handle
+> > > to itself and then transact with itself, but I haven't tested that.)
+> >
+> > Ignore this sentence, that's obviously wrong because same-binder_proc
+> > nodes will always show up as a binder, not a handle.
+>
+> Thank you for the email and steps to reproduce the issue Jann. I need
+> some time to take a look at the same and I will get back to you once I
+> understand it and hopefully have a fix. We do want to disallow
+> same-process transactions. Here is a little bit more of context for
+> the patch: https://lkml.org/lkml/2018/3/28/173
 
-Update to my latest master for v8 (otherwise there won't be a clean
-merge).
-
-/Jarkko
+That patch (commit 7aa135fcf26377f92dc0680a57566b4c7f3e281b) prevented
+transactions within one *binder_proc*, which makes sense to me; that
+still allows same-process transactions, so long as they are between
+different binder_proc instances. What I don't understand is your
+follow-up in commit 49ed96943a8e0c62cc5a9b0a6cfc88be87d1fcec, where
+you try to block transactions within the same process (well, kind of,
+the semantics of the term "process" are quite fuzzy here and don't map
+onto binder well).
