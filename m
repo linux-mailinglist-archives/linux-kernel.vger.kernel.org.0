@@ -2,155 +2,231 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A78C0D6725
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 18:21:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8413D6731
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 18:23:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388048AbfJNQVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 12:21:33 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:44531 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729889AbfJNQVc (ORCPT
+        id S2387666AbfJNQX0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 12:23:26 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:34785 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729271AbfJNQXY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 12:21:32 -0400
-Received: by mail-pl1-f193.google.com with SMTP id q15so8215039pll.11;
-        Mon, 14 Oct 2019 09:21:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=XJ1DbTHwQkp6rz8764Ynj3HtGD3CNAlvqeCKZgSoVQ0=;
-        b=YkE2NEEBQSwXfOv2XRFZzx4Ygv0E1pGi5Y6ukpAcSKn+qrh0g4f2XtsI+WdBGG5JnL
-         gr9b72YQ9fTyqnPmL02ubAP8MG6rJxIddzgn9tuwa8ftCJfjqYyHqFa/ZsSBxv4UUmP4
-         p3IczoTvhsJIJulLzvUhvzchfD7krk4kcL1Q6AuMJSLsCQpN9cLC/F0z1ki47CGkSqGU
-         lFOwqdkq9QuPgAF6ouQpYKjeg43AEc80IuUraZ7HJZ00exki8/fVGfWs6gQUI9yKtO8C
-         Ziu5b0JDSkUxZHBfOmLcVHKjNI1+55Fpko3KO6QPLFOZIid/5qgj1UVe5pJtk67kBYIF
-         U+8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=XJ1DbTHwQkp6rz8764Ynj3HtGD3CNAlvqeCKZgSoVQ0=;
-        b=NfQ+xaIX4xyLq2/sS1zlGr7GnIJysdQHa/vopsBQG2sPsTYZeZrtniPsHPb/yINP0b
-         ne6SelIfDoZHtP1BNqbxipDuEEMzG3AiHFuvmBCqzJ+4ZIu9UNYNqDh/8+zGDhmXWG3G
-         L00wub1WnPFImRsSV9jW4+9q4uLrwZf8WaYF9PPRweP3D0vvce5Xg0xmJWybITGpedD2
-         ApzeHqAuQ/HuGj09NI9m8CCsBsM4Bj9VNTi/qywupcPVju8TUdsbANzryKkRjdYm9ekb
-         jQkxZfJqIXqdiB8hTBRVrfJwCLJY80ty4A85A/taUftDdRdK5NWnEsN75lzbJtu7jBez
-         QS8g==
-X-Gm-Message-State: APjAAAXKS5xqkV2ojM5Cardzj/qGIcHeg+vZ23vNIbOqBvFk0QXe2UE3
-        iCrPq4+KZBlqgYme9sHa6uE=
-X-Google-Smtp-Source: APXvYqyD30S+hd0zi0LGH5vSH5pXI4H6Jmrw2/vgufLPKDa5X6EfbljsT4vWOTPRqxzZ75NG5ocsbw==
-X-Received: by 2002:a17:902:7d92:: with SMTP id a18mr26228068plm.102.1571070091621;
-        Mon, 14 Oct 2019 09:21:31 -0700 (PDT)
-Received: from nishad ([2406:7400:54:c1b:38e9:5260:8522:a8f0])
-        by smtp.gmail.com with ESMTPSA id m19sm14877483pjl.28.2019.10.14.09.21.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Oct 2019 09:21:31 -0700 (PDT)
-Date:   Mon, 14 Oct 2019 21:51:20 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Vladimir Oltean <olteanv@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joe Perches <joe@perches.com>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] net: dsa: sja1105: Use the correct style for SPDX License
- Identifier
-Message-ID: <20191014162116.GA5024@nishad>
+        Mon, 14 Oct 2019 12:23:24 -0400
+X-UUID: 00e5f5011c1b421da9e2c7e6370c8c49-20191015
+X-UUID: 00e5f5011c1b421da9e2c7e6370c8c49-20191015
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <walter-zh.wu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1840082822; Tue, 15 Oct 2019 00:23:19 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 15 Oct 2019 00:23:17 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 15 Oct 2019 00:23:15 +0800
+From:   Walter Wu <walter-zh.wu@mediatek.com>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     <kasan-dev@googlegroups.com>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
+        Walter Wu <walter-zh.wu@mediatek.com>
+Subject: [PATCH v2 1/2] kasan: detect negative size in memory operation function
+Date:   Tue, 15 Oct 2019 00:23:16 +0800
+Message-ID: <20191014162316.28314-1-walter-zh.wu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch corrects the SPDX License Identifier style
-in header files related to Distributed Switch Architecture
-drivers for NXP SJA1105 series Ethernet switch support.
-It uses an expilict block comment for the SPDX License
-Identifier.
+KASAN missed detecting size is negative numbers in memset(), memcpy(),
+and memmove(), it will cause out-of-bounds bug, so needs to be detected
+by KASAN.
 
-Changes made by using a script provided by Joe Perches here:
-https://lkml.org/lkml/2019/2/7/46.
+If size is negative numbers, then it has three reasons to be
+defined as heap-out-of-bounds bug type.
+1) Casting negative numbers to size_t would indeed turn up as
+   a large size_t and its value will be larger than ULONG_MAX/2,
+   so that this can qualify as out-of-bounds.
+2) If KASAN has new bug type and user-space passes negative size,
+   then there are duplicate reports. So don't produce new bug type
+   in order to prevent duplicate reports by some systems (e.g. syzbot)
+   to report the same bug twice.
+3) When size is negative numbers, it may be passed from user-space.
+   So we always print heap-out-of-bounds in order to prevent that
+   kernel-space and user-space have the same bug but have duplicate
+   reports.
 
-Suggested-by: Joe Perches <joe@perches.com>
-Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
----
+KASAN report:
+
+ BUG: KASAN: heap-out-of-bounds in kmalloc_memmove_invalid_size+0x70/0xa0
+ Read of size 18446744073709551608 at addr ffffff8069660904 by task cat/72
+
+ CPU: 2 PID: 72 Comm: cat Not tainted 5.4.0-rc1-next-20191004ajb-00001-gdb8af2f372b2-dirty #1
+ Hardware name: linux,dummy-virt (DT)
+ Call trace:
+  dump_backtrace+0x0/0x288
+  show_stack+0x14/0x20
+  dump_stack+0x10c/0x164
+  print_address_description.isra.9+0x68/0x378
+  __kasan_report+0x164/0x1a0
+  kasan_report+0xc/0x18
+  check_memory_region+0x174/0x1d0
+  memmove+0x34/0x88
+  kmalloc_memmove_invalid_size+0x70/0xa0
+
+[1] https://bugzilla.kernel.org/show_bug.cgi?id=199341
+
 Changes in v2:
-  - Modify the commit message to reflect the changes done.
-  - Correct some indentation errors.
----
- drivers/net/dsa/sja1105/sja1105.h                | 4 ++--
- drivers/net/dsa/sja1105/sja1105_dynamic_config.h | 4 ++--
- drivers/net/dsa/sja1105/sja1105_ptp.h            | 4 ++--
- drivers/net/dsa/sja1105/sja1105_static_config.h  | 4 ++--
- drivers/net/dsa/sja1105/sja1105_tas.h            | 4 ++--
- 5 files changed, 10 insertions(+), 10 deletions(-)
+Fix the indentation bug, thanks for the reminder Matthew.
 
-diff --git a/drivers/net/dsa/sja1105/sja1105.h b/drivers/net/dsa/sja1105/sja1105.h
-index 8681ff9d1a76..b0dada13c377 100644
---- a/drivers/net/dsa/sja1105/sja1105.h
-+++ b/drivers/net/dsa/sja1105/sja1105.h
-@@ -1,5 +1,5 @@
--/* SPDX-License-Identifier: GPL-2.0
-- * Copyright (c) 2018, Sensor-Technik Wiedemann GmbH
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2018, Sensor-Technik Wiedemann GmbH
-  * Copyright (c) 2018-2019, Vladimir Oltean <olteanv@gmail.com>
-  */
- #ifndef _SJA1105_H
-diff --git a/drivers/net/dsa/sja1105/sja1105_dynamic_config.h b/drivers/net/dsa/sja1105/sja1105_dynamic_config.h
-index 740dadf43f01..1fc0d13dc623 100644
---- a/drivers/net/dsa/sja1105/sja1105_dynamic_config.h
-+++ b/drivers/net/dsa/sja1105/sja1105_dynamic_config.h
-@@ -1,5 +1,5 @@
--/* SPDX-License-Identifier: GPL-2.0
-- * Copyright (c) 2019, Vladimir Oltean <olteanv@gmail.com>
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2019, Vladimir Oltean <olteanv@gmail.com>
-  */
- #ifndef _SJA1105_DYNAMIC_CONFIG_H
- #define _SJA1105_DYNAMIC_CONFIG_H
-diff --git a/drivers/net/dsa/sja1105/sja1105_ptp.h b/drivers/net/dsa/sja1105/sja1105_ptp.h
-index af456b0a4d27..394e12a6ad59 100644
---- a/drivers/net/dsa/sja1105/sja1105_ptp.h
-+++ b/drivers/net/dsa/sja1105/sja1105_ptp.h
-@@ -1,5 +1,5 @@
--/* SPDX-License-Identifier: GPL-2.0
-- * Copyright (c) 2019, Vladimir Oltean <olteanv@gmail.com>
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2019, Vladimir Oltean <olteanv@gmail.com>
-  */
- #ifndef _SJA1105_PTP_H
- #define _SJA1105_PTP_H
-diff --git a/drivers/net/dsa/sja1105/sja1105_static_config.h b/drivers/net/dsa/sja1105/sja1105_static_config.h
-index 7f87022a2d61..f4a5c5c04311 100644
---- a/drivers/net/dsa/sja1105/sja1105_static_config.h
-+++ b/drivers/net/dsa/sja1105/sja1105_static_config.h
-@@ -1,5 +1,5 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright (c) 2016-2018, NXP Semiconductors
-+/* SPDX-License-Identifier: BSD-3-Clause */
-+/* Copyright (c) 2016-2018, NXP Semiconductors
-  * Copyright (c) 2018-2019, Vladimir Oltean <olteanv@gmail.com>
-  */
- #ifndef _SJA1105_STATIC_CONFIG_H
-diff --git a/drivers/net/dsa/sja1105/sja1105_tas.h b/drivers/net/dsa/sja1105/sja1105_tas.h
-index 0b803c30e640..0aad212d88b2 100644
---- a/drivers/net/dsa/sja1105/sja1105_tas.h
-+++ b/drivers/net/dsa/sja1105/sja1105_tas.h
-@@ -1,5 +1,5 @@
--/* SPDX-License-Identifier: GPL-2.0
-- * Copyright (c) 2019, Vladimir Oltean <olteanv@gmail.com>
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2019, Vladimir Oltean <olteanv@gmail.com>
-  */
- #ifndef _SJA1105_TAS_H
- #define _SJA1105_TAS_H
+Signed-off-by: Walter Wu <walter-zh.wu@mediatek.com>
+Reported -by: Dmitry Vyukov <dvyukov@google.com>
+Suggested-by: Dmitry Vyukov <dvyukov@google.com>
+Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+---
+ mm/kasan/common.c         | 13 ++++++++-----
+ mm/kasan/generic.c        |  5 +++++
+ mm/kasan/generic_report.c | 18 ++++++++++++++++++
+ mm/kasan/tags.c           |  5 +++++
+ mm/kasan/tags_report.c    | 18 ++++++++++++++++++
+ 5 files changed, 54 insertions(+), 5 deletions(-)
+
+diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+index 6814d6d6a023..16a370023425 100644
+--- a/mm/kasan/common.c
++++ b/mm/kasan/common.c
+@@ -102,7 +102,8 @@ EXPORT_SYMBOL(__kasan_check_write);
+ #undef memset
+ void *memset(void *addr, int c, size_t len)
+ {
+-	check_memory_region((unsigned long)addr, len, true, _RET_IP_);
++	if (!check_memory_region((unsigned long)addr, len, true, _RET_IP_))
++		return NULL;
+ 
+ 	return __memset(addr, c, len);
+ }
+@@ -110,8 +111,9 @@ void *memset(void *addr, int c, size_t len)
+ #undef memmove
+ void *memmove(void *dest, const void *src, size_t len)
+ {
+-	check_memory_region((unsigned long)src, len, false, _RET_IP_);
+-	check_memory_region((unsigned long)dest, len, true, _RET_IP_);
++	if (!check_memory_region((unsigned long)src, len, false, _RET_IP_) ||
++	    !check_memory_region((unsigned long)dest, len, true, _RET_IP_))
++		return NULL;
+ 
+ 	return __memmove(dest, src, len);
+ }
+@@ -119,8 +121,9 @@ void *memmove(void *dest, const void *src, size_t len)
+ #undef memcpy
+ void *memcpy(void *dest, const void *src, size_t len)
+ {
+-	check_memory_region((unsigned long)src, len, false, _RET_IP_);
+-	check_memory_region((unsigned long)dest, len, true, _RET_IP_);
++	if (!check_memory_region((unsigned long)src, len, false, _RET_IP_) ||
++	    !check_memory_region((unsigned long)dest, len, true, _RET_IP_))
++		return NULL;
+ 
+ 	return __memcpy(dest, src, len);
+ }
+diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
+index 616f9dd82d12..02148a317d27 100644
+--- a/mm/kasan/generic.c
++++ b/mm/kasan/generic.c
+@@ -173,6 +173,11 @@ static __always_inline bool check_memory_region_inline(unsigned long addr,
+ 	if (unlikely(size == 0))
+ 		return true;
+ 
++	if (unlikely((long)size < 0)) {
++		kasan_report(addr, size, write, ret_ip);
++		return false;
++	}
++
+ 	if (unlikely((void *)addr <
+ 		kasan_shadow_to_mem((void *)KASAN_SHADOW_START))) {
+ 		kasan_report(addr, size, write, ret_ip);
+diff --git a/mm/kasan/generic_report.c b/mm/kasan/generic_report.c
+index 36c645939bc9..52a92c7db697 100644
+--- a/mm/kasan/generic_report.c
++++ b/mm/kasan/generic_report.c
+@@ -107,6 +107,24 @@ static const char *get_wild_bug_type(struct kasan_access_info *info)
+ 
+ const char *get_bug_type(struct kasan_access_info *info)
+ {
++	/*
++	 * If access_size is negative numbers, then it has three reasons
++	 * to be defined as heap-out-of-bounds bug type.
++	 * 1) Casting negative numbers to size_t would indeed turn up as
++	 *    a large size_t and its value will be larger than ULONG_MAX/2,
++	 *    so that this can qualify as out-of-bounds.
++	 * 2) If KASAN has new bug type and user-space passes negative size,
++	 *    then there are duplicate reports. So don't produce new bug type
++	 *    in order to prevent duplicate reports by some systems
++	 *    (e.g. syzbot) to report the same bug twice.
++	 * 3) When size is negative numbers, it may be passed from user-space.
++	 *    So we always print heap-out-of-bounds in order to prevent that
++	 *    kernel-space and user-space have the same bug but have duplicate
++	 *    reports.
++	 */
++	if ((long)info->access_size < 0)
++		return "heap-out-of-bounds";
++
+ 	if (addr_has_shadow(info->access_addr))
+ 		return get_shadow_bug_type(info);
+ 	return get_wild_bug_type(info);
+diff --git a/mm/kasan/tags.c b/mm/kasan/tags.c
+index 0e987c9ca052..b829535a3ad7 100644
+--- a/mm/kasan/tags.c
++++ b/mm/kasan/tags.c
+@@ -86,6 +86,11 @@ bool check_memory_region(unsigned long addr, size_t size, bool write,
+ 	if (unlikely(size == 0))
+ 		return true;
+ 
++	if (unlikely((long)size < 0)) {
++		kasan_report(addr, size, write, ret_ip);
++		return false;
++	}
++
+ 	tag = get_tag((const void *)addr);
+ 
+ 	/*
+diff --git a/mm/kasan/tags_report.c b/mm/kasan/tags_report.c
+index 969ae08f59d7..f7ae474aef3a 100644
+--- a/mm/kasan/tags_report.c
++++ b/mm/kasan/tags_report.c
+@@ -36,6 +36,24 @@
+ 
+ const char *get_bug_type(struct kasan_access_info *info)
+ {
++	/*
++	 * If access_size is negative numbers, then it has three reasons
++	 * to be defined as heap-out-of-bounds bug type.
++	 * 1) Casting negative numbers to size_t would indeed turn up as
++	 *    a large size_t and its value will be larger than ULONG_MAX/2,
++	 *    so that this can qualify as out-of-bounds.
++	 * 2) If KASAN has new bug type and user-space passes negative size,
++	 *    then there are duplicate reports. So don't produce new bug type
++	 *    in order to prevent duplicate reports by some systems
++	 *    (e.g. syzbot) to report the same bug twice.
++	 * 3) When size is negative numbers, it may be passed from user-space.
++	 *    So we always print heap-out-of-bounds in order to prevent that
++	 *    kernel-space and user-space have the same bug but have duplicate
++	 *    reports.
++	 */
++	if ((long)info->access_size < 0)
++		return "heap-out-of-bounds";
++
+ #ifdef CONFIG_KASAN_SW_TAGS_IDENTIFY
+ 	struct kasan_alloc_meta *alloc_meta;
+ 	struct kmem_cache *cache;
 -- 
-2.17.1
+2.18.0
 
