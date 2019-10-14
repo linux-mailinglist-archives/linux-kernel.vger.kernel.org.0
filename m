@@ -2,105 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21EF9D6645
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:39:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD50ED6659
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:44:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387664AbfJNPjY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 11:39:24 -0400
-Received: from foss.arm.com ([217.140.110.172]:47186 "EHLO foss.arm.com"
+        id S2387682AbfJNPot (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 11:44:49 -0400
+Received: from mga04.intel.com ([192.55.52.120]:63197 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730005AbfJNPjX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 11:39:23 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7942B28;
-        Mon, 14 Oct 2019 08:39:22 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 761AF3F68E;
-        Mon, 14 Oct 2019 08:39:21 -0700 (PDT)
-Date:   Mon, 14 Oct 2019 16:39:19 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Remi Pommarel <repk@triplefau.lt>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        Ellie Reeves <ellierevves@gmail.com>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: aardvark: Wait for endpoint to be ready before
- training link
-Message-ID: <20191014153919.GB2928@e121166-lin.cambridge.arm.com>
-References: <20190522213351.21366-2-repk@triplefau.lt>
- <20190806184945.GU12859@voidbox.localdomain>
+        id S1731441AbfJNPos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 11:44:48 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Oct 2019 08:44:48 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,296,1566889200"; 
+   d="scan'208";a="225112710"
+Received: from rtnitta-mobl1.amr.corp.intel.com (HELO [10.251.134.135]) ([10.251.134.135])
+  by fmsmga002.fm.intel.com with ESMTP; 14 Oct 2019 08:44:47 -0700
+Subject: Re: [alsa-devel] [PATCH -next] ASoC: SOF: Fix randbuild error
+To:     YueHaibing <yuehaibing@huawei.com>, lgirdwood@gmail.com,
+        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+        jaska.uimonen@linux.intel.com, yang.jie@linux.intel.com,
+        yung-chuan.liao@linux.intel.com
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+References: <20191014091308.23688-1-yuehaibing@huawei.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <3222f3a0-f3cf-b1b9-df23-ec392f7dae4f@linux.intel.com>
+Date:   Mon, 14 Oct 2019 10:36:11 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190806184945.GU12859@voidbox.localdomain>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191014091308.23688-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 08:49:46PM +0200, Remi Pommarel wrote:
-> On Wed, May 22, 2019 at 11:33:50PM +0200, Remi Pommarel wrote:
-> > When configuring pcie reset pin from gpio (e.g. initially set by
-> > u-boot) to pcie function this pin goes low for a brief moment
-> > asserting the PERST# signal. Thus connected device enters fundamental
-> > reset process and link configuration can only begin after a minimal
-> > 100ms delay (see [1]).
-> > 
-> > Because the pin configuration comes from the "default" pinctrl it is
-> > implicitly configured before the probe callback is called:
-> > 
-> > driver_probe_device()
-> >   really_probe()
-> >     ...
-> >     pinctrl_bind_pins() /* Here pin goes from gpio to PCIE reset
-> >                            function and PERST# is asserted */
-> >     ...
-> >     drv->probe()
-> > 
-> > [1] "PCI Express Base Specification", REV. 4.0
-> >     PCI Express, February 19 2014, 6.6.1 Conventional Reset
-> > 
-> > Signed-off-by: Remi Pommarel <repk@triplefau.lt>
-> > ---
-> > Changes since v1:
-> >   - Add a comment about pinctrl implicit pin configuration
-> >   - Use more legible msleep
-> >   - Use PCI_PM_D3COLD_WAIT macro
-> > 
-> > Please note that I will unlikely be able to answer any comments from May
-> > 24th to June 10th.
-> > ---
-> >  drivers/pci/controller/pci-aardvark.c | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> > 
-> > diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
-> > index 134e0306ff00..d998c2b9cd04 100644
-> > --- a/drivers/pci/controller/pci-aardvark.c
-> > +++ b/drivers/pci/controller/pci-aardvark.c
-> > @@ -324,6 +324,14 @@ static void advk_pcie_setup_hw(struct advk_pcie *pcie)
-> >  	reg |= PIO_CTRL_ADDR_WIN_DISABLE;
-> >  	advk_writel(pcie, reg, PIO_CTRL);
-> >  
-> > +	/*
-> > +	 * PERST# signal could have been asserted by pinctrl subsystem before
-> > +	 * probe() callback has been called, making the endpoint going into
-> > +	 * fundamental reset. As required by PCI Express spec a delay for at
-> > +	 * least 100ms after such a reset before link training is needed.
-> > +	 */
-> > +	msleep(PCI_PM_D3COLD_WAIT);
-> > +
-> >  	/* Start link training */
-> >  	reg = advk_readl(pcie, PCIE_CORE_LINK_CTRL_STAT_REG);
-> >  	reg |= PCIE_CORE_LINK_TRAINING;
-> > -- 
-> > 2.20.1
+
+
+On 10/14/19 4:13 AM, YueHaibing wrote:
+> When LEDS_TRIGGER_AUDIO is m and SND_SOC_SOF is y,
 > 
-> Gentle ping.
+> sound/soc/sof/control.o: In function `snd_sof_switch_put':
+> control.c:(.text+0x587): undefined reference to `ledtrig_audio_set'
+> control.c:(.text+0x593): undefined reference to `ledtrig_audio_set'
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Fixes: 5d43001ae436 ("ASoC: SOF: acpi led support for switch controls")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Thomas, sorry for the delay, unless you object I would merge this
-patch, I need your ACK to proceed though.
+Thanks for the fix.
 
-Thanks,
-Lorenzo
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+
+> ---
+>   sound/soc/sof/control.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/sound/soc/sof/control.c b/sound/soc/sof/control.c
+> index 41551e8..2c4abd4 100644
+> --- a/sound/soc/sof/control.c
+> +++ b/sound/soc/sof/control.c
+> @@ -36,10 +36,12 @@ static void update_mute_led(struct snd_sof_control *scontrol,
+>   
+>   	scontrol->led_ctl.led_value = temp;
+>   
+> +#if IS_REACHABLE(CONFIG_LEDS_TRIGGER_AUDIO)
+>   	if (!scontrol->led_ctl.direction)
+>   		ledtrig_audio_set(LED_AUDIO_MUTE, temp ? LED_OFF : LED_ON);
+>   	else
+>   		ledtrig_audio_set(LED_AUDIO_MICMUTE, temp ? LED_OFF : LED_ON);
+> +#endif
+>   }
+>   
+>   static inline u32 mixer_to_ipc(unsigned int value, u32 *volume_map, int size)
+> 
