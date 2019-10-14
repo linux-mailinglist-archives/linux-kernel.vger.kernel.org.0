@@ -2,79 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34CE2D6453
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 15:47:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 961AFD645F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 15:49:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732253AbfJNNrC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 09:47:02 -0400
-Received: from foss.arm.com ([217.140.110.172]:44592 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727789AbfJNNrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 09:47:01 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 94714337;
-        Mon, 14 Oct 2019 06:47:00 -0700 (PDT)
-Received: from [10.1.194.37] (unknown [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 745613F68E;
-        Mon, 14 Oct 2019 06:46:59 -0700 (PDT)
-Subject: Re: [PATCH] sched/topology: Disable sched_asym_cpucapacity on domain
- destruction
-To:     Vincent Guittot <vincent.guittot@linaro.org>,
-        Quentin Perret <qperret@google.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dietmar Eggemann <Dietmar.Eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Quentin Perret <qperret@qperret.net>,
-        "# v4 . 16+" <stable@vger.kernel.org>
-References: <20191014114710.22142-1-valentin.schneider@arm.com>
- <20191014121648.GA53234@google.com>
- <CAKfTPtDoBrE=npY_Ay1pucdXsW1yQr1UiaCGq1DXKa2VmNqcUg@mail.gmail.com>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <fe5977ab-0a70-e705-fcca-246c7dc3d23f@arm.com>
-Date:   Mon, 14 Oct 2019 14:46:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1732308AbfJNNtF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 09:49:05 -0400
+Received: from inca-roads.misterjones.org ([213.251.177.50]:57382 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732275AbfJNNtE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 09:49:04 -0400
+Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1iK0iY-0001Qb-NC; Mon, 14 Oct 2019 15:48:58 +0200
+To:     Benjamin GAIGNARD <benjamin.gaignard@st.com>
+Subject: Re: [PATCH] ARM: dts: stm32: Enable high resolution timer
+X-PHP-Originating-Script: 0:main.inc
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtDoBrE=npY_Ay1pucdXsW1yQr1UiaCGq1DXKa2VmNqcUg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Mon, 14 Oct 2019 14:48:58 +0100
+From:   Marc Zyngier <maz@kernel.org>
+Cc:     Alexandre TORGUE <alexandre.torgue@st.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+In-Reply-To: <61dda183-cd53-153b-8ed1-e2ecb8f96e03@st.com>
+References: <20190927084819.645-1-benjamin.gaignard@st.com>
+ <da48ce9633441cd0186518fa7ce1d528@www.loen.fr>
+ <341949c8-7864-5d65-2797-988022724a4c@st.com>
+ <ff11797da8f049b354797689754fde52@www.loen.fr>
+ <69af57d1-13a9-9e35-78f2-4a0d17bdaf6d@st.com>
+ <e376301a8e9ec02dfd7713748abed83e@www.loen.fr>
+ <61dda183-cd53-153b-8ed1-e2ecb8f96e03@st.com>
+Message-ID: <a42dd20677cddd8d09ea91a369a4e10b@www.loen.fr>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/0.7.2
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Rcpt-To: benjamin.gaignard@st.com, alexandre.torgue@st.com, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(Replying to the reply because for some reason my mail client never got
-your reply?!)
-
-On 14/10/2019 14:29, Vincent Guittot wrote:
-> On Mon, 14 Oct 2019 at 14:16, Quentin Perret <qperret@google.com> wrote:
->> FWIW we already clear the EAS static key properly (based on the sd
->> pointer, not the static key), so this is really only for the
->> capacity-aware stuff.
+On 2019-10-14 10:31, Benjamin GAIGNARD wrote:
+> On 9/27/19 2:59 PM, Marc Zyngier wrote:
+>> On 2019-09-27 13:44, Benjamin GAIGNARD wrote:
+>>> On 9/27/19 2:41 PM, Marc Zyngier wrote:
+>>>> On 2019-09-27 13:36, Benjamin GAIGNARD wrote:
+>>>>> On 9/27/19 1:22 PM, Marc Zyngier wrote:
+>>>>>> On 2019-09-27 09:48, Benjamin Gaignard wrote:
+>>>>>>> Adding always-on makes arm arch_timer claim to be an high 
+>>>>>>> resolution
+>>>>>>> timer.
+>>>>>>> That is possible because power mode won't stop clocking the 
+>>>>>>> timer.
+>>>>>>
+>>>>>> The "always-on" is not about the clock. It is about the 
+>>>>>> comparator.
+>>>>>> The clock itself is *guaranteed* to always tick. If it didn't,
+>>>>>> that'd be
+>>>>>> an integration bug, and a pretty bad one.
+>>>>>>
+>>>>>> What you're claiming here is that your CPU never enters a 
+>>>>>> low-power
+>>>>>> mode?
+>>>>>> Ever? I find this very hard to believe.
+>>>>>>
+>>>>>> Furthermore, claiming that always-on is the way to force the
+>>>>>> arch-timer
+>>>>>> to be an hrtimer is factually wrong. This is what happens *if*
+>>>>>> this is
+>>>>>> the only timer in the system. The only case this is true is for
+>>>>>> virtual
+>>>>>> machines. Anything else has a global timer somewhere that will 
+>>>>>> allow
+>>>>>> the arch timers to be used as an hrtimer.
+>>>>>>
+>>>>>> I'm pretty sure you too have a global timer somewhere in your 
+>>>>>> system.
+>>>>>> Enable it, and enjoy hrtimers without having to lie about the
+>>>>>> properties
+>>>>>> of your system! ;-)
+>>>>>
+>>>>> Hi Marc,
+>>>>>
+>>>>> This SoC doesn't have any other global timer. Use arch_time is 
+>>>>> the
+>>>>> only
+>>>>> we have to provide hrtimer on this system.
+>>>>
+>>>> And you don't have any form of power management either? What 
+>>>> happens
+>>>> when
+>>>> your CPU goes into idle? If your system does any form of power
+>>>> management
+>>>> *and* doesn't have a separate timer, it is remarkably broken.
+>>>
+>>> Even in low-power modes this timer is always powered and clocked so 
+>>> it
+>>> is working fine.
 >>
-
-Ah, right.
-
->> So what happens it you have mutiple root domains ? You might skip
->> build_sched_domains() for one of them and end up not setting the static
->> key when you should no ?
+>> You're missing the point again. It is not about the clock, but the
+>> comparator
+>> that is internal to the CPU, and not functional when the CPU is in 
+>> its
+>> lowest
+>> power mode. See also the verbiage in [1] (44.3 STGEN functional
+>> description),
+>> which indicates that the clock source actually dies in low-power 
+>> mode
+>> (going
+>> against the architecture which mandates it to be always-on).
 >>
->> I suppose an alternative would be to play with static_branch_inc() /
->> static_branch_dec() from build_sched_domains() or something along those
->> lines.
+>> Also, coming back to your earlier assertion ("This SoC doesn't have
+>> any other
+>> global timer"): The documentation at [1] shows at least 17 timers 
+>> that
+>> could
+>> be used and avoid this dirty hack.
 >>
+>> So for what it is worth, NAK to this patch.
+>
+>
+> Hi Marc,
+>
+> I have listen your remarks and propose another way to solve this 
+> issue:
+>
+> https://lkml.org/lkml/2019/10/9/690
 
-Hmph, so I went with the concept that having the key set should mandate
-having a non-NULL sd_asym_cpucapacity domain, which is why I unset it as
-soon as one CPU gets attached to a NULL domain.
+I don't think you have. You're just trying to move the same dirty hack 
+to
+another place instead of properly describing your hardware, and Thomas
+has pointed you in the same direction.
 
-Sadly as you pointed out, this doesn't work if we have another root domain
-that sees asymmetry. It also kinda sounds broken to have SDs of a root
-domain that does not see asymmetry (e.g. LITTLEs only) to see that key 
-being set. Maybe what we want is to have a key per root domain?
-
->> Thanks,
->> Quentin
+         M.
+-- 
+Jazz is not dead. It just smells funny...
