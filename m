@@ -2,135 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61ADBD674D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 18:28:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FB74D677E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 18:37:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387693AbfJNQ2w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 12:28:52 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53532 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729930AbfJNQ2w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 12:28:52 -0400
-Received: by mail-wm1-f66.google.com with SMTP id i16so17932108wmd.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 09:28:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rR4HHt9sUcCAtG9vjl4zLc6ifKuatlbyyZBo1ocXxP8=;
-        b=GSoVeTWOXMaWnHP1MS2tl1J4MneC+RHaKf1ZXRIFJFBAu/PSKG6LKdD4T46Iuerd9s
-         qfAG9Fp7et6D7dU+Web0FQJam1ass/TdkYGu44TJ7GgF08BL5BIgrdoW/0nKy2pGobkE
-         a9xSKETW18UFUoG/Pzl7DWF+WD1VS+K75LnUSnnlR1ybDlO5ZGSKiyqwSRa8uROAXUfV
-         XPumTgp0sjcocgmB/dISROI52ps6sMYj9iT6OTWJUGtDOrGTyVGKvjIWKOu8weQTwNre
-         4hGFwLjxSrKTOYWD0JEzIElPaLJxLdt7nGHRPeJR0DiiS0KN5G7qnGFIif1lywQbHc/y
-         dBSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rR4HHt9sUcCAtG9vjl4zLc6ifKuatlbyyZBo1ocXxP8=;
-        b=iV2Z/gACzQHLKQLhWSHluwvny4sHIcTvbl1hWLjnmoOzWlvLebNPA3P+IZbivAiVlE
-         fCVVVMwoseZeFRXMLG5jivDJcGM5ciuxFJuHz8OzMW0aZFtbfpOm/7azy/SDIOPEjEJ0
-         NgGl7ju/VTmBDVMXVF9j7pqsc4V9cmHgvNu4JGdG8DoRbn1jmwagvmGd/WZnILFRvdx3
-         qIeU39b+OB6agpUfH9k1GlIb+mEZ6K9/mpxJ2EGg11M6lMb6U5652C1FoK1HgrEkWicr
-         0AmQvCMlMHvXhHBvV38gQd2hooAOUSW0/gusWx2eT0pevK2Eu5YYLgXqroAVAGSFadz0
-         5Uqg==
-X-Gm-Message-State: APjAAAW2+0tcu7dZxtYYMeAMZLW0068NJdmm9wkJ9TnLBsq10IQ13pcy
-        7bMRVW9WLaZNg1Q7EQAjsuOTnKOiCyqIlg==
-X-Google-Smtp-Source: APXvYqwyqujMWffkPiPAQfBJGd2YLo5bKm8byYy+9RVKQ7jWMRFKN/SVhY6dr7Zj0uk2exqQPnaY7g==
-X-Received: by 2002:a7b:cc07:: with SMTP id f7mr15077392wmh.56.1571070530048;
-        Mon, 14 Oct 2019 09:28:50 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id h18sm7073619wrr.78.2019.10.14.09.28.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2019 09:28:49 -0700 (PDT)
-Date:   Mon, 14 Oct 2019 17:28:47 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     Jason Wessel <jason.wessel@windriver.com>,
-        kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [danielt-linux:kgdb/for-next 4/4]
- kernel/debug/debug_core.c:452:17: warning: array subscript is outside array
- bounds
-Message-ID: <20191014162847.kshvdwcahyjbtweo@holly.lan>
-References: <201910110030.gUpQOCmR%lkp@intel.com>
+        id S2388161AbfJNQhx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 12:37:53 -0400
+Received: from mga04.intel.com ([192.55.52.120]:2181 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732550AbfJNQhx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 12:37:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Oct 2019 09:37:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,296,1566889200"; 
+   d="scan'208";a="198343502"
+Received: from lxy-clx-4s.sh.intel.com ([10.239.43.57])
+  by orsmga003.jf.intel.com with ESMTP; 14 Oct 2019 09:37:50 -0700
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Jim Mattson <jmattson@google.com>
+Cc:     Xiaoyao Li <xiaoyao.li@intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] KVM: X86: Make fpu allocation a common function
+Date:   Tue, 15 Oct 2019 00:22:47 +0800
+Message-Id: <20191014162247.61461-1-xiaoyao.li@intel.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201910110030.gUpQOCmR%lkp@intel.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Doug
+They are duplicated codes to create vcpu.arch.{user,guest}_fpu in VMX
+and SVM. Make them common functions.
 
-On Fri, Oct 11, 2019 at 12:41:31AM +0800, kbuild test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/danielt/linux.git kgdb/for-next
-> head:   2277b492582d5525244519f60da6f9daea5ef41a
-> commit: 2277b492582d5525244519f60da6f9daea5ef41a [4/4] kdb: Fix stack crawling on 'running' CPUs that aren't the master
-> config: sh-allyesconfig (attached as .config)
-> compiler: sh4-linux-gcc (GCC) 7.4.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         git checkout 2277b492582d5525244519f60da6f9daea5ef41a
->         # save the attached .config to linux build tree
->         GCC_VERSION=7.4.0 make.cross ARCH=sh 
-> 
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
-> 
-> Note: it may well be a FALSE warning. FWIW you are at least aware of it now.
-> 
-> All warnings (new ones prefixed by >>):
-> 
->    kernel/debug/debug_core.c: In function 'kdb_dump_stack_on_cpu':
-> >> kernel/debug/debug_core.c:452:17: warning: array subscript is outside array bounds [-Warray-bounds]
->      if (!(kgdb_info[cpu].exception_state & DCPU_IS_SLAVE)) {
->            ~~~~~~~~~^~~~~
->    kernel/debug/debug_core.c:469:33: warning: array subscript is outside array bounds [-Warray-bounds]
->      kgdb_info[cpu].exception_state |= DCPU_WANT_BT;
->    kernel/debug/debug_core.c:470:18: warning: array subscript is outside array bounds [-Warray-bounds]
->      while (kgdb_info[cpu].exception_state & DCPU_WANT_BT)
->             ~~~~~~~~~^~~~~
+No functional change intended.
 
-Thoughts on the following?
-
-From 9e0114bc9ae504c3a7e837c977d64f84b2010d8e Mon Sep 17 00:00:00 2001
-From: Daniel Thompson <daniel.thompson@linaro.org>
-Date: Fri, 11 Oct 2019 08:49:29 +0100
-Subject: [PATCH] kdb: Avoid array subscript warnings on non-SMP builds
-
-Recent versions of gcc (reported on gcc-7.4) issue array subscript
-warnings for builds where SMP is not enabled.
-
-There is no bug here but there is scope to improve the code
-generation for non-SMP systems (whilst also silencing the warning).
-
-Reported-by: kbuild test robot <lkp@intel.com>
-Fixes: 2277b492582d ("kdb: Fix stack crawling on 'running' CPUs that aren't the master")
-Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
 ---
- kernel/debug/debug_core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/kvm/svm.c     | 20 +++-----------------
+ arch/x86/kvm/vmx/vmx.c | 20 +++-----------------
+ arch/x86/kvm/x86.h     | 26 ++++++++++++++++++++++++++
+ 3 files changed, 32 insertions(+), 34 deletions(-)
 
-diff --git a/kernel/debug/debug_core.c b/kernel/debug/debug_core.c
-index 70e86b4b4932..eccb7298a0b5 100644
---- a/kernel/debug/debug_core.c
-+++ b/kernel/debug/debug_core.c
-@@ -449,7 +449,8 @@ void kdb_dump_stack_on_cpu(int cpu)
- 		return;
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index e479ea9bc9da..0116a3c37a07 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -2156,21 +2156,9 @@ static struct kvm_vcpu *svm_create_vcpu(struct kvm *kvm, unsigned int id)
+ 		goto out;
  	}
  
--	if (!(kgdb_info[cpu].exception_state & DCPU_IS_SLAVE)) {
-+	if (!IS_ENABLED(CONFIG_SMP) ||
-+	    !(kgdb_info[cpu].exception_state & DCPU_IS_SLAVE)) {
- 		kdb_printf("ERROR: Task on cpu %d didn't stop in the debugger\n",
- 			   cpu);
- 		return;
+-	svm->vcpu.arch.user_fpu = kmem_cache_zalloc(x86_fpu_cache,
+-						     GFP_KERNEL_ACCOUNT);
+-	if (!svm->vcpu.arch.user_fpu) {
+-		printk(KERN_ERR "kvm: failed to allocate kvm userspace's fpu\n");
+-		err = -ENOMEM;
++	err = kvm_vcpu_create_fpu(&svm->vcpu);
++	if (err)
+ 		goto free_partial_svm;
+-	}
+-
+-	svm->vcpu.arch.guest_fpu = kmem_cache_zalloc(x86_fpu_cache,
+-						     GFP_KERNEL_ACCOUNT);
+-	if (!svm->vcpu.arch.guest_fpu) {
+-		printk(KERN_ERR "kvm: failed to allocate vcpu's fpu\n");
+-		err = -ENOMEM;
+-		goto free_user_fpu;
+-	}
+ 
+ 	err = kvm_vcpu_init(&svm->vcpu, kvm, id);
+ 	if (err)
+@@ -2231,9 +2219,7 @@ static struct kvm_vcpu *svm_create_vcpu(struct kvm *kvm, unsigned int id)
+ uninit:
+ 	kvm_vcpu_uninit(&svm->vcpu);
+ free_svm:
+-	kmem_cache_free(x86_fpu_cache, svm->vcpu.arch.guest_fpu);
+-free_user_fpu:
+-	kmem_cache_free(x86_fpu_cache, svm->vcpu.arch.user_fpu);
++	kvm_vcpu_free_fpu(&svm->vcpu);
+ free_partial_svm:
+ 	kmem_cache_free(kvm_vcpu_cache, svm);
+ out:
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index e660e28e9ae0..53d9298ff648 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -6710,21 +6710,9 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
+ 	if (!vmx)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	vmx->vcpu.arch.user_fpu = kmem_cache_zalloc(x86_fpu_cache,
+-			GFP_KERNEL_ACCOUNT);
+-	if (!vmx->vcpu.arch.user_fpu) {
+-		printk(KERN_ERR "kvm: failed to allocate kvm userspace's fpu\n");
+-		err = -ENOMEM;
++	err = kvm_vcpu_create_fpu(&vmx->vcpu);
++	if (err)
+ 		goto free_partial_vcpu;
+-	}
+-
+-	vmx->vcpu.arch.guest_fpu = kmem_cache_zalloc(x86_fpu_cache,
+-			GFP_KERNEL_ACCOUNT);
+-	if (!vmx->vcpu.arch.guest_fpu) {
+-		printk(KERN_ERR "kvm: failed to allocate vcpu's fpu\n");
+-		err = -ENOMEM;
+-		goto free_user_fpu;
+-	}
+ 
+ 	vmx->vpid = allocate_vpid();
+ 
+@@ -6825,9 +6813,7 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
+ 	kvm_vcpu_uninit(&vmx->vcpu);
+ free_vcpu:
+ 	free_vpid(vmx->vpid);
+-	kmem_cache_free(x86_fpu_cache, vmx->vcpu.arch.guest_fpu);
+-free_user_fpu:
+-	kmem_cache_free(x86_fpu_cache, vmx->vcpu.arch.user_fpu);
++	kvm_vcpu_free_fpu(&vmx->vcpu);
+ free_partial_vcpu:
+ 	kmem_cache_free(kvm_vcpu_cache, vmx);
+ 	return ERR_PTR(err);
+diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+index 45d82b8277e5..c27e7ac91337 100644
+--- a/arch/x86/kvm/x86.h
++++ b/arch/x86/kvm/x86.h
+@@ -367,4 +367,30 @@ static inline bool kvm_pat_valid(u64 data)
+ void kvm_load_guest_xcr0(struct kvm_vcpu *vcpu);
+ void kvm_put_guest_xcr0(struct kvm_vcpu *vcpu);
+ 
++static inline int kvm_vcpu_create_fpu(struct kvm_vcpu *vcpu)
++{
++	vcpu->arch.user_fpu = kmem_cache_zalloc(x86_fpu_cache,
++			GFP_KERNEL_ACCOUNT);
++	if (!vcpu->arch.user_fpu) {
++		printk(KERN_ERR "kvm: failed to allocate kvm userspace's fpu\n");
++		return -ENOMEM;
++	}
++
++	vcpu->arch.guest_fpu = kmem_cache_zalloc(x86_fpu_cache,
++			GFP_KERNEL_ACCOUNT);
++	if (!vcpu->arch.guest_fpu) {
++		printk(KERN_ERR "kvm: failed to allocate vcpu's fpu\n");
++		kmem_cache_free(x86_fpu_cache, vcpu->arch.user_fpu);
++		return -ENOMEM;
++	}
++
++	return 0;
++}
++
++static inline void kvm_vcpu_free_fpu(struct kvm_vcpu *vcpu)
++{
++	kmem_cache_free(x86_fpu_cache, vcpu->arch.guest_fpu);
++	kmem_cache_free(x86_fpu_cache, vcpu->arch.user_fpu);
++}
++
+ #endif
 -- 
-2.21.0
+2.19.1
 
