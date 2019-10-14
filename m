@@ -2,139 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 243A8D67CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 18:56:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03948D67D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 18:58:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388263AbfJNQ4O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 12:56:14 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:33738 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727083AbfJNQ4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 12:56:14 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 4872ABD9755E61BFA34D;
-        Tue, 15 Oct 2019 00:56:12 +0800 (CST)
-Received: from [127.0.0.1] (10.202.227.179) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Tue, 15 Oct 2019
- 00:56:07 +0800
-Subject: Re: edac KASAN warning in experimental arm64 allmodconfig boot
-To:     James Morse <james.morse@arm.com>
-References: <304df85b-8b56-b77e-1a11-aa23769f2e7c@huawei.com>
- <dc974549-6ea4-899d-7f3a-b2fcfafe1528@arm.com>
-CC:     Borislav Petkov <bp@alien8.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        <tony.luck@intel.com>, Robert Richter <rrichter@marvell.com>,
-        <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <a5e3c4eb-57ed-d4bc-a771-47472c5fb088@huawei.com>
-Date:   Mon, 14 Oct 2019 17:56:02 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S2388287AbfJNQ5o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 12:57:44 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:50510 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727083AbfJNQ5o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 12:57:44 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 5so18046566wmg.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 09:57:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=llON5toOWi2bZ+EE1q0Z/QUJpndkKf2DNgWPmwYksfQ=;
+        b=ZzgD3Jbn2ktYUCG1ShTxDW6V90lyllgeMmDKv8Ub8GF0rxsJxYn5YqATRlKmu+4GsV
+         vgx5YoGWzta0LlB6m9iz3FsiCGANPQv23KuM5zEC+HrcUXXhRxk7QOkGiq5KC55RjCPw
+         O+gK8mChRm2vA7ly4iOLv7RIs8Ey2Kp+Jrlk8XIBLwCceOR4KFVqfYYf9hNupQ5fwRRN
+         1e1+6wbAKix07wTye8AyGnZ5EnhmgWVD7C5vpAZbikYCnjmyv8gOn+xm5H5RmA90urNk
+         dXW1nejEkqDyZ7u7+uBx9PQ55IGedX/rq9ZWSEXN6BiRLBUH2U50wqk1Gbcgg2VRJ1PV
+         v46A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=llON5toOWi2bZ+EE1q0Z/QUJpndkKf2DNgWPmwYksfQ=;
+        b=GIuPIGXH3bMiT96iqH0tiB4mTWNHLwSr2UntetTIHJld3U/WjDSS68gqQ96IYPxKGc
+         8YN4vxPeH+f8KRpnmbtD4Ythl43BiRQ+Nzk1Im+mSlEcjON8VEulWqDgdGJR46gNj1SW
+         fkygr/94l/CkzVqOAZ7tP1GASx1ZhY7CGwf5ibMJfvotH+i8q1NCGiSMdqxSVF5rLsy+
+         KXXyNWhSez+im/bIZvEr1Ljw9ckoMaC8qUrP+h9ODzTGjSSNrDqWOmEikQqfmSHkb3BX
+         CSeqhtQW1KR6KUZgrMBrYPx27WoF66ZreAeYE6CIbUrq0Y+6fcaQp7qf8afmKqZ3vBFA
+         fVpQ==
+X-Gm-Message-State: APjAAAWkscyT/VArwaz6ZfUMQvpCdNo2ehzmUKMGgilQeOEthJt1hpjn
+        1Tt91VGVxv9aQkIAhIbuMNaQ9n1Tw7iOEjbPTqY61w==
+X-Google-Smtp-Source: APXvYqxWnHQOjzcs7wXVKeBx8Rfnrc4denkCs9byW/mRpcJYeegYV/fsEXUw6MvLUzIFiNdhTH5aFimyaebe3sK4AFU=
+X-Received: by 2002:a1c:a9c5:: with SMTP id s188mr14432821wme.61.1571072262432;
+ Mon, 14 Oct 2019 09:57:42 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <dc974549-6ea4-899d-7f3a-b2fcfafe1528@arm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.179]
-X-CFilter-Loop: Reflected
+References: <20191010171517.28782-1-suzuki.poulose@arm.com>
+ <20191010171517.28782-2-suzuki.poulose@arm.com> <20191011113620.GG27757@arm.com>
+ <4ba5c423-4e2a-d810-cd36-32a16ad42c91@arm.com> <20191011142137.GH27757@arm.com>
+ <418b0c4b-cbcd-4263-276d-1e9edc5eee0b@arm.com> <20191014145204.GS27757@arm.com>
+ <12e002e7-42e8-c205-e42c-3348359d2f98@arm.com> <20191014155009.GM24047@e103592.cambridge.arm.com>
+In-Reply-To: <20191014155009.GM24047@e103592.cambridge.arm.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 14 Oct 2019 18:57:30 +0200
+Message-ID: <CAKv+Gu83oa3+DKNFowVkE=mZfLorAvGQ3GVPiZtsXzQBcsMCWg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] arm64: cpufeature: Fix the type of no FP/SIMD capability
+To:     Dave P Martin <Dave.Martin@arm.com>
+Cc:     Suzuki Poulose <Suzuki.Poulose@arm.com>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        Catalin Marinas <Catalin.Marinas@arm.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/10/2019 17:15, James Morse wrote:
-> Hi John,
+On Mon, 14 Oct 2019 at 17:50, Dave P Martin <Dave.Martin@arm.com> wrote:
+>
+> On Mon, Oct 14, 2019 at 04:45:40PM +0100, Suzuki K Poulose wrote:
+> >
+> >
+> > On 14/10/2019 15:52, Dave Martin wrote:
+> > > On Fri, Oct 11, 2019 at 06:28:43PM +0100, Suzuki K Poulose wrote:
+> > >>
+> > >>
+> > >> On 11/10/2019 15:21, Dave Martin wrote:
+> > >>> On Fri, Oct 11, 2019 at 01:13:18PM +0100, Suzuki K Poulose wrote: > Hi Dave
+> > >>>>
+> > >>>> On 11/10/2019 12:36, Dave Martin wrote:
+> > >>>>> On Thu, Oct 10, 2019 at 06:15:15PM +0100, Suzuki K Poulose wrote:
+> > >>>>>> The NO_FPSIMD capability is defined with scope SYSTEM, which implies
+> > >>>>>> that the "absence" of FP/SIMD on at least one CPU is detected only
+> > >>>>>> after all the SMP CPUs are brought up. However, we use the status
+> > >>>>>> of this capability for every context switch. So, let us change
+> > >>>>>> the scop to LOCAL_CPU to allow the detection of this capability
+> > >>>>>> as and when the first CPU without FP is brought up.
+> > >>>>>>
+> > >>>>>> Also, the current type allows hotplugged CPU to be brought up without
+> > >>>>>> FP/SIMD when all the current CPUs have FP/SIMD and we have the userspace
+> > >>>>>> up. Fix both of these issues by changing the capability to
+> > >>>>>> BOOT_RESTRICTED_LOCAL_CPU_FEATURE.
+> > >>>>>>
+> > >>>>>> Fixes: 82e0191a1aa11abf ("arm64: Support systems without FP/ASIMD")
+> > >>>>>> Cc: Will Deacon <will@kernel.org>
+> > >>>>>> Cc: Mark Rutland <mark.rutland@arm.com>
+> > >>>>>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > >>>>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> > >>>>>> ---
+> > >>>>>>   arch/arm64/kernel/cpufeature.c | 2 +-
+> > >>>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+> > >>>>>>
+> > >>>>>> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> > >>>>>> index 9323bcc40a58..0f9eace6c64b 100644
+> > >>>>>> --- a/arch/arm64/kernel/cpufeature.c
+> > >>>>>> +++ b/arch/arm64/kernel/cpufeature.c
+> > >>>>>> @@ -1361,7 +1361,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+> > >>>>>>        {
+> > >>>>>>                /* FP/SIMD is not implemented */
+> > >>>>>>                .capability = ARM64_HAS_NO_FPSIMD,
+> > >>>>>> -              .type = ARM64_CPUCAP_SYSTEM_FEATURE,
+> > >>>>>> +              .type = ARM64_CPUCAP_BOOT_RESTRICTED_CPU_LOCAL_FEATURE,
+> > >>>>>
+> > >>>>> ARM64_HAS_NO_FPSIMD is really a disability, not a capability.
+> > >>>>>
+> > >>>>> Although we have other things that smell like this (CPU errata for
+> > >>>>> example), I wonder whether inverting the meaning in the case would
+> > >>>>> make the situation easier to understand.
+> > >>>>
+> > >>>> Yes, it is indeed a disability, more on that below.
+> > >>>>
+> > >>>>>
+> > >>>>> So, we'd have ARM64_HAS_FPSIMD, with a minimum (signed) feature field
+> > >>>>> value of 0.  Then this just looks like an ARM64_CPUCAP_SYSTEM_FEATURE
+> > >>>>> IIUC.  We'd just need to invert the sense of the check in
+> > >>>>> system_supports_fpsimd().
+> > >>>>
+> > >>>> This is particularly something we want to avoid with this patch. We want
+> > >>>> to make sure that we have the up-to-date status of the disability right
+> > >>>> when it happens. i.e, a CPU without FP/SIMD is brought up. With SYSTEM_FEATURE
+> > >>>> you have to wait until we bring all the CPUs up. Also, for HAS_FPSIMD,
+> > >>>> you must wait until all the CPUs are up, unlike the negated capability.
+> > >>>
+> > >>> I don't see why waiting for the random defective early CPU to come up is
+> > >>> better than waiting for all the early CPUs to come up and then deciding.
+> > >>>
+> > >>> Kernel-mode NEON aside, the status of this cap should not matter until
+> > >>> we enter userspace for the first time.
+> > >>>
+> > >>> The only issue is if e.g., crypto drivers that can use kernel-mode NEON
+> > >>> probe for it before all early CPUs are up, and so cache the wrong
+> > >>> decision.  The current approach doesn't cope with that anyway AFAICT.
+> > >>
+> > >> This approach does in fact. With LOCAL_CPU scope, the moment a defective
+> > >> CPU turns up, we mark the "capability" and thus the kernel cannot use
+> > >> the neon then onwards, unlike the existing case where we have time till
+> > >> we boot all the CPUs (even when the boot CPU may be defective).
+> > >
+> > > I guess that makes sense.
+> > >
+> > > I'm now wondering what happens if anything tries to use kernel-mode NEON
+> > > before SVE is initialised -- which doesn't happen until cpufeatures
+> > > configures the system features.
+> > >
+> > > I don't think your proposed change makes anything worse here, but it may
+> > > need looking into.
+> >
+> > We could throw in a WARN_ON() in kernel_neon() to make sure that the SVE
+> > is initialised ?
+>
+> Could do, at least as an experiment.
+>
+> Ard, do you have any thoughts on this?
 >
 
-Hi James,
-
-> On 14/10/2019 16:18, John Garry wrote:
->> I'm experimenting by trying to boot an allmodconfig arm64 kernel, as mentioned here:
->
-> Crumbs!
->
->
->> One thing that I noticed - it's hard to miss actually - is the amount of complaining from
->> KASAN about the EDAC/ghes code. Maybe this is something I should not care about/red
->> herring, or maybe something genuine. Let me know what you think.
->
-> Hmmm, I thought I tested this recently...
->
->> Log snippet (I cut off after the first KASAN warning):
->>
->> [   70.471011][    T1] random: get_random_u32 called from new_slab+0x360/0x698 with
->> crng_init=0
->
->> [   70.478671][    T1] [Firmware Bug]: APEI: Invalid bit width + offset in GAR
->> [0x94110034/64/0/3/0]
->
-> (this one's for you right?)
-
-Yeah, I'll report it. It might be already fixed.
-
->
->> [   70.700412][    T1] ------------[ cut here ]------------
->
->> [   70.802080][    T1] Call trace:
->> [   70.802093][    T1]  debug_print_object+0xec/0x130
->> [   70.802106][    T1]  __debug_check_no_obj_freed+0x114/0x290
->> [   70.802119][    T1]  debug_check_no_obj_freed+0x18/0x28
->> [   70.802130][    T1]  slab_free_freelist_hook+0x18c/0x228
->> [   70.802140][    T1]  kfree+0x264/0x420
->> [   70.802157][    T1]  _edac_mc_free+0x6c/0x210
->> [   70.814163][    T1]  edac_mc_free+0x68/0x88
->> [   70.814177][    T1]  ghes_edac_unregister+0x44/0x70
->> [   70.814193][    T1]  ghes_remove+0x274/0x2a0
->
-> Ugh. This must be the test driver remove thing.
-
-Yeah, the probe, remove, probe again flow from 
-CONFIG_DEBUG_TEST_DRIVER_REMOVE.
-
->
-> I've reproduced this, but had to remove the parent GHES twice. It looks like it tries to
-> use the first ghes_edac global variables when freeing the second. ghes_init prevents it
-> from re-allocating over the top.
->
-> The below diff fixes it for me.
-
-And for me by the looks of it. That's with CONFIG_DEBUG_KOBJECT_RELEASE 
-now unset, but I expect the same with it set.
-
-(I'll post it as a proper patch once I've done the
-> archaeology)
->
-> -----------%<-----------
-> diff --git a/drivers/edac/ghes_edac.c b/drivers/edac/ghes_edac.c
-> index d413a0bdc9ad..955b59b6aade 100644
-> --- a/drivers/edac/ghes_edac.c
-> +++ b/drivers/edac/ghes_edac.c
-> @@ -554,6 +554,7 @@ void ghes_edac_unregister(struct ghes *ghes)
->                 return;
->
->         mci = ghes_pvt->mci;
-> +       ghes_pvt = NULL;
->         edac_mc_del_mc(mci->pdev);
->         edac_mc_free(mci);
->  }
->
-> -----------%<-----------
->
-
-Thanks,
-John
-
-BTW, I am not sure if my response to Boris was rejected due to 
-attachments, as but it is here:
-
-https://lore.kernel.org/linux-edac/dc974549-6ea4-899d-7f3a-b2fcfafe1528@arm.com/T/#ma0e122ca0eda9d80e869af179352f75037146d3c
-
->
-> Thanks!
->
-> James
->
-> .
->
-
-
+All in-kernel NEON code checks whether the NEON is usable, so I'd
+expect that check to return 'false' if it is too early in the boot for
+the NEON to be used at all.
