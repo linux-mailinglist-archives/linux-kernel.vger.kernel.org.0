@@ -2,91 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9742FD591A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 02:43:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59ED0D5925
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 02:55:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729633AbfJNAnr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 13 Oct 2019 20:43:47 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:43834 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729180AbfJNAnq (ORCPT
+        id S1729672AbfJNAzx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 13 Oct 2019 20:55:53 -0400
+Received: from [195.171.27.244] ([195.171.27.244]:43192 "EHLO
+        gitlab.quiqup.com" rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729180AbfJNAzx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Oct 2019 20:43:46 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9E0f906136448;
-        Mon, 14 Oct 2019 00:43:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2019-08-05;
- bh=77664crqggBs6vqUBErJUe+tfNhGlZupqkwqa4ZPD94=;
- b=D25DMKKkY6e9st02pwZm5u2GptW5e3vzLJDJuZuQEEkcoX6pJKoHJzFfGafZZyb3cFLS
- YTcoNlit9wgUdb0eH4nhDRxQroACznJkNaVr0OPwj2AxPqPtAhYI8HpFGlWQpYPLW6E7
- mZ+n8tM/OPvmdLSUfpeg2yRMED7kYB9hwOW6sodcItkWg6CEynb0n1OpJ8b5tonG7Fg+
- hb72pv0gFCBuIpIhhAcm7z3+nG94FGKPIQBKw+j3yo7yWScCzEixYRN5gDionbrtY1G9
- E9ccD3evlZatnMlSGClwirBSUaLi/zJB1HJC9971A4BFso3LfVdbuKeLikJZwgzwfE6D zg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2vk7fqw6us-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Oct 2019 00:43:37 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9E0djRW124185;
-        Mon, 14 Oct 2019 00:41:36 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2vkrbhr5cu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Oct 2019 00:41:36 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9E0fYrd030219;
-        Mon, 14 Oct 2019 00:41:34 GMT
-Received: from z2.cn.oracle.com (/10.182.71.205)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 14 Oct 2019 00:41:34 +0000
-From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     rjw@rjwysocki.net, daniel.lezcano@linaro.org,
-        linux-pm@vger.kernel.org, mtosatti@redhat.com,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Subject: [PATCH] cpuidle: not unset the driver if it already exist
-Date:   Sun, 13 Oct 2019 08:46:26 +0800
-Message-Id: <1570927586-12023-1-git-send-email-zhenzhong.duan@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9409 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=799
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910140003
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9409 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=885 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910140003
+        Sun, 13 Oct 2019 20:55:53 -0400
+Received: from localhost (localhost [IPv6:::1])
+        by gitlab.quiqup.com (Postfix) with SMTP id 8AD4D31024A
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 01:45:17 +0100 (BST)
+From:   linux-kernel@vger.kernel.org
+Reply-To: prodawez@teleworm.us
+To:     linux-kernel@vger.kernel.org,
+        =?utf-8?Q?=D0=97=D0=B4=D1=80=D0=B0=D0=B2=D1=81=D1=82=D0?=@gitlab.quiqup.com,
+        _=D0=92=D0=B0=D1=81?=@=?utf-8?Q?=B2=D1=83=D0=B9=D1=82=D0=B5,
+        =?utf-8?Q?_=D0=B8=D0=BD=D1=82=D0=B5=D1=80=D0=B5=D1=81=D1?=@gitlab.quiqup.com,
+        =?utf-8?Q?=83=D1=8E=D1=82_=D0=BA=D0=BB=D0=B8=D0=B5=D0=BD?=@gitlab.quiqup.com,
+        =?utf-8?Q?=D1=82=D1=81=D0=BA=D0=B8=D0=B5_=D0=B1=D0=B0=D0?=@gitlab.quiqup.com,
+        =?utf-8?Q?=B7=D1=8B_=D0=B4=D0=B0=D0=BD=D0=BD=D1=8B=D1=85?=@gitlab.quiqup.com,
+        =?utf-8?Q?=3F?=@gitlab.quiqup.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8";
+Content-Transfer-Encoding: 8bit
+Message-Id: <20191014004517.8AD4D31024A@gitlab.quiqup.com>
+Date:   Mon, 14 Oct 2019 01:45:17 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__cpuidle_set_driver() check if there is an already exist driver and
-unset it before return with -EBUSY. The next call will succeed as it's
-just unset. This is strange as we should either keep old driver and
-return -EBUSY or unset and set new driver and return 0.
-
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
----
- drivers/cpuidle/driver.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/cpuidle/driver.c b/drivers/cpuidle/driver.c
-index 80c1a83..a200304 100644
---- a/drivers/cpuidle/driver.c
-+++ b/drivers/cpuidle/driver.c
-@@ -74,7 +74,6 @@ static inline int __cpuidle_set_driver(struct cpuidle_driver *drv)
- 	for_each_cpu(cpu, drv->cpumask) {
- 
- 		if (__cpuidle_get_cpu_driver(cpu)) {
--			__cpuidle_unset_driver(drv);
- 			return -EBUSY;
- 		}
- 
--- 
-1.8.3.1
+Здравствуйте! Вас интересуют клиентские базы данных?
 
