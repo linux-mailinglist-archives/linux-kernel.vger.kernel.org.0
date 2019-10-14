@@ -2,60 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A67AD6630
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:36:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA928D6632
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 17:36:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730929AbfJNPgK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 11:36:10 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45347 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730550AbfJNPgK (ORCPT
+        id S2387605AbfJNPgZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 11:36:25 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40164 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730828AbfJNPgY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 11:36:10 -0400
-Received: by mail-pg1-f194.google.com with SMTP id r1so9135565pgj.12
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 08:36:09 -0700 (PDT)
+        Mon, 14 Oct 2019 11:36:24 -0400
+Received: by mail-pf1-f196.google.com with SMTP id x127so10600384pfb.7
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 08:36:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0JzEuZMgcTnB+W99wjyXU7kcGAiddB4Jt5OmZBJQues=;
-        b=KFGg2+aadsAmkO3VWYUHKbDZQKie2khKxl5ymHoPu+WG6BiC0fE9TrdzOu+dUoobwd
-         +xATgnVFzGGDCatQ12ESIkgqj/BnyfoEiPOsVYWlDo/M71ahNiDeI4Y2c6My5APAcrMy
-         Llvq9S3dWaV/yaiIlTjZhMWS8jSamcJAFZ0o1tDlx2gy0beNE/31LGFh1ss0Zj7vhD4L
-         DO6bPXLsWL5ubMwzymxtD1/QBKRWSSQovnC9eNvIVsI8nWxCN8Vac2LOx5ckaLbNv9Rq
-         w1Ps1TNcmmF3IE1QNBLkohY4XEWOOZ+hs/bBJAcm4BjhT3ZFjmDiU4PqLd3N81VBzXrv
-         PaDQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=/yjgZhJlzmYmxj7+A0FInNB+01Y4Ffyd19ePmcPESes=;
+        b=CVyG1ovbA8RGQ16T8ML7L8LxbGahjwShjcdQlTH3lmTzTAJ0nwEn02/iyJpBhuIa40
+         QSMgqet7U40/IYTyqdpf2v8oonnIGq+4pYocfb2XiIC/XjHbzlxnUqmuH7+2PzjEHh4H
+         mlecS7R/xoy4e5pJd6IniOpI2cI9PP4FIlnHzpIop4Q1ix+Q6Z6ybDk/BESizhnPWHJ8
+         E3sbjbz08X+suDdzP+K5z3VHMarROko3ztjrl4EVjlkmBXEP0i+qZ/S3f1+N/k8puu8H
+         PjKRiHVumJRCTerVRRTpxzRGW5nJliDpIHPEUOZHxMSjeyG60K3yktU9U8kpwavBuSEo
+         rIeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0JzEuZMgcTnB+W99wjyXU7kcGAiddB4Jt5OmZBJQues=;
-        b=fad0yxPyf4RuzsfY4JKVMH0kJ/WVNy1NXVE33dltketAk1qhdcdiw1i88loHq3O33m
-         fmG7JSRtNpiOuuFUi6E4K/inqpk9ghfawssyQhyyU1+ITMDxGUXrDsRuQiFJphoJMmcq
-         jPD4B0Dn4MsTxJtehNvbSUvffQ2Vsi73SOFfxlDuuJMVtHQSd28JiqndL4PshkYEixqb
-         qtLhJX36+/LymqGq18bAgKFenwH/jLvgu3GA/03WFq1Jly1icMIaJCeYWbXObWOS6pqC
-         k5JaLgOwnwei3Hup43d0yE3JXn+n8renjAg+kZbJ+8wYN5IM2IMrufQxcAOcJHn2bGSf
-         HQIw==
-X-Gm-Message-State: APjAAAXMY6PoD+Fjv27v8YL7itIa6LGxWrHVqXUAQX+CazdNsZBsStnQ
-        AwBBszYngZ8RrNY0uKITsivkOvyGpnY=
-X-Google-Smtp-Source: APXvYqzjIlrwg+aThNX7ZKbiBHS5SUDfO/Om8705QI56Jee14JSd4k5+4q9tUD/9ZhgR76MaAbylCA==
-X-Received: by 2002:a63:d50c:: with SMTP id c12mr12148168pgg.199.1571067369278;
-        Mon, 14 Oct 2019 08:36:09 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=/yjgZhJlzmYmxj7+A0FInNB+01Y4Ffyd19ePmcPESes=;
+        b=jBK+XfeNVCMpdKL+zIpP7wP9WU/k8ZlemUKNVc5cLvFnBC/S3X1jTtHqyFRQATzcQi
+         2UZG3N+coGe24f/B3nEusd/Ce36j9ByJGrgns0vgxiKDObNW0YkQw2SrDH3W6S/OseRT
+         bmYVmD2KMHHb0vHEhvakNXcFDXHO29E0y3w7RahDOErTtwcfStKNApDUrc772/TRP5eG
+         vHY+wrCLOcGE9xk4pDUsyrrUqAoThonMp5mPEIgKoHdF/58fydNXAjEKv2BF2NCugSyt
+         z2q/0CpzXw8SfgUemQF4+8+r3sdoOpLtOqti2wwGhLDHzCyyliJtzRWih5itP2Jsy0dR
+         eOeQ==
+X-Gm-Message-State: APjAAAXH4qCV8n9HvX1gvZZxZnr+VPw7LTtPHQiPm6v0Dh/EClytWEiJ
+        /9HDNu7i2/rvziGMu/FAuj8=
+X-Google-Smtp-Source: APXvYqxyZmsDru8Wwba7bFjE9IMY/SwryjQcDZdhSqry9+5Ap2Hn5lQl3Gkf6865K3CcZpAPyPBKYQ==
+X-Received: by 2002:a17:90a:6302:: with SMTP id e2mr36003590pjj.20.1571067382494;
+        Mon, 14 Oct 2019 08:36:22 -0700 (PDT)
 Received: from localhost.localdomain (155-97-232-235.usahousing.utah.edu. [155.97.232.235])
-        by smtp.googlemail.com with ESMTPSA id q76sm41142648pfc.86.2019.10.14.08.36.07
+        by smtp.googlemail.com with ESMTPSA id q76sm41142648pfc.86.2019.10.14.08.36.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2019 08:36:08 -0700 (PDT)
+        Mon, 14 Oct 2019 08:36:22 -0700 (PDT)
 From:   Tuowen Zhao <ztuowen@gmail.com>
 To:     lee.jones@linaro.org, linux-kernel@vger.kernel.org
 Cc:     Tuowen Zhao <ztuowen@gmail.com>,
         AceLan Kao <acelan.kao@canonical.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH v4 1/2] lib: devres: add a helper function for ioremap_uc
-Date:   Mon, 14 Oct 2019 09:33:43 -0600
-Message-Id: <20191014153344.8996-1-ztuowen@gmail.com>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v4 2/2] mfd: intel-lpss: use devm_ioremap_uc for MMIO
+Date:   Mon, 14 Oct 2019 09:33:44 -0600
+Message-Id: <20191014153344.8996-2-ztuowen@gmail.com>
 X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191014153344.8996-1-ztuowen@gmail.com>
+References: <20191014153344.8996-1-ztuowen@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -63,94 +64,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement a resource managed strongly uncachable ioremap function.
+Some BIOS erroneously specifies write-combining BAR for intel-lpss-pci
+in MTRR. This will cause the system to hang during boot. If possible,
+this bug could be corrected with a firmware update.
 
+This patch use devm_ioremap_uc to overwrite/ignore the MTRR settings
+by forcing the use of strongly uncachable pages for intel-lpss.
+
+The BIOS bug is present on Dell XPS 13 7390 2-in-1:
+
+[    0.001734]   5 base 4000000000 mask 6000000000 write-combining
+
+4000000000-7fffffffff : PCI Bus 0000:00
+  4000000000-400fffffff : 0000:00:02.0 (i915)
+  4010000000-4010000fff : 0000:00:15.0 (intel-lpss-pci)
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=203485
 Cc: <stable@vger.kernel.org>
 Tested-by: AceLan Kao <acelan.kao@canonical.com>
 Signed-off-by: Tuowen Zhao <ztuowen@gmail.com>
 Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
 Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
-Changes from previous version:
+ drivers/mfd/intel-lpss.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  * Add Cc stable
-
- .../driver-api/driver-model/devres.rst        |  1 +
- include/linux/io.h                            |  2 ++
- lib/devres.c                                  | 19 +++++++++++++++++++
- 3 files changed, 22 insertions(+)
-
-diff --git a/Documentation/driver-api/driver-model/devres.rst b/Documentation/driver-api/driver-model/devres.rst
-index a100bef54952..92628fdc2f11 100644
---- a/Documentation/driver-api/driver-model/devres.rst
-+++ b/Documentation/driver-api/driver-model/devres.rst
-@@ -314,6 +314,7 @@ IOMAP
-   devm_ioport_unmap()
-   devm_ioremap()
-   devm_ioremap_nocache()
-+  devm_ioremap_uc()
-   devm_ioremap_wc()
-   devm_ioremap_resource() : checks resource, requests memory region, ioremaps
-   devm_iounmap()
-diff --git a/include/linux/io.h b/include/linux/io.h
-index accac822336a..a59834bc0a11 100644
---- a/include/linux/io.h
-+++ b/include/linux/io.h
-@@ -64,6 +64,8 @@ static inline void devm_ioport_unmap(struct device *dev, void __iomem *addr)
+diff --git a/drivers/mfd/intel-lpss.c b/drivers/mfd/intel-lpss.c
+index bfe4ff337581..b0f0781a6b9c 100644
+--- a/drivers/mfd/intel-lpss.c
++++ b/drivers/mfd/intel-lpss.c
+@@ -384,7 +384,7 @@ int intel_lpss_probe(struct device *dev,
+ 	if (!lpss)
+ 		return -ENOMEM;
  
- void __iomem *devm_ioremap(struct device *dev, resource_size_t offset,
- 			   resource_size_t size);
-+void __iomem *devm_ioremap_uc(struct device *dev, resource_size_t offset,
-+				   resource_size_t size);
- void __iomem *devm_ioremap_nocache(struct device *dev, resource_size_t offset,
- 				   resource_size_t size);
- void __iomem *devm_ioremap_wc(struct device *dev, resource_size_t offset,
-diff --git a/lib/devres.c b/lib/devres.c
-index 6a0e9bd6524a..17624d35e82d 100644
---- a/lib/devres.c
-+++ b/lib/devres.c
-@@ -9,6 +9,7 @@
- enum devm_ioremap_type {
- 	DEVM_IOREMAP = 0,
- 	DEVM_IOREMAP_NC,
-+	DEVM_IOREMAP_UC,
- 	DEVM_IOREMAP_WC,
- };
- 
-@@ -39,6 +40,9 @@ static void __iomem *__devm_ioremap(struct device *dev, resource_size_t offset,
- 	case DEVM_IOREMAP_NC:
- 		addr = ioremap_nocache(offset, size);
- 		break;
-+	case DEVM_IOREMAP_UC:
-+		addr = ioremap_uc(offset, size);
-+		break;
- 	case DEVM_IOREMAP_WC:
- 		addr = ioremap_wc(offset, size);
- 		break;
-@@ -68,6 +72,21 @@ void __iomem *devm_ioremap(struct device *dev, resource_size_t offset,
- }
- EXPORT_SYMBOL(devm_ioremap);
- 
-+/**
-+ * devm_ioremap_uc - Managed ioremap_uc()
-+ * @dev: Generic device to remap IO address for
-+ * @offset: Resource address to map
-+ * @size: Size of map
-+ *
-+ * Managed ioremap_uc().  Map is automatically unmapped on driver detach.
-+ */
-+void __iomem *devm_ioremap_uc(struct device *dev, resource_size_t offset,
-+			      resource_size_t size)
-+{
-+	return __devm_ioremap(dev, offset, size, DEVM_IOREMAP_UC);
-+}
-+EXPORT_SYMBOL_GPL(devm_ioremap_uc);
-+
- /**
-  * devm_ioremap_nocache - Managed ioremap_nocache()
-  * @dev: Generic device to remap IO address for
+-	lpss->priv = devm_ioremap(dev, info->mem->start + LPSS_PRIV_OFFSET,
++	lpss->priv = devm_ioremap_uc(dev, info->mem->start + LPSS_PRIV_OFFSET,
+ 				  LPSS_PRIV_SIZE);
+ 	if (!lpss->priv)
+ 		return -ENOMEM;
 -- 
 2.23.0
 
