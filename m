@@ -2,69 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 982AFD5DD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 10:48:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29E28D5DCF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 10:48:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730594AbfJNIsQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 04:48:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45024 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730565AbfJNIsQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 04:48:16 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C6D49ACFA;
+        id S1730558AbfJNIsO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 04:48:14 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40394 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730439AbfJNIsO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 04:48:14 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F11ACC049E36;
         Mon, 14 Oct 2019 08:48:13 +0000 (UTC)
-Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id D0998E3935; Mon, 14 Oct 2019 10:48:09 +0200 (CEST)
-Date:   Mon, 14 Oct 2019 10:48:09 +0200
-From:   Michal Kubecek <mkubecek@suse.cz>
-To:     netdev@vger.kernel.org
-Cc:     Jiri Pirko <jiri@resnulli.us>, David Miller <davem@davemloft.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        John Linville <linville@tuxdriver.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v7 14/17] ethtool: set link settings with
- LINKINFO_SET request
-Message-ID: <20191014084809.GA8493@unicorn.suse.cz>
-References: <cover.1570654310.git.mkubecek@suse.cz>
- <aef31ba798d1cfa2ae92d333ad1547f4b528ffa8.1570654310.git.mkubecek@suse.cz>
- <20191012163309.GA2219@nanopsycho>
+Received: from krava (unknown [10.43.17.61])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 04A921001B08;
+        Mon, 14 Oct 2019 08:48:11 +0000 (UTC)
+Date:   Mon, 14 Oct 2019 10:48:11 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Michael Petlan <mpetlan@redhat.com>
+Subject: Re: [PATCH 3/3] perf tools: Make 'struct map_shared' truly shared
+Message-ID: <20191014084811.GA9700@krava>
+References: <20191013151427.11941-1-jolsa@kernel.org>
+ <20191013151427.11941-4-jolsa@kernel.org>
+ <20191014031054.GJ9933@tassilo.jf.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191012163309.GA2219@nanopsycho>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191014031054.GJ9933@tassilo.jf.intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 14 Oct 2019 08:48:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 12, 2019 at 06:33:09PM +0200, Jiri Pirko wrote:
-> Wed, Oct 09, 2019 at 10:59:43PM CEST, mkubecek@suse.cz wrote:
+On Sun, Oct 13, 2019 at 08:10:54PM -0700, Andi Kleen wrote:
+> On Sun, Oct 13, 2019 at 05:14:27PM +0200, Jiri Olsa wrote:
+> > Andi reported that maps cloning is eating lot of memory and
+> > it's probably unnecessary, because they keep the same data.
+> > 
+> > Changing 'struct map_shared' to be a pointer inside 'struct map',
+> > so it can be shared on fork. Changing the map__clone function to
+> > actually share 'struct map_shared' for cloned maps.
+> > 
+> > The 'struct map_shared' carries its own refcnt counter, which is
+> > incremented when it's assigned to new 'struct map' and decremented
+> > when 'struct map' gets deleted in map__delete (its refcnt is 0).
+> > 
+> > This 'maps sharing' seems to save lot of heap for reports with
+> > many forks/cloned mmaps (over 60% in example below).
 > 
-> [...]
-> 
-> >+static const struct nla_policy linkinfo_hdr_policy[ETHTOOL_A_HEADER_MAX + 1] = {
-> >+	[ETHTOOL_A_HEADER_UNSPEC]		= { .type = NLA_REJECT },
-> >+	[ETHTOOL_A_HEADER_DEV_INDEX]		= { .type = NLA_U32 },
-> >+	[ETHTOOL_A_HEADER_DEV_NAME]		= { .type = NLA_NUL_STRING,
-> >+						    .len = IFNAMSIZ - 1 },
-> 
-> Please make ETHTOOL_A_HEADER_DEV_NAME accept alternative names as well.
-> Just s/IFNAMSIZ/ALTIFNAMSIZ should be enough.
+> The one case I wasn't sure about is with JIT support. So if
+> a map gets modified with fixup/start from /tmp/perf-%d 
+> in one process, would it impact the other too?
 
-Yes, definitely. I focused on (finally) submitting v7 so I didn't left
-testing how it plays with altnames for later.
+there are cases we do the fixup for maps and we clone
+the map fully in those cases, but not sure now what JIT
+does.. I'll check the JIT path
 
-Michal 
+thanks,
+jirka
 
-> >+	[ETHTOOL_A_HEADER_GFLAGS]		= { .type = NLA_U32 },
-> >+	[ETHTOOL_A_HEADER_RFLAGS]		= { .type = NLA_REJECT },
-> >+};
 > 
-> [...]
+> We may need a COW operation for this (hopefully rare) case.
+> 
+> -Andi
