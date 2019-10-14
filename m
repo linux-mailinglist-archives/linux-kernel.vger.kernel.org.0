@@ -2,95 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC29AD59D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 05:12:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D23A9D59E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 05:21:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729870AbfJNDMm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 13 Oct 2019 23:12:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60878 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729621AbfJNDMm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Oct 2019 23:12:42 -0400
-Received: from earth.universe (unknown [88.128.80.21])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A52C22083B;
-        Mon, 14 Oct 2019 03:12:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571022761;
-        bh=f9++ssYlU32C3mD6GxFSvOSRuGIHHWu9gwvD+GnS4TI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Rkjq2d1XYhtZhEdpmX1Y8ImJrHnRKTnavJ3+5KQY4tHI0MdCEijUtJq3ojVaKrPBL
-         JAdiHa4eBhfgfRw6/q1JhtYEOBjzI0cc4nQpp4+zJR+j5a3jGg980G0OWeEgav9+11
-         0yQ6/fiVqHC+UQ0cvYSjr94I9+jq00xDHYUP/yUo=
-Received: by earth.universe (Postfix, from userid 1000)
-        id AC81D3C0CA1; Mon, 14 Oct 2019 05:12:38 +0200 (CEST)
-Date:   Mon, 14 Oct 2019 05:12:38 +0200
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Yizhuo Zhai <yzhai003@ucr.edu>, Beomho Seo <beomho.seo@samsung.com>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Zhiyun Qian <zhiyunq@cs.ucr.edu>,
-        Chengyu Song <csong@cs.ucr.edu>
-Subject: Re: Potential uninitialized variables in power: supply:
- rt5033_battery:
-Message-ID: <20191014031238.fqiytckizbrwntci@earth.universe>
-References: <CABvMjLTicqk-ncY18j=UCZhCCugTVkPWKjkWZj9yEccUp3m8XQ@mail.gmail.com>
+        id S1729875AbfJNDVe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 13 Oct 2019 23:21:34 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:45947 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729823AbfJNDVd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Oct 2019 23:21:33 -0400
+Received: by mail-vs1-f66.google.com with SMTP id d204so9909090vsc.12
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2019 20:21:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MoAndGD7+xOBQmFjHRilIe31g5IJG3QAYI2h3oVAfaM=;
+        b=KEcztLNrUdPKcWuyh2hGeyPVaQfBg/U/7j5i0RNpWCAbI0jKHQPdLtQOyKZlKFk+io
+         gQEboJhqjPtjsmxFmgam36eyS7/VqKYyG6aUXo9s3DFRKrICszdqtvoQabD702grmQ5F
+         3a9GW6ba/v4r/6DpR1Y28TAVgEcW+/0ZbvEnU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MoAndGD7+xOBQmFjHRilIe31g5IJG3QAYI2h3oVAfaM=;
+        b=hRRFdMlcoU4XlmVaFyJ1NfXHoK26RDQHsIfHSvQO57XqANobdGXleGV7FKfRuyvxGl
+         pzfBAi2oGy5KTBC9lyE/sIQXD6pzEZYhJHrUwde1ixfa9b/rI3GQk2QHmI1+v92UhyOQ
+         W8eFX8MvcWW8v0HVm/XYwkhNVr5WLDrMcv6V4R4adsc49RwW8f3ISZLEBJM+9mGgKY8y
+         zXfsM9QIJ85z1UTijuChgxNAZ0a29omxT+RnuHbk8SMXl4Tp/PpTDt5aSTH7RoDVi2lO
+         zYSwFSkGA0x7CYK9NfE5lqMe6NE5k4iKRmxrt4eJWFQCzwhSHxYEBJwy2Ji+8Y1uFJw/
+         jiZg==
+X-Gm-Message-State: APjAAAW4xP3eaImMAv0NjMMsJ3jC+aB/HkMNpWHCygn7oxq6yZ4h22lH
+        gfxraHyLB1bOArNb5ewh3SHHaMhT0mfOwz+fqZxwK0R9K68j7A==
+X-Google-Smtp-Source: APXvYqzUpeUtM7it5vJ7Px2l0C655iX038UrctA+47NpKao+0z1PEHHeav8gnfqe5HbF8piW70zXNvnZHj+qZJIPC8k=
+X-Received: by 2002:a05:6102:227c:: with SMTP id v28mr16725837vsd.119.1571023290929;
+ Sun, 13 Oct 2019 20:21:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="oguz6rorx46w3zrv"
-Content-Disposition: inline
-In-Reply-To: <CABvMjLTicqk-ncY18j=UCZhCCugTVkPWKjkWZj9yEccUp3m8XQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+References: <20191007071610.65714-1-cychiang@chromium.org> <CA+Px+wWkr1xmSpgEkSaGS7UZu8TKUYvSnbjimBRH29=kDtcHKA@mail.gmail.com>
+ <ebf9bc3f-a531-6c5b-a146-d80fe6c5d772@roeck-us.net> <CAFv8NwLuYKHJoG9YR3WvofwiMnXCgYv-Sk7t5jCvTZbST+Ctjw@mail.gmail.com>
+ <5d9b5b3e.1c69fb81.7203c.1215@mx.google.com> <CAFv8Nw+x6V-995ijyws1Q36W1MpaP=kNJeiVtNakH-uC3Vgg9Q@mail.gmail.com>
+ <5d9ca7e4.1c69fb81.7f8fa.3f7d@mx.google.com> <e968e478-bb48-5b05-b6c4-ae1bf77f714f@linaro.org>
+In-Reply-To: <e968e478-bb48-5b05-b6c4-ae1bf77f714f@linaro.org>
+From:   Cheng-yi Chiang <cychiang@chromium.org>
+Date:   Mon, 14 Oct 2019 11:21:04 +0800
+Message-ID: <CAFv8NwKH5rX2cdfbK1XJxUJFU3uo0K4UowUM3Z7447Qoz_y8bA@mail.gmail.com>
+Subject: Re: [PATCH] firmware: vpd: Add an interface to read VPD value
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Tzung-Bi Shih <tzungbi@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ALSA development <alsa-devel@alsa-project.org>,
+        Hung-Te Lin <hungte@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Brown <broonie@kernel.org>,
+        Dylan Reid <dgreid@chromium.org>,
+        Tzung-Bi Shih <tzungbi@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Oct 9, 2019 at 10:05 PM Srinivas Kandagatla
+<srinivas.kandagatla@linaro.org> wrote:
+>
+>
+>
+> On 08/10/2019 16:14, Stephen Boyd wrote:
+> >> 3) As my use case does not use device tree, it is hard for ASoC
+> >> machine to access nvmem device. I am wondering if I can use
+> >> nvm_cell_lookup so machine driver can find the nvmem device using a
+> >> con_id. But currently the cell lookup API requires a matched device,
+> >> which does not fit my usage because there will be different machine
+> >> drivers requesting the value.
+> >> I think I can still workaround this by adding the lookup table in
+> >> machine driver. This would seem to be a bit weird because I found that
+> >> most lookup table is added in provider side, not consumer side. Not
+> >> sure if this is logically correct.
+> > Maybe Srini has some input here. It looks like your main concern is
+> > consumer to provider mapping?
+> >
+>
+> In non-DT setup, there are various ways to lookup nvmem provider.
+>
+> 1> nvmem_device_get()/put() using provider devid/name. I think you
+> should be able to use this in your case.
+> 2> nvmem_register_notifier() which notifies when nvmem provider is added
+> to system.
+> 3> nvmem_device_find() with own match function this will be merged in
+> next window (https://lkml.org/lkml/2019/10/3/215)
+>
+>
+> If none of these are of any help, could explain what exactly are you
+> looking for w.r.t nvmem to be able to move to what Stephen Boyd suggested?
+>
+> --srini
+>
 
---oguz6rorx46w3zrv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen, Mark and Srinivas,
+Thank you all for the suggestions.
+In my non-DT setup, I have been working on coreboot changes to prepare
+data in _DSD following suggestion in
+https://patchwork.kernel.org/patch/11179237
+The basic idea is that codec driver should just get data it needs from
+device property.
+The coreboot approach works in my local setup, but I have not sent the
+change to coreboot upstream yet.
+If that path work, then the change needed in kernel will be much simpler.
 
-Hi,
-
-On Thu, Oct 03, 2019 at 09:21:44PM -0700, Yizhuo Zhai wrote:
-> drivers/power/supply/rt5033_battery.c:
->=20
-> In function rt5033_battery_get_present(), variable "val" could be
-> uninitialized if regmap_read() returns -EINVAL. However, "val" is
-> used to decide the return value, which is potentially unsafe.
->=20
-> Also, we cannot simply return -EINVAL in rt5033_battery_get_present()
-> because it's not an acceptable return value.
->=20
-> Thanks for your time to check this case.
-
-Should be fine to just return false when regmap_read() fails.
-Will you prepare a patch for that?
-
-Thanks,
-
--- Sebastian
-
---oguz6rorx46w3zrv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl2j56MACgkQ2O7X88g7
-+pqEHg/9EW8LYtH5bHaYEn8WLUM+DKorgimr8m5w9WQp4yw4fjl+WzteTp6MdUdm
-0a00kYbFxFVwffJBoy28MS2tFG/4T8+NqdE7JQeFnatAERlA4FJhzpxB/etA/9IE
-pbtETgg/r0qVLaLUKwlrqfWN0Dlo0g1t/QrKK7BaNWR2eZu0cGUI4O6k6s6C00u1
-lyxXgUCkOgNEJSD4k664jcKIf3XboFZLanTghQ/uFerU9kH1gqCdSd51gxQ8eodu
-KlS3Eb4qcSWgLwrZLMtg/ewPa6KK9r+MRyQEipyK2ZyLEohlVhf+ZQ72R6+YM08M
-gmkr52vyzIVq673hPNGOVL9eUUQUKFLtJPDesQcdgPDlsEP2Vxs+EA7QEWIPTrSC
-AORM4pFjzpLiG+0aXbeX9TSA9xG2h+vpJ0rBTqbtl8syz2447rbzrgXirhhVI/06
-4H0xmQXq9w8ctSW/qk/gJci1djcogYGes9lM8iN0mH2B++sC44vwgiHTe1b5h6IZ
-HeFDCzs8ZzIQR8Mk0aGYUMi/vCyhpBmVBO1JnZfecYmNAQ2XSlLu2yZeEsPh+jiW
-kld/CRSenBhE6oMb0f95UI5TG6Q4oVpUYtyyTRKoIMXf3PJwY84VI004M3+YhcAb
-e3EgTf2v8PSHF/s9pPBPurQ4bv/fkCNOFws++JsWDUTv23ekDE0=
-=GwVf
------END PGP SIGNATURE-----
-
---oguz6rorx46w3zrv--
+In the future, there might be DT setup use case, and I think it should
+be doable for VPD to register a nvmem device, and let codec driver
+gets the property.
+But I would drop this path for now.
+Thanks!
