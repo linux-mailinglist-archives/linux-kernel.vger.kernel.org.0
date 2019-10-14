@@ -2,88 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E117BD6392
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 15:16:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3C78D639B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 15:18:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731517AbfJNNQN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 09:16:13 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38785 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727789AbfJNNQM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 09:16:12 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1iK0Cn-0005Vt-14; Mon, 14 Oct 2019 13:16:09 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Jaroslav Kysela <perex@perex.cz>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] PNP: fix unintended sign extension on left shifts
-Date:   Mon, 14 Oct 2019 14:16:08 +0100
-Message-Id: <20191014131608.31335-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        id S1731175AbfJNNRb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 09:17:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33364 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729858AbfJNNRb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 09:17:31 -0400
+Received: from dragon (li937-157.members.linode.com [45.56.119.157])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D849E2089C;
+        Mon, 14 Oct 2019 13:17:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571059050;
+        bh=wZFd2MDNuLSRO61MvQmIIhnzwvRFGkA4X4MW5UdN0Rc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ftXr9mSljbN7pe2DI95fWgfux9IioFn7rCw2JUvOBdNO6O7z2spqatskV3l0SPyDU
+         P3Fz70jEFDmxTPOJkMO5C79bWq0HJAh3mUV0QNqVeyl73eCDlsckSYKlzQtsgle8oc
+         ErB3UXWSsibDoLQXS5OGFyy83XbCgCHtKs9pZmTo=
+Date:   Mon, 14 Oct 2019 21:16:59 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, jun.li@nxp.com,
+        daniel.baluta@nxp.com, ping.bai@nxp.com, leonard.crestez@nxp.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
+Subject: Re: [PATCH V2 1/3] arm64: dts: imx8mm-evk: Adjust i2c nodes
+ following alphabetical sort
+Message-ID: <20191014131654.GW12262@dragon>
+References: <1570497955-19481-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1570497955-19481-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Oct 08, 2019 at 09:25:53AM +0800, Anson Huang wrote:
+> The iomuxc node is being put at end of file because of its huge
+> pinctrl data. I2C devices should be placed in alphabetical sort.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Shifting a u8 left will cause the value to be promoted to an integer. If
-the top bit of the u8 is set then the following conversion to a 64 bit
-resource_size_t will sign extend the value causing the upper 32 bits
-to be set in the result.
-
-Fix this by casting the u8 value to a resource_size_t before the shift.
-Original commit is pre-git history.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/pnp/isapnp/core.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/pnp/isapnp/core.c b/drivers/pnp/isapnp/core.c
-index 179b737280e1..c947b1673041 100644
---- a/drivers/pnp/isapnp/core.c
-+++ b/drivers/pnp/isapnp/core.c
-@@ -511,10 +511,14 @@ static void __init isapnp_parse_mem32_resource(struct pnp_dev *dev,
- 	unsigned char flags;
- 
- 	isapnp_peek(tmp, size);
--	min = (tmp[4] << 24) | (tmp[3] << 16) | (tmp[2] << 8) | tmp[1];
--	max = (tmp[8] << 24) | (tmp[7] << 16) | (tmp[6] << 8) | tmp[5];
--	align = (tmp[12] << 24) | (tmp[11] << 16) | (tmp[10] << 8) | tmp[9];
--	len = (tmp[16] << 24) | (tmp[15] << 16) | (tmp[14] << 8) | tmp[13];
-+	min = ((resource_size_t)tmp[4] << 24) | (tmp[3] << 16) |
-+              (tmp[2] << 8) | tmp[1];
-+	max = ((resource_size_t)tmp[8] << 24) | (tmp[7] << 16) |
-+              (tmp[6] << 8) | tmp[5];
-+	align = ((resource_size_t)tmp[12] << 24) | (tmp[11] << 16) |
-+              (tmp[10] << 8) | tmp[9];
-+	len = ((resource_size_t)tmp[16] << 24) | (tmp[15] << 16) |
-+              (tmp[14] << 8) | tmp[13];
- 	flags = tmp[0];
- 	pnp_register_mem_resource(dev, option_flags,
- 				  min, max, align, len, flags);
-@@ -532,8 +536,10 @@ static void __init isapnp_parse_fixed_mem32_resource(struct pnp_dev *dev,
- 	unsigned char flags;
- 
- 	isapnp_peek(tmp, size);
--	base = (tmp[4] << 24) | (tmp[3] << 16) | (tmp[2] << 8) | tmp[1];
--	len = (tmp[8] << 24) | (tmp[7] << 16) | (tmp[6] << 8) | tmp[5];
-+	base = ((resource_size_t)tmp[4] << 24) | (tmp[3] << 16) |
-+	       (tmp[2] << 8) | tmp[1];
-+	len = ((resource_size_t)tmp[8] << 24) | (tmp[7] << 16) |
-+              (tmp[6] << 8) | tmp[5];
- 	flags = tmp[0];
- 	pnp_register_mem_resource(dev, option_flags, base, base, 0, len, flags);
- }
--- 
-2.20.1
-
+Applied all, thanks.
