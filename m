@@ -2,218 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0824D5E45
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 11:09:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 542FED5E4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2019 11:09:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730752AbfJNJJR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 05:09:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35998 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730719AbfJNJJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 05:09:16 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EEC30B664;
-        Mon, 14 Oct 2019 09:09:13 +0000 (UTC)
-From:   Juergen Gross <jgross@suse.com>
-To:     xen-devel@lists.xenproject.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Juergen Gross <jgross@suse.com>, Wei Liu <wei.liu@kernel.org>,
-        Paul Durrant <paul@xen.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 2/2] xen/netback: cleanup init and deinit code
-Date:   Mon, 14 Oct 2019 11:09:10 +0200
-Message-Id: <20191014090910.9701-3-jgross@suse.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20191014090910.9701-1-jgross@suse.com>
-References: <20191014090910.9701-1-jgross@suse.com>
+        id S1730780AbfJNJJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 05:09:54 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:39503 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730686AbfJNJJx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 05:09:53 -0400
+Received: by mail-ot1-f68.google.com with SMTP id s22so13172363otr.6
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 02:09:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=mmj2BkgM8N7EfRm0KQme7Wm8/QTctqo/rgR46m8jYww=;
+        b=utOwdNUatw0TJVcjEzTDXL9YxHok/lnaqAbJDnMdLHtT8FLMimNAu+So6hq07QgsJy
+         QoK22R7R0Y6jECX8A4N/OfLSzmFnpi7Kg8I79ukNgdxQXECWbbpzgDtNdPtCc03jsQx6
+         F2LXvxe/OSFzyR9PJPe7jqbHoMjPOc0kz7hXY/ArEkOqCQ23QJq9NObMy5liNTpmzjlD
+         iIV1j2OGFfIvfIZpL6JgoWjESsv5FpyS1IdGTbsULmPm4o/iqsZnV/dAG+PHwKtbhqwm
+         Rbp7U40W6gHE9xclO4MBn91IxElM6TJvmOo2a/stnMSQkGmqzCqZWUpxDDVweW3byF7q
+         qhvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=mmj2BkgM8N7EfRm0KQme7Wm8/QTctqo/rgR46m8jYww=;
+        b=sZ5QPjT8GAUzzxbXCj3nHBWcxKPIlHxjbb9Di2ofs/YfI4fsn7sql6hRgkCbN0YI3y
+         gOw9bRmdywogekymbPLZ6BhUEiOU6EHGsvAUYqdbpHBkLbN6Sy294I3lz3IcwtLOcbqs
+         55pGoVnLzpx9GeZ96CwHcgRDlNXZndeNecEBxxLVkrLzxnk3GFqHYQoSNtjgRexJw95J
+         yn4VAY2gecZUqujO61Q2csQ2SNfheccsPKQjaEGQ28ocIhNgEQvqWkZbLcHL5lkkVSqW
+         AJeITBjixyfy3Rbe20RzCjomkyukqwUIrGkJ+oeHSM9TFZuy4sjmpmbmV2Slmmu+21R+
+         /xOw==
+X-Gm-Message-State: APjAAAXvr/bKpGnAIlikCksiLeeYQbvN1t8QoV34tnTE3dR3e8IBCa76
+        Mz9hH0hvUBmVADIBFtv+iD/XLsHjoEKktHMjJyiPCg==
+X-Google-Smtp-Source: APXvYqzCKjg45tJKERrykwPUGSuvKz+hjzMmNcjl6CE6Dw1vz4H7648JzVQqbrqc0NIeC+JpXC/vi4Q6HAipqR6zkhQ=
+X-Received: by 2002:a9d:7590:: with SMTP id s16mr23066520otk.2.1571044192234;
+ Mon, 14 Oct 2019 02:09:52 -0700 (PDT)
+MIME-Version: 1.0
+References: <000001d5824d$c8b2a060$5a17e120$@codeaurora.org> <CACT4Y+aAicvQ1FYyOVbhJy62F4U6R_PXr+myNghFh8PZixfYLQ@mail.gmail.com>
+In-Reply-To: <CACT4Y+aAicvQ1FYyOVbhJy62F4U6R_PXr+myNghFh8PZixfYLQ@mail.gmail.com>
+From:   Marco Elver <elver@google.com>
+Date:   Mon, 14 Oct 2019 11:09:40 +0200
+Message-ID: <CANpmjNOx7fuLLBasdEgnOCJepeufY4zo_FijsoSg0hfVgN7Ong@mail.gmail.com>
+Subject: Re: KCSAN Support on ARM64 Kernel
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     sgrover@codeaurora.org, kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Will Deacon <willdeacon@google.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do some cleanup of the netback init and deinit code:
+On Mon, 14 Oct 2019 at 10:40, Dmitry Vyukov <dvyukov@google.com> wrote:
+>
+> On Mon, Oct 14, 2019 at 7:11 AM <sgrover@codeaurora.org> wrote:
+> >
+> > Hi Dmitry,
+> >
+> > I am from Qualcomm Linux Security Team, just going through KCSAN and fo=
+und that there was a thread for arm64 support (https://lkml.org/lkml/2019/9=
+/20/804).
+> >
+> > Can you please tell me if KCSAN is supported on ARM64 now? Can I just r=
+ebase the KCSAN branch on top of our let=E2=80=99s say android mainline ker=
+nel, enable the config and run syzkaller on that for finding race condition=
+s?
+> >
+> > It would be very helpful if you reply, we want to setup this for findin=
+g issues on our proprietary modules that are not part of kernel mainline.
+> >
+> > Regards,
+> >
+> > Sachin Grover
+>
+> +more people re KCSAN on ARM64
 
-- add an omnipotent queue deinit function usable from
-  xenvif_disconnect_data() and the error path of xenvif_connect_data()
-- only install the irq handlers after initializing all relevant items
-  (especially the kthreads related to the queue)
-- there is no need to use get_task_struct() after creating a kthread
-  and using put_task_struct() again after having stopped it.
-- use kthread_run() instead of kthread_create() to spare the call of
-  wake_up_process().
+KCSAN does not yet have ARM64 support. Once it's upstream, I would
+expect that Mark's patches (from repo linked in LKML thread) will just
+cleanly apply to enable ARM64 support.
 
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
- drivers/net/xen-netback/interface.c | 114 +++++++++++++++++-------------------
- 1 file changed, 54 insertions(+), 60 deletions(-)
-
-diff --git a/drivers/net/xen-netback/interface.c b/drivers/net/xen-netback/interface.c
-index 103ed00775eb..68dd7bb07ca6 100644
---- a/drivers/net/xen-netback/interface.c
-+++ b/drivers/net/xen-netback/interface.c
-@@ -626,6 +626,38 @@ int xenvif_connect_ctrl(struct xenvif *vif, grant_ref_t ring_ref,
- 	return err;
- }
- 
-+static void xenvif_disconnect_queue(struct xenvif_queue *queue)
-+{
-+	if (queue->tx_irq) {
-+		unbind_from_irqhandler(queue->tx_irq, queue);
-+		if (queue->tx_irq == queue->rx_irq)
-+			queue->rx_irq = 0;
-+		queue->tx_irq = 0;
-+	}
-+
-+	if (queue->rx_irq) {
-+		unbind_from_irqhandler(queue->rx_irq, queue);
-+		queue->rx_irq = 0;
-+	}
-+
-+	if (queue->task) {
-+		kthread_stop(queue->task);
-+		queue->task = NULL;
-+	}
-+
-+	if (queue->dealloc_task) {
-+		kthread_stop(queue->dealloc_task);
-+		queue->dealloc_task = NULL;
-+	}
-+
-+	if (queue->napi.poll) {
-+		netif_napi_del(&queue->napi);
-+		queue->napi.poll = NULL;
-+	}
-+
-+	xenvif_unmap_frontend_data_rings(queue);
-+}
-+
- int xenvif_connect_data(struct xenvif_queue *queue,
- 			unsigned long tx_ring_ref,
- 			unsigned long rx_ring_ref,
-@@ -651,13 +683,27 @@ int xenvif_connect_data(struct xenvif_queue *queue,
- 	netif_napi_add(queue->vif->dev, &queue->napi, xenvif_poll,
- 			XENVIF_NAPI_WEIGHT);
- 
-+	queue->stalled = true;
-+
-+	task = kthread_run(xenvif_kthread_guest_rx, queue,
-+			   "%s-guest-rx", queue->name);
-+	if (IS_ERR(task))
-+		goto kthread_err;
-+	queue->task = task;
-+
-+	task = kthread_run(xenvif_dealloc_kthread, queue,
-+			   "%s-dealloc", queue->name);
-+	if (IS_ERR(task))
-+		goto kthread_err;
-+	queue->dealloc_task = task;
-+
- 	if (tx_evtchn == rx_evtchn) {
- 		/* feature-split-event-channels == 0 */
- 		err = bind_interdomain_evtchn_to_irqhandler(
- 			queue->vif->domid, tx_evtchn, xenvif_interrupt, 0,
- 			queue->name, queue);
- 		if (err < 0)
--			goto err_unmap;
-+			goto err;
- 		queue->tx_irq = queue->rx_irq = err;
- 		disable_irq(queue->tx_irq);
- 	} else {
-@@ -668,7 +714,7 @@ int xenvif_connect_data(struct xenvif_queue *queue,
- 			queue->vif->domid, tx_evtchn, xenvif_tx_interrupt, 0,
- 			queue->tx_irq_name, queue);
- 		if (err < 0)
--			goto err_unmap;
-+			goto err;
- 		queue->tx_irq = err;
- 		disable_irq(queue->tx_irq);
- 
-@@ -678,47 +724,18 @@ int xenvif_connect_data(struct xenvif_queue *queue,
- 			queue->vif->domid, rx_evtchn, xenvif_rx_interrupt, 0,
- 			queue->rx_irq_name, queue);
- 		if (err < 0)
--			goto err_tx_unbind;
-+			goto err;
- 		queue->rx_irq = err;
- 		disable_irq(queue->rx_irq);
- 	}
- 
--	queue->stalled = true;
--
--	task = kthread_create(xenvif_kthread_guest_rx,
--			      (void *)queue, "%s-guest-rx", queue->name);
--	if (IS_ERR(task)) {
--		pr_warn("Could not allocate kthread for %s\n", queue->name);
--		err = PTR_ERR(task);
--		goto err_rx_unbind;
--	}
--	queue->task = task;
--	get_task_struct(task);
--
--	task = kthread_create(xenvif_dealloc_kthread,
--			      (void *)queue, "%s-dealloc", queue->name);
--	if (IS_ERR(task)) {
--		pr_warn("Could not allocate kthread for %s\n", queue->name);
--		err = PTR_ERR(task);
--		goto err_rx_unbind;
--	}
--	queue->dealloc_task = task;
--
--	wake_up_process(queue->task);
--	wake_up_process(queue->dealloc_task);
--
- 	return 0;
- 
--err_rx_unbind:
--	unbind_from_irqhandler(queue->rx_irq, queue);
--	queue->rx_irq = 0;
--err_tx_unbind:
--	unbind_from_irqhandler(queue->tx_irq, queue);
--	queue->tx_irq = 0;
--err_unmap:
--	xenvif_unmap_frontend_data_rings(queue);
--	netif_napi_del(&queue->napi);
-+kthread_err:
-+	pr_warn("Could not allocate kthread for %s\n", queue->name);
-+	err = PTR_ERR(task);
- err:
-+	xenvif_disconnect_queue(queue);
- 	return err;
- }
- 
-@@ -746,30 +763,7 @@ void xenvif_disconnect_data(struct xenvif *vif)
- 	for (queue_index = 0; queue_index < num_queues; ++queue_index) {
- 		queue = &vif->queues[queue_index];
- 
--		netif_napi_del(&queue->napi);
--
--		if (queue->task) {
--			kthread_stop(queue->task);
--			put_task_struct(queue->task);
--			queue->task = NULL;
--		}
--
--		if (queue->dealloc_task) {
--			kthread_stop(queue->dealloc_task);
--			queue->dealloc_task = NULL;
--		}
--
--		if (queue->tx_irq) {
--			if (queue->tx_irq == queue->rx_irq)
--				unbind_from_irqhandler(queue->tx_irq, queue);
--			else {
--				unbind_from_irqhandler(queue->tx_irq, queue);
--				unbind_from_irqhandler(queue->rx_irq, queue);
--			}
--			queue->tx_irq = 0;
--		}
--
--		xenvif_unmap_frontend_data_rings(queue);
-+		xenvif_disconnect_queue(queue);
- 	}
- 
- 	xenvif_mcast_addr_list_free(vif);
--- 
-2.16.4
-
+Thanks,
+-- Marco
