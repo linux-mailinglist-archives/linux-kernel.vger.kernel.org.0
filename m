@@ -2,156 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82691D8233
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 23:29:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04714D8249
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 23:39:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730002AbfJOV3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 17:29:34 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:38819 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbfJOV3d (ORCPT
+        id S1730156AbfJOVjE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 17:39:04 -0400
+Received: from www381.your-server.de ([78.46.137.84]:49436 "EHLO
+        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728174AbfJOVjD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 17:29:33 -0400
-Received: by mail-oi1-f194.google.com with SMTP id m16so18182991oic.5;
-        Tue, 15 Oct 2019 14:29:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KbwveZ50AkqIbP4Itqlsx5ooyBIGNElzrTfxvpsJZS8=;
-        b=Y9C8cvxGeo8nWxLEL3sYbZ850RTm42JSYsIayve1dzg6Hdr8AKWADDDKcfXcaZSRkJ
-         YAN5u+HBc3gbky9bPnnfP7d5JYdE7AuvNCxr29HEju370BQmKVfquiANK/txngYLN/yx
-         UdxGoWwU9dDJyHZylLoEspafGgb7H7gBwFwSf5xV1pHW5rBbf6JEpqKGASva7yB6Dek+
-         wN3HSHyrvPiS6bGV06B+DVDd9PcQIK8FMlDfc5iAtuaZBHwVpe4tFpOjPb3FK+/srkVz
-         srKLeSkMIB7RBMmTp1zK5RX2Yl4UgwlZ78z2stFNJBQGZqmTww55yNPXtcsYCuOIUa3e
-         5rbw==
-X-Gm-Message-State: APjAAAWMK1Ku24ojhMFU7vgYk7tc+aBfoJPEiUsSSf2jMKVry/HdTeVD
-        YUHTAAL63Hdusy0uP8fzlQ==
-X-Google-Smtp-Source: APXvYqwZwL8+yC/RXLuTkW6Sv3IuKwFVCiV0tFWnlQN1htXXuxCwMA0OHypPOp7q5Kl9gE79aV4i6g==
-X-Received: by 2002:aca:490f:: with SMTP id w15mr540730oia.159.1571174972402;
-        Tue, 15 Oct 2019 14:29:32 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id q18sm6913157otk.57.2019.10.15.14.29.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2019 14:29:31 -0700 (PDT)
-Date:   Tue, 15 Oct 2019 16:29:31 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Roger Quadros <rogerq@ti.com>
-Cc:     felipe.balbi@linux.intel.com, gregkh@linuxfoundation.org,
-        pawell@cadence.com, nsekhar@ti.com, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: usb: Add binding for the TI wrapper for
- Cadence USB3 controller
-Message-ID: <20191015212931.GA8031@bogus>
-References: <20191007114142.5182-1-rogerq@ti.com>
- <20191007114142.5182-2-rogerq@ti.com>
+        Tue, 15 Oct 2019 17:39:03 -0400
+X-Greylist: delayed 1923 seconds by postgrey-1.27 at vger.kernel.org; Tue, 15 Oct 2019 17:39:02 EDT
+Received: from sslproxy01.your-server.de ([88.198.220.130])
+        by www381.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <lars@metafoo.de>)
+        id 1iKU1s-00079J-3q; Tue, 15 Oct 2019 23:06:52 +0200
+Received: from [93.104.114.34] (helo=[192.168.178.20])
+        by sslproxy01.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <lars@metafoo.de>)
+        id 1iKU1r-0001zM-Ky; Tue, 15 Oct 2019 23:06:51 +0200
+Subject: Re: [PATCH] dmaengine: axi-dmac: simple device_config operation
+ implemented
+To:     Vinod Koul <vkoul@kernel.org>,
+        "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
+Cc:     "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "alencar.fmce@imbel.gov.br" <alencar.fmce@imbel.gov.br>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190913145404.28715-1-alexandru.ardelean@analog.com>
+ <20191014070142.GB2654@vkoul-mobl>
+ <4384347cc94a54e3fa22790aaa91375afda54e1b.camel@analog.com>
+ <20191015104342.GW2654@vkoul-mobl>
+From:   Lars-Peter Clausen <lars@metafoo.de>
+Message-ID: <4428e1fa-1a2a-5a5f-ada8-806078c8da94@metafoo.de>
+Date:   Tue, 15 Oct 2019 23:06:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191007114142.5182-2-rogerq@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191015104342.GW2654@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: lars@metafoo.de
+X-Virus-Scanned: Clear (ClamAV 0.101.4/25603/Tue Oct 15 10:57:00 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 07, 2019 at 02:41:41PM +0300, Roger Quadros wrote:
-> TI platforms have a wrapper module around the Cadence USB3
-> controller. Add binding information for that.
+On 10/15/19 12:43 PM, Vinod Koul wrote:
+> On 15-10-19, 07:05, Ardelean, Alexandru wrote:
+>> On Mon, 2019-10-14 at 12:31 +0530, Vinod Koul wrote:
+>>> [External]
+>>>
+>>
+>> Hey,
+>>
+>>> On 13-09-19, 17:54, Alexandru Ardelean wrote:
+>>>> From: Rodrigo Alencar <alencar.fmce@imbel.gov.br>
+>>>>
+>>>> dmaengine_slave_config is called by dmaengine_pcm_hw_params when using
+>>>> axi-i2s with axi-dmac. If device_config is NULL, -ENOSYS  is returned,
+>>>> which breaks the snd_pcm_hw_params function.
+>>>> This is a fix for the error:
+>>>
+>>> and what is that?
+>>>
+>>>> $ aplay -D plughw:ADAU1761 /usr/share/sounds/alsa/Front_Center.wav
+>>>> Playing WAVE '/usr/share/sounds/alsa/Front_Center.wav' : Signed 16 bit
+>>>> Little Endian, Rate 48000 Hz, Mono
+>>>> axi-i2s 43c20000.axi-i2s: ASoC: 43c20000.axi-i2s hw params failed: -38
+>>
+>> Error is above this line [code -38].
 > 
-> Signed-off-by: Roger Quadros <rogerq@ti.com>
-> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
-> ---
->  .../devicetree/bindings/usb/cdns-usb3-ti.txt  | 59 +++++++++++++++++++
->  1 file changed, 59 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/cdns-usb3-ti.txt
-
-Please convert to DT schema.
-
-> diff --git a/Documentation/devicetree/bindings/usb/cdns-usb3-ti.txt b/Documentation/devicetree/bindings/usb/cdns-usb3-ti.txt
-> new file mode 100644
-> index 000000000000..12c7c903e6da
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/usb/cdns-usb3-ti.txt
-> @@ -0,0 +1,59 @@
-> +Binding for the TI specific wrapper for the Cadence USBSS-DRD controller
-> +
-> +Required properties:
-> +  - compatible: Should contain "ti,j721e-usb"
-> +  - reg: Physical base address and size of the wrappers register area.
-> +  - power-domains: Should contain a phandle to a PM domain provider node
-> +                   and an args specifier containing the USB device id
-> +                   value. This property is as per the binding documentation:
-> +                   Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
-> +  - clocks: Clock phandles to usb2_refclk and lpm_clk
-> +  - clock-names: Should contain "usb2_refclk" and "lpm_clk"
-
-_clk is redundant. 'ref' amd 'lpm' is sufficient.
-
-> +
-> +Optional properties:
-> + - ti,usb2-only: If present, it restricts the controller to USB2.0 mode of
-> +		 operation. Must be present if USB3 PHY is not available
-> +		 for USB.
-
-Seems like this should be discoverable based on describing the phy 
-connections.
-
-> + - ti,modestrap-host: Set controller modestrap to HOST mode.
-> + - ti,modestrap-peripheral: Set controller modestrap to PERIPHERAL mode.
-
-What does modestrap mean? Fixed to the mode or that's the default? For 
-default, John Stultz sent a similar binding. Seems we need something 
-common.
-
-> + - ti,vbus-divider: Should be present if USB VBUS line is connected to the
-> +		 VBUS pin of the SoC via a 1/3 voltage divider.
-> +
-> +Sub-nodes:
-> +The USB2 PHY and the Cadence USB3 controller should be the sub-nodes.
-> +
-> +Example:
-> +
-> +	ti_usb0: cdns_usb@4104000 {
-> +		compatible = "ti,j721e-usb";
-> +		reg = <0x00 0x4104000 0x00 0x100>;
-> +		power-domains = <&k3_pds 288 TI_SCI_PD_EXCLUSIVE>;
-> +		clocks = <&k3_clks 288 15>, <&k3_clks 288 3>;
-> +		clock-names = "usb2_refclk", "lpm_clk";
-> +		assigned-clocks = <&k3_clks 288 15>;	/* USB2_REFCLK */
-> +		assigned-clock-parents = <&k3_clks 288 16>; /* HFOSC0 */
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		phy@4108000 {
-> +			compatible = "ti,j721e-usb2-phy";
-> +			reg = <0x00 0x4108000 0x00 0x400>;
-> +		};
-
-Why is this a child node? Use the phy binding.
-
-> +
-> +		usb0: usb@6000000 {
-> +			compatible = "cdns,usb3-1.0.1";
-
-Not documented.
-
-> +			reg = <0x00 0x6000000 0x00 0x10000>,
-> +			      <0x00 0x6010000 0x00 0x10000>,
-> +			      <0x00 0x6020000 0x00 0x10000>;
-> +			reg-names = "otg", "xhci", "dev";
-> +			interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,	/* irq.0 */
-> +				     <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,	/* irq.6 */
-> +				     <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;	/* otgirq.0 */
-> +			interrupt-names = "host",
-> +					  "peripheral",
-> +					  "otg";
-> +			maximum-speed = "super-speed";
-> +			dr_mode = "otg";
-> +		};
-> +	};
-> -- 
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> Right and it would help explaining a bit more on the error!
 > 
+>>
+>>>> aplay: set_params:1403: Unable to install hw params:
+>>>> ACCESS:  RW_INTERLEAVED
+>>>> FORMAT:  S16_LE
+>>>> SUBFORMAT:  STD
+>>>> SAMPLE_BITS: 16
+>>>> FRAME_BITS: 16
+>>>> CHANNELS: 1
+>>>> RATE: 48000
+>>>> PERIOD_TIME: 125000
+>>>> PERIOD_SIZE: 6000
+>>>> PERIOD_BYTES: 12000
+>>>> PERIODS: 4
+>>>> BUFFER_TIME: 500000
+>>>> BUFFER_SIZE: 24000
+>>>> BUFFER_BYTES: 48000
+>>>> TICK_TIME: 0
+>>>>
+>>>> Signed-off-by: Rodrigo Alencar <alencar.fmce@imbel.gov.br>
+>>>> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+>>>> ---
+>>>>
+>>>> Note: Fixes tag not added intentionally.
+>>>>
+>>>>  drivers/dma/dma-axi-dmac.c | 16 ++++++++++++++++
+>>>>  1 file changed, 16 insertions(+)
+>>>>
+>>>> diff --git a/drivers/dma/dma-axi-dmac.c b/drivers/dma/dma-axi-dmac.c
+>>>> index a0ee404b736e..ab2677343202 100644
+>>>> --- a/drivers/dma/dma-axi-dmac.c
+>>>> +++ b/drivers/dma/dma-axi-dmac.c
+>>>> @@ -564,6 +564,21 @@ static struct dma_async_tx_descriptor
+>>>> *axi_dmac_prep_slave_sg(
+>>>>  	return vchan_tx_prep(&chan->vchan, &desc->vdesc, flags);
+>>>>  }
+>>>>  
+>>>> +static int axi_dmac_device_config(struct dma_chan *c,
+>>>> +			struct dma_slave_config *slave_config)
+>>>> +{
+>>>> +	struct axi_dmac_chan *chan = to_axi_dmac_chan(c);
+>>>> +	struct axi_dmac *dmac = chan_to_axi_dmac(chan);
+>>>> +
+>>>> +	/* no configuration required, a sanity check is done instead */
+>>>> +	if (slave_config->direction != chan->direction) {
+>>>
+>>>  slave_config->direction is a deprecated field, pls dont use that
+>>
+>> ack
+>> any alternative recommendations of what to do in this case?
+
+iirc direction is checked when the channel is requested, there should be
+no need to check it again.
+
+>> i can take a look, but if you have something on-the-top-of-your-head, i'm
+>> open to suggestions
+>> we can also just drop this completely and let userspace fail
+> 
+> Yeah it is tricky, this should be ideally implemented properly.
+> 
+>>>> +		dev_err(dmac->dma_dev.dev, "Direction not supported by this
+>>>> DMA Channel");
+>>>> +		return -EINVAL;
+>>>
+>>> So you intent to support slave dma but do not use dma_slave_config.. how
+>>> are you getting the slave address and other details?
+>>
+>> This DMA controller is a bit special.
+>> It gets synthesized in FPGA, so the configuration is fixed and cannot be
+>> changed at runtime. Maybe later we would allow/implement this
+>> functionality, but this is a question for my HDL colleagues.
+>>
+>> Two things are done (in this order):
+>> 1. For some paramters, axi_dmac_parse_chan_dt() is used to determine things
+>> from device-tree; as it's an FPGA core, things are synthesized once and
+>> cannot change (yet)
+>> 2. For other parameters, the axi_dmac_detect_caps() is used to guess some
+>> of them at probe time, by doing some reg reads/writes
+> 
+> So the question for you hw folks is how would a controller work with
+> multiple slave devices, do they need to synthesize it everytime?
+> 
+> Rather than that why cant they make the peripheral addresses
+> programmable so that you dont need updating fpga everytime!
+
+The DMA has a direct connection to the peripheral and the peripheral
+data port is not connected to the general purpose memory interconnect.
+So you can't write to it by an MMIO address and	 there is no address
+that needs to be configured. For an FPGA based design this is quite a
+good solution in terms of resource usage, performance and simplicity. A
+direct connection requires less resources than connection it to the
+central memory interconnect, while at the same time having lower latency
+and not eating up any additional bandwidth on the central memory connect.
+
+So slave config in this case is a noop and all it can do is verify that
+the requested configuration matches the available configuration.
+
