@@ -2,82 +2,230 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B965FD6CE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 03:31:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0708D6CF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 03:35:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727332AbfJOBbp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 21:31:45 -0400
-Received: from mga01.intel.com ([192.55.52.88]:21652 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726023AbfJOBbp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 21:31:45 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Oct 2019 18:31:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,297,1566889200"; 
-   d="scan'208";a="395378142"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by fmsmga005.fm.intel.com with ESMTP; 14 Oct 2019 18:31:44 -0700
-Date:   Mon, 14 Oct 2019 18:31:44 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andrea Arcangeli <aarcange@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: Re: [PATCH 01/14] KVM: monolithic: x86: remove kvm.ko
-Message-ID: <20191015013144.GC24895@linux.intel.com>
-References: <20190928172323.14663-1-aarcange@redhat.com>
- <20190928172323.14663-2-aarcange@redhat.com>
+        id S1726426AbfJOBfd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 21:35:33 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:37229 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726132AbfJOBfc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 21:35:32 -0400
+Received: by mail-io1-f67.google.com with SMTP id b19so42281376iob.4;
+        Mon, 14 Oct 2019 18:35:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LMY9A2MWun3N4rIjA8XhC7qKiKrGnVrImDpx4GGsAwM=;
+        b=NKclVLvn+bBs5xiuN7LD9CcQuO0U8OPvzkmuBFD1EQI0Y/k8p6R1yLgpLuPo/6vldX
+         IzUcWMwd1ydA/ALP4jkud3EvO0PCYjw0GJQ8XlBPRCyMRqHCOO8M6WfOG5MMSdLbMWu6
+         XiqAqUal8+s7GmGTfwgePoHg7ub2tw0d7xtC26JUrR6AdXlab/WR2MaRcOYQE+t88oEW
+         zHzNa/e5s8kWqt13Lop9Idl+v0esnOJNpPJ2YbevACcdIddPNzehT8P/d3QjqrmUNWdW
+         DJwR5yqKF0hSJ+P7yFdeow/55etT51DU9SQzbPSEBS3LvD+zI6juzHOPt9eVPJolzQXR
+         jiug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LMY9A2MWun3N4rIjA8XhC7qKiKrGnVrImDpx4GGsAwM=;
+        b=K84dbuNRqUUfrBqgXZpymrQ0gJCoZhohClfgH4xUteP0jCtlT0T4Xltk8pi3FVHqep
+         XIPKGCMcyAQMawES3XwG24NWk7+xUuPHksIjVbfI7jTG1s4oFrgPPZ4iGSThI1SEP+XV
+         LCUxQ/fcXaKuSSU48P5/2lTEvpzPu1y6owvYadgf4YkWhoXPnTdNdVUwcZb+r4JugTVQ
+         KiFhSxYC610t2t2HFSsH80qWhhA8lETV+ne6DGj9g06DzHMwwV9AlqYQ64xoasNi2gSx
+         dc5PdISK/bOA16cXBkL3DBvgWYbKwUfKj9PzaOOvRdwdEGX6irMzwYc88w2MM9YWaLK5
+         roZQ==
+X-Gm-Message-State: APjAAAVaElNqZHqQ0jL0rcR8bkR5pKk7WkPn7jihk2vLmpMFlCNwoR80
+        LD1pVJWnIJ4HTybhZg6VjQDfeV2guN1z1OUR2h0=
+X-Google-Smtp-Source: APXvYqz8Ha4k/ZFwcmxeOTXm/19dNF3CDpsOsle/rLaKbW5bnB3IWD8YdYulQnh7zwr5Jy3TUBgfsiWCOwQaltLCFtQ=
+X-Received: by 2002:a6b:e813:: with SMTP id f19mr11949466ioh.105.1571103331377;
+ Mon, 14 Oct 2019 18:35:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190928172323.14663-2-aarcange@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20191010083357.28982-1-vigneshr@ti.com> <20191010083357.28982-3-vigneshr@ti.com>
+In-Reply-To: <20191010083357.28982-3-vigneshr@ti.com>
+From:   Alim Akhtar <alim.akhtar@gmail.com>
+Date:   Tue, 15 Oct 2019 07:04:55 +0530
+Message-ID: <CAGOxZ51-ds99wNomK3xbws3G9nZgmhyox9k=fKrLmnJL68N2Vw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] scsi: ufs: Add driver for TI wrapper for Cadence
+ UFS IP
+To:     Vignesh Raghavendra <vigneshr@ti.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Martin K Petersen <martin.petersen@oracle.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        Janek Kotas <jank@cadence.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        nsekhar@ti.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 28, 2019 at 01:23:10PM -0400, Andrea Arcangeli wrote:
-> This is the first commit of a patch series that aims to replace the
-> modular kvm.ko kernel module with a monolithic kvm-intel/kvm-amd
-> model. This change has the only possible cons of wasting some disk
-> space in /lib/modules/. The pros are that it saves CPUS and some minor
-> RAM which are more scarse resources than disk space.
-> 
-> The pointer to function virtual template model cannot provide any
-> runtime benefit because kvm-intel and kvm-amd can't be loaded at the
-> same time.
-> 
-> This removes kvm.ko and it links and duplicates all kvm.ko objects to
-> both kvm-amd and kvm-intel.
+Hi Vignesh
 
-The KVM config option should be changed to a bool and its help text
-updated.  Maybe something similar to the help for VIRTUALIZATION to make
-it clear that enabling KVM on its own does nothing.
-
-> 
-> Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+On Thu, Oct 10, 2019 at 2:05 PM Vignesh Raghavendra <vigneshr@ti.com> wrote:
+>
+> TI's J721e SoC has a Cadence UFS IP with a TI specific wrapper. This is
+> a minimal driver to configure the wrapper. It releases the UFS slave
+> device out of reset and sets up registers to indicate PHY reference
+> clock input frequency before probing child Cadence UFS driver.
+>
+> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
 > ---
->  arch/x86/kvm/Makefile | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/Makefile b/arch/x86/kvm/Makefile
-> index 31ecf7a76d5a..68b81f381369 100644
-> --- a/arch/x86/kvm/Makefile
-> +++ b/arch/x86/kvm/Makefile
-> @@ -12,9 +12,8 @@ kvm-y			+= x86.o mmu.o emulate.o i8259.o irq.o lapic.o \
->  			   i8254.o ioapic.o irq_comm.o cpuid.o pmu.o mtrr.o \
->  			   hyperv.o page_track.o debugfs.o
->  
-> -kvm-intel-y		+= vmx/vmx.o vmx/vmenter.o vmx/pmu_intel.o vmx/vmcs12.o vmx/evmcs.o vmx/nested.o
-> -kvm-amd-y		+= svm.o pmu_amd.o
-> +kvm-intel-y		+= vmx/vmx.o vmx/vmenter.o vmx/pmu_intel.o vmx/vmcs12.o vmx/evmcs.o vmx/nested.o $(kvm-y)
-> +kvm-amd-y		+= svm.o pmu_amd.o $(kvm-y)
->  
-> -obj-$(CONFIG_KVM)	+= kvm.o
->  obj-$(CONFIG_KVM_INTEL)	+= kvm-intel.o
->  obj-$(CONFIG_KVM_AMD)	+= kvm-amd.o
+>
+> v2: No change
+>
+>  drivers/scsi/ufs/Kconfig        | 10 ++++
+>  drivers/scsi/ufs/Makefile       |  1 +
+>  drivers/scsi/ufs/ti-j721e-ufs.c | 90 +++++++++++++++++++++++++++++++++
+>  3 files changed, 101 insertions(+)
+>  create mode 100644 drivers/scsi/ufs/ti-j721e-ufs.c
+>
+> diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
+> index 0b845ab7c3bf..d14c2243e02a 100644
+> --- a/drivers/scsi/ufs/Kconfig
+> +++ b/drivers/scsi/ufs/Kconfig
+> @@ -132,6 +132,16 @@ config SCSI_UFS_HISI
+>           Select this if you have UFS controller on Hisilicon chipset.
+>           If unsure, say N.
+>
+> +config SCSI_UFS_TI_J721E
+> +       tristate "TI glue layer for Cadence UFS Controller"
+> +       depends on OF && HAS_IOMEM && (ARCH_K3 || COMPILE_TEST)
+> +       help
+> +         This selects driver for TI glue layer for Cadence UFS Host
+> +         Controller IP.
+> +
+> +         Selects this if you have TI platform with UFS controller.
+> +         If unsure, say N.
+> +
+>  config SCSI_UFS_BSG
+>         bool "Universal Flash Storage BSG device node"
+>         depends on SCSI_UFSHCD
+> diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
+> index 2a9097939bcb..94c6c5d7334b 100644
+> --- a/drivers/scsi/ufs/Makefile
+> +++ b/drivers/scsi/ufs/Makefile
+> @@ -11,3 +11,4 @@ obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
+>  obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
+>  obj-$(CONFIG_SCSI_UFS_HISI) += ufs-hisi.o
+>  obj-$(CONFIG_SCSI_UFS_MEDIATEK) += ufs-mediatek.o
+> +obj-$(CONFIG_SCSI_UFS_TI_J721E) += ti-j721e-ufs.o
+> diff --git a/drivers/scsi/ufs/ti-j721e-ufs.c b/drivers/scsi/ufs/ti-j721e-ufs.c
+> new file mode 100644
+> index 000000000000..a653bf1902f3
+> --- /dev/null
+> +++ b/drivers/scsi/ufs/ti-j721e-ufs.c
+> @@ -0,0 +1,90 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
+> +//
+> +
+> +#include <linux/clk.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +
+> +#define UFS_SS_CTRL            0x4
+> +#define UFS_SS_RST_N_PCS       BIT(0)
+> +#define UFS_SS_CLK_26MHZ       BIT(4)
+> +
+These looks like vendor specific defines, if so, please add TI_* suffix.
+
+> +static int ti_j721e_ufs_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev = &pdev->dev;
+> +       unsigned long clk_rate;
+> +       void __iomem *regbase;
+> +       struct clk *clk;
+> +       u32 reg = 0;
+> +       int ret;
+> +
+> +       regbase = devm_platform_ioremap_resource(pdev, 0);
+> +       if (IS_ERR(regbase))
+> +               return PTR_ERR(regbase);
+> +
+> +       /* Select MPHY refclk frequency */
+> +       clk = devm_clk_get(dev, NULL);
+> +       if (IS_ERR(clk)) {
+> +               dev_err(dev, "Cannot claim MPHY clock.\n");
+> +               return PTR_ERR(clk);
+> +       }
+No need to enable MPHY clock? Moreover this clock belongs to MPHY and
+should be handled using generic PHY framework to do that.
+> +       clk_rate = clk_get_rate(clk);
+> +       if (clk_rate == 26000000)
+> +               reg |= UFS_SS_CLK_26MHZ;
+> +       devm_clk_put(dev, clk);
+> +
+Is this only needed to select one bit in UFS_SS_CLK_26MHz? if so, just
+have a DT property and get this selection from there.
+
+> +       pm_runtime_enable(dev);
+> +       ret = pm_runtime_get_sync(dev);
+> +       if (ret < 0) {
+> +               pm_runtime_put_noidle(dev);
+> +               return ret;
+> +       }
+> +
+> +       /*  Take UFS slave device out of reset */
+> +       reg |= UFS_SS_RST_N_PCS;
+What is the default value of UFS_SS_CLK_26MHZ bit above? Incase 26MHZ
+is not set, then what is default?
+> +       writel(reg, regbase + UFS_SS_CTRL);
+> +
+> +       ret = of_platform_populate(pdev->dev.of_node, NULL, NULL,
+> +                                  dev);
+> +       if (ret) {
+> +               dev_err(dev, "failed to populate child nodes %d\n", ret);
+> +               pm_runtime_put_sync(dev);
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +static int ti_j721e_ufs_remove(struct platform_device *pdev)
+> +{
+> +       of_platform_depopulate(&pdev->dev);
+> +       pm_runtime_put_sync(&pdev->dev);
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct of_device_id ti_j721e_ufs_of_match[] = {
+> +       {
+> +               .compatible = "ti,j721e-ufs",
+> +       },
+> +       { },
+> +};
+> +
+> +static struct platform_driver ti_j721e_ufs_driver = {
+> +       .probe  = ti_j721e_ufs_probe,
+> +       .remove = ti_j721e_ufs_remove,
+> +       .driver = {
+> +               .name   = "ti-j721e-ufs",
+> +               .of_match_table = ti_j721e_ufs_of_match,
+> +       },
+> +};
+> +module_platform_driver(ti_j721e_ufs_driver);
+> +
+> +MODULE_AUTHOR("Vignesh Raghavendra <vigneshr@ti.com>");
+> +MODULE_DESCRIPTION("TI UFS host controller glue driver");
+> +MODULE_LICENSE("GPL v2");
+> --
+> 2.23.0
+>
+
+
+-- 
+Regards,
+Alim
