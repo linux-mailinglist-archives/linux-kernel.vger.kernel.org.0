@@ -2,68 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B40BFD7FA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:10:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76E74D7FB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:15:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389357AbfJOTKv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 15:10:51 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:38186 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389308AbfJOTKu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 15:10:50 -0400
-Received: by mail-oi1-f195.google.com with SMTP id m16so17827819oic.5;
-        Tue, 15 Oct 2019 12:10:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Rdx+RGcYZmE7xTrxPtMWVRt9GbBcLhSlDvK0sKaIe84=;
-        b=ILM1o6EZhPGrC1F0i4wtMC9Z56utKZIOKZohQ0sJwV7CgdszqsUuey91jTUlSF8fit
-         fhZOdok8mleNBEvkt/xsgaN8d0KdE6m20hgAd8BWNgNvj7ZYi6t/xX0bdFE36UEuRdxZ
-         MA0cwtRNh5oV4dfVX5+KjJ47/q9v9qIW8OjUonx8VhvtCASBfpe08pfKmbMiBCWlLaQl
-         7G6Di15qT28HXWi01lOggSopWye9HTo+gaicPhlzT+UpiVqxSw0P48TYZIzOvcliqRus
-         gZsd1hQMGFr+y9ICCVIUcjRQMZypYMwRYj8JGKaPA5JHyiWatEzIiMjDlOfudk7wrltm
-         9aZg==
-X-Gm-Message-State: APjAAAV332Mnjp4M6sR7jcHx8rBQWJvprwVwwovTpyEAydI4+HPt8YhG
-        8jo1H7VEVSN5sx0Bs5sxjg==
-X-Google-Smtp-Source: APXvYqx+m+Bb3C7kgH+eLbBDO+U5qtqn66b5kqCPYE/1rRFEDvRLKZS0IRkuc3gFAkT/j+pyxzRgCg==
-X-Received: by 2002:a54:4f87:: with SMTP id g7mr108763oiy.100.1571166649597;
-        Tue, 15 Oct 2019 12:10:49 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id l47sm7091562ota.56.2019.10.15.12.10.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2019 12:10:49 -0700 (PDT)
-Date:   Tue, 15 Oct 2019 14:10:48 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Kamel Bouhara <kamel.bouhara@bootlin.com>
-Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 0/4] i2c bus recovery for Microchip SoCs.
-Message-ID: <20191015191048.GA32065@bogus>
-References: <20191002144658.7718-1-kamel.bouhara@bootlin.com>
+        id S1730782AbfJOTPr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 15:15:47 -0400
+Received: from mail-eopbgr820055.outbound.protection.outlook.com ([40.107.82.55]:29120
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726399AbfJOTPr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 15:15:47 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KH4YaEMpmaoA+Phz51tHS6hO1BJJvORX5YtyRelPgOOa7uV7lpGgfYIjXdrgmIzLAaskzl4ScS8pcIrUwQUhS+7CkCmuSaOO9Hj3w9aUWW/SNFvHYWxua33NVJrk9oj6B8d4Xfa0oYdHuTjU0l1rkGR1Pzxu+/3a8eMVGSk8mG5Ez8QsU61nbws8QTk46hT9h/v6g4Dq9W7JT1rRaPPyXwTURrVisgzpDoJXIfZtl8d9ZjYB7oIcnmCotv6BeXjeE1GfnplVdPRXFepBXhbvdvCJ780cdv1bFMx4zaQttGfK/9kAnGkqIJjx7U6xsWy8P+TRtjgTM/k+DPyRwNBxMA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=seI6TbLbW8Se7sKaud8olhdkBZJ6KoGqXBHfj9FmowI=;
+ b=FBgi5pITFTIG3SDBxVEdMrdTwfy6+QxLBnqKLeHb/sUvtR7veK/LYmDgHUAbCO0gB8lHQ9Wk6nIUXsvfnbadAjZRP8H+G3o0P1Hiqn3fqKq0sEYA4k93d41iDbegHqiALZdyhCoXJEGc2ETFA3Dq9zbxt9cUcsKknXGYU/lAWZmQL/U/58YtbnxPALQBCfxWvcUBD03LCfGWul31x8U45ugbGzeNQhcL5x8f6w5wG9SYA2wUVXVgIgFPnsTHMe7avSnsFL0FvGN7JeyorR8BZNGL+4y+6c9Y94KSiF+w61/c8/0g8rilWDVrecHmRmGlNHiwkg/mrOVSJLKF5WzzSQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=seI6TbLbW8Se7sKaud8olhdkBZJ6KoGqXBHfj9FmowI=;
+ b=vtdo8zeLAGcGDWPEftfy1EPRdgSQgoZQxwie18anpcmRENQn1JvhG4izkWc7+MU/af2B+oex3AfrWjXopm2FocG0LpQ86kMAw3WPC5gNZgggvyaF+Vn3YRu0sNwJ7SY2N+cKggbiAb5L6KOb6gryAnbL8f9kMDPQ8mTaVDIBdl0=
+Received: from DM6PR12MB3370.namprd12.prod.outlook.com (20.178.198.25) by
+ DM6PR12MB3497.namprd12.prod.outlook.com (20.178.199.20) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2347.16; Tue, 15 Oct 2019 19:15:05 +0000
+Received: from DM6PR12MB3370.namprd12.prod.outlook.com
+ ([fe80::88a6:9681:d4cd:51d2]) by DM6PR12MB3370.namprd12.prod.outlook.com
+ ([fe80::88a6:9681:d4cd:51d2%6]) with mapi id 15.20.2347.023; Tue, 15 Oct 2019
+ 19:15:05 +0000
+From:   "Siqueira, Rodrigo" <Rodrigo.Siqueira@amd.com>
+To:     =?iso-8859-1?Q?Ville_Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+CC:     "Berthe, Abdoulaye" <Abdoulaye.Berthe@amd.com>,
+        "Wentland, Harry" <Harry.Wentland@amd.com>,
+        "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Manasi Navare <manasi.d.navare@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm: Add LT-tunable PHY repeater mode operations
+Thread-Topic: [PATCH] drm: Add LT-tunable PHY repeater mode operations
+Thread-Index: AQHVg14R21/cmlYs3kCpQ3lK2eqOFKdbuQoAgABZ6QA=
+Date:   Tue, 15 Oct 2019 19:15:04 +0000
+Message-ID: <20191015191502.zrngl6arydwazwr5@outlook.office365.com>
+References: <20191015134010.26zwopwnrbsmz5az@outlook.office365.com>
+ <20191015135314.GE1208@intel.com>
+In-Reply-To: <20191015135314.GE1208@intel.com>
+Accept-Language: en-CA, en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: YTXPR0101CA0046.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b00:1::23) To DM6PR12MB3370.namprd12.prod.outlook.com
+ (2603:10b6:5:38::25)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Rodrigo.Siqueira@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.55.250]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: ac1f49db-b617-45d8-adf1-08d751a3fc0e
+x-ms-office365-filtering-ht: Tenant
+x-ms-traffictypediagnostic: DM6PR12MB3497:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM6PR12MB34972B29E7E957AA8A84DCD798930@DM6PR12MB3497.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1443;
+x-forefront-prvs: 01917B1794
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(376002)(366004)(39860400002)(136003)(346002)(189003)(199004)(66556008)(66946007)(64756008)(66616009)(66476007)(66066001)(2906002)(11346002)(52116002)(6246003)(99286004)(966005)(446003)(186003)(66446008)(76176011)(6916009)(6512007)(9686003)(14454004)(6486002)(6436002)(256004)(26005)(25786009)(71200400001)(6306002)(8676002)(102836004)(81166006)(229853002)(81156014)(86362001)(5660300002)(1076003)(486006)(4326008)(316002)(8936002)(6116002)(478600001)(6506007)(71190400001)(386003)(54906003)(305945005)(476003)(3846002)(99936001)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3497;H:DM6PR12MB3370.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: hFdR+riYSceEf+mPBDoedb0Fy0Ro9KLejZ3/qwM5dshKGVvJECGyEpKlESFscJhRaBaUjKlSaKFK6ZyiE1F5l9RJFlYbJ0iSl5pPMZrARqi85/OatlWMkOrTXVvGpMhs7Z3IFVVr1r97P2aQquzy4+fgNNtTY/l8WTkTDqFPglSSjMwPP+9ykXS/JmtVKNWlCNkI11qpgcO8YmKgr8Yg6/MqNWxtR2sQyhLfHtXHRTMPsYhBHBYoUqO2ApXX+HVMOxVt3kSF7OY9MziE4j05YQXizQtS/ipVlwCT10ArEQLB0AMRQ4oNKuP4U872dHOdM7eT8zMTJAJX83/CclBvLMQwcDclHZlqCaNkmj3wkyaPyx0uvY3QxBrJZTShGSXhmlomoLjRr9+yErrcb4OGxI+CHuSoA1A3rnY5rge8DG0=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="udp5nohy3qs232fn"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191002144658.7718-1-kamel.bouhara@bootlin.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac1f49db-b617-45d8-adf1-08d751a3fc0e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2019 19:15:04.9132
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: TZ+bRyM1bB5rm1AwFJ0N4C5ozV/IAGYLnhzCau9CxTW5Fis1a27OkX95HMqIr1XMjLD8LiFYD6JgXjLtPdErTA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3497
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 04:46:54PM +0200, Kamel Bouhara wrote:
-> This patch series introduce the kernel i2c-gpio bus recovery mechanism
-> for the Microchip SoCs. Updated the corresponding dts to add i2c
-> gpio pinctrl. The bus recovery is configured for the sama5d3/4 xplained
-> boards in dts.
+--udp5nohy3qs232fn
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Now we have 2 drivers with the same binding and code for using GPIO for 
-bus recovery. Perhaps all this should be common.
+Applied to drm-misc-next.
 
-Rob
+Thanks
+
+On 10/15, Ville Syrj=E4l=E4 wrote:
+> On Tue, Oct 15, 2019 at 01:40:12PM +0000, Siqueira, Rodrigo wrote:
+> > LT-tunable PHY Repeaters can operate in two different modes: transparent
+> > (default) and non-transparent. The value 0x55 specifies the transparent
+> > mode, and 0xaa represents the non-transparent; this commit adds these
+> > two values as definitions.
+> >=20
+> > Cc: Abdoulaye Berthe <Abdoulaye.Berthe@amd.com>
+> > Cc: Harry Wentland <harry.wentland@amd.com>
+> > Cc: Leo Li <sunpeng.li@amd.com>
+> > Cc: Jani Nikula <jani.nikula@linux.intel.com>
+> > Cc: Manasi Navare <manasi.d.navare@intel.com>
+> > Cc: Ville Syrj=E4l=E4 <ville.syrjala@linux.intel.com>
+> > Signed-off-by: Abdoulaye Berthe <Abdoulaye.Berthe@amd.com>
+> > Signed-off-by: Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>
+>=20
+> Reviewed-by: Ville Syrj=E4l=E4 <ville.syrjala@linux.intel.com>
+>=20
+> > ---
+> >  include/drm/drm_dp_helper.h | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >=20
+> > diff --git a/include/drm/drm_dp_helper.h b/include/drm/drm_dp_helper.h
+> > index bf62b43aaf2b..cfadeeef8492 100644
+> > --- a/include/drm/drm_dp_helper.h
+> > +++ b/include/drm/drm_dp_helper.h
+> > @@ -1034,6 +1034,10 @@
+> >  #define DP_SYMBOL_ERROR_COUNT_LANE3_PHY_REPEATER1	    0xf003b /* 1.3 */
+> >  #define DP_FEC_STATUS_PHY_REPEATER1			    0xf0290 /* 1.4 */
+> > =20
+> > +/* Repeater modes */
+> > +#define DP_PHY_REPEATER_MODE_TRANSPARENT		    0x55    /* 1.3 */
+> > +#define DP_PHY_REPEATER_MODE_NON_TRANSPARENT		    0xaa    /* 1.3 */
+> > +
+> >  /* DP HDCP message start offsets in DPCD address space */
+> >  #define DP_HDCP_2_2_AKE_INIT_OFFSET		DP_HDCP_2_2_REG_RTX_OFFSET
+> >  #define DP_HDCP_2_2_AKE_SEND_CERT_OFFSET	DP_HDCP_2_2_REG_CERT_RX_OFFSET
+> > --=20
+> > 2.23.0
+>=20
+>=20
+>=20
+> --=20
+> Ville Syrj=E4l=E4
+> Intel
+
+--=20
+Rodrigo Siqueira
+Software Engineer, Advanced Micro Devices (AMD)
+https://siqueira.tech
+
+--udp5nohy3qs232fn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE4tZ+ii1mjMCMQbfkWJzP/comvP8FAl2mGrUACgkQWJzP/com
+vP9E+A//UaVzf/8YhouHYfbmraLJHyggL0dmRR9dfGUUUNBF94Nzpv0PCs08h5k0
+KWc/OwKJQq8pLkEqxw8w3AHIjfxJ9ElyTQAUEs4hR23egw8m3h+zCsO5y+TO6NU3
+SrZc2tQiX+7d5njYJXSzfVoZIiozl4ttsdA8uOXMNPSWAkk7aobgfTIxL2q0dvxq
+n3FtCFipfmtKJFTRKueZqfNfgQw4t9EPUsEYAmOmPTUlQd1l4dh1nL2+RkSTT8xs
+pEiVl+14aRU4yTmqQJbWQ10GBWBjs7pPw8/lJ0WUTy1ZMyZayOcjwwgrEWGCadfo
+JHLaqi2kyDCfDDGGUPAj94J/C4cc96fpiqyNlOKJdRHHPPelpJZ2kTvu6bkvSdhw
+FgPh1kapeKCP20sCeyGEBnuasMqyMoJGnZIMovsV5u8WbALUTzawGk/Zl8LxW06I
+Eod0t795DE3vOhTa8ip1lUi5rZigP2B7LmZ8/e0TtoiGbjgl9anqFVLuecwszaHm
+hXk1KuqQ0Ozlx7Q7DgFy5CnUPTovvT/i44TbG1+uWwGrWLGCcW8DnTpbjm5/WIkr
+QAN3PjBwkhWV+FQGlozYl4zc7WiQ7WqG168lUfcsFKTLyJpPyEAFudaTLazuJzq7
+0i3KKiCfVV5nxbfC+yVadM6wEkAqJiEr0dgiBTJuwI5yJ1wiuao=
+=OsbP
+-----END PGP SIGNATURE-----
+
+--udp5nohy3qs232fn--
