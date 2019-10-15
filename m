@@ -2,28 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 478D8D7FEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:20:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D534D7FD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:19:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389641AbfJOTUA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 15:20:00 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:45689 "EHLO
+        id S2389567AbfJOTTa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 15:19:30 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:45692 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389429AbfJOTSr (ORCPT
+        with ESMTP id S2389436AbfJOTSs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 15:18:47 -0400
+        Tue, 15 Oct 2019 15:18:48 -0400
 Received: from localhost ([127.0.0.1] helo=localhost.localdomain)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1iKSLE-00067i-Rw; Tue, 15 Oct 2019 21:18:45 +0200
+        id 1iKSLF-00067i-B6; Tue, 15 Oct 2019 21:18:45 +0200
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     tglx@linutronix.de,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 32/34] lib: Use CONFIG_PREEMPTION
-Date:   Tue, 15 Oct 2019 21:18:19 +0200
-Message-Id: <20191015191821.11479-33-bigeasy@linutronix.de>
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: [PATCH 33/34] tracing: Use CONFIG_PREEMPTION
+Date:   Tue, 15 Oct 2019 21:18:20 +0200
+Message-Id: <20191015191821.11479-34-bigeasy@linutronix.de>
 In-Reply-To: <20191015191821.11479-1-bigeasy@linutronix.de>
 References: <20191015191821.11479-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
@@ -37,27 +38,44 @@ CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by CONFIG_PREEMPT_RT.
 Both PREEMPT and PREEMPT_RT require the same functionality which today
 depends on CONFIG_PREEMPT.
 
-Let DEBUG_PREEMPT depend on CONFIG_PREEMPTION.
+Add additional header output for PREEMPT_RT.
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ingo Molnar <mingo@redhat.com>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- lib/Kconfig.debug | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/trace/ftrace-uses.rst | 2 +-
+ kernel/trace/trace.c                | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 93d97f9b01571..5aa5c9b263afa 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1053,7 +1053,7 @@ config DEBUG_TIMEKEEPING
+diff --git a/Documentation/trace/ftrace-uses.rst b/Documentation/trace/ftra=
+ce-uses.rst
+index 1fbc69894eed0..1e0020b0bc745 100644
+--- a/Documentation/trace/ftrace-uses.rst
++++ b/Documentation/trace/ftrace-uses.rst
+@@ -146,7 +146,7 @@ FTRACE_OPS_FL_RECURSION_SAFE
+ 	itself or any nested functions that those functions call.
 =20
- config DEBUG_PREEMPT
- 	bool "Debug preemptible kernel"
--	depends on DEBUG_KERNEL && PREEMPT && TRACE_IRQFLAGS_SUPPORT
-+	depends on DEBUG_KERNEL && PREEMPTION && TRACE_IRQFLAGS_SUPPORT
- 	default y
- 	help
- 	  If you say Y here then the kernel will use a debug variant of the
+ 	If this flag is set, it is possible that the callback will also
+-	be called with preemption enabled (when CONFIG_PREEMPT is set),
++	be called with preemption enabled (when CONFIG_PREEMPTION is set),
+ 	but this is not guaranteed.
+=20
+ FTRACE_OPS_FL_IPMODIFY
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 6a0ee91783656..c13caba27c368 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -3654,6 +3654,8 @@ print_trace_header(struct seq_file *m, struct trace_i=
+terator *iter)
+ 		   "desktop",
+ #elif defined(CONFIG_PREEMPT)
+ 		   "preempt",
++#elif defined(CONFIG_PREEMPT_RT)
++		   "preempt_rt",
+ #else
+ 		   "unknown",
+ #endif
 --=20
 2.23.0
 
