@@ -2,29 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 311ABD7FF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:20:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55B9ED7FCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:19:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389424AbfJOTSq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 15:18:46 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:45653 "EHLO
+        id S1729122AbfJOTSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 15:18:54 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:45694 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389386AbfJOTSm (ORCPT
+        with ESMTP id S2389440AbfJOTSs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 15:18:42 -0400
+        Tue, 15 Oct 2019 15:18:48 -0400
 Received: from localhost ([127.0.0.1] helo=localhost.localdomain)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1iKSL9-00067i-MN; Tue, 15 Oct 2019 21:18:39 +0200
+        id 1iKSLA-00067i-1z; Tue, 15 Oct 2019 21:18:40 +0200
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
-Cc:     tglx@linutronix.de, Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        linux-xtensa@linux-xtensa.org,
+Cc:     tglx@linutronix.de, "David S. Miller" <davem@davemloft.net>,
+        netdev@vger.kernel.org,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 20/34] xtensa: Use CONFIG_PREEMPTION
-Date:   Tue, 15 Oct 2019 21:18:07 +0200
-Message-Id: <20191015191821.11479-21-bigeasy@linutronix.de>
+Subject: [PATCH 21/34] net: Use CONFIG_PREEMPTION
+Date:   Tue, 15 Oct 2019 21:18:08 +0200
+Message-Id: <20191015191821.11479-22-bigeasy@linutronix.de>
 In-Reply-To: <20191015191821.11479-1-bigeasy@linutronix.de>
 References: <20191015191821.11479-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
@@ -40,55 +39,29 @@ CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by CONFIG_PREEMPT_RT.
 Both PREEMPT and PREEMPT_RT require the same functionality which today
 depends on CONFIG_PREEMPT.
 
-Switch the entry code over to use CONFIG_PREEMPTION. Add PREEMPT_RT
-output to die().
+Update the comment to use CONFIG_PREEMPTION.
 
-Cc: Chris Zankel <chris@zankel.net>
-Cc: Max Filippov <jcmvbkbc@gmail.com>
-Cc: linux-xtensa@linux-xtensa.org
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: netdev@vger.kernel.org
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-[bigeasy: +traps.c]
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- arch/xtensa/kernel/entry.S | 2 +-
- arch/xtensa/kernel/traps.c | 7 +++++--
- 2 files changed, 6 insertions(+), 3 deletions(-)
+ net/core/dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/xtensa/kernel/entry.S b/arch/xtensa/kernel/entry.S
-index 9e3676879168a..a6434813df6c8 100644
---- a/arch/xtensa/kernel/entry.S
-+++ b/arch/xtensa/kernel/entry.S
-@@ -520,7 +520,7 @@ ENTRY(kernel_exception)
- 	call4	schedule	# void schedule (void)
- 	j	1b
-=20
--#ifdef CONFIG_PREEMPT
-+#ifdef CONFIG_PREEMPTION
- 6:
- 	_bbci.l	a4, TIF_NEED_RESCHED, 4f
-=20
-diff --git a/arch/xtensa/kernel/traps.c b/arch/xtensa/kernel/traps.c
-index 4a6c495ce9b6d..2e7cf56412a05 100644
---- a/arch/xtensa/kernel/traps.c
-+++ b/arch/xtensa/kernel/traps.c
-@@ -524,12 +524,15 @@ DEFINE_SPINLOCK(die_lock);
- void die(const char * str, struct pt_regs * regs, long err)
+diff --git a/net/core/dev.c b/net/core/dev.c
+index bf3ed413abafe..11a60d69434bc 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -901,7 +901,7 @@ EXPORT_SYMBOL(dev_get_by_napi_id);
+  *
+  *	The use of raw_seqcount_begin() and cond_resched() before
+  *	retrying is required as we want to give the writers a chance
+- *	to complete when CONFIG_PREEMPT is not set.
++ *	to complete when CONFIG_PREEMPTION is not set.
+  */
+ int netdev_get_name(struct net *net, char *name, int ifindex)
  {
- 	static int die_counter;
-+	const char *pr =3D "";
-+
-+	if (IS_ENABLED(CONFIG_PREEMPTION))
-+		pr =3D IS_ENABLED(CONFIG_PREEMPT_RT) ? " PREEMPT_RT" : " PREEMPT";
-=20
- 	console_verbose();
- 	spin_lock_irq(&die_lock);
-=20
--	pr_info("%s: sig: %ld [#%d]%s\n", str, err, ++die_counter,
--		IS_ENABLED(CONFIG_PREEMPT) ? " PREEMPT" : "");
-+	pr_info("%s: sig: %ld [#%d]%s\n", str, err, ++die_counter, pr);
- 	show_regs(regs);
- 	if (!user_mode(regs))
- 		show_stack(NULL, (unsigned long*)regs->areg[1]);
 --=20
 2.23.0
 
