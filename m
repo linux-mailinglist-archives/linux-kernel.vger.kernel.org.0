@@ -2,20 +2,20 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAB19D733D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 12:29:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F17FCD733A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 12:29:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730601AbfJOK3H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 06:29:07 -0400
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:20477 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730313AbfJOK3F (ORCPT
+        id S1730206AbfJOK3A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 06:29:00 -0400
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:52155 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727242AbfJOK25 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 06:29:05 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=laijs@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Tf7A0ZJ_1571135332;
-Received: from localhost(mailfrom:laijs@linux.alibaba.com fp:SMTPD_---0Tf7A0ZJ_1571135332)
+        Tue, 15 Oct 2019 06:28:57 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R541e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01419;MF=laijs@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Tf7U3jR_1571135333;
+Received: from localhost(mailfrom:laijs@linux.alibaba.com fp:SMTPD_---0Tf7U3jR_1571135333)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 15 Oct 2019 18:28:52 +0800
+          Tue, 15 Oct 2019 18:28:53 +0800
 From:   Lai Jiangshan <laijs@linux.alibaba.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Lai Jiangshan <laijs@linux.alibaba.com>,
@@ -25,9 +25,9 @@ Cc:     Lai Jiangshan <laijs@linux.alibaba.com>,
         Steven Rostedt <rostedt@goodmis.org>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
-Subject: [PATCH 4/7] rcu: remove the declaration of call_rcu() in tree.h
-Date:   Tue, 15 Oct 2019 10:28:46 +0000
-Message-Id: <20191015102850.2079-2-laijs@linux.alibaba.com>
+Subject: [PATCH 5/7] rcu: move gp_state_names[] and gp_state_getname() to tree_stall.h
+Date:   Tue, 15 Oct 2019 10:28:47 +0000
+Message-Id: <20191015102850.2079-3-laijs@linux.alibaba.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191015102850.2079-1-laijs@linux.alibaba.com>
 References: <20191015102850.2079-1-laijs@linux.alibaba.com>
@@ -39,27 +39,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-call_rcu() is external RCU API declared in include/linux/,
-and doesn't need to be (re-)declared in internal files again.
+Only tree_stall.h needs to get name from GP state.
 
 Signed-off-by: Lai Jiangshan <jiangshanlai@gmail.com>
 Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
 ---
- kernel/rcu/tree.h | 1 -
- 1 file changed, 1 deletion(-)
+ kernel/rcu/tree.c       | 10 ----------
+ kernel/rcu/tree.h       | 12 ------------
+ kernel/rcu/tree_stall.h | 22 ++++++++++++++++++++++
+ 3 files changed, 22 insertions(+), 22 deletions(-)
 
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 7830d5a06e69..7db5ea06a9ed 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -529,16 +529,6 @@ static struct rcu_node *rcu_get_root(void)
+ 	return &rcu_state.node[0];
+ }
+ 
+-/*
+- * Convert a ->gp_state value to a character string.
+- */
+-static const char *gp_state_getname(short gs)
+-{
+-	if (gs < 0 || gs >= ARRAY_SIZE(gp_state_names))
+-		return "???";
+-	return gp_state_names[gs];
+-}
+-
+ /*
+  * Send along grace-period-related data for rcutorture diagnostics.
+  */
 diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-index f8e6c70cceef..823f475c5e35 100644
+index 823f475c5e35..75ae55b6270a 100644
 --- a/kernel/rcu/tree.h
 +++ b/kernel/rcu/tree.h
-@@ -412,7 +412,6 @@ static bool rcu_preempt_has_tasks(struct rcu_node *rnp);
- static int rcu_print_task_exp_stall(struct rcu_node *rnp);
- static void rcu_preempt_check_blocked_tasks(struct rcu_node *rnp);
- static void rcu_flavor_sched_clock_irq(int user);
--void call_rcu(struct rcu_head *head, rcu_callback_t func);
- static void dump_blkd_tasks(struct rcu_node *rnp, int ncheck);
- static void rcu_initiate_boost(struct rcu_node *rnp, unsigned long flags);
- static void rcu_preempt_boost_start_gp(struct rcu_node *rnp);
+@@ -367,18 +367,6 @@ struct rcu_state {
+ #define RCU_GP_CLEANUP   7	/* Grace-period cleanup started. */
+ #define RCU_GP_CLEANED   8	/* Grace-period cleanup complete. */
+ 
+-static const char * const gp_state_names[] = {
+-	"RCU_GP_IDLE",
+-	"RCU_GP_WAIT_GPS",
+-	"RCU_GP_DONE_GPS",
+-	"RCU_GP_ONOFF",
+-	"RCU_GP_INIT",
+-	"RCU_GP_WAIT_FQS",
+-	"RCU_GP_DOING_FQS",
+-	"RCU_GP_CLEANUP",
+-	"RCU_GP_CLEANED",
+-};
+-
+ /*
+  * In order to export the rcu_state name to the tracing tools, it
+  * needs to be added in the __tracepoint_string section.
+diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
+index 806f2ddc8f74..0b75426ebb3e 100644
+--- a/kernel/rcu/tree_stall.h
++++ b/kernel/rcu/tree_stall.h
+@@ -277,6 +277,28 @@ static void print_cpu_stall_fast_no_hz(char *cp, int cpu)
+ 
+ #endif /* #else #ifdef CONFIG_RCU_FAST_NO_HZ */
+ 
++static const char * const gp_state_names[] = {
++	[RCU_GP_IDLE] = "RCU_GP_IDLE",
++	[RCU_GP_WAIT_GPS] = "RCU_GP_WAIT_GPS",
++	[RCU_GP_DONE_GPS] = "RCU_GP_DONE_GPS",
++	[RCU_GP_ONOFF] = "RCU_GP_ONOFF",
++	[RCU_GP_INIT] = "RCU_GP_INIT",
++	[RCU_GP_WAIT_FQS] = "RCU_GP_WAIT_FQS",
++	[RCU_GP_DOING_FQS] = "RCU_GP_DOING_FQS",
++	[RCU_GP_CLEANUP] = "RCU_GP_CLEANUP",
++	[RCU_GP_CLEANED] = "RCU_GP_CLEANED",
++};
++
++/*
++ * Convert a ->gp_state value to a character string.
++ */
++static const char *gp_state_getname(short gs)
++{
++	if (gs < 0 || gs >= ARRAY_SIZE(gp_state_names))
++		return "???";
++	return gp_state_names[gs];
++}
++
+ /*
+  * Print out diagnostic information for the specified stalled CPU.
+  *
 -- 
 2.20.1
 
