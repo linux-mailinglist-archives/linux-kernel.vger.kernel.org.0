@@ -2,148 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4C94D7142
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 10:40:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26038D716B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 10:48:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729319AbfJOIkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 04:40:08 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:39215 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726275AbfJOIkI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 04:40:08 -0400
-Received: by mail-yw1-f67.google.com with SMTP id n11so7052107ywn.6
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 01:40:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AqJilFgL4FnU7FTEYnrwYFbssjg64wIXPF6xmLsOmPw=;
-        b=dMv5o/28lV5eqQ6bsstF+8kQTU23HpHM7uGA1mQx9OL8DufixiTQBhQczwb9OZFYYd
-         7W3cA2GyJed1k6hXVr/2rwc3AX6DJgZ3fQkDiaw+7l1yVgu2ZIXaPzA9kX08sm87OeAM
-         FHNxHoazD5b78yRw0zB7eEiE82F/JskUc7JsqDiXies4CyeBbO2EKG4DTSl32NqdhIfx
-         6h7ICpf2yVbyT4NB4KWkpjk22CMGUG0adfxOhwVuaxE/drTDYt2FMC9CvUWdvcJPn64q
-         H5oj5wSKb/hqXX3KhJalYdybL5MxH3ZboqDcmr0V8yvqmkIGQIMxj1j2P4/8zTvqfjOb
-         zHMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AqJilFgL4FnU7FTEYnrwYFbssjg64wIXPF6xmLsOmPw=;
-        b=SsR7UMR26cTNVLa4Yh5ajcmLjDoNVS31qfYX55XMs+OZDJyMwVo2yhQfcm2aOOIMV1
-         XWQEtJC/B5G7kgPic9LusRjkQ6Yjqp0vAIX6afvmFQzwkStR1VuF10BvDyItNSXdurdy
-         gFe3gIMtYUC+vRp45PtDskuP97PujX+FkvhghFnnXFFwvi8xyfLVvqQtxlgXGJJO4xrc
-         8z1X6lfBB6exvGyT9neW2XMlzkVgbEja+Bali+oxX+s1EvQn6C+xuCGfMbUSEG+E6wC8
-         ASNLx4eeo+2S1tX1oLdH+IlmqlKbgL0b3RTOMkG074geKBfIAuXsaBSyl6EOlzKiVnYE
-         Vgqw==
-X-Gm-Message-State: APjAAAVbFqOJHXV6TldleN2+0XGsvYncZN5kDVFVlBfiJDfOev14gJ4v
-        7HJLXZM+3GwbOIGA4QDytS6V3ZUTbw4PRJ2qrUTwCA==
-X-Google-Smtp-Source: APXvYqzu3fgAZn0e8gU0Hx3m9VF7LBh6xTjczQQEqITtlLvVTjf0aPPLvwy/C+DdGBt9KgMh8hPRtceTv89bTUbMWlA=
-X-Received: by 2002:a81:996:: with SMTP id 144mr16495099ywj.57.1571128807207;
- Tue, 15 Oct 2019 01:40:07 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191010073055.183635-1-suleiman@google.com> <20191010073055.183635-3-suleiman@google.com>
- <2e6e5b14-fa68-67bd-1436-293659c8d92c@redhat.com>
-In-Reply-To: <2e6e5b14-fa68-67bd-1436-293659c8d92c@redhat.com>
-From:   Suleiman Souhlal <suleiman@google.com>
-Date:   Tue, 15 Oct 2019 17:39:55 +0900
-Message-ID: <CABCjUKAsO9bOW9-VW1gk0O_U=9V6Zhft8LjpcqXVbDVTvWJ5Hw@mail.gmail.com>
-Subject: Re: [RFC v2 2/2] x86/kvmclock: Introduce kvm-hostclock clocksource.
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     rkrcmar@redhat.com, Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>, sboyd@kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        kvm@vger.kernel.org, Suleiman Souhlal <ssouhlal@freebsd.org>,
-        tfiga@chromium.org, Vitaly Kuznetsov <vkuznets@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1729410AbfJOIsH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 04:48:07 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:59346 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726430AbfJOIsH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 04:48:07 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D22B51A07CA;
+        Tue, 15 Oct 2019 10:48:04 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 03A8E1A0460;
+        Tue, 15 Oct 2019 10:47:58 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 613E5402B3;
+        Tue, 15 Oct 2019 16:47:49 +0800 (SGT)
+From:   Xiaowei Bao <xiaowei.bao@nxp.com>
+To:     Zhiqiang.Hou@nxp.com, bhelgaas@google.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, shawnguo@kernel.org, leoyang.li@nxp.com,
+        kishon@ti.com, lorenzo.pieralisi@arm.com, Minghuan.Lian@nxp.com,
+        andrew.murray@arm.com, mingkai.hu@nxp.com,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Xiaowei Bao <xiaowei.bao@nxp.com>
+Subject: [PATCH v2 0/6] Add the Mobiveil EP and Layerscape Gen4 EP driver support
+Date:   Tue, 15 Oct 2019 16:36:56 +0800
+Message-Id: <20191015083702.21792-1-xiaowei.bao@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 7:55 PM Paolo Bonzini <pbonzini@redhat.com> wrote:
->
-> On 10/10/19 09:30, Suleiman Souhlal wrote:
-> > +kvm_hostclock_enable(struct clocksource *cs)
-> > +{
-> > +     pv_timekeeper_enabled = 1;
-> > +
-> > +     old_vclock_mode = kvm_clock.archdata.vclock_mode;
-> > +     kvm_clock.archdata.vclock_mode = VCLOCK_TSC;
-> > +     return 0;
-> > +}
-> > +
-> > +static void
-> > +kvm_hostclock_disable(struct clocksource *cs)
-> > +{
-> > +     pv_timekeeper_enabled = 0;
-> > +     kvm_clock.archdata.vclock_mode = old_vclock_mode;
-> > +}
-> > +
->
-> Why do you poke at kvm_clock?  Instead you should add
->
->         .archdata               = { .vclock_mode = VCLOCK_TSC },
->
-> to the kvm_hostclock declaration.
+This patch set are for adding Mobiveil EP driver and adding PCIe Gen4
+EP driver of NXP Layerscape platform.
 
-Yeah, what I was doing does not make sense.
+This patch set depends on:
+https://patchwork.kernel.org/project/linux-pci/list/?series=159139
 
-> Please also check that the invariant TSC CPUID bit
-> CPUID[0x80000007].EDX[8] is set before enabling this feature.
+Xiaowei Bao (6):
+  PCI: mobiveil: Add the EP driver support
+  dt-bindings: Add DT binding for PCIE GEN4 EP of the layerscape
+  PCI: mobiveil: Add PCIe Gen4 EP driver for NXP Layerscape SoCs
+  PCI: mobiveil: Add workaround for unsupported request error
+  arm64: dts: lx2160a: Add PCIe EP node
+  misc: pci_endpoint_test: Add the layerscape PCIe GEN4 EP device
+    support
 
-Will do.
+ .../bindings/pci/layerscape-pcie-gen4.txt          |  27 +-
+ MAINTAINERS                                        |   3 +
+ arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi     |  56 ++
+ drivers/misc/pci_endpoint_test.c                   |   2 +
+ drivers/pci/controller/mobiveil/Kconfig            |  22 +-
+ drivers/pci/controller/mobiveil/Makefile           |   2 +
+ .../controller/mobiveil/pcie-layerscape-gen4-ep.c  | 169 ++++++
+ drivers/pci/controller/mobiveil/pcie-mobiveil-ep.c | 569 +++++++++++++++++++++
+ drivers/pci/controller/mobiveil/pcie-mobiveil.c    |  99 +++-
+ drivers/pci/controller/mobiveil/pcie-mobiveil.h    |  72 +++
+ 10 files changed, 1009 insertions(+), 12 deletions(-)
+ create mode 100644 drivers/pci/controller/mobiveil/pcie-layerscape-gen4-ep.c
+ create mode 100644 drivers/pci/controller/mobiveil/pcie-mobiveil-ep.c
 
->
-> Paolo
->
-> > +     pvtk = &pv_timekeeper;
-> > +     do {
-> > +             gen = pvtk_read_begin(pvtk);
-> > +             if (!(pv_timekeeper.flags & PVCLOCK_TIMEKEEPER_ENABLED))
-> > +                     return;
-> > +
-> > +             pvclock_copy_into_read_base(pvtk, &tk->tkr_mono,
-> > +                 &pvtk->tkr_mono);
-> > +             pvclock_copy_into_read_base(pvtk, &tk->tkr_raw, &pvtk->tkr_raw);
-> > +
-> > +             tk->xtime_sec = pvtk->xtime_sec;
-> > +             tk->ktime_sec = pvtk->ktime_sec;
-> > +             tk->wall_to_monotonic.tv_sec = pvtk->wall_to_monotonic_sec;
-> > +             tk->wall_to_monotonic.tv_nsec = pvtk->wall_to_monotonic_nsec;
-> > +             tk->offs_real = pvtk->offs_real;
-> > +             tk->offs_boot = pvtk->offs_boot;
-> > +             tk->offs_tai = pvtk->offs_tai;
-> > +             tk->raw_sec = pvtk->raw_sec;
-> > +     } while (pvtk_read_retry(pvtk, gen));
-> > +}
-> > +
->
-> Should you write an "enabled value" (basically the flags) into pvtk as well?
+-- 
+2.9.5
 
-I think we have that already (pvtk->flags).
-I'll change the if statement above to use pvtk instead of pv_timekeeper.
-
-> > +kvm_hostclock_init(void)
-> > +{
-> > +     unsigned long pa;
-> > +
-> > +     pa = __pa(&pv_timekeeper);
-> > +     wrmsrl(MSR_KVM_TIMEKEEPER_EN, pa);
->
->
-> As Vitaly said, a new CPUID bit must be defined in
-> Documentation/virt/kvm/cpuid.txt, and used here.  Also please make bit 0
-> an enable bit.
-
-I think I might not be able to move the enable bit to 0 because we
-need the generation count (pvclock_timekeeper.gen) to be the first
-word of the struct due to the way we copy the data to userspace,
-similarly to how kvm_setup_pvclock_page() does it.
-
-I also noticed the comment in kvm_copy_into_pvtk() references the
-wrong function, which I will fix in the next revision.
-
-Thanks for the feedback.
-
--- Suleiman
