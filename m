@@ -2,188 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAA51D797C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 17:12:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08735D7974
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 17:11:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733224AbfJOPMI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 11:12:08 -0400
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:38110 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726523AbfJOPMH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 11:12:07 -0400
+        id S1732891AbfJOPL0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 11:11:26 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:43243 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726523AbfJOPL0 (ORCPT
+        <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 11:11:26 -0400
+Received: by mail-qt1-f195.google.com with SMTP id t20so25702897qtr.10
+        for <Linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 08:11:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1571152327; x=1602688327;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=I1HQ40Yz5nhSZHj8Efhb8t+NSkA4Lqjdb0qM50SZFGE=;
-  b=TcD43VO/1iCB9ASKOj4EI8nJPi9aBpk6ktHfeH6Pu92UqpqeRGHWCdWm
-   7NICjH2wf4oV4IOd5uU70/a5QBUOGvqZ++6QuoxQcXCJYFh+SIizz3GjJ
-   wrBBGK8K3qgpwb954jOVvACxdo3Kcq02wzh3vhhkaveOtnuyotKQi5Z0N
-   8=;
-X-IronPort-AV: E=Sophos;i="5.67,300,1566864000"; 
-   d="scan'208";a="429292546"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2b-859fe132.us-west-2.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 15 Oct 2019 15:12:05 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
-        by email-inbound-relay-2b-859fe132.us-west-2.amazon.com (Postfix) with ESMTPS id D71E922186A;
-        Tue, 15 Oct 2019 15:12:04 +0000 (UTC)
-Received: from EX13D13EUA004.ant.amazon.com (10.43.165.22) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Tue, 15 Oct 2019 15:12:04 +0000
-Received: from localhost (10.43.161.223) by EX13D13EUA004.ant.amazon.com
- (10.43.165.22) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Tue, 15 Oct
- 2019 15:12:03 +0000
-From:   Yuri Volchkov <volchkov@amazon.de>
-To:     <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>
-CC:     <joro@8bytes.org>, <bhelgaas@google.com>, <dwmw2@infradead.org>,
-        <neugebar@amazon.co.uk>, Yuri Volchkov <volchkov@amazon.de>
-Subject: [PATCH 2/2] iommu/dmar: catch early fault occurrences
-Date:   Tue, 15 Oct 2019 17:11:12 +0200
-Message-ID: <20191015151112.17225-3-volchkov@amazon.de>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191015151112.17225-1-volchkov@amazon.de>
-References: <20191015151112.17225-1-volchkov@amazon.de>
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+GV7lls91NbEz69rkgCFKrFFp0YlWtB12S3sy3CsNSc=;
+        b=NgXUXhOdQKUuLgTMppjJoXe+DIgNYmfq7CkO9w8XBx/HzuDLVt+aR8GyRkyiCj4bWP
+         9eR+6c9gwaUH/iR53eBL9PZ8kQruxgcD8WbvgvXHsw5RuM8Bv1tulPcsXwTCyUKaWUGP
+         aJP1O2hypFsiuAQ+sbBqStgro5VYaHeJ94pA5UXpjgfd2uyIltUEfb3KObB6bJHU0mJ2
+         42qMPHoykxb/dYRvfHRkBnk3q5mh9ly8GEAbrMlwbaZ3Ot9IyJgVI1OLVrhrIgddjPse
+         91m7Y4FQBkW4SlhTK98/nhaPGpGRyDovAlKXwT4EffAVzV2MYA9mnXnBmGDIpXF0WxqG
+         kGYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+GV7lls91NbEz69rkgCFKrFFp0YlWtB12S3sy3CsNSc=;
+        b=heSqtqzu24kJaNxyyUeZyOOn3Iho0BBSmO2+J1lwutR/w+GDhArF6pURVHbFdjhuDy
+         pU8w+HKGLwtOpoKTadKacZRsjlIniO5B54+12GbxI7H9sW8ju2LT8qdwiqrRVHsySxHG
+         ykUaCVpeA6ucuwS43686hSiMVgS/H874T8aLtwpO8muiahSAa+2+4kigUgdr60Pf0b/3
+         Y1MTxdpDHYewv1lC+u6uK+Z5z9p3KXfpofxi02JLA7rFp6S3/ntaUfyf2vV7gzlFgp8v
+         DvyooQAtsk880mp6Y8VNsxx0yPgmE83CXtcKDah28EMrmxzsl5Ea2j2zlWlESaMk7hIG
+         JhkA==
+X-Gm-Message-State: APjAAAUXCeUFddsEjnKXoHamZQQkM2aYWjPHF3w3xyofOV7y6UHvLthT
+        r5OvjnhRvl6MldhiEyreY3w=
+X-Google-Smtp-Source: APXvYqxE1J64PreUzsPx4hlYCPNl3d94xuBJUPPm+b35UVPT4r7jm09Iq7pSLzr4lSiJ7OnchHvBNg==
+X-Received: by 2002:ac8:363c:: with SMTP id m57mr39128185qtb.290.1571152284746;
+        Tue, 15 Oct 2019 08:11:24 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.35.50])
+        by smtp.gmail.com with ESMTPSA id m63sm10256991qkc.72.2019.10.15.08.11.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2019 08:11:23 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 8D72F4DD66; Tue, 15 Oct 2019 12:11:21 -0300 (-03)
+Date:   Tue, 15 Oct 2019 12:11:21 -0300
+To:     "Jin, Yao" <yao.jin@linux.intel.com>
+Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Jiri Olsa <jolsa@redhat.com>, jolsa@kernel.org,
+        peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
+        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH] perf stat: Support --all-kernel/--all-user
+Message-ID: <20191015151121.GD25820@kernel.org>
+References: <20191011050545.3899-1-yao.jin@linux.intel.com>
+ <20191014144208.GC9700@krava>
+ <20191014162339.GN19627@kernel.org>
+ <2672b8ea-06f2-d828-3da0-da0e59f2eb9d@linux.intel.com>
 MIME-Version: 1.0
-X-Originating-IP: [10.43.161.223]
-X-ClientProxiedBy: EX13D10UWA002.ant.amazon.com (10.43.160.228) To
- EX13D13EUA004.ant.amazon.com (10.43.165.22)
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2672b8ea-06f2-d828-3da0-da0e59f2eb9d@linux.intel.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-First dmar faults can happen even before linux have scanned PCI
-bus. In such case worker will not have chance to lookup a
-corresponding 'struct pci_dev'.
+Em Tue, Oct 15, 2019 at 09:57:33AM +0800, Jin, Yao escreveu:
+> 
+> 
+> On 10/15/2019 12:23 AM, Arnaldo Carvalho de Melo wrote:
+> > Em Mon, Oct 14, 2019 at 04:42:08PM +0200, Jiri Olsa escreveu:
+> > > On Fri, Oct 11, 2019 at 01:05:45PM +0800, Jin Yao wrote:
+> > > > perf record has supported --all-kernel / --all-user to configure all
+> > > > used events to run in kernel space or run in user space. But perf
+> > > > stat doesn't support these options.
+> > > > 
+> > > > It would be useful to support these options in perf-stat too to keep
+> > > > the same semantics.
+> > > > 
+> > > > Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+> > > 
+> > > Acked-by: Jiri Olsa <jolsa@kernel.org>
+> > 
+> > What happens if one asks for both? From the patch only the --all-kernel
+> > will stick, right? Is that the behaviour for 'perf record'? Lemme see,
+> > as I recall having this discussion at that time...
+> > 
+> > Yeah, same thing, and looking at that I wonder why we dong use
+> > perf_evsel__config() in 'perf stat'...
+> > 
+> > Ok, I'm going to apply it.
+> > 
+> 
+> Hi Arnaldo,
+> 
+> If we specify both, we will see the error.
 
-This commit defers processing of the fault until intel_iommu_init
-function has been called. At this point of time pci devices will be
-already initialized.
+Cool, I looked for this code and couldn't quickly spot it nor tried
+running with both to see what happened, my bad, thanks for replying and
+making sure that that is the behaviour.
+ 
+> root@kbl:~# perf stat --all-kernel --all-user -a -- sleep 1
+>  Error: option `all-user' cannot be used with all-kernel
+> 
+> root@kbl:~# perf record --all-kernel --all-user -a -- sleep 1
+>  Error: option `all-user' cannot be used with all-kernel
+> 
+> For why I don't set them in perf_evsel__config, because perf_evsel__config
+> is called in record but not called in stat.
 
-Signed-off-by: Yuri Volchkov <volchkov@amazon.de>
----
- drivers/iommu/dmar.c        | 51 ++++++++++++++++++++++++++++++++++++-
- drivers/iommu/intel-iommu.c |  1 +
- include/linux/intel-iommu.h |  1 +
- 3 files changed, 52 insertions(+), 1 deletion(-)
+Ok, at some point we should try and check if we could make 'perf stat'
+use perf_evsel__config(), even if we have to separate what is shared
+into some __perf_evsel__config() that then gets called by 'perf stat'
+while the preexisting perf_evsel__config() calls it and does things
+that don't make sense for 'perf stat'.
+ 
+> Thanks for reviewing and applying this patch.
 
-diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-index 0749873e3e41..8db2af3de29f 100644
---- a/drivers/iommu/dmar.c
-+++ b/drivers/iommu/dmar.c
-@@ -1674,7 +1674,10 @@ void dmar_msi_read(int irq, struct msi_msg *msg)
- }
+You're welcome!
+
+- Arnaldo
  
- struct dmar_fault_info {
--	struct work_struct work;
-+	union {
-+		struct work_struct work;
-+		struct list_head backlog_list;
-+	};
- 	struct intel_iommu *iommu;
- 	int type;
- 	int pasid;
-@@ -1757,12 +1760,58 @@ static int dmar_fault_handle_one(struct dmar_fault_info *info)
- 	return 0;
- }
- 
-+struct fault_backlog {
-+	struct list_head queue;
-+	struct mutex lock;
-+	bool is_active;
-+};
-+
-+static struct fault_backlog fault_backlog = {
-+	.queue = LIST_HEAD_INIT(fault_backlog.queue),
-+	.lock = __MUTEX_INITIALIZER(fault_backlog.lock),
-+	.is_active = true,
-+};
-+
-+void dmar_process_deferred_faults(void)
-+{
-+	struct dmar_fault_info *info, *tmp;
-+
-+	mutex_lock(&fault_backlog.lock);
-+	WARN_ON(!fault_backlog.is_active);
-+
-+	list_for_each_entry_safe(info, tmp, &fault_backlog.queue,
-+				 backlog_list) {
-+		dmar_fault_handle_one(info);
-+		list_del(&info->backlog_list);
-+		free_dmar_fault_info(info);
-+	}
-+	fault_backlog.is_active = false;
-+	mutex_unlock(&fault_backlog.lock);
-+}
-+
- static void dmar_fault_handle_work(struct work_struct *work)
- {
- 	struct dmar_fault_info *info;
- 
- 	info = container_of(work, struct dmar_fault_info, work);
- 
-+	if (fault_backlog.is_active) {
-+		/* Postpone handling until PCI devices will be
-+		 * initialized
-+		 */
-+
-+		mutex_lock(&fault_backlog.lock);
-+		if (!fault_backlog.is_active) {
-+			mutex_unlock(&fault_backlog.lock);
-+			goto process;
-+		}
-+
-+		list_add(&info->backlog_list, &fault_backlog.queue);
-+		mutex_unlock(&fault_backlog.lock);
-+		return;
-+	}
-+
-+process:
- 	dmar_fault_handle_one(info);
- 	free_dmar_fault_info(info);
- }
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 3f974919d3bd..a97c05fac5e9 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -5041,6 +5041,7 @@ int __init intel_iommu_init(void)
- 		iommu_disable_protect_mem_regions(iommu);
- 	}
- 	pr_info("Intel(R) Virtualization Technology for Directed I/O\n");
-+	dmar_process_deferred_faults();
- 
- 	intel_iommu_enabled = 1;
- 	intel_iommu_debugfs_init();
-diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index f8963c833fb0..480a31b41263 100644
---- a/include/linux/intel-iommu.h
-+++ b/include/linux/intel-iommu.h
-@@ -649,6 +649,7 @@ extern void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
- extern int qi_submit_sync(struct qi_desc *desc, struct intel_iommu *iommu);
- 
- extern int dmar_ir_support(void);
-+extern void dmar_process_deferred_faults(void);
- 
- void *alloc_pgtable_page(int node);
- void free_pgtable_page(void *vaddr);
+> Thanks
+> Jin Yao
+> 
+> > > thanks,
+> > > jirka
+> > > 
+> > > > ---
+> > > >   tools/perf/Documentation/perf-stat.txt |  6 ++++++
+> > > >   tools/perf/builtin-stat.c              |  6 ++++++
+> > > >   tools/perf/util/stat.c                 | 10 ++++++++++
+> > > >   tools/perf/util/stat.h                 |  2 ++
+> > > >   4 files changed, 24 insertions(+)
+> > > > 
+> > > > diff --git a/tools/perf/Documentation/perf-stat.txt b/tools/perf/Documentation/perf-stat.txt
+> > > > index 930c51c01201..a9af4e440e80 100644
+> > > > --- a/tools/perf/Documentation/perf-stat.txt
+> > > > +++ b/tools/perf/Documentation/perf-stat.txt
+> > > > @@ -323,6 +323,12 @@ The output is SMI cycles%, equals to (aperf - unhalted core cycles) / aperf
+> > > >   Users who wants to get the actual value can apply --no-metric-only.
+> > > > +--all-kernel::
+> > > > +Configure all used events to run in kernel space.
+> > > > +
+> > > > +--all-user::
+> > > > +Configure all used events to run in user space.
+> > > > +
+> > > >   EXAMPLES
+> > > >   --------
+> > > > diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> > > > index 468fc49420ce..c88d4e118409 100644
+> > > > --- a/tools/perf/builtin-stat.c
+> > > > +++ b/tools/perf/builtin-stat.c
+> > > > @@ -803,6 +803,12 @@ static struct option stat_options[] = {
+> > > >   	OPT_CALLBACK('M', "metrics", &evsel_list, "metric/metric group list",
+> > > >   		     "monitor specified metrics or metric groups (separated by ,)",
+> > > >   		     parse_metric_groups),
+> > > > +	OPT_BOOLEAN_FLAG(0, "all-kernel", &stat_config.all_kernel,
+> > > > +			 "Configure all used events to run in kernel space.",
+> > > > +			 PARSE_OPT_EXCLUSIVE),
+> > > > +	OPT_BOOLEAN_FLAG(0, "all-user", &stat_config.all_user,
+> > > > +			 "Configure all used events to run in user space.",
+> > > > +			 PARSE_OPT_EXCLUSIVE),
+> > > >   	OPT_END()
+> > > >   };
+> > > > diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
+> > > > index ebdd130557fb..6822e4ffe224 100644
+> > > > --- a/tools/perf/util/stat.c
+> > > > +++ b/tools/perf/util/stat.c
+> > > > @@ -490,6 +490,16 @@ int create_perf_stat_counter(struct evsel *evsel,
+> > > >   	if (config->identifier)
+> > > >   		attr->sample_type = PERF_SAMPLE_IDENTIFIER;
+> > > > +	if (config->all_user) {
+> > > > +		attr->exclude_kernel = 1;
+> > > > +		attr->exclude_user   = 0;
+> > > > +	}
+> > > > +
+> > > > +	if (config->all_kernel) {
+> > > > +		attr->exclude_kernel = 0;
+> > > > +		attr->exclude_user   = 1;
+> > > > +	}
+> > > > +
+> > > >   	/*
+> > > >   	 * Disabling all counters initially, they will be enabled
+> > > >   	 * either manually by us or by kernel via enable_on_exec
+> > > > diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
+> > > > index edbeb2f63e8d..081c4a5113c6 100644
+> > > > --- a/tools/perf/util/stat.h
+> > > > +++ b/tools/perf/util/stat.h
+> > > > @@ -106,6 +106,8 @@ struct perf_stat_config {
+> > > >   	bool			 big_num;
+> > > >   	bool			 no_merge;
+> > > >   	bool			 walltime_run_table;
+> > > > +	bool			 all_kernel;
+> > > > +	bool			 all_user;
+> > > >   	FILE			*output;
+> > > >   	unsigned int		 interval;
+> > > >   	unsigned int		 timeout;
+> > > > -- 
+> > > > 2.17.1
+> > > > 
+> > 
+
 -- 
-2.23.0
 
-
-
-
-Amazon Development Center Germany GmbH
-Krausenstr. 38
-10117 Berlin
-Geschaeftsfuehrung: Christian Schlaeger, Ralf Herbrich
-Eingetragen am Amtsgericht Charlottenburg unter HRB 149173 B
-Sitz: Berlin
-Ust-ID: DE 289 237 879
-
-
-
+- Arnaldo
