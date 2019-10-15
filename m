@@ -2,55 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCD27D73AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 12:45:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C026D73B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 12:46:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731230AbfJOKpc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 06:45:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46996 "EHLO mail.kernel.org"
+        id S1731276AbfJOKpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 06:45:50 -0400
+Received: from 8bytes.org ([81.169.241.247]:47402 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727156AbfJOKpc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 06:45:32 -0400
-Received: from localhost (unknown [171.76.96.211])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D741F2086A;
-        Tue, 15 Oct 2019 10:45:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571136331;
-        bh=77WBH2h9bRchd3kaucl/YpLXYB2oYx+m7W/9F0lJXvk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PyUD/4NOrGSzWLXzapptVHYY7NBEA/f14KabnbZdQCl9yYXhRHHK5fNn6TQ+lYLco
-         9UMGzrfIREaj2fHCHC1soEe6LP/nWEmlZczRND4gokDE9nCh9CH4xT4tAqati0PFls
-         VGB5xQ5P4mYFXr3JVBie0/AXxoUNqMnz7fA9uHMo=
-Date:   Tue, 15 Oct 2019 16:15:27 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Michal Suchanek <msuchanek@suse.de>
-Cc:     alsa-devel@alsa-project.org, Sanyog Kale <sanyog.r.kale@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] soundwire: depend on ACPI
-Message-ID: <20191015104527.GX2654@vkoul-mobl>
-References: <20191002081717.GA4015@kitsune.suse.cz>
- <bd685232ea511251eeb9554172f1524eabf9a46e.1570097621.git.msuchanek@suse.de>
+        id S1726653AbfJOKpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 06:45:50 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 3E5212D9; Tue, 15 Oct 2019 12:45:48 +0200 (CEST)
+Date:   Tue, 15 Oct 2019 12:45:46 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iommu/rockchip: don't use platform_get_irq to implicitly
+ count irqs
+Message-ID: <20191015104546.GD14518@8bytes.org>
+References: <20190925184346.14121-1-heiko@sntech.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bd685232ea511251eeb9554172f1524eabf9a46e.1570097621.git.msuchanek@suse.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190925184346.14121-1-heiko@sntech.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03-10-19, 12:13, Michal Suchanek wrote:
-> The device cannot be probed on !ACPI and gives this warning:
+On Wed, Sep 25, 2019 at 08:43:46PM +0200, Heiko Stuebner wrote:
+> Till now the Rockchip iommu driver walked through the irq list via
+> platform_get_irq() until it encountered an ENXIO error. With the
+> recent change to add a central error message, this always results
+> in such an error for each iommu on probe and shutdown.
 > 
-> drivers/soundwire/slave.c:16:12: warning: ‘sdw_slave_add’ defined but
-> not used [-Wunused-function]
->  static int sdw_slave_add(struct sdw_bus *bus,
+> To not confuse people, switch to platform_count_irqs() to get the
+> actual number of interrupts before walking through them.
+> 
+> Fixes: 7723f4c5ecdb ("driver core: platform: Add an error message to platform_get_irq*()")
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  drivers/iommu/rockchip-iommu.c | 19 ++++++++++++++-----
+>  1 file changed, 14 insertions(+), 5 deletions(-)
 
-Applied both, thanks
--- 
-~Vinod
+Applied for v5.4, thanks.
