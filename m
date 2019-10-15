@@ -2,83 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D13A0D7AFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 18:16:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 493A8D7B0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 18:18:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727963AbfJOQQu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 12:16:50 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:48826 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726974AbfJOQQu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 12:16:50 -0400
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1iKPV8-0007So-SM; Tue, 15 Oct 2019 10:16:47 -0600
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Kit Chow <kchow@gigaio.com>
-References: <20191008221837.13067-1-logang@deltatee.com>
- <20191008221837.13067-4-logang@deltatee.com>
- <20191015133748.GC17570@8bytes.org>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <6485fb62-cdb4-21e7-552d-1aa84a196458@deltatee.com>
-Date:   Tue, 15 Oct 2019 10:16:45 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20191015133748.GC17570@8bytes.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: kchow@gigaio.com, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, joro@8bytes.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [PATCH 3/3] iommu/amd: Support multiple PCI DMA aliases in IRQ
- Remapping
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S2387850AbfJOQSU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 12:18:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33016 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727809AbfJOQSU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 12:18:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 670E5B4B0;
+        Tue, 15 Oct 2019 16:18:18 +0000 (UTC)
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     herbert@gondor.apana.org.au
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dave@stgolabs.net, Davidlohr Bueso <dbueso@suse.de>
+Subject: [PATCH] drivers,crypto/cavium: Fix barrier barrier usage after atomic_set()
+Date:   Tue, 15 Oct 2019 09:16:57 -0700
+Message-Id: <20191015161657.10760-1-dave@stgolabs.net>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Because it is not a Rmw operation, atomic_set() is not serialized,
+and therefore the 'upgradable' smp_mb__after_atomic() call after
+the atomic_set() is completely bogus (not to mention the comment
+could also use some love, but that's a different matter).
 
+This patch replaces these with smp_mb(), which seems like the
+original intent of when the code was written.
 
-On 2019-10-15 7:37 a.m., Joerg Roedel wrote:
-> On Tue, Oct 08, 2019 at 04:18:37PM -0600, Logan Gunthorpe wrote:
->> -static struct irq_remap_table *alloc_irq_table(u16 devid)
->> +static int set_remap_table_entry_alias(struct pci_dev *pdev, u16 alias,
->> +				       void *data)
->> +{
->> +	struct irq_remap_table *table = data;
->> +
->> +	irq_lookup_table[alias] = table;
->> +	set_dte_irq_entry(alias, table);
->> +
->> +	return 0;
->> +}
->> +
->> +static int iommu_flush_dte_alias(struct pci_dev *pdev, u16 alias, void *data)
->> +{
->> +	struct amd_iommu *iommu = data;
->> +
->> +	iommu_flush_dte(iommu, alias);
->> +
->> +	return 0;
->> +}
-> 
-> I think these two functions can be merged into one, saving one
-> pci_for_each_dma_alias() call below. You can lookup the iommu using the
-> amd_iommu_rlookup_table[alias] in the first function and issue the flush
-> there.
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+---
+ drivers/crypto/cavium/nitrox/nitrox_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Makes sense, thanks.
+diff --git a/drivers/crypto/cavium/nitrox/nitrox_main.c b/drivers/crypto/cavium/nitrox/nitrox_main.c
+index bc924980e10c..da2e0edceb50 100644
+--- a/drivers/crypto/cavium/nitrox/nitrox_main.c
++++ b/drivers/crypto/cavium/nitrox/nitrox_main.c
+@@ -504,7 +504,7 @@ static int nitrox_probe(struct pci_dev *pdev,
+ 
+ 	atomic_set(&ndev->state, __NDEV_READY);
+ 	/* barrier to sync with other cpus */
+-	smp_mb__after_atomic();
++	smp_mb();
+ 
+ 	err = nitrox_crypto_register();
+ 	if (err)
+@@ -551,7 +551,7 @@ static void nitrox_remove(struct pci_dev *pdev)
+ 
+ 	atomic_set(&ndev->state, __NDEV_NOT_READY);
+ 	/* barrier to sync with other cpus */
+-	smp_mb__after_atomic();
++	smp_mb();
+ 
+ 	nitrox_remove_from_devlist(ndev);
+ 
+-- 
+2.16.4
 
-I'll rework this and send a v2 shortly.
-
-Logan
