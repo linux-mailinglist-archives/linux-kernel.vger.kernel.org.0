@@ -2,27 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E5F1D7FFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:20:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2A8AD7FF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:20:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389395AbfJOTSm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 15:18:42 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:45614 "EHLO
+        id S2389408AbfJOTSo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 15:18:44 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:45657 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731857AbfJOTSg (ORCPT
+        with ESMTP id S2389393AbfJOTSm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 15:18:36 -0400
+        Tue, 15 Oct 2019 15:18:42 -0400
 Received: from localhost ([127.0.0.1] helo=localhost.localdomain)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1iKSL3-00067i-Iw; Tue, 15 Oct 2019 21:18:33 +0200
+        id 1iKSL3-00067i-To; Tue, 15 Oct 2019 21:18:34 +0200
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
-Cc:     tglx@linutronix.de, Guo Ren <guoren@kernel.org>,
+Cc:     tglx@linutronix.de, Yoshinori Sato <ysato@users.sourceforge.jp>,
+        uclinux-h8-devel@lists.sourceforge.jp,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 06/34] csky: Use CONFIG_PREEMPTION
-Date:   Tue, 15 Oct 2019 21:17:53 +0200
-Message-Id: <20191015191821.11479-7-bigeasy@linutronix.de>
+Subject: [PATCH 07/34] h8300: Use CONFIG_PREEMPTION
+Date:   Tue, 15 Oct 2019 21:17:54 +0200
+Message-Id: <20191015191821.11479-8-bigeasy@linutronix.de>
 In-Reply-To: <20191015191821.11479-1-bigeasy@linutronix.de>
 References: <20191015191821.11479-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
@@ -40,35 +41,42 @@ depends on CONFIG_PREEMPT.
 
 Switch the entry code over to use CONFIG_PREEMPTION.
 
-Cc: Guo Ren <guoren@kernel.org>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: uclinux-h8-devel@lists.sourceforge.jp
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- arch/csky/kernel/entry.S | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/h8300/kernel/entry.S | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/csky/kernel/entry.S b/arch/csky/kernel/entry.S
-index a7a5b67df8989..0077063280000 100644
---- a/arch/csky/kernel/entry.S
-+++ b/arch/csky/kernel/entry.S
-@@ -277,7 +277,7 @@ ENTRY(csky_irq)
- 	zero_fp
- 	psrset	ee
+diff --git a/arch/h8300/kernel/entry.S b/arch/h8300/kernel/entry.S
+index 4ade5f8299bae..c6e289b5f1f28 100644
+--- a/arch/h8300/kernel/entry.S
++++ b/arch/h8300/kernel/entry.S
+@@ -284,12 +284,12 @@ INTERRUPTS =3D 128
+ 	mov.l	er0,@(LER0:16,sp)
+ 	bra	resume_userspace
 =20
--#ifdef CONFIG_PREEMPT
-+#ifdef CONFIG_PREEMPTION
- 	mov	r9, sp			/* Get current stack  pointer */
- 	bmaski	r10, THREAD_SHIFT
- 	andn	r9, r10			/* Get thread_info */
-@@ -294,7 +294,7 @@ ENTRY(csky_irq)
- 	mov	a0, sp
- 	jbsr	csky_do_IRQ
+-#if !defined(CONFIG_PREEMPT)
++#if !defined(CONFIG_PREEMPTION)
+ #define resume_kernel restore_all
+ #endif
 =20
--#ifdef CONFIG_PREEMPT
-+#ifdef CONFIG_PREEMPTION
- 	subi	r12, 1
- 	stw	r12, (r9, TINFO_PREEMPT)
- 	cmpnei	r12, 0
+ ret_from_exception:
+-#if defined(CONFIG_PREEMPT)
++#if defined(CONFIG_PREEMPTION)
+ 	orc	#0xc0,ccr
+ #endif
+ ret_from_interrupt:
+@@ -319,7 +319,7 @@ INTERRUPTS =3D 128
+ restore_all:
+ 	RESTORE_ALL			/* Does RTE */
+=20
+-#if defined(CONFIG_PREEMPT)
++#if defined(CONFIG_PREEMPTION)
+ resume_kernel:
+ 	mov.l	@(TI_PRE_COUNT:16,er4),er0
+ 	bne	restore_all:8
 --=20
 2.23.0
 
