@@ -2,106 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91EC7D7D91
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 19:24:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E615D7D96
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 19:25:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388248AbfJORYW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 13:24:22 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:51917 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727242AbfJORYW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 13:24:22 -0400
-Received: from 79.184.254.38.ipv4.supernova.orange.pl (79.184.254.38) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
- id 01cfd58c3730d6c7; Tue, 15 Oct 2019 19:24:19 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Dexuan Cui <decui@microsoft.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>, olaf@aepfle.de,
-        apw@canonical.com, jasowang@redhat.com, vkuznets@redhat.com,
-        marcelo.cerri@canonical.com, jackm@mellanox.com,
-        linux-pci@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        driverdev-devel@linuxdriverproject.org,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH 7/7] PCI/MSI: Move power state check out of pci_msi_supported()
-Date:   Tue, 15 Oct 2019 19:24:19 +0200
-Message-ID: <12092576.0PD7RdXzXY@kreacher>
-In-Reply-To: <20191014230016.240912-8-helgaas@kernel.org>
-References: <20191014230016.240912-1-helgaas@kernel.org> <20191014230016.240912-8-helgaas@kernel.org>
+        id S2388689AbfJORY7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 13:24:59 -0400
+Received: from foss.arm.com ([217.140.110.172]:44076 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727242AbfJORY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 13:24:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 53CC0337;
+        Tue, 15 Oct 2019 10:24:58 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 000F23F68E;
+        Tue, 15 Oct 2019 10:24:55 -0700 (PDT)
+Date:   Tue, 15 Oct 2019 18:24:53 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Jianyong Wu <jianyong.wu@arm.com>
+Cc:     netdev@vger.kernel.org, yangbo.lu@nxp.com, john.stultz@linaro.org,
+        tglx@linutronix.de, pbonzini@redhat.com,
+        sean.j.christopherson@intel.com, maz@kernel.org,
+        richardcochran@gmail.com, will@kernel.org, suzuki.poulose@arm.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
+        Steve.Capper@arm.com, Kaly.Xin@arm.com, justin.he@arm.com,
+        nd@arm.com
+Subject: Re: [PATCH v5 1/6] psci: Export psci_ops.conduit symbol as modules
+ will use it.
+Message-ID: <20191015172453.GE24604@lakrids.cambridge.arm.com>
+References: <20191015104822.13890-1-jianyong.wu@arm.com>
+ <20191015104822.13890-2-jianyong.wu@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191015104822.13890-2-jianyong.wu@arm.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, October 15, 2019 1:00:16 AM CEST Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
+On Tue, Oct 15, 2019 at 06:48:17PM +0800, Jianyong Wu wrote:
+> If arm_smccc_1_1_invoke used in modules, psci_ops.conduit should
+> be export.
 > 
-> 27e20603c54b ("PCI/MSI: Move D0 check into pci_msi_check_device()")
-> moved the power state check into pci_msi_check_device(), which was
-> subsequently renamed to pci_msi_supported().  This didn't change the
-> behavior, since both callers checked the power state.
-> 
-> However, it doesn't fit the current "pci_msi_supported()" name, which
-> should return what the device is capable of, independent of the power
-> state.
-> 
-> Move the power state check back into the callers for readability.  No
-> functional change intended.
-> 
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> Signed-off-by: Jianyong Wu <jianyong.wu@arm.com>
 
-No issues found, so
+I have a patch queued [1] in the arm64 tree which adds
+arm_smccc_1_1_get_conduit() for this purpose.
 
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Please use that, adding an EXPORT_SYMBOL() if necessary.
+
+Thanks,
+Mark.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git/commit/?h=for-next/smccc-conduit-cleanup&id=6b7fe77c334ae59fed9500140e08f4f896b36871
 
 > ---
->  drivers/pci/msi.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  drivers/firmware/psci/psci.c | 6 ++++++
+>  include/linux/arm-smccc.h    | 2 +-
+>  include/linux/psci.h         | 1 +
+>  3 files changed, 8 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
-> index 0884bedcfc7a..20e9c729617c 100644
-> --- a/drivers/pci/msi.c
-> +++ b/drivers/pci/msi.c
-> @@ -861,7 +861,7 @@ static int pci_msi_supported(struct pci_dev *dev, int nvec)
->  	if (!pci_msi_enable)
->  		return 0;
+> diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
+> index f82ccd39a913..35c4eaab1451 100644
+> --- a/drivers/firmware/psci/psci.c
+> +++ b/drivers/firmware/psci/psci.c
+> @@ -212,6 +212,12 @@ static unsigned long psci_migrate_info_up_cpu(void)
+>  			      0, 0, 0);
+>  }
 >  
-> -	if (!dev || dev->no_msi || dev->current_state != PCI_D0)
-> +	if (!dev || dev->no_msi)
->  		return 0;
+> +enum psci_conduit psci_get_conduit(void)
+> +{
+> +	return psci_ops.conduit;
+> +}
+> +EXPORT_SYMBOL(psci_get_conduit);
+> +
+>  static void set_conduit(enum psci_conduit conduit)
+>  {
+>  	switch (conduit) {
+> diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
+> index 552cbd49abe8..a6e4d3e3d10a 100644
+> --- a/include/linux/arm-smccc.h
+> +++ b/include/linux/arm-smccc.h
+> @@ -357,7 +357,7 @@ asmlinkage void __arm_smccc_hvc(unsigned long a0, unsigned long a1,
+>   * The return value also provides the conduit that was used.
+>   */
+>  #define arm_smccc_1_1_invoke(...) ({					\
+> -		int method = psci_ops.conduit;				\
+> +		int method = psci_get_conduit();			\
+>  		switch (method) {					\
+>  		case PSCI_CONDUIT_HVC:					\
+>  			arm_smccc_1_1_hvc(__VA_ARGS__);			\
+> diff --git a/include/linux/psci.h b/include/linux/psci.h
+> index a8a15613c157..e5cedc986049 100644
+> --- a/include/linux/psci.h
+> +++ b/include/linux/psci.h
+> @@ -42,6 +42,7 @@ struct psci_operations {
+>  	enum smccc_version smccc_version;
+>  };
 >  
->  	/*
-> @@ -972,7 +972,7 @@ static int __pci_enable_msix(struct pci_dev *dev, struct msix_entry *entries,
->  	int nr_entries;
->  	int i, j;
+> +extern enum psci_conduit psci_get_conduit(void);
+>  extern struct psci_operations psci_ops;
 >  
-> -	if (!pci_msi_supported(dev, nvec))
-> +	if (!pci_msi_supported(dev, nvec) || dev->current_state != PCI_D0)
->  		return -EINVAL;
->  
->  	nr_entries = pci_msix_vec_count(dev);
-> @@ -1058,7 +1058,7 @@ static int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
->  	int nvec;
->  	int rc;
->  
-> -	if (!pci_msi_supported(dev, minvec))
-> +	if (!pci_msi_supported(dev, minvec) || dev->current_state != PCI_D0)
->  		return -EINVAL;
->  
->  	/* Check whether driver already requested MSI-X IRQs */
+>  #if defined(CONFIG_ARM_PSCI_FW)
+> -- 
+> 2.17.1
 > 
-
-
-
-
