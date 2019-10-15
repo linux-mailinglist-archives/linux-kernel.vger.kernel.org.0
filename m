@@ -2,74 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F1A8D7823
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 16:14:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ABA7D782D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 16:15:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732594AbfJOONr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 10:13:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44588 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732500AbfJOONq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 10:13:46 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 30A43B450;
-        Tue, 15 Oct 2019 14:13:44 +0000 (UTC)
-Date:   Tue, 15 Oct 2019 16:13:41 +0200 (CEST)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Peter Zijlstra <peterz@infradead.org>
-cc:     Jessica Yu <jeyu@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
-        x86@kernel.org, linux-kernel@vger.kernel.org, mhiramat@kernel.org,
-        bristot@redhat.com, jbaron@akamai.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, jpoimboe@redhat.com,
-        live-patching@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] x86/ftrace: Use text_poke()
-In-Reply-To: <20191015135634.GK2328@hirez.programming.kicks-ass.net>
-Message-ID: <alpine.LSU.2.21.1910151611000.13169@pobox.suse.cz>
-References: <20191007081945.10951536.8@infradead.org> <20191008104335.6fcd78c9@gandalf.local.home> <20191009224135.2dcf7767@oasis.local.home> <20191010092054.GR2311@hirez.programming.kicks-ass.net> <20191010091956.48fbcf42@gandalf.local.home>
- <20191010140513.GT2311@hirez.programming.kicks-ass.net> <20191010115449.22044b53@gandalf.local.home> <20191010172819.GS2328@hirez.programming.kicks-ass.net> <20191011125903.GN2359@hirez.programming.kicks-ass.net> <20191015130739.GA23565@linux-8ccs>
- <20191015135634.GK2328@hirez.programming.kicks-ass.net>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1732593AbfJOOPE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 10:15:04 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:49733 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732252AbfJOOPE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 10:15:04 -0400
+Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1iKNbD-0004US-5j; Tue, 15 Oct 2019 15:14:55 +0100
+Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.2)
+        (envelope-from <ben@rainbowdash.codethink.co.uk>)
+        id 1iKNbC-00041B-O8; Tue, 15 Oct 2019 15:14:54 +0100
+From:   Ben Dooks <ben.dooks@codethink.co.uk>
+To:     linux-kernel@lists.codethink.co.uk
+Cc:     Ben Dooks <ben.dooks@codethink.co.uk>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        linux-pm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] thermal: stm32: make stm_thermal_pm_ops static
+Date:   Tue, 15 Oct 2019 15:14:54 +0100
+Message-Id: <20191015141454.15402-1-ben.dooks@codethink.co.uk>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ live-patching ML CCed ]
+The stm_thermal_pm_ops struct is not exported to any
+other units, so make it static to avoid the following
+sparse warning:
 
-On Tue, 15 Oct 2019, Peter Zijlstra wrote:
+drivers/thermal/st/stm_thermal.c:599:1: warning: symbol 'stm_thermal_pm_ops' was not declared. Should it be static?
 
-> On Tue, Oct 15, 2019 at 03:07:40PM +0200, Jessica Yu wrote:
-> 
-> > > The fact that it is executable; also the fact that you do it right after
-> > > we mark it ro. Flipping the memory protections back and forth is just
-> > > really poor everything.
-> > > 
-> > > Once this ftrace thing is sorted, we'll change x86 to _refuse_ to make
-> > > executable (kernel) memory writable.
-> > 
-> > Not sure if relevant, but just thought I'd clarify: IIRC,
-> > klp_module_coming() is not poking the coming module, but it calls
-> > module_enable_ro() on itself (the livepatch module) so it can apply
-> > relocations and such on the new code, which lives inside the livepatch
-> > module, and it needs to possibly do this numerous times over the
-> > lifetime of the patch module for any coming module it is responsible
-> > for patching (i.e., call module_enable_ro() on the patch module, not
-> > necessarily the coming module). So I am not be sure why
-> > klp_module_coming() should be moved before complete_formation(). I
-> > hope I'm remembering the details correctly, livepatch folks feel free
-> > to chime in if I'm incorrect here.
-> 
-> You mean it does module_disable_ro() ? That would be broken and it needs
-> to be fixed. Can some livepatch person explain what it does and why?
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+---
+Cc: Zhang Rui <rui.zhang@intel.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Amit Kucheria <amit.kucheria@verdurent.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: linux-pm@vger.kernel.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/thermal/st/stm_thermal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yes, it does. klp_module_coming() calls module_disable_ro() on all 
-patching modules which patch the coming module in order to call 
-apply_relocate_add(). New (patching) code for a module can be relocated 
-only when the relevant module is loaded.
+diff --git a/drivers/thermal/st/stm_thermal.c b/drivers/thermal/st/stm_thermal.c
+index cf9ddc52f30e..40bc13c68fba 100644
+--- a/drivers/thermal/st/stm_thermal.c
++++ b/drivers/thermal/st/stm_thermal.c
+@@ -596,7 +596,7 @@ static int stm_thermal_resume(struct device *dev)
+ }
+ #endif /* CONFIG_PM_SLEEP */
+ 
+-SIMPLE_DEV_PM_OPS(stm_thermal_pm_ops, stm_thermal_suspend, stm_thermal_resume);
++static SIMPLE_DEV_PM_OPS(stm_thermal_pm_ops, stm_thermal_suspend, stm_thermal_resume);
+ 
+ static const struct thermal_zone_of_device_ops stm_tz_ops = {
+ 	.get_temp	= stm_thermal_get_temp,
+-- 
+2.23.0
 
-Miroslav
