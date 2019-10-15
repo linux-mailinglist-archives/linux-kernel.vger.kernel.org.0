@@ -2,103 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C45A2D762C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 14:13:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB80CD763D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 14:15:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731686AbfJOMNy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 08:13:54 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53128 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725815AbfJOMNx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 08:13:53 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6C5E2306F4AE;
-        Tue, 15 Oct 2019 12:13:53 +0000 (UTC)
-Received: from [10.72.12.168] (ovpn-12-168.pek2.redhat.com [10.72.12.168])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5B70B608C0;
-        Tue, 15 Oct 2019 12:13:31 +0000 (UTC)
-Subject: Re: [PATCH V3 2/7] mdev: bus uevent support
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org,
-        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
-        alex.williamson@redhat.com, mst@redhat.com, tiwei.bie@intel.com,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        maxime.coquelin@redhat.com, cunming.liang@intel.com,
-        zhihong.wang@intel.com, rob.miller@broadcom.com,
-        xiao.w.wang@intel.com, haotian.wang@sifive.com,
-        zhenyuw@linux.intel.com, zhi.a.wang@intel.com,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, airlied@linux.ie, daniel@ffwll.ch,
-        farman@linux.ibm.com, pasic@linux.ibm.com, sebott@linux.ibm.com,
-        oberpar@linux.ibm.com, heiko.carstens@de.ibm.com,
-        gor@linux.ibm.com, borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
-        freude@linux.ibm.com, lingshan.zhu@intel.com, idos@mellanox.com,
-        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
-        christophe.de.dinechin@gmail.com, kevin.tian@intel.com
-References: <20191011081557.28302-1-jasowang@redhat.com>
- <20191011081557.28302-3-jasowang@redhat.com>
- <20191015122707.1fd52240.cohuck@redhat.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <515d31c5-a7d9-5a22-b570-2035ecf03c09@redhat.com>
-Date:   Tue, 15 Oct 2019 20:13:29 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727479AbfJOMPU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 08:15:20 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:47818 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726092AbfJOMPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 08:15:19 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 03760B4CE4007F68691B;
+        Tue, 15 Oct 2019 20:15:18 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Tue, 15 Oct 2019
+ 20:15:10 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <matthias.bgg@gmail.com>, <weiyi.lu@mediatek.com>,
+        <robh@kernel.org>, <drinkcat@chromium.org>,
+        <yong.liang@mediatek.com>, <erin.lo@mediatek.com>,
+        <chunfeng.yun@mediatek.com>
+CC:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] clk: mediatek: mt8183: use devm_platform_ioremap_resource() to simplify code
+Date:   Tue, 15 Oct 2019 20:14:21 +0800
+Message-ID: <20191015121421.26144-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <20191015122707.1fd52240.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 15 Oct 2019 12:13:53 +0000 (UTC)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Use devm_platform_ioremap_resource() to simplify the code a bit.
+This is detected by coccinelle.
 
-On 2019/10/15 下午6:27, Cornelia Huck wrote:
-> On Fri, 11 Oct 2019 16:15:52 +0800
-> Jason Wang <jasowang@redhat.com> wrote:
->
->> This patch adds bus uevent support for mdev bus in order to allow
->> cooperation with userspace.
->>
->> Signed-off-by: Jason Wang <jasowang@redhat.com>
->> ---
->>   drivers/vfio/mdev/mdev_driver.c | 8 ++++++++
->>   1 file changed, 8 insertions(+)
->>
->> diff --git a/drivers/vfio/mdev/mdev_driver.c b/drivers/vfio/mdev/mdev_driver.c
->> index b7c40ce86ee3..319d886ffaf7 100644
->> --- a/drivers/vfio/mdev/mdev_driver.c
->> +++ b/drivers/vfio/mdev/mdev_driver.c
->> @@ -82,9 +82,17 @@ static int mdev_match(struct device *dev, struct device_driver *drv)
->>   	return 0;
->>   }
->>   
->> +static int mdev_uevent(struct device *dev, struct kobj_uevent_env *env)
->> +{
->> +	struct mdev_device *mdev = to_mdev_device(dev);
->> +
->> +	return add_uevent_var(env, "MODALIAS=mdev:c%02X", mdev->class_id);
->> +}
->> +
->>   struct bus_type mdev_bus_type = {
->>   	.name		= "mdev",
->>   	.match		= mdev_match,
->> +	.uevent		= mdev_uevent,
->>   	.probe		= mdev_probe,
->>   	.remove		= mdev_remove,
->>   };
-> I'd merge that into the previous patch.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/clk/mediatek/clk-mt8183.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-
-Will do.
-
-Thanks
+diff --git a/drivers/clk/mediatek/clk-mt8183.c b/drivers/clk/mediatek/clk-mt8183.c
+index 51c8d5c..5046852 100644
+--- a/drivers/clk/mediatek/clk-mt8183.c
++++ b/drivers/clk/mediatek/clk-mt8183.c
+@@ -1189,11 +1189,10 @@ CLK_OF_DECLARE_DRIVER(mt8183_topckgen, "mediatek,mt8183-topckgen",
+ 
+ static int clk_mt8183_top_probe(struct platform_device *pdev)
+ {
+-	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	void __iomem *base;
+ 	struct device_node *node = pdev->dev.of_node;
+ 
+-	base = devm_ioremap_resource(&pdev->dev, res);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+ 
+@@ -1262,9 +1261,8 @@ static int clk_mt8183_mcu_probe(struct platform_device *pdev)
+ 	struct clk_onecell_data *clk_data;
+ 	struct device_node *node = pdev->dev.of_node;
+ 	void __iomem *base;
+-	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 
+-	base = devm_ioremap_resource(&pdev->dev, res);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+ 
+-- 
+2.7.4
 
 
