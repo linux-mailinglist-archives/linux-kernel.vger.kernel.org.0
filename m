@@ -2,42 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82C9AD6EEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 07:34:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EF8DD6EC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 07:32:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729108AbfJOFeH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 01:34:07 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:42170 "EHLO
+        id S1728791AbfJOFcd convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 15 Oct 2019 01:32:33 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:42192 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728598AbfJOFcN (ORCPT
+        with ESMTP id S1728609AbfJOFcP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 01:32:13 -0400
+        Tue, 15 Oct 2019 01:32:15 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iKFRG-0000Pt-KS; Tue, 15 Oct 2019 07:32:06 +0200
+        id 1iKFRJ-0000PP-3E; Tue, 15 Oct 2019 07:32:09 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C3EDE1C04CE;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 890BB1C04CB;
         Tue, 15 Oct 2019 07:31:48 +0200 (CEST)
 Date:   Tue, 15 Oct 2019 05:31:48 -0000
-From:   "tip-bot2 for Andi Kleen" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf script: Allow --time with --reltime
-Cc:     Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+Subject: [tip: perf/core] perf trace: Factor out the initialization of
+ syscal_arg_fmt->scnprintf
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Luis =?utf-8?q?Cl=C3=A1udio_Gon=C3=A7alves?= 
+        <lclaudio@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20191002164642.1719-1-andi@firstfloor.org>
-References: <20191002164642.1719-1-andi@firstfloor.org>
+In-Reply-To: <tip-xs3x0zzyes06c7scdsjn01ty@git.kernel.org>
+References: <tip-xs3x0zzyes06c7scdsjn01ty@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157111750869.12254.7758951849188927947.tip-bot2@tip-bot2>
+Message-ID: <157111750842.12254.9042699783487450531.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
 X-Linutronix-Spam-Score: -1.0
 X-Linutronix-Spam-Level: -
 X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
@@ -48,45 +52,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     3714437d3fcc7956cabcb0077f2a506b61160a56
-Gitweb:        https://git.kernel.org/tip/3714437d3fcc7956cabcb0077f2a506b61160a56
-Author:        Andi Kleen <ak@linux.intel.com>
-AuthorDate:    Wed, 02 Oct 2019 09:46:42 -07:00
+Commit-ID:     8d1d4ff5e239d9ef385444bc0d855127d7b32754
+Gitweb:        https://git.kernel.org/tip/8d1d4ff5e239d9ef385444bc0d855127d7b32754
+Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate:    Thu, 03 Oct 2019 15:57:42 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Mon, 07 Oct 2019 12:22:18 -03:00
 
-perf script: Allow --time with --reltime
+perf trace: Factor out the initialization of syscal_arg_fmt->scnprintf
 
-The original --reltime patch forbid --time with --reltime.
+We set the default scnprint routines for the syscall args based on its
+type or on heuristics based on its names, now we'll use this for
+tracepoints as well, so move it out of syscall__set_arg_fmts() and into
+a routine that receive just an array of syscall_arg_fmt entries + the
+tracepoint format fields list.
 
-But it turns out --time doesn't really care about --reltime, because the
-relative time is only used at final output, while the time filtering
-always works earlier on absolute time.
-
-So just remove the check and allow combining the two options.
-
-Fixes: 90b10f47c0ee ("perf script: Support relative time")
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Link: http://lore.kernel.org/lkml/20191002164642.1719-1-andi@firstfloor.org
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-xs3x0zzyes06c7scdsjn01ty@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-script.c | 5 -----
- 1 file changed, 5 deletions(-)
+ tools/perf/builtin-trace.c | 28 ++++++++++++++++++----------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 67be8d3..1c797a9 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -3605,11 +3605,6 @@ int cmd_script(int argc, const char **argv)
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 6c70253..d52dd2b 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -1467,15 +1467,16 @@ static int syscall__alloc_arg_fmts(struct syscall *sc, int nr_args)
+ 	return 0;
+ }
+ 
+-static int syscall__set_arg_fmts(struct syscall *sc)
++static struct tep_format_field *
++syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field *field)
+ {
+-	struct tep_format_field *field, *last_field = NULL;
+-	int idx = 0, len;
++	struct tep_format_field *last_field = NULL;
++	int len;
+ 
+-	for (field = sc->args; field; field = field->next, ++idx) {
++	for (; field; field = field->next, ++arg) {
+ 		last_field = field;
+ 
+-		if (sc->fmt && sc->fmt->arg[idx].scnprintf)
++		if (arg->scnprintf)
+ 			continue;
+ 
+ 		len = strlen(field->name);
+@@ -1483,13 +1484,13 @@ static int syscall__set_arg_fmts(struct syscall *sc)
+ 		if (strcmp(field->type, "const char *") == 0 &&
+ 		    ((len >= 4 && strcmp(field->name + len - 4, "name") == 0) ||
+ 		     strstr(field->name, "path") != NULL))
+-			sc->arg_fmt[idx].scnprintf = SCA_FILENAME;
++			arg->scnprintf = SCA_FILENAME;
+ 		else if ((field->flags & TEP_FIELD_IS_POINTER) || strstr(field->name, "addr"))
+-			sc->arg_fmt[idx].scnprintf = SCA_PTR;
++			arg->scnprintf = SCA_PTR;
+ 		else if (strcmp(field->type, "pid_t") == 0)
+-			sc->arg_fmt[idx].scnprintf = SCA_PID;
++			arg->scnprintf = SCA_PID;
+ 		else if (strcmp(field->type, "umode_t") == 0)
+-			sc->arg_fmt[idx].scnprintf = SCA_MODE_T;
++			arg->scnprintf = SCA_MODE_T;
+ 		else if ((strcmp(field->type, "int") == 0 ||
+ 			  strcmp(field->type, "unsigned int") == 0 ||
+ 			  strcmp(field->type, "long") == 0) &&
+@@ -1501,10 +1502,17 @@ static int syscall__set_arg_fmts(struct syscall *sc)
+ 			 * 23 unsigned int
+ 			 * 7 unsigned long
+ 			 */
+-			sc->arg_fmt[idx].scnprintf = SCA_FD;
++			arg->scnprintf = SCA_FD;
  		}
  	}
  
--	if (script.time_str && reltime) {
--		fprintf(stderr, "Don't combine --reltime with --time\n");
--		return -1;
--	}
--
- 	if (itrace_synth_opts.callchain &&
- 	    itrace_synth_opts.callchain_sz > scripting_max_stack)
- 		scripting_max_stack = itrace_synth_opts.callchain_sz;
++	return last_field;
++}
++
++static int syscall__set_arg_fmts(struct syscall *sc)
++{
++	struct tep_format_field *last_field = syscall_arg_fmt__init_array(sc->arg_fmt, sc->args);
++
+ 	if (last_field)
+ 		sc->args_size = last_field->offset + last_field->size;
+ 
