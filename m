@@ -2,71 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 219F1D7868
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 16:27:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00E7AD7863
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 16:26:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732691AbfJOO07 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 10:26:59 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:45148 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732050AbfJOO07 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 10:26:59 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 4CB0152FA015268CFAAA;
-        Tue, 15 Oct 2019 22:26:56 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Tue, 15 Oct 2019
- 22:26:47 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <wg@grandegger.com>, <mkl@pengutronix.de>, <davem@davemloft.net>,
-        <michal.simek@xilinx.com>
-CC:     <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next] can: xilinx_can: use devm_platform_ioremap_resource() to simplify code
-Date:   Tue, 15 Oct 2019 22:26:19 +0800
-Message-ID: <20191015142619.17148-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1732659AbfJOO0j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 10:26:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44858 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732050AbfJOO0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 10:26:38 -0400
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37B4F2168B;
+        Tue, 15 Oct 2019 14:26:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571149598;
+        bh=5nnNdAf6WXH+v00l5Zeozfrj8EhYQJPb342rxJehYoo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=w6kJzt5rCxA+Nlnc6hyIEBdHPLR9CJR6dh6IqwJ/WXAz5GRdYwAlefDCa5ef3V271
+         ls2UZPhGQCoIqPOU4JcYp3QDCydF113tQQy89ztJklOt0nRytgyFF1PR5PBOLiY/+V
+         OovPE2XgvnVLIRFhxz5FdEp8dIte+utA3TCTK5Y0=
+Received: by mail-qt1-f173.google.com with SMTP id c21so30764130qtj.12;
+        Tue, 15 Oct 2019 07:26:38 -0700 (PDT)
+X-Gm-Message-State: APjAAAXHoNnpul/Mmefy6IG707ulo6YzPf1+U0KtjUZvOylO461wk7qi
+        2xhzWn4LBz/sdbJYDfFFensVIO1SUNXiBRsnvIc=
+X-Google-Smtp-Source: APXvYqxJeXGDIDIxntmOPHKIT4TVJ5vltdtc+3C0nxOmveI8caoOTLYE4Qxbn38fdBc1CblJtiI19abZIqkd7fxC1QQ=
+X-Received: by 2002:ad4:4503:: with SMTP id k3mr1579944qvu.155.1571149597331;
+ Tue, 15 Oct 2019 07:26:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+References: <20191015114646.15354-1-parri.andrea@gmail.com>
+In-Reply-To: <20191015114646.15354-1-parri.andrea@gmail.com>
+From:   Wei Liu <wei.liu@kernel.org>
+Date:   Tue, 15 Oct 2019 15:26:26 +0100
+X-Gmail-Original-Message-ID: <CAHd7Wqx8VzTdyo_e7NxYg83kgV27HSeKdpij3+s=VR6GZT197A@mail.gmail.com>
+Message-ID: <CAHd7Wqx8VzTdyo_e7NxYg83kgV27HSeKdpij3+s=VR6GZT197A@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] Drivers: hv: vmbus: Miscellaneous improvements
+To:     Andrea Parri <parri.andrea@gmail.com>
+Cc:     Linux Kernel List <linux-kernel@vger.kernel.org>,
+        Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
+        "K . Y . Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Dexuan Cui <decui@microsoft.com>, Wei Liu <wei.liu@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify the code a bit.
-This is detected by coccinelle.
+On Tue, 15 Oct 2019 at 12:47, Andrea Parri <parri.andrea@gmail.com> wrote:
+[...]
+> [1] https://lkml.kernel.org/r/20191010154600.23875-1-parri.andrea@gmail.com
+> [2] https://lkml.kernel.org/r/20191007163115.26197-1-parri.andrea@gmail.com
+>
+> Andrea Parri (3):
+>   Drivers: hv: vmbus: Introduce table of VMBus protocol versions
+>   Drivers: hv: vmbus: Enable VMBus protocol versions 4.1, 5.1 and 5.2
+>   Drivers: hv: vmbus: Add module parameter to cap the VMBus version
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/can/xilinx_can.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+For the whole series:
 
-diff --git a/drivers/net/can/xilinx_can.c b/drivers/net/can/xilinx_can.c
-index 911b343..5d45c50 100644
---- a/drivers/net/can/xilinx_can.c
-+++ b/drivers/net/can/xilinx_can.c
-@@ -1652,7 +1652,6 @@ MODULE_DEVICE_TABLE(of, xcan_of_match);
-  */
- static int xcan_probe(struct platform_device *pdev)
- {
--	struct resource *res; /* IO mem resources */
- 	struct net_device *ndev;
- 	struct xcan_priv *priv;
- 	const struct of_device_id *of_id;
-@@ -1664,8 +1663,7 @@ static int xcan_probe(struct platform_device *pdev)
- 	const char *hw_tx_max_property;
- 
- 	/* Get the virtual base address for the device */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	addr = devm_ioremap_resource(&pdev->dev, res);
-+	addr = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(addr)) {
- 		ret = PTR_ERR(addr);
- 		goto err;
--- 
-2.7.4
-
-
+Reviewed-by: Wei Liu <wei.liu@kernel.org>
