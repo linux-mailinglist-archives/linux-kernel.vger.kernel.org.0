@@ -2,84 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7ABB1D70B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 10:04:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7745CD70B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 10:05:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728377AbfJOIEl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 04:04:41 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45608 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727295AbfJOIEl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 04:04:41 -0400
-Received: by mail-pf1-f194.google.com with SMTP id y72so11927045pfb.12;
-        Tue, 15 Oct 2019 01:04:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DnhzaSlkHgUlv9y36Jmkw3rGD1aw6OTZtA+BqJpe57s=;
-        b=MXdC8S3VHlc4hL+vsYbtQ9R+19+oUKz5pmQAIdh8jRNqzqeng0L0K3pVDV5rb9TIbN
-         LB9w+rsJEsncudR165UF1hMthivxbEO8i/kOEeSzvTuHUUjy5jZ6lx6gEvj+cRsQqaS7
-         tijfUuYpLREMO68IcmZ4rpWhnPRiStxYxlFzrzzGfxLcacX8VCSHkIjIR7J7DTic5RGN
-         iNM7pBYFOEoLa4J1pDKUqOHJriAqNkBtzYcXNIo+oxo3S2v3iVqBAdTCZcu0Jp+JOCaX
-         9yWxKNA/YB8GWWdC5s54L3iK2I9OpDqiUWzqgQLxGXUYynhrcRpA9QFPLsvMonFC5pZl
-         wpZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DnhzaSlkHgUlv9y36Jmkw3rGD1aw6OTZtA+BqJpe57s=;
-        b=GMsnEW/P3PU8o0/8iEKZ6Uwg00AF4wTmw5GkUfw/uU985nvpYCWMONurzD+Q5lFqZB
-         hYcYJuuKmhYJJ9PeKyUYcoodSldQxuh+a+TFEE3v7s8f3E9xUYubUdu1VRnbgtFQtMwd
-         gB9SMgreTDRjWOFUHypl/Q0RUgqGWh+Fir5j//jhqHtdSNnXwGg97/SNOgEQdw5JngEu
-         FeAdbmi0hB7QEuihKjO72Jv+2JXAxzwmo2Btp1XIuJTigHKtRYRCrzCynwQT3zQWzLMi
-         zuH/CIGRrkfxjr48U9+xiYl37Bwuv/rxs7uI+edoXJUQrfkaPDocYa/h3sczFJTWR9XI
-         xfyg==
-X-Gm-Message-State: APjAAAXzJKtZQOUSnbD+/2wEOByYu6jM8ya8r8oHMHRxA52pwieyxsBp
-        GSX02vnuSZLTpSKxegZYTg7WX3Uec+IRV27WKdi/j9TYZRs=
-X-Google-Smtp-Source: APXvYqxnWwgMhWk0YKCsehOQtmWn+QFvIyf7VwT/tw3uDk7TAxYFWdT2pKbS7kwZuBIAxcA8fJbzEzFxhMivXQ059KM=
-X-Received: by 2002:a63:1e04:: with SMTP id e4mr16669575pge.4.1571126680179;
- Tue, 15 Oct 2019 01:04:40 -0700 (PDT)
+        id S1728425AbfJOIF4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 04:05:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59616 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728350AbfJOIFz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 04:05:55 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BB241B562;
+        Tue, 15 Oct 2019 08:05:53 +0000 (UTC)
+Message-ID: <453a9a954f4967a68a7023c8c79a39fdcb69254a.camel@suse.de>
+Subject: Re: [PATCH] sh: use dma_to_phys() instead of dev->dma_pfn_offset
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org
+Date:   Tue, 15 Oct 2019 10:05:52 +0200
+In-Reply-To: <20191015074354.GB3464@infradead.org>
+References: <20191011165129.29655-1-nsaenzjulienne@suse.de>
+         <20191015074354.GB3464@infradead.org>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-LqhdFNFQbXFXXko83wzg"
+User-Agent: Evolution 3.32.4 
 MIME-Version: 1.0
-References: <20191015130006.39f58992@canb.auug.org.au>
-In-Reply-To: <20191015130006.39f58992@canb.auug.org.au>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 15 Oct 2019 11:04:29 +0300
-Message-ID: <CAHp75Vfv7hzqO=U3AwDs8OuKL_rs9+Sx0DknnAi6WN342iSpHQ@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the drivers-x86 tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ayman Bagabas <ayman.bagabas@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 5:00 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> After merging the drivers-x86 tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> drivers/platform/x86/huawei-wmi.c: In function 'huawei_wmi_exit':
-> drivers/platform/x86/huawei-wmi.c:890:41: error: 'struct huawei_wmi' has no member named 'pdev'; did you mean 'idev'?
->   890 |  platform_device_unregister(huawei_wmi->pdev);
->       |                                         ^~~~
->       |                                         idev
->
-> Caused by commit
->
->   eda34f06b2e0 ("platform/x86: huawei-wmi: No need to keep pointer to platform device")
->
-> interacting with commit
->
->   7532afb35012 ("platform/x86: huawei-wmi: Move to platform driver")
+--=-LqhdFNFQbXFXXko83wzg
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Oops, thank you for pointing out, should be fixed.
+On Tue, 2019-10-15 at 00:43 -0700, Christoph Hellwig wrote:
+> On Fri, Oct 11, 2019 at 06:51:29PM +0200, Nicolas Saenz Julienne wrote:
+> > It's more explicit and lets dma-direct handle the specifics of how to
+> > translate addresses.
+> >=20
+> > On top of that get rid of warnings as, since the introduction of commit
+> > 6fa1d28e38c ("sh: use generic dma_noncoherent_ops"), it's impossible fo=
+r
+> > the dev to be NULL.
+>=20
+> This looks ok, but the real answer is to switch sh to the generic
+> dma remapping code.  I've been trying to get this included for about
+> a year now, but never managed to get a reply from the sh maintainers.
 
--- 
-With Best Regards,
-Andy Shevchenko
+I see, well I guess this one will get ignored too :)
+
+> Here is the last one:
+>=20
+> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/sh-dma-re=
+map
+
+I'd be happy with your series too.
+
+In case you're wondering why I want this: I'm interested in supporting mult=
+iple
+dma-ranges in DT. So I was looking at the amount of work needed to centrali=
+ze
+usage of dev->dma_pfn_offset. This one patch seemed trivial enough to send
+right away.
+
+Regards,
+Nicolas
+
+
+--=-LqhdFNFQbXFXXko83wzg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl2lfeAACgkQlfZmHno8
+x/7FnQf/fWogNvidITqlQcsKCGc7oeRASPSjW/lRMdE4n3pH/nBJe8zF9LqxNsZj
+n0yCrXQfiJt9fVzHMLjWmi7vrC8/e7MQ94nqYnK9R1E9KPKnkriRFU0ux2ahlU8l
+xXHa0Q0momOpZimYl5rR0rYVVi1nrhkRl8TUJn2WAAfO2X+z9r1O2LwWTAVmR6yL
+wIG81FoN1wXzZShor97MX7RAivRQ5HwediXU6o1GOjsqRPl8K8YvCFDuTnXH6iGZ
+7TvnaGzKy0flfbvihDOCUNCLYTIy01aq/lqxBDl0/O9yOuRwNjfD8GekckaOx3p6
+GJk1+BKLk3RydGJXLzJn37JhXq2eqg==
+=h442
+-----END PGP SIGNATURE-----
+
+--=-LqhdFNFQbXFXXko83wzg--
+
