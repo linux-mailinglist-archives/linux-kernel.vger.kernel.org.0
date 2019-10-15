@@ -2,79 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03500D77C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 15:53:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39A3AD77C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 15:55:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732251AbfJONxw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 09:53:52 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:34583 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732239AbfJONxv (ORCPT
+        id S1732259AbfJONzX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 09:55:23 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:48771 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729525AbfJONzW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 09:53:51 -0400
-Received: by mail-qt1-f194.google.com with SMTP id 3so30709893qta.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 06:53:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rdFD1ySM7snbTlYVusRsUK5w8tupUNVkhhCAYZ7l2Pc=;
-        b=y5eyFIzUZPf7JNQjTnetQoWn3BAyiwEjxA5Z4qE2NKrnEC5SXIMN2+3NTw9lnNtQpl
-         8jXl1nYoG97Myed+YXA4VidWTzzkb728WjXDdyiTxMAnQnJCgfOxgYm+hXr813ku/ApS
-         D/V/R44Njsqn3oEV6/kJ7kxFhqWh4qQzvA/G0IpIq0MYI9ymag/1KcZjH4FecF15gYer
-         FWTe0oBPGVvjex692yOemBosnoB8ax+5iL9DTQF+3g1QQvhV+wm+0euRJZqpsxIc5fHh
-         t7R60n9eCfBoflqA7J0pr4mOMAlD6cCJW5kjSZJkYio+WNor05cV2ad46SLhRD6o/TXk
-         48kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rdFD1ySM7snbTlYVusRsUK5w8tupUNVkhhCAYZ7l2Pc=;
-        b=jFjMPQvqjk/fOVMZgRPWeMbJEA0j2eag6F97BTzmrWmpj+PIa+SxVgAsoKBKurJ1M3
-         MDiKdtStGaA3W6IzPe0IhJlKjyq841O1Z5jPBntMyPLMMXf7bJxHKFMRqvtmX0Qqaa3l
-         NO490Kd1uCxMG78Z9EPQdRv3hiok8CKoE5yFp/T1L/Q/lSWbCV/95agOvsOQpDBIKlQN
-         C1zMRn5nDFPdmDCZhjWv9kdhIX0MMMRkt5movbc8fuKmL3QDQzro4q0usAkr59hiw+ZH
-         20gMohSSS1rJUryoA0A86O+lnlW0yEIqIz7XqMQPCoP3xybTYdRRkYX7zb9hXcyXJnxN
-         fk0A==
-X-Gm-Message-State: APjAAAWyd6UL3QJhF/L9s5IJG+u7xMmDPaFyFUdathCZNeCpukI2Gc0i
-        h7b4eHTHNNFc5KRpf+su6yrAIg==
-X-Google-Smtp-Source: APXvYqyhlPRXzOnBK2H9VoOhhErMUW+uFAJUl6CEm6oB8pyKripwSp26aw+YsSeqMP5Lxhsfcz7ugA==
-X-Received: by 2002:a0c:b068:: with SMTP id l37mr28886665qvc.36.1571147630166;
-        Tue, 15 Oct 2019 06:53:50 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::3:d056])
-        by smtp.gmail.com with ESMTPSA id t17sm14675129qtt.57.2019.10.15.06.53.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2019 06:53:49 -0700 (PDT)
-Date:   Tue, 15 Oct 2019 09:53:48 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Subject: Re: [PATCH] mm/memcontrol: update lruvec counters in
- mem_cgroup_move_account
-Message-ID: <20191015135348.GA139269@cmpxchg.org>
-References: <157112699975.7360.1062614888388489788.stgit@buzz>
+        Tue, 15 Oct 2019 09:55:22 -0400
+Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1iKNIC-0003s9-Sv; Tue, 15 Oct 2019 14:55:17 +0100
+Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.2)
+        (envelope-from <ben@rainbowdash.codethink.co.uk>)
+        id 1iKNIC-0002ho-Du; Tue, 15 Oct 2019 14:55:16 +0100
+From:   Ben Dooks <ben.dooks@codethink.co.uk>
+To:     linux-kernel@lists.codethink.co.uk
+Cc:     Ben Dooks <ben.dooks@codethink.co.uk>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/nouveau/disp/gv100: make gv100_disp_core_mthd_{base,sor} static
+Date:   Tue, 15 Oct 2019 14:55:15 +0100
+Message-Id: <20191015135515.10357-1-ben.dooks@codethink.co.uk>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <157112699975.7360.1062614888388489788.stgit@buzz>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 11:09:59AM +0300, Konstantin Khlebnikov wrote:
-> Mapped, dirty and writeback pages are also counted in per-lruvec stats.
-> These counters needs update when page is moved between cgroups.
-> 
-> Fixes: 00f3ca2c2d66 ("mm: memcontrol: per-lruvec stats infrastructure")
-> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+The gv100_disp_core_mthd_{base,sor} are not used outside
+of the file they are defined in, so make them static to
+avoid the following sparse warning:
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+drivers/gpu/drm/nouveau/nvkm/engine/disp/coregv100.c:27:1: warning: symbol 'gv100_disp_core_mthd_base' was not declared. Should it be static?
+drivers/gpu/drm/nouveau/nvkm/engine/disp/coregv100.c:43:1: warning: symbol 'gv100_disp_core_mthd_sor' was not declared. Should it be static?
 
-Please mention in the changelog that currently is nobody *consuming*
-the lruvec versions of these counters and that there is no
-user-visible effect. Thanks
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+---
+Bad divisor in main::vcs_assign: 0
+Cc: Ben Skeggs <bskeggs@redhat.com>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org
+Cc: nouveau@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/gpu/drm/nouveau/nvkm/engine/disp/coregv100.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/disp/coregv100.c b/drivers/gpu/drm/nouveau/nvkm/engine/disp/coregv100.c
+index 4592d0e69fec..9594ba732113 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/coregv100.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/coregv100.c
+@@ -23,7 +23,7 @@
+ 
+ #include <subdev/timer.h>
+ 
+-const struct nv50_disp_mthd_list
++static const struct nv50_disp_mthd_list
+ gv100_disp_core_mthd_base = {
+ 	.mthd = 0x0000,
+ 	.addr = 0x000000,
+@@ -39,7 +39,7 @@ gv100_disp_core_mthd_base = {
+ 	}
+ };
+ 
+-const struct nv50_disp_mthd_list
++static const struct nv50_disp_mthd_list
+ gv100_disp_core_mthd_sor = {
+ 	.mthd = 0x0020,
+ 	.addr = 0x000020,
+-- 
+2.23.0
+
