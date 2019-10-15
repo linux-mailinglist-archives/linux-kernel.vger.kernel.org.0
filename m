@@ -2,28 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B274D8002
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:20:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D211FD8014
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:21:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389679AbfJOTUh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 15:20:37 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:45652 "EHLO
+        id S2389730AbfJOTVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 15:21:24 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:45623 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389378AbfJOTSm (ORCPT
+        with ESMTP id S2389292AbfJOTSh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 15:18:42 -0400
+        Tue, 15 Oct 2019 15:18:37 -0400
 Received: from localhost ([127.0.0.1] helo=localhost.localdomain)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1iKSL4-00067i-Uv; Tue, 15 Oct 2019 21:18:35 +0200
+        id 1iKSL5-00067i-Ct; Tue, 15 Oct 2019 21:18:35 +0200
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
-Cc:     tglx@linutronix.de, Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org,
+Cc:     tglx@linutronix.de, Greg Ungerer <gerg@linux-m68k.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 09/34] ia64: Use CONFIG_PREEMPTION
-Date:   Tue, 15 Oct 2019 21:17:56 +0200
-Message-Id: <20191015191821.11479-10-bigeasy@linutronix.de>
+Subject: [PATCH 10/34] m68k/coldfire: Use CONFIG_PREEMPTION
+Date:   Tue, 15 Oct 2019 21:17:57 +0200
+Message-Id: <20191015191821.11479-11-bigeasy@linutronix.de>
 In-Reply-To: <20191015191821.11479-1-bigeasy@linutronix.de>
 References: <20191015191821.11479-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
@@ -39,92 +40,30 @@ CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by CONFIG_PREEMPT_RT.
 Both PREEMPT and PREEMPT_RT require the same functionality which today
 depends on CONFIG_PREEMPT.
 
-Switch the entry code and kprobes over to use CONFIG_PREEMPTION.
+Switch the entry code over to use CONFIG_PREEMPTION.
 
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: linux-ia64@vger.kernel.org
+Cc: Greg Ungerer <gerg@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-m68k@lists.linux-m68k.org
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- arch/ia64/kernel/entry.S   | 12 ++++++------
- arch/ia64/kernel/kprobes.c |  2 +-
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ arch/m68k/coldfire/entry.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/ia64/kernel/entry.S b/arch/ia64/kernel/entry.S
-index a9992be5718b8..2ac9263315000 100644
---- a/arch/ia64/kernel/entry.S
-+++ b/arch/ia64/kernel/entry.S
-@@ -670,12 +670,12 @@ GLOBAL_ENTRY(ia64_leave_syscall)
- 	 *
- 	 * p6 controls whether current_thread_info()->flags needs to be check for
- 	 * extra work.  We always check for extra work when returning to user-lev=
-el.
--	 * With CONFIG_PREEMPT, we also check for extra work when the preempt_cou=
-nt
-+	 * With CONFIG_PREEMPTION, we also check for extra work when the preempt_=
-count
- 	 * is 0.  After extra work processing has been completed, execution
- 	 * resumes at ia64_work_processed_syscall with p6 set to 1 if the extra-w=
-ork-check
- 	 * needs to be redone.
- 	 */
+diff --git a/arch/m68k/coldfire/entry.S b/arch/m68k/coldfire/entry.S
+index 52d312d5b4d4f..d43a02795a4a4 100644
+--- a/arch/m68k/coldfire/entry.S
++++ b/arch/m68k/coldfire/entry.S
+@@ -108,7 +108,7 @@ ENTRY(system_call)
+ 	btst	#5,%sp@(PT_OFF_SR)	/* check if returning to kernel */
+ 	jeq	Luser_return		/* if so, skip resched, signals */
+=20
 -#ifdef CONFIG_PREEMPT
 +#ifdef CONFIG_PREEMPTION
- 	RSM_PSR_I(p0, r2, r18)			// disable interrupts
- 	cmp.eq pLvSys,p0=3Dr0,r0			// pLvSys=3D1: leave from syscall
- (pKStk) adds r20=3DTI_PRE_COUNT+IA64_TASK_SIZE,r13
-@@ -685,7 +685,7 @@ GLOBAL_ENTRY(ia64_leave_syscall)
- (pUStk)	mov r21=3D0			// r21 <- 0
- 	;;
- 	cmp.eq p6,p0=3Dr21,r0		// p6 <- pUStk || (preempt_count =3D=3D 0)
--#else /* !CONFIG_PREEMPT */
-+#else /* !CONFIG_PREEMPTION */
- 	RSM_PSR_I(pUStk, r2, r18)
- 	cmp.eq pLvSys,p0=3Dr0,r0		// pLvSys=3D1: leave from syscall
- (pUStk)	cmp.eq.unc p6,p0=3Dr0,r0		// p6 <- pUStk
-@@ -814,12 +814,12 @@ GLOBAL_ENTRY(ia64_leave_kernel)
- 	 *
- 	 * p6 controls whether current_thread_info()->flags needs to be check for
- 	 * extra work.  We always check for extra work when returning to user-lev=
-el.
--	 * With CONFIG_PREEMPT, we also check for extra work when the preempt_cou=
-nt
-+	 * With CONFIG_PREEMPTION, we also check for extra work when the preempt_=
-count
- 	 * is 0.  After extra work processing has been completed, execution
- 	 * resumes at .work_processed_syscall with p6 set to 1 if the extra-work-=
-check
- 	 * needs to be redone.
- 	 */
--#ifdef CONFIG_PREEMPT
-+#ifdef CONFIG_PREEMPTION
- 	RSM_PSR_I(p0, r17, r31)			// disable interrupts
- 	cmp.eq p0,pLvSys=3Dr0,r0			// pLvSys=3D0: leave from kernel
- (pKStk)	adds r20=3DTI_PRE_COUNT+IA64_TASK_SIZE,r13
-@@ -1120,7 +1120,7 @@ GLOBAL_ENTRY(ia64_leave_kernel)
-=20
- 	/*
- 	 * On entry:
--	 *	r20 =3D &current->thread_info->pre_count (if CONFIG_PREEMPT)
-+	 *	r20 =3D &current->thread_info->pre_count (if CONFIG_PREEMPTION)
- 	 *	r31 =3D current->thread_info->flags
- 	 * On exit:
- 	 *	p6 =3D TRUE if work-pending-check needs to be redone
-diff --git a/arch/ia64/kernel/kprobes.c b/arch/ia64/kernel/kprobes.c
-index b8356edbde659..a6d6a0556f089 100644
---- a/arch/ia64/kernel/kprobes.c
-+++ b/arch/ia64/kernel/kprobes.c
-@@ -841,7 +841,7 @@ static int __kprobes pre_kprobes_handler(struct die_arg=
-s *args)
- 		return 1;
- 	}
-=20
--#if !defined(CONFIG_PREEMPT)
-+#if !defined(CONFIG_PREEMPTION)
- 	if (p->ainsn.inst_flag =3D=3D INST_FLAG_BOOSTABLE && !p->post_handler) {
- 		/* Boost up -- we can execute copied instructions directly */
- 		ia64_psr(regs)->ri =3D p->ainsn.slot;
+ 	movel	%sp,%d1			/* get thread_info pointer */
+ 	andl	#-THREAD_SIZE,%d1	/* at base of kernel stack */
+ 	movel	%d1,%a0
 --=20
 2.23.0
 
