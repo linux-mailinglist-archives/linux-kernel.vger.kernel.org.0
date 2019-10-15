@@ -2,84 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51E26D7C3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 18:45:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAC21D7C11
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 18:40:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388249AbfJOQpg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 12:45:36 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41320 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727643AbfJOQpg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 12:45:36 -0400
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1058D2CE955
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 16:36:16 +0000 (UTC)
-Received: by mail-wm1-f70.google.com with SMTP id o8so8908350wmc.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 09:36:15 -0700 (PDT)
+        id S1728292AbfJOQkW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 12:40:22 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:46511 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726362AbfJOQkV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 12:40:21 -0400
+Received: by mail-oi1-f195.google.com with SMTP id k25so17359290oiw.13
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 09:40:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6SU2iYxBpciwSkgWiOL6iZkMAxSRBo4v5NF0FEchK38=;
-        b=Q/+fk9bK0bushYjNLqjEXk26G9RovYAYyPgT0i+Wskuq9l4TEQepYhkggV5uLqUvFu
-         +HeBj4769krhjs2FG9D8kWREr/7kNParbCM0/DeC7Z48GPtMQtvTvgR7w4n+Q2eumqlz
-         26McIZCnP/BaMmM0nvnFkY9/ShW9MOngXG68viPAKnvCB2VDGB7VM63dGDSIPjnnVJV6
-         6HOE0EYmIuL7w0ZMbgy/QN7UqzMJ6zo+hZqCovqPSB0qn6C7dC3How6u6S7lr5NZ+lDH
-         aBuQiE1sQTZPb4rTfO80/JR6JRZeI5xlYkNZOrufxsB4LG/ekRMksFRs0iZyixVHX4f8
-         d6NA==
-X-Gm-Message-State: APjAAAUT5LwSfjeCdhq5dbD36qWU0youd8znfvcnrIFS3BnzI9DbL9fc
-        TWIqiuGv4+zQVf3bYFp3ls4eYCwc/fJs+T+Tg64HUI1VYGaFIiRsEscyRnJPSPAf0CbdZmo+mbY
-        cSirMHmLUEymOb/B/OtaRx7/e
-X-Received: by 2002:a1c:e086:: with SMTP id x128mr19487201wmg.139.1571157374398;
-        Tue, 15 Oct 2019 09:36:14 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzIfVMIbG+6mpdFJ1PD9Fm1XVFu7mH9sLaGR+C1rC7u9raqVC9mEMICjHeKjSaYaX9uuQ3HNA==
-X-Received: by 2002:a1c:e086:: with SMTP id x128mr19487181wmg.139.1571157374101;
-        Tue, 15 Oct 2019 09:36:14 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:d001:591b:c73b:6c41? ([2001:b07:6468:f312:d001:591b:c73b:6c41])
-        by smtp.gmail.com with ESMTPSA id a4sm19159768wmm.10.2019.10.15.09.36.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2019 09:36:13 -0700 (PDT)
-Subject: Re: [PATCH] KVM: X86: Make fpu allocation a common function
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Xiaoyao Li <xiaoyao.li@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jim Mattson <jmattson@google.com>
-References: <20191014162247.61461-1-xiaoyao.li@intel.com>
- <87y2xn462e.fsf@vitty.brq.redhat.com>
- <20191014183723.GE22962@linux.intel.com>
- <87v9sq46vz.fsf@vitty.brq.redhat.com>
- <97255084-7b10-73a5-bfb4-fdc1d5cc0f6e@redhat.com>
- <87lftm3wja.fsf@vitty.brq.redhat.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <f00edd02-7d25-54f4-0972-c702e8254016@redhat.com>
-Date:   Tue, 15 Oct 2019 18:36:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eCEIjy3ZeRG5elKhqsYsGhVL5vKH8XQWJHZa/dHTiZY=;
+        b=fVh+tK1OuW5UiuFAZjWx8FC5euZfwGMmrNHQtggVqFhpiMP7XNojpg05YadIcP26IF
+         I2jD0ZdyetFF13WJZIWLKFsxG/0+b5B9p6D51tkLhLp4TfZvRZ7tWmdWe0KGwzI46d/H
+         DycFcqH+WFhOCGtnbyUUkXudVUk6PjXyfr4rFmme7KjSkyOaQna8RQjC8H0uRaD5D8x4
+         cJEs5xaVP/Jl67zw4kP7PdQPHeGFTUqyBnLr2VoHzsTimYjlckAzhEetXVdXFsKxhiky
+         WzU5OiaLrqt759TEzBB6RczAFzIq2QxJAiAF4HC44407AyowMUJQLjCrQwIBuzSoLugM
+         aVeA==
+X-Gm-Message-State: APjAAAUBdzkr1NKm90RhCVByEdpeH0auxJWXkEsTCFjHfNRAByeetkbu
+        yny5u20jHG60xgqNGMHc+YzzybV9xpVJgfG9lZcxQ+TK
+X-Google-Smtp-Source: APXvYqw3ubKBylwMS0d4kkMpFJTqclSWCV2kf6t8698FSO4lFwUowU9nzE6mRXTH436ScESa+2RQ+mL/+/G4zutSHpo=
+X-Received: by 2002:aca:4bd2:: with SMTP id y201mr4744553oia.102.1571157619424;
+ Tue, 15 Oct 2019 09:40:19 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <87lftm3wja.fsf@vitty.brq.redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191008094006.8251-1-geert+renesas@glider.be>
+ <19c54ca5b3750bebc057e20542ad6c0c2acef960.camel@perches.com>
+ <CAMuHMdUYf=0RVeJhSqs9WUY4H+o9Jk8U+J6tUsnMjz7bgKpAxw@mail.gmail.com>
+ <f59c1ef48b64bcf97047df5952f8994f75c0cecf.camel@perches.com>
+ <CAMuHMdWvLbcGDG=VZDSAd=E-Bb_FEt9zvffpJu5nubMCKMZUZA@mail.gmail.com>
+ <CAMuHMdWZYOsJv1uQkOFRK2tZO+E8sSHEneUM-p+q5FyAmYZ9Fw@mail.gmail.com>
+ <fa4ce46605a81d660be73361a4fdd30240a6348e.camel@perches.com>
+ <CAMuHMdWSGzs7BHqeHC0W5qUEpYqJ8B3Os4wdY11JNzt5+xEaiQ@mail.gmail.com> <e09057e0eefb221549ef9686826e2d190ef36a9c.camel@perches.com>
+In-Reply-To: <e09057e0eefb221549ef9686826e2d190ef36a9c.camel@perches.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 15 Oct 2019 18:40:08 +0200
+Message-ID: <CAMuHMdUvoQz7a7NmLHdpNjRnAUMdbqxFRvB2vdLhHj8pw4Z9Rw@mail.gmail.com>
+Subject: Re: [PATCH] checkpatch: use patch subject when reading from stdin
+To:     Joe Perches <joe@perches.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Andy Whitcroft <apw@canonical.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/10/19 16:36, Vitaly Kuznetsov wrote:
->> On 15/10/19 12:53, Vitaly Kuznetsov wrote:
->>> A very theoretical question: why do we have 'struct vcpu' embedded in
->>> vcpu_vmx/vcpu_svm and not the other way around (e.g. in a union)? That
->>> would've allowed us to allocate memory in common code and then fill in
->>> vendor-specific details in .create_vcpu().
->> Probably "because it's always been like that" is the most accurate answer.
->>
-> OK, so let me make my question a bit less theoretical: would you be in
-> favor of changing the status quo? :-)
+Hi Joe,
 
-Not really, it would be a lot of churn for debatable benefit.
+On Tue, Oct 15, 2019 at 5:50 PM Joe Perches <joe@perches.com> wrote:
+> On Tue, 2019-10-15 at 08:49 +0200, Geert Uytterhoeven wrote:
+> > On Mon, Oct 14, 2019 at 4:48 PM Joe Perches <joe@perches.com> wrote:
+> > > On Mon, 2019-10-14 at 11:20 +0200, Geert Uytterhoeven wrote:
+> []
+> > > > I gave your solution a try.
+> > > > It only enables the reset-on-next-patch feature when using stdin.
+> > > > Thanks to the printed subject, it's now obvious to which patch a
+> > > > message applies to.
+> > > > However, the output is significantly different than when passing
+> > > > a split patch series.  Can this be improved upon?
+> > > >
+> > > > Note that the only reason I'm using stdin is that I use formail to split
+> > > > a bundle in individual patches.  Once checkpatch supports bundles (or
+> > > > mboxes) containing multiple patches, there's no longer a need for
+> > > > using formail, and the reset-on-next-patch feature should be
+> > > > enabled unconditionally.
+> > >
+> > > Using your collection of little tools idea,
+> > > why not write a trivial script like:
+> > >
+> > >         grep "^Subject:" $1
+> > >         checkpatch.pl $1
+> > >
+> > > and use that as the command line for formail
+> > > instead of adding unnecessary complexity to
+> > > checkpatch?
+> >
+> > That would be another possibility.
+> >
+> > But given more maintainers are starting to apply patchwork bundles (cfr.
+> > the workflows discussions), it makes sense to make their lives easier.
+>
+> But given this particular change only works for stdin, then this
+> patch splitting idea wouldn't generically work.
+>
+> > This is also useful for maintainers who save all patches to apply into a
+> > single mbox, and run checkpatch+git-am on that.
+>
+> Which also wouldn't generally work for checkpatch <mbox>
 
-Paolo
+formail -s scripts/checkpatch.pl < <mbox>
+
+> > Summarized: git-am handles multiple patches, checkpatch requires
+> > splitting.
+>
+> I still think it's better to introduce YA script that disaggregates
+> aggregated patches/emails and feeds each individual patch to
+> checkpatch rather than making checkpatch learn how to disaggregate.
+>
+> Using "git mailsplit" as part of some additional script could work.
+
+Thanks, didn't know git was assimilating formail functionality...
+
+[reading git-mailsplit(1)]
+
+The advantage of formail over git-mailsplit is that the former doesn't
+create a bunch of files that need to be stored in a temporary place,
+and cleant up afterwards.
+But hey, that can be handled in yet-another-script...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
