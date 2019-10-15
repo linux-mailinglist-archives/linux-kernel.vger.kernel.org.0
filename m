@@ -2,108 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C50C1D753D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 13:40:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B92FFD7540
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 13:40:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728974AbfJOLkX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 07:40:23 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:39960 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726927AbfJOLkX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 07:40:23 -0400
-Received: by mail-qt1-f193.google.com with SMTP id m61so30011247qte.7
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 04:40:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=02G6ILTaST1a8y3NRyfUEBPlsVYY6wbFdoki+Yg8QNs=;
-        b=s17SDYWpQoCoedq/K8Fzedb24l8dH0aMWwsRIbjPJ1dxlyPtIkoho4EcRU7WStlaXu
-         cOMe80AodKX5QHC5Hn/Z4ZmGEnpQTa+TzbH9SffYc51thRFB7SmpKYv1Hl1G+yrzOjjM
-         MOA5+fElhe8wQ9IM+yA42AixeectyrbVf3DUmxbZfYr5R24xB8L50RU5gp9xnw7uUc/o
-         OtUjb0FN6NpoW+APStq9uqA/YdSjfHniFFiKNUMptE5F2pdArt4TNek89O/znUoXUhIe
-         abSAOUC/uYs7L228AiCBNx56WXx/LMfRxc7kdKEAHMl7umD0BBJ1qeK2C0zit3daGoDI
-         Liew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=02G6ILTaST1a8y3NRyfUEBPlsVYY6wbFdoki+Yg8QNs=;
-        b=CNue+g6NmSkjANxWwTMV4irs+az3THvdvKZPnnbHzabbGAFFoQMt2QfaWxPlabYCKm
-         x+4mNCgAgGbY5IER+H/1fkccW0amj8jSwb2cc6mOozG7Cxzsq13+ueN0v/82xxd04AEt
-         e9BC24YcI4oe/JtIolEZBuFaiwH/7+OrlGa1lk6vI/x9dmmS7st26kIqIfsryyqE46cQ
-         pFz75/ZK6MzIzjTWSb9HiNklgECbl8kG2lgtsXMmvXyg+FMOSBSh7luKSYPGaxv0SVQU
-         FCPonNOIMHxFuiN9tNfDnPGgXnv2LUAD+FxOswyIMxyCyp7VMsoXHJoo6su9eSL0aGlS
-         x6eA==
-X-Gm-Message-State: APjAAAWWIOtQNDj89saa56l2rTz6EbHVgpu1R8YbqUDjvWmsg54Zwy+r
-        QerxSzwmOp8Ngbd/OLov/Fk=
-X-Google-Smtp-Source: APXvYqxnsTJcr0P9p+hdcRptpQaYzywIwPAV7Rstwo1k9VbavXS6wUq2i7aQTATDGAQae2ai1M+rsA==
-X-Received: by 2002:a0c:9311:: with SMTP id d17mr37424440qvd.11.1571139621811;
-        Tue, 15 Oct 2019 04:40:21 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.182.218.3])
-        by smtp.gmail.com with ESMTPSA id q2sm9239325qkc.68.2019.10.15.04.40.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2019 04:40:21 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id D02B64DD66; Tue, 15 Oct 2019 08:40:17 -0300 (-03)
-Date:   Tue, 15 Oct 2019 08:40:17 -0300
-To:     Ian Rogers <irogers@google.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>, linux-kernel@vger.kernel.org,
-        Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH] perf annotate: ensure objdump argv is NULL terminated
-Message-ID: <20191015114017.GB29967@kernel.org>
-References: <20191015003418.62563-1-irogers@google.com>
+        id S1729055AbfJOLkc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 07:40:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32854 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726472AbfJOLkb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 07:40:31 -0400
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09A4821A49;
+        Tue, 15 Oct 2019 11:40:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571139631;
+        bh=oGPUs6ScsKBWjiqXvGtsLhcAYD8CQlphpe25WiR9FGY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=IuhXmlHj2PRLsBZj2269HsoFFYUJrFjAzqKrBXSsQ2lsXfxkAooLORx/ALjRhk/av
+         ERpKqQNIxKws3tEloX9E5mfprd62BzVlhogQ3aOrpQrb9cxxE3XPXOK00XeBGl973Y
+         lVbRtilHoNYYolWIarpI02u6whi0mzrqQRS4oax4=
+Received: by mail-qt1-f177.google.com with SMTP id m15so30074401qtq.2;
+        Tue, 15 Oct 2019 04:40:31 -0700 (PDT)
+X-Gm-Message-State: APjAAAWhL/rI0qhYBfHM8DEWfMzO3/NGgv2BBnIN9oadhCsnWZsUElaV
+        kUZYni865pnk1Tn40DT44LkSodXNUr2N3MsQyg==
+X-Google-Smtp-Source: APXvYqwOmCf+8YOVZvLtKg632W0xW7C6kdgWWv1JJ/jsejb6F+m2ruoP20gZce1ZKtzSOkNUWHdYVGoH9vEkkWJApFc=
+X-Received: by 2002:ac8:44d9:: with SMTP id b25mr39160131qto.300.1571139630214;
+ Tue, 15 Oct 2019 04:40:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191015003418.62563-1-irogers@google.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20191007175553.66940-1-john.stultz@linaro.org>
+ <20191007175553.66940-5-john.stultz@linaro.org> <CAL_JsqJLY2n7hfneNptAGswVZtGm3vJbSR6W2wUG+ZTzMN8wZA@mail.gmail.com>
+ <CALAqxLWB7Vd-H70LLLSW0Fv=_4-saQ9CE2k3-L_43E+F8mLj2w@mail.gmail.com>
+ <CAL_JsqJ9uUtqTDEkLi86-BCvW+wM6Pgz_K+JuTsuOqHfFOHStA@mail.gmail.com>
+ <CALAqxLVpPvHf2RpwjHh5v9cnQm9CLtj0HHaqVH=EFQJk-GhaPQ@mail.gmail.com>
+ <20191011155123.GA14272@bogus> <CALAqxLUbh7_PkOwh9NrS_+sgLDZMHndbp44jVQkB=WqOhKUotA@mail.gmail.com>
+In-Reply-To: <CALAqxLUbh7_PkOwh9NrS_+sgLDZMHndbp44jVQkB=WqOhKUotA@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 15 Oct 2019 06:40:18 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLB_Pruk0n0jS0B-uB74R=pE7aOhoo5FU191Hg3wsd7XA@mail.gmail.com>
+Message-ID: <CAL_JsqLB_Pruk0n0jS0B-uB74R=pE7aOhoo5FU191Hg3wsd7XA@mail.gmail.com>
+Subject: Re: [RFC][PATCH v2 4/5] dt-bindings: usb: dwc3: of-simple: add
+ compatible for HiSi
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Yu Chen <chenyu56@huawei.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Oct 14, 2019 at 05:34:18PM -0700, Ian Rogers escreveu:
-> Provide null termination.
+On Mon, Oct 14, 2019 at 10:57 PM John Stultz <john.stultz@linaro.org> wrote:
+>
+> On Fri, Oct 11, 2019 at 8:51 AM Rob Herring <robh@kernel.org> wrote:
+> >
+> > On Mon, Oct 07, 2019 at 04:00:24PM -0700, John Stultz wrote:
+> > > On Mon, Oct 7, 2019 at 2:11 PM Rob Herring <robh+dt@kernel.org> wrote:
+> > > >
+> > > > On Mon, Oct 7, 2019 at 2:07 PM John Stultz <john.stultz@linaro.org> wrote:
+> > > > >
+> > > > > On Mon, Oct 7, 2019 at 11:38 AM Rob Herring <robh+dt@kernel.org> wrote:
+> > > > > >
+> > > > > > On Mon, Oct 7, 2019 at 12:56 PM John Stultz <john.stultz@linaro.org> wrote:
+> > > > > > >
+> > > > > > > Add necessary compatible flag for HiSi's DWC3 so
+> > > > > > > dwc3-of-simple will probe.
+> > > > > > >
+> > > > > > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > > > > > Cc: Felipe Balbi <balbi@kernel.org>
+> > > > > > > Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > > > > > > Cc: Rob Herring <robh+dt@kernel.org>
+> > > > > > > Cc: Mark Rutland <mark.rutland@arm.com>
+> > > > > > > Cc: Yu Chen <chenyu56@huawei.com>
+> > > > > > > Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> > > > > > > Cc: Chunfeng Yun <chunfeng.yun@mediatek.com>
+> > > > > > > Cc: linux-usb@vger.kernel.org
+> > > > > > > Cc: devicetree@vger.kernel.org
+> > > > > > > Signed-off-by: John Stultz <john.stultz@linaro.org>
+> > > > > > > ---
+> > > > > > > v2: Tweaked clock names as clk_usb3phy_ref didn't seem right.
+> > > > > > > ---
+> > > > > > >  .../devicetree/bindings/usb/hisi,dwc3.txt     | 52 +++++++++++++++++++
+> > > > > > >  1 file changed, 52 insertions(+)
+> > > > > > >  create mode 100644 Documentation/devicetree/bindings/usb/hisi,dwc3.txt
+> > > > > >
+> > > > > > Can you make this a schema.
+> > > > >
+> > > > > Sorry, I'm not sure exactly what you're asking. I'm guessing from
+> > > > > grepping around you want the bindings in yaml instead (I see a few
+> > > > > examples)?
+> > > >
+> > > > Yes.
+> > > >
+> > > > > Is there some pointer to documentation? The
+> > > > > Documentation/devicetree/bindings/writing-bindings.txt file doesn't
+> > > > > seem to say much on it.
+> > > >
+> > > > You mean Documentation/devicetree/writing-schemas.rst? There's that
+> > > > and Documentation/devicetree/bindings/example-schema.yaml which has a
+> > > > bunch of annotations on what each part means.
+> > >
+> > > Ah! Sorry for missing that. Thanks for the pointer, though I may get
+> > > away with dropping this one.
+> > >
+> > > > > > If it's only clocks and resets for the wrapper node, just make this
+> > > > > > all one node.
+> > > > >
+> > > > > Just to make sure I'm following, you're suggesting I put all the
+> > > > > clocks/resets in the dwc3 node (renamed to usb for the node name) and
+> > > > > not add the wrapper?
+> > > >
+> > > > Yes.
+> > > >
+> > > > > I'll have to see if that's possible. The generic dwc3 binding wants 3
+> > > > > clocks, but I only have two in the code I've worked with (similarly it
+> > > > > seems to only want two resets, not 4) so I'll have to see if I can
+> > > > > figure out how to adapt that.
+> > > >
+> > > > Possible since commit fe8abf332b8f ("usb: dwc3: support clocks and
+> > > > resets for DWC3 core").
+> > >
+> > > Ok. It *seems* like I can get it working with the existing binding
+> > > then. There's a little funkiness with the core expecting three clocks
+> > > while I only have two (currently I'm duplicating the "bus_early" clk
+> > > for "suspend". Is there a preferred way to do this sort of hack?), and
+> > > I'm a little worried that only the first reset is being used (instead
+> > > of the 4 specified), but it seems to work so far.
+> >
+> > I would assume that you simply don't know how the 'suspend' clock is
+> > connected rather than you don't have one. But that's maybe not a
+> > problem you can fix.
+> >
+> > I would make dwc3 use devm_clk_bulk_get_all and allow for less than 3
+> > clocks. And do a similar change for resets.
+>
+> So got a chance to start implementing this and it seems like it will
+> work. That said, it feels like I'm duplicating logic already in the
+> dwc-of-simple.c implementation (which already handles arbitrary clks
+> and resets), particularly if I try to implement the device specific
+> need_reset quirk used by HiKey960 (and rk3399).
+>
+> Do you feel having that logic copied is worth avoiding the extra
+> bindings? Or is it too duplicative?
 
-Since this hasn't been pushed upstream yet I folded it into the patch
-where it should've been, to keep bisection.
+We already have reset and clock setup in 2 places, so it's already
+kind of duplicated.
 
-Thanks,
+Why not refactor into a helper that both can use?
 
-- Arnaldo
- 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/util/annotate.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-> index f7c620e0099b..a9089e64046d 100644
-> --- a/tools/perf/util/annotate.c
-> +++ b/tools/perf/util/annotate.c
-> @@ -1921,6 +1921,7 @@ static int symbol__disassemble(struct symbol *sym, struct annotate_args *args)
->  		NULL, /* Will be the objdump command to run. */
->  		"--",
->  		NULL, /* Will be the symfs path. */
-> +		NULL,
->  	};
->  	struct child_process objdump_process;
->  	int err = dso__disassemble_filename(dso, symfs_filename, sizeof(symfs_filename));
-> -- 
-> 2.23.0.700.g56cf767bdb-goog
-
--- 
-
-- Arnaldo
+Rob
