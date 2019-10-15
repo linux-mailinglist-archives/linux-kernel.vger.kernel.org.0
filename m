@@ -2,97 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73C75D7786
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 15:36:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75E8ED778A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 15:37:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732027AbfJONgq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 09:36:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32806 "EHLO mail.kernel.org"
+        id S1732066AbfJONhw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 09:37:52 -0400
+Received: from 8bytes.org ([81.169.241.247]:47568 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728880AbfJONgq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 09:36:46 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 855752064A;
-        Tue, 15 Oct 2019 13:36:44 +0000 (UTC)
-Date:   Tue, 15 Oct 2019 09:36:42 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Miroslav Benes <mbenes@suse.cz>
-Cc:     Petr Mladek <pmladek@suse.com>, jikos@kernel.org,
-        joe.lawrence@redhat.com, jpoimboe@redhat.com, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
-Subject: Re: [PATCH v2] ftrace: Introduce PERMANENT ftrace_ops flag
-Message-ID: <20191015093642.72e872d0@gandalf.local.home>
-In-Reply-To: <alpine.LSU.2.21.1910151244550.30206@pobox.suse.cz>
-References: <20191014105923.29607-1-mbenes@suse.cz>
-        <20191014111719.141bd4fa@gandalf.local.home>
-        <20191015074540.bxehllisibls3kk7@pathway.suse.cz>
-        <alpine.LSU.2.21.1910151244550.30206@pobox.suse.cz>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1728880AbfJONhv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 09:37:51 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id CAC062DF; Tue, 15 Oct 2019 15:37:49 +0200 (CEST)
+Date:   Tue, 15 Oct 2019 15:37:48 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Kit Chow <kchow@gigaio.com>
+Subject: Re: [PATCH 3/3] iommu/amd: Support multiple PCI DMA aliases in IRQ
+ Remapping
+Message-ID: <20191015133748.GC17570@8bytes.org>
+References: <20191008221837.13067-1-logang@deltatee.com>
+ <20191008221837.13067-4-logang@deltatee.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191008221837.13067-4-logang@deltatee.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 15 Oct 2019 12:50:59 +0200 (CEST)
-Miroslav Benes <mbenes@suse.cz> wrote:
+On Tue, Oct 08, 2019 at 04:18:37PM -0600, Logan Gunthorpe wrote:
+> -static struct irq_remap_table *alloc_irq_table(u16 devid)
+> +static int set_remap_table_entry_alias(struct pci_dev *pdev, u16 alias,
+> +				       void *data)
+> +{
+> +	struct irq_remap_table *table = data;
+> +
+> +	irq_lookup_table[alias] = table;
+> +	set_dte_irq_entry(alias, table);
+> +
+> +	return 0;
+> +}
+> +
+> +static int iommu_flush_dte_alias(struct pci_dev *pdev, u16 alias, void *data)
+> +{
+> +	struct amd_iommu *iommu = data;
+> +
+> +	iommu_flush_dte(iommu, alias);
+> +
+> +	return 0;
+> +}
 
-> > > > @@ -6752,12 +6764,19 @@ ftrace_enable_sysctl(struct ctl_table *table, int write,
-> > > >  		ftrace_startup_sysctl();
-> > > >  
-> > > >  	} else {
-> > > > +		if (is_permanent_ops_registered()) {
-> > > > +			ftrace_enabled = last_ftrace_enabled;  
-> > > 
-> > > Although this is not incorrect, but may be somewhat confusing.
-> > > 
-> > > At this location, last_ftrace_enabled is always true.
-> > > 
-> > > I'm thinking this would be better to simply set it to false here.  
-> > 
-> > IMHO, we want to set ftrace_enabled = true here.
+I think these two functions can be merged into one, saving one
+pci_for_each_dma_alias() call below. You can lookup the iommu using the
+amd_iommu_rlookup_table[alias] in the first function and issue the flush
+there.
 
-Yes, I meant true (don't know why I said false :-/ )
 
-> > 
-> > It was set to "false" by writing to the sysfs file. But the change
-> > gets rejected. ftrace will stay enabled. So, we should set
-> > the value back to "true".  
-> 
-> That's correct.
-> 
-> I can make it explicit as proposed. I just thought that 'ftrace_enabled = 
-> last_ftrace_enabled' was clear enough given Petr's explanation.
-> 
-> > > > +			ret = -EBUSY;
-> > > > +			goto out;
-> > > > +		}
-> > > > +
-> > > >  		/* stopping ftrace calls (just send to ftrace_stub) */
-> > > >  		ftrace_trace_function = ftrace_stub;
-> > > >  
-> > > >  		ftrace_shutdown_sysctl();
-> > > >  	}
-> > > >  
-> > > > +	last_ftrace_enabled = !!ftrace_enabled;
-> > > >   out:  
-> > > 
-> > > And move the assignment of last_ftrace_enabled to after the "out:"
-> > > label.  
-> > 
-> > This change might make sense anyway. But it is not strictly necessary
-> > from my POV.  
-> 
-> If it stays before "out:" label, last_ftrace_enabled is set if and only if 
-> it has to be set. I think it is better, but I can, of course, move it in 
-> v3 if Steven prefers it.
+Regards,
 
-I don't have any strong feelings here. If you want to keep it like
-this, I wont argue.
-
--- Steve
+	Joerg
 
