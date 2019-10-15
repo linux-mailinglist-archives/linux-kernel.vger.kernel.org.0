@@ -2,113 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72139D76CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 14:47:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 366ACD76D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 14:49:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726343AbfJOMrU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 08:47:20 -0400
-Received: from mga07.intel.com ([134.134.136.100]:26311 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725710AbfJOMrU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 08:47:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Oct 2019 05:47:19 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,300,1566889200"; 
-   d="scan'208";a="207538674"
-Received: from shacharl-mobl.ger.corp.intel.com (HELO localhost) ([10.252.9.88])
-  by orsmga002.jf.intel.com with ESMTP; 15 Oct 2019 05:47:14 -0700
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        David Safford <david.safford@ge.com>,
-        Pascal Van Leeuwen <pvanleeuwen@verimatrix.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] tpm: Salt tpm_get_random() result with get_random_bytes()
-Date:   Tue, 15 Oct 2019 15:47:02 +0300
-Message-Id: <20191015124702.633-1-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
+        id S1728467AbfJOMtF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 08:49:05 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3768 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726534AbfJOMtF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 08:49:05 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 471D16BF59E3EF2A8247;
+        Tue, 15 Oct 2019 20:49:02 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Tue, 15 Oct 2019
+ 20:48:53 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <matthias.bgg@gmail.com>, <kstewart@linuxfoundation.org>,
+        <gregkh@linuxfoundation.org>, <tglx@linutronix.de>,
+        <jasu@njomotys.info>
+CC:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] clk: mediatek: mt6797: use devm_platform_ioremap_resource() to simplify code
+Date:   Tue, 15 Oct 2019 20:47:28 +0800
+Message-ID: <20191015124728.25072-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Salt the result that comes from the TPM RNG with random bytes from the
-kernel RNG. This will allow to use tpm_get_random() as a substitute for
-get_random_bytes().  TPM could have a bug (making results predicatable),
-backdoor or even an inteposer in the bus. Salting gives protections
-against these concerns.
+Use devm_platform_ioremap_resource() to simplify the code a bit.
+This is detected by coccinelle.
 
-Cc: David Safford <david.safford@ge.com>
-Cc: Pascal Van Leeuwen <pvanleeuwen@verimatrix.com>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/char/tpm/tpm-interface.c | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+ drivers/clk/mediatek/clk-mt6797.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 7f105490604c..a135b1cd5a17 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -22,6 +22,7 @@
- #include <linux/poll.h>
- #include <linux/slab.h>
- #include <linux/mutex.h>
-+#include <linux/random.h>
- #include <linux/spinlock.h>
- #include <linux/suspend.h>
- #include <linux/freezer.h>
-@@ -431,16 +432,24 @@ int tpm_pm_resume(struct device *dev)
- EXPORT_SYMBOL_GPL(tpm_pm_resume);
+diff --git a/drivers/clk/mediatek/clk-mt6797.c b/drivers/clk/mediatek/clk-mt6797.c
+index f62b042..f35389a 100644
+--- a/drivers/clk/mediatek/clk-mt6797.c
++++ b/drivers/clk/mediatek/clk-mt6797.c
+@@ -385,9 +385,8 @@ static int mtk_topckgen_init(struct platform_device *pdev)
+ 	struct clk_onecell_data *clk_data;
+ 	void __iomem *base;
+ 	struct device_node *node = pdev->dev.of_node;
+-	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
  
- /**
-- * tpm_get_random() - get random bytes from the TPM's RNG
-+ * tpm_get_random() - Get random bytes from the TPM's RNG
-  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
-  * @out:	destination buffer for the random bytes
-  * @max:	the max number of bytes to write to @out
-  *
-- * Return: number of random bytes read or a negative error value.
-+ * Get random bytes from the TPM's RNG and salt the result with the same amount
-+ * of bytes from the kernel RNG. Salting allows to call this function as a
-+ * substitute for get_random_bytes() where appropriate.
-+ *
-+ * Return:
-+ *   number of random bytes on success,
-+ *   -errno on error
-  */
- int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
- {
-+	u8 salt[TPM_MAX_RNG_DATA];
- 	int rc;
-+	int i;
+-	base = devm_ioremap_resource(&pdev->dev, res);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
  
- 	if (!out || max > TPM_MAX_RNG_DATA)
- 		return -EINVAL;
-@@ -455,6 +464,14 @@ int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
- 		rc = tpm1_get_random(chip, out, max);
- 
- 	tpm_put_ops(chip);
-+
-+	if (rc > 0) {
-+		get_random_bytes(salt, rc);
-+
-+		for (i = 0; i < rc; i++)
-+			out[i] ^= salt[i];
-+	}
-+
- 	return rc;
- }
- EXPORT_SYMBOL_GPL(tpm_get_random);
 -- 
-2.20.1
+2.7.4
+
 
