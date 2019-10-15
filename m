@@ -2,74 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05041D7316
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 12:23:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3466D7323
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 12:25:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730411AbfJOKXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 06:23:51 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46930 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727810AbfJOKXv (ORCPT
+        id S1730525AbfJOKZi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 06:25:38 -0400
+Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:56402 "EHLO
+        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728459AbfJOKZh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 06:23:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=g8Yf5bkK0qIaSk67mxtN2CAg12cwmtqwx0IrD4HqSA8=; b=EdZyJ8XgRi7NDvsRwaiKHjDwN
-        Ss+k9RgPQXO/UicfhAEVevJjtPrsrxIwNCaJmatOW6cC/8dsNgm1lzeHLLfq3AId1rsH5VtQuhFiH
-        o+XDUvS0TQZ9DM1AyYY8qQKqO4VP3m56zRljXK33/mKPAOJTj9cX2BSx354fHODXNG2JPlhnaBm3u
-        C8JTi/PjWI3T+By2cocpOJp7tcjgKTesEtZFEyWcTCGB/KFhb8eeeFAoYr/VX2AX55veWzfRQyRbD
-        jm0lh3yxFO5EHPpUwl/1crtPqlvFNX5LkbO3tjMRMADbqOf3DIu62ij/wT5hGBCOZVoR7/bN/0hgq
-        nEKEJZY9w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iKJzW-0002Q7-UI; Tue, 15 Oct 2019 10:23:46 +0000
-Date:   Tue, 15 Oct 2019 03:23:46 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        hch@infradead.org, mbrugger@suse.com, f.fainelli@gmail.com,
-        wahrenst@gmx.net, Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH RFC 4/5] dma/direct: check for overflows in ARM's
- dma_capable()
-Message-ID: <20191015102346.GA9071@infradead.org>
-References: <20191014183108.24804-1-nsaenzjulienne@suse.de>
- <20191014183108.24804-5-nsaenzjulienne@suse.de>
+        Tue, 15 Oct 2019 06:25:37 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=laijs@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Tf7BXHR_1571135103;
+Received: from localhost(mailfrom:laijs@linux.alibaba.com fp:SMTPD_---0Tf7BXHR_1571135103)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 15 Oct 2019 18:25:35 +0800
+From:   Lai Jiangshan <laijs@linux.alibaba.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Lai Jiangshan <laijs@linux.alibaba.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
+Subject: [PATCH 0/7] rcu: cleanups
+Date:   Tue, 15 Oct 2019 10:23:55 +0000
+Message-Id: <20191015102402.1978-1-laijs@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191014183108.24804-5-nsaenzjulienne@suse.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 14, 2019 at 08:31:06PM +0200, Nicolas Saenz Julienne wrote:
-> The Raspberry Pi 4 has a 1GB ZONE_DMA area starting at address
-> 0x00000000 and a mapping between physical and DMA memory offset by
-> 0xc0000000.  It transpires that, on non LPAE systems, any attempt to
-> translate physical addresses outside of ZONE_DMA will result in an
-> overflow. The resulting DMA addresses will not be detected by arm's
-> dma_capable() as they still fit in the device's DMA mask.
-> 
-> Fix this by failing to validate a DMA address smaller than the lowest
-> possible DMA address.
+All are minimal independent cleanups, expect that patch 3 depends
+on patch 2.
 
-I think the main problem here is that arm doesn't respect the
-bus_dma_mask.  If you replace the arm version of dma_capable with
-the generic one, does that fi the issue for you as well?
+Lai Jiangshan (7):
+  rcu: fix incorrect conditional compilation
+  rcu: fix tracepoint string when RCU CPU kthread runs
+  rcu: trace_rcu_utilization() paired
+  rcu: remove the declaration of call_rcu() in tree.h
+  rcu: move gp_state_names[] and gp_state_getname() to tree_stall.h
+  rcu: rename some CONFIG_PREEMPTION to CONFIG_PREEMPT_RCU
+  rcu: splite tasks_rcu to tasks.c
 
-We need to untangle the various macros arm uses for the direct mapping
-and eventually we should be able to use the linux/dma-direct.h helpers
-directly.  Here is a branch with some simple preps I had.  Freshly
-rebased, not actually tested:
+ kernel/rcu/Makefile      |   1 +
+ kernel/rcu/rcu.h         |   4 +-
+ kernel/rcu/tasks.c       | 395 +++++++++++++++++++++++++++++++++++++++
+ kernel/rcu/tree.c        |  19 +-
+ kernel/rcu/tree.h        |  15 +-
+ kernel/rcu/tree_plugin.h |   1 +
+ kernel/rcu/tree_stall.h  |  28 ++-
+ kernel/rcu/update.c      | 365 ------------------------------------
+ 8 files changed, 431 insertions(+), 397 deletions(-)
+ create mode 100644 kernel/rcu/tasks.c
 
-http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/arm-generic-dma-preps
+-- 
+2.20.1
+
