@@ -2,74 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D343D7171
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 10:48:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1756FD7146
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 10:41:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729489AbfJOIsR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 04:48:17 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:59650 "EHLO inva020.nxp.com"
+        id S1729342AbfJOIlF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 04:41:05 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59925 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729459AbfJOIsP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 04:48:15 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E976D1A00B8;
-        Tue, 15 Oct 2019 10:48:13 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1B1921A0A32;
-        Tue, 15 Oct 2019 10:48:07 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 7046F4031C;
-        Tue, 15 Oct 2019 16:47:58 +0800 (SGT)
-From:   Xiaowei Bao <xiaowei.bao@nxp.com>
-To:     Zhiqiang.Hou@nxp.com, bhelgaas@google.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, leoyang.li@nxp.com,
-        kishon@ti.com, lorenzo.pieralisi@arm.com, Minghuan.Lian@nxp.com,
-        andrew.murray@arm.com, mingkai.hu@nxp.com,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: [PATCH v2 6/6] misc: pci_endpoint_test: Add the layerscape PCIe GEN4 EP device support
-Date:   Tue, 15 Oct 2019 16:37:02 +0800
-Message-Id: <20191015083702.21792-7-xiaowei.bao@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20191015083702.21792-1-xiaowei.bao@nxp.com>
-References: <20191015083702.21792-1-xiaowei.bao@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726937AbfJOIlF (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 04:41:05 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4990230860CB;
+        Tue, 15 Oct 2019 08:41:05 +0000 (UTC)
+Received: from krava (unknown [10.43.17.61])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 56F3A5D9CD;
+        Tue, 15 Oct 2019 08:41:03 +0000 (UTC)
+Date:   Tue, 15 Oct 2019 10:41:02 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Jin Yao <yao.jin@linux.intel.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH v2 3/5] perf report: Sort by sampled cycles percent per
+ block for stdio
+Message-ID: <20191015084102.GA10951@krava>
+References: <20191015053350.13909-1-yao.jin@linux.intel.com>
+ <20191015053350.13909-4-yao.jin@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191015053350.13909-4-yao.jin@linux.intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Tue, 15 Oct 2019 08:41:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the layerscape PCIE GEN4 EP device support in pci_endpoint_test driver.
+On Tue, Oct 15, 2019 at 01:33:48PM +0800, Jin Yao wrote:
 
-Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
----
-v2: 
- - No change.
+SNIP
 
- drivers/misc/pci_endpoint_test.c | 2 ++
- 1 file changed, 2 insertions(+)
+> +enum {
+> +	PERF_HPP_REPORT__BLOCK_TOTAL_CYCLES_COV,
+> +	PERF_HPP_REPORT__BLOCK_LBR_CYCLES,
+> +	PERF_HPP_REPORT__BLOCK_CYCLES_PCT,
+> +	PERF_HPP_REPORT__BLOCK_AVG_CYCLES,
+> +	PERF_HPP_REPORT__BLOCK_RANGE,
+> +	PERF_HPP_REPORT__BLOCK_DSO,
+> +	PERF_HPP_REPORT__BLOCK_MAX_INDEX
+> +};
+> +
+> +static struct block_fmt block_fmts[PERF_HPP_REPORT__BLOCK_MAX_INDEX];
+> +
+> +static struct block_header_column{
+> +	const char *name;
+> +	int width;
+> +} block_columns[PERF_HPP_REPORT__BLOCK_MAX_INDEX] = {
+> +	[PERF_HPP_REPORT__BLOCK_TOTAL_CYCLES_COV] = {
+> +		.name = "Sampled Cycles%",
+> +		.width = 15,
+> +	},
+> +	[PERF_HPP_REPORT__BLOCK_LBR_CYCLES] = {
+> +		.name = "Sampled Cycles",
+> +		.width = 14,
+> +	},
+> +	[PERF_HPP_REPORT__BLOCK_CYCLES_PCT] = {
+> +		.name = "Avg Cycles%",
+> +		.width = 11,
+> +	},
+> +	[PERF_HPP_REPORT__BLOCK_AVG_CYCLES] = {
+> +		.name = "Avg Cycles",
+> +		.width = 10,
+> +	},
+> +	[PERF_HPP_REPORT__BLOCK_RANGE] = {
+> +		.name = "[Program Block Range]",
+> +		.width = 70,
+> +	},
+> +	[PERF_HPP_REPORT__BLOCK_DSO] = {
+> +		.name = "Shared Object",
+> +		.width = 20,
+> +	}
+>  };
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index 6e208a0..8b145a7 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -65,6 +65,7 @@
- #define PCI_ENDPOINT_TEST_IRQ_NUMBER		0x28
- 
- #define PCI_DEVICE_ID_TI_AM654			0xb00c
-+#define PCI_DEVICE_ID_LX2160A			0x8d80
- 
- #define is_am654_pci_dev(pdev)		\
- 		((pdev)->device == PCI_DEVICE_ID_TI_AM654)
-@@ -793,6 +794,7 @@ static const struct pci_device_id pci_endpoint_test_tbl[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA74x) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA72x) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_FREESCALE, 0x81c0) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_FREESCALE, PCI_DEVICE_ID_LX2160A) },
- 	{ PCI_DEVICE_DATA(SYNOPSYS, EDDA, NULL) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_AM654),
- 	  .driver_data = (kernel_ulong_t)&am654_data
--- 
-2.9.5
+so we already have support for multiple columns,
+why don't you add those as 'struct sort_entry' objects?
 
+SNIP
+
+> +{
+> +	struct block_hist *bh = &rep->block_hist;
+> +
+> +	get_block_hists(hists, bh, rep);
+> +	symbol_conf.report_individual_block = true;
+> +	hists__fprintf(&bh->block_hists, true, 0, 0, 0,
+> +		       stdout, true);
+> +	hists__delete_entries(&bh->block_hists);
+> +	return 0;
+> +}
+> +
+>  static int perf_evlist__tty_browse_hists(struct evlist *evlist,
+>  					 struct report *rep,
+>  					 const char *help)
+> @@ -500,6 +900,12 @@ static int perf_evlist__tty_browse_hists(struct evlist *evlist,
+>  			continue;
+>  
+>  		hists__fprintf_nr_sample_events(hists, rep, evname, stdout);
+> +
+> +		if (rep->total_cycles) {
+> +			hists__fprintf_all_blocks(hists, rep);
+
+so this call kicks all the block info setup/count/print, right?
+
+I thingk it shouldn't be in the output code, but in the code before..
+from what I see you could count block_info counts during the sample
+processing, no?
+
+jirka
