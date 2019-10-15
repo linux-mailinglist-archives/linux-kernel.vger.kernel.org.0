@@ -2,84 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F8ABD8392
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 00:24:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10F15D839A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 00:25:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389841AbfJOWY1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 18:24:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42438 "EHLO mail.kernel.org"
+        id S2389882AbfJOWZL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 18:25:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389809AbfJOWY0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 18:24:26 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0E622064A;
-        Tue, 15 Oct 2019 22:24:23 +0000 (UTC)
+        id S1732265AbfJOWZI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 18:25:08 -0400
+Subject: Re: [PULL] vhost: cleanups and fixes
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571178266;
-        bh=7wD/sv1cp59b0s917sG2wb/i73fxap9yaREzOUv1GHk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=Qa8FOoODC83mp3W205B7mOZ3mQ2bwlNINhhmwHUDDwntGVXNfzz/AN5WbUDcCC4Ss
-         K7ureGdXByoli4H0GCReDKB63KkS8Gb6p7soa3E1+BxpwUAvrZ6zXEHlEFnm34z5Oz
-         GjQ6H5CK2MmV/SZK0hMThsATz+SIX5hfTCeG9CWU=
-Date:   Tue, 15 Oct 2019 17:24:21 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Rajat Jain <rajatja@google.com>
-Cc:     gregkh@linuxfoundation.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rajatxjain@gmail.com
-Subject: Re: [PATCH v3 1/2] PCI/AER: Add PoisonTLPBlocked to Uncorrectable
- errors
-Message-ID: <20191015222421.GA184682@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190827222145.32642-1-rajatja@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        s=default; t=1571178307;
+        bh=kvmC4E7L+oeDDz2E8MyZ7vy8vlZuBNRvi0r5zkZQzEw=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=bnEMMCiIkY+cceDhVmWI3SwGLOVkTzLzCA/iEbt/KJrqDlApuq1MhEKMRMmJl0rAl
+         osldAywju56GIGmKTtqF+C+aeNULWZ94iC2j7vYgpDe4VJhvo7DujiguCdSUN2Kl1R
+         7OYLubeq6rVlb+Xn702ULY86zKyVld5Q9SzjvvvU=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20191015171908-mutt-send-email-mst@kernel.org>
+References: <20191015171908-mutt-send-email-mst@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20191015171908-mutt-send-email-mst@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
+X-PR-Tracked-Commit-Id: 245cdd9fbd396483d501db83047116e2530f245f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 3b1f00aceb7a67bf079a5a64aa5c6baf78a8f442
+Message-Id: <157117830785.470.239830549616573165.pr-tracker-bot@kernel.org>
+Date:   Tue, 15 Oct 2019 22:25:07 +0000
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jan.kiszka@web.de, mst@redhat.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 03:21:44PM -0700, Rajat Jain wrote:
-> The elements in the aer_uncorrectable_error_string[] refer to
-> the bit names in Uncorrectable Error status Register in the PCIe spec
-> (Sec 7.8.4.2 in PCIe 4.0)
-> 
-> Add the last error bit in the strings array that was missing.
-> 
-> Signed-off-by: Rajat Jain <rajatja@google.com>
+The pull request you sent on Tue, 15 Oct 2019 17:19:08 -0400:
 
-I applied this to pci/aer for v5.5, thanks, Rajat!
+> https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
 
-> ---
-> v3: same as v2
-> v2: same as v1
-> 
->  drivers/pci/pcie/aer.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index b45bc47d04fe..68060a290291 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -36,7 +36,7 @@
->  #define AER_ERROR_SOURCES_MAX		128
->  
->  #define AER_MAX_TYPEOF_COR_ERRS		16	/* as per PCI_ERR_COR_STATUS */
-> -#define AER_MAX_TYPEOF_UNCOR_ERRS	26	/* as per PCI_ERR_UNCOR_STATUS*/
-> +#define AER_MAX_TYPEOF_UNCOR_ERRS	27	/* as per PCI_ERR_UNCOR_STATUS*/
->  
->  struct aer_err_source {
->  	unsigned int status;
-> @@ -560,6 +560,7 @@ static const char *aer_uncorrectable_error_string[AER_MAX_TYPEOF_UNCOR_ERRS] = {
->  	"BlockedTLP",			/* Bit Position 23	*/
->  	"AtomicOpBlocked",		/* Bit Position 24	*/
->  	"TLPBlockedErr",		/* Bit Position 25	*/
-> +	"PoisonTLPBlocked",		/* Bit Position 26	*/
->  };
->  
->  static const char *aer_agent_string[] = {
-> -- 
-> 2.23.0.187.g17f5b7556c-goog
-> 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/3b1f00aceb7a67bf079a5a64aa5c6baf78a8f442
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
