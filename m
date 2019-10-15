@@ -2,355 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD268D82EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 23:51:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E0FFD82F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 23:51:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388899AbfJOVug (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 17:50:36 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52184 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726719AbfJOVug (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 17:50:36 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3B0493086218;
-        Tue, 15 Oct 2019 21:50:35 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-84.rdu2.redhat.com [10.10.121.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6F20610027AB;
-        Tue, 15 Oct 2019 21:50:32 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 18/21] block: Add block layer notifications
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     dhowells@redhat.com, Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>, dhowells@redhat.com,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 15 Oct 2019 22:50:31 +0100
-Message-ID: <157117623165.15019.7188193153962358526.stgit@warthog.procyon.org.uk>
-In-Reply-To: <157117606853.15019.15459271147790470307.stgit@warthog.procyon.org.uk>
-References: <157117606853.15019.15459271147790470307.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        id S2388941AbfJOVum (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 17:50:42 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:47128 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732448AbfJOVuk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 17:50:40 -0400
+Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1iKUiB-0000tN-Rr; Tue, 15 Oct 2019 23:50:36 +0200
+Date:   Tue, 15 Oct 2019 23:50:33 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     David Laight <David.Laight@ACULAB.COM>
+cc:     'Linus Torvalds' <torvalds@linux-foundation.org>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Nicholas Mc Guire <hofrat@opentech.at>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: RE: x86/random: Speculation to the rescue
+In-Reply-To: <41646d76683844e7baf068bed35891ad@AcuMS.aculab.com>
+Message-ID: <alpine.DEB.2.21.1910152230070.2518@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.21.1909290010500.2636@nanos.tec.linutronix.de> <CAHk-=wgjC01UaoV35PZvGPnrQ812SRGPoV7Xp63BBFxAsJjvrg@mail.gmail.com> <CAHk-=wi0vxLmwEBn2Xgu7hZ0U8z2kN4sgCax+57ZJMVo3huDaQ@mail.gmail.com> <20190930033706.GD4994@mit.edu>
+ <20190930131639.GF4994@mit.edu> <CAHk-=wg7YAx_+CDe6fUqApPD_ghP18H9sPnJWWUg32pQ4pU82g@mail.gmail.com> <41646d76683844e7baf068bed35891ad@AcuMS.aculab.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 15 Oct 2019 21:50:35 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a block layer notification mechanism whereby notifications about
-block-layer events such as I/O errors, can be reported to a monitoring
-process asynchronously.
+David,
 
-Firstly, an event queue needs to be created:
+On Tue, 1 Oct 2019, David Laight wrote:
+> From: Linus Torvalds
+> > Sent: 30 September 2019 17:16
+> > 
+> > On Mon, Sep 30, 2019 at 6:16 AM Theodore Y. Ts'o <tytso@mit.edu> wrote:
+> > >
+> > > Which is to say, I'm still worried that people with deep access to the
+> > > implementation details of a CPU might be able to reverse engineer what
+> > > a jitter entropy scheme produces.  This is why I'd be curious to see
+> > > the results when someone tries to attack a jitter scheme on a fully
+> > > open, simple architecture such as RISC-V.
+> > 
+> > Oh, I agree.
+> > 
+> > One of the reasons I didn't like some of the other jitter entropy
+> > things was that they seemed to rely _entirely_ on just purely
+> > low-level CPU unpredictability. I think that exists, but I think it
+> > makes for problems for really simple cores.
+> > 
+> > Timing over a bigger thing and an actual interrupt (even if it's
+> > "just" a timer interrupt, which is arguably much closer to the CPU and
+> > has a much higher likelihood of having common frequency domains with
+> > the cycle counter etc) means that I'm pretty damn convinced that a big
+> > complex CPU will absolutely see issues, even if it has big caches.
+> 
+> Agreed, you need something that is actually non-deterministic.
+> While 'speculation' is difficult to predict, it is actually fully deterministic.
 
-	pipe2(fds, O_TMPFILE);
-	ioctl(fds[1], IOC_WATCH_QUEUE_SET_SIZE, 256);
+I surely agree with Linus that simple architectures could have a more or
+less predictable or at least searchable behaviour. If we talk about complex
+x86 CPUs, I tend to disagree.
 
-then a notification can be set up to report block notifications via that
-queue:
+Even the Intel architects cannot explain why the following scenario is not
+deterministic at all:
 
-	struct watch_notification_filter filter = {
-		.nr_filters = 1,
-		.filters = {
-			[0] = {
-				.type = WATCH_TYPE_BLOCK_NOTIFY,
-				.subtype_filter[0] = UINT_MAX;
-			},
-		},
-	};
-	ioctl(fds[1], IOC_WATCH_QUEUE_SET_FILTER, &filter);
-	watch_devices(fds[1], 12);
+	Single CPU
+	No NMIs
+	No MCEs
+	No DMAs in the background, nothing.
+	CPU frequency is identical to TSC frequency
 
-After that, records will be placed into the queue when, for example, errors
-occur on a block device.  Records are of the following format:
+	volatile int foo;
 
-	struct block_notification {
-		struct watch_notification watch;
-		__u64	dev;
-		__u64	sector;
-	} *n;
+	local_irq_disable();
+	start = rdtscp();
+	for (i = 0; i < 100000; i++)
+		foo++;
+	end = rdtscp();
+	local_irq_enable();
 
-Where:
+Repeat that loop as often as you wish and observe the end - start
+delta. You'll see
 
-	n->watch.type will be WATCH_TYPE_BLOCK_NOTIFY
+       min <= delta <= N * min
 
-	n->watch.subtype will be the type of notification, such as
-	NOTIFY_BLOCK_ERROR_CRITICAL_MEDIUM.
+where N is something >= 2. The actual value of N depends on the micro
+architecture, but is not identical on two systems and not even identical on
+the same system after boot and 1e6 iterations of the above.
 
-	n->watch.info & WATCH_INFO_LENGTH will indicate the length of the
-	record.
+Aside of the fact that N is insane big there is absolutely no pattern in
+the delta value even over a large number of runs.
 
-	n->watch.info & WATCH_INFO_ID will be the second argument to
-	watch_devices(), shifted.
+> Until you get some perturbation from an outside source the cpu state
+> (including caches and DRAM) is likely to be the same on every boot.
 
-	n->dev will be the device numbers munged together.
+See above and read Nicholas paper. It's simply not that likely on anything
+halfways modern.
 
-	n->sector will indicate the affected sector (if appropriate for the
-	event).
+> For a desktop (etc) PC booting from a disk (even SSD) you'll get some variation.
+> Boot an embedded system from onboard flash and every boot could
+> well be the same (or one of a small number of results).
+>
+> Synchronising a signal between frequency domains might generate
+> some 'randomness', but maybe not if both come from the same PLL.
+> 
+> Even if there are variations, they may not be large enough to give
+> a lot of variations in the state.
+> The variations between systems could also be a lot larger than the
+> variations within a system.
 
-Note that it is permissible for event records to be of variable length -
-or, at least, the length may be dependent on the subtype.
+The variations between systems are going to be larger as any minimal
+tolerance in the components have an influence.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+But even between two boots on a 'noiseless' embedded system factors like
+temperature, PLL lock times, swing in times of voltage regulators and other
+tiny details create non-deterministic behaviour. In my former life as a
+hardware engineer I had to analyze such issues deeply as they create
+serious trouble for some application scenarios, but those systems where
+based on very trivial and truly deterministic silicon parts. No commodity
+hardware vendor will ever go the extra mile to address these things as the
+effort required to get them under control is exponential vs. the effect.
 
- Documentation/watch_queue.rst    |    4 +++-
- block/Kconfig                    |    9 +++++++++
- block/blk-core.c                 |   29 ++++++++++++++++++++++++++++
- include/linux/blkdev.h           |   15 ++++++++++++++
- include/uapi/linux/watch_queue.h |   30 ++++++++++++++++++++++++++++-
- samples/watch_queue/watch_test.c |   40 +++++++++++++++++++++++++++++++++++++-
- 6 files changed, 124 insertions(+), 3 deletions(-)
+Whether that's enough to create true entropy is a different question, but I
+do not agree with the upfront dismissal of a potentially useful entropy
+source. 
 
-diff --git a/Documentation/watch_queue.rst b/Documentation/watch_queue.rst
-index ed592700be0e..f2299f631ae8 100644
---- a/Documentation/watch_queue.rst
-+++ b/Documentation/watch_queue.rst
-@@ -8,7 +8,9 @@ opened by userspace.  This can be used in conjunction with::
- 
-   * Key/keyring notifications
- 
--  * General device event notifications
-+  * General device event notifications, including::
-+
-+    * Block layer event notifications
- 
- 
- The notifications buffers can be enabled by:
-diff --git a/block/Kconfig b/block/Kconfig
-index 41c0917ce622..0906227a9431 100644
---- a/block/Kconfig
-+++ b/block/Kconfig
-@@ -177,6 +177,15 @@ config BLK_SED_OPAL
- 	Enabling this option enables users to setup/unlock/lock
- 	Locking ranges for SED devices using the Opal protocol.
- 
-+config BLK_NOTIFICATIONS
-+	bool "Block layer event notifications"
-+	depends on DEVICE_NOTIFICATIONS
-+	help
-+	  This option provides support for getting block layer event
-+	  notifications.  This makes use of the /dev/watch_queue misc device to
-+	  handle the notification buffer and provides the device_notify() system
-+	  call to enable/disable watches.
-+
- menu "Partition Types"
- 
- source "block/partitions/Kconfig"
-diff --git a/block/blk-core.c b/block/blk-core.c
-index d5e668ec751b..08e9b12ff5a5 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -184,6 +184,22 @@ static const struct {
- 	[BLK_STS_IOERR]		= { -EIO,	"I/O" },
- };
- 
-+#ifdef CONFIG_BLK_NOTIFICATIONS
-+static const
-+enum block_notification_type blk_notifications[ARRAY_SIZE(blk_errors)] = {
-+	[BLK_STS_TIMEOUT]	= NOTIFY_BLOCK_ERROR_TIMEOUT,
-+	[BLK_STS_NOSPC]		= NOTIFY_BLOCK_ERROR_NO_SPACE,
-+	[BLK_STS_TRANSPORT]	= NOTIFY_BLOCK_ERROR_RECOVERABLE_TRANSPORT,
-+	[BLK_STS_TARGET]	= NOTIFY_BLOCK_ERROR_CRITICAL_TARGET,
-+	[BLK_STS_NEXUS]		= NOTIFY_BLOCK_ERROR_CRITICAL_NEXUS,
-+	[BLK_STS_MEDIUM]	= NOTIFY_BLOCK_ERROR_CRITICAL_MEDIUM,
-+	[BLK_STS_PROTECTION]	= NOTIFY_BLOCK_ERROR_PROTECTION,
-+	[BLK_STS_RESOURCE]	= NOTIFY_BLOCK_ERROR_KERNEL_RESOURCE,
-+	[BLK_STS_DEV_RESOURCE]	= NOTIFY_BLOCK_ERROR_DEVICE_RESOURCE,
-+	[BLK_STS_IOERR]		= NOTIFY_BLOCK_ERROR_IO,
-+};
-+#endif
-+
- blk_status_t errno_to_blk_status(int errno)
- {
- 	int i;
-@@ -224,6 +240,19 @@ static void print_req_error(struct request *req, blk_status_t status,
- 		req->cmd_flags & ~REQ_OP_MASK,
- 		req->nr_phys_segments,
- 		IOPRIO_PRIO_CLASS(req->ioprio));
-+
-+#ifdef CONFIG_BLK_NOTIFICATIONS
-+	if (blk_notifications[idx]) {
-+		struct block_notification n = {
-+			.watch.type	= WATCH_TYPE_BLOCK_NOTIFY,
-+			.watch.subtype	= blk_notifications[idx],
-+			.watch.info	= watch_sizeof(n),
-+			.dev		= req->rq_disk ? disk_devt(req->rq_disk) : 0,
-+			.sector		= blk_rq_pos(req),
-+		};
-+		post_block_notification(&n);
-+	}
-+#endif
- }
- 
- static void req_bio_endio(struct request *rq, struct bio *bio,
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index f3ea78b0c91c..477472c11815 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -27,6 +27,7 @@
- #include <linux/percpu-refcount.h>
- #include <linux/scatterlist.h>
- #include <linux/blkzoned.h>
-+#include <linux/watch_queue.h>
- 
- struct module;
- struct scsi_ioctl_command;
-@@ -1773,6 +1774,20 @@ static inline bool blk_req_can_dispatch_to_zone(struct request *rq)
- }
- #endif /* CONFIG_BLK_DEV_ZONED */
- 
-+#ifdef CONFIG_BLK_NOTIFICATIONS
-+static inline void post_block_notification(struct block_notification *n)
-+{
-+	u64 id = 0; /* Might want to allow dev# here. */
-+
-+	post_device_notification(&n->watch, id);
-+}
-+#else
-+static inline void post_block_notification(struct block_notification *n)
-+{
-+}
-+#endif
-+
-+
- #else /* CONFIG_BLOCK */
- 
- struct block_device;
-diff --git a/include/uapi/linux/watch_queue.h b/include/uapi/linux/watch_queue.h
-index 14fee36ec000..65b127ca272b 100644
---- a/include/uapi/linux/watch_queue.h
-+++ b/include/uapi/linux/watch_queue.h
-@@ -11,7 +11,8 @@
- enum watch_notification_type {
- 	WATCH_TYPE_META		= 0,	/* Special record */
- 	WATCH_TYPE_KEY_NOTIFY	= 1,	/* Key change event notification */
--	WATCH_TYPE___NR		= 2
-+	WATCH_TYPE_BLOCK_NOTIFY	= 2,	/* Block layer event notification */
-+	WATCH_TYPE___NR		= 3
- };
- 
- enum watch_meta_notification_subtype {
-@@ -98,4 +99,31 @@ struct key_notification {
- 	__u32	aux;		/* Per-type auxiliary data */
- };
- 
-+/*
-+ * Type of block layer notification.
-+ */
-+enum block_notification_type {
-+	NOTIFY_BLOCK_ERROR_TIMEOUT		= 1, /* Timeout error */
-+	NOTIFY_BLOCK_ERROR_NO_SPACE		= 2, /* Critical space allocation error */
-+	NOTIFY_BLOCK_ERROR_RECOVERABLE_TRANSPORT = 3, /* Recoverable transport error */
-+	NOTIFY_BLOCK_ERROR_CRITICAL_TARGET	= 4, /* Critical target error */
-+	NOTIFY_BLOCK_ERROR_CRITICAL_NEXUS	= 5, /* Critical nexus error */
-+	NOTIFY_BLOCK_ERROR_CRITICAL_MEDIUM	= 6, /* Critical medium error */
-+	NOTIFY_BLOCK_ERROR_PROTECTION		= 7, /* Protection error */
-+	NOTIFY_BLOCK_ERROR_KERNEL_RESOURCE	= 8, /* Kernel resource error */
-+	NOTIFY_BLOCK_ERROR_DEVICE_RESOURCE	= 9, /* Device resource error */
-+	NOTIFY_BLOCK_ERROR_IO			= 10, /* Other I/O error */
-+};
-+
-+/*
-+ * Block layer notification record.
-+ * - watch.type = WATCH_TYPE_BLOCK_NOTIFY
-+ * - watch.subtype = enum block_notification_type
-+ */
-+struct block_notification {
-+	struct watch_notification watch; /* WATCH_TYPE_BLOCK_NOTIFY */
-+	__u64	dev;			/* Device number */
-+	__u64	sector;			/* Affected sector */
-+};
-+
- #endif /* _UAPI_LINUX_WATCH_QUEUE_H */
-diff --git a/samples/watch_queue/watch_test.c b/samples/watch_queue/watch_test.c
-index 1ffed42bfece..263dbba59651 100644
---- a/samples/watch_queue/watch_test.c
-+++ b/samples/watch_queue/watch_test.c
-@@ -59,6 +59,32 @@ static void saw_key_change(struct watch_notification *n, size_t len)
- 	       k->key_id, n->subtype, key_subtypes[n->subtype], k->aux);
- }
- 
-+static const char *block_subtypes[256] = {
-+	[NOTIFY_BLOCK_ERROR_TIMEOUT]			= "timeout",
-+	[NOTIFY_BLOCK_ERROR_NO_SPACE]			= "critical space allocation",
-+	[NOTIFY_BLOCK_ERROR_RECOVERABLE_TRANSPORT]	= "recoverable transport",
-+	[NOTIFY_BLOCK_ERROR_CRITICAL_TARGET]		= "critical target",
-+	[NOTIFY_BLOCK_ERROR_CRITICAL_NEXUS]		= "critical nexus",
-+	[NOTIFY_BLOCK_ERROR_CRITICAL_MEDIUM]		= "critical medium",
-+	[NOTIFY_BLOCK_ERROR_PROTECTION]			= "protection",
-+	[NOTIFY_BLOCK_ERROR_KERNEL_RESOURCE]		= "kernel resource",
-+	[NOTIFY_BLOCK_ERROR_DEVICE_RESOURCE]		= "device resource",
-+	[NOTIFY_BLOCK_ERROR_IO]				= "I/O",
-+};
-+
-+static void saw_block_change(struct watch_notification *n, size_t len)
-+{
-+	struct block_notification *b = (struct block_notification *)n;
-+
-+	if (len < sizeof(struct block_notification))
-+		return;
-+
-+	printf("BLOCK %08llx e=%u[%s] s=%llx\n",
-+	       (unsigned long long)b->dev,
-+	       n->subtype, block_subtypes[n->subtype],
-+	       (unsigned long long)b->sector);
-+}
-+
- /*
-  * Consume and display events.
-  */
-@@ -132,6 +158,9 @@ static void consumer(int fd)
- 			case WATCH_TYPE_KEY_NOTIFY:
- 				saw_key_change(&n.n, len);
- 				break;
-+			case WATCH_TYPE_BLOCK_NOTIFY:
-+				saw_block_change(&n.n, len);
-+				break;
- 			default:
- 				printf("other type\n");
- 				break;
-@@ -143,12 +172,16 @@ static void consumer(int fd)
- }
- 
- static struct watch_notification_filter filter = {
--	.nr_filters	= 1,
-+	.nr_filters	= 2,
- 	.filters = {
- 		[0]	= {
- 			.type			= WATCH_TYPE_KEY_NOTIFY,
- 			.subtype_filter[0]	= UINT_MAX,
- 		},
-+		[1]	= {
-+			.type			= WATCH_TYPE_BLOCK_NOTIFY,
-+			.subtype_filter[0]	= UINT_MAX,
-+		},
- 	},
- };
- 
-@@ -182,6 +215,11 @@ int main(int argc, char **argv)
- 		exit(1);
- 	}
- 
-+	if (syscall(__NR_watch_devices, fd, 0x04, 0) == -1) {
-+		perror("watch_devices");
-+		exit(1);
-+	}
-+
- 	consumer(fd);
- 	exit(0);
- }
+I'm in no way saying that this should be used as the sole source of
+entropy, but I definitely want to explore the inherent non-determinism of
+modern OoO machines further.
 
+The results are way too interesting to ignore them and amazingly fast at
+least with the algorithm which I used in my initial post which started this
+whole discussion.
+
+I let that thing run on a testbox for the last two weeks while I was on
+vacation and gathered 32768 random bits via that debugfs hack every 100ms,
+i.e. a total of 1.2e7 samples amounting to ~4e11 bits. The analysis is
+still running, but so far it holds up.
+
+Thanks,
+
+	tglx
