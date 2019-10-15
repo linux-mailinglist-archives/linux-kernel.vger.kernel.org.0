@@ -2,120 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC05AD6E64
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 06:53:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D113D6E6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 07:02:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728109AbfJOExv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 00:53:51 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:46053 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727959AbfJOExv (ORCPT
+        id S1728151AbfJOFCi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 01:02:38 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:3291 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728123AbfJOFCi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 00:53:51 -0400
-Received: by mail-io1-f65.google.com with SMTP id c25so42887005iot.12;
-        Mon, 14 Oct 2019 21:53:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=FoyKK6+CZHtzLvyc+hXa9rZT9/61RNMGYHQKvCgAsn8=;
-        b=da1+odWxWl7gUFhDl9t6DAPPjvv49NvV4J800iLoARhJP8025HZn3Kxd/DL6c6uO8P
-         GFWRHn1nDwbjzHP+Fy5RLnWWBYInr8ZrFkwjETeXTznLEa6Mrf3oTePwZie/0zzI3pq8
-         3H556MItZnzFM0oZIjoEL2ydVfi+OEpbzBIkpW9E1PGbwFNf2MMU/kKgQ6aRozQRiQIm
-         ygkRH2h/xDqS2hvCa1UD0WRTidtODYmBjAnoBRKHvdEMZmoPnufZNxqLzh2MKuoLocHb
-         7ZrwAP92LrsOk1ywJCXH6FKRFORrdKoRtUNICv1A69XGGWNgjAjD6us1nCtDSsPDvszE
-         SQeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=FoyKK6+CZHtzLvyc+hXa9rZT9/61RNMGYHQKvCgAsn8=;
-        b=XUeanHdwJ+UV1GKqS3qvFEpi1OLMs7nNtA7f/mqjm8I9hqycx83xmkp8H2yNJkBo5x
-         nB5Fdsiat48Ye3yvK0q0VQW1mV7FDbTBnPsRtEQuietbgqA6jpglYRrgEWI6KGq4Odfy
-         sbcrpsWT8i/JyS1e88fMtxC2Q6gVgMXluJUV6NiXc8QIPlWWCrSjkhu6wdyVvsDq/Yhv
-         adT8eu6K8CMYFRClZSGACKRVcomSylMTe9/3NeyUG4HeXhnAHMRivb6H/eaqMBRTR4B4
-         txzr4ao8Yo4n0mp+rSlm7vtu69em0FP4eyURO9clEbZJ7TkGJt+/yIf4mYN/Hhy5HVPW
-         6YgA==
-X-Gm-Message-State: APjAAAWE/tx11O7I/LrSWgA+PbWPk+zzSztz3Pg7CqBYD7LFSzvXGn96
-        DHVLAEQcz046+73z2n0CQphVDiytdRJLlUu+xVk=
-X-Google-Smtp-Source: APXvYqyQZ42Wzz4Mil0VtK34oFTpJ7nzC1L+Te3pMJBnDtnnJhfH6Tb5NGwSDCztaKyQCoaC83210VSdDSzpC57w4ow=
-X-Received: by 2002:a6b:fa12:: with SMTP id p18mr14453335ioh.272.1571115230075;
- Mon, 14 Oct 2019 21:53:50 -0700 (PDT)
+        Tue, 15 Oct 2019 01:02:38 -0400
+X-UUID: 62f03084beeb45c09eb9d12c94df3f27-20191015
+X-UUID: 62f03084beeb45c09eb9d12c94df3f27-20191015
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <walter-zh.wu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 706590738; Tue, 15 Oct 2019 13:02:33 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 15 Oct 2019 13:02:29 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 15 Oct 2019 13:02:29 +0800
+From:   Walter Wu <walter-zh.wu@mediatek.com>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     <kasan-dev@googlegroups.com>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
+        Walter Wu <walter-zh.wu@mediatek.com>
+Subject: [PATCH v2 2/2] kasan: add test for invalid size in memmove
+Date:   Tue, 15 Oct 2019 13:02:30 +0800
+Message-ID: <20191015050230.20521-1-walter-zh.wu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-References: <20191014071531.12790-1-hslester96@gmail.com> <CAKywueQY-J3g0RBF4=opP8SbhpWh-BHoHWzNEeTruxmfacnhGw@mail.gmail.com>
-In-Reply-To: <CAKywueQY-J3g0RBF4=opP8SbhpWh-BHoHWzNEeTruxmfacnhGw@mail.gmail.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Mon, 14 Oct 2019 23:53:38 -0500
-Message-ID: <CAH2r5msPBvF298mWgz_1Jx9svHY1NyqNti4G9TUaNdEqg=A=CQ@mail.gmail.com>
-Subject: Re: [PATCH] cifs: Fix missed free operations
-To:     Pavel Shilovsky <piastryyy@gmail.com>
-Cc:     Chuhong Yuan <hslester96@gmail.com>,
-        Steve French <sfrench@samba.org>,
-        linux-cifs <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 76C7B23B7010F871BB120DC39271DA7F14504898BA30BE7C2D2C7F7C49CAD97A2000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Merged into cifs-2.6.git for-next and cc: stable for 5.3
+Test negative size in memmove in order to verify whether it correctly
+get KASAN report.
 
-On Mon, Oct 14, 2019 at 4:43 PM Pavel Shilovsky via samba-technical
-<samba-technical@lists.samba.org> wrote:
->
-> =D0=BF=D0=BD, 14 =D0=BE=D0=BA=D1=82. 2019 =D0=B3. =D0=B2 00:18, Chuhong Y=
-uan <hslester96@gmail.com>:
-> >
-> > cifs_setattr_nounix has two paths which miss free operations
-> > for xid and fullpath.
-> > Use goto cifs_setattr_exit like other paths to fix them.
-> >
-> > Fixes: aa081859b10c ("cifs: flush before set-info if we have writeable =
-handles")
-> > Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-> > ---
-> >  fs/cifs/inode.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/cifs/inode.c b/fs/cifs/inode.c
-> > index 5dcc95b38310..df9377828e2f 100644
-> > --- a/fs/cifs/inode.c
-> > +++ b/fs/cifs/inode.c
-> > @@ -2475,9 +2475,9 @@ cifs_setattr_nounix(struct dentry *direntry, stru=
-ct iattr *attrs)
-> >                         rc =3D tcon->ses->server->ops->flush(xid, tcon,=
- &wfile->fid);
-> >                         cifsFileInfo_put(wfile);
-> >                         if (rc)
-> > -                               return rc;
-> > +                               goto cifs_setattr_exit;
-> >                 } else if (rc !=3D -EBADF)
-> > -                       return rc;
-> > +                       goto cifs_setattr_exit;
-> >                 else
-> >                         rc =3D 0;
-> >         }
-> > --
-> > 2.20.1
-> >
->
-> Looks good, thanks.
->
-> Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
->
-> The original patch was tagged for stable, so, it seems that this one
-> should be tagged too.
->
-> --
-> Best regards,
-> Pavel Shilovsky
->
+Casting negative numbers to size_t would indeed turn up as a 'large'
+size_t, so it will have out-of-bounds bug and detected by KASAN.
 
+Changes in v2:
+Add some descriptions for clarity the testcase.
 
---=20
-Thanks,
+Signed-off-by: Walter Wu <walter-zh.wu@mediatek.com>
+Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+---
+ lib/test_kasan.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-Steve
+diff --git a/lib/test_kasan.c b/lib/test_kasan.c
+index 49cc4d570a40..06942cf585cc 100644
+--- a/lib/test_kasan.c
++++ b/lib/test_kasan.c
+@@ -283,6 +283,23 @@ static noinline void __init kmalloc_oob_in_memset(void)
+ 	kfree(ptr);
+ }
+ 
++static noinline void __init kmalloc_memmove_invalid_size(void)
++{
++	char *ptr;
++	size_t size = 64;
++
++	pr_info("invalid size in memmove\n");
++	ptr = kmalloc(size, GFP_KERNEL);
++	if (!ptr) {
++		pr_err("Allocation failed\n");
++		return;
++	}
++
++	memset((char *)ptr, 0, 64);
++	memmove((char *)ptr, (char *)ptr + 4, -2);
++	kfree(ptr);
++}
++
+ static noinline void __init kmalloc_uaf(void)
+ {
+ 	char *ptr;
+@@ -773,6 +790,7 @@ static int __init kmalloc_tests_init(void)
+ 	kmalloc_oob_memset_4();
+ 	kmalloc_oob_memset_8();
+ 	kmalloc_oob_memset_16();
++	kmalloc_memmove_invalid_size();
+ 	kmalloc_uaf();
+ 	kmalloc_uaf_memset();
+ 	kmalloc_uaf2();
+-- 
+2.18.0
+
