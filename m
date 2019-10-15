@@ -2,141 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1121ED796E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 17:10:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 565DED7976
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 17:11:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733273AbfJOPIp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 11:08:45 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:44209 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726523AbfJOPIo (ORCPT
+        id S1733003AbfJOPL6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 11:11:58 -0400
+Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:1607 "EHLO
+        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726523AbfJOPL5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 11:08:44 -0400
-Received: by mail-qt1-f195.google.com with SMTP id u40so30986270qth.11
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 08:08:42 -0700 (PDT)
+        Tue, 15 Oct 2019 11:11:57 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1FpMq7EcpHQR8/pfyktJU1Qq9chq6W6jLbp0yLXRsZA=;
-        b=sedLu2UBGJ7f1OMvFaIVKNIIMbVzxtl8LH1lBiFpdk/HJuxAG6hk5Pi4aVqsgA5xz3
-         0SCJkcKtBB7bmEx5fQr1nCoSfnQ7/8MSYAMEPf+K6uG5Xdp7laU9OHH9/b2jrYQHKp+9
-         jxBryafS+ajBO3x51OiZKxW+t8LMHedL0oodpKrnhDVrx0RYGT+td9mdFVYZMm0PIZtq
-         l6HcZksYu/YSWFWzl4mMfvypMeFx0KR99mJnw68PKcQ/rFawaO8DqAx4akqUa3igVRXG
-         C3DS94RRMtoSc3ZUJf3Asg4YWKmy+F/Adga4RZi6q4WccS8+jOx/HOJoy7NgdqGT2CBr
-         2YKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1FpMq7EcpHQR8/pfyktJU1Qq9chq6W6jLbp0yLXRsZA=;
-        b=NcdYJ5RYV4mrpm8i/mfSnsKT7HOexhBU1q0wi6ro/ypJoIHwIDAFwAuEpdyGTjkUms
-         aaWoFkEzFWPzOwbzjuJp2bahtTA7Fb2m0f4cxusOfliOdBkNx63stpZ/QrqqfmefEbLa
-         yQeV9poNnhyJy/ZO+D0YdsJ3N9bzFN5z7KO3kTBXxRKAOwY8c9K325Pc0QiAG+TMv2sM
-         Y8MepARkq1kpKiSuofMbwYSyx7XMhAAer21n3ru9u3+ZL1IVMweffKyAaYYqRjhXI4YY
-         kPEcarxOJ/3x0CLCw4u7R9Kk9DC2xe5w9u31HTBczkunfr5z9OA/ayGEdYLGdCZ82fiA
-         supg==
-X-Gm-Message-State: APjAAAVqyH7QGHwBKhESCejnMr3NJVnM6CEUFgI6QneA5zOL3xSDK7MJ
-        yP2ikM0jBVrvj9+EJMuOnBM=
-X-Google-Smtp-Source: APXvYqyuKnBkDwEoC24CMlezIjGPq/TOSpp7Ly020/bROcoWqrX+xBQAhkivxpTG/kOL0BJ/JAIksA==
-X-Received: by 2002:ac8:234e:: with SMTP id b14mr39917731qtb.346.1571152122373;
-        Tue, 15 Oct 2019 08:08:42 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id q6sm9491704qkj.108.2019.10.15.08.08.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2019 08:08:41 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id BC07A4DD66; Tue, 15 Oct 2019 12:08:39 -0300 (-03)
-Date:   Tue, 15 Oct 2019 12:08:39 -0300
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Yunfeng Ye <yeyunfeng@huawei.com>, peterz@infradead.org,
-        mingo@redhat.com, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, hushiyuan@huawei.com,
-        linfeilong@huawei.com
-Subject: Re: [PATCH] perf c2c: fix memory leak in build_cl_output()
-Message-ID: <20191015150839.GC25820@kernel.org>
-References: <4d3c0178-5482-c313-98e1-f82090d2d456@huawei.com>
- <20191015084753.GD10951@krava>
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1571152316; x=1602688316;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=u+I3dMwQI/KSkSqrBp+39zdAeGJeYw2xPhZwcNW/iQ0=;
+  b=F9isxWb6BoFggK6g9Y3Sq9OwaTgFOKl5A1rBYgYgOLqZ+h04/5Nl/v5I
+   kycdlhSdGDWaYnEHQvUkJlOw56w6VVchBYFeBXUKx/cQisifysQZTzxXJ
+   tzifOvlPTZ1S7VYbBkeghVVL/5m6vu4q73UMNgaC8V+dplj5VTiF+Z84q
+   U=;
+X-IronPort-AV: E=Sophos;i="5.67,300,1566864000"; 
+   d="scan'208";a="793097327"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2b-81e76b79.us-west-2.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP; 15 Oct 2019 15:11:55 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
+        by email-inbound-relay-2b-81e76b79.us-west-2.amazon.com (Postfix) with ESMTPS id 86ABDA182D;
+        Tue, 15 Oct 2019 15:11:54 +0000 (UTC)
+Received: from EX13D13EUA004.ant.amazon.com (10.43.165.22) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 15 Oct 2019 15:11:53 +0000
+Received: from localhost (10.43.160.180) by EX13D13EUA004.ant.amazon.com
+ (10.43.165.22) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Tue, 15 Oct
+ 2019 15:11:51 +0000
+From:   Yuri Volchkov <volchkov@amazon.de>
+To:     <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>
+CC:     <joro@8bytes.org>, <bhelgaas@google.com>, <dwmw2@infradead.org>,
+        <neugebar@amazon.co.uk>, Yuri Volchkov <volchkov@amazon.de>
+Subject: [PATCH 0/2] iommu/dmar: expose fault counters via sysfs
+Date:   Tue, 15 Oct 2019 17:11:10 +0200
+Message-ID: <20191015151112.17225-1-volchkov@amazon.de>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191015084753.GD10951@krava>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Originating-IP: [10.43.160.180]
+X-ClientProxiedBy: EX13D13UWA004.ant.amazon.com (10.43.160.251) To
+ EX13D13EUA004.ant.amazon.com (10.43.165.22)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Oct 15, 2019 at 10:47:53AM +0200, Jiri Olsa escreveu:
-> On Tue, Oct 15, 2019 at 10:54:14AM +0800, Yunfeng Ye wrote:
-> > There is a memory leak problem in the failure paths of
-> > build_cl_output(), so fix it.
-> > 
-> > Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
-> 
-> Acked-by: Jiri Olsa <jolsa@kernel.org>
+For health monitoring, it can be useful to know if iommu is behaving as
+expected. DMAR faults can be an indicator that a device:
+ - has been misconfigured, or
+ - has experienced a hardware hiccup and replacement should
+   be considered, or
+ - has been issuing faults due to malicious activity
 
-Thanks, applied to perf/urgent.
+Currently the only way to check if there were any DMAR faults on the
+host is to scan the dmesg output. However this approach is not very
+elegant. The information we are looking for can be wrapped out of the
+buffer, or masked (since it is a rate-limited print) by another
+device.
 
-- Arnaldo
- 
-> thanks,
-> jirka
-> 
-> > ---
-> >  tools/perf/builtin-c2c.c | 14 +++++++++-----
-> >  1 file changed, 9 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-> > index 3542b6a..e69f449 100644
-> > --- a/tools/perf/builtin-c2c.c
-> > +++ b/tools/perf/builtin-c2c.c
-> > @@ -2635,6 +2635,7 @@ static int build_cl_output(char *cl_sort, bool no_source)
-> >  	bool add_sym   = false;
-> >  	bool add_dso   = false;
-> >  	bool add_src   = false;
-> > +	int ret = 0;
-> > 
-> >  	if (!buf)
-> >  		return -ENOMEM;
-> > @@ -2653,7 +2654,8 @@ static int build_cl_output(char *cl_sort, bool no_source)
-> >  			add_dso = true;
-> >  		} else if (strcmp(tok, "offset")) {
-> >  			pr_err("unrecognized sort token: %s\n", tok);
-> > -			return -EINVAL;
-> > +			ret = -EINVAL;
-> > +			goto err;
-> >  		}
-> >  	}
-> > 
-> > @@ -2676,13 +2678,15 @@ static int build_cl_output(char *cl_sort, bool no_source)
-> >  		add_sym ? "symbol," : "",
-> >  		add_dso ? "dso," : "",
-> >  		add_src ? "cl_srcline," : "",
-> > -		"node") < 0)
-> > -		return -ENOMEM;
-> > +		"node") < 0) {
-> > +		ret = -ENOMEM;
-> > +		goto err;
-> > +	}
-> > 
-> >  	c2c.show_src = add_src;
-> > -
-> > +err:
-> >  	free(buf);
-> > -	return 0;
-> > +	return ret;
-> >  }
-> > 
-> >  static int setup_coalesce(const char *coalesce, bool no_source)
-> > -- 
-> > 2.7.4.3
-> > 
+The series adds counters for DMAR faults and exposes them via sysfs.
+
+Yuri Volchkov (2):
+  iommu/dmar: collect fault statistics
+  iommu/dmar: catch early fault occurrences
+
+ drivers/iommu/dmar.c        | 182 ++++++++++++++++++++++++++++++++----
+ drivers/iommu/intel-iommu.c |   1 +
+ drivers/pci/pci-sysfs.c     |  20 ++++
+ include/linux/intel-iommu.h |   4 +
+ include/linux/pci.h         |  11 +++
+ 5 files changed, 201 insertions(+), 17 deletions(-)
 
 -- 
+2.23.0
 
-- Arnaldo
+
+
+
+Amazon Development Center Germany GmbH
+Krausenstr. 38
+10117 Berlin
+Geschaeftsfuehrung: Christian Schlaeger, Ralf Herbrich
+Eingetragen am Amtsgericht Charlottenburg unter HRB 149173 B
+Sitz: Berlin
+Ust-ID: DE 289 237 879
+
+
+
