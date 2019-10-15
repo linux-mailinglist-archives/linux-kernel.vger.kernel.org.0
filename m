@@ -2,135 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CC3ED7E70
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 20:08:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6FA7D7E7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 20:09:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389048AbfJOSIe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 14:08:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39934 "EHLO mail.kernel.org"
+        id S2389090AbfJOSIz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 14:08:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725820AbfJOSId (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 14:08:33 -0400
+        id S1725820AbfJOSIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 14:08:54 -0400
 Received: from localhost (unknown [38.98.37.135])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81CBB2086A;
-        Tue, 15 Oct 2019 18:08:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2210920659;
+        Tue, 15 Oct 2019 18:08:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571162912;
-        bh=2vnG9zvitjyN5YRzL5mKaObhzjkQF1sodt7gWZ0dIcY=;
+        s=default; t=1571162933;
+        bh=72Jhf2gCfLKMsgroJ+dspsUWbLqIIaKdSi3E4kfQTHg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=yAT3GUSAolCquTvf0Pp53cAn87OGSGsmXvt3fY4x0HaTP066nxrMrhNi7XLAlokKE
-         NWsDhq+FLeSto9SRMOpINc6fpIPqogRq0L018DXZmvmzfgy4z30ezv6OJoGgL3JTax
-         /P2UHzW5dXogVigVJRFOU5dlh8rj9MaA1vY2KC/Q=
-Date:   Tue, 15 Oct 2019 19:55:55 +0200
-From:   reg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     zhangfei <zhangfei.gao@linaro.org>
-Cc:     Jonathan Cameron <jonathan.cameron@huawei.com>,
-        Arnd Bergmann <arnd@arndb.de>, grant.likely@arm.com,
-        jean-philippe <jean-philippe@linaro.org>,
-        ilias.apalodimas@linaro.org, francois.ozog@linaro.org,
-        kenneth-lee-2012@foxmail.com, Wangzhou <wangzhou1@hisilicon.com>,
-        linux-accelerators@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Kenneth Lee <liguozhu@hisilicon.com>,
-        Zaibo Xu <xuzaibo@huawei.com>
-Subject: Re: [PATCH v5 2/3] uacce: add uacce driver
-Message-ID: <20191015175555.GB1072965@kroah.com>
-References: <1571035735-31882-1-git-send-email-zhangfei.gao@linaro.org>
- <1571035735-31882-3-git-send-email-zhangfei.gao@linaro.org>
- <20191014113231.00002967@huawei.com>
- <e71edf57-8449-e8d1-01ba-aed3ecf379e1@linaro.org>
+        b=NxpiRKvyPENu5nqLqiiuFfvP8HewQgS0FRdSFH07T5l3FMQbOQO44QHVHBgUFam0F
+         eXDUI/uT1ldmjFXmLTQEiewhqryQ4Ac5n4vAV3hlsaHuBZOZnyuDDJRKQN+Wqkhlgx
+         swd+tFNGfcfgwhilnMLjyfPZwq0ztzgXzUO+HuSs=
+Date:   Tue, 15 Oct 2019 19:58:20 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Felipe Balbi <balbi@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Nagarjuna Kristam <nkristam@nvidia.com>, jonathanh@nvidia.com,
+        mark.rutland@arm.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [Patch V10 0/8] Tegra XUSB gadget driver support
+Message-ID: <20191015175820.GC1072965@kroah.com>
+References: <1569227152-3030-1-git-send-email-nkristam@nvidia.com>
+ <20191014100257.GB419598@ulmo>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e71edf57-8449-e8d1-01ba-aed3ecf379e1@linaro.org>
+In-Reply-To: <20191014100257.GB419598@ulmo>
 User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 03:39:00PM +0800, zhangfei wrote:
-> Hi, Jonathan
+On Mon, Oct 14, 2019 at 12:02:57PM +0200, Thierry Reding wrote:
+> On Mon, Sep 23, 2019 at 01:55:44PM +0530, Nagarjuna Kristam wrote:
+> > Patches 1-3 are phy driver changes to add support for device
+> > mode.
+> > Patches 4-7 are changes related to XUSB device mode
+> > controller driver.
+> > Patch 8 is to enable drivers for XUDC support in defconfig
+> > 
+> > Test Steps(USB 2.0):
+> > - Enable "USB Gadget precomposed configurations" in defconfig
+> > - Build, flash and boot Jetson TX1
+> > - Connect Jetson TX1 and Ubuntu device using USB A to Micro B
+> >   cable
+> > - After boot on Jetson TX1 terminal usb0 network device should be
+> >   enumerated
+> > - Assign static ip to usb0 on Jetson TX1 and corresponding net
+> >   device on ubuntu
+> > - Run ping test and transfer test(used scp) to check data transfer
+> >   communication
 > 
-> On 2019/10/14 下午6:32, Jonathan Cameron wrote:
-> > On Mon, 14 Oct 2019 14:48:54 +0800
-> > Zhangfei Gao <zhangfei.gao@linaro.org> wrote:
-> > 
-> > > From: Kenneth Lee <liguozhu@hisilicon.com>
-> > > 
-> > > Uacce (Unified/User-space-access-intended Accelerator Framework) targets to
-> > > provide Shared Virtual Addressing (SVA) between accelerators and processes.
-> > > So accelerator can access any data structure of the main cpu.
-> > > This differs from the data sharing between cpu and io device, which share
-> > > data content rather than address.
-> > > Since unified address, hardware and user space of process can share the
-> > > same virtual address in the communication.
-> > > 
-> > > Uacce create a chrdev for every registration, the queue is allocated to
-> > > the process when the chrdev is opened. Then the process can access the
-> > > hardware resource by interact with the queue file. By mmap the queue
-> > > file space to user space, the process can directly put requests to the
-> > > hardware without syscall to the kernel space.
-> > > 
-> > > Signed-off-by: Kenneth Lee <liguozhu@hisilicon.com>
-> > > Signed-off-by: Zaibo Xu <xuzaibo@huawei.com>
-> > > Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
-> > > Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
-> > Hi,
-> > 
-> > Some superficial comments from me.
-> Thanks for the suggestion.
-> > > +/*
-> > > + * While user space releases a queue, all the relatives on the queue
-> > > + * should be released immediately by this putting.
-> > This one needs rewording but I'm not quite sure what
-> > relatives are in this case.
-> > > + */
-> > > +static long uacce_put_queue(struct uacce_queue *q)
-> > > +{
-> > > +	struct uacce_device *uacce = q->uacce;
-> > > +
-> > > +	mutex_lock(&uacce_mutex);
-> > > +
-> > > +	if ((q->state == UACCE_Q_STARTED) && uacce->ops->stop_queue)
-> > > +		uacce->ops->stop_queue(q);
-> > > +
-> > > +	if ((q->state == UACCE_Q_INIT || q->state == UACCE_Q_STARTED) &&
-> > > +	     uacce->ops->put_queue)
-> > > +		uacce->ops->put_queue(q);
-> > > +
-> > > +	q->state = UACCE_Q_ZOMBIE;
-> > > +	mutex_unlock(&uacce_mutex);
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > ..
-> > 
-> > > +
-> > > +static ssize_t qfrs_size_show(struct device *dev,
-> > > +				struct device_attribute *attr, char *buf)
-> > > +{
-> > > +	struct uacce_device *uacce = to_uacce_device(dev);
-> > > +	unsigned long size;
-> > > +	int i, ret;
-> > > +
-> > > +	for (i = 0, ret = 0; i < UACCE_QFRT_MAX; i++) {
-> > > +		size = uacce->qf_pg_size[i] << PAGE_SHIFT;
-> > > +		if (i == UACCE_QFRT_SS)
-> > > +			break;
-> > > +		ret += sprintf(buf + ret, "%lu\t", size);
-> > > +	}
-> > > +	ret += sprintf(buf + ret, "%lu\n", size);
-> > > +
-> > > +	return ret;
-> > > +}
-> > This may break the sysfs rule of one thing per file.  If you have
-> > multiple regions, they should probably each have their own file
-> > to give their size.
-> Is the rule must be applied?
+> Hi Felipe, Kishon, Greg,
+> 
+> Patches 1-3 provide new API that is required by patch 7, so I think
+> patches 1, 2, 3, 4 and 7 should probably all go through a single tree to
+> avoid having to model the dependencies using stable branches.
+> 
+> Kishon, patches 1-3 have gone through several rounds of review already,
+> but do you have any remaining concerns on them? If not, it'd be great if
+> you could ack them. Felipe and Greg could then pick them up along with
+> patches 4 and 7 into the USB tree.
+> 
+> Felipe, Greg, does that sound like a reasonable plan?
 
-Yes, it always must be followed.  Please fix.
+Fine with me.
 
+> I should also mention that while waiting for review, Nagarjuna has been
+> able to extend support for the XUDC driver to Tegra186 but has so far
+> been holding back on sending them out so as to not needlessly hold up
+> progress on this series. However, given the interdependencies, I've come
+> to think that it may be preferable to merge everything in one go instead
+> of revisiting this in a couple of weeks.
+> 
+> If you guys prefer, Nagarjuna could send out v11 of the series and
+> integrate Tegra186 support.
+
+That's also fine.
+
+thanks,
+
+greg k-h
