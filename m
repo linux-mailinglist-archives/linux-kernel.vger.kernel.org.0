@@ -2,88 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17B58D6DCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 05:31:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1BD7D6DE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 05:37:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727882AbfJODbl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 23:31:41 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:35570 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727807AbfJODbk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 23:31:40 -0400
-Received: by mail-io1-f67.google.com with SMTP id q10so42795031iop.2;
-        Mon, 14 Oct 2019 20:31:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zhEjQGNeUYnva0C6Q5TMD839svsRDx2jkIkGQy4YWS4=;
-        b=Q29zXeYiB8XHeZ1EqJMpyBXIhr7P1bR8RsUvqgKC0ZGwwOccYqrk29sfcD4ab3Yjgm
-         II7djmY7O8yVxx0Cnj3N3j0anX0qJFH2o7lqsOFrvZ+AtuB51dg51ujml9xofT6yNvlM
-         fGuaGlTNYoMlAwsy7lRt5Y1aOvNCYknmt68C95fiTpXoytGiJ/kQdELL0l6/oN0ONpBU
-         q5l6h0D9RRNOld4kNz/c8PGGgUpWL/nrDsAOEuB1EJoSJKlwPv71FdFaTDbwHQafPosO
-         JZIjIBvvvKR/YdUncmp+2+ID3urmvALLvIvbvULDJCvlNwWzw1JvHsCDFFr+4U89Sj5C
-         nq5g==
-X-Gm-Message-State: APjAAAUOyW+vgr9UGlmj/YCArZzV1d+zxRLkTZC4558Oft3mWiJkIsGB
-        yjCyT7mtZ45uvAInodwr5eeQyHzbPeBvmBMiS8M=
-X-Google-Smtp-Source: APXvYqx6Khf29rFvlzokKbjYXTWq9VNplO9R+e7oZ+ApgNX8SsNYz4bHuRktyfwncTAjBC/ILe8JSLAO9SkVFEvcWDs=
-X-Received: by 2002:a5d:9c03:: with SMTP id 3mr11251986ioe.134.1571110298671;
- Mon, 14 Oct 2019 20:31:38 -0700 (PDT)
+        id S1727990AbfJODhq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 23:37:46 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33358 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727472AbfJODhq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 23:37:46 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4F94118CB8F9;
+        Tue, 15 Oct 2019 03:37:45 +0000 (UTC)
+Received: from [10.72.12.168] (ovpn-12-168.pek2.redhat.com [10.72.12.168])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F112C5C1D4;
+        Tue, 15 Oct 2019 03:37:19 +0000 (UTC)
+Subject: Re: [PATCH V3 0/7] mdev based hardware virtio offloading support
+To:     Stefan Hajnoczi <stefanha@gmail.com>
+Cc:     kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org,
+        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
+        alex.williamson@redhat.com, mst@redhat.com, tiwei.bie@intel.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        cohuck@redhat.com, maxime.coquelin@redhat.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com,
+        rob.miller@broadcom.com, xiao.w.wang@intel.com,
+        haotian.wang@sifive.com, zhenyuw@linux.intel.com,
+        zhi.a.wang@intel.com, jani.nikula@linux.intel.com,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        airlied@linux.ie, daniel@ffwll.ch, farman@linux.ibm.com,
+        pasic@linux.ibm.com, sebott@linux.ibm.com, oberpar@linux.ibm.com,
+        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
+        freude@linux.ibm.com, lingshan.zhu@intel.com, idos@mellanox.com,
+        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
+        christophe.de.dinechin@gmail.com, kevin.tian@intel.com
+References: <20191011081557.28302-1-jasowang@redhat.com>
+ <20191014174946.GC5359@stefanha-x1.localdomain>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <6d12ad8f-8137-e07d-d735-da59a326e8ed@redhat.com>
+Date:   Tue, 15 Oct 2019 11:37:17 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <1571101656-871-1-git-send-email-yangtiezhu@loongson.cn>
-In-Reply-To: <1571101656-871-1-git-send-email-yangtiezhu@loongson.cn>
-From:   Huacai Chen <chenhc@lemote.com>
-Date:   Tue, 15 Oct 2019 11:36:59 +0800
-Message-ID: <CAAhV-H573fv+NVqBRgU38BRDDX=syj3gUqnJqRp4CdBx+QcdpQ@mail.gmail.com>
-Subject: Re: [PATCH] MIPS: Loongson: Make default kernel log buffer size as
- 128KB for Loongson3
-To:     Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc:     Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191014174946.GC5359@stefanha-x1.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.63]); Tue, 15 Oct 2019 03:37:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 10:12 AM Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
->
-> When I update kernel with loongson3_defconfig based on the Loongson 3A3000
-> platform, then using dmesg command to show kernel ring buffer, the initial
-> kernel messages have disappeared due to the log buffer is too small, it is
-> better to change the default kernel log buffer size from 16KB to 128KB.
->
-> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-> ---
->  arch/mips/configs/loongson3_defconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/mips/configs/loongson3_defconfig b/arch/mips/configs/loongson3_defconfig
-> index 90ee008..3aa2201 100644
-> --- a/arch/mips/configs/loongson3_defconfig
-> +++ b/arch/mips/configs/loongson3_defconfig
-> @@ -12,7 +12,7 @@ CONFIG_TASKSTATS=y
->  CONFIG_TASK_DELAY_ACCT=y
->  CONFIG_TASK_XACCT=y
->  CONFIG_TASK_IO_ACCOUNTING=y
-> -CONFIG_LOG_BUF_SHIFT=14
-> +CONFIG_LOG_BUF_SHIFT=17
-Hi, Tiezhu,
 
-Why you choose 128KB but not 64KB or 256KB? I found 64KB is enough for
-our cases. And if you really need more, I think 256KB could be better
-because there are many platforms choose 256KB.
-
-Huacai
-
->  CONFIG_MEMCG=y
->  CONFIG_MEMCG_SWAP=y
->  CONFIG_BLK_CGROUP=y
-> --
-> 2.1.0
+On 2019/10/15 上午1:49, Stefan Hajnoczi wrote:
+> On Fri, Oct 11, 2019 at 04:15:50PM +0800, Jason Wang wrote:
+>> There are hardware that can do virtio datapath offloading while having
+>> its own control path. This path tries to implement a mdev based
+>> unified API to support using kernel virtio driver to drive those
+>> devices. This is done by introducing a new mdev transport for virtio
+>> (virtio_mdev) and register itself as a new kind of mdev driver. Then
+>> it provides a unified way for kernel virtio driver to talk with mdev
+>> device implementation.
+>>
+>> Though the series only contains kernel driver support, the goal is to
+>> make the transport generic enough to support userspace drivers. This
+>> means vhost-mdev[1] could be built on top as well by resuing the
+>> transport.
+>>
+>> A sample driver is also implemented which simulate a virito-net
+>> loopback ethernet device on top of vringh + workqueue. This could be
+>> used as a reference implementation for real hardware driver.
+>>
+>> Consider mdev framework only support VFIO device and driver right now,
+>> this series also extend it to support other types. This is done
+>> through introducing class id to the device and pairing it with
+>> id_talbe claimed by the driver. On top, this seris also decouple
+>> device specific parents ops out of the common ones.
+> I was curious so I took a quick look and posted comments.
 >
+> I guess this driver runs inside the guest since it registers virtio
+> devices?
+
+
+It could run in either guest or host. But the main focus is to run in 
+the host then we can use virtio drivers in containers.
+
+
 >
+> If this is used with physical PCI devices that support datapath
+> offloading then how are physical devices presented to the guest without
+> SR-IOV?
+
+
+We will do control path meditation through vhost-mdev[1] and 
+vhost-vfio[2]. Then we will present a full virtio compatible ethernet 
+device for guest.
+
+SR-IOV is not a must, any mdev device that implements the API defined in 
+patch 5 can be used by this framework.
+
+Thanks
+
+[1] https://lkml.org/lkml/2019/9/26/15
+
+[2] https://patchwork.ozlabs.org/cover/984763/
+
+
+>
+> Stefan
