@@ -2,139 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE4C3D6FDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 09:06:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C0E4D6FFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 09:13:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbfJOHF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 03:05:59 -0400
-Received: from mail-eopbgr20044.outbound.protection.outlook.com ([40.107.2.44]:10834
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726236AbfJOHF6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 03:05:58 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lX9oZzMXjFu7JdXJZAFnrVsb9OvitHt+gnpPnqwj/OU8LSVv2hDoRo9gpE9lBwZhABYbaRL06k3okKc8VZHQZdSh+smWIzr7f+XtYtXzPqxg6d0Yq4XZR5DoI9tkmVkIkaxbCaoirJgETrTC4gADLr8c6j5KDpeK24STHa1CtFxLZV9l/owgLLpEUoNmYcpzgSCg7EMLQHBxkxYkhZCcgXdEdYMW9nGkGKJSPr/sh5JgzpuiRTYfkruuISwFeF0hRI493DRy2Lw2VWbLvQ2/Nn4SOBN+3V7DBijkOCog2Dno+sq1XBs83aPvzzq9Hk8XEQFnNnb9I1VhL/NNn8rRmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DCbBUNqU2Xi+G69tYMOFUCw6uVPSzHYICKtvvfwAFGg=;
- b=QDmf/BF0nklnRNrNoC8fby2gNWhhH7Ctjoge+BJOcSN2QfZBAe6URifi3X6eIl4jCU46uXEgGhIQ52bYT4Sb4tNt95540zzz59IZlxquqQhRaHQ9gmVZQixaOnSRhT8bDQoWi/eL3QE68bbfXnhE+ZsKyaXrqEguCXSci0Maq22Qa5lssqgCv2zjDY1gKJxX54J/j3e+K/iQmU6AzarLCfNwfBvtS0cHY+yhWYKARZor5roreB18UCeb/rk4u+9Z5Bigm8U7WU5gGXff3Ml7gDeoXTfzzBDJHv1uQs2en2Sfpi1c2qbZw0Vfub04qkc4XT8bpjHEjHneZBghGx1h7Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DCbBUNqU2Xi+G69tYMOFUCw6uVPSzHYICKtvvfwAFGg=;
- b=H5DL+7CKXAz2/qAb8SJVMPUiuMy7ecSAXNSN91tNug45pB4drX3QAvYbDD2f/iRTFw57yHNj/eIF81I9OahLdAbRR/WFTO3Ci5eL8HbjioYsO5hWw+Wsm3gk4AGqDcbaHvSodHwYzjH6dV9oL1b1rW/0g78UB3EszA3Q921ELXg=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB6721.eurprd04.prod.outlook.com (20.179.254.150) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.16; Tue, 15 Oct 2019 07:05:53 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::843c:e722:27cb:74e1]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::843c:e722:27cb:74e1%5]) with mapi id 15.20.2347.021; Tue, 15 Oct 2019
- 07:05:53 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>
-CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
+        id S1727198AbfJOHNQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 03:13:16 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:46491 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726565AbfJOHNQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 03:13:16 -0400
+Received: by mail-ed1-f66.google.com with SMTP id r18so5286208eds.13
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 00:13:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=42biyvPrM31S02FsXUC0MU+0R6tD+Grhb6Q0nsVz7Ds=;
+        b=07Ro9DoDUOV+hGr1z0pDvrhKuUGay3/l/niOQeWdwuMjtweQYy+ib4C04lop8neHRr
+         /Cofqv91xBd/zu/rW9CypWngXIM8TzIgl7XxcJ67lxemRhucFI/u0g+2HAA2gxwqVhV4
+         KqjjYjMw/bYk4EUR3ureh4UkvD30pN6OGzo7UscckZ+S3FknLUL4VY6kDkP308LPA9Qv
+         +XgM84b5fGWauxm24KYhW7chdXFiPbnB+lPx7pvpaM8TF7/bwjeY+xAbZlerS3cMLFnc
+         wXw7GCgaF9SCJDU0+TrJoSNVDxpbaodv03bNgmVOZQrJVvsgmSe2MS3nmbgHgPnPdvBQ
+         hnEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=42biyvPrM31S02FsXUC0MU+0R6tD+Grhb6Q0nsVz7Ds=;
+        b=Hm7Egk4XG8z8wd9RtqExmTwSOpcp/LR+v36hcQCNpo9tWjEfrEvTQgBe52Gblt6mjN
+         uLwZwcOa1XraRYrjOSmQQefxnpVPIVML7CrzCm1BpDqtubVSpFuQ7ux1lguoaKIkOo4R
+         MBQezai5ADAINH/44hfmQ5VA1fB6C3DGpkAF5SC/FtB1T8s8ZY99rk9vXa24VZkzpi81
+         qYArSiE3cN/mW5wgM32rx6tEzgOfHmBr/YjeMv2OcbB9mHdPPvTQTig4yG4OYH/0zsvB
+         h/0llEs9+aqKf/wPRDF/eaIykED10Zlh6KnhCZYiXmiIkGXKxOea+qv+jrrEXO0bY6pZ
+         KFhQ==
+X-Gm-Message-State: APjAAAWTdESKh9tPd9zSwwFQUL1RX6z7gtXkJXojADinW+feM6TSFFJc
+        ZESFKs5Iuyy7JZbp2lr/ds+nOw==
+X-Google-Smtp-Source: APXvYqzkDKmEoyVN1f2OTnxxt1B+9UZ1DrV5ZExNh0mPSF0Uip8kLTW7XTtAyZQSYQT8uaXQrE7MCQ==
+X-Received: by 2002:a50:bac2:: with SMTP id x60mr31916901ede.96.1571123594739;
+        Tue, 15 Oct 2019 00:13:14 -0700 (PDT)
+Received: from netronome.com (penelope-musen.rivierenbuurt.horms.nl. [2001:470:7eb3:404:c685:8ff:fe7c:9971])
+        by smtp.gmail.com with ESMTPSA id p4sm3575649eda.56.2019.10.15.00.13.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 15 Oct 2019 00:13:13 -0700 (PDT)
+Date:   Tue, 15 Oct 2019 09:13:12 +0200
+From:   Simon Horman <simon.horman@netronome.com>
+To:     Jeroen Hofstee <jhofstee@victronenergy.com>
+Cc:     kbuild test robot <lkp@intel.com>,
+        Pankaj Sharma <pankj.sharma@samsung.com>,
+        "kbuild-all@lists.01.org" <kbuild-all@lists.01.org>,
+        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH] clk: imx: imx8mn: drop unused pll enum
-Thread-Topic: [PATCH] clk: imx: imx8mn: drop unused pll enum
-Thread-Index: AQHVgyb7rQc7WB2ptUeNJcHfwDTOYA==
-Date:   Tue, 15 Oct 2019 07:05:53 +0000
-Message-ID: <1571122989-29361-1-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK2PR02CA0190.apcprd02.prod.outlook.com
- (2603:1096:201:21::26) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 06e83f04-0a7f-4d80-fe22-08d7513e1ddc
-x-ms-office365-filtering-ht: Tenant
-x-ms-traffictypediagnostic: AM0PR04MB6721:|AM0PR04MB6721:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB6721369DFE571E81DBB2B8D388930@AM0PR04MB6721.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:628;
-x-forefront-prvs: 01917B1794
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(136003)(39860400002)(376002)(396003)(366004)(199004)(189003)(50226002)(71200400001)(71190400001)(66946007)(81166006)(81156014)(52116002)(256004)(25786009)(4744005)(316002)(2201001)(5660300002)(14454004)(66446008)(64756008)(66556008)(66476007)(305945005)(99286004)(44832011)(2906002)(7736002)(36756003)(6436002)(3846002)(6506007)(478600001)(86362001)(486006)(2501003)(2616005)(476003)(6116002)(26005)(102836004)(386003)(66066001)(8676002)(6512007)(4326008)(186003)(110136005)(6486002)(54906003)(8936002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6721;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: LU9bcTCVdIyVLT45Y8G2ke8kM9cdX4io2JYo+jZ3jzuWBsOqPnpZ20vCX0yM0J/gwhgOUM6c6GOif2NO6XU+a9eJBPIXFrgSCz5uHPAnl0g/2e69p9fR01oG48Wckc3wS4I3P/9V+pStp4mMky8A3zgJZ0lpUoKNPGqsOCmD/eIyfYQOWjuWRayMefx4ZqmhS5CKryUwQBeFF6cRnkprGXTUFb7omjNJoAfT5U2NHEGNDqecd9bHUvAhwFBGUK7dP1Lppb3H4SqsnRby1MRu28+CGDE31rL7+Sqflil+9LgNLl73zNEKMHOyJpUnQ/Uy9GrbM2+GvpAsLtbacB7c++RE5TkM7bhoFje4fTjzMjq9lpR7RjmMeYB8jObMG3hdxBMNddL2kHJlNzbcRi9/Ez8JQFT/PnTOsySq3YW7TrE=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        "wg@grandegger.com" <wg@grandegger.com>,
+        "mkl@pengutronix.de" <mkl@pengutronix.de>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "eugen.hristev@microchip.com" <eugen.hristev@microchip.com>,
+        "ludovic.desroches@microchip.com" <ludovic.desroches@microchip.com>,
+        "pankaj.dubey@samsung.com" <pankaj.dubey@samsung.com>,
+        "rcsekar@samsung.com" <rcsekar@samsung.com>,
+        Sriram Dash <sriram.dash@samsung.com>
+Subject: Re: [PATCH] can: m_can: fix boolreturn.cocci warnings
+Message-ID: <20191015071311.yssgqhoax46lfa7l@netronome.com>
+References: <1571052844-22633-1-git-send-email-pankj.sharma@samsung.com>
+ <20191014150428.xhhc43ovkxm6oxf2@332d0cec05f4>
+ <20191015055718.mypn63s2ovgwipk3@netronome.com>
+ <9ad7810b-2205-3227-7ef9-0272f3714839@victronenergy.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 06e83f04-0a7f-4d80-fe22-08d7513e1ddc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2019 07:05:53.0926
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: p3KHzXThsDYvFMOcBH+qhnmQ89rLcK+C032FiSjiVizYvtLZNk8gzkaaZsrEW9DrWcP6q3sYZbJYHiF4aseZ7g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6721
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9ad7810b-2205-3227-7ef9-0272f3714839@victronenergy.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+On Tue, Oct 15, 2019 at 06:37:54AM +0000, Jeroen Hofstee wrote:
+> Hi,
+> 
+> On 10/15/19 7:57 AM, Simon Horman wrote:
+> > On Mon, Oct 14, 2019 at 11:04:28PM +0800, kbuild test robot wrote:
+> >> From: kbuild test robot <lkp@intel.com>
+> >>
+> >> drivers/net/can/m_can/m_can.c:783:9-10: WARNING: return of 0/1 in function 'is_protocol_err' with return type bool
+> >>
+> >>   Return statements in functions returning bool should use
+> >>   true/false instead of 1/0.
+> >> Generated by: scripts/coccinelle/misc/boolreturn.cocci
+> >>
+> >> Fixes: 46946163ac61 ("can: m_can: add support for handling arbitration error")
+> >> CC: Pankaj Sharma <pankj.sharma@samsung.com>
+> >> Signed-off-by: kbuild test robot <lkp@intel.com>
+> >> ---
+> >>
+> >> url:    https://github.com/0day-ci/linux/commits/Pankaj-Sharma/can-m_can-add-support-for-handling-arbitration-error/20191014-193532
+> >>
+> >>   m_can.c |    4 ++--
+> >>   1 file changed, 2 insertions(+), 2 deletions(-)
+> >>
+> >> --- a/drivers/net/can/m_can/m_can.c
+> >> +++ b/drivers/net/can/m_can/m_can.c
+> >> @@ -780,9 +780,9 @@ static inline bool is_lec_err(u32 psr)
+> >>   static inline bool is_protocol_err(u32 irqstatus)
+> >>   {
+> >>   	if (irqstatus & IR_ERR_LEC_31X)
+> >> -		return 1;
+> >> +		return true;
+> >>   	else
+> >> -		return 0;
+> >> +		return false;
+> >>   }
+> >>   
+> >>   static int m_can_handle_protocol_error(struct net_device *dev, u32 irqstatus)
+> >>
+> > <2c>
+> > Perhaps the following is a nicer way to express this (completely untested):
+> >
+> > 	return !!(irqstatus & IR_ERR_LEC_31X);
+> > </2c>
+> 
+> 
+> Really...., !! for bool / _Bool types? why not simply:
+> 
+> static inline bool is_protocol_err(u32 irqstatus)
+> 	return irqstatus & IR_ERR_LEC_31X;
+> }
 
-The PLL enum definition is not used, so drop it.
-
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/clk/imx/clk-imx8mn.c | 14 --------------
- 1 file changed, 14 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-index 28467db10c69..6ab6e9228962 100644
---- a/drivers/clk/imx/clk-imx8mn.c
-+++ b/drivers/clk/imx/clk-imx8mn.c
-@@ -25,20 +25,6 @@ static u32 share_count_disp;
- static u32 share_count_pdm;
- static u32 share_count_nand;
-=20
--enum {
--	ARM_PLL,
--	GPU_PLL,
--	VPU_PLL,
--	SYS_PLL1,
--	SYS_PLL2,
--	SYS_PLL3,
--	DRAM_PLL,
--	AUDIO_PLL1,
--	AUDIO_PLL2,
--	VIDEO_PLL2,
--	NR_PLLS,
--};
--
- static const char * const pll_ref_sels[] =3D { "osc_24m", "dummy", "dummy"=
-, "dummy", };
- static const char * const audio_pll1_bypass_sels[] =3D {"audio_pll1", "aud=
-io_pll1_ref_sel", };
- static const char * const audio_pll2_bypass_sels[] =3D {"audio_pll2", "aud=
-io_pll2_ref_sel", };
---=20
-2.16.4
-
+Good point, silly me.
