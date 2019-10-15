@@ -2,78 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C396D79E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 17:36:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E620AD79ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 17:37:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727478AbfJOPg1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 11:36:27 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:52459 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726231AbfJOPg1 (ORCPT
+        id S1727915AbfJOPhm convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 15 Oct 2019 11:37:42 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:52252 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727656AbfJOPhm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 11:36:27 -0400
-Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1iKOrw-0006ZY-Ry; Tue, 15 Oct 2019 16:36:16 +0100
-Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.2)
-        (envelope-from <ben@rainbowdash.codethink.co.uk>)
-        id 1iKOrw-0001V2-De; Tue, 15 Oct 2019 16:36:16 +0100
-From:   "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
-To:     linux-kernel@lists.codethink.co.uk
-Cc:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] decompressor: fix undeclared items
-Date:   Tue, 15 Oct 2019 16:36:15 +0100
-Message-Id: <20191015153615.5721-1-ben.dooks@codethink.co.uk>
-X-Mailer: git-send-email 2.23.0
+        Tue, 15 Oct 2019 11:37:42 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 5B76460632FF;
+        Tue, 15 Oct 2019 17:37:39 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id RSIHUIs5bPXs; Tue, 15 Oct 2019 17:37:37 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id C21F960632EE;
+        Tue, 15 Oct 2019 17:37:37 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id T3wxvxa3rLp7; Tue, 15 Oct 2019 17:37:37 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 7EAF260632C6;
+        Tue, 15 Oct 2019 17:37:37 +0200 (CEST)
+Date:   Tue, 15 Oct 2019 17:37:37 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     Jiri Slaby <jslaby@suse.cz>
+Cc:     bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, linux-arch@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Jeff Dike <jdike@addtoit.com>,
+        user-mode-linux-devel@lists.sourceforge.net,
+        user-mode-linux-user@lists.sourceforge.net
+Message-ID: <879392618.23509.1571153857379.JavaMail.zimbra@nod.at>
+In-Reply-To: <20191011115108.12392-14-jslaby@suse.cz>
+References: <20191011115108.12392-1-jslaby@suse.cz> <20191011115108.12392-14-jslaby@suse.cz>
+Subject: Re: [PATCH v9 13/28] um: Annotate data appropriately
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [195.201.40.130]
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF60 (Linux)/8.8.12_GA_3809)
+Thread-Topic: Annotate data appropriately
+Thread-Index: gRNjB6YSPJT4xz32OxsfGpK8VELjCQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The follow items are not declared but also not exported
-so use __attribute__((__externally_visible__)) to silence
-the following sparse warnings:
+----- Ursprüngliche Mail -----
+> Von: "Jiri Slaby" <jslaby@suse.cz>
+> An: bp@alien8.de
+> CC: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, linux-arch@vger.kernel.org, "linux-kernel"
+> <linux-kernel@vger.kernel.org>, "Jiri Slaby" <jslaby@suse.cz>, "Jeff Dike" <jdike@addtoit.com>, "richard"
+> <richard@nod.at>, user-mode-linux-devel@lists.sourceforge.net, user-mode-linux-user@lists.sourceforge.net
+> Gesendet: Freitag, 11. Oktober 2019 13:50:53
+> Betreff: [PATCH v9 13/28] um: Annotate data appropriately
 
- ./include/linux/decompress/mm.h:31:30: warning: symbol 'malloc_ptr' was not declared. Should it be static?
-./include/linux/decompress/mm.h:32:20: warning: symbol 'malloc_count' was not declared. Should it be static?
-arch/arm/boot/compressed/decompress.c:59:5: warning: symbol 'do_decompress' was not declared. Should it be static?
+> Use the new SYM_DATA_START and SYM_DATA_END_LABEL macros for vdso_start.
+> 
+> We get:
+>  0000  2376 OBJECT  GLOBAL DEFAULT    4 vdso_start
+>  0948     0 OBJECT  GLOBAL DEFAULT    4 vdso_end
+> 
+> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+> Cc: Jeff Dike <jdike@addtoit.com>
+> Cc: Richard Weinberger <richard@nod.at>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: x86@kernel.org
+> Cc: user-mode-linux-devel@lists.sourceforge.net
+> Cc: user-mode-linux-user@lists.sourceforge.net
+> ---
+> arch/x86/um/vdso/vdso.S | 6 +++---
+> 1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/um/vdso/vdso.S b/arch/x86/um/vdso/vdso.S
+> index a4a3870dc059..a6eaf293a73b 100644
+> --- a/arch/x86/um/vdso/vdso.S
+> +++ b/arch/x86/um/vdso/vdso.S
+> @@ -1,11 +1,11 @@
+> /* SPDX-License-Identifier: GPL-2.0 */
+> #include <linux/init.h>
+> +#include <linux/linkage.h>
+> 
+> __INITDATA
+> 
+> -	.globl vdso_start, vdso_end
+> -vdso_start:
+> +SYM_DATA_START(vdso_start)
+> 	.incbin "arch/x86/um/vdso/vdso.so"
+> -vdso_end:
+> +SYM_DATA_END_LABEL(vdso_start, SYM_L_GLOBAL, vdso_end)
 
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
----
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- arch/arm/boot/compressed/decompress.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Acked-by: Richard Weinberger <richard@nod.at>
 
-diff --git a/arch/arm/boot/compressed/decompress.c b/arch/arm/boot/compressed/decompress.c
-index aa075d8372ea..8f4969916151 100644
---- a/arch/arm/boot/compressed/decompress.c
-+++ b/arch/arm/boot/compressed/decompress.c
-@@ -9,7 +9,7 @@
- #include "misc.h"
- 
- #define STATIC static
--#define STATIC_RW_DATA	/* non-static please */
-+#define STATIC_RW_DATA	__attribute__((__externally_visible__)) /* non-static please */
- 
- /* Diagnostic functions */
- #ifdef DEBUG
-@@ -56,7 +56,8 @@ extern char * strchrnul(const char *, int);
- #include "../../../../lib/decompress_unlz4.c"
- #endif
- 
--int do_decompress(u8 *input, int len, u8 *output, void (*error)(char *x))
-+int __attribute__((__externally_visible__))
-+do_decompress(u8 *input, int len, u8 *output, void (*error)(char *x))
- {
- 	return __decompress(input, len, NULL, NULL, output, 0, NULL, error);
- }
--- 
-2.23.0
-
+Thanks,
+//richard
