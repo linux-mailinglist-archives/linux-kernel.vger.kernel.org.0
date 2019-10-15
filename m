@@ -2,97 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6FA7D7E7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 20:09:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68A78D7E4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 20:00:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389090AbfJOSIz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 14:08:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40134 "EHLO mail.kernel.org"
+        id S2388940AbfJOSAV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 14:00:21 -0400
+Received: from foss.arm.com ([217.140.110.172]:44858 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725820AbfJOSIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 14:08:54 -0400
-Received: from localhost (unknown [38.98.37.135])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2210920659;
-        Tue, 15 Oct 2019 18:08:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571162933;
-        bh=72Jhf2gCfLKMsgroJ+dspsUWbLqIIaKdSi3E4kfQTHg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NxpiRKvyPENu5nqLqiiuFfvP8HewQgS0FRdSFH07T5l3FMQbOQO44QHVHBgUFam0F
-         eXDUI/uT1ldmjFXmLTQEiewhqryQ4Ac5n4vAV3hlsaHuBZOZnyuDDJRKQN+Wqkhlgx
-         swd+tFNGfcfgwhilnMLjyfPZwq0ztzgXzUO+HuSs=
-Date:   Tue, 15 Oct 2019 19:58:20 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Felipe Balbi <balbi@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Nagarjuna Kristam <nkristam@nvidia.com>, jonathanh@nvidia.com,
-        mark.rutland@arm.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [Patch V10 0/8] Tegra XUSB gadget driver support
-Message-ID: <20191015175820.GC1072965@kroah.com>
-References: <1569227152-3030-1-git-send-email-nkristam@nvidia.com>
- <20191014100257.GB419598@ulmo>
+        id S1725820AbfJOSAV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 14:00:21 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B79BE337;
+        Tue, 15 Oct 2019 11:00:20 -0700 (PDT)
+Received: from [10.1.197.57] (e110467-lin.cambridge.arm.com [10.1.197.57])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EA7303F6C4;
+        Tue, 15 Oct 2019 11:00:18 -0700 (PDT)
+Subject: Re: [RFC PATCH 0/6] SMMUv3 PMCG IMP DEF event support
+To:     John Garry <john.garry@huawei.com>, lorenzo.pieralisi@arm.com,
+        guohanjun@huawei.com, sudeep.holla@arm.com, mark.rutland@arm.com,
+        will@kernel.org
+Cc:     shameerali.kolothum.thodi@huawei.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, rjw@rjwysocki.net,
+        lenb@kernel.org, nleeder@codeaurora.org, linuxarm@huawei.com
+References: <1569854031-237636-1-git-send-email-john.garry@huawei.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <66a3ce9f-d3cd-110f-7353-46e6eaf25b7c@arm.com>
+Date:   Tue, 15 Oct 2019 19:00:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191014100257.GB419598@ulmo>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <1569854031-237636-1-git-send-email-john.garry@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 14, 2019 at 12:02:57PM +0200, Thierry Reding wrote:
-> On Mon, Sep 23, 2019 at 01:55:44PM +0530, Nagarjuna Kristam wrote:
-> > Patches 1-3 are phy driver changes to add support for device
-> > mode.
-> > Patches 4-7 are changes related to XUSB device mode
-> > controller driver.
-> > Patch 8 is to enable drivers for XUDC support in defconfig
-> > 
-> > Test Steps(USB 2.0):
-> > - Enable "USB Gadget precomposed configurations" in defconfig
-> > - Build, flash and boot Jetson TX1
-> > - Connect Jetson TX1 and Ubuntu device using USB A to Micro B
-> >   cable
-> > - After boot on Jetson TX1 terminal usb0 network device should be
-> >   enumerated
-> > - Assign static ip to usb0 on Jetson TX1 and corresponding net
-> >   device on ubuntu
-> > - Run ping test and transfer test(used scp) to check data transfer
-> >   communication
-> 
-> Hi Felipe, Kishon, Greg,
-> 
-> Patches 1-3 provide new API that is required by patch 7, so I think
-> patches 1, 2, 3, 4 and 7 should probably all go through a single tree to
-> avoid having to model the dependencies using stable branches.
-> 
-> Kishon, patches 1-3 have gone through several rounds of review already,
-> but do you have any remaining concerns on them? If not, it'd be great if
-> you could ack them. Felipe and Greg could then pick them up along with
-> patches 4 and 7 into the USB tree.
-> 
-> Felipe, Greg, does that sound like a reasonable plan?
+Hi John,
 
-Fine with me.
-
-> I should also mention that while waiting for review, Nagarjuna has been
-> able to extend support for the XUDC driver to Tegra186 but has so far
-> been holding back on sending them out so as to not needlessly hold up
-> progress on this series. However, given the interdependencies, I've come
-> to think that it may be preferable to merge everything in one go instead
-> of revisiting this in a couple of weeks.
+On 30/09/2019 15:33, John Garry wrote:
+> This patchset adds IMP DEF event support for the SMMUv3 PMCG.
 > 
-> If you guys prefer, Nagarjuna could send out v11 of the series and
-> integrate Tegra186 support.
+> It is marked as an RFC as the method to identify the PMCG implementation
+> may be a quite disliked. And, in general, the series is somewhat
+> incomplete.
+> 
+> So the background is that the PMCG supports IMP DEF events, yet we have no
+> method to identify the PMCG to know the IMP DEF events.
+> 
+> A method for identifying the PMCG implementation could be using
+> PMDEVARCH, but we cannot rely on this being set properly, as whether this
+> is implemented is not defined in SMMUv3 spec.
+> 
+> Another method would be perf event aliasing, but this method of event
+> matching is based on CPU id, which would not guarantee same
+> uniqueness as PMCG implementation.
+> 
+> Yet another method could be to continue using ACPI OEM ID in the IORT
+> code, but this does not scale. And it is not suitable if we ever add DT
+> support to the PMCG driver.
+> 
+> The method used in this series is based on matching on the parent SMMUv3
+> IIDR. We store this IIDR contents in the arm smmu structure as the first
+> element, which means that we don't have to expose SMMU APIs - this is
+> the part which may be disliked.
+> 
+> The final two patches switch the pre-existing PMCG model identification
+> from ACPI OEM ID to the same parent SMMUv3 IIDR matching.
+> 
+> For now, we only consider SMMUv3' nodes being the associated node for
+> PMCG.
 
-That's also fine.
+Two significant concerns right off the bat:
 
-thanks,
+- It seems more common than not for silicon designers to fail to 
+implement IIDR correctly, so it's only a matter of time before 
+inevitably needing to bring back some firmware-level identifier 
+abstraction (if not already - does Hi161x have PMCGs?)
 
-greg k-h
+- This seems like a step in entirely the wrong direction for supporting 
+PMCGs that reference a Named Component or Root Complex.
+
+Interpreting the Node Reference is definitely a welcome improvement over 
+matching table headers, but absent a truly compelling argument to the 
+contrary, I'd rather retain the "PMCG model" abstraction in between that 
+and the driver itself (especially since those can trivially be hung off 
+compatibles once it comes to DT support).
+
+Thanks,
+Robin.
+
+> 
+> John Garry (6):
+>    ACPI/IORT: Set PMCG device parent
+>    iommu/arm-smmu-v3: Record IIDR in arm_smmu_device structure
+>    perf/smmuv3: Retrieve parent SMMUv3 IIDR
+>    perf/smmuv3: Support HiSilicon hip08 (hi1620) IMP DEF events
+>    perf/smmuv3: Match implementation options based on parent SMMU IIDR
+>    ACPI/IORT: Drop code to set the PMCG software-defined model
+> 
+>   drivers/acpi/arm64/iort.c     | 69 ++++++++++++++--------------
+>   drivers/iommu/arm-smmu-v3.c   |  5 +++
+>   drivers/perf/arm_smmuv3_pmu.c | 84 ++++++++++++++++++++++++++++++-----
+>   include/linux/acpi_iort.h     |  8 ----
+>   4 files changed, 112 insertions(+), 54 deletions(-)
+> 
