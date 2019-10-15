@@ -2,131 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AD82D727D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 11:49:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 971C0D7277
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 11:47:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730030AbfJOJtl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 05:49:41 -0400
-Received: from mail-eopbgr750120.outbound.protection.outlook.com ([40.107.75.120]:35041
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726799AbfJOJtk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 05:49:40 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IXsaXeq1pnSkldjoD6f0uh7WPyTG0oN0pjxNhnUyFklLu1A76n6f7lpggsf4H3vFelUTMmF2sBg6blMf7hDi6u0Ewdt4IDfJxsU9cWhLTYTLSrXD7uv3/vxbcerklG3l/K/IbSoSjLy7V1P855mS/E8dcVIRmAM7RDDR0GQRa11uTO9zdQWsLA2MSw7xB8xO2HaEZWxVFCdQh8RwNIpy+dDee6JTaWaeebSuP6A4re5yQCHbP/znJn8+NaBvXZz2YA7D5Mas7rkdmn1SFQKbID/AwbzP3Jgs529cmBGyW87+k6dr9tEDZZVk80Rdt/qIh55sgdceJg5r601r+ENYqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CJmmb3/kA02j2b/YZsJKMMSbVVYCPaCWWFTYRzx8AwM=;
- b=Qa1a4rDz+aQIf4/Th2e6v+A32YhwXZrwv5E5eXHpP62UpVdg+GG9c0D+vGm02wr6CqxXqiLZFNekUR+tIB2epEWrNGpaS+yB3UXyzqCJJ64w7yqBeL5RRSB5V3Ufa/yScOG0q29x4B1XADzi6Tscue376KhLBCrSl6NHMOPPWawO/D6Kjb1rBTqE3ub5Pv+wgQz3jfm2r7UAOJh8UT7BIma5r+0UXA03kXACrEni/0aBjYIgsjrU3fqZUht/PUicvEbUiPMEtjj8jo2ViDubeP+FAaWLtqZxb+TpMsovtvN2VW9rD1H+mA8tK0PsPYtpyaWswQl7664P1Gw3XNO1qg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=analogixsemi.com; dmarc=pass action=none
- header.from=analogixsemi.com; dkim=pass header.d=analogixsemi.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Analogixsemi.onmicrosoft.com; s=selector2-Analogixsemi-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CJmmb3/kA02j2b/YZsJKMMSbVVYCPaCWWFTYRzx8AwM=;
- b=2vj5XJDst3icMCEqZJq8DnVT3nfH+wzjtwzakmkUoA1O2ObQxZ2FSVGNeqJGYE8yu0CuJmA07nGh1emjiCgNSTbJSdf0IGLNFYOFrHOTCv8+y91aKFASWSVKBMaTgfaP04zB6HVZO1RTBys+5aTX5gsYQIBogeKJeOzbLWUC1Pg=
-Received: from SN6PR04MB4543.namprd04.prod.outlook.com (52.135.120.29) by
- SN6PR04MB5295.namprd04.prod.outlook.com (20.177.254.26) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.22; Tue, 15 Oct 2019 09:46:58 +0000
-Received: from SN6PR04MB4543.namprd04.prod.outlook.com
- ([fe80::c55e:6c70:adbb:cf87]) by SN6PR04MB4543.namprd04.prod.outlook.com
- ([fe80::c55e:6c70:adbb:cf87%5]) with mapi id 15.20.2347.023; Tue, 15 Oct 2019
- 09:46:58 +0000
-From:   Xin Ji <xji@analogixsemi.com>
-To:     "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Andrzej Hajda <a.hajda@samsung.com>
-CC:     Neil Armstrong <narmstrong@baylibre.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Sheng Pan <span@analogixsemi.com>
-Subject: [PATCH v3 0/2] Add initial support for slimport anx7625
-Thread-Topic: [PATCH v3 0/2] Add initial support for slimport anx7625
-Thread-Index: AQHVgz18ii85ZkKQDUisjYsNOX82Bg==
-Date:   Tue, 15 Oct 2019 09:46:57 +0000
-Message-ID: <cover.1571132350.git.xji@analogixsemi.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM0PR0102CA0069.eurprd01.prod.exchangelabs.com
- (2603:10a6:208::46) To SN6PR04MB4543.namprd04.prod.outlook.com
- (2603:10b6:805:a8::29)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=xji@analogixsemi.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [114.247.245.252]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: d55dbdd8-6057-407c-060c-08d751549ea5
-x-ms-traffictypediagnostic: SN6PR04MB5295:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <SN6PR04MB529525E21321DA5E180F2AF8C7930@SN6PR04MB5295.namprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 01917B1794
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(199004)(189003)(53754006)(66066001)(6486002)(6436002)(107886003)(2906002)(4326008)(5660300002)(66946007)(66476007)(66556008)(64756008)(66446008)(6512007)(4744005)(2501003)(14454004)(7736002)(86362001)(110136005)(54906003)(498600001)(8676002)(8936002)(81156014)(81166006)(36756003)(7416002)(305945005)(99286004)(25786009)(71190400001)(71200400001)(3846002)(26005)(102836004)(2616005)(486006)(6116002)(186003)(52116002)(476003)(14444005)(256004)(6506007)(386003);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR04MB5295;H:SN6PR04MB4543.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: analogixsemi.com does not
- designate permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: KIEwDS5kS6zsy/N6iTndnPlxXnN5CbhUNxjKxNI0iSP8pUZ9D3wd8lwjjcdzfsk4MrMWahppdH3oNE9Hm9/TIPr6wVr3zODxDHkq0SxhSfdzXMzjyDq9WAhNeN8KOyMKoUopOD3lA7T/HeB8ZyV7ZNDPj1aNmlF6nNmc9BY8z3E5q3UNPo7Xv/qymjkSRsQC4vgitj+yBRJVDgQbQy3GeEtdIyZMJLNSbU+8kVY8Rjhe/nT6XBNofIJ50ryrQLLNepvy4ZrR2Xnth88UR32/bNZBu6Q9GJZiUVSV5hCGUUzogEo50STuLeImsU0FNzRP+xU7575gdZtWwHbG3xD8xjvDoXTMFR9yVfe1BvpT6J6ipotoqb9ThY3sFsYfs08G9YgxYxJ96wO6FyJttFrvBw2OAb636x4Ug+IdBDztpoc=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <193F035F439A9A419DFB4141B728922D@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1727436AbfJOJrx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 05:47:53 -0400
+Received: from foss.arm.com ([217.140.110.172]:33884 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726293AbfJOJrx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 05:47:53 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3C5E28;
+        Tue, 15 Oct 2019 02:47:51 -0700 (PDT)
+Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D45D13F68E;
+        Tue, 15 Oct 2019 02:47:50 -0700 (PDT)
+Subject: Re: [PATCH] sched/topology: Disable sched_asym_cpucapacity on domain
+ destruction
+To:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Quentin Perret <qperret@google.com>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Quentin Perret <qperret@qperret.net>,
+        "# v4 . 16+" <stable@vger.kernel.org>
+References: <20191014114710.22142-1-valentin.schneider@arm.com>
+ <20191014121648.GA53234@google.com>
+ <CAKfTPtDoBrE=npY_Ay1pucdXsW1yQr1UiaCGq1DXKa2VmNqcUg@mail.gmail.com>
+ <fe5977ab-0a70-e705-fcca-246c7dc3d23f@arm.com>
+ <20191014135256.GA85340@google.com>
+ <2b058430-1951-3d58-ebf4-8195a28ff233@arm.com>
+ <c5fec41b-87f1-be4e-475f-69c7394f5467@arm.com>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <30d20b89-2108-5eed-2d2c-df99331d2320@arm.com>
+Date:   Tue, 15 Oct 2019 10:47:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: analogixsemi.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d55dbdd8-6057-407c-060c-08d751549ea5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2019 09:46:57.9360
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b099b0b4-f26c-4cf5-9a0f-d5be9acab205
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: y9Z4mjMpe/jcVqtvCuFWNXvq/R8gb2bcx+j7c9BZ0sm/2t/F0Rc/FUSWjHWi/+i21tjvoHv/AqQ/oJpy4h83mQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB5295
+In-Reply-To: <c5fec41b-87f1-be4e-475f-69c7394f5467@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+On 15/10/2019 10:22, Dietmar Eggemann wrote:
+> I still don't understand the benefit of the counter approach here.
+> sched_smt_present counts the number of cores with SMT. So in case you
+> have 2 SMT cores with 2 HW threads and you CPU hp out one CPU, you still
+> have sched_smt_present, although 1 CPU doesn't have a SMT thread sibling
+> anymore.
+> 
+> Valentin's patch makes sure that sched_asym_cpucapacity is correctly set
+> when the sd hierarchy is rebuild due to CPU hp. Including the unlikely
+> scenario that an asymmetric CPU capacity system (based on DT's
+> capacity-dmips-mhz values) turns normal SMT because of the max frequency
+> values of the CPUs involved.
+> 
+> Systems with a mix of asymmetric and symmetric CPU capacity rd's have to
+> live with the fact that wake_cap and misfit handling is enabled for
+> them. This should be the case already today.
+> 
 
-The following series add initial support for the Slimport ANX7625 transmitt=
-er, a
-ultra-low power Full-HD 4K MIPI to DP transmitter designed for portable dev=
-ice.
+Good point, that's what I slowly came to realize this morning.
 
-This is the initial version, any mistakes, please let me know, I will fix i=
-t in
-the next series.
+> There should be no SD_ASYM_CPUCAPACITY flag on the sd's of the CPUs of
+> the symmetric CPU capacity rd's. I.e. update_top_cache_domain() should
+> set sd_asym_cpucapacity=NULL for those CPUs.
+> 
+> So as a rule we could say even if a static key enables a code path, a
+> derefenced sd still has to be checked against NULL.
+> 
 
-Thanks,
-Xin
-
-Xin Ji (2):
-  dt-bindings: drm/bridge: anx7625: MIPI to DP transmitter binding
-  drm/bridge: anx7625: Add anx7625 MIPI DSI/DPI to DP bridge driver
-
- .../bindings/display/bridge/anx7625.yaml           |   91 +
- drivers/gpu/drm/bridge/Makefile                    |    2 +-
- drivers/gpu/drm/bridge/analogix/Kconfig            |    6 +
- drivers/gpu/drm/bridge/analogix/Makefile           |    1 +
- drivers/gpu/drm/bridge/analogix/anx7625.c          | 2043 ++++++++++++++++=
-++++
- drivers/gpu/drm/bridge/analogix/anx7625.h          |  406 ++++
- 6 files changed, 2548 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/anx762=
-5.yaml
- create mode 100644 drivers/gpu/drm/bridge/analogix/anx7625.c
- create mode 100644 drivers/gpu/drm/bridge/analogix/anx7625.h
-
---=20
-2.7.4
-
+Yeah, I think there's no escaping it. Let me see if I can do something
+sensible regarding the static key.
