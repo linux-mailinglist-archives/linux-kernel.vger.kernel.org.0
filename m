@@ -2,250 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52A94D71F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 11:19:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CB70D7204
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 11:20:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727618AbfJOJTI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 05:19:08 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:37304 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726036AbfJOJTI (ORCPT
+        id S1729707AbfJOJUH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 05:20:07 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:33360 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725980AbfJOJUH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 05:19:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=YIaOBNWN2tpG+RpI2kNEP0VXguIxNOWwrYW3F7DeUP8=; b=OMkoqyY0vapTbGrlufm/6ayOY
-        XSkrMEjXZT8h0b4GmtbZLBbtUTelQxluoeVreLNcdFjQ3+ceI/7EH9H4HSWoODT26X1rOm6DdWmFp
-        oRnlqVuSs8zXTw94Yq1mm+GHmz1UGUrzmVH7IYyRo+jgQT3B8i/m8iH0trQB3tn7gCI+TPdIEYzZK
-        elCvZorMO4eEfAhIZyeqFJDIvtEYWDvAKk4HK89yLFp02wurTrDCuj49xyFohoimuHy8BN0cGeEjN
-        q95FWUIV9VfODFWWmp6L1Jy/QOmc+As8DcvxIfzkA17ySv7MKXHXiP+2hKUSt9WrkKF68LPUP2e+X
-        4tzF+1+5w==;
-Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:43734)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1iKIyh-0003VI-5O; Tue, 15 Oct 2019 10:18:51 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1iKIyf-0005C9-SU; Tue, 15 Oct 2019 10:18:49 +0100
-Date:   Tue, 15 Oct 2019 10:18:49 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Xiaowei Bao <xiaowei.bao@nxp.com>
-Cc:     "Z.q. Hou" <zhiqiang.hou@nxp.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>, "kishon@ti.com" <kishon@ti.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        "andrew.murray@arm.com" <andrew.murray@arm.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/6] PCI: mobiveil: Add PCIe Gen4 EP driver for NXP
- Layerscape SoCs
-Message-ID: <20191015091849.GT25745@shell.armlinux.org.uk>
-References: <20190916021742.22844-1-xiaowei.bao@nxp.com>
- <20190916021742.22844-4-xiaowei.bao@nxp.com>
- <20190924163850.GY25745@shell.armlinux.org.uk>
- <AM5PR04MB32991D0D69769CE29E0F8DAEF5930@AM5PR04MB3299.eurprd04.prod.outlook.com>
- <20191015090756.GS25745@shell.armlinux.org.uk>
- <AM5PR04MB3299919E5C4C8A764DB3A656F5930@AM5PR04MB3299.eurprd04.prod.outlook.com>
+        Tue, 15 Oct 2019 05:20:07 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9F9DCsw015460;
+        Tue, 15 Oct 2019 09:19:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type : in-reply-to;
+ s=corp-2019-08-05; bh=XOS9EXMDrfcapa0yCPVW2tWQBekI+jT6QODKtdRu1OU=;
+ b=Qr7X/dmJF+BJSy/GF+LmiqYPiI+bOcgWHfpXFx/5BLQ6rY4195UOzl0XLlo993ZEA5j3
+ 6nI7jwwM2pGULD13DKQRxvmtC76O8SlY9peYOEUcdupYGw52asJDIxLFPMdUe7DbdzFZ
+ A0Mmjkwxv6LNYGWWYJm+EtDbhSUgOrbbUh4piVJWdYGu7kxyRJbOkk9GzowxQjvFIiNk
+ JOMHwxkSnPB1PECWXFjn4AsQnzAnMIht/SOl3vWpQ7cTyn2Tdt8vpIKu1x1/CUvthX6+
+ B7jI+RzhhZ6dQxmvyLZenQFzC+707MWvqQEvdezbZSa2KJuveo6jNiFlXKdq3P5noZ1g JA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2vk68ueh7b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Oct 2019 09:19:40 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9F98DWJ147688;
+        Tue, 15 Oct 2019 09:19:39 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2vnb0erxc9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Oct 2019 09:19:39 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9F9JV6N021786;
+        Tue, 15 Oct 2019 09:19:31 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 15 Oct 2019 09:19:30 +0000
+Date:   Tue, 15 Oct 2019 12:19:21 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     kbuild@lists.01.org, Xin Ji <xji@analogixsemi.com>
+Cc:     kbuild-all@lists.01.org,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Sheng Pan <span@analogixsemi.com>
+Subject: Re: [PATCH v2 2/2] drm/bridge: anx7625: Add anx7625 MIPI DSI/DPI to
+ DP bridge driver
+Message-ID: <20191015091921.GC21344@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <AM5PR04MB3299919E5C4C8A764DB3A656F5930@AM5PR04MB3299.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <55295c49503a963f3417b917fd7163feb26ed0b6.1570760115.git.xji@analogixsemi.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9410 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910150086
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9410 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910150086
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 09:14:00AM +0000, Xiaowei Bao wrote:
-> > -----Original Message-----
-> > From: Russell King - ARM Linux admin <linux@armlinux.org.uk>
-> > Sent: 2019年10月15日 17:08
-> > To: Xiaowei Bao <xiaowei.bao@nxp.com>
-> > Cc: Z.q. Hou <zhiqiang.hou@nxp.com>; bhelgaas@google.com;
-> > robh+dt@kernel.org; mark.rutland@arm.com; shawnguo@kernel.org; Leo Li
-> > <leoyang.li@nxp.com>; kishon@ti.com; lorenzo.pieralisi@arm.com; M.h. Lian
-> > <minghuan.lian@nxp.com>; andrew.murray@arm.com; Mingkai Hu
-> > <mingkai.hu@nxp.com>; linux-pci@vger.kernel.org;
-> > linux-arm-kernel@lists.infradead.org; devicetree@vger.kernel.org;
-> > linux-kernel@vger.kernel.org
-> > Subject: Re: [PATCH 3/6] PCI: mobiveil: Add PCIe Gen4 EP driver for NXP
-> > Layerscape SoCs
-> > 
-> > On Tue, Oct 15, 2019 at 07:46:12AM +0000, Xiaowei Bao wrote:
-> > >
-> > >
-> > > > -----Original Message-----
-> > > > From: Russell King - ARM Linux admin <linux@armlinux.org.uk>
-> > > > Sent: 2019年9月25日 0:39
-> > > > To: Xiaowei Bao <xiaowei.bao@nxp.com>
-> > > > Cc: Z.q. Hou <zhiqiang.hou@nxp.com>; bhelgaas@google.com;
-> > > > robh+dt@kernel.org; mark.rutland@arm.com; shawnguo@kernel.org; Leo
-> > > > robh+Li
-> > > > <leoyang.li@nxp.com>; kishon@ti.com; lorenzo.pieralisi@arm.com; M.h.
-> > > > Lian <minghuan.lian@nxp.com>; andrew.murray@arm.com; Mingkai Hu
-> > > > <mingkai.hu@nxp.com>; linux-pci@vger.kernel.org;
-> > > > linux-arm-kernel@lists.infradead.org; devicetree@vger.kernel.org;
-> > > > linux-kernel@vger.kernel.org
-> > > > Subject: Re: [PATCH 3/6] PCI: mobiveil: Add PCIe Gen4 EP driver for
-> > > > NXP Layerscape SoCs
-> > > >
-> > > > On Mon, Sep 16, 2019 at 10:17:39AM +0800, Xiaowei Bao wrote:
-> > > > > This PCIe controller is based on the Mobiveil GPEX IP, it work in
-> > > > > EP mode if select this config opteration.
-> > > > >
-> > > > > Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
-> > > > > ---
-> > > > >  MAINTAINERS                                        |   2
-> > +
-> > > > >  drivers/pci/controller/mobiveil/Kconfig            |  17 ++-
-> > > > >  drivers/pci/controller/mobiveil/Makefile           |   1 +
-> > > > >  .../controller/mobiveil/pcie-layerscape-gen4-ep.c  | 156
-> > > > > +++++++++++++++++++++
-> > > > >  4 files changed, 173 insertions(+), 3 deletions(-)  create mode
-> > > > > 100644 drivers/pci/controller/mobiveil/pcie-layerscape-gen4-ep.c
-> > > > >
-> > > > > diff --git a/MAINTAINERS b/MAINTAINERS index b997056..0858b54
-> > > > > 100644
-> > > > > --- a/MAINTAINERS
-> > > > > +++ b/MAINTAINERS
-> > > > > @@ -12363,11 +12363,13 @@ F:
-> > > > 	drivers/pci/controller/dwc/*layerscape*
-> > > > >
-> > > > >  PCI DRIVER FOR NXP LAYERSCAPE GEN4 CONTROLLER
-> > > > >  M:	Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> > > > > +M:	Xiaowei Bao <xiaowei.bao@nxp.com>
-> > > > >  L:	linux-pci@vger.kernel.org
-> > > > >  L:	linux-arm-kernel@lists.infradead.org
-> > > > >  S:	Maintained
-> > > > >  F:	Documentation/devicetree/bindings/pci/layerscape-pcie-gen4.txt
-> > > > >  F:	drivers/pci/controller/mobibeil/pcie-layerscape-gen4.c
-> > > > > +F:	drivers/pci/controller/mobiveil/pcie-layerscape-gen4-ep.c
-> > > > >
-> > > > >  PCI DRIVER FOR GENERIC OF HOSTS
-> > > > >  M:	Will Deacon <will@kernel.org>
-> > > > > diff --git a/drivers/pci/controller/mobiveil/Kconfig
-> > > > > b/drivers/pci/controller/mobiveil/Kconfig
-> > > > > index 2054950..0696b6e 100644
-> > > > > --- a/drivers/pci/controller/mobiveil/Kconfig
-> > > > > +++ b/drivers/pci/controller/mobiveil/Kconfig
-> > > > > @@ -27,13 +27,24 @@ config PCIE_MOBIVEIL_PLAT
-> > > > >  	  for address translation and it is a PCIe Gen4 IP.
-> > > > >
-> > > > >  config PCIE_LAYERSCAPE_GEN4
-> > > > > -	bool "Freescale Layerscape PCIe Gen4 controller"
-> > > > > +	bool "Freescale Layerscpe PCIe Gen4 controller in RC mode"
-> > > > >  	depends on PCI
-> > > > >  	depends on OF && (ARM64 || ARCH_LAYERSCAPE)
-> > > > >  	depends on PCI_MSI_IRQ_DOMAIN
-> > > > >  	select PCIE_MOBIVEIL_HOST
-> > > > >  	help
-> > > > >  	  Say Y here if you want PCIe Gen4 controller support on
-> > > > > -	  Layerscape SoCs. The PCIe controller can work in RC or
-> > > > > -	  EP mode according to RCW[HOST_AGT_PEX] setting.
-> > > > > +	  Layerscape SoCs. And the PCIe controller work in RC mode
-> > > > > +	  by setting the RCW[HOST_AGT_PEX] to 0.
-> > > > > +
-> > > > > +config PCIE_LAYERSCAPE_GEN4_EP
-> > > > > +	bool "Freescale Layerscpe PCIe Gen4 controller in EP mode"
-> > > > > +	depends on PCI
-> > > > > +	depends on OF && (ARM64 || ARCH_LAYERSCAPE)
-> > > > > +	depends on PCI_ENDPOINT
-> > > > > +	select PCIE_MOBIVEIL_EP
-> > > > > +	help
-> > > > > +	  Say Y here if you want PCIe Gen4 controller support on
-> > > > > +	  Layerscape SoCs. And the PCIe controller work in EP mode
-> > > > > +	  by setting the RCW[HOST_AGT_PEX] to 1.
-> > > > >  endmenu
-> > > > > diff --git a/drivers/pci/controller/mobiveil/Makefile
-> > > > > b/drivers/pci/controller/mobiveil/Makefile
-> > > > > index 686d41f..6f54856 100644
-> > > > > --- a/drivers/pci/controller/mobiveil/Makefile
-> > > > > +++ b/drivers/pci/controller/mobiveil/Makefile
-> > > > > @@ -4,3 +4,4 @@ obj-$(CONFIG_PCIE_MOBIVEIL_HOST) +=
-> > > > > pcie-mobiveil-host.o
-> > > > >  obj-$(CONFIG_PCIE_MOBIVEIL_EP) += pcie-mobiveil-ep.o
-> > > > >  obj-$(CONFIG_PCIE_MOBIVEIL_PLAT) += pcie-mobiveil-plat.o
-> > > > >  obj-$(CONFIG_PCIE_LAYERSCAPE_GEN4) += pcie-layerscape-gen4.o
-> > > > > +obj-$(CONFIG_PCIE_LAYERSCAPE_GEN4_EP) +=
-> > > > pcie-layerscape-gen4-ep.o
-> > > > > diff --git
-> > > > > a/drivers/pci/controller/mobiveil/pcie-layerscape-gen4-ep.c
-> > > > > b/drivers/pci/controller/mobiveil/pcie-layerscape-gen4-ep.c
-> > > > > new file mode 100644
-> > > > > index 0000000..7bfec51
-> > > > > --- /dev/null
-> > > > > +++ b/drivers/pci/controller/mobiveil/pcie-layerscape-gen4-ep.c
-> > > > > @@ -0,0 +1,156 @@
-> > > > > +// SPDX-License-Identifier: GPL-2.0
-> > > > > +/*
-> > > > > + * PCIe controller EP driver for Freescale Layerscape SoCs
-> > > > > + *
-> > > > > + * Copyright (C) 2019 NXP Semiconductor.
-> > > > > + *
-> > > > > + * Author: Xiaowei Bao <xiaowei.bao@nxp.com>  */
-> > > > > +
-> > > > > +#include <linux/kernel.h>
-> > > > > +#include <linux/init.h>
-> > > > > +#include <linux/of_pci.h>
-> > > > > +#include <linux/of_platform.h>
-> > > > > +#include <linux/of_address.h>
-> > > > > +#include <linux/pci.h>
-> > > > > +#include <linux/platform_device.h> #include <linux/resource.h>
-> > > > > +
-> > > > > +#include "pcie-mobiveil.h"
-> > > > > +
-> > > > > +#define PCIE_LX2_BAR_NUM	4
-> > > > > +
-> > > > > +#define to_ls_pcie_g4_ep(x)	dev_get_drvdata((x)->dev)
-> > > > > +
-> > > > > +struct ls_pcie_g4_ep {
-> > > > > +	struct mobiveil_pcie		*mv_pci;
-> > > > > +};
-> > > > > +
-> > > > > +static const struct of_device_id ls_pcie_g4_ep_of_match[] = {
-> > > > > +	{ .compatible = "fsl,lx2160a-pcie-ep",},
-> > > > > +	{ },
-> > > > > +};
-> > > > > +
-> > > > > +static const struct pci_epc_features ls_pcie_g4_epc_features = {
-> > > > > +	.linkup_notifier = false,
-> > > > > +	.msi_capable = true,
-> > > > > +	.msix_capable = true,
-> > > > > +	.reserved_bar = (1 << BAR_4) | (1 << BAR_5),
-> > > >
-> > > > 			BIT(BAR_4) | BIT(BAR_5) ?
-> > >
-> > > I think use .reserved_bar = (1 << BAR_4) | (1 << BAR_5), is better,
-> > > because BAR_4 is not a bit of register.
-> > 
-> > Why is whether it's a register or not relevent?
-> 
-> My understand is that the BIT is used to register, refer to other EP driver files,
-> it also use 1 << BAR_4 method.
-> 
-> [baoxw@titan controller]$ grep -r "reserved_bar" *
-> dwc/pci-keystone.c:     .reserved_bar = 1 << BAR_0 | 1 << BAR_1,
-> mobiveil/pcie-layerscape-gen4-ep.c:     .reserved_bar = (1 << BAR_4) | (1 << BAR_5),
+[  These are automated text from the 0-day bot -dan ]
 
-$ grep '\<BIT(' fs kernel lib mm net -r
+Hi Xin,
 
-About 695 non-device driver instances at the very least seem to disagree.
+Thank you for the patch! Perhaps something to improve:
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+url:    https://github.com/0day-ci/linux/commits/Xin-Ji/dt-bindings-drm-bridge-anx7625-MIPI-to-DP-transmitter-binding/20191014-043019
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+New smatch warnings:
+drivers/gpu/drm/bridge/analogix/anx7625.c:1274 anx7625_start_dp_work() error: uninitialized symbol 'sp_tx_lane_count'.
+
+# https://github.com/0day-ci/linux/commit/152a82b6747f10d6c13c7a422173947c2f2e1aa2
+git remote add linux-review https://github.com/0day-ci/linux
+git remote update linux-review
+git checkout 152a82b6747f10d6c13c7a422173947c2f2e1aa2
+vim +/sp_tx_lane_count +1274 drivers/gpu/drm/bridge/analogix/anx7625.c
+
+152a82b6747f10 Xin Ji 2019-10-11  1253  static void anx7625_start_dp_work(struct anx7625_data *ctx)
+152a82b6747f10 Xin Ji 2019-10-11  1254  {
+152a82b6747f10 Xin Ji 2019-10-11  1255  	int ret;
+152a82b6747f10 Xin Ji 2019-10-11  1256  	u8 buf[MAX_DPCD_BUFFER_SIZE];
+152a82b6747f10 Xin Ji 2019-10-11  1257  	u8 hdcp_cap;
+152a82b6747f10 Xin Ji 2019-10-11  1258  	struct device *dev = &ctx->client->dev;
+152a82b6747f10 Xin Ji 2019-10-11  1259  	u8 sp_tx_bw; /* linktraining banwidth */
+152a82b6747f10 Xin Ji 2019-10-11  1260  	u8 sp_tx_lane_count; /* link training lane count */
+152a82b6747f10 Xin Ji 2019-10-11  1261  
+152a82b6747f10 Xin Ji 2019-10-11  1262  	if (ctx->hpd_high_cnt >= 2) {
+152a82b6747f10 Xin Ji 2019-10-11  1263  		DRM_DEV_DEBUG_DRIVER(dev, "anx7625 filter useless HPD\n");
+152a82b6747f10 Xin Ji 2019-10-11  1264  		return;
+152a82b6747f10 Xin Ji 2019-10-11  1265  	}
+152a82b6747f10 Xin Ji 2019-10-11  1266  
+152a82b6747f10 Xin Ji 2019-10-11  1267  	ctx->hpd_high_cnt++;
+152a82b6747f10 Xin Ji 2019-10-11  1268  
+152a82b6747f10 Xin Ji 2019-10-11  1269  	sp_tx_get_rx_bw(ctx, &sp_tx_bw);
+152a82b6747f10 Xin Ji 2019-10-11  1270  
+152a82b6747f10 Xin Ji 2019-10-11  1271  	sp_tx_aux_dpcdread_bytes(ctx, 0x00, 0x00, DPCD_MAX_LANE_COUNT,
+152a82b6747f10 Xin Ji 2019-10-11  1272  				 1, &sp_tx_lane_count);
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Smatch thinks sp_tx_aux_dpcdread_bytes() can fail and we don't check
+for errors.
+
+152a82b6747f10 Xin Ji 2019-10-11  1273  
+152a82b6747f10 Xin Ji 2019-10-11 @1274  	sp_tx_lane_count = sp_tx_lane_count & 0x1f;
+152a82b6747f10 Xin Ji 2019-10-11  1275  	sp_tx_aux_dpcdread_bytes(ctx, 0x06, 0x80, 0x28, 1, buf);/* read Bcap */
+152a82b6747f10 Xin Ji 2019-10-11  1276  
+152a82b6747f10 Xin Ji 2019-10-11  1277  	hdcp_cap = buf[0] & 0x01;
+152a82b6747f10 Xin Ji 2019-10-11  1278  
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
