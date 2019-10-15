@@ -2,83 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E487DD77B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 15:51:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AB75D77CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 15:58:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732198AbfJONv4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 09:51:56 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:48593 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732183AbfJONvz (ORCPT
+        id S1732349AbfJON6T convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 15 Oct 2019 09:58:19 -0400
+Received: from mail.minitech.co.jp ([140.227.16.172]:59890 "EHLO
+        mail.minitech.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728880AbfJON6T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 09:51:55 -0400
-Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1iKNEs-0003kR-60; Tue, 15 Oct 2019 14:51:50 +0100
-Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.2)
-        (envelope-from <ben@rainbowdash.codethink.co.uk>)
-        id 1iKNEr-0007Qg-GV; Tue, 15 Oct 2019 14:51:49 +0100
-From:   Ben Dooks <ben.dooks@codethink.co.uk>
-To:     linux-kernel@lists.codethink.co.uk
-Cc:     Ben Dooks <ben.dooks@codethink.co.uk>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] phy: stm32: fix use of integer as pointer
-Date:   Tue, 15 Oct 2019 14:51:48 +0100
-Message-Id: <20191015135148.28508-1-ben.dooks@codethink.co.uk>
-X-Mailer: git-send-email 2.23.0
+        Tue, 15 Oct 2019 09:58:19 -0400
+X-Greylist: delayed 356 seconds by postgrey-1.27 at vger.kernel.org; Tue, 15 Oct 2019 09:58:19 EDT
+Received: from mail.minitech.co.jp (unknown [127.0.0.1])
+        by minitech.co.jp (Postfix) with ESMTP id 458873BA5035;
+        Tue, 15 Oct 2019 22:52:22 +0900 (JST)
+Received: from [74.208.25.207] (unknown [74.208.25.207])
+        (Authenticated sender: minitech-saiyou@minitech.co.jp)
+        by minitech.co.jp (Postfix) with ESMTPA id E135F3BA503C;
+        Tue, 15 Oct 2019 22:52:18 +0900 (JST)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Waiting to chat with you 
+To:     Recipients <hkt@hkfl.online>
+From:   "Natcha Thitadat" <hkt@hkfl.online>
+Date:   Tue, 15 Oct 2019 13:52:14 +0000
+Reply-To: natchathitadat@nttd.biz
+X-Spam-WB: 128
+Message-Id: <20191015135218.E135F3BA503C@minitech.co.jp>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The calls devm_clk_get() and devm_reset_control_get()
-take pointers so change the 0 to NULl to fix the
-following sparse warnings:
+Good day,
 
-drivers/phy/st/phy-stm32-usbphyc.c:330:42: warning: Using plain integer as NULL pointer
-drivers/phy/st/phy-stm32-usbphyc.c:343:52: warning: Using plain integer as NULL pointer
+How are you?I am Ms.Natcha and will like to have a little discussion with you if you don't mind.
 
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
----
-Cc: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-stm32@st-md-mailman.stormreply.com
-Cc: linux-arm-kernel@lists.infradead.org
----
- drivers/phy/st/phy-stm32-usbphyc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/phy/st/phy-stm32-usbphyc.c b/drivers/phy/st/phy-stm32-usbphyc.c
-index 56bdea4b0bd9..2b3639cba51a 100644
---- a/drivers/phy/st/phy-stm32-usbphyc.c
-+++ b/drivers/phy/st/phy-stm32-usbphyc.c
-@@ -327,7 +327,7 @@ static int stm32_usbphyc_probe(struct platform_device *pdev)
- 	if (IS_ERR(usbphyc->base))
- 		return PTR_ERR(usbphyc->base);
- 
--	usbphyc->clk = devm_clk_get(dev, 0);
-+	usbphyc->clk = devm_clk_get(dev, NULL);
- 	if (IS_ERR(usbphyc->clk)) {
- 		ret = PTR_ERR(usbphyc->clk);
- 		dev_err(dev, "clk get failed: %d\n", ret);
-@@ -340,7 +340,7 @@ static int stm32_usbphyc_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	usbphyc->rst = devm_reset_control_get(dev, 0);
-+	usbphyc->rst = devm_reset_control_get(dev, NULL);
- 	if (!IS_ERR(usbphyc->rst)) {
- 		reset_control_assert(usbphyc->rst);
- 		udelay(2);
--- 
-2.23.0
-
+Thanks and have a lovely day,
+Ms.Natcha.
