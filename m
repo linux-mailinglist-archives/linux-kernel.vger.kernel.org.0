@@ -2,273 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27CA5D7190
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 10:50:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23870D719B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 10:54:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727766AbfJOIui (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 04:50:38 -0400
-Received: from mga12.intel.com ([192.55.52.136]:54791 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726775AbfJOIui (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 04:50:38 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Oct 2019 01:50:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,298,1566889200"; 
-   d="scan'208";a="225353910"
-Received: from unknown (HELO localhost) ([10.239.159.128])
-  by fmsmga002.fm.intel.com with ESMTP; 15 Oct 2019 01:50:35 -0700
-Date:   Tue, 15 Oct 2019 16:53:40 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Jim Mattson <jmattson@google.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        yu.c.zhang@intel.com, alazar@bitdefender.com
-Subject: Re: [PATCH v5 1/9] Documentation: Introduce EPT based Subpage
- Protection
-Message-ID: <20191015085340.GA5118@local-michael-cet-test>
-References: <20190917085304.16987-1-weijiang.yang@intel.com>
- <20190917085304.16987-2-weijiang.yang@intel.com>
- <CALMp9eT+P5QTGy=LfZzMozkTC7jdEhbupbfza2tTE3U1grtZkQ@mail.gmail.com>
+        id S1727806AbfJOIys (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 04:54:48 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37480 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725804AbfJOIyr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 04:54:47 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 14A2060C04; Tue, 15 Oct 2019 08:54:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1571129686;
+        bh=aEu5mpzn32x7rkyUlbfZ0xOhWov1nX00SdmGcW+iGoI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=FukvMCOkMX0+h4rUDyGj+jeSj6Qgm7ZMj+Zjx49Tm+3ylBFf7z2ucK8iBv4YbD4Oj
+         YtShomCAE5yU4GNjqSV08wPw6F0WJnGxYp1qnB3FzEd+fLfh9kxnorxpSTCkPy23zy
+         tuL7R7svGNdKHlZol7FQhEjBsnT1v0x7IATuZe5w=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 3E70360907;
+        Tue, 15 Oct 2019 08:54:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1571129681;
+        bh=aEu5mpzn32x7rkyUlbfZ0xOhWov1nX00SdmGcW+iGoI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Cts81DNd9f3YV99tFQWbWJR+ug5gXbEGlgczDEO504sISeM82eKMt7iwXN4v+Smvs
+         FB8SBdtw0smr+AFS6vahbYTpnEO3FrEEYFbmmiJhwRTEQdg3LZS0lRZi6f5PxuDyQz
+         OSbj3PXXw4CMu2OHsQPl0cuPeBrgC8Q3IowQjAZ8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALMp9eT+P5QTGy=LfZzMozkTC7jdEhbupbfza2tTE3U1grtZkQ@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Tue, 15 Oct 2019 14:24:39 +0530
+From:   kgunda@codeaurora.org
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
+        lee.jones@linaro.org, b.zolnierkie@samsung.com,
+        dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org,
+        jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH V6 3/8] backlight: qcom-wled: Add new properties for
+ PMI8998
+In-Reply-To: <3836b382-a4e6-d6db-9667-1851a9cf0112@ti.com>
+References: <1569825553-26039-1-git-send-email-kgunda@codeaurora.org>
+ <1569825553-26039-4-git-send-email-kgunda@codeaurora.org>
+ <3836b382-a4e6-d6db-9667-1851a9cf0112@ti.com>
+Message-ID: <2500384590b9f01116fc8ddf8f1b20b9@codeaurora.org>
+X-Sender: kgunda@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 01:31:08PM -0700, Jim Mattson wrote:
-> On Tue, Sep 17, 2019 at 1:52 AM Yang Weijiang <weijiang.yang@intel.com> wrote:
-> >
-> > Co-developed-by: yi.z.zhang@linux.intel.com
-> > Signed-off-by: yi.z.zhang@linux.intel.com
-> > Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> > ---
-> >  Documentation/virtual/kvm/spp_kvm.txt | 178 ++++++++++++++++++++++++++
-> >  1 file changed, 178 insertions(+)
-> >  create mode 100644 Documentation/virtual/kvm/spp_kvm.txt
-> >
-> > diff --git a/Documentation/virtual/kvm/spp_kvm.txt b/Documentation/virtual/kvm/spp_kvm.txt
-> > new file mode 100644
-> > index 000000000000..1bd1c11d0a99
-> > --- /dev/null
-> > +++ b/Documentation/virtual/kvm/spp_kvm.txt
-> > @@ -0,0 +1,178 @@
-> > +EPT-Based Sub-Page Protection (SPP) for KVM
-> > +====================================================
-> > +
-> > +1.Overview
-> > +  EPT-based Sub-Page Protection(SPP) allows VMM to specify
-> > +  fine-grained(128byte per sub-page) write-protection for guest physical
-> > +  memory. When it's enabled, the CPU enforces write-access permission
-> > +  for the sub-pages within a 4KB page, if corresponding bit is set in
-> > +  permission vector, write to sub-page region is allowed, otherwise,
-> > +  it's prevented with a EPT violation.
-> > +
-> > +  *Note*: In current implementation, SPP is exclusive with nested flag,
-> > +  if it's on, SPP feature won't work.
-> > +
-> > +2.SPP Operation
-> > +  Sub-Page Protection Table (SPPT) is introduced to manage sub-page
-> > +  write-access permission.
-> > +
-> > +  It is active when:
-> > +  a) nested flag is turned off.
-> > +  b) "sub-page write protection" VM-execution control is 1.
-> > +  c) SPP is initialized with KVM_INIT_SPP ioctl.
-> > +  d) Sub-page permissions are set with KVM_SUBPAGES_SET_ACCESS ioctl.
-> > +     see below sections for details.
-> > +
-> > +  __________________________________________________________________________
-> > +
-> > +  How SPP hardware works:
-> > +  __________________________________________________________________________
-> > +
-> > +  Guest write access --> GPA --> Walk EPT --> EPT leaf entry -----|
-> > +  |---------------------------------------------------------------|
-> > +  |-> if VMexec_control.spp && ept_leaf_entry.spp_bit (bit 61)
-> > +       |
-> > +       |-> <false> --> EPT legacy behavior
-> > +       |
-> > +       |
-> > +       |-> <true>  --> if ept_leaf_entry.writable
-> > +                        |
-> > +                        |-> <true>  --> Ignore SPP
-> > +                        |
-> > +                        |-> <false> --> GPA --> Walk SPP 4-level table--|
-> > +                                                                        |
-> > +  |------------<----------get-the-SPPT-point-from-VMCS-filed-----<------|
-> /filed/field/
-> > +  |
-> > +  Walk SPP L4E table
-> > +  |
-> > +  |---> if-entry-misconfiguration ------------>-------|-------<---------|
-> > +   |                                                  |                 |
-> > +  else                                                |                 |
-> > +   |                                                  |                 |
-> > +   |   |------------------SPP VMexit<-----------------|                 |
-> > +   |   |                                                                |
-> > +   |   |-> exit_qualification & sppt_misconfig --> sppt misconfig       |
-> > +   |   |                                                                |
-> > +   |   |-> exit_qualification & sppt_miss --> sppt miss                 |
-> > +   |---|                                                                |
-> > +       |                                                                |
-> > +  walk SPPT L3E--|--> if-entry-misconfiguration------------>------------|
-> > +                 |                                                      |
-> > +                else                                                    |
-> > +                 |                                                      |
-> > +                 |                                                      |
-> > +          walk SPPT L2E --|--> if-entry-misconfiguration-------->-------|
-> > +                          |                                             |
-> > +                         else                                           |
-> > +                          |                                             |
-> > +                          |                                             |
-> > +                   walk SPPT L1E --|-> if-entry-misconfiguration--->----|
-> > +                                   |
-> > +                                 else
-> > +                                   |
-> > +                                   |-> if sub-page writable
-> > +                                   |-> <true>  allow, write access
-> > +                                   |-> <false> disallow, EPT violation
-> > +  ______________________________________________________________________________
-> > +
-> > +3.IOCTL Interfaces
-> > +
-> > +    KVM_INIT_SPP:
-> > +    Allocate storage for sub-page permission vectors and SPPT root page.
-> > +
-> > +    KVM_SUBPAGES_GET_ACCESS:
-> > +    Get sub-page write permission vectors for given continuous guest pages.
-> /continuous/contiguous/
-Thanks for all the corrections.
-
-> > +
-> > +    KVM_SUBPAGES_SET_ACCESS
-> > +    Set SPP bit in EPT leaf entries for given continuous guest pages. The
-> /continuous/contiguous/
-> > +    actual SPPT setup is triggered when SPP miss vm-exit is handled.
-> > +
-> > +    /* for KVM_SUBPAGES_GET_ACCESS and KVM_SUBPAGES_SET_ACCESS */
-> > +    struct kvm_subpage_info {
-> > +       __u64 gfn; /* the first page gfn of the continuous pages */
-> /continuous/contiguous/
-> > +       __u64 npages; /* number of 4K pages */
-> > +       __u64 *access_map; /* sub-page write-access bitmap array */
-> > +    };
-> > +
-> > +    #define KVM_SUBPAGES_GET_ACCESS   _IOR(KVMIO,  0x49, __u64)
-> > +    #define KVM_SUBPAGES_SET_ACCESS   _IOW(KVMIO,  0x4a, __u64)
-> > +    #define KVM_INIT_SPP              _IOW(KVMIO,  0x4b, __u64)
+On 2019-10-01 20:42, Dan Murphy wrote:
+> Kiran
 > 
-> The ioctls should be documented in api.txt.
->
-Sure, will do it.
-
-> > +4.Set Sub-Page Permission
-> > +
-> > +  * To enable SPP protection, system admin sets sub-page permission via
-> Why system admin? Can't any kvm user do this?
-Oops, will change it.
-
-> > +    KVM_SUBPAGES_SET_ACCESS ioctl:
-> > +    (1) It first stores the access permissions in bitmap array.
-> > +
-> > +    (2) Then, if the target 4KB page is mapped as PT_PAGE_TABLE_LEVEL entry in EPT,
-> /page is/pages are/
-> > +       it sets SPP bit of the corresponding entry to mark sub-page protection.
-> > +       If the 4KB page is mapped as PT_DIRECTORY_LEVEL or PT_PDPE_LEVEL, it
-> /page is/pages are/
-> > +       zapps the hugepage entry and let following memroy access to trigger EPT
-> /zapps/zaps/, /entry/enttries/, /memroy/memory/
-> > +       page fault, there the gfn is check against SPP permission bitmap and
-> /page fault/violation/
-> > +       proper level is selected to set up EPT entry.
-> > +
-> > +
-> > +   The SPPT paging structure format is as below:
-> > +
-> > +   Format of the SPPT L4E, L3E, L2E:
-> > +   | Bit    | Contents                                                                 |
-> > +   | :----- | :------------------------------------------------------------------------|
-> > +   | 0      | Valid entry when set; indicates whether the entry is present             |
-> > +   | 11:1   | Reserved (0)                                                             |
-> > +   | N-1:12 | Physical address of 4KB aligned SPPT LX-1 Table referenced by this entry |
-> > +   | 51:N   | Reserved (0)                                                             |
-> > +   | 63:52  | Reserved (0)                                                             |
-> > +   Note: N is the physical address width supported by the processor. X is the page level
-> > +
-> > +   Format of the SPPT L1E:
-> > +   | Bit   | Contents                                                          |
-> > +   | :---- | :---------------------------------------------------------------- |
-> > +   | 0+2i  | Write permission for i-th 128 byte sub-page region.               |
-> > +   | 1+2i  | Reserved (0).                                                     |
-> > +   Note: 0<=i<=31
-> > +
-> > +5.SPPT-induced VM exit
-> > +
-> > +  * SPPT miss and misconfiguration induced VM exit
-> > +
-> > +    A SPPT missing VM exit occurs when walk the SPPT, there is no SPPT
-> > +    misconfiguration but a paging-structure entry is not
-> > +    present in any of L4E/L3E/L2E entries.
-> > +
-> > +    A SPPT misconfiguration VM exit occurs when reserved bits or unsupported values
-> > +    are set in SPPT entry.
-> > +
-> > +    *NOTE* SPPT miss and SPPT misconfigurations can occur only due to an
-> > +    attempt to write memory with a guest physical address.
+> On 9/30/19 1:39 AM, Kiran Gunda wrote:
+>> Update the bindings with the new properties used for
+>> PMI8998.
+>> 
+>> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+>> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>> Reviewed-by: Rob Herring <robh@kernel.org>
+>> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+>> ---
+>>   .../bindings/leds/backlight/qcom-wled.txt          | 76 
+>> ++++++++++++++++++----
+>>   1 file changed, 62 insertions(+), 14 deletions(-)
+>> 
+>> diff --git 
+>> a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt 
+>> b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+>> index 14f28f2..9d840d5 100644
+>> --- a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+>> +++ b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+>> @@ -20,8 +20,7 @@ platforms. The PMIC is connected to the host 
+>> processor via SPMI bus.
+>>   - default-brightness
+>>   	Usage:        optional
+>>   	Value type:   <u32>
+>> -	Definition:   brightness value on boot, value from: 0-4095
+>> -		      Default: 2048
+>> +	Definition:   brightness value on boot, value from: 0-4095.
+>>     - label
+>>   	Usage:        required
+>> @@ -48,20 +47,24 @@ platforms. The PMIC is connected to the host 
+>> processor via SPMI bus.
+>>   - qcom,current-limit
+>>   	Usage:        optional
+>>   	Value type:   <u32>
+>> -	Definition:   mA; per-string current limit
+>> -		      value: For pm8941: from 0 to 25 with 5 mA step
+>> -			     Default 20 mA.
+>> -			     For pmi8998: from 0 to 30 with 5 mA step
+>> -			     Default 25 mA.
+>> +	Definition:   mA; per-string current limit; value from 0 to 25 with
+>> +		      1 mA step.
+>> +		      This property is supported only for pm8941.
+>> +
+>> +- qcom,current-limit-microamp
+>> +	Usage:        optional
+>> +	Value type:   <u32>
+>> +	Definition:   uA; per-string current limit; value from 0 to 30000 
+>> with
+>> +		      2500 uA step.
+>>     - qcom,current-boost-limit
+>>   	Usage:        optional
+>>   	Value type:   <u32>
+>>   	Definition:   mA; boost current limit.
+>>   		      For pm8941: one of: 105, 385, 525, 805, 980, 1260, 1400,
+>> -		      1680. Default: 805 mA
+>> +		      1680.
+>>   		      For pmi8998: one of: 105, 280, 450, 620, 970, 1150, 1300,
+>> -		      1500. Default: 970 mA
+>> +		      1500.
+>>     - qcom,switching-freq
+>>   	Usage:        optional
+>> @@ -69,22 +72,66 @@ platforms. The PMIC is connected to the host 
+>> processor via SPMI bus.
+>>   	 Definition:   kHz; switching frequency; one of: 600, 640, 685, 
+>> 738,
+>>   		       800, 872, 960, 1066, 1200, 1371, 1600, 1920, 2400, 3200,
+>>   		       4800, 9600.
+>> -		       Default: for pm8941: 1600 kHz
+>> -				for pmi8998: 800 kHz
+>>     - qcom,ovp
+>>   	Usage:        optional
+>>   	Value type:   <u32>
+>>   	Definition:   V; Over-voltage protection limit; one of:
+>> -		      27, 29, 32, 35. default: 29V
+>> +		      27, 29, 32, 35.
+>>   		      This property is supported only for PM8941.
+>>   +- qcom,ovp-millivolt
+>> +	Usage:        optional
+>> +	Value type:   <u32>
+>> +	Definition:   mV; Over-voltage protection limit;
+>> +		      For pmi8998: one of 18100, 19600, 29600, 31100
+>> +		      If this property is not specified for PM8941, it
+>> +		      falls back to "qcom,ovp" property.
+>> +
+>>   - qcom,num-strings
+>>   	Usage:        optional
+>>   	Value type:   <u32>
+>>   	Definition:   #; number of led strings attached;
+>> -		      value from 1 to 3. default: 2
+>> -		      This property is supported only for PM8941.
+>> +		      value: For PM8941 from 1 to 3.
+>> +			     For PMI8998 from 1 to 4.
 > 
-> Can you clarify what this means? For instance, setting an A or D bit
-> in a PTE is an attempt to "write memory with a guest physical
-> address," but per the SDM, it is not an operation that is eligible for
-> sub-page write permissions.
+> We probably don't need this since we define 1 led node per output. 
+> And if you need to define
+> 
+> multiple strings per node then you use led-sources.
+> 
+> Then you will use fwnode_property_count_u32(child, "led-sources"); to
+> get the number of outputs
+> 
+> 
+I have kept this property as is to have the backward compatibility with 
+pm8941-wled.
+The backward compatibility is broken if this property is removed.
 
-Yep, should be "memory write mapped by EPT leaf entry and guarded by SPP". thanks!
+>> +
+>> +- interrupts
+>> +	Usage:        optional
+>> +	Value type:   <prop encoded array>
+>> +	Definition:   Interrupts associated with WLED. This should be
+>> +		      "short" and "ovp" interrupts. Interrupts can be
+>> +		      specified as per the encoding listed under
+>> +		      Documentation/devicetree/bindings/spmi/
+>> +		      qcom,spmi-pmic-arb.txt.
+>> +
+>> +- interrupt-names
+>> +	Usage:        optional
+>> +	Value type:   <string>
+>> +	Definition:   Interrupt names associated with the interrupts.
+>> +		      Must be "short" and "ovp". The short circuit detection
+>> +		      is not supported for PM8941.
+>> +
+>> +- qcom,enabled-strings
+>> +	Usage:        optional
+>> +	Value tyoe:   <u32 array>
+>> +	Definition:   Array of the WLED strings numbered from 0 to 3. Each
+>> +		      string of leds are operated individually. Specify the
+>> +		      list of strings used by the device. Any combination of
+>> +		      led strings can be used.
 > 
-> > +  * SPP permission induced VM exit
-> > +    SPP sub-page permission induced violation is reported as EPT violation
-> > +    thesefore causes VM exit.
-> /thesefore/therefore/
+> We usually use the reg property per led node to denote what output is
+> associated with which
 > 
-> > +
-> > +6.SPPT-induced VM exit handling
-> > +
-> > +  #define EXIT_REASON_SPP                 66
-> > +
-> > +  static int (*const kvm_vmx_exit_handlers[])(struct kvm_vcpu *vcpu) = {
-> > +    ...
-> > +    [EXIT_REASON_SPP]                     = handle_spp,
-> > +    ...
-> > +  };
-> > +
-> > +  New exit qualification for SPPT-induced vmexits.
-> > +
-> > +  | Bit   | Contents                                                          |
-> > +  | :---- | :---------------------------------------------------------------- |
-> > +  | 10:0  | Reserved (0).                                                     |
-> > +  | 11    | SPPT VM exit type. Set for SPPT Miss, cleared for SPPT Misconfig. |
-> > +  | 12    | NMI unblocking due to IRET                                        |
-> > +  | 63:13 | Reserved (0)                                                      |
-> > +
-> > +  In addition to the exit qualification, guest linear address and guest
-> > +  physical address fields will be reported.
-> > +
-> > +  * SPPT miss and misconfiguration induced VM exit
-> > +    Set up SPPT entries correctly.
-> > +
-> > +  * SPP permission induced VM exit
-> > +    This kind of VM exit is left to VMI tool to handle.
-> > --
-> > 2.17.2
-> >
+> property node.  And if you want to define multiple outputs per node
+> then you need to use
+> 
+> led-sources
+> 
+> See leds-lm3697.txt for an example
+> 
+> Dan
+As per the Qualcomm hardware recommendation , all the strings (leds) 
+properties like
+OVP, FSC and brightness etc .. should have the same values. That's why 
+all the strings (leds)
+and it's properties are mentioned in a single node.
+
+
