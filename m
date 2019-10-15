@@ -2,50 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17E00D70D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 10:15:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CCBCD70D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 10:16:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728611AbfJOIPT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 04:15:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36456 "EHLO mx1.suse.de"
+        id S1728659AbfJOIQe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 04:16:34 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3715 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728560AbfJOIPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 04:15:19 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B968AAE7F;
-        Tue, 15 Oct 2019 08:15:17 +0000 (UTC)
-Date:   Tue, 15 Oct 2019 10:15:34 +0200
-From:   Jean Delvare <jdelvare@suse.de>
-To:     LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [GIT PULL] dmi fix for v5.4
-Message-ID: <20191015101534.278375b9@endymion>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        id S1728638AbfJOIQe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 04:16:34 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 684F722A77D763E6CFE1;
+        Tue, 15 Oct 2019 16:16:30 +0800 (CST)
+Received: from [127.0.0.1] (10.202.227.179) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Tue, 15 Oct 2019
+ 16:16:22 +0800
+Subject: Re: [PATCH for-stable-5.3 1/2] ACPI/PPTT: Add support for ACPI 6.3
+ thread flag
+To:     Sasha Levin <sashal@kernel.org>
+References: <1571054162-71090-1-git-send-email-john.garry@huawei.com>
+ <1571054162-71090-2-git-send-email-john.garry@huawei.com>
+ <20191014232958.GC31224@sasha-vm>
+CC:     <stable@vger.kernel.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <rjw@rjwysocki.net>, <lenb@kernel.org>,
+        <sudeep.holla@arm.com>, <rrichter@marvell.com>,
+        <jeremy.linton@arm.com>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+        <linuxarm@huawei.com>, <gregkh@linuxfoundation.org>,
+        <guohanjun@huawei.com>, <wanghuiqiang@huawei.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <635a839b-bc1e-37ab-bd47-a554acc9b282@huawei.com>
+Date:   Tue, 15 Oct 2019 09:16:13 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20191014232958.GC31224@sasha-vm>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.179]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 15/10/2019 00:29, Sasha Levin wrote:
+> On Mon, Oct 14, 2019 at 07:56:01PM +0800, John Garry wrote:
+>> From: Jeremy Linton <jeremy.linton@arm.com>
+>>
+>> Commit bbd1b70639f785a970d998f35155c713f975e3ac upstream.
+>>
+>> ACPI 6.3 adds a flag to the CPU node to indicate whether
+>> the given PE is a thread. Add a function to return that
+>> information for a given linux logical CPU.
+>>
+>> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+>> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+>> Reviewed-by: Robert Richter <rrichter@marvell.com>
+>> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>> Signed-off-by: Will Deacon <will@kernel.org>
+>> Signed-off-by: John Garry <john.garry@huawei.com>
+>
+> How far back should these patches be backported?
+>
 
-Please pull dmi subsystem fixes for Linux v5.4 from:
+Hi Sasha,
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jdelvare/staging.git dmi-for-linus
+This patchset is for 5.3, and I sent a separate patchset for 4.19, since 
+the backport is a little different and required some hand modification - 
+ 
+https://lore.kernel.org/linux-arm-kernel/1571046986-231263-1-git-send-email-john.garry@huawei.com/. 
+4.19 is as far back as we want.
 
- drivers/firmware/dmi_scan.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please note that the patches in this 5.3 series are relevant for 5.2 
+also, but since 5.2 is EOL, I didn't mention it. We did test 5.2, so you 
+can add there also.
 
----------------
+Please let me know if any more questions.
 
-Jean Delvare (1):
-      firmware: dmi: Fix unlikely out-of-bounds read in save_mem_devices
+All the best,
+John
 
-Thanks,
--- 
-Jean Delvare
-SUSE L3 Support
+
+
