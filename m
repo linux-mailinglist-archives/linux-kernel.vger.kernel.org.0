@@ -2,137 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E669ED73D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 12:49:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 204B6D73E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 12:50:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731468AbfJOKtX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 06:49:23 -0400
-Received: from forwardcorp1j.mail.yandex.net ([5.45.199.163]:39022 "EHLO
-        forwardcorp1j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731434AbfJOKtT (ORCPT
+        id S1731154AbfJOKu4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 06:50:56 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:42932 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727142AbfJOKu4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 06:49:19 -0400
-Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
-        by forwardcorp1j.mail.yandex.net (Yandex) with ESMTP id 7E4802E0AD4;
-        Tue, 15 Oct 2019 13:49:16 +0300 (MSK)
-Received: from vla5-2bf13a090f43.qloud-c.yandex.net (vla5-2bf13a090f43.qloud-c.yandex.net [2a02:6b8:c18:3411:0:640:2bf1:3a09])
-        by mxbackcorp1g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 7rrsh8uytn-nFq8PcE2;
-        Tue, 15 Oct 2019 13:49:16 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1571136556; bh=kAMGDxkAbOPo3YYQfmMwLm3qVE+lcF5C9p9mjMh3EfA=;
-        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
-        b=rQw+KLl4HkAqtmwhezss/Z53Dxs7y2+bj/AoPhBWVauUKB4M0XyZWTOlyM1sV6kfO
-         u2G0uWq5uOz9iVde1iKyTrtI3zgvE3QzuUkrwlYkIi0uL+/HQGVeuAZkBmr2A7BX9j
-         GHxfA+S3RCAXieYfCJFzif4whnfoVGqMxtZBg86o=
-Authentication-Results: mxbackcorp1g.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:3d4d:a9cb:ef29:4bb1])
-        by vla5-2bf13a090f43.qloud-c.yandex.net (nwsmtp/Yandex) with ESMTPSA id tdH7LpAdpl-nFJCDZSi;
-        Tue, 15 Oct 2019 13:49:15 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: Re: [PATCH] mm/memcontrol: update lruvec counters in
- mem_cgroup_move_account
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-References: <157112699975.7360.1062614888388489788.stgit@buzz>
- <20191015082048.GU317@dhcp22.suse.cz>
- <3b73e301-ea4a-5edb-9360-2ae9b4ad9f69@yandex-team.ru>
- <20191015103623.GX317@dhcp22.suse.cz>
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Message-ID: <31cab57d-6e79-33cb-1a58-99065c6e7b82@yandex-team.ru>
-Date:   Tue, 15 Oct 2019 13:49:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 15 Oct 2019 06:50:56 -0400
+Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1iKKPi-0007WH-T0; Tue, 15 Oct 2019 11:50:50 +0100
+Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.2)
+        (envelope-from <ben@rainbowdash.codethink.co.uk>)
+        id 1iKKPi-0008BP-Eu; Tue, 15 Oct 2019 11:50:50 +0100
+From:   Ben Dooks <ben.dooks@codethink.co.uk>
+To:     linux-kernel@lists.codethink.co.uk
+Cc:     Ben Dooks <ben.dooks@codethink.co.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] fs/fnctl: fix missing __user in fcntl_rw_hint()
+Date:   Tue, 15 Oct 2019 11:50:49 +0100
+Message-Id: <20191015105049.31412-1-ben.dooks@codethink.co.uk>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <20191015103623.GX317@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/10/2019 13.36, Michal Hocko wrote:
-> On Tue 15-10-19 11:44:22, Konstantin Khlebnikov wrote:
->> On 15/10/2019 11.20, Michal Hocko wrote:
->>> On Tue 15-10-19 11:09:59, Konstantin Khlebnikov wrote:
->>>> Mapped, dirty and writeback pages are also counted in per-lruvec stats.
->>>> These counters needs update when page is moved between cgroups.
->>>
->>> Please describe the user visible effect.
->>
->> Surprisingly I don't see any users at this moment.
->> So, there is no effect in mainline kernel.
-> 
-> Those counters are exported right? Or do we exclude them for v1?
+The fcntl_rw_hint() has a missing __user annotation in
+the code when assinging argp. Add this to fix the
+following sparse warnings:
 
-It seems per-lruvec statistics is not exposed anywhere.
-And per-lruvec NR_FILE_MAPPED, NR_FILE_DIRTY, NR_WRITEBACK never had users.
+fs/fcntl.c:280:22: warning: incorrect type in initializer (different address spaces)
+fs/fcntl.c:280:22:    expected unsigned long long [usertype] *argp
+fs/fcntl.c:280:22:    got unsigned long long [noderef] [usertype] <asn:1> *
+fs/fcntl.c:287:34: warning: incorrect type in argument 1 (different address spaces)
+fs/fcntl.c:287:34:    expected void [noderef] <asn:1> *to
+fs/fcntl.c:287:34:    got unsigned long long [usertype] *argp
+fs/fcntl.c:291:40: warning: incorrect type in argument 2 (different address spaces)
+fs/fcntl.c:291:40:    expected void const [noderef] <asn:1> *from
+fs/fcntl.c:291:40:    got unsigned long long [usertype] *argp
+fs/fcntl.c:303:34: warning: incorrect type in argument 1 (different address spaces)
+fs/fcntl.c:303:34:    expected void [noderef] <asn:1> *to
+fs/fcntl.c:303:34:    got unsigned long long [usertype] *argp
+fs/fcntl.c:307:40: warning: incorrect type in argument 2 (different address spaces)
+fs/fcntl.c:307:40:    expected void const [noderef] <asn:1> *from
+fs/fcntl.c:307:40:    got unsigned long long [usertype] *argp
 
-I've found this because I'm using mem_cgroup_move_account for recharging
-pages at mlock and playing right now with debug for memory cgroup which
-validates statistics and counters when cgroup dies.
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+---
+Cc: Jeff Layton <jlayton@kernel.org>
+Cc: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ fs/fcntl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
->>>> Fixes: 00f3ca2c2d66 ("mm: memcontrol: per-lruvec stats infrastructure")
->>>> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
->>>
->>> We want Cc: stable I suspect because broken stats might be really
->>> misleading.
->>>
->>> The patch looks ok to me otherwise
->>> Acked-by: Michal Hocko <mhocko@suse.com>
->>>
->>>> ---
->>>>    mm/memcontrol.c |   18 ++++++++++++------
->>>>    1 file changed, 12 insertions(+), 6 deletions(-)
->>>>
->>>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
->>>> index bdac56009a38..363106578876 100644
->>>> --- a/mm/memcontrol.c
->>>> +++ b/mm/memcontrol.c
->>>> @@ -5420,6 +5420,8 @@ static int mem_cgroup_move_account(struct page *page,
->>>>    				   struct mem_cgroup *from,
->>>>    				   struct mem_cgroup *to)
->>>>    {
->>>> +	struct lruvec *from_vec, *to_vec;
->>>> +	struct pglist_data *pgdat;
->>>>    	unsigned long flags;
->>>>    	unsigned int nr_pages = compound ? hpage_nr_pages(page) : 1;
->>>>    	int ret;
->>>> @@ -5443,11 +5445,15 @@ static int mem_cgroup_move_account(struct page *page,
->>>>    	anon = PageAnon(page);
->>>> +	pgdat = page_pgdat(page);
->>>> +	from_vec = mem_cgroup_lruvec(pgdat, from);
->>>> +	to_vec = mem_cgroup_lruvec(pgdat, to);
->>>> +
->>>>    	spin_lock_irqsave(&from->move_lock, flags);
->>>>    	if (!anon && page_mapped(page)) {
->>>> -		__mod_memcg_state(from, NR_FILE_MAPPED, -nr_pages);
->>>> -		__mod_memcg_state(to, NR_FILE_MAPPED, nr_pages);
->>>> +		__mod_lruvec_state(from_vec, NR_FILE_MAPPED, -nr_pages);
->>>> +		__mod_lruvec_state(to_vec, NR_FILE_MAPPED, nr_pages);
->>>>    	}
->>>>    	/*
->>>> @@ -5459,14 +5465,14 @@ static int mem_cgroup_move_account(struct page *page,
->>>>    		struct address_space *mapping = page_mapping(page);
->>>>    		if (mapping_cap_account_dirty(mapping)) {
->>>> -			__mod_memcg_state(from, NR_FILE_DIRTY, -nr_pages);
->>>> -			__mod_memcg_state(to, NR_FILE_DIRTY, nr_pages);
->>>> +			__mod_lruvec_state(from_vec, NR_FILE_DIRTY, -nr_pages);
->>>> +			__mod_lruvec_state(to_vec, NR_FILE_DIRTY, nr_pages);
->>>>    		}
->>>>    	}
->>>>    	if (PageWriteback(page)) {
->>>> -		__mod_memcg_state(from, NR_WRITEBACK, -nr_pages);
->>>> -		__mod_memcg_state(to, NR_WRITEBACK, nr_pages);
->>>> +		__mod_lruvec_state(from_vec, NR_WRITEBACK, -nr_pages);
->>>> +		__mod_lruvec_state(to_vec, NR_WRITEBACK, nr_pages);
->>>>    	}
->>>>    #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>>
-> 
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index 3d40771e8e7c..7ca7562f2b79 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -277,7 +277,7 @@ static long fcntl_rw_hint(struct file *file, unsigned int cmd,
+ 			  unsigned long arg)
+ {
+ 	struct inode *inode = file_inode(file);
+-	u64 *argp = (u64 __user *)arg;
++	u64 __user *argp = (u64 __user *)arg;
+ 	enum rw_hint hint;
+ 	u64 h;
+ 
+-- 
+2.23.0
+
