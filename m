@@ -2,108 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2491D799A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 17:20:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E507D79A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 17:23:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733148AbfJOPU5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 11:20:57 -0400
-Received: from foss.arm.com ([217.140.110.172]:40796 "EHLO foss.arm.com"
+        id S1733306AbfJOPVp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 11:21:45 -0400
+Received: from gecko.sbs.de ([194.138.37.40]:57804 "EHLO gecko.sbs.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726523AbfJOPU4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 11:20:56 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 68FF928;
-        Tue, 15 Oct 2019 08:20:55 -0700 (PDT)
-Received: from [10.162.42.142] (p8cg001049571a15.blr.arm.com [10.162.42.142])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 754823F718;
-        Tue, 15 Oct 2019 08:20:44 -0700 (PDT)
-Subject: Re: [PATCH V6 0/2] mm/debug: Add tests validating architecture page
- table helpers
-To:     Qian Cai <cai@lca.pw>, linux-mm@kvack.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Steven Price <Steven.Price@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Matthew Wilcox <willy@infradead.org>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        James Hogan <jhogan@kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        linux-snps-arc@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-References: <1571131302-32290-1-git-send-email-anshuman.khandual@arm.com>
- <1571150502.5937.39.camel@lca.pw>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <c052784a-a5d7-878e-cd97-01daa90c0ed8@arm.com>
-Date:   Tue, 15 Oct 2019 20:51:11 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1732991AbfJOPVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 11:21:45 -0400
+Received: from mail1.sbs.de (mail1.sbs.de [192.129.41.35])
+        by gecko.sbs.de (8.15.2/8.15.2) with ESMTPS id x9FFLZtr004347
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Oct 2019 17:21:35 +0200
+Received: from [139.25.68.37] ([139.25.68.37])
+        by mail1.sbs.de (8.15.2/8.15.2) with ESMTP id x9FFLHkl014570;
+        Tue, 15 Oct 2019 17:21:17 +0200
+Subject: Re: [PATCH] scripts/gdb: fix debugging modules on s390
+To:     Ilya Leoshkevich <iii@linux.ibm.com>,
+        Kieran Bingham <kbingham@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+References: <20191015105313.12663-1-iii@linux.ibm.com>
+From:   Jan Kiszka <jan.kiszka@siemens.com>
+Message-ID: <356384d7-d14f-2c9d-1c13-3d96e75e1727@siemens.com>
+Date:   Tue, 15 Oct 2019 17:21:16 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <1571150502.5937.39.camel@lca.pw>
+In-Reply-To: <20191015105313.12663-1-iii@linux.ibm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 10/15/2019 08:11 PM, Qian Cai wrote:
-> The x86 will crash with linux-next during boot due to this series (v5) with the
-> config below plus CONFIG_DEBUG_VM_PGTABLE=y. I am not sure if v6 would address
-> it.
+On 15.10.19 12:53, Ilya Leoshkevich wrote:
+> Currently lx-symbols assumes that module text is always located at
+> module->core_layout->base, but s390 uses the following layout:
 > 
-> https://raw.githubusercontent.com/cailca/linux-mm/master/x86.config
+> +------+  <- module->core_layout->base
+> | GOT  |
+> +------+  <- module->core_layout->base + module->arch->plt_offset
+> | PLT  |
+> +------+  <- module->core_layout->base + module->arch->plt_offset +
+> | TEXT |     module->arch->plt_size
+> +------+
 > 
-> [   33.862600][    T1] page:ffffea0009000000 is uninitialized and poisoned
-> [   33.862608][    T1] raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff
-> ffffff871140][    T1]  ? _raw_spin_unlock_irq+0x27/0x40
-> [   33.871140][    T1]  ? rest_init+0x307/0x307
-> [   33.871140][    T1]  kernel_init+0x11/0x139
-> [   33.871140][    T1]  ? rest_init+0x307/0x307
-> [   33.871140][    T1]  ret_from_fork+0x27/0x50
-> [   33.871140][    T1] Modules linked in:
-> [   33.871140][    T1] ---[ end trace e99d392b0f7befbd ]---
-> [   33.871140][    T1] RIP: 0010:alloc_gigantic_page_order+0x3fe/0x490
+> Therefore, when trying to debug modules on s390, all the symbol
+> addresses are skewed by plt_offset + plt_size.
+> 
+> Fix by adding plt_offset + plt_size to module_addr in
+> load_module_symbols().
+> 
+> Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+> ---
+>  scripts/gdb/linux/symbols.py | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/scripts/gdb/linux/symbols.py b/scripts/gdb/linux/symbols.py
+> index f0d8f2ecfde7..41c6d1a55b03 100644
+> --- a/scripts/gdb/linux/symbols.py
+> +++ b/scripts/gdb/linux/symbols.py
+> @@ -15,7 +15,7 @@ import gdb
+>  import os
+>  import re
+>  
+> -from linux import modules
+> +from linux import modules, utils
+>  
+>  
+>  if hasattr(gdb, 'Breakpoint'):
+> @@ -113,6 +113,12 @@ lx-symbols command."""
+>          if module_file:
+>              gdb.write("loading @{addr}: {filename}\n".format(
+>                  addr=module_addr, filename=module_file))
+> +            if utils.is_target_arch('s390'):
+> +                # Module text is preceded by PLT stubs on s390.
+> +                module_arch = module['arch']
+> +                plt_offset = int(module_arch['plt_offset'])
+> +                plt_size = int(module_arch['plt_size'])
+> +                module_addr = hex(int(module_addr, 0) + plt_offset + plt_size)
 
-Hmm, with defconfig (DEBUG_VM=y and DEBUG_VM_PGTABLE=y) it does not crash but
-with the config above, it does. Just wondering if it is possible that these
-pages might not been initialized yet because DEFERRED_STRUCT_PAGE_INIT=y ?
+Shouldn't we report the actual address above, ie. reorder this tuning
+with the gdb.write?
 
-[   13.898549][    T1] page:ffffea0005000000 is uninitialized and poisoned
-[   13.898549][    T1] raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff ffffffffffffffff
-[   13.898549][    T1] raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff ffffffffffffffff
-[   13.898549][    T1] page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
-[   13.898549][    T1] ------------[ cut here ]------------
-[   13.898549][    T1] kernel BUG at ./include/linux/mm.h:1107!
-[   13.898549][    T1] invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN PTI
-[   13.898549][    T1] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc3-next-20191015+ #
+>              cmdline = "add-symbol-file {filename} {addr}{sections}".format(
+>                  filename=module_file,
+>                  addr=module_addr,
+> 
+
+Jan
+
+-- 
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
