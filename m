@@ -2,28 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55B9ED7FCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:19:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F524D7FCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:19:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729122AbfJOTSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 15:18:54 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:45694 "EHLO
+        id S2389499AbfJOTSz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 15:18:55 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:45701 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389440AbfJOTSs (ORCPT
+        with ESMTP id S2389457AbfJOTSu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 15:18:48 -0400
+        Tue, 15 Oct 2019 15:18:50 -0400
 Received: from localhost ([127.0.0.1] helo=localhost.localdomain)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1iKSLA-00067i-1z; Tue, 15 Oct 2019 21:18:40 +0200
+        id 1iKSLA-00067i-FD; Tue, 15 Oct 2019 21:18:40 +0200
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
-Cc:     tglx@linutronix.de, "David S. Miller" <davem@davemloft.net>,
-        netdev@vger.kernel.org,
+Cc:     tglx@linutronix.de, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        xen-devel@lists.xenproject.org,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 21/34] net: Use CONFIG_PREEMPTION
-Date:   Tue, 15 Oct 2019 21:18:08 +0200
-Message-Id: <20191015191821.11479-22-bigeasy@linutronix.de>
+Subject: [PATCH 22/34] xen: Use CONFIG_PREEMPTION
+Date:   Tue, 15 Oct 2019 21:18:09 +0200
+Message-Id: <20191015191821.11479-23-bigeasy@linutronix.de>
 In-Reply-To: <20191015191821.11479-1-bigeasy@linutronix.de>
 References: <20191015191821.11479-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
@@ -39,29 +41,60 @@ CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by CONFIG_PREEMPT_RT.
 Both PREEMPT and PREEMPT_RT require the same functionality which today
 depends on CONFIG_PREEMPT.
 
-Update the comment to use CONFIG_PREEMPTION.
+Switch the preempt anand xen-ops code over to use CONFIG_PREEMPTION.
 
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Stefano Stabellini <sstabellini@kernel.org>
+Cc: xen-devel@lists.xenproject.org
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- net/core/dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/xen/preempt.c | 4 ++--
+ include/xen/xen-ops.h | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index bf3ed413abafe..11a60d69434bc 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -901,7 +901,7 @@ EXPORT_SYMBOL(dev_get_by_napi_id);
-  *
-  *	The use of raw_seqcount_begin() and cond_resched() before
-  *	retrying is required as we want to give the writers a chance
-- *	to complete when CONFIG_PREEMPT is not set.
-+ *	to complete when CONFIG_PREEMPTION is not set.
-  */
- int netdev_get_name(struct net *net, char *name, int ifindex)
+diff --git a/drivers/xen/preempt.c b/drivers/xen/preempt.c
+index 8b9919c26095d..70650b248de5d 100644
+--- a/drivers/xen/preempt.c
++++ b/drivers/xen/preempt.c
+@@ -8,7 +8,7 @@
+ #include <linux/sched.h>
+ #include <xen/xen-ops.h>
+=20
+-#ifndef CONFIG_PREEMPT
++#ifndef CONFIG_PREEMPTION
+=20
+ /*
+  * Some hypercalls issued by the toolstack can take many 10s of
+@@ -37,4 +37,4 @@ asmlinkage __visible void xen_maybe_preempt_hcall(void)
+ 		__this_cpu_write(xen_in_preemptible_hcall, true);
+ 	}
+ }
+-#endif /* CONFIG_PREEMPT */
++#endif /* CONFIG_PREEMPTION */
+diff --git a/include/xen/xen-ops.h b/include/xen/xen-ops.h
+index d89969aa9942c..095be1d66f31c 100644
+--- a/include/xen/xen-ops.h
++++ b/include/xen/xen-ops.h
+@@ -215,7 +215,7 @@ bool xen_running_on_version_or_later(unsigned int major=
+, unsigned int minor);
+ void xen_efi_runtime_setup(void);
+=20
+=20
+-#ifdef CONFIG_PREEMPT
++#ifdef CONFIG_PREEMPTION
+=20
+ static inline void xen_preemptible_hcall_begin(void)
  {
+@@ -239,6 +239,6 @@ static inline void xen_preemptible_hcall_end(void)
+ 	__this_cpu_write(xen_in_preemptible_hcall, false);
+ }
+=20
+-#endif /* CONFIG_PREEMPT */
++#endif /* CONFIG_PREEMPTION */
+=20
+ #endif /* INCLUDE_XEN_OPS_H */
 --=20
 2.23.0
 
