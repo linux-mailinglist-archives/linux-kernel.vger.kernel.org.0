@@ -2,131 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF595D8211
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 23:22:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CA70D821C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 23:23:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730179AbfJOVWJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 17:22:09 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:37922 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729750AbfJOVWI (ORCPT
+        id S1730156AbfJOVXY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 17:23:24 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:38183 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726527AbfJOVXX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 17:22:08 -0400
-Received: by mail-io1-f70.google.com with SMTP id q11so19670656ioj.5
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 14:22:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=bstYtC8Ri8tluUuq778xxN+KSS3XBV0G97whA8YKm8o=;
-        b=OR5g+P5YAsvb9D6x5UunTGF1G5YUeORN1nIXh4Wj31nuHZSCMWeQUNKcuwNVq8Sr+N
-         iNJkku69bEv/oBpFT0NrxL3s0p9inqiul24RRrMu7W2pSePfAlcPHEjV9cyP69ygn3pQ
-         /uLr558yAFYUOK0ENVHwdHZ3rOo545WksPqOxZBa84pQ/sVGxz7mgYoG4H+sVQTBWv6Z
-         h2g5mK9GJ4by/PIW6TW7h800EyErkngbmVZltQaGLpuOKkH6ButUxBPiYrPREsqDLYyD
-         HVBFS1OQ8fISveiycoifvJv3B/tIbhdCUwmStho7/TrcDIAzb8uCYcyiRtjDbdHjkyI0
-         pISQ==
-X-Gm-Message-State: APjAAAWmrg1vVJFUdVa/qD0j6a2gmTLhA+V2WRuhYfElY1sG46l6jN75
-        CfgVRAo49Ot0sJbd0RsDUTqGR6ykMq7/2K+jw9rGLQ630wvE
-X-Google-Smtp-Source: APXvYqzAt6j2rF9D7TsrAleAUuKduSGEH6A8zW/VXkM+19DW2B+e8sFGeZCdtU4NXMIC5gFtbbMYJlXhUVbs/lmWzGxQ34KvI/f4
+        Tue, 15 Oct 2019 17:23:23 -0400
+Received: from dread.disaster.area (pa49-181-198-88.pa.nsw.optusnet.com.au [49.181.198.88])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 02565362ABE;
+        Wed, 16 Oct 2019 08:23:19 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.2)
+        (envelope-from <david@fromorbit.com>)
+        id 1iKUHm-0000bs-TN; Wed, 16 Oct 2019 08:23:18 +1100
+Date:   Wed, 16 Oct 2019 08:23:18 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Carlos Maiolino <cmaiolino@redhat.com>
+Subject: Re: [PATCH 03/12] xfs: use a struct iomap in xfs_writepage_ctx
+Message-ID: <20191015212318.GW16973@dread.disaster.area>
+References: <20191015154345.13052-1-hch@lst.de>
+ <20191015154345.13052-4-hch@lst.de>
 MIME-Version: 1.0
-X-Received: by 2002:a92:9ecd:: with SMTP id s74mr8223352ilk.188.1571174527489;
- Tue, 15 Oct 2019 14:22:07 -0700 (PDT)
-Date:   Tue, 15 Oct 2019 14:22:07 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009763320594f993ee@google.com>
-Subject: KMSAN: uninit-value in asix_mdio_write
-From:   syzbot <syzbot+7dc7c28d4577bbe55b10@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, glider@google.com, gregkh@linuxfoundation.org,
-        hslester96@gmail.com, kstewart@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191015154345.13052-4-hch@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
+        a=ocld+OpnWJCUTqzFQA3oTA==:117 a=ocld+OpnWJCUTqzFQA3oTA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
+        a=20KFwNOVAAAA:8 a=yPCof4ZbAAAA:8 a=7-415B0cAAAA:8 a=Yo5lynH-2DwgSaF5JXMA:9
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Tue, Oct 15, 2019 at 05:43:36PM +0200, Christoph Hellwig wrote:
+> In preparation for moving the XFS writeback code to fs/iomap.c, switch
+> it to use struct iomap instead of the XFS-specific struct xfs_bmbt_irec.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
+> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-syzbot found the following crash on:
+Pretty straight forward.
 
-HEAD commit:    c2453450 kmsan: kcov: prettify the code unpoisoning area->..
-git tree:       https://github.com/google/kmsan.git master
-console output: https://syzkaller.appspot.com/x/log.txt?x=1159ab53600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3684f3c73f43899a
-dashboard link: https://syzkaller.appspot.com/bug?extid=7dc7c28d4577bbe55b10
-compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
-80fee25776c2fb61e74c1ecb1a523375c2500b69)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17e7276f600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15609b30e00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+7dc7c28d4577bbe55b10@syzkaller.appspotmail.com
-
-asix 1-1:0.145 (unnamed net_device) (uninitialized): Failed to enable  
-software MII access
-asix 1-1:0.145 (unnamed net_device) (uninitialized): Failed to read reg  
-index 0x0000: -71
-=====================================================
-BUG: KMSAN: uninit-value in asix_mdio_write+0x3fa/0x8d0  
-drivers/net/usb/asix_common.c:496
-CPU: 1 PID: 17 Comm: kworker/1:0 Not tainted 5.4.0-rc3+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: usb_hub_wq hub_event
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x191/0x1f0 lib/dump_stack.c:113
-  kmsan_report+0x14a/0x2f0 mm/kmsan/kmsan_report.c:109
-  __msan_warning+0x73/0xf0 mm/kmsan/kmsan_instr.c:245
-  asix_mdio_write+0x3fa/0x8d0 drivers/net/usb/asix_common.c:496
-  asix_phy_reset+0xd8/0x2d0 drivers/net/usb/asix_devices.c:208
-  ax88172_bind+0x780/0xbd0 drivers/net/usb/asix_devices.c:272
-  usbnet_probe+0x10d3/0x39d0 drivers/net/usb/usbnet.c:1730
-  usb_probe_interface+0xd19/0x1310 drivers/usb/core/driver.c:361
-  really_probe+0xd91/0x1f90 drivers/base/dd.c:552
-  driver_probe_device+0x1ba/0x510 drivers/base/dd.c:721
-  __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:828
-  bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:430
-  __device_attach+0x489/0x750 drivers/base/dd.c:894
-  device_initial_probe+0x4a/0x60 drivers/base/dd.c:941
-  bus_probe_device+0x131/0x390 drivers/base/bus.c:490
-  device_add+0x25b5/0x2df0 drivers/base/core.c:2201
-  usb_set_configuration+0x309f/0x3710 drivers/usb/core/message.c:2027
-  generic_probe+0xe7/0x280 drivers/usb/core/generic.c:210
-  usb_probe_device+0x146/0x200 drivers/usb/core/driver.c:266
-  really_probe+0xd91/0x1f90 drivers/base/dd.c:552
-  driver_probe_device+0x1ba/0x510 drivers/base/dd.c:721
-  __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:828
-  bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:430
-  __device_attach+0x489/0x750 drivers/base/dd.c:894
-  device_initial_probe+0x4a/0x60 drivers/base/dd.c:941
-  bus_probe_device+0x131/0x390 drivers/base/bus.c:490
-  device_add+0x25b5/0x2df0 drivers/base/core.c:2201
-  usb_new_device+0x23e5/0x2fb0 drivers/usb/core/hub.c:2536
-  hub_port_connect drivers/usb/core/hub.c:5098 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
-  port_event drivers/usb/core/hub.c:5359 [inline]
-  hub_event+0x581d/0x72f0 drivers/usb/core/hub.c:5441
-  process_one_work+0x1572/0x1ef0 kernel/workqueue.c:2269
-  worker_thread+0x111b/0x2460 kernel/workqueue.c:2415
-  kthread+0x4b5/0x4f0 kernel/kthread.c:256
-  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
-
-Local variable description: ----smsr@asix_mdio_write
-Variable was created at:
-  asix_mdio_write+0xc7/0x8d0 drivers/net/usb/asix_common.c:480
-  asix_mdio_write+0xc7/0x8d0 drivers/net/usb/asix_common.c:480
-=====================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
+-- 
+Dave Chinner
+david@fromorbit.com
