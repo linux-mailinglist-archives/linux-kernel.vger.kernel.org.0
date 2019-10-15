@@ -2,120 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63A06D74F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 13:29:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC922D7525
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 13:36:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727773AbfJOL33 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 07:29:29 -0400
-Received: from ozlabs.org ([203.11.71.1]:42177 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726430AbfJOL32 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 07:29:28 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46stVs0wDCz9sPF;
-        Tue, 15 Oct 2019 22:29:25 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
-        s=201909; t=1571138965;
-        bh=+qtiJDQHIVgW7tXXW/HVWZwkwKeRnLqlcLW63HvWG/8=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=n2ZMZZbYotjEqToIdWSDZdwaKWnLHNlsJPwlSUVmj99HeC6ZdGjDKDvUs/cwgt0Hn
-         vYakpTyPLYfphaVNY/WHGsfKOzAaEmhE2MLHXPs9xOyjsLS38W92Z9Z/nV0QLW0XKO
-         MPCyiPjD1l5WpY57Tc3IYGR0dDrAqXrQKwNNfQrzjLsE1LA8PDoJZ11f6nfQxx3RY1
-         NAdcTD8pn7sErX1DiAQbjCT4y0ED4W5ENyy/QVO+Ik+pltUfFd06yJN2zx26+4yiiR
-         XksLrhtxVT4qp9Gt8HS42o2ZCZ0zAoDVqpPmxXeAcDKBh9UnHAW6vxnaYXlMnXEw30
-         yUDS05LhJQScQ==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@ozlabs.org,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeremy Kerr <jk@ozlabs.org>,
-        Matthew Garret <matthew.garret@nebula.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Elaine Palmer <erpalmer@us.ibm.com>,
-        Eric Ricther <erichte@linux.ibm.com>,
-        Oliver O'Halloran <oohall@gmail.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: Re: [PATCH v7 2/8] powerpc: add support to initialize ima policy rules
-In-Reply-To: <1570497267-13672-3-git-send-email-nayna@linux.ibm.com>
-References: <1570497267-13672-1-git-send-email-nayna@linux.ibm.com> <1570497267-13672-3-git-send-email-nayna@linux.ibm.com>
-Date:   Tue, 15 Oct 2019 22:29:17 +1100
-Message-ID: <871rveuu0i.fsf@mpe.ellerman.id.au>
+        id S1728807AbfJOLgv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 07:36:51 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:35198 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728061AbfJOLgu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 07:36:50 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 0CEA856F593A920B9B6C;
+        Tue, 15 Oct 2019 19:36:47 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Tue, 15 Oct 2019
+ 19:36:36 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <matthias.bgg@gmail.com>, <kstewart@linuxfoundation.org>,
+        <allison@lohutok.net>, <yuehaibing@huawei.com>,
+        <tglx@linutronix.de>, <weiyi.lu@mediatek.com>
+CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Subject: [PATCH -next] clk: mediatek: mt2712: use devm_platform_ioremap_resource() to simplify code
+Date:   Tue, 15 Oct 2019 19:26:44 +0800
+Message-ID: <20191015112644.19816-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
 Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nayna Jain <nayna@linux.ibm.com> writes:
-> PowerNV systems uses kernel based bootloader, thus its secure boot
-> implementation uses kernel IMA security subsystem to verify the kernel
-> before kexec. Since the verification policy might differ based on the
-> secure boot mode of the system, the policies are defined at runtime.
->
-> This patch implements the arch-specific support to define the IMA policy
-> rules based on the runtime secure boot mode of the system.
->
-> This patch provides arch-specific IMA policies if PPC_SECURE_BOOT
-> config is enabled.
-...
-> diff --git a/arch/powerpc/kernel/ima_arch.c b/arch/powerpc/kernel/ima_arch.c
-> new file mode 100644
-> index 000000000000..c22d82965eb4
-> --- /dev/null
-> +++ b/arch/powerpc/kernel/ima_arch.c
-> @@ -0,0 +1,33 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2019 IBM Corporation
-> + * Author: Nayna Jain
-> + */
-> +
-> +#include <linux/ima.h>
-> +#include <asm/secure_boot.h>
-> +
-> +bool arch_ima_get_secureboot(void)
-> +{
-> +	return is_powerpc_os_secureboot_enabled();
-> +}
-> +
-> +/* Defines IMA appraise rules for secureboot */
-> +static const char *const arch_rules[] = {
-> +	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig|modsig",
-> +#if !IS_ENABLED(CONFIG_MODULE_SIG_FORCE)
-> +	"appraise func=MODULE_CHECK appraise_type=imasig|modsig",
-> +#endif
+Use devm_platform_ioremap_resource() to simplify the code a bit.
+This is detected by coccinelle.
 
-This confuses me.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/clk/mediatek/clk-mt2712.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-If I spell it out we get:
+diff --git a/drivers/clk/mediatek/clk-mt2712.c b/drivers/clk/mediatek/clk-mt2712.c
+index 354c26f..a3bd9a1 100644
+--- a/drivers/clk/mediatek/clk-mt2712.c
++++ b/drivers/clk/mediatek/clk-mt2712.c
+@@ -1306,9 +1306,8 @@ static int clk_mt2712_top_probe(struct platform_device *pdev)
+ 	int r, i;
+ 	struct device_node *node = pdev->dev.of_node;
+ 	void __iomem *base;
+-	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 
+-	base = devm_ioremap_resource(&pdev->dev, res);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base)) {
+ 		pr_err("%s(): ioremap failed\n", __func__);
+ 		return PTR_ERR(base);
+@@ -1394,9 +1393,8 @@ static int clk_mt2712_mcu_probe(struct platform_device *pdev)
+ 	int r;
+ 	struct device_node *node = pdev->dev.of_node;
+ 	void __iomem *base;
+-	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 
+-	base = devm_ioremap_resource(&pdev->dev, res);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base)) {
+ 		pr_err("%s(): ioremap failed\n", __func__);
+ 		return PTR_ERR(base);
+-- 
+2.7.4
 
-#if IS_ENABLED(CONFIG_MODULE_SIG_FORCE)
-	// nothing
-#else
-	"appraise func=MODULE_CHECK appraise_type=imasig|modsig",
-#endif
 
-Which is just:
-
-#ifdef CONFIG_MODULE_SIG_FORCE
-	// nothing
-#else
-	"appraise func=MODULE_CHECK appraise_type=imasig|modsig",
-#endif
-
-But CONFIG_MODULE_SIG_FORCE enabled says that we *do* require modules to
-have a valid signature. Isn't that the inverse of what the rules say?
-
-Presumably I'm misunderstanding something :)
-
-cheers
