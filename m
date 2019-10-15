@@ -2,130 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F00C8D73EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 12:51:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6C13D73EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 12:51:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731473AbfJOKvB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 06:51:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39318 "EHLO mx1.suse.de"
+        id S1731557AbfJOKvE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 06:51:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39368 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727142AbfJOKu7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 06:50:59 -0400
+        id S1731364AbfJOKvC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 06:51:02 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 19566B4B3;
-        Tue, 15 Oct 2019 10:50:57 +0000 (UTC)
-Date:   Tue, 15 Oct 2019 12:50:55 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Piotr Sarna <p.sarna@tlen.pl>
-Cc:     linux-kernel@vger.kernel.org, mike.kravetz@oracle.com,
-        linux-mm@kvack.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] hugetlbfs: add O_TMPFILE support
-Message-ID: <20191015105055.GA24932@dhcp22.suse.cz>
-References: <22c29acf9c51dae17802e1b05c9e5e4051448c5c.1571129593.git.p.sarna@tlen.pl>
+        by mx1.suse.de (Postfix) with ESMTP id 6E6CBB4C2;
+        Tue, 15 Oct 2019 10:51:00 +0000 (UTC)
+Date:   Tue, 15 Oct 2019 12:50:59 +0200 (CEST)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Petr Mladek <pmladek@suse.com>
+cc:     Steven Rostedt <rostedt@goodmis.org>, jikos@kernel.org,
+        joe.lawrence@redhat.com, jpoimboe@redhat.com, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
+Subject: Re: [PATCH v2] ftrace: Introduce PERMANENT ftrace_ops flag
+In-Reply-To: <20191015074540.bxehllisibls3kk7@pathway.suse.cz>
+Message-ID: <alpine.LSU.2.21.1910151244550.30206@pobox.suse.cz>
+References: <20191014105923.29607-1-mbenes@suse.cz> <20191014111719.141bd4fa@gandalf.local.home> <20191015074540.bxehllisibls3kk7@pathway.suse.cz>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <22c29acf9c51dae17802e1b05c9e5e4051448c5c.1571129593.git.p.sarna@tlen.pl>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 15-10-19 11:01:12, Piotr Sarna wrote:
-> With hugetlbfs, a common pattern for mapping anonymous huge pages
-> is to create a temporary file first.
+On Tue, 15 Oct 2019, Petr Mladek wrote:
 
-Really? I though that this is normally done by shmget(SHM_HUGETLB) or
-mmap(MAP_HUGETLB). Or maybe I misunderstood your definition on anonymous
-huge pages.
+> On Mon 2019-10-14 11:17:19, Steven Rostedt wrote:
+> > On Mon, 14 Oct 2019 12:59:23 +0200
+> > Miroslav Benes <mbenes@suse.cz> wrote:
+> > 
+> > >  int
+> > >  ftrace_enable_sysctl(struct ctl_table *table, int write,
+> > >  		     void __user *buffer, size_t *lenp,
+> > > @@ -6740,8 +6754,6 @@ ftrace_enable_sysctl(struct ctl_table *table, int write,
+> > >  	if (ret || !write || (last_ftrace_enabled == !!ftrace_enabled))
+> > >  		goto out;
+> > >  
+> > > -	last_ftrace_enabled = !!ftrace_enabled;
+> > > -
+> > >  	if (ftrace_enabled) {
+> > >  
+> > >  		/* we are starting ftrace again */
+> > > @@ -6752,12 +6764,19 @@ ftrace_enable_sysctl(struct ctl_table *table, int write,
+> > >  		ftrace_startup_sysctl();
+> > >  
+> > >  	} else {
+> > > +		if (is_permanent_ops_registered()) {
+> > > +			ftrace_enabled = last_ftrace_enabled;
+> > 
+> > Although this is not incorrect, but may be somewhat confusing.
+> > 
+> > At this location, last_ftrace_enabled is always true.
+> > 
+> > I'm thinking this would be better to simply set it to false here.
+> 
+> IMHO, we want to set ftrace_enabled = true here.
+> 
+> It was set to "false" by writing to the sysfs file. But the change
+> gets rejected. ftrace will stay enabled. So, we should set
+> the value back to "true".
 
-> Currently libraries like
-> libhugetlbfs and seastar create these with a standard mkstemp+unlink
-> trick, but it would be more robust to be able to simply pass
-> the O_TMPFILE flag to open(). O_TMPFILE is already supported by several
-> file systems like ext4 and xfs. The implementation simply uses the existing
-> d_tmpfile utility function to instantiate the dcache entry for the file.
-> 
-> Tested manually by successfully creating a temporary file by opening
-> it with (O_TMPFILE|O_RDWR) on mounted hugetlbfs and successfully
-> mapping 2M huge pages with it. Without the patch, trying to open
-> a file with O_TMPFILE results in -ENOSUP.
-> 
-> Signed-off-by: Piotr Sarna <p.sarna@tlen.pl>
-> ---
->  fs/hugetlbfs/inode.c | 25 ++++++++++++++++++++++---
->  1 file changed, 22 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-> index 1dcc57189382..277b7d231db8 100644
-> --- a/fs/hugetlbfs/inode.c
-> +++ b/fs/hugetlbfs/inode.c
-> @@ -815,8 +815,11 @@ static struct inode *hugetlbfs_get_inode(struct super_block *sb,
->  /*
->   * File creation. Allocate an inode, and we're done..
->   */
-> -static int hugetlbfs_mknod(struct inode *dir,
-> -			struct dentry *dentry, umode_t mode, dev_t dev)
-> +static int do_hugetlbfs_mknod(struct inode *dir,
-> +			struct dentry *dentry,
-> +			umode_t mode,
-> +			dev_t dev,
-> +			bool tmpfile)
->  {
->  	struct inode *inode;
->  	int error = -ENOSPC;
-> @@ -824,13 +827,22 @@ static int hugetlbfs_mknod(struct inode *dir,
->  	inode = hugetlbfs_get_inode(dir->i_sb, dir, mode, dev);
->  	if (inode) {
->  		dir->i_ctime = dir->i_mtime = current_time(dir);
-> -		d_instantiate(dentry, inode);
-> +		if (tmpfile)
-> +			d_tmpfile(dentry, inode);
-> +		else
-> +			d_instantiate(dentry, inode);
->  		dget(dentry);	/* Extra count - pin the dentry in core */
->  		error = 0;
->  	}
->  	return error;
->  }
->  
-> +static int hugetlbfs_mknod(struct inode *dir,
-> +			struct dentry *dentry, umode_t mode, dev_t dev)
-> +{
-> +	return do_hugetlbfs_mknod(dir, dentry, mode, dev, false);
-> +}
-> +
->  static int hugetlbfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
->  {
->  	int retval = hugetlbfs_mknod(dir, dentry, mode | S_IFDIR, 0);
-> @@ -844,6 +856,12 @@ static int hugetlbfs_create(struct inode *dir, struct dentry *dentry, umode_t mo
->  	return hugetlbfs_mknod(dir, dentry, mode | S_IFREG, 0);
->  }
->  
-> +static int hugetlbfs_tmpfile(struct inode *dir,
-> +			struct dentry *dentry, umode_t mode)
-> +{
-> +	return do_hugetlbfs_mknod(dir, dentry, mode | S_IFREG, 0, true);
-> +}
-> +
->  static int hugetlbfs_symlink(struct inode *dir,
->  			struct dentry *dentry, const char *symname)
->  {
-> @@ -1102,6 +1120,7 @@ static const struct inode_operations hugetlbfs_dir_inode_operations = {
->  	.mknod		= hugetlbfs_mknod,
->  	.rename		= simple_rename,
->  	.setattr	= hugetlbfs_setattr,
-> +	.tmpfile	= hugetlbfs_tmpfile,
->  };
->  
->  static const struct inode_operations hugetlbfs_inode_operations = {
-> -- 
-> 2.21.0
-> 
+That's correct.
 
--- 
-Michal Hocko
-SUSE Labs
+I can make it explicit as proposed. I just thought that 'ftrace_enabled = 
+last_ftrace_enabled' was clear enough given Petr's explanation.
+
+> > > +			ret = -EBUSY;
+> > > +			goto out;
+> > > +		}
+> > > +
+> > >  		/* stopping ftrace calls (just send to ftrace_stub) */
+> > >  		ftrace_trace_function = ftrace_stub;
+> > >  
+> > >  		ftrace_shutdown_sysctl();
+> > >  	}
+> > >  
+> > > +	last_ftrace_enabled = !!ftrace_enabled;
+> > >   out:
+> > 
+> > And move the assignment of last_ftrace_enabled to after the "out:"
+> > label.
+> 
+> This change might make sense anyway. But it is not strictly necessary
+> from my POV.
+
+If it stays before "out:" label, last_ftrace_enabled is set if and only if 
+it has to be set. I think it is better, but I can, of course, move it in 
+v3 if Steven prefers it.
+
+Thanks
+Miroslav
+
+
