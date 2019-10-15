@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 531C9D6F20
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 07:36:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50D73D6F1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 07:35:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729330AbfJOFf6 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 15 Oct 2019 01:35:58 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:42013 "EHLO
+        id S1729294AbfJOFfs convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 15 Oct 2019 01:35:48 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:42024 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728452AbfJOFcA (ORCPT
+        with ESMTP id S1728457AbfJOFcB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 01:32:00 -0400
+        Tue, 15 Oct 2019 01:32:01 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iKFR4-0000F9-JJ; Tue, 15 Oct 2019 07:31:54 +0200
+        id 1iKFR4-0000EV-Cb; Tue, 15 Oct 2019 07:31:54 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5F7891C0105;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 24B8A1C0482;
         Tue, 15 Oct 2019 07:31:43 +0200 (CEST)
 Date:   Tue, 15 Oct 2019 05:31:43 -0000
 From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf trace: Add a strtoul() method to 'struct
- syscall_arg_fmt'
+Subject: [tip: perf/core] perf trace: Introduce a strtoul() method for 'struct
+ strarrays'
 Cc:     Adrian Hunter <adrian.hunter@intel.com>,
         Brendan Gregg <brendan.d.gregg@gmail.com>,
         Jiri Olsa <jolsa@kernel.org>,
@@ -34,10 +34,10 @@ Cc:     Adrian Hunter <adrian.hunter@intel.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <tip-wgqq48agcgr95b8dmn6fygtr@git.kernel.org>
-References: <tip-wgqq48agcgr95b8dmn6fygtr@git.kernel.org>
+In-Reply-To: <tip-r2hpaahf8lishyb1owko9vs1@git.kernel.org>
+References: <tip-r2hpaahf8lishyb1owko9vs1@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157111750329.12254.9112211069914938976.tip-bot2@tip-bot2>
+Message-ID: <157111750300.12254.14854506277817723991.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -53,59 +53,112 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     3f41b77843b338e836f52cc2d486be689d6cb9c1
-Gitweb:        https://git.kernel.org/tip/3f41b77843b338e836f52cc2d486be689d6cb9c1
+Commit-ID:     d0a3a1041005d9273d18669819e2a6dfed922a4d
+Gitweb:        https://git.kernel.org/tip/d0a3a1041005d9273d18669819e2a6dfed922a4d
 Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Wed, 09 Oct 2019 16:06:43 -03:00
+AuthorDate:    Wed, 09 Oct 2019 16:11:36 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Wed, 09 Oct 2019 16:06:43 -03:00
+CommitterDate: Wed, 09 Oct 2019 16:11:36 -03:00
 
-perf trace: Add a strtoul() method to 'struct syscall_arg_fmt'
+perf trace: Introduce a strtoul() method for 'struct strarrays'
 
-This will go from a string to a number, so that filter expressions can
-be constructed with strings and then, before applying the tracepoint
-filters (or eBPF, in the future) we can map those strings to numbers.
+And also for 'struct strarray', since its needed to implement
+strarrays__strtoul(). This just traverses the entries and when finding a
+match, returns (offset + index), i.e. the value associated with the
+searched string.
 
-The first one will be for 'msr' tracepoint arguments, but real quickly
-we will be able to reuse all strarrays for that.
+E.g. "EFER" (MSR_EFER) returns:
+
+  # grep -w EFER -B2 /tmp/build/perf/trace/beauty/generated/x86_arch_MSRs_array.c
+  #define x86_64_specific_MSRs_offset 0xc0000080
+  static const char *x86_64_specific_MSRs[] = {
+	[0xc0000080 - x86_64_specific_MSRs_offset] = "EFER",
+  #
+
+  0xc0000080
+
+This will be auto-attached to 'struct syscall_arg_fmt' entries
+associated with strarrays as soon as we add a ->strarray and ->strarrays
+to 'struct syscall_arg_fmt'.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Brendan Gregg <brendan.d.gregg@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-wgqq48agcgr95b8dmn6fygtr@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-r2hpaahf8lishyb1owko9vs1@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ tools/perf/builtin-trace.c       | 28 ++++++++++++++++++++++++++++
+ tools/perf/trace/beauty/beauty.h |  5 +++++
+ 2 files changed, 33 insertions(+)
 
 diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 2c19680..faa5bf4 100644
+index faa5bf4..50a1aeb 100644
 --- a/tools/perf/builtin-trace.c
 +++ b/tools/perf/builtin-trace.c
-@@ -86,8 +86,12 @@
- # define F_LINUX_SPECIFIC_BASE	1024
- #endif
+@@ -477,6 +477,34 @@ size_t strarrays__scnprintf(struct strarrays *sas, char *bf, size_t size, const 
+ 	return printed;
+ }
  
-+/*
-+ * strtoul: Go from a string to a value, i.e. for msr: MSR_FS_BASE to 0xc0000100
-+ */
- struct syscall_arg_fmt {
- 	size_t	   (*scnprintf)(char *bf, size_t size, struct syscall_arg *arg);
-+	bool	   (*strtoul)(char *bf, size_t size, struct syscall_arg *arg, u64 *val);
- 	unsigned long (*mask_val)(struct syscall_arg *arg, unsigned long val);
- 	void	   *parm;
- 	const char *name;
-@@ -1543,8 +1547,10 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
-                } else {
- 			struct syscall_arg_fmt *fmt = syscall_arg_fmt__find_by_name(field->name);
++bool strarray__strtoul(struct strarray *sa, char *bf, size_t size, u64 *ret)
++{
++	int i;
++
++	for (i = 0; i < sa->nr_entries; ++i) {
++		if (sa->entries[i] && strncmp(sa->entries[i], bf, size) == 0 && sa->entries[i][size] == '\0') {
++			*ret = sa->offset + i;
++			return true;
++		}
++	}
++
++	return false;
++}
++
++bool strarrays__strtoul(struct strarrays *sas, char *bf, size_t size, u64 *ret)
++{
++	int i;
++
++	for (i = 0; i < sas->nr_entries; ++i) {
++		struct strarray *sa = sas->entries[i];
++
++		if (strarray__strtoul(sa, bf, size, ret))
++			return true;
++	}
++
++	return false;
++}
++
+ size_t syscall_arg__scnprintf_strarrays(char *bf, size_t size,
+ 					struct syscall_arg *arg)
+ {
+diff --git a/tools/perf/trace/beauty/beauty.h b/tools/perf/trace/beauty/beauty.h
+index aa3fac8..919ac45 100644
+--- a/tools/perf/trace/beauty/beauty.h
++++ b/tools/perf/trace/beauty/beauty.h
+@@ -5,6 +5,7 @@
+ #include <linux/kernel.h>
+ #include <linux/types.h>
+ #include <sys/types.h>
++#include <stdbool.h>
  
--			if (fmt)
-+			if (fmt) {
- 				arg->scnprintf = fmt->scnprintf;
-+				arg->strtoul   = fmt->strtoul;
-+			}
- 		}
- 	}
+ struct strarray {
+ 	u64	    offset;
+@@ -29,6 +30,8 @@ struct strarray {
+ size_t strarray__scnprintf(struct strarray *sa, char *bf, size_t size, const char *intfmt, bool show_prefix, int val);
+ size_t strarray__scnprintf_flags(struct strarray *sa, char *bf, size_t size, bool show_prefix, unsigned long flags);
  
++bool strarray__strtoul(struct strarray *sa, char *bf, size_t size, u64 *ret);
++
+ struct trace;
+ struct thread;
+ 
+@@ -51,6 +54,8 @@ struct strarrays {
+ 
+ size_t strarrays__scnprintf(struct strarrays *sas, char *bf, size_t size, const char *intfmt, bool show_prefix, int val);
+ 
++bool strarrays__strtoul(struct strarrays *sas, char *bf, size_t size, u64 *ret);
++
+ size_t pid__scnprintf_fd(struct trace *trace, pid_t pid, int fd, char *bf, size_t size);
+ 
+ extern struct strarray strarray__socket_families;
