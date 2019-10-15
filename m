@@ -2,82 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7452D7553
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 13:42:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F10BFD7558
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 13:43:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729206AbfJOLmp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 07:42:45 -0400
-Received: from ozlabs.org ([203.11.71.1]:36887 "EHLO ozlabs.org"
+        id S1729270AbfJOLnf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 07:43:35 -0400
+Received: from foss.arm.com ([217.140.110.172]:36778 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726208AbfJOLmo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 07:42:44 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46stpB2Vf8z9sPF;
-        Tue, 15 Oct 2019 22:42:42 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1571139762;
-        bh=GzuSXvwCsW5qF4JT5b2HN3qZva4w3uLIyiYuDHbFckA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=bBI3tFvysNsS3jE+Hy7eUTigqI0rcezmGhgObJfPGfzsgJNOD0kdbmfRJTrM7bp/+
-         G7A3ZTeo4NApvwBvbc4JHK5FHRjw7dqCKNAnmfRhTKyfDk/38XzeVMrQjJkOU5h0Qj
-         jFLkvk1S4nguuFc4v57hMBeMs6oJNTXL+/oJttJEZUyU5qX6eDGLJJPaUpg9ISbnLy
-         1jrKLDwiDXTDZ1THQl4nn54tvHeIfK7D9x5Fde5DMYdwp7UVK2k71fE9wDGEw/4/4l
-         XW+ubjsewOCMuPRwnR8o8csHaacd5KLYXqwIx2HDiZH0PaqoL7C73WsFGJVzBAdRWO
-         XU8S3mjHkZ4hw==
-Date:   Tue, 15 Oct 2019 22:42:41 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ayman Bagabas <ayman.bagabas@gmail.com>
-Subject: Re: linux-next: build failure after merge of the drivers-x86 tree
-Message-ID: <20191015224241.1a485d5d@canb.auug.org.au>
-In-Reply-To: <CAHp75Vfv7hzqO=U3AwDs8OuKL_rs9+Sx0DknnAi6WN342iSpHQ@mail.gmail.com>
-References: <20191015130006.39f58992@canb.auug.org.au>
-        <CAHp75Vfv7hzqO=U3AwDs8OuKL_rs9+Sx0DknnAi6WN342iSpHQ@mail.gmail.com>
+        id S1726208AbfJOLne (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 07:43:34 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 39529337;
+        Tue, 15 Oct 2019 04:43:34 -0700 (PDT)
+Received: from [10.1.197.57] (e110467-lin.cambridge.arm.com [10.1.197.57])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3A6F43F68E;
+        Tue, 15 Oct 2019 04:43:33 -0700 (PDT)
+Subject: Re: [PATCH] iommu: rockchip: Free domain on .domain_free
+To:     Ezequiel Garcia <ezequiel@collabora.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Heiko Stuebner <heiko@sntech.de>
+Cc:     linux-rockchip@lists.infradead.org,
+        iommu@lists.linux-foundation.org, kernel@collabora.com,
+        linux-kernel@vger.kernel.org
+References: <20191002172923.22430-1-ezequiel@collabora.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <815abfca-a15f-365d-438c-5616a05b0513@arm.com>
+Date:   Tue, 15 Oct 2019 12:43:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/AlH65u3khJPw=1hotxSS7al";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <20191002172923.22430-1-ezequiel@collabora.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/AlH65u3khJPw=1hotxSS7al
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 02/10/2019 18:29, Ezequiel Garcia wrote:
+> IOMMU domain resource life is well-defined, managed
+> by .domain_alloc and .domain_free.
+> 
+> Therefore, domain-specific resources shouldn't be tied to
+> the device life, but instead to its domain.
 
-Hi Andy,
+FWIW,
 
-On Tue, 15 Oct 2019 11:04:29 +0300 Andy Shevchenko <andy.shevchenko@gmail.c=
-om> wrote:
->
-> Oops, thank you for pointing out, should be fixed.
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 
-Excellent, thanks.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/AlH65u3khJPw=1hotxSS7al
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl2lsLEACgkQAVBC80lX
-0Gy+mgf/TiQL2aTj7YcyG4XIzf8W4bf4hC/qxynHPaK9oMM5StJMxkNv8hU6plta
-1utr9QplMT6tRBNeS9lMEp77YO8HX33NcksuggFUagjmiAJm9D3XdkFIZ09OcBla
-cWaDadz4LoCJYT8s8nIQJN2bpxVM0JKbKM7qoeK40R8l9lvPA2usrVyFA27a4HJl
-Sf0yBs73AIFLw0bSYqCetWUp0u9cfz2Qw+z0fi6fVyBECXckHkancgzujlOrEVt2
-lOLPW5qZcCAJYZix8LLurhcR36uDHXsDkYTRcLe8091fcQURAj9WOakYV5bcGz8R
-fXktwqSdSyyFcIUxT3qOJ3eHMazYQg==
-=dLW5
------END PGP SIGNATURE-----
-
---Sig_/AlH65u3khJPw=1hotxSS7al--
+> Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+> ---
+>   drivers/iommu/rockchip-iommu.c | 7 +++++--
+>   1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
+> index 26290f310f90..e845bd01a1a2 100644
+> --- a/drivers/iommu/rockchip-iommu.c
+> +++ b/drivers/iommu/rockchip-iommu.c
+> @@ -979,13 +979,13 @@ static struct iommu_domain *rk_iommu_domain_alloc(unsigned type)
+>   	if (!dma_dev)
+>   		return NULL;
+>   
+> -	rk_domain = devm_kzalloc(dma_dev, sizeof(*rk_domain), GFP_KERNEL);
+> +	rk_domain = kzalloc(sizeof(*rk_domain), GFP_KERNEL);
+>   	if (!rk_domain)
+>   		return NULL;
+>   
+>   	if (type == IOMMU_DOMAIN_DMA &&
+>   	    iommu_get_dma_cookie(&rk_domain->domain))
+> -		return NULL;
+> +		goto err_free_domain;
+>   
+>   	/*
+>   	 * rk32xx iommus use a 2 level pagetable.
+> @@ -1020,6 +1020,8 @@ static struct iommu_domain *rk_iommu_domain_alloc(unsigned type)
+>   err_put_cookie:
+>   	if (type == IOMMU_DOMAIN_DMA)
+>   		iommu_put_dma_cookie(&rk_domain->domain);
+> +err_free_domain:
+> +	kfree(rk_domain);
+>   
+>   	return NULL;
+>   }
+> @@ -1048,6 +1050,7 @@ static void rk_iommu_domain_free(struct iommu_domain *domain)
+>   
+>   	if (domain->type == IOMMU_DOMAIN_DMA)
+>   		iommu_put_dma_cookie(&rk_domain->domain);
+> +	kfree(rk_domain);
+>   }
+>   
+>   static int rk_iommu_add_device(struct device *dev)
+> 
