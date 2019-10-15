@@ -2,57 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83436D70BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 10:08:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1030FD70C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 10:10:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728483AbfJOIID (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 04:08:03 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38268 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728295AbfJOIIC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 04:08:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=wnuAl5JtsHUOid65Qy+G3kdgjasueY+xYrNILl9pjkw=; b=mU4Da2tWWcMEckNczgZ1z+WoI
-        mRQ0tEYXnCz+1Ra7zuTZM7GKnu7rMWAKxtt84xsyg90LIA+pPbxXB+mFQqyAt2moMyX4NW/8zgNlU
-        njYvPTLyTAG+3JUF7cvf09nFWET0miMV4HntSodqCG0xrAxJ4Ey1VTl5pgsgsbNfZ4m2PHCanA2Ck
-        uCUg/F3CJF8ruBWG8C99DGa6QVVnEkmIk6gHPLoE01wUO+1QfpX0xpWNAxQhAsrq1HnmPigIBnzd3
-        56tykTjPAwk1ybJUCjWgnOSaPY2Z8plGtztzQ2TdrGfne9n4oHRdVh7DHFftEDgAha/nTgx9esFUp
-        GK1x/FRrw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iKHsA-0004Sx-7E; Tue, 15 Oct 2019 08:08:02 +0000
-Date:   Tue, 15 Oct 2019 01:08:02 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Daniel Colascione <dancol@google.com>
-Cc:     linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lokeshgidra@google.com, nnk@google.com, nosh@google.com,
-        timmurray@google.com
-Subject: Re: [PATCH 1/7] Add a new flags-accepting interface for anonymous
- inodes
-Message-ID: <20191015080802.GA16814@infradead.org>
-References: <20191012191602.45649-1-dancol@google.com>
- <20191012191602.45649-2-dancol@google.com>
+        id S1728559AbfJOIKK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 04:10:10 -0400
+Received: from spam01.hygon.cn ([110.188.70.11]:18461 "EHLO spam1.hygon.cn"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728295AbfJOIKK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 04:10:10 -0400
+Received: from MK-FE.hygon.cn ([172.23.18.61])
+        by spam1.hygon.cn with ESMTP id x9F89CRw070512;
+        Tue, 15 Oct 2019 16:09:13 +0800 (GMT-8)
+        (envelope-from fanjinke@hygon.cn)
+Received: from cncheex01.Hygon.cn ([172.23.18.10])
+        by MK-FE.hygon.cn with ESMTP id x9F88uHP054359;
+        Tue, 15 Oct 2019 16:08:56 +0800 (GMT-8)
+        (envelope-from fanjinke@hygon.cn)
+Received: from bogon.higon.com (172.23.18.44) by cncheex01.Hygon.cn
+ (172.23.18.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Tue, 15 Oct
+ 2019 16:09:07 +0800
+From:   Jinke Fan <fanjinke@hygon.cn>
+To:     <alexandre.belloni@bootlin.com>, <a.zummo@towertech.it>,
+        <puwen@hygon.cn>, <thomas.lendacky@amd.com>, <kim.phillips@amd.com>
+CC:     <linux-rtc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Jinke Fan <fanjinke@hygon.cn>
+Subject: [RESEND RFC PATCH v3] rtc: Fix the AltCentury value on AMD/Hygon platform
+Date:   Tue, 15 Oct 2019 16:08:27 +0800
+Message-ID: <20191015080827.11589-1-fanjinke@hygon.cn>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191012191602.45649-2-dancol@google.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
+X-Originating-IP: [172.23.18.44]
+X-ClientProxiedBy: cncheex02.Hygon.cn (172.23.18.12) To cncheex01.Hygon.cn
+ (172.23.18.10)
+X-MAIL: spam1.hygon.cn x9F89CRw070512
+X-DNSRBL: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 12, 2019 at 12:15:56PM -0700, Daniel Colascione wrote:
-> Add functions forwarding from the old names to the new ones so we
-> don't need to change any callers.
+When using following operations:
+date -s "21190910 19:20:00"
+hwclock -w
+to change date from 2019 to 2119 for test, it will fail on Hygon
+Dhyana and AMD Zen CPUs, while the same operations run ok on Intel i7
+platform.
 
-Independent of the usefulness of the interface (I'll let other comment,
-but you defintively want to talk to Al Viro), adding a second interface
-for only 17 callers total is a bad idea.  Just switch the existing
-interface to pass flags.
+MC146818 driver use function mc146818_set_time() to set register
+RTC_FREQ_SELECT(RTC_REG_A)'s bit4-bit6 field which means divider stage
+reset value on Intel platform to 0x7.
+
+While AMD/Hygon RTC_REG_A(0Ah)'s bit4 is defined as DV0 [Reference]:
+DV0 = 0 selects Bank 0, DV0 = 1 selects Bank 1. Bit5-bit6 is defined
+as reserved.
+
+DV0 is set to 1, it will select Bank 1, which will disable AltCentury
+register(0x32) access. As UEFI pass acpi_gbl_FADT.century 0x32
+(AltCentury), the CMOS write will be failed on code:
+CMOS_WRITE(century, acpi_gbl_FADT.century).
+
+Correct RTC_REG_A bank select bit(DV0) to 0 on AMD/Hygon CPUs, it will
+enable AltCentury(0x32) register writing and finally setup century as
+expected.
+
+Test results on AMD/Hygon machine show that it works as expected.
+
+Reference:
+https://www.amd.com/system/files/TechDocs/51192_Bolton_FCH_RRG.pdf
+section: 3.13 Real Time Clock (RTC)
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Jinke Fan <fanjinke@hygon.cn>
+---
+
+v2->v3:
+  - Make the changes only relevant to AMD/Hygon.
+
+v1->v2:
+  - Fix the compile errors on sparc64/alpha platform.
+
+ drivers/rtc/rtc-mc146818-lib.c | 11 ++++++++++-
+ include/linux/mc146818rtc.h    |  6 ++++++
+ 2 files changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/rtc/rtc-mc146818-lib.c b/drivers/rtc/rtc-mc146818-lib.c
+index 2ecd8752b088..70502881785d 100644
+--- a/drivers/rtc/rtc-mc146818-lib.c
++++ b/drivers/rtc/rtc-mc146818-lib.c
+@@ -172,7 +172,16 @@ int mc146818_set_time(struct rtc_time *time)
+ 	save_control = CMOS_READ(RTC_CONTROL);
+ 	CMOS_WRITE((save_control|RTC_SET), RTC_CONTROL);
+ 	save_freq_select = CMOS_READ(RTC_FREQ_SELECT);
+-	CMOS_WRITE((save_freq_select|RTC_DIV_RESET2), RTC_FREQ_SELECT);
++
++#ifdef CONFIG_X86
++	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
++	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
++		CMOS_WRITE((save_freq_select & (~RTC_DV0)), RTC_FREQ_SELECT);
++	else
++		CMOS_WRITE((save_freq_select | RTC_DIV_RESET2), RTC_FREQ_SELECT);
++#else
++	CMOS_WRITE((save_freq_select | RTC_DIV_RESET2), RTC_FREQ_SELECT);
++#endif
+ 
+ #ifdef CONFIG_MACH_DECSTATION
+ 	CMOS_WRITE(real_yrs, RTC_DEC_YEAR);
+diff --git a/include/linux/mc146818rtc.h b/include/linux/mc146818rtc.h
+index 0661af17a758..7066a7bced61 100644
+--- a/include/linux/mc146818rtc.h
++++ b/include/linux/mc146818rtc.h
+@@ -86,6 +86,12 @@ struct cmos_rtc_board_info {
+    /* 2 values for divider stage reset, others for "testing purposes only" */
+ #  define RTC_DIV_RESET1	0x60
+ #  define RTC_DIV_RESET2	0x70
++
++#ifdef CONFIG_X86
++   /* DV0 = 0 selects Bank 0, DV0 = 1 selects Bank 1 on AMD/Hygon platform */
++#  define RTC_DV0		0x10
++#endif
++
+   /* Periodic intr. / Square wave rate select. 0=none, 1=32.8kHz,... 15=2Hz */
+ # define RTC_RATE_SELECT 	0x0F
+ 
+-- 
+2.17.1
+
