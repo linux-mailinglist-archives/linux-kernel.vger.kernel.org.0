@@ -2,127 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 675AAD7FE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:20:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2F0FD8010
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:21:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389624AbfJOTTn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 15:19:43 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:39702 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389570AbfJOTTb (ORCPT
+        id S2389372AbfJOTVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 15:21:09 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:45642 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389367AbfJOTSj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 15:19:31 -0400
-Received: from mailhost.synopsys.com (dc8-mailhost1.synopsys.com [10.13.135.209])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id ED46AC0C42;
-        Tue, 15 Oct 2019 19:19:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1571167170; bh=HXvS8rDRQphESG7ffnx96mHp9U7LHEpSGqJLrluE2qs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZCwJap5yYG7J/fX2/MtXF9Lr8CqjfSDU0gQFHRsYSxx2FEWJi/iuZokzl3Uf30gzg
-         SuPpnut/Hlh2Ch2hC3n+P5PJm3A2/zjEQfiX8bTSa8wmOU9PBcPMevWWfwpqKoFzf2
-         T8/tJZ0J6978lmKMd9VzQQ6JM3DJeuVkbene5eXKbP4VlpiDzaU50l01SsCeFcLvdK
-         uH+nugVtEdJl9nJZd+ADQ1w4DXyIPY516+Nre5nCJS9f77LFY8tTeMC+JX7spZC6+a
-         zzgv3/AFp9jYvvdqu55ATtDwmqvP/Ejt2i1bblheBZ9CHGqeYLnBJmR432v9efuxx6
-         s9uOiNKbDoBXQ==
-Received: from vineetg-Latitude-E7450.internal.synopsys.com (vineetg-latitude-e7450.internal.synopsys.com [10.10.161.61])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 6329BA007E;
-        Tue, 15 Oct 2019 19:19:29 +0000 (UTC)
-From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
-To:     Arnd Bergmann <arnd@arndb.de>, Will Deacon <will@kernel.org>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nick Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-snps-arc@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Subject: [PATCH v2 5/5] asm-generic/mm: stub out p{4,d}d_clear_bad() if __PAGETABLE_P{4,u}D_FOLDED
-Date:   Tue, 15 Oct 2019 12:19:26 -0700
-Message-Id: <20191015191926.9281-6-vgupta@synopsys.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191015191926.9281-1-vgupta@synopsys.com>
-References: <20191015191926.9281-1-vgupta@synopsys.com>
+        Tue, 15 Oct 2019 15:18:39 -0400
+Received: from localhost ([127.0.0.1] helo=localhost.localdomain)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1iKSL2-00067i-3h; Tue, 15 Oct 2019 21:18:32 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH 01/34] ARM: Use CONFIG_PREEMPTION
+Date:   Tue, 15 Oct 2019 21:17:48 +0200
+Message-Id: <20191015191821.11479-2-bigeasy@linutronix.de>
+In-Reply-To: <20191015191821.11479-1-bigeasy@linutronix.de>
+References: <20191015191821.11479-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This removes the code for 2 level paging as seen on ARC
+From: Thomas Gleixner <tglx@linutronix.de>
 
-| bloat-o-meter2 vmlinux-D-elide-p4d_free_tlb vmlinux-E-elide-p?d_clear_bad
-| add/remove: 0/2 grow/shrink: 0/0 up/down: 0/-40 (-40)
-| function                                     old     new   delta
-| pud_clear_bad                                 20       -     -20
-| p4d_clear_bad                                 20       -     -20
-| Total: Before=4136930, After=4136890, chg -1.000000%
+CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by CONFIG_PREEMPT_RT.
+Both PREEMPT and PREEMPT_RT require the same functionality which today
+depends on CONFIG_PREEMPT.
 
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Switch the entry code, cache over to use CONFIG_PREEMPTION and add
+output in show_stack() for PREEMPT_RT.
+
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+[bigeasy: +traps.c]
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- include/asm-generic/pgtable.h | 11 +++++++++++
- mm/pgtable-generic.c          |  8 ++++++++
- 2 files changed, 19 insertions(+)
+ arch/arm/include/asm/switch_to.h | 2 +-
+ arch/arm/kernel/entry-armv.S     | 4 ++--
+ arch/arm/kernel/traps.c          | 2 ++
+ arch/arm/mm/cache-v7.S           | 4 ++--
+ arch/arm/mm/cache-v7m.S          | 4 ++--
+ 5 files changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
-index 818691846c90..9cdcbc7c0b7b 100644
---- a/include/asm-generic/pgtable.h
-+++ b/include/asm-generic/pgtable.h
-@@ -558,8 +558,19 @@ static inline pgprot_t pgprot_modify(pgprot_t oldprot, pgprot_t newprot)
-  * Do the tests inline, but report and clear the bad entry in mm/memory.c.
+diff --git a/arch/arm/include/asm/switch_to.h b/arch/arm/include/asm/switch=
+_to.h
+index d3e937dcee4d0..007d8fea71572 100644
+--- a/arch/arm/include/asm/switch_to.h
++++ b/arch/arm/include/asm/switch_to.h
+@@ -10,7 +10,7 @@
+  * to ensure that the maintenance completes in case we migrate to another
+  * CPU.
   */
- void pgd_clear_bad(pgd_t *);
-+
-+#ifndef __PAGETABLE_P4D_FOLDED
- void p4d_clear_bad(p4d_t *);
-+#else
-+#define p4d_clear_bad(p4d)        do { } while (0)
-+#endif
-+
-+#ifndef __PAGETABLE_PUD_FOLDED
- void pud_clear_bad(pud_t *);
-+#else
-+#define pud_clear_bad(p4d)        do { } while (0)
-+#endif
-+
- void pmd_clear_bad(pmd_t *);
- 
- static inline int pgd_none_or_clear_bad(pgd_t *pgd)
-diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
-index 532c29276fce..a5edddc3846a 100644
---- a/mm/pgtable-generic.c
-+++ b/mm/pgtable-generic.c
-@@ -24,18 +24,26 @@ void pgd_clear_bad(pgd_t *pgd)
- 	pgd_clear(pgd);
- }
- 
-+#ifndef __PAGETABLE_P4D_FOLDED
- void p4d_clear_bad(p4d_t *p4d)
- {
- 	p4d_ERROR(*p4d);
- 	p4d_clear(p4d);
- }
-+#endif
- 
-+#ifndef __PAGETABLE_PUD_FOLDED
- void pud_clear_bad(pud_t *pud)
- {
- 	pud_ERROR(*pud);
- 	pud_clear(pud);
- }
-+#endif
- 
-+/*
-+ * Note that below can't be stubed out for nopmd case:
-+ * pmd folding is special and typically pmd_* macros refet to upper level
-+ */
- void pmd_clear_bad(pmd_t *pmd)
- {
- 	pmd_ERROR(*pmd);
--- 
-2.20.1
+-#if defined(CONFIG_PREEMPT) && defined(CONFIG_SMP) && defined(CONFIG_CPU_V=
+7)
++#if defined(CONFIG_PREEMPTION) && defined(CONFIG_SMP) && defined(CONFIG_CP=
+U_V7)
+ #define __complete_pending_tlbi()	dsb(ish)
+ #else
+ #define __complete_pending_tlbi()
+diff --git a/arch/arm/kernel/entry-armv.S b/arch/arm/kernel/entry-armv.S
+index 858d4e5415326..77f54830554c3 100644
+--- a/arch/arm/kernel/entry-armv.S
++++ b/arch/arm/kernel/entry-armv.S
+@@ -211,7 +211,7 @@ ENDPROC(__dabt_svc)
+ 	svc_entry
+ 	irq_handler
+=20
+-#ifdef CONFIG_PREEMPT
++#ifdef CONFIG_PREEMPTION
+ 	ldr	r8, [tsk, #TI_PREEMPT]		@ get preempt count
+ 	ldr	r0, [tsk, #TI_FLAGS]		@ get flags
+ 	teq	r8, #0				@ if preempt count !=3D 0
+@@ -226,7 +226,7 @@ ENDPROC(__irq_svc)
+=20
+ 	.ltorg
+=20
+-#ifdef CONFIG_PREEMPT
++#ifdef CONFIG_PREEMPTION
+ svc_preempt:
+ 	mov	r8, lr
+ 1:	bl	preempt_schedule_irq		@ irq en/disable is done inside
+diff --git a/arch/arm/kernel/traps.c b/arch/arm/kernel/traps.c
+index c053abd1fb539..abb7dd7e656fd 100644
+--- a/arch/arm/kernel/traps.c
++++ b/arch/arm/kernel/traps.c
+@@ -248,6 +248,8 @@ void show_stack(struct task_struct *tsk, unsigned long =
+*sp)
+=20
+ #ifdef CONFIG_PREEMPT
+ #define S_PREEMPT " PREEMPT"
++#elif defined(CONFIG_PREEMPT_RT)
++#define S_PREEMPT " PREEMPT_RT"
+ #else
+ #define S_PREEMPT ""
+ #endif
+diff --git a/arch/arm/mm/cache-v7.S b/arch/arm/mm/cache-v7.S
+index 0ee8fc4b4672c..dc8f152f35566 100644
+--- a/arch/arm/mm/cache-v7.S
++++ b/arch/arm/mm/cache-v7.S
+@@ -135,13 +135,13 @@ ENTRY(v7_flush_dcache_all)
+ 	and	r1, r1, #7			@ mask of the bits for current cache only
+ 	cmp	r1, #2				@ see what cache we have at this level
+ 	blt	skip				@ skip if no cache, or just i-cache
+-#ifdef CONFIG_PREEMPT
++#ifdef CONFIG_PREEMPTION
+ 	save_and_disable_irqs_notrace r9	@ make cssr&csidr read atomic
+ #endif
+ 	mcr	p15, 2, r10, c0, c0, 0		@ select current cache level in cssr
+ 	isb					@ isb to sych the new cssr&csidr
+ 	mrc	p15, 1, r1, c0, c0, 0		@ read the new csidr
+-#ifdef CONFIG_PREEMPT
++#ifdef CONFIG_PREEMPTION
+ 	restore_irqs_notrace r9
+ #endif
+ 	and	r2, r1, #7			@ extract the length of the cache lines
+diff --git a/arch/arm/mm/cache-v7m.S b/arch/arm/mm/cache-v7m.S
+index a0035c426ce63..1bc3a0a507539 100644
+--- a/arch/arm/mm/cache-v7m.S
++++ b/arch/arm/mm/cache-v7m.S
+@@ -183,13 +183,13 @@ ENTRY(v7m_flush_dcache_all)
+ 	and	r1, r1, #7			@ mask of the bits for current cache only
+ 	cmp	r1, #2				@ see what cache we have at this level
+ 	blt	skip				@ skip if no cache, or just i-cache
+-#ifdef CONFIG_PREEMPT
++#ifdef CONFIG_PREEMPTION
+ 	save_and_disable_irqs_notrace r9	@ make cssr&csidr read atomic
+ #endif
+ 	write_csselr r10, r1			@ set current cache level
+ 	isb					@ isb to sych the new cssr&csidr
+ 	read_ccsidr r1				@ read the new csidr
+-#ifdef CONFIG_PREEMPT
++#ifdef CONFIG_PREEMPTION
+ 	restore_irqs_notrace r9
+ #endif
+ 	and	r2, r1, #7			@ extract the length of the cache lines
+--=20
+2.23.0
 
