@@ -2,90 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 720EBD7A52
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 17:46:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40C34D7A5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 17:48:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387784AbfJOPp4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 11:45:56 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:43469 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726231AbfJOPpw (ORCPT
+        id S2387542AbfJOPsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 11:48:31 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:34393 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726422AbfJOPsb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 11:45:52 -0400
-Received: by mail-ed1-f65.google.com with SMTP id r9so18479150edl.10
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 08:45:51 -0700 (PDT)
+        Tue, 15 Oct 2019 11:48:31 -0400
+Received: by mail-qk1-f196.google.com with SMTP id q203so19626475qke.1;
+        Tue, 15 Oct 2019 08:48:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=VmiRcRHmz8DDVB2cq0v7r6/X0JPNcG46yUc4K+zEiys=;
-        b=E9mfq/KOFVE0GO0x3b0UZZ1JezhxnKyhaIzvNd3sSr4Gbk3H+JJLK7YLD46aGZCwHk
-         0yXSRBXCRg0JFm3f65XtnG4n5KBuRuhOlhhVEh39Moad4HjLxOnqYsbuq3ZDpHQGu2Sq
-         /K3OsUMx7veVmqT7mP1Haa8gTLk77WVE4S+y/eB562wtPDMb2FTEBzTkpfhq3jygXnKX
-         n+vXIu5J8sxv0BmrxfG24w2TArWPh2dnvx8xY3IEeWZV+M6+nScSsxK0zMOCP/eXmnjq
-         kgEzw5GxhefB6Vv1bi0BiUBNKEwhYXhAVNe5Phz/7vIGRZOxPzf6vn7zElYHHmqNqsiI
-         koJA==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4UV/vP6Ak7zlZSSUsFjQtQPToq6GnlOm1PHifs316U4=;
+        b=LsoAypu+QZFDZOOMgWj57DzO9NJX1FgAGXdYolZJAF3A/bnTKstO7wULawxUrkeLnF
+         LIZALF6eFW4JRe91stBT6ts8IaIkGyHBFFDmQnJfq2yT/aAqEAZSmvDelPxyuKUqHiRE
+         VEwh2YBOJgmKRUXKRKcELaCCvsJquUZJXkI3j2Lut0LhIZ6BmmRPQ0juk5aiZifh2sKB
+         BuM8uI/lEYzA7uFjLvNJU3wOK31R6M8dqKpmvI5hACGwcYhs7HzPViT4DiEGTY1DLndY
+         CGuRlYOGOjQ4Xosg93QM8Wpixg799Rm48Zf7pRmxjbeVnB5ewpnrDMl2kKbzbTbqENgt
+         RRYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=VmiRcRHmz8DDVB2cq0v7r6/X0JPNcG46yUc4K+zEiys=;
-        b=YzQPdzJfYa2NR3IsAqkCB2rhfLf5fltIDoASrJ+JX2PSHNjQv61E5kZkD5zHfEMukl
-         rdYPO+41famFRQwoZALpWgrS6xhLaF0mHp8S+jGRc4h6iA97UZm49AkyOttcAKYAjITA
-         h9rcNjgNg+QC8KpCzU6Y2TTulPpSY6gej6qEmoehm+1/NOXLT06zzkbTsXB6K9HWBEPE
-         xxF7baNEG+FC3VQAuwJ+9PDoPRCVyjFi8o+8YE0WP5wy4rrnjGCrwgUqSBfIL8FEXzCJ
-         oK57cx5GH9Xit+cXM24sIVVqeevN/Ka3dy6/t4Ysri+ZK4iPgJZrW2P9qhIW/8/oW2CE
-         iAog==
-X-Gm-Message-State: APjAAAWrRICkr898EZgjRS4H9q1WAQm9xD43D2ReV8wv6rccTPMowQWg
-        GpF9kwc4n3HlS9VV5ZnEV5VuvWKv
-X-Google-Smtp-Source: APXvYqwJje6PpKAjIIPrG8T3cNgpwAEubyG9qZshvloANoppnP9GolA5+D50+LSdpYInZJ3Le6bePg==
-X-Received: by 2002:a17:906:8391:: with SMTP id p17mr33623378ejx.216.1571154350730;
-        Tue, 15 Oct 2019 08:45:50 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:8108:96bf:e0ab:2b68:5d76:a12a:e6ba])
-        by smtp.gmail.com with ESMTPSA id nq1sm2807787ejb.75.2019.10.15.08.45.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2019 08:45:50 -0700 (PDT)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 3/3] staging: rtl8188eu: remove blank lines
-Date:   Tue, 15 Oct 2019 17:45:35 +0200
-Message-Id: <20191015154535.27979-3-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191015154535.27979-1-straube.linux@gmail.com>
-References: <20191015154535.27979-1-straube.linux@gmail.com>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4UV/vP6Ak7zlZSSUsFjQtQPToq6GnlOm1PHifs316U4=;
+        b=GrZalv11NN+/wA0njRs2vKNHTW1S/iJnkexzABWjDgaGK5/wpz8UAteCPPVdo5hwWs
+         sNmrGXFsZmuhi1Lav0ZwIIBLwOenUT/jMMosY7t1Kyx9KDT3H/1pcrkGbaE4FnfqFgnq
+         7pULvn10XYdvLvkqc+lTPiIxt/xKOciWM+3O1/wTKEu1owZOp1eKgV5BAF0eD2C1bsa0
+         /mG+nBTP5lOAVmlFRoFmWCKJWLlBu2i9r+lfggtDhVY9wXmJx2B6fwU8SsFIayOdknbl
+         C5L6ZFx8LOMGIaHJ+e6nHdFtmHGyjSQqjbmSCYFRZbUwBwg0XZ5sdNsUakJ176krKHkZ
+         38sw==
+X-Gm-Message-State: APjAAAW1QYFuk8MDjzbr3aYC5x8NjjKaLbU6D461vugrE7XmVEbXsZHW
+        +5rCuotivBBGHVebtEnIB/w=
+X-Google-Smtp-Source: APXvYqzK7AJnTuTyVvinEDnBafFaa0S4oM2gipW8LqP+1d6TT52IrNHq2jpxXWuOvsik/AY376SHyQ==
+X-Received: by 2002:a37:a50a:: with SMTP id o10mr35684316qke.115.1571154509896;
+        Tue, 15 Oct 2019 08:48:29 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::3:2a53])
+        by smtp.gmail.com with ESMTPSA id p77sm10954411qke.6.2019.10.15.08.48.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 15 Oct 2019 08:48:29 -0700 (PDT)
+Date:   Tue, 15 Oct 2019 08:48:27 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Julia Lawall <julia.lawall@lip6.fr>
+Cc:     Jens Axboe <axboe@kernel.dk>, kbuild-all@lists.01.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        linux-block@vger.kernel.org
+Subject: [PATCH block/for-linus] blkcg: fix botched pd_prealloc error
+ handling in blkcg_activate_policy()
+Message-ID: <20191015154827.GK18794@devbig004.ftw2.facebook.com>
+References: <alpine.DEB.2.21.1910151232480.2818@hadrien>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1910151232480.2818@hadrien>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove blank lines to reduce whitespace and improve readability.
+While fixing ->pd_alloc_fn() bug, ab94b0382d81 ("blkcg: Fix
+->pd_alloc_fn() being called with the wrong blkcg on policy
+activation") broke the pd_prealloc error handling.
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
+* pd's were freed using kfree().  They should be freed with
+  ->pd_free_fn().
+
+* pd_prealloc could be kfree()'d and then ->pd_free_fn()'d again.
+
+* When GFP_KERNEL allocation fails, pinned_blkg wasn't put.
+
+There are also a couple existing issues.
+
+* Each pd is initialized as they get allocated.  If alloc fails, the
+  policy will get freed with pd's initialized on it.
+
+* After the above partial failure, the partial pds are not freed.
+
+This patch fixes all of the above issues.
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: Julia Lawall <julia.lawall@lip6.fr>
+Fixes: ab94b0382d81 ("blkcg: Fix ->pd_alloc_fn() being called with the wrong blkcg on policy activation")
 ---
- drivers/staging/rtl8188eu/core/rtw_wlan_util.c | 2 --
- 1 file changed, 2 deletions(-)
+ block/blk-cgroup.c |   44 +++++++++++++++++++++++++++++++-------------
+ 1 file changed, 31 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
-index 1e261ff8f0a0..af8a79ce8736 100644
---- a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
-@@ -749,11 +749,9 @@ void HTOnAssocRsp(struct adapter *padapter)
- 	 * AMPDU_para [4:2]:Min MPDU Start Spacing
- 	 */
- 	max_ampdu_len = pmlmeinfo->HT_caps.ampdu_params_info & 0x03;
--
- 	min_mpdu_spacing = (pmlmeinfo->HT_caps.ampdu_params_info & 0x1c) >> 2;
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -1373,13 +1373,14 @@ int blkcg_activate_policy(struct request
+ retry:
+ 	spin_lock_irq(&q->queue_lock);
  
- 	rtw_hal_set_hwreg(padapter, HW_VAR_AMPDU_MIN_SPACE, &min_mpdu_spacing);
--
- 	rtw_hal_set_hwreg(padapter, HW_VAR_AMPDU_FACTOR, &max_ampdu_len);
+-	/* blkg_list is pushed at the head, reverse walk to init parents first */
++	/* blkg_list is pushed at the head, reverse walk to allocate parents first */
+ 	list_for_each_entry_reverse(blkg, &q->blkg_list, q_node) {
+ 		struct blkg_policy_data *pd;
+ 
+ 		if (blkg->pd[pol->plid])
+ 			continue;
+ 
++		/* If prealloc matches, use it; otherwise try GFP_NOWAIT */
+ 		if (blkg == pinned_blkg) {
+ 			pd = pd_prealloc;
+ 			pd_prealloc = NULL;
+@@ -1389,6 +1390,10 @@ retry:
+ 		}
+ 
+ 		if (!pd) {
++			/*
++			 * GFP_NOWAIT failed.  Free the existing one and
++			 * prealloc for @blkg w/ GFP_KERNEL.
++			 */
+ 			if (pinned_blkg)
+ 				blkg_put(pinned_blkg);
+ 			blkg_get(blkg);
+@@ -1396,38 +1401,51 @@ retry:
+ 
+ 			spin_unlock_irq(&q->queue_lock);
+ 
+-			kfree(pd_prealloc);
++			if (pd_prealloc)
++				pol->pd_free_fn(pd_prealloc);
+ 			pd_prealloc = pol->pd_alloc_fn(GFP_KERNEL, q,
+ 						       blkg->blkcg);
+-			if (pd_prealloc) {
++			if (pd_prealloc)
+ 				goto retry;
+-			} else {
+-				ret = -ENOMEM;
+-				goto out_bypass_end;
+-			}
++			else
++				goto enomem;
+ 		}
+ 
+ 		blkg->pd[pol->plid] = pd;
+ 		pd->blkg = blkg;
+ 		pd->plid = pol->plid;
+-		if (pol->pd_init_fn)
+-			pol->pd_init_fn(pd);
+ 	}
+ 
+-	if (pinned_blkg)
+-		blkg_put(pinned_blkg);
+-	kfree(pd_prealloc);
++	/* all allocated, init in the same order */
++	if (pol->pd_init_fn)
++		list_for_each_entry_reverse(blkg, &q->blkg_list, q_node)
++			pol->pd_init_fn(blkg->pd[pol->plid]);
+ 
+ 	__set_bit(pol->plid, q->blkcg_pols);
+ 	ret = 0;
+ 
+ 	spin_unlock_irq(&q->queue_lock);
+-out_bypass_end:
++out:
+ 	if (queue_is_mq(q))
+ 		blk_mq_unfreeze_queue(q);
++	if (pinned_blkg)
++		blkg_put(pinned_blkg);
+ 	if (pd_prealloc)
+ 		pol->pd_free_fn(pd_prealloc);
+ 	return ret;
++
++enomem:
++	/* alloc failed, nothing's initialized yet, free everything */
++	spin_lock_irq(&q->queue_lock);
++	list_for_each_entry(blkg, &q->blkg_list, q_node) {
++		if (blkg->pd[pol->plid]) {
++			pol->pd_free_fn(blkg->pd[pol->plid]);
++			blkg->pd[pol->plid] = NULL;
++		}
++	}
++	spin_unlock_irq(&q->queue_lock);
++	ret = -ENOMEM;
++	goto out;
  }
+ EXPORT_SYMBOL_GPL(blkcg_activate_policy);
  
--- 
-2.23.0
-
