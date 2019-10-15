@@ -2,150 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33512D83A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 00:29:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17E2ED83D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 00:39:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389916AbfJOW3u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 18:29:50 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:44469 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389902AbfJOW3u (ORCPT
+        id S1732983AbfJOWjM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 18:39:12 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:34539 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732775AbfJOWjL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 18:29:50 -0400
-Received: by mail-ot1-f68.google.com with SMTP id 21so18396560otj.11;
-        Tue, 15 Oct 2019 15:29:49 -0700 (PDT)
+        Tue, 15 Oct 2019 18:39:11 -0400
+Received: by mail-lj1-f193.google.com with SMTP id j19so21946343lja.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 15:39:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fon9Xqueqx/Fq0wGHnHqEDUCXyflZLUwsevU6fmx6jE=;
+        b=SIEI+eyzsLvgKQSWy68fNU4waAO3JnvS6nzHr5/fZu5+F3lS+ninFSB5dUKCVryHZ+
+         kl8H8QJRcmYfRoBpcYQdlcvyFYmbnE5AhMRuYRji7sgqsBgEDlqfBvGU7GUQWJu2UMf7
+         6W/csLC8ZHTI+HN72RKiuRYhkxOOMexsvDhzA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vrE5B9TKEy0Ahf3PltGkrbQZJCBK9Th8CtGSMcMqVcE=;
-        b=ZI1rJc8R2QV8iJi9ysmoEWo4n+d+ejAXqWCeBMQ99V5kHMH3bIBoHZTibTbRFFm0oZ
-         5rpzxf+7xYfMDta56gaIblQ0KFMzch4NUqFO4tr96FGRnOLCAhPktrxdzAUOLrdjXahV
-         m8rjBFHKo/4tX2LLdDJ+mMAkk1aIG5OvXICopudM2fiMktnfH5eNKcvCVmhC9WcyJpuC
-         9O6Are37YlhndpFYxiCc5OE6zBzQdw3RkSWlfan8vzLiwnfK5WlLdepVMrfL8fmW4nKY
-         PBXNmS0QnM+fnzepS/gAol5HnYAJJtrKitGVLYW4Q6cwCHFzJtrOxRZdzT3Bfqrl1Zc8
-         yB8A==
-X-Gm-Message-State: APjAAAUNdifjQtEwNaZpNFnK2/nLS3UGLuyoTvSO+Bmw3mYz6rC6GhCW
-        vIwHB5kbXCLlAEAlQ+SmvGpYjL4=
-X-Google-Smtp-Source: APXvYqwrJv+FLlYQeraNR8fsDqy1zId6Y5dKvTXqDqkfTJWxeP0UhxcGwuqnMSXi1bDmu4jRLcXUsg==
-X-Received: by 2002:a05:6830:22d9:: with SMTP id q25mr29736448otc.87.1571178589083;
-        Tue, 15 Oct 2019 15:29:49 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id l19sm6459488oie.22.2019.10.15.15.29.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2019 15:29:48 -0700 (PDT)
-Date:   Tue, 15 Oct 2019 17:29:47 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Benoit Parrot <bparrot@ti.com>
-Cc:     Tony Lindgren <tony@atomide.com>, Tero Kristo <t-kristo@ti.com>,
-        linux-omap@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [Patch 1/3] dt-bindings: media: ti-vpe: Document VPE driver
-Message-ID: <20191015222947.GA13388@bogus>
-References: <20191009175628.20570-1-bparrot@ti.com>
- <20191009175628.20570-2-bparrot@ti.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fon9Xqueqx/Fq0wGHnHqEDUCXyflZLUwsevU6fmx6jE=;
+        b=tz2fV6+rx/OFuGnXohp9D2THamucFJGP7pymYrdMX6gWRLS4N8ZfkFXkfKDQ2Ejcby
+         ItqSRhTdMSrNiZU2MqP3B+P4bd0VkNlID4/ivZYiIvcMViyINvfsbaurNVfgDhOdi+fg
+         52EbAOMWLYd+KdViIVJOL/Z5C6QpjjlN0i6Kd2uvLdYrOpfCztDFUn8W1pdqHFlLMom8
+         JRLNf/CK+qsoPo9XMCXwuHeLSg4b/nh3MUhJD8DEb/rEXIYef8N8A4cjKEjkFjIJgcDV
+         oOlp9pCvUX1rL2UVyAMIJwpMnzcmtlyTBq43E4Q9njZDnww9zCi69GV2pMWkbp0zVIei
+         E20w==
+X-Gm-Message-State: APjAAAVEgC1F1UxqRMwNNeNY8wIF0MMN4hYZbTrzkgsRz23u9vI3Wrmb
+        hUkgBHc7R/G900keU9sNT3aTEl2fquE=
+X-Google-Smtp-Source: APXvYqzdGBZG1Ya5kS05O9OAlNXgBSsEz4FKifFhDRQxIZ7O5Ua0AgK1vBxHV6SXVSYD5dFLW8++wQ==
+X-Received: by 2002:a2e:a0ca:: with SMTP id f10mr13675890ljm.84.1571179149469;
+        Tue, 15 Oct 2019 15:39:09 -0700 (PDT)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id i190sm1271584lfi.45.2019.10.15.15.39.09
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Oct 2019 15:39:09 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id r2so15728983lfn.8
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 15:39:09 -0700 (PDT)
+X-Received: by 2002:a19:5504:: with SMTP id n4mr4230778lfe.106.1571178744104;
+ Tue, 15 Oct 2019 15:32:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191009175628.20570-2-bparrot@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <157117606853.15019.15459271147790470307.stgit@warthog.procyon.org.uk>
+In-Reply-To: <157117606853.15019.15459271147790470307.stgit@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 15 Oct 2019 15:32:08 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whfCy+WCZ5SXZGi4QEhxXm=EjZjj4R9+o4q-QR3saMyfg@mail.gmail.com>
+Message-ID: <CAHk-=whfCy+WCZ5SXZGi4QEhxXm=EjZjj4R9+o4q-QR3saMyfg@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/21] pipe: Keyrings, Block and USB notifications
+To:     David Howells <dhowells@redhat.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 12:56:26PM -0500, Benoit Parrot wrote:
-> Device Tree bindings for the Video Processing Engine (VPE) driver.
-> 
-> Signed-off-by: Benoit Parrot <bparrot@ti.com>
-> ---
->  .../devicetree/bindings/media/ti-vpe.txt      | 48 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 49 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/ti-vpe.txt
+Aside from the two small comments, the pipe side looked reasonable,
+but I stopped looking when the patches moved on to the notificaiton
+part, and maybe I missed something in the earlier ones too.
 
-Please convert to DT schema format.
+Which does bring me to the meat of this email: can we please keep the
+pipe cleanups and prepwork (and benchmarking) as a separate patch
+series? I'd like that to be done separately from the notification
+code, since it's re-organization and cleanup - while the eventual goal
+is to be able to add messages to the pipe atomically, I think the
+series makes sense (and should make sense) on its own.
 
-> 
-> diff --git a/Documentation/devicetree/bindings/media/ti-vpe.txt b/Documentation/devicetree/bindings/media/ti-vpe.txt
-> new file mode 100644
-> index 000000000000..b2942fa8c3ea
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/ti-vpe.txt
-> @@ -0,0 +1,48 @@
-> +Texas Instruments DRA7x VIDEO PROCESSING ENGINE (VPE)
-> +------------------------------------------------------
-> +
-> +The Video Processing Engine (VPE) is a key component for image post
-> +processing applications. VPE consist of a single memory to memory
-> +path which can perform chroma up/down sampling, deinterlacing,
-> +scaling and color space conversion.
-> +
-> +Required properties:
-> +- compatible: must be "ti,vpe"
-
-Needs to have SoC specific compatibles.
-
-> +- reg:	physical base address and length of the registers set for the 4
-> +	memory regions required;
-> +- reg-names: name associated with the memory regions described is <reg>;
-
-The names need to be documented.
-
-> +- interrupts: should contain IRQ line for VPE;
-> +
-> +Example:
-> +
-> +	target-module@1d0010 {                  /* 0x489d0000, ap 27 30.0 */
-> +		compatible = "ti,sysc-omap4", "ti,sysc";
-> +		reg = <0x1d0010 0x4>;
-> +		reg-names = "sysc";
-> +		ti,sysc-midle = <SYSC_IDLE_FORCE>,
-> +				<SYSC_IDLE_NO>,
-> +				<SYSC_IDLE_SMART>;
-> +		ti,sysc-sidle = <SYSC_IDLE_FORCE>,
-> +				<SYSC_IDLE_NO>,
-> +				<SYSC_IDLE_SMART>;
-> +		clocks = <&vpe_clkctrl DRA7_VPE_VPE_CLKCTRL 0>;
-> +		clock-names = "fck";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0x0 0x1d0000 0x10000>;
-
-All this is outside the scope of this binding.
-
-> +
-> +		vpe: vpe@0 {
-> +			compatible = "ti,vpe";
-> +			reg = <0x0000 0x120>,
-> +			      <0x0700 0x80>,
-> +			      <0x5700 0x18>,
-> +			      <0xd000 0x400>;
-> +			reg-names = "vpe_top",
-> +				    "sc",
-> +				    "csc",
-> +				    "vpdma";
-> +			interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
-
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-
-Not documented, nor needed as there are no child nodes.
-
-> +		};
-> +	};
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8598f49fa2c8..63dcda51f8ae 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -16299,6 +16299,7 @@ W:	http://linuxtv.org/
->  Q:	http://patchwork.linuxtv.org/project/linux-media/list/
->  S:	Maintained
->  F:	drivers/media/platform/ti-vpe/
-> +F:	Documentation/devicetree/bindings/media/ti-vpe.txt
->  
->  TI WILINK WIRELESS DRIVERS
->  L:	linux-wireless@vger.kernel.org
-> -- 
-> 2.17.1
-> 
+          Linus
