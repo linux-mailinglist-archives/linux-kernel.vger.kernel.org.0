@@ -2,72 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA38CD7D13
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 19:11:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A698BD7D2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 19:16:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730186AbfJORL0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 13:11:26 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:33261 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728152AbfJORL0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 13:11:26 -0400
-Received: by mail-ot1-f65.google.com with SMTP id 60so17611395otu.0;
-        Tue, 15 Oct 2019 10:11:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VxDGjraqfzXc9uftKDsuNClpdLGxHQLLKEDl6Bl0yGY=;
-        b=CX3EbGPaNtb84+kXycX8EEIWm4qZtW8+PM90DNg86GyWWgI+RMpiW/oTxgjqgQPIYW
-         pWSu0c0kwwNNR2mzi2W9jdGWrqIM8qyoS4DvMfoKzEFBSdO1Ssazthj/fq5mDKPExnic
-         i7Pmo5rQcR+VQyxeh8n1afcKHZ316xLh+8WM6MivSj3V8Lv4tSwGHnobNkDYF7O1gRIB
-         j3w8C7BVfzfut+Yaysv3nI4I8LYDNda3/EhYDZdTcY4fwuCNVgyqAM9qDLw5opiBbfkv
-         oUMad9iRREQc/cujKn1I6gNT1KcZ3+CT6WLJ/63/lHqSrn3pN6yXninb2l/Ydpe/v9i8
-         J91g==
-X-Gm-Message-State: APjAAAV36mhGCsVAwowDExcjzUXBWhm5VeNswXUI1n/W1xxW8GIUedJr
-        1Xme3VDlDXap2ICYaI80pR9097Q=
-X-Google-Smtp-Source: APXvYqy4sZEG/+W6xEOtw6Rd/8zS/h+KMn+CPYcc4g5SttNj/xXlDflbSBhC8AEgrAAvxTNzzBDmEw==
-X-Received: by 2002:a9d:2a88:: with SMTP id e8mr30901276otb.188.1571159484997;
-        Tue, 15 Oct 2019 10:11:24 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id x6sm6874566ote.69.2019.10.15.10.11.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2019 10:11:24 -0700 (PDT)
-Date:   Tue, 15 Oct 2019 12:11:23 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org
-Subject: Re: [PATCH 4/4] dt-bindings: iio: adc: exynos: Use defines instead
- of clock numbers
-Message-ID: <20191015171123.GA11947@bogus>
-References: <20191002160744.11307-1-krzk@kernel.org>
- <20191002160744.11307-4-krzk@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191002160744.11307-4-krzk@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1730397AbfJORQa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 13:16:30 -0400
+Received: from mout.gmx.net ([212.227.15.15]:56371 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726277AbfJORQ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 13:16:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1571159776;
+        bh=pWV8t98N4Fo6WzlbK05g/TVgMxifM1N6xBHlNciUcE8=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=kSR6/xH+HDHvrO3CO4SQ/kQOCfer1nNoIp8hFH1MfZaC2GVbaIZfFXT6mXxMFMAa7
+         jTfmm3fq4Qa4GRx/fqXkan0YnhZ/Exm0SSBpYfajTU09gG56+qXhrT2oBgkiJCcQlN
+         lTvgdkYLRebTrVqKPmhNFzPBK+gIg5V4hkMFMrm4=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from localhost.localdomain ([37.4.249.112]) by mail.gmx.com
+ (mrgmx005 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 1M7sHo-1iPM7G0QNO-004zt6; Tue, 15 Oct 2019 19:16:16 +0200
+From:   Stefan Wahren <wahrenst@gmx.net>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Stefan Wahren <wahrenst@gmx.net>, Eric Anholt <eric@anholt.net>,
+        linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL 1/3] bcm2835-dt-next-2019-10-15
+Date:   Tue, 15 Oct 2019 19:15:23 +0200
+Message-Id: <1571159725-5090-1-git-send-email-wahrenst@gmx.net>
+X-Mailer: git-send-email 2.7.4
+X-Provags-ID: V03:K1:dfZx3uAk0vysgtmYoY6k3UPO7+uWCLJU/YbcuOWHM3bUaop1Kfc
+ FdW5t1UZI4gqdAQSn7/POzYMdoPfZ+Ox6/2uHh3do52Bcx0lLROu9rlI+a5II62DuzvRmUG
+ 6cYs7xrKRSWAHRACx8eCiYvDfSP8DvtsTWlc9mFBmHjUfK+G9pJpycZeRt3vu4f7YskTHe/
+ +ykUGtHcFwPt8sXHOpFAQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:wyIlnAb9bcA=:RB4gxlwT01gSsq4Bmz8/05
+ DlmkjBB/Z9cOI2zys9IFQNgv2YbZBUovkOoFl0EjDkHUdGYKtePogDa/2CtfAmsH/0Z1l8OUW
+ zQlevcJQkviYadwRxcMy7FlU5lYOEQqTZVQVmMbchWicu4876i9Etwx3BK3K9tH/erziGQZBs
+ 6gHGDSi9Ca2a7iJxYvGP/MhwEOiBWwIYhGKxBQk4tWZrvvb8VpbExhS/RarSQVcopi7fwi0i8
+ ALu8nowNm2PyU4j7ufap5qO7/e9A4REJrG6yQx30s4kgcEtu1vFjk/gK4qRZahrVTUzuJqBkT
+ 2S95HEjUAriCT7Ki6jQF7CAK9VWxBF651li20hXsLhABZkfhXp9L2Kpqc9zVJYKvDPKSicArO
+ 8UaHyakTvVDx8z/Dy9fCkea+by/AT0pFzh/z1s6XjFAsY8zI1NMID9vF8Am/A20NB9US7V/z5
+ EbQ3C7vVf13MIlOXE2SSSfXzk31IoeIW8UkcXeOiuHW3PruEDoLFIKt7KyLWvWE3AAOegmRNc
+ LCK99P1CSe/nSR+7h32VpL0L8Nw40fDHhWItwObcLRbWMavig7HT6aWOXBR6/q08I1dwE8i3R
+ uCMKgEzbp/fn8ZvBF963HCkAGrQbtL3vh1X3RSaBepkVK4dfdNUrAG+W/Wrcoop2ax0xiH7hQ
+ WyKItgPxxGOBJIMJu8hqcrUMuODhZiOAcUWWSGiQNooDsj/2X/cpww+bz/PH39942Z8Y9JJgH
+ B0mSsZRJ7qOIEZcAxKdVdf2zEwft3O3ND9gHorwQur1YzC9mrxxAB3P5jYnPEor8OZiGmKf3O
+ 8pYjURdHxcjfDPcXCTlln0M6wC8UUa6ZtqYQNUxJwO9YVNot28f5cvkDfvTjMOGITgmccdpxF
+ JjWejq09Nff/UBUeVVHq/e92KMdic6czcHAFZP06qs1JcG4cHivCqFaxRDxjAoQiBeMGrf1uI
+ eybHJsBBdIF66DbXzSIKFer9cLsikiA3Rgq6j3ENoICZFfuORQplJsNTNYGVaBKffmPDi0hTD
+ TjTD5xcqcu/Gq5XZGZvBYUEzIJbq6AIgwvs+P4do5JI9b4Ikh45bS4XZ7CAOxBMJ01fWU/fhB
+ Uy1oC7ulH7zulaT47AUY0GdEKJj2N8WYprxyQJ5e8zpaIC5oOH4fPYpL275yjx7vesC0wzJQV
+ 9Rzj/lHDsNdOlVkQqtkDUJEgqrL0HmNZRrWzzmW7Mfz/Gd/+fNjCfn65lEq+UN4qobAk+As+H
+ fko+Wqbh+gnpIHer4TU5Gi5+sJ+fbeurRDsw7QA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  2 Oct 2019 18:07:44 +0200, Krzysztof Kozlowski wrote:
-> Make the examples in Exynos ADC bindings more readable and bring them
-> closer to real DTS by using defines for clocks.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  .../devicetree/bindings/iio/adc/samsung,exynos-adc.yaml     | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
+Hi Florian,
 
-Applied, thanks.
+The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
 
-Rob
+  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
+
+are available in the git repository at:
+
+  git://github.com/anholt/linux tags/bcm2835-dt-next-2019-10-15
+
+for you to fetch changes up to 46fdee06aeefedfc62a4c33b2c4a7a74682ac755:
+
+  arm64: dts: broadcom: Add reference to RPi 4 B (2019-10-10 19:14:28 +0200)
+
+----------------------------------------------------------------
+This pull request introduce initial Raspberry Pi 4 support. But all the fancy
+stuff like GENET, PCIe, xHCI, 40 bit DMA and V3D is missing.
+
+----------------------------------------------------------------
+Stefan Wahren (7):
+      ARM: dts: bcm283x: Remove simple-bus from fixed clocks
+      ARM: dts: bcm283x: Remove brcm,bcm2835-pl011 compatible
+      ARM: dts: bcm283x: Move BCM2835/6/7 specific to bcm2835-common.dtsi
+      dt-bindings: arm: Convert BCM2835 board/soc bindings to json-schema
+      dt-bindings: arm: bcm2835: Add Raspberry Pi 4 to DT schema
+      ARM: dts: Add minimal Raspberry Pi 4 support
+      arm64: dts: broadcom: Add reference to RPi 4 B
+
+ .../devicetree/bindings/arm/bcm/bcm2835.yaml       |  54 ++
+ .../devicetree/bindings/arm/bcm/brcm,bcm2835.txt   |  67 --
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/bcm2711-rpi-4-b.dts              | 123 +++
+ arch/arm/boot/dts/bcm2711.dtsi                     | 844 +++++++++++++++++++++
+ arch/arm/boot/dts/bcm2835-common.dtsi              | 194 +++++
+ arch/arm/boot/dts/bcm2835-rpi.dtsi                 |   4 -
+ arch/arm/boot/dts/bcm2835.dtsi                     |   1 +
+ arch/arm/boot/dts/bcm2836.dtsi                     |   1 +
+ arch/arm/boot/dts/bcm2837.dtsi                     |   1 +
+ arch/arm/boot/dts/bcm283x-rpi-usb-peripheral.dtsi  |   7 +
+ arch/arm/boot/dts/bcm283x.dtsi                     | 190 +----
+ arch/arm64/boot/dts/broadcom/Makefile              |   3 +-
+ arch/arm64/boot/dts/broadcom/bcm2711-rpi-4-b.dts   |   2 +
+ 14 files changed, 1236 insertions(+), 256 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/bcm/bcm2835.yaml
+ delete mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,bcm2835.txt
+ create mode 100644 arch/arm/boot/dts/bcm2711-rpi-4-b.dts
+ create mode 100644 arch/arm/boot/dts/bcm2711.dtsi
+ create mode 100644 arch/arm/boot/dts/bcm2835-common.dtsi
+ create mode 100644 arch/arm/boot/dts/bcm283x-rpi-usb-peripheral.dtsi
+ create mode 100644 arch/arm64/boot/dts/broadcom/bcm2711-rpi-4-b.dts
