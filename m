@@ -2,62 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC3C9D756C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 13:46:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF667D7573
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 13:47:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729352AbfJOLqs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 07:46:48 -0400
-Received: from 8bytes.org ([81.169.241.247]:47502 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726208AbfJOLqp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 07:46:45 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id AC4752D9; Tue, 15 Oct 2019 13:46:43 +0200 (CEST)
-Date:   Tue, 15 Oct 2019 13:46:42 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Keith Busch <keith.busch@intel.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH 0/2] iommu/vt-d: Select PCI_PRI for INTEL_IOMMU_SVM
-Message-ID: <20191015114642.GL14518@8bytes.org>
-References: <20191009224551.179497-1-helgaas@kernel.org>
+        id S1729411AbfJOLrK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 07:47:10 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43704 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726208AbfJOLrJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 07:47:09 -0400
+Received: by mail-wr1-f66.google.com with SMTP id j18so23447287wrq.10;
+        Tue, 15 Oct 2019 04:47:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2rFh15VrB4DEKcYfjt476nNyBnV2R8iO+x5S3m+Zx9s=;
+        b=M44lzqYZ55PCUtw3DvsrdQZn/ARc2y7bf3Hs+7Tj2fei/jNSDBfdWh8cfXKTOAKsvY
+         SHBv/u9sMAP43yNXWl6wBlr/leLB/Xuqni4a+YYvCQtR7yQN5R68epVhwzU+XsKyjeWL
+         kGDErTlZZhuc9so36ovhMRIf6P1VE8xM7UIbrLULMmsYRLAoPO8t0zY/3eccNgWeyb3y
+         qFSQfD69DPfuX3E/abCstS+DW5K6Ct+roBaizDHaBuUxincE2mpMvsMyieSsxvEcI04C
+         JT+MHdwFI9OczZFDIFcpUYLaXxcO1NsgDFB+ZGEWFQew9k+NZAqaofjWtQy3iox9unY9
+         xLrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2rFh15VrB4DEKcYfjt476nNyBnV2R8iO+x5S3m+Zx9s=;
+        b=p4uWHH7GymW+MzlBjqvFd7sGmfvQpo6/Hc8Dr0ytNW43uMVouz4TVkvRNcdBRK0VxC
+         AlT5RUwUWWAkcVN7/qLxL1zowA4/hNbWlFs/9uECpxEbQNM1j2Fo5MDKGGWj349T0ykM
+         mTEtc15tEQzu6IZ4A+IoPlW9whSN6ru83zEuDJpTVZtwVoONxsEqRhdu56oWEamlOeBZ
+         ZX3wjVauxwmMRY5trKc+ViOK/Ht/BnMRDJESnJiINgG47JdgiFffyp5S/rPmJIM+FaRb
+         3Jh12pSeBYOZHoxxMNDZ92CYycOZEeC/2n3/ryX5SLALXEaScu1J1IQaO/IiPeRPwxzl
+         Pegw==
+X-Gm-Message-State: APjAAAX83mIMumSqlw4KJYEE3KkYXblQdrfuI1iWgY94zPMK86Sj2mmJ
+        TH+00ccSwbPqwiLgZtwaxQJDEAjJUaI3qw==
+X-Google-Smtp-Source: APXvYqzfLHeVyovVfvjsOtMX1WbIcgz8S/+Bh0XBIL8YKw8jbzwdIlKeIIEmB8ocHE7M5CxvuheMJw==
+X-Received: by 2002:a5d:540d:: with SMTP id g13mr26160793wrv.8.1571140026937;
+        Tue, 15 Oct 2019 04:47:06 -0700 (PDT)
+Received: from andrea.corp.microsoft.com ([2a01:110:8012:1010:8d42:cc61:bfff:65c2])
+        by smtp.gmail.com with ESMTPSA id u11sm20237307wmd.32.2019.10.15.04.47.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2019 04:47:05 -0700 (PDT)
+From:   Andrea Parri <parri.andrea@gmail.com>
+To:     linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org
+Cc:     "K . Y . Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Dexuan Cui <decui@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+        Andrea Parri <parri.andrea@gmail.com>
+Subject: [PATCH v3 0/3] Drivers: hv: vmbus: Miscellaneous improvements
+Date:   Tue, 15 Oct 2019 13:46:43 +0200
+Message-Id: <20191015114646.15354-1-parri.andrea@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191009224551.179497-1-helgaas@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Bjorn,
+Hi all,
 
-On Wed, Oct 09, 2019 at 05:45:49PM -0500, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> I think intel-iommu.c depends on CONFIG_AMD_IOMMU in an undesirable way:
-> 
-> When CONFIG_INTEL_IOMMU_SVM=y, iommu_enable_dev_iotlb() calls PRI
-> interfaces (pci_reset_pri() and pci_enable_pri()), but those are only
-> implemented when CONFIG_PCI_PRI is enabled.  If CONFIG_PCI_PRI is not
-> enabled, there are stubs that just return failure.
-> 
-> The INTEL_IOMMU_SVM Kconfig does nothing with PCI_PRI, but AMD_IOMMU
-> selects PCI_PRI.  So if AMD_IOMMU is enabled, intel-iommu.c gets the full
-> PRI interfaces.  If AMD_IOMMU is not enabled, it gets the PRI stubs.
-> 
-> This seems wrong.  The first patch here makes INTEL_IOMMU_SVM select
-> PCI_PRI so intel-iommu.c always gets the full PRI interfaces.
+The patchset:
 
-Indeed, this is very wrong, thanks for fixing it. Feel free to apply
-this series to your tree with my:
+  - refactors the VMBus negotiation code by introducing the table of
+    VMBus protocol versions (patch 1/3),
 
-Reviewed-by: Joerg Roedel <jroedel@suse.de>
-Acked-by: Joerg Roedel <jroedel@suse.de>
+  - enables VMBus protocol version 4.1, 5.1 and 5.2 (patch 2/3),
+
+  - introduces a module parameter to cap the VMBus protocol versions
+    which a guest can negotiate with the hypervisor (patch 3/3).
+
+Thanks,
+  Andrea
+
+---
+Changes since v2 ([1]):
+  - refactor the loop exit path in vmbus_connect() (Michael Kelley)
+  - do not rename VERSION_WIN10 (Michael Kelley)
+
+Changes since v1 ([2]):
+  - remove the VERSION_INVAL macro (Vitaly Kuznetsov and Dexuan Cui)
+  - make the table of VMBus protocol versions static (Dexuan Cui)
+  - enable VMBus protocol version 4.1 (Michael Kelley)
+  - introduce module parameter to cap the VMBus version (Dexuan Cui)
+
+[1] https://lkml.kernel.org/r/20191010154600.23875-1-parri.andrea@gmail.com
+[2] https://lkml.kernel.org/r/20191007163115.26197-1-parri.andrea@gmail.com
+
+Andrea Parri (3):
+  Drivers: hv: vmbus: Introduce table of VMBus protocol versions
+  Drivers: hv: vmbus: Enable VMBus protocol versions 4.1, 5.1 and 5.2
+  Drivers: hv: vmbus: Add module parameter to cap the VMBus version
+
+ drivers/hv/connection.c | 72 +++++++++++++++++++++--------------------
+ drivers/hv/vmbus_drv.c  |  3 +-
+ include/linux/hyperv.h  | 12 ++++---
+ 3 files changed, 45 insertions(+), 42 deletions(-)
+
+-- 
+2.23.0
 
