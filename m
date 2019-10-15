@@ -2,138 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0DB5D83E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 00:46:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1508D83EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 00:46:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390032AbfJOWp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 18:45:58 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:46978 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732531AbfJOWp5 (ORCPT
+        id S2390060AbfJOWqL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 18:46:11 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:37920 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390034AbfJOWqI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 18:45:57 -0400
-Received: by mail-ot1-f65.google.com with SMTP id 89so18418678oth.13;
-        Tue, 15 Oct 2019 15:45:55 -0700 (PDT)
+        Tue, 15 Oct 2019 18:46:08 -0400
+Received: by mail-lj1-f193.google.com with SMTP id b20so21950974ljj.5;
+        Tue, 15 Oct 2019 15:46:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sX8jTMX1nSIXGcCRNZ453mld0cSsi8SG9vJtVFWmkgY=;
+        b=ES/OzHKnNaTbjDoZaXmFsqYm4h8O0iW4SYK/1ndLuLvY7RUpbwD2ej7ZWtshgaPazd
+         UUnQwewSFBIjRDF44nesd7JXsVX/k50opp+s5i5b2f19wxk/LbSzVk13LFGb+CmUXKlV
+         092qU3KAwKp92DLApsSN7InO1e5M6HAIoyijAJkq862bxOQ/FEc3MztS6PHQuENM75Yx
+         GjUKKm+9FNF4fghj+tPnOBSUSvEPMCmdTXXQaSyrDys0wQ9C/qOqkBoiS3sP28uQwYG3
+         KQKnDniiiVXYLDbejzoUpnDGXbTxZ8ulLBvxQz2fRcdjco3lJrfiSWsU+sgsT+1QQk8j
+         ZsVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MaWp6Jn60uj0bT6sKCogPI4dguf5DlDQ3ZrBSjZQ+hQ=;
-        b=BnGN+2Y/7C4yic9FHhR6n/xkvlokZdM5f+PCeegSm/85ytr0Y3z2e5GpzBm9zWvG0m
-         n/RmFIHNbFK7byMaua9U+1C3eQdeBueXJ0yhoYSZ8vzQAO5wvXL+MIhHZ/T2OigtF0l7
-         +Y3SlVXTPAueryS1hBCFqYQvaY+vMTyLTabqv+kaPv71agkipgXfb4p+NY1QafBR+MlD
-         r2haiwHrMNsK8S1a9zsJcSTcdtaQsue32MI4RZSPedrW/PXfzLRLHq/RyB3fHtZjfIuy
-         JjGzR3prpUA2u+IOPosWjBMbwlqRBtni/G2ywXtDbdK+DB5LLUCsl746OoDPLK7YfPce
-         a8sQ==
-X-Gm-Message-State: APjAAAVTLv4sEZ8J5orX8zKMLKhh9jDoDt/UqegNvyTfxlwtNu2tuKwh
-        lpT+KPE4GR4bnS6pPFo6WFURgtE=
-X-Google-Smtp-Source: APXvYqx++w9zqh0aKrrTNQxwptQw2IBBKd30UczgzL9fYL5LBBi4ThJTdAd91a3CRCBWp8KOLN+6ww==
-X-Received: by 2002:a9d:6b82:: with SMTP id b2mr7915218otq.56.1571179555334;
-        Tue, 15 Oct 2019 15:45:55 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id c19sm6786305oib.21.2019.10.15.15.45.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2019 15:45:54 -0700 (PDT)
-Date:   Tue, 15 Oct 2019 17:45:54 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     mchehab@kernel.org, sakari.ailus@iki.fi,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        c.barrett@framos.com, a.brela@framos.com
-Subject: Re: [PATCH 1/2] dt-bindings: media: i2c: Add IMX296 CMOS sensor
- binding
-Message-ID: <20191015224554.GA5634@bogus>
-References: <20191011035613.13598-1-manivannan.sadhasivam@linaro.org>
- <20191011035613.13598-2-manivannan.sadhasivam@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sX8jTMX1nSIXGcCRNZ453mld0cSsi8SG9vJtVFWmkgY=;
+        b=tUBfF9bMuSvxERqghdiiE3zDWsnvAP5Oo8ucMz1GvO8c8f/dmYOMhRTvkfAF+LCPmp
+         +aduvoAbEpD/BNijO3MwKodzF7ZlwnMlGbWE2czPNIzz+0wKT0bgM3+T+8sWYIXXzqOa
+         k5g1mvrMeZ+5e2EKHAxwQQdYHs8q4sDFwogs2qPmGpLeW20H6yChSdICDspAvXE9SeGd
+         2NzQJHxwLqB2lHfDoJGL7JFfyH00yMTYjeSAeG0xwgHv8h9LV1KsYhk3qksq9h61P4Hf
+         mpqU51b+tIeX6RF6+T2+tyIWt5gRG4HgRe8cnu/On+vC+xLKakKPiNnPp8z0n/6E4H1n
+         BaSg==
+X-Gm-Message-State: APjAAAU8iIR7/IUL7uaSbzDbD5ysGyC2SpI26r8/HFnCB6WBqkfE2+pK
+        pGHloyGcnIoG103gpPvpYKT92afj/YtCs/P1gpg=
+X-Google-Smtp-Source: APXvYqzlNJ02z8aHXTE2BBN+PZ4eg4j3tGXrnmLyvYl56/qH/Wq5j5U+oaAP2hF4sPK9AnCKWxQBVEiuc6J0CBfrUro=
+X-Received: by 2002:a2e:6c15:: with SMTP id h21mr23559078ljc.10.1571179565793;
+ Tue, 15 Oct 2019 15:46:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191011035613.13598-2-manivannan.sadhasivam@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191009160907.10981-1-christian.brauner@ubuntu.com>
+ <CAADnVQJxUwD3u+tK1xsU2thpRWiAbERGx8mMoXKOCfNZrETMuw@mail.gmail.com> <20191010092647.cpxh7neqgabq36gt@wittgenstein>
+In-Reply-To: <20191010092647.cpxh7neqgabq36gt@wittgenstein>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Tue, 15 Oct 2019 15:45:54 -0700
+Message-ID: <CAADnVQJ6t+HQBRhN3mZrz4qhzGybsY2g-26mc2kQARkbLxqzTA@mail.gmail.com>
+Subject: Re: [PATCH 0/3] bpf: switch to new usercopy helpers
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        bpf <bpf@vger.kernel.org>, Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 09:26:12AM +0530, Manivannan Sadhasivam wrote:
-> Add devicetree binding for IMX296 CMOS image sensor.
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  .../devicetree/bindings/media/i2c/imx296.txt  | 55 +++++++++++++++++++
->  1 file changed, 55 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/i2c/imx296.txt
+On Thu, Oct 10, 2019 at 2:26 AM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+>
+> On Wed, Oct 09, 2019 at 04:06:18PM -0700, Alexei Starovoitov wrote:
+> > On Wed, Oct 9, 2019 at 9:09 AM Christian Brauner
+> > <christian.brauner@ubuntu.com> wrote:
+> > >
+> > > Hey everyone,
+> > >
+> > > In v5.4-rc2 we added two new helpers check_zeroed_user() and
+> > > copy_struct_from_user() including selftests (cf. [1]). It is a generic
+> > > interface designed to copy a struct from userspace. The helpers will be
+> > > especially useful for structs versioned by size of which we have quite a
+> > > few.
+> > >
+> > > The most obvious benefit is that this helper lets us get rid of
+> > > duplicate code. We've already switched over sched_setattr(), perf_event_open(),
+> > > and clone3(). More importantly it will also help to ensure that users
+> > > implementing versioning-by-size end up with the same core semantics.
+> > >
+> > > This point is especially crucial since we have at least one case where
+> > > versioning-by-size is used but with slighly different semantics:
+> > > sched_setattr(), perf_event_open(), and clone3() all do do similar
+> > > checks to copy_struct_from_user() while rt_sigprocmask(2) always rejects
+> > > differently-sized struct arguments.
+> > >
+> > > This little series switches over bpf codepaths that have hand-rolled
+> > > implementations of these helpers.
+> >
+> > check_zeroed_user() is not in bpf-next.
+> > we will let this set sit in patchworks for some time until bpf-next
+> > is merged back into net-next and we fast forward it.
+> > Then we can apply it (assuming no conflicts).
+>
+> Sounds good to me. Just ping me when you need me to resend rebase onto
+> bpf-next.
 
-You should know by now, use DT schema format please.
+-rc1 is now in bpf-next.
+I took a look at patches and they look good overall.
 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/imx296.txt b/Documentation/devicetree/bindings/media/i2c/imx296.txt
-> new file mode 100644
-> index 000000000000..25d3b15162c1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/i2c/imx296.txt
-> @@ -0,0 +1,55 @@
-> +* Sony IMX296 1/2.8-Inch CMOS Image Sensor
-> +
-> +The Sony IMX296 is a 1/2.9-Inch active pixel type CMOS Solid-state image
-> +sensor with square pixel array and 1.58 M effective pixels. This chip features
-> +a global shutter with variable charge-integration time. It is programmable
-> +through I2C and 4-wire interfaces. The sensor output is available via CSI-2
-> +serial data output (1 Lane).
-> +
-> +Required Properties:
-> +- compatible: Should be "sony,imx296"
-> +- reg: I2C bus address of the device
-> +- clocks: Reference to the mclk clock.
-> +- clock-names: Should be "mclk".
-> +- clock-frequency: Frequency of the mclk clock in Hz.
-> +- vddo-supply: Interface power supply.
-> +- vdda-supply: Analog power supply.
-> +- vddd-supply: Digital power supply.
-> +
-> +Optional Properties:
-> +- reset-gpios: Sensor reset GPIO
-> +
-> +The imx296 device node should contain one 'port' child node with
-> +an 'endpoint' subnode. For further reading on port node refer to
-> +Documentation/devicetree/bindings/media/video-interfaces.txt.
-> +
-> +Required Properties on endpoint:
-> +- data-lanes: check ../video-interfaces.txt
+In patches 2 and 3 the zero init via "= {};"
+should be unnecessary anymore due to
+copy_struct_from_user() logic, right?
 
-This should only be required when not using all the lanes on the device.
-
-> +- remote-endpoint: check ../video-interfaces.txt
-
-Don't really need to document this.
-
-> +
-> +Example:
-> +	&i2c1 {
-> +		...
-> +		imx296: camera-sensor@1a {
-> +			compatible = "sony,imx296";
-> +			reg = <0x1a>;
-> +
-> +			reset-gpios = <&msmgpio 35 GPIO_ACTIVE_LOW>;
-> +			pinctrl-names = "default";
-> +			pinctrl-0 = <&camera_rear_default>;
-> +
-> +			clocks = <&gcc GCC_CAMSS_MCLK0_CLK>;
-> +			clock-names = "mclk";
-> +			clock-frequency = <37125000>;
-> +
-> +			vddo-supply = <&camera_vddo_1v8>;
-> +			vdda-supply = <&camera_vdda_3v3>;
-> +			vddd-supply = <&camera_vddd_1v2>;
-> +
-> +			port {
-> +				imx296_ep: endpoint {
-> +					data-lanes = <1>;
-> +					remote-endpoint = <&csiphy0_ep>;
-> +				};
-> +			};
-> +		};
-> -- 
-> 2.17.1
-> 
+Could you also convert all other case in kernel/bpf/,
+so bpf_check_uarg_tail_zero() can be removed ?
+Otherwise the half-way conversion will look odd.
