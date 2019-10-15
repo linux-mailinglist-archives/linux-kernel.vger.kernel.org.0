@@ -2,103 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 188F4D756E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 13:46:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B07F7D7569
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 13:46:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729378AbfJOLq5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 07:46:57 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:40004 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726208AbfJOLq4 (ORCPT
+        id S1729318AbfJOLqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 07:46:44 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46547 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726208AbfJOLqn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 07:46:56 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9FBhkSG128247;
-        Tue, 15 Oct 2019 11:46:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=ioUB4OQf3/crC1d3UdNJzo0k+yaINfoF6RwTYIRdMeQ=;
- b=QvK8ywLH5JaiDsQE3ecSFMabz320gTsm4Sm0RdNVx5DmU2HrT9HxLW1ccMsVu4ecceMy
- e4d94b9IXtuR/3fbUySwJCXRQhk3NpIrSTLNbd55Mc2W6UpGD3apmDqf8nkRlqsb4oK+
- RqEPPKNsGzueaHwItZGFz3iFnxJ1Idgro778uwnwqFQl00s0fNGP4SxXiEVynXHgNoAk
- FYsd0yn4QHppJUKQtZ3MLH4oXOrMTe6/QocMyXjR4CUaIVtX1ZBbX3bam6gBZ/lhwox2
- pAvfFpqH823ddIWa3ksadguwRcdQDmw4okk3avH7ukgRhFLadPpSTYOA9de039qzoCBA ow== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2vk7fr73e0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Oct 2019 11:46:30 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9FBhIWM154785;
-        Tue, 15 Oct 2019 11:46:30 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2vn7181c5u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Oct 2019 11:46:30 +0000
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9FBkSab025252;
-        Tue, 15 Oct 2019 11:46:28 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 15 Oct 2019 11:46:27 +0000
-Date:   Tue, 15 Oct 2019 14:46:18 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     gregkh@linuxfoundation.org, jarias.linux@gmail.com,
-        julia.lawall@lip6.fr, colin.king@canonical.com,
-        hdegoede@redhat.com, hariprasad.kelam@gmail.com,
-        nachukannan@gmail.com, pakki001@umn.edu, hardiksingh.k@gmail.com,
-        nishkadg.linux@gmail.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] staging: rtl8723bs: remove unnecessary null check
-Message-ID: <20191015114618.GG4774@kadam>
-References: <20191015114053.23496-1-yuehaibing@huawei.com>
+        Tue, 15 Oct 2019 07:46:43 -0400
+Received: by mail-pf1-f196.google.com with SMTP id q5so12299662pfg.13
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 04:46:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=7nxz6zGMrO8KEWQH3HeYGqaLsVZGUP/TEpFv7v6lvxs=;
+        b=zvSGZhiOtHdGvy14s6GyHZuv88yUqPbQwJpWSzfbMYO5X9dWo5YYuHa6rNSQRvD+So
+         gQqpIGP5TbYKTxYrAaCidrqfnNq0975PPFG+AhBp5OL22ab8iRsCR4gYyxixRlxbL69N
+         ssAf4NW0g2tZmUBkUmujAHGpHMb6+WfP4J8z5bmZT8fe4Pit9+XMbFzXSqnf/4KpgFpT
+         7gZ4fLKI89TDHttIkcS/qIKANqSXF4n+rTDvJkWKO34sz/OO5A1m86i8ZpfWJXfnANN0
+         8TsSdz2p4rGez9OJseuDXbHApFTnFax32bcky64+HFr7AX4kTvxfPfzmDLYEuWed5e55
+         BXQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7nxz6zGMrO8KEWQH3HeYGqaLsVZGUP/TEpFv7v6lvxs=;
+        b=J/R12/yaB5r19v6EsdlvzDYYShpcQgJHGRA7Bxew80BxBSNh/aUpcJqyMcnuvFiVGl
+         wXdQzjGvxnurzCIPHI9lZFZgH/wa1UfFwFgqn2g9ZrmOnga5WVW58DcSmepexU5W2J/X
+         hCMz/97fE4Be0ExB13cOHeHMjuukS8G+aSk8Q08YKfqC5BBMTcutEbf95R7zuZlDnBuc
+         pvrTBZsHCEThNcEZajK6Lzoggwgm7ykxlm/f2KgS6G8kKdI9Egr+Nf2Zm2nDtpDCxUGy
+         VJcLP4cULd2rQ5VO25oh5DduVtI8yLoef8OGKQ/Wxdec1U9TlHu9GoK2nZd+S8o0aBe2
+         x4Hw==
+X-Gm-Message-State: APjAAAWgt1CGPlZLTlxYw3iusotJgRSjwzgIYZTbC1Iz8CyQOW5rcF36
+        2rU2y7GVhddedFKuPDzZU9SEOg==
+X-Google-Smtp-Source: APXvYqx57AELHzxiNgpMzoxeCvv9cjy2XscqdyIxlwGe5Q3KNTjsdl/RhoTDUKUsXGBSzws2Bo9sCw==
+X-Received: by 2002:a63:9255:: with SMTP id s21mr39408310pgn.325.1571140002251;
+        Tue, 15 Oct 2019 04:46:42 -0700 (PDT)
+Received: from localhost ([122.172.151.112])
+        by smtp.gmail.com with ESMTPSA id q2sm24373495pfg.144.2019.10.15.04.46.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 15 Oct 2019 04:46:40 -0700 (PDT)
+Date:   Tue, 15 Oct 2019 17:16:37 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Rafael Wysocki <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>, mka@chromium.org,
+        ulf.hansson@linaro.org, sfr@canb.auug.org.au, pavel@ucw.cz,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH V7 5/7] cpufreq: Register notifiers with the PM QoS
+ framework
+Message-ID: <20191015114637.pcdbs2ctxl4xoxdo@vireshk-i7>
+References: <5ad2624194baa2f53acc1f1e627eb7684c577a19.1562210705.git.viresh.kumar@linaro.org>
+ <2c7a751a58adb4ce6f345dab9714b924504009b6.1562583394.git.viresh.kumar@linaro.org>
+ <a1c503a7-6136-a405-369c-596a680183f2@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191015114053.23496-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9410 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910150110
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9410 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910150110
+In-Reply-To: <a1c503a7-6136-a405-369c-596a680183f2@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 07:40:53PM +0800, YueHaibing wrote:
-> Null check before kfree is redundant, so remove it.
-> This is detected by coccinelle.
+On 22-09-19, 23:12, Dmitry Osipenko wrote:
+> Hello Viresh,
 > 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/staging/rtl8723bs/core/rtw_xmit.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> This patch causes use-after-free on a cpufreq driver module reload. Please take a look, thanks in advance.
 > 
-> diff --git a/drivers/staging/rtl8723bs/core/rtw_xmit.c b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-> index 7011c2a..4597f4f 100644
-> --- a/drivers/staging/rtl8723bs/core/rtw_xmit.c
-> +++ b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-> @@ -2210,8 +2210,7 @@ void rtw_free_hwxmits(struct adapter *padapter)
->  	struct xmit_priv *pxmitpriv = &padapter->xmitpriv;
->  
->  	hwxmits = pxmitpriv->hwxmits;
-> -	if (hwxmits)
-> -		kfree(hwxmits);
-> +	kfree(hwxmits);
+> 
+> [   87.952369] ==================================================================
+> [   87.953259] BUG: KASAN: use-after-free in notifier_chain_register+0x4f/0x9c
+> [   87.954031] Read of size 4 at addr e6abbd0c by task modprobe/243
+> 
+> [   87.954901] CPU: 1 PID: 243 Comm: modprobe Tainted: G        W
+> 5.3.0-next-20190920-00185-gf61698eab956-dirty #2408
+> [   87.956077] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+> [   87.956807] [<c0110aad>] (unwind_backtrace) from [<c010bb71>] (show_stack+0x11/0x14)
+> [   87.957709] [<c010bb71>] (show_stack) from [<c0d37b25>] (dump_stack+0x89/0x98)
+> [   87.958616] [<c0d37b25>] (dump_stack) from [<c02937e1>]
+> (print_address_description.constprop.0+0x3d/0x340)
+> [   87.959785] [<c02937e1>] (print_address_description.constprop.0) from [<c0293c6b>]
+> (__kasan_report+0xe3/0x12c)
+> [   87.960907] [<c0293c6b>] (__kasan_report) from [<c014988f>] (notifier_chain_register+0x4f/0x9c)
+> [   87.962001] [<c014988f>] (notifier_chain_register) from [<c01499b5>]
+> (blocking_notifier_chain_register+0x29/0x3c)
+> [   87.963180] [<c01499b5>] (blocking_notifier_chain_register) from [<c06f7ee9>]
+> (dev_pm_qos_add_notifier+0x79/0xf8)
+> [   87.964339] [<c06f7ee9>] (dev_pm_qos_add_notifier) from [<c092927d>] (cpufreq_online+0x5e1/0x8a4)
+> [   87.965351] [<c092927d>] (cpufreq_online) from [<c09295c9>] (cpufreq_add_dev+0x79/0x80)
+> [   87.966247] [<c09295c9>] (cpufreq_add_dev) from [<c06eb9d3>] (subsys_interface_register+0xc3/0x100)
+> [   87.967297] [<c06eb9d3>] (subsys_interface_register) from [<c0926e53>]
+> (cpufreq_register_driver+0x13b/0x1ec)
+> [   87.968476] [<c0926e53>] (cpufreq_register_driver) from [<bf800435>]
+> (tegra20_cpufreq_probe+0x165/0x1a8 [tegra20_cpufreq])
 
-Just do:
+Hi Dmitry,
 
-	kfree(pxmitpriv->hwxmits);
+Thanks for the bug report and I was finally able to reproduce it at my end and
+this was quite an interesting debugging exercise :)
 
-regards,
-dan carpenter
+When a cpufreq driver gets registered, we register with the subsys interface and
+it calls cpufreq_add_dev() for each CPU, starting from CPU0. And so the QoS
+notifiers get added to the first CPU of the policy, i.e. CPU0 in common cases.
 
+When the cpufreq driver gets unregistered, we unregister with the subsys
+interface and it calls cpufreq_remove_dev() for each CPU, starting from CPU0
+(should have been in reverse order I feel). We remove the QoS notifier only when
+cpufreq_remove_dev() gets called for the last CPU of the policy, lets call it
+CPUx. Now this has a different notifier list as compared to CPU0.
+
+In short, we are adding the cpufreq notifiers to CPU0 and removing them from
+CPUx. When we try to add it again by inserting the module for second time, we
+find a node in the notifier list which is already freed but still in the list as
+we removed it from CPUx's list (which doesn't do anything as the node wasn't
+there in the first place).
+
+@Rafael: How do you see we solve this problem ? Here are the options I could
+think of:
+
+- Update subsys layer to reverse the order of devices while unregistering (this
+  will fix the current problem, but we will still have corner cases hanging
+  around, like if the CPU0 is hotplugged out, etc).
+
+- Update QoS framework with the knowledge of related CPUs, this has been pending
+  until now from my side. And this is the thing we really need to do. Eventually
+  we shall have only a single notifier list for all CPUs of a policy, at least
+  for MIN/MAX frequencies.
+
+- ??
+
+-- 
+viresh
