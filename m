@@ -2,110 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1508D83EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 00:46:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63284D83FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 00:47:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390060AbfJOWqL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 18:46:11 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:37920 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390034AbfJOWqI (ORCPT
+        id S2390094AbfJOWrC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 18:47:02 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:38713 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728835AbfJOWrA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 18:46:08 -0400
-Received: by mail-lj1-f193.google.com with SMTP id b20so21950974ljj.5;
-        Tue, 15 Oct 2019 15:46:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sX8jTMX1nSIXGcCRNZ453mld0cSsi8SG9vJtVFWmkgY=;
-        b=ES/OzHKnNaTbjDoZaXmFsqYm4h8O0iW4SYK/1ndLuLvY7RUpbwD2ej7ZWtshgaPazd
-         UUnQwewSFBIjRDF44nesd7JXsVX/k50opp+s5i5b2f19wxk/LbSzVk13LFGb+CmUXKlV
-         092qU3KAwKp92DLApsSN7InO1e5M6HAIoyijAJkq862bxOQ/FEc3MztS6PHQuENM75Yx
-         GjUKKm+9FNF4fghj+tPnOBSUSvEPMCmdTXXQaSyrDys0wQ9C/qOqkBoiS3sP28uQwYG3
-         KQKnDniiiVXYLDbejzoUpnDGXbTxZ8ulLBvxQz2fRcdjco3lJrfiSWsU+sgsT+1QQk8j
-         ZsVA==
+        Tue, 15 Oct 2019 18:47:00 -0400
+Received: by mail-oi1-f195.google.com with SMTP id m16so18342883oic.5;
+        Tue, 15 Oct 2019 15:46:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sX8jTMX1nSIXGcCRNZ453mld0cSsi8SG9vJtVFWmkgY=;
-        b=tUBfF9bMuSvxERqghdiiE3zDWsnvAP5Oo8ucMz1GvO8c8f/dmYOMhRTvkfAF+LCPmp
-         +aduvoAbEpD/BNijO3MwKodzF7ZlwnMlGbWE2czPNIzz+0wKT0bgM3+T+8sWYIXXzqOa
-         k5g1mvrMeZ+5e2EKHAxwQQdYHs8q4sDFwogs2qPmGpLeW20H6yChSdICDspAvXE9SeGd
-         2NzQJHxwLqB2lHfDoJGL7JFfyH00yMTYjeSAeG0xwgHv8h9LV1KsYhk3qksq9h61P4Hf
-         mpqU51b+tIeX6RF6+T2+tyIWt5gRG4HgRe8cnu/On+vC+xLKakKPiNnPp8z0n/6E4H1n
-         BaSg==
-X-Gm-Message-State: APjAAAU8iIR7/IUL7uaSbzDbD5ysGyC2SpI26r8/HFnCB6WBqkfE2+pK
-        pGHloyGcnIoG103gpPvpYKT92afj/YtCs/P1gpg=
-X-Google-Smtp-Source: APXvYqzlNJ02z8aHXTE2BBN+PZ4eg4j3tGXrnmLyvYl56/qH/Wq5j5U+oaAP2hF4sPK9AnCKWxQBVEiuc6J0CBfrUro=
-X-Received: by 2002:a2e:6c15:: with SMTP id h21mr23559078ljc.10.1571179565793;
- Tue, 15 Oct 2019 15:46:05 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=C6wXRtpbEpzp24GuIHDI6uFCDF6VV7WToyM7YY1OIxQ=;
+        b=eGVYGg9wfv/UXrbdGkMVHgmPW6flLwRGWQc02+jQaWkMZ+NGyurwc2mvcrLJqXMUUk
+         L+HlpW6Tssw4J/oBRy5RS05+TVLI4PI6B+h7JDSpmNqrb4itSruBzD1lOfI9cijt1xsQ
+         PfLoDZVbwpAZdVLRNLWvGPqkyw6F+p4WvEUI1+cAQN4HJyCzEaaMTQx1dgr+H5B5u7BO
+         uaOxzpn/rI2XRGigFRFhVFDvuzRYtPNKBMnbRR3AI+sZatmz7gCCs/w1ObTn8LWFyreN
+         HMfR6fMzq/vCa17SgQVkm31ugLYfDoXL3zfmH4GwXahmTK8r1NWltV0Dzaf8zEOPHQ79
+         4Hdg==
+X-Gm-Message-State: APjAAAWJj95S3LJansMhIG8e8lwPWGX+ROJQucxZFpDJCAodKPbfxEYn
+        W8dLwe4lv/9R14oeE0y4gA==
+X-Google-Smtp-Source: APXvYqzfVvWw5j9mzVQMN0v7Wf66qbF22TX9XvtdfnrJk4RPIsSapGqhtHO196+2gpIJxuthWNa7BQ==
+X-Received: by 2002:aca:aac5:: with SMTP id t188mr807467oie.39.1571179619358;
+        Tue, 15 Oct 2019 15:46:59 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id x38sm7204509ota.59.2019.10.15.15.46.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2019 15:46:58 -0700 (PDT)
+Date:   Tue, 15 Oct 2019 17:46:58 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Kamel Bouhara <kamel.bouhara@bootlin.com>
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kamel Bouhara <kamel.bouhara@bootlin.com>
+Subject: Re: [PATCH 1/3] dt-bindings: Add vendor prefix for Overkiz SAS
+Message-ID: <20191015224658.GA13080@bogus>
+References: <20191011125022.16329-1-kamel.bouhara@bootlin.com>
+ <20191011125022.16329-2-kamel.bouhara@bootlin.com>
 MIME-Version: 1.0
-References: <20191009160907.10981-1-christian.brauner@ubuntu.com>
- <CAADnVQJxUwD3u+tK1xsU2thpRWiAbERGx8mMoXKOCfNZrETMuw@mail.gmail.com> <20191010092647.cpxh7neqgabq36gt@wittgenstein>
-In-Reply-To: <20191010092647.cpxh7neqgabq36gt@wittgenstein>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Tue, 15 Oct 2019 15:45:54 -0700
-Message-ID: <CAADnVQJ6t+HQBRhN3mZrz4qhzGybsY2g-26mc2kQARkbLxqzTA@mail.gmail.com>
-Subject: Re: [PATCH 0/3] bpf: switch to new usercopy helpers
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        bpf <bpf@vger.kernel.org>, Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191011125022.16329-2-kamel.bouhara@bootlin.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 2:26 AM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
->
-> On Wed, Oct 09, 2019 at 04:06:18PM -0700, Alexei Starovoitov wrote:
-> > On Wed, Oct 9, 2019 at 9:09 AM Christian Brauner
-> > <christian.brauner@ubuntu.com> wrote:
-> > >
-> > > Hey everyone,
-> > >
-> > > In v5.4-rc2 we added two new helpers check_zeroed_user() and
-> > > copy_struct_from_user() including selftests (cf. [1]). It is a generic
-> > > interface designed to copy a struct from userspace. The helpers will be
-> > > especially useful for structs versioned by size of which we have quite a
-> > > few.
-> > >
-> > > The most obvious benefit is that this helper lets us get rid of
-> > > duplicate code. We've already switched over sched_setattr(), perf_event_open(),
-> > > and clone3(). More importantly it will also help to ensure that users
-> > > implementing versioning-by-size end up with the same core semantics.
-> > >
-> > > This point is especially crucial since we have at least one case where
-> > > versioning-by-size is used but with slighly different semantics:
-> > > sched_setattr(), perf_event_open(), and clone3() all do do similar
-> > > checks to copy_struct_from_user() while rt_sigprocmask(2) always rejects
-> > > differently-sized struct arguments.
-> > >
-> > > This little series switches over bpf codepaths that have hand-rolled
-> > > implementations of these helpers.
-> >
-> > check_zeroed_user() is not in bpf-next.
-> > we will let this set sit in patchworks for some time until bpf-next
-> > is merged back into net-next and we fast forward it.
-> > Then we can apply it (assuming no conflicts).
->
-> Sounds good to me. Just ping me when you need me to resend rebase onto
-> bpf-next.
+On Fri, 11 Oct 2019 14:50:20 +0200, Kamel Bouhara wrote:
+> Overkiz is a smarthome solutions provider, more information on:
+> https://www.overkiz.com
+> 
+> Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
--rc1 is now in bpf-next.
-I took a look at patches and they look good overall.
-
-In patches 2 and 3 the zero init via "= {};"
-should be unnecessary anymore due to
-copy_struct_from_user() logic, right?
-
-Could you also convert all other case in kernel/bpf/,
-so bpf_check_uarg_tail_zero() can be removed ?
-Otherwise the half-way conversion will look odd.
+Acked-by: Rob Herring <robh@kernel.org>
