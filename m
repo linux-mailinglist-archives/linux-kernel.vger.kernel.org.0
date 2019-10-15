@@ -2,63 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68F1DD768B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 14:31:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6A7AD7694
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 14:31:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729425AbfJOMbA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 08:31:00 -0400
-Received: from 8bytes.org ([81.169.241.247]:47552 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729160AbfJOMbA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 08:31:00 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 27D5E2DF; Tue, 15 Oct 2019 14:30:58 +0200 (CEST)
-Date:   Tue, 15 Oct 2019 14:30:53 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Yong Wu <yong.wu@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Evan Green <evgreen@chromium.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Tomasz Figa <tfiga@google.com>,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, youlin.pei@mediatek.com,
-        Nicolas Boichat <drinkcat@chromium.org>, anan.sun@mediatek.com,
-        ming-fan.chen@mediatek.com
-Subject: Re: [PATCH] memory: mtk-smi: Add PM suspend and resume ops
-Message-ID: <20191015123053.GA17570@8bytes.org>
-References: <1570622373-16413-1-git-send-email-yong.wu@mediatek.com>
+        id S1729765AbfJOMbU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 08:31:20 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:1271 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725871AbfJOMbU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 08:31:20 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9FCFiFX020740;
+        Tue, 15 Oct 2019 14:31:05 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=C/kzveCydwhm/NSFFbbmhm40wMyVsaHpKZ6dysDlYG0=;
+ b=qyuKPHoeTpOW3iueqds4b/gZvPAxhVUcK9So+HFG+eldZacdjcWHeND1gDmE85oUoSYn
+ UJ5DieWVV5C73w8PSyW5bCGbC9eFU/it5YT7dZqaEhoqEniIJqr4bpEvtPFAxw7UuJwK
+ bKefzXdgx9k7WWSktRdMQ9QEC8IecSV0pUNPaYiO++nMUImGpAn41CSY87abBH+PGYc9
+ bJONXibjSpSo1HnKljA0SOF05ESnvCO+4GvyYdxy8eFhUqugk4Ia1fIxNZWv4bCsYMqm
+ xqDW+YeICJBOMPF+CKqUwbzvxs3h2F6uwy+VrIhB46w/VRbTuCYVgjyVBlye1of6INU3 kQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2vk4kx04f4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 15 Oct 2019 14:31:05 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 24DA6100034;
+        Tue, 15 Oct 2019 14:31:05 +0200 (CEST)
+Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 106AA2C7EA9;
+        Tue, 15 Oct 2019 14:31:05 +0200 (CEST)
+Received: from SAFEX1HUBCAS21.st.com (10.75.90.44) by Safex1hubcas22.st.com
+ (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 15 Oct
+ 2019 14:31:05 +0200
+Received: from localhost (10.129.4.186) by Webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 15 Oct 2019 14:31:04
+ +0200
+From:   Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     <alexandre.torgue@st.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>
+CC:     <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH] ARM: dts: stm32f429: remove useless dma-ranges property
+Date:   Tue, 15 Oct 2019 14:30:57 +0200
+Message-ID: <20191015123058.14669-1-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1570622373-16413-1-git-send-email-yong.wu@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.129.4.186]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-15_05:2019-10-15,2019-10-15 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 07:59:33PM +0800, Yong Wu wrote:
-> In the commit 4f0a1a1ae351 ("memory: mtk-smi: Invoke pm runtime_callback
-> to enable clocks"), we use pm_runtime callback to enable/disable the smi
-> larb clocks. It will cause the larb's clock may not be disabled when
-> suspend. That is because device_prepare will call pm_runtime_get_noresume
-> which will keep the larb's PM runtime status still is active when suspend,
-> then it won't enter our pm_runtime suspend callback to disable the
-> corresponding clocks.
-> 
-> This patch adds suspend pm_ops to force disable the clocks, Use "LATE" to
-> make sure it disable the larb's clocks after the multimedia devices.
-> 
-> Fixes: 4f0a1a1ae351 ("memory: mtk-smi: Invoke pm runtime_callback to enable clocks")
-> Signed-off-by: Anan Sun <anan.sun@mediatek.com>
-> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-> ---
-> base on v5.4-rc1.
-> ---
->  drivers/memory/mtk-smi.c | 4 ++++
->  1 file changed, 4 insertions(+)
+Remove dma-ranges from ltdc node since it is already set
+on bus node.
 
-Applied, thanks.
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+---
+ arch/arm/boot/dts/stm32429i-eval.dts | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/stm32429i-eval.dts b/arch/arm/boot/dts/stm32429i-eval.dts
+index ba08624c6237..21bc657f21c3 100644
+--- a/arch/arm/boot/dts/stm32429i-eval.dts
++++ b/arch/arm/boot/dts/stm32429i-eval.dts
+@@ -234,7 +234,6 @@
+ 	status = "okay";
+ 	pinctrl-0 = <&ltdc_pins>;
+ 	pinctrl-names = "default";
+-	dma-ranges;
+ 
+ 	port {
+ 		ltdc_out_rgb: endpoint {
+-- 
+2.15.0
 
