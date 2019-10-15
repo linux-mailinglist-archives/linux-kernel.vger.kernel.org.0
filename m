@@ -2,47 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24FEDD6EF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 07:34:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD596D6F1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 07:36:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728557AbfJOFcJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 01:32:09 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:42026 "EHLO
+        id S1729319AbfJOFfz convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 15 Oct 2019 01:35:55 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:42015 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728459AbfJOFcC (ORCPT
+        with ESMTP id S1728453AbfJOFcA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 01:32:02 -0400
+        Tue, 15 Oct 2019 01:32:00 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iKFQy-0000Ab-KY; Tue, 15 Oct 2019 07:31:48 +0200
+        id 1iKFR2-0000E0-Jv; Tue, 15 Oct 2019 07:31:52 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 6C3CA1C04D4;
-        Tue, 15 Oct 2019 07:31:41 +0200 (CEST)
-Date:   Tue, 15 Oct 2019 05:31:41 -0000
-From:   "tip-bot2 for Jiri Olsa" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id CEE221C04A9;
+        Tue, 15 Oct 2019 07:31:42 +0200 (CEST)
+Date:   Tue, 15 Oct 2019 05:31:42 -0000
+From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] libperf: Adopt perf_mmap__mmap_len() function from
- tools/perf
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+Subject: [tip: perf/core] perf trace: Expand strings in filters to integers
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Luis =?utf-8?q?Cl=C3=A1udio_Gon=C3=A7alves?= 
+        <lclaudio@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20191007125344.14268-4-jolsa@kernel.org>
-References: <20191007125344.14268-4-jolsa@kernel.org>
+In-Reply-To: <tip-dx5j70fv2rgkeezd1cb3hv2p@git.kernel.org>
+References: <tip-dx5j70fv2rgkeezd1cb3hv2p@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157111750137.12254.17060612108241104664.tip-bot2@tip-bot2>
+Message-ID: <157111750273.12254.3506068585260421140.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
 X-Linutronix-Spam-Score: -1.0
 X-Linutronix-Spam-Level: -
 X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
@@ -53,183 +52,183 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     bf59b3053e63783520c2810fc3f676553bc7eedd
-Gitweb:        https://git.kernel.org/tip/bf59b3053e63783520c2810fc3f676553bc7eedd
-Author:        Jiri Olsa <jolsa@kernel.org>
-AuthorDate:    Mon, 07 Oct 2019 14:53:11 +02:00
+Commit-ID:     90df0249c2eae21f329760ee857575260926188a
+Gitweb:        https://git.kernel.org/tip/90df0249c2eae21f329760ee857575260926188a
+Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate:    Wed, 09 Oct 2019 16:22:16 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Thu, 10 Oct 2019 09:41:38 -03:00
+CommitterDate: Wed, 09 Oct 2019 16:22:16 -03:00
 
-libperf: Adopt perf_mmap__mmap_len() function from tools/perf
+perf trace: Expand strings in filters to integers
 
-Move perf_mmap__mmap_len() from tools/perf wto libperf, it will be used
-in the following patches. And rename the existing perf's function to
-mmap__mmap_len().
+So that one can try things like:
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
+  # perf trace -e msr:* --filter="msr!=FS_BASE && msr != IA32_TSC_DEADLINE && msr != 0x830 && msr != 0x83f && msr !=IA32_SPEC_CTRL" --filter-pids 3750
+
+That, at this point in the patchset, without any strtoul in place for
+tracepoint arguments, will result in:
+
+  No resolver (strtoul) for "msr" in "msr:read_msr", can't set filter "(msr!=FS_BASE && msr != IA32_TSC_DEADLINE && msr != 0x830 && msr != 0x83f && msr !=IA32_SPEC_CTRL) && (common_pid != 25407 && common_pid != 3750)"
+  #
+
+See you in the next cset!
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Brendan Gregg <brendan.d.gregg@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lore.kernel.org/lkml/20191007125344.14268-4-jolsa@kernel.org
+Link: https://lkml.kernel.org/n/tip-dx5j70fv2rgkeezd1cb3hv2p@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-record.c            |  4 ++--
- tools/perf/lib/include/internal/mmap.h |  2 ++
- tools/perf/lib/mmap.c                  |  6 ++++++
- tools/perf/util/mmap.c                 | 20 ++++++++++----------
- tools/perf/util/mmap.h                 |  2 +-
- 5 files changed, 21 insertions(+), 13 deletions(-)
+ tools/perf/builtin-trace.c | 130 ++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 130 insertions(+)
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 2333286..f05e8b7 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -276,7 +276,7 @@ static int record__aio_pushfn(struct mmap *map, void *to, void *buf, size_t size
- 
- 	if (record__comp_enabled(aio->rec)) {
- 		size = zstd_compress(aio->rec->session, aio->data + aio->size,
--				     perf_mmap__mmap_len(map) - aio->size,
-+				     mmap__mmap_len(map) - aio->size,
- 				     buf, size);
- 	} else {
- 		memcpy(aio->data + aio->size, buf, size);
-@@ -488,7 +488,7 @@ static int record__pushfn(struct mmap *map, void *to, void *bf, size_t size)
- 	struct record *rec = to;
- 
- 	if (record__comp_enabled(rec)) {
--		size = zstd_compress(rec->session, map->data, perf_mmap__mmap_len(map), bf, size);
-+		size = zstd_compress(rec->session, map->data, mmap__mmap_len(map), bf, size);
- 		bf   = map->data;
- 	}
- 
-diff --git a/tools/perf/lib/include/internal/mmap.h b/tools/perf/lib/include/internal/mmap.h
-index b26806b..e7a6726 100644
---- a/tools/perf/lib/include/internal/mmap.h
-+++ b/tools/perf/lib/include/internal/mmap.h
-@@ -34,6 +34,8 @@ struct perf_mmap_param {
- 	int	mask;
- };
- 
-+size_t perf_mmap__mmap_len(struct perf_mmap *map);
-+
- void perf_mmap__init(struct perf_mmap *map, bool overwrite);
- 
- #endif /* __LIBPERF_INTERNAL_MMAP_H */
-diff --git a/tools/perf/lib/mmap.c b/tools/perf/lib/mmap.c
-index 3da6177..cc4284d 100644
---- a/tools/perf/lib/mmap.c
-+++ b/tools/perf/lib/mmap.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <internal/mmap.h>
-+#include <internal/lib.h>
- 
- void perf_mmap__init(struct perf_mmap *map, bool overwrite)
- {
-@@ -7,3 +8,8 @@ void perf_mmap__init(struct perf_mmap *map, bool overwrite)
- 	map->overwrite = overwrite;
- 	refcount_set(&map->refcnt, 0);
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 50a1aeb..515a800 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -3484,6 +3484,133 @@ static int ordered_events__deliver_event(struct ordered_events *oe,
+ 	return __trace__deliver_event(trace, event->event);
  }
-+
-+size_t perf_mmap__mmap_len(struct perf_mmap *map)
+ 
++static struct syscall_arg_fmt *perf_evsel__syscall_arg_fmt(struct evsel *evsel, char *arg)
 +{
-+	return map->mask + 1 + page_size;
++	struct tep_format_field *field;
++	struct syscall_arg_fmt *fmt = evsel->priv;
++
++	if (evsel->tp_format == NULL || fmt == NULL)
++		return NULL;
++
++	for (field = evsel->tp_format->format.fields; field; field = field->next, ++fmt)
++		if (strcmp(field->name, arg) == 0)
++			return fmt;
++
++	return NULL;
 +}
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index a496ced..a8e81c4 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -23,9 +23,9 @@
- #include "../perf.h"
- #include <internal/lib.h> /* page_size */
- 
--size_t perf_mmap__mmap_len(struct mmap *map)
-+size_t mmap__mmap_len(struct mmap *map)
++
++static int trace__expand_filter(struct trace *trace __maybe_unused, struct evsel *evsel)
++{
++	char *tok, *left = evsel->filter, *new_filter = evsel->filter;
++
++	while ((tok = strpbrk(left, "=<>!")) != NULL) {
++		char *right = tok + 1, *right_end;
++
++		if (*right == '=')
++			++right;
++
++		while (isspace(*right))
++			++right;
++
++		if (*right == '\0')
++			break;
++
++		while (!isalpha(*left))
++			if (++left == tok) {
++				/*
++				 * Bail out, can't find the name of the argument that is being
++				 * used in the filter, let it try to set this filter, will fail later.
++				 */
++				return 0;
++			}
++
++		right_end = right + 1;
++		while (isalnum(*right_end) || *right_end == '_')
++			++right_end;
++
++		if (isalpha(*right)) {
++			struct syscall_arg_fmt *fmt;
++			int left_size = tok - left,
++			    right_size = right_end - right;
++			char arg[128];
++
++			while (isspace(left[left_size - 1]))
++				--left_size;
++
++			scnprintf(arg, sizeof(arg), "%.*s", left_size, left);
++
++			fmt = perf_evsel__syscall_arg_fmt(evsel, arg);
++			if (fmt == NULL) {
++				pr_debug("\"%s\" not found in \"%s\", can't set filter \"%s\"\n",
++					 arg, evsel->name, evsel->filter);
++				return -1;
++			}
++
++			pr_debug2("trying to expand \"%s\" \"%.*s\" \"%.*s\" -> ",
++				 arg, (int)(right - tok), tok, right_size, right);
++
++			if (fmt->strtoul) {
++				u64 val;
++				if (fmt->strtoul(right, right_size, NULL, &val)) {
++					char *n, expansion[19];
++					int expansion_lenght = scnprintf(expansion, sizeof(expansion), "%#" PRIx64, val);
++					int expansion_offset = right - new_filter;
++
++					pr_debug("%s", expansion);
++
++					if (asprintf(&n, "%.*s%s%s", expansion_offset, new_filter, expansion, right_end) < 0) {
++						pr_debug(" out of memory!\n");
++						free(new_filter);
++						return -1;
++					}
++					if (new_filter != evsel->filter)
++						free(new_filter);
++					left = n + expansion_offset + expansion_lenght;
++					new_filter = n;
++				} else {
++					pr_err("\"%.*s\" not found for \"%s\" in \"%s\", can't set filter \"%s\"\n",
++					       right_size, right, arg, evsel->name, evsel->filter);
++					return -1;
++				}
++			} else {
++				pr_err("No resolver (strtoul) for \"%s\" in \"%s\", can't set filter \"%s\"\n",
++				       arg, evsel->name, evsel->filter);
++				return -1;
++			}
++
++			pr_debug("\n");
++		} else {
++			left = right_end;
++		}
++	}
++
++	if (new_filter != evsel->filter) {
++		pr_debug("New filter for %s: %s\n", evsel->name, new_filter);
++		perf_evsel__set_filter(evsel, new_filter);
++		free(new_filter);
++	}
++
++	return 0;
++}
++
++static int trace__expand_filters(struct trace *trace, struct evsel **err_evsel)
++{
++	struct evlist *evlist = trace->evlist;
++	struct evsel *evsel;
++
++	evlist__for_each_entry(evlist, evsel) {
++		if (evsel->filter == NULL)
++			continue;
++
++		if (trace__expand_filter(trace, evsel)) {
++			*err_evsel = evsel;
++			return -1;
++		}
++	}
++
++	return 0;
++}
++
+ static int trace__run(struct trace *trace, int argc, const char **argv)
  {
--	return map->core.mask + 1 + page_size;
-+	return perf_mmap__mmap_len(&map->core);
- }
+ 	struct evlist *evlist = trace->evlist;
+@@ -3625,6 +3752,9 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+ 	 */
+ 	trace->fd_path_disabled = !trace__syscall_enabled(trace, syscalltbl__id(trace->sctbl, "close"));
  
- /* When check_messup is true, 'end' must points to a good entry */
-@@ -170,7 +170,7 @@ static int perf_mmap__aio_enabled(struct mmap *map)
- #ifdef HAVE_LIBNUMA_SUPPORT
- static int perf_mmap__aio_alloc(struct mmap *map, int idx)
- {
--	map->aio.data[idx] = mmap(NULL, perf_mmap__mmap_len(map), PROT_READ|PROT_WRITE,
-+	map->aio.data[idx] = mmap(NULL, mmap__mmap_len(map), PROT_READ|PROT_WRITE,
- 				  MAP_PRIVATE|MAP_ANONYMOUS, 0, 0);
- 	if (map->aio.data[idx] == MAP_FAILED) {
- 		map->aio.data[idx] = NULL;
-@@ -183,7 +183,7 @@ static int perf_mmap__aio_alloc(struct mmap *map, int idx)
- static void perf_mmap__aio_free(struct mmap *map, int idx)
- {
- 	if (map->aio.data[idx]) {
--		munmap(map->aio.data[idx], perf_mmap__mmap_len(map));
-+		munmap(map->aio.data[idx], mmap__mmap_len(map));
- 		map->aio.data[idx] = NULL;
- 	}
- }
-@@ -196,7 +196,7 @@ static int perf_mmap__aio_bind(struct mmap *map, int idx, int cpu, int affinity)
- 
- 	if (affinity != PERF_AFFINITY_SYS && cpu__max_node() > 1) {
- 		data = map->aio.data[idx];
--		mmap_len = perf_mmap__mmap_len(map);
-+		mmap_len = mmap__mmap_len(map);
- 		node_mask = 1UL << cpu__get_node(cpu);
- 		if (mbind(data, mmap_len, MPOL_BIND, &node_mask, 1, 0)) {
- 			pr_err("Failed to bind [%p-%p] AIO buffer to node %d: error %m\n",
-@@ -210,7 +210,7 @@ static int perf_mmap__aio_bind(struct mmap *map, int idx, int cpu, int affinity)
- #else /* !HAVE_LIBNUMA_SUPPORT */
- static int perf_mmap__aio_alloc(struct mmap *map, int idx)
- {
--	map->aio.data[idx] = malloc(perf_mmap__mmap_len(map));
-+	map->aio.data[idx] = malloc(mmap__mmap_len(map));
- 	if (map->aio.data[idx] == NULL)
- 		return -1;
- 
-@@ -315,11 +315,11 @@ void perf_mmap__munmap(struct mmap *map)
- {
- 	perf_mmap__aio_munmap(map);
- 	if (map->data != NULL) {
--		munmap(map->data, perf_mmap__mmap_len(map));
-+		munmap(map->data, mmap__mmap_len(map));
- 		map->data = NULL;
- 	}
- 	if (map->core.base != NULL) {
--		munmap(map->core.base, perf_mmap__mmap_len(map));
-+		munmap(map->core.base, mmap__mmap_len(map));
- 		map->core.base = NULL;
- 		map->core.fd = -1;
- 		refcount_set(&map->core.refcnt, 0);
-@@ -371,7 +371,7 @@ int perf_mmap__mmap(struct mmap *map, struct mmap_params *mp, int fd, int cpu)
- 	refcount_set(&map->core.refcnt, 2);
- 	map->core.prev = 0;
- 	map->core.mask = mp->core.mask;
--	map->core.base = mmap(NULL, perf_mmap__mmap_len(map), mp->core.prot,
-+	map->core.base = mmap(NULL, mmap__mmap_len(map), mp->core.prot,
- 			 MAP_SHARED, fd, 0);
- 	if (map->core.base == MAP_FAILED) {
- 		pr_debug2("failed to mmap perf event ring buffer, error %d\n",
-@@ -389,7 +389,7 @@ int perf_mmap__mmap(struct mmap *map, struct mmap_params *mp, int fd, int cpu)
- 	map->comp_level = mp->comp_level;
- 
- 	if (map->comp_level && !perf_mmap__aio_enabled(map)) {
--		map->data = mmap(NULL, perf_mmap__mmap_len(map), PROT_READ|PROT_WRITE,
-+		map->data = mmap(NULL, mmap__mmap_len(map), PROT_READ|PROT_WRITE,
- 				 MAP_PRIVATE|MAP_ANONYMOUS, 0, 0);
- 		if (map->data == MAP_FAILED) {
- 			pr_debug2("failed to mmap data buffer, error %d\n",
-diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-index 4ff75d8..2b97dc6 100644
---- a/tools/perf/util/mmap.h
-+++ b/tools/perf/util/mmap.h
-@@ -67,7 +67,7 @@ union perf_event *perf_mmap__read_event(struct mmap *map);
- int perf_mmap__push(struct mmap *md, void *to,
- 		    int push(struct mmap *map, void *to, void *buf, size_t size));
- 
--size_t perf_mmap__mmap_len(struct mmap *map);
-+size_t mmap__mmap_len(struct mmap *map);
- 
- int perf_mmap__read_init(struct mmap *md);
- void perf_mmap__read_done(struct mmap *map);
++	err = trace__expand_filters(trace, &evsel);
++	if (err)
++		goto out_delete_evlist;
+ 	err = perf_evlist__apply_filters(evlist, &evsel);
+ 	if (err < 0)
+ 		goto out_error_apply_filters;
