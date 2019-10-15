@@ -2,67 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B78ED72CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 12:07:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE7ABD72D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 12:09:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729033AbfJOKHu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 06:07:50 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:34227 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727132AbfJOKHu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 06:07:50 -0400
-Received: from [185.81.136.22] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1iKJk3-0005A2-Nc; Tue, 15 Oct 2019 10:07:47 +0000
-Date:   Tue, 15 Oct 2019 12:07:44 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Christian Kellner <ckellner@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Jann Horn <jannh@google.com>,
-        Christian Kellner <christian@kellner.me>,
-        Christian Brauner <christian@ubuntu.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, Michal Hocko <mhocko@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] pidfd: add tests for NSpid info in fdinfo
-Message-ID: <20191015100743.t6gowsic7c347ldv@wittgenstein>
-References: <20191011122323.7770-1-ckellner@redhat.com>
- <20191014162034.2185-1-ckellner@redhat.com>
- <20191014162034.2185-2-ckellner@redhat.com>
+        id S1730156AbfJOKJI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 06:09:08 -0400
+Received: from spam01.hygon.cn ([110.188.70.11]:19923 "EHLO spam2.hygon.cn"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727018AbfJOKJH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 06:09:07 -0400
+Received: from MK-FE.hygon.cn ([172.23.18.61])
+        by spam2.hygon.cn with ESMTP id x9FA8HvJ025917;
+        Tue, 15 Oct 2019 18:08:17 +0800 (GMT-8)
+        (envelope-from fanjinke@hygon.cn)
+Received: from cncheex02.Hygon.cn ([172.23.18.12])
+        by MK-FE.hygon.cn with ESMTP id x9FA85iU064248;
+        Tue, 15 Oct 2019 18:08:05 +0800 (GMT-8)
+        (envelope-from fanjinke@hygon.cn)
+Received: from cncheex01.Hygon.cn (172.23.18.10) by cncheex02.Hygon.cn
+ (172.23.18.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Tue, 15 Oct
+ 2019 18:08:16 +0800
+Received: from cncheex01.Hygon.cn ([172.23.18.10]) by cncheex01.Hygon.cn
+ ([172.23.18.10]) with mapi id 15.01.1466.003; Tue, 15 Oct 2019 18:08:16 +0800
+From:   Jinke Fan <fanjinke@hygon.cn>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC:     "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        Wen Pu <puwen@hygon.cn>,
+        "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+        "kim.phillips@amd.com" <kim.phillips@amd.com>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RESEND RFC PATCH v3] rtc: Fix the AltCentury value on AMD/Hygon
+ platform
+Thread-Topic: [RESEND RFC PATCH v3] rtc: Fix the AltCentury value on AMD/Hygon
+ platform
+Thread-Index: AQHVgy/RkjjnHG3zLEyv1IS/Xg7OVqda2DwAgAAcM4A=
+Date:   Tue, 15 Oct 2019 10:08:16 +0000
+Message-ID: <9eceb1b6-bd61-d48f-0bc8-ec5c9de5f25a@hygon.cn>
+References: <20191015080827.11589-1-fanjinke@hygon.cn>
+ <20191015082720.GW3125@piout.net>
+In-Reply-To: <20191015082720.GW3125@piout.net>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.23.18.44]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <55A0941C8CBFE54FA3479EAD7AD6CCE6@Hygon.cn>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191014162034.2185-2-ckellner@redhat.com>
-User-Agent: NeoMutt/20180716
+X-MAIL: spam2.hygon.cn x9FA8HvJ025917
+X-DNSRBL: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 14, 2019 at 06:20:33PM +0200, Christian Kellner wrote:
-> From: Christian Kellner <christian@kellner.me>
-> 
-> Add a test that checks that if pid namespaces are configured the fdinfo
-> file of a pidfd contains an NSpid: entry containing the process id in
-> the current and additionally all nested namespaces. In the case that
-> a pidfd is from a pid namespace not in the same namespace hierarchy as
-> the process accessing the fdinfo file, ensure the 'NSpid' shows 0 for
-> that pidfd, analogous to the 'Pid' entry.
-> 
-> Signed-off-by: Christian Kellner <christian@kellner.me>
-
-That looks reasonable to me.
-
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+T24gMjAxOS8xMC8xNSAxNjoyNywgQWxleGFuZHJlIEJlbGxvbmkgd3JvdGU6DQo+IE9oIGNvbWUg
+b24sIHlvdSBzZW50IHRoYXQgcGF0Y2ggb25seSBhIHdlZWsgYWdvIGFuZCB2MiBoYWQgYSBzbyBv
+YnZpb3VzDQo+IG1pc3Rha2UgdGhhdCBteSB0cnVzdCBpbiB5b3VyIGNvZGUgcXVhbGl0eSBpcyBu
+b3cgdmVyeSBsb3cuDQpIaSBBbGV4YW5kcmUsDQoNClRoZSBwYXRjaCB2MyBoYXMgYmVlbiBjb21w
+aWxlZCBmb3Igc3BhcmM2NCBhbmQgYWxwaGEgYXJjaGl0ZWN0dXJlcyB3aXRoOg0KICAtIEdDQ19W
+RVJTSU9OPTcuNC4wIG1ha2UuY3Jvc3MgQVJDSD1zcGFyYzY0DQogIC0gR0NDX1ZFUlNJT049Ny40
+LjAgbWFrZS5jcm9zcyBBUkNIPWFscGhhDQp0aGUgcmVzdWx0IHdhcyBwYXNzZWQuIEFuZCB0ZXN0
+ZWQgb24gSHlnb24gcGxhdGZvcm0sIGl0IHdvcmtlZCB3ZWxsLg0KDQpBcyB5b3VyIGNvbW1lbnQs
+IHRoZSBtb2RpZmljYXRpb24gd2lsbCBiZSBzdHJpY3RseSBsaW1pdGVkIHRvIEFNRCANCkVQWUMo
+MTdoKSBhbmQgSHlnb24gQ1BVIGluIHRoZSBuZXh0IHZlcnNpb24uIEFsc28gSSB3aWxsIGRvIG1v
+cmUgdGVzdHMgDQpvbiB0aGVzZSBwbGF0Zm9ybXMuDQoNCkFueSBtb3JlIHN1Z2dlc3Rpb25zPw0K
+DQotLSANCkJlc3QgUmVnYXJkcywNCkppbmtlIEZhbg==
