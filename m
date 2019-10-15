@@ -2,34 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4C21D7FC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:19:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAC82D7FCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:19:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389542AbfJOTTF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 15:19:05 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:45738 "EHLO
+        id S2389551AbfJOTTO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 15:19:14 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:45725 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389526AbfJOTTC (ORCPT
+        with ESMTP id S2389486AbfJOTSy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 15:19:02 -0400
+        Tue, 15 Oct 2019 15:18:54 -0400
 Received: from localhost ([127.0.0.1] helo=localhost.localdomain)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1iKSLC-00067i-OW; Tue, 15 Oct 2019 21:18:42 +0200
+        id 1iKSLD-00067i-7g; Tue, 15 Oct 2019 21:18:43 +0200
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     tglx@linutronix.de,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Davidlohr Bueso <dave@stgolabs.net>, rcu@vger.kernel.org
-Subject: [PATCH 27/34] rcu: Use CONFIG_PREEMPTION where appropriate
-Date:   Tue, 15 Oct 2019 21:18:14 +0200
-Message-Id: <20191015191821.11479-28-bigeasy@linutronix.de>
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH 28/34] drm/i810: Refer to `PREEMPTION' in comment
+Date:   Tue, 15 Oct 2019 21:18:15 +0200
+Message-Id: <20191015191821.11479-29-bigeasy@linutronix.de>
 In-Reply-To: <20191015191821.11479-1-bigeasy@linutronix.de>
 References: <20191015191821.11479-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
@@ -39,155 +37,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The config option `CONFIG_PREEMPT' is used for the preemption model
-"Low-Latency Desktop". The config option `CONFIG_PREEMPTION' is enabled
-when kernel preemption is enabled which is true for the preemption model
-`CONFIG_PREEMPT' and `CONFIG_PREEMPT_RT'.
+The dependency has been changed from `PREEMPT' to `PREEMPTION'. Reflect
+this change in the comment.
 
-Use `CONFIG_PREEMPTION' if it applies to both preemption models and not
-just to `CONFIG_PREEMPT'.
+Use `PREEMPTION' in the comment.
 
-Cc: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Josh Triplett <josh@joshtriplett.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: Joel Fernandes <joel@joelfernandes.org>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: rcu@vger.kernel.org
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Sean Paul <sean@poorly.run>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- include/linux/rcupdate.h | 4 ++--
- kernel/rcu/Kconfig       | 4 ++--
- kernel/rcu/rcutorture.c  | 2 +-
- kernel/rcu/srcutiny.c    | 2 +-
- kernel/rcu/tree.c        | 4 ++--
- kernel/rcu/tree_exp.h    | 2 +-
- kernel/rcu/tree_plugin.h | 4 ++--
- 7 files changed, 11 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index 75a2eded7aa2c..1e3dad252d61f 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -154,7 +154,7 @@ static inline void exit_tasks_rcu_finish(void) { }
-  *
-  * This macro resembles cond_resched(), except that it is defined to
-  * report potential quiescent states to RCU-tasks even if the cond_resched=
-()
-- * machinery were to be shut off, as some advocate for PREEMPT kernels.
-+ * machinery were to be shut off, as some advocate for PREEMPTION kernels.
-  */
- #define cond_resched_tasks_rcu_qs() \
- do { \
-@@ -580,7 +580,7 @@ do {									      \
-  *
-  * You can avoid reading and understanding the next paragraph by
-  * following this rule: don't put anything in an rcu_read_lock() RCU
-- * read-side critical section that would block in a !PREEMPT kernel.
-+ * read-side critical section that would block in a !PREEMPTION kernel.
-  * But if you want the full story, read on!
-  *
-  * In non-preemptible RCU implementations (TREE_RCU and TINY_RCU),
-diff --git a/kernel/rcu/Kconfig b/kernel/rcu/Kconfig
-index 7644eda17d624..01b56177464d8 100644
---- a/kernel/rcu/Kconfig
-+++ b/kernel/rcu/Kconfig
-@@ -200,8 +200,8 @@ config RCU_NOCB_CPU
- 	  specified at boot time by the rcu_nocbs parameter.  For each
- 	  such CPU, a kthread ("rcuox/N") will be created to invoke
- 	  callbacks, where the "N" is the CPU being offloaded, and where
--	  the "p" for RCU-preempt (PREEMPT kernels) and "s" for RCU-sched
--	  (!PREEMPT kernels).  Nothing prevents this kthread from running
-+	  the "p" for RCU-preempt (PREEMPTION kernels) and "s" for RCU-sched
-+	  (!PREEMPTION kernels).  Nothing prevents this kthread from running
- 	  on the specified CPUs, but (1) the kthreads may be preempted
- 	  between each callback, and (2) affinity or cgroups can be used
- 	  to force the kthreads to run on whatever set of CPUs is desired.
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index 3c9feca1eab17..c070d103f34d6 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -1725,7 +1725,7 @@ static void rcu_torture_fwd_cb_cr(struct rcu_head *rh=
-p)
- // Give the scheduler a chance, even on nohz_full CPUs.
- static void rcu_torture_fwd_prog_cond_resched(unsigned long iter)
- {
--	if (IS_ENABLED(CONFIG_PREEMPT) && IS_ENABLED(CONFIG_NO_HZ_FULL)) {
-+	if (IS_ENABLED(CONFIG_PREEMPTION) && IS_ENABLED(CONFIG_NO_HZ_FULL)) {
- 		// Real call_rcu() floods hit userspace, so emulate that.
- 		if (need_resched() || (iter & 0xfff))
- 			schedule();
-diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
-index 44d6606b83257..6208c1dae5c95 100644
---- a/kernel/rcu/srcutiny.c
-+++ b/kernel/rcu/srcutiny.c
-@@ -103,7 +103,7 @@ EXPORT_SYMBOL_GPL(__srcu_read_unlock);
+diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+index e67c194c2acad..5f6dcbbeb0c1b 100644
+--- a/drivers/gpu/drm/Kconfig
++++ b/drivers/gpu/drm/Kconfig
+@@ -397,7 +397,7 @@ config DRM_R128
 =20
- /*
-  * Workqueue handler to drive one grace period and invoke any callbacks
-- * that become ready as a result.  Single-CPU and !PREEMPT operation
-+ * that become ready as a result.  Single-CPU and !PREEMPTION operation
-  * means that we get away with murder on synchronization.  ;-)
-  */
- void srcu_drive_gp(struct work_struct *wp)
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 81105141b6a82..1c5de816ae9e5 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -2667,9 +2667,9 @@ EXPORT_SYMBOL_GPL(kfree_call_rcu);
-=20
- /*
-  * During early boot, any blocking grace-period wait automatically
-- * implies a grace period.  Later on, this is never the case for PREEMPT.
-+ * implies a grace period.  Later on, this is never the case for PREEMPTIO=
-N.
-  *
-- * Howevr, because a context switch is a grace period for !PREEMPT, any
-+ * Howevr, because a context switch is a grace period for !PREEMPTION, any
-  * blocking grace-period wait automatically implies a grace period if
-  * there is only one CPU online at any point time during execution of
-  * either synchronize_rcu() or synchronize_rcu_expedited().  It is OK to
-diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-index d632cd0195975..98d078cafa5a6 100644
---- a/kernel/rcu/tree_exp.h
-+++ b/kernel/rcu/tree_exp.h
-@@ -670,7 +670,7 @@ static void rcu_exp_handler(void *unused)
- 	}
- }
-=20
--/* PREEMPT=3Dy, so no PREEMPT=3Dn expedited grace period to clean up after=
-. */
-+/* PREEMPTION=3Dy, so no PREEMPTION=3Dn expedited grace period to clean up=
- after. */
- static void sync_sched_exp_online_cleanup(int cpu)
- {
- }
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 2defc7fe74c39..e6c987d171cbe 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -788,7 +788,7 @@ static void __init rcu_bootup_announce(void)
- }
-=20
- /*
-- * Note a quiescent state for PREEMPT=3Dn.  Because we do not need to know
-+ * Note a quiescent state for PREEMPTION=3Dn.  Because we do not need to k=
-now
-  * how many quiescent states passed, just if there was at least one since
-  * the start of the grace period, this just sets a flag.  The caller must
-  * have disabled preemption.
-@@ -838,7 +838,7 @@ void rcu_all_qs(void)
- EXPORT_SYMBOL_GPL(rcu_all_qs);
-=20
- /*
-- * Note a PREEMPT=3Dn context switch.  The caller must have disabled inter=
-rupts.
-+ * Note a PREEMPTION=3Dn context switch. The caller must have disabled int=
-errupts.
-  */
- void rcu_note_context_switch(bool preempt)
- {
+ config DRM_I810
+ 	tristate "Intel I810"
+-	# !PREEMPT because of missing ioctl locking
++	# !PREEMPTION because of missing ioctl locking
+ 	depends on DRM && AGP && AGP_INTEL && (!PREEMPTION || BROKEN)
+ 	help
+ 	  Choose this option if you have an Intel I810 graphics card.  If M is
 --=20
 2.23.0
 
