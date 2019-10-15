@@ -2,46 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F80FD7C14
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 18:40:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AFCBD7C1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 18:41:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728416AbfJOQkb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 12:40:31 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:45157 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728297AbfJOQka (ORCPT
+        id S1728443AbfJOQlg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 12:41:36 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:36688 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726366AbfJOQlg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 12:40:30 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1iKPs3-0003m0-2t; Tue, 15 Oct 2019 18:40:27 +0200
-Date:   Tue, 15 Oct 2019 18:40:27 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Frank Rowand <frank.rowand@am.sony.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH RT] Revert "ARM: Initialize split page table locks for
- vector page"
-Message-ID: <20191015164026.6lfu4meeclpijxar@linutronix.de>
-References: <20191014160238.enawbbfcxnbdrlch@linutronix.de>
- <20191015162609.GH32665@bombadil.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191015162609.GH32665@bombadil.infradead.org>
+        Tue, 15 Oct 2019 12:41:36 -0400
+Received: from localhost (unknown [IPv6:2603:3023:50c:85e1:5314:1b70:2a53:887e])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id C3C3915035C82;
+        Tue, 15 Oct 2019 09:41:35 -0700 (PDT)
+Date:   Tue, 15 Oct 2019 12:41:31 -0400 (EDT)
+Message-Id: <20191015.124131.1460380746118792831.davem@davemloft.net>
+To:     kvalo@codeaurora.org
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: pull-request: wireless-drivers 2019-10-15
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <87eezexkak.fsf@kamboji.qca.qualcomm.com>
+References: <87eezexkak.fsf@kamboji.qca.qualcomm.com>
+X-Mailer: Mew version 6.8 on Emacs 26.2
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 15 Oct 2019 09:41:36 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-10-15 09:26:09 [-0700], Matthew Wilcox wrote:
-> Did your test build have ALLOC_SPLIT_PTLOCKS defined?
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 15 Oct 2019 15:30:59 +0300
 
-I tried to explain that ptlock_ptr() returns NULL for the page before
-the ctor invocation and non-NULL afterwards which means that
-USE_SPLIT_PTE_PTLOCKS and ALLOC_SPLIT_PTLOCKS was defined.
+> here's a pull request to net tree for v5.4, more info below. Please let
+> me know if there are any problems.
 
-Sebastian
+Pulled, thanks Kalle.
