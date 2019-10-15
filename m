@@ -2,102 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94441D7168
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 10:47:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2754D7183
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 10:48:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729377AbfJOIr5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 04:47:57 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56668 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726430AbfJOIr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 04:47:56 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 259FB7F746;
-        Tue, 15 Oct 2019 08:47:56 +0000 (UTC)
-Received: from krava (unknown [10.43.17.61])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 3608C19C68;
-        Tue, 15 Oct 2019 08:47:54 +0000 (UTC)
-Date:   Tue, 15 Oct 2019 10:47:53 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Yunfeng Ye <yeyunfeng@huawei.com>
-Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        hushiyuan@huawei.com, linfeilong@huawei.com
-Subject: Re: [PATCH] perf c2c: fix memory leak in build_cl_output()
-Message-ID: <20191015084753.GD10951@krava>
-References: <4d3c0178-5482-c313-98e1-f82090d2d456@huawei.com>
+        id S1729561AbfJOIsp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 04:48:45 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55452 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727735AbfJOIso (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 04:48:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=PZs2Jew1Apcdf2AL00ZC9tQ/+7iCmPCjp3H58ifi9kY=; b=hdwt12/0qG3iaS8UDIeaV6OeT
+        tFWgC5uur0rZhU5DuiIm1RCpWVqBjORlw4dLTzGtKm3n9dWhM48M9oQtbksvQoPa3gihlBl3dnsG8
+        BR8lVZ3SpR4xBhp/F+x+EAxPEnenm89BkltBeLWzPnbL+FtgOKCj5AOgn5ZEVQYCAWFy9y69O58Vk
+        EMLzBLvIq7hS5X3kLFKcFqJF6u4JJMdj/W/++YE51InAPEdltcgY5S9qYGquoGugiYDNEVk3iVEuE
+        K1GXMLtYoJluJU8UhTQcUwLGQMtOSmfqOTYUAc+7bgm5hM4/6BHQXpQ5la89gYMfjmNCSuRlV6t3/
+        SfMUNJt3w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iKIVP-0003za-My; Tue, 15 Oct 2019 08:48:35 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id CE17A304637;
+        Tue, 15 Oct 2019 10:47:38 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 36F94284DE590; Tue, 15 Oct 2019 10:48:33 +0200 (CEST)
+Date:   Tue, 15 Oct 2019 10:48:33 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc:     tony.luck@intel.com, bp@alien8.de, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, bberg@redhat.com, x86@kernel.org,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hdegoede@redhat.com, ckellner@redhat.com
+Subject: Re: [PATCH 1/2] x86, mce, therm_throt: Optimize logging of thermal
+ throttle messages
+Message-ID: <20191015084833.GD2311@hirez.programming.kicks-ass.net>
+References: <2c2b65c23be3064504566c5f621c1f37bf7e7326.camel@redhat.com>
+ <20191014212101.25719-1-srinivas.pandruvada@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4d3c0178-5482-c313-98e1-f82090d2d456@huawei.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.71]); Tue, 15 Oct 2019 08:47:56 +0000 (UTC)
+In-Reply-To: <20191014212101.25719-1-srinivas.pandruvada@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 10:54:14AM +0800, Yunfeng Ye wrote:
-> There is a memory leak problem in the failure paths of
-> build_cl_output(), so fix it.
+On Mon, Oct 14, 2019 at 02:21:00PM -0700, Srinivas Pandruvada wrote:
+> Some modern systems have very tight thermal tolerances. Because of this
+> they may cross thermal thresholds when running normal workloads (even
+> during boot). The CPU hardware will react by limiting power/frequency
+> and using duty cycles to bring the temperature back into normal range.
 > 
-> Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+> Thus users may see a "critical" message about the "temperature above
+> threshold" which is soon followed by "temperature/speed normal". These
+> messages are rate limited, but still may repeat every few minutes.
+> 
+> The solution here is to set a timeout when the temperature first exceeds
+> the threshold.
 
-Acked-by: Jiri Olsa <jolsa@kernel.org>
+Why can we even reach critical thresholds when the fans are working? I
+always thought it was BAD to ever reach the critical temps and have the
+hardware throttle.
 
-thanks,
-jirka
 
-> ---
->  tools/perf/builtin-c2c.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-> index 3542b6a..e69f449 100644
-> --- a/tools/perf/builtin-c2c.c
-> +++ b/tools/perf/builtin-c2c.c
-> @@ -2635,6 +2635,7 @@ static int build_cl_output(char *cl_sort, bool no_source)
->  	bool add_sym   = false;
->  	bool add_dso   = false;
->  	bool add_src   = false;
-> +	int ret = 0;
-> 
->  	if (!buf)
->  		return -ENOMEM;
-> @@ -2653,7 +2654,8 @@ static int build_cl_output(char *cl_sort, bool no_source)
->  			add_dso = true;
->  		} else if (strcmp(tok, "offset")) {
->  			pr_err("unrecognized sort token: %s\n", tok);
-> -			return -EINVAL;
-> +			ret = -EINVAL;
-> +			goto err;
->  		}
->  	}
-> 
-> @@ -2676,13 +2678,15 @@ static int build_cl_output(char *cl_sort, bool no_source)
->  		add_sym ? "symbol," : "",
->  		add_dso ? "dso," : "",
->  		add_src ? "cl_srcline," : "",
-> -		"node") < 0)
-> -		return -ENOMEM;
-> +		"node") < 0) {
-> +		ret = -ENOMEM;
-> +		goto err;
-> +	}
-> 
->  	c2c.show_src = add_src;
-> -
-> +err:
->  	free(buf);
-> -	return 0;
-> +	return ret;
->  }
-> 
->  static int setup_coalesce(const char *coalesce, bool no_source)
-> -- 
-> 2.7.4.3
-> 
