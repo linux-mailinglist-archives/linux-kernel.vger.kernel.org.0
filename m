@@ -2,31 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB80BD785E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 16:25:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 219F1D7868
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 16:27:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732655AbfJOOZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 10:25:10 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:44084 "EHLO huawei.com"
+        id S1732691AbfJOO07 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 10:26:59 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:45148 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732050AbfJOOZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 10:25:09 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 8F4A91629CC662650C3C;
-        Tue, 15 Oct 2019 22:25:07 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Tue, 15 Oct 2019
- 22:24:56 +0800
+        id S1732050AbfJOO07 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 10:26:59 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 4CB0152FA015268CFAAA;
+        Tue, 15 Oct 2019 22:26:56 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Tue, 15 Oct 2019
+ 22:26:47 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
-To:     <kgene@kernel.org>, <krzk@kernel.org>, <s.nawrocki@samsung.com>,
-        <tomasz.figa@gmail.com>, <cw00.choi@samsung.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+To:     <wg@grandegger.com>, <mkl@pengutronix.de>, <davem@davemloft.net>,
+        <michal.simek@xilinx.com>
+CC:     <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] clk: s3c2410: use devm_platform_ioremap_resource() to simplify code
-Date:   Tue, 15 Oct 2019 22:24:24 +0800
-Message-ID: <20191015142424.25944-1-yuehaibing@huawei.com>
+Subject: [PATCH net-next] can: xilinx_can: use devm_platform_ioremap_resource() to simplify code
+Date:   Tue, 15 Oct 2019 22:26:19 +0800
+Message-ID: <20191015142619.17148-1-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -42,31 +41,31 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/clk/samsung/clk-s3c2410-dclk.c | 4 +---
+ drivers/net/can/xilinx_can.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
-index 1281672..7dad909 100644
---- a/drivers/clk/samsung/clk-s3c2410-dclk.c
-+++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
-@@ -238,7 +238,6 @@ static SIMPLE_DEV_PM_OPS(s3c24xx_dclk_pm_ops,
- static int s3c24xx_dclk_probe(struct platform_device *pdev)
+diff --git a/drivers/net/can/xilinx_can.c b/drivers/net/can/xilinx_can.c
+index 911b343..5d45c50 100644
+--- a/drivers/net/can/xilinx_can.c
++++ b/drivers/net/can/xilinx_can.c
+@@ -1652,7 +1652,6 @@ MODULE_DEVICE_TABLE(of, xcan_of_match);
+  */
+ static int xcan_probe(struct platform_device *pdev)
  {
- 	struct s3c24xx_dclk *s3c24xx_dclk;
--	struct resource *mem;
- 	struct s3c24xx_dclk_drv_data *dclk_variant;
- 	struct clk_hw **clk_table;
- 	int ret, i;
-@@ -257,8 +256,7 @@ static int s3c24xx_dclk_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, s3c24xx_dclk);
- 	spin_lock_init(&s3c24xx_dclk->dclk_lock);
+-	struct resource *res; /* IO mem resources */
+ 	struct net_device *ndev;
+ 	struct xcan_priv *priv;
+ 	const struct of_device_id *of_id;
+@@ -1664,8 +1663,7 @@ static int xcan_probe(struct platform_device *pdev)
+ 	const char *hw_tx_max_property;
  
--	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	s3c24xx_dclk->base = devm_ioremap_resource(&pdev->dev, mem);
-+	s3c24xx_dclk->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(s3c24xx_dclk->base))
- 		return PTR_ERR(s3c24xx_dclk->base);
- 
+ 	/* Get the virtual base address for the device */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	addr = devm_ioremap_resource(&pdev->dev, res);
++	addr = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(addr)) {
+ 		ret = PTR_ERR(addr);
+ 		goto err;
 -- 
 2.7.4
 
