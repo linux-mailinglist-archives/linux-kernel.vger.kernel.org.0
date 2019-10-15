@@ -2,91 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45912D710D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 10:32:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B55DD7116
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 10:32:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726539AbfJOIcP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 04:32:15 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40844 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726220AbfJOIcP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 04:32:15 -0400
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0F1EE5945B
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 08:32:15 +0000 (UTC)
-Received: by mail-wr1-f71.google.com with SMTP id f3so9731597wrr.23
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 01:32:14 -0700 (PDT)
+        id S1729043AbfJOIcb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 04:32:31 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:46711 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729013AbfJOIca (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 04:32:30 -0400
+Received: by mail-lj1-f196.google.com with SMTP id d1so19253493ljl.13
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 01:32:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iqc7TL4ZCr8iG1KRxAEVdDujqelnE0lYSvI39NYB58s=;
+        b=ORou6M+VQm37RcWZSBf+3eRqxFtkcZeczsKeNWcAWPwbiqHzYP3Ur9KiB9UMEd3Lto
+         EoEQpQ3RKxucy9m96KaqlT52jWOyIdtxMJg9nvXjEG0bWLtxNYS5vIyzfQQyBASKjoJO
+         qupfVGIPm1FO80oJCZxaNFclo8qLzzM9dW8Sx96n3kT/eFuwFB9OceQV6omhjxyMkFGz
+         a6Ufa4iTgdyC+zlKaESyzDnFop4NnLupEVuRofGYvRYCidXxRBamHowRUOIXXRndk+Hk
+         Wc/siRy083KIQubV8OoCGsZK1dkvjTQ7eKGU+nF0pFCJblZJTUSG5AspIUsuQeE0fZgE
+         UiIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=P5PIeo7F8BONUmbx5z3F8WKmU2e7zzUSE3SYwbN/HB8=;
-        b=d3AOzIBD451fs2SQ8hBugBOFoy2DlN9bbGWYwcEz6+Lk2CVT6i+Bu7bad9+aIyHa7A
-         2PZXw5XibI4oGXhf455w2VxNgyZA2aa5NAlpl0wgT0oh7MveNFG/JEZ+8DnlrgueJtKM
-         WZ985S4uAWsx0GnLz7JvHrNvnFc+Ne9jsYHtMp8/A5jiOsDFVx0+4QCMbV0q8o2F7TPd
-         H2tEJOxu/rTN7yxscPHBNqVOkBQaETXHf6E6PJDyU4IfDLsTOj6Q3JKMhDYX8OSHEWMz
-         qaq6uQx5ttN3RRZQXJS79F4zUwVAh4lDNk+ub9/xugpAoTnHE9y2Q48R6CmpxwEu7KHX
-         kJ+g==
-X-Gm-Message-State: APjAAAUBy5AMEpQ2qHjr/vloWo6nVlaXg34KkXm2qnvPpT/HJBF7tz2U
-        KKnY1RCOvyBtNkIoOBEB9h4xF1eHSCtYU8kX1z6KW1eQSdJ3ySiFOdpjNkzs265Zns/+LsyLmE1
-        k/CUkQXpIQzfhf4Tt9nqZ/X5P
-X-Received: by 2002:adf:fd0a:: with SMTP id e10mr27570509wrr.55.1571128333665;
-        Tue, 15 Oct 2019 01:32:13 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxrwQzt+PWn32MNk4JHIoXCkTdb8YUH7EkIrAtHisFtFyFyrwBRV58d5gOa3puF11f2x3ROYw==
-X-Received: by 2002:adf:fd0a:: with SMTP id e10mr27570487wrr.55.1571128333388;
-        Tue, 15 Oct 2019 01:32:13 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:d001:591b:c73b:6c41? ([2001:b07:6468:f312:d001:591b:c73b:6c41])
-        by smtp.gmail.com with ESMTPSA id a4sm17420727wmm.10.2019.10.15.01.32.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2019 01:32:12 -0700 (PDT)
-Subject: Re: [PATCH 01/14] KVM: monolithic: x86: remove kvm.ko
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-References: <20190928172323.14663-1-aarcange@redhat.com>
- <20190928172323.14663-2-aarcange@redhat.com>
- <20191015013144.GC24895@linux.intel.com>
- <20191015031828.GE24895@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <259674b0-85e3-5266-4eaa-6314e8156f77@redhat.com>
-Date:   Tue, 15 Oct 2019 10:32:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iqc7TL4ZCr8iG1KRxAEVdDujqelnE0lYSvI39NYB58s=;
+        b=fcJUfCMlYlym7XF8XqJvg5oisssi+89e8Wi50F5SkPk5NCB1cqYs337lG1ANxt6UI6
+         +kEJrY0iScVLWaNdeM7LCL7mzUFAXb7N84NZN0rNap4O4LWmDjVpvaZ4lhmO7b5vfoxJ
+         ZC5AivSixyhl4b5wk9MBU+5YrZR/CUJFW9nxnrh1uTCH5YUSzUk50kwA0dIBXXxMZ6cj
+         92gj03vKIaEszZxpsUtK+/w8KXgH/74NCyMNv/Kjl/5DGVo2S1LS7D/Q4PnEkzE3WRWn
+         T/OjVV57VApFuGv2NPg1lJh4Cafe//AwrMfWv5K+QQ6fBcUryo5ZRY0mmzDTFwdvCRlg
+         A2+A==
+X-Gm-Message-State: APjAAAWYQjyYAKiJCBdGd78fqKsayDf05/8fx9qtP4LhfEbTd6n+VOrz
+        jvQbS3OYZsa9ns2nWBtTCkqQFx+R6d+oHgIWd4ri3A==
+X-Google-Smtp-Source: APXvYqxazDgrooIQclEs7kygQ2crMsb2qqnTnpLdD1E5sie5oddglXjpLaPSJSrZAAYLQpj1tBFHnzGFpI/tNX842Mc=
+X-Received: by 2002:a2e:1214:: with SMTP id t20mr21151298lje.191.1571128347374;
+ Tue, 15 Oct 2019 01:32:27 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191015031828.GE24895@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1570425935-7435-1-git-send-email-sumit.garg@linaro.org>
+ <20191011123757.GD3129@linux.intel.com> <20191011210517.qxjemugqczsvscu6@cantor>
+ <20191014201604.GN15552@linux.intel.com>
+In-Reply-To: <20191014201604.GN15552@linux.intel.com>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Tue, 15 Oct 2019 14:02:15 +0530
+Message-ID: <CAFA6WYM1AfYfk1+eJeDJeaRddF7kQ8mi+-DKbcND1gkOzkF6=Q@mail.gmail.com>
+Subject: Re: [Patch v7 0/4] Create and consolidate trusted keys subsystem
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     dhowells@redhat.com, peterhuewe@gmx.de, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>, davem@davemloft.net,
+        jgg@ziepe.ca, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        jejb@linux.ibm.com, Mimi Zohar <zohar@linux.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/10/19 05:18, Sean Christopherson wrote:
->> The KVM config option should be changed to a bool and its help text
->> updated.  Maybe something similar to the help for VIRTUALIZATION to make
->> it clear that enabling KVM on its own does nothing.
-> Making KVM a bool doesn't work well, keeping it a tristate and keying off
-> KVM=y to force Intel or AMD (as done in the next patch) looks like the
-> cleanest implementation.
+On Tue, 15 Oct 2019 at 01:46, Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> On Fri, Oct 11, 2019 at 02:05:17PM -0700, Jerry Snitselaar wrote:
+> > On Fri Oct 11 19, Jarkko Sakkinen wrote:
+> > > On Mon, Oct 07, 2019 at 10:55:31AM +0530, Sumit Garg wrote:
+> > > > This patch-set does restructuring of trusted keys code to create and
+> > > > consolidate trusted keys subsystem.
+> > > >
+> > > > Also, patch #2 replaces tpm1_buf code used in security/keys/trusted.c and
+> > > > crypto/asymmertic_keys/asym_tpm.c files to use the common tpm_buf code.
+> > > >
+> > > > Changes in v7:
+> > > > 1. Rebased to top of tpmdd/master
+> > > > 2. Patch #4: update tpm2 trusted keys code to use tpm_send() instead of
+> > > >    tpm_transmit_cmd() which is an internal function.
+> > > >
+> > > > Changes in v6:
+> > > > 1. Switch TPM asymmetric code also to use common tpm_buf code. These
+> > > >    changes required patches #1 and #2 update, so I have dropped review
+> > > >    tags from those patches.
+> > > > 2. Incorporated miscellaneous comments from Jarkko.
+> > > >
+> > > > Changes in v5:
+> > > > 1. Drop 5/5 patch as its more relavant along with TEE patch-set.
+> > > > 2. Add Reviewed-by tag for patch #2.
+> > > > 3. Fix build failure when "CONFIG_HEADER_TEST" and
+> > > >    "CONFIG_KERNEL_HEADER_TEST" config options are enabled.
+> > > > 4. Misc changes to rename files.
+> > > >
+> > > > Changes in v4:
+> > > > 1. Separate patch for export of tpm_buf code to include/linux/tpm.h
+> > > > 2. Change TPM1.x trusted keys code to use common tpm_buf
+> > > > 3. Keep module name as trusted.ko only
+> > > >
+> > > > Changes in v3:
+> > > >
+> > > > Move TPM2 trusted keys code to trusted keys subsystem.
+> > > >
+> > > > Changes in v2:
+> > > >
+> > > > Split trusted keys abstraction patch for ease of review.
+> > > >
+> > > > Sumit Garg (4):
+> > > >   tpm: Move tpm_buf code to include/linux/
+> > > >   KEYS: Use common tpm_buf for trusted and asymmetric keys
+> > > >   KEYS: trusted: Create trusted keys subsystem
+> > > >   KEYS: trusted: Move TPM2 trusted keys code
+> > > >
+> > > >  crypto/asymmetric_keys/asym_tpm.c                  | 101 +++----
+> > > >  drivers/char/tpm/tpm-interface.c                   |  56 ----
+> > > >  drivers/char/tpm/tpm.h                             | 226 ---------------
+> > > >  drivers/char/tpm/tpm2-cmd.c                        | 307 --------------------
+> > > >  include/Kbuild                                     |   1 -
+> > > >  include/keys/{trusted.h => trusted_tpm.h}          |  49 +---
+> > > >  include/linux/tpm.h                                | 251 ++++++++++++++--
+> > > >  security/keys/Makefile                             |   2 +-
+> > > >  security/keys/trusted-keys/Makefile                |   8 +
+> > > >  .../{trusted.c => trusted-keys/trusted_tpm1.c}     |  96 +++----
+> > > >  security/keys/trusted-keys/trusted_tpm2.c          | 314 +++++++++++++++++++++
+> > > >  11 files changed, 652 insertions(+), 759 deletions(-)
+> > > >  rename include/keys/{trusted.h => trusted_tpm.h} (77%)
+> > > >  create mode 100644 security/keys/trusted-keys/Makefile
+> > > >  rename security/keys/{trusted.c => trusted-keys/trusted_tpm1.c} (94%)
+> > > >  create mode 100644 security/keys/trusted-keys/trusted_tpm2.c
+> > > >
+> > > > --
+> > > > 2.7.4
+> > > >
+> > >
+> > > I fixed a merge conflict caused by James' commit. Already pushed.
+> > > Compiling test kernel ATM i.e. tested-by's will follow later.
+> > >
+> > > /Jarkko
+> >
+> > Are you missing patch 4 on master?
+>
+> Already removed the patch set given the sparse issues.
 
-Indeed, keeping the KVM option as tristate helps showing the right
-suboptions, similar to what Andrea did in patch 2.  However, this patch
-already breaks the CONFIG_KVM_INTEL=y && CONFIG_KVM_AMD=y case I think,
-so it should be squashed with "KVM: monolithic: x86: disable linking vmx
-and svm at the same time into the kernel".
+The sparse issues weren't due to this patch-set but they already
+existed in "security/keys/trusted.c" and this patch-set only did a
+rename for that file. So I think we should have a separate patch to
+fix sparse issues.
 
-> The help text should still be updated though.
+-Sumit
 
-The patch doesn't change the fact that enabling KVM on its own does
-nothing, so the help text can be updated independently (patch welcome :)).
-
-Thanks,
-
-Paolo
-
+> Read this email
+> after doing that. Thanks anyway for pointing that out.
+>
+> /Jarkko
