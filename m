@@ -2,254 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ADBAD71B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 11:02:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C369D71B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 11:02:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728880AbfJOJCL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 05:02:11 -0400
-Received: from forwardcorp1p.mail.yandex.net ([77.88.29.217]:50278 "EHLO
-        forwardcorp1p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727838AbfJOJCJ (ORCPT
+        id S1729592AbfJOJCW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 05:02:22 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:43044 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728896AbfJOJCN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 05:02:09 -0400
-Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
-        by forwardcorp1p.mail.yandex.net (Yandex) with ESMTP id 0B5762E14E2;
-        Tue, 15 Oct 2019 12:02:06 +0300 (MSK)
-Received: from sas1-7fab0cd91cd2.qloud-c.yandex.net (sas1-7fab0cd91cd2.qloud-c.yandex.net [2a02:6b8:c14:3a93:0:640:7fab:cd9])
-        by mxbackcorp1g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id oIq2cXkIR9-25qKoYea;
-        Tue, 15 Oct 2019 12:02:05 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1571130125; bh=1aq0pVoTzlDnzXJ1d6ME0b2po+bbeLYJMa32BOa4Uzs=;
-        h=In-Reply-To:Message-ID:References:Date:To:From:Subject:Cc;
-        b=dFoY6Mbv7lkY3dqBTxfNtO6WxztXVf8vh0W3zhA6EqWINXorGsGi/oIrgpzuXF1KB
-         KBElDLYGa9wj3ehn5Ks6WIvuYt8CfV4XcC2qHJfEP5QNneWCuaf6x0OH3VXkyV/6QV
-         56uKhB0CElNd6zWODPKq5/+KfYwyV8gTnVuf4UKw=
-Authentication-Results: mxbackcorp1g.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:3d4d:a9cb:ef29:4bb1])
-        by sas1-7fab0cd91cd2.qloud-c.yandex.net (nwsmtp/Yandex) with ESMTPSA id or88dzfQpo-25HmHwwC;
-        Tue, 15 Oct 2019 12:02:05 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: [PATCH 2/2] mm/memcontrol: use vmstat names for printing statistics
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-To:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Tue, 15 Oct 2019 05:02:13 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iKIiU-0004Sd-G1; Tue, 15 Oct 2019 11:02:06 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 1F3961C0105;
+        Tue, 15 Oct 2019 11:02:06 +0200 (CEST)
+Date:   Tue, 15 Oct 2019 09:02:05 -0000
+From:   "tip-bot2 for Sean Christopherson" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/apic/x2apic: Fix a NULL pointer deref when
+ handling a dying cpu
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-Cc:     cgroups@vger.kernel.org, Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Date:   Tue, 15 Oct 2019 12:02:05 +0300
-Message-ID: <157113012508.453.80391533767219371.stgit@buzz>
-In-Reply-To: <157113012325.453.562783073839432766.stgit@buzz>
-References: <157113012325.453.562783073839432766.stgit@buzz>
-User-Agent: StGit/0.17.1-dirty
+In-Reply-To: <20191001205019.5789-1-sean.j.christopherson@intel.com>
+References: <20191001205019.5789-1-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
+Message-ID: <157113012595.12254.4819420610843563041.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use common names from vmstat array when possible.
-This gives not much difference in code size for now,
-but should help in keeping interfaces consistent.
+The following commit has been merged into the x86/urgent branch of tip:
 
-add/remove: 0/2 grow/shrink: 2/0 up/down: 70/-72 (-2)
-Function                                     old     new   delta
-memory_stat_format                           984    1050     +66
-memcg_stat_show                              957     961      +4
-memcg1_event_names                            32       -     -32
-mem_cgroup_lru_names                          40       -     -40
-Total: Before=14485337, After=14485335, chg -0.00%
+Commit-ID:     7a22e03b0c02988e91003c505b34d752a51de344
+Gitweb:        https://git.kernel.org/tip/7a22e03b0c02988e91003c505b34d752a51de344
+Author:        Sean Christopherson <sean.j.christopherson@intel.com>
+AuthorDate:    Tue, 01 Oct 2019 13:50:19 -07:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 15 Oct 2019 10:57:09 +02:00
 
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+x86/apic/x2apic: Fix a NULL pointer deref when handling a dying cpu
+
+Check that the per-cpu cluster mask pointer has been set prior to
+clearing a dying cpu's bit.  The per-cpu pointer is not set until the
+target cpu reaches smp_callin() during CPUHP_BRINGUP_CPU, whereas the
+teardown function, x2apic_dead_cpu(), is associated with the earlier
+CPUHP_X2APIC_PREPARE.  If an error occurs before the cpu is awakened,
+e.g. if do_boot_cpu() itself fails, x2apic_dead_cpu() will dereference
+the NULL pointer and cause a panic.
+
+  smpboot: do_boot_cpu failed(-22) to wakeup CPU#1
+  BUG: kernel NULL pointer dereference, address: 0000000000000008
+  RIP: 0010:x2apic_dead_cpu+0x1a/0x30
+  Call Trace:
+   cpuhp_invoke_callback+0x9a/0x580
+   _cpu_up+0x10d/0x140
+   do_cpu_up+0x69/0xb0
+   smp_init+0x63/0xa9
+   kernel_init_freeable+0xd7/0x229
+   ? rest_init+0xa0/0xa0
+   kernel_init+0xa/0x100
+   ret_from_fork+0x35/0x40
+
+Fixes: 023a611748fd5 ("x86/apic/x2apic: Simplify cluster management")
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20191001205019.5789-1-sean.j.christopherson@intel.com
+
 ---
- include/linux/vmstat.h |    4 ++--
- mm/memcontrol.c        |   52 ++++++++++++++++++++----------------------------
- mm/vmstat.c            |    9 +++++---
- 3 files changed, 29 insertions(+), 36 deletions(-)
+ arch/x86/kernel/apic/x2apic_cluster.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/vmstat.h b/include/linux/vmstat.h
-index b995d8b680c2..292485f3d24d 100644
---- a/include/linux/vmstat.h
-+++ b/include/linux/vmstat.h
-@@ -420,7 +420,7 @@ static inline const char *writeback_stat_name(enum writeback_stat_item item)
- 			   item];
- }
- 
--#ifdef CONFIG_VM_EVENT_COUNTERS
-+#if defined(CONFIG_VM_EVENT_COUNTERS) || defined(CONFIG_MEMCG)
- static inline const char *vm_event_name(enum vm_event_item item)
+diff --git a/arch/x86/kernel/apic/x2apic_cluster.c b/arch/x86/kernel/apic/x2apic_cluster.c
+index 45e92cb..b0889c4 100644
+--- a/arch/x86/kernel/apic/x2apic_cluster.c
++++ b/arch/x86/kernel/apic/x2apic_cluster.c
+@@ -156,7 +156,8 @@ static int x2apic_dead_cpu(unsigned int dead_cpu)
  {
- 	return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-@@ -429,6 +429,6 @@ static inline const char *vm_event_name(enum vm_event_item item)
- 			   NR_VM_WRITEBACK_STAT_ITEMS +
- 			   item];
+ 	struct cluster_mask *cmsk = per_cpu(cluster_masks, dead_cpu);
+ 
+-	cpumask_clear_cpu(dead_cpu, &cmsk->mask);
++	if (cmsk)
++		cpumask_clear_cpu(dead_cpu, &cmsk->mask);
+ 	free_cpumask_var(per_cpu(ipi_mask, dead_cpu));
+ 	return 0;
  }
--#endif /* CONFIG_VM_EVENT_COUNTERS */
-+#endif /* CONFIG_VM_EVENT_COUNTERS || CONFIG_MEMCG */
- 
- #endif /* _LINUX_VMSTAT_H */
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index bdac56009a38..e0aff8a81067 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -98,14 +98,6 @@ static bool do_memsw_account(void)
- 	return !cgroup_subsys_on_dfl(memory_cgrp_subsys) && do_swap_account;
- }
- 
--static const char *const mem_cgroup_lru_names[] = {
--	"inactive_anon",
--	"active_anon",
--	"inactive_file",
--	"active_file",
--	"unevictable",
--};
--
- #define THRESHOLDS_EVENTS_TARGET 128
- #define SOFTLIMIT_EVENTS_TARGET 1024
- #define NUMAINFO_EVENTS_TARGET	1024
-@@ -1438,7 +1430,7 @@ static char *memory_stat_format(struct mem_cgroup *memcg)
- 		       PAGE_SIZE);
- 
- 	for (i = 0; i < NR_LRU_LISTS; i++)
--		seq_buf_printf(&s, "%s %llu\n", mem_cgroup_lru_names[i],
-+		seq_buf_printf(&s, "%s %llu\n", lru_list_name(i),
- 			       (u64)memcg_page_state(memcg, NR_LRU_BASE + i) *
- 			       PAGE_SIZE);
- 
-@@ -1451,8 +1443,10 @@ static char *memory_stat_format(struct mem_cgroup *memcg)
- 
- 	/* Accumulated memory events */
- 
--	seq_buf_printf(&s, "pgfault %lu\n", memcg_events(memcg, PGFAULT));
--	seq_buf_printf(&s, "pgmajfault %lu\n", memcg_events(memcg, PGMAJFAULT));
-+	seq_buf_printf(&s, "%s %lu\n", vm_event_name(PGFAULT),
-+		       memcg_events(memcg, PGFAULT));
-+	seq_buf_printf(&s, "%s %lu\n", vm_event_name(PGMAJFAULT),
-+		       memcg_events(memcg, PGMAJFAULT));
- 
- 	seq_buf_printf(&s, "workingset_refault %lu\n",
- 		       memcg_page_state(memcg, WORKINGSET_REFAULT));
-@@ -1461,22 +1455,27 @@ static char *memory_stat_format(struct mem_cgroup *memcg)
- 	seq_buf_printf(&s, "workingset_nodereclaim %lu\n",
- 		       memcg_page_state(memcg, WORKINGSET_NODERECLAIM));
- 
--	seq_buf_printf(&s, "pgrefill %lu\n", memcg_events(memcg, PGREFILL));
-+	seq_buf_printf(&s, "%s %lu\n",  vm_event_name(PGREFILL),
-+		       memcg_events(memcg, PGREFILL));
- 	seq_buf_printf(&s, "pgscan %lu\n",
- 		       memcg_events(memcg, PGSCAN_KSWAPD) +
- 		       memcg_events(memcg, PGSCAN_DIRECT));
- 	seq_buf_printf(&s, "pgsteal %lu\n",
- 		       memcg_events(memcg, PGSTEAL_KSWAPD) +
- 		       memcg_events(memcg, PGSTEAL_DIRECT));
--	seq_buf_printf(&s, "pgactivate %lu\n", memcg_events(memcg, PGACTIVATE));
--	seq_buf_printf(&s, "pgdeactivate %lu\n", memcg_events(memcg, PGDEACTIVATE));
--	seq_buf_printf(&s, "pglazyfree %lu\n", memcg_events(memcg, PGLAZYFREE));
--	seq_buf_printf(&s, "pglazyfreed %lu\n", memcg_events(memcg, PGLAZYFREED));
-+	seq_buf_printf(&s, "%s %lu\n", vm_event_name(PGACTIVATE),
-+		       memcg_events(memcg, PGACTIVATE));
-+	seq_buf_printf(&s, "%s %lu\n", vm_event_name(PGDEACTIVATE),
-+		       memcg_events(memcg, PGDEACTIVATE));
-+	seq_buf_printf(&s, "%s %lu\n", vm_event_name(PGLAZYFREE),
-+		       memcg_events(memcg, PGLAZYFREE));
-+	seq_buf_printf(&s, "%s %lu\n", vm_event_name(PGLAZYFREED),
-+		       memcg_events(memcg, PGLAZYFREED));
- 
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
--	seq_buf_printf(&s, "thp_fault_alloc %lu\n",
-+	seq_buf_printf(&s, "%s %lu\n", vm_event_name(THP_FAULT_ALLOC),
- 		       memcg_events(memcg, THP_FAULT_ALLOC));
--	seq_buf_printf(&s, "thp_collapse_alloc %lu\n",
-+	seq_buf_printf(&s, "%s %lu\n", vm_event_name(THP_COLLAPSE_ALLOC),
- 		       memcg_events(memcg, THP_COLLAPSE_ALLOC));
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
- 
-@@ -3849,13 +3848,6 @@ static const unsigned int memcg1_events[] = {
- 	PGMAJFAULT,
- };
- 
--static const char *const memcg1_event_names[] = {
--	"pgpgin",
--	"pgpgout",
--	"pgfault",
--	"pgmajfault",
--};
--
- static int memcg_stat_show(struct seq_file *m, void *v)
- {
- 	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
-@@ -3864,7 +3856,6 @@ static int memcg_stat_show(struct seq_file *m, void *v)
- 	unsigned int i;
- 
- 	BUILD_BUG_ON(ARRAY_SIZE(memcg1_stat_names) != ARRAY_SIZE(memcg1_stats));
--	BUILD_BUG_ON(ARRAY_SIZE(mem_cgroup_lru_names) != NR_LRU_LISTS);
- 
- 	for (i = 0; i < ARRAY_SIZE(memcg1_stats); i++) {
- 		if (memcg1_stats[i] == MEMCG_SWAP && !do_memsw_account())
-@@ -3875,11 +3866,11 @@ static int memcg_stat_show(struct seq_file *m, void *v)
- 	}
- 
- 	for (i = 0; i < ARRAY_SIZE(memcg1_events); i++)
--		seq_printf(m, "%s %lu\n", memcg1_event_names[i],
-+		seq_printf(m, "%s %lu\n", vm_event_name(memcg1_events[i]),
- 			   memcg_events_local(memcg, memcg1_events[i]));
- 
- 	for (i = 0; i < NR_LRU_LISTS; i++)
--		seq_printf(m, "%s %lu\n", mem_cgroup_lru_names[i],
-+		seq_printf(m, "%s %lu\n", lru_list_name(i),
- 			   memcg_page_state_local(memcg, NR_LRU_BASE + i) *
- 			   PAGE_SIZE);
- 
-@@ -3904,11 +3895,12 @@ static int memcg_stat_show(struct seq_file *m, void *v)
- 	}
- 
- 	for (i = 0; i < ARRAY_SIZE(memcg1_events); i++)
--		seq_printf(m, "total_%s %llu\n", memcg1_event_names[i],
-+		seq_printf(m, "total_%s %llu\n",
-+			   vm_event_name(memcg1_events[i]),
- 			   (u64)memcg_events(memcg, memcg1_events[i]));
- 
- 	for (i = 0; i < NR_LRU_LISTS; i++)
--		seq_printf(m, "total_%s %llu\n", mem_cgroup_lru_names[i],
-+		seq_printf(m, "total_%s %llu\n", lru_list_name(i),
- 			   (u64)memcg_page_state(memcg, NR_LRU_BASE + i) *
- 			   PAGE_SIZE);
- 
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 590aeca27cab..b2fd344d2fcf 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1084,7 +1084,8 @@ int fragmentation_index(struct zone *zone, unsigned int order)
- }
- #endif
- 
--#if defined(CONFIG_PROC_FS) || defined(CONFIG_SYSFS) || defined(CONFIG_NUMA)
-+#if defined(CONFIG_PROC_FS) || defined(CONFIG_SYSFS) || \
-+    defined(CONFIG_NUMA) || defined(CONFIG_MEMCG)
- #ifdef CONFIG_ZONE_DMA
- #define TEXT_FOR_DMA(xx) xx "_dma",
- #else
-@@ -1172,7 +1173,7 @@ const char * const vmstat_text[] = {
- 	"nr_dirty_threshold",
- 	"nr_dirty_background_threshold",
- 
--#ifdef CONFIG_VM_EVENT_COUNTERS
-+#if defined(CONFIG_VM_EVENT_COUNTERS) || defined(CONFIG_MEMCG)
- 	/* enum vm_event_item counters */
- 	"pgpgin",
- 	"pgpgout",
-@@ -1291,9 +1292,9 @@ const char * const vmstat_text[] = {
- 	"swap_ra",
- 	"swap_ra_hit",
- #endif
--#endif /* CONFIG_VM_EVENTS_COUNTERS */
-+#endif /* CONFIG_VM_EVENT_COUNTERS || CONFIG_MEMCG */
- };
--#endif /* CONFIG_PROC_FS || CONFIG_SYSFS || CONFIG_NUMA */
-+#endif /* CONFIG_PROC_FS || CONFIG_SYSFS || CONFIG_NUMA || CONFIG_MEMCG */
- 
- #if (defined(CONFIG_DEBUG_FS) && defined(CONFIG_COMPACTION)) || \
-      defined(CONFIG_PROC_FS)
-
