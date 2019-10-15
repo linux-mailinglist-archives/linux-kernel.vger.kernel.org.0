@@ -2,91 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E95BAD7516
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 13:34:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D4F8D751C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 13:35:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728113AbfJOLe1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 07:34:27 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:34938 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725769AbfJOLe1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 07:34:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7d+YQreqBRQcsvWljBKB/AzEl5GFMHHwN18g6igEwNw=; b=sN/Ft3IhQzmxh45kbR92yKOo5
-        EnYSTlo9vfW1kf5pnpfBMI0nBrmJ5AtYnLayFf9EB5d4/g8aWEOSuy6yMps3X8IdHXkqBzwpewPWY
-        8R6wv3mCFVry4AzP4r1g50N6mDeCkmS4xXyrv/WP/Ml/0bEKeMjI8MB28cZek9QVuR+cIjQjn7wXj
-        G2geyvHmoP7wcAhn9W7qRZlqZBuk9I79dVIgVvz7adLPteFHQjr4fLGtmkaIohCh9ZQAgVg7bFq3v
-        8MjFW6u7Q77CTuWFzEGdCk3zhgXSYNH3q7Cki6Zv7mVG8qbKbtAopnQHCejX7I8B8uxhBPReAw6YB
-        PD/IiZj6A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iKL5h-0002gr-PP; Tue, 15 Oct 2019 11:34:14 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 7ACF2303807;
-        Tue, 15 Oct 2019 13:33:16 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C9F612023039A; Tue, 15 Oct 2019 13:34:10 +0200 (CEST)
-Date:   Tue, 15 Oct 2019 13:34:10 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        vincent.guittot@linaro.org, juri.lelli@redhat.com,
-        Dietmar.Eggemann@arm.com, morten.rasmussen@arm.com,
-        seto.hidetoshi@jp.fujitsu.com, qperret@google.com
-Subject: Re: [PATCH] sched/topology: Don't set SD_BALANCE_WAKE on cpuset
- domain relax
-Message-ID: <20191015113410.GG2311@hirez.programming.kicks-ass.net>
-References: <20191014164408.32596-1-valentin.schneider@arm.com>
+        id S1728444AbfJOLfM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 07:35:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59518 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728061AbfJOLfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 07:35:12 -0400
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EEC5F21D71;
+        Tue, 15 Oct 2019 11:35:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571139312;
+        bh=RmwTSDIV8FwauP/TKSSY3ZDlw7e1niXdhbfrZ3cn/3U=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=G0WeyfkMI8DUD6k61eGb9P15FohcAbMve2CgAE71mA3q0NuhSFaIOCYWT+ANYz48D
+         j7UQl8M4Uc8QXB/vzKMB3Uu3pUcir3dR6wceFeR5ZYk5hNrvxA7JsCU/pOj6LX1Ft8
+         EsI3IjAGOKwQBxelIRslQ/SWxt142ZO17244Iohg=
+Received: by mail-qt1-f173.google.com with SMTP id 3so30074954qta.1;
+        Tue, 15 Oct 2019 04:35:11 -0700 (PDT)
+X-Gm-Message-State: APjAAAU4EcrbLmnmNHiyYJKgkzxFtnr0vtcRFDQ+CbcSLXB8VGVhdBjF
+        2MWkZp0j2wSyyM+ZfX9Sp7EGruyKB1sjvTL0uQ==
+X-Google-Smtp-Source: APXvYqwV4ka+h8Ai6FzlPXTB/SteBHk/rshSYgJyQG3n6WwcEMODovifEQMVxtQT5VJ5SFVHSgIdavwnJcXTiUug4Fg=
+X-Received: by 2002:ac8:44d9:: with SMTP id b25mr39135730qto.300.1571139311121;
+ Tue, 15 Oct 2019 04:35:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191014164408.32596-1-valentin.schneider@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191011154423.2506-1-srinivas.kandagatla@linaro.org>
+ <20191011154423.2506-2-srinivas.kandagatla@linaro.org> <20191014171241.GA24989@bogus>
+ <76be1a0d-43ea-44c3-ef6c-9f9a2025c7a2@linaro.org>
+In-Reply-To: <76be1a0d-43ea-44c3-ef6c-9f9a2025c7a2@linaro.org>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 15 Oct 2019 06:35:00 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+ZBhh2A3yLtOyReHHAET_bvM-ygBtRXeFihAxf0jvDKQ@mail.gmail.com>
+Message-ID: <CAL_Jsq+ZBhh2A3yLtOyReHHAET_bvM-ygBtRXeFihAxf0jvDKQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: soundwire: add bindings for Qcom controller
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Vinod <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Banajit Goswami <bgoswami@codeaurora.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        devicetree@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        spapothi@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 14, 2019 at 05:44:08PM +0100, Valentin Schneider wrote:
-> As pointed out in commit
-> 
->   182a85f8a119 ("sched: Disable wakeup balancing")
-> 
-> SD_BALANCE_WAKE is a tad too aggressive, and is usually left unset.
-> 
-> However, it turns out cpuset domain relaxation will unconditionally set it
-> on domains below the relaxation level. This made sense back when
-> SD_BALANCE_WAKE was set unconditionally, but it no longer is the case.
-> 
-> We can improve things slightly by noticing that set_domain_attribute() is
-> always called after sd_init(), so rather than setting flags we can rely on
-> whatever sd_init() is doing and only clear certain flags when above the
-> relaxation level.
-> 
-> While at it, slightly clean up the function and flip the relax level
-> check to be more human readable.
-> 
-> Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
-> ---
-> I was tempted to put a
-> 
-> Fixes: 182a85f8a119 ("sched: Disable wakeup balancing")
-> 
-> but the SD setup code back then was a mess of SD_INIT() macros which I'm
-> not familiar with. It *looks* like the sequence was roughly the same as it
-> is now (i.e. set up domain flags, *then* call set_domain_attribute()) but
-> I'm not completely sure.
+On Mon, Oct 14, 2019 at 12:34 PM Srinivas Kandagatla
+<srinivas.kandagatla@linaro.org> wrote:
+>
+> Thanks Rob for taking time to review,
+>
+> On 14/10/2019 18:12, Rob Herring wrote:
+> > On Fri, Oct 11, 2019 at 04:44:22PM +0100, Srinivas Kandagatla wrote:
+> >> This patch adds bindings for Qualcomm soundwire controller.
+> >>
+> >> Qualcomm SoundWire Master controller is present in most Qualcomm SoCs
+> >> either integrated as part of WCD audio codecs via slimbus or
+> >> as part of SOC I/O.
+> >>
+> >> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> >> ---
+> >>   .../bindings/soundwire/qcom,sdw.txt           | 167 ++++++++++++++++++
+> >>   1 file changed, 167 insertions(+)
+> >>   create mode 100644 Documentation/devicetree/bindings/soundwire/qcom,sdw.txt
+> >
+> > Next time, do a DT schema.
+> >
+> Sure! I can do that in next version!
 
-This 'relax' thing is on my list of regrets. It is a terrible thing that
-should never have existed.
+I meant the next binding you write, not v4. However, ...
 
-Are you actually using it or did you just stumble upon it while looking
-around there?
+[...]
+
+> >> += SoundWire devices
+> >> +Each subnode of the bus represents SoundWire device attached to it.
+> >> +The properties of these nodes are defined by the individual bindings.
+> >
+> > Is there some sort of addressing that needs to be defined?
+> >
+> Thanks, Looks like I missed that here.
+>
+> it should be something like this,
+>
+> #address-cells = <2>;
+> #size-cells = <0>;
+>
+> Will add the in next version.
+
+You need a common soundwire binding for this. You also need to define
+the format of 'reg' and unit addresses. And it needs to be a schema.
+So perhaps this binding too should be.
+
+Rob
