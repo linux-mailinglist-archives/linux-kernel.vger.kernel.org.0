@@ -2,143 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44180D7325
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 12:26:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9353BD7331
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 12:27:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730600AbfJOK0W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 06:26:22 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:41113 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726508AbfJOK0W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 06:26:22 -0400
-Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1iKK1w-0006RM-62; Tue, 15 Oct 2019 11:26:16 +0100
-Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.2)
-        (envelope-from <ben@rainbowdash.codethink.co.uk>)
-        id 1iKK1v-0002zJ-OZ; Tue, 15 Oct 2019 11:26:15 +0100
-From:   Ben Dooks <ben.dooks@codethink.co.uk>
-To:     linux-kernel@lists.codethink.co.uk
-Cc:     Ben Dooks <ben.dooks@codethink.co.uk>,
-        Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Christoph Lameter <cl@linux.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] percpu: add __percpu to SHIFT_PERCPU_PTR
-Date:   Tue, 15 Oct 2019 11:26:15 +0100
-Message-Id: <20191015102615.11430-1-ben.dooks@codethink.co.uk>
-X-Mailer: git-send-email 2.23.0
+        id S1730684AbfJOK1Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 06:27:24 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57474 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726574AbfJOK1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 06:27:23 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D882A882EF;
+        Tue, 15 Oct 2019 10:27:22 +0000 (UTC)
+Received: from gondolin (dhcp-192-233.str.redhat.com [10.33.192.233])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 888895DA8C;
+        Tue, 15 Oct 2019 10:27:09 +0000 (UTC)
+Date:   Tue, 15 Oct 2019 12:27:07 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org,
+        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
+        alex.williamson@redhat.com, mst@redhat.com, tiwei.bie@intel.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        maxime.coquelin@redhat.com, cunming.liang@intel.com,
+        zhihong.wang@intel.com, rob.miller@broadcom.com,
+        xiao.w.wang@intel.com, haotian.wang@sifive.com,
+        zhenyuw@linux.intel.com, zhi.a.wang@intel.com,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, airlied@linux.ie, daniel@ffwll.ch,
+        farman@linux.ibm.com, pasic@linux.ibm.com, sebott@linux.ibm.com,
+        oberpar@linux.ibm.com, heiko.carstens@de.ibm.com,
+        gor@linux.ibm.com, borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
+        freude@linux.ibm.com, lingshan.zhu@intel.com, idos@mellanox.com,
+        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
+        christophe.de.dinechin@gmail.com, kevin.tian@intel.com
+Subject: Re: [PATCH V3 2/7] mdev: bus uevent support
+Message-ID: <20191015122707.1fd52240.cohuck@redhat.com>
+In-Reply-To: <20191011081557.28302-3-jasowang@redhat.com>
+References: <20191011081557.28302-1-jasowang@redhat.com>
+        <20191011081557.28302-3-jasowang@redhat.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 15 Oct 2019 10:27:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SHIFT_PERCPU_PTR() returns a pointer used by a number
-of functions that expect the pointer to be __percpu annotated
-(sparse address space 3). Adding __percpu to this makes the
-following sparse warnings go away.
+On Fri, 11 Oct 2019 16:15:52 +0800
+Jason Wang <jasowang@redhat.com> wrote:
 
-Note, this then creates the problem the __percup is marked
-as noderef, which may need removing for some of the internal
-functions, or to remove other warnings.
+> This patch adds bus uevent support for mdev bus in order to allow
+> cooperation with userspace.
+> 
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> ---
+>  drivers/vfio/mdev/mdev_driver.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/vfio/mdev/mdev_driver.c b/drivers/vfio/mdev/mdev_driver.c
+> index b7c40ce86ee3..319d886ffaf7 100644
+> --- a/drivers/vfio/mdev/mdev_driver.c
+> +++ b/drivers/vfio/mdev/mdev_driver.c
+> @@ -82,9 +82,17 @@ static int mdev_match(struct device *dev, struct device_driver *drv)
+>  	return 0;
+>  }
+>  
+> +static int mdev_uevent(struct device *dev, struct kobj_uevent_env *env)
+> +{
+> +	struct mdev_device *mdev = to_mdev_device(dev);
+> +
+> +	return add_uevent_var(env, "MODALIAS=mdev:c%02X", mdev->class_id);
+> +}
+> +
+>  struct bus_type mdev_bus_type = {
+>  	.name		= "mdev",
+>  	.match		= mdev_match,
+> +	.uevent		= mdev_uevent,
+>  	.probe		= mdev_probe,
+>  	.remove		= mdev_remove,
+>  };
 
-mm/vmstat.c:385:13: warning: incorrect type in initializer (different address spaces)
-mm/vmstat.c:385:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-mm/vmstat.c:385:13:    got signed char *
-mm/vmstat.c:385:13: warning: incorrect type in initializer (different address spaces)
-mm/vmstat.c:385:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-mm/vmstat.c:385:13:    got signed char *
-mm/vmstat.c:385:13: warning: incorrect type in initializer (different address spaces)
-mm/vmstat.c:385:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-mm/vmstat.c:385:13:    got signed char *
-mm/vmstat.c:385:13: warning: incorrect type in initializer (different address spaces)
-mm/vmstat.c:385:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-mm/vmstat.c:385:13:    got signed char *
-mm/vmstat.c:401:13: warning: incorrect type in initializer (different address spaces)
-mm/vmstat.c:401:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-mm/vmstat.c:401:13:    got signed char *
-mm/vmstat.c:401:13: warning: incorrect type in initializer (different address spaces)
-mm/vmstat.c:401:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-mm/vmstat.c:401:13:    got signed char *
-mm/vmstat.c:401:13: warning: incorrect type in initializer (different address spaces)
-mm/vmstat.c:401:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-mm/vmstat.c:401:13:    got signed char *
-mm/vmstat.c:401:13: warning: incorrect type in initializer (different address spaces)
-mm/vmstat.c:401:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-mm/vmstat.c:401:13:    got signed char *
-mm/vmstat.c:429:13: warning: incorrect type in initializer (different address spaces)
-mm/vmstat.c:429:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-mm/vmstat.c:429:13:    got signed char *
-mm/vmstat.c:429:13: warning: incorrect type in initializer (different address spaces)
-mm/vmstat.c:429:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-mm/vmstat.c:429:13:    got signed char *
-mm/vmstat.c:429:13: warning: incorrect type in initializer (different address spaces)
-mm/vmstat.c:429:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-mm/vmstat.c:429:13:    got signed char *
-mm/vmstat.c:429:13: warning: incorrect type in initializer (different address spaces)
-mm/vmstat.c:429:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-mm/vmstat.c:429:13:    got signed char *
-mm/vmstat.c:445:13: warning: incorrect type in initializer (different address spaces)
-mm/vmstat.c:445:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-mm/vmstat.c:445:13:    got signed char *
-mm/vmstat.c:445:13: warning: incorrect type in initializer (different address spaces)
-mm/vmstat.c:445:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-mm/vmstat.c:445:13:    got signed char *
-mm/vmstat.c:445:13: warning: incorrect type in initializer (different address spaces)
-mm/vmstat.c:445:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-mm/vmstat.c:445:13:    got signed char *
-mm/vmstat.c:445:13: warning: incorrect type in initializer (different address spaces)
-mm/vmstat.c:445:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-mm/vmstat.c:445:13:    got signed char *
-mm/vmstat.c:763:29: warning: incorrect type in initializer (different address spaces)
-mm/vmstat.c:763:29:    expected signed char [noderef] <asn:3> *__p
-mm/vmstat.c:763:29:    got signed char *
-mm/vmstat.c:763:29: warning: incorrect type in initializer (different address spaces)
-mm/vmstat.c:763:29:    expected signed char [noderef] <asn:3> *__p
-mm/vmstat.c:763:29:    got signed char *
-mm/vmstat.c:763:29: warning: incorrect type in initializer (different address spaces)
-mm/vmstat.c:763:29:    expected signed char [noderef] <asn:3> *__p
-mm/vmstat.c:763:29:    got signed char *
-mm/vmstat.c:763:29: warning: incorrect type in initializer (different address spaces)
-mm/vmstat.c:763:29:    expected signed char [noderef] <asn:3> *__p
-mm/vmstat.c:763:29:    got signed char *
-mm/vmstat.c:825:29: warning: incorrect type in initializer (different address spaces)
-mm/vmstat.c:825:29:    expected signed char [noderef] <asn:3> *__p
-mm/vmstat.c:825:29:    got signed char *
-mm/vmstat.c:825:29: warning: incorrect type in initializer (different address spaces)
-mm/vmstat.c:825:29:    expected signed char [noderef] <asn:3> *__p
-mm/vmstat.c:825:29:    got signed char *
-mm/vmstat.c:825:29: warning: incorrect type in initializer (different address spaces)
-mm/vmstat.c:825:29:    expected signed char [noderef] <asn:3> *__p
-mm/vmstat.c:825:29:    got signed char *
-mm/vmstat.c:825:29: warning: incorrect type in initializer (different address spaces)
-mm/vmstat.c:825:29:    expected signed char [noderef] <asn:3> *__p
-mm/vmstat.c:825:29:    got signed char *
-
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
----
-Cc: Dennis Zhou <dennis@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Christoph Lameter <cl@linux.com>
-Cc: linux-kernel@vger.kernel.org
----
- include/linux/percpu-defs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/percpu-defs.h b/include/linux/percpu-defs.h
-index a6fabd865211..a49b6c702598 100644
---- a/include/linux/percpu-defs.h
-+++ b/include/linux/percpu-defs.h
-@@ -229,7 +229,7 @@ do {									\
-  * pointer value.  The weird cast keeps both GCC and sparse happy.
-  */
- #define SHIFT_PERCPU_PTR(__p, __offset)					\
--	RELOC_HIDE((typeof(*(__p)) __kernel __force *)(__p), (__offset))
-+	RELOC_HIDE((typeof(*(__p)) __kernel __percpu __force *)(__p), (__offset))
- 
- #define per_cpu_ptr(ptr, cpu)						\
- ({									\
--- 
-2.23.0
-
+I'd merge that into the previous patch.
