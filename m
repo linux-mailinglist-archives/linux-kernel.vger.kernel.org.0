@@ -2,86 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17E2ED83D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 00:39:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F0A2D83B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 00:32:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732983AbfJOWjM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 18:39:12 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34539 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732775AbfJOWjL (ORCPT
+        id S2389926AbfJOWci (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 18:32:38 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45312 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732040AbfJOWci (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 18:39:11 -0400
-Received: by mail-lj1-f193.google.com with SMTP id j19so21946343lja.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 15:39:10 -0700 (PDT)
+        Tue, 15 Oct 2019 18:32:38 -0400
+Received: by mail-pl1-f196.google.com with SMTP id u12so10246470pls.12
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 15:32:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fon9Xqueqx/Fq0wGHnHqEDUCXyflZLUwsevU6fmx6jE=;
-        b=SIEI+eyzsLvgKQSWy68fNU4waAO3JnvS6nzHr5/fZu5+F3lS+ninFSB5dUKCVryHZ+
-         kl8H8QJRcmYfRoBpcYQdlcvyFYmbnE5AhMRuYRji7sgqsBgEDlqfBvGU7GUQWJu2UMf7
-         6W/csLC8ZHTI+HN72RKiuRYhkxOOMexsvDhzA=
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=ZPGOSSx5giEEfL2NPx2gvww++Bfy7bq2OL0BsYfuuHg=;
+        b=HJg0uZssgcrUSgxu4Yt6cBbovBjr3Wy8sfTsLZaJ5il4NS8LlLl+YXlQufsmAOhrUe
+         EjPI+S9rdd9S0a0yFhE80R21vVioW+hNay9WseUk7tEudntZ+ZVUQW/eEvwAdWlj7R0J
+         eL6TvUgJ4Wbp8ruzE7ttH23JwlHVYaonygjyk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fon9Xqueqx/Fq0wGHnHqEDUCXyflZLUwsevU6fmx6jE=;
-        b=tz2fV6+rx/OFuGnXohp9D2THamucFJGP7pymYrdMX6gWRLS4N8ZfkFXkfKDQ2Ejcby
-         ItqSRhTdMSrNiZU2MqP3B+P4bd0VkNlID4/ivZYiIvcMViyINvfsbaurNVfgDhOdi+fg
-         52EbAOMWLYd+KdViIVJOL/Z5C6QpjjlN0i6Kd2uvLdYrOpfCztDFUn8W1pdqHFlLMom8
-         JRLNf/CK+qsoPo9XMCXwuHeLSg4b/nh3MUhJD8DEb/rEXIYef8N8A4cjKEjkFjIJgcDV
-         oOlp9pCvUX1rL2UVyAMIJwpMnzcmtlyTBq43E4Q9njZDnww9zCi69GV2pMWkbp0zVIei
-         E20w==
-X-Gm-Message-State: APjAAAVEgC1F1UxqRMwNNeNY8wIF0MMN4hYZbTrzkgsRz23u9vI3Wrmb
-        hUkgBHc7R/G900keU9sNT3aTEl2fquE=
-X-Google-Smtp-Source: APXvYqzdGBZG1Ya5kS05O9OAlNXgBSsEz4FKifFhDRQxIZ7O5Ua0AgK1vBxHV6SXVSYD5dFLW8++wQ==
-X-Received: by 2002:a2e:a0ca:: with SMTP id f10mr13675890ljm.84.1571179149469;
-        Tue, 15 Oct 2019 15:39:09 -0700 (PDT)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
-        by smtp.gmail.com with ESMTPSA id i190sm1271584lfi.45.2019.10.15.15.39.09
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2019 15:39:09 -0700 (PDT)
-Received: by mail-lf1-f50.google.com with SMTP id r2so15728983lfn.8
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 15:39:09 -0700 (PDT)
-X-Received: by 2002:a19:5504:: with SMTP id n4mr4230778lfe.106.1571178744104;
- Tue, 15 Oct 2019 15:32:24 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=ZPGOSSx5giEEfL2NPx2gvww++Bfy7bq2OL0BsYfuuHg=;
+        b=gcktiuFr8a9ttyNqfNiPdsIP2pK7acVkgB3G43SdIlHpAImifIt7z8Xiw6/BJoRu3+
+         xNWlwKVyCvVSXSU7GT2TgZEbGGlQuQ1G3NJ1xmspCaFeqeIb8ThdunCrRTFpmCeRtNqS
+         mCjSunOlUxtz9m7Kn5WtnRz8Iih1mK8INCx5FCrQUCc568mLtjN52wIv+UnLtaVMd5nZ
+         hTwwL2FGZ1WTz4njl9/MtHhgy938h0hp5Tk68DZrystdLDJcvB1tqnSZZooQxi3WUBo5
+         /QJszgXi7R3LbJivlMjmRSWPvnR0t+s1mJUU/coBJ7gxbqK2HSx9XLRC7kt5vDgj+IHN
+         wG5Q==
+X-Gm-Message-State: APjAAAU9axc5CMF0upOcPOXVthwsY2D3oKzRUmBKTh/uYvCeA2aoEG1i
+        1OecxpyyY6wRgAPLrwn5fUzLfWcBBpWfVT6+ljxHXgOnZHePrFAexLm1eOw+iw5c3uBixFngzEI
+        YjyzvVjWZtJxTjmDR9FOYIGK7TRvjz7GyoPeVhRQjJoRqhNk4N9zegd6jdPfFbAbMHYaQFQrtRM
+        DcFx437p+QQaQ=
+X-Google-Smtp-Source: APXvYqynowQLJijtXfqi2elhpB72G1vEHERM1q9vmxBCIR/fDTcnRQIGAZzcOq4IwAR76Jx3qQgNgQ==
+X-Received: by 2002:a17:902:547:: with SMTP id 65mr26662481plf.239.1571178756804;
+        Tue, 15 Oct 2019 15:32:36 -0700 (PDT)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id l62sm24419257pfl.167.2019.10.15.15.32.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 15 Oct 2019 15:32:35 -0700 (PDT)
+Subject: Re: [PATCH net-next v2] net: bcmgenet: Generate a random MAC if none
+ is valid
+To:     Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org
+Cc:     phil@raspberrypi.org, jonathan@raspberrypi.org,
+        matthias.bgg@kernel.org, linux-rpi-kernel@lists.infradead.org,
+        wahrenst@gmx.net, nsaenzjulienne@suse.de,
+        Doug Berger <opendmb@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "open list:BROADCOM GENET ETHERNET DRIVER" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20191014212000.27712-1-f.fainelli@gmail.com>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <dda8587a-0734-d294-5b50-0f5f35c27918@broadcom.com>
+Date:   Tue, 15 Oct 2019 15:32:28 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <157117606853.15019.15459271147790470307.stgit@warthog.procyon.org.uk>
-In-Reply-To: <157117606853.15019.15459271147790470307.stgit@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 15 Oct 2019 15:32:08 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whfCy+WCZ5SXZGi4QEhxXm=EjZjj4R9+o4q-QR3saMyfg@mail.gmail.com>
-Message-ID: <CAHk-=whfCy+WCZ5SXZGi4QEhxXm=EjZjj4R9+o4q-QR3saMyfg@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/21] pipe: Keyrings, Block and USB notifications
-To:     David Howells <dhowells@redhat.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191014212000.27712-1-f.fainelli@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Aside from the two small comments, the pipe side looked reasonable,
-but I stopped looking when the patches moved on to the notificaiton
-part, and maybe I missed something in the earlier ones too.
+Hi Florian,
 
-Which does bring me to the meat of this email: can we please keep the
-pipe cleanups and prepwork (and benchmarking) as a separate patch
-series? I'd like that to be done separately from the notification
-code, since it's re-organization and cleanup - while the eventual goal
-is to be able to add messages to the pipe atomically, I think the
-series makes sense (and should make sense) on its own.
+On 2019-10-14 2:20 p.m., Florian Fainelli wrote:
+> Instead of having a hard failure and stopping the driver's probe
+> routine, generate a random Ethernet MAC address to keep going.
+>
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+> Changes in v2:
+>
+> - provide a message that a random MAC is used, the same message that
+>    bcmsysport.c uses
+>
+>   drivers/net/ethernet/broadcom/genet/bcmgenet.c | 17 ++++++++---------
+>   1 file changed, 8 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.c b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+> index 12cb77ef1081..dd4e4f1dd384 100644
+> --- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+> +++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+> @@ -3461,16 +3461,10 @@ static int bcmgenet_probe(struct platform_device *pdev)
+>   		goto err;
+>   	}
+>   
+> -	if (dn) {
+> +	if (dn)
+>   		macaddr = of_get_mac_address(dn);
+> -		if (IS_ERR(macaddr)) {
+> -			dev_err(&pdev->dev, "can't find MAC address\n");
+> -			err = -EINVAL;
+> -			goto err;
+> -		}
+> -	} else {
+> +	else
+>   		macaddr = pd->mac_address;
+> -	}
+>   
+>   	priv->base = devm_platform_ioremap_resource(pdev, 0);
+>   	if (IS_ERR(priv->base)) {
+> @@ -3482,7 +3476,12 @@ static int bcmgenet_probe(struct platform_device *pdev)
+>   
+>   	SET_NETDEV_DEV(dev, &pdev->dev);
+>   	dev_set_drvdata(&pdev->dev, dev);
+> -	ether_addr_copy(dev->dev_addr, macaddr);
+> +	if (IS_ERR_OR_NULL(macaddr) || !is_valid_ether_addr(macaddr)) {
+> +		dev_warn(&pdev->dev, "using random Ethernet MAC\n");
+I would still consider this warrants a dev_err as you should not be 
+using the device with a random MAC address assigned to it.  But I'll 
+leave it to the "experts" to decide on the print level here.
+> +		eth_hw_addr_random(dev);
+> +	} else {
+> +		ether_addr_copy(dev->dev_addr, macaddr);
+> +	}
+>   	dev->watchdog_timeo = 2 * HZ;
+>   	dev->ethtool_ops = &bcmgenet_ethtool_ops;
+>   	dev->netdev_ops = &bcmgenet_netdev_ops;
 
-          Linus
