@@ -2,91 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E91E9D75EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 14:10:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAA1FD75F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 14:10:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731737AbfJOMKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 08:10:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58236 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730682AbfJOMKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 08:10:06 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C75F6B3BE;
-        Tue, 15 Oct 2019 12:10:01 +0000 (UTC)
-From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
-To:     Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        netdev@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Subject: [PATCH v10 6/6] MIPS: SGI-IP27: Enable ethernet phy on second Origin 200 module
-Date:   Tue, 15 Oct 2019 14:09:51 +0200
-Message-Id: <20191015120953.2597-7-tbogendoerfer@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20191015120953.2597-1-tbogendoerfer@suse.de>
-References: <20191015120953.2597-1-tbogendoerfer@suse.de>
+        id S1731831AbfJOMKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 08:10:34 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:45324 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728652AbfJOMKW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 08:10:22 -0400
+Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1iKLeX-00016l-FO; Tue, 15 Oct 2019 13:10:13 +0100
+Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.2)
+        (envelope-from <ben@rainbowdash.codethink.co.uk>)
+        id 1iKLeX-0004uN-1N; Tue, 15 Oct 2019 13:10:13 +0100
+From:   Ben Dooks <ben.dooks@codethink.co.uk>
+To:     linux-kernel@lists.codethink.co.uk
+Cc:     Ben Dooks <ben.dooks@codethink.co.uk>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] tracing: make internal data static
+Date:   Tue, 15 Oct 2019 13:10:12 +0100
+Message-Id: <20191015121012.18824-1-ben.dooks@codethink.co.uk>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PROM only enables ethernet PHY on first Origin 200 module, so we must
-do it ourselves for the second module.
+The event_class_ftrace_##call and event_##call do not seem
+to be used outside of trace_export.c so make them both static
+to avoid a number of sparse warnings:
 
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+kernel/trace/trace_entries.h:59:1: warning: symbol 'event_class_ftrace_function' was not declared. Should it be static?
+kernel/trace/trace_entries.h:59:1: warning: symbol '__event_function' was not declared. Should it be static?
+kernel/trace/trace_entries.h:77:1: warning: symbol 'event_class_ftrace_funcgraph_entry' was not declared. Should it be static?
+kernel/trace/trace_entries.h:77:1: warning: symbol '__event_funcgraph_entry' was not declared. Should it be static?
+kernel/trace/trace_entries.h:93:1: warning: symbol 'event_class_ftrace_funcgraph_exit' was not declared. Should it be static?
+kernel/trace/trace_entries.h:93:1: warning: symbol '__event_funcgraph_exit' was not declared. Should it be static?
+kernel/trace/trace_entries.h:129:1: warning: symbol 'event_class_ftrace_context_switch' was not declared. Should it be static?
+kernel/trace/trace_entries.h:129:1: warning: symbol '__event_context_switch' was not declared. Should it be static?
+kernel/trace/trace_entries.h:149:1: warning: symbol 'event_class_ftrace_wakeup' was not declared. Should it be static?
+kernel/trace/trace_entries.h:149:1: warning: symbol '__event_wakeup' was not declared. Should it be static?
+kernel/trace/trace_entries.h:171:1: warning: symbol 'event_class_ftrace_kernel_stack' was not declared. Should it be static?
+kernel/trace/trace_entries.h:171:1: warning: symbol '__event_kernel_stack' was not declared. Should it be static?
+kernel/trace/trace_entries.h:191:1: warning: symbol 'event_class_ftrace_user_stack' was not declared. Should it be static?
+kernel/trace/trace_entries.h:191:1: warning: symbol '__event_user_stack' was not declared. Should it be static?
+kernel/trace/trace_entries.h:214:1: warning: symbol 'event_class_ftrace_bprint' was not declared. Should it be static?
+kernel/trace/trace_entries.h:214:1: warning: symbol '__event_bprint' was not declared. Should it be static?
+kernel/trace/trace_entries.h:230:1: warning: symbol 'event_class_ftrace_print' was not declared. Should it be static?
+kernel/trace/trace_entries.h:230:1: warning: symbol '__event_print' was not declared. Should it be static?
+kernel/trace/trace_entries.h:247:1: warning: symbol 'event_class_ftrace_raw_data' was not declared. Should it be static?
+kernel/trace/trace_entries.h:247:1: warning: symbol '__event_raw_data' was not declared. Should it be static?
+kernel/trace/trace_entries.h:262:1: warning: symbol 'event_class_ftrace_bputs' was not declared. Should it be static?
+kernel/trace/trace_entries.h:262:1: warning: symbol '__event_bputs' was not declared. Should it be static?
+kernel/trace/trace_entries.h:277:1: warning: symbol 'event_class_ftrace_mmiotrace_rw' was not declared. Should it be static?
+kernel/trace/trace_entries.h:277:1: warning: symbol '__event_mmiotrace_rw' was not declared. Should it be static?
+kernel/trace/trace_entries.h:298:1: warning: symbol 'event_class_ftrace_mmiotrace_map' was not declared. Should it be static?
+kernel/trace/trace_entries.h:298:1: warning: symbol '__event_mmiotrace_map' was not declared. Should it be static?
+kernel/trace/trace_entries.h:322:1: warning: symbol 'event_class_ftrace_branch' was not declared. Should it be static?
+kernel/trace/trace_entries.h:322:1: warning: symbol '__event_branch' was not declared. Should it be static?
+kernel/trace/trace_entries.h:343:1: warning: symbol 'event_class_ftrace_hwlat' was not declared. Should it be static?
+kernel/trace/trace_entries.h:343:1: warning: symbol '__event_hwlat' was not declared. Should it be static?
+
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 ---
- arch/mips/pci/pci-ip27.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: linux-kernel@vger.kernel.org
+---
+ kernel/trace/trace_export.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/mips/pci/pci-ip27.c b/arch/mips/pci/pci-ip27.c
-index 441eb9383b20..0d2eb86e8a1e 100644
---- a/arch/mips/pci/pci-ip27.c
-+++ b/arch/mips/pci/pci-ip27.c
-@@ -7,6 +7,11 @@
-  * Copyright (C) 1999, 2000, 04 Ralf Baechle (ralf@linux-mips.org)
-  * Copyright (C) 1999, 2000 Silicon Graphics, Inc.
-  */
-+#include <asm/sn/addrs.h>
-+#include <asm/sn/types.h>
-+#include <asm/sn/klconfig.h>
-+#include <asm/sn/hub.h>
-+#include <asm/sn/ioc3.h>
- #include <asm/pci/bridge.h>
+diff --git a/kernel/trace/trace_export.c b/kernel/trace/trace_export.c
+index 45630a76ed3a..2e6d2e9741cc 100644
+--- a/kernel/trace/trace_export.c
++++ b/kernel/trace/trace_export.c
+@@ -171,7 +171,7 @@ ftrace_define_fields_##name(struct trace_event_call *event_call)	\
+ #define FTRACE_ENTRY_REG(call, struct_name, etype, tstruct, print, filter,\
+ 			 regfn)						\
+ 									\
+-struct trace_event_class __refdata event_class_ftrace_##call = {	\
++static struct trace_event_class __refdata event_class_ftrace_##call = {	\
+ 	.system			= __stringify(TRACE_SYSTEM),		\
+ 	.define_fields		= ftrace_define_fields_##call,		\
+ 	.fields			= LIST_HEAD_INIT(event_class_ftrace_##call.fields),\
+@@ -187,7 +187,7 @@ struct trace_event_call __used event_##call = {				\
+ 	.print_fmt		= print,				\
+ 	.flags			= TRACE_EVENT_FL_IGNORE_ENABLE,		\
+ };									\
+-struct trace_event_call __used						\
++static struct trace_event_call __used						\
+ __attribute__((section("_ftrace_events"))) *__event_##call = &event_##call;
  
- dma_addr_t __phys_to_dma(struct device *dev, phys_addr_t paddr)
-@@ -31,3 +36,20 @@ int pcibus_to_node(struct pci_bus *bus)
- }
- EXPORT_SYMBOL(pcibus_to_node);
- #endif /* CONFIG_NUMA */
-+
-+static void ip29_fixup_phy(struct pci_dev *dev)
-+{
-+	int nasid = pcibus_to_node(dev->bus);
-+	u32 sid;
-+
-+	if (nasid != 1)
-+		return; /* only needed on second module */
-+
-+	/* enable ethernet PHY on IP29 systemboard */
-+	pci_read_config_dword(dev, PCI_SUBSYSTEM_VENDOR_ID, &sid);
-+	if (sid == (PCI_VENDOR_ID_SGI | (IOC3_SUBSYS_IP29_SYSBOARD) << 16))
-+		REMOTE_HUB_S(nasid, MD_LED0, 0x09);
-+}
-+
-+DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_SGI, PCI_DEVICE_ID_SGI_IOC3,
-+			ip29_fixup_phy);
+ #undef FTRACE_ENTRY
 -- 
-2.16.4
+2.23.0
 
