@@ -2,47 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D377D7A9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 17:54:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0105AD7ABE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 18:03:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387793AbfJOPyh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 11:54:37 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:43468 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731631AbfJOPyg (ORCPT
+        id S2387591AbfJOQDm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 12:03:42 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:53849 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731631AbfJOQDk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 11:54:36 -0400
-Received: by mail-ot1-f68.google.com with SMTP id o44so17347854ota.10;
-        Tue, 15 Oct 2019 08:54:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rV9egUVAST8OIR2Vy9HXV180k6eZjVdltgXDChEOcvU=;
-        b=cPQ+OZD3dhkI/H/TMcl72kMh08oJgrGV0No0fhVEFXQifG6axCFu06NCDMXEf63bLQ
-         LFaPZMPOipaYlSVQ2a9yII+zczCW1OHJk3NeiFoQdUachjXN9kHP1EF8A4ZWXCTaP9Wn
-         RWK8Ck9LYZm+deIsTK/tdBwmqUC06H57lZePbiNclpFHjkJskzEH9XuZbr2PiTJyntiS
-         N6b1ZSWJoBQsMvzhn8/78RpZRe9KW+G5S0W7O6Ll2U3EHskrGsrSLUNspTYUWVgTTUIX
-         A7l0Cjswfq40RhXgBu7ncAcZX7tHGAC9TURSeQKuZPtnhuI+nQlCKxlbTFX6hm5ia410
-         wzKw==
-X-Gm-Message-State: APjAAAVvUYGYQzMr4ItcQX01fxrn/MGMXOVAaeE4HXLF16C7Vo2NAoGr
-        WPgPkhKYThzFpHJFlEzWbjlFCyE=
-X-Google-Smtp-Source: APXvYqx5PEklVj7gQXdlttTQJDeMKkDwquulLzKwtzxeyRpybL2ZzO9JE48NPNfN5OSQLFBx1zsx/A==
-X-Received: by 2002:a9d:3e4e:: with SMTP id h14mr30809861otg.198.1571154875408;
-        Tue, 15 Oct 2019 08:54:35 -0700 (PDT)
-Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id y137sm6633719oie.53.2019.10.15.08.54.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2019 08:54:34 -0700 (PDT)
-From:   Rob Herring <robh@kernel.org>
-To:     devicetree@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] dt: submitting-patches: Document requirements for DT schema
-Date:   Tue, 15 Oct 2019 10:54:33 -0500
-Message-Id: <20191015155433.25359-2-robh@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191015155433.25359-1-robh@kernel.org>
-References: <20191015155433.25359-1-robh@kernel.org>
+        Tue, 15 Oct 2019 12:03:40 -0400
+Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1iKPIL-0007cZ-5b; Tue, 15 Oct 2019 17:03:33 +0100
+Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.2)
+        (envelope-from <ben@rainbowdash.codethink.co.uk>)
+        id 1iKPIK-0003yd-Of; Tue, 15 Oct 2019 17:03:32 +0100
+From:   "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
+To:     linux-kernel@lists.codethink.co.uk
+Cc:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>,
+        Al Cooper <alcooperx@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+Subject: [PATCH 1/2] phy: phy-brcm-usb-init: fix __iomem annotations
+Date:   Tue, 15 Oct 2019 17:03:31 +0100
+Message-Id: <20191015160332.15244-1-ben.dooks@codethink.co.uk>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -50,69 +35,293 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the DT submitting-patches.txt with additional requirements for DT
-binding schemas. New binding documents should generally use the schema
-format and have an explicit license.
+The register address should have __iomem attributes
+so fix this to remove the following sparse warnings:
 
-Signed-off-by: Rob Herring <robh@kernel.org>
+drivers/phy/broadcom/phy-brcm-usb-init.c:459:30: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:459:30: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:459:30:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:459:30:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:461:30: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:461:30: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:461:30:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:461:30:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:465:30: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:465:30: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:465:30:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:465:30:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:469:30: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:469:30: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:469:30:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:469:30:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:478:30: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:478:30: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:478:30:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:478:30:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:480:30: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:480:30: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:480:30:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:480:30:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:485:30: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:485:30: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:485:30:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:485:30:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:494:9: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:494:9: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:494:9:    expected void [noderef] <asn:2> *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:494:9:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:495:9: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:495:9: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:495:9:    expected void [noderef] <asn:2> *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:495:9:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:498:9: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:498:9: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:498:9:    expected void [noderef] <asn:2> *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:498:9:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:501:9: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:501:9: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:501:9:    expected void [noderef] <asn:2> *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:501:9:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:613:9: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:613:9: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:613:9:    expected void [noderef] <asn:2> *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:613:9:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:640:9: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:640:9: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:640:9:    expected void [noderef] <asn:2> *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:640:9:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:422:13: warning: incorrect type in assignment (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:422:13:    expected void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:422:13:    got void [noderef] <asn:2> *
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:38: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:38:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:38:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:52: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:52:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:52:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:710:64: warning: Using plain integer as NULL pointer
+drivers/phy/broadcom/phy-brcm-usb-init.c:712:32: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:712:32: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:712:32:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:712:32:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:713:29: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:713:29: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:713:29:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:713:29:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:717:29: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:717:29: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:717:29:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:717:29:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:720:9: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:720:9: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:720:9:    expected void [noderef] <asn:2> *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:720:9:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:721:9: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:721:9: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:721:9:    expected void [noderef] <asn:2> *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:721:9:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:422:13: warning: incorrect type in assignment (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:422:13:    expected void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:422:13:    got void [noderef] <asn:2> *
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:38: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:38:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:38:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:52: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:52:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:52:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:422:13: warning: incorrect type in assignment (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:422:13:    expected void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:422:13:    got void [noderef] <asn:2> *
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:38: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:38:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:38:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:52: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:52:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:52:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:434:13: warning: incorrect type in assignment (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:434:13:    expected void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:434:13:    got void [noderef] <asn:2> *
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:38: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:38:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:38:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:51: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:51:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:51:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:434:13: warning: incorrect type in assignment (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:434:13:    expected void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:434:13:    got void [noderef] <asn:2> *
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:38: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:38:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:38:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:51: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:51:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:51:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:434:13: warning: incorrect type in assignment (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:434:13:    expected void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:434:13:    got void [noderef] <asn:2> *
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:38: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:38:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:38:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:51: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:51:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:51:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:434:13: warning: incorrect type in assignment (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:434:13:    expected void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:434:13:    got void [noderef] <asn:2> *
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:38: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:38:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:38:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:51: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:51:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:51:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:794:29: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:794:29: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:794:29:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:794:29:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:813:29: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:813:29: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:813:29:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:813:29:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:829:37: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:829:37: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:829:37:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:829:37:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:843:37: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:843:37: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:843:37:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:843:37:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:847:37: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:847:37: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:847:37:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:847:37:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:422:13: warning: incorrect type in assignment (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:422:13:    expected void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:422:13:    got void [noderef] <asn:2> *
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:38: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:38:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:38:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:52: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:52:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:52:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:422:13: warning: incorrect type in assignment (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:422:13:    expected void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:422:13:    got void [noderef] <asn:2> *
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:38: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:38:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:38:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:52: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:52:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:52:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:434:13: warning: incorrect type in assignment (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:434:13:    expected void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:434:13:    got void [noderef] <asn:2> *
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:38: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:38:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:38:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:51: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:51:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:51:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:878:9: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:878:9: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:878:9:    expected void [noderef] <asn:2> *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:878:9:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:880:29: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:880:29: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:880:29:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:880:29:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:896:29: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:896:29: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:896:29:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:896:29:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:901:37: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:901:37: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:901:37:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:901:37:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:905:37: warning: cast removes address space '<asn:2>' of expression
+drivers/phy/broadcom/phy-brcm-usb-init.c:905:37: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:905:37:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:905:37:    got void *
+drivers/phy/broadcom/phy-brcm-usb-init.c:422:13: warning: incorrect type in assignment (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:422:13:    expected void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:422:13:    got void [noderef] <asn:2> *
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:38: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:38:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:38:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:52: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:52:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:52:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:422:13: warning: incorrect type in assignment (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:422:13:    expected void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:422:13:    got void [noderef] <asn:2> *
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:38: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:38:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:38:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:52: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:52:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:423:52:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:434:13: warning: incorrect type in assignment (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:434:13:    expected void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:434:13:    got void [noderef] <asn:2> *
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:38: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:38:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:38:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:51: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:51:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:51:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:434:13: warning: incorrect type in assignment (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:434:13:    expected void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:434:13:    got void [noderef] <asn:2> *
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:38: warning: incorrect type in argument 1 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:38:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:38:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:51: warning: incorrect type in argument 2 (different address spaces)
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:51:    expected void [noderef] <asn:2> *addr
+drivers/phy/broadcom/phy-brcm-usb-init.c:435:51:    got void *reg
+drivers/phy/broadcom/phy-brcm-usb-init.c:422:13: warning: too many warnings
+
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 ---
- .../bindings/submitting-patches.txt           | 21 ++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+Cc: Al Cooper <alcooperx@gmail.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: bcm-kernel-feedback-list@broadcom.com
+---
+ drivers/phy/broadcom/phy-brcm-usb-init.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/submitting-patches.txt b/Documentation/devicetree/bindings/submitting-patches.txt
-index de0d6090c0fd..98bee6240b65 100644
---- a/Documentation/devicetree/bindings/submitting-patches.txt
-+++ b/Documentation/devicetree/bindings/submitting-patches.txt
-@@ -15,17 +15,28 @@ I. For patch submitters
-      use "Documentation" or "doc" because that is implied. All bindings are
-      docs. Repeating "binding" again should also be avoided.
+diff --git a/drivers/phy/broadcom/phy-brcm-usb-init.c b/drivers/phy/broadcom/phy-brcm-usb-init.c
+index 3c53625f8bc2..fa6dd117c40e 100644
+--- a/drivers/phy/broadcom/phy-brcm-usb-init.c
++++ b/drivers/phy/broadcom/phy-brcm-usb-init.c
+@@ -126,8 +126,8 @@ enum {
+ 	USB_CTRL_SELECTOR_COUNT,
+ };
  
--  2) Submit the entire series to the devicetree mailinglist at
-+  2) DT binding files are written in DT schema format using json-schema
-+     vocabulary and YAML file format. The DT binding files must pass validation
-+     by running:
-+
-+       make dt_binding_check
-+
-+     See ../writing-schema.rst for more details about schema and tools setup.
-+
-+  3) DT binding files should be dual licensed. The preferred license tag is
-+     (GPL-2.0-only OR BSD-2-Clause).
-+
-+  4) Submit the entire series to the devicetree mailinglist at
+-#define USB_CTRL_REG(base, reg)	((void *)base + USB_CTRL_##reg)
+-#define USB_XHCI_EC_REG(base, reg) ((void *)base + USB_XHCI_EC_##reg)
++#define USB_CTRL_REG(base, reg)	((void __iomem *)base + USB_CTRL_##reg)
++#define USB_XHCI_EC_REG(base, reg) ((void __iomem *)base + USB_XHCI_EC_##reg)
+ #define USB_CTRL_MASK(reg, field) \
+ 	USB_CTRL_##reg##_##field##_MASK
+ #define USB_CTRL_MASK_FAMILY(params, reg, field)			\
+@@ -416,7 +416,7 @@ void usb_ctrl_unset_family(struct brcm_usb_init_params *params,
+ 			   u32 reg_offset, u32 field)
+ {
+ 	u32 mask;
+-	void *reg;
++	void __iomem *reg;
  
-        devicetree@vger.kernel.org
+ 	mask = params->usb_reg_bits_map[field];
+ 	reg = params->ctrl_regs + reg_offset;
+@@ -428,7 +428,7 @@ void usb_ctrl_set_family(struct brcm_usb_init_params *params,
+ 			 u32 reg_offset, u32 field)
+ {
+ 	u32 mask;
+-	void *reg;
++	void __iomem *reg;
  
-      and Cc: the DT maintainers. Use scripts/get_maintainer.pl to identify
-      all of the DT maintainers.
- 
--  3) The Documentation/ portion of the patch should come in the series before
-+  5) The Documentation/ portion of the patch should come in the series before
-      the code implementing the binding.
- 
--  4) Any compatible strings used in a chip or board DTS file must be
-+  6) Any compatible strings used in a chip or board DTS file must be
-      previously documented in the corresponding DT binding text file
-      in Documentation/devicetree/bindings.  This rule applies even if
-      the Linux device driver does not yet match on the compatible
-@@ -33,7 +44,7 @@ I. For patch submitters
-      followed as of commit bff5da4335256513497cc8c79f9a9d1665e09864
-      ("checkpatch: add DT compatible string documentation checks"). ]
- 
--  5) The wildcard "<chip>" may be used in compatible strings, as in
-+  7) The wildcard "<chip>" may be used in compatible strings, as in
-      the following example:
- 
-          - compatible: Must contain '"nvidia,<chip>-pcie",
-@@ -42,7 +53,7 @@ I. For patch submitters
-      As in the above example, the known values of "<chip>" should be
-      documented if it is used.
- 
--  6) If a documented compatible string is not yet matched by the
-+  8) If a documented compatible string is not yet matched by the
-      driver, the documentation should also include a compatible
-      string that is matched by the driver (as in the "nvidia,tegra20-pcie"
-      example above).
+ 	mask = params->usb_reg_bits_map[field];
+ 	reg = params->ctrl_regs + reg_offset;
 -- 
-2.20.1
+2.23.0
 
