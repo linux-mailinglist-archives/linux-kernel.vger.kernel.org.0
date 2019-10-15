@@ -2,339 +2,287 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A131CD7E69
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 20:06:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9B0BD7E73
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 20:08:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389037AbfJOSGN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 14:06:13 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:57592 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbfJOSGM (ORCPT
+        id S2389062AbfJOSIi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 14:08:38 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:38544 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725820AbfJOSIh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 14:06:12 -0400
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 63B93324;
-        Tue, 15 Oct 2019 20:06:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1571162768;
-        bh=gGZ92IHX4aErxdxSECBpzax+mh5hsPtQqSv5CKMIOcw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eXlx+rz4JfFCNkXO/MpQUDisyDAnlsYX4gM3rx5ozAyNJNmhB+JupPV/wfmXsVEWP
-         jE/RuY6ozqxR+qiDsAi9vtvEzVADlTCYPE0N7m4C2wpXZDBYZ3QnkHhQIwiUHLP6rf
-         gryuhbu+fleqi8xI2VRp3+YtGhYfe0YxhmVs0QmU=
-Date:   Tue, 15 Oct 2019 21:06:05 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
-        horms@verge.net.au, uli+renesas@fpond.eu,
-        VenkataRajesh.Kalakodima@in.bosch.com, airlied@linux.ie,
-        daniel@ffwll.ch, koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
-        Harsha.ManjulaMallikarjun@in.bosch.com, ezequiel@collabora.com,
-        seanpaul@chromium.org, linux-renesas-soc@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Subject: Re: [PATCH v5 7/8] arm64: dts: renesas: Add CMM units to Gen3 SoCs
-Message-ID: <20191015180605.GO4875@pendragon.ideasonboard.com>
-References: <20191015104621.62514-1-jacopo+renesas@jmondi.org>
- <20191015104621.62514-8-jacopo+renesas@jmondi.org>
- <84f7b344-6a3a-edcc-3f3d-588825516bc2@ideasonboard.com>
+        Tue, 15 Oct 2019 14:08:37 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9FHmZVC085408;
+        Tue, 15 Oct 2019 18:08:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=tffcv5R344QUSZsjEYxRMACURvQ25ud8isc745HmEUk=;
+ b=iJuUfJFpOQECw4zViTjMbajpDf5ldW/jOzmcLO1jrmGIPHTWWbK+KGMhziBz4uKZ6gy+
+ yvZqLwmHZKuqpwi6ZbHjSJX/hE+rlmHptl466dumCsG1FTvbkPW6+0Tsu/iIYdGlZmNl
+ BOImKgTO7gBhHf9vnPRZ82zKGJ6zu3yqg69MvZEV6omibatSWf4BliU5bLZLxntjMl9Y
+ JpY0CuPvAoGGnqldnOttqdxEcnifGJHHKkjWh7QYfdGJKQqU2R3+yQRwBf8/y6nnOn5+
+ mL/cLSbCibRBIVNh/RdlKzkQToob79LHjTSwfVj7hLw3+tetKwn2fUOysIXImoeU56/D 0g== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2vk7fr9qjt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Oct 2019 18:08:18 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9FHmLp8059866;
+        Tue, 15 Oct 2019 18:06:18 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2vnb0fm8uv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Oct 2019 18:06:17 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9FI6Fbc024969;
+        Tue, 15 Oct 2019 18:06:15 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 15 Oct 2019 11:06:15 -0700
+Date:   Tue, 15 Oct 2019 11:06:13 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/12] iomap: lift the xfs readpage / readpages tracing
+ to iomap
+Message-ID: <20191015180613.GT13108@magnolia>
+References: <20191015154345.13052-1-hch@lst.de>
+ <20191015154345.13052-9-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <84f7b344-6a3a-edcc-3f3d-588825516bc2@ideasonboard.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191015154345.13052-9-hch@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9411 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910150153
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9411 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910150153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo and Kieran,
+On Tue, Oct 15, 2019 at 05:43:41PM +0200, Christoph Hellwig wrote:
+> Lift the xfs code for tracing address space operations to the iomap
+> layer.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-On Tue, Oct 15, 2019 at 01:52:29PM +0100, Kieran Bingham wrote:
-> On 15/10/2019 11:46, Jacopo Mondi wrote:
-> > Add CMM units to Renesas R-Car Gen3 SoC that support it, and reference them
-> > from the Display Unit they are connected to.
-> > 
-> > Sort the 'vsps', 'renesas,cmm' and 'status' properties in the DU unit
-> > consistently in all the involved DTS.
-> 
-> Going through this, I think I'm happy, except for a 'future' gotcha
-> detailed below.
-> 
-> The H3-N is possibly going to cause some issues (not
-> supporting/connecting/using the CMM2) ... but as we don't really have
-> that yet ... I'm going to say "la la la " ... and put this here:
-> 
-> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> 
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > ---
-> >  arch/arm64/boot/dts/renesas/r8a7795.dtsi  | 39 +++++++++++++++++++++++
-> >  arch/arm64/boot/dts/renesas/r8a7796.dtsi  | 31 +++++++++++++++++-
-> >  arch/arm64/boot/dts/renesas/r8a77965.dtsi | 31 +++++++++++++++++-
-> >  arch/arm64/boot/dts/renesas/r8a77990.dtsi | 21 ++++++++++++
-> >  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 21 ++++++++++++
-> >  5 files changed, 141 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> > index 6675462f7585..e16757af8c27 100644
-> > --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> > @@ -2939,6 +2939,42 @@
-> >  			iommus = <&ipmmu_vi1 10>;
-> >  		};
-> > 
-> > +		cmm0: cmm@fea40000 {
-> > +			compatible = "renesas,r8a7795-cmm",
-> > +				     "renesas,rcar-gen3-cmm";
-> > +			reg = <0 0xfea40000 0 0x1000>;
-> > +			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-> > +			clocks = <&cpg CPG_MOD 711>;
-> > +			resets = <&cpg 711>;
-> > +		};
-> > +
-> > +		cmm1: cmm@fea50000 {
-> > +			compatible = "renesas,r8a7795-cmm",
-> > +				     "renesas,rcar-gen3-cmm";
-> > +			reg = <0 0xfea50000 0 0x1000>;
-> > +			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-> > +			clocks = <&cpg CPG_MOD 710>;
-> > +			resets = <&cpg 710>;
-> > +		};
-> > +
-> > +		cmm2: cmm@fea60000 {
-> > +			compatible = "renesas,r8a7795-cmm",
-> > +				     "renesas,rcar-gen3-cmm";
-> > +			reg = <0 0xfea60000 0 0x1000>;
-> > +			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-> > +			clocks = <&cpg CPG_MOD 709>;
-> > +			resets = <&cpg 709>;
-> > +		};
-> 
-> Yeouch. CMM2 is not available on the H3-N - but as far as I can tell the
-> H3-N is an R8A7795 ...
-> 
-> Geert, How will we differentiate this, or perhaps it just won't matter.
-> 
-> The key part here will be handling it in the DU perhaps anyway.
+Looks ok,
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-I think we'll figure it out when we'll have more information about the
-H3-N, and in particular if DU2 will be present (but not usable) or
-completely absent. In the latter case we'll need a separate .dtsi.
+--D
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> > +
-> > +		cmm3: cmm@fea70000 {
-> > +			compatible = "renesas,r8a7795-cmm",
-> > +				     "renesas,rcar-gen3-cmm";
-> > +			reg = <0 0xfea70000 0 0x1000>;
-> > +			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-> > +			clocks = <&cpg CPG_MOD 708>;
-> > +			resets = <&cpg 708>;
-> > +		};
-> > +
-> >  		csi20: csi2@fea80000 {
-> >  			compatible = "renesas,r8a7795-csi2";
-> >  			reg = <0 0xfea80000 0 0x10000>;
-> > @@ -3142,7 +3178,10 @@
-> >  				 <&cpg CPG_MOD 722>,
-> >  				 <&cpg CPG_MOD 721>;
-> >  			clock-names = "du.0", "du.1", "du.2", "du.3";
-> > +
-> > +			renesas,cmms = <&cmm0>, <&cmm1>, <&cmm2>, <&cmm3>;
-> >  			vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
-> > +
-> >  			status = "disabled";
-> > 
-> >  			ports {
-> > diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> > index 822c96601d3c..597c47f3f994 100644
-> > --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> > @@ -2641,6 +2641,33 @@
-> >  			renesas,fcp = <&fcpvi0>;
-> >  		};
-> > 
-> > +		cmm0: cmm@fea40000 {
-> > +			compatible = "renesas,r8a7796-cmm",
-> > +				     "renesas,rcar-gen3-cmm";
-> > +			reg = <0 0xfea40000 0 0x1000>;
-> > +			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-> > +			clocks = <&cpg CPG_MOD 711>;
-> > +			resets = <&cpg 711>;
-> > +		};
-> > +
-> > +		cmm1: cmm@fea50000 {
-> > +			compatible = "renesas,r8a7796-cmm",
-> > +				     "renesas,rcar-gen3-cmm";
-> > +			reg = <0 0xfea50000 0 0x1000>;
-> > +			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-> > +			clocks = <&cpg CPG_MOD 710>;
-> > +			resets = <&cpg 710>;
-> > +		};
-> > +
-> > +		cmm2: cmm@fea60000 {
-> > +			compatible = "renesas,r8a7796-cmm",
-> > +				     "renesas,rcar-gen3-cmm";
-> > +			reg = <0 0xfea60000 0 0x1000>;
-> > +			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-> > +			clocks = <&cpg CPG_MOD 709>;
-> > +			resets = <&cpg 709>;
-> > +		};
-> > +
-> >  		csi20: csi2@fea80000 {
-> >  			compatible = "renesas,r8a7796-csi2";
-> >  			reg = <0 0xfea80000 0 0x10000>;
-> > @@ -2791,10 +2818,12 @@
-> >  				 <&cpg CPG_MOD 723>,
-> >  				 <&cpg CPG_MOD 722>;
-> >  			clock-names = "du.0", "du.1", "du.2";
-> > -			status = "disabled";
-> > 
-> > +			renesas,cmms = <&cmm0>, <&cmm1>, <&cmm2>;
-> >  			vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>;
-> > 
-> > +			status = "disabled";
-> > +
-> >  			ports {
-> >  				#address-cells = <1>;
-> >  				#size-cells = <0>;
-> > diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> > index 4ae163220f60..c3da8d26ccba 100644
-> > --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> > @@ -2320,6 +2320,33 @@
-> >  			resets = <&cpg 611>;
-> >  		};
-> > 
-> > +		cmm0: cmm@fea40000 {
-> > +			compatible = "renesas,r8a77965-cmm",
-> > +				     "renesas,rcar-gen3-cmm";
-> > +			reg = <0 0xfea40000 0 0x1000>;
-> > +			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-> > +			clocks = <&cpg CPG_MOD 711>;
-> > +			resets = <&cpg 711>;
-> > +		};
-> > +
-> > +		cmm1: cmm@fea50000 {
-> > +			compatible = "renesas,r8a77965-cmm",
-> > +				     "renesas,rcar-gen3-cmm";
-> > +			reg = <0 0xfea50000 0 0x1000>;
-> > +			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-> > +			clocks = <&cpg CPG_MOD 710>;
-> > +			resets = <&cpg 710>;
-> > +		};
-> > +
-> > +		cmm3: cmm@fea70000 {
-> > +			compatible = "renesas,r8a77965-cmm",
-> > +				     "renesas,rcar-gen3-cmm";
-> > +			reg = <0 0xfea70000 0 0x1000>;
-> > +			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-> > +			clocks = <&cpg CPG_MOD 708>;
-> > +			resets = <&cpg 708>;
-> > +		};
-> > +
-> >  		csi20: csi2@fea80000 {
-> >  			compatible = "renesas,r8a77965-csi2";
-> >  			reg = <0 0xfea80000 0 0x10000>;
-> > @@ -2467,10 +2494,12 @@
-> >  				 <&cpg CPG_MOD 723>,
-> >  				 <&cpg CPG_MOD 721>;
-> >  			clock-names = "du.0", "du.1", "du.3";
-> > -			status = "disabled";
-> > 
-> > +			renesas,cmms = <&cmm0>, <&cmm1>, <&cmm3>;
-> >  			vsps = <&vspd0 0>, <&vspd1 0>, <&vspd0 1>;
-> > 
-> > +			status = "disabled";
-> > +
-> >  			ports {
-> >  				#address-cells = <1>;
-> >  				#size-cells = <0>;
-> > diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> > index 455954c3d98e..bab9b7f96c72 100644
-> > --- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> > @@ -1727,6 +1727,24 @@
-> >  			iommus = <&ipmmu_vi0 9>;
-> >  		};
-> > 
-> > +		cmm0: cmm@fea40000 {
-> > +			compatible = "renesas,r8a77990-cmm",
-> > +				     "renesas,rcar-gen3-cmm";
-> > +			reg = <0 0xfea40000 0 0x1000>;
-> > +			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-> > +			clocks = <&cpg CPG_MOD 711>;
-> > +			resets = <&cpg 711>;
-> > +		};
-> > +
-> > +		cmm1: cmm@fea50000 {
-> > +			compatible = "renesas,r8a77990-cmm",
-> > +				     "renesas,rcar-gen3-cmm";
-> > +			reg = <0 0xfea50000 0 0x1000>;
-> > +			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-> > +			clocks = <&cpg CPG_MOD 710>;
-> > +			resets = <&cpg 710>;
-> > +		};
-> > +
-> >  		csi40: csi2@feaa0000 {
-> >  			compatible = "renesas,r8a77990-csi2";
-> >  			reg = <0 0xfeaa0000 0 0x10000>;
-> > @@ -1768,7 +1786,10 @@
-> >  			clock-names = "du.0", "du.1";
-> >  			resets = <&cpg 724>;
-> >  			reset-names = "du.0";
-> > +
-> > +			renesas,cmms = <&cmm0>, <&cmm1>;
-> >  			vsps = <&vspd0 0>, <&vspd1 0>;
-> > +
-> >  			status = "disabled";
-> > 
-> >  			ports {
-> > diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-> > index 183fef86cf7c..871c70cc2d2e 100644
-> > --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-> > @@ -993,6 +993,24 @@
-> >  			iommus = <&ipmmu_vi0 9>;
-> >  		};
-> > 
-> > +		cmm0: cmm@fea40000 {
-> > +			compatible = "renesas,r8a77995-cmm",
-> > +				     "renesas,rcar-gen3-cmm";
-> > +			reg = <0 0xfea40000 0 0x1000>;
-> > +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-> > +			clocks = <&cpg CPG_MOD 711>;
-> > +			resets = <&cpg 711>;
-> > +		};
-> > +
-> > +		cmm1: cmm@fea50000 {
-> > +			compatible = "renesas,r8a77995-cmm",
-> > +				     "renesas,rcar-gen3-cmm";
-> > +			reg = <0 0xfea50000 0 0x1000>;
-> > +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-> > +			clocks = <&cpg CPG_MOD 710>;
-> > +			resets = <&cpg 710>;
-> > +		};
-> > +
-> >  		du: display@feb00000 {
-> >  			compatible = "renesas,du-r8a77995";
-> >  			reg = <0 0xfeb00000 0 0x40000>;
-> > @@ -1003,7 +1021,10 @@
-> >  			clock-names = "du.0", "du.1";
-> >  			resets = <&cpg 724>;
-> >  			reset-names = "du.0";
-> > +
-> > +			renesas,cmms = <&cmm0>, <&cmm1>;
-> >  			vsps = <&vspd0 0>, <&vspd1 0>;
-> > +
-> >  			status = "disabled";
-> > 
-> >  			ports {
-
--- 
-Regards,
-
-Laurent Pinchart
+> ---
+>  fs/iomap/Makefile      | 16 ++++++++------
+>  fs/iomap/buffered-io.c |  5 +++++
+>  fs/iomap/trace.c       | 12 +++++++++++
+>  fs/iomap/trace.h       | 49 ++++++++++++++++++++++++++++++++++++++++++
+>  fs/xfs/xfs_aops.c      |  2 --
+>  fs/xfs/xfs_trace.h     | 26 ----------------------
+>  6 files changed, 75 insertions(+), 35 deletions(-)
+>  create mode 100644 fs/iomap/trace.c
+>  create mode 100644 fs/iomap/trace.h
+> 
+> diff --git a/fs/iomap/Makefile b/fs/iomap/Makefile
+> index 93cd11938bf5..eef2722d93a1 100644
+> --- a/fs/iomap/Makefile
+> +++ b/fs/iomap/Makefile
+> @@ -3,13 +3,15 @@
+>  # Copyright (c) 2019 Oracle.
+>  # All Rights Reserved.
+>  #
+> -obj-$(CONFIG_FS_IOMAP)		+= iomap.o
+>  
+> -iomap-y				+= \
+> -					apply.o \
+> -					buffered-io.o \
+> -					direct-io.o \
+> -					fiemap.o \
+> -					seek.o
+> +ccflags-y += -I $(srctree)/$(src)		# needed for trace events
+> +
+> +obj-$(CONFIG_FS_IOMAP)		+= iomap.o
+>  
+> +iomap-y				+= trace.o \
+> +				   apply.o \
+> +				   buffered-io.o \
+> +				   direct-io.o \
+> +				   fiemap.o \
+> +				   seek.o
+>  iomap-$(CONFIG_SWAP)		+= swapfile.o
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 181ee8477aad..d1620c3f2a4c 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/bio.h>
+>  #include <linux/sched/signal.h>
+>  #include <linux/migrate.h>
+> +#include "trace.h"
+>  
+>  #include "../internal.h"
+>  
+> @@ -301,6 +302,8 @@ iomap_readpage(struct page *page, const struct iomap_ops *ops)
+>  	unsigned poff;
+>  	loff_t ret;
+>  
+> +	trace_iomap_readpage(page->mapping->host, 1);
+> +
+>  	for (poff = 0; poff < PAGE_SIZE; poff += ret) {
+>  		ret = iomap_apply(inode, page_offset(page) + poff,
+>  				PAGE_SIZE - poff, 0, ops, &ctx,
+> @@ -397,6 +400,8 @@ iomap_readpages(struct address_space *mapping, struct list_head *pages,
+>  	loff_t last = page_offset(list_entry(pages->next, struct page, lru));
+>  	loff_t length = last - pos + PAGE_SIZE, ret = 0;
+>  
+> +	trace_iomap_readpages(mapping->host, nr_pages);
+> +
+>  	while (length > 0) {
+>  		ret = iomap_apply(mapping->host, pos, length, 0, ops,
+>  				&ctx, iomap_readpages_actor);
+> diff --git a/fs/iomap/trace.c b/fs/iomap/trace.c
+> new file mode 100644
+> index 000000000000..63ce9f0ce4dc
+> --- /dev/null
+> +++ b/fs/iomap/trace.c
+> @@ -0,0 +1,12 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2019, Christoph Hellwig
+> + */
+> +#include <linux/iomap.h>
+> +
+> +/*
+> + * We include this last to have the helpers above available for the trace
+> + * event implementations.
+> + */
+> +#define CREATE_TRACE_POINTS
+> +#include "trace.h"
+> diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
+> new file mode 100644
+> index 000000000000..3900de1d871d
+> --- /dev/null
+> +++ b/fs/iomap/trace.h
+> @@ -0,0 +1,49 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (c) 2009-2019, Christoph Hellwig
+> + *
+> + * NOTE: none of these tracepoints shall be consider a stable kernel ABI
+> + * as they can change at any time.
+> + */
+> +#undef TRACE_SYSTEM
+> +#define TRACE_SYSTEM iomap
+> +
+> +#if !defined(_IOMAP_TRACE_H) || defined(TRACE_HEADER_MULTI_READ)
+> +#define _IOMAP_TRACE_H
+> +
+> +#include <linux/tracepoint.h>
+> +
+> +struct inode;
+> +
+> +DECLARE_EVENT_CLASS(iomap_readpage_class,
+> +	TP_PROTO(struct inode *inode, int nr_pages),
+> +	TP_ARGS(inode, nr_pages),
+> +	TP_STRUCT__entry(
+> +		__field(dev_t, dev)
+> +		__field(u64, ino)
+> +		__field(int, nr_pages)
+> +	),
+> +	TP_fast_assign(
+> +		__entry->dev = inode->i_sb->s_dev;
+> +		__entry->ino = inode->i_ino;
+> +		__entry->nr_pages = nr_pages;
+> +	),
+> +	TP_printk("dev %d:%d ino 0x%llx nr_pages %d",
+> +		  MAJOR(__entry->dev), MINOR(__entry->dev),
+> +		  __entry->ino,
+> +		  __entry->nr_pages)
+> +)
+> +
+> +#define DEFINE_READPAGE_EVENT(name)		\
+> +DEFINE_EVENT(iomap_readpage_class, name,	\
+> +	TP_PROTO(struct inode *inode, int nr_pages), \
+> +	TP_ARGS(inode, nr_pages))
+> +DEFINE_READPAGE_EVENT(iomap_readpage);
+> +DEFINE_READPAGE_EVENT(iomap_readpages);
+> +
+> +#endif /* _IOMAP_TRACE_H */
+> +
+> +#undef TRACE_INCLUDE_PATH
+> +#define TRACE_INCLUDE_PATH .
+> +#define TRACE_INCLUDE_FILE trace
+> +#include <trace/define_trace.h>
+> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> index 00fe40b35f72..e2033b070f4a 100644
+> --- a/fs/xfs/xfs_aops.c
+> +++ b/fs/xfs/xfs_aops.c
+> @@ -1184,7 +1184,6 @@ xfs_vm_readpage(
+>  	struct file		*unused,
+>  	struct page		*page)
+>  {
+> -	trace_xfs_vm_readpage(page->mapping->host, 1);
+>  	return iomap_readpage(page, &xfs_iomap_ops);
+>  }
+>  
+> @@ -1195,7 +1194,6 @@ xfs_vm_readpages(
+>  	struct list_head	*pages,
+>  	unsigned		nr_pages)
+>  {
+> -	trace_xfs_vm_readpages(mapping->host, nr_pages);
+>  	return iomap_readpages(mapping, pages, nr_pages, &xfs_iomap_ops);
+>  }
+>  
+> diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
+> index eaae275ed430..eae4b29c174e 100644
+> --- a/fs/xfs/xfs_trace.h
+> +++ b/fs/xfs/xfs_trace.h
+> @@ -1197,32 +1197,6 @@ DEFINE_PAGE_EVENT(xfs_writepage);
+>  DEFINE_PAGE_EVENT(xfs_releasepage);
+>  DEFINE_PAGE_EVENT(xfs_invalidatepage);
+>  
+> -DECLARE_EVENT_CLASS(xfs_readpage_class,
+> -	TP_PROTO(struct inode *inode, int nr_pages),
+> -	TP_ARGS(inode, nr_pages),
+> -	TP_STRUCT__entry(
+> -		__field(dev_t, dev)
+> -		__field(xfs_ino_t, ino)
+> -		__field(int, nr_pages)
+> -	),
+> -	TP_fast_assign(
+> -		__entry->dev = inode->i_sb->s_dev;
+> -		__entry->ino = inode->i_ino;
+> -		__entry->nr_pages = nr_pages;
+> -	),
+> -	TP_printk("dev %d:%d ino 0x%llx nr_pages %d",
+> -		  MAJOR(__entry->dev), MINOR(__entry->dev),
+> -		  __entry->ino,
+> -		  __entry->nr_pages)
+> -)
+> -
+> -#define DEFINE_READPAGE_EVENT(name)		\
+> -DEFINE_EVENT(xfs_readpage_class, name,	\
+> -	TP_PROTO(struct inode *inode, int nr_pages), \
+> -	TP_ARGS(inode, nr_pages))
+> -DEFINE_READPAGE_EVENT(xfs_vm_readpage);
+> -DEFINE_READPAGE_EVENT(xfs_vm_readpages);
+> -
+>  DECLARE_EVENT_CLASS(xfs_imap_class,
+>  	TP_PROTO(struct xfs_inode *ip, xfs_off_t offset, ssize_t count,
+>  		 int whichfork, struct xfs_bmbt_irec *irec),
+> -- 
+> 2.20.1
+> 
