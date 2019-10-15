@@ -2,118 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2D02D74D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 13:23:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCD51D74DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 13:24:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727392AbfJOLXO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 07:23:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56336 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726092AbfJOLXN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 07:23:13 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B4763ACD9;
-        Tue, 15 Oct 2019 11:23:11 +0000 (UTC)
-Date:   Tue, 15 Oct 2019 13:23:10 +0200 (CEST)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Joe Lawrence <joe.lawrence@redhat.com>
-cc:     rostedt@goodmis.org, mingo@redhat.com, jpoimboe@redhat.com,
-        jikos@kernel.org, pmladek@suse.com, linux-kernel@vger.kernel.org,
-        live-patching@vger.kernel.org
-Subject: Re: [PATCH v2] ftrace: Introduce PERMANENT ftrace_ops flag
-In-Reply-To: <20191014223100.GA16608@redhat.com>
-Message-ID: <alpine.LSU.2.21.1910151259220.30206@pobox.suse.cz>
-References: <20191014105923.29607-1-mbenes@suse.cz> <20191014223100.GA16608@redhat.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1727687AbfJOLYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 07:24:09 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:41082 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726092AbfJOLYG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 07:24:06 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9FBNt9L109230;
+        Tue, 15 Oct 2019 06:23:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1571138635;
+        bh=JtonZDXxyNuqLG8pQHZ0YDPt2+49Y+aRH6v4JFO9anw=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=KXldssEfQzIdpm/xL8bImgE+7Ze0Bn9jIXXOnN70YnNZKpAMKNdcwEo0QGf1J7Ho6
+         stYsk6C5V/k+6jw6wWWXVDJqsklMPsFPRUJcuvAo5qOvyNWz10sCxyTWkfpxedJvBp
+         hiJnDWmiw6Hq46Tx/xcwFpuTYDsy2XmeiSj8KrPk=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9FBNtMH052386
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 15 Oct 2019 06:23:55 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 15
+ Oct 2019 06:23:48 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 15 Oct 2019 06:23:55 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9FBNmk2109164;
+        Tue, 15 Oct 2019 06:23:50 -0500
+Subject: Re: [PATCH] PCI:cadence:Driver refactored to use as a core library.
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+To:     Tom Joseph <tjoseph@cadence.com>, <linux-pci@vger.kernel.org>
+CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        <linux-kernel@vger.kernel.org>
+References: <1569861768-10109-1-git-send-email-tjoseph@cadence.com>
+ <03a8af4b-96bb-48b6-a79b-7db3a2ee59d0@ti.com>
+Message-ID: <ba7cf838-dc20-2007-cbf4-e8fbcd49e69f@ti.com>
+Date:   Tue, 15 Oct 2019 16:53:20 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <03a8af4b-96bb-48b6-a79b-7db3a2ee59d0@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Hi Miroslav,
-> 
-> Maybe we should add a test to verify this new behavior?  See sample
-> version below (lightly tested).  We can add to this one, or patch
-> seperately if you prefer.
+Hi Tom,
 
-Thanks a lot, Joe. It looks nice. I'll include it in v3. One question 
-below.
- 
-> -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8--
+On 01/10/19 4:45 PM, Kishon Vijay Abraham I wrote:
+> Hi Tom,
 > 
->  
-> >From c8c9f22e3816ca4c90ab7e7159d2ce536eaa5fad Mon Sep 17 00:00:00 2001
-> From: Joe Lawrence <joe.lawrence@redhat.com>
-> Date: Mon, 14 Oct 2019 18:25:01 -0400
-> Subject: [PATCH] selftests/livepatch: test interaction with ftrace_enabled
-> 
-> Since livepatching depends upon ftrace handlers to implement "patched"
-> functionality, verify that the ftrace_enabled sysctl value interacts
-> with livepatch registration as expected.
-> 
-> Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
-> ---
->  tools/testing/selftests/livepatch/Makefile    |  3 +-
->  .../testing/selftests/livepatch/functions.sh  | 18 +++++
->  .../selftests/livepatch/test-ftrace.sh        | 65 +++++++++++++++++++
->  3 files changed, 85 insertions(+), 1 deletion(-)
->  create mode 100755 tools/testing/selftests/livepatch/test-ftrace.sh
-> 
-> diff --git a/tools/testing/selftests/livepatch/Makefile b/tools/testing/selftests/livepatch/Makefile
-> index fd405402c3ff..1886d9d94b88 100644
-> --- a/tools/testing/selftests/livepatch/Makefile
-> +++ b/tools/testing/selftests/livepatch/Makefile
-> @@ -4,6 +4,7 @@ TEST_PROGS_EXTENDED := functions.sh
->  TEST_PROGS := \
->  	test-livepatch.sh \
->  	test-callbacks.sh \
-> -	test-shadow-vars.sh
-> +	test-shadow-vars.sh \
-> +	test-ftrace.sh
->  
->  include ../lib.mk
-> diff --git a/tools/testing/selftests/livepatch/functions.sh b/tools/testing/selftests/livepatch/functions.sh
-> index 79b0affd21fb..556252efece0 100644
-> --- a/tools/testing/selftests/livepatch/functions.sh
-> +++ b/tools/testing/selftests/livepatch/functions.sh
-> @@ -52,6 +52,24 @@ function set_dynamic_debug() {
->  		EOF
->  }
->  
-> +function push_ftrace_enabled() {
-> +	FTRACE_ENABLED=$(sysctl --values kernel.ftrace_enabled)
-> +}
+> On 30/09/19 10:12 PM, Tom Joseph wrote:
+>> All the platform related APIs/Structures in the driver has been extracted
+>>  out to a separate file (pcie-cadence-plat.c). This will enable the
+>>  driver to be used as a core library, which could be used by other
+>>  platform drivers.Testing was done using simulation environment.
+>>
+>> Signed-off-by: Tom Joseph <tjoseph@cadence.com>
+>> ---
+>>  drivers/pci/controller/Kconfig             |  35 +++++++
+>>  drivers/pci/controller/Makefile            |   1 +
+>>  drivers/pci/controller/pcie-cadence-ep.c   |  78 ++-------------
+>>  drivers/pci/controller/pcie-cadence-host.c |  77 +++------------
+>>  drivers/pci/controller/pcie-cadence-plat.c | 154 +++++++++++++++++++++++++++++
+>>  drivers/pci/controller/pcie-cadence.h      |  69 +++++++++++++
+>>  6 files changed, 278 insertions(+), 136 deletions(-)
+>>  create mode 100644 drivers/pci/controller/pcie-cadence-plat.c
+>>
 
-Shouldn't we call push_ftrace_enabled() somewhere at the beginning of the 
-test script? set_dynamic_debug() calls its push_dynamic_debug() directly, 
-but set_ftrace_enabled() is different, because it is called more than once 
-in the script.
+<snip>
 
-One could argue that ftrace_enabled has to be true at the beginning of 
-testing anyway, but I think it would be cleaner. Btw, we should probably 
-guarantee that ftrace_enabled is true when livepatch selftests are 
-invoked.
+>> diff --git a/drivers/pci/controller/pcie-cadence-plat.c b/drivers/pci/controller/pcie-cadence-plat.c
+>> new file mode 100644
+>> index 0000000..274615d
+>> --- /dev/null
+>> +++ b/drivers/pci/controller/pcie-cadence-plat.c
+>> @@ -0,0 +1,154 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +// Copyright (c) 2019 Cadence
+>> +// Cadence PCIe platform  driver.
+>> +// Author: Tom Joseph <tjoseph@cadence.com>
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/of_pci.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/pm_runtime.h>
+>> +#include <linux/of_device.h>
+>> +#include "pcie-cadence.h"
+>> +
+>> +/**
+>> + * struct cdns_plat_pcie - private data for this PCIe platform driver
+>> + * @pcie: Cadence PCIe controller
+>> + * @regmap: pointer to PCIe device
+>> + * @is_rc: Set to 1 indicates the PCIe controller mode is Root Complex,
+>> + *         if 0 it is in Endpoint mode.
+>> + */
+>> +struct cdns_plat_pcie {
+>> +	struct cdns_pcie        *pcie;
+>> +	bool is_rc;
+>> +};
+>> +
+>> +struct cdns_plat_pcie_of_data {
+>> +	bool is_rc;
+>> +};
+>> +
+>> +static const struct of_device_id cdns_plat_pcie_of_match[];
+>> +
+>> +int cdns_plat_pcie_link_control(struct cdns_pcie *pcie, bool start)
+>> +{
+>> +	pr_debug(" %s called\n", __func__);
+>> +	return 0;
+>> +}
+>> +
+>> +bool cdns_plat_pcie_link_status(struct cdns_pcie *pcie)
 
-> +function pop_ftrace_enabled() {
-> +	if [[ -n "$FTRACE_ENABLED" ]]; then
-> +		sysctl kernel.ftrace_enabled="$FTRACE_ENABLED"
-> +	fi
-> +}
-> +# set_ftrace_enabled() - save the current ftrace_enabled config and tweak
-> +# 			 it for the self-tests.  Set a script exit trap
-> +#			 that restores the original value.
-> +function set_ftrace_enabled() {
-> +	local sysctl="$1"
-> +        trap pop_ftrace_enabled EXIT INT TERM HUP
-> +	result=$(sysctl kernel.ftrace_enabled="$1" 2>&1 | paste --serial --delimiters=' ')
-> +	echo "livepatch: $result" > /dev/kmsg
-> +}
-> +
->  # loop_until(cmd) - loop a command until it is successful or $MAX_RETRIES,
->  #		    sleep $RETRY_INTERVAL between attempts
->  #	cmd - command and its arguments to run
+How do you get cdns_plat_pcie from pcie? Cadence plat doesn't need it however
+the platform specific base address will be stored in the platform specific
+structure (struct cdns_plat_pcie here) which will be used for performing
+controller configuration.
 
-Miroslav
+I think you can just move *dev to struct cdns_pcie from struct
+cdns_pcie_ep/struct cdns_pcie_rc and use dev_get_drvdata here to get platform
+specific structure.
+
+Thanks
+Kishon
