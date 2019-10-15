@@ -2,153 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ABC5D7538
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 13:39:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71648D753E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 13:40:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728963AbfJOLjF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 07:39:05 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:54618 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726927AbfJOLjF (ORCPT
+        id S1729009AbfJOLk0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 07:40:26 -0400
+Received: from regular1.263xmail.com ([211.150.70.198]:34998 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726472AbfJOLkX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 07:39:05 -0400
-Received: from [192.168.0.20] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id EF960324;
-        Tue, 15 Oct 2019 13:39:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1571139542;
-        bh=yoPsqnguXofm64qXBaPQ6QLvJoVxEAIjVYEFwiQ79VI=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=YM/HSvh9aRCsibtOOiXQFe+YmDHCnEcfYjBb147pA0B6/MBqt3+bkBvTZ2rkwcMWw
-         N/4AFHgP2TzQ6AmWRQKo+xYHbNCiKPEtk6v+Yf5557i1KaafWEDTnySU7r0V5X3zb4
-         YJ4I4UejFCBGUdxu/XaXhAQpiHb+y6rSL9SLas6c=
-Reply-To: kieran.bingham+renesas@ideasonboard.com
-Subject: Re: [PATCH v5 1/8] dt-bindings: display: renesas,cmm: Add R-Car CMM
- documentation
-To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com, geert@linux-m68k.org,
-        horms@verge.net.au, uli+renesas@fpond.eu,
-        VenkataRajesh.Kalakodima@in.bosch.com
-Cc:     airlied@linux.ie, daniel@ffwll.ch, koji.matsuoka.xm@renesas.com,
-        muroya@ksk.co.jp, Harsha.ManjulaMallikarjun@in.bosch.com,
-        ezequiel@collabora.com, seanpaul@chromium.org,
-        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com
-References: <20191015104621.62514-1-jacopo+renesas@jmondi.org>
- <20191015104621.62514-2-jacopo+renesas@jmondi.org>
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <ef8e16cf-a1ef-6cf7-8735-b620a3d8f318@ideasonboard.com>
-Date:   Tue, 15 Oct 2019 12:38:59 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 15 Oct 2019 07:40:23 -0400
+Received: from localhost (unknown [192.168.167.190])
+        by regular1.263xmail.com (Postfix) with ESMTP id 6349F230;
+        Tue, 15 Oct 2019 19:40:17 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-SKE-CHECKED: 1
+X-ABS-CHECKED: 1
+Received: from localhost.localdomain (unknown [14.18.236.69])
+        by smtp.263.net (postfix) whith ESMTP id P7669T140716028237568S1571139613270818_;
+        Tue, 15 Oct 2019 19:40:17 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <9efec5f3268291a9d6bd43d68d75c39e>
+X-RL-SENDER: yili@winhong.com
+X-SENDER: yili@winhong.com
+X-LOGIN-NAME: yili@winhong.com
+X-FST-TO: joseph.qi@linux.alibaba.com
+X-SENDER-IP: 14.18.236.69
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From:   Yi Li <yili@winhong.com>
+To:     joseph.qi@linux.alibaba.com
+Cc:     linux-kernel@vger.kernel.org, Yi Li <yilikernel@gmail.com>
+Subject: [PATCH v2] ocfs2: fix panic due to ocfs2_wq is null
+Date:   Tue, 15 Oct 2019 19:40:11 +0800
+Message-Id: <1571139611-24107-1-git-send-email-yili@winhong.com>
+X-Mailer: git-send-email 2.7.5
+In-Reply-To: <1571130330-3944-1-git-send-email-yili@winhong.com>
+References: <1571130330-3944-1-git-send-email-yili@winhong.com>
 MIME-Version: 1.0
-In-Reply-To: <20191015104621.62514-2-jacopo+renesas@jmondi.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+From: Yi Li <yilikernel@gmail.com>
 
-On 15/10/2019 11:46, Jacopo Mondi wrote:
-> Add device tree bindings documentation for the Renesas R-Car Display
-> Unit Color Management Module.
-> 
-> CMM is the image enhancement module available on each R-Car DU video
-> channel on R-Car Gen2 and Gen3 SoCs (V3H and V3M excluded).
-> 
+mount.ocfs2 failed when read ocfs2 filesystem super error.
+the func ocfs2_initialize_super will return before allocate ocfs2_wq.
+ocfs2_dismount_volume will triggered the following panic.
 
-LGTM. Good to see how we get started with the new yaml bindings. I guess
-we've got plenty of conversion work to do there ..
+  Oct 15 16:09:27 cnwarekv-205120 kernel: On-disk corruption
+discovered.Please run fsck.ocfs2 once the filesystem is unmounted.
+  Oct 15 16:09:27 cnwarekv-205120 kernel: (mount.ocfs2,22804,44):
+ocfs2_read_locked_inode:537 ERROR: status = -30
+  Oct 15 16:09:27 cnwarekv-205120 kernel: (mount.ocfs2,22804,44):
+ocfs2_init_global_system_inodes:458 ERROR: status = -30
+  Oct 15 16:09:27 cnwarekv-205120 kernel: (mount.ocfs2,22804,44):
+ocfs2_init_global_system_inodes:491 ERROR: status = -30
+  Oct 15 16:09:27 cnwarekv-205120 kernel: (mount.ocfs2,22804,44):
+ocfs2_initialize_super:2313 ERROR: status = -30
+  Oct 15 16:09:27 cnwarekv-205120 kernel: (mount.ocfs2,22804,44):
+ocfs2_fill_super:1033 ERROR: status = -30
+  ------------[ cut here ]------------
+  Oops: 0002 [#1] SMP NOPTI
+  Modules linked in: ocfs2 rpcsec_gss_krb5 auth_rpcgss nfsv4 nfs fscache
+lockd grace ocfs2_dlmfs ocfs2_stack_o2cb ocfs2_dlm ocfs2_nodemanager
+ocfs2_stackglue configfs sunrpc ipt_REJECT nf_reject_ipv4
+nf_conntrack_ipv4 nf_defrag_ipv4 iptable_filter ip_tables ip6t_REJECT
+nf_reject_ipv6 nf_conntrack_ipv6 nf_defrag_ipv6 xt_state nf_conntrack
+ip6table_filter ip6_tables ib_ipoib rdma_ucm ib_ucm ib_uverbs ib_umad
+rdma_cm ib_cm iw_cm ib_sa ib_mad ib_core ib_addr ipv6 ovmapi ppdev
+parport_pc parport fb_sys_fops sysimgblt sysfillrect syscopyarea
+acpi_cpufreq pcspkr i2c_piix4 i2c_core sg ext4 jbd2 mbcache2 sr_mod cdrom
+  CPU: 1 PID: 11753 Comm: mount.ocfs2 Tainted: G  E
+        4.14.148-200.ckv.x86_64 #1
+  Hardware name: Sugon H320-G30/35N16-US, BIOS 0SSDX017 12/21/2018
+  task: ffff967af0520000 task.stack: ffffa5f05484000
+  RIP: 0010:mutex_lock+0x19/0x20
+  Call Trace:
+    flush_workqueue+0x81/0x460
+    ocfs2_shutdown_local_alloc+0x47/0x440 [ocfs2]
+    ocfs2_dismount_volume+0x84/0x400 [ocfs2]
+    ocfs2_fill_super+0xa4/0x1270 [ocfs2]
+    ? ocfs2_initialize_super.isa.211+0xf20/0xf20 [ocfs2]
+    mount_bdev+0x17f/0x1c0
+    mount_fs+0x3a/0x160
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Yi Li <yilikernel@gmail.com>
+---
+ fs/ocfs2/journal.c    | 3 ++-
+ fs/ocfs2/localalloc.c | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  .../bindings/display/renesas,cmm.yaml         | 67 +++++++++++++++++++
->  1 file changed, 67 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/renesas,cmm.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/display/renesas,cmm.yaml b/Documentation/devicetree/bindings/display/renesas,cmm.yaml
-> new file mode 100644
-> index 000000000000..a57037b9e9ba
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/renesas,cmm.yaml
-> @@ -0,0 +1,67 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/renesas,cmm.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Renesas R-Car Color Management Module (CMM)
-> +
-> +maintainers:
-> +  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> +  - Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> +  - Jacopo Mondi <jacopo+renesas@jmondi.org>
-> +
-> +description: |+
-> +  Renesas R-Car color management module connected to R-Car DU video channels.
-> +  It provides image enhancement functions such as 1-D look-up tables (LUT),
-> +  3-D look-up tables (CLU), 1D-histogram generation (HGO), and color
-> +  space conversion (CSC).
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +        - enum:
-> +          - renesas,r8a7795-cmm
-> +          - renesas,r8a7796-cmm
-> +          - renesas,r8a77965-cmm
-> +          - renesas,r8a77990-cmm
-> +          - renesas,r8a77995-cmm
-> +        - const: renesas,rcar-gen3-cmm
-> +      - items:
-> +        - const: renesas,rcar-gen2-cmm
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - resets
-> +  - power-domains
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/r8a7796-cpg-mssr.h>
-> +    #include <dt-bindings/power/r8a7796-sysc.h>
-> +
-> +    cmm0: cmm@fea40000 {
-> +         compatible = "renesas,r8a7796-cmm",
-> +                      "renesas,rcar-gen3-cmm";
-> +         reg = <0 0xfea40000 0 0x1000>;
-> +         power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-> +         clocks = <&cpg CPG_MOD 711>;
-> +         resets = <&cpg 711>;
-> +    };
-> --
-> 2.23.0
-> 
+diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
+index 930e3d3..699a560 100644
+--- a/fs/ocfs2/journal.c
++++ b/fs/ocfs2/journal.c
+@@ -217,7 +217,8 @@ void ocfs2_recovery_exit(struct ocfs2_super *osb)
+ 	/* At this point, we know that no more recovery threads can be
+ 	 * launched, so wait for any recovery completion work to
+ 	 * complete. */
+-	flush_workqueue(osb->ocfs2_wq);
++	if (osb->ocfs2_wq)
++		flush_workqueue(osb->ocfs2_wq);
+ 
+ 	/*
+ 	 * Now that recovery is shut down, and the osb is about to be
+diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
+index 158e5af..720e9f9 100644
+--- a/fs/ocfs2/localalloc.c
++++ b/fs/ocfs2/localalloc.c
+@@ -377,7 +377,8 @@ void ocfs2_shutdown_local_alloc(struct ocfs2_super *osb)
+ 	struct ocfs2_dinode *alloc = NULL;
+ 
+ 	cancel_delayed_work(&osb->la_enable_wq);
+-	flush_workqueue(osb->ocfs2_wq);
++	if (osb->ocfs2_wq)
++		flush_workqueue(osb->ocfs2_wq);
+ 
+ 	if (osb->local_alloc_state == OCFS2_LA_UNUSED)
+ 		goto out;
+-- 
+2.7.5
+
+
 
