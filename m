@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D534D7FD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:19:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A461D7FC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:19:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389567AbfJOTTa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 15:19:30 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:45692 "EHLO
+        id S2389510AbfJOTS4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 15:18:56 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:45716 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389436AbfJOTSs (ORCPT
+        with ESMTP id S2389468AbfJOTSv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 15:18:48 -0400
+        Tue, 15 Oct 2019 15:18:51 -0400
 Received: from localhost ([127.0.0.1] helo=localhost.localdomain)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1iKSLF-00067i-B6; Tue, 15 Oct 2019 21:18:45 +0200
+        id 1iKSLF-00067i-SH; Tue, 15 Oct 2019 21:18:46 +0200
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     tglx@linutronix.de,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH 33/34] tracing: Use CONFIG_PREEMPTION
-Date:   Tue, 15 Oct 2019 21:18:20 +0200
-Message-Id: <20191015191821.11479-34-bigeasy@linutronix.de>
+        Tejun Heo <tj@kernel.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: [PATCH 34/34] workqueue: Use PREEMPTION
+Date:   Tue, 15 Oct 2019 21:18:21 +0200
+Message-Id: <20191015191821.11479-35-bigeasy@linutronix.de>
 In-Reply-To: <20191015191821.11479-1-bigeasy@linutronix.de>
 References: <20191015191821.11479-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
@@ -38,44 +38,29 @@ CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by CONFIG_PREEMPT_RT.
 Both PREEMPT and PREEMPT_RT require the same functionality which today
 depends on CONFIG_PREEMPT.
 
-Add additional header output for PREEMPT_RT.
+Update the comment to use PREEMPTION because it is true for both
+preemption models.
 
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- Documentation/trace/ftrace-uses.rst | 2 +-
- kernel/trace/trace.c                | 2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ kernel/workqueue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/trace/ftrace-uses.rst b/Documentation/trace/ftra=
-ce-uses.rst
-index 1fbc69894eed0..1e0020b0bc745 100644
---- a/Documentation/trace/ftrace-uses.rst
-+++ b/Documentation/trace/ftrace-uses.rst
-@@ -146,7 +146,7 @@ FTRACE_OPS_FL_RECURSION_SAFE
- 	itself or any nested functions that those functions call.
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index bc2e09a8ea61d..a668b2118539c 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -2285,7 +2285,7 @@ __acquires(&pool->lock)
+ 	}
 =20
- 	If this flag is set, it is possible that the callback will also
--	be called with preemption enabled (when CONFIG_PREEMPT is set),
-+	be called with preemption enabled (when CONFIG_PREEMPTION is set),
- 	but this is not guaranteed.
-=20
- FTRACE_OPS_FL_IPMODIFY
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 6a0ee91783656..c13caba27c368 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -3654,6 +3654,8 @@ print_trace_header(struct seq_file *m, struct trace_i=
-terator *iter)
- 		   "desktop",
- #elif defined(CONFIG_PREEMPT)
- 		   "preempt",
-+#elif defined(CONFIG_PREEMPT_RT)
-+		   "preempt_rt",
- #else
- 		   "unknown",
- #endif
+ 	/*
+-	 * The following prevents a kworker from hogging CPU on !PREEMPT
++	 * The following prevents a kworker from hogging CPU on !PREEMPTION
+ 	 * kernels, where a requeueing work item waiting for something to
+ 	 * happen could deadlock with stop_machine as such work item could
+ 	 * indefinitely requeue itself while all other CPUs are trapped in
 --=20
 2.23.0
 
