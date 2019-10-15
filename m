@@ -2,218 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12808D71D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 11:09:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 472B8D71DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 11:12:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729033AbfJOJJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 05:09:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42534 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726373AbfJOJJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 05:09:38 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5937AB39B;
-        Tue, 15 Oct 2019 09:09:35 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 19D791E4A8A; Tue, 15 Oct 2019 11:09:33 +0200 (CEST)
-Date:   Tue, 15 Oct 2019 11:09:33 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com, tj@kernel.org,
-        Jan Kara <jack@suse.cz>, Dennis Zhou <dennis@kernel.org>
-Subject: Re: [PATCH v2] cgroup, blkcg: prevent dirty inodes to pin dying
- memory cgroups
-Message-ID: <20191015090933.GA21104@quack2.suse.cz>
-References: <20191010234036.2860655-1-guro@fb.com>
+        id S1727557AbfJOJMF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 05:12:05 -0400
+Received: from regular1.263xmail.com ([211.150.70.203]:51320 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725828AbfJOJMF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 05:12:05 -0400
+X-Greylist: delayed 383 seconds by postgrey-1.27 at vger.kernel.org; Tue, 15 Oct 2019 05:12:02 EDT
+Received: from localhost (unknown [192.168.167.209])
+        by regular1.263xmail.com (Postfix) with ESMTP id DFD0B41C;
+        Tue, 15 Oct 2019 17:05:37 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-SKE-CHECKED: 1
+X-ABS-CHECKED: 1
+Received: from localhost.localdomain (unknown [14.18.236.69])
+        by smtp.263.net (postfix) whith ESMTP id P1583T140684250044160S1571130332829507_;
+        Tue, 15 Oct 2019 17:05:38 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <ea1c15b0bb58094303253241c357fb03>
+X-RL-SENDER: yili@winhong.com
+X-SENDER: yili@winhong.com
+X-LOGIN-NAME: yili@winhong.com
+X-FST-TO: linux-kernel@vger.kernel.org
+X-SENDER-IP: 14.18.236.69
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From:   Yi Li <yili@winhong.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     joseph.qi@linux.alibaba.com, Yi Li <yili@winhong.com>,
+        Yi Li <yilikernel@gmail.com>
+Subject: [PATCH] ocfs2: fix panic due to ocfs2_wq is null
+Date:   Tue, 15 Oct 2019 17:05:30 +0800
+Message-Id: <1571130330-3944-1-git-send-email-yili@winhong.com>
+X-Mailer: git-send-email 2.7.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191010234036.2860655-1-guro@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 10-10-19 16:40:36, Roman Gushchin wrote:
-> We've noticed that the number of dying cgroups on our production hosts
-> tends to grow with the uptime. This time it's caused by the writeback
-> code.
-> 
-> An inode which is getting dirty for the first time is associated
-> with the wb structure (look at __inode_attach_wb()). It can later
-> be switched to another wb under some conditions (e.g. some other
-> cgroup is writing a lot of data to the same inode), but generally
-> stays associated up to the end of life of the inode structure.
-> 
-> The problem is that the wb structure holds a reference to the original
-> memory cgroup. So if an inode has been dirty once, it has a good chance
-> to pin down the original memory cgroup.
-> 
-> An example from the real life: some service runs periodically and
-> updates rpm packages. Each time in a new memory cgroup. Installed
-> .so files are heavily used by other cgroups, so corresponding inodes
-> tend to stay alive for a long. So do pinned memory cgroups.
-> In production I've seen many hosts with 1-2 thousands of dying
-> cgroups.
-> 
-> This is not the first problem with the dying memory cgroups. As
-> always, the problem is with their relative size: memory cgroups
-> are large objects, easily 100x-1000x larger that inodes. So keeping
-> a couple of thousands of dying cgroups in memory without a good reason
-> (what we easily do with inodes) is quite costly (and is measured
-> in tens and hundreds of Mb).
-> 
-> To solve this problem let's perform a periodic scan of inodes
-> attached to the dying wbs, and detach those of them, which are clean
-> and don't have an active io operation.
-> That will eventually release the wb structure and corresponding
-> memory cgroup.
-> 
-> To make this scanning effective, let's keep a list of attached
-> inodes. inode->i_io_list can be reused for this purpose.
-> 
-> The scan is performed from the cgroup offlining path. Dying wbs
-> are placed on the global list. On each cgroup removal we traverse
-> the whole list ignoring wbs with active io operations. That will
-> allow the majority of io operations to be finished after the
-> removal of the cgroup.
-> 
-> Big thanks to Jan Kara and Dennis Zhou for their ideas and
-> contribution to this patch.
-> 
-> Signed-off-by: Roman Gushchin <guro@fb.com>
-> ---
->  fs/fs-writeback.c                | 52 +++++++++++++++++++++++---
->  include/linux/backing-dev-defs.h |  2 +
->  include/linux/writeback.h        |  1 +
->  mm/backing-dev.c                 | 63 ++++++++++++++++++++++++++++++--
->  4 files changed, 108 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index e88421d9a48d..c792db951274 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -136,16 +136,21 @@ static bool inode_io_list_move_locked(struct inode *inode,
->   * inode_io_list_del_locked - remove an inode from its bdi_writeback IO list
->   * @inode: inode to be removed
->   * @wb: bdi_writeback @inode is being removed from
-> + * @keep_attached: keep the inode on the list of inodes attached to wb
->   *
->   * Remove @inode which may be on one of @wb->b_{dirty|io|more_io} lists and
->   * clear %WB_has_dirty_io if all are empty afterwards.
->   */
->  static void inode_io_list_del_locked(struct inode *inode,
-> -				     struct bdi_writeback *wb)
-> +				     struct bdi_writeback *wb,
-> +				     bool keep_attached)
->  {
->  	assert_spin_locked(&wb->list_lock);
->  
-> -	list_del_init(&inode->i_io_list);
-> +	if (keep_attached)
-> +		list_move(&inode->i_io_list, &wb->b_attached);
-> +	else
-> +		list_del_init(&inode->i_io_list);
->  	wb_io_lists_depopulated(wb);
->  }
+mount.ocfs2 failed when read ocfs2 filesystem super error.
+the func ocfs2_initialize_super will return before allocate ocfs2_wq.
+ocfs2_dismount_volume will flush the ocfs2_wq, that triggered the following panic.
 
-Rather than adding this (somewhat ugly) bool argument to
-inode_io_list_del_locked() I'd teach inode_io_list_move_locked() about the
-new b_attached list and use that function where needed...
+Oct 15 16:09:27 cnwarekv-205120 kernel: OCFS2: ERROR (device dm-34): ocfs2_validate_inode_block: Invalid dinode #513: fs_generation is 1837764116
+Oct 15 16:09:27 cnwarekv-205120 kernel: On-disk corruption discovered. Please run fsck.ocfs2 once the filesystem is unmounted.
+Oct 15 16:09:27 cnwarekv-205120 kernel: OCFS2: File system is now read-only.
+Oct 15 16:09:27 cnwarekv-205120 kernel: (mount.ocfs2,22804,44):ocfs2_read_locked_inode:537 ERROR: status = -30
+Oct 15 16:09:27 cnwarekv-205120 kernel: (mount.ocfs2,22804,44):ocfs2_init_global_system_inodes:458 ERROR: status = -30
+Oct 15 16:09:27 cnwarekv-205120 kernel: (mount.ocfs2,22804,44):ocfs2_init_global_system_inodes:491 ERROR: status = -30
+Oct 15 16:09:27 cnwarekv-205120 kernel: (mount.ocfs2,22804,44):ocfs2_initialize_super:2313 ERROR: status = -30
+Oct 15 16:09:27 cnwarekv-205120 kernel: (mount.ocfs2,22804,44):ocfs2_fill_super:1033 ERROR: status = -30
+------------[ cut here ]------------
+Oops: 0002 [#1] SMP NOPTI
+Modules linked in: ocfs2 rpcsec_gss_krb5 auth_rpcgss nfsv4 nfs fscache lockd grace ocfs2_dlmfs ocfs2_stack_o2cb ocfs2_dlm ocfs2_nodemanager ocfs2_stackglue configfs sunrpc ipt_REJECT nf_reject_ipv4 nf_conntrack_ipv4 nf_defrag_ipv4 iptable_filter ip_tables ip6t_REJECT nf_reject_ipv6 nf_conntrack_ipv6 nf_defrag_ipv6 xt_state nf_conntrack ip6table_filter ip6_tables ib_ipoib rdma_ucm ib_ucm ib_uverbs ib_umad rdma_cm ib_cm iw_cm ib_sa ib_mad ib_core ib_addr ipv6 ovmapi ppdev parport_pc parport xen_netfront fb_sys_fops sysimgblt sysfillrect syscopyarea acpi_cpufreq pcspkr i2c_piix4 i2c_core sg ext4 jbd2 mbcache2 sr_mod cdrom xen_blkfront pata_acpi ata_generic ata_piix floppy dm_mirror dm_region_hash dm_log dm_mod
+CPU: 1 PID: 11753 Comm: mount.ocfs2 Tainted: G  E	4.14.148-200.ckv.x86_64 #1
+Hardware name: Sugon H320-G30/35N16-US, BIOS 0SSDX017 12/21/2018
+task: ffff967af0520000 task.stack: ffffa5f05484000
+RIP: 0010:mutex_lock+0x19/0x20
+Call Trace:
+  flush_workqueue+0x81/0x460
+  ocfs2_shutdown_local_alloc+0x47/0x440 [ocfs2]
+  ocfs2_dismount_volume+0x84/0x400 [ocfs2]
+  ocfs2_fill_super+0xa4/0x1270 [ocfs2]
+  ? ocfs2_initialize_super.isa.211+0xf20/0xf20 [ocfs2]
+  mount_bdev+0x17f/0x1c0
+  mount_fs+0x3a/0x160
 
-> @@ -426,7 +431,7 @@ static void inode_switch_wbs_work_fn(struct work_struct *work)
->  	if (!list_empty(&inode->i_io_list)) {
->  		struct inode *pos;
->  
-> -		inode_io_list_del_locked(inode, old_wb);
-> +		inode_io_list_del_locked(inode, old_wb, false);
->  		inode->i_wb = new_wb;
->  		list_for_each_entry(pos, &new_wb->b_dirty, i_io_list)
->  			if (time_after_eq(inode->dirtied_when,
+Signed-off-by: Yi Li <yilikernel@gmail.com>
+---
+ fs/ocfs2/localalloc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-This bit looks wrong. Not the change you made as such but the fact that you
-can now move inode from b_attached list of old wb to the dirty list of new
-wb.
-
-> @@ -544,6 +549,41 @@ static void inode_switch_wbs(struct inode *inode, int new_wb_id)
->  	kfree(isw);
->  }
->  
-> +/**
-> + * cleanup_offline_wb - detach attached clean inodes
-> + * @wb: target wb
-> + *
-> + * Clear the ->i_wb pointer of the attached inodes and drop
-> + * the corresponding wb reference. Skip inodes which are dirty,
-> + * freeing, switching or in the active writeback process.
-> + */
-> +void cleanup_offline_wb(struct bdi_writeback *wb)
-> +{
-> +	struct inode *inode, *tmp;
-> +	bool ret = true;
-> +
-> +	spin_lock(&wb->list_lock);
-> +	if (list_empty(&wb->b_attached))
-> +		goto unlock;
-
-What's the point of this check? list_for_each_entry_safe() below will just
-do the same...
-
-> +
-> +	list_for_each_entry_safe(inode, tmp, &wb->b_attached, i_io_list) {
-> +		if (!spin_trylock(&inode->i_lock))
-> +			continue;
-> +		xa_lock_irq(&inode->i_mapping->i_pages);
-> +		if (!(inode->i_state &
-> +		      (I_FREEING | I_CLEAR | I_SYNC | I_DIRTY | I_WB_SWITCH))) {
-> +			WARN_ON_ONCE(inode->i_wb != wb);
-> +			inode->i_wb = NULL;
-> +			wb_put(wb);
-
-Hum, currently the code assumes that once i_wb is set, it never becomes
-NULL again. In particular the inode e.g. in
-fs/fs-writeback.c:inode_congested() or generally unlocked_inode_to_wb_begin()
-users could get broken by this. The i_wb switching code is so complex
-exactly because of these interactions.
-
-Maybe you thought through the interactions and things are actually fine but
-if nothing else you'd need a big fat comment here explaining why this is
-fine and update inode_congested() comments etc.
-
-> +			list_del_init(&inode->i_io_list);
-> +		}
-> +		xa_unlock_irq(&inode->i_mapping->i_pages);
-> +		spin_unlock(&inode->i_lock);
-> +	}
-> +unlock:
-> +	spin_unlock(&wb->list_lock);
-> +}
-> +
-
-...
-
-> diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
-> index 4fc87dee005a..68b167fda259 100644
-> --- a/include/linux/backing-dev-defs.h
-> +++ b/include/linux/backing-dev-defs.h
-> @@ -137,6 +137,7 @@ struct bdi_writeback {
->  	struct list_head b_io;		/* parked for writeback */
->  	struct list_head b_more_io;	/* parked for more writeback */
->  	struct list_head b_dirty_time;	/* time stamps are dirty */
-> +	struct list_head b_attached;	/* attached inodes */
-
-Maybe
-	/* clean inodes pointing to this wb through inode->i_wb */
-would be more explanatory?
-
->  	spinlock_t list_lock;		/* protects the b_* lists */
->  
->  	struct percpu_counter stat[NR_WB_STAT_ITEMS];
-
-									Honza
+diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
+index 158e5af..943e5c3 100644
+--- a/fs/ocfs2/localalloc.c
++++ b/fs/ocfs2/localalloc.c
+@@ -377,7 +377,9 @@ void ocfs2_shutdown_local_alloc(struct ocfs2_super *osb)
+ 	struct ocfs2_dinode *alloc = NULL;
+ 
+ 	cancel_delayed_work(&osb->la_enable_wq);
+-	flush_workqueue(osb->ocfs2_wq);
++	if (osb->ocfs2_wq) {
++	    flush_workqueue(osb->ocfs2_wq);
++	}
+ 
+ 	if (osb->local_alloc_state == OCFS2_LA_UNUSED)
+ 		goto out;
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.7.5
+
+
+
