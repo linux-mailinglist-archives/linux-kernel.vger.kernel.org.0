@@ -2,83 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DED8D7F73
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 20:59:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52E4AD7F7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:00:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730129AbfJOS7W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 14:59:22 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:41789 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727868AbfJOS7V (ORCPT
+        id S2389114AbfJOTA6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 15:00:58 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39714 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731776AbfJOTA4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 14:59:21 -0400
-Received: by mail-oi1-f194.google.com with SMTP id w65so17777726oiw.8;
-        Tue, 15 Oct 2019 11:59:21 -0700 (PDT)
+        Tue, 15 Oct 2019 15:00:56 -0400
+Received: by mail-lj1-f195.google.com with SMTP id y3so21399963ljj.6
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 12:00:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MMAvaim9+S74+cLKGfKpPV0jt0ePKq4pl+dUnol7U2k=;
+        b=DhI3jZcx/uyOLfu8ny5Lt1siVQgFVsCm5kmsY6i2FCqBbzb8QH9PPyTN8DCmdhDr5S
+         A4G11LYL3O44P/4Ql7Jt/VeZd1nO1dKf4kVncZj73MdbJR4Dzd9pa/QE5Xu42b6DB/NB
+         KjEixpuat22YXDmNzVBhKNDv8Olnc7lfHEeOk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=71Wb7b/0yCm9bssMx4aB/LI8BIio7aNdnZ8+kJtjPq0=;
-        b=H7z5YHMciRS2Md+9wQGN+rIZQbbGK3C4wS0J6P+5dbC/JKL9rsIOyq7p6KKjfS6sgB
-         NmA2N3x33qxO+ltFkjnZPmmstFGEYW6HPrmsKxClcp+4/ZyyCpif9BGOXpRhTOgm0AYN
-         GgSr/Yw8cIqJZnkziAkgQYpebI1tlnszC25MV8RfPtyzvv6eEtPx0t/PV6xFHm62Z7bz
-         4TIpLwVMHvXyOfz3R/kyK8xnd6scyd4Q5j8BB+L5UXgPmzgd+/y1PzuLSb7jW/iA85ec
-         Jq70zKA0zwMqBeU0JNh11Etzi9p02e+mWw29cYmbSw5K2zPDLedoGpAmZQeVcSZYfytP
-         gNhw==
-X-Gm-Message-State: APjAAAUfZSwyXR6htLTVklTmPZ1EJ1AbX8A0QqW/kPg0JGE0Z4u4kGeN
-        p40Dh/E9YOPExyNa0vLoLwAcmcc=
-X-Google-Smtp-Source: APXvYqzT2LJQzrzNosAbkxBk/0GI7gvyDnwpb0aWZ6ydWCGS4zdvQsjb5mnvTW61pltsIBY83ceZxA==
-X-Received: by 2002:aca:3242:: with SMTP id y63mr55005oiy.114.1571165960668;
-        Tue, 15 Oct 2019 11:59:20 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id d69sm6593697oig.32.2019.10.15.11.59.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2019 11:59:19 -0700 (PDT)
-Date:   Tue, 15 Oct 2019 13:59:19 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        "maintainer:BROADCOM BCM281XX/BCM11XXX/BCM216XX ARM ARCHITE..." 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/7] dt-bindings: interrupt-controller: Add
- brcm,bcm7211-armctrl-ic binding
-Message-ID: <20191015185919.GA26464@bogus>
-References: <20191001224842.9382-1-f.fainelli@gmail.com>
- <20191001224842.9382-3-f.fainelli@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MMAvaim9+S74+cLKGfKpPV0jt0ePKq4pl+dUnol7U2k=;
+        b=Sfko3OgbfQEuj2WTydBmbcoqqDFIgtBiqn/WCkZ/9CqPL61X8kKzlt7eB7qbRZdtk4
+         gLzRg4x07V9Trb80NFmFup5WDD3VD2pR78TIn5IzgW4CjwarrjTWV+uUnuvrLJ0c/C0o
+         +LTf+kUAY0Dn5V8ZyWRUeY+s/aDGsrsNAWnC/GVBy5soNVziMts/qATR7JMmoqiDahTa
+         dyIb4QXK+lzjDceIrvgyLLS4eF1ofb5frX9LLFj03rvSwaj0h2vJ+2h/dEqF17co77GB
+         h2gEJcrirzxLUFCvRyYvHkFn8C4JWAIPhsyBlugBDg3CCaBMBZEgZBeWvm6Qmc4xnMIe
+         qQ4w==
+X-Gm-Message-State: APjAAAV2mx5DtVR3Zo4NnX43ExylvvZIYAtFtmcl4IpXRDP4GXUGjnPT
+        EcpFZ5sUgdax8icwSN8c5KBaZj9WyYE=
+X-Google-Smtp-Source: APXvYqwuNKpndHMm/WcYWQnwqf/9yylOM1AkYGZEhThHBwINp2fi9u/Hx9IZVTdg3hI1PR6SHlA8VQ==
+X-Received: by 2002:a2e:858f:: with SMTP id b15mr23421358lji.68.1571166053091;
+        Tue, 15 Oct 2019 12:00:53 -0700 (PDT)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id m27sm430987lfp.60.2019.10.15.12.00.51
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Oct 2019 12:00:51 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id m7so21393820lji.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 12:00:51 -0700 (PDT)
+X-Received: by 2002:a2e:545:: with SMTP id 66mr1159643ljf.133.1571166050946;
+ Tue, 15 Oct 2019 12:00:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191001224842.9382-3-f.fainelli@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CAHk-=wgOWxqwqCFuP_Bw=Hxxf9njeHJs0OLNGNc63peNd=kRqw@mail.gmail.com>
+ <20191010195504.GI26530@ZenIV.linux.org.uk> <CAHk-=wgWRQo0m7TUCK4T_J-3Vqte+p-FWzvT3CB1jJHgX-KctA@mail.gmail.com>
+ <20191011001104.GJ26530@ZenIV.linux.org.uk> <CAHk-=wgg3jzkk-jObm1FLVYGS8JCTiKppEnA00_QX7Wsm5ieLQ@mail.gmail.com>
+ <20191013181333.GK26530@ZenIV.linux.org.uk> <CAHk-=wgrWGyACBM8N8KP7Pu_2VopuzM4A12yQz6Eo=X2Jpwzcw@mail.gmail.com>
+ <20191013191050.GL26530@ZenIV.linux.org.uk> <CAHk-=wjJNE9hOKuatqh6SFf4nd65LG4ZR3gQSgg+rjSpVxe89w@mail.gmail.com>
+ <20191013195949.GM26530@ZenIV.linux.org.uk> <20191015180846.GA31707@ZenIV.linux.org.uk>
+In-Reply-To: <20191015180846.GA31707@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 15 Oct 2019 12:00:34 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjyiiYhAbzVDUW1F3j9CAcu8+ugSvGYwUivdBfKoeU6yA@mail.gmail.com>
+Message-ID: <CAHk-=wjyiiYhAbzVDUW1F3j9CAcu8+ugSvGYwUivdBfKoeU6yA@mail.gmail.com>
+Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to unsafe_put_user()
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue,  1 Oct 2019 15:48:37 -0700, Florian Fainelli wrote:
-> BCM7211 features a second level interrupt controller similar in nature
-> to BCM2836, with a few modifications to the register offsets, document
-> that specific compatible string.
-> 
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
->  .../interrupt-controller/brcm,bcm2835-armctrl-ic.txt        | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
+On Tue, Oct 15, 2019 at 11:08 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> Another question: right now we have
+>         if (!access_ok(uaddr, sizeof(u32)))
+>                 return -EFAULT;
+>
+>         ret = arch_futex_atomic_op_inuser(op, oparg, &oldval, uaddr);
+>         if (ret)
+>                 return ret;
+> in kernel/futex.c.  Would there be any objections to moving access_ok()
+> inside the instances and moving pagefault_disable()/pagefault_enable() outside?
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+I think we should remove all the "atomic" versions, and just make the
+rule be that if you want atomic, you surround it with
+pagefault_disable()/pagefault_enable().
+
+That covers not just the futex ops (where "atomic" is actually
+somewhat ambiguous - the ops themselves are atomic too, so the naming
+might stay, although arguably the "futex" part makes that pointless
+too), but also copy_to_user_inatomic() and the powerpc version of
+__get_user_inatomic().
+
+So we'd aim to get rid of all the "inatomic" ones entirely.
+
+Same ultimately probably goes for the NMI versions. We should just
+make it be a rule that we can use all of the user access functions
+with pagefault_{dis,en}able() around them, and they'll be "safe" to
+use in atomic context.
+
+One issue with the NMI versions is that they actually want to avoid
+the current value of set_fs().  So copy_from_user_nmi() (at least on
+x86) is special in that it does
+
+        if (__range_not_ok(from, n, TASK_SIZE))
+                return n;
+
+instead of access_ok() because of that issue.
+
+NMI also has some other issues (nmi_uaccess_okay() on x86, at least),
+but those *probably* could be handled at page fault time instead.
+
+Anyway, NMI is so special that I'd suggest leaving it for later, but
+the non-NMI atomic accesses I would suggest you clean up at the same
+time.
+
+I think the *only* reason we have the "inatomic()" versions is that
+the regular ones do that "might_fault()" testing unconditionally, and
+might_fault() _used_ to be just a might_sleep() - so it's not about
+functionality per se, it's about "we have this sanity check that we
+need to undo".
+
+We've already made "might_fault()" look at pagefault_disabled(), so I
+think a lot of the reasons for inatomic are entirely historical.
+
+                Linus
