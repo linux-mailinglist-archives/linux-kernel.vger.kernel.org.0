@@ -2,104 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E620AD79ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 17:37:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 364BDD7A56
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 17:46:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727915AbfJOPhm convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 15 Oct 2019 11:37:42 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:52252 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727656AbfJOPhm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 11:37:42 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 5B76460632FF;
-        Tue, 15 Oct 2019 17:37:39 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id RSIHUIs5bPXs; Tue, 15 Oct 2019 17:37:37 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id C21F960632EE;
-        Tue, 15 Oct 2019 17:37:37 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id T3wxvxa3rLp7; Tue, 15 Oct 2019 17:37:37 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 7EAF260632C6;
-        Tue, 15 Oct 2019 17:37:37 +0200 (CEST)
-Date:   Tue, 15 Oct 2019 17:37:37 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     Jiri Slaby <jslaby@suse.cz>
-Cc:     bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Jeff Dike <jdike@addtoit.com>,
-        user-mode-linux-devel@lists.sourceforge.net,
-        user-mode-linux-user@lists.sourceforge.net
-Message-ID: <879392618.23509.1571153857379.JavaMail.zimbra@nod.at>
-In-Reply-To: <20191011115108.12392-14-jslaby@suse.cz>
-References: <20191011115108.12392-1-jslaby@suse.cz> <20191011115108.12392-14-jslaby@suse.cz>
-Subject: Re: [PATCH v9 13/28] um: Annotate data appropriately
+        id S1732173AbfJOPqy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 11:46:54 -0400
+Received: from foss.arm.com ([217.140.110.172]:41380 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726231AbfJOPqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 11:46:53 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 195D428;
+        Tue, 15 Oct 2019 08:46:53 -0700 (PDT)
+Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 76F613F68E;
+        Tue, 15 Oct 2019 08:46:51 -0700 (PDT)
+From:   Valentin Schneider <valentin.schneider@arm.com>
+To:     linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Cc:     lizefan@huawei.com, tj@kernel.org, hannes@cmpxchg.org,
+        mingo@kernel.org, peterz@infradead.org, vincent.guittot@linaro.org,
+        Dietmar.Eggemann@arm.com, morten.rasmussen@arm.com,
+        qperret@google.com
+Subject: [PATCH v3 0/2] sched/topology: Asymmetric topologies fixes
+Date:   Tue, 15 Oct 2019 16:42:48 +0100
+Message-Id: <20191015154250.12951-1-valentin.schneider@arm.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [195.201.40.130]
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF60 (Linux)/8.8.12_GA_3809)
-Thread-Topic: Annotate data appropriately
-Thread-Index: gRNjB6YSPJT4xz32OxsfGpK8VELjCQ==
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ Ursprüngliche Mail -----
-> Von: "Jiri Slaby" <jslaby@suse.cz>
-> An: bp@alien8.de
-> CC: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, linux-arch@vger.kernel.org, "linux-kernel"
-> <linux-kernel@vger.kernel.org>, "Jiri Slaby" <jslaby@suse.cz>, "Jeff Dike" <jdike@addtoit.com>, "richard"
-> <richard@nod.at>, user-mode-linux-devel@lists.sourceforge.net, user-mode-linux-user@lists.sourceforge.net
-> Gesendet: Freitag, 11. Oktober 2019 13:50:53
-> Betreff: [PATCH v9 13/28] um: Annotate data appropriately
+Hi,
 
-> Use the new SYM_DATA_START and SYM_DATA_END_LABEL macros for vdso_start.
-> 
-> We get:
->  0000  2376 OBJECT  GLOBAL DEFAULT    4 vdso_start
->  0948     0 OBJECT  GLOBAL DEFAULT    4 vdso_end
-> 
-> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-> Cc: Jeff Dike <jdike@addtoit.com>
-> Cc: Richard Weinberger <richard@nod.at>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: x86@kernel.org
-> Cc: user-mode-linux-devel@lists.sourceforge.net
-> Cc: user-mode-linux-user@lists.sourceforge.net
-> ---
-> arch/x86/um/vdso/vdso.S | 6 +++---
-> 1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/um/vdso/vdso.S b/arch/x86/um/vdso/vdso.S
-> index a4a3870dc059..a6eaf293a73b 100644
-> --- a/arch/x86/um/vdso/vdso.S
-> +++ b/arch/x86/um/vdso/vdso.S
-> @@ -1,11 +1,11 @@
-> /* SPDX-License-Identifier: GPL-2.0 */
-> #include <linux/init.h>
-> +#include <linux/linkage.h>
-> 
-> __INITDATA
-> 
-> -	.globl vdso_start, vdso_end
-> -vdso_start:
-> +SYM_DATA_START(vdso_start)
-> 	.incbin "arch/x86/um/vdso/vdso.so"
-> -vdso_end:
-> +SYM_DATA_END_LABEL(vdso_start, SYM_L_GLOBAL, vdso_end)
+I got a nice splat while testing out the toggling of
+sched_asym_cpucapacity, so this gets a new patch.
 
-Acked-by: Richard Weinberger <richard@nod.at>
+Details are in the logs.
 
-Thanks,
-//richard
+v2 changes:
+  - Use static_branch_{inc,dec} rather than enable/disable
+
+v3 changes:
+  - New patch: add fix for empty cpumap in sched domain rebuild
+  - Move static_branch_dec outside of RCU read-side section (Quentin)
+
+Cheers,
+Valentin
+
+Valentin Schneider (2):
+  sched/topology: Don't try to build empty sched domains
+  sched/topology: Allow sched_asym_cpucapacity to be disabled
+
+ kernel/cgroup/cpuset.c  |  8 ++++++++
+ kernel/sched/topology.c | 11 +++++++++--
+ 2 files changed, 17 insertions(+), 2 deletions(-)
+
+--
+2.22.0
+
