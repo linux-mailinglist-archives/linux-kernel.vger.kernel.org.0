@@ -2,47 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D40CED7542
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 13:40:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BD8AD7555
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 13:43:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729083AbfJOLkt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 07:40:49 -0400
-Received: from 8bytes.org ([81.169.241.247]:47474 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726472AbfJOLks (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 07:40:48 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id E6A532D9; Tue, 15 Oct 2019 13:40:46 +0200 (CEST)
-Date:   Tue, 15 Oct 2019 13:40:45 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Chris Wilson <chris@chris-wilson.co.uk>
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu/intel: Use fallback generic_device_group() for
- ACPI devices
-Message-ID: <20191015114045.GJ14518@8bytes.org>
-References: <20191004205554.21055-1-chris@chris-wilson.co.uk>
+        id S1729246AbfJOLnS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 07:43:18 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3721 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726208AbfJOLnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 07:43:18 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id C7D8C5804CF78C3128C0;
+        Tue, 15 Oct 2019 19:43:15 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Tue, 15 Oct 2019
+ 19:43:09 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <gregkh@linuxfoundation.org>, <jarias.linux@gmail.com>,
+        <julia.lawall@lip6.fr>, <colin.king@canonical.com>,
+        <hdegoede@redhat.com>, <hariprasad.kelam@gmail.com>,
+        <nachukannan@gmail.com>, <pakki001@umn.edu>,
+        <hardiksingh.k@gmail.com>, <nishkadg.linux@gmail.com>
+CC:     <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] staging: rtl8723bs: remove unnecessary null check
+Date:   Tue, 15 Oct 2019 19:40:53 +0800
+Message-ID: <20191015114053.23496-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191004205554.21055-1-chris@chris-wilson.co.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 04, 2019 at 09:55:54PM +0100, Chris Wilson wrote:
-> [    2.073922] DMAR: ACPI device "INT33C2:00" under DMAR at fed91000 as 00:15.1
-> [    2.073983] DMAR: ACPI device "INT33C3:00" under DMAR at fed91000 as 00:15.2
-> [    2.074027] DMAR: ACPI device "INT33C0:00" under DMAR at fed91000 as 00:15.3
-> [    2.074072] DMAR: ACPI device "INT33C1:00" under DMAR at fed91000 as 00:15.4
+Null check before kfree is redundant, so remove it.
+This is detected by coccinelle.
 
-I think just using generic_device_group() is not enough here. You need
-to mach the device-id of the ACPI device with the PCI hierarchy and find
-the right group there. You can look at the AMD IOMMU drivers
-acpihid_device_group() function for some inspiration.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/staging/rtl8723bs/core/rtw_xmit.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Regards,
+diff --git a/drivers/staging/rtl8723bs/core/rtw_xmit.c b/drivers/staging/rtl8723bs/core/rtw_xmit.c
+index 7011c2a..4597f4f 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_xmit.c
++++ b/drivers/staging/rtl8723bs/core/rtw_xmit.c
+@@ -2210,8 +2210,7 @@ void rtw_free_hwxmits(struct adapter *padapter)
+ 	struct xmit_priv *pxmitpriv = &padapter->xmitpriv;
+ 
+ 	hwxmits = pxmitpriv->hwxmits;
+-	if (hwxmits)
+-		kfree(hwxmits);
++	kfree(hwxmits);
+ }
+ 
+ void rtw_init_hwxmits(struct hw_xmit *phwxmit, sint entry)
+-- 
+2.7.4
 
-	Joerg
 
