@@ -2,523 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 565F8D82EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 23:51:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D46D5D82F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 23:51:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388856AbfJOVu2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 17:50:28 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50706 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726719AbfJOVu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 17:50:27 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6873610C0925;
-        Tue, 15 Oct 2019 21:50:26 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-84.rdu2.redhat.com [10.10.121.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7984C5D713;
-        Tue, 15 Oct 2019 21:50:23 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 17/21] Add a general,
- global device notification watch list
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     dhowells@redhat.com, Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>, dhowells@redhat.com,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 15 Oct 2019 22:50:22 +0100
-Message-ID: <157117622273.15019.10638125968293561486.stgit@warthog.procyon.org.uk>
-In-Reply-To: <157117606853.15019.15459271147790470307.stgit@warthog.procyon.org.uk>
-References: <157117606853.15019.15459271147790470307.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        id S2388923AbfJOVul (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 17:50:41 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:39445 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726719AbfJOVuk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 17:50:40 -0400
+Received: by mail-oi1-f196.google.com with SMTP id w144so18223540oia.6;
+        Tue, 15 Oct 2019 14:50:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6Rbg3GlsCZMY2PYzwlKYN6U3Hys/GlUE/N1CGmM1+mk=;
+        b=umRVsOqGggFxreCANJTaxO9NJm0LhK+1fTpp6xV7MRdjr9plnVt8m2pyzAVU2miLeM
+         MsjOJ65fKkLLKXIKoC0KBVc0DpB7Zn5tbEKKY93I7xzxc2tweH41kohYFNCdQ0ONfwIk
+         p+WQWkvgMyYbVXVl+5N/Jef9IyBirAdVKCNPW3tsM/sowMKu2aqM4aNQjZCG1gS2mTLG
+         jGhrT31h94uqvb2VaDj/ldThsciGboA0H74tDhwG0Eb5XLV3Wxy+EbJfDu/GVSzE7RkZ
+         vfWQd2b2/qogVQNPUILIjiQMs1GDCZjNnBFvZmwC21NDWQhFVoSlRMrEsrDzA1T0B6UJ
+         Gm2w==
+X-Gm-Message-State: APjAAAWoLUwkdIcu10lUGxX7nUitNshDCTawhOdiV2OdnafYEC8ko+qa
+        JHHdHdiIF1g5raWRybQxZrQn2EbyBu8vvLae9fAggDcm
+X-Google-Smtp-Source: APXvYqwSdEONq2xTT80HSQuU+UMOReflhaKoGASTVXaLwjVs7H5aEpsz5B6O64BQDIT2HvPpOWEtr8ZZKM6ngr86wl8=
+X-Received: by 2002:aca:d405:: with SMTP id l5mr582341oig.115.1571176238841;
+ Tue, 15 Oct 2019 14:50:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.66]); Tue, 15 Oct 2019 21:50:26 +0000 (UTC)
+References: <5ad2624194baa2f53acc1f1e627eb7684c577a19.1562210705.git.viresh.kumar@linaro.org>
+ <2c7a751a58adb4ce6f345dab9714b924504009b6.1562583394.git.viresh.kumar@linaro.org>
+ <a1c503a7-6136-a405-369c-596a680183f2@gmail.com> <20191015114637.pcdbs2ctxl4xoxdo@vireshk-i7>
+ <CAJZ5v0g3kRfa2WXy=xz3Mj15Pwb5tm1xg=uPODoifnv70O1ORA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0g3kRfa2WXy=xz3Mj15Pwb5tm1xg=uPODoifnv70O1ORA@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 15 Oct 2019 23:50:27 +0200
+Message-ID: <CAJZ5v0hxsy3ZKFvtWULHAVog4=3rYQfd3-61A9dNaKeUbiDtrg@mail.gmail.com>
+Subject: Re: [PATCH V7 5/7] cpufreq: Register notifiers with the PM QoS framework
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Pavel Machek <pavel@ucw.cz>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create a general, global watch list that can be used for the posting of
-device notification events, for such things as device attachment,
-detachment and errors on sources such as block devices and USB devices.
-This can be enabled with:
+On Tue, Oct 15, 2019 at 5:53 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Tue, Oct 15, 2019 at 1:46 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> >
+> > On 22-09-19, 23:12, Dmitry Osipenko wrote:
+> > > Hello Viresh,
+> > >
+> > > This patch causes use-after-free on a cpufreq driver module reload. Please take a look, thanks in advance.
+> > >
+> > >
+> > > [   87.952369] ==================================================================
+> > > [   87.953259] BUG: KASAN: use-after-free in notifier_chain_register+0x4f/0x9c
+> > > [   87.954031] Read of size 4 at addr e6abbd0c by task modprobe/243
+> > >
+> > > [   87.954901] CPU: 1 PID: 243 Comm: modprobe Tainted: G        W
+> > > 5.3.0-next-20190920-00185-gf61698eab956-dirty #2408
+> > > [   87.956077] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+> > > [   87.956807] [<c0110aad>] (unwind_backtrace) from [<c010bb71>] (show_stack+0x11/0x14)
+> > > [   87.957709] [<c010bb71>] (show_stack) from [<c0d37b25>] (dump_stack+0x89/0x98)
+> > > [   87.958616] [<c0d37b25>] (dump_stack) from [<c02937e1>]
+> > > (print_address_description.constprop.0+0x3d/0x340)
+> > > [   87.959785] [<c02937e1>] (print_address_description.constprop.0) from [<c0293c6b>]
+> > > (__kasan_report+0xe3/0x12c)
+> > > [   87.960907] [<c0293c6b>] (__kasan_report) from [<c014988f>] (notifier_chain_register+0x4f/0x9c)
+> > > [   87.962001] [<c014988f>] (notifier_chain_register) from [<c01499b5>]
+> > > (blocking_notifier_chain_register+0x29/0x3c)
+> > > [   87.963180] [<c01499b5>] (blocking_notifier_chain_register) from [<c06f7ee9>]
+> > > (dev_pm_qos_add_notifier+0x79/0xf8)
+> > > [   87.964339] [<c06f7ee9>] (dev_pm_qos_add_notifier) from [<c092927d>] (cpufreq_online+0x5e1/0x8a4)
+> > > [   87.965351] [<c092927d>] (cpufreq_online) from [<c09295c9>] (cpufreq_add_dev+0x79/0x80)
+> > > [   87.966247] [<c09295c9>] (cpufreq_add_dev) from [<c06eb9d3>] (subsys_interface_register+0xc3/0x100)
+> > > [   87.967297] [<c06eb9d3>] (subsys_interface_register) from [<c0926e53>]
+> > > (cpufreq_register_driver+0x13b/0x1ec)
+> > > [   87.968476] [<c0926e53>] (cpufreq_register_driver) from [<bf800435>]
+> > > (tegra20_cpufreq_probe+0x165/0x1a8 [tegra20_cpufreq])
+> >
+> > Hi Dmitry,
+> >
+> > Thanks for the bug report and I was finally able to reproduce it at my end and
+> > this was quite an interesting debugging exercise :)
+> >
+> > When a cpufreq driver gets registered, we register with the subsys interface and
+> > it calls cpufreq_add_dev() for each CPU, starting from CPU0. And so the QoS
+> > notifiers get added to the first CPU of the policy, i.e. CPU0 in common cases.
+> >
+> > When the cpufreq driver gets unregistered, we unregister with the subsys
+> > interface and it calls cpufreq_remove_dev() for each CPU, starting from CPU0
+> > (should have been in reverse order I feel). We remove the QoS notifier only when
+> > cpufreq_remove_dev() gets called for the last CPU of the policy, lets call it
+> > CPUx. Now this has a different notifier list as compared to CPU0.
+>
+> The same problem will appear if the original policy CPU goes offline, won't it?
+>
+> > In short, we are adding the cpufreq notifiers to CPU0 and removing them from
+> > CPUx. When we try to add it again by inserting the module for second time, we
+> > find a node in the notifier list which is already freed but still in the list as
+> > we removed it from CPUx's list (which doesn't do anything as the node wasn't
+> > there in the first place).
+> >
+> > @Rafael: How do you see we solve this problem ? Here are the options I could
+> > think of:
+> >
+> > - Update subsys layer to reverse the order of devices while unregistering (this
+> >   will fix the current problem, but we will still have corner cases hanging
+> >   around, like if the CPU0 is hotplugged out, etc).
+>
+> This isn't sufficient for the offline case.
+>
+> > - Update QoS framework with the knowledge of related CPUs, this has been pending
+> >   until now from my side. And this is the thing we really need to do. Eventually
+> >   we shall have only a single notifier list for all CPUs of a policy, at least
+> >   for MIN/MAX frequencies.
+>
+> - Move the PM QoS requests and notifiers to the new policy CPU on all
+> changes of that.  That is, when cpufreq_offline() nominates the new
+> "leader", all of the QoS stuff for the policy needs to go to this one.
 
-	CONFIG_DEVICE_NOTIFICATIONS
+Alas, that still will not work, because things like
+acpi_processor_ppc_init() only work accidentally for one-CPU policies.
+Generally, adding such a PM QoS request to a non-policy CPU simply has
+no effect until it becomes a policy CPU which may be never.
 
-To add a watch on this list, an event queue must be created and configured:
+It looks like using device PM QoS for cpufreq is a mistake in general
+and what is needed is a struct pm_qos_constraints member in struct
+cpufreq_policy and something like
 
-        pipe2(fds, O_TMPFILE);
-        ioctl(fds[1], IOC_WATCH_QUEUE_SET_SIZE, 256);
+struct freq_pm_qos_request {
+        enum freq_pm_qos_req_type type; /* min or max */
+        struct plist_node pnode;
+        struct cpufreq_policy *policy;
+};
 
-and then a watch can be placed upon it using a system call:
-
-        watch_devices(fds[1], 12, 0);
-
-Unless the application wants to receive all events, it should employ
-appropriate filters.  For example, to receive just USB notifications, it
-could do:
-
-	struct watch_notification_filter filter = {
-		.nr_filters = 1,
-		.filters = {
-			[0] = {
-				.type = WATCH_TYPE_USB_NOTIFY,
-				.subtype_filter[0] = UINT_MAX;
-			},
-		},
-	};
-	ioctl(fds[1], IOC_WATCH_QUEUE_SET_FILTER, &filter);
-
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- Documentation/watch_queue.rst               |   22 ++++++-
- arch/alpha/kernel/syscalls/syscall.tbl      |    1 
- arch/arm/tools/syscall.tbl                  |    1 
- arch/arm64/include/asm/unistd.h             |    2 -
- arch/arm64/include/asm/unistd32.h           |    2 +
- arch/ia64/kernel/syscalls/syscall.tbl       |    1 
- arch/m68k/kernel/syscalls/syscall.tbl       |    1 
- arch/microblaze/kernel/syscalls/syscall.tbl |    1 
- arch/mips/kernel/syscalls/syscall_n32.tbl   |    1 
- arch/mips/kernel/syscalls/syscall_n64.tbl   |    1 
- arch/mips/kernel/syscalls/syscall_o32.tbl   |    1 
- arch/parisc/kernel/syscalls/syscall.tbl     |    1 
- arch/powerpc/kernel/syscalls/syscall.tbl    |    1 
- arch/s390/kernel/syscalls/syscall.tbl       |    1 
- arch/sh/kernel/syscalls/syscall.tbl         |    1 
- arch/sparc/kernel/syscalls/syscall.tbl      |    1 
- arch/x86/entry/syscalls/syscall_32.tbl      |    1 
- arch/x86/entry/syscalls/syscall_64.tbl      |    1 
- arch/xtensa/kernel/syscalls/syscall.tbl     |    1 
- drivers/base/Kconfig                        |    9 +++
- drivers/base/Makefile                       |    1 
- drivers/base/watch.c                        |   90 +++++++++++++++++++++++++++
- include/linux/device.h                      |    7 ++
- include/linux/syscalls.h                    |    1 
- include/uapi/asm-generic/unistd.h           |    4 +
- kernel/sys_ni.c                             |    1 
- 26 files changed, 152 insertions(+), 3 deletions(-)
- create mode 100644 drivers/base/watch.c
-
-diff --git a/Documentation/watch_queue.rst b/Documentation/watch_queue.rst
-index d8f70282d247..ed592700be0e 100644
---- a/Documentation/watch_queue.rst
-+++ b/Documentation/watch_queue.rst
-@@ -223,6 +223,25 @@ The ``id`` is the ID of the source object (such as the serial number on a key).
- Only watches that have the same ID set in them will see this notification.
- 
- 
-+Global Device Watch List
-+========================
-+
-+There is a global watch list that hardware generated events, such as device
-+connection, disconnection, failure and error can be posted upon.  It must be
-+enabled using::
-+
-+	CONFIG_DEVICE_NOTIFICATIONS
-+
-+Watchpoints are set in userspace using the device_notify(2) system call.
-+Within the kernel events are posted upon it using::
-+
-+	void post_device_notification(struct watch_notification *n, u64 id);
-+
-+where ``n`` is the formatted notification record to post.  ``id`` is an
-+identifier that can be used to direct to specific watches, but it should be 0
-+for general use on this queue.
-+
-+
- Watch Sources
- =============
- 
-@@ -238,7 +257,8 @@ Any particular buffer can be fed from multiple sources.  Sources include:
-   * WATCH_TYPE_BLOCK_NOTIFY
- 
-     Notifications of this type indicate block layer events, such as I/O errors
--    or temporary link loss.  Watches of this type are set on a global queue.
-+    or temporary link loss.  Watches of this type are set on the global device
-+    watch list.
- 
- 
- Event Filtering
-diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-index 728fe028c02c..8e841d8e4c22 100644
---- a/arch/alpha/kernel/syscalls/syscall.tbl
-+++ b/arch/alpha/kernel/syscalls/syscall.tbl
-@@ -475,3 +475,4 @@
- 543	common	fspick				sys_fspick
- 544	common	pidfd_open			sys_pidfd_open
- # 545 reserved for clone3
-+546	common	watch_devices			sys_watch_devices
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index 6da7dc4d79cc..0f080cf44cc9 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -449,3 +449,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- 435	common	clone3				sys_clone3
-+436	common	watch_devices			sys_watch_devices
-diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
-index 2629a68b8724..368761302768 100644
---- a/arch/arm64/include/asm/unistd.h
-+++ b/arch/arm64/include/asm/unistd.h
-@@ -38,7 +38,7 @@
- #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
- #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
- 
--#define __NR_compat_syscalls		436
-+#define __NR_compat_syscalls		437
- #endif
- 
- #define __ARCH_WANT_SYS_CLONE
-diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-index 94ab29cf4f00..b5310789ce7a 100644
---- a/arch/arm64/include/asm/unistd32.h
-+++ b/arch/arm64/include/asm/unistd32.h
-@@ -879,6 +879,8 @@ __SYSCALL(__NR_fspick, sys_fspick)
- __SYSCALL(__NR_pidfd_open, sys_pidfd_open)
- #define __NR_clone3 435
- __SYSCALL(__NR_clone3, sys_clone3)
-+#define __NR_watch_devices 436
-+__SYSCALL(__NR_watch_devices, sys_watch_devices)
- 
- /*
-  * Please add new compat syscalls above this comment and update
-diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
-index 36d5faf4c86c..2f33f5db2fed 100644
---- a/arch/ia64/kernel/syscalls/syscall.tbl
-+++ b/arch/ia64/kernel/syscalls/syscall.tbl
-@@ -356,3 +356,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- # 435 reserved for clone3
-+436	common	watch_devices			sys_watch_devices
-diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
-index a88a285a0e5f..83e4e8784b88 100644
---- a/arch/m68k/kernel/syscalls/syscall.tbl
-+++ b/arch/m68k/kernel/syscalls/syscall.tbl
-@@ -435,3 +435,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- # 435 reserved for clone3
-+436	common	watch_devices			sys_watch_devices
-diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
-index 09b0cd7dab0a..9a70a3be3b7b 100644
---- a/arch/microblaze/kernel/syscalls/syscall.tbl
-+++ b/arch/microblaze/kernel/syscalls/syscall.tbl
-@@ -441,3 +441,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- 435	common	clone3				sys_clone3
-+436	common	watch_devices			sys_watch_devices
-diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
-index e7c5ab38e403..b39527fc32c9 100644
---- a/arch/mips/kernel/syscalls/syscall_n32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
-@@ -374,3 +374,4 @@
- 433	n32	fspick				sys_fspick
- 434	n32	pidfd_open			sys_pidfd_open
- 435	n32	clone3				__sys_clone3
-+436	n32	watch_devices			sys_watch_devices
-diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
-index 13cd66581f3b..a7f0c5e71768 100644
---- a/arch/mips/kernel/syscalls/syscall_n64.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
-@@ -350,3 +350,4 @@
- 433	n64	fspick				sys_fspick
- 434	n64	pidfd_open			sys_pidfd_open
- 435	n64	clone3				__sys_clone3
-+436	n64	watch_devices			sys_watch_devices
-diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-index 353539ea4140..6f378288598c 100644
---- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-@@ -423,3 +423,4 @@
- 433	o32	fspick				sys_fspick
- 434	o32	pidfd_open			sys_pidfd_open
- 435	o32	clone3				__sys_clone3
-+436	o32	watch_devices			sys_watch_devices
-diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
-index 285ff516150c..b64bbafa5919 100644
---- a/arch/parisc/kernel/syscalls/syscall.tbl
-+++ b/arch/parisc/kernel/syscalls/syscall.tbl
-@@ -433,3 +433,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- 435	common	clone3				sys_clone3_wrapper
-+436	common	watch_devices			sys_watch_devices
-diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-index 43f736ed47f2..0a503239ab5c 100644
---- a/arch/powerpc/kernel/syscalls/syscall.tbl
-+++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-@@ -517,3 +517,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- 435	nospu	clone3				ppc_clone3
-+436	common	watch_devices			sys_watch_devices
-diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-index 3054e9c035a3..19b43c0d928a 100644
---- a/arch/s390/kernel/syscalls/syscall.tbl
-+++ b/arch/s390/kernel/syscalls/syscall.tbl
-@@ -438,3 +438,4 @@
- 433  common	fspick			sys_fspick			sys_fspick
- 434  common	pidfd_open		sys_pidfd_open			sys_pidfd_open
- 435  common	clone3			sys_clone3			sys_clone3
-+436  common	watch_devices		sys_watch_devices		sys_watch_devices
-diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
-index b5ed26c4c005..b454e07c9372 100644
---- a/arch/sh/kernel/syscalls/syscall.tbl
-+++ b/arch/sh/kernel/syscalls/syscall.tbl
-@@ -438,3 +438,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- # 435 reserved for clone3
-+436	common	watch_devices			sys_watch_devices
-diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-index 8c8cc7537fb2..8ef43c27457e 100644
---- a/arch/sparc/kernel/syscalls/syscall.tbl
-+++ b/arch/sparc/kernel/syscalls/syscall.tbl
-@@ -481,3 +481,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- # 435 reserved for clone3
-+436	common	watch_devices			sys_watch_devices
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 3fe02546aed3..9b225c0d5240 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -440,3 +440,4 @@
- 433	i386	fspick			sys_fspick			__ia32_sys_fspick
- 434	i386	pidfd_open		sys_pidfd_open			__ia32_sys_pidfd_open
- 435	i386	clone3			sys_clone3			__ia32_sys_clone3
-+436	i386	watch_devices		sys_watch_devices		__ia32_sys_watch_devices
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index c29976eca4a8..29293d103829 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -357,6 +357,7 @@
- 433	common	fspick			__x64_sys_fspick
- 434	common	pidfd_open		__x64_sys_pidfd_open
- 435	common	clone3			__x64_sys_clone3/ptregs
-+436	common	watch_devices		__x64_sys_watch_devices
- 
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
-diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
-index 25f4de729a6d..243fa18b8d1e 100644
---- a/arch/xtensa/kernel/syscalls/syscall.tbl
-+++ b/arch/xtensa/kernel/syscalls/syscall.tbl
-@@ -406,3 +406,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- 435	common	clone3				sys_clone3
-+436	common	watch_devices			sys_watch_devices
-diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
-index 28b92e3cc570..e37d37684132 100644
---- a/drivers/base/Kconfig
-+++ b/drivers/base/Kconfig
-@@ -1,6 +1,15 @@
- # SPDX-License-Identifier: GPL-2.0
- menu "Generic Driver Options"
- 
-+config DEVICE_NOTIFICATIONS
-+	bool "Provide device event notifications"
-+	depends on WATCH_QUEUE
-+	help
-+	  This option provides support for getting hardware event notifications
-+	  on devices, buses and interfaces.  This makes use of the
-+	  /dev/watch_queue misc device to handle the notification buffer.
-+	  device_notify(2) is used to set/remove watches.
-+
- config UEVENT_HELPER
- 	bool "Support for uevent helper"
- 	help
-diff --git a/drivers/base/Makefile b/drivers/base/Makefile
-index 157452080f3d..4db2e8f1a1f4 100644
---- a/drivers/base/Makefile
-+++ b/drivers/base/Makefile
-@@ -7,6 +7,7 @@ obj-y			:= component.o core.o bus.o dd.o syscore.o \
- 			   attribute_container.o transport_class.o \
- 			   topology.o container.o property.o cacheinfo.o \
- 			   devcon.o swnode.o
-+obj-$(CONFIG_DEVICE_NOTIFICATIONS) += watch.o
- obj-$(CONFIG_DEVTMPFS)	+= devtmpfs.o
- obj-y			+= power/
- obj-$(CONFIG_ISA_BUS_API)	+= isa.o
-diff --git a/drivers/base/watch.c b/drivers/base/watch.c
-new file mode 100644
-index 000000000000..725aaa24275b
---- /dev/null
-+++ b/drivers/base/watch.c
-@@ -0,0 +1,90 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Event notifications.
-+ *
-+ * Copyright (C) 2019 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/watch_queue.h>
-+#include <linux/syscalls.h>
-+#include <linux/init_task.h>
-+#include <linux/security.h>
-+
-+/*
-+ * Global queue for watching for device layer events.
-+ */
-+static struct watch_list device_watchers = {
-+	.watchers	= HLIST_HEAD_INIT,
-+	.lock		= __SPIN_LOCK_UNLOCKED(&device_watchers.lock),
-+};
-+
-+static DEFINE_SPINLOCK(device_watchers_lock);
-+
-+/**
-+ * post_device_notification - Post notification of a device event
-+ * @n - The notification to post
-+ * @id - The device ID
-+ *
-+ * Note that there's only a global queue to which all events are posted.  Might
-+ * want to provide per-dev queues also.
-+ */
-+void post_device_notification(struct watch_notification *n, u64 id)
-+{
-+	post_watch_notification(&device_watchers, n, &init_cred, id);
-+}
-+EXPORT_SYMBOL(post_device_notification);
-+
-+/**
-+ * sys_watch_devices - Watch for device events.
-+ * @watch_fd: The watch queue to send notifications to.
-+ * @watch_id: The watch ID to be placed in the notification (-1 to remove watch)
-+ * @flags: Flags (reserved for future)
-+ */
-+SYSCALL_DEFINE3(watch_devices, int, watch_fd, int, watch_id, unsigned int, flags)
-+{
-+	struct watch_queue *wqueue;
-+	struct watch *watch = NULL;
-+	long ret = -ENOMEM;
-+
-+	if (watch_id < -1 || watch_id > 0xff || flags)
-+		return -EINVAL;
-+
-+	wqueue = get_watch_queue(watch_fd);
-+	if (IS_ERR(wqueue)) {
-+		ret = PTR_ERR(wqueue);
-+		goto err;
-+	}
-+
-+	if (watch_id >= 0) {
-+		watch = kzalloc(sizeof(*watch), GFP_KERNEL);
-+		if (!watch)
-+			goto err_wqueue;
-+
-+		init_watch(watch, wqueue);
-+		watch->info_id = (u32)watch_id << WATCH_INFO_ID__SHIFT;
-+
-+		ret = security_watch_devices();
-+		if (ret < 0)
-+			goto err_watch;
-+
-+		spin_lock(&device_watchers_lock);
-+		ret = add_watch_to_object(watch, &device_watchers);
-+		spin_unlock(&device_watchers_lock);
-+		if (ret == 0)
-+			watch = NULL;
-+	} else {
-+		spin_lock(&device_watchers_lock);
-+		ret = remove_watch_from_object(&device_watchers, wqueue, 0,
-+					       false);
-+		spin_unlock(&device_watchers_lock);
-+	}
-+
-+err_watch:
-+	kfree(watch);
-+err_wqueue:
-+	put_watch_queue(wqueue);
-+err:
-+	return ret;
-+}
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 297239a08bb7..f30e80185825 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -43,6 +43,7 @@ struct iommu_group;
- struct iommu_fwspec;
- struct dev_pin_info;
- struct iommu_param;
-+struct watch_notification;
- 
- struct bus_attribute {
- 	struct attribute	attr;
-@@ -1654,6 +1655,12 @@ struct device_link *device_link_add(struct device *consumer,
- void device_link_del(struct device_link *link);
- void device_link_remove(void *consumer, struct device *supplier);
- 
-+#ifdef CONFIG_DEVICE_NOTIFICATIONS
-+extern void post_device_notification(struct watch_notification *n, u64 id);
-+#else
-+static inline void post_device_notification(struct watch_notification *n, u64 id) {}
-+#endif
-+
- #ifndef dev_fmt
- #define dev_fmt(fmt) fmt
- #endif
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index f7c561c4dcdd..565f033a61bc 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -1000,6 +1000,7 @@ asmlinkage long sys_fspick(int dfd, const char __user *path, unsigned int flags)
- asmlinkage long sys_pidfd_send_signal(int pidfd, int sig,
- 				       siginfo_t __user *info,
- 				       unsigned int flags);
-+asmlinkage long sys_watch_devices(int watch_fd, int watch_id, unsigned int flags);
- 
- /*
-  * Architecture-specific system calls
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index 1fc8faa6e973..4794d3c2afd7 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -850,9 +850,11 @@ __SYSCALL(__NR_pidfd_open, sys_pidfd_open)
- #define __NR_clone3 435
- __SYSCALL(__NR_clone3, sys_clone3)
- #endif
-+#define __NR_watch_devices 436
-+__SYSCALL(__NR_watch_devices, sys_watch_devices)
- 
- #undef __NR_syscalls
--#define __NR_syscalls 436
-+#define __NR_syscalls 437
- 
- /*
-  * 32 bit systems traditionally used different
-diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-index 34b76895b81e..184ad68c087f 100644
---- a/kernel/sys_ni.c
-+++ b/kernel/sys_ni.c
-@@ -51,6 +51,7 @@ COND_SYSCALL_COMPAT(io_pgetevents);
- COND_SYSCALL(io_uring_setup);
- COND_SYSCALL(io_uring_enter);
- COND_SYSCALL(io_uring_register);
-+COND_SYSCALL(watch_devices);
- 
- /* fs/xattr.c */
- 
-
+Then, pm_qos_update_target() can be used for adding, updating and
+removing requests.
