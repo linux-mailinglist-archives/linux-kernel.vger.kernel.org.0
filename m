@@ -2,85 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C2ECD7A5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 17:47:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20F09D7A12
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 17:43:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387571AbfJOPrH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 11:47:07 -0400
-Received: from foss.arm.com ([217.140.110.172]:41418 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732725AbfJOPrG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 11:47:06 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 98ACB1576;
-        Tue, 15 Oct 2019 08:47:05 -0700 (PDT)
-Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E80C93F68E;
-        Tue, 15 Oct 2019 08:47:03 -0700 (PDT)
-From:   Valentin Schneider <valentin.schneider@arm.com>
-To:     linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Cc:     lizefan@huawei.com, tj@kernel.org, hannes@cmpxchg.org,
-        mingo@kernel.org, peterz@infradead.org, vincent.guittot@linaro.org,
-        Dietmar.Eggemann@arm.com, morten.rasmussen@arm.com,
-        qperret@google.com, stable@vger.kernel.org
-Subject: [PATCH v3 2/2] sched/topology: Allow sched_asym_cpucapacity to be disabled
-Date:   Tue, 15 Oct 2019 16:42:50 +0100
-Message-Id: <20191015154250.12951-3-valentin.schneider@arm.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20191015154250.12951-1-valentin.schneider@arm.com>
-References: <20191015154250.12951-1-valentin.schneider@arm.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1732659AbfJOPn1 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 15 Oct 2019 11:43:27 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:10470 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731230AbfJOPn1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 11:43:27 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9FFg3QC021030
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 11:43:24 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2vng7e23b8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 11:43:24 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <iii@linux.ibm.com>;
+        Tue, 15 Oct 2019 16:43:22 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 15 Oct 2019 16:43:19 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9FFhJEI39780562
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Oct 2019 15:43:19 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E8B3DA4065;
+        Tue, 15 Oct 2019 15:43:18 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AC21AA4062;
+        Tue, 15 Oct 2019 15:43:18 +0000 (GMT)
+Received: from dyn-9-152-98-114.boeblingen.de.ibm.com (unknown [9.152.98.114])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 15 Oct 2019 15:43:18 +0000 (GMT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3594.4.19\))
+Subject: Re: [PATCH] scripts/gdb: fix debugging modules on s390
+From:   Ilya Leoshkevich <iii@linux.ibm.com>
+In-Reply-To: <356384d7-d14f-2c9d-1c13-3d96e75e1727@siemens.com>
+Date:   Tue, 15 Oct 2019 17:43:18 +0200
+Cc:     Kieran Bingham <kbingham@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+Content-Transfer-Encoding: 8BIT
+References: <20191015105313.12663-1-iii@linux.ibm.com>
+ <356384d7-d14f-2c9d-1c13-3d96e75e1727@siemens.com>
+To:     Jan Kiszka <jan.kiszka@siemens.com>
+X-Mailer: Apple Mail (2.3594.4.19)
+X-TM-AS-GCONF: 00
+x-cbid: 19101515-0008-0000-0000-000003224AA3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19101515-0009-0000-0000-00004A416167
+Message-Id: <EC1E8F36-C374-4130-9841-CC35F557B7CE@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-15_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=866 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910150138
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While the static key is correctly initialized as being disabled, it will
-remain forever enabled once turned on. This means that if we start with an
-asymmetric system and hotplug out enough CPUs to end up with an SMP system,
-the static key will remain set - which is obviously wrong. We should detect
-this and turn off things like misfit migration and capacity aware wakeups.
+> Am 15.10.2019 um 17:21 schrieb Jan Kiszka <jan.kiszka@siemens.com>:
+> 
+>> @@ -113,6 +113,12 @@ lx-symbols command."""
+>>         if module_file:
+>>             gdb.write("loading @{addr}: {filename}\n".format(
+>>                 addr=module_addr, filename=module_file))
+>> +            if utils.is_target_arch('s390'):
+>> +                # Module text is preceded by PLT stubs on s390.
+>> +                module_arch = module['arch']
+>> +                plt_offset = int(module_arch['plt_offset'])
+>> +                plt_size = int(module_arch['plt_size'])
+>> +                module_addr = hex(int(module_addr, 0) + plt_offset + plt_size)
+> 
+> Shouldn't we report the actual address above, ie. reorder this tuning
+> with the gdb.write?
 
-As Quentin pointed out, having separate root domains makes this slightly
-trickier. We could have exclusive cpusets that create an SMP island - IOW,
-the domains within this root domain will not see any asymmetry. This means
-we need to count how many asymmetric root domains we have.
+That's a tough question. I thought about this, and the argument for
+showing the fixed up address is that if someone does the math with
+symbol offsets from e.g. objdump, the result will be consistent with
+what gdb shows.
 
-Change the simple key enablement to an increment, and decrement the key
-counter when destroying domains that cover asymmetric CPUs.
+On the other hand side, why would anyone do this? that's exactly what
+this gdb script is for. So showing the actual address at which the
+memory was allocated gives the user some additional information, and is
+also consistent with what cat /proc/modules would show.
 
-Cc: <stable@vger.kernel.org>
-Fixes: df054e8445a4 ("sched/topology: Add static_key for asymmetric CPU capacity optimizations")
-Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
----
- kernel/sched/topology.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+At the end of the day, I don't have a strong opinion on this, so if you
+think it's better to show the fixed up address, I'll send a v2.
 
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 9318acf1d1fe..f0e730143380 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -2029,7 +2029,7 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
- 	rcu_read_unlock();
- 
- 	if (has_asym)
--		static_branch_enable_cpuslocked(&sched_asym_cpucapacity);
-+		static_branch_inc_cpuslocked(&sched_asym_cpucapacity);
- 
- 	if (rq && sched_debug_enabled) {
- 		pr_info("root domain span: %*pbl (max cpu_capacity = %lu)\n",
-@@ -2125,7 +2125,10 @@ int sched_init_domains(const struct cpumask *cpu_map)
- static void detach_destroy_domains(const struct cpumask *cpu_map)
- {
- 	int i;
-+	unsigned int cpu = cpumask_any(cpu_map);
-+
-+	if (rcu_access_pointer(per_cpu(sd_asym_cpucapacity, cpu)))
-+		static_branch_dec_cpuslocked(&sched_asym_cpucapacity);
- 
- 	rcu_read_lock();
- 	for_each_cpu(i, cpu_map)
---
-2.22.0
-
+Best regards,
+Ilya
