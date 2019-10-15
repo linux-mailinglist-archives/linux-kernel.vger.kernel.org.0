@@ -2,113 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29181D7FA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:10:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B40BFD7FA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:10:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389333AbfJOTKi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 15:10:38 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54766 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389296AbfJOTKi (ORCPT
+        id S2389357AbfJOTKv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 15:10:51 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:38186 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389308AbfJOTKu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 15:10:38 -0400
-Received: by mail-wm1-f67.google.com with SMTP id p7so231400wmp.4
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 12:10:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/jU7rRfSR7KZ0wkNZhhrrk0hyXdThNXa68z+mg8n0M8=;
-        b=RCa9rQrzpy8SAsQE5duWX/nt8SV5/lYLyb4rmtngMuny+yGmQ677vb3xAtvnG2gzOJ
-         qTeueCYoh0SoMQSUKK1kJavs2zUek0inwGXAjDQlDwuxw1o0EyvK1tvJrAcxwhs3Kza5
-         DqY8lZHrLkPZT+PA/voin9xX84EfFzHAZVe9AOuyxT2rkCpneyDkrCI6ntV8rfXFbSHa
-         g3xLeu5hlPrweq80yZZwjmNqMUHJsRVmY+HHRHMeZd0/1Xg5pxJOgFjkvp8qO0jvZOAO
-         y6en+qnPuHWVuzGPnlYFqvMP/HsDCMfR2BagtwpV5pm5XTGg6oJB/swb4Z/MaS+f3q2X
-         tVTw==
+        Tue, 15 Oct 2019 15:10:50 -0400
+Received: by mail-oi1-f195.google.com with SMTP id m16so17827819oic.5;
+        Tue, 15 Oct 2019 12:10:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/jU7rRfSR7KZ0wkNZhhrrk0hyXdThNXa68z+mg8n0M8=;
-        b=NMWUsBB8IwQOkQBuubU1RZMEJdbwazK75b+dhS7KwvXyvxsOvJ6gmSZrbotF1n8+vU
-         jXUwOdz0N6O/3kPvpEYKljFMFnuXZJFyTs3qkQ2n3VddAf7YPSuW3f+17Nfxp+V5Wx1h
-         moSERtlvFJk52mHhdk1HAjd4bMajkrLND+0FglQ+zhv0ZkF3DIbRYLE5irvzJq1vJpsM
-         Q5b5U1HedpLgyN4uvnrkwFT+i7cbKF+RjXRau9Z7Dsq9L/BDz1YcyK4lRX16BmtzukFW
-         yVUV9E/VDoJ16OJXmaTstaeUgpH8gq2oB8GI0Nqn4tWudO4FYUx7E9ASmIrDBGBEO/Y5
-         nbHA==
-X-Gm-Message-State: APjAAAW1r2x38O7xhEum/afV3HEhpbt0zkfhJESmy3pzEQ2uQY7TI7ql
-        8X49HZMctAqYVIoJeWZ7mVe2dJyUIlVGLVnvgX8ZRA==
-X-Google-Smtp-Source: APXvYqxSK3jyA7hIvHp5hYpw5AaY3TZQxvucfVqV+CwKk4CEjD7RgKLUxjtFuNQIonxMqyw0jKkMO1Z1gCVlpbMPx+I=
-X-Received: by 2002:a05:600c:2388:: with SMTP id m8mr46558wma.173.1571166635181;
- Tue, 15 Oct 2019 12:10:35 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Rdx+RGcYZmE7xTrxPtMWVRt9GbBcLhSlDvK0sKaIe84=;
+        b=ILM1o6EZhPGrC1F0i4wtMC9Z56utKZIOKZohQ0sJwV7CgdszqsUuey91jTUlSF8fit
+         fhZOdok8mleNBEvkt/xsgaN8d0KdE6m20hgAd8BWNgNvj7ZYi6t/xX0bdFE36UEuRdxZ
+         MA0cwtRNh5oV4dfVX5+KjJ47/q9v9qIW8OjUonx8VhvtCASBfpe08pfKmbMiBCWlLaQl
+         7G6Di15qT28HXWi01lOggSopWye9HTo+gaicPhlzT+UpiVqxSw0P48TYZIzOvcliqRus
+         gZsd1hQMGFr+y9ICCVIUcjRQMZypYMwRYj8JGKaPA5JHyiWatEzIiMjDlOfudk7wrltm
+         9aZg==
+X-Gm-Message-State: APjAAAV332Mnjp4M6sR7jcHx8rBQWJvprwVwwovTpyEAydI4+HPt8YhG
+        8jo1H7VEVSN5sx0Bs5sxjg==
+X-Google-Smtp-Source: APXvYqx+m+Bb3C7kgH+eLbBDO+U5qtqn66b5kqCPYE/1rRFEDvRLKZS0IRkuc3gFAkT/j+pyxzRgCg==
+X-Received: by 2002:a54:4f87:: with SMTP id g7mr108763oiy.100.1571166649597;
+        Tue, 15 Oct 2019 12:10:49 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id l47sm7091562ota.56.2019.10.15.12.10.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2019 12:10:49 -0700 (PDT)
+Date:   Tue, 15 Oct 2019 14:10:48 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Kamel Bouhara <kamel.bouhara@bootlin.com>
+Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 0/4] i2c bus recovery for Microchip SoCs.
+Message-ID: <20191015191048.GA32065@bogus>
+References: <20191002144658.7718-1-kamel.bouhara@bootlin.com>
 MIME-Version: 1.0
-References: <20191002231617.3670-1-john.stultz@linaro.org> <20191002231617.3670-4-john.stultz@linaro.org>
- <9e86bb7b-5dd2-760e-c324-fe1c1ee41868@ti.com>
-In-Reply-To: <9e86bb7b-5dd2-760e-c324-fe1c1ee41868@ti.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Tue, 15 Oct 2019 12:10:22 -0700
-Message-ID: <CALAqxLUVd5Eo_9tuP9aQUpNT0gnewBv8Dpvsj8UT3MucmzCJVQ@mail.gmail.com>
-Subject: Re: [RFC][PATCH 3/3] usb: dwc3: Registering a role switch in the DRD code.
-To:     Roger Quadros <rogerq@ti.com>
-Cc:     lkml <linux-kernel@vger.kernel.org>, Yu Chen <chenyu56@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jun Li <lijun.kernel@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191002144658.7718-1-kamel.bouhara@bootlin.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 1:25 AM Roger Quadros <rogerq@ti.com> wrote:
-> On 03/10/2019 02:16, John Stultz wrote:
-> > @@ -487,7 +539,28 @@ int dwc3_drd_init(struct dwc3 *dwc)
-> >       if (IS_ERR(dwc->edev))
-> >               return PTR_ERR(dwc->edev);
-> >
-> > -     if (dwc->edev) {
-> > +     if (device_property_read_bool(dwc->dev, "usb-role-switch")) {
->
-> I think we should use role switch unconditionally and get rid of the
-> debugfs role status/change mechanism.
->
-> > +             struct usb_role_switch_desc dwc3_role_switch = {0};
-> > +             u32 mode;
-> > +
-> > +             if (device_property_read_bool(dwc->dev,
-> > +                                           "role-switch-default-host")) {
-> > +                     dwc->role_switch_default_mode = USB_DR_MODE_HOST;
-> > +                     mode = DWC3_GCTL_PRTCAP_HOST;
-> > +             } else {
-> > +                     dwc->role_switch_default_mode = USB_DR_MODE_PERIPHERAL;
-> > +                     mode = DWC3_GCTL_PRTCAP_DEVICE;
-> > +             }
-> > +             dwc3_role_switch.fwnode = dev_fwnode(dwc->dev);
-> > +             dwc3_role_switch.set = dwc3_usb_role_switch_set;
-> > +             dwc3_role_switch.get = dwc3_usb_role_switch_get;
-> > +             dwc->role_sw = usb_role_switch_register(dwc->dev,
-> > +                                                     &dwc3_role_switch);
-> > +             if (IS_ERR(dwc->role_sw))
-> > +                     return PTR_ERR(dwc->role_sw);
-> > +
-> > +             dwc3_set_mode(dwc, mode);
-> > +     } else if (dwc->edev) {
->
-> Role switch should exist regardless if dwc->edev is present or not.
+On Wed, Oct 02, 2019 at 04:46:54PM +0200, Kamel Bouhara wrote:
+> This patch series introduce the kernel i2c-gpio bus recovery mechanism
+> for the Microchip SoCs. Updated the corresponding dts to add i2c
+> gpio pinctrl. The bus recovery is configured for the sama5d3/4 xplained
+> boards in dts.
 
-Does that risk duplicative mode sets when things change (via the
-dwc3_drd_notifier and dwc3_usb_role_switch_set calls?).
+Now we have 2 drivers with the same binding and code for using GPIO for 
+bus recovery. Perhaps all this should be common.
 
-thanks
--john
+Rob
