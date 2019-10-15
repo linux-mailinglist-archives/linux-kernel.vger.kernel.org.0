@@ -2,93 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37A3FD7D2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 19:16:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A176AD7D1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 19:15:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730341AbfJORQ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 13:16:27 -0400
-Received: from mout.gmx.net ([212.227.15.15]:36675 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727243AbfJORQ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 13:16:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1571159777;
-        bh=AhHV6TtMeciM0Gr7rafl85fPJjF0rdTKI+ZYNxJSWBg=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=DhcKGzunTjcm9phucq+nqCWKy7F3/HAW3E3NyySjTox3ej3RoeEqodSxorFRrjaA/
-         EmfzUj0RP103UkvnjMyUbdgsYR7OHRyRbDRaEsoXhu8u8MwJYTov6RYUgVSYQZoS4f
-         AWIdA7Dg/LAIdo+vKSxHgcIhDKAfyKfOPA0AKKb8=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from localhost.localdomain ([37.4.249.112]) by mail.gmx.com
- (mrgmx005 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 1N6bk4-1hznqQ3RqI-0183KC; Tue, 15 Oct 2019 19:16:16 +0200
-From:   Stefan Wahren <wahrenst@gmx.net>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Stefan Wahren <wahrenst@gmx.net>, Eric Anholt <eric@anholt.net>,
+        id S1727683AbfJORPu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 13:15:50 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:41103 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726277AbfJORPu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 13:15:50 -0400
+Received: from 79.184.254.38.ipv4.supernova.orange.pl (79.184.254.38) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
+ id 167685bb2f0fdbb3; Tue, 15 Oct 2019 19:15:46 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Dexuan Cui <decui@microsoft.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>, olaf@aepfle.de,
+        apw@canonical.com, jasowang@redhat.com, vkuznets@redhat.com,
+        marcelo.cerri@canonical.com, jackm@mellanox.com,
+        linux-pci@vger.kernel.org, linux-hyperv@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 3/3] bcm2835-maintainers-next-2019-10-15
-Date:   Tue, 15 Oct 2019 19:15:25 +0200
-Message-Id: <1571159725-5090-3-git-send-email-wahrenst@gmx.net>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1571159725-5090-1-git-send-email-wahrenst@gmx.net>
-References: <1571159725-5090-1-git-send-email-wahrenst@gmx.net>
-X-Provags-ID: V03:K1:01i+QbX6mSH342HD8rtrSxzRjRTt1foLS4W1KCeunXXHNi7IR9E
- FrYoU6wlK6tfFfxtGVgg0q4hu1rksgNMxoa7yVdkub9JXUQNU3cSc4KD0RxeoLBbNqrbV5u
- kOExPTZUI1fQqo1mh366ctpM5PxbIYKxqD9rv5Z3DZVGjLh9QIWP77m5TcdvVjNzOw8MWdH
- UvJl2I7kmknMCXj0Hs2hA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:2LPRL9G1FG4=:QAAqQLCA/mJeESN9JBvJDm
- 5cQSqJUKQXRw5XqAgGFmwWfckiYxojVS6c0NgeAkka/I1ik1O29d88EM64gNMGbksoT5eroAn
- QH3NeIn7w3Wd2a40uauFemrSBOi8XTri67lWoInmJP86s8uoNmwTobkTe7qNKtOmHW2ydgkff
- SysBT9IEqrWMSWiwD16fcgCDYpeYwFgiYHBn1rWNByh8vaN/MD62MQ73FOLu9ezFiAyMZ/lh3
- BePKYEVGprapXJTIUDQsR2E+ICADHy0CK5o5OoMjBjAFbHlDbY6JQjCMgAuvDyScUtDnfleUZ
- 6y1KBCUxHVYK3fqkz3+VnPHOH7jaP+Zrh2nHWIPTTtZx0pR77pR5mXkG662TZcm2qWupNFQfS
- Vwt6X185mAsyO7SfDUFbNnt5yjqOdr+HVxCsTcAGbvxM1ANbcipx1ecTasDRz4p/2VHzTnTDU
- nzeuOOJCecSh681qKiHZ9o71fkPA3eB8+Yt4dE1bYhbyJ9HDL4gSpQzVhQ/H+zojVggXn+0Km
- 8nTw9FQ4wTGCvoZREpRb/Z02fZKI4T+4m1Jukpapd3XKPdfrU3/KuSbrQ+/5UIAKtuVsg5xHQ
- v9NI75r36y7IPQlLpccdJH0bz9PxFpn3P5oTMiQyGeujz5XC4r81nF7Q/+FkENKYtQO7aJP/L
- NB+99ESKVoyINCb6KjscI5Aslaa71FFi/ZYEW8PJq/WIcP2EkYyDbMnZReu5vpHeb01ft/SHv
- FkTZABIe4Etyv+4RGC3SBDyHYi6yZf04E0KfiDEwYT9BTW0f8afV2ULXd2PwLrzQ9yiW6+yJh
- 1I9DZF84DPd1yCW7mnozEJZ4J3pF+3bhBEM3Fex69AOM0hQMqFdWJ/P0MRv3z/Uutk+zqFte4
- ctH7jLC6vQCaJHwyaPiUu92MZofpr9vM3Q7K1/bnE5toXV1pSf0Sjbjc+ATZFroZC/meo+zvf
- H2fEfrOdwVvrtybbBZ0oWmiD/KdBfaC1vM03JA5Aa7KzR6Sf49XEAU0yVsLehSbFatzj4aTCf
- BpF/Yo+RBzZW4uhafbuqLxBQzSQLp7kqtyTCmeOH+2JEE95PJ6DoSrsIkKHDIhn13A1pFyevm
- 98ZSpV57StIhkuf3cUIzrW/UZZhq5Lhu9Oq9fncgyt7G3ayw5mOi/sRTpKfIKJwjzhoMqKTwn
- 29rfbf/RYjAgsI0joKIwfK5PYIAY6Dckmv9xcM55mC4SbcyhzfzTPuyhobTN6HmMgCYRfFh5L
- z2ifUP40fy7k6oA1ueW1P2l7b0FN2/yDzfIdIZg==
+        driverdev-devel@linuxdriverproject.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH 1/7] PCI/PM: Always return devices to D0 when thawing
+Date:   Tue, 15 Oct 2019 19:15:46 +0200
+Message-ID: <15877028.U7HUqG5fmY@kreacher>
+In-Reply-To: <20191014230016.240912-2-helgaas@kernel.org>
+References: <20191014230016.240912-1-helgaas@kernel.org> <20191014230016.240912-2-helgaas@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Florian,
+On Tuesday, October 15, 2019 1:00:10 AM CEST Bjorn Helgaas wrote:
+> From: Dexuan Cui <decui@microsoft.com>
+> 
+> pci_pm_thaw_noirq() is supposed to return the device to D0 and restore its
+> configuration registers, but previously it only did that for devices whose
+> drivers implemented the new power management ops.
+> 
+> Hibernation, e.g., via "echo disk > /sys/power/state", involves freezing
+> devices, creating a hibernation image, thawing devices, writing the image,
+> and powering off.  The fact that thawing did not return devices with legacy
+> power management to D0 caused errors, e.g., in this path:
+> 
+>   pci_pm_thaw_noirq
+>     if (pci_has_legacy_pm_support(pci_dev)) # true for Mellanox VF driver
+>       return pci_legacy_resume_early(dev)   # ... legacy PM skips the rest
+>     pci_set_power_state(pci_dev, PCI_D0)
+>     pci_restore_state(pci_dev)
+>   pci_pm_thaw
+>     if (pci_has_legacy_pm_support(pci_dev))
+>       pci_legacy_resume
+> 	drv->resume
+> 	  mlx4_resume
+> 	    ...
+> 	      pci_enable_msix_range
+> 	        ...
+> 		  if (dev->current_state != PCI_D0)  # <---
+> 		    return -EINVAL;
+> 
+> which caused these warnings:
+> 
+>   mlx4_core a6d1:00:02.0: INTx is not supported in multi-function mode, aborting
+>   PM: dpm_run_callback(): pci_pm_thaw+0x0/0xd7 returns -95
+>   PM: Device a6d1:00:02.0 failed to thaw: error -95
+> 
+> Return devices to D0 and restore config registers for all devices, not just
+> those whose drivers support new power management.
+> 
+> [bhelgaas: also call pci_restore_state() before pci_legacy_resume_early(),
+> update comment, add stable tag, commit log]
+> Link: https://lore.kernel.org/r/KU1P153MB016637CAEAD346F0AA8E3801BFAD0@KU1P153MB0166.APCP153.PROD.OUTLOOK.COM
+> Signed-off-by: Dexuan Cui <decui@microsoft.com>
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: stable@vger.kernel.org	# v4.13+
 
-The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
+No issues found, so
 
-  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-are available in the git repository at:
+> ---
+>  drivers/pci/pci-driver.c | 17 +++++++++++------
+>  1 file changed, 11 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+> index a8124e47bf6e..d4ac8ce8c1f9 100644
+> --- a/drivers/pci/pci-driver.c
+> +++ b/drivers/pci/pci-driver.c
+> @@ -1076,17 +1076,22 @@ static int pci_pm_thaw_noirq(struct device *dev)
+>  			return error;
+>  	}
+>  
+> -	if (pci_has_legacy_pm_support(pci_dev))
+> -		return pci_legacy_resume_early(dev);
+> -
+>  	/*
+> -	 * pci_restore_state() requires the device to be in D0 (because of MSI
+> -	 * restoration among other things), so force it into D0 in case the
+> -	 * driver's "freeze" callbacks put it into a low-power state directly.
+> +	 * Both the legacy ->resume_early() and the new pm->thaw_noirq()
+> +	 * callbacks assume the device has been returned to D0 and its
+> +	 * config state has been restored.
+> +	 *
+> +	 * In addition, pci_restore_state() restores MSI-X state in MMIO
+> +	 * space, which requires the device to be in D0, so return it to D0
+> +	 * in case the driver's "freeze" callbacks put it into a low-power
+> +	 * state.
+>  	 */
+>  	pci_set_power_state(pci_dev, PCI_D0);
+>  	pci_restore_state(pci_dev);
+>  
+> +	if (pci_has_legacy_pm_support(pci_dev))
+> +		return pci_legacy_resume_early(dev);
+> +
+>  	if (drv && drv->pm && drv->pm->thaw_noirq)
+>  		error = drv->pm->thaw_noirq(dev);
+>  
+> 
 
-  git://github.com/anholt/linux tags/bcm2835-maintainers-next-2019-10-15
 
-for you to fetch changes up to a91f757bda1a48317f692487addf832ebf8e93aa:
 
-  mailmap: Add Simon Arlott (replacement for expired email address) (2019-10-12 12:48:25 +0200)
 
-----------------------------------------------------------------
-This pull request clarifies maintainership of the BCM2711 and adds a replacement
-mail address for a former contributor.
-
-----------------------------------------------------------------
-Simon Arlott (1):
-      mailmap: Add Simon Arlott (replacement for expired email address)
-
-Stefan Wahren (1):
-      MAINTAINERS: Add BCM2711 to BCM2835 ARCH
-
- .mailmap    | 1 +
- MAINTAINERS | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
