@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2BCCD6F3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 07:38:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95219D6EB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 07:32:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726697AbfJOFiG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 01:38:06 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:41961 "EHLO
+        id S1728594AbfJOFcM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 01:32:12 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:42072 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728173AbfJOFb4 (ORCPT
+        with ESMTP id S1728493AbfJOFcE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 01:31:56 -0400
+        Tue, 15 Oct 2019 01:32:04 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iKFQm-0008S8-9V; Tue, 15 Oct 2019 07:31:36 +0200
+        id 1iKFQl-0008S0-N4; Tue, 15 Oct 2019 07:31:35 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id EEB331C0105;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 66E051C0450;
         Tue, 15 Oct 2019 07:31:35 +0200 (CEST)
 Date:   Tue, 15 Oct 2019 05:31:35 -0000
 From:   "tip-bot2 for Jiri Olsa" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] libperf: Introduce perf_evlist__exit()
+Subject: [tip: perf/core] libperf: Adopt perf_evlist__filter_pollfd() from tools/perf
 Cc:     Jiri Olsa <jolsa@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Michael Petlan <mpetlan@redhat.com>,
@@ -33,10 +33,10 @@ Cc:     Jiri Olsa <jolsa@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20191007125344.14268-25-jolsa@kernel.org>
-References: <20191007125344.14268-25-jolsa@kernel.org>
+In-Reply-To: <20191007125344.14268-27-jolsa@kernel.org>
+References: <20191007125344.14268-27-jolsa@kernel.org>
 MIME-Version: 1.0
-Message-ID: <157111749587.12254.16297376340208825345.tip-bot2@tip-bot2>
+Message-ID: <157111749528.12254.11860766663201094833.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -52,96 +52,106 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     93dd6e2831ff399f7685aa2157b997b6392efac8
-Gitweb:        https://git.kernel.org/tip/93dd6e2831ff399f7685aa2157b997b6392efac8
+Commit-ID:     84227cb11ff4d9815b9b1daf0c1a2bd7e9274c58
+Gitweb:        https://git.kernel.org/tip/84227cb11ff4d9815b9b1daf0c1a2bd7e9274c58
 Author:        Jiri Olsa <jolsa@kernel.org>
-AuthorDate:    Mon, 07 Oct 2019 14:53:32 +02:00
+AuthorDate:    Mon, 07 Oct 2019 14:53:34 +02:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Thu, 10 Oct 2019 12:56:01 -03:00
+CommitterDate: Thu, 10 Oct 2019 12:58:45 -03:00
 
-libperf: Introduce perf_evlist__exit()
+libperf: Adopt perf_evlist__filter_pollfd() from tools/perf
 
-Add the perf_evlist__exit() function, so far it's not exported and added
-only for internal use for perf and libperf.
-
-USe it to release cpus/threads and pollfd array.
+Introduce the perf_evlist__filter_pollfd function and export it in the
+perf/evlist.h header, so that libperf users can check if the descriptor
+is still alive.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Michael Petlan <mpetlan@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lore.kernel.org/lkml/20191007125344.14268-25-jolsa@kernel.org
+Link: http://lore.kernel.org/lkml/20191007125344.14268-27-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/lib/evlist.c                  | 12 +++++++++++-
- tools/perf/lib/include/internal/evlist.h |  2 ++
- tools/perf/util/evlist.c                 |  6 +-----
- 3 files changed, 14 insertions(+), 6 deletions(-)
+ tools/perf/lib/evlist.c              | 15 +++++++++++++++
+ tools/perf/lib/include/perf/evlist.h |  2 ++
+ tools/perf/lib/libperf.map           |  1 +
+ tools/perf/util/evlist.c             | 12 +-----------
+ 4 files changed, 19 insertions(+), 11 deletions(-)
 
 diff --git a/tools/perf/lib/evlist.c b/tools/perf/lib/evlist.c
-index 5ae1da9..7ba98f0 100644
+index 9534ad9..6504561 100644
 --- a/tools/perf/lib/evlist.c
 +++ b/tools/perf/lib/evlist.c
-@@ -109,13 +109,23 @@ perf_evlist__next(struct perf_evlist *evlist, struct perf_evsel *prev)
- 	return next;
+@@ -313,6 +313,21 @@ int perf_evlist__add_pollfd(struct perf_evlist *evlist, int fd,
+ 	return pos;
  }
  
-+void perf_evlist__exit(struct perf_evlist *evlist)
++static void perf_evlist__munmap_filtered(struct fdarray *fda, int fd,
++					 void *arg __maybe_unused)
 +{
-+	perf_cpu_map__put(evlist->cpus);
-+	perf_thread_map__put(evlist->threads);
-+	evlist->cpus = NULL;
-+	evlist->threads = NULL;
-+	fdarray__exit(&evlist->pollfd);
++	struct perf_mmap *map = fda->priv[fd].ptr;
++
++	if (map)
++		perf_mmap__put(map);
 +}
 +
- void perf_evlist__delete(struct perf_evlist *evlist)
- {
- 	if (evlist == NULL)
- 		return;
- 
- 	perf_evlist__munmap(evlist);
--	fdarray__exit(&evlist->pollfd);
-+	perf_evlist__close(evlist);
-+	perf_evlist__exit(evlist);
- 	free(evlist);
- }
- 
-diff --git a/tools/perf/lib/include/internal/evlist.h b/tools/perf/lib/include/internal/evlist.h
-index b201970..0721512 100644
---- a/tools/perf/lib/include/internal/evlist.h
-+++ b/tools/perf/lib/include/internal/evlist.h
-@@ -48,6 +48,8 @@ int perf_evlist__mmap_ops(struct perf_evlist *evlist,
- 			  struct perf_evlist_mmap_ops *ops,
- 			  struct perf_mmap_param *mp);
- 
-+void perf_evlist__exit(struct perf_evlist *evlist);
++int perf_evlist__filter_pollfd(struct perf_evlist *evlist, short revents_and_mask)
++{
++	return fdarray__filter(&evlist->pollfd, revents_and_mask,
++			       perf_evlist__munmap_filtered, NULL);
++}
 +
- /**
-  * __perf_evlist__for_each_entry - iterate thru all the evsels
-  * @list: list_head instance to iterate
+ int perf_evlist__poll(struct perf_evlist *evlist, int timeout)
+ {
+ 	return fdarray__poll(&evlist->pollfd, timeout);
+diff --git a/tools/perf/lib/include/perf/evlist.h b/tools/perf/lib/include/perf/evlist.h
+index 28b6a12..16f526e 100644
+--- a/tools/perf/lib/include/perf/evlist.h
++++ b/tools/perf/lib/include/perf/evlist.h
+@@ -32,6 +32,8 @@ LIBPERF_API void perf_evlist__set_maps(struct perf_evlist *evlist,
+ 				       struct perf_cpu_map *cpus,
+ 				       struct perf_thread_map *threads);
+ LIBPERF_API int perf_evlist__poll(struct perf_evlist *evlist, int timeout);
++LIBPERF_API int perf_evlist__filter_pollfd(struct perf_evlist *evlist,
++					   short revents_and_mask);
+ 
+ LIBPERF_API int perf_evlist__mmap(struct perf_evlist *evlist, int pages);
+ LIBPERF_API void perf_evlist__munmap(struct perf_evlist *evlist);
+diff --git a/tools/perf/lib/libperf.map b/tools/perf/lib/libperf.map
+index 5a18fd1..2184aba 100644
+--- a/tools/perf/lib/libperf.map
++++ b/tools/perf/lib/libperf.map
+@@ -42,6 +42,7 @@ LIBPERF_0.0.1 {
+ 		perf_evlist__poll;
+ 		perf_evlist__mmap;
+ 		perf_evlist__munmap;
++		perf_evlist__filter_pollfd;
+ 		perf_mmap__consume;
+ 		perf_mmap__read_init;
+ 		perf_mmap__read_done;
 diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 5192c65..031ace3 100644
+index 031ace3..21b77ef 100644
 --- a/tools/perf/util/evlist.c
 +++ b/tools/perf/util/evlist.c
-@@ -138,7 +138,7 @@ void evlist__exit(struct evlist *evlist)
- {
- 	zfree(&evlist->mmap);
- 	zfree(&evlist->overwrite_mmap);
--	fdarray__exit(&evlist->core.pollfd);
-+	perf_evlist__exit(&evlist->core);
+@@ -423,19 +423,9 @@ int evlist__add_pollfd(struct evlist *evlist, int fd)
+ 	return perf_evlist__add_pollfd(&evlist->core, fd, NULL, POLLIN);
  }
  
- void evlist__delete(struct evlist *evlist)
-@@ -148,10 +148,6 @@ void evlist__delete(struct evlist *evlist)
+-static void perf_evlist__munmap_filtered(struct fdarray *fda, int fd,
+-					 void *arg __maybe_unused)
+-{
+-	struct perf_mmap *map = fda->priv[fd].ptr;
+-
+-	if (map)
+-		perf_mmap__put(map);
+-}
+-
+ int evlist__filter_pollfd(struct evlist *evlist, short revents_and_mask)
+ {
+-	return fdarray__filter(&evlist->core.pollfd, revents_and_mask,
+-			       perf_evlist__munmap_filtered, NULL);
++	return perf_evlist__filter_pollfd(&evlist->core, revents_and_mask);
+ }
  
- 	evlist__munmap(evlist);
- 	evlist__close(evlist);
--	perf_cpu_map__put(evlist->core.cpus);
--	perf_thread_map__put(evlist->core.threads);
--	evlist->core.cpus = NULL;
--	evlist->core.threads = NULL;
- 	evlist__purge(evlist);
- 	evlist__exit(evlist);
- 	free(evlist);
+ int evlist__poll(struct evlist *evlist, int timeout)
