@@ -2,79 +2,206 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 543FFD75D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 14:09:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0847D75E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 14:10:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730635AbfJOMJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 08:09:54 -0400
-Received: from mga06.intel.com ([134.134.136.31]:12934 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726540AbfJOMJy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 08:09:54 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Oct 2019 05:09:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,299,1566889200"; 
-   d="scan'208";a="396790405"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga006.fm.intel.com with ESMTP; 15 Oct 2019 05:09:50 -0700
-Received: from andy by smile with local (Exim 4.92.2)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1iKLe9-0007Wl-R7; Tue, 15 Oct 2019 15:09:49 +0300
-Date:   Tue, 15 Oct 2019 15:09:49 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v5 06/14] software node: get rid of property_set_pointer()
-Message-ID: <20191015120949.GH32742@smile.fi.intel.com>
-References: <20191011230721.206646-1-dmitry.torokhov@gmail.com>
- <20191011230721.206646-7-dmitry.torokhov@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191011230721.206646-7-dmitry.torokhov@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1731275AbfJOMKJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 08:10:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58308 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730896AbfJOMKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 08:10:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C7528B3BB;
+        Tue, 15 Oct 2019 12:10:01 +0000 (UTC)
+From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        netdev@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Subject: [PATCH v10 5/6] MIPS: SGI-IP27: fix readb/writeb addressing
+Date:   Tue, 15 Oct 2019 14:09:50 +0200
+Message-Id: <20191015120953.2597-6-tbogendoerfer@suse.de>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20191015120953.2597-1-tbogendoerfer@suse.de>
+References: <20191015120953.2597-1-tbogendoerfer@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 04:07:13PM -0700, Dmitry Torokhov wrote:
-> Instead of explicitly setting values of integer types when copying
-> property entries lets just copy entire value union when processing
-> non-array values.
-> 
-> For value arrays we no longer use union of pointers, but rather a single
-> void pointer, which allows us to remove property_set_pointer().
-> 
-> In property_get_pointer() we do not need to handle each data type
-> separately, we can simply return either the pointer or pointer to values
-> union.
-> 
-> We are not losing anything from removing typed pointer union because the
-> upper layers do their accesses through void pointers anyway, and we
-> trust the "type" of the property when interpret the data. We rely on
-> users of property entries on using PROPERTY_ENTRY_XXX() macros to
-> properly initialize entries instead of poking in the instances directly.
+Our chosen byte swapping, which is what firmware already uses, is to
+do readl/writel by normal lw/sw intructions (data invariance). This
+also means we need to mangle addresses for u8 and u16 accesses. The
+mangling for 16bit has been done aready, but 8bit one was missing.
+Correcting this causes different addresses for accesses to the
+SuperIO and local bus of the IOC3 chip. This is fixed by changing
+byte order in ioc3 and m48rtc_rtc structs.
 
-I'm not sure about this change since the struct definition is still available
-to use. If we would change it to be opaque pointer, it will be possible to get
-rid of the type differentiation in cleaner way.
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+---
+ arch/mips/include/asm/mach-ip27/mangle-port.h |  4 +--
+ arch/mips/include/asm/sn/ioc3.h               | 38 +++++++++++++--------------
+ drivers/rtc/rtc-m48t35.c                      | 11 ++++++++
+ drivers/tty/serial/8250/8250_ioc3.c           |  4 +--
+ 4 files changed, 34 insertions(+), 23 deletions(-)
 
-Anyway, perhaps somebody else can look at this.
-
+diff --git a/arch/mips/include/asm/mach-ip27/mangle-port.h b/arch/mips/include/asm/mach-ip27/mangle-port.h
+index f6e4912ea062..27c56efa519f 100644
+--- a/arch/mips/include/asm/mach-ip27/mangle-port.h
++++ b/arch/mips/include/asm/mach-ip27/mangle-port.h
+@@ -8,7 +8,7 @@
+ #ifndef __ASM_MACH_IP27_MANGLE_PORT_H
+ #define __ASM_MACH_IP27_MANGLE_PORT_H
+ 
+-#define __swizzle_addr_b(port)	(port)
++#define __swizzle_addr_b(port)	((port) ^ 3)
+ #define __swizzle_addr_w(port)	((port) ^ 2)
+ #define __swizzle_addr_l(port)	(port)
+ #define __swizzle_addr_q(port)	(port)
+@@ -20,6 +20,6 @@
+ # define ioswabl(a, x)		(x)
+ # define __mem_ioswabl(a, x)	cpu_to_le32(x)
+ # define ioswabq(a, x)		(x)
+-# define __mem_ioswabq(a, x)	cpu_to_le32(x)
++# define __mem_ioswabq(a, x)	cpu_to_le64(x)
+ 
+ #endif /* __ASM_MACH_IP27_MANGLE_PORT_H */
+diff --git a/arch/mips/include/asm/sn/ioc3.h b/arch/mips/include/asm/sn/ioc3.h
+index 78ef760ddde4..3865d3225780 100644
+--- a/arch/mips/include/asm/sn/ioc3.h
++++ b/arch/mips/include/asm/sn/ioc3.h
+@@ -21,50 +21,50 @@ struct ioc3_serialregs {
+ 
+ /* SUPERIO uart register map */
+ struct ioc3_uartregs {
++	u8	iu_lcr;
+ 	union {
+-		u8	iu_rbr;	/* read only, DLAB == 0 */
+-		u8	iu_thr;	/* write only, DLAB == 0 */
+-		u8	iu_dll;	/* DLAB == 1 */
++		u8	iu_iir;	/* read only */
++		u8	iu_fcr;	/* write only */
+ 	};
+ 	union {
+ 		u8	iu_ier;	/* DLAB == 0 */
+ 		u8	iu_dlm;	/* DLAB == 1 */
+ 	};
+ 	union {
+-		u8	iu_iir;	/* read only */
+-		u8	iu_fcr;	/* write only */
++		u8	iu_rbr;	/* read only, DLAB == 0 */
++		u8	iu_thr;	/* write only, DLAB == 0 */
++		u8	iu_dll;	/* DLAB == 1 */
+ 	};
+-	u8	iu_lcr;
+-	u8	iu_mcr;
+-	u8	iu_lsr;
+-	u8	iu_msr;
+ 	u8	iu_scr;
++	u8	iu_msr;
++	u8	iu_lsr;
++	u8	iu_mcr;
+ };
+ 
+ struct ioc3_sioregs {
+ 	u8	fill[0x141];	/* starts at 0x141 */
+ 
+-	u8	uartc;
+ 	u8	kbdcg;
++	u8	uartc;
+ 
+-	u8	fill0[0x150 - 0x142 - 1];
++	u8	fill0[0x151 - 0x142 - 1];
+ 
+-	u8	pp_data;
+-	u8	pp_dsr;
+ 	u8	pp_dcr;
++	u8	pp_dsr;
++	u8	pp_data;
+ 
+-	u8	fill1[0x158 - 0x152 - 1];
++	u8	fill1[0x159 - 0x153 - 1];
+ 
+-	u8	pp_fifa;
+-	u8	pp_cfgb;
+ 	u8	pp_ecr;
++	u8	pp_cfgb;
++	u8	pp_fifa;
+ 
+-	u8	fill2[0x168 - 0x15a - 1];
++	u8	fill2[0x16a - 0x15b - 1];
+ 
+-	u8	rtcad;
+ 	u8	rtcdat;
++	u8	rtcad;
+ 
+-	u8	fill3[0x170 - 0x169 - 1];
++	u8	fill3[0x170 - 0x16b - 1];
+ 
+ 	struct ioc3_uartregs	uartb;	/* 0x20170  */
+ 	struct ioc3_uartregs	uarta;	/* 0x20178  */
+diff --git a/drivers/rtc/rtc-m48t35.c b/drivers/rtc/rtc-m48t35.c
+index d3a75d447fce..e8194f1f01a8 100644
+--- a/drivers/rtc/rtc-m48t35.c
++++ b/drivers/rtc/rtc-m48t35.c
+@@ -20,6 +20,16 @@
+ 
+ struct m48t35_rtc {
+ 	u8	pad[0x7ff8];    /* starts at 0x7ff8 */
++#ifdef CONFIG_SGI_IP27
++	u8	hour;
++	u8	min;
++	u8	sec;
++	u8	control;
++	u8	year;
++	u8	month;
++	u8	date;
++	u8	day;
++#else
+ 	u8	control;
+ 	u8	sec;
+ 	u8	min;
+@@ -28,6 +38,7 @@ struct m48t35_rtc {
+ 	u8	date;
+ 	u8	month;
+ 	u8	year;
++#endif
+ };
+ 
+ #define M48T35_RTC_SET		0x80
+diff --git a/drivers/tty/serial/8250/8250_ioc3.c b/drivers/tty/serial/8250/8250_ioc3.c
+index 2be6ed2967e0..4c405f1b9c67 100644
+--- a/drivers/tty/serial/8250/8250_ioc3.c
++++ b/drivers/tty/serial/8250/8250_ioc3.c
+@@ -23,12 +23,12 @@ struct ioc3_8250_data {
+ 
+ static unsigned int ioc3_serial_in(struct uart_port *p, int offset)
+ {
+-	return readb(p->membase + offset);
++	return readb(p->membase + (offset ^ 3));
+ }
+ 
+ static void ioc3_serial_out(struct uart_port *p, int offset, int value)
+ {
+-	writeb(value, p->membase + offset);
++	writeb(value, p->membase + (offset ^ 3));
+ }
+ 
+ static int serial8250_ioc3_probe(struct platform_device *pdev)
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.16.4
 
