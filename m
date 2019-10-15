@@ -2,81 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB80CD763D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 14:15:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B851D7635
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 14:14:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727479AbfJOMPU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 08:15:20 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:47818 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726092AbfJOMPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 08:15:19 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 03760B4CE4007F68691B;
-        Tue, 15 Oct 2019 20:15:18 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Tue, 15 Oct 2019
- 20:15:10 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <matthias.bgg@gmail.com>, <weiyi.lu@mediatek.com>,
-        <robh@kernel.org>, <drinkcat@chromium.org>,
-        <yong.liang@mediatek.com>, <erin.lo@mediatek.com>,
-        <chunfeng.yun@mediatek.com>
-CC:     <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] clk: mediatek: mt8183: use devm_platform_ioremap_resource() to simplify code
-Date:   Tue, 15 Oct 2019 20:14:21 +0800
-Message-ID: <20191015121421.26144-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1731802AbfJOMO3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 08:14:29 -0400
+Received: from 8bytes.org ([81.169.241.247]:47516 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726939AbfJOMO2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 08:14:28 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 445092D9; Tue, 15 Oct 2019 14:14:26 +0200 (CEST)
+Date:   Tue, 15 Oct 2019 14:14:24 +0200
+From:   "joro@8bytes.org" <joro@8bytes.org>
+To:     "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        Joerg Roedel <jroedel@suse.de>,
+        "Hook, Gary" <Gary.Hook@amd.com>
+Subject: Re: iommu: amd: Fix incorrect PASID decoding from event log
+Message-ID: <20191015121424.GM14518@8bytes.org>
+References: <1571083556-105953-1-git-send-email-suravee.suthikulpanit@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1571083556-105953-1-git-send-email-suravee.suthikulpanit@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify the code a bit.
-This is detected by coccinelle.
+On Mon, Oct 14, 2019 at 08:06:05PM +0000, Suthikulpanit, Suravee wrote:
+> IOMMU Event Log encodes 20-bit PASID for events:
+>     ILLEGAL_DEV_TABLE_ENTRY
+>     IO_PAGE_FAULT
+>     PAGE_TAB_HARDWARE_ERROR
+>     INVALID_DEVICE_REQUEST
+> as:
+>     PASID[15:0]  = bit 47:32
+>     PASID[19:16] = bit 19:16
+> 
+> Note that INVALID_PPR_REQUEST event has different encoding
+> from the rest of the events as the following:
+>     PASID[15:0]  = bit 31:16
+>     PASID[19:16] = bit 45:42
+> 
+> So, fixes the decoding logic.
+> 
+> Fixes: d64c0486ed50 ("iommu/amd: Update the PASID information printed to the system log")
+> Cc: Joerg Roedel <jroedel@suse.de>
+> Cc: Gary R Hook <gary.hook@amd.com>
+> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+> ---
+>  drivers/iommu/amd_iommu.c       | 5 +++--
+>  drivers/iommu/amd_iommu_types.h | 4 ++--
+>  2 files changed, 5 insertions(+), 4 deletions(-)
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/clk/mediatek/clk-mt8183.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/mediatek/clk-mt8183.c b/drivers/clk/mediatek/clk-mt8183.c
-index 51c8d5c..5046852 100644
---- a/drivers/clk/mediatek/clk-mt8183.c
-+++ b/drivers/clk/mediatek/clk-mt8183.c
-@@ -1189,11 +1189,10 @@ CLK_OF_DECLARE_DRIVER(mt8183_topckgen, "mediatek,mt8183-topckgen",
- 
- static int clk_mt8183_top_probe(struct platform_device *pdev)
- {
--	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	void __iomem *base;
- 	struct device_node *node = pdev->dev.of_node;
- 
--	base = devm_ioremap_resource(&pdev->dev, res);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
- 
-@@ -1262,9 +1261,8 @@ static int clk_mt8183_mcu_probe(struct platform_device *pdev)
- 	struct clk_onecell_data *clk_data;
- 	struct device_node *node = pdev->dev.of_node;
- 	void __iomem *base;
--	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 
--	base = devm_ioremap_resource(&pdev->dev, res);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
- 
--- 
-2.7.4
-
+Applied for v5.4, thanks Suravee.
 
