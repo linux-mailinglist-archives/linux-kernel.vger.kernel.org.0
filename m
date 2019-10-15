@@ -2,105 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE0C7D6DBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 05:29:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 770A7D6DC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 05:30:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727826AbfJOD3b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 23:29:31 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38814 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727092AbfJOD3b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 23:29:31 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4C10D308624A;
-        Tue, 15 Oct 2019 03:29:30 +0000 (UTC)
-Received: from [10.72.12.168] (ovpn-12-168.pek2.redhat.com [10.72.12.168])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 76A635D6A9;
-        Tue, 15 Oct 2019 03:29:09 +0000 (UTC)
-Subject: Re: [PATCH V3 6/7] virtio: introduce a mdev based transport
-To:     Stefan Hajnoczi <stefanha@gmail.com>
-Cc:     kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org,
-        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
-        alex.williamson@redhat.com, mst@redhat.com, tiwei.bie@intel.com,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        cohuck@redhat.com, maxime.coquelin@redhat.com,
-        cunming.liang@intel.com, zhihong.wang@intel.com,
-        rob.miller@broadcom.com, xiao.w.wang@intel.com,
-        haotian.wang@sifive.com, zhenyuw@linux.intel.com,
-        zhi.a.wang@intel.com, jani.nikula@linux.intel.com,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        airlied@linux.ie, daniel@ffwll.ch, farman@linux.ibm.com,
-        pasic@linux.ibm.com, sebott@linux.ibm.com, oberpar@linux.ibm.com,
-        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
-        borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
-        freude@linux.ibm.com, lingshan.zhu@intel.com, idos@mellanox.com,
-        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
-        christophe.de.dinechin@gmail.com, kevin.tian@intel.com
-References: <20191011081557.28302-1-jasowang@redhat.com>
- <20191011081557.28302-7-jasowang@redhat.com>
- <20191014173942.GB5359@stefanha-x1.localdomain>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <cf8fa583-fb2c-67c3-15d1-64efa8d73121@redhat.com>
-Date:   Tue, 15 Oct 2019 11:29:07 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727845AbfJODaE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 23:30:04 -0400
+Received: from [129.146.181.251] ([129.146.181.251]:55344 "EHLO
+        issue-4015.localdomain" rhost-flags-FAIL-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727472AbfJODaE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 23:30:04 -0400
+Received: from localhost (localhost [IPv6:::1])
+        by issue-4015.localdomain (Postfix) with SMTP id 160448D9E265
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 03:30:02 +0000 (GMT)
+From:   linux-kernel@vger.kernel.org
+Reply-To: prodawez@teleworm.us
+To:     linux-kernel@vger.kernel.org,
+        =?utf-8?Q?=D0=97=D0=B4=D1=80=D0=B0=D0=B2=D1=81=D1=82=D0?=@issue-4015.localdomain,
+        _=D0=92=D0=B0=D1=81?=@=?utf-8?Q?=B2=D1=83=D0=B9=D1=82=D0=B5.localdomain,
+        =?utf-8?Q?_=D0=B8=D0=BD=D1=82=D0=B5=D1=80=D0=B5=D1=81=D1?=@issue-4015.localdomain,
+        =?utf-8?Q?=83=D1=8E=D1=82_=D0=BA=D0=BB=D0=B8=D0=B5=D0=BD?=@issue-4015.localdomain,
+        =?utf-8?Q?=D1=82=D1=81=D0=BA=D0=B8=D0=B5_=D0=B1=D0=B0=D0?=@issue-4015.localdomain,
+        =?utf-8?Q?=B7=D1=8B_=D0=B4=D0=B0=D0=BD=D0=BD=D1=8B=D1=85?=@issue-4015.localdomain,
+        =?utf-8?Q?=3F?=@issue-4015.localdomain
 MIME-Version: 1.0
-In-Reply-To: <20191014173942.GB5359@stefanha-x1.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8";
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Tue, 15 Oct 2019 03:29:30 +0000 (UTC)
+Message-Id: <20191015033003.160448D9E265@issue-4015.localdomain>
+Date:   Tue, 15 Oct 2019 03:30:02 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 2019/10/15 上午1:39, Stefan Hajnoczi wrote:
-> On Fri, Oct 11, 2019 at 04:15:56PM +0800, Jason Wang wrote:
->> +struct virtio_mdev_device {
->> +	struct virtio_device vdev;
->> +	struct mdev_device *mdev;
->> +	unsigned long version;
->> +
->> +	struct virtqueue **vqs;
->> +	/* The lock to protect virtqueue list */
->> +	spinlock_t lock;
->> +	struct list_head virtqueues;
-> Is this a list of struct virtio_mdev_vq_info?  Please document the
-> actual type in a comment.
-
-
-Ok.
-
-
->> +static int virtio_mdev_find_vqs(struct virtio_device *vdev, unsigned nvqs,
->> +				struct virtqueue *vqs[],
->> +				vq_callback_t *callbacks[],
->> +				const char * const names[],
->> +				const bool *ctx,
->> +				struct irq_affinity *desc)
->> +{
->> +	struct virtio_mdev_device *vm_dev = to_virtio_mdev_device(vdev);
->> +	struct mdev_device *mdev = vm_get_mdev(vdev);
->> +	const struct virtio_mdev_device_ops *ops = mdev_get_dev_ops(mdev);
->> +	struct virtio_mdev_callback cb;
->> +	int i, err, queue_idx = 0;
->> +
->> +	vm_dev->vqs = kmalloc_array(queue_idx, sizeof(*vm_dev->vqs),
->> +				    GFP_KERNEL);
-> kmalloc_array(0, ...)?  I would have expected nvqs instead of queue_idx
-> (0).
->
-> What is this the purpose of vm_dev->vqs and does anything ever access it?
-
-
-It's useless, will remove it.
-
-Thanks
+Здравствуйте! Вас интересуют клиентские базы данных?
 
