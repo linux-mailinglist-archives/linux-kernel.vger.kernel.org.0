@@ -2,59 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4951D80D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 22:16:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE36DD80DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 22:18:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733080AbfJOUQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 16:16:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37174 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727962AbfJOUQB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 16:16:01 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5334CAD05;
-        Tue, 15 Oct 2019 20:15:59 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id F0919DA7E3; Tue, 15 Oct 2019 22:16:09 +0200 (CEST)
-Date:   Tue, 15 Oct 2019 22:16:09 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH 24/34] btrfs: Use CONFIG_PREEMPTION
-Message-ID: <20191015201609.GA2751@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
-References: <20191015191821.11479-1-bigeasy@linutronix.de>
- <20191015191821.11479-25-bigeasy@linutronix.de>
+        id S1733277AbfJOUSs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 16:18:48 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:39488 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726252AbfJOUSs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 16:18:48 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iKTHJ-0003KI-98; Tue, 15 Oct 2019 20:18:45 +0000
+Date:   Tue, 15 Oct 2019 21:18:45 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to
+ unsafe_put_user()
+Message-ID: <20191015201845.GP26530@ZenIV.linux.org.uk>
+References: <20191011001104.GJ26530@ZenIV.linux.org.uk>
+ <CAHk-=wgg3jzkk-jObm1FLVYGS8JCTiKppEnA00_QX7Wsm5ieLQ@mail.gmail.com>
+ <20191013181333.GK26530@ZenIV.linux.org.uk>
+ <CAHk-=wgrWGyACBM8N8KP7Pu_2VopuzM4A12yQz6Eo=X2Jpwzcw@mail.gmail.com>
+ <20191013191050.GL26530@ZenIV.linux.org.uk>
+ <CAHk-=wjJNE9hOKuatqh6SFf4nd65LG4ZR3gQSgg+rjSpVxe89w@mail.gmail.com>
+ <20191013195949.GM26530@ZenIV.linux.org.uk>
+ <20191015180846.GA31707@ZenIV.linux.org.uk>
+ <CAHk-=wjyiiYhAbzVDUW1F3j9CAcu8+ugSvGYwUivdBfKoeU6yA@mail.gmail.com>
+ <20191015194012.GO26530@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191015191821.11479-25-bigeasy@linutronix.de>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+In-Reply-To: <20191015194012.GO26530@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 09:18:11PM +0200, Sebastian Andrzej Siewior wrote:
-> From: Thomas Gleixner <tglx@linutronix.de>
+On Tue, Oct 15, 2019 at 08:40:12PM +0100, Al Viro wrote:
+> or this
+> static void ntb_memcpy_tx(struct ntb_queue_entry *entry, void __iomem *offset)
+> {
+> #ifdef ARCH_HAS_NOCACHE_UACCESS
+>         /*
+>          * Using non-temporal mov to improve performance on non-cached
+>          * writes, even though we aren't actually copying from user space.
+>          */
+>         __copy_from_user_inatomic_nocache(offset, entry->buf, entry->len);
+> #else   
+>         memcpy_toio(offset, entry->buf, entry->len);
+> #endif
 > 
-> CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by CONFIG_PREEMPT_RT.
-> Both PREEMPT and PREEMPT_RT require the same functionality which today
-> depends on CONFIG_PREEMPT.
+>         /* Ensure that the data is fully copied out before setting the flags */
+>         wmb();
 > 
-> Switch the btrfs_device_set_â€¦() macro over to use CONFIG_PREEMPTION.
-> 
-> Cc: Chris Mason <clm@fb.com>
-> Cc: Josef Bacik <josef@toxicpanda.com>
-> Cc: David Sterba <dsterba@suse.com>
+>         ntb_tx_copy_callback(entry, NULL);
+> }
+> "user" part is bollocks in both cases; moreover, I really wonder about that
+> ifdef in ntb one - ARCH_HAS_NOCACHE_UACCESS is x86-only *at* *the* *moment*
+> and it just so happens that ..._toio() doesn't require anything special on
+> x86.  Have e.g. arm grow nocache stuff and the things will suddenly break,
+> won't they?
 
-Acked-by: David Sterba <dsterba@suse.com>
+Incidentally, there are two callers of __copy_from_user_inatomic_nocache() in
+generic code:
+lib/iov_iter.c:792:             __copy_from_user_inatomic_nocache((to += v.iov_len) - v.iov_len,
+lib/iov_iter.c:849:             if (__copy_from_user_inatomic_nocache((to += v.iov_len) - v.iov_len,
+
+Neither is done under under pagefault_disable(), AFAICS.  This one
+drivers/gpu/drm/qxl/qxl_ioctl.c:189:    unwritten = __copy_from_user_inatomic_nocache
+probably is - it has something called qxl_bo_kmap_atomic_page() called just prior,
+which would seem to imply kmap_atomic() somewhere in it.
+The same goes for
+drivers/gpu/drm/i915/i915_gem.c:500:    unwritten = __copy_from_user_inatomic_nocache((void __force *)vaddr + offset,
+
+So we have 5 callers anywhere.  Two are not "inatomic" in any sense; source is
+in userspace and we want nocache behaviour.  Two _are_ done into a page that
+had been fed through kmap_atomic(); the source is, again, in userland.  And
+the last one is complete BS - it wants memcpy_toio_nocache() and abuses this
+thing.
+
+Incidentally, in case of fault i915 caller ends up unmapping the page,
+mapping it non-atomic (with kmap?) and doing plain copy_from_user(),
+nocache be damned.  qxl, OTOH, whines and fails all the way to userland...
