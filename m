@@ -2,199 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E6F3D6DB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 05:27:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD6D9D6DBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 05:28:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727652AbfJOD1x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 23:27:53 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:36945 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727195AbfJOD1x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 23:27:53 -0400
-Received: by mail-ed1-f65.google.com with SMTP id r4so16582267edy.4
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 20:27:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=YVPytTWHt8mFoi/ykGbrP0trwQRYqXcPKOUsZYejpz0=;
-        b=PSKWNoiQI7P2JrAnmZCiTSgVzPC2o2fcfeEnYQfZvWpZFU9ynIIProhbzJ65NurZb8
-         GME6b6LCf/14PkTKQLv5zbnx2l7GuZfeYhdSFcnck6rLibElMKdgKq6zpn2TCXK7UvCh
-         uxEQcudhe2hEm3v0IPz3ZrfmlH4DSnEFTqZG8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=YVPytTWHt8mFoi/ykGbrP0trwQRYqXcPKOUsZYejpz0=;
-        b=Xq+FE5xoYGIxzr6APpOu83o2J6dqypZkAoOXlzwOGlGIeFWMfptzBjz13xTOkyzp7V
-         kkxUkNqF08vNT7fX5EGYAbUK0NQkM1vHocDbtL4j6d8UVHGbjxxyPsJ1RiU27Rll6Fd6
-         ktX3K18Lr/Bb2C5bdfBEv8R7A8/9iwQMWFPQ/lkyNZS0fD+1F/wVGS4eREfBxBu+yGOS
-         5rycIwb2OswkcakKsdQdsSh19xiDKW+eLIhh8+ZhdpyWzBcKjzq2j00AOwgejts2GdHn
-         fhs5lUYPlLA5tXdfY7jxKeLXfsev60nFETXrd0XMyRVy4psEeNpVguwQ1MCiUNRj9wBq
-         4SaA==
-X-Gm-Message-State: APjAAAU1phdzm0HNcqhv+scTxSPkXRh7zZc1S9OYkm5Z785ipLuTHGl5
-        6TVTbWZJWP/AU8JN/h55eonsCiZoRnOebw==
-X-Google-Smtp-Source: APXvYqyQeN5ZUsjM36H9vlRUEjj6JyyAMZSRXPaLP87i7YIQYp5bw7+3EwJ/DmaKkSuvcVlPRVHjAg==
-X-Received: by 2002:a17:906:c317:: with SMTP id s23mr33241021ejz.251.1571110068250;
-        Mon, 14 Oct 2019 20:27:48 -0700 (PDT)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com. [209.85.128.54])
-        by smtp.gmail.com with ESMTPSA id nk2sm2535759ejb.28.2019.10.14.20.27.45
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2019 20:27:46 -0700 (PDT)
-Received: by mail-wm1-f54.google.com with SMTP id i16so19097713wmd.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 20:27:45 -0700 (PDT)
-X-Received: by 2002:a1c:dcd6:: with SMTP id t205mr17526191wmg.10.1571110064602;
- Mon, 14 Oct 2019 20:27:44 -0700 (PDT)
+        id S1727809AbfJOD2D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 23:28:03 -0400
+Received: from mail-eopbgr20047.outbound.protection.outlook.com ([40.107.2.47]:25855
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727195AbfJOD2C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 23:28:02 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RDzcosZNapSVr3tCe0xlhyVBQrqceRKEDMWnNxoy4F0eBkH+4RtdLOorY374fv8c6tcFiU9gSYMAHMvmXBgqu20zFm6dJTOHO7inYhUxQ7jo/PFWhpOnqFE9qUglDo3hbQkCoZ1GFJqM2dE7H8Tk4OVNsXfrrVUhbVIGYX84kB+BJYtopHEra6chg/7RATvz8tENH+YBP8kRD1LTdMdvud2VA+z+8GCx+azuSQZV5SPkniVBqPgl01FTEfMqlpZdMdW7+JwHyvIoY7j1NeecmHB3Vroz5ibKjinuU0qQie3bTxV2V370QxXzXkx/LujYvzqXDfKMSZLHf6/wRvlK1g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=smDtZU4HdeLnrFfdaNbMnRorcUo/HC/cobBxVkqc1EM=;
+ b=NZNKzNLIU9MCHnIpvzcJ7cVBM2eKeVKZjszlOA0MzNlZ80lW6Vx/BmTY0N7HjgZ9ujKcz6FS2Z5jps5m2HoEzYEde1ltSoBBwDMblnCCMVLofqBfuTKiCuEdXxG2qssDJSfS4Vad0uqhxpLj4PA5lST3YPc+S3qya69KYZIsGN97ueDHNOeYmRZ4rlKagtBEartU+Jcuf1NZKY2VjpDbgn3vDycvvNz1XKiU24MNhibOFtxpP5ZDzafXYNNy/t+U//6/x8ULUhSyKvBJvHN9BR3wg0c7lghPV8t5TKAee7Wg/gqGDAfcdbpy6jzqD2OOFjSjoU+LGzBLWZ/t1RtLLA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=smDtZU4HdeLnrFfdaNbMnRorcUo/HC/cobBxVkqc1EM=;
+ b=ilJ0188wN7oqx89gZcquS6NMRiWZ0i4AGrWfK/VSjDS+OtZn371JukS48nS68QKvHPjMqFzmF4NqqR/ezRtTxombpgZyYL7p77sSvouhN4CGpdIVZL8oiE7YAYnttJaqwzhPGmBqzPqLlu0NKOKNbzq08EjXVDAT3cJwOOPzQ0I=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3737.eurprd04.prod.outlook.com (52.134.66.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2347.16; Tue, 15 Oct 2019 03:27:59 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::d469:ad51:2bec:19f0]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::d469:ad51:2bec:19f0%6]) with mapi id 15.20.2347.023; Tue, 15 Oct 2019
+ 03:27:59 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     Fancy Fang <chen.fang@nxp.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>
+CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH v3] clk: imx7ulp: do not export out IMX7ULP_CLK_MIPI_PLL
+ clock
+Thread-Topic: [PATCH v3] clk: imx7ulp: do not export out IMX7ULP_CLK_MIPI_PLL
+ clock
+Thread-Index: AQHVgwcPc0jqN29IB0OYPLGVX+dhGKdbCpHQ
+Date:   Tue, 15 Oct 2019 03:27:59 +0000
+Message-ID: <DB3PR0402MB3916869C2A91293F0600CF34F5930@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <20191015031501.2703-1-chen.fang@nxp.com>
+In-Reply-To: <20191015031501.2703-1-chen.fang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 136dc6d9-9768-43bf-6dff-08d7511fad85
+x-ms-office365-filtering-ht: Tenant
+x-ms-traffictypediagnostic: DB3PR0402MB3737:|DB3PR0402MB3737:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB3PR0402MB3737294FBF6560E23D72F9C2F5930@DB3PR0402MB3737.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 01917B1794
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(346002)(39860400002)(366004)(396003)(54534003)(189003)(199004)(478600001)(446003)(11346002)(6506007)(66476007)(66946007)(64756008)(66446008)(66556008)(14454004)(256004)(76116006)(52536014)(71190400001)(71200400001)(26005)(44832011)(66066001)(2501003)(476003)(486006)(2906002)(102836004)(25786009)(186003)(5660300002)(316002)(6436002)(33656002)(4326008)(81166006)(86362001)(2201001)(9686003)(305945005)(3846002)(55016002)(229853002)(6246003)(54906003)(74316002)(8676002)(110136005)(8936002)(7736002)(7696005)(76176011)(99286004)(6116002)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3737;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: tQ36Ne34rn8hFpJpuuAdEAGcUArGGTC5DTB1ILp0UZ65repDOE+k5R4zxZCEpzhSWnYgFTyku3ZGW750XVMi7SYGgX30e4jDo/pcL/8JUpUH5z0J4W84BOH2rPRU0WMCZWspsL282OWBj6qKJYIivVfhPpyqvv8Vi597FVcfzpZWWJ7BA5pzRPPvvk/xkYWpesSO71wtni8G17L0ZNHVhGRr2M91E/UbuM9cQAuKkmWUXwoFz5oz0GQyOcvtlU9eA/UJu7MbVIRh6Hg1xGDksp2K10rVIhc/drd2p6S9Fw3QNvnCnvhhmyrSiybzkQVtZIxE5lqkpH71wicqNpHXHebUvh/0snGccVIRs9OKRQ/qNwXWpgqcX/F868uzIh+9vq3Y+OR1hEgm1ZhrH+6onF2j5tthQX/j6BeC+/F70Ew=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20191007174505.10681-1-ezequiel@collabora.com>
- <20191007174505.10681-3-ezequiel@collabora.com> <CAAFQd5BNu2ea3ei_imHmEwmdna0+iiSbQSv_SBsdHfP4Uh1h4Q@mail.gmail.com>
- <HE1PR06MB4011EC9E93ECBB6773252247AC9A0@HE1PR06MB4011.eurprd06.prod.outlook.com>
- <CAAFQd5CWoAP1psrEW6bVMkRmhFeTvFKtDSLjT7nefc2YiFovqQ@mail.gmail.com>
- <CAAFQd5AYCiKcA9pGc44L3gGHLPx6iMSb7KywkO8OqVv4gS8KvQ@mail.gmail.com>
- <CAAFQd5AQXGX_2gmKLfymH5mLG-uVh-v+XXtGXzbfzYzVVV42mA@mail.gmail.com>
- <HE1PR06MB4011B897EA5497659A19BCC6AC9A0@HE1PR06MB4011.eurprd06.prod.outlook.com>
- <CAAFQd5DEhHF+_oO_0ZKS1mi26hJ-JueFxXfdpyQ3ATzMW5Czaw@mail.gmail.com> <0d40f89059cd5aba96adcdd24340636df3315592.camel@collabora.com>
-In-Reply-To: <0d40f89059cd5aba96adcdd24340636df3315592.camel@collabora.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Tue, 15 Oct 2019 12:27:32 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5Aj1fh5MbT1B8HZQmwYOSRr6C68uHmAPJ+5dec1K-szEA@mail.gmail.com>
-Message-ID: <CAAFQd5Aj1fh5MbT1B8HZQmwYOSRr6C68uHmAPJ+5dec1K-szEA@mail.gmail.com>
-Subject: Re: [PATCH v2 for 5.4 2/4] media: hantro: Fix H264 max frmsize
- supported on RK3288
-To:     Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Cc:     Jonas Karlman <jonas@kwiboo.se>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        "kernel@collabora.com" <kernel@collabora.com>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        "fbuergisser@chromium.org" <fbuergisser@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Douglas Anderson <dianders@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 136dc6d9-9768-43bf-6dff-08d7511fad85
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2019 03:27:59.2263
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 46tGle2DCdO+yPRKf9aW/x12LllNNMAOnwClcLr3q7U4hkQDJmnaYkBr6fn15a1+aAWxojEIAG7//OMyOrNptw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3737
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 14, 2019 at 7:10 AM Nicolas Dufresne
-<nicolas.dufresne@collabora.com> wrote:
->
-> Le jeudi 10 octobre 2019 =C3=A0 16:23 +0900, Tomasz Figa a =C3=A9crit :
-> > On Tue, Oct 8, 2019 at 11:12 PM Jonas Karlman <jonas@kwiboo.se> wrote:
-> > > On 2019-10-08 15:53, Tomasz Figa wrote:
-> > > > On Tue, Oct 8, 2019 at 10:35 PM Tomasz Figa <tfiga@chromium.org> wr=
-ote:
-> > > > > On Tue, Oct 8, 2019 at 7:42 PM Tomasz Figa <tfiga@chromium.org> w=
-rote:
-> > > > > > On Tue, Oct 8, 2019 at 3:31 PM Jonas Karlman <jonas@kwiboo.se> =
-wrote:
-> > > > > > > On 2019-10-08 07:27, Tomasz Figa wrote:
-> > > > > > > > Hi Ezequiel, Jonas,
-> > > > > > > >
-> > > > > > > > On Tue, Oct 8, 2019 at 2:46 AM Ezequiel Garcia <ezequiel@co=
-llabora.com> wrote:
-> > > > > > > > > From: Jonas Karlman <jonas@kwiboo.se>
-> > > > > > > > >
-> > > > > > > > > TRM specify supported image size 48x48 to 4096x2304 at st=
-ep size 16 pixels,
-> > > > > > > > > change frmsize max_width/max_height to match TRM.
-> > > > > > > > >
-> > > > > > > > > Fixes: 760327930e10 ("media: hantro: Enable H264 decoding=
- on rk3288")
-> > > > > > > > > Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-> > > > > > > > > ---
-> > > > > > > > > v2:
-> > > > > > > > > * No changes.
-> > > > > > > > >
-> > > > > > > > >  drivers/staging/media/hantro/rk3288_vpu_hw.c | 4 ++--
-> > > > > > > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > > > > > > >
-> > > > > > > > > diff --git a/drivers/staging/media/hantro/rk3288_vpu_hw.c=
- b/drivers/staging/media/hantro/rk3288_vpu_hw.c
-> > > > > > > > > index 6bfcc47d1e58..ebb017b8a334 100644
-> > > > > > > > > --- a/drivers/staging/media/hantro/rk3288_vpu_hw.c
-> > > > > > > > > +++ b/drivers/staging/media/hantro/rk3288_vpu_hw.c
-> > > > > > > > > @@ -67,10 +67,10 @@ static const struct hantro_fmt rk3288=
-_vpu_dec_fmts[] =3D {
-> > > > > > > > >                 .max_depth =3D 2,
-> > > > > > > > >                 .frmsize =3D {
-> > > > > > > > >                         .min_width =3D 48,
-> > > > > > > > > -                       .max_width =3D 3840,
-> > > > > > > > > +                       .max_width =3D 4096,
-> > > > > > > > >                         .step_width =3D H264_MB_DIM,
-> > > > > > > > >                         .min_height =3D 48,
-> > > > > > > > > -                       .max_height =3D 2160,
-> > > > > > > > > +                       .max_height =3D 2304,
-> > > > > > > > This doesn't match the datasheet I have, which is RK3288 Da=
-tasheet Rev
-> > > > > > > > 1.4 and which has the values as in current code. What's the=
- one you
-> > > > > > > > got the values from?
-> > > > > > > The RK3288 TRM vcodec chapter from [1], unknown revision and =
-date, lists 48x48 to 4096x2304 step size 16 pixels under 25.5.1 H.264 decod=
-er.
-> > > > > > >
-> > > > > > > I can also confirm that one of my test samples (PUPPIES BATH =
-IN 4K) is 4096x2304 and can be decoded after this patch.
-> > > > > > > However the decoding speed is not optimal at 400Mhz, if I rec=
-all correctly you need to set the VPU1 clock to 600Mhz for 4K decoding on R=
-K3288.
-> > > > > > >
-> > > > > > > I am not sure if I should include a v2 of this patch in my v2=
- series, as-is this patch do not apply on master (H264_MB_DIM has changed t=
-o MB_DIM in master).
-> > > > > > >
-> > > > > > > [1] http://www.t-firefly.com/download/firefly-rk3288/docs/TRM=
-/rk3288-chapter-25-video-encoder-decoder-unit-(vcodec).pdf
-> > > > > > I checked the RK3288 TRM V1.1 too and it refers to 3840x2160@24=
-fps as
-> > > > > > the maximum.
-> > > > > >
-> > > > > > As for performance, we've actually been getting around 33 fps a=
-t 400
-> > > > > > MHz with 3840x2160 on our devices (the old RK3288 Asus Chromebo=
-ok
-> > > > > > Flip).
-> > > > > >
-> > > > > > I guess we might want to check that with Hantro.
-> > > > > Could you check the value of bits 10:0 in register at 0x0c8? That
-> > > > > should be the maximum supported stream width in the units of 16
-> > > > > pixels.
-> > > > Correction: The unit is 1 pixel and there are additional 2 most
-> > > > significant bits at 0x0d8, 15:14.
-> > >
-> > > I will check this later tonight when I have access to my devices.
-> > > The PUPPIES BATH IN 4K (4096x2304) sample decoded without issue using=
- rockchip 4.4 BSP kernel and mpp last time I tested.
-> > >
-> > > The vcodec driver in 4.4 BSP kernel use 300/400 Mhz as default clock =
-rate and will change to 600 Mhz when width is over 2560, see [1]:
-> > >   raise frequency for resolution larger than 1440p avc
-> > >
-> > > [1] https://github.com/rockchip-linux/kernel/blob/develop-4.4/drivers=
-/video/rockchip/vcodec/vcodec_service.c#L2551-L2570
-> >
-> > How comes it works for us well at 400 MHz? Better DRAM? Differences in
-> > how Vcodec BSP handles the hardware that somehow make the decoding
-> > slower?
->
-> FWIW, here on the mainline driver, on RK3288, playing a 4K30 sample
-> (probably the max for this one) get stuck at 20fps with 400MHz. So
-> 600MHz would in theory be perfect to reach 30fps. That being said,
-> different stream yield different performance with H264 and other
-> CODECs, so doing a completely objective evaluation is hard.
-
-For a fair comparison, we're using the following stream in our 4K
-performance test:
-http://storage.googleapis.com/chromiumos-test-assets-public/tast/cros/video=
-/perf/h264/2160p_30fps_300frames_20190801.h264
-
-Best regards,
-Tomasz
+SGksIEZhbmN5DQoNCj4gU3ViamVjdDogW1BBVENIIHYzXSBjbGs6IGlteDd1bHA6IGRvIG5vdCBl
+eHBvcnQgb3V0IElNWDdVTFBfQ0xLX01JUElfUExMDQo+IGNsb2NrDQo+IA0KPiBUaGUgbWlwaSBw
+bGwgY2xvY2sgY29tZXMgZnJvbSB0aGUgTUlQSSBQSFkgUExMIG91dHB1dCwgc28gaXQgc2hvdWxk
+IG5vdCBiZSBhDQo+IGZpeGVkIGNsb2NrLg0KPiANCj4gTUlQSSBQSFkgUExMIGlzIGluIHRoZSBN
+SVBJIERTSSBzcGFjZSwgYW5kIGl0IGlzIHVzZWQgYXMgdGhlIGJpdCBjbG9jayBmb3INCj4gdHJh
+bnNmZXJyaW5nIHRoZSBwaXhlbCBkYXRhIG91dCBhbmQgaXRzIG91dHB1dCBjbG9jayBpcyBjb25m
+aWd1cmVkIGFjY29yZGluZyB0bw0KPiB0aGUgZGlzcGxheSBtb2RlLg0KPiANCj4gU28gaXQgc2hv
+dWxkIGJlIHVzZWQgb25seSBmb3IgTUlQSSBEU0kgYW5kIG5vdCBiZSBleHBvcnRlZCBvdXQgZm9y
+IG90aGVyDQo+IHVzYWdlcy4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEZhbmN5IEZhbmcgPGNoZW4u
+ZmFuZ0BueHAuY29tPg0KPiAtLS0NCj4gQ2hhbmdlTG9nIHYyLT52MzoNCj4gICogS2VlcCAnSU1Y
+N1VMUF9DTEtfTUlQSV9QTEwnIG1hY3JvIGRlZmluaXRpb24uDQo+IA0KPiBDaGFuZ2VMb2cgdjEt
+PnYyOg0KPiAgKiBLZWVwIG90aGVyIGNsb2NrIGluZGV4ZXMgdW5jaGFuZ2VkIGFzIFNoYXduIHN1
+Z2dlc3RlZC4NCj4gDQo+ICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2sv
+aW14N3VscC1jbG9jay50eHQgfCAxIC0NCj4gIGRyaXZlcnMvY2xrL2lteC9jbGstaW14N3VscC5j
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8IDMgKy0tDQo+ICAyIGZpbGVzIGNoYW5nZWQs
+IDEgaW5zZXJ0aW9uKCspLCAzIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL0RvY3Vt
+ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9pbXg3dWxwLWNsb2NrLnR4dA0KPiBi
+L0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9pbXg3dWxwLWNsb2NrLnR4
+dA0KPiBpbmRleCBhNGY4Y2Q0NzhmOTIuLjkzZDg5YWRiN2FmZSAxMDA2NDQNCj4gLS0tIGEvRG9j
+dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL2lteDd1bHAtY2xvY2sudHh0DQo+
+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9pbXg3dWxwLWNs
+b2NrLnR4dA0KPiBAQCAtODIsNyArODIsNiBAQCBwY2MyOiBwY2MyQDQwM2YwMDAwIHsNCj4gIAkJ
+IDwmc2NnMSBJTVg3VUxQX0NMS19BUExMX1BGRDA+LA0KPiAgCQkgPCZzY2cxIElNWDdVTFBfQ0xL
+X1VQTEw+LA0KPiAgCQkgPCZzY2cxIElNWDdVTFBfQ0xLX1NPU0NfQlVTX0NMSz4sDQo+IC0JCSA8
+JnNjZzEgSU1YN1VMUF9DTEtfTUlQSV9QTEw+LA0KPiAgCQkgPCZzY2cxIElNWDdVTFBfQ0xLX0ZJ
+UkNfQlVTX0NMSz4sDQo+ICAJCSA8JnNjZzEgSU1YN1VMUF9DTEtfUk9TQz4sDQo+ICAJCSA8JnNj
+ZzEgSU1YN1VMUF9DTEtfU1BMTF9CVVNfQ0xLPjsNCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xr
+L2lteC9jbGstaW14N3VscC5jIGIvZHJpdmVycy9jbGsvaW14L2Nsay1pbXg3dWxwLmMNCj4gaW5k
+ZXggMjAyMmQ5YmVhZDkxLi40NTliMTIwYjcxZDUgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvY2xr
+L2lteC9jbGstaW14N3VscC5jDQo+ICsrKyBiL2RyaXZlcnMvY2xrL2lteC9jbGstaW14N3VscC5j
+DQo+IEBAIC0yOCw3ICsyOCw3IEBAIHN0YXRpYyBjb25zdCBjaGFyICogY29uc3Qgc2NzX3NlbHNb
+XQkJPQ0KPiB7ICJkdW1teSIsICJzb3NjIiwgInNpcmMiLCAiZmlyYyIsICJkdW1tDQo+ICBzdGF0
+aWMgY29uc3QgY2hhciAqIGNvbnN0IGRkcl9zZWxzW10JCT0geyAiYXBsbF9wZmRfc2VsIiwgInVw
+bGwiLCB9Ow0KPiAgc3RhdGljIGNvbnN0IGNoYXIgKiBjb25zdCBuaWNfc2Vsc1tdCQk9IHsgImZp
+cmMiLCAiZGRyX2NsayIsIH07DQo+ICBzdGF0aWMgY29uc3QgY2hhciAqIGNvbnN0IHBlcmlwaF9w
+bGF0X3NlbHNbXQk9IHsgImR1bW15IiwgIm5pYzFfYnVzX2NsayIsDQo+ICJuaWMxX2NsayIsICJk
+ZHJfY2xrIiwgImFwbGxfcGZkMiIsICJhcGxsX3BmZDEiLCAiYXBsbF9wZmQwIiwgInVwbGwiLCB9
+Ow0KPiAtc3RhdGljIGNvbnN0IGNoYXIgKiBjb25zdCBwZXJpcGhfYnVzX3NlbHNbXQk9IHsgImR1
+bW15IiwgInNvc2NfYnVzX2NsayIsDQo+ICJtcGxsIiwgImZpcmNfYnVzX2NsayIsICJyb3NjIiwg
+Im5pYzFfYnVzX2NsayIsICJuaWMxX2NsayIsICJzcGxsX2J1c19jbGsiLCB9Ow0KPiArc3RhdGlj
+IGNvbnN0IGNoYXIgKiBjb25zdCBwZXJpcGhfYnVzX3NlbHNbXQk9IHsgImR1bW15IiwgInNvc2Nf
+YnVzX2NsayIsDQo+ICJkdW1teSIsICJmaXJjX2J1c19jbGsiLCAicm9zYyIsICJuaWMxX2J1c19j
+bGsiLCAibmljMV9jbGsiLCAic3BsbF9idXNfY2xrIiwgfTsNCg0KVGhlIHJlZmVyZW5jZSBtYW51
+YWwgZG9lcyBoYXZlIG1wbGwgYXMgY2xvY2sgb3B0aW9uLCBzbyBkbyB5b3UgbWVhbiBpdCB3aWxs
+IE5PVCBiZSBzdXBwb3J0ZWQNCmFueW1vcmUsIGlzIG1wbGwgdXNlZCBpbnNpZGUgTUlQSSBQSFk/
+DQoNCkFuc29uDQoNCj4gIHN0YXRpYyBjb25zdCBjaGFyICogY29uc3QgYXJtX3NlbHNbXQkJPSB7
+ICJkaXZjb3JlIiwgImR1bW15IiwNCj4gImR1bW15IiwgImhzcnVuX2RpdmNvcmUiLCB9Ow0KPiAN
+Cj4gIC8qIHVzZWQgYnkgc29zYy9zaXJjL2ZpcmMvZGRyL3NwbGwvYXBsbCBkaXZpZGVycyAqLyBA
+QCAtNzUsNyArNzUsNiBAQCBzdGF0aWMNCj4gdm9pZCBfX2luaXQgaW14N3VscF9jbGtfc2NnMV9p
+bml0KHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnApDQo+ICAJY2xrc1tJTVg3VUxQX0NMS19TT1NDXQkJ
+PQ0KPiBpbXhfb2J0YWluX2ZpeGVkX2Nsa19odyhucCwgInNvc2MiKTsNCj4gIAljbGtzW0lNWDdV
+TFBfQ0xLX1NJUkNdCQk9DQo+IGlteF9vYnRhaW5fZml4ZWRfY2xrX2h3KG5wLCAic2lyYyIpOw0K
+PiAgCWNsa3NbSU1YN1VMUF9DTEtfRklSQ10JCT0NCj4gaW14X29idGFpbl9maXhlZF9jbGtfaHco
+bnAsICJmaXJjIik7DQo+IC0JY2xrc1tJTVg3VUxQX0NMS19NSVBJX1BMTF0JPSBpbXhfb2J0YWlu
+X2ZpeGVkX2Nsa19odyhucCwNCj4gIm1wbGwiKTsNCj4gIAljbGtzW0lNWDdVTFBfQ0xLX1VQTExd
+CQk9DQo+IGlteF9vYnRhaW5fZml4ZWRfY2xrX2h3KG5wLCAidXBsbCIpOw0KPiANCj4gIAkvKiBT
+Q0cxICovDQo+IC0tDQo+IDIuMTcuMQ0KDQo=
