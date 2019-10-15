@@ -2,163 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25D69D7393
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 12:43:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFCA4D73B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 12:45:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730835AbfJOKns (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 06:43:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45688 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728214AbfJOKns (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 06:43:48 -0400
-Received: from localhost (unknown [171.76.96.211])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6334820854;
-        Tue, 15 Oct 2019 10:43:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571136226;
-        bh=S3B+ofswemQthW/eKUQJFkeu8fu8WPXvCfq+gdh/oNk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=a4+5VIBfbh54Faf9vFA1aBP8YseXHySX3OEYN04PVDvBJ3P7wDiAPqUx3wU/ENTq+
-         Rh021lx5OjEP4fAVs4Vw0PEIUfDXwBjBpiaznH6L9jFnabOP17QmQcVbleYtC3doFj
-         OipAfTTHfzq52r0S2xGyKBITF69ag8ZaE+p+FFQo=
-Date:   Tue, 15 Oct 2019 16:13:42 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
-Cc:     "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "alencar.fmce@imbel.gov.br" <alencar.fmce@imbel.gov.br>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "lars@metafoo.de" <lars@metafoo.de>
-Subject: Re: [PATCH] dmaengine: axi-dmac: simple device_config operation
- implemented
-Message-ID: <20191015104342.GW2654@vkoul-mobl>
-References: <20190913145404.28715-1-alexandru.ardelean@analog.com>
- <20191014070142.GB2654@vkoul-mobl>
- <4384347cc94a54e3fa22790aaa91375afda54e1b.camel@analog.com>
+        id S1731259AbfJOKpk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 06:45:40 -0400
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:23344
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726653AbfJOKpj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 06:45:39 -0400
+X-IronPort-AV: E=Sophos;i="5.67,299,1566856800"; 
+   d="scan'208";a="322757829"
+Received: from portablejulia.rsr.lip6.fr ([132.227.76.63])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Oct 2019 12:45:06 +0200
+Date:   Tue, 15 Oct 2019 12:45:06 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: julia@hadrien
+To:     Dan Robertson <dan@dlrobertson.com>
+cc:     Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        devicetree@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, Dan Robertson <dan@dlrobertson.com>,
+        kbuild-all@lists.01.org
+Subject: Re: [PATCH v3 2/2] iio: (bma400) add driver for the BMA400 (fwd)
+Message-ID: <alpine.DEB.2.21.1910151243270.2818@hadrien>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4384347cc94a54e3fa22790aaa91375afda54e1b.camel@analog.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15-10-19, 07:05, Ardelean, Alexandru wrote:
-> On Mon, 2019-10-14 at 12:31 +0530, Vinod Koul wrote:
-> > [External]
-> > 
-> 
-> Hey,
-> 
-> > On 13-09-19, 17:54, Alexandru Ardelean wrote:
-> > > From: Rodrigo Alencar <alencar.fmce@imbel.gov.br>
-> > > 
-> > > dmaengine_slave_config is called by dmaengine_pcm_hw_params when using
-> > > axi-i2s with axi-dmac. If device_config is NULL, -ENOSYS  is returned,
-> > > which breaks the snd_pcm_hw_params function.
-> > > This is a fix for the error:
-> > 
-> > and what is that?
-> > 
-> > > $ aplay -D plughw:ADAU1761 /usr/share/sounds/alsa/Front_Center.wav
-> > > Playing WAVE '/usr/share/sounds/alsa/Front_Center.wav' : Signed 16 bit
-> > > Little Endian, Rate 48000 Hz, Mono
-> > > axi-i2s 43c20000.axi-i2s: ASoC: 43c20000.axi-i2s hw params failed: -38
-> 
-> Error is above this line [code -38].
+acc_config is unsigned, so it won't be negative (line 390).
 
-Right and it would help explaining a bit more on the error!
+julia
 
-> 
-> > > aplay: set_params:1403: Unable to install hw params:
-> > > ACCESS:  RW_INTERLEAVED
-> > > FORMAT:  S16_LE
-> > > SUBFORMAT:  STD
-> > > SAMPLE_BITS: 16
-> > > FRAME_BITS: 16
-> > > CHANNELS: 1
-> > > RATE: 48000
-> > > PERIOD_TIME: 125000
-> > > PERIOD_SIZE: 6000
-> > > PERIOD_BYTES: 12000
-> > > PERIODS: 4
-> > > BUFFER_TIME: 500000
-> > > BUFFER_SIZE: 24000
-> > > BUFFER_BYTES: 48000
-> > > TICK_TIME: 0
-> > > 
-> > > Signed-off-by: Rodrigo Alencar <alencar.fmce@imbel.gov.br>
-> > > Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-> > > ---
-> > > 
-> > > Note: Fixes tag not added intentionally.
-> > > 
-> > >  drivers/dma/dma-axi-dmac.c | 16 ++++++++++++++++
-> > >  1 file changed, 16 insertions(+)
-> > > 
-> > > diff --git a/drivers/dma/dma-axi-dmac.c b/drivers/dma/dma-axi-dmac.c
-> > > index a0ee404b736e..ab2677343202 100644
-> > > --- a/drivers/dma/dma-axi-dmac.c
-> > > +++ b/drivers/dma/dma-axi-dmac.c
-> > > @@ -564,6 +564,21 @@ static struct dma_async_tx_descriptor
-> > > *axi_dmac_prep_slave_sg(
-> > >  	return vchan_tx_prep(&chan->vchan, &desc->vdesc, flags);
-> > >  }
-> > >  
-> > > +static int axi_dmac_device_config(struct dma_chan *c,
-> > > +			struct dma_slave_config *slave_config)
-> > > +{
-> > > +	struct axi_dmac_chan *chan = to_axi_dmac_chan(c);
-> > > +	struct axi_dmac *dmac = chan_to_axi_dmac(chan);
-> > > +
-> > > +	/* no configuration required, a sanity check is done instead */
-> > > +	if (slave_config->direction != chan->direction) {
-> > 
-> >  slave_config->direction is a deprecated field, pls dont use that
-> 
-> ack
-> any alternative recommendations of what to do in this case?
-> i can take a look, but if you have something on-the-top-of-your-head, i'm
-> open to suggestions
-> we can also just drop this completely and let userspace fail
+---------- Forwarded message ----------
+Date: Mon, 14 Oct 2019 07:23:53 +0800
+From: kbuild test robot <lkp@intel.com>
+To: kbuild@lists.01.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>
+Subject: Re: [PATCH v3 2/2] iio: (bma400) add driver for the BMA400
 
-Yeah it is tricky, this should be ideally implemented properly.
+Hi Dan,
 
-> > > +		dev_err(dmac->dma_dev.dev, "Direction not supported by this
-> > > DMA Channel");
-> > > +		return -EINVAL;
-> > 
-> > So you intent to support slave dma but do not use dma_slave_config.. how
-> > are you getting the slave address and other details?
-> 
-> This DMA controller is a bit special.
-> It gets synthesized in FPGA, so the configuration is fixed and cannot be
-> changed at runtime. Maybe later we would allow/implement this
-> functionality, but this is a question for my HDL colleagues.
-> 
-> Two things are done (in this order):
-> 1. For some paramters, axi_dmac_parse_chan_dt() is used to determine things
-> from device-tree; as it's an FPGA core, things are synthesized once and
-> cannot change (yet)
-> 2. For other parameters, the axi_dmac_detect_caps() is used to guess some
-> of them at probe time, by doing some reg reads/writes
+Thank you for the patch! Perhaps something to improve:
 
-So the question for you hw folks is how would a controller work with
-multiple slave devices, do they need to synthesize it everytime?
+[auto build test WARNING on iio/togreg]
+[cannot apply to v5.4-rc2 next-20191011]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
 
-Rather than that why cant they make the peripheral addresses
-programmable so that you dont need updating fpga everytime!
+url:    https://github.com/0day-ci/linux/commits/Dan-Robertson/iio-add-driver-for-Bosch-BMA400-accelerometer/20191014-035631
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+:::::: branch date: 3 hours ago
+:::::: commit date: 3 hours ago
 
-> 
-> I'll admit that maybe the whole approach could be done a bit
-> differently/better. But I guess this approach was chosen by the fact that
-> it's FPGA.
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: Julia Lawall <julia.lawall@lip6.fr>
 
-Well FPGA doesnt mean hw should know everything, having SW program
-things is not a terrible idea
+>> drivers/iio/accel/bma400_core.c:390:6-16: WARNING: Unsigned expression compared with zero: acc_config < 0
 
--- 
-~Vinod
+# https://github.com/0day-ci/linux/commit/76b89222e99357a9fdbcfb61982e10d2fe74a409
+git remote add linux-review https://github.com/0day-ci/linux
+git remote update linux-review
+git checkout 76b89222e99357a9fdbcfb61982e10d2fe74a409
+vim +390 drivers/iio/accel/bma400_core.c
+
+76b89222e99357 Dan Robertson 2019-10-12  372
+76b89222e99357 Dan Robertson 2019-10-12  373  static int bma400_set_accel_oversampling_ratio(struct bma400_data *data,
+76b89222e99357 Dan Robertson 2019-10-12  374  					       int val)
+76b89222e99357 Dan Robertson 2019-10-12  375  {
+76b89222e99357 Dan Robertson 2019-10-12  376  	int ret;
+76b89222e99357 Dan Robertson 2019-10-12  377  	unsigned int acc_config;
+76b89222e99357 Dan Robertson 2019-10-12  378
+76b89222e99357 Dan Robertson 2019-10-12  379  	if (val & ~BMA400_TWO_BITS_MASK)
+76b89222e99357 Dan Robertson 2019-10-12  380  		return -EINVAL;
+76b89222e99357 Dan Robertson 2019-10-12  381
+76b89222e99357 Dan Robertson 2019-10-12  382  	/*
+76b89222e99357 Dan Robertson 2019-10-12  383  	 * The oversampling ratio is stored in a different register
+76b89222e99357 Dan Robertson 2019-10-12  384  	 * based on the power-mode.
+76b89222e99357 Dan Robertson 2019-10-12  385  	 */
+76b89222e99357 Dan Robertson 2019-10-12  386  	switch (data->power_mode) {
+76b89222e99357 Dan Robertson 2019-10-12  387  	case POWER_MODE_LOW:
+76b89222e99357 Dan Robertson 2019-10-12  388  		ret = regmap_read(data->regmap, BMA400_ACC_CONFIG0_REG,
+76b89222e99357 Dan Robertson 2019-10-12  389  				  &acc_config);
+76b89222e99357 Dan Robertson 2019-10-12 @390  		if (acc_config < 0)
+76b89222e99357 Dan Robertson 2019-10-12  391  			return acc_config;
+76b89222e99357 Dan Robertson 2019-10-12  392
+76b89222e99357 Dan Robertson 2019-10-12  393  		ret = regmap_write(data->regmap, BMA400_ACC_CONFIG0_REG,
+76b89222e99357 Dan Robertson 2019-10-12  394  				   (acc_config & ~BMA400_LP_OSR_MASK) |
+76b89222e99357 Dan Robertson 2019-10-12  395  				   (val << BMA400_LP_OSR_SHIFT));
+76b89222e99357 Dan Robertson 2019-10-12  396  		if (ret < 0) {
+76b89222e99357 Dan Robertson 2019-10-12  397  			dev_err(data->dev, "Failed to write out OSR");
+76b89222e99357 Dan Robertson 2019-10-12  398  			return ret;
+76b89222e99357 Dan Robertson 2019-10-12  399  		}
+76b89222e99357 Dan Robertson 2019-10-12  400
+76b89222e99357 Dan Robertson 2019-10-12  401  		data->oversampling_ratio = val;
+76b89222e99357 Dan Robertson 2019-10-12  402  		return 0;
+76b89222e99357 Dan Robertson 2019-10-12  403  	case POWER_MODE_NORMAL:
+76b89222e99357 Dan Robertson 2019-10-12  404  		ret = regmap_read(data->regmap, BMA400_ACC_CONFIG1_REG,
+76b89222e99357 Dan Robertson 2019-10-12  405  				  &acc_config);
+76b89222e99357 Dan Robertson 2019-10-12  406  		if (ret < 0)
+76b89222e99357 Dan Robertson 2019-10-12  407  			return ret;
+76b89222e99357 Dan Robertson 2019-10-12  408
+76b89222e99357 Dan Robertson 2019-10-12  409  		ret = regmap_write(data->regmap, BMA400_ACC_CONFIG1_REG,
+76b89222e99357 Dan Robertson 2019-10-12  410  				   (acc_config & ~BMA400_NP_OSR_MASK) |
+76b89222e99357 Dan Robertson 2019-10-12  411  				   (val << BMA400_NP_OSR_SHIFT));
+76b89222e99357 Dan Robertson 2019-10-12  412  		if (ret < 0) {
+76b89222e99357 Dan Robertson 2019-10-12  413  			dev_err(data->dev, "Failed to write out OSR");
+76b89222e99357 Dan Robertson 2019-10-12  414  			return ret;
+76b89222e99357 Dan Robertson 2019-10-12  415  		}
+76b89222e99357 Dan Robertson 2019-10-12  416
+76b89222e99357 Dan Robertson 2019-10-12  417  		data->oversampling_ratio = val;
+76b89222e99357 Dan Robertson 2019-10-12  418  		return 0;
+76b89222e99357 Dan Robertson 2019-10-12  419  	default:
+76b89222e99357 Dan Robertson 2019-10-12  420  		return -EINVAL;
+76b89222e99357 Dan Robertson 2019-10-12  421  	}
+76b89222e99357 Dan Robertson 2019-10-12  422  	return ret;
+76b89222e99357 Dan Robertson 2019-10-12  423  }
+76b89222e99357 Dan Robertson 2019-10-12  424
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
