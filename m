@@ -2,68 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04819D7657
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 14:20:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1FD1D765F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 14:20:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728206AbfJOMUA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 08:20:00 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:45599 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725810AbfJOMUA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 08:20:00 -0400
-Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1iKLnu-0001Lj-2W; Tue, 15 Oct 2019 13:19:54 +0100
-Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.2)
-        (envelope-from <ben@rainbowdash.codethink.co.uk>)
-        id 1iKLnt-0003tA-L7; Tue, 15 Oct 2019 13:19:53 +0100
-From:   Ben Dooks <ben.dooks@codethink.co.uk>
-To:     linux-kernel@lists.codethink.co.uk
-Cc:     Ben Dooks <ben.dooks@codethink.co.uk>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] NFSv4: add declaration of current_stateid
-Date:   Tue, 15 Oct 2019 13:19:53 +0100
-Message-Id: <20191015121953.14905-1-ben.dooks@codethink.co.uk>
-X-Mailer: git-send-email 2.23.0
+        id S1728901AbfJOMUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 08:20:33 -0400
+Received: from mga11.intel.com ([192.55.52.93]:26185 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725810AbfJOMUc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 08:20:32 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Oct 2019 05:20:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,299,1566889200"; 
+   d="scan'208";a="198590734"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga003.jf.intel.com with ESMTP; 15 Oct 2019 05:20:29 -0700
+Received: from andy by smile with local (Exim 4.92.2)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1iKLoS-0007eW-MV; Tue, 15 Oct 2019 15:20:28 +0300
+Date:   Tue, 15 Oct 2019 15:20:28 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v5 11/14] software node: move small properties inline
+ when copying
+Message-ID: <20191015122028.GI32742@smile.fi.intel.com>
+References: <20191011230721.206646-1-dmitry.torokhov@gmail.com>
+ <20191011230721.206646-12-dmitry.torokhov@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191011230721.206646-12-dmitry.torokhov@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current_stateid is exported from nfs4state.c but not
-declared in any of the headers. Add to nfs4_fs.h to
-remove the following warning:
+On Fri, Oct 11, 2019 at 04:07:18PM -0700, Dmitry Torokhov wrote:
+> When copying/duplicating set of properties, move smaller properties that
+> were stored separately directly inside property entry structures. We can
+> move:
+> 
+> - up to 8 bytes from U8 arrays
+> - up to 4 words
+> - up to 2 double words
+> - one U64 value
+> - one or 2 strings.
 
-fs/nfs/nfs4state.c:80:20: warning: symbol 'current_stateid' was not declared. Should it be static?
+Can you show where you extract such values?
 
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
----
-Cc: Trond Myklebust <trond.myklebust@hammerspace.com>
-Cc: Anna Schumaker <anna.schumaker@netapp.com>
-Cc: linux-nfs@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- fs/nfs/nfs4_fs.h | 2 ++
- 1 file changed, 2 insertions(+)
+> +	if (!dst->is_inline && dst->length <= sizeof(dst->value)) {
+> +		/* We have an opportunity to move the data inline */
+> +		const void *tmp = dst->pointer;
+> +
 
-diff --git a/fs/nfs/nfs4_fs.h b/fs/nfs/nfs4_fs.h
-index 16b2e5cc3e94..330f45268060 100644
---- a/fs/nfs/nfs4_fs.h
-+++ b/fs/nfs/nfs4_fs.h
-@@ -445,6 +445,8 @@ extern void nfs4_set_lease_period(struct nfs_client *clp,
- 
- 
- /* nfs4state.c */
-+extern const nfs4_stateid current_stateid;
-+
- const struct cred *nfs4_get_clid_cred(struct nfs_client *clp);
- const struct cred *nfs4_get_machine_cred(struct nfs_client *clp);
- const struct cred *nfs4_get_renew_cred(struct nfs_client *clp);
+> +		memcpy(&dst->value, tmp, dst->length);
+
+...because this is strange trick.
+
+> +		dst->is_inline = true;
+> +
+> +		kfree(tmp);
+> +	}
+
 -- 
-2.23.0
+With Best Regards,
+Andy Shevchenko
+
 
