@@ -2,156 +2,212 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44F4FD75CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 14:08:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3642CD75E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 14:10:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730571AbfJOMIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 08:08:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56142 "EHLO mx1.suse.de"
+        id S1731070AbfJOMKH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 08:10:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58024 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726540AbfJOMII (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 08:08:08 -0400
+        id S1730655AbfJOMKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 08:10:05 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0D9E7B12C;
-        Tue, 15 Oct 2019 12:08:06 +0000 (UTC)
-Subject: Re: [PATCH] kernel-doc: rename the kernel-doc directive 'functions'
- to 'specific'
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Tim.Bird@sony.com, jani.nikula@linux.intel.com,
-        changbin.du@gmail.com, corbet@lwn.net, linux-doc@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-fpga@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-mm@kvack.org, linux-crypto@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, intel-gfx@lists.freedesktop.org
-References: <20191013055359.23312-1-changbin.du@gmail.com>
- <875zkrd7nq.fsf@intel.com>
- <ECADFF3FD767C149AD96A924E7EA6EAF977CAF09@USCULXMSG01.am.sony.com>
- <7e7557b5-469f-3e63-6254-53dab2d7234a@suse.de>
- <20191015115439.GE32665@bombadil.infradead.org>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- mQENBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAG0J1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPokBVAQTAQgAPhYh
- BHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJbOdLgAhsDBQkDwmcABQsJCAcCBhUKCQgLAgQWAgMB
- Ah4BAheAAAoJEGgNwR1TC3ojR80H/jH+vYavwQ+TvO8ksXL9JQWc3IFSiGpuSVXLCdg62AmR
- irxW+qCwNncNQyb9rd30gzdectSkPWL3KSqEResBe24IbA5/jSkPweJasgXtfhuyoeCJ6PXo
- clQQGKIoFIAEv1s8l0ggPZswvCinegl1diyJXUXmdEJRTWYAtxn/atut1o6Giv6D2qmYbXN7
- mneMC5MzlLaJKUtoH7U/IjVw1sx2qtxAZGKVm4RZxPnMCp9E1MAr5t4dP5gJCIiqsdrVqI6i
- KupZstMxstPU//azmz7ZWWxT0JzgJqZSvPYx/SATeexTYBP47YFyri4jnsty2ErS91E6H8os
- Bv6pnSn7eAq5AQ0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRH
- UE9eosYbT6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgT
- RjP+qbU63Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+R
- dhgATnWWGKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zb
- ehDda8lvhFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r
- 12+lqdsAEQEAAYkBPAQYAQgAJhYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJbOdLgAhsMBQkD
- wmcAAAoJEGgNwR1TC3ojpfcIAInwP5OlcEKokTnHCiDTz4Ony4GnHRP2fXATQZCKxmu4AJY2
- h9ifw9Nf2TjCZ6AMvC3thAN0rFDj55N9l4s1CpaDo4J+0fkrHuyNacnT206CeJV1E7NYntxU
- n+LSiRrOdywn6erjxRi9EYTVLCHcDhBEjKmFZfg4AM4GZMWX1lg0+eHbd5oL1as28WvvI/uI
- aMyV8RbyXot1r/8QLlWldU3NrTF5p7TMU2y3ZH2mf5suSKHAMtbE4jKJ8ZHFOo3GhLgjVrBW
- HE9JXO08xKkgD+w6v83+nomsEuf6C6LYrqY/tsZvyEX6zN8CtirPdPWu/VXNRYAl/lat7lSI
- 3H26qrE=
-Message-ID: <f4157a18-6c2e-9854-40a2-dd78c9bde5ea@suse.de>
-Date:   Tue, 15 Oct 2019 14:08:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
-MIME-Version: 1.0
-In-Reply-To: <20191015115439.GE32665@bombadil.infradead.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="xXjpgUbLDdBAUlDObA57HUQXDHzBsVHcH"
+        by mx1.suse.de (Postfix) with ESMTP id 0F763B398;
+        Tue, 15 Oct 2019 12:10:01 +0000 (UTC)
+From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        netdev@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Subject: [PATCH v10 1/6] nvmem: core: add nvmem_device_find
+Date:   Tue, 15 Oct 2019 14:09:46 +0200
+Message-Id: <20191015120953.2597-2-tbogendoerfer@suse.de>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20191015120953.2597-1-tbogendoerfer@suse.de>
+References: <20191015120953.2597-1-tbogendoerfer@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---xXjpgUbLDdBAUlDObA57HUQXDHzBsVHcH
-Content-Type: multipart/mixed; boundary="z434XuCeAEdMMPGCrDECpwMF4D7beqFx1";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Tim.Bird@sony.com, jani.nikula@linux.intel.com, changbin.du@gmail.com,
- corbet@lwn.net, linux-doc@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-fpga@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
- linux-crypto@vger.kernel.org, linux-kselftest@vger.kernel.org,
- intel-gfx@lists.freedesktop.org
-Message-ID: <f4157a18-6c2e-9854-40a2-dd78c9bde5ea@suse.de>
-Subject: Re: [PATCH] kernel-doc: rename the kernel-doc directive 'functions'
- to 'specific'
-References: <20191013055359.23312-1-changbin.du@gmail.com>
- <875zkrd7nq.fsf@intel.com>
- <ECADFF3FD767C149AD96A924E7EA6EAF977CAF09@USCULXMSG01.am.sony.com>
- <7e7557b5-469f-3e63-6254-53dab2d7234a@suse.de>
- <20191015115439.GE32665@bombadil.infradead.org>
-In-Reply-To: <20191015115439.GE32665@bombadil.infradead.org>
+nvmem_device_find provides a way to search for nvmem devices with
+the help of a match function simlair to bus_find_device.
 
---z434XuCeAEdMMPGCrDECpwMF4D7beqFx1
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+---
+ Documentation/driver-api/nvmem.rst |  2 ++
+ drivers/nvmem/core.c               | 61 +++++++++++++++++---------------------
+ include/linux/nvmem-consumer.h     |  9 ++++++
+ 3 files changed, 38 insertions(+), 34 deletions(-)
 
-Hi
+diff --git a/Documentation/driver-api/nvmem.rst b/Documentation/driver-api/nvmem.rst
+index d9d958d5c824..287e86819640 100644
+--- a/Documentation/driver-api/nvmem.rst
++++ b/Documentation/driver-api/nvmem.rst
+@@ -129,6 +129,8 @@ To facilitate such consumers NVMEM framework provides below apis::
+   struct nvmem_device *nvmem_device_get(struct device *dev, const char *name);
+   struct nvmem_device *devm_nvmem_device_get(struct device *dev,
+ 					   const char *name);
++  struct nvmem_device *nvmem_device_find(void *data,
++			int (*match)(struct device *dev, const void *data));
+   void nvmem_device_put(struct nvmem_device *nvmem);
+   int nvmem_device_read(struct nvmem_device *nvmem, unsigned int offset,
+ 		      size_t bytes, void *buf);
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index 057d1ff87d5d..9f1ee9c766ec 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -76,33 +76,6 @@ static struct bus_type nvmem_bus_type = {
+ 	.name		= "nvmem",
+ };
+ 
+-static struct nvmem_device *of_nvmem_find(struct device_node *nvmem_np)
+-{
+-	struct device *d;
+-
+-	if (!nvmem_np)
+-		return NULL;
+-
+-	d = bus_find_device_by_of_node(&nvmem_bus_type, nvmem_np);
+-
+-	if (!d)
+-		return NULL;
+-
+-	return to_nvmem_device(d);
+-}
+-
+-static struct nvmem_device *nvmem_find(const char *name)
+-{
+-	struct device *d;
+-
+-	d = bus_find_device_by_name(&nvmem_bus_type, NULL, name);
+-
+-	if (!d)
+-		return NULL;
+-
+-	return to_nvmem_device(d);
+-}
+-
+ static void nvmem_cell_drop(struct nvmem_cell *cell)
+ {
+ 	blocking_notifier_call_chain(&nvmem_notifier, NVMEM_CELL_REMOVE, cell);
+@@ -532,13 +505,16 @@ int devm_nvmem_unregister(struct device *dev, struct nvmem_device *nvmem)
+ }
+ EXPORT_SYMBOL(devm_nvmem_unregister);
+ 
+-static struct nvmem_device *__nvmem_device_get(struct device_node *np,
+-					       const char *nvmem_name)
++static struct nvmem_device *__nvmem_device_get(void *data,
++			int (*match)(struct device *dev, const void *data))
+ {
+ 	struct nvmem_device *nvmem = NULL;
++	struct device *dev;
+ 
+ 	mutex_lock(&nvmem_mutex);
+-	nvmem = np ? of_nvmem_find(np) : nvmem_find(nvmem_name);
++	dev = bus_find_device(&nvmem_bus_type, NULL, data, match);
++	if (dev)
++		nvmem = to_nvmem_device(dev);
+ 	mutex_unlock(&nvmem_mutex);
+ 	if (!nvmem)
+ 		return ERR_PTR(-EPROBE_DEFER);
+@@ -587,7 +563,7 @@ struct nvmem_device *of_nvmem_device_get(struct device_node *np, const char *id)
+ 	if (!nvmem_np)
+ 		return ERR_PTR(-ENOENT);
+ 
+-	return __nvmem_device_get(nvmem_np, NULL);
++	return __nvmem_device_get(nvmem_np, device_match_of_node);
+ }
+ EXPORT_SYMBOL_GPL(of_nvmem_device_get);
+ #endif
+@@ -613,10 +589,26 @@ struct nvmem_device *nvmem_device_get(struct device *dev, const char *dev_name)
+ 
+ 	}
+ 
+-	return __nvmem_device_get(NULL, dev_name);
++	return __nvmem_device_get((void *)dev_name, device_match_name);
+ }
+ EXPORT_SYMBOL_GPL(nvmem_device_get);
+ 
++/**
++ * nvmem_device_find() - Find nvmem device with matching function
++ *
++ * @data: Data to pass to match function
++ * @match: Callback function to check device
++ *
++ * Return: ERR_PTR() on error or a valid pointer to a struct nvmem_device
++ * on success.
++ */
++struct nvmem_device *nvmem_device_find(void *data,
++			int (*match)(struct device *dev, const void *data))
++{
++	return __nvmem_device_get(data, match);
++}
++EXPORT_SYMBOL_GPL(nvmem_device_find);
++
+ static int devm_nvmem_device_match(struct device *dev, void *res, void *data)
+ {
+ 	struct nvmem_device **nvmem = res;
+@@ -710,7 +702,8 @@ nvmem_cell_get_from_lookup(struct device *dev, const char *con_id)
+ 		if ((strcmp(lookup->dev_id, dev_id) == 0) &&
+ 		    (strcmp(lookup->con_id, con_id) == 0)) {
+ 			/* This is the right entry. */
+-			nvmem = __nvmem_device_get(NULL, lookup->nvmem_name);
++			nvmem = __nvmem_device_get((void *)lookup->nvmem_name,
++						   device_match_name);
+ 			if (IS_ERR(nvmem)) {
+ 				/* Provider may not be registered yet. */
+ 				cell = ERR_CAST(nvmem);
+@@ -780,7 +773,7 @@ struct nvmem_cell *of_nvmem_cell_get(struct device_node *np, const char *id)
+ 	if (!nvmem_np)
+ 		return ERR_PTR(-EINVAL);
+ 
+-	nvmem = __nvmem_device_get(nvmem_np, NULL);
++	nvmem = __nvmem_device_get(nvmem_np, device_match_of_node);
+ 	of_node_put(nvmem_np);
+ 	if (IS_ERR(nvmem))
+ 		return ERR_CAST(nvmem);
+diff --git a/include/linux/nvmem-consumer.h b/include/linux/nvmem-consumer.h
+index 8f8be5b00060..02dc4aa992b2 100644
+--- a/include/linux/nvmem-consumer.h
++++ b/include/linux/nvmem-consumer.h
+@@ -89,6 +89,9 @@ void nvmem_del_cell_lookups(struct nvmem_cell_lookup *entries,
+ int nvmem_register_notifier(struct notifier_block *nb);
+ int nvmem_unregister_notifier(struct notifier_block *nb);
+ 
++struct nvmem_device *nvmem_device_find(void *data,
++			int (*match)(struct device *dev, const void *data));
++
+ #else
+ 
+ static inline struct nvmem_cell *nvmem_cell_get(struct device *dev,
+@@ -204,6 +207,12 @@ static inline int nvmem_unregister_notifier(struct notifier_block *nb)
+ 	return -EOPNOTSUPP;
+ }
+ 
++static inline struct nvmem_device *nvmem_device_find(void *data,
++			int (*match)(struct device *dev, const void *data))
++{
++	return NULL;
++}
++
+ #endif /* CONFIG_NVMEM */
+ 
+ #if IS_ENABLED(CONFIG_NVMEM) && IS_ENABLED(CONFIG_OF)
+-- 
+2.16.4
 
-Am 15.10.19 um 13:54 schrieb Matthew Wilcox:
-> On Tue, Oct 15, 2019 at 11:25:53AM +0200, Thomas Zimmermann wrote:
->>> My preference would be to use 'symbols'.  I tried to come up with som=
-ething
->>> but 'symbols' is better than anything I came up with.
->>
->> Maybe 'interfaces' or 'artifacts'. The term 'symbols' is just as
->> imprecise as 'functions'.
->=20
-> I suggested 'identifier' because that's the term used in the C spec (6.=
-2.1):
->=20
-> : An identifier can denote an object; a function; a tag or a member
-> : of a structure, union, or enumeration; a typedef name; a label name;
-> : a macro name; or a macro parameter.
->=20
-> We don't allow documenting all those things separately, but it does cov=
-er
-> all the things we do allow to be individually documented.
->=20
-
-Yeah, makes sense.
-
-Best regards
-Thomas
-
---=20
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-(HRB 36809, AG N=C3=BCrnberg)
-Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
-
-
---z434XuCeAEdMMPGCrDECpwMF4D7beqFx1--
-
---xXjpgUbLDdBAUlDObA57HUQXDHzBsVHcH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl2ltqUACgkQaA3BHVML
-eiO7bAf8DqpVa41x8h+LyR771/7XD6R9SM1oSqopIn1EaGndzepL2obOpvv7TM8J
-xdFUMac1FMD7pBfjtTfs6Ax/+KSIBGMJQxiiiGhsZ2Z9RXIiNMJpVV0pFwkEBCic
-Xwxmem2Hn+LhB98tlmtb1rUid5ZEWIqxJn0HEfOht/Y7iu+RZUfVre1GHP2W5OG+
-KSJSTG5ZwTIBzXvMS++NOh0kJWyzTiKY7Gaxl0ck76UKp34bdsTqFNVlOqNgfdiW
-tEmx0i6R/9ZZp3HGgsbN7waSqxjcYWI4M8sPApl7aPDDpTZC2ydWX1J5qzmp9/LF
-uRn+WrOCEMHCMSPfYsv/311cYx9oLw==
-=fbgk
------END PGP SIGNATURE-----
-
---xXjpgUbLDdBAUlDObA57HUQXDHzBsVHcH--
