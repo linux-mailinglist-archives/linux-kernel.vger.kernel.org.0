@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AD48D7463
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 13:12:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 911C1D7481
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 13:13:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731919AbfJOLMl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 07:12:41 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50692 "EHLO
+        id S1732029AbfJOLNL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 07:13:11 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50506 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731866AbfJOLMf (ORCPT
+        with ESMTP id S1731790AbfJOLMa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 07:12:35 -0400
+        Tue, 15 Oct 2019 07:12:30 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=XCG6nXMGLYQhVpZyzuReMuwYH4A65umGWgOZuO0RXAo=; b=ffme7iF5Ra6w
-        6h7DVHdA2T9b4sS225fPXOlD4FCRb0nxCGP+SCFCkfVTukpRnWCdaHAwOpvxY+r74L8zTbdt15Qlz
-        E96ZCiw9zJlbabXCFJlzIafub6qVaakYc8BQYC71qO+w33ROIZvQBaYCXu88D/ziYmHMaqYhxvO1r
-        TmH40=;
+        List-Archive; bh=jhntVV8cMh3g2DE+tP5NtnjXltLwNEBM5VGM4l2YeWo=; b=BUeaAr6FBBFX
+        KV8hBtInuEG/LI03TciqxvDgqD4spKMnmZLVKWKWQpHWxeOf0NEbPSkvwn21Q9VMm8v7s4mvtxcYc
+        ELM4ZB4hsj5a8LA8VG2efNIARtxfWaQ3gCn+8Y5aW0zGTYrmX6ZzjOu6uHosiQ4hwrg2hmA5bmFhV
+        Mg5yg=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iKKka-00021J-Hd; Tue, 15 Oct 2019 11:12:24 +0000
+        id 1iKKkb-00021c-BH; Tue, 15 Oct 2019 11:12:25 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 0F45627419E4; Tue, 15 Oct 2019 12:12:23 +0100 (BST)
+        id A83BD27419E4; Tue, 15 Oct 2019 12:12:24 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
 Cc:     baolin.wang@linaro.org, bcm-kernel-feedback-list@broadcom.com,
@@ -38,11 +38,11 @@ Cc:     baolin.wang@linaro.org, bcm-kernel-feedback-list@broadcom.com,
         linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
         Mark Brown <broonie@kernel.org>, orsonzhai@gmail.com,
         zhang.lyra@gmail.com
-Subject: Applied "spi: spi-loopback-test: use new `delay` field" to the spi tree
-In-Reply-To: <20190926105147.7839-13-alexandru.ardelean@analog.com>
+Subject: Applied "spi: tegra114: use `spi_transfer_delay_exec` helper" to the spi tree
+In-Reply-To: <20190926105147.7839-11-alexandru.ardelean@analog.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191015111224.0F45627419E4@ypsilon.sirena.org.uk>
-Date:   Tue, 15 Oct 2019 12:12:23 +0100 (BST)
+Message-Id: <20191015111224.A83BD27419E4@ypsilon.sirena.org.uk>
+Date:   Tue, 15 Oct 2019 12:12:24 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -50,7 +50,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: spi-loopback-test: use new `delay` field
+   spi: tegra114: use `spi_transfer_delay_exec` helper
 
 has been applied to the spi tree at
 
@@ -75,56 +75,76 @@ to this mail.
 Thanks,
 Mark
 
-From 867bd8868bbd16e17bbd26c5959abc3118902218 Mon Sep 17 00:00:00 2001
+From cd13152bce34cd71f560a7c4a8f66096f2445984 Mon Sep 17 00:00:00 2001
 From: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Date: Thu, 26 Sep 2019 13:51:40 +0300
-Subject: [PATCH] spi: spi-loopback-test: use new `delay` field
+Date: Thu, 26 Sep 2019 13:51:38 +0300
+Subject: [PATCH] spi: tegra114: use `spi_transfer_delay_exec` helper
 
-This change replaces the use of the `delay_usecs` field with the new
-`delay` field. The code/test still uses micro-seconds, but they are now
-configured and used via the `struct spi_delay` format of the `delay` field.
+The tegra114 driver has a weird/separate `tegra_spi_transfer_delay()`
+function that does 2 delays: one mdelay() and one udelay().
+
+This was introduced via commit f4fade12d506e14867a2b0a5e2f7aaf227297d8b
+("spi/tegra114: Correct support for cs_change").
+
+There doesn't seem to be a mention in that commit message to suggest a
+specific need/use-case for having the 2 delay calls.
+For the most part, udelay() should be sufficient.
+
+This change replaces it with the new `spi_transfer_delay_exec()`, which
+should do the same thing.
 
 Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Link: https://lore.kernel.org/r/20190926105147.7839-13-alexandru.ardelean@analog.com
+Link: https://lore.kernel.org/r/20190926105147.7839-11-alexandru.ardelean@analog.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-loopback-test.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/spi/spi-tegra114.c | 17 +++--------------
+ 1 file changed, 3 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/spi/spi-loopback-test.c b/drivers/spi/spi-loopback-test.c
-index 6f18d4952767..b6d79cd156fb 100644
---- a/drivers/spi/spi-loopback-test.c
-+++ b/drivers/spi/spi-loopback-test.c
-@@ -298,12 +298,18 @@ static struct spi_test spi_tests[] = {
- 			{
- 				.tx_buf = TX(0),
- 				.rx_buf = RX(0),
--				.delay_usecs = 1000,
-+				.delay = {
-+					.value = 1000,
-+					.unit = SPI_DELAY_UNIT_USECS,
-+				},
- 			},
- 			{
- 				.tx_buf = TX(0),
- 				.rx_buf = RX(0),
--				.delay_usecs = 1000,
-+				.delay = {
-+					.value = 1000,
-+					.unit = SPI_DELAY_UNIT_USECS,
-+				},
- 			},
- 		},
- 	},
-@@ -537,7 +543,7 @@ static int spi_test_check_elapsed_time(struct spi_device *spi,
- 		unsigned long long nbits = (unsigned long long)BITS_PER_BYTE *
- 					   xfer->len;
+diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+index 39374c2edcf3..8133dc49d34f 100644
+--- a/drivers/spi/spi-tegra114.c
++++ b/drivers/spi/spi-tegra114.c
+@@ -984,17 +984,6 @@ static int tegra_spi_setup(struct spi_device *spi)
+ 	return 0;
+ }
  
--		delay_usecs += xfer->delay_usecs;
-+		delay_usecs += xfer->delay.value;
- 		if (!xfer->speed_hz)
- 			continue;
- 		estimated_time += div_u64(nbits * NSEC_PER_SEC, xfer->speed_hz);
+-static void tegra_spi_transfer_delay(int delay)
+-{
+-	if (!delay)
+-		return;
+-
+-	if (delay >= 1000)
+-		mdelay(delay / 1000);
+-
+-	udelay(delay % 1000);
+-}
+-
+ static void tegra_spi_transfer_end(struct spi_device *spi)
+ {
+ 	struct tegra_spi_data *tspi = spi_master_get_devdata(spi->master);
+@@ -1098,7 +1087,7 @@ static int tegra_spi_transfer_one_message(struct spi_master *master,
+ complete_xfer:
+ 		if (ret < 0 || skip) {
+ 			tegra_spi_transfer_end(spi);
+-			tegra_spi_transfer_delay(xfer->delay_usecs);
++			spi_transfer_delay_exec(xfer);
+ 			goto exit;
+ 		} else if (list_is_last(&xfer->transfer_list,
+ 					&msg->transfers)) {
+@@ -1106,11 +1095,11 @@ static int tegra_spi_transfer_one_message(struct spi_master *master,
+ 				tspi->cs_control = spi;
+ 			else {
+ 				tegra_spi_transfer_end(spi);
+-				tegra_spi_transfer_delay(xfer->delay_usecs);
++				spi_transfer_delay_exec(xfer);
+ 			}
+ 		} else if (xfer->cs_change) {
+ 			tegra_spi_transfer_end(spi);
+-			tegra_spi_transfer_delay(xfer->delay_usecs);
++			spi_transfer_delay_exec(xfer);
+ 		}
+ 
+ 	}
 -- 
 2.20.1
 
