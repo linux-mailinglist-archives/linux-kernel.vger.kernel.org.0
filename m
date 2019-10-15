@@ -2,97 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5985DD7563
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 13:46:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 188F4D756E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 13:46:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729150AbfJOLqP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 07:46:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42162 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726208AbfJOLqP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 07:46:15 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 41B27AD79;
-        Tue, 15 Oct 2019 11:46:12 +0000 (UTC)
-Date:   Tue, 15 Oct 2019 13:46:11 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Steven Price <Steven.Price@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Matthew Wilcox <willy@infradead.org>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        James Hogan <jhogan@kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        linux-snps-arc@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V6 2/2] mm/debug: Add tests validating architecture page
- table helpers
-Message-ID: <20191015114611.GC317@dhcp22.suse.cz>
-References: <1571131302-32290-1-git-send-email-anshuman.khandual@arm.com>
- <1571131302-32290-3-git-send-email-anshuman.khandual@arm.com>
+        id S1729378AbfJOLq5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 07:46:57 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:40004 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726208AbfJOLq4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 07:46:56 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9FBhkSG128247;
+        Tue, 15 Oct 2019 11:46:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=ioUB4OQf3/crC1d3UdNJzo0k+yaINfoF6RwTYIRdMeQ=;
+ b=QvK8ywLH5JaiDsQE3ecSFMabz320gTsm4Sm0RdNVx5DmU2HrT9HxLW1ccMsVu4ecceMy
+ e4d94b9IXtuR/3fbUySwJCXRQhk3NpIrSTLNbd55Mc2W6UpGD3apmDqf8nkRlqsb4oK+
+ RqEPPKNsGzueaHwItZGFz3iFnxJ1Idgro778uwnwqFQl00s0fNGP4SxXiEVynXHgNoAk
+ FYsd0yn4QHppJUKQtZ3MLH4oXOrMTe6/QocMyXjR4CUaIVtX1ZBbX3bam6gBZ/lhwox2
+ pAvfFpqH823ddIWa3ksadguwRcdQDmw4okk3avH7ukgRhFLadPpSTYOA9de039qzoCBA ow== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2vk7fr73e0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Oct 2019 11:46:30 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9FBhIWM154785;
+        Tue, 15 Oct 2019 11:46:30 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2vn7181c5u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Oct 2019 11:46:30 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9FBkSab025252;
+        Tue, 15 Oct 2019 11:46:28 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 15 Oct 2019 11:46:27 +0000
+Date:   Tue, 15 Oct 2019 14:46:18 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     gregkh@linuxfoundation.org, jarias.linux@gmail.com,
+        julia.lawall@lip6.fr, colin.king@canonical.com,
+        hdegoede@redhat.com, hariprasad.kelam@gmail.com,
+        nachukannan@gmail.com, pakki001@umn.edu, hardiksingh.k@gmail.com,
+        nishkadg.linux@gmail.com, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] staging: rtl8723bs: remove unnecessary null check
+Message-ID: <20191015114618.GG4774@kadam>
+References: <20191015114053.23496-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1571131302-32290-3-git-send-email-anshuman.khandual@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191015114053.23496-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9410 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910150110
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9410 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910150110
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 15-10-19 14:51:42, Anshuman Khandual wrote:
-> This adds tests which will validate architecture page table helpers and
-> other accessors in their compliance with expected generic MM semantics.
-> This will help various architectures in validating changes to existing
-> page table helpers or addition of new ones.
+On Tue, Oct 15, 2019 at 07:40:53PM +0800, YueHaibing wrote:
+> Null check before kfree is redundant, so remove it.
+> This is detected by coccinelle.
 > 
-> Test page table and memory pages creating it's entries at various level are
-> all allocated from system memory with required size and alignments. But if
-> memory pages with required size and alignment could not be allocated, then
-> all depending individual tests are just skipped afterwards. This test gets
-> called right after init_mm_internals() required for alloc_contig_range() to
-> work correctly.
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/staging/rtl8723bs/core/rtw_xmit.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> This gets build and run when CONFIG_DEBUG_VM_PGTABLE is selected along with
-> CONFIG_VM_DEBUG. Architectures willing to subscribe this test also need to
-> select CONFIG_ARCH_HAS_DEBUG_VM_PGTABLE which for now is limited to x86 and
-> arm64. Going forward, other architectures too can enable this after fixing
-> build or runtime problems (if any) with their page table helpers.
+> diff --git a/drivers/staging/rtl8723bs/core/rtw_xmit.c b/drivers/staging/rtl8723bs/core/rtw_xmit.c
+> index 7011c2a..4597f4f 100644
+> --- a/drivers/staging/rtl8723bs/core/rtw_xmit.c
+> +++ b/drivers/staging/rtl8723bs/core/rtw_xmit.c
+> @@ -2210,8 +2210,7 @@ void rtw_free_hwxmits(struct adapter *padapter)
+>  	struct xmit_priv *pxmitpriv = &padapter->xmitpriv;
+>  
+>  	hwxmits = pxmitpriv->hwxmits;
+> -	if (hwxmits)
+> -		kfree(hwxmits);
+> +	kfree(hwxmits);
 
-A highlevel description of tests and what they are testing for would be
-really appreciated. Who wants to run these tests and why/when? What kind
-of bugs would get detected? In short why do we really need/want this
-code in the tree?
+Just do:
 
--- 
-Michal Hocko
-SUSE Labs
+	kfree(pxmitpriv->hwxmits);
+
+regards,
+dan carpenter
+
