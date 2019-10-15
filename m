@@ -2,29 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D211FD8014
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:21:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AF73D8013
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:21:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389730AbfJOTVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 15:21:24 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:45623 "EHLO
+        id S2389714AbfJOTVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 15:21:14 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:45632 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389292AbfJOTSh (ORCPT
+        with ESMTP id S2389343AbfJOTSi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 15:18:37 -0400
+        Tue, 15 Oct 2019 15:18:38 -0400
 Received: from localhost ([127.0.0.1] helo=localhost.localdomain)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1iKSL5-00067i-Ct; Tue, 15 Oct 2019 21:18:35 +0200
+        id 1iKSL5-00067i-M3; Tue, 15 Oct 2019 21:18:35 +0200
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
-Cc:     tglx@linutronix.de, Greg Ungerer <gerg@linux-m68k.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-m68k@lists.linux-m68k.org,
+Cc:     tglx@linutronix.de, Michal Simek <monstr@monstr.eu>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 10/34] m68k/coldfire: Use CONFIG_PREEMPTION
-Date:   Tue, 15 Oct 2019 21:17:57 +0200
-Message-Id: <20191015191821.11479-11-bigeasy@linutronix.de>
+Subject: [PATCH 11/34] microblaze: Use CONFIG_PREEMPTION
+Date:   Tue, 15 Oct 2019 21:17:58 +0200
+Message-Id: <20191015191821.11479-12-bigeasy@linutronix.de>
 In-Reply-To: <20191015191821.11479-1-bigeasy@linutronix.de>
 References: <20191015191821.11479-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
@@ -42,28 +40,26 @@ depends on CONFIG_PREEMPT.
 
 Switch the entry code over to use CONFIG_PREEMPTION.
 
-Cc: Greg Ungerer <gerg@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-m68k@lists.linux-m68k.org
+Cc: Michal Simek <monstr@monstr.eu>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- arch/m68k/coldfire/entry.S | 2 +-
+ arch/microblaze/kernel/entry.S | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/m68k/coldfire/entry.S b/arch/m68k/coldfire/entry.S
-index 52d312d5b4d4f..d43a02795a4a4 100644
---- a/arch/m68k/coldfire/entry.S
-+++ b/arch/m68k/coldfire/entry.S
-@@ -108,7 +108,7 @@ ENTRY(system_call)
- 	btst	#5,%sp@(PT_OFF_SR)	/* check if returning to kernel */
- 	jeq	Luser_return		/* if so, skip resched, signals */
-=20
+diff --git a/arch/microblaze/kernel/entry.S b/arch/microblaze/kernel/entry.S
+index 4e1b567becd6a..253f2b702b4c0 100644
+--- a/arch/microblaze/kernel/entry.S
++++ b/arch/microblaze/kernel/entry.S
+@@ -728,7 +728,7 @@ irq_call:rtbd	r0, do_IRQ;
+ 	bri	6f;
+ /* MS: Return to kernel state. */
+ 2:
 -#ifdef CONFIG_PREEMPT
 +#ifdef CONFIG_PREEMPTION
- 	movel	%sp,%d1			/* get thread_info pointer */
- 	andl	#-THREAD_SIZE,%d1	/* at base of kernel stack */
- 	movel	%d1,%a0
+ 	lwi	r11, CURRENT_TASK, TS_THREAD_INFO;
+ 	/* MS: get preempt_count from thread info */
+ 	lwi	r5, r11, TI_PREEMPT_COUNT;
 --=20
 2.23.0
 
