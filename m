@@ -2,196 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9F81D704A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 09:39:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7457D704C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 09:39:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727908AbfJOHjZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 03:39:25 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36567 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbfJOHjZ (ORCPT
+        id S1728034AbfJOHjv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 03:39:51 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:36884 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725890AbfJOHjt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 03:39:25 -0400
-Received: by mail-pg1-f194.google.com with SMTP id 23so11611923pgk.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 00:39:24 -0700 (PDT)
+        Tue, 15 Oct 2019 03:39:49 -0400
+Received: by mail-lf1-f68.google.com with SMTP id w67so13682579lff.4
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 00:39:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=jUy71pOBMBAd7moEUuCOQtrAzBz9OsmDzA6aIC7g4xI=;
-        b=MnzmnsPJN5Ur6vmQ34vJWjh1hqmYtxkkC49XRU8erRDCRrHeBMztHR7hmz0Q91co3I
-         PGL3Ht5ZlkZ4O/M2LoiQP5/SNIXY4NFU9Zax6IFq2VRfOrj1/cLj0WV5ZW1EapVRqxge
-         ebSCo3FuOVJcwKxKrcdlKu2hAnlHzxtkT65mjwKtAS0Uox49sKAYVb12hLJx84zJoQDi
-         d8fqr0h+ncV1l5FLE0BRJSnMG1JjZHt5j7EuG9SGgH+N5+ioxa8SeBScy5bKM0KSoi16
-         x2RUpw30fmwmqnWbp24CUdRVpAkJ0q3XywICUa2f1GQrP96Hg9AreI9s7k6CnJ3dyPRs
-         p7tA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=uCnJe4OS4PmiAnx5U5+vuST11DJd/WAfBYWSy4Jhz0g=;
+        b=hRzO3jLACHZPBKE26DyiG4/GPKih57vYOa/WKvCWuCYx8poS7TAt+aUG/e1UVw0LPt
+         5t7/+el+H1mhzc4Z+gAtCwskaROvYTom1na2uKJRJGpyv0inrxTCKal1TcDQpUErHyxG
+         OM7lERaagShNYGEd6k8fNhviXFjIYFCQtrnU/aMbFATyk4ssAQG1uux5fY4ErvuGJalS
+         EM0+4hz5spPOdLq57r0DvFv8zRphgOACIP/bOYm0T5XOojMA1lafAQaWMJOMyLZNXIda
+         M3rDLjkWRrUbvxq8vcmu0z8UehCAtGN71yg83MXEtPFp2kvDsSIMQVZiG20VvYUj8NH8
+         k4nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=jUy71pOBMBAd7moEUuCOQtrAzBz9OsmDzA6aIC7g4xI=;
-        b=hkkIDmXXmmClqd9UKA3sDWMgMTIIKowx5wmILyUzdmGYu5RNGpcL0qgYTcCjDnpM2W
-         3MV9Je+I4US6S87bvpPLu0MH39X8Y0Tx8eLizBI4DcqGLbU3odrC3NQtTKqp9cOwjIy5
-         BXVQUGKOGZLSU43t7aotlJ1OxPm3zgsMwz0kC8TN+5T6UAh63qvhLVTq4wgDg2s0t5q5
-         lDQVSpSAV9sKK4EmwT9Hsz2mI0/1oIDXbBpwbFjkClGmaFE71X6MkdpBzmSd8MYv2jHy
-         gEmWayR8LOtWn6iLgyMwcWgnCwSlFVpwg/uZfHXIFkyep7gd6NgBbVh5IRrl8gvHUwQ/
-         d/nA==
-X-Gm-Message-State: APjAAAVbGRj/aPI43aeKeztac+N8m0YSc2Xi373PF3E/InDCoXQSxOVG
-        q00ufD3UDL5I38RrANBzIyMVIw==
-X-Google-Smtp-Source: APXvYqyZ2pN6ZvKZUMGGHYpu0Gzhijm041GHn1uNhUwQydTy8yUXrWrHwaduCBndmTgRUE4FPW6/Zg==
-X-Received: by 2002:a65:614e:: with SMTP id o14mr37100365pgv.237.1571125164346;
-        Tue, 15 Oct 2019 00:39:24 -0700 (PDT)
-Received: from ?IPv6:240e:362:476:1400:a84c:1220:27ed:3e8a? ([240e:362:476:1400:a84c:1220:27ed:3e8a])
-        by smtp.gmail.com with ESMTPSA id k8sm14732337pgm.14.2019.10.15.00.39.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Oct 2019 00:39:23 -0700 (PDT)
-Subject: Re: [PATCH v5 2/3] uacce: add uacce driver
-To:     Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc:     reg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, grant.likely@arm.com,
-        jean-philippe <jean-philippe@linaro.org>,
-        ilias.apalodimas@linaro.org, francois.ozog@linaro.org,
-        kenneth-lee-2012@foxmail.com, Wangzhou <wangzhou1@hisilicon.com>,
-        linux-accelerators@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Kenneth Lee <liguozhu@hisilicon.com>,
-        Zaibo Xu <xuzaibo@huawei.com>
-References: <1571035735-31882-1-git-send-email-zhangfei.gao@linaro.org>
- <1571035735-31882-3-git-send-email-zhangfei.gao@linaro.org>
- <20191014113231.00002967@huawei.com>
-From:   zhangfei <zhangfei.gao@linaro.org>
-Message-ID: <e71edf57-8449-e8d1-01ba-aed3ecf379e1@linaro.org>
-Date:   Tue, 15 Oct 2019 15:39:00 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=uCnJe4OS4PmiAnx5U5+vuST11DJd/WAfBYWSy4Jhz0g=;
+        b=lwxpe88oREQ6OIYNFjniYIGe3tUYIKxYeGbIwcKvmg3LQO03HGXAU4yJubFxvXdI9J
+         bkWgpdPsQBz1h5BeJEmXIISfdPuNlmTfO23HRvBH7E42C1/MtbzQdJ91yFCKWoWUaam0
+         c66dQqnBQG2SWgA6JsXrJEIl3jIiYBpZfsdjEacMfXyWyozFsDNARloRY4lC0vavCVpv
+         rXzs1ys9gK0F4ENfn2NY/mDLyJ1psiLqIJjQlhVQxOEKfW1VXSgW2Mps21Ht+YT7Eyyu
+         QoeVaz2w3bB/YDc5SLuVkXBBQCh9FioAfvSqedF+z77z20aA2wcRjMoVOor89Y+p+AdK
+         25Sw==
+X-Gm-Message-State: APjAAAU1KEksKNp/R7BGRaD1TLazUhDYRC11ZxEHyRLm5YvZz3n51RwZ
+        mSuJcv/LOcmKDr1mFfdz4ldTEO0gGUlLB/nWuy8=
+X-Google-Smtp-Source: APXvYqwptjBMTPoWRGTAvwqu3e+6NI/iyXjZfQ0T9HEOlL7LlYf+55z1dhHXaNodC8Mp3q7d9Lz9Lyhuhd5Qda0uWpc=
+X-Received: by 2002:ac2:48af:: with SMTP id u15mr19951848lfg.185.1571125187128;
+ Tue, 15 Oct 2019 00:39:47 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191014113231.00002967@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20191010230414.647c29f34665ca26103879c4@gmail.com> <20191014164110.GA58307@google.com>
+In-Reply-To: <20191014164110.GA58307@google.com>
+From:   Vitaly Wool <vitalywool@gmail.com>
+Date:   Tue, 15 Oct 2019 09:39:35 +0200
+Message-ID: <CAMJBoFOqG8GYby-MLCgiYgsfntNP2hiX25WibxvUjpkLHvwsUQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Allow ZRAM to use any zpool-compatible backend
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Streetman <ddstreet@ieee.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Shakeel Butt <shakeelb@google.com>,
+        Henry Burns <henrywolfeburns@gmail.com>,
+        "Theodore Ts'o" <tytso@thunk.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Jonathan
+Hi Minchan,
 
-On 2019/10/14 下午6:32, Jonathan Cameron wrote:
-> On Mon, 14 Oct 2019 14:48:54 +0800
-> Zhangfei Gao <zhangfei.gao@linaro.org> wrote:
+On Mon, Oct 14, 2019 at 6:41 PM Minchan Kim <minchan@kernel.org> wrote:
 >
->> From: Kenneth Lee <liguozhu@hisilicon.com>
->>
->> Uacce (Unified/User-space-access-intended Accelerator Framework) targets to
->> provide Shared Virtual Addressing (SVA) between accelerators and processes.
->> So accelerator can access any data structure of the main cpu.
->> This differs from the data sharing between cpu and io device, which share
->> data content rather than address.
->> Since unified address, hardware and user space of process can share the
->> same virtual address in the communication.
->>
->> Uacce create a chrdev for every registration, the queue is allocated to
->> the process when the chrdev is opened. Then the process can access the
->> hardware resource by interact with the queue file. By mmap the queue
->> file space to user space, the process can directly put requests to the
->> hardware without syscall to the kernel space.
->>
->> Signed-off-by: Kenneth Lee <liguozhu@hisilicon.com>
->> Signed-off-by: Zaibo Xu <xuzaibo@huawei.com>
->> Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
->> Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
-> Hi,
+> On Thu, Oct 10, 2019 at 11:04:14PM +0300, Vitaly Wool wrote:
+> > The coming patchset is a new take on the old issue: ZRAM can currently =
+be used only with zsmalloc even though this may not be the optimal combinat=
+ion for some configurations. The previous (unsuccessful) attempt dates back=
+ to 2015 [1] and is notable for the heated discussions it has caused.
+> >
+> > The patchset in [1] had basically the only goal of enabling ZRAM/zbud c=
+ombo which had a very narrow use case. Things have changed substantially si=
+nce then, and now, with z3fold used widely as a zswap backend, I, as the z3=
+fold maintainer, am getting requests to re-interate on making it possible t=
+o use ZRAM with any zpool-compatible backend, first of all z3fold.
+> >
+> > The preliminary results for this work have been delivered at Linux Plum=
+bers this year [2]. The talk at LPC, though having attracted limited intere=
+st, ended in a consensus to continue the work and pursue the goal of decoup=
+ling ZRAM from zsmalloc.
+> >
+> > The current patchset has been stress tested on arm64 and x86_64 devices=
+, including the Dell laptop I'm writing this message on now, not to mention=
+ several QEmu confugirations.
+> >
+> > [1] https://lkml.org/lkml/2015/9/14/356
+> > [2] https://linuxplumbersconf.org/event/4/contributions/551/
 >
-> Some superficial comments from me.
-Thanks for the suggestion.
->> +/*
->> + * While user space releases a queue, all the relatives on the queue
->> + * should be released immediately by this putting.
-> This one needs rewording but I'm not quite sure what
-> relatives are in this case.
->   
->> + */
->> +static long uacce_put_queue(struct uacce_queue *q)
->> +{
->> +	struct uacce_device *uacce = q->uacce;
->> +
->> +	mutex_lock(&uacce_mutex);
->> +
->> +	if ((q->state == UACCE_Q_STARTED) && uacce->ops->stop_queue)
->> +		uacce->ops->stop_queue(q);
->> +
->> +	if ((q->state == UACCE_Q_INIT || q->state == UACCE_Q_STARTED) &&
->> +	     uacce->ops->put_queue)
->> +		uacce->ops->put_queue(q);
->> +
->> +	q->state = UACCE_Q_ZOMBIE;
->> +	mutex_unlock(&uacce_mutex);
->> +
->> +	return 0;
->> +}
->> +
-> ..
->
->> +
->> +static ssize_t qfrs_size_show(struct device *dev,
->> +				struct device_attribute *attr, char *buf)
->> +{
->> +	struct uacce_device *uacce = to_uacce_device(dev);
->> +	unsigned long size;
->> +	int i, ret;
->> +
->> +	for (i = 0, ret = 0; i < UACCE_QFRT_MAX; i++) {
->> +		size = uacce->qf_pg_size[i] << PAGE_SHIFT;
->> +		if (i == UACCE_QFRT_SS)
->> +			break;
->> +		ret += sprintf(buf + ret, "%lu\t", size);
->> +	}
->> +	ret += sprintf(buf + ret, "%lu\n", size);
->> +
->> +	return ret;
->> +}
-> This may break the sysfs rule of one thing per file.  If you have
-> multiple regions, they should probably each have their own file
-> to give their size.
-Is the rule must be applied?
+> Please describe what's the usecase in real world, what's the benefit zsma=
+lloc
+> cannot fulfill by desgin and how it's significant.
 
-Documentation/filesystems/sysfs.txt
-Attributes should be ASCII text files, preferably with only one value
-per file. It is noted that it may not be efficient to contain only one
-value per file, so it is socially acceptable to express an array of
-values of the same type.
+I'm not entirely sure how to interpret the phrase "the benefit
+zsmalloc cannot fulfill by design" but let me explain.
+First, there are multi multi core systems where z3fold can provide
+better throughput.
+Then, there are low end systems with hardware
+compression/decompression support which don't need zsmalloc
+sophistication and would rather use zbud with ZRAM because the
+compression ratio is relatively low.
+Finally, there are MMU-less systems targeting IOT and still running
+Linux and having a compressed RAM disk is something that would help
+these systems operate in a better way (for the benefit of the overall
+Linux ecosystem, if you care about that, of course; well, some people
+do).
 
-We may have efficiency here.
-For  extensibility in future,  UACCE_QFRT_MAX=16, do we export all of them?
-In sva case only 2 region is used, and 4  at most if sva is not supported.
-Do you think it is more efficient to put in one file?
+> I really don't want to make fragmentaion of allocator so we should really=
+ see
+> how zsmalloc cannot achieve things if you are claiming.
 
->> +
->> +/**
->> + * uacce_unregister - unregisters a uacce
->> + * @uacce: the accelerator to unregister
->> + *
->> + * Unregister an accelerator that wat previously successully registered with
-> wat -> was
-> successully -> successfully
->
-> ...
->
->> +/**
->> + * struct uacce_queue
->> + * @uacce: pointer to uacce
->> + * @priv: private pointer
->> + * @wait: wait queue head
->> + * @pasid: pasid of the queue
->> + * @handle: iommu_sva handle return from iommu_sva_bind_device
->> + * @list: share list for qfr->qs
->> + * @mm: current->mm
->> + * @qfrs: pointer of qfr regions
-> Missing state.  Make sure to run
-> ./scripts/kernel-doc FILENAME > /dev/null and
-> fix any errors that show up.
-Good tool, will use it to check.
+I have to say that this point is completely bogus. We do not create
+fragmentation by using a better defined and standardized API. In fact,
+we aim to increase the number of use cases and test coverage for ZRAM.
+With that said, I have hard time seeing how zsmalloc can operate on a
+MMU-less system.
 
+> Please tell us how to test it so that we could investigate what's the roo=
+t
+> cause.
 
-Thanks.
+I gather you haven't read neither the LPC documents nor my
+conversation with Sergey re: these changes, because if you did you
+wouldn't have had the type of questions you're asking. Please also see
+above.
 
+I feel a bit awkward explaining basic things to you but there may not
+be other "root cause" than applicability issue. zsmalloc is a great
+allocator but it's not universal and has its limitations. The
+(potential) scope for ZRAM is wider than zsmalloc can provide. We are
+*helping* _you_ to extend this scope "in real world" (c) and you come
+up with bogus objections. Why?
+
+Best regards,
+   Vitaly
