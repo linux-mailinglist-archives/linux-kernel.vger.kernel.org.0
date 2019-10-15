@@ -2,330 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 446DAD7E28
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 19:54:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 104F1D7E35
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 19:55:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731430AbfJORy3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 13:54:29 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:57490 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726192AbfJORy3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 13:54:29 -0400
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D5C13324;
-        Tue, 15 Oct 2019 19:54:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1571162066;
-        bh=AohTNOIEwTNYMgzz86ZFKd5AE2bQ0nD5VETR3pM8Cfw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=d/idhbsadmYlwv/lKU7+VfCrQAKIT487BUQw47A+CXYLGRpuClPzNlROXw4SIP1QH
-         jxzrp3gf6tvFD2YFWSqKvXgqDJsqWZ4GaCPash6Qt3QAmyy/aklEyhhrK3gKDQd2b8
-         X0TXLkH2QP34FKadoLOMlCzGyHkCfNNEKQMkViYI=
-Date:   Tue, 15 Oct 2019 20:54:22 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
-        horms@verge.net.au, uli+renesas@fpond.eu,
-        VenkataRajesh.Kalakodima@in.bosch.com, airlied@linux.ie,
-        daniel@ffwll.ch, koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
-        Harsha.ManjulaMallikarjun@in.bosch.com, ezequiel@collabora.com,
-        seanpaul@chromium.org, linux-renesas-soc@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 5/8] drm: rcar-du: crtc: Control CMM operations
-Message-ID: <20191015175422.GN4875@pendragon.ideasonboard.com>
-References: <20191015104621.62514-1-jacopo+renesas@jmondi.org>
- <20191015104621.62514-6-jacopo+renesas@jmondi.org>
- <42ae76b8-c65f-8c5e-e83a-fc6a422d2624@ideasonboard.com>
- <20191015133752.oyb3p6iyr3ekjxic@uno.localdomain>
+        id S2388893AbfJORzj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 13:55:39 -0400
+Received: from mout.web.de ([212.227.15.14]:44223 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731694AbfJORzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 13:55:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1571162121;
+        bh=TZIhK7EPJZ3JVj0kpDPDNCPLGn4fJ8OQ0rsR71wX43g=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=IL40AzomKPZnMDzdF2ZsIESiMuOZ2yOfmKNRD78hQk37bqCJqCJIwPPWkYSr3Vsc6
+         xv/ns6b0TCLYgZLxQCzRHzcLUxVFk7M0S6wZnvIb38vXAl9BnItPkl24Erw8j8wlqo
+         21o2aVH4NGZ4p22ua8lHnLQWhKqTi7lcmVFLD5Eg=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.132.79.11]) by smtp.web.de (mrweb003
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0M7bVP-1i65p0023L-00xKuS; Tue, 15
+ Oct 2019 19:55:21 +0200
+Subject: Re: clk: samsung: Checking a kmemdup() call in
+ _samsung_clk_register_pll()
+To:     Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
+        Navid Emamdoost <emamd001@umn.edu>,
+        Stephen McCamant <smccaman@umn.edu>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <7933ce8f-ca1b-6ed8-14b9-59679130dc47@web.de>
+ <CA+Ln22GpcMF5e8wjwoRH0wExyoGfta4n3YuaOBNDE+rfqhSZjg@mail.gmail.com>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <39a142ae-e0a1-0683-d68c-128b388f480e@web.de>
+Date:   Tue, 15 Oct 2019 19:55:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
+In-Reply-To: <CA+Ln22GpcMF5e8wjwoRH0wExyoGfta4n3YuaOBNDE+rfqhSZjg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191015133752.oyb3p6iyr3ekjxic@uno.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+X-Provags-ID: V03:K1:vadA7w8m5et9Kx41H25zGHRg87E2nONtqAmT24ocOvYR+/eR7T0
+ VMPqm5RUNgyq33b4RjrGIEBwZAFmm6bbhFD9qNQBPfk723JYDya+BMR3FL5RdTuGA7ilppy
+ 6UFGsC/yeZjqwv7SY85tIGJG5HfxRMzw9iyn+BLJzHn236tyO5ZKMdBaksDa0Cv0VBE2kUC
+ a3RPcid4HumSc6v5ZR6rQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:4kQck1rPbFM=:htyPbTF0j7kl8J+L+lMiO3
+ qt/aTYR1DvNtX+KzXL8WKylAgGco7HQwFzSmuncX4vCLC3Hx7QiR9gyipEw7yXCeWeDMCJ0bj
+ mzC7GeJDvKvkP9P8b3x0DRf3ggsMJlP6NMB1Q835ZjLtbporFTsp9T5q3vpV89W2mPArr8hWi
+ CBBS17LLsljzyn+4X2vOx3dLH/A25OH2oGBmnAqIvb+UVRgT5Dra5hzVqdHO+QN/vk1Q9a5va
+ 3qicr6/JVOhH/1DsNIsr+UOLB1GxK4cDrmHY2t+PBOMetFWzhniHnDIzIUzu+W3IucL4YUZam
+ 8hwi42xQTcfz19U97RIupnMSYdtqyJLCxp5YjpqjWGy31XebbnudKiSf1FnGYafFnrI4y5oXG
+ Fns+MP+6verfm5LtHO0LVY9o0WwczNgeAAU3HUq27G2GUX9puXLbfBeQ28oFl0cYURarYGd3j
+ LQF0fcNFhq3L/40sjgn+3qODUt5nOMc+taBED9tiFU1CK/zcGcg/ORZhh4T5qt+9a5EsfSawC
+ aIXkqF1ZR9CCSA5ZTuf+at8q7RM8wVBKAiaSOz6Pn984rSyxyd1BGmXNJKdMgUa7WaJW+fsrT
+ 9+zUa2eEdF3rwUDqI7wnTbOjD35N4um9F9QcX3hLubMIq1RCSzQY0+gaW4EbC0c4z8SogVtvh
+ qO4n8A+h//m88D9ND+mjjM97FYn8EXPjxa8EGMOnRlcMeogKqOwx0ANWtA85L7R14mbroe7zP
+ KcL/BctqRT7W1PDDyhx4zX0CK8qjRhZPQaExoZ1S8LLEo4snem1K2KFj5ATR9fTgIoWc5gXfv
+ gd8wdnpUOBGVj6HHHXTxj3ZfcZ7MrT7JZMVTX3fafYS1coWahkr3Mq0vIsYbJ6XTSsOpb8JtP
+ bfSIQegqjl0PUgfQp/Id6xX5ZA7QVAaSpOF1MlnJrd5Q1hQVXk5OWhonZZfHj/+rbAXat//7j
+ 8pfe0/wk7Ka0TGRE+qT8duVMLWItTCF3LspkLIeojKvFxL5Z9PJLXBhUkcmmM2pWyK47G0yUJ
+ 7jR9V/EDrvrdKstvLzTTlZEqE5LDuBsT0LQ6K165zjCKQOwHmyow6dIaP8tX37Jx9pVubfQHh
+ zFd+VcpvYi8yqqty7bKN/Od8jEqdFlRUl8JweYJfI5//zN0XtQ1mc6BjtdMqn4aNp/uUNs5nt
+ P/4bXt8uAz2UuTq0X1aYl2yUm67FRyxDxBlDx3WMBnda1mbmyOnGrFK7eNtqQyAQdCSC7fxtT
+ htMbaG8h5rPe3tzVin41PuPNoNBk0nM1pKjbUYBB4PH5RmlRwNNKxXCrvYTY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+> That said, there is no need to print any warnings or error messages on
+> allocation failure, so technically they could be removed.
 
-Thank you for the patch.
+Do you find information sufficient from the Linux allocation failure report?
 
-On Tue, Oct 15, 2019 at 03:37:52PM +0200, Jacopo Mondi wrote:
-> On Tue, Oct 15, 2019 at 02:15:35PM +0100, Kieran Bingham wrote:
-> > On 15/10/2019 11:46, Jacopo Mondi wrote:
-> > > Implement CMM handling in the crtc begin and enable atomic callbacks,
-> > > and enable CMM unit through the Display Extensional Functions
-> >
-> > Extensional ?
-> >
-> > Perhaps this should just be Display Extension Functions?
-> > Wow - that's actually what they call it in the data-sheet.
-> >
-> > > register at group setup time.
-> >
-> > Only a trivial extra blank line below that I can find... so
-> >
-> > Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> >
-> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > > ---
-> > >  drivers/gpu/drm/rcar-du/rcar_du_crtc.c  | 79 +++++++++++++++++++++++++
-> > >  drivers/gpu/drm/rcar-du/rcar_du_group.c |  5 ++
-> > >  drivers/gpu/drm/rcar-du/rcar_du_regs.h  |  5 ++
-> > >  3 files changed, 89 insertions(+)
-> > >
-> > > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> > > index 23f1d6cc1719..4bc50a3f4a00 100644
-> > > --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> > > +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> > > @@ -21,6 +21,7 @@
-> > >  #include <drm/drm_plane_helper.h>
-> > >  #include <drm/drm_vblank.h>
-> > >
-> > > +#include "rcar_cmm.h"
-> > >  #include "rcar_du_crtc.h"
-> > >  #include "rcar_du_drv.h"
-> > >  #include "rcar_du_encoder.h"
-> > > @@ -474,6 +475,70 @@ static void rcar_du_crtc_wait_page_flip(struct rcar_du_crtc *rcrtc)
-> > >  	rcar_du_crtc_finish_page_flip(rcrtc);
-> > >  }
-> > >
-> > > +/* -----------------------------------------------------------------------------
-> > > + * Color Management Module (CMM)
-> > > + */
-
-Missing blank line.
-
-> > > +static int rcar_du_cmm_enable(struct drm_crtc *crtc)
-> > > +{
-> > > +	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
-> > > +
-> > > +	if (!rcrtc->cmm)
-> > > +		return 0;
-> > > +
-> > > +	return rcar_cmm_enable(rcrtc->cmm);
-> > > +}
-> > > +
-> > > +static void rcar_du_cmm_disable(struct drm_crtc *crtc)
-> > > +{
-> > > +	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
-> > > +
-> > > +	if (!rcrtc->cmm)
-> > > +		return;
-> > > +
-> > > +	rcar_cmm_disable(rcrtc->cmm);
-> > > +}
-
-I think I would have inlined those two functions in their only call site
-as
-
-	if (rcrtc->cmm)
-		rcar_cmm_enable(rcrtc->cmm);
-
-but that's up to you.
-
-> > > +
-> > > +static int rcar_du_cmm_check(struct drm_crtc *crtc,
-> > > +			     struct drm_crtc_state *state)
-> > > +{
-> > > +	struct drm_property_blob *drm_lut = state->gamma_lut;
-> > > +	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
-> > > +	struct device *dev = rcrtc->dev->dev;
-> > > +
-> > > +	if (!rcrtc->cmm || !drm_lut)
-> > > +		return 0;
-> > > +
-> > > +	/* We only accept fully populated LUT tables. */
-> > > +	if (CM2_LUT_SIZE * sizeof(struct drm_color_lut) !=
-> > > +	    drm_lut->length) {
-
-How about
-
-	if (drm_color_lut_size(drm_lut) != CM2_LUT_SIZE)
-
-?
-
-> > > +		dev_err(dev, "invalid gamma lut size: %lu bytes\n",
-> > > +			drm_lut->length);
-> > > +		return -EINVAL;
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static void rcar_du_cmm_setup(struct drm_crtc *crtc)
-> > > +{
-> > > +	struct drm_property_blob *drm_lut = crtc->state->gamma_lut;
-> > > +	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
-> > > +	struct rcar_cmm_config cmm_config = {};
-> > > +
-> > > +	if (!rcrtc->cmm)
-> > > +		return;
-> > > +
-> > > +	if (drm_lut) {
-> > > +		cmm_config.lut.enable = true;
-> > > +		cmm_config.lut.table = (struct drm_color_lut *)drm_lut->data;
-> > > +
-> > > +	} else {
-> > > +		cmm_config.lut.enable = false;
-> > > +	}
-
-This could be changed to
-
-	if (drm_lut)
-		cmm_config.lut.table = (struct drm_color_lut *)drm_lut->data;
-
-if we dropped the enable field.
-
-> > > +
-> > > +	rcar_cmm_setup(rcrtc->cmm, &cmm_config);
-> > > +}
-> > > +
-> > >  /* -----------------------------------------------------------------------------
-> > >   * Start/Stop and Suspend/Resume
-> > >   */
-> > > @@ -619,6 +684,8 @@ static void rcar_du_crtc_stop(struct rcar_du_crtc *rcrtc)
-> > >  	if (rcar_du_has(rcrtc->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
-> > >  		rcar_du_vsp_disable(rcrtc);
-> > >
-> > > +	rcar_du_cmm_disable(crtc);
-> > > +
-> > >  	/*
-> > >  	 * Select switch sync mode. This stops display operation and configures
-> > >  	 * the HSYNC and VSYNC signals as inputs.
-> > > @@ -631,6 +698,7 @@ static void rcar_du_crtc_stop(struct rcar_du_crtc *rcrtc)
-> > >  					   DSYSR_TVM_SWITCH);
-> > >
-> > >  	rcar_du_group_start_stop(rcrtc->group, false);
-> > > +
-> >
-> > Extra blank line...
-> 
-> Thanks for spotting this. I'm quite sure I run checkpatch (I just
-> re-did) and not warnings for the extra white space in the previous
-> patch, or this extra blank line o_0
-> 
-> > >  }
-> > >
-> > >  /* -----------------------------------------------------------------------------
-> > > @@ -642,6 +710,11 @@ static int rcar_du_crtc_atomic_check(struct drm_crtc *crtc,
-> > >  {
-> > >  	struct rcar_du_crtc_state *rstate = to_rcar_crtc_state(state);
-> > >  	struct drm_encoder *encoder;
-> > > +	int ret;
-> > > +
-> > > +	ret = rcar_du_cmm_check(crtc, state);
-> > > +	if (ret)
-> > > +		return ret;
-> > >
-> > >  	/* Store the routes from the CRTC output to the DU outputs. */
-> > >  	rstate->outputs = 0;
-> > > @@ -667,6 +740,7 @@ static void rcar_du_crtc_atomic_enable(struct drm_crtc *crtc,
-> > >  	struct rcar_du_crtc_state *rstate = to_rcar_crtc_state(crtc->state);
-> > >  	struct rcar_du_device *rcdu = rcrtc->dev;
-> > >
-> > > +	rcar_du_cmm_enable(crtc);
-> > >  	rcar_du_crtc_get(rcrtc);
-> > >
-> > >  	/*
-> > > @@ -686,6 +760,7 @@ static void rcar_du_crtc_atomic_enable(struct drm_crtc *crtc,
-> > >  	}
-> > >
-> > >  	rcar_du_crtc_start(rcrtc);
-> > > +	rcar_du_cmm_setup(crtc);
-
-This is the only part that really bothers me, we setup the LUT after
-starting the CRTC, so the first frame will be output with a disabled
-LUT, or possibly even with the LUT enabled in the middle of the frame.
-Do I recall correctly that moving setup before start causes issues ?
-Could you explain what happens ?
-
-> > >  }
-> > >
-> > >  static void rcar_du_crtc_atomic_disable(struct drm_crtc *crtc,
-> > > @@ -739,6 +814,10 @@ static void rcar_du_crtc_atomic_begin(struct drm_crtc *crtc,
-> > >  	 */
-> > >  	rcar_du_crtc_get(rcrtc);
-> > >
-> > > +	/* If the active state changed, we let .atomic_enable handle CMM. */
-> > > +	if (crtc->state->color_mgmt_changed && !crtc->state->active_changed)
-> > > +		rcar_du_cmm_setup(crtc);
-> >
-> > Aha, this is quite neat for handling the timings.
-> 
-> Yes, much more streamlined than what we had. Thanks Sean and Ezequiel :)
-
-Yes, it guarantees that the CRTC is enabled, so we should be safe with
-the assumption from patch 3/8 that rcar_du_cmm_setup() is always called
-with the CMM enabled.
-
-Interestingly though, this doesn't implement atomicity. That will be a
-very interesting challenge. We should use double buffering of the LUT in
-the CMM to avoid it being modified in the middle of the frame, but how
-to update it in sync with the commit, and thus the VSP, remains to be
-researched.
-
-Could you maybe add a TODO comment in patch 3/8 to mention that we
-should use double buffering ?
-
-> > > +
-> > >  	if (rcar_du_has(rcrtc->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
-> > >  		rcar_du_vsp_atomic_begin(rcrtc);
-> > >  }
-> > > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-> > > index 9eee47969e77..583de800a66d 100644
-> > > --- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
-> > > +++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-> > > @@ -135,6 +135,7 @@ static void rcar_du_group_setup_didsr(struct rcar_du_group *rgrp)
-> > >  static void rcar_du_group_setup(struct rcar_du_group *rgrp)
-> > >  {
-> > >  	struct rcar_du_device *rcdu = rgrp->dev;
-> > > +	u32 defr7 = DEFR7_CODE;
-> > >
-> > >  	/* Enable extended features */
-> > >  	rcar_du_group_write(rgrp, DEFR, DEFR_CODE | DEFR_DEFE);
-> > > @@ -147,6 +148,10 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
-> > >
-> > >  	rcar_du_group_setup_pins(rgrp);
-> > >
-
-Could you please add a comment here to mention that we shouldn't route
-through CMM if no color management feature is used ?
-
-	/*
-	 * TODO: Handling routing the DU output to CMM dynamically, as we should
-	 * bypass CMM completely when no color management feature is used.
-	 */
-
-> > > +	defr7 |= (rgrp->cmms_mask & BIT(1) ? DEFR7_CMME1 : 0) |
-> > > +		 (rgrp->cmms_mask & BIT(0) ? DEFR7_CMME0 : 0);
-> > > +	rcar_du_group_write(rgrp, DEFR7, defr7);
-> > > +
-> > >  	if (rcdu->info->gen >= 2) {
-> > >  		rcar_du_group_setup_defr8(rgrp);
-> > >  		rcar_du_group_setup_didsr(rgrp);
-> > > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_regs.h b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
-> > > index bc87f080b170..fb9964949368 100644
-> > > --- a/drivers/gpu/drm/rcar-du/rcar_du_regs.h
-> > > +++ b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
-> > > @@ -197,6 +197,11 @@
-> > >  #define DEFR6_MLOS1		(1 << 2)
-> > >  #define DEFR6_DEFAULT		(DEFR6_CODE | DEFR6_TCNE1)
-> > >
-> > > +#define DEFR7			0x000ec
-> > > +#define DEFR7_CODE		(0x7779 << 16)
-> > > +#define DEFR7_CMME1		BIT(6)
-> > > +#define DEFR7_CMME0		BIT(4)
-> > > +
-> > >  /* -----------------------------------------------------------------------------
-> > >   * R8A7790-only Control Registers
-> > >   */
-> > >
-
--- 
 Regards,
-
-Laurent Pinchart
+Markus
