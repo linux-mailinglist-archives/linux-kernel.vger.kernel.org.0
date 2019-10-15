@@ -2,215 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1855BD74CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 13:19:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2D02D74D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 13:23:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727083AbfJOLTX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 07:19:23 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37764 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725815AbfJOLTV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 07:19:21 -0400
-Received: by mail-wr1-f65.google.com with SMTP id p14so23356804wro.4
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 04:19:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=TJDLjD/EIRColwg8HoY5YztYO4bo1iRFSPlFTZN1y8c=;
-        b=VvFufmcKjRgKS+OYLvvjAaOmyYGU3AMEcUtKz/v8TwOwXIvGpjDjqMfbZwaJkTj8uV
-         cat0Snerxhdy+eDmboy5vuq/pc4XrTzomQnSsMrShpRTG9KZUAMKV9yfEV90EYasl00q
-         Alr7X/z46Jx2JWhT9aGk0VMwOw4TECLF4QuCy/MOXQWsWZBt0TOBbEiYRqI+ws7lW5gH
-         eqangALn9yzGC7CUWt+e7uCSJ4Zo52Tx1FtSH+yU+wfd8vHaWAG8mesC12G3yRU9A86+
-         AgghRMSw4lmhk8UT+eYsQcrQVFso/XurvqUNr3UMKXJbvyWXHcxC6NXVOV+6oFfdYcLi
-         RLkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=TJDLjD/EIRColwg8HoY5YztYO4bo1iRFSPlFTZN1y8c=;
-        b=qX/aclcnGXwWnASwtgP3GAgNbUWI6fMzjcF7N/PL2jirZt+X9eNLVcBwve19ATZkUV
-         vrsdBkcGBAEZMfF+Om6ps6+b4v5U6ZivCprPXVuCjZuYtfL5dDlptbDVN+uCouCQjz/V
-         BObrn8x8zZQplAHLvtQxr0uCK6FYMHoDYkZHX5uNSpCAiCXL481zafiTFcH7PCPiJG4t
-         NMSizL94lotPWSTliXjDupFj6MN9DxPlO+9camCO8NBQIrZ1IfUOse0iWb05FNMbA9kB
-         CCaOZ/UkRf1/kmVhWQjZw398hkibzVbF3nL+3pgtq/8ZOwfDUotewZ6pUPHwhmI8STlf
-         IzPw==
-X-Gm-Message-State: APjAAAW5qPUxvUciBHnDQt5LLGbSamaaqh9rbGj0gG/7rJ0a11RWeHmM
-        Vs6D40XswcfaX1lHP55tDQ==
-X-Google-Smtp-Source: APXvYqy5NOQUYrbb1+1GmEw80RjOkZ/mm0y70M5AgbvXY3HrrWPB8pP9jzYgVfYw5xIW8eJpP3/xzg==
-X-Received: by 2002:a5d:46d2:: with SMTP id g18mr13330873wrs.245.1571138358237;
-        Tue, 15 Oct 2019 04:19:18 -0700 (PDT)
-Received: from buster-jangle.bmw-carit.intra ([212.118.206.70])
-        by smtp.gmail.com with ESMTPSA id l9sm18487303wme.45.2019.10.15.04.19.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2019 04:19:17 -0700 (PDT)
-From:   "Viktor Rosendahl (BMW)" <viktor.rosendahl@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        "Viktor Rosendahl (BMW)" <viktor.rosendahl@gmail.com>
-Subject: [PATCH v9 4/4] ftrace: Add an option for tracing console latencies
-Date:   Tue, 15 Oct 2019 13:19:10 +0200
-Message-Id: <20191015111910.4496-5-viktor.rosendahl@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191015111910.4496-1-viktor.rosendahl@gmail.com>
-References: <20191015111910.4496-1-viktor.rosendahl@gmail.com>
+        id S1727392AbfJOLXO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 07:23:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56336 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726092AbfJOLXN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 07:23:13 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B4763ACD9;
+        Tue, 15 Oct 2019 11:23:11 +0000 (UTC)
+Date:   Tue, 15 Oct 2019 13:23:10 +0200 (CEST)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Joe Lawrence <joe.lawrence@redhat.com>
+cc:     rostedt@goodmis.org, mingo@redhat.com, jpoimboe@redhat.com,
+        jikos@kernel.org, pmladek@suse.com, linux-kernel@vger.kernel.org,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH v2] ftrace: Introduce PERMANENT ftrace_ops flag
+In-Reply-To: <20191014223100.GA16608@redhat.com>
+Message-ID: <alpine.LSU.2.21.1910151259220.30206@pobox.suse.cz>
+References: <20191014105923.29607-1-mbenes@suse.cz> <20191014223100.GA16608@redhat.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This new kernel parameter "trace_console_latency" will enable the latency
-tracers to trace the console latencies. Previously this has always been
-implicitely disabled. I guess this is because they are considered to be
-well known and unavoidable.
+> Hi Miroslav,
+> 
+> Maybe we should add a test to verify this new behavior?  See sample
+> version below (lightly tested).  We can add to this one, or patch
+> seperately if you prefer.
 
-However, for some organizations it may nevertheless be desirable to
-trace them. Basically, we want to be able to tell that there are
-latencies in the system under test because someone has incorrectly
-enabled the serial console.
+Thanks a lot, Joe. It looks nice. I'll include it in v3. One question 
+below.
+ 
+> -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8--
+> 
+>  
+> >From c8c9f22e3816ca4c90ab7e7159d2ce536eaa5fad Mon Sep 17 00:00:00 2001
+> From: Joe Lawrence <joe.lawrence@redhat.com>
+> Date: Mon, 14 Oct 2019 18:25:01 -0400
+> Subject: [PATCH] selftests/livepatch: test interaction with ftrace_enabled
+> 
+> Since livepatching depends upon ftrace handlers to implement "patched"
+> functionality, verify that the ftrace_enabled sysctl value interacts
+> with livepatch registration as expected.
+> 
+> Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
+> ---
+>  tools/testing/selftests/livepatch/Makefile    |  3 +-
+>  .../testing/selftests/livepatch/functions.sh  | 18 +++++
+>  .../selftests/livepatch/test-ftrace.sh        | 65 +++++++++++++++++++
+>  3 files changed, 85 insertions(+), 1 deletion(-)
+>  create mode 100755 tools/testing/selftests/livepatch/test-ftrace.sh
+> 
+> diff --git a/tools/testing/selftests/livepatch/Makefile b/tools/testing/selftests/livepatch/Makefile
+> index fd405402c3ff..1886d9d94b88 100644
+> --- a/tools/testing/selftests/livepatch/Makefile
+> +++ b/tools/testing/selftests/livepatch/Makefile
+> @@ -4,6 +4,7 @@ TEST_PROGS_EXTENDED := functions.sh
+>  TEST_PROGS := \
+>  	test-livepatch.sh \
+>  	test-callbacks.sh \
+> -	test-shadow-vars.sh
+> +	test-shadow-vars.sh \
+> +	test-ftrace.sh
+>  
+>  include ../lib.mk
+> diff --git a/tools/testing/selftests/livepatch/functions.sh b/tools/testing/selftests/livepatch/functions.sh
+> index 79b0affd21fb..556252efece0 100644
+> --- a/tools/testing/selftests/livepatch/functions.sh
+> +++ b/tools/testing/selftests/livepatch/functions.sh
+> @@ -52,6 +52,24 @@ function set_dynamic_debug() {
+>  		EOF
+>  }
+>  
+> +function push_ftrace_enabled() {
+> +	FTRACE_ENABLED=$(sysctl --values kernel.ftrace_enabled)
+> +}
 
-Signed-off-by: Viktor Rosendahl (BMW) <viktor.rosendahl@gmail.com>
----
- .../admin-guide/kernel-parameters.txt         |  4 +++
- include/linux/irqflags.h                      | 22 +++++++++++++
- kernel/printk/printk.c                        |  6 ++--
- kernel/trace/trace_irqsoff.c                  | 32 +++++++++++++++++++
- 4 files changed, 62 insertions(+), 2 deletions(-)
+Shouldn't we call push_ftrace_enabled() somewhere at the beginning of the 
+test script? set_dynamic_debug() calls its push_dynamic_debug() directly, 
+but set_ftrace_enabled() is different, because it is called more than once 
+in the script.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index a84a83f8881e..3f96a380c528 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4768,6 +4768,10 @@
- 	trace_buf_size=nn[KMG]
- 			[FTRACE] will set tracing buffer size on each cpu.
- 
-+	trace_console_latency=[0|1]
-+			[FTRACE] Trace the console latencies if 1 is given. Do
-+			not trace the latencies if 0 or no parameter is given.
-+
- 	trace_event=[event-list]
- 			[FTRACE] Set and start specified trace events in order
- 			to facilitate early boot debugging. The event-list is a
-diff --git a/include/linux/irqflags.h b/include/linux/irqflags.h
-index 21619c92c377..3de891723331 100644
---- a/include/linux/irqflags.h
-+++ b/include/linux/irqflags.h
-@@ -13,6 +13,7 @@
- #define _LINUX_TRACE_IRQFLAGS_H
- 
- #include <linux/typecheck.h>
-+#include <linux/types.h>
- #include <asm/irqflags.h>
- 
- /* Currently trace_softirqs_on/off is used only by lockdep */
-@@ -68,9 +69,30 @@ do {						\
- 	defined(CONFIG_PREEMPT_TRACER)
-  extern void stop_critical_timings(void);
-  extern void start_critical_timings(void);
-+ extern bool console_tracing_disabled(void);
-+
-+# define console_stop_critical_timings(flag)		\
-+	do {						\
-+		typecheck(bool, flag);			\
-+		flag = console_tracing_disabled();	\
-+		if (flag)				\
-+			stop_critical_timings();	\
-+	} while (0)
-+
-+# define console_start_critical_timings(flag)		 \
-+	do {						 \
-+		typecheck(bool, flag);			 \
-+		if (flag)				 \
-+			start_critical_timings();	 \
-+	} while (0)
-+
- #else
- # define stop_critical_timings() do { } while (0)
- # define start_critical_timings() do { } while (0)
-+# define console_stop_critical_timings(flag)	\
-+	do { typecheck(bool, flag); } while (0)
-+# define console_start_critical_timings(flag)	\
-+	do { typecheck(bool, flag); } while (0)
- #endif
- 
- /*
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index ca65327a6de8..f27e96273453 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -2369,6 +2369,7 @@ void console_unlock(void)
- 	static char ext_text[CONSOLE_EXT_LOG_MAX];
- 	static char text[LOG_LINE_MAX + PREFIX_MAX];
- 	unsigned long flags;
-+	bool cflag;
- 	bool do_cond_resched, retry;
- 
- 	if (console_suspended) {
-@@ -2469,9 +2470,10 @@ void console_unlock(void)
- 		 */
- 		console_lock_spinning_enable();
- 
--		stop_critical_timings();	/* don't trace print latency */
-+		/* don't trace print latency if it's disabled */
-+		console_stop_critical_timings(cflag);
- 		call_console_drivers(ext_text, ext_len, text, len);
--		start_critical_timings();
-+		console_start_critical_timings(cflag);
- 
- 		if (console_lock_spinning_disable_and_check()) {
- 			printk_safe_exit_irqrestore(flags);
-diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
-index a745b0cee5d3..84876192cc73 100644
---- a/kernel/trace/trace_irqsoff.c
-+++ b/kernel/trace/trace_irqsoff.c
-@@ -14,6 +14,7 @@
- #include <linux/uaccess.h>
- #include <linux/module.h>
- #include <linux/ftrace.h>
-+#include <linux/init.h>
- #include <linux/kprobes.h>
- 
- #include "trace.h"
-@@ -456,6 +457,37 @@ void stop_critical_timings(void)
- EXPORT_SYMBOL_GPL(stop_critical_timings);
- NOKPROBE_SYMBOL(stop_critical_timings);
- 
-+static bool no_console_latency __read_mostly = true;
-+
-+static int __init trace_console_latency(char *str)
-+{
-+	int param;
-+
-+	get_option(&str, &param);
-+	no_console_latency = !(param == 1);
-+
-+	return 0;
-+}
-+
-+early_param("trace_console_latency", trace_console_latency);
-+
-+bool console_tracing_disabled(void)
-+{
-+	int pc = preempt_count();
-+
-+	/*
-+	 * If tracing is disabled, then the question of whether to trace console
-+	 * latencies is moot. By always returning false here we save the caller
-+	 * the calls to start/stop_critical_timings(). These calls would not do
-+	 * anything anyway.
-+	 */
-+	if (!preempt_trace(pc) && !irq_trace())
-+		return false;
-+
-+	return no_console_latency;
-+}
-+EXPORT_SYMBOL_GPL(console_tracing_disabled);
-+
- #ifdef CONFIG_FUNCTION_TRACER
- static bool function_enabled;
- 
--- 
-2.17.1
+One could argue that ftrace_enabled has to be true at the beginning of 
+testing anyway, but I think it would be cleaner. Btw, we should probably 
+guarantee that ftrace_enabled is true when livepatch selftests are 
+invoked.
 
+> +function pop_ftrace_enabled() {
+> +	if [[ -n "$FTRACE_ENABLED" ]]; then
+> +		sysctl kernel.ftrace_enabled="$FTRACE_ENABLED"
+> +	fi
+> +}
+> +# set_ftrace_enabled() - save the current ftrace_enabled config and tweak
+> +# 			 it for the self-tests.  Set a script exit trap
+> +#			 that restores the original value.
+> +function set_ftrace_enabled() {
+> +	local sysctl="$1"
+> +        trap pop_ftrace_enabled EXIT INT TERM HUP
+> +	result=$(sysctl kernel.ftrace_enabled="$1" 2>&1 | paste --serial --delimiters=' ')
+> +	echo "livepatch: $result" > /dev/kmsg
+> +}
+> +
+>  # loop_until(cmd) - loop a command until it is successful or $MAX_RETRIES,
+>  #		    sleep $RETRY_INTERVAL between attempts
+>  #	cmd - command and its arguments to run
+
+Miroslav
