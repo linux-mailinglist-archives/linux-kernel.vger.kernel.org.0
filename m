@@ -2,67 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 493A8D7B0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 18:18:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80EADD7B05
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 18:18:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387850AbfJOQSU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 12:18:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33016 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727809AbfJOQSU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 12:18:20 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 670E5B4B0;
-        Tue, 15 Oct 2019 16:18:18 +0000 (UTC)
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     herbert@gondor.apana.org.au
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dave@stgolabs.net, Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH] drivers,crypto/cavium: Fix barrier barrier usage after atomic_set()
-Date:   Tue, 15 Oct 2019 09:16:57 -0700
-Message-Id: <20191015161657.10760-1-dave@stgolabs.net>
-X-Mailer: git-send-email 2.16.4
+        id S2387814AbfJOQSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 12:18:01 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:54656 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727981AbfJOQSA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 12:18:00 -0400
+Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1iKPW9-00088n-5a; Tue, 15 Oct 2019 17:17:49 +0100
+Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.2)
+        (envelope-from <ben@rainbowdash.codethink.co.uk>)
+        id 1iKPW8-0008E4-NS; Tue, 15 Oct 2019 17:17:48 +0100
+From:   "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
+To:     linux-kernel@lists.codethink.co.uk
+Cc:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] net: stmmac: make tc_flow_parsers static
+Date:   Tue, 15 Oct 2019 17:17:48 +0100
+Message-Id: <20191015161748.31576-1-ben.dooks@codethink.co.uk>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Because it is not a Rmw operation, atomic_set() is not serialized,
-and therefore the 'upgradable' smp_mb__after_atomic() call after
-the atomic_set() is completely bogus (not to mention the comment
-could also use some love, but that's a different matter).
+The tc_flow_parsers is not used outside of the driver, so
+make it static to avoid the following sparse warning:
 
-This patch replaces these with smp_mb(), which seems like the
-original intent of when the code was written.
+drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c:516:3: warning: symbol 'tc_flow_parsers' was not declared. Should it be static?
 
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 ---
- drivers/crypto/cavium/nitrox/nitrox_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Jose Abreu <joabreu@synopsys.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: netdev@vger.kernel.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/cavium/nitrox/nitrox_main.c b/drivers/crypto/cavium/nitrox/nitrox_main.c
-index bc924980e10c..da2e0edceb50 100644
---- a/drivers/crypto/cavium/nitrox/nitrox_main.c
-+++ b/drivers/crypto/cavium/nitrox/nitrox_main.c
-@@ -504,7 +504,7 @@ static int nitrox_probe(struct pci_dev *pdev,
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+index e231098061b6..f9a9a9d82233 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+@@ -510,7 +510,7 @@ static struct stmmac_flow_entry *tc_find_flow(struct stmmac_priv *priv,
+ 	return NULL;
+ }
  
- 	atomic_set(&ndev->state, __NDEV_READY);
- 	/* barrier to sync with other cpus */
--	smp_mb__after_atomic();
-+	smp_mb();
- 
- 	err = nitrox_crypto_register();
- 	if (err)
-@@ -551,7 +551,7 @@ static void nitrox_remove(struct pci_dev *pdev)
- 
- 	atomic_set(&ndev->state, __NDEV_NOT_READY);
- 	/* barrier to sync with other cpus */
--	smp_mb__after_atomic();
-+	smp_mb();
- 
- 	nitrox_remove_from_devlist(ndev);
- 
+-struct {
++static struct {
+ 	int (*fn)(struct stmmac_priv *priv, struct flow_cls_offload *cls,
+ 		  struct stmmac_flow_entry *entry);
+ } tc_flow_parsers[] = {
 -- 
-2.16.4
+2.23.0
 
