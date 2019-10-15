@@ -2,30 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3219BD8006
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:21:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C278D7FF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:20:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389703AbfJOTUq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 15:20:46 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:45649 "EHLO
+        id S1731154AbfJOTUN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 15:20:13 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:45679 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389376AbfJOTSl (ORCPT
+        with ESMTP id S2389418AbfJOTSq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 15:18:41 -0400
+        Tue, 15 Oct 2019 15:18:46 -0400
 Received: from localhost ([127.0.0.1] helo=localhost.localdomain)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1iKSL8-00067i-BZ; Tue, 15 Oct 2019 21:18:38 +0200
+        id 1iKSLB-00067i-FL; Tue, 15 Oct 2019 21:18:41 +0200
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
-Cc:     tglx@linutronix.de, Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-s390@vger.kernel.org,
+Cc:     tglx@linutronix.de, Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 17/34] s390: Use CONFIG_PREEMPTION
-Date:   Tue, 15 Oct 2019 21:18:04 +0200
-Message-Id: <20191015191821.11479-18-bigeasy@linutronix.de>
+Subject: [PATCH 25/34] mm: Use CONFIG_PREEMPTION
+Date:   Tue, 15 Oct 2019 21:18:12 +0200
+Message-Id: <20191015191821.11479-26-bigeasy@linutronix.de>
 In-Reply-To: <20191015191821.11479-1-bigeasy@linutronix.de>
 References: <20191015191821.11479-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
@@ -41,81 +42,95 @@ CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by CONFIG_PREEMPT_RT.
 Both PREEMPT and PREEMPT_RT require the same functionality which today
 depends on CONFIG_PREEMPT.
 
-Switch the preemption and entry code over to use CONFIG_PREEMPTION. Add
-PREEMPT_RT output to die().
+Switch the pte_unmap_same() and SLUB code over to use CONFIG_PREEMPTION.
 
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Vasily Gorbik <gor@linux.ibm.com>
-Cc: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: linux-s390@vger.kernel.org
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-[bigeasy: +Kconfig, dumpstack.c]
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- arch/s390/Kconfig               | 2 +-
- arch/s390/include/asm/preempt.h | 4 ++--
- arch/s390/kernel/dumpstack.c    | 2 ++
- arch/s390/kernel/entry.S        | 2 +-
- 4 files changed, 6 insertions(+), 4 deletions(-)
+ mm/memory.c |  2 +-
+ mm/slub.c   | 12 ++++++------
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index 43a81d0ad5074..33d968175038e 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -30,7 +30,7 @@ config GENERIC_BUG_RELATIVE_POINTERS
- 	def_bool y
-=20
- config GENERIC_LOCKBREAK
--	def_bool y if PREEMPT
-+	def_bool y if PREEMPTTION
-=20
- config PGSTE
- 	def_bool y if KVM
-diff --git a/arch/s390/include/asm/preempt.h b/arch/s390/include/asm/preemp=
-t.h
-index b5ea9e14c017a..6ede29907fbf7 100644
---- a/arch/s390/include/asm/preempt.h
-+++ b/arch/s390/include/asm/preempt.h
-@@ -130,11 +130,11 @@ static inline bool should_resched(int preempt_offset)
-=20
- #endif /* CONFIG_HAVE_MARCH_Z196_FEATURES */
+diff --git a/mm/memory.c b/mm/memory.c
+index b1ca51a079f27..fd2cede4a84f0 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -2133,7 +2133,7 @@ static inline int pte_unmap_same(struct mm_struct *mm=
+, pmd_t *pmd,
+ 				pte_t *page_table, pte_t orig_pte)
+ {
+ 	int same =3D 1;
+-#if defined(CONFIG_SMP) || defined(CONFIG_PREEMPT)
++#if defined(CONFIG_SMP) || defined(CONFIG_PREEMPTION)
+ 	if (sizeof(pte_t) > sizeof(unsigned long)) {
+ 		spinlock_t *ptl =3D pte_lockptr(mm, pmd);
+ 		spin_lock(ptl);
+diff --git a/mm/slub.c b/mm/slub.c
+index 3d63ae320d31b..23fa669934829 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -1984,7 +1984,7 @@ static void *get_partial(struct kmem_cache *s, gfp_t =
+flags, int node,
+ 	return get_any_partial(s, flags, c);
+ }
 =20
 -#ifdef CONFIG_PREEMPT
 +#ifdef CONFIG_PREEMPTION
- extern asmlinkage void preempt_schedule(void);
- #define __preempt_schedule() preempt_schedule()
- extern asmlinkage void preempt_schedule_notrace(void);
- #define __preempt_schedule_notrace() preempt_schedule_notrace()
--#endif /* CONFIG_PREEMPT */
-+#endif /* CONFIG_PREEMPTION */
+ /*
+  * Calculate the next globally unique transaction for disambiguiation
+  * during cmpxchg. The transactions start with the cpu number and are then
+@@ -2029,7 +2029,7 @@ static inline void note_cmpxchg_failure(const char *n,
 =20
- #endif /* __ASM_PREEMPT_H */
-diff --git a/arch/s390/kernel/dumpstack.c b/arch/s390/kernel/dumpstack.c
-index 34bdc60c0b11d..8e38447be4653 100644
---- a/arch/s390/kernel/dumpstack.c
-+++ b/arch/s390/kernel/dumpstack.c
-@@ -194,6 +194,8 @@ void die(struct pt_regs *regs, const char *str)
- 	       regs->int_code >> 17, ++die_counter);
- #ifdef CONFIG_PREEMPT
- 	pr_cont("PREEMPT ");
-+#elif defined(CONFIG_PREEMPT_RT)
-+	pr_cont("PREEMPT_RT ");
- #endif
- 	pr_cont("SMP ");
- 	if (debug_pagealloc_enabled())
-diff --git a/arch/s390/kernel/entry.S b/arch/s390/kernel/entry.S
-index 270d1d145761b..9205add8481d5 100644
---- a/arch/s390/kernel/entry.S
-+++ b/arch/s390/kernel/entry.S
-@@ -790,7 +790,7 @@ ENTRY(io_int_handler)
- .Lio_work:
- 	tm	__PT_PSW+1(%r11),0x01	# returning to user ?
- 	jo	.Lio_work_user		# yes -> do resched & signal
+ 	pr_info("%s %s: cmpxchg redo ", n, s->name);
+=20
 -#ifdef CONFIG_PREEMPT
 +#ifdef CONFIG_PREEMPTION
- 	# check for preemptive scheduling
- 	icm	%r0,15,__LC_PREEMPT_COUNT
- 	jnz	.Lio_restore		# preemption is disabled
+ 	if (tid_to_cpu(tid) !=3D tid_to_cpu(actual_tid))
+ 		pr_warn("due to cpu change %d -> %d\n",
+ 			tid_to_cpu(tid), tid_to_cpu(actual_tid));
+@@ -2657,7 +2657,7 @@ static void *__slab_alloc(struct kmem_cache *s, gfp_t=
+ gfpflags, int node,
+ 	unsigned long flags;
+=20
+ 	local_irq_save(flags);
+-#ifdef CONFIG_PREEMPT
++#ifdef CONFIG_PREEMPTION
+ 	/*
+ 	 * We may have been preempted and rescheduled on a different
+ 	 * cpu before disabling interrupts. Need to reload cpu area
+@@ -2700,13 +2700,13 @@ static __always_inline void *slab_alloc_node(struct=
+ kmem_cache *s,
+ 	 * as we end up on the original cpu again when doing the cmpxchg.
+ 	 *
+ 	 * We should guarantee that tid and kmem_cache are retrieved on
+-	 * the same cpu. It could be different if CONFIG_PREEMPT so we need
++	 * the same cpu. It could be different if CONFIG_PREEMPTION so we need
+ 	 * to check if it is matched or not.
+ 	 */
+ 	do {
+ 		tid =3D this_cpu_read(s->cpu_slab->tid);
+ 		c =3D raw_cpu_ptr(s->cpu_slab);
+-	} while (IS_ENABLED(CONFIG_PREEMPT) &&
++	} while (IS_ENABLED(CONFIG_PREEMPTION) &&
+ 		 unlikely(tid !=3D READ_ONCE(c->tid)));
+=20
+ 	/*
+@@ -2984,7 +2984,7 @@ static __always_inline void do_slab_free(struct kmem_=
+cache *s,
+ 	do {
+ 		tid =3D this_cpu_read(s->cpu_slab->tid);
+ 		c =3D raw_cpu_ptr(s->cpu_slab);
+-	} while (IS_ENABLED(CONFIG_PREEMPT) &&
++	} while (IS_ENABLED(CONFIG_PREEMPTION) &&
+ 		 unlikely(tid !=3D READ_ONCE(c->tid)));
+=20
+ 	/* Same with comment on barrier() in slab_alloc_node() */
 --=20
 2.23.0
 
