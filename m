@@ -2,119 +2,252 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEE2BD71B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 11:02:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BD74D71B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 11:02:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729435AbfJOJCQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 05:02:16 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:37882 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727838AbfJOJCO (ORCPT
+        id S1728376AbfJOJCI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 05:02:08 -0400
+Received: from forwardcorp1j.mail.yandex.net ([5.45.199.163]:53252 "EHLO
+        forwardcorp1j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727726AbfJOJCH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 05:02:14 -0400
-Received: by mail-pl1-f193.google.com with SMTP id u20so9280321plq.4;
-        Tue, 15 Oct 2019 02:02:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Y/FDmIN7D8CAH00XLKSbXEilWCinqJP7n+EcoU7otuk=;
-        b=HoCuT2+lllpMGI7rxiT0hR8SrLG0PxTVSag1/oMBtvUyOxazz+MUgiI1f8MRbx46ej
-         GOavSu+uhk8b6OY/Z4K8ksOea6AVOo8YvnixA0pmAn8Mj43ZoY4HXbCK5fX9F657AIpm
-         Iq4zItG0MZtz4yqXJx1lRI03gq7wX7c2zG9nq9luguy0oKWRsBC89Uf2XwMAa1e0Zzgc
-         h5kIKDSpesNdliArJBfcRHOcLLZERWLYirCf6ScpT36OkkoWyWhkh6eDDAYLxQ/fnYR6
-         4r6LXRWVC+f7kDgeGRRcu7pFWdZ6JI5CZAipJ7DMvBp8pV14/qNA9T0F8LAIPtFD5imQ
-         CQYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Y/FDmIN7D8CAH00XLKSbXEilWCinqJP7n+EcoU7otuk=;
-        b=gg7oh5ZjQGjulF3Z2xTfieQDXc84zKmcMo35UuBk5nfnSAmC4JYT5rxPQDgWxciDvd
-         hERTfEdJ9DfLImmNEGGd53klHCz66hxh6G32lV9FFFnUwsgsKIuRgE1wfEkHKaI9vCdf
-         YcGwxfhF5lPgkEolBj40eG/ZVaXXE/54BYwkpdY5vCwdGEpQJUZnzHBQk5W0OY21RrmO
-         iHFlBKPZke4xg3ibefT9gG7Mjv1XYMatWSktp7r8P+7SaCjFnbZpHWiIL+CkeO4Ay1L+
-         UeDPFGMMoqRDL4GzGNtF1gmz7UZQwta7cdt4a7klPIzsI5WYA03t/oifUbrTaIA62nH6
-         j4lw==
-X-Gm-Message-State: APjAAAUd2c8aQoDPpv3ILU9u3RRcreu/QZM3bMI0QUYYhcL/8KXe38gO
-        SMWUrml5FmR8vibqqREqXyWqlEbAVVKZZVg1vwI=
-X-Google-Smtp-Source: APXvYqwO/5hFqux5frYOwevy/NieZz1EIdQe655HuLE5hkKwfQJ49zRK0A/Mgoun/IUJoY/i+vhv9Ba0Waay4XJ8WXM=
-X-Received: by 2002:a17:902:9881:: with SMTP id s1mr35148119plp.18.1571130132022;
- Tue, 15 Oct 2019 02:02:12 -0700 (PDT)
+        Tue, 15 Oct 2019 05:02:07 -0400
+Received: from mxbackcorp1o.mail.yandex.net (mxbackcorp1o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::301])
+        by forwardcorp1j.mail.yandex.net (Yandex) with ESMTP id 0939E2E14A8;
+        Tue, 15 Oct 2019 12:02:04 +0300 (MSK)
+Received: from iva8-b53eb3f76dc7.qloud-c.yandex.net (iva8-b53eb3f76dc7.qloud-c.yandex.net [2a02:6b8:c0c:2ca1:0:640:b53e:b3f7])
+        by mxbackcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id DbUH92CeEB-23OKsYoB;
+        Tue, 15 Oct 2019 12:02:03 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1571130123; bh=zI18dNBNXOgchJaUsCZ4rEWuTdAP8TPR+E7kuGvEeoQ=;
+        h=Message-ID:Date:To:From:Subject:Cc;
+        b=qGyVlPLPV+q8cAABUjS3GnFLZR2f6jt7QuJBrWXXPHEU12fCcC86Rwo6TUcfAJFAV
+         HsWFWf6yzNwbdWnb7nDh5GQojTM3r7IOEnIJUSKkzfPChKda36TPQlEBwDu/dMcxo8
+         D7vB1gb7YXwTKipuIad+adI+bkn8VDRhgBp6N0Tk=
+Authentication-Results: mxbackcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:3d4d:a9cb:ef29:4bb1])
+        by iva8-b53eb3f76dc7.qloud-c.yandex.net (nwsmtp/Yandex) with ESMTPSA id oJKLqvSmfN-23I0FQbx;
+        Tue, 15 Oct 2019 12:02:03 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: [PATCH 1/2] mm/vmstat: add helpers to get vmstat item names for
+ each enum type
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     cgroups@vger.kernel.org, Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Date:   Tue, 15 Oct 2019 12:02:03 +0300
+Message-ID: <157113012325.453.562783073839432766.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-References: <20191004214334.149976-1-swboyd@chromium.org> <20191004214334.149976-2-swboyd@chromium.org>
- <CAHp75Vebn48hbzqKWzV3aj4NEBCta_Fn7zOQHzsznW4=6cXLsQ@mail.gmail.com> <5da4e084.1c69fb81.567f9.4b9c@mx.google.com>
-In-Reply-To: <5da4e084.1c69fb81.567f9.4b9c@mx.google.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 15 Oct 2019 12:02:01 +0300
-Message-ID: <CAHp75Vcht2S7j64vUGw+DQdSEAyxuyBJ9oVwHyXxnL9bM1-wFA@mail.gmail.com>
-Subject: Re: [PATCH 01/10] leds: pca953x: Use of_device_get_match_data()
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Riku Voipio <riku.voipio@iki.fi>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 14, 2019 at 11:54 PM Stephen Boyd <swboyd@chromium.org> wrote:
-> Quoting Andy Shevchenko (2019-10-14 10:50:06)
-> > On Sat, Oct 5, 2019 at 12:47 AM Stephen Boyd <swboyd@chromium.org> wrote:
-> > >
-> > > This driver can use the of_device_get_match_data() API to simplify the
-> > > code. Replace calls to of_match_device() with this newer API under the
-> > > assumption that where it is called will be when we know the device is
-> > > backed by a DT node. This nicely avoids referencing the match table when
-> > > it is undefined with configurations where CONFIG_OF=n.
-> >
-> > > +       devid = (int)(uintptr_t)of_device_get_match_data(dev);
-> >
-> > > +               devid = (int)(uintptr_t)of_device_get_match_data(&client->dev);
-> >
-> > This still leaves it OF-centric.
-> > Better to use device_get_match_data().
-> >
-> > Also, I'm thinking that following may help to clean a lot of the i2c
-> > client drivers
-> >
-> > static inline // perhaps no
-> > const void *i2c_device_get_match_data(struct i2c_client *client, const
-> > struct i2c_device_id *id)
-> > {
-> >   if (id)
-> >     return (const void *)id->driver_data;
-> >   return device_get_match_data(&client->dev);
-> > }
-> >
->
-> Looks alright to me. Maybe device_get_match_data() can look at the bus
-> and call some bus op if the firmware match isn't present? Then we can
-> replace a bunch of these calls with device_get_match_data() and it will
-> "do the right thing" regardless of what bus or firmware the device is
-> running on.
+Statistics in vmstat is combined from counters with different structure,
+but names for them are merged into one array.
 
-It will be something ugly like
+This patch adds trivial helpers to get name for each item:
 
-buses {
-#ifdef I2C
-&i2c_bus_type,
-#endif
-...
-}
+const char *zone_stat_name(enum zone_stat_item item);
+const char *numa_stat_name(enum numa_stat_item item);
+const char *node_stat_name(enum node_stat_item item);
+const char *writeback_stat_name(enum writeback_stat_item item);
+const char *vm_event_name(enum vm_event_item item);
 
-in the code. I won't do this.
 
-See generic_match_buses[] for example.
+Names for enum writeback_stat_item are folded in the middle of
+vmstat_text so this patch moves declaration into header to calculate
+offset of following items.
 
--- 
-With Best Regards,
-Andy Shevchenko
+
+Also this patch reuses piece of node stat names for lru list names:
+
+const char *lru_list_name(enum lru_list lru);
+
+This returns common lru list names: "inactive_anon", "active_anon",
+"inactive_file", "active_file", "unevictable".
+
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+---
+ drivers/base/node.c    |    9 +++------
+ include/linux/vmstat.h |   50 ++++++++++++++++++++++++++++++++++++++++++++++++
+ mm/vmstat.c            |   27 +++++++++-----------------
+ 3 files changed, 62 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/base/node.c b/drivers/base/node.c
+index 296546ffed6c..98a31bafc8a2 100644
+--- a/drivers/base/node.c
++++ b/drivers/base/node.c
+@@ -496,20 +496,17 @@ static ssize_t node_read_vmstat(struct device *dev,
+ 	int n = 0;
+ 
+ 	for (i = 0; i < NR_VM_ZONE_STAT_ITEMS; i++)
+-		n += sprintf(buf+n, "%s %lu\n", vmstat_text[i],
++		n += sprintf(buf+n, "%s %lu\n", zone_stat_name(i),
+ 			     sum_zone_node_page_state(nid, i));
+ 
+ #ifdef CONFIG_NUMA
+ 	for (i = 0; i < NR_VM_NUMA_STAT_ITEMS; i++)
+-		n += sprintf(buf+n, "%s %lu\n",
+-			     vmstat_text[i + NR_VM_ZONE_STAT_ITEMS],
++		n += sprintf(buf+n, "%s %lu\n", numa_stat_name(i),
+ 			     sum_zone_numa_state(nid, i));
+ #endif
+ 
+ 	for (i = 0; i < NR_VM_NODE_STAT_ITEMS; i++)
+-		n += sprintf(buf+n, "%s %lu\n",
+-			     vmstat_text[i + NR_VM_ZONE_STAT_ITEMS +
+-			     NR_VM_NUMA_STAT_ITEMS],
++		n += sprintf(buf+n, "%s %lu\n", node_stat_name(i),
+ 			     node_page_state(pgdat, i));
+ 
+ 	return n;
+diff --git a/include/linux/vmstat.h b/include/linux/vmstat.h
+index bdeda4b079fe..b995d8b680c2 100644
+--- a/include/linux/vmstat.h
++++ b/include/linux/vmstat.h
+@@ -31,6 +31,12 @@ struct reclaim_stat {
+ 	unsigned nr_unmap_fail;
+ };
+ 
++enum writeback_stat_item {
++	NR_DIRTY_THRESHOLD,
++	NR_DIRTY_BG_THRESHOLD,
++	NR_VM_WRITEBACK_STAT_ITEMS,
++};
++
+ #ifdef CONFIG_VM_EVENT_COUNTERS
+ /*
+  * Light weight per cpu counter implementation.
+@@ -381,4 +387,48 @@ static inline void __mod_zone_freepage_state(struct zone *zone, int nr_pages,
+ 
+ extern const char * const vmstat_text[];
+ 
++static inline const char *zone_stat_name(enum zone_stat_item item)
++{
++	return vmstat_text[item];
++}
++
++#ifdef CONFIG_NUMA
++static inline const char *numa_stat_name(enum numa_stat_item item)
++{
++	return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
++			   item];
++}
++#endif /* CONFIG_NUMA */
++
++static inline const char *node_stat_name(enum node_stat_item item)
++{
++	return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
++			   NR_VM_NUMA_STAT_ITEMS +
++			   item];
++}
++
++static inline const char *lru_list_name(enum lru_list lru)
++{
++	return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
++}
++
++static inline const char *writeback_stat_name(enum writeback_stat_item item)
++{
++	return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
++			   NR_VM_NUMA_STAT_ITEMS +
++			   NR_VM_NODE_STAT_ITEMS +
++			   item];
++}
++
++#ifdef CONFIG_VM_EVENT_COUNTERS
++static inline const char *vm_event_name(enum vm_event_item item)
++{
++	return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
++			   NR_VM_NUMA_STAT_ITEMS +
++			   NR_VM_NODE_STAT_ITEMS +
++			   NR_VM_WRITEBACK_STAT_ITEMS +
++			   item];
++}
++#endif /* CONFIG_VM_EVENT_COUNTERS */
++
+ #endif /* _LINUX_VMSTAT_H */
+diff --git a/mm/vmstat.c b/mm/vmstat.c
+index 6afc892a148a..590aeca27cab 100644
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@ -1134,7 +1134,7 @@ const char * const vmstat_text[] = {
+ 	"numa_other",
+ #endif
+ 
+-	/* Node-based counters */
++	/* enum node_stat_item counters */
+ 	"nr_inactive_anon",
+ 	"nr_active_anon",
+ 	"nr_inactive_file",
+@@ -1547,10 +1547,8 @@ static void zoneinfo_show_print(struct seq_file *m, pg_data_t *pgdat,
+ 	if (is_zone_first_populated(pgdat, zone)) {
+ 		seq_printf(m, "\n  per-node stats");
+ 		for (i = 0; i < NR_VM_NODE_STAT_ITEMS; i++) {
+-			seq_printf(m, "\n      %-12s %lu",
+-				vmstat_text[i + NR_VM_ZONE_STAT_ITEMS +
+-				NR_VM_NUMA_STAT_ITEMS],
+-				node_page_state(pgdat, i));
++			seq_printf(m, "\n      %-12s %lu", node_stat_name(i),
++				   node_page_state(pgdat, i));
+ 		}
+ 	}
+ 	seq_printf(m,
+@@ -1583,14 +1581,13 @@ static void zoneinfo_show_print(struct seq_file *m, pg_data_t *pgdat,
+ 	}
+ 
+ 	for (i = 0; i < NR_VM_ZONE_STAT_ITEMS; i++)
+-		seq_printf(m, "\n      %-12s %lu", vmstat_text[i],
+-				zone_page_state(zone, i));
++		seq_printf(m, "\n      %-12s %lu", zone_stat_name(i),
++			   zone_page_state(zone, i));
+ 
+ #ifdef CONFIG_NUMA
+ 	for (i = 0; i < NR_VM_NUMA_STAT_ITEMS; i++)
+-		seq_printf(m, "\n      %-12s %lu",
+-				vmstat_text[i + NR_VM_ZONE_STAT_ITEMS],
+-				zone_numa_state_snapshot(zone, i));
++		seq_printf(m, "\n      %-12s %lu", numa_stat_name(i),
++			   zone_numa_state_snapshot(zone, i));
+ #endif
+ 
+ 	seq_printf(m, "\n  pagesets");
+@@ -1641,12 +1638,6 @@ static const struct seq_operations zoneinfo_op = {
+ 	.show	= zoneinfo_show,
+ };
+ 
+-enum writeback_stat_item {
+-	NR_DIRTY_THRESHOLD,
+-	NR_DIRTY_BG_THRESHOLD,
+-	NR_VM_WRITEBACK_STAT_ITEMS,
+-};
+-
+ static void *vmstat_start(struct seq_file *m, loff_t *pos)
+ {
+ 	unsigned long *v;
+@@ -1764,7 +1755,7 @@ int vmstat_refresh(struct ctl_table *table, int write,
+ 		val = atomic_long_read(&vm_zone_stat[i]);
+ 		if (val < 0) {
+ 			pr_warn("%s: %s %ld\n",
+-				__func__, vmstat_text[i], val);
++				__func__, zone_stat_name(i), val);
+ 			err = -EINVAL;
+ 		}
+ 	}
+@@ -1773,7 +1764,7 @@ int vmstat_refresh(struct ctl_table *table, int write,
+ 		val = atomic_long_read(&vm_numa_stat[i]);
+ 		if (val < 0) {
+ 			pr_warn("%s: %s %ld\n",
+-				__func__, vmstat_text[i + NR_VM_ZONE_STAT_ITEMS], val);
++				__func__, numa_stat_name(i), val);
+ 			err = -EINVAL;
+ 		}
+ 	}
+
