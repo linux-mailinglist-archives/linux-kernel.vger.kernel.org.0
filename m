@@ -2,210 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29490D72CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 12:08:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AF5DD72C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 12:06:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730064AbfJOKIO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 06:08:14 -0400
-Received: from mail-eopbgr20085.outbound.protection.outlook.com ([40.107.2.85]:4368
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727018AbfJOKIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 06:08:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FJjFVD/1IUqcd1WEqRaflOr0mBmZvSltw5iQOvjQDe4=;
- b=dNSlLZPBpcLVA6TDfRCHYPpKVEMGxHg923HOYFPYubxYNjwE4lnNiNx1E+6SmV7QCK0TGHK6wcYOGxCdjD6GBr4usiB2Ftroek00WgNpom5oxMDhqb0iEb4uIQ/mPN7JS+miTvBo2kdwC7GRHde7I0mudE8MZpBY8nH/SBSIrFA=
-Received: from VI1PR0801CA0079.eurprd08.prod.outlook.com
- (2603:10a6:800:7d::23) by VE1PR08MB4766.eurprd08.prod.outlook.com
- (2603:10a6:802:a9::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2347.21; Tue, 15 Oct
- 2019 10:06:25 +0000
-Received: from AM5EUR03FT038.eop-EUR03.prod.protection.outlook.com
- (2a01:111:f400:7e08::200) by VI1PR0801CA0079.outlook.office365.com
- (2603:10a6:800:7d::23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2347.16 via Frontend
- Transport; Tue, 15 Oct 2019 10:06:25 +0000
-Authentication-Results: spf=temperror (sender IP is 63.35.35.123)
- smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
- header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=none action=none
- header.from=arm.com;
-Received-SPF: TempError (protection.outlook.com: error in processing during
- lookup of arm.com: DNS Timeout)
-Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- AM5EUR03FT038.mail.protection.outlook.com (10.152.17.118) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.2305.15 via Frontend Transport; Tue, 15 Oct 2019 10:06:23 +0000
-Received: ("Tessian outbound 3fba803f6da3:v33"); Tue, 15 Oct 2019 10:06:19 +0000
-X-CheckRecipientChecked: true
-X-CR-MTA-CID: 83e296d17dcb401e
-X-CR-MTA-TID: 64aa7808
-Received: from eac64756631c.2 (ip-172-16-0-2.eu-west-1.compute.internal [104.47.2.56])
-        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 03D616CD-62E2-41DE-AF9C-8FAFEF5249D2.1;
-        Tue, 15 Oct 2019 10:06:14 +0000
-Received: from EUR01-DB5-obe.outbound.protection.outlook.com (mail-db5eur01lp2056.outbound.protection.outlook.com [104.47.2.56])
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id eac64756631c.2
-    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
-    Tue, 15 Oct 2019 10:06:14 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IkqLGvspB/hYaUsJ9ulhp2mw9vh91iz3YQhBTP9mrDRWv8Nzf6VoKLSwGsi9fOtDgGK2Tcj63knO9Ue7HmzIMOopTNeEDL9JXVIyGw/DKNxicTv+aIxcvUvu6xUU19WCqybzQdGRuLdZlBLxP+7nWYRiZ5I3KzQy2gWbtb8Zz5dTBQiZOKzqOSyjXwu6NlfMrExCJUJZBmLQIBeAqFnvBffyHLhK6fNK2xFCNIBWnaX9hKqmKQCShmAVyzlNq9AqQp7dDX6ofjkGHLiMn7hDJS6DVsV7HKwKbqf2xQsETkjaD3MA86y28OUpWnz5ud43zJcW2ml8Te12PRsupEF04Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FJjFVD/1IUqcd1WEqRaflOr0mBmZvSltw5iQOvjQDe4=;
- b=JY41AfQHKQde7gNznDHWoERRYQCR5dY8/Rv4y/ptE4varAQ5KhqK0WXlwUIadl7QYzb9cjMByWRdC0INIh0dfiEYFi46HCgi2A9lQF4XLyw4+ceGsyAWIhv246P/j0QCCDxTXNVKngeer3Q1OfzZCZ8YZIQNn1s7BleHQLssFh6fQD790PgYU6guBrlhmd20SoLjVsPG00ixaQbjHybU70syQTl6caHNfVj+vqcRzD+7JIMyjtOq7p6w7OF7xm14rzTNOShlmDXJnC5TX6HTsJDEkefihx6yig1CIXemUTBU4tqeG1YN6bb/fwpXLSRic9FLaDRyqi7BdEAcZoggHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FJjFVD/1IUqcd1WEqRaflOr0mBmZvSltw5iQOvjQDe4=;
- b=dNSlLZPBpcLVA6TDfRCHYPpKVEMGxHg923HOYFPYubxYNjwE4lnNiNx1E+6SmV7QCK0TGHK6wcYOGxCdjD6GBr4usiB2Ftroek00WgNpom5oxMDhqb0iEb4uIQ/mPN7JS+miTvBo2kdwC7GRHde7I0mudE8MZpBY8nH/SBSIrFA=
-Received: from VE1PR08MB5182.eurprd08.prod.outlook.com (20.179.31.89) by
- VE1PR08MB5184.eurprd08.prod.outlook.com (20.179.29.143) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.19; Tue, 15 Oct 2019 10:06:12 +0000
-Received: from VE1PR08MB5182.eurprd08.prod.outlook.com
- ([fe80::a54d:cc87:644c:e3ba]) by VE1PR08MB5182.eurprd08.prod.outlook.com
- ([fe80::a54d:cc87:644c:e3ba%6]) with mapi id 15.20.2347.023; Tue, 15 Oct 2019
- 10:06:12 +0000
-From:   "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>
-To:     Brian Starkey <Brian.Starkey@arm.com>
-CC:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
-        Liviu Dudau <Liviu.Dudau@arm.com>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "seanpaul@chromium.org" <seanpaul@chromium.org>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        Mihail Atanassov <Mihail.Atanassov@arm.com>,
-        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
-        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
-        Ayan Halder <Ayan.Halder@arm.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        nd <nd@arm.com>
-Subject: Re: [PATCH] drm/komeda: Adds output-color format/depth support
-Thread-Topic: [PATCH] drm/komeda: Adds output-color format/depth support
-Thread-Index: AQHVb5fml3iiEtk+MEOqXjNduhm+kKc5MiiAgADp5ICAAhFyAIACqBcAgAVBDQCAF4p+gA==
-Date:   Tue, 15 Oct 2019 10:06:12 +0000
-Message-ID: <20191015100605.GA26326@lowli01-ThinkStation-P300>
-References: <20190920094329.17513-1-lowry.li@arm.com>
- <20190923121604.jqi6ewln27yvdajw@DESKTOP-E1NTVVP.localdomain>
- <20190924021313.GA15776@jamwan02-TSP300>
- <20190925094810.fbeyt7fxvyhaip33@DESKTOP-E1NTVVP.localdomain>
- <20190927022218.GA11732@jamwan02-TSP300>
- <20190930103626.de3p6rbowyerjbks@DESKTOP-E1NTVVP.localdomain>
-In-Reply-To: <20190930103626.de3p6rbowyerjbks@DESKTOP-E1NTVVP.localdomain>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mutt/1.9.4 (2018-02-28)
-x-originating-ip: [113.29.88.7]
-x-clientproxiedby: HK0PR03CA0039.apcprd03.prod.outlook.com
- (2603:1096:203:2f::27) To VE1PR08MB5182.eurprd08.prod.outlook.com
- (2603:10a6:803:10c::25)
-Authentication-Results-Original: spf=none (sender IP is )
- smtp.mailfrom=Lowry.Li@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-X-MS-Office365-Filtering-Correlation-Id: 1613e6e9-03ea-4d4f-6ec5-08d7515755a1
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-TrafficTypeDiagnostic: VE1PR08MB5184:|VE1PR08MB5184:|VE1PR08MB4766:
-X-MS-Exchange-PUrlCount: 2
-x-ms-exchange-transport-forked: True
-X-Microsoft-Antispam-PRVS: <VE1PR08MB47665E93969E26495C2FC62E9F930@VE1PR08MB4766.eurprd08.prod.outlook.com>
-x-checkrecipientrouted: true
-x-ms-oob-tlc-oobclassifiers: OLM:8882;OLM:8882;
-x-forefront-prvs: 01917B1794
-X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(4636009)(7916004)(39860400002)(136003)(346002)(376002)(366004)(396003)(189003)(199004)(55236004)(256004)(66446008)(66556008)(8676002)(6636002)(81156014)(14454004)(8936002)(33656002)(64756008)(66476007)(66946007)(66066001)(81166006)(71190400001)(71200400001)(305945005)(99286004)(7736002)(33716001)(4326008)(186003)(26005)(76176011)(52116002)(102836004)(6506007)(6246003)(1076003)(5660300002)(9686003)(6512007)(25786009)(6436002)(6306002)(229853002)(478600001)(6862004)(476003)(6486002)(11346002)(446003)(2906002)(6116002)(3846002)(486006)(966005)(316002)(54906003)(58126008)(86362001)(386003);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR08MB5184;H:VE1PR08MB5182.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original: Wlht+9gGzV2O5vQezxOuzER5+clz5CYUMog981J9LIADpH1BTo0LjNhTK4iC4eiB8BSKXxOI3jLtNaBLeMndlDSYBQhX3cLxDawAKKhJBI1ruFg/AgmbOs+R7cfNj4YUNHiKkYlanv9MiyRGTnaemJVagqF42TrBKiVA+oH2Hj1CDUCkIKhNuHSewBXuGJg+++VHXalXwStSiK2BnQZrX0FSx1rcepPBhNtarFLXHHMjhAQfsaJ2+5vG90nnpkfnDxp6+qnoKbK8WmfrMZ2/BxNZluYRj1ritUArC7eM1fbLKeiCqzGVfpTgA6jrBAXpR2k4ud9qzWlBPr9b2uTCoKtAmysHsFk57EEkbNPeVxRIFCCZ7F8UZJ3bO7pYBnZi2cFhbgi1768m6PkdMI2aRJaLMicfKDFyzOkebapQdGGRhBg+SNDWg1Q1iGTOVJEyuy4VoDCTgd5gbqAMnN1g8A==
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <221E5282F0F9EB42B7A16C6296309758@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1727593AbfJOKG5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 06:06:57 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33899 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727132AbfJOKG5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 06:06:57 -0400
+Received: by mail-lj1-f196.google.com with SMTP id j19so19618499lja.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 03:06:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=RjVMtrJp1iFHo56unmu4gsv1JhH5b/RYaTBUd0ibDk8=;
+        b=RZ+GE5VFUSnnTf/4sDkmoYv6MUSD4lyg2kYsLPOvYHjd6dE04HZw4ZcjF1x3FUMZvd
+         W+6rr3QIHHJR8GkzYRfypHK7GaN9noxAC/nLkKLrkM+woppzwrLa3ru6EihxyiJV9dL4
+         /24kmrtpNGcwWo0nWLjfo1DlwP1yw8Srj8tUKfRBtTtMbFl0y+oECZMwq26ZIS4gOwGs
+         5tucrdKs65ohI9oQ14tCuEUC1kInwNruNxC/dkYGuHU+5aMdGivFrBS0tzRDmJ17Xfng
+         vbsSLRwVGLooOgeUFk2X+Foynp1gDHtfmDpC+TQ7xAQ0HMn/O0ByZg1L1cvjNBdbHjjV
+         6lmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=RjVMtrJp1iFHo56unmu4gsv1JhH5b/RYaTBUd0ibDk8=;
+        b=JPd5WKOHoCSKCG8dxIAGljLrogONCfe3ygoGwDZU1e+S/1DT0VHRd8Y3/KH/rv3kSp
+         +VphK8LEbbLhHCHIjnjECnjf/Ww6+2EKm39Mt7FaWU5nxCoq8yx8KizRKi820F4UGsbc
+         2Dtlb+Wml61swnMis5GaU7BXDiJ6/H17o6D2XIJ+p9q4kK+uDLNK0S45uMeD89L6mOX3
+         anf8xlSc1uojKRoN5r2Oa21zw8LrYIlho81USVchXMHubNMFsXHxWAIQ8psLwsjxVXGw
+         ksVOrlkPaHN6/EsutEvpXKzQRzh2rEWvbJPa5PE+qxorN8EsBO96fwuCryttIJNrPTyk
+         c7OQ==
+X-Gm-Message-State: APjAAAXuSxCbVfYKQDN4tfDY1XuBqK0JtSQO3hWZ491b+6RJEUeIan85
+        dQr3D7fll4y3Fx9Dyj7sI5LAJoVc6Pw=
+X-Google-Smtp-Source: APXvYqzrUStCoSSrPUP/5nERGNNorZD3MawK+VZNiHzjzhWHkDwiDSY0QhCmMEg14m1WlC6XsH9p0Q==
+X-Received: by 2002:a2e:8684:: with SMTP id l4mr22684903lji.87.1571134014417;
+        Tue, 15 Oct 2019 03:06:54 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id d8sm4527376lfb.88.2019.10.15.03.06.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2019 03:06:53 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 8F9DC100D4C; Tue, 15 Oct 2019 13:06:53 +0300 (+03)
+Date:   Tue, 15 Oct 2019 13:06:53 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Thomas =?utf-8?Q?Hellstr=C3=B6m_=28VMware=29?= 
+        <thomas_os@shipmail.org>, Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Thomas Hellstrom <thellstrom@vmware.com>
+Subject: Re: [RFC PATCH] mm: Fix a huge pud insertion race during faulting
+Message-ID: <20191015100653.ittq4b2mx7pszky5@box>
+References: <20191008093711.3410-1-thomas_os@shipmail.org>
 MIME-Version: 1.0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR08MB5184
-Original-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Lowry.Li@arm.com; 
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: AM5EUR03FT038.eop-EUR03.prod.protection.outlook.com
-X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(7916004)(39860400002)(346002)(396003)(376002)(136003)(199004)(189003)(6636002)(356004)(76130400001)(70586007)(70206006)(316002)(36906005)(58126008)(47776003)(54906003)(102836004)(6246003)(33716001)(22756006)(76176011)(97756001)(33656002)(6506007)(26005)(14454004)(7736002)(6862004)(386003)(186003)(66066001)(966005)(478600001)(26826003)(126002)(46406003)(305945005)(336012)(2906002)(99286004)(4326008)(8676002)(6512007)(229853002)(8746002)(6306002)(25786009)(23726003)(3846002)(6116002)(476003)(5660300002)(50466002)(11346002)(446003)(486006)(6486002)(86362001)(9686003)(1076003)(63350400001)(81166006)(8936002)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR08MB4766;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:TempError;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;A:1;MX:1;
-X-MS-Office365-Filtering-Correlation-Id-Prvs: 64ea690a-ff94-4401-7635-08d751574ede
-NoDisclaimer: True
-X-Forefront-PRVS: 01917B1794
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Fe0RPIAbVk3NnC/3OajyXun1TUdzin4ttHK8A+/ebJB0gxqjMswqRnHsldvOsFhZwdzImqEBLRMKY6hQMaptvw5KE8JThSHxPa/xXVYwXKoTBjO7ZiwGxcSpEvgc7zunAGYpTOERC+Anw0LQ9HEL/u3xYsKBuXbPhSvbdnZaTY/7KdlYuPIQphdzk5mbnt5ZRNbQf9iTdB+KUWdVMRsdKU3kPktlcSw9hwRl0/rC8mJdSXWdoyIcxmo10SXtx1pMk8VAIDvDDq8ueiJjBNcKqzm1nnFIP1W5XUJUVGVRB42KH8tVnv6CCccS9gM930p8onrjDXqBN6hXJfv7AFfJb4mrj8Fcq0IKWW1bTKB9uAxz8pD0/i0uirZ+Lkif29HZYw2qXdRB5keYR+HvOKiLXEDJ0bftcYJrfbVoOjKY33BlXJnXqi8BCu3/cvuAH3+FDCzfnpEaVknvYXbVkyQiFg==
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2019 10:06:23.6041
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1613e6e9-03ea-4d4f-6ec5-08d7515755a1
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR08MB4766
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191008093711.3410-1-thomas_os@shipmail.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Brian,
-On Mon, Sep 30, 2019 at 10:36:27AM +0000, Brian Starkey wrote:
-> On Fri, Sep 27, 2019 at 02:22:24AM +0000, james qian wang (Arm Technology=
- China) wrote:
-> > On Wed, Sep 25, 2019 at 09:48:11AM +0000, Brian Starkey wrote:
-> > > Hi James,
-> > >=20
-> > > On Tue, Sep 24, 2019 at 02:13:27AM +0000, james qian wang (Arm Techno=
-logy China) wrote:
-> > > >=20
-> > > > Hi Brian:
-> > > >=20
-> > > > Since one monitor can support mutiple color-formats, this DT proper=
-ty
-> > > > supply a way for user to select a specific one from this supported
-> > > > color-formats.
-> > >=20
-> > > Modifying DT is a _really_ user-unfriendly way of specifying
-> > > preferences. If we want a user to be able to pick a preferred format,
-> > > then it should probably be via the atomic API as Ville mentioned.
-> > >
-> >=20
-> > Hi Brian:
-> >=20
-> > Agree, a drm UPAI might be the best & right way for this.
-> >=20
-> > I can raise a new thread/topic to discuss the "HOW TO", maybe after the
-> > Chinese national day.
-> >=20
-> > LAST:
-> > what do you think about this patch:
-> > - Just drop it, waiting for the new uapi
-> > - or keep it, and replace it once new uapi is ready.
->=20
-> The bit-depth stuff is clear and non-controversial, so you could split
-> that out and merge it.
->=20
-> For the YUV stuff, I think it would be fine to merge the
-> implementation that we discussed here - force YUV for modes which must
-> be YUV, and leave the user-preference stuff for a later UAPI.
->=20
-> Thanks,
-> -Brian
-This patch has been split to two patches and this will be dropped.
-Output bit-depth : https://patchwork.freedesktop.org/series/67730/
-Output color format: https://patchwork.freedesktop.org/series/68012/
+On Tue, Oct 08, 2019 at 11:37:11AM +0200, Thomas Hellström (VMware) wrote:
+> From: Thomas Hellstrom <thellstrom@vmware.com>
+> 
+> A huge pud page can theoretically be faulted in racing with pmd_alloc()
+> in __handle_mm_fault(). That will lead to pmd_alloc() returning an
+> invalid pmd pointer. Fix this by adding a pud_trans_unstable() function
+> similar to pmd_trans_unstable() and check whether the pud is really stable
+> before using the pmd pointer.
+> 
+> Race:
+> Thread 1:             Thread 2:                 Comment
+> create_huge_pud()                               Fallback - not taken.
+> 		      create_huge_pud()         Taken.
+> pmd_alloc()                                     Returns an invalid pointer.
+> 
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Fixes: a00cc7d9dd93 ("mm, x86: add support for PUD-sized transparent hugepages")
+> Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+> ---
+> RFC: We include pud_devmap() as an unstable PUD flag. Is this correct?
+>      Do the same for pmds?
 
-Regards,
-Lowry
-> >=20
-> > Thanks
-> > James
-> >=20
-> > > Cheers,
-> > > -Brian
+I *think* it is correct and we should do the same for PMD, but I may be
+wrong.
+
+Dan, Matthew, could you comment on this?
+
+> ---
+>  include/asm-generic/pgtable.h | 25 +++++++++++++++++++++++++
+>  mm/memory.c                   |  6 ++++++
+>  2 files changed, 31 insertions(+)
+> 
+> diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+> index 818691846c90..70c2058230ba 100644
+> --- a/include/asm-generic/pgtable.h
+> +++ b/include/asm-generic/pgtable.h
+> @@ -912,6 +912,31 @@ static inline int pud_trans_huge(pud_t pud)
+>  }
+>  #endif
+>  
+> +/* See pmd_none_or_trans_huge_or_clear_bad for discussion. */
+> +static inline int pud_none_or_trans_huge_or_dev_or_clear_bad(pud_t *pud)
+> +{
+> +	pud_t pudval = READ_ONCE(*pud);
+> +
+> +	if (pud_none(pudval) || pud_trans_huge(pudval) || pud_devmap(pudval))
+> +		return 1;
+> +	if (unlikely(pud_bad(pudval))) {
+> +		pud_clear_bad(pud);
+> +		return 1;
+> +	}
+> +	return 0;
+> +}
+> +
+> +/* See pmd_trans_unstable for discussion. */
+> +static inline int pud_trans_unstable(pud_t *pud)
+> +{
+> +#if defined(CONFIG_TRANSPARENT_HUGEPAGE) &&			\
+> +	defined(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
+> +	return pud_none_or_trans_huge_or_dev_or_clear_bad(pud);
+> +#else
+> +	return 0;
+> +#endif
+> +}
+> +
+>  #ifndef pmd_read_atomic
+>  static inline pmd_t pmd_read_atomic(pmd_t *pmdp)
+>  {
+> diff --git a/mm/memory.c b/mm/memory.c
+> index b1ca51a079f2..43ff372f4f07 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -3914,6 +3914,7 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
+>  	vmf.pud = pud_alloc(mm, p4d, address);
+>  	if (!vmf.pud)
+>  		return VM_FAULT_OOM;
+> +retry_pud:
+>  	if (pud_none(*vmf.pud) && __transparent_hugepage_enabled(vma)) {
+>  		ret = create_huge_pud(&vmf);
+>  		if (!(ret & VM_FAULT_FALLBACK))
+> @@ -3940,6 +3941,11 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
+>  	vmf.pmd = pmd_alloc(mm, vmf.pud, address);
+>  	if (!vmf.pmd)
+>  		return VM_FAULT_OOM;
+> +
+> +	/* Huge pud page fault raced with pmd_alloc? */
+> +	if (pud_trans_unstable(vmf.pud))
+> +		goto retry_pud;
+> +
+>  	if (pmd_none(*vmf.pmd) && __transparent_hugepage_enabled(vma)) {
+>  		ret = create_huge_pmd(&vmf);
+>  		if (!(ret & VM_FAULT_FALLBACK))
+> -- 
+> 2.20.1
+> 
+
+-- 
+ Kirill A. Shutemov
