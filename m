@@ -2,116 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 344A5D6F39
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 07:37:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A331BD6F42
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 07:40:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726562AbfJOFhf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 01:37:35 -0400
-Received: from mga07.intel.com ([134.134.136.100]:46142 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726115AbfJOFhf (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 01:37:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Oct 2019 22:37:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,298,1566889200"; 
-   d="scan'208";a="189246117"
-Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.239.196.81]) ([10.239.196.81])
-  by orsmga008.jf.intel.com with ESMTP; 14 Oct 2019 22:37:32 -0700
-Subject: Re: [PATCH v1 0/5] perf report: Support sorting all blocks by cycles
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com
-References: <20191008070502.22551-1-yao.jin@linux.intel.com>
- <20191014153213.GE9700@krava>
-From:   "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <33a5e21c-1885-0b02-0c62-a25dddd7b65c@linux.intel.com>
-Date:   Tue, 15 Oct 2019 13:37:31 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726251AbfJOFkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 01:40:08 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39466 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725890AbfJOFkH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 01:40:07 -0400
+Received: by mail-wr1-f68.google.com with SMTP id r3so22145438wrj.6
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 22:40:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cgXIwZUEBFUFxozlcJa8pF4R5hS6O4lvi7YgXVTtNrg=;
+        b=wobk7zeU2Qq4Iw4VYGauePPRVllk+oX4BOTXW4dqIuZOU65i669vY0sI98tfrYcOZ5
+         SshO5hlj9xhcyL22b4GpHbRJWWe/55C0R23E2Q4WjVy/Td59knbs3xvJ4MPctCSIG7Jw
+         f2yddxGid5Qylc/tlOo6/r7RWlnkAq64dhtH9MlpO1G1QqQNndYMQLGyhR9QBN6Qi90W
+         JeURaeQ+4gEghE38gdiQujzUV1xWBCPxHAWgFJJpCzDWm2Dcm1rIU0OWeVsPemcPcJrL
+         TU5gIu9NjSC9kgfQ0mht0q61rqiJQtnsqYYzrKuJVWnvcXb8qz2NhTj1DOCbX5ewie5Y
+         QpAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cgXIwZUEBFUFxozlcJa8pF4R5hS6O4lvi7YgXVTtNrg=;
+        b=Tf0E8JC7YfOBoH3RgUOOxULI9AbXMyLIYHv7wZ02u7YIxAkyL4L4nIvthbonidbK0o
+         mN2b43WRHT1zEivFqEYIlH90+6Ga9jhX268lP78RzU9wKp+r/niKXIoniMGxFs6tUxeX
+         m7paRoEzebQ2dKwfL6R81gCb2ndcb54Rz7azWb4IZLGT7MbVVwtBX36Jx1PNl6n44SEk
+         UvX5EMsAkFFsfwPVkKPTTroCv/ZEuHxSJ68SzcFwoflrdF1+r/ltE1FIB0bk28oMJ9rh
+         OtWgd+tOrgXtdUXdsEireg9ZHR4UBXwqdVBwuuFapRr/Fj05J4Uuy2zD1bMQR2MQGUws
+         1LQg==
+X-Gm-Message-State: APjAAAUkb0jDTNzxUtxuHT3/9M/Ms9yiM3l6bkMd4EQ3rsyJwW/iPV4Z
+        W9ouIMVD3UQi2dSDd59LejC+Ea2x/UWjGIVuPEpB0g==
+X-Google-Smtp-Source: APXvYqw22c6HVZZ+Kpi/RqnTBbP1ROHewS5lJFHx9CR+JR4q2hJYAD5M98Q9ue9e4uA7Wv2AfuCyqpA1kNE9d99rEbk=
+X-Received: by 2002:a5d:50c9:: with SMTP id f9mr27636293wrt.36.1571118003994;
+ Mon, 14 Oct 2019 22:40:03 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191014153213.GE9700@krava>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191002231617.3670-1-john.stultz@linaro.org> <20191002231617.3670-3-john.stultz@linaro.org>
+ <2e369349-41f6-bd15-2829-fa886f209b39@redhat.com> <CALAqxLVcQ7yZuJCUEqGmvqcz5u0Gd=xJzqLbmiXKR+LJrOhvMQ@mail.gmail.com>
+ <b8695418-9d3a-96a6-9587-c9a790f49740@redhat.com>
+In-Reply-To: <b8695418-9d3a-96a6-9587-c9a790f49740@redhat.com>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Mon, 14 Oct 2019 22:39:51 -0700
+Message-ID: <CALAqxLVh6GbiKmuK60e6f+_dWh-TS2ZLrwx0WsSo5bKp-F3iLA@mail.gmail.com>
+Subject: Re: [RFC][PATCH 2/3] usb: roles: Add usb role switch notifier.
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     lkml <linux-kernel@vger.kernel.org>, Yu Chen <chenyu56@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Jun Li <lijun.kernel@gmail.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Oct 3, 2019 at 1:51 PM Hans de Goede <hdegoede@redhat.com> wrote:
+> On 03-10-2019 22:37, John Stultz wrote:
+> > Fair point. I'm sort of taking a larger patchset and trying to break
+> > it up into more easily reviewable chunks, but I guess here I mis-cut.
+> >
+> > The user is the hikey960 gpio hub driver here:
+> >    https://git.linaro.org/people/john.stultz/android-dev.git/commit/?id=b06158a2d3eb00c914f12c76c93695e92d9af00f
+>
+> Hmm, that seems to tie the TypeC data-role to the power-role, which
+> is not going to work with role swapping.
 
+Thanks again for the feedback here. Sorry for the slow response. Been
+reworking some of the easier changes but am starting to look at how to
+address your feedback here.
 
-On 10/14/2019 11:32 PM, Jiri Olsa wrote:
-> On Tue, Oct 08, 2019 at 03:04:57PM +0800, Jin Yao wrote:
->> It would be useful to support sorting for all blocks by the
->> sampled cycles percent per block. This is useful to concentrate
->> on the globally busiest/slowest blocks.
->>
->> This patch series implements a new sort option "total_cycles" which
->> sorts all blocks by 'Sampled Cycles%'. The 'Sampled Cycles%' is
->> block sampled cycles aggregation / total sampled cycles
->>
->> For example,
->>
->> perf record -b ./div
->> perf report -s total_cycles --stdio
->>
->>   # To display the perf.data header info, please use --header/--header-only options.
->>   #
->>   #
->>   # Total Lost Samples: 0
->>   #
->>   # Samples: 2M of event 'cycles'
->>   # Event count (approx.): 2753248
->>   #
->>   # Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles                                              [Program Block Range]         Shared Object
->>   # ...............  ..............  ...........  ..........  .................................................................  ....................
->>   #
->>              26.04%            2.8M        0.40%          18                                             [div.c:42 -> div.c:39]                   div
->>              15.17%            1.2M        0.16%           7                                 [random_r.c:357 -> random_r.c:380]          libc-2.27.so
->>               5.11%          402.0K        0.04%           2                                             [div.c:27 -> div.c:28]                   div
->>               4.87%          381.6K        0.04%           2                                     [random.c:288 -> random.c:291]          libc-2.27.so
->>               4.53%          381.0K        0.04%           2                                             [div.c:40 -> div.c:40]                   div
->>               3.85%          300.9K        0.02%           1                                             [div.c:22 -> div.c:25]                   div
->>               3.08%          241.1K        0.02%           1                                           [rand.c:26 -> rand.c:27]          libc-2.27.so
->>               3.06%          240.0K        0.02%           1                                     [random.c:291 -> random.c:291]          libc-2.27.so
->>               2.78%          215.7K        0.02%           1                                     [random.c:298 -> random.c:298]          libc-2.27.so
->>               2.52%          198.3K        0.02%           1                                     [random.c:293 -> random.c:293]          libc-2.27.so
->>               2.36%          184.8K        0.02%           1                                           [rand.c:28 -> rand.c:28]          libc-2.27.so
->>               2.33%          180.5K        0.02%           1                                     [random.c:295 -> random.c:295]          libc-2.27.so
->>               2.28%          176.7K        0.02%           1                                     [random.c:295 -> random.c:295]          libc-2.27.so
->>               2.20%          168.8K        0.02%           1                                         [rand@plt+0 -> rand@plt+0]                   div
->>               1.98%          158.2K        0.02%           1                                 [random_r.c:388 -> random_r.c:388]          libc-2.27.so
->>               1.57%          123.3K        0.02%           1                                             [div.c:42 -> div.c:44]                   div
->>               1.44%          116.0K        0.42%          19                                 [random_r.c:357 -> random_r.c:394]          libc-2.27.so
->>   ......
->>
->> This patch series supports both stdio and tui. And also with the supporting
->> of --percent-limit.
->>
->> Jin Yao (5):
->>    perf util: Create new block.h/block.c for block related functions
->>    perf util: Count the total cycles of all samples
->>    perf report: Sort by sampled cycles percent per block for stdio
->>    perf report: Support --percent-limit for total_cycles
->>    perf report: Sort by sampled cycles percent per block for tui
-> 
-> sry for delay, but I can no longer apply this
-> could you please rebase?
-> 
-> thanks,
-> jirka
-> 
+> What is controlling the usb-role-switch, and thus ultimately
+> causing the notifier you are suggesting to get called ?
 
-Hi Jiri,
+The tcpm_mux_set() call via tcpm_state_machine_work()
 
-Thanks a lot for reviewing the patch. I just sent out the v2 which had 
-been rebased to perf/core branch.
+> Things like TYPEC_VBUS_POWER_OFF and TYPEC_VBUS_POWER_ON
+> really beg to be modeled as a regulator and then the
+> Type-C controller (using e.g. the drivers/usb/typec/tcpm/tcpm.c
+> framework) can use that regulator to control things.
+> in case of the tcpm.c framework it can then use that
+> regulator to implement the set_vbus callback.
 
-Thanks
-Jin Yao
+So I'm looking at the bindings and I'm not sure exactly how to tie a
+regulator style driver into the tcpm for this?
+Looking at the driver I just see this commented out bit:
+   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/usb/typec/tcpm/tcpm.c#n3075
 
+Do you happen to have a pointer to something closer to what you are describing?
+
+thanks
+-john
