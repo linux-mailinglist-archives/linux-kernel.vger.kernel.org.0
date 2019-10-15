@@ -2,101 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92D8AD7FA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:10:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D784D7F9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:10:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389344AbfJOTKj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 15:10:39 -0400
-Received: from gateway30.websitewelcome.com ([192.185.196.18]:42479 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389323AbfJOTKi (ORCPT
+        id S2389319AbfJOTKQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 15:10:16 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38885 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389296AbfJOTKP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 15:10:38 -0400
-X-Greylist: delayed 1397 seconds by postgrey-1.27 at vger.kernel.org; Tue, 15 Oct 2019 15:10:37 EDT
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id EF3783B3E
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 13:47:18 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id KRqoi6mzjPUvSKRqoigmUU; Tue, 15 Oct 2019 13:47:18 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ylsOLtlHy0yELn95rm6leLOAaujCpaVYbsqRrnqooSg=; b=iWCnoGxsnxYjGPaXkBCyHWfTq2
-        HJG4FcIp5GHwd3eXjbCCqMNeevLjnHhCvBCd759outDoOte8McPV7BaRPRHiIUG6E6HD5yJUscPLG
-        9n7+RiZc+o7meo2iuVYmPnrRZ1zlFV5RputOPMet64VEzZIz3v2EW8fffL+zPAaHrjITKuNGK6T6X
-        3UpjCkVsWDox1owp7C0+Ikd0MsbL3kkWNdqeeP62mGo89NOaEMDUqm5ZQBCLQ7fjEB6GW3BWwyH4x
-        Y+WNu5fS+dcZiLxuSSas8xKmfpJ/S7xe9m2wTv2mnHc7cGrlzSY7zLY5K1BBzudKqKf7ZAvk37tqM
-        gbvRJWvQ==;
-Received: from [187.192.22.73] (port=41390 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1iKRqn-001fgo-4G; Tue, 15 Oct 2019 13:47:17 -0500
-Date:   Tue, 15 Oct 2019 13:46:57 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     William Breathitt Gray <vilhelm.gray@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] linux/bitmap.h: fix potential sign-extension overflow
-Message-ID: <20191015184657.GA26541@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.22.73
-X-Source-L: No
-X-Exim-ID: 1iKRqn-001fgo-4G
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.192.22.73]:41390
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 9
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Tue, 15 Oct 2019 15:10:15 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 3so217486wmi.3;
+        Tue, 15 Oct 2019 12:10:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=iUvBerQddYmthJVayR0YUavvmPSsApA6rPHT7ry9gZM=;
+        b=CQPBccpCjw/Sso/I1eghm8gDdbDrvw6bhKk463W434QzPsmH/EcDrwH5OjhZgnD85q
+         T979D8d+4CXOBqNJUM+WwpZdgiD0jqvwxuJLKTDtvf14rf4EKtMZN9s76jmm+BhGN8QV
+         JcolqoGCKfGCJMy4tjp7dWc3rsP2kY6Rh4hGk604EgvTKQC+I74h//Fa3MSsvwweztxD
+         +zDgOwHK6PStVZPGrPh2EPP/XkHhCIOzVTnvFAi2MQG3ZtkQMeCmzjnGj7+iRIQyYK2h
+         +23Ndauj8wLvqom7LpzbhcDP4Y8r4OSdIbE+c+DNKJhDUyPmt6IUMdCL48noVtMa1UA9
+         jsMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=iUvBerQddYmthJVayR0YUavvmPSsApA6rPHT7ry9gZM=;
+        b=jhteDrqmb4nuWkkQcWhQiQDmJ3t73AOtxzJzKQwgpaCZRIu30kdn5SB6mNVfsvNtkr
+         9LeLbIQqHkWlWI9BiH27piEXaYeNxphmDSoJ28GPjI71M0Va4UVQ0Es9+GUmjawA0lN6
+         BLXT2703NWrQaZok1ZtEuhEIMmpY+yfRmSVdtjv/D5C0HSbr5no//Tbr4eMcUGDF31ij
+         0v8zvNnZr/GG/tHwV0s3V2vaZx5UOJmYfEU52C7Zf8UNKjr9FLHB43uybf32fUifR8mM
+         HGSSiiJW48H8p3N7PEfyylpmdCDM6rE3IE5JUFuc2gECFiaCcuIczm7UdKeCfNCaM/MX
+         FQWw==
+X-Gm-Message-State: APjAAAWoEx07jN9TOXuIRieVcZnifZaEma48m4li8WMexEXA6FdgU5/W
+        KJc2o3rFUlcGNGVYwN9EXGE=
+X-Google-Smtp-Source: APXvYqyBlK332ZryIQ0G96MVaBD1a1pECjFocKt//rUbE5ZTMRxlSfCkSM0UjXKmzCeVAUuZhl9iGQ==
+X-Received: by 2002:a7b:ce89:: with SMTP id q9mr31686wmj.2.1571166611570;
+        Tue, 15 Oct 2019 12:10:11 -0700 (PDT)
+Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id u26sm25089984wrd.87.2019.10.15.12.10.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 15 Oct 2019 12:10:11 -0700 (PDT)
+From:   Johan Jonker <jbx6244@gmail.com>
+To:     heiko@sntech.de
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] include: dt-bindings: rockchip: remove RK_FUNC defines
+Date:   Tue, 15 Oct 2019 21:10:00 +0200
+Message-Id: <20191015191000.2890-2-jbx6244@gmail.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20191015191000.2890-1-jbx6244@gmail.com>
+References: <20191015191000.2890-1-jbx6244@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In expression 0xff << offset, left shifting by more than 31 bits has
-undefined behavior. Notice that the shift amount, *offset*, can be as
-much as 63.
+The defines RK_FUNC_1, RK_FUNC_2, RK_FUNC_3 and RK_FUNC_4
+are no longer used, so remove them to prevent
+that someone start using them again.
 
-Fix this by adding suffix ULL to integer 0xFF.
-
-Addresses-Coverity: 1487071 ("Bad bit shift operation")
-Fixes: d33f5cbaadd8 ("bitops: introduce the for_each_set_clump8 macro")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
 ---
- include/linux/bitmap.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/dt-bindings/pinctrl/rockchip.h | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
-index 942871bfe47e..96f91db25b06 100644
---- a/include/linux/bitmap.h
-+++ b/include/linux/bitmap.h
-@@ -520,7 +520,7 @@ static inline void bitmap_set_value8(unsigned long *map, unsigned long value,
- 	const size_t index = BIT_WORD(start);
- 	const unsigned long offset = start % BITS_PER_LONG;
+diff --git a/include/dt-bindings/pinctrl/rockchip.h b/include/dt-bindings/pinctrl/rockchip.h
+index dc5c1c73d..2798b6c03 100644
+--- a/include/dt-bindings/pinctrl/rockchip.h
++++ b/include/dt-bindings/pinctrl/rockchip.h
+@@ -50,9 +50,5 @@
+ #define RK_PD7		31
  
--	map[index] &= ~(0xFF << offset);
-+	map[index] &= ~(0xFFULL << offset);
- 	map[index] |= value << offset;
- }
+ #define RK_FUNC_GPIO	0
+-#define RK_FUNC_1	1
+-#define RK_FUNC_2	2
+-#define RK_FUNC_3	3
+-#define RK_FUNC_4	4
  
+ #endif
 -- 
-2.23.0
+2.11.0
 
