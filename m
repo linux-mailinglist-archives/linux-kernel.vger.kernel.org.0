@@ -2,96 +2,279 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FE40D7CF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 19:09:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9632D7D23
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 19:16:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727700AbfJORJU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 13:09:20 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:45400 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726470AbfJORJU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 13:09:20 -0400
-Received: by mail-ot1-f67.google.com with SMTP id 41so17589780oti.12;
-        Tue, 15 Oct 2019 10:09:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JHMlVw4tvcimgqLNE6cW+4izJ5ZEdiASsMVMnyNWIFE=;
-        b=koQy+GHTtbCT+IzxVvnGOCZxIBEqWR0dzqDxlOMt2tPU2TzFErwyF2yJnh9gByBrOr
-         PQnZQdHPnokIRDzj8yrpdzch4bzFexF8oyoTmAACJFHC6KR+fzXzCswsqT+TWR1zuNZJ
-         w6j69mal2a9l4xzngk7Gkch+op+YX+7fNgOuC4XBcKS6gHx6LshtJXGeZpspLkyfkHZ7
-         5wKYSKkJGk4ilNdduc4H7lYNAHLLGHmhpmAHNmNCwEo6XGt8QMsI61sMPNgXD9LTLnX1
-         dap5/tPe5x9U6H/fQ0Af6MHZF67lVhD+Q1y5fLDB28La1S2AsTLcEDLBokRD3JSzaqk5
-         IJWA==
-X-Gm-Message-State: APjAAAXm5kIiKNplGnIvvQAqcimlU0yOSWZtQ9HVziX4Dl9f661K45F7
-        5Aq6U1t83nQa4CeYYYQX0A==
-X-Google-Smtp-Source: APXvYqy2X9I15W25gmPVuvvFHsnO6LRLZtuacdrohlwkKPnx10p92ZlfGBeUKRra5d48a54FxaB9Kg==
-X-Received: by 2002:a9d:70c3:: with SMTP id w3mr22943854otj.246.1571159359034;
-        Tue, 15 Oct 2019 10:09:19 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id o184sm6585474oia.28.2019.10.15.10.09.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2019 10:09:18 -0700 (PDT)
-Date:   Tue, 15 Oct 2019 12:09:17 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>
-Cc:     airlied@linux.ie, daniel@ffwll.ch, robh+dt@kernel.org,
-        mark.rutland@arm.com, alexandre.torgue@st.com,
-        yannick.fertre@st.com, philippe.cornu@st.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
+        id S1730230AbfJORQM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 13:16:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45138 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726277AbfJORQL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 13:16:11 -0400
+Received: from localhost (unknown [38.98.37.135])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F4582086A;
+        Tue, 15 Oct 2019 17:16:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571159769;
+        bh=WAR2gwanRkglRgJ33wk2slqYTUIdiOqopLY7+jPOZzY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mB+ir6sP0IpA3smBmT3xKeYTEe+9GQ8J/og8iqCS7fTiQOggWfn5N8gD+h9JG4BMG
+         UJAWS4SeSuOBn9uTlv7kGaKXUmby5IZZkW3NXX+Leqx9fqy61C4z9qnHM4lzeyS3vp
+         7uLj51/XBjgXCdL3TCaTR3GsHPq7U9gviwv5SX9U=
+Date:   Tue, 15 Oct 2019 18:58:33 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Yunsheng Lin <linyunsheng@huawei.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>, catalin.marinas@arm.com,
+        will@kernel.org, mingo@redhat.com, bp@alien8.de, rth@twiddle.net,
+        ink@jurassic.park.msu.ru, mattst88@gmail.com,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, ysato@users.sourceforge.jp,
+        dalias@libc.org, davem@davemloft.net, ralf@linux-mips.org,
+        paul.burton@mips.com, jhogan@kernel.org, jiaxun.yang@flygoat.com,
+        chenhc@lemote.com, akpm@linux-foundation.org, rppt@linux.ibm.com,
+        anshuman.khandual@arm.com, tglx@linutronix.de, cai@lca.pw,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: Re: [PATCH v4] dt-bindings: display: Convert stm32 display bindings
- to json-schema
-Message-ID: <20191015170917.GA8078@bogus>
-References: <20191015123151.14828-1-benjamin.gaignard@st.com>
+        hpa@zytor.com, x86@kernel.org, dave.hansen@linux.intel.com,
+        luto@kernel.org, len.brown@intel.com, axboe@kernel.dk,
+        dledford@redhat.com, jeffrey.t.kirsher@intel.com,
+        linux-alpha@vger.kernel.org, naveen.n.rao@linux.vnet.ibm.com,
+        mwb@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, tbogendoerfer@suse.de,
+        linux-mips@vger.kernel.org, rafael@kernel.org, bhelgaas@google.com,
+        linux-pci@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        lenb@kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v6] numa: make node_to_cpumask_map() NUMA_NO_NODE aware
+Message-ID: <20191015165833.GB1067208@kroah.com>
+References: <6cc94f9b-0d79-93a8-5ec2-4f6c21639268@huawei.com>
+ <20191011111539.GX2311@hirez.programming.kicks-ass.net>
+ <7fad58d6-5126-e8b8-a7d8-a91814da53ba@huawei.com>
+ <20191012074014.GA2037204@kroah.com>
+ <1e1ec851-b5e7-8f35-a627-4c12ca9c2d3c@huawei.com>
+ <20191012104001.GA2052933@kroah.com>
+ <20191012104742.GA2053473@kroah.com>
+ <82000bc8-6912-205b-0251-25b9cc430973@huawei.com>
+ <20191014092509.GA3050088@kroah.com>
+ <34450edf-2249-ee7a-fc83-f4a923f75989@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191015123151.14828-1-benjamin.gaignard@st.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <34450edf-2249-ee7a-fc83-f4a923f75989@huawei.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 15 Oct 2019 14:31:51 +0200, Benjamin Gaignard wrote:
-> Convert the STM32 display binding to DT schema format using json-schema.
-> Split the original bindings in two yaml files:
-> - one for display controller (ltdc)
-> - one for DSI controller
+On Tue, Oct 15, 2019 at 06:40:29PM +0800, Yunsheng Lin wrote:
+> On 2019/10/14 17:25, Greg KH wrote:
+> > On Mon, Oct 14, 2019 at 04:00:46PM +0800, Yunsheng Lin wrote:
+> >> On 2019/10/12 18:47, Greg KH wrote:
+> >>> On Sat, Oct 12, 2019 at 12:40:01PM +0200, Greg KH wrote:
+> >>>> On Sat, Oct 12, 2019 at 05:47:56PM +0800, Yunsheng Lin wrote:
+> >>>>> On 2019/10/12 15:40, Greg KH wrote:
+> >>>>>> On Sat, Oct 12, 2019 at 02:17:26PM +0800, Yunsheng Lin wrote:
+> >>>>>>> add pci and acpi maintainer
+> >>>>>>> cc linux-pci@vger.kernel.org and linux-acpi@vger.kernel.org
+> >>>>>>>
+> >>>>>>> On 2019/10/11 19:15, Peter Zijlstra wrote:
+> >>>>>>>> On Fri, Oct 11, 2019 at 11:27:54AM +0800, Yunsheng Lin wrote:
+> >>>>>>>>> But I failed to see why the above is related to making node_to_cpumask_map()
+> >>>>>>>>> NUMA_NO_NODE aware?
+> >>>>>>>>
+> >>>>>>>> Your initial bug is for hns3, which is a PCI device, which really _MUST_
+> >>>>>>>> have a node assigned.
+> >>>>>>>>
+> >>>>>>>> It not having one, is a straight up bug. We must not silently accept
+> >>>>>>>> NO_NODE there, ever.
+> >>>>>>>>
+> >>>>>>>
+> >>>>>>> I suppose you mean reporting a lack of affinity when the node of a pcie
+> >>>>>>> device is not set by "not silently accept NO_NODE".
+> >>>>>>
+> >>>>>> If the firmware of a pci device does not provide the node information,
+> >>>>>> then yes, warn about that.
+> >>>>>>
+> >>>>>>> As Greg has asked about in [1]:
+> >>>>>>> what is a user to do when the user sees the kernel reporting that?
+> >>>>>>>
+> >>>>>>> We may tell user to contact their vendor for info or updates about
+> >>>>>>> that when they do not know about their system well enough, but their
+> >>>>>>> vendor may get away with this by quoting ACPI spec as the spec
+> >>>>>>> considering this optional. Should the user believe this is indeed a
+> >>>>>>> fw bug or a misreport from the kernel?
+> >>>>>>
+> >>>>>> Say it is a firmware bug, if it is a firmware bug, that's simple.
+> >>>>>>
+> >>>>>>> If this kind of reporting is common pratice and will not cause any
+> >>>>>>> misunderstanding, then maybe we can report that.
+> >>>>>>
+> >>>>>> Yes, please do so, that's the only way those boxes are ever going to get
+> >>>>>> fixed.  And go add the test to the "firmware testing" tool that is based
+> >>>>>> on Linux that Intel has somewhere, to give vendors a chance to fix this
+> >>>>>> before they ship hardware.
+> >>>>>>
+> >>>>>> This shouldn't be a big deal, we warn of other hardware bugs all the
+> >>>>>> time.
+> >>>>>
+> >>>>> Ok, thanks for clarifying.
+> >>>>>
+> >>>>> Will send a patch to catch the case when a pcie device without numa node
+> >>>>> being set and warn about it.
+> >>>>>
+> >>>>> Maybe use dev->bus to verify if it is a pci device?
+> >>>>
+> >>>> No, do that in the pci bus core code itself, when creating the devices
+> >>>> as that is when you know, or do not know, the numa node, right?
+> >>>>
+> >>>> This can't be in the driver core only, as each bus type will have a
+> >>>> different way of determining what the node the device is on.  For some
+> >>>> reason, I thought the PCI core code already does this, right?
+> >>>
+> >>> Yes, pci_irq_get_node(), which NO ONE CALLS!  I should go delete that
+> >>> thing...
+> >>>
+> >>> Anyway, it looks like the pci core code does call set_dev_node() based
+> >>> on the PCI bridge, so if that is set up properly, all should be fine.
+> >>>
+> >>> If not, well, you have buggy firmware and you need to warn about that at
+> >>> the time you are creating the bridge.  Look at the call to
+> >>> pcibus_to_node() in pci_register_host_bridge().
+> >>
+> >> Thanks for pointing out the specific function.
+> >> Maybe we do not need to warn about the case when the device has a parent,
+> >> because we must have warned about the parent if the device has a parent
+> >> and the parent also has a node of NO_NODE, so do not need to warn the child
+> >> device anymore? like blew:
+> >>
+> >> @@ -932,6 +932,10 @@ static int pci_register_host_bridge(struct pci_host_bridge *bridge)
+> >>         list_add_tail(&bus->node, &pci_root_buses);
+> >>         up_write(&pci_bus_sem);
+> >>
+> >> +       if (nr_node_ids > 1 && !parent &&
+> > 
+> > Why do you need to check this?  If you have a parent, it's your node
+> > should be set, if not, that's an error, right?
 > 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> ---
-> changes in v4:
-> - describe interruptions items
-> - remove unit address from port property
-> - remove dma-ranges (DT patches send too)
-> 
-> changes in v3:
-> - use (GPL-2.0-only OR BSD-2-Clause) license
-> 
-> changes in v2:
-> - use BSD-2-Clause license
-> - add panel property
-> - fix identation
-> - remove pinctrl-names: true
-> - remove pinctrl-[0-9]+: true
-> - rework ports block to include port@0 and port@1
-> - use const for #adress-cells and #size-cells
-> - add additionalProperties: false
->  .../devicetree/bindings/display/st,stm32-dsi.yaml  | 151 +++++++++++++++++++++
->  .../devicetree/bindings/display/st,stm32-ltdc.txt  | 144 --------------------
->  .../devicetree/bindings/display/st,stm32-ltdc.yaml |  81 +++++++++++
->  3 files changed, 232 insertions(+), 144 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/display/st,stm32-dsi.yaml
->  delete mode 100644 Documentation/devicetree/bindings/display/st,stm32-ltdc.txt
->  create mode 100644 Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
-> 
+> If the device has parent and the parent device also has a node of
+> NUMA_NO_NODE, then maybe we have warned about the parent device, so
+> we do not have to warn about the child device?
 
-Applied, thanks.
+But it's a PCI bridge, if it is not set properly, that needs to be fixed
+otherwise the PCI devices attached to it have no hope of working
+properly.
 
-Rob
+> In pci_register_host_bridge():
+> 
+> 	if (!parent)
+> 		set_dev_node(bus->bridge, pcibus_to_node(bus));
+> 
+> The above only set the node of the bridge device to the node of bus if
+> the bridge device does not have a parent.
+
+Odd, what happens to devices behind another bridge today?  Are their
+nodes set properly today?  Is the node supposed to be the same as the
+parent bridge?
+
+> >> +           dev_to_node(bus->bridge) == NUMA_NO_NODE)
+> >> +               dev_err(bus->bridge, FW_BUG "No node assigned on NUMA capable HW. Please contact your vendor for updates.\n");
+> >> +
+> >>         return 0;
+> > 
+> > Who set that bus->bridge node to NUMA_NO_NODE?
+> 
+> It seems x86 and arm64 may have different implemention of
+> pcibus_to_node():
+> 
+> For arm64:
+> int pcibus_to_node(struct pci_bus *bus)
+> {
+> 	return dev_to_node(&bus->dev);
+> }
+> 
+> And the node of bus is set in:
+> int pcibios_root_bridge_prepare(struct pci_host_bridge *bridge)
+> {
+> 	if (!acpi_disabled) {
+> 		struct pci_config_window *cfg = bridge->bus->sysdata;
+> 		struct acpi_device *adev = to_acpi_device(cfg->parent);
+> 		struct device *bus_dev = &bridge->bus->dev;
+> 
+> 		ACPI_COMPANION_SET(&bridge->dev, adev);
+> 		set_dev_node(bus_dev, acpi_get_node(acpi_device_handle(adev)));
+> 	}
+> 
+> 	return 0;
+> }
+> 
+> acpi_get_node() may return NUMA_NO_NODE in pcibios_root_bridge_prepare(),
+> which will set the node of bus_dev to NUMA_NO_NODE
+> 
+> 
+> x86:
+> static inline int __pcibus_to_node(const struct pci_bus *bus)
+> {
+> 	const struct pci_sysdata *sd = bus->sysdata;
+> 
+> 	return sd->node;
+> }
+> 
+> And the node of bus is set in pci_acpi_scan_root(), which uses
+> pci_acpi_root_get_node() get the node of a bus. And it also may return
+> NUMA_NO_NODE.
+
+Fixing that will be good :)
+
+> > If that is set, the firmware is broken, as you say, but you need to tell
+> > the user what firmware is broken.
+> 
+> Maybe mentioning the BIOS in log?
+> dev_err(bus->bridge, FW_BUG "No node assigned on NUMA capable HW by BIOS. Please contact your vendor for updates.\n");
+
+That's a good start.  Try running it on your machines (big and small)
+and see what happens.
+
+> > Try something like this out and see what happens on your machine that
+> > had things "broken".  What does it say?
+> 
+> Does not have a older bios right now.
+> But always returning NUMA_NO_NODE by below patch:
+> 
+> --- a/drivers/acpi/numa.c
+> +++ b/drivers/acpi/numa.c
+> @@ -484,6 +484,7 @@ int acpi_get_node(acpi_handle handle)
+> 
+>         pxm = acpi_get_pxm(handle);
+> 
+> -       return acpi_map_pxm_to_node(pxm);
+> +       return -1;
+> +       //return acpi_map_pxm_to_node(pxm);
+> 
+> it gives the blow warning in my machine:
+> 
+> [   16.126136]  pci0000:00: [Firmware Bug]: No node assigned on NUMA capable HW by BIOS. Please contact your vendor for updates.
+> [   17.733831]  pci0000:7b: [Firmware Bug]: No node assigned on NUMA capable HW by BIOS. Please contact your vendor for updates.
+> [   18.020924]  pci0000:7a: [Firmware Bug]: No node assigned on NUMA capable HW by BIOS. Please contact your vendor for updates.
+> [   18.552832]  pci0000:78: [Firmware Bug]: No node assigned on NUMA capable HW by BIOS. Please contact your vendor for updates.
+> [   19.514948]  pci0000:7c: [Firmware Bug]: No node assigned on NUMA capable HW by BIOS. Please contact your vendor for updates.
+> [   20.652990]  pci0000:74: [Firmware Bug]: No node assigned on NUMA capable HW by BIOS. Please contact your vendor for updates.
+> [   22.573200]  pci0000:80: [Firmware Bug]: No node assigned on NUMA capable HW by BIOS. Please contact your vendor for updates.
+> [   23.225355]  pci0000:bb: [Firmware Bug]: No node assigned on NUMA capable HW by BIOS. Please contact your vendor for updates.
+> [   23.514040]  pci0000:ba: [Firmware Bug]: No node assigned on NUMA capable HW by BIOS. Please contact your vendor for updates.
+> [   24.050107]  pci0000:b8: [Firmware Bug]: No node assigned on NUMA capable HW by BIOS. Please contact your vendor for updates.
+> [   25.017491]  pci0000:bc: [Firmware Bug]: No node assigned on NUMA capable HW by BIOS. Please contact your vendor for updates.
+> [   25.557974]  pci0000:b4: [Firmware Bug]: No node assigned on NUMA capable HW by BIOS. Please contact your vendor for updates.
+
+And can you fix your bios?  If you can't then why are we going to warn
+about this?
+
+:)
+
+thanks,
+
+greg k-h
