@@ -2,97 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9A2BD77CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 15:58:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC119D77D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 15:59:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732364AbfJON6m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 09:58:42 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:33450 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728880AbfJON6l (ORCPT
+        id S1732369AbfJON7h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 09:59:37 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45792 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728880AbfJON7h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 09:58:41 -0400
-Received: by mail-qt1-f195.google.com with SMTP id r5so30737743qtd.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 06:58:41 -0700 (PDT)
+        Tue, 15 Oct 2019 09:59:37 -0400
+Received: by mail-pg1-f193.google.com with SMTP id r1so11021772pgj.12;
+        Tue, 15 Oct 2019 06:59:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gpiccoli-net.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=54xgkVzZgk7ykJH9b+4053yO/DDlwH10i1FWiEony/E=;
-        b=QgkcK1SDRmdM24Gc134VjPVmhLV6mwGA/y5dQFuwD01b2+nusETsUNhZqSr+/nW0rZ
-         +JiFKqDXMV99qpXURKZp0uQD00zX5hXOeUBwctQ7JGaTCO9j2awkot5GhW1w5/PtRcxw
-         syPoKkaffB7NqLm9jaN8767HkzroYFmMZy4qaTAFdiEEfo4LfvsjtHH7VonrLZRcg93k
-         lh7a/GGnR7RGgJZZvcxFp6naPzQ1ghFkt8ArvOJ4KxEKp7hD3C6df3OlzYTmkec1H+0G
-         vd/3Ef1LaMjVbh2IYoGhYNQcaallFT9QYxppp6EGNhKxWPxaRqBccWzBuJZTgA26dz+H
-         Su7A==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OQHiqCpXSZVn47ppjdn/hXFH8fLHSyXwnH+G+uWWB+o=;
+        b=PG4f7wI6q1dk3mWzLjlecyFFuvz+MvCpjU3+a7kNFzGR7+KG8pztW0pVXuGsU77+pv
+         Tg8rtN7LMGYs4zKs5btLmvUm9LQLkZFr1ldniygmnAf3ZgCm9oFHL6dB761IEtafw71x
+         r3p2EZl05GyvwaCibRuHibodBjLm20HnBo6IOoMtdRGvCnJioNod0RqSRazny9zmXdhC
+         Uny2R0HlAZj0hbtVf7G6mF+mVYMM3XRrXP+dOS/N5qdk8e4e5Kl+fi2fD7iP3JkslAfb
+         w3FCwwCDNbH/NTKTNlx57+tap11uYFOB8Lf2DKSvM/LBpQb/kx/Wf/o/vIupQc7uS0MP
+         DnaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=54xgkVzZgk7ykJH9b+4053yO/DDlwH10i1FWiEony/E=;
-        b=uH/p4W7UIV2+bmxAOjhIVvA1LECjWE+/zTRfkzIO2UBfgp5tOpmHRKz14E/DD2O2Jd
-         DC5NUZPwx05HgEFZ6DClxxluW75UXZ6jTAuYmmkDahdMvpyYwonQSmn5D/188FJu8hwV
-         KKbjRj/b580BCDsFuQbko3g9/q/S8CqEkhldoZuY/KPvkvKyXTOvC7/AOXoZl/mqUfhe
-         Jfko63Aq5IXU+dx3oIT+3HKVxyYN20h9iIaxp5mAdZQo8hUcYCI+CrCoHs/xcoDchwpi
-         KT1QkUIj8VqIYQFawXFhJbnJvWEv7M902SG3/ndaAqsRJOFAo9ihKcJNZXaAuaJdIQZv
-         tp5A==
-X-Gm-Message-State: APjAAAWSXrxvLD8vUFRm4/xsCRzRDt25ic9vqOa/su/ivV4KdVvtX2ay
-        JOL0m6GyJ1rqH4D3fJw9afwHqw==
-X-Google-Smtp-Source: APXvYqz0JATTqXiR7wH8+G40/GHaOMt5Y9Pn9yF5nkxLTiCLAwyGRlhU27d3qMcJw2uhMdc7HMTtqA==
-X-Received: by 2002:ac8:2191:: with SMTP id 17mr39780242qty.112.1571147920936;
-        Tue, 15 Oct 2019 06:58:40 -0700 (PDT)
-Received: from [192.168.1.10] (201-92-249-168.dsl.telesp.net.br. [201.92.249.168])
-        by smtp.gmail.com with ESMTPSA id h10sm11260478qtk.18.2019.10.15.06.58.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Oct 2019 06:58:40 -0700 (PDT)
-Subject: Re: [PATCH] hugetlb: Add nohugepages parameter to prevent hugepages
- creation
-To:     Michal Hocko <mhocko@kernel.org>,
-        Guilherme Piccoli <gpiccoli@canonical.com>
-Cc:     Qian Cai <cai@lca.pw>, linux-mm@kvack.org, mike.kravetz@oracle.com,
-        linux-kernel@vger.kernel.org,
-        Jay Vosburgh <jay.vosburgh@canonical.com>,
-        "Guilherme G. Piccoli" <kernel@gpiccoli.net>
-References: <CAHD1Q_ynd6f2Jc54k1D9JjmtD6tGhkDcAHRzd5nZt5LUdQTvaw@mail.gmail.com>
- <4641B95A-6DD8-4E8A-AD53-06E7B72D956C@lca.pw>
- <CAHD1Q_x+m0ZT_xfLV3j6ma3Cc88fk9KnoS4yytS=PHBvJN7nnQ@mail.gmail.com>
- <20191015121803.GB24932@dhcp22.suse.cz>
-From:   "Guilherme G. Piccoli" <guilherme@gpiccoli.net>
-Message-ID: <b6617b4b-bcab-3b40-7d46-46a5d9682856@gpiccoli.net>
-Date:   Tue, 15 Oct 2019 10:58:36 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        bh=OQHiqCpXSZVn47ppjdn/hXFH8fLHSyXwnH+G+uWWB+o=;
+        b=Z5oifoVmYrONmFabLHNvCrsBTYk6cavgt3QHasbvhnRV0LXHcvUB4IlnE4i9Z5FVnC
+         cnYQhvt4+aqrXTwezx6OV/1MeJdRdNVLYf5Sgpvo19LfsGkRwSPq7/qFnvggDJMIIJ8/
+         i7XbKdrTnqpBC53YuHDJgRJn9mANkcRhvYHG9TWm8qfi4mtbOhzITrV0+vnsbCvbxY29
+         nY3eFz1cgsZ4FNnwfHSNVFBqMuYUIGe42KJlzfgZaR1JDu6I7aiTaUkTP8l5Zn//Pf4M
+         wRm8IOAu3ItlTNE/SPkXNlGF+eALvN/bz2H5h0/Rn2RKNyMdpsgQonO1ALD9TyQWiqxr
+         +7XA==
+X-Gm-Message-State: APjAAAVqhsKLjaVZT5fgaCAsGScQDDBn0BzY9wOdxeWc0pO6ODfJuhDQ
+        DOdG7bzSDiYWQJ8DqITE7m4=
+X-Google-Smtp-Source: APXvYqyXWaPbhXkHRvEhA4Oc8Ytcwswmvg4C2Aw1yEvsNR9Wkx6j5txbHhxZQ54W+B9d7pRnyjZ1/g==
+X-Received: by 2002:a17:90a:1617:: with SMTP id n23mr43135972pja.75.1571147976272;
+        Tue, 15 Oct 2019 06:59:36 -0700 (PDT)
+Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
+        by smtp.gmail.com with ESMTPSA id m123sm24503127pfb.133.2019.10.15.06.59.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2019 06:59:35 -0700 (PDT)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     Rui Miguel Silva <rmfrfs@gmail.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH v2] media: imx7-mipi-csis: Add a check for devm_regulator_get
+Date:   Tue, 15 Oct 2019 21:59:15 +0800
+Message-Id: <20191015135915.6530-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20191015121803.GB24932@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/15/19 9:18 AM, Michal Hocko wrote:
-> I do agree with Qian Cai here. Kdump kernel requires a very tailored
-> environment considering it is running in a very restricted
-> configuration. The hugetlb pre-allocation sounds like a tooling problem
-> and should be fixed at that layer.
-> 
+devm_regulator_get may return an error but mipi_csis_phy_init misses
+a check for it.
+This may lead to problems when regulator_set_voltage uses the unchecked
+pointer.
+This patch adds a check for devm_regulator_get to avoid potential risk.
 
-Hi Michal, thanks for your response. Can you suggest me a current way of 
-preventing hugepages for being created, using userspace? The goal for 
-this patch is exactly this, introduce such a way.
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+---
+Changes in v2:
+  - Add a check in mipi_csis_probe for the modified mipi_csis_phy_init.
 
-As I've said before, Ubuntu kdump rely on rootfs mounting and there's no 
-official statement or documentation that say it's wrong to do this way - 
-although I agree initrd-only approach is more safe. But since Ubuntu 
-kdump rely on rootfs mount, we couldn't find a way to effectively 
-prevent the creation of hugepages completely, hence we tried to 
-introduce one.
+ drivers/staging/media/imx/imx7-mipi-csis.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Cheers,
-
-
-Guilherme
+diff --git a/drivers/staging/media/imx/imx7-mipi-csis.c b/drivers/staging/media/imx/imx7-mipi-csis.c
+index 73d8354e618c..e8a6acaa969e 100644
+--- a/drivers/staging/media/imx/imx7-mipi-csis.c
++++ b/drivers/staging/media/imx/imx7-mipi-csis.c
+@@ -350,6 +350,8 @@ static void mipi_csis_sw_reset(struct csi_state *state)
+ static int mipi_csis_phy_init(struct csi_state *state)
+ {
+ 	state->mipi_phy_regulator = devm_regulator_get(state->dev, "phy");
++	if (IS_ERR(state->mipi_phy_regulator))
++		return PTR_ERR(state->mipi_phy_regulator);
+ 
+ 	return regulator_set_voltage(state->mipi_phy_regulator, 1000000,
+ 				     1000000);
+@@ -966,7 +968,10 @@ static int mipi_csis_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	mipi_csis_phy_init(state);
++	ret = mipi_csis_phy_init(state);
++	if (ret < 0)
++		return ret;
++
+ 	mipi_csis_phy_reset(state);
+ 
+ 	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-- 
+2.20.1
 
