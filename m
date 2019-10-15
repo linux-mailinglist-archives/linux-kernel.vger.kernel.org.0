@@ -2,70 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20AFCD807B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:41:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1037BD807F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:44:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732462AbfJOTlI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 15:41:08 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:42186 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727856AbfJOTlH (ORCPT
+        id S1732478AbfJOToC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 15:44:02 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:37991 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727478AbfJOToC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 15:41:07 -0400
-Received: by mail-oi1-f193.google.com with SMTP id i185so17860309oif.9;
-        Tue, 15 Oct 2019 12:41:07 -0700 (PDT)
+        Tue, 15 Oct 2019 15:44:02 -0400
+Received: by mail-yw1-f67.google.com with SMTP id s6so7779766ywe.5
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 12:44:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZwF3UovUJQM4lIZOxzxPbkJHR0pkb72kpecDlmrnReI=;
+        b=XODjQi2tQm5hqkLwP+VbgANGcu6RvgWN8kN+xHLxAjnkj3s25skyfNejbMoU92LZno
+         YAxE1QgQ5Drh3afgV3gqCh0auh8qm+A9r0gtfi8D8Xm/sI+2cfswt4hT/7/jtY48ce3O
+         jJdiOwkHBPpKUfFL/dvKORFBPQoFmi/X1YgX8voScl9VAX8MjLEeVf2HEsAfoOagTyCc
+         G8X9C9fGtsiTdhm3gG9ZFbfVyfTdAnHlIuys8P7iP0ifA4O3e2xYB/aKaEb+Q2wHcMCN
+         HLxNwzCSzxlZHBZqL3XypTJen0jjEutErT9R+RAAVps4owtcMl6Wn7IuiAciPPZYeD6p
+         HwaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dYr5YHDW3PpOfxrfTITzHIyYd4WqoilUYd2hAnALyj4=;
-        b=LSZqEUWCFmaepVOFhBNPPE6MG7nAb5rAcPPSF3ZfroRIovkq2FfdRFq7OQW2/9UtaB
-         HpytoOT7x1ts79e779/Vqsp/TUz9XeRwCzl/B+iymSSuAjyK+tooID1+XMebEuiTEsRN
-         qGKaunqcBaTRi0hCWpdzz/r7nMO0X60EfwLIua5WnpECjIi4Pt/rbdwktFg85EchJBVb
-         OsthpsT8Zqt5uKwZ1c1q94r/7aSc7c20Y3nVoNj/q+5tGjJVp3QA5549gPgg34bFxZH5
-         6Lk2Ux3gZ5O/w7psHUf3zJtOwufBQyz/mCTLVkFS/5g6GtoYbGLVOpslLgFUIkaGqLju
-         SSqg==
-X-Gm-Message-State: APjAAAXQ5rzuYPeIS9Gr3P/6mWW/oJQapyCOb4ZUEIx9oeuRkeeBmsNb
-        21hNSBAZuR1tJcarcUOjo3rhiU8=
-X-Google-Smtp-Source: APXvYqx89oy1Ch87hKjVGrKdExTcjDGJBEM33RGUrBGSXq7zjricuAxlTAS2si4uuKG9LJragplpVA==
-X-Received: by 2002:a05:6808:689:: with SMTP id k9mr220151oig.58.1571168466497;
-        Tue, 15 Oct 2019 12:41:06 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id t17sm6633499otk.14.2019.10.15.12.41.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2019 12:41:05 -0700 (PDT)
-Date:   Tue, 15 Oct 2019 14:41:05 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc:     emamd001@umn.edu, kjlu@umn.edu, smccaman@umn.edu,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] of: unittest: fix memory leak in unittest_data_add
-Message-ID: <20191015194105.GA24758@bogus>
-References: <20191004185847.14074-1-navid.emamdoost@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZwF3UovUJQM4lIZOxzxPbkJHR0pkb72kpecDlmrnReI=;
+        b=bQMxVOEUqfeddfPAIMKzkX6bOnnyFbxphcnHhl0EdXvJDg1Y4NO3JrzKPnAiiXuVx3
+         dwffpAkr8VtdAyPVBl+W19SvC+slYn9etyswaKBeUagHhRMr0g9mlr/0tFOJeWgZ5JbY
+         e5IkrjI3bTuTaIrjvdqEkFIILFMYXQmbDYaIk/k9iLjGgYoqHM6VCPImvRyD2EB7TQ4V
+         VzPf5EuIPVUj8t40daiPCFEeDhmpcx1w717+3xm/fk3yip3PEDla6UTiX8mNfrugQ/V6
+         NMS5XrVB6b9QfMVlZo+TriUo2VSFLdP2cLi4hFWDUPnjZHdQRaMstXAdL0rHlw/ksmP4
+         fl3A==
+X-Gm-Message-State: APjAAAXk9N+X+qfdE1A9lAw4KiElz3AlIxOyTBtMvrU0HptGO7aA24d3
+        xsClvrB+UXO8dAlr56m8do3TCfWa41iv/kaDyykVA990
+X-Google-Smtp-Source: APXvYqxg/ocWm0Vdt6TA/rSb3L5qnhnb+zg1qq/R2n7id6WlidlESVt5rWqPACBSRFtFQeGLeboCSpx9jA9o07ZPxD0=
+X-Received: by 2002:a81:74d4:: with SMTP id p203mr17581738ywc.234.1571168641550;
+ Tue, 15 Oct 2019 12:44:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191004185847.14074-1-navid.emamdoost@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191015191821.11479-1-bigeasy@linutronix.de> <20191015191821.11479-21-bigeasy@linutronix.de>
+In-Reply-To: <20191015191821.11479-21-bigeasy@linutronix.de>
+From:   Max Filippov <jcmvbkbc@gmail.com>
+Date:   Tue, 15 Oct 2019 12:43:49 -0700
+Message-ID: <CAMo8BfJRN3D4+UW-9FQd7JBJuszRPT5whNXoPuWjdofvzF=NsQ@mail.gmail.com>
+Subject: Re: [PATCH 20/34] xtensa: Use CONFIG_PREEMPTION
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Chris Zankel <chris@zankel.net>,
+        "open list:TENSILICA XTENSA PORT (xtensa)" 
+        <linux-xtensa@linux-xtensa.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  4 Oct 2019 13:58:43 -0500, Navid Emamdoost wrote:
-> In unittest_data_add, a copy buffer is created via kmemdup. This buffer
-> is leaked if of_fdt_unflatten_tree fails. The release for the
-> unittest_data buffer is added.
-> 
-> Fixes: b951f9dc7f25 ("Enabling OF selftest to run without machine's devicetree")
-> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+On Tue, Oct 15, 2019 at 12:18 PM Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
+>
+> From: Thomas Gleixner <tglx@linutronix.de>
+>
+> CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by CONFIG_PREEMPT_RT.
+> Both PREEMPT and PREEMPT_RT require the same functionality which today
+> depends on CONFIG_PREEMPT.
+>
+> Switch the entry code over to use CONFIG_PREEMPTION. Add PREEMPT_RT
+> output to die().
+>
+> Cc: Chris Zankel <chris@zankel.net>
+> Cc: Max Filippov <jcmvbkbc@gmail.com>
+> Cc: linux-xtensa@linux-xtensa.org
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> [bigeasy: +traps.c]
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 > ---
->  drivers/of/unittest.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
+>  arch/xtensa/kernel/entry.S | 2 +-
+>  arch/xtensa/kernel/traps.c | 7 +++++--
+>  2 files changed, 6 insertions(+), 3 deletions(-)
 
-Applied, thanks.
+Acked-by: Max Filippov <jcmvbkbc@gmail.com>
 
-Rob
+-- 
+Thanks.
+-- Max
