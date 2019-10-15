@@ -2,95 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5A4CD7322
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 12:25:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEB15D7327
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 12:26:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730494AbfJOKZh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 06:25:37 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46869 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728185AbfJOKZg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 06:25:36 -0400
-Received: by mail-wr1-f68.google.com with SMTP id o18so23104170wrv.13;
-        Tue, 15 Oct 2019 03:25:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Hs18HuLQlgBABYesmo7IPm5KuxOAJYfK6ga//A893aY=;
-        b=OkgWOtemW9nA/ZipwE4kOKLVI4eGEGdocKmL4HLlgOULjPLJIUK5OJfZyJWNEl5c8v
-         qmSd+yrQm2a9vQNujY32vp3w4ZCWdXdGBHJpI+o0IXJjJS8bVtIrM9ehDwfB6ZD6lbTX
-         sHKgiMQfS+Q6yB5VOvrGmtc54YveKPHy6qee3HB43Mu3Tsiq+Jn2dmhHDDLwbFJMojhT
-         XZMgEFxG4AiJIfb0VwJ5+z9fuf0NbjAea2piH63VJm38SZpSZrYiBVHrmEkv54PV2pen
-         yrB+OLcLMIE8UiVPoubhjXW0vSSRogWRjPLsyi8GYWHDXHZMazQAoUv5h8tyE5VFjv+i
-         +rjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Hs18HuLQlgBABYesmo7IPm5KuxOAJYfK6ga//A893aY=;
-        b=MDrs9uEPp0kiXydnIjACKitKGUEp7RRcIAaY2lv5+77HBg/mjjWIp0vKxGZGm9r9nd
-         W7UC/6h6NRW+D+sI1l7gtSaCkvIlnrHjy3cXVOQIhL1YC+9THWj9ZaCHYpuRJWCxCIfG
-         lVyPzKCkzjsgv7BCUN1kXksfrgKTYL/+X3LWsxPScJgipT2BC4Nmhlz4sPGdp6gMQqdl
-         f6hhXtCx5Y5ST3txoa+6FZS9a0tr8vpPZuyMsGg7BAcBJGUigWfcIK/kBYW82v3uVE5x
-         irKD1efc2IBEOQ52aSM37MkUQuo6qvo8Tq7TCCKggPRq2yBnQJ8gXL+C7029CLqs0oHr
-         Q1mg==
-X-Gm-Message-State: APjAAAWlLpvpFMmALEMaJ7UGdgjh0jZ4puYQtunv2Ti1sDljM0vgPyQr
-        XATFaSj2MzLF/zZ6h3brOnE=
-X-Google-Smtp-Source: APXvYqxL0dyh9xwdUkfgUwlxcAfzfOeWzotdyra9eCE+RCoTeujCdgXqU2QpDj6SRa9lEBtldGJdBQ==
-X-Received: by 2002:a5d:518f:: with SMTP id k15mr28782850wrv.328.1571135134302;
-        Tue, 15 Oct 2019 03:25:34 -0700 (PDT)
-Received: from andrea.guest.corp.microsoft.com ([2a01:110:8012:1012:8d40:cc61:bfff:65c2])
-        by smtp.gmail.com with ESMTPSA id o18sm1779059wrm.11.2019.10.15.03.25.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2019 03:25:33 -0700 (PDT)
-Date:   Tue, 15 Oct 2019 12:25:27 +0200
-From:   Andrea Parri <parri.andrea@gmail.com>
-To:     Wei Liu <wei.liu@kernel.org>
-Cc:     Linux Kernel List <linux-kernel@vger.kernel.org>,
-        Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
-        x86@kernel.org, "K . Y . Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Dexuan Cui <decui@microsoft.com>
-Subject: Re: [PATCH] x86/hyperv: Set pv_info.name to "Hyper-V"
-Message-ID: <20191015102527.GA12412@andrea.guest.corp.microsoft.com>
-References: <20191015092937.11244-1-parri.andrea@gmail.com>
- <CAHd7Wqxn3sQQWkzOBrJ1KYm8eUpwa_9dcSYRDfPGAMWm=qvbag@mail.gmail.com>
+        id S1730635AbfJOK01 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 06:26:27 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50072 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726508AbfJOK00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 06:26:26 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C3DBA306F4AB;
+        Tue, 15 Oct 2019 10:26:22 +0000 (UTC)
+Received: from gondolin (dhcp-192-233.str.redhat.com [10.33.192.233])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6ACB65DA8C;
+        Tue, 15 Oct 2019 10:26:09 +0000 (UTC)
+Date:   Tue, 15 Oct 2019 12:26:07 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org,
+        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
+        alex.williamson@redhat.com, mst@redhat.com, tiwei.bie@intel.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        maxime.coquelin@redhat.com, cunming.liang@intel.com,
+        zhihong.wang@intel.com, rob.miller@broadcom.com,
+        xiao.w.wang@intel.com, haotian.wang@sifive.com,
+        zhenyuw@linux.intel.com, zhi.a.wang@intel.com,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, airlied@linux.ie, daniel@ffwll.ch,
+        farman@linux.ibm.com, pasic@linux.ibm.com, sebott@linux.ibm.com,
+        oberpar@linux.ibm.com, heiko.carstens@de.ibm.com,
+        gor@linux.ibm.com, borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
+        freude@linux.ibm.com, lingshan.zhu@intel.com, idos@mellanox.com,
+        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
+        christophe.de.dinechin@gmail.com, kevin.tian@intel.com
+Subject: Re: [PATCH V3 1/7] mdev: class id support
+Message-ID: <20191015122607.126e3960.cohuck@redhat.com>
+In-Reply-To: <20191011081557.28302-2-jasowang@redhat.com>
+References: <20191011081557.28302-1-jasowang@redhat.com>
+        <20191011081557.28302-2-jasowang@redhat.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHd7Wqxn3sQQWkzOBrJ1KYm8eUpwa_9dcSYRDfPGAMWm=qvbag@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 15 Oct 2019 10:26:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > @@ -154,6 +154,8 @@ static uint32_t  __init ms_hyperv_platform(void)
-> 
-> This function is for platform detection only.
-> 
-> >         if (!boot_cpu_has(X86_FEATURE_HYPERVISOR))
-> >                 return 0;
-> >
-> > +       pv_info.name = "Hyper-V";
-> > +
-> 
-> At this point we're not sure if Linux is really running on Hyper-V yet.
-> 
-> Setting pv_info.name should be moved to the init_platform hook, i.e.
-> ms_hyperv_init_platform.
+On Fri, 11 Oct 2019 16:15:51 +0800
+Jason Wang <jasowang@redhat.com> wrote:
 
-Thank you for the review, Wei.  I'll move this to the init_platform hook
-and re-submit shortly.
+> Mdev bus only supports vfio driver right now, so it doesn't implement
+> match method. But in the future, we may add drivers other than vfio,
+> the first driver could be virtio-mdev. This means we need to add
+> device class id support in bus match method to pair the mdev device
+> and mdev driver correctly.
+> 
+> So this patch adds id_table to mdev_driver and class_id for mdev
+> device with the match method for mdev bus.
+> 
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> ---
+>  Documentation/driver-api/vfio-mediated-device.rst |  7 ++++++-
+>  drivers/gpu/drm/i915/gvt/kvmgt.c                  |  1 +
+>  drivers/s390/cio/vfio_ccw_ops.c                   |  1 +
+>  drivers/s390/crypto/vfio_ap_ops.c                 |  1 +
+>  drivers/vfio/mdev/mdev_core.c                     | 11 +++++++++++
+>  drivers/vfio/mdev/mdev_driver.c                   | 14 ++++++++++++++
+>  drivers/vfio/mdev/mdev_private.h                  |  1 +
+>  drivers/vfio/mdev/vfio_mdev.c                     |  6 ++++++
+>  include/linux/mdev.h                              |  8 ++++++++
+>  include/linux/mod_devicetable.h                   |  8 ++++++++
+>  samples/vfio-mdev/mbochs.c                        |  1 +
+>  samples/vfio-mdev/mdpy.c                          |  1 +
+>  samples/vfio-mdev/mtty.c                          |  1 +
+>  13 files changed, 60 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/driver-api/vfio-mediated-device.rst b/Documentation/driver-api/vfio-mediated-device.rst
+> index 25eb7d5b834b..2035e48da7b2 100644
+> --- a/Documentation/driver-api/vfio-mediated-device.rst
+> +++ b/Documentation/driver-api/vfio-mediated-device.rst
+> @@ -102,12 +102,14 @@ structure to represent a mediated device's driver::
+>        * @probe: called when new device created
+>        * @remove: called when device removed
+>        * @driver: device driver structure
+> +      * @id_table: the ids serviced by this driver
+>        */
+>       struct mdev_driver {
+>  	     const char *name;
+>  	     int  (*probe)  (struct device *dev);
+>  	     void (*remove) (struct device *dev);
+>  	     struct device_driver    driver;
+> +	     const struct mdev_class_id *id_table;
+>       };
+>  
+>  A mediated bus driver for mdev should use this structure in the function calls
+> @@ -165,12 +167,15 @@ register itself with the mdev core driver::
+>  	extern int  mdev_register_device(struct device *dev,
+>  	                                 const struct mdev_parent_ops *ops);
+>  
+> +It is also required to specify the class_id through::
+> +
+> +	extern int mdev_set_class(struct device *dev, u16 id);
 
-Thanks,
-  Andrea
+Should the document state explicitly that this should be done in the
+->create() callback? Also, I think that the class_id might be different
+for different mdevs (even if the parent is the same) -- should that be
+mentioned explicitly?
+
+> +
+>  However, the mdev_parent_ops structure is not required in the function call
+>  that a driver should use to unregister itself with the mdev core driver::
+>  
+>  	extern void mdev_unregister_device(struct device *dev);
+>  
+> -
+>  Mediated Device Management Interface Through sysfs
+>  ==================================================
+>  
+(...)
+
+Looks reasonable to me.
