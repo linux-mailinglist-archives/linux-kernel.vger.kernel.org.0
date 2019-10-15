@@ -2,111 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 097C8D7F9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:10:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92D8AD7FA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:10:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389306AbfJOTKN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 15:10:13 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52770 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389296AbfJOTKM (ORCPT
+        id S2389344AbfJOTKj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 15:10:39 -0400
+Received: from gateway30.websitewelcome.com ([192.185.196.18]:42479 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389323AbfJOTKi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 15:10:12 -0400
-Received: by mail-wm1-f67.google.com with SMTP id r19so243735wmh.2;
-        Tue, 15 Oct 2019 12:10:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=q85wWT1Ntix0umS+jHesJR+Bc8njDJ95cdjzzQg8isg=;
-        b=Qtue6CQgRcmNCCevDgHkx1nw6nwFmlUixidcjbgaIDm4CTFvf9nEgb5BaqJwTwk33t
-         qDClhJVxShLHZtTLCcaqSqt1ubXo5CHnT1ckRwUGXiQb06xdXNw8cAWPvChjA/mQidDW
-         3Xa6unKQyCYmR+lI0WDYtykal4JiuA690wKtJ8Kmclf0Ot8Lajas8/OG3zshPSp044Gd
-         ZuUssuVp1oVhFQyWdfoCXOa5v6ofDAuiaou4inXUVvR/KbSVqwpwI4hAr9oDnrnJaCj6
-         +PxyeVYecH51/ZEKinF324uy+IMrEfsgDT5hV3ha/+xaBnEGP22pQplalarGlqT19JF3
-         vldA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=q85wWT1Ntix0umS+jHesJR+Bc8njDJ95cdjzzQg8isg=;
-        b=FDhgsged6qpW4RbYoOnEmLdMWB3ge7impcfuEYBN7CkJ7+Txlrti1BAmFKmKA0xj93
-         hJl8yn1G4vaWxucY9c9jsKwzOE/OWvO5ZWUuY9GjblvtlgHmlvgcp2wKjjQovYsYLWV4
-         xAcR2lx6r9Bv6kr1NRdHLg/pRzYJFY9+KtIPx5sUh86+GmpQK4i8R1mMO6XOS0q78oQu
-         zFH1479Dtzfa9tbKwB3vcGlHpUiAvUvJ9apGzRPME7JnJq20nrq+tYfTjgA60ne2HZyQ
-         xVuUUPj/PWvM/TdDbC+zl+q3VxxCHE/7YG+HfSowrrGyj5MaNK2maSfidtPv7VuMCsuW
-         ZSXA==
-X-Gm-Message-State: APjAAAV7oMxq3ENDGaAJ/sjzqQdBGkz8+VAz5J3N0ce99a0l053/PjqC
-        BydJEWx7SsGfLpFaHXOn7vfrCyO8
-X-Google-Smtp-Source: APXvYqzKZdq6eLHh6x7PFZAJKQx0U0RnCiTFPg+KYwQ0VlKMan5QzmHnChRFPM30ZpQC7osTfYxqhA==
-X-Received: by 2002:a7b:cd87:: with SMTP id y7mr61400wmj.93.1571166610784;
-        Tue, 15 Oct 2019 12:10:10 -0700 (PDT)
-Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id u26sm25089984wrd.87.2019.10.15.12.10.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Oct 2019 12:10:10 -0700 (PDT)
-From:   Johan Jonker <jbx6244@gmail.com>
-To:     heiko@sntech.de
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] arm64: dts: rockchip: rk3399-rock-pi-4: restyle rockchip,pins
-Date:   Tue, 15 Oct 2019 21:09:59 +0200
-Message-Id: <20191015191000.2890-1-jbx6244@gmail.com>
-X-Mailer: git-send-email 2.11.0
+        Tue, 15 Oct 2019 15:10:38 -0400
+X-Greylist: delayed 1397 seconds by postgrey-1.27 at vger.kernel.org; Tue, 15 Oct 2019 15:10:37 EDT
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id EF3783B3E
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 13:47:18 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id KRqoi6mzjPUvSKRqoigmUU; Tue, 15 Oct 2019 13:47:18 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=ylsOLtlHy0yELn95rm6leLOAaujCpaVYbsqRrnqooSg=; b=iWCnoGxsnxYjGPaXkBCyHWfTq2
+        HJG4FcIp5GHwd3eXjbCCqMNeevLjnHhCvBCd759outDoOte8McPV7BaRPRHiIUG6E6HD5yJUscPLG
+        9n7+RiZc+o7meo2iuVYmPnrRZ1zlFV5RputOPMet64VEzZIz3v2EW8fffL+zPAaHrjITKuNGK6T6X
+        3UpjCkVsWDox1owp7C0+Ikd0MsbL3kkWNdqeeP62mGo89NOaEMDUqm5ZQBCLQ7fjEB6GW3BWwyH4x
+        Y+WNu5fS+dcZiLxuSSas8xKmfpJ/S7xe9m2wTv2mnHc7cGrlzSY7zLY5K1BBzudKqKf7ZAvk37tqM
+        gbvRJWvQ==;
+Received: from [187.192.22.73] (port=41390 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1iKRqn-001fgo-4G; Tue, 15 Oct 2019 13:47:17 -0500
+Date:   Tue, 15 Oct 2019 13:46:57 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] linux/bitmap.h: fix potential sign-extension overflow
+Message-ID: <20191015184657.GA26541@embeddedor>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.22.73
+X-Source-L: No
+X-Exim-ID: 1iKRqn-001fgo-4G
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.22.73]:41390
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 9
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The define RK_FUNC_1 is no longer used,
-so restyle the rockchip,pins definitions.
+In expression 0xff << offset, left shifting by more than 31 bits has
+undefined behavior. Notice that the shift amount, *offset*, can be as
+much as 63.
 
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+Fix this by adding suffix ULL to integer 0xFF.
+
+Addresses-Coverity: 1487071 ("Bad bit shift operation")
+Fixes: d33f5cbaadd8 ("bitops: introduce the for_each_set_clump8 macro")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
+ include/linux/bitmap.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts
-index 1ae1ebd4e..188d9dfc2 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts
-@@ -486,21 +486,18 @@
+diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
+index 942871bfe47e..96f91db25b06 100644
+--- a/include/linux/bitmap.h
++++ b/include/linux/bitmap.h
+@@ -520,7 +520,7 @@ static inline void bitmap_set_value8(unsigned long *map, unsigned long value,
+ 	const size_t index = BIT_WORD(start);
+ 	const unsigned long offset = start % BITS_PER_LONG;
  
- 	sdio0 {
- 		sdio0_bus4: sdio0-bus4 {
--			rockchip,pins =
--				<2 20 RK_FUNC_1 &pcfg_pull_up_20ma>,
--				<2 21 RK_FUNC_1 &pcfg_pull_up_20ma>,
--				<2 22 RK_FUNC_1 &pcfg_pull_up_20ma>,
--				<2 23 RK_FUNC_1 &pcfg_pull_up_20ma>;
-+			rockchip,pins = <2 RK_PC4 1 &pcfg_pull_up_20ma>,
-+					<2 RK_PC5 1 &pcfg_pull_up_20ma>,
-+					<2 RK_PC6 1 &pcfg_pull_up_20ma>,
-+					<2 RK_PC7 1 &pcfg_pull_up_20ma>;
- 		};
+-	map[index] &= ~(0xFF << offset);
++	map[index] &= ~(0xFFULL << offset);
+ 	map[index] |= value << offset;
+ }
  
- 		sdio0_cmd: sdio0-cmd {
--			rockchip,pins =
--				<2 24 RK_FUNC_1 &pcfg_pull_up_20ma>;
-+			rockchip,pins = <2 RK_PD0 1 &pcfg_pull_up_20ma>;
- 		};
- 
- 		sdio0_clk: sdio0-clk {
--			rockchip,pins =
--				<2 25 RK_FUNC_1 &pcfg_pull_none_20ma>;
-+			rockchip,pins = <2 RK_PD1 1 &pcfg_pull_none_20ma>;
- 		};
- 	};
- 
-@@ -532,8 +529,7 @@
- 
- 	wifi {
- 		wifi_enable_h: wifi-enable-h {
--			rockchip,pins =
--				<0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_none>;
-+			rockchip,pins = <0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
- 
- 		wifi_host_wake_l: wifi-host-wake-l {
 -- 
-2.11.0
+2.23.0
 
