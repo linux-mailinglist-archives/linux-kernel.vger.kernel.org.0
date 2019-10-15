@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BA82D6EBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 07:32:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 531C9D6F20
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 07:36:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728749AbfJOFc3 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 15 Oct 2019 01:32:29 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:42131 "EHLO
+        id S1729330AbfJOFf6 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 15 Oct 2019 01:35:58 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:42013 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728551AbfJOFcK (ORCPT
+        with ESMTP id S1728452AbfJOFcA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 01:32:10 -0400
+        Tue, 15 Oct 2019 01:32:00 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iKFRA-0000G0-1q; Tue, 15 Oct 2019 07:32:00 +0200
+        id 1iKFR4-0000F9-JJ; Tue, 15 Oct 2019 07:31:54 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id DC3831C04CF;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5F7891C0105;
         Tue, 15 Oct 2019 07:31:43 +0200 (CEST)
 Date:   Tue, 15 Oct 2019 05:31:43 -0000
 From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf evlist: Introduce append_tp_filter_pid() and
- append_tp_filter_pids()
+Subject: [tip: perf/core] perf trace: Add a strtoul() method to 'struct
+ syscall_arg_fmt'
 Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
         Jiri Olsa <jolsa@kernel.org>,
         Luis =?utf-8?q?Cl=C3=A1udio_Gon=C3=A7alves?= 
         <lclaudio@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <tip-daynpknni44ywuzi8iua57nn@git.kernel.org>
-References: <tip-daynpknni44ywuzi8iua57nn@git.kernel.org>
+In-Reply-To: <tip-wgqq48agcgr95b8dmn6fygtr@git.kernel.org>
+References: <tip-wgqq48agcgr95b8dmn6fygtr@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157111750377.12254.9662918016580898240.tip-bot2@tip-bot2>
+Message-ID: <157111750329.12254.9112211069914938976.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -52,68 +53,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     1827ab5ba8e1d0354cc36b3692444306ced01471
-Gitweb:        https://git.kernel.org/tip/1827ab5ba8e1d0354cc36b3692444306ced01471
+Commit-ID:     3f41b77843b338e836f52cc2d486be689d6cb9c1
+Gitweb:        https://git.kernel.org/tip/3f41b77843b338e836f52cc2d486be689d6cb9c1
 Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Mon, 07 Oct 2019 17:00:34 -03:00
+AuthorDate:    Wed, 09 Oct 2019 16:06:43 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Wed, 09 Oct 2019 11:23:52 -03:00
+CommitterDate: Wed, 09 Oct 2019 16:06:43 -03:00
 
-perf evlist: Introduce append_tp_filter_pid() and append_tp_filter_pids()
+perf trace: Add a strtoul() method to 'struct syscall_arg_fmt'
 
-We'll need this to support 'perf trace e tracepoint --filter=expr', as
-the command line tracepoint filter is attache to the preceding evsel,
-just like in 'perf record' and when we go to set pid filters, which we
-do at the minimum to filter 'perf trace' own syscalls, we need to
-append, not set the tp filter.
+This will go from a string to a number, so that filter expressions can
+be constructed with strings and then, before applying the tracepoint
+filters (or eBPF, in the future) we can map those strings to numbers.
+
+The first one will be for 'msr' tracepoint arguments, but real quickly
+we will be able to reuse all strarrays for that.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Brendan Gregg <brendan.d.gregg@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-daynpknni44ywuzi8iua57nn@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-wgqq48agcgr95b8dmn6fygtr@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/evlist.c | 14 ++++++++++++++
- tools/perf/util/evlist.h |  3 +++
- 2 files changed, 17 insertions(+)
+ tools/perf/builtin-trace.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 1650d24..e33b46a 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -1128,6 +1128,20 @@ int perf_evlist__set_tp_filter_pid(struct evlist *evlist, pid_t pid)
- 	return perf_evlist__set_tp_filter_pids(evlist, 1, &pid);
- }
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 2c19680..faa5bf4 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -86,8 +86,12 @@
+ # define F_LINUX_SPECIFIC_BASE	1024
+ #endif
  
-+int perf_evlist__append_tp_filter_pids(struct evlist *evlist, size_t npids, pid_t *pids)
-+{
-+	char *filter = asprintf__tp_filter_pids(npids, pids);
-+	int ret = perf_evlist__append_tp_filter(evlist, filter);
-+
-+	free(filter);
-+	return ret;
-+}
-+
-+int perf_evlist__append_tp_filter_pid(struct evlist *evlist, pid_t pid)
-+{
-+	return perf_evlist__append_tp_filter_pids(evlist, 1, &pid);
-+}
-+
- bool perf_evlist__valid_sample_type(struct evlist *evlist)
- {
- 	struct evsel *pos;
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index c58fd19..1305140 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -142,6 +142,9 @@ int perf_evlist__set_tp_filter_pids(struct evlist *evlist, size_t npids, pid_t *
++/*
++ * strtoul: Go from a string to a value, i.e. for msr: MSR_FS_BASE to 0xc0000100
++ */
+ struct syscall_arg_fmt {
+ 	size_t	   (*scnprintf)(char *bf, size_t size, struct syscall_arg *arg);
++	bool	   (*strtoul)(char *bf, size_t size, struct syscall_arg *arg, u64 *val);
+ 	unsigned long (*mask_val)(struct syscall_arg *arg, unsigned long val);
+ 	void	   *parm;
+ 	const char *name;
+@@ -1543,8 +1547,10 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
+                } else {
+ 			struct syscall_arg_fmt *fmt = syscall_arg_fmt__find_by_name(field->name);
  
- int perf_evlist__append_tp_filter(struct evlist *evlist, const char *filter);
- 
-+int perf_evlist__append_tp_filter_pid(struct evlist *evlist, pid_t pid);
-+int perf_evlist__append_tp_filter_pids(struct evlist *evlist, size_t npids, pid_t *pids);
-+
- struct evsel *
- perf_evlist__find_tracepoint_by_id(struct evlist *evlist, int id);
+-			if (fmt)
++			if (fmt) {
+ 				arg->scnprintf = fmt->scnprintf;
++				arg->strtoul   = fmt->strtoul;
++			}
+ 		}
+ 	}
  
