@@ -2,105 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 940D9D7C0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 18:39:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51E26D7C3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 18:45:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728240AbfJOQji (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 12:39:38 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:35395 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727579AbfJOQjg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 12:39:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571157574;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:openpgp:openpgp;
-        bh=ojp02z/yPeUqI0YPPrqnloEvXX8pMYJM8GdkxYvWth0=;
-        b=JiBoFcgU3vK36RnkawQvLKPgM2PiIW04nPfHByYuxUxuuAi1tfOyUpUifRWmr5k1kw9JbW
-        w2vRq2T0T792odlSf4FxlZLhbhfq9vDgzcRN9qcqHQhBu2HosdDlKPrkdtlCPh6UV9dZBz
-        crXst+PhbIdWyLzTLHFuccnIrpp4Lxs=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-82-IfxNH-Z8MDyb6IAPqkPSLQ-1; Tue, 15 Oct 2019 12:39:29 -0400
-Received: by mail-wm1-f71.google.com with SMTP id l3so8898203wmf.8
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 09:39:29 -0700 (PDT)
+        id S2388249AbfJOQpg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 12:45:36 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41320 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727643AbfJOQpg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 12:45:36 -0400
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1058D2CE955
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 16:36:16 +0000 (UTC)
+Received: by mail-wm1-f70.google.com with SMTP id o8so8908350wmc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 09:36:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=o8Yzcui6UO5aokPFK9KbVMAamgpXNzxTPApyteJcIxI=;
-        b=VND6ntnFsM2KTGPCvHjG9agX+VgmkuiRyOy+5MFH74R0q395vG16VwQ0BUCAmGu2oS
-         Cw32fxKQ4NNBKKkbH+SHEjdnINED2FZu4nqBaFzvRIW8X6aRS7DO/p/RpMT+zGFWhAhz
-         PALoaxNjyfinb0lTp1WfwrspCibzGrJuUexVr+WmeVKz5FesDEXRTE3up2P6hhcQVyjs
-         EwP3mu0KYUxGX0fNoXobeAQ5HqJa8wrDhXnkCP18SW/szVskWXm1rnygyZ9Lmla3dzcC
-         8ET+p9fdYRrVG8bncw2Yvwdj1RHCbTeQXL/A6qQMLUqRwQRg97yvM2r37e9ayo2qlpuv
-         KI/A==
-X-Gm-Message-State: APjAAAXgl71IfYq+ulBk46K8ZpKiuYCSVXekP1kyqORZCP2UHII2t+Bh
-        ZYH87rh82pdIrdLQQsH/MFlMQqk+5R3kvrkadYoI4NsEvLtSAuSPaufnnB3+EHUUq2dGfLu3cDT
-        Cgl1mgiOMSHdLJsHyuq7IpvH9
-X-Received: by 2002:adf:e747:: with SMTP id c7mr935235wrn.384.1571157568341;
-        Tue, 15 Oct 2019 09:39:28 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyejSMH01cdqlKyvOUSnepj7nqszueGVbjXDXwAp7a2kqRNxQBtic0nSge519tsU28CGqWN0A==
-X-Received: by 2002:adf:e747:: with SMTP id c7mr935204wrn.384.1571157568078;
-        Tue, 15 Oct 2019 09:39:28 -0700 (PDT)
+        bh=6SU2iYxBpciwSkgWiOL6iZkMAxSRBo4v5NF0FEchK38=;
+        b=Q/+fk9bK0bushYjNLqjEXk26G9RovYAYyPgT0i+Wskuq9l4TEQepYhkggV5uLqUvFu
+         +HeBj4769krhjs2FG9D8kWREr/7kNParbCM0/DeC7Z48GPtMQtvTvgR7w4n+Q2eumqlz
+         26McIZCnP/BaMmM0nvnFkY9/ShW9MOngXG68viPAKnvCB2VDGB7VM63dGDSIPjnnVJV6
+         6HOE0EYmIuL7w0ZMbgy/QN7UqzMJ6zo+hZqCovqPSB0qn6C7dC3How6u6S7lr5NZ+lDH
+         aBuQiE1sQTZPb4rTfO80/JR6JRZeI5xlYkNZOrufxsB4LG/ekRMksFRs0iZyixVHX4f8
+         d6NA==
+X-Gm-Message-State: APjAAAUT5LwSfjeCdhq5dbD36qWU0youd8znfvcnrIFS3BnzI9DbL9fc
+        TWIqiuGv4+zQVf3bYFp3ls4eYCwc/fJs+T+Tg64HUI1VYGaFIiRsEscyRnJPSPAf0CbdZmo+mbY
+        cSirMHmLUEymOb/B/OtaRx7/e
+X-Received: by 2002:a1c:e086:: with SMTP id x128mr19487201wmg.139.1571157374398;
+        Tue, 15 Oct 2019 09:36:14 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzIfVMIbG+6mpdFJ1PD9Fm1XVFu7mH9sLaGR+C1rC7u9raqVC9mEMICjHeKjSaYaX9uuQ3HNA==
+X-Received: by 2002:a1c:e086:: with SMTP id x128mr19487181wmg.139.1571157374101;
+        Tue, 15 Oct 2019 09:36:14 -0700 (PDT)
 Received: from ?IPv6:2001:b07:6468:f312:d001:591b:c73b:6c41? ([2001:b07:6468:f312:d001:591b:c73b:6c41])
-        by smtp.gmail.com with ESMTPSA id h7sm20388863wrs.15.2019.10.15.09.39.26
+        by smtp.gmail.com with ESMTPSA id a4sm19159768wmm.10.2019.10.15.09.36.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2019 09:39:27 -0700 (PDT)
-Subject: Re: [PATCH v5 5/6] ptp: arm64: Enable ptp_kvm for arm64
-To:     Jianyong Wu <jianyong.wu@arm.com>, netdev@vger.kernel.org,
-        yangbo.lu@nxp.com, john.stultz@linaro.org, tglx@linutronix.de,
-        sean.j.christopherson@intel.com, maz@kernel.org,
-        richardcochran@gmail.com, Mark.Rutland@arm.com, will@kernel.org,
-        suzuki.poulose@arm.com
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
-        Steve.Capper@arm.com, Kaly.Xin@arm.com, justin.he@arm.com,
-        nd@arm.com
-References: <20191015104822.13890-1-jianyong.wu@arm.com>
- <20191015104822.13890-6-jianyong.wu@arm.com>
+        Tue, 15 Oct 2019 09:36:13 -0700 (PDT)
+Subject: Re: [PATCH] KVM: X86: Make fpu allocation a common function
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Xiaoyao Li <xiaoyao.li@intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jim Mattson <jmattson@google.com>
+References: <20191014162247.61461-1-xiaoyao.li@intel.com>
+ <87y2xn462e.fsf@vitty.brq.redhat.com>
+ <20191014183723.GE22962@linux.intel.com>
+ <87v9sq46vz.fsf@vitty.brq.redhat.com>
+ <97255084-7b10-73a5-bfb4-fdc1d5cc0f6e@redhat.com>
+ <87lftm3wja.fsf@vitty.brq.redhat.com>
 From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
-Message-ID: <da62c327-9402-9a5c-d694-c1a4378822e0@redhat.com>
-Date:   Tue, 15 Oct 2019 18:39:28 +0200
+Message-ID: <f00edd02-7d25-54f4-0972-c702e8254016@redhat.com>
+Date:   Tue, 15 Oct 2019 18:36:14 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20191015104822.13890-6-jianyong.wu@arm.com>
+In-Reply-To: <87lftm3wja.fsf@vitty.brq.redhat.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-MC-Unique: IfxNH-Z8MDyb6IAPqkPSLQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/10/19 12:48, Jianyong Wu wrote:
-> +int kvm_arch_ptp_get_clock_generic(struct timespec64 *ts,
-> +=09=09=09=09   struct arm_smccc_res *hvc_res)
-> +{
-> +=09u64 ns;
-> +=09ktime_t ktime_overall;
-> +
-> +=09arm_smccc_1_1_invoke(ARM_SMCCC_VENDOR_HYP_KVM_PTP_FUNC_ID,
-> +=09=09=09=09  hvc_res);
-> +=09if ((long)(hvc_res->a0) < 0)
-> +=09=09return -EOPNOTSUPP;
-> +
-> +=09ktime_overall =3D hvc_res->a0 << 32 | hvc_res->a1;
-> +=09*ts =3D ktime_to_timespec64(ktime_overall);
-> +
-> +=09return 0;
-> +}
-> +
+On 15/10/19 16:36, Vitaly Kuznetsov wrote:
+>> On 15/10/19 12:53, Vitaly Kuznetsov wrote:
+>>> A very theoretical question: why do we have 'struct vcpu' embedded in
+>>> vcpu_vmx/vcpu_svm and not the other way around (e.g. in a union)? That
+>>> would've allowed us to allocate memory in common code and then fill in
+>>> vendor-specific details in .create_vcpu().
+>> Probably "because it's always been like that" is the most accurate answer.
+>>
+> OK, so let me make my question a bit less theoretical: would you be in
+> favor of changing the status quo? :-)
 
-This seems wrong, who uses kvm_arch_ptp_get_clock_fn?
+Not really, it would be a lot of churn for debatable benefit.
 
 Paolo
-
