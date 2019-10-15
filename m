@@ -2,404 +2,267 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77AFAD6D61
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 04:57:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A57ACD6D57
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 04:54:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbfJOC5x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 14 Oct 2019 22:57:53 -0400
-Received: from mga09.intel.com ([134.134.136.24]:21491 "EHLO mga09.intel.com"
+        id S1727361AbfJOCyR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 14 Oct 2019 22:54:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726248AbfJOC5w (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 14 Oct 2019 22:57:52 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Oct 2019 19:54:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,297,1566889200"; 
-   d="scan'208";a="370316963"
-Received: from kbl.sh.intel.com ([10.239.159.163])
-  by orsmga005.jf.intel.com with ESMTP; 14 Oct 2019 19:54:48 -0700
-From:   Jin Yao <yao.jin@linux.intel.com>
-To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com,
-        Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH] perf list: Hide deprecated events by default
-Date:   Tue, 15 Oct 2019 10:53:57 +0800
-Message-Id: <20191015025357.8708-1-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726248AbfJOCyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Oct 2019 22:54:17 -0400
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2F4B20673;
+        Tue, 15 Oct 2019 02:54:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571108056;
+        bh=qKZ0ciuJU4z0155MQkJkQYkWFz4v7tp1GEy9wweUyq4=;
+        h=Date:From:To:Subject:From;
+        b=x32T9rD9UNOaIv8sAOaRL1L7qXgC01DucDgBIb6llsrE/OqW5yOfQewDJPC4kQbjz
+         ni21znOkIog8IaFAFbA0q2IuF+Pv9cDMrM62Np3CNUAkfZ0MNk3xrqjsj4r0Mu0hkJ
+         ZPTsiqL4sttVPRAqyxyImJ6tQ7eptYosyBkaqSTM=
+Date:   Mon, 14 Oct 2019 19:54:15 -0700
+From:   akpm@linux-foundation.org
+To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
+Subject:  mmotm 2019-10-14-19-53 uploaded
+Message-ID: <20191015025415.n36TQo9wD%akpm@linux-foundation.org>
+User-Agent: s-nail v14.8.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are some deprecated events listed by perf list. But we can't remove
-them from perf list with ease because some old scripts may use them.
+The mm-of-the-moment snapshot 2019-10-14-19-53 has been uploaded to
 
-Deprecated events are old names of renamed events.  When an event gets
-renamed the old name is kept around for some time and marked with
-Deprecated. The newer Intel event lists in the tree already have these
-headers.
+   http://www.ozlabs.org/~akpm/mmotm/
 
-So we need to keep them in the event list, but provide a new option to
-show them. The new option is "--deprecated".
+mmotm-readme.txt says
 
-With this patch, the deprecated events are hidden by default but they can
-be displayed when option "--deprecated" is enabled.
+README for mm-of-the-moment:
 
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
----
- tools/perf/Documentation/perf-list.txt |  3 +++
- tools/perf/builtin-list.c              | 14 ++++++++++----
- tools/perf/pmu-events/jevents.c        | 26 ++++++++++++++++++++------
- tools/perf/pmu-events/jevents.h        |  3 ++-
- tools/perf/pmu-events/pmu-events.h     |  1 +
- tools/perf/util/parse-events.c         |  4 ++--
- tools/perf/util/parse-events.h         |  2 +-
- tools/perf/util/pmu.c                  | 17 +++++++++++++----
- tools/perf/util/pmu.h                  |  4 +++-
- 9 files changed, 55 insertions(+), 19 deletions(-)
+http://www.ozlabs.org/~akpm/mmotm/
 
-diff --git a/tools/perf/Documentation/perf-list.txt b/tools/perf/Documentation/perf-list.txt
-index 18ed1b0fceb3..6345db33c533 100644
---- a/tools/perf/Documentation/perf-list.txt
-+++ b/tools/perf/Documentation/perf-list.txt
-@@ -36,6 +36,9 @@ Enable debugging output.
- Print how named events are resolved internally into perf events, and also
- any extra expressions computed by perf stat.
- 
-+--deprecated::
-+Print deprecated events. By default the deprecated events are hidden.
-+
- [[EVENT_MODIFIERS]]
- EVENT MODIFIERS
- ---------------
-diff --git a/tools/perf/builtin-list.c b/tools/perf/builtin-list.c
-index 08e62ae9d37e..965ef017496f 100644
---- a/tools/perf/builtin-list.c
-+++ b/tools/perf/builtin-list.c
-@@ -26,6 +26,7 @@ int cmd_list(int argc, const char **argv)
- 	int i;
- 	bool raw_dump = false;
- 	bool long_desc_flag = false;
-+	bool deprecated = false;
- 	struct option list_options[] = {
- 		OPT_BOOLEAN(0, "raw-dump", &raw_dump, "Dump raw events"),
- 		OPT_BOOLEAN('d', "desc", &desc_flag,
-@@ -34,6 +35,8 @@ int cmd_list(int argc, const char **argv)
- 			    "Print longer event descriptions."),
- 		OPT_BOOLEAN(0, "details", &details_flag,
- 			    "Print information on the perf event names and expressions used internally by events."),
-+		OPT_BOOLEAN(0, "deprecated", &deprecated,
-+			    "Print deprecated events."),
- 		OPT_INCR(0, "debug", &verbose,
- 			     "Enable debugging output"),
- 		OPT_END()
-@@ -55,7 +58,7 @@ int cmd_list(int argc, const char **argv)
- 
- 	if (argc == 0) {
- 		print_events(NULL, raw_dump, !desc_flag, long_desc_flag,
--				details_flag);
-+				details_flag, deprecated);
- 		return 0;
- 	}
- 
-@@ -78,7 +81,8 @@ int cmd_list(int argc, const char **argv)
- 			print_hwcache_events(NULL, raw_dump);
- 		else if (strcmp(argv[i], "pmu") == 0)
- 			print_pmu_events(NULL, raw_dump, !desc_flag,
--						long_desc_flag, details_flag);
-+						long_desc_flag, details_flag,
-+						deprecated);
- 		else if (strcmp(argv[i], "sdt") == 0)
- 			print_sdt_events(NULL, NULL, raw_dump);
- 		else if (strcmp(argv[i], "metric") == 0 || strcmp(argv[i], "metrics") == 0)
-@@ -91,7 +95,8 @@ int cmd_list(int argc, const char **argv)
- 			if (sep == NULL) {
- 				print_events(argv[i], raw_dump, !desc_flag,
- 							long_desc_flag,
--							details_flag);
-+							details_flag,
-+							deprecated);
- 				continue;
- 			}
- 			sep_idx = sep - argv[i];
-@@ -117,7 +122,8 @@ int cmd_list(int argc, const char **argv)
- 			print_hwcache_events(s, raw_dump);
- 			print_pmu_events(s, raw_dump, !desc_flag,
- 						long_desc_flag,
--						details_flag);
-+						details_flag,
-+						deprecated);
- 			print_tracepoint_events(NULL, s, raw_dump);
- 			print_sdt_events(NULL, s, raw_dump);
- 			metricgroup__print(true, true, s, raw_dump, details_flag);
-diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
-index e2837260ca4d..7d69727f44bd 100644
---- a/tools/perf/pmu-events/jevents.c
-+++ b/tools/perf/pmu-events/jevents.c
-@@ -322,7 +322,8 @@ static int print_events_table_entry(void *data, char *name, char *event,
- 				    char *desc, char *long_desc,
- 				    char *pmu, char *unit, char *perpkg,
- 				    char *metric_expr,
--				    char *metric_name, char *metric_group)
-+				    char *metric_name, char *metric_group,
-+				    char *deprecated)
- {
- 	struct perf_entry_data *pd = data;
- 	FILE *outfp = pd->outfp;
-@@ -354,6 +355,8 @@ static int print_events_table_entry(void *data, char *name, char *event,
- 		fprintf(outfp, "\t.metric_name = \"%s\",\n", metric_name);
- 	if (metric_group)
- 		fprintf(outfp, "\t.metric_group = \"%s\",\n", metric_group);
-+	if (deprecated)
-+		fprintf(outfp, "\t.deprecated = \"%s\",\n", deprecated);
- 	fprintf(outfp, "},\n");
- 
- 	return 0;
-@@ -371,6 +374,7 @@ struct event_struct {
- 	char *metric_expr;
- 	char *metric_name;
- 	char *metric_group;
-+	char *deprecated;
- };
- 
- #define ADD_EVENT_FIELD(field) do { if (field) {		\
-@@ -398,6 +402,7 @@ struct event_struct {
- 	op(metric_expr);					\
- 	op(metric_name);					\
- 	op(metric_group);					\
-+	op(deprecated);						\
- } while (0)
- 
- static LIST_HEAD(arch_std_events);
-@@ -416,7 +421,8 @@ static void free_arch_std_events(void)
- static int save_arch_std_events(void *data, char *name, char *event,
- 				char *desc, char *long_desc, char *pmu,
- 				char *unit, char *perpkg, char *metric_expr,
--				char *metric_name, char *metric_group)
-+				char *metric_name, char *metric_group,
-+				char *deprecated)
- {
- 	struct event_struct *es;
- 
-@@ -479,7 +485,8 @@ static int
- try_fixup(const char *fn, char *arch_std, char **event, char **desc,
- 	  char **name, char **long_desc, char **pmu, char **filter,
- 	  char **perpkg, char **unit, char **metric_expr, char **metric_name,
--	  char **metric_group, unsigned long long eventcode)
-+	  char **metric_group, unsigned long long eventcode,
-+	  char **deprecated)
- {
- 	/* try to find matching event from arch standard values */
- 	struct event_struct *es;
-@@ -507,7 +514,8 @@ int json_events(const char *fn,
- 		      char *long_desc,
- 		      char *pmu, char *unit, char *perpkg,
- 		      char *metric_expr,
--		      char *metric_name, char *metric_group),
-+		      char *metric_name, char *metric_group,
-+		      char *deprecated),
- 	  void *data)
- {
- 	int err;
-@@ -536,6 +544,7 @@ int json_events(const char *fn,
- 		char *metric_expr = NULL;
- 		char *metric_name = NULL;
- 		char *metric_group = NULL;
-+		char *deprecated = NULL;
- 		char *arch_std = NULL;
- 		unsigned long long eventcode = 0;
- 		struct msrmap *msr = NULL;
-@@ -614,6 +623,8 @@ int json_events(const char *fn,
- 				addfield(map, &unit, "", "", val);
- 			} else if (json_streq(map, field, "PerPkg")) {
- 				addfield(map, &perpkg, "", "", val);
-+			} else if (json_streq(map, field, "Deprecated")) {
-+				addfield(map, &deprecated, "", "", val);
- 			} else if (json_streq(map, field, "MetricName")) {
- 				addfield(map, &metric_name, "", "", val);
- 			} else if (json_streq(map, field, "MetricGroup")) {
-@@ -658,12 +669,14 @@ int json_events(const char *fn,
- 			err = try_fixup(fn, arch_std, &event, &desc, &name,
- 					&long_desc, &pmu, &filter, &perpkg,
- 					&unit, &metric_expr, &metric_name,
--					&metric_group, eventcode);
-+					&metric_group, eventcode,
-+					&deprecated);
- 			if (err)
- 				goto free_strings;
- 		}
- 		err = func(data, name, real_event(name, event), desc, long_desc,
--			   pmu, unit, perpkg, metric_expr, metric_name, metric_group);
-+			   pmu, unit, perpkg, metric_expr, metric_name,
-+			   metric_group, deprecated);
- free_strings:
- 		free(event);
- 		free(desc);
-@@ -673,6 +686,7 @@ int json_events(const char *fn,
- 		free(pmu);
- 		free(filter);
- 		free(perpkg);
-+		free(deprecated);
- 		free(unit);
- 		free(metric_expr);
- 		free(metric_name);
-diff --git a/tools/perf/pmu-events/jevents.h b/tools/perf/pmu-events/jevents.h
-index 4684c673c445..5cda49a42143 100644
---- a/tools/perf/pmu-events/jevents.h
-+++ b/tools/perf/pmu-events/jevents.h
-@@ -7,7 +7,8 @@ int json_events(const char *fn,
- 				char *long_desc,
- 				char *pmu,
- 				char *unit, char *perpkg, char *metric_expr,
--				char *metric_name, char *metric_group),
-+				char *metric_name, char *metric_group,
-+				char *deprecated),
- 		void *data);
- char *get_cpu_str(void);
- 
-diff --git a/tools/perf/pmu-events/pmu-events.h b/tools/perf/pmu-events/pmu-events.h
-index 92a4d15ee0b9..caeb577d36c9 100644
---- a/tools/perf/pmu-events/pmu-events.h
-+++ b/tools/perf/pmu-events/pmu-events.h
-@@ -17,6 +17,7 @@ struct pmu_event {
- 	const char *metric_expr;
- 	const char *metric_name;
- 	const char *metric_group;
-+	const char *deprecated;
- };
- 
- /*
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index b5e2adef49de..db882f630f7e 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -2600,7 +2600,7 @@ void print_symbol_events(const char *event_glob, unsigned type,
-  * Print the help text for the event symbols:
-  */
- void print_events(const char *event_glob, bool name_only, bool quiet_flag,
--			bool long_desc, bool details_flag)
-+			bool long_desc, bool details_flag, bool deprecated)
- {
- 	print_symbol_events(event_glob, PERF_TYPE_HARDWARE,
- 			    event_symbols_hw, PERF_COUNT_HW_MAX, name_only);
-@@ -2612,7 +2612,7 @@ void print_events(const char *event_glob, bool name_only, bool quiet_flag,
- 	print_hwcache_events(event_glob, name_only);
- 
- 	print_pmu_events(event_glob, name_only, quiet_flag, long_desc,
--			details_flag);
-+			details_flag, deprecated);
- 
- 	if (event_glob != NULL)
- 		return;
-diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-events.h
-index 616ca1eda0eb..769e07cddaa2 100644
---- a/tools/perf/util/parse-events.h
-+++ b/tools/perf/util/parse-events.h
-@@ -195,7 +195,7 @@ void parse_events_evlist_error(struct parse_events_state *parse_state,
- 			       int idx, const char *str);
- 
- void print_events(const char *event_glob, bool name_only, bool quiet,
--		  bool long_desc, bool details_flag);
-+		  bool long_desc, bool details_flag, bool deprecated);
- 
- struct event_symbol {
- 	const char	*symbol;
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 5608da82ad23..adbe97e941dd 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -308,7 +308,8 @@ static int __perf_pmu__new_alias(struct list_head *list, char *dir, char *name,
- 				 char *long_desc, char *topic,
- 				 char *unit, char *perpkg,
- 				 char *metric_expr,
--				 char *metric_name)
-+				 char *metric_name,
-+				 char *deprecated)
- {
- 	struct parse_events_term *term;
- 	struct perf_pmu_alias *alias;
-@@ -325,6 +326,7 @@ static int __perf_pmu__new_alias(struct list_head *list, char *dir, char *name,
- 	alias->unit[0] = '\0';
- 	alias->per_pkg = false;
- 	alias->snapshot = false;
-+	alias->deprecated = false;
- 
- 	ret = parse_events_terms(&alias->terms, val);
- 	if (ret) {
-@@ -379,6 +381,9 @@ static int __perf_pmu__new_alias(struct list_head *list, char *dir, char *name,
- 	alias->per_pkg = perpkg && sscanf(perpkg, "%d", &num) == 1 && num == 1;
- 	alias->str = strdup(newval);
- 
-+	if (deprecated)
-+		alias->deprecated = true;
-+
- 	if (!perf_pmu_merge_alias(alias, list))
- 		list_add_tail(&alias->list, list);
- 
-@@ -400,7 +405,7 @@ static int perf_pmu__new_alias(struct list_head *list, char *dir, char *name, FI
- 	strim(buf);
- 
- 	return __perf_pmu__new_alias(list, dir, name, NULL, buf, NULL, NULL, NULL,
--				     NULL, NULL, NULL);
-+				     NULL, NULL, NULL, NULL);
- }
- 
- static inline bool pmu_alias_info_file(char *name)
-@@ -787,7 +792,8 @@ static void pmu_add_cpu_aliases(struct list_head *head, struct perf_pmu *pmu)
- 				(char *)pe->long_desc, (char *)pe->topic,
- 				(char *)pe->unit, (char *)pe->perpkg,
- 				(char *)pe->metric_expr,
--				(char *)pe->metric_name);
-+				(char *)pe->metric_name,
-+				(char *)pe->deprecated);
- 	}
- }
- 
-@@ -1383,7 +1389,7 @@ static void wordwrap(char *s, int start, int max, int corr)
- }
- 
- void print_pmu_events(const char *event_glob, bool name_only, bool quiet_flag,
--			bool long_desc, bool details_flag)
-+			bool long_desc, bool details_flag, bool deprecated)
- {
- 	struct perf_pmu *pmu;
- 	struct perf_pmu_alias *alias;
-@@ -1414,6 +1420,9 @@ void print_pmu_events(const char *event_glob, bool name_only, bool quiet_flag,
- 				format_alias(buf, sizeof(buf), pmu, alias);
- 			bool is_cpu = !strcmp(pmu->name, "cpu");
- 
-+			if (alias->deprecated && !deprecated)
-+				continue;
-+
- 			if (event_glob != NULL &&
- 			    !(strglobmatch_nocase(name, event_glob) ||
- 			      (!is_cpu && strglobmatch_nocase(alias->name,
-diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
-index f36ade6df76d..3e8cd31a89cc 100644
---- a/tools/perf/util/pmu.h
-+++ b/tools/perf/util/pmu.h
-@@ -57,6 +57,7 @@ struct perf_pmu_alias {
- 	double scale;
- 	bool per_pkg;
- 	bool snapshot;
-+	bool deprecated;
- 	char *metric_expr;
- 	char *metric_name;
- };
-@@ -85,7 +86,8 @@ int perf_pmu__format_parse(char *dir, struct list_head *head);
- struct perf_pmu *perf_pmu__scan(struct perf_pmu *pmu);
- 
- void print_pmu_events(const char *event_glob, bool name_only, bool quiet,
--		      bool long_desc, bool details_flag);
-+		      bool long_desc, bool details_flag,
-+		      bool deprecated);
- bool pmu_have_event(const char *pname, const char *name);
- 
- int perf_pmu__scan_file(struct perf_pmu *pmu, const char *name, const char *fmt, ...) __scanf(3, 4);
--- 
-2.17.1
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
 
+You will need quilt to apply these patches to the latest Linus release (5.x
+or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
+
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
+
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
+
+
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
+
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
+
+
+
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is available at
+
+	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
+
+and use of this tree is similar to
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+
+
+This mmotm tree contains the following patches against 5.4-rc3:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+* mm-page_owner-fix-off-by-one-error-in-__set_page_owner_handle.patch
+* mm-page_owner-decouple-freeing-stack-trace-from-debug_pagealloc.patch
+* mm-page_owner-rename-flag-indicating-that-page-is-allocated.patch
+* mm-slub-fix-a-deadlock-in-show_slab_objects.patch
+* lib-generic-radix-treec-add-kmemleak-annotations.patch
+* mm-slub-init_on_free=1-should-wipe-freelist-ptr-for-bulk-allocations.patch
+* lib-test_meminit-add-a-kmem_cache_alloc_bulk-test.patch
+* mm-hugetlb-allow-hugepage-allocations-to-excessively-reclaim.patch
+* mm-compaction-fix-wrong-pfn-handling-in-__reset_isolation_pfn.patch
+* fs-fix-direct-ioc-kernel-doc-warning.patch
+* fs-fix-libfsc-kernel-doc-warning.patch
+* fs-fs-writebackc-fix-kernel-doc-warning.patch
+* bitmaph-fix-kernel-doc-warning-and-typo.patch
+* xarrayh-fix-kernel-doc-warning.patch
+* mm-slabc-fix-kernel-doc-warning-for-__ksize.patch
+* mm-memory-failure-poison-read-receives-sigkill-instead-of-sigbus-if-mmaped-more-than-once.patch
+* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
+* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
+* drivers-base-memoryc-dont-access-uninitialized-memmaps-in-soft_offline_page_store.patch
+* mm-dont-access-uninitialized-memmaps-in-fs-proc-pagec.patch
+* mm-memory-failurec-dont-access-uninitialized-memmaps-in-memory_failure.patch
+* scripts-gdb-fix-lx-dmesg-when-config_printk_caller-is-set.patch
+* mm-page_owner-dont-access-uninitialized-memmaps-when-reading-proc-pagetypeinfo.patch
+* mm-memory_hotplug-dont-access-uninitialized-memmaps-in-shrink_pgdat_span.patch
+* mm-memunmap-dont-access-uninitialized-memmap-in-memunmap_pages.patch
+* mm-memcg-slab-fix-panic-in-__free_slab-caused-by-premature-memcg-pointer-release.patch
+* resend-ocfs2-fix-error-handling-in-ocfs2_setattr.patch
+* mm-gup_benchmark-add-a-missing-w-to-getopt-string.patch
+* mm-gup-fix-a-misnamed-write-argument-and-a-related-bug.patch
+* mm-vmscan-get-number-of-pages-on-the-lru-list-in-memcgroup-base-on-lru_zone_size.patch
+* mm-memblock-do-not-enforce-current-limit-for-memblock_phys-family.patch
+* ocfs2-protect-extent-tree-in-the-ocfs2_prepare_inode_for_write.patch
+* ocfs2-protect-extent-tree-in-the-ocfs2_prepare_inode_for_write-checkpatch-fixes.patch
+* ocfs2-remove-unused-function-ocfs2_prepare_inode_for_refcount.patch
+* ocfs2-fix-passing-zero-to-ptr_err-warning.patch
+* ramfs-support-o_tmpfile.patch
+  mm.patch
+* mm-slab-make-kmalloc_info-contain-all-types-of-names.patch
+* mm-slab-remove-unused-kmalloc_size.patch
+* mm-slab_common-use-enum-kmalloc_cache_type-to-iterate-over-kmalloc-caches.patch
+* mm-slub-print-the-offset-of-fault-addresses.patch
+* mm-update-comments-in-slubc.patch
+* mm-hugetlb-make-alloc_gigantic_page-available-for-general-use.patch
+* mm-debug-add-tests-validating-architecture-page-table-helpers.patch
+* mm-debug-add-tests-validating-architecture-page-table-helpers-fix.patch
+* mm-memcg-clean-up-reclaim-iter-array.patch
+* mm-vmscan-expose-cgroup_ino-for-memcg-reclaim-tracepoints.patch
+* mm-drop-mmap_sem-before-calling-balance_dirty_pages-in-write-fault.patch
+* shmem-pin-the-file-in-shmem_fault-if-mmap_sem-is-dropped.patch
+* mm-emit-tracepoint-when-rss-changes.patch
+* mm-mmapc-remove-a-never-trigger-warning-in-__vma_adjust.patch
+* mm-pgmap-use-correct-alignment-when-looking-at-first-pfn-from-a-region.patch
+* mm-pgmap-use-correct-alignment-when-looking-at-first-pfn-from-a-region-checkpatch-fixes.patch
+* mm-mmap-fix-the-adjusted-length-error.patch
+* mm-swap-piggyback-lru_add_drain_all-calls.patch
+* mm-mmapc-prev-could-be-retrieved-from-vma-vm_prev.patch
+* mm-mmapc-__vma_unlink_prev-is-not-necessary-now.patch
+* mm-mmapc-extract-__vma_unlink_list-as-counter-part-for-__vma_link_list.patch
+* mm-mmapc-rb_parent-is-not-necessary-in-__vma_link_list.patch
+* mm-rmapc-dont-reuse-anon_vma-if-we-just-want-a-copy.patch
+* mm-rmapc-reuse-mergeable-anon_vma-as-parent-when-fork.patch
+* asm-generic-tlb-stub-out-pud_free_tlb-if-__pagetable_pud_folded.patch
+* asm-generic-tlb-stub-out-p4d_free_tlb-if-__pagetable_p4d_folded.patch
+* asm-generic-mm-stub-out-p4dd_clear_bad-if-__pagetable_p4ud_folded.patch
+* mm-memory-failurec-clean-up-around-tk-pre-allocation.patch
+* mm-hotplug-reorder-memblock_-calls-in-try_remove_memory.patch
+* memory_hotplug-add-a-bounds-check-to-__add_pages.patch
+* mm-memory_hotplug-export-generic_online_page.patch
+* hv_balloon-use-generic_online_page.patch
+* mm-memory_hotplug-remove-__online_page_free-and-__online_page_increment_counters.patch
+* mm-memmap_init-update-variable-name-in-memmap_init_zone.patch
+* mm-memory_hotplug-dont-access-uninitialized-memmaps-in-shrink_zone_span.patch
+* mm-memory_hotplug-shrink-zones-when-offlining-memory.patch
+* mm-memory_hotplug-poison-memmap-in-remove_pfn_range_from_zone.patch
+* mm-memory_hotplug-we-always-have-a-zone-in-find_smallestbiggest_section_pfn.patch
+* mm-memory_hotplug-dont-check-for-all-holes-in-shrink_zone_span.patch
+* mm-memory_hotplug-drop-local-variables-in-shrink_zone_span.patch
+* mm-memory_hotplug-cleanup-__remove_pages.patch
+* mm-vmalloc-remove-unnecessary-highmem_mask-from-parameter-of-gfpflags_allow_blocking.patch
+* mm-vmalloc-remove-preempt_disable-enable-when-do-preloading.patch
+* selftests-vm-add-fragment-config_test_vmalloc.patch
+* mm-vmscan-remove-unused-scan_control-parameter-from-pageout.patch
+* z3fold-add-inter-page-compaction.patch
+* z3fold-add-inter-page-compaction-fix.patch
+* mm-support-memblock-alloc-on-the-exact-node-for-sparse_buffer_init.patch
+* mm-oom-avoid-printk-iteration-under-rcu.patch
+* mm-oom-avoid-printk-iteration-under-rcu-fix.patch
+* hugetlbfs-hugetlb_fault_mutex_hash-cleanup.patch
+* hugetlb-region_chg-provides-only-cache-entry.patch
+* hugetlb-remove-duplicated-code.patch
+* hugetlb-remove-duplicated-code-checkpatch-fixes.patch
+* hugetlb-remove-unused-hstate-in-hugetlb_fault_mutex_hash.patch
+* hugetlb-remove-unused-hstate-in-hugetlb_fault_mutex_hash-fix.patch
+* hugetlb-remove-unused-hstate-in-hugetlb_fault_mutex_hash-fix-fix.patch
+* mm-hugetlb-avoid-looping-to-the-same-hugepage-if-pages-and-vmas.patch
+* mm-thp-do-not-queue-fully-unmapped-pages-for-deferred-split.patch
+* mm-thp-make-set_huge_zero_page-return-void.patch
+* mm-cmac-switch-to-bitmap_zalloc-for-cma-bitmap-allocation.patch
+* userfaultfd-use-vma_pagesize-for-all-huge-page-size-calculation.patch
+* userfaultfd-remove-unnecessary-warn_on-in-__mcopy_atomic_hugetlb.patch
+* userfaultfd-wrap-the-common-dst_vma-check-into-an-inlined-function.patch
+* uffd-wp-clear-vm_uffd_missing-or-vm_uffd_wp-during-userfaultfd_register.patch
+* mm-shmemc-make-array-values-static-const-makes-object-smaller.patch
+* mm-fix-struct-member-name-in-function-comments.patch
+* mm-fix-typo-in-the-comment-when-calling-function-__setpageuptodate.patch
+* mm-memory_hotplugc-remove-__online_page_set_limits.patch
+* mm-annotate-refault-stalls-from-swap_readpage.patch
+* mm-annotate-refault-stalls-from-swap_readpage-fix.patch
+* mm-vmscan-remove-unused-lru_pages-argument.patch
+* info-task-hung-in-generic_file_write_iter.patch
+* info-task-hung-in-generic_file_write-fix.patch
+* kernel-hung_taskc-monitor-killed-tasks.patch
+* proc-change-nlink-under-proc_subdir_lock.patch
+* proc-delete-useless-len-variable.patch
+* proc-shuffle-struct-pde_opener.patch
+* proc-fix-confusing-macro-arg-name.patch
+* sysctl-inline-braces-for-ctl_table-and-ctl_table_header.patch
+* gitattributes-use-dts-diff-driver-for-dts-files.patch
+* linux-build_bugh-change-type-to-int.patch
+* kernel-notifierc-intercepting-duplicate-registrations-to-avoid-infinite-loops.patch
+* kernel-notifierc-remove-notifier_chain_cond_register.patch
+* kernel-notifierc-remove-blocking_notifier_chain_cond_register.patch
+* hung_task-allow-printing-warnings-every-check-interval.patch
+* get_maintainer-add-signatures-from-fixes-badcommit-lines-in-commit-message.patch
+* string-add-stracpy-and-stracpy_pad-mechanisms.patch
+* documentation-checkpatch-prefer-stracpy-strscpy-over-strcpy-strlcpy-strncpy.patch
+* lib-fix-possible-incorrect-result-from-rational-fractions-helper.patch
+* checkpatch-improve-ignoring-camelcase-si-style-variants-like-ma.patch
+* epoll-simplify-ep_poll_safewake-for-config_debug_lock_alloc.patch
+* fs-epoll-remove-unnecessary-wakeups-of-nested-epoll.patch
+* selftests-add-epoll-selftests.patch
+* elf-delete-unused-interp_map_addr-argument.patch
+* elf-extract-elf_read-function.patch
+* uaccess-disallow-int_max-copy-sizes.patch
+* aio-simplify-read_events.patch
+* lib-ubsan-dont-seralize-ubsan-report.patch
+* ipc-consolidate-all-xxxctl_down-functions.patch
+  linux-next.patch
+  diff-sucks.patch
+* drivers-block-null_blk_mainc-fix-layout.patch
+* drivers-block-null_blk_mainc-fix-uninitialized-var-warnings.patch
+* pinctrl-fix-pxa2xxc-build-warnings.patch
+* lib-list-test-add-a-test-for-the-list-doubly-linked-list.patch
+* lib-genallocc-export-symbol-addr_in_gen_pool.patch
+* lib-genallocc-rename-addr_in_gen_pool-to-gen_pool_has_addr.patch
+* lib-genallocc-rename-addr_in_gen_pool-to-gen_pool_has_addr-fix.patch
+* hacking-group-sysrq-kgdb-ubsan-into-generic-kernel-debugging-instruments.patch
+* hacking-create-submenu-for-arch-special-debugging-options.patch
+* hacking-group-kernel-data-structures-debugging-together.patch
+* hacking-move-kernel-testing-and-coverage-options-to-same-submenu.patch
+* hacking-move-oops-into-lockups-and-hangs.patch
+* hacking-move-sched_stack_end_check-after-debug_stack_usage.patch
+* hacking-create-a-submenu-for-scheduler-debugging-options.patch
+* hacking-move-debug_bugverbose-to-printk-and-dmesg-options.patch
+* hacking-move-debug_fs-to-generic-kernel-debugging-instruments.patch
+* bitops-introduce-the-for_each_set_clump8-macro.patch
+* lib-test_bitmapc-add-for_each_set_clump8-test-cases.patch
+* gpio-104-dio-48e-utilize-for_each_set_clump8-macro.patch
+* gpio-104-idi-48-utilize-for_each_set_clump8-macro.patch
+* gpio-gpio-mm-utilize-for_each_set_clump8-macro.patch
+* gpio-ws16c48-utilize-for_each_set_clump8-macro.patch
+* gpio-pci-idio-16-utilize-for_each_set_clump8-macro.patch
+* gpio-pcie-idio-24-utilize-for_each_set_clump8-macro.patch
+* gpio-uniphier-utilize-for_each_set_clump8-macro.patch
+* gpio-74x164-utilize-the-for_each_set_clump8-macro.patch
+* thermal-intel-intel_soc_dts_iosf-utilize-for_each_set_clump8-macro.patch
+* gpio-pisosr-utilize-the-for_each_set_clump8-macro.patch
+* gpio-max3191x-utilize-the-for_each_set_clump8-macro.patch
+* gpio-pca953x-utilize-the-for_each_set_clump8-macro.patch
+* drivers-tty-serial-sh-scic-suppress-warning.patch
+* fix-read-buffer-overflow-in-delta-ipc.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  workaround-for-a-pci-restoring-bug.patch
