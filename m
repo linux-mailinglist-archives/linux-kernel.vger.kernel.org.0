@@ -2,119 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEEBED71CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 11:08:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEE2BD71B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 11:02:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728784AbfJOJIE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 05:08:04 -0400
-Received: from mx-out.tlen.pl ([193.222.135.142]:45673 "EHLO mx-out.tlen.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726383AbfJOJIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 05:08:04 -0400
-Received: (wp-smtpd smtp.tlen.pl 11047 invoked from network); 15 Oct 2019 11:01:22 +0200
-Received: from unknown (HELO localhost.localdomain) (p.sarna@tlen.pl@[31.179.144.84])
-          (envelope-sender <p.sarna@tlen.pl>)
-          by smtp.tlen.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <linux-kernel@vger.kernel.org>; 15 Oct 2019 11:01:22 +0200
-From:   Piotr Sarna <p.sarna@tlen.pl>
-To:     linux-kernel@vger.kernel.org, mike.kravetz@oracle.com
-Cc:     Piotr Sarna <p.sarna@tlen.pl>, linux-mm@kvack.org,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] hugetlbfs: add O_TMPFILE support
-Date:   Tue, 15 Oct 2019 11:01:12 +0200
-Message-Id: <22c29acf9c51dae17802e1b05c9e5e4051448c5c.1571129593.git.p.sarna@tlen.pl>
-X-Mailer: git-send-email 2.21.0
+        id S1729435AbfJOJCQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 05:02:16 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37882 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727838AbfJOJCO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 05:02:14 -0400
+Received: by mail-pl1-f193.google.com with SMTP id u20so9280321plq.4;
+        Tue, 15 Oct 2019 02:02:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Y/FDmIN7D8CAH00XLKSbXEilWCinqJP7n+EcoU7otuk=;
+        b=HoCuT2+lllpMGI7rxiT0hR8SrLG0PxTVSag1/oMBtvUyOxazz+MUgiI1f8MRbx46ej
+         GOavSu+uhk8b6OY/Z4K8ksOea6AVOo8YvnixA0pmAn8Mj43ZoY4HXbCK5fX9F657AIpm
+         Iq4zItG0MZtz4yqXJx1lRI03gq7wX7c2zG9nq9luguy0oKWRsBC89Uf2XwMAa1e0Zzgc
+         h5kIKDSpesNdliArJBfcRHOcLLZERWLYirCf6ScpT36OkkoWyWhkh6eDDAYLxQ/fnYR6
+         4r6LXRWVC+f7kDgeGRRcu7pFWdZ6JI5CZAipJ7DMvBp8pV14/qNA9T0F8LAIPtFD5imQ
+         CQYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Y/FDmIN7D8CAH00XLKSbXEilWCinqJP7n+EcoU7otuk=;
+        b=gg7oh5ZjQGjulF3Z2xTfieQDXc84zKmcMo35UuBk5nfnSAmC4JYT5rxPQDgWxciDvd
+         hERTfEdJ9DfLImmNEGGd53klHCz66hxh6G32lV9FFFnUwsgsKIuRgE1wfEkHKaI9vCdf
+         YcGwxfhF5lPgkEolBj40eG/ZVaXXE/54BYwkpdY5vCwdGEpQJUZnzHBQk5W0OY21RrmO
+         iHFlBKPZke4xg3ibefT9gG7Mjv1XYMatWSktp7r8P+7SaCjFnbZpHWiIL+CkeO4Ay1L+
+         UeDPFGMMoqRDL4GzGNtF1gmz7UZQwta7cdt4a7klPIzsI5WYA03t/oifUbrTaIA62nH6
+         j4lw==
+X-Gm-Message-State: APjAAAUd2c8aQoDPpv3ILU9u3RRcreu/QZM3bMI0QUYYhcL/8KXe38gO
+        SMWUrml5FmR8vibqqREqXyWqlEbAVVKZZVg1vwI=
+X-Google-Smtp-Source: APXvYqwO/5hFqux5frYOwevy/NieZz1EIdQe655HuLE5hkKwfQJ49zRK0A/Mgoun/IUJoY/i+vhv9Ba0Waay4XJ8WXM=
+X-Received: by 2002:a17:902:9881:: with SMTP id s1mr35148119plp.18.1571130132022;
+ Tue, 15 Oct 2019 02:02:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-WP-MailID: e93136fb553552c8e020d3da8703060d
-X-WP-AV: skaner antywirusowy Poczty o2
-X-WP-SPAM: NO 0000000 [sUP0]                               
+References: <20191004214334.149976-1-swboyd@chromium.org> <20191004214334.149976-2-swboyd@chromium.org>
+ <CAHp75Vebn48hbzqKWzV3aj4NEBCta_Fn7zOQHzsznW4=6cXLsQ@mail.gmail.com> <5da4e084.1c69fb81.567f9.4b9c@mx.google.com>
+In-Reply-To: <5da4e084.1c69fb81.567f9.4b9c@mx.google.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 15 Oct 2019 12:02:01 +0300
+Message-ID: <CAHp75Vcht2S7j64vUGw+DQdSEAyxuyBJ9oVwHyXxnL9bM1-wFA@mail.gmail.com>
+Subject: Re: [PATCH 01/10] leds: pca953x: Use of_device_get_match_data()
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Wolfram Sang <wsa@the-dreams.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Riku Voipio <riku.voipio@iki.fi>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With hugetlbfs, a common pattern for mapping anonymous huge pages
-is to create a temporary file first. Currently libraries like
-libhugetlbfs and seastar create these with a standard mkstemp+unlink
-trick, but it would be more robust to be able to simply pass
-the O_TMPFILE flag to open(). O_TMPFILE is already supported by several
-file systems like ext4 and xfs. The implementation simply uses the existing
-d_tmpfile utility function to instantiate the dcache entry for the file.
+On Mon, Oct 14, 2019 at 11:54 PM Stephen Boyd <swboyd@chromium.org> wrote:
+> Quoting Andy Shevchenko (2019-10-14 10:50:06)
+> > On Sat, Oct 5, 2019 at 12:47 AM Stephen Boyd <swboyd@chromium.org> wrote:
+> > >
+> > > This driver can use the of_device_get_match_data() API to simplify the
+> > > code. Replace calls to of_match_device() with this newer API under the
+> > > assumption that where it is called will be when we know the device is
+> > > backed by a DT node. This nicely avoids referencing the match table when
+> > > it is undefined with configurations where CONFIG_OF=n.
+> >
+> > > +       devid = (int)(uintptr_t)of_device_get_match_data(dev);
+> >
+> > > +               devid = (int)(uintptr_t)of_device_get_match_data(&client->dev);
+> >
+> > This still leaves it OF-centric.
+> > Better to use device_get_match_data().
+> >
+> > Also, I'm thinking that following may help to clean a lot of the i2c
+> > client drivers
+> >
+> > static inline // perhaps no
+> > const void *i2c_device_get_match_data(struct i2c_client *client, const
+> > struct i2c_device_id *id)
+> > {
+> >   if (id)
+> >     return (const void *)id->driver_data;
+> >   return device_get_match_data(&client->dev);
+> > }
+> >
+>
+> Looks alright to me. Maybe device_get_match_data() can look at the bus
+> and call some bus op if the firmware match isn't present? Then we can
+> replace a bunch of these calls with device_get_match_data() and it will
+> "do the right thing" regardless of what bus or firmware the device is
+> running on.
 
-Tested manually by successfully creating a temporary file by opening
-it with (O_TMPFILE|O_RDWR) on mounted hugetlbfs and successfully
-mapping 2M huge pages with it. Without the patch, trying to open
-a file with O_TMPFILE results in -ENOSUP.
+It will be something ugly like
 
-Signed-off-by: Piotr Sarna <p.sarna@tlen.pl>
----
- fs/hugetlbfs/inode.c | 25 ++++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
+buses {
+#ifdef I2C
+&i2c_bus_type,
+#endif
+...
+}
 
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 1dcc57189382..277b7d231db8 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -815,8 +815,11 @@ static struct inode *hugetlbfs_get_inode(struct super_block *sb,
- /*
-  * File creation. Allocate an inode, and we're done..
-  */
--static int hugetlbfs_mknod(struct inode *dir,
--			struct dentry *dentry, umode_t mode, dev_t dev)
-+static int do_hugetlbfs_mknod(struct inode *dir,
-+			struct dentry *dentry,
-+			umode_t mode,
-+			dev_t dev,
-+			bool tmpfile)
- {
- 	struct inode *inode;
- 	int error = -ENOSPC;
-@@ -824,13 +827,22 @@ static int hugetlbfs_mknod(struct inode *dir,
- 	inode = hugetlbfs_get_inode(dir->i_sb, dir, mode, dev);
- 	if (inode) {
- 		dir->i_ctime = dir->i_mtime = current_time(dir);
--		d_instantiate(dentry, inode);
-+		if (tmpfile)
-+			d_tmpfile(dentry, inode);
-+		else
-+			d_instantiate(dentry, inode);
- 		dget(dentry);	/* Extra count - pin the dentry in core */
- 		error = 0;
- 	}
- 	return error;
- }
- 
-+static int hugetlbfs_mknod(struct inode *dir,
-+			struct dentry *dentry, umode_t mode, dev_t dev)
-+{
-+	return do_hugetlbfs_mknod(dir, dentry, mode, dev, false);
-+}
-+
- static int hugetlbfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
- {
- 	int retval = hugetlbfs_mknod(dir, dentry, mode | S_IFDIR, 0);
-@@ -844,6 +856,12 @@ static int hugetlbfs_create(struct inode *dir, struct dentry *dentry, umode_t mo
- 	return hugetlbfs_mknod(dir, dentry, mode | S_IFREG, 0);
- }
- 
-+static int hugetlbfs_tmpfile(struct inode *dir,
-+			struct dentry *dentry, umode_t mode)
-+{
-+	return do_hugetlbfs_mknod(dir, dentry, mode | S_IFREG, 0, true);
-+}
-+
- static int hugetlbfs_symlink(struct inode *dir,
- 			struct dentry *dentry, const char *symname)
- {
-@@ -1102,6 +1120,7 @@ static const struct inode_operations hugetlbfs_dir_inode_operations = {
- 	.mknod		= hugetlbfs_mknod,
- 	.rename		= simple_rename,
- 	.setattr	= hugetlbfs_setattr,
-+	.tmpfile	= hugetlbfs_tmpfile,
- };
- 
- static const struct inode_operations hugetlbfs_inode_operations = {
+in the code. I won't do this.
+
+See generic_match_buses[] for example.
+
 -- 
-2.21.0
-
+With Best Regards,
+Andy Shevchenko
