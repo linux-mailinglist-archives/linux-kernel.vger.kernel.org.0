@@ -2,89 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD600D8045
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:28:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F968D8059
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 21:32:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732283AbfJOT2s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 15:28:48 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52609 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730038AbfJOT2r (ORCPT
+        id S1732122AbfJOTcL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 15:32:11 -0400
+Received: from smtprelay0149.hostedemail.com ([216.40.44.149]:52271 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726837AbfJOTcK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 15:28:47 -0400
-Received: by mail-wm1-f65.google.com with SMTP id r19so292153wmh.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 12:28:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=EbAnyTOslp6v1Q8FsmUFH6BpJr8FNaYvIMIlQEjnqCI=;
-        b=G90I0dyrX3/1JAVSlVemOrG13hF203/pZ3Lk38+XtGFF4rkUlZ/iPoV1/27W04fCiN
-         rLpCP/3Dz4tB/k9Gq51AKs4+FJ1LW3x+x/bQdVmWSl036tb3ZB/sSuRMc0A3vXrj25ZN
-         i7dh49TtP7P6EGenJ5aLCCZT9aHDh8pSWd5g04fxKv3T+uQL22Cn0LUD4jDYyOAnZllD
-         1kjxE3kIPbGN3ZQR9vPIA6GQAbuZE/2M2uwOgW7IFirWuitnCb86tY9t2WShf+n+d/by
-         vvR7SIag0PpihD6oqYflk2DE7u4BsxgixPGQTxK/LkrkBW4o7ur01/8OJwnqNhUXb1Py
-         QjCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=EbAnyTOslp6v1Q8FsmUFH6BpJr8FNaYvIMIlQEjnqCI=;
-        b=EfFuLI51sK2M3+Q0n7TJcv3XDbfDKk4h6kYxTNBpNY99K/JE3NU7fmtLSACs60mUec
-         jGQtCCN1sIe46KLFFkiaRFz711hfttWbHYl/Iggnse6KW8aT+aZINoOcjVVBrDh6rnzU
-         ljXkgyIqfksO3ZHn34wQ1aWpCwYs9B9qiPHytRDKffhkorkxlkqCPS9Vti1JAtR8TxPC
-         aXJT2wQbO6tpUU0q8F2GqdAYaz7Oefju2S2OLCx44bJ/IndmFcXQVqd2/GxH0EX2Oadh
-         XPqFG1jpfZfacpw7jcGiDauMeX+ocs7IzpkL9gQ9egbTWMKVRGeZmJL7xQaeTf9UL/RQ
-         Ypqg==
-X-Gm-Message-State: APjAAAUI4cyk8WSkWIHmKGzwjwYppPpbhZPz4dRPVCVkCNlzu01AQBwf
-        psI87AvMCdY36Rp6tfSCl5L9jg==
-X-Google-Smtp-Source: APXvYqz7nP0l7vdHzimkwgpLFEg+eNxzWXUfJJzNLYDn7AUPiBz5wwZf6tij4i9ykaeLXoR8PZtrxQ==
-X-Received: by 2002:a05:600c:2318:: with SMTP id 24mr60488wmo.146.1571167724173;
-        Tue, 15 Oct 2019 12:28:44 -0700 (PDT)
-Received: from cakuba.netronome.com ([66.60.152.14])
-        by smtp.gmail.com with ESMTPSA id i1sm342582wmb.19.2019.10.15.12.28.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2019 12:28:43 -0700 (PDT)
-Date:   Tue, 15 Oct 2019 12:28:36 -0700
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     MarkLee <Mark-MC.Lee@mediatek.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Sean Wang <sean.wang@mediatek.com>,
-        John Crispin <john@phrozen.org>,
-        Nelson Chang <nelson.chang@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rene van Dorst <opensource@vdorst.com>,
-        <devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net,v3 1/2] net: ethernet: mediatek: Fix MT7629 missing
- GMII mode support
-Message-ID: <20191015122836.78bff48f@cakuba.netronome.com>
-In-Reply-To: <20191014071518.11923-2-Mark-MC.Lee@mediatek.com>
-References: <20191014071518.11923-1-Mark-MC.Lee@mediatek.com>
-        <20191014071518.11923-2-Mark-MC.Lee@mediatek.com>
-Organization: Netronome Systems, Ltd.
+        Tue, 15 Oct 2019 15:32:10 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 3408B181D341E;
+        Tue, 15 Oct 2019 19:32:09 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::,RULES_HIT:41:355:379:599:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:1801:2393:2559:2562:2828:3138:3139:3140:3141:3142:3353:3622:3653:3865:3866:3867:3868:3870:3874:4321:4605:5007:6119:7903:8829:8957:9040:10004:10400:11026:11232:11657:11658:11914:12043:12219:12296:12297:12438:12740:12760:12895:13439:14096:14097:14180:14181:14659:14721:14877:21063:21080:21324:21451:21627:30054:30070:30074:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: town65_8721e632c0408
+X-Filterd-Recvd-Size: 2804
+Received: from XPS-9350.home (unknown [47.151.152.152])
+        (Authenticated sender: joe@perches.com)
+        by omf09.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 15 Oct 2019 19:32:08 +0000 (UTC)
+Message-ID: <44f9a9bde7cf7885a8e55a52260b59240cb9a157.camel@perches.com>
+Subject: Re: Build failures since 5.4-rc3
+From:   Joe Perches <joe@perches.com>
+To:     Larry Finger <Larry.Finger@lwfinger.net>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Tue, 15 Oct 2019 12:32:07 -0700
+In-Reply-To: <2da85bba-ab2a-b993-be1a-c98222819b37@lwfinger.net>
+References: <2da85bba-ab2a-b993-be1a-c98222819b37@lwfinger.net>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 14 Oct 2019 15:15:17 +0800, MarkLee wrote:
-> In the original design, mtk_phy_connect function will set ge_mode=1
-> if phy-mode is GMII(PHY_INTERFACE_MODE_GMII) and then set the correct
-> ge_mode to ETHSYS_SYSCFG0 register. This logic was broken after apply  
-> mediatek PHYLINK patch(Fixes tag), the new mtk_mac_config function will
-> not set ge_mode=1 for GMII mode hence the final ETHSYS_SYSCFG0 setting 
-> will be incorrect for mt7629 GMII mode. This patch add the missing logic
-> back to fix it.
-> 			 
-> Fixes: b8fc9f30821e ("net: ethernet: mediatek: Add basic PHYLINK support")
-> Signed-off-by: MarkLee <Mark-MC.Lee@mediatek.com>
+On Tue, 2019-10-15 at 14:09 -0500, Larry Finger wrote:
+> Joe,
 
-LGTM, thanks
+Hey Larry.
+
+> Since commit 294f69e662d1("compiler_attributes.h: Add 'fallthrough' pseudo 
+> keyword for switch/case use"), builds of VirtualBox are failing with the 
+> following errors:
+> 
+>   1954s] In file included from 
+> /usr/src/linux-5.4.0-rc3-1.g2309d7d/include/linux/compiler_types.h:59,
+> [ 1954s]                  from <command-line>:
+> [ 1954s] 
+> /home/abuild/rpmbuild/BUILD/VirtualBox-6.0.12/modules_build_dir/default/vboxdrv/SUPDrvGip.c: 
+> In function 'supdrvTscDeltaThread':
+> [ 1954s] 
+> /usr/src/linux-5.4.0-rc3-1.g2309d7d/include/linux/compiler_attributes.h:200:41: 
+> error: expected ')' before '__attribute__'
+> [ 1954s]   200 | # define fallthrough 
+> __attribute__((__fallthrough__))
+> [ 1954s]       |                                         ^~~~~~~~~~~~~
+> [ 1954s] 
+> /home/abuild/rpmbuild/BUILD/VirtualBox-6.0.12/modules_build_dir/default/vboxdrv/include/iprt/cdefs.h:1169:44: 
+> note: in expansion of macro 'fallthrough'
+> [ 1954s]  1169 | # define FALL_THROUGH      __attribute__ ((fallthrough))
+
+Looks like this should be:
+
+#define FALL_THROUGH __attribute__((__fallthrough__))
+
+and there appear to be many of these #defines that
+use __attribute__((foo)) where foo does not use the
+double underscored prefix and suffix form
+
+I also downloaded and trivially attempted to build vbox
+without success, but I don't find this #define anywhere
+in the sources.  Clues?
+
+$ git clone git://github.com/mirror/vbox.git
+$ cd vbox
+
+$ git grep FALL_THROUGH
+$ 
+
+$ ./configure
+Checking for environment: Determined build machine: linux.amd64, target machine: linux.amd64, OK.
+Checking for kBuild: 
+  ** kmk (variable KBUILDDIR) not found!
+Check /home/joe/vbox/configure.log for details
+
+
+$ cat configure.log
+# Log file generated by
+#
+#   './configure '
+#
+
+***** Checking environment *****
+Determined build machine: linux.amd64, target machine: linux.amd64
+
+
+***** Checking kBuild *****
+** kmk (variable KBUILDDIR) not found!
+
+$
+
