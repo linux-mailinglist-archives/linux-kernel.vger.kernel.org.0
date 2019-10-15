@@ -2,93 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93001D73BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 12:48:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E669ED73D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 12:49:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727645AbfJOKsk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 06:48:40 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:25387 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726054AbfJOKsj (ORCPT
+        id S1731468AbfJOKtX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 06:49:23 -0400
+Received: from forwardcorp1j.mail.yandex.net ([5.45.199.163]:39022 "EHLO
+        forwardcorp1j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731434AbfJOKtT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 06:48:39 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id uk-mta-4-OcvsGto7M5O-CokwjfVoxg-1;
- Tue, 15 Oct 2019 11:48:35 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Tue, 15 Oct 2019 11:48:35 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Tue, 15 Oct 2019 11:48:35 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Arnd Bergmann' <arnd@arndb.de>, "S, Shirish" <sshankar@amd.com>
-CC:     Nick Desaulniers <ndesaulniers@google.com>,
-        "Wentland, Harry" <Harry.Wentland@amd.com>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        "yshuiv7@gmail.com" <yshuiv7@gmail.com>,
-        "andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Matthias Kaehlcke <mka@google.com>,
-        "S, Shirish" <Shirish.S@amd.com>,
-        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: RE: AMDGPU and 16B stack alignment
-Thread-Topic: AMDGPU and 16B stack alignment
-Thread-Index: AQHVgyjgGlq8x7ABFEya7CGn/JANAKdbg66A
-Date:   Tue, 15 Oct 2019 10:48:35 +0000
-Message-ID: <309b52a1c174410f8c6c14fe69c32e51@AcuMS.aculab.com>
-References: <CAKwvOdnDVe-dahZGnRtzMrx-AH_C+2Lf20qjFQHNtn9xh=Okzw@mail.gmail.com>
- <9e4d6378-5032-8521-13a9-d9d9519d07de@amd.com>
- <CAK8P3a3_Q15hKT=gyupb0FrPX1xV3tEBpVaYy1LF0kMUj2u8hw@mail.gmail.com>
-In-Reply-To: <CAK8P3a3_Q15hKT=gyupb0FrPX1xV3tEBpVaYy1LF0kMUj2u8hw@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Tue, 15 Oct 2019 06:49:19 -0400
+Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
+        by forwardcorp1j.mail.yandex.net (Yandex) with ESMTP id 7E4802E0AD4;
+        Tue, 15 Oct 2019 13:49:16 +0300 (MSK)
+Received: from vla5-2bf13a090f43.qloud-c.yandex.net (vla5-2bf13a090f43.qloud-c.yandex.net [2a02:6b8:c18:3411:0:640:2bf1:3a09])
+        by mxbackcorp1g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 7rrsh8uytn-nFq8PcE2;
+        Tue, 15 Oct 2019 13:49:16 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1571136556; bh=kAMGDxkAbOPo3YYQfmMwLm3qVE+lcF5C9p9mjMh3EfA=;
+        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
+        b=rQw+KLl4HkAqtmwhezss/Z53Dxs7y2+bj/AoPhBWVauUKB4M0XyZWTOlyM1sV6kfO
+         u2G0uWq5uOz9iVde1iKyTrtI3zgvE3QzuUkrwlYkIi0uL+/HQGVeuAZkBmr2A7BX9j
+         GHxfA+S3RCAXieYfCJFzif4whnfoVGqMxtZBg86o=
+Authentication-Results: mxbackcorp1g.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:3d4d:a9cb:ef29:4bb1])
+        by vla5-2bf13a090f43.qloud-c.yandex.net (nwsmtp/Yandex) with ESMTPSA id tdH7LpAdpl-nFJCDZSi;
+        Tue, 15 Oct 2019 13:49:15 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: Re: [PATCH] mm/memcontrol: update lruvec counters in
+ mem_cgroup_move_account
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+References: <157112699975.7360.1062614888388489788.stgit@buzz>
+ <20191015082048.GU317@dhcp22.suse.cz>
+ <3b73e301-ea4a-5edb-9360-2ae9b4ad9f69@yandex-team.ru>
+ <20191015103623.GX317@dhcp22.suse.cz>
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Message-ID: <31cab57d-6e79-33cb-1a58-99065c6e7b82@yandex-team.ru>
+Date:   Tue, 15 Oct 2019 13:49:14 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-MC-Unique: OcvsGto7M5O-CokwjfVoxg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+In-Reply-To: <20191015103623.GX317@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogQXJuZCBCZXJnbWFubg0KPiBTZW50OiAxNSBPY3RvYmVyIDIwMTkgMDg6MTkNCj4gDQo+
-IE9uIFR1ZSwgT2N0IDE1LCAyMDE5IGF0IDk6MDggQU0gUywgU2hpcmlzaCA8c3NoYW5rYXJAYW1k
-LmNvbT4gd3JvdGU6DQo+ID4gT24gMTAvMTUvMjAxOSAzOjUyIEFNLCBOaWNrIERlc2F1bG5pZXJz
-IHdyb3RlOg0KPiANCj4gPiBNeSBnY2MgYnVpbGQgZmFpbHMgd2l0aCBiZWxvdyBlcnJvcnM6DQo+
-ID4NCj4gPiBkY25fY2FsY3MuYzoxOjA6IGVycm9yOiAtbXByZWZlcnJlZC1zdGFjay1ib3VuZGFy
-eT0zIGlzIG5vdCBiZXR3ZWVuIDQgYW5kIDEyDQo+ID4NCj4gPiBkY25fY2FsY19tYXRoLmM6MTow
-OiBlcnJvcjogLW1wcmVmZXJyZWQtc3RhY2stYm91bmRhcnk9MyBpcyBub3QgYmV0d2VlbiA0IGFu
-ZCAxMg0KPiA+DQo+ID4gV2hpbGUgR1BGIG9ic2VydmVkIG9uIGNsYW5nIGJ1aWxkcyBzZWVtIHRv
-IGJlIGZpeGVkLg0KPiANCj4gT2ssIHNvIGl0IHNlZW1zIHRoYXQgZ2NjIGluc2lzdHMgb24gaGF2
-aW5nIGF0IGxlYXN0IDJeNCBieXRlcyBzdGFjaw0KPiBhbGlnbm1lbnQgd2hlbg0KPiBTU0UgaXMg
-ZW5hYmxlZCBvbiB4ODYtNjQsIGJ1dCBkb2VzIG5vdCBhY3R1YWxseSByZWx5IG9uIHRoYXQgZm9y
-DQo+IGNvcnJlY3Qgb3BlcmF0aW9uDQo+IHVubGVzcyBpdCdzIHVzaW5nIHNzZTIuIFNvIC1tc3Nl
-IGFsd2F5cyBoYXMgdG8gYmUgcGFpcmVkIHdpdGgNCj4gIC1tcHJlZmVycmVkLXN0YWNrLWJvdW5k
-YXJ5PTMuDQo+IA0KPiBGb3IgY2xhbmcsIGl0IHNvdW5kcyBsaWtlIHRoZSBvcHBvc2l0ZSBpcyB0
-cnVlOiB3aGVuIHBhc3NpbmcgMTYgYnl0ZQ0KPiBzdGFjayBhbGlnbm1lbnQNCj4gYW5kIGhhdmlu
-ZyBzc2Uvc3NlMiBlbmFibGVkLCBpdCByZXF1aXJlcyB0aGUgaW5jb21pbmcgc3RhY2sgdG8gYmUg
-MTYNCj4gYnl0ZSBhbGlnbmVkLA0KPiBidXQgcGFzc2luZyA4IGJ5dGUgYWxpZ25tZW50IG1ha2Vz
-IGl0IGRvIHRoZSByaWdodCB0aGluZy4NCj4gDQo+IFNvLCBzaG91bGQgd2UganVzdCBhbHdheXMg
-cGFzcyAkKGNhbGwgY2Mtb3B0aW9uLCAtbXByZWZlcnJlZC1zdGFjay1ib3VuZGFyeT00KQ0KPiB0
-byBnZXQgdGhlIGRlc2lyZWQgb3V0Y29tZSBvbiBib3RoPw0KDQpJdCBwcm9iYWJseSB3b24ndCBz
-b2x2ZSB0aGUgcHJvYmxlbS4NCllvdSBuZWVkIHRvIGZpbmQgYWxsIHRoZSBhc20gYmxvY2tzIHRo
-YXQgY2FsbCBiYWNrIGludG8gQyBhbmQgZW5zdXJlIHRoZXkNCm1haW50YWluIHRoZSByZXF1aXJl
-ZCBzdGFjayBhbGlnbm1lbnQuDQpUaGlzIG1pZ2h0IGJlIHBvc3NpYmxlIGluIHRoZSBrZXJuZWws
-IGJ1dCBpcyBhbG1vc3QgaW1wb3NzaWJsZSBpbiB1c2Vyc3BhY2UuDQoNCklTVFIgdGhhdCBnY2Mg
-YXJiaXRyYXJpbHkgY2hhbmdlZCB0aGUgc3RhY2sgYWxpZ25tZW50IGZvciBpMzg2IGEgZmV3IHll
-YXJzIGFnby4NCldoaWxlIGl0IGhlbHBlZCBjb2RlIGdlbmVyYXRpb24gaXQgYnJva2UgYSBsb3Qg
-b2YgdGhpbmdzLg0KSSBjYW4ndCByZW1lbWJlciB0aGUgY29ycmVjdCBzZXQgb2Ygb3B0aW9ucyB0
-byBnZXQgdGhlIHN0YWNrIGFsaWdubWVudA0KY29kZSBhZGRlZCBvbmx5IHdoZXJlIGl0IHdhcyBu
-ZWVkZWQgKGdlbmVyYXRlcyBhIGRvdWJsZSAlYnAgZnJhbWUpLg0KDQoJRGF2aWQNCg0KLQ0KUmVn
-aXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRv
-biBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
+On 15/10/2019 13.36, Michal Hocko wrote:
+> On Tue 15-10-19 11:44:22, Konstantin Khlebnikov wrote:
+>> On 15/10/2019 11.20, Michal Hocko wrote:
+>>> On Tue 15-10-19 11:09:59, Konstantin Khlebnikov wrote:
+>>>> Mapped, dirty and writeback pages are also counted in per-lruvec stats.
+>>>> These counters needs update when page is moved between cgroups.
+>>>
+>>> Please describe the user visible effect.
+>>
+>> Surprisingly I don't see any users at this moment.
+>> So, there is no effect in mainline kernel.
+> 
+> Those counters are exported right? Or do we exclude them for v1?
 
+It seems per-lruvec statistics is not exposed anywhere.
+And per-lruvec NR_FILE_MAPPED, NR_FILE_DIRTY, NR_WRITEBACK never had users.
+
+I've found this because I'm using mem_cgroup_move_account for recharging
+pages at mlock and playing right now with debug for memory cgroup which
+validates statistics and counters when cgroup dies.
+
+> 
+>>>> Fixes: 00f3ca2c2d66 ("mm: memcontrol: per-lruvec stats infrastructure")
+>>>> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+>>>
+>>> We want Cc: stable I suspect because broken stats might be really
+>>> misleading.
+>>>
+>>> The patch looks ok to me otherwise
+>>> Acked-by: Michal Hocko <mhocko@suse.com>
+>>>
+>>>> ---
+>>>>    mm/memcontrol.c |   18 ++++++++++++------
+>>>>    1 file changed, 12 insertions(+), 6 deletions(-)
+>>>>
+>>>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>>>> index bdac56009a38..363106578876 100644
+>>>> --- a/mm/memcontrol.c
+>>>> +++ b/mm/memcontrol.c
+>>>> @@ -5420,6 +5420,8 @@ static int mem_cgroup_move_account(struct page *page,
+>>>>    				   struct mem_cgroup *from,
+>>>>    				   struct mem_cgroup *to)
+>>>>    {
+>>>> +	struct lruvec *from_vec, *to_vec;
+>>>> +	struct pglist_data *pgdat;
+>>>>    	unsigned long flags;
+>>>>    	unsigned int nr_pages = compound ? hpage_nr_pages(page) : 1;
+>>>>    	int ret;
+>>>> @@ -5443,11 +5445,15 @@ static int mem_cgroup_move_account(struct page *page,
+>>>>    	anon = PageAnon(page);
+>>>> +	pgdat = page_pgdat(page);
+>>>> +	from_vec = mem_cgroup_lruvec(pgdat, from);
+>>>> +	to_vec = mem_cgroup_lruvec(pgdat, to);
+>>>> +
+>>>>    	spin_lock_irqsave(&from->move_lock, flags);
+>>>>    	if (!anon && page_mapped(page)) {
+>>>> -		__mod_memcg_state(from, NR_FILE_MAPPED, -nr_pages);
+>>>> -		__mod_memcg_state(to, NR_FILE_MAPPED, nr_pages);
+>>>> +		__mod_lruvec_state(from_vec, NR_FILE_MAPPED, -nr_pages);
+>>>> +		__mod_lruvec_state(to_vec, NR_FILE_MAPPED, nr_pages);
+>>>>    	}
+>>>>    	/*
+>>>> @@ -5459,14 +5465,14 @@ static int mem_cgroup_move_account(struct page *page,
+>>>>    		struct address_space *mapping = page_mapping(page);
+>>>>    		if (mapping_cap_account_dirty(mapping)) {
+>>>> -			__mod_memcg_state(from, NR_FILE_DIRTY, -nr_pages);
+>>>> -			__mod_memcg_state(to, NR_FILE_DIRTY, nr_pages);
+>>>> +			__mod_lruvec_state(from_vec, NR_FILE_DIRTY, -nr_pages);
+>>>> +			__mod_lruvec_state(to_vec, NR_FILE_DIRTY, nr_pages);
+>>>>    		}
+>>>>    	}
+>>>>    	if (PageWriteback(page)) {
+>>>> -		__mod_memcg_state(from, NR_WRITEBACK, -nr_pages);
+>>>> -		__mod_memcg_state(to, NR_WRITEBACK, nr_pages);
+>>>> +		__mod_lruvec_state(from_vec, NR_WRITEBACK, -nr_pages);
+>>>> +		__mod_lruvec_state(to_vec, NR_WRITEBACK, nr_pages);
+>>>>    	}
+>>>>    #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>>
+> 
