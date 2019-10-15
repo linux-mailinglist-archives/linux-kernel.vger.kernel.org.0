@@ -2,100 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56425D8223
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 23:25:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 972AED8229
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 23:26:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727916AbfJOVZw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 17:25:52 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33086 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726408AbfJOVZw (ORCPT
+        id S1729232AbfJOV0n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 17:26:43 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:41227 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728653AbfJOV0m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 17:25:52 -0400
-Received: by mail-lf1-f68.google.com with SMTP id y127so15653246lfc.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 14:25:50 -0700 (PDT)
+        Tue, 15 Oct 2019 17:26:42 -0400
+Received: by mail-oi1-f195.google.com with SMTP id w65so18162252oiw.8
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 14:26:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TupgV0MHjA8yhWmBL3cewNdEfIAySH9lA2snhT2KSA0=;
-        b=gU0FNH+YkmD9qkMKyKIVtHQfL7lcArLVLw6hAZPGPh9wu58EpZ+OqTE5ywg4R6bFY+
-         pkXIAD4EvoB/gq5QY5gfkd6tVajJJ+I7cgDFtE8U3E9XxbgIDHsFg5+ggcrBta64PCLp
-         cCQ6uS/yBUw6Qefb03aimc23o9T6g2wc3Sg2H/xgKMAC3Af+08SLkLOBKVyduCs/ak54
-         Tvc5EFS+2zAcirOKtZE0J6UoCXUvPvyOdFgeYoIimjMc9CxfwajW5OJrVyopbuEmmlhy
-         eokWvZ336DJO9Kbbe0n+eEvJVpXqF+xa1u4SlwDxi8nEmoYHMz9QKwp/a233ViLfOUnU
-         5Sog==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FjTzov0ZWMBRnnkfLydTowwTTWaZQQMz8GLbYd2DoJY=;
+        b=sseX6QWUP9CFA63813y5OMpaVx25163OITn2IzLP24ux6NTGMBFIsckkEKwagWvAJq
+         9yXBTSntSikoMBdORY8eLAPlVHulfEOthNtwXgw3Sxy1X0v3CvRKlAM22m0WLC13KAQp
+         tg6hf/IYvnxhoNNhrcZUre5exfMwHVc6OOcnJDanCqFhPXEtxsOU7604QOyRVekBGf/Q
+         9oSMyaDTlrnjKheT8DHhUuWZEeR6Oy7YrH0suqKEP5N4kQAF/FgyjxnX/IZEYuMutYqA
+         9mlugtK7Tvhu+3kjPcR3vG4lbWby8JiJigfNzpb6QFeE7MNKOctL3kyENkpQV1UpzU3Z
+         sZuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TupgV0MHjA8yhWmBL3cewNdEfIAySH9lA2snhT2KSA0=;
-        b=cbOO6x67iymOcc0hZ/rw5TwygQs+8iqYHP6JKff07KgplAddnNsxZvvB7tEqMZhmOe
-         09Lux2E+AOkZt1nbwPcTAlvwruhm04R992xzheQu88JxWC/tcdEDoeqExuew3BAuURgW
-         7inZBsOhwEwhFi/tF9wqbhJXGA+1N9IEt0BQL8a+YTQK/RTrjLRZZUSkP6J9i1CAPIJe
-         w15sVEq3fpfaqq8MYjYhKvTLLb//UlnBJxDrc8u3FxDLn7YSzO/Bb1gqiVzJq41uJr6U
-         FYSVkPdXu7AohpBzOM0vPD7T2B4QDhsU08WbRXT4P1ixYhg7OuY1UhgaUTVtZ1LV/I4m
-         H/rg==
-X-Gm-Message-State: APjAAAU92/FaD1ODGB6n1hh7c5LF7jCfT1uy5AQK/G7TNiC0cEU2lswV
-        NJuGsimbNXTjBCr0n5QfEKizfZodlh4=
-X-Google-Smtp-Source: APXvYqwYi9FHUGev/22Lws4+0G8iiMlMBA/PDnRq6muX/tFrhu8jEDv03Ihqb6Wd32ENbMM1SI5v7A==
-X-Received: by 2002:ac2:44c3:: with SMTP id d3mr21412169lfm.109.1571174750137;
-        Tue, 15 Oct 2019 14:25:50 -0700 (PDT)
-Received: from octofox.cadence.com (jcmvbkbc-1-pt.tunnel.tserv24.sto1.ipv6.he.net. [2001:470:27:1fa::2])
-        by smtp.gmail.com with ESMTPSA id w30sm5313233lfn.82.2019.10.15.14.25.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2019 14:25:49 -0700 (PDT)
-From:   Max Filippov <jcmvbkbc@gmail.com>
-To:     linux-xtensa@linux-xtensa.org
-Cc:     Chris Zankel <chris@zankel.net>, Christoph Hellwig <hch@lst.de>,
-        linux-kernel@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH] xtensa: implement arch_dma_coherent_to_pfn
-Date:   Tue, 15 Oct 2019 14:25:26 -0700
-Message-Id: <20191015212526.1775-1-jcmvbkbc@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FjTzov0ZWMBRnnkfLydTowwTTWaZQQMz8GLbYd2DoJY=;
+        b=VOIvC47BXNmNwcuqeb0eGwlQayQdBvlBk7XM4Xb1DjGmHuQqth5kPvZZvXV7C3Z6Cl
+         T6wQHcPQUIao0ztwQAi6DFHvsez8lOGuVOiBiT/0afKcbyQpXSPPwZZe8K1teGeUqK87
+         B67fL76Jb+SSTfLcoh1bG/YZv1VaQsnF6aUSUpcXvXjEOM+yorn8iwbWmjlaQ7AKz/HB
+         6RF5iCYt2IvvyJBcAAJPh0R982AiH5jTj1VXlB/V7OfyNYWAvsqaT1KCWIjL44Z4IaJ/
+         PCCBFAVROmzqyIpLy1fC/R2WTSefVd5v1PhIA82yPhhA892DtDoSs0/osCK/KmOD63/K
+         S5FQ==
+X-Gm-Message-State: APjAAAVKMYJI28JjR7bU0N0oUBY6KW9xnagolRX+1Tsrn7+nYYw6ecpF
+        oW5jvTZ8wvOshoWaecUQ/BU6QtZQNMrKNtsjD/oR3w==
+X-Google-Smtp-Source: APXvYqziwX4Qd/CruVwbh4d+LgL43yQ6WwVxz8RVdhbf141kc/6k1rSNikV7EoWIivQB8kktrbIH2SlneWo8tRyAGPA=
+X-Received: by 2002:a05:6808:7cd:: with SMTP id f13mr551315oij.70.1571174801334;
+ Tue, 15 Oct 2019 14:26:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <157116925749.1211205.12806062056189943042.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <e4544252-d2d7-e464-94d6-4df7cda0e248@silicom-usa.com>
+In-Reply-To: <e4544252-d2d7-e464-94d6-4df7cda0e248@silicom-usa.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 15 Oct 2019 14:26:29 -0700
+Message-ID: <CAPcyv4iRFZ3AZ6WOduDPxBu2sNUY3AJLO-81sWhkDityoeQAiw@mail.gmail.com>
+Subject: Re: [PATCH] libata/ahci: Fix PCS quirk application
+To:     Stephen Douthit <stephend@silicom-usa.com>
+Cc:     "axboe@kernel.dk" <axboe@kernel.dk>,
+        Andreas Friedrich <afrie@gmx.net>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add trivial implementation for arch_dma_coherent_to_pfn.
-This change enables communication with PCI ALSA devices through mmapped
-buffers.
+On Tue, Oct 15, 2019 at 2:02 PM Stephen Douthit
+<stephend@silicom-usa.com> wrote:
+>
+> On 10/15/19 3:54 PM, Dan Williams wrote:
+> > Commit c312ef176399 "libata/ahci: Drop PCS quirk for Denverton and
+> > beyond" got the polarity wrong on the check for which board-ids should
+> > have the quirk applied. The board type board_ahci_pcs7 is defined at the
+> > end of the list such that "pcs7" boards can be special cased in the
+> > future if they need the quirk. All prior Intel board ids "<
+> > board_ahci_pcs7" should proceed with applying the quirk.
+> >
+> > Reported-by: Andreas Friedrich <afrie@gmx.net>
+> > Reported-by: Stephen Douthit <stephend@silicom-usa.com>
+> > Fixes: c312ef176399 ("libata/ahci: Drop PCS quirk for Denverton and beyond")
+> > Cc: <stable@vger.kernel.org>
+> > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> > ---
+> >   drivers/ata/ahci.c |    4 +++-
+> >   1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
+> > index dd92faf197d5..05c2b32dcc4d 100644
+> > --- a/drivers/ata/ahci.c
+> > +++ b/drivers/ata/ahci.c
+> > @@ -1600,7 +1600,9 @@ static void ahci_intel_pcs_quirk(struct pci_dev *pdev, struct ahci_host_priv *hp
+> >        */
+> >       if (!id || id->vendor != PCI_VENDOR_ID_INTEL)
+> >               return;
+>
+> Unless I'm missing something this will short-circuit if there are any
+> older Intel controllers not explicitly listed with a PCI_VDEVICE entry
+> in ahci_pci_tbl.  Those will match on:
+>
+>         /* Generic, PCI class code for AHCI */
+>         { PCI_ANY_ID, PCI_ANY_ID, PCI_ANY_ID, PCI_ANY_ID,
+>           PCI_CLASS_STORAGE_SATA_AHCI, 0xffffff, board_ahci },
 
-Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
----
- arch/xtensa/Kconfig          | 1 +
- arch/xtensa/kernel/pci-dma.c | 6 ++++++
- 2 files changed, 7 insertions(+)
-
-diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
-index bf492f9e1f75..f78e6b6f8b6f 100644
---- a/arch/xtensa/Kconfig
-+++ b/arch/xtensa/Kconfig
-@@ -3,6 +3,7 @@ config XTENSA
- 	def_bool y
- 	select ARCH_32BIT_OFF_T
- 	select ARCH_HAS_BINFMT_FLAT if !MMU
-+	select ARCH_HAS_DMA_COHERENT_TO_PFN
- 	select ARCH_HAS_SYNC_DMA_FOR_CPU
- 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
- 	select ARCH_USE_QUEUED_RWLOCKS
-diff --git a/arch/xtensa/kernel/pci-dma.c b/arch/xtensa/kernel/pci-dma.c
-index 154979d62b73..6a114ce23084 100644
---- a/arch/xtensa/kernel/pci-dma.c
-+++ b/arch/xtensa/kernel/pci-dma.c
-@@ -200,3 +200,9 @@ void arch_dma_free(struct device *dev, size_t size, void *vaddr,
- 	if (!dma_release_from_contiguous(dev, page, count))
- 		__free_pages(page, get_order(size));
- }
-+
-+long arch_dma_coherent_to_pfn(struct device *dev, void *cpu_addr,
-+			      dma_addr_t dma_addr)
-+{
-+	return __phys_to_pfn(dma_to_phys(dev, dma_addr));
-+}
--- 
-2.20.1
-
+You're not missing anything, but I think we should stick with explicit
+mapping as only newer controllers tend to match on class id rather
+than pci-id, and there's no way to know if that class-id match is for
+PCS_6 or PCS_7. Hopefully newer controllers are tested with Linux and
+the BIOS fixed prior to the breakage leaking into the wild.
