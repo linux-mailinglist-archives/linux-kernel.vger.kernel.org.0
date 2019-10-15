@@ -2,83 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA1CDD82A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 23:49:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44973D8297
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 23:48:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388276AbfJOVtG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 17:49:06 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38726 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726802AbfJOVtD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 17:49:03 -0400
-Received: by mail-lj1-f195.google.com with SMTP id b20so21841403ljj.5
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 14:49:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wItDXbX3LEWoTo1/kp4dk8aeAZ/2xJzKQP/tyONQ97k=;
-        b=hzBYiXjPBdQglMHyHwZdH7Hfwgp8qRgeHE6/0plo981vFS0npABggAoHWs92Y0M4j4
-         6yInWWbjRDRm/aBcc9LUQovQyVPjXs9u2abaLNMMyRfQw3SRznL+/RbI8WTdojuOz1np
-         +b80D6JSR28AZDW+EGzyd7AudQJVj7qyOksd4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wItDXbX3LEWoTo1/kp4dk8aeAZ/2xJzKQP/tyONQ97k=;
-        b=Zb2DSQb84rMTjOHpXwIXEwsMhJ0+1Ay4I+EjIdGfvG/TkhW/cRaURHVOoSI15qbuyA
-         dJitIq6dLAOzl2Eqef66pYqEqGMaZH8coKByQN0+rs3kVFM81TG48xE8XSwDo/835a3O
-         blzEGzwDoAivoF9XiLDOrMR5S/d4uReXPNkuoHGbkxplR4zZsf5HHZuc28KiKswous9t
-         6fzMZcS1TL6mTzPKAzTNs6zcsW+g57kcJnNwZ9soSc114O3Y0fT2mN2LXznvytldUoJh
-         Q27Tsae75qQEsqf2i24W5T3MwqlyFPiDhAdRKlvpNXlMR8WyUpxKxYUa+NAlUpqeLXiU
-         eOQQ==
-X-Gm-Message-State: APjAAAVv93JQZ5G9LqP1gOmrgVPUr29+SBAzcGDemDZP2ZmJTww+3R3y
-        3BWhotpi518xnR24vlgcfRFuJTHPcj0=
-X-Google-Smtp-Source: APXvYqyiVPGFSwmJcMom5H1/F7MbLgdSm4aydtjMMA476umVmuC8Qieu1vxqBqAUvQW8hwsGcorGbw==
-X-Received: by 2002:a2e:55d7:: with SMTP id g84mr24223235lje.255.1571176140244;
-        Tue, 15 Oct 2019 14:49:00 -0700 (PDT)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
-        by smtp.gmail.com with ESMTPSA id q24sm5258562ljj.6.2019.10.15.14.48.59
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2019 14:48:59 -0700 (PDT)
-Received: by mail-lf1-f53.google.com with SMTP id 195so2723350lfj.6
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 14:48:59 -0700 (PDT)
-X-Received: by 2002:a19:5504:: with SMTP id n4mr4137650lfe.106.1571176138790;
- Tue, 15 Oct 2019 14:48:58 -0700 (PDT)
+        id S1731671AbfJOVst (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 17:48:49 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55842 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726802AbfJOVss (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 17:48:48 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4AFA318C4282;
+        Tue, 15 Oct 2019 21:48:47 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-84.rdu2.redhat.com [10.10.121.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 56A1E19C58;
+        Tue, 15 Oct 2019 21:48:44 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [RFC PATCH 06/21] pipe: Rearrange sequence in pipe_write() to
+ preallocate slot
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     dhowells@redhat.com, Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>, dhowells@redhat.com,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 15 Oct 2019 22:48:43 +0100
+Message-ID: <157117612345.15019.10880434751559609346.stgit@warthog.procyon.org.uk>
+In-Reply-To: <157117606853.15019.15459271147790470307.stgit@warthog.procyon.org.uk>
+References: <157117606853.15019.15459271147790470307.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-References: <20191015191926.9281-1-vgupta@synopsys.com> <20191015191926.9281-2-vgupta@synopsys.com>
-In-Reply-To: <20191015191926.9281-2-vgupta@synopsys.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 15 Oct 2019 14:48:42 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi3QC7tj3rmTPg5RmK_ugVKYs-jKqX=TaASWfd73Owaig@mail.gmail.com>
-Message-ID: <CAHk-=wi3QC7tj3rmTPg5RmK_ugVKYs-jKqX=TaASWfd73Owaig@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] ARC: mm: remove __ARCH_USE_5LEVEL_HACK
-To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Will Deacon <will@kernel.org>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nick Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-snps-arc@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.62]); Tue, 15 Oct 2019 21:48:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 12:19 PM Vineet Gupta
-<Vineet.Gupta1@synopsys.com> wrote:
->
-> This is a non-functional change anyways since ARC has software page walker
-> with 2 lookup levels (pgd -> pte)
+Rearrange the sequence in pipe_write() so that the allocation of the new
+buffer, the allocation of a ring slot and the attachment to the ring is
+done under the pipe wait spinlock and then the lock is dropped and the
+buffer can be filled.
 
-Could we encourage other architectures to do the same, and get rid of
-all uses of __ARCH_USE_5LEVEL_HACK?
+The data copy needs to be done with the spinlock unheld and irqs enabled,
+so the lock needs to be dropped first.  However, the reader can't progress
+as we're holding pipe->mutex.
 
-            Linus
+We also need to drop the lock as that would impact others looking at the
+pipe waitqueue, such as poll(), the consumer and a future kernel message
+writer.
+
+We just abandon the preallocated slot if we get a copy error.  Future
+writes may continue it and a future read will eventually recycle it.
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
+
+ fs/pipe.c |   53 ++++++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 34 insertions(+), 19 deletions(-)
+
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 0d25cb090a03..5a199b249191 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -386,7 +386,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ {
+ 	struct file *filp = iocb->ki_filp;
+ 	struct pipe_inode_info *pipe = filp->private_data;
+-	unsigned int head, tail, buffers, mask;
++	unsigned int head, buffers, mask;
+ 	ssize_t ret = 0;
+ 	int do_wakeup = 0;
+ 	size_t total_len = iov_iter_count(from);
+@@ -404,14 +404,13 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 		goto out;
+ 	}
+ 
+-	tail = pipe->tail;
+ 	head = pipe->head;
+ 	buffers = pipe->max_usage;
+ 	mask = pipe->ring_size - 1;
+ 
+ 	/* We try to merge small writes */
+ 	chars = total_len & (PAGE_SIZE-1); /* size of the last buffer */
+-	if (head != tail && chars != 0) {
++	if (head != pipe->tail && chars != 0) {
+ 		struct pipe_buffer *buf = &pipe->bufs[(head - 1) & mask];
+ 		int offset = buf->offset + buf->len;
+ 
+@@ -440,9 +439,9 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 			break;
+ 		}
+ 
+-		tail = pipe->tail;
+-		if (head - tail < buffers) {
+-			struct pipe_buffer *buf = &pipe->bufs[head & mask];
++		head = pipe->head;
++		if (head - pipe->tail < buffers) {
++			struct pipe_buffer *buf;
+ 			struct page *page = pipe->tmp_page;
+ 			int copied;
+ 
+@@ -454,40 +453,56 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 				}
+ 				pipe->tmp_page = page;
+ 			}
++
++			/* Allocate a slot in the ring in advance and attach an
++			 * empty buffer.  If we fault or otherwise fail to use
++			 * it, either the reader will consume it or it'll still
++			 * be there for the next write.
++			 */
++			spin_lock_irq(&pipe->wait.lock);
++
++			head = pipe->head;
++			pipe_commit_write(pipe, head + 1);
++
+ 			/* Always wake up, even if the copy fails. Otherwise
+ 			 * we lock up (O_NONBLOCK-)readers that sleep due to
+ 			 * syscall merging.
+ 			 * FIXME! Is this really true?
+ 			 */
+-			do_wakeup = 1;
+-			copied = copy_page_from_iter(page, 0, PAGE_SIZE, from);
+-			if (unlikely(copied < PAGE_SIZE && iov_iter_count(from))) {
+-				if (!ret)
+-					ret = -EFAULT;
+-				break;
+-			}
+-			ret += copied;
++			prelocked_wake_up_interruptible_sync_poll(
++				&pipe->wait, EPOLLIN | EPOLLRDNORM);
++
++			spin_unlock_irq(&pipe->wait.lock);
++			kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
+ 
+ 			/* Insert it into the buffer array */
++			buf = &pipe->bufs[head & mask];
+ 			buf->page = page;
+ 			buf->ops = &anon_pipe_buf_ops;
+ 			buf->offset = 0;
+-			buf->len = copied;
++			buf->len = 0;
+ 			buf->flags = 0;
+ 			if (is_packetized(filp)) {
+ 				buf->ops = &packet_pipe_buf_ops;
+ 				buf->flags = PIPE_BUF_FLAG_PACKET;
+ 			}
+-
+-			head++;
+-			pipe_commit_write(pipe, head);
+ 			pipe->tmp_page = NULL;
+ 
++			copied = copy_page_from_iter(page, 0, PAGE_SIZE, from);
++			if (unlikely(copied < PAGE_SIZE && iov_iter_count(from))) {
++				if (!ret)
++					ret = -EFAULT;
++				break;
++			}
++			ret += copied;
++			buf->offset = 0;
++			buf->len = copied;
++
+ 			if (!iov_iter_count(from))
+ 				break;
+ 		}
+ 
+-		if (head - tail < buffers)
++		if (pipe->head - pipe->tail < buffers)
+ 			continue;
+ 
+ 		/* Wait for buffer space to become available. */
+
