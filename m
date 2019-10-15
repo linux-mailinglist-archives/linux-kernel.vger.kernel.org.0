@@ -2,97 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24ED9D80CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 22:13:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68745D80D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 22:16:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733211AbfJOUNq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 16:13:46 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43925 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733084AbfJOUNj (ORCPT
+        id S1733249AbfJOUQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 16:16:10 -0400
+Received: from mail-pf1-f178.google.com ([209.85.210.178]:38392 "EHLO
+        mail-pf1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726670AbfJOUQK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 16:13:39 -0400
-Received: by mail-lj1-f195.google.com with SMTP id n14so21560061ljj.10;
-        Tue, 15 Oct 2019 13:13:37 -0700 (PDT)
+        Tue, 15 Oct 2019 16:16:10 -0400
+Received: by mail-pf1-f178.google.com with SMTP id h195so13188533pfe.5
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 13:16:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4MPbKpbEg5ppV5gaRQpYS65cgF3qRl3wNuMK75d1ehs=;
-        b=L1DZFIQXFIVk/4vGGozIDAkO9Vm6PKjaokmEaMNpNwh4rMQtCE8XlKQHG+MoUzBb+8
-         3QvpccDjUuPnuAJ9EWr6HuJPzjAHtxAVuxpeT9ZsG9l+Eu/HO6+3wtD1gEh77IahEmfF
-         AtDI3oGd7cKX1KXIqWNLaarofb3G3MehoPOLMZe6wJ480A5m9z+lz3VD2m9S4eF2mp8B
-         w5qavndp2JTEUewn6dyaz5/WN56qQwuV43yohYGM4d2GzEEF0lYgWat1U4C4prS9Tvug
-         K5pCShh461WPF/hwUS3qKh6bwonbheOav9fUT2Qj8T3/K/3hpauNqvLl+KMZzSkdgJqR
-         dfIw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=T6wGmR3qIig/wVR5vsFEQByfOvdwbfZeNFvYpJXRBa8=;
+        b=ZkUC2VvDYeB3kimGxCTRRiD6bzPRrvilRsSrHzdhRZReqGG/sMYHd0CtpUqzg+AYzz
+         0/qxUZbei0laUxbaw9rodRBLy8qXWgm+ZoRg4PN4dyrgwyG8HVZXO3z4PjsXC3KdypNL
+         wtxm1iWMXo5b1v00eON247x2iP9hOTCKPuYNDnSV6+FwovdrWx/tH18faL5Q9dLC0YkM
+         dk4fJmPQ7jPZga/o3RCC8FC6wsGS0vnSN6X+J3hcWTFjD6m0Hx2TN739Gvh7KwrbZg4Q
+         s1pimPih476jfM0Yyhiju2TgFAnzvERrrqBZvUA/w/0yiH7Q+GJG/m3Qdj5Kn70u5iDH
+         zZoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4MPbKpbEg5ppV5gaRQpYS65cgF3qRl3wNuMK75d1ehs=;
-        b=o5CuPtiqjX3oPT0U+ZpvyOhg/u1hem+0CUZlRQj9xeXSy7Q+Z/M/W8rKVoPk1rgWfb
-         HyPyvfcselv8GfL+4EgkFwitUjOHxUXU9kmIMLpRSMRHMpAAkPVDnhMiS/lm56KKH2en
-         pDHxcgS8pTRkunkP48wXQGXI+V8W2Os03fM/08WvP6fSiurD43KUiT7uPgvTg9u1WeN/
-         RAQ7lWKv0kD8q0AtRMdYoa6zB7Fuau2pfNI48ICucxzb3vv5MVxxybpRYZ2ZkVrTde2z
-         XNZcNJicCsYXwZLNRme68PPKJ8sZvvR1faWjXQVPb9nErzl68pJFrjD5CNNR+F+4gYNS
-         ATjg==
-X-Gm-Message-State: APjAAAV0bKum9VqnMBhl/B3GU/u2B6EPQAZMIsBRfDylp3zzEJaEQsp/
-        7LJKsiQ/f8FYt56rIV1N2o8=
-X-Google-Smtp-Source: APXvYqy0DKP3fhfMO7V9Xm7rE2ISjPPe4qPOtzSK4w/gUpTATDATUg1HONJ/3rmQ7bEhIseglHCjwg==
-X-Received: by 2002:a2e:584b:: with SMTP id x11mr23883879ljd.96.1571170417130;
-        Tue, 15 Oct 2019 13:13:37 -0700 (PDT)
-Received: from localhost.localdomain (h-98-128-228-153.NA.cust.bahnhof.se. [98.128.228.153])
-        by smtp.gmail.com with ESMTPSA id b10sm5335761lji.48.2019.10.15.13.13.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2019 13:13:36 -0700 (PDT)
-From:   Rikard Falkeborn <rikard.falkeborn@gmail.com>
-To:     xuzaibo@huawei.com
-Cc:     davem@davemloft.net, forest.zhouchang@huawei.com,
-        herbert@gondor.apana.org.au, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxarm@huawei.com,
-        tanghui20@huawei.com, Rikard Falkeborn <rikard.falkeborn@gmail.com>
-Subject: [PATCH] crypto: hisilicon: Fix misuse of GENMASK macro
-Date:   Tue, 15 Oct 2019 22:13:30 +0200
-Message-Id: <20191015201330.25973-1-rikard.falkeborn@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <1569835209-44326-2-git-send-email-xuzaibo@huawei.com>
-References: <1569835209-44326-2-git-send-email-xuzaibo@huawei.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=T6wGmR3qIig/wVR5vsFEQByfOvdwbfZeNFvYpJXRBa8=;
+        b=NIhn6hehTGQgrniSc/jp6rklDQcGxq+4qS7OLN4oEa90Bj1vlqubibyc/gkbP+YXD0
+         zCHG0fKuDYD+f4NLdqSNq1+omBxBjiaVbh69fOz+Qna7ANhd9DvYqWlwn69xb3FEc09I
+         ziMBNzQmzqPLILK8T8NX5aoFHOqmw9mNZOHXC2aBzy6jyUIJXGBUislWEofT1lP+XS74
+         CTOt9uHqLUnjW5FbgWm34Q/sJuEMZoWUPThbbs9xYgml6YO+HSJhJYc8BsTnR0aSX8NP
+         x7Cs9GHDv90YTHJfnUYR+7G0O6u3rv7L0Au++qWg7UUnFeF4+W17kSK5PUVm/AWS5lN/
+         /3RA==
+X-Gm-Message-State: APjAAAWexwF+HNZszaa+Vu4W68qnf0iiA2kt4Q8G++Ut5v2FJaaAYaBz
+        t2IhVGmChr6DLol6OkYpyZy1qARqCGodxOvRzkpyTw==
+X-Google-Smtp-Source: APXvYqw7meAgMvqhoBX/JmtJARgYzLvgCyfPRVahL0fEM4fvkw+hKAvA0vpgplsq2FMo1H1eF/kDPG6m6XvNRSH+zXE=
+X-Received: by 2002:a17:90a:aa81:: with SMTP id l1mr7575pjq.73.1571170568840;
+ Tue, 15 Oct 2019 13:16:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAKwvOdnDVe-dahZGnRtzMrx-AH_C+2Lf20qjFQHNtn9xh=Okzw@mail.gmail.com>
+ <9e4d6378-5032-8521-13a9-d9d9519d07de@amd.com> <CAK8P3a3_Q15hKT=gyupb0FrPX1xV3tEBpVaYy1LF0kMUj2u8hw@mail.gmail.com>
+ <CAKwvOdnLxm_tZ_qR1D-BE64Z3QaMC2h79ooobdRVAzmCD_2_Sg@mail.gmail.com> <CADnq5_P55aRJ-1VVz2uKA=xpddyi0BvDcXqPD=xVpw3aJZrzng@mail.gmail.com>
+In-Reply-To: <CADnq5_P55aRJ-1VVz2uKA=xpddyi0BvDcXqPD=xVpw3aJZrzng@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 15 Oct 2019 13:15:57 -0700
+Message-ID: <CAKwvOdme6g7rr+AkJi6Do6Rzq7zYAJm+spQaBF3cwgKU1H2ThQ@mail.gmail.com>
+Subject: Re: AMDGPU and 16B stack alignment
+To:     Alex Deucher <alexdeucher@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, "S, Shirish" <sshankar@amd.com>,
+        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        "andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        "S, Shirish" <Shirish.S@amd.com>,
+        Matthias Kaehlcke <mka@google.com>,
+        "yshuiv7@gmail.com" <yshuiv7@gmail.com>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        "Wentland, Harry" <Harry.Wentland@amd.com>,
+        "Koenig, Christian" <Christian.Koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arguments are supposed to be ordered high then low.
+On Tue, Oct 15, 2019 at 11:30 AM Alex Deucher <alexdeucher@gmail.com> wrote:
+>
+> On Tue, Oct 15, 2019 at 2:07 PM Nick Desaulniers
+> <ndesaulniers@google.com> wrote:
+> >
+> > On Tue, Oct 15, 2019 at 12:19 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> > >
+> > > On Tue, Oct 15, 2019 at 9:08 AM S, Shirish <sshankar@amd.com> wrote:
+> > > > On 10/15/2019 3:52 AM, Nick Desaulniers wrote:
+> > >
+> > > > My gcc build fails with below errors:
+> > > >
+> > > > dcn_calcs.c:1:0: error: -mpreferred-stack-boundary=3 is not between 4 and 12
+> > > >
+> > > > dcn_calc_math.c:1:0: error: -mpreferred-stack-boundary=3 is not between 4 and 12
+> >
+> > I was able to reproduce this failure on pre-7.1 versions of GCC.  It
+> > seems that when:
+> > 1. code is using doubles
+> > 2. setting -mpreferred-stack-boundary=3 -mno-sse2, ie. 8B stack alignment
+> > than GCC produces that error:
+> > https://godbolt.org/z/7T8nbH
+> >
+> > That's already a tall order of constraints, so it's understandable
+> > that the compiler would just error likely during instruction
+> > selection, but was eventually taught how to solve such constraints.
+> >
+> > > >
+> > > > While GPF observed on clang builds seem to be fixed.
+> >
+> > Thanks for the report.  Your testing these patches is invaluable, Shirish!
+> >
+> > >
+> > > Ok, so it seems that gcc insists on having at least 2^4 bytes stack
+> > > alignment when
+> > > SSE is enabled on x86-64, but does not actually rely on that for
+> > > correct operation
+> > > unless it's using sse2. So -msse always has to be paired with
+> > >  -mpreferred-stack-boundary=3.
+> >
+> > Seemingly only for older versions of GCC, pre 7.1.
+> >
+> > >
+> > > For clang, it sounds like the opposite is true: when passing 16 byte
+> > > stack alignment
+> > > and having sse/sse2 enabled, it requires the incoming stack to be 16
+> > > byte aligned,
+> >
+> > I don't think it requires the incoming stack to be 16B aligned for
+> > sse2, I think it requires the incoming and current stack alignment to
+> > match. Today it does not, which is why we observe GPFs.
+> >
+> > > but passing 8 byte alignment makes it do the right thing.
+> > >
+> > > So, should we just always pass $(call cc-option, -mpreferred-stack-boundary=4)
+> > > to get the desired outcome on both?
+> >
+> > Hmmm...I would have liked to remove it outright, as it is an ABI
+> > mismatch that is likely to result in instability and non-fun-to-debug
+> > runtime issues in the future.  I suspect my patch does work for GCC
+> > 7.1+.  The question is: Do we want to either:
+> > 1. mark AMDGPU broken for GCC < 7.1, or
+> > 2. continue supporting it via stack alignment mismatch?
+> >
+> > 2 is brittle, and may break at any point in the future, but if it's
+> > working for someone it does make me feel bad to outright disable it.
+> > What I'd image 2 looks like is (psuedo code in a Makefile):
+>
+> Well, it's been working as is for years now, at least with gcc, so I'd
+> hate to break that.
 
-Fixes: c8b4b477079d ("crypto: hisilicon - add HiSilicon HPRE accelerator")
-Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
----
-Spotted when trying to introduce compile time checking that the order
-of the arguments to GENMASK are correct [0]. I have only compile tested
-the patch.
+Ok, I'm happy to leave that as is for GCC, then.  Would you prefer I
+modify it for GCC >7.1 or just leave it alone (maybe I'll add a
+comment about *why* it's done for GCC)? Would you prefer 1 patch or 4?
 
-[0]: https://lore.kernel.org/lkml/20191009214502.637875-1-rikard.falkeborn@gmail.com/
+>
+> Alex
+>
+> >
+> > if CC_IS_GCC && GCC_VERSION < 7.1:
+> >   set stack alignment to 16B and hope for the best
 
- drivers/crypto/hisilicon/hpre/hpre_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Ie, this ^
 
-diff --git a/drivers/crypto/hisilicon/hpre/hpre_main.c b/drivers/crypto/hisilicon/hpre/hpre_main.c
-index ca945b29632b..34e0424410bf 100644
---- a/drivers/crypto/hisilicon/hpre/hpre_main.c
-+++ b/drivers/crypto/hisilicon/hpre/hpre_main.c
-@@ -116,8 +116,8 @@ static const struct hpre_hw_error hpre_hw_errors[] = {
- 	{ .int_msk = BIT(7), .msg = "hpre_cltr2_htbt_tm_out_err" },
- 	{ .int_msk = BIT(8), .msg = "hpre_cltr3_htbt_tm_out_err" },
- 	{ .int_msk = BIT(9), .msg = "hpre_cltr4_htbt_tm_out_err" },
--	{ .int_msk = GENMASK(10, 15), .msg = "hpre_ooo_rdrsp_err" },
--	{ .int_msk = GENMASK(16, 21), .msg = "hpre_ooo_wrrsp_err" },
-+	{ .int_msk = GENMASK(15, 10), .msg = "hpre_ooo_rdrsp_err" },
-+	{ .int_msk = GENMASK(21, 16), .msg = "hpre_ooo_wrrsp_err" },
- 	{ /* sentinel */ }
- };
- 
+> >
+> > So my diff would be amended to keep the stack alignment flags, but
+> > only to support GCC < 7.1.  And that assumes my change compiles with
+> > GCC 7.1+. (Looks like it does for me locally with GCC 8.3, but I would
+> > feel even more confident if someone with hardware to test on and GCC
+> > 7.1+ could boot test).
+
 -- 
-2.23.0
-
+Thanks,
+~Nick Desaulniers
