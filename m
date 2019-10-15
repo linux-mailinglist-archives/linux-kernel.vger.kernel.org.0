@@ -2,149 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76AC9D6E6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 06:59:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C3C3D6E5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 06:50:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728137AbfJOE7j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 00:59:39 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:49602 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726825AbfJOE7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 00:59:39 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 35EBE1A043F;
-        Tue, 15 Oct 2019 06:59:36 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1488D1A00FD;
-        Tue, 15 Oct 2019 06:59:32 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id F12394030B;
-        Tue, 15 Oct 2019 12:59:26 +0800 (SGT)
-From:   Biwen Li <biwen.li@nxp.com>
-To:     peda@axentia.se, leoyang.li@nxp.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Biwen Li <biwen.li@nxp.com>
-Subject: [v2,2/2] i2c: mux: pca954x: add property idle-state
-Date:   Tue, 15 Oct 2019 12:48:39 +0800
-Message-Id: <20191015044839.23746-2-biwen.li@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20191015044839.23746-1-biwen.li@nxp.com>
-References: <20191015044839.23746-1-biwen.li@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1728063AbfJOEuW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 00:50:22 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:52265 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726825AbfJOEuV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 00:50:21 -0400
+Received: from mail-pl1-f198.google.com ([209.85.214.198])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <gpiccoli@canonical.com>)
+        id 1iKEmp-0002pF-Q1
+        for linux-kernel@vger.kernel.org; Tue, 15 Oct 2019 04:50:19 +0000
+Received: by mail-pl1-f198.google.com with SMTP id d1so11342447plj.9
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2019 21:50:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=arIxZVQOQ+cfkJxb4yxz7C3o33+rZWOc/lBYT2wRroE=;
+        b=dMwq4NIO8AUWMN4zFUP3Ei6b4hVMVnZFO+W4KwAVNj92KC1QIlLS5unJbVUI24oHTH
+         HX665AP3y7a+FJ9Ln0PlFmko3MHHtVj9DErfB121qI6k4GCsB/YFwalzMB9CBKPlrASq
+         vEDvMHNRFfQ0vZ12KSIY06AcXvDo7T6Q1RLOJ6l3+8w7v+XyJuNYxG26vqsbaGhTuz75
+         PsZB2i0maQENLpBv9NwWGaazymWQf/PNILCCY7TEnEkX8+0EvvXnH5H4xcf6Jy3CXpTo
+         Jt3zBb92uc96e8o+tGbaOkx/tJnbVW4MvzMBvASBtAS0CqeY0s/8cfQitiVghMRPZlMg
+         1DTg==
+X-Gm-Message-State: APjAAAVrcUhNYqAnggbGL5bRviBBfAw1fFM4WbIuvy7HIZK9x+1K3QmM
+        jcnkFN+11DrgNNl4m1fqgcGcQxMzH+OHPS3NsDehuy54c+dd0Vd0lv+oixC/RRXXZt5Yg2zZpDp
+        DNx5sDSUJYIrxNwBBj7OcdqrfuVfZH8njguAKar2bdw==
+X-Received: by 2002:a63:e211:: with SMTP id q17mr36673529pgh.316.1571115018403;
+        Mon, 14 Oct 2019 21:50:18 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzBj0er8XaKQeV5zGp92dPcULkWzyxa66qJbWhpo3yzosfwO2gJWjcOGh5E2EMS4KJlOsqjTA==
+X-Received: by 2002:a63:e211:: with SMTP id q17mr36673498pgh.316.1571115017970;
+        Mon, 14 Oct 2019 21:50:17 -0700 (PDT)
+Received: from [192.168.1.200] (201-92-249-168.dsl.telesp.net.br. [201.92.249.168])
+        by smtp.gmail.com with ESMTPSA id w6sm22169908pfj.17.2019.10.14.21.50.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 14 Oct 2019 21:50:17 -0700 (PDT)
+Subject: Re: [PATCH] hugetlb: Add nohugepages parameter to prevent hugepages
+ creation
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        jay.vosburgh@canonical.com, kernel@gpiccoli.net
+References: <20191011223955.1435-1-gpiccoli@canonical.com>
+ <c145a020-5ae0-e3a5-0251-199618cfaa9e@oracle.com>
+From:   "Guilherme G. Piccoli" <gpiccoli@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gpiccoli@canonical.com; prefer-encrypt=mutual; keydata=
+ mQENBFpVBxcBCADPNKmu2iNKLepiv8+Ssx7+fVR8lrL7cvakMNFPXsXk+f0Bgq9NazNKWJIn
+ Qxpa1iEWTZcLS8ikjatHMECJJqWlt2YcjU5MGbH1mZh+bT3RxrJRhxONz5e5YILyNp7jX+Vh
+ 30rhj3J0vdrlIhPS8/bAt5tvTb3ceWEic9mWZMsosPavsKVcLIO6iZFlzXVu2WJ9cov8eQM/
+ irIgzvmFEcRyiQ4K+XUhuA0ccGwgvoJv4/GWVPJFHfMX9+dat0Ev8HQEbN/mko/bUS4Wprdv
+ 7HR5tP9efSLucnsVzay0O6niZ61e5c97oUa9bdqHyApkCnGgKCpg7OZqLMM9Y3EcdMIJABEB
+ AAG0LUd1aWxoZXJtZSBHLiBQaWNjb2xpIDxncGljY29saUBjYW5vbmljYWwuY29tPokBNwQT
+ AQgAIQUCWmClvQIbAwULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRDOR5EF9K/7Gza3B/9d
+ 5yczvEwvlh6ksYq+juyuElLvNwMFuyMPsvMfP38UslU8S3lf+ETukN1S8XVdeq9yscwtsRW/
+ 4YoUwHinJGRovqy8gFlm3SAtjfdqysgJqUJwBmOtcsHkmvFXJmPPGVoH9rMCUr9s6VDPox8f
+ q2W5M7XE9YpsfchS/0fMn+DenhQpV3W6pbLtuDvH/81GKrhxO8whSEkByZbbc+mqRhUSTdN3
+ iMpRL0sULKPVYbVMbQEAnfJJ1LDkPqlTikAgt3peP7AaSpGs1e3pFzSEEW1VD2jIUmmDku0D
+ LmTHRl4t9KpbU/H2/OPZkrm7809QovJGRAxjLLPcYOAP7DUeltveuQENBFpVBxcBCADbxD6J
+ aNw/KgiSsbx5Sv8nNqO1ObTjhDR1wJw+02Bar9DGuFvx5/qs3ArSZkl8qX0X9Vhptk8rYnkn
+ pfcrtPBYLoux8zmrGPA5vRgK2ItvSc0WN31YR/6nqnMfeC4CumFa/yLl26uzHJa5RYYQ47jg
+ kZPehpc7IqEQ5IKy6cCKjgAkuvM1rDP1kWQ9noVhTUFr2SYVTT/WBHqUWorjhu57/OREo+Tl
+ nxI1KrnmW0DbF52tYoHLt85dK10HQrV35OEFXuz0QPSNrYJT0CZHpUprkUxrupDgkM+2F5LI
+ bIcaIQ4uDMWRyHpDbczQtmTke0x41AeIND3GUc+PQ4hWGp9XABEBAAGJAR8EGAEIAAkFAlpV
+ BxcCGwwACgkQzkeRBfSv+xv1wwgAj39/45O3eHN5pK0XMyiRF4ihH9p1+8JVfBoSQw7AJ6oU
+ 1Hoa+sZnlag/l2GTjC8dfEGNoZd3aRxqfkTrpu2TcfT6jIAsxGjnu+fUCoRNZzmjvRziw3T8
+ egSPz+GbNXrTXB8g/nc9mqHPPprOiVHDSK8aGoBqkQAPZDjUtRwVx112wtaQwArT2+bDbb/Y
+ Yh6gTrYoRYHo6FuQl5YsHop/fmTahpTx11IMjuh6IJQ+lvdpdfYJ6hmAZ9kiVszDF6pGFVkY
+ kHWtnE2Aa5qkxnA2HoFpqFifNWn5TyvJFpyqwVhVI8XYtXyVHub/WbXLWQwSJA4OHmqU8gDl
+ X18zwLgdiQ==
+Message-ID: <92e8451a-3a64-cde9-a879-10c0c9e857aa@canonical.com>
+Date:   Tue, 15 Oct 2019 01:50:07 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <c145a020-5ae0-e3a5-0251-199618cfaa9e@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds property idle-state
+On 14/10/2019 15:25, Mike Kravetz wrote:
+>  [...]
+> I don't know much about early_param(), so I will assume this works as you
+> describe.  However, a quick grep shows hugepage options for ia64 also with
+> early_param.
+> 
 
-Signed-off-by: Biwen Li <biwen.li@nxp.com>
----
-Change in v2:
-	- update subject and description
-	- add property idle-state
+Thanks a lot for the prompt and quite informative reply Mike.
+I've checked this IA64 parameter after your mention, and it just sets
+the hugepages size, I don't think it'll affect the purpose of this patch.
 
- drivers/i2c/muxes/i2c-mux-pca954x.c | 47 ++++++++++++++++++-----------
- 1 file changed, 30 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/i2c/muxes/i2c-mux-pca954x.c b/drivers/i2c/muxes/i2c-mux-pca954x.c
-index 923aa3a5a3dc..8ec586342b92 100644
---- a/drivers/i2c/muxes/i2c-mux-pca954x.c
-+++ b/drivers/i2c/muxes/i2c-mux-pca954x.c
-@@ -86,7 +86,7 @@ struct pca954x {
- 
- 	u8 last_chan;		/* last register value */
- 	/* MUX_IDLE_AS_IS, MUX_IDLE_DISCONNECT or >= 0 for channel */
--	s8 idle_state;
-+	s32 idle_state;
- 
- 	struct i2c_client *client;
- 
-@@ -256,7 +256,7 @@ static int pca954x_deselect_mux(struct i2c_mux_core *muxc, u32 chan)
- {
- 	struct pca954x *data = i2c_mux_priv(muxc);
- 	struct i2c_client *client = data->client;
--	s8 idle_state;
-+	s32 idle_state;
- 
- 	idle_state = READ_ONCE(data->idle_state);
- 	if (idle_state >= 0)
-@@ -402,6 +402,25 @@ static void pca954x_cleanup(struct i2c_mux_core *muxc)
- 	i2c_mux_del_adapters(muxc);
- }
- 
-+static int pca954x_init(struct i2c_client *client, struct pca954x *data)
-+{
-+	/*
-+	 * Write the mux register at addr to verify
-+	 * that the mux is in fact present. This also
-+	 * initializes the mux to disconnected state.
-+	 */
-+	if (data->idle_state >= 0) {
-+		/* Always enable multiplexer */
-+		if (data->chip->muxtype == pca954x_ismux)
-+			data->last_chan = data->idle_state | data->chip->enable;
-+		else
-+			data->last_chan = 1 << data->idle_state;
-+	} else {
-+		/* Disconnect multiplexer */
-+		data->last_chan = 0; /* force the first selection */
-+	}
-+	return i2c_smbus_write_byte(client, data->last_chan);
-+}
- /*
-  * I2C init/probing/exit functions
-  */
-@@ -411,7 +430,6 @@ static int pca954x_probe(struct i2c_client *client,
- 	struct i2c_adapter *adap = client->adapter;
- 	struct device *dev = &client->dev;
- 	struct device_node *np = dev->of_node;
--	bool idle_disconnect_dt;
- 	struct gpio_desc *gpio;
- 	struct i2c_mux_core *muxc;
- 	struct pca954x *data;
-@@ -462,22 +480,18 @@ static int pca954x_probe(struct i2c_client *client,
- 		}
- 	}
- 
--	/* Write the mux register at addr to verify
--	 * that the mux is in fact present. This also
--	 * initializes the mux to disconnected state.
--	 */
--	if (i2c_smbus_write_byte(client, 0) < 0) {
-+	if (of_property_read_u32(np, "idle-state", &data->idle_state))
-+		data->idle_state = MUX_IDLE_AS_IS;
-+
-+	if (of_property_read_bool(np, "i2c-mux-idle-disconnect"))
-+		data->idle_state = MUX_IDLE_DISCONNECT;
-+
-+	ret = pca954x_init(client, data);
-+	if (ret < 0) {
- 		dev_warn(dev, "probe failed\n");
- 		return -ENODEV;
- 	}
- 
--	data->last_chan = 0;		   /* force the first selection */
--	data->idle_state = MUX_IDLE_AS_IS;
--
--	idle_disconnect_dt = np &&
--		of_property_read_bool(np, "i2c-mux-idle-disconnect");
--	if (idle_disconnect_dt)
--		data->idle_state = MUX_IDLE_DISCONNECT;
- 
- 	ret = pca954x_irq_setup(muxc);
- 	if (ret)
-@@ -531,8 +545,7 @@ static int pca954x_resume(struct device *dev)
- 	struct i2c_mux_core *muxc = i2c_get_clientdata(client);
- 	struct pca954x *data = i2c_mux_priv(muxc);
- 
--	data->last_chan = 0;
--	return i2c_smbus_write_byte(client, 0);
-+	return pca954x_init(client, data);
- }
- #endif
- 
--- 
-2.17.1
+>> * The return when sysctl handler is prevented to progress due to
+>> nohugepages is -EINVAL, but could be changed; I've just followed
+>> present code there, but I'm OK changing that if we have suggestions.
+> 
+> It looks like you only have short circuited/prevented nr_hugepages via
+> sysfs/sysctl.  Theoretically, one could set nr_overcommit_hugepages and
+> still allocate hugetlb pages.  So, if you REALLY want to shut things down
+> you need to stop this as well.
+> 
+> There is already a macro hugepages_supported() that can be set by arch
+> specific code.  I wonder how difficult it would be to 'overwrite' the
+> macro if nohugepages is specified.  Perhaps just a level of naming
+> indirection.  This would use the existing code to prevent all hugetlb usage.
+>
 
+Outstanding! It's a much better idea to use hugepages_supported()
+infrastructure, it prevents even the creation of hugepages-related sysfs
+entries; I've worked a V2 with this modification, and it worked fine,
+thanks for the suggestion.
+
+
+> It seems like there may be some discussion about 'the right' way to
+> do kdump.  I can't add to that discussion, but if such an option as
+> nohugepages is needed, I can help.
+> 
+
+I think this parameter may be important/useful not only for kdump - it
+is a legitimate way of disabling hugepages, something we don't currently
+have on kernel. I'll submit a V2, for Ubuntu kdump specially this is
+quite helpful!
+
+Cheers,
+
+
+Guilherme
