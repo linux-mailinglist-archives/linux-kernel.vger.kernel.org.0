@@ -2,214 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08735D7974
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 17:11:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E56B6D797F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 17:12:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732891AbfJOPL0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 11:11:26 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:43243 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726523AbfJOPL0 (ORCPT
-        <rfc822;Linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 11:11:26 -0400
-Received: by mail-qt1-f195.google.com with SMTP id t20so25702897qtr.10
-        for <Linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 08:11:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+GV7lls91NbEz69rkgCFKrFFp0YlWtB12S3sy3CsNSc=;
-        b=NgXUXhOdQKUuLgTMppjJoXe+DIgNYmfq7CkO9w8XBx/HzuDLVt+aR8GyRkyiCj4bWP
-         9eR+6c9gwaUH/iR53eBL9PZ8kQruxgcD8WbvgvXHsw5RuM8Bv1tulPcsXwTCyUKaWUGP
-         aJP1O2hypFsiuAQ+sbBqStgro5VYaHeJ94pA5UXpjgfd2uyIltUEfb3KObB6bJHU0mJ2
-         42qMPHoykxb/dYRvfHRkBnk3q5mh9ly8GEAbrMlwbaZ3Ot9IyJgVI1OLVrhrIgddjPse
-         91m7Y4FQBkW4SlhTK98/nhaPGpGRyDovAlKXwT4EffAVzV2MYA9mnXnBmGDIpXF0WxqG
-         kGYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+GV7lls91NbEz69rkgCFKrFFp0YlWtB12S3sy3CsNSc=;
-        b=heSqtqzu24kJaNxyyUeZyOOn3Iho0BBSmO2+J1lwutR/w+GDhArF6pURVHbFdjhuDy
-         pU8w+HKGLwtOpoKTadKacZRsjlIniO5B54+12GbxI7H9sW8ju2LT8qdwiqrRVHsySxHG
-         ykUaCVpeA6ucuwS43686hSiMVgS/H874T8aLtwpO8muiahSAa+2+4kigUgdr60Pf0b/3
-         Y1MTxdpDHYewv1lC+u6uK+Z5z9p3KXfpofxi02JLA7rFp6S3/ntaUfyf2vV7gzlFgp8v
-         DvyooQAtsk880mp6Y8VNsxx0yPgmE83CXtcKDah28EMrmxzsl5Ea2j2zlWlESaMk7hIG
-         JhkA==
-X-Gm-Message-State: APjAAAUXCeUFddsEjnKXoHamZQQkM2aYWjPHF3w3xyofOV7y6UHvLthT
-        r5OvjnhRvl6MldhiEyreY3w=
-X-Google-Smtp-Source: APXvYqxE1J64PreUzsPx4hlYCPNl3d94xuBJUPPm+b35UVPT4r7jm09Iq7pSLzr4lSiJ7OnchHvBNg==
-X-Received: by 2002:ac8:363c:: with SMTP id m57mr39128185qtb.290.1571152284746;
-        Tue, 15 Oct 2019 08:11:24 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id m63sm10256991qkc.72.2019.10.15.08.11.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2019 08:11:23 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 8D72F4DD66; Tue, 15 Oct 2019 12:11:21 -0300 (-03)
-Date:   Tue, 15 Oct 2019 12:11:21 -0300
-To:     "Jin, Yao" <yao.jin@linux.intel.com>
-Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Jiri Olsa <jolsa@redhat.com>, jolsa@kernel.org,
-        peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
-        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
-Subject: Re: [PATCH] perf stat: Support --all-kernel/--all-user
-Message-ID: <20191015151121.GD25820@kernel.org>
-References: <20191011050545.3899-1-yao.jin@linux.intel.com>
- <20191014144208.GC9700@krava>
- <20191014162339.GN19627@kernel.org>
- <2672b8ea-06f2-d828-3da0-da0e59f2eb9d@linux.intel.com>
+        id S1733246AbfJOPMy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 11:12:54 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:9818 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726523AbfJOPMy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 11:12:54 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9FFAkqQ021745;
+        Tue, 15 Oct 2019 17:12:27 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=Dz/82zOXMhfMmklzqpL72vLdKWuedjy+hvTqhAoCBe0=;
+ b=UcLs1Mq9WYwpkYMT5Yq7HM/zidaf654mUbnTN7jf3CJG7H/Cmz5LpcYbevsCsbeeBcsx
+ Qs+BDE1EZtLgyPWPp97mYe1+/LnJQnw2yoVX/Lj7u3MMwDVX6/IYG88Y10Gl1Uzl/5N7
+ 7+jbqlFj0LlQRWUbgUiGv9mc60vO9yQx9gPuiy46/U5nlpVSTj/wXirwxZ4AWycOnxjw
+ 1tbqK4ysBLXKsH7s6j/Nbhi1JpPHTDM5HLvls1rbJnOj0kXQIxMU+2Nys3OAK84VkM6y
+ mPcMOMHN/78HMfD1hSVZDxOuoUIlxh2PAP73jH0uJKK0z7Iqn1iSYxz7nhfE9AY7nb93 TQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2vk4a18xk6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 15 Oct 2019 17:12:27 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9D19C100038;
+        Tue, 15 Oct 2019 17:12:26 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 83C452C0B1D;
+        Tue, 15 Oct 2019 17:12:26 +0200 (CEST)
+Received: from SFHDAG3NODE3.st.com (10.75.127.9) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 15 Oct
+ 2019 17:12:26 +0200
+Received: from SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476]) by
+ SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476%20]) with mapi id
+ 15.00.1347.000; Tue, 15 Oct 2019 17:12:26 +0200
+From:   Benjamin GAIGNARD <benjamin.gaignard@st.com>
+To:     Ben Dooks <ben.dooks@codethink.co.uk>,
+        "linux-kernel@lists.codethink.co.uk" 
+        <linux-kernel@lists.codethink.co.uk>
+CC:     Amit Kucheria <amit.kucheria@verdurent.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Maxime Coquelin" <mcoquelin.stm32@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [Linux-stm32] [PATCH] thermal: stm32: make stm_thermal_pm_ops
+ static
+Thread-Topic: [Linux-stm32] [PATCH] thermal: stm32: make stm_thermal_pm_ops
+ static
+Thread-Index: AQHVg2LySKg+3iRMIESRd33erHyNMqdbrZeA
+Date:   Tue, 15 Oct 2019 15:12:26 +0000
+Message-ID: <b5e353bc-1171-1559-351f-2e54ef6749fe@st.com>
+References: <20191015141454.15402-1-ben.dooks@codethink.co.uk>
+In-Reply-To: <20191015141454.15402-1-ben.dooks@codethink.co.uk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.45]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C885B1D9DAA4E145A7287A236169A642@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2672b8ea-06f2-d828-3da0-da0e59f2eb9d@linux.intel.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-15_05:2019-10-15,2019-10-15 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Oct 15, 2019 at 09:57:33AM +0800, Jin, Yao escreveu:
-> 
-> 
-> On 10/15/2019 12:23 AM, Arnaldo Carvalho de Melo wrote:
-> > Em Mon, Oct 14, 2019 at 04:42:08PM +0200, Jiri Olsa escreveu:
-> > > On Fri, Oct 11, 2019 at 01:05:45PM +0800, Jin Yao wrote:
-> > > > perf record has supported --all-kernel / --all-user to configure all
-> > > > used events to run in kernel space or run in user space. But perf
-> > > > stat doesn't support these options.
-> > > > 
-> > > > It would be useful to support these options in perf-stat too to keep
-> > > > the same semantics.
-> > > > 
-> > > > Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-> > > 
-> > > Acked-by: Jiri Olsa <jolsa@kernel.org>
-> > 
-> > What happens if one asks for both? From the patch only the --all-kernel
-> > will stick, right? Is that the behaviour for 'perf record'? Lemme see,
-> > as I recall having this discussion at that time...
-> > 
-> > Yeah, same thing, and looking at that I wonder why we dong use
-> > perf_evsel__config() in 'perf stat'...
-> > 
-> > Ok, I'm going to apply it.
-> > 
-> 
-> Hi Arnaldo,
-> 
-> If we specify both, we will see the error.
-
-Cool, I looked for this code and couldn't quickly spot it nor tried
-running with both to see what happened, my bad, thanks for replying and
-making sure that that is the behaviour.
- 
-> root@kbl:~# perf stat --all-kernel --all-user -a -- sleep 1
->  Error: option `all-user' cannot be used with all-kernel
-> 
-> root@kbl:~# perf record --all-kernel --all-user -a -- sleep 1
->  Error: option `all-user' cannot be used with all-kernel
-> 
-> For why I don't set them in perf_evsel__config, because perf_evsel__config
-> is called in record but not called in stat.
-
-Ok, at some point we should try and check if we could make 'perf stat'
-use perf_evsel__config(), even if we have to separate what is shared
-into some __perf_evsel__config() that then gets called by 'perf stat'
-while the preexisting perf_evsel__config() calls it and does things
-that don't make sense for 'perf stat'.
- 
-> Thanks for reviewing and applying this patch.
-
-You're welcome!
-
-- Arnaldo
- 
-> Thanks
-> Jin Yao
-> 
-> > > thanks,
-> > > jirka
-> > > 
-> > > > ---
-> > > >   tools/perf/Documentation/perf-stat.txt |  6 ++++++
-> > > >   tools/perf/builtin-stat.c              |  6 ++++++
-> > > >   tools/perf/util/stat.c                 | 10 ++++++++++
-> > > >   tools/perf/util/stat.h                 |  2 ++
-> > > >   4 files changed, 24 insertions(+)
-> > > > 
-> > > > diff --git a/tools/perf/Documentation/perf-stat.txt b/tools/perf/Documentation/perf-stat.txt
-> > > > index 930c51c01201..a9af4e440e80 100644
-> > > > --- a/tools/perf/Documentation/perf-stat.txt
-> > > > +++ b/tools/perf/Documentation/perf-stat.txt
-> > > > @@ -323,6 +323,12 @@ The output is SMI cycles%, equals to (aperf - unhalted core cycles) / aperf
-> > > >   Users who wants to get the actual value can apply --no-metric-only.
-> > > > +--all-kernel::
-> > > > +Configure all used events to run in kernel space.
-> > > > +
-> > > > +--all-user::
-> > > > +Configure all used events to run in user space.
-> > > > +
-> > > >   EXAMPLES
-> > > >   --------
-> > > > diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> > > > index 468fc49420ce..c88d4e118409 100644
-> > > > --- a/tools/perf/builtin-stat.c
-> > > > +++ b/tools/perf/builtin-stat.c
-> > > > @@ -803,6 +803,12 @@ static struct option stat_options[] = {
-> > > >   	OPT_CALLBACK('M', "metrics", &evsel_list, "metric/metric group list",
-> > > >   		     "monitor specified metrics or metric groups (separated by ,)",
-> > > >   		     parse_metric_groups),
-> > > > +	OPT_BOOLEAN_FLAG(0, "all-kernel", &stat_config.all_kernel,
-> > > > +			 "Configure all used events to run in kernel space.",
-> > > > +			 PARSE_OPT_EXCLUSIVE),
-> > > > +	OPT_BOOLEAN_FLAG(0, "all-user", &stat_config.all_user,
-> > > > +			 "Configure all used events to run in user space.",
-> > > > +			 PARSE_OPT_EXCLUSIVE),
-> > > >   	OPT_END()
-> > > >   };
-> > > > diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
-> > > > index ebdd130557fb..6822e4ffe224 100644
-> > > > --- a/tools/perf/util/stat.c
-> > > > +++ b/tools/perf/util/stat.c
-> > > > @@ -490,6 +490,16 @@ int create_perf_stat_counter(struct evsel *evsel,
-> > > >   	if (config->identifier)
-> > > >   		attr->sample_type = PERF_SAMPLE_IDENTIFIER;
-> > > > +	if (config->all_user) {
-> > > > +		attr->exclude_kernel = 1;
-> > > > +		attr->exclude_user   = 0;
-> > > > +	}
-> > > > +
-> > > > +	if (config->all_kernel) {
-> > > > +		attr->exclude_kernel = 0;
-> > > > +		attr->exclude_user   = 1;
-> > > > +	}
-> > > > +
-> > > >   	/*
-> > > >   	 * Disabling all counters initially, they will be enabled
-> > > >   	 * either manually by us or by kernel via enable_on_exec
-> > > > diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
-> > > > index edbeb2f63e8d..081c4a5113c6 100644
-> > > > --- a/tools/perf/util/stat.h
-> > > > +++ b/tools/perf/util/stat.h
-> > > > @@ -106,6 +106,8 @@ struct perf_stat_config {
-> > > >   	bool			 big_num;
-> > > >   	bool			 no_merge;
-> > > >   	bool			 walltime_run_table;
-> > > > +	bool			 all_kernel;
-> > > > +	bool			 all_user;
-> > > >   	FILE			*output;
-> > > >   	unsigned int		 interval;
-> > > >   	unsigned int		 timeout;
-> > > > -- 
-> > > > 2.17.1
-> > > > 
-> > 
-
--- 
-
-- Arnaldo
+DQpPbiAxMC8xNS8xOSA0OjE0IFBNLCBCZW4gRG9va3Mgd3JvdGU6DQo+IFRoZSBzdG1fdGhlcm1h
+bF9wbV9vcHMgc3RydWN0IGlzIG5vdCBleHBvcnRlZCB0byBhbnkNCj4gb3RoZXIgdW5pdHMsIHNv
+IG1ha2UgaXQgc3RhdGljIHRvIGF2b2lkIHRoZSBmb2xsb3dpbmcNCj4gc3BhcnNlIHdhcm5pbmc6
+DQo+DQo+IGRyaXZlcnMvdGhlcm1hbC9zdC9zdG1fdGhlcm1hbC5jOjU5OToxOiB3YXJuaW5nOiBz
+eW1ib2wgJ3N0bV90aGVybWFsX3BtX29wcycgd2FzIG5vdCBkZWNsYXJlZC4gU2hvdWxkIGl0IGJl
+IHN0YXRpYz8NCg0KUmV2aWV3ZWQtYnk6IEJlbmphbWluIEdhaWduYXJkIDxiZW5qYW1pbi5nYWln
+bmFyZEBzdC5jb20+DQoNClRoYW5rcywNCg0KQmVuamFtaW4NCg0KPg0KPiBTaWduZWQtb2ZmLWJ5
+OiBCZW4gRG9va3MgPGJlbi5kb29rc0Bjb2RldGhpbmsuY28udWs+DQo+IC0tLQ0KPiBDYzogWmhh
+bmcgUnVpIDxydWkuemhhbmdAaW50ZWwuY29tPg0KPiBDYzogRGFuaWVsIExlemNhbm8gPGRhbmll
+bC5sZXpjYW5vQGxpbmFyby5vcmc+DQo+IENjOiBBbWl0IEt1Y2hlcmlhIDxhbWl0Lmt1Y2hlcmlh
+QHZlcmR1cmVudC5jb20+DQo+IENjOiBNYXhpbWUgQ29xdWVsaW4gPG1jb3F1ZWxpbi5zdG0zMkBn
+bWFpbC5jb20+DQo+IENjOiBBbGV4YW5kcmUgVG9yZ3VlIDxhbGV4YW5kcmUudG9yZ3VlQHN0LmNv
+bT4NCj4gQ2M6IGxpbnV4LXBtQHZnZXIua2VybmVsLm9yZw0KPiBDYzogbGludXgtc3RtMzJAc3Qt
+bWQtbWFpbG1hbi5zdG9ybXJlcGx5LmNvbQ0KPiBDYzogbGludXgtYXJtLWtlcm5lbEBsaXN0cy5p
+bmZyYWRlYWQub3JnDQo+IENjOiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IC0tLQ0K
+PiAgIGRyaXZlcnMvdGhlcm1hbC9zdC9zdG1fdGhlcm1hbC5jIHwgMiArLQ0KPiAgIDEgZmlsZSBj
+aGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPg0KPiBkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy90aGVybWFsL3N0L3N0bV90aGVybWFsLmMgYi9kcml2ZXJzL3RoZXJtYWwvc3Qvc3Rt
+X3RoZXJtYWwuYw0KPiBpbmRleCBjZjlkZGM1MmYzMGUuLjQwYmMxM2M2OGZiYSAxMDA2NDQNCj4g
+LS0tIGEvZHJpdmVycy90aGVybWFsL3N0L3N0bV90aGVybWFsLmMNCj4gKysrIGIvZHJpdmVycy90
+aGVybWFsL3N0L3N0bV90aGVybWFsLmMNCj4gQEAgLTU5Niw3ICs1OTYsNyBAQCBzdGF0aWMgaW50
+IHN0bV90aGVybWFsX3Jlc3VtZShzdHJ1Y3QgZGV2aWNlICpkZXYpDQo+ICAgfQ0KPiAgICNlbmRp
+ZiAvKiBDT05GSUdfUE1fU0xFRVAgKi8NCj4gICANCj4gLVNJTVBMRV9ERVZfUE1fT1BTKHN0bV90
+aGVybWFsX3BtX29wcywgc3RtX3RoZXJtYWxfc3VzcGVuZCwgc3RtX3RoZXJtYWxfcmVzdW1lKTsN
+Cj4gK3N0YXRpYyBTSU1QTEVfREVWX1BNX09QUyhzdG1fdGhlcm1hbF9wbV9vcHMsIHN0bV90aGVy
+bWFsX3N1c3BlbmQsIHN0bV90aGVybWFsX3Jlc3VtZSk7DQo+ICAgDQo+ICAgc3RhdGljIGNvbnN0
+IHN0cnVjdCB0aGVybWFsX3pvbmVfb2ZfZGV2aWNlX29wcyBzdG1fdHpfb3BzID0gew0KPiAgIAku
+Z2V0X3RlbXAJPSBzdG1fdGhlcm1hbF9nZXRfdGVtcCw=
