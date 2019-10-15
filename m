@@ -2,87 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C537D73F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 12:53:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE2E5D73FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 12:55:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730285AbfJOKxY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 06:53:24 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44630 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727525AbfJOKxY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 06:53:24 -0400
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9D767811D8
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 10:53:23 +0000 (UTC)
-Received: by mail-wm1-f69.google.com with SMTP id p6so5165034wmc.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 03:53:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=p/1yabDz8qKhRFkalHkrj4947RSYeZJkszdmHrfnxwc=;
-        b=sfgd/10vGH73hWKS3FSdB0PuTSqWNapAy4zQSn5jRImLrz8HDllDW4mT6rXX2faxFg
-         r8yaP3o6sr3cddbCC5fHTUardC7TBQayC639NKgouvrz7/aonvqfR95azFAYeBZB+Wwc
-         xW7ybCFKDsN/Xzsy63PrmCTNcZ8ZNhN3gBy+TMLHFW6SkcQJN5nmAFbSu/2Gmgtg68fU
-         7WWLjLOU1FYdDvJgVzXouYh4QojhcvgWySh/lvSmTp4eIuAzKatEkC8eDDyL06Hd+PZY
-         OPll/tRmQrI+HHyIT8+y8MaVwySSlvLzqL/8qV4WybTZZfUXi6gNtYX7SLqCvsFTkwvC
-         Cwvg==
-X-Gm-Message-State: APjAAAUKp14W8DHjuoTLYf/HOMnGQ7w9WNnLMPuKD8aC0zcejTVXvpOd
-        lyOc3LGz+uhQjP01csOe9S4z4mNovySQaHm2gmFK6TZhUXEq//XPzUVB1n7ARoK+lnB6mVqeFW0
-        FFmWcSMekEOmMfdce750s1nvk
-X-Received: by 2002:adf:eb0f:: with SMTP id s15mr28329223wrn.97.1571136802294;
-        Tue, 15 Oct 2019 03:53:22 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwu0QYUpkH9lGGmecEb8XIlX9PlulVL8sYPAzG3x9q/fyyIX2pqIq4BlP6J6f9jD1VdvCLLWQ==
-X-Received: by 2002:adf:eb0f:: with SMTP id s15mr28329205wrn.97.1571136802066;
-        Tue, 15 Oct 2019 03:53:22 -0700 (PDT)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id g17sm16952765wrq.58.2019.10.15.03.53.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2019 03:53:21 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Xiaoyao Li <xiaoyao.li@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Jim Mattson <jmattson@google.com>
-Subject: Re: [PATCH] KVM: X86: Make fpu allocation a common function
-In-Reply-To: <20191014183723.GE22962@linux.intel.com>
-References: <20191014162247.61461-1-xiaoyao.li@intel.com> <87y2xn462e.fsf@vitty.brq.redhat.com> <20191014183723.GE22962@linux.intel.com>
-Date:   Tue, 15 Oct 2019 12:53:20 +0200
-Message-ID: <87v9sq46vz.fsf@vitty.brq.redhat.com>
+        id S1731526AbfJOKzn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 06:55:43 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:43092 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726054AbfJOKzn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 06:55:43 -0400
+Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1iKKUC-0007dT-4p; Tue, 15 Oct 2019 11:55:28 +0100
+Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.2)
+        (envelope-from <ben@rainbowdash.codethink.co.uk>)
+        id 1iKKUB-0000Rs-FJ; Tue, 15 Oct 2019 11:55:27 +0100
+From:   Ben Dooks <ben.dooks@codethink.co.uk>
+To:     linux-kernel@lists.codethink.co.uk
+Cc:     Ben Dooks <ben.dooks@codethink.co.uk>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] rcu: rcu_segcblist.c make undeclared items static
+Date:   Tue, 15 Oct 2019 11:55:24 +0100
+Message-Id: <20191015105524.1676-1-ben.dooks@codethink.co.uk>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Christopherson <sean.j.christopherson@intel.com> writes:
+The following are not used outside the unit they are
+declared in, so make them static to avoid the following
+sparse warnings:
 
-> On Mon, Oct 14, 2019 at 06:58:49PM +0200, Vitaly Kuznetsov wrote:
->> Xiaoyao Li <xiaoyao.li@intel.com> writes:
->> 
->> > They are duplicated codes to create vcpu.arch.{user,guest}_fpu in VMX
->> > and SVM. Make them common functions.
->> >
->> > No functional change intended.
->> 
->> Would it rather make sense to move this code to
->> kvm_arch_vcpu_create()/kvm_arch_vcpu_destroy() instead?
->
-> Does it make sense?  Yes.  Would it actually work?  No.  Well, not without
-> other shenanigans.
->
-> FPU allocation can't be placed after the call to .create_vcpu() becuase
-> it's consumed in kvm_arch_vcpu_init().   FPU allocation can't come before
-> .create_vcpu() because the vCPU struct itself hasn't been allocated.
+kernel/rcu/rcu_segcblist.c:91:6: warning: symbol 'rcu_segcblist_set_len' was not declared. Should it be static?
+kernel/rcu/rcu_segcblist.c:107:6: warning: symbol 'rcu_segcblist_add_len' was not declared. Should it be static?
+kernel/rcu/rcu_segcblist.c:137:6: warning: symbol 'rcu_segcblist_xchg_len' was not declared. Should it be static?
 
-A very theoretical question: why do we have 'struct vcpu' embedded in
-vcpu_vmx/vcpu_svm and not the other way around (e.g. in a union)? That
-would've allowed us to allocate memory in common code and then fill in
-vendor-specific details in .create_vcpu().
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+---
+Cc: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Josh Triplett <josh@joshtriplett.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: Joel Fernandes <joel@joelfernandes.org>
+Cc: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ kernel/rcu/rcu_segcblist.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/kernel/rcu/rcu_segcblist.c b/kernel/rcu/rcu_segcblist.c
+index 495c58ce1640..cbc87b804db9 100644
+--- a/kernel/rcu/rcu_segcblist.c
++++ b/kernel/rcu/rcu_segcblist.c
+@@ -88,7 +88,7 @@ struct rcu_head *rcu_cblist_dequeue(struct rcu_cblist *rclp)
+ }
+ 
+ /* Set the length of an rcu_segcblist structure. */
+-void rcu_segcblist_set_len(struct rcu_segcblist *rsclp, long v)
++static void rcu_segcblist_set_len(struct rcu_segcblist *rsclp, long v)
+ {
+ #ifdef CONFIG_RCU_NOCB_CPU
+ 	atomic_long_set(&rsclp->len, v);
+@@ -104,7 +104,7 @@ void rcu_segcblist_set_len(struct rcu_segcblist *rsclp, long v)
+  * This increase is fully ordered with respect to the callers accesses
+  * both before and after.
+  */
+-void rcu_segcblist_add_len(struct rcu_segcblist *rsclp, long v)
++static void rcu_segcblist_add_len(struct rcu_segcblist *rsclp, long v)
+ {
+ #ifdef CONFIG_RCU_NOCB_CPU
+ 	smp_mb__before_atomic(); /* Up to the caller! */
+@@ -134,7 +134,7 @@ void rcu_segcblist_inc_len(struct rcu_segcblist *rsclp)
+  * with the actual number of callbacks on the structure.  This exchange is
+  * fully ordered with respect to the callers accesses both before and after.
+  */
+-long rcu_segcblist_xchg_len(struct rcu_segcblist *rsclp, long v)
++static long rcu_segcblist_xchg_len(struct rcu_segcblist *rsclp, long v)
+ {
+ #ifdef CONFIG_RCU_NOCB_CPU
+ 	return atomic_long_xchg(&rsclp->len, v);
 -- 
-Vitaly
+2.23.0
+
