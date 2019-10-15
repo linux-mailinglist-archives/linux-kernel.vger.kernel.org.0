@@ -2,188 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44DACD6EDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 07:33:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B128D6F0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2019 07:35:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729011AbfJOFdf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 01:33:35 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:42249 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728668AbfJOFcV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 01:32:21 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iKFRQ-0000X2-8K; Tue, 15 Oct 2019 07:32:16 +0200
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 8C9051C070D;
-        Tue, 15 Oct 2019 07:31:52 +0200 (CEST)
-Date:   Tue, 15 Oct 2019 05:31:52 -0000
-From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf evlist: Adopt __set_tracepoint_handlers method
- from perf_session
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <tip-9oc53gnfi53vg82fvolkm85g@git.kernel.org>
-References: <tip-9oc53gnfi53vg82fvolkm85g@git.kernel.org>
-MIME-Version: 1.0
-Message-ID: <157111751245.12254.8726429854829041178.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        id S1729228AbfJOFfE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 01:35:04 -0400
+Received: from mga17.intel.com ([192.55.52.151]:50347 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729173AbfJOFev (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 01:34:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Oct 2019 22:34:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,298,1566889200"; 
+   d="scan'208";a="198507546"
+Received: from kbl.sh.intel.com ([10.239.159.163])
+  by orsmga003.jf.intel.com with ESMTP; 14 Oct 2019 22:34:48 -0700
+From:   Jin Yao <yao.jin@linux.intel.com>
+To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com
+Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com,
+        Jin Yao <yao.jin@linux.intel.com>
+Subject: [PATCH v2 0/5] perf report: Support sorting all blocks by cycles
+Date:   Tue, 15 Oct 2019 13:33:45 +0800
+Message-Id: <20191015053350.13909-1-yao.jin@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the perf/core branch of tip:
+It would be useful to support sorting for all blocks by the
+sampled cycles percent per block. This is useful to concentrate
+on the globally hottest blocks.
 
-Commit-ID:     c0e53476ab5087353547cbcd37f001d98941326c
-Gitweb:        https://git.kernel.org/tip/c0e53476ab5087353547cbcd37f001d98941326c
-Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Tue, 01 Oct 2019 11:14:26 -03:00
-Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Mon, 07 Oct 2019 12:22:17 -03:00
+This patch series implements a new sort option "total_cycles" which
+sorts all blocks by 'Sampled Cycles%'. The 'Sampled Cycles%' is
+block sampled cycles aggregation / total sampled cycles
 
-perf evlist: Adopt __set_tracepoint_handlers method from perf_session
+For example,
 
-It all operates on the evsels in the session's evlist, so move it to the
-evlist layer to make it useful to tools not using perf_session, just
-evlists, like 'perf trace' in live mode.
+perf record -b ./div
+perf report -s total_cycles --stdio
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-9oc53gnfi53vg82fvolkm85g@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/evlist.c  | 24 ++++++++++++++++++++++++
- tools/perf/util/evlist.h  |  7 +++++++
- tools/perf/util/session.c | 29 -----------------------------
- tools/perf/util/session.h |  6 +-----
- 4 files changed, 32 insertions(+), 34 deletions(-)
+ # To display the perf.data header info, please use --header/--header-only options.
+ #
+ #
+ # Total Lost Samples: 0
+ #
+ # Samples: 2M of event 'cycles'
+ # Event count (approx.): 2753248
+ #
+ # Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles                                              [Program Block Range]         Shared Object
+ # ...............  ..............  ...........  ..........  .................................................................  ....................
+ #
+            26.04%            2.8M        0.40%          18                                             [div.c:42 -> div.c:39]                   div
+            15.17%            1.2M        0.16%           7                                 [random_r.c:357 -> random_r.c:380]          libc-2.27.so
+             5.11%          402.0K        0.04%           2                                             [div.c:27 -> div.c:28]                   div
+             4.87%          381.6K        0.04%           2                                     [random.c:288 -> random.c:291]          libc-2.27.so
+             4.53%          381.0K        0.04%           2                                             [div.c:40 -> div.c:40]                   div
+             3.85%          300.9K        0.02%           1                                             [div.c:22 -> div.c:25]                   div
+             3.08%          241.1K        0.02%           1                                           [rand.c:26 -> rand.c:27]          libc-2.27.so
+             3.06%          240.0K        0.02%           1                                     [random.c:291 -> random.c:291]          libc-2.27.so
+             2.78%          215.7K        0.02%           1                                     [random.c:298 -> random.c:298]          libc-2.27.so
+             2.52%          198.3K        0.02%           1                                     [random.c:293 -> random.c:293]          libc-2.27.so
+             2.36%          184.8K        0.02%           1                                           [rand.c:28 -> rand.c:28]          libc-2.27.so
+             2.33%          180.5K        0.02%           1                                     [random.c:295 -> random.c:295]          libc-2.27.so
+             2.28%          176.7K        0.02%           1                                     [random.c:295 -> random.c:295]          libc-2.27.so
+             2.20%          168.8K        0.02%           1                                         [rand@plt+0 -> rand@plt+0]                   div
+             1.98%          158.2K        0.02%           1                                 [random_r.c:388 -> random_r.c:388]          libc-2.27.so
+             1.57%          123.3K        0.02%           1                                             [div.c:42 -> div.c:44]                   div
+             1.44%          116.0K        0.42%          19                                 [random_r.c:357 -> random_r.c:394]          libc-2.27.so
+ ......
 
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index d277a98..b4c43ac 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -186,6 +186,30 @@ void perf_evlist__splice_list_tail(struct evlist *evlist,
- 	}
- }
- 
-+int __evlist__set_tracepoints_handlers(struct evlist *evlist,
-+				       const struct evsel_str_handler *assocs, size_t nr_assocs)
-+{
-+	struct evsel *evsel;
-+	size_t i;
-+	int err;
-+
-+	for (i = 0; i < nr_assocs; i++) {
-+		// Adding a handler for an event not in this evlist, just ignore it.
-+		evsel = perf_evlist__find_tracepoint_by_name(evlist, assocs[i].name);
-+		if (evsel == NULL)
-+			continue;
-+
-+		err = -EEXIST;
-+		if (evsel->handler != NULL)
-+			goto out;
-+		evsel->handler = assocs[i].handler;
-+	}
-+
-+	err = 0;
-+out:
-+	return err;
-+}
-+
- void __perf_evlist__set_leader(struct list_head *list)
- {
- 	struct evsel *evsel, *leader;
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index 7cfe755..00eab94 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -118,6 +118,13 @@ void perf_evlist__stop_sb_thread(struct evlist *evlist);
- int perf_evlist__add_newtp(struct evlist *evlist,
- 			   const char *sys, const char *name, void *handler);
- 
-+int __evlist__set_tracepoints_handlers(struct evlist *evlist,
-+				       const struct evsel_str_handler *assocs,
-+				       size_t nr_assocs);
-+
-+#define evlist__set_tracepoints_handlers(evlist, array) \
-+	__evlist__set_tracepoints_handlers(evlist, array, ARRAY_SIZE(array))
-+
- void __perf_evlist__set_sample_bit(struct evlist *evlist,
- 				   enum perf_event_sample_format bit);
- void __perf_evlist__reset_sample_bit(struct evlist *evlist,
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 061bb4d..6cc32f5 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -2355,35 +2355,6 @@ void perf_session__fprintf_info(struct perf_session *session, FILE *fp,
- 	fprintf(fp, "# ========\n#\n");
- }
- 
--
--int __perf_session__set_tracepoints_handlers(struct perf_session *session,
--					     const struct evsel_str_handler *assocs,
--					     size_t nr_assocs)
--{
--	struct evsel *evsel;
--	size_t i;
--	int err;
--
--	for (i = 0; i < nr_assocs; i++) {
--		/*
--		 * Adding a handler for an event not in the session,
--		 * just ignore it.
--		 */
--		evsel = perf_evlist__find_tracepoint_by_name(session->evlist, assocs[i].name);
--		if (evsel == NULL)
--			continue;
--
--		err = -EEXIST;
--		if (evsel->handler != NULL)
--			goto out;
--		evsel->handler = assocs[i].handler;
--	}
--
--	err = 0;
--out:
--	return err;
--}
--
- int perf_event__process_id_index(struct perf_session *session,
- 				 union perf_event *event)
- {
-diff --git a/tools/perf/util/session.h b/tools/perf/util/session.h
-index b4c9428..8456e1d 100644
---- a/tools/perf/util/session.h
-+++ b/tools/perf/util/session.h
-@@ -120,12 +120,8 @@ void perf_session__fprintf_info(struct perf_session *s, FILE *fp, bool full);
- 
- struct evsel_str_handler;
- 
--int __perf_session__set_tracepoints_handlers(struct perf_session *session,
--					     const struct evsel_str_handler *assocs,
--					     size_t nr_assocs);
--
- #define perf_session__set_tracepoints_handlers(session, array) \
--	__perf_session__set_tracepoints_handlers(session, array, ARRAY_SIZE(array))
-+	__evlist__set_tracepoints_handlers(session->evlist, array, ARRAY_SIZE(array))
- 
- extern volatile int session_done;
- 
+This patch series supports both stdio and tui. And also with the supporting
+of --percent-limit.
+
+ v2:
+ ---
+ Rebase to perf/core branch
+
+Jin Yao (5):
+  perf util: Create new block.h/block.c for block related functions
+  perf util: Count the total cycles of all samples
+  perf report: Sort by sampled cycles percent per block for stdio
+  perf report: Support --percent-limit for total_cycles
+  perf report: Sort by sampled cycles percent per block for tui
+
+ tools/perf/Documentation/perf-report.txt |  10 +
+ tools/perf/builtin-annotate.c            |   2 +-
+ tools/perf/builtin-diff.c                |  41 +--
+ tools/perf/builtin-report.c              | 445 ++++++++++++++++++++++-
+ tools/perf/builtin-top.c                 |   3 +-
+ tools/perf/ui/browsers/hists.c           |  62 +++-
+ tools/perf/ui/browsers/hists.h           |   2 +
+ tools/perf/ui/stdio/hist.c               |  29 +-
+ tools/perf/util/Build                    |   1 +
+ tools/perf/util/block.c                  |  73 ++++
+ tools/perf/util/block.h                  |  40 ++
+ tools/perf/util/hist.c                   |  11 +-
+ tools/perf/util/hist.h                   |  15 +-
+ tools/perf/util/sort.c                   |   5 +
+ tools/perf/util/sort.h                   |   1 +
+ tools/perf/util/symbol.c                 |  22 --
+ tools/perf/util/symbol.h                 |  24 --
+ tools/perf/util/symbol_conf.h            |   1 +
+ 18 files changed, 694 insertions(+), 93 deletions(-)
+ create mode 100644 tools/perf/util/block.c
+ create mode 100644 tools/perf/util/block.h
+
+-- 
+2.17.1
+
