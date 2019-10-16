@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73104DA08C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:25:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D90AFD9FFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:24:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407357AbfJPWMk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:12:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47682 "EHLO mail.kernel.org"
+        id S2407000AbfJPWGo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:06:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406590AbfJPV4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:56:14 -0400
+        id S2438151AbfJPV62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:58:28 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2081C218DE;
-        Wed, 16 Oct 2019 21:56:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D169D21925;
+        Wed, 16 Oct 2019 21:58:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262974;
-        bh=JffcVU2maBe0QjGzq/y3BwaF0f+wHP+HIvIN//M6Jio=;
+        s=default; t=1571263108;
+        bh=Do8Ps45Db9i2Kq5cWrhLAuBtarWPj5Gh4AhA8R5NR3c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QbVIiNRz8uZy1iiU1CcQr5CYl4eX1+Jtc7vuQsJNiP5OAg//zlpMN7DCLhAvpFXHc
-         U/6Uiw0W9eOKkAdD3FdYl66pN74x69ps5apFt4+Tv9/rIjCxqNr7TnDB/KtBhHt7Qo
-         hZG/BjirbgctSTAv7fk2pK+ZG/w+GtR5O1R7rv+Y=
+        b=fMEx1bvUJA6EeZXYfad5vqy/m2aGNaV+Y89Rv/EgKLfU9xkyRjmE5SZMwjE9yTbaI
+         gUOmm9nuSLFeYp+zBa/cucjMexd2BvZGnYBXSjvkNBKdHxK3SbIWObWiPiZTolvQ/i
+         rGuIBGZzT0fbgJ3f+Fca77Wb3Y6Gqs7ADgGaivV8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Schmidt <jan@centricular.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.14 09/65] xhci: Prevent device initiated U1/U2 link pm if exit latency is too long
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 5.3 031/112] USB: usblcd: fix I/O after disconnect
 Date:   Wed, 16 Oct 2019 14:50:23 -0700
-Message-Id: <20191016214803.862322042@linuxfoundation.org>
+Message-Id: <20191016214853.185824638@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
-References: <20191016214756.457746573@linuxfoundation.org>
+In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
+References: <20191016214844.038848564@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,47 +42,128 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit cd9d9491e835a845c1a98b8471f88d26285e0bb9 upstream.
+commit eb7f5a490c5edfe8126f64bc58b9ba2edef0a425 upstream.
 
-If host/hub initiated link pm is prevented by a driver flag we still must
-ensure that periodic endpoints have longer service intervals than link pm
-exit latency before allowing device initiated link pm.
+Make sure to stop all I/O on disconnect by adding a disconnected flag
+which is used to prevent new I/O from being started and by stopping all
+ongoing I/O before returning.
 
-Fix this by continue walking and checking endpoint service interval if
-xhci_get_timeout_no_hub_lpm() returns anything else than USB3_LPM_DISABLED
+This also fixes a potential use-after-free on driver unbind in case the
+driver data is freed before the completion handler has run.
 
-While at it fix the split line error message
-
-Tested-by: Jan Schmidt <jan@centricular.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/1570190373-30684-3-git-send-email-mathias.nyman@linux.intel.com
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable <stable@vger.kernel.org>	# 7bbe990c989e
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20190926091228.24634-7-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/usb/misc/usblcd.c |   33 +++++++++++++++++++++++++++++++--
+ 1 file changed, 31 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -4607,10 +4607,12 @@ static u16 xhci_calculate_lpm_timeout(st
- 		if (intf->dev.driver) {
- 			driver = to_usb_driver(intf->dev.driver);
- 			if (driver && driver->disable_hub_initiated_lpm) {
--				dev_dbg(&udev->dev, "Hub-initiated %s disabled "
--						"at request of driver %s\n",
--						state_name, driver->name);
--				return xhci_get_timeout_no_hub_lpm(udev, state);
-+				dev_dbg(&udev->dev, "Hub-initiated %s disabled at request of driver %s\n",
-+					state_name, driver->name);
-+				timeout = xhci_get_timeout_no_hub_lpm(udev,
-+								      state);
-+				if (timeout == USB3_LPM_DISABLED)
-+					return timeout;
- 			}
- 		}
+--- a/drivers/usb/misc/usblcd.c
++++ b/drivers/usb/misc/usblcd.c
+@@ -18,6 +18,7 @@
+ #include <linux/slab.h>
+ #include <linux/errno.h>
+ #include <linux/mutex.h>
++#include <linux/rwsem.h>
+ #include <linux/uaccess.h>
+ #include <linux/usb.h>
+ 
+@@ -57,6 +58,8 @@ struct usb_lcd {
+ 							   using up all RAM */
+ 	struct usb_anchor	submitted;		/* URBs to wait for
+ 							   before suspend */
++	struct rw_semaphore	io_rwsem;
++	unsigned long		disconnected:1;
+ };
+ #define to_lcd_dev(d) container_of(d, struct usb_lcd, kref)
+ 
+@@ -142,6 +145,13 @@ static ssize_t lcd_read(struct file *fil
+ 
+ 	dev = file->private_data;
+ 
++	down_read(&dev->io_rwsem);
++
++	if (dev->disconnected) {
++		retval = -ENODEV;
++		goto out_up_io;
++	}
++
+ 	/* do a blocking bulk read to get data from the device */
+ 	retval = usb_bulk_msg(dev->udev,
+ 			      usb_rcvbulkpipe(dev->udev,
+@@ -158,6 +168,9 @@ static ssize_t lcd_read(struct file *fil
+ 			retval = bytes_read;
+ 	}
+ 
++out_up_io:
++	up_read(&dev->io_rwsem);
++
+ 	return retval;
+ }
+ 
+@@ -237,11 +250,18 @@ static ssize_t lcd_write(struct file *fi
+ 	if (r < 0)
+ 		return -EINTR;
+ 
++	down_read(&dev->io_rwsem);
++
++	if (dev->disconnected) {
++		retval = -ENODEV;
++		goto err_up_io;
++	}
++
+ 	/* create a urb, and a buffer for it, and copy the data to the urb */
+ 	urb = usb_alloc_urb(0, GFP_KERNEL);
+ 	if (!urb) {
+ 		retval = -ENOMEM;
+-		goto err_no_buf;
++		goto err_up_io;
+ 	}
+ 
+ 	buf = usb_alloc_coherent(dev->udev, count, GFP_KERNEL,
+@@ -278,6 +298,7 @@ static ssize_t lcd_write(struct file *fi
+ 	   the USB core will eventually free it entirely */
+ 	usb_free_urb(urb);
+ 
++	up_read(&dev->io_rwsem);
+ exit:
+ 	return count;
+ error_unanchor:
+@@ -285,7 +306,8 @@ error_unanchor:
+ error:
+ 	usb_free_coherent(dev->udev, count, buf, urb->transfer_dma);
+ 	usb_free_urb(urb);
+-err_no_buf:
++err_up_io:
++	up_read(&dev->io_rwsem);
+ 	up(&dev->limit_sem);
+ 	return retval;
+ }
+@@ -325,6 +347,7 @@ static int lcd_probe(struct usb_interfac
+ 
+ 	kref_init(&dev->kref);
+ 	sema_init(&dev->limit_sem, USB_LCD_CONCURRENT_WRITES);
++	init_rwsem(&dev->io_rwsem);
+ 	init_usb_anchor(&dev->submitted);
+ 
+ 	dev->udev = usb_get_dev(interface_to_usbdev(interface));
+@@ -422,6 +445,12 @@ static void lcd_disconnect(struct usb_in
+ 	/* give back our minor */
+ 	usb_deregister_dev(interface, &lcd_class);
+ 
++	down_write(&dev->io_rwsem);
++	dev->disconnected = 1;
++	up_write(&dev->io_rwsem);
++
++	usb_kill_anchored_urbs(&dev->submitted);
++
+ 	/* decrement our usage count */
+ 	kref_put(&dev->kref, lcd_delete);
  
 
 
