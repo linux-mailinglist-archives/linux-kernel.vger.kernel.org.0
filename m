@@ -2,150 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D65BD902E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:59:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31D2AD9047
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:02:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387476AbfJPL7B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 07:59:01 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37752 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726372AbfJPL7B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 07:59:01 -0400
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5A8B17FDE9
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 11:59:00 +0000 (UTC)
-Received: by mail-wm1-f70.google.com with SMTP id k184so1107306wmk.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 04:59:00 -0700 (PDT)
+        id S2388369AbfJPMCc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 08:02:32 -0400
+Received: from mail-yb1-f171.google.com ([209.85.219.171]:46893 "EHLO
+        mail-yb1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726372AbfJPMCa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 08:02:30 -0400
+Received: by mail-yb1-f171.google.com with SMTP id h202so7686337ybg.13;
+        Wed, 16 Oct 2019 05:02:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EOhSKFRNbWN9yAKzmfHZhTX3n/eFbcTEsWwMp45CFAs=;
+        b=TyIjvHv1QNRUaN9ssWTSYEbK8f71Pqr3Kvr83aPOr/hw6LT/GfgSrLD2+591ntEA1+
+         8GsDrCPs48egEjJ4IwvVxdlmj1RVflJKN7/0COHg+ZFp+px7zTN1JjUgLn2Gqzs+PEkL
+         4lOaIXR+OIh2v9fVniopcIyvdHCIr9Qk9Uy9YIYX4SL5XE0Sd/No7WHReeCMLC+lxowG
+         fuXrJt0dRRzsPu9JOhTEg6lzRY7Vto2uGYpwzF2hivVskp4GrooW/vWjJDTTfjpJOIu7
+         /yWF944aOvp8Kn/h8XCmrR8Auc10Yu7QcN1/LIqWasRL4906nTIQ9LfJ9hQJol8YidHP
+         w9xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=iQqLr0072EPsnTxt9Tx21FXVuFvWLQZSEt/0llfkeOA=;
-        b=WjwqEqgS61VtAectjHI/os0huTSyJy3vHD7JOhXAy1P7I2pzIQVkXjxmvgnzsz+Jlf
-         7odHrXIf6o5Jmb9/YOF5bovsVEjCpSiebYSDR9oj4CZFwpY3ocwoqCskuXZW4EuNOba/
-         fvQika3v61ZjRC7PTyVdBazsicCWVy8zANwkBjUcYDcey2c1Dh5XCRYzi+XB8qCEl9AP
-         rsLvodw8YImRnBQv6IfaVgOVzZZx2FaLXZyoQna1PPOpe8vaNuAjMmHAt4/p+NAEDxgf
-         tXA3tSEZhJzoNu+JesuGeCJMK2pnvMBpews8v3sBkyTzvu53Wo85XBK7S9Aklg9loMCi
-         5blQ==
-X-Gm-Message-State: APjAAAXexUzV17POpCQ0yDhpug9do76uvRa1JqO5Q6sbtV2tkXU6JBYt
-        qWYyk9XJg/D3hphOy6ljn1t5YnbNME8nUaUHHSIPdhqbv8UaYS5KQ0P0ZQWdYAItSO3ErMSbZXa
-        FteBFhJef6Maz71pNhDaCp9ss
-X-Received: by 2002:adf:ecc7:: with SMTP id s7mr2398976wro.305.1571227138943;
-        Wed, 16 Oct 2019 04:58:58 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyPn2WqMqrALmzAf7rRPCploJic5/A4+kCdmkuSxok12U/qcGXOFuOtsmSdfRterPobr4w6Pg==
-X-Received: by 2002:adf:ecc7:: with SMTP id s7mr2398937wro.305.1571227138615;
-        Wed, 16 Oct 2019 04:58:58 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:d001:591b:c73b:6c41? ([2001:b07:6468:f312:d001:591b:c73b:6c41])
-        by smtp.gmail.com with ESMTPSA id u11sm2148223wmd.32.2019.10.16.04.58.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2019 04:58:58 -0700 (PDT)
-Subject: Re: [PATCH v9 09/17] x86/split_lock: Handle #AC exception for split
- lock
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Xiaoyao Li <xiaoyao.li@intel.com>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        x86 <x86@kernel.org>, kvm@vger.kernel.org
-References: <1560897679-228028-1-git-send-email-fenghua.yu@intel.com>
- <1560897679-228028-10-git-send-email-fenghua.yu@intel.com>
- <alpine.DEB.2.21.1906262209590.32342@nanos.tec.linutronix.de>
- <20190626203637.GC245468@romley-ivt3.sc.intel.com>
- <alpine.DEB.2.21.1906262338220.32342@nanos.tec.linutronix.de>
- <20190925180931.GG31852@linux.intel.com>
- <3ec328dc-2763-9da5-28d6-e28970262c58@redhat.com>
- <alpine.DEB.2.21.1910161142560.2046@nanos.tec.linutronix.de>
- <57f40083-9063-5d41-f06d-fa1ae4c78ec6@redhat.com>
- <alpine.DEB.2.21.1910161244060.2046@nanos.tec.linutronix.de>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <3a12810b-1196-b70a-aa2e-9fe17dc7341a@redhat.com>
-Date:   Wed, 16 Oct 2019 13:58:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EOhSKFRNbWN9yAKzmfHZhTX3n/eFbcTEsWwMp45CFAs=;
+        b=moLOURSrbXjuvb3AAdXAtTIykj5nrpwAIq8alUzptr9inmYkveW3QLOLunjgT/zNDq
+         B+26YbM6RrH9XY4hiWergf7r5kKOkP69/TXm1ramwqDJuZ2HFE5CPAQX8IvfHgcX+th8
+         R/U9cJhvJBb+4P6RLbqfdF/Pb9stCyEJdOwyQFwSSAsySo+dsyzuULy0sABYLc7AZon3
+         1g6yeQEi+nX0CxgtZgnyQwlUFWCXI9GqIg3xI5vYeBmtmkqnWrfyhOhj22reRLC/XiaQ
+         Y7qSh4CEWWFg1U3zF/NUxuRstBcFXgmuVzP/vVV+30cn7YQubJ1lyDYNE277refe9w6M
+         Hqwg==
+X-Gm-Message-State: APjAAAWRbwJDnHL2Dqe2f/lwzeUobv6wkIac8tVFHtPkFldYvFuC2ITW
+        ndrN/v8JnNc/eaEmk6snxAhKEIPDX0piZDUau9c=
+X-Google-Smtp-Source: APXvYqyKwoSy9uDdUFDL7IGWquqEML0FnzeC6V6viQRoFG5+7DuKUjwaS7f9Rs5Uelml6CR6n79ZYlIgLQA9f2e/vGc=
+X-Received: by 2002:a25:cdca:: with SMTP id d193mr27663420ybf.60.1571227349079;
+ Wed, 16 Oct 2019 05:02:29 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1910161244060.2046@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191015123830.GA1797@ls3530.fritz.box> <157115910290.6841.17729342283243489680.pr-tracker-bot@kernel.org>
+In-Reply-To: <157115910290.6841.17729342283243489680.pr-tracker-bot@kernel.org>
+From:   Carlo Pisani <carlojpisani@gmail.com>
+Date:   Wed, 16 Oct 2019 14:02:17 +0200
+Message-ID: <CA+QBN9D+hg3PkJG9Wb99TqK7AHb-tVEo3R7Um0zuegqc_YTqrA@mail.gmail.com>
+Subject: working PCI SATA cards
+To:     pr-tracker-bot@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/10/19 13:49, Thomas Gleixner wrote:
-> On Wed, 16 Oct 2019, Paolo Bonzini wrote:
->> Yes it does.  But Sean's proposal, as I understand it, leads to the
->> guest receiving #AC when it wasn't expecting one.  So for an old guest,
->> as soon as the guest kernel happens to do a split lock, it gets an
->> unexpected #AC and crashes and burns.  And then, after much googling and
->> gnashing of teeth, people proceed to disable split lock detection.
-> 
-> I don't think that this was what he suggested/intended.
+hi
+after weeks of testing activities, I confirm the following SATA cards
+do work with C3600 workstation running Linux >= 5.1
 
-Xiaoyao's reply suggests that he also understood it like that.
-
->> In all of these cases, the common final result is that split-lock
->> detection is disabled on the host.  So might as well go with the
->> simplest one and not pretend to virtualize something that (without core
->> scheduling) is obviously not virtualizable.
-> 
-> You are completely ignoring any argument here and just leave it behind your
-> signature (instead of trimming your reply).
-
-I am not ignoring them, I think there is no doubt that this is the
-intended behavior.  I disagree that Sean's patches achieve it, however.
-
->>> 1) Sane guest
->>>
->>> Guest kernel has #AC handler and you basically prevent it from
->>> detecting malicious user space and killing it. You also prevent #AC
->>> detection in the guest kernel which limits debugability.
-> 
-> That's a perfectly fine situation. Host has #AC enabled and exposes the
-> availability of #AC to the guest. Guest kernel has a proper handler and
-> does the right thing. So the host _CAN_ forward #AC to the guest and let it
-> deal with it. For that to work you need to expose the MSR so you know the
-> guest state in the host.
-> 
-> Your lazy 'solution' just renders #AC completely useless even for
-> debugging.
-> 
->>> 2) Malicious guest
->>>
->>> Trigger #AC to disable the host detection and then carry out the DoS 
->>> attack.
-> 
-> With your proposal you render #AC useless even on hosts which have SMT
-> disabled, which is just wrong. There are enough good reasons to disable
-> SMT.
-
-My lazy "solution" only applies to SMT enabled.  When SMT is either not
-supported, or disabled as in "nosmt=force", we can virtualize it like
-the posted patches have done so far.
-
-> I agree that with SMT enabled the situation is truly bad, but we surely can
-> be smarter than just disabling it globally unconditionally and forever.
-> 
-> Plus we want a knob which treats guests triggering #AC in the same way as
-> we treat user space, i.e. kill them with SIGBUS.
-
-Yes, that's a valid alternative.  But if SMT is possible, I think the
-only sane possibilities are global disable and SIGBUS.  SIGBUS (or
-better, a new KVM_RUN exit code) can be acceptable for debugging guests too.
-
-Paolo
+- HighPoint RocketRAID 2224
+- Highpoint RocketRAID 1640
+- SYBA-SY-PCX40009
+- Adaptec 1210SA
