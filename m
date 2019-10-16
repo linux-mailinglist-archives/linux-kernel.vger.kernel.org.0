@@ -2,73 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E4A5DA05F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:25:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C49D6DA0AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:25:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407253AbfJPWKq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:10:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35114 "EHLO mail.kernel.org"
+        id S2439339AbfJPWON (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:14:13 -0400
+Received: from mga01.intel.com ([192.55.52.88]:64007 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2407243AbfJPWKo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 18:10:44 -0400
-Received: from localhost (unknown [192.55.54.58])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3490D2168B;
-        Wed, 16 Oct 2019 22:10:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263844;
-        bh=wRPRx59clYqvUpZMC7DRBJZmjJM/PP5JMQYLM6iKfrM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=a7gwYWoHqwcRdWaqK8CFEiFoOWi4S/TMuYIW1WxYqrMRDPmB7Gwg4WgiIHgBHX/18
-         w4tYaVj9aS5w66G631mvEfl7IGp8I9C0kYrP3oJRiHSou2aEgghad5eaKJzxHc1AiK
-         kd5XvGsh3b1X+xBh0oTuFcvZVr13SQ5RZK6MOLdg=
-Date:   Wed, 16 Oct 2019 15:10:25 -0700
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Mark Brown <broonie@kernel.org>,
-        Richard Leitner <richard.leitner@skidata.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Igor Opaniuk <igor.opaniuk@toradex.com>,
-        Fabio Estevam <festevam@gmail.com>
-Subject: Re: [PATCH 5.3 112/112] ASoC: sgtl5000: add ADC mute control
-Message-ID: <20191016221025.GA990599@kroah.com>
-References: <20191016214844.038848564@linuxfoundation.org>
- <20191016214907.599726506@linuxfoundation.org>
- <20191016220044.GB11473@sirena.co.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191016220044.GB11473@sirena.co.uk>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+        id S2405224AbfJPWOK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 18:14:10 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2019 15:14:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,305,1566889200"; 
+   d="scan'208";a="208057636"
+Received: from viggo.jf.intel.com (HELO localhost.localdomain) ([10.54.77.144])
+  by orsmga002.jf.intel.com with ESMTP; 16 Oct 2019 15:14:09 -0700
+Subject: [PATCH 0/4] [RFC] Migrate Pages in lieu of discard
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, dan.j.williams@intel.com,
+        Dave Hansen <dave.hansen@linux.intel.com>
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Date:   Wed, 16 Oct 2019 15:11:48 -0700
+Message-Id: <20191016221148.F9CCD155@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 11:00:44PM +0100, Mark Brown wrote:
-> On Wed, Oct 16, 2019 at 02:51:44PM -0700, Greg Kroah-Hartman wrote:
-> > From: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
-> > 
-> > commit 694b14554d75f2a1ae111202e71860d58b434a21 upstream.
-> > 
-> > This control mute/unmute the ADC input of SGTL5000
-> > using its CHIP_ANA_CTRL register.
-> 
-> This seems like a new feature and not an obvious candidate for stable?
+We're starting to see systems with more and more kinds of memory such
+as Intel's implementation of persistent memory.
 
-there was a long email from Richard that said:
-	Upstream commit 631bc8f0134a ("ASoC: sgtl5000: Fix of unmute
-	outputs on probe"), which is e9f621efaebd in v5.3 replaced
-	snd_soc_component_write with snd_soc_component_update_bits and
-	therefore no longer cleared the MUTE_ADC flag. This caused the
-	ADC to stay muted and recording doesn't work any longer. This
-	patch fixes this problem by adding a Switch control for
-	MUTE_ADC.
+Let's say you have a system with some DRAM and some persistent memory.
+Today, once DRAM fills up, reclaim will start and some of the DRAM
+contents will be thrown out.  Allocations will, at some point, start
+falling over to the slower persistent memory.
 
-That's why I took this.  If this isn't true, I'll be glad to drop this.
+That has two nasty properties.  First, the newer allocations can end
+up in the slower persistent memory.  Second, reclaimed data in DRAM
+are just discarded even if there are gobs of space in persistent
+memory that could be used.
 
-thanks,
+This set implements a solution to these problems.  At the end of the
+reclaim process in shrink_page_list() just before the last page
+refcount is dropped, the page is migrated to persistent memory instead
+of being dropped.
 
-greg k-h
+While I've talked about a DRAM/PMEM pairing, this approach would
+function in any environment where memory tiers exist.
+
+This is not perfect.  It "strands" pages in slower memory and never
+brings them back to fast DRAM.  Other things need to be built to
+promote hot pages back to DRAM.
+
+This is part of a larger patch set.  If you want to apply these or
+play with them, I'd suggest using the tree from here.  It includes
+autonuma-based hot page promotion back to DRAM:
+
+	http://lkml.kernel.org/r/c3d6de4d-f7c3-b505-2e64-8ee5f70b2118@intel.com
+
+This is also all based on an upstream mechanism that allows
+persistent memory to be onlined and used as if it were volatile:
+
+	http://lkml.kernel.org/r/20190124231441.37A4A305@viggo.jf.intel.com
