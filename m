@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CF32D9E9C
+	by mail.lfdr.de (Postfix) with ESMTP id E0F90D9E9D
 	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438658AbfJPV7w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:59:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52708 "EHLO mail.kernel.org"
+        id S2406733AbfJPV7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:59:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52728 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438276AbfJPV6t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:58:49 -0400
+        id S2438278AbfJPV6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:58:50 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75C3321928;
-        Wed, 16 Oct 2019 21:58:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 445C420872;
+        Wed, 16 Oct 2019 21:58:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263128;
-        bh=RR3rpb/NWDOjZesUdv/4qJSanHshBDUM1P6TXdKXDcg=;
+        s=default; t=1571263129;
+        bh=vO0yUZV65ERdk3w+vcfuwASmrtK1bHnh3veVjPqCnuY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uCtyvcH5amPypjJfAUcInV18x+1DGPOF38T+14Hm5YzG0kMrHkLklvPAYIVKTulJc
-         XP3tNQaGbJLtaoNwXtIaWwInWAA7vvORvvk1hjqOZvJfBsoDsMpcyzEch4QVBwivms
-         nyjpNWrEJTElQvrDUdLVKXSCTpO8wKb2YeV4+BQg=
+        b=Bl/lUss3I5eG5XpRIMVdtWdy7YHBLcX1xHg6oAnTbMMI/kYrVUVTCDdMaCVlFHAmf
+         TPbU31WQIGGkarPsm4vUzDaQH/0n89w1H5dhNhFL5orNaVLdjNWEZmOA63mJbwdwwW
+         44jQNObDhldViye/KlzD+sR4TjplgpChqHlrW/EM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Navid Emamdoost <navid.emamdoost@gmail.com>
-Subject: [PATCH 5.3 051/112] staging: vt6655: Fix memory leak in vt6655_probe
-Date:   Wed, 16 Oct 2019 14:50:43 -0700
-Message-Id: <20191016214857.295568959@linuxfoundation.org>
+        stable@vger.kernel.org, Andreas Klinger <ak@it-klinger.de>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 5.3 052/112] iio: adc: hx711: fix bug in sampling of data
+Date:   Wed, 16 Oct 2019 14:50:44 -0700
+Message-Id: <20191016214857.800085108@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
 References: <20191016214844.038848564@linuxfoundation.org>
@@ -42,37 +44,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Andreas Klinger <ak@it-klinger.de>
 
-commit 80b15db5e1e9c3300de299b2d43d1aafb593e6ac upstream.
+commit 4043ecfb5fc4355a090111e14faf7945ff0fdbd5 upstream.
 
-In vt6655_probe, if vnt_init() fails the cleanup code needs to be called
-like other error handling cases. The call to device_free_info() is
-added.
+Fix bug in sampling function hx711_cycle() when interrupt occures while
+PD_SCK is high. If PD_SCK is high for at least 60 us power down mode of
+the sensor is entered which in turn leads to a wrong measurement.
 
-Fixes: 67013f2c0e58 ("staging: vt6655: mac80211 conversion add main mac80211 functions")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191004200319.22394-1-navid.emamdoost@gmail.com
+Switch off interrupts during a PD_SCK high period and move query of DOUT
+to the latest point of time which is at the end of PD_SCK low period.
+
+This bug exists in the driver since it's initial addition. The more
+interrupts on the system the higher is the probability that it happens.
+
+Fixes: c3b2fdd0ea7e ("iio: adc: hx711: Add IIO driver for AVIA HX711")
+Signed-off-by: Andreas Klinger <ak@it-klinger.de>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/vt6655/device_main.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/iio/adc/hx711.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/drivers/staging/vt6655/device_main.c
-+++ b/drivers/staging/vt6655/device_main.c
-@@ -1748,8 +1748,10 @@ vt6655_probe(struct pci_dev *pcid, const
+--- a/drivers/iio/adc/hx711.c
++++ b/drivers/iio/adc/hx711.c
+@@ -100,14 +100,14 @@ struct hx711_data {
  
- 	priv->hw->max_signal = 100;
+ static int hx711_cycle(struct hx711_data *hx711_data)
+ {
+-	int val;
++	unsigned long flags;
  
--	if (vnt_init(priv))
-+	if (vnt_init(priv)) {
-+		device_free_info(priv);
- 		return -ENODEV;
-+	}
+ 	/*
+ 	 * if preempted for more then 60us while PD_SCK is high:
+ 	 * hx711 is going in reset
+ 	 * ==> measuring is false
+ 	 */
+-	preempt_disable();
++	local_irq_save(flags);
+ 	gpiod_set_value(hx711_data->gpiod_pd_sck, 1);
  
- 	device_print_info(priv);
- 	pci_set_drvdata(pcid, priv);
+ 	/*
+@@ -117,7 +117,6 @@ static int hx711_cycle(struct hx711_data
+ 	 */
+ 	ndelay(hx711_data->data_ready_delay_ns);
+ 
+-	val = gpiod_get_value(hx711_data->gpiod_dout);
+ 	/*
+ 	 * here we are not waiting for 0.2 us as suggested by the datasheet,
+ 	 * because the oscilloscope showed in a test scenario
+@@ -125,7 +124,7 @@ static int hx711_cycle(struct hx711_data
+ 	 * and 0.56 us for PD_SCK low on TI Sitara with 800 MHz
+ 	 */
+ 	gpiod_set_value(hx711_data->gpiod_pd_sck, 0);
+-	preempt_enable();
++	local_irq_restore(flags);
+ 
+ 	/*
+ 	 * make it a square wave for addressing cases with capacitance on
+@@ -133,7 +132,8 @@ static int hx711_cycle(struct hx711_data
+ 	 */
+ 	ndelay(hx711_data->data_ready_delay_ns);
+ 
+-	return val;
++	/* sample as late as possible */
++	return gpiod_get_value(hx711_data->gpiod_dout);
+ }
+ 
+ static int hx711_read(struct hx711_data *hx711_data)
 
 
