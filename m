@@ -2,75 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39AFBDA219
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 01:25:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD1FDDA21F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 01:26:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406080AbfJPXZ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 19:25:28 -0400
-Received: from smtprelay0045.hostedemail.com ([216.40.44.45]:56242 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725970AbfJPXZ2 (ORCPT
+        id S2406752AbfJPX0A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 19:26:00 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44484 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406711AbfJPXZ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 19:25:28 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id B26C85832;
-        Wed, 16 Oct 2019 23:25:26 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3167:3352:3622:3865:3866:3867:3868:3870:3871:4321:5007:6742:7875:7903:10004:10400:11232:11658:11914:12297:12663:12740:12760:12895:13069:13311:13357:13439:14659:21080:21433:21627:21740:30003:30054:30090:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
-X-HE-Tag: flock47_2f3f58b870741
-X-Filterd-Recvd-Size: 2044
-Received: from XPS-9350.home (unknown [47.151.152.152])
-        (Authenticated sender: joe@perches.com)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 16 Oct 2019 23:25:24 +0000 (UTC)
-Message-ID: <3f2feed96a3569e2a27051864ae5e8a84ce634b4.camel@perches.com>
-Subject: Re: [PATCH v3] x86, efi: never relocate kernel below lowest
- acceptable address
-From:   Joe Perches <joe@perches.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Kairui Song <kasong@redhat.com>, linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
-        x86@kernel.org, linux-efi@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Date:   Wed, 16 Oct 2019 16:25:23 -0700
-In-Reply-To: <20191016154842.GJ1138@zn.tnic>
-References: <20191012034421.25027-1-kasong@redhat.com>
-         <20191014101419.GA4715@zn.tnic> <20191014202111.GP15552@linux.intel.com>
-         <20191014211825.GJ4715@zn.tnic> <20191016152014.GC4261@linux.intel.com>
-         <fb0e7c13da405970d5cbd59c10005daaf970b8da.camel@perches.com>
-         <20191016154842.GJ1138@zn.tnic>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
+        Wed, 16 Oct 2019 19:25:59 -0400
+Received: by mail-pg1-f194.google.com with SMTP id e10so137743pgd.11
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 16:25:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:from:to:cc:subject:user-agent:date;
+        bh=Qrvxi8VNIEP80MdoyXCLvX2dInmjYNYid6pa9CMx9/Y=;
+        b=C1LD66Kn8oz6QcB4JFdprXZte3otJEvF9M2x3YmxrvIbQz6oHdj2oYpj6OogvYQljn
+         rf6QL47fvOLb9HjbUEL+2zH59ECPYOgGXzagCFaZwp5GT1KcjTwrwM9pucVnjfhIlqBD
+         ciUxzWRdllOfvxfpCZ3JK+oraf4kD0CEdfFdU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:from:to:cc:subject
+         :user-agent:date;
+        bh=Qrvxi8VNIEP80MdoyXCLvX2dInmjYNYid6pa9CMx9/Y=;
+        b=PL1f3l0yBk83zED3nWNwdITxPoCBPYFDA1nmZPBkKoX1GEsY9GfNf+ILmXj0fEG+v6
+         HKZN1bRR9hQMUK9Co8IWQRwJzTfLrnJFJZctymgDcYJRhkNGCqUwC3OW/8TFuH37ke2d
+         Kzf5aPg0z0ffxFqofuNSf92NpI5qhEFvmj2/fokGnNKc1N+hcAzGz7GUT3sK9nxUhfmQ
+         gHDTNRPa+waezRqNgk23//VKxF9aewp2BEvhqfBkI2Zkdpftyt+iv59cwunAGlshyOwt
+         iUBqObeQ8nhfw5tFjbrNNCPSjmG76PAlcFrpGEA4bi7C6fq5XCAxZhdb+ELex0v4wIIq
+         EAtg==
+X-Gm-Message-State: APjAAAUu6xKkYorMQ3PJeYVzso+CCCZPs1YsfXpfz+hfysFo5QMdhWeW
+        DUWZlW8lCJxQQMJUF+udHKXK+AFVPYvBvQ==
+X-Google-Smtp-Source: APXvYqzwan96igiVoJXoXnp0dlhIkgKisPOSNOslthiLl2WjZnd3MQpnyD29PbzVpemNzqdv3BAF4A==
+X-Received: by 2002:a65:644c:: with SMTP id s12mr708041pgv.319.1571268358755;
+        Wed, 16 Oct 2019 16:25:58 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id y6sm182241pfp.82.2019.10.16.16.25.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2019 16:25:58 -0700 (PDT)
+Message-ID: <5da7a706.1c69fb81.7818.0cfe@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191016143101.28738-1-geert+renesas@glider.be>
+References: <20191016143101.28738-1-geert+renesas@glider.be>
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>
+Cc:     linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH] spi: rspi: Use platform_get_irq_byname_optional() for optional irqs
+User-Agent: alot/0.8.1
+Date:   Wed, 16 Oct 2019 16:25:57 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-10-16 at 17:48 +0200, Borislav Petkov wrote:
-> On Wed, Oct 16, 2019 at 08:23:56AM -0700, Joe Perches wrote:
-> > ?  examples please.
-> 
-> From this very thread:
-> 
-> \sEfi\s, \sefi\s, \seFI\s etc should be "EFI"
-> 
-> I'm thinking perhaps start conservatively and catch the most often
-> misspelled ones in commit messages or comments. "CPU", "SMT", "MCE",
-> "MCA", "PCI" etc come to mind.
-> 
-> > checkpatch has a db for misspellings, I supposed another for
-> > acronyms could be added,
-> 
-> Doesn't have to be another one - established acronyms are part of the
-> dictionary too.
+Quoting Geert Uytterhoeven (2019-10-16 07:31:01)
+> As platform_get_irq_byname() now prints an error when the interrupt
+> does not exist, scary warnings may be printed for optional interrupts:
+>=20
+>     renesas_spi e6b10000.spi: IRQ rx not found
+>     renesas_spi e6b10000.spi: IRQ mux not found
+>=20
+> Fix this by calling platform_get_irq_byname_optional() instead.
+> Remove the no longer needed printing of platform_get_irq errors, as the
+> remaining calls to platform_get_irq() and platform_get_irq_byname() take
+> care of that.
+>=20
+> Fixes: 7723f4c5ecdb8d83 ("driver core: platform: Add an error message to =
+platform_get_irq*()")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-Couldn't work.  The dictionary is case insensitive.
-
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
