@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F407D9EA5
+	by mail.lfdr.de (Postfix) with ESMTP id E8B70D9EA6
 	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438723AbfJPWAM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:00:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53496 "EHLO mail.kernel.org"
+        id S2438732AbfJPWAO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:00:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438401AbfJPV7H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:59:07 -0400
+        id S1726231AbfJPV7I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:59:08 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1AD6B21D80;
+        by mail.kernel.org (Postfix) with ESMTPSA id DE54221A4C;
         Wed, 16 Oct 2019 21:59:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263147;
-        bh=Bz5u3wlAT5/Ku/jxzSaX7pLfTV0CjBM4TdeuqkeqQnk=;
+        s=default; t=1571263148;
+        bh=uySbU/iStrpg7gYqVAO/jw0Lt6eyVT6b5EdH9JhGSaU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CXQ+AJb6yNoDfD8jjIzO+wTH4veJu02zUD7FU+a35Z26xiX5lHWsWJh5h7KAjHFIn
-         EW5jDdmAQuR4ewhcn2cClp07FPI4wtLp0torNBPTtYDhvkkHtD28iwEWmgf7CYIrVG
-         KnJ2ebgr1eCHu5r+LcpHvG1oAG7kLZ1lkurWKgBw=
+        b=f5uKPT06r378iZZK/osr3cpQ8Ksn/XcJo5ESnIVCGZ+GwUEf9cgz8p35DauIkot14
+         pKmgeMNt/FxTRgn+Ig6APtNI1QXdMx6wk5eFAoarXHJGqlSyx6b4TyUMlgKOx2kLj0
+         myg+t/hnZoNZ+mhWdq0vgxer+gc35OQ8Bvmb9rw4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Reinhard Speyerer <rspmn@arcor.de>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 5.3 029/112] USB: serial: option: add support for Cinterion CLS8 devices
-Date:   Wed, 16 Oct 2019 14:50:21 -0700
-Message-Id: <20191016214852.919058996@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 5.3 030/112] USB: serial: fix runtime PM after driver unbind
+Date:   Wed, 16 Oct 2019 14:50:22 -0700
+Message-Id: <20191016214853.073187033@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
 References: <20191016214844.038848564@linuxfoundation.org>
@@ -43,65 +42,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Reinhard Speyerer <rspmn@arcor.de>
+From: Johan Hovold <johan@kernel.org>
 
-commit dfbac2f4da6a0c4a8f6b4d715a4077a7b8df53ad upstream.
+commit d51bdb93ca7e71d7fb30a572c7b47ed0194bf3fe upstream.
 
-Add support for the serial ports of Cinterion CLS8 devices.
+Since commit c2b71462d294 ("USB: core: Fix bug caused by duplicate
+interface PM usage counter") USB drivers must always balance their
+runtime PM gets and puts, including when the driver has already been
+unbound from the interface.
 
-T:  Bus=01 Lev=03 Prnt=05 Port=01 Cnt=02 Dev#= 25 Spd=480  MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=1e2d ProdID=00b0 Rev= 3.18
-S:  Manufacturer=GEMALTO
-S:  Product=USB Modem
-C:* #Ifs= 5 Cfg#= 1 Atr=80 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=83(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=85(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=87(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=86(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
-E:  Ad=89(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
-E:  Ad=88(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+Leaving the interface with a positive PM usage counter would prevent a
+later bound driver from suspending the device.
 
-Signed-off-by: Reinhard Speyerer <rspmn@arcor.de>
+Fixes: c2b71462d294 ("USB: core: Fix bug caused by duplicate interface PM usage counter")
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191001084908.2003-4-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/option.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/serial/usb-serial.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -419,6 +419,7 @@ static void option_instat_callback(struc
- #define CINTERION_PRODUCT_PH8_AUDIO		0x0083
- #define CINTERION_PRODUCT_AHXX_2RMNET		0x0084
- #define CINTERION_PRODUCT_AHXX_AUDIO		0x0085
-+#define CINTERION_PRODUCT_CLS8			0x00b0
+--- a/drivers/usb/serial/usb-serial.c
++++ b/drivers/usb/serial/usb-serial.c
+@@ -314,10 +314,7 @@ static void serial_cleanup(struct tty_st
+ 	serial = port->serial;
+ 	owner = serial->type->driver.owner;
  
- /* Olivetti products */
- #define OLIVETTI_VENDOR_ID			0x0b3c
-@@ -1855,6 +1856,8 @@ static const struct usb_device_id option
- 	  .driver_info = RSVD(4) },
- 	{ USB_DEVICE_INTERFACE_CLASS(CINTERION_VENDOR_ID, CINTERION_PRODUCT_AHXX_2RMNET, 0xff) },
- 	{ USB_DEVICE_INTERFACE_CLASS(CINTERION_VENDOR_ID, CINTERION_PRODUCT_AHXX_AUDIO, 0xff) },
-+	{ USB_DEVICE_INTERFACE_CLASS(CINTERION_VENDOR_ID, CINTERION_PRODUCT_CLS8, 0xff),
-+	  .driver_info = RSVD(0) | RSVD(4) },
- 	{ USB_DEVICE(CINTERION_VENDOR_ID, CINTERION_PRODUCT_HC28_MDM) },
- 	{ USB_DEVICE(CINTERION_VENDOR_ID, CINTERION_PRODUCT_HC28_MDMNET) },
- 	{ USB_DEVICE(SIEMENS_VENDOR_ID, CINTERION_PRODUCT_HC25_MDM) },
+-	mutex_lock(&serial->disc_mutex);
+-	if (!serial->disconnected)
+-		usb_autopm_put_interface(serial->interface);
+-	mutex_unlock(&serial->disc_mutex);
++	usb_autopm_put_interface(serial->interface);
+ 
+ 	usb_serial_put(serial);
+ 	module_put(owner);
 
 
