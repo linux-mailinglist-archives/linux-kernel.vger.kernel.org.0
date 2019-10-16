@@ -2,319 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB27CD8AC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:22:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69B45D8AC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:23:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391559AbfJPIWi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 04:22:38 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56214 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391502AbfJPIWf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 04:22:35 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 178743082135;
-        Wed, 16 Oct 2019 08:22:35 +0000 (UTC)
-Received: from krava.brq.redhat.com (unknown [10.43.17.61])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C04481001B08;
-        Wed, 16 Oct 2019 08:22:32 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Andi Kleen <ak@linux.intel.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Stephane Eranian <eranian@google.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH 2/2] perf tools: Make 'struct map_shared' truly shared
-Date:   Wed, 16 Oct 2019 10:22:26 +0200
-Message-Id: <20191016082226.10325-3-jolsa@kernel.org>
-In-Reply-To: <20191016082226.10325-1-jolsa@kernel.org>
-References: <20191016082226.10325-1-jolsa@kernel.org>
+        id S2404085AbfJPIXV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 04:23:21 -0400
+Received: from mail-eopbgr140089.outbound.protection.outlook.com ([40.107.14.89]:45635
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388263AbfJPIXU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 04:23:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AZbofYpIDbV28hSpTOVjYlizA67F1XAVucWkprlnXVk=;
+ b=3thg8Yaaur1/xi+m0yeUN6lTh5meMhUtQJG4lqkR39bP33nhCuTvHYpmkOjAPiAS3uN8rTs7eNgi9AMYJtBk1GJDxAdTUGYzNK23BKLuvd54ZatFQAQP9ZiFCyWKb0HDgqVE0y5xSqlleg5yyZOw6wseTPcoCxHuaiO2iA1hVNg=
+Received: from HE1PR0802CA0021.eurprd08.prod.outlook.com (2603:10a6:3:bd::31)
+ by VI1PR0801MB2031.eurprd08.prod.outlook.com (2603:10a6:800:8b::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2347.16; Wed, 16 Oct
+ 2019 08:23:14 +0000
+Received: from DB5EUR03FT058.eop-EUR03.prod.protection.outlook.com
+ (2a01:111:f400:7e0a::204) by HE1PR0802CA0021.outlook.office365.com
+ (2603:10a6:3:bd::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2347.16 via Frontend
+ Transport; Wed, 16 Oct 2019 08:23:13 +0000
+Authentication-Results: spf=temperror (sender IP is 63.35.35.123)
+ smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
+ header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=none action=none
+ header.from=arm.com;
+Received-SPF: TempError (protection.outlook.com: error in processing during
+ lookup of arm.com: DNS Timeout)
+Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
+ DB5EUR03FT058.mail.protection.outlook.com (10.152.20.255) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.2305.15 via Frontend Transport; Wed, 16 Oct 2019 08:23:12 +0000
+Received: ("Tessian outbound 0cf06bf5c60e:v33"); Wed, 16 Oct 2019 08:23:10 +0000
+X-CheckRecipientChecked: true
+X-CR-MTA-CID: 39db470f410efa4d
+X-CR-MTA-TID: 64aa7808
+Received: from 84e95bfba6bf.2 (ip-172-16-0-2.eu-west-1.compute.internal [104.47.0.54])
+        by 64aa7808-outbound-1.mta.getcheckrecipient.com id E98B294B-E23E-4045-9D39-6504C6096F75.1;
+        Wed, 16 Oct 2019 08:23:04 +0000
+Received: from EUR01-HE1-obe.outbound.protection.outlook.com (mail-he1eur01lp2054.outbound.protection.outlook.com [104.47.0.54])
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id 84e95bfba6bf.2
+    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
+    Wed, 16 Oct 2019 08:23:04 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TFX9VY4C0huG5Qo8oq/tz0A/iy6fnRkVZtEmucfJZVPzS61VjUR8dJnPbVFpT9+KsricGgro8p1F5X6IoFiva4RYD+TyVYJwHkq0rfUtybNw6Wa9fUn+nZ7TeEfIg/yrlde6JR/wXSm5xEaS/plwwyqZl4zBmIu3UMgWf1TZraNl0I85yStHu1aSKzysdfHlu6kxqXFMWiJpc/4Xml+B1R0/H2+SMpJZgW3kzElakRUQsyTE385qfWF7QQvX8xAq25uHUVpujmK2oxzQmsAPgsiOUMVdyYhw6VmTJKwiiYf/gqZvzGtryw5AUFOkTsnOBca0PWuLe3jx1QbsK5tt0Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AZbofYpIDbV28hSpTOVjYlizA67F1XAVucWkprlnXVk=;
+ b=bQqL/8D4YCWlGEuBFluCRCaWvK1HFdkhsQmu/jbYwNdrtA0ALGCv7TWxlbhyKHiBMxjQC2jFU6ZlF64HLVnEi7SJBTLHKaMI+W+eynSxq0DRXM2SedpjkLTxfzJzBQUH4fdGLkN4uquawFtckKw0iA5ONETdhWQ3Snsim2tpneUeob6XNW/jRVMhfZBQ9QmZURCcZ5mY5rN5OHVickC73Mr1NWtTNB/JAqH7EFRdpSCjCgQqqTiVsEcU4hU9GAcOVZd+GryA11y9n+kNnnzq7v7f3EOm0EwVy2f720tbqKVranGXuHtpYChyr0pt1SK3mH1oDQeV+j/b7phnavKHeA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AZbofYpIDbV28hSpTOVjYlizA67F1XAVucWkprlnXVk=;
+ b=3thg8Yaaur1/xi+m0yeUN6lTh5meMhUtQJG4lqkR39bP33nhCuTvHYpmkOjAPiAS3uN8rTs7eNgi9AMYJtBk1GJDxAdTUGYzNK23BKLuvd54ZatFQAQP9ZiFCyWKb0HDgqVE0y5xSqlleg5yyZOw6wseTPcoCxHuaiO2iA1hVNg=
+Received: from VE1PR08MB5006.eurprd08.prod.outlook.com (10.255.159.31) by
+ VE1PR08MB5088.eurprd08.prod.outlook.com (10.255.158.94) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2347.17; Wed, 16 Oct 2019 08:23:03 +0000
+Received: from VE1PR08MB5006.eurprd08.prod.outlook.com
+ ([fe80::40ed:7ed3:90cf:ece5]) by VE1PR08MB5006.eurprd08.prod.outlook.com
+ ([fe80::40ed:7ed3:90cf:ece5%3]) with mapi id 15.20.2347.023; Wed, 16 Oct 2019
+ 08:23:03 +0000
+From:   "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+To:     Mihail Atanassov <Mihail.Atanassov@arm.com>
+CC:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        nd <nd@arm.com>
+Subject: Re: [v2] drm/komeda: Fix typos in komeda_splitter_validate
+Thread-Topic: [v2] drm/komeda: Fix typos in komeda_splitter_validate
+Thread-Index: AQHVg/rtmkxsWyZ8v0y88TcuY0W0UQ==
+Date:   Wed, 16 Oct 2019 08:23:03 +0000
+Message-ID: <20191016082255.GA18768@jamwan02-TSP300>
+References: <20190930122231.33029-1-mihail.atanassov@arm.com>
+In-Reply-To: <20190930122231.33029-1-mihail.atanassov@arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mutt/1.10.1 (2018-07-13)
+x-originating-ip: [113.29.88.7]
+x-clientproxiedby: HK2PR02CA0207.apcprd02.prod.outlook.com
+ (2603:1096:201:20::19) To VE1PR08MB5006.eurprd08.prod.outlook.com
+ (2603:10a6:803:113::31)
+Authentication-Results-Original: spf=none (sender IP is )
+ smtp.mailfrom=james.qian.wang@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+X-MS-Office365-Filtering-Correlation-Id: b99fdb83-50e3-4e76-59a5-08d7521215d8
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-TrafficTypeDiagnostic: VE1PR08MB5088:|VE1PR08MB5088:|VI1PR0801MB2031:
+x-ms-exchange-transport-forked: True
+X-Microsoft-Antispam-PRVS: <VI1PR0801MB2031795F3E3C92D9527864DAB3920@VI1PR0801MB2031.eurprd08.prod.outlook.com>
+x-checkrecipientrouted: true
+x-ms-oob-tlc-oobclassifiers: OLM:5797;OLM:5797;
+x-forefront-prvs: 0192E812EC
+X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(4636009)(7916004)(39860400002)(136003)(396003)(346002)(376002)(366004)(199004)(189003)(64756008)(386003)(55236004)(66446008)(102836004)(66066001)(6506007)(33716001)(26005)(14444005)(71190400001)(25786009)(256004)(14454004)(186003)(71200400001)(11346002)(446003)(476003)(33656002)(5660300002)(486006)(2906002)(66946007)(66476007)(66556008)(229853002)(9686003)(86362001)(1076003)(6246003)(478600001)(4326008)(6486002)(7736002)(54906003)(58126008)(316002)(8676002)(305945005)(6862004)(81156014)(52116002)(76176011)(6512007)(8936002)(3846002)(6116002)(6636002)(99286004)(6436002)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR08MB5088;H:VE1PR08MB5006.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Untrusted: BCL:0;
+X-Microsoft-Antispam-Message-Info-Original: h+5X2EOJHF+qY6OSItPbuTngr4dd+QeyaoW9AEfCWRuOTvmhvXbN6Z4NtBJ3H0jiiY79qWJVxmp623ZLdni6SXiTgdNsFH2PJ009z55yBf3leagOCJFVy6VWpHaDzF6HgfW0ASL/KwOEC6vSyvYItoJsiEmBTX7VFwlzW/jdYsqGkn5DGF1xDvMwNR0ICtqo1gGLKqKVXb7UMiOxSMDESaebYVSLdxPPhfU1iLcpUPrkfr9yeBgxMGZo8M8Bj/RLyNZV6WhRMzZvgRikp+/EKO/w/+YXq7Ww7ZROh3qOvaGAv4X9qI/9R0o9zS4K/AngByKr6prsveajnR8nkYRD+MLtngy8XzrJuD05l4unsz8JEmv/JygvCwECXnvMA30cMQSwOHG1JUesgWfSo9bae6nonO7NFgTDfG1wEE5O4ss=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <29C5E991405FA343889E64DAC9A0060F@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Wed, 16 Oct 2019 08:22:35 +0000 (UTC)
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR08MB5088
+Original-Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=james.qian.wang@arm.com; 
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: DB5EUR03FT058.eop-EUR03.prod.protection.outlook.com
+X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(7916004)(376002)(346002)(39860400002)(136003)(396003)(189003)(199004)(66066001)(6862004)(4326008)(446003)(8676002)(33656002)(5660300002)(336012)(63350400001)(14454004)(6116002)(33716001)(81156014)(81166006)(3846002)(99286004)(11346002)(47776003)(6506007)(102836004)(386003)(8746002)(8936002)(76176011)(23726003)(6636002)(186003)(26005)(126002)(6246003)(9686003)(476003)(6512007)(486006)(70586007)(305945005)(22756006)(7736002)(86362001)(6486002)(50466002)(478600001)(70206006)(1076003)(46406003)(97756001)(316002)(229853002)(2906002)(25786009)(58126008)(14444005)(54906003)(26826003)(356004)(76130400001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0801MB2031;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:TempError;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;MX:1;A:1;
+X-MS-Office365-Filtering-Correlation-Id-Prvs: 61267cee-ef87-48f1-8cf4-08d752121011
+NoDisclaimer: True
+X-Forefront-PRVS: 0192E812EC
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: SYB4SoER2+DD073EAbp3xWm4c1cWOapOF0uak/eDcz6c1z5EehTrw90qsv3TQxeDBI3AY47vEVj24PZtuA2YexYwedFS6GG2zEt03mWBxFUJu3JPWlbUVyMyqq5vnE38XtJCGgUhPA+XWJ9o36tBDKnZjJH0R12UUdMWyEs9QKLga6VWlGcdkt7BOKxFjrBkUX2z7TJ9ZyJW1urMyMaD+XjNBNtZThu0n5AX3vPgGgXJEuq+zVUvJQO5IfrWlzHWfizyAHeGY701aurhEQRklrylZZ/qVlJ1FItF9GJm34pv3VgXi+Cdk4SNYPdi/sMvLWItpswh/9+ghKymFErixjk9NAvegS79Eo/SRWIw+mPdP+By+LqdX9eT1ayy69YV28yBS8RRdpYWobVuJWlzyKMUeZIk/gTIFbVrseZyl30=
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2019 08:23:12.5083
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b99fdb83-50e3-4e76-59a5-08d7521215d8
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0801MB2031
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andi reported that maps cloning is eating lot of memory and
-it's probably unnecessary, because they keep the same data.
+On Mon, Sep 30, 2019 at 12:23:07PM +0000, Mihail Atanassov wrote:
+> Fix both the string and the struct member being printed.
+>=20
+> Changes since v1:
+>  - Now with a bonus grammar fix, too.
+>=20
+> Fixes: 264b9436d23b ("drm/komeda: Enable writeback split support")
+> Signed-off-by: Mihail Atanassov <mihail.atanassov@arm.com>
+> ---
+>  drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c b=
+/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
+> index 950235af1e79..2b624bfe1751 100644
+> --- a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
+> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
+> @@ -564,8 +564,8 @@ komeda_splitter_validate(struct komeda_splitter *spli=
+tter,
+>  	}
+> =20
+>  	if (!in_range(&splitter->vsize, dflow->in_h)) {
+> -		DRM_DEBUG_ATOMIC("split in_in: %d exceed the acceptable range.\n",
+> -				 dflow->in_w);
+> +		DRM_DEBUG_ATOMIC("split in_h: %d exceeds the acceptable range.\n",
+> +				 dflow->in_h);
 
-Changing 'struct map_shared' to be a pointer inside 'struct map',
-so it can be shared on fork. Changing the map__clone function to
-actually share 'struct map_shared' for cloned maps.
-
-The 'struct map_shared' carries its own refcnt counter, which is
-incremented when it's assigned to new 'struct map' and decremented
-when 'struct map' gets deleted in map__delete (its refcnt is 0).
-
-This 'maps sharing' seems to save lot of heap for reports with
-many forks/cloned mmaps (over 60% in example below).
-
-Profile kernel build:
-
-  $ perf record make -j 40
-
-Get heap profile (tools/perf directory):
-
-  $ <install gperftools>
-  $ make TCMALLOC=1
-  $ HEAPPROFILE=/tmp/heapprof ./perf report -i perf.data --stdio > out
-  $ pprof ./perf /tmp/heapprof.000*
-
-Before:
-
-  (pprof) top
-  Total: 2335.5 MB
-    1735.1  74.3%  74.3%   1735.1  74.3% memdup
-     402.0  17.2%  91.5%    402.0  17.2% zalloc
-     140.2   6.0%  97.5%    145.8   6.2% map__new
-      33.6   1.4%  98.9%     33.6   1.4% symbol__new
-      12.4   0.5%  99.5%     12.4   0.5% alloc_event
-       6.2   0.3%  99.7%      6.2   0.3% nsinfo__new
-       5.5   0.2% 100.0%      5.5   0.2% nsinfo__copy
-       0.3   0.0% 100.0%      0.3   0.0% dso__new
-       0.1   0.0% 100.0%      0.1   0.0% do_read_string
-       0.0   0.0% 100.0%      0.0   0.0% __GI__IO_file_doallocate
-
-After:
-
-  (pprof) top
-  Total: 758.5 MB
-     385.7  50.8%  50.8%    385.7  50.8% memdup
-     248.4  32.7%  83.6%    248.4  32.7% zalloc
-      91.2  12.0%  95.6%     94.8  12.5% map__new
-      19.3   2.5%  98.2%     19.3   2.5% symbol__new
-       6.2   0.8%  99.0%      6.2   0.8% alloc_event
-       3.9   0.5%  99.5%      3.9   0.5% nsinfo__new
-       3.5   0.5% 100.0%      3.5   0.5% nsinfo__copy
-       0.2   0.0% 100.0%      0.2   0.0% dso__new
-       0.0   0.0% 100.0%      0.0   0.0% do_read_string
-       0.0   0.0% 100.0%      0.0   0.0% elf_fill
-
-The perf report output is the same.
-
-Reported-by: Andi Kleen <ak@linux.intel.com>
-Link: http://lkml.kernel.org/n/tip-9x8utaeeqwyktzhruhrpp9g9@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/util/map.c    | 62 ++++++++++++++++++++++++++++++++--------
- tools/perf/util/map.h    |  7 +++--
- tools/perf/util/symbol.c |  2 +-
- 3 files changed, 55 insertions(+), 16 deletions(-)
-
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index 98c56714f1ae..9df18ef76241 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -145,6 +145,7 @@ void map__init(struct map *map, u64 start, u64 end, u64 pgoff, struct dso *dso)
- 	map->groups   = NULL;
- 	sh->erange_warned = false;
- 	refcount_set(&map->refcnt, 1);
-+	refcount_set(&sh->refcnt, 1);
- }
- 
- struct map *map__new(struct machine *machine, u64 start, u64 len,
-@@ -153,14 +154,16 @@ struct map *map__new(struct machine *machine, u64 start, u64 len,
- 		     struct thread *thread)
- {
- 	struct map *map = malloc(sizeof(*map));
-+	struct map_shared *sh = malloc(sizeof(*sh));
- 	struct nsinfo *nsi = NULL;
- 	struct nsinfo *nnsi;
- 
--	if (map != NULL) {
-+	if (map != NULL && sh != NULL) {
- 		char newfilename[PATH_MAX];
- 		struct dso *dso;
- 		int anon, no_dso, vdso, android;
--		struct map_shared *sh = map_sh(map);
-+
-+		map->shared = sh;
- 
- 		android = is_android_lib(filename);
- 		anon = is_anon_memory(filename, flags);
-@@ -220,11 +223,12 @@ struct map *map__new(struct machine *machine, u64 start, u64 len,
- 		}
- 		dso->nsinfo = nsi;
- 		dso__put(dso);
-+		return map;
- 	}
--	return map;
- out_delete:
- 	nsinfo__put(nsi);
- 	free(map);
-+	free(sh);
- 	return NULL;
- }
- 
-@@ -235,13 +239,19 @@ struct map *map__new(struct machine *machine, u64 start, u64 len,
-  */
- struct map *map__new2(u64 start, struct dso *dso)
- {
-+	struct map_shared *sh = zalloc(sizeof(*sh));
- 	struct map *map = calloc(1, (sizeof(*map) +
- 				     (dso->kernel ? sizeof(struct kmap) : 0)));
--	if (map != NULL) {
-+
-+	if (map != NULL && sh != NULL) {
-+		map->shared = sh;
- 		/*
- 		 * ->end will be filled after we load all the symbols
- 		 */
- 		map__init(map, start, 0, 0, dso);
-+	} else {
-+		zfree(&map);
-+		free(sh);
- 	}
- 
- 	return map;
-@@ -289,15 +299,29 @@ bool map__has_symbols(const struct map *map)
- 	return dso__has_symbols(map_sh(map)->dso);
- }
- 
--static void map__exit(struct map *map)
-+static void map_shared__delete(struct map_shared *sh)
- {
--	BUG_ON(!RB_EMPTY_NODE(&map->rb_node));
--	dso__zput(map_sh(map)->dso);
-+	dso__put(sh->dso);
-+	free(sh);
-+}
-+
-+static struct map_shared *map_shared__get(struct map_shared *sh)
-+{
-+	if (sh)
-+		refcount_inc(&sh->refcnt);
-+	return sh;
-+}
-+
-+static void map_shared__put(struct map_shared *sh)
-+{
-+	if (sh && refcount_dec_and_test(&sh->refcnt))
-+		map_shared__delete(sh);
- }
- 
- void map__delete(struct map *map)
- {
--	map__exit(map);
-+	BUG_ON(!RB_EMPTY_NODE(&map->rb_node));
-+	map_shared__put(map->shared);
- 	free(map);
- }
- 
-@@ -390,12 +414,26 @@ struct symbol *map__find_symbol_by_name(struct map *map, const char *name)
- 	return dso__find_symbol_by_name(map_sh(map)->dso, name);
- }
- 
--struct map *map__clone(struct map *from)
-+struct map *map__clone(struct map *from, bool share)
- {
- 	struct map *map = memdup(from, sizeof(*map));
-+	struct map_shared *sh;
- 
- 	if (map != NULL) {
- 		refcount_set(&map->refcnt, 1);
-+
-+		if (share) {
-+			sh = map_shared__get(map->shared);
-+		} else {
-+			sh = memdup(map->shared, sizeof(*sh));
-+			if (!sh) {
-+				free(map);
-+				return NULL;
-+			}
-+			map->shared = sh;
-+			refcount_set(&sh->refcnt, 1);
-+		}
-+
- 		RB_CLEAR_NODE(&map->rb_node);
- 		dso__get(map_sh(map)->dso);
- 		map->groups = NULL;
-@@ -840,7 +878,7 @@ static int maps__fixup_overlappings(struct maps *maps, struct map *map, FILE *fp
- 		 * overlapped by the new map:
- 		 */
- 		if (map_sh(map)->start > map_sh(pos)->start) {
--			struct map *before = map__clone(pos);
-+			struct map *before = map__clone(pos, false);
- 
- 			if (before == NULL) {
- 				err = -ENOMEM;
-@@ -855,7 +893,7 @@ static int maps__fixup_overlappings(struct maps *maps, struct map *map, FILE *fp
- 		}
- 
- 		if (map_sh(map)->end < map_sh(pos)->end) {
--			struct map *after = map__clone(pos);
-+			struct map *after = map__clone(pos, false);
- 
- 			if (after == NULL) {
- 				err = -ENOMEM;
-@@ -902,7 +940,7 @@ int map_groups__clone(struct thread *thread, struct map_groups *parent)
- 	down_read(&maps->lock);
- 
- 	for (map = maps__first(maps); map; map = map__next(map)) {
--		struct map *new = map__clone(map);
-+		struct map *new = map__clone(map, true);
- 		if (new == NULL)
- 			goto out_unlock;
- 
-diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
-index 297e8f9d1c4c..2788894bdd1c 100644
---- a/tools/perf/util/map.h
-+++ b/tools/perf/util/map.h
-@@ -38,6 +38,7 @@ struct map_shared {
- 	u64			(*unmap_ip)(struct map *, u64);
- 
- 	struct dso		*dso;
-+	refcount_t		 refcnt;
- };
- 
- struct map {
-@@ -46,12 +47,12 @@ struct map {
- 		struct list_head node;
- 	};
- 	struct rb_node		 rb_node_name;
--	struct map_shared	 shared;
-+	struct map_shared	*shared;
- 	struct map_groups	*groups;
- 	refcount_t		 refcnt;
- };
- 
--#define map_sh(__m)  (&((__m)->shared))
-+#define map_sh(__m)  ((__m)->shared)
- 
- struct kmap;
- 
-@@ -123,7 +124,7 @@ struct map *map__new(struct machine *machine, u64 start, u64 len,
- 		     char *filename, struct thread *thread);
- struct map *map__new2(u64 start, struct dso *dso);
- void map__delete(struct map *map);
--struct map *map__clone(struct map *map);
-+struct map *map__clone(struct map *map, bool share);
- 
- static inline struct map *map__get(struct map *map)
- {
-diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-index 80c4429304f0..bca6cbdd7eea 100644
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -1213,7 +1213,7 @@ int map_groups__merge_in(struct map_groups *kmaps, struct map *new_map)
- 				 * |new.............| -> |new..|       |new..|
- 				 *       |old....|    ->       |old....|
- 				 */
--				struct map *m = map__clone(new_map);
-+				struct map *m = map__clone(new_map, false);
- 
- 				if (!m)
- 					return -ENOMEM;
--- 
-2.21.0
-
+Reviewed-by: James Qian Wang (Arm Technology China) <james.qian.wang@arm.co=
+m>
+>  		return -EINVAL;
+>  	}
+> =20
