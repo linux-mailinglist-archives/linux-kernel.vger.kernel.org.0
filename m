@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69417DA09C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:25:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16AC3D9FBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:24:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439308AbfJPWNR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:13:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47118 "EHLO mail.kernel.org"
+        id S2438097AbfJPV6A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:58:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437864AbfJPVz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:55:58 -0400
+        id S2406669AbfJPV5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:57:08 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0594121925;
-        Wed, 16 Oct 2019 21:55:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B775820872;
+        Wed, 16 Oct 2019 21:57:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262957;
-        bh=XYVh6+TMgEhP0g5409q+lNX4DMmBfqbBA05Q34b6kzo=;
+        s=default; t=1571263027;
+        bh=bmmJE0WLwJRxWkFTNcpVE3zwotn4CsZHkea48KPSqUE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NaI9VSBCmit/ikdIg964U+eNiKBNDAsDLZRvEeiCJ3635u6yJG9YXLil2Be9YauK3
-         8waL1NQyH2N6lIEzlD3fgYSoDEmC+91QoxrAb9Jdewu1yQ6HBBayQIYCeqeurlIliZ
-         cyiA2qcUEXbLBJCKDIc9TMICw32BsO6sWjrEP5rI=
+        b=ZFInKMNYcI1nu8SIQpMaFlj4c9cumnJfb6GvCoBweCANONmDkaZGyRxQV4xBYyZbh
+         TXKh8sYjD2aNhwn1IaTzukDvqRlM2EFRustlSeHZaBcXELMSKQ9WfYhorDZ3ubRk3Z
+         pSdFr8c6QOZ/BIiz3hISm8SAs6q1lIwQJWMRVtMQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniele Palmas <dnlplm@gmail.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 26/65] USB: serial: option: add Telit FN980 compositions
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.19 29/81] USB: serial: fix runtime PM after driver unbind
 Date:   Wed, 16 Oct 2019 14:50:40 -0700
-Message-Id: <20191016214822.564151333@linuxfoundation.org>
+Message-Id: <20191016214831.320656822@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
-References: <20191016214756.457746573@linuxfoundation.org>
+In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
+References: <20191016214805.727399379@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,42 +42,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniele Palmas <dnlplm@gmail.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 5eb3f4b87a0e7e949c976f32f296176a06d1a93b upstream.
+commit d51bdb93ca7e71d7fb30a572c7b47ed0194bf3fe upstream.
 
-This patch adds the following Telit FN980 compositions:
+Since commit c2b71462d294 ("USB: core: Fix bug caused by duplicate
+interface PM usage counter") USB drivers must always balance their
+runtime PM gets and puts, including when the driver has already been
+unbound from the interface.
 
-0x1050: tty, adb, rmnet, tty, tty, tty, tty
-0x1051: tty, adb, mbim, tty, tty, tty, tty
-0x1052: rndis, tty, adb, tty, tty, tty, tty
-0x1053: tty, adb, ecm, tty, tty, tty, tty
+Leaving the interface with a positive PM usage counter would prevent a
+later bound driver from suspending the device.
 
-Signed-off-by: Daniele Palmas <dnlplm@gmail.com>
+Fixes: c2b71462d294 ("USB: core: Fix bug caused by duplicate interface PM usage counter")
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191001084908.2003-4-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/option.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/usb/serial/usb-serial.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -1157,6 +1157,14 @@ static const struct usb_device_id option
- 	  .driver_info = NCTRL(0) | RSVD(1) | RSVD(2) | RSVD(3) },
- 	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, TELIT_PRODUCT_LE922_USBCFG5, 0xff),
- 	  .driver_info = RSVD(0) | RSVD(1) | NCTRL(2) | RSVD(3) },
-+	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x1050, 0xff),	/* Telit FN980 (rmnet) */
-+	  .driver_info = NCTRL(0) | RSVD(1) | RSVD(2) },
-+	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x1051, 0xff),	/* Telit FN980 (MBIM) */
-+	  .driver_info = NCTRL(0) | RSVD(1) },
-+	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x1052, 0xff),	/* Telit FN980 (RNDIS) */
-+	  .driver_info = NCTRL(2) | RSVD(3) },
-+	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x1053, 0xff),	/* Telit FN980 (ECM) */
-+	  .driver_info = NCTRL(0) | RSVD(1) },
- 	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_ME910),
- 	  .driver_info = NCTRL(0) | RSVD(1) | RSVD(3) },
- 	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_ME910_DUAL_MODEM),
+--- a/drivers/usb/serial/usb-serial.c
++++ b/drivers/usb/serial/usb-serial.c
+@@ -311,10 +311,7 @@ static void serial_cleanup(struct tty_st
+ 	serial = port->serial;
+ 	owner = serial->type->driver.owner;
+ 
+-	mutex_lock(&serial->disc_mutex);
+-	if (!serial->disconnected)
+-		usb_autopm_put_interface(serial->interface);
+-	mutex_unlock(&serial->disc_mutex);
++	usb_autopm_put_interface(serial->interface);
+ 
+ 	usb_serial_put(serial);
+ 	module_put(owner);
 
 
