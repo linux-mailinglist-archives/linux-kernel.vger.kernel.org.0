@@ -2,145 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EEE7D84DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 02:35:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99F84D8500
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 02:43:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390260AbfJPAfC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 20:35:02 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:37163 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727579AbfJPAfC (ORCPT
+        id S2388572AbfJPAnE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 20:43:04 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:45358 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728557AbfJPAnE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 20:35:02 -0400
-Received: by mail-pf1-f194.google.com with SMTP id y5so13556614pfo.4
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 17:35:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rf4qoYyym4OwL8++6P6U9mCaO/3P2myy/Ny/GVBd60Q=;
-        b=IRP9Gp/cJhpFJaURX7/ZJIIpkjlkzVHyKeR3E6m4jvjUm9XRNardXfNdATdaX4UJf9
-         5vhyJYmrai6Gy+w9n12CYH1PbhelsdACD9X+14BQhtRJ20IxkwAKlsjZrn5hYV2J+DNy
-         zs9JK3H+/n4EgWykXOS1pB1s2AOMDv6Mq7YoY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rf4qoYyym4OwL8++6P6U9mCaO/3P2myy/Ny/GVBd60Q=;
-        b=XhSUSLggo1nZIVcPv4s/iykounAn2dHW16362BqWxeJ+x91qMqMMFcfNBaI0pBoYDB
-         ZdYPfWMKVNZ7YQmSeeSuWAH5UfU5XUAHq6UK6M0LP7yzniFe9Deyb8G9WfH7zgITmK4+
-         HzS7xF+ZEn0xT7O86GONb96bGouJWWnFciDHRvU317d9A6fxzfBI6sfIMjWySiFm/eaG
-         M5fUxk7HcOGLhwQV5bf1Tj3RCFu2dROh48nfDu7RB4EJDnd/e8N/bFfsIwDqS3INsES4
-         nfrHPWjUaFHjl8ci5aYLL7uDOGEYj+xbqaEjZ6vDwMiY1mHb+7XCT2h49/Uw5nwQ/aOt
-         w8Jw==
-X-Gm-Message-State: APjAAAUrh+I+m+4VGj91QRQe1jvDDsOvSQOCWKMey5cLVli928IVQJUK
-        RjohL6SSaRiAQXK/bnIOA508ew==
-X-Google-Smtp-Source: APXvYqyPPkyjiknKmvJtBVlA6uQdX3TqmCgOcloVhb3YghiCNtEgFx94uDlnXbKNkyFOOguf0p6now==
-X-Received: by 2002:a63:1e5f:: with SMTP id p31mr22515386pgm.291.1571186101558;
-        Tue, 15 Oct 2019 17:35:01 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id j10sm21326993pfn.128.2019.10.15.17.35.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2019 17:35:01 -0700 (PDT)
-Date:   Tue, 15 Oct 2019 20:35:00 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, rostedt@goodmis.org,
-        primiano@google.com, rsavitski@google.com, jeffv@google.com,
-        kernel-team@android.com, James Morris <jmorris@namei.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        bpf@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-security-module@vger.kernel.org,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Namhyung Kim <namhyung@kernel.org>, selinux@vger.kernel.org,
-        Song Liu <songliubraving@fb.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Yonghong Song <yhs@fb.com>
-Subject: Re: [PATCH v2] perf_event: Add support for LSM and SELinux checks
-Message-ID: <20191016003500.GC89937@google.com>
-References: <20191014170308.70668-1-joel@joelfernandes.org>
- <c5bd06a4-54a4-b56e-457c-df36f05d2e3f@tycho.nsa.gov>
+        Tue, 15 Oct 2019 20:43:04 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9G0dqH2003599;
+        Wed, 16 Oct 2019 00:42:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=RO+XrYrDaeBDBxb1QAxo3QY1K6pbqEr9rfJZhor0FR0=;
+ b=gkk5uU1QPz3pbW3mvR/PL+XZDaVfWIA3KgJD1tICgkTq04qP2LRQ4b9QQTxGdfae+vbD
+ MWqnAiZ1yKyo09CvbtkuXG5osuKUNnzs0mr9+qLxSM55L7THOJW+XGdDmIfCOoYKrn6Q
+ uBNh2sj6j9clhaoSjcDM3PmbUJqdr4BM70dnGctX09WWasq9eTEBiT1bOwP4Sosbi3lz
+ WU3ndcM4/66BpxDL9LLiaYQJFh879sJ3LTlrXWyJtzB4VSh7YYDcfYcDI3a++8tbhoWC
+ bYDy4CEiqjMBLaRonpcjNxWYqAdjnwb17XxqauDmvnQzoHXlAhofSFJ8FnT+/z9MXk2l +g== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2vk6sqkfmv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 16 Oct 2019 00:42:36 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9G0dKZL099099;
+        Wed, 16 Oct 2019 00:40:36 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2vnf7s7m4s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 16 Oct 2019 00:40:35 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9G0eZvr007898;
+        Wed, 16 Oct 2019 00:40:35 GMT
+Received: from dhcp-10-132-91-76.usdhcp.oraclecorp.com (/10.132.91.76)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 16 Oct 2019 00:40:35 +0000
+Subject: Re: [PATCH 2/4] KVM: VMX: Setup MSR bitmap only when has msr_bitmap
+ capability
+To:     Xiaoyao Li <xiaoyao.li@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191015164033.87276-1-xiaoyao.li@intel.com>
+ <20191015164033.87276-3-xiaoyao.li@intel.com>
+From:   Krish Sadhukhan <krish.sadhukhan@oracle.com>
+Message-ID: <05ff009e-5f60-54ff-a371-111763a1cb7f@oracle.com>
+Date:   Tue, 15 Oct 2019 17:40:33 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c5bd06a4-54a4-b56e-457c-df36f05d2e3f@tycho.nsa.gov>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191015164033.87276-3-xiaoyao.li@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9411 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=11 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910160002
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9411 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=11 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910160002
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-> > index bb7b271397a6..2af95f937a5b 100644
-> > --- a/include/uapi/linux/perf_event.h
-> > +++ b/include/uapi/linux/perf_event.h
-> > @@ -427,6 +427,15 @@ struct perf_event_attr {
-> >   	__u16	__reserved_2;	/* align to __u64 */
-> >   };
-> > +
-> > +/* Access to perf_event_open(2) syscall. */
-> > +#define PERF_SECURITY_OPEN		0
-> > +
-> > +/* Finer grained perf_event_open(2) access control. */
-> > +#define PERF_SECURITY_CPU		1
-> > +#define PERF_SECURITY_KERNEL		2
-> > +#define PERF_SECURITY_TRACEPOINT	3
-> > +
-> 
-> Why are these definitions part of the uapi header and not private to the
-> kernel?
 
-No reason but I agree it is better to put them in the private header.
 
-Peter, if you are Ok with it, could you squash the below diff into my
-original patch? But let me know if you want me to resend the whole patch
-again. Thanks.
+On 10/15/2019 09:40 AM, Xiaoyao Li wrote:
+> Move the MSR bitmap setup codes to vmx_vmcs_setup() and only setup them
+> when hardware has msr_bitmap capability.
+>
+> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
+> ---
+>   arch/x86/kvm/vmx/vmx.c | 39 ++++++++++++++++++++-------------------
+>   1 file changed, 20 insertions(+), 19 deletions(-)
+>
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 58b77a882426..7051511c27c2 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -4164,12 +4164,30 @@ static void ept_set_mmio_spte_mask(void)
+>   static void vmx_vmcs_setup(struct vcpu_vmx *vmx)
+>   {
+>   	int i;
+> +	unsigned long *msr_bitmap;
+>   
+>   	if (nested)
+>   		nested_vmx_vmcs_setup();
+>   
+> -	if (cpu_has_vmx_msr_bitmap())
+> -		vmcs_write64(MSR_BITMAP, __pa(vmx->vmcs01.msr_bitmap));
+> +	if (cpu_has_vmx_msr_bitmap()) {
+> +		msr_bitmap = vmx->vmcs01.msr_bitmap;
+> +		vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_TSC, MSR_TYPE_R);
 
----8<-----------------------
+vmx_disable_intercept_for_msr() also calls cpu_has_vmx_msr_bitmap(), 
+which means we are repeating the check. A cleaner approach is to remove 
+the call to cpu_has_vmx_msr_bitmap()  from 
+vmx_disable_intercept_for_msr()  and let its callers do the check just 
+like you are doing here.
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 664bb7f99c46..587ae4d002f5 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -1245,6 +1245,14 @@ extern int perf_cpu_time_max_percent_handler(struct ctl_table *table, int write,
- int perf_event_max_stack_handler(struct ctl_table *table, int write,
- 				 void __user *buffer, size_t *lenp, loff_t *ppos);
- 
-+/* Access to perf_event_open(2) syscall. */
-+#define PERF_SECURITY_OPEN		0
-+
-+/* Finer grained perf_event_open(2) access control. */
-+#define PERF_SECURITY_CPU		1
-+#define PERF_SECURITY_KERNEL		2
-+#define PERF_SECURITY_TRACEPOINT	3
-+
- static inline int perf_is_paranoid(void)
- {
- 	return sysctl_perf_event_paranoid > -1;
-diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-index 2af95f937a5b..bb7b271397a6 100644
---- a/include/uapi/linux/perf_event.h
-+++ b/include/uapi/linux/perf_event.h
-@@ -427,15 +427,6 @@ struct perf_event_attr {
- 	__u16	__reserved_2;	/* align to __u64 */
- };
- 
--
--/* Access to perf_event_open(2) syscall. */
--#define PERF_SECURITY_OPEN		0
--
--/* Finer grained perf_event_open(2) access control. */
--#define PERF_SECURITY_CPU		1
--#define PERF_SECURITY_KERNEL		2
--#define PERF_SECURITY_TRACEPOINT	3
--
- /*
-  * Structure used by below PERF_EVENT_IOC_QUERY_BPF command
-  * to query bpf programs attached to the same perf tracepoint
--- 
-2.23.0.700.g56cf767bdb-goog
+> +		vmx_disable_intercept_for_msr(msr_bitmap, MSR_FS_BASE, MSR_TYPE_RW);
+> +		vmx_disable_intercept_for_msr(msr_bitmap, MSR_GS_BASE, MSR_TYPE_RW);
+> +		vmx_disable_intercept_for_msr(msr_bitmap, MSR_KERNEL_GS_BASE, MSR_TYPE_RW);
+> +		vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_CS, MSR_TYPE_RW);
+> +		vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_ESP, MSR_TYPE_RW);
+> +		vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_EIP, MSR_TYPE_RW);
+> +		if (kvm_cstate_in_guest(vmx->vcpu.kvm)) {
+> +			vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C1_RES, MSR_TYPE_R);
+> +			vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C3_RESIDENCY, MSR_TYPE_R);
+> +			vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C6_RESIDENCY, MSR_TYPE_R);
+> +			vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C7_RESIDENCY, MSR_TYPE_R);
+> +		}
+> +
+> +		vmcs_write64(MSR_BITMAP, __pa(msr_bitmap));
+> +	}
+> +	vmx->msr_bitmap_mode = 0;
+>   
+>   	vmcs_write64(VMCS_LINK_POINTER, -1ull); /* 22.3.1.5 */
+>   
+> @@ -6697,7 +6715,6 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
+>   {
+>   	int err;
+>   	struct vcpu_vmx *vmx;
+> -	unsigned long *msr_bitmap;
+>   	int cpu;
+>   
+>   	BUILD_BUG_ON_MSG(offsetof(struct vcpu_vmx, vcpu) != 0,
+> @@ -6754,22 +6771,6 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
+>   	if (err < 0)
+>   		goto free_msrs;
+>   
+> -	msr_bitmap = vmx->vmcs01.msr_bitmap;
+> -	vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_TSC, MSR_TYPE_R);
+> -	vmx_disable_intercept_for_msr(msr_bitmap, MSR_FS_BASE, MSR_TYPE_RW);
+> -	vmx_disable_intercept_for_msr(msr_bitmap, MSR_GS_BASE, MSR_TYPE_RW);
+> -	vmx_disable_intercept_for_msr(msr_bitmap, MSR_KERNEL_GS_BASE, MSR_TYPE_RW);
+> -	vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_CS, MSR_TYPE_RW);
+> -	vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_ESP, MSR_TYPE_RW);
+> -	vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_EIP, MSR_TYPE_RW);
+> -	if (kvm_cstate_in_guest(kvm)) {
+> -		vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C1_RES, MSR_TYPE_R);
+> -		vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C3_RESIDENCY, MSR_TYPE_R);
+> -		vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C6_RESIDENCY, MSR_TYPE_R);
+> -		vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C7_RESIDENCY, MSR_TYPE_R);
+> -	}
+> -	vmx->msr_bitmap_mode = 0;
+> -
+>   	vmx->loaded_vmcs = &vmx->vmcs01;
+>   	cpu = get_cpu();
+>   	vmx_vcpu_load(&vmx->vcpu, cpu);
 
