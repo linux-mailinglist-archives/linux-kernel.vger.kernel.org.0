@@ -2,52 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 830F2D9979
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 20:47:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0365D9995
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 20:53:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394365AbfJPSr3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 14:47:29 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:33350 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390765AbfJPSrZ (ORCPT
+        id S2436618AbfJPSxC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 14:53:02 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:46604 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731889AbfJPSxB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 14:47:25 -0400
+        Wed, 16 Oct 2019 14:53:01 -0400
 Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9GIlME3035332;
-        Wed, 16 Oct 2019 13:47:22 -0500
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9GIqfgo083570;
+        Wed, 16 Oct 2019 13:52:41 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1571251642;
-        bh=3IxeNu4wchrQeZ/ZlnZUz1zyjoHUMiEjO9eFxiakpnc=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=QulLEWG4Oez6xCGdmtOxGSAlJl+gtgWxHPRFc8fY0JuDemyWN+/BMHRA3BdTYKJmX
-         aDlcMW8L58cFB9cfDiZYnqNemq2GVIW1scTRdd5cCxKS+qHXQo4vr6eXYY3Aua/VKd
-         CI72C1df+Raz9mGF8BSFv2lfdq0MrJ4x1VY/zhbw=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9GIlM0L073570
+        s=ti-com-17Q1; t=1571251961;
+        bh=vUHHm6TQrzUaqF3WoeACMdoEVSPvSP0FUJ+Io/gdxSQ=;
+        h=From:To:CC:Subject:Date;
+        b=VW4V+/aZg20RkpZf9MraYhWlL5qZKFA7AkTCmXqpdrkBW9KjrD4toiuNnGTspLQ79
+         UYG7axKc2ttmfLszbY1LuCOPKm3uISbwZdy3ay49JBzkkFeKuIKZSHzdadMYFzJWWN
+         WqjjS2pAofIqHhrRTEKcK3+mQEzTRLZKEA9L4EqQ=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9GIqffr082253
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Oct 2019 13:47:22 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+        Wed, 16 Oct 2019 13:52:41 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 16
- Oct 2019 13:47:21 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ Oct 2019 13:52:34 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 16 Oct 2019 13:47:21 -0500
-Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9GIlIhB094854;
-        Wed, 16 Oct 2019 13:47:21 -0500
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Tony Lindgren <tony@atomide.com>, Tero Kristo <t-kristo@ti.com>
-CC:     Rob Herring <robh+dt@kernel.org>, <linux-omap@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Benoit Parrot <bparrot@ti.com>
-Subject: [Patch 3/3] ARM: dts: am43x-epos-evm: Add VPFE and OV2659 entries
-Date:   Wed, 16 Oct 2019 13:49:54 -0500
-Message-ID: <20191016184954.14048-4-bparrot@ti.com>
+ Frontend Transport; Wed, 16 Oct 2019 13:52:41 -0500
+Received: from legion.dal.design.ti.com (legion.dal.design.ti.com [128.247.22.53])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9GIqfNF081989;
+        Wed, 16 Oct 2019 13:52:41 -0500
+Received: from localhost ([10.250.79.55])
+        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id x9GIqdZ11777;
+        Wed, 16 Oct 2019 13:52:39 -0500 (CDT)
+From:   "Andrew F. Davis" <afd@ti.com>
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+CC:     <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        "Andrew F . Davis" <afd@ti.com>
+Subject: [PATCH] drm: Move radeon and amdgpu Kconfig options into their directories
+Date:   Wed, 16 Oct 2019 14:52:30 -0400
+Message-ID: <20191016185230.27824-1-afd@ti.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191016184954.14048-1-bparrot@ti.com>
-References: <20191016184954.14048-1-bparrot@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -56,66 +59,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add VPFE device nodes entries.
-Add OmniVision OV2659 sensor device nodes and linkage.
+Most Kconfig options to enable a driver are in the Kconfig file
+inside the relevant directory, move these two to the same.
 
-Since Rev1.2a on this board the sensor source clock (xvclk) has a
-dedicated 12Mhz oscillator instead of using clkout1.
-Add 'audio_mstrclk' fixed clock object to represent it.
-
-Signed-off-by: Benoit Parrot <bparrot@ti.com>
+Signed-off-by: Andrew F. Davis <afd@ti.com>
 ---
- arch/arm/boot/dts/am43x-epos-evm.dts | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/Kconfig            | 34 ------------------------------
+ drivers/gpu/drm/amd/amdgpu/Kconfig | 18 ++++++++++++++++
+ drivers/gpu/drm/radeon/Kconfig     | 18 ++++++++++++++++
+ 3 files changed, 36 insertions(+), 34 deletions(-)
 
-diff --git a/arch/arm/boot/dts/am43x-epos-evm.dts b/arch/arm/boot/dts/am43x-epos-evm.dts
-index 95314121d111..1958d0985f76 100644
---- a/arch/arm/boot/dts/am43x-epos-evm.dts
-+++ b/arch/arm/boot/dts/am43x-epos-evm.dts
-@@ -145,6 +145,12 @@
- 			system-clock-frequency = <12000000>;
- 		};
- 	};
-+
-+	audio_mstrclk: mclk_osc {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <12000000>;
-+	};
- };
+diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+index e67c194c2aca..bc5329b697ad 100644
+--- a/drivers/gpu/drm/Kconfig
++++ b/drivers/gpu/drm/Kconfig
+@@ -203,42 +203,8 @@ source "drivers/gpu/drm/i2c/Kconfig"
  
- &am43xx_pinmux {
-@@ -696,6 +702,21 @@
- 		IOVDD-supply = <&dcdc4>; /* V3_3D -> DCDC4 */
- 		DVDD-supply = <&ldo1>; /* V1_8AUD -> V1_8D -> LDO1 */
- 	};
-+
-+	ov2659@30 {
-+		compatible = "ovti,ov2659";
-+		reg = <0x30>;
-+
-+		clocks = <&audio_mstrclk>;
-+		clock-names = "xvclk";
-+
-+		port {
-+			ov2659_1: endpoint {
-+				remote-endpoint = <&vpfe1_ep>;
-+				link-frequencies = /bits/ 64 <70000000>;
-+			};
-+		};
-+	};
- };
+ source "drivers/gpu/drm/arm/Kconfig"
  
- &i2c2 {
-@@ -962,7 +983,7 @@
+-config DRM_RADEON
+-	tristate "ATI Radeon"
+-	depends on DRM && PCI && MMU
+-	select FW_LOADER
+-        select DRM_KMS_HELPER
+-        select DRM_TTM
+-	select POWER_SUPPLY
+-	select HWMON
+-	select BACKLIGHT_CLASS_DEVICE
+-	select INTERVAL_TREE
+-	help
+-	  Choose this option if you have an ATI Radeon graphics card.  There
+-	  are both PCI and AGP versions.  You don't need to choose this to
+-	  run the Radeon in plain VGA mode.
+-
+-	  If M is selected, the module will be called radeon.
+-
+ source "drivers/gpu/drm/radeon/Kconfig"
  
- 	port {
- 		vpfe1_ep: endpoint {
--			/* remote-endpoint = <&sensor>; add once we have it */
-+			remote-endpoint = <&ov2659_1>;
- 			ti,am437x-vpfe-interface = <0>;
- 			bus-width = <8>;
- 			hsync-active = <0>;
+-config DRM_AMDGPU
+-	tristate "AMD GPU"
+-	depends on DRM && PCI && MMU
+-	select FW_LOADER
+-        select DRM_KMS_HELPER
+-	select DRM_SCHED
+-        select DRM_TTM
+-	select POWER_SUPPLY
+-	select HWMON
+-	select BACKLIGHT_CLASS_DEVICE
+-	select INTERVAL_TREE
+-	select CHASH
+-	help
+-	  Choose this option if you have a recent AMD Radeon graphics card.
+-
+-	  If M is selected, the module will be called amdgpu.
+-
+ source "drivers/gpu/drm/amd/amdgpu/Kconfig"
+ 
+ source "drivers/gpu/drm/nouveau/Kconfig"
+diff --git a/drivers/gpu/drm/amd/amdgpu/Kconfig b/drivers/gpu/drm/amd/amdgpu/Kconfig
+index 2e98c016cb47..a53554557cc6 100644
+--- a/drivers/gpu/drm/amd/amdgpu/Kconfig
++++ b/drivers/gpu/drm/amd/amdgpu/Kconfig
+@@ -1,4 +1,22 @@
+ # SPDX-License-Identifier: GPL-2.0-only
++
++config DRM_AMDGPU
++	tristate "AMD GPU"
++	depends on DRM && PCI && MMU
++	select FW_LOADER
++	select DRM_KMS_HELPER
++	select DRM_SCHED
++	select DRM_TTM
++	select POWER_SUPPLY
++	select HWMON
++	select BACKLIGHT_CLASS_DEVICE
++	select INTERVAL_TREE
++	select CHASH
++	help
++	  Choose this option if you have a recent AMD Radeon graphics card.
++
++	  If M is selected, the module will be called amdgpu.
++
+ config DRM_AMDGPU_SI
+ 	bool "Enable amdgpu support for SI parts"
+ 	depends on DRM_AMDGPU
+diff --git a/drivers/gpu/drm/radeon/Kconfig b/drivers/gpu/drm/radeon/Kconfig
+index 6f60f4840cc5..ba67b879d31d 100644
+--- a/drivers/gpu/drm/radeon/Kconfig
++++ b/drivers/gpu/drm/radeon/Kconfig
+@@ -1,4 +1,22 @@
+ # SPDX-License-Identifier: GPL-2.0-only
++
++config DRM_RADEON
++	tristate "ATI Radeon"
++	depends on DRM && PCI && MMU
++	select FW_LOADER
++	select DRM_KMS_HELPER
++	select DRM_TTM
++	select POWER_SUPPLY
++	select HWMON
++	select BACKLIGHT_CLASS_DEVICE
++	select INTERVAL_TREE
++	help
++	  Choose this option if you have an ATI Radeon graphics card.  There
++	  are both PCI and AGP versions.  You don't need to choose this to
++	  run the Radeon in plain VGA mode.
++
++	  If M is selected, the module will be called radeon.
++
+ config DRM_RADEON_USERPTR
+ 	bool "Always enable userptr support"
+ 	depends on DRM_RADEON
 -- 
 2.17.1
 
