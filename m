@@ -2,45 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C58F5D9E66
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:03:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72008D9EDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438274AbfJPV6s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:58:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51128 "EHLO mail.kernel.org"
+        id S2406779AbfJPWDB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:03:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438096AbfJPV6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:58:00 -0400
+        id S2438540AbfJPV7d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:59:33 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4825621D7A;
-        Wed, 16 Oct 2019 21:58:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05B2121D7D;
+        Wed, 16 Oct 2019 21:59:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263080;
-        bh=HdPM/9FoLj8uItAc5KmRuQ+e5lvgdJjgzjajg0U+Q1k=;
+        s=default; t=1571263172;
+        bh=r+8aUgc/mfaf5/2iPvz/+sfyyYAYN95Yw/xN8JOWDWc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nzdD3NqeijYb5YZeeX0qxAgTRrGPpbzwmeD/hB4huX2ySJgcayS6gVYP1tHSWZ177
-         5+yU53onJfr64MY1jjpRfS/Bu1XErOUxbRaAD01WCS6PZlozUFOkalEf5ldAgHrhbJ
-         ByP8bUM/aaiF5PW52ekL7Sx8towTwC401UYrg+1Y=
+        b=f8LWlH25HwUGhEa2B0i9sdqlOqi3xzDntY/YCZcOz90aWiaJTuKVpQ9SHdmhf9QWw
+         PlB4VNrpAM4lNOTWcFPABICN5TTXLSv7n1d9xi1O/+weHaJd5C/dfFkSRZxdeW94R9
+         MirpzmB8ODkWXFmiS+Qnx+ZCTtfDJQRdWI7qp4HQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
-        Borislav Petkov <bp@suse.de>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.19 79/81] x86/asm: Fix MWAITX C-state hint value
-Date:   Wed, 16 Oct 2019 14:51:30 -0700
-Message-Id: <20191016214848.545954452@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Matthew Auld <matthew.william.auld@gmail.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>
+Subject: [PATCH 5.3 099/112] drm/i915: Mark contents as dirty on a write fault
+Date:   Wed, 16 Oct 2019 14:51:31 -0700
+Message-Id: <20191016214906.326608454@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
-References: <20191016214805.727399379@linuxfoundation.org>
+In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
+References: <20191016214844.038848564@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,64 +46,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-commit 454de1e7d970d6bc567686052329e4814842867c upstream.
+commit b925708f28c2b7a3a362d709bd7f77bc75c1daac upstream.
 
-As per "AMD64 Architecture Programmer's Manual Volume 3: General-Purpose
-and System Instructions", MWAITX EAX[7:4]+1 specifies the optional hint
-of the optimized C-state. For C0 state, EAX[7:4] should be set to 0xf.
+Since dropping the set-to-gtt-domain in commit a679f58d0510 ("drm/i915:
+Flush pages on acquisition"), we no longer mark the contents as dirty on
+a write fault. This has the issue of us then not marking the pages as
+dirty on releasing the buffer, which means the contents are not written
+out to the swap device (should we ever pick that buffer as a victim).
+Notably, this is visible in the dumb buffer interface used for cursors.
+Having updated the cursor contents via mmap, and swapped away, if the
+shrinker should evict the old cursor, upon next reuse, the cursor would
+be invisible.
 
-Currently, a value of 0xf is set for EAX[3:0] instead of EAX[7:4]. Fix
-this by changing MWAITX_DISABLE_CSTATES from 0xf to 0xf0.
+E.g. echo 80 > /proc/sys/kernel/sysrq ; echo f > /proc/sysrq-trigger
 
-This hasn't had any implications so far because setting reserved bits in
-EAX is simply ignored by the CPU.
-
- [ bp: Fixup comment in delay_mwaitx() and massage. ]
-
-Signed-off-by: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Frederic Weisbecker <frederic@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: "x86@kernel.org" <x86@kernel.org>
-Cc: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Cc: <stable@vger.kernel.org>
-Link: https://lkml.kernel.org/r/20191007190011.4859-1-Janakarajan.Natarajan@amd.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=111541
+Fixes: a679f58d0510 ("drm/i915: Flush pages on acquisition")
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Matthew Auld <matthew.william.auld@gmail.com>
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Cc: <stable@vger.kernel.org> # v5.2+
+Reviewed-by: Matthew Auld <matthew.william.auld@gmail.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190920121821.7223-1-chris@chris-wilson.co.uk
+(cherry picked from commit 5028851cdfdf78dc22eacbc44a0ab0b3f599ee4a)
+Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/mwait.h |    2 +-
- arch/x86/lib/delay.c         |    4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/i915/gem/i915_gem_mman.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/mwait.h
-+++ b/arch/x86/include/asm/mwait.h
-@@ -21,7 +21,7 @@
- #define MWAIT_ECX_INTERRUPT_BREAK	0x1
- #define MWAITX_ECX_TIMER_ENABLE		BIT(1)
- #define MWAITX_MAX_LOOPS		((u32)-1)
--#define MWAITX_DISABLE_CSTATES		0xf
-+#define MWAITX_DISABLE_CSTATES		0xf0
+--- a/drivers/gpu/drm/i915/gem/i915_gem_mman.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_mman.c
+@@ -317,7 +317,11 @@ vm_fault_t i915_gem_fault(struct vm_faul
+ 				   msecs_to_jiffies_timeout(CONFIG_DRM_I915_USERFAULT_AUTOSUSPEND));
+ 	GEM_BUG_ON(!obj->userfault_count);
  
- static inline void __monitor(const void *eax, unsigned long ecx,
- 			     unsigned long edx)
---- a/arch/x86/lib/delay.c
-+++ b/arch/x86/lib/delay.c
-@@ -113,8 +113,8 @@ static void delay_mwaitx(unsigned long _
- 		__monitorx(raw_cpu_ptr(&cpu_tss_rw), 0, 0);
+-	i915_vma_set_ggtt_write(vma);
++	if (write) {
++		GEM_BUG_ON(!i915_gem_object_has_pinned_pages(obj));
++		i915_vma_set_ggtt_write(vma);
++		obj->mm.dirty = true;
++	}
  
- 		/*
--		 * AMD, like Intel, supports the EAX hint and EAX=0xf
--		 * means, do not enter any deep C-state and we use it
-+		 * AMD, like Intel's MWAIT version, supports the EAX hint and
-+		 * EAX=0xf0 means, do not enter any deep C-state and we use it
- 		 * here in delay() to minimize wakeup latency.
- 		 */
- 		__mwaitx(MWAITX_DISABLE_CSTATES, delay, MWAITX_ECX_TIMER_ENABLE);
+ err_fence:
+ 	i915_vma_unpin_fence(vma);
 
 
