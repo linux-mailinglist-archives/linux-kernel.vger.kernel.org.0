@@ -2,172 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDD7CD90B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:23:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84437D90BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:24:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389783AbfJPMXy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 08:23:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47992 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387581AbfJPMXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 08:23:54 -0400
-Received: from localhost (unknown [171.76.123.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C34B6218DE;
-        Wed, 16 Oct 2019 12:23:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571228632;
-        bh=tpyw6dnWtRktL2mWFhpiJUG5Thn3Q7Jh+AkFL2KBI+Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Qa/l60b2JJTcUZ278R7jNoVGx28q8QiwPDjwOtI1jkSn/4IzfMZFipQJWoSj3cHm9
-         324dSyDpVJWSuUWz58xXxLajnhCAGqgQS0rpyf2eNJ27gsgFeuLPyeymiCitTgXFGD
-         O51IqEr0niNCj4CXPP4J2l59dA6ubVPC7XIUA5Vg=
-Date:   Wed, 16 Oct 2019 17:53:43 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gcc: Add missing clocks in SM8150
-Message-ID: <20191016122343.GM2654@vkoul-mobl>
-References: <20190917091623.3453-1-vkoul@kernel.org>
- <20190917161000.DAFF3206C2@mail.kernel.org>
+        id S2392994AbfJPMYS convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 16 Oct 2019 08:24:18 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:44751 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392980AbfJPMYR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 08:24:17 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ore@pengutronix.de>)
+        id 1iKiLU-0004AS-AG; Wed, 16 Oct 2019 14:24:04 +0200
+Received: from ore by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ore@pengutronix.de>)
+        id 1iKiLR-0005zs-CJ; Wed, 16 Oct 2019 14:24:01 +0200
+Date:   Wed, 16 Oct 2019 14:24:01 +0200
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Chris Snook <chris.snook@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jay Cliburn <jcliburn@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mips@vger.kernel.org
+Subject: Re: [PATCH v1 1/4] net: ag71xx: port to phylink
+Message-ID: <20191016122401.jnldnlwruv7h5kgy@pengutronix.de>
+References: <20191014061549.3669-1-o.rempel@pengutronix.de>
+ <20191014061549.3669-2-o.rempel@pengutronix.de>
+ <20191016121216.GD4780@lunn.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190917161000.DAFF3206C2@mail.kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20191016121216.GD4780@lunn.ch>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 14:20:56 up 151 days, 18:39, 100 users,  load average: 0.12, 0.11,
+ 0.04
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve,
-
-Looks like I missed replying to this one, apologies!
-
-On 17-09-19, 09:09, Stephen Boyd wrote:
-> Quoting Vinod Koul (2019-09-17 02:16:23)
-> > The initial upstreaming of SM8150 GCC driver missed few clock so add
-> > them up now.
+On Wed, Oct 16, 2019 at 02:12:16PM +0200, Andrew Lunn wrote:
+> On Mon, Oct 14, 2019 at 08:15:46AM +0200, Oleksij Rempel wrote:
+> > The port to phylink was done as close as possible to initial
+> > functionality.
+> > Theoretically this HW can support flow control, practically seems to be not
+> > enough to just enable it. So, more work should be done.
 > > 
-> > Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> > ---
+> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 > 
-> Should have some sort of fixes tag?
-
-Not really, the drivers to use these clks are not upstream so we dont
-miss it yet
-
+> Hi Oleksij
 > 
-> >  drivers/clk/qcom/gcc-sm8150.c | 172 ++++++++++++++++++++++++++++++++++
-> >  1 file changed, 172 insertions(+)
-> > 
-> > diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
-> > index 12ca2d14797f..13d4d14a5744 100644
-> > --- a/drivers/clk/qcom/gcc-sm8150.c
-> > +++ b/drivers/clk/qcom/gcc-sm8150.c
-> > @@ -1616,6 +1616,38 @@ static struct clk_branch gcc_gpu_cfg_ahb_clk = {
-> >         },
-> >  };
+> Please include Russell King in Cc: in future.
+
+He was included in To:. Do you mean, I need to move him from To to Cc?
+
+> > -static void ag71xx_phy_link_adjust(struct net_device *ndev)
+> > +static void ag71xx_mac_validate(struct phylink_config *config,
+> > +			    unsigned long *supported,
+> > +			    struct phylink_link_state *state)
+> >  {
+> > -	struct ag71xx *ag = netdev_priv(ndev);
+> > +	__ETHTOOL_DECLARE_LINK_MODE_MASK(mask) = { 0, };
+> > +
+> > +	if (state->interface != PHY_INTERFACE_MODE_NA &&
+> > +	    state->interface != PHY_INTERFACE_MODE_GMII &&
+> > +	    state->interface != PHY_INTERFACE_MODE_MII) {
+> > +		bitmap_zero(supported, __ETHTOOL_LINK_MODE_MASK_NBITS);
+> > +		return;
+> > +	}
+> > +
+> > +	phylink_set(mask, MII);
+> > +
+> > +	/* flow control is not supported */
 > >  
-> > +static struct clk_branch gcc_gpu_gpll0_clk_src = {
-> > +       .halt_check = BRANCH_HALT_SKIP,
-> 
-> Why skip?
-
-I will explore and add comments for that
-
-> > +       .clkr = {
-> > +               .enable_reg = 0x52004,
-> > +               .enable_mask = BIT(15),
-> > +               .hw.init = &(struct clk_init_data){
-> > +                       .name = "gcc_gpu_gpll0_clk_src",
-> > +                       .parent_hws = (const struct clk_hw *[]){
-> > +                               &gpll0.clkr.hw },
-> > +                       .num_parents = 1,
-> > +                       .flags = CLK_SET_RATE_PARENT,
-> > +                       .ops = &clk_branch2_ops,
-> > +               },
-> > +       },
-> > +};
+> > -	ag71xx_link_adjust(ag, true);
+> > +	phylink_set(mask, 10baseT_Half);
+> > +	phylink_set(mask, 10baseT_Full);
+> > +	phylink_set(mask, 100baseT_Half);
+> > +	phylink_set(mask, 100baseT_Full);
 > > +
-> > +static struct clk_branch gcc_gpu_gpll0_div_clk_src = {
-> > +       .halt_check = BRANCH_HALT_SKIP,
+> > +	phylink_set(mask, 1000baseT_Full);
+> > +	phylink_set(mask, 1000baseX_Full);
 > 
-> Why skip?
-> 
-> > +       .clkr = {
-> > +               .enable_reg = 0x52004,
-> > +               .enable_mask = BIT(16),
-> > +               .hw.init = &(struct clk_init_data){
-> > +                       .name = "gcc_gpu_gpll0_div_clk_src",
-> > +                       .parent_hws = (const struct clk_hw *[]){
-> > +                               &gcc_gpu_gpll0_clk_src.clkr.hw },
-> > +                       .num_parents = 1,
-> > +                       .flags = CLK_SET_RATE_PARENT,
-> > +                       .ops = &clk_branch2_ops,
-> > +               },
-> > +       },
-> > +};
-> > +
-> >  static struct clk_branch gcc_gpu_iref_clk = {
-> >         .halt_reg = 0x8c010,
-> >         .halt_check = BRANCH_HALT,
-> > @@ -1698,6 +1730,38 @@ static struct clk_branch gcc_npu_cfg_ahb_clk = {
-> >         },
-> >  };
+> Can the MAC/PHY dynamically switch between MII and GMII? Maybe you
+> should only add 1G support when interface is GMII?
+
+OK, good point.
+
+> > @@ -1239,6 +1255,13 @@ static int ag71xx_open(struct net_device *ndev)
+> >  	unsigned int max_frame_len;
+> >  	int ret;
 > >  
-> > +static struct clk_branch gcc_npu_gpll0_clk_src = {
-> > +       .halt_check = BRANCH_HALT_SKIP,
-> > +       .clkr = {
-> > +               .enable_reg = 0x52004,
-> > +               .enable_mask = BIT(18),
-> > +               .hw.init = &(struct clk_init_data){
-> > +                       .name = "gcc_npu_gpll0_clk_src",
-> > +                       .parent_hws = (const struct clk_hw *[]){
-> > +                               &gpll0.clkr.hw },
-> > +                       .num_parents = 1,
-> > +                       .flags = CLK_SET_RATE_PARENT,
-> > +                       .ops = &clk_branch2_ops,
-> > +               },
-> > +       },
-> > +};
-> > +
-> > +static struct clk_branch gcc_npu_gpll0_div_clk_src = {
-> > +       .halt_check = BRANCH_HALT_SKIP,
-> > +       .clkr = {
-> > +               .enable_reg = 0x52004,
-> > +               .enable_mask = BIT(19),
-> > +               .hw.init = &(struct clk_init_data){
-> > +                       .name = "gcc_npu_gpll0_div_clk_src",
-> > +                       .parent_hws = (const struct clk_hw *[]){
-> > +                               &gcc_npu_gpll0_clk_src.clkr.hw },
-> > +                       .num_parents = 1,
-> > +                       .flags = CLK_SET_RATE_PARENT,
-> > +                       .ops = &clk_branch2_ops,
-> > +               },
-> > +       },
-> > +};
-> > +
-> >  static struct clk_branch gcc_npu_trig_clk = {
-> >         .halt_reg = 0x4d00c,
-> >         .halt_check = BRANCH_VOTED,
-> > @@ -2812,6 +2876,42 @@ static struct clk_branch gcc_ufs_card_phy_aux_hw_ctl_clk = {
-> >         },
-> >  };
-> >  
-> > +static struct clk_branch gcc_ufs_card_rx_symbol_0_clk = {
-> > +       .halt_check = BRANCH_HALT_SKIP,
+> > +	ret = phylink_of_phy_connect(ag->phylink, ag->pdev->dev.of_node, 0);
+> > +	if (ret) {
+> > +		netif_info(ag, link, ndev, "phylink_of_phy_connect filed with err: %i\n",
+> > +			   ret);
 > 
-> Can't we fix the UFS driver to not require this anymore? This is the
-> fourth or fifth time I've asked for this.
+> netif_info seems wrong. _err()?
 
-yeah Bjorn did tell me that and I think there was some other thread on
-similar lines. So is this fine by you.
+Yes, will fix it.
+
+Regards,
+Oleksij.
 
 -- 
-~Vinod
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
