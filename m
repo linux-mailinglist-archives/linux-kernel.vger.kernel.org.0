@@ -2,41 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 909C8DA071
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:25:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EDDBD9FAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407302AbfJPWLd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:11:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48746 "EHLO mail.kernel.org"
+        id S2438001AbfJPV5W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:57:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395420AbfJPV4o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:56:44 -0400
+        id S2387438AbfJPV4p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:56:45 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6A0C21D7C;
-        Wed, 16 Oct 2019 21:56:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C13FC20872;
+        Wed, 16 Oct 2019 21:56:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1571263004;
-        bh=9hytf46pxJZwWd1KZSS2LwMH+F/2nbwdUj2HF2HtH7s=;
+        bh=aYhgH6fzlsQzxS6skawnwMCgmv+FYnwhSWjRU2M2VK4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nO5dxg5rW9EMkQwoX1lhOCDyOR7G3Sgq5PBgFgGXPjZT7ghnOHv6ZTtcCtkZSieUs
-         veF7Pdn5KHCQ0uRNEeh4g9hFawaOB334YQ3pbC3IoLV75iuX4JXJPrXx+Zn7k01/NY
-         7BOD+ZFkniZzZ9D2f0n0qjc7vbZZ1tBn7oRZglrU=
+        b=ij8sdJAg8lYrSscvaURxzdmbfBX4THUM92wzsP7SXG8hyiq94RX8cTj0M5o8/oT8F
+         C+5YVwX2ZRNB1igEfpH2eYtZfUENWAoUokbXhXrHd/IKd0YVDo3RI7k+Q5gRiZKW70
+         fS7vlGL8nhhMpw+Ryy6d03azuV5CJ/d+UmnlRClg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ian Rogers <irogers@google.com>,
+        stable@vger.kernel.org,
+        Steve MacLean <Steve.MacLean@Microsoft.com>,
+        Jiri Olsa <jolsa@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Brian Robbins <brianrob@microsoft.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Eric Saint-Etienne <eric.saint.etienne@oracle.com>,
+        John Keeping <john@metanate.com>,
+        John Salem <josalem@microsoft.com>,
+        Leo Yan <leo.yan@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
+        Song Liu <songliubraving@fb.com>,
         Stephane Eranian <eranian@google.com>,
-        Wang Nan <wangnan0@huawei.com>,
+        Tom McDonald <thomas.mcdonald@microsoft.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.14 44/65] perf llvm: Dont access out-of-scope array
-Date:   Wed, 16 Oct 2019 14:50:58 -0700
-Message-Id: <20191016214833.346302368@linuxfoundation.org>
+Subject: [PATCH 4.14 45/65] perf inject jit: Fix JIT_CODE_MOVE filename
+Date:   Wed, 16 Oct 2019 14:50:59 -0700
+Message-Id: <20191016214833.734751175@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
 References: <20191016214756.457746573@linuxfoundation.org>
@@ -49,55 +59,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ian Rogers <irogers@google.com>
+From: Steve MacLean <Steve.MacLean@microsoft.com>
 
-commit 7d4c85b7035eb2f9ab217ce649dcd1bfaf0cacd3 upstream.
+commit b59711e9b0d22fd47abfa00602fd8c365cdd3ab7 upstream.
 
-The 'test_dir' variable is assigned to the 'release' array which is
-out-of-scope 3 lines later.
+During perf inject --jit, JIT_CODE_MOVE records were injecting MMAP records
+with an incorrect filename. Specifically it was missing the ".so" suffix.
 
-Extend the scope of the 'release' array so that an out-of-scope array
-isn't accessed.
+Further the JIT_CODE_LOAD record were silently truncating the
+jr->load.code_index field to 32 bits before generating the filename.
 
-Bug detected by clang's address sanitizer.
+Make both records emit the same filename based on the full 64 bit
+code_index field.
 
-Fixes: 07bc5c699a3d ("perf tools: Make fetch_kernel_version() publicly available")
-Cc: stable@vger.kernel.org # v4.4+
-Signed-off-by: Ian Rogers <irogers@google.com>
+Fixes: 9b07e27f88b9 ("perf inject: Add jitdump mmap injection support")
+Cc: stable@vger.kernel.org # v4.6+
+Signed-off-by: Steve MacLean <Steve.MacLean@Microsoft.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Brian Robbins <brianrob@microsoft.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Eric Saint-Etienne <eric.saint.etienne@oracle.com>
+Cc: John Keeping <john@metanate.com>
+Cc: John Salem <josalem@microsoft.com>
+Cc: Leo Yan <leo.yan@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Song Liu <songliubraving@fb.com>
 Cc: Stephane Eranian <eranian@google.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lore.kernel.org/lkml/20190926220018.25402-1-irogers@google.com
+Cc: Tom McDonald <thomas.mcdonald@microsoft.com>
+Link: http://lore.kernel.org/lkml/BN8PR21MB1362FF8F127B31DBF4121528F7800@BN8PR21MB1362.namprd21.prod.outlook.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/llvm-utils.c |    6 +++---
+ tools/perf/util/jitdump.c |    6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/tools/perf/util/llvm-utils.c
-+++ b/tools/perf/util/llvm-utils.c
-@@ -225,14 +225,14 @@ static int detect_kbuild_dir(char **kbui
- 	const char *prefix_dir = "";
- 	const char *suffix_dir = "";
+--- a/tools/perf/util/jitdump.c
++++ b/tools/perf/util/jitdump.c
+@@ -394,7 +394,7 @@ static int jit_repipe_code_load(struct j
+ 	size_t size;
+ 	u16 idr_size;
+ 	const char *sym;
+-	uint32_t count;
++	uint64_t count;
+ 	int ret, csize, usize;
+ 	pid_t pid, tid;
+ 	struct {
+@@ -417,7 +417,7 @@ static int jit_repipe_code_load(struct j
+ 		return -1;
  
-+	/* _UTSNAME_LENGTH is 65 */
-+	char release[128];
-+
- 	char *autoconf_path;
+ 	filename = event->mmap2.filename;
+-	size = snprintf(filename, PATH_MAX, "%s/jitted-%d-%u.so",
++	size = snprintf(filename, PATH_MAX, "%s/jitted-%d-%" PRIu64 ".so",
+ 			jd->dir,
+ 			pid,
+ 			count);
+@@ -530,7 +530,7 @@ static int jit_repipe_code_move(struct j
+ 		return -1;
  
- 	int err;
- 
- 	if (!test_dir) {
--		/* _UTSNAME_LENGTH is 65 */
--		char release[128];
--
- 		err = fetch_kernel_version(NULL, release,
- 					   sizeof(release));
- 		if (err)
+ 	filename = event->mmap2.filename;
+-	size = snprintf(filename, PATH_MAX, "%s/jitted-%d-%"PRIu64,
++	size = snprintf(filename, PATH_MAX, "%s/jitted-%d-%" PRIu64 ".so",
+ 	         jd->dir,
+ 	         pid,
+ 		 jr->move.code_index);
 
 
