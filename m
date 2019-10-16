@@ -2,191 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C4ACD8FE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:47:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C68AD8FE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:49:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389480AbfJPLrp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 07:47:45 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:40349 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388069AbfJPLro (ORCPT
+        id S2389792AbfJPLtn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 07:49:43 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:49888 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728404AbfJPLtm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 07:47:44 -0400
-Received: by mail-ot1-f65.google.com with SMTP id y39so19838572ota.7
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 04:47:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4FFfdl/5HhwgogS+uQMVCmerpDy+QFALdziBFwG47Ho=;
-        b=qxYBTI3sDAIe67leQB17PCwhFI+UWqXoCGfOvVZPliY25X9Cp/O2IdRxHSCUnyWG4q
-         Tu5RtHDfeIIAwieu+6Cwh17xFFs59XSifqxoV8fjVPl+qwfuOSDsUNOvDZKGmwUEnROU
-         BQwsxUVu18fnl8vNb9VtrZm7KX1m1ZdfyyiOvKciuypBvupKsxgYYRXrjAxaPFjmyVPk
-         VNdWQtpdWBS3JaivSzlYgGfD1+lzCSW6pxicnllkR4LcOqIQSBVdnETIiV1fJby9fziv
-         gt2ywLf1FY3q+ebS4ed36RPp/4sHlRtB31NCq4sIrHh+8s/E7PBOrKYJ5th3o/KNQRHQ
-         xXGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4FFfdl/5HhwgogS+uQMVCmerpDy+QFALdziBFwG47Ho=;
-        b=WGvv8unxxGhlLsaM2WpLrrrj2KfPPFisGiOPdqbrpTU7XMdIbYMvhJtFOt/JzMf26G
-         7bIUivcJM/ducoKQqHx2xjWH+JiMYfyGc5jUgDl4+73/XqPWRW1sYGvGUMrcM7yE9qmV
-         RLENt2vd5Tt96bVi8fx/hrvaiukyRYy3wqQL5Y3RWa3NZVV7+MMv59egTW64zjTnsxu7
-         Jg1yY3qTUir9EJlz/DmBt4JuDv/uNxRezDnPQilyORkg8KPUnbe0NmpESdIHUILyiwPN
-         oPJopAhwGRt9GUQvzPF0A/D+r1Pq+US8O8GBc1HbM6AsCz/loh4BNruyaTB8pKkQPiuV
-         Q7Aw==
-X-Gm-Message-State: APjAAAUww3h2NLINOQ0/cg4gvyPEyEoO/p6Zbp4Mt+Ra41crm1pOkq3y
-        cH82Uh5mbR27bE6WnXPfxvFUqPtSzRmr4YRjrfRrGA==
-X-Google-Smtp-Source: APXvYqxLUzdznFDTAtPsUXOQYQINf4AjQMZ44lwwxhy/Q0X7piHQ/pfQCNFVFkyakV+yLYUZARwFLNI44v5WlRcVy2E=
-X-Received: by 2002:a9d:724e:: with SMTP id a14mr34065885otk.23.1571226461723;
- Wed, 16 Oct 2019 04:47:41 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191016083959.186860-1-elver@google.com> <20191016083959.186860-8-elver@google.com>
- <20191016111847.GB44246@lakrids.cambridge.arm.com>
-In-Reply-To: <20191016111847.GB44246@lakrids.cambridge.arm.com>
-From:   Marco Elver <elver@google.com>
-Date:   Wed, 16 Oct 2019 13:47:30 +0200
-Message-ID: <CANpmjNMww9EX_WqAfWbQk8VG=DghLL7f=Otsx2=bs5sLh-VERQ@mail.gmail.com>
-Subject: Re: [PATCH 7/8] locking/atomics, kcsan: Add KCSAN instrumentation
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Alexander Potapenko <glider@google.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Borislav Petkov <bp@alien8.de>, Daniel Axtens <dja@axtens.net>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        dave.hansen@linux.intel.com, dhowells@redhat.com,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Wed, 16 Oct 2019 07:49:42 -0400
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1iKhnz-00040t-47; Wed, 16 Oct 2019 13:49:27 +0200
+Date:   Wed, 16 Oct 2019 13:49:26 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-efi@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Xiaoyao Li <xiaoyao.li@intel.com>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        x86 <x86@kernel.org>, kvm@vger.kernel.org
+Subject: Re: [PATCH v9 09/17] x86/split_lock: Handle #AC exception for split
+ lock
+In-Reply-To: <57f40083-9063-5d41-f06d-fa1ae4c78ec6@redhat.com>
+Message-ID: <alpine.DEB.2.21.1910161244060.2046@nanos.tec.linutronix.de>
+References: <1560897679-228028-1-git-send-email-fenghua.yu@intel.com> <1560897679-228028-10-git-send-email-fenghua.yu@intel.com> <alpine.DEB.2.21.1906262209590.32342@nanos.tec.linutronix.de> <20190626203637.GC245468@romley-ivt3.sc.intel.com>
+ <alpine.DEB.2.21.1906262338220.32342@nanos.tec.linutronix.de> <20190925180931.GG31852@linux.intel.com> <3ec328dc-2763-9da5-28d6-e28970262c58@redhat.com> <alpine.DEB.2.21.1910161142560.2046@nanos.tec.linutronix.de>
+ <57f40083-9063-5d41-f06d-fa1ae4c78ec6@redhat.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 16 Oct 2019 at 13:18, Mark Rutland <mark.rutland@arm.com> wrote:
->
-> Hi Marco,
->
-> On Wed, Oct 16, 2019 at 10:39:58AM +0200, Marco Elver wrote:
-> > This adds KCSAN instrumentation to atomic-instrumented.h.
-> >
-> > Signed-off-by: Marco Elver <elver@google.com>
-> > ---
-> >  include/asm-generic/atomic-instrumented.h | 192 +++++++++++++++++++++-
-> >  scripts/atomic/gen-atomic-instrumented.sh |   9 +-
-> >  2 files changed, 199 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/include/asm-generic/atomic-instrumented.h b/include/asm-generic/atomic-instrumented.h
-> > index e8730c6b9fe2..9e487febc610 100644
-> > --- a/include/asm-generic/atomic-instrumented.h
-> > +++ b/include/asm-generic/atomic-instrumented.h
-> > @@ -19,11 +19,13 @@
-> >
-> >  #include <linux/build_bug.h>
-> >  #include <linux/kasan-checks.h>
-> > +#include <linux/kcsan-checks.h>
-> >
-> >  static inline int
-> >  atomic_read(const atomic_t *v)
-> >  {
-> >       kasan_check_read(v, sizeof(*v));
-> > +     kcsan_check_atomic(v, sizeof(*v), false);
->
-> For legibility and consistency with kasan, it would be nicer to avoid
-> the bool argument here and have kcsan_check_atomic_{read,write}()
-> helpers...
->
-> > diff --git a/scripts/atomic/gen-atomic-instrumented.sh b/scripts/atomic/gen-atomic-instrumented.sh
-> > index e09812372b17..c0553743a6f4 100755
-> > --- a/scripts/atomic/gen-atomic-instrumented.sh
-> > +++ b/scripts/atomic/gen-atomic-instrumented.sh
-> > @@ -12,15 +12,20 @@ gen_param_check()
-> >       local type="${arg%%:*}"
-> >       local name="$(gen_param_name "${arg}")"
-> >       local rw="write"
-> > +     local is_write="true"
-> >
-> >       case "${type#c}" in
-> >       i) return;;
-> >       esac
-> >
-> >       # We don't write to constant parameters
-> > -     [ ${type#c} != ${type} ] && rw="read"
-> > +     if [ ${type#c} != ${type} ]; then
-> > +             rw="read"
-> > +             is_write="false"
-> > +     fi
-> >
-> >       printf "\tkasan_check_${rw}(${name}, sizeof(*${name}));\n"
-> > +     printf "\tkcsan_check_atomic(${name}, sizeof(*${name}), ${is_write});\n"
->
-> ... which would also simplify this.
->
-> Though as below, we might want to wrap both in a helper local to
-> atomic-instrumented.h.
->
-> >  }
-> >
-> >  #gen_param_check(arg...)
-> > @@ -108,6 +113,7 @@ cat <<EOF
-> >  ({                                                                   \\
-> >       typeof(ptr) __ai_ptr = (ptr);                                   \\
-> >       kasan_check_write(__ai_ptr, ${mult}sizeof(*__ai_ptr));          \\
-> > +     kcsan_check_atomic(__ai_ptr, ${mult}sizeof(*__ai_ptr), true);   \\
-> >       arch_${xchg}(__ai_ptr, __VA_ARGS__);                            \\
-> >  })
-> >  EOF
-> > @@ -148,6 +154,7 @@ cat << EOF
-> >
-> >  #include <linux/build_bug.h>
-> >  #include <linux/kasan-checks.h>
-> > +#include <linux/kcsan-checks.h>
->
-> We could add the following to this preamble:
->
-> static inline void __atomic_check_read(const volatile void *v, size_t size)
-> {
->         kasan_check_read(v, sizeof(*v));
->         kcsan_check_atomic(v, sizeof(*v), false);
-> }
->
-> static inline void __atomic_check_write(const volatile void *v, size_t size)
-> {
->         kasan_check_write(v, sizeof(*v));
->         kcsan_check_atomic(v, sizeof(*v), true);
-> }
->
-> ... and only have the one call in each atomic wrapper.
->
-> Otherwise, this looks good to me.
+On Wed, 16 Oct 2019, Paolo Bonzini wrote:
+> On 16/10/19 11:47, Thomas Gleixner wrote:
+> > On Wed, 16 Oct 2019, Paolo Bonzini wrote:
+> >> Just never advertise split-lock
+> >> detection to guests.  If the host has enabled split-lock detection,
+> >> trap #AC and forward it to the host handler---which would disable
+> >> split lock detection globally and reenter the guest.
+> > 
+> > Which completely defeats the purpose.
+> 
+> Yes it does.  But Sean's proposal, as I understand it, leads to the
+> guest receiving #AC when it wasn't expecting one.  So for an old guest,
+> as soon as the guest kernel happens to do a split lock, it gets an
+> unexpected #AC and crashes and burns.  And then, after much googling and
+> gnashing of teeth, people proceed to disable split lock detection.
 
-Thanks, incorporated suggestions for v2: for readability rename
-kcsan_check_access -> kcsan_check_{read,write}, and for
-atomic-instrumented.h, adding the suggested preamble.
+I don't think that this was what he suggested/intended.
+
+> In all of these cases, the common final result is that split-lock
+> detection is disabled on the host.  So might as well go with the
+> simplest one and not pretend to virtualize something that (without core
+> scheduling) is obviously not virtualizable.
+
+You are completely ignoring any argument here and just leave it behind your
+signature (instead of trimming your reply).
+
+> > 1) Sane guest
+> > 
+> > Guest kernel has #AC handler and you basically prevent it from
+> > detecting malicious user space and killing it. You also prevent #AC
+> > detection in the guest kernel which limits debugability.
+
+That's a perfectly fine situation. Host has #AC enabled and exposes the
+availability of #AC to the guest. Guest kernel has a proper handler and
+does the right thing. So the host _CAN_ forward #AC to the guest and let it
+deal with it. For that to work you need to expose the MSR so you know the
+guest state in the host.
+
+Your lazy 'solution' just renders #AC completely useless even for
+debugging.
+
+> > 2) Malicious guest
+> > 
+> > Trigger #AC to disable the host detection and then carry out the DoS 
+> > attack.
+
+With your proposal you render #AC useless even on hosts which have SMT
+disabled, which is just wrong. There are enough good reasons to disable
+SMT.
+
+I agree that with SMT enabled the situation is truly bad, but we surely can
+be smarter than just disabling it globally unconditionally and forever.
+
+Plus we want a knob which treats guests triggering #AC in the same way as
+we treat user space, i.e. kill them with SIGBUS.
 
 Thanks,
--- Marco
+
+	tglx
