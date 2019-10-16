@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9EE2D9E97
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CF32D9E9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438631AbfJPV7r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:59:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52646 "EHLO mail.kernel.org"
+        id S2438658AbfJPV7w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:59:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438260AbfJPV6q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:58:46 -0400
+        id S2438276AbfJPV6t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:58:49 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BD3A20872;
-        Wed, 16 Oct 2019 21:58:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75C3321928;
+        Wed, 16 Oct 2019 21:58:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263126;
-        bh=wrPFR4hMu8e3GqW0eIvzAndNN0lyryXQlDzQkmqeg+A=;
+        s=default; t=1571263128;
+        bh=RR3rpb/NWDOjZesUdv/4qJSanHshBDUM1P6TXdKXDcg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O4LTZGZEHo0jih5T4FHS6KfJgOXaTOajYNQyv9Kd+l4aYmI+3msZKSK/2A8smvCWh
-         4xRAB0cCYyNUveRFbMxXeljc0QY/aMreSRK/hnF3pe68KfnySVgFyzpoYfjr2W7MxV
-         MAxmlS0Fqi7MskByvgp50r4yPLOX3gFlyr+3g6Mc=
+        b=uCtyvcH5amPypjJfAUcInV18x+1DGPOF38T+14Hm5YzG0kMrHkLklvPAYIVKTulJc
+         XP3tNQaGbJLtaoNwXtIaWwInWAA7vvORvvk1hjqOZvJfBsoDsMpcyzEch4QVBwivms
+         nyjpNWrEJTElQvrDUdLVKXSCTpO8wKb2YeV4+BQg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Straube <straube.linux@gmail.com>,
-        Denis Efremov <efremov@linux.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>
-Subject: [PATCH 5.3 050/112] staging: rtl8188eu: fix HighestRate check in odm_ARFBRefresh_8188E()
-Date:   Wed, 16 Oct 2019 14:50:42 -0700
-Message-Id: <20191016214856.566046359@linuxfoundation.org>
+        stable@vger.kernel.org, Navid Emamdoost <navid.emamdoost@gmail.com>
+Subject: [PATCH 5.3 051/112] staging: vt6655: Fix memory leak in vt6655_probe
+Date:   Wed, 16 Oct 2019 14:50:43 -0700
+Message-Id: <20191016214857.295568959@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
 References: <20191016214844.038848564@linuxfoundation.org>
@@ -44,36 +42,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Efremov <efremov@linux.com>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-commit 22d67a01d8d89552b989c9651419824bb4111200 upstream.
+commit 80b15db5e1e9c3300de299b2d43d1aafb593e6ac upstream.
 
-It's incorrect to compare HighestRate with 0x0b twice in the following
-manner "if (HighestRate > 0x0b) ... else if (HighestRate > 0x0b) ...". The
-"else if" branch is constantly false. The second comparision should be
-with 0x03 according to the max_rate_idx in ODM_RAInfo_Init().
+In vt6655_probe, if vnt_init() fails the cleanup code needs to be called
+like other error handling cases. The call to device_free_info() is
+added.
 
-Cc: Michael Straube <straube.linux@gmail.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Denis Efremov <efremov@linux.com>
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
-Link: https://lore.kernel.org/r/20190926073138.12109-1-efremov@linux.com
+Fixes: 67013f2c0e58 ("staging: vt6655: mac80211 conversion add main mac80211 functions")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191004200319.22394-1-navid.emamdoost@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/rtl8188eu/hal/hal8188e_rate_adaptive.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/vt6655/device_main.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/staging/rtl8188eu/hal/hal8188e_rate_adaptive.c
-+++ b/drivers/staging/rtl8188eu/hal/hal8188e_rate_adaptive.c
-@@ -409,7 +409,7 @@ static int odm_ARFBRefresh_8188E(struct
- 		pRaInfo->PTModeSS = 3;
- 	else if (pRaInfo->HighestRate > 0x0b)
- 		pRaInfo->PTModeSS = 2;
--	else if (pRaInfo->HighestRate > 0x0b)
-+	else if (pRaInfo->HighestRate > 0x03)
- 		pRaInfo->PTModeSS = 1;
- 	else
- 		pRaInfo->PTModeSS = 0;
+--- a/drivers/staging/vt6655/device_main.c
++++ b/drivers/staging/vt6655/device_main.c
+@@ -1748,8 +1748,10 @@ vt6655_probe(struct pci_dev *pcid, const
+ 
+ 	priv->hw->max_signal = 100;
+ 
+-	if (vnt_init(priv))
++	if (vnt_init(priv)) {
++		device_free_info(priv);
+ 		return -ENODEV;
++	}
+ 
+ 	device_print_info(priv);
+ 	pci_set_drvdata(pcid, priv);
 
 
