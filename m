@@ -2,673 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB8D4D8DB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 12:20:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24D05D8DCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 12:23:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392338AbfJPKUR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 06:20:17 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40510 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729634AbfJPKUQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 06:20:16 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EBE7510CC20C;
-        Wed, 16 Oct 2019 10:20:15 +0000 (UTC)
-Received: from [10.72.12.53] (ovpn-12-53.pek2.redhat.com [10.72.12.53])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 75DE15D6B2;
-        Wed, 16 Oct 2019 10:19:33 +0000 (UTC)
-Subject: Re: [RFC 2/2] vhost: IFC VF vdpa layer
-To:     Zhu Lingshan <lingshan.zhu@intel.com>, mst@redhat.com,
-        alex.williamson@redhat.com
-Cc:     linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        netdev@vger.kernel.org, dan.daly@intel.com,
-        cunming.liang@intel.com, tiwei.bie@intel.com, jason.zeng@intel.com,
-        zhiyuan.lv@intel.com
-References: <20191016013050.3918-1-lingshan.zhu@intel.com>
- <20191016013050.3918-3-lingshan.zhu@intel.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <9495331d-3c65-6f49-dcd9-bfdb17054cf0@redhat.com>
-Date:   Wed, 16 Oct 2019 18:19:26 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2392363AbfJPKXC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 06:23:02 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:47100 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726394AbfJPKXC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 06:23:02 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 7BE6C3E9025F397CF751;
+        Wed, 16 Oct 2019 18:22:59 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 16 Oct 2019 18:22:53 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <axboe@kernel.dk>
+CC:     <linux-ide@vger.kernel.org>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, John Garry <john.garry@huawei.com>
+Subject: [PATCH] libata: Ensure ata_port probe has completed before detach
+Date:   Wed, 16 Oct 2019 18:19:52 +0800
+Message-ID: <1571221192-216909-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-In-Reply-To: <20191016013050.3918-3-lingshan.zhu@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.65]); Wed, 16 Oct 2019 10:20:16 +0000 (UTC)
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+With CONFIG_DEBUG_TEST_DRIVER_REMOVE set, we may find the following WARN:
 
-On 2019/10/16 上午9:30, Zhu Lingshan wrote:
-> This commit introduced IFC VF operations for vdpa, which complys to
-> vhost_mdev interfaces, handles IFC VF initialization,
-> configuration and removal.
->
-> Signed-off-by: Zhu Lingshan <lingshan.zhu@intel.com>
-> ---
->   drivers/vhost/ifcvf/ifcvf_main.c | 541 +++++++++++++++++++++++++++++++++++++++
->   1 file changed, 541 insertions(+)
->   create mode 100644 drivers/vhost/ifcvf/ifcvf_main.c
->
-> diff --git a/drivers/vhost/ifcvf/ifcvf_main.c b/drivers/vhost/ifcvf/ifcvf_main.c
-> new file mode 100644
-> index 000000000000..c48a29969a85
-> --- /dev/null
-> +++ b/drivers/vhost/ifcvf/ifcvf_main.c
-> @@ -0,0 +1,541 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2019 Intel Corporation.
-> + */
-> +
-> +#include <linux/interrupt.h>
-> +#include <linux/module.h>
-> +#include <linux/mdev.h>
-> +#include <linux/pci.h>
-> +#include <linux/sysfs.h>
-> +
-> +#include "ifcvf_base.h"
-> +
-> +#define VERSION_STRING	"0.1"
-> +#define DRIVER_AUTHOR	"Intel Corporation"
-> +#define IFCVF_DRIVER_NAME	"ifcvf"
-> +
-> +static irqreturn_t ifcvf_intr_handler(int irq, void *arg)
-> +{
-> +	struct vring_info *vring = arg;
-> +
-> +	if (vring->cb.callback)
-> +		return vring->cb.callback(vring->cb.private);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static u64 ifcvf_mdev_get_features(struct mdev_device *mdev)
-> +{
-> +	return IFC_SUPPORTED_FEATURES;
+[   23.452574] ------------[ cut here ]------------
+[   23.457190] WARNING: CPU: 59 PID: 1 at drivers/ata/libata-core.c:6676 ata_host_detach+0x15c/0x168
+[   23.466047] Modules linked in:
+[   23.469092] CPU: 59 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc1-00010-g5b83fd27752b-dirty #296
+[   23.477776] Hardware name: Huawei D06 /D06, BIOS Hisilicon D06 UEFI RC0 - V1.16.01 03/15/2019
+[   23.486286] pstate: a0c00009 (NzCv daif +PAN +UAO)
+[   23.491065] pc : ata_host_detach+0x15c/0x168
+[   23.495322] lr : ata_host_detach+0x88/0x168
+[   23.499491] sp : ffff800011cabb50
+[   23.502792] x29: ffff800011cabb50 x28: 0000000000000007
+[   23.508091] x27: ffff80001137f068 x26: ffff8000112c0c28
+[   23.513390] x25: 0000000000003848 x24: ffff0023ea185300
+[   23.518689] x23: 0000000000000001 x22: 00000000000014c0
+[   23.523987] x21: 0000000000013740 x20: ffff0023bdc20000
+[   23.529286] x19: 0000000000000000 x18: 0000000000000004
+[   23.534584] x17: 0000000000000001 x16: 00000000000000f0
+[   23.539883] x15: ffff0023eac13790 x14: ffff0023eb76c408
+[   23.545181] x13: 0000000000000000 x12: ffff0023eac13790
+[   23.550480] x11: ffff0023eb76c228 x10: 0000000000000000
+[   23.555779] x9 : ffff0023eac13798 x8 : 0000000040000000
+[   23.561077] x7 : 0000000000000002 x6 : 0000000000000001
+[   23.566376] x5 : 0000000000000002 x4 : 0000000000000000
+[   23.571674] x3 : ffff0023bf08a0bc x2 : 0000000000000000
+[   23.576972] x1 : 3099674201f72700 x0 : 0000000000400284
+[   23.582272] Call trace:
+[   23.584706]  ata_host_detach+0x15c/0x168
+[   23.588616]  ata_pci_remove_one+0x10/0x18
+[   23.592615]  ahci_remove_one+0x20/0x40
+[   23.596356]  pci_device_remove+0x3c/0xe0
+[   23.600267]  really_probe+0xdc/0x3e0
+[   23.603830]  driver_probe_device+0x58/0x100
+[   23.608000]  device_driver_attach+0x6c/0x90
+[   23.612169]  __driver_attach+0x84/0xc8
+[   23.615908]  bus_for_each_dev+0x74/0xc8
+[   23.619730]  driver_attach+0x20/0x28
+[   23.623292]  bus_add_driver+0x148/0x1f0
+[   23.627115]  driver_register+0x60/0x110
+[   23.630938]  __pci_register_driver+0x40/0x48
+[   23.635199]  ahci_pci_driver_init+0x20/0x28
+[   23.639372]  do_one_initcall+0x5c/0x1b0
+[   23.643199]  kernel_init_freeable+0x1a4/0x24c
+[   23.647546]  kernel_init+0x10/0x108
+[   23.651023]  ret_from_fork+0x10/0x18
+[   23.654590] ---[ end trace 634a14b675b71c13 ]---
 
+With KASAN also enabled, we may also get many use-after-free reports.
 
-I would expect this should be done by querying the hw. Or IFC VF can't 
-get any update through its firmware?
+The issue is that when CONFIG_DEBUG_TEST_DRIVER_REMOVE is set, we may
+attempt to detach the ata_port before it has been probed.
 
+This is because the ata_ports are async probed, meaning that there is no
+guarantee that the ata_port has probed prior to detach. When the ata_port
+does probe in this scenario, we get all sorts of issues as the detach may
+have already happened.
 
-> +}
-> +
-> +static int ifcvf_mdev_set_features(struct mdev_device *mdev, u64 features)
-> +{
-> +	struct ifcvf_adapter *adapter = mdev_get_drvdata(mdev);
-> +	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(adapter);
-> +
-> +	vf->req_features = features;
-> +
-> +	return 0;
-> +}
-> +
-> +static u64 ifcvf_mdev_get_vq_state(struct mdev_device *mdev, u16 qid)
-> +{
-> +	struct ifcvf_adapter *adapter = mdev_get_drvdata(mdev);
-> +	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(adapter);
-> +
-> +	return vf->vring[qid].last_avail_idx;
+Fix by ensuring synchronisation with async_synchronize_full(). We could
+alternatively use the cookie returned from the ata_port probe
+async_schedule() call, but that means managing the cookie, so more
+complicated.
 
+Signed-off-by: John Garry <john.garry@huawei.com>
+---
+Note: This has only been boot tested and manual driver remove/add.
+         My system has no disk attached to the ahci host.
 
-Does this really work? I'd expect it should be fetched from hw since 
-it's an internal state.
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index 28c492be0a57..74c9b3032d46 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -6708,6 +6708,9 @@ void ata_host_detach(struct ata_host *host)
+ {
+ 	int i;
+ 
++	/* Ensure ata_port probe has completed */
++	async_synchronize_full();
++
+ 	for (i = 0; i < host->n_ports; i++)
+ 		ata_port_detach(host->ports[i]);
+ 
+-- 
+2.17.1
 
-
-> +}
-> +
-> +static int ifcvf_mdev_set_vq_state(struct mdev_device *mdev, u16 qid, u64 num)
-> +{
-> +	struct ifcvf_adapter *adapter = mdev_get_drvdata(mdev);
-> +	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(adapter);
-> +
-> +	vf->vring[qid].last_used_idx = num;
-
-
-I fail to understand why last_used_idx is needed. It looks to me the 
-used idx in the used ring is sufficient.
-
-
-> +	vf->vring[qid].last_avail_idx = num;
-
-
-Do we need a synchronization with hw immediately here?
-
-
-> +
-> +	return 0;
-> +}
-> +
-> +static int ifcvf_mdev_set_vq_address(struct mdev_device *mdev, u16 idx,
-> +				     u64 desc_area, u64 driver_area,
-> +				     u64 device_area)
-> +{
-> +	struct ifcvf_adapter *adapter = mdev_get_drvdata(mdev);
-> +	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(adapter);
-> +
-> +	vf->vring[idx].desc = desc_area;
-> +	vf->vring[idx].avail = driver_area;
-> +	vf->vring[idx].used = device_area;
-> +
-> +	return 0;
-> +}
-> +
-> +static void ifcvf_mdev_set_vq_num(struct mdev_device *mdev, u16 qid, u32 num)
-> +{
-> +	struct ifcvf_adapter *adapter = mdev_get_drvdata(mdev);
-> +	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(adapter);
-> +
-> +	vf->vring[qid].size = num;
-> +}
-> +
-> +static void ifcvf_mdev_set_vq_ready(struct mdev_device *mdev,
-> +				u16 qid, bool ready)
-> +{
-> +
-> +	struct ifcvf_adapter *adapter = mdev_get_drvdata(mdev);
-> +	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(adapter);
-> +
-> +	vf->vring[qid].ready = ready;
-> +}
-> +
-> +static bool ifcvf_mdev_get_vq_ready(struct mdev_device *mdev, u16 qid)
-> +{
-> +
-> +	struct ifcvf_adapter *adapter = mdev_get_drvdata(mdev);
-> +	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(adapter);
-> +
-> +	return vf->vring[qid].ready;
-> +}
-> +
-> +static void ifcvf_mdev_set_vq_cb(struct mdev_device *mdev, u16 idx,
-> +				 struct virtio_mdev_callback *cb)
-> +{
-> +	struct ifcvf_adapter *adapter = mdev_get_drvdata(mdev);
-> +	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(adapter);
-> +
-> +	vf->vring[idx].cb = *cb;
-> +}
-> +
-> +static void ifcvf_mdev_kick_vq(struct mdev_device *mdev, u16 idx)
-> +{
-> +	struct ifcvf_adapter *adapter = mdev_get_drvdata(mdev);
-> +	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(adapter);
-> +
-> +	ifcvf_notify_queue(vf, idx);
-> +}
-> +
-> +static u8 ifcvf_mdev_get_status(struct mdev_device *mdev)
-> +{
-> +	struct ifcvf_adapter *adapter = mdev_get_drvdata(mdev);
-> +	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(adapter);
-> +
-> +	return vf->status;
-> +}
-> +
-> +static u32 ifcvf_mdev_get_generation(struct mdev_device *mdev)
-> +{
-> +	struct ifcvf_adapter *adapter = mdev_get_drvdata(mdev);
-> +	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(adapter);
-> +
-> +	return vf->generation;
-> +}
-> +
-> +static int ifcvf_mdev_get_version(struct mdev_device *mdev)
-> +{
-> +	return VIRTIO_MDEV_VERSION;
-> +}
-> +
-> +static u32 ifcvf_mdev_get_device_id(struct mdev_device *mdev)
-> +{
-> +	return IFCVF_DEVICE_ID;
-> +}
-> +
-> +static u32 ifcvf_mdev_get_vendor_id(struct mdev_device *mdev)
-> +{
-> +	return IFCVF_VENDOR_ID;
-> +}
-> +
-> +static u16 ifcvf_mdev_get_vq_align(struct mdev_device *mdev)
-> +{
-> +	return IFCVF_QUEUE_ALIGNMENT;
-> +}
-> +
-> +static int ifcvf_start_datapath(void *private)
-> +{
-> +	int i, ret;
-> +	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(private);
-> +
-> +	for (i = 0; i < (IFCVF_MAX_QUEUE_PAIRS * 2); i++) {
-> +		if (!vf->vring[i].ready)
-> +			break;
-
-
-Looks like error should be returned here?
-
-
-> +
-> +		if (!vf->vring[i].size)
-> +			break;
-> +
-> +		if (!vf->vring[i].desc || !vf->vring[i].avail ||
-> +			!vf->vring[i].used)
-> +			break;
-> +	}
-> +	vf->nr_vring = i;
-> +
-> +	ret = ifcvf_start_hw(vf);
-> +	return ret;
-> +}
-> +
-> +static int ifcvf_stop_datapath(void *private)
-> +{
-> +	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(private);
-> +	int i;
-> +
-> +	for (i = 0; i < IFCVF_MAX_QUEUES; i++)
-> +		vf->vring[i].cb.callback = NULL;
-
-
-Any synchronization is needed for the vq irq handler?
-
-
-> +
-> +	ifcvf_stop_hw(vf);
-> +
-> +	return 0;
-> +}
-> +
-> +static void ifcvf_reset_vring(struct ifcvf_adapter *adapter)
-> +{
-> +	int i;
-> +	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(adapter);
-> +
-> +	for (i = 0; i < IFCVF_MAX_QUEUE_PAIRS * 2; i++) {
-> +		vf->vring[i].last_used_idx = 0;
-> +		vf->vring[i].last_avail_idx = 0;
-> +		vf->vring[i].desc = 0;
-> +		vf->vring[i].avail = 0;
-> +		vf->vring[i].used = 0;
-> +		vf->vring[i].ready = 0;
-> +		vf->vring->cb.callback = NULL;
-> +		vf->vring->cb.private = NULL;
-> +	}
-> +}
-> +
-> +static void ifcvf_mdev_set_status(struct mdev_device *mdev, u8 status)
-> +{
-> +	struct ifcvf_adapter *adapter = mdev_get_drvdata(mdev);
-> +	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(adapter);
-> +
-> +	vf->status = status;
-> +
-> +	if (status == 0) {
-> +		ifcvf_stop_datapath(adapter);
-> +		ifcvf_reset_vring(adapter);
-> +		return;
-> +	}
-> +
-> +	if (status & VIRTIO_CONFIG_S_DRIVER_OK) {
-> +		ifcvf_start_datapath(adapter);
-> +		return;
-> +	}
-> +}
-> +
-> +static u16 ifcvf_mdev_get_queue_max(struct mdev_device *mdev)
-> +{
-> +	return IFCVF_MAX_QUEUES;
-
-
-The name is confusing, it was used to return the maximum queue size. In 
-new version of virtio-mdev, the callback was renamed as get_vq_num_max().
-
-
-> +}
-> +
-> +static struct virtio_mdev_device_ops ifc_mdev_ops = {
-> +	.get_features  = ifcvf_mdev_get_features,
-> +	.set_features  = ifcvf_mdev_set_features,
-> +	.get_status    = ifcvf_mdev_get_status,
-> +	.set_status    = ifcvf_mdev_set_status,
-> +	.get_queue_max = ifcvf_mdev_get_queue_max,
-> +	.get_vq_state   = ifcvf_mdev_get_vq_state,
-> +	.set_vq_state   = ifcvf_mdev_set_vq_state,
-> +	.set_vq_cb      = ifcvf_mdev_set_vq_cb,
-> +	.set_vq_ready   = ifcvf_mdev_set_vq_ready,
-> +	.get_vq_ready	= ifcvf_mdev_get_vq_ready,
-> +	.set_vq_num     = ifcvf_mdev_set_vq_num,
-> +	.set_vq_address = ifcvf_mdev_set_vq_address,
-> +	.kick_vq        = ifcvf_mdev_kick_vq,
-> +	.get_generation	= ifcvf_mdev_get_generation,
-> +	.get_version	= ifcvf_mdev_get_version,
-> +	.get_device_id	= ifcvf_mdev_get_device_id,
-> +	.get_vendor_id	= ifcvf_mdev_get_vendor_id,
-> +	.get_vq_align	= ifcvf_mdev_get_vq_align,
-> +};
-
-
-set_config/get_config is missing. It looks to me they are not hard, just 
-implementing the access to dev_cfg. It's key to make kernel virtio 
-driver to work.
-
-And in the new version of virito-mdev, features like _F_LOG_ALL should 
-be advertised through get_mdev_features.
-
-
-> +
-> +static int ifcvf_init_msix(struct ifcvf_adapter *adapter)
-> +{
-> +	int vector, i, ret, irq;
-> +	struct pci_dev *pdev = to_pci_dev(adapter->dev);
-> +	struct ifcvf_hw *vf = &adapter->vf;
-> +
-> +	ret = pci_alloc_irq_vectors(pdev, IFCVF_MAX_INTR,
-> +			IFCVF_MAX_INTR, PCI_IRQ_MSIX);
-> +	if (ret < 0) {
-> +		IFC_ERR(adapter->dev, "Failed to alloc irq vectors.\n");
-> +		return ret;
-> +	}
-> +
-> +	for (i = 0; i < IFCVF_MAX_QUEUE_PAIRS * 2; i++) {
-> +		vector = i + IFCVF_MSI_QUEUE_OFF;
-> +		irq = pci_irq_vector(pdev, vector);
-> +		ret = request_irq(irq, ifcvf_intr_handler, 0,
-> +				pci_name(pdev), &vf->vring[i]);
-> +		if (ret) {
-> +			IFC_ERR(adapter->dev,
-> +				"Failed to request irq for vq %d.\n", i);
-> +			return ret;
-> +		}
-> +	}
-
-
-Do we need to provide fallback when we can't do per vq MSIX?
-
-
-> +
-> +	return 0;
-> +}
-> +
-> +static void ifcvf_destroy_adapter(struct ifcvf_adapter *adapter)
-> +{
-> +	int i, vector, irq;
-> +	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(adapter);
-> +	struct pci_dev *pdev = to_pci_dev(adapter->dev);
-> +
-> +	for (i = 0; i < IFCVF_MAX_QUEUE_PAIRS * 2; i++) {
-> +		vector = i + IFCVF_MSI_QUEUE_OFF;
-> +		irq = pci_irq_vector(pdev, vector);
-> +		free_irq(irq, &vf->vring[i]);
-> +	}
-> +}
-> +
-> +static ssize_t name_show(struct kobject *kobj, struct device *dev, char *buf)
-> +{
-> +	const char *name = "vhost accelerator (virtio ring compatible)";
-> +
-> +	return sprintf(buf, "%s\n", name);
-> +}
-> +MDEV_TYPE_ATTR_RO(name);
-> +
-> +static ssize_t device_api_show(struct kobject *kobj, struct device *dev,
-> +			       char *buf)
-> +{
-> +	return sprintf(buf, "%s\n", VIRTIO_MDEV_DEVICE_API_STRING);
-> +}
-> +MDEV_TYPE_ATTR_RO(device_api);
-> +
-> +static ssize_t available_instances_show(struct kobject *kobj,
-> +					struct device *dev, char *buf)
-> +{
-> +	struct pci_dev *pdev = to_pci_dev(dev);
-> +	struct ifcvf_adapter *adapter = pci_get_drvdata(pdev);
-> +
-> +	return sprintf(buf, "%d\n", adapter->mdev_count);
-> +}
-> +
-> +MDEV_TYPE_ATTR_RO(available_instances);
-> +
-> +static ssize_t type_show(struct kobject *kobj,
-> +			struct device *dev, char *buf)
-> +{
-> +	return sprintf(buf, "%s\n", "net");
-> +}
-> +
-> +MDEV_TYPE_ATTR_RO(type);
-> +
-> +
-> +static struct attribute *mdev_types_attrs[] = {
-> +	&mdev_type_attr_name.attr,
-> +	&mdev_type_attr_device_api.attr,
-> +	&mdev_type_attr_available_instances.attr,
-> +	&mdev_type_attr_type.attr,
-> +	NULL,
-> +};
-> +
-> +static struct attribute_group mdev_type_group = {
-> +	.name  = "vdpa_virtio",
-
-
-To be consistent, it should be "vhost" or "virtio".
-
-
-> +	.attrs = mdev_types_attrs,
-> +};
-> +
-> +static struct attribute_group *mdev_type_groups[] = {
-> +	&mdev_type_group,
-> +	NULL,
-> +};
-> +
-> +const struct attribute_group *mdev_dev_groups[] = {
-> +	NULL,
-> +};
-> +
-> +static int ifcvf_mdev_create(struct kobject *kobj, struct mdev_device *mdev)
-> +{
-> +	struct device *dev = mdev_parent_dev(mdev);
-> +	struct pci_dev *pdev = to_pci_dev(dev);
-> +	struct ifcvf_adapter *adapter = pci_get_drvdata(pdev);
-> +	int ret = 0;
-> +
-> +	mutex_lock(&adapter->mdev_lock);
-> +
-> +	if (adapter->mdev_count < 1) {
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	mdev_set_class_id(mdev, MDEV_ID_VHOST);
-> +	mdev_set_dev_ops(mdev, &ifc_mdev_ops);
-> +
-> +	mdev_set_drvdata(mdev, adapter);
-> +	mdev_set_iommu_device(mdev_dev(mdev), dev);
-> +
-> +	INIT_LIST_HEAD(&adapter->dma_maps);
-> +	adapter->mdev_count--;
-> +
-> +out:
-> +	mutex_unlock(&adapter->mdev_lock);
-> +	return ret;
-> +}
-> +
-> +static int ifcvf_mdev_remove(struct mdev_device *mdev)
-> +{
-> +	struct device *dev = mdev_parent_dev(mdev);
-> +	struct pci_dev *pdev = to_pci_dev(dev);
-> +	struct ifcvf_adapter *adapter = pci_get_drvdata(pdev);
-> +
-> +	mutex_lock(&adapter->mdev_lock);
-> +	adapter->mdev_count++;
-> +	mutex_unlock(&adapter->mdev_lock);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct mdev_parent_ops ifcvf_mdev_fops = {
-> +	.owner			= THIS_MODULE,
-> +	.supported_type_groups	= mdev_type_groups,
-> +	.mdev_attr_groups	= mdev_dev_groups,
-> +	.create			= ifcvf_mdev_create,
-> +	.remove			= ifcvf_mdev_remove,
-> +};
-> +
-> +static int ifcvf_probe(struct pci_dev *pdev, const struct pci_device_id *id)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct ifcvf_adapter *adapter;
-> +	struct ifcvf_hw *vf;
-> +	int ret, i;
-> +
-> +	adapter = kzalloc(sizeof(struct ifcvf_adapter), GFP_KERNEL);
-> +	if (adapter == NULL) {
-> +		ret = -ENOMEM;
-> +		goto fail;
-> +	}
-> +
-> +	mutex_init(&adapter->mdev_lock);
-> +	adapter->mdev_count = 1;
-
-
-So this is per VF based vDPA implementation, which seems not convenient 
-for management.  Anyhow we can control the creation in PF?
-
-Thanks
-
-
-> +	adapter->dev = dev;
-> +
-> +	pci_set_drvdata(pdev, adapter);
-> +
-> +	ret = pci_enable_device(pdev);
-> +	if (ret) {
-> +		IFC_ERR(adapter->dev, "Failed to enable device.\n");
-> +		goto free_adapter;
-> +	}
-> +
-> +	ret = pci_request_regions(pdev, IFCVF_DRIVER_NAME);
-> +	if (ret) {
-> +		IFC_ERR(adapter->dev, "Failed to request MMIO region.\n");
-> +		goto disable_device;
-> +	}
-> +
-> +	pci_set_master(pdev);
-> +
-> +	ret = ifcvf_init_msix(adapter);
-> +	if (ret) {
-> +		IFC_ERR(adapter->dev, "Failed to initialize MSIX.\n");
-> +		goto free_msix;
-> +	}
-> +
-> +	vf = &adapter->vf;
-> +	for (i = 0; i < IFCVF_PCI_MAX_RESOURCE; i++) {
-> +		vf->mem_resource[i].phys_addr = pci_resource_start(pdev, i);
-> +		vf->mem_resource[i].len = pci_resource_len(pdev, i);
-> +		if (!vf->mem_resource[i].len) {
-> +			vf->mem_resource[i].addr = NULL;
-> +			continue;
-> +		}
-> +
-> +		vf->mem_resource[i].addr = pci_iomap_range(pdev, i, 0,
-> +				vf->mem_resource[i].len);
-> +		if (!vf->mem_resource[i].addr) {
-> +			IFC_ERR(adapter->dev, "Failed to map IO resource %d\n",
-> +				i);
-> +			return -1;
-> +		}
-> +	}
-> +
-> +	if (ifcvf_init_hw(vf, pdev) < 0)
-> +		return -1;
-> +
-> +	ret = mdev_register_device(dev, &ifcvf_mdev_fops);
-> +	if (ret) {
-> +		IFC_ERR(adapter->dev,  "Failed to register mdev device\n");
-> +		goto destroy_adapter;
-> +	}
-> +
-> +	return 0;
-> +
-> +destroy_adapter:
-> +	ifcvf_destroy_adapter(adapter);
-> +free_msix:
-> +	pci_free_irq_vectors(pdev);
-> +	pci_release_regions(pdev);
-> +disable_device:
-> +	pci_disable_device(pdev);
-> +free_adapter:
-> +	kfree(adapter);
-> +fail:
-> +	return ret;
-> +}
-> +
-> +static void ifcvf_remove(struct pci_dev *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct ifcvf_adapter *adapter = pci_get_drvdata(pdev);
-> +	struct ifcvf_hw *vf;
-> +	int i;
-> +
-> +	mdev_unregister_device(dev);
-> +
-> +	vf = &adapter->vf;
-> +	for (i = 0; i < IFCVF_PCI_MAX_RESOURCE; i++) {
-> +		if (vf->mem_resource[i].addr) {
-> +			pci_iounmap(pdev, vf->mem_resource[i].addr);
-> +			vf->mem_resource[i].addr = NULL;
-> +		}
-> +	}
-> +
-> +	ifcvf_destroy_adapter(adapter);
-> +	pci_free_irq_vectors(pdev);
-> +
-> +	pci_release_regions(pdev);
-> +	pci_disable_device(pdev);
-> +
-> +	kfree(adapter);
-> +}
-> +
-> +static struct pci_device_id ifcvf_pci_ids[] = {
-> +	{ PCI_DEVICE_SUB(IFCVF_VENDOR_ID,
-> +			IFCVF_DEVICE_ID,
-> +			IFCVF_SUBSYS_VENDOR_ID,
-> +			IFCVF_SUBSYS_DEVICE_ID) },
-> +	{ 0 },
-> +};
-> +MODULE_DEVICE_TABLE(pci, ifcvf_pci_ids);
-> +
-> +static struct pci_driver ifcvf_driver = {
-> +	.name     = IFCVF_DRIVER_NAME,
-> +	.id_table = ifcvf_pci_ids,
-> +	.probe    = ifcvf_probe,
-> +	.remove   = ifcvf_remove,
-> +};
-> +
-> +static int __init ifcvf_init_module(void)
-> +{
-> +	int ret;
-> +
-> +	ret = pci_register_driver(&ifcvf_driver);
-> +	return ret;
-> +}
-> +
-> +static void __exit ifcvf_exit_module(void)
-> +{
-> +	pci_unregister_driver(&ifcvf_driver);
-> +}
-> +
-> +module_init(ifcvf_init_module);
-> +module_exit(ifcvf_exit_module);
-> +
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_VERSION(VERSION_STRING);
-> +MODULE_AUTHOR(DRIVER_AUTHOR);
