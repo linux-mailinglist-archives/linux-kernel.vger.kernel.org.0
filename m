@@ -2,61 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34162D8EB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 12:56:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30CAED8EC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 12:59:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392273AbfJPK4g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 06:56:36 -0400
-Received: from mga18.intel.com ([134.134.136.126]:44164 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726083AbfJPK4f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 06:56:35 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2019 03:56:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,303,1566889200"; 
-   d="scan'208";a="189643967"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.130])
-  by orsmga008.jf.intel.com with ESMTP; 16 Oct 2019 03:56:32 -0700
-Date:   Wed, 16 Oct 2019 13:56:31 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jerry Snitselaar <jsnitsel@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH] efi/tpm: return -EINVAL when determining tpm final
- events log size fails
-Message-ID: <20191016105631.GD10184@linux.intel.com>
-References: <20191014172145.9669-1-jsnitsel@redhat.com>
+        id S2404707AbfJPK7L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 06:59:11 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:33390 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726083AbfJPK7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 06:59:11 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 453AB4BF490C4069A344;
+        Wed, 16 Oct 2019 18:59:09 +0800 (CST)
+Received: from [127.0.0.1] (10.177.251.225) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Wed, 16 Oct 2019
+ 18:59:01 +0800
+Subject: Re: [PATCH] perf jevents: Fix resource leak in process_mapfile()
+To:     John Garry <john.garry@huawei.com>, <peterz@infradead.org>,
+        <mingo@redhat.com>, <acme@kernel.org>, <mark.rutland@arm.com>,
+        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
+        <namhyung@kernel.org>, <ak@linux.intel.com>,
+        <lukemujica@google.com>, <kan.liang@linux.intel.com>,
+        <yuzenghui@huawei.com>
+CC:     <linux-kernel@vger.kernel.org>, <hushiyuan@huawei.com>,
+        <linfeilong@huawei.com>
+References: <bf113089-e3cd-50f9-f7ed-17d07512a702@huawei.com>
+ <87e66585-1564-3523-59f6-cab15b7e1717@huawei.com>
+From:   Yunfeng Ye <yeyunfeng@huawei.com>
+Message-ID: <0cd0d259-e806-effd-5e44-fccd13842697@huawei.com>
+Date:   Wed, 16 Oct 2019 18:58:36 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191014172145.9669-1-jsnitsel@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <87e66585-1564-3523-59f6-cab15b7e1717@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.177.251.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 14, 2019 at 10:21:45AM -0700, Jerry Snitselaar wrote:
-> Currently nothing checks the return value of efi_tpm_eventlog_init,
-> but in case that changes in the future make sure an error is
-> returned when it fails to determine the tpm final events log
-> size.
+
+
+On 2019/10/16 18:40, John Garry wrote:
+> On 16/10/2019 08:47, Yunfeng Ye wrote:
+>> There are memory leaks and file descriptor resource leaks in
+>> process_mapfile().
+>>
+>> Fix this by adding free() and fclose() on the error paths.
+>>
+>> Fixes: 80eeb67fe577 ("perf jevents: Program to convert JSON file")
+>> Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+>> ---
+>>  tools/perf/pmu-events/jevents.c | 9 +++++++--
+>>  1 file changed, 7 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
+>> index e2837260ca4d..6e60d4cff592 100644
+>> --- a/tools/perf/pmu-events/jevents.c
+>> +++ b/tools/perf/pmu-events/jevents.c
+>> @@ -758,6 +758,7 @@ static int process_mapfile(FILE *outfp, char *fpath)
+>>      char *line, *p;
+>>      int line_num;
+>>      char *tblname;
+>> +    int ret = 0;
+>>
+>>      pr_info("%s: Processing mapfile %s\n", prog, fpath);
+>>
+>> @@ -769,6 +770,7 @@ static int process_mapfile(FILE *outfp, char *fpath)
+>>      if (!mapfp) {
+>>          pr_info("%s: Error %s opening %s\n", prog, strerror(errno),
+>>                  fpath);
+>> +        free(line);
+>>          return -1;
+>>      }
+>>
+>> @@ -795,7 +797,8 @@ static int process_mapfile(FILE *outfp, char *fpath)
+>>              /* TODO Deal with lines longer than 16K */
+>>              pr_info("%s: Mapfile %s: line %d too long, aborting\n",
+>>                      prog, fpath, line_num);
+>> -            return -1;
+>> +            ret = -1;
+>> +            goto out;
 > 
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Cc: linux-efi@vger.kernel.org
-> Cc: linux-integrity@vger.kernel.org
-> Fixes: e658c82be556 ("efi/tpm: Only set 'efi_tpm_final_log_size' after successful event log parsing")
-> Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> There's a subtle change of behaviour here, i.e. now calling print_mapping_table_suffix(), but I don't think that it makes any difference.
+> 
+yes, I know that "goto out" will run print_mapping_table_suffix(outfp), because the error path before is done like this.
+so I think it should be use "goto out" to run run print_mapping_table_suffix(outfp).
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> However, does outfp remain open also in this case:
+> 
+Because it has a comment that "Make build fail", so I am not handle the outfp, only modify the process_mapfile() function.
 
-/Jarkko
+> main(int argc, char *argv[])
+> {
+> ...
+> 
+> if (process_mapfile(eventsfp, mapfile)) {
+>     pr_info("%s: Error processing mapfile %s\n", prog, mapfile);
+>     /* Make build fail */
+>     return 1;
+> }
+> 
+> return 0;
+> 
+> empty_map:
+>     fclose(eventsfp);
+>     ...
+> }
+> 
+> I think that this code works on the basis that the program exits on any sort of error and releases resources automatically. Having said that, it is a good practice to tidy up.
+> 
+I agree with you, when program exits, it will releases resources automatically. It's just to make the program clearer and more correct.
+
+> John
+> 
+>>          }
+>>          line[strlen(line)-1] = '\0';
+>>
+>> @@ -825,7 +828,9 @@ static int process_mapfile(FILE *outfp, char *fpath)
+>>
+>>  out:
+>>      print_mapping_table_suffix(outfp);
+>> -    return 0;
+>> +    fclose(mapfp);
+>> +    free(line);
+>> +    return ret;
+>>  }
+>>
+>>  /*
+>>
+> 
+> 
+> 
+> .
+> 
+
