@@ -2,40 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB21ED9E32
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:03:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1307DD9EC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437942AbfJPV44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:56:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48094 "EHLO mail.kernel.org"
+        id S2438959AbfJPWBI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:01:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406644AbfJPV41 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:56:27 -0400
+        id S2438646AbfJPV7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:59:50 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A0FB21D7E;
-        Wed, 16 Oct 2019 21:56:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8556921E6F;
+        Wed, 16 Oct 2019 21:59:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262986;
-        bh=qFP1NjO6W8Srt9bBH9rasyAL70V1cecuNsWg7IKsMEo=;
+        s=default; t=1571263189;
+        bh=VKHQfKbsgnFdOJ/vCWv509LB8R6iwIp/yFnQDFa6zDc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S75StnAgxkuU2RBkJ+9IBDM9SUEvP9m/2NnojWmv6M1rSJeddZFhac3odUsC3PvEG
-         FLIxlG+tyxtNXedtFHdVXARkay6tdPqGMlI0rPo5TOX/TQlS394ozvS1OENQzez8Mr
-         XFRVOZoJd5p5pvyj8GedfLdLLicUkdlHGqnfBj2I=
+        b=Y/2N1j8PxCVkrRlRgHR9mmwgYoXycrr1mBP9HyCA4ZG4tuaWph1EXa2mhIZwJJGfx
+         Mliq3qnyD+odoY907tl76fVvO3kzXyL6Ae4VEkrfjzNJCJt2NenLNNUmdoKfRtlpOO
+         c5YtaB/VIlCJr+WmwSP/9xHuN0LjYvE+znGhdRPc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Mason <clm@fb.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 55/65] btrfs: fix incorrect updating of log root tree
+        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Duyck <alexander.duyck@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 5.3 077/112] mm/page_alloc.c: fix a crash in free_pages_prepare()
 Date:   Wed, 16 Oct 2019 14:51:09 -0700
-Message-Id: <20191016214837.671712650@linuxfoundation.org>
+Message-Id: <20191016214904.226946438@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
-References: <20191016214756.457746573@linuxfoundation.org>
+In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
+References: <20191016214844.038848564@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,132 +50,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Qian Cai <cai@lca.pw>
 
-commit 4203e968947071586a98b5314fd7ffdea3b4f971 upstream.
+commit 234fdce892f905cbc2674349a9eb4873e288e5b3 upstream.
 
-We've historically had reports of being unable to mount file systems
-because the tree log root couldn't be read.  Usually this is the "parent
-transid failure", but could be any of the related errors, including
-"fsid mismatch" or "bad tree block", depending on which block got
-allocated.
+On architectures like s390, arch_free_page() could mark the page unused
+(set_page_unused()) and any access later would trigger a kernel panic.
+Fix it by moving arch_free_page() after all possible accessing calls.
 
-The modification of the individual log root items are serialized on the
-per-log root root_mutex.  This means that any modification to the
-per-subvol log root_item is completely protected.
+ Hardware name: IBM 2964 N96 400 (z/VM 6.4.0)
+ Krnl PSW : 0404e00180000000 0000000026c2b96e (__free_pages_ok+0x34e/0x5d8)
+            R:0 T:1 IO:0 EX:0 Key:0 M:1 W:0 P:0 AS:3 CC:2 PM:0 RI:0 EA:3
+ Krnl GPRS: 0000000088d43af7 0000000000484000 000000000000007c 000000000000000f
+            000003d080012100 000003d080013fc0 0000000000000000 0000000000100000
+            00000000275cca48 0000000000000100 0000000000000008 000003d080010000
+            00000000000001d0 000003d000000000 0000000026c2b78a 000000002717fdb0
+ Krnl Code: 0000000026c2b95c: ec1100b30659 risbgn %r1,%r1,0,179,6
+            0000000026c2b962: e32014000036 pfd 2,1024(%r1)
+           #0000000026c2b968: d7ff10001000 xc 0(256,%r1),0(%r1)
+           >0000000026c2b96e: 41101100  la %r1,256(%r1)
+            0000000026c2b972: a737fff8  brctg %r3,26c2b962
+            0000000026c2b976: d7ff10001000 xc 0(256,%r1),0(%r1)
+            0000000026c2b97c: e31003400004 lg %r1,832
+            0000000026c2b982: ebff1430016a asi 5168(%r1),-1
+ Call Trace:
+ __free_pages_ok+0x16a/0x5d8)
+ memblock_free_all+0x206/0x290
+ mem_init+0x58/0x120
+ start_kernel+0x2b0/0x570
+ startup_continue+0x6a/0xc0
+ INFO: lockdep is turned off.
+ Last Breaking-Event-Address:
+ __free_pages_ok+0x372/0x5d8
+ Kernel panic - not syncing: Fatal exception: panic_on_oops
+ 00: HCPGIR450W CP entered; disabled wait PSW 00020001 80000000 00000000 26A2379C
 
-However we update the root item in the log root tree outside of the log
-root tree log_mutex.  We do this in order to allow multiple subvolumes
-to be updated in each log transaction.
+In the past, only kernel_poison_pages() would trigger this but it needs
+"page_poison=on" kernel cmdline, and I suspect nobody tested that on
+s390.  Recently, kernel_init_free_pages() (commit 6471384af2a6 ("mm:
+security: introduce init_on_alloc=1 and init_on_free=1 boot options"))
+was added and could trigger this as well.
 
-This is problematic however because when we are writing the log root
-tree out we update the super block with the _current_ log root node
-information.  Since these two operations happen independently of each
-other, you can end up updating the log root tree in between writing out
-the dirty blocks and setting the super block to point at the current
-root.
-
-This means we'll point at the new root node that hasn't been written
-out, instead of the one we should be pointing at.  Thus whatever garbage
-or old block we end up pointing at complains when we mount the file
-system later and try to replay the log.
-
-Fix this by copying the log's root item into a local root item copy.
-Then once we're safely under the log_root_tree->log_mutex we update the
-root item in the log_root_tree.  This way we do not modify the
-log_root_tree while we're committing it, fixing the problem.
-
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Chris Mason <clm@fb.com>
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+[akpm@linux-foundation.org: add comment]
+Link: http://lkml.kernel.org/r/1569613623-16820-1-git-send-email-cai@lca.pw
+Fixes: 8823b1dbc05f ("mm/page_poison.c: enable PAGE_POISONING as a separate option")
+Fixes: 6471384af2a6 ("mm: security: introduce init_on_alloc=1 and init_on_free=1 boot options")
+Signed-off-by: Qian Cai <cai@lca.pw>
+Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Vasily Gorbik <gor@linux.ibm.com>
+Cc: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: <stable@vger.kernel.org>	[5.3+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/tree-log.c |   36 +++++++++++++++++++++++++++---------
- 1 file changed, 27 insertions(+), 9 deletions(-)
+ mm/page_alloc.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -2729,7 +2729,8 @@ out:
-  * in the tree of log roots
-  */
- static int update_log_root(struct btrfs_trans_handle *trans,
--			   struct btrfs_root *log)
-+			   struct btrfs_root *log,
-+			   struct btrfs_root_item *root_item)
- {
- 	struct btrfs_fs_info *fs_info = log->fs_info;
- 	int ret;
-@@ -2737,10 +2738,10 @@ static int update_log_root(struct btrfs_
- 	if (log->log_transid == 1) {
- 		/* insert root item on the first sync */
- 		ret = btrfs_insert_root(trans, fs_info->log_root_tree,
--				&log->root_key, &log->root_item);
-+				&log->root_key, root_item);
- 	} else {
- 		ret = btrfs_update_root(trans, fs_info->log_root_tree,
--				&log->root_key, &log->root_item);
-+				&log->root_key, root_item);
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1174,11 +1174,17 @@ static __always_inline bool free_pages_p
+ 		debug_check_no_obj_freed(page_address(page),
+ 					   PAGE_SIZE << order);
  	}
- 	return ret;
- }
-@@ -2836,6 +2837,7 @@ int btrfs_sync_log(struct btrfs_trans_ha
- 	struct btrfs_fs_info *fs_info = root->fs_info;
- 	struct btrfs_root *log = root->log_root;
- 	struct btrfs_root *log_root_tree = fs_info->log_root_tree;
-+	struct btrfs_root_item new_root_item;
- 	int log_transid = 0;
- 	struct btrfs_log_ctx root_log_ctx;
- 	struct blk_plug plug;
-@@ -2901,18 +2903,26 @@ int btrfs_sync_log(struct btrfs_trans_ha
- 		goto out;
- 	}
+-	arch_free_page(page, order);
+ 	if (want_init_on_free())
+ 		kernel_init_free_pages(page, 1 << order);
  
+ 	kernel_poison_pages(page, 1 << order, 0);
 +	/*
-+	 * We _must_ update under the root->log_mutex in order to make sure we
-+	 * have a consistent view of the log root we are trying to commit at
-+	 * this moment.
-+	 *
-+	 * We _must_ copy this into a local copy, because we are not holding the
-+	 * log_root_tree->log_mutex yet.  This is important because when we
-+	 * commit the log_root_tree we must have a consistent view of the
-+	 * log_root_tree when we update the super block to point at the
-+	 * log_root_tree bytenr.  If we update the log_root_tree here we'll race
-+	 * with the commit and possibly point at the new block which we may not
-+	 * have written out.
++	 * arch_free_page() can make the page's contents inaccessible.  s390
++	 * does this.  So nothing which can access the page's contents should
++	 * happen after this.
 +	 */
- 	btrfs_set_root_node(&log->root_item, log->node);
-+	memcpy(&new_root_item, &log->root_item, sizeof(new_root_item));
- 
- 	root->log_transid++;
- 	log->log_transid = root->log_transid;
- 	root->log_start_pid = 0;
- 	/*
--	 * Update or create log root item under the root's log_mutex to prevent
--	 * races with concurrent log syncs that can lead to failure to update
--	 * log root item because it was not created yet.
--	 */
--	ret = update_log_root(trans, log);
--	/*
- 	 * IO has been started, blocks of the log tree have WRITTEN flag set
- 	 * in their headers. new modifications of the log will be written to
- 	 * new positions. so it's safe to allow log writers to go in.
-@@ -2932,6 +2942,14 @@ int btrfs_sync_log(struct btrfs_trans_ha
- 	mutex_unlock(&log_root_tree->log_mutex);
- 
- 	mutex_lock(&log_root_tree->log_mutex);
++	arch_free_page(page, order);
 +
-+	/*
-+	 * Now we are safe to update the log_root_tree because we're under the
-+	 * log_mutex, and we're a current writer so we're holding the commit
-+	 * open until we drop the log_mutex.
-+	 */
-+	ret = update_log_root(trans, log, &new_root_item);
-+
- 	if (atomic_dec_and_test(&log_root_tree->log_writers)) {
- 		/*
- 		 * Implicit memory barrier after atomic_dec_and_test
+ 	if (debug_pagealloc_enabled())
+ 		kernel_map_pages(page, 1 << order, 0);
+ 
 
 
