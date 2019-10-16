@@ -2,56 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19076D9416
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 16:40:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8C9DD941D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 16:40:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405183AbfJPOkL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 10:40:11 -0400
-Received: from foss.arm.com ([217.140.110.172]:41694 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404529AbfJPOkK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 10:40:10 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F2E5E142F;
-        Wed, 16 Oct 2019 07:40:09 -0700 (PDT)
-Received: from arrakis.emea.arm.com (unknown [10.1.196.49])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 193FB3F68E;
-        Wed, 16 Oct 2019 07:40:08 -0700 (PDT)
-Date:   Wed, 16 Oct 2019 15:40:06 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Will Deacon <will@kernel.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next v2] arm64: mm: Fix unused variable warning in
- zone_sizes_init
-Message-ID: <20191016144006.GK49619@arrakis.emea.arm.com>
-References: <20191015224304.20963-1-natechancellor@gmail.com>
- <20191016031107.30045-1-natechancellor@gmail.com>
+        id S2405737AbfJPOkY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 10:40:24 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:38954 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405214AbfJPOkX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 10:40:23 -0400
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 34F3C9F4;
+        Wed, 16 Oct 2019 16:40:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1571236821;
+        bh=Ix3XoJ8c2YHEbbRw/h23s9VQOlN2/0+X/ZG7Iozx4OM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=t2WIQRuEIMiyqAfhI9K8seGMZLbuogVv7sRdQ7WqmidxqES1u0zjmgqsIAcvtNU0X
+         7hOxXRHo7DR3i+oByIuV5RL8j6//k0NHBiGcO2C9kzqa9jMY4EOZznm/CB7A/E20Et
+         OKbsxfLMRm3Payf72G5DnLmaBjHgn8ddDYDVKxHs=
+Date:   Wed, 16 Oct 2019 17:40:18 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Adam Ford <aford173@gmail.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-omap@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V5 2/3] dt-bindings: Add Logic PD Type 28 display panel
+Message-ID: <20191016144018.GG5175@pendragon.ideasonboard.com>
+References: <20191016135147.7743-1-aford173@gmail.com>
+ <20191016135147.7743-2-aford173@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191016031107.30045-1-natechancellor@gmail.com>
+In-Reply-To: <20191016135147.7743-2-aford173@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 08:11:08PM -0700, Nathan Chancellor wrote:
-> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> index 44f07fdf7a59..359c3b08b968 100644
-> --- a/arch/arm64/mm/init.c
-> +++ b/arch/arm64/mm/init.c
-> @@ -212,7 +212,9 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max)
->  	struct memblock_region *reg;
->  	unsigned long zone_size[MAX_NR_ZONES], zhole_size[MAX_NR_ZONES];
->  	unsigned long max_dma32 = min;
-> +#if defined(CONFIG_ZONE_DMA) || defined(CONFIG_ZONE_DMA32)
->  	unsigned long max_dma = min;
-> +#endif
+Hi Adam,
 
-Nitpick: the coding style recommends __maybe_unused instead of #ifdef.
+Thank you for the patch.
+
+On Wed, Oct 16, 2019 at 08:51:46AM -0500, Adam Ford wrote:
+> This patch adds documentation of device tree bindings for the WVGA panel
+> Logic PD Type 28 display.
+> 
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+> ---
+> V5:  Replace GPIO_ACTIVE_HIGH with 0 to fix make dt_binding_check -k
+> V4:  Update per Rob H's suggestions and copy other panel yaml example from 5.4-rc1
+> V3:  Correct build errors from 'make dt_binding_check'
+> V2:  Use YAML instead of TXT for binding
+> 
+> diff --git a/Documentation/devicetree/bindings/display/panel/logicpd,type28.yaml b/Documentation/devicetree/bindings/display/panel/logicpd,type28.yaml
+> new file mode 100644
+> index 000000000000..2834287b8d88
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/panel/logicpd,type28.yaml
+> @@ -0,0 +1,42 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/panel/logicpd,type28.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Logic PD Type 28 4.3" WQVGA TFT LCD panel
+> +
+> +maintainers:
+> +  - Adam Ford <aford173@gmail.com>
+> +
+> +allOf:
+> +  - $ref: panel-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: logicpd,type28
+> +
+> +  power-supply: true
+> +  enable-gpios: true
+> +  backlight: true
+> +  port: true
+> +
+> +required:
+> +  - compatible
+
+Should the port be required too ? Apart from that,
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    lcd0: display {
+> +      compatible = "logicpd,type28";
+> +      enable-gpios = <&gpio5 27 0>;
+> +      backlight = <&backlight>;
+> +      port {
+> +        lcd_in: endpoint {
+> +          remote-endpoint = <&dpi_out>;
+> +        };
+> +      };
+> +    };
+> +
+> +...
 
 -- 
-Catalin
+Regards,
+
+Laurent Pinchart
