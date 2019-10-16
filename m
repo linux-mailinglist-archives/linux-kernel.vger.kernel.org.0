@@ -2,1161 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45CFFD8F49
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:22:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DE02D8F4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:23:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403824AbfJPLWF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 07:22:05 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52463 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392658AbfJPLWC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 07:22:02 -0400
-Received: by mail-wm1-f66.google.com with SMTP id r19so2494524wmh.2;
-        Wed, 16 Oct 2019 04:21:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=tdfVbf1hgnVyAmlFjYFGizWINwPnURSIxz2NkI7SU14=;
-        b=OMn8I9KXLgw2hJAJ5gZ3E/Jpz4ELhuDqaKeMn+Gb6jLMW/Rh6Gtuh1ClCKRl/lpPtn
-         xJnRo/xW3YO1AHLR6EplGTaO6pJRkqYsL/UHbI8N3J4FsPhsLgDWAoFgEcUDxRbKpX5e
-         8MzbxAlaSnl/unoPW5aQ6SOmoDATNRSPND0kbhhZ5+dELePSlNsGYi+LWi3n8PWGZLmR
-         5HsA+pkJQnqjn0nYz05pRYt7t+apSwb6xHIh/TGPIK6HutTuw9WNKk+FsYoT4s6A2gmS
-         Fg6Ppd//iWih/jPLWVeebK633utjtAwT0ZTjv+Dxl0w/IBgoPNw4CuBoSK4VVbUyB9+8
-         Qbgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=tdfVbf1hgnVyAmlFjYFGizWINwPnURSIxz2NkI7SU14=;
-        b=AsSORsqCU9osTaVnrUZxEQ4Al1HUXQ4ptH75y1ssiLw9fED4CpR1gy0KZbrsU9d4Tw
-         S8zbhacNpANndCnz2G0i61xJz4NTp2NR+b5Lr4Dby2nWAPOkIx3o0V36D+keNGJICQAB
-         Z9Wh5JsTzO0iDtn36mbd/DSQ34qeI/inWSn+ZgbdqC52xVGCDE98+CFx/58xMXTmnpPw
-         L+Ajl5VN/StdPtzPN3kc83labz1oH4wb1zVE4vM6pmRmWnVbI3oCaT28+HBVhEFEbjEB
-         yvX2trGZUOpFmeq3noFwU7K/SYFA8F9sV565H1a1jOjs4e1CWZr3EpBA6GioVYNuG740
-         tSig==
-X-Gm-Message-State: APjAAAX83mnMGMWg+PHzg32ODVsRU3Zvu4Sz64VLhcvhecHu/Let8z/R
-        8I38pKXZd4mMRFzn42fcvV5nzBCx
-X-Google-Smtp-Source: APXvYqzVClt04qsXQhCjUpxwu8cmg55JnV152H99dXvrVRyxzH0lRbN7xxZbYilakYOviMGmUJCmQg==
-X-Received: by 2002:a7b:c08e:: with SMTP id r14mr2861321wmh.118.1571224917132;
-        Wed, 16 Oct 2019 04:21:57 -0700 (PDT)
-Received: from localhost.localdomain ([213.86.25.14])
-        by smtp.googlemail.com with ESMTPSA id 33sm42571968wra.41.2019.10.16.04.21.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2019 04:21:56 -0700 (PDT)
-From:   Alexander Gordeev <a.gordeev.box@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Alexander Gordeev <a.gordeev.box@gmail.com>,
-        dmaengine@vger.kernel.org
-Subject: [PATCH v3 1/1] dmaengine: avalon: Intel Avalon-MM DMA Interface for PCIe
-Date:   Wed, 16 Oct 2019 13:21:53 +0200
-Message-Id: <7098b5a803119fd824752aefb873cddab68058d7.1571224166.git.a.gordeev.box@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <cover.1571224166.git.a.gordeev.box@gmail.com>
-References: <cover.1571224166.git.a.gordeev.box@gmail.com>
+        id S2392786AbfJPLX1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 07:23:27 -0400
+Received: from mga12.intel.com ([192.55.52.136]:20212 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2392658AbfJPLX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 07:23:27 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2019 04:23:26 -0700
+X-IronPort-AV: E=Sophos;i="5.67,303,1566889200"; 
+   d="scan'208";a="186119904"
+Received: from xiaoyaol-mobl.ccr.corp.intel.com (HELO [10.239.13.123]) ([10.239.13.123])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/AES256-SHA; 16 Oct 2019 04:23:23 -0700
+Subject: Re: [PATCH v9 09/17] x86/split_lock: Handle #AC exception for split
+ lock
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        x86 <x86@kernel.org>, kvm@vger.kernel.org
+References: <1560897679-228028-1-git-send-email-fenghua.yu@intel.com>
+ <1560897679-228028-10-git-send-email-fenghua.yu@intel.com>
+ <alpine.DEB.2.21.1906262209590.32342@nanos.tec.linutronix.de>
+ <20190626203637.GC245468@romley-ivt3.sc.intel.com>
+ <alpine.DEB.2.21.1906262338220.32342@nanos.tec.linutronix.de>
+ <20190925180931.GG31852@linux.intel.com>
+ <3ec328dc-2763-9da5-28d6-e28970262c58@redhat.com>
+ <alpine.DEB.2.21.1910161142560.2046@nanos.tec.linutronix.de>
+ <57f40083-9063-5d41-f06d-fa1ae4c78ec6@redhat.com>
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+Message-ID: <c3ff2fb3-4380-fb07-1fa3-15896a09e748@intel.com>
+Date:   Wed, 16 Oct 2019 19:23:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <57f40083-9063-5d41-f06d-fa1ae4c78ec6@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support Avalon-MM DMA Interface for PCIe used in hard IPs for
-Intel Arria, Cyclone or Stratix FPGAs.
+On 10/16/2019 6:16 PM, Paolo Bonzini wrote:
+> On 16/10/19 11:47, Thomas Gleixner wrote:
+>> On Wed, 16 Oct 2019, Paolo Bonzini wrote:
+>>> Just never advertise split-lock
+>>> detection to guests.  If the host has enabled split-lock detection,
+>>> trap #AC and forward it to the host handler---which would disable
+>>> split lock detection globally and reenter the guest.
+>>
+>> Which completely defeats the purpose.
+> 
+> Yes it does.  But Sean's proposal, as I understand it, leads to the
+> guest receiving #AC when it wasn't expecting one.  So for an old guest,
+> as soon as the guest kernel happens to do a split lock, it gets an
+> unexpected #AC and crashes and burns.  And then, after much googling and
+> gnashing of teeth, people proceed to disable split lock detection.
+> 
+> (Old guests are the common case: you're a cloud provider and your
+> customers run old stuff; it's a workstation and you want to play that
+> game that requires an old version of Windows; etc.).
+> 
+> To save them the googling and gnashing of teeth, I guess we can do a
+> pr_warn_ratelimited on the first split lock encountered by a guest.  (It
+> has to be ratelimited because userspace could create an arbitrary amount
+> of guests to spam the kernel logs).  But the end result is the same,
+> split lock detection is disabled by the user.
+> 
+> The first alternative I thought of was:
+> 
+> - Remove KVM loading of MSR_TEST_CTRL, i.e. KVM *never* writes the CPU's
+>    actual MSR_TEST_CTRL.  KVM still emulates MSR_TEST_CTRL so that the
+>    guest can do WRMSR and handle its own #AC faults, but KVM doesn't
+>    change the value in hardware.
+> 
+> - trap #AC if the guest encounters a split lock while detection is
+>    disabled, and then disable split-lock detection in the host.
+> 
+> But I discarded it because it still doesn't do anything for malicious
+> guests, which can trigger #AC as they prefer.  And it makes things
+> _worse_ for sane guests, because they think split-lock detection is
+> enabled but they become vulnerable as soon as there is only one
+> malicious guest on the same machine.
+> 
+> In all of these cases, the common final result is that split-lock
+> detection is disabled on the host.  So might as well go with the
+> simplest one and not pretend to virtualize something that (without core
+> scheduling) is obviously not virtualizable.
 
-CC: dmaengine@vger.kernel.org
+Right, the nature of core-scope makes MSR_TEST_CTL impossible/hard to 
+virtualize.
 
-Signed-off-by: Alexander Gordeev <a.gordeev.box@gmail.com>
----
- drivers/dma/Kconfig              |   2 +
- drivers/dma/Makefile             |   1 +
- drivers/dma/avalon/Kconfig       |  14 +
- drivers/dma/avalon/Makefile      |   6 +
- drivers/dma/avalon/avalon-core.c | 476 +++++++++++++++++++++++++++++++
- drivers/dma/avalon/avalon-core.h |  92 ++++++
- drivers/dma/avalon/avalon-hw.c   | 186 ++++++++++++
- drivers/dma/avalon/avalon-hw.h   |  85 ++++++
- drivers/dma/avalon/avalon-pci.c  | 144 ++++++++++
- 9 files changed, 1006 insertions(+)
- create mode 100644 drivers/dma/avalon/Kconfig
- create mode 100644 drivers/dma/avalon/Makefile
- create mode 100644 drivers/dma/avalon/avalon-core.c
- create mode 100644 drivers/dma/avalon/avalon-core.h
- create mode 100644 drivers/dma/avalon/avalon-hw.c
- create mode 100644 drivers/dma/avalon/avalon-hw.h
- create mode 100644 drivers/dma/avalon/avalon-pci.c
+- Making old guests survive needs to disable split-lock detection in 
+host(hardware).
+- Defending malicious guests needs to enable split-lock detection in 
+host(hardware).
 
-diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
-index 7af874b69ffb..f6f43480a4a4 100644
---- a/drivers/dma/Kconfig
-+++ b/drivers/dma/Kconfig
-@@ -669,6 +669,8 @@ source "drivers/dma/sh/Kconfig"
- 
- source "drivers/dma/ti/Kconfig"
- 
-+source "drivers/dma/avalon/Kconfig"
-+
- # clients
- comment "DMA Clients"
- 	depends on DMA_ENGINE
-diff --git a/drivers/dma/Makefile b/drivers/dma/Makefile
-index f5ce8665e944..fd7e11417b73 100644
---- a/drivers/dma/Makefile
-+++ b/drivers/dma/Makefile
-@@ -75,6 +75,7 @@ obj-$(CONFIG_UNIPHIER_MDMAC) += uniphier-mdmac.o
- obj-$(CONFIG_XGENE_DMA) += xgene-dma.o
- obj-$(CONFIG_ZX_DMA) += zx_dma.o
- obj-$(CONFIG_ST_FDMA) += st_fdma.o
-+obj-$(CONFIG_AVALON_DMA) += avalon/
- 
- obj-y += mediatek/
- obj-y += qcom/
-diff --git a/drivers/dma/avalon/Kconfig b/drivers/dma/avalon/Kconfig
-new file mode 100644
-index 000000000000..c824f9fa281f
---- /dev/null
-+++ b/drivers/dma/avalon/Kconfig
-@@ -0,0 +1,14 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Avalon DMA engine
-+#
-+# Author: Alexander Gordeev <a.gordeev.box@gmail.com>
-+#
-+config AVALON_DMA
-+	tristate "Intel Avalon-MM DMA Interface for PCIe"
-+	depends on PCI
-+	select DMA_ENGINE
-+	select DMA_VIRTUAL_CHANNELS
-+	help
-+	  This selects a driver for Avalon-MM DMA Interface for PCIe
-+	  hard IP block used in Intel Arria, Cyclone or Stratix FPGAs.
-diff --git a/drivers/dma/avalon/Makefile b/drivers/dma/avalon/Makefile
-new file mode 100644
-index 000000000000..4b5278d12f86
---- /dev/null
-+++ b/drivers/dma/avalon/Makefile
-@@ -0,0 +1,6 @@
-+# SPDX-License-Identifier: GPL-2.0
-+obj-$(CONFIG_AVALON_DMA)	+= avalon-dma.o
-+
-+avalon-dma-objs			:= avalon-hw.o \
-+				   avalon-core.o \
-+				   avalon-pci.o
-diff --git a/drivers/dma/avalon/avalon-core.c b/drivers/dma/avalon/avalon-core.c
-new file mode 100644
-index 000000000000..186d1e901979
---- /dev/null
-+++ b/drivers/dma/avalon/avalon-core.c
-@@ -0,0 +1,476 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Avalon DMA engine
-+ *
-+ * Author: Alexander Gordeev <a.gordeev.box@gmail.com>
-+ */
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/delay.h>
-+#include <linux/dma-mapping.h>
-+
-+#include "avalon-hw.h"
-+#include "avalon-core.h"
-+
-+#define INTERRUPT_NAME		"avalon_dma"
-+
-+static unsigned int dma_mask_width = 64;
-+module_param(dma_mask_width, uint, 0644);
-+MODULE_PARM_DESC(dma_mask_width, "Avalon DMA bitmask width (default: 64)");
-+
-+unsigned long ctrl_base;
-+module_param(ctrl_base, ulong, 0644);
-+MODULE_PARM_DESC(ctrl_base, "Avalon DMA controller base (default: 0)");
-+
-+static unsigned int rd_ep_dst_lo = 0x80000000;
-+module_param(rd_ep_dst_lo, uint, 0644);
-+MODULE_PARM_DESC(rd_ep_dst_lo,
-+		 "Read status and desc table low (default: 0x80000000)");
-+
-+static unsigned int rd_ep_dst_hi = 0;
-+module_param(rd_ep_dst_hi, uint, 0644);
-+MODULE_PARM_DESC(rd_ep_dst_hi,
-+		 "Read status and desc table hi (default: 0)");
-+
-+static unsigned int wr_ep_dst_lo = 0x80002000;
-+module_param(wr_ep_dst_lo, uint, 0644);
-+MODULE_PARM_DESC(wr_ep_dst_lo,
-+		 "Write status and desc table low (default: 0x80002000)");
-+
-+static unsigned int wr_ep_dst_hi = 0;
-+module_param(wr_ep_dst_hi, uint, 0644);
-+MODULE_PARM_DESC(wr_ep_dst_hi,
-+		 "Write status and desc table hi (default: 0)");
-+
-+static int setup_dma_descs(struct dma_desc *dma_descs,
-+			   struct avalon_dma_desc *desc)
-+{
-+	unsigned int seg_stop;
-+	unsigned int seg_set;
-+	int ret;
-+
-+	ret = setup_descs_sg(dma_descs, 0,
-+			     desc->direction,
-+			     desc->dev_addr,
-+			     desc->seg, desc->nr_segs,
-+			     desc->seg_curr, desc->seg_off,
-+			     &seg_stop, &seg_set);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (seg_stop == desc->seg_curr) {
-+		desc->seg_off += seg_set;
-+	} else {
-+		desc->seg_curr = seg_stop;
-+		desc->seg_off = seg_set;
-+	}
-+
-+	return ret;
-+}
-+
-+static int start_dma_xfer(struct avalon_dma_hw *hw,
-+			  struct avalon_dma_desc *desc)
-+{
-+	size_t ctrl_off;
-+	struct __dma_desc_table *__table;
-+	struct dma_desc_table *table;
-+	u32 rc_src_hi, rc_src_lo;
-+	u32 ep_dst_lo, ep_dst_hi;
-+	int last_id, *__last_id;
-+	int nr_descs;
-+
-+	if (desc->direction == DMA_TO_DEVICE) {
-+		__table = &hw->dma_desc_table_rd;
-+
-+		ctrl_off = AVALON_DMA_RD_CTRL_OFFSET;
-+
-+		ep_dst_hi = rd_ep_dst_hi;
-+		ep_dst_lo = rd_ep_dst_lo;
-+
-+		__last_id = &hw->h2d_last_id;
-+	} else if (desc->direction == DMA_FROM_DEVICE) {
-+		__table = &hw->dma_desc_table_wr;
-+
-+		ctrl_off = AVALON_DMA_WR_CTRL_OFFSET;
-+
-+		ep_dst_hi = wr_ep_dst_hi;
-+		ep_dst_lo = wr_ep_dst_lo;
-+
-+		__last_id = &hw->d2h_last_id;
-+	} else {
-+		return -EINVAL;
-+	}
-+
-+	table = __table->cpu_addr;
-+	memset(&table->flags, 0, sizeof(table->flags));
-+
-+	nr_descs = setup_dma_descs(table->descs, desc);
-+	if (nr_descs < 0)
-+		return nr_descs;
-+
-+	last_id = nr_descs - 1;
-+	*__last_id = last_id;
-+
-+	rc_src_hi = __table->dma_addr >> 32;
-+	rc_src_lo = (u32)__table->dma_addr;
-+
-+	start_xfer(hw->regs, ctrl_off,
-+		   rc_src_hi, rc_src_lo,
-+		   ep_dst_hi, ep_dst_lo,
-+		   last_id);
-+
-+	return 0;
-+}
-+
-+static bool is_desc_complete(struct avalon_dma_desc *desc)
-+{
-+	if (desc->seg_curr < (desc->nr_segs - 1))
-+		return false;
-+
-+	if (desc->seg_off < desc->seg[desc->seg_curr].dma_len)
-+		return false;
-+
-+	return true;
-+}
-+
-+static irqreturn_t avalon_dma_interrupt(int irq, void *dev_id)
-+{
-+	struct avalon_dma *adma = (struct avalon_dma *)dev_id;
-+	struct avalon_dma_chan *chan = &adma->chan;
-+	struct avalon_dma_hw *hw = &chan->hw;
-+	u32 *rd_flags = hw->dma_desc_table_rd.cpu_addr->flags;
-+	u32 *wr_flags = hw->dma_desc_table_wr.cpu_addr->flags;
-+	struct avalon_dma_desc *desc;
-+	struct virt_dma_desc *vdesc;
-+	bool rd_done;
-+	bool wr_done;
-+
-+	spin_lock(&chan->vchan.lock);
-+
-+	rd_done = (hw->h2d_last_id < 0);
-+	wr_done = (hw->d2h_last_id < 0);
-+
-+	if (rd_done && wr_done) {
-+		spin_unlock(&chan->vchan.lock);
-+		return IRQ_NONE;
-+	}
-+
-+	/*
-+	 * The Intel documentation claims "The Descriptor Controller
-+	 * writes a 1 to the done bit of the status DWORD to indicate
-+	 * successful completion. The Descriptor Controller also sends
-+	 * an MSI interrupt for the final descriptor. After receiving
-+	 * this MSI, host software can poll the done bit to determine
-+	 * status."
-+	 *
-+	 * The above could be read like MSI interrupt might be delivered
-+	 * before the corresponding done bit is set. But in reality it
-+	 * does not happen at all (or happens really rare). So put here
-+	 * the done bit polling, just in case.
-+	 */
-+	do {
-+		if (!rd_done && rd_flags[hw->h2d_last_id])
-+			rd_done = true;
-+		if (!wr_done && wr_flags[hw->d2h_last_id])
-+			wr_done = true;
-+		cpu_relax();
-+	} while (!rd_done || !wr_done);
-+
-+	hw->h2d_last_id = -1;
-+	hw->d2h_last_id = -1;
-+
-+	desc = chan->active_desc;
-+
-+	if (is_desc_complete(desc)) {
-+		list_del(&desc->vdesc.node);
-+		vchan_cookie_complete(&desc->vdesc);
-+
-+		desc->direction = DMA_NONE;
-+
-+		vdesc = vchan_next_desc(&chan->vchan);
-+		if (vdesc) {
-+			desc = to_avalon_dma_desc(vdesc);
-+			chan->active_desc = desc;
-+		} else {
-+			chan->active_desc = NULL;
-+		}
-+	}
-+
-+	if (chan->active_desc)
-+		start_dma_xfer(hw, desc);
-+
-+	spin_unlock(&chan->vchan.lock);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int avalon_dma_terminate_all(struct dma_chan *dma_chan)
-+{
-+	struct virt_dma_chan *vchan = to_virt_chan(dma_chan);
-+
-+	vchan_free_chan_resources(vchan);
-+
-+	return 0;
-+}
-+
-+static void avalon_dma_synchronize(struct dma_chan *dma_chan)
-+{
-+	struct virt_dma_chan *vchan = to_virt_chan(dma_chan);
-+
-+	vchan_synchronize(vchan);
-+}
-+
-+static int avalon_dma_init(struct avalon_dma *adma,
-+			   struct device *dev,
-+			   void __iomem *regs,
-+			   unsigned int irq)
-+{
-+	struct avalon_dma_chan *chan = &adma->chan;
-+	struct avalon_dma_hw *hw = &chan->hw;
-+	int ret;
-+
-+	adma->dev		= dev;
-+	adma->irq		= irq;
-+
-+	chan->active_desc	= NULL;
-+
-+	hw->regs		= regs;
-+	hw->h2d_last_id		= -1;
-+	hw->d2h_last_id		= -1;
-+
-+	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(dma_mask_width));
-+	if (ret)
-+		return ret;
-+
-+	hw->dma_desc_table_rd.cpu_addr = dma_alloc_coherent(
-+		dev,
-+		sizeof(struct dma_desc_table),
-+		&hw->dma_desc_table_rd.dma_addr,
-+		GFP_KERNEL);
-+	if (!hw->dma_desc_table_rd.cpu_addr)
-+		return -ENOMEM;
-+
-+	hw->dma_desc_table_wr.cpu_addr = dma_alloc_coherent(
-+		dev,
-+		sizeof(struct dma_desc_table),
-+		&hw->dma_desc_table_wr.dma_addr,
-+		GFP_KERNEL);
-+	if (!hw->dma_desc_table_wr.cpu_addr) {
-+		ret = -ENOMEM;
-+		goto free_table_rd;
-+	}
-+
-+	ret = request_irq(irq, avalon_dma_interrupt, IRQF_SHARED,
-+			  INTERRUPT_NAME, adma);
-+	if (ret)
-+		goto free_table_wr;
-+
-+	return 0;
-+
-+free_table_wr:
-+	dma_free_coherent(
-+		dev,
-+		sizeof(struct dma_desc_table),
-+		hw->dma_desc_table_wr.cpu_addr,
-+		hw->dma_desc_table_wr.dma_addr);
-+
-+free_table_rd:
-+	dma_free_coherent(
-+		dev,
-+		sizeof(struct dma_desc_table),
-+		hw->dma_desc_table_rd.cpu_addr,
-+		hw->dma_desc_table_rd.dma_addr);
-+
-+	return ret;
-+}
-+
-+static void avalon_dma_term(struct avalon_dma *adma)
-+{
-+	struct avalon_dma_chan *chan = &adma->chan;
-+	struct avalon_dma_hw *hw = &chan->hw;
-+	struct device *dev = adma->dev;
-+
-+	free_irq(adma->irq, adma);
-+
-+	dma_free_coherent(
-+		dev,
-+		sizeof(struct dma_desc_table),
-+		hw->dma_desc_table_rd.cpu_addr,
-+		hw->dma_desc_table_rd.dma_addr);
-+
-+	dma_free_coherent(
-+		dev,
-+		sizeof(struct dma_desc_table),
-+		hw->dma_desc_table_wr.cpu_addr,
-+		hw->dma_desc_table_wr.dma_addr);
-+}
-+
-+static int avalon_dma_device_config(struct dma_chan *dma_chan,
-+				    struct dma_slave_config *config)
-+{
-+	struct avalon_dma_chan *chan = to_avalon_dma_chan(dma_chan);
-+
-+	if (!IS_ALIGNED(config->src_addr, sizeof(u32)) ||
-+	    !IS_ALIGNED(config->dst_addr, sizeof(u32)))
-+		return -EINVAL;
-+
-+	chan->src_addr = config->src_addr;
-+	chan->dst_addr = config->dst_addr;
-+
-+	return 0;
-+}
-+
-+static struct dma_async_tx_descriptor *
-+avalon_dma_prep_slave_sg(struct dma_chan *dma_chan,
-+			 struct scatterlist *sg, unsigned int sg_len,
-+			 enum dma_transfer_direction direction,
-+			 unsigned long flags, void *context)
-+{
-+	struct avalon_dma_chan *chan = to_avalon_dma_chan(dma_chan);
-+	struct avalon_dma_desc *desc;
-+	dma_addr_t dev_addr;
-+	int i;
-+
-+	if (direction == DMA_MEM_TO_DEV)
-+		dev_addr = chan->dst_addr;
-+	else if (direction == DMA_DEV_TO_MEM)
-+		dev_addr = chan->src_addr;
-+	else
-+		return NULL;
-+
-+	desc = kzalloc(struct_size(desc, seg, sg_len), GFP_NOWAIT);
-+	if (!desc)
-+		return NULL;
-+
-+	desc->direction = direction;
-+	desc->dev_addr	= dev_addr;
-+	desc->seg_curr	= 0;
-+	desc->seg_off	= 0;
-+	desc->nr_segs	= sg_len;
-+
-+	for (i = 0; i < sg_len; i++) {
-+		struct dma_segment *seg = &desc->seg[i];
-+		dma_addr_t dma_addr = sg_dma_address(sg);
-+		unsigned int dma_len = sg_dma_len(sg);
-+
-+		if (!IS_ALIGNED(dma_addr, sizeof(u32)) ||
-+		    !IS_ALIGNED(dma_len, sizeof(u32)))
-+			return NULL;
-+
-+		seg->dma_addr = dma_addr;
-+		seg->dma_len = dma_len;
-+
-+		sg = sg_next(sg);
-+	}
-+
-+	return vchan_tx_prep(&chan->vchan, &desc->vdesc, flags);
-+}
-+
-+static void avalon_dma_issue_pending(struct dma_chan *dma_chan)
-+{
-+	struct avalon_dma_chan *chan = to_avalon_dma_chan(dma_chan);
-+	struct avalon_dma_hw *hw = &chan->hw;
-+	struct avalon_dma_desc *desc;
-+	struct virt_dma_desc *vdesc;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&chan->vchan.lock, flags);
-+
-+	if (!vchan_issue_pending(&chan->vchan))
-+		goto out;
-+
-+	/*
-+	 * Do nothing if a DMA transmission is currently active.
-+	 * BOTH read and write status must be checked here!
-+	 */
-+	if (hw->d2h_last_id < 0 && hw->h2d_last_id < 0) {
-+		if (chan->active_desc)
-+			goto out;
-+
-+		vdesc = vchan_next_desc(&chan->vchan);
-+		desc = to_avalon_dma_desc(vdesc);
-+		chan->active_desc = desc;
-+
-+		if (start_dma_xfer(hw, desc))
-+			goto out;
-+	}
-+
-+out:
-+	spin_unlock_irqrestore(&chan->vchan.lock, flags);
-+}
-+
-+static void avalon_dma_desc_free(struct virt_dma_desc *vdesc)
-+{
-+	struct avalon_dma_desc *desc = to_avalon_dma_desc(vdesc);
-+
-+	kfree(desc);
-+}
-+
-+struct avalon_dma *avalon_dma_register(struct device *dev,
-+				       void __iomem *regs,
-+				       unsigned int irq)
-+{
-+	struct avalon_dma *adma;
-+	struct avalon_dma_chan *chan;
-+	struct dma_device *dma_dev;
-+	int ret;
-+
-+	adma = kzalloc(sizeof(*adma), GFP_KERNEL);
-+	if (!adma)
-+		return ERR_PTR(-ENOMEM);
-+
-+	ret = avalon_dma_init(adma, dev, regs, irq);
-+	if (ret)
-+		goto err;
-+
-+	dev->dma_parms = &adma->dma_parms;
-+	dma_set_max_seg_size(dev, UINT_MAX);
-+
-+	dma_dev = &adma->dma_dev;
-+	dma_cap_set(DMA_SLAVE, dma_dev->cap_mask);
-+
-+	dma_dev->device_tx_status = dma_cookie_status;
-+	dma_dev->device_prep_slave_sg = avalon_dma_prep_slave_sg;
-+	dma_dev->device_issue_pending = avalon_dma_issue_pending;
-+	dma_dev->device_terminate_all = avalon_dma_terminate_all;
-+	dma_dev->device_synchronize = avalon_dma_synchronize;
-+	dma_dev->device_config = avalon_dma_device_config;
-+
-+	dma_dev->dev = dev;
-+	dma_dev->chancnt = 1;
-+
-+	dma_dev->src_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
-+	dma_dev->dst_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
-+	dma_dev->directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
-+	dma_dev->residue_granularity = DMA_RESIDUE_GRANULARITY_DESCRIPTOR;
-+
-+	INIT_LIST_HEAD(&dma_dev->channels);
-+
-+	chan = &adma->chan;
-+	chan->src_addr = -1;
-+	chan->dst_addr = -1;
-+	chan->vchan.desc_free = avalon_dma_desc_free;
-+
-+	vchan_init(&chan->vchan, dma_dev);
-+
-+	ret = dma_async_device_register(dma_dev);
-+	if (ret)
-+		goto err;
-+
-+	return adma;
-+
-+err:
-+	kfree(adma);
-+
-+	return ERR_PTR(ret);
-+}
-+
-+void avalon_dma_unregister(struct avalon_dma *adma)
-+{
-+	dmaengine_terminate_sync(&adma->chan.vchan.chan);
-+	dma_async_device_unregister(&adma->dma_dev);
-+
-+	avalon_dma_term(adma);
-+
-+	kfree(adma);
-+}
-diff --git a/drivers/dma/avalon/avalon-core.h b/drivers/dma/avalon/avalon-core.h
-new file mode 100644
-index 000000000000..c3b075cf8e74
---- /dev/null
-+++ b/drivers/dma/avalon/avalon-core.h
-@@ -0,0 +1,92 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Avalon DMA engine
-+ *
-+ * Author: Alexander Gordeev <a.gordeev.box@gmail.com>
-+ */
-+#ifndef __AVALON_CORE_H__
-+#define __AVALON_CORE_H__
-+
-+#include <linux/interrupt.h>
-+#include <linux/dma-direction.h>
-+
-+#include "../virt-dma.h"
-+
-+#include "avalon-hw.h"
-+
-+struct avalon_dma_desc {
-+	struct virt_dma_desc	vdesc;
-+
-+	enum dma_data_direction	direction;
-+
-+	dma_addr_t		dev_addr;
-+
-+	unsigned int		seg_curr;
-+	unsigned int		seg_off;
-+
-+	unsigned int		nr_segs;
-+	struct dma_segment	seg[];
-+};
-+
-+struct avalon_dma_hw {
-+	struct __dma_desc_table {
-+		struct dma_desc_table *cpu_addr;
-+		dma_addr_t dma_addr;
-+	} dma_desc_table_rd, dma_desc_table_wr;
-+
-+	int			h2d_last_id;
-+	int			d2h_last_id;
-+
-+	void __iomem		*regs;
-+};
-+
-+struct avalon_dma_chan {
-+	struct virt_dma_chan	vchan;
-+
-+	dma_addr_t		src_addr;
-+	dma_addr_t		dst_addr;
-+
-+	struct avalon_dma_hw	hw;
-+
-+	struct avalon_dma_desc	*active_desc;
-+};
-+
-+struct avalon_dma {
-+	struct device		*dev;
-+	unsigned int		irq;
-+
-+	struct avalon_dma_chan	chan;
-+	struct dma_device	dma_dev;
-+	struct device_dma_parameters dma_parms;
-+};
-+
-+static inline
-+struct avalon_dma_chan *to_avalon_dma_chan(struct dma_chan *dma_chan)
-+{
-+	return container_of(dma_chan, struct avalon_dma_chan, vchan.chan);
-+}
-+
-+static inline
-+struct avalon_dma_desc *to_avalon_dma_desc(struct virt_dma_desc *vdesc)
-+{
-+	return container_of(vdesc, struct avalon_dma_desc, vdesc);
-+}
-+
-+static inline
-+struct avalon_dma *chan_to_avalon_dma(struct avalon_dma_chan *chan)
-+{
-+	return container_of(chan, struct avalon_dma, chan);
-+}
-+
-+static inline
-+__iomem void *__iomem avalon_dma_mmio(struct avalon_dma *adma)
-+{
-+	return adma->chan.hw.regs;
-+}
-+
-+struct avalon_dma *avalon_dma_register(struct device *dev,
-+				       void __iomem *regs,
-+				       unsigned int irq);
-+void avalon_dma_unregister(struct avalon_dma *adma);
-+
-+#endif
-diff --git a/drivers/dma/avalon/avalon-hw.c b/drivers/dma/avalon/avalon-hw.c
-new file mode 100644
-index 000000000000..3c31cce44c64
---- /dev/null
-+++ b/drivers/dma/avalon/avalon-hw.c
-@@ -0,0 +1,186 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Avalon DMA engine
-+ *
-+ * Author: Alexander Gordeev <a.gordeev.box@gmail.com>
-+ */
-+#include <linux/kernel.h>
-+
-+#include "avalon-hw.h"
-+
-+#define DMA_DESC_MAX		AVALON_DMA_DESC_NUM
-+
-+static void setup_desc(struct dma_desc *desc, u32 desc_id,
-+		       u64 dest, u64 src, u32 size)
-+{
-+	desc->src_lo = cpu_to_le32(src & 0xfffffffful);
-+	desc->src_hi = cpu_to_le32((src >> 32));
-+	desc->dst_lo = cpu_to_le32(dest & 0xfffffffful);
-+	desc->dst_hi = cpu_to_le32((dest >> 32));
-+	desc->ctl_dma_len = cpu_to_le32((size >> 2) | (desc_id << 18));
-+	desc->reserved[0] = cpu_to_le32(0x0);
-+	desc->reserved[1] = cpu_to_le32(0x0);
-+	desc->reserved[2] = cpu_to_le32(0x0);
-+}
-+
-+static
-+int setup_descs(struct dma_desc *descs, unsigned int desc_id,
-+		enum dma_data_direction direction,
-+		dma_addr_t dev_addr, dma_addr_t host_addr, unsigned int len,
-+		unsigned int *_set)
-+{
-+	int nr_descs = 0;
-+	unsigned int set = 0;
-+	dma_addr_t src;
-+	dma_addr_t dest;
-+
-+	if (desc_id >= DMA_DESC_MAX)
-+		return -EINVAL;
-+
-+	if (direction == DMA_TO_DEVICE) {
-+		src = host_addr;
-+		dest = dev_addr;
-+	} else {
-+		src = dev_addr;
-+		dest = host_addr;
-+	}
-+
-+	while (len) {
-+		unsigned int xfer_len = min_t(unsigned int, len, AVALON_DMA_MAX_TANSFER_SIZE);
-+
-+		setup_desc(descs, desc_id, dest, src, xfer_len);
-+
-+		set += xfer_len;
-+
-+		nr_descs++;
-+		if (nr_descs >= DMA_DESC_MAX)
-+			break;
-+
-+		desc_id++;
-+		if (desc_id >= DMA_DESC_MAX)
-+			break;
-+
-+		descs++;
-+
-+		dest += xfer_len;
-+		src += xfer_len;
-+
-+		len -= xfer_len;
-+	}
-+
-+	*_set = set;
-+
-+	return nr_descs;
-+}
-+
-+int setup_descs_sg(struct dma_desc *descs, unsigned int desc_id,
-+		   enum dma_data_direction direction,
-+		   dma_addr_t dev_addr,
-+		   struct dma_segment *seg, unsigned int nr_segs,
-+		   unsigned int seg_start, unsigned int seg_off,
-+		   unsigned int *seg_stop, unsigned int *seg_set)
-+{
-+	unsigned int set = -1;
-+	int nr_descs = 0;
-+	int ret;
-+	int i;
-+
-+	if (seg_start >= nr_segs)
-+		return -EINVAL;
-+	if ((direction != DMA_TO_DEVICE) && (direction != DMA_FROM_DEVICE))
-+		return -EINVAL;
-+
-+	/*
-+	 * Skip all SGEs that have been fully transmitted.
-+	 */
-+	for (i = 0; i < seg_start; i++)
-+		dev_addr += seg[i].dma_len;
-+
-+	/*
-+	 * Skip the current SGE if it has been fully transmitted.
-+	 */
-+	if (seg[i].dma_len == seg_off) {
-+		dev_addr += seg_off;
-+		seg_off = 0;
-+		i++;
-+	}
-+
-+	/*
-+	 * Setup as many SGEs as the controller is able to transmit.
-+	 */
-+	for (; i < nr_segs; i++) {
-+		dma_addr_t dma_addr = seg[i].dma_addr;
-+		unsigned int dma_len = seg[i].dma_len;
-+
-+		/*
-+		 * The offset can not be longer than the SGE length.
-+		 */
-+		if (dma_len < seg_off)
-+			return -EINVAL;
-+
-+		if (seg_off) {
-+			dev_addr += seg_off;
-+			dma_addr += seg_off;
-+			dma_len -= seg_off;
-+
-+			seg_off = 0;
-+		}
-+
-+		ret = setup_descs(descs, desc_id, direction,
-+				  dev_addr, dma_addr, dma_len, &set);
-+		if (ret < 0)
-+			return ret;
-+
-+		if ((desc_id + ret > DMA_DESC_MAX) ||
-+		    (nr_descs + ret > DMA_DESC_MAX))
-+			return -EINVAL;
-+
-+		nr_descs += ret;
-+		desc_id += ret;
-+
-+		/*
-+		 * Stop when descriptor table entries are exhausted.
-+		 */
-+		if (desc_id == DMA_DESC_MAX)
-+			break;
-+
-+		/*
-+		 * The descriptor table still has free entries, thus
-+		 * the current SGE should have fit.
-+		 */
-+		if (dma_len != set)
-+			return -EINVAL;
-+
-+		if (i >= nr_segs - 1)
-+			break;
-+
-+		descs += ret;
-+		dev_addr += dma_len;
-+	}
-+
-+	/*
-+	 * Remember the SGE that next transmission should be started from.
-+	 */
-+	if (nr_descs) {
-+		*seg_stop = i;
-+		*seg_set = set;
-+	} else {
-+		*seg_stop = seg_start;
-+		*seg_set = seg_off;
-+	}
-+
-+	return nr_descs;
-+}
-+
-+void start_xfer(void __iomem *base, size_t ctrl_off,
-+		u32 rc_src_hi, u32 rc_src_lo,
-+		u32 ep_dst_hi, u32 ep_dst_lo,
-+		int last_id)
-+{
-+	av_write32(rc_src_hi, base, ctrl_off, rc_src_hi);
-+	av_write32(rc_src_lo, base, ctrl_off, rc_src_lo);
-+	av_write32(ep_dst_hi, base, ctrl_off, ep_dst_hi);
-+	av_write32(ep_dst_lo, base, ctrl_off, ep_dst_lo);
-+	av_write32(last_id, base, ctrl_off, table_size);
-+	av_write32(last_id, base, ctrl_off, last_ptr);
-+}
-diff --git a/drivers/dma/avalon/avalon-hw.h b/drivers/dma/avalon/avalon-hw.h
-new file mode 100644
-index 000000000000..92cd8d51a7cd
---- /dev/null
-+++ b/drivers/dma/avalon/avalon-hw.h
-@@ -0,0 +1,85 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Avalon DMA engine
-+ *
-+ * Author: Alexander Gordeev <a.gordeev.box@gmail.com>
-+ */
-+#ifndef __AVALON_HW_H__
-+#define __AVALON_HW_H__
-+
-+#include <linux/dma-direction.h>
-+#include <linux/io.h>
-+
-+#define AVALON_DMA_DESC_NUM		128
-+
-+#define AVALON_DMA_FIXUP_SIZE		0x100
-+#define AVALON_DMA_MAX_TANSFER_SIZE	(0x100000 - AVALON_DMA_FIXUP_SIZE)
-+
-+#define AVALON_DMA_RD_CTRL_OFFSET	0x0
-+#define AVALON_DMA_WR_CTRL_OFFSET	0x100
-+
-+extern unsigned long ctrl_base;
-+
-+static inline
-+u32 __av_read32(void __iomem *base, size_t ctrl_off, size_t reg_off)
-+{
-+	size_t offset = ctrl_base + ctrl_off + reg_off;
-+
-+	return ioread32(base + offset);
-+}
-+
-+static inline
-+void __av_write32(u32 val,
-+		  void __iomem *base, size_t ctrl_off, size_t reg_off)
-+{
-+	size_t offset = ctrl_base + ctrl_off + reg_off;
-+
-+	iowrite32(val, base + offset);
-+}
-+
-+#define av_read32(b, o, r) \
-+	__av_read32(b, o, offsetof(struct dma_ctrl, r))
-+#define av_write32(v, b, o, r) \
-+	__av_write32(v, b, o, offsetof(struct dma_ctrl, r))
-+
-+struct dma_ctrl {
-+	u32 rc_src_lo;
-+	u32 rc_src_hi;
-+	u32 ep_dst_lo;
-+	u32 ep_dst_hi;
-+	u32 last_ptr;
-+	u32 table_size;
-+	u32 control;
-+} __packed;
-+
-+struct dma_desc {
-+	u32 src_lo;
-+	u32 src_hi;
-+	u32 dst_lo;
-+	u32 dst_hi;
-+	u32 ctl_dma_len;
-+	u32 reserved[3];
-+} __packed;
-+
-+struct dma_desc_table {
-+	u32 flags[AVALON_DMA_DESC_NUM];
-+	struct dma_desc descs[AVALON_DMA_DESC_NUM];
-+} __packed;
-+
-+struct dma_segment {
-+	dma_addr_t	dma_addr;
-+	unsigned int	dma_len;
-+};
-+
-+int setup_descs_sg(struct dma_desc *descs, unsigned int desc_id,
-+		   enum dma_data_direction direction,
-+		   dma_addr_t dev_addr,
-+		   struct dma_segment *seg, unsigned int nr_segs,
-+		   unsigned int seg_start, unsigned int sg_off,
-+		   unsigned int *seg_stop, unsigned int *seg_set);
-+
-+void start_xfer(void __iomem *base, size_t ctrl_off,
-+		u32 rc_src_hi, u32 rc_src_lo,
-+		u32 ep_dst_hi, u32 ep_dst_lo,
-+		int last_id);
-+#endif
-diff --git a/drivers/dma/avalon/avalon-pci.c b/drivers/dma/avalon/avalon-pci.c
-new file mode 100644
-index 000000000000..08f4428f5695
---- /dev/null
-+++ b/drivers/dma/avalon/avalon-pci.c
-@@ -0,0 +1,144 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Avalon DMA driver
-+ *
-+ * Author: Alexander Gordeev <a.gordeev.box@gmail.com>
-+ */
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/pci.h>
-+
-+#include "avalon-core.h"
-+
-+#define DRIVER_NAME "avalon-dma"
-+
-+static unsigned int pci_bar = 0;
-+module_param(pci_bar, uint, 0644);
-+MODULE_PARM_DESC(pci_bar,
-+		 "PCI BAR number the controller is mapped to (default: 0)");
-+
-+static unsigned int pci_msi_vector = 0;
-+module_param(pci_msi_vector, uint, 0644);
-+MODULE_PARM_DESC(pci_msi_vector,
-+		 "MSI vector number used for the controller (default: 0)");
-+
-+static unsigned int pci_msi_count_order = 5;
-+module_param(pci_msi_count_order, uint, 0644);
-+MODULE_PARM_DESC(pci_msi_count_order,
-+		 "Number of MSI vectors (order) device uses (default: 5)");
-+
-+static int init_interrupts(struct pci_dev *pci_dev)
-+{
-+	unsigned int nr_vecs = BIT(pci_msi_count_order);
-+	int ret;
-+
-+	ret = pci_alloc_irq_vectors(pci_dev, nr_vecs, nr_vecs, PCI_IRQ_MSI);
-+	if (ret < 0) {
-+		return ret;
-+
-+	} else if (ret != nr_vecs) {
-+		ret = -ENOSPC;
-+		goto disable_msi;
-+	}
-+
-+	ret = pci_irq_vector(pci_dev, pci_msi_vector);
-+	if (ret < 0)
-+		goto disable_msi;
-+
-+	return ret;
-+
-+disable_msi:
-+	pci_disable_msi(pci_dev);
-+
-+	return ret;
-+}
-+
-+static void term_interrupts(struct pci_dev *pci_dev)
-+{
-+	pci_disable_msi(pci_dev);
-+}
-+
-+static int avalon_pci_probe(struct pci_dev *pci_dev,
-+			    const struct pci_device_id *id)
-+{
-+	void *adma;
-+	void __iomem *regs;
-+	int ret;
-+
-+	ret = pci_enable_device(pci_dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = pci_request_regions(pci_dev, DRIVER_NAME);
-+	if (ret)
-+		goto disable_device;
-+
-+	regs = pci_ioremap_bar(pci_dev, pci_bar);
-+	if (!regs) {
-+		ret = -ENOMEM;
-+		goto release_regions;
-+	}
-+
-+	ret = init_interrupts(pci_dev);
-+	if (ret < 0)
-+		goto unmap_bars;
-+
-+	adma = avalon_dma_register(&pci_dev->dev, regs, ret);
-+	if (IS_ERR(adma)) {
-+		ret = PTR_ERR(adma);
-+		goto terminate_interrupts;
-+	}
-+
-+	pci_set_master(pci_dev);
-+	pci_set_drvdata(pci_dev, adma);
-+
-+	return 0;
-+
-+terminate_interrupts:
-+	term_interrupts(pci_dev);
-+
-+unmap_bars:
-+	pci_iounmap(pci_dev, regs);
-+
-+release_regions:
-+	pci_release_regions(pci_dev);
-+
-+disable_device:
-+	pci_disable_device(pci_dev);
-+
-+	return ret;
-+}
-+
-+static void avalon_pci_remove(struct pci_dev *pci_dev)
-+{
-+	void *adma = pci_get_drvdata(pci_dev);
-+	void __iomem *regs = avalon_dma_mmio(adma);
-+
-+	pci_set_drvdata(pci_dev, NULL);
-+
-+	avalon_dma_unregister(adma);
-+	term_interrupts(pci_dev);
-+
-+	pci_iounmap(pci_dev, regs);
-+	pci_release_regions(pci_dev);
-+	pci_disable_device(pci_dev);
-+}
-+
-+static struct pci_device_id avalon_pci_ids[] = {
-+	{ PCI_DEVICE(PCI_VENDOR_ID_ALTERA, 0xe003) },
-+	{ 0 }
-+};
-+
-+static struct pci_driver avalon_pci_driver = {
-+	.name		= DRIVER_NAME,
-+	.id_table	= avalon_pci_ids,
-+	.probe		= avalon_pci_probe,
-+	.remove		= avalon_pci_remove,
-+};
-+
-+module_pci_driver(avalon_pci_driver);
-+
-+MODULE_AUTHOR("Alexander Gordeev <a.gordeev.box@gmail.com>");
-+MODULE_DESCRIPTION("Avalon-MM DMA Interface for PCIe");
-+MODULE_LICENSE("GPL v2");
-+MODULE_DEVICE_TABLE(pci, avalon_pci_ids);
--- 
-2.23.0
+We cannot achieve them at the same time.
 
+In my opinion, letting kvm disable the split-lock detection in host is 
+not acceptable that it just opens the door for malicious guests to 
+attack. I think we can use Sean's proposal like below.
+
+KVM always traps #AC, and only advertises split-lock detection to guest 
+when the global variable split_lock_detection_enabled in host is true.
+
+- If guest enables #AC (CPL3 alignment check or split-lock detection 
+enabled), injecting #AC back into guest since it's supposed capable of 
+handling it.
+- If guest doesn't enable #AC, KVM reports #AC to userspace (like other 
+unexpected exceptions), and we can print a hint in kernel, or let 
+userspace (e.g., QEMU) tell the user guest is killed because there is a 
+split-lock in guest.
+
+In this way, malicious guests always get killed by userspace and old 
+sane guests cannot survive as well if it causes split-lock. If we do 
+want old sane guests work we have to disable the split-lock detection 
+(through booting parameter or debugfs) in the host just the same as we 
+want to run an old and split-lock generating userspace binary.
+
+But there is an issue that we advertise split-lock detection to guest 
+based on the value of split_lock_detection_enabled to be true in host, 
+which can be turned into false dynamically when split-lock happens in 
+host kernel. This causes guest's capability changes at run time and I 
+don't if there is a better way to inform guest? Maybe we need a pv 
+interface?
+
+> Thanks,
+> 
+> Paolo
+> 
+>> 1) Sane guest
+>>
+>> Guest kernel has #AC handler and you basically prevent it from
+>> detecting malicious user space and killing it. You also prevent #AC
+>> detection in the guest kernel which limits debugability.
+>>
+>> 2) Malicious guest
+>>
+>> Trigger #AC to disable the host detection and then carry out the DoS
+>> attack.
+> 
+> 
