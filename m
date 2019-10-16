@@ -2,121 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91292DA1F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 01:07:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 857A7DA205
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 01:17:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438261AbfJPXHi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 19:07:38 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51648 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437662AbfJPXHc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 19:07:32 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 7so512457wme.1;
-        Wed, 16 Oct 2019 16:07:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ojfnadijHOPOCIQe26f89HvAE7/IDT63+su1is3tzr8=;
-        b=lY5CUcT4nAFgne+0DY/Jrp7zFWt0eXI+t/q/cxUVdS0Z3vSW8amESZDEOd1se+Oaa3
-         Lqyz0Tq8BNtX/irF+O5HBKg2+XqzDpLbQsYMYQ9jkoXWlF5Tn7FTNxt8McdNc5AYGVuP
-         xoWkq7CoN2UOzxEQva8YPqXcadLnkS0cjS0empf9qLOtWrbiyQtwB8ZMZOPudOEmOPHd
-         iTE5MmLQksTO5gao6n7solbfLJJh1eagjGivp+pLnkc7nMNqb1YtCfIlF3eAmxdiUXUl
-         zDkk/Ovjz5b8ickpm4Y8olSqjxw09/U6/2ba/ch0CK3TM0k5uQS0H5EtS1JLLxQrj9BU
-         mUVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=ojfnadijHOPOCIQe26f89HvAE7/IDT63+su1is3tzr8=;
-        b=Y+ZmNubUCgm0cAC4Haj6V+Un0+YtPtCymHRA8iXjDV+/MBCkGRrJQgSzGMSB+4RgA4
-         JkqFRZ859kIddEGhUKbxKAdTHb52JXkcSaby6nbES4ov5QJzmQnTQ9pZKYz1Sgawyink
-         cgKOacXSdwUJ8fBceH0PmDYimzsh+igIms2fOI+1HKtMaCaIlQo/GHcpQBrdZBhXSIdh
-         2LRwYeagFmEgz9SioqPgASFmf+7j0s7D44sqdquaUB0CnyDPgwcqgXaK7k7SMcjGVs2f
-         sDGY/xH4nxufsMmQA5s/Um1Wo0TUEwAAS7qlBQG24O3t+e/J+DW1HL54ZdJ8F/88qCWz
-         acIg==
-X-Gm-Message-State: APjAAAU5KWpsHCKTApObMdp9G6ujdkpfeLJoBwtw/hn98CplRR49qVNC
-        vWLiKzcjbaaNLkwGUsc++js=
-X-Google-Smtp-Source: APXvYqzVaTcVEj9/DSFJ+OeDTUdB9Rzl62iE9/bOW9PuSB5M2D5R1yNixttwWgkxdjIA4kKyoV2F0g==
-X-Received: by 2002:a7b:cb95:: with SMTP id m21mr112778wmi.36.1571267251034;
-        Wed, 16 Oct 2019 16:07:31 -0700 (PDT)
-Received: from stbirv-lnx-3.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id l9sm297071wme.45.2019.10.16.16.07.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 16 Oct 2019 16:07:30 -0700 (PDT)
-From:   Doug Berger <opendmb@gmail.com>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Doug Berger <opendmb@gmail.com>
-Subject: [PATCH net 4/4] net: bcmgenet: reset 40nm EPHY on energy detect
-Date:   Wed, 16 Oct 2019 16:06:32 -0700
-Message-Id: <1571267192-16720-5-git-send-email-opendmb@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1571267192-16720-1-git-send-email-opendmb@gmail.com>
-References: <1571267192-16720-1-git-send-email-opendmb@gmail.com>
+        id S2391381AbfJPXRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 19:17:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53212 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729316AbfJPXQ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 19:16:59 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC61820872;
+        Wed, 16 Oct 2019 23:16:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571267818;
+        bh=zirAnIqC/9yz2gPtuufIs13cXwxMvCqnY5qApb41f+M=;
+        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
+        b=SaQGqpiLQgeR98Z05PO57/QW0eAM5ELeTAxUZFHS3ii0Oq3gWZkOhpRfJIynjgkeD
+         fc8awSBNLZlD9W0zzTLo5OlzG8eb7jKrx5mrJ6H2l6WSqobT3S29gblenIA0BzAUxg
+         fF2fv21XF4md2j1/KsDyDhRGUDtn+p+4qwQWEN0w=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191014143642.24552-1-yuehaibing@huawei.com>
+References: <20191014143642.24552-1-yuehaibing@huawei.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     broonie@kernel.org, eric@anholt.net, f.fainelli@gmail.com,
+        heiko@sntech.de, mbrugger@suse.com, mripard@kernel.org,
+        mturquette@baylibre.com, nsaenzjulienne@suse.de, rjui@broadcom.com,
+        sbranden@broadcom.com, wahrenst@gmx.net, yuehaibing@huawei.com
+Cc:     bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] clk: bcm2835: use devm_platform_ioremap_resource() to simplify code
+User-Agent: alot/0.8.1
+Date:   Wed, 16 Oct 2019 16:16:57 -0700
+Message-Id: <20191016231658.CC61820872@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The EPHY integrated into the 40nm Set-Top Box devices can falsely
-detect energy when connected to a disabled peer interface. When the
-peer interface is enabled the EPHY will detect and report the link
-as active, but on occasion may get into a state where it is not
-able to exchange data with the connected GENET MAC. This issue has
-not been observed when the link parameters are auto-negotiated;
-however, it has been observed with a manually configured link.
+Quoting YueHaibing (2019-10-14 07:36:42)
+> Use devm_platform_ioremap_resource() to simplify the code a bit.
+> This is detected by coccinelle.
+>=20
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
 
-It has been empirically determined that issuing a soft reset to the
-EPHY when energy is detected prevents it from getting into this bad
-state.
-
-Fixes: 1c1008c793fa ("net: bcmgenet: add main driver file")
-Signed-off-by: Doug Berger <opendmb@gmail.com>
----
- drivers/net/ethernet/broadcom/genet/bcmgenet.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.c b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-index f0937c650e3c..0f138280315a 100644
---- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-@@ -2018,6 +2018,8 @@ static void bcmgenet_link_intr_enable(struct bcmgenet_priv *priv)
- 	 */
- 	if (priv->internal_phy) {
- 		int0_enable |= UMAC_IRQ_LINK_EVENT;
-+		if (GENET_IS_V1(priv) || GENET_IS_V2(priv) || GENET_IS_V3(priv))
-+			int0_enable |= UMAC_IRQ_PHY_DET_R;
- 	} else if (priv->ext_phy) {
- 		int0_enable |= UMAC_IRQ_LINK_EVENT;
- 	} else if (priv->phy_interface == PHY_INTERFACE_MODE_MOCA) {
-@@ -2611,9 +2613,14 @@ static void bcmgenet_irq_task(struct work_struct *work)
- 	priv->irq0_stat = 0;
- 	spin_unlock_irq(&priv->lock);
- 
-+	if (status & UMAC_IRQ_PHY_DET_R &&
-+	    priv->dev->phydev->autoneg != AUTONEG_ENABLE)
-+		phy_init_hw(priv->dev->phydev);
-+
- 	/* Link UP/DOWN event */
- 	if (status & UMAC_IRQ_LINK_EVENT)
- 		phy_mac_interrupt(priv->dev->phydev);
-+
- }
- 
- /* bcmgenet_isr1: handle Rx and Tx priority queues */
-@@ -2708,7 +2715,7 @@ static irqreturn_t bcmgenet_isr0(int irq, void *dev_id)
- 	}
- 
- 	/* all other interested interrupts handled in bottom half */
--	status &= UMAC_IRQ_LINK_EVENT;
-+	status &= (UMAC_IRQ_LINK_EVENT | UMAC_IRQ_PHY_DET_R);
- 	if (status) {
- 		/* Save irq status for bottom-half processing. */
- 		spin_lock_irqsave(&priv->lock, flags);
--- 
-2.7.4
+Applied to clk-next
 
