@@ -2,72 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F06BD9B61
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 22:16:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38B5CD9B70
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 22:18:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437104AbfJPUQj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 16:16:39 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:36909 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437071AbfJPUQi (ORCPT
+        id S2437129AbfJPUSF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 16:18:05 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:53884 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733249AbfJPUSF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 16:16:38 -0400
-X-Originating-IP: 86.202.229.42
-Received: from localhost (lfbn-lyo-1-146-42.w86-202.abo.wanadoo.fr [86.202.229.42])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 9BC1140002;
-        Wed, 16 Oct 2019 20:16:34 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     linux-rtc@vger.kernel.org
-Cc:     Tony Prisk <linux@prisktech.co.nz>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 5/5] rtc: vt8500: let the core handle rtc range
-Date:   Wed, 16 Oct 2019 22:16:26 +0200
-Message-Id: <20191016201626.31309-5-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191016201626.31309-1-alexandre.belloni@bootlin.com>
-References: <20191016201626.31309-1-alexandre.belloni@bootlin.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 16 Oct 2019 16:18:05 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f00:1e2::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 968D81434B98B;
+        Wed, 16 Oct 2019 13:18:04 -0700 (PDT)
+Date:   Wed, 16 Oct 2019 13:18:01 -0700 (PDT)
+Message-Id: <20191016.131801.2242669095837757698.davem@davemloft.net>
+To:     liuyonglong@huawei.com
+Cc:     hkallweit1@gmail.com, andrew@lunn.ch, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linuxarm@huawei.com,
+        salil.mehta@huawei.com, yisen.zhuang@huawei.com,
+        shiju.jose@huawei.com
+Subject: Re: [PATCH net] net: phy: Fix "link partner" information disappear
+ issue
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1571193039-36228-1-git-send-email-liuyonglong@huawei.com>
+References: <1571193039-36228-1-git-send-email-liuyonglong@huawei.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 16 Oct 2019 13:18:04 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let the rtc core check the date/time against the RTC range.
+From: Yonglong Liu <liuyonglong@huawei.com>
+Date: Wed, 16 Oct 2019 10:30:39 +0800
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/rtc/rtc-vt8500.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+> Some drivers just call phy_ethtool_ksettings_set() to set the
+> links, for those phy drivers that use genphy_read_status(), if
+> autoneg is on, and the link is up, than execute "ethtool -s
+> ethx autoneg on" will cause "link partner" information disappear.
+> 
+> The call trace is phy_ethtool_ksettings_set()->phy_start_aneg()
+> ->linkmode_zero(phydev->lp_advertising)->genphy_read_status(),
+> the link didn't change, so genphy_read_status() just return, and
+> phydev->lp_advertising is zero now.
+> 
+> This patch moves the clear operation of lp_advertising from
+> phy_start_aneg() to genphy_read_lpa()/genphy_c45_read_lpa(), and
+> if autoneg on and autoneg not complete, just clear what the
+> generic functions care about.
+> 
+> Fixes: 88d6272acaaa ("net: phy: avoid unneeded MDIO reads in genphy_read_status")
+> Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
 
-diff --git a/drivers/rtc/rtc-vt8500.c b/drivers/rtc/rtc-vt8500.c
-index 0761478861f8..e2588625025f 100644
---- a/drivers/rtc/rtc-vt8500.c
-+++ b/drivers/rtc/rtc-vt8500.c
-@@ -122,12 +122,6 @@ static int vt8500_rtc_set_time(struct device *dev, struct rtc_time *tm)
- {
- 	struct vt8500_rtc *vt8500_rtc = dev_get_drvdata(dev);
- 
--	if (tm->tm_year < 100) {
--		dev_warn(dev, "Only years 2000-2199 are supported by the "
--			      "hardware!\n");
--		return -EINVAL;
--	}
--
- 	writel((bin2bcd(tm->tm_year % 100) << DATE_YEAR_S)
- 		| (bin2bcd(tm->tm_mon + 1) << DATE_MONTH_S)
- 		| (bin2bcd(tm->tm_mday))
-@@ -227,6 +221,8 @@ static int vt8500_rtc_probe(struct platform_device *pdev)
- 		return PTR_ERR(vt8500_rtc->rtc);
- 
- 	vt8500_rtc->rtc->ops = &vt8500_rtc_ops;
-+	vt8500_rtc->rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
-+	vt8500_rtc->rtc->range_max = RTC_TIMESTAMP_END_2199;
- 
- 	ret = devm_request_irq(&pdev->dev, vt8500_rtc->irq_alarm,
- 				vt8500_rtc_irq, 0, "rtc alarm", vt8500_rtc);
--- 
-2.21.0
-
+Applied and queued up for -stable, thank you.
