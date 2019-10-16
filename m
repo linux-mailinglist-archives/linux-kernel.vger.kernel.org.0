@@ -2,171 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31088D9137
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:43:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD54AD913D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:43:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393173AbfJPMnR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 08:43:17 -0400
-Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:32815 "EHLO
-        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726985AbfJPMnR (ORCPT
+        id S2393198AbfJPMno (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 08:43:44 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44978 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726985AbfJPMnn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 08:43:17 -0400
-Received: from [192.168.2.10] ([46.9.232.237])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id KidyiHbzfPduvKie2ir0H9; Wed, 16 Oct 2019 14:43:14 +0200
-Subject: Re: [PATCH] media: v4l2-ctrl: Add p_def to v4l2_ctrl_config
-To:     Ricardo Ribalda Delgado <ribalda@kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20191014141427.30708-1-ribalda@kernel.org>
- <f03e39da-2fe0-b1af-c409-8460c2fc5e9f@xs4all.nl>
- <CAPybu_1xBCVdcHKOwDFoM8wkrXWRSuFO1vUuB6Kp0rD6BREs1Q@mail.gmail.com>
- <0e98973c-96a8-dc2e-295f-225ab3b1eae0@xs4all.nl>
- <CAPybu_1to=P0s491p4pbaZMy+YAG88R5sORsvKQy9gKBL49f_w@mail.gmail.com>
-From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Message-ID: <77204a05-34a5-f6f1-460f-bddaa8f2bb5c@xs4all.nl>
-Date:   Wed, 16 Oct 2019 14:43:10 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Wed, 16 Oct 2019 08:43:43 -0400
+Received: by mail-pl1-f193.google.com with SMTP id q15so11214686pll.11
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 05:43:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kFYPT3OrsbiUD60Nb8NDIx2f6C6Q/2ZZ3HTvfG2KWDI=;
+        b=TGF2yffbWIfYdq0R5MXC7aLdf2wihHo/XfTvhYAQ5bopyjIE6lMn2U21/SkQZR3zes
+         v5JLJjnsHYDGNAmE2ci+pQy33q2Tk3WNhlgVMeLV57PmFmECvuM6th9Cbk+ZPachApgl
+         H7zyK2DvXEcpCMkubmEnKrOVguuUldDwiCyzxpc9sCSjZDUg3SgHOeemOS1ZvhqrNlWe
+         c3CgychUcuzfEaAJQrIVU+acJX4C+4QtUfKGwJOpfLAAf6RtbepKKCeilDh3k6bFwPnT
+         5hOpvQTNbW9NwEt0DLVDnGHd5kUO79x12hTHgp2C2/ZQNc73FFvnMOi/F+NUemPxj1eF
+         //rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kFYPT3OrsbiUD60Nb8NDIx2f6C6Q/2ZZ3HTvfG2KWDI=;
+        b=Vw6ZxGXrp1cuItMhjue1vRU//6/gh0C3PSgaMOFG7N5mCwfRfI9ryjR+bm8Cc5isc0
+         gO3KkDzlnIrCdpNMXOg7n+IdaZVxtdXVEjxsrRyCylmHg0AeHCoOhO/3vzNdO146AL+Q
+         w9dxSMF9s7Krk7THboqKI7TFDZlmdOoakAbup3K2+0fFWfhVOhMMwWAuOD0h1fpST4Cl
+         Ch1qq6KRC5ZzzgKTnlJBbhwp7gXtDuipGU8Zz/8vw+b5O0CI4J4AgR+7IprFbvcSq3w/
+         r8iJS+wk9Ygf2DsSyz/SvNO2K+JZAKLxxXFrj0UX8TjL7UFEG+qCLm1mLcYtkWFEMR/u
+         ZZmw==
+X-Gm-Message-State: APjAAAUPLUS8ktl/n7TLDR5Li4J6fYi6v1Y8OyYp83XwGJSXow5DJk/d
+        onAB0b8csGvn1AkChzmZMyw=
+X-Google-Smtp-Source: APXvYqxlKqqfHauh1QZMUlXSk8OuNmVIgZ6K0hVwnYMm6tGgku/yb2kebWcD53eqiq0YGhBolFRbSg==
+X-Received: by 2002:a17:902:728f:: with SMTP id d15mr41460060pll.211.1571229822775;
+        Wed, 16 Oct 2019 05:43:42 -0700 (PDT)
+Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
+        by smtp.gmail.com with ESMTPSA id i37sm2604894pje.23.2019.10.16.05.43.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2019 05:43:41 -0700 (PDT)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH] clocksource: asm9260: Add a check for of_clk_get
+Date:   Wed, 16 Oct 2019 20:43:30 +0800
+Message-Id: <20191016124330.22211-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <CAPybu_1to=P0s491p4pbaZMy+YAG88R5sORsvKQy9gKBL49f_w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfMTdI58S21VqBJGlzRA5QkvX90Dxrir53Rm9prnYFCX84at+LMg5VsJnHeRctj13ky0AJPqdjYHdLjY4iEzRqvE10l/3JpcHiLi7EeeWOqaM+QAt4sxj
- DxF410CIkFCBC8X3hdltE/ESw+4556LbpwybGeLSBmrWnNO/zu5j/sWEdwEkyagrL4A47vVItOfLXp204eDGnZVA+kEgTPPmK87Jt5GChmgqfJ9U/dioBjFv
- TJBlt2v6RkxUN19rJ4A7TXB5iNSIR6VjhqKbC7VeTbW1KBIqIkyQiGOZWZEzY4Gy
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/16/19 2:39 PM, Ricardo Ribalda Delgado wrote:
-> Hi Hans:
-> 
-> On Wed, Oct 16, 2019 at 2:32 PM Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
->>
->> On 10/16/19 2:20 PM, Ricardo Ribalda Delgado wrote:
->>> Hi Hans
->>>
->>> Not that awkward, the user has to use the brand new
->>> v4l2_ctrl_ptr_create() ;). But if you prefer void * I can make the
->>> change.
->>
->> Well, a struct v4l2_ctrl_config is typically a static const, so you can't use
->> v4l2_ctrl_ptr_create().
->>
->> Hmm, perhaps it is as easy as:
->>
->> static const struct v4l2_area def_area = {
->>         ...
->> };
->>
->> static const struct v4l2_ctrl_config ctrl = {
->>         ...
->>
->>         .p_def.p_area = &def_area,
->>         ...
->> };
->>
->> Can you do a quick compile check that I am not overlooking anything?
->>
->> If this works, then I'll take this patch.
-> 
-> Testing with gcc 9.2.1
-> 
-> This works fine, no warning/error:
-> 
-> static struct v4l2_area unit_size = {
-> .width = UNIT_SIZE,
-> .height = UNIT_SIZE,
-> };
-> static struct v4l2_ctrl_config area_ctrl = {
-> .type = V4L2_CTRL_TYPE_AREA,
-> .flags = V4L2_CTRL_FLAG_READ_ONLY,
-> .p_def.p_area = &unit_size,
-> };
-> 
-> but if unit_size is set as CONST:
-> static const struct v4l2_area
-> 
-> Then:
-> drivers/qtec/qtec_sony.c: In function ‘qtec_sony_probe’:
-> drivers/qtec/qtec_sony.c:3151:19: warning: initialization discards
-> ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
->  3151 |   .p_def.p_area = &unit_size,
->       |
+asm9260_timer_init misses a check for of_clk_get.
+Add a check for it and print errors like other clocksource drivers.
 
-Hmm. So we need a const void *p_def instead.
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+---
+ drivers/clocksource/asm9260_timer.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Regards,
-
-	Hans
-
-> 
->>
->> Regards,
->>
->>         Hans
->>
->>>
->>> Regards
->>>
->>> On Wed, Oct 16, 2019 at 2:17 PM Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
->>>>
->>>> On 10/14/19 4:14 PM, Ricardo Ribalda Delgado wrote:
->>>>> This allows setting the default value on compound controls created via
->>>>> v4l2_ctrl_new_custom.
->>>>>
->>>>> Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
->>>>> ---
->>>>>  drivers/media/v4l2-core/v4l2-ctrls.c | 2 +-
->>>>>  include/media/v4l2-ctrls.h           | 2 ++
->>>>>  2 files changed, 3 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
->>>>> index bf50d37ef6c1..12cf38f73f7b 100644
->>>>> --- a/drivers/media/v4l2-core/v4l2-ctrls.c
->>>>> +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
->>>>> @@ -2583,7 +2583,7 @@ struct v4l2_ctrl *v4l2_ctrl_new_custom(struct v4l2_ctrl_handler *hdl,
->>>>>                       type, min, max,
->>>>>                       is_menu ? cfg->menu_skip_mask : step, def,
->>>>>                       cfg->dims, cfg->elem_size,
->>>>> -                     flags, qmenu, qmenu_int, ptr_null, priv);
->>>>> +                     flags, qmenu, qmenu_int, cfg->p_def, priv);
->>>>>       if (ctrl)
->>>>>               ctrl->is_private = cfg->is_private;
->>>>>       return ctrl;
->>>>> diff --git a/include/media/v4l2-ctrls.h b/include/media/v4l2-ctrls.h
->>>>> index 26205ba3a0a0..2fca5b823961 100644
->>>>> --- a/include/media/v4l2-ctrls.h
->>>>> +++ b/include/media/v4l2-ctrls.h
->>>>> @@ -375,6 +375,7 @@ struct v4l2_ctrl_handler {
->>>>>   * @max:     The control's maximum value.
->>>>>   * @step:    The control's step value for non-menu controls.
->>>>>   * @def:     The control's default value.
->>>>> + * @p_def:   The control's default value for compound controls.
->>>>>   * @dims:    The size of each dimension.
->>>>>   * @elem_size:       The size in bytes of the control.
->>>>>   * @flags:   The control's flags.
->>>>> @@ -403,6 +404,7 @@ struct v4l2_ctrl_config {
->>>>>       s64 max;
->>>>>       u64 step;
->>>>>       s64 def;
->>>>> +     union v4l2_ctrl_ptr p_def;
->>>>>       u32 dims[V4L2_CTRL_MAX_DIMS];
->>>>>       u32 elem_size;
->>>>>       u32 flags;
->>>>>
->>>>
->>>> I'm not sure about this. It might be a bit awkward to initialize p_def given that it is a union.
->>>>
->>>> Perhaps a simple void pointer would be easier?
->>>>
->>>> Regards,
->>>>
->>>>         Hans
->>
+diff --git a/drivers/clocksource/asm9260_timer.c b/drivers/clocksource/asm9260_timer.c
+index 9f09a59161e7..5b39d3701fa3 100644
+--- a/drivers/clocksource/asm9260_timer.c
++++ b/drivers/clocksource/asm9260_timer.c
+@@ -194,6 +194,10 @@ static int __init asm9260_timer_init(struct device_node *np)
+ 	}
+ 
+ 	clk = of_clk_get(np, 0);
++	if (IS_ERR(clk)) {
++		pr_err("Failed to get clk!\n");
++		return PTR_ERR(clk);
++	}
+ 
+ 	ret = clk_prepare_enable(clk);
+ 	if (ret) {
+-- 
+2.20.1
 
