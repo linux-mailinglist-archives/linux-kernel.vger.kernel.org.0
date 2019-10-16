@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BFC9DA104
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:26:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87538D9F33
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403853AbfJPWSZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:18:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44390 "EHLO mail.kernel.org"
+        id S2437421AbfJPVxO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:53:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394999AbfJPVy1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:54:27 -0400
+        id S2437375AbfJPVxM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:53:12 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8B5B20872;
-        Wed, 16 Oct 2019 21:54:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC2EA21D7A;
+        Wed, 16 Oct 2019 21:53:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262866;
-        bh=cgm7JhnJU7yURefX0VJ3pWnWAdelXvqCOB9FccoB5k4=;
+        s=default; t=1571262791;
+        bh=POLCXjKVPmnPb4Te2lDMEypqewX48I3YWuiNw2otHjA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Mgcx8+SP/oEl/UHpQkBJyMEmFfiuuVchUVOKOp5uukj2OhK+qmcbpD8Bh/yjBpp0Z
-         75Avxq+6yyJjihZDJjwd2vKB3fgx+RREqNJG+6nfceq244JQZiU8Dhr6bQtnofe8gQ
-         7eNTkSc/XYpwvyAoiU9bc9R8vkGFQjzRf3B1TdnQ=
+        b=Lit7q/q9L+9LNh6bryHDFbdA+6/TN/e++kgR4hogfii9aAS5XxOYcGI8ENbrnOdvR
+         pTkkXlWHl3NmJisnLQOl0P38z5+HpymCtfNMH+Z54qd5JbGbxYTZFw7NlUhv23zSRS
+         r/7J6i+ivERCMe/FL17AJIfClTaiNwlKvOiY29fc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.9 32/92] cfg80211: add and use strongly typed element iteration macros
-Date:   Wed, 16 Oct 2019 14:50:05 -0700
-Message-Id: <20191016214826.756979955@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.4 31/79] USB: yurex: fix NULL-derefs on disconnect
+Date:   Wed, 16 Oct 2019 14:50:06 -0700
+Message-Id: <20191016214756.986666753@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
-References: <20191016214759.600329427@linuxfoundation.org>
+In-Reply-To: <20191016214729.758892904@linuxfoundation.org>
+References: <20191016214729.758892904@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,134 +42,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 0f3b07f027f87a38ebe5c436490095df762819be upstream.
+commit aafb00a977cf7d81821f7c9d12e04c558c22dc3c upstream.
 
-Rather than always iterating elements from frames with pure
-u8 pointers, add a type "struct element" that encapsulates
-the id/datalen/data format of them.
+The driver was using its struct usb_interface pointer as an inverted
+disconnected flag, but was setting it to NULL without making sure all
+code paths that used it were done with it.
 
-Then, add the element iteration macros
- * for_each_element
- * for_each_element_id
- * for_each_element_extid
+Before commit ef61eb43ada6 ("USB: yurex: Fix protection fault after
+device removal") this included the interrupt-in completion handler, but
+there are further accesses in dev_err and dev_dbg statements in
+yurex_write() and the driver-data destructor (sic!).
 
-which take, as their first 'argument', such a structure and
-iterate through a given u8 array interpreting it as elements.
+Fix this by unconditionally stopping also the control URB at disconnect
+and by using a dedicated disconnected flag.
 
-While at it and since we'll need it, also add
- * for_each_subelement
- * for_each_subelement_id
- * for_each_subelement_extid
+Note that we need to take a reference to the struct usb_interface to
+avoid a use-after-free in the destructor whenever the device was
+disconnected while the character device was still open.
 
-which instead of taking data/length just take an outer element
-and use its data/datalen.
-
-Also add for_each_element_completed() to determine if any of
-the loops above completed, i.e. it was able to parse all of
-the elements successfully and no data remained.
-
-Use for_each_element_id() in cfg80211_find_ie_match() as the
-first user of this.
-
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fixes: aadd6472d904 ("USB: yurex.c: remove dbg() usage")
+Fixes: 45714104b9e8 ("USB: yurex.c: remove err() usage")
+Cc: stable <stable@vger.kernel.org>     # 3.5: ef61eb43ada6
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191009153848.8664-6-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/ieee80211.h |   53 ++++++++++++++++++++++++++++++++++++++++++++++
- net/wireless/scan.c       |   14 +++++-------
- 2 files changed, 59 insertions(+), 8 deletions(-)
+ drivers/usb/misc/yurex.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/include/linux/ieee80211.h
-+++ b/include/linux/ieee80211.h
-@@ -2630,4 +2630,57 @@ static inline bool ieee80211_action_cont
- 	return true;
- }
+--- a/drivers/usb/misc/yurex.c
++++ b/drivers/usb/misc/yurex.c
+@@ -64,6 +64,7 @@ struct usb_yurex {
  
-+struct element {
-+	u8 id;
-+	u8 datalen;
-+	u8 data[];
-+};
-+
-+/* element iteration helpers */
-+#define for_each_element(element, _data, _datalen)			\
-+	for (element = (void *)(_data);					\
-+	     (u8 *)(_data) + (_datalen) - (u8 *)element >=		\
-+		sizeof(*element) &&					\
-+	     (u8 *)(_data) + (_datalen) - (u8 *)element >=		\
-+		sizeof(*element) + element->datalen;			\
-+	     element = (void *)(element->data + element->datalen))
-+
-+#define for_each_element_id(element, _id, data, datalen)		\
-+	for_each_element(element, data, datalen)			\
-+		if (element->id == (_id))
-+
-+#define for_each_element_extid(element, extid, data, datalen)		\
-+	for_each_element(element, data, datalen)			\
-+		if (element->id == WLAN_EID_EXTENSION &&		\
-+		    element->datalen > 0 &&				\
-+		    element->data[0] == (extid))
-+
-+#define for_each_subelement(sub, element)				\
-+	for_each_element(sub, (element)->data, (element)->datalen)
-+
-+#define for_each_subelement_id(sub, id, element)			\
-+	for_each_element_id(sub, id, (element)->data, (element)->datalen)
-+
-+#define for_each_subelement_extid(sub, extid, element)			\
-+	for_each_element_extid(sub, extid, (element)->data, (element)->datalen)
-+
-+/**
-+ * for_each_element_completed - determine if element parsing consumed all data
-+ * @element: element pointer after for_each_element() or friends
-+ * @data: same data pointer as passed to for_each_element() or friends
-+ * @datalen: same data length as passed to for_each_element() or friends
-+ *
-+ * This function returns %true if all the data was parsed or considered
-+ * while walking the elements. Only use this if your for_each_element()
-+ * loop cannot be broken out of, otherwise it always returns %false.
-+ *
-+ * If some data was malformed, this returns %false since the last parsed
-+ * element will not fill the whole remaining data.
-+ */
-+static inline bool for_each_element_completed(const struct element *element,
-+					      const void *data, size_t datalen)
-+{
-+	return (u8 *)element == (u8 *)data + datalen;
-+}
-+
- #endif /* LINUX_IEEE80211_H */
---- a/net/wireless/scan.c
-+++ b/net/wireless/scan.c
-@@ -407,6 +407,8 @@ const u8 *cfg80211_find_ie_match(u8 eid,
- 				 const u8 *match, int match_len,
- 				 int match_offset)
- {
-+	const struct element *elem;
-+
- 	/* match_offset can't be smaller than 2, unless match_len is
- 	 * zero, in which case match_offset must be zero as well.
- 	 */
-@@ -414,14 +416,10 @@ const u8 *cfg80211_find_ie_match(u8 eid,
- 		    (!match_len && match_offset)))
- 		return NULL;
+ 	struct kref		kref;
+ 	struct mutex		io_mutex;
++	unsigned long		disconnected:1;
+ 	struct fasync_struct	*async_queue;
+ 	wait_queue_head_t	waitq;
  
--	while (len >= 2 && len >= ies[1] + 2) {
--		if ((ies[0] == eid) &&
--		    (ies[1] + 2 >= match_offset + match_len) &&
--		    !memcmp(ies + match_offset, match, match_len))
--			return ies;
--
--		len -= ies[1] + 2;
--		ies += ies[1] + 2;
-+	for_each_element_id(elem, eid, ies, len) {
-+		if (elem->datalen >= match_offset - 2 + match_len &&
-+		    !memcmp(elem->data + match_offset - 2, match, match_len))
-+			return (void *)elem;
+@@ -111,6 +112,7 @@ static void yurex_delete(struct kref *kr
+ 				dev->int_buffer, dev->urb->transfer_dma);
+ 		usb_free_urb(dev->urb);
  	}
++	usb_put_intf(dev->interface);
+ 	usb_put_dev(dev->udev);
+ 	kfree(dev);
+ }
+@@ -211,7 +213,7 @@ static int yurex_probe(struct usb_interf
+ 	init_waitqueue_head(&dev->waitq);
  
- 	return NULL;
+ 	dev->udev = usb_get_dev(interface_to_usbdev(interface));
+-	dev->interface = interface;
++	dev->interface = usb_get_intf(interface);
+ 
+ 	/* set up the endpoint information */
+ 	iface_desc = interface->cur_altsetting;
+@@ -334,8 +336,9 @@ static void yurex_disconnect(struct usb_
+ 
+ 	/* prevent more I/O from starting */
+ 	usb_poison_urb(dev->urb);
++	usb_poison_urb(dev->cntl_urb);
+ 	mutex_lock(&dev->io_mutex);
+-	dev->interface = NULL;
++	dev->disconnected = 1;
+ 	mutex_unlock(&dev->io_mutex);
+ 
+ 	/* wakeup waiters */
+@@ -423,7 +426,7 @@ static ssize_t yurex_read(struct file *f
+ 	dev = file->private_data;
+ 
+ 	mutex_lock(&dev->io_mutex);
+-	if (!dev->interface) {		/* already disconnected */
++	if (dev->disconnected) {		/* already disconnected */
+ 		mutex_unlock(&dev->io_mutex);
+ 		return -ENODEV;
+ 	}
+@@ -458,7 +461,7 @@ static ssize_t yurex_write(struct file *
+ 		goto error;
+ 
+ 	mutex_lock(&dev->io_mutex);
+-	if (!dev->interface) {		/* already disconnected */
++	if (dev->disconnected) {		/* already disconnected */
+ 		mutex_unlock(&dev->io_mutex);
+ 		retval = -ENODEV;
+ 		goto error;
 
 
