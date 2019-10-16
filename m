@@ -2,105 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9190D8AEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:28:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 637AFD8AF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:29:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391680AbfJPI2o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 04:28:44 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:19032 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391656AbfJPI2o (ORCPT
+        id S2388412AbfJPI27 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 04:28:59 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47374 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729646AbfJPI25 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 04:28:44 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9G8RQ93066879
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 04:28:43 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2vnx1u3svc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 04:28:43 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Wed, 16 Oct 2019 09:28:40 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 16 Oct 2019 09:28:33 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9G8SWqN19661040
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 16 Oct 2019 08:28:33 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C7E88A4057;
-        Wed, 16 Oct 2019 08:28:32 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1C7A3A4040;
-        Wed, 16 Oct 2019 08:28:32 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.85])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 16 Oct 2019 08:28:32 +0000 (GMT)
-Date:   Wed, 16 Oct 2019 10:28:30 +0200
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Will Deacon <will@kernel.org>, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-c6x-dev@linux-c6x.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Michal Simek <monstr@monstr.eu>, linux-parisc@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/29] vmlinux.lds.h: Refactor EXCEPTION_TABLE and
- NOTES
-References: <20191011000609.29728-1-keescook@chromium.org>
+        Wed, 16 Oct 2019 04:28:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=F6wdwkLS5YIBFm9uUOcdDvp68NOyscyLtLISp6pAdS8=; b=FKLVhskw8PSJ0s6I3yOcLvpA1
+        59TfLaVzZkj60onD2dqGvFYN/41Y3KSoXTvXqbM2O7B9Ke5ijicM9e4L+ErBR4qdzN+qGsbmCi9LF
+        c0WiMiQQQUq1ukM8+jpKTP3yJX3kwbBx15ePfGSAQkvqRhSWi1d2SY6suEYm3I37gFdBYH1fVlBk9
+        qJ/n8K6AOFdD2EGXsV9FnyQMirM8jNNmLw8v2iLymllHeSWTW4tCFc9KYI9YLrQa4bGGX8kVOH77Z
+        +E6oS2SFZ2eSskIuMDbD4Gs62cEAxXi7WUeNOyqxksgVfajD2arjYCdtCTWc9aB6KGyvBjV3ky2zb
+        1y2M6SmWg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iKefr-0001z9-8N; Wed, 16 Oct 2019 08:28:51 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 7E945305E42;
+        Wed, 16 Oct 2019 10:27:54 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 500B328B61623; Wed, 16 Oct 2019 10:28:49 +0200 (CEST)
+Date:   Wed, 16 Oct 2019 10:28:49 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        vincent.guittot@linaro.org, juri.lelli@redhat.com,
+        Dietmar.Eggemann@arm.com, morten.rasmussen@arm.com,
+        seto.hidetoshi@jp.fujitsu.com, qperret@google.com
+Subject: Re: [PATCH] sched/topology: Don't set SD_BALANCE_WAKE on cpuset
+ domain relax
+Message-ID: <20191016082849.GQ2328@hirez.programming.kicks-ass.net>
+References: <20191014164408.32596-1-valentin.schneider@arm.com>
+ <20191015113410.GG2311@hirez.programming.kicks-ass.net>
+ <86fd060d-fc2f-b9e8-ec14-b4f4627f7c0c@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191011000609.29728-1-keescook@chromium.org>
-X-TM-AS-GCONF: 00
-x-cbid: 19101608-0016-0000-0000-000002B87DFE
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19101608-0017-0000-0000-000033199F8D
-Message-Id: <20191016082830.GC4267@osiris>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-16_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=960 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1910160075
+In-Reply-To: <86fd060d-fc2f-b9e8-ec14-b4f4627f7c0c@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 05:05:40PM -0700, Kees Cook wrote:
-> Arch maintainers: please send Acks (if you haven't already) for your
-> respective linker script changes; the intention is for this series to
-> land via -tip.
+On Tue, Oct 15, 2019 at 12:37:11PM +0100, Valentin Schneider wrote:
+> On 15/10/2019 12:34, Peter Zijlstra wrote:
+> > This 'relax' thing is on my list of regrets. It is a terrible thing that
+> > should never have existed.
+> > 
+> > Are you actually using it or did you just stumble upon it while looking
+> > around there?
+> > 
 > 
-> v1: https://lore.kernel.org/lkml/20190926175602.33098-1-keescook@chromium.org
-> v2: clean up commit messages, rename RO_EXCEPTION_TABLE (bp)
-> 
-> 
-> This series works to move the linker sections for NOTES and
-> EXCEPTION_TABLE into the RO_DATA area, where they belong on most
-> (all?) architectures. The problem being addressed was the discovery
-> by Rick Edgecombe that the exception table was accidentally marked
-> executable while he was developing his execute-only-memory series. When
-> permissions were flipped from readable-and-executable to only-executable,
-> the exception table became unreadable, causing things to explode rather
-> badly. :)
+> Just staring around, I don't use cpuset stuff unless I really need to...
 
-Feel free to add
-Acked-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-to every patch in this series which touches s390.
-
+Fair enough. Applied it.
