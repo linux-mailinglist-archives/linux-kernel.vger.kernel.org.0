@@ -2,265 +2,362 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF7BAD8B69
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:41:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD883D8B31
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:40:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391783AbfJPIll (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 04:41:41 -0400
-Received: from mail-wm1-f74.google.com ([209.85.128.74]:53742 "EHLO
-        mail-wm1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390010AbfJPIlj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 04:41:39 -0400
-Received: by mail-wm1-f74.google.com with SMTP id p6so667052wmc.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 01:41:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=7ROjjIT0dSiqK7weicBG4sWceIh3b0q1ZAIHDJ8V6Dk=;
-        b=NSrpYdVj6fvXpFrnYfMPpaxzWB8tZgAHeQar0WnBSBStaLWhUFgVJk9C/oS/EQde3j
-         MN4Pu2PiFyorxV2NAx67TfVsuapiiUeipddfWo7q/H/WBwZUnkM+6M8rF64LWI1zqnod
-         u5c2hdeezFE94Xt0CqiWPN9JZ+XWZGa2LmHJ17RvhMuYF8jJYNzHYmLp4bSOyQhnLb5n
-         wcTS/OQn6cmqiOthUHvG8diywSJRIpleWQFeeW+APiJo3NuWVCMKVB3OAzacpbRddg+g
-         eGRi/qTPu5x/ubxado+lIc7l9pv4VKTx9GmOiVRvCsEI/RgIn0MQsYWgNaf1gyqvzMor
-         8Gxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=7ROjjIT0dSiqK7weicBG4sWceIh3b0q1ZAIHDJ8V6Dk=;
-        b=q+cZBSI5E71bt6SIqfFsYdaVg514Ff5HX7aTt07XtaRgKggGLPextxpIadBsudqE4E
-         Gx9zGRnba3rHdELI2powX/BNkCBBiDkXg/b8jGgOaSpufw1ZovWl0kqf0xNM8lsaxs1R
-         r2izM+Zaf2BmQ0YIvUyr2BsEdG55dpmjIwVeVBWoJP6M96zTVEt0HPq8ZNWn3FnCgmS/
-         zbm8s/jJW0u44iWjnbyk9ZfdZjnXvB662OmQ7Zgy8vugK6Qax7DiwvcJdCAAaDBmRhSg
-         ZtxpEc8pQF6R0b20ezQj/4zTH+t4zjQG2Q2i2Jy4Ck3qfYF/zRngq76QP8/9RbE8l9JH
-         K2Eg==
-X-Gm-Message-State: APjAAAVCLIbE0AB3sSS+oOsTN30NRk91K04u4qPwR2buz0E8hAY/LOBO
-        BJu3cHGVXr8rtonnIwAzGEMbI0lr0A==
-X-Google-Smtp-Source: APXvYqyPTbF4tMvD/+6fq80mlU+ztvS58zl/Ed2jENLqLLVlUfZnkS670w03BnK/IEZ6vSaVSsQZVxJcuQ==
-X-Received: by 2002:adf:e983:: with SMTP id h3mr1520622wrm.95.1571215294184;
- Wed, 16 Oct 2019 01:41:34 -0700 (PDT)
-Date:   Wed, 16 Oct 2019 10:39:59 +0200
-In-Reply-To: <20191016083959.186860-1-elver@google.com>
-Message-Id: <20191016083959.186860-9-elver@google.com>
-Mime-Version: 1.0
-References: <20191016083959.186860-1-elver@google.com>
-X-Mailer: git-send-email 2.23.0.700.g56cf767bdb-goog
-Subject: [PATCH 8/8] x86, kcsan: Enable KCSAN for x86
-From:   Marco Elver <elver@google.com>
-To:     elver@google.com
-Cc:     akiyks@gmail.com, stern@rowland.harvard.edu, glider@google.com,
-        parri.andrea@gmail.com, andreyknvl@google.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, arnd@arndb.de, boqun.feng@gmail.com,
-        bp@alien8.de, dja@axtens.net, dlustig@nvidia.com,
-        dave.hansen@linux.intel.com, dhowells@redhat.com,
-        dvyukov@google.com, hpa@zytor.com, mingo@redhat.com,
-        j.alglave@ucl.ac.uk, joel@joelfernandes.org, corbet@lwn.net,
-        jpoimboe@redhat.com, luc.maranget@inria.fr, mark.rutland@arm.com,
-        npiggin@gmail.com, paulmck@linux.ibm.com, peterz@infradead.org,
-        tglx@linutronix.de, will@kernel.org, kasan-dev@googlegroups.com,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S2391629AbfJPIkQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 04:40:16 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44358 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389897AbfJPIkQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 04:40:16 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D1AEA2CE905;
+        Wed, 16 Oct 2019 08:40:15 +0000 (UTC)
+Received: from [10.36.117.237] (ovpn-117-237.ams2.redhat.com [10.36.117.237])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B85235D6A9;
+        Wed, 16 Oct 2019 08:40:12 +0000 (UTC)
+Subject: Re: [PATCH] mm/page_alloc: Make alloc_gigantic_page() available for
+ general use
+From:   David Hildenbrand <david@redhat.com>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
+Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@suse.com>,
+        David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-kernel@vger.kernel.org
+References: <1571211293-29974-1-git-send-email-anshuman.khandual@arm.com>
+ <c7ac9f99-a34f-c553-b216-b847d093cae9@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <a811effb-4ab8-7cb0-aee7-c047d06129bc@redhat.com>
+Date:   Wed, 16 Oct 2019 10:40:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
+MIME-Version: 1.0
+In-Reply-To: <c7ac9f99-a34f-c553-b216-b847d093cae9@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 16 Oct 2019 08:40:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enables KCSAN for x86, with updates to build rules to not use
-KCSAN for several incompatible compilation units.
+On 16.10.19 10:08, David Hildenbrand wrote:
+> On 16.10.19 09:34, Anshuman Khandual wrote:
+>> HugeTLB helper alloc_gigantic_page() implements fairly generic allocation
+>> method where it scans over various zones looking for a large contiguous pfn
+>> range before trying to allocate it with alloc_contig_range(). Other than
+>> deriving the requested order from 'struct hstate', there is nothing HugeTLB
+>> specific in there. This can be made available for general use to allocate
+>> contiguous memory which could not have been allocated through the buddy
+>> allocator.
+>>
+>> alloc_gigantic_page() has been split carving out actual allocation method
+>> which is then made available via new alloc_contig_pages() helper wrapped
+>> under CONFIG_CONTIG_ALLOC. All references to 'gigantic' have been replaced
+>> with more generic term 'contig'. Allocated pages here should be freed with
+>> free_contig_range() or by calling __free_page() on each allocated page.
+>>
+>> Cc: Mike Kravetz <mike.kravetz@oracle.com>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: Vlastimil Babka <vbabka@suse.cz>
+>> Cc: Michal Hocko <mhocko@suse.com>
+>> Cc: David Rientjes <rientjes@google.com>
+>> Cc: Andrea Arcangeli <aarcange@redhat.com>
+>> Cc: Oscar Salvador <osalvador@suse.de>
+>> Cc: Mel Gorman <mgorman@techsingularity.net>
+>> Cc: Mike Rapoport <rppt@linux.ibm.com>
+>> Cc: Dan Williams <dan.j.williams@intel.com>
+>> Cc: Pavel Tatashin <pavel.tatashin@microsoft.com>
+>> Cc: Matthew Wilcox <willy@infradead.org>
+>> Cc: David Hildenbrand <david@redhat.com>
+>> Cc: linux-kernel@vger.kernel.org
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> ---
+>> This is based on https://patchwork.kernel.org/patch/11190213/
+>>
+>> Changes from [V5,1/2] mm/hugetlb: Make alloc_gigantic_page()...
+>>
+>> - alloc_contig_page() takes nr_pages instead of order per Michal
+>> - s/gigantic/contig on all related functions
+>>
+>>    include/linux/gfp.h |  2 +
+>>    mm/hugetlb.c        | 77 +----------------------------------
+>>    mm/page_alloc.c     | 97 +++++++++++++++++++++++++++++++++++++++++++++
+>>    3 files changed, 101 insertions(+), 75 deletions(-)
+>>
+>> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+>> index fb07b503dc45..1a11d4857027 100644
+>> --- a/include/linux/gfp.h
+>> +++ b/include/linux/gfp.h
+>> @@ -589,6 +589,8 @@ static inline bool pm_suspended_storage(void)
+>>    /* The below functions must be run on a range from a single zone. */
+>>    extern int alloc_contig_range(unsigned long start, unsigned long end,
+>>    			      unsigned migratetype, gfp_t gfp_mask);
+>> +extern struct page *alloc_contig_pages(unsigned long nr_pages, gfp_t gfp_mask,
+>> +				       int nid, nodemask_t *nodemask);
+>>    #endif
+>>    void free_contig_range(unsigned long pfn, unsigned int nr_pages);
+>>    
+>> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+>> index 985ee15eb04b..a5c2c880af27 100644
+>> --- a/mm/hugetlb.c
+>> +++ b/mm/hugetlb.c
+>> @@ -1023,85 +1023,12 @@ static void free_gigantic_page(struct page *page, unsigned int order)
+>>    }
+>>    
+>>    #ifdef CONFIG_CONTIG_ALLOC
+>> -static int __alloc_gigantic_page(unsigned long start_pfn,
+>> -				unsigned long nr_pages, gfp_t gfp_mask)
+>> -{
+>> -	unsigned long end_pfn = start_pfn + nr_pages;
+>> -	return alloc_contig_range(start_pfn, end_pfn, MIGRATE_MOVABLE,
+>> -				  gfp_mask);
+>> -}
+>> -
+>> -static bool pfn_range_valid_gigantic(struct zone *z,
+>> -			unsigned long start_pfn, unsigned long nr_pages)
+>> -{
+>> -	unsigned long i, end_pfn = start_pfn + nr_pages;
+>> -	struct page *page;
+>> -
+>> -	for (i = start_pfn; i < end_pfn; i++) {
+>> -		page = pfn_to_online_page(i);
+>> -		if (!page)
+>> -			return false;
+>> -
+>> -		if (page_zone(page) != z)
+>> -			return false;
+>> -
+>> -		if (PageReserved(page))
+>> -			return false;
+>> -
+>> -		if (page_count(page) > 0)
+>> -			return false;
+>> -
+>> -		if (PageHuge(page))
+>> -			return false;
+>> -	}
+>> -
+>> -	return true;
+>> -}
+>> -
+>> -static bool zone_spans_last_pfn(const struct zone *zone,
+>> -			unsigned long start_pfn, unsigned long nr_pages)
+>> -{
+>> -	unsigned long last_pfn = start_pfn + nr_pages - 1;
+>> -	return zone_spans_pfn(zone, last_pfn);
+>> -}
+>> -
+>>    static struct page *alloc_gigantic_page(struct hstate *h, gfp_t gfp_mask,
+>>    		int nid, nodemask_t *nodemask)
+>>    {
+>> -	unsigned int order = huge_page_order(h);
+>> -	unsigned long nr_pages = 1 << order;
+>> -	unsigned long ret, pfn, flags;
+>> -	struct zonelist *zonelist;
+>> -	struct zone *zone;
+>> -	struct zoneref *z;
+>> -
+>> -	zonelist = node_zonelist(nid, gfp_mask);
+>> -	for_each_zone_zonelist_nodemask(zone, z, zonelist, gfp_zone(gfp_mask), nodemask) {
+>> -		spin_lock_irqsave(&zone->lock, flags);
+>> +	unsigned long nr_pages = 1UL << huge_page_order(h);
+>>    
+>> -		pfn = ALIGN(zone->zone_start_pfn, nr_pages);
+>> -		while (zone_spans_last_pfn(zone, pfn, nr_pages)) {
+>> -			if (pfn_range_valid_gigantic(zone, pfn, nr_pages)) {
+>> -				/*
+>> -				 * We release the zone lock here because
+>> -				 * alloc_contig_range() will also lock the zone
+>> -				 * at some point. If there's an allocation
+>> -				 * spinning on this lock, it may win the race
+>> -				 * and cause alloc_contig_range() to fail...
+>> -				 */
+>> -				spin_unlock_irqrestore(&zone->lock, flags);
+>> -				ret = __alloc_gigantic_page(pfn, nr_pages, gfp_mask);
+>> -				if (!ret)
+>> -					return pfn_to_page(pfn);
+>> -				spin_lock_irqsave(&zone->lock, flags);
+>> -			}
+>> -			pfn += nr_pages;
+>> -		}
+>> -
+>> -		spin_unlock_irqrestore(&zone->lock, flags);
+>> -	}
+>> -
+>> -	return NULL;
+>> +	return alloc_contig_pages(nr_pages, gfp_mask, nid, nodemask);
+>>    }
+>>    
+>>    static void prep_new_huge_page(struct hstate *h, struct page *page, int nid);
+>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>> index cd1dd0712624..1e084d6acf2f 100644
+>> --- a/mm/page_alloc.c
+>> +++ b/mm/page_alloc.c
+>> @@ -8499,6 +8499,103 @@ int alloc_contig_range(unsigned long start, unsigned long end,
+>>    				pfn_max_align_up(end), migratetype);
+>>    	return ret;
+>>    }
+>> +
+>> +static int __alloc_contig_pages(unsigned long start_pfn,
+>> +				unsigned long nr_pages, gfp_t gfp_mask)
+>> +{
+>> +	unsigned long end_pfn = start_pfn + nr_pages;
+>> +
+>> +	return alloc_contig_range(start_pfn, end_pfn, MIGRATE_MOVABLE,
+>> +				  gfp_mask);
+>> +}
+>> +
+>> +static bool pfn_range_valid_contig(struct zone *z, unsigned long start_pfn,
+>> +				   unsigned long nr_pages)
+>> +{
+>> +	unsigned long i, end_pfn = start_pfn + nr_pages;
+>> +	struct page *page;
+>> +
+>> +	for (i = start_pfn; i < end_pfn; i++) {
+>> +		page = pfn_to_online_page(i);
+>> +		if (!page)
+>> +			return false;
+>> +
+>> +		if (page_zone(page) != z)
+>> +			return false;
+>> +
+>> +		if (PageReserved(page))
+>> +			return false;
+>> +
+>> +		if (page_count(page) > 0)
+>> +			return false;
+>> +
+>> +		if (PageHuge(page))
+>> +			return false;
+>> +	}
+> 
+> We might still try to allocate a lot of ranges that contain unmovable
+> data (we could avoid isolating a lot of page blocks in the first place).
+> I'd love to see something like pfn_range_movable() (similar, but
+> different to is_mem_section_removable(), which uses has_unmovable_pages()).
+> 
+> Especially, I want something like that for virtio-mem, which also uses
+> alloc_contig_range/free_contig_range, to perform a fast test if a range
+> makes sense to try with alloc_contig_range().
+> 
+> https://lkml.org/lkml/2019/9/19/463
+> 
+> 
+>> +	return true;
+>> +}
+>> +
+>> +static bool zone_spans_last_pfn(const struct zone *zone,
+>> +				unsigned long start_pfn, unsigned long nr_pages)
+>> +{
+>> +	unsigned long last_pfn = start_pfn + nr_pages - 1;
+>> +
+>> +	return zone_spans_pfn(zone, last_pfn);
+>> +}
+>> +
+>> +/**
+>> + * alloc_contig_pages() -- tries to find and allocate contiguous range of pages
+>> + * @nr_pages:	Number of contiguous pages to allocate
+>> + * @gfp_mask:	GFP mask to limit search and used during compaction
+>> + * @nid:	Target node
+>> + * @nodemask:	Mask for other possible nodes
+>> + *
+>> + * This routine is an wrapper around alloc_contig_range(). It scans over zones
+> 
+> "a" wrapper
+> 
+>> + * on an applicable zonelist to find a contiguous pfn range which can then be
+>> + * tried for allocation with alloc_contig_range(). This routine is intended
+>> + * for allocation requests which can not be fulfilled with buddy allocator.
+> 
+> "the" buddy allocator.
+> 
+>> + *
+>> + * Allocated pages can be freed with free_contig_range() or by manually calling
+>> + * __free_page() on each allocated page.
+>> + *
+>> + * Return: pointer to 'order' pages on success, or NULL if not successful.
+> 
+> order?
+> 
+>> + */
+>> +struct page *alloc_contig_pages(unsigned long nr_pages, gfp_t gfp_mask,
+>> +				int nid, nodemask_t *nodemask)
+>> +{
+>> +	unsigned long ret, pfn, flags;
+>> +	struct zonelist *zonelist;
+>> +	struct zone *zone;
+>> +	struct zoneref *z;
+>> +
+>> +	zonelist = node_zonelist(nid, gfp_mask);
+>> +	for_each_zone_zonelist_nodemask(zone, z, zonelist,
+>> +					gfp_zone(gfp_mask), nodemask) {
+> 
+> One important part is to never use the MOVABLE zone here (otherwise
+> unmovable data would end up on the movable zone). But I guess the caller
+> is responsible for that (not pass GFP_MOVABLE) like gigantic pages do.
+> 
+>> +		spin_lock_irqsave(&zone->lock, flags);
+>> +
+>> +		pfn = ALIGN(zone->zone_start_pfn, nr_pages);
+> 
+> This alignment does not make too much sense when allowing passing in
+> !power of two orders. Maybe the caller should specify the requested
+> alignment instead? Or should we enforce this to be aligned to make our
+> life easier for now?
+> 
+>> +		while (zone_spans_last_pfn(zone, pfn, nr_pages)) {
+>> +			if (pfn_range_valid_contig(zone, pfn, nr_pages)) {
+>> +				/*
+>> +				 * We release the zone lock here because
+>> +				 * alloc_contig_range() will also lock the zone
+>> +				 * at some point. If there's an allocation
+>> +				 * spinning on this lock, it may win the race
+>> +				 * and cause alloc_contig_range() to fail...
+>> +				 */
+>> +				spin_unlock_irqrestore(&zone->lock, flags);
+>> +				ret = __alloc_contig_pages(pfn, nr_pages,
+>> +							gfp_mask);
+>> +				if (!ret)
+>> +					return pfn_to_page(pfn);
+>> +				spin_lock_irqsave(&zone->lock, flags);
+>> +			}
+>> +			pfn += nr_pages;
+> 
+> Now, that's interesting. When you relax the alignment restriction,
+> skipping over the whole range is no longer such a good idea (imagine
+> only the first PFN not being movable).
+> 
+>> +		}
+>> +		spin_unlock_irqrestore(&zone->lock, flags);
+>> +	}
+>> +	return NULL;
+>> +}
+>>    #endif /* CONFIG_CONTIG_ALLOC */
+>>    
+>>    void free_contig_range(unsigned long pfn, unsigned int nr_pages)
+>>
+> 
+> 
 
-Signed-off-by: Marco Elver <elver@google.com>
----
- arch/x86/Kconfig                      | 1 +
- arch/x86/boot/Makefile                | 1 +
- arch/x86/boot/compressed/Makefile     | 1 +
- arch/x86/entry/vdso/Makefile          | 1 +
- arch/x86/include/asm/bitops.h         | 2 +-
- arch/x86/kernel/Makefile              | 6 ++++++
- arch/x86/kernel/cpu/Makefile          | 3 +++
- arch/x86/lib/Makefile                 | 2 ++
- arch/x86/mm/Makefile                  | 3 +++
- arch/x86/purgatory/Makefile           | 1 +
- arch/x86/realmode/Makefile            | 1 +
- arch/x86/realmode/rm/Makefile         | 1 +
- drivers/firmware/efi/libstub/Makefile | 1 +
- 13 files changed, 23 insertions(+), 1 deletion(-)
+FWIW, the patch subject needs a rework, too.
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index d6e1faa28c58..81859be4a005 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -226,6 +226,7 @@ config X86
- 	select VIRT_TO_BUS
- 	select X86_FEATURE_NAMES		if PROC_FS
- 	select PROC_PID_ARCH_STATUS		if PROC_FS
-+	select HAVE_ARCH_KCSAN if X86_64
- 
- config INSTRUCTION_DECODER
- 	def_bool y
-diff --git a/arch/x86/boot/Makefile b/arch/x86/boot/Makefile
-index e2839b5c246c..2f9e928acae6 100644
---- a/arch/x86/boot/Makefile
-+++ b/arch/x86/boot/Makefile
-@@ -10,6 +10,7 @@
- #
- 
- KASAN_SANITIZE			:= n
-+KCSAN_SANITIZE			:= n
- OBJECT_FILES_NON_STANDARD	:= y
- 
- # Kernel does not boot with kcov instrumentation here.
-diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
-index 6b84afdd7538..0921689f7c70 100644
---- a/arch/x86/boot/compressed/Makefile
-+++ b/arch/x86/boot/compressed/Makefile
-@@ -18,6 +18,7 @@
- #	compressed vmlinux.bin.all + u32 size of vmlinux.bin.all
- 
- KASAN_SANITIZE			:= n
-+KCSAN_SANITIZE			:= n
- OBJECT_FILES_NON_STANDARD	:= y
- 
- # Prevents link failures: __sanitizer_cov_trace_pc() is not linked in.
-diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-index 0f2154106d01..d2cd34d2ac4e 100644
---- a/arch/x86/entry/vdso/Makefile
-+++ b/arch/x86/entry/vdso/Makefile
-@@ -12,6 +12,7 @@ include $(srctree)/lib/vdso/Makefile
- KBUILD_CFLAGS += $(DISABLE_LTO)
- KASAN_SANITIZE			:= n
- UBSAN_SANITIZE			:= n
-+KCSAN_SANITIZE			:= n
- OBJECT_FILES_NON_STANDARD	:= y
- 
- # Prevents link failures: __sanitizer_cov_trace_pc() is not linked in.
-diff --git a/arch/x86/include/asm/bitops.h b/arch/x86/include/asm/bitops.h
-index 7d1f6a49bfae..a36d900960e4 100644
---- a/arch/x86/include/asm/bitops.h
-+++ b/arch/x86/include/asm/bitops.h
-@@ -201,7 +201,7 @@ arch_test_and_change_bit(long nr, volatile unsigned long *addr)
- 	return GEN_BINARY_RMWcc(LOCK_PREFIX __ASM_SIZE(btc), *addr, c, "Ir", nr);
- }
- 
--static __always_inline bool constant_test_bit(long nr, const volatile unsigned long *addr)
-+static __no_kcsan_or_inline bool constant_test_bit(long nr, const volatile unsigned long *addr)
- {
- 	return ((1UL << (nr & (BITS_PER_LONG-1))) &
- 		(addr[nr >> _BITOPS_LONG_SHIFT])) != 0;
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 3578ad248bc9..adccbbfa47e4 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -28,6 +28,12 @@ KASAN_SANITIZE_dumpstack_$(BITS).o			:= n
- KASAN_SANITIZE_stacktrace.o				:= n
- KASAN_SANITIZE_paravirt.o				:= n
- 
-+KCSAN_SANITIZE_head$(BITS).o				:= n
-+KCSAN_SANITIZE_dumpstack.o				:= n
-+KCSAN_SANITIZE_dumpstack_$(BITS).o			:= n
-+KCSAN_SANITIZE_stacktrace.o				:= n
-+KCSAN_SANITIZE_paravirt.o				:= n
-+
- OBJECT_FILES_NON_STANDARD_relocate_kernel_$(BITS).o	:= y
- OBJECT_FILES_NON_STANDARD_test_nx.o			:= y
- OBJECT_FILES_NON_STANDARD_paravirt_patch.o		:= y
-diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
-index d7a1e5a9331c..7651c4f37e5e 100644
---- a/arch/x86/kernel/cpu/Makefile
-+++ b/arch/x86/kernel/cpu/Makefile
-@@ -3,6 +3,9 @@
- # Makefile for x86-compatible CPU details, features and quirks
- #
- 
-+KCSAN_SANITIZE_common.o = n
-+KCSAN_SANITIZE_perf_event.o = n
-+
- # Don't trace early stages of a secondary CPU boot
- ifdef CONFIG_FUNCTION_TRACER
- CFLAGS_REMOVE_common.o = -pg
-diff --git a/arch/x86/lib/Makefile b/arch/x86/lib/Makefile
-index 5246db42de45..4e4b74f525f2 100644
---- a/arch/x86/lib/Makefile
-+++ b/arch/x86/lib/Makefile
-@@ -5,11 +5,13 @@
- 
- # Produces uninteresting flaky coverage.
- KCOV_INSTRUMENT_delay.o	:= n
-+KCSAN_SANITIZE_delay.o := n
- 
- # Early boot use of cmdline; don't instrument it
- ifdef CONFIG_AMD_MEM_ENCRYPT
- KCOV_INSTRUMENT_cmdline.o := n
- KASAN_SANITIZE_cmdline.o  := n
-+KCSAN_SANITIZE_cmdline.o  := n
- 
- ifdef CONFIG_FUNCTION_TRACER
- CFLAGS_REMOVE_cmdline.o = -pg
-diff --git a/arch/x86/mm/Makefile b/arch/x86/mm/Makefile
-index 84373dc9b341..ee871602f96a 100644
---- a/arch/x86/mm/Makefile
-+++ b/arch/x86/mm/Makefile
-@@ -7,6 +7,9 @@ KCOV_INSTRUMENT_mem_encrypt_identity.o	:= n
- KASAN_SANITIZE_mem_encrypt.o		:= n
- KASAN_SANITIZE_mem_encrypt_identity.o	:= n
- 
-+KCSAN_SANITIZE_mem_encrypt.o		:= n
-+KCSAN_SANITIZE_mem_encrypt_identity.o	:= n
-+
- ifdef CONFIG_FUNCTION_TRACER
- CFLAGS_REMOVE_mem_encrypt.o		= -pg
- CFLAGS_REMOVE_mem_encrypt_identity.o	= -pg
-diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
-index fb4ee5444379..72060744f34f 100644
---- a/arch/x86/purgatory/Makefile
-+++ b/arch/x86/purgatory/Makefile
-@@ -18,6 +18,7 @@ LDFLAGS_purgatory.ro := -e purgatory_start -r --no-undefined -nostdlib -z nodefa
- targets += purgatory.ro
- 
- KASAN_SANITIZE	:= n
-+KCSAN_SANITIZE	:= n
- KCOV_INSTRUMENT := n
- 
- # These are adjustments to the compiler flags used for objects that
-diff --git a/arch/x86/realmode/Makefile b/arch/x86/realmode/Makefile
-index 682c895753d9..4fc7ce2534dd 100644
---- a/arch/x86/realmode/Makefile
-+++ b/arch/x86/realmode/Makefile
-@@ -7,6 +7,7 @@
- #
- #
- KASAN_SANITIZE			:= n
-+KCSAN_SANITIZE			:= n
- OBJECT_FILES_NON_STANDARD	:= y
- 
- subdir- := rm
-diff --git a/arch/x86/realmode/rm/Makefile b/arch/x86/realmode/rm/Makefile
-index f60501a384f9..6f7fbe9dfda6 100644
---- a/arch/x86/realmode/rm/Makefile
-+++ b/arch/x86/realmode/rm/Makefile
-@@ -7,6 +7,7 @@
- #
- #
- KASAN_SANITIZE			:= n
-+KCSAN_SANITIZE			:= n
- OBJECT_FILES_NON_STANDARD	:= y
- 
- # Prevents link failures: __sanitizer_cov_trace_pc() is not linked in.
-diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-index 0460c7581220..a56981286623 100644
---- a/drivers/firmware/efi/libstub/Makefile
-+++ b/drivers/firmware/efi/libstub/Makefile
-@@ -32,6 +32,7 @@ KBUILD_CFLAGS			:= $(cflags-y) -DDISABLE_BRANCH_PROFILING \
- 
- GCOV_PROFILE			:= n
- KASAN_SANITIZE			:= n
-+KCSAN_SANITIZE			:= n
- UBSAN_SANITIZE			:= n
- OBJECT_FILES_NON_STANDARD	:= y
- 
 -- 
-2.23.0.700.g56cf767bdb-goog
 
+Thanks,
+
+David / dhildenb
