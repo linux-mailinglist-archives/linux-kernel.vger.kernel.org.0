@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D13C9D9F85
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24BB8DA040
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:25:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395294AbfJPVzk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:55:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46376 "EHLO mail.kernel.org"
+        id S2407159AbfJPWJh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:09:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395252AbfJPVzd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:55:33 -0400
+        id S2391757AbfJPV53 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:57:29 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9ABBA21D7F;
-        Wed, 16 Oct 2019 21:55:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 564DD21928;
+        Wed, 16 Oct 2019 21:57:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262932;
-        bh=+Xx8dEvgQfqrBHSIOX0sGjnhqv4hoRx4grH9nfmkAtg=;
+        s=default; t=1571263049;
+        bh=Pxs2aB/agyCIYNPG8qWddQ44GaKflEmdA4OTUXMUcMU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aIIpjv+fGVWGMJRJ7NLrZloPPGEAQZfDEO1HeEw2/Xm7uaIXi7yW87Hfg296YDzPq
-         VTjYALCcJ0spv5GOexF1EbbSyIV3sn/Xedl7PYcsoQt92QrABhsTE9WTNTU/VOVnoU
-         QcreUb7kXbVWH+3p7qniuNhK7mIbs/Y08bBdUqBI=
+        b=sZlt4OS43J9zHehdRuccRGOrBUv6MhyfF6wRJVokUG2R0pLMRLp5WLhy8PgHr04YP
+         dQTK2bHBihxC2pvTz5BleiC9RrF2uSzfDoseqDWbVaYPnbGraXxOIOC2BkbBkcEVjc
+         K7WKrdJHksNYOG3asnRu5KWZwSFhfpI9XTiLMNbc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Ajay Kaher <akaher@vmware.com>
-Subject: [PATCH 4.9 92/92] xfs: clear sb->s_fs_info on mount failure
+        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.19 54/81] CIFS: Force revalidate inode when dentry is stale
 Date:   Wed, 16 Oct 2019 14:51:05 -0700
-Message-Id: <20191016214849.217245343@linuxfoundation.org>
+Message-Id: <20191016214841.933221804@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
-References: <20191016214759.600329427@linuxfoundation.org>
+In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
+References: <20191016214805.727399379@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,78 +43,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dave Chinner <dchinner@redhat.com>
+From: Pavel Shilovsky <piastryyy@gmail.com>
 
-commit c9fbd7bbc23dbdd73364be4d045e5d3612cf6e82 upstream.
+commit c82e5ac7fe3570a269c0929bf7899f62048e7dbc upstream.
 
-We recently had an oops reported on a 4.14 kernel in
-xfs_reclaim_inodes_count() where sb->s_fs_info pointed to garbage
-and so the m_perag_tree lookup walked into lala land.
+Currently the client indicates that a dentry is stale when inode
+numbers or type types between a local inode and a remote file
+don't match. If this is the case attributes is not being copied
+from remote to local, so, it is already known that the local copy
+has stale metadata. That's why the inode needs to be marked for
+revalidation in order to tell the VFS to lookup the dentry again
+before openning a file. This prevents unexpected stale errors
+to be returned to the user space when openning a file.
 
-Essentially, the machine was under memory pressure when the mount
-was being run, xfs_fs_fill_super() failed after allocating the
-xfs_mount and attaching it to sb->s_fs_info. It then cleaned up and
-freed the xfs_mount, but the sb->s_fs_info field still pointed to
-the freed memory. Hence when the superblock shrinker then ran
-it fell off the bad pointer.
-
-With the superblock shrinker problem fixed at teh VFS level, this
-stale s_fs_info pointer is still a problem - we use it
-unconditionally in ->put_super when the superblock is being torn
-down, and hence we can still trip over it after a ->fill_super
-call failure. Hence we need to clear s_fs_info if
-xfs-fs_fill_super() fails, and we need to check if it's valid in
-the places it can potentially be dereferenced after a ->fill_super
-failure.
-
-Signed-Off-By: Dave Chinner <dchinner@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Ajay Kaher <akaher@vmware.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/xfs/xfs_super.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
 
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -1674,6 +1674,7 @@ xfs_fs_fill_super(
-  out_close_devices:
- 	xfs_close_devices(mp);
-  out_free_fsname:
-+	sb->s_fs_info = NULL;
- 	xfs_free_fsname(mp);
- 	kfree(mp);
-  out:
-@@ -1691,6 +1692,10 @@ xfs_fs_put_super(
- {
- 	struct xfs_mount	*mp = XFS_M(sb);
- 
-+	/* if ->fill_super failed, we have no mount to tear down */
-+	if (!sb->s_fs_info)
-+		return;
-+
- 	xfs_notice(mp, "Unmounting Filesystem");
- 	xfs_filestream_unmount(mp);
- 	xfs_unmountfs(mp);
-@@ -1700,6 +1705,8 @@ xfs_fs_put_super(
- 	xfs_destroy_percpu_counters(mp);
- 	xfs_destroy_mount_workqueues(mp);
- 	xfs_close_devices(mp);
-+
-+	sb->s_fs_info = NULL;
- 	xfs_free_fsname(mp);
- 	kfree(mp);
- }
-@@ -1719,6 +1726,9 @@ xfs_fs_nr_cached_objects(
- 	struct super_block	*sb,
- 	struct shrink_control	*sc)
- {
-+	/* Paranoia: catch incorrect calls during mount setup or teardown */
-+	if (WARN_ON_ONCE(!sb->s_fs_info))
-+		return 0;
- 	return xfs_reclaim_inodes_count(XFS_M(sb));
- }
- 
+---
+ fs/cifs/inode.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/fs/cifs/inode.c
++++ b/fs/cifs/inode.c
+@@ -410,6 +410,7 @@ int cifs_get_inode_info_unix(struct inod
+ 		/* if uniqueid is different, return error */
+ 		if (unlikely(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_SERVER_INUM &&
+ 		    CIFS_I(*pinode)->uniqueid != fattr.cf_uniqueid)) {
++			CIFS_I(*pinode)->time = 0; /* force reval */
+ 			rc = -ESTALE;
+ 			goto cgiiu_exit;
+ 		}
+@@ -417,6 +418,7 @@ int cifs_get_inode_info_unix(struct inod
+ 		/* if filetype is different, return error */
+ 		if (unlikely(((*pinode)->i_mode & S_IFMT) !=
+ 		    (fattr.cf_mode & S_IFMT))) {
++			CIFS_I(*pinode)->time = 0; /* force reval */
+ 			rc = -ESTALE;
+ 			goto cgiiu_exit;
+ 		}
+@@ -926,6 +928,7 @@ cifs_get_inode_info(struct inode **inode
+ 		/* if uniqueid is different, return error */
+ 		if (unlikely(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_SERVER_INUM &&
+ 		    CIFS_I(*inode)->uniqueid != fattr.cf_uniqueid)) {
++			CIFS_I(*inode)->time = 0; /* force reval */
+ 			rc = -ESTALE;
+ 			goto cgii_exit;
+ 		}
+@@ -933,6 +936,7 @@ cifs_get_inode_info(struct inode **inode
+ 		/* if filetype is different, return error */
+ 		if (unlikely(((*inode)->i_mode & S_IFMT) !=
+ 		    (fattr.cf_mode & S_IFMT))) {
++			CIFS_I(*inode)->time = 0; /* force reval */
+ 			rc = -ESTALE;
+ 			goto cgii_exit;
+ 		}
 
 
