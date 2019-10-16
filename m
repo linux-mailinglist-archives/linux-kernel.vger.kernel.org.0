@@ -2,78 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69A5DD9162
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:48:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65114D9176
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:49:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393315AbfJPMsh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 08:48:37 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:57012 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393267AbfJPMse (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 08:48:34 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9715D1A009E;
-        Wed, 16 Oct 2019 14:48:32 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 89EB61A001A;
-        Wed, 16 Oct 2019 14:48:32 +0200 (CEST)
-Received: from fsr-ub1664-026.ea.freescale.net (fsr-ub1664-026.ea.freescale.net [10.171.81.59])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id CB94D205D2;
-        Wed, 16 Oct 2019 14:48:31 +0200 (CEST)
-From:   Stefan-Gabriel Mirea <stefan-gabriel.mirea@nxp.com>
-To:     corbet@lwn.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        gregkh@linuxfoundation.org, catalin.marinas@arm.com,
-        will@kernel.org, shawnguo@kernel.org, leoyang.li@nxp.com
-Cc:     jslaby@suse.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        "Stoica Cosmin-Stefan" <cosmin.stoica@nxp.com>
-Subject: [PATCH v7 5/5] arm64: defconfig: Enable configs for S32V234
-Date:   Wed, 16 Oct 2019 15:48:27 +0300
-Message-Id: <1571230107-8493-6-git-send-email-stefan-gabriel.mirea@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1571230107-8493-1-git-send-email-stefan-gabriel.mirea@nxp.com>
-References: <1571230107-8493-1-git-send-email-stefan-gabriel.mirea@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S2393336AbfJPMtU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 08:49:20 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:50112 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390639AbfJPMtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 08:49:19 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 34BB285F6FBDE307F700;
+        Wed, 16 Oct 2019 20:49:17 +0800 (CST)
+Received: from [127.0.0.1] (10.177.251.225) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Wed, 16 Oct 2019
+ 20:49:09 +0800
+Subject: Re: [PATCH] perf jevents: Fix resource leak in process_mapfile()
+To:     John Garry <john.garry@huawei.com>, <peterz@infradead.org>,
+        <mingo@redhat.com>, <acme@kernel.org>, <mark.rutland@arm.com>,
+        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
+        <namhyung@kernel.org>, <ak@linux.intel.com>,
+        <lukemujica@google.com>, <kan.liang@linux.intel.com>,
+        <yuzenghui@huawei.com>
+CC:     <linux-kernel@vger.kernel.org>, <hushiyuan@huawei.com>,
+        <linfeilong@huawei.com>
+References: <bf113089-e3cd-50f9-f7ed-17d07512a702@huawei.com>
+ <87e66585-1564-3523-59f6-cab15b7e1717@huawei.com>
+ <0cd0d259-e806-effd-5e44-fccd13842697@huawei.com>
+ <5dcbcd6f-3789-69e1-b0c1-33416aa0790d@huawei.com>
+From:   Yunfeng Ye <yeyunfeng@huawei.com>
+Message-ID: <6dc4d5bc-3a1e-3849-a0d3-0f9635bb77fe@huawei.com>
+Date:   Wed, 16 Oct 2019 20:49:06 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <5dcbcd6f-3789-69e1-b0c1-33416aa0790d@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.177.251.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mihaela Martinas <Mihaela.Martinas@freescale.com>
 
-Enable support for the S32V234 SoC, including the previously added UART
-driver.
 
-Signed-off-by: Mihaela Martinas <Mihaela.Martinas@freescale.com>
-Signed-off-by: Adrian.Nitu <adrian.nitu@freescale.com>
-Signed-off-by: Stoica Cosmin-Stefan <cosmin.stoica@nxp.com>
-Signed-off-by: Stefan-Gabriel Mirea <stefan-gabriel.mirea@nxp.com>
----
- arch/arm64/configs/defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+On 2019/10/16 20:08, John Garry wrote:
+>>>> +            ret = -1;
+>>>> +            goto out;
+>>>
+>>> There's a subtle change of behaviour here, i.e. now calling print_mapping_table_suffix(), but I don't think that it makes any difference.
+>>>
+>> yes, I know that "goto out" will run print_mapping_table_suffix(outfp), because the error path before is done like this.
+>> so I think it should be use "goto out" to run run print_mapping_table_suffix(outfp).
+>>
+>>> However, does outfp remain open also in this case:
+>>>
+>> Because it has a comment that "Make build fail", so I am not handle the outfp, only modify the process_mapfile() function.
+>>
+>>> main(int argc, char *argv[])
+>>> {
+>>> ...
+>>>
+>>> if (process_mapfile(eventsfp, mapfile)) {
+>>>     pr_info("%s: Error processing mapfile %s\n", prog, mapfile);
+>>>     /* Make build fail */
+>>>     return 1;
+>>> }
+>>>
+>>> return 0;
+>>>
+>>> empty_map:
+>>>     fclose(eventsfp);
+>>>     ...
+>>> }
+>>>
+>>> I think that this code works on the basis that the program exits on any sort of error and releases resources automatically. Having said that, it is a good practice to tidy up.
+>>>
+>> I agree with you, when program exits, it will releases resources automatically. It's just to make the program clearer and more correct.
+> 
+> So can you make that change also (to close outfp)?
+> 
+ok, I will modify by adding fclose(eventsfp) on the error path, In addition, free_arch_std_events() is need too.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index c9a867ac32d4..bc14d95c1665 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -48,6 +48,7 @@ CONFIG_ARCH_MXC=y
- CONFIG_ARCH_QCOM=y
- CONFIG_ARCH_RENESAS=y
- CONFIG_ARCH_ROCKCHIP=y
-+CONFIG_ARCH_S32=y
- CONFIG_ARCH_SEATTLE=y
- CONFIG_ARCH_STRATIX10=y
- CONFIG_ARCH_SYNQUACER=y
-@@ -352,6 +353,8 @@ CONFIG_SERIAL_XILINX_PS_UART=y
- CONFIG_SERIAL_XILINX_PS_UART_CONSOLE=y
- CONFIG_SERIAL_FSL_LPUART=y
- CONFIG_SERIAL_FSL_LPUART_CONSOLE=y
-+CONFIG_SERIAL_FSL_LINFLEXUART=y
-+CONFIG_SERIAL_FSL_LINFLEXUART_CONSOLE=y
- CONFIG_SERIAL_MVEBU_UART=y
- CONFIG_SERIAL_DEV_BUS=y
- CONFIG_VIRTIO_CONSOLE=y
--- 
-2.22.0
+> Thanks,
+> John
+> 
+>>
+>>> John
+>>>
+>>>>          }
+>>>>          line[strlen(line)-1] = '\0';
+>>>>
+>>>> @@ -825,7 +828,9 @@ static int process_mapfile(FILE *outfp, char *fpath)
+>>>>
+>>>>  out:
+>>>>      print_mapping_table_suffix(outfp);
+>>>> -    return 0;
+>>>> +    fclose(mapfp);
+>>>> +    free(line);
+>>>> +    return ret;
+>>>>  }
+>>>>
+>>>>  /*
+>>>>
+>>>
+>>>
+>>>
+>>> .
+>>>
+>>
+>>
+>> .
+>>
+> 
+> 
+> 
+> .
+> 
 
