@@ -2,37 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 998DFDA000
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:24:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C63EDA10F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:26:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407015AbfJPWGz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:06:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51932 "EHLO mail.kernel.org"
+        id S2404267AbfJPWSs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:18:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438143AbfJPV6X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:58:23 -0400
+        id S2389001AbfJPVyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:54:21 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86F8920872;
-        Wed, 16 Oct 2019 21:58:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 883F821925;
+        Wed, 16 Oct 2019 21:54:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263102;
-        bh=ONS2EygcQU152NOuMAZMhNEtFoUo4KLiKujogzhpwkw=;
+        s=default; t=1571262860;
+        bh=KkXarZVi9IQI5T8enECmh0evr4Fy1GERF/KUBBGCKQE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OGsKmEtTHI6/7yobLzpUo5XPhGb9lFjUwTyPfDYuhoFM80QYVo+VwaAD1DA98ckuw
-         iW8g7RJtHESJ+fAxN775L59SRdlCrRcAy+yoAtiwra1Wlxqp9bWv8ZTExlKzxdqFRD
-         /La7iI81he6mvnuecWpPLxfvP88l4QCzQBgjobuo=
+        b=eMfFgTLdq+jQIxbUlsXaA/VySKp7OK/rtXUHEV5McMWejCvhb6juXy63e/Qa3d/ye
+         UEmdAmD0lk94qv4uQhc+vyV5pqj+SR2T0SAKAoRq/7iDvaIzvk3zQ0hNxrL68fR93l
+         fNsQ1p+tlqYGIwpHXw18mxJqHYCH4mCEekp5oF1M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 5.3 006/112] USB: usb-skeleton: fix NULL-deref on disconnect
-Date:   Wed, 16 Oct 2019 14:49:58 -0700
-Message-Id: <20191016214845.594625051@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-trace-devel@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 26/92] tools lib traceevent: Do not free tep->cmdlines in add_new_comm() on failure
+Date:   Wed, 16 Oct 2019 14:49:59 -0700
+Message-Id: <20191016214820.999791156@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
-References: <20191016214844.038848564@linuxfoundation.org>
+In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
+References: <20191016214759.600329427@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,70 +49,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit bed5ef230943863b9abf5eae226a20fad9a8ff71 upstream.
+[ Upstream commit e0d2615856b2046c2e8d5bfd6933f37f69703b0b ]
 
-The driver was using its struct usb_interface pointer as an inverted
-disconnected flag and was setting it to NULL before making sure all
-completion handlers had run. This could lead to NULL-pointer
-dereferences in the dev_err() statements in the completion handlers
-which relies on said pointer.
+If the re-allocation of tep->cmdlines succeeds, then the previous
+allocation of tep->cmdlines will be freed. If we later fail in
+add_new_comm(), we must not free cmdlines, and also should assign
+tep->cmdlines to the new allocation. Otherwise when freeing tep, the
+tep->cmdlines will be pointing to garbage.
 
-Fix this by using a dedicated disconnected flag.
-
-Note that this is also addresses a NULL-pointer dereference at release()
-and a struct usb_interface reference leak introduced by a recent runtime
-PM fix, which depends on and should have been submitted together with
-this patch.
-
-Fixes: 4212cd74ca6f ("USB: usb-skeleton.c: remove err() usage")
-Fixes: 5c290a5e42c3 ("USB: usb-skeleton: fix runtime PM after driver unbind")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191009170944.30057-2-johan@kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: a6d2a61ac653a ("tools lib traceevent: Remove some die() calls")
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: linux-trace-devel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/20190828191819.970121417@goodmis.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/usb-skeleton.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ tools/lib/traceevent/event-parse.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/usb/usb-skeleton.c
-+++ b/drivers/usb/usb-skeleton.c
-@@ -59,6 +59,7 @@ struct usb_skel {
- 	spinlock_t		err_lock;		/* lock for errors */
- 	struct kref		kref;
- 	struct mutex		io_mutex;		/* synchronize I/O with disconnect */
-+	unsigned long		disconnected:1;
- 	wait_queue_head_t	bulk_in_wait;		/* to wait for an ongoing read */
- };
- #define to_skel_dev(d) container_of(d, struct usb_skel, kref)
-@@ -236,7 +237,7 @@ static ssize_t skel_read(struct file *fi
- 	if (rv < 0)
- 		return rv;
- 
--	if (!dev->interface) {		/* disconnect() was called */
-+	if (dev->disconnected) {		/* disconnect() was called */
- 		rv = -ENODEV;
- 		goto exit;
+diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
+index def61125ac36d..62f4cacf253ab 100644
+--- a/tools/lib/traceevent/event-parse.c
++++ b/tools/lib/traceevent/event-parse.c
+@@ -267,10 +267,10 @@ static int add_new_comm(struct pevent *pevent, const char *comm, int pid)
+ 		errno = ENOMEM;
+ 		return -1;
  	}
-@@ -418,7 +419,7 @@ static ssize_t skel_write(struct file *f
++	pevent->cmdlines = cmdlines;
  
- 	/* this lock makes sure we don't submit URBs to gone devices */
- 	mutex_lock(&dev->io_mutex);
--	if (!dev->interface) {		/* disconnect() was called */
-+	if (dev->disconnected) {		/* disconnect() was called */
- 		mutex_unlock(&dev->io_mutex);
- 		retval = -ENODEV;
- 		goto error;
-@@ -569,7 +570,7 @@ static void skel_disconnect(struct usb_i
+ 	cmdlines[pevent->cmdline_count].comm = strdup(comm);
+ 	if (!cmdlines[pevent->cmdline_count].comm) {
+-		free(cmdlines);
+ 		errno = ENOMEM;
+ 		return -1;
+ 	}
+@@ -281,7 +281,6 @@ static int add_new_comm(struct pevent *pevent, const char *comm, int pid)
+ 		pevent->cmdline_count++;
  
- 	/* prevent more I/O from starting */
- 	mutex_lock(&dev->io_mutex);
--	dev->interface = NULL;
-+	dev->disconnected = 1;
- 	mutex_unlock(&dev->io_mutex);
+ 	qsort(cmdlines, pevent->cmdline_count, sizeof(*cmdlines), cmdline_cmp);
+-	pevent->cmdlines = cmdlines;
  
- 	usb_kill_anchored_urbs(&dev->submitted);
+ 	return 0;
+ }
+-- 
+2.20.1
+
 
 
