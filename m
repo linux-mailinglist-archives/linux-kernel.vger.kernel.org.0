@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24E1DD9DD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C4C7D9E12
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437610AbfJPVxv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:53:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42980 "EHLO mail.kernel.org"
+        id S2406618AbfJPV4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:56:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437591AbfJPVxr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:53:47 -0400
+        id S2437908AbfJPV4G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:56:06 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CBDD021925;
-        Wed, 16 Oct 2019 21:53:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BBF8218DE;
+        Wed, 16 Oct 2019 21:56:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262827;
-        bh=OyUlPjNeANd8E09a9byU60G74exCztVEBMkvSlrpIsQ=;
+        s=default; t=1571262965;
+        bh=1+1fyWTqgaYeBWPbe4DGTlwrzehJQTZxrXvSRxP2qjk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Oo41bmgC68295rCBeCLhKDjro6BYJUSgndSnwWnqxN70aY3cUal0td5gg9KqJ+l32
-         Z76b0aztjAANSWLJM73HkrtvTMck22fuUDQGM0RJD1YdwFSO2IlOLOTeWVAc22F6EP
-         KTWGURBbq2R1cse82Yc/PHfGXwPa8673vOv4sJXY=
+        b=1UEU2iJr/Zj7aNiXsNuH9aIMzy0UJeXGArJCVLgDoPWaTX6l2Yqw1uUlgg3y8K/ZF
+         gEVELSi3R09M8M02XneqboVYk1zLqS42Zs8d5pnpzER7B83drzpBce6g2ypEmimZmq
+         l38caT93ySSgou0QbH0A3h0VNj741kw9MfZljFvE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.4 69/79] CIFS: Force reval dentry if LOOKUP_REVAL flag is set
-Date:   Wed, 16 Oct 2019 14:50:44 -0700
-Message-Id: <20191016214827.621573775@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 4.14 32/65] usb: renesas_usbhs: gadget: Do not discard queues in usb_ep_set_{halt,wedge}()
+Date:   Wed, 16 Oct 2019 14:50:46 -0700
+Message-Id: <20191016214826.472670219@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214729.758892904@linuxfoundation.org>
-References: <20191016214729.758892904@linuxfoundation.org>
+In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
+References: <20191016214756.457746573@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,53 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pavel Shilovsky <piastryyy@gmail.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-commit 0b3d0ef9840f7be202393ca9116b857f6f793715 upstream.
+commit 1aae1394294cb71c6aa0bc904a94a7f2f1e75936 upstream.
 
-Mark inode for force revalidation if LOOKUP_REVAL flag is set.
-This tells the client to actually send a QueryInfo request to
-the server to obtain the latest metadata in case a directory
-or a file were changed remotely. Only do that if the client
-doesn't have a lease for the file to avoid unneeded round
-trips to the server.
+The commit 97664a207bc2 ("usb: renesas_usbhs: shrink spin lock area")
+had added a usbhsg_pipe_disable() calling into
+__usbhsg_ep_set_halt_wedge() accidentally. But, this driver should
+not call the usbhsg_pipe_disable() because the function discards
+all queues. So, this patch removes it.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Fixes: 97664a207bc2 ("usb: renesas_usbhs: shrink spin lock area")
+Cc: <stable@vger.kernel.org> # v3.1+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Link: https://lore.kernel.org/r/1569924633-322-2-git-send-email-yoshihiro.shimoda.uh@renesas.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/dir.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/usb/renesas_usbhs/mod_gadget.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/fs/cifs/dir.c
-+++ b/fs/cifs/dir.c
-@@ -830,10 +830,16 @@ lookup_out:
- static int
- cifs_d_revalidate(struct dentry *direntry, unsigned int flags)
- {
-+	struct inode *inode;
-+
- 	if (flags & LOOKUP_RCU)
- 		return -ECHILD;
+--- a/drivers/usb/renesas_usbhs/mod_gadget.c
++++ b/drivers/usb/renesas_usbhs/mod_gadget.c
+@@ -730,8 +730,6 @@ static int __usbhsg_ep_set_halt_wedge(st
+ 	struct device *dev = usbhsg_gpriv_to_dev(gpriv);
+ 	unsigned long flags;
  
- 	if (d_really_is_positive(direntry)) {
-+		inode = d_inode(direntry);
-+		if ((flags & LOOKUP_REVAL) && !CIFS_CACHE_READ(CIFS_I(inode)))
-+			CIFS_I(inode)->time = 0; /* force reval */
-+
- 		if (cifs_revalidate_dentry(direntry))
- 			return 0;
- 		else {
-@@ -844,7 +850,7 @@ cifs_d_revalidate(struct dentry *direntr
- 			 * attributes will have been updated by
- 			 * cifs_revalidate_dentry().
- 			 */
--			if (IS_AUTOMOUNT(d_inode(direntry)) &&
-+			if (IS_AUTOMOUNT(inode) &&
- 			   !(direntry->d_flags & DCACHE_NEED_AUTOMOUNT)) {
- 				spin_lock(&direntry->d_lock);
- 				direntry->d_flags |= DCACHE_NEED_AUTOMOUNT;
+-	usbhsg_pipe_disable(uep);
+-
+ 	dev_dbg(dev, "set halt %d (pipe %d)\n",
+ 		halt, usbhs_pipe_number(pipe));
+ 
 
 
