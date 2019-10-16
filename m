@@ -2,44 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D957D9EC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB21ED9E32
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:03:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438949AbfJPWBF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:01:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55050 "EHLO mail.kernel.org"
+        id S2437942AbfJPV44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:56:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438642AbfJPV7t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:59:49 -0400
+        id S2406644AbfJPV41 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:56:27 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA90A21D80;
-        Wed, 16 Oct 2019 21:59:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A0FB21D7E;
+        Wed, 16 Oct 2019 21:56:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263188;
-        bh=QBtzNwCVrJp4cN4CQJnMzOVGUpLADOg3yzZ8Zb1kjw0=;
+        s=default; t=1571262986;
+        bh=qFP1NjO6W8Srt9bBH9rasyAL70V1cecuNsWg7IKsMEo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GGZwQXdSVg0OaYgWMAt4W6+yLRyyQz++JlM4tA0aLuIFZYwJI48qkBK1ibw/td2lS
-         ANvdodFWQxFAl8uGYPRbOv9UHPzkE0p1fN1HRpBo7jPuTnZjjabrdpFyGvoq6CVZuE
-         YI7TDrsDNkn7ryvp57dBy3NNvqXaMUy0LvdXTD8k=
+        b=S75StnAgxkuU2RBkJ+9IBDM9SUEvP9m/2NnojWmv6M1rSJeddZFhac3odUsC3PvEG
+         FLIxlG+tyxtNXedtFHdVXARkay6tdPqGMlI0rPo5TOX/TQlS394ozvS1OENQzez8Mr
+         XFRVOZoJd5p5pvyj8GedfLdLLicUkdlHGqnfBj2I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Wool <vitalywool@gmail.com>,
-        Markus Linnala <markus.linnala@gmail.com>,
-        Dan Streetman <ddstreet@ieee.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Henry Burns <henrywolfeburns@gmail.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.3 076/112] mm/z3fold.c: claim page in the beginning of free
-Date:   Wed, 16 Oct 2019 14:51:08 -0700
-Message-Id: <20191016214904.150037983@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Mason <clm@fb.com>,
+        Filipe Manana <fdmanana@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 55/65] btrfs: fix incorrect updating of log root tree
+Date:   Wed, 16 Oct 2019 14:51:09 -0700
+Message-Id: <20191016214837.671712650@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
-References: <20191016214844.038848564@linuxfoundation.org>
+In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
+References: <20191016214756.457746573@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,91 +45,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vitaly Wool <vitalywool@gmail.com>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit 5b6807de11445c05b537df8324f5d7ab1c2782f9 upstream.
+commit 4203e968947071586a98b5314fd7ffdea3b4f971 upstream.
 
-There's a really hard to reproduce race in z3fold between z3fold_free()
-and z3fold_reclaim_page().  z3fold_reclaim_page() can claim the page
-after z3fold_free() has checked if the page was claimed and
-z3fold_free() will then schedule this page for compaction which may in
-turn lead to random page faults (since that page would have been
-reclaimed by then).
+We've historically had reports of being unable to mount file systems
+because the tree log root couldn't be read.  Usually this is the "parent
+transid failure", but could be any of the related errors, including
+"fsid mismatch" or "bad tree block", depending on which block got
+allocated.
 
-Fix that by claiming page in the beginning of z3fold_free() and not
-forgetting to clear the claim in the end.
+The modification of the individual log root items are serialized on the
+per-log root root_mutex.  This means that any modification to the
+per-subvol log root_item is completely protected.
 
-[vitalywool@gmail.com: v2]
-  Link: http://lkml.kernel.org/r/20190928113456.152742cf@bigdell
-Link: http://lkml.kernel.org/r/20190926104844.4f0c6efa1366b8f5741eaba9@gmail.com
-Signed-off-by: Vitaly Wool <vitalywool@gmail.com>
-Reported-by: Markus Linnala <markus.linnala@gmail.com>
-Cc: Dan Streetman <ddstreet@ieee.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Henry Burns <henrywolfeburns@gmail.com>
-Cc: Shakeel Butt <shakeelb@google.com>
-Cc: Markus Linnala <markus.linnala@gmail.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+However we update the root item in the log root tree outside of the log
+root tree log_mutex.  We do this in order to allow multiple subvolumes
+to be updated in each log transaction.
+
+This is problematic however because when we are writing the log root
+tree out we update the super block with the _current_ log root node
+information.  Since these two operations happen independently of each
+other, you can end up updating the log root tree in between writing out
+the dirty blocks and setting the super block to point at the current
+root.
+
+This means we'll point at the new root node that hasn't been written
+out, instead of the one we should be pointing at.  Thus whatever garbage
+or old block we end up pointing at complains when we mount the file
+system later and try to replay the log.
+
+Fix this by copying the log's root item into a local root item copy.
+Then once we're safely under the log_root_tree->log_mutex we update the
+root item in the log_root_tree.  This way we do not modify the
+log_root_tree while we're committing it, fixing the problem.
+
+CC: stable@vger.kernel.org # 4.4+
+Reviewed-by: Chris Mason <clm@fb.com>
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/z3fold.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ fs/btrfs/tree-log.c |   36 +++++++++++++++++++++++++++---------
+ 1 file changed, 27 insertions(+), 9 deletions(-)
 
---- a/mm/z3fold.c
-+++ b/mm/z3fold.c
-@@ -998,9 +998,11 @@ static void z3fold_free(struct z3fold_po
- 	struct z3fold_header *zhdr;
- 	struct page *page;
- 	enum buddy bud;
-+	bool page_claimed;
- 
- 	zhdr = handle_to_z3fold_header(handle);
- 	page = virt_to_page(zhdr);
-+	page_claimed = test_and_set_bit(PAGE_CLAIMED, &page->private);
- 
- 	if (test_bit(PAGE_HEADLESS, &page->private)) {
- 		/* if a headless page is under reclaim, just leave.
-@@ -1008,7 +1010,7 @@ static void z3fold_free(struct z3fold_po
- 		 * has not been set before, we release this page
- 		 * immediately so we don't care about its value any more.
- 		 */
--		if (!test_and_set_bit(PAGE_CLAIMED, &page->private)) {
-+		if (!page_claimed) {
- 			spin_lock(&pool->lock);
- 			list_del(&page->lru);
- 			spin_unlock(&pool->lock);
-@@ -1044,13 +1046,15 @@ static void z3fold_free(struct z3fold_po
- 		atomic64_dec(&pool->pages_nr);
- 		return;
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -2729,7 +2729,8 @@ out:
+  * in the tree of log roots
+  */
+ static int update_log_root(struct btrfs_trans_handle *trans,
+-			   struct btrfs_root *log)
++			   struct btrfs_root *log,
++			   struct btrfs_root_item *root_item)
+ {
+ 	struct btrfs_fs_info *fs_info = log->fs_info;
+ 	int ret;
+@@ -2737,10 +2738,10 @@ static int update_log_root(struct btrfs_
+ 	if (log->log_transid == 1) {
+ 		/* insert root item on the first sync */
+ 		ret = btrfs_insert_root(trans, fs_info->log_root_tree,
+-				&log->root_key, &log->root_item);
++				&log->root_key, root_item);
+ 	} else {
+ 		ret = btrfs_update_root(trans, fs_info->log_root_tree,
+-				&log->root_key, &log->root_item);
++				&log->root_key, root_item);
  	}
--	if (test_bit(PAGE_CLAIMED, &page->private)) {
-+	if (page_claimed) {
-+		/* the page has not been claimed by us */
- 		z3fold_page_unlock(zhdr);
- 		return;
- 	}
- 	if (unlikely(PageIsolated(page)) ||
- 	    test_and_set_bit(NEEDS_COMPACTING, &page->private)) {
- 		z3fold_page_unlock(zhdr);
-+		clear_bit(PAGE_CLAIMED, &page->private);
- 		return;
- 	}
- 	if (zhdr->cpu < 0 || !cpu_online(zhdr->cpu)) {
-@@ -1060,10 +1064,12 @@ static void z3fold_free(struct z3fold_po
- 		zhdr->cpu = -1;
- 		kref_get(&zhdr->refcount);
- 		do_compact_page(zhdr, true);
-+		clear_bit(PAGE_CLAIMED, &page->private);
- 		return;
- 	}
- 	kref_get(&zhdr->refcount);
- 	queue_work_on(zhdr->cpu, pool->compact_wq, &zhdr->work);
-+	clear_bit(PAGE_CLAIMED, &page->private);
- 	z3fold_page_unlock(zhdr);
+ 	return ret;
  }
+@@ -2836,6 +2837,7 @@ int btrfs_sync_log(struct btrfs_trans_ha
+ 	struct btrfs_fs_info *fs_info = root->fs_info;
+ 	struct btrfs_root *log = root->log_root;
+ 	struct btrfs_root *log_root_tree = fs_info->log_root_tree;
++	struct btrfs_root_item new_root_item;
+ 	int log_transid = 0;
+ 	struct btrfs_log_ctx root_log_ctx;
+ 	struct blk_plug plug;
+@@ -2901,18 +2903,26 @@ int btrfs_sync_log(struct btrfs_trans_ha
+ 		goto out;
+ 	}
  
++	/*
++	 * We _must_ update under the root->log_mutex in order to make sure we
++	 * have a consistent view of the log root we are trying to commit at
++	 * this moment.
++	 *
++	 * We _must_ copy this into a local copy, because we are not holding the
++	 * log_root_tree->log_mutex yet.  This is important because when we
++	 * commit the log_root_tree we must have a consistent view of the
++	 * log_root_tree when we update the super block to point at the
++	 * log_root_tree bytenr.  If we update the log_root_tree here we'll race
++	 * with the commit and possibly point at the new block which we may not
++	 * have written out.
++	 */
+ 	btrfs_set_root_node(&log->root_item, log->node);
++	memcpy(&new_root_item, &log->root_item, sizeof(new_root_item));
+ 
+ 	root->log_transid++;
+ 	log->log_transid = root->log_transid;
+ 	root->log_start_pid = 0;
+ 	/*
+-	 * Update or create log root item under the root's log_mutex to prevent
+-	 * races with concurrent log syncs that can lead to failure to update
+-	 * log root item because it was not created yet.
+-	 */
+-	ret = update_log_root(trans, log);
+-	/*
+ 	 * IO has been started, blocks of the log tree have WRITTEN flag set
+ 	 * in their headers. new modifications of the log will be written to
+ 	 * new positions. so it's safe to allow log writers to go in.
+@@ -2932,6 +2942,14 @@ int btrfs_sync_log(struct btrfs_trans_ha
+ 	mutex_unlock(&log_root_tree->log_mutex);
+ 
+ 	mutex_lock(&log_root_tree->log_mutex);
++
++	/*
++	 * Now we are safe to update the log_root_tree because we're under the
++	 * log_mutex, and we're a current writer so we're holding the commit
++	 * open until we drop the log_mutex.
++	 */
++	ret = update_log_root(trans, log, &new_root_item);
++
+ 	if (atomic_dec_and_test(&log_root_tree->log_writers)) {
+ 		/*
+ 		 * Implicit memory barrier after atomic_dec_and_test
 
 
