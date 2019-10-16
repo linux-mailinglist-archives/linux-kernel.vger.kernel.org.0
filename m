@@ -2,83 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B824D8EC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:00:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD69BD8ED6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:03:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392537AbfJPLAg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 07:00:36 -0400
-Received: from mga09.intel.com ([134.134.136.24]:3400 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726083AbfJPLAg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 07:00:36 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2019 04:00:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,303,1566889200"; 
-   d="scan'208";a="225749572"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.130])
-  by fmsmga002.fm.intel.com with ESMTP; 16 Oct 2019 04:00:32 -0700
-Date:   Wed, 16 Oct 2019 14:00:31 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     "Safford, David (GE Global Research, US)" <david.safford@ge.com>,
-        Ken Goldman <kgold@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        "open list:CRYPTO API" <linux-crypto@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] KEYS: asym_tpm: Switch to get_random_bytes()
-Message-ID: <20191016110031.GE10184@linux.intel.com>
-References: <BCA04D5D9A3B764C9B7405BBA4D4A3C035F2A22E@ALPMBAPA12.e2k.ad.ge.com>
- <20191004182711.GC6945@linux.intel.com>
- <BCA04D5D9A3B764C9B7405BBA4D4A3C035F2A38B@ALPMBAPA12.e2k.ad.ge.com>
- <20191007000520.GA17116@linux.intel.com>
- <59b88042-9c56-c891-f75e-7c0719eb5ff9@linux.ibm.com>
- <20191008234935.GA13926@linux.intel.com>
- <20191008235339.GB13926@linux.intel.com>
- <BCA04D5D9A3B764C9B7405BBA4D4A3C035F2B995@ALPMBAPA12.e2k.ad.ge.com>
- <20191014190033.GA15552@linux.intel.com>
- <1571081397.3728.9.camel@HansenPartnership.com>
+        id S2404804AbfJPLDr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 07:03:47 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:36167 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726083AbfJPLDr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 07:03:47 -0400
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id x9GB3Ka9025407;
+        Wed, 16 Oct 2019 20:03:20 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x9GB3Ka9025407
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1571223801;
+        bh=CZS/GBm12+BcQahpwNBxwpIrzDOrM5ncaaZ4Hdi5fxQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=1HVgYGrgJuqrnsFm151Rr+/Ybj/6G/6A5CDaKqgjkNSW6mBkkrOdP+bIIbGO3HOoJ
+         WnTqwTDHR2MnEEuHR3UiBAZmidhAQF05xoY3OLg83RY1CCBZr8JmLtEAnNIjYo9fdE
+         1zVqX5OgWlTDstIUkdpQ1WaSztMdZibwcbal9Qg+x3GWdF1dgDlwU/F5uT5Gsn2VUN
+         D42EaCMOj+qH4AsLbpQbTjumFONOBmarRGWxBCzTSR1sLkssX2kYWAigly4G6FIl2r
+         aYrHG2aF9qCQ3tCD7nrGHOi7GohhOlhh2LbBpRW2R24a/nkdtx2DlK9gLfFsS+Fgsk
+         5rknQ5sUraqFQ==
+X-Nifty-SrcIP: [209.85.217.43]
+Received: by mail-vs1-f43.google.com with SMTP id y129so15296207vsc.6;
+        Wed, 16 Oct 2019 04:03:20 -0700 (PDT)
+X-Gm-Message-State: APjAAAVfu0ALrjk8WuhlJ8a9IAS2DSSrPFW/4Y2PF1bQelVwE7wSyXV6
+        EYs8GlC26IXKTx6dg0ARMS40rGgTN6bKt+GPkHs=
+X-Google-Smtp-Source: APXvYqwi2NOARFdiIeiefPcsQM9QE7f5KDMvhzleVf/yNku4VncLL4mmJysOK+WrOjI4KTTDWV6CdUJJKviU0KwCJo0=
+X-Received: by 2002:a67:ff86:: with SMTP id v6mr23079325vsq.181.1571223799384;
+ Wed, 16 Oct 2019 04:03:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1571081397.3728.9.camel@HansenPartnership.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190617162123.24920-1-yamada.masahiro@socionext.com>
+ <CAK7LNATtqhxPcDneW0QOkw-5NyPNP06Qv0bYTe7A_gCiHMiU7A@mail.gmail.com> <CAK7LNASMwqy0ZUZ=kTJ7MJ6OJNa=+vbj5444xzmubJ8+6vO=sg@mail.gmail.com>
+In-Reply-To: <CAK7LNASMwqy0ZUZ=kTJ7MJ6OJNa=+vbj5444xzmubJ8+6vO=sg@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 16 Oct 2019 20:01:46 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS=9yGqMQ9eoM4L0hhvuFRYhg6S4i6J3Ou9vcB1Npj4BQ@mail.gmail.com>
+Message-ID: <CAK7LNAS=9yGqMQ9eoM4L0hhvuFRYhg6S4i6J3Ou9vcB1Npj4BQ@mail.gmail.com>
+Subject: Re: [PATCH] libfdt: reduce the number of headers included from libfdt_env.h
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        DTML <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 14, 2019 at 12:29:57PM -0700, James Bottomley wrote:
-> The job of the in-kernel rng is simply to produce a mixed entropy pool
-> from which we can draw random numbers.  The idea is that quite a few
-> attackers have identified the rng as being a weak point in the security
-> architecture of the kernel, so if we mix entropy from all the sources
-> we have, you have to compromise most of them to gain some predictive
-> power over the rng sequence.
+Hi Andrew,
 
-The documentation says that krng is suitable for key generation.
-Should the documentation changed to state that it is unsuitable?
+Could you pick up this to akpm tree?
+https://lore.kernel.org/patchwork/patch/1089856/
 
-> The point is not how certified the TPM RNG is, the point is that it's a
-> single source and if we rely on it solely for some applications, like
-> trusted keys, then it gives the attackers a single known point to go
-> after.  This may be impossible for script kiddies, but it won't be for
-> nation states ... are you going to exclusively trust the random number
-> you got from your chinese certified TPM?
+I believe this is correct, and a good clean-up.
 
-I'd suggest approach where TPM RNG result is xored with krng result.
+I pinged the DT maintainers, but they did not respond.
 
-> Remember also that the attack doesn't have to be to the TPM only, it
-> could be the pathway by which we get the random number, which involves
-> components outside of the TPM certification.
+Thanks.
 
-Yeah, I do get this.
 
-/Jarkko
+
+
+On Mon, Aug 19, 2019 at 1:36 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> On Thu, Aug 1, 2019 at 11:30 AM Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+> >
+> > On Tue, Jun 18, 2019 at 1:21 AM Masahiro Yamada
+> > <yamada.masahiro@socionext.com> wrote:
+> > >
+> > > Currently, libfdt_env.h includes <linux/kernel.h> just for INT_MAX.
+> > >
+> > > <linux/kernel.h> pulls in a lots of broat.
+> > >
+> > > Thanks to commit 54d50897d544 ("linux/kernel.h: split *_MAX and *_MIN
+> > > macros into <linux/limits.h>"), <linux/kernel.h> can be replaced with
+> > > <linux/limits.h>.
+> > >
+> > > This saves including dozens of headers.
+> > >
+> > > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > > ---
+> >
+> > ping?
+>
+> ping x2.
+>
+>
+>
+>
+> >
+> >
+> > >  include/linux/libfdt_env.h | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/include/linux/libfdt_env.h b/include/linux/libfdt_env.h
+> > > index edb0f0c30904..2231eb855e8f 100644
+> > > --- a/include/linux/libfdt_env.h
+> > > +++ b/include/linux/libfdt_env.h
+> > > @@ -2,7 +2,7 @@
+> > >  #ifndef LIBFDT_ENV_H
+> > >  #define LIBFDT_ENV_H
+> > >
+> > > -#include <linux/kernel.h>      /* For INT_MAX */
+> > > +#include <linux/limits.h>      /* For INT_MAX */
+> > >  #include <linux/string.h>
+> > >
+> > >  #include <asm/byteorder.h>
+> > > --
+> > > 2.17.1
+> > >
+> >
+> >
+> > --
+> > Best Regards
+> > Masahiro Yamada
+>
+>
+>
+> --
+> Best Regards
+> Masahiro Yamada
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
