@@ -2,40 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E170CD9FA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E68B3DA036
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:24:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391361AbfJPV4w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:56:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48062 "EHLO mail.kernel.org"
+        id S2407105AbfJPWJL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:09:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732322AbfJPV40 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:56:26 -0400
+        id S2406681AbfJPV5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:57:35 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0FB6A21925;
-        Wed, 16 Oct 2019 21:56:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA40A21928;
+        Wed, 16 Oct 2019 21:57:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262985;
-        bh=Dc9+ogRIAZPbdKsx3Y3UPw4dJ/jP6cmYHivfV2jcg8w=;
+        s=default; t=1571263055;
+        bh=pSKK78qYuM/oMF/AE9JGU3jGCsV2zPg3W1Gx2TVmpoA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mOnNju/OlG89HZ15Ale60cyIsh/xJQ0wvXamx+ojzUpAnW+hRa5ZqMJCf3HBfVFVv
-         DXOkcMPixyQCH2qcC4MueD9FrkUawb1S1s8+VYpft+QcgNvpwdAHuPZvoS7wPUsknC
-         so6JgtvPCSiGNKmTPPCezqwc/XLw5KN45xHRscXU=
+        b=F2mwEGlf/5dbK1L8IkRxYSaVP4SLALSIxf3PDMpMBEU9Ioj8A52+xyPrq1A+isRNY
+         gIh5Z0TSDby3KeXQ093qsIzoWaYSfZbXz2wPBe5A3yJ06r0Ae88MG0XU9MYU48Y6BS
+         alx2ntKPQnT3Vh7JJFbf440X2R2Hik1t7qxe4WUM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Klinger <ak@it-klinger.de>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 54/65] iio: adc: hx711: fix bug in sampling of data
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Enrico Weigelt <info@metux.net>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 57/81] mm/vmpressure.c: fix a signedness bug in vmpressure_register_event()
 Date:   Wed, 16 Oct 2019 14:51:08 -0700
-Message-Id: <20191016214837.290861729@linuxfoundation.org>
+Message-Id: <20191016214842.957825220@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
-References: <20191016214756.457746573@linuxfoundation.org>
+In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
+References: <20191016214805.727399379@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,79 +50,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andreas Klinger <ak@it-klinger.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 4043ecfb5fc4355a090111e14faf7945ff0fdbd5 ]
+commit 518a86713078168acd67cf50bc0b45d54b4cce6c upstream.
 
-Fix bug in sampling function hx711_cycle() when interrupt occures while
-PD_SCK is high. If PD_SCK is high for at least 60 us power down mode of
-the sensor is entered which in turn leads to a wrong measurement.
+The "mode" and "level" variables are enums and in this context GCC will
+treat them as unsigned ints so the error handling is never triggered.
 
-Switch off interrupts during a PD_SCK high period and move query of DOUT
-to the latest point of time which is at the end of PD_SCK low period.
+I also removed the bogus initializer because it isn't required any more
+and it's sort of confusing.
 
-This bug exists in the driver since it's initial addition. The more
-interrupts on the system the higher is the probability that it happens.
+[akpm@linux-foundation.org: reduce implicit and explicit typecasting]
+[akpm@linux-foundation.org: fix return value, add comment, per Matthew]
+Link: http://lkml.kernel.org/r/20190925110449.GO3264@mwanda
+Fixes: 3cadfa2b9497 ("mm/vmpressure.c: convert to use match_string() helper")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: David Rientjes <rientjes@google.com>
+Reviewed-by: Matthew Wilcox <willy@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Enrico Weigelt <info@metux.net>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Fixes: c3b2fdd0ea7e ("iio: adc: hx711: Add IIO driver for AVIA HX711")
-Signed-off-by: Andreas Klinger <ak@it-klinger.de>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/adc/hx711.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ mm/vmpressure.c |   20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/iio/adc/hx711.c b/drivers/iio/adc/hx711.c
-index 8eb3f1bbe332b..0dec733471d56 100644
---- a/drivers/iio/adc/hx711.c
-+++ b/drivers/iio/adc/hx711.c
-@@ -101,14 +101,14 @@ struct hx711_data {
+--- a/mm/vmpressure.c
++++ b/mm/vmpressure.c
+@@ -358,6 +358,9 @@ void vmpressure_prio(gfp_t gfp, struct m
+  * "hierarchy" or "local").
+  *
+  * To be used as memcg event method.
++ *
++ * Return: 0 on success, -ENOMEM on memory failure or -EINVAL if @args could
++ * not be parsed.
+  */
+ int vmpressure_register_event(struct mem_cgroup *memcg,
+ 			      struct eventfd_ctx *eventfd, const char *args)
+@@ -365,7 +368,7 @@ int vmpressure_register_event(struct mem
+ 	struct vmpressure *vmpr = memcg_to_vmpressure(memcg);
+ 	struct vmpressure_event *ev;
+ 	enum vmpressure_modes mode = VMPRESSURE_NO_PASSTHROUGH;
+-	enum vmpressure_levels level = -1;
++	enum vmpressure_levels level;
+ 	char *spec, *spec_orig;
+ 	char *token;
+ 	int ret = 0;
+@@ -378,20 +381,18 @@ int vmpressure_register_event(struct mem
  
- static int hx711_cycle(struct hx711_data *hx711_data)
- {
--	int val;
-+	unsigned long flags;
+ 	/* Find required level */
+ 	token = strsep(&spec, ",");
+-	level = match_string(vmpressure_str_levels, VMPRESSURE_NUM_LEVELS, token);
+-	if (level < 0) {
+-		ret = level;
++	ret = match_string(vmpressure_str_levels, VMPRESSURE_NUM_LEVELS, token);
++	if (ret < 0)
+ 		goto out;
+-	}
++	level = ret;
  
- 	/*
- 	 * if preempted for more then 60us while PD_SCK is high:
- 	 * hx711 is going in reset
- 	 * ==> measuring is false
- 	 */
--	preempt_disable();
-+	local_irq_save(flags);
- 	gpiod_set_value(hx711_data->gpiod_pd_sck, 1);
+ 	/* Find optional mode */
+ 	token = strsep(&spec, ",");
+ 	if (token) {
+-		mode = match_string(vmpressure_str_modes, VMPRESSURE_NUM_MODES, token);
+-		if (mode < 0) {
+-			ret = mode;
++		ret = match_string(vmpressure_str_modes, VMPRESSURE_NUM_MODES, token);
++		if (ret < 0)
+ 			goto out;
+-		}
++		mode = ret;
+ 	}
  
- 	/*
-@@ -118,7 +118,6 @@ static int hx711_cycle(struct hx711_data *hx711_data)
- 	 */
- 	ndelay(hx711_data->data_ready_delay_ns);
- 
--	val = gpiod_get_value(hx711_data->gpiod_dout);
- 	/*
- 	 * here we are not waiting for 0.2 us as suggested by the datasheet,
- 	 * because the oscilloscope showed in a test scenario
-@@ -126,7 +125,7 @@ static int hx711_cycle(struct hx711_data *hx711_data)
- 	 * and 0.56 us for PD_SCK low on TI Sitara with 800 MHz
- 	 */
- 	gpiod_set_value(hx711_data->gpiod_pd_sck, 0);
--	preempt_enable();
-+	local_irq_restore(flags);
- 
- 	/*
- 	 * make it a square wave for addressing cases with capacitance on
-@@ -134,7 +133,8 @@ static int hx711_cycle(struct hx711_data *hx711_data)
- 	 */
- 	ndelay(hx711_data->data_ready_delay_ns);
- 
--	return val;
-+	/* sample as late as possible */
-+	return gpiod_get_value(hx711_data->gpiod_dout);
- }
- 
- static int hx711_read(struct hx711_data *hx711_data)
--- 
-2.20.1
-
+ 	ev = kzalloc(sizeof(*ev), GFP_KERNEL);
+@@ -407,6 +408,7 @@ int vmpressure_register_event(struct mem
+ 	mutex_lock(&vmpr->events_lock);
+ 	list_add(&ev->node, &vmpr->events);
+ 	mutex_unlock(&vmpr->events_lock);
++	ret = 0;
+ out:
+ 	kfree(spec_orig);
+ 	return ret;
 
 
