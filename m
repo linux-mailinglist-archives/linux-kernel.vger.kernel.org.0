@@ -2,188 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EA3CD9247
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 15:20:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD373D924C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 15:20:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393582AbfJPNUI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 09:20:08 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:48022 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388141AbfJPNUI (ORCPT
+        id S2393606AbfJPNUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 09:20:16 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42979 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388141AbfJPNUO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 09:20:08 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9GDK2GC110727;
-        Wed, 16 Oct 2019 08:20:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1571232002;
-        bh=pn1VJ6hcp1F1tZLG4xpI8lS3IUjFzRCxzxKnmp0Jaq0=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=KxCHByEfMBLsRmBAXWWcNQCupC/BZCNyKovmhaDakle728gy820EYYpkqCx+5Gxz+
-         J6ADvghlRoDdaFgX1JeCBynrO9CXqIUI354FGvtcr/PNJYwGAzY8Jkb5P6vfvtSitX
-         6K/r3+FOBiSWAevhohiFBj5UMuPEShDYjikPgM/k=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9GDK2Jl111013
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Oct 2019 08:20:02 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 16
- Oct 2019 08:20:01 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 16 Oct 2019 08:20:01 -0500
-Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with SMTP id x9GDK1N8027346;
-        Wed, 16 Oct 2019 08:20:01 -0500
-Date:   Wed, 16 Oct 2019 08:22:39 -0500
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     Tony Lindgren <tony@atomide.com>, Tero Kristo <t-kristo@ti.com>,
-        <linux-omap@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [Patch 1/3] dt-bindings: media: ti-vpe: Document VPE driver
-Message-ID: <20191016132239.ufptwl44ktmhvylo@ti.com>
-References: <20191009175628.20570-1-bparrot@ti.com>
- <20191009175628.20570-2-bparrot@ti.com>
- <20191015222947.GA13388@bogus>
+        Wed, 16 Oct 2019 09:20:14 -0400
+Received: by mail-wr1-f65.google.com with SMTP id n14so27987701wrw.9
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 06:20:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from:cc;
+        bh=CRTJozMzC0Sq8yDxtGDsD1ywHLbA5/ocQGk+2VJ+CuA=;
+        b=oKUVRL7j9UAZKXm5UCUADCaqr4NS4FI6Ffjga6PZVLqpUwStLyTNafOX6SKjWpebwD
+         JO588yRlcxBtDW7tEkIsn58BF+NuIcArO1872kulij5VM4fM+/V+6KGtHqRV8v4a24W7
+         ezDFlmKqsRF9eIgMlAuitUYW7vHHOUXCDuBqxCIpR5QRmEcRQL0S1IQr/8TPfufJaQtJ
+         Np4RxNN0Bl3K7wlEiffIql6avoug/4mVL4APDBnO2flhUDYXtgoGF9+8Un5xApUplJIh
+         KwFmQDrDzhmDjlBK1rYYbG60mxax0T8XbyFnou/xk3yJekcc6Chla/RMVjR73gV+TY47
+         4rlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from:cc;
+        bh=CRTJozMzC0Sq8yDxtGDsD1ywHLbA5/ocQGk+2VJ+CuA=;
+        b=Gqp2SU1MpxO2VrpQhwmanx50Bl908sh7ObOKX5dQtg60VBD2JcB6aJIW3RY6iVNaNP
+         s0pZbeNUYhvgpaRRqxMAxrNRj9+Fim+GWOoOs2J9ovNxUiPJ93nPCna4p0w3YFq2aX8+
+         U3uIi1s3kAqGPetKrkCKAsDCTB68GTyCRochVwWHZUQMJnd6rmvKy643s6jjNilO5FH0
+         K4KjAPM8UrO/1Eezvj53R/s8amTfucWtUUDyzEty/xiVBq4maPQEPj13OzlgwXyD4SUF
+         Ta8UihLE+XtfE/3M5G6xD47WxpjIo1ZXdef6E9CuL5quC3lRZyMLAOPaedNVdeG2AhAW
+         vdcA==
+X-Gm-Message-State: APjAAAU1uauFAIb7mDnDAowwlvzSundTCbNVgmFb4Oh+t3LbbjLvArIx
+        fjWqngT6m7jB1DqdItpdwTU7yTzs4y7l1Q==
+X-Google-Smtp-Source: APXvYqxAl12/I5KYaBJs3MqRhWjcFCVnysK215fMFKYBqgC7UyEt15RheXyIMLQParjuuhOeF1z5Ig==
+X-Received: by 2002:a5d:4ec1:: with SMTP id s1mr2608717wrv.42.1571232012715;
+        Wed, 16 Oct 2019 06:20:12 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id g4sm29489365wrw.9.2019.10.16.06.20.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 16 Oct 2019 06:20:11 -0700 (PDT)
+Message-ID: <5da7190b.1c69fb81.560a8.e3ae@mx.google.com>
+Date:   Wed, 16 Oct 2019 06:20:11 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20191015222947.GA13388@bogus>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Lab-Name: lab-baylibre
+X-Kernelci-Branch: ci-next
+X-Kernelci-Tree: agross
+X-Kernelci-Report-Type: bisect
+X-Kernelci-Kernel: v5.4-rc1-28-g3836faaf73f4
+Subject: agross/ci-next boot bisection: v5.4-rc1-28-g3836faaf73f4 on beagle-xm
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        tomeu.vizoso@collabora.com, guillaume.tucker@collabora.com,
+        mgalka@collabora.com, broonie@kernel.org, matthew.hart@linaro.org,
+        khilman@baylibre.com, enric.balletbo@collabora.com,
+        Stephan Gerhold <stephan@gerhold.net>
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rob Herring <robh@kernel.org> wrote on Tue [2019-Oct-15 17:29:47 -0500]:
-> On Wed, Oct 09, 2019 at 12:56:26PM -0500, Benoit Parrot wrote:
-> > Device Tree bindings for the Video Processing Engine (VPE) driver.
-> > 
-> > Signed-off-by: Benoit Parrot <bparrot@ti.com>
-> > ---
-> >  .../devicetree/bindings/media/ti-vpe.txt      | 48 +++++++++++++++++++
-> >  MAINTAINERS                                   |  1 +
-> >  2 files changed, 49 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/media/ti-vpe.txt
-> 
-> Please convert to DT schema format.
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* This automated bisection report was sent to you on the basis  *
+* that you may be involved with the breaking commit it has      *
+* found.  No manual investigation has been done to verify it,   *
+* and the root cause of the problem may be somewhere else.      *
+*                                                               *
+* If you do send a fix, please include this trailer:            *
+*   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
+*                                                               *
+* Hope this helps!                                              *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-I can do that.
-Before posting/merging a .yaml, are we supposed to be able to pass these?
-# make dt_binding_check
-# make dtbs_check
+agross/ci-next boot bisection: v5.4-rc1-28-g3836faaf73f4 on beagle-xm
 
-Because currently with 5.4-rc3 these fails.
+Summary:
+  Start:      3836faaf73f4 Merge branches 'arm64-for-5.5', 'arm64-defconfog=
+-for-5.5', 'defconfig-for-5.5' 'drivers-for-5.5' and 'dts-for-5.5' into for=
+-next
+  Details:    https://kernelci.org/boot/id/5da6ccfd59b5144bc3752596
+  Plain log:  https://storage.kernelci.org//agross/ci-next/v5.4-rc1-28-g383=
+6faaf73f4/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-baylibre/boot-oma=
+p3-beagle-xm.txt
+  HTML log:   https://storage.kernelci.org//agross/ci-next/v5.4-rc1-28-g383=
+6faaf73f4/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-baylibre/boot-oma=
+p3-beagle-xm.html
+  Result:     0d7051999175 arm64: dts: msm8916-samsung-a5u: Override iris c=
+ompatible
 
-Is there a way to run these "test command" target a specific .yaml and not
-the whole set?
+Checks:
+  revert:     PASS
+  verify:     PASS
 
-> 
-> > 
-> > diff --git a/Documentation/devicetree/bindings/media/ti-vpe.txt b/Documentation/devicetree/bindings/media/ti-vpe.txt
-> > new file mode 100644
-> > index 000000000000..b2942fa8c3ea
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/media/ti-vpe.txt
-> > @@ -0,0 +1,48 @@
-> > +Texas Instruments DRA7x VIDEO PROCESSING ENGINE (VPE)
-> > +------------------------------------------------------
-> > +
-> > +The Video Processing Engine (VPE) is a key component for image post
-> > +processing applications. VPE consist of a single memory to memory
-> > +path which can perform chroma up/down sampling, deinterlacing,
-> > +scaling and color space conversion.
-> > +
-> > +Required properties:
-> > +- compatible: must be "ti,vpe"
-> 
-> Needs to have SoC specific compatibles.
+Parameters:
+  Tree:       agross
+  URL:        https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git
+  Branch:     ci-next
+  Target:     beagle-xm
+  CPU arch:   arm
+  Lab:        lab-baylibre
+  Compiler:   gcc-8
+  Config:     multi_v7_defconfig+CONFIG_SMP=3Dn
+  Test suite: boot
 
-Yes, I'll fix that.
+Breaking commit found:
 
-> 
-> > +- reg:	physical base address and length of the registers set for the 4
-> > +	memory regions required;
-> > +- reg-names: name associated with the memory regions described is <reg>;
-> 
-> The names need to be documented.
+---------------------------------------------------------------------------=
+----
+commit 0d7051999175f97dfb1aa32e9008f08bf044a0a7
+Author: Stephan Gerhold <stephan@gerhold.net>
+Date:   Thu Aug 22 13:23:39 2019 +0200
 
-Ok.
+    arm64: dts: msm8916-samsung-a5u: Override iris compatible
+    =
 
-> 
-> > +- interrupts: should contain IRQ line for VPE;
-> > +
-> > +Example:
-> > +
-> > +	target-module@1d0010 {                  /* 0x489d0000, ap 27 30.0 */
-> > +		compatible = "ti,sysc-omap4", "ti,sysc";
-> > +		reg = <0x1d0010 0x4>;
-> > +		reg-names = "sysc";
-> > +		ti,sysc-midle = <SYSC_IDLE_FORCE>,
-> > +				<SYSC_IDLE_NO>,
-> > +				<SYSC_IDLE_SMART>;
-> > +		ti,sysc-sidle = <SYSC_IDLE_FORCE>,
-> > +				<SYSC_IDLE_NO>,
-> > +				<SYSC_IDLE_SMART>;
-> > +		clocks = <&vpe_clkctrl DRA7_VPE_VPE_CLKCTRL 0>;
-> > +		clock-names = "fck";
-> > +		#address-cells = <1>;
-> > +		#size-cells = <1>;
-> > +		ranges = <0x0 0x1d0000 0x10000>;
-> 
-> All this is outside the scope of this binding.
+    msm8916.dtsi sets the iris compatible to "qcom,wcn3620".
+    While WCN3620 seems to be used on most MSM8916 devices,
+    MSM8916 can also be paired with another chip (e.g. for WiFi dual-band).
+    =
 
-OK I was not sure if the whole interconnect thing was needed in the example
-or not.
+    A5U uses WCN3660B instead, so the compatible needs to be overridden
+    to apply the correct configuration.
+    =
 
-> 
-> > +
-> > +		vpe: vpe@0 {
-> > +			compatible = "ti,vpe";
-> > +			reg = <0x0000 0x120>,
-> > +			      <0x0700 0x80>,
-> > +			      <0x5700 0x18>,
-> > +			      <0xd000 0x400>;
-> > +			reg-names = "vpe_top",
-> > +				    "sc",
-> > +				    "csc",
-> > +				    "vpdma";
-> > +			interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
-> 
-> > +			#address-cells = <1>;
-> > +			#size-cells = <0>;
-> 
-> Not documented, nor needed as there are no child nodes.
+    However, simply using "qcom,wcn3660" would be incorrect,
+    since WCN3660B requires a slightly different regulator configuration
+    compared to WCN3660.
+    =
 
-Yeah, I'll remove that.
+    Instead, it requires the same configuration as "qcom,wcn3680".
+    Replace the compatible with "qcom,wcn3680" for A5U to make WCNSS
+    work correctly.
+    =
 
-> 
-> > +		};
-> > +	};
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 8598f49fa2c8..63dcda51f8ae 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -16299,6 +16299,7 @@ W:	http://linuxtv.org/
-> >  Q:	http://patchwork.linuxtv.org/project/linux-media/list/
-> >  S:	Maintained
-> >  F:	drivers/media/platform/ti-vpe/
-> > +F:	Documentation/devicetree/bindings/media/ti-vpe.txt
+    Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+    Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Now with the dt_schemas, I noticed that the maintainer's name is part of
-the yaml file. Do we still need to add this to the MAINTAINERS file as
-well?
-
-Benoit
+diff --git a/arch/arm64/boot/dts/qcom/msm8916-samsung-a5u-eur.dts b/arch/ar=
+m64/boot/dts/qcom/msm8916-samsung-a5u-eur.dts
+index 1aa59da98495..6629a621139c 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916-samsung-a5u-eur.dts
++++ b/arch/arm64/boot/dts/qcom/msm8916-samsung-a5u-eur.dts
+@@ -8,3 +8,9 @@
+ 	model =3D "Samsung Galaxy A5U (EUR)";
+ 	compatible =3D "samsung,a5u-eur", "qcom,msm8916";
+ };
++
++&pronto {
++	iris {
++		compatible =3D "qcom,wcn3680";
++	};
++};
+---------------------------------------------------------------------------=
+----
 
 
-> >  
-> >  TI WILINK WIRELESS DRIVERS
-> >  L:	linux-wireless@vger.kernel.org
-> > -- 
-> > 2.17.1
-> > 
+Git bisection log:
+
+---------------------------------------------------------------------------=
+----
+git bisect start
+# good: [54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c] Linux 5.4-rc1
+git bisect good 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c
+# bad: [3836faaf73f4380c8f9632723be4ee82f4e50196] Merge branches 'arm64-for=
+-5.5', 'arm64-defconfog-for-5.5', 'defconfig-for-5.5' 'drivers-for-5.5' and=
+ 'dts-for-5.5' into for-next
+git bisect bad 3836faaf73f4380c8f9632723be4ee82f4e50196
+# good: [acbf73bfa02881ba9e0532ba1a5f5beec573af9f] soc: qcom: llcc: Move re=
+gmap config to local variable
+git bisect good acbf73bfa02881ba9e0532ba1a5f5beec573af9f
+# bad: [e38161bd325ea541ef2f258d8e28281077dde524] arm64: dts: apq8096-db820=
+c: Increase load on l21 for SDCARD
+git bisect bad e38161bd325ea541ef2f258d8e28281077dde524
+# bad: [0d7051999175f97dfb1aa32e9008f08bf044a0a7] arm64: dts: msm8916-samsu=
+ng-a5u: Override iris compatible
+git bisect bad 0d7051999175f97dfb1aa32e9008f08bf044a0a7
+# good: [8a250aa6eccdd54aebc62165c0c1fe250fee0338] arm64: dts: qcom: qcs404=
+: add the watchdog node
+git bisect good 8a250aa6eccdd54aebc62165c0c1fe250fee0338
+# good: [efb9e0df7d8df9f6ccc4a02a52e56fb6e379e193] arm64: dts: msm8916-sams=
+ung-a2015: Enable WCNSS for WiFi and BT
+git bisect good efb9e0df7d8df9f6ccc4a02a52e56fb6e379e193
+# first bad commit: [0d7051999175f97dfb1aa32e9008f08bf044a0a7] arm64: dts: =
+msm8916-samsung-a5u: Override iris compatible
+---------------------------------------------------------------------------=
+----
