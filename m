@@ -2,86 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21882DA214
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 01:24:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39AFBDA219
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 01:25:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406074AbfJPXX7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 19:23:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54032 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725970AbfJPXX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 19:23:59 -0400
-Received: from localhost (unknown [192.55.54.58])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1F8B20872;
-        Wed, 16 Oct 2019 23:23:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571268238;
-        bh=igapbZGpLlKRzBdYxMTU1tCbvC2o5pyly0l6ltnqaAQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1qbmwoid57B9hFBwPWg+OWygSZUrw22vI6dINmFlY7wSMOPDtrFUs06xMuHrOfJyL
-         QZ7ZMEaGtm0XtCgt0z7sZQ+Tz85DuNq0ousESvViYgloWYilcgjXv2frZXWpVq8rgk
-         0qbasP5hiEQXf1i2A/Dp9WOzrwqDSIwtOfSZQ0kM=
-Date:   Wed, 16 Oct 2019 16:23:58 -0700
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Richard Leitner <richard.leitner@skidata.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Igor Opaniuk <igor.opaniuk@toradex.com>,
-        Fabio Estevam <festevam@gmail.com>
-Subject: Re: [PATCH 5.3 112/112] ASoC: sgtl5000: add ADC mute control
-Message-ID: <20191016232358.GA994597@kroah.com>
-References: <20191016214844.038848564@linuxfoundation.org>
- <20191016214907.599726506@linuxfoundation.org>
- <20191016220044.GB11473@sirena.co.uk>
- <20191016221025.GA990599@kroah.com>
- <20191016223518.GC11473@sirena.co.uk>
+        id S2406080AbfJPXZ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 19:25:28 -0400
+Received: from smtprelay0045.hostedemail.com ([216.40.44.45]:56242 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725970AbfJPXZ2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 19:25:28 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id B26C85832;
+        Wed, 16 Oct 2019 23:25:26 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3167:3352:3622:3865:3866:3867:3868:3870:3871:4321:5007:6742:7875:7903:10004:10400:11232:11658:11914:12297:12663:12740:12760:12895:13069:13311:13357:13439:14659:21080:21433:21627:21740:30003:30054:30090:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
+X-HE-Tag: flock47_2f3f58b870741
+X-Filterd-Recvd-Size: 2044
+Received: from XPS-9350.home (unknown [47.151.152.152])
+        (Authenticated sender: joe@perches.com)
+        by omf02.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 16 Oct 2019 23:25:24 +0000 (UTC)
+Message-ID: <3f2feed96a3569e2a27051864ae5e8a84ce634b4.camel@perches.com>
+Subject: Re: [PATCH v3] x86, efi: never relocate kernel below lowest
+ acceptable address
+From:   Joe Perches <joe@perches.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Kairui Song <kasong@redhat.com>, linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
+        x86@kernel.org, linux-efi@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Date:   Wed, 16 Oct 2019 16:25:23 -0700
+In-Reply-To: <20191016154842.GJ1138@zn.tnic>
+References: <20191012034421.25027-1-kasong@redhat.com>
+         <20191014101419.GA4715@zn.tnic> <20191014202111.GP15552@linux.intel.com>
+         <20191014211825.GJ4715@zn.tnic> <20191016152014.GC4261@linux.intel.com>
+         <fb0e7c13da405970d5cbd59c10005daaf970b8da.camel@perches.com>
+         <20191016154842.GJ1138@zn.tnic>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191016223518.GC11473@sirena.co.uk>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 11:35:18PM +0100, Mark Brown wrote:
-> On Wed, Oct 16, 2019 at 03:10:25PM -0700, Greg Kroah-Hartman wrote:
-> > On Wed, Oct 16, 2019 at 11:00:44PM +0100, Mark Brown wrote:
-> > > On Wed, Oct 16, 2019 at 02:51:44PM -0700, Greg Kroah-Hartman wrote:
-> > > > From: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+On Wed, 2019-10-16 at 17:48 +0200, Borislav Petkov wrote:
+> On Wed, Oct 16, 2019 at 08:23:56AM -0700, Joe Perches wrote:
+> > ?  examples please.
 > 
-> > > > commit 694b14554d75f2a1ae111202e71860d58b434a21 upstream.
+> From this very thread:
 > 
-> > > > This control mute/unmute the ADC input of SGTL5000
-> > > > using its CHIP_ANA_CTRL register.
+> \sEfi\s, \sefi\s, \seFI\s etc should be "EFI"
 > 
-> > > This seems like a new feature and not an obvious candidate for stable?
+> I'm thinking perhaps start conservatively and catch the most often
+> misspelled ones in commit messages or comments. "CPU", "SMT", "MCE",
+> "MCA", "PCI" etc come to mind.
 > 
-> > there was a long email from Richard that said:
-> > 	Upstream commit 631bc8f0134a ("ASoC: sgtl5000: Fix of unmute
-> > 	outputs on probe"), which is e9f621efaebd in v5.3 replaced
-> > 	snd_soc_component_write with snd_soc_component_update_bits and
-> > 	therefore no longer cleared the MUTE_ADC flag. This caused the
-> > 	ADC to stay muted and recording doesn't work any longer. This
-> > 	patch fixes this problem by adding a Switch control for
-> > 	MUTE_ADC.
+> > checkpatch has a db for misspellings, I supposed another for
+> > acronyms could be added,
 > 
-> > That's why I took this.  If this isn't true, I'll be glad to drop this.
-> 
-> That's probably not an appropriate fix for stable - it's going to add a
-> new control which users will need to manually set (or hope their
-> userspace automatically figures out that it should set for them, more
-> advanced userspaces like PulseAudio should) which isn't a drop in fix. 
-> You could either drop the backport that was done for zero cross or take
-> a new patch that clears the MUTE_ADC flag (rather than punting to
-> userspace to do so), or just be OK with what you've got at the minute
-> which might be fine given the lack of user reports.
+> Doesn't have to be another one - established acronyms are part of the
+> dictionary too.
 
-Ok, I'll gladly go drop it, thanks!
+Couldn't work.  The dictionary is case insensitive.
 
-greg k-h
+
