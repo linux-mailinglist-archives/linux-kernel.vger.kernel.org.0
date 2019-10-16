@@ -2,103 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A020D91B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:57:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96A44D91B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:57:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393359AbfJPM5H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 08:57:07 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42846 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731287AbfJPM5H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 08:57:07 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9965C300C72A;
-        Wed, 16 Oct 2019 12:57:06 +0000 (UTC)
-Received: from [10.36.116.19] (ovpn-116-19.ams2.redhat.com [10.36.116.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7887560C4E;
-        Wed, 16 Oct 2019 12:57:04 +0000 (UTC)
-Subject: Re: [PATCH RFC v3 8/9] mm/memory_hotplug: Introduce
- offline_and_remove_memory()
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        virtualization@lists.linux-foundation.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <osalvador@suse.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>, Qian Cai <cai@lca.pw>
-References: <20190919142228.5483-1-david@redhat.com>
- <20190919142228.5483-9-david@redhat.com>
- <20191016114708.GY317@dhcp22.suse.cz>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <0568676b-4a22-cd95-1de8-a43022aa6a9f@redhat.com>
-Date:   Wed, 16 Oct 2019 14:57:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S2393392AbfJPM53 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 08:57:29 -0400
+Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:41125 "EHLO
+        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731686AbfJPM53 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 08:57:29 -0400
+Received: from [192.168.2.10] ([46.9.232.237])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id KirjiHi1LPduvKirnir4R3; Wed, 16 Oct 2019 14:57:27 +0200
+Subject: Re: [PATCH] media: v4l2-ctrl: Add p_def to v4l2_ctrl_config
+From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
+To:     Ricardo Ribalda Delgado <ribalda@kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20191014141427.30708-1-ribalda@kernel.org>
+ <f03e39da-2fe0-b1af-c409-8460c2fc5e9f@xs4all.nl>
+ <CAPybu_1xBCVdcHKOwDFoM8wkrXWRSuFO1vUuB6Kp0rD6BREs1Q@mail.gmail.com>
+ <0e98973c-96a8-dc2e-295f-225ab3b1eae0@xs4all.nl>
+ <CAPybu_1to=P0s491p4pbaZMy+YAG88R5sORsvKQy9gKBL49f_w@mail.gmail.com>
+ <77204a05-34a5-f6f1-460f-bddaa8f2bb5c@xs4all.nl>
+Message-ID: <3768e962-9c6b-1d32-c968-569c15c5f5bf@xs4all.nl>
+Date:   Wed, 16 Oct 2019 14:57:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191016114708.GY317@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <77204a05-34a5-f6f1-460f-bddaa8f2bb5c@xs4all.nl>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 16 Oct 2019 12:57:06 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfJsjDSTjSe/eU04bGP79b1Nors6UFxODyp4KAbwDZ8lP9tU1YSQOdwJQ6YB/Krh8HSZlRDADj4CW8ZOoEWNrs6oEOaAoul9ZgVLuJCJsbz2d3qAurGhg
+ iAlgQRlBPPWYS/H9opapeJrtCPc720qvAxd/hDsAPqnLof8dpiXIMd2RaE7ypT/1ut9B1kR8UMntfGRCYLb4QZFZwFdvxV1G5buCLBB3ybIKjCcWMQi4B0pO
+ KNR37eancBQgbBSSKsYM+zNl5zforKFuPdazAK8oFgc/nLKN71WmjzyXNay9e/8B
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16.10.19 13:47, Michal Hocko wrote:
-> On Thu 19-09-19 16:22:27, David Hildenbrand wrote:
->> virtio-mem wants to offline and remove a memory block once it unplugged
->> all subblocks (e.g., using alloc_contig_range()). Let's provide
->> an interface to do that from a driver. virtio-mem already supports to
->> offline partially unplugged memory blocks. Offlining a fully unplugged
->> memory block will not require to migrate any pages. All unplugged
->> subblocks are PageOffline() and have a reference count of 0 - so
->> offlining code will simply skip them.
+On 10/16/19 2:43 PM, Hans Verkuil wrote:
+> On 10/16/19 2:39 PM, Ricardo Ribalda Delgado wrote:
+>> Hi Hans:
 >>
->> All we need an interface to trigger the "offlining" and the removing in a
->> single operation - to make sure the memory block cannot get onlined by
->> user space again before it gets removed.
+>> On Wed, Oct 16, 2019 at 2:32 PM Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
+>>>
+>>> On 10/16/19 2:20 PM, Ricardo Ribalda Delgado wrote:
+>>>> Hi Hans
+>>>>
+>>>> Not that awkward, the user has to use the brand new
+>>>> v4l2_ctrl_ptr_create() ;). But if you prefer void * I can make the
+>>>> change.
+>>>
+>>> Well, a struct v4l2_ctrl_config is typically a static const, so you can't use
+>>> v4l2_ctrl_ptr_create().
+>>>
+>>> Hmm, perhaps it is as easy as:
+>>>
+>>> static const struct v4l2_area def_area = {
+>>>         ...
+>>> };
+>>>
+>>> static const struct v4l2_ctrl_config ctrl = {
+>>>         ...
+>>>
+>>>         .p_def.p_area = &def_area,
+>>>         ...
+>>> };
+>>>
+>>> Can you do a quick compile check that I am not overlooking anything?
+>>>
+>>> If this works, then I'll take this patch.
 >>
->> To keep things simple, allow to only work on a single memory block.
+>> Testing with gcc 9.2.1
+>>
+>> This works fine, no warning/error:
+>>
+>> static struct v4l2_area unit_size = {
+>> .width = UNIT_SIZE,
+>> .height = UNIT_SIZE,
+>> };
+>> static struct v4l2_ctrl_config area_ctrl = {
+>> .type = V4L2_CTRL_TYPE_AREA,
+>> .flags = V4L2_CTRL_FLAG_READ_ONLY,
+>> .p_def.p_area = &unit_size,
+>> };
+>>
+>> but if unit_size is set as CONST:
+>> static const struct v4l2_area
+>>
+>> Then:
+>> drivers/qtec/qtec_sony.c: In function ‘qtec_sony_probe’:
+>> drivers/qtec/qtec_sony.c:3151:19: warning: initialization discards
+>> ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
+>>  3151 |   .p_def.p_area = &unit_size,
+>>       |
 > 
-> Without a user it is not really clear why do we need this interface.
-> I am also not really sure why do you want/need to control beyond the
-> offlining stage. Care to explain some more?
+> Hmm. So we need a const void *p_def instead.
+
+Ah, v4l2_ctrl_ptr_create() expects a non-const pointer.
+
+What happens if union v4l2_ctrl_ptr p_def; in struct v4l2_ctrl changes
+to const union v4l2_ctrl_ptr p_def; ?
+
+You'll need to add const elsewhere as well, but since the default value
+is const, this might work.
+
+I'm not entirely sure this is correct code, though, but it's worth trying
+it.
+
+Regards,
+
+	Hans
+
+> 
+> Regards,
+> 
+> 	Hans
+> 
+>>
+>>>
+>>> Regards,
+>>>
+>>>         Hans
+>>>
+>>>>
+>>>> Regards
+>>>>
+>>>> On Wed, Oct 16, 2019 at 2:17 PM Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
+>>>>>
+>>>>> On 10/14/19 4:14 PM, Ricardo Ribalda Delgado wrote:
+>>>>>> This allows setting the default value on compound controls created via
+>>>>>> v4l2_ctrl_new_custom.
+>>>>>>
+>>>>>> Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
+>>>>>> ---
+>>>>>>  drivers/media/v4l2-core/v4l2-ctrls.c | 2 +-
+>>>>>>  include/media/v4l2-ctrls.h           | 2 ++
+>>>>>>  2 files changed, 3 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
+>>>>>> index bf50d37ef6c1..12cf38f73f7b 100644
+>>>>>> --- a/drivers/media/v4l2-core/v4l2-ctrls.c
+>>>>>> +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+>>>>>> @@ -2583,7 +2583,7 @@ struct v4l2_ctrl *v4l2_ctrl_new_custom(struct v4l2_ctrl_handler *hdl,
+>>>>>>                       type, min, max,
+>>>>>>                       is_menu ? cfg->menu_skip_mask : step, def,
+>>>>>>                       cfg->dims, cfg->elem_size,
+>>>>>> -                     flags, qmenu, qmenu_int, ptr_null, priv);
+>>>>>> +                     flags, qmenu, qmenu_int, cfg->p_def, priv);
+>>>>>>       if (ctrl)
+>>>>>>               ctrl->is_private = cfg->is_private;
+>>>>>>       return ctrl;
+>>>>>> diff --git a/include/media/v4l2-ctrls.h b/include/media/v4l2-ctrls.h
+>>>>>> index 26205ba3a0a0..2fca5b823961 100644
+>>>>>> --- a/include/media/v4l2-ctrls.h
+>>>>>> +++ b/include/media/v4l2-ctrls.h
+>>>>>> @@ -375,6 +375,7 @@ struct v4l2_ctrl_handler {
+>>>>>>   * @max:     The control's maximum value.
+>>>>>>   * @step:    The control's step value for non-menu controls.
+>>>>>>   * @def:     The control's default value.
+>>>>>> + * @p_def:   The control's default value for compound controls.
+>>>>>>   * @dims:    The size of each dimension.
+>>>>>>   * @elem_size:       The size in bytes of the control.
+>>>>>>   * @flags:   The control's flags.
+>>>>>> @@ -403,6 +404,7 @@ struct v4l2_ctrl_config {
+>>>>>>       s64 max;
+>>>>>>       u64 step;
+>>>>>>       s64 def;
+>>>>>> +     union v4l2_ctrl_ptr p_def;
+>>>>>>       u32 dims[V4L2_CTRL_MAX_DIMS];
+>>>>>>       u32 elem_size;
+>>>>>>       u32 flags;
+>>>>>>
+>>>>>
+>>>>> I'm not sure about this. It might be a bit awkward to initialize p_def given that it is a union.
+>>>>>
+>>>>> Perhaps a simple void pointer would be easier?
+>>>>>
+>>>>> Regards,
+>>>>>
+>>>>>         Hans
+>>>
 > 
 
-The user is the next (small) patch in this series:
-
-https://lkml.org/lkml/2019/9/19/475
-
-Let's assume virtio-mem added a memory block and that block was onlined 
-(e.g. by user space). E.g. 128MB.
-
-On request, virtio-mem used alloc_contig_range() to logically unplug all 
-chunks (e.g., 4MB) of that memory block. virtio-mem marked all pages 
-PG_offline and dropped the reference count to 0 (to allow the memory 
-block to get offlined). Basically no memory of the memory block is still 
-in use by the system. So it is very desirable to remove that memory 
-block along with the vmemmap and the page tables. This frees up memory.
-
-In order to remove the memory block, it first has to be officially 
-offlined (e.g., make the memory block as offline). Then, the memory 
-block can get cleanly removed. Otherwise, try_remove_memory() will fail.
-
-To do this, virtio-mem needs an interface to perform both steps (offline 
-+ remove).
-
-There is no interface for a driver to offline a memory block. What I 
-propose here performs both steps (offline+remove) in a single step, as 
-that is really what the driver wants.
-
--- 
-
-Thanks,
-
-David / dhildenb
