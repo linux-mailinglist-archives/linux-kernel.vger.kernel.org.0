@@ -2,165 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E67AFD9433
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 16:45:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4663D9444
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 16:49:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405798AbfJPOpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 10:45:50 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38489 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727167AbfJPOps (ORCPT
+        id S2405758AbfJPOtH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 10:49:07 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:37336 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731322AbfJPOtH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 10:45:48 -0400
-Received: by mail-wr1-f65.google.com with SMTP id y18so18952153wrn.5
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 07:45:47 -0700 (PDT)
+        Wed, 16 Oct 2019 10:49:07 -0400
+Received: by mail-oi1-f194.google.com with SMTP id i16so20289556oie.4
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 07:49:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=B2kmhxpHzT/W8YmXwqPn9jM6tjvYg2CfLXyu9jlga3E=;
-        b=lnX4/9csxZeW/BQFOa425K21Hm+rofjHkJaxs2FNuV9sijpmgLwMR9uCTnc36WSKjw
-         Nn6coLQzcbSWKO/5fJM33lZAdo/vnRJkH/ixmjnCXpgEk7kGOe+YB3elDOgBnuWpssSW
-         oBvlZLUcf83k/rZGlBcVVSspvINLTKqzRQhrLQdvsIIoSS+UhBvnZHL//4eQjJZRt/QE
-         IxMEJDlMA6L3RZedUbPanQOgKbjUJl1M55ph/S+mtqBd0hQ5yBsokaY3LrAETeOifWw7
-         Z/2Bviq5MjIjbuqX+42gznD1CNlPRDSWqbe6BWfP9KXSGWu8LSiHAiOBoxwpe0Ahk4ZM
-         OSBg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=w1bxrgVA37G+vlASPmtvWKFuCtmhkeFNcRz6WRlmRjU=;
+        b=cV/mvzRfHOQQSRtHHeQpRDH7Gm9zRPlfcWS9R5ZhcSzGTi98v3A9AAlhUsyazP7Laz
+         5lmdp7D4vUQEi557gGii1CzHcNk+MgGKFrm/cbfY1drUb2PsXsHH1vYEBIfhUBte9h8R
+         +9K66Slzy/v6RP1V8mAbkgQ3peCNr+vnwZ52Z6CdCaYh1cL+7DtTrGfiWg0yNmOAH2fe
+         3ivwLseXQjkqFqEd99cHdWz/ycBGljWtsgl3pL+TsNn8LYHynVV2lxeDQp+j1qJOqsy8
+         QgH3QGjL2dSW+TWsc0lbEwc34KDF8Pm5togWdw8MIEuc4PLQkfJQE1Cc3aNOtIo4JYVx
+         4UNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=B2kmhxpHzT/W8YmXwqPn9jM6tjvYg2CfLXyu9jlga3E=;
-        b=WXKUG5Lx0P8Ui2lTprHnDGCXih8Q/thQrdmLgr20Z5P7b02ww3P2Gd5VAbZT39nPDu
-         84fNRK/2g/spGPdibJ+V7IA7xLQ0w0O6ORQOnNj9W98B2xbGzrfJs4OGmys7QgoC7cuo
-         +SHfM5qoTe3T7Me2CiYP9UfsAx1TKkiLTWj+SgrfgUuXhNZ3k22fYRoLIkzcZWy7gG06
-         uhPMUr9tdcOL6m0LTMowoxd5xfBpl7J7ejtDi27ND/Qjs2t4Ccqizz1KuqHAMMYYfKoj
-         N+NL5kXZmDsEjbebJ/GQ7ysVMxOzKtJX/lt1PyZvLkF6iYrPCcnlM/utGSWiXaBfGhym
-         DamA==
-X-Gm-Message-State: APjAAAUdR7PMeJgSBWRJmVX/7uxXJR3NW5iLFKFWClOt7FU4odI5oBgD
-        HjtlHpmGr0QSa4kTTIo/rpma2OlG
-X-Google-Smtp-Source: APXvYqwphoX3NKpjlDQIPrJ5NiNPpTPXR6/fV0+svh+VYlot2u7K2+Y10+3vHavNWs0Ry96lhdGGCg==
-X-Received: by 2002:a5d:6651:: with SMTP id f17mr3167654wrw.175.1571237146714;
-        Wed, 16 Oct 2019 07:45:46 -0700 (PDT)
-Received: from debian.office.codethink.co.uk ([167.98.27.226])
-        by smtp.gmail.com with ESMTPSA id q3sm22211733wru.33.2019.10.16.07.45.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 16 Oct 2019 07:45:46 -0700 (PDT)
-From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, Michal Kubecek <mkubecek@suse.cz>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4/4] parport: daisy: use new parport device model
-Date:   Wed, 16 Oct 2019 15:45:40 +0100
-Message-Id: <20191016144540.18810-4-sudipm.mukherjee@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20191016144540.18810-1-sudipm.mukherjee@gmail.com>
-References: <20191016144540.18810-1-sudipm.mukherjee@gmail.com>
+         :references:mime-version:content-transfer-encoding;
+        bh=w1bxrgVA37G+vlASPmtvWKFuCtmhkeFNcRz6WRlmRjU=;
+        b=G0sOZDQmwxVDQ4vVcx1+xNzX3xFahTQ/ciYTmOG5+C1w6Ke80VW39LZiGLWzdCuJU/
+         XJdYKKsMBu3IiQ+r+0f1AVpFbQbptYkssg+AM0AuMbE4jYtj0HcOevn5Dv2+x0rJZQb3
+         IDZKAs5IfwuTyL51WC6CQ2aYvLPs690TYbLQj58AQSuZ6A87gx70hDxdWLrMpKMrUn7f
+         fBui8lkn74aahpIxHwb3HaSrHn4z0Wxw1p0Kx4Z5sEiW6/fjVWKn7SP2/pmhxuXADmYJ
+         pCUBhvhCjXzxRDuOcThVF0JnAjoxKVganEom/IMyqxwPIWrDNhL9EqPZ4v9jKlItOnI6
+         d2GQ==
+X-Gm-Message-State: APjAAAWggiUWGyvArOUu/8UN+vXhm+mDTUdo29Sgp+7qgM9H3/JWUmI/
+        52w9AeLX9u1ARrBUHdQyau4=
+X-Google-Smtp-Source: APXvYqyN5zisgMnkVtiqZYBEqq7Y3oEfz/wNwyVWCQzqSRIXm/Hfh5W+j6xi9TCcQ44CZ63kx7p2kg==
+X-Received: by 2002:aca:dd07:: with SMTP id u7mr4009174oig.106.1571237346163;
+        Wed, 16 Oct 2019 07:49:06 -0700 (PDT)
+Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id k3sm7281574otn.38.2019.10.16.07.49.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2019 07:49:05 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH -next v3] arm64: mm: Fix unused variable warning in zone_sizes_init
+Date:   Wed, 16 Oct 2019 07:47:14 -0700
+Message-Id: <20191016144713.23792-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191016031107.30045-1-natechancellor@gmail.com>
+References: <20191016031107.30045-1-natechancellor@gmail.com>
+MIME-Version: 1.0
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Modify parport daisy driver to use the new parallel port device model.
+When building arm64 allnoconfig, CONFIG_ZONE_DMA and CONFIG_ZONE_DMA32
+get disabled so there is a warning about max_dma being unused.
 
-Last attempt was '1aec4211204d ("parport: daisy: use new parport device
-model")' which failed as daisy was also trying to load the low level
-driver and that resulted in a deadlock.
+../arch/arm64/mm/init.c:215:16: warning: unused variable 'max_dma'
+[-Wunused-variable]
+        unsigned long max_dma = min;
+                      ^
+1 warning generated.
 
-Cc: Michal Kubecek <mkubecek@suse.cz>
-Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Add __maybe_unused to make this clear to the compiler.
+
+Fixes: 1a8e1cef7603 ("arm64: use both ZONE_DMA and ZONE_DMA32")
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
 
-Steven, Michal,
-Can you please test this series in your test environment and verify that
-I am not breaking anything this time.
+v1 -> v2:
 
- drivers/parport/daisy.c | 40 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 39 insertions(+), 1 deletion(-)
+* Fix check for CONFIG_ZONE_DMA32 as pointed out by Will.
 
-diff --git a/drivers/parport/daisy.c b/drivers/parport/daisy.c
-index 5484a46dafda..95b5c3363582 100644
---- a/drivers/parport/daisy.c
-+++ b/drivers/parport/daisy.c
-@@ -45,6 +45,7 @@ static struct daisydev {
- static DEFINE_SPINLOCK(topology_lock);
+v2 -> v3:
+
+* Use __maybe_unused attribute instead of preprocessor ifdefs
+  to conform to section 21 of the coding style as pointed out by
+  Catalin.
+
+ arch/arm64/mm/init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index 44f07fdf7a59..71b45c58218b 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -212,7 +212,7 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max)
+ 	struct memblock_region *reg;
+ 	unsigned long zone_size[MAX_NR_ZONES], zhole_size[MAX_NR_ZONES];
+ 	unsigned long max_dma32 = min;
+-	unsigned long max_dma = min;
++	unsigned long __maybe_unused max_dma = min;
  
- static int numdevs;
-+static bool daisy_init_done;
+ 	memset(zone_size, 0, sizeof(zone_size));
  
- /* Forward-declaration of lower-level functions. */
- static int mux_present(struct parport *port);
-@@ -87,6 +88,24 @@ static struct parport *clone_parport(struct parport *real, int muxport)
- 	return extra;
- }
- 
-+static int daisy_drv_probe(struct pardevice *par_dev)
-+{
-+	struct device_driver *drv = par_dev->dev.driver;
-+
-+	if (strcmp(drv->name, "daisy_drv"))
-+		return -ENODEV;
-+	if (strcmp(par_dev->name, daisy_dev_name))
-+		return -ENODEV;
-+
-+	return 0;
-+}
-+
-+static struct parport_driver daisy_driver = {
-+	.name = "daisy_drv",
-+	.probe = daisy_drv_probe,
-+	.devmodel = true,
-+};
-+
- /* Discover the IEEE1284.3 topology on a port -- muxes and daisy chains.
-  * Return value is number of devices actually detected. */
- int parport_daisy_init(struct parport *port)
-@@ -98,6 +117,23 @@ int parport_daisy_init(struct parport *port)
- 	int i;
- 	int last_try = 0;
- 
-+	if (!daisy_init_done) {
-+		/*
-+		 * flag should be marked true first as
-+		 * parport_register_driver() might try to load the low
-+		 * level driver which will lead to announcing new ports
-+		 * and which will again come back here at
-+		 * parport_daisy_init()
-+		 */
-+		daisy_init_done = true;
-+		i = parport_register_driver(&daisy_driver);
-+		if (i) {
-+			pr_err("daisy registration failed\n");
-+			daisy_init_done = false;
-+			return i;
-+		}
-+	}
-+
- again:
- 	/* Because this is called before any other devices exist,
- 	 * we don't have to claim exclusive access.  */
-@@ -213,10 +249,12 @@ void parport_daisy_fini(struct parport *port)
- struct pardevice *parport_open(int devnum, const char *name)
- {
- 	struct daisydev *p = topology;
-+	struct pardev_cb par_cb;
- 	struct parport *port;
- 	struct pardevice *dev;
- 	int daisy;
- 
-+	memset(&par_cb, 0, sizeof(par_cb));
- 	spin_lock(&topology_lock);
- 	while (p && p->devnum != devnum)
- 		p = p->next;
-@@ -230,7 +268,7 @@ struct pardevice *parport_open(int devnum, const char *name)
- 	port = parport_get_port(p->port);
- 	spin_unlock(&topology_lock);
- 
--	dev = parport_register_device(port, name, NULL, NULL, NULL, 0, NULL);
-+	dev = parport_register_dev_model(port, name, &par_cb, devnum);
- 	parport_put_port(port);
- 	if (!dev)
- 		return NULL;
 -- 
-2.11.0
+2.23.0
 
