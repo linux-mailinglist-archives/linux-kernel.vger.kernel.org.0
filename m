@@ -2,46 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44232DA0B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:25:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C20C8D9FEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:24:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405289AbfJPWOm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:14:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46596 "EHLO mail.kernel.org"
+        id S2406922AbfJPWGF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:06:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395244AbfJPVzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:55:40 -0400
+        id S2438209AbfJPV6i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:58:38 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29D7B21A49;
-        Wed, 16 Oct 2019 21:55:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D549021D7E;
+        Wed, 16 Oct 2019 21:58:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262939;
-        bh=REzPX+ps4EsntGq1fEN2z9PLK2GMZpTroTB3Ljksu9A=;
+        s=default; t=1571263117;
+        bh=yk9sT55xKYSbTU7SwJdDXKQs5jxFZqeLsk4v9Gu/aQY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SqSziGYBbE2YpvGxC9eb4EXoTBE4RijsMuOpNakre6C+K+iBfIT7OIVlZaCsUoyZf
-         3Fl6qRj3qyf3nv0G+mXMZbmbozTXumaFt3g6Z8cX6D99u483+4tZ6v8hzRCjHI9Mnd
-         fbkU13TTeYVLc3N2L6yC7SO4mHFyIaLP8xvc2Ryw=
+        b=b1AHQgIr28ccZ1Z4oYH/XxjepXW1Bf90O/bh6w0ww5tEwQjD9Xw00rmseK6k5gKUt
+         dSpYPgUm3MXnl3rHEFarPR2oFJuINoEz2dPdoQGwVp7TQaI5UwZDmsHci1pC56mDiw
+         rnGSEdLVhVckZC5uvY+dAwKxjntaZnb8IZlYWGVc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will@kernel.org>,
-        Xogium <contact@xogium.me>, Kees Cook <keescook@chromium.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>, Petr Mladek <pmladek@suse.com>,
-        Feng Tang <feng.tang@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 01/65] panic: ensure preemption is disabled during panic()
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 5.3 023/112] USB: ldusb: fix NULL-derefs on driver unbind
 Date:   Wed, 16 Oct 2019 14:50:15 -0700
-Message-Id: <20191016214756.999293102@linuxfoundation.org>
+Message-Id: <20191016214851.712718557@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
-References: <20191016214756.457746573@linuxfoundation.org>
+In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
+References: <20191016214844.038848564@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -50,82 +42,130 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Will Deacon <will@kernel.org>
+From: Johan Hovold <johan@kernel.org>
 
-commit 20bb759a66be52cf4a9ddd17fddaf509e11490cd upstream.
+commit 58ecf131e74620305175a7aa103f81350bb37570 upstream.
 
-Calling 'panic()' on a kernel with CONFIG_PREEMPT=y can leave the
-calling CPU in an infinite loop, but with interrupts and preemption
-enabled.  From this state, userspace can continue to be scheduled,
-despite the system being "dead" as far as the kernel is concerned.
+The driver was using its struct usb_interface pointer as an inverted
+disconnected flag, but was setting it to NULL before making sure all
+completion handlers had run. This could lead to a NULL-pointer
+dereference in a number of dev_dbg, dev_warn and dev_err statements in
+the completion handlers which relies on said pointer.
 
-This is easily reproducible on arm64 when booting with "nosmp" on the
-command line; a couple of shell scripts print out a periodic "Ping"
-message whilst another triggers a crash by writing to
-/proc/sysrq-trigger:
+Fix this by unconditionally stopping all I/O and preventing
+resubmissions by poisoning the interrupt URBs at disconnect and using a
+dedicated disconnected flag.
 
-  | sysrq: Trigger a crash
-  | Kernel panic - not syncing: sysrq triggered crash
-  | CPU: 0 PID: 1 Comm: init Not tainted 5.2.15 #1
-  | Hardware name: linux,dummy-virt (DT)
-  | Call trace:
-  |  dump_backtrace+0x0/0x148
-  |  show_stack+0x14/0x20
-  |  dump_stack+0xa0/0xc4
-  |  panic+0x140/0x32c
-  |  sysrq_handle_reboot+0x0/0x20
-  |  __handle_sysrq+0x124/0x190
-  |  write_sysrq_trigger+0x64/0x88
-  |  proc_reg_write+0x60/0xa8
-  |  __vfs_write+0x18/0x40
-  |  vfs_write+0xa4/0x1b8
-  |  ksys_write+0x64/0xf0
-  |  __arm64_sys_write+0x14/0x20
-  |  el0_svc_common.constprop.0+0xb0/0x168
-  |  el0_svc_handler+0x28/0x78
-  |  el0_svc+0x8/0xc
-  | Kernel Offset: disabled
-  | CPU features: 0x0002,24002004
-  | Memory Limit: none
-  | ---[ end Kernel panic - not syncing: sysrq triggered crash ]---
-  |  Ping 2!
-  |  Ping 1!
-  |  Ping 1!
-  |  Ping 2!
+This also makes sure that all I/O has completed by the time the
+disconnect callback returns.
 
-The issue can also be triggered on x86 kernels if CONFIG_SMP=n,
-otherwise local interrupts are disabled in 'smp_send_stop()'.
-
-Disable preemption in 'panic()' before re-enabling interrupts.
-
-Link: http://lkml.kernel.org/r/20191002123538.22609-1-will@kernel.org
-Link: https://lore.kernel.org/r/BX1W47JXPMR8.58IYW53H6M5N@dragonstone
-Signed-off-by: Will Deacon <will@kernel.org>
-Reported-by: Xogium <contact@xogium.me>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Feng Tang <feng.tang@intel.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 2824bd250f0b ("[PATCH] USB: add ldusb driver")
+Cc: stable <stable@vger.kernel.org>     # 2.6.13
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191009153848.8664-4-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/panic.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/misc/ldusb.c |   24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -146,6 +146,7 @@ void panic(const char *fmt, ...)
- 	 * after setting panic_cpu) from invoking panic() again.
- 	 */
- 	local_irq_disable();
-+	preempt_disable_notrace();
+--- a/drivers/usb/misc/ldusb.c
++++ b/drivers/usb/misc/ldusb.c
+@@ -153,6 +153,7 @@ MODULE_PARM_DESC(min_interrupt_out_inter
+ struct ld_usb {
+ 	struct mutex		mutex;		/* locks this structure */
+ 	struct usb_interface	*intf;		/* save off the usb interface pointer */
++	unsigned long		disconnected:1;
  
- 	/*
- 	 * It's possible to come here directly from a panic-assertion and
+ 	int			open_count;	/* number of times this port has been opened */
+ 
+@@ -192,12 +193,10 @@ static void ld_usb_abort_transfers(struc
+ 	/* shutdown transfer */
+ 	if (dev->interrupt_in_running) {
+ 		dev->interrupt_in_running = 0;
+-		if (dev->intf)
+-			usb_kill_urb(dev->interrupt_in_urb);
++		usb_kill_urb(dev->interrupt_in_urb);
+ 	}
+ 	if (dev->interrupt_out_busy)
+-		if (dev->intf)
+-			usb_kill_urb(dev->interrupt_out_urb);
++		usb_kill_urb(dev->interrupt_out_urb);
+ }
+ 
+ /**
+@@ -205,8 +204,6 @@ static void ld_usb_abort_transfers(struc
+  */
+ static void ld_usb_delete(struct ld_usb *dev)
+ {
+-	ld_usb_abort_transfers(dev);
+-
+ 	/* free data structures */
+ 	usb_free_urb(dev->interrupt_in_urb);
+ 	usb_free_urb(dev->interrupt_out_urb);
+@@ -263,7 +260,7 @@ static void ld_usb_interrupt_in_callback
+ 
+ resubmit:
+ 	/* resubmit if we're still running */
+-	if (dev->interrupt_in_running && !dev->buffer_overflow && dev->intf) {
++	if (dev->interrupt_in_running && !dev->buffer_overflow) {
+ 		retval = usb_submit_urb(dev->interrupt_in_urb, GFP_ATOMIC);
+ 		if (retval) {
+ 			dev_err(&dev->intf->dev,
+@@ -392,7 +389,7 @@ static int ld_usb_release(struct inode *
+ 		retval = -ENODEV;
+ 		goto unlock_exit;
+ 	}
+-	if (dev->intf == NULL) {
++	if (dev->disconnected) {
+ 		/* the device was unplugged before the file was released */
+ 		mutex_unlock(&dev->mutex);
+ 		/* unlock here as ld_usb_delete frees dev */
+@@ -423,7 +420,7 @@ static __poll_t ld_usb_poll(struct file
+ 
+ 	dev = file->private_data;
+ 
+-	if (!dev->intf)
++	if (dev->disconnected)
+ 		return EPOLLERR | EPOLLHUP;
+ 
+ 	poll_wait(file, &dev->read_wait, wait);
+@@ -462,7 +459,7 @@ static ssize_t ld_usb_read(struct file *
+ 	}
+ 
+ 	/* verify that the device wasn't unplugged */
+-	if (dev->intf == NULL) {
++	if (dev->disconnected) {
+ 		retval = -ENODEV;
+ 		printk(KERN_ERR "ldusb: No device or device unplugged %d\n", retval);
+ 		goto unlock_exit;
+@@ -542,7 +539,7 @@ static ssize_t ld_usb_write(struct file
+ 	}
+ 
+ 	/* verify that the device wasn't unplugged */
+-	if (dev->intf == NULL) {
++	if (dev->disconnected) {
+ 		retval = -ENODEV;
+ 		printk(KERN_ERR "ldusb: No device or device unplugged %d\n", retval);
+ 		goto unlock_exit;
+@@ -764,6 +761,9 @@ static void ld_usb_disconnect(struct usb
+ 	/* give back our minor */
+ 	usb_deregister_dev(intf, &ld_usb_class);
+ 
++	usb_poison_urb(dev->interrupt_in_urb);
++	usb_poison_urb(dev->interrupt_out_urb);
++
+ 	mutex_lock(&dev->mutex);
+ 
+ 	/* if the device is not opened, then we clean up right now */
+@@ -771,7 +771,7 @@ static void ld_usb_disconnect(struct usb
+ 		mutex_unlock(&dev->mutex);
+ 		ld_usb_delete(dev);
+ 	} else {
+-		dev->intf = NULL;
++		dev->disconnected = 1;
+ 		/* wake up pollers */
+ 		wake_up_interruptible_all(&dev->read_wait);
+ 		wake_up_interruptible_all(&dev->write_wait);
 
 
