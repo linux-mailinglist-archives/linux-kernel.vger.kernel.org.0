@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F4EBDA171
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:27:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CB66D9F5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407674AbfJPWXW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:23:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41442 "EHLO mail.kernel.org"
+        id S2388273AbfJPVyd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:54:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437094AbfJPVw6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:52:58 -0400
+        id S2394952AbfJPVyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:54:15 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1701520872;
-        Wed, 16 Oct 2019 21:52:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 005EE21925;
+        Wed, 16 Oct 2019 21:54:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262778;
-        bh=x5Dh/lsFvWpy8PJRDAS+pIIwjaN0mNYgFOUG/aDqDhc=;
+        s=default; t=1571262855;
+        bh=f6t4c88a69fuHzhV8io9AVBJIcK7SkSDMOV9GaanKkY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ADQGG74rwagV0B+Qob24NDzkPVMlCPYj4wz8xm4DlxooPzw0loX860VOOSIIn4QhC
-         nOzrburxQ3qoLnCi/LWfzbHT59D2ZwUs61aOxS6vDdr6uJ9/Mzem5ii0CgXG72jpZy
-         G+oeKdCtM7d7veAJmisZl42OK5dEJo4FR88v37zA=
+        b=F2d5ps6xO5jN95Rr9xsLYnNx7RWcQKJLhxCJFoxms/k3JS08GFVDpeaWLjTGf9m6g
+         PqS5cMOdilzbGfFYn6NtwGWGmXcC0fRSpY/g+dSqm0rorE5eeqOJ23KLK6L+90kdjg
+         DLtkViwZdt0PQ+ZjZNqhe87HGbUNw7L/EE03vyDw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        zhengbin <zhengbin13@huawei.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
+        stable@vger.kernel.org, Trek <trek00@inbox.ru>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 19/79] fuse: fix memleak in cuse_channel_open
+Subject: [PATCH 4.9 21/92] drm/amdgpu: Check for valid number of registers to read
 Date:   Wed, 16 Oct 2019 14:49:54 -0700
-Message-Id: <20191016214747.875720830@linuxfoundation.org>
+Message-Id: <20191016214818.171084892@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214729.758892904@linuxfoundation.org>
-References: <20191016214729.758892904@linuxfoundation.org>
+In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
+References: <20191016214759.600329427@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhengbin <zhengbin13@huawei.com>
+From: Trek <trek00@inbox.ru>
 
-[ Upstream commit 9ad09b1976c562061636ff1e01bfc3a57aebe56b ]
+[ Upstream commit 73d8e6c7b841d9bf298c8928f228fb433676635c ]
 
-If cuse_send_init fails, need to fuse_conn_put cc->fc.
+Do not try to allocate any amount of memory requested by the user.
+Instead limit it to 128 registers. Actually the longest series of
+consecutive allowed registers are 48, mmGB_TILE_MODE0-31 and
+mmGB_MACROTILE_MODE0-15 (0x2644-0x2673).
 
-cuse_channel_open->fuse_conn_init->refcount_set(&fc->count, 1)
-                 ->fuse_dev_alloc->fuse_conn_get
-                 ->fuse_dev_free->fuse_conn_put
-
-Fixes: cc080e9e9be1 ("fuse: introduce per-instance fuse_dev structure")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: zhengbin <zhengbin13@huawei.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Bug: https://bugs.freedesktop.org/show_bug.cgi?id=111273
+Signed-off-by: Trek <trek00@inbox.ru>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/fuse/cuse.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/fuse/cuse.c b/fs/fuse/cuse.c
-index c5b6b71654893..d9aba97007267 100644
---- a/fs/fuse/cuse.c
-+++ b/fs/fuse/cuse.c
-@@ -513,6 +513,7 @@ static int cuse_channel_open(struct inode *inode, struct file *file)
- 	rc = cuse_send_init(cc);
- 	if (rc) {
- 		fuse_dev_free(fud);
-+		fuse_conn_put(&cc->fc);
- 		return rc;
- 	}
- 	file->private_data = fud;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
+index 3938fca1ea8e5..24941a7b659f4 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
+@@ -430,6 +430,9 @@ static int amdgpu_info_ioctl(struct drm_device *dev, void *data, struct drm_file
+ 		if (sh_num == AMDGPU_INFO_MMR_SH_INDEX_MASK)
+ 			sh_num = 0xffffffff;
+ 
++		if (info->read_mmr_reg.count > 128)
++			return -EINVAL;
++
+ 		regs = kmalloc_array(info->read_mmr_reg.count, sizeof(*regs), GFP_KERNEL);
+ 		if (!regs)
+ 			return -ENOMEM;
 -- 
 2.20.1
 
