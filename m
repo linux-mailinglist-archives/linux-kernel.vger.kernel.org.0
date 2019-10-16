@@ -2,48 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F05B3D9046
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:02:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73202D904F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:03:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732478AbfJPMC3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 08:02:29 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:49914 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726372AbfJPMC3 (ORCPT
+        id S2388542AbfJPMDW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 08:03:22 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:60972 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729585AbfJPMDV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 08:02:29 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1iKi0Y-0004F3-0O; Wed, 16 Oct 2019 14:02:26 +0200
-Date:   Wed, 16 Oct 2019 14:02:25 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH 30/34] media: cec-gpio: Use CONFIG_PREEMPTION
-Message-ID: <20191016120225.bi6zyewpruvmxlnl@linutronix.de>
-References: <20191015191821.11479-1-bigeasy@linutronix.de>
- <20191015191821.11479-31-bigeasy@linutronix.de>
- <6897ccdb-e2b7-7739-e6b9-872306895a4f@xs4all.nl>
- <23950aea-3972-64fd-9493-d7f9f81db9d2@xs4all.nl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <23950aea-3972-64fd-9493-d7f9f81db9d2@xs4all.nl>
+        Wed, 16 Oct 2019 08:03:21 -0400
+Received: from penelope.horms.nl (ip4dab7138.direct-adsl.nl [77.171.113.56])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 744E725AD78;
+        Wed, 16 Oct 2019 23:03:19 +1100 (AEDT)
+Received: by penelope.horms.nl (Postfix, from userid 7100)
+        id 577F0E2248D; Wed, 16 Oct 2019 14:03:17 +0200 (CEST)
+From:   Simon Horman <horms@verge.net.au>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>
+Subject: [PATCH] MAINTAINERS: Add Marek and Shimoda-san as R-Car PCIE co-maintainers
+Date:   Wed, 16 Oct 2019 14:02:49 +0200
+Message-Id: <20191016120249.16776-1-horms@verge.net.au>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-10-16 13:51:14 [+0200], Hans Verkuil wrote:
-> Do you want me to take this patch? Just checking.
+At the end of the v5.3 upstream development cycle I stepped down
+from my role at Renesas.
 
-It is up to you. You have all the dependencies so you can either add it
-to your -next branch or leave it and we will pick it up for you.
+Pass maintainership of the R-Car PCIE to Marek and Shimoda-san.
 
-> Regards,
-> 
-> 	Hans
+Signed-off-by: Simon Horman <horms@verge.net.au>
+---
+ MAINTAINERS | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Sebastian
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 783569e3c4b4..b61ade7afd64 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12337,7 +12337,8 @@ F:	Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+ F:	drivers/pci/controller/pci-tegra.c
+ 
+ PCI DRIVER FOR RENESAS R-CAR
+-M:	Simon Horman <horms@verge.net.au>
++M:	Marek Vasut <marek.vasut+renesas@gmail.com>
++M:	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+ L:	linux-pci@vger.kernel.org
+ L:	linux-renesas-soc@vger.kernel.org
+ S:	Maintained
+-- 
+2.11.0
+
