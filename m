@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DD80D9F9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E748DA093
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:25:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406645AbfJPV41 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:56:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47564 "EHLO mail.kernel.org"
+        id S2439276AbfJPWMp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:12:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403919AbfJPV4K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:56:10 -0400
+        id S2404008AbfJPV4M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:56:12 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14BE821D7C;
-        Wed, 16 Oct 2019 21:56:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E0D321925;
+        Wed, 16 Oct 2019 21:56:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262970;
-        bh=Qe3ssngl+iI31CVqlySl7zSBeFLqt0/1fydfQVk9lF0=;
+        s=default; t=1571262971;
+        bh=oxkWNxzXo5Rq8VQmI1FVdzmCWqOC2IDSLeRr5WFXm6o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RBcYT3Bo4Zx0YguReE3spHrqf+1vDCZ0Smu7NgvFt7E/GXQr5i6DEUYBCzAygH8h8
-         qoqdvx6mtD3SgpldwWY+9DKE6Ue8EDluFY65X/wSykrYWk1a+oYW8ueV17gu9QjbMq
-         BNfxELCybjFmyQpvJrBae1RtZG72mOQ2O4lct9MY=
+        b=MfQcNc04WSegiu0Yd7nvGuWA7U5YeNtaVnAQdWn8Tvkvs2TESk7gzNowkKxq+0/bB
+         aIM2APZsz3YCvyKpRoUrzsi+JjRWCClRb143/KcAvVWprbGdquf3t1K3Hijg8B1nnm
+         mqRrn3ek3boQZTnP8jIHWPvA3nssfWwFQlf0fFVE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 05/65] USB: yurex: fix NULL-derefs on disconnect
-Date:   Wed, 16 Oct 2019 14:50:19 -0700
-Message-Id: <20191016214758.841340240@linuxfoundation.org>
+Subject: [PATCH 4.14 06/65] USB: usb-skeleton: fix runtime PM after driver unbind
+Date:   Wed, 16 Oct 2019 14:50:20 -0700
+Message-Id: <20191016214800.020396108@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
 References: <20191016214756.457746573@linuxfoundation.org>
@@ -44,90 +44,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Johan Hovold <johan@kernel.org>
 
-commit aafb00a977cf7d81821f7c9d12e04c558c22dc3c upstream.
+commit 5c290a5e42c3387e82de86965784d30e6c5270fd upstream.
 
-The driver was using its struct usb_interface pointer as an inverted
-disconnected flag, but was setting it to NULL without making sure all
-code paths that used it were done with it.
+Since commit c2b71462d294 ("USB: core: Fix bug caused by duplicate
+interface PM usage counter") USB drivers must always balance their
+runtime PM gets and puts, including when the driver has already been
+unbound from the interface.
 
-Before commit ef61eb43ada6 ("USB: yurex: Fix protection fault after
-device removal") this included the interrupt-in completion handler, but
-there are further accesses in dev_err and dev_dbg statements in
-yurex_write() and the driver-data destructor (sic!).
+Leaving the interface with a positive PM usage counter would prevent a
+later bound driver from suspending the device.
 
-Fix this by unconditionally stopping also the control URB at disconnect
-and by using a dedicated disconnected flag.
-
-Note that we need to take a reference to the struct usb_interface to
-avoid a use-after-free in the destructor whenever the device was
-disconnected while the character device was still open.
-
-Fixes: aadd6472d904 ("USB: yurex.c: remove dbg() usage")
-Fixes: 45714104b9e8 ("USB: yurex.c: remove err() usage")
-Cc: stable <stable@vger.kernel.org>     # 3.5: ef61eb43ada6
+Fixes: c2b71462d294 ("USB: core: Fix bug caused by duplicate interface PM usage counter")
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191009153848.8664-6-johan@kernel.org
+Link: https://lore.kernel.org/r/20191001084908.2003-2-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/yurex.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/usb/usb-skeleton.c |    8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
---- a/drivers/usb/misc/yurex.c
-+++ b/drivers/usb/misc/yurex.c
-@@ -64,6 +64,7 @@ struct usb_yurex {
+--- a/drivers/usb/usb-skeleton.c
++++ b/drivers/usb/usb-skeleton.c
+@@ -75,6 +75,7 @@ static void skel_delete(struct kref *kre
+ 	struct usb_skel *dev = to_skel_dev(kref);
  
- 	struct kref		kref;
- 	struct mutex		io_mutex;
-+	unsigned long		disconnected:1;
- 	struct fasync_struct	*async_queue;
- 	wait_queue_head_t	waitq;
- 
-@@ -111,6 +112,7 @@ static void yurex_delete(struct kref *kr
- 				dev->int_buffer, dev->urb->transfer_dma);
- 		usb_free_urb(dev->urb);
- 	}
+ 	usb_free_urb(dev->bulk_in_urb);
 +	usb_put_intf(dev->interface);
  	usb_put_dev(dev->udev);
+ 	kfree(dev->bulk_in_buffer);
  	kfree(dev);
- }
-@@ -209,7 +211,7 @@ static int yurex_probe(struct usb_interf
- 	init_waitqueue_head(&dev->waitq);
+@@ -126,10 +127,7 @@ static int skel_release(struct inode *in
+ 		return -ENODEV;
+ 
+ 	/* allow the device to be autosuspended */
+-	mutex_lock(&dev->io_mutex);
+-	if (dev->interface)
+-		usb_autopm_put_interface(dev->interface);
+-	mutex_unlock(&dev->io_mutex);
++	usb_autopm_put_interface(dev->interface);
+ 
+ 	/* decrement the count on our device */
+ 	kref_put(&dev->kref, skel_delete);
+@@ -507,7 +505,7 @@ static int skel_probe(struct usb_interfa
+ 	init_waitqueue_head(&dev->bulk_in_wait);
  
  	dev->udev = usb_get_dev(interface_to_usbdev(interface));
 -	dev->interface = interface;
 +	dev->interface = usb_get_intf(interface);
  
  	/* set up the endpoint information */
- 	iface_desc = interface->cur_altsetting;
-@@ -320,8 +322,9 @@ static void yurex_disconnect(struct usb_
- 
- 	/* prevent more I/O from starting */
- 	usb_poison_urb(dev->urb);
-+	usb_poison_urb(dev->cntl_urb);
- 	mutex_lock(&dev->io_mutex);
--	dev->interface = NULL;
-+	dev->disconnected = 1;
- 	mutex_unlock(&dev->io_mutex);
- 
- 	/* wakeup waiters */
-@@ -409,7 +412,7 @@ static ssize_t yurex_read(struct file *f
- 	dev = file->private_data;
- 
- 	mutex_lock(&dev->io_mutex);
--	if (!dev->interface) {		/* already disconnected */
-+	if (dev->disconnected) {		/* already disconnected */
- 		mutex_unlock(&dev->io_mutex);
- 		return -ENODEV;
- 	}
-@@ -444,7 +447,7 @@ static ssize_t yurex_write(struct file *
- 		goto error;
- 
- 	mutex_lock(&dev->io_mutex);
--	if (!dev->interface) {		/* already disconnected */
-+	if (dev->disconnected) {		/* already disconnected */
- 		mutex_unlock(&dev->io_mutex);
- 		retval = -ENODEV;
- 		goto error;
+ 	/* use only the first bulk-in and bulk-out endpoints */
 
 
