@@ -2,115 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A6A8D9791
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:38:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74C9FD9797
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:39:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406351AbfJPQiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 12:38:50 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47716 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731480AbfJPQit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 12:38:49 -0400
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 07E69C0546D5
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 16:38:49 +0000 (UTC)
-Received: by mail-wr1-f71.google.com with SMTP id i10so11969140wrb.20
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 09:38:48 -0700 (PDT)
+        id S2406382AbfJPQjD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 12:39:03 -0400
+Received: from mail-pg1-f171.google.com ([209.85.215.171]:43188 "EHLO
+        mail-pg1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406373AbfJPQjD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 12:39:03 -0400
+Received: by mail-pg1-f171.google.com with SMTP id i32so14599092pgl.10
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 09:39:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=uj62At7arnilFOJJbl5N7a5EkMRk8gmjDj29tsswWIE=;
+        b=rBya5PBO6sZHChGDQpT99l/deboFxP1XaW8i/9Ff0L5lelkWO7f2RuzRS3/wLiXWVb
+         XjdRwrYeSFsiAoPnxaDseJgPW0UZlbFWO5u33OaphuTGKfM2k7rEFGs8wPKGYjYIE49h
+         dORi5YyWTorA+d6D6zuQRS+tX15uEph0kH8P5A2mxeJLAIjUm3w6yQJ6yGrHKsH+OVDE
+         TlP3iEvahZXKpwACmvuRDomjXkvEREPVhWSABCM+nEe2wRs+zIvkicRGDPQep9OMWLF9
+         YI3u2S5W/FmHu/LpjWTcKfjs+P2CCCQ4Hqi4PYUuRYqGerDiMmRFcFHJDVsMeWEGscu6
+         C3bQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vjbKDvVFPL0th2krdx8wMvub7uxuN9FX2tXsWBpSZGA=;
-        b=WZKn6sCBQ24KO019zMjKMvll4v7PAVBBtxOG3Sq5o2E8+81FXvQJL/Nrzun4UVxZPa
-         /gSzjuTpA1GZC3aSHXZ4jhc4lNfGgZvg8EZ9HlWaAA73L7eH4p1gh9aCTfQALr3/uBWp
-         UshYEgWtvrx0dVdiM3jf2yJcFiiI7+4c4BQd/Ai9Jh5t1CU6Ix0em018g24AE2TkTdII
-         gCj6mPo/2s3QJY8a3ED6R/4r4dGpSXEckdPsGzLWL97rtS7Z1zzEH7FXVngZ8FKewJcQ
-         +hsWia8dcMlXR2nM/Vc848Q0p/uw/1VBTHoolLGeYzTACKP6+7o39V/OO9HfB2j6Hbt8
-         CNWQ==
-X-Gm-Message-State: APjAAAU/rpLYhT39d6HUpO5Kh6AcuK3+i8rJatAChrNyddDaMcincsBn
-        NlUUa1XAvKlPfqLMIs5cjakbJVyAl+hD5a1kI0G61Bql8k11/tQQw9jbpv5HLT+h3bSou/HzqKn
-        Am8mQsaR6IphUANzUDdG1luE8
-X-Received: by 2002:a1c:1bc5:: with SMTP id b188mr4397254wmb.88.1571243927616;
-        Wed, 16 Oct 2019 09:38:47 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyTRKkY7xojuOdJ8XLJRUq8YBcEngwDEOfnwMsHIoBx2ccVCj7UoQkvx5J80rejnnTYAPIXcw==
-X-Received: by 2002:a1c:1bc5:: with SMTP id b188mr4397221wmb.88.1571243927350;
-        Wed, 16 Oct 2019 09:38:47 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:d001:591b:c73b:6c41? ([2001:b07:6468:f312:d001:591b:c73b:6c41])
-        by smtp.gmail.com with ESMTPSA id b62sm4008159wmc.13.2019.10.16.09.38.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2019 09:38:46 -0700 (PDT)
-Subject: Re: [PATCH v9 09/17] x86/split_lock: Handle #AC exception for split
- lock
-To:     Xiaoyao Li <xiaoyao.li@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        x86 <x86@kernel.org>, kvm@vger.kernel.org
-References: <1560897679-228028-1-git-send-email-fenghua.yu@intel.com>
- <1560897679-228028-10-git-send-email-fenghua.yu@intel.com>
- <alpine.DEB.2.21.1906262209590.32342@nanos.tec.linutronix.de>
- <20190626203637.GC245468@romley-ivt3.sc.intel.com>
- <alpine.DEB.2.21.1906262338220.32342@nanos.tec.linutronix.de>
- <20190925180931.GG31852@linux.intel.com>
- <3ec328dc-2763-9da5-28d6-e28970262c58@redhat.com>
- <alpine.DEB.2.21.1910161142560.2046@nanos.tec.linutronix.de>
- <57f40083-9063-5d41-f06d-fa1ae4c78ec6@redhat.com>
- <c3ff2fb3-4380-fb07-1fa3-15896a09e748@intel.com>
- <d30652bb-89fa-671a-5691-e2c76af231d0@redhat.com>
- <8808c9ac-0906-5eec-a31f-27cbec778f9c@intel.com>
- <alpine.DEB.2.21.1910161519260.2046@nanos.tec.linutronix.de>
- <ba2c0aab-1d7c-5cfd-0054-ac2c266c1df3@redhat.com>
- <bea889c5-1599-1eb8-ff3a-3bde1e58afa3@intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <f9735fb8-650e-c263-36a7-61390ccbb662@redhat.com>
-Date:   Wed, 16 Oct 2019 18:38:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=uj62At7arnilFOJJbl5N7a5EkMRk8gmjDj29tsswWIE=;
+        b=jSYKdGITQ8K8ZUht5mi9LOIogeDOd7tGc5fLOobiVBwKFLNGZJRvPLVU1IhQiceriq
+         TVfnmONB5EQWBxz3NRzeIxhJ2FXJQTICEcw9sq80CYkh+kAt2rtohajxzLxSAu/rcGpC
+         OpbQR1bLwaPW1fj2hTo/tWcEgOZrmRRKO6t0ZaQZ4kF1eLtTow52V6IJq3FCE4kt6smL
+         4I7CFrScsTID419Y8pi5rn03ZWv9yvsguaTo3Qgy9fj3L+zVqbhTi+U4/XQysSKhqoNm
+         miJgS7WJjl+gNvPYhlSH1OEoyGY1xz+C0ZBuok9fGqfokNFgTosoGkI/4HhvbFKCovDQ
+         pcWg==
+X-Gm-Message-State: APjAAAXWZYUNDJsfRadiJNYgytxW3SBFkOhlCoxmPt0EahHH+7JY2wfH
+        BaWlfH13J2gQ9I81n0ymR9Ca9Q==
+X-Google-Smtp-Source: APXvYqy7cm/gQHTfBaihNUxg/kpuNUjJHhY1iUPuIbJzt/XJ4Le3qA+lNeFhKinPwgh0xJasS1A49w==
+X-Received: by 2002:a17:90a:2ec5:: with SMTP id h5mr6266957pjs.87.1571243941981;
+        Wed, 16 Oct 2019 09:39:01 -0700 (PDT)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.gmail.com with ESMTPSA id z4sm29661708pfn.45.2019.10.16.09.39.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 16 Oct 2019 09:39:01 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     edubezval@gmail.com
+Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        amit.kucheria@linaro.org, rui.zhang@intel.com,
+        daniel.lezcano@linaro.org
+Subject: Re: [PATCH v7 0/7] Add support of New Amlogic temperature sensor for G12 SoCs
+In-Reply-To: <20191004090114.30694-1-glaroque@baylibre.com>
+References: <20191004090114.30694-1-glaroque@baylibre.com>
+Date:   Wed, 16 Oct 2019 09:39:00 -0700
+Message-ID: <7hwod4fxwb.fsf@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <bea889c5-1599-1eb8-ff3a-3bde1e58afa3@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/10/19 18:25, Xiaoyao Li wrote:
->>
->>    3 | Y         |     Y       |  N  |   Y     |   x   | Switch
->> MSR_TEST_CTRL on
->>      |           |             |     |         |       | enter/exit,
->> plus:
->>      |           |             |     |         |       | A) #AC
->> forwarded to guest.
->>      |           |             |     |         |       | B) SIGBUS or
->> KVM exit code
->>
-> 
-> I just want to get confirmed that in (3), we should split into 2 case:
-> 
-> a) if host has it enabled, still apply the constraint that guest is
-> forcibly enabled? so we don't switch MSR_TEST_CTL.
-> 
-> b) if host has it disabled, we can switch MSR_TEST_CTL on enter/exit.
+Eduardo,
 
-That's doable, yes.
+Guillaume La Roque <glaroque@baylibre.com> writes:
 
-Paolo
+> This patchs series add support of New Amlogic temperature sensor and minimal
+> thermal zone for SEI510 and ODROID-N2 boards.
+
+[...]
+
+> Guillaume La Roque (7):
+>   dt-bindings: thermal: Add DT bindings documentation for Amlogic
+>     Thermal
+>   thermal: amlogic: Add thermal driver to support G12 SoCs
+>   arm64: dts: amlogic: g12: add temperature sensor
+>   arm64: dts: meson: g12: Add minimal thermal zone
+>   arm64: dts: amlogic: g12a: add cooling properties
+>   arm64: dts: amlogic: g12b: add cooling properties
+>   MAINTAINERS: add entry for Amlogic Thermal driver
+
+This has now been thorougly reviewed/tested.
+
+I've queued all the "arm64: dts:" patches via my amlogic tree for v5.5.
+Can you please queue up the driver, bindings and MAINTAINERS patch?
+
+Thanks,
+
+Kevin
