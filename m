@@ -2,80 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60296D98A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 19:43:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4A38D989B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 19:41:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393547AbfJPRny convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 16 Oct 2019 13:43:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49672 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390723AbfJPRnw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 13:43:52 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 687E2B5FD;
-        Wed, 16 Oct 2019 17:23:22 +0000 (UTC)
-Date:   Wed, 16 Oct 2019 19:23:21 +0200
-From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
-To:     Jakub Kicinski <jakub.kicinski@netronome.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        netdev@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Subject: Re: [PATCH v10 4/6] mfd: ioc3: Add driver for SGI IOC3 chip
-Message-Id: <20191016192321.c1ef8ea7c2533d6c8e1b98a2@suse.de>
-In-Reply-To: <20191015122349.612a230b@cakuba.netronome.com>
-References: <20191015120953.2597-1-tbogendoerfer@suse.de>
-        <20191015120953.2597-5-tbogendoerfer@suse.de>
-        <20191015122349.612a230b@cakuba.netronome.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8BIT
+        id S2389386AbfJPRlB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 13:41:01 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:54368 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726383AbfJPRlA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 13:41:00 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9GHeiln054132;
+        Wed, 16 Oct 2019 12:40:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1571247644;
+        bh=Wc7RR5GvEzErLs8YJE/8azaMJ2X1mI57r2l2h9Hi84s=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=pmneRVSlMMtJZS9TC6eP4IE7K4BF4wF7y7u3LRIFYqflLA9GQ+VyCckB/roTGGjQw
+         NsHrk6pYWjxTBjTGacKt7dAwwErYSyjBlUpNYFQpOjeRQvtwPQEREYsnVH2osls3b/
+         9FSc4kYRas+i3s6kdjxbR+T1vorvQ93zuWvWRMD4=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9GHeiGq109306
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 16 Oct 2019 12:40:44 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 16
+ Oct 2019 12:40:37 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 16 Oct 2019 12:40:44 -0500
+Received: from [10.250.79.55] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9GHehq7108884;
+        Wed, 16 Oct 2019 12:40:43 -0500
+Subject: Re: [RESEND][PATCH v8 0/5] DMA-BUF Heaps (destaging ION)
+To:     Brian Starkey <Brian.Starkey@arm.com>
+CC:     Ayan Halder <Ayan.Halder@arm.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Sudipto Paul <Sudipto.Paul@arm.com>,
+        Vincent Donnefort <Vincent.Donnefort@arm.com>,
+        Chenbo Feng <fengc@google.com>,
+        Alistair Strachan <astrachan@google.com>,
+        Liam Mark <lmark@codeaurora.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        DRI mailing list <dri-devel@lists.freedesktop.org>,
+        Hridya Valsaraju <hridya@google.com>, nd <nd@arm.com>,
+        Pratik Patel <pratikp@codeaurora.org>
+References: <20190906184712.91980-1-john.stultz@linaro.org>
+ <CAO_48GFHx4uK6cWwJ4oGdJ8HNZNZYDzdD=yR3VK0EXQ86ya9-g@mail.gmail.com>
+ <20190924162217.GA12974@arm.com> <20191009173742.GA2682@arm.com>
+ <f4fb09a5-999b-e676-0403-cc0de41be440@ti.com>
+ <20191014090729.lwusl5zxa32a7uua@DESKTOP-E1NTVVP.localdomain>
+From:   "Andrew F. Davis" <afd@ti.com>
+Message-ID: <a213760f-1f41-c4a3-7e38-8619898adecd@ti.com>
+Date:   Wed, 16 Oct 2019 13:40:43 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20191014090729.lwusl5zxa32a7uua@DESKTOP-E1NTVVP.localdomain>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 15 Oct 2019 12:23:49 -0700
-Jakub Kicinski <jakub.kicinski@netronome.com> wrote:
-
-> On Tue, 15 Oct 2019 14:09:49 +0200, Thomas Bogendoerfer wrote:
-> > SGI IOC3 chip has integrated ethernet, keyboard and mouse interface.
-> > It also supports connecting a SuperIO chip for serial and parallel
-> > interfaces. IOC3 is used inside various SGI systemboards and add-on
-> > cards with different equipped external interfaces.
-> > 
-> > Support for ethernet and serial interfaces were implemented inside
-> > the network driver. This patchset moves out the not network related
-> > parts to a new MFD driver, which takes care of card detection,
-> > setup of platform devices and interrupt distribution for the subdevices.
-> > 
-> > Serial portion: Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-> > 
-> > Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+On 10/14/19 5:07 AM, Brian Starkey wrote:
+> Hi Andrew,
 > 
-> Looks good, I think.
+> On Wed, Oct 09, 2019 at 02:27:15PM -0400, Andrew F. Davis wrote:
+>> The CMA driver that registers these nodes will have to be expanded to
+>> export them using this framework as needed. We do something similar to
+>> export SRAM nodes:
+>>
+>> https://lkml.org/lkml/2019/3/21/575
+>>
+>> Unlike the system/default-cma driver which can be centralized in the
+>> tree, these extra exporters will probably live out in other subsystems
+>> and so are added in later steps.
+>>
+>> Andrew
+> 
+> I was under the impression that the "cma_for_each_area" loop in patch
+> 4 would do that (add_cma_heaps). Is it not the case?
+> 
 
-thank you. 
+For these cma nodes yes, I thought you meant reserved memory areas in
+general.
 
-Now how do I get an Acked-by for the network part to merge it via
-the MIPS tree ?
+Just as a side note, I'm not a huge fan of the cma_for_each_area() to
+begin with, it seems a bit out of place when they could be selectively
+added as heaps as needed. Not sure how that will work with cma nodes
+specifically assigned to devices, seems like we could just steal their
+memory space from userspace with this..
 
-Thomas.
+Andrew
 
--- 
-SUSE Software Solutions Germany GmbH
-HRB 36809 (AG Nürnberg)
-Geschäftsführer: Felix Imendörffer
+> Thanks,
+> -Brian
+> 
