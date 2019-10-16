@@ -2,36 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44EBBDA134
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:26:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFF68D9F41
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407512AbfJPWUn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:20:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42882 "EHLO mail.kernel.org"
+        id S2394901AbfJPVxt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:53:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437570AbfJPVxo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2437575AbfJPVxo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 16 Oct 2019 17:53:44 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06FDD21928;
-        Wed, 16 Oct 2019 21:53:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DCDDA20872;
+        Wed, 16 Oct 2019 21:53:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262823;
-        bh=cTL+dBjDCxL6Y0uF6sd753LlF0axEe9XOYq7JAgM1hk=;
+        s=default; t=1571262824;
+        bh=GQe8EeLqG6PpoebDlvdKElf1ra2zPi7pDl6tBmXa50E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c4QK6at8mdaXPkwPaqrJv4gWlaWDK+2e9+JWfTSjlsar3VBeeM8pcrPq4+dsXGRKm
-         dinU6uR3WkkmmwWdeG20Nk1UP+S44Jt5GS85XlvkadhPIej4wOrtTfnXDtOgMfsHdR
-         g2ydEza1GoXBY5Pqn7Szu1hus9eRfz3/Pp9IXt0k=
+        b=lAl4zB3iX7g08QTsvGt+6/Cx0gb5qmqHgzufW8tSM7PwpUHIfzkz4dV49WHnz54x1
+         5taDWxW/MuJqNi/E0jQo553QfmkklANerCgFQ6JTk5zsWIvnqlL0hvMaKMo2tQsQiy
+         tj1oxgGYrrZR77UEIVvKsjqtrhk38OjBVXelVUEI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Frey <dpfrey@gmail.com>,
-        Andreas Dannenberg <dannenberg@ti.com>, Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.4 66/79] iio: light: opt3001: fix mutex unlock race
-Date:   Wed, 16 Oct 2019 14:50:41 -0700
-Message-Id: <20191016214826.651806493@linuxfoundation.org>
+        stable@vger.kernel.org, Ian Rogers <irogers@google.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
+        Wang Nan <wangnan0@huawei.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.4 67/79] perf llvm: Dont access out-of-scope array
+Date:   Wed, 16 Oct 2019 14:50:42 -0700
+Message-Id: <20191016214826.803890383@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191016214729.758892904@linuxfoundation.org>
 References: <20191016214729.758892904@linuxfoundation.org>
@@ -44,56 +49,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Frey <dpfrey@gmail.com>
+From: Ian Rogers <irogers@google.com>
 
-commit 82f3015635249a8c8c45bac303fd84905066f04f upstream.
+commit 7d4c85b7035eb2f9ab217ce649dcd1bfaf0cacd3 upstream.
 
-When an end-of-conversion interrupt is received after performing a
-single-shot reading of the light sensor, the driver was waking up the
-result ready queue before checking opt->ok_to_ignore_lock to determine
-if it should unlock the mutex. The problem occurred in the case where
-the other thread woke up and changed the value of opt->ok_to_ignore_lock
-to false prior to the interrupt thread performing its read of the
-variable. In this case, the mutex would be unlocked twice.
+The 'test_dir' variable is assigned to the 'release' array which is
+out-of-scope 3 lines later.
 
-Signed-off-by: David Frey <dpfrey@gmail.com>
-Reviewed-by: Andreas Dannenberg <dannenberg@ti.com>
-Fixes: 94a9b7b1809f ("iio: light: add support for TI's opt3001 light sensor")
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Extend the scope of the 'release' array so that an out-of-scope array
+isn't accessed.
+
+Bug detected by clang's address sanitizer.
+
+Fixes: 07bc5c699a3d ("perf tools: Make fetch_kernel_version() publicly available")
+Cc: stable@vger.kernel.org # v4.4+
+Signed-off-by: Ian Rogers <irogers@google.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lore.kernel.org/lkml/20190926220018.25402-1-irogers@google.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/light/opt3001.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ tools/perf/util/llvm-utils.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/iio/light/opt3001.c
-+++ b/drivers/iio/light/opt3001.c
-@@ -646,6 +646,7 @@ static irqreturn_t opt3001_irq(int irq,
- 	struct iio_dev *iio = _iio;
- 	struct opt3001 *opt = iio_priv(iio);
- 	int ret;
-+	bool wake_result_ready_queue = false;
+--- a/tools/perf/util/llvm-utils.c
++++ b/tools/perf/util/llvm-utils.c
+@@ -214,14 +214,14 @@ static int detect_kbuild_dir(char **kbui
+ 	const char *prefix_dir = "";
+ 	const char *suffix_dir = "";
  
- 	if (!opt->ok_to_ignore_lock)
- 		mutex_lock(&opt->lock);
-@@ -680,13 +681,16 @@ static irqreturn_t opt3001_irq(int irq,
- 		}
- 		opt->result = ret;
- 		opt->result_ready = true;
--		wake_up(&opt->result_ready_queue);
-+		wake_result_ready_queue = true;
- 	}
- 
- out:
- 	if (!opt->ok_to_ignore_lock)
- 		mutex_unlock(&opt->lock);
- 
-+	if (wake_result_ready_queue)
-+		wake_up(&opt->result_ready_queue);
++	/* _UTSNAME_LENGTH is 65 */
++	char release[128];
 +
- 	return IRQ_HANDLED;
- }
+ 	char *autoconf_path;
  
+ 	int err;
+ 
+ 	if (!test_dir) {
+-		/* _UTSNAME_LENGTH is 65 */
+-		char release[128];
+-
+ 		err = fetch_kernel_version(NULL, release,
+ 					   sizeof(release));
+ 		if (err)
 
 
