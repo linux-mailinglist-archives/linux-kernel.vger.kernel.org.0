@@ -2,117 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD3BFD8D1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 11:59:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 910E4D8D17
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 11:58:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404444AbfJPJ7h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 05:59:37 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34944 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727167AbfJPJ7g (ORCPT
+        id S2404426AbfJPJ6w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 05:58:52 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:36382 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728556AbfJPJ6w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 05:59:36 -0400
-Received: by mail-pg1-f195.google.com with SMTP id p30so13992900pgl.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 02:59:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2UHiq+bpKpYTZfFCDKz/wHMdPBwb8otM78+THN0Zfxc=;
-        b=TlmWQr2oZsXsdXMZxuaRHpzO0t6KpXZ1HsiWTKX2m54q+A2Rp1yOdP46uEcRqDOXZD
-         Xx8ePK9bNrndXkfM9xbnC4y12z4SanvCtLaaC2LUSSbWP8Zl23hxd9xv9v6/ci+aPu7Q
-         N9rrDEtQTuizJjcWieCFpLFZhhFfbwiCIfzTORLJlrHH0CO52xbwMnoQFzDpIh6tt1CT
-         2Cc4GWp7DpYFv6A3MoRmmsXBxm0I5lEv09a4FfO66c0SCjlnzYkI16LjJObsM1WQyQpY
-         my8enjoqkUcKPq7wjcu1dOuI1tLps2cIVHwUn0V4r3i37N74svEicLAiYZv0xCHWTilB
-         gD0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2UHiq+bpKpYTZfFCDKz/wHMdPBwb8otM78+THN0Zfxc=;
-        b=QsuYJrTvoRtPBO4kNbApGRPrQHXhuxeTfc4aUe5K0FWF+xqOcQk0qkNm4rHIs+56V9
-         ROidezQbD+1vxakvvxe/MZQWbEOUiMw3sZO/4kJhMllNCYX2SqRPH61jFrJ+EL4MV7T7
-         ZELAjfrdHWQU/Ia8jKqSCVnTETPE1sxVhiV1GUempw6pckhIXSAHQkDvyOfA6eKXbbCg
-         Vhlp2GSwoHEMXNvWQ1hTGSH74awNT7NT9mr8vlvrF6BHoQByK1+rVNbXI+riXax1svvC
-         vwd783Ko4ag4uZdwGLy6h8g5MAgcSiYCevZTYAiXRv+TWk0HjXBwhEbMUgeVQNh8YDGI
-         caXQ==
-X-Gm-Message-State: APjAAAVYRVYsSmrjOFjtQJ4jSbV4rB0gLgq4KLRwDnfKbv6iFWrasCdx
-        r5+ewh21fW4TvCAWdFE69ED37g==
-X-Google-Smtp-Source: APXvYqyuTfvDzxNwI9kalDMU0iywh8UZbVEiS7QPebJLB/GNw2tf4Ez9bgFTGBHDoNZGPFzSDcggRQ==
-X-Received: by 2002:aa7:87d9:: with SMTP id i25mr4990873pfo.244.1571219975917;
-        Wed, 16 Oct 2019 02:59:35 -0700 (PDT)
-Received: from localhost.localdomain (123-204-46-122.static.seed.net.tw. [123.204.46.122])
-        by smtp.gmail.com with ESMTPSA id p17sm23021423pfn.50.2019.10.16.02.59.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2019 02:59:35 -0700 (PDT)
-From:   Jian-Hong Pan <jian-hong@endlessm.com>
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Ramalingam C <ramalingam.c@intel.com>,
-        Uma Shankar <uma.shankar@intel.com>
-Cc:     intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux@endlessm.com,
-        Jian-Hong Pan <jian-hong@endlessm.com>
-Subject: [PATCH] drm/i915/hdmi: enable resolution 3840x2160 for type 1 HDMI
-Date:   Wed, 16 Oct 2019 17:57:58 +0800
-Message-Id: <20191016095757.4919-1-jian-hong@endlessm.com>
-X-Mailer: git-send-email 2.23.0
+        Wed, 16 Oct 2019 05:58:52 -0400
+Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id AFF5E43E;
+        Wed, 16 Oct 2019 11:58:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1571219930;
+        bh=WcoU1rgkgfqck3Sixg1f5PWiV0VMExUEKXAuCwDKFlA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pVj4hmDAfQUZ32V/hQgFbhsQSVDs5bKAe3nKkT2Zpmjt7bkGF9yascohgHlwmSQdu
+         DgBXeW9qdQYvf1u0dvdke62X8RBvclto0p9mYDQuWe2Duulvh4v1ljjGwtWswjcmcY
+         sJl5LJGL59qhrS9V5JmNbPkd6Pjp/7TqymSToksY=
+Date:   Wed, 16 Oct 2019 12:58:48 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     mchehab@kernel.org, gregkh@linuxfoundation.org,
+        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] staging: media: omap4iss: use
+ devm_platform_ioremap_resource() to simplify code
+Message-ID: <20191016095848.GC5175@pendragon.ideasonboard.com>
+References: <20191016085136.22812-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191016085136.22812-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Type 1 HDMI may be version 1.3 or upper, which supports higher max TMDS
-clock for higher resolutions, like 3840x2160. This patch sets max TMDS
-clock according to the chip, if the adapter is type 1 HDMI.
+Hello YueHaibing,
 
-Buglink: https://bugs.freedesktop.org/show_bug.cgi?id=112018
-Fixes: b1ba124d8e95 ("drm/i915: Respect DP++ adaptor TMDS clock limit")
-Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
----
- drivers/gpu/drm/i915/display/intel_hdmi.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+Thank you for the patch.
 
-diff --git a/drivers/gpu/drm/i915/display/intel_hdmi.c b/drivers/gpu/drm/i915/display/intel_hdmi.c
-index e02f0faecf02..74e4426ffcad 100644
---- a/drivers/gpu/drm/i915/display/intel_hdmi.c
-+++ b/drivers/gpu/drm/i915/display/intel_hdmi.c
-@@ -2454,6 +2454,7 @@ intel_hdmi_dp_dual_mode_detect(struct drm_connector *connector, bool has_edid)
- {
- 	struct drm_i915_private *dev_priv = to_i915(connector->dev);
- 	struct intel_hdmi *hdmi = intel_attached_hdmi(connector);
-+	struct intel_encoder *encoder = &hdmi_to_dig_port(hdmi)->base;
- 	enum port port = hdmi_to_dig_port(hdmi)->base.port;
- 	struct i2c_adapter *adapter =
- 		intel_gmbus_get_adapter(dev_priv, hdmi->ddc_bus);
-@@ -2488,8 +2489,16 @@ intel_hdmi_dp_dual_mode_detect(struct drm_connector *connector, bool has_edid)
- 		return;
- 
- 	hdmi->dp_dual_mode.type = type;
--	hdmi->dp_dual_mode.max_tmds_clock =
--		drm_dp_dual_mode_max_tmds_clock(type, adapter);
-+	/* Type 1 HDMI may be version 1.3 or upper, which supports higher max
-+	 * TMDS clock for higher resolutions, like 3840x2160. So, set it
-+	 * according to the chip, if the adapter is type 1 HDMI.
-+	 */
-+	if (type == DRM_DP_DUAL_MODE_TYPE1_HDMI)
-+		hdmi->dp_dual_mode.max_tmds_clock =
-+			intel_hdmi_source_max_tmds_clock(encoder);
-+	else
-+		hdmi->dp_dual_mode.max_tmds_clock =
-+			drm_dp_dual_mode_max_tmds_clock(type, adapter);
- 
- 	DRM_DEBUG_KMS("DP dual mode adaptor (%s) detected (max TMDS clock: %d kHz)\n",
- 		      drm_dp_get_dual_mode_type_name(type),
+The same fix has already been submitted a week ago, and I have sent a
+pull request today that includes it. I'm afraid I thus can't take this
+patch. The good news is that the change was good :-)
+
+On Wed, Oct 16, 2019 at 04:51:36PM +0800, YueHaibing wrote:
+> Use devm_platform_ioremap_resource() to simplify the code a bit.
+> This is detected by coccinelle.
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/staging/media/omap4iss/iss.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+> 
+> diff --git a/drivers/staging/media/omap4iss/iss.c b/drivers/staging/media/omap4iss/iss.c
+> index 1a966cb..6fb60b5 100644
+> --- a/drivers/staging/media/omap4iss/iss.c
+> +++ b/drivers/staging/media/omap4iss/iss.c
+> @@ -908,11 +908,7 @@ static int iss_map_mem_resource(struct platform_device *pdev,
+>  				struct iss_device *iss,
+>  				enum iss_mem_resources res)
+>  {
+> -	struct resource *mem;
+> -
+> -	mem = platform_get_resource(pdev, IORESOURCE_MEM, res);
+> -
+> -	iss->regs[res] = devm_ioremap_resource(iss->dev, mem);
+> +	iss->regs[res] = devm_platform_ioremap_resource(pdev, res);
+>  
+>  	return PTR_ERR_OR_ZERO(iss->regs[res]);
+>  }
+
 -- 
-2.23.0
+Regards,
 
+Laurent Pinchart
