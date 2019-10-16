@@ -2,116 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DEBCD8CB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 11:40:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7E08D8CBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 11:41:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404251AbfJPJko (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 05:40:44 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57776 "EHLO mx1.redhat.com"
+        id S2404277AbfJPJlM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 05:41:12 -0400
+Received: from mga09.intel.com ([134.134.136.24]:60896 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726689AbfJPJkn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 05:40:43 -0400
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com [209.85.221.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A303986663
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 09:40:42 +0000 (UTC)
-Received: by mail-wr1-f70.google.com with SMTP id 7so6203029wrl.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 02:40:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ErxuLlMobmLYC74NaNqAt2F8x+RQ/6BqJJt5ZsK39jA=;
-        b=T4IvUxiIN45bBVSIPHLcgap7/C17wSOGfhKEQQFItDDnUoAdHPcnTkCGM59dHjfLz+
-         aqRcbpmM9OdSg99+zLbKlKUqjGzPomCotzKDwmWFwIPun9C0dvuHSpquZRkxhSFMusH2
-         IiNJ2JwZrYOam2/HNZQ5+m9cDl1gh4jq6gSnQDpa/nAmaOiO0rNUHFpqdeB9rXltFf74
-         iGrJ19ftPhz/H+d2C6Po4/m5J/5pSBRUQF0Tm1pnKYRtAAIDobIoWuIcZWLc53jM9AZH
-         Tc6aQbdybLaNmiWZ7pcec8893+Y1a2nn1nRMWxnpLwEOW7xWcrFYQxXOrNhLx9/BjG5K
-         g3Sw==
-X-Gm-Message-State: APjAAAXxdhPrpJRuiGt/fIe96kPmvm3lsJ80N4eKx3dDWvbzqHr7rTg0
-        Ms6lQeVjLuEosdi8pkXDUQnynMap8kQiOHEqPGThUZ1PH9wi45UZxhC17CCmA90/FF/lDN0wykR
-        w8TTh7YUHxN3mzbI6czk0ZQv3
-X-Received: by 2002:a1c:ac02:: with SMTP id v2mr2393735wme.85.1571218841236;
-        Wed, 16 Oct 2019 02:40:41 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwsJxy70cLYMoF7l/VW8chmnZNzKQwU5PYQpVT7wXPSuA+YQf+PmLNyOibMuk/B0bQQL+t13g==
-X-Received: by 2002:a1c:ac02:: with SMTP id v2mr2393719wme.85.1571218840942;
-        Wed, 16 Oct 2019 02:40:40 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:ddc7:c53c:581a:7f3e? ([2001:b07:6468:f312:ddc7:c53c:581a:7f3e])
-        by smtp.gmail.com with ESMTPSA id f143sm3441248wme.40.2019.10.16.02.40.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2019 02:40:40 -0700 (PDT)
-Subject: Re: [PATCH v9 09/17] x86/split_lock: Handle #AC exception for split
- lock
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Fenghua Yu <fenghua.yu@intel.com>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Xiaoyao Li <xiaoyao.li@intel.com>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        x86 <x86@kernel.org>, kvm@vger.kernel.org
-References: <1560897679-228028-1-git-send-email-fenghua.yu@intel.com>
- <1560897679-228028-10-git-send-email-fenghua.yu@intel.com>
- <alpine.DEB.2.21.1906262209590.32342@nanos.tec.linutronix.de>
- <20190626203637.GC245468@romley-ivt3.sc.intel.com>
- <alpine.DEB.2.21.1906262338220.32342@nanos.tec.linutronix.de>
- <20190925180931.GG31852@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <3ec328dc-2763-9da5-28d6-e28970262c58@redhat.com>
-Date:   Wed, 16 Oct 2019 11:40:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190925180931.GG31852@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726689AbfJPJlM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 05:41:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2019 02:41:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,303,1566889200"; 
+   d="scan'208";a="225733107"
+Received: from unknown (HELO ubuntu.localdomain) ([10.226.249.160])
+  by fmsmga002.fm.intel.com with ESMTP; 16 Oct 2019 02:41:08 -0700
+From:   "Ooi, Joyce" <joyce.ooi@intel.com>
+To:     Dinh Nguyen <dinguyen@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Joyce Ooi <joyce.ooi@intel.com>,
+        Ong Hean Loong <hean.loong.ong@intel.com>,
+        See Chin Liang <chin.liang.see@intel.com>,
+        Tan Ley Foon <ley.foon.tan@intel.com>
+Subject: [PATCHv2] arm64: dts: agilex: add QSPI support for Intel Agilex
+Date:   Wed, 16 Oct 2019 02:40:46 -0700
+Message-Id: <1571218846-12306-1-git-send-email-joyce.ooi@intel.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/09/19 20:09, Sean Christopherson wrote:
-> We're trying to sort out the trainwreck, but there's an additional wrinkle
-> that I'd like your input on.
+This patch adds QSPI flash interface in device tree for Intel Agilex
 
-That's not exactly a wrinkle...
+Signed-off-by: Ooi, Joyce <joyce.ooi@intel.com>
+---
+v2: update the qspi_rootfs partition size
+---
+ arch/arm64/boot/dts/intel/socfpga_agilex_socdk.dts | 35 ++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
->   - Remove KVM loading of MSR_TEST_CTRL, i.e. KVM *never* writes the CPU's
->     actual MSR_TEST_CTRL.  KVM still emulates MSR_TEST_CTRL so that the
->     guest can do WRMSR and handle its own #AC faults, but KVM doesn't
->     change the value in hardware.
-> 
->       * Allowing guest to enable split-lock detection can induce #AC on
->         the host after it has been explicitly turned off, e.g. the sibling
->         hyperthread hits an #AC in the host kernel, or worse, causes a
->         different process in the host to SIGBUS.
-> 
->       * Allowing guest to disable split-lock detection opens up the host
->         to DoS attacks.
-> 
->   - KVM advertises split-lock detection to guest/userspace if and only if
->     split_lock_detect_disabled is zero.
-> 
->   - Add a pr_warn_once() in KVM that triggers if split locks are disabled
->     after support has been advertised to a guest.
-> 
-> Does this sound sane?
+diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex_socdk.dts b/arch/arm64/boot/dts/intel/socfpga_agilex_socdk.dts
+index 7814a9e..8de8118 100644
+--- a/arch/arm64/boot/dts/intel/socfpga_agilex_socdk.dts
++++ b/arch/arm64/boot/dts/intel/socfpga_agilex_socdk.dts
+@@ -73,3 +73,38 @@
+ &watchdog0 {
+ 	status = "okay";
+ };
++
++&qspi {
++	flash@0 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "mt25qu02g";
++		reg = <0>;
++		spi-max-frequency = <50000000>;
++
++		m25p,fast-read;
++		cdns,page-size = <256>;
++		cdns,block-size = <16>;
++		cdns,read-delay = <1>;
++		cdns,tshsl-ns = <50>;
++		cdns,tsd2d-ns = <50>;
++		cdns,tchsh-ns = <4>;
++		cdns,tslch-ns = <4>;
++
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			qspi_boot: partition@0 {
++				label = "Boot and fpga data";
++				reg = <0x0 0x034B0000>;
++			};
++
++			qspi_rootfs: partition@34B0000 {
++				label = "Root Filesystem - JFFS2";
++				reg = <0x034B0000 0x0CB50000>;
++			};
++		};
++	};
++};
+-- 
+1.9.1
 
-Not really, unfortunately.  Just never advertise split-lock detection to
-guests.  If the host has enabled split-lock detection, trap #AC and
-forward it to the host handler---which would disable split lock
-detection globally and reenter the guest.
-
-Paolo
