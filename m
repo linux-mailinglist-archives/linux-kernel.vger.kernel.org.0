@@ -2,111 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C68AD8FE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:49:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E510BD8FE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:49:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389792AbfJPLtn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 07:49:43 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:49888 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728404AbfJPLtm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S2389549AbfJPLtm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 16 Oct 2019 07:49:42 -0400
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iKhnz-00040t-47; Wed, 16 Oct 2019 13:49:27 +0200
-Date:   Wed, 16 Oct 2019 13:49:26 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
+Received: from mx2.suse.de ([195.135.220.15]:45500 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728323AbfJPLtl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 07:49:41 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 737E8B435;
+        Wed, 16 Oct 2019 11:49:35 +0000 (UTC)
+Date:   Wed, 16 Oct 2019 13:49:34 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
+        Mike Kravetz <mike.kravetz@oracle.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Mike Rapoport <rppt@linux.ibm.com>,
         Dan Williams <dan.j.williams@intel.com>,
-        Xiaoyao Li <xiaoyao.li@intel.com>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        x86 <x86@kernel.org>, kvm@vger.kernel.org
-Subject: Re: [PATCH v9 09/17] x86/split_lock: Handle #AC exception for split
- lock
-In-Reply-To: <57f40083-9063-5d41-f06d-fa1ae4c78ec6@redhat.com>
-Message-ID: <alpine.DEB.2.21.1910161244060.2046@nanos.tec.linutronix.de>
-References: <1560897679-228028-1-git-send-email-fenghua.yu@intel.com> <1560897679-228028-10-git-send-email-fenghua.yu@intel.com> <alpine.DEB.2.21.1906262209590.32342@nanos.tec.linutronix.de> <20190626203637.GC245468@romley-ivt3.sc.intel.com>
- <alpine.DEB.2.21.1906262338220.32342@nanos.tec.linutronix.de> <20190925180931.GG31852@linux.intel.com> <3ec328dc-2763-9da5-28d6-e28970262c58@redhat.com> <alpine.DEB.2.21.1910161142560.2046@nanos.tec.linutronix.de>
- <57f40083-9063-5d41-f06d-fa1ae4c78ec6@redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/page_alloc: Make alloc_gigantic_page() available for
+ general use
+Message-ID: <20191016114934.GZ317@dhcp22.suse.cz>
+References: <1571211293-29974-1-git-send-email-anshuman.khandual@arm.com>
+ <c7ac9f99-a34f-c553-b216-b847d093cae9@redhat.com>
+ <20191016085123.GO317@dhcp22.suse.cz>
+ <679b5c66-8f1b-ec4d-64dd-13fbc440917d@redhat.com>
+ <20191016110831.GV317@dhcp22.suse.cz>
+ <eb2406d5-1327-1365-be0e-ee319ab92088@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eb2406d5-1327-1365-be0e-ee319ab92088@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 16 Oct 2019, Paolo Bonzini wrote:
-> On 16/10/19 11:47, Thomas Gleixner wrote:
-> > On Wed, 16 Oct 2019, Paolo Bonzini wrote:
-> >> Just never advertise split-lock
-> >> detection to guests.  If the host has enabled split-lock detection,
-> >> trap #AC and forward it to the host handler---which would disable
-> >> split lock detection globally and reenter the guest.
+On Wed 16-10-19 13:10:41, David Hildenbrand wrote:
+> On 16.10.19 13:08, Michal Hocko wrote:
+> > On Wed 16-10-19 10:56:16, David Hildenbrand wrote:
+[...]
+> > > Gigantic pages have to be aligned AFAIK.
 > > 
-> > Which completely defeats the purpose.
+> > Aligned to what? I do not see any guarantee like that in the existing
+> > code.
+> > 
 > 
-> Yes it does.  But Sean's proposal, as I understand it, leads to the
-> guest receiving #AC when it wasn't expecting one.  So for an old guest,
-> as soon as the guest kernel happens to do a split lock, it gets an
-> unexpected #AC and crashes and burns.  And then, after much googling and
-> gnashing of teeth, people proceed to disable split lock detection.
+> pfn = ALIGN(zone->zone_start_pfn, nr_pages);
 
-I don't think that this was what he suggested/intended.
+I am obviously blind! Sorry about the confusion.
 
-> In all of these cases, the common final result is that split-lock
-> detection is disabled on the host.  So might as well go with the
-> simplest one and not pretend to virtualize something that (without core
-> scheduling) is obviously not virtualizable.
-
-You are completely ignoring any argument here and just leave it behind your
-signature (instead of trimming your reply).
-
-> > 1) Sane guest
-> > 
-> > Guest kernel has #AC handler and you basically prevent it from
-> > detecting malicious user space and killing it. You also prevent #AC
-> > detection in the guest kernel which limits debugability.
-
-That's a perfectly fine situation. Host has #AC enabled and exposes the
-availability of #AC to the guest. Guest kernel has a proper handler and
-does the right thing. So the host _CAN_ forward #AC to the guest and let it
-deal with it. For that to work you need to expose the MSR so you know the
-guest state in the host.
-
-Your lazy 'solution' just renders #AC completely useless even for
-debugging.
-
-> > 2) Malicious guest
-> > 
-> > Trigger #AC to disable the host detection and then carry out the DoS 
-> > attack.
-
-With your proposal you render #AC useless even on hosts which have SMT
-disabled, which is just wrong. There are enough good reasons to disable
-SMT.
-
-I agree that with SMT enabled the situation is truly bad, but we surely can
-be smarter than just disabling it globally unconditionally and forever.
-
-Plus we want a knob which treats guests triggering #AC in the same way as
-we treat user space, i.e. kill them with SIGBUS.
-
-Thanks,
-
-	tglx
+-- 
+Michal Hocko
+SUSE Labs
