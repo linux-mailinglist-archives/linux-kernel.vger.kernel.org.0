@@ -2,82 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5C02D9EC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA287D9EEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438975AbfJPWBM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:01:12 -0400
-Received: from ozlabs.org ([203.11.71.1]:41521 "EHLO ozlabs.org"
+        id S1728537AbfJPWDi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:03:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438917AbfJPWA7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 18:00:59 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S2406826AbfJPWDg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 18:03:36 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46tmT01FSSz9sRX;
-        Thu, 17 Oct 2019 09:00:51 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
-        s=201909; t=1571263256;
-        bh=4MsmL64dyZAIeoPnH7Xa/yFXBwCvuSkYKcnGrR7vIrs=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=QFObH92PJgBMlT3l42RO6dn04vkLru885Ofz29/erFVxqrgij3GfB4TRcqOBFetjj
-         3Vrac09I7jEjIbSdKe7Aq8lgAPD7olJMcrypLTjI8X0lFSgu6GOKLOAgkWODtK7glp
-         6uu8lRYFIBwbomqe79Td0dgUaBEpo9vJUArQ+hjqjB7SYIWDiYtyUg503uGRrXn9Sd
-         Ney8b05Sc0mOpi3+MmhElvZnYeqU6QnABvpSYVOSc6WJShTCqalBrd60mzt2N/OGsH
-         8BZ4tQSGU5xsXnLyhFnE+cvG415V0ePFa8smqfUFBpnVxELOdNp2lZyGUZN2K+Y/jy
-         MuQemmbUXh4TQ==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     cyphar@cyphar.com, mingo@redhat.com, peterz@infradead.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, christian@brauner.io, keescook@chromium.org,
-        linux@rasmusvillemoes.dk, viro@zeniv.linux.org.uk,
-        torvalds@linux-foundation.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] usercopy: Avoid soft lockups in test_check_nonzero_user()
-In-Reply-To: <20191016130319.vcc2mqac3ta5jjat@wittgenstein>
-References: <20191011022447.24249-1-mpe@ellerman.id.au> <20191016122732.13467-1-mpe@ellerman.id.au> <20191016130319.vcc2mqac3ta5jjat@wittgenstein>
-Date:   Thu, 17 Oct 2019 09:00:48 +1100
-Message-ID: <871rvctkof.fsf@mpe.ellerman.id.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id EA193218DE;
+        Wed, 16 Oct 2019 22:03:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571263415;
+        bh=O0G17YN2tPEZ7i3JnTYzZCDAa/F7uCFuiSjmZ3wvrfA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=BiWb/svlRwEwax+APMGEapJwph2a8ugfWL3JZwsnqQTfPQWA4SLexSE+F2cnVPgRU
+         2qJGp2NUMGqKYOWdToD89u2zQk8Y+dHmcIMFsy8yShVFJYscHruIHQrj9VnRNp7mlu
+         i5f8AtdnKEMXdw3+v/a8iBP1vkESb0pk/b5c38S4=
+Date:   Wed, 16 Oct 2019 17:03:33 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Karol Herbst <kherbst@redhat.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Lyude Paul <lyude@redhat.com>,
+        Mika Westerberg <mika.westerberg@intel.com>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        Linux ACPI Mailing List <linux-acpi@vger.kernel.org>
+Subject: Re: [PATCH v3] pci: prevent putting nvidia GPUs into lower device
+ states on certain intel bridges
+Message-ID: <20191016220333.GA88523@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACO55tuXck7vqGVLmMBGFg6A2pr3h8koRuvvWHLNDH8XvBVxew@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christian Brauner <christian.brauner@ubuntu.com> writes:
-> On Wed, Oct 16, 2019 at 11:27:32PM +1100, Michael Ellerman wrote:
->> On a machine with a 64K PAGE_SIZE, the nested for loops in
->> test_check_nonzero_user() can lead to soft lockups, eg:
->> 
->>   watchdog: BUG: soft lockup - CPU#4 stuck for 22s! [modprobe:611]
->>   Modules linked in: test_user_copy(+) vmx_crypto gf128mul crc32c_vpmsum virtio_balloon ip_tables x_tables autofs4
->>   CPU: 4 PID: 611 Comm: modprobe Tainted: G             L    5.4.0-rc1-gcc-8.2.0-00001-gf5a1a536fa14-dirty #1151
->>   ...
->>   NIP __might_sleep+0x20/0xc0
->>   LR  __might_fault+0x40/0x60
->>   Call Trace:
->>     check_zeroed_user+0x12c/0x200
->>     test_user_copy_init+0x67c/0x1210 [test_user_copy]
->>     do_one_initcall+0x60/0x340
->>     do_init_module+0x7c/0x2f0
->>     load_module+0x2d94/0x30e0
->>     __do_sys_finit_module+0xc8/0x150
->>     system_call+0x5c/0x68
->> 
->> Even with a 4K PAGE_SIZE the test takes multiple seconds. Instead
->> tweak it to only scan a 1024 byte region, but make it cross the
->> page boundary.
->> 
->> Fixes: f5a1a536fa14 ("lib: introduce copy_struct_from_user() helper")
->> Suggested-by: Aleksa Sarai <cyphar@cyphar.com>
->> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
->
-> With Aleksa's Reviewed-by I've picked this up:
-> https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/log/?h=copy_struct_from_user
+On Wed, Oct 16, 2019 at 11:48:22PM +0200, Karol Herbst wrote:
+> On Wed, Oct 16, 2019 at 11:37 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > On Wed, Oct 16, 2019 at 09:18:32PM +0200, Karol Herbst wrote:
+> > > but setting the PCI_DEV_FLAGS_NO_D3 flag does prevent using the
+> > > platform means of putting the device into D3cold, right? That's
+> > > actually what should still happen, just the D3hot step should be
+> > > skipped.
+> >
+> > If I understand correctly, when we put a device in D3cold on an ACPI
+> > system, we do something like this:
+> >
+> >   pci_set_power_state(D3cold)
+> >     if (PCI_DEV_FLAGS_NO_D3)
+> >       return 0                                   <-- nothing at all if quirked
+> >     pci_raw_set_power_state
+> >       pci_write_config_word(PCI_PM_CTRL, D3hot)  <-- set to D3hot
+> >     __pci_complete_power_transition(D3cold)
+> >       pci_platform_power_transition(D3cold)
+> >         platform_pci_set_power_state(D3cold)
+> >           acpi_pci_set_power_state(D3cold)
+> >             acpi_device_set_power(ACPI_STATE_D3_COLD)
+> >               ...
+> >                 acpi_evaluate_object("_OFF")     <-- set to D3cold
+> >
+> > I did not understand the connection with platform (ACPI) power
+> > management from your patch.  It sounds like you want this entire path
+> > except that you want to skip the PCI_PM_CTRL write?
+> >
+> 
+> exactly. I am running with this workaround for a while now and never
+> had any fails with it anymore. The GPU gets turned off correctly and I
+> see the same power savings, just that the GPU can be powered on again.
+> 
+> > That seems like something Rafael should weigh in on.  I don't know
+> > why we set the device to D3hot with PCI_PM_CTRL before using the ACPI
+> > methods, and I don't know what the effect of skipping that is.  It
+> > seems a little messy to slice out this tiny piece from the middle, but
+> > maybe it makes sense.
+> >
+> 
+> afaik when I was talking with others in the past about it, Windows is
+> doing that before using ACPI calls, but maybe they have some similar
+> workarounds for certain intel bridges as well? I am sure it affects
+> more than the one I am blacklisting here, but I rather want to check
+> each device before blacklisting all kabylake and sky lake bridges (as
+> those are the ones were this issue can be observed).
 
-Thanks. Are you planning to send that to Linus for v5.4 or v5.5 ?
+From a quick look at the ACPI spec, I didn't see conditions like "OSPM
+must put PCI devices in D3hot before executing _OFF".  But obviously
+there's *some* reason and I probably just missed it.
 
-cheers
+> Sadly we had no luck getting any information about such workaround out
+> of Nvidia or Intel.
+
+I'm not surprised; it doesn't seem like we really have the details
+needed to get to a root cause yet.  I think what we really need is a
+PCIe analyzer trace to see what happens when the device "falls off the
+bus".
+
+Bjorn
