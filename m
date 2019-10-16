@@ -2,79 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 663F7D8EA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 12:54:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D3E5D8E99
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 12:51:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388925AbfJPKyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 06:54:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50514 "EHLO mail.kernel.org"
+        id S1729365AbfJPKvL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 06:51:11 -0400
+Received: from mga04.intel.com ([192.55.52.120]:13732 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726083AbfJPKyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 06:54:17 -0400
-Received: from localhost (unknown [209.136.236.94])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 824162067D;
-        Wed, 16 Oct 2019 10:54:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571223255;
-        bh=yFzd53J4K2VB7WLByqAWeKHKRwRFjS6u0jt4bslhMbI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PHpXkc0Rwa5omeBdC4gekAAL6HKvioRqL2J9e/WX8/GleZxWzR+FdCGvv7EmH4tsf
-         Xn7mwFo0zCmJiOIi6gWyMeniVBa7PWzbHHuA3f6vQW4z5PWryMvLiRGMt50NsR1F4o
-         JvEok6KCso4YIE0jMupjfr0Ja+uO1er1M/1jWCiQ=
-Date:   Wed, 16 Oct 2019 02:18:15 -0700
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     pumahsu <pumahsu@google.com>
-Cc:     heikki.krogerus@linux.intel.com, badhri@google.com,
-        kyletso@google.com, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: Add sysfs node to show cc orientation
-Message-ID: <20191016091815.GA1175217@kroah.com>
-References: <20191016034314.231363-1-pumahsu@google.com>
+        id S1726697AbfJPKvL (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 06:51:11 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2019 03:51:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,303,1566889200"; 
+   d="scan'208";a="189643009"
+Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.254.210.124]) ([10.254.210.124])
+  by orsmga008.jf.intel.com with ESMTP; 16 Oct 2019 03:51:08 -0700
+Subject: Re: [PATCH v2 3/5] perf report: Sort by sampled cycles percent per
+ block for stdio
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+References: <20191015053350.13909-1-yao.jin@linux.intel.com>
+ <20191015053350.13909-4-yao.jin@linux.intel.com>
+ <20191015084102.GA10951@krava>
+ <6882f3ae-0f8d-5a01-7fd5-5b9f9c93f9ac@linux.intel.com>
+ <20191016101543.GC15580@krava>
+From:   "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <456b8e97-dc50-449c-9999-0bddef0e9c4c@linux.intel.com>
+Date:   Wed, 16 Oct 2019 18:51:07 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191016034314.231363-1-pumahsu@google.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191016101543.GC15580@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 11:43:14AM +0800, pumahsu wrote:
-> Export the Type-C cc orientation so that user space can
-> get this information.
+
+
+On 10/16/2019 6:15 PM, Jiri Olsa wrote:
+> On Tue, Oct 15, 2019 at 10:53:18PM +0800, Jin, Yao wrote:
 > 
-> Signed-off-by: pumahsu <pumahsu@google.com>
-> ---
->  Documentation/ABI/testing/sysfs-class-typec |  7 +++++++
->  drivers/usb/typec/class.c                   | 11 +++++++++++
->  2 files changed, 18 insertions(+)
+> SNIP
+> 
+>>>> +static struct block_header_column{
+>>>> +	const char *name;
+>>>> +	int width;
+>>>> +} block_columns[PERF_HPP_REPORT__BLOCK_MAX_INDEX] = {
+>>>> +	[PERF_HPP_REPORT__BLOCK_TOTAL_CYCLES_COV] = {
+>>>> +		.name = "Sampled Cycles%",
+>>>> +		.width = 15,
+>>>> +	},
+>>>> +	[PERF_HPP_REPORT__BLOCK_LBR_CYCLES] = {
+>>>> +		.name = "Sampled Cycles",
+>>>> +		.width = 14,
+>>>> +	},
+>>>> +	[PERF_HPP_REPORT__BLOCK_CYCLES_PCT] = {
+>>>> +		.name = "Avg Cycles%",
+>>>> +		.width = 11,
+>>>> +	},
+>>>> +	[PERF_HPP_REPORT__BLOCK_AVG_CYCLES] = {
+>>>> +		.name = "Avg Cycles",
+>>>> +		.width = 10,
+>>>> +	},
+>>>> +	[PERF_HPP_REPORT__BLOCK_RANGE] = {
+>>>> +		.name = "[Program Block Range]",
+>>>> +		.width = 70,
+>>>> +	},
+>>>> +	[PERF_HPP_REPORT__BLOCK_DSO] = {
+>>>> +		.name = "Shared Object",
+>>>> +		.width = 20,
+>>>> +	}
+>>>>    };
+>>>
+>>> so we already have support for multiple columns,
+>>> why don't you add those as 'struct sort_entry' objects?
+>>>
+>>
+>> For 'struct sort_entry' objects, do you mean I should reuse the "sort_dso"
+>> which has been implemented yet in util/sort.c?
+>>
+>> For other columns, it looks we can't reuse the existing sort_entry objects.
+> 
+> I did not mean reuse, just add new sort entries
+> to current sort framework
+> 
 
-Hi,
+Does it seem like what the c2c does?
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+For example, my new update is like:
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+struct block_dimension {
+        const char              *header;
+        int                     idx;
+        int                     width;
+        struct sort_entry       *se;
+        int64_t (*cmp)(struct perf_hpp_fmt *,
+                       struct hist_entry *, struct hist_entry *);
+        int64_t (*sort)(struct perf_hpp_fmt *,
+                        struct hist_entry *, struct hist_entry *);
+        int   (*entry)(struct perf_hpp_fmt *, struct perf_hpp *,
+                       struct hist_entry *);
+};
 
-- It looks like you did not use your "real" name for the patch on either
-  the Signed-off-by: line, or the From: line (both of which have to
-  match).  Please read the kernel file, Documentation/SubmittingPatches
-  for how to do this correctly.
+struct block_fmt {
+        struct perf_hpp_fmt     fmt;
+        struct report           *rep;
+        struct block_dimension  *dim;
+};
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
+static struct block_dimension dim_total_cycles_pct {
+        .header = "Sampled Cycles%",
+        .idx = PERF_HPP_REPORT__BLOCK_TOTAL_CYCLES_PCT,
+        .width = 15,
+        .cmp = block_info__cmp;
+        .sort = block_cycles_cov_sort;
+        .entry = block_cycles_cov_entry;
+};
 
-thanks,
+......
 
-greg k-h's patch email bot
+Is above new update correct?
+
+>>
+>>> SNIP
+>>>
+>>>> +{
+>>>> +	struct block_hist *bh = &rep->block_hist;
+>>>> +
+>>>> +	get_block_hists(hists, bh, rep);
+>>>> +	symbol_conf.report_individual_block = true;
+>>>> +	hists__fprintf(&bh->block_hists, true, 0, 0, 0,
+>>>> +		       stdout, true);
+>>>> +	hists__delete_entries(&bh->block_hists);
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>>    static int perf_evlist__tty_browse_hists(struct evlist *evlist,
+>>>>    					 struct report *rep,
+>>>>    					 const char *help)
+>>>> @@ -500,6 +900,12 @@ static int perf_evlist__tty_browse_hists(struct evlist *evlist,
+>>>>    			continue;
+>>>>    		hists__fprintf_nr_sample_events(hists, rep, evname, stdout);
+>>>> +
+>>>> +		if (rep->total_cycles) {
+>>>> +			hists__fprintf_all_blocks(hists, rep);
+>>>
+>>> so this call kicks all the block info setup/count/print, right?
+>>>
+>>
+>> Yes, all in this call.
+>>
+>>> I thingk it shouldn't be in the output code, but in the code before..
+>>> from what I see you could count block_info counts during the sample
+>>> processing, no?
+>>>
+>>
+>> In sample processing, we just get all symbols and account the cycles per
+>> symbol. We need to create/count the block_info at some points after the
+>> sample processing.
+> 
+> understand, but it needs to be outside display function
+> 
+
+OK, I will move the code for block_info collection outside of display 
+function.
+
+> also, can't you gather the block_info data gradually
+> during the sample processing?
+> 
+
+Looks we have to gather the block_info after the sample processing. 
+That's because in each sample processing, we will call 
+hist__account_cycles(). Then finally __symbol__account_cycles() gets 
+called for accounting one basic block in this symbol.
+
+ch[offset].num_aggr++;
+ch[offset].cycles_aggr += cycles;
+
+So actually, after the sample processing, we will get the num_aggr and 
+cycles_aggr for this basic block and compute the average cycles for this 
+block (cycles_aggr / num_aggr).
+
+That's why I think we should gather the block_info after the sample 
+processing.
+
+Thanks
+Jin Yao
+
+> jirka
+> 
+>>
+>> Maybe it's not very good to put block info setup/count/print in a call, but
+>> it's really not easy to process the block_info during the sample processing.
+>>
+>> Thanks
+>> Jin Yao
+>>
+>>> jirka
+>>>
