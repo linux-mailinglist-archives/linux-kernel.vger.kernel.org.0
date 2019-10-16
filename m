@@ -2,83 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC94DD8623
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 04:57:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26D1FD8627
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 05:00:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390823AbfJPC5u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 22:57:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53538 "EHLO mail.kernel.org"
+        id S1730853AbfJPDA5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 23:00:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53832 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390806AbfJPC5s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 22:57:48 -0400
-Received: from lenoir.home (lfbn-ncy-1-150-155.w83-194.abo.wanadoo.fr [83.194.232.155])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728588AbfJPDA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 23:00:57 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B429217D6;
-        Wed, 16 Oct 2019 02:57:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CAA5D20854;
+        Wed, 16 Oct 2019 03:00:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571194667;
-        bh=Wpce9udaw5lqxb8qndTEni/7j4Wvb9sSHAxCu/D1goI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pb26N5+KY7ykJCza9xsXU/tVLP0iceei6SxEUxG+wf0FphmiiVPzY2F07/4+LDCeP
-         SCySMffDZZPzBrbmZLOAv/Uinv+vSeFa2q8g7l4eJaKqLfBhyzwMpQfAITXPiYVuG4
-         1M045mlqy4dGdPr9cwHvXMBHB+zqz2484D57sUwk=
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Frederic Weisbecker <frederic@kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Yauheni Kaliuta <yauheni.kaliuta@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Pavel Machek <pavel@ucw.cz>
-Subject: [PATCH 14/14] leds: Use vtime aware kcpustat accessor to fetch CPUTIME_SYSTEM
-Date:   Wed, 16 Oct 2019 04:57:00 +0200
-Message-Id: <20191016025700.31277-15-frederic@kernel.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016025700.31277-1-frederic@kernel.org>
-References: <20191016025700.31277-1-frederic@kernel.org>
+        s=default; t=1571194856;
+        bh=Q6EaTHXUZJ+A9ZOpvEPtSB0LVp/m+g/JevPvkuMDYe4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qx3o05KJQZGZrN0HgUJI3GmkNWw/R2WGNKL6xxxEPanMo+gX0DLd6aQk0eJOA3wsP
+         xDsH36/1uMy6d/v1atqafEYJbtpQKoFXqEFc1chpMzq7pF+9Id5mZLVjbag6n0RV9H
+         qmr+pLv4PT5WFRZ+p10cz4nZlcx3EwxnyQNC/Lt8=
+Date:   Wed, 16 Oct 2019 04:00:52 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] arm64: mm: Fix unused variable warning in
+ zone_sizes_init
+Message-ID: <20191016030051.4di67v6swlkz2wzy@willie-the-truck>
+References: <20191015224304.20963-1-natechancellor@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191015224304.20963-1-natechancellor@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we have a vtime safe kcpustat accessor for CPUTIME_SYSTEM, use
-it to start fixing frozen kcpustat values on nohz_full CPUs.
+On Tue, Oct 15, 2019 at 03:43:04PM -0700, Nathan Chancellor wrote:
+> When building arm64 allnoconfig, CONFIG_ZONE_DMA and CONFIG_ZONE_DMA32
+> get disabled so there is a warning about max_dma being unused.
+> 
+> ../arch/arm64/mm/init.c:215:16: warning: unused variable 'max_dma'
+> [-Wunused-variable]
+>         unsigned long max_dma = min;
+>                       ^
+> 1 warning generated.
+> 
+> Add an ifdef around the variable to fix this.
+> 
+> Fixes: 1a8e1cef7603 ("arm64: use both ZONE_DMA and ZONE_DMA32")
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>  arch/arm64/mm/init.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+> index 44f07fdf7a59..c3d6657b9942 100644
+> --- a/arch/arm64/mm/init.c
+> +++ b/arch/arm64/mm/init.c
+> @@ -212,7 +212,9 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max)
+>  	struct memblock_region *reg;
+>  	unsigned long zone_size[MAX_NR_ZONES], zhole_size[MAX_NR_ZONES];
+>  	unsigned long max_dma32 = min;
+> +#if defined(CONFIG_ZONE_DMA) || defined(CONFIG_ZONE_DMA)
+>  	unsigned long max_dma = min;
+> +#endif
 
-Reported-by: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Wanpeng Li <wanpengli@tencent.com>
-Cc: Ingo Molnar <mingo@kernel.org>
----
- drivers/leds/trigger/ledtrig-activity.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This looks bogus to me :/ You're referring to CONFIG_ZONE_DMA twice, and I
+can't see how that symbol even exists on arm64.
 
-diff --git a/drivers/leds/trigger/ledtrig-activity.c b/drivers/leds/trigger/ledtrig-activity.c
-index 6a72b7e13719..ddfc5edd07c8 100644
---- a/drivers/leds/trigger/ledtrig-activity.c
-+++ b/drivers/leds/trigger/ledtrig-activity.c
-@@ -59,7 +59,7 @@ static void led_activity_function(struct timer_list *t)
- 	for_each_possible_cpu(i) {
- 		curr_used += kcpustat_cpu(i).cpustat[CPUTIME_USER]
- 			  +  kcpustat_cpu(i).cpustat[CPUTIME_NICE]
--			  +  kcpustat_cpu(i).cpustat[CPUTIME_SYSTEM]
-+			  +  kcpustat_field(&kcpustat_cpu(i), CPUTIME_SYSTEM, i)
- 			  +  kcpustat_cpu(i).cpustat[CPUTIME_SOFTIRQ]
- 			  +  kcpustat_cpu(i).cpustat[CPUTIME_IRQ];
- 		cpus++;
--- 
-2.23.0
-
+Will
