@@ -2,155 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91BA7D8BA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:48:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 255F2D8BAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:48:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389838AbfJPIsC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 04:48:02 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:4180 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726231AbfJPIsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 04:48:01 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 8F356CBF38CF2F34D498;
-        Wed, 16 Oct 2019 16:47:59 +0800 (CST)
-Received: from [127.0.0.1] (10.202.227.179) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Wed, 16 Oct 2019
- 16:47:53 +0800
-Subject: Re: [RFC PATCH 0/6] SMMUv3 PMCG IMP DEF event support
-To:     Robin Murphy <robin.murphy@arm.com>, <lorenzo.pieralisi@arm.com>,
-        <guohanjun@huawei.com>, <sudeep.holla@arm.com>,
-        <mark.rutland@arm.com>, <will@kernel.org>
-References: <1569854031-237636-1-git-send-email-john.garry@huawei.com>
- <66a3ce9f-d3cd-110f-7353-46e6eaf25b7c@arm.com>
-CC:     <shameerali.kolothum.thodi@huawei.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
-        <rjw@rjwysocki.net>, <lenb@kernel.org>, <nleeder@codeaurora.org>,
-        <linuxarm@huawei.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <1d546b4b-a2ad-49da-b532-951232093a9f@huawei.com>
-Date:   Wed, 16 Oct 2019 09:47:45 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S2388290AbfJPIsW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 04:48:22 -0400
+Received: from mga14.intel.com ([192.55.52.115]:6542 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388188AbfJPIsV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 04:48:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2019 01:48:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,303,1566889200"; 
+   d="scan'208";a="208368132"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga001.fm.intel.com with ESMTP; 16 Oct 2019 01:48:20 -0700
+Received: from [10.226.38.27] (unknown [10.226.38.27])
+        by linux.intel.com (Postfix) with ESMTP id 791205803C5;
+        Wed, 16 Oct 2019 01:48:16 -0700 (PDT)
+Subject: Re: [PATCH v3 2/3] mtd: spi-nor: cadence-quadspi: Disable the DAC for
+ Intel LGM SoC
+To:     Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-mtd@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        dwmw2@infradead.org, computersforpeace@gmail.com, richard@nod.at,
+        jwboyer@gmail.com, boris.brezillon@free-electrons.com,
+        cyrille.pitchen@atmel.com, david.oberhollenzer@sigma-star.at,
+        miquel.raynal@bootlin.com, tudor.ambarus@gmail.com,
+        andriy.shevchenko@intel.com, cheol.yong.kim@intel.com,
+        qi-ming.wu@intel.com
+References: <20190909104733.14273-1-vadivel.muruganx.ramuthevar@linux.intel.com>
+ <20190909104733.14273-3-vadivel.muruganx.ramuthevar@linux.intel.com>
+ <85355c80-1344-db22-ae31-0f20f30b9754@ti.com>
+From:   "Ramuthevar, Vadivel MuruganX" 
+        <vadivel.muruganx.ramuthevar@linux.intel.com>
+Message-ID: <9b91e39e-a1ab-d99d-50b1-483d6acf5357@linux.intel.com>
+Date:   Wed, 16 Oct 2019 16:48:15 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <66a3ce9f-d3cd-110f-7353-46e6eaf25b7c@arm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.179]
-X-CFilter-Loop: Reflected
+In-Reply-To: <85355c80-1344-db22-ae31-0f20f30b9754@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/10/2019 19:00, Robin Murphy wrote:
-> Hi John,
+Hi Vignesh,
+
+       Thank you for the review comments.
+
+On 16/10/2019 4:32 PM, Vignesh Raghavendra wrote:
 >
-> On 30/09/2019 15:33, John Garry wrote:
->> This patchset adds IMP DEF event support for the SMMUv3 PMCG.
+> On 09/09/19 4:17 PM, Ramuthevar,Vadivel MuruganX wrote:
+>> From: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
 >>
->> It is marked as an RFC as the method to identify the PMCG implementation
->> may be a quite disliked. And, in general, the series is somewhat
->> incomplete.
+>> on Intel's Lightning Mountain(LGM) SoCs QSPI controller do not use
+> s/on/On
+Agreed, will update.
+>> Direct Access Controller(DAC).
 >>
->> So the background is that the PMCG supports IMP DEF events, yet we
->> have no
->> method to identify the PMCG to know the IMP DEF events.
+>> This patch introduces to properly disable the Direct Access Controller
+> "This patch adds a quirk to disable..." or something something similar
+okay, will update.
+>> for data transfer instead it uses indirect data transfer.
 >>
->> A method for identifying the PMCG implementation could be using
->> PMDEVARCH, but we cannot rely on this being set properly, as whether this
->> is implemented is not defined in SMMUv3 spec.
+>> Signed-off-by: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
+>> ---
+>>   drivers/mtd/spi-nor/Kconfig           |  2 +-
+>>   drivers/mtd/spi-nor/cadence-quadspi.c | 21 +++++++++++++++++++++
+>>   2 files changed, 22 insertions(+), 1 deletion(-)
 >>
->> Another method would be perf event aliasing, but this method of event
->> matching is based on CPU id, which would not guarantee same
->> uniqueness as PMCG implementation.
+>> diff --git a/drivers/mtd/spi-nor/Kconfig b/drivers/mtd/spi-nor/Kconfig
+>> index 6de83277ce8b..ba2e372ae514 100644
+>> --- a/drivers/mtd/spi-nor/Kconfig
+>> +++ b/drivers/mtd/spi-nor/Kconfig
+>> @@ -34,7 +34,7 @@ config SPI_ASPEED_SMC
+>>   
+>>   config SPI_CADENCE_QUADSPI
+>>   	tristate "Cadence Quad SPI controller"
+>> -	depends on OF && (ARM || ARM64 || COMPILE_TEST)
+>> +	depends on OF && (ARM || ARM64 || COMPILE_TEST || X86)
+>>   	help
+>>   	  Enable support for the Cadence Quad SPI Flash controller.
+>>   
+>> diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
+>> index 67f15a1f16fd..73b9fbd1508a 100644
+>> --- a/drivers/mtd/spi-nor/cadence-quadspi.c
+>> +++ b/drivers/mtd/spi-nor/cadence-quadspi.c
+>> @@ -33,6 +33,7 @@
+>>   
+>>   /* Quirks */
+>>   #define CQSPI_NEEDS_WR_DELAY		BIT(0)
+>> +#define CQSPI_DISABLE_DAC_MODE		BIT(1)
+>>   
+>>   /* Capabilities mask */
+>>   #define CQSPI_BASE_HWCAPS_MASK					\
+>> @@ -609,6 +610,13 @@ static int cqspi_write_setup(struct spi_nor *nor)
+>>   	struct cqspi_st *cqspi = f_pdata->cqspi;
+>>   	void __iomem *reg_base = cqspi->iobase;
+>>   
+>> +	/* Disable direct access controller */
+>> +	if (!f_pdata->use_direct_mode) {
+>> +		reg = readl(reg_base + CQSPI_REG_CONFIG);
+>> +		reg &= ~CQSPI_REG_CONFIG_ENB_DIR_ACC_CTRL;
+>> +		writel(reg, reg_base + CQSPI_REG_CONFIG);
+>> +	}
+>> +
+>>   	/* Set opcode. */
+>>   	reg = nor->program_opcode << CQSPI_REG_WR_INSTR_OPCODE_LSB;
+>>   	writel(reg, reg_base + CQSPI_REG_WR_INSTR);
+>> @@ -1328,6 +1336,7 @@ static int cqspi_probe(struct platform_device *pdev)
+>>   	struct resource *res_ahb;
+>>   	struct reset_control *rstc, *rstc_ocp;
+>>   	const struct cqspi_driver_platdata *ddata;
+>> +	struct cqspi_flash_pdata *f_pdata;
+>>   	int ret;
+>>   	int irq;
+>>   
+>> @@ -1436,6 +1445,9 @@ static int cqspi_probe(struct platform_device *pdev)
+>>   		goto probe_setup_failed;
+>>   	}
+>>   
+>> +	if (ddata && (ddata->quirks & CQSPI_DISABLE_DAC_MODE))
+>> +		f_pdata->use_direct_mode = false;
+>> +
+> If you do this here, you will still end up acquiring a DMA channel in
+> cqspi_request_mmap_dma() (called from cqspi_setup_flash()). So, please
+> move the check to cqspi_setup_flash().
+
+will fix it.
+
+---
+Regards
+Vadivel
+>>   	return ret;
+>>   probe_setup_failed:
+>>   	cqspi_controller_enable(cqspi, 0);
+>> @@ -1510,6 +1522,11 @@ static const struct cqspi_driver_platdata am654_ospi = {
+>>   	.quirks = CQSPI_NEEDS_WR_DELAY,
+>>   };
+>>   
+>> +static const struct cqspi_driver_platdata intel_lgm_qspi = {
+>> +	.hwcaps_mask = CQSPI_BASE_HWCAPS_MASK,
+>> +	.quirks = CQSPI_DISABLE_DAC_MODE,
+>> +};
+>> +
+>>   static const struct of_device_id cqspi_dt_ids[] = {
+>>   	{
+>>   		.compatible = "cdns,qspi-nor",
+>> @@ -1523,6 +1540,10 @@ static const struct of_device_id cqspi_dt_ids[] = {
+>>   		.compatible = "ti,am654-ospi",
+>>   		.data = &am654_ospi,
+>>   	},
+>> +	{
+>> +		.compatible = "intel,lgm-qspi",
+>> +		.data = &intel_lgm_qspi,
+>> +	},
+>>   	{ /* end of table */ }
+>>   };
+>>   
 >>
->> Yet another method could be to continue using ACPI OEM ID in the IORT
->> code, but this does not scale. And it is not suitable if we ever add DT
->> support to the PMCG driver.
->>
->> The method used in this series is based on matching on the parent SMMUv3
->> IIDR. We store this IIDR contents in the arm smmu structure as the first
->> element, which means that we don't have to expose SMMU APIs - this is
->> the part which may be disliked.
->>
->> The final two patches switch the pre-existing PMCG model identification
->> from ACPI OEM ID to the same parent SMMUv3 IIDR matching.
->>
->> For now, we only consider SMMUv3' nodes being the associated node for
->> PMCG.
->
-
-Hi Robin,
-
-> Two significant concerns right off the bat:
->
-> - It seems more common than not for silicon designers to fail to
-> implement IIDR correctly, so it's only a matter of time before
-> inevitably needing to bring back some firmware-level identifier
-> abstraction (if not already - does Hi161x have PMCGs?)
-
-Maybe there's a way that we can switch to this method, and leave the 
-door open for an easy way to support firmware-level identifier again, if 
-ever needed. I'm not too pushed - this was secondary to just allowing 
-the PMCG driver know the associated SMMU model.
-
-And, no, hi161x does not have any PMCGs.
-
->
-> - This seems like a step in entirely the wrong direction for supporting
->.
-
-So to support PMCGs that reference a Named Component or Root Complex, I 
-thought that the IORT parsing code would have to do some secondary 
-lookup to the associated SMMU, through the Named Component or Root 
-Complex node.
-
-What was your idea here?
-
-Note: I do acknowledge that an overall issue is that we assume all PMCG 
-IMP DEF events are same for a given SMMU model.
-
->
-> Interpreting the Node Reference is definitely a welcome improvement over
-> matching table headers, but absent a truly compelling argument to the
-> contrary, I'd rather retain the "PMCG model" abstraction in between that
-> and the driver itself (especially since those can trivially be hung off
-> compatibles once it comes to DT support).
-
-For DT, I would assume that we just use compatible strings would allow 
-us to identify the PMCG model.
-
-On a related matter, is there still a need to deal with scenarios of the 
-PMCG being located within the SMMU register map? As you may remember, we 
-did have this issue but relocated the PMCG to outside the SMMU register 
-map in a later chip rev.
-
-Cheers,
-John
-
->
-> Thanks,
-> Robin.
->
->>
->> John Garry (6):
->>    ACPI/IORT: Set PMCG device parent
->>    iommu/arm-smmu-v3: Record IIDR in arm_smmu_device structure
->>    perf/smmuv3: Retrieve parent SMMUv3 IIDR
->>    perf/smmuv3: Support HiSilicon hip08 (hi1620) IMP DEF events
->>    perf/smmuv3: Match implementation options based on parent SMMU IIDR
->>    ACPI/IORT: Drop code to set the PMCG software-defined model
->>
->>   drivers/acpi/arm64/iort.c     | 69 ++++++++++++++--------------
->>   drivers/iommu/arm-smmu-v3.c   |  5 +++
->>   drivers/perf/arm_smmuv3_pmu.c | 84 ++++++++++++++++++++++++++++++-----
->>   include/linux/acpi_iort.h     |  8 ----
->>   4 files changed, 112 insertions(+), 54 deletions(-)
->>
->
-> .
->
-
-
