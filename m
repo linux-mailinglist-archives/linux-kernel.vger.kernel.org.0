@@ -2,102 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08799D9008
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:52:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48B64D9004
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:52:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392847AbfJPLwX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 07:52:23 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41022 "EHLO mx1.redhat.com"
+        id S2392839AbfJPLwP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 07:52:15 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50650 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392811AbfJPLwM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 07:52:12 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        id S2392812AbfJPLwN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 07:52:13 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8F58CA3CD8A;
+        by mx1.redhat.com (Postfix) with ESMTPS id AEA0D8980F1;
         Wed, 16 Oct 2019 11:52:12 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-43.ams2.redhat.com [10.36.116.43])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4F7D460852;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5587B1001B20;
         Wed, 16 Oct 2019 11:52:09 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 4D9FD31EA2; Wed, 16 Oct 2019 13:52:05 +0200 (CEST)
+        id 8D43731EA4; Wed, 16 Oct 2019 13:52:05 +0200 (CEST)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
         Daniel Vetter <daniel.vetter@ffwll.ch>,
         Gerd Hoffmann <kraxel@redhat.com>,
+        Dave Airlie <airlied@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Xinliang Liu <z.liuxinliang@hisilicon.com>,
+        Rongrong Zou <zourongrong@gmail.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Hans de Goede <hdegoede@redhat.com>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 10/11] drm/vram: drop verify_access
-Date:   Wed, 16 Oct 2019 13:52:02 +0200
-Message-Id: <20191016115203.20095-11-kraxel@redhat.com>
+        Sean Paul <sean@poorly.run>,
+        linux-kernel@vger.kernel.org (open list),
+        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
+        BOCHS VIRTUAL GPU)
+Subject: [PATCH v4 11/11] drm/vram: drop DRM_VRAM_MM_FILE_OPERATIONS
+Date:   Wed, 16 Oct 2019 13:52:03 +0200
+Message-Id: <20191016115203.20095-12-kraxel@redhat.com>
 In-Reply-To: <20191016115203.20095-1-kraxel@redhat.com>
 References: <20191016115203.20095-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.68]); Wed, 16 Oct 2019 11:52:12 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.67]); Wed, 16 Oct 2019 11:52:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Not needed any more.
+Not needed any more because we don't have vram specific fops
+any more.  DEFINE_DRM_GEM_FOPS() can be used instead.
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/drm_gem_vram_helper.c | 22 ----------------------
- 1 file changed, 22 deletions(-)
+ include/drm/drm_gem_vram_helper.h              | 18 ------------------
+ drivers/gpu/drm/ast/ast_drv.c                  |  5 +----
+ drivers/gpu/drm/bochs/bochs_drv.c              |  5 +----
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c    |  5 +----
+ drivers/gpu/drm/mgag200/mgag200_drv.c          |  5 +----
+ drivers/gpu/drm/vboxvideo/vbox_drv.c           |  5 +----
+ 6 files changed, 5 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_gem_vram_helper.c b/drivers/gpu/drm/drm_gem_vram_helper.c
-index ec868bf75333..b86fe0fa9d05 100644
---- a/drivers/gpu/drm/drm_gem_vram_helper.c
-+++ b/drivers/gpu/drm/drm_gem_vram_helper.c
-@@ -552,13 +552,6 @@ static void drm_gem_vram_bo_driver_evict_flags(struct drm_gem_vram_object *gbo,
- 	*pl = gbo->placement;
+diff --git a/include/drm/drm_gem_vram_helper.h b/include/drm/drm_gem_vram_helper.h
+index 5e48fdac4a1d..b8ad4531ebb4 100644
+--- a/include/drm/drm_gem_vram_helper.h
++++ b/include/drm/drm_gem_vram_helper.h
+@@ -184,22 +184,4 @@ struct drm_vram_mm *drm_vram_helper_alloc_mm(
+ 	struct drm_device *dev, uint64_t vram_base, size_t vram_size);
+ void drm_vram_helper_release_mm(struct drm_device *dev);
+ 
+-/**
+- * define DRM_VRAM_MM_FILE_OPERATIONS - default callback functions for \
+-	&struct file_operations
+- *
+- * Drivers that use VRAM MM can use this macro to initialize
+- * &struct file_operations with default functions.
+- */
+-#define DRM_VRAM_MM_FILE_OPERATIONS \
+-	.llseek		= no_llseek, \
+-	.read		= drm_read, \
+-	.poll		= drm_poll, \
+-	.unlocked_ioctl = drm_ioctl, \
+-	.compat_ioctl	= drm_compat_ioctl, \
+-	.mmap		= drm_gem_mmap, \
+-	.open		= drm_open, \
+-	.release	= drm_release \
+-
+-
+ #endif
+diff --git a/drivers/gpu/drm/ast/ast_drv.c b/drivers/gpu/drm/ast/ast_drv.c
+index e0e8770462bc..1f17794b0890 100644
+--- a/drivers/gpu/drm/ast/ast_drv.c
++++ b/drivers/gpu/drm/ast/ast_drv.c
+@@ -200,10 +200,7 @@ static struct pci_driver ast_pci_driver = {
+ 	.driver.pm = &ast_pm_ops,
+ };
+ 
+-static const struct file_operations ast_fops = {
+-	.owner = THIS_MODULE,
+-	DRM_VRAM_MM_FILE_OPERATIONS
+-};
++DEFINE_DRM_GEM_FOPS(ast_fops);
+ 
+ static struct drm_driver driver = {
+ 	.driver_features = DRIVER_MODESET | DRIVER_GEM,
+diff --git a/drivers/gpu/drm/bochs/bochs_drv.c b/drivers/gpu/drm/bochs/bochs_drv.c
+index 3b9b0d9bbc14..10460878414e 100644
+--- a/drivers/gpu/drm/bochs/bochs_drv.c
++++ b/drivers/gpu/drm/bochs/bochs_drv.c
+@@ -58,10 +58,7 @@ static int bochs_load(struct drm_device *dev)
+ 	return ret;
  }
  
--static int drm_gem_vram_bo_driver_verify_access(struct drm_gem_vram_object *gbo,
--						struct file *filp)
--{
--	return drm_vma_node_verify_access(&gbo->bo.base.vma_node,
--					  filp->private_data);
--}
--
- static void drm_gem_vram_bo_driver_move_notify(struct drm_gem_vram_object *gbo,
- 					       bool evict,
- 					       struct ttm_mem_reg *new_mem)
-@@ -823,20 +816,6 @@ static void bo_driver_evict_flags(struct ttm_buffer_object *bo,
- 	drm_gem_vram_bo_driver_evict_flags(gbo, placement);
+-static const struct file_operations bochs_fops = {
+-	.owner		= THIS_MODULE,
+-	DRM_VRAM_MM_FILE_OPERATIONS
+-};
++DEFINE_DRM_GEM_FOPS(bochs_fops);
+ 
+ static struct drm_driver bochs_driver = {
+ 	.driver_features	= DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC,
+diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+index 4f52c83b9b4c..2fd4ca91a62d 100644
+--- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
++++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+@@ -26,10 +26,7 @@
+ #include "hibmc_drm_drv.h"
+ #include "hibmc_drm_regs.h"
+ 
+-static const struct file_operations hibmc_fops = {
+-	.owner		= THIS_MODULE,
+-	DRM_VRAM_MM_FILE_OPERATIONS
+-};
++DEFINE_DRM_GEM_FOPS(hibmc_fops);
+ 
+ static irqreturn_t hibmc_drm_interrupt(int irq, void *arg)
+ {
+diff --git a/drivers/gpu/drm/mgag200/mgag200_drv.c b/drivers/gpu/drm/mgag200/mgag200_drv.c
+index 4f9df3b93598..397f8b0a9af8 100644
+--- a/drivers/gpu/drm/mgag200/mgag200_drv.c
++++ b/drivers/gpu/drm/mgag200/mgag200_drv.c
+@@ -58,10 +58,7 @@ static void mga_pci_remove(struct pci_dev *pdev)
+ 	drm_put_dev(dev);
  }
  
--static int bo_driver_verify_access(struct ttm_buffer_object *bo,
--				   struct file *filp)
--{
--	struct drm_gem_vram_object *gbo;
--
--	/* TTM may pass BOs that are not GEM VRAM BOs. */
--	if (!drm_is_gem_vram(bo))
--		return -EINVAL;
--
--	gbo = drm_gem_vram_of_bo(bo);
--
--	return drm_gem_vram_bo_driver_verify_access(gbo, filp);
--}
--
- static void bo_driver_move_notify(struct ttm_buffer_object *bo,
- 				  bool evict,
- 				  struct ttm_mem_reg *new_mem)
-@@ -893,7 +872,6 @@ static struct ttm_bo_driver bo_driver = {
- 	.init_mem_type = bo_driver_init_mem_type,
- 	.eviction_valuable = ttm_bo_eviction_valuable,
- 	.evict_flags = bo_driver_evict_flags,
--	.verify_access = bo_driver_verify_access,
- 	.move_notify = bo_driver_move_notify,
- 	.io_mem_reserve = bo_driver_io_mem_reserve,
- 	.io_mem_free = bo_driver_io_mem_free,
+-static const struct file_operations mgag200_driver_fops = {
+-	.owner = THIS_MODULE,
+-	DRM_VRAM_MM_FILE_OPERATIONS
+-};
++DEFINE_DRM_GEM_FOPS(mgag200_driver_fops);
+ 
+ static struct drm_driver driver = {
+ 	.driver_features = DRIVER_GEM | DRIVER_MODESET,
+diff --git a/drivers/gpu/drm/vboxvideo/vbox_drv.c b/drivers/gpu/drm/vboxvideo/vbox_drv.c
+index 6ee308b453da..8512d970a09f 100644
+--- a/drivers/gpu/drm/vboxvideo/vbox_drv.c
++++ b/drivers/gpu/drm/vboxvideo/vbox_drv.c
+@@ -181,10 +181,7 @@ static struct pci_driver vbox_pci_driver = {
+ #endif
+ };
+ 
+-static const struct file_operations vbox_fops = {
+-	.owner = THIS_MODULE,
+-	DRM_VRAM_MM_FILE_OPERATIONS
+-};
++DEFINE_DRM_GEM_FOPS(vbox_fops);
+ 
+ static struct drm_driver driver = {
+ 	.driver_features =
 -- 
 2.18.1
 
