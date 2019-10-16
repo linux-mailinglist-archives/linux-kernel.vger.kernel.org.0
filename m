@@ -2,126 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09449D9AA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 22:01:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D94A1D9ABA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 22:04:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436984AbfJPUBU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 16:01:20 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:39129 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436975AbfJPUBR (ORCPT
+        id S2394639AbfJPUCW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 16:02:22 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:36981 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729380AbfJPUCV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 16:01:17 -0400
-Received: by mail-qt1-f193.google.com with SMTP id n7so37978901qtb.6
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 13:01:17 -0700 (PDT)
+        Wed, 16 Oct 2019 16:02:21 -0400
+Received: by mail-oi1-f196.google.com with SMTP id i16so117341oie.4
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 13:02:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=T3XWTOgEP/9W4ZS1E8/VXGGfXzT8jd4exEGR+bMuwFQ=;
-        b=TwrU+GOQ941Sbph2SFlImjGbplb/clyAhQMdLITdEqfku17H8sdjTfFUMvAZe4kojq
-         4YBgVZ0VBiTp3siA8nE/jqe9SmThHOYeBqzBNcz8IFDf7vf796F/kPBtX4VfC12d9cGF
-         Z87WVxZ17F7bODF0yNyx32TQf/Uq2xQTMJQjkPTJhaIYadOcoA+UnpOO4MqsumekXePm
-         dnsb99L63dW8eqGMUTHNASV5cIoNW8HlxIKZwH2Oq2DtBbwk8VEm4Kb7drd+R4rQyPl9
-         cAk4Ro2mCrP6oNxUCU7i27imKhoBEzF+naSPVz9JYZWlBy9dvkx82EpjYrBvxvcm4UJ8
-         tBUg==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=FHNz99ZfBU4H/6+e3BXs4XfNAFX8LVbryN5UqXjbu7I=;
+        b=dtthg5EZZ6M5n+jDlRO+XUgJ7uRzwWsrmdYf51cen7Gcgu4XipcrmMUfzXFgudSK4x
+         burC4NFvhRNF3ykdCqRgQWCkURUpUAymbeF6gDH5VQIRLHQVSKHTNDnRbBeKtEiSYGeg
+         INMiCFLVO64voTtuLWiPiHJ5i2/wWAePJVvmK/an+fOcJZfKRF2x+MHntSCc/AgwaRZA
+         ytUMMSIX9vdcGG2ZIotBaJRV2ziIfVC97BuxS84OmCcDXY188d/+uXkWKhJKdk/pgsGT
+         CnDVim+xlg1ES+K1vIE1gFXHeAQzAX72hRZTo4ehTgcQkXukG+ExCbw+qZd9xfyAtUoO
+         2eVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=T3XWTOgEP/9W4ZS1E8/VXGGfXzT8jd4exEGR+bMuwFQ=;
-        b=IVX7rhquos456dguGxY/UKt2RqRtD7QOvjzZ3F4matITHn59f/pzw/p+ETY7vrJgiZ
-         d6CbiVFcuAvsOmYAIhnnawKet8opUCd2iQpbr2Xh571x72GOmnfwzYnyYBsbHLbPB76e
-         67wl0f58YagXVan6NU2jrUjVDCege1Six/7Zopvcxu34UQeHazCzb9TeBXpFDBK1kb25
-         LT/Fpxcum7VStBeJztr9mAeF4jlGuuoexbTr6kA2CHzmTgYIAHO3vaczKeu8ekxx1+18
-         vfJ/5IlKh39m15iXfdaZnSX1jKa5Yaolu1Vb3svbFk6JIztp2pg4bhAdml+eFWL585GN
-         oqbA==
-X-Gm-Message-State: APjAAAXQLw4/uv1iggiYqPqton8z4YYxaLM3ENNlJKjSfkQo7GmXI5+M
-        daC9PdYhI2bZJo+nkIHwe8dqtA==
-X-Google-Smtp-Source: APXvYqxUeYI2VVeNKwOcx1CBf1Vuu9NAWArtbmb0ydUiJoKzSapQ6z4MonpaFLHL7qk8ur/XLUM3Ag==
-X-Received: by 2002:ac8:f28:: with SMTP id e37mr47590802qtk.274.1571256076532;
-        Wed, 16 Oct 2019 13:01:16 -0700 (PDT)
-Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id c204sm13342030qkb.90.2019.10.16.13.01.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2019 13:01:15 -0700 (PDT)
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
-        ebiederm@xmission.com, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net,
-        catalin.marinas@arm.com, will@kernel.org,
-        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
-        james.morse@arm.com, vladimir.murzin@arm.com,
-        matthias.bgg@gmail.com, bhsharma@redhat.com, linux-mm@kvack.org,
-        mark.rutland@arm.com, steve.capper@arm.com, rfontana@redhat.com,
-        tglx@linutronix.de
-Subject: [PATCH v7 25/25] arm64: kexec: remove head from relocation argument
-Date:   Wed, 16 Oct 2019 16:00:34 -0400
-Message-Id: <20191016200034.1342308-26-pasha.tatashin@soleen.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016200034.1342308-1-pasha.tatashin@soleen.com>
-References: <20191016200034.1342308-1-pasha.tatashin@soleen.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=FHNz99ZfBU4H/6+e3BXs4XfNAFX8LVbryN5UqXjbu7I=;
+        b=k+9oF82VLYcvXfXQU7jmP4Ata1owKpI2FUT3HCxhw4g5UBn31DCUd5tqZmAp6irICG
+         WNrmM8gBh2VG9qzL4LVNlV1k9/ezxPyg/z2sJcwsRmzqoOVGxV0/JM3uSaEAiBD7TEk5
+         i1dBkovgxOWNdAFSR+lqa3+yh+mcWaBNza0OOjGd4b+taZsKvrc5EjX/cp2f3ONSJD0O
+         ChxsriaRMsyRwv19miuedDcHqkHC50b6bW76YxOiE29bnY5Ub5R3uZeyP6q+jYVi61B8
+         PjR+Y6eAP2p9EmSG5vSJ38Jz3EeAoHZVmUac05psriMQOkmfTMOsZwbr9nk3j4TTBj7G
+         nHbA==
+X-Gm-Message-State: APjAAAX0rNzEkReBGj9GtFJZ8RT7E8vAJ2aVWboTeEfcKS5X+pnNcuRd
+        HzB+VNftsR6nbGuyXExPS/GLRlqaIXkGCUKh+JhPIw==
+X-Google-Smtp-Source: APXvYqwcJcti+SIQuAW47j8ngZ+NPZclH4h0ArtC1oKNxg9RonHLIJ2S/EfU3D3UB1hu9GkydPYLCNDntlwygRVUFZw=
+X-Received: by 2002:aca:620a:: with SMTP id w10mr118318oib.0.1571256140474;
+ Wed, 16 Oct 2019 13:02:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191008093711.3410-1-thomas_os@shipmail.org> <20191015100653.ittq4b2mx7pszky5@box>
+ <CAA9_cmcSXYB1jo1=CQ78eXVcyGWm1_TjQKd-Gmg0yAO3tObOFw@mail.gmail.com> <3a16a199-a4bd-5503-3146-3fb24bfb2638@shipmail.org>
+In-Reply-To: <3a16a199-a4bd-5503-3146-3fb24bfb2638@shipmail.org>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 16 Oct 2019 13:02:08 -0700
+Message-ID: <CAPcyv4ifG5_jCyURNVNHE2cYKbVWYuzVydstaXWr6VPOZxoZ-A@mail.gmail.com>
+Subject: Re: [RFC PATCH] mm: Fix a huge pud insertion race during faulting
+To:     =?UTF-8?Q?Thomas_Hellstr=C3=B6m_=28VMware=29?= 
+        <thomas_os@shipmail.org>
+Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Hellstrom <thellstrom@vmware.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now, that relocation is done using virtual addresses, reloc_arg->head
-is not needed anymore.
+On Tue, Oct 15, 2019 at 10:59 PM Thomas Hellstr=C3=B6m (VMware)
+<thomas_os@shipmail.org> wrote:
+>
+> Hi, Dan,
+>
+> On 10/16/19 3:44 AM, Dan Williams wrote:
+> > On Tue, Oct 15, 2019 at 3:06 AM Kirill A. Shutemov <kirill@shutemov.nam=
+e> wrote:
+> >> On Tue, Oct 08, 2019 at 11:37:11AM +0200, Thomas Hellstr=C3=B6m (VMwar=
+e) wrote:
+> >>> From: Thomas Hellstrom <thellstrom@vmware.com>
+> >>>
+> >>> A huge pud page can theoretically be faulted in racing with pmd_alloc=
+()
+> >>> in __handle_mm_fault(). That will lead to pmd_alloc() returning an
+> >>> invalid pmd pointer. Fix this by adding a pud_trans_unstable() functi=
+on
+> >>> similar to pmd_trans_unstable() and check whether the pud is really s=
+table
+> >>> before using the pmd pointer.
+> >>>
+> >>> Race:
+> >>> Thread 1:             Thread 2:                 Comment
+> >>> create_huge_pud()                               Fallback - not taken.
+> >>>                      create_huge_pud()         Taken.
+> >>> pmd_alloc()                                     Returns an invalid po=
+inter.
+> >>>
+> >>> Cc: Matthew Wilcox <willy@infradead.org>
+> >>> Fixes: a00cc7d9dd93 ("mm, x86: add support for PUD-sized transparent =
+hugepages")
+> >>> Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+> >>> ---
+> >>> RFC: We include pud_devmap() as an unstable PUD flag. Is this correct=
+?
+> >>>       Do the same for pmds?
+> >> I *think* it is correct and we should do the same for PMD, but I may b=
+e
+> >> wrong.
+> >>
+> >> Dan, Matthew, could you comment on this?
+> > The _devmap() check in these paths near _trans_unstable() has always
+> > been about avoiding assumptions that the corresponding page might be
+> > page cache or anonymous which for dax it's neither and does not behave
+> > like a typical page.
+>
+> The concern here is that _trans_huge() returns false for _devmap()
+> pages, which means that also _trans_unstable() returns false.
+>
+> Still, I figure someone could zap the entry at any time using madvise(),
+> so AFAICT the entry is indeed unstable, and it's a bug not to include
+> _devmap() in the _trans_unstable() functions?
 
-Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
----
- arch/arm64/include/asm/kexec.h    | 2 --
- arch/arm64/kernel/asm-offsets.c   | 1 -
- arch/arm64/kernel/machine_kexec.c | 1 -
- 3 files changed, 4 deletions(-)
-
-diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
-index df911a4aa8ce..b3a39736d0db 100644
---- a/arch/arm64/include/asm/kexec.h
-+++ b/arch/arm64/include/asm/kexec.h
-@@ -104,7 +104,6 @@ extern const unsigned long kexec_el2_vectors_offset;
- 
- /*
-  * kern_reloc_arg is passed to kernel relocation function as an argument.
-- * head		kimage->head, allows to traverse through relocation segments.
-  * entry_addr	kimage->start, where to jump from relocation function (new
-  *		kernel, or purgatory entry address).
-  * kern_arg0	first argument to kernel is its dtb address. The other
-@@ -119,7 +118,6 @@ extern const unsigned long kexec_el2_vectors_offset;
-  * copy_len	Number of bytes that need to be copied
-  */
- struct kern_reloc_arg {
--	phys_addr_t head;
- 	phys_addr_t entry_addr;
- 	phys_addr_t kern_arg0;
- 	phys_addr_t kern_arg1;
-diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
-index 4147d9d70c1c..4ec01f29718d 100644
---- a/arch/arm64/kernel/asm-offsets.c
-+++ b/arch/arm64/kernel/asm-offsets.c
-@@ -129,7 +129,6 @@ int main(void)
-   DEFINE(SDEI_EVENT_PRIORITY,	offsetof(struct sdei_registered_event, priority));
- #endif
- #ifdef CONFIG_KEXEC_CORE
--  DEFINE(KEXEC_KRELOC_HEAD,		offsetof(struct kern_reloc_arg, head));
-   DEFINE(KEXEC_KRELOC_ENTRY_ADDR,	offsetof(struct kern_reloc_arg, entry_addr));
-   DEFINE(KEXEC_KRELOC_KERN_ARG0,	offsetof(struct kern_reloc_arg, kern_arg0));
-   DEFINE(KEXEC_KRELOC_KERN_ARG1,	offsetof(struct kern_reloc_arg, kern_arg1));
-diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machine_kexec.c
-index 8edcc4be0b15..2e11194b8023 100644
---- a/arch/arm64/kernel/machine_kexec.c
-+++ b/arch/arm64/kernel/machine_kexec.c
-@@ -174,7 +174,6 @@ int machine_kexec_post_load(struct kimage *kimage)
- 	memcpy(reloc_code, kexec_relocate_code_start, kexec_relocate_code_size);
- 	kimage->arch.kern_reloc = __pa(reloc_code) + kexec_kern_reloc_offset;
- 	kimage->arch.kern_reloc_arg = __pa(kern_reloc_arg);
--	kern_reloc_arg->head = kimage->head;
- 	kern_reloc_arg->entry_addr = kimage->start;
- 	kern_reloc_arg->kern_arg0 = kimage->arch.dtb_mem;
- 	/* Setup vector table only when EL2 is available, but no VHE */
--- 
-2.23.0
-
+Yes, I can't think a case where it is wrong to include _devmap() in a
+_trans_unstable(). It may be unnecessary if the given path can't
+reasonably ever encounter a file-backed dax mapping, but it's
+otherwise ok to always consider _devmap().
