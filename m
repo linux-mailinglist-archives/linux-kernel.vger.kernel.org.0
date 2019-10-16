@@ -2,429 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7BC1D9691
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:11:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B21EED969B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:11:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405364AbfJPQKx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 12:10:53 -0400
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:14434 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405299AbfJPQKx (ORCPT
+        id S2405428AbfJPQLF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 12:11:05 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:52142 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2405297AbfJPQLE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 12:10:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1571242253; x=1602778253;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=s/FezfmeDvloVwFW2CBOqXqTQy2cR+yRjRdY7cVGHvQ=;
-  b=meg76JBqgoEsZrjifjKKwSpiLY65X1SBdvBwRblMKoUbKnnux4LTzJ3j
-   2MyChb/Fh4zvNBGb5ntWbCGQRupuu2VO1uAfnmI+QqGLzS6T5+NzoI+M6
-   bFB2HmtRu5iycGp/C7/HFeOZHR6EioRl0GohmHYUnKOEn3QtT5cnEcwBt
-   abBXXIUYKWinNBjJgEaB9zJJR6XXaJUJB3+i+eN053k8D74I5f1Bjwq1/
-   EGtooWiLcxwCxC6dMBgng8KFKFiwGv6KkZVI0uo+24blcu2OTV7umxOai
-   rYWxOvT+90MO0YR4hjuTpWkm6DPNFeDmFAG7Z2LFQYIQesWWcOtMNEzAn
-   g==;
-IronPort-SDR: TzJ4l1j9iiMf+qjelN9RXgEe8rhpykDgRpSurYLwLxoot3x9a7OzO6FrMnHV3PV2FZ3oeMUATJ
- 1ChjGnGcuhhD4HhxZezL5mHuNnT/LHwpeVbpAgN14JQJeOgndK2OOf29qSOiBg2HgdSoyFNIS8
- OJFyGtSEoWtvIqnYlNwOtNf4CaaEmIsaFhTNhQRNUztozfC5Oe4Iaqln+lZWl9XbfuNFNc+0oh
- sQI25jzKaznbIromSWEXd+QnLbxhNn/3eWYaix8Lb1W/FYVwYX9RwgqCcT3XFhHyXpwUwrbaBp
- qDM=
-X-IronPort-AV: E=Sophos;i="5.67,304,1566835200"; 
-   d="scan'208";a="121448324"
-Received: from mail-dm3nam03lp2050.outbound.protection.outlook.com (HELO NAM03-DM3-obe.outbound.protection.outlook.com) ([104.47.41.50])
-  by ob1.hgst.iphmx.com with ESMTP; 17 Oct 2019 00:10:51 +0800
+        Wed, 16 Oct 2019 12:11:04 -0400
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9GG9DpB017694;
+        Wed, 16 Oct 2019 09:10:52 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=GfoXv/Fqrk3PRrOlR1VGGxedXFlxXp5lwUxvKUBzTd0=;
+ b=f/FhoMQMas9VfT21hDDC5oindrZWOB/z/4gLjBwZ583Qh/AmJreIdBJr/ckT9CA/XF07
+ YV9az2kR89mcKf1EpP3+4ZMbrgYctxmCuYq0EXBKUnGP0uASC9604XFfrJq1rRIC+FTd
+ oatDC3o2LplByf9lpneQ4p+T+xgSLYsH4vc= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 2vmtajk77s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Wed, 16 Oct 2019 09:10:52 -0700
+Received: from ash-exhub104.TheFacebook.com (2620:10d:c0a8:82::d) by
+ ash-exhub101.TheFacebook.com (2620:10d:c0a8:82::e) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Wed, 16 Oct 2019 09:10:51 -0700
+Received: from NAM03-BY2-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.35.175) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
+ via Frontend Transport; Wed, 16 Oct 2019 09:10:51 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HpVs6fKDuUNvCBvnIrZU7vFJ2aEDR/aMSh9cxzsM3U4oizd7oeVpPh2j95IdZvhM7u+H65wTs7z+piGvO064sWNf2/2AVBLmfpQkAnXTQZg7qBw4Dume1GiHKAFeQrBcxeW/mx/RyBGlpWh60ic0UUxg0oUXn2eeohpmn2+1lfd6UbrzNozRfdO/XErjh7Pz5xYFPkw1xpBQhgAUWCnllFqyKXK4n/rI7pSSvq+nYoxhUs+uKW9ExuWmxQL49x0M+QLD3yiiolPTTTQjXjboGU9Y94NJoaf2n2nXesHEZUUxWaeRhRjwpHO9+L5J+XfJu9HKwLH4XOQG6d73LWtz2w==
+ b=nfLE0fn41+yTPiDi/hC18IO5rB4yuKvMPcrN4B+4C1K0vAinG3VbSDmwfoRQ5fU3XbKFelD7ATRe2WftkP/oeGTEE1qOBVPFD+7MbUCgGEhw7OBbxSLuQWA0UXDaZnuf+A4tbXrtFSLHZ2MXKe1S8kK1C+Am9qWazn+OAt20xQnB+9gMoU72P6WJHKUoxLIxDhKJQd0FuFDyU5rAEeNuhbGoT6NQuNLooPxKi4pD8uvI9y7h+AXimpqUXdKs31xfR0uaJcSWghCdcQDZkbQFBYF6Wc9A+UTLdj18tOjuEtY0MQQDrClDGHgYn5d+vQsRcC9jTZtOar8iUu1K3Jw+YQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rlvej/j+g2n4bhw6H+t5klqmTXvwIXZ5KSNtxzH1RRE=;
- b=EBZlIOh9m6qbLAeBO0UlV9N316TqG3DuIND1IxkbjtpCPVpSFSVyULvpoQQrjsgnYbtwQ6Kyy7bSNCtwI7D+MFIxOSwTG8q6ooeD20jXdMkFhQDNzA91L1qAz7E3KGehX5wVhsd52Gf+C7RTH+CzB4Foj0dK6hffQzSnsR8xnHqP8D293ovxeR2qpcIZO+lWKvEgeFGpH6A/yu9Qelqvccdb+xPE48hiUt1EIQyKB9+Mwx5RDqfPOs7ZQvZgUG3ZpmdGZSCOR7kRC+tyQRJrvgXKGVoELyjS2+LqHWfs0zobYtm8qngXi//15j3a2RYdIeFeNeXc/+ZSkeQySiHY6g==
+ bh=GfoXv/Fqrk3PRrOlR1VGGxedXFlxXp5lwUxvKUBzTd0=;
+ b=ln4FznQYIlDzVGKe/nQ+sXfvL0zJZEekx9qJw4rn/pGa5eHjSr7uRfBc9v2EGZ+xICStfW69yY00px3xrEjPBjHqy5KRkBFpWNf3AVcAeTFSHbmicIBytqPCvypgvBcPmC7gvJK2x/BSb+kEytdFTEMjSUC4lOqeROb/T/kJt+WoikR/Yjt7Zrr+TWR6DiivH9ZjvcoIco8aG8h/YOxqhvsOHO/Jrm6Fm7I0Ln/GybLTFLK5vrTQf2ewQh1kyz6wdx1ARPP0tnPOl44WiCEVXIp82o/bl/OpmbJgWFQTycXmdaokJ8rPWIIN5NSfu+DxsmUOsFzIJJCWhF6yr6yi7Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rlvej/j+g2n4bhw6H+t5klqmTXvwIXZ5KSNtxzH1RRE=;
- b=VmIWZa0xFRffU2afPdOeYG2IqHAqe6PMlrPL1SLk5B1IgcGW13CuahoQNZ4Ljj/h9PyW/QuM4swuP07HWyZ86g/6Go48PFRv9apASPScESb2Eyrdyjg/G15aZ+ybqDf45+mXHw0SkCNqIeLdJJLcRvBxTl7ur7ybp16zk/Ergtw=
-Received: from MN2PR04MB6061.namprd04.prod.outlook.com (20.178.246.15) by
- MN2PR04MB6397.namprd04.prod.outlook.com (52.132.170.135) with Microsoft SMTP
+ bh=GfoXv/Fqrk3PRrOlR1VGGxedXFlxXp5lwUxvKUBzTd0=;
+ b=H5VrYAlkUO2VBUbmsLMebxxx9jOHT64a+oa0efAD2xP0cmDVATH8wq+yzSF3hA9eSh9E/5497tDTPBXsWemfkBpH0OEXWS1rygtcicBLRnG2bupqzSDmKyUilwx2VSI56RoKzVJDyEbiYjNCZk3nHR9S9pW4y5rTh0yutBMyZ80=
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.3.22) by
+ MWHPR15MB1360.namprd15.prod.outlook.com (10.173.228.148) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.17; Wed, 16 Oct 2019 16:10:50 +0000
-Received: from MN2PR04MB6061.namprd04.prod.outlook.com
- ([fe80::1454:87a:13b0:d3a]) by MN2PR04MB6061.namprd04.prod.outlook.com
- ([fe80::1454:87a:13b0:d3a%7]) with mapi id 15.20.2347.023; Wed, 16 Oct 2019
- 16:10:50 +0000
-From:   Anup Patel <Anup.Patel@wdc.com>
-To:     Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim K <rkrcmar@redhat.com>
-CC:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Graf <graf@amazon.com>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Anup Patel <anup@brainfault.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Anup Patel <Anup.Patel@wdc.com>
-Subject: [PATCH v9 13/22] RISC-V: KVM: Add timer functionality
-Thread-Topic: [PATCH v9 13/22] RISC-V: KVM: Add timer functionality
-Thread-Index: AQHVhDxG0eY7JsU8T0+9hRpUt4ALdw==
+ 15.20.2347.18; Wed, 16 Oct 2019 16:10:49 +0000
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::fdc8:5546:bace:15f5]) by MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::fdc8:5546:bace:15f5%5]) with mapi id 15.20.2347.023; Wed, 16 Oct 2019
+ 16:10:49 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     Oleg Nesterov <oleg@redhat.com>
+CC:     open list <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
+        Kernel Team <Kernel-team@fb.com>,
+        "william.kucharski@oracle.com" <william.kucharski@oracle.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Subject: Re: [PATCH 4/4] uprobe: only do FOLL_SPLIT_PMD for uprobe register
+Thread-Topic: [PATCH 4/4] uprobe: only do FOLL_SPLIT_PMD for uprobe register
+Thread-Index: AQHVg/TTl1jUwKEEhEe4JMFjXQBksqddLX+AgABDI4A=
 Date:   Wed, 16 Oct 2019 16:10:49 +0000
-Message-ID: <20191016160649.24622-14-anup.patel@wdc.com>
-References: <20191016160649.24622-1-anup.patel@wdc.com>
-In-Reply-To: <20191016160649.24622-1-anup.patel@wdc.com>
+Message-ID: <CE3DD093-E5B4-4C98-A7B7-3B05D7732D3C@fb.com>
+References: <20191016073731.4076725-1-songliubraving@fb.com>
+ <20191016073731.4076725-5-songliubraving@fb.com>
+ <20191016121031.GA31585@redhat.com>
+In-Reply-To: <20191016121031.GA31585@redhat.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: MAXPR01CA0098.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:5d::16) To MN2PR04MB6061.namprd04.prod.outlook.com
- (2603:10b6:208:d8::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Anup.Patel@wdc.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [106.51.27.162]
+x-mailer: Apple Mail (2.3594.4.19)
+x-originating-ip: [2620:10d:c090:200::1:35f7]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f4556bcb-2fab-46bc-ad61-08d752536918
-x-ms-office365-filtering-ht: Tenant
-x-ms-traffictypediagnostic: MN2PR04MB6397:
+x-ms-office365-filtering-correlation-id: f833eda3-5037-4061-1739-08d752536944
+x-ms-traffictypediagnostic: MWHPR15MB1360:
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MN2PR04MB63975D134CF7808E1773E1148D920@MN2PR04MB6397.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-microsoft-antispam-prvs: <MWHPR15MB136008E9AF88264DB162F3E8B3920@MWHPR15MB1360.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
 x-forefront-prvs: 0192E812EC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(346002)(396003)(376002)(39860400002)(136003)(199004)(189003)(71190400001)(71200400001)(66556008)(66476007)(66446008)(64756008)(66946007)(6116002)(3846002)(14444005)(66066001)(76176011)(52116002)(256004)(99286004)(25786009)(7416002)(14454004)(4326008)(478600001)(7736002)(8676002)(305945005)(110136005)(476003)(54906003)(86362001)(2616005)(11346002)(446003)(316002)(102836004)(81166006)(486006)(55236004)(44832011)(5660300002)(50226002)(26005)(9456002)(186003)(8936002)(36756003)(1076003)(6436002)(6512007)(2906002)(6486002)(386003)(81156014)(6506007);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR04MB6397;H:MN2PR04MB6061.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(396003)(366004)(376002)(136003)(189003)(199004)(6116002)(64756008)(8676002)(6512007)(66556008)(6246003)(6506007)(54906003)(316002)(229853002)(478600001)(81156014)(86362001)(71200400001)(486006)(476003)(71190400001)(33656002)(50226002)(81166006)(6436002)(186003)(102836004)(46003)(66476007)(76116006)(66446008)(6916009)(446003)(305945005)(66946007)(53546011)(11346002)(2616005)(7736002)(76176011)(14444005)(2906002)(14454004)(256004)(99286004)(6486002)(25786009)(4326008)(36756003)(8936002)(5660300002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1360;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: quHogZHhviH2FdAtYYhkhSnAvbdjT9F3HDnw1EWhEC3ZHyox/lQSY6HBF5aD7ez5R4fhbdPOeiIdgJ/opMnfbWVB2Kk2fGwX/2bl/7IbN0I2z6TttLWabXYAaZrCH/oURmOqvb7j3Df5tybI+ra8jtOx9mVA/NDBdnXkHptzMemmqBM8lADYnqdvWfavTlh8ntVsnoVSSPzT67XD3k7AAva5kTYYse/3mjWA6w9c6EtNouVKftY0+tcku4VIWhBDbLbvSBJEoCgOYyBuCBLQp2ejLD6BYYMhLOXpxgPgPfvFCe1m78jYcwfT9cQaTajOKhENAVLxh3GFtgwchINc7d8EmXmGJa9iKDTO72Gq8q4win7nK6/JRjIPmgx+bfLCeK4SFeDR4olawBZHAttJZDGDQvy14N7ItoHid1DpYSI=
-Content-Type: text/plain; charset="iso-8859-1"
+x-microsoft-antispam-message-info: gD7QeNp7jW9EDkRJgYqRFBP3Z2osBfBS4C+DiI5k2mQ3+1rGYlPIWPSrj2sUpLJjKtHjDstYIliFdYbN3DcFdD1gHjw5Vv2o5l05VtgeCNwdOhF7DIUKUfExfQlo1Hp1gI1c7b9iSmQ4phnjk69b3yrt8uz7ReTy8nnA55QVg6lk56CPtnCT1C7f78LF8OKcrPGYpS04SBIqaoTBv7RJ2jR0s9R2sNNxSm0yM/9GiVI/GMHmW/ezK2XraW4s8YHaJ/OGiH1DzzeFUQTSUXhn/pataKhs8PTOn2RqvgbVKGkoVw8GHLLn5Xu6rjEzKWez+lyUh3TUhv09vr7B9sJOxUZj8a8lepPI+wzXYwdyo2u014nZNHOTz+NEsljyFRlL+fididLNVRFmpBV9HB5435qlHQ4qvmrXMxkLwFDAjPo=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <E81786F0A079F04B926518CE3CA6CF2D@namprd15.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f4556bcb-2fab-46bc-ad61-08d752536918
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2019 16:10:49.9650
+X-MS-Exchange-CrossTenant-Network-Message-Id: f833eda3-5037-4061-1739-08d752536944
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2019 16:10:49.5778
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 1xGL86eDChrSzvoTh3fRmcDeBJPq+sxUSt3m70g3HYDH2JjUpLjmdzXCdEgzdjRhI6FHjfb6TbGeDiAfxnUhZw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB6397
+X-MS-Exchange-CrossTenant-userprincipalname: n60JP/0m0vc2RSQreU45iujkoUxM7EwykTgNYbS6RqMGzG6c9MLtUKOwp/ROEZrkGlYjAwRDatefkUNv+wIoDQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1360
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-16_07:2019-10-16,2019-10-16 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 adultscore=0 mlxscore=0
+ mlxlogscore=999 suspectscore=0 bulkscore=0 clxscore=1015 impostorscore=0
+ malwarescore=0 spamscore=0 lowpriorityscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1908290000 definitions=main-1910160135
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Atish Patra <atish.patra@wdc.com>
 
-The RISC-V hypervisor specification doesn't have any virtual timer
-feature.
 
-Due to this, the guest VCPU timer will be programmed via SBI calls.
-The host will use a separate hrtimer event for each guest VCPU to
-provide timer functionality. We inject a virtual timer interrupt to
-the guest VCPU whenever the guest VCPU hrtimer event expires.
+> On Oct 16, 2019, at 5:10 AM, Oleg Nesterov <oleg@redhat.com> wrote:
+>=20
+> On 10/16, Song Liu wrote:
+>>=20
+>> --- a/kernel/events/uprobes.c
+>> +++ b/kernel/events/uprobes.c
+>> @@ -474,14 +474,17 @@ int uprobe_write_opcode(struct arch_uprobe *auprob=
+e, struct mm_struct *mm,
+>> 	struct vm_area_struct *vma;
+>> 	int ret, is_register, ref_ctr_updated =3D 0;
+>> 	bool orig_page_huge =3D false;
+>> +	unsigned int gup_flags =3D FOLL_FORCE;
+>>=20
+>> 	is_register =3D is_swbp_insn(&opcode);
+>> 	uprobe =3D container_of(auprobe, struct uprobe, arch);
+>>=20
+>> retry:
+>> +	if (is_register)
+>> +		gup_flags |=3D FOLL_SPLIT_PMD;
+>> 	/* Read the page with vaddr into memory */
+>> -	ret =3D get_user_pages_remote(NULL, mm, vaddr, 1,
+>> -			FOLL_FORCE | FOLL_SPLIT_PMD, &old_page, &vma, NULL);
+>> +	ret =3D get_user_pages_remote(NULL, mm, vaddr, 1, gup_flags,
+>> +				    &old_page, &vma, NULL);
+>> 	if (ret <=3D 0)
+>> 		return ret;
+>>=20
+>> @@ -489,6 +492,9 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe,=
+ struct mm_struct *mm,
+>> 	if (ret <=3D 0)
+>> 		goto put_old;
+>>=20
+>> +	WARN(!is_register && PageCompound(old_page),
+>> +	     "uprobe unregister should never work on compound page\n");
+>=20
+> But this can happen with the change above. You can't know if *vaddr was
+> previously changed by install_breakpoint() or not.
 
-The following features are not supported yet and will be added in
-future:
-1. A time offset to adjust guest time from host time
-2. A saved next event in guest vcpu for vm migration
+> If not, verify_opcode() should likely save us, but we can't rely on it.
+> Say, someone can write "int3" into vm_file at uprobe->offset.
 
-Signed-off-by: Atish Patra <atish.patra@wdc.com>
-Signed-off-by: Anup Patel <anup.patel@wdc.com>
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/riscv/include/asm/kvm_host.h       |   4 +
- arch/riscv/include/asm/kvm_vcpu_timer.h |  30 +++++++
- arch/riscv/kvm/Makefile                 |   2 +-
- arch/riscv/kvm/vcpu.c                   |   6 ++
- arch/riscv/kvm/vcpu_timer.c             | 110 ++++++++++++++++++++++++
- drivers/clocksource/timer-riscv.c       |   8 ++
- include/clocksource/timer-riscv.h       |  16 ++++
- 7 files changed, 175 insertions(+), 1 deletion(-)
- create mode 100644 arch/riscv/include/asm/kvm_vcpu_timer.h
- create mode 100644 arch/riscv/kvm/vcpu_timer.c
- create mode 100644 include/clocksource/timer-riscv.h
+I think this won't really happen. With is_register =3D=3D false, we already=
+=20
+know opcode is not "int3", so current call must be from set_orig_insn().=20
+Therefore, old_page must be installed by uprobe, and cannot be compound.
 
-diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/kvm=
-_host.h
-index b1493c6cbe83..0ef0aac8143e 100644
---- a/arch/riscv/include/asm/kvm_host.h
-+++ b/arch/riscv/include/asm/kvm_host.h
-@@ -12,6 +12,7 @@
- #include <linux/types.h>
- #include <linux/kvm.h>
- #include <linux/kvm_types.h>
-+#include <asm/kvm_vcpu_timer.h>
-=20
- #ifdef CONFIG_64BIT
- #define KVM_MAX_VCPUS			(1U << 16)
-@@ -168,6 +169,9 @@ struct kvm_vcpu_arch {
- 	unsigned long irqs_pending;
- 	unsigned long irqs_pending_mask;
-=20
-+	/* VCPU Timer */
-+	struct kvm_vcpu_timer timer;
-+
- 	/* MMIO instruction details */
- 	struct kvm_mmio_decode mmio_decode;
-=20
-diff --git a/arch/riscv/include/asm/kvm_vcpu_timer.h b/arch/riscv/include/a=
-sm/kvm_vcpu_timer.h
-new file mode 100644
-index 000000000000..6f904d49e27e
---- /dev/null
-+++ b/arch/riscv/include/asm/kvm_vcpu_timer.h
-@@ -0,0 +1,30 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2019 Western Digital Corporation or its affiliates.
-+ *
-+ * Authors:
-+ *	Atish Patra <atish.patra@wdc.com>
-+ */
-+
-+#ifndef __KVM_VCPU_RISCV_TIMER_H
-+#define __KVM_VCPU_RISCV_TIMER_H
-+
-+#include <linux/hrtimer.h>
-+
-+struct kvm_vcpu_timer {
-+	bool init_done;
-+	/* Check if the timer is programmed */
-+	bool next_set;
-+	u64 next_cycles;
-+	struct hrtimer hrt;
-+	/* Mult & Shift values to get nanosec from cycles */
-+	u32 mult;
-+	u32 shift;
-+};
-+
-+int kvm_riscv_vcpu_timer_init(struct kvm_vcpu *vcpu);
-+int kvm_riscv_vcpu_timer_deinit(struct kvm_vcpu *vcpu);
-+int kvm_riscv_vcpu_timer_reset(struct kvm_vcpu *vcpu);
-+int kvm_riscv_vcpu_timer_next_event(struct kvm_vcpu *vcpu, u64 ncycles);
-+
-+#endif
-diff --git a/arch/riscv/kvm/Makefile b/arch/riscv/kvm/Makefile
-index c0f57f26c13d..3e0c7558320d 100644
---- a/arch/riscv/kvm/Makefile
-+++ b/arch/riscv/kvm/Makefile
-@@ -9,6 +9,6 @@ ccflags-y :=3D -Ivirt/kvm -Iarch/riscv/kvm
- kvm-objs :=3D $(common-objs-y)
-=20
- kvm-objs +=3D main.o vm.o vmid.o tlb.o mmu.o
--kvm-objs +=3D vcpu.o vcpu_exit.o vcpu_switch.o
-+kvm-objs +=3D vcpu.o vcpu_exit.o vcpu_switch.o vcpu_timer.o
-=20
- obj-$(CONFIG_KVM)	+=3D kvm.o
-diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
-index 36957802fed4..f9c5ef98becf 100644
---- a/arch/riscv/kvm/vcpu.c
-+++ b/arch/riscv/kvm/vcpu.c
-@@ -54,6 +54,8 @@ static void kvm_riscv_reset_vcpu(struct kvm_vcpu *vcpu)
-=20
- 	memcpy(cntx, reset_cntx, sizeof(*cntx));
-=20
-+	kvm_riscv_vcpu_timer_reset(vcpu);
-+
- 	WRITE_ONCE(vcpu->arch.irqs_pending, 0);
- 	WRITE_ONCE(vcpu->arch.irqs_pending_mask, 0);
- }
-@@ -108,6 +110,9 @@ int kvm_arch_vcpu_init(struct kvm_vcpu *vcpu)
- 	cntx->hstatus |=3D HSTATUS_SP2P;
- 	cntx->hstatus |=3D HSTATUS_SPV;
-=20
-+	/* Setup VCPU timer */
-+	kvm_riscv_vcpu_timer_init(vcpu);
-+
- 	/* Reset VCPU */
- 	kvm_riscv_reset_vcpu(vcpu);
-=20
-@@ -116,6 +121,7 @@ int kvm_arch_vcpu_init(struct kvm_vcpu *vcpu)
-=20
- void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
- {
-+	kvm_riscv_vcpu_timer_deinit(vcpu);
- 	kvm_riscv_stage2_flush_cache(vcpu);
- 	kmem_cache_free(kvm_vcpu_cache, vcpu);
- }
-diff --git a/arch/riscv/kvm/vcpu_timer.c b/arch/riscv/kvm/vcpu_timer.c
-new file mode 100644
-index 000000000000..4ff5d666f60d
---- /dev/null
-+++ b/arch/riscv/kvm/vcpu_timer.c
-@@ -0,0 +1,110 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2019 Western Digital Corporation or its affiliates.
-+ *
-+ * Authors:
-+ *     Atish Patra <atish.patra@wdc.com>
-+ */
-+
-+#include <linux/errno.h>
-+#include <linux/err.h>
-+#include <linux/kvm_host.h>
-+#include <clocksource/timer-riscv.h>
-+#include <asm/csr.h>
-+#include <asm/kvm_vcpu_timer.h>
-+
-+static u64 kvm_riscv_delta_cycles2ns(u64 cycles, struct kvm_vcpu_timer *t)
-+{
-+	unsigned long flags;
-+	u64 cycles_now, cycles_delta, delta_ns;
-+
-+	local_irq_save(flags);
-+	cycles_now =3D get_cycles64();
-+	if (cycles_now < cycles)
-+		cycles_delta =3D cycles - cycles_now;
-+	else
-+		cycles_delta =3D 0;
-+	delta_ns =3D (cycles_delta * t->mult) >> t->shift;
-+	local_irq_restore(flags);
-+
-+	return delta_ns;
-+}
-+
-+static enum hrtimer_restart kvm_riscv_vcpu_hrtimer_expired(struct hrtimer =
-*h)
-+{
-+	u64 delta_ns;
-+	struct kvm_vcpu_timer *t =3D container_of(h, struct kvm_vcpu_timer, hrt);
-+	struct kvm_vcpu *vcpu =3D container_of(t, struct kvm_vcpu, arch.timer);
-+
-+	if (get_cycles64() < t->next_cycles) {
-+		delta_ns =3D kvm_riscv_delta_cycles2ns(t->next_cycles, t);
-+		hrtimer_forward_now(&t->hrt, ktime_set(0, delta_ns));
-+		return HRTIMER_RESTART;
-+	}
-+
-+	t->next_set =3D false;
-+	kvm_riscv_vcpu_set_interrupt(vcpu, IRQ_S_TIMER);
-+
-+	return HRTIMER_NORESTART;
-+}
-+
-+static int kvm_riscv_vcpu_timer_cancel(struct kvm_vcpu_timer *t)
-+{
-+	if (!t->init_done || !t->next_set)
-+		return -EINVAL;
-+
-+	hrtimer_cancel(&t->hrt);
-+	t->next_set =3D false;
-+
-+	return 0;
-+}
-+
-+int kvm_riscv_vcpu_timer_next_event(struct kvm_vcpu *vcpu, u64 ncycles)
-+{
-+	struct kvm_vcpu_timer *t =3D &vcpu->arch.timer;
-+	u64 delta_ns =3D kvm_riscv_delta_cycles2ns(ncycles, t);
-+
-+	if (!t->init_done)
-+		return -EINVAL;
-+
-+	kvm_riscv_vcpu_unset_interrupt(vcpu, IRQ_S_TIMER);
-+
-+	delta_ns =3D kvm_riscv_delta_cycles2ns(ncycles, t);
-+	t->next_cycles =3D ncycles;
-+	hrtimer_start(&t->hrt, ktime_set(0, delta_ns), HRTIMER_MODE_REL);
-+	t->next_set =3D true;
-+
-+	return 0;
-+}
-+
-+int kvm_riscv_vcpu_timer_init(struct kvm_vcpu *vcpu)
-+{
-+	struct kvm_vcpu_timer *t =3D &vcpu->arch.timer;
-+
-+	if (t->init_done)
-+		return -EINVAL;
-+
-+	hrtimer_init(&t->hrt, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-+	t->hrt.function =3D kvm_riscv_vcpu_hrtimer_expired;
-+	t->init_done =3D true;
-+	t->next_set =3D false;
-+
-+	riscv_cs_get_mult_shift(&t->mult, &t->shift);
-+
-+	return 0;
-+}
-+
-+int kvm_riscv_vcpu_timer_deinit(struct kvm_vcpu *vcpu)
-+{
-+	int ret;
-+
-+	ret =3D kvm_riscv_vcpu_timer_cancel(&vcpu->arch.timer);
-+	vcpu->arch.timer.init_done =3D false;
-+
-+	return ret;
-+}
-+
-+int kvm_riscv_vcpu_timer_reset(struct kvm_vcpu *vcpu)
-+{
-+	return kvm_riscv_vcpu_timer_cancel(&vcpu->arch.timer);
-+}
-diff --git a/drivers/clocksource/timer-riscv.c b/drivers/clocksource/timer-=
-riscv.c
-index 470c7ef02ea4..a48036459f3c 100644
---- a/drivers/clocksource/timer-riscv.c
-+++ b/drivers/clocksource/timer-riscv.c
-@@ -12,6 +12,7 @@
- #include <linux/cpu.h>
- #include <linux/delay.h>
- #include <linux/irq.h>
-+#include <linux/module.h>
- #include <linux/sched_clock.h>
- #include <asm/smp.h>
- #include <asm/sbi.h>
-@@ -71,6 +72,13 @@ static int riscv_timer_dying_cpu(unsigned int cpu)
- 	return 0;
- }
-=20
-+void riscv_cs_get_mult_shift(u32 *mult, u32 *shift)
-+{
-+	*mult =3D riscv_clocksource.mult;
-+	*shift =3D riscv_clocksource.shift;
-+}
-+EXPORT_SYMBOL_GPL(riscv_cs_get_mult_shift);
-+
- /* called directly from the low-level interrupt handler */
- void riscv_timer_interrupt(void)
- {
-diff --git a/include/clocksource/timer-riscv.h b/include/clocksource/timer-=
-riscv.h
-new file mode 100644
-index 000000000000..e94e4feecbe8
---- /dev/null
-+++ b/include/clocksource/timer-riscv.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2019 Western Digital Corporation or its affiliates.
-+ *
-+ * Authors:
-+ *	Atish Patra <atish.patra@wdc.com>
-+ */
-+
-+#ifndef __TIMER_RISCV_H
-+#define __TIMER_RISCV_H
-+
-+#include <linux/types.h>
-+
-+void riscv_cs_get_mult_shift(u32 *mult, u32 *shift);
-+
-+#endif
---=20
-2.17.1
+The other way is not guaranteed. With is_register =3D=3D true, it is still
+possible current call is from set_orig_insn(). However, we do not rely
+on this path.=20
+
+Does this make sense? Or did I miss anything?
+
+>=20
+> And I am not sure it is safe to continue in this case, I'd suggest to
+> return -EWHATEVER to avoid the possible crash.
+
+I think we can return -ESOMETHING here to be safe. However, if the=20
+analysis above makes sense, it is not necessary.=20
+
+Thanks,
+Song
+
 
