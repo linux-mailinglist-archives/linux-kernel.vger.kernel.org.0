@@ -2,102 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0FB1D97EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:52:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14D85D97F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:53:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406507AbfJPQwp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 12:52:45 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:32928 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726263AbfJPQwo (ORCPT
+        id S2406520AbfJPQxe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 12:53:34 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:38834 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406479AbfJPQxd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 12:52:44 -0400
-Received: by mail-pf1-f193.google.com with SMTP id q10so15103480pfl.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 09:52:44 -0700 (PDT)
+        Wed, 16 Oct 2019 12:53:33 -0400
+Received: by mail-lf1-f66.google.com with SMTP id u28so18076518lfc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 09:53:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=DWB28C23b4LvznGkG5ZeUrO8QaxjHT8svafhe7nPaII=;
-        b=Fqt4lOhAUnwSxBzgtRVB2hal9xbqZxbyM6Sh7YLtYAQ9a9+L1sF3rBWAwWldX6BbAQ
-         VmNZDebEzUpKD+9uXmhyU0PPgZ6oJfmecVjpa/valJuWqzb+mdfzfZ2XUaW5tb/5ENrF
-         99RIBdhdicBLu2QI3kdHUbBJWeP+6N1sm+ximgH1b6AXpqq9zjtYzFMRLExakZJoTpMc
-         /G9oUKnLPTI9a/+cESsKQS8dNxahHXoQfwlDF5IcgIaWK6DcWrG5b1tG+vZsV7N+L6Nv
-         JtwEnkf/v8cm4HjNLyZK0UyY31vIdn4JBCyP7yMFIbLXqMyo2Zwc9yddVNtO5FnFhdOD
-         J5HA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tNeMRNIfdjHwkdsyXewzfu5Z/8d+Ipu1WBE/Nji2j6o=;
+        b=HeZJ0LsXW7mmUON1V5xmhDSncNZB6lkZZK/aQWqiaeWfoLceQmVHBsDrCPQSNheJR8
+         IlGmQI4GJ0a3KeeFkLuB74++cbk9zF0MDCMgauIVVv0MwlsN3fCAwETly3Hs6g4/FkHw
+         iEk8N0MQZJH+hJFBo2HVA6OtUhJMuYfZ5sPusj5OQxOppuNXZYOgYxDnB9MIBb3gxyzH
+         1icSwpBDJK0X2hCL65Fadnjyq+4tckml3p2rGvN2a9MV48WAFf+YIo2fnTLKfDbQ6ASd
+         XuEN3r0BA457vpI/RA+I/+JpNL3X/U4hmzV6WfI7z2bL2ECB+9Oj+VZvzNfX+X+uijTK
+         m2Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=DWB28C23b4LvznGkG5ZeUrO8QaxjHT8svafhe7nPaII=;
-        b=HWnSRsUzi5eHdOWsq5PMlbqNYtm0jjHYacCd2i/J4FTEF84sy3Fku489kGJB1Pn9s2
-         7C3/atH0LG3e4SsuHBBigQqQpLz+qzBUDjJReYdcaVkJHnU/NAbvEgq1KDVa6W6cmmDJ
-         3FhdClde3In76OxnP1uPpQP08dQmXY1htWDBM8dlX54iL1WgWcJKBeS+r0Nqm7FwkZNI
-         ns5yzHqt6rTuvZ1GRFc/5B/KWCMOCiQI53604I+gTvk5KgTqlh7c6K0izPXROVpmSKfr
-         Q/+hgZupNwIOHZe6L/XIuxvBVwYYpvnqrCeH1s08isWSi+y65+2yAK9eS3kmMMP1sRVD
-         eJIw==
-X-Gm-Message-State: APjAAAUICfXW35lQSE9Vd0dy6zrSRA9dxrA17f8Qz6Oa5bl3RZnFpOoH
-        nSLYBAdcI0LppjMrFPXJcBxduA==
-X-Google-Smtp-Source: APXvYqwEa5xX0UPGLDw3yx5YgchQI4Nl9Up2L3YAU98vchmqR+FbNObjPraFt55twMf+r/Me6ucjtQ==
-X-Received: by 2002:a17:90a:3628:: with SMTP id s37mr6287710pjb.38.1571244763750;
-        Wed, 16 Oct 2019 09:52:43 -0700 (PDT)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.gmail.com with ESMTPSA id u13sm21952806pgk.88.2019.10.16.09.52.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Oct 2019 09:52:43 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Corentin Labbe <clabbe@baylibre.com>, davem@davemloft.net,
-        herbert@gondor.apana.org.au, mark.rutland@arm.com,
-        robh+dt@kernel.org, martin.blumenstingl@googlemail.com
-Cc:     devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>
-Subject: Re: [PATCH v2 4/4] ARM64: dts: amlogic: adds crypto hardware node
-In-Reply-To: <1571031104-6880-5-git-send-email-clabbe@baylibre.com>
-References: <1571031104-6880-1-git-send-email-clabbe@baylibre.com> <1571031104-6880-5-git-send-email-clabbe@baylibre.com>
-Date:   Wed, 16 Oct 2019 09:52:42 -0700
-Message-ID: <7hk194fx9h.fsf@baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tNeMRNIfdjHwkdsyXewzfu5Z/8d+Ipu1WBE/Nji2j6o=;
+        b=AsV1blh07LKRzdGKlHGA3s8wY/3Nx80q2WR+iDI/caPTnLXQ16y46+MpDAj2N+xuJN
+         inu1RJCmP918bVhFWZ6Gun5a2drMk5jZAXm2LItxybWNk+3xNdHyq/57xap9JhOMQdQc
+         REVQ4jJxJplVamUnyjZMqa60hjG3OmqwwTeWXEGELq+Sh/7Z95b4MwHzCRYKzVACUvSN
+         cIM9xFXhSlr6vSPqUBVxxeWqzNqn2GpN7qKn//PFUgzAVjfbJ66dRFL3EsQJHfIzkkvQ
+         j6fQuA3tnvHup1+K1oXRnArgZpzH8xjwWyg7eXJgVAQneq+pIzYMZeOmnA419lF7wVaD
+         B43g==
+X-Gm-Message-State: APjAAAVzIgAKo09KHLyGjIcNpA4vTQS54kag2ldFQi1hu+tcOlNdKt5T
+        TJAeZEWfhm/ZCXdQxeUpWkEVrPmZ//eYetFk/Fk=
+X-Google-Smtp-Source: APXvYqwMseb7aiO3tFfsZ84aQ9dmGeiDkv2eggWi2RKvGK2efG0A11Ujp0LulqKpVQBfYEFHkesdEqqpegAgmnEE75E=
+X-Received: by 2002:a19:6e0a:: with SMTP id j10mr9861743lfc.131.1571244811925;
+ Wed, 16 Oct 2019 09:53:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20191016082430.5955-1-poeschel@lemonage.de>
+In-Reply-To: <20191016082430.5955-1-poeschel@lemonage.de>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Wed, 16 Oct 2019 18:53:20 +0200
+Message-ID: <CANiq72=uXWpEWHixM+wwyxZfzQ41WYvQsoV8B3+JLRharDjC0w@mail.gmail.com>
+Subject: Re: [PATCH 1/3] auxdisplay: Make charlcd.[ch] more general
+To:     Lars Poeschel <poeschel@lemonage.de>
+Cc:     Willy Tarreau <willy@haproxy.com>,
+        Ksenija Stanojevic <ksenija.stanojevic@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Corentin Labbe <clabbe@baylibre.com> writes:
-
-> This patch adds the GXL crypto hardware node for all GXL SoCs.
+On Wed, Oct 16, 2019 at 10:24 AM Lars Poeschel <poeschel@lemonage.de> wrote:
 >
-> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> charlcd.c contains lots of hd44780 hardware specific stuff. It is nearly
+> impossible to reuse the interface for other character based displays.
+> The current users of charlcd are the hd44780 and the panel drivers.
+> This does factor out the hd44780 specific stuff out of charlcd into a
+> new module called hd44780_common.
+> charlcd gets rid of the hd44780 specfics and more generally useable.
+> The hd44780 and panel drivers are modified to use the new
+> hd44780_common.
+> This is tested on a hd44780 connected through the gpios of a pcf8574.
+>
+> Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
 > ---
->  arch/arm64/boot/dts/amlogic/meson-gxl.dtsi | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-> index 49ff0a7d0210..ed33d8efaf62 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-> @@ -36,6 +36,16 @@
->  				phys = <&usb3_phy>, <&usb2_phy0>, <&usb2_phy1>;
->  			};
->  		};
-> +
-> +		crypto: crypto@c883e000 {
-> +			compatible = "amlogic,gxl-crypto";
-> +			reg = <0x0 0xc883e000 0x0 0x36>;
-> +			interrupts = <GIC_SPI 188 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 189 IRQ_TYPE_EDGE_RISING>;
-> +			clocks = <&clkc CLKID_BLKMV>;
-> +			clock-names = "blkmv";
-> +			status = "okay";
-> +		};
+>  drivers/auxdisplay/Kconfig          |  16 +
+>  drivers/auxdisplay/Makefile         |   1 +
+>  drivers/auxdisplay/charlcd.c        | 591 ++++++++--------------------
+>  drivers/auxdisplay/charlcd.h        | 109 ++++-
+>  drivers/auxdisplay/hd44780.c        | 121 ++++--
+>  drivers/auxdisplay/hd44780_common.c | 370 +++++++++++++++++
+>  drivers/auxdisplay/hd44780_common.h |  32 ++
+>  drivers/auxdisplay/panel.c          | 178 ++++-----
+>  8 files changed, 851 insertions(+), 567 deletions(-)
 
-Looks good.
+Thanks Lars, CC'ing Geert since he wrote a large portion of this, as
+well as Andy.
 
-I'll apply this via the amlogic tree as soon as Herbet applies the
-driver part.
+From a cursory look (sorry, not doing it inline since it is a pain to
+edit in this UI given the size...):
+  * panel.c doesn't compile since lcd_backlight's return type did not
+get updated, which makes me uneasy. I am not sure why you changed the
+return type anyway, since callers ignore it and callees always return
+0.
+  * Declared and then immediately defined hd44780_common in the header...?
+  * Some things (e.g. the addition of enums like charlcd_onoff) seem
+like could have been done other patches (since they are not really
+related to the reorganization).
+  * From checkpatch.pl: DOS line endings and trailing whitespace
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+I am not capable of testing this, so extra testing by anyone who has
+the different hardware affected around is very welcome.
 
-Kevin
-
+Cheers,
+Miguel
