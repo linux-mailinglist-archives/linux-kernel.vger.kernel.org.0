@@ -2,133 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B613DD9560
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 17:20:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67D63D9566
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 17:21:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393282AbfJPPUV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 11:20:21 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:46835 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731530AbfJPPUU (ORCPT
+        id S2393552AbfJPPVy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 11:21:54 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:37930 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392877AbfJPPVx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 11:20:20 -0400
-Received: by mail-oi1-f194.google.com with SMTP id k25so20334654oiw.13
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 08:20:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:reply-to:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Hg//TZrhBsTy9D87m/T6t9gxtTCE+xcZuR7rP4e2SMY=;
-        b=H2TT2wssG/M4CGPptijE6fYDUwf6g02pfVhn2pLyGTct7/HPxBRUoc7o0wYy4masnz
-         puxOhemptI0TnB1Gk2dbdiI8v1Z1jhViNl/rhVYsWhNJauqCZcXyx/loBdg73ER910jF
-         9JI6iLelAXAgp/mqa0NsYUC6GAvq97L62s7oB1XeMtZ32mhjQPj/PFUjUo7y2AVvDd0n
-         QKJmLeVwWQ/UWIjxfakQD+LqvVt4nmGvLPGuM0n64E/BYo0+xneHRD0owdjiccLcAClN
-         2vMyt43umiFBp9GBuJxIN2X7YanifU34H1pCuNbYm17q+S/dUB8EYAU2s+mItkqu7Ux2
-         foSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :reply-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=Hg//TZrhBsTy9D87m/T6t9gxtTCE+xcZuR7rP4e2SMY=;
-        b=rW+7W8qbSrKKApUTmngd8kDxaCQ0ajI09dDOYRDKC2N8XVT/feJySop7+UK76MDSJm
-         Vpi13vGXzxoHqEX12S6uV1GwCQT/zu+BHuj75vrnIAp/Kt/aM1fEadgzr4Oj1yPQf7Lk
-         YcxQe/gy6EScqWeqz5vm6xdIgbsk8NiY8N2DLIdqh7c8dv3CQh49UABygPxnss2ZRhfI
-         GUYUjyBtTi4Ltjn+Iy8zvDcxrXZ7VCu2HhWNYQPkP96L82wf/jQ1kS28IxOcXLUBurvS
-         xbgk6QsHmywjD1NAhcRC+8SMhVX00g+q3Gf0idwIoOkb/duFR9HsIEoHbnfD1nObxDbT
-         XSxg==
-X-Gm-Message-State: APjAAAXsDfAltmaekzrnYstikXQrh1AabuvwCAuCxDmPKT/9918Ln/Ov
-        O0a/0PUM0KQmWGMEyjmpyQ==
-X-Google-Smtp-Source: APXvYqw29TSLm5lXfqhgqJ4rgsbwSamu6EsD2YQAkOS+jHJBw4/SftqEt/3cn7iBZ7a/ahH0VVTfAQ==
-X-Received: by 2002:a54:4582:: with SMTP id z2mr4069134oib.140.1571239219494;
-        Wed, 16 Oct 2019 08:20:19 -0700 (PDT)
-Received: from serve.minyard.net (serve.minyard.net. [2001:470:b8f6:1b::1])
-        by smtp.gmail.com with ESMTPSA id k2sm7449649oih.38.2019.10.16.08.20.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2019 08:20:18 -0700 (PDT)
-Received: from t560 (unknown [192.168.27.180])
-        by serve.minyard.net (Postfix) with ESMTPSA id 49C4A180056;
-        Wed, 16 Oct 2019 15:20:18 +0000 (UTC)
-Date:   Wed, 16 Oct 2019 10:20:17 -0500
-From:   Corey Minyard <minyard@acm.org>
-To:     =?utf-8?Q?C=C3=A9dric?= Le Goater <clg@kaod.org>
-Cc:     YueHaibing <yuehaibing@huawei.com>, arnd@arndb.de,
-        gregkh@linuxfoundation.org,
-        openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org,
-        Alistair Popple <alistair@popple.id.au>
-Subject: Re: [PATCH -next] ipmi: bt-bmc: use devm_platform_ioremap_resource()
- to simplify code
-Message-ID: <20191016152017.GO14232@t560>
-Reply-To: minyard@acm.org
-References: <20191016092131.23096-1-yuehaibing@huawei.com>
- <20191016141936.GN14232@t560>
- <789af3ff-9ed8-5869-05c4-9cfb2ac5e9d5@kaod.org>
+        Wed, 16 Oct 2019 11:21:53 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9GF4lBs149062;
+        Wed, 16 Oct 2019 15:21:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=1k/exljLrxFAW5tfrPeMCcZcoF6D571S9KzF3OmzfC8=;
+ b=TDdl8b/hQnTmo4V3Sc3k+P1chL1cyQMGLN+bP2ef9psad4wdHM8KhoWjapkmtsRQZora
+ cvF+xZdFWYrEo+YWfdhBh/lq48hH5nNpuD57S9DlY3lVy4JqxjXaOWBTPEatVnHPOfOL
+ kGX1YVgkkM8PRZkg0S4sIBjgMGfRq5Al4l8EIhWNrJdBkNC6bbs08oR1ZKtaeMuBe/rD
+ ECYVHYkW9bJk4PB2my5vDk+NwXx6OPnJoBqZmblGZExc4sPX9tW2fKHEo4bKlf0wjXAG
+ qgdhz12CxUC8f/5keIn5p4AJATqSG25I0QpvWCF/DnKxTz9AMxU0wnQVu8vDyHDWzWY+ FA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2vk7frfk81-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 16 Oct 2019 15:21:47 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9GF3Zd4042845;
+        Wed, 16 Oct 2019 15:21:46 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2vnf7tjwvx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 16 Oct 2019 15:21:46 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9GFLj01002476;
+        Wed, 16 Oct 2019 15:21:45 GMT
+Received: from [192.168.1.222] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 16 Oct 2019 08:21:45 -0700
+Subject: Re: [PATCH] hugetlb: Fix clang compilation warning
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20191016142324.52250-1-vincenzo.frascino@arm.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <29fdadee-2e0c-0886-73b3-358f983fd1fd@oracle.com>
+Date:   Wed, 16 Oct 2019 08:21:40 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
+In-Reply-To: <20191016142324.52250-1-vincenzo.frascino@arm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <789af3ff-9ed8-5869-05c4-9cfb2ac5e9d5@kaod.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9412 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=708
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910160130
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9412 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=768 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910160130
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 04:41:07PM +0200, Cédric Le Goater wrote:
-> On 16/10/2019 16:19, Corey Minyard wrote:
-> > On Wed, Oct 16, 2019 at 05:21:31PM +0800, YueHaibing wrote:
-> >> Use devm_platform_ioremap_resource() to simplify the code a bit.
-> >> This is detected by coccinelle.
-> > 
-> > Adding the module author and others. I can't see a reason to not do
-> > this.
+On 10/16/19 7:23 AM, Vincenzo Frascino wrote:
+> Building the kernel with a recent version of clang I noticed the warning
+> below:
 > 
-> yes. Looks good to me.
+> mm/hugetlb.c:4055:40: warning: expression does not compute the number of
+> elements in this array; element type is 'unsigned long', not 'u32'
+> (aka 'unsigned int') [-Wsizeof-array-div]
+>         hash = jhash2((u32 *)&key, sizeof(key)/sizeof(u32), 0);
+>                                           ~~~ ^
+> mm/hugetlb.c:4049:16: note: array 'key' declared here
+>         unsigned long key[2];
+>                       ^
+> mm/hugetlb.c:4055:40: note: place parentheses around the 'sizeof(u32)'
+> expression to silence this warning
+>         hash = jhash2((u32 *)&key, sizeof(key)/sizeof(u32), 0);
+>                                               ^  CC      fs/ext4/ialloc.o
 > 
-> Reviewed-by: Cédric Le Goater <clg@kaod.org>
+> Fix the warning adding parentheses around the sizeof(u32) expression.
+> 
+> Cc: Mike Kravetz <mike.kravetz@oracle.com>
+> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 
-Queued for next merge window, unless someone protests.
+Thanks,
 
--corey
+However, this is already addressed in Andrew's tree.
+https://ozlabs.org/~akpm/mmotm/broken-out/hugetlbfs-hugetlb_fault_mutex_hash-cleanup.patch
 
-> 
-> Thanks,
-> 
-> C.
-> 
-> > -corey
-> > 
-> >>
-> >> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> >> ---
-> >>  drivers/char/ipmi/bt-bmc.c | 4 +---
-> >>  1 file changed, 1 insertion(+), 3 deletions(-)
-> >>
-> >> diff --git a/drivers/char/ipmi/bt-bmc.c b/drivers/char/ipmi/bt-bmc.c
-> >> index 40b9927..d36aeac 100644
-> >> --- a/drivers/char/ipmi/bt-bmc.c
-> >> +++ b/drivers/char/ipmi/bt-bmc.c
-> >> @@ -444,15 +444,13 @@ static int bt_bmc_probe(struct platform_device *pdev)
-> >>  
-> >>  	bt_bmc->map = syscon_node_to_regmap(pdev->dev.parent->of_node);
-> >>  	if (IS_ERR(bt_bmc->map)) {
-> >> -		struct resource *res;
-> >>  		void __iomem *base;
-> >>  
-> >>  		/*
-> >>  		 * Assume it's not the MFD-based devicetree description, in
-> >>  		 * which case generate a regmap ourselves
-> >>  		 */
-> >> -		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> >> -		base = devm_ioremap_resource(&pdev->dev, res);
-> >> +		base = devm_platform_ioremap_resource(pdev, 0);
-> >>  		if (IS_ERR(base))
-> >>  			return PTR_ERR(base);
-> >>  
-> >> -- 
-> >> 2.7.4
-> >>
-> >>
-> 
+-- 
+Mike Kravetz
