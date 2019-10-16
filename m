@@ -2,207 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7BD4D94A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 17:00:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DFD0D94AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 17:01:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390970AbfJPPA1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 11:00:27 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:35797 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388424AbfJPPA1 (ORCPT
+        id S2392064AbfJPPB2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 11:01:28 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36429 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388424AbfJPPB1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 11:00:27 -0400
-X-Originating-IP: 1.186.12.12
-Received: from localhost (unknown [1.186.12.12])
-        (Authenticated sender: me@yadavpratyush.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id AC34524001E;
-        Wed, 16 Oct 2019 15:00:23 +0000 (UTC)
-Date:   Wed, 16 Oct 2019 20:30:20 +0530
-From:   Pratyush Yadav <me@yadavpratyush.com>
-To:     Vegard Nossum <vegard.nossum@oracle.com>
-Cc:     workflows@vger.kernel.org, Git Mailing List <git@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        Eric Wong <e@80x24.org>
-Subject: Re: email as a bona fide git transport
-Message-ID: <20191016150020.cr6jgfpd2c6fyg7t@yadavpratyush.com>
-References: <b9fb52b8-8168-6bf0-9a72-1e6c44a281a5@oracle.com>
+        Wed, 16 Oct 2019 11:01:27 -0400
+Received: by mail-wm1-f68.google.com with SMTP id m18so3150872wmc.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 08:01:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:date:from:user-agent:mime-version:to:cc:subject
+         :references:in-reply-to:content-transfer-encoding;
+        bh=gBIzGINd7SQ7oBpqM/NJJHdjeRpwfDkX8l55pEp/DuE=;
+        b=smKnNLAdHYOllIrDVEixkFAORjdfr8hXbLNqEQ4Y86ccXGJ2haZwseq5xHkD53KgX6
+         Z+paZ18i1xxzkCj+/+SuQ3+Jjdbmv9/+mRGYwpHesZlawlcZJqPN9fyireiqrD1gpTIG
+         QswcolaJdFVRJfqKmY7IznmClaEJ3kItGuPWH142RbnLnpI5oRhLmXiQLmU1mr7iWcTn
+         JyYsoeUy+14SuALGRgCiTbh6UE6PYB739bMFf49vjTkIi4H2w8pTT7vv3yi9WJUtLXOd
+         UwlmEo+oRjsr/6Oc6ZW/8+lAEvnVlPOte7ZZMsVHErGzv7ahW68fqIi3yAgy6hX26A1H
+         8jRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:from:user-agent:mime-version:to
+         :cc:subject:references:in-reply-to:content-transfer-encoding;
+        bh=gBIzGINd7SQ7oBpqM/NJJHdjeRpwfDkX8l55pEp/DuE=;
+        b=ou+yeTyOdnhm7RQH2jpIgtpjuNxthou+6N/9m+oPO4SGWpmFY6fOQjDXzr55prhyDI
+         yaDZ3SFaRg9E3Ryb5zGRBnMspQznFAK47hKGXXl1t7tc3LFwURNZ7Jdf04Rxcs6GK/b+
+         LVJV8BnuVssN5NLkeMeatpxenx6SGc9hXSs+B4/swhXDg1cY5xEvz8VXdN1qj1kNxChC
+         ETSPR2aQJpbOxGXEfvM5vqeZ3kXjk4RQ62v87WAm+50MlKqK0CGqf+nS0bpvqP0L9PUw
+         spmFdZKgcdCOwOKRTkia8Fy98qM9u/3WNVCjg4J9lqjRDGNnOkfPBK7fu6lj2OrlKbX2
+         ZqHg==
+X-Gm-Message-State: APjAAAXQbIOz2CJf12FHrg6bMTm+Ex/caROfW4unyNT6NicKzOgVvcWV
+        KIU4SrFXTG3SWW/B+4BOX5K94hMD
+X-Google-Smtp-Source: APXvYqy5c+iODVvlN/NaNMiUViYa/0uPuY6zL9LTYzJyhEB55wAcb/XR7G5uWTK7JhQ5XCN5gulJWg==
+X-Received: by 2002:a1c:4986:: with SMTP id w128mr3666689wma.69.1571238085613;
+        Wed, 16 Oct 2019 08:01:25 -0700 (PDT)
+Received: from [109.186.90.35] (109-186-90-35.bb.netvision.net.il. [109.186.90.35])
+        by smtp.gmail.com with ESMTPSA id z125sm3358100wme.37.2019.10.16.08.01.23
+        (version=TLS1 cipher=AES128-SHA bits=128/128);
+        Wed, 16 Oct 2019 08:01:24 -0700 (PDT)
+Message-ID: <5DA730B2.2@gmail.com>
+Date:   Wed, 16 Oct 2019 18:01:06 +0300
+From:   Eli Billauer <eli.billauer@gmail.com>
+User-Agent: Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.1.12) Gecko/20100907 Fedora/3.0.7-1.fc12 Thunderbird/3.0.7
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b9fb52b8-8168-6bf0-9a72-1e6c44a281a5@oracle.com>
-User-Agent: NeoMutt/20180716
+To:     YueHaibing <yuehaibing@huawei.com>
+CC:     arnd@arndb.de, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] char: xillybus: use devm_platform_ioremap_resource()
+ to simplify code
+References: <20191016092546.26332-1-yuehaibing@huawei.com>
+In-Reply-To: <20191016092546.26332-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vegard,
+Hello,
 
-On 16/10/19 12:22PM, Vegard Nossum wrote:
-> (cross-posted to git, LKML, and the kernel workflows mailing lists.)
-> 
-> Hi all,
-> 
-> I've been following Konstantin Ryabitsev's quest for better development
-> and communication tools for the kernel [1][2][3], and I would like to
-> propose a relatively straightforward idea which I think could bring a
-> lot to the table.
-> 
-> Step 1:
-> 
-> * git send-email needs to include parent SHA1s and generally all the
->   information needed to perfectly recreate the commit when applied so
->   that all the SHA1s remain the same
-> 
-> * git am (or an alternative command) needs to recreate the commit
->   perfectly when applied, including applying it to the correct parent
-> 
-> Having these two will allow a perfect mapping between email and git;
-> essentially email just becomes a transport for git. There are a lot of
-> advantages to this, particularly that you have a stable way to refer to
-> a patch or commit (despite it appearing on a mailing list), and there
-> is no need for "changeset IDs" or whatever, since you can just use the
-> git SHA1 which is unique, unambiguous, and stable.
- 
-FWIW, I like the idea.
+Thanks for the patch.
 
-> As a rough proof of concept I've attached 3 git patches which implement
-> this. There are issues to work out like exact format, encodings, mail
-> mangling, error handling, etc., but hopefully the git community can
-> help out here. (Improvement suggestions are welcome!)
-> 
-> Step 2:
-> 
-> * A bot that follows LKML (and other lists) and imports patchsets into
->   a git repository hosted on git.kernel.org
-> 
-> * The bot can add git notes with URLs to lore (and/or other mailing
->   list archives) and store them in e.g. refs/notes/lore,
->   refs/notes/lkml, etc.
-> 
->   (For those who don't use git notes yet: they are essentially small
->   bits of information you can add to a commit without changing its SHA1,
->   and you can configure tools like 'git log' to show these at the bottom
->   of a commit. Notes can also exist in a repo completely separate from
->   the commits they attach data to, so there is _zero_ overhead for those
->   who don't want to use this.)
-> 
-> * Maintainers can either pull patchsets directly from this bot-
->   maintained repo OR they can continue to apply patches from their inbox
->   (the result should be the same either way) OR they can continue in the
->   old-style process (at least for a while) and just not have the
->   benefits of the new process.
-> 
-> Step 3:
-> 
-> * Instead of describing a patchset in a separate introduction email, we
->   can create a merge commit between the parent of the first commit in
->   the series and the last and put the patchset description in the merge
->   commit [5]. This means the patchset description also gets to be part
->   of git history.
-> 
->   (This would require support for git send-email/am to be able to send
->   and apply merge commits -- at least those which have the same tree as
->   one of the parents. This is _not_ yet supported in my proposed git
->   patches.)
+I have to admit that this goes slightly against my instinct not to touch 
+code that works. But I'll leave the tradeoff to people who know better 
+than me.
 
-Can sending merge commits via email work with your proposed '--exact'? 
-Say I'm the maintainer, and you fork off a feature branch off my master, 
-add a few commits that introduce your new feature, and then merge it 
-into my master, and then send those commits, including the merge.
+Anyhow, I've verified that it compiles well, and the functional 
+equivalence is quite obvious.
 
-Now in that scenario, say the tip of your feature branch was X and the 
-tip of my 'master' was Y when you sent your patches. Now while your 
-patches are still being reviewed, I merge in some other branch creating 
-a merge commit Z on my master.
-
-Now your merge's first parent was Y and second parent was X. But now the 
-tip of my master is Z, so the first parent of your merge needs to be Z, 
-not Y. Changing the first parent would mean a different commit hash.
-
-So, the way I see it, your proposed merge commits via email can't work 
-with '--exact'. Do I understand this situation correctly? Am I missing 
-something?
-
-Maybe a better idea would be to allow 'am' to create these merges 
-locally when applying the patches. That would mean having to merge the 
-separate branch along with applying the patches, otherwise the cover 
-letter text is lost. This might not be something everyone wants. I for 
-one don't. When I apply patches via 'am', I first keep them on a 
-separate branch, test them out, and then merge them into 'master'.
-
-So a yet another alternative could be to save the cover letter as the 
-branch description. This branch description can then be used to generate 
-the merge message. IIRC, Denton Liu is working on generating the cover 
-letter text from branch description, so this feature would be like its 
-inverse.
- 
-> * stable SHA1s means we can refer to previous versions of a patchset by
->   SHA1 rather than archive links. I propose a new changelog tag for
->   this, maybe "Previous:" or maybe even a full list of "v1:", "v2:",
->   etc. with a SHA1 or ref. Note that these SHA1s do *not* need to exist
->   in Linus's repo, but those who want can pull those branches from the
->   bot-maintained repo on git.kernel.org.
-> 
-> Advantages:
-> 
-> - we can keep using email to post patches/patchsets
-> 
-> - the process is opt-in (but should be encouraged) for both authors and
->   maintainers, and the transition can happen over time
-> 
-> - there is a central repo for convenience, but it is not necessary for
->   development to happen and is not a single point of failure -- it's
->   more like Linus's repo and can be moved or even replicated from
->   scratch by somebody else simply by having mailing list archives
-> 
-> - allows quick lookup of patch/patchset <-> email discussion within git
-> 
-> - allows diffing between versions of a single logical patchset
-> 
-> - patchset descriptions naturally become part of the changelog that ends
->   up in Linus's tree
-> 
-> Disadvantages:
-> 
-> - requires patching git
-> 
-> - requires a bot to continuously create branches for patchsets sent to
->   mailing lists
-> 
-> - increased storage/bandwidth for git.kernel.org (?)
-> 
-> - may need a couple of new wrapper scripts to automate patchset
->   construction/versioning
-
-Just to play the devil's advocate, even though I'm in favor of something 
-like this, I'll add in another disadvantage:
-
-- The maintainer can't make small edits before pushing the changes out. 
-
-I do that every now and then for git-gui, and Junio does that sometimes 
-for Git. I don't know if the folks over at Linux do something like this, 
-but using '--exact' would mean that contributors would have to send a 
-re-roll for even minor changes. Its mostly an inconvenience instead of a 
-problem, but I thought I'd point it out.
- 
-> Thoughts?
-
-One more question, not strictly related to your proposal: right now, 
-when I apply patches from contributors, I pass '-s' to 'am', so the 
-applied commit would have my sign-off. The way I see it, that sign-off 
-is supposed to signify that I have the right to push out the commit to 
-the "main" repo, just like the author's sign-off means that they have 
-the right to send me that commit.
-
-Looking at git.git, I notice that Junio does the same. The new '--exact' 
-would be incompatible with '-s', correct (since the commit message has 
-changed, the SHA1 would also change)? So firstly, make sure you account 
-for something like that if you haven't already (I haven't found the time 
-to read your patches yet). Secondly, is it all right for the maintainer 
-to just not sign-off on the commits they push out?
-
--- 
 Regards,
-Pratyush Yadav
+    Eli
+
+Acked-by: Eli Billauer <eli.billauer@gmail.com>
+
+On 16/10/19 12:25, YueHaibing wrote:
+> Use devm_platform_ioremap_resource() to simplify the code a bit.
+> This is detected by coccinelle.
+>
+> Signed-off-by: YueHaibing<yuehaibing@huawei.com>
+> ---
+>   drivers/char/xillybus/xillybus_of.c | 5 +----
+>   1 file changed, 1 insertion(+), 4 deletions(-)
+>
+> diff --git a/drivers/char/xillybus/xillybus_of.c b/drivers/char/xillybus/xillybus_of.c
+> index bfafd8f..96b6de8 100644
+> --- a/drivers/char/xillybus/xillybus_of.c
+> +++ b/drivers/char/xillybus/xillybus_of.c
+> @@ -116,7 +116,6 @@ static int xilly_drv_probe(struct platform_device *op)
+>   	struct xilly_endpoint *endpoint;
+>   	int rc;
+>   	int irq;
+> -	struct resource *res;
+>   	struct xilly_endpoint_hardware *ephw =&of_hw;
+>
+>   	if (of_property_read_bool(dev->of_node, "dma-coherent"))
+> @@ -129,9 +128,7 @@ static int xilly_drv_probe(struct platform_device *op)
+>
+>   	dev_set_drvdata(dev, endpoint);
+>
+> -	res = platform_get_resource(op, IORESOURCE_MEM, 0);
+> -	endpoint->registers = devm_ioremap_resource(dev, res);
+> -
+> +	endpoint->registers = devm_platform_ioremap_resource(op, 0);
+>   	if (IS_ERR(endpoint->registers))
+>   		return PTR_ERR(endpoint->registers);
+>
+>    
+
