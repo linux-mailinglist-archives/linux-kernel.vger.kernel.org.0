@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F05E8DA06B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:25:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DC6BDA152
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:27:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407273AbfJPWLS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:11:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48956 "EHLO mail.kernel.org"
+        id S2439402AbfJPWWA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:22:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42306 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437924AbfJPV4u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:56:50 -0400
+        id S2394858AbfJPVx0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:53:26 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8562F21925;
-        Wed, 16 Oct 2019 21:56:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30F7721925;
+        Wed, 16 Oct 2019 21:53:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263009;
-        bh=BakXtVNyWxfe6/6cNUyEpr7kiZiRERaM4EkEd9adm7w=;
+        s=default; t=1571262806;
+        bh=Bf+ER69cBxaSgSskm14ZAD6nSzKcf7naYP/B+3ZIYU8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MrjHYQ31+PRoLRWDOnF6Q+H4bNorriRjz7/fC5CRprVOVFSgtq67WsMjY2QHF3jvw
-         UqOeO5Vh6OLROtNs9zpzbJI3PZTPRFAharsv/oRiSVIHLwJJqqr5LzmxG+Jys6ft0r
-         PMGtq3l0gteBLNXLOdvMbMtKeXMONOcsTfEwtUSY=
+        b=ag92/JOGMWolXSIdPiD8z0PbLPAcMoVj3Ep7ofrlQLA7BbrQ+EGsNFwxjTGSj7KKw
+         4WbLElfyhXTVxGs6AVi6AAeRR+SvaMhL7xLVpgz690iHOgBXmLtDJFifrQe33y1SEc
+         OM6bZUp4LV9jf73xnzS9DHaYZfGnYNyva+7KNaaY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rick Tseng <rtseng@nvidia.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.19 12/81] usb: xhci: wait for CNR controller not ready bit in xhci resume
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Peter Korsgaard <jacmet@sunsite.dk>
+Subject: [PATCH 4.4 48/79] serial: uartlite: fix exit path null pointer
 Date:   Wed, 16 Oct 2019 14:50:23 -0700
-Message-Id: <20191016214817.920493885@linuxfoundation.org>
+Message-Id: <20191016214811.705472460@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
-References: <20191016214805.727399379@linuxfoundation.org>
+In-Reply-To: <20191016214729.758892904@linuxfoundation.org>
+References: <20191016214729.758892904@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,45 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rick Tseng <rtseng@nvidia.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-commit a70bcbc322837eda1ab5994d12db941dc9733a7d upstream.
+commit a553add0846f355a28ed4e81134012e4a1e280c2 upstream.
 
-NVIDIA 3.1 xHCI card would lose power when moving power state into D3Cold.
-Thus we need to wait for CNR bit to clear in xhci resume, just as in
-xhci init.
+Call uart_unregister_driver() conditionally instead of
+unconditionally, only if it has been previously registered.
 
-[Minor changes to comment and commit message -Mathias]
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Rick Tseng <rtseng@nvidia.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/1570190373-30684-6-git-send-email-mathias.nyman@linux.intel.com
+This uses driver.state, just as the sh-sci.c driver does.
+
+Fixes this null pointer dereference in tty_unregister_driver(),
+since the 'driver' argument is null:
+
+  general protection fault: 0000 [#1] PREEMPT SMP KASAN PTI
+  RIP: 0010:tty_unregister_driver+0x25/0x1d0
+
+Fixes: 238b8721a554 ("[PATCH] serial uartlite driver")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: stable <stable@vger.kernel.org>
+Cc: Peter Korsgaard <jacmet@sunsite.dk>
+Link: https://lore.kernel.org/r/9c8e6581-6fcc-a595-0897-4d90f5d710df@infradead.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/tty/serial/uartlite.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -1098,6 +1098,18 @@ int xhci_resume(struct xhci_hcd *xhci, b
- 		hibernated = true;
+--- a/drivers/tty/serial/uartlite.c
++++ b/drivers/tty/serial/uartlite.c
+@@ -701,7 +701,8 @@ err_uart:
+ static void __exit ulite_exit(void)
+ {
+ 	platform_driver_unregister(&ulite_platform_driver);
+-	uart_unregister_driver(&ulite_uart_driver);
++	if (ulite_uart_driver.state)
++		uart_unregister_driver(&ulite_uart_driver);
+ }
  
- 	if (!hibernated) {
-+		/*
-+		 * Some controllers might lose power during suspend, so wait
-+		 * for controller not ready bit to clear, just as in xHC init.
-+		 */
-+		retval = xhci_handshake(&xhci->op_regs->status,
-+					STS_CNR, 0, 10 * 1000 * 1000);
-+		if (retval) {
-+			xhci_warn(xhci, "Controller not ready at resume %d\n",
-+				  retval);
-+			spin_unlock_irq(&xhci->lock);
-+			return retval;
-+		}
- 		/* step 1: restore register */
- 		xhci_restore_registers(xhci);
- 		/* step 2: initialize command ring buffer */
+ module_init(ulite_init);
 
 
