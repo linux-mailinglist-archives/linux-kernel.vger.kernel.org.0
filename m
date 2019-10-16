@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6D96D9AAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 22:02:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ABD2D9A91
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 22:00:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394634AbfJPUCG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 16:02:06 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:37684 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436816AbfJPUAm (ORCPT
+        id S2436839AbfJPUAq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 16:00:46 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:36500 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436828AbfJPUAo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 16:00:42 -0400
-Received: by mail-qk1-f193.google.com with SMTP id u184so23999791qkd.4
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 13:00:42 -0700 (PDT)
+        Wed, 16 Oct 2019 16:00:44 -0400
+Received: by mail-qk1-f196.google.com with SMTP id y189so24012000qkc.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 13:00:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=soleen.com; s=google;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=T4oxSJQXJFiY001HVXtMhV4c1Nyh6Voq/S19Iap3z4U=;
-        b=DGre7ope1z/85rJPZ4IFjlhOm3YBsexLNt4OvsWWWOLkWgwpsaJIM1pD6dhXAvTH/R
-         SfQobt9L6NpsyIeGpWCeql3qSX/KVIo4W9kEozA8Zi9G5eq4JBzcOExg6eBteqdmzgky
-         lEOeY0V8KSCmNj6cq5taZ9NDiiobXDnV2YEFB6EqqlLi2InV8v3IT4yFCcQS2m8MEIjb
-         IvEEJWKzBIknz04aeOVYCxcWFTQEZF9ob2eKJ1FWdigupZeVnmgr/C4pTJMF3F34Cxmk
-         7MbPPMmEg+vmDYF4We/tyX6V6e4RnPYMNs3H6NXSZ/cscrc6DqxNmz4UwntpX/VVatui
-         dMLw==
+        bh=bEALksuMGDCoXJUsPuJK9KjzrlYMPFHPnYP/iTi6nJA=;
+        b=PmgVNinlAhKoCy38ovygoke5eHkmtndpc1qCG+WMEy9t9CEaDFzQKRRgmdC+/OTIAr
+         cClxqiICWNaO9nHeEsZv1j3YqYY8c2OLUOt90mSsJlaqZ0yME3UdcMJnjBBcAFw/MxOB
+         1gU5t4NkzRJAnW47EOb8ae4y2t+V1JiAo3wDbEYc0YRWeJM0RtUeU8C3aWxAqgm21r2X
+         2TjH36zN66FahrRc6sj/m312DAfD5zn543Be9cOWsRTaprJZ2ao3oHfuJffHHQSvKTfH
+         Y7lPKpfR61Aw+x4ek1rgWv3PvQp/5zoyFWjLSW5+KPcvj4n3qAvnRZospNLcs5gjEocg
+         UXTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=T4oxSJQXJFiY001HVXtMhV4c1Nyh6Voq/S19Iap3z4U=;
-        b=mPep7Jt9TcgWO+WF7VL+nVb/nazA/vW6CMWaKusGaSrzpNHOiULG22Frdl9YlXHrKM
-         E0rjdSsaGcsthOlp0c6axzB/nZYCvBhzSyYzAznjhMJm0cfVk7opqEovTtyTwRmcRIh4
-         W6H1/yKHiHG3awbJEGz1Vdr/DMhgJs1sQTx5eFGBPjfxhHVDty+jOGDpS7GI/5ytMqLg
-         WXdW0n5KvnqpaH968kVrEmgILWkNb6RxaD5C7Iqkr09KJT9myNSKoNxr1banzItqDoGp
-         1D5Ut6wVCRLNzH/XVpWEtkvAe4Zh5Qv8FS2vhoOi3QAB7RXGfQE9yG1RmFeKgmYNffpl
-         sh4w==
-X-Gm-Message-State: APjAAAWOPkZ3kMrN9/lMrdU/YR/ltQN9okjeDK6i4XQU+YDIinG+zB/h
-        Y2Is8fw/rbUEFHxgxIo860GMoQ==
-X-Google-Smtp-Source: APXvYqzmh9ZVCm734DDic0+RycCb/gxkGIXhQmNPGS2Audv6J5EXJ/l4r8dVf285F5TVgxAglBRtkQ==
-X-Received: by 2002:a37:8183:: with SMTP id c125mr29289075qkd.279.1571256041916;
-        Wed, 16 Oct 2019 13:00:41 -0700 (PDT)
+        bh=bEALksuMGDCoXJUsPuJK9KjzrlYMPFHPnYP/iTi6nJA=;
+        b=F+CxN8b0KWBfsBMMNLsuLyaN3tRmLDdISXJmJQOSfs8IaLpPel1qm2j6PmfZVuBVC5
+         T9/iiJpghT2tZ7onJqv6VoOz94NIrC8PKWHhb2xTKkXBfBoO2F8ZSDYLNUdJvSWbhMEZ
+         SJ+AclEclg/kA+mC5holAEnS2ntY3O5bpTohLAJX6E1bnufQyA9VkL+2CX9Q+wDfClwM
+         i1uGKRtW4oKxKj1doMxYfYlwsCZTeOWLgMFcRyUZAzIvaRUKQtrpJN+HCUWVHvxvOqUj
+         4Ra5H2ASDqbvYZkQ3PT/2hgUv4rokxQP3VB34KwWlabiXqBCCPidwzz5fOSYSBBx83aF
+         Wz9Q==
+X-Gm-Message-State: APjAAAWiy7zJEyOI/BiLaUh6V0rFudGrXvRiRVvde+d9w26y4yt1/C2/
+        obHQuClFgF/BdzgxYPt6BRstSg==
+X-Google-Smtp-Source: APXvYqzyH+2jZ2ynpwq6pYQufa7x4iWmQOZSfM/oXRiz2GauBXOrA822WeZtbs4kkqeqKB/SnonOpw==
+X-Received: by 2002:a37:56c6:: with SMTP id k189mr41781172qkb.124.1571256043570;
+        Wed, 16 Oct 2019 13:00:43 -0700 (PDT)
 Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id c204sm13342030qkb.90.2019.10.16.13.00.40
+        by smtp.gmail.com with ESMTPSA id c204sm13342030qkb.90.2019.10.16.13.00.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2019 13:00:41 -0700 (PDT)
+        Wed, 16 Oct 2019 13:00:42 -0700 (PDT)
 From:   Pavel Tatashin <pasha.tatashin@soleen.com>
 To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         ebiederm@xmission.com, kexec@lists.infradead.org,
@@ -55,9 +55,9 @@ To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         matthias.bgg@gmail.com, bhsharma@redhat.com, linux-mm@kvack.org,
         mark.rutland@arm.com, steve.capper@arm.com, rfontana@redhat.com,
         tglx@linutronix.de
-Subject: [PATCH v7 03/25] arm64: kexec: remove unnecessary debug prints
-Date:   Wed, 16 Oct 2019 16:00:12 -0400
-Message-Id: <20191016200034.1342308-4-pasha.tatashin@soleen.com>
+Subject: [PATCH v7 04/25] arm64: kexec: make dtb_mem always enabled
+Date:   Wed, 16 Oct 2019 16:00:13 -0400
+Message-Id: <20191016200034.1342308-5-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191016200034.1342308-1-pasha.tatashin@soleen.com>
 References: <20191016200034.1342308-1-pasha.tatashin@soleen.com>
@@ -68,38 +68,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kexec_image_info() outputs all the necessary information about the
-upcoming kexec. The extra debug printfs in machine_kexec() are not
-needed.
+Currently, dtb_mem is enabled only when CONFIG_KEXEC_FILE is
+enabled. This adds ugly ifdefs to c files.
+
+Always enabled dtb_mem, when it is not used, it is NULL.
+Change the dtb_mem to phys_addr_t, as it is a physical address.
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
 ---
- arch/arm64/kernel/machine_kexec.c | 12 ------------
- 1 file changed, 12 deletions(-)
+ arch/arm64/include/asm/kexec.h    | 4 ++--
+ arch/arm64/kernel/machine_kexec.c | 6 +-----
+ 2 files changed, 3 insertions(+), 7 deletions(-)
 
+diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
+index 12a561a54128..ad6afed69078 100644
+--- a/arch/arm64/include/asm/kexec.h
++++ b/arch/arm64/include/asm/kexec.h
+@@ -90,14 +90,14 @@ static inline void crash_prepare_suspend(void) {}
+ static inline void crash_post_resume(void) {}
+ #endif
+ 
+-#ifdef CONFIG_KEXEC_FILE
+ #define ARCH_HAS_KIMAGE_ARCH
+ 
+ struct kimage_arch {
+ 	void *dtb;
+-	unsigned long dtb_mem;
++	phys_addr_t dtb_mem;
+ };
+ 
++#ifdef CONFIG_KEXEC_FILE
+ extern const struct kexec_file_ops kexec_image_ops;
+ 
+ struct kimage;
 diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machine_kexec.c
-index 0df8493624e0..8e9c924423b4 100644
+index 8e9c924423b4..ae1bad0156cd 100644
 --- a/arch/arm64/kernel/machine_kexec.c
 +++ b/arch/arm64/kernel/machine_kexec.c
-@@ -160,18 +160,6 @@ void machine_kexec(struct kimage *kimage)
+@@ -203,11 +203,7 @@ void machine_kexec(struct kimage *kimage)
+ 	 * In kexec_file case, the kernel starts directly without purgatory.
+ 	 */
+ 	cpu_soft_restart(reboot_code_buffer_phys, kimage->head, kimage->start,
+-#ifdef CONFIG_KEXEC_FILE
+-						kimage->arch.dtb_mem);
+-#else
+-						0);
+-#endif
++			 kimage->arch.dtb_mem);
  
- 	kexec_image_info(kimage);
- 
--	pr_debug("%s:%d: control_code_page:        %p\n", __func__, __LINE__,
--		kimage->control_code_page);
--	pr_debug("%s:%d: reboot_code_buffer_phys:  %pa\n", __func__, __LINE__,
--		&reboot_code_buffer_phys);
--	pr_debug("%s:%d: reboot_code_buffer:       %p\n", __func__, __LINE__,
--		reboot_code_buffer);
--	pr_debug("%s:%d: relocate_new_kernel:      %p\n", __func__, __LINE__,
--		arm64_relocate_new_kernel);
--	pr_debug("%s:%d: relocate_new_kernel_size: 0x%lx(%lu) bytes\n",
--		__func__, __LINE__, arm64_relocate_new_kernel_size,
--		arm64_relocate_new_kernel_size);
--
- 	/*
- 	 * Copy arm64_relocate_new_kernel to the reboot_code_buffer for use
- 	 * after the kernel is shut down.
+ 	BUG(); /* Should never get here. */
+ }
 -- 
 2.23.0
 
