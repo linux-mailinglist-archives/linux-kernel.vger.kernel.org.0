@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F2EDD9E0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72B19D9DF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437897AbfJPV4E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:56:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47160 "EHLO mail.kernel.org"
+        id S2437746AbfJPVzQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:55:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437873AbfJPVz7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:55:59 -0400
+        id S2395195AbfJPVzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:55:09 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 195DC20872;
-        Wed, 16 Oct 2019 21:55:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD0AA21925;
+        Wed, 16 Oct 2019 21:55:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262959;
-        bh=uySbU/iStrpg7gYqVAO/jw0Lt6eyVT6b5EdH9JhGSaU=;
+        s=default; t=1571262909;
+        bh=0rVRR0CbBTVHtEv8LVBhHuawCNnGDu3ml+NkzVi1Ro8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S5kkhM88TQ7it11C+1bTTomBLucvBl4WIu5NzePt32kV5ulEjd3ZYmrKCz4Tt6Q6R
-         SoXHvBVlYRcWystPGZzKCOX6wYOFgqX1sKVhoCp7jRRj1Xe+faj9iZUNWKR9tIlNvc
-         xe28sBgU5tuRgCRbg53RYAT5TkTUxwxItO+pS+LM=
+        b=Q2xPGQv73SIIzVQYJt3D633IaF95NDj5yrFMqOQLpGZThZySHS+h4RTQf/iC/cD9M
+         I0XTd4cfLc6sYSx1gccqQjGirN5vJReXy2p4xPLJSfNnGK6TkXx1aZ8ksKOHUrKP25
+         1ZWqapCw28JAdg49WaC+DhDPO2ivK3TzsG3wUhRg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 28/65] USB: serial: fix runtime PM after driver unbind
+        stable@vger.kernel.org,
+        syzbot+f9549f5ee8a5416f0b95@syzkaller.appspotmail.com,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.9 69/92] USB: legousbtower: fix deadlock on disconnect
 Date:   Wed, 16 Oct 2019 14:50:42 -0700
-Message-Id: <20191016214823.576491359@linuxfoundation.org>
+Message-Id: <20191016214843.701774402@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
-References: <20191016214756.457746573@linuxfoundation.org>
+In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
+References: <20191016214759.600329427@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +46,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Johan Hovold <johan@kernel.org>
 
-commit d51bdb93ca7e71d7fb30a572c7b47ed0194bf3fe upstream.
+commit 33a7813219f208f4952ece60ee255fd983272dec upstream.
 
-Since commit c2b71462d294 ("USB: core: Fix bug caused by duplicate
-interface PM usage counter") USB drivers must always balance their
-runtime PM gets and puts, including when the driver has already been
-unbound from the interface.
+Fix a potential deadlock if disconnect races with open.
 
-Leaving the interface with a positive PM usage counter would prevent a
-later bound driver from suspending the device.
+Since commit d4ead16f50f9 ("USB: prevent char device open/deregister
+race") core holds an rw-semaphore while open is called and when
+releasing the minor number during deregistration. This can lead to an
+ABBA deadlock if a driver takes a lock in open which it also holds
+during deregistration.
 
-Fixes: c2b71462d294 ("USB: core: Fix bug caused by duplicate interface PM usage counter")
-Cc: stable <stable@vger.kernel.org>
+This effectively reverts commit 78663ecc344b ("USB: disconnect open race
+in legousbtower") which needlessly introduced this issue after a generic
+fix for this race had been added to core by commit d4ead16f50f9 ("USB:
+prevent char device open/deregister race").
+
+Fixes: 78663ecc344b ("USB: disconnect open race in legousbtower")
+Cc: stable <stable@vger.kernel.org>	# 2.6.24
+Reported-by: syzbot+f9549f5ee8a5416f0b95@syzkaller.appspotmail.com
+Tested-by: syzbot+f9549f5ee8a5416f0b95@syzkaller.appspotmail.com
 Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191001084908.2003-4-johan@kernel.org
+Link: https://lore.kernel.org/r/20190919083039.30898-3-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/usb-serial.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/usb/misc/legousbtower.c |   19 ++-----------------
+ 1 file changed, 2 insertions(+), 17 deletions(-)
 
---- a/drivers/usb/serial/usb-serial.c
-+++ b/drivers/usb/serial/usb-serial.c
-@@ -314,10 +314,7 @@ static void serial_cleanup(struct tty_st
- 	serial = port->serial;
- 	owner = serial->type->driver.owner;
+--- a/drivers/usb/misc/legousbtower.c
++++ b/drivers/usb/misc/legousbtower.c
+@@ -185,7 +185,6 @@ static const struct usb_device_id tower_
+ };
  
--	mutex_lock(&serial->disc_mutex);
--	if (!serial->disconnected)
--		usb_autopm_put_interface(serial->interface);
--	mutex_unlock(&serial->disc_mutex);
-+	usb_autopm_put_interface(serial->interface);
+ MODULE_DEVICE_TABLE (usb, tower_table);
+-static DEFINE_MUTEX(open_disc_mutex);
  
- 	usb_serial_put(serial);
- 	module_put(owner);
+ #define LEGO_USB_TOWER_MINOR_BASE	160
+ 
+@@ -338,18 +337,14 @@ static int tower_open (struct inode *ino
+ 		goto exit;
+ 	}
+ 
+-	mutex_lock(&open_disc_mutex);
+ 	dev = usb_get_intfdata(interface);
+-
+ 	if (!dev) {
+-		mutex_unlock(&open_disc_mutex);
+ 		retval = -ENODEV;
+ 		goto exit;
+ 	}
+ 
+ 	/* lock this device */
+ 	if (mutex_lock_interruptible(&dev->lock)) {
+-		mutex_unlock(&open_disc_mutex);
+ 	        retval = -ERESTARTSYS;
+ 		goto exit;
+ 	}
+@@ -357,12 +352,10 @@ static int tower_open (struct inode *ino
+ 
+ 	/* allow opening only once */
+ 	if (dev->open_count) {
+-		mutex_unlock(&open_disc_mutex);
+ 		retval = -EBUSY;
+ 		goto unlock_exit;
+ 	}
+ 	dev->open_count = 1;
+-	mutex_unlock(&open_disc_mutex);
+ 
+ 	/* reset the tower */
+ 	result = usb_control_msg (dev->udev,
+@@ -429,10 +422,9 @@ static int tower_release (struct inode *
+ 
+ 	if (dev == NULL) {
+ 		retval = -ENODEV;
+-		goto exit_nolock;
++		goto exit;
+ 	}
+ 
+-	mutex_lock(&open_disc_mutex);
+ 	if (mutex_lock_interruptible(&dev->lock)) {
+ 	        retval = -ERESTARTSYS;
+ 		goto exit;
+@@ -462,10 +454,7 @@ static int tower_release (struct inode *
+ 
+ unlock_exit:
+ 	mutex_unlock(&dev->lock);
+-
+ exit:
+-	mutex_unlock(&open_disc_mutex);
+-exit_nolock:
+ 	return retval;
+ }
+ 
+@@ -932,7 +921,6 @@ static int tower_probe (struct usb_inter
+ 	if (retval) {
+ 		/* something prevented us from registering this driver */
+ 		dev_err(idev, "Not able to get a minor for this device.\n");
+-		usb_set_intfdata (interface, NULL);
+ 		goto error;
+ 	}
+ 	dev->minor = interface->minor;
+@@ -964,16 +952,13 @@ static void tower_disconnect (struct usb
+ 	int minor;
+ 
+ 	dev = usb_get_intfdata (interface);
+-	mutex_lock(&open_disc_mutex);
+-	usb_set_intfdata (interface, NULL);
+ 
+ 	minor = dev->minor;
+ 
+-	/* give back our minor */
++	/* give back our minor and prevent further open() */
+ 	usb_deregister_dev (interface, &tower_class);
+ 
+ 	mutex_lock(&dev->lock);
+-	mutex_unlock(&open_disc_mutex);
+ 
+ 	/* if the device is not opened, then we clean up right now */
+ 	if (!dev->open_count) {
 
 
