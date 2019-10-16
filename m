@@ -2,83 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83BF9D96DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:18:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50126D96E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:19:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393662AbfJPQSt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 12:18:49 -0400
-Received: from mga06.intel.com ([134.134.136.31]:4632 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727154AbfJPQSt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 12:18:49 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2019 09:18:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,304,1566889200"; 
-   d="scan'208";a="202114135"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by FMSMGA003.fm.intel.com with ESMTP; 16 Oct 2019 09:18:46 -0700
-Received: from andy by smile with local (Exim 4.92.2)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1iKm0b-0005Up-Ef; Wed, 16 Oct 2019 19:18:45 +0300
-Date:   Wed, 16 Oct 2019 19:18:45 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v5 11/14] software node: move small properties inline
- when copying
-Message-ID: <20191016161845.GX32742@smile.fi.intel.com>
-References: <20191011230721.206646-1-dmitry.torokhov@gmail.com>
- <20191011230721.206646-12-dmitry.torokhov@gmail.com>
- <20191015122028.GI32742@smile.fi.intel.com>
- <20191015182553.GG105649@dtor-ws>
- <20191016074857.GN32742@smile.fi.intel.com>
- <20191016160126.GB35946@dtor-ws>
+        id S2393811AbfJPQTO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 12:19:14 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:34890 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727154AbfJPQTN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 12:19:13 -0400
+Received: by mail-io1-f66.google.com with SMTP id q10so54685545iop.2;
+        Wed, 16 Oct 2019 09:19:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=h32JWLot+gceae0jQn6+dpZ85M9IjTbgfAQ5j4grnTA=;
+        b=UXaaodg3AFzS4aSYdIEd36mhiJEN7vilHRmzWu5tZGMnYleV6eUDOKw4ScHHm1iIo9
+         YhV+fJpyY2lM/ApsjxfbQ41c7Bh9SxHYRzYZybNuFE9tB4D2sCUT+OXc65qbawa6rr/n
+         UV8HHfghrJBRDgHhKSJ3A61llDuxCoCn9IgMl7xXWVb8AolKDi2B4N8vtlQWM6vmdSWO
+         aO7204bSLfoLbtIynHam5CXwCUJyWj0od89S5T3cW5nCJXMS4PrhQWg0FWc4mXmcubY2
+         mjW03XFhU3DSsP1EykwtCvouoektuZJhxOghw3m91RHSQ5XqnKKSGrj9B456LWjHdq5c
+         Zdww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=h32JWLot+gceae0jQn6+dpZ85M9IjTbgfAQ5j4grnTA=;
+        b=ZxZHHMW7OZpKHw4V/0SxIsPRIehy9RkD+jHaYPnYmJuD/PChkj5Fsnk0OnIPP9tRVQ
+         H1o9PtjVVye7Z59Wty+IASEptM0LXbaCIO93PhZrOL4kJ/CEzxKzdWKdsS9aAkm6vowS
+         lI56/WqXuCsO4lKrlG8RcKoOOZVfRO4MrUXI+ru1Dbvdhu7snqBhhsKixQGk51hHlZlI
+         2/sICrAFbqvkWz17wVhO+MnpKKP9zJECUjb3Ew+ukm4yiP5CHuKWsz7aY9APKh4w0BNW
+         fcCEENdVPEdgjihB5mzRPb5UgwIOMoIXIzJCwuXqYhsNG4qllUnqBmZujwAgWHG0GmNc
+         qRxQ==
+X-Gm-Message-State: APjAAAU1mMg0yynMQd9OSz56Q1RhCy1fEQVwjk1sw/nDUekLnXHDhm+E
+        owTWldsdcuL8dlNI1ovYn7svnPf824bj8pOYdwI=
+X-Google-Smtp-Source: APXvYqyhl5iUSYWpUQKJhr3nSoqeJuYCD1HiKNf1oQRQxqz8oX8fx+54lB4kBMH1RO7fz+6Vb8PFFolkd/cH6Qoz2Ps=
+X-Received: by 2002:a05:6638:632:: with SMTP id h18mr31488191jar.55.1571242752159;
+ Wed, 16 Oct 2019 09:19:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191016160126.GB35946@dtor-ws>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191002114626.12407-1-aford173@gmail.com> <20191002203149.g22igmfndbve7m3n@earth.universe>
+In-Reply-To: <20191002203149.g22igmfndbve7m3n@earth.universe>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Wed, 16 Oct 2019 11:19:00 -0500
+Message-ID: <CAHCN7xK2MFJbZkjaboDnfHJa4SgGMc7CL3+ZUL4UBCFV00W9+g@mail.gmail.com>
+Subject: Re: [PATCH] Revert "Bluetooth: hci_ll: set operational frequency earlier"
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Adam Ford <adam.ford@logicpd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 09:01:26AM -0700, Dmitry Torokhov wrote:
-> On Wed, Oct 16, 2019 at 10:48:57AM +0300, Andy Shevchenko wrote:
-> > On Tue, Oct 15, 2019 at 11:25:53AM -0700, Dmitry Torokhov wrote:
+On Wed, Oct 2, 2019 at 3:31 PM Sebastian Reichel <sre@kernel.org> wrote:
+>
+> Hi,
+>
+> On Wed, Oct 02, 2019 at 06:46:26AM -0500, Adam Ford wrote:
+> > As nice as it would be to update firmware faster, that patch broke
+> > at least two different boards, an OMAP4+WL1285 based Motorola Droid
+> > 4, as reported by Sebasian Reichel and the Logic PD i.MX6Q +
+> > WL1837MOD.
+> >
+> > This reverts commit a2e02f38eff84f199c8e32359eb213f81f270047.
+> >
+> > Signed-off-by: Adam Ford <aford173@gmail.com>
+>
+> Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+>
+> This should be backported stable
 
-> > You store a value as union, but going to read as a member of union?
-> > I'm pretty sure it breaks standard rules.
-> 
-> No, I move the values _in place_ of the union, and the data is always
-> fetched via void pointers. And copying data via char * or memcpy() is
-> allowed even in C99 and C11.
-> 
-> But I am wondering why are we actually worrying about all of this? The
-> kernel is gnu89 and I think is going to stay this way because we use
-> initializers with a cast in a lot of places:
-> 
-> #define __RAW_SPIN_LOCK_UNLOCKED(lockname)      \
->         (raw_spinlock_t) __RAW_SPIN_LOCK_INITIALIZER(lockname)
-> 
-> and C99 and gnu99 do not allow this. See
-> https://lore.kernel.org/lkml/20141019231031.GB9319@node.dhcp.inet.fi/
+Is there any chance of this getting picked up for the 5.4 kernel?
+It's been a couple weeks, and I haven't seen any responses beyond
+Sebastian's Ack and request for backport.
 
-This is simple not a cast.
+adam
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+>
+> -- Sebastian
+>
+> > diff --git a/drivers/bluetooth/hci_ll.c b/drivers/bluetooth/hci_ll.c
+> > index 285706618f8a..d9a4c6c691e0 100644
+> > --- a/drivers/bluetooth/hci_ll.c
+> > +++ b/drivers/bluetooth/hci_ll.c
+> > @@ -621,13 +621,6 @@ static int ll_setup(struct hci_uart *hu)
+> >
+> >       serdev_device_set_flow_control(serdev, true);
+> >
+> > -     if (hu->oper_speed)
+> > -             speed = hu->oper_speed;
+> > -     else if (hu->proto->oper_speed)
+> > -             speed = hu->proto->oper_speed;
+> > -     else
+> > -             speed = 0;
+> > -
+> >       do {
+> >               /* Reset the Bluetooth device */
+> >               gpiod_set_value_cansleep(lldev->enable_gpio, 0);
+> > @@ -639,20 +632,6 @@ static int ll_setup(struct hci_uart *hu)
+> >                       return err;
+> >               }
+> >
+> > -             if (speed) {
+> > -                     __le32 speed_le = cpu_to_le32(speed);
+> > -                     struct sk_buff *skb;
+> > -
+> > -                     skb = __hci_cmd_sync(hu->hdev,
+> > -                                          HCI_VS_UPDATE_UART_HCI_BAUDRATE,
+> > -                                          sizeof(speed_le), &speed_le,
+> > -                                          HCI_INIT_TIMEOUT);
+> > -                     if (!IS_ERR(skb)) {
+> > -                             kfree_skb(skb);
+> > -                             serdev_device_set_baudrate(serdev, speed);
+> > -                     }
+> > -             }
+> > -
+> >               err = download_firmware(lldev);
+> >               if (!err)
+> >                       break;
+> > @@ -677,7 +656,25 @@ static int ll_setup(struct hci_uart *hu)
+> >       }
+> >
+> >       /* Operational speed if any */
+> > +     if (hu->oper_speed)
+> > +             speed = hu->oper_speed;
+> > +     else if (hu->proto->oper_speed)
+> > +             speed = hu->proto->oper_speed;
+> > +     else
+> > +             speed = 0;
+> > +
+> > +     if (speed) {
+> > +             __le32 speed_le = cpu_to_le32(speed);
+> > +             struct sk_buff *skb;
+> >
+> > +             skb = __hci_cmd_sync(hu->hdev, HCI_VS_UPDATE_UART_HCI_BAUDRATE,
+> > +                                  sizeof(speed_le), &speed_le,
+> > +                                  HCI_INIT_TIMEOUT);
+> > +             if (!IS_ERR(skb)) {
+> > +                     kfree_skb(skb);
+> > +                     serdev_device_set_baudrate(serdev, speed);
+> > +             }
+> > +     }
+> >
+> >       return 0;
+> >  }
+> > --
+> > 2.17.1
+> >
