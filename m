@@ -2,159 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72309D891A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 09:13:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10CDAD890B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 09:10:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729895AbfJPHMv convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 16 Oct 2019 03:12:51 -0400
-Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:41591 "EHLO
-        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726405AbfJPHMv (ORCPT
+        id S1732696AbfJPHKl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 03:10:41 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:35327 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726686AbfJPHKl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 03:12:51 -0400
-Received: from mailgate01.nec.co.jp ([114.179.233.122])
-        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x9G7CXb3003239
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 16 Oct 2019 16:12:33 +0900
-Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x9G7CXi3009686;
-        Wed, 16 Oct 2019 16:12:33 +0900
-Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
-        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x9G7BSmS020645;
-        Wed, 16 Oct 2019 16:12:33 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.152] [10.38.151.152]) by mail01b.kamome.nec.co.jp with ESMTP id BT-MMP-9539196; Wed, 16 Oct 2019 16:09:26 +0900
-Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
- BPXC24GP.gisp.nec.co.jp ([10.38.151.152]) with mapi id 14.03.0439.000; Wed,
- 16 Oct 2019 16:09:25 +0900
-From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To:     "linux-mm@kvack.org" <linux-mm@kvack.org>
-CC:     Michal Hocko <mhocko@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH] mm, soft-offline: convert parameter to pfn
-Thread-Topic: [PATCH] mm, soft-offline: convert parameter to pfn
-Thread-Index: AQHVg/CjSPbKnBteSU6QJtzEs3jIHA==
-Date:   Wed, 16 Oct 2019 07:09:24 +0000
-Message-ID: <20191016070924.GA10178@hori.linux.bs1.fc.nec.co.jp>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.34.125.150]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <5974334D3EC89443ADA33ACB060FCF0D@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
+        Wed, 16 Oct 2019 03:10:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571209840;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=atkKBE+OhbQ4pOII4N38Iv93WpWN9YTy8W/dwEibJvo=;
+        b=JXTO0GXnmDTd8ADD0ABb8mNP/39+TLlqX7isew7arN/30FXyoLSIvFu3MaTEKI6os8OprW
+        PtlUTOmLYLESVAy1WRrinakAlsj5Gs+7O0x4VSMD+pQnQD6kMGgYXP7u6vqEx722/kJqUA
+        b/NLf9Nb8zG1Q1Mf002GvUbLaiIuMoU=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-18-S15e7qXXNPWQsXXxXCzWxw-1; Wed, 16 Oct 2019 03:10:39 -0400
+Received: by mail-wm1-f71.google.com with SMTP id q9so747148wmj.9
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 00:10:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4KmZ9tmpXlk46xmJUogDKwLZzCFViFGNnmxsywrkhr4=;
+        b=Jzxh8QYwekaPtVi7f35f9fi0PG9obUD9pajRJb42RHXwIcw3oKVLj8+1yMEE9mMSwi
+         jYBKfw+zdoZMPnAZ9ZTButmRrsqr0XPvgyHZb/BvBhfk/VSw/yoUntW57RDenqnoxp4i
+         UlijmhxVpedLSNzw4avpbNaUI8fheKroaEThrItyoDR2GrE/Qzk60sik1KUv5Zn9u/lq
+         blqA0gBEO3Z8FOMoRRSTSdGW4FCb7kcN154HdNac6mYa13rZNIwiI52yV8Ss1nQstBul
+         zwIpePDtPKYwF6hPy1fQZnfZOz5BvBfz+ybFGs5t/jM/Cczm9jzp7EG0L4cP9LcYsBC6
+         dKWw==
+X-Gm-Message-State: APjAAAVL+6JjwcUw+2Er4COch6duX+mtsMqKUGVejEgyHNu88HD/WAbM
+        E+NGC7kslDSMebf/yCO+YFozhuMJC8DDRj9XU/pMDTDcMkRL7367Qir3Xl+1XyFHSrFz3SOM1y+
+        nMDB42J1e66dojC3dC99j44iu
+X-Received: by 2002:adf:cc8e:: with SMTP id p14mr1344881wrj.301.1571209837021;
+        Wed, 16 Oct 2019 00:10:37 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqyMkepD45un/zag7gKTc+lFp9N0/XMwW6mC1kmyUCBXgrwtYogoeP8y+AmUc8Y9iVF713Y8IQ==
+X-Received: by 2002:adf:cc8e:: with SMTP id p14mr1344860wrj.301.1571209836713;
+        Wed, 16 Oct 2019 00:10:36 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:ddc7:c53c:581a:7f3e? ([2001:b07:6468:f312:ddc7:c53c:581a:7f3e])
+        by smtp.gmail.com with ESMTPSA id z189sm2973051wmc.25.2019.10.16.00.10.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2019 00:10:36 -0700 (PDT)
+Subject: Re: [PATCH v5 5/6] ptp: arm64: Enable ptp_kvm for arm64
+To:     "Jianyong Wu (Arm Technology China)" <Jianyong.Wu@arm.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "yangbo.lu@nxp.com" <yangbo.lu@nxp.com>,
+        "john.stultz@linaro.org" <john.stultz@linaro.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
+        "maz@kernel.org" <maz@kernel.org>,
+        "richardcochran@gmail.com" <richardcochran@gmail.com>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        "will@kernel.org" <will@kernel.org>,
+        Suzuki Poulose <Suzuki.Poulose@arm.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Steve Capper <Steve.Capper@arm.com>,
+        "Kaly Xin (Arm Technology China)" <Kaly.Xin@arm.com>,
+        "Justin He (Arm Technology China)" <Justin.He@arm.com>,
+        nd <nd@arm.com>
+References: <20191015104822.13890-1-jianyong.wu@arm.com>
+ <20191015104822.13890-6-jianyong.wu@arm.com>
+ <da62c327-9402-9a5c-d694-c1a4378822e0@redhat.com>
+ <HE1PR0801MB167654440A67AF072E28FFFDF4920@HE1PR0801MB1676.eurprd08.prod.outlook.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <6e9bfd40-4715-74b3-b5d4-fc49329bed24@redhat.com>
+Date:   Wed, 16 Oct 2019 09:10:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+In-Reply-To: <HE1PR0801MB167654440A67AF072E28FFFDF4920@HE1PR0801MB1676.eurprd08.prod.outlook.com>
+Content-Language: en-US
+X-MC-Unique: S15e7qXXNPWQsXXxXCzWxw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 16/10/19 05:52, Jianyong Wu (Arm Technology China) wrote:
+> This func used only by kvm_arch_ptp_get_clock and nothing to do with
+> kvm_arch_ptp_get_clock_fn. Also it can be merged into
+> kvm_arch_ptp_get_clock.
+>=20
 
-I wrote a simple cleanup for parameter of soft_offline_page(),
-based on thread https://lkml.org/lkml/2019/10/11/57.
+Your patches also have no user for kvm_arch_ptp_get_clock, so you can
+remove it.
 
-I know that we need more cleanup on hwpoison-inject, but I think
-that will be mentioned in re-write patchset Oscar is preparing now.
-So let me shared only this part as a separate one now.
-
-Thanks,
-Naoya Horiguchi
----
-From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Date: Wed, 16 Oct 2019 15:49:00 +0900
-Subject: [PATCH] mm, soft-offline: convert parameter to pfn
-
-Currently soft_offline_page() receives struct page, and its sibling
-memory_failure() receives pfn. This discrepancy looks weird and makes
-precheck on pfn validity tricky. So let's align them.
-
-Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
----
- drivers/base/memory.c | 2 +-
- include/linux/mm.h    | 2 +-
- mm/madvise.c          | 2 +-
- mm/memory-failure.c   | 8 ++++----
- 4 files changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-index e5485c22ef77..04e469c82852 100644
---- a/drivers/base/memory.c
-+++ b/drivers/base/memory.c
-@@ -540,7 +540,7 @@ static ssize_t soft_offline_page_store(struct device *dev,
- 	pfn >>= PAGE_SHIFT;
- 	if (!pfn_valid(pfn))
- 		return -ENXIO;
--	ret = soft_offline_page(pfn_to_page(pfn));
-+	ret = soft_offline_page(pfn);
- 	return ret == 0 ? count : ret;
- }
- 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 3eba26324ff1..0a452020edf5 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2783,7 +2783,7 @@ extern int sysctl_memory_failure_early_kill;
- extern int sysctl_memory_failure_recovery;
- extern void shake_page(struct page *p, int access);
- extern atomic_long_t num_poisoned_pages __read_mostly;
--extern int soft_offline_page(struct page *page);
-+extern int soft_offline_page(unsigned long pfn);
- 
- 
- /*
-diff --git a/mm/madvise.c b/mm/madvise.c
-index fd221b610b52..df198d1e5e2e 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -893,7 +893,7 @@ static int madvise_inject_error(int behavior,
- 		if (behavior == MADV_SOFT_OFFLINE) {
- 			pr_info("Soft offlining pfn %#lx at process virtual address %#lx\n",
- 				 pfn, start);
--			ret = soft_offline_page(page);
-+			ret = soft_offline_page(pfn);
- 			if (ret)
- 				return ret;
- 		} else {
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index 4f16e0a7e7cc..eb4fd5e8d5e1 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -1514,7 +1514,7 @@ static void memory_failure_work_func(struct work_struct *work)
- 		if (!gotten)
- 			break;
- 		if (entry.flags & MF_SOFT_OFFLINE)
--			soft_offline_page(pfn_to_page(entry.pfn));
-+			soft_offline_page(entry.pfn);
- 		else
- 			memory_failure(entry.pfn, entry.flags);
- 	}
-@@ -1822,7 +1822,7 @@ static int soft_offline_free_page(struct page *page)
- 
- /**
-  * soft_offline_page - Soft offline a page.
-- * @page: page to offline
-+ * @pfn: pfn to soft-offline
-  *
-  * Returns 0 on success, otherwise negated errno.
-  *
-@@ -1841,10 +1841,10 @@ static int soft_offline_free_page(struct page *page)
-  * This is not a 100% solution for all memory, but tries to be
-  * ``good enough'' for the majority of memory.
-  */
--int soft_offline_page(struct page *page)
-+int soft_offline_page(unsigned long pfn)
- {
- 	int ret;
--	unsigned long pfn = page_to_pfn(page);
-+	struct page *page = pfn_to_page(pfn);
- 
- 	if (is_zone_device_page(page)) {
- 		pr_debug_ratelimited("soft_offline: %#lx page is device page\n",
--- 
-2.17.1
+Paolo
 
