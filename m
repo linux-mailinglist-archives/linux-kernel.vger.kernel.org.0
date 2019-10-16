@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8E9DD9E99
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5825CD9EA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438644AbfJPV7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:59:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52668 "EHLO mail.kernel.org"
+        id S2438673AbfJPWAB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:00:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438269AbfJPV6r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:58:47 -0400
+        id S2438338AbfJPV66 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:58:58 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57AAC21925;
-        Wed, 16 Oct 2019 21:58:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 066C5218DE;
+        Wed, 16 Oct 2019 21:58:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263127;
-        bh=QR/FWJvorMny5FKt9GS+YknXw16/Cv9Bjq0InM4LQn4=;
+        s=default; t=1571263137;
+        bh=uqDXuX7FvYTlA5CnBCXp8htezwOXB+LqJ3hsJ+v+GvA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gja1ur++cJw/ttAsq+N/qJGeI9WOSy57bi1ROFaR+vVTjuwV3G30jk+R71HglxWmo
-         Cz7Mg+5IBxqUBiZvyYvrkeULXevfxhn7dfcWsxuSlt0rXunvVjEYqpcJIEe7RsT9zJ
-         WzS0dY5ksDDXlny/hWeLgmxY66uLF1i0hfoc6bu0=
+        b=J3AV57GFEUbwppWlg2Z6sCPqdyPrhnH/pncu4E3//W710xMhxwOkgq5a6j2UT6mjM
+         C3JIS4USbtv+AyN4oxldyqC1LLlhlcI5leHYDa6c95hQ3wqx4F6cdgdRYclqR6Zox9
+         UXacKFb7TbO2sO8CPv/I6Km0eh2Q6XhPOF//vkcI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Peter Korsgaard <jacmet@sunsite.dk>
-Subject: [PATCH 5.3 024/112] serial: uartlite: fix exit path null pointer
-Date:   Wed, 16 Oct 2019 14:50:16 -0700
-Message-Id: <20191016214852.010367751@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Thomas <pthomas8589@gmail.com>,
+        Michal Simek <michal.simek@xilinx.com>
+Subject: [PATCH 5.3 025/112] serial: uartps: Fix uartps_major handling
+Date:   Wed, 16 Oct 2019 14:50:17 -0700
+Message-Id: <20191016214852.267606672@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
 References: <20191016214844.038848564@linuxfoundation.org>
@@ -43,43 +43,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Michal Simek <michal.simek@xilinx.com>
 
-commit a553add0846f355a28ed4e81134012e4a1e280c2 upstream.
+commit 5e9bd2d70ae7c00a95a22994abf1eef728649e64 upstream.
 
-Call uart_unregister_driver() conditionally instead of
-unconditionally, only if it has been previously registered.
+There are two parts which should be fixed. The first one is to assigned
+uartps_major at the end of probe() to avoid complicated logic when
+something fails.
+The second part is initialized uartps_major number to 0 when last device is
+removed. This will ensure that on next probe driver will ask for new
+dynamic major number.
 
-This uses driver.state, just as the sh-sci.c driver does.
-
-Fixes this null pointer dereference in tty_unregister_driver(),
-since the 'driver' argument is null:
-
-  general protection fault: 0000 [#1] PREEMPT SMP KASAN PTI
-  RIP: 0010:tty_unregister_driver+0x25/0x1d0
-
-Fixes: 238b8721a554 ("[PATCH] serial uartlite driver")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Fixes: ab262666018d ("serial: uartps: Use the same dynamic major number for all ports")
+Reported-by: Paul Thomas <pthomas8589@gmail.com>
 Cc: stable <stable@vger.kernel.org>
-Cc: Peter Korsgaard <jacmet@sunsite.dk>
-Link: https://lore.kernel.org/r/9c8e6581-6fcc-a595-0897-4d90f5d710df@infradead.org
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Link: https://lore.kernel.org/r/d2652cda992833315c4f96f06953eb547f928918.1570194248.git.michal.simek@xilinx.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/uartlite.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/tty/serial/xilinx_uartps.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/tty/serial/uartlite.c
-+++ b/drivers/tty/serial/uartlite.c
-@@ -897,7 +897,8 @@ static int __init ulite_init(void)
- static void __exit ulite_exit(void)
- {
- 	platform_driver_unregister(&ulite_platform_driver);
--	uart_unregister_driver(&ulite_uart_driver);
-+	if (ulite_uart_driver.state)
-+		uart_unregister_driver(&ulite_uart_driver);
- }
+--- a/drivers/tty/serial/xilinx_uartps.c
++++ b/drivers/tty/serial/xilinx_uartps.c
+@@ -1550,7 +1550,6 @@ static int cdns_uart_probe(struct platfo
+ 		goto err_out_id;
+ 	}
  
- module_init(ulite_init);
+-	uartps_major = cdns_uart_uart_driver->tty_driver->major;
+ 	cdns_uart_data->cdns_uart_driver = cdns_uart_uart_driver;
+ 
+ 	/*
+@@ -1680,6 +1679,7 @@ static int cdns_uart_probe(struct platfo
+ 		console_port = NULL;
+ #endif
+ 
++	uartps_major = cdns_uart_uart_driver->tty_driver->major;
+ 	cdns_uart_data->cts_override = of_property_read_bool(pdev->dev.of_node,
+ 							     "cts-override");
+ 	return 0;
+@@ -1741,6 +1741,12 @@ static int cdns_uart_remove(struct platf
+ 		console_port = NULL;
+ #endif
+ 
++	/* If this is last instance major number should be initialized */
++	mutex_lock(&bitmap_lock);
++	if (bitmap_empty(bitmap, MAX_UART_INSTANCES))
++		uartps_major = 0;
++	mutex_unlock(&bitmap_lock);
++
+ 	uart_unregister_driver(cdns_uart_data->cdns_uart_driver);
+ 	return rc;
+ }
 
 
