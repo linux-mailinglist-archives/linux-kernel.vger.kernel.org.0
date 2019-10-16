@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1929DA0C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:26:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA9EFD9F8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407430AbfJPWPI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:15:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46232 "EHLO mail.kernel.org"
+        id S2395351AbfJPVzp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:55:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395237AbfJPVza (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:55:30 -0400
+        id S2395324AbfJPVzn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:55:43 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC569218DE;
-        Wed, 16 Oct 2019 21:55:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BCA2218DE;
+        Wed, 16 Oct 2019 21:55:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262930;
-        bh=crHSjvYMY9d/dYMyzSZHnf5e6SCkxwWPOlxaPZTBiYQ=;
+        s=default; t=1571262942;
+        bh=ano3lCLTDZjUOQxqg5UXqoNphOhVKH8iFTaJKiHaR9E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dKjAGF5ZqDo/B4hWjIkT5tABv1sKNzvzmKhHqxRI6lWra1L3n27MgjQ2mvm0WnbW8
-         QyrEgVru9eBJ+TjjpSFz3FPW4HM2OHiqdugCBmEi/VHAF3MyxicIhHyJKG042uK7Mx
-         9E/mrTaCkSGRuVMlhT+t3a/IrxBrhFzSdi7piC3g=
+        b=p1eIP8LDzn7EG0C3E8305ERdZYYOLwD6vgLVpphAKu66bgVMI6ipc8/XmOQC54cg5
+         LahA7PFugC1NmnnQqrYAJ7WInLTGWqOlTX5zKzuVWWpbj193Jd2twl4feUzrOEbTTs
+         a5yRF1qykXxB7vjT0aebVcCdP8hHap/tOik7ZQyw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.9 54/92] USB: usblp: fix runtime PM after driver unbind
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>
+Subject: [PATCH 4.14 13/65] USB: adutux: remove redundant variable minor
 Date:   Wed, 16 Oct 2019 14:50:27 -0700
-Message-Id: <20191016214838.063905932@linuxfoundation.org>
+Message-Id: <20191016214806.274121772@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
-References: <20191016214759.600329427@linuxfoundation.org>
+In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
+References: <20191016214756.457746573@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,45 +42,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit 9a31535859bfd8d1c3ed391f5e9247cd87bb7909 upstream.
+commit 8444efc4a052332d643ed5c8aebcca148c7de032 upstream.
 
-Since commit c2b71462d294 ("USB: core: Fix bug caused by duplicate
-interface PM usage counter") USB drivers must always balance their
-runtime PM gets and puts, including when the driver has already been
-unbound from the interface.
+Variable minor is being assigned but never read, hence it is redundant
+and can be removed. Cleans up clang warning:
 
-Leaving the interface with a positive PM usage counter would prevent a
-later bound driver from suspending the device.
+drivers/usb/misc/adutux.c:770:2: warning: Value stored to 'minor' is
+never read
 
-Fixes: c2b71462d294 ("USB: core: Fix bug caused by duplicate interface PM usage counter")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191001084908.2003-3-johan@kernel.org
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/class/usblp.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/usb/misc/adutux.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/drivers/usb/class/usblp.c
-+++ b/drivers/usb/class/usblp.c
-@@ -474,10 +474,12 @@ static int usblp_release(struct inode *i
+--- a/drivers/usb/misc/adutux.c
++++ b/drivers/usb/misc/adutux.c
+@@ -761,13 +761,11 @@ error:
+ static void adu_disconnect(struct usb_interface *interface)
+ {
+ 	struct adu_device *dev;
+-	int minor;
  
- 	mutex_lock(&usblp_mutex);
- 	usblp->used = 0;
--	if (usblp->present) {
-+	if (usblp->present)
- 		usblp_unlink_urbs(usblp);
--		usb_autopm_put_interface(usblp->intf);
--	} else		/* finish cleanup from disconnect */
-+
-+	usb_autopm_put_interface(usblp->intf);
-+
-+	if (!usblp->present)		/* finish cleanup from disconnect */
- 		usblp_cleanup(usblp);
- 	mutex_unlock(&usblp_mutex);
- 	return 0;
+ 	dev = usb_get_intfdata(interface);
+ 
+ 	mutex_lock(&dev->mtx);	/* not interruptible */
+ 	dev->udev = NULL;	/* poison */
+-	minor = dev->minor;
+ 	usb_deregister_dev(interface, &adu_class);
+ 	mutex_unlock(&dev->mtx);
+ 
 
 
