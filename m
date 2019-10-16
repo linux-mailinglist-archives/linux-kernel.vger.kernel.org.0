@@ -2,87 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F169D959F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 17:31:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBE21D95A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 17:32:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404934AbfJPPbg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 11:31:36 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45684 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393009AbfJPPbf (ORCPT
+        id S2404969AbfJPPcN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 11:32:13 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38299 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726332AbfJPPcM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 11:31:35 -0400
-Received: by mail-wr1-f65.google.com with SMTP id r5so28535409wrm.12
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 08:31:34 -0700 (PDT)
+        Wed, 16 Oct 2019 11:32:12 -0400
+Received: by mail-lj1-f196.google.com with SMTP id b20so24510225ljj.5
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 08:32:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=jPExNZM3mmX+1Ih8VVxmCh7AFIrM8pkRXK2ZyryZhKI=;
-        b=ApYdeKZ9fE/uL+HfaQnAof/XZu+KYfl6KYJz49v9V0ORLQCmIm3LS5agQaRqpV4t/t
-         +n55Aev3khsWFSnT10G/n1iikZQvLrk+oOoabLte5HAQ4f6TOCpwHigKgd80wFNTPGys
-         tFz+SzaM64Ctu6mzpkT17qBlRFo+CtF97F5oxnrk7n44+k5SSlwERVTzaSSRs8iUWTsK
-         WZ0k/lnIjJvaxdEG8wswMJK0rzPR9nLnrnNFqvYlCRJ9dAvXmEj7hNXAb0h0ljS05kA0
-         UtjlYigMIziA0kj2XZJw+78vjb2wD1nHBB9PCyR036JayhddzoT7u7uLey8QKF4idSgV
-         /hlQ==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=x4sUXBF9N+gOqGoXUSe/0E2VksmAjHdkiv7KSR2ftGI=;
+        b=KN++Zn81C01LK7bngv2WQhecCB2pvDWa6MiPOCNK9giCb55GzPd38NprLWCi9y4Rmp
+         G5JVpEFhN07gxtvQKkcodZ0c/iin5yb7op+6svXAeHTJxJPM5HZz2LuFX2hGczINIWnp
+         zjAlhPJ3IIlR8ZNhwPZ4TPeH42AI6XYGcDMmI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=jPExNZM3mmX+1Ih8VVxmCh7AFIrM8pkRXK2ZyryZhKI=;
-        b=Fj0YwSEcFSvcvmPT6wDjHsKPu1hcWND9c2Ly+0WPMntzaFcBFgFaTbxwqkrXlUjIY/
-         FckHcXYyd7TKmAbw8efcXPJ46PkR5+1Ua4MBYsXcjVAkss8O2nHQ8DQNwjATPZQgykmn
-         N1zwL1sEFiJTaKsTqTFEU8yVNLeVbRQVcGRf/tbc0uO7q/F1Vja2f4ZjW4PRWQOq40zB
-         7oK4O+hzI4NLJsOKtJkCag4NuPqCoVS10pB0LI2ibMMMJs7DDMZkPPnpfrtEmi8VbyKx
-         SyCrSrQAuSs+DZna1pqA8523FcOo/CbSvque4I+iokVKT6NXeHi5GHaeLvPMWabo5bgi
-         GlHQ==
-X-Gm-Message-State: APjAAAUzEnNGRFRAJ2QPocfpnW8mLdm3PgVN1GpwVskte2kCZ5ksTnWD
-        rQRATuvWASVVZ2RQiUn/Qdy2zlSKlg30UVdCP28=
-X-Google-Smtp-Source: APXvYqxBM4UIGrPvOuk1XPCp+v+SNcQj3pTIoZxq6cmtsi/J6jnefFS64cY36cA2Go0f6qlSw2SenYehpd0fx57APPI=
-X-Received: by 2002:adf:828c:: with SMTP id 12mr3268694wrc.40.1571239893838;
- Wed, 16 Oct 2019 08:31:33 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=x4sUXBF9N+gOqGoXUSe/0E2VksmAjHdkiv7KSR2ftGI=;
+        b=uHQyc84jtG9yhtaDKwVl/mW0JofwcKsrFKX02nI20lPNpI5IDwJGAVDfgq0AYv2uHI
+         5By8Va647NgxI4Jgb/c9fQO++kuUnfG2QDyx0gAR2No13alpkNjUKNR8iTkIam9Zr9iL
+         qk7AMTqt36NGYIRf8Bz87QMFH+aWsxIxKASZ/Amek6fcwKiY0lT6tCynNUlBbgrz1TUZ
+         iWKCIhJnQbqiqNB88RbCWEZeUWlB7Xp5gSZsQU8kBJFvGK9PN6KkG7wpuhwEcEKlZIPO
+         gklHkXRp/J9T0SmcgRcn2DcL2Z4UkZyh3NE4rojyJ/t1I6Oanris5FetdY/qjwCuTpCZ
+         fwYQ==
+X-Gm-Message-State: APjAAAW5l0Cbm5ijBroJf2UXf8cV6ll+MfTjJ85kzB6hb7l6OsLTCPTr
+        bpKaPZ/FVNLBvucqIenNgfcMmaCqEZ0=
+X-Google-Smtp-Source: APXvYqxrAubzqBNDQsl5oaMlalW824MhSMd+mIdkg1K3kgr2Bea+40ec8qNw1iQTKiwvWL/FGdl3pA==
+X-Received: by 2002:a05:651c:102e:: with SMTP id w14mr19570568ljm.159.1571239929340;
+        Wed, 16 Oct 2019 08:32:09 -0700 (PDT)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id m10sm6270932lfo.69.2019.10.16.08.32.05
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2019 08:32:06 -0700 (PDT)
+Received: by mail-lj1-f180.google.com with SMTP id l21so24514031lje.4
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 08:32:05 -0700 (PDT)
+X-Received: by 2002:a2e:545:: with SMTP id 66mr4189350ljf.133.1571239925218;
+ Wed, 16 Oct 2019 08:32:05 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a5d:6108:0:0:0:0:0 with HTTP; Wed, 16 Oct 2019 08:31:33
- -0700 (PDT)
-Reply-To: alhouttta@gmail.com
-From:   Al Haji Idriss Ouattara <alhaji.akim1@gmail.com>
-Date:   Wed, 16 Oct 2019 15:31:33 +0000
-Message-ID: <CAG6=Wo4RH+eZfez5OAaGe9TWu_zULMn0zwYXV0mtr_=w_Ugu+g@mail.gmail.com>
-Subject: Assalam alaikum,
-To:     undisclosed-recipients:;
+References: <157117606853.15019.15459271147790470307.stgit@warthog.procyon.org.uk>
+ <157117608708.15019.1998141309054662114.stgit@warthog.procyon.org.uk>
+ <CAHk-=whiz1sHXu8SVZKEC2dup=r5JMrftPtEt6ff9Ea8dyH8yQ@mail.gmail.com> <6900.1571235985@warthog.procyon.org.uk>
+In-Reply-To: <6900.1571235985@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 16 Oct 2019 08:31:48 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgMZR8TWpmRBPytGmWJX=C=-bCb5D2PsCx0LUNemAPexA@mail.gmail.com>
+Message-ID: <CAHk-=wgMZR8TWpmRBPytGmWJX=C=-bCb5D2PsCx0LUNemAPexA@mail.gmail.com>
+Subject: Re: [RFC PATCH 02/21] Add a prelocked wake-up
+To:     David Howells <dhowells@redhat.com>
+Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
+        Kan Liang <kan.liang@intel.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Assalam alaikum,
+On Wed, Oct 16, 2019 at 7:26 AM David Howells <dhowells@redhat.com> wrote:
+>
+> Btw, is there any point in __wake_up_sync_key() taking a nr_exclusive
+> argument since it clears WF_SYNC if nr_exclusive != 1 and doesn't make sense
+> to be >1 anyway.
 
-I am an active banker,  I saw your email address while browsing
-through the bank DTC Screen in my office yesterday. now  I am in a
-better position to transfer about $8.3 million US Dollars into a
-foreign account. If you are willing and capable to work with me to
-receive this fund into a personal or company's account, I will give
-you the full detailed information. No risk is involved as it will pass
-through normal banking procedures.
+Ack, looks sane to me.
 
-Hence, I am inviting you for a business deal where this money can be
-transfer to your account which we will shared between us in the ratio
-of 50% for me,50% for you and both of us will share any expenses that
-will come during the release/transfer from our bank, if you agree to
-my business proposal. Further details of this Fund release and
-transfer will be forwarded to you as soon as I receive your detail
-Mail.
+We have _very_ few users of nr_exclusive. I wonder if it's even worth
+having at all, but it's definitely not worth it here.
 
-1)Your Full Names. (2)Your country. (3)Your Telephone
-(4)Your Occupation .(5)Your Age. (6) Your full Address.
-I will use these detail information=E2=80=99s to fill a release/transfer an=
-d
-arrange some documents on your behalf in our bank here as the
-beneficiary owner of this fund abandoned in our bank
+I'd love for nr_exclusive to go away and be replaced by WF_ALL
+instead. Right now it looks like there is one SGI driver that uses it,
+and the sbitmap code. That was all I could find.
 
-Please contact me through my private Email:alhouttta@gmail.com
+Oh well. You removing one case is at last a small amount of progress.
 
-Thanks
-Alh Idriss Akim Outta
+         Linus
