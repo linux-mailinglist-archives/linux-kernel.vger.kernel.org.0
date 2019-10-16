@@ -2,118 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E99DD8A01
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 09:42:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A097D8A05
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 09:42:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390973AbfJPHmR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 03:42:17 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40904 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728201AbfJPHmR (ORCPT
+        id S2391222AbfJPHmb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 03:42:31 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53938 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728201AbfJPHmb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 03:42:17 -0400
-Received: by mail-pg1-f195.google.com with SMTP id e13so5563892pga.7
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 00:42:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=THg5AIRpzEMlPPt8spygiynKMTygfSswC7awShDdMxU=;
-        b=LobMO/1OtmSkqdhcKBbbKNeFpMIP4hoHsRV4p1VCHldVwZ2SRicw5VVUb6sNSwKbnq
-         VByBnG30mUKPa/sgQ5CddllExySAv+bvMVNglTtD02F6r/aDtsrzrTAgwHu3zs7ZLp8f
-         Ox3OUs2ZqdmEiLFIbVVhkh42diPZLCX/I+lrtQrwBYWJhpU3cQBLQYIv9Cz3rptDcT5m
-         fYV0Fsei2nCyxuIJ9V8Vlq6W5+zaQ0Y33nz2ONgz3gKrXj61WzD2nGF8Po5T2ka0L5Nm
-         Qq13EyOESKDZy6N8pv7QrCTbJTovR+g3W19r+3CyBaK8dvnlZiGju/7rWMIqhQDXchV1
-         ulew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=THg5AIRpzEMlPPt8spygiynKMTygfSswC7awShDdMxU=;
-        b=lzypU2bH8FQ4Y5gH+SW49Z8KdQ2DSuDYOi1EJt1r4BjC904NVBHP3ElDRaeFAKA+KG
-         MQA3671tK5fPfRrUwtmTNUfd9Dtpdn/Hakw+oVR4iarbTJnr++LX9aPuVL4hwR/7v4TL
-         3tFZb2ObnbBTdVqTb2VzFPRMeCxTlFcOBOVLKNMvbFUSUjHs0kUU34pCMA6XUtXLYb/U
-         5pWU6Uj5pw3p15Mo3I2zB0Dblc/Fm+0cweDKUOwFm4GMXnNaVfWCk/f2t4nwz/w/4ftJ
-         XxELJakuwGkUummoUcNitBIEmf1lTwoT6I4C+qtIBxz3szMWVGfJ/1oLkyjYuAndLhMq
-         b/bg==
-X-Gm-Message-State: APjAAAXIGjiF580tXDfvfoKtKMrDpvq1bQz/8zuKAcBbsdhiag+Ufgyy
-        T5IGWGsNzJXizdWAGBdoBy0=
-X-Google-Smtp-Source: APXvYqzIecCR/3jU0SEKcTA9DhO74LXXfPo/HAnU2KYPgcgmmYd6QrNsRetxpjZrJLuPuTrJuFZDMQ==
-X-Received: by 2002:a63:f453:: with SMTP id p19mr41882831pgk.433.1571211736414;
-        Wed, 16 Oct 2019 00:42:16 -0700 (PDT)
-Received: from whale ([45.52.215.209])
-        by smtp.gmail.com with ESMTPSA id ce16sm2148561pjb.29.2019.10.16.00.42.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2019 00:42:15 -0700 (PDT)
-Date:   Wed, 16 Oct 2019 00:42:13 -0700
-From:   "<Chandra Annamaneni>" <chandra627@gmail.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, gneukum1@gmail.com,
-        michael.scheiderer@fau.de, fabian.krueger@fau.de,
-        linux-kernel@vger.kernel.org, simon@nikanor.nu,
-        dan.carpenter@oracle.com
-Subject: Re: [PATCH 1/5] KPC2000: kpc2000_spi.c: Fix style issues (line
- length)
-Message-ID: <20191016074213.GB19148@whale>
-References: <20191011055155.4985-1-chandra627@gmail.com>
- <20191011063219.GA986093@kroah.com>
+        Wed, 16 Oct 2019 03:42:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=HZk+bV3WLC0Kp3efq7J7NzYocbzHcIWk7+ZyTXdSxy4=; b=Z9FEfEftwdBAqYl5xGywYMCj1
+        Bu8Oxg35mWjPBwtU9Ct4ZiRdzAPHhfk0vd4uw++CYEesW7gV/J7HaflSLW1T71OJbz17o1SbEExsa
+        N9oqpDZ0qSleAu8M+IiDqv5N5wq2YXUeC2MRXhbHos7NmLflK8orqFlzz8GJ09J2CnuJxP5lkyXGP
+        aij33sW+4KbMkp/C+A+lQ/Tivg8eKonAQxoXddjAdaXeFbiCVwrDWNlOSOfUYUlDvsX0LtGXT3pkA
+        JxytniYK4UkZGipYAi0TbgSkgwDENkm30cTdP52UWF+0N6LFzBn3Ae7smd62Kdu/PxvL9JxVUg848
+        82MCo2gYg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iKdwq-00085M-9S; Wed, 16 Oct 2019 07:42:20 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id D65213032F8;
+        Wed, 16 Oct 2019 09:41:22 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A6F0820B972E4; Wed, 16 Oct 2019 09:42:17 +0200 (CEST)
+Date:   Wed, 16 Oct 2019 09:42:17 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Joe Lawrence <joe.lawrence@redhat.com>,
+        Jessica Yu <jeyu@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+        x86@kernel.org, linux-kernel@vger.kernel.org, mhiramat@kernel.org,
+        bristot@redhat.com, jbaron@akamai.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
+        ard.biesheuvel@linaro.org, jpoimboe@redhat.com,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH v3 5/6] x86/ftrace: Use text_poke()
+Message-ID: <20191016074217.GL2328@hirez.programming.kicks-ass.net>
+References: <20191010115449.22044b53@gandalf.local.home>
+ <20191010172819.GS2328@hirez.programming.kicks-ass.net>
+ <20191011125903.GN2359@hirez.programming.kicks-ass.net>
+ <20191015130739.GA23565@linux-8ccs>
+ <20191015135634.GK2328@hirez.programming.kicks-ass.net>
+ <alpine.LSU.2.21.1910151611000.13169@pobox.suse.cz>
+ <88bab814-ea24-ece9-2bc0-7a1e10a62f12@redhat.com>
+ <20191015153120.GA21580@linux-8ccs>
+ <7e9c7dd1-809e-f130-26a3-3d3328477437@redhat.com>
+ <20191015182705.1aeec284@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191011063219.GA986093@kroah.com>
+In-Reply-To: <20191015182705.1aeec284@gandalf.local.home>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 08:32:19AM +0200, Greg KH wrote:
-> On Thu, Oct 10, 2019 at 10:51:51PM -0700, Chandra Annamaneni wrote:
-> > Resoved: "WARNING: line over 80 characters" from checkpatch.pl
-> 
-> Please put "staging:" in your subject line, makes it easier to sort and
-> handle.  It should look something like:
-> 	staging: kpc2000_spi: fix line length issues
-> 
-> Looks a lot cleaner, right?
-> 
-> > 
-> > Signed-off-by: Chandra Annamaneni <chandra627@gmail.com>
-> > ---
-> >  drivers/staging/kpc2000/kpc2000_spi.c | 20 ++++++++++----------
-> >  1 file changed, 10 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/drivers/staging/kpc2000/kpc2000_spi.c b/drivers/staging/kpc2000/kpc2000_spi.c
-> > index 3be33c450cab..81d79b116ce0 100644
-> > --- a/drivers/staging/kpc2000/kpc2000_spi.c
-> > +++ b/drivers/staging/kpc2000/kpc2000_spi.c
-> > @@ -30,19 +30,19 @@
-> >  #include "kpc.h"
-> >  
-> >  static struct mtd_partition p2kr0_spi0_parts[] = {
-> > -	{ .name = "SLOT_0",	.size = 7798784,		.offset = 0,                },
-> > -	{ .name = "SLOT_1",	.size = 7798784,		.offset = MTDPART_OFS_NXTBLK},
-> > -	{ .name = "SLOT_2",	.size = 7798784,		.offset = MTDPART_OFS_NXTBLK},
-> > -	{ .name = "SLOT_3",	.size = 7798784,		.offset = MTDPART_OFS_NXTBLK},
-> > -	{ .name = "CS0_EXTRA",	.size = MTDPART_SIZ_FULL,	.offset = MTDPART_OFS_NXTBLK},
-> > +	{ .name = "SLOT_0",  .size = 7798784,  .offset = 0,                },
-> > +	{ .name = "SLOT_1",  .size = 7798784,  .offset = MTDPART_OFS_NXTBLK},
-> > +	{ .name = "SLOT_2",  .size = 7798784,  .offset = MTDPART_OFS_NXTBLK},
-> > +	{ .name = "SLOT_3",  .size = 7798784,  .offset = MTDPART_OFS_NXTBLK},
-> > +	{ .name = "CS0_EXTRA",  .size = MTDPART_SIZ_FULL,  .offset = MTDPART_OFS_NXTBLK},
-> 
-> Why did you pick 2 spaces here as a random choice of padding?  That's
-> very odd, please don't.
-> 
-> Either leave this alone (as it lines everything up nicely), or only use
-> one space.  I would suggest just leaving it alone.
-> 
-> thanks,
-> 
-> greg k-h
+> which are not compatible with livepatching. GCC upstream now has
+> -flive-patching option, which disables all those interfering optimizations.
 
-I am going to leave it as is at your and Dan C's suggestion. 
+Which, IIRC, has a significant performance impact and should thus really
+not be used...
 
-Thanks!
-Chandra
-
+If distros ship that crap, I'm going to laugh at them the next time they
+want a single digit performance improvement because *important*.
