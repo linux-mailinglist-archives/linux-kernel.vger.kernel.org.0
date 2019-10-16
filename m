@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2377D9E52
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:03:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8E9DD9E99
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438119AbfJPV6J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:58:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49724 "EHLO mail.kernel.org"
+        id S2438644AbfJPV7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:59:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727241AbfJPV5P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:57:15 -0400
+        id S2438269AbfJPV6r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:58:47 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A301921928;
-        Wed, 16 Oct 2019 21:57:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57AAC21925;
+        Wed, 16 Oct 2019 21:58:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263034;
-        bh=jlGR3XPRL+NAmC7s4hIpPBFodatK9NRysbSifcG7A+0=;
+        s=default; t=1571263127;
+        bh=QR/FWJvorMny5FKt9GS+YknXw16/Cv9Bjq0InM4LQn4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fQZYx3YRpx1IQFrNG/mLdlGEQjhCwBpuklaAH0C+hwOEclZ5mVVlrTNC1WAr/J46d
-         xWPXCz7Eg/HPHEn8lLaQNIZessT/VxkF9H9cLAKTJHzJnbSViSQTekGezJLD6c3j0V
-         DZ1GPysR3XNu6xo2ol4QN6cd0U/Z9Zsa7+GgFXEs=
+        b=gja1ur++cJw/ttAsq+N/qJGeI9WOSy57bi1ROFaR+vVTjuwV3G30jk+R71HglxWmo
+         Cz7Mg+5IBxqUBiZvyYvrkeULXevfxhn7dfcWsxuSlt0rXunvVjEYqpcJIEe7RsT9zJ
+         WzS0dY5ksDDXlny/hWeLgmxY66uLF1i0hfoc6bu0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Tomoki Sekiyama <tomoki.sekiyama@gmail.com>,
-        syzbot+b24d736f18a1541ad550@syzkaller.appspotmail.com
-Subject: [PATCH 4.19 04/81] USB: yurex: Dont retry on unexpected errors
-Date:   Wed, 16 Oct 2019 14:50:15 -0700
-Message-Id: <20191016214808.920844358@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Peter Korsgaard <jacmet@sunsite.dk>
+Subject: [PATCH 5.3 024/112] serial: uartlite: fix exit path null pointer
+Date:   Wed, 16 Oct 2019 14:50:16 -0700
+Message-Id: <20191016214852.010367751@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
-References: <20191016214805.727399379@linuxfoundation.org>
+In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
+References: <20191016214844.038848564@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,72 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-commit 32a0721c6620b77504916dac0cea8ad497c4878a upstream.
+commit a553add0846f355a28ed4e81134012e4a1e280c2 upstream.
 
-According to Greg KH, it has been generally agreed that when a USB
-driver encounters an unknown error (or one it can't handle directly),
-it should just give up instead of going into a potentially infinite
-retry loop.
+Call uart_unregister_driver() conditionally instead of
+unconditionally, only if it has been previously registered.
 
-The three codes -EPROTO, -EILSEQ, and -ETIME fall into this category.
-They can be caused by bus errors such as packet loss or corruption,
-attempting to communicate with a disconnected device, or by malicious
-firmware.  Nowadays the extent of packet loss or corruption is
-negligible, so it should be safe for a driver to give up whenever one
-of these errors occurs.
+This uses driver.state, just as the sh-sci.c driver does.
 
-Although the yurex driver handles -EILSEQ errors in this way, it
-doesn't do the same for -EPROTO (as discovered by the syzbot fuzzer)
-or other unrecognized errors.  This patch adjusts the driver so that
-it doesn't log an error message for -EPROTO or -ETIME, and it doesn't
-retry after any errors.
+Fixes this null pointer dereference in tty_unregister_driver(),
+since the 'driver' argument is null:
 
-Reported-and-tested-by: syzbot+b24d736f18a1541ad550@syzkaller.appspotmail.com
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-CC: Tomoki Sekiyama <tomoki.sekiyama@gmail.com>
-CC: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/Pine.LNX.4.44L0.1909171245410.1590-100000@iolanthe.rowland.org
+  general protection fault: 0000 [#1] PREEMPT SMP KASAN PTI
+  RIP: 0010:tty_unregister_driver+0x25/0x1d0
+
+Fixes: 238b8721a554 ("[PATCH] serial uartlite driver")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: stable <stable@vger.kernel.org>
+Cc: Peter Korsgaard <jacmet@sunsite.dk>
+Link: https://lore.kernel.org/r/9c8e6581-6fcc-a595-0897-4d90f5d710df@infradead.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/yurex.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/tty/serial/uartlite.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/misc/yurex.c
-+++ b/drivers/usb/misc/yurex.c
-@@ -132,6 +132,7 @@ static void yurex_interrupt(struct urb *
- 	switch (status) {
- 	case 0: /*success*/
- 		break;
-+	/* The device is terminated or messed up, give up */
- 	case -EOVERFLOW:
- 		dev_err(&dev->interface->dev,
- 			"%s - overflow with length %d, actual length is %d\n",
-@@ -140,12 +141,13 @@ static void yurex_interrupt(struct urb *
- 	case -ENOENT:
- 	case -ESHUTDOWN:
- 	case -EILSEQ:
--		/* The device is terminated, clean up */
-+	case -EPROTO:
-+	case -ETIME:
- 		return;
- 	default:
- 		dev_err(&dev->interface->dev,
- 			"%s - unknown status received: %d\n", __func__, status);
--		goto exit;
-+		return;
- 	}
+--- a/drivers/tty/serial/uartlite.c
++++ b/drivers/tty/serial/uartlite.c
+@@ -897,7 +897,8 @@ static int __init ulite_init(void)
+ static void __exit ulite_exit(void)
+ {
+ 	platform_driver_unregister(&ulite_platform_driver);
+-	uart_unregister_driver(&ulite_uart_driver);
++	if (ulite_uart_driver.state)
++		uart_unregister_driver(&ulite_uart_driver);
+ }
  
- 	/* handle received message */
-@@ -177,7 +179,6 @@ static void yurex_interrupt(struct urb *
- 		break;
- 	}
- 
--exit:
- 	retval = usb_submit_urb(dev->urb, GFP_ATOMIC);
- 	if (retval) {
- 		dev_err(&dev->interface->dev, "%s - usb_submit_urb failed: %d\n",
+ module_init(ulite_init);
 
 
