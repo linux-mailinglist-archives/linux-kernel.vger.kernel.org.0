@@ -2,101 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 214F5DA0FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:26:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1B63DA195
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:35:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390297AbfJPWSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:18:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40346 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389879AbfJPWR7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 18:17:59 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B452D207FF;
-        Wed, 16 Oct 2019 22:17:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571264279;
-        bh=U4kDOlX8lQYv+4nKBktAaaJMCGAvRP2iVRiV78ERC3g=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=Mo9aP8Y34RQ4T1WhJP7WEvCs5I0D3LjQ5OK80fEVa99L3+Gn45VjBU4b6/VH4rdDR
-         ze6Xukj2ztHIIQo1N+vOeOiWM3w9QKDM7Xjd/MuDi5Xo7OnUiEcNQHp63T3NHM7Yof
-         aqc1H3F9fROmIsEQ8ldNSeAj9xC5j8N8VaDy4XDg=
-Date:   Wed, 16 Oct 2019 17:17:57 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
-Cc:     linux-kernel@lists.codethink.co.uk, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [V2] PCI: sysfs: remove pci_bridge_groups and
- pcie_dev_groups
-Message-ID: <20191016221757.GA90897@google.com>
+        id S2391798AbfJPWfY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:35:24 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60262 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726743AbfJPWfY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 18:35:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=X6Sf04ArD7jN+fMhh6LgGi0CQBGg138wDjt0wx/X6YQ=; b=nPOPzYG2BZgfRlCTsM1Tw9T/f
+        1+5ByqsJqcq2PpoevodlkHfjpX3svIy4yaebHYxPSOm7dB/LKY9dmOGDmAwVjzql0xRcmuzMcqo66
+        eF6rHeN3PyN+rGA6knH5G1AAvWUgHF4JXP/CUugqDvXRDieF0tz73AOB4o2y6dgROksrY=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iKrt1-0006P1-O3; Wed, 16 Oct 2019 22:35:19 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id C841B274325C; Wed, 16 Oct 2019 23:35:18 +0100 (BST)
+Date:   Wed, 16 Oct 2019 23:35:18 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Richard Leitner <richard.leitner@skidata.com>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Igor Opaniuk <igor.opaniuk@toradex.com>,
+        Fabio Estevam <festevam@gmail.com>
+Subject: Re: [PATCH 5.3 112/112] ASoC: sgtl5000: add ADC mute control
+Message-ID: <20191016223518.GC11473@sirena.co.uk>
+References: <20191016214844.038848564@linuxfoundation.org>
+ <20191016214907.599726506@linuxfoundation.org>
+ <20191016220044.GB11473@sirena.co.uk>
+ <20191016221025.GA990599@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ALfTUftag+2gvp1h"
 Content-Disposition: inline
-In-Reply-To: <20191016080324.12864-1-ben.dooks@codethink.co.uk>
+In-Reply-To: <20191016221025.GA990599@kroah.com>
+X-Cookie: Auction:
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 09:03:24AM +0100, Ben Dooks (Codethink) wrote:
-> From: Ben Dooks <ben.dooks@codethink.co.uk>
-> 
-> The pci_bridge_groups and pcie_dev_groups objects are
-> not exported and not used at-all, so remove them to
-> fix the following warnings from sparse:
-> 
-> drivers/pci/pci-sysfs.c:1546:30: warning: symbol 'pci_bridge_groups' was not declared. Should it be static?
-> drivers/pci/pci-sysfs.c:1555:30: warning: symbol 'pcie_dev_groups' was not declared. Should it be static?
-> 
-> Also remove the unused pci_bridge_group and pcie_dev_group
-> as they are not used any more.
-> 
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 
-Applied to pci/misc for v5.5, thanks a lot, Ben!
+--ALfTUftag+2gvp1h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> ---
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: linux-pci@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> 
-> fixup - more unused pci bits
-> ---
->  drivers/pci/pci-sysfs.c | 18 ------------------
->  1 file changed, 18 deletions(-)
-> 
-> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> index 793412954529..eaffb477c5bf 100644
-> --- a/drivers/pci/pci-sysfs.c
-> +++ b/drivers/pci/pci-sysfs.c
-> @@ -1539,24 +1539,6 @@ const struct attribute_group *pci_dev_groups[] = {
->  	NULL,
->  };
->  
-> -static const struct attribute_group pci_bridge_group = {
-> -	.attrs = pci_bridge_attrs,
-> -};
-> -
-> -const struct attribute_group *pci_bridge_groups[] = {
-> -	&pci_bridge_group,
-> -	NULL,
-> -};
-> -
-> -static const struct attribute_group pcie_dev_group = {
-> -	.attrs = pcie_dev_attrs,
-> -};
-> -
-> -const struct attribute_group *pcie_dev_groups[] = {
-> -	&pcie_dev_group,
-> -	NULL,
-> -};
-> -
->  static const struct attribute_group pci_dev_hp_attr_group = {
->  	.attrs = pci_dev_hp_attrs,
->  	.is_visible = pci_dev_hp_attrs_are_visible,
-> -- 
-> 2.23.0
-> 
+On Wed, Oct 16, 2019 at 03:10:25PM -0700, Greg Kroah-Hartman wrote:
+> On Wed, Oct 16, 2019 at 11:00:44PM +0100, Mark Brown wrote:
+> > On Wed, Oct 16, 2019 at 02:51:44PM -0700, Greg Kroah-Hartman wrote:
+> > > From: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+
+> > > commit 694b14554d75f2a1ae111202e71860d58b434a21 upstream.
+
+> > > This control mute/unmute the ADC input of SGTL5000
+> > > using its CHIP_ANA_CTRL register.
+
+> > This seems like a new feature and not an obvious candidate for stable?
+
+> there was a long email from Richard that said:
+> 	Upstream commit 631bc8f0134a ("ASoC: sgtl5000: Fix of unmute
+> 	outputs on probe"), which is e9f621efaebd in v5.3 replaced
+> 	snd_soc_component_write with snd_soc_component_update_bits and
+> 	therefore no longer cleared the MUTE_ADC flag. This caused the
+> 	ADC to stay muted and recording doesn't work any longer. This
+> 	patch fixes this problem by adding a Switch control for
+> 	MUTE_ADC.
+
+> That's why I took this.  If this isn't true, I'll be glad to drop this.
+
+That's probably not an appropriate fix for stable - it's going to add a
+new control which users will need to manually set (or hope their
+userspace automatically figures out that it should set for them, more
+advanced userspaces like PulseAudio should) which isn't a drop in fix.=20
+You could either drop the backport that was done for zero cross or take
+a new patch that clears the MUTE_ADC flag (rather than punting to
+userspace to do so), or just be OK with what you've got at the minute
+which might be fine given the lack of user reports.
+
+--ALfTUftag+2gvp1h
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2nmyUACgkQJNaLcl1U
+h9DWfwf+K0fc88QLIuGcWpAJ3DwOZiSnXrA9pkmrlSQ4aR8OEk+t2JiTrfCySwH8
+F6FczIz+0Zu3FHrozTsnmaB/QTl8PprwARpVQitGnY7h/U4ULv4WRiuMZGA2azXG
+nzcm/7hCpE+WqFCGcwU2crKtn01HZ3xHMaizHW0xJqoQAP8gXeEz/B6+HGercbkX
+v/FzDuyaispEy48+7/ktcWkQOj0xCZl/newEY1Z6B+PvfteUgoKaa440Vo01WzM3
+PBB7x1rz54Z0ws/z+tFJY9RykpE4t16j2hjIMlhKdsZQMA2kJzEjI7dn4shL4uKV
+oPkSvOU4E3YPneqh4cxbBxAcwezFnA==
+=kUz1
+-----END PGP SIGNATURE-----
+
+--ALfTUftag+2gvp1h--
