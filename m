@@ -2,140 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2823D9967
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 20:45:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5781CD997D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 20:47:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390763AbfJPSpF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 14:45:05 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:47646 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728538AbfJPSpF (ORCPT
+        id S2394378AbfJPSrf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 14:47:35 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:46829 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394367AbfJPSrc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 14:45:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Xkj+IPEJ6D9FNAsOyKv+xxTO5cnYq7m4+bjOEldOn7U=; b=RUtfEOh4CN2XG3g+2p4F5E59U
-        uH8zd6ysB/TYLiCt3L1YeAm69Q+wHntC69+c0JrQQ5R6VNXzeroYN3C/snKxMewnTOgZDGlBVp/NB
-        MaL8EQ8ux/EaNk5bQOd5GOm2PthRHrHm769GXcFoWVhoBOBwlCNRbXnBcM6JMe3l11+QMFJG+TuuX
-        b4sxXIB/+Ifi5OVFmwaxI9DM7JWW0a0nu9euoCXKguWyEz8z59H8S27xwIJZ7Ph2tqcAWmfrchsjX
-        IU3OY2jpOYBpUVtLNOxXmacibZzbJw+eL4iF7tlpfi9+by4cmr2vv8snTS3N48Gdxc8T7X9JIBx3U
-        cgV/d5WGA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iKoH4-0007gT-0F; Wed, 16 Oct 2019 18:43:55 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E1E46303807;
-        Wed, 16 Oct 2019 20:42:51 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C50B629E86612; Wed, 16 Oct 2019 20:43:46 +0200 (CEST)
-Date:   Wed, 16 Oct 2019 20:43:46 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Marco Elver <elver@google.com>
-Cc:     akiyks@gmail.com, stern@rowland.harvard.edu, glider@google.com,
-        parri.andrea@gmail.com, andreyknvl@google.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, arnd@arndb.de, boqun.feng@gmail.com,
-        bp@alien8.de, dja@axtens.net, dlustig@nvidia.com,
-        dave.hansen@linux.intel.com, dhowells@redhat.com,
-        dvyukov@google.com, hpa@zytor.com, mingo@redhat.com,
-        j.alglave@ucl.ac.uk, joel@joelfernandes.org, corbet@lwn.net,
-        jpoimboe@redhat.com, luc.maranget@inria.fr, mark.rutland@arm.com,
-        npiggin@gmail.com, paulmck@linux.ibm.com, tglx@linutronix.de,
-        will@kernel.org, kasan-dev@googlegroups.com,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
-Subject: Re: [PATCH 1/8] kcsan: Add Kernel Concurrency Sanitizer
- infrastructure
-Message-ID: <20191016184346.GT2328@hirez.programming.kicks-ass.net>
-References: <20191016083959.186860-1-elver@google.com>
- <20191016083959.186860-2-elver@google.com>
+        Wed, 16 Oct 2019 14:47:32 -0400
+Received: by mail-ot1-f67.google.com with SMTP id 89so21060573oth.13;
+        Wed, 16 Oct 2019 11:47:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gqpn9jLsuGQEqSlT0lMK90g2SEuJLofAVojY6ZnVAuI=;
+        b=s2OwwEKREPzFvs+B1awYEV+xH6cuEGMagr8uXdJ1qm2z9qHH7piEkped6uiXrcg/Qm
+         NU9RotziDl/4l8PFz9khqLrfTS88mViE5C3FySXmZhSguZqAO/wXTJRW58ZG9IeCQ5Ay
+         8ieSwd+3ZTsscxK2IfAidR3S49faEwcUf2MEPME337dQ2EBnVZ6RTCX6ZwdqwE/TNZIl
+         sL6m/wd7ET/1e909sENJC6u95fcL5xnxtP3g2HbMOm1+ZNwVL6jTrY/TuiwK4uyxGETS
+         4E5/wEQwSg8D4GUscCQFY2TTfZgfzBs4DMibCsOSjxGItOWFpEm0CNb7CY5ndoGxATey
+         2Jbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gqpn9jLsuGQEqSlT0lMK90g2SEuJLofAVojY6ZnVAuI=;
+        b=hVhXp2rdQSwnVwuEpBmVt10SSTfVA+myX9dff2VDBOUoIsC+YfFhIhtQz/Pc5Vz/Cg
+         Nm0CFUzO69GArFuw/4MRlXNMEoa1wPX7Z27xSSUYiFRjiDKETxpgrOqlY0NxFJ5CwOIp
+         3CcuBZUqvXn/Ab7mhthvJDGgSfeQ+NvK66svrP3hYgVgLd46IBxV9NJokpYBTvbtQiYE
+         RjS12Yh/s9uae397EVzSo5W+i4rn+y2JmCh3Sg32GmlwC7aT2CmptFeELZo6aEupZWko
+         tLlfxwia7mlNuj5QsX+IIn4KdYXQXvcGZ9fV1S7yUyclHhPDGqdFXrBX9cb5DqdMhxDj
+         oQDQ==
+X-Gm-Message-State: APjAAAWRGt2ajFzNvSPt6D/5Y2kIlLBG5bNWxFTmieBTsugr+v32tAmD
+        cOrbdsogUmSTtQF9lkiIr1idhkCQVByIGsMlwzM=
+X-Google-Smtp-Source: APXvYqyd4YCThm6TrfST/FLSnkCN228UwGx/C4XLZ1NicXfr2rGX7y52xspzcKmLLUP1jsbPM9cPgsLdN6tRee0R+Xk=
+X-Received: by 2002:a9d:6c48:: with SMTP id g8mr35712955otq.206.1571251650131;
+ Wed, 16 Oct 2019 11:47:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191016083959.186860-2-elver@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190531195016.4430-1-albertvaka@gmail.com> <20190531195016.4430-2-albertvaka@gmail.com>
+ <20190531170046.ac2b52d8c4923fdeedf943cc@linux-foundation.org> <CAAQViEsp0LjUcgR-at-ufdC7rnWARNBeqjqOSx6r3wJBcQkGiQ@mail.gmail.com>
+In-Reply-To: <CAAQViEsp0LjUcgR-at-ufdC7rnWARNBeqjqOSx6r3wJBcQkGiQ@mail.gmail.com>
+From:   Albert Vaca Cintora <albertvaka@gmail.com>
+Date:   Wed, 16 Oct 2019 20:47:04 +0200
+Message-ID: <CAAQViEtD3x58f7gVq3B1n=nM7BrzfpEFTKXmAZwpPBZ=ntgoyQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] kernel/ucounts: expose count of inotify watches in use
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     rdunlap@infradead.org, mingo@kernel.org, Jan Kara <jack@suse.cz>,
+        ebiederm@xmission.com,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, Matthias Brugger <mbrugger@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 10:39:52AM +0200, Marco Elver wrote:
+ On Sat, Jun 1, 2019 at 8:20 PM Albert Vaca Cintora
+<albertvaka@gmail.com> wrote:
+>
+> On Sat, Jun 1, 2019 at 2:00 AM Andrew Morton <akpm@linux-foundation.org> wrote:
+> >
+> > On Fri, 31 May 2019 21:50:15 +0200 Albert Vaca Cintora <albertvaka@gmail.com> wrote:
+> >
+> > > Adds a readonly 'current_inotify_watches' entry to the user sysctl table.
+> > > The handler for this entry is a custom function that ends up calling
+> > > proc_dointvec. Said sysctl table already contains 'max_inotify_watches'
+> > > and it gets mounted under /proc/sys/user/.
+> > >
+> > > Inotify watches are a finite resource, in a similar way to available file
+> > > descriptors. The motivation for this patch is to be able to set up
+> > > monitoring and alerting before an application starts failing because
+> > > it runs out of inotify watches.
+> > >
+> > > ...
+> > >
+> > > --- a/kernel/ucount.c
+> > > +++ b/kernel/ucount.c
+> > > @@ -118,6 +118,26 @@ static void put_ucounts(struct ucounts *ucounts)
+> > >       kfree(ucounts);
+> > >  }
+> > >
+> > > +#ifdef CONFIG_INOTIFY_USER
+> > > +int proc_read_inotify_watches(struct ctl_table *table, int write,
+> > > +                  void __user *buffer, size_t *lenp, loff_t *ppos)
+> > > +{
+> > > +     struct ucounts *ucounts;
+> > > +     struct ctl_table fake_table;
+> >
+> > hmm.
+> >
+> > > +     int count = -1;
+> > > +
+> > > +     ucounts = get_ucounts(current_user_ns(), current_euid());
+> > > +     if (ucounts != NULL) {
+> > > +             count = atomic_read(&ucounts->ucount[UCOUNT_INOTIFY_WATCHES]);
+> > > +             put_ucounts(ucounts);
+> > > +     }
+> > > +
+> > > +     fake_table.data = &count;
+> > > +     fake_table.maxlen = sizeof(count);
+> > > +     return proc_dointvec(&fake_table, write, buffer, lenp, ppos);
+> >
+> > proc_dointvec
+> > ->do_proc_dointvec
+> >   ->__do_proc_dointvec
+> >     ->proc_first_pos_non_zero_ignore
+> >       ->warn_sysctl_write
+> >         ->pr_warn_once(..., table->procname)
+> >
+> > and I think ->procname is uninitialized.
+> >
+> > That's from a cursory check.  Perhaps other uninitialized members of
+> > fake_table are accessed, dunno.
+> >
+> > we could do
+> >
+> >         {
+> >                 struct ctl_table fake_table = {
+> >                         .data = &count,
+> >                         .maxlen = sizeof(count),
+> >                 };
+> >
+> >                 return proc_dointvec(&fake_table, write, buffer, lenp, ppos);
+> >         }
+> >
+> > or whatever.  That will cause the pr_warn_once to print "(null)" but
+> > that's OK I guess.
+> >
+> > Are there other places in the kernel which do this temp ctl_table
+> > trick?  If so, what do they do?  If not, what is special about this
+> > code?
+> >
+> >
+>
+> I copied this 'fake_table' trick from proc_do_entropy in
+> drivers/char/random.c exactly as it is. It is also used in other
+> places with slight variations.
+>
+> Note that, since we are creating a read-only proc file,
+> proc_first_pos_non_zero_ignore is not called from __do_proc_dointvec,
+> so the uninitialized ->procname is not accessed.
+>
 
-> +bool __kcsan_check_watchpoint(const volatile void *ptr, size_t size,
-> +			      bool is_write)
-> +{
-> +	atomic_long_t *watchpoint;
-> +	long encoded_watchpoint;
-> +	unsigned long flags;
-> +	enum kcsan_report_type report_type;
-> +
-> +	if (unlikely(!is_enabled()))
-> +		return false;
-> +
-> +	watchpoint = find_watchpoint((unsigned long)ptr, size, !is_write,
-> +				     &encoded_watchpoint);
-> +	if (watchpoint == NULL)
-> +		return true;
-> +
-> +	flags = user_access_save();
+Friendly ping. I think the code is correct as it is for the reasons
+explained above.
 
-Could use a comment on why find_watchpoint() is save to call without
-user_access_save() on.
-
-> +	if (!try_consume_watchpoint(watchpoint, encoded_watchpoint)) {
-> +		/*
-> +		 * The other thread may not print any diagnostics, as it has
-> +		 * already removed the watchpoint, or another thread consumed
-> +		 * the watchpoint before this thread.
-> +		 */
-> +		kcsan_counter_inc(kcsan_counter_report_races);
-> +		report_type = kcsan_report_race_check_race;
-> +	} else {
-> +		report_type = kcsan_report_race_check;
-> +	}
-> +
-> +	/* Encountered a data-race. */
-> +	kcsan_counter_inc(kcsan_counter_data_races);
-> +	kcsan_report(ptr, size, is_write, raw_smp_processor_id(), report_type);
-> +
-> +	user_access_restore(flags);
-> +	return false;
-> +}
-> +EXPORT_SYMBOL(__kcsan_check_watchpoint);
-> +
-> +void __kcsan_setup_watchpoint(const volatile void *ptr, size_t size,
-> +			      bool is_write)
-> +{
-> +	atomic_long_t *watchpoint;
-> +	union {
-> +		u8 _1;
-> +		u16 _2;
-> +		u32 _4;
-> +		u64 _8;
-> +	} expect_value;
-> +	bool is_expected = true;
-> +	unsigned long ua_flags = user_access_save();
-> +	unsigned long irq_flags;
-> +
-> +	if (!should_watch(ptr))
-> +		goto out;
-> +
-> +	if (!check_encodable((unsigned long)ptr, size)) {
-> +		kcsan_counter_inc(kcsan_counter_unencodable_accesses);
-> +		goto out;
-> +	}
-> +
-> +	/*
-> +	 * Disable interrupts & preemptions, to ignore races due to accesses in
-> +	 * threads running on the same CPU.
-> +	 */
-> +	local_irq_save(irq_flags);
-> +	preempt_disable();
-
-Is there a point to that preempt_disable() here?
+Best regards,
+Albert
