@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 835B4D9DE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24582D9DC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:53:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395042AbfJPVyl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:54:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44438 "EHLO mail.kernel.org"
+        id S2437509AbfJPVxT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:53:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395002AbfJPVy2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:54:28 -0400
+        id S2437399AbfJPVxO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:53:14 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9AED521D7C;
-        Wed, 16 Oct 2019 21:54:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A63E821D7E;
+        Wed, 16 Oct 2019 21:53:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262867;
-        bh=gYuQsYl1SzxCGOE22YKWlWGbBKVnNOPK0ervu2KNH9w=;
+        s=default; t=1571262793;
+        bh=uP8YV1birrED3aJFs260DKq+h57zQGkpcTu8RaIQVXw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=InqaqwE5D0LOk9qVZ5aUFPun47emkdJGje/pR2PXFeaWv3TDfA9dW9kpsDPRcHKwo
-         SNIh2OCw0PKBVVn2eDqIParR8Bd+8k6Puies/66i2tKwlrNnlSBU41nET92bG8MApn
-         LJNZYDmcP8/EpyDK/EqhdnQrn1ETtxUeYETWj/No=
+        b=c2YaEaXbAn0T3+xPt0JBmL5942grNqmPcTQ7p04hIcn9JcTlNxUozelAmtKKKJYHA
+         ENcT3h79KIqNBBtU7HZUKR7MfcwHyB2hIKE5bVlyuW7/v+IOnjERGQQEW5kLSf599L
+         XYnKEp9lADD2UvIAwhBQf7lDVmc7tjH7v7z278sI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jouni Malinen <j@w1.fi>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.9 33/92] cfg80211: Use const more consistently in for_each_element macros
-Date:   Wed, 16 Oct 2019 14:50:06 -0700
-Message-Id: <20191016214827.040911961@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.4 33/79] USB: usb-skeleton: fix NULL-deref on disconnect
+Date:   Wed, 16 Oct 2019 14:50:08 -0700
+Message-Id: <20191016214757.765918513@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
-References: <20191016214759.600329427@linuxfoundation.org>
+In-Reply-To: <20191016214729.758892904@linuxfoundation.org>
+References: <20191016214729.758892904@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,59 +42,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jouni Malinen <j@w1.fi>
+From: Johan Hovold <johan@kernel.org>
 
-commit 7388afe09143210f555bdd6c75035e9acc1fab96 upstream.
+commit bed5ef230943863b9abf5eae226a20fad9a8ff71 upstream.
 
-Enforce the first argument to be a correct type of a pointer to struct
-element and avoid unnecessary typecasts from const to non-const pointers
-(the change in validate_ie_attr() is needed to make this part work). In
-addition, avoid signed/unsigned comparison within for_each_element() and
-mark struct element packed just in case.
+The driver was using its struct usb_interface pointer as an inverted
+disconnected flag and was setting it to NULL before making sure all
+completion handlers had run. This could lead to NULL-pointer
+dereferences in the dev_err() statements in the completion handlers
+which relies on said pointer.
 
-Signed-off-by: Jouni Malinen <j@w1.fi>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fix this by using a dedicated disconnected flag.
+
+Note that this is also addresses a NULL-pointer dereference at release()
+and a struct usb_interface reference leak introduced by a recent runtime
+PM fix, which depends on and should have been submitted together with
+this patch.
+
+Fixes: 4212cd74ca6f ("USB: usb-skeleton.c: remove err() usage")
+Fixes: 5c290a5e42c3 ("USB: usb-skeleton: fix runtime PM after driver unbind")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191009170944.30057-2-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/ieee80211.h |   18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/usb/usb-skeleton.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/include/linux/ieee80211.h
-+++ b/include/linux/ieee80211.h
-@@ -2634,16 +2634,16 @@ struct element {
- 	u8 id;
- 	u8 datalen;
- 	u8 data[];
--};
-+} __packed;
+--- a/drivers/usb/usb-skeleton.c
++++ b/drivers/usb/usb-skeleton.c
+@@ -63,6 +63,7 @@ struct usb_skel {
+ 	spinlock_t		err_lock;		/* lock for errors */
+ 	struct kref		kref;
+ 	struct mutex		io_mutex;		/* synchronize I/O with disconnect */
++	unsigned long		disconnected:1;
+ 	wait_queue_head_t	bulk_in_wait;		/* to wait for an ongoing read */
+ };
+ #define to_skel_dev(d) container_of(d, struct usb_skel, kref)
+@@ -239,7 +240,7 @@ static ssize_t skel_read(struct file *fi
+ 	if (rv < 0)
+ 		return rv;
  
- /* element iteration helpers */
--#define for_each_element(element, _data, _datalen)			\
--	for (element = (void *)(_data);					\
--	     (u8 *)(_data) + (_datalen) - (u8 *)element >=		\
--		sizeof(*element) &&					\
--	     (u8 *)(_data) + (_datalen) - (u8 *)element >=		\
--		sizeof(*element) + element->datalen;			\
--	     element = (void *)(element->data + element->datalen))
-+#define for_each_element(_elem, _data, _datalen)			\
-+	for (_elem = (const struct element *)(_data);			\
-+	     (const u8 *)(_data) + (_datalen) - (const u8 *)_elem >=	\
-+		(int)sizeof(*_elem) &&					\
-+	     (const u8 *)(_data) + (_datalen) - (const u8 *)_elem >=	\
-+		(int)sizeof(*_elem) + _elem->datalen;			\
-+	     _elem = (const struct element *)(_elem->data + _elem->datalen))
+-	if (!dev->interface) {		/* disconnect() was called */
++	if (dev->disconnected) {		/* disconnect() was called */
+ 		rv = -ENODEV;
+ 		goto exit;
+ 	}
+@@ -420,7 +421,7 @@ static ssize_t skel_write(struct file *f
  
- #define for_each_element_id(element, _id, data, datalen)		\
- 	for_each_element(element, data, datalen)			\
-@@ -2680,7 +2680,7 @@ struct element {
- static inline bool for_each_element_completed(const struct element *element,
- 					      const void *data, size_t datalen)
- {
--	return (u8 *)element == (u8 *)data + datalen;
-+	return (const u8 *)element == (const u8 *)data + datalen;
- }
+ 	/* this lock makes sure we don't submit URBs to gone devices */
+ 	mutex_lock(&dev->io_mutex);
+-	if (!dev->interface) {		/* disconnect() was called */
++	if (dev->disconnected) {		/* disconnect() was called */
+ 		mutex_unlock(&dev->io_mutex);
+ 		retval = -ENODEV;
+ 		goto error;
+@@ -588,7 +589,7 @@ static void skel_disconnect(struct usb_i
  
- #endif /* LINUX_IEEE80211_H */
+ 	/* prevent more I/O from starting */
+ 	mutex_lock(&dev->io_mutex);
+-	dev->interface = NULL;
++	dev->disconnected = 1;
+ 	mutex_unlock(&dev->io_mutex);
+ 
+ 	usb_kill_anchored_urbs(&dev->submitted);
 
 
