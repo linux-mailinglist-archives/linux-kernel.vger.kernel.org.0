@@ -2,275 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43AB7D8F6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:30:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1381FD8F78
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:31:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404933AbfJPLaI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 07:30:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59398 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728372AbfJPLaH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 07:30:07 -0400
-Received: from linux-8ccs (unknown [95.90.219.243])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 085E22067B;
-        Wed, 16 Oct 2019 11:30:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571225406;
-        bh=7dlcNbEm1jQx5aRgHTuAySMD3calJlzqy+17Alu9I1s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mzye1pLwm5QTCT76T6h7xiw5AEQhsPf397Wqr4mPnF5FdgDqHysH9CJYdFvw3mAnx
-         JBhEDrKR6a+F8NlKnkObKGBp9geh0wII0JFdQ9lBExxjZQ9NkW2IKXvU7aYWzi1Qdy
-         xaC0yRlT/VyhCKhnxhCY+KEpzhXb0ufnBJkM2pyY=
-Date:   Wed, 16 Oct 2019 13:30:01 +0200
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Johannes Thumshirn <jthumshirn@suse.de>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Michael Moese <mmoese@suse.de>,
-        Matthias Maennich <maennich@google.com>
-Subject: Re: [PATCH] drivers: mcb: use symbol namespaces
-Message-ID: <20191016113001.GB9193@linux-8ccs>
-References: <20191016100158.1400-1-jthumshirn@suse.de>
+        id S2404962AbfJPLbj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 07:31:39 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:18868 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2404936AbfJPLbj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 07:31:39 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9GBQG43023848;
+        Wed, 16 Oct 2019 13:29:19 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=LG7dUwNIu0+LFfdXsArrTdZw8lqv6tMm88WzwKR6KrA=;
+ b=S1dIOLgHhlnWOXh0gObHc7UsclwUejJlDnyrM1B+IDgosRXzZubyieCbZiLXGnEqlKYL
+ hpd61tPz7LkYexBy/HvcgZ45lzNg6K5RFrtQsR1/CsvmQpM0HL/LOKFVqbEJoCrjqRaJ
+ /E9EoqdTnfvZ+edK6JdPaQOvWKFGFEXldD9L/94lcNehviIcFV2PYLDKjiVqFaJ1Wjsg
+ dwmH1cOV1yvdz2fcgJRj41SW6+7vKlTL7PDE7rlsl1xD4adXDF9AaC3xXAi5DlfpperF
+ v7x4omaQWAxF3KYwgM0sjlCaITEkEpA4SQIgW0FP7lZAToaCZOv54Gin4gnBg888vRQx Zw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2vk3y9x8wr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 16 Oct 2019 13:29:19 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7D01310002A;
+        Wed, 16 Oct 2019 13:29:16 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 38E132074CE;
+        Wed, 16 Oct 2019 13:29:16 +0200 (CEST)
+Received: from SFHDAG6NODE3.st.com (10.75.127.18) by SFHDAG6NODE2.st.com
+ (10.75.127.17) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 16 Oct
+ 2019 13:29:15 +0200
+Received: from SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6]) by
+ SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6%20]) with mapi id
+ 15.00.1473.003; Wed, 16 Oct 2019 13:29:15 +0200
+From:   Patrice CHOTARD <patrice.chotard@st.com>
+To:     YueHaibing <yuehaibing@huawei.com>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "mpm@selenic.com" <mpm@selenic.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "ludovic.desroches@microchip.com" <ludovic.desroches@microchip.com>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "rjui@broadcom.com" <rjui@broadcom.com>,
+        "sbranden@broadcom.com" <sbranden@broadcom.com>,
+        "bcm-kernel-feedback-list@broadcom.com" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "eric@anholt.net" <eric@anholt.net>,
+        "wahrenst@gmx.net" <wahrenst@gmx.net>,
+        "l.stelmach@samsung.com" <l.stelmach@samsung.com>,
+        "kgene@kernel.org" <kgene@kernel.org>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        "khilman@baylibre.com" <khilman@baylibre.com>,
+        "dsaxena@plexity.net" <dsaxena@plexity.net>
+CC:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-rpi-kernel@lists.infradead.org" 
+        <linux-rpi-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-amlogic@lists.infradead.org" 
+        <linux-amlogic@lists.infradead.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH -next 11/13] hwrng: st - use
+ devm_platform_ioremap_resource() to simplify code
+Thread-Topic: [PATCH -next 11/13] hwrng: st - use
+ devm_platform_ioremap_resource() to simplify code
+Thread-Index: AQHVhA8R7X2BGSeJiEmwGCSOAcwdJ6ddADyA
+Date:   Wed, 16 Oct 2019 11:29:15 +0000
+Message-ID: <d9fd5224-a858-e7ea-eb71-2ed6696a6ffd@st.com>
+References: <20191016104621.26056-1-yuehaibing@huawei.com>
+ <20191016104621.26056-12-yuehaibing@huawei.com>
+In-Reply-To: <20191016104621.26056-12-yuehaibing@huawei.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.46]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B3EF5CC03322D04D91346E3040ABD037@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20191016100158.1400-1-jthumshirn@suse.de>
-X-OS:   Linux linux-8ccs 4.12.14-lp150.12.28-default x86_64
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-16_04:2019-10-16,2019-10-16 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+++ Johannes Thumshirn [16/10/19 12:01 +0200]:
->Now that we have symbol namespaces, use them in MCB to not pollute the
->default namespace with MCB internals.
->
->Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-
-Hurray, more namespace users! :) 
-
-Reviewed-by: Jessica Yu <jeyu@kernel.org>
-
-Thanks!
-
->---
-> drivers/gpio/gpio-menz127.c            |  1 +
-> drivers/iio/adc/men_z188_adc.c         |  1 +
-> drivers/mcb/mcb-core.c                 | 28 ++++++++++++++--------------
-> drivers/mcb/mcb-lpc.c                  |  1 +
-> drivers/mcb/mcb-parse.c                |  2 +-
-> drivers/mcb/mcb-pci.c                  |  1 +
-> drivers/tty/serial/8250/8250_men_mcb.c |  1 +
-> drivers/tty/serial/men_z135_uart.c     |  1 +
-> drivers/watchdog/menz69_wdt.c          |  1 +
-> 9 files changed, 22 insertions(+), 15 deletions(-)
->
->diff --git a/drivers/gpio/gpio-menz127.c b/drivers/gpio/gpio-menz127.c
->index 70fdb42a8e88..1e21c661d79d 100644
->--- a/drivers/gpio/gpio-menz127.c
->+++ b/drivers/gpio/gpio-menz127.c
->@@ -211,3 +211,4 @@ MODULE_AUTHOR("Andreas Werner <andreas.werner@men.de>");
-> MODULE_DESCRIPTION("MEN 16z127 GPIO Controller");
-> MODULE_LICENSE("GPL v2");
-> MODULE_ALIAS("mcb:16z127");
->+MODULE_IMPORT_NS(MCB);
->diff --git a/drivers/iio/adc/men_z188_adc.c b/drivers/iio/adc/men_z188_adc.c
->index 3b2fbb7ce431..196c8226381e 100644
->--- a/drivers/iio/adc/men_z188_adc.c
->+++ b/drivers/iio/adc/men_z188_adc.c
->@@ -167,3 +167,4 @@ MODULE_AUTHOR("Johannes Thumshirn <johannes.thumshirn@men.de>");
-> MODULE_LICENSE("GPL");
-> MODULE_DESCRIPTION("IIO ADC driver for MEN 16z188 ADC Core");
-> MODULE_ALIAS("mcb:16z188");
->+MODULE_IMPORT_NS(MCB);
->diff --git a/drivers/mcb/mcb-core.c b/drivers/mcb/mcb-core.c
->index b72e82efaee5..38fbb3b59873 100644
->--- a/drivers/mcb/mcb-core.c
->+++ b/drivers/mcb/mcb-core.c
->@@ -191,7 +191,7 @@ int __mcb_register_driver(struct mcb_driver *drv, struct module *owner,
->
-> 	return driver_register(&drv->driver);
-> }
->-EXPORT_SYMBOL_GPL(__mcb_register_driver);
->+EXPORT_SYMBOL_NS_GPL(__mcb_register_driver, MCB);
->
-> /**
->  * mcb_unregister_driver() - Unregister a @mcb_driver from the system
->@@ -203,7 +203,7 @@ void mcb_unregister_driver(struct mcb_driver *drv)
-> {
-> 	driver_unregister(&drv->driver);
-> }
->-EXPORT_SYMBOL_GPL(mcb_unregister_driver);
->+EXPORT_SYMBOL_NS_GPL(mcb_unregister_driver, MCB);
->
-> static void mcb_release_dev(struct device *dev)
-> {
->@@ -249,7 +249,7 @@ int mcb_device_register(struct mcb_bus *bus, struct mcb_device *dev)
->
-> 	return ret;
-> }
->-EXPORT_SYMBOL_GPL(mcb_device_register);
->+EXPORT_SYMBOL_NS_GPL(mcb_device_register, MCB);
->
-> static void mcb_free_bus(struct device *dev)
-> {
->@@ -301,7 +301,7 @@ struct mcb_bus *mcb_alloc_bus(struct device *carrier)
-> 	kfree(bus);
-> 	return ERR_PTR(rc);
-> }
->-EXPORT_SYMBOL_GPL(mcb_alloc_bus);
->+EXPORT_SYMBOL_NS_GPL(mcb_alloc_bus, MCB);
->
-> static int __mcb_devices_unregister(struct device *dev, void *data)
-> {
->@@ -323,7 +323,7 @@ void mcb_release_bus(struct mcb_bus *bus)
-> {
-> 	mcb_devices_unregister(bus);
-> }
->-EXPORT_SYMBOL_GPL(mcb_release_bus);
->+EXPORT_SYMBOL_NS_GPL(mcb_release_bus, MCB);
->
-> /**
->  * mcb_bus_put() - Increment refcnt
->@@ -338,7 +338,7 @@ struct mcb_bus *mcb_bus_get(struct mcb_bus *bus)
->
-> 	return bus;
-> }
->-EXPORT_SYMBOL_GPL(mcb_bus_get);
->+EXPORT_SYMBOL_NS_GPL(mcb_bus_get, MCB);
->
-> /**
->  * mcb_bus_put() - Decrement refcnt
->@@ -351,7 +351,7 @@ void mcb_bus_put(struct mcb_bus *bus)
-> 	if (bus)
-> 		put_device(&bus->dev);
-> }
->-EXPORT_SYMBOL_GPL(mcb_bus_put);
->+EXPORT_SYMBOL_NS_GPL(mcb_bus_put, MCB);
->
-> /**
->  * mcb_alloc_dev() - Allocate a device
->@@ -371,7 +371,7 @@ struct mcb_device *mcb_alloc_dev(struct mcb_bus *bus)
->
-> 	return dev;
-> }
->-EXPORT_SYMBOL_GPL(mcb_alloc_dev);
->+EXPORT_SYMBOL_NS_GPL(mcb_alloc_dev, MCB);
->
-> /**
->  * mcb_free_dev() - Free @mcb_device
->@@ -383,7 +383,7 @@ void mcb_free_dev(struct mcb_device *dev)
-> {
-> 	kfree(dev);
-> }
->-EXPORT_SYMBOL_GPL(mcb_free_dev);
->+EXPORT_SYMBOL_NS_GPL(mcb_free_dev, MCB);
->
-> static int __mcb_bus_add_devices(struct device *dev, void *data)
-> {
->@@ -412,7 +412,7 @@ void mcb_bus_add_devices(const struct mcb_bus *bus)
-> {
-> 	bus_for_each_dev(&mcb_bus_type, NULL, NULL, __mcb_bus_add_devices);
-> }
->-EXPORT_SYMBOL_GPL(mcb_bus_add_devices);
->+EXPORT_SYMBOL_NS_GPL(mcb_bus_add_devices, MCB);
->
-> /**
->  * mcb_get_resource() - get a resource for a mcb device
->@@ -428,7 +428,7 @@ struct resource *mcb_get_resource(struct mcb_device *dev, unsigned int type)
-> 	else
-> 		return NULL;
-> }
->-EXPORT_SYMBOL_GPL(mcb_get_resource);
->+EXPORT_SYMBOL_NS_GPL(mcb_get_resource, MCB);
->
-> /**
->  * mcb_request_mem() - Request memory
->@@ -454,7 +454,7 @@ struct resource *mcb_request_mem(struct mcb_device *dev, const char *name)
->
-> 	return mem;
-> }
->-EXPORT_SYMBOL_GPL(mcb_request_mem);
->+EXPORT_SYMBOL_NS_GPL(mcb_request_mem, MCB);
->
-> /**
->  * mcb_release_mem() - Release memory requested by device
->@@ -469,7 +469,7 @@ void mcb_release_mem(struct resource *mem)
-> 	size = resource_size(mem);
-> 	release_mem_region(mem->start, size);
-> }
->-EXPORT_SYMBOL_GPL(mcb_release_mem);
->+EXPORT_SYMBOL_NS_GPL(mcb_release_mem, MCB);
->
-> static int __mcb_get_irq(struct mcb_device *dev)
-> {
->@@ -495,7 +495,7 @@ int mcb_get_irq(struct mcb_device *dev)
->
-> 	return __mcb_get_irq(dev);
-> }
->-EXPORT_SYMBOL_GPL(mcb_get_irq);
->+EXPORT_SYMBOL_NS_GPL(mcb_get_irq, MCB);
->
-> static int mcb_init(void)
-> {
->diff --git a/drivers/mcb/mcb-lpc.c b/drivers/mcb/mcb-lpc.c
->index 8f1bde437a7e..506676754538 100644
->--- a/drivers/mcb/mcb-lpc.c
->+++ b/drivers/mcb/mcb-lpc.c
->@@ -168,3 +168,4 @@ module_exit(mcb_lpc_exit);
-> MODULE_AUTHOR("Andreas Werner <andreas.werner@men.de>");
-> MODULE_LICENSE("GPL");
-> MODULE_DESCRIPTION("MCB over LPC support");
->+MODULE_IMPORT_NS(MCB);
->diff --git a/drivers/mcb/mcb-parse.c b/drivers/mcb/mcb-parse.c
->index 3b69e6aa3d88..0266bfddfbe2 100644
->--- a/drivers/mcb/mcb-parse.c
->+++ b/drivers/mcb/mcb-parse.c
->@@ -253,4 +253,4 @@ int chameleon_parse_cells(struct mcb_bus *bus, phys_addr_t mapbase,
->
-> 	return ret;
-> }
->-EXPORT_SYMBOL_GPL(chameleon_parse_cells);
->+EXPORT_SYMBOL_NS_GPL(chameleon_parse_cells, MCB);
->diff --git a/drivers/mcb/mcb-pci.c b/drivers/mcb/mcb-pci.c
->index 14866aa22f75..dc88232d9af8 100644
->--- a/drivers/mcb/mcb-pci.c
->+++ b/drivers/mcb/mcb-pci.c
->@@ -131,3 +131,4 @@ module_pci_driver(mcb_pci_driver);
-> MODULE_AUTHOR("Johannes Thumshirn <johannes.thumshirn@men.de>");
-> MODULE_LICENSE("GPL");
-> MODULE_DESCRIPTION("MCB over PCI support");
->+MODULE_IMPORT_NS(MCB);
->diff --git a/drivers/tty/serial/8250/8250_men_mcb.c b/drivers/tty/serial/8250/8250_men_mcb.c
->index 02c5aff58a74..80a5c063ed70 100644
->--- a/drivers/tty/serial/8250/8250_men_mcb.c
->+++ b/drivers/tty/serial/8250/8250_men_mcb.c
->@@ -174,3 +174,4 @@ MODULE_AUTHOR("Michael Moese <michael.moese@men.de");
-> MODULE_ALIAS("mcb:16z125");
-> MODULE_ALIAS("mcb:16z025");
-> MODULE_ALIAS("mcb:16z057");
->+MODULE_IMPORT_NS(MCB);
->diff --git a/drivers/tty/serial/men_z135_uart.c b/drivers/tty/serial/men_z135_uart.c
->index e5d3ebab6dae..4f53a4caabf6 100644
->--- a/drivers/tty/serial/men_z135_uart.c
->+++ b/drivers/tty/serial/men_z135_uart.c
->@@ -930,3 +930,4 @@ MODULE_AUTHOR("Johannes Thumshirn <johannes.thumshirn@men.de>");
-> MODULE_LICENSE("GPL v2");
-> MODULE_DESCRIPTION("MEN 16z135 High Speed UART");
-> MODULE_ALIAS("mcb:16z135");
->+MODULE_IMPORT_NS(MCB);
->diff --git a/drivers/watchdog/menz69_wdt.c b/drivers/watchdog/menz69_wdt.c
->index ed18238c5407..8973f98bc6a5 100644
->--- a/drivers/watchdog/menz69_wdt.c
->+++ b/drivers/watchdog/menz69_wdt.c
->@@ -168,3 +168,4 @@ module_mcb_driver(men_z069_driver);
-> MODULE_AUTHOR("Johannes Thumshirn <jth@kernel.org>");
-> MODULE_LICENSE("GPL v2");
-> MODULE_ALIAS("mcb:16z069");
->+MODULE_IMPORT_NS(MCB);
->-- 
->2.16.4
->
+SGkNCg0KT24gMTAvMTYvMTkgMTI6NDYgUE0sIFl1ZUhhaWJpbmcgd3JvdGU6DQo+IFVzZSBkZXZt
+X3BsYXRmb3JtX2lvcmVtYXBfcmVzb3VyY2UoKSB0byBzaW1wbGlmeSB0aGUgY29kZSBhIGJpdC4N
+Cj4gVGhpcyBpcyBkZXRlY3RlZCBieSBjb2NjaW5lbGxlLg0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBZ
+dWVIYWliaW5nIDx5dWVoYWliaW5nQGh1YXdlaS5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9jaGFy
+L2h3X3JhbmRvbS9zdC1ybmcuYyB8IDQgKy0tLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0
+aW9uKCspLCAzIGRlbGV0aW9ucygtKQ0KPg0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jaGFyL2h3
+X3JhbmRvbS9zdC1ybmcuYyBiL2RyaXZlcnMvY2hhci9od19yYW5kb20vc3Qtcm5nLmMNCj4gaW5k
+ZXggODYzNDQ4My4uNzgzYzI0ZSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9jaGFyL2h3X3JhbmRv
+bS9zdC1ybmcuYw0KPiArKysgYi9kcml2ZXJzL2NoYXIvaHdfcmFuZG9tL3N0LXJuZy5jDQo+IEBA
+IC03Miw3ICs3Miw2IEBAIHN0YXRpYyBpbnQgc3Rfcm5nX3JlYWQoc3RydWN0IGh3cm5nICpybmcs
+IHZvaWQgKmRhdGEsIHNpemVfdCBtYXgsIGJvb2wgd2FpdCkNCj4gIHN0YXRpYyBpbnQgc3Rfcm5n
+X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ICB7DQo+ICAJc3RydWN0IHN0
+X3JuZ19kYXRhICpkZGF0YTsNCj4gLQlzdHJ1Y3QgcmVzb3VyY2UgKnJlczsNCj4gIAlzdHJ1Y3Qg
+Y2xrICpjbGs7DQo+ICAJdm9pZCBfX2lvbWVtICpiYXNlOw0KPiAgCWludCByZXQ7DQo+IEBAIC04
+MSw4ICs4MCw3IEBAIHN0YXRpYyBpbnQgc3Rfcm5nX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZp
+Y2UgKnBkZXYpDQo+ICAJaWYgKCFkZGF0YSkNCj4gIAkJcmV0dXJuIC1FTk9NRU07DQo+ICANCj4g
+LQlyZXMgPSBwbGF0Zm9ybV9nZXRfcmVzb3VyY2UocGRldiwgSU9SRVNPVVJDRV9NRU0sIDApOw0K
+PiAtCWJhc2UgPSBkZXZtX2lvcmVtYXBfcmVzb3VyY2UoJnBkZXYtPmRldiwgcmVzKTsNCj4gKwli
+YXNlID0gZGV2bV9wbGF0Zm9ybV9pb3JlbWFwX3Jlc291cmNlKHBkZXYsIDApOw0KPiAgCWlmIChJ
+U19FUlIoYmFzZSkpDQo+ICAJCXJldHVybiBQVFJfRVJSKGJhc2UpOw0KPiAgDQoNClJldmlld2Vk
+LWJ5OiBQYXRyaWNlIENob3RhcmQgPHBhdHJpY2UuY2hvdGFyZEBzdC5jb20+DQoNClRoYW5rcw0K
