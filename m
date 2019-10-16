@@ -2,64 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22D00D8FFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:51:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CE7BD8FFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:52:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391148AbfJPLvX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 07:51:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45960 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2391115AbfJPLvV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 07:51:21 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E2DC7B576;
-        Wed, 16 Oct 2019 11:51:19 +0000 (UTC)
-Date:   Wed, 16 Oct 2019 13:51:19 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] mm/page_alloc: Add alloc_contig_pages()
-Message-ID: <20191016115119.GA317@dhcp22.suse.cz>
-References: <1571223765-10662-1-git-send-email-anshuman.khandual@arm.com>
- <40b8375c-5291-b477-1519-fd7fa799a67d@redhat.com>
- <cdcf77a5-e5c9-71ff-811d-ecd1c1e80f00@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cdcf77a5-e5c9-71ff-811d-ecd1c1e80f00@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2391207AbfJPLwL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 07:52:11 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33476 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730622AbfJPLwJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 07:52:09 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 89A983082E0F;
+        Wed, 16 Oct 2019 11:52:08 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-43.ams2.redhat.com [10.36.116.43])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 11C565D6B2;
+        Wed, 16 Oct 2019 11:52:04 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 00BF831E46; Wed, 16 Oct 2019 13:52:03 +0200 (CEST)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v4 01/11] drm: add mmap() to drm_gem_object_funcs
+Date:   Wed, 16 Oct 2019 13:51:53 +0200
+Message-Id: <20191016115203.20095-2-kraxel@redhat.com>
+In-Reply-To: <20191016115203.20095-1-kraxel@redhat.com>
+References: <20191016115203.20095-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 16 Oct 2019 11:52:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 16-10-19 16:43:57, Anshuman Khandual wrote:
-> 
-> 
-> On 10/16/2019 04:39 PM, David Hildenbrand wrote:
-[...]
-> > Just to make sure, you ignored my comment regarding alignment
-> > although I explicitly mentioned it a second time? Thanks.
-> 
-> I had asked Michal explicitly what to be included for the respin. Anyways
-> seems like the previous thread is active again. I am happy to incorporate
-> anything new getting agreed on there.
+drm_gem_object_funcs->vm_ops alone can't handle everything which needs
+to be done for mmap(), tweaking vm_flags for example.  So add a new
+mmap() callback to drm_gem_object_funcs where this code can go to.
 
-Your patch is using the same alignment as the original code would do. If
-an explicit alignement is needed then this can be added on top, right?
+Note that the vm_ops field is not used in case the mmap callback is
+present, it is expected that the callback sets vma->vm_ops instead.
+
+Also setting vm_flags and vm_page_prot is the job of the new callback.
+so drivers have more control over these flags.
+
+drm_gem_mmap_obj() will use the new callback for object specific mmap
+setup.  With this in place the need for driver-speific fops->mmap
+callbacks goes away, drm_gem_mmap can be hooked instead.
+
+drm_gem_prime_mmap() will use the new callback too to just mmap gem
+objects directly instead of jumping though loops to make
+drm_gem_object_lookup() and fops->mmap work.
+
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+---
+ include/drm/drm_gem.h       | 14 ++++++++++++++
+ drivers/gpu/drm/drm_gem.c   | 27 ++++++++++++++++++---------
+ drivers/gpu/drm/drm_prime.c |  9 +++++++++
+ 3 files changed, 41 insertions(+), 9 deletions(-)
+
+diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
+index 6aaba14f5972..e71f75a2ab57 100644
+--- a/include/drm/drm_gem.h
++++ b/include/drm/drm_gem.h
+@@ -150,6 +150,20 @@ struct drm_gem_object_funcs {
+ 	 */
+ 	void (*vunmap)(struct drm_gem_object *obj, void *vaddr);
+ 
++	/**
++	 * @mmap:
++	 *
++	 * Handle mmap() of the gem object, setup vma accordingly.
++	 *
++	 * This callback is optional.
++	 *
++	 * The callback is used by by both drm_gem_mmap_obj() and
++	 * drm_gem_prime_mmap().  When @mmap is present @vm_ops is not
++	 * used, the @mmap callback must set vma->vm_ops instead.
++	 *
++	 */
++	int (*mmap)(struct drm_gem_object *obj, struct vm_area_struct *vma);
++
+ 	/**
+ 	 * @vm_ops:
+ 	 *
+diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+index 6854f5867d51..56f42e0f2584 100644
+--- a/drivers/gpu/drm/drm_gem.c
++++ b/drivers/gpu/drm/drm_gem.c
+@@ -1099,22 +1099,31 @@ int drm_gem_mmap_obj(struct drm_gem_object *obj, unsigned long obj_size,
+ 		     struct vm_area_struct *vma)
+ {
+ 	struct drm_device *dev = obj->dev;
++	int ret;
+ 
+ 	/* Check for valid size. */
+ 	if (obj_size < vma->vm_end - vma->vm_start)
+ 		return -EINVAL;
+ 
+-	if (obj->funcs && obj->funcs->vm_ops)
+-		vma->vm_ops = obj->funcs->vm_ops;
+-	else if (dev->driver->gem_vm_ops)
+-		vma->vm_ops = dev->driver->gem_vm_ops;
+-	else
+-		return -EINVAL;
++	if (obj->funcs && obj->funcs->mmap) {
++		ret = obj->funcs->mmap(obj, vma);
++		if (ret)
++			return ret;
++		WARN_ON(!(vma->vm_flags & VM_DONTEXPAND));
++	} else {
++		if (obj->funcs && obj->funcs->vm_ops)
++			vma->vm_ops = obj->funcs->vm_ops;
++		else if (dev->driver->gem_vm_ops)
++			vma->vm_ops = dev->driver->gem_vm_ops;
++		else
++			return -EINVAL;
++
++		vma->vm_flags |= VM_IO | VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP;
++		vma->vm_page_prot = pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
++		vma->vm_page_prot = pgprot_decrypted(vma->vm_page_prot);
++	}
+ 
+-	vma->vm_flags |= VM_IO | VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP;
+ 	vma->vm_private_data = obj;
+-	vma->vm_page_prot = pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
+-	vma->vm_page_prot = pgprot_decrypted(vma->vm_page_prot);
+ 
+ 	/* Take a ref for this mapping of the object, so that the fault
+ 	 * handler can dereference the mmap offset's pointer to the object.
+diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
+index 0a2316e0e812..0814211b0f3f 100644
+--- a/drivers/gpu/drm/drm_prime.c
++++ b/drivers/gpu/drm/drm_prime.c
+@@ -713,6 +713,15 @@ int drm_gem_prime_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma)
+ 	struct file *fil;
+ 	int ret;
+ 
++	if (obj->funcs && obj->funcs->mmap) {
++		ret = obj->funcs->mmap(obj, vma);
++		if (ret)
++			return ret;
++		vma->vm_private_data = obj;
++		drm_gem_object_get(obj);
++		return 0;
++	}
++
+ 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+ 	fil = kzalloc(sizeof(*fil), GFP_KERNEL);
+ 	if (!priv || !fil) {
 -- 
-Michal Hocko
-SUSE Labs
+2.18.1
+
