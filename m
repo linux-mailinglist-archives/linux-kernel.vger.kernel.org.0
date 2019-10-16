@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CF72D9FE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:24:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA815D9FC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:24:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404250AbfJPWF3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:05:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52782 "EHLO mail.kernel.org"
+        id S2395565AbfJPV6H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:58:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438281AbfJPV6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:58:50 -0400
+        id S2437967AbfJPV5O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:57:14 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 438A121928;
-        Wed, 16 Oct 2019 21:58:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB2CF20872;
+        Wed, 16 Oct 2019 21:57:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263130;
-        bh=+GLBanWr41SGuaV9NYI9/4ppr/jsnEijwLjwFEy87FI=;
+        s=default; t=1571263033;
+        bh=KBAU9OMK2sBXQWd9cYoO7tzeT75xTCJgt3hVD5ITMPI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xxAqf/wzwNkHjKu8vSXfC5IGNDvkvCN1XdgZDRiJ+1GkMdCA+K2Z6iVOmNXwH3j2V
-         Oxm+QrNqQVGpGjeF5KIBR1tV8YL0O9WGrV9wKGw6houKc21Jfcp0JzZDF0T1/EgI9a
-         9GhUNq69yqfpjRqnLDUeFHJvWBdbv9N1+FtyOn/A=
+        b=tncqq1VIDMpoW2dWJLAvCFt4Z/QJQgd5f5rAFxuwCM/L7Q4q/DqWjrDqr83IVDBGe
+         U5tVgeSGLy9JblKKikqTNgw22j9zIXCbnRcMbspKaI3R3iZQPs40uCADpmRMnQ0gRk
+         XTaWbobb0ScZYnGp4YhhMdsnkw9y6u8h9JDwv2qc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marco Felsch <m.felsch@pengutronix.de>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 5.3 053/112] iio: adc: ad799x: fix probe error handling
-Date:   Wed, 16 Oct 2019 14:50:45 -0700
-Message-Id: <20191016214858.448795865@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.19 35/81] USB: legousbtower: fix slab info leak at probe
+Date:   Wed, 16 Oct 2019 14:50:46 -0700
+Message-Id: <20191016214835.510391970@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
-References: <20191016214844.038848564@linuxfoundation.org>
+In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
+References: <20191016214805.727399379@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,39 +42,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marco Felsch <m.felsch@pengutronix.de>
+From: Johan Hovold <johan@kernel.org>
 
-commit c62dd44901cfff12acc5792bf3d2dec20bcaf392 upstream.
+commit 1d427be4a39defadda6dd8f4659bc17f7591740f upstream.
 
-Since commit 0f7ddcc1bff1 ("iio:adc:ad799x: Write default config on probe
-and reset alert status on probe") the error path is wrong since it
-leaves the vref regulator on. Fix this by disabling both regulators.
+Make sure to check for short transfers when retrieving the version
+information at probe to avoid leaking uninitialised slab data when
+logging it.
 
-Fixes: 0f7ddcc1bff1 ("iio:adc:ad799x: Write default config on probe and reset alert status on probe")
-Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-Reviewed-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20190919083039.30898-2-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/adc/ad799x.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/misc/legousbtower.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/iio/adc/ad799x.c
-+++ b/drivers/iio/adc/ad799x.c
-@@ -810,10 +810,10 @@ static int ad799x_probe(struct i2c_clien
- 
- 	ret = ad799x_write_config(st, st->chip_config->default_config);
- 	if (ret < 0)
--		goto error_disable_reg;
-+		goto error_disable_vref;
- 	ret = ad799x_read_config(st);
- 	if (ret < 0)
--		goto error_disable_reg;
-+		goto error_disable_vref;
- 	st->config = ret;
- 
- 	ret = iio_triggered_buffer_setup(indio_dev, NULL,
+--- a/drivers/usb/misc/legousbtower.c
++++ b/drivers/usb/misc/legousbtower.c
+@@ -891,8 +891,10 @@ static int tower_probe (struct usb_inter
+ 				  get_version_reply,
+ 				  sizeof(*get_version_reply),
+ 				  1000);
+-	if (result < 0) {
+-		dev_err(idev, "LEGO USB Tower get version control request failed\n");
++	if (result < sizeof(*get_version_reply)) {
++		if (result >= 0)
++			result = -EIO;
++		dev_err(idev, "get version request failed: %d\n", result);
+ 		retval = result;
+ 		goto error;
+ 	}
 
 
