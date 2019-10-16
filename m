@@ -2,93 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17C62D936F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 16:13:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C794D9372
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 16:14:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393870AbfJPONf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 10:13:35 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4222 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1733190AbfJPONf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 10:13:35 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 667E687B94C88BDDAF7F;
-        Wed, 16 Oct 2019 22:13:32 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Wed, 16 Oct 2019
- 22:13:26 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <jason@lakedaemon.net>, <andrew@lunn.ch>,
-        <gregory.clement@bootlin.com>, <sebastian.hesselbarth@gmail.com>,
-        <linus.walleij@linaro.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] pinctrl: mvebu: use devm_platform_ioremap_resource() to simplify code
-Date:   Wed, 16 Oct 2019 22:12:17 +0800
-Message-ID: <20191016141217.21520-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S2393874AbfJPOOm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 10:14:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52166 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733190AbfJPOOl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 10:14:41 -0400
+Received: from paulmck-ThinkPad-P72 (unknown [76.14.14.11])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 977BA207FF;
+        Wed, 16 Oct 2019 14:14:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571235280;
+        bh=BCBnIdgzHwLTNLerkK+Tvksc5IOkOoEgqCnmgNRCt0s=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=l4qvE68O5WrLhA97juhMjDTPl6SwZyvI7Z/ftUul+gs1n40w8IuG8in9+dl9D/KZv
+         GPVt7UnWKkOOc9RXSsSL+DcxA6XcFwsUqTxNkr6FvFN5GKJZismP9Pyol3i/f/18fm
+         bnUGLeJgsx0wfpcb2JRJRKeZP4r0hGLFyr72rdhY=
+Date:   Wed, 16 Oct 2019 07:14:39 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Lai Jiangshan <laijs@linux.alibaba.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
+Subject: Re: [PATCH 2/7] rcu: fix tracepoint string when RCU CPU kthread runs
+Message-ID: <20191016141439.GA2588@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20191015102402.1978-1-laijs@linux.alibaba.com>
+ <20191015102402.1978-3-laijs@linux.alibaba.com>
+ <20191016033814.GX2689@paulmck-ThinkPad-P72>
+ <c54063d6-c6d0-cd8c-40e3-5185258d71dd@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c54063d6-c6d0-cd8c-40e3-5185258d71dd@linux.alibaba.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify the code a bit.
-This is detected by coccinelle.
+On Wed, Oct 16, 2019 at 12:24:09PM +0800, Lai Jiangshan wrote:
+> 
+> 
+> On 2019/10/16 11:38 上午, Paul E. McKenney wrote:
+> > On Tue, Oct 15, 2019 at 10:23:57AM +0000, Lai Jiangshan wrote:
+> > > "rcu_wait" is incorrct here, use "rcu_run" instead.
+> > > 
+> > > Signed-off-by: Lai Jiangshan <jiangshanlai@gmail.com>
+> > > Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
+> > > ---
+> > >   kernel/rcu/tree.c | 4 ++--
+> > >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > > index 278798e58698..c351fc280945 100644
+> > > --- a/kernel/rcu/tree.c
+> > > +++ b/kernel/rcu/tree.c
+> > > @@ -2485,7 +2485,7 @@ static void rcu_cpu_kthread(unsigned int cpu)
+> > >   	int spincnt;
+> > >   	for (spincnt = 0; spincnt < 10; spincnt++) {
+> > > -		trace_rcu_utilization(TPS("Start CPU kthread@rcu_wait"));
+> > > +		trace_rcu_utilization(TPS("Start CPU kthread@rcu_run"));
+> > >   		local_bh_disable();
+> > >   		*statusp = RCU_KTHREAD_RUNNING;
+> > >   		local_irq_disable();
+> > > @@ -2496,7 +2496,7 @@ static void rcu_cpu_kthread(unsigned int cpu)
+> > >   			rcu_core();
+> > >   		local_bh_enable();
+> > >   		if (*workp == 0) {
+> > > -			trace_rcu_utilization(TPS("End CPU kthread@rcu_wait"));
+> > > +			trace_rcu_utilization(TPS("End CPU kthread@rcu_run"));
+> > 
+> > This one needs to stay as it was because this is where we wait when out
+> > of work.
+> 
+> I don't fully understand those TPS marks.
+> 
+> If it is all about "where we wait when out of work", it ought to
+> be "Start ... wait", rather than "End ... wait". The later one
+> ("End ... wait") should be put before
+> "for (spincnt = 0; spincnt < 10; spincnt++)" and remove
+> the whole "rcu_run" as this patch suggested. To be honest,
+> "rcu_run" is redundant since we already has TPS("Start RCU core").
+> 
+> Any ways, patch2&3 lose their relevance and should be dropped.
+> Looking forward to your improved version.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/pinctrl/mvebu/pinctrl-mvebu.c | 4 +---
- drivers/pinctrl/mvebu/pinctrl-orion.c | 7 ++-----
- 2 files changed, 3 insertions(+), 8 deletions(-)
+Given that most of RCU's overhead is now in kthreads and in RCU_SOFTIRQ,
+perhaps trace_rcu_utilization() has outlived its usefulness, especially
+given the prospect of an RCU_SOFTIRQ-specific kthread.
 
-diff --git a/drivers/pinctrl/mvebu/pinctrl-mvebu.c b/drivers/pinctrl/mvebu/pinctrl-mvebu.c
-index 00cfaf2..a1f9385 100644
---- a/drivers/pinctrl/mvebu/pinctrl-mvebu.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-mvebu.c
-@@ -759,12 +759,10 @@ int mvebu_pinctrl_simple_mmio_probe(struct platform_device *pdev)
- {
- 	struct mvebu_pinctrl_soc_info *soc = dev_get_platdata(&pdev->dev);
- 	struct mvebu_mpp_ctrl_data *mpp_data;
--	struct resource *res;
- 	void __iomem *base;
- 	int i;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(&pdev->dev, res);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
- 
-diff --git a/drivers/pinctrl/mvebu/pinctrl-orion.c b/drivers/pinctrl/mvebu/pinctrl-orion.c
-index 29bb9d8..cc97d27 100644
---- a/drivers/pinctrl/mvebu/pinctrl-orion.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-orion.c
-@@ -220,17 +220,14 @@ static int orion_pinctrl_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *match =
- 		of_match_device(orion_pinctrl_of_match, &pdev->dev);
--	struct resource *res;
- 
- 	pdev->dev.platform_data = (void*)match->data;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	mpp_base = devm_ioremap_resource(&pdev->dev, res);
-+	mpp_base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(mpp_base))
- 		return PTR_ERR(mpp_base);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	high_mpp_base = devm_ioremap_resource(&pdev->dev, res);
-+	high_mpp_base = devm_platform_ioremap_resource(pdev, 1);
- 	if (IS_ERR(high_mpp_base))
- 		return PTR_ERR(high_mpp_base);
- 
--- 
-2.7.4
-
-
+							Thanx, Paul
