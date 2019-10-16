@@ -2,59 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE5E4D8A03
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 09:42:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B32D4D89FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 09:40:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391189AbfJPHmZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 03:42:25 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3778 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728201AbfJPHmZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 03:42:25 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 69F6FD40EE297C4244F5;
-        Wed, 16 Oct 2019 15:42:22 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 16 Oct 2019 15:42:14 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <gregkh@linuxfoundation.org>
-CC:     <linux-kernel@vger.kernel.org>, <zhongjiang@huawei.com>
-Subject: [PATCH] staging: rtl8723bs: remove an redundant null check before kfree()
-Date:   Wed, 16 Oct 2019 15:38:26 +0800
-Message-ID: <1571211506-19005-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        id S2391118AbfJPHkh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 03:40:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52484 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732599AbfJPHke (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 03:40:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=nAVrUYNo7z77xNN8BPUYDjArRLCzHJySHwl8SGXWxtA=; b=hHypW5ckFDh6HXlPU8J/DBxPn
+        3ysSaC4VkVmMb6n21hYpS5DUSbe9/K5xvXF4Ap3889f9kKtk/nSi7OvWLMDBgl1wEu4Jm2ZfK2ADD
+        R4JWlr1saxV7trRst+fFBqaygEgFaSgDr3sebg2JytNGZGt+nhgIPthLFGGt7kAIrz6zcxn1z+CKW
+        HP9HAFKCmx7NQVzWOPwVeejyiyDcMGlh8GAvWdRLMPp48jrM439trEfzWnZOmtIg9UMq19pHcT1CM
+        xTpwYQER629OMMcYz5XFzwb+hzl0ZdkH7WOiH5bK1ooaGcdCf881Npq0aJUCB8+clohzyWdBLFq6q
+        YAOnj2P/Q==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iKdv2-0007jR-Lh; Wed, 16 Oct 2019 07:40:28 +0000
+Date:   Wed, 16 Oct 2019 00:40:28 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Ben Dooks <ben.dooks@codethink.co.uk>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        linux-kernel@lists.codethink.co.uk,
+        Marek Behun <marek.behun@nic.cz>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bus: moxtet: declare moxtet_bus_type
+Message-ID: <20191016074028.GA25140@infradead.org>
+References: <20191015122535.5439-1-ben.dooks@codethink.co.uk>
+ <20191015163205.GB11160@infradead.org>
+ <ec914ca4-53c6-ef4d-b0db-82852cdd9bbe@codethink.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ec914ca4-53c6-ef4d-b0db-82852cdd9bbe@codethink.co.uk>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kfree() has taken null pointer into account. hence it is safe to remove
-the unnecessary check.
+On Wed, Oct 16, 2019 at 08:34:06AM +0100, Ben Dooks wrote:
+> On 15/10/2019 17:32, Christoph Hellwig wrote:
+> > On Tue, Oct 15, 2019 at 01:25:35PM +0100, Ben Dooks wrote:
+> > > The moxtet_bus_type object is exported from the bus
+> > > driver, but not declared. Add a declaration for use
+> > > and to silence the following warning:
+> > 
+> > The symbol can be marked static instead.
+> 
+> Then it would have to be un-exported as it's listed as
+> EXPORT_SYMBOL_GPL(moxtet_bus_type);
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- drivers/staging/rtl8723bs/core/rtw_xmit.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/staging/rtl8723bs/core/rtw_xmit.c b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-index 7011c2a..4597f4f 100644
---- a/drivers/staging/rtl8723bs/core/rtw_xmit.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-@@ -2210,8 +2210,7 @@ void rtw_free_hwxmits(struct adapter *padapter)
- 	struct xmit_priv *pxmitpriv = &padapter->xmitpriv;
- 
- 	hwxmits = pxmitpriv->hwxmits;
--	if (hwxmits)
--		kfree(hwxmits);
-+	kfree(hwxmits);
- }
- 
- void rtw_init_hwxmits(struct hw_xmit *phwxmit, sint entry)
--- 
-1.7.12.4
-
+Yes, once you mark it static you should also remove the export.
