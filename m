@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60C92DA052
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:25:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3C3AD9F62
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407176AbfJPWKR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:10:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49792 "EHLO mail.kernel.org"
+        id S2395100AbfJPVy4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:54:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437976AbfJPV5R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:57:17 -0400
+        id S2395071AbfJPVys (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:54:48 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79989218DE;
-        Wed, 16 Oct 2019 21:57:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E258A20872;
+        Wed, 16 Oct 2019 21:54:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263036;
-        bh=izqO9ALxtxnEoEPIVKQWUWSUcpA2AFD+pQ0ufO4hGps=;
+        s=default; t=1571262887;
+        bh=B+56Rk6MOcpvOySkqiVk7g+eKtEtdThp+MfpJwfLYMc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SLxBMhPWkvNRMDKC4324E/TCP6aBbo/C8rnJV+dvCxb7gc1kOtBN8pZdkzK2/MNK4
-         JABYfwkNYFuajn8GzdyjOoz3Mqo917OVIu3NzDl79Ak7AwPvxrmuuYS/i2bH+IoIHx
-         o33UuNhkJAdVY+w3p1nuiA4yNS6yGLs5IOQiy1Po=
+        b=ANHS59wYVtyCQk9Fhbv2r1WT/yQvLwjrc9v/m1W8HSc3R+9v8XxRB8qPsBT0ScIjm
+         bNFuw0vFUfX5fmBimoAX7/vJiao6fIjUmQ1xZ17J2gFoLf0buywdB8U+ZVnsjaNRfr
+         oqeOjOcH5O47CPt8cSTC9xUmilB+/G+lh7+Z3kPU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.19 06/81] USB: usb-skeleton: fix runtime PM after driver unbind
+        stable@vger.kernel.org, Jan Schmidt <jan@centricular.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: [PATCH 4.9 44/92] xhci: Check all endpoints for LPM timeout
 Date:   Wed, 16 Oct 2019 14:50:17 -0700
-Message-Id: <20191016214811.706227648@linuxfoundation.org>
+Message-Id: <20191016214833.497334248@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
-References: <20191016214805.727399379@linuxfoundation.org>
+In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
+References: <20191016214759.600329427@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,58 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Jan Schmidt <jan@centricular.com>
 
-commit 5c290a5e42c3387e82de86965784d30e6c5270fd upstream.
+commit d500c63f80f2ea08ee300e57da5f2af1c13875f5 upstream.
 
-Since commit c2b71462d294 ("USB: core: Fix bug caused by duplicate
-interface PM usage counter") USB drivers must always balance their
-runtime PM gets and puts, including when the driver has already been
-unbound from the interface.
+If an endpoint is encountered that returns USB3_LPM_DEVICE_INITIATED, keep
+checking further endpoints, as there might be periodic endpoints later
+that return USB3_LPM_DISABLED due to shorter service intervals.
 
-Leaving the interface with a positive PM usage counter would prevent a
-later bound driver from suspending the device.
+Without this, the code can set too high a maximum-exit-latency and
+prevent the use of multiple USB3 cameras that should be able to work.
 
-Fixes: c2b71462d294 ("USB: core: Fix bug caused by duplicate interface PM usage counter")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191001084908.2003-2-johan@kernel.org
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jan Schmidt <jan@centricular.com>
+Tested-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Link: https://lore.kernel.org/r/1570190373-30684-4-git-send-email-mathias.nyman@linux.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/usb-skeleton.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/usb/host/xhci.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/usb-skeleton.c
-+++ b/drivers/usb/usb-skeleton.c
-@@ -71,6 +71,7 @@ static void skel_delete(struct kref *kre
- 	struct usb_skel *dev = to_skel_dev(kref);
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -4510,12 +4510,12 @@ static int xhci_update_timeout_for_endpo
+ 	alt_timeout = xhci_call_host_update_timeout_for_endpoint(xhci, udev,
+ 		desc, state, timeout);
  
- 	usb_free_urb(dev->bulk_in_urb);
-+	usb_put_intf(dev->interface);
- 	usb_put_dev(dev->udev);
- 	kfree(dev->bulk_in_buffer);
- 	kfree(dev);
-@@ -122,10 +123,7 @@ static int skel_release(struct inode *in
- 		return -ENODEV;
- 
- 	/* allow the device to be autosuspended */
--	mutex_lock(&dev->io_mutex);
--	if (dev->interface)
--		usb_autopm_put_interface(dev->interface);
--	mutex_unlock(&dev->io_mutex);
-+	usb_autopm_put_interface(dev->interface);
- 
- 	/* decrement the count on our device */
- 	kref_put(&dev->kref, skel_delete);
-@@ -505,7 +503,7 @@ static int skel_probe(struct usb_interfa
- 	init_waitqueue_head(&dev->bulk_in_wait);
- 
- 	dev->udev = usb_get_dev(interface_to_usbdev(interface));
--	dev->interface = interface;
-+	dev->interface = usb_get_intf(interface);
- 
- 	/* set up the endpoint information */
- 	/* use only the first bulk-in and bulk-out endpoints */
+-	/* If we found we can't enable hub-initiated LPM, or
++	/* If we found we can't enable hub-initiated LPM, and
+ 	 * the U1 or U2 exit latency was too high to allow
+-	 * device-initiated LPM as well, just stop searching.
++	 * device-initiated LPM as well, then we will disable LPM
++	 * for this device, so stop searching any further.
+ 	 */
+-	if (alt_timeout == USB3_LPM_DISABLED ||
+-			alt_timeout == USB3_LPM_DEVICE_INITIATED) {
++	if (alt_timeout == USB3_LPM_DISABLED) {
+ 		*timeout = alt_timeout;
+ 		return -E2BIG;
+ 	}
 
 
