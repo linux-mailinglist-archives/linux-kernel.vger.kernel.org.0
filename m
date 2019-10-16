@@ -2,91 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EAD5D8EED
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:07:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AE31D8EF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:08:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390775AbfJPLHZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 07:07:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46524 "EHLO mx1.suse.de"
+        id S2392610AbfJPLIe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 07:08:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46882 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728406AbfJPLHY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 07:07:24 -0400
+        id S1728406AbfJPLIe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 07:08:34 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 012BAB1FF;
-        Wed, 16 Oct 2019 11:07:23 +0000 (UTC)
-Date:   Wed, 16 Oct 2019 13:07:22 +0200
+        by mx1.suse.de (Postfix) with ESMTP id 096DDB1FF;
+        Wed, 16 Oct 2019 11:08:32 +0000 (UTC)
+Date:   Wed, 16 Oct 2019 13:08:31 +0200
 From:   Michal Hocko <mhocko@kernel.org>
-To:     "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Daniel Wagner <dwagner@suse.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Hillf Danton <hdanton@sina.com>,
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
         Matthew Wilcox <willy@infradead.org>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v3 3/3] mm/vmalloc: add more comments to the
- adjust_va_to_fit_type()
-Message-ID: <20191016110722.GU317@dhcp22.suse.cz>
-References: <20191016095438.12391-1-urezki@gmail.com>
- <20191016095438.12391-3-urezki@gmail.com>
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/page_alloc: Make alloc_gigantic_page() available for
+ general use
+Message-ID: <20191016110831.GV317@dhcp22.suse.cz>
+References: <1571211293-29974-1-git-send-email-anshuman.khandual@arm.com>
+ <c7ac9f99-a34f-c553-b216-b847d093cae9@redhat.com>
+ <20191016085123.GO317@dhcp22.suse.cz>
+ <679b5c66-8f1b-ec4d-64dd-13fbc440917d@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191016095438.12391-3-urezki@gmail.com>
+In-Reply-To: <679b5c66-8f1b-ec4d-64dd-13fbc440917d@redhat.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 16-10-19 11:54:38, Uladzislau Rezki (Sony) wrote:
-> When fit type is NE_FIT_TYPE there is a need in one extra object.
-> Usually the "ne_fit_preload_node" per-CPU variable has it and
-> there is no need in GFP_NOWAIT allocation, but there are exceptions.
+On Wed 16-10-19 10:56:16, David Hildenbrand wrote:
+> On 16.10.19 10:51, Michal Hocko wrote:
+> > On Wed 16-10-19 10:08:21, David Hildenbrand wrote:
+> > > On 16.10.19 09:34, Anshuman Khandual wrote:
+> > [...]
+> > > > +static bool pfn_range_valid_contig(struct zone *z, unsigned long start_pfn,
+> > > > +				   unsigned long nr_pages)
+> > > > +{
+> > > > +	unsigned long i, end_pfn = start_pfn + nr_pages;
+> > > > +	struct page *page;
+> > > > +
+> > > > +	for (i = start_pfn; i < end_pfn; i++) {
+> > > > +		page = pfn_to_online_page(i);
+> > > > +		if (!page)
+> > > > +			return false;
+> > > > +
+> > > > +		if (page_zone(page) != z)
+> > > > +			return false;
+> > > > +
+> > > > +		if (PageReserved(page))
+> > > > +			return false;
+> > > > +
+> > > > +		if (page_count(page) > 0)
+> > > > +			return false;
+> > > > +
+> > > > +		if (PageHuge(page))
+> > > > +			return false;
+> > > > +	}
+> > > 
+> > > We might still try to allocate a lot of ranges that contain unmovable data
+> > > (we could avoid isolating a lot of page blocks in the first place). I'd love
+> > > to see something like pfn_range_movable() (similar, but different to
+> > > is_mem_section_removable(), which uses has_unmovable_pages()).
+> > 
+> > Just to make sure I understand. Do you want has_unmovable_pages to be
+> > called inside pfn_range_valid_contig?
 > 
-> This commit just adds more explanations, as a result giving
-> answers on questions like when it can occur, how often, under
-> which conditions and what happens if GFP_NOWAIT gets failed.
+> I think this requires more thought, as has_unmovable_pages() works on
+> pageblocks only AFAIK. If you try to allocate < MAX_ORDER - 1, you could get
+> a lot of false positives.
 > 
-> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> E.g., if a free "MAX_ORDER - 1" page spans two pageblocks and you only test
+> the second pageblock, you might detect "unmovable" if not taking proper care
+> of the "bigger" free page. (alloc_contig_range() properly works around that
+> issue)
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+OK, I see your point. You are right that false positives are possible. I
+would deal with those in a separate patch though.
 
-> ---
->  mm/vmalloc.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+> > [...]
+> > > > +struct page *alloc_contig_pages(unsigned long nr_pages, gfp_t gfp_mask,
+> > > > +				int nid, nodemask_t *nodemask)
+> > > > +{
+> > > > +	unsigned long ret, pfn, flags;
+> > > > +	struct zonelist *zonelist;
+> > > > +	struct zone *zone;
+> > > > +	struct zoneref *z;
+> > > > +
+> > > > +	zonelist = node_zonelist(nid, gfp_mask);
+> > > > +	for_each_zone_zonelist_nodemask(zone, z, zonelist,
+> > > > +					gfp_zone(gfp_mask), nodemask) {
+> > > 
+> > > One important part is to never use the MOVABLE zone here (otherwise
+> > > unmovable data would end up on the movable zone). But I guess the caller is
+> > > responsible for that (not pass GFP_MOVABLE) like gigantic pages do.
+> > 
+> > Well, if the caller uses GFP_MOVABLE then the movability should be
+> > implemented in some form. If that is not the case then it is a bug on
+> > the caller behalf.
+> > 
+> > > > +		spin_lock_irqsave(&zone->lock, flags);
+> > > > +
+> > > > +		pfn = ALIGN(zone->zone_start_pfn, nr_pages);
+> > > 
+> > > This alignment does not make too much sense when allowing passing in !power
+> > > of two orders. Maybe the caller should specify the requested alignment
+> > > instead? Or should we enforce this to be aligned to make our life easier for
+> > > now?
+> > 
+> > Are there any usecases that would require than the page alignment?
 > 
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index 593bf554518d..2290a0d270e4 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -969,6 +969,19 @@ adjust_va_to_fit_type(struct vmap_area *va,
->  			 * There are a few exceptions though, as an example it is
->  			 * a first allocation (early boot up) when we have "one"
->  			 * big free space that has to be split.
-> +			 *
-> +			 * Also we can hit this path in case of regular "vmap"
-> +			 * allocations, if "this" current CPU was not preloaded.
-> +			 * See the comment in alloc_vmap_area() why. If so, then
-> +			 * GFP_NOWAIT is used instead to get an extra object for
-> +			 * split purpose. That is rare and most time does not
-> +			 * occur.
-> +			 *
-> +			 * What happens if an allocation gets failed. Basically,
-> +			 * an "overflow" path is triggered to purge lazily freed
-> +			 * areas to free some memory, then, the "retry" path is
-> +			 * triggered to repeat one more time. See more details
-> +			 * in alloc_vmap_area() function.
->  			 */
->  			lva = kmem_cache_alloc(vmap_area_cachep, GFP_NOWAIT);
->  			if (!lva)
-> -- 
-> 2.20.1
-> 
+> Gigantic pages have to be aligned AFAIK.
+
+Aligned to what? I do not see any guarantee like that in the existing
+code.
 
 -- 
 Michal Hocko
