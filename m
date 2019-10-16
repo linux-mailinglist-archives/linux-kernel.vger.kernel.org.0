@@ -2,75 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC263D9561
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 17:20:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B613DD9560
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 17:20:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393491AbfJPPUX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 11:20:23 -0400
-Received: from mga07.intel.com ([134.134.136.100]:7188 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387700AbfJPPUV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2393282AbfJPPUV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 16 Oct 2019 11:20:21 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2019 08:20:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,304,1566889200"; 
-   d="scan'208";a="370829200"
-Received: from hagarwal-mobl1.gar.corp.intel.com (HELO localhost) ([10.252.5.165])
-  by orsmga005.jf.intel.com with ESMTP; 16 Oct 2019 08:20:15 -0700
-Date:   Wed, 16 Oct 2019 18:20:14 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Kairui Song <kasong@redhat.com>, linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
-        x86@kernel.org, linux-efi@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v3] x86, efi: never relocate kernel below lowest
- acceptable address
-Message-ID: <20191016152014.GC4261@linux.intel.com>
-References: <20191012034421.25027-1-kasong@redhat.com>
- <20191014101419.GA4715@zn.tnic>
- <20191014202111.GP15552@linux.intel.com>
- <20191014211825.GJ4715@zn.tnic>
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:46835 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731530AbfJPPUU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 11:20:20 -0400
+Received: by mail-oi1-f194.google.com with SMTP id k25so20334654oiw.13
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 08:20:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:reply-to:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Hg//TZrhBsTy9D87m/T6t9gxtTCE+xcZuR7rP4e2SMY=;
+        b=H2TT2wssG/M4CGPptijE6fYDUwf6g02pfVhn2pLyGTct7/HPxBRUoc7o0wYy4masnz
+         puxOhemptI0TnB1Gk2dbdiI8v1Z1jhViNl/rhVYsWhNJauqCZcXyx/loBdg73ER910jF
+         9JI6iLelAXAgp/mqa0NsYUC6GAvq97L62s7oB1XeMtZ32mhjQPj/PFUjUo7y2AVvDd0n
+         QKJmLeVwWQ/UWIjxfakQD+LqvVt4nmGvLPGuM0n64E/BYo0+xneHRD0owdjiccLcAClN
+         2vMyt43umiFBp9GBuJxIN2X7YanifU34H1pCuNbYm17q+S/dUB8EYAU2s+mItkqu7Ux2
+         foSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :reply-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=Hg//TZrhBsTy9D87m/T6t9gxtTCE+xcZuR7rP4e2SMY=;
+        b=rW+7W8qbSrKKApUTmngd8kDxaCQ0ajI09dDOYRDKC2N8XVT/feJySop7+UK76MDSJm
+         Vpi13vGXzxoHqEX12S6uV1GwCQT/zu+BHuj75vrnIAp/Kt/aM1fEadgzr4Oj1yPQf7Lk
+         YcxQe/gy6EScqWeqz5vm6xdIgbsk8NiY8N2DLIdqh7c8dv3CQh49UABygPxnss2ZRhfI
+         GUYUjyBtTi4Ltjn+Iy8zvDcxrXZ7VCu2HhWNYQPkP96L82wf/jQ1kS28IxOcXLUBurvS
+         xbgk6QsHmywjD1NAhcRC+8SMhVX00g+q3Gf0idwIoOkb/duFR9HsIEoHbnfD1nObxDbT
+         XSxg==
+X-Gm-Message-State: APjAAAXsDfAltmaekzrnYstikXQrh1AabuvwCAuCxDmPKT/9918Ln/Ov
+        O0a/0PUM0KQmWGMEyjmpyQ==
+X-Google-Smtp-Source: APXvYqw29TSLm5lXfqhgqJ4rgsbwSamu6EsD2YQAkOS+jHJBw4/SftqEt/3cn7iBZ7a/ahH0VVTfAQ==
+X-Received: by 2002:a54:4582:: with SMTP id z2mr4069134oib.140.1571239219494;
+        Wed, 16 Oct 2019 08:20:19 -0700 (PDT)
+Received: from serve.minyard.net (serve.minyard.net. [2001:470:b8f6:1b::1])
+        by smtp.gmail.com with ESMTPSA id k2sm7449649oih.38.2019.10.16.08.20.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2019 08:20:18 -0700 (PDT)
+Received: from t560 (unknown [192.168.27.180])
+        by serve.minyard.net (Postfix) with ESMTPSA id 49C4A180056;
+        Wed, 16 Oct 2019 15:20:18 +0000 (UTC)
+Date:   Wed, 16 Oct 2019 10:20:17 -0500
+From:   Corey Minyard <minyard@acm.org>
+To:     =?utf-8?Q?C=C3=A9dric?= Le Goater <clg@kaod.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>, arnd@arndb.de,
+        gregkh@linuxfoundation.org,
+        openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org,
+        Alistair Popple <alistair@popple.id.au>
+Subject: Re: [PATCH -next] ipmi: bt-bmc: use devm_platform_ioremap_resource()
+ to simplify code
+Message-ID: <20191016152017.GO14232@t560>
+Reply-To: minyard@acm.org
+References: <20191016092131.23096-1-yuehaibing@huawei.com>
+ <20191016141936.GN14232@t560>
+ <789af3ff-9ed8-5869-05c4-9cfb2ac5e9d5@kaod.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191014211825.GJ4715@zn.tnic>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <789af3ff-9ed8-5869-05c4-9cfb2ac5e9d5@kaod.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 14, 2019 at 11:18:25PM +0200, Borislav Petkov wrote:
-> On Mon, Oct 14, 2019 at 11:21:11PM +0300, Jarkko Sakkinen wrote:
-> > Was there a section in the patch submission documentation to point out
-> > when people send patches with all the possible twists for an acronym?
+On Wed, Oct 16, 2019 at 04:41:07PM +0200, Cédric Le Goater wrote:
+> On 16/10/2019 16:19, Corey Minyard wrote:
+> > On Wed, Oct 16, 2019 at 05:21:31PM +0800, YueHaibing wrote:
+> >> Use devm_platform_ioremap_resource() to simplify the code a bit.
+> >> This is detected by coccinelle.
+> > 
+> > Adding the module author and others. I can't see a reason to not do
+> > this.
 > 
-> I don't think so.
+> yes. Looks good to me.
 > 
-> > This is giving me constantly gray hairs with TPM patches.
-> 
-> Well, I'm slowly getting tired of repeating the same crap over and over
-> again about how important it is to document one's changes and to write
-> good commit messages. The most repeated answers I'm simply putting into
-> canned reply templates because, well, saying it once or twice is not
-> enough anymore. :-\
-> 
-> And yeah, I see your pain. Same here, actually.
-> 
-> In the acronym case, I'd probably add a regex to my patch massaging
-> script and convert those typos automatically and be done with it.
+> Reviewed-by: Cédric Le Goater <clg@kaod.org>
 
-Wonder if checkpatch.pl could be extended to know acronyms e.g. have a
-db of known acronyms.
+Queued for next merge window, unless someone protests.
 
-/Jarkko
+-corey
+
+> 
+> Thanks,
+> 
+> C.
+> 
+> > -corey
+> > 
+> >>
+> >> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> >> ---
+> >>  drivers/char/ipmi/bt-bmc.c | 4 +---
+> >>  1 file changed, 1 insertion(+), 3 deletions(-)
+> >>
+> >> diff --git a/drivers/char/ipmi/bt-bmc.c b/drivers/char/ipmi/bt-bmc.c
+> >> index 40b9927..d36aeac 100644
+> >> --- a/drivers/char/ipmi/bt-bmc.c
+> >> +++ b/drivers/char/ipmi/bt-bmc.c
+> >> @@ -444,15 +444,13 @@ static int bt_bmc_probe(struct platform_device *pdev)
+> >>  
+> >>  	bt_bmc->map = syscon_node_to_regmap(pdev->dev.parent->of_node);
+> >>  	if (IS_ERR(bt_bmc->map)) {
+> >> -		struct resource *res;
+> >>  		void __iomem *base;
+> >>  
+> >>  		/*
+> >>  		 * Assume it's not the MFD-based devicetree description, in
+> >>  		 * which case generate a regmap ourselves
+> >>  		 */
+> >> -		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> >> -		base = devm_ioremap_resource(&pdev->dev, res);
+> >> +		base = devm_platform_ioremap_resource(pdev, 0);
+> >>  		if (IS_ERR(base))
+> >>  			return PTR_ERR(base);
+> >>  
+> >> -- 
+> >> 2.7.4
+> >>
+> >>
+> 
