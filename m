@@ -2,84 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 988DCD8B6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:41:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA1B2D8B7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:42:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404116AbfJPIlr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 04:41:47 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:35624 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391805AbfJPIlp (ORCPT
+        id S2390139AbfJPImC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 04:42:02 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:58800 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390087AbfJPIl7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 04:41:45 -0400
-Received: by mail-lf1-f67.google.com with SMTP id w6so16754207lfl.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 01:41:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=P5rCHjs55GhS0d4QwWMR+IRXm4cU7A5acMAqOom+agM=;
-        b=cmxLnnlv3X8JzjYTOrMqk+TrttOUQO+7Ws5eEWIRsEywSi1lz7WA6MOWF2jvS2WjdU
-         kNnUvK2cVJU0uIxO8GhtsUwz7YRYCcSD4sc5HojMnTJHNi7TV/4LE0IDtg48eW6tv4EZ
-         yp0HfIdJ3n5GCBA/L3alVcWo6V6kJ0OkrWiyeEiCV+GqXCr+1HCkWjqYygrdRdst0E/s
-         Jw0IuQIhHHnjpLvdhnWnk2MEqsxtjlmE0E7FyNcMmIeJWuHqQMjPcMkbaaQ1Yx6fRUuw
-         p5rWDLQWh+mWjmnGrmjPilU4K8yetyUqCqxz6D/6lCKowZu9tOEzyy1oZ17LVeq65OFv
-         NAmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P5rCHjs55GhS0d4QwWMR+IRXm4cU7A5acMAqOom+agM=;
-        b=h66bY2AT6iJ/sA3qQgZw9GitHpxp5iA7lroZFfYtb01yk4DE7DuIGpRS6C7Xalt5mJ
-         4MvDrez9E3f+eU16y0vM8+4qSmEg53rzLkB2druxuaoegMekdupmu53YTDUzF0MNJsan
-         qijtujSBW1UVV9IWMhOgVUWlaaTckP64HKPOXIg2TZevyrb5JoLgoM0CM4QoR617X+Y8
-         PDyOZC0q5+HdsGYE+YIRflQQpfTA9XeQNfAGnjGuQKy/wCI+o8wbDfPAs/lPU91Nfl2+
-         GdNXX6wN91h9Uxf2y00KLGXsCAjv5ktOA176jxgSZmU1KDnoMyWVQWuC7KjXDBN1jQCa
-         S6Lw==
-X-Gm-Message-State: APjAAAXzRP2vwTfoWcdpbkHAPTbbHSBxw8MMvYFcjm5gjPNPsUC4CgG3
-        8WSzVEgfti1GvWQeni74AEKd0lM8kebdrQlRVAY=
-X-Google-Smtp-Source: APXvYqwMqRyrV6KURGxOk+nK8zfx8iulHbs2fxXoCl2l6ahgWaJLEk4ZRRTnkB348AtFsLAoa2OCoYz7BbpqTULv2UM=
-X-Received: by 2002:ac2:5610:: with SMTP id v16mr23568149lfd.93.1571215303287;
- Wed, 16 Oct 2019 01:41:43 -0700 (PDT)
+        Wed, 16 Oct 2019 04:41:59 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9G8fQnT054935;
+        Wed, 16 Oct 2019 03:41:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1571215286;
+        bh=aSRpuLVp5PoC9Dq+98yBbK/K+q52Oq+i7oGbPusjzIs=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=IupuLxn5B/Ry75qSBUOS3YhHXhxCLYq3BDscxUdS3jqm0CZCiVGKerYAz8fpodgG8
+         3y3O6VcA4ZrtQJ5yTDsOoYyaSA3wCSscjPy+QcMqaRSp7EV1xegxyWgLmvXGYMF/IZ
+         kSa/0XSjoUbWrxXzW+jHaIzsbKzJVVHSAAz/vnqg=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9G8fQ1e101268;
+        Wed, 16 Oct 2019 03:41:26 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 16
+ Oct 2019 03:41:25 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 16 Oct 2019 03:41:19 -0500
+Received: from [172.24.145.136] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9G8fLCx117756;
+        Wed, 16 Oct 2019 03:41:22 -0500
+Subject: Re: [PATCH] Fix reading support of the 1-4-4-DTR read-mode from the
+ wrong bit of the SFDP table which is part of the linux-imx fork located in
+ the following repo:
+ https://source.codeaurora.org/external/imx/linux-imx/?h=imx_4.14.98_2.1.0
+To:     Christoph Fink <christoph.fink@omicron-lab.com>
+CC:     Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Richard Weinberger <richard@nod.at>,
+        Christoph Fink <fink.christoph@gmail.com>,
+        Huang Shijie <shijie8@gmail.com>,
+        <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        <linux-mtd@lists.infradead.org>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Han Xu <han.xu@nxp.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+References: <1568184843-11300-1-git-send-email-christoph.fink@omicron-lab.com>
+From:   Vignesh Raghavendra <vigneshr@ti.com>
+Message-ID: <2c950e5b-bf77-b2a8-d7ee-6c669948b68f@ti.com>
+Date:   Wed, 16 Oct 2019 14:11:51 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191016070740.121435-1-codekipper@gmail.com> <20191016070740.121435-2-codekipper@gmail.com>
- <20191016080420.4cbxn2hdt3wwtrhl@gilmour>
-In-Reply-To: <20191016080420.4cbxn2hdt3wwtrhl@gilmour>
-From:   Code Kipper <codekipper@gmail.com>
-Date:   Wed, 16 Oct 2019 10:41:31 +0200
-Message-ID: <CAEKpxBmNCA4U8-X8iSwOxBZ7T3dp6352S2Kfxc6f5E4N671zvg@mail.gmail.com>
-Subject: Re: [PATCH v6 1/7] ASoC: sun4i-i2s: Move channel select offset
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        "Andrea Venturi (pers)" <be17068@iperbole.bo.it>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1568184843-11300-1-git-send-email-christoph.fink@omicron-lab.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 16 Oct 2019 at 10:04, Maxime Ripard <mripard@kernel.org> wrote:
->
-> On Wed, Oct 16, 2019 at 09:07:34AM +0200, codekipper@gmail.com wrote:
-> > From: Marcus Cooper <codekipper@gmail.com>
-> >
-> > On the newer SoCs the offset is used to set the mode of the
-> > connection. As it is to be used elsewhere then it makes sense
-> > to move it to the main structure.
->
-> Elsewhere where, and to do what?
-Thanks...How does this sound?
 
-As it is to be used to set the same offset for each TX data channel in use
-during multi-channel audio then let's move it to the main structure.
 
-BR,
-CK
->
-> Maxime
+On 11/09/19 12:24 PM, Christoph Fink wrote:
+> From: Christoph Fink <fink.christoph@gmail.com>
+> 
+
+This patch is not against mainline kernel. There is no support for DTR
+mode in kernel yet. Below hunk is not even present in the spi-nor.c.
+
+For future submissions:
+Subject line should be one line summary of the patch starting with
+prefix "mtd: spi-nor:" (hint: run git log on file to know the format)
+and commit message should have detailed description of the patch
+
+Regards
+Vignesh
+
+
+> Signed-off-by: Christoph Fink <fink.christoph@gmail.com>
+> ---
+>  drivers/mtd/spi-nor/spi-nor.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+> index 8cc4b04..7fd52fa 100644
+> --- a/drivers/mtd/spi-nor/spi-nor.c
+> +++ b/drivers/mtd/spi-nor/spi-nor.c
+> @@ -2089,7 +2089,7 @@ static const struct sfdp_bfpt_read sfdp_bfpt_reads[] = {
+>  	/* Fast Read 1-4-4-DTR */
+>  	{
+>  		SNOR_HWCAPS_READ_1_4_4_DTR,
+> -		BFPT_DWORD(1), BIT(21),	/* Supported bit */
+> +		BFPT_DWORD(1), BIT(19),	/* Supported bit */
+>  		BFPT_DWORD(3), 0,	/* Settings */
+>  		SNOR_PROTO_1_4_4_DTR,
+>  	},
+> 
+
+-- 
+Regards
+Vignesh
