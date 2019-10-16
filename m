@@ -2,114 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97F51D8E2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 12:41:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF713D8E34
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 12:43:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392439AbfJPKlv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 06:41:51 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42902 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727635AbfJPKlv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 06:41:51 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2404400AbfJPKnJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 06:43:09 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36050 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389345AbfJPKnJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 06:43:09 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 7630160540; Wed, 16 Oct 2019 10:43:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1571222588;
+        bh=Gnx0VU9W9M2MKA7f69n4Pw5dV4fGPZ3KgNoNOQDCD8s=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=QGoMybTg6SSF1woDJvQLNmzZLLWK/T77+4ZJ3251sxIIyTnZBAvJcC8fXOA0uY1C3
+         sttPgwqIUWLbkqsTMCvt3B+ZZ04mhVqVZulCo8Q4x/m9vXth/71Ipg9OQPqCZTzWGG
+         7A04pNk5chTOjLDw4p70tdG5aeSgKlrUq/TFDoSg=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from [192.168.0.104] (unknown [183.83.146.112])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DA23F81F0D;
-        Wed, 16 Oct 2019 10:41:50 +0000 (UTC)
-Received: from [10.36.117.237] (ovpn-117-237.ams2.redhat.com [10.36.117.237])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DE82C5C1D8;
-        Wed, 16 Oct 2019 10:41:44 +0000 (UTC)
-Subject: Re: [PATCH] mm/page_alloc: Make alloc_gigantic_page() available for
- general use
-To:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, Mike Kravetz <mike.kravetz@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Matthew Wilcox <willy@infradead.org>,
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 218BF602C8;
+        Wed, 16 Oct 2019 10:43:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1571222588;
+        bh=Gnx0VU9W9M2MKA7f69n4Pw5dV4fGPZ3KgNoNOQDCD8s=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=QGoMybTg6SSF1woDJvQLNmzZLLWK/T77+4ZJ3251sxIIyTnZBAvJcC8fXOA0uY1C3
+         sttPgwqIUWLbkqsTMCvt3B+ZZ04mhVqVZulCo8Q4x/m9vXth/71Ipg9OQPqCZTzWGG
+         7A04pNk5chTOjLDw4p70tdG5aeSgKlrUq/TFDoSg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 218BF602C8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH 2/2] arm64: dts: sc7180: Add minimal dts/dtsi files for
+ SC7180 soc
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>, agross@kernel.org,
+        robh+dt@kernel.org, bjorn.andersson@linaro.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <1571211293-29974-1-git-send-email-anshuman.khandual@arm.com>
- <20191016085839.GP317@dhcp22.suse.cz>
- <c344224c-e8ae-ccea-911b-2d08f257b6f4@arm.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <77d835fd-91e7-4405-d252-26f565b0f1a1@redhat.com>
-Date:   Wed, 16 Oct 2019 12:41:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+References: <20191015103358.17550-1-rnayak@codeaurora.org>
+ <20191015103358.17550-2-rnayak@codeaurora.org>
+ <20191016052535.GC2654@vkoul-mobl>
+ <89225569-1cd3-ae0e-94ed-bbb2b3dd8e9c@codeaurora.org>
+ <20191016082432.GL2654@vkoul-mobl>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <79b24548-dc69-b09d-55d2-6a370446abdf@codeaurora.org>
+Date:   Wed, 16 Oct 2019 16:13:01 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <c344224c-e8ae-ccea-911b-2d08f257b6f4@arm.com>
+In-Reply-To: <20191016082432.GL2654@vkoul-mobl>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 16 Oct 2019 10:41:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16.10.19 12:28, Anshuman Khandual wrote:
-> 
-> 
-> On 10/16/2019 02:28 PM, Michal Hocko wrote:
->> On Wed 16-10-19 13:04:53, Anshuman Khandual wrote:
->>> HugeTLB helper alloc_gigantic_page() implements fairly generic allocation
->>> method where it scans over various zones looking for a large contiguous pfn
->>> range before trying to allocate it with alloc_contig_range(). Other than
->>> deriving the requested order from 'struct hstate', there is nothing HugeTLB
->>> specific in there. This can be made available for general use to allocate
->>> contiguous memory which could not have been allocated through the buddy
->>> allocator.
+
+>>>> +		xo_board: xo-board {
+>>>> +			compatible = "fixed-clock";
+>>>> +			clock-frequency = <38400000>;
+>>>> +			clock-output-names = "xo_board";
+>>>> +			#clock-cells = <0>;
+>>>> +		};
+>>>> +
+>>>> +		sleep_clk: sleep-clk {
+>>>> +			compatible = "fixed-clock";
+>>>> +			clock-frequency = <32764>;
+>>>> +			clock-output-names = "sleep_clk";
+>>>> +			#clock-cells = <0>;
+>>>> +		};
+>>>> +
+>>>> +		bi_tcxo: bi_tcxo {
 >>>
->>> alloc_gigantic_page() has been split carving out actual allocation method
->>> which is then made available via new alloc_contig_pages() helper wrapped
->>> under CONFIG_CONTIG_ALLOC. All references to 'gigantic' have been replaced
->>> with more generic term 'contig'. Allocated pages here should be freed with
->>> free_contig_range() or by calling __free_page() on each allocated page.
+>>> why is this a clock defined here? Isnt this gcc clock?
 >>
->> Do we want to export this to modules? Apart from mostly styling issues
->> pointed by David this looks fine.
->>
->> I do agree that a general allocator api belongs to page_alloc.c rather
->> than force people to invent their own and broken instances.
->>   
->>> Cc: Mike Kravetz <mike.kravetz@oracle.com>
->>> Cc: Andrew Morton <akpm@linux-foundation.org>
->>> Cc: Vlastimil Babka <vbabka@suse.cz>
->>> Cc: Michal Hocko <mhocko@suse.com>
->>> Cc: David Rientjes <rientjes@google.com>
->>> Cc: Andrea Arcangeli <aarcange@redhat.com>
->>> Cc: Oscar Salvador <osalvador@suse.de>
->>> Cc: Mel Gorman <mgorman@techsingularity.net>
->>> Cc: Mike Rapoport <rppt@linux.ibm.com>
->>> Cc: Dan Williams <dan.j.williams@intel.com>
->>> Cc: Pavel Tatashin <pavel.tatashin@microsoft.com>
->>> Cc: Matthew Wilcox <willy@infradead.org>
->>> Cc: David Hildenbrand <david@redhat.com>
->>> Cc: linux-kernel@vger.kernel.org
->>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->>
->> After other issues mentioned by David get resolved you can add
+>> This is a RPMH-controlled clock and not from GCC. It is the parent clock for
+>> GCC RCGs/PLLs.
 > 
-> Just to confirm. Only the styling issues, right ? pfn_range_valid_contig(),
-> pfn alignment and zone scanning all remain the same like before ?
+> Yes right!
+> 
+>> Once the RPMH clock support is added these would be removed.
+> 
+> Wont it make sense to keep this bit not upstream and then remove that
+> part when you have rpmh support available. Reduces the churn upstream!
+> 
+> The parent can be xo_board till then!
 > 
 
-Fine with me. Please do think about the alignment thingy. (I suggest to 
-just enforce an alignment to a power of two for now (and return NULL if 
-not a power of two), we can always relax that when needed - and then 
-think about a better search for !power of two)
+The xo_board is 38.4MHz and bi_tcxo (xo/2), which needs to be updated 
+anyways :).
 
 -- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
-Thanks,
-
-David / dhildenb
+--
