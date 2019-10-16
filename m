@@ -2,139 +2,224 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B98D4D8BE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:56:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6947CD8BEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:58:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389753AbfJPI4U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 04:56:20 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41930 "EHLO mx1.redhat.com"
+        id S2388426AbfJPI6B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 04:58:01 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56666 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726968AbfJPI4U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 04:56:20 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        id S1730468AbfJPI6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 04:58:00 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BAEEE59455;
-        Wed, 16 Oct 2019 08:56:19 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 242D118C4282;
+        Wed, 16 Oct 2019 08:58:00 +0000 (UTC)
 Received: from [10.36.117.237] (ovpn-117-237.ams2.redhat.com [10.36.117.237])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D38835C207;
-        Wed, 16 Oct 2019 08:56:16 +0000 (UTC)
-Subject: Re: [PATCH] mm/page_alloc: Make alloc_gigantic_page() available for
- general use
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B0C3819C68;
+        Wed, 16 Oct 2019 08:57:58 +0000 (UTC)
+Subject: Re: [PATCH] mm, soft-offline: convert parameter to pfn
+To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Michal Hocko <mhocko@kernel.org>,
         Oscar Salvador <osalvador@suse.de>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-kernel@vger.kernel.org
-References: <1571211293-29974-1-git-send-email-anshuman.khandual@arm.com>
- <c7ac9f99-a34f-c553-b216-b847d093cae9@redhat.com>
- <20191016085123.GO317@dhcp22.suse.cz>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20191016070924.GA10178@hori.linux.bs1.fc.nec.co.jp>
+ <e931b14b-da27-2720-5344-b5c0b08b38ad@redhat.com>
+ <20191016082735.GB13770@hori.linux.bs1.fc.nec.co.jp>
+ <c78962ba-ffa1-90e2-0116-6c94d082de2f@redhat.com>
+ <20191016085359.GD13770@hori.linux.bs1.fc.nec.co.jp>
 From:   David Hildenbrand <david@redhat.com>
 Organization: Red Hat GmbH
-Message-ID: <679b5c66-8f1b-ec4d-64dd-13fbc440917d@redhat.com>
-Date:   Wed, 16 Oct 2019 10:56:16 +0200
+Message-ID: <997b5b51-db71-3e27-1f84-cbaa24fa66c7@redhat.com>
+Date:   Wed, 16 Oct 2019 10:57:57 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.1.0
 MIME-Version: 1.0
-In-Reply-To: <20191016085123.GO317@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20191016085359.GD13770@hori.linux.bs1.fc.nec.co.jp>
+Content-Type: text/plain; charset=iso-2022-jp; format=flowed; delsp=yes
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 16 Oct 2019 08:56:19 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.62]); Wed, 16 Oct 2019 08:58:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16.10.19 10:51, Michal Hocko wrote:
-> On Wed 16-10-19 10:08:21, David Hildenbrand wrote:
->> On 16.10.19 09:34, Anshuman Khandual wrote:
-> [...]
->>> +static bool pfn_range_valid_contig(struct zone *z, unsigned long start_pfn,
->>> +				   unsigned long nr_pages)
->>> +{
->>> +	unsigned long i, end_pfn = start_pfn + nr_pages;
->>> +	struct page *page;
->>> +
->>> +	for (i = start_pfn; i < end_pfn; i++) {
->>> +		page = pfn_to_online_page(i);
->>> +		if (!page)
->>> +			return false;
->>> +
->>> +		if (page_zone(page) != z)
->>> +			return false;
->>> +
->>> +		if (PageReserved(page))
->>> +			return false;
->>> +
->>> +		if (page_count(page) > 0)
->>> +			return false;
->>> +
->>> +		if (PageHuge(page))
->>> +			return false;
->>> +	}
+On 16.10.19 10:54, Naoya Horiguchi wrote:
+> On Wed, Oct 16, 2019 at 10:34:52AM +0200, David Hildenbrand wrote:
+>> On 16.10.19 10:27, Naoya Horiguchi wrote:
+>>> On Wed, Oct 16, 2019 at 09:56:19AM +0200, David Hildenbrand wrote:
+>>>> On 16.10.19 09:09, Naoya Horiguchi wrote:
+>>>>> Hi,
+>>>>>
+>>>>> I wrote a simple cleanup for parameter of soft_offline_page(),
+>>>>> based on thread https://lkml.org/lkml/2019/10/11/57.
+>>>>>
+>>>>> I know that we need more cleanup on hwpoison-inject, but I think
+>>>>> that will be mentioned in re-write patchset Oscar is preparing now.
+>>>>> So let me shared only this part as a separate one now.
+>>> ...
+>>>>
+>>>> I think you should rebase that patch on linux-next (where the
+>>>> pfn_to_online_page() check is in place). I assume you'll want to move the
+>>>> pfn_to_online_page() check into soft_offline_page() then as well?
+>>>
+>>> I rebased to next-20191016. And yes, we will move pfn_to_online_page()
+>>> into soft offline code.  It seems that we can also move pfn_valid(),
+>>> but is simply moving like below good enough for you?
 >>
->> We might still try to allocate a lot of ranges that contain unmovable data
->> (we could avoid isolating a lot of page blocks in the first place). I'd love
->> to see something like pfn_range_movable() (similar, but different to
->> is_mem_section_removable(), which uses has_unmovable_pages()).
-> 
-> Just to make sure I understand. Do you want has_unmovable_pages to be
-> called inside pfn_range_valid_contig?
+>> At least I can't am the patch to current next/master (due to
+>> pfn_to_online_page()).
 
-I think this requires more thought, as has_unmovable_pages() works on 
-pageblocks only AFAIK. If you try to allocate < MAX_ORDER - 1, you could 
-get a lot of false positives.
+Could also be that my "git am" skills failed as the mail was not a  
+proper patch itself :)
 
-E.g., if a free "MAX_ORDER - 1" page spans two pageblocks and you only 
-test the second pageblock, you might detect "unmovable" if not taking 
-proper care of the "bigger" free page. (alloc_contig_range() properly 
-works around that issue)
-
-
-> [...]
->>> +struct page *alloc_contig_pages(unsigned long nr_pages, gfp_t gfp_mask,
->>> +				int nid, nodemask_t *nodemask)
->>> +{
->>> +	unsigned long ret, pfn, flags;
->>> +	struct zonelist *zonelist;
->>> +	struct zone *zone;
->>> +	struct zoneref *z;
->>> +
->>> +	zonelist = node_zonelist(nid, gfp_mask);
->>> +	for_each_zone_zonelist_nodemask(zone, z, zonelist,
->>> +					gfp_zone(gfp_mask), nodemask) {
 >>
->> One important part is to never use the MOVABLE zone here (otherwise
->> unmovable data would end up on the movable zone). But I guess the caller is
->> responsible for that (not pass GFP_MOVABLE) like gigantic pages do.
-> 
-> Well, if the caller uses GFP_MOVABLE then the movability should be
-> implemented in some form. If that is not the case then it is a bug on
-> the caller behalf.
-> 
->>> +		spin_lock_irqsave(&zone->lock, flags);
->>> +
->>> +		pfn = ALIGN(zone->zone_start_pfn, nr_pages);
+>>>
+>>>     @@ -1877,11 +1877,17 @@ static int soft_offline_free_page(struct page *page)
+>>>       * This is not a 100% solution for all memory, but tries to be
+>>>       * ``good enough'' for the majority of memory.
+>>>       */
+>>>     -int soft_offline_page(struct page *page, int flags)
+>>>     +int soft_offline_page(unsigned long pfn, int flags)
+>>>      {
+>>>      	int ret;
+>>>     -	unsigned long pfn = page_to_pfn(page);
+>>>     +	struct page *page;
+>>>     +	if (!pfn_valid(pfn))
+>>>     +		return -ENXIO;
+>>>     +	/* Only online pages can be soft-offlined (esp., not ZONE_DEVICE). */
+>>>     +	if (!pfn_to_online_page(pfn))
+>>>     +		return -EIO;
+>>>     +	page = pfn_to_page(pfn);
+>>>      	if (is_zone_device_page(page)) {
+>>>      		pr_debug_ratelimited("soft_offline: %#lx page is device page\n",
+>>>      				pfn);
+>>>     --
+>>>
+>>> Or we might have an option to do as memory_failure() does like below:
 >>
->> This alignment does not make too much sense when allowing passing in !power
->> of two orders. Maybe the caller should specify the requested alignment
->> instead? Or should we enforce this to be aligned to make our life easier for
->> now?
+>> In contrast to soft offlining, memory failure can deal with devmem. So I
+>> think the above makes sense.
 > 
-> Are there any usecases that would require than the page alignment?
+> OK, so here's the revised one.
+> 
+> Thanks,
+> Naoya Horiguchi
+> ---
+> From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> Date: Wed, 16 Oct 2019 17:00:33 +0900
+> Subject: [PATCH] mm, soft-offline: convert parameter to pfn
+> 
+> Currently soft_offline_page() receives struct page, and its sibling
+> memory_failure() receives pfn. This discrepancy looks weird and makes
+> precheck on pfn validity tricky. So let's align them.
+> 
+> Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> ---
+>   drivers/base/memory.c |  7 +------
+>   include/linux/mm.h    |  2 +-
+>   mm/madvise.c          |  2 +-
+>   mm/memory-failure.c   | 14 ++++++++++----
+>   4 files changed, 13 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+> index 55907c27075b..a757d9ed88a7 100644
+> --- a/drivers/base/memory.c
+> +++ b/drivers/base/memory.c
+> @@ -538,12 +538,7 @@ static ssize_t soft_offline_page_store(struct device *dev,
+>   	if (kstrtoull(buf, 0, &pfn) < 0)
+>   		return -EINVAL;
+>   	pfn >>= PAGE_SHIFT;
+> -	if (!pfn_valid(pfn))
+> -		return -ENXIO;
+> -	/* Only online pages can be soft-offlined (esp., not ZONE_DEVICE). */
+> -	if (!pfn_to_online_page(pfn))
+> -		return -EIO;
+> -	ret = soft_offline_page(pfn_to_page(pfn), 0);
+> +	ret = soft_offline_page(pfn, 0);
+>   	return ret == 0 ? count : ret;
+>   }
+>   
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 44d058723db9..fd360d208346 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2794,7 +2794,7 @@ extern int sysctl_memory_failure_early_kill;
+>   extern int sysctl_memory_failure_recovery;
+>   extern void shake_page(struct page *p, int access);
+>   extern atomic_long_t num_poisoned_pages __read_mostly;
+> -extern int soft_offline_page(struct page *page, int flags);
+> +extern int soft_offline_page(unsigned long pfn, int flags);
+>   
+>   
+>   /*
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index 2be9f3fdb05e..99dd06fecfa9 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -887,7 +887,7 @@ static int madvise_inject_error(int behavior,
+>   			pr_info("Soft offlining pfn %#lx at process virtual address %#lx\n",
+>   					pfn, start);
+>   
+> -			ret = soft_offline_page(page, MF_COUNT_INCREASED);
+> +			ret = soft_offline_page(pfn, MF_COUNT_INCREASED);
+>   			if (ret)
+>   				return ret;
+>   			continue;
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index 05c8c6df25e6..bdf408d7f65c 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -1476,7 +1476,7 @@ static void memory_failure_work_func(struct work_struct *work)
+>   		if (!gotten)
+>   			break;
+>   		if (entry.flags & MF_SOFT_OFFLINE)
+> -			soft_offline_page(pfn_to_page(entry.pfn), entry.flags);
+> +			soft_offline_page(entry.pfn, entry.flags);
+>   		else
+>   			memory_failure(entry.pfn, entry.flags);
+>   	}
+> @@ -1857,7 +1857,7 @@ static int soft_offline_free_page(struct page *page)
+>   
+>   /**
+>    * soft_offline_page - Soft offline a page.
+> - * @page: page to offline
+> + * @pfn: pfn to soft-offline
+>    * @flags: flags. Same as memory_failure().
+>    *
+>    * Returns 0 on success, otherwise negated errno.
+> @@ -1877,11 +1877,17 @@ static int soft_offline_free_page(struct page *page)
+>    * This is not a 100% solution for all memory, but tries to be
+>    * ``good enough'' for the majority of memory.
+>    */
+> -int soft_offline_page(struct page *page, int flags)
+> +int soft_offline_page(unsigned long pfn, int flags)
+>   {
+>   	int ret;
+> -	unsigned long pfn = page_to_pfn(page);
+> +	struct page *page;
+>   
+> +	if (!pfn_valid(pfn))
+> +		return -ENXIO;
+> +	/* Only online pages can be soft-offlined (esp., not ZONE_DEVICE). */
+> +	page = pfn_to_online_page(pfn);
+> +	if (!page)
+> +		return -EIO;
+>   	if (is_zone_device_page(page)) {
 
-Gigantic pages have to be aligned AFAIK.
+-> this is now no longer possible! So you can drop the whole if  
+(is_zone_device....) case
+
+>   		pr_debug_ratelimited("soft_offline: %#lx page is device page\n",
+>   				pfn);
+> 
+
+Apart from that, looks good to me.
 
 -- 
 
