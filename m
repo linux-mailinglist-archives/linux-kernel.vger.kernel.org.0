@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E09EDA154
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:27:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6251FD9F66
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407614AbfJPWWH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:22:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42204 "EHLO mail.kernel.org"
+        id S2395156AbfJPVzC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:55:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729185AbfJPVxY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:53:24 -0400
+        id S2395099AbfJPVy4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:54:56 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 651D321A49;
-        Wed, 16 Oct 2019 21:53:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54ACB20872;
+        Wed, 16 Oct 2019 21:54:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262803;
-        bh=ym8G2ZdQbDsO+1BvbPg5YIeTwSU9bt9Wg46NbwfNwBo=;
+        s=default; t=1571262895;
+        bh=85ImHd+iC/uz5AhcNCsQYGkHH6IrmsgFjvEXApBTSiY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ct0MhTd0KW5fKw8gejZaojr0TI80SXIROvUVW/QKT2aysnRtD0KE7WxEVy1bzm4Aq
-         u7VPLzZ+w+NW+pwioqC1eeU37FK2PoNjpM6OnQ4w7jeUKoSSahpjc1HGTVtIGDph8W
-         C9ukt6wQT70M3Jh3Ro0DmI8t4/xBCaY2To+pA+hY=
+        b=KzW7YiOy+XgZFSLcdMXQubH44PIkJDgCkSsOm7shs4sJocwsnIbU/GZRbmmmxaYN1
+         EjW4UnmbdzzAsJTULHmQV6yFNUBrQWtj6GptMbS1lsLXzjkkgpDgU2t+9GLNoheZtb
+         OxbfF2Hd9/V4gUf1C7vT+FHwHJ3/eBcrOrOjkn+Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.4 09/79] crypto: qat - Silence smp_processor_id() warning
-Date:   Wed, 16 Oct 2019 14:49:44 -0700
-Message-Id: <20191016214738.404173114@linuxfoundation.org>
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>
+Subject: [PATCH 4.9 12/92] watchdog: imx2_wdt: fix min() calculation in imx2_wdt_set_timeout
+Date:   Wed, 16 Oct 2019 14:49:45 -0700
+Message-Id: <20191016214808.012529416@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214729.758892904@linuxfoundation.org>
-References: <20191016214729.758892904@linuxfoundation.org>
+In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
+References: <20191016214759.600329427@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,68 +45,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
-commit 1b82feb6c5e1996513d0fb0bbb475417088b4954 upstream.
+commit 144783a80cd2cbc45c6ce17db649140b65f203dd upstream.
 
-It seems that smp_processor_id() is only used for a best-effort
-load-balancing, refer to qat_crypto_get_instance_node(). It's not feasible
-to disable preemption for the duration of the crypto requests. Therefore,
-just silence the warning. This commit is similar to e7a9b05ca4
-("crypto: cavium - Fix smp_processor_id() warnings").
+Converting from ms to s requires dividing by 1000, not multiplying. So
+this is currently taking the smaller of new_timeout and 1.28e8,
+i.e. effectively new_timeout.
 
-Silences the following splat:
-BUG: using smp_processor_id() in preemptible [00000000] code: cryptomgr_test/2904
-caller is qat_alg_ablkcipher_setkey+0x300/0x4a0 [intel_qat]
-CPU: 1 PID: 2904 Comm: cryptomgr_test Tainted: P           O    4.14.69 #1
-...
-Call Trace:
- dump_stack+0x5f/0x86
- check_preemption_disabled+0xd3/0xe0
- qat_alg_ablkcipher_setkey+0x300/0x4a0 [intel_qat]
- skcipher_setkey_ablkcipher+0x2b/0x40
- __test_skcipher+0x1f3/0xb20
- ? cpumask_next_and+0x26/0x40
- ? find_busiest_group+0x10e/0x9d0
- ? preempt_count_add+0x49/0xa0
- ? try_module_get+0x61/0xf0
- ? crypto_mod_get+0x15/0x30
- ? __kmalloc+0x1df/0x1f0
- ? __crypto_alloc_tfm+0x116/0x180
- ? crypto_skcipher_init_tfm+0xa6/0x180
- ? crypto_create_tfm+0x4b/0xf0
- test_skcipher+0x21/0xa0
- alg_test_skcipher+0x3f/0xa0
- alg_test.part.6+0x126/0x2a0
- ? finish_task_switch+0x21b/0x260
- ? __schedule+0x1e9/0x800
- ? __wake_up_common+0x8d/0x140
- cryptomgr_test+0x40/0x50
- kthread+0xff/0x130
- ? cryptomgr_notify+0x540/0x540
- ? kthread_create_on_node+0x70/0x70
- ret_from_fork+0x24/0x50
+The driver knows what it set max_hw_heartbeat_ms to, so use that
+value instead of doing a division at run-time.
 
-Fixes: ed8ccaef52 ("crypto: qat - Add support for SRIOV")
-Cc: stable@vger.kernel.org
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+FWIW, this can easily be tested by booting into a busybox shell and
+doing "watchdog -t 5 -T 130 /dev/watchdog" - without this patch, the
+watchdog fires after 130&127 == 2 seconds.
+
+Fixes: b07e228eee69 "watchdog: imx2_wdt: Fix set_timeout for big timeout values"
+Cc: stable@vger.kernel.org # 5.2 plus anything the above got backported to
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/20190812131356.23039-1-linux@rasmusvillemoes.dk
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/qat/qat_common/adf_common_drv.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/watchdog/imx2_wdt.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/crypto/qat/qat_common/adf_common_drv.h
-+++ b/drivers/crypto/qat/qat_common/adf_common_drv.h
-@@ -95,7 +95,7 @@ struct service_hndl {
+--- a/drivers/watchdog/imx2_wdt.c
++++ b/drivers/watchdog/imx2_wdt.c
+@@ -58,7 +58,7 @@
  
- static inline int get_current_node(void)
+ #define IMX2_WDT_WMCR		0x08		/* Misc Register */
+ 
+-#define IMX2_WDT_MAX_TIME	128
++#define IMX2_WDT_MAX_TIME	128U
+ #define IMX2_WDT_DEFAULT_TIME	60		/* in seconds */
+ 
+ #define WDOG_SEC_TO_COUNT(s)	((s * 2 - 1) << 8)
+@@ -183,7 +183,7 @@ static int imx2_wdt_set_timeout(struct w
  {
--	return topology_physical_package_id(smp_processor_id());
-+	return topology_physical_package_id(raw_smp_processor_id());
- }
+ 	unsigned int actual;
  
- int adf_service_register(struct service_hndl *service);
+-	actual = min(new_timeout, wdog->max_hw_heartbeat_ms * 1000);
++	actual = min(new_timeout, IMX2_WDT_MAX_TIME);
+ 	__imx2_wdt_set_timeout(wdog, actual);
+ 	wdog->timeout = new_timeout;
+ 	return 0;
 
 
