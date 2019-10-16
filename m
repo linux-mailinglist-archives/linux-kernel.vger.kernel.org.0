@@ -2,86 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49694D8DFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 12:34:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0CA7D8E07
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 12:35:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392476AbfJPKet (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 06:34:49 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41398 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392462AbfJPKet (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 06:34:49 -0400
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BD53C81F0D
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 10:34:48 +0000 (UTC)
-Received: by mail-lf1-f71.google.com with SMTP id m16so4660153lfb.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 03:34:48 -0700 (PDT)
+        id S2390425AbfJPKfk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 06:35:40 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:36198 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728851AbfJPKfk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 06:35:40 -0400
+Received: by mail-lf1-f67.google.com with SMTP id u16so4443235lfq.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 03:35:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TPx7rPA0Br+et5o6KmRStGO/myFB8ZhOgy82/e79ydg=;
+        b=jw4mP6UxdbKOn1Ax/5Lz6J3Yf5tVdATs7EvlFAJS+GhYi7/834ey8w/GvLQpLeZVc7
+         7Mb3IXhbnQSlm+QXZ3MZ+nckKcixkU87Dmfefg2Z9rz8pDIfZBDL+OES3N1PpeYo6xU8
+         PNyU5vrMcL2T8PAlZ7u7qD0H1U6OF5fCcn7y7a3kIALA9Bqh1plMD2Y9HS6Mm00vbv7v
+         xjKALcfBL8p4Z6xSJDAwiS4oeDHxeJA6eDNAP8saYrTaPW6uq2jHilKFYwB8ptI5KkAz
+         zT8lgn8Vk55SVZ90xAYBKzEcFI76nh/U52ixpe6wlEk/hmGMD2fliIAFd31J/AcanEeZ
+         Jw6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=SgWpfY5Xz4zDxp0MpMcVzJx2JBdy4PlhQXGqbdLqW1c=;
-        b=cVz+kpyM9HHIUfT0r1LHMnzDSlZbmSdCsSTfzHYZG/0E4Oar2DFMd4kDb7rvc6ZC+C
-         XPYvVtOL8qjcGsjQxqQiPTZ3wLtD+vw9ONKRBnZBH+iJtEJ/wbEuv732TXDnQEUk4FJX
-         vliQNX6uIt2RJZDef3LG3CbkyUF8LAgoIatmIRw9RIe+9HP8gnrmT2cHV0QqCcOGhJgZ
-         1c/O4y26oIHnjjq9NErcNC6TpeoBCL/TFyWti1pbSUI3wEBKdXrCGp5ZayqxU2WPgCnk
-         kAeLvEv8cJTW3/kLX/aEvB2D1/5z3W/O5Oga+nycYkQhhLpA9SXS+vEjJZyTdcSadgiN
-         UhhA==
-X-Gm-Message-State: APjAAAWt6FTEXut3JllJ9SnSpbnrFaXXkz7qWcC8hwbJh4ydSgynr9L3
-        7Q2jBbI22OQJwTnR2c5he3u27YJGkEcUkL5kJhTCbBez0oTETbUuA72i+rUM5v16wTEATtqnK2C
-        cGkIGOsqtTAxZWELB731zu4Sb
-X-Received: by 2002:a2e:8908:: with SMTP id d8mr25165972lji.197.1571222087232;
-        Wed, 16 Oct 2019 03:34:47 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqx4XYHDPAfrBOTyCsdEH7wCjKz6XyRUDaC+zt/SS3g8SNH7/oIXHGkUSk//39pfT1paBIYsMQ==
-X-Received: by 2002:a2e:8908:: with SMTP id d8mr25165952lji.197.1571222086968;
-        Wed, 16 Oct 2019 03:34:46 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk (borgediget.toke.dk. [85.204.121.218])
-        by smtp.gmail.com with ESMTPSA id v1sm6234517lfq.89.2019.10.16.03.34.45
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TPx7rPA0Br+et5o6KmRStGO/myFB8ZhOgy82/e79ydg=;
+        b=b1PQs1ThwZ+YzzIozjBSZOrlqHPK8FET/L9Zy46SEdoActuBrtAICOpx6lxbKJlNtw
+         uXEXetjPWSp5KDF2GDKnnXLihCdhGRJY3htzTtFVi3fIk4nDMYfuHQkQfzZiw4PCIYH4
+         uevlI40zNJ0vh8BUnYh39r+hjZ45zC1pSn+iXOv0hmfDoZfHIdHGhjkUiCiS02QBLo8W
+         QLZ+TANTIY9f+tZH3IcXWkfh5fsTTXR7nz8QrfWf3cDUFQ+7rDeY1hAGXY5gpty3iXCu
+         86MzyIAxsVKHAjr2HNQ6FR6BFznsk1r2/+xLAV6kLyO2NnUzGOtXR5uhxt1v1YVEJjG7
+         he7Q==
+X-Gm-Message-State: APjAAAX8Vps8Avx4pXilhzckv2RsnRxDug2krIi6RLdTuI6LXPacSF4+
+        yU4fT9tQo2UiBB4tXwNMv6sCDA==
+X-Google-Smtp-Source: APXvYqwEBdxAChMVVBFlmc6eUXtVvNheuH3e0SluP3ca6bXyqt8wHnILm5brTVtYux5zecvFFwwvVw==
+X-Received: by 2002:ac2:5dc2:: with SMTP id x2mr24763989lfq.38.1571222137941;
+        Wed, 16 Oct 2019 03:35:37 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id k7sm5791404lja.19.2019.10.16.03.35.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2019 03:34:45 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-        id 174401800F4; Wed, 16 Oct 2019 12:34:45 +0200 (CEST)
-From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Jesper Dangaard Brouer <brouer@redhat.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        syzbot <syzbot+30209ea299c09d8785c9@syzkaller.appspotmail.com>,
-        ddstreet@ieee.org, Dmitry Vyukov <dvyukov@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        bpf <bpf@vger.kernel.org>
-Subject: Re: unregister_netdevice: waiting for DEV to become free (2)
-In-Reply-To: <CAADnVQJ7BZMVSt9on4updWrWsFWq6b5J1qEGwTdGYV+BLqH7tg@mail.gmail.com>
-References: <00000000000056268e05737dcb95@google.com> <0000000000007d22100573d66078@google.com> <063a57ba-7723-6513-043e-ee99c5797271@I-love.SAKURA.ne.jp> <CAADnVQJ7BZMVSt9on4updWrWsFWq6b5J1qEGwTdGYV+BLqH7tg@mail.gmail.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date:   Wed, 16 Oct 2019 12:34:45 +0200
-Message-ID: <87imopgere.fsf@toke.dk>
+        Wed, 16 Oct 2019 03:35:37 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id E4B6C101F90; Wed, 16 Oct 2019 13:35:37 +0300 (+03)
+Date:   Wed, 16 Oct 2019 13:35:37 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Will Deacon <will@kernel.org>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nick Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm@kvack.org, linux-snps-arc@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] asm-generic/mm: stub out p{4,d}d_clear_bad() if
+ __PAGETABLE_P{4,u}D_FOLDED
+Message-ID: <20191016103537.oeanj7nh7u7yhk7l@box>
+References: <20191015191926.9281-1-vgupta@synopsys.com>
+ <20191015191926.9281-6-vgupta@synopsys.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191015191926.9281-6-vgupta@synopsys.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+There is couple of typos in the subject of the patch. It has to be
 
-> On Fri, Oct 11, 2019 at 3:15 AM Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
->>
->> Hello.
->>
->> I noticed that syzbot is reporting that refcount incremented by bpf(BPF_MAP_UPDATE_ELEM)
->> syscall is not decremented when unregister_netdevice() is called. Is this a BPF bug?
->
-> Jesper, Toke,
-> please take a look.
+	[PATCH v2 5/5] asm-generic/mm: stub out p{4,u}d_clear_bad() if __PAGETABLE_P{4,U}D_FOLDED
 
-Yeah, that unregister notification handler definitely looks broken for
-hashmaps; I'll send a patch :)
+Otherwise the patchset looks good to me. You can use my ACK for all
+patches.
 
--Toke
+-- 
+ Kirill A. Shutemov
