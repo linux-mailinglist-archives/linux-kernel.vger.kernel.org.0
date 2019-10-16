@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72B19D9DF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98B5FD9E0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437746AbfJPVzQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:55:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45534 "EHLO mail.kernel.org"
+        id S2437907AbfJPV4G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:56:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395195AbfJPVzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:55:09 -0400
+        id S2391243AbfJPV4B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:56:01 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD0AA21925;
-        Wed, 16 Oct 2019 21:55:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A2FD20872;
+        Wed, 16 Oct 2019 21:56:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262909;
-        bh=0rVRR0CbBTVHtEv8LVBhHuawCNnGDu3ml+NkzVi1Ro8=;
+        s=default; t=1571262960;
+        bh=GMroOM9PZh/Tl08PvLxoGXQdPtPlBJPYr00HtvM5kgg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q2xPGQv73SIIzVQYJt3D633IaF95NDj5yrFMqOQLpGZThZySHS+h4RTQf/iC/cD9M
-         I0XTd4cfLc6sYSx1gccqQjGirN5vJReXy2p4xPLJSfNnGK6TkXx1aZ8ksKOHUrKP25
-         1ZWqapCw28JAdg49WaC+DhDPO2ivK3TzsG3wUhRg=
+        b=2ReIyePhwfaTd8YmywyL4H3HDmr1e11clYdkz6EjTFE/Ce45TmoTKGTJgTVIL7Lsh
+         xjAT6roqRfJ2kxxNZNT9bFnJasjc0gk/KYclJE/Y69WPEmC8zSmOfERV5QmsIMxH1J
+         O7zFCywPfz7VZ94soT19ZrM+YTvvqnPdbVscr9Do=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+f9549f5ee8a5416f0b95@syzkaller.appspotmail.com,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.9 69/92] USB: legousbtower: fix deadlock on disconnect
-Date:   Wed, 16 Oct 2019 14:50:42 -0700
-Message-Id: <20191016214843.701774402@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.14 29/65] USB: usblcd: fix I/O after disconnect
+Date:   Wed, 16 Oct 2019 14:50:43 -0700
+Message-Id: <20191016214824.139956965@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
-References: <20191016214759.600329427@linuxfoundation.org>
+In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
+References: <20191016214756.457746573@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,123 +44,126 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Johan Hovold <johan@kernel.org>
 
-commit 33a7813219f208f4952ece60ee255fd983272dec upstream.
+commit eb7f5a490c5edfe8126f64bc58b9ba2edef0a425 upstream.
 
-Fix a potential deadlock if disconnect races with open.
+Make sure to stop all I/O on disconnect by adding a disconnected flag
+which is used to prevent new I/O from being started and by stopping all
+ongoing I/O before returning.
 
-Since commit d4ead16f50f9 ("USB: prevent char device open/deregister
-race") core holds an rw-semaphore while open is called and when
-releasing the minor number during deregistration. This can lead to an
-ABBA deadlock if a driver takes a lock in open which it also holds
-during deregistration.
+This also fixes a potential use-after-free on driver unbind in case the
+driver data is freed before the completion handler has run.
 
-This effectively reverts commit 78663ecc344b ("USB: disconnect open race
-in legousbtower") which needlessly introduced this issue after a generic
-fix for this race had been added to core by commit d4ead16f50f9 ("USB:
-prevent char device open/deregister race").
-
-Fixes: 78663ecc344b ("USB: disconnect open race in legousbtower")
-Cc: stable <stable@vger.kernel.org>	# 2.6.24
-Reported-by: syzbot+f9549f5ee8a5416f0b95@syzkaller.appspotmail.com
-Tested-by: syzbot+f9549f5ee8a5416f0b95@syzkaller.appspotmail.com
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable <stable@vger.kernel.org>	# 7bbe990c989e
 Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20190919083039.30898-3-johan@kernel.org
+Link: https://lore.kernel.org/r/20190926091228.24634-7-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/legousbtower.c |   19 ++-----------------
- 1 file changed, 2 insertions(+), 17 deletions(-)
+ drivers/usb/misc/usblcd.c |   33 +++++++++++++++++++++++++++++++--
+ 1 file changed, 31 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/misc/legousbtower.c
-+++ b/drivers/usb/misc/legousbtower.c
-@@ -185,7 +185,6 @@ static const struct usb_device_id tower_
+--- a/drivers/usb/misc/usblcd.c
++++ b/drivers/usb/misc/usblcd.c
+@@ -17,6 +17,7 @@
+ #include <linux/slab.h>
+ #include <linux/errno.h>
+ #include <linux/mutex.h>
++#include <linux/rwsem.h>
+ #include <linux/uaccess.h>
+ #include <linux/usb.h>
+ 
+@@ -56,6 +57,8 @@ struct usb_lcd {
+ 							   using up all RAM */
+ 	struct usb_anchor	submitted;		/* URBs to wait for
+ 							   before suspend */
++	struct rw_semaphore	io_rwsem;
++	unsigned long		disconnected:1;
  };
+ #define to_lcd_dev(d) container_of(d, struct usb_lcd, kref)
  
- MODULE_DEVICE_TABLE (usb, tower_table);
--static DEFINE_MUTEX(open_disc_mutex);
+@@ -141,6 +144,13 @@ static ssize_t lcd_read(struct file *fil
  
- #define LEGO_USB_TOWER_MINOR_BASE	160
+ 	dev = file->private_data;
  
-@@ -338,18 +337,14 @@ static int tower_open (struct inode *ino
- 		goto exit;
++	down_read(&dev->io_rwsem);
++
++	if (dev->disconnected) {
++		retval = -ENODEV;
++		goto out_up_io;
++	}
++
+ 	/* do a blocking bulk read to get data from the device */
+ 	retval = usb_bulk_msg(dev->udev,
+ 			      usb_rcvbulkpipe(dev->udev,
+@@ -157,6 +167,9 @@ static ssize_t lcd_read(struct file *fil
+ 			retval = bytes_read;
  	}
  
--	mutex_lock(&open_disc_mutex);
- 	dev = usb_get_intfdata(interface);
--
- 	if (!dev) {
--		mutex_unlock(&open_disc_mutex);
- 		retval = -ENODEV;
- 		goto exit;
- 	}
- 
- 	/* lock this device */
- 	if (mutex_lock_interruptible(&dev->lock)) {
--		mutex_unlock(&open_disc_mutex);
- 	        retval = -ERESTARTSYS;
- 		goto exit;
- 	}
-@@ -357,12 +352,10 @@ static int tower_open (struct inode *ino
- 
- 	/* allow opening only once */
- 	if (dev->open_count) {
--		mutex_unlock(&open_disc_mutex);
- 		retval = -EBUSY;
- 		goto unlock_exit;
- 	}
- 	dev->open_count = 1;
--	mutex_unlock(&open_disc_mutex);
- 
- 	/* reset the tower */
- 	result = usb_control_msg (dev->udev,
-@@ -429,10 +422,9 @@ static int tower_release (struct inode *
- 
- 	if (dev == NULL) {
- 		retval = -ENODEV;
--		goto exit_nolock;
-+		goto exit;
- 	}
- 
--	mutex_lock(&open_disc_mutex);
- 	if (mutex_lock_interruptible(&dev->lock)) {
- 	        retval = -ERESTARTSYS;
- 		goto exit;
-@@ -462,10 +454,7 @@ static int tower_release (struct inode *
- 
- unlock_exit:
- 	mutex_unlock(&dev->lock);
--
- exit:
--	mutex_unlock(&open_disc_mutex);
--exit_nolock:
++out_up_io:
++	up_read(&dev->io_rwsem);
++
  	return retval;
  }
  
-@@ -932,7 +921,6 @@ static int tower_probe (struct usb_inter
- 	if (retval) {
- 		/* something prevented us from registering this driver */
- 		dev_err(idev, "Not able to get a minor for this device.\n");
--		usb_set_intfdata (interface, NULL);
- 		goto error;
+@@ -236,11 +249,18 @@ static ssize_t lcd_write(struct file *fi
+ 	if (r < 0)
+ 		return -EINTR;
+ 
++	down_read(&dev->io_rwsem);
++
++	if (dev->disconnected) {
++		retval = -ENODEV;
++		goto err_up_io;
++	}
++
+ 	/* create a urb, and a buffer for it, and copy the data to the urb */
+ 	urb = usb_alloc_urb(0, GFP_KERNEL);
+ 	if (!urb) {
+ 		retval = -ENOMEM;
+-		goto err_no_buf;
++		goto err_up_io;
  	}
- 	dev->minor = interface->minor;
-@@ -964,16 +952,13 @@ static void tower_disconnect (struct usb
- 	int minor;
  
- 	dev = usb_get_intfdata (interface);
--	mutex_lock(&open_disc_mutex);
--	usb_set_intfdata (interface, NULL);
+ 	buf = usb_alloc_coherent(dev->udev, count, GFP_KERNEL,
+@@ -277,6 +297,7 @@ static ssize_t lcd_write(struct file *fi
+ 	   the USB core will eventually free it entirely */
+ 	usb_free_urb(urb);
  
- 	minor = dev->minor;
++	up_read(&dev->io_rwsem);
+ exit:
+ 	return count;
+ error_unanchor:
+@@ -284,7 +305,8 @@ error_unanchor:
+ error:
+ 	usb_free_coherent(dev->udev, count, buf, urb->transfer_dma);
+ 	usb_free_urb(urb);
+-err_no_buf:
++err_up_io:
++	up_read(&dev->io_rwsem);
+ 	up(&dev->limit_sem);
+ 	return retval;
+ }
+@@ -324,6 +346,7 @@ static int lcd_probe(struct usb_interfac
  
--	/* give back our minor */
-+	/* give back our minor and prevent further open() */
- 	usb_deregister_dev (interface, &tower_class);
+ 	kref_init(&dev->kref);
+ 	sema_init(&dev->limit_sem, USB_LCD_CONCURRENT_WRITES);
++	init_rwsem(&dev->io_rwsem);
+ 	init_usb_anchor(&dev->submitted);
  
- 	mutex_lock(&dev->lock);
--	mutex_unlock(&open_disc_mutex);
+ 	dev->udev = usb_get_dev(interface_to_usbdev(interface));
+@@ -421,6 +444,12 @@ static void lcd_disconnect(struct usb_in
+ 	/* give back our minor */
+ 	usb_deregister_dev(interface, &lcd_class);
  
- 	/* if the device is not opened, then we clean up right now */
- 	if (!dev->open_count) {
++	down_write(&dev->io_rwsem);
++	dev->disconnected = 1;
++	up_write(&dev->io_rwsem);
++
++	usb_kill_anchored_urbs(&dev->submitted);
++
+ 	/* decrement our usage count */
+ 	kref_put(&dev->kref, lcd_delete);
+ 
 
 
