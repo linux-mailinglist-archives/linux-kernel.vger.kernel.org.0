@@ -2,62 +2,278 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB882D91A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:55:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A54CD91A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:55:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391564AbfJPMzo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 08:55:44 -0400
-Received: from foss.arm.com ([217.140.110.172]:39148 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727881AbfJPMzo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 08:55:44 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6EB3528;
-        Wed, 16 Oct 2019 05:55:43 -0700 (PDT)
-Received: from arrakis.emea.arm.com (unknown [10.1.196.49])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2F6E33F68E;
-        Wed, 16 Oct 2019 05:55:42 -0700 (PDT)
-Date:   Wed, 16 Oct 2019 13:55:39 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mike Rapoport <rppt@linux.ibm.com>
-Subject: Re: [PATCH v4] arm64: use generic free_initrd_mem()
-Message-ID: <20191016125539.GH49619@arrakis.emea.arm.com>
-References: <1569657746-31672-1-git-send-email-rppt@kernel.org>
+        id S2391666AbfJPMz5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 08:55:57 -0400
+Received: from mail-il1-f195.google.com ([209.85.166.195]:37044 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391619AbfJPMz4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 08:55:56 -0400
+Received: by mail-il1-f195.google.com with SMTP id l12so2472639ilq.4
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 05:55:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=qda5ffDTblUU8JGu4nuH5ZD05Te45+ZgViZmocYeACs=;
+        b=rMb84r8iQLAC38MibQ/V2rXDvCRSxVxzno6NbsIzxdlfKVTv7g9nB9NYrdUDcgAApl
+         lSIlnR2DTcieW1lRkZLQVqW5pmXG2SQjFI2DC43m5t/5ouLpQx/Xa/6vJZBjujhgckcY
+         NbBYt2E3njmocjuZnaY08M1VHVxPQJEUnlOYN3zx+n3OAiJp6pTfNR6fYd8hn78RcIUr
+         8oqLdjQD3hRFmP5gqwCpu/N1k7Qcft/LDxjNIoBHOg/OLgKyvq2P0AT5CrchnU2+fcqp
+         34CZuqFitVM4rvaRHIHyJe7nPvRpw7Nsb8b/SstNs3DGscazROWSN77PogwtiK659w40
+         /n/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=qda5ffDTblUU8JGu4nuH5ZD05Te45+ZgViZmocYeACs=;
+        b=qGN/b5JqMrYNtgqRJ5swDvoxMHFUODuhoYZYWumcxdy08GuxT2Kai8r+Wtt56kqCnE
+         XqG9wdMfSDnc9guZEzUX/N72m6Cq7iVPSz6ETLQP4U8cJHuIwvIAVkJIri5oMK3KlJ18
+         FEWk75CCPBD2RoBgA7ziB+isCXy1ePWPkRmYAgNVG9Pz27T/ZoFTsUYRiIAyUGJmg7Zx
+         x5mg2Hs/ly5RA9aI1kHAjbtLZLNbZCl4fLxUsI0YKWsj4iSu/EHM4BK4DXYEL5Z9Xx1B
+         h4nGrYAuTUXBK5OmrmuTvCR6SuyX90TTPEJ4e4Dhb7cDyIDhF5hlMGFQsMjCGDju5K3Q
+         e8nQ==
+X-Gm-Message-State: APjAAAVshCeXZ0amUhLhVPauzT1wr2XsWeNmFkmLA4AOtFQA8jnAJLt+
+        DOxaMccyJ6ykuO6ayx5pwMs2VR3ErCTGia+84a12jw==
+X-Google-Smtp-Source: APXvYqz9HunDNQdJFmbx8opch7P0KRYwL8eqX945ccJM9byllYNV8ONZFcYgXsZYUiZxX1DMDKZ3FWfRFjX+qCP3bFo=
+X-Received: by 2002:a92:c80b:: with SMTP id v11mr12242511iln.6.1571230554866;
+ Wed, 16 Oct 2019 05:55:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1569657746-31672-1-git-send-email-rppt@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191015162300.22024-1-brgl@bgdev.pl> <20191015162300.22024-2-brgl@bgdev.pl>
+ <CAL_JsqKhGr6QDWZFR6cq6MH-0vghb9oSgkCCdi7bhiKmvrkY_w@mail.gmail.com>
+In-Reply-To: <CAL_JsqKhGr6QDWZFR6cq6MH-0vghb9oSgkCCdi7bhiKmvrkY_w@mail.gmail.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Wed, 16 Oct 2019 14:55:43 +0200
+Message-ID: <CAMRc=Mdb7T6p7xXWJBS2UXq0E-FD4WRtaP7H-AvRH0s6-MyJ8A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] dt-bindings: mfd: max77650: convert the binding
+ document to yaml
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Linux Input <linux-input@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 28, 2019 at 11:02:26AM +0300, Mike Rapoport wrote:
-> From: Mike Rapoport <rppt@linux.ibm.com>
-> 
-> arm64 calls memblock_free() for the initrd area in its implementation of
-> free_initrd_mem(), but this call has no actual effect that late in the boot
-> process. By the time initrd is freed, all the reserved memory is managed by
-> the page allocator and the memblock.reserved is unused, so the only purpose
-> of the memblock_free() call is to keep track of initrd memory for debugging
-> and accounting.
-> 
-> Without the memblock_free() call the only difference between arm64 and the
-> generic versions of free_initrd_mem() is the memory poisoning.
-> 
-> Move memblock_free() call to the generic code, enable it there
-> for the architectures that define ARCH_KEEP_MEMBLOCK and use the generic
-> implementation of free_initrd_mem() on arm64.
-> 
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+wt., 15 pa=C5=BA 2019 o 23:17 Rob Herring <robh+dt@kernel.org> napisa=C5=82=
+(a):
+>
+> On Tue, Oct 15, 2019 at 11:23 AM Bartosz Golaszewski <brgl@bgdev.pl> wrot=
+e:
+> >
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > Convert the binding document for MAX77650 core MFD module to YAML.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > ---
+> >  .../devicetree/bindings/mfd/max77650.txt      | 47 +----------
+> >  .../devicetree/bindings/mfd/max77650.yaml     | 83 +++++++++++++++++++
+> >  2 files changed, 84 insertions(+), 46 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/mfd/max77650.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/mfd/max77650.txt b/Docum=
+entation/devicetree/bindings/mfd/max77650.txt
+> > index b529d8d19335..080871686b3b 100644
+> > --- a/Documentation/devicetree/bindings/mfd/max77650.txt
+> > +++ b/Documentation/devicetree/bindings/mfd/max77650.txt
+> > @@ -1,46 +1 @@
+> > -MAX77650 ultra low-power PMIC from Maxim Integrated.
+> > -
+> > -Required properties:
+> > --------------------
+> > -- compatible:          Must be "maxim,max77650"
+> > -- reg:                 I2C device address.
+> > -- interrupts:          The interrupt on the parent the controller is
+> > -                       connected to.
+> > -- interrupt-controller: Marks the device node as an interrupt controll=
+er.
+> > -- #interrupt-cells:    Must be <2>.
+> > -
+> > -- gpio-controller:     Marks the device node as a gpio controller.
+> > -- #gpio-cells:         Must be <2>. The first cell is the pin number a=
+nd
+> > -                       the second cell is used to specify the gpio act=
+ive
+> > -                       state.
+> > -
+> > -Optional properties:
+> > ---------------------
+> > -gpio-line-names:       Single string containing the name of the GPIO l=
+ine.
+> > -
+> > -The GPIO-controller module is represented as part of the top-level PMI=
+C
+> > -node. The device exposes a single GPIO line.
+> > -
+> > -For device-tree bindings of other sub-modules (regulator, power supply=
+,
+> > -LEDs and onkey) refer to the binding documents under the respective
+> > -sub-system directories.
+> > -
+> > -For more details on GPIO bindings, please refer to the generic GPIO DT
+> > -binding document <devicetree/bindings/gpio/gpio.txt>.
+> > -
+> > -Example:
+> > ---------
+> > -
+> > -       pmic@48 {
+> > -               compatible =3D "maxim,max77650";
+> > -               reg =3D <0x48>;
+> > -
+> > -               interrupt-controller;
+> > -               interrupt-parent =3D <&gpio2>;
+> > -               #interrupt-cells =3D <2>;
+> > -               interrupts =3D <3 IRQ_TYPE_LEVEL_LOW>;
+> > -
+> > -               gpio-controller;
+> > -               #gpio-cells =3D <2>;
+> > -               gpio-line-names =3D "max77650-charger";
+> > -       };
+> > +This file has been moved to max77650.yaml.
+> > diff --git a/Documentation/devicetree/bindings/mfd/max77650.yaml b/Docu=
+mentation/devicetree/bindings/mfd/max77650.yaml
+> > new file mode 100644
+> > index 000000000000..5186ad287ec7
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/mfd/max77650.yaml
+> > @@ -0,0 +1,83 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/mfd/max77650.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: MAX77650 ultra low-power PMIC from Maxim Integrated.
+> > +
+> > +maintainers:
+> > +  - Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > +
+> > +description: |
+> > +  This document describes the DT properties of the core MFD controller=
+.
+> > +
+> > +  The GPIO-controller module is represented as part of the top-level P=
+MIC
+> > +  node. The device exposes a single GPIO line.
+> > +
+> > +  For device-tree bindings of other sub-modules (regulator, power supp=
+ly,
+> > +  LEDs and onkey) refer to the binding documents under the respective
+> > +  sub-system directories.
+> > +
+> > +  For more details on GPIO bindings, please refer to the generic GPIO =
+DT
+> > +  binding document <devicetree/bindings/gpio/gpio.txt>.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: maxim,max77650
+> > +
+> > +  reg:
+> > +    description:
+> > +      I2C device address.
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    description:
+> > +      The interrupt on the parent the controller is connected to.
+> > +    maxItems: 1
+> > +
+> > +  interrupt-controller: true
+> > +
+> > +  "#interrupt-cells":
+> > +    const: 2
+> > +    description:
+> > +      The first cell is the IRQ number, the second cell is the trigger=
+ type.
+> > +
+> > +  gpio-controller: true
+> > +
+> > +  "#gpio-cells":
+> > +    const: 2
+> > +    description:
+> > +      The first cell is the pin number and the second cell is used to =
+specify
+> > +      the gpio active state.
+> > +
+> > +  gpio-line-names:
+> > +    $ref: '/schemas/types.yaml#/definitions/string-array'
+> > +    maxItems: 1
+> > +    description:
+> > +      Single string containing the name of the GPIO line.
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - interrupts
+> > +  - interrupt-controller
+> > +  - "#interrupt-cells"
+> > +  - gpio-controller
+> > +  - "#gpio-cells"
+> > +
+> > +examples:
+> > +  - |
+> > +    pmic@48 {
+> > +        compatible =3D "maxim,max77650";
+> > +        reg =3D <0x48>;
+> > +
+> > +        interrupt-controller;
+> > +        interrupt-parent =3D <&gpio2>;
+> > +        #interrupt-cells =3D <2>;
+> > +        interrupts =3D <3 IRQ_TYPE_LEVEL_LOW>;
+>
+> Examples are built now. Run 'make dt_binding_check' on bindings before
+> sending them:
+>
+> Error: Documentation/devicetree/bindings/mfd/max77650.example.dts:24.29-3=
+0
+> syntax error
+> FATAL ERROR: Unable to parse input tree
+> scripts/Makefile.lib:321: recipe for target
+> 'Documentation/devicetree/bindings/mfd/max77650.example.dt.yaml'
+> failed
+> make[1]: *** [Documentation/devicetree/bindings/mfd/max77650.example.dt.y=
+aml]
+> Error 1
+>
+> You need to include any includes that you use.
+>
+> Rob
 
-Queued for 5.5. Thanks.
+Hi Rob,
 
--- 
-Catalin
+thanks for the review.
+
+I'm on v5.4-rc3 and when running dt_binding_check, the error I'm
+getting is this:
+
+# make dt_binding_check
+DT_SCHEMA_FILES=3DDocumentation/devicetree/bindings/mfd/max77650.yaml
+  SCHEMA  Documentation/devicetree/bindings/processed-schema.yaml
+  CHKDT   Documentation/devicetree/bindings/mfd/max77650.yaml
+make[1]: *** No rule to make target
+'Documentation/devicetree/bindings/mfd/max77650.example.dt.yaml',
+needed by '__build'.  Stop.
+make: *** [Makefile:1263: dt_binding_check] Error 2
+
+Is this caused by the same issue or am I missing something?
+
+Bartosz
