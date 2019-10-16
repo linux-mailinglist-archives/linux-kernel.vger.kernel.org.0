@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8ACDD9F01
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9A64D9E74
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:03:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438392AbfJPV7G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:59:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51576 "EHLO mail.kernel.org"
+        id S2438403AbfJPV7I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:59:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404125AbfJPV6M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:58:12 -0400
+        id S2406703AbfJPV6P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:58:15 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1FC121D80;
-        Wed, 16 Oct 2019 21:58:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4EE7020872;
+        Wed, 16 Oct 2019 21:58:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263092;
-        bh=hBzaPLWMlU+AIxsjy3lQg77sD59CSAafwrLjn5pho+8=;
+        s=default; t=1571263095;
+        bh=WRL3sT47+SA5WctN36UU6w5wSnvVV/ScBydEcOXw0q8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D5+1Q8dwKaCa4A7ywp3JmmTIc43VMf68Ao78rfKnt6WvpOF3USmaXWxJVBASauLOo
-         vli0nFn9NB7vzRcd4hiQYLvYeFUcdPfn1oSn+BXOZ57Ms1sywlK16griuwXdIXjyOY
-         3xkBl5wo495FmP31AHyLEqPKCqc+zlA00SFgC2Ms=
+        b=0eee7CNkxiODH4JobAfPWmL28INdc7oUtchfdfp//KZ043ouaBcoB1f5618omb7oH
+         yj4DZU222kzw0vQLuZQ/gpWUrVWSPktMoSEKyq4MvJFsebkSJ3bQSUstgAerAAu0JO
+         IWJkGlFumQb1/HZMjrjEZWN/15BNsvraQWGi49TQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 5.3 013/112] xhci: Increase STS_SAVE timeout in xhci_suspend()
-Date:   Wed, 16 Oct 2019 14:50:05 -0700
-Message-Id: <20191016214847.438460379@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 5.3 017/112] USB: adutux: fix use-after-free on release
+Date:   Wed, 16 Oct 2019 14:50:09 -0700
+Message-Id: <20191016214848.653423627@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
 References: <20191016214844.038848564@linuxfoundation.org>
@@ -44,41 +42,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit ac343366846a445bb81f0a0e8f16abb8bd5d5d88 upstream.
+commit 123a0f125fa3d2104043697baa62899d9e549272 upstream.
 
-After commit f7fac17ca925 ("xhci: Convert xhci_handshake() to use
-readl_poll_timeout_atomic()"), ASMedia xHCI may fail to suspend.
+The driver was accessing its struct usb_device in its release()
+callback without holding a reference. This would lead to a
+use-after-free whenever the device was disconnected while the character
+device was still open.
 
-Although the algorithms are essentially the same, the old max timeout is
-(usec + usec * time of doing readl()), and the new max timeout is just
-usec, which is much less than the old one.
-
-Increase the timeout to make ASMedia xHCI able to suspend again.
-
-BugLink: https://bugs.launchpad.net/bugs/1844021
-Fixes: f7fac17ca925 ("xhci: Convert xhci_handshake() to use readl_poll_timeout_atomic()")
-Cc: <stable@vger.kernel.org> # v5.2+
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/1570190373-30684-8-git-send-email-mathias.nyman@linux.intel.com
+Fixes: 66d4bc30d128 ("USB: adutux: remove custom debug macro")
+Cc: stable <stable@vger.kernel.org>     # 3.12
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191009153848.8664-2-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/misc/adutux.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -1032,7 +1032,7 @@ int xhci_suspend(struct xhci_hcd *xhci,
- 	writel(command, &xhci->op_regs->command);
- 	xhci->broken_suspend = 0;
- 	if (xhci_handshake(&xhci->op_regs->status,
--				STS_SAVE, 0, 10 * 1000)) {
-+				STS_SAVE, 0, 20 * 1000)) {
- 	/*
- 	 * AMD SNPS xHC 3.0 occasionally does not clear the
- 	 * SSS bit of USBSTS and when driver tries to poll
+--- a/drivers/usb/misc/adutux.c
++++ b/drivers/usb/misc/adutux.c
+@@ -149,6 +149,7 @@ static void adu_delete(struct adu_device
+ 	kfree(dev->read_buffer_secondary);
+ 	kfree(dev->interrupt_in_buffer);
+ 	kfree(dev->interrupt_out_buffer);
++	usb_put_dev(dev->udev);
+ 	kfree(dev);
+ }
+ 
+@@ -664,7 +665,7 @@ static int adu_probe(struct usb_interfac
+ 
+ 	mutex_init(&dev->mtx);
+ 	spin_lock_init(&dev->buflock);
+-	dev->udev = udev;
++	dev->udev = usb_get_dev(udev);
+ 	init_waitqueue_head(&dev->read_wait);
+ 	init_waitqueue_head(&dev->write_wait);
+ 
 
 
