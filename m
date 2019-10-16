@@ -2,84 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2035D96D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:18:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED42AD96FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:20:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393631AbfJPQSY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 12:18:24 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39029 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727154AbfJPQSY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 12:18:24 -0400
-Received: by mail-lf1-f67.google.com with SMTP id 195so5028907lfj.6;
-        Wed, 16 Oct 2019 09:18:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=y1u4tBuRnd6ZjEytQ7zg9F82TRiFsD/C7WX2wqbch+8=;
-        b=Y7XnxeWv16vJcEIy56IkwtxL2LWSOOIclCzC6NanfV6A6wNIdsg7+3EZdMtgtnNVv7
-         xdIrJI/hLsYV97HRn2qp9huBjieN/OP5vRzMRErA11sJbn4U6/CdxhUJgtOMxIIDiElQ
-         Q3o+lJ42HjrYPICB6LWJXJSYr7Gt1dymkiTZHYUoowNdz7G2MKmqOtSOzRYOKdHts0Sn
-         6ZYcuo60ZcFiPCWA9rD4wKtWOlZs2u0XKR92+SqRdDkYyd6ChC8r4ZD3dXHF3k+BzLPQ
-         mD9kUuQ7qTanPS8PDIVPqvyS++w5wJyHLxpepf3r1TOh8chtfJJXsTQ3Tqrs+B0lXyoX
-         2rKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y1u4tBuRnd6ZjEytQ7zg9F82TRiFsD/C7WX2wqbch+8=;
-        b=WfcuoQNzPv9bk+btBmuqoeGUlPpdXUg3rCVX+dtVuPnHDdLnI9PZ6Kd0peeBQSD5PW
-         ih7GOuRC9TvItyjnq98+atJYANsdx1nY7DMzPIc0Nzrag+IQGzO8Tt4cJ32BdsWaL93A
-         ZIvj4y4qIfEHInubsYaE/TTAi9UCTrO3na9cSy9FzSgC5gNS1CFGcnhNzpYaMk2b9TnD
-         n5egDMqSC9h6lB4/bvC0GoIRjdM4Htv6DgNiNRI2yu0y+EJj5t1V+vzASeaBfACSapXk
-         3RGI/3CNvA9GwGBNZWG19S6UAZsqwKyr3DH1CKUb1KkkVuhEsuaM4m1UGZe/DwwFJ63a
-         7mUg==
-X-Gm-Message-State: APjAAAX/O3x1HaqY1BI0tJMQx+F7bXfRZ8UOERDsDPZEwzaNQkgeQIHo
-        y8sk5Ff8JA5KYamGdLfHHK6c61CQ18nh1ahVPo0=
-X-Google-Smtp-Source: APXvYqyVZwfMVjw15XoxG0GOxNLuRAAnl9bDYbPMHaNMcwAzDZPkm7NBafCKz09RK7HbPatoJcJIcT8/B0ysUieaPvg=
-X-Received: by 2002:ac2:4888:: with SMTP id x8mr25064278lfc.90.1571242700210;
- Wed, 16 Oct 2019 09:18:20 -0700 (PDT)
+        id S2406111AbfJPQUe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 12:20:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33932 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733190AbfJPQUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 12:20:34 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 164AB20663;
+        Wed, 16 Oct 2019 16:20:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571242833;
+        bh=vx4fgYELxq41ZRHv+mEk07Z7avOAFxP0vU2ELzDIZVI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MbyZatxiqhOeO1jLIwdNcHHFaMvWJTKvHTpqkgEsErzVbBPJaG9L71cnrnd3w4YH0
+         n8BOCQpXPr7Ew7/c5TWlTYogITb+qXI4xuLHdHrpzvONUT+cBIYVYuql96vVB543uG
+         B1Y1YQtUX3+rojF+mdWtPeRglujbzVQVMlzy5zsk=
+Date:   Wed, 16 Oct 2019 12:20:32 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
+Message-ID: <20191016162032.GT31224@sasha-vm>
+References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
+ <20190829205631.uhz6jdboneej3j3c@pali>
+ <184209.1567120696@turing-police>
+ <20190829233506.GT5281@sasha-vm>
+ <20190830075647.wvhrx4asnkrfkkwk@pali>
+ <20191016140353.4hrncxa5wkx47oau@pali>
+ <20191016143113.GS31224@sasha-vm>
+ <20191016160349.pwghlg566hh2o7id@pali>
 MIME-Version: 1.0
-References: <20191014061549.3669-1-o.rempel@pengutronix.de>
- <20191014061549.3669-5-o.rempel@pengutronix.de> <20191016130057.GF4780@lunn.ch>
-In-Reply-To: <20191016130057.GF4780@lunn.ch>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Wed, 16 Oct 2019 13:20:31 -0300
-Message-ID: <CAOMZO5BRfkz+VBR6NRjSY6CymyuXRNqLnF_bOao90j64+sYZtQ@mail.gmail.com>
-Subject: Re: [PATCH v1 4/4] net: dsa: add support for Atheros AR9331 build-in switch
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Oleksij Rempel <o.rempel@pengutronix.de>,
-        Chris Snook <chris.snook@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jay Cliburn <jcliburn@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linux-mips@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191016160349.pwghlg566hh2o7id@pali>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 1:01 PM Andrew Lunn <andrew@lunn.ch> wrote:
+On Wed, Oct 16, 2019 at 06:03:49PM +0200, Pali Rohár wrote:
+>On Wednesday 16 October 2019 10:31:13 Sasha Levin wrote:
+>> On Wed, Oct 16, 2019 at 04:03:53PM +0200, Pali Rohár wrote:
+>> > On Friday 30 August 2019 09:56:47 Pali Rohár wrote:
+>> > > On Thursday 29 August 2019 19:35:06 Sasha Levin wrote:
+>> > > > With regards to missing specs/docs/whatever - our main concern with this
+>> > > > release was that we want full interoperability, which is why the spec
+>> > > > was made public as-is without modifications from what was used
+>> > > > internally. There's no "secret sauce" that Microsoft is hiding here.
+>> > >
+>> > > Ok, if it was just drop of "current version" of documentation then it
+>> > > makes sense.
+>> > >
+>> > > > How about we give this spec/code time to get soaked and reviewed for a
+>> > > > bit, and if folks still feel (in a month or so?) that there are missing
+>> > > > bits of information related to exfat, I'll be happy to go back and try
+>> > > > to get them out as well.
+>> >
+>> > Hello Sasha!
+>> >
+>> > Now one month passed, so do you have some information when missing parts
+>> > of documentation like TexFAT would be released to public?
+>>
+>> Sure, I'll see if I can get an approval to open it up.
+>
+>Ok!
+>
+>> Can I assume you will be implementing TexFAT support once the spec is
+>> available?
+>
+>I cannot promise that I would implement something which I do not know
+>how is working... It depends on how complicated TexFAT is and also how
+>future exfat support in kernel would look like.
+>
+>But I'm interesting in implementing it.
 
-> I think C files should use /*  */, and header files //, for SPDX.
+Sure, thank you. This is more to let me tell my management that "there
+is someone who wants to work on it" rather than committing you to do
+that work :)
 
-Not really.
-
-From Documentation/process/license-rules.rst:
-
-"C source: // SPDX-License-Identifier: <SPDX License Expression>
- C header: /* SPDX-License-Identifier: <SPDX License Expression> */ "
+-- 
+Thanks,
+Sasha
