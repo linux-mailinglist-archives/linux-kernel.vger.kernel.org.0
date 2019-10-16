@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13BB7D9E62
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:03:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B36CD9F19
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:05:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391671AbfJPV6f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:58:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50672 "EHLO mail.kernel.org"
+        id S2406900AbfJPWFA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:05:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438035AbfJPV5p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:57:45 -0400
+        id S2438325AbfJPV64 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:58:56 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7531A21928;
-        Wed, 16 Oct 2019 21:57:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C15E20872;
+        Wed, 16 Oct 2019 21:58:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263064;
-        bh=jFXAIx9g4Rar81Kccj33nbuvqOQF4Z/HIzIz/pbtx48=;
+        s=default; t=1571263135;
+        bh=6Tth2jOeWpDQ2aUcTiGK2l5Bgddx8M/sL5/m/fEewoU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cj8CvnKmOngp/s+KzqR6EQa0MIgTy+uKpKbOlTIgAQUOqpKlfgIsqrC0jg71hrbdh
-         6CwLvYWBNMfERXEOeo3kZnhq9xsJb1gvawKDhGb2QjLv24pmlrp6/6i9YYOzJqmUf3
-         E1s0XOSU9odrNT2ZAriMeiuUPYCIaNe4c8KnN0oM=
+        b=dbQj6P92cG49D9P0zGqqvrMxbi7xH6PlbWeV8VcrseNx8xcYTmLN75cHuV7xAnCe/
+         IuAbhu8Ushz/PF66R3RCeWxDfxZcJDm8ZoZjtIIsaB5Sbg2dmqbcfvEmP5yzPdf1yU
+         IImNoxLP0vsoX5/hQk0cBzofMcsGNXduMW/VWVvs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.19 39/81] USB: legousbtower: fix use-after-free on release
-Date:   Wed, 16 Oct 2019 14:50:50 -0700
-Message-Id: <20191016214837.287917317@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan Popa <stefan.popa@analog.com>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 5.3 059/112] iio: accel: adxl372: Fix/remove limitation for FIFO samples
+Date:   Wed, 16 Oct 2019 14:50:51 -0700
+Message-Id: <20191016214900.232869545@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
-References: <20191016214805.727399379@linuxfoundation.org>
+In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
+References: <20191016214844.038848564@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,43 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Stefan Popa <stefan.popa@analog.com>
 
-commit 726b55d0e22ca72c69c947af87785c830289ddbc upstream.
+commit d202ce4787e446556c6b9d01f84734c3f8174ba3 upstream.
 
-The driver was accessing its struct usb_device in its release()
-callback without holding a reference. This would lead to a
-use-after-free whenever the device was disconnected while the character
-device was still open.
+Currently, the driver sets the FIFO_SAMPLES register with the number of
+sample sets (maximum of 170 for 3 axis data, 256 for 2-axis and 512 for
+single axis). However, the FIFO_SAMPLES register should store the number
+of samples, regardless of how the FIFO format is configured.
 
-Fixes: fef526cae700 ("USB: legousbtower: remove custom debug macro")
-Cc: stable <stable@vger.kernel.org>     # 3.12
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191009153848.8664-5-johan@kernel.org
+Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+Fixes: f4f55ce38e5f ("iio:adxl372: Add FIFO and interrupts support")
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/legousbtower.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/iio/accel/adxl372.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/misc/legousbtower.c
-+++ b/drivers/usb/misc/legousbtower.c
-@@ -296,6 +296,7 @@ static inline void tower_delete (struct
- 	kfree (dev->read_buffer);
- 	kfree (dev->interrupt_in_buffer);
- 	kfree (dev->interrupt_out_buffer);
-+	usb_put_dev(dev->udev);
- 	kfree (dev);
- }
+--- a/drivers/iio/accel/adxl372.c
++++ b/drivers/iio/accel/adxl372.c
+@@ -474,12 +474,17 @@ static int adxl372_configure_fifo(struct
+ 	if (ret < 0)
+ 		return ret;
  
-@@ -810,7 +811,7 @@ static int tower_probe (struct usb_inter
+-	fifo_samples = st->watermark & 0xFF;
++	/*
++	 * watermark stores the number of sets; we need to write the FIFO
++	 * registers with the number of samples
++	 */
++	fifo_samples = (st->watermark * st->fifo_set_size);
+ 	fifo_ctl = ADXL372_FIFO_CTL_FORMAT_MODE(st->fifo_format) |
+ 		   ADXL372_FIFO_CTL_MODE_MODE(st->fifo_mode) |
+-		   ADXL372_FIFO_CTL_SAMPLES_MODE(st->watermark);
++		   ADXL372_FIFO_CTL_SAMPLES_MODE(fifo_samples);
  
- 	mutex_init(&dev->lock);
- 
--	dev->udev = udev;
-+	dev->udev = usb_get_dev(udev);
- 	dev->open_count = 0;
- 	dev->disconnected = 0;
+-	ret = regmap_write(st->regmap, ADXL372_FIFO_SAMPLES, fifo_samples);
++	ret = regmap_write(st->regmap,
++			   ADXL372_FIFO_SAMPLES, fifo_samples & 0xFF);
+ 	if (ret < 0)
+ 		return ret;
  
 
 
