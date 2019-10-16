@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C888D9F3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82954D9FF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:24:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437579AbfJPVxo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:53:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42542 "EHLO mail.kernel.org"
+        id S2406959AbfJPWGP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:06:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437534AbfJPVxe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:53:34 -0400
+        id S2438198AbfJPV6f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:58:35 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7797A20872;
-        Wed, 16 Oct 2019 21:53:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 270EB21925;
+        Wed, 16 Oct 2019 21:58:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262813;
-        bh=pOCrst16gNH88uIbZ4MKF+ZZd8DAYqOcxYzBcFMGtB0=;
+        s=default; t=1571263115;
+        bh=KBAU9OMK2sBXQWd9cYoO7tzeT75xTCJgt3hVD5ITMPI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ydgxTh+ENwvXMdD7TUV885kBDvCzJH4acvl0BB2hL0WviHMnKrsEZPqEYKUJgAQfC
-         3b4wCmBOyhRANbV3AUOMAd4QAECe9VstelheOXULJNnGvVjDQWLNMF6rAC5Vk98fgS
-         5g+9DNgDGobpZtWgt/fVswo9Irw0fw6FN3vG1Rc0=
+        b=gPqOncP2g45v1l7j3t29ptCeeWqMZzQhgWlZaaiLB2+Q8T+1AZpx2Tct6eJF9lA3F
+         KchbnSKYBlT/3fyae+URMqBNBVvUEVj8FfHQn5dimLqV5aTO8xSvSHQze01y0vUs5A
+         XGs/4/ZQd8nbO8mXrUEA4Hk9q0d559ZlG3fNc4hA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacky Cao <Jacky.Cao@sony.com>,
-        Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 4.4 56/79] USB: dummy-hcd: fix power budget for SuperSpeed mode
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 5.3 039/112] USB: legousbtower: fix slab info leak at probe
 Date:   Wed, 16 Oct 2019 14:50:31 -0700
-Message-Id: <20191016214819.206934415@linuxfoundation.org>
+Message-Id: <20191016214854.216542720@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214729.758892904@linuxfoundation.org>
-References: <20191016214729.758892904@linuxfoundation.org>
+In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
+References: <20191016214844.038848564@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,48 +42,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jacky.Cao@sony.com <Jacky.Cao@sony.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 2636d49b64671d3d90ecc4daf971b58df3956519 upstream.
+commit 1d427be4a39defadda6dd8f4659bc17f7591740f upstream.
 
-The power budget for SuperSpeed mode should be 900 mA
-according to USB specification, so set the power budget
-to 900mA for dummy_start_ss which is only used for
-SuperSpeed mode.
+Make sure to check for short transfers when retrieving the version
+information at probe to avoid leaking uninitialised slab data when
+logging it.
 
-If the max power consumption of SuperSpeed device is
-larger than 500 mA, insufficient available bus power
-error happens in usb_choose_configuration function
-when the device connects to dummy hcd.
-
-Signed-off-by: Jacky Cao <Jacky.Cao@sony.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/16EA1F625E922C43B00B9D82250220500871CDE5@APYOKXMS108.ap.sony.com
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20190919083039.30898-2-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/gadget/udc/dummy_hcd.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/usb/misc/legousbtower.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/gadget/udc/dummy_hcd.c
-+++ b/drivers/usb/gadget/udc/dummy_hcd.c
-@@ -50,6 +50,7 @@
- #define DRIVER_VERSION	"02 May 2005"
- 
- #define POWER_BUDGET	500	/* in mA; use 8 for low-power port testing */
-+#define POWER_BUDGET_3	900	/* in mA */
- 
- static const char	driver_name[] = "dummy_hcd";
- static const char	driver_desc[] = "USB Host+Gadget Emulator";
-@@ -2435,7 +2436,7 @@ static int dummy_start_ss(struct dummy_h
- 	dum_hcd->rh_state = DUMMY_RH_RUNNING;
- 	dum_hcd->stream_en_ep = 0;
- 	INIT_LIST_HEAD(&dum_hcd->urbp_list);
--	dummy_hcd_to_hcd(dum_hcd)->power_budget = POWER_BUDGET;
-+	dummy_hcd_to_hcd(dum_hcd)->power_budget = POWER_BUDGET_3;
- 	dummy_hcd_to_hcd(dum_hcd)->state = HC_STATE_RUNNING;
- 	dummy_hcd_to_hcd(dum_hcd)->uses_new_polling = 1;
- #ifdef CONFIG_USB_OTG
+--- a/drivers/usb/misc/legousbtower.c
++++ b/drivers/usb/misc/legousbtower.c
+@@ -891,8 +891,10 @@ static int tower_probe (struct usb_inter
+ 				  get_version_reply,
+ 				  sizeof(*get_version_reply),
+ 				  1000);
+-	if (result < 0) {
+-		dev_err(idev, "LEGO USB Tower get version control request failed\n");
++	if (result < sizeof(*get_version_reply)) {
++		if (result >= 0)
++			result = -EIO;
++		dev_err(idev, "get version request failed: %d\n", result);
+ 		retval = result;
+ 		goto error;
+ 	}
 
 
