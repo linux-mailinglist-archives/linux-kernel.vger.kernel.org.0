@@ -2,44 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C63EDA10F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:26:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9652D9FFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:24:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404267AbfJPWSs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:18:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44162 "EHLO mail.kernel.org"
+        id S2407006AbfJPWGu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:06:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389001AbfJPVyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:54:21 -0400
+        id S2406717AbfJPV6X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:58:23 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 883F821925;
-        Wed, 16 Oct 2019 21:54:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51FC021A49;
+        Wed, 16 Oct 2019 21:58:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262860;
-        bh=KkXarZVi9IQI5T8enECmh0evr4Fy1GERF/KUBBGCKQE=;
+        s=default; t=1571263103;
+        bh=kbqYrKp9K7Y0yVz+0W0CU40rQnMwPb3hoPbkR185Xq4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eMfFgTLdq+jQIxbUlsXaA/VySKp7OK/rtXUHEV5McMWejCvhb6juXy63e/Qa3d/ye
-         UEmdAmD0lk94qv4uQhc+vyV5pqj+SR2T0SAKAoRq/7iDvaIzvk3zQ0hNxrL68fR93l
-         fNsQ1p+tlqYGIwpHXw18mxJqHYCH4mCEekp5oF1M=
+        b=w9uZxNTBsWF9kFon7hF7B8iJVK7BAN6zLd6VRPVtg1N9pfaMJiD4RqF9p8GcIUCQv
+         2d+fzP6ImIpz60XJ6ZasU4jeablFV6kkccOIl3/CUqDvjal9MSGOdlLG7EBpKTyr83
+         1Am3pahKqDFpzoa05and6X0ZxFsc4S0F2TAI/Wgo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-trace-devel@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 26/92] tools lib traceevent: Do not free tep->cmdlines in add_new_comm() on failure
+        Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: [PATCH 5.3 007/112] xhci: Fix false warning message about wrong bounce buffer write length
 Date:   Wed, 16 Oct 2019 14:49:59 -0700
-Message-Id: <20191016214820.999791156@linuxfoundation.org>
+Message-Id: <20191016214845.950987317@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
-References: <20191016214759.600329427@linuxfoundation.org>
+In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
+References: <20191016214844.038848564@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,56 +43,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-[ Upstream commit e0d2615856b2046c2e8d5bfd6933f37f69703b0b ]
+commit c03101ff4f74bb30679c1a03d551ecbef1024bf6 upstream.
 
-If the re-allocation of tep->cmdlines succeeds, then the previous
-allocation of tep->cmdlines will be freed. If we later fail in
-add_new_comm(), we must not free cmdlines, and also should assign
-tep->cmdlines to the new allocation. Otherwise when freeing tep, the
-tep->cmdlines will be pointing to garbage.
+The check printing out the "WARN Wrong bounce buffer write length:"
+uses incorrect values when comparing bytes written from scatterlist
+to bounce buffer. Actual copied lengths are fine.
 
-Fixes: a6d2a61ac653a ("tools lib traceevent: Remove some die() calls")
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: linux-trace-devel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20190828191819.970121417@goodmis.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The used seg->bounce_len will be set to equal new_buf_len a few lines later
+in the code, but is incorrect when doing the comparison.
+
+The patch which added this false warning was backported to 4.8+ kernels
+so this should be backported as far as well.
+
+Cc: <stable@vger.kernel.org> # v4.8+
+Fixes: 597c56e372da ("xhci: update bounce buffer with correct sg num")
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Link: https://lore.kernel.org/r/1570190373-30684-2-git-send-email-mathias.nyman@linux.intel.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- tools/lib/traceevent/event-parse.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/usb/host/xhci-ring.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-index def61125ac36d..62f4cacf253ab 100644
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -267,10 +267,10 @@ static int add_new_comm(struct pevent *pevent, const char *comm, int pid)
- 		errno = ENOMEM;
- 		return -1;
- 	}
-+	pevent->cmdlines = cmdlines;
- 
- 	cmdlines[pevent->cmdline_count].comm = strdup(comm);
- 	if (!cmdlines[pevent->cmdline_count].comm) {
--		free(cmdlines);
- 		errno = ENOMEM;
- 		return -1;
- 	}
-@@ -281,7 +281,6 @@ static int add_new_comm(struct pevent *pevent, const char *comm, int pid)
- 		pevent->cmdline_count++;
- 
- 	qsort(cmdlines, pevent->cmdline_count, sizeof(*cmdlines), cmdline_cmp);
--	pevent->cmdlines = cmdlines;
- 
- 	return 0;
- }
--- 
-2.20.1
-
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -3202,10 +3202,10 @@ static int xhci_align_td(struct xhci_hcd
+ 	if (usb_urb_dir_out(urb)) {
+ 		len = sg_pcopy_to_buffer(urb->sg, urb->num_sgs,
+ 				   seg->bounce_buf, new_buff_len, enqd_len);
+-		if (len != seg->bounce_len)
++		if (len != new_buff_len)
+ 			xhci_warn(xhci,
+ 				"WARN Wrong bounce buffer write length: %zu != %d\n",
+-				len, seg->bounce_len);
++				len, new_buff_len);
+ 		seg->bounce_dma = dma_map_single(dev, seg->bounce_buf,
+ 						 max_pkt, DMA_TO_DEVICE);
+ 	} else {
 
 
