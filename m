@@ -2,73 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4B7FD8B9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:46:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0E33D8BA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:48:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387816AbfJPIq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 04:46:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36760 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726640AbfJPIq1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 04:46:27 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 36A703C93A;
-        Wed, 16 Oct 2019 08:46:27 +0000 (UTC)
-Received: from [10.72.12.53] (ovpn-12-53.pek2.redhat.com [10.72.12.53])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A430E60166;
-        Wed, 16 Oct 2019 08:45:58 +0000 (UTC)
-Subject: Re: [RFC 1/2] vhost: IFC VF hardware operation layer
-To:     Zhu Lingshan <lingshan.zhu@intel.com>, mst@redhat.com,
-        alex.williamson@redhat.com
-Cc:     linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        netdev@vger.kernel.org, dan.daly@intel.com,
-        cunming.liang@intel.com, tiwei.bie@intel.com, jason.zeng@intel.com,
-        zhiyuan.lv@intel.com
-References: <20191016013050.3918-1-lingshan.zhu@intel.com>
- <20191016013050.3918-2-lingshan.zhu@intel.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <2d711b6b-3bdc-afaa-8110-beebd6c5a896@redhat.com>
-Date:   Wed, 16 Oct 2019 16:45:49 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2390062AbfJPIsR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 04:48:17 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4181 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388188AbfJPIsQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 04:48:16 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id C5AE5BF7F8DB060889A7;
+        Wed, 16 Oct 2019 16:48:14 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Wed, 16 Oct 2019
+ 16:48:04 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <oded.gabbay@gmail.com>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>, <ttayar@habana.ai>,
+        <rppt@linux.ibm.com>, <oshpigelman@habana.ai>, <dbenzoor@habana.ai>
+CC:     <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] habanalabs: remove set but not used variable 'qman_base_addr'
+Date:   Wed, 16 Oct 2019 16:46:32 +0800
+Message-ID: <20191016084632.26424-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <20191016013050.3918-2-lingshan.zhu@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 16 Oct 2019 08:46:27 +0000 (UTC)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-On 2019/10/16 上午9:30, Zhu Lingshan wrote:
-> + */
-> +#define IFCVF_TRANSPORT_F_START 28
-> +#define IFCVF_TRANSPORT_F_END   34
-> +
-> +#define IFC_SUPPORTED_FEATURES \
-> +		((1ULL << VIRTIO_NET_F_MAC)			| \
-> +		 (1ULL << VIRTIO_F_ANY_LAYOUT)			| \
-> +		 (1ULL << VIRTIO_F_VERSION_1)			| \
-> +		 (1ULL << VHOST_F_LOG_ALL)			| \
+drivers/misc/habanalabs/goya/goya.c: In function 'goya_init_mme_cmdq':
+drivers/misc/habanalabs/goya/goya.c:1536:6: warning:
+ variable 'qman_base_addr' set but not used [-Wunused-but-set-variable]
 
+It is never used, so can be removed.
 
-Let's avoid using VHOST_F_LOG_ALL, using the get_mdev_features() instead.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/misc/habanalabs/goya/goya.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
+diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
+index 6fba14b..1ef34ec 100644
+--- a/drivers/misc/habanalabs/goya/goya.c
++++ b/drivers/misc/habanalabs/goya/goya.c
+@@ -1533,7 +1533,6 @@ static void goya_init_mme_cmdq(struct hl_device *hdev)
+ 	u32 mtr_base_lo, mtr_base_hi;
+ 	u32 so_base_lo, so_base_hi;
+ 	u32 gic_base_lo, gic_base_hi;
+-	u64 qman_base_addr;
+ 
+ 	mtr_base_lo = lower_32_bits(CFG_BASE + mmSYNC_MNGR_MON_PAY_ADDRL_0);
+ 	mtr_base_hi = upper_32_bits(CFG_BASE + mmSYNC_MNGR_MON_PAY_ADDRL_0);
+@@ -1545,9 +1544,6 @@ static void goya_init_mme_cmdq(struct hl_device *hdev)
+ 	gic_base_hi =
+ 		upper_32_bits(CFG_BASE + mmGIC_DISTRIBUTOR__5_GICD_SETSPI_NSR);
+ 
+-	qman_base_addr = hdev->asic_prop.sram_base_address +
+-				MME_QMAN_BASE_OFFSET;
+-
+ 	WREG32(mmMME_CMDQ_CP_MSG_BASE0_ADDR_LO, mtr_base_lo);
+ 	WREG32(mmMME_CMDQ_CP_MSG_BASE0_ADDR_HI, mtr_base_hi);
+ 	WREG32(mmMME_CMDQ_CP_MSG_BASE1_ADDR_LO,	so_base_lo);
+-- 
+2.7.4
 
-> +		 (1ULL << VIRTIO_NET_F_GUEST_ANNOUNCE)		| \
-> +		 (1ULL << VIRTIO_NET_F_CTRL_VQ)			| \
-> +		 (1ULL << VIRTIO_NET_F_STATUS)			| \
-> +		 (1ULL << VIRTIO_NET_F_MRG_RXBUF)) /* not fully supported */
-
-
-Why not having VIRTIO_F_IOMMU_PLATFORM and VIRTIO_F_ORDER_PLATFORM?
-
-Thanks
 
