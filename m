@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78C83D9E8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37EAAD9E93
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438591AbfJPV7k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:59:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52492 "EHLO mail.kernel.org"
+        id S2438604AbfJPV7n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:59:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438228AbfJPV6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:58:41 -0400
+        id S2438234AbfJPV6m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:58:42 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59F3021925;
-        Wed, 16 Oct 2019 21:58:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4343321925;
+        Wed, 16 Oct 2019 21:58:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263120;
-        bh=y8truStfN1WkIHglGgpdViTzyA8SDBHckzAXehcL7B4=;
+        s=default; t=1571263121;
+        bh=+L06x7cH/GvyDOZLPDnycUzXAwWQRzr/CvOedlMODvg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rS0dr0bD2id8eYwCvBuIitXlQp47gVrYtuABrW4JINaOpX4T/E+AqfSpI1os8PU1d
-         jvqBxGAJ+3DTym4Ae0YuE9QFPvZGH06r1z7HgGa+ZlMvJEM3F4eev5DLjAkw0h8kBC
-         Bwy/zfxJDeATpJCbXbtcCflBCIvGvG+z0L2wXefg=
+        b=YuHNiQWrU8JeLJ7RAPf7TyKMtJ0331Q84d3Bh2VfyGWLrECt3dhh4pkIkNi2jbMds
+         3fqpBPdYt3nC7t/nt7F26pO0O0TOuDrdP0ZUCG6YpjvqqPr8hRfRbudyrNEstyVAhL
+         LZM2kSOnbybd8U/7AwPHCOUmDR0j7TVVtHUxZDqE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH 5.3 044/112] mei: me: add comet point (lake) LP device ids
-Date:   Wed, 16 Oct 2019 14:50:36 -0700
-Message-Id: <20191016214854.808452660@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Menzel <pmenzel@molgen.mpg.de>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH 5.3 045/112] mei: avoid FW version request on Ibex Peak and earlier
+Date:   Wed, 16 Oct 2019 14:50:37 -0700
+Message-Id: <20191016214854.991242812@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
 References: <20191016214844.038848564@linuxfoundation.org>
@@ -42,45 +44,212 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomas Winkler <tomas.winkler@intel.com>
+From: Alexander Usyskin <alexander.usyskin@intel.com>
 
-commit 4d86dfd38285c83a6df01093b8547f742e3b2470 upstream.
+commit f8204f0ddd62966a0e79c2804963a21e3540dd82 upstream.
 
-Add Comet Point devices IDs for Comet Lake U platforms.
+The fixed MKHI client on PCH 6 gen platforms
+does not support fw version retrieval.
+The error is not fatal, but it fills up the kernel logs and
+slows down the driver start.
+This patch disables requesting FW version on GEN6 and earlier platforms.
 
-Cc: <stable@vger.kernel.org>
+Fixes warning:
+[   15.964298] mei mei::55213584-9a29-4916-badf-0fb7ed682aeb:01: Could not read FW version
+[   15.964301] mei mei::55213584-9a29-4916-badf-0fb7ed682aeb:01: version command failed -5
+
+Cc: <stable@vger.kernel.org> +v4.18
+Cc: Paul Menzel <pmenzel@molgen.mpg.de>
+Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-Link: https://lore.kernel.org/r/20191001235958.19979-1-tomas.winkler@intel.com
+Link: https://lore.kernel.org/r/20191004181722.31374-1-tomas.winkler@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/mei/hw-me-regs.h |    3 +++
- drivers/misc/mei/pci-me.c     |    3 +++
- 2 files changed, 6 insertions(+)
+ drivers/misc/mei/bus-fixup.c |   14 +++++++++++---
+ drivers/misc/mei/hw-me.c     |   21 ++++++++++++++++++---
+ drivers/misc/mei/hw-me.h     |    8 ++++++--
+ drivers/misc/mei/mei_dev.h   |    4 ++++
+ drivers/misc/mei/pci-me.c    |   10 +++++-----
+ 5 files changed, 44 insertions(+), 13 deletions(-)
 
---- a/drivers/misc/mei/hw-me-regs.h
-+++ b/drivers/misc/mei/hw-me-regs.h
-@@ -79,6 +79,9 @@
- #define MEI_DEV_ID_CNP_H      0xA360  /* Cannon Point H */
- #define MEI_DEV_ID_CNP_H_4    0xA364  /* Cannon Point H 4 (iTouch) */
+--- a/drivers/misc/mei/bus-fixup.c
++++ b/drivers/misc/mei/bus-fixup.c
+@@ -218,13 +218,21 @@ static void mei_mkhi_fix(struct mei_cl_d
+ {
+ 	int ret;
  
-+#define MEI_DEV_ID_CMP_LP     0x02e0  /* Comet Point LP */
-+#define MEI_DEV_ID_CMP_LP_3   0x02e4  /* Comet Point LP 3 (iTouch) */
++	/* No need to enable the client if nothing is needed from it */
++	if (!cldev->bus->fw_f_fw_ver_supported &&
++	    !cldev->bus->hbm_f_os_supported)
++		return;
 +
- #define MEI_DEV_ID_ICP_LP     0x34E0  /* Ice Lake Point LP */
+ 	ret = mei_cldev_enable(cldev);
+ 	if (ret)
+ 		return;
  
- #define MEI_DEV_ID_TGP_LP     0xA0E0  /* Tiger Lake Point LP */
+-	ret = mei_fwver(cldev);
+-	if (ret < 0)
+-		dev_err(&cldev->dev, "FW version command failed %d\n", ret);
++	if (cldev->bus->fw_f_fw_ver_supported) {
++		ret = mei_fwver(cldev);
++		if (ret < 0)
++			dev_err(&cldev->dev, "FW version command failed %d\n",
++				ret);
++	}
+ 
+ 	if (cldev->bus->hbm_f_os_supported) {
+ 		ret = mei_osver(cldev);
+--- a/drivers/misc/mei/hw-me.c
++++ b/drivers/misc/mei/hw-me.c
+@@ -1355,6 +1355,8 @@ static bool mei_me_fw_type_sps(struct pc
+ #define MEI_CFG_FW_SPS                           \
+ 	.quirk_probe = mei_me_fw_type_sps
+ 
++#define MEI_CFG_FW_VER_SUPP                     \
++	.fw_ver_supported = 1
+ 
+ #define MEI_CFG_ICH_HFS                      \
+ 	.fw_status.count = 0
+@@ -1392,31 +1394,41 @@ static const struct mei_cfg mei_me_ich10
+ 	MEI_CFG_ICH10_HFS,
+ };
+ 
+-/* PCH devices */
+-static const struct mei_cfg mei_me_pch_cfg = {
++/* PCH6 devices */
++static const struct mei_cfg mei_me_pch6_cfg = {
+ 	MEI_CFG_PCH_HFS,
+ };
+ 
++/* PCH7 devices */
++static const struct mei_cfg mei_me_pch7_cfg = {
++	MEI_CFG_PCH_HFS,
++	MEI_CFG_FW_VER_SUPP,
++};
++
+ /* PCH Cougar Point and Patsburg with quirk for Node Manager exclusion */
+ static const struct mei_cfg mei_me_pch_cpt_pbg_cfg = {
+ 	MEI_CFG_PCH_HFS,
++	MEI_CFG_FW_VER_SUPP,
+ 	MEI_CFG_FW_NM,
+ };
+ 
+ /* PCH8 Lynx Point and newer devices */
+ static const struct mei_cfg mei_me_pch8_cfg = {
+ 	MEI_CFG_PCH8_HFS,
++	MEI_CFG_FW_VER_SUPP,
+ };
+ 
+ /* PCH8 Lynx Point with quirk for SPS Firmware exclusion */
+ static const struct mei_cfg mei_me_pch8_sps_cfg = {
+ 	MEI_CFG_PCH8_HFS,
++	MEI_CFG_FW_VER_SUPP,
+ 	MEI_CFG_FW_SPS,
+ };
+ 
+ /* Cannon Lake and newer devices */
+ static const struct mei_cfg mei_me_pch12_cfg = {
+ 	MEI_CFG_PCH8_HFS,
++	MEI_CFG_FW_VER_SUPP,
+ 	MEI_CFG_DMA_128,
+ };
+ 
+@@ -1428,7 +1440,8 @@ static const struct mei_cfg *const mei_c
+ 	[MEI_ME_UNDEF_CFG] = NULL,
+ 	[MEI_ME_ICH_CFG] = &mei_me_ich_cfg,
+ 	[MEI_ME_ICH10_CFG] = &mei_me_ich10_cfg,
+-	[MEI_ME_PCH_CFG] = &mei_me_pch_cfg,
++	[MEI_ME_PCH6_CFG] = &mei_me_pch6_cfg,
++	[MEI_ME_PCH7_CFG] = &mei_me_pch7_cfg,
+ 	[MEI_ME_PCH_CPT_PBG_CFG] = &mei_me_pch_cpt_pbg_cfg,
+ 	[MEI_ME_PCH8_CFG] = &mei_me_pch8_cfg,
+ 	[MEI_ME_PCH8_SPS_CFG] = &mei_me_pch8_sps_cfg,
+@@ -1473,6 +1486,8 @@ struct mei_device *mei_me_dev_init(struc
+ 	mei_device_init(dev, &pdev->dev, &mei_me_hw_ops);
+ 	hw->cfg = cfg;
+ 
++	dev->fw_f_fw_ver_supported = cfg->fw_ver_supported;
++
+ 	return dev;
+ }
+ 
+--- a/drivers/misc/mei/hw-me.h
++++ b/drivers/misc/mei/hw-me.h
+@@ -20,11 +20,13 @@
+  * @fw_status: FW status
+  * @quirk_probe: device exclusion quirk
+  * @dma_size: device DMA buffers size
++ * @fw_ver_supported: is fw version retrievable from FW
+  */
+ struct mei_cfg {
+ 	const struct mei_fw_status fw_status;
+ 	bool (*quirk_probe)(struct pci_dev *pdev);
+ 	size_t dma_size[DMA_DSCR_NUM];
++	u32 fw_ver_supported:1;
+ };
+ 
+ 
+@@ -62,7 +64,8 @@ struct mei_me_hw {
+  * @MEI_ME_UNDEF_CFG:      Lower sentinel.
+  * @MEI_ME_ICH_CFG:        I/O Controller Hub legacy devices.
+  * @MEI_ME_ICH10_CFG:      I/O Controller Hub platforms Gen10
+- * @MEI_ME_PCH_CFG:        Platform Controller Hub platforms (Up to Gen8).
++ * @MEI_ME_PCH6_CFG:       Platform Controller Hub platforms (Gen6).
++ * @MEI_ME_PCH7_CFG:       Platform Controller Hub platforms (Gen7).
+  * @MEI_ME_PCH_CPT_PBG_CFG:Platform Controller Hub workstations
+  *                         with quirk for Node Manager exclusion.
+  * @MEI_ME_PCH8_CFG:       Platform Controller Hub Gen8 and newer
+@@ -77,7 +80,8 @@ enum mei_cfg_idx {
+ 	MEI_ME_UNDEF_CFG,
+ 	MEI_ME_ICH_CFG,
+ 	MEI_ME_ICH10_CFG,
+-	MEI_ME_PCH_CFG,
++	MEI_ME_PCH6_CFG,
++	MEI_ME_PCH7_CFG,
+ 	MEI_ME_PCH_CPT_PBG_CFG,
+ 	MEI_ME_PCH8_CFG,
+ 	MEI_ME_PCH8_SPS_CFG,
+--- a/drivers/misc/mei/mei_dev.h
++++ b/drivers/misc/mei/mei_dev.h
+@@ -426,6 +426,8 @@ struct mei_fw_version {
+  *
+  * @fw_ver : FW versions
+  *
++ * @fw_f_fw_ver_supported : fw feature: fw version supported
++ *
+  * @me_clients_rwsem: rw lock over me_clients list
+  * @me_clients  : list of FW clients
+  * @me_clients_map : FW clients bit map
+@@ -506,6 +508,8 @@ struct mei_device {
+ 
+ 	struct mei_fw_version fw_ver[MEI_MAX_FW_VER_BLOCKS];
+ 
++	unsigned int fw_f_fw_ver_supported:1;
++
+ 	struct rw_semaphore me_clients_rwsem;
+ 	struct list_head me_clients;
+ 	DECLARE_BITMAP(me_clients_map, MEI_CLIENTS_MAX);
 --- a/drivers/misc/mei/pci-me.c
 +++ b/drivers/misc/mei/pci-me.c
-@@ -96,6 +96,9 @@ static const struct pci_device_id mei_me
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_CNP_H, MEI_ME_PCH12_CFG)},
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_CNP_H_4, MEI_ME_PCH8_CFG)},
+@@ -61,13 +61,13 @@ static const struct pci_device_id mei_me
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_ICH10_3, MEI_ME_ICH10_CFG)},
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_ICH10_4, MEI_ME_ICH10_CFG)},
  
-+	{MEI_PCI_DEVICE(MEI_DEV_ID_CMP_LP, MEI_ME_PCH12_CFG)},
-+	{MEI_PCI_DEVICE(MEI_DEV_ID_CMP_LP_3, MEI_ME_PCH8_CFG)},
-+
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_ICP_LP, MEI_ME_PCH12_CFG)},
- 
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_TGP_LP, MEI_ME_PCH12_CFG)},
+-	{MEI_PCI_DEVICE(MEI_DEV_ID_IBXPK_1, MEI_ME_PCH_CFG)},
+-	{MEI_PCI_DEVICE(MEI_DEV_ID_IBXPK_2, MEI_ME_PCH_CFG)},
++	{MEI_PCI_DEVICE(MEI_DEV_ID_IBXPK_1, MEI_ME_PCH6_CFG)},
++	{MEI_PCI_DEVICE(MEI_DEV_ID_IBXPK_2, MEI_ME_PCH6_CFG)},
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_CPT_1, MEI_ME_PCH_CPT_PBG_CFG)},
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_PBG_1, MEI_ME_PCH_CPT_PBG_CFG)},
+-	{MEI_PCI_DEVICE(MEI_DEV_ID_PPT_1, MEI_ME_PCH_CFG)},
+-	{MEI_PCI_DEVICE(MEI_DEV_ID_PPT_2, MEI_ME_PCH_CFG)},
+-	{MEI_PCI_DEVICE(MEI_DEV_ID_PPT_3, MEI_ME_PCH_CFG)},
++	{MEI_PCI_DEVICE(MEI_DEV_ID_PPT_1, MEI_ME_PCH7_CFG)},
++	{MEI_PCI_DEVICE(MEI_DEV_ID_PPT_2, MEI_ME_PCH7_CFG)},
++	{MEI_PCI_DEVICE(MEI_DEV_ID_PPT_3, MEI_ME_PCH7_CFG)},
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_LPT_H, MEI_ME_PCH8_SPS_CFG)},
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_LPT_W, MEI_ME_PCH8_SPS_CFG)},
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_LPT_LP, MEI_ME_PCH8_CFG)},
 
 
