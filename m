@@ -2,128 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E670D92C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 15:45:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2490FD92C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 15:45:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404253AbfJPNpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 09:45:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43588 "EHLO mx1.suse.de"
+        id S2405471AbfJPNp1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 09:45:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43986 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729093AbfJPNpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 09:45:10 -0400
+        id S1729093AbfJPNp0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 09:45:26 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id ACD89B1E9;
-        Wed, 16 Oct 2019 13:45:08 +0000 (UTC)
-Subject: Re: [PATCH] drivers: mcb: use symbol namespaces
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Michael Moese <mmoese@suse.de>, Jessica Yu <jeyu@kernel.org>
-References: <20191016100158.1400-1-jthumshirn@suse.de>
- <20191016125139.GA26497@kroah.com>
-From:   Johannes Thumshirn <jthumshirn@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jthumshirn@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <48f87640-d277-fdb6-3d6e-3f88b7623f22@suse.de>
-Date:   Wed, 16 Oct 2019 15:45:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        by mx1.suse.de (Postfix) with ESMTP id 4CD1CB68D;
+        Wed, 16 Oct 2019 13:45:22 +0000 (UTC)
+Date:   Wed, 16 Oct 2019 15:45:19 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        virtualization@lists.linux-foundation.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Juergen Gross <jgross@suse.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Pingfan Liu <kernelfans@gmail.com>, Qian Cai <cai@lca.pw>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Wei Yang <richardw.yang@linux.intel.com>,
+        Alexander Potapenko <glider@google.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Yu Zhao <yuzhao@google.com>, Minchan Kim <minchan@kernel.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>
+Subject: Re: [PATCH RFC v3 6/9] mm: Allow to offline PageOffline() pages with
+ a reference count of 0
+Message-ID: <20191016134519.GC317@dhcp22.suse.cz>
+References: <20190919142228.5483-1-david@redhat.com>
+ <20190919142228.5483-7-david@redhat.com>
+ <20191016114321.GX317@dhcp22.suse.cz>
+ <bd38d88d-19a7-275a-386d-f37cb76a3390@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20191016125139.GA26497@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bd38d88d-19a7-275a-386d-f37cb76a3390@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/10/2019 14:51, Greg KH wrote:
-> On Wed, Oct 16, 2019 at 12:01:58PM +0200, Johannes Thumshirn wrote:
->> Now that we have symbol namespaces, use them in MCB to not pollute the
->> default namespace with MCB internals.
->>
->> Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
->> ---
->>  drivers/gpio/gpio-menz127.c            |  1 +
->>  drivers/iio/adc/men_z188_adc.c         |  1 +
->>  drivers/mcb/mcb-core.c                 | 28 ++++++++++++++--------------
->>  drivers/mcb/mcb-lpc.c                  |  1 +
->>  drivers/mcb/mcb-parse.c                |  2 +-
->>  drivers/mcb/mcb-pci.c                  |  1 +
->>  drivers/tty/serial/8250/8250_men_mcb.c |  1 +
->>  drivers/tty/serial/men_z135_uart.c     |  1 +
->>  drivers/watchdog/menz69_wdt.c          |  1 +
->>  9 files changed, 22 insertions(+), 15 deletions(-)
+On Wed 16-10-19 14:50:30, David Hildenbrand wrote:
+> On 16.10.19 13:43, Michal Hocko wrote:
+> > On Thu 19-09-19 16:22:25, David Hildenbrand wrote:
+> > > virtio-mem wants to allow to offline memory blocks of which some parts
+> > > were unplugged, especially, to later offline and remove completely
+> > > unplugged memory blocks. The important part is that PageOffline() has
+> > > to remain set until the section is offline, so these pages will never
+> > > get accessed (e.g., when dumping). The pages should not be handed
+> > > back to the buddy (which would require clearing PageOffline() and
+> > > result in issues if offlining fails and the pages are suddenly in the
+> > > buddy).
+> > > 
+> > > Let's use "PageOffline() + reference count = 0" as a sign to
+> > > memory offlining code that these pages can simply be skipped when
+> > > offlining, similar to free or HWPoison pages.
+> > > 
+> > > Pass flags to test_pages_isolated(), similar as already done for
+> > > has_unmovable_pages(). Use a new flag to indicate the
+> > > requirement of memory offlining to skip over these special pages.
+> > > 
+> > > In has_unmovable_pages(), make sure the pages won't be detected as
+> > > movable. This is not strictly necessary, however makes e.g.,
+> > > alloc_contig_range() stop early, trying to isolate such page blocks -
+> > > compared to failing later when testing if all pages were isolated.
+> > > 
+> > > Also, make sure that when a reference to a PageOffline() page is
+> > > dropped, that the page will not be returned to the buddy.
+> > > 
+> > > memory devices (like virtio-mem) that want to make use of this
+> > > functionality have to make sure to synchronize against memory offlining,
+> > > using the memory hotplug notifier.
+> > > 
+> > > Alternative: Allow to offline with a reference count of 1
+> > > and use some other sign in the struct page that offlining is permitted.
+> > 
+> > Few questions. I do not see onlining code to take care of this special
+> > case. What should happen when offline && online?
 > 
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Once offline, the memmap is garbage. When onlining again:
+> 
+> a) memmap will be re-initialized
+> b) online_page_callback_t will be called for every page in the section. The
+> driver can mark them offline again and not give them to the buddy.
+> c) section will be marked online.
 
-Btw do you want me to send it to you again shortly before the merge
-window opens or can you queue it up before?
+But we can skip those pages when onlining and keep them in the offline
+state right? We do not poison offlined pages.
 
-Thanks,
-	Johannes
+There is state stored in the struct page. In other words this shouldn't
+be really different from HWPoison pages. I cannot find the code that is
+doing that and maybe we don't handle that. But we cannot simply online
+hwpoisoned page. Offlining the range will not make a broken memory OK
+all of the sudden. And your usecase sounds similar to me.
+
+> The driver that marked these pages to be skipped when offlining is
+> responsible for registering the online_page_callback_t callback where these
+> pages will get excluded.
+> 
+> This is exactly the same as when onling a memory block that is partially
+> populated (e.g., HpyerV balloon right now).
+> 
+> So it's effectively "re-initializing the memmap using the driver knowledge"
+> when onlining.
+
+I am not sure I follow. So you exclude those pages when onlining?
+
+> > Should we allow to try_remove_memory to succeed with these pages?
+> 
+> I think we should first properly offline them (mark sections offline and
+> memory blocks, fixup numbers, shrink zones ...). The we can cleanly remove
+> the memory. (see [PATCH RFC v3 8/9] mm/memory_hotplug: Introduce
+> offline_and_remove_memory())
+
+I will have a look, but just to quick question. try_remove_memory would
+fail if the range is offline (via user interface) but there are still some
+pages in the driver Offline state?
+
+> Once offline, the memmap is irrelevant and try_remove_memory() can do its
+> job.
+> 
+> > Do we really have hook into __put_page? Why do we even care about the
+> > reference count of those pages? Wouldn't it be just more consistent to
+> > elevate the reference count (I guess this is what you suggest in the
+> > last paragraph) and the virtio driver would return that page to the
+> > buddy by regular put_page. This is also related to the above question
+> > about the physical memory remove.
+> 
+> Returning them to the buddy is problematic for various reasons. Let's have a
+> look at __offline_pages():
+> 
+> 1) start_isolate_page_range()
+> -> offline pages with a reference count of one will be detected as unmovable
+> -> BAD, we abort right away. We could hack around that.
+> 
+> 2) memory_notify(MEM_GOING_OFFLINE, &arg);
+> -> Here, we could release all pages to the buddy, clearing PG_offline
+> -> BAD, PF_offline must not be cleared so dumping tools will not touch
+>    these pages. I don't see a way to hack around that.
+> 
+> 3) scan_movable_pages() ...
+> 
+> 4a) memory_notify(MEM_OFFLINE, &arg);
+> 
+> Perfect, it worked. Sections are offline.
+> 
+> 4b) undo_isolate_page_range(start_pfn, end_pfn, MIGRATE_MOVABLE);
+>     memory_notify(MEM_CANCEL_OFFLINE, &arg);
+> 
+> -> Offlining failed for whatever reason.
+> -> Pages are in the buddy, but we already un-isolated them. BAD.
+> 
+> By not going via the buddy we avoid these issues and can leave PG_offline
+> set until the section is fully offline. Something that is very desirable for
+> virtio-mem (and as far as I can tell also HyperV in the future).
+
+I am not sure I follow. Maybe my original question was confusing. Let me
+ask again. Why do we need to hook into __put_page?
+
+
+> > [...]
+> > > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > > index d5d7944954b3..fef74720d8b4 100644
+> > > --- a/mm/page_alloc.c
+> > > +++ b/mm/page_alloc.c
+> > > @@ -8221,6 +8221,15 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
+> > >   		if (!page_ref_count(page)) {
+> > >   			if (PageBuddy(page))
+> > >   				iter += (1 << page_order(page)) - 1;
+> > > +			/*
+> > > +			* Memory devices allow to offline a page if it is
+> > > +			* marked PG_offline and has a reference count of 0.
+> > > +			* However, the pages are not movable as it would be
+> > > +			* required e.g., for alloc_contig_range().
+> > > +			*/
+> > > +			if (PageOffline(page) && !(flags & SKIP_OFFLINE))
+> > > +				if (++found > count)
+> > > +					goto unmovable;
+> > >   			continue;
+> > >   		}
+> > 
+> > Do we really need to distinguish offline and hwpoison pages? They are
+> > both unmovable for allocator purposes and offlineable for the hotplug,
+> > right? Should we just hide them behind a helper and use it rather than
+> > an explicit SKIP_$FOO?
+> 
+> Makes sense. It really boils down to "offline" vs. "allocate" use cases.
+> 
+> So maybe instead of "SKIP_FOO" something like "MEMORY_OFFLINE". ?
+
+Yes, that would be a better fit.
+
 -- 
-Johannes Thumshirn                            SUSE Labs Filesystems
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5
-90409 Nürnberg
-Germany
-(HRB 36809, AG Nürnberg)
-Geschäftsführer: Felix Imendörffer
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+Michal Hocko
+SUSE Labs
