@@ -2,83 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EBF1D8977
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 09:32:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44A00D8993
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 09:34:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389167AbfJPHcM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 03:32:12 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:48478 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389039AbfJPHcM (ORCPT
+        id S1731942AbfJPHeY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 03:34:24 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35492 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731730AbfJPHeY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 03:32:12 -0400
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iKdmp-0007Pm-FE; Wed, 16 Oct 2019 09:31:59 +0200
-Date:   Wed, 16 Oct 2019 09:31:58 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-cc:     Jianyong Wu <jianyong.wu@arm.com>, netdev@vger.kernel.org,
-        yangbo.lu@nxp.com, john.stultz@linaro.org,
-        sean.j.christopherson@intel.com, maz@kernel.org,
-        richardcochran@gmail.com, Mark.Rutland@arm.com, will@kernel.org,
-        suzuki.poulose@arm.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        kvm@vger.kernel.org, Steve.Capper@arm.com, Kaly.Xin@arm.com,
-        justin.he@arm.com, nd@arm.com
-Subject: Re: [PATCH v5 4/6] psci: Add hvc call service for ptp_kvm.
-In-Reply-To: <9641fbff-cfcd-4854-e0c9-0b97d44193ee@redhat.com>
-Message-ID: <alpine.DEB.2.21.1910160929500.2518@nanos.tec.linutronix.de>
-References: <20191015104822.13890-1-jianyong.wu@arm.com> <20191015104822.13890-5-jianyong.wu@arm.com> <9641fbff-cfcd-4854-e0c9-0b97d44193ee@redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Wed, 16 Oct 2019 03:34:24 -0400
+Received: by mail-pg1-f195.google.com with SMTP id p30so13767283pgl.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 00:34:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=oaPZpMWVpeTaXyczMAyADaVhWo958LDrNtPNnm45k+8=;
+        b=LHH658wbM0k+Va6D68qeWuqW0Y4HISxQ7+Chb07DJVuuyyRkDwj6wXRYQz323X9V84
+         W+ep2amIpCgm+BTuNFr6j+z7O/l/hOaTEqmNiKMWVk10CCWWCwVADl8+rCTeZ8JRjiSf
+         7fQ8eOOOxw+q1xg8IvQ9NGaUH3AqD2WoA5I1e2+8QB18aG8IbsfBBL0demeKmfDKx4cG
+         cXZaE5tau0Kn00F91zB/bU1iBBsfHtpPeFc3tiSwRq1HlEAGE9vRzkzNW7HfCx5cuT/9
+         bP9D3oK2xsBa9Vl9LMeSPi2mT2h5mWTZuMXzpphvQp0CTHIJUSIAxjMfIUxPiG+y06Ku
+         XWIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=oaPZpMWVpeTaXyczMAyADaVhWo958LDrNtPNnm45k+8=;
+        b=preVKq7IqzJETjPQ32wJIgVjFl8clvTPRazVLGwPlWsOQVN8D9mUQ+EfhJ/itRBq18
+         JsK+6kcmE+UtyDucfQoEIJSy1xjBq8vaVpXFEOD+m8G7jMPSjQcn4Elzqnc1373EgJ5H
+         Uw0hhhgaG66tRyP9HgmdF3az6g2FP3gxBrAB2TvGq7pASGchgfIVZKjRDh07bopowd7m
+         qC4HqDK25M1qI34jeNYTdOeK1nkVTwzojvYcvr+IR7wim0lpAm4zxEGRMnN9RUFs5kEy
+         n8+x0iyCpKtGWz6Kn/x5gZe1MhFC5VAJViGlBlL6WvOuLt3GiLMkRzqJbDRM+l5ANy/A
+         DWcQ==
+X-Gm-Message-State: APjAAAWO4AMleT6e7EJdiyCb3vfHe742yXBSCzuO30RjPyipNg2wYJtS
+        JZXo/30iVlRB4JW+h5nu5XVdPcxeDhcFNQ==
+X-Google-Smtp-Source: APXvYqxy/0e4eqIE4Ili3iqksq7BQ+lJQZd8bolWvI3oQgQtrJukriBBE5CvPXT4GwVhZmJGPhniOg==
+X-Received: by 2002:a63:1042:: with SMTP id 2mr44558827pgq.59.1571211262784;
+        Wed, 16 Oct 2019 00:34:22 -0700 (PDT)
+Received: from localhost ([49.248.175.127])
+        by smtp.gmail.com with ESMTPSA id x125sm25026657pfb.93.2019.10.16.00.34.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 16 Oct 2019 00:34:21 -0700 (PDT)
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+To:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        bjorn.andersson@linaro.org, edubezval@gmail.com, agross@kernel.org,
+        masneyb@onstation.org, swboyd@chromium.org,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>
+Cc:     devicetree@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: [PATCH 00/15] thermal: qcom: tsens: Add interrupt support
+Date:   Wed, 16 Oct 2019 13:03:59 +0530
+Message-Id: <cover.1571210269.git.amit.kucheria@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 16 Oct 2019, Paolo Bonzini wrote:
-> On 15/10/19 12:48, Jianyong Wu wrote:
-> > diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
-> > index 07e57a49d1e8..3597f1f27b10 100644
-> > --- a/drivers/clocksource/arm_arch_timer.c
-> > +++ b/drivers/clocksource/arm_arch_timer.c
-> > @@ -1634,3 +1634,8 @@ static int __init arch_timer_acpi_init(struct acpi_table_header *table)
-> >  }
-> >  TIMER_ACPI_DECLARE(arch_timer, ACPI_SIG_GTDT, arch_timer_acpi_init);
-> >  #endif
-> > +
-> > +bool is_arm_arch_counter(void *cs)
-> > +{
-> > +	return (struct clocksource *)cs == &clocksource_counter;
-> > +}
-> 
-> As Thomas pointed out, any reason to have a void * here?
-> 
-> However, since he didn't like modifying the struct, here is an
-> alternative idea:
-> 
-> 1) add a "struct clocksource*" argument to ktime_get_snapshot
-> 
-> 2) return -ENODEV if the argument is not NULL and is not the current
-> clocksource
-> 
-> 3) move the implementation of the hypercall to
-> drivers/clocksource/arm_arch_timer.c, so that it can call
-> ktime_get_snapshot(&systime_snapshot, &clocksource_counter);
+Hi Thermal and MSM maintainers,
 
-And then you implement a gazillion of those functions for every
-arch/subarch which has a similar requirement. Pointless exercise.
+I believe this series is now ready to be merged. The DT bindings and driver
+changes should go through the thermal tree and the changes to the DT files
+themselves should go through the MSM tree. There is no hard ordering
+dependency because we're adding a new property to the driver. It would help
+to soak in linux-next for a few weeks to catch anything on kernelci.org.
 
-Having the ID is trivial enough and the storage space is not really a
-concern.
+Regards,
+Amit
 
-Thanks,
+Changes since v4:
+- Change to of-thermal core[1] to force interrupts w/o changing polling-delay DT
+  parameter
+- Corresponding changes to DT files to remove the hunks setting the values
+  to 0
+- Collected reviews and acks
 
-	tglx
+Changes since v3:
+- Fix up the YAML definitions based on Rob's review
+
+Changes since v2:
+- Addressed Stephen's review comment
+- Moved the dt-bindings to yaml (This throws up some new warnings in various QCOM
+devicetrees. I'll send out a separate series to fix them up)
+- Collected reviews and acks
+- Added the dt-bindings to MAINTAINERS
+
+Changes since v1:
+- Collected reviews and acks
+- Addressed Stephen's review comments (hopefully I got them all).
+- Completely removed critical interrupt infrastructure from this series.
+  Will post that separately.
+- Fixed a bug in sign-extension of temperature.
+- Fixed DT bindings to use the name of the interrupt e.g. "uplow" and use
+  platform_get_irq_byname().
+
+Add interrupt support to TSENS. The first 6 patches are general fixes and
+cleanups to the driver before interrupt support is introduced.
+
+[1] https://lore.kernel.org/linux-arm-msm/1b53ef537203e629328285b4597a09e4a586d688.1571181041.git.amit.kucheria@linaro.org/
+
+Amit Kucheria (15):
+  drivers: thermal: tsens: Get rid of id field in tsens_sensor
+  drivers: thermal: tsens: Simplify code flow in tsens_probe
+  drivers: thermal: tsens: Add __func__ identifier to debug statements
+  drivers: thermal: tsens: Add debugfs support
+  arm: dts: msm8974: thermal: Add thermal zones for each sensor
+  arm64: dts: msm8916: thermal: Fixup HW ids for cpu sensors
+  dt-bindings: thermal: tsens: Convert over to a yaml schema
+  arm64: dts: sdm845: thermal: Add interrupt support
+  arm64: dts: msm8996: thermal: Add interrupt support
+  arm64: dts: msm8998: thermal: Add interrupt support
+  arm64: dts: qcs404: thermal: Add interrupt support
+  arm: dts: msm8974: thermal: Add interrupt support
+  arm64: dts: msm8916: thermal: Add interrupt support
+  drivers: thermal: tsens: Create function to return sign-extended
+    temperature
+  drivers: thermal: tsens: Add interrupt support
+
+ .../bindings/thermal/qcom-tsens.txt           |  55 --
+ .../bindings/thermal/qcom-tsens.yaml          | 168 ++++++
+ MAINTAINERS                                   |   1 +
+ arch/arm/boot/dts/qcom-msm8974.dtsi           |  92 +++
+ arch/arm64/boot/dts/qcom/msm8916.dtsi         |   6 +-
+ arch/arm64/boot/dts/qcom/msm8996.dtsi         |   4 +
+ arch/arm64/boot/dts/qcom/msm8998.dtsi         |   6 +-
+ arch/arm64/boot/dts/qcom/qcs404.dtsi          |   2 +
+ arch/arm64/boot/dts/qcom/sdm845.dtsi          |   4 +
+ drivers/thermal/qcom/tsens-8960.c             |   4 +-
+ drivers/thermal/qcom/tsens-common.c           | 529 ++++++++++++++++--
+ drivers/thermal/qcom/tsens-v0_1.c             |  11 +
+ drivers/thermal/qcom/tsens-v1.c               |  29 +
+ drivers/thermal/qcom/tsens-v2.c               |  13 +
+ drivers/thermal/qcom/tsens.c                  |  58 +-
+ drivers/thermal/qcom/tsens.h                  | 286 ++++++++--
+ 16 files changed, 1102 insertions(+), 166 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+ create mode 100644 Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+
+-- 
+2.17.1
+
