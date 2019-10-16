@@ -2,93 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E9F3D8CFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 11:54:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0A3DD8D06
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 11:54:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404348AbfJPJx7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 05:53:59 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:36338 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404266AbfJPJx6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 05:53:58 -0400
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8361443E;
-        Wed, 16 Oct 2019 11:53:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1571219635;
-        bh=gjcnDXgTaHH8i0rQWIk9tmPvMqWjkUNsCfrg0iTzX/U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BjNRpsJlVWhEN2gh2yeS7XLz3wM+GhoW+gTtqVPxOvthF6gcJDbUAfd6owFXi7IBC
-         M+7+h31pY9s8i/nlfZWjSj92dvu1HLAOw+5QWPHnmHlrS1q1wmxsFBuIw33JDUOugs
-         o9CqGq9H5Oy1FnBCXb+66ZIBJfklmfTCCa8cK9ws=
-Date:   Wed, 16 Oct 2019 12:53:52 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Hariprasad Kelam <hariprasad.kelam@gmail.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        id S2404364AbfJPJyN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 05:54:13 -0400
+Received: from foss.arm.com ([217.140.110.172]:34420 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404266AbfJPJyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 05:54:12 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A6076142F;
+        Wed, 16 Oct 2019 02:54:11 -0700 (PDT)
+Received: from [10.163.1.216] (unknown [10.163.1.216])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DD8023F6C4;
+        Wed, 16 Oct 2019 02:53:56 -0700 (PDT)
+Subject: Re: [PATCH V6 2/2] mm/debug: Add tests validating architecture page
+ table helpers
+To:     Qian Cai <cai@lca.pw>, linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: media: make use of
- devm_platform_ioremap_resource
-Message-ID: <20191016095352.GA5175@pendragon.ideasonboard.com>
-References: <1570517752-30991-1-git-send-email-hariprasad.kelam@gmail.com>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Steven Price <Steven.Price@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Matthew Wilcox <willy@infradead.org>,
+        Sri Krishna chowdary <schowdary@nvidia.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        James Hogan <jhogan@kernel.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        linux-snps-arc@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+References: <1571131302-32290-1-git-send-email-anshuman.khandual@arm.com>
+ <1571131302-32290-3-git-send-email-anshuman.khandual@arm.com>
+ <1571162982.5937.42.camel@lca.pw>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <7cd03155-6713-3116-1e88-f81f84dd794f@arm.com>
+Date:   Wed, 16 Oct 2019 15:24:23 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <1571162982.5937.42.camel@lca.pw>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1570517752-30991-1-git-send-email-hariprasad.kelam@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Hariprasad,
 
-Thank you for the patch.
 
-As the patch only touches the omap4iss driver, you could have made the
-subject line a bit more specific, for instance "staging: media:
-omap4iss: Use devm_platform_ioremap_resource". No big deal though.
-
-On Tue, Oct 08, 2019 at 12:25:51PM +0530, hariprasadKelamhariprasad.kelam@gmail.com wrote:
-> From: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+On 10/15/2019 11:39 PM, Qian Cai wrote:
+> On Tue, 2019-10-15 at 14:51 +0530, Anshuman Khandual wrote:
+>> +static unsigned long __init get_random_vaddr(void)
+>> +{
+>> +	unsigned long random_vaddr, random_pages, total_user_pages;
+>> +
+>> +	total_user_pages = (TASK_SIZE - FIRST_USER_ADDRESS) / PAGE_SIZE;
+>> +
+>> +	random_pages = get_random_long() % total_user_pages;
+>> +	random_vaddr = FIRST_USER_ADDRESS + random_pages * PAGE_SIZE;
+>> +
+>> +	WARN_ON(random_vaddr > TASK_SIZE);
+>> +	WARN_ON(random_vaddr < FIRST_USER_ADDRESS);
 > 
-> fix below issue reported by coccicheck
-> drivers/staging//media/omap4iss/iss.c:915:1-15: WARNING: Use
-> devm_platform_ioremap_resource for iss -> regs [ res ]
+> It would be nice if this patch does not introduce a new W=1 GCC warning here on
+> x86 because FIRST_USER_ADDRESS is 0, and GCC think the code is dumb because
+> "random_vaddr" is unsigned,
 > 
-> Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+> In file included from ./arch/x86/include/asm/bug.h:83,
+>                  from ./include/linux/bug.h:5,
+>                  from ./include/linux/mmdebug.h:5,
+>                  from ./include/linux/gfp.h:5,
+>                  from mm/debug_vm_pgtable.c:13:
+> mm/debug_vm_pgtable.c: In function ‘get_random_vaddr’:
+> mm/debug_vm_pgtable.c:359:23: warning: comparison of unsigned expression < 0 is
+> always false [-Wtype-limits]
+>   WARN_ON(random_vaddr < FIRST_USER_ADDRESS);
+>                        ^
+> ./include/asm-generic/bug.h:113:25: note: in definition of macro ‘WARN_ON’
+>   int __ret_warn_on = !!(condition);    \
+>                          ^~~~~~~~~
 
-The change looks good to me.
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-and applied to my tree for v5.5.
-
-> ---
->  drivers/staging/media/omap4iss/iss.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/drivers/staging/media/omap4iss/iss.c b/drivers/staging/media/omap4iss/iss.c
-> index 1a966cb..6fb60b5 100644
-> --- a/drivers/staging/media/omap4iss/iss.c
-> +++ b/drivers/staging/media/omap4iss/iss.c
-> @@ -908,11 +908,7 @@ static int iss_map_mem_resource(struct platform_device *pdev,
->  				struct iss_device *iss,
->  				enum iss_mem_resources res)
->  {
-> -	struct resource *mem;
-> -
-> -	mem = platform_get_resource(pdev, IORESOURCE_MEM, res);
-> -
-> -	iss->regs[res] = devm_ioremap_resource(iss->dev, mem);
-> +	iss->regs[res] = devm_platform_ioremap_resource(pdev, res);
->  
->  	return PTR_ERR_OR_ZERO(iss->regs[res]);
->  }
-
--- 
-Regards,
-
-Laurent Pinchart
+The test checks against an erroneous unsigned long overflow when
+FIRST_USER_ADDRESS is not 0 but a positive number. Wondering if
+the compiler will still complain if we merge both the WARN_ON()
+checks as || on a single statement.
