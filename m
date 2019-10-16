@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1BD2DA0C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:26:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73B0CD9FB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:24:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407428AbfJPWO7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:14:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46482 "EHLO mail.kernel.org"
+        id S2395533AbfJPV5n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:57:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395267AbfJPVzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:55:36 -0400
+        id S2391233AbfJPV46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:56:58 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B599222BD;
-        Wed, 16 Oct 2019 21:55:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 041F8218DE;
+        Wed, 16 Oct 2019 21:56:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262935;
-        bh=j6J6/XrfGH0dGCQ64DCTclHY+iBTFT8Fgdv2TEDikSw=;
+        s=default; t=1571263017;
+        bh=axZIwNdfKdDdPLE4tMS6r7yKnYi7SwZ0HbtEFjMZyz4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GnIb/f9jhiTxU7b8PwWYcUSbcDgoZZ9bOBF16b9KIquSqmNgGaA7lB9uz9VgTFyo0
-         VDuIdB8wweARIFoPKjHwxioRzXLSK5O+yCcRI98bOvJN7pMJE4Ofcz55x23pl9mAyS
-         61U3ECOnbV4/XLIuoWZU5y5CzjajYQd0IYv+ZWS0=
+        b=X+tYoM7C2WK2FSb2OuFLOmZ4/XMMySRBIF85KfDzUK4HTx3F4yRtzJ2lhIg/HBHf6
+         P2X6ZV7a8n5zwCNXlVWd5Pjvx6959iQNaG2qpWAX304JKtSjkZ5XsMD3uvA/47aJqJ
+         HwbjEiuNalZe0VZW5EucfI24yEYFhz3EvAll9Exg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Peter Korsgaard <jacmet@sunsite.dk>
-Subject: [PATCH 4.9 57/92] serial: uartlite: fix exit path null pointer
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.19 19/81] USB: iowarrior: fix use-after-free on release
 Date:   Wed, 16 Oct 2019 14:50:30 -0700
-Message-Id: <20191016214839.294596520@linuxfoundation.org>
+Message-Id: <20191016214825.028539641@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
-References: <20191016214759.600329427@linuxfoundation.org>
+In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
+References: <20191016214805.727399379@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,43 +42,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Johan Hovold <johan@kernel.org>
 
-commit a553add0846f355a28ed4e81134012e4a1e280c2 upstream.
+commit 80cd5479b525093a56ef768553045741af61b250 upstream.
 
-Call uart_unregister_driver() conditionally instead of
-unconditionally, only if it has been previously registered.
+The driver was accessing its struct usb_interface from its release()
+callback without holding a reference. This would lead to a
+use-after-free whenever debugging was enabled and the device was
+disconnected while its character device was open.
 
-This uses driver.state, just as the sh-sci.c driver does.
-
-Fixes this null pointer dereference in tty_unregister_driver(),
-since the 'driver' argument is null:
-
-  general protection fault: 0000 [#1] PREEMPT SMP KASAN PTI
-  RIP: 0010:tty_unregister_driver+0x25/0x1d0
-
-Fixes: 238b8721a554 ("[PATCH] serial uartlite driver")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: stable <stable@vger.kernel.org>
-Cc: Peter Korsgaard <jacmet@sunsite.dk>
-Link: https://lore.kernel.org/r/9c8e6581-6fcc-a595-0897-4d90f5d710df@infradead.org
+Fixes: 549e83500b80 ("USB: iowarrior: Convert local dbg macro to dev_dbg")
+Cc: stable <stable@vger.kernel.org>     # 3.16
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191009104846.5925-3-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/uartlite.c |    3 ++-
+ drivers/usb/misc/iowarrior.c |    3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/tty/serial/uartlite.c
-+++ b/drivers/tty/serial/uartlite.c
-@@ -746,7 +746,8 @@ err_uart:
- static void __exit ulite_exit(void)
- {
- 	platform_driver_unregister(&ulite_platform_driver);
--	uart_unregister_driver(&ulite_uart_driver);
-+	if (ulite_uart_driver.state)
-+		uart_unregister_driver(&ulite_uart_driver);
+--- a/drivers/usb/misc/iowarrior.c
++++ b/drivers/usb/misc/iowarrior.c
+@@ -243,6 +243,7 @@ static inline void iowarrior_delete(stru
+ 	kfree(dev->int_in_buffer);
+ 	usb_free_urb(dev->int_in_urb);
+ 	kfree(dev->read_queue);
++	usb_put_intf(dev->interface);
+ 	kfree(dev);
  }
  
- module_init(ulite_init);
+@@ -764,7 +765,7 @@ static int iowarrior_probe(struct usb_in
+ 	init_waitqueue_head(&dev->write_wait);
+ 
+ 	dev->udev = udev;
+-	dev->interface = interface;
++	dev->interface = usb_get_intf(interface);
+ 
+ 	iface_desc = interface->cur_altsetting;
+ 	dev->product_id = le16_to_cpu(udev->descriptor.idProduct);
 
 
