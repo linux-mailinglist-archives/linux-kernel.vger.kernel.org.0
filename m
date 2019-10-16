@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 577EFDA0DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:26:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B483AD9FB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:24:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437720AbfJPWQ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:16:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45580 "EHLO mail.kernel.org"
+        id S2438020AbfJPV5b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:57:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388653AbfJPVzK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:55:10 -0400
+        id S2388938AbfJPV4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:56:52 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3014218DE;
-        Wed, 16 Oct 2019 21:55:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF10421925;
+        Wed, 16 Oct 2019 21:56:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262909;
-        bh=bU4CuMd2VNYjjpDGrnKUfxlztZgEPyz8hEzwiyxPeGM=;
+        s=default; t=1571263012;
+        bh=kTN6QrRy9u1N1DvdWUdVJbBzo9drJCWo4r6Z0OTLQCo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D7hVxwcLp3oza5FPfK7M2OOnZyzaFJYAjZRqMTaue+GKpVxniYmku2HzoCJ46pqfP
-         oshSnHWh4Sajmi+ldQzXbxI+aLouXVXpYHpOBOy+3StoTE+UXNz/C9iHNGrtbEyQSF
-         +LT4M+Ci4Ncf0cqGWayMLVCN2jMrP09K6tG6SR8k=
+        b=cVx8731xGAiU7uM4T8SqnQ4TFfdI/zzI25NFyZS099V90gCKk+NHAbEjDuTFMXNFn
+         Qg9pC9N3dcgKg6N1yAW8vnS+RqdMBS0/9xr+nFB69bMjWMfrkaEP574usjaXWOYaJ+
+         N+kP1J7YhMF7WVB/ujk950BZxJ/LDo/dJq+JPVuU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.9 52/92] USB: iowarrior: fix use-after-free on release
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: [PATCH 4.19 14/81] xhci: Increase STS_SAVE timeout in xhci_suspend()
 Date:   Wed, 16 Oct 2019 14:50:25 -0700
-Message-Id: <20191016214837.207999160@linuxfoundation.org>
+Message-Id: <20191016214819.189214935@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
-References: <20191016214759.600329427@linuxfoundation.org>
+In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
+References: <20191016214805.727399379@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,43 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit 80cd5479b525093a56ef768553045741af61b250 upstream.
+commit ac343366846a445bb81f0a0e8f16abb8bd5d5d88 upstream.
 
-The driver was accessing its struct usb_interface from its release()
-callback without holding a reference. This would lead to a
-use-after-free whenever debugging was enabled and the device was
-disconnected while its character device was open.
+After commit f7fac17ca925 ("xhci: Convert xhci_handshake() to use
+readl_poll_timeout_atomic()"), ASMedia xHCI may fail to suspend.
 
-Fixes: 549e83500b80 ("USB: iowarrior: Convert local dbg macro to dev_dbg")
-Cc: stable <stable@vger.kernel.org>     # 3.16
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191009104846.5925-3-johan@kernel.org
+Although the algorithms are essentially the same, the old max timeout is
+(usec + usec * time of doing readl()), and the new max timeout is just
+usec, which is much less than the old one.
+
+Increase the timeout to make ASMedia xHCI able to suspend again.
+
+BugLink: https://bugs.launchpad.net/bugs/1844021
+Fixes: f7fac17ca925 ("xhci: Convert xhci_handshake() to use readl_poll_timeout_atomic()")
+Cc: <stable@vger.kernel.org> # v5.2+
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Link: https://lore.kernel.org/r/1570190373-30684-8-git-send-email-mathias.nyman@linux.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/iowarrior.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/usb/host/xhci.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/misc/iowarrior.c
-+++ b/drivers/usb/misc/iowarrior.c
-@@ -248,6 +248,7 @@ static inline void iowarrior_delete(stru
- 	kfree(dev->int_in_buffer);
- 	usb_free_urb(dev->int_in_urb);
- 	kfree(dev->read_queue);
-+	usb_put_intf(dev->interface);
- 	kfree(dev);
- }
- 
-@@ -776,7 +777,7 @@ static int iowarrior_probe(struct usb_in
- 	init_waitqueue_head(&dev->write_wait);
- 
- 	dev->udev = udev;
--	dev->interface = interface;
-+	dev->interface = usb_get_intf(interface);
- 
- 	iface_desc = interface->cur_altsetting;
- 	dev->product_id = le16_to_cpu(udev->descriptor.idProduct);
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -1022,7 +1022,7 @@ int xhci_suspend(struct xhci_hcd *xhci,
+ 	writel(command, &xhci->op_regs->command);
+ 	xhci->broken_suspend = 0;
+ 	if (xhci_handshake(&xhci->op_regs->status,
+-				STS_SAVE, 0, 10 * 1000)) {
++				STS_SAVE, 0, 20 * 1000)) {
+ 	/*
+ 	 * AMD SNPS xHC 3.0 occasionally does not clear the
+ 	 * SSS bit of USBSTS and when driver tries to poll
 
 
