@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 519BADA0A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:25:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD0E8DA0E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:26:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439337AbfJPWNj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:13:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46844 "EHLO mail.kernel.org"
+        id S2387606AbfJPWQs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:16:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45286 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437826AbfJPVzt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:55:49 -0400
+        id S2390952AbfJPVzB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:55:01 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D6CF21928;
-        Wed, 16 Oct 2019 21:55:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 202CC218DE;
+        Wed, 16 Oct 2019 21:55:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262948;
-        bh=T/ispQqBFYx+Dt0v8DmKHA7q7O9Ug7uRRz1rITIolcQ=;
+        s=default; t=1571262901;
+        bh=LUKjsPCWEtNH3HLndgOLDUzg8Vj0lrrvdvXlTRZPOks=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a2ykbMtRhGCZVTfPIdomY+7Njs+e6s5RyMgVvZUhC2lCVuW7xjddk2a8cSdtATY5N
-         rihq3f79y5uX2F3I9tgxohMgs0hyQORxcFM+632J08yJT9I4nobSS3SD4p7BXJfDB6
-         67jW8oPTP5g8ig+B9LIKuzMjInAbvleWsEd2U1l4=
+        b=UdNzhci3SEtcxTF6dxTL8SfTioql5fGp2/bEXUtg7si7tKWAiFoF3H7QuLRLT7Aul
+         mCoLEZEB/92ze0nO3rG2Cf00hZ/yasuIcSkXKZpxQx519eOebGEs6Tfrn+aCjj8d8U
+         a360MZBNttv2isqlN6mFbHwyRW7IjoQbRAEW14oI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 19/65] USB: iowarrior: fix use-after-free after driver unbind
-Date:   Wed, 16 Oct 2019 14:50:33 -0700
-Message-Id: <20191016214813.881350919@linuxfoundation.org>
+        stable@vger.kernel.org, Reinhard Speyerer <rspmn@arcor.de>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.9 61/92] USB: serial: option: add support for Cinterion CLS8 devices
+Date:   Wed, 16 Oct 2019 14:50:34 -0700
+Message-Id: <20191016214840.469490059@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
-References: <20191016214756.457746573@linuxfoundation.org>
+In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
+References: <20191016214759.600329427@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,63 +43,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Reinhard Speyerer <rspmn@arcor.de>
 
-commit b5f8d46867ca233d773408ffbe691a8062ed718f upstream.
+commit dfbac2f4da6a0c4a8f6b4d715a4077a7b8df53ad upstream.
 
-Make sure to stop also the asynchronous write URBs on disconnect() to
-avoid use-after-free in the completion handler after driver unbind.
+Add support for the serial ports of Cinterion CLS8 devices.
 
-Fixes: 946b960d13c1 ("USB: add driver for iowarrior devices.")
-Cc: stable <stable@vger.kernel.org>	# 2.6.21: 51a2f077c44e ("USB: introduce usb_anchor")
+T:  Bus=01 Lev=03 Prnt=05 Port=01 Cnt=02 Dev#= 25 Spd=480  MxCh= 0
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+P:  Vendor=1e2d ProdID=00b0 Rev= 3.18
+S:  Manufacturer=GEMALTO
+S:  Product=USB Modem
+C:* #Ifs= 5 Cfg#= 1 Atr=80 MxPwr=500mA
+I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
+E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=83(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=85(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=87(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+E:  Ad=86(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
+E:  Ad=89(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
+E:  Ad=88(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+
+Signed-off-by: Reinhard Speyerer <rspmn@arcor.de>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191009104846.5925-4-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/iowarrior.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/usb/serial/option.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/usb/misc/iowarrior.c
-+++ b/drivers/usb/misc/iowarrior.c
-@@ -87,6 +87,7 @@ struct iowarrior {
- 	char chip_serial[9];		/* the serial number string of the chip connected */
- 	int report_size;		/* number of bytes in a report */
- 	u16 product_id;
-+	struct usb_anchor submitted;
- };
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -421,6 +421,7 @@ static void option_instat_callback(struc
+ #define CINTERION_PRODUCT_PH8_AUDIO		0x0083
+ #define CINTERION_PRODUCT_AHXX_2RMNET		0x0084
+ #define CINTERION_PRODUCT_AHXX_AUDIO		0x0085
++#define CINTERION_PRODUCT_CLS8			0x00b0
  
- /*--------------*/
-@@ -428,11 +429,13 @@ static ssize_t iowarrior_write(struct fi
- 			retval = -EFAULT;
- 			goto error;
- 		}
-+		usb_anchor_urb(int_out_urb, &dev->submitted);
- 		retval = usb_submit_urb(int_out_urb, GFP_KERNEL);
- 		if (retval) {
- 			dev_dbg(&dev->interface->dev,
- 				"submit error %d for urb nr.%d\n",
- 				retval, atomic_read(&dev->write_busy));
-+			usb_unanchor_urb(int_out_urb);
- 			goto error;
- 		}
- 		/* submit was ok */
-@@ -774,6 +777,8 @@ static int iowarrior_probe(struct usb_in
- 	iface_desc = interface->cur_altsetting;
- 	dev->product_id = le16_to_cpu(udev->descriptor.idProduct);
- 
-+	init_usb_anchor(&dev->submitted);
-+
- 	res = usb_find_last_int_in_endpoint(iface_desc, &dev->int_in_endpoint);
- 	if (res) {
- 		dev_err(&interface->dev, "no interrupt-in endpoint found\n");
-@@ -889,6 +894,7 @@ static void iowarrior_disconnect(struct
- 		   Deleting the device is postponed until close() was called.
- 		 */
- 		usb_kill_urb(dev->int_in_urb);
-+		usb_kill_anchored_urbs(&dev->submitted);
- 		wake_up_interruptible(&dev->read_wait);
- 		wake_up_interruptible(&dev->write_wait);
- 		mutex_unlock(&dev->mutex);
+ /* Olivetti products */
+ #define OLIVETTI_VENDOR_ID			0x0b3c
+@@ -1850,6 +1851,8 @@ static const struct usb_device_id option
+ 	  .driver_info = RSVD(4) },
+ 	{ USB_DEVICE_INTERFACE_CLASS(CINTERION_VENDOR_ID, CINTERION_PRODUCT_AHXX_2RMNET, 0xff) },
+ 	{ USB_DEVICE_INTERFACE_CLASS(CINTERION_VENDOR_ID, CINTERION_PRODUCT_AHXX_AUDIO, 0xff) },
++	{ USB_DEVICE_INTERFACE_CLASS(CINTERION_VENDOR_ID, CINTERION_PRODUCT_CLS8, 0xff),
++	  .driver_info = RSVD(0) | RSVD(4) },
+ 	{ USB_DEVICE(CINTERION_VENDOR_ID, CINTERION_PRODUCT_HC28_MDM) },
+ 	{ USB_DEVICE(CINTERION_VENDOR_ID, CINTERION_PRODUCT_HC28_MDMNET) },
+ 	{ USB_DEVICE(SIEMENS_VENDOR_ID, CINTERION_PRODUCT_HC25_MDM) },
 
 
