@@ -2,48 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CE55D8713
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 06:00:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 537F6D8716
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 06:01:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391189AbfJPD7p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 23:59:45 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:44304 "EHLO
+        id S1727655AbfJPEAv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 00:00:51 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:44310 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391171AbfJPD7p (ORCPT
+        with ESMTP id S1725263AbfJPEAv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 23:59:45 -0400
+        Wed, 16 Oct 2019 00:00:51 -0400
 Received: from localhost (unknown [IPv6:2601:601:9f00:1e2::d71])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 6EE54108B7CF2;
-        Tue, 15 Oct 2019 20:59:44 -0700 (PDT)
-Date:   Tue, 15 Oct 2019 20:59:43 -0700 (PDT)
-Message-Id: <20191015.205943.563728623358766810.davem@davemloft.net>
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 63D25108AE0D6;
+        Tue, 15 Oct 2019 21:00:50 -0700 (PDT)
+Date:   Tue, 15 Oct 2019 21:00:50 -0700 (PDT)
+Message-Id: <20191015.210050.2009076485951831312.davem@davemloft.net>
 To:     f.fainelli@gmail.com
 Cc:     netdev@vger.kernel.org, opendmb@gmail.com,
         bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: bcmgenet: Add a shutdown callback
+Subject: Re: [PATCH net] net: bcmgenet: Fix RGMII_MODE_EN value for GENET
+ v1/2/3
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20191015173624.10452-1-f.fainelli@gmail.com>
-References: <20191015173624.10452-1-f.fainelli@gmail.com>
+In-Reply-To: <20191015174547.9837-1-f.fainelli@gmail.com>
+References: <20191015174547.9837-1-f.fainelli@gmail.com>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 15 Oct 2019 20:59:44 -0700 (PDT)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 15 Oct 2019 21:00:50 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Tue, 15 Oct 2019 10:36:24 -0700
+Date: Tue, 15 Oct 2019 10:45:47 -0700
 
-> Make sure that we completely quiesce the network device, including its
-> DMA to avoid having it continue to receive packets while there is no
-> software alive to service those.
+> The RGMII_MODE_EN bit value was 0 for GENET versions 1 through 3, and
+> became 6 for GENET v4 and above, account for that difference.
 > 
+> Fixes: aa09677cba42 ("net: bcmgenet: add MDIO routines")
 > Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
-Applied.
+Applied and queued up for -stable.
