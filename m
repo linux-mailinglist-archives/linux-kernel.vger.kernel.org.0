@@ -2,41 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 615E9DA0CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:26:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02BE3DA010
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:24:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439371AbfJPWPf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:15:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45988 "EHLO mail.kernel.org"
+        id S2438357AbfJPWHi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:07:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437741AbfJPVzX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:55:23 -0400
+        id S1728605AbfJPV6G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:58:06 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94E4F21925;
-        Wed, 16 Oct 2019 21:55:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1C1921D7D;
+        Wed, 16 Oct 2019 21:58:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262922;
-        bh=RpGTqagJB6A2tt+p5GnQxTSznwvHVQuX/VHEtXgNcBc=;
+        s=default; t=1571263086;
+        bh=noUnwI0h4iur9WPeS9k/FiH/dWk7jZpKt2XyMsjckl8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VCnvbCrpZttpVeIV10gZ3ecbWVD92XvW5YF9DFEXw44ugODlnD0jhnmYk1Ctn6hZu
-         oQyKunTHTKXaDqqfafJGDItg4mLJH/gJxKUzu35MTNJdqB/vxXn3Dp7LbKHUpMWjMx
-         ZIjWJGFAKZEu+VXbJCLxFlrPTuiP5KQ2fgeZTbzk=
+        b=ERd13f7Qh6ve71C2CkXl/FG8eXc37w1uYZHfaatnkoFOyfDcjXXYsnBJc+bRaFNW4
+         0Dn6UD972M7nZRnWtompoAg8kTwaXuWSd/cpN3/zVrhgnpudvQdXzMf+Sdg4OXJ/jR
+         +qA/PBRPzlwNlttBh/6aAQ0cY+JyM7oxrVTAK66w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Heinrich Schuchardt <xypron.glpk@gmx.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 82/92] kernel/sysctl.c: do not override max_threads provided by userspace
+        stable@vger.kernel.org, Navid Emamdoost <navid.emamdoost@gmail.com>
+Subject: [PATCH 4.19 44/81] staging: vt6655: Fix memory leak in vt6655_probe
 Date:   Wed, 16 Oct 2019 14:50:55 -0700
-Message-Id: <20191016214847.223376846@linuxfoundation.org>
+Message-Id: <20191016214839.038246940@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
-References: <20191016214759.600329427@linuxfoundation.org>
+In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
+References: <20191016214805.727399379@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,83 +42,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-commit b0f53dbc4bc4c371f38b14c391095a3bb8a0bb40 upstream.
+commit 80b15db5e1e9c3300de299b2d43d1aafb593e6ac upstream.
 
-Partially revert 16db3d3f1170 ("kernel/sysctl.c: threads-max observe
-limits") because the patch is causing a regression to any workload which
-needs to override the auto-tuning of the limit provided by kernel.
+In vt6655_probe, if vnt_init() fails the cleanup code needs to be called
+like other error handling cases. The call to device_free_info() is
+added.
 
-set_max_threads is implementing a boot time guesstimate to provide a
-sensible limit of the concurrently running threads so that runaways will
-not deplete all the memory.  This is a good thing in general but there
-are workloads which might need to increase this limit for an application
-to run (reportedly WebSpher MQ is affected) and that is simply not
-possible after the mentioned change.  It is also very dubious to
-override an admin decision by an estimation that doesn't have any direct
-relation to correctness of the kernel operation.
-
-Fix this by dropping set_max_threads from sysctl_max_threads so any
-value is accepted as long as it fits into MAX_THREADS which is important
-to check because allowing more threads could break internal robust futex
-restriction.  While at it, do not use MIN_THREADS as the lower boundary
-because it is also only a heuristic for automatic estimation and admin
-might have a good reason to stop new threads to be created even when
-below this limit.
-
-This became more severe when we switched x86 from 4k to 8k kernel
-stacks.  Starting since 6538b8ea886e ("x86_64: expand kernel stack to
-16K") (3.16) we use THREAD_SIZE_ORDER = 2 and that halved the auto-tuned
-value.
-
-In the particular case
-
-  3.12
-  kernel.threads-max = 515561
-
-  4.4
-  kernel.threads-max = 200000
-
-Neither of the two values is really insane on 32GB machine.
-
-I am not sure we want/need to tune the max_thread value further.  If
-anything the tuning should be removed altogether if proven not useful in
-general.  But we definitely need a way to override this auto-tuning.
-
-Link: http://lkml.kernel.org/r/20190922065801.GB18814@dhcp22.suse.cz
-Fixes: 16db3d3f1170 ("kernel/sysctl.c: threads-max observe limits")
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Heinrich Schuchardt <xypron.glpk@gmx.de>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 67013f2c0e58 ("staging: vt6655: mac80211 conversion add main mac80211 functions")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191004200319.22394-1-navid.emamdoost@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/fork.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/vt6655/device_main.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2356,7 +2356,7 @@ int sysctl_max_threads(struct ctl_table
- 	struct ctl_table t;
- 	int ret;
- 	int threads = max_threads;
--	int min = MIN_THREADS;
-+	int min = 1;
- 	int max = MAX_THREADS;
+--- a/drivers/staging/vt6655/device_main.c
++++ b/drivers/staging/vt6655/device_main.c
+@@ -1755,8 +1755,10 @@ vt6655_probe(struct pci_dev *pcid, const
  
- 	t = *table;
-@@ -2368,7 +2368,7 @@ int sysctl_max_threads(struct ctl_table
- 	if (ret || !write)
- 		return ret;
+ 	priv->hw->max_signal = 100;
  
--	set_max_threads(threads);
-+	max_threads = threads;
+-	if (vnt_init(priv))
++	if (vnt_init(priv)) {
++		device_free_info(priv);
+ 		return -ENODEV;
++	}
  
- 	return 0;
- }
+ 	device_print_info(priv);
+ 	pci_set_drvdata(pcid, priv);
 
 
