@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E107DDA158
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:27:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61F48DA0F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:26:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407631AbfJPWWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:22:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42020 "EHLO mail.kernel.org"
+        id S2389550AbfJPWRy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:17:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44722 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437500AbfJPVxS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:53:18 -0400
+        id S2395047AbfJPVyn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:54:43 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C269521925;
-        Wed, 16 Oct 2019 21:53:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A7EA20872;
+        Wed, 16 Oct 2019 21:54:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262797;
-        bh=xnki3rbLWJLf5BLKRUN6w4ebkf3Oh+8ohSb8jtfg7cg=;
+        s=default; t=1571262882;
+        bh=l63bBNW4p4Tbl1QgQ/eNqi8H6ikGirXGH3NJnWmRoSs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Oq+HWOt0AOMAZbcUOVfkSEn6sA0bTyiyy6v9j3savgxvWbf93hCpZ9rVUUj/jUO8T
-         ukRX1J/E2W5JE/FCVKEcQYT8HVk8p8QPy7isgmxIc9nIpJ9TVevKHdmDz/RjS7XuE5
-         KW3S6qcvpTxN1z1f8Iod4metN8IiMkSKyBmONxMA=
+        b=snAMcGnNL9c/RWwoJlIF4x8G4p1hZvjd69CWA4CcWBSiH+wpVkfJWsmUM0W4xMmBB
+         CkfXDiTciyjvoNyiCU+sdOfPR37omeGaQ12gp+I2Lbh/qRVEaF9q0am0PJ3akomdOu
+         VUXYmL9SBt75vz2urpDAreCWcoU1HJyyNLPr0zS8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.4 37/79] xhci: Increase STS_SAVE timeout in xhci_suspend()
-Date:   Wed, 16 Oct 2019 14:50:12 -0700
-Message-Id: <20191016214800.041318735@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.9 40/92] USB: usb-skeleton: fix runtime PM after driver unbind
+Date:   Wed, 16 Oct 2019 14:50:13 -0700
+Message-Id: <20191016214831.753628078@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214729.758892904@linuxfoundation.org>
-References: <20191016214729.758892904@linuxfoundation.org>
+In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
+References: <20191016214759.600329427@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +42,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit ac343366846a445bb81f0a0e8f16abb8bd5d5d88 upstream.
+commit 5c290a5e42c3387e82de86965784d30e6c5270fd upstream.
 
-After commit f7fac17ca925 ("xhci: Convert xhci_handshake() to use
-readl_poll_timeout_atomic()"), ASMedia xHCI may fail to suspend.
+Since commit c2b71462d294 ("USB: core: Fix bug caused by duplicate
+interface PM usage counter") USB drivers must always balance their
+runtime PM gets and puts, including when the driver has already been
+unbound from the interface.
 
-Although the algorithms are essentially the same, the old max timeout is
-(usec + usec * time of doing readl()), and the new max timeout is just
-usec, which is much less than the old one.
+Leaving the interface with a positive PM usage counter would prevent a
+later bound driver from suspending the device.
 
-Increase the timeout to make ASMedia xHCI able to suspend again.
-
-BugLink: https://bugs.launchpad.net/bugs/1844021
-Fixes: f7fac17ca925 ("xhci: Convert xhci_handshake() to use readl_poll_timeout_atomic()")
-Cc: <stable@vger.kernel.org> # v5.2+
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/1570190373-30684-8-git-send-email-mathias.nyman@linux.intel.com
+Fixes: c2b71462d294 ("USB: core: Fix bug caused by duplicate interface PM usage counter")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191001084908.2003-2-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/usb-skeleton.c |    8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -981,7 +981,7 @@ int xhci_suspend(struct xhci_hcd *xhci,
- 	command |= CMD_CSS;
- 	writel(command, &xhci->op_regs->command);
- 	if (xhci_handshake(&xhci->op_regs->status,
--				STS_SAVE, 0, 10 * 1000)) {
-+				STS_SAVE, 0, 20 * 1000)) {
- 		xhci_warn(xhci, "WARN: xHC save state timeout\n");
- 		spin_unlock_irq(&xhci->lock);
- 		return -ETIMEDOUT;
+--- a/drivers/usb/usb-skeleton.c
++++ b/drivers/usb/usb-skeleton.c
+@@ -75,6 +75,7 @@ static void skel_delete(struct kref *kre
+ 	struct usb_skel *dev = to_skel_dev(kref);
+ 
+ 	usb_free_urb(dev->bulk_in_urb);
++	usb_put_intf(dev->interface);
+ 	usb_put_dev(dev->udev);
+ 	kfree(dev->bulk_in_buffer);
+ 	kfree(dev);
+@@ -126,10 +127,7 @@ static int skel_release(struct inode *in
+ 		return -ENODEV;
+ 
+ 	/* allow the device to be autosuspended */
+-	mutex_lock(&dev->io_mutex);
+-	if (dev->interface)
+-		usb_autopm_put_interface(dev->interface);
+-	mutex_unlock(&dev->io_mutex);
++	usb_autopm_put_interface(dev->interface);
+ 
+ 	/* decrement the count on our device */
+ 	kref_put(&dev->kref, skel_delete);
+@@ -509,7 +507,7 @@ static int skel_probe(struct usb_interfa
+ 	init_waitqueue_head(&dev->bulk_in_wait);
+ 
+ 	dev->udev = usb_get_dev(interface_to_usbdev(interface));
+-	dev->interface = interface;
++	dev->interface = usb_get_intf(interface);
+ 
+ 	/* set up the endpoint information */
+ 	/* use only the first bulk-in and bulk-out endpoints */
 
 
