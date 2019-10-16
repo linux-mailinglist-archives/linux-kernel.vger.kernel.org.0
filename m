@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2050FDA082
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:25:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 552C9DA031
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:24:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393151AbfJPWMJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:12:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48214 "EHLO mail.kernel.org"
+        id S2439121AbfJPWIz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:08:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406659AbfJPV4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:56:32 -0400
+        id S2395523AbfJPV5m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:57:42 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9EA021D7A;
-        Wed, 16 Oct 2019 21:56:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13701222BD;
+        Wed, 16 Oct 2019 21:57:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262991;
-        bh=G+ewoKReLo8kaLUZAu05EM3mfMfbkjAxb+wWkYXUIVc=;
+        s=default; t=1571263060;
+        bh=45TN+AVUUlUvz2/NcfGvcrPhot7V+NoTaE61N7NufjY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F1l2K/Mx9gYyA04odaaxpIAPiuy415YwiN5xjnjZLVanUrvLka2O1UUjmoJOC1Fjs
-         CfUWvPNIekB5WwbOOItt7dh67DVWAOxWZPgmVWlUHPz1VqveDHcuBhQIv7O9JvK2Nr
-         q6+dBiJcQfRXM28NPaz7pA78U+zmElFSo3jdyFr0=
+        b=BNXoalnRFmGhiPMEmOTyCtWG1NuuTawG7zjN4HjKtSMq63J9qaxPISfVyETsxS02p
+         v8nuL/U0Dr6bg5HkfuCOsR/sXQxul7uMxN/Bn/Z60iV7rBQid9zDi0F7EUX+iWIKo9
+         QpkGwZT3VRi7A8gRjb+MP6B7v40eUCIWx6z5y4sk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "zhengbin (A)" <zhengbin13@huawei.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.14 58/65] Fix the locking in dcache_readdir() and friends
-Date:   Wed, 16 Oct 2019 14:51:12 -0700
-Message-Id: <20191016214839.027507782@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Wysochanski <dwysocha@redhat.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.19 62/81] cifs: use cifsInodeInfo->open_file_lock while iterating to avoid a panic
+Date:   Wed, 16 Oct 2019 14:51:13 -0700
+Message-Id: <20191016214843.979454273@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
-References: <20191016214756.457746573@linuxfoundation.org>
+In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
+References: <20191016214805.727399379@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,222 +44,163 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Dave Wysochanski <dwysocha@redhat.com>
 
-commit d4f4de5e5ef8efde85febb6876cd3c8ab1631999 upstream.
+Commit 487317c99477 ("cifs: add spinlock for the openFileList to
+cifsInodeInfo") added cifsInodeInfo->open_file_lock spin_lock to protect
+the openFileList, but missed a few places where cifs_inode->openFileList
+was enumerated.  Change these remaining tcon->open_file_lock to
+cifsInodeInfo->open_file_lock to avoid panic in is_size_safe_to_change.
 
-There are two problems in dcache_readdir() - one is that lockless traversal
-of the list needs non-trivial cooperation of d_alloc() (at least a switch
-to list_add_rcu(), and probably more than just that) and another is that
-it assumes that no removal will happen without the directory locked exclusive.
-Said assumption had always been there, never had been stated explicitly and
-is violated by several places in the kernel (devpts and selinuxfs).
+[17313.245641] RIP: 0010:is_size_safe_to_change+0x57/0xb0 [cifs]
+[17313.245645] Code: 68 40 48 89 ef e8 19 67 b7 f1 48 8b 43 40 48 8d 4b 40 48 8d 50 f0 48 39 c1 75 0f eb 47 48 8b 42 10 48 8d 50 f0 48 39 c1 74 3a <8b> 80 88 00 00 00 83 c0 01 a8 02 74 e6 48 89 ef c6 07 00 0f 1f 40
+[17313.245649] RSP: 0018:ffff94ae1baefa30 EFLAGS: 00010202
+[17313.245654] RAX: dead000000000100 RBX: ffff88dc72243300 RCX: ffff88dc72243340
+[17313.245657] RDX: dead0000000000f0 RSI: 00000000098f7940 RDI: ffff88dd3102f040
+[17313.245659] RBP: ffff88dd3102f040 R08: 0000000000000000 R09: ffff94ae1baefc40
+[17313.245661] R10: ffffcdc8bb1c4e80 R11: ffffcdc8b50adb08 R12: 00000000098f7940
+[17313.245663] R13: ffff88dc72243300 R14: ffff88dbc8f19600 R15: ffff88dc72243428
+[17313.245667] FS:  00007fb145485700(0000) GS:ffff88dd3e000000(0000) knlGS:0000000000000000
+[17313.245670] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[17313.245672] CR2: 0000026bb46c6000 CR3: 0000004edb110003 CR4: 00000000007606e0
+[17313.245753] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[17313.245756] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[17313.245759] PKRU: 55555554
+[17313.245761] Call Trace:
+[17313.245803]  cifs_fattr_to_inode+0x16b/0x580 [cifs]
+[17313.245838]  cifs_get_inode_info+0x35c/0xa60 [cifs]
+[17313.245852]  ? kmem_cache_alloc_trace+0x151/0x1d0
+[17313.245885]  cifs_open+0x38f/0x990 [cifs]
+[17313.245921]  ? cifs_revalidate_dentry_attr+0x3e/0x350 [cifs]
+[17313.245953]  ? cifsFileInfo_get+0x30/0x30 [cifs]
+[17313.245960]  ? do_dentry_open+0x132/0x330
+[17313.245963]  do_dentry_open+0x132/0x330
+[17313.245969]  path_openat+0x573/0x14d0
+[17313.245974]  do_filp_open+0x93/0x100
+[17313.245979]  ? __check_object_size+0xa3/0x181
+[17313.245986]  ? audit_alloc_name+0x7e/0xd0
+[17313.245992]  do_sys_open+0x184/0x220
+[17313.245999]  do_syscall_64+0x5b/0x1b0
 
-        * replacement of next_positive() with different calling conventions:
-it returns struct list_head * instead of struct dentry *; the latter is
-passed in and out by reference, grabbing the result and dropping the original
-value.
-        * scan is under ->d_lock.  If we run out of timeslice, cursor is moved
-after the last position we'd reached and we reschedule; then the scan continues
-from that place.  To avoid livelocks between multiple lseek() (with cursors
-getting moved past each other, never reaching the real entries) we always
-skip the cursors, need_resched() or not.
-        * returned list_head * is either ->d_child of dentry we'd found or
-->d_subdirs of parent (if we got to the end of the list).
-        * dcache_readdir() and dcache_dir_lseek() switched to new helper.
-dcache_readdir() always holds a reference to dentry passed to dir_emit() now.
-Cursor is moved to just before the entry where dir_emit() has failed or into
-the very end of the list, if we'd run out.
-        * move_cursor() eliminated - it had sucky calling conventions and
-after fixing that it became simply list_move() (in lseek and scan_positives)
-or list_move_tail() (in readdir).
+Fixes: 487317c99477 ("cifs: add spinlock for the openFileList to cifsInodeInfo")
 
-        All operations with the list are under ->d_lock now, and we do not
-depend upon having all file removals done with parent locked exclusive
-anymore.
-
-Cc: stable@vger.kernel.org
-Reported-by: "zhengbin (A)" <zhengbin13@huawei.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+CC: Stable <stable@vger.kernel.org>
+Signed-off-by: Dave Wysochanski <dwysocha@redhat.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 ---
- fs/libfs.c |  134 +++++++++++++++++++++++++++++++------------------------------
- 1 file changed, 69 insertions(+), 65 deletions(-)
+ fs/cifs/file.c |   27 +++++++++++----------------
+ 1 file changed, 11 insertions(+), 16 deletions(-)
 
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -86,58 +86,47 @@ int dcache_dir_close(struct inode *inode
- EXPORT_SYMBOL(dcache_dir_close);
- 
- /* parent is locked at least shared */
--static struct dentry *next_positive(struct dentry *parent,
--				    struct list_head *from,
--				    int count)
-+/*
-+ * Returns an element of siblings' list.
-+ * We are looking for <count>th positive after <p>; if
-+ * found, dentry is grabbed and passed to caller via *<res>.
-+ * If no such element exists, the anchor of list is returned
-+ * and *<res> is set to NULL.
-+ */
-+static struct list_head *scan_positives(struct dentry *cursor,
-+					struct list_head *p,
-+					loff_t count,
-+					struct dentry **res)
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -1841,13 +1841,12 @@ struct cifsFileInfo *find_readable_file(
  {
--	unsigned *seq = &parent->d_inode->i_dir_seq, n;
--	struct dentry *res;
--	struct list_head *p;
--	bool skipped;
--	int i;
-+	struct dentry *dentry = cursor->d_parent, *found = NULL;
+ 	struct cifsFileInfo *open_file = NULL;
+ 	struct cifs_sb_info *cifs_sb = CIFS_SB(cifs_inode->vfs_inode.i_sb);
+-	struct cifs_tcon *tcon = cifs_sb_master_tcon(cifs_sb);
  
--retry:
--	i = count;
--	skipped = false;
--	n = smp_load_acquire(seq) & ~1;
--	res = NULL;
--	rcu_read_lock();
--	for (p = from->next; p != &parent->d_subdirs; p = p->next) {
-+	spin_lock(&dentry->d_lock);
-+	while ((p = p->next) != &dentry->d_subdirs) {
- 		struct dentry *d = list_entry(p, struct dentry, d_child);
--		if (!simple_positive(d)) {
--			skipped = true;
--		} else if (!--i) {
--			res = d;
--			break;
-+		// we must at least skip cursors, to avoid livelocks
-+		if (d->d_flags & DCACHE_DENTRY_CURSOR)
-+			continue;
-+		if (simple_positive(d) && !--count) {
-+			spin_lock_nested(&d->d_lock, DENTRY_D_LOCK_NESTED);
-+			if (simple_positive(d))
-+				found = dget_dlock(d);
-+			spin_unlock(&d->d_lock);
-+			if (likely(found))
-+				break;
-+			count = 1;
-+		}
-+		if (need_resched()) {
-+			list_move(&cursor->d_child, p);
-+			p = &cursor->d_child;
-+			spin_unlock(&dentry->d_lock);
-+			cond_resched();
-+			spin_lock(&dentry->d_lock);
- 		}
+ 	/* only filter by fsuid on multiuser mounts */
+ 	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_MULTIUSER))
+ 		fsuid_only = false;
+ 
+-	spin_lock(&tcon->open_file_lock);
++	spin_lock(&cifs_inode->open_file_lock);
+ 	/* we could simply get the first_list_entry since write-only entries
+ 	   are always at the end of the list but since the first entry might
+ 	   have a close pending, we go through the whole list */
+@@ -1859,7 +1858,7 @@ struct cifsFileInfo *find_readable_file(
+ 				/* found a good file */
+ 				/* lock it so it will not be closed on us */
+ 				cifsFileInfo_get(open_file);
+-				spin_unlock(&tcon->open_file_lock);
++				spin_unlock(&cifs_inode->open_file_lock);
+ 				return open_file;
+ 			} /* else might as well continue, and look for
+ 			     another, or simply have the caller reopen it
+@@ -1867,7 +1866,7 @@ struct cifsFileInfo *find_readable_file(
+ 		} else /* write only file */
+ 			break; /* write only files are last so must be done */
  	}
--	rcu_read_unlock();
--	if (skipped) {
--		smp_rmb();
--		if (unlikely(*seq != n))
--			goto retry;
--	}
--	return res;
--}
--
--static void move_cursor(struct dentry *cursor, struct list_head *after)
--{
--	struct dentry *parent = cursor->d_parent;
--	unsigned n, *seq = &parent->d_inode->i_dir_seq;
--	spin_lock(&parent->d_lock);
--	for (;;) {
--		n = *seq;
--		if (!(n & 1) && cmpxchg(seq, n, n + 1) == n)
--			break;
--		cpu_relax();
--	}
--	__list_del(cursor->d_child.prev, cursor->d_child.next);
--	if (after)
--		list_add(&cursor->d_child, after);
--	else
--		list_add_tail(&cursor->d_child, &parent->d_subdirs);
--	smp_store_release(seq, n + 2);
--	spin_unlock(&parent->d_lock);
-+	spin_unlock(&dentry->d_lock);
-+	dput(*res);
-+	*res = found;
-+	return p;
+-	spin_unlock(&tcon->open_file_lock);
++	spin_unlock(&cifs_inode->open_file_lock);
+ 	return NULL;
  }
  
- loff_t dcache_dir_lseek(struct file *file, loff_t offset, int whence)
-@@ -153,17 +142,28 @@ loff_t dcache_dir_lseek(struct file *fil
- 			return -EINVAL;
- 	}
- 	if (offset != file->f_pos) {
-+		struct dentry *cursor = file->private_data;
-+		struct dentry *to = NULL;
-+		struct list_head *p;
-+
- 		file->f_pos = offset;
--		if (file->f_pos >= 2) {
--			struct dentry *cursor = file->private_data;
--			struct dentry *to;
--			loff_t n = file->f_pos - 2;
--
--			inode_lock_shared(dentry->d_inode);
--			to = next_positive(dentry, &dentry->d_subdirs, n);
--			move_cursor(cursor, to ? &to->d_child : NULL);
--			inode_unlock_shared(dentry->d_inode);
-+		inode_lock_shared(dentry->d_inode);
-+
-+		if (file->f_pos > 2) {
-+			p = scan_positives(cursor, &dentry->d_subdirs,
-+					   file->f_pos - 2, &to);
-+			spin_lock(&dentry->d_lock);
-+			list_move(&cursor->d_child, p);
-+			spin_unlock(&dentry->d_lock);
-+		} else {
-+			spin_lock(&dentry->d_lock);
-+			list_del_init(&cursor->d_child);
-+			spin_unlock(&dentry->d_lock);
- 		}
-+
-+		dput(to);
-+
-+		inode_unlock_shared(dentry->d_inode);
- 	}
- 	return offset;
- }
-@@ -185,25 +185,29 @@ int dcache_readdir(struct file *file, st
+@@ -1876,7 +1875,6 @@ struct cifsFileInfo *find_writable_file(
  {
- 	struct dentry *dentry = file->f_path.dentry;
- 	struct dentry *cursor = file->private_data;
--	struct list_head *p = &cursor->d_child;
--	struct dentry *next;
--	bool moved = false;
-+	struct list_head *anchor = &dentry->d_subdirs;
-+	struct dentry *next = NULL;
-+	struct list_head *p;
- 
- 	if (!dir_emit_dots(file, ctx))
- 		return 0;
- 
- 	if (ctx->pos == 2)
--		p = &dentry->d_subdirs;
--	while ((next = next_positive(dentry, p, 1)) != NULL) {
-+		p = anchor;
-+	else
-+		p = &cursor->d_child;
-+
-+	while ((p = scan_positives(cursor, p, 1, &next)) != anchor) {
- 		if (!dir_emit(ctx, next->d_name.name, next->d_name.len,
- 			      d_inode(next)->i_ino, dt_type(d_inode(next))))
- 			break;
--		moved = true;
--		p = &next->d_child;
- 		ctx->pos++;
+ 	struct cifsFileInfo *open_file, *inv_file = NULL;
+ 	struct cifs_sb_info *cifs_sb;
+-	struct cifs_tcon *tcon;
+ 	bool any_available = false;
+ 	int rc;
+ 	unsigned int refind = 0;
+@@ -1892,16 +1890,15 @@ struct cifsFileInfo *find_writable_file(
  	}
--	if (moved)
--		move_cursor(cursor, p);
-+	spin_lock(&dentry->d_lock);
-+	list_move_tail(&cursor->d_child, p);
-+	spin_unlock(&dentry->d_lock);
-+	dput(next);
-+
+ 
+ 	cifs_sb = CIFS_SB(cifs_inode->vfs_inode.i_sb);
+-	tcon = cifs_sb_master_tcon(cifs_sb);
+ 
+ 	/* only filter by fsuid on multiuser mounts */
+ 	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_MULTIUSER))
+ 		fsuid_only = false;
+ 
+-	spin_lock(&tcon->open_file_lock);
++	spin_lock(&cifs_inode->open_file_lock);
+ refind_writable:
+ 	if (refind > MAX_REOPEN_ATT) {
+-		spin_unlock(&tcon->open_file_lock);
++		spin_unlock(&cifs_inode->open_file_lock);
+ 		return NULL;
+ 	}
+ 	list_for_each_entry(open_file, &cifs_inode->openFileList, flist) {
+@@ -1913,7 +1910,7 @@ refind_writable:
+ 			if (!open_file->invalidHandle) {
+ 				/* found a good writable file */
+ 				cifsFileInfo_get(open_file);
+-				spin_unlock(&tcon->open_file_lock);
++				spin_unlock(&cifs_inode->open_file_lock);
+ 				return open_file;
+ 			} else {
+ 				if (!inv_file)
+@@ -1932,7 +1929,7 @@ refind_writable:
+ 		cifsFileInfo_get(inv_file);
+ 	}
+ 
+-	spin_unlock(&tcon->open_file_lock);
++	spin_unlock(&cifs_inode->open_file_lock);
+ 
+ 	if (inv_file) {
+ 		rc = cifs_reopen_file(inv_file, false);
+@@ -1946,7 +1943,7 @@ refind_writable:
+ 			cifsFileInfo_put(inv_file);
+ 			++refind;
+ 			inv_file = NULL;
+-			spin_lock(&tcon->open_file_lock);
++			spin_lock(&cifs_inode->open_file_lock);
+ 			goto refind_writable;
+ 		}
+ 	}
+@@ -4007,17 +4004,15 @@ static int cifs_readpage(struct file *fi
+ static int is_inode_writable(struct cifsInodeInfo *cifs_inode)
+ {
+ 	struct cifsFileInfo *open_file;
+-	struct cifs_tcon *tcon =
+-		cifs_sb_master_tcon(CIFS_SB(cifs_inode->vfs_inode.i_sb));
+ 
+-	spin_lock(&tcon->open_file_lock);
++	spin_lock(&cifs_inode->open_file_lock);
+ 	list_for_each_entry(open_file, &cifs_inode->openFileList, flist) {
+ 		if (OPEN_FMODE(open_file->f_flags) & FMODE_WRITE) {
+-			spin_unlock(&tcon->open_file_lock);
++			spin_unlock(&cifs_inode->open_file_lock);
+ 			return 1;
+ 		}
+ 	}
+-	spin_unlock(&tcon->open_file_lock);
++	spin_unlock(&cifs_inode->open_file_lock);
  	return 0;
  }
- EXPORT_SYMBOL(dcache_readdir);
+ 
 
 
