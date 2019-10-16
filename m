@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F6A6D9FAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B1EEDA02E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:24:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395455AbfJPV5L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:57:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48342 "EHLO mail.kernel.org"
+        id S2404872AbfJPWIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:08:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391375AbfJPV4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:56:34 -0400
+        id S2437936AbfJPV5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:57:43 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DB6521925;
-        Wed, 16 Oct 2019 21:56:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E333121D7D;
+        Wed, 16 Oct 2019 21:57:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262993;
-        bh=vsZnRybb1oRRLje+6QOYMh4wo/50seiDG8wLW8igT9c=;
+        s=default; t=1571263062;
+        bh=2m19+YgUmMyrEpYecCFQt1Y2M/nrhbrEdoBxBlyVQxs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D6DNAJow1l5iHn5rrC8dPUXnuWZHBqt65UOCMPyym2NRIe3pC73P7XlywQQRrvONp
-         DrqkDLtonUMo/CbqtNlU/s/3DU3HWMdwSNxR1urJ0RCcmSUBJsXJmzRH3DJWQkz1vc
-         IKS0+RVHYNqx81zCJPx94ZaXZiyOQAESdVz76c3Y=
+        b=jlbpxAqAL3BKxDOEiFuPvehIgQTbboWNgkJ7GrMceE+9+Ul37sQ5nOQ155fyyPiqR
+         BrKZJCR0A84PeIgZNc66gOaFpVj/1xdic3r2u5kW4ijOixBdkA+aCcyD3jh01MSQrq
+         QohTD3Kn4JfOb1WR6bRoMYmTmnc7Ss1Pznq8r47U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Srivatsa S. Bhat (VMware)" <srivatsa@csail.mit.edu>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.14 61/65] tracing/hwlat: Dont ignore outer-loop duration when calculating max_latency
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.19 64/81] btrfs: fix uninitialized ret in ref-verify
 Date:   Wed, 16 Oct 2019 14:51:15 -0700
-Message-Id: <20191016214839.826570224@linuxfoundation.org>
+Message-Id: <20191016214844.557001120@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
-References: <20191016214756.457746573@linuxfoundation.org>
+In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
+References: <20191016214805.727399379@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit fc64e4ad80d4b72efce116f87b3174f0b7196f8e upstream.
+commit c5f4987e86f6692fdb12533ea1fc7a7bb98e555a upstream.
 
-max_latency is intended to record the maximum ever observed hardware
-latency, which may occur in either part of the loop (inner/outer). So
-we need to also consider the outer-loop sample when updating
-max_latency.
+Coverity caught a case where we could return with a uninitialized value
+in ret in process_leaf.  This is actually pretty likely because we could
+very easily run into a block group item key and have a garbage value in
+ret and think there was an errror.  Fix this by initializing ret to 0.
 
-Link: http://lkml.kernel.org/r/157073345463.17189.18124025522664682811.stgit@srivatsa-ubuntu
-
-Fixes: e7c15cd8a113 ("tracing: Added hardware latency tracer")
-Cc: stable@vger.kernel.org
-Signed-off-by: Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Reported-by: Colin Ian King <colin.king@canonical.com>
+Fixes: fd708b81d972 ("Btrfs: add a extent ref verify tool")
+CC: stable@vger.kernel.org # 4.19+
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_hwlat.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/btrfs/ref-verify.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/trace/trace_hwlat.c
-+++ b/kernel/trace/trace_hwlat.c
-@@ -258,6 +258,8 @@ static int get_sample(void)
- 		/* Keep a running maximum ever recorded hardware latency */
- 		if (sample > tr->max_latency)
- 			tr->max_latency = sample;
-+		if (outer_sample > tr->max_latency)
-+			tr->max_latency = outer_sample;
- 	}
+--- a/fs/btrfs/ref-verify.c
++++ b/fs/btrfs/ref-verify.c
+@@ -511,7 +511,7 @@ static int process_leaf(struct btrfs_roo
+ 	struct btrfs_extent_data_ref *dref;
+ 	struct btrfs_shared_data_ref *sref;
+ 	u32 count;
+-	int i = 0, tree_block_level = 0, ret;
++	int i = 0, tree_block_level = 0, ret = 0;
+ 	struct btrfs_key key;
+ 	int nritems = btrfs_header_nritems(leaf);
  
- out:
 
 
