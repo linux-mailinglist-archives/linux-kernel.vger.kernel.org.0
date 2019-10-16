@@ -2,137 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD69BD8ED6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:03:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B959D8ECD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:02:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404804AbfJPLDr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 07:03:47 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:36167 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbfJPLDr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 07:03:47 -0400
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id x9GB3Ka9025407;
-        Wed, 16 Oct 2019 20:03:20 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x9GB3Ka9025407
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1571223801;
-        bh=CZS/GBm12+BcQahpwNBxwpIrzDOrM5ncaaZ4Hdi5fxQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=1HVgYGrgJuqrnsFm151Rr+/Ybj/6G/6A5CDaKqgjkNSW6mBkkrOdP+bIIbGO3HOoJ
-         WnTqwTDHR2MnEEuHR3UiBAZmidhAQF05xoY3OLg83RY1CCBZr8JmLtEAnNIjYo9fdE
-         1zVqX5OgWlTDstIUkdpQ1WaSztMdZibwcbal9Qg+x3GWdF1dgDlwU/F5uT5Gsn2VUN
-         D42EaCMOj+qH4AsLbpQbTjumFONOBmarRGWxBCzTSR1sLkssX2kYWAigly4G6FIl2r
-         aYrHG2aF9qCQ3tCD7nrGHOi7GohhOlhh2LbBpRW2R24a/nkdtx2DlK9gLfFsS+Fgsk
-         5rknQ5sUraqFQ==
-X-Nifty-SrcIP: [209.85.217.43]
-Received: by mail-vs1-f43.google.com with SMTP id y129so15296207vsc.6;
-        Wed, 16 Oct 2019 04:03:20 -0700 (PDT)
-X-Gm-Message-State: APjAAAVfu0ALrjk8WuhlJ8a9IAS2DSSrPFW/4Y2PF1bQelVwE7wSyXV6
-        EYs8GlC26IXKTx6dg0ARMS40rGgTN6bKt+GPkHs=
-X-Google-Smtp-Source: APXvYqwi2NOARFdiIeiefPcsQM9QE7f5KDMvhzleVf/yNku4VncLL4mmJysOK+WrOjI4KTTDWV6CdUJJKviU0KwCJo0=
-X-Received: by 2002:a67:ff86:: with SMTP id v6mr23079325vsq.181.1571223799384;
- Wed, 16 Oct 2019 04:03:19 -0700 (PDT)
+        id S2392581AbfJPLCC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 07:02:02 -0400
+Received: from mail-eopbgr10066.outbound.protection.outlook.com ([40.107.1.66]:48286
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726083AbfJPLCB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 07:02:01 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kz7torD2zd4MvCR6wU7lK2u9zdqG3isApDfog6wHBjJuHnoW7m8THfXJ92vImUwcFxL1bb+Iw5f9zg7bKvn6Occ8v6KJ7SvR6mIPQ269en2fnVLXs+SM2jzg/eZKhT7y6mgFadyitkp1IxZ6LBp1lJqYhTTo59ao9z7d3nctXJecFWNloQ/MmwP9mdigwxtZRCPW367yrH9N9ihTxQtUhIDue9ZhLjwjvV/m+PdIjk/c+AkoKrWJGWQByNTMWGiXbrLalelAN9gAQssMkjAfbltIhDzdFamZiTtEtZyV6m+fOSx/Mo3t0Nd3OQ+JBDk+kcesX7LUktKyUNrtCGauxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZC0s8H2jNEl7qNSIrVIkOcb7mNC+168VZoIPI+EBrkk=;
+ b=EHhLUbpKlg5DXobSTQ5ZVN5/KF8TdOcHi7LMfaifY3W+h4JLBQGdq+0GyP8UXrwnvncERuow7D1gewEwuNxetidd0FNUusDcB/wa0duIY04/ewKgp57JYH6p7liYNY8f6VB3jGmH6QyqCurfipiKbFAu2mV/na0oYbKcN1kwVuWj07jv0K80aQhgPoWsrJ3gTq0xmMWY0MONOYQPNc7QAH0Wk3R47ZRVc4Ie/VibT+xEHmgNAlQX7jdo/gIE2GFztSR4Lz8JW0kRt3gdHEENzGOMhrU2pFP7K3I2BRSBdaTkNKnOlEToi8d6IGqS75Esw6+unwURF+Ro4Ctbe2A51A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZC0s8H2jNEl7qNSIrVIkOcb7mNC+168VZoIPI+EBrkk=;
+ b=eavAjY99AxUSXE6kan8codSvCp/JoG73hOZntQU2q7fMn6AyhyhvIBtNVFeWsWxFMfHDfBUjxPTe+XfDtsJdk+0RYE80VMGy1N3buVK8OrrUTsik2VKtDD0L0H5XhUdteJbX/xMBjn1tUSOOK13cGAow1U3XT9OYmtklD9SqXpk=
+Received: from VI1PR0402MB2863.eurprd04.prod.outlook.com (10.175.20.18) by
+ VI1PR0402MB3679.eurprd04.prod.outlook.com (52.134.13.11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2347.17; Wed, 16 Oct 2019 11:01:57 +0000
+Received: from VI1PR0402MB2863.eurprd04.prod.outlook.com
+ ([fe80::d0fc:54d4:86f4:b1d2]) by VI1PR0402MB2863.eurprd04.prod.outlook.com
+ ([fe80::d0fc:54d4:86f4:b1d2%7]) with mapi id 15.20.2347.023; Wed, 16 Oct 2019
+ 11:01:57 +0000
+From:   Stefan-gabriel Mirea <stefan-gabriel.mirea@nxp.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+CC:     "corbet@lwn.net" <corbet@lwn.net>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "jslaby@suse.com" <jslaby@suse.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v6 3/5] serial: fsl_linflexuart: Be consistent with the
+ name
+Thread-Topic: [PATCH v6 3/5] serial: fsl_linflexuart: Be consistent with the
+ name
+Thread-Index: AQHVhBEget+54Njm0Um0wC+XV9FxYQ==
+Date:   Wed, 16 Oct 2019 11:01:57 +0000
+Message-ID: <VI1PR0402MB2863EC2DF6464234DE4E0A16DF920@VI1PR0402MB2863.eurprd04.prod.outlook.com>
+References: <1570726348-6420-1-git-send-email-stefan-gabriel.mirea@nxp.com>
+ <1570726348-6420-4-git-send-email-stefan-gabriel.mirea@nxp.com>
+ <20191015190155.GA1140159@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=stefan-gabriel.mirea@nxp.com; 
+x-originating-ip: [64.157.242.222]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 40bad12d-7fad-47df-9b09-08d752284326
+x-ms-office365-filtering-ht: Tenant
+x-ms-traffictypediagnostic: VI1PR0402MB3679:|VI1PR0402MB3679:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR0402MB3679BD349F27ADED558DBF84DF920@VI1PR0402MB3679.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-forefront-prvs: 0192E812EC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(376002)(366004)(346002)(136003)(396003)(199004)(189003)(53546011)(316002)(102836004)(74316002)(486006)(305945005)(81156014)(7736002)(446003)(86362001)(54906003)(476003)(8676002)(55016002)(6436002)(52536014)(2906002)(9686003)(229853002)(81166006)(186003)(5660300002)(26005)(8936002)(6506007)(4326008)(64756008)(558084003)(33656002)(71200400001)(71190400001)(66946007)(76116006)(91956017)(66476007)(256004)(66446008)(66556008)(7416002)(7696005)(25786009)(76176011)(6916009)(14454004)(66066001)(478600001)(99286004)(6246003)(6116002)(3846002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3679;H:VI1PR0402MB2863.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: UuN6y66MLXQQjBy69LXejFCBemQkk7g0WqIioDyg4k9YaqNYQDh2wDKzUF3Itph1AeFZDcNR/Ofmk56IUyAllHxIRR+C8ojvoqjfb9FnmUcbGQdMthYxmgm+zxYYHZWUCHC3qhq7LpgoQoC3h25y42UqsZD4HuOlZjOG3I0yepo2qhcuL5ER8WXRPkosQ18jK8PWZNHMuY9cLIvtmgB3vs3WBPZfIcYlDzVVQanaKMwIHDI0FCRBwwPXIowqRKCOlGsZWNAcgW2dbPmHY2tkjgWduI9HBJ9+eKmfsV2adIFrPDgizxI6NaWkPimckuKpNWcrMCvZicnZINu7MymMt8hwsG+/+qn3znFcUCkkfTN+UXuD+/3GqE059ulFhm6IA5QQDNL777afv7XIstZk3TlCYanhsolhy+E0X9XbgT4=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20190617162123.24920-1-yamada.masahiro@socionext.com>
- <CAK7LNATtqhxPcDneW0QOkw-5NyPNP06Qv0bYTe7A_gCiHMiU7A@mail.gmail.com> <CAK7LNASMwqy0ZUZ=kTJ7MJ6OJNa=+vbj5444xzmubJ8+6vO=sg@mail.gmail.com>
-In-Reply-To: <CAK7LNASMwqy0ZUZ=kTJ7MJ6OJNa=+vbj5444xzmubJ8+6vO=sg@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 16 Oct 2019 20:01:46 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS=9yGqMQ9eoM4L0hhvuFRYhg6S4i6J3Ou9vcB1Npj4BQ@mail.gmail.com>
-Message-ID: <CAK7LNAS=9yGqMQ9eoM4L0hhvuFRYhg6S4i6J3Ou9vcB1Npj4BQ@mail.gmail.com>
-Subject: Re: [PATCH] libfdt: reduce the number of headers included from libfdt_env.h
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        DTML <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 40bad12d-7fad-47df-9b09-08d752284326
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2019 11:01:57.3348
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 1s8TCWGOPefbN/x1X+R1jkW/j+qHJYPZob1EPJ5ZuTzmPYMWKpkvsvN094+NQ0qd9Ok/W5wCOGGWxMXHRMzrlXOpUxLVduXf64YPbyLKbFk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3679
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
-
-Could you pick up this to akpm tree?
-https://lore.kernel.org/patchwork/patch/1089856/
-
-I believe this is correct, and a good clean-up.
-
-I pinged the DT maintainers, but they did not respond.
-
-Thanks.
-
-
-
-
-On Mon, Aug 19, 2019 at 1:36 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> On Thu, Aug 1, 2019 at 11:30 AM Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
-> >
-> > On Tue, Jun 18, 2019 at 1:21 AM Masahiro Yamada
-> > <yamada.masahiro@socionext.com> wrote:
-> > >
-> > > Currently, libfdt_env.h includes <linux/kernel.h> just for INT_MAX.
-> > >
-> > > <linux/kernel.h> pulls in a lots of broat.
-> > >
-> > > Thanks to commit 54d50897d544 ("linux/kernel.h: split *_MAX and *_MIN
-> > > macros into <linux/limits.h>"), <linux/kernel.h> can be replaced with
-> > > <linux/limits.h>.
-> > >
-> > > This saves including dozens of headers.
-> > >
-> > > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > > ---
-> >
-> > ping?
->
-> ping x2.
->
->
->
->
-> >
-> >
-> > >  include/linux/libfdt_env.h | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/include/linux/libfdt_env.h b/include/linux/libfdt_env.h
-> > > index edb0f0c30904..2231eb855e8f 100644
-> > > --- a/include/linux/libfdt_env.h
-> > > +++ b/include/linux/libfdt_env.h
-> > > @@ -2,7 +2,7 @@
-> > >  #ifndef LIBFDT_ENV_H
-> > >  #define LIBFDT_ENV_H
-> > >
-> > > -#include <linux/kernel.h>      /* For INT_MAX */
-> > > +#include <linux/limits.h>      /* For INT_MAX */
-> > >  #include <linux/string.h>
-> > >
-> > >  #include <asm/byteorder.h>
-> > > --
-> > > 2.17.1
-> > >
-> >
-> >
-> > --
-> > Best Regards
-> > Masahiro Yamada
->
->
->
-> --
-> Best Regards
-> Masahiro Yamada
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Hello Greg,=0A=
+=0A=
+On 10/15/2019 10:05 PM, Greg KH wrote:=0A=
+> =0A=
+> This patch does not apply to my tree :(=0A=
+> =0A=
+=0A=
+Thanks for letting me know; I will rebase it in v7.=0A=
+=0A=
+Regards,=0A=
+Stefan=0A=
