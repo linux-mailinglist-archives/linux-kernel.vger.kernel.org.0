@@ -2,32 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29AEED9102
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:33:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35BE3D9103
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:34:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393105AbfJPMdZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 08:33:25 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:51456 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733070AbfJPMdY (ORCPT
+        id S2393109AbfJPMeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 08:34:09 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40053 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733070AbfJPMeJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 08:33:24 -0400
-Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1iKiUR-0007XK-Ke; Wed, 16 Oct 2019 13:33:19 +0100
-Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.2)
-        (envelope-from <ben@rainbowdash.codethink.co.uk>)
-        id 1iKiUR-0000pe-1y; Wed, 16 Oct 2019 13:33:19 +0100
-From:   "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
-To:     linux-kernel@lists.codethink.co.uk
-Cc:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] pstore: make 'pstore_choose_compression' static
-Date:   Wed, 16 Oct 2019 13:33:17 +0100
-Message-Id: <20191016123317.3154-1-ben.dooks@codethink.co.uk>
+        Wed, 16 Oct 2019 08:34:09 -0400
+Received: by mail-lj1-f195.google.com with SMTP id 7so23833163ljw.7
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 05:34:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9EysGKwAMgXXygyzOXkQ7pShV2hQHXICJ75+QvsLTBY=;
+        b=HLlv0MeD2E9hs6is28aAs7TiTNwhmn/o8yknVMgs7CtznyDtUhmE4WqzWbmtdEhTEw
+         S82uxowSCTfXLgrrpu3BKca7UbPBMptLGgKeISmGBpqeLrsHALwYdZ/mxwR4Q7m+lNe4
+         fZyaGKze9yPewQcFzr4L4IFT/7E3DOlrlHFFmgYVHUVGiYJKsjaKZJMOCbqmmD+5nf3I
+         Z8OfG77Ns56FlOdXRl4HNITcWI3ZVs2ME5Txl35hnP60CUmmkhXnzV3CwlGCocQBGQ2e
+         hNsL5JYJJQGh10rCL3Rnc4KdZP4PRxUsQz/UDVi/Tjx/UtpAXBugovlc/WceAt14S0r3
+         1v7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9EysGKwAMgXXygyzOXkQ7pShV2hQHXICJ75+QvsLTBY=;
+        b=LnV/SAygrKgRJJnXwH71ksc/e6zTOrr6PBNpqESyIVKT+KwoFnkcM4apPyeqttp0xJ
+         x6nJ8FwcsyLyzuMJcLAZXJYDhGPMsY/hiILTAZWk6gQ59elfwF3WdVTMjUKJHvucWHkR
+         kNVBCVoMRtrIvB7uE0/L47CuSpNzs7VTATwO9SpOvg/0rbtl0ExEHcXMHS7r8RYF6sek
+         +Lf1a9OdLRBqVp8xR7J2d6z4tmuwypBS9ywnjGUyijpGbDxPa3/QylVIPT59xiap9CQl
+         5SVrII/hYcR6p5Fmrrlk8KQJx/vZ5tMvEioXSgC71lG2nqm1aggCHhd8exbEfC4bnx3J
+         Rfmg==
+X-Gm-Message-State: APjAAAXE1LP8HZpGWfGoFsE1sGCuD5bRN447+mnwzlLKTqwRxUCglqGG
+        AFz3usDAMR8WYsxEObOQCco=
+X-Google-Smtp-Source: APXvYqwHt7sCh5g0ZTnwvcbI6A3r0Iyc2Qv0wChRhGIC4CIAL/V7habUytiOLi16NvB9mQL5JEMXcg==
+X-Received: by 2002:a2e:9a4c:: with SMTP id k12mr26347766ljj.213.1571229247533;
+        Wed, 16 Oct 2019 05:34:07 -0700 (PDT)
+Received: from workstation.lan (81-229-85-231-no13.tbcn.telia.com. [81.229.85.231])
+        by smtp.gmail.com with ESMTPSA id 207sm8605119lfn.0.2019.10.16.05.34.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2019 05:34:06 -0700 (PDT)
+From:   Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/scdc: Fix typo in bit definition of SCDC_STATUS_FLAGS
+Date:   Wed, 16 Oct 2019 14:33:42 +0200
+Message-Id: <20191016123342.19119-1-patrik.r.jakobsson@gmail.com>
 X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -36,34 +63,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pstore_choose_compression function is not exported
-so make it static to avoid the following sparse warning:
+Fix typo where bits got compared (x < y) instead of shifted (x << y).
 
-fs/pstore/platform.c:796:13: warning: symbol 'pstore_choose_compression' was not declared. Should it be static?
-
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+Signed-off-by: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
 ---
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Anton Vorontsov <anton@enomsg.org>
-Cc: Colin Cross <ccross@android.com>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: linux-kernel@vger.kernel.org
----
- fs/pstore/platform.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/drm/drm_scdc_helper.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
-index 3d7024662d29..d896457e7c11 100644
---- a/fs/pstore/platform.c
-+++ b/fs/pstore/platform.c
-@@ -793,7 +793,7 @@ static void pstore_timefunc(struct timer_list *unused)
- 			  jiffies + msecs_to_jiffies(pstore_update_ms));
- }
+diff --git a/include/drm/drm_scdc_helper.h b/include/drm/drm_scdc_helper.h
+index f92eb2094d6b..6a483533aae4 100644
+--- a/include/drm/drm_scdc_helper.h
++++ b/include/drm/drm_scdc_helper.h
+@@ -50,9 +50,9 @@
+ #define  SCDC_READ_REQUEST_ENABLE (1 << 0)
  
--void __init pstore_choose_compression(void)
-+static void __init pstore_choose_compression(void)
- {
- 	const struct pstore_zbackend *step;
+ #define SCDC_STATUS_FLAGS_0 0x40
+-#define  SCDC_CH2_LOCK (1 < 3)
+-#define  SCDC_CH1_LOCK (1 < 2)
+-#define  SCDC_CH0_LOCK (1 < 1)
++#define  SCDC_CH2_LOCK (1 << 3)
++#define  SCDC_CH1_LOCK (1 << 2)
++#define  SCDC_CH0_LOCK (1 << 1)
+ #define  SCDC_CH_LOCK_MASK (SCDC_CH2_LOCK | SCDC_CH1_LOCK | SCDC_CH0_LOCK)
+ #define  SCDC_CLOCK_DETECT (1 << 0)
  
 -- 
 2.23.0
