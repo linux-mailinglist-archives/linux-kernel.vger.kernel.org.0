@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF4A5D9DC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:53:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 835B4D9DE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437496AbfJPVxR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:53:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41848 "EHLO mail.kernel.org"
+        id S2395042AbfJPVyl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:54:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437296AbfJPVxL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:53:11 -0400
+        id S2395002AbfJPVy2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:54:28 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A20321A49;
-        Wed, 16 Oct 2019 21:53:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9AED521D7C;
+        Wed, 16 Oct 2019 21:54:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262790;
-        bh=fruldeb33iN9zTBskPGOhUUlHhwi0U+9Kdn0xTmWzyU=;
+        s=default; t=1571262867;
+        bh=gYuQsYl1SzxCGOE22YKWlWGbBKVnNOPK0ervu2KNH9w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p0DKV/4h75bzXClcfzb9JzslpOG511LFnhrlTWkfw6Of7oWI1uMBxW9IBewc+LXGy
-         zke3dbttj0neGkucQKnleZhx01mYYAZBLLtloKZEkfRYv7bDHHqk8IC81AIBQ5Dsb8
-         5pGrSD1nbj2o7T8zjOtnoJuUaMC1cgf+V1n9XiZo=
+        b=InqaqwE5D0LOk9qVZ5aUFPun47emkdJGje/pR2PXFeaWv3TDfA9dW9kpsDPRcHKwo
+         SNIh2OCw0PKBVVn2eDqIParR8Bd+8k6Puies/66i2tKwlrNnlSBU41nET92bG8MApn
+         LJNZYDmcP8/EpyDK/EqhdnQrn1ETtxUeYETWj/No=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Tomoki Sekiyama <tomoki.sekiyama@gmail.com>,
-        syzbot+b24d736f18a1541ad550@syzkaller.appspotmail.com
-Subject: [PATCH 4.4 30/79] USB: yurex: Dont retry on unexpected errors
-Date:   Wed, 16 Oct 2019 14:50:05 -0700
-Message-Id: <20191016214755.997785491@linuxfoundation.org>
+        stable@vger.kernel.org, Jouni Malinen <j@w1.fi>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.9 33/92] cfg80211: Use const more consistently in for_each_element macros
+Date:   Wed, 16 Oct 2019 14:50:06 -0700
+Message-Id: <20191016214827.040911961@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214729.758892904@linuxfoundation.org>
-References: <20191016214729.758892904@linuxfoundation.org>
+In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
+References: <20191016214759.600329427@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,72 +43,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Jouni Malinen <j@w1.fi>
 
-commit 32a0721c6620b77504916dac0cea8ad497c4878a upstream.
+commit 7388afe09143210f555bdd6c75035e9acc1fab96 upstream.
 
-According to Greg KH, it has been generally agreed that when a USB
-driver encounters an unknown error (or one it can't handle directly),
-it should just give up instead of going into a potentially infinite
-retry loop.
+Enforce the first argument to be a correct type of a pointer to struct
+element and avoid unnecessary typecasts from const to non-const pointers
+(the change in validate_ie_attr() is needed to make this part work). In
+addition, avoid signed/unsigned comparison within for_each_element() and
+mark struct element packed just in case.
 
-The three codes -EPROTO, -EILSEQ, and -ETIME fall into this category.
-They can be caused by bus errors such as packet loss or corruption,
-attempting to communicate with a disconnected device, or by malicious
-firmware.  Nowadays the extent of packet loss or corruption is
-negligible, so it should be safe for a driver to give up whenever one
-of these errors occurs.
-
-Although the yurex driver handles -EILSEQ errors in this way, it
-doesn't do the same for -EPROTO (as discovered by the syzbot fuzzer)
-or other unrecognized errors.  This patch adjusts the driver so that
-it doesn't log an error message for -EPROTO or -ETIME, and it doesn't
-retry after any errors.
-
-Reported-and-tested-by: syzbot+b24d736f18a1541ad550@syzkaller.appspotmail.com
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-CC: Tomoki Sekiyama <tomoki.sekiyama@gmail.com>
-CC: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/Pine.LNX.4.44L0.1909171245410.1590-100000@iolanthe.rowland.org
+Signed-off-by: Jouni Malinen <j@w1.fi>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/yurex.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ include/linux/ieee80211.h |   18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
---- a/drivers/usb/misc/yurex.c
-+++ b/drivers/usb/misc/yurex.c
-@@ -136,6 +136,7 @@ static void yurex_interrupt(struct urb *
- 	switch (status) {
- 	case 0: /*success*/
- 		break;
-+	/* The device is terminated or messed up, give up */
- 	case -EOVERFLOW:
- 		dev_err(&dev->interface->dev,
- 			"%s - overflow with length %d, actual length is %d\n",
-@@ -144,12 +145,13 @@ static void yurex_interrupt(struct urb *
- 	case -ENOENT:
- 	case -ESHUTDOWN:
- 	case -EILSEQ:
--		/* The device is terminated, clean up */
-+	case -EPROTO:
-+	case -ETIME:
- 		return;
- 	default:
- 		dev_err(&dev->interface->dev,
- 			"%s - unknown status received: %d\n", __func__, status);
--		goto exit;
-+		return;
- 	}
+--- a/include/linux/ieee80211.h
++++ b/include/linux/ieee80211.h
+@@ -2634,16 +2634,16 @@ struct element {
+ 	u8 id;
+ 	u8 datalen;
+ 	u8 data[];
+-};
++} __packed;
  
- 	/* handle received message */
-@@ -181,7 +183,6 @@ static void yurex_interrupt(struct urb *
- 		break;
- 	}
+ /* element iteration helpers */
+-#define for_each_element(element, _data, _datalen)			\
+-	for (element = (void *)(_data);					\
+-	     (u8 *)(_data) + (_datalen) - (u8 *)element >=		\
+-		sizeof(*element) &&					\
+-	     (u8 *)(_data) + (_datalen) - (u8 *)element >=		\
+-		sizeof(*element) + element->datalen;			\
+-	     element = (void *)(element->data + element->datalen))
++#define for_each_element(_elem, _data, _datalen)			\
++	for (_elem = (const struct element *)(_data);			\
++	     (const u8 *)(_data) + (_datalen) - (const u8 *)_elem >=	\
++		(int)sizeof(*_elem) &&					\
++	     (const u8 *)(_data) + (_datalen) - (const u8 *)_elem >=	\
++		(int)sizeof(*_elem) + _elem->datalen;			\
++	     _elem = (const struct element *)(_elem->data + _elem->datalen))
  
--exit:
- 	retval = usb_submit_urb(dev->urb, GFP_ATOMIC);
- 	if (retval) {
- 		dev_err(&dev->interface->dev, "%s - usb_submit_urb failed: %d\n",
+ #define for_each_element_id(element, _id, data, datalen)		\
+ 	for_each_element(element, data, datalen)			\
+@@ -2680,7 +2680,7 @@ struct element {
+ static inline bool for_each_element_completed(const struct element *element,
+ 					      const void *data, size_t datalen)
+ {
+-	return (u8 *)element == (u8 *)data + datalen;
++	return (const u8 *)element == (const u8 *)data + datalen;
+ }
+ 
+ #endif /* LINUX_IEEE80211_H */
 
 
