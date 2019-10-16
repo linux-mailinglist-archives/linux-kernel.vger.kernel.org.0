@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B76FD9F5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95FFBDA110
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:26:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395027AbfJPVyf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:54:35 -0400
+        id S2393755AbfJPWSu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:18:50 -0400
 Received: from mail.kernel.org ([198.145.29.99]:44064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388866AbfJPVyS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:54:18 -0400
+        id S2437707AbfJPVyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:54:20 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6B5C21A4C;
-        Wed, 16 Oct 2019 21:54:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2F1F20872;
+        Wed, 16 Oct 2019 21:54:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262858;
-        bh=kYzjHFeSJmYMO6kYfEMX+vU+jy9Iq1brizrumZUAVe8=;
+        s=default; t=1571262859;
+        bh=8RDZahehh86mUaLsL8w6c3B6FC/eAknSP6AsN0Pn2IM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=voKsnQzKq7FrAGwg4J1S3QS2RRSzqJbF6V/pc4uYxL6JCLJ9r9jUFxRbBbCSQeEOz
-         GjQGCsEIxARygVMbcaOKOCmc5FlojKJ6KJ9h7tFF5GAs3mXi4iUAZBNNqEEZObZAL1
-         S589xn1Ah640MvQbnfbva/mY5mYqpsvGCJ5DM5xI=
+        b=W+0cpdLWXtP0anK6BMUQRM3bq05Q4P2jwnaitgyB04VJslmerBDOV1EhvUHxcvznI
+         ARs4CfUeUNIqopPrzH1b8UaYbRgBqA3haucsb2hFPHRPcJdT0WVCFERgJRCO4RuSjq
+         Bb1Wq7tJs9UPoN8RMBSbNTmE8vljP6K2J+n6RDFQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, KeMeng Shi <shikemeng@huawei.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
+        stable@vger.kernel.org, Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 24/92] sched/core: Fix migration to invalid CPU in __set_cpus_allowed_ptr()
-Date:   Wed, 16 Oct 2019 14:49:57 -0700
-Message-Id: <20191016214819.797335164@linuxfoundation.org>
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 25/92] kernel/elfcore.c: include proper prototypes
+Date:   Wed, 16 Oct 2019 14:49:58 -0700
+Message-Id: <20191016214820.207374320@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
 References: <20191016214759.600329427@linuxfoundation.org>
@@ -47,83 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: KeMeng Shi <shikemeng@huawei.com>
+From: Valdis Kletnieks <valdis.kletnieks@vt.edu>
 
-[ Upstream commit 714e501e16cd473538b609b3e351b2cc9f7f09ed ]
+[ Upstream commit 0f74914071ab7e7b78731ed62bf350e3a344e0a5 ]
 
-An oops can be triggered in the scheduler when running qemu on arm64:
+When building with W=1, gcc properly complains that there's no prototypes:
 
- Unable to handle kernel paging request at virtual address ffff000008effe40
- Internal error: Oops: 96000007 [#1] SMP
- Process migration/0 (pid: 12, stack limit = 0x00000000084e3736)
- pstate: 20000085 (nzCv daIf -PAN -UAO)
- pc : __ll_sc___cmpxchg_case_acq_4+0x4/0x20
- lr : move_queued_task.isra.21+0x124/0x298
- ...
- Call trace:
-  __ll_sc___cmpxchg_case_acq_4+0x4/0x20
-  __migrate_task+0xc8/0xe0
-  migration_cpu_stop+0x170/0x180
-  cpu_stopper_thread+0xec/0x178
-  smpboot_thread_fn+0x1ac/0x1e8
-  kthread+0x134/0x138
-  ret_from_fork+0x10/0x18
+  CC      kernel/elfcore.o
+kernel/elfcore.c:7:17: warning: no previous prototype for 'elf_core_extra_phdrs' [-Wmissing-prototypes]
+    7 | Elf_Half __weak elf_core_extra_phdrs(void)
+      |                 ^~~~~~~~~~~~~~~~~~~~
+kernel/elfcore.c:12:12: warning: no previous prototype for 'elf_core_write_extra_phdrs' [-Wmissing-prototypes]
+   12 | int __weak elf_core_write_extra_phdrs(struct coredump_params *cprm, loff_t offset)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~
+kernel/elfcore.c:17:12: warning: no previous prototype for 'elf_core_write_extra_data' [-Wmissing-prototypes]
+   17 | int __weak elf_core_write_extra_data(struct coredump_params *cprm)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~
+kernel/elfcore.c:22:15: warning: no previous prototype for 'elf_core_extra_data_size' [-Wmissing-prototypes]
+   22 | size_t __weak elf_core_extra_data_size(void)
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~
 
-__set_cpus_allowed_ptr() will choose an active dest_cpu in affinity mask to
-migrage the process if process is not currently running on any one of the
-CPUs specified in affinity mask. __set_cpus_allowed_ptr() will choose an
-invalid dest_cpu (dest_cpu >= nr_cpu_ids, 1024 in my virtual machine) if
-CPUS in an affinity mask are deactived by cpu_down after cpumask_intersects
-check. cpumask_test_cpu() of dest_cpu afterwards is overflown and may pass if
-corresponding bit is coincidentally set. As a consequence, kernel will
-access an invalid rq address associate with the invalid CPU in
-migration_cpu_stop->__migrate_task->move_queued_task and the Oops occurs.
+Provide the include file so gcc is happy, and we don't have potential code drift
 
-The reproduce the crash:
-
-  1) A process repeatedly binds itself to cpu0 and cpu1 in turn by calling
-  sched_setaffinity.
-
-  2) A shell script repeatedly does "echo 0 > /sys/devices/system/cpu/cpu1/online"
-  and "echo 1 > /sys/devices/system/cpu/cpu1/online" in turn.
-
-  3) Oops appears if the invalid CPU is set in memory after tested cpumask.
-
-Signed-off-by: KeMeng Shi <shikemeng@huawei.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/1568616808-16808-1-git-send-email-shikemeng@huawei.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: http://lkml.kernel.org/r/29875.1565224705@turing-police
+Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sched/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/elfcore.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 63be0bcfa286d..82cec9a666e7b 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1162,7 +1162,8 @@ static int __set_cpus_allowed_ptr(struct task_struct *p,
- 	if (cpumask_equal(&p->cpus_allowed, new_mask))
- 		goto out;
+diff --git a/kernel/elfcore.c b/kernel/elfcore.c
+index e556751d15d94..a2b29b9bdfcb2 100644
+--- a/kernel/elfcore.c
++++ b/kernel/elfcore.c
+@@ -2,6 +2,7 @@
+ #include <linux/fs.h>
+ #include <linux/mm.h>
+ #include <linux/binfmts.h>
++#include <linux/elfcore.h>
  
--	if (!cpumask_intersects(new_mask, cpu_valid_mask)) {
-+	dest_cpu = cpumask_any_and(cpu_valid_mask, new_mask);
-+	if (dest_cpu >= nr_cpu_ids) {
- 		ret = -EINVAL;
- 		goto out;
- 	}
-@@ -1183,7 +1184,6 @@ static int __set_cpus_allowed_ptr(struct task_struct *p,
- 	if (cpumask_test_cpu(task_cpu(p), new_mask))
- 		goto out;
- 
--	dest_cpu = cpumask_any_and(cpu_valid_mask, new_mask);
- 	if (task_running(rq, p) || p->state == TASK_WAKING) {
- 		struct migration_arg arg = { p, dest_cpu };
- 		/* Need help from migration thread: drop lock and wait. */
+ Elf_Half __weak elf_core_extra_phdrs(void)
+ {
 -- 
 2.20.1
 
