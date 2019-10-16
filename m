@@ -2,83 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BE2CD8D57
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 12:09:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C276D8D62
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 12:11:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392245AbfJPKJR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 06:09:17 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:43568 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727235AbfJPKJQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 06:09:16 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9GA51sp009174;
-        Wed, 16 Oct 2019 05:09:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=PODMain02222019;
- bh=wY7mAvj5F21+V86bnuE18PYzkAjmvRHb8mMHS3hceXQ=;
- b=EA00SE6Z2E3k7SYFmqLaahzFj9XBNXjotsuUm/KPxWHyilfAJAm5KZPxQmDDAJgrJUle
- gnJUdIu3m1gPVluI0VzrM0AX1MdVV/iAOspKE8s/QO1nKSpmsxQkQfyJoUEt4/lXWVew
- LF6SWzPJAJWOR2PKHdG4CaibjbMB8WtQqdgVSmrR41mibmFPlpRucfSj++0eq28ey8OI
- SMP0stSn8afBqt+M1O/iK/mZvq+3iAlZZUfF8bB3guzQMjGxX6mPTHo3W2v/TfMfmhz0
- qZU8xVquIHF32s7/MTVCNiLTmcVXo6jMXqbbLwD2Y03PXK3bCfQXNh10hu5x7koRn8j7 cQ== 
-Authentication-Results: ppops.net;
-        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from ediex02.ad.cirrus.com ([87.246.76.36])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2vkc83dbua-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Wed, 16 Oct 2019 05:09:06 -0500
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Wed, 16 Oct
- 2019 11:09:04 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
- Transport; Wed, 16 Oct 2019 11:09:04 +0100
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id AB4E92C1;
-        Wed, 16 Oct 2019 10:09:04 +0000 (UTC)
-Date:   Wed, 16 Oct 2019 10:09:04 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-CC:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 12/36] ARM: s3c64xx: remove mach/hardware.h
-Message-ID: <20191016100904.GC31391@ediswmail.ad.cirrus.com>
-References: <20191010202802.1132272-1-arnd@arndb.de>
- <20191010203043.1241612-1-arnd@arndb.de>
- <20191010203043.1241612-12-arnd@arndb.de>
+        id S2404502AbfJPKL2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 06:11:28 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42444 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730479AbfJPKL2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 06:11:28 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D0EFA315C036;
+        Wed, 16 Oct 2019 10:11:27 +0000 (UTC)
+Received: from krava (unknown [10.43.17.61])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 35CD75D6B2;
+        Wed, 16 Oct 2019 10:11:23 +0000 (UTC)
+Date:   Wed, 16 Oct 2019 12:11:22 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Yunfeng Ye <yeyunfeng@huawei.com>
+Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        namhyung@kernel.org, john.garry@huawei.com, ak@linux.intel.com,
+        lukemujica@google.com, kan.liang@linux.intel.com,
+        yuzenghui@huawei.com, linux-kernel@vger.kernel.org,
+        hushiyuan@huawei.com, linfeilong@huawei.com
+Subject: Re: [PATCH] perf jevents: Fix resource leak in process_mapfile()
+Message-ID: <20191016101122.GB15580@krava>
+References: <bf113089-e3cd-50f9-f7ed-17d07512a702@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191010203043.1241612-12-arnd@arndb.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-SPF-Result: fail
-X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
- -all
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 suspectscore=0
- phishscore=0 malwarescore=0 mlxscore=0 impostorscore=0 clxscore=1011
- lowpriorityscore=0 mlxlogscore=942 adultscore=0 spamscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1908290000
- definitions=main-1910160090
+In-Reply-To: <bf113089-e3cd-50f9-f7ed-17d07512a702@huawei.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 16 Oct 2019 10:11:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 10:29:56PM +0200, Arnd Bergmann wrote:
-> This header is empty and conflicts with the s3c24xx version
-> of the same file when we merge the two, so stop including it.
+On Wed, Oct 16, 2019 at 03:47:23PM +0800, Yunfeng Ye wrote:
+> There are memory leaks and file descriptor resource leaks in
+> process_mapfile().
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fix this by adding free() and fclose() on the error paths.
+> 
+> Fixes: 80eeb67fe577 ("perf jevents: Program to convert JSON file")
+> Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+
+thanks,
+jirka
+
 > ---
-
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-
-Thanks,
-Charles
+>  tools/perf/pmu-events/jevents.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
+> index e2837260ca4d..6e60d4cff592 100644
+> --- a/tools/perf/pmu-events/jevents.c
+> +++ b/tools/perf/pmu-events/jevents.c
+> @@ -758,6 +758,7 @@ static int process_mapfile(FILE *outfp, char *fpath)
+>  	char *line, *p;
+>  	int line_num;
+>  	char *tblname;
+> +	int ret = 0;
+> 
+>  	pr_info("%s: Processing mapfile %s\n", prog, fpath);
+> 
+> @@ -769,6 +770,7 @@ static int process_mapfile(FILE *outfp, char *fpath)
+>  	if (!mapfp) {
+>  		pr_info("%s: Error %s opening %s\n", prog, strerror(errno),
+>  				fpath);
+> +		free(line);
+>  		return -1;
+>  	}
+> 
+> @@ -795,7 +797,8 @@ static int process_mapfile(FILE *outfp, char *fpath)
+>  			/* TODO Deal with lines longer than 16K */
+>  			pr_info("%s: Mapfile %s: line %d too long, aborting\n",
+>  					prog, fpath, line_num);
+> -			return -1;
+> +			ret = -1;
+> +			goto out;
+>  		}
+>  		line[strlen(line)-1] = '\0';
+> 
+> @@ -825,7 +828,9 @@ static int process_mapfile(FILE *outfp, char *fpath)
+> 
+>  out:
+>  	print_mapping_table_suffix(outfp);
+> -	return 0;
+> +	fclose(mapfp);
+> +	free(line);
+> +	return ret;
+>  }
+> 
+>  /*
+> -- 
+> 2.7.4.3
+> 
