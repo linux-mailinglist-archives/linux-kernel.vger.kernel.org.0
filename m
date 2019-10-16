@@ -2,83 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9003D92EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 15:49:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FDE0D930A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 15:52:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405541AbfJPNtz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 09:49:55 -0400
-Received: from uho.ysoft.cz ([81.19.3.130]:39698 "EHLO uho.ysoft.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405519AbfJPNtx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 09:49:53 -0400
-Received: from iota-build.ysoft.local (unknown [10.1.5.151])
-        by uho.ysoft.cz (Postfix) with ESMTP id 1EB01A26C9;
-        Wed, 16 Oct 2019 15:49:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
-        s=20160406-ysoft-com; t=1571233792;
-        bh=erasMNJVDzkpqE/Lkt54LFkKCs93IkeeRqS23J8cd9A=;
-        h=From:To:Cc:Subject:Date:From;
-        b=meg7KkdydlXzbCYQcmxPojik1y6ceyJQoGpApWAA/mUpnuawE8vFM1G0D7J7Gopxa
-         afFlvNJ3+tzY9lmY6qJhqdWU/BoIhNZfZ5oHmnUhffw9YOjsAoZYK/emGI1H1F1e9m
-         fky2lG8YBZp8j0IHEkBVsG87PXIa29xFBaw+mVnU=
-From:   =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
-To:     Rob Herring <robh+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
-Subject: [PATCH] ARM: dts: imx6dl-yapp4: Enable the I2C3 bus on all board variants
-Date:   Wed, 16 Oct 2019 15:49:49 +0200
-Message-Id: <1571233789-4491-1-git-send-email-michal.vokac@ysoft.com>
-X-Mailer: git-send-email 2.1.4
+        id S2393713AbfJPNwv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 09:52:51 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:34922 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388108AbfJPNwv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 09:52:51 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9GDnadY072397;
+        Wed, 16 Oct 2019 13:52:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=RT6WwgIAQ124uGpiC/zTSw0NchbyOlxzq3SDduZSmwQ=;
+ b=GpxV3Yir75uCm3qsU+Be3dsU9hcQLqlHxSI7TTBBgJvFi3qCwuLgRQqusnTNlQ0DwTc5
+ 3qreNb1hE3cR/gUZcmRBJkwDecgLG5+8XQgaK1/JTxuNokpgNbaLdDQHEkqr+/K9WNT+
+ 4MyrAXXwZVmp8i4htnPgz0Rh9z0EtfQY08NlCaSkKqW+j8W8bpWvlXI0mtA5rAOGFdLy
+ 26yZuj4J/kBzHdO4aXZAdqLgX+Vi/d4RAPD3nVtWqZixfKh9/mUFcgQ9K4N/YLoU99iS
+ QfArAsSoEWq+SlO6LTwpscHVdGNP0eRGavGAWaDNUtwFiu/pArHO7YFHCs+Fhwm8HTVF xg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2vk7frewux-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 16 Oct 2019 13:52:19 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9GDgrMt186456;
+        Wed, 16 Oct 2019 13:50:18 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2vnf7tdyed-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 16 Oct 2019 13:50:18 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9GDoDs6029673;
+        Wed, 16 Oct 2019 13:50:13 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 16 Oct 2019 06:50:13 -0700
+Date:   Wed, 16 Oct 2019 16:50:02 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Dexuan Cui <decui@microsoft.com>,
+        driverdev-devel@linuxdriverproject.org, olaf@aepfle.de,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>, jackm@mellanox.com,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-hyperv@vger.kernel.org,
+        Michael Kelley <mikelley@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        marcelo.cerri@canonical.com, linux-pci@vger.kernel.org,
+        apw@canonical.com, vkuznets@redhat.com,
+        Bjorn Helgaas <bhelgaas@google.com>, jasowang@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/7] PCI/PM: Make power management op coding style
+ consistent
+Message-ID: <20191016135002.GA24678@kadam>
+References: <20191014230016.240912-1-helgaas@kernel.org>
+ <20191014230016.240912-6-helgaas@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191014230016.240912-6-helgaas@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9411 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=931
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910160121
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9411 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910160122
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-imx6dl-yapp4 Draco and Ursa boards use the I2C3 bus to control some
-external devices through the /dev files.
+On Mon, Oct 14, 2019 at 06:00:14PM -0500, Bjorn Helgaas wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> Some of the power management ops use this style:
+> 
+>   struct device_driver *drv = dev->driver;
+>   if (drv && drv->pm && drv->pm->prepare(dev))
+>     drv->pm->prepare(dev);
+> 
+> while others use this:
+> 
+>   const struct dev_pm_ops *pm = dev->driver ? dev->driver->pm : NULL;
 
-So enable the I2C3 bus on all board variants, not just on Hydra.
+I like this patch a lot, especially the direct returns.  But it
+occurs to me that in the future this conditional would look better as
 
-Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
----
- arch/arm/boot/dts/imx6dl-yapp4-common.dtsi | 2 +-
- arch/arm/boot/dts/imx6dl-yapp4-hydra.dts   | 4 ----
- 2 files changed, 1 insertion(+), 5 deletions(-)
+	const struct dev_pm_ops *pm = driver_to_pm(dev->driver);
 
-diff --git a/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi b/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi
-index 663a72a96b6c..e2991a02f30f 100644
---- a/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi
-+++ b/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi
-@@ -308,7 +308,7 @@
- 	clock-frequency = <100000>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_i2c3>;
--	status = "disabled";
-+	status = "okay";
- 
- 	oled: oled@3d {
- 		compatible = "solomon,ssd1305fb-i2c";
-diff --git a/arch/arm/boot/dts/imx6dl-yapp4-hydra.dts b/arch/arm/boot/dts/imx6dl-yapp4-hydra.dts
-index f97927064750..264f9271895d 100644
---- a/arch/arm/boot/dts/imx6dl-yapp4-hydra.dts
-+++ b/arch/arm/boot/dts/imx6dl-yapp4-hydra.dts
-@@ -25,10 +25,6 @@
- 	status = "okay";
- };
- 
--&i2c3 {
--	status = "okay";
--};
--
- &leds {
- 	status = "okay";
- };
--- 
-2.1.4
+or something.
+
+regards,
+dan carpenter
 
