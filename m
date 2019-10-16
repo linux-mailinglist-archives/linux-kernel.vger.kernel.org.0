@@ -2,95 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F127D9435
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 16:45:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8888DD9432
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 16:45:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405766AbfJPOpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S2405776AbfJPOpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 16 Oct 2019 10:45:47 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35327 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727291AbfJPOpq (ORCPT
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36214 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727167AbfJPOpq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 16 Oct 2019 10:45:46 -0400
-Received: by mail-wr1-f66.google.com with SMTP id v8so28416628wrt.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 07:45:44 -0700 (PDT)
+Received: by mail-wr1-f65.google.com with SMTP id y19so28416507wrd.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 07:45:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=KiNYSZak6gY+iTMwji/UIPStYu+CYTFJcAQfNVpy0D8=;
-        b=XpQhfFQSx2JsMXp1NZJ6/hru99O+c0K/SNaTQQ8E8SJtgTESjISSO4eyKSruYo68HD
-         lKrhohrltz3iEaM19V/XrkV6RJym+M1Pv0FASiy1SCVuPA8UKAEvz0gMz+UqY4icwO3g
-         cybZwnszs3xTqt1f6iUYnd52Taz0kWNsKZ2fjBQ+GIdIYL33r8StF7gkClD4hbQHTBzR
-         FnioeCWDIbSW3l7YbamCvXZMhr5F79Z/d5MkfYH863BFl7fA/GHcMG+PYkjjzXhilH09
-         JcaczH2qddgCqpLGdQpLDP0GLie+OzbNhiSfVmmLvN7mHqQiz7xe2RHRAMrLIYRnLCEH
-         YEOg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=OqWLyb2BG8Sok2vGbygAuB5dtFUQpwFRtHupkgR5yCg=;
+        b=dtLlJFfrr+8E71lRdhXf0907/EJJZdg7mf0+MkvIqzq6Lx0I6NDcpOZSyLu2llONZp
+         YETOIeS09sgle1b1Cu//fC2rlSxa6WMkA3DP2Gn+FNjnlYJXHhyzcuGKa8tIXE46SdPK
+         kBj9OHhhAzFnc6XN9/d+q7LvQShiW58S9WdSgroBLWLPeqF4eNNe/9JMLbhXwc+tJv30
+         pj/svO6d0xZ2QRryeys3OEi+Gi+hf2aBULvfCR5DEr+EgBpeU1mOyJKCGtRHC/N8/4Cg
+         3l1w+A56EqSpdfV0d/6/WUgYKj3rG5aCl1Ge7NtCfWOqZONm4KG9wQBtqigadjfZhzZs
+         uV3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=KiNYSZak6gY+iTMwji/UIPStYu+CYTFJcAQfNVpy0D8=;
-        b=Aby9K7N0gGqHHNIcGbHFkfSWkffnkJptwIQm1aYQMaUFY+5R1jCIZHkjerXYLl3J0j
-         OImnN4lL24XimY6K3GTgcRecPO846RnJW5KSF02PMKDu40yMeji22AHMa5iBic1K8Aqp
-         +6tk8wtnY/X+/VVatHcmEf+3CSyJRP/vNPAGotpCEVPOz72z+L5FFDhzr4RuIRgesBmv
-         InWBq2hMvn1qsX3+jljrsPSO2NPCBRM2WEF4IEAPJLr0bxJfz4DT6Y2fS7L0nljt/nmR
-         F+rTSLExEhRYSzEeghGhwoiOZoxd7544dhop/8kaE7DabYGDtLlzkoRMnWoSk9uHziwK
-         +MAg==
-X-Gm-Message-State: APjAAAV+5Geiubc3spyKCv9ClVq5qlq8qglEgKpGQC9DhFngfvfI5zC8
-        GhuqwxbZNPBf5i6aSPcWYXY=
-X-Google-Smtp-Source: APXvYqwY8Vzhr5qL3XF3pfXr5wGIgiABjaTbDw7VvZYTHLNEgTuVHi74EFZMXnZL90WLbwztBZT63g==
-X-Received: by 2002:adf:fc42:: with SMTP id e2mr3273223wrs.100.1571237143519;
-        Wed, 16 Oct 2019 07:45:43 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=OqWLyb2BG8Sok2vGbygAuB5dtFUQpwFRtHupkgR5yCg=;
+        b=OViw4Qq4WTOiWzMjSFy40AcLcExUD018ilxNgrEUIyY0P/npHlECe1p+3vutNUzXl/
+         tw/aLOmsxC6PRu4DvTNYS+JXHPafSuogIOpxSEE2XTL7Ll2o3XBMobi5w42zSQqtkfDy
+         Hkfg50FyoaHxfgySGmgVfWtTblWVM61lXNxNJ19Z6Ro52MNZiCvfocmun+p4rnXJMqde
+         c9rBENeQYd4j2eZG1jYMX6V77tERz0sJ7S+WIlrNI6saoKj9+W6eVLR9tOc+bj3yQGt8
+         zUklWiyEsesyfHgG1GgM+ifxQuPOhea59IyMv83v3ud0AZyE2I/5t24Skh04ZOO2ZTdF
+         C4Ng==
+X-Gm-Message-State: APjAAAWmGW4w3tEAgaZkmVjd6Ruj0A+GoIaVyyPJdyYgHf9MKcpwVa5q
+        gfu0G5cWmq6KbwsY5TWhaOc=
+X-Google-Smtp-Source: APXvYqwf95sC2Wvbbo5QZxX6nVpD7F+Dy1DWm2Q/ChY0HuEzuKHmvO9mWqGrXkspBBCTHmw14UOZSA==
+X-Received: by 2002:a5d:55ce:: with SMTP id i14mr1648260wrw.169.1571237144632;
+        Wed, 16 Oct 2019 07:45:44 -0700 (PDT)
 Received: from debian.office.codethink.co.uk ([167.98.27.226])
-        by smtp.gmail.com with ESMTPSA id q3sm22211733wru.33.2019.10.16.07.45.42
+        by smtp.gmail.com with ESMTPSA id q3sm22211733wru.33.2019.10.16.07.45.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 16 Oct 2019 07:45:42 -0700 (PDT)
+        Wed, 16 Oct 2019 07:45:43 -0700 (PDT)
 From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org, Michal Kubecek <mkubecek@suse.cz>,
         Steven Rostedt <rostedt@goodmis.org>,
         Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 1/4] parport: daisy: avoid hardcoded name
-Date:   Wed, 16 Oct 2019 15:45:37 +0100
-Message-Id: <20191016144540.18810-1-sudipm.mukherjee@gmail.com>
+Subject: [PATCH 2/4] parport: do not check portlist when using device-model
+Date:   Wed, 16 Oct 2019 15:45:38 +0100
+Message-Id: <20191016144540.18810-2-sudipm.mukherjee@gmail.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20191016144540.18810-1-sudipm.mukherjee@gmail.com>
+References: <20191016144540.18810-1-sudipm.mukherjee@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The daisy device name is hardcoded, define it in the header file and
-use it in the code.
+We do not need to maintain a list of ports when we are using the
+device-model. The base layer is going to maintain the list for us and
+we can get the list of ports just using bus_for_each_dev().
 
 Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 ---
- drivers/parport/probe.c | 2 +-
- include/linux/parport.h | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ drivers/parport/share.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/parport/probe.c b/drivers/parport/probe.c
-index e035174ba205..4e2bfeb6b4a6 100644
---- a/drivers/parport/probe.c
-+++ b/drivers/parport/probe.c
-@@ -257,7 +257,7 @@ static ssize_t parport_read_device_id (struct parport *port, char *buffer,
- ssize_t parport_device_id (int devnum, char *buffer, size_t count)
+diff --git a/drivers/parport/share.c b/drivers/parport/share.c
+index 7b4ee33c1935..96538b7975e5 100644
+--- a/drivers/parport/share.c
++++ b/drivers/parport/share.c
+@@ -266,9 +266,6 @@ static int port_check(struct device *dev, void *dev_drv)
+ int __parport_register_driver(struct parport_driver *drv, struct module *owner,
+ 			      const char *mod_name)
  {
- 	ssize_t retval = -ENXIO;
--	struct pardevice *dev = parport_open (devnum, "Device ID probe");
-+	struct pardevice *dev = parport_open(devnum, daisy_dev_name);
- 	if (!dev)
- 		return -ENXIO;
+-	if (list_empty(&portlist))
+-		get_lowlevel_driver();
+-
+ 	if (drv->devmodel) {
+ 		/* using device model */
+ 		int ret;
+@@ -292,6 +289,8 @@ int __parport_register_driver(struct parport_driver *drv, struct module *owner,
  
-diff --git a/include/linux/parport.h b/include/linux/parport.h
-index 397607a0c0eb..13932ce8b37b 100644
---- a/include/linux/parport.h
-+++ b/include/linux/parport.h
-@@ -460,6 +460,7 @@ extern size_t parport_ieee1284_epp_read_addr (struct parport *,
- 					      void *, size_t, int);
+ 		drv->devmodel = false;
  
- /* IEEE1284.3 functions */
-+#define daisy_dev_name "Device ID probe"
- extern int parport_daisy_init (struct parport *port);
- extern void parport_daisy_fini (struct parport *port);
- extern struct pardevice *parport_open (int devnum, const char *name);
++		if (list_empty(&portlist))
++			get_lowlevel_driver();
+ 		mutex_lock(&registration_lock);
+ 		list_for_each_entry(port, &portlist, list)
+ 			drv->attach(port);
 -- 
 2.11.0
 
