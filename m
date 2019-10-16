@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06694D9E21
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDCDED9E01
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395388AbfJPV4h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:56:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47886 "EHLO mail.kernel.org"
+        id S2395271AbfJPVzg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:55:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406627AbfJPV4U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:56:20 -0400
+        id S2395238AbfJPVzb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:55:31 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA9D820872;
-        Wed, 16 Oct 2019 21:56:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F91D21A4C;
+        Wed, 16 Oct 2019 21:55:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262979;
-        bh=J2Sn1aG9tQc5zNbTM4373KlEXNztfHo5wQ38E+AP4+M=;
+        s=default; t=1571262930;
+        bh=wrJC8ofyYVGM3ZMkVOPjmMsV1QlKH9zkBK4eiceb2GA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lL4fL7tNWtc1offacAvhniuKZfFqHTqwnH9XklgC2wPIMc/CxqaNBphOhRUvtzLYc
-         hRsD8/6tzc0kHNBQZQFSb+ZWET0/Cgx6tyxwF0Mc+bQMznwHEiLpDQgghbj0c59Ebq
-         +ehowKj5gTyYTivLmyAFTw14diVuaSm/0F4WnK2E=
+        b=l1CkTOlmJ+oRtpx5p+UTgj+yw0nSGtXdnWkYe4syM+MB26QXJD78Bg/20ZsXabqKt
+         Ec7mwnJ2iJs27W2f/UiBAcjuPIJkdzmuf/dSzofBXng3uVKiB4zA4XVbNRBQm7qdxq
+         W4Vp49K9N2PmSenJ7Jdy+oiZhHrAfwv42Ofep1fE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Heinrich Schuchardt <xypron.glpk@gmx.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 49/65] kernel/sysctl.c: do not override max_threads provided by userspace
+        stable@vger.kernel.org,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.9 90/92] tracing: Get trace_array reference for available_tracers files
 Date:   Wed, 16 Oct 2019 14:51:03 -0700
-Message-Id: <20191016214835.534949867@linuxfoundation.org>
+Message-Id: <20191016214848.693341261@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
-References: <20191016214756.457746573@linuxfoundation.org>
+In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
+References: <20191016214759.600329427@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,83 +43,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit b0f53dbc4bc4c371f38b14c391095a3bb8a0bb40 upstream.
+commit 194c2c74f5532e62c218adeb8e2b683119503907 upstream.
 
-Partially revert 16db3d3f1170 ("kernel/sysctl.c: threads-max observe
-limits") because the patch is causing a regression to any workload which
-needs to override the auto-tuning of the limit provided by kernel.
+As instances may have different tracers available, we need to look at the
+trace_array descriptor that shows the list of the available tracers for the
+instance. But there's a race between opening the file and an admin
+deleting the instance. The trace_array_get() needs to be called before
+accessing the trace_array.
 
-set_max_threads is implementing a boot time guesstimate to provide a
-sensible limit of the concurrently running threads so that runaways will
-not deplete all the memory.  This is a good thing in general but there
-are workloads which might need to increase this limit for an application
-to run (reportedly WebSpher MQ is affected) and that is simply not
-possible after the mentioned change.  It is also very dubious to
-override an admin decision by an estimation that doesn't have any direct
-relation to correctness of the kernel operation.
-
-Fix this by dropping set_max_threads from sysctl_max_threads so any
-value is accepted as long as it fits into MAX_THREADS which is important
-to check because allowing more threads could break internal robust futex
-restriction.  While at it, do not use MIN_THREADS as the lower boundary
-because it is also only a heuristic for automatic estimation and admin
-might have a good reason to stop new threads to be created even when
-below this limit.
-
-This became more severe when we switched x86 from 4k to 8k kernel
-stacks.  Starting since 6538b8ea886e ("x86_64: expand kernel stack to
-16K") (3.16) we use THREAD_SIZE_ORDER = 2 and that halved the auto-tuned
-value.
-
-In the particular case
-
-  3.12
-  kernel.threads-max = 515561
-
-  4.4
-  kernel.threads-max = 200000
-
-Neither of the two values is really insane on 32GB machine.
-
-I am not sure we want/need to tune the max_thread value further.  If
-anything the tuning should be removed altogether if proven not useful in
-general.  But we definitely need a way to override this auto-tuning.
-
-Link: http://lkml.kernel.org/r/20190922065801.GB18814@dhcp22.suse.cz
-Fixes: 16db3d3f1170 ("kernel/sysctl.c: threads-max observe limits")
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Heinrich Schuchardt <xypron.glpk@gmx.de>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stable@vger.kernel.org
+Fixes: 607e2ea167e56 ("tracing: Set up infrastructure to allow tracers for instances")
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/fork.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/trace/trace.c |   17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2499,7 +2499,7 @@ int sysctl_max_threads(struct ctl_table
- 	struct ctl_table t;
- 	int ret;
- 	int threads = max_threads;
--	int min = MIN_THREADS;
-+	int min = 1;
- 	int max = MAX_THREADS;
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -3700,9 +3700,14 @@ static int show_traces_open(struct inode
+ 	if (tracing_disabled)
+ 		return -ENODEV;
  
- 	t = *table;
-@@ -2511,7 +2511,7 @@ int sysctl_max_threads(struct ctl_table
- 	if (ret || !write)
++	if (trace_array_get(tr) < 0)
++		return -ENODEV;
++
+ 	ret = seq_open(file, &show_traces_seq_ops);
+-	if (ret)
++	if (ret) {
++		trace_array_put(tr);
  		return ret;
++	}
  
--	set_max_threads(threads);
-+	max_threads = threads;
- 
+ 	m = file->private_data;
+ 	m->private = tr;
+@@ -3710,6 +3715,14 @@ static int show_traces_open(struct inode
  	return 0;
  }
+ 
++static int show_traces_release(struct inode *inode, struct file *file)
++{
++	struct trace_array *tr = inode->i_private;
++
++	trace_array_put(tr);
++	return seq_release(inode, file);
++}
++
+ static ssize_t
+ tracing_write_stub(struct file *filp, const char __user *ubuf,
+ 		   size_t count, loff_t *ppos)
+@@ -3740,8 +3753,8 @@ static const struct file_operations trac
+ static const struct file_operations show_traces_fops = {
+ 	.open		= show_traces_open,
+ 	.read		= seq_read,
+-	.release	= seq_release,
+ 	.llseek		= seq_lseek,
++	.release	= show_traces_release,
+ };
+ 
+ static ssize_t
 
 
