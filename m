@@ -2,113 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D752FD914A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:45:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2311D9154
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:46:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393225AbfJPMps (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 08:45:48 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41957 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390973AbfJPMps (ORCPT
+        id S2393245AbfJPMqq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 08:46:46 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54586 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388855AbfJPMqp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 08:45:48 -0400
-Received: by mail-pl1-f196.google.com with SMTP id t10so11224042plr.8;
-        Wed, 16 Oct 2019 05:45:46 -0700 (PDT)
+        Wed, 16 Oct 2019 08:46:45 -0400
+Received: by mail-wm1-f67.google.com with SMTP id p7so2773973wmp.4
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 05:46:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zKeyF68jMzkZ8PZE+zyf0AJaz2r+snV2TpAgt4NOVLs=;
+        b=KTEToaQ6qrUyieyWQDtnZTqU0uLP/8iwXQlf8besLewIcU49APKdYdkSgI38Agh1MC
+         fybhBfRdkx5N+TTVr1tYMxdymZL3T0riuRTK/LOyyxhgaZQubAeRVPpVt+A3RnXX8QXs
+         URwFg3CqEOZzLc5RyI2hhW6B0aejSropBsziuKyyH/FIwM2Q/afI6g5YmezT97h0gfC5
+         m7l0yztoR6wQheMj/D2XjlMwJcTuiMahzWX2A2g4HbTmV1V3s2gVyEtGwQa4xFvdKB7X
+         +hlE/qsb3XwJejEKcLz/Da0ZJ8PWWa/2vOpEx0Rr6ALCbfpwZCOQM8tBCVrg0yVT28Nz
+         rENQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MW2OPawZ1/S7yUUbg0Iwr6wr8CBZilFP35Sgfd8NrvI=;
-        b=llxF/QUkrOKyUU+KdhmQpMmMY9Gfd9z6w6tCedM4LOBAEk9O2YvP0V/NAHXsK4va1G
-         3Nwq9K+MBR+hkNVSiEOjfcj5JuCrTBk/BVAo8oCyEkLB/OXxMLy1UD78kDB4JPS9pbVR
-         rN61qwQL/SesmJPyMleE46qq4H+ZjZhNYJC4OBohquCLqVjIG5yz3sIIlKOpd5mZO2ZU
-         1H9H+aTjvNj8CwM1QBi+eUzpkpMgq+enRUamJvlsXMNkEaAfBFAwXwBZrKBEszwMAIfX
-         hlsP8IT6YHuRDbiDt4HiaFU4dmRlDX8EUncTUGvQFYKgDwqxsK2IqKIFMCSGMuslhguX
-         OCdw==
-X-Gm-Message-State: APjAAAVO9aPh0mKppK5HK6pDai7eZbfEuhx6j0rN8RAnZOjY5Bhd2LGF
-        gADR1yRtLRMQxhsklCqiX0g=
-X-Google-Smtp-Source: APXvYqyKGPR4ZK3MbBMfiZ9W9A5wG/MAiwUafwAuA5NTnFoMudfkEXwGcJ82nnpb3T+NzAZR6dFXmw==
-X-Received: by 2002:a17:902:8e81:: with SMTP id bg1mr7131785plb.137.1571229945751;
-        Wed, 16 Oct 2019 05:45:45 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id c34sm3935476pgb.35.2019.10.16.05.45.44
+        bh=zKeyF68jMzkZ8PZE+zyf0AJaz2r+snV2TpAgt4NOVLs=;
+        b=IqMADy6HrY+hEV3HqKujEX9Xh5foocsWciApTdR5x6izzNhzSIFSIOOTSXR2JjV5J/
+         hIU066zRGVpbE/aKCAnrRnmTJYHx1Do/5uhSmGKVjyAs0TrdNU4amNbkyTaU+12+mtJx
+         ecmdMqlN6KPjAEaQu1EBiG7FCbhCmGUeNs8gi4O+1EkOWvHz1gh8B8IbsWzk6oaiP/xV
+         oJ0Y6ls3VhoBPc7PeP5Yr7/gNLhcXTuTMfXjYaEyIoe9giXG5r+cGLw8jK8gY0u7n8iN
+         JuzIWEi7KPL28ly9ujNk+CDf6X132fOYxAvXxo6ryN5iWHVHhXh2at7iE5DxMySRPLXT
+         wMhQ==
+X-Gm-Message-State: APjAAAVswcR/GJO1Z+n1HFSjarJI/U5Y5xeUr+ZaIffs1udpH6gdrstm
+        rQ8KEofSlqJXT/rkvPY+UWI=
+X-Google-Smtp-Source: APXvYqy4uLAxXK8dZ9uj0Q5OXVcdh/jm7RvNEApTwfDvS63JBb+q8OpwLefZS54uymyMLUA4t9VzRQ==
+X-Received: by 2002:a7b:c4c6:: with SMTP id g6mr3276352wmk.126.1571230003562;
+        Wed, 16 Oct 2019 05:46:43 -0700 (PDT)
+Received: from localhost (p2E5BE2CE.dip0.t-ipconnect.de. [46.91.226.206])
+        by smtp.gmail.com with ESMTPSA id c18sm22646572wrv.10.2019.10.16.05.46.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2019 05:45:44 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 9DF5140251; Wed, 16 Oct 2019 12:45:43 +0000 (UTC)
-Date:   Wed, 16 Oct 2019 12:45:43 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Peter Jones <pjones@redhat.com>,
-        Dave Olsthoorn <dave@bewaar.me>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH v7 0/8] efi/firmware/platform-x86: Add EFI embedded fw
- support
-Message-ID: <20191016124543.GF16384@42.do-not-panic.com>
-References: <20191004145056.43267-1-hdegoede@redhat.com>
- <20191011141036.GK16384@42.do-not-panic.com>
- <7fed4882-efa7-18d0-1ef6-9138fbdddfc4@redhat.com>
- <20191011153823.GS16384@42.do-not-panic.com>
- <20191011163819.GA1295750@kroah.com>
- <20191014092216.GA16384@42.do-not-panic.com>
- <20191014092929.GA3050866@kroah.com>
- <20191014103150.GB16384@42.do-not-panic.com>
- <20191014105754.GA34057@kroah.com>
+        Wed, 16 Oct 2019 05:46:41 -0700 (PDT)
+Date:   Wed, 16 Oct 2019 14:46:40 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Will Deacon <will@kernel.org>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] iommu: Implement iommu_put_resv_regions_simple()
+Message-ID: <20191016124640.GA1772382@ulmo>
+References: <20190829111752.17513-1-thierry.reding@gmail.com>
+ <20190829111752.17513-2-thierry.reding@gmail.com>
+ <20190918153737.dea2z5dddhuus25g@willie-the-truck>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gKMricLos+KVdGMg"
 Content-Disposition: inline
-In-Reply-To: <20191014105754.GA34057@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190918153737.dea2z5dddhuus25g@willie-the-truck>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 14, 2019 at 12:57:54PM +0200, Greg Kroah-Hartman wrote:
-> On Mon, Oct 14, 2019 at 10:31:50AM +0000, Luis Chamberlain wrote:
-> > On Mon, Oct 14, 2019 at 11:29:29AM +0200, Greg Kroah-Hartman wrote:
-> > > On Mon, Oct 14, 2019 at 09:22:16AM +0000, Luis Chamberlain wrote:
-> > > > On Fri, Oct 11, 2019 at 06:38:19PM +0200, Greg Kroah-Hartman wrote:
-> > > > > On Fri, Oct 11, 2019 at 03:38:23PM +0000, Luis Chamberlain wrote:
-> > > > > > On Fri, Oct 11, 2019 at 04:31:26PM +0200, Hans de Goede wrote:
-> > > > > > > Hi,
-> > > > > > > 
-> > > > > > > On 10/11/19 4:10 PM, Luis Chamberlain wrote:
-> > > > > > > > Hey Hans, thanks for staying on top of this and follow up! For some
-> > > > > > > > reason the universe conspired against your first and last patch ([1/8],
-> > > > > > > > [8/8]), and I never got them. Could you bounce these or resend in case
-> > > > > > > > others confirm they also didn't get it?
-> > > > > > > 
-> > > > > > > I have received feedback from others on the first patch, so at least
-> > > > > > > that one has reached others. I've bounced patches 1 and 8 to you.
-> > > > > > 
-> > > > > > Thanks, can you also bounce the feedback received?
-> > > > > 
-> > > > > That is what lore.kernel.org is for...
-> > > > 
-> > > > If I have feedback on an email which I did not get I cannot easily reply to it.
-> > > 
-> > > I meant, use lore.kernel.org to download the mbox of the thread and then
-> > > use your email client to respond to whatever you need there.  This all
-> > > is public, no need to ask anyone else to bounce emails to you.
-> > 
-> > Last I looked it didn't allow you to downlaod an mbox of a thread...
-> 
-> It can, from the front page of "all" threads, or on the thread itself,
-> at the bottom of the page.  Search for "download" on the page.
 
-Sweet! <insert sound of discovering an item in Legend of Zelda>
+--gKMricLos+KVdGMg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  Luis
+On Wed, Sep 18, 2019 at 04:37:38PM +0100, Will Deacon wrote:
+> On Thu, Aug 29, 2019 at 01:17:48PM +0200, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > Implement a generic function for removing reserved regions. This can be
+> > used by drivers that don't do anything fancy with these regions other
+> > than allocating memory for them.
+> >=20
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > ---
+> >  drivers/iommu/iommu.c | 19 +++++++++++++++++++
+> >  include/linux/iommu.h |  2 ++
+> >  2 files changed, 21 insertions(+)
+> >=20
+> > diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> > index 0f585b614657..73a2a6b13507 100644
+> > --- a/drivers/iommu/iommu.c
+> > +++ b/drivers/iommu/iommu.c
+> > @@ -2170,6 +2170,25 @@ void iommu_put_resv_regions(struct device *dev, =
+struct list_head *list)
+> >  		ops->put_resv_regions(dev, list);
+> >  }
+> > =20
+> > +/**
+> > + * iommu_put_resv_regions_simple - Reserved region driver helper
+> > + * @dev: device for which to free reserved regions
+> > + * @list: reserved region list for device
+> > + *
+> > + * IOMMU drivers can use this to implement their .put_resv_regions() c=
+allback
+> > + * for simple reservations. Memory allocated for each reserved region =
+will be
+> > + * freed. If an IOMMU driver allocates additional resources per region=
+, it is
+> > + * going to have to implement a custom callback.
+> > + */
+> > +void iommu_put_resv_regions_simple(struct device *dev, struct list_hea=
+d *list)
+> > +{
+> > +	struct iommu_resv_region *entry, *next;
+> > +
+> > +	list_for_each_entry_safe(entry, next, list, list)
+> > +		kfree(entry);
+> > +}
+> > +EXPORT_SYMBOL(iommu_put_resv_regions_simple);
+>=20
+> Can you call this directly from iommu_put_resv_regions() if the function
+> pointer in ops is NULL? That would save having to plumb the default callb=
+ack
+> into a bunch of drivers.
+
+I probably could, but I don't think that necessarily improves things.
+The reason is that that would cause the helper to get called even if the
+driver doesn't support reserved regions. That's likely harmless because
+in that case the list of regions passed to it would be empty. However, I
+think the current way to do this, where we have to implement both hooks
+for ->get_resv_regions() and ->put_resv_regions() is nicely symmetric.
+
+Thierry
+
+--gKMricLos+KVdGMg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2nES4ACgkQ3SOs138+
+s6EONg//ZrYWm5ShwdyQ9XivGxuuU1NxmrAJMtWHz2z0xMVhLv8vVlvNeGNNepm/
+AYozw/NMlEZokXfJVW9zNHDpOdr+MB6EchafhOZo9kK592CE18NhVrpVDptMvf29
+K1QsQvgCq5Lu9EHBeDMxpx6Kn9VNBFJuAeYCIVzD5GOm80sHdAp1eKMwu/od+oTQ
+IwZLB0K82tKdvnwYDYjN/JUW0dbrthH+fW843oOxAqQgrJYApL64k6WuPn6evN11
+V7xbw3/Yk3LMqxmBzve7b7ATYXdGRuN7TdMX7aZmLX8xyu11L6LbK+Lss10BbBKi
+Vja3MbZgoD54Eam3zOvj+b7tfdiRry4jhqqVksJ/Q2U7KOygrzLORgYR6wTgtz9g
+opzD+i9cGdaSj1k8kvVeFPqX9TL/er2hy05MIEWYYTuVh3Y6xiPekH988bHvxf9X
+bcl8I5YARin8U2n5R9kaS+drtuo3HvgeQMfszEf9UDNLQc+Pl5niTQPJzljWiZ36
+zI8Tq7Sq8Fph33gOGbpcZMTDux4cjlYtGWle7U5tkS38Xte7+IgRxmpwWDC6Y0jX
+muP1UNGkXJMLvJtssGseFZZw9qkJcq0NPRdjaN4k+LTdbrw0B10f1CDST8g/9Z4H
+xvmbe6SyeWzgcBc43Fs4V3YjZXAYWxf66eD2B9h9AdAEHSmCgD4=
+=LljU
+-----END PGP SIGNATURE-----
+
+--gKMricLos+KVdGMg--
