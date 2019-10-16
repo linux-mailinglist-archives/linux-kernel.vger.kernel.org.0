@@ -2,52 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B005FD98D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 20:05:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F635D98DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 20:08:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436507AbfJPSFl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 14:05:41 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:56200 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390992AbfJPSFl (ORCPT
+        id S1732134AbfJPSIc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 14:08:32 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:41648 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726534AbfJPSIb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 14:05:41 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9GI5bPc024288;
-        Wed, 16 Oct 2019 13:05:37 -0500
+        Wed, 16 Oct 2019 14:08:31 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9GI8Uc6072282;
+        Wed, 16 Oct 2019 13:08:30 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1571249137;
-        bh=O/Wbj2F5tkZWFNGIP7N39PcXh3SJywRvUwjgfektGIM=;
+        s=ti-com-17Q1; t=1571249310;
+        bh=YCyXThMK8TLR4zdXzUs0SnFwUHzK41OhlkUpk4hCt5U=;
         h=From:To:CC:Subject:Date;
-        b=t4Eg8lp1413Gd1DQJDp95MMv6Wl/NWxlohDJu1oEwIhMRpvLXeriZvTBz0OquXNDY
-         q/y7zsWEXWiPglsH1gtBvjxbnCosPM1zmm6YSJFSjAracb4U3l4qw7k3gojKjH4wFw
-         UesW4S6nCttBZmz84ywx6ha+03tFxZJkDAHyUo9w=
+        b=uaiYocczNbzUSbPAJ/m2HsAEms55zM5LF/s1jlqdKV3PIXEi3zpiql3Mi7P6L1LHr
+         EliFhDoTArWY1mKPFA8qe+AmWeBIZa1qasy90/8aginTxv4J/v/Yut8qcBCaRYa7qz
+         vR/RxZkdINps/q6jW6160qFFkB23pGXf6lPXlGeM=
 Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9GI5bwZ013949
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9GI8UHP109640
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Oct 2019 13:05:37 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE114.ent.ti.com
+        Wed, 16 Oct 2019 13:08:30 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE114.ent.ti.com
  (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 16
- Oct 2019 13:05:30 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ Oct 2019 13:08:23 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 16 Oct 2019 13:05:30 -0500
+ Frontend Transport; Wed, 16 Oct 2019 13:08:23 -0500
 Received: from legion.dal.design.ti.com (legion.dal.design.ti.com [128.247.22.53])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9GI5bOF000515;
-        Wed, 16 Oct 2019 13:05:37 -0500
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9GI8TWB028204;
+        Wed, 16 Oct 2019 13:08:29 -0500
 Received: from localhost ([10.250.79.55])
-        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id x9GI5aZ22393;
-        Wed, 16 Oct 2019 13:05:36 -0500 (CDT)
+        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id x9GI8SZ25474;
+        Wed, 16 Oct 2019 13:08:28 -0500 (CDT)
 From:   "Andrew F. Davis" <afd@ti.com>
-To:     Jiri Kosina <trivial@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-CC:     <linux-fbdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+To:     Jiri Kosina <trivial@kernel.org>
+CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         "Andrew F . Davis" <afd@ti.com>
-Subject: [PATCH] omapfb/dss: remove unneeded conversions to bool
-Date:   Wed, 16 Oct 2019 14:04:24 -0400
-Message-ID: <20191016180424.23907-1-afd@ti.com>
+Subject: [PATCH 01/10] drm/nouveau: remove unneeded conversions to bool
+Date:   Wed, 16 Oct 2019 14:08:12 -0400
+Message-ID: <20191016180821.24036-1-afd@ti.com>
 X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -61,34 +60,22 @@ Found with scripts/coccinelle/misc/boolconv.cocci.
 
 Signed-off-by: Andrew F. Davis <afd@ti.com>
 ---
- drivers/video/fbdev/omap2/omapfb/dss/dispc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/nouveau/nouveau_ttm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/video/fbdev/omap2/omapfb/dss/dispc.c b/drivers/video/fbdev/omap2/omapfb/dss/dispc.c
-index 376ee5bc3ddc..ce37da85cc45 100644
---- a/drivers/video/fbdev/omap2/omapfb/dss/dispc.c
-+++ b/drivers/video/fbdev/omap2/omapfb/dss/dispc.c
-@@ -1635,7 +1635,7 @@ static void dispc_ovl_set_scaling_uv(enum omap_plane plane,
- {
- 	int scale_x = out_width != orig_width;
- 	int scale_y = out_height != orig_height;
--	bool chroma_upscale = plane != OMAP_DSS_WB ? true : false;
-+	bool chroma_upscale = plane != OMAP_DSS_WB;
- 
- 	if (!dss_has_feature(FEAT_HANDLE_UV_SEPARATE))
- 		return;
-@@ -3100,9 +3100,9 @@ static bool _dispc_mgr_pclk_ok(enum omap_channel channel,
- 		unsigned long pclk)
- {
- 	if (dss_mgr_is_lcd(channel))
--		return pclk <= dispc.feat->max_lcd_pclk ? true : false;
-+		return pclk <= dispc.feat->max_lcd_pclk;
- 	else
--		return pclk <= dispc.feat->max_tv_pclk ? true : false;
-+		return pclk <= dispc.feat->max_tv_pclk;
- }
- 
- bool dispc_mgr_timings_ok(enum omap_channel channel,
+diff --git a/drivers/gpu/drm/nouveau/nouveau_ttm.c b/drivers/gpu/drm/nouveau/nouveau_ttm.c
+index f0daf958e03a..e2fe2608193e 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_ttm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_ttm.c
+@@ -236,7 +236,7 @@ nouveau_ttm_init(struct nouveau_drm *drm)
+ 	ret = ttm_bo_device_init(&drm->ttm.bdev,
+ 				  &nouveau_bo_driver,
+ 				  dev->anon_inode->i_mapping,
+-				  drm->client.mmu.dmabits <= 32 ? true : false);
++				  drm->client.mmu.dmabits <= 32);
+ 	if (ret) {
+ 		NV_ERROR(drm, "error initialising bo driver, %d\n", ret);
+ 		return ret;
 -- 
 2.17.1
 
