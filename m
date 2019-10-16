@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 382A5DA0DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:26:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69417DA09C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:25:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390198AbfJPWQc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:16:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45468 "EHLO mail.kernel.org"
+        id S2439308AbfJPWNR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:13:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395187AbfJPVzH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:55:07 -0400
+        id S2437864AbfJPVz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:55:58 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95E27218DE;
-        Wed, 16 Oct 2019 21:55:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0594121925;
+        Wed, 16 Oct 2019 21:55:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262906;
-        bh=pBrzYawHYQSo8GOBN5dukprXQBJbBsMQHY9ZSLfj7ss=;
+        s=default; t=1571262957;
+        bh=XYVh6+TMgEhP0g5409q+lNX4DMmBfqbBA05Q34b6kzo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gsutl3idFuzNBUdp7DyLsQ6qDqOND0UoPgDdHgX+U7DllaAb1cMzyt2uWu5M4mlsi
-         IgW66RU6QEdVobTrs1nM3zOHAIzZ9KMJOb36nvdZB2uV9lXzi93OWR5xXNqBbaEiod
-         r5RrY0MQJa6QRzDHjPSeesz1BUK2ZKW8IpLRC3KA=
+        b=NaI9VSBCmit/ikdIg964U+eNiKBNDAsDLZRvEeiCJ3635u6yJG9YXLil2Be9YauK3
+         8waL1NQyH2N6lIEzlD3fgYSoDEmC+91QoxrAb9Jdewu1yQ6HBBayQIYCeqeurlIliZ
+         cyiA2qcUEXbLBJCKDIc9TMICw32BsO6sWjrEP5rI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 4.9 67/92] usb: renesas_usbhs: gadget: Fix usb_ep_set_{halt,wedge}() behavior
+        stable@vger.kernel.org, Daniele Palmas <dnlplm@gmail.com>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.14 26/65] USB: serial: option: add Telit FN980 compositions
 Date:   Wed, 16 Oct 2019 14:50:40 -0700
-Message-Id: <20191016214842.627313212@linuxfoundation.org>
+Message-Id: <20191016214822.564151333@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
-References: <20191016214759.600329427@linuxfoundation.org>
+In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
+References: <20191016214756.457746573@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,137 +43,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Daniele Palmas <dnlplm@gmail.com>
 
-commit 4d599cd3a097a85a5c68a2c82b9a48cddf9953ec upstream.
+commit 5eb3f4b87a0e7e949c976f32f296176a06d1a93b upstream.
 
-According to usb_ep_set_halt()'s description,
-__usbhsg_ep_set_halt_wedge() should return -EAGAIN if the IN endpoint
-has any queue or data. Otherwise, this driver is possible to cause
-just STALL without sending a short packet data on g_mass_storage driver,
-and then a few resetting a device happens on a host side during
-a usb enumaration.
+This patch adds the following Telit FN980 compositions:
 
-Fixes: 2f98382dcdfe ("usb: renesas_usbhs: Add Renesas USBHS Gadget")
-Cc: <stable@vger.kernel.org> # v3.0+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Link: https://lore.kernel.org/r/1569924633-322-3-git-send-email-yoshihiro.shimoda.uh@renesas.com
+0x1050: tty, adb, rmnet, tty, tty, tty, tty
+0x1051: tty, adb, mbim, tty, tty, tty, tty
+0x1052: rndis, tty, adb, tty, tty, tty, tty
+0x1053: tty, adb, ecm, tty, tty, tty, tty
+
+Signed-off-by: Daniele Palmas <dnlplm@gmail.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/renesas_usbhs/common.h     |    1 +
- drivers/usb/renesas_usbhs/fifo.c       |    2 +-
- drivers/usb/renesas_usbhs/fifo.h       |    1 +
- drivers/usb/renesas_usbhs/mod_gadget.c |   16 +++++++++++++++-
- drivers/usb/renesas_usbhs/pipe.c       |   15 +++++++++++++++
- drivers/usb/renesas_usbhs/pipe.h       |    1 +
- 6 files changed, 34 insertions(+), 2 deletions(-)
+ drivers/usb/serial/option.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/usb/renesas_usbhs/common.h
-+++ b/drivers/usb/renesas_usbhs/common.h
-@@ -213,6 +213,7 @@ struct usbhs_priv;
- /* DCPCTR */
- #define BSTS		(1 << 15)	/* Buffer Status */
- #define SUREQ		(1 << 14)	/* Sending SETUP Token */
-+#define INBUFM		(1 << 14)	/* (PIPEnCTR) Transfer Buffer Monitor */
- #define CSSTS		(1 << 12)	/* CSSTS Status */
- #define	ACLRM		(1 << 9)	/* Buffer Auto-Clear Mode */
- #define SQCLR		(1 << 8)	/* Toggle Bit Clear */
---- a/drivers/usb/renesas_usbhs/fifo.c
-+++ b/drivers/usb/renesas_usbhs/fifo.c
-@@ -98,7 +98,7 @@ static void __usbhsf_pkt_del(struct usbh
- 	list_del_init(&pkt->node);
- }
- 
--static struct usbhs_pkt *__usbhsf_pkt_get(struct usbhs_pipe *pipe)
-+struct usbhs_pkt *__usbhsf_pkt_get(struct usbhs_pipe *pipe)
- {
- 	if (list_empty(&pipe->list))
- 		return NULL;
---- a/drivers/usb/renesas_usbhs/fifo.h
-+++ b/drivers/usb/renesas_usbhs/fifo.h
-@@ -106,5 +106,6 @@ void usbhs_pkt_push(struct usbhs_pipe *p
- 		    void *buf, int len, int zero, int sequence);
- struct usbhs_pkt *usbhs_pkt_pop(struct usbhs_pipe *pipe, struct usbhs_pkt *pkt);
- void usbhs_pkt_start(struct usbhs_pipe *pipe);
-+struct usbhs_pkt *__usbhsf_pkt_get(struct usbhs_pipe *pipe);
- 
- #endif /* RENESAS_USB_FIFO_H */
---- a/drivers/usb/renesas_usbhs/mod_gadget.c
-+++ b/drivers/usb/renesas_usbhs/mod_gadget.c
-@@ -729,6 +729,7 @@ static int __usbhsg_ep_set_halt_wedge(st
- 	struct usbhs_priv *priv = usbhsg_gpriv_to_priv(gpriv);
- 	struct device *dev = usbhsg_gpriv_to_dev(gpriv);
- 	unsigned long flags;
-+	int ret = 0;
- 
- 	dev_dbg(dev, "set halt %d (pipe %d)\n",
- 		halt, usbhs_pipe_number(pipe));
-@@ -736,6 +737,18 @@ static int __usbhsg_ep_set_halt_wedge(st
- 	/********************  spin lock ********************/
- 	usbhs_lock(priv, flags);
- 
-+	/*
-+	 * According to usb_ep_set_halt()'s description, this function should
-+	 * return -EAGAIN if the IN endpoint has any queue or data. Note
-+	 * that the usbhs_pipe_is_dir_in() returns false if the pipe is an
-+	 * IN endpoint in the gadget mode.
-+	 */
-+	if (!usbhs_pipe_is_dir_in(pipe) && (__usbhsf_pkt_get(pipe) ||
-+	    usbhs_pipe_contains_transmittable_data(pipe))) {
-+		ret = -EAGAIN;
-+		goto out;
-+	}
-+
- 	if (halt)
- 		usbhs_pipe_stall(pipe);
- 	else
-@@ -746,10 +759,11 @@ static int __usbhsg_ep_set_halt_wedge(st
- 	else
- 		usbhsg_status_clr(gpriv, USBHSG_STATUS_WEDGE);
- 
-+out:
- 	usbhs_unlock(priv, flags);
- 	/********************  spin unlock ******************/
- 
--	return 0;
-+	return ret;
- }
- 
- static int usbhsg_ep_set_halt(struct usb_ep *ep, int value)
---- a/drivers/usb/renesas_usbhs/pipe.c
-+++ b/drivers/usb/renesas_usbhs/pipe.c
-@@ -286,6 +286,21 @@ int usbhs_pipe_is_accessible(struct usbh
- 	return -EBUSY;
- }
- 
-+bool usbhs_pipe_contains_transmittable_data(struct usbhs_pipe *pipe)
-+{
-+	u16 val;
-+
-+	/* Do not support for DCP pipe */
-+	if (usbhs_pipe_is_dcp(pipe))
-+		return false;
-+
-+	val = usbhsp_pipectrl_get(pipe);
-+	if (val & INBUFM)
-+		return true;
-+
-+	return false;
-+}
-+
- /*
-  *		PID ctrl
-  */
---- a/drivers/usb/renesas_usbhs/pipe.h
-+++ b/drivers/usb/renesas_usbhs/pipe.h
-@@ -90,6 +90,7 @@ void usbhs_pipe_init(struct usbhs_priv *
- int usbhs_pipe_get_maxpacket(struct usbhs_pipe *pipe);
- void usbhs_pipe_clear(struct usbhs_pipe *pipe);
- int usbhs_pipe_is_accessible(struct usbhs_pipe *pipe);
-+bool usbhs_pipe_contains_transmittable_data(struct usbhs_pipe *pipe);
- void usbhs_pipe_enable(struct usbhs_pipe *pipe);
- void usbhs_pipe_disable(struct usbhs_pipe *pipe);
- void usbhs_pipe_stall(struct usbhs_pipe *pipe);
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -1157,6 +1157,14 @@ static const struct usb_device_id option
+ 	  .driver_info = NCTRL(0) | RSVD(1) | RSVD(2) | RSVD(3) },
+ 	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, TELIT_PRODUCT_LE922_USBCFG5, 0xff),
+ 	  .driver_info = RSVD(0) | RSVD(1) | NCTRL(2) | RSVD(3) },
++	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x1050, 0xff),	/* Telit FN980 (rmnet) */
++	  .driver_info = NCTRL(0) | RSVD(1) | RSVD(2) },
++	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x1051, 0xff),	/* Telit FN980 (MBIM) */
++	  .driver_info = NCTRL(0) | RSVD(1) },
++	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x1052, 0xff),	/* Telit FN980 (RNDIS) */
++	  .driver_info = NCTRL(2) | RSVD(3) },
++	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x1053, 0xff),	/* Telit FN980 (ECM) */
++	  .driver_info = NCTRL(0) | RSVD(1) },
+ 	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_ME910),
+ 	  .driver_info = NCTRL(0) | RSVD(1) | RSVD(3) },
+ 	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_ME910_DUAL_MODEM),
 
 
