@@ -2,146 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF7EDD927C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 15:30:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB9CCD9283
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 15:32:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405354AbfJPNav (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 09:30:51 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4219 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388342AbfJPNau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 09:30:50 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 1ED8C5D4AE5A087F7F66;
-        Wed, 16 Oct 2019 21:30:47 +0800 (CST)
-Received: from [127.0.0.1] (10.202.227.179) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Wed, 16 Oct 2019
- 21:30:37 +0800
-Subject: Re: [PATCH v6 2/2] drivers/perf: Add CCPI2 PMU support in ThunderX2
- UNCORE driver.
-To:     Ganapatrao Prabhakerrao Kulkarni <gkulkarni@marvell.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <1571218608-15933-1-git-send-email-gkulkarni@marvell.com>
- <1571218608-15933-3-git-send-email-gkulkarni@marvell.com>
-CC:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        Jan Glauber <jglauber@marvell.com>,
-        "Jayachandran Chandrasekharan Nair" <jnair@marvell.com>,
-        "gklkml16@gmail.com" <gklkml16@gmail.com>,
-        Robert Richter <rrichter@marvell.com>,
-        "will@kernel.org" <will@kernel.org>,
-        Zhangshaokun <zhangshaokun@hisilicon.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <b8e1a637-faf4-4567-7d3e-a4f13dfa1cf0@huawei.com>
-Date:   Wed, 16 Oct 2019 14:30:30 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S2405380AbfJPNcb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 09:32:31 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:48400 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405363AbfJPNcb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 09:32:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=bI3j/lNqd37v2UjsCOVjDYtbKavFToQzGAe5GTYyiDo=; b=CB6a2dFSBDFrSxogDUqW0XQkV4
+        hHU+dY+NSZ+cmUosWV13i2DVtvZfDilF3/4Uj3BHJxP182Rl6Evg77wG49m1LMzsbNMkQDLdGg8HV
+        vWP9jgzqcESxYmMq3VDDSign3wN24T7rzoGhxSHDLUTJXfkiZO/uNVXpEF4hGcA0FMRo=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.92.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1iKjPT-0007bb-8z; Wed, 16 Oct 2019 15:32:15 +0200
+Date:   Wed, 16 Oct 2019 15:32:15 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     Chris Snook <chris.snook@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jay Cliburn <jcliburn@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mips@vger.kernel.org
+Subject: Re: [PATCH v1 1/4] net: ag71xx: port to phylink
+Message-ID: <20191016133215.GA17013@lunn.ch>
+References: <20191014061549.3669-1-o.rempel@pengutronix.de>
+ <20191014061549.3669-2-o.rempel@pengutronix.de>
+ <20191016121216.GD4780@lunn.ch>
+ <20191016122401.jnldnlwruv7h5kgy@pengutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <1571218608-15933-3-git-send-email-gkulkarni@marvell.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.179]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191016122401.jnldnlwruv7h5kgy@pengutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Oct 16, 2019 at 02:24:01PM +0200, Oleksij Rempel wrote:
+> On Wed, Oct 16, 2019 at 02:12:16PM +0200, Andrew Lunn wrote:
+> > On Mon, Oct 14, 2019 at 08:15:46AM +0200, Oleksij Rempel wrote:
+> > > The port to phylink was done as close as possible to initial
+> > > functionality.
+> > > Theoretically this HW can support flow control, practically seems to be not
+> > > enough to just enable it. So, more work should be done.
+> > > 
+> > > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> > 
+> > Hi Oleksij
+> > 
+> > Please include Russell King in Cc: in future.
+> 
+> He was included in To:. Do you mean, I need to move him from To to Cc?
 
-> +TX2_EVENT_ATTR(req_pktsent, CCPI2_EVENT_REQ_PKT_SENT);
-> +TX2_EVENT_ATTR(snoop_pktsent, CCPI2_EVENT_SNOOP_PKT_SENT);
-> +TX2_EVENT_ATTR(data_pktsent, CCPI2_EVENT_DATA_PKT_SENT);
-> +TX2_EVENT_ATTR(gic_pktsent, CCPI2_EVENT_GIC_PKT_SENT);
-> +
-> +static struct attribute *ccpi2_pmu_events_attrs[] = {
-> +	&tx2_pmu_event_attr_req_pktsent.attr.attr,
-> +	&tx2_pmu_event_attr_snoop_pktsent.attr.attr,
-> +	&tx2_pmu_event_attr_data_pktsent.attr.attr,
-> +	&tx2_pmu_event_attr_gic_pktsent.attr.attr,
-> +	NULL,
-> +};
+Ah, sorry. Missed him among all the other To:
 
-Hi Ganapatrao,
+I don't know if there are any strict rules, but i tend to use To: for
+the maintainer you expect to merge the patch, and Cc: for everybody
+else, and the lists.
 
-Have you considered adding these as uncore pmu-events in the perf tool?
-
-Some advantages I see:
-- perf list is not swamped with all these uncore events per PMU
-For the Hisi uncore events, we get 100s of events (>600 on the board I 
-just tested, which is crazy)
-- can add more description in the JSON files
-- less stuff in the kernel
-
-> +
->  static const struct attribute_group l3c_pmu_events_attr_group = {
->  	.name = "events",
->  	.attrs = l3c_pmu_events_attrs,
-> @@ -174,6 +240,11 @@ static const struct attribute_group dmc_pmu_events_attr_group = {
->  	.attrs = dmc_pmu_events_attrs,
->  };
-
-[...]
-
->  		tx2_pmu->attr_groups = l3c_pmu_attr_groups;
->  		tx2_pmu->name = devm_kasprintf(dev, GFP_KERNEL,
->  				"uncore_l3c_%d", tx2_pmu->node);
-> @@ -665,10 +846,13 @@ static struct tx2_uncore_pmu *tx2_uncore_pmu_init_dev(struct device *dev,
->  		tx2_pmu->stop_event = uncore_stop_event_l3c;
->  		break;
->  	case PMU_TYPE_DMC:
-> -		tx2_pmu->max_counters = TX2_PMU_MAX_COUNTERS;
-> +		tx2_pmu->max_counters = TX2_PMU_DMC_L3C_MAX_COUNTERS;
-> +		tx2_pmu->counters_mask = 0x3;
->  		tx2_pmu->prorate_factor = TX2_PMU_DMC_CHANNELS;
->  		tx2_pmu->max_events = DMC_EVENT_MAX;
-> +		tx2_pmu->events_mask = 0x1f;
->  		tx2_pmu->hrtimer_interval = TX2_PMU_HRTIMER_INTERVAL;
-> +		tx2_pmu->hrtimer_callback = tx2_hrtimer_callback;
->  		tx2_pmu->attr_groups = dmc_pmu_attr_groups;
->  		tx2_pmu->name = devm_kasprintf(dev, GFP_KERNEL,
->  				"uncore_dmc_%d", tx2_pmu->node);
-> @@ -676,6 +860,21 @@ static struct tx2_uncore_pmu *tx2_uncore_pmu_init_dev(struct device *dev,
->  		tx2_pmu->start_event = uncore_start_event_dmc;
->  		tx2_pmu->stop_event = uncore_stop_event_dmc;
->  		break;
-> +	case PMU_TYPE_CCPI2:
-> +		/* CCPI2 has 8 counters */
-> +		tx2_pmu->max_counters = TX2_PMU_CCPI2_MAX_COUNTERS;
-> +		tx2_pmu->counters_mask = 0x7;
-> +		tx2_pmu->prorate_factor = 1;
-> +		tx2_pmu->max_events = CCPI2_EVENT_MAX;
-> +		tx2_pmu->events_mask = 0x1ff;
-> +		tx2_pmu->attr_groups = ccpi2_pmu_attr_groups;
-> +		tx2_pmu->name = devm_kasprintf(dev, GFP_KERNEL,
-> +				"uncore_ccpi2_%d", tx2_pmu->node);
-
-Do you need to check this for name == NULL?
-
-> +		tx2_pmu->init_cntr_base = init_cntr_base_ccpi2;
-> +		tx2_pmu->start_event = uncore_start_event_ccpi2;
-> +		tx2_pmu->stop_event = uncore_stop_event_ccpi2;
-> +		tx2_pmu->hrtimer_callback = NULL;
-> +		break;
->  	case PMU_TYPE_INVALID:
->  		devm_kfree(dev, tx2_pmu);
->  		return NULL;
-> @@ -744,7 +943,9 @@ static int tx2_uncore_pmu_offline_cpu(unsigned int cpu,
->  	if (cpu != tx2_pmu->cpu)
->  		return 0;
->
-> -	hrtimer_cancel(&tx2_pmu->hrtimer);
-> +	if (tx2_pmu->hrtimer_callback)
-> +		hrtimer_cancel(&tx2_pmu->hrtimer);
-> +
->  	cpumask_copy(&cpu_online_mask_temp, cpu_online_mask);
->  	cpumask_clear_cpu(cpu, &cpu_online_mask_temp);
->  	new_cpu = cpumask_any_and(
->
-
-Thanks,
-John
-
-
+    Andrew
