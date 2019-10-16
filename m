@@ -2,362 +2,658 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD883D8B31
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:40:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A1A4D8B3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:41:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391629AbfJPIkQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 04:40:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44358 "EHLO mx1.redhat.com"
+        id S2391719AbfJPIlB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 04:41:01 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:2476 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389897AbfJPIkQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 04:40:16 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        id S2389094AbfJPIlA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 04:41:00 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D1AEA2CE905;
-        Wed, 16 Oct 2019 08:40:15 +0000 (UTC)
-Received: from [10.36.117.237] (ovpn-117-237.ams2.redhat.com [10.36.117.237])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B85235D6A9;
-        Wed, 16 Oct 2019 08:40:12 +0000 (UTC)
-Subject: Re: [PATCH] mm/page_alloc: Make alloc_gigantic_page() available for
- general use
-From:   David Hildenbrand <david@redhat.com>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
-Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
-        David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-kernel@vger.kernel.org
-References: <1571211293-29974-1-git-send-email-anshuman.khandual@arm.com>
- <c7ac9f99-a34f-c553-b216-b847d093cae9@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <a811effb-4ab8-7cb0-aee7-c047d06129bc@redhat.com>
-Date:   Wed, 16 Oct 2019 10:40:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        by mx1.redhat.com (Postfix) with ESMTPS id 90AD069086;
+        Wed, 16 Oct 2019 08:40:59 +0000 (UTC)
+Received: from [10.72.12.53] (ovpn-12-53.pek2.redhat.com [10.72.12.53])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 721981001B08;
+        Wed, 16 Oct 2019 08:40:29 +0000 (UTC)
+Subject: Re: [RFC 1/2] vhost: IFC VF hardware operation layer
+To:     Zhu Lingshan <lingshan.zhu@intel.com>, mst@redhat.com,
+        alex.williamson@redhat.com
+Cc:     linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        netdev@vger.kernel.org, dan.daly@intel.com,
+        cunming.liang@intel.com, tiwei.bie@intel.com, jason.zeng@intel.com,
+        zhiyuan.lv@intel.com
+References: <20191016013050.3918-1-lingshan.zhu@intel.com>
+ <20191016013050.3918-2-lingshan.zhu@intel.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <991d41c6-4032-6341-f6c8-6e69d698f629@redhat.com>
+Date:   Wed, 16 Oct 2019 16:40:13 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <c7ac9f99-a34f-c553-b216-b847d093cae9@redhat.com>
+In-Reply-To: <20191016013050.3918-2-lingshan.zhu@intel.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 16 Oct 2019 08:40:16 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 16 Oct 2019 08:40:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16.10.19 10:08, David Hildenbrand wrote:
-> On 16.10.19 09:34, Anshuman Khandual wrote:
->> HugeTLB helper alloc_gigantic_page() implements fairly generic allocation
->> method where it scans over various zones looking for a large contiguous pfn
->> range before trying to allocate it with alloc_contig_range(). Other than
->> deriving the requested order from 'struct hstate', there is nothing HugeTLB
->> specific in there. This can be made available for general use to allocate
->> contiguous memory which could not have been allocated through the buddy
->> allocator.
->>
->> alloc_gigantic_page() has been split carving out actual allocation method
->> which is then made available via new alloc_contig_pages() helper wrapped
->> under CONFIG_CONTIG_ALLOC. All references to 'gigantic' have been replaced
->> with more generic term 'contig'. Allocated pages here should be freed with
->> free_contig_range() or by calling __free_page() on each allocated page.
->>
->> Cc: Mike Kravetz <mike.kravetz@oracle.com>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: Vlastimil Babka <vbabka@suse.cz>
->> Cc: Michal Hocko <mhocko@suse.com>
->> Cc: David Rientjes <rientjes@google.com>
->> Cc: Andrea Arcangeli <aarcange@redhat.com>
->> Cc: Oscar Salvador <osalvador@suse.de>
->> Cc: Mel Gorman <mgorman@techsingularity.net>
->> Cc: Mike Rapoport <rppt@linux.ibm.com>
->> Cc: Dan Williams <dan.j.williams@intel.com>
->> Cc: Pavel Tatashin <pavel.tatashin@microsoft.com>
->> Cc: Matthew Wilcox <willy@infradead.org>
->> Cc: David Hildenbrand <david@redhat.com>
->> Cc: linux-kernel@vger.kernel.org
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->> This is based on https://patchwork.kernel.org/patch/11190213/
->>
->> Changes from [V5,1/2] mm/hugetlb: Make alloc_gigantic_page()...
->>
->> - alloc_contig_page() takes nr_pages instead of order per Michal
->> - s/gigantic/contig on all related functions
->>
->>    include/linux/gfp.h |  2 +
->>    mm/hugetlb.c        | 77 +----------------------------------
->>    mm/page_alloc.c     | 97 +++++++++++++++++++++++++++++++++++++++++++++
->>    3 files changed, 101 insertions(+), 75 deletions(-)
->>
->> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
->> index fb07b503dc45..1a11d4857027 100644
->> --- a/include/linux/gfp.h
->> +++ b/include/linux/gfp.h
->> @@ -589,6 +589,8 @@ static inline bool pm_suspended_storage(void)
->>    /* The below functions must be run on a range from a single zone. */
->>    extern int alloc_contig_range(unsigned long start, unsigned long end,
->>    			      unsigned migratetype, gfp_t gfp_mask);
->> +extern struct page *alloc_contig_pages(unsigned long nr_pages, gfp_t gfp_mask,
->> +				       int nid, nodemask_t *nodemask);
->>    #endif
->>    void free_contig_range(unsigned long pfn, unsigned int nr_pages);
->>    
->> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
->> index 985ee15eb04b..a5c2c880af27 100644
->> --- a/mm/hugetlb.c
->> +++ b/mm/hugetlb.c
->> @@ -1023,85 +1023,12 @@ static void free_gigantic_page(struct page *page, unsigned int order)
->>    }
->>    
->>    #ifdef CONFIG_CONTIG_ALLOC
->> -static int __alloc_gigantic_page(unsigned long start_pfn,
->> -				unsigned long nr_pages, gfp_t gfp_mask)
->> -{
->> -	unsigned long end_pfn = start_pfn + nr_pages;
->> -	return alloc_contig_range(start_pfn, end_pfn, MIGRATE_MOVABLE,
->> -				  gfp_mask);
->> -}
->> -
->> -static bool pfn_range_valid_gigantic(struct zone *z,
->> -			unsigned long start_pfn, unsigned long nr_pages)
->> -{
->> -	unsigned long i, end_pfn = start_pfn + nr_pages;
->> -	struct page *page;
->> -
->> -	for (i = start_pfn; i < end_pfn; i++) {
->> -		page = pfn_to_online_page(i);
->> -		if (!page)
->> -			return false;
->> -
->> -		if (page_zone(page) != z)
->> -			return false;
->> -
->> -		if (PageReserved(page))
->> -			return false;
->> -
->> -		if (page_count(page) > 0)
->> -			return false;
->> -
->> -		if (PageHuge(page))
->> -			return false;
->> -	}
->> -
->> -	return true;
->> -}
->> -
->> -static bool zone_spans_last_pfn(const struct zone *zone,
->> -			unsigned long start_pfn, unsigned long nr_pages)
->> -{
->> -	unsigned long last_pfn = start_pfn + nr_pages - 1;
->> -	return zone_spans_pfn(zone, last_pfn);
->> -}
->> -
->>    static struct page *alloc_gigantic_page(struct hstate *h, gfp_t gfp_mask,
->>    		int nid, nodemask_t *nodemask)
->>    {
->> -	unsigned int order = huge_page_order(h);
->> -	unsigned long nr_pages = 1 << order;
->> -	unsigned long ret, pfn, flags;
->> -	struct zonelist *zonelist;
->> -	struct zone *zone;
->> -	struct zoneref *z;
->> -
->> -	zonelist = node_zonelist(nid, gfp_mask);
->> -	for_each_zone_zonelist_nodemask(zone, z, zonelist, gfp_zone(gfp_mask), nodemask) {
->> -		spin_lock_irqsave(&zone->lock, flags);
->> +	unsigned long nr_pages = 1UL << huge_page_order(h);
->>    
->> -		pfn = ALIGN(zone->zone_start_pfn, nr_pages);
->> -		while (zone_spans_last_pfn(zone, pfn, nr_pages)) {
->> -			if (pfn_range_valid_gigantic(zone, pfn, nr_pages)) {
->> -				/*
->> -				 * We release the zone lock here because
->> -				 * alloc_contig_range() will also lock the zone
->> -				 * at some point. If there's an allocation
->> -				 * spinning on this lock, it may win the race
->> -				 * and cause alloc_contig_range() to fail...
->> -				 */
->> -				spin_unlock_irqrestore(&zone->lock, flags);
->> -				ret = __alloc_gigantic_page(pfn, nr_pages, gfp_mask);
->> -				if (!ret)
->> -					return pfn_to_page(pfn);
->> -				spin_lock_irqsave(&zone->lock, flags);
->> -			}
->> -			pfn += nr_pages;
->> -		}
->> -
->> -		spin_unlock_irqrestore(&zone->lock, flags);
->> -	}
->> -
->> -	return NULL;
->> +	return alloc_contig_pages(nr_pages, gfp_mask, nid, nodemask);
->>    }
->>    
->>    static void prep_new_huge_page(struct hstate *h, struct page *page, int nid);
->> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->> index cd1dd0712624..1e084d6acf2f 100644
->> --- a/mm/page_alloc.c
->> +++ b/mm/page_alloc.c
->> @@ -8499,6 +8499,103 @@ int alloc_contig_range(unsigned long start, unsigned long end,
->>    				pfn_max_align_up(end), migratetype);
->>    	return ret;
->>    }
->> +
->> +static int __alloc_contig_pages(unsigned long start_pfn,
->> +				unsigned long nr_pages, gfp_t gfp_mask)
->> +{
->> +	unsigned long end_pfn = start_pfn + nr_pages;
->> +
->> +	return alloc_contig_range(start_pfn, end_pfn, MIGRATE_MOVABLE,
->> +				  gfp_mask);
->> +}
->> +
->> +static bool pfn_range_valid_contig(struct zone *z, unsigned long start_pfn,
->> +				   unsigned long nr_pages)
->> +{
->> +	unsigned long i, end_pfn = start_pfn + nr_pages;
->> +	struct page *page;
->> +
->> +	for (i = start_pfn; i < end_pfn; i++) {
->> +		page = pfn_to_online_page(i);
->> +		if (!page)
->> +			return false;
->> +
->> +		if (page_zone(page) != z)
->> +			return false;
->> +
->> +		if (PageReserved(page))
->> +			return false;
->> +
->> +		if (page_count(page) > 0)
->> +			return false;
->> +
->> +		if (PageHuge(page))
->> +			return false;
->> +	}
-> 
-> We might still try to allocate a lot of ranges that contain unmovable
-> data (we could avoid isolating a lot of page blocks in the first place).
-> I'd love to see something like pfn_range_movable() (similar, but
-> different to is_mem_section_removable(), which uses has_unmovable_pages()).
-> 
-> Especially, I want something like that for virtio-mem, which also uses
-> alloc_contig_range/free_contig_range, to perform a fast test if a range
-> makes sense to try with alloc_contig_range().
-> 
-> https://lkml.org/lkml/2019/9/19/463
-> 
-> 
->> +	return true;
->> +}
->> +
->> +static bool zone_spans_last_pfn(const struct zone *zone,
->> +				unsigned long start_pfn, unsigned long nr_pages)
->> +{
->> +	unsigned long last_pfn = start_pfn + nr_pages - 1;
->> +
->> +	return zone_spans_pfn(zone, last_pfn);
->> +}
->> +
->> +/**
->> + * alloc_contig_pages() -- tries to find and allocate contiguous range of pages
->> + * @nr_pages:	Number of contiguous pages to allocate
->> + * @gfp_mask:	GFP mask to limit search and used during compaction
->> + * @nid:	Target node
->> + * @nodemask:	Mask for other possible nodes
->> + *
->> + * This routine is an wrapper around alloc_contig_range(). It scans over zones
-> 
-> "a" wrapper
-> 
->> + * on an applicable zonelist to find a contiguous pfn range which can then be
->> + * tried for allocation with alloc_contig_range(). This routine is intended
->> + * for allocation requests which can not be fulfilled with buddy allocator.
-> 
-> "the" buddy allocator.
-> 
->> + *
->> + * Allocated pages can be freed with free_contig_range() or by manually calling
->> + * __free_page() on each allocated page.
->> + *
->> + * Return: pointer to 'order' pages on success, or NULL if not successful.
-> 
-> order?
-> 
->> + */
->> +struct page *alloc_contig_pages(unsigned long nr_pages, gfp_t gfp_mask,
->> +				int nid, nodemask_t *nodemask)
->> +{
->> +	unsigned long ret, pfn, flags;
->> +	struct zonelist *zonelist;
->> +	struct zone *zone;
->> +	struct zoneref *z;
->> +
->> +	zonelist = node_zonelist(nid, gfp_mask);
->> +	for_each_zone_zonelist_nodemask(zone, z, zonelist,
->> +					gfp_zone(gfp_mask), nodemask) {
-> 
-> One important part is to never use the MOVABLE zone here (otherwise
-> unmovable data would end up on the movable zone). But I guess the caller
-> is responsible for that (not pass GFP_MOVABLE) like gigantic pages do.
-> 
->> +		spin_lock_irqsave(&zone->lock, flags);
->> +
->> +		pfn = ALIGN(zone->zone_start_pfn, nr_pages);
-> 
-> This alignment does not make too much sense when allowing passing in
-> !power of two orders. Maybe the caller should specify the requested
-> alignment instead? Or should we enforce this to be aligned to make our
-> life easier for now?
-> 
->> +		while (zone_spans_last_pfn(zone, pfn, nr_pages)) {
->> +			if (pfn_range_valid_contig(zone, pfn, nr_pages)) {
->> +				/*
->> +				 * We release the zone lock here because
->> +				 * alloc_contig_range() will also lock the zone
->> +				 * at some point. If there's an allocation
->> +				 * spinning on this lock, it may win the race
->> +				 * and cause alloc_contig_range() to fail...
->> +				 */
->> +				spin_unlock_irqrestore(&zone->lock, flags);
->> +				ret = __alloc_contig_pages(pfn, nr_pages,
->> +							gfp_mask);
->> +				if (!ret)
->> +					return pfn_to_page(pfn);
->> +				spin_lock_irqsave(&zone->lock, flags);
->> +			}
->> +			pfn += nr_pages;
-> 
-> Now, that's interesting. When you relax the alignment restriction,
-> skipping over the whole range is no longer such a good idea (imagine
-> only the first PFN not being movable).
-> 
->> +		}
->> +		spin_unlock_irqrestore(&zone->lock, flags);
->> +	}
->> +	return NULL;
->> +}
->>    #endif /* CONFIG_CONTIG_ALLOC */
->>    
->>    void free_contig_range(unsigned long pfn, unsigned int nr_pages)
->>
-> 
-> 
 
-FWIW, the patch subject needs a rework, too.
+On 2019/10/16 上午9:30, Zhu Lingshan wrote:
+> This commit introduced ifcvf_base layer, which handles IFC VF NIC
+> hardware operations and configurations.
 
--- 
 
-Thanks,
+It's better to describe the difference between ifc vf and virtio in the 
+commit log or is there a open doc for this?
 
-David / dhildenb
+
+>
+> Signed-off-by: Zhu Lingshan <lingshan.zhu@intel.com>
+> ---
+>   drivers/vhost/ifcvf/ifcvf_base.c | 390 +++++++++++++++++++++++++++++++++++++++
+>   drivers/vhost/ifcvf/ifcvf_base.h | 137 ++++++++++++++
+>   2 files changed, 527 insertions(+)
+>   create mode 100644 drivers/vhost/ifcvf/ifcvf_base.c
+>   create mode 100644 drivers/vhost/ifcvf/ifcvf_base.h
+>
+> diff --git a/drivers/vhost/ifcvf/ifcvf_base.c b/drivers/vhost/ifcvf/ifcvf_base.c
+> new file mode 100644
+> index 000000000000..b85e14c9bdcf
+> --- /dev/null
+> +++ b/drivers/vhost/ifcvf/ifcvf_base.c
+> @@ -0,0 +1,390 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2019 Intel Corporation.
+> + */
+> +
+> +#include "ifcvf_base.h"
+> +
+> +static void *get_cap_addr(struct ifcvf_hw *hw, struct virtio_pci_cap *cap)
+> +{
+> +	u8 bar = cap->bar;
+> +	u32 length = cap->length;
+> +	u32 offset = cap->offset;
+> +	struct ifcvf_adapter *ifcvf =
+> +		container_of(hw, struct ifcvf_adapter, vf);
+> +
+> +	if (bar >= IFCVF_PCI_MAX_RESOURCE) {
+> +		IFC_ERR(ifcvf->dev,
+> +			"Invalid bar number %u to get capabilities.\n", bar);
+> +		return NULL;
+> +	}
+> +
+> +	if (offset + length < offset) {
+> +		IFC_ERR(ifcvf->dev, "offset(%u) + length(%u) overflows\n",
+> +			offset, length);
+> +		return NULL;
+> +	}
+> +
+> +	if (offset + length > hw->mem_resource[cap->bar].len) {
+> +		IFC_ERR(ifcvf->dev,
+> +			"offset(%u) + len(%u) overflows bar%u to get capabilities.\n",
+> +			offset, length, bar);
+> +		return NULL;
+> +	}
+> +
+> +	return hw->mem_resource[bar].addr + offset;
+> +}
+> +
+> +int ifcvf_read_config_range(struct pci_dev *dev,
+> +			uint32_t *val, int size, int where)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < size; i += 4) {
+> +		if (pci_read_config_dword(dev, where + i, val + i / 4) < 0)
+> +			return -1;
+> +	}
+> +	return 0;
+> +}
+> +
+> +int ifcvf_init_hw(struct ifcvf_hw *hw, struct pci_dev *dev)
+> +{
+> +	int ret;
+> +	u8 pos;
+> +	struct virtio_pci_cap cap;
+> +	u32 i;
+> +	u16 notify_off;
+> +
+> +	ret = pci_read_config_byte(dev, PCI_CAPABILITY_LIST, &pos);
+> +
+> +	if (ret < 0) {
+> +		IFC_ERR(&dev->dev, "failed to read PCI capability list.\n");
+> +		return -EIO;
+> +	}
+> +
+> +	while (pos) {
+> +		ret = ifcvf_read_config_range(dev, (u32 *)&cap,
+> +				sizeof(cap), pos);
+> +
+> +		if (ret < 0) {
+> +			IFC_ERR(&dev->dev, "failed to get PCI capability at %x",
+> +					pos);
+> +			break;
+> +		}
+> +
+> +		if (cap.cap_vndr != PCI_CAP_ID_VNDR)
+> +			goto next;
+> +
+> +		IFC_INFO(&dev->dev, "read PCI config:\n"
+> +					"config type: %u.\n"
+> +					"PCI bar: %u.\n"
+> +					"PCI bar offset: %u.\n"
+> +					"PCI config len: %u.\n",
+> +					cap.cfg_type, cap.bar,
+> +					cap.offset, cap.length);
+> +
+> +		switch (cap.cfg_type) {
+> +		case VIRTIO_PCI_CAP_COMMON_CFG:
+> +			hw->common_cfg = get_cap_addr(hw, &cap);
+> +			IFC_INFO(&dev->dev, "hw->common_cfg = %p.\n",
+> +					hw->common_cfg);
+> +			break;
+> +		case VIRTIO_PCI_CAP_NOTIFY_CFG:
+> +			pci_read_config_dword(dev, pos + sizeof(cap),
+> +				&hw->notify_off_multiplier);
+> +			hw->notify_bar = cap.bar;
+> +			hw->notify_base = get_cap_addr(hw, &cap);
+> +			IFC_INFO(&dev->dev, "hw->notify_base = %p.\n",
+> +					hw->notify_base);
+> +			break;
+> +		case VIRTIO_PCI_CAP_ISR_CFG:
+> +			hw->isr = get_cap_addr(hw, &cap);
+> +			IFC_INFO(&dev->dev, "hw->isr = %p.\n", hw->isr);
+> +			break;
+> +		case VIRTIO_PCI_CAP_DEVICE_CFG:
+> +			hw->dev_cfg = get_cap_addr(hw, &cap);
+> +			IFC_INFO(&dev->dev, "hw->dev_cfg = %p.\n", hw->dev_cfg);
+> +			break;
+> +		}
+> +next:
+> +		pos = cap.cap_next;
+> +	}
+> +
+> +	if (hw->common_cfg == NULL || hw->notify_base == NULL ||
+> +		hw->isr == NULL || hw->dev_cfg == NULL) {
+> +		IFC_ERR(&dev->dev, "Incomplete PCI capabilities.\n");
+> +		return -1;
+> +	}
+> +
+> +	for (i = 0; i < (IFCVF_MAX_QUEUE_PAIRS * 2); i++) {
+
+
+Any reason for using hard coded queue pairs limit other than the 
+max_queue_pairs in the net config?
+
+
+> +		iowrite16(i, &hw->common_cfg->queue_select);
+> +		notify_off = ioread16(&hw->common_cfg->queue_notify_off);
+> +		hw->notify_addr[i] = (void *)((u8 *)hw->notify_base +
+> +				notify_off * hw->notify_off_multiplier);
+> +	}
+> +
+> +	hw->lm_cfg = hw->mem_resource[4].addr;
+> +
+> +	IFC_INFO(&dev->dev, "PCI capability mapping:\n"
+> +				"common cfg: %p\n"
+> +				"notify base: %p\n"
+> +				"isr cfg: %p\n"
+> +				"device cfg: %p\n"
+> +				"multiplier: %u\n",
+> +				hw->common_cfg,
+> +				hw->notify_base,
+> +				hw->isr,
+> +				hw->dev_cfg,
+> +				hw->notify_off_multiplier);
+> +
+> +	return 0;
+> +}
+> +
+> +static u8 ifcvf_get_status(struct ifcvf_hw *hw)
+> +{
+> +	return ioread8(&hw->common_cfg->device_status);
+> +}
+> +
+> +static void ifcvf_set_status(struct ifcvf_hw *hw, u8 status)
+> +{
+> +	iowrite8(status, &hw->common_cfg->device_status);
+> +}
+> +
+> +static void ifcvf_reset(struct ifcvf_hw *hw)
+> +{
+> +	ifcvf_set_status(hw, 0);
+> +
+> +	/* flush status write */
+> +	ifcvf_get_status(hw);
+
+
+Why this flush is needed?
+
+
+> +	hw->generation++;
+> +}
+> +
+> +static void ifcvf_add_status(struct ifcvf_hw *hw, u8 status)
+> +{
+> +	if (status != 0)
+> +		status |= ifcvf_get_status(hw);
+> +
+> +	ifcvf_set_status(hw, status);
+> +	ifcvf_get_status(hw);
+> +}
+> +
+> +u64 ifcvf_get_features(struct ifcvf_hw *hw)
+> +{
+> +	u32 features_lo, features_hi;
+> +	struct virtio_pci_common_cfg *cfg = hw->common_cfg;
+> +
+> +	iowrite32(0, &cfg->device_feature_select);
+> +	features_lo = ioread32(&cfg->device_feature);
+> +
+> +	iowrite32(1, &cfg->device_feature_select);
+> +	features_hi = ioread32(&cfg->device_feature);
+> +
+> +	return ((u64)features_hi << 32) | features_lo;
+> +}
+> +static int ifcvf_with_feature(struct ifcvf_hw *hw, u64 bit)
+> +{
+> +	return (hw->req_features & (1ULL << bit)) != 0;
+> +}
+> +
+> +static void ifcvf_read_dev_config(struct ifcvf_hw *hw, u64 offset,
+> +		       void *dst, int length)
+> +{
+> +	int i;
+> +	u8 *p;
+> +	u8 old_gen, new_gen;
+> +
+> +	do {
+> +		old_gen = ioread8(&hw->common_cfg->config_generation);
+> +
+> +		p = dst;
+> +		for (i = 0; i < length; i++)
+> +			*p++ = ioread8((u8 *)hw->dev_cfg + offset + i);
+> +
+> +		new_gen = ioread8(&hw->common_cfg->config_generation);
+> +	} while (old_gen != new_gen);
+> +}
+> +
+> +void ifcvf_get_linkstatus(struct ifcvf_hw *hw, u8 *is_linkup)
+> +{
+
+
+Why not just return bollean?
+
+
+> +	u16 status;
+> +	u64 host_features;
+> +
+> +	host_features = ifcvf_get_features(hw);
+> +	if (ifcvf_with_feature(hw, VIRTIO_NET_F_STATUS)) {
+> +		ifcvf_read_dev_config(hw,
+> +				offsetof(struct ifcvf_net_config, status),
+> +				&status, sizeof(status));
+> +		if ((status & VIRTIO_NET_S_LINK_UP) == 0)
+> +			(*is_linkup) = 1;
+> +		else
+> +			(*is_linkup) = 0;
+> +	} else
+> +		(*is_linkup) = 0;
+> +}
+> +
+> +static void ifcvf_set_features(struct ifcvf_hw *hw, u64 features)
+> +{
+> +	struct virtio_pci_common_cfg *cfg = hw->common_cfg;
+> +
+> +	iowrite32(0, &cfg->guest_feature_select);
+> +	iowrite32(features & ((1ULL << 32) - 1), &cfg->guest_feature);
+> +
+> +	iowrite32(1, &cfg->guest_feature_select);
+> +	iowrite32(features >> 32, &cfg->guest_feature);
+> +}
+> +
+> +static int ifcvf_config_features(struct ifcvf_hw *hw)
+> +{
+> +	u64 host_features;
+> +	struct ifcvf_adapter *ifcvf =
+> +		container_of(hw, struct ifcvf_adapter, vf);
+> +
+> +	host_features = ifcvf_get_features(hw);
+> +	hw->req_features &= host_features;
+
+
+Is this a must, can't device deal with this?
+
+
+> +
+> +	ifcvf_set_features(hw, hw->req_features);
+> +	ifcvf_add_status(hw, VIRTIO_CONFIG_S_FEATURES_OK);
+> +
+> +	if (!(ifcvf_get_status(hw) & VIRTIO_CONFIG_S_FEATURES_OK)) {
+> +		IFC_ERR(ifcvf->dev, "Failed to set FEATURES_OK status\n");
+> +		return -EIO;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void io_write64_twopart(u64 val, u32 *lo, u32 *hi)
+> +{
+> +	iowrite32(val & ((1ULL << 32) - 1), lo);
+> +	iowrite32(val >> 32, hi);
+> +}
+> +
+> +static int ifcvf_hw_enable(struct ifcvf_hw *hw)
+> +{
+> +	struct virtio_pci_common_cfg *cfg;
+> +	u8 *lm_cfg;
+> +	u32 i;
+> +	struct ifcvf_adapter *ifcvf =
+> +		container_of(hw, struct ifcvf_adapter, vf);
+> +
+> +	cfg = hw->common_cfg;
+> +	lm_cfg = hw->lm_cfg;
+> +
+> +	iowrite16(IFCVF_MSI_CONFIG_OFF, &cfg->msix_config);
+> +	if (ioread16(&cfg->msix_config) == VIRTIO_MSI_NO_VECTOR) {
+> +		IFC_ERR(ifcvf->dev, "No msix vector for device config.\n");
+> +		return -1;
+> +	}
+> +
+> +	for (i = 0; i < hw->nr_vring; i++) {
+> +		iowrite16(i, &cfg->queue_select);
+> +		io_write64_twopart(hw->vring[i].desc, &cfg->queue_desc_lo,
+> +				&cfg->queue_desc_hi);
+> +		io_write64_twopart(hw->vring[i].avail, &cfg->queue_avail_lo,
+> +				&cfg->queue_avail_hi);
+> +		io_write64_twopart(hw->vring[i].used, &cfg->queue_used_lo,
+> +				&cfg->queue_used_hi);
+> +		iowrite16(hw->vring[i].size, &cfg->queue_size);
+> +
+> +		*(u32 *)(lm_cfg + IFCVF_LM_RING_STATE_OFFSET +
+> +				(i / 2) * IFCVF_LM_CFG_SIZE + (i % 2) * 4) =
+> +			(u32)hw->vring[i].last_avail_idx |
+> +			((u32)hw->vring[i].last_used_idx << 16);
+> +
+> +		iowrite16(i + IFCVF_MSI_QUEUE_OFF, &cfg->queue_msix_vector);
+> +		if (ioread16(&cfg->queue_msix_vector) ==
+> +				VIRTIO_MSI_NO_VECTOR) {
+> +			IFC_ERR(ifcvf->dev,
+> +				"No msix vector for queue %u.\n", i);
+> +			return -1;
+> +		}
+> +
+> +		iowrite16(1, &cfg->queue_enable);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void ifcvf_hw_disable(struct ifcvf_hw *hw)
+> +{
+> +	u32 i;
+> +	struct virtio_pci_common_cfg *cfg;
+> +
+> +	cfg = hw->common_cfg;
+> +
+> +	iowrite16(VIRTIO_MSI_NO_VECTOR, &cfg->msix_config);
+> +	for (i = 0; i < hw->nr_vring; i++) {
+> +		iowrite16(i, &cfg->queue_select);
+> +		iowrite16(0, &cfg->queue_enable);
+> +		iowrite16(VIRTIO_MSI_NO_VECTOR, &cfg->queue_msix_vector);
+> +	}
+> +}
+> +
+> +int ifcvf_start_hw(struct ifcvf_hw *hw)
+> +{
+> +	ifcvf_reset(hw);
+> +	ifcvf_add_status(hw, VIRTIO_CONFIG_S_ACKNOWLEDGE);
+> +	ifcvf_add_status(hw, VIRTIO_CONFIG_S_DRIVER);
+> +
+> +	if (ifcvf_config_features(hw) < 0)
+> +		return -1;
+> +
+> +	if (ifcvf_hw_enable(hw) < 0)
+> +		return -1;
+> +
+> +	ifcvf_add_status(hw, VIRTIO_CONFIG_S_DRIVER_OK);
+> +
+> +	return 0;
+> +}
+> +
+> +void ifcvf_stop_hw(struct ifcvf_hw *hw)
+> +{
+> +	ifcvf_hw_disable(hw);
+> +	ifcvf_reset(hw);
+> +}
+> +
+> +void ifcvf_enable_logging_vf(struct ifcvf_hw *hw, u64 log_base, u64 log_size)
+> +{
+> +	u8 *lm_cfg;
+> +
+> +	lm_cfg = hw->lm_cfg;
+> +
+> +	*(u32 *)(lm_cfg + IFCVF_LM_BASE_ADDR_LOW) =
+> +		log_base & IFCVF_32_BIT_MASK;
+> +
+> +	*(u32 *)(lm_cfg + IFCVF_LM_BASE_ADDR_HIGH) =
+> +		(log_base >> 32) & IFCVF_32_BIT_MASK;
+> +
+> +	*(u32 *)(lm_cfg + IFCVF_LM_END_ADDR_LOW) =
+> +		(log_base + log_size) & IFCVF_32_BIT_MASK;
+> +
+> +	*(u32 *)(lm_cfg + IFCVF_LM_END_ADDR_HIGH) =
+> +		((log_base + log_size) >> 32) & IFCVF_32_BIT_MASK;
+> +
+> +	*(u32 *)(lm_cfg + IFCVF_LM_LOGGING_CTRL) = IFCVF_LM_ENABLE_VF;
+> +}
+
+
+Is the device using iova or gpa for the logging?
+
+
+> +
+> +void ifcvf_disable_logging(struct ifcvf_hw *hw)
+> +{
+> +	u8 *lm_cfg;
+> +
+> +	lm_cfg = hw->lm_cfg;
+> +	*(u32 *)(lm_cfg + IFCVF_LM_LOGGING_CTRL) = IFCVF_LM_DISABLE;
+> +}
+> +
+> +void ifcvf_notify_queue(struct ifcvf_hw *hw, u16 qid)
+> +{
+> +
+> +	iowrite16(qid, hw->notify_addr[qid]);
+> +}
+> +
+> +u8 ifcvf_get_notify_region(struct ifcvf_hw *hw)
+> +{
+> +	return hw->notify_bar;
+> +}
+> +
+> +u64 ifcvf_get_queue_notify_off(struct ifcvf_hw *hw, int qid)
+> +{
+> +	return (u8 *)hw->notify_addr[qid] -
+> +		(u8 *)hw->mem_resource[hw->notify_bar].addr;
+> +}
+> diff --git a/drivers/vhost/ifcvf/ifcvf_base.h b/drivers/vhost/ifcvf/ifcvf_base.h
+> new file mode 100644
+> index 000000000000..1ab1a1c40f24
+> --- /dev/null
+> +++ b/drivers/vhost/ifcvf/ifcvf_base.h
+> @@ -0,0 +1,137 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +/*
+> + * Copyright (C) 2019 Intel Corporation.
+> + */
+> +
+> +#ifndef _IFCVF_H_
+> +#define _IFCVF_H_
+> +
+> +#include <linux/virtio_mdev.h>
+> +#include <linux/pci.h>
+> +#include <linux/pci_regs.h>
+> +#include <uapi/linux/virtio_net.h>
+> +#include <uapi/linux/virtio_config.h>
+> +#include <uapi/linux/virtio_pci.h>
+> +
+> +#define IFCVF_VENDOR_ID         0x1AF4
+> +#define IFCVF_DEVICE_ID         0x1041
+> +#define IFCVF_SUBSYS_VENDOR_ID  0x8086
+> +#define IFCVF_SUBSYS_DEVICE_ID  0x001A
+> +
+> +/*
+> + * Some ifcvf feature bits (currently bits 28 through 31) are
+> + * reserved for the transport being used (eg. ifcvf_ring), the
+> + * rest are per-device feature bits.
+> + */
+> +#define IFCVF_TRANSPORT_F_START 28
+> +#define IFCVF_TRANSPORT_F_END   34
+> +
+> +#define IFC_SUPPORTED_FEATURES \
+> +		((1ULL << VIRTIO_NET_F_MAC)			| \
+> +		 (1ULL << VIRTIO_F_ANY_LAYOUT)			| \
+> +		 (1ULL << VIRTIO_F_VERSION_1)			| \
+> +		 (1ULL << VHOST_F_LOG_ALL)			| \
+> +		 (1ULL << VIRTIO_NET_F_GUEST_ANNOUNCE)		| \
+> +		 (1ULL << VIRTIO_NET_F_CTRL_VQ)			| \
+> +		 (1ULL << VIRTIO_NET_F_STATUS)			| \
+> +		 (1ULL << VIRTIO_NET_F_MRG_RXBUF)) /* not fully supported */
+> +
+> +#define IFCVF_MAX_QUEUE_PAIRS		1
+> +#define IFCVF_MAX_QUEUES		2
+> +
+> +#define IFCVF_QUEUE_ALIGNMENT		PAGE_SIZE
+> +
+> +#define IFCVF_MSI_CONFIG_OFF	0
+> +#define IFCVF_MSI_QUEUE_OFF	1
+> +#define IFCVF_PCI_MAX_RESOURCE	6
+> +
+> +/* 46 bit CPU physical address, avoid overlap */
+> +#define LM_IOVA 0x400000000000
+> +
+> +#define IFCVF_LM_CFG_SIZE		0x40
+> +#define IFCVF_LM_RING_STATE_OFFSET	0x20
+> +
+> +#define IFCVF_LM_LOGGING_CTRL		0x0
+> +
+> +#define IFCVF_LM_BASE_ADDR_LOW		0x10
+> +#define IFCVF_LM_BASE_ADDR_HIGH		0x14
+> +#define IFCVF_LM_END_ADDR_LOW		0x18
+> +#define IFCVF_LM_END_ADDR_HIGH		0x1c
+> +
+> +#define IFCVF_LM_DISABLE		0x0
+> +#define IFCVF_LM_ENABLE_VF		0x1
+> +#define IFCVF_LM_ENABLE_PF		0x3
+> +
+> +#define IFCVF_32_BIT_MASK		0xffffffff
+> +
+> +#define IFC_ERR(dev, fmt, ...)	dev_err(dev, fmt, ##__VA_ARGS__)
+> +#define IFC_INFO(dev, fmt, ...)	dev_info(dev, fmt, ##__VA_ARGS__)
+> +
+> +struct ifcvf_net_config {
+> +	u8    mac[6];
+> +	u16   status;
+> +	u16   max_virtqueue_pairs;
+> +} __packed;
+> +
+> +struct ifcvf_pci_mem_resource {
+> +	u64      phys_addr; /**< Physical address, 0 if not resource. */
+> +	u64      len;       /**< Length of the resource. */
+> +	u8       *addr;     /**< Virtual address, NULL when not mapped. */
+> +};
+> +
+> +struct vring_info {
+> +	u64 desc;
+> +	u64 avail;
+> +	u64 used;
+> +	u16 size;
+> +	u16 last_avail_idx;
+> +	u16 last_used_idx;
+> +	bool ready;
+> +	char msix_name[256];
+> +	struct virtio_mdev_callback cb;
+> +};
+> +
+> +struct ifcvf_hw {
+> +	u8	*isr;
+> +	u8	notify_bar;
+> +	u8	*lm_cfg;
+> +	u8	status;
+> +	u8	nr_vring;
+
+
+Is the the number of queue currently used?
+
+
+> +	u16	*notify_base;
+> +	u16	*notify_addr[IFCVF_MAX_QUEUE_PAIRS * 2];
+> +	u32	generation;
+> +	u32	notify_off_multiplier;
+> +	u64	req_features;
+> +	struct	virtio_pci_common_cfg *common_cfg;
+> +	struct	ifcvf_net_config *dev_cfg;
+> +	struct	vring_info vring[IFCVF_MAX_QUEUE_PAIRS * 2];
+> +	struct	ifcvf_pci_mem_resource mem_resource[IFCVF_PCI_MAX_RESOURCE];
+> +};
+> +
+> +#define IFC_PRIVATE_TO_VF(adapter) \
+> +	(&((struct ifcvf_adapter *)adapter)->vf)
+> +
+> +#define IFCVF_MAX_INTR (IFCVF_MAX_QUEUE_PAIRS * 2 + 1)
+
+
+The extra one means the config interrupt?
+
+
+> +
+> +struct ifcvf_adapter {
+> +	struct	device *dev;
+> +	struct	mutex mdev_lock;
+
+
+Not used in the patch, move to next one?
+
+
+> +	int	mdev_count;
+
+
+Not used.
+
+
+> +	struct	list_head dma_maps;
+
+
+This is not used.
+
+Thanks
+
+
+> +	int	vectors;
+> +	struct	ifcvf_hw vf;
+> +};
+> +
+> +int ifcvf_init_hw(struct ifcvf_hw *hw, struct pci_dev *dev);
+> +u64 ifcvf_get_features(struct ifcvf_hw *hw);
+> +int ifcvf_start_hw(struct ifcvf_hw *hw);
+> +void ifcvf_stop_hw(struct ifcvf_hw *hw);
+> +void ifcvf_enable_logging(struct ifcvf_hw *hw, u64 log_base, u64 log_size);
+> +void ifcvf_enable_logging_vf(struct ifcvf_hw *hw, u64 log_base, u64 log_size);
+> +void ifcvf_disable_logging(struct ifcvf_hw *hw);
+> +void ifcvf_notify_queue(struct ifcvf_hw *hw, u16 qid);
+> +void ifcvf_get_linkstatus(struct ifcvf_hw *hw, u8 *is_linkup);
+> +u8 ifcvf_get_notify_region(struct ifcvf_hw *hw);
+> +u64 ifcvf_get_queue_notify_off(struct ifcvf_hw *hw, int qid);
+> +
+> +#endif /* _IFCVF_H_ */
