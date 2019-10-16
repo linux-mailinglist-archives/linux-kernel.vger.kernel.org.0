@@ -2,143 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCB84D8BC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:53:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D002DD8BC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:53:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391460AbfJPIxZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 04:53:25 -0400
-Received: from mga02.intel.com ([134.134.136.20]:5536 "EHLO mga02.intel.com"
+        id S1726640AbfJPIxh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 04:53:37 -0400
+Received: from gofer.mess.org ([88.97.38.141]:44443 "EHLO gofer.mess.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726640AbfJPIxY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 04:53:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2019 01:53:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,303,1566889200"; 
-   d="scan'208";a="202015647"
-Received: from linux.intel.com ([10.54.29.200])
-  by FMSMGA003.fm.intel.com with ESMTP; 16 Oct 2019 01:53:22 -0700
-Received: from [10.226.38.27] (unknown [10.226.38.27])
-        by linux.intel.com (Postfix) with ESMTP id 8C3135803C5;
-        Wed, 16 Oct 2019 01:53:18 -0700 (PDT)
-Subject: Re: [PATCH v3 3/3] mtd: spi-nor: cadence-quadspi: disable the
- auto-poll for Intel LGM
-To:     Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        dwmw2@infradead.org, computersforpeace@gmail.com, richard@nod.at,
-        jwboyer@gmail.com, boris.brezillon@free-electrons.com,
-        cyrille.pitchen@atmel.com, david.oberhollenzer@sigma-star.at,
-        miquel.raynal@bootlin.com, tudor.ambarus@gmail.com,
-        andriy.shevchenko@intel.com, cheol.yong.kim@intel.com,
-        qi-ming.wu@intel.com
-References: <20190909104733.14273-1-vadivel.muruganx.ramuthevar@linux.intel.com>
- <20190909104733.14273-4-vadivel.muruganx.ramuthevar@linux.intel.com>
- <a4d45efe-907f-6c87-c650-5ad19942f0e4@ti.com>
-From:   "Ramuthevar, Vadivel MuruganX" 
-        <vadivel.muruganx.ramuthevar@linux.intel.com>
-Message-ID: <888a5cfa-7ded-938a-cdd6-cc11068117e4@linux.intel.com>
-Date:   Wed, 16 Oct 2019 16:53:17 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2391694AbfJPIxh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 04:53:37 -0400
+Received: by gofer.mess.org (Postfix, from userid 1000)
+        id 6D812C6389; Wed, 16 Oct 2019 09:53:34 +0100 (BST)
+Date:   Wed, 16 Oct 2019 09:53:34 +0100
+From:   Sean Young <sean@mess.org>
+To:     Valentin Vidic <vvidic@valentin-vidic.from.hr>
+Cc:     Michael Krufky <mkrufky@linuxtv.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzbot+98730b985cad4931a552@syzkaller.appspotmail.com
+Subject: Re: [PATCH] media: cxusb: fix uninitialized local variable
+Message-ID: <20191016085334.GA1345@gofer.mess.org>
+References: <20191015200315.28830-1-vvidic@valentin-vidic.from.hr>
 MIME-Version: 1.0
-In-Reply-To: <a4d45efe-907f-6c87-c650-5ad19942f0e4@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191015200315.28830-1-vvidic@valentin-vidic.from.hr>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vignesh,
+Hi Valentin,
 
-      Thank you for the review comments.
+Thank you for your patch.
 
-On 16/10/2019 4:40 PM, Vignesh Raghavendra wrote:
->
-> On 09/09/19 4:17 PM, Ramuthevar,Vadivel MuruganX wrote:
->> From: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
->>
->> On Intel's Lightning Mountain(LGM) SoC QSPI controller do not auto-poll.
->> This patch introduces to properly disable the auto-polling feature to
-> This patch disables auto polling when direct access mode is disabled
-> which should be noted in the commit message.
-will add it.
->> improve the performance of cadence-quadspi.
-> How does this improve performance of cadence-quadspi? I would expect HW
-> auto-polling to be faster than SW polling.
-During the bring-up time observed this, once again verify it on my setup.
-Agreed, you are correct HW auto-polling is faster than SW polling.
->> Signed-off-by: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
->> ---
->>   drivers/mtd/spi-nor/cadence-quadspi.c | 24 ++++++++++++++++++++++++
->>   1 file changed, 24 insertions(+)
->>
->> diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
->> index 73b9fbd1508a..60998eaad1cc 100644
->> --- a/drivers/mtd/spi-nor/cadence-quadspi.c
->> +++ b/drivers/mtd/spi-nor/cadence-quadspi.c
->> @@ -135,6 +135,8 @@ struct cqspi_driver_platdata {
->>   #define CQSPI_REG_RD_INSTR_TYPE_DATA_MASK	0x3
->>   #define CQSPI_REG_RD_INSTR_DUMMY_MASK		0x1F
->>   
->> +#define CQSPI_REG_WR_COMPLETION_CTRL		0x38
->> +#define CQSPI_REG_WR_COMPLETION_DISABLE_AUTO_POLL	BIT(14)
->>   #define CQSPI_REG_WR_INSTR			0x08
->>   #define CQSPI_REG_WR_INSTR_OPCODE_LSB		0
->>   #define CQSPI_REG_WR_INSTR_TYPE_ADDR_LSB	12
->> @@ -471,6 +473,18 @@ static int cqspi_command_write_addr(struct spi_nor *nor,
->>   	return cqspi_exec_flash_cmd(cqspi, reg);
->>   }
->>   
->> +static int cqspi_disable_auto_poll(struct cqspi_st *cqspi)
->> +{
->> +	void __iomem *reg_base = cqspi->iobase;
->> +	unsigned int reg;
->> +
->> +	reg = readl(reg_base + CQSPI_REG_WR_COMPLETION_CTRL);
->> +	reg |= CQSPI_REG_WR_COMPLETION_DISABLE_AUTO_POLL;
->> +	writel(reg, reg_base + CQSPI_REG_WR_COMPLETION_CTRL);
->> +
->> +	return 0;
->> +}
->> +
->>   static int cqspi_read_setup(struct spi_nor *nor)
->>   {
->>   	struct cqspi_flash_pdata *f_pdata = nor->priv;
->> @@ -508,6 +522,11 @@ static int cqspi_read_setup(struct spi_nor *nor)
->>   	reg &= ~CQSPI_REG_SIZE_ADDRESS_MASK;
->>   	reg |= (nor->addr_width - 1);
->>   	writel(reg, reg_base + CQSPI_REG_SIZE);
->> +
->> +	/* Disable auto-polling */
->> +	if (!f_pdata->use_direct_mode)
->> +		cqspi_disable_auto_poll(cqspi);
->> +
->>   	return 0;
->>   }
->>   
-> Hmmm.. There is no need to disable polling for every read/write
-> operation. It should be enough to do it once in cqspi_controller_init()
-sure, move to cqspi_controller_init() .
----
-Regards
-Vadivel
->
->
->> @@ -627,6 +646,11 @@ static int cqspi_write_setup(struct spi_nor *nor)
->>   	reg &= ~CQSPI_REG_SIZE_ADDRESS_MASK;
->>   	reg |= (nor->addr_width - 1);
->>   	writel(reg, reg_base + CQSPI_REG_SIZE);
->> +
->> +	/* Disable auto-polling */
->> +	if (!f_pdata->use_direct_mode)
->> +		cqspi_disable_auto_poll(cqspi);
->> +
->>   	return 0;
->>   }
->>   
->>
+On Tue, Oct 15, 2019 at 10:03:15PM +0200, Valentin Vidic wrote:
+> Make sure ircode does not contain random values if the call to
+> cxusb_ctrl_msg fails for some reason.
+> 
+> Reported-by: syzbot+98730b985cad4931a552@syzkaller.appspotmail.com
+> Signed-off-by: Valentin Vidic <vvidic@valentin-vidic.from.hr>
+> ---
+>  drivers/media/usb/dvb-usb/cxusb.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/usb/dvb-usb/cxusb.c b/drivers/media/usb/dvb-usb/cxusb.c
+> index f02fa0a67aa4..afcd88dd96c0 100644
+> --- a/drivers/media/usb/dvb-usb/cxusb.c
+> +++ b/drivers/media/usb/dvb-usb/cxusb.c
+> @@ -519,7 +519,7 @@ static int cxusb_d680_dmb_streaming_ctrl(struct dvb_usb_adapter *adap,
+>  
+>  static int cxusb_rc_query(struct dvb_usb_device *d)
+>  {
+> -	u8 ircode[4];
+> +	u8 ircode[4] = { 0 };
+>  
+>  	cxusb_ctrl_msg(d, CMD_GET_IR_CODE, NULL, 0, ircode, 4);
+
+The correct to do here is check the return value of cxusb_ctrl_msg() and
+to not proceed if it failed, rather than assume the value of 0.
+
+Also note that:
+
+	https://patchwork.linuxtv.org/patch/59448/
+
+Is already being merged.
+
+Thanks
+Sean
+
+>  
+> @@ -531,7 +531,7 @@ static int cxusb_rc_query(struct dvb_usb_device *d)
+>  
+>  static int cxusb_bluebird2_rc_query(struct dvb_usb_device *d)
+>  {
+> -	u8 ircode[4];
+> +	u8 ircode[4] = { 0 };
+>  	struct i2c_msg msg = {
+>  		.addr = 0x6b,
+>  		.flags = I2C_M_RD,
+> @@ -550,7 +550,7 @@ static int cxusb_bluebird2_rc_query(struct dvb_usb_device *d)
+>  
+>  static int cxusb_d680_dmb_rc_query(struct dvb_usb_device *d)
+>  {
+> -	u8 ircode[2];
+> +	u8 ircode[2] = { 0 };
+>  
+>  	if (cxusb_ctrl_msg(d, 0x10, NULL, 0, ircode, 2) < 0)
+>  		return 0;
+> @@ -989,7 +989,7 @@ static int cxusb_dee1601_frontend_attach(struct dvb_usb_adapter *adap)
+>  
+>  static int cxusb_dualdig4_frontend_attach(struct dvb_usb_adapter *adap)
+>  {
+> -	u8 ircode[4];
+> +	u8 ircode[4] = { 0 };
+>  	int i;
+>  	struct i2c_msg msg = {
+>  		.addr = 0x6b,
+> -- 
+> 2.20.1
