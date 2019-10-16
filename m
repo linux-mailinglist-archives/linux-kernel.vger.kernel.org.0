@@ -2,39 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1926DA0C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:26:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E391DA045
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:25:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439356AbfJPWPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:15:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46160 "EHLO mail.kernel.org"
+        id S2395523AbfJPWJr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:09:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395220AbfJPVz2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:55:28 -0400
+        id S2395477AbfJPV50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:57:26 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3674720872;
-        Wed, 16 Oct 2019 21:55:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8484721D7A;
+        Wed, 16 Oct 2019 21:57:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262928;
-        bh=R7muj0ZQtz28cz8Rdo20VjZVXN0cWVxoYOowSW3clsY=;
+        s=default; t=1571263045;
+        bh=0Ezjz9iLxP32YFSyq0qYZi3BTTaYEBdbc7fnqbjGPFw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qoAHQRIKBAorgKbjy/GiIXiFR6JpQeBI3RgzCHSa5bcLJJDX1A6krKiCVTMCO/8sE
-         dWYLA4scygYS3GFi0M6TX3D1tPhqdzl2Fd32T9+iONdA0TL+35kD6EjapnyWq0tAET
-         PyKvrB4gfHSeasV1uy5mhhL7/3GF8U1txOQKk/zs=
+        b=NWXSHd64+VVafqvIbad6lOFlmBs7/JE0l3c4OOvEn/mR9SXd/hU31WwP25U1mejns
+         jxxj7TkIhPy+3yPLRe/bEWW+yebiN5pcbbKBndrlFzlHtk6YMppbGuK7E3l46dGE19
+         yE5E5iaFgnqaCLwFjW8JuA/CVWyBEy0znvUp350E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Srivatsa S. Bhat (VMware)" <srivatsa@csail.mit.edu>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.9 88/92] tracing/hwlat: Report total time spent in all NMIs during the sample
+        stable@vger.kernel.org, Ian Rogers <irogers@google.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
+        Wang Nan <wangnan0@huawei.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.19 50/81] perf llvm: Dont access out-of-scope array
 Date:   Wed, 16 Oct 2019 14:51:01 -0700
-Message-Id: <20191016214848.472113499@linuxfoundation.org>
+Message-Id: <20191016214840.491058425@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
-References: <20191016214759.600329427@linuxfoundation.org>
+In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
+References: <20191016214805.727399379@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +49,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
+From: Ian Rogers <irogers@google.com>
 
-commit 98dc19c11470ee6048aba723d77079ad2cda8a52 upstream.
+commit 7d4c85b7035eb2f9ab217ce649dcd1bfaf0cacd3 upstream.
 
-nmi_total_ts is supposed to record the total time spent in *all* NMIs
-that occur on the given CPU during the (active portion of the)
-sampling window. However, the code seems to be overwriting this
-variable for each NMI, thereby only recording the time spent in the
-most recent NMI. Fix it by accumulating the duration instead.
+The 'test_dir' variable is assigned to the 'release' array which is
+out-of-scope 3 lines later.
 
-Link: http://lkml.kernel.org/r/157073343544.17189.13911783866738671133.stgit@srivatsa-ubuntu
+Extend the scope of the 'release' array so that an out-of-scope array
+isn't accessed.
 
-Fixes: 7b2c86250122 ("tracing: Add NMI tracing in hwlat detector")
-Cc: stable@vger.kernel.org
-Signed-off-by: Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Bug detected by clang's address sanitizer.
+
+Fixes: 07bc5c699a3d ("perf tools: Make fetch_kernel_version() publicly available")
+Cc: stable@vger.kernel.org # v4.4+
+Signed-off-by: Ian Rogers <irogers@google.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lore.kernel.org/lkml/20190926220018.25402-1-irogers@google.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_hwlat.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/llvm-utils.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/kernel/trace/trace_hwlat.c
-+++ b/kernel/trace/trace_hwlat.c
-@@ -151,7 +151,7 @@ void trace_hwlat_callback(bool enter)
- 		if (enter)
- 			nmi_ts_start = time_get();
- 		else
--			nmi_total_ts = time_get() - nmi_ts_start;
-+			nmi_total_ts += time_get() - nmi_ts_start;
- 	}
+--- a/tools/perf/util/llvm-utils.c
++++ b/tools/perf/util/llvm-utils.c
+@@ -230,14 +230,14 @@ static int detect_kbuild_dir(char **kbui
+ 	const char *prefix_dir = "";
+ 	const char *suffix_dir = "";
  
- 	if (enter)
++	/* _UTSNAME_LENGTH is 65 */
++	char release[128];
++
+ 	char *autoconf_path;
+ 
+ 	int err;
+ 
+ 	if (!test_dir) {
+-		/* _UTSNAME_LENGTH is 65 */
+-		char release[128];
+-
+ 		err = fetch_kernel_version(NULL, release,
+ 					   sizeof(release));
+ 		if (err)
 
 
