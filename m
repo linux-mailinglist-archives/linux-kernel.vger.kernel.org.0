@@ -2,119 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B8FED91EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 15:03:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 519A3D91F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 15:04:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393429AbfJPNDe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 09:03:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32878 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393419AbfJPNDe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 09:03:34 -0400
-Received: from localhost (unknown [209.136.236.94])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 37E3E20854;
-        Wed, 16 Oct 2019 13:03:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571231013;
-        bh=Z78ULDNnjtEHNfa2EEEaBAQoxzgGn7F8+ZBCCPNh2bA=;
-        h=Date:From:To:Subject:From;
-        b=as7Kgd0bcsCi4b5BilhFTktF2yFC+9pGXXSIfHekPmFnSXe699KOKNz2vZkcwRwPi
-         KbelPulV4tBFxWyWNaNloq15lHx+lVKGKZXtAmKQDlgoLjy9u5arQTsx4BBzzzDEEz
-         2bX0JK6sBihEvJ6UenKjRa6K3MAusIDW3LckNRRs=
-Date:   Wed, 16 Oct 2019 06:03:32 -0700
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Subject: [PATCH] debugfs: remove return value of debugfs_create_atomic_t()
-Message-ID: <20191016130332.GA28240@kroah.com>
+        id S2405294AbfJPNEJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 09:04:09 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:34246 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405282AbfJPNEI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 09:04:08 -0400
+Received: by mail-qt1-f194.google.com with SMTP id 3so36009220qta.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 06:04:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PaygqXHQuaC5ycCiWRMEVFWLxwJSQTfQRD8hMbozOH4=;
+        b=a6em5sPq1kYjTh4Gos9mjEHYuHVIoQ98XWy3VObQZGiwnnP/leACZU1CNNpZJ6o60O
+         /mwUxKTvXUlAxlxFSb9BqRu92qGDsiR1JH8G0jOApChowQFE36vSlqfuvz75TUDINh8I
+         Efs05XCBc8g/knvY0gGexx83lnfLwkxJSK91xRB1JUnjpJ2lHjwY+1cYctWgKs0kE8Dv
+         Fs/hA6VbnEZkaHNcqpXZYjpADL+G/oznyiePyh29gY5d8j9jZmwXt4srKXwSTXzAyrAC
+         K3liiotHtoBvrraYMcdDkhVajOafop/kMnFKyS9FQrh4xAum/UiLT+mL1WfF2BO9e1G5
+         v8bQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PaygqXHQuaC5ycCiWRMEVFWLxwJSQTfQRD8hMbozOH4=;
+        b=L04C4PAHhQonVSKQJCD+i7ipFmShgchZODTenZw3hfpIkB1KTCpbR/IPdGEtNh1Kxa
+         bwD5v+QOqcR96VtqM1uOMA5ZYM2j5wKSsBeR3vCnzXlJgg8rqcDpHc+UBLfWzARi9RIX
+         FqQxcy05JHwWbK/KAceExeTjZlQiitQJWci/KdLpbDg6X4RHyustZUb+NiUOVVbI+wSw
+         q9HVu/fww+rioe9n5d6HaC8SVTrmSYMHzDCAo4IrqClwjfgj7WF4WUxzQK5PygqVR+i0
+         +UhKM7cdYlO7QULg5+RN9a/a1CszSCbf9TmlBomaqEfLeEbxOXgtTIFu6NYSF/p+3rmm
+         wWTQ==
+X-Gm-Message-State: APjAAAWB9SSJXjn90dYSkNqrmsG5t/sVeF2S5tWUK5hvDsD0A/mFHKip
+        tUIEMRdHpY1Df/XEFs4HYR4=
+X-Google-Smtp-Source: APXvYqwfcq2We+5TqhLAfkE7OnROz8ZlXCvXe3ha0WVLYlpbcyKu5rl+oq5H6JP40X5Z5zo5fasWMw==
+X-Received: by 2002:ac8:368b:: with SMTP id a11mr24854169qtc.362.1571231046562;
+        Wed, 16 Oct 2019 06:04:06 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.35.50])
+        by smtp.gmail.com with ESMTPSA id b22sm11636807qkc.58.2019.10.16.06.04.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2019 06:04:05 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id BE85B4DD66; Wed, 16 Oct 2019 10:04:03 -0300 (-03)
+Date:   Wed, 16 Oct 2019 10:04:03 -0300
+To:     Yunfeng Ye <yeyunfeng@huawei.com>
+Cc:     peterz@infradead.org, mingo@redhat.com, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        hushiyuan@huawei.com, linfeilong@huawei.com
+Subject: Re: [PATCH] perf kmem: Fix memory leak in compact_gfp_flags()
+Message-ID: <20191016130403.GA22835@kernel.org>
+References: <f9e9f458-96f3-4a97-a1d5-9feec2420e07@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <f9e9f458-96f3-4a97-a1d5-9feec2420e07@huawei.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No one checks the return value of debugfs_create_atomic_t(), as it's not
-needed, so make the return value void, so that no one tries to do so in
-the future.
+Em Wed, Oct 16, 2019 at 04:38:45PM +0800, Yunfeng Ye escreveu:
+> The memory @orig_flags is allocated by strdup(), it is freed on the
+> normal path, but leak to free on the error path.
 
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- Documentation/filesystems/debugfs.txt |  4 ++--
- fs/debugfs/file.c                     |  9 ++++-----
- include/linux/debugfs.h               | 13 ++++++-------
- 3 files changed, 12 insertions(+), 14 deletions(-)
+Are you using some tool to find out these problems? Or is it just visual
+inspection?
 
-diff --git a/Documentation/filesystems/debugfs.txt b/Documentation/filesystems/debugfs.txt
-index 4a7a477a73d3..b8e544f84a34 100644
---- a/Documentation/filesystems/debugfs.txt
-+++ b/Documentation/filesystems/debugfs.txt
-@@ -113,8 +113,8 @@ lower-case values, or 1 or 0.  Any other input will be silently ignored.
+- Arnaldo
  
- Also, atomic_t values can be placed in debugfs with:
- 
--    struct dentry *debugfs_create_atomic_t(const char *name, umode_t mode,
--				struct dentry *parent, atomic_t *value)
-+    void debugfs_create_atomic_t(const char *name, umode_t mode,
-+				 struct dentry *parent, atomic_t *value)
- 
- A read of this file will get atomic_t values, and a write of this file
- will set atomic_t values.
-diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
-index 803b5aab31fc..a86cb0b1c69c 100644
---- a/fs/debugfs/file.c
-+++ b/fs/debugfs/file.c
-@@ -748,12 +748,11 @@ DEFINE_DEBUGFS_ATTRIBUTE(fops_atomic_t_wo, NULL, debugfs_atomic_t_set,
-  * @value: a pointer to the variable that the file should read to and write
-  *         from.
-  */
--struct dentry *debugfs_create_atomic_t(const char *name, umode_t mode,
--				 struct dentry *parent, atomic_t *value)
-+void debugfs_create_atomic_t(const char *name, umode_t mode,
-+			     struct dentry *parent, atomic_t *value)
- {
--	return debugfs_create_mode_unsafe(name, mode, parent, value,
--					&fops_atomic_t, &fops_atomic_t_ro,
--					&fops_atomic_t_wo);
-+	debugfs_create_mode_unsafe(name, mode, parent, value, &fops_atomic_t,
-+				   &fops_atomic_t_ro, &fops_atomic_t_wo);
- }
- EXPORT_SYMBOL_GPL(debugfs_create_atomic_t);
- 
-diff --git a/include/linux/debugfs.h b/include/linux/debugfs.h
-index 578c35ecdab9..1bd7e1772534 100644
---- a/include/linux/debugfs.h
-+++ b/include/linux/debugfs.h
-@@ -117,8 +117,8 @@ void debugfs_create_x64(const char *name, umode_t mode, struct dentry *parent,
- 			u64 *value);
- void debugfs_create_size_t(const char *name, umode_t mode,
- 			   struct dentry *parent, size_t *value);
--struct dentry *debugfs_create_atomic_t(const char *name, umode_t mode,
--				     struct dentry *parent, atomic_t *value);
-+void debugfs_create_atomic_t(const char *name, umode_t mode,
-+			     struct dentry *parent, atomic_t *value);
- struct dentry *debugfs_create_bool(const char *name, umode_t mode,
- 				  struct dentry *parent, bool *value);
- 
-@@ -280,11 +280,10 @@ static inline void debugfs_create_size_t(const char *name, umode_t mode,
- 					 struct dentry *parent, size_t *value)
- { }
- 
--static inline struct dentry *debugfs_create_atomic_t(const char *name, umode_t mode,
--				     struct dentry *parent, atomic_t *value)
--{
--	return ERR_PTR(-ENODEV);
--}
-+static inline void debugfs_create_atomic_t(const char *name, umode_t mode,
-+					   struct dentry *parent,
-+					   atomic_t *value)
-+{ }
- 
- static inline struct dentry *debugfs_create_bool(const char *name, umode_t mode,
- 						 struct dentry *parent,
+> Fix this by adding free(orig_flags) on the error path.
+> 
+> Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+> ---
+>  tools/perf/builtin-kmem.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/tools/perf/builtin-kmem.c b/tools/perf/builtin-kmem.c
+> index 1e61e353f579..9661671cc26e 100644
+> --- a/tools/perf/builtin-kmem.c
+> +++ b/tools/perf/builtin-kmem.c
+> @@ -691,6 +691,7 @@ static char *compact_gfp_flags(char *gfp_flags)
+>  			new = realloc(new_flags, len + strlen(cpt) + 2);
+>  			if (new == NULL) {
+>  				free(new_flags);
+> +				free(orig_flags);
+>  				return NULL;
+>  			}
+> 
+> -- 
+> 2.7.4.3
+
 -- 
-2.23.0
 
+- Arnaldo
