@@ -2,70 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68288D893A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 09:20:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D227D8941
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 09:20:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389616AbfJPHUV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 03:20:21 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:4174 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1733012AbfJPHUQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 03:20:16 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id AEEE3A785B089A540842;
-        Wed, 16 Oct 2019 15:20:08 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.132) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 16 Oct 2019 15:20:00 +0800
-From:   Huazhong Tan <tanhuazhong@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <linuxarm@huawei.com>, <jakub.kicinski@netronome.com>,
-        Jian Shen <shenjian15@huawei.com>,
-        "Huazhong Tan" <tanhuazhong@huawei.com>
-Subject: [PATCH net-next 12/12] net: hns3: log and clear hardware error after reset complete
-Date:   Wed, 16 Oct 2019 15:17:11 +0800
-Message-ID: <1571210231-29154-13-git-send-email-tanhuazhong@huawei.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1571210231-29154-1-git-send-email-tanhuazhong@huawei.com>
-References: <1571210231-29154-1-git-send-email-tanhuazhong@huawei.com>
+        id S2389734AbfJPHUf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 03:20:35 -0400
+Received: from mx01-fr.bfs.de ([193.174.231.67]:64402 "EHLO mx01-fr.bfs.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732565AbfJPHUO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 03:20:14 -0400
+Received: from mail-fr.bfs.de (mail-fr.bfs.de [10.177.18.200])
+        by mx01-fr.bfs.de (Postfix) with ESMTPS id 5DD7A20384;
+        Wed, 16 Oct 2019 09:20:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bfs.de; s=dkim201901;
+        t=1571210407; h=from:from:sender:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=NC6uNoV+Bbox7Ddnhu9UcPLyFj4/7LcgIIqejJJhFBI=;
+        b=hZjHEAoZCY0OUi7JeJII3wlzMjAVqp5cxIAM9Gj/3fYJuVGSZcBhGKry/Cs3zb/JgaaG+4
+        9uhhgCX9QpZ//DKvgOieJIx9xcMMuAf9WePe7gASulVMY6KOTRGMEgNj3050gdh2l6lXs/
+        25+BG/CKvklnMkk81PIPsSpm3QCeJ3H+HZyc5dDFE3K2ciXFKPP8FpB+EGSk7/IOrbp1bx
+        TZc42v9/rZJvl24RrUQHhbj6eq6lPghh//6RMr/N5UrkGLA5Y4Fh2O+lz/CmPlDzmrP0F8
+        X2Q8i5TeYzeWxAcsYN4O39k2XlCKzzuUT/p1WR11Al5oIkeWwzLFs0JzyZy9Yw==
+Received: from [134.92.181.33] (unknown [134.92.181.33])
+        by mail-fr.bfs.de (Postfix) with ESMTPS id 214EBBEEBD;
+        Wed, 16 Oct 2019 09:20:06 +0200 (CEST)
+Message-ID: <5DA6C4A6.6090207@bfs.de>
+Date:   Wed, 16 Oct 2019 09:20:06 +0200
+From:   walter harms <wharms@bfs.de>
+Reply-To: wharms@bfs.de
+User-Agent: Mozilla/5.0 (X11; U; Linux x86_64; de; rv:1.9.1.16) Gecko/20101125 SUSE/3.0.11 Thunderbird/3.0.11
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.132]
-X-CFilter-Loop: Reflected
+To:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+CC:     Colin King <colin.king@canonical.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PNP: fix unintended sign extension on left shifts
+References: <20191014131608.31335-1-colin.king@canonical.com> <cda044bf-4aec-4423-007c-1d6cf6f0eecf@intel.com>
+In-Reply-To: <cda044bf-4aec-4423-007c-1d6cf6f0eecf@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.96
+Authentication-Results: mx01-fr.bfs.de
+X-Spamd-Result: default: False [-2.96 / 7.00];
+         ARC_NA(0.00)[];
+         HAS_REPLYTO(0.00)[wharms@bfs.de];
+         BAYES_HAM(-2.86)[99.39%];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         REPLYTO_ADDR_EQ_FROM(0.00)[];
+         RCPT_COUNT_FIVE(0.00)[5];
+         DKIM_SIGNED(0.00)[];
+         NEURAL_HAM(-0.00)[-0.999,0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         RCVD_COUNT_TWO(0.00)[2];
+         MID_RHS_MATCH_FROM(0.00)[];
+         RCVD_TLS_ALL(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jian Shen <shenjian15@huawei.com>
 
-When device is resetting, the CMDQ service may be stopped until
-reset completed. If a new RAS error occurs at this moment, it
-will no be able to clear the RAS source. This patch fixes it
-by clear the RAS source after reset complete.
 
-Signed-off-by: Jian Shen <shenjian15@huawei.com>
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 3 +++
- 1 file changed, 3 insertions(+)
+Am 15.10.2019 18:29, schrieb Rafael J. Wysocki:
+> On 10/14/2019 3:16 PM, Colin King wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> Shifting a u8 left will cause the value to be promoted to an integer. If
+>> the top bit of the u8 is set then the following conversion to a 64 bit
+>> resource_size_t will sign extend the value causing the upper 32 bits
+>> to be set in the result.
+>>
+>> Fix this by casting the u8 value to a resource_size_t before the shift.
+>> Original commit is pre-git history.
+>>
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> 
+> Please resend this with a Cc to linux-acpi@vger.kernel.org for easier
+> handling.
+> 
+> 
+>> ---
+>>   drivers/pnp/isapnp/core.c | 18 ++++++++++++------
+>>   1 file changed, 12 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/pnp/isapnp/core.c b/drivers/pnp/isapnp/core.c
+>> index 179b737280e1..c947b1673041 100644
+>> --- a/drivers/pnp/isapnp/core.c
+>> +++ b/drivers/pnp/isapnp/core.c
+>> @@ -511,10 +511,14 @@ static void __init
+>> isapnp_parse_mem32_resource(struct pnp_dev *dev,
+>>       unsigned char flags;
+>>         isapnp_peek(tmp, size);
+>> -    min = (tmp[4] << 24) | (tmp[3] << 16) | (tmp[2] << 8) | tmp[1];
+>> -    max = (tmp[8] << 24) | (tmp[7] << 16) | (tmp[6] << 8) | tmp[5];
+>> -    align = (tmp[12] << 24) | (tmp[11] << 16) | (tmp[10] << 8) | tmp[9];
+>> -    len = (tmp[16] << 24) | (tmp[15] << 16) | (tmp[14] << 8) | tmp[13];
+>> +    min = ((resource_size_t)tmp[4] << 24) | (tmp[3] << 16) |
+>> +              (tmp[2] << 8) | tmp[1];
+>> +    max = ((resource_size_t)tmp[8] << 24) | (tmp[7] << 16) |
+>> +              (tmp[6] << 8) | tmp[5];
+>> +    align = ((resource_size_t)tmp[12] << 24) | (tmp[11] << 16) |
+>> +              (tmp[10] << 8) | tmp[9];
+>> +    len = ((resource_size_t)tmp[16] << 24) | (tmp[15] << 16) |
+>> +              (tmp[14] << 8) | tmp[13];
+>>       flags = tmp[0];
+>>       pnp_register_mem_resource(dev, option_flags,
+>>                     min, max, align, len, flags);
+>> @@ -532,8 +536,10 @@ static void __init
+>> isapnp_parse_fixed_mem32_resource(struct pnp_dev *dev,
+>>       unsigned char flags;
+>>         isapnp_peek(tmp, size);
+>> -    base = (tmp[4] << 24) | (tmp[3] << 16) | (tmp[2] << 8) | tmp[1];
+>> -    len = (tmp[8] << 24) | (tmp[7] << 16) | (tmp[6] << 8) | tmp[5];
+>> +    base = ((resource_size_t)tmp[4] << 24) | (tmp[3] << 16) |
+>> +           (tmp[2] << 8) | tmp[1];
+>> +    len = ((resource_size_t)tmp[8] << 24) | (tmp[7] << 16) |
+>> +              (tmp[6] << 8) | tmp[5];
+>>       flags = tmp[0];
+>>       pnp_register_mem_resource(dev, option_flags, base, base, 0, len,
+>> flags);
+>>   }
+> 
+> 
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 60aba81..a47e46e 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -9798,6 +9798,9 @@ static int hclge_reset_ae_dev(struct hnae3_ae_dev *ae_dev)
- 		return ret;
- 	}
- 
-+	/* Log and clear the hw errors those already occurred */
-+	hclge_handle_all_hns_hw_errors(ae_dev);
-+
- 	/* Re-enable the hw error interrupts because
- 	 * the interrupts get disabled on global reset.
- 	 */
--- 
-2.7.4
+there was a hint to use get/put_unaligned_be*() maybe that is here also possible ?
 
+re,
+ wh
+
+(ps: see: [PATCH] scsi: fix unintended sign extension on left shifts)
+> 
