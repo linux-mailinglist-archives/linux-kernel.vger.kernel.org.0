@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55775D9E5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:03:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE258D9E36
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:03:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438163AbfJPV6a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:58:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50432 "EHLO mail.kernel.org"
+        id S2391484AbfJPV5C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:57:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395495AbfJPV5h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:57:37 -0400
+        id S2406657AbfJPV4a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:56:30 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF44121D7A;
-        Wed, 16 Oct 2019 21:57:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE24021A49;
+        Wed, 16 Oct 2019 21:56:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263057;
-        bh=HSW9Eg9Cocl1FHpauNvnQ+JPck1GECfflNlQLO7SD2w=;
+        s=default; t=1571262990;
+        bh=L95EMHtNAx1++/FTWvOD8AFJ7l+KXtUK06uQ1uo1HIw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FB6G+2Zgbpwe2nRII9z0lbH4PNiHHOk2LVYIjGZemWp03Yk5YzS7+na6RTR4pXyqQ
-         HavUhLWmLaNbavbBJ/7pYdUJNQYSWFuC0XUmkdLL7NuDTIdZA2ScB5O6s/lUH9FHXj
-         pfldp2HUB8ztt8qc4AemEOeVoswWlrWKkRR8NESs=
+        b=ynwlWHHJyJqer7kYxICV018N7sUxdSVFSAuZdHoF3QUgVrRzXWkTc7Lock0v/I+AF
+         qM40yFlBh//j8lXBE7ax0HMHhZKOhnRAP2eUaB56kV2ovb6RpT5t0DBsSFG0Pqw7EA
+         3hNBZa5dbZ8zad7PE7ZwMpe7uAV38MFW8WA+6Bjg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kent Gibson <warthog618@gmail.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 59/81] gpiolib: dont clear FLAG_IS_OUT when emulating open-drain/open-source
-Date:   Wed, 16 Oct 2019 14:51:10 -0700
-Message-Id: <20191016214843.408438977@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        Huacai Chen <chenhc@lemote.com>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        linux-mips@vger.kernel.org
+Subject: [PATCH 4.14 57/65] MIPS: Disable Loongson MMI instructions for kernel build
+Date:   Wed, 16 Oct 2019 14:51:11 -0700
+Message-Id: <20191016214838.518286192@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
-References: <20191016214805.727399379@linuxfoundation.org>
+In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
+References: <20191016214756.457746573@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,98 +45,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+From: Paul Burton <paul.burton@mips.com>
 
-[ Upstream commit e735244e2cf068f98b6384681a38993e0517a838 ]
+commit 2f2b4fd674cadd8c6b40eb629e140a14db4068fd upstream.
 
-When emulating open-drain/open-source by not actively driving the output
-lines - we're simply changing their mode to input. This is wrong as it
-will then make it impossible to change the value of such line - it's now
-considered to actually be in input mode. If we want to still use the
-direction_input() callback for simplicity then we need to set FLAG_IS_OUT
-manually in gpiod_direction_output() and not clear it in
-gpio_set_open_drain_value_commit() and
-gpio_set_open_source_value_commit().
+GCC 9.x automatically enables support for Loongson MMI instructions when
+using some -march= flags, and then errors out when -msoft-float is
+specified with:
 
-Fixes: c663e5f56737 ("gpio: support native single-ended hardware drivers")
-Cc: stable@vger.kernel.org
-Reported-by: Kent Gibson <warthog618@gmail.com>
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-[Bartosz: backported to v5.3, v4.19]
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+  cc1: error: ‘-mloongson-mmi’ must be used with ‘-mhard-float’
+
+The kernel shouldn't be using these MMI instructions anyway, just as it
+doesn't use floating point instructions. Explicitly disable them in
+order to fix the build with GCC 9.x.
+
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Fixes: 3702bba5eb4f ("MIPS: Loongson: Add GCC 4.4 support for Loongson2E")
+Fixes: 6f7a251a259e ("MIPS: Loongson: Add basic Loongson 2F support")
+Fixes: 5188129b8c9f ("MIPS: Loongson-3: Improve -march option and move it to Platform")
+Cc: Huacai Chen <chenhc@lemote.com>
+Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: stable@vger.kernel.org # v2.6.32+
+Cc: linux-mips@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/gpio/gpiolib.c | 27 +++++++++++++++++++--------
- 1 file changed, 19 insertions(+), 8 deletions(-)
+ arch/mips/loongson64/Platform |    4 ++++
+ arch/mips/vdso/Makefile       |    1 +
+ 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 3289b53a7ba14..565ab945698ca 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2649,8 +2649,10 @@ int gpiod_direction_output(struct gpio_desc *desc, int value)
- 		if (!ret)
- 			goto set_output_value;
- 		/* Emulate open drain by not actively driving the line high */
--		if (value)
--			return gpiod_direction_input(desc);
-+		if (value) {
-+			ret = gpiod_direction_input(desc);
-+			goto set_output_flag;
-+		}
- 	}
- 	else if (test_bit(FLAG_OPEN_SOURCE, &desc->flags)) {
- 		ret = gpio_set_drive_single_ended(gc, gpio_chip_hwgpio(desc),
-@@ -2658,8 +2660,10 @@ int gpiod_direction_output(struct gpio_desc *desc, int value)
- 		if (!ret)
- 			goto set_output_value;
- 		/* Emulate open source by not actively driving the line low */
--		if (!value)
--			return gpiod_direction_input(desc);
-+		if (!value) {
-+			ret = gpiod_direction_input(desc);
-+			goto set_output_flag;
-+		}
- 	} else {
- 		gpio_set_drive_single_ended(gc, gpio_chip_hwgpio(desc),
- 					    PIN_CONFIG_DRIVE_PUSH_PULL);
-@@ -2667,6 +2671,17 @@ int gpiod_direction_output(struct gpio_desc *desc, int value)
+--- a/arch/mips/loongson64/Platform
++++ b/arch/mips/loongson64/Platform
+@@ -43,6 +43,10 @@ else
+       $(call cc-option,-march=mips64r2,-mips64r2 -U_MIPS_ISA -D_MIPS_ISA=_MIPS_ISA_MIPS64)
+ endif
  
- set_output_value:
- 	return gpiod_direction_output_raw_commit(desc, value);
++# Some -march= flags enable MMI instructions, and GCC complains about that
++# support being enabled alongside -msoft-float. Thus explicitly disable MMI.
++cflags-y += $(call cc-option,-mno-loongson-mmi)
 +
-+set_output_flag:
-+	/*
-+	 * When emulating open-source or open-drain functionalities by not
-+	 * actively driving the line (setting mode to input) we still need to
-+	 * set the IS_OUT flag or otherwise we won't be able to set the line
-+	 * value anymore.
-+	 */
-+	if (ret == 0)
-+		set_bit(FLAG_IS_OUT, &desc->flags);
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(gpiod_direction_output);
- 
-@@ -2980,8 +2995,6 @@ static void gpio_set_open_drain_value_commit(struct gpio_desc *desc, bool value)
- 
- 	if (value) {
- 		err = chip->direction_input(chip, offset);
--		if (!err)
--			clear_bit(FLAG_IS_OUT, &desc->flags);
- 	} else {
- 		err = chip->direction_output(chip, offset, 0);
- 		if (!err)
-@@ -3011,8 +3024,6 @@ static void gpio_set_open_source_value_commit(struct gpio_desc *desc, bool value
- 			set_bit(FLAG_IS_OUT, &desc->flags);
- 	} else {
- 		err = chip->direction_input(chip, offset);
--		if (!err)
--			clear_bit(FLAG_IS_OUT, &desc->flags);
- 	}
- 	trace_gpio_direction(desc_to_gpio(desc), !value, err);
- 	if (err < 0)
--- 
-2.20.1
-
+ #
+ # Loongson Machines' Support
+ #
+--- a/arch/mips/vdso/Makefile
++++ b/arch/mips/vdso/Makefile
+@@ -9,6 +9,7 @@ ccflags-vdso := \
+ 	$(filter -mmicromips,$(KBUILD_CFLAGS)) \
+ 	$(filter -march=%,$(KBUILD_CFLAGS)) \
+ 	$(filter -m%-float,$(KBUILD_CFLAGS)) \
++	$(filter -mno-loongson-%,$(KBUILD_CFLAGS)) \
+ 	-D__VDSO__
+ cflags-vdso := $(ccflags-vdso) \
+ 	$(filter -W%,$(filter-out -Wa$(comma)%,$(KBUILD_CFLAGS))) \
 
 
