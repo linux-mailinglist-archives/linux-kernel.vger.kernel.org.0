@@ -2,202 +2,221 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 363E9D8CBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 11:41:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 642D3D8CCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 11:42:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404289AbfJPJlt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 05:41:49 -0400
-Received: from mga02.intel.com ([134.134.136.20]:9173 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391934AbfJPJlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 05:41:49 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2019 02:41:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,303,1566889200"; 
-   d="scan'208";a="200007842"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga006.jf.intel.com with ESMTP; 16 Oct 2019 02:41:46 -0700
-Received: from [10.125.252.157] (abudanko-mobl.ccr.corp.intel.com [10.125.252.157])
-        by linux.intel.com (Postfix) with ESMTP id 476EC58048F;
-        Wed, 16 Oct 2019 02:41:44 -0700 (PDT)
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH v2 0/4]: perf/core: fix restoring of Intel LBR call stack on a
- context switch
-Organization: Intel Corp.
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Ian Rogers <irogers@google.com>,
-        Song Liu <songliubraving@fb.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <5964c7e9-ab6f-c0d0-3dca-31196606e337@linux.intel.com>
-Date:   Wed, 16 Oct 2019 12:41:43 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2392044AbfJPJmr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 05:42:47 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:42024 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726689AbfJPJmr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 05:42:47 -0400
+Received: by mail-qt1-f194.google.com with SMTP id w14so35102214qto.9;
+        Wed, 16 Oct 2019 02:42:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Tc+bjrFvCm99dkdh8oHRuyC3BtBT5HBjTdr0g9Rtqkg=;
+        b=PsAp2aMFrpQeUVfKKIw12to7ciwCj3LHoHmyOPdzFWsswiJ6kXsv1mb0q77oUZ9qPz
+         XYR4aS+6mT+8SNy7FCY6OdbupRF8wfSSaVCbkWxwjWhhlcZaNVqvGdsFylj7YJCw2dY3
+         ymIFlzkAstc6TGOb5oMPfuAvPNv5aC1kpoODjB98NfomTm0NunbjQ2mn637lIiUuFV87
+         0YVQwMmXz1vdwww4bv6fxNRXlCjQeYmGfKTL0Wc3Wl1L5Rxb3o5co9y8fUtDdTFvjdNB
+         2lvS7WBkm+s09jacoMVDx0W4liDwPgyf33qVFu7t5K9Ujvzmn8WquTVidiB2gtWe2qwc
+         W7Xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Tc+bjrFvCm99dkdh8oHRuyC3BtBT5HBjTdr0g9Rtqkg=;
+        b=j4HfzMUrM39YWhCUlfJHrpPsvFuKi93S0jSmQEBkYnIoegFdLj3rAuDElwcwMxGB/v
+         ulg3pRfbD6prICC5UP5weFKq6GwYrRb6e94BBHrbL6kjhh3LnHnz0LFHkT7PIwvdEDwS
+         apNfUWsTvdBsEOHcGQ0B+2VPYl8EiEVTxZoPZDb9jCHw3I4LEWsarZaJSKQZql4lR9D9
+         LsKONEFFr8tVTrpKHpeK1+6lPc9zAoel1HkEopRjhJsvlLjpHnI7b7tmjgd3hTPl1KcZ
+         RVTMYvmPtZZ+oVi8LhukbOAJflAbD9Vpjw0q2GVbSTQJ6OdcIfz0ZcAclPGo4wbzXb2O
+         qZng==
+X-Gm-Message-State: APjAAAUEMB8yyWkTXaI4tzhZYGO+ihmRuwNhFuxkphoryadxgyZ3hQ8C
+        aO+VyizMNCgiYNu0lzHLjgU=
+X-Google-Smtp-Source: APXvYqwv4OPCbvJ/75Lox4Ir6P4EncPUZZJZylf1we/5Vtb4xrvd19GTx1XCLu0AyB4tvOx1k1Pa+g==
+X-Received: by 2002:ac8:7084:: with SMTP id y4mr44279072qto.146.1571218965731;
+        Wed, 16 Oct 2019 02:42:45 -0700 (PDT)
+Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
+        by smtp.gmail.com with ESMTPSA id p53sm12956733qtk.23.2019.10.16.02.42.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 16 Oct 2019 02:42:44 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailauth.nyi.internal (Postfix) with ESMTP id 5433120931;
+        Wed, 16 Oct 2019 05:42:43 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Wed, 16 Oct 2019 05:42:43 -0400
+X-ME-Sender: <xms:EOamXau1beLCvey8giMNfWrS5u-M98SOlPG_UcrFJ_Y4lqdSeQSxrg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrjeehgddulecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujggfsehgtderredtredvnecuhfhrohhmpeeuohhquhhn
+    ucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecukfhppedutd
+    durdekiedrgedurddvuddvnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhm
+    vghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekhe
+    ehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghm
+    vgenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:EOamXXISM7AZAGOysAqNwFrwskFK4GyvXEMAUK76sMQhyalLITrueQ>
+    <xmx:EOamXX9WFyjbGgP8fN1v2SsFAsuaS2nvq57_d3YoSZKkDj0uzpSfrQ>
+    <xmx:EOamXT5zY7H9WLM1B_lOpw2bBnMmL1VKQXk25rKbr0sGwMbHc8WAiw>
+    <xmx:E-amXT59VT5qlyQTUsleQCVd7IBHXi8qe1VOu-Vf8i4ehTQfx0geLQQ1pB0>
+Received: from localhost (unknown [101.86.41.212])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 78764D60062;
+        Wed, 16 Oct 2019 05:42:38 -0400 (EDT)
+Date:   Wed, 16 Oct 2019 17:42:34 +0800
+From:   Boqun Feng <boqun.feng@gmail.com>
+To:     Marco Elver <elver@google.com>
+Cc:     akiyks@gmail.com, stern@rowland.harvard.edu, glider@google.com,
+        parri.andrea@gmail.com, andreyknvl@google.com, luto@kernel.org,
+        ard.biesheuvel@linaro.org, arnd@arndb.de, bp@alien8.de,
+        dja@axtens.net, dlustig@nvidia.com, dave.hansen@linux.intel.com,
+        dhowells@redhat.com, dvyukov@google.com, hpa@zytor.com,
+        mingo@redhat.com, j.alglave@ucl.ac.uk, joel@joelfernandes.org,
+        corbet@lwn.net, jpoimboe@redhat.com, luc.maranget@inria.fr,
+        mark.rutland@arm.com, npiggin@gmail.com, paulmck@linux.ibm.com,
+        peterz@infradead.org, tglx@linutronix.de, will@kernel.org,
+        kasan-dev@googlegroups.com, linux-arch@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, x86@kernel.org
+Subject: Re: [PATCH 1/8] kcsan: Add Kernel Concurrency Sanitizer
+ infrastructure
+Message-ID: <20191016094234.GB2701514@tardis>
+References: <20191016083959.186860-1-elver@google.com>
+ <20191016083959.186860-2-elver@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
+Content-Disposition: inline
+In-Reply-To: <20191016083959.186860-2-elver@google.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Restore Intel LBR call stack from cloned inactive task perf context on
-a context switch. This change inherently addresses inconsistency in LBR 
-call stack data provided on a sample in record profiling mode:
+--yrj/dFKFPuw6o+aM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-  $ perf record -N -B -T -R --call-graph lbr \
-         -e cpu/period=0xcdfe60,event=0x3c,name=\'CPU_CLK_UNHALTED.THREAD\'/Duk \
-         --clockid=monotonic_raw -- ./miniFE.x nx 25 ny 25 nz 25
+Hi Marco,
 
-Let's assume threads A, B, C belonging to the same process. 
-B and C are siblings of A and their perf contexts are treated as equivalent.
-At some point B blocks on a futex (non preempt context switch).
-B's LBRs are preserved at B's perf context task_ctx_data and B's events 
-are removed from PMU and disabled. B's perf context becomes inactive.
+On Wed, Oct 16, 2019 at 10:39:52AM +0200, Marco Elver wrote:
+[...]
+> --- /dev/null
+> +++ b/kernel/kcsan/kcsan.c
+> @@ -0,0 +1,81 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/*
+> + * The Kernel Concurrency Sanitizer (KCSAN) infrastructure. For more info please
+> + * see Documentation/dev-tools/kcsan.rst.
+> + */
+> +
+> +#include <linux/export.h>
+> +
+> +#include "kcsan.h"
+> +
+> +/*
+> + * Concurrency Sanitizer uses the same instrumentation as Thread Sanitizer.
 
-Later C gets on a cpu, runs, gets profiled and eventually switches to 
-the awaken but not yet running B. The optimized context switch path is 
-executed swapping B's and C's task_ctx_data pointers at perf event contexts.
-So C's task_ctx_data will refer preserved B's LBRs on the following 
-switch-in event.
+Is there any documentation on the instrumentation? Like a complete list
+for all instrumentation functions plus a description of where the
+compiler will use those functions. Yes, the names of the below functions
+are straightforward, but an accurate doc on the instrumentation will
+cerntainly help people review KCSAN.
 
-However, as far B's perf context is inactive there is no enabled events
-in there and B's task_ctx_data->lbr_callstack_users is equal to 0.
-When B gets on the cpu B's events reviving is skipped following
-the optimized context switch path and B's task_ctx_data->lbr_callstack_users
-remains 0. Thus B's LBR's are not restored by pmu sched_task() code called 
-in the end of perf context switch-in callback for B.
+Regards,
+Boqun
 
-In the report that manifests as having short fragments of B's
-call stack, still tracked by LBR's HW between adjacent samples,
-but the whole thread call tree doesn't aggregate.
+> + */
+> +
+> +#define DEFINE_TSAN_READ_WRITE(size)                                           \
+> +	void __tsan_read##size(void *ptr)                                      \
+> +	{                                                                      \
+> +		__kcsan_check_access(ptr, size, false);                        \
+> +	}                                                                      \
+> +	EXPORT_SYMBOL(__tsan_read##size);                                      \
+> +	void __tsan_write##size(void *ptr)                                     \
+> +	{                                                                      \
+> +		__kcsan_check_access(ptr, size, true);                         \
+> +	}                                                                      \
+> +	EXPORT_SYMBOL(__tsan_write##size)
+> +
+> +DEFINE_TSAN_READ_WRITE(1);
+> +DEFINE_TSAN_READ_WRITE(2);
+> +DEFINE_TSAN_READ_WRITE(4);
+> +DEFINE_TSAN_READ_WRITE(8);
+> +DEFINE_TSAN_READ_WRITE(16);
+> +
+> +/*
+> + * Not all supported compiler versions distinguish aligned/unaligned accesses,
+> + * but e.g. recent versions of Clang do.
+> + */
+> +#define DEFINE_TSAN_UNALIGNED_READ_WRITE(size)                                 \
+> +	void __tsan_unaligned_read##size(void *ptr)                            \
+> +	{                                                                      \
+> +		__kcsan_check_access(ptr, size, false);                        \
+> +	}                                                                      \
+> +	EXPORT_SYMBOL(__tsan_unaligned_read##size);                            \
+> +	void __tsan_unaligned_write##size(void *ptr)                           \
+> +	{                                                                      \
+> +		__kcsan_check_access(ptr, size, true);                         \
+> +	}                                                                      \
+> +	EXPORT_SYMBOL(__tsan_unaligned_write##size)
+> +
+> +DEFINE_TSAN_UNALIGNED_READ_WRITE(2);
+> +DEFINE_TSAN_UNALIGNED_READ_WRITE(4);
+> +DEFINE_TSAN_UNALIGNED_READ_WRITE(8);
+> +DEFINE_TSAN_UNALIGNED_READ_WRITE(16);
+> +
+> +void __tsan_read_range(void *ptr, size_t size)
+> +{
+> +	__kcsan_check_access(ptr, size, false);
+> +}
+> +EXPORT_SYMBOL(__tsan_read_range);
+> +
+> +void __tsan_write_range(void *ptr, size_t size)
+> +{
+> +	__kcsan_check_access(ptr, size, true);
+> +}
+> +EXPORT_SYMBOL(__tsan_write_range);
+> +
+> +/*
+> + * The below are not required KCSAN, but can still be emitted by the compiler.
+> + */
+> +void __tsan_func_entry(void *call_pc)
+> +{
+> +}
+> +EXPORT_SYMBOL(__tsan_func_entry);
+> +void __tsan_func_exit(void)
+> +{
+> +}
+> +EXPORT_SYMBOL(__tsan_func_exit);
+> +void __tsan_init(void)
+> +{
+> +}
+> +EXPORT_SYMBOL(__tsan_init);
+[...]
 
-The fix has been evaluated when profiling miniFE [1] (C++, OpenMP)
-workload running 64 threads on Intel Skylake EP(64 core, 2 sockets):
+--yrj/dFKFPuw6o+aM
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  $ perf report --call-graph callee,flat
+-----BEGIN PGP SIGNATURE-----
 
-5.3.0-rc6+ (tip perf/core) - fixed
+iQEzBAABCAAdFiEEj5IosQTPz8XU1wRHSXnow7UH+rgFAl2m5gMACgkQSXnow7UH
++rjJegf/Rrq3dKwfP4Vyd25nX8MIlEeiMrDXyxhCS2tQFw7EfcgilRD8INFnob38
+H/FZ9xR3ndkcpXmoq64gGCN+dEULY78jI7Zg1fpnvUcoVI+q7Hc43PWERvU3otLo
+c65FZXO36WKdEg0PJ//SWfSgwQBDfUdjmJ+17YBUd/78SleSsDk9PQNm+A6yb+u5
+5jsmrV1uo7vDA+B7/n8Pn06Zu8Uwi0qZn9aWQzoGwmAFrwaF7KRbvWX86p2SMr6k
+Tqi7Rpp0uoJDTBFyZg3Dmnizqh81BsHEEQtI3Yjh6bKUpGdre0tyMNUVRYHpQaYX
+oVHK6bV3bKlerxpvUT/SE2yOUOBGtw==
+=zQTb
+-----END PGP SIGNATURE-----
 
--   92.66%    82.64%  miniFE.x  libiomp5.so         [.] _INTERNAL_25_______src_kmp_barrier_cpp_1d20fae8::__kmp_hyper_barrier_release
-   - 69.14% _INTERNAL_25_______src_kmp_barrier_cpp_1d20fae8::__kmp_hyper_barrier_release
-        __kmp_fork_barrier
-        __kmp_launch_thread
-        _INTERNAL_24_______src_z_Linux_util_c_3e0095e6::__kmp_launch_worker
-        start_thread
-        __clone
-   - 21.89% _INTERNAL_25_______src_kmp_barrier_cpp_1d20fae8::__kmp_hyper_barrier_release
-        __kmp_barrier
-        __kmpc_reduce_nowait
-        miniFE::cg_solve<miniFE::CSRMatrix<double, int, int>, miniFE::Vector<double, int, int>, miniFE::matvec_std<miniFE::CSRMatrix<double, int, int>, miniFE::Vector<double, int, in
-        __kmp_invoke_microtask
-        __kmp_invoke_task_func
-        __kmp_launch_thread
-        _INTERNAL_24_______src_z_Linux_util_c_3e0095e6::__kmp_launch_worker
-        start_thread
-        __clone
-   - 1.63% _INTERNAL_25_______src_kmp_barrier_cpp_1d20fae8::__kmp_hyper_barrier_release
-        __kmp_barrier
-        __kmpc_reduce_nowait
-        main
-        __kmp_invoke_microtask
-        __kmp_invoke_task_func
-        __kmp_launch_thread
-        _INTERNAL_24_______src_z_Linux_util_c_3e0095e6::__kmp_launch_worker
-        start_thread
-        __clone
-
-5.0.13-300.fc30.x86_64 - no fix
-
--   90.29%    81.01%  miniFE.x  libiomp5.so         [.] _INTERNAL_25_______src_kmp_barrier_cpp_1d20fae8::__kmp_hyper_barrier_release
-   - 33.45% _INTERNAL_25_______src_kmp_barrier_cpp_1d20fae8::__kmp_hyper_barrier_release
-        __kmp_fork_barrier
-        __kmp_launch_thread
-        _INTERNAL_24_______src_z_Linux_util_c_3e0095e6::__kmp_launch_worker
-        start_thread
-        __clone
-     87.63% _INTERNAL_25_______src_kmp_barrier_cpp_1d20fae8::__kmp_hyper_barrier_release
-   - 54.79% _INTERNAL_25_______src_kmp_barrier_cpp_1d20fae8::__kmp_hyper_barrier_release
-        __kmp_fork_barrier
-        __kmp_launch_thread
-   - 9.18% _INTERNAL_25_______src_kmp_barrier_cpp_1d20fae8::__kmp_hyper_barrier_release
-        __kmp_barrier
-        __kmpc_reduce_nowait
-        miniFE::cg_solve<miniFE::CSRMatrix<double, int, int>, miniFE::Vector<double, int, int>, miniFE::matvec_std<miniFE::CSRMatrix<double, int, int>, miniFE::Vector<double, int, in
-        __kmp_invoke_microtask
-        __kmp_invoke_task_func
-        __kmp_launch_thread
-        _INTERNAL_24_______src_z_Linux_util_c_3e0095e6::__kmp_launch_worker
-        start_thread
-        __clone
-   - 41.28% _INTERNAL_25_______src_kmp_barrier_cpp_1d20fae8::__kmp_hyper_barrier_release
-        __kmp_fork_barrier
-        __kmp_launch_thread
-        _INTERNAL_24_______src_z_Linux_util_c_3e0095e6::__kmp_launch_worker
-   - 15.77% _INTERNAL_25_______src_kmp_barrier_cpp_1d20fae8::__kmp_hyper_barrier_release
-        __kmp_barrier
-        __kmpc_reduce_nowait
-        miniFE::cg_solve<miniFE::CSRMatrix<double, int, int>, miniFE::Vector<double, int, int>, miniFE::matvec_std<miniFE::CSRMatrix<double, int, int>, miniFE::Vector<double, int, in
-        __kmp_invoke_microtask
-        __kmp_invoke_task_func
-        __kmp_launch_thread
-   - 11.56% _INTERNAL_25_______src_kmp_barrier_cpp_1d20fae8::__kmp_hyper_barrier_release
-        __kmp_barrier
-        __kmpc_reduce_nowait
-        miniFE::cg_solve<miniFE::CSRMatrix<double, int, int>, miniFE::Vector<double, int, int>, miniFE::matvec_std<miniFE::CSRMatrix<double, int, int>, miniFE::Vector<double, int, in
-        __kmp_invoke_microtask
-        __kmp_invoke_task_func
-        __kmp_launch_thread
-        _INTERNAL_24_______src_z_Linux_util_c_3e0095e6::__kmp_launch_worker
-   - 2.33% _INTERNAL_25_______src_kmp_barrier_cpp_1d20fae8::__kmp_hyper_barrier_release
-        __kmp_barrier
-        __kmpc_reduce_nowait
-        main
-        __kmp_invoke_microtask
-        __kmp_invoke_task_func
-        __kmp_launch_thread
-        _INTERNAL_24_______src_z_Linux_util_c_3e0095e6::__kmp_launch_worker
-        start_thread
-        __clone
-     0.67% _INTERNAL_25_______src_kmp_barrier_cpp_1d20fae8::__kmp_hyper_barrier_gather
-     0.57% __kmp_hardware_timestamp
-
-[1] https://www.hpcadvisorycouncil.com/pdf/miniFE_Analysis_and_Profiling.pdf
-
----
-Alexey Budankov (4):
-  perf/core,x86: introduce sync_task_ctx() method at struct pmu
-  perf/x86: install platform specific sync_task_ctx adapter
-  perf/x86/intel: implement LBR callstacks context synchronization
-  perf/core,x86: synchronize PMU task contexts on optimized context
-    switches
-
- arch/x86/events/core.c       |  7 +++++++
- arch/x86/events/intel/core.c |  7 +++++++
- arch/x86/events/intel/lbr.c  |  9 +++++++++
- arch/x86/events/perf_event.h | 11 +++++++++++
- include/linux/perf_event.h   |  7 +++++++
- kernel/events/core.c         |  9 +++++++++
- 6 files changed, 50 insertions(+)
-
----
-Changes in v2:
-- implemented sync_task_ctx() method at perf,x86,intel pmu types;
-- employed the method on the optimized context switch path between 
-  equivalent perf event contexts;
-
--- 
-2.20.1
-
+--yrj/dFKFPuw6o+aM--
