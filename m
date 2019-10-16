@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E543D9F3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CC29DA0EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:26:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729939AbfJPVxc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:53:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42182 "EHLO mail.kernel.org"
+        id S1732849AbfJPWRY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:17:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394842AbfJPVxX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:53:23 -0400
+        id S2395092AbfJPVyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:54:55 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93A6721925;
-        Wed, 16 Oct 2019 21:53:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B88521928;
+        Wed, 16 Oct 2019 21:54:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262802;
-        bh=mYrFo0W9gI8djX/nmVkmDQqAzDr5zN+mypISr36JtF0=;
+        s=default; t=1571262894;
+        bh=+IG6tGYgGoLbuBZ79yfPKMgVZv30lypkPm307m9NWhE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0+LT/8stROdzAdiKjWubc5if38PmqGqikDgzSB0BjrnNX9zIOtn4qObn4Pu78S7uX
-         lal70PlTnEW0+sblJzhIf8lqWtl37EnNh+fjvDqkrEKFZRl4QPEHyXwpFptgEsr9A7
-         3qDn5cg6x0OW5nmGqQc6mwnyLQKq+T7FJXgy5z0Q=
+        b=ozkMzroh/oEI6nE29Lw1ux/fR1QQcdjsGgAMJ2SG1IbRfTS+am/MgqhEEdHq0hb3v
+         CrelDg9DeV2yUvG6aQiIywHmNjm7UR/FwsZ+8BoGLmiB2OcBFJNJsh1NzNJ/Qim/00
+         jJjGvDV+nvUUdorcyOI6oCKz7vtscCTLZW+fqhgM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sean Nyekjaer <sean@geanix.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.4 08/79] can: mcp251x: mcp251x_hw_reset(): allow more time after a reset
-Date:   Wed, 16 Oct 2019 14:49:43 -0700
-Message-Id: <20191016214737.921480788@linuxfoundation.org>
+        stable@vger.kernel.org, Li RongQing <lirongqing@baidu.com>,
+        Liang ZhiCheng <liangzhicheng@baidu.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.9 11/92] timer: Read jiffies once when forwarding base clk
+Date:   Wed, 16 Oct 2019 14:49:44 -0700
+Message-Id: <20191016214807.820860828@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214729.758892904@linuxfoundation.org>
-References: <20191016214729.758892904@linuxfoundation.org>
+In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
+References: <20191016214759.600329427@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,57 +44,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marc Kleine-Budde <mkl@pengutronix.de>
+From: Li RongQing <lirongqing@baidu.com>
 
-commit d84ea2123f8d27144e3f4d58cd88c9c6ddc799de upstream.
+commit e430d802d6a3aaf61bd3ed03d9404888a29b9bf9 upstream.
 
-Some boards take longer than 5ms to power up after a reset, so allow
-some retries attempts before giving up.
+The timer delayed for more than 3 seconds warning was triggered during
+testing.
 
-Fixes: ff06d611a31c ("can: mcp251x: Improve mcp251x_hw_reset()")
-Cc: linux-stable <stable@vger.kernel.org>
-Tested-by: Sean Nyekjaer <sean@geanix.com>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+  Workqueue: events_unbound sched_tick_remote
+  RIP: 0010:sched_tick_remote+0xee/0x100
+  ...
+  Call Trace:
+   process_one_work+0x18c/0x3a0
+   worker_thread+0x30/0x380
+   kthread+0x113/0x130
+   ret_from_fork+0x22/0x40
+
+The reason is that the code in collect_expired_timers() uses jiffies
+unprotected:
+
+    if (next_event > jiffies)
+        base->clk = jiffies;
+
+As the compiler is allowed to reload the value base->clk can advance
+between the check and the store and in the worst case advance farther than
+next event. That causes the timer expiry to be delayed until the wheel
+pointer wraps around.
+
+Convert the code to use READ_ONCE()
+
+Fixes: 236968383cf5 ("timers: Optimize collect_expired_timers() for NOHZ")
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+Signed-off-by: Liang ZhiCheng <liangzhicheng@baidu.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/1568894687-14499-1-git-send-email-lirongqing@baidu.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/spi/mcp251x.c |   19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ kernel/time/timer.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/net/can/spi/mcp251x.c
-+++ b/drivers/net/can/spi/mcp251x.c
-@@ -627,7 +627,7 @@ static int mcp251x_setup(struct net_devi
- static int mcp251x_hw_reset(struct spi_device *spi)
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -1586,21 +1586,23 @@ void timer_clear_idle(void)
+ static int collect_expired_timers(struct timer_base *base,
+ 				  struct hlist_head *heads)
  {
- 	struct mcp251x_priv *priv = spi_get_drvdata(spi);
--	u8 reg;
-+	unsigned long timeout;
- 	int ret;
- 
- 	/* Wait for oscillator startup timer after power up */
-@@ -641,10 +641,19 @@ static int mcp251x_hw_reset(struct spi_d
- 	/* Wait for oscillator startup timer after reset */
- 	mdelay(MCP251X_OST_DELAY_MS);
- 
--	reg = mcp251x_read_reg(spi, CANSTAT);
--	if ((reg & CANCTRL_REQOP_MASK) != CANCTRL_REQOP_CONF)
--		return -ENODEV;
--
-+	/* Wait for reset to finish */
-+	timeout = jiffies + HZ;
-+	while ((mcp251x_read_reg(spi, CANSTAT) & CANCTRL_REQOP_MASK) !=
-+	       CANCTRL_REQOP_CONF) {
-+		usleep_range(MCP251X_OST_DELAY_MS * 1000,
-+			     MCP251X_OST_DELAY_MS * 1000 * 2);
++	unsigned long now = READ_ONCE(jiffies);
 +
-+		if (time_after(jiffies, timeout)) {
-+			dev_err(&spi->dev,
-+				"MCP251x didn't enter in conf mode after reset\n");
-+			return -EBUSY;
-+		}
-+	}
- 	return 0;
- }
+ 	/*
+ 	 * NOHZ optimization. After a long idle sleep we need to forward the
+ 	 * base to current jiffies. Avoid a loop by searching the bitfield for
+ 	 * the next expiring timer.
+ 	 */
+-	if ((long)(jiffies - base->clk) > 2) {
++	if ((long)(now - base->clk) > 2) {
+ 		unsigned long next = __next_timer_interrupt(base);
  
+ 		/*
+ 		 * If the next timer is ahead of time forward to current
+ 		 * jiffies, otherwise forward to the next expiry time:
+ 		 */
+-		if (time_after(next, jiffies)) {
++		if (time_after(next, now)) {
+ 			/* The call site will increment clock! */
+-			base->clk = jiffies - 1;
++			base->clk = now - 1;
+ 			return 0;
+ 		}
+ 		base->clk = next;
 
 
