@@ -2,115 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6402D8BBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:51:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A94FD8BC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:53:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390068AbfJPIv0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 04:51:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51868 "EHLO mx1.suse.de"
+        id S2391686AbfJPIxc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 04:53:32 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:60290 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726640AbfJPIv0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 04:51:26 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 557A7AF5D;
-        Wed, 16 Oct 2019 08:51:24 +0000 (UTC)
-Date:   Wed, 16 Oct 2019 10:51:23 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/page_alloc: Make alloc_gigantic_page() available for
- general use
-Message-ID: <20191016085123.GO317@dhcp22.suse.cz>
-References: <1571211293-29974-1-git-send-email-anshuman.khandual@arm.com>
- <c7ac9f99-a34f-c553-b216-b847d093cae9@redhat.com>
+        id S1726640AbfJPIxb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 04:53:31 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 6F41C6A52E32BD6B3D7B;
+        Wed, 16 Oct 2019 16:53:28 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Wed, 16 Oct 2019
+ 16:53:17 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <laurent.pinchart@ideasonboard.com>, <mchehab@kernel.org>,
+        <gregkh@linuxfoundation.org>
+CC:     <linux-media@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] staging: media: omap4iss: use devm_platform_ioremap_resource() to simplify code
+Date:   Wed, 16 Oct 2019 16:51:36 +0800
+Message-ID: <20191016085136.22812-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c7ac9f99-a34f-c553-b216-b847d093cae9@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 16-10-19 10:08:21, David Hildenbrand wrote:
-> On 16.10.19 09:34, Anshuman Khandual wrote:
-[...]
-> > +static bool pfn_range_valid_contig(struct zone *z, unsigned long start_pfn,
-> > +				   unsigned long nr_pages)
-> > +{
-> > +	unsigned long i, end_pfn = start_pfn + nr_pages;
-> > +	struct page *page;
-> > +
-> > +	for (i = start_pfn; i < end_pfn; i++) {
-> > +		page = pfn_to_online_page(i);
-> > +		if (!page)
-> > +			return false;
-> > +
-> > +		if (page_zone(page) != z)
-> > +			return false;
-> > +
-> > +		if (PageReserved(page))
-> > +			return false;
-> > +
-> > +		if (page_count(page) > 0)
-> > +			return false;
-> > +
-> > +		if (PageHuge(page))
-> > +			return false;
-> > +	}
-> 
-> We might still try to allocate a lot of ranges that contain unmovable data
-> (we could avoid isolating a lot of page blocks in the first place). I'd love
-> to see something like pfn_range_movable() (similar, but different to
-> is_mem_section_removable(), which uses has_unmovable_pages()).
+Use devm_platform_ioremap_resource() to simplify the code a bit.
+This is detected by coccinelle.
 
-Just to make sure I understand. Do you want has_unmovable_pages to be
-called inside pfn_range_valid_contig?
-[...]
-> > +struct page *alloc_contig_pages(unsigned long nr_pages, gfp_t gfp_mask,
-> > +				int nid, nodemask_t *nodemask)
-> > +{
-> > +	unsigned long ret, pfn, flags;
-> > +	struct zonelist *zonelist;
-> > +	struct zone *zone;
-> > +	struct zoneref *z;
-> > +
-> > +	zonelist = node_zonelist(nid, gfp_mask);
-> > +	for_each_zone_zonelist_nodemask(zone, z, zonelist,
-> > +					gfp_zone(gfp_mask), nodemask) {
-> 
-> One important part is to never use the MOVABLE zone here (otherwise
-> unmovable data would end up on the movable zone). But I guess the caller is
-> responsible for that (not pass GFP_MOVABLE) like gigantic pages do.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/staging/media/omap4iss/iss.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-Well, if the caller uses GFP_MOVABLE then the movability should be
-implemented in some form. If that is not the case then it is a bug on
-the caller behalf.
-
-> > +		spin_lock_irqsave(&zone->lock, flags);
-> > +
-> > +		pfn = ALIGN(zone->zone_start_pfn, nr_pages);
-> 
-> This alignment does not make too much sense when allowing passing in !power
-> of two orders. Maybe the caller should specify the requested alignment
-> instead? Or should we enforce this to be aligned to make our life easier for
-> now?
-
-Are there any usecases that would require than the page alignment?
+diff --git a/drivers/staging/media/omap4iss/iss.c b/drivers/staging/media/omap4iss/iss.c
+index 1a966cb..6fb60b5 100644
+--- a/drivers/staging/media/omap4iss/iss.c
++++ b/drivers/staging/media/omap4iss/iss.c
+@@ -908,11 +908,7 @@ static int iss_map_mem_resource(struct platform_device *pdev,
+ 				struct iss_device *iss,
+ 				enum iss_mem_resources res)
+ {
+-	struct resource *mem;
+-
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, res);
+-
+-	iss->regs[res] = devm_ioremap_resource(iss->dev, mem);
++	iss->regs[res] = devm_platform_ioremap_resource(pdev, res);
+ 
+ 	return PTR_ERR_OR_ZERO(iss->regs[res]);
+ }
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
+
+
