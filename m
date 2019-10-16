@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2710DD9E1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 715E9D9E22
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391366AbfJPV4d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:56:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47822 "EHLO mail.kernel.org"
+        id S2395397AbfJPV4j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:56:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406619AbfJPV4S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:56:18 -0400
+        id S2406622AbfJPV4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:56:19 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0F8421D7C;
-        Wed, 16 Oct 2019 21:56:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D996721D7A;
+        Wed, 16 Oct 2019 21:56:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262978;
-        bh=gYkeHv2pVC1gVduuwi6FZhed2yorRXCI+ZgLHcWznLI=;
+        s=default; t=1571262979;
+        bh=0i8NEifPkeXZ3/FmjfKoxUqh11xEvFRrE2wjoyTZt/k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r5yjIjnqkR9CBL3HeE8M6ZY5EUgckgqiTN6JUsDQ8/3nIPEV3wDy5tzu5v7j+R85L
-         ezqdNrLA5BfaS2rRcSUtMHYr5YkHOnXPcDlzvr7V+T8CKaTzRpwNJaEUymj9mXh8yY
-         oTeegnhAiTxTSIeQXPI2/TIHAvA8MJ3bqN5fRtfU=
+        b=prpysJtTog7q4t5tlDEUvAybARKaYjym8dRLhtMEmZOwHLyuPoWN5M1HUiTyRw7+G
+         4tL38y2EspL90k+fmhzLHcMBsMIZYR0BRZUk04eCT2/RJYgXGxDyNnKN1DwZRWQQd4
+         S4oe+Q8DowuNpv9ogK0MBhSCqOzdFDPuJtXX9dPw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
         Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.14 47/65] CIFS: Force revalidate inode when dentry is stale
-Date:   Wed, 16 Oct 2019 14:51:01 -0700
-Message-Id: <20191016214834.707923238@linuxfoundation.org>
+Subject: [PATCH 4.14 48/65] CIFS: Force reval dentry if LOOKUP_REVAL flag is set
+Date:   Wed, 16 Oct 2019 14:51:02 -0700
+Message-Id: <20191016214834.999868151@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
 References: <20191016214756.457746573@linuxfoundation.org>
@@ -45,16 +45,14 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Pavel Shilovsky <piastryyy@gmail.com>
 
-commit c82e5ac7fe3570a269c0929bf7899f62048e7dbc upstream.
+commit 0b3d0ef9840f7be202393ca9116b857f6f793715 upstream.
 
-Currently the client indicates that a dentry is stale when inode
-numbers or type types between a local inode and a remote file
-don't match. If this is the case attributes is not being copied
-from remote to local, so, it is already known that the local copy
-has stale metadata. That's why the inode needs to be marked for
-revalidation in order to tell the VFS to lookup the dentry again
-before openning a file. This prevents unexpected stale errors
-to be returned to the user space when openning a file.
+Mark inode for force revalidation if LOOKUP_REVAL flag is set.
+This tells the client to actually send a QueryInfo request to
+the server to obtain the latest metadata in case a directory
+or a file were changed remotely. Only do that if the client
+doesn't have a lease for the file to avoid unneeded round
+trips to the server.
 
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
@@ -62,42 +60,36 @@ Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/inode.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ fs/cifs/dir.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/fs/cifs/inode.c
-+++ b/fs/cifs/inode.c
-@@ -410,6 +410,7 @@ int cifs_get_inode_info_unix(struct inod
- 		/* if uniqueid is different, return error */
- 		if (unlikely(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_SERVER_INUM &&
- 		    CIFS_I(*pinode)->uniqueid != fattr.cf_uniqueid)) {
-+			CIFS_I(*pinode)->time = 0; /* force reval */
- 			rc = -ESTALE;
- 			goto cgiiu_exit;
- 		}
-@@ -417,6 +418,7 @@ int cifs_get_inode_info_unix(struct inod
- 		/* if filetype is different, return error */
- 		if (unlikely(((*pinode)->i_mode & S_IFMT) !=
- 		    (fattr.cf_mode & S_IFMT))) {
-+			CIFS_I(*pinode)->time = 0; /* force reval */
- 			rc = -ESTALE;
- 			goto cgiiu_exit;
- 		}
-@@ -925,6 +927,7 @@ cifs_get_inode_info(struct inode **inode
- 		/* if uniqueid is different, return error */
- 		if (unlikely(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_SERVER_INUM &&
- 		    CIFS_I(*inode)->uniqueid != fattr.cf_uniqueid)) {
-+			CIFS_I(*inode)->time = 0; /* force reval */
- 			rc = -ESTALE;
- 			goto cgii_exit;
- 		}
-@@ -932,6 +935,7 @@ cifs_get_inode_info(struct inode **inode
- 		/* if filetype is different, return error */
- 		if (unlikely(((*inode)->i_mode & S_IFMT) !=
- 		    (fattr.cf_mode & S_IFMT))) {
-+			CIFS_I(*inode)->time = 0; /* force reval */
- 			rc = -ESTALE;
- 			goto cgii_exit;
- 		}
+--- a/fs/cifs/dir.c
++++ b/fs/cifs/dir.c
+@@ -841,10 +841,16 @@ lookup_out:
+ static int
+ cifs_d_revalidate(struct dentry *direntry, unsigned int flags)
+ {
++	struct inode *inode;
++
+ 	if (flags & LOOKUP_RCU)
+ 		return -ECHILD;
+ 
+ 	if (d_really_is_positive(direntry)) {
++		inode = d_inode(direntry);
++		if ((flags & LOOKUP_REVAL) && !CIFS_CACHE_READ(CIFS_I(inode)))
++			CIFS_I(inode)->time = 0; /* force reval */
++
+ 		if (cifs_revalidate_dentry(direntry))
+ 			return 0;
+ 		else {
+@@ -855,7 +861,7 @@ cifs_d_revalidate(struct dentry *direntr
+ 			 * attributes will have been updated by
+ 			 * cifs_revalidate_dentry().
+ 			 */
+-			if (IS_AUTOMOUNT(d_inode(direntry)) &&
++			if (IS_AUTOMOUNT(inode) &&
+ 			   !(direntry->d_flags & DCACHE_NEED_AUTOMOUNT)) {
+ 				spin_lock(&direntry->d_lock);
+ 				direntry->d_flags |= DCACHE_NEED_AUTOMOUNT;
 
 
