@@ -2,83 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 470D4D8518
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 02:52:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F290CD851A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 02:55:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390376AbfJPAwf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 20:52:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32956 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726315AbfJPAwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 20:52:34 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDBB62067B;
-        Wed, 16 Oct 2019 00:52:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571187154;
-        bh=A/u6kf+idGmi0psouuwo2uYEmwrcJV3/rAZxg91qHqE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=r19ysU3rAAeZjA20PGXZfcyCuNTanJ//ncuAzJyhWwBqaGSRbFW87Etnhh8gO5p44
-         2UlV1lUL06p7snIdPhtRNozDVafNOXaOyFxXmQrpz71aQVNJAsm0+N+Z0ihPQBLn7y
-         ekjRiYktKe+zcw1od2VAC5IRwSB1OUpLjQKSAPUo=
-Date:   Tue, 15 Oct 2019 17:52:32 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfs: fsmount: add missing mntget()
-Message-ID: <20191016005232.GA726@sol.localdomain>
-Mail-Followup-To: Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org
-References: <20190610183031.GE63833@gmail.com>
- <20190612184313.143456-1-ebiggers@kernel.org>
- <20190613084728.GA32129@miu.piliscsaba.redhat.com>
- <20190709230029.GO641@sol.localdomain>
- <20190710003113.GC17978@ZenIV.linux.org.uk>
+        id S2390407AbfJPAzL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 20:55:11 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:52150 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726315AbfJPAzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Oct 2019 20:55:11 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id D0656E38D07370F6AE70;
+        Wed, 16 Oct 2019 08:55:07 +0800 (CST)
+Received: from [127.0.0.1] (10.177.96.96) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Wed, 16 Oct 2019
+ 08:54:57 +0800
+Subject: Re: [PATCH -next] usb: typec: add dependency for TYPEC_HD3SS3220
+To:     <heikki.krogerus@linux.intel.com>, <gregkh@linuxfoundation.org>,
+        <biju.das@bp.renesas.com>
+CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+References: <20191009014707.38716-1-maowenan@huawei.com>
+From:   maowenan <maowenan@huawei.com>
+Message-ID: <ff1837bd-d6eb-a296-f7d9-f2988d5d2256@huawei.com>
+Date:   Wed, 16 Oct 2019 08:54:53 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190710003113.GC17978@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191009014707.38716-1-maowenan@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.96.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 01:31:13AM +0100, Al Viro wrote:
-> On Tue, Jul 09, 2019 at 04:00:29PM -0700, Eric Biggers wrote:
-> 
-> > > index 49a058c73e4c..26f74e092bd9 100644
-> > > --- a/fs/pnode.h
-> > > +++ b/fs/pnode.h
-> > > @@ -44,7 +44,7 @@ int propagate_mount_busy(struct mount *, int);
-> > >  void propagate_mount_unlock(struct mount *);
-> > >  void mnt_release_group_id(struct mount *);
-> > >  int get_dominating_id(struct mount *mnt, const struct path *root);
-> > > -unsigned int mnt_get_count(struct mount *mnt);
-> > > +int mnt_get_count(struct mount *mnt);
-> > >  void mnt_set_mountpoint(struct mount *, struct mountpoint *,
-> > >  			struct mount *);
-> > >  void mnt_change_mountpoint(struct mount *parent, struct mountpoint *mp,
-> > 
-> > Miklos, are you planning to send this as a formal patch?
-> 
-> Hold it for a while, OK?  There's an unpleasant issue (a very long-standing
-> one) with boxen that have an obscene amount of RAM.  Some of the counters
-> involved will need to become long.  This is the coming cycle fodder (mounts
-> and inodes are relatively easy; it's dentry->d_count that brings arseloads
-> of fun) and I'd rather deal with that sanity check as part of the same series.
-> It's not forgotten...  Patch series re limiting the number of negative
-> dentries is also getting into the same mix.  Watch #work.dcache - what's
-> in there is basically prep work for the big pile for the next cycle; it'll
-> be interesting...
+kindly ping.
 
-Al, whatever happened to the refcounting patches you mentioned here?
+On 2019/10/9 9:47, Mao Wenan wrote:
+> If CONFIG_TYPEC_HD3SS3220=y, CONFIG_USB_ROLE_SWITCH=m, below errors
+> can be found:
+> drivers/usb/typec/hd3ss3220.o: In function `hd3ss3220_remove':
+> hd3ss3220.c:(.text+0x64): undefined reference to `usb_role_switch_put'
+> drivers/usb/typec/hd3ss3220.o: In function `hd3ss3220_dr_set':
+> hd3ss3220.c:(.text+0x154): undefined reference to `usb_role_switch_set_role'
+> drivers/usb/typec/hd3ss3220.o: In function `hd3ss3220_set_role':
+> hd3ss3220.c:(.text+0x294): undefined reference to `usb_role_switch_set_role'
+> hd3ss3220.c:(.text+0x2f4): undefined reference to `usb_role_switch_set_role'
+> hd3ss3220.c:(.text+0x348): undefined reference to `usb_role_switch_set_role'
+> hd3ss3220.c:(.text+0x390): undefined reference to `usb_role_switch_set_role'
+> drivers/usb/typec/hd3ss3220.o: In function `hd3ss3220_probe':
+> hd3ss3220.c:(.text+0x5e8): undefined reference to `fwnode_usb_role_switch_get'
+> hd3ss3220.c:(.text+0x8a4): undefined reference to `usb_role_switch_put'
+> make: *** [vmlinux] Error 1
+> 
+> This patch add dependency USB_ROLE_SWITCH for TYPEC_HD3SS3220.
+> 
+> Fixes: 1c48c759ef4b ("usb: typec: driver for TI HD3SS3220 USB Type-C DRP port controller")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+> ---
+>  drivers/usb/typec/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/usb/typec/Kconfig b/drivers/usb/typec/Kconfig
+> index aceb2af..b4f2aac 100644
+> --- a/drivers/usb/typec/Kconfig
+> +++ b/drivers/usb/typec/Kconfig
+> @@ -53,6 +53,7 @@ source "drivers/usb/typec/ucsi/Kconfig"
+>  config TYPEC_HD3SS3220
+>  	tristate "TI HD3SS3220 Type-C DRP Port controller driver"
+>  	depends on I2C
+> +	depends on USB_ROLE_SWITCH
+>  	help
+>  	  Say Y or M here if your system has TI HD3SS3220 Type-C DRP Port
+>  	  controller driver.
+> 
 
-- Eric
