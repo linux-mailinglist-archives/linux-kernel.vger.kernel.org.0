@@ -2,120 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F86CD9462
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 16:54:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15E02D9467
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 16:55:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404630AbfJPOyn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 10:54:43 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:44949 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727054AbfJPOym (ORCPT
+        id S2404843AbfJPOzL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 10:55:11 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:47238 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727054AbfJPOzK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 10:54:42 -0400
-Received: by mail-ed1-f68.google.com with SMTP id r16so21519092edq.11
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 07:54:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ge8y9M+PbIEIsapWKOry+7z8a5UxWiYE6qcowbBaIEY=;
-        b=RZ2nNU4CxUB362lxcFHzsFyB/ttPZRXY591wLbgsRSPYGnYuP2/wVDVREwvk28/S9v
-         8oW1qbdzR1sg6KTB3hrziFj4xTrl6Bdd/0bboi7Z7tDaZJBvQvaQL7nvbSigH/OTd1Bx
-         kRy/Jmq4qLbhGHsl2wg6CE+mXp1eDjsPwwiQWjT8IlfaJ4QslUr7JXKppy/IaIsF7SLJ
-         30rveF02RMH/yt3fYp553QfKTbiIQ99QAuohegZ0tdBdCT7lmjxS7V/mSw0ncNrBy/Yq
-         Dk9apRozdOeRGrQ2qOxP/IPZ94Sc37++dP5hyhDqX50zbNLS8Fq1pf/8WT7FvfqLqLRd
-         tyuw==
-X-Gm-Message-State: APjAAAXTwlFbp9qsGviA0fhgZC4cQ/dDeCcLLRy+pH5ZU9KPzCu7hRgp
-        Rfu61dA5jPcgtYKMN9uYlL9l919I46U=
-X-Google-Smtp-Source: APXvYqwV2j60+MJg7ZbQYx6MPV4/o8kKWRWQFQdtAJH7S+dy9w0RKRO4KKTbtEbMBhB4H9wEGX49Qg==
-X-Received: by 2002:a05:6402:1351:: with SMTP id y17mr39437556edw.294.1571237680186;
-        Wed, 16 Oct 2019 07:54:40 -0700 (PDT)
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com. [209.85.128.48])
-        by smtp.gmail.com with ESMTPSA id z39sm4072162edd.46.2019.10.16.07.54.39
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2019 07:54:39 -0700 (PDT)
-Received: by mail-wm1-f48.google.com with SMTP id 5so3284002wmg.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 07:54:39 -0700 (PDT)
-X-Received: by 2002:a1c:a9c5:: with SMTP id s188mr3395636wme.61.1571237678969;
- Wed, 16 Oct 2019 07:54:38 -0700 (PDT)
+        Wed, 16 Oct 2019 10:55:10 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9GElKxc124421;
+        Wed, 16 Oct 2019 14:54:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=r44O34qzc0k+ZTr+o+pUijPkcyNeplDRN6mlyThNKVk=;
+ b=gW2jvxqheJFSkpJbARyXyrxAYhwam+IiUHrBI7xDdX3mqpAyXrVaL07mJLXBog92q36K
+ hcMKXJVeWZbeSshxVzb8ZGeWb16w595Q+aitLnyIdiOyIXkYHFxdprtnn86iWpDSaWkG
+ jvBafqQ+mfPqUDcg9BohYEmetrmmQqyWg+ftVj9NtZSpPH6Vov4BRq7tyfRgpsa2NUQo
+ vsoJvBleBKrttZq5IPjW1KRXPPkarOsgVFE9CFfihBIBFk9xSJIJf7xmkzs6kQa4ftm9
+ wWU6K4bwQE2YDYR9nGW0Wp+dtU2BhODq+wp3F2gNyzFW+0fZKfFCEqpE7k5SfsYfevsR +g== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2vk6sqqjs3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 16 Oct 2019 14:54:54 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9GEmnaj194932;
+        Wed, 16 Oct 2019 14:54:53 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2vnf7thbn4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 16 Oct 2019 14:54:53 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9GEsi97027860;
+        Wed, 16 Oct 2019 14:54:45 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 16 Oct 2019 14:54:40 +0000
+Date:   Wed, 16 Oct 2019 17:54:32 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Chandra Annamaneni <chandra627@gmail.com>
+Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        gneukum1@gmail.com, michael.scheiderer@fau.de,
+        fabian.krueger@fau.de, linux-kernel@vger.kernel.org,
+        simon@nikanor.nu
+Subject: Re: [PATCH 2/4] staging: KPC2000: kpc2000_spi.c: Fix style issues
+ (alignment)
+Message-ID: <20191016145354.GB24678@kadam>
+References: <20191016074927.20056-1-chandra627@gmail.com>
+ <20191016074927.20056-2-chandra627@gmail.com>
 MIME-Version: 1.0
-References: <20191012200524.23512-1-alistair@alistair23.me> <20191016144946.p3tm67vh5lqigndn@gilmour>
-In-Reply-To: <20191016144946.p3tm67vh5lqigndn@gilmour>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 16 Oct 2019 22:54:27 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67QrTJjSO99UNs-=3ZZnK948am11=izRTHT6gZ06E28eA@mail.gmail.com>
-Message-ID: <CAGb2v67QrTJjSO99UNs-=3ZZnK948am11=izRTHT6gZ06E28eA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: sun50i: sopine-baseboard: Expose serial1,
- serial2 and serial3
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     Alistair Francis <alistair@alistair23.me>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        alistair23@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191016074927.20056-2-chandra627@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9412 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910160129
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9412 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910160129
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 10:49 PM Maxime Ripard <mripard@kernel.org> wrote:
->
-> Hi,
->
-> On Sat, Oct 12, 2019 at 01:05:24PM -0700, Alistair Francis wrote:
-> > Follow what the sun50i-a64-pine64.dts does and expose all 5 serial
-> > connections.
-> >
-> > Signed-off-by: Alistair Francis <alistair@alistair23.me>
-> > ---
-> >  .../allwinner/sun50i-a64-sopine-baseboard.dts | 25 +++++++++++++++++++
-> >  1 file changed, 25 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-> > index 124b0b030b28..49c37b21ab36 100644
-> > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-> > @@ -56,6 +56,10 @@
-> >       aliases {
-> >               ethernet0 = &emac;
-> >               serial0 = &uart0;
-> > +             serial1 = &uart1;
-> > +             serial2 = &uart2;
-> > +             serial3 = &uart3;
-> > +             serial4 = &uart4;
-> >       };
-> >
-> >       chosen {
-> > @@ -280,6 +284,27 @@
-> >       };
-> >  };
-> >
-> > +/* On Pi-2 connector */
-> > +&uart2 {
-> > +     pinctrl-names = "default";
-> > +     pinctrl-0 = <&uart2_pins>;
-> > +     status = "disabled";
-> > +};
-> > +
-> > +/* On Euler connector */
-> > +&uart3 {
-> > +     pinctrl-names = "default";
-> > +     pinctrl-0 = <&uart3_pins>;
-> > +     status = "disabled";
-> > +};
-> > +
-> > +/* On Euler connector, RTS/CTS optional */
-> > +&uart4 {
-> > +     pinctrl-names = "default";
-> > +     pinctrl-0 = <&uart4_pins>;
-> > +     status = "disabled";
-> > +};
->
-> Since these are all the default muxing, maybe we should just set that
-> in the DTSI?
+On Wed, Oct 16, 2019 at 12:49:25AM -0700, Chandra Annamaneni wrote:
+> Resolved: "CHECK: Alignment should match open parenthesis" from checkpatch
+> 
 
-Maybe not, since people may want to only use RX/TX, and leave the other
-two pins for GPIO?
+I think you accidentally copied the wrong commit message.  This one
+and the next are the same.  This description doesn't match the patch.
 
-ChenYu
+regards,
+dan carpenter
+
