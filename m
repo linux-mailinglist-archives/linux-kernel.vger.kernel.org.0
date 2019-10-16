@@ -2,129 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C74ED976F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:32:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4520D9789
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:36:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406309AbfJPQcf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 12:32:35 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36597 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390111AbfJPQcf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 12:32:35 -0400
-Received: by mail-wr1-f68.google.com with SMTP id y19so28838817wrd.3;
-        Wed, 16 Oct 2019 09:32:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1IL8KzN4eED7MJkMylgKBjULCBhCLDg5VeoFVt5LveI=;
-        b=eCND4nsOyqYAezMnMU37cySOpp5nLngSuyJa0Z+cWB+wLpxW+4pdPfI3lVITMQhUVb
-         +0XD4rsNM8jrLIZUuXL5R66YYOrsXgThdlFMqP7TrTVsOOaHF/Tc9nOv+ILcB8NCA2d5
-         iZG0V4qY5LNwMj0a+sEydSHjRWnJRbbTDX4c8b5LveFIwo4gozQ52Ce1I/W+Fbpiywq9
-         dOkRnBds7Op7Yrqqj9w2s/fcaIAs6+vYFGZtVeJEKm3PEie841QFnky0wILH1UUf++oN
-         Jw+Me7HTdZBwbIONgu1mtUZ8YMv7sl+NlXYjN8Uphs74vxoqB6BQXq2nUuJkDCFsRld9
-         Bbew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1IL8KzN4eED7MJkMylgKBjULCBhCLDg5VeoFVt5LveI=;
-        b=RwztK+pz0hUXs+5gCEch2k+gsX5UiYVae6pbDFMmM2s4gcNwZ4aQHGi/BczvjZ7A0/
-         ijTZSyhJpJ3KONl7hn9Dr7GMBVSuxQGEUb024M+cLWRGK0bAvm1B8PPFmYl3n6mj4dFc
-         qinXHW0ABPZ4ZY6KKfci0Xij+5PIw303WW1gbBvKNnMAwkG96ouQDIQ/1cJDRR5IX5tI
-         n4FcLMMEA1DpXn+jU7izzBkWJ0v6QOsBrjlSdG4RCWv39no3KKm+v+SQYZXWvvL7c4he
-         BwJjACsXJ6wtgsVGLao0pdSDw2XFGs/UoMHYfAKdQmT2RTcVcM62uc4bZ9TqBbgFyD02
-         Ieow==
-X-Gm-Message-State: APjAAAUnwF67LP9SQ+8uUSkBZOtoM8TP1DzaaGC+SvTlnpNtAUV9y0t6
-        pWMuH0LqMM3cU8e02O7KfvA=
-X-Google-Smtp-Source: APXvYqxuH63ig5G6nfHASUQgTWm3NGdPCshxv4cee3gvvED+PjjhRI5a0HIWN82XSTyHvy9sVMp4Eg==
-X-Received: by 2002:adf:ed84:: with SMTP id c4mr3352316wro.333.1571243552893;
-        Wed, 16 Oct 2019 09:32:32 -0700 (PDT)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id v11sm2970044wml.30.2019.10.16.09.32.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Oct 2019 09:32:31 -0700 (PDT)
-Date:   Wed, 16 Oct 2019 18:32:31 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Sasha Levin <sashal@kernel.org>, devel@driverdev.osuosl.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        linux-kernel@vger.kernel.org,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
-Message-ID: <20191016163231.dgvurzdqcifunw35@pali>
-References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
- <20190829205631.uhz6jdboneej3j3c@pali>
- <184209.1567120696@turing-police>
- <20190829233506.GT5281@sasha-vm>
- <20190830075647.wvhrx4asnkrfkkwk@pali>
- <20191016140353.4hrncxa5wkx47oau@pali>
- <20191016143113.GS31224@sasha-vm>
- <20191016160349.pwghlg566hh2o7id@pali>
- <20191016162211.GA505532@kroah.com>
+        id S2406348AbfJPQgO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 12:36:14 -0400
+Received: from foss.arm.com ([217.140.110.172]:45190 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404745AbfJPQgO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 12:36:14 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A93C628;
+        Wed, 16 Oct 2019 09:36:13 -0700 (PDT)
+Received: from [10.1.196.50] (e108454-lin.cambridge.arm.com [10.1.196.50])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 80C143F68E;
+        Wed, 16 Oct 2019 09:36:12 -0700 (PDT)
+Subject: Re: "Convert the AMD iommu driver to the dma-iommu api" is buggy
+To:     Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <jroedel@suse.de>, Qian Cai <cai@lca.pw>
+Cc:     iommu@lists.linux-foundation.org, Christoph Hellwig <hch@lst.de>,
+        Tom Murphy <murphyt7@tcd.ie>, linux-kernel@vger.kernel.org,
+        Marc Zyngier <maz@kernel.org>
+References: <1571237707.5937.58.camel@lca.pw>
+ <1571237982.5937.60.camel@lca.pw> <20191016153112.GF4695@suse.de>
+ <1571241213.5937.64.camel@lca.pw> <20191016160314.GH4695@suse.de>
+ <a85f264c-3b74-b92b-ac03-aeba3a56946f@arm.com>
+From:   Julien Grall <julien.grall@arm.com>
+Message-ID: <fc510899-4e8b-827f-4c5f-2fe89145ac30@arm.com>
+Date:   Wed, 16 Oct 2019 17:36:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="uulki3czcfzmvzao"
-Content-Disposition: inline
-In-Reply-To: <20191016162211.GA505532@kroah.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <a85f264c-3b74-b92b-ac03-aeba3a56946f@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Robin,
 
---uulki3czcfzmvzao
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 16/10/2019 17:09, Robin Murphy wrote:
+> On 16/10/2019 17:03, Joerg Roedel wrote:
+>> On Wed, Oct 16, 2019 at 11:53:33AM -0400, Qian Cai wrote:
+>>> On Wed, 2019-10-16 at 17:31 +0200, Joerg Roedel wrote:
+>>
+>>> The x86 one might just be a mistake.
+>>>
+>>> diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+>>> index ad05484d0c80..63c4b894751d 100644
+>>> --- a/drivers/iommu/amd_iommu.c
+>>> +++ b/drivers/iommu/amd_iommu.c
+>>> @@ -2542,7 +2542,7 @@ static int amd_iommu_map(struct iommu_domain *dom,
+>>> unsigned long iova,
+>>>          if (iommu_prot & IOMMU_WRITE)
+>>>                  prot |= IOMMU_PROT_IW;
+>>> -       ret = iommu_map_page(domain, iova, paddr, page_size, prot, GFP_KERNEL);
+>>> +       ret = iommu_map_page(domain, iova, paddr, page_size, prot, gfp);
+>>
+>> Yeah, that is a bug, I spotted that too.
+>>
+>>> @@ -1185,7 +1185,7 @@ static struct iommu_dma_msi_page
+>>> *iommu_dma_get_msi_page(struct device *dev,
+>>>          if (!iova)
+>>>                  goto out_free_page;
+>>> -       if (iommu_map(domain, iova, msi_addr, size, prot))
+>>> +       if (iommu_map_atomic(domain, iova, msi_addr, size, prot))
+>>>                  goto out_free_iova;
+>>
+>> Not so sure this is a bug, this code is only about setting up MSIs on
+>> ARM. It probably doesn't need to be atomic.
+> Right, since the iommu_dma_prepare_msi() operation was broken out to happen at 
+> MSI domain setup time, I don't think the comment in there applies any more, so 
+> we can probably stop disabling irqs around the iommu_dma_get_msi_page() call.
 
-On Wednesday 16 October 2019 09:22:11 Greg Kroah-Hartman wrote:
-> On Wed, Oct 16, 2019 at 06:03:49PM +0200, Pali Roh=C3=A1r wrote:
-> > > Can I assume you will be implementing TexFAT support once the spec is
-> > > available?
-> >=20
-> > I cannot promise that I would implement something which I do not know
-> > how is working... It depends on how complicated TexFAT is and also how
-> > future exfat support in kernel would look like.
-> >=20
-> > But I'm interesting in implementing it.
->=20
-> What devices need TexFAT?  I thought it the old devices that used it are
-> long obsolete and gone.  How is this feature going to be tested/used?
+Yes, I agree that it does not need to be atomic anymore.
 
-Hi Greg! Per 3.1.16 of exFAT specification [1], TexFAT extension is the
-only way how to use more FAT tables, like in FAT32 (where you normally
-have two FATs). Secondary FAT table can be used e.g. for redundancy or
-data recovery. For FAT32 volumes, e.g. fsck.fat uses secondary FAT table
-when first one is corrupted.
+Cheers,
 
-Usage of just one FAT table in exFAT is just step backward from FAT32 as
-secondary FAT table is sometimes the only way how to recover broken FAT
-fs. So I do not think that exFAT is for old devices, but rather
-non-exFAT is for old devices. Modern filesystems have journal or other
-technique to do (fast|some) recovery, exFAT has nothing.
-
-And how is this feature going to be used? That depends on specification.
-
-[1] - https://docs.microsoft.com/en-us/windows/win32/fileio/exfat-specifica=
-tion#3116-numberoffats-field
-
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
-
---uulki3czcfzmvzao
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXadGHQAKCRCL8Mk9A+RD
-Ukm6AJ9ab4GclmcB/R83hw/wIqInUfSArwCeLEPDX7XQcg6sMkgXJ6qqa0gQCcE=
-=Ni+T
------END PGP SIGNATURE-----
-
---uulki3czcfzmvzao--
+-- 
+Julien Grall
