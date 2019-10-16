@@ -2,96 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97D37D95FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 17:51:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5136ED9600
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 17:53:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405861AbfJPPv6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 11:51:58 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:33213 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405514AbfJPPv6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 11:51:58 -0400
-Received: by mail-ot1-f65.google.com with SMTP id 60so20580277otu.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 08:51:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/sC5t5Telanb+Whfg1izOfbj9GvpmoEXVoH0REuP7x8=;
-        b=jv5WRXVOVyiic7g3B6hzLWwoGmFzH9DJdzlqxWKAWzstDRy++d1ruHya3dqcZfm8Hg
-         9Rudmq17u3E2k67xCXAr5jpMRggU2FxRcFoykd59F+54u5feq/Skr8jY5/WM5aXNzhR1
-         Gu3x6o7GyLyWxzU6UmHflZ+/keES8JPUxcPr+81tTJ7H0Glo8DLSgyKYhVYN1PthKAtP
-         iDbCnY6amhxSMndZEidLBMj4YuHRZt7cX9keNKkICxWeVvcOoHgpMqR+9uAeAZph0Qsu
-         pjYqXJKQUB2zoAUbExrG0HaOJvkvhwaUOOfM40SIKJiMjBGKfaktJXyppAQXCK9iBeuf
-         e1wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/sC5t5Telanb+Whfg1izOfbj9GvpmoEXVoH0REuP7x8=;
-        b=qN/CtHtgws8IdrOiRmHhEe+UV79IWROu4keOHlmJ3zTkXmsh8ENSM8eXzn3iKp8qwf
-         iw7Hgd6GTIVIrztTDDMfVduT6ywRtWL3gAeTCCwdsdJ3I5aM2UniYzqnxjrERI7XHta+
-         EVWMu0hmfZ8TCD1L+FxBNJXmhnENkOq73snDPgBMc9X99h6/ZoqFv7mtqyYfxkfvdKTd
-         FJkE67AICQ0JgbNFcmLM6WnlcCZvCsFi+AfXy5Dp7tB7bPr9QXqo6PA9Z3anbFAPoQqj
-         y80qad3q9zsL3+o69orHeWyAy3SESfSLGL/8sj+JydcGBYOIeL3NPxNQfR402twBNmC/
-         L3RQ==
-X-Gm-Message-State: APjAAAX1X+aMHgbeFN9pmmGEcoagfVLaKyok22OSjtx3EKdCNXJGe+EG
-        yeDjDMp5AWKhU8WLcK/T7Y5HhbhK
-X-Google-Smtp-Source: APXvYqxYktwrr28slQB53InWNZbt9qZC1OePYPQ0XWGAnQ9+4+SfHMLN5d01QoN/5tuE1e+21JABtg==
-X-Received: by 2002:a05:6830:119a:: with SMTP id u26mr8734058otq.166.1571241116924;
-        Wed, 16 Oct 2019 08:51:56 -0700 (PDT)
-Received: from ubuntu-m2-xlarge-x86 ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id y30sm7512305oix.36.2019.10.16.08.51.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Oct 2019 08:51:56 -0700 (PDT)
-Date:   Wed, 16 Oct 2019 08:51:54 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next v3] arm64: mm: Fix unused variable warning in
- zone_sizes_init
-Message-ID: <20191016155154.GA55959@ubuntu-m2-xlarge-x86>
-References: <20191016031107.30045-1-natechancellor@gmail.com>
- <20191016144713.23792-1-natechancellor@gmail.com>
- <20191016150846.GO49619@arrakis.emea.arm.com>
- <83c223c14c55aff1c8c9b30b0760c7e13c928209.camel@suse.de>
+        id S2405878AbfJPPxf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 11:53:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53322 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726985AbfJPPxf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 11:53:35 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D230520650;
+        Wed, 16 Oct 2019 15:53:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571241214;
+        bh=2aQeCKMudat8SNGBakIrBap6j4bq+bgWrgmVeaKi6zU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ijByLgSxyop2dsaHlNCdO07lOchloezmmgNbZeNWtA5TyMI9wMhu5SjIpv48XwpXZ
+         QSqwS3/7CvktAZWYQq15RRfERk2Lsk7+i3FEysweZiiU8I4gqNqYSO5T0FMPgi4OHr
+         ZLw7TsTLcxaowLsHAa5q78Uj7X3+xueNZZW4bpYY=
+Date:   Wed, 16 Oct 2019 16:53:29 +0100
+From:   Will Deacon <will@kernel.org>
+To:     James Morse <james.morse@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Julien Thierry <julien.thierry@arm.com>
+Subject: Re: [PATCH v2] arm64: entry.S: Do not preempt from IRQ before all
+ cpufeatures are enabled
+Message-ID: <20191016155328.exfa25uc6thdpq7b@willie-the-truck>
+References: <20191015172544.186627-1-james.morse@arm.com>
+ <20191015200755.aavtyhq56lewazah@willie-the-truck>
+ <e6d58ed6-2d5e-8c78-c824-d0d5abff8394@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <83c223c14c55aff1c8c9b30b0760c7e13c928209.camel@suse.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <e6d58ed6-2d5e-8c78-c824-d0d5abff8394@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 05:09:30PM +0200, Nicolas Saenz Julienne wrote:
-> On Wed, 2019-10-16 at 16:08 +0100, Catalin Marinas wrote:
-> > On Wed, Oct 16, 2019 at 07:47:14AM -0700, Nathan Chancellor wrote:
-> > > When building arm64 allnoconfig, CONFIG_ZONE_DMA and CONFIG_ZONE_DMA32
-> > > get disabled so there is a warning about max_dma being unused.
-> > > 
-> > > ../arch/arm64/mm/init.c:215:16: warning: unused variable 'max_dma'
-> > > [-Wunused-variable]
-> > >         unsigned long max_dma = min;
-> > >                       ^
-> > > 1 warning generated.
-> > > 
-> > > Add __maybe_unused to make this clear to the compiler.
-> > > 
-> > > Fixes: 1a8e1cef7603 ("arm64: use both ZONE_DMA and ZONE_DMA32")
-> > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Hi James,
+
+On Wed, Oct 16, 2019 at 10:35:13AM +0100, James Morse wrote:
+> On 15/10/2019 21:07, Will Deacon wrote:
+> > Patch looks good apart from one thing...
 > > 
-> > Thanks. Queued on top of Nicolas' patches for 5.5. I also added Nicolas'
-> > reviewed-by from v2 as I suspect it still stands.
+> > On Tue, Oct 15, 2019 at 06:25:44PM +0100, James Morse wrote:
+> >> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> >> index 2c2e56bd8913..67a1d86981a9 100644
+> >> --- a/include/linux/sched.h
+> >> +++ b/include/linux/sched.h
+> >> @@ -223,6 +223,7 @@ extern long schedule_timeout_uninterruptible(long timeout);
+> >>  extern long schedule_timeout_idle(long timeout);
+> >>  asmlinkage void schedule(void);
+> >>  extern void schedule_preempt_disabled(void);
+> >> +asmlinkage void preempt_schedule_irq(void);
+> > 
+> > I don't understand the need for this hunk, since we're only calling the
+> > function from C now. Please could you explain?
 > 
-> Yes, thanks!
-> 
+> (A prototype is needed to make the thing build[0], but)
 
-Thank you both for reviewing the patch and picking it up!
+Got it, thanks. I'm surprised the prototype doesn't exist already, but it
+looks like we'll be the first C caller.
 
-Cheers,
-Nathan
+I'll queue this as a fix.
+
+Will
