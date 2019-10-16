@@ -2,191 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE590D88F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 09:08:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E92D6D88F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 09:07:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389734AbfJPHHw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 03:07:52 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40010 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389634AbfJPHHv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 03:07:51 -0400
-Received: by mail-lf1-f68.google.com with SMTP id f23so1009886lfk.7
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 00:07:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=FfnwO8vvijCwZxuUL06QD5Tx1fxFqAFTG2kXsJEWJMY=;
-        b=P7jKcqJWpHrW1gaub0fSy2vbAtI/feqgoOpswUlXO9Je+VTo59n3zc/RFhfKNPOHYo
-         X5RCZt1cS1NVGjTKtTS5zTsXPdX2MFhM5jti2LrRKX0HtZjSy6X89TEvTCgHOH6dZApV
-         JhSyjrS8Jv3ik/H7deMyV9fRxuNoNZdx8yPbx2I5BvIs5Y1NXhK115S8cbJvzlW7wgwr
-         m7YhX1l8TsMUm9UfJOnlonv/WJ92jOmqjnwJc2+N757v9eYaQ0dXoLImO+zfrilQHiuR
-         3zAm4rCjVZcgWEW0V4HPRLXhOKetlFT2zdktVefFU2P696B8kikobkWenLpt4C8fmDap
-         BJcA==
+        id S2389453AbfJPHHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 03:07:42 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59028 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389242AbfJPHHl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 03:07:41 -0400
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 227348666C
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 07:07:41 +0000 (UTC)
+Received: by mail-wr1-f71.google.com with SMTP id o10so11265408wrm.22
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 00:07:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=FfnwO8vvijCwZxuUL06QD5Tx1fxFqAFTG2kXsJEWJMY=;
-        b=ZIhPubbKh5NvxVQiBAxGeWywWnDZlP7UojpX77owKIwT657W7Umy80IhDWPXz+dy4h
-         Qn8ElgLDlCMCKgUi6HEWnMXmWGr+vVuKcAVcI92oQVeJmuXnUWdgn86nFNpSF1/Qy83L
-         OUiMyfVR8FV+UdiL+B39MNzCaHp/WhT4HcZSB4pOD+EAyKpxkEU1L5m+CRXn30UkV5dx
-         qLbdwCbYX2KDHa7zbS5Xwq87a3Mq+I/5GGPonRnhynG4XNUFCkdepBgXo6fKtvn56ziP
-         5XcwCpcuA5bRjHHPXdnKUMs6kXXRY0uGbhCrhnp6Dxw9BanBkq0qYvCNCoa+MlulYjIQ
-         31/Q==
-X-Gm-Message-State: APjAAAUOophYsu8C747CAtcmMHR0M6nlIVHacPHI3QnKaSremgRLhCp/
-        gylSSe2Pt/p563GoghwsTzEwkKHC
-X-Google-Smtp-Source: APXvYqz5kC5mHtEuZCkmB220wctQYP7NsY41HDsa9pdKX2nuuRVHlx3tF9FC50FqXmDOK4Pu2/vSxg==
-X-Received: by 2002:a05:6512:403:: with SMTP id u3mr11797775lfk.135.1571209669188;
-        Wed, 16 Oct 2019 00:07:49 -0700 (PDT)
-Received: from localhost.localdomain (c213-102-65-51.bredband.comhem.se. [213.102.65.51])
-        by smtp.gmail.com with ESMTPSA id j191sm1361493lfj.49.2019.10.16.00.07.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2019 00:07:48 -0700 (PDT)
-From:   codekipper@gmail.com
-To:     mripard@kernel.org, wens@csie.org, linux-sunxi@googlegroups.com
-Cc:     linux-arm-kernel@lists.infradead.org, lgirdwood@gmail.com,
-        broonie@kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, be17068@iperbole.bo.it,
-        Marcus Cooper <codekipper@gmail.com>
-Subject: [PATCH v6 5/7] ASoC: sun4i-i2s: Add functions for RX and TX channel mapping
-Date:   Wed, 16 Oct 2019 09:07:38 +0200
-Message-Id: <20191016070740.121435-6-codekipper@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016070740.121435-1-codekipper@gmail.com>
-References: <20191016070740.121435-1-codekipper@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=N+9zhD6sQkjtyZn9LozIr63oV0xoTG40KqwCVlYDKHM=;
+        b=D9zr6l7JKbNusCi5zgJ6K9cD5+HgDlLIiUwtty+qEaLktej6uX/rdRwS7SYpYuoe8c
+         VC4dX12QmSSdlKjqaWuI0G6XNzyOzInedRseiEofEYjGz3me7CTCmQm4+x6aLNoEqqkd
+         9p+9bbEC6NknomSBB5EOtUsevqA6cltDa+I2F4SdiYCpGaS+/TveAwSDNoeBed3G+5+V
+         ZIfvFppKp3Xm9lR9sFwOqQhtFVe9ZhSjejSJQAKt8GshqGO/uJT2Z0zQxUhuY70saP1A
+         +fJ6vW+goGJ2xVynbsn9R2BCIbYRSTXewaxxlHhCm9f5p6sVWtuLMfz3zf833IDaYOGu
+         GHfw==
+X-Gm-Message-State: APjAAAWZeH6QhqsDkFhYTskJZhgkiFz1el/0U6E49nO6GaD1ZYiKBJxh
+        MXnP9ub2wQ/7tl7K1U9qWvUg0fxG/NYuzM139CyZ9sVHB2XXcIDESfIq9bkHx8dEYFql025boIE
+        +03JpFd8qVgOrSxBFbiiRPOJz
+X-Received: by 2002:adf:8295:: with SMTP id 21mr1239232wrc.14.1571209659471;
+        Wed, 16 Oct 2019 00:07:39 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxoZ2u9pyRAua6Ul/ChncLAqQBC2pUX3xcLpP8/GnoCUcKnPgyeub7C/seFKjjOj2y3m+oRsg==
+X-Received: by 2002:adf:8295:: with SMTP id 21mr1239207wrc.14.1571209659089;
+        Wed, 16 Oct 2019 00:07:39 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:ddc7:c53c:581a:7f3e? ([2001:b07:6468:f312:ddc7:c53c:581a:7f3e])
+        by smtp.gmail.com with ESMTPSA id a9sm2047772wmf.14.2019.10.16.00.07.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2019 00:07:38 -0700 (PDT)
+Subject: Re: [PATCH 12/14] KVM: retpolines: x86: eliminate retpoline from
+ vmx.c exit handlers
+To:     Andrea Arcangeli <aarcange@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+References: <20190928172323.14663-1-aarcange@redhat.com>
+ <20190928172323.14663-13-aarcange@redhat.com>
+ <933ca564-973d-645e-fe9c-9afb64edba5b@redhat.com>
+ <20191015164952.GE331@redhat.com>
+ <870aaaf3-7a52-f91a-c5f3-fd3c7276a5d9@redhat.com>
+ <20191015203516.GF331@redhat.com>
+ <f375049a-6a45-c0df-a377-66418c8eb7e8@redhat.com>
+ <20191015234229.GC6487@redhat.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <27cc0d6b-6bd7-fcaf-10b4-37bb566871f8@redhat.com>
+Date:   Wed, 16 Oct 2019 09:07:39 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191015234229.GC6487@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcus Cooper <codekipper@gmail.com>
+On 16/10/19 01:42, Andrea Arcangeli wrote:
+> On Wed, Oct 16, 2019 at 12:22:31AM +0200, Paolo Bonzini wrote:
+>> Oh come on.  0.9 is not 12-years old.  virtio 1.0 is 3.5 years old
+>> (March 2016).  Anything older than 2017 is going to use 0.9.
+> 
+> Sorry if I got the date wrong, but still I don't see the point in
+> optimizing for legacy virtio. I can't justify forcing everyone to
+> execute that additional branch for inb/outb, in the attempt to make
+> legacy virtio faster that nobody should use in combination with
+> bleeding edge KVM in the host.
 
-As we will eventually add multi-channel audio support to the i2s
-then create function calls as opposed to regmap fields to add
-support for different devices.
+Yet you would add CPUID to the list even though it is not even there in
+your benchmarks, and is *never* invoked in a hot path by *any* sane
+program? Some OSes have never gotten virtio 1.0 drivers.  OpenBSD only
+got it earlier this year.
 
-Signed-off-by: Marcus Cooper <codekipper@gmail.com>
----
- sound/soc/sunxi/sun4i-i2s.c | 45 +++++++++++++++++++++++++++++++++----
- 1 file changed, 41 insertions(+), 4 deletions(-)
+>> Your tables give:
+>>
+>> 	Samples	  Samples%  Time%     Min Time  Max time       Avg time
+>> HLT     101128    75.33%    99.66%    0.43us    901000.66us    310.88us
+>> HLT     118474    19.11%    95.88%    0.33us    707693.05us    43.56us
+>>
+>> If "avg time" means the average time to serve an HLT vmexit, I don't
+>> understand how you can have an average time of 0.3ms (1/3000th of a
+>> second) and 100000 samples per second.  Can you explain that to me?
+> 
+> I described it wrong, the bpftrace record was a sleep 5, not a sleep
+> 1. The pipe loop was sure a sleep 1.
 
-diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-index 19988d61a085..63ae9da180f2 100644
---- a/sound/soc/sunxi/sun4i-i2s.c
-+++ b/sound/soc/sunxi/sun4i-i2s.c
-@@ -165,6 +165,8 @@ struct sun4i_i2s_quirks {
- 	void	(*set_rxchanen)(const struct sun4i_i2s *, int);
- 	void	(*set_txchansel)(const struct sun4i_i2s *, int, int);
- 	void	(*set_rxchansel)(const struct sun4i_i2s *, int);
-+	void	(*set_txchanmap)(const struct sun4i_i2s *, int, int);
-+	void	(*set_rxchanmap)(const struct sun4i_i2s *, int);
- };
- 
- struct sun4i_i2s {
-@@ -405,8 +407,8 @@ static int sun4i_i2s_set_chan_cfg(const struct sun4i_i2s *i2s,
- 	unsigned int channels = params_channels(params);
- 
- 	/* Map the channels for playback and capture */
--	regmap_write(i2s->regmap, SUN4I_I2S_TX_CHAN_MAP_REG, 0x76543210);
--	regmap_write(i2s->regmap, SUN4I_I2S_RX_CHAN_MAP_REG, 0x00003210);
-+	i2s->variant->set_txchanmap(i2s, 0, 0x76543210);
-+	i2s->variant->set_rxchanmap(i2s, 0x00003210);
- 
- 	/* Configure the channels */
- 	i2s->variant->set_txchansel(i2s, 0, channels);
-@@ -426,8 +428,8 @@ static int sun8i_i2s_set_chan_cfg(const struct sun4i_i2s *i2s,
- 		slots = i2s->slots;
- 
- 	/* Map the channels for playback and capture */
--	regmap_write(i2s->regmap, SUN8I_I2S_TX_CHAN_MAP_REG, 0x76543210);
--	regmap_write(i2s->regmap, SUN8I_I2S_RX_CHAN_MAP_REG, 0x76543210);
-+	i2s->variant->set_txchanmap(i2s, 0, 0x76543210);
-+	i2s->variant->set_rxchanmap(i2s, 0x00003210);
- 
- 	/* Configure the channels */
- 	i2s->variant->set_txchansel(i2s, 0, channels);
-@@ -534,6 +536,31 @@ static void sun8i_i2s_set_rxchansel(const struct sun4i_i2s *i2s, int channel)
- 			   SUN8I_I2S_TX_CHAN_SEL(channel));
- }
- 
-+static void sun4i_i2s_set_txchanmap(const struct sun4i_i2s *i2s, int output,
-+				    int channel)
-+{
-+	if (output == 0)
-+		regmap_write(i2s->regmap, SUN4I_I2S_TX_CHAN_MAP_REG, channel);
-+}
-+
-+static void sun8i_i2s_set_txchanmap(const struct sun4i_i2s *i2s, int output,
-+				    int channel)
-+{
-+	if (output >= 0 && output < 4)
-+		regmap_write(i2s->regmap,
-+			     SUN8I_I2S_TX_CHAN_MAP_REG + (output * 4), channel);
-+}
-+
-+static void sun4i_i2s_set_rxchanmap(const struct sun4i_i2s *i2s, int channel)
-+{
-+	regmap_write(i2s->regmap, SUN4I_I2S_RX_CHAN_MAP_REG, channel);
-+}
-+
-+static void sun8i_i2s_set_rxchanmap(const struct sun4i_i2s *i2s, int channel)
-+{
-+	regmap_write(i2s->regmap, SUN8I_I2S_RX_CHAN_MAP_REG, channel);
-+}
-+
- static int sun4i_i2s_hw_params(struct snd_pcm_substream *substream,
- 			       struct snd_pcm_hw_params *params,
- 			       struct snd_soc_dai *dai)
-@@ -1154,6 +1181,8 @@ static const struct sun4i_i2s_quirks sun4i_a10_i2s_quirks = {
- 	.set_fmt		= sun4i_i2s_set_soc_fmt,
- 	.set_txchansel		= sun4i_i2s_set_txchansel,
- 	.set_rxchansel		= sun4i_i2s_set_rxchansel,
-+	.set_txchanmap		= sun4i_i2s_set_txchanmap,
-+	.set_rxchanmap		= sun4i_i2s_set_rxchanmap,
- };
- 
- static const struct sun4i_i2s_quirks sun6i_a31_i2s_quirks = {
-@@ -1174,6 +1203,8 @@ static const struct sun4i_i2s_quirks sun6i_a31_i2s_quirks = {
- 	.set_fmt		= sun4i_i2s_set_soc_fmt,
- 	.set_txchansel		= sun4i_i2s_set_txchansel,
- 	.set_rxchansel		= sun4i_i2s_set_rxchansel,
-+	.set_txchanmap		= sun4i_i2s_set_txchanmap,
-+	.set_rxchanmap		= sun4i_i2s_set_rxchanmap,
- };
- 
- /*
-@@ -1199,6 +1230,8 @@ static const struct sun4i_i2s_quirks sun8i_a83t_i2s_quirks = {
- 	.set_fmt		= sun4i_i2s_set_soc_fmt,
- 	.set_txchansel		= sun4i_i2s_set_txchansel,
- 	.set_rxchansel		= sun4i_i2s_set_rxchansel,
-+	.set_txchanmap		= sun4i_i2s_set_txchanmap,
-+	.set_rxchanmap		= sun4i_i2s_set_rxchanmap,
- };
- 
- static const struct sun4i_i2s_quirks sun8i_h3_i2s_quirks = {
-@@ -1223,6 +1256,8 @@ static const struct sun4i_i2s_quirks sun8i_h3_i2s_quirks = {
- 	.set_rxchanen		= sun8i_i2s_set_rxchanen,
- 	.set_txchansel		= sun8i_i2s_set_txchansel,
- 	.set_rxchansel		= sun8i_i2s_set_rxchansel,
-+	.set_txchanmap		= sun8i_i2s_set_txchanmap,
-+	.set_rxchanmap		= sun8i_i2s_set_rxchanmap,
- };
- 
- static const struct sun4i_i2s_quirks sun50i_a64_codec_i2s_quirks = {
-@@ -1243,6 +1278,8 @@ static const struct sun4i_i2s_quirks sun50i_a64_codec_i2s_quirks = {
- 	.set_fmt		= sun4i_i2s_set_soc_fmt,
- 	.set_txchansel		= sun4i_i2s_set_txchansel,
- 	.set_rxchansel		= sun4i_i2s_set_rxchansel,
-+	.set_txchanmap		= sun4i_i2s_set_txchanmap,
-+	.set_rxchanmap		= sun4i_i2s_set_rxchanmap,
- };
- 
- static int sun4i_i2s_init_regmap_fields(struct device *dev,
--- 
-2.23.0
+It still doesn't add up.  0.3ms / 5 is 1/15000th of a second; 43us is
+1/25000th of a second.  Do you have multiple vCPU perhaps?
 
+> The issue is that in production you get a flood more of those with
+> hundred of CPUs, so the exact number doesn't move the needle.
+> This just needs to be frequent enough that the branch cost pay itself off,
+> but the sure thing is that HLT vmexit will not go away unless you execute
+> mwait in guest mode by isolating the CPU in the host.
+
+The number of vmexits doesn't count (for HLT).  What counts is how long
+they take to be serviced, and as long as it's 1us or more the
+optimization is pointless.
+
+Consider these pictures
+
+         w/o optimization                   with optimization
+         ----------------------             -------------------------
+0us      vmexit                             vmexit
+500ns    retpoline                          call vmexit handler directly
+600ns    retpoline                          kvm_vcpu_check_block()
+700ns    retpoline                          kvm_vcpu_check_block()
+800ns    kvm_vcpu_check_block()             kvm_vcpu_check_block()
+900ns    kvm_vcpu_check_block()             kvm_vcpu_check_block()
+...
+39900ns  kvm_vcpu_check_block()             kvm_vcpu_check_block()
+
+                            <interrupt arrives>
+
+40000ns  kvm_vcpu_check_block()             kvm_vcpu_check_block()
+
+
+Unless the interrupt arrives exactly in the few nanoseconds that it
+takes to execute the retpoline, a direct handling of HLT vmexits makes
+*absolutely no difference*.
+
+>> Again: what is the real workload that does thousands of CPUIDs per second?
+> 
+> None, but there are always background CPUID vmexits while there are
+> never inb/outb vmexits.
+> 
+> So the cpuid retpoline removal has a slight chance to pay for the cost
+> of the branch, the inb/outb retpoline removal cannot pay off the cost
+> of the branch.
+
+Please stop considering only the exact configuration of your benchmarks.
+ There are known, valid configurations where outb is a very hot vmexit.
+
+Thanks,
+
+Paolo
