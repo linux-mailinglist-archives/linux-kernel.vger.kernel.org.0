@@ -2,142 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE7EED8BFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:59:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E03D6D8C0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 11:00:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391842AbfJPI7w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 04:59:52 -0400
-Received: from foss.arm.com ([217.140.110.172]:33026 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388817AbfJPI7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 04:59:51 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 940C9142F;
-        Wed, 16 Oct 2019 01:59:50 -0700 (PDT)
-Received: from [10.163.1.216] (unknown [10.163.1.216])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2810F3F6C4;
-        Wed, 16 Oct 2019 01:59:32 -0700 (PDT)
-Subject: Re: [PATCH V6 0/2] mm/debug: Add tests validating architecture page
- table helpers
-To:     Qian Cai <cai@lca.pw>, linux-mm@kvack.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Steven Price <Steven.Price@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Matthew Wilcox <willy@infradead.org>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        James Hogan <jhogan@kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        linux-snps-arc@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-References: <1571131302-32290-1-git-send-email-anshuman.khandual@arm.com>
- <1571150502.5937.39.camel@lca.pw>
- <c052784a-a5d7-878e-cd97-01daa90c0ed8@arm.com>
- <1571164920.5937.45.camel@lca.pw>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <fb1fe447-d30a-21ea-1b85-0d46e14f0872@arm.com>
-Date:   Wed, 16 Oct 2019 14:29:59 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S2391863AbfJPJAS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 05:00:18 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44819 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389871AbfJPJAR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 05:00:17 -0400
+Received: by mail-wr1-f68.google.com with SMTP id z9so27050396wrl.11
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 02:00:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=FWwSZ7wVHB66iuc6hwPySPcSnpuZXmN+p1/bCDDEZAo=;
+        b=UDSYSJtEKugyDuq3KMpdtgOOFzhbwAnFU4ZHVk/+xe+ABJ96+ug84qKCiMiV2jqyQa
+         Njv7sRzHFCpauHdKZFWwRP0m+5MVLn4AhaVYieFt49Ho2dYnBY0vn7k5Ug+Nl/Ghq+o6
+         nveOswF2JtJ4xceyVyyooCOCmvd8HTws5+h5VU6uUQThGLvMa+oqwNKyS+7Twodw3CjA
+         48R3xyCTlsZ47z46SHSH/GQ8WYVK6Xlejnmg/w+peYethFa0qHtGR+77fN48BWDtdUO0
+         srnSh4tnrIuhDEiNUJc01vM7ctZtyAV1kuVzeIJ37ajYYxFRR/T1MHZm8DsbfAfdWTrX
+         9SfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=FWwSZ7wVHB66iuc6hwPySPcSnpuZXmN+p1/bCDDEZAo=;
+        b=uk/MzmI0sWWKErC6TwHyAjSU8UoXdtPQ9UFeS0+EXW/MkFIxLlKHpgu5abqQUgpHW3
+         H3MxxNwsZlgONPe6p4qaF7bm8Z5xJS+UzD/UXq0HBZnu+VKXB8awsrEGLBd24O0FYimd
+         cEJ1JMtE2+FOYNzrxUxmMMxV7xfkQcg6TtS/qgLU09CL1R2VjFHO9INNCgIwULZ11ka+
+         2FjieB4ud91iP/7+iNtitG2QwKvvENDHvokJq1TGu5ioUz6qUqDEZdvWD3xAqY+hdTCE
+         P7eoW107NEareUJfrL7qGeYIhT4IzE17Y2u8MjAghTLn5ymkOOWhegagFwXwRgDqPnry
+         9ptA==
+X-Gm-Message-State: APjAAAXHu1c2Ar9UOyQmIZzPWs6r0dvuD22tyUGAbVgE5tE3Mhagffbn
+        s1Fv7iP8LVnRp3JeF8GMnEtWwg==
+X-Google-Smtp-Source: APXvYqy8jmTWK22einYBZkkJUT3gZQaCWv3cRPLnG6y72qAhJWTSUhHTPba7TgOkJn0GB6oggXGTqA==
+X-Received: by 2002:a05:6000:11cd:: with SMTP id i13mr1616456wrx.197.1571216414621;
+        Wed, 16 Oct 2019 02:00:14 -0700 (PDT)
+Received: from [10.1.4.98] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id p85sm2026845wme.23.2019.10.16.02.00.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 16 Oct 2019 02:00:13 -0700 (PDT)
+Subject: Re: [PATCH v7 4/7] arm64: dts: meson: g12: Add minimal thermal zone
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        lakml <linux-arm-kernel@lists.infradead.org>,
+        linux-amlogic@lists.infradead.org
+References: <20191004090114.30694-1-glaroque@baylibre.com>
+ <20191004090114.30694-5-glaroque@baylibre.com>
+ <CAHLCerOzZ6kc0nrGL+XMi37WuBKUv6E0yzE26wUZ5XoRMS8q6w@mail.gmail.com>
+From:   guillaume La Roque <glaroque@baylibre.com>
+Message-ID: <347c0fe0-62de-8ef5-c1ca-8958fef81820@baylibre.com>
+Date:   Wed, 16 Oct 2019 11:00:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <1571164920.5937.45.camel@lca.pw>
+In-Reply-To: <CAHLCerOzZ6kc0nrGL+XMi37WuBKUv6E0yzE26wUZ5XoRMS8q6w@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-
-On 10/16/2019 12:12 AM, Qian Cai wrote:
-> On Tue, 2019-10-15 at 20:51 +0530, Anshuman Khandual wrote:
+On 10/16/19 1:20 AM, Amit Kucheria wrote:
+> On Fri, Oct 4, 2019 at 2:31 PM Guillaume La Roque <glaroque@baylibre.com> wrote:
+>> Add minimal thermal zone for two temperature sensor
+>> One is located close to the DDR and the other one is
+>> located close to the PLLs (between the CPU and GPU)
 >>
->> On 10/15/2019 08:11 PM, Qian Cai wrote:
->>> The x86 will crash with linux-next during boot due to this series (v5) with the
->>> config below plus CONFIG_DEBUG_VM_PGTABLE=y. I am not sure if v6 would address
->>> it.
->>>
->>> https://raw.githubusercontent.com/cailca/linux-mm/master/x86.config
->>>
->>> [   33.862600][    T1] page:ffffea0009000000 is uninitialized and poisoned
->>> [   33.862608][    T1] raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff
->>> ffffff871140][    T1]  ? _raw_spin_unlock_irq+0x27/0x40
->>> [   33.871140][    T1]  ? rest_init+0x307/0x307
->>> [   33.871140][    T1]  kernel_init+0x11/0x139
->>> [   33.871140][    T1]  ? rest_init+0x307/0x307
->>> [   33.871140][    T1]  ret_from_fork+0x27/0x50
->>> [   33.871140][    T1] Modules linked in:
->>> [   33.871140][    T1] ---[ end trace e99d392b0f7befbd ]---
->>> [   33.871140][    T1] RIP: 0010:alloc_gigantic_page_order+0x3fe/0x490
+>> Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+>> Tested-by: Christian Hewitt <christianshewitt@gmail.com>
+>> Tested-by: Kevin Hilman <khilman@baylibre.com>
+>> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+>> ---
+>>  .../boot/dts/amlogic/meson-g12-common.dtsi    | 57 +++++++++++++++++++
+>>  1 file changed, 57 insertions(+)
 >>
->> Hmm, with defconfig (DEBUG_VM=y and DEBUG_VM_PGTABLE=y) it does not crash but
->> with the config above, it does. Just wondering if it is possible that these
->> pages might not been initialized yet because DEFERRED_STRUCT_PAGE_INIT=y ?
-> 
-> Yes, this patch works fine.
-> 
-> diff --git a/init/main.c b/init/main.c
-> index 676d8020dd29..591be8f9e8e0 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -1177,7 +1177,6 @@ static noinline void __init kernel_init_freeable(void)
->         workqueue_init();
->  
->         init_mm_internals();
-> -       debug_vm_pgtable();
->  
->         do_pre_smp_initcalls();
->         lockup_detector_init();
-> @@ -1186,6 +1185,8 @@ static noinline void __init kernel_init_freeable(void)
->         sched_init_smp();
->  
->         page_alloc_init_late();
-> +       debug_vm_pgtable();
-> +
->         /* Initialize page ext after all struct pages are initialized. */
->         page_ext_init();
-> 
-
-Sure, will keep this in mind if we at all end up with memory allocation approach
-for this test.
-
+>> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+>> index 0660d9ef6a86..a98c16e163c2 100644
+>> --- a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+>> +++ b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+>> @@ -12,6 +12,7 @@
+>>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>  #include <dt-bindings/reset/amlogic,meson-axg-audio-arb.h>
+>>  #include <dt-bindings/reset/amlogic,meson-g12a-reset.h>
+>> +#include <dt-bindings/thermal/thermal.h>
 >>
->> [   13.898549][    T1] page:ffffea0005000000 is uninitialized and poisoned
->> [   13.898549][    T1] raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff ffffffffffffffff
->> [   13.898549][    T1] raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff ffffffffffffffff
->> [   13.898549][    T1] page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
->> [   13.898549][    T1] ------------[ cut here ]------------
->> [   13.898549][    T1] kernel BUG at ./include/linux/mm.h:1107!
->> [   13.898549][    T1] invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN PTI
->> [   13.898549][    T1] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc3-next-20191015+ #
-> 
+>>  / {
+>>         interrupt-parent = <&gic>;
+>> @@ -94,6 +95,61 @@
+>>                 #size-cells = <2>;
+>>                 ranges;
+>>
+>> +               thermal-zones {
+>> +                       cpu_thermal: cpu-thermal {
+>> +                               polling-delay = <1000>;
+>> +                               polling-delay-passive = <100>;
+> Ordinarily, you would need to set these delays to 0 in interrupt mode
+> to prevent polling overhead. I've just submitted a patch to of-thermal
+> that should fix this requirement. Could you check if it works for you?
+
+it's working for me.
+
+thanks for your review.
+
+>> +                               thermal-sensors = <&cpu_temp>;
+>> +
+>> +                               trips {
+>> +                                       cpu_passive: cpu-passive {
+>> +                                               temperature = <85000>; /* millicelsius */
+>> +                                               hysteresis = <2000>; /* millicelsius */
+>> +                                               type = "passive";
+>> +                                       };
+>> +
+>> +                                       cpu_hot: cpu-hot {
+>> +                                               temperature = <95000>; /* millicelsius */
+>> +                                               hysteresis = <2000>; /* millicelsius */
+>> +                                               type = "hot";
+>> +                                       };
+>> +
+>> +                                       cpu_critical: cpu-critical {
+>> +                                               temperature = <110000>; /* millicelsius */
+>> +                                               hysteresis = <2000>; /* millicelsius */
+>> +                                               type = "critical";
+>> +                                       };
+>> +                               };
+>> +                       };
+>> +
+>> +                       ddr_thermal: ddr-thermal {
+>> +                               polling-delay = <1000>;
+>> +                               polling-delay-passive = <100>;
+>> +                               thermal-sensors = <&ddr_temp>;
+>> +
+>> +                               trips {
+>> +                                       ddr_passive: ddr-passive {
+>> +                                               temperature = <85000>; /* millicelsius */
+>> +                                               hysteresis = <2000>; /* millicelsius */
+>> +                                               type = "passive";
+>> +                                       };
+>> +
+>> +                                       ddr_critical: ddr-critical {
+>> +                                               temperature = <110000>; /* millicelsius */
+>> +                                               hysteresis = <2000>; /* millicelsius */
+>> +                                               type = "critical";
+>> +                                       };
+>> +                               };
+>> +
+>> +                               cooling-maps {
+>> +                                       map {
+>> +                                               trip = <&ddr_passive>;
+>> +                                               cooling-device = <&mali THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+>> +                                       };
+>> +                               };
+>> +                       };
+>> +               };
+>> +
+>>                 ethmac: ethernet@ff3f0000 {
+>>                         compatible = "amlogic,meson-axg-dwmac",
+>>                                      "snps,dwmac-3.70a",
+>> @@ -2412,6 +2468,7 @@
+>>                         assigned-clock-rates = <0>, /* Do Nothing */
+>>                                                <800000000>,
+>>                                                <0>; /* Do Nothing */
+>> +                       #cooling-cells = <2>;
+>>                 };
+>>         };
+>>
+>> --
+>> 2.17.1
+>>
