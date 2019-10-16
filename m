@@ -2,70 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F5A2D9706
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:22:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3184D9711
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:23:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406131AbfJPQWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 12:22:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34262 "EHLO mail.kernel.org"
+        id S2406154AbfJPQXL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 12:23:11 -0400
+Received: from mga17.intel.com ([192.55.52.151]:52798 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406119AbfJPQWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 12:22:17 -0400
-Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E743F20663;
-        Wed, 16 Oct 2019 16:22:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571242937;
-        bh=KFBtm5iJWUA4wxim3LDUKOG7zCrPJp5DCTkanoJ0k9c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eTXTM/L9NWb8/NdyzwZZPi0OEedrfLvfGiv0fACfuKwbZZI7lDpaVO8UE8BbK96vs
-         09zQi+JyE2O4PWIP9Xt8ZJR56F2+mnPSL8IPlGuDauw+9nCXuRUThpKEoyv0BmhtOr
-         UGU8xzoTLpeIhaEuWFW56kD55nVaVfjoT6H61iSo=
-Date:   Wed, 16 Oct 2019 09:22:11 -0700
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
-Cc:     Sasha Levin <sashal@kernel.org>, devel@driverdev.osuosl.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        linux-kernel@vger.kernel.org,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
-Message-ID: <20191016162211.GA505532@kroah.com>
-References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
- <20190829205631.uhz6jdboneej3j3c@pali>
- <184209.1567120696@turing-police>
- <20190829233506.GT5281@sasha-vm>
- <20190830075647.wvhrx4asnkrfkkwk@pali>
- <20191016140353.4hrncxa5wkx47oau@pali>
- <20191016143113.GS31224@sasha-vm>
- <20191016160349.pwghlg566hh2o7id@pali>
+        id S1727138AbfJPQXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 12:23:11 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2019 09:23:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,304,1566889200"; 
+   d="scan'208";a="220832260"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga004.fm.intel.com with ESMTP; 16 Oct 2019 09:23:08 -0700
+Received: from andy by smile with local (Exim 4.92.2)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1iKm4q-0005d4-0w; Wed, 16 Oct 2019 19:23:08 +0300
+Date:   Wed, 16 Oct 2019 19:23:08 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v5 11/14] software node: move small properties inline
+ when copying
+Message-ID: <20191016162308.GY32742@smile.fi.intel.com>
+References: <20191011230721.206646-1-dmitry.torokhov@gmail.com>
+ <20191011230721.206646-12-dmitry.torokhov@gmail.com>
+ <20191015122028.GI32742@smile.fi.intel.com>
+ <20191015182553.GG105649@dtor-ws>
+ <20191016074857.GN32742@smile.fi.intel.com>
+ <20191016160126.GB35946@dtor-ws>
+ <20191016161845.GX32742@smile.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191016160349.pwghlg566hh2o7id@pali>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191016161845.GX32742@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 06:03:49PM +0200, Pali Rohár wrote:
-> > Can I assume you will be implementing TexFAT support once the spec is
-> > available?
+On Wed, Oct 16, 2019 at 07:18:45PM +0300, Andy Shevchenko wrote:
+> On Wed, Oct 16, 2019 at 09:01:26AM -0700, Dmitry Torokhov wrote:
+> > On Wed, Oct 16, 2019 at 10:48:57AM +0300, Andy Shevchenko wrote:
+> > > On Tue, Oct 15, 2019 at 11:25:53AM -0700, Dmitry Torokhov wrote:
 > 
-> I cannot promise that I would implement something which I do not know
-> how is working... It depends on how complicated TexFAT is and also how
-> future exfat support in kernel would look like.
+> > > You store a value as union, but going to read as a member of union?
+> > > I'm pretty sure it breaks standard rules.
+> > 
+> > No, I move the values _in place_ of the union, and the data is always
+> > fetched via void pointers. And copying data via char * or memcpy() is
+> > allowed even in C99 and C11.
+> > 
+> > But I am wondering why are we actually worrying about all of this? The
+> > kernel is gnu89 and I think is going to stay this way because we use
+> > initializers with a cast in a lot of places:
+> > 
+> > #define __RAW_SPIN_LOCK_UNLOCKED(lockname)      \
+> >         (raw_spinlock_t) __RAW_SPIN_LOCK_INITIALIZER(lockname)
+> > 
+> > and C99 and gnu99 do not allow this. See
+> > https://lore.kernel.org/lkml/20141019231031.GB9319@node.dhcp.inet.fi/
 > 
-> But I'm interesting in implementing it.
+> This is simple not a cast.
 
-What devices need TexFAT?  I thought it the old devices that used it are
-long obsolete and gone.  How is this feature going to be tested/used?
+4.62 Compound literals in C99
+ISO C99 supports compound literals. A compound literal looks like a cast
+followed by an initializer. Its value is an object of the type specified in the
+cast, containing the elements specified in the initializer. It is an lvalue.
 
-thanks,
 
-greg k-h
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
