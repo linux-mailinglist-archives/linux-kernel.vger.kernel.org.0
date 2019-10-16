@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E8B3DA07A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:25:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60F49DA021
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:24:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407332AbfJPWLy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:11:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48498 "EHLO mail.kernel.org"
+        id S2438070AbfJPWIV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:08:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395387AbfJPV4h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:56:37 -0400
+        id S2391233AbfJPV5u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:57:50 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F3CFD21D7E;
-        Wed, 16 Oct 2019 21:56:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37F4E21D7D;
+        Wed, 16 Oct 2019 21:57:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262997;
-        bh=LA6KR0c28eo+/gwg1dpmIVId20Zt7vqtc46BEbBLHF0=;
+        s=default; t=1571263069;
+        bh=qbbtywL0VKu2zBaJP9W9WFBm4xk1t57/2QfOShygBEw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ei9WmJEQXc2Ekz7ggbd5h8YMQCP3EWqTFq1FnKXfWzF3HTUTyvT4eMPWwMcemuGq4
-         gfkA/y6raidPMYVxYqRRTKm72Ph9FgPK1jl0qvpB5ZjY7iZyi1DUszouObb1Uy/+al
-         vNv3nktPqDSrWOWoLyPfD1L99IXUB8MG0xFeMMPs=
+        b=zMDIxj9iiQ6VCr+Fd4GauMOTJW+mD2Xyz7vKQu83rk6ZRbwukVAv0XwuyD3hSTjaT
+         HAkbp5SAhBe+TEaH/xFMMsn7KVFd5eidGRSjlvro36tCrI1TK7M3/WPh0wRvGgrbSA
+         TOVfOLdbCcnmm7CeJQwSYxeaw/MqKU9GBkrUeMCQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Ajay Kaher <akaher@vmware.com>
-Subject: [PATCH 4.14 65/65] xfs: clear sb->s_fs_info on mount failure
-Date:   Wed, 16 Oct 2019 14:51:19 -0700
-Message-Id: <20191016214840.649307743@linuxfoundation.org>
+        stable@vger.kernel.org, Jeremy Linton <jeremy.linton@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Robert Richter <rrichter@marvell.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Will Deacon <will@kernel.org>,
+        John Garry <john.garry@huawei.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 69/81] ACPI/PPTT: Add support for ACPI 6.3 thread flag
+Date:   Wed, 16 Oct 2019 14:51:20 -0700
+Message-Id: <20191016214846.213102586@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
-References: <20191016214756.457746573@linuxfoundation.org>
+In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
+References: <20191016214805.727399379@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,78 +48,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dave Chinner <dchinner@redhat.com>
+From: Jeremy Linton <jeremy.linton@arm.com>
 
-commit c9fbd7bbc23dbdd73364be4d045e5d3612cf6e82 upstream.
+Commit bbd1b70639f785a970d998f35155c713f975e3ac upstream.
 
-We recently had an oops reported on a 4.14 kernel in
-xfs_reclaim_inodes_count() where sb->s_fs_info pointed to garbage
-and so the m_perag_tree lookup walked into lala land.
+ACPI 6.3 adds a flag to the CPU node to indicate whether
+the given PE is a thread. Add a function to return that
+information for a given linux logical CPU.
 
-Essentially, the machine was under memory pressure when the mount
-was being run, xfs_fs_fill_super() failed after allocating the
-xfs_mount and attaching it to sb->s_fs_info. It then cleaned up and
-freed the xfs_mount, but the sb->s_fs_info field still pointed to
-the freed memory. Hence when the superblock shrinker then ran
-it fell off the bad pointer.
-
-With the superblock shrinker problem fixed at teh VFS level, this
-stale s_fs_info pointer is still a problem - we use it
-unconditionally in ->put_super when the superblock is being torn
-down, and hence we can still trip over it after a ->fill_super
-call failure. Hence we need to clear s_fs_info if
-xfs-fs_fill_super() fails, and we need to check if it's valid in
-the places it can potentially be dereferenced after a ->fill_super
-failure.
-
-Signed-Off-By: Dave Chinner <dchinner@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Ajay Kaher <akaher@vmware.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+Reviewed-by: Robert Richter <rrichter@marvell.com>
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Will Deacon <will@kernel.org>
+[jpg: backport for 4.19, replace acpi_pptt_warn_missing()]
+Signed-off-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/xfs/xfs_super.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/acpi/pptt.c  | 52 ++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/acpi.h |  5 +++++
+ 2 files changed, 57 insertions(+)
 
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -1715,6 +1715,7 @@ xfs_fs_fill_super(
-  out_close_devices:
- 	xfs_close_devices(mp);
-  out_free_fsname:
-+	sb->s_fs_info = NULL;
- 	xfs_free_fsname(mp);
- 	kfree(mp);
-  out:
-@@ -1732,6 +1733,10 @@ xfs_fs_put_super(
- {
- 	struct xfs_mount	*mp = XFS_M(sb);
- 
-+	/* if ->fill_super failed, we have no mount to tear down */
-+	if (!sb->s_fs_info)
-+		return;
-+
- 	xfs_notice(mp, "Unmounting Filesystem");
- 	xfs_filestream_unmount(mp);
- 	xfs_unmountfs(mp);
-@@ -1741,6 +1746,8 @@ xfs_fs_put_super(
- 	xfs_destroy_percpu_counters(mp);
- 	xfs_destroy_mount_workqueues(mp);
- 	xfs_close_devices(mp);
-+
-+	sb->s_fs_info = NULL;
- 	xfs_free_fsname(mp);
- 	kfree(mp);
- }
-@@ -1760,6 +1767,9 @@ xfs_fs_nr_cached_objects(
- 	struct super_block	*sb,
- 	struct shrink_control	*sc)
- {
-+	/* Paranoia: catch incorrect calls during mount setup or teardown */
-+	if (WARN_ON_ONCE(!sb->s_fs_info))
-+		return 0;
- 	return xfs_reclaim_inodes_count(XFS_M(sb));
+diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
+index da031b1df6f5c..9dbf86a0c8277 100644
+--- a/drivers/acpi/pptt.c
++++ b/drivers/acpi/pptt.c
+@@ -509,6 +509,44 @@ static int find_acpi_cpu_topology_tag(unsigned int cpu, int level, int flag)
+ 	return retval;
  }
  
++/**
++ * check_acpi_cpu_flag() - Determine if CPU node has a flag set
++ * @cpu: Kernel logical CPU number
++ * @rev: The minimum PPTT revision defining the flag
++ * @flag: The flag itself
++ *
++ * Check the node representing a CPU for a given flag.
++ *
++ * Return: -ENOENT if the PPTT doesn't exist, the CPU cannot be found or
++ *	   the table revision isn't new enough.
++ *	   1, any passed flag set
++ *	   0, flag unset
++ */
++static int check_acpi_cpu_flag(unsigned int cpu, int rev, u32 flag)
++{
++	struct acpi_table_header *table;
++	acpi_status status;
++	u32 acpi_cpu_id = get_acpi_id_for_cpu(cpu);
++	struct acpi_pptt_processor *cpu_node = NULL;
++	int ret = -ENOENT;
++
++	status = acpi_get_table(ACPI_SIG_PPTT, 0, &table);
++	if (ACPI_FAILURE(status)) {
++		pr_warn_once("No PPTT table found, cpu topology may be inaccurate\n");
++		return ret;
++	}
++
++	if (table->revision >= rev)
++		cpu_node = acpi_find_processor_node(table, acpi_cpu_id);
++
++	if (cpu_node)
++		ret = (cpu_node->flags & flag) != 0;
++
++	acpi_put_table(table);
++
++	return ret;
++}
++
+ /**
+  * acpi_find_last_cache_level() - Determines the number of cache levels for a PE
+  * @cpu: Kernel logical cpu number
+@@ -573,6 +611,20 @@ int cache_setup_acpi(unsigned int cpu)
+ 	return status;
+ }
+ 
++/**
++ * acpi_pptt_cpu_is_thread() - Determine if CPU is a thread
++ * @cpu: Kernel logical CPU number
++ *
++ * Return: 1, a thread
++ *         0, not a thread
++ *         -ENOENT ,if the PPTT doesn't exist, the CPU cannot be found or
++ *         the table revision isn't new enough.
++ */
++int acpi_pptt_cpu_is_thread(unsigned int cpu)
++{
++	return check_acpi_cpu_flag(cpu, 2, ACPI_PPTT_ACPI_PROCESSOR_IS_THREAD);
++}
++
+ /**
+  * find_acpi_cpu_topology() - Determine a unique topology value for a given cpu
+  * @cpu: Kernel logical cpu number
+diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+index b4d23b3a2ef2d..59a416dfcaaa2 100644
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -1291,10 +1291,15 @@ static inline int lpit_read_residency_count_address(u64 *address)
+ #endif
+ 
+ #ifdef CONFIG_ACPI_PPTT
++int acpi_pptt_cpu_is_thread(unsigned int cpu);
+ int find_acpi_cpu_topology(unsigned int cpu, int level);
+ int find_acpi_cpu_topology_package(unsigned int cpu);
+ int find_acpi_cpu_cache_topology(unsigned int cpu, int level);
+ #else
++static inline int acpi_pptt_cpu_is_thread(unsigned int cpu)
++{
++	return -EINVAL;
++}
+ static inline int find_acpi_cpu_topology(unsigned int cpu, int level)
+ {
+ 	return -EINVAL;
+-- 
+2.20.1
+
 
 
