@@ -2,1021 +2,300 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35D3CD8F8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:32:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13A3AD8F96
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:32:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405106AbfJPLcZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 07:32:25 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:34216 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405078AbfJPLcW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 07:32:22 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9GBWJPo081858;
-        Wed, 16 Oct 2019 06:32:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1571225539;
-        bh=IkwGKr6Ny4JhcI2ivpcqdgKGlVBhoANfFfnuIDihDO8=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=PqZgDK5/yP0Wq4zDTv47LhMxkKskYyb5nGfWdnCqvO/El2tqdvlNcBxBo2DKiB+bk
-         S7qAz28Z/ZRpvFF4ySPBF7dx8WrOYj+zO2lwMyA6f0n9jg8m/Ygq7g0PIXylSxWa2Y
-         eBvHtWg2LlCnaIWfNMY1gvM8Bd92DqCZe0z+yhvo=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9GBWJlS080478
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Oct 2019 06:32:19 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 16
- Oct 2019 06:32:19 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 16 Oct 2019 06:32:12 -0500
-Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9GBVkmH097485;
-        Wed, 16 Oct 2019 06:32:17 -0500
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Roger Quadros <rogerq@ti.com>, Jyri Sarha <jsarha@ti.com>
-CC:     Anil Varughese <aniljoy@cadence.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH 13/13] phy: ti: j721e-wiz: Add support for WIZ module present in TI J721E SoC
-Date:   Wed, 16 Oct 2019 17:01:17 +0530
-Message-ID: <20191016113117.12370-14-kishon@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191016113117.12370-1-kishon@ti.com>
-References: <20191016113117.12370-1-kishon@ti.com>
+        id S2405138AbfJPLco (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 07:32:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35322 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2405015AbfJPLco (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 07:32:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E4670AD12;
+        Wed, 16 Oct 2019 11:32:41 +0000 (UTC)
+Subject: Re: [PATCH] drivers: mcb: use symbol namespaces
+To:     Johannes Thumshirn <jthumshirn@suse.de>,
+        Greg KH <gregkh@linuxfoundation.org>
+Cc:     Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Jessica Yu <jeyu@kernel.org>
+References: <20191016100158.1400-1-jthumshirn@suse.de>
+From:   Michael Moese <mmoese@suse.de>
+Autocrypt: addr=mmoese@suse.de; keydata=
+ mQENBFpMxXQBCAC7Z72NqEDJW9vUrNbkIaAxobHAoZBtLK1RsorBlqYgqsUilu5ACfDazfox
+ u7uw07rkSIFdBZU2ghPwdWr8j0LM/5DEpf6+jY+PU6AUiKzji4UHbJVLViHVsV7q8UsDTmIf
+ XTkZVVVFGCBerfHpWKRJfkreL5g2TA6tDFkBE+eeJEgWmubMP/XYEmtSStSzXBmCiA1QZ08k
+ 66ETcgEFok6iB5EJb1eYmkVZO5kUeCvl0EHkeBpybSuaEd+/Ux3OAfhh0nyYZwDNXJMNR8Uu
+ CrQtJPKdR1LXial5ycKbtoe7mN9cxLAbHZWLLna9VaRA/C7iIfhEqO70IAgY4vcnXFgvABEB
+ AAG0Hk1pY2hhZWwgTW9lc2UgPG1tb2VzZUBzdXNlLmRlPokBPwQTAQIAKQUCWkzHqwIbAwUJ
+ B4TOAAcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEGAhN1yGNX50quMIALiRNQ2Jt0Fz
+ pr/K1s0IS3VglbWbDIDVlauZixQ02+IU+cywcc9Bm7A9KnXT8MjN6+dNlBuBsK7KXmqrnwn0
+ gMVb+KTXKVVZR0k3lvWrlH+zQ3FPY/xTSuZyPAYcuZVAUly7VLyN8UDGuAeJF7WrqfO4I/jF
+ 7s9DffubVA5Umyl0yhQxHcTjEozCfmUBukEVCTZ2zIsKqBMp7eUPMWRDe+QauId+BSRC9gMF
+ KeEOVHi/VVi+Vr3A0U4zFxXjAcrbQZhjNS1GJ6jOPjy+MX3edY9WlkYQtx/tu2xZMhePw1I1
+ 4W4sTLCqAvHN59KZiACRGsd0/20pZN+T3rIIQOfTnM+5AQ0EWkzFdAEIALh+XBKEnfViYecZ
+ B1suj0OBg9nnBk6j1FpQCx09ACooTiVmBQFqfMrvm1JiizombQ80kBRyiwcZ1BDmzjWLoeYB
+ VovPZh4Mx+YPLSt1L7WmflGC7oWoAL3HtDKe7HCRUR17czTQXuDmeKuAggO8PV/FexHD70N/
+ 6EeKRPh9Dtzlo5hbC6/sqp8RmVf0E71LLBpxej1GHn8FvH2N0CA/RI/mvtuo311NudEUiR5e
+ FML1oeW63Iknr0jTLutSOhZEKjeaRwFZOCt0X8ECiyuXYZU970GHhqUfVtnM8/q5qU2l18Rp
+ /stWAmVyDQ7TGjECc6AvV9VSnaq6aDxgHOJi5EUAEQEAAYkBJQQYAQIADwUCWkzFdAIbDAUJ
+ B4TOAAAKCRBgITdchjV+dAHWB/9VrimlVzbdURLP0ZSttHtO8WdxPiYdmvl8G08a6yy59nc7
+ 5qnkc7EKQ9XMisejZqsbSXbWxmgpA65rBtXrFomi0qoaDHzUlKVGlEU9YkkJo+/PEsgvxnWF
+ J4vR0aLRYNOO9PvWRhJ6aHkWlCz2i9n6xsVA6PILYBiSQW22rvpH6AHu7WH7k3ddHmh4hmfw
+ yxpDl1qL127wmZGUMLArb+mIEbG+Ftre84TwpvHLq9J1+xwo7/A+dEDfWwzDb3GjeL+TNar9
+ ZpY8cPYiHNDqnPUoNhHdhSJuvoIuNBhUU3RalPbNRYkuitKUWfJYMvIypGO4+YBj61TIvOaY
+ nDZS/ArT
+Message-ID: <3a7a65f6-e1e8-7ab5-f407-d979da6f60dd@suse.de>
+Date:   Wed, 16 Oct 2019 13:32:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20191016100158.1400-1-jthumshirn@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for WIZ module present in TI's J721E SoC. WIZ is a SERDES
-wrapper used to configure some of the input signals to the SERDES. It is
-used with both Sierra(16G) and Torrent(10G) SERDES. This driver configures
-three clock selects (pll0, pll1, dig), two divider clocks and supports
-resets for each of the lanes.
 
-[jsarha@ti.com: Add support for Torrent(10G) SERDES wrapper]
-Signed-off-by: Jyri Sarha <jsarha@ti.com>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
----
- drivers/phy/ti/Kconfig         |  15 +
- drivers/phy/ti/Makefile        |   1 +
- drivers/phy/ti/phy-j721e-wiz.c | 904 +++++++++++++++++++++++++++++++++
- 3 files changed, 920 insertions(+)
- create mode 100644 drivers/phy/ti/phy-j721e-wiz.c
 
-diff --git a/drivers/phy/ti/Kconfig b/drivers/phy/ti/Kconfig
-index c3fa1840f8de..af6213b734e6 100644
---- a/drivers/phy/ti/Kconfig
-+++ b/drivers/phy/ti/Kconfig
-@@ -33,6 +33,21 @@ config PHY_AM654_SERDES
- 	  This option enables support for TI AM654 SerDes PHY used for
- 	  PCIe.
- 
-+config PHY_J721E_WIZ
-+	tristate "TI J721E WIZ (SERDES Wrapper) support"
-+	depends on OF && ARCH_K3 || COMPILE_TEST
-+	depends on COMMON_CLK
-+	select GENERIC_PHY
-+	select MULTIPLEXER
-+	select REGMAP_MMIO
-+	select MUX_MMIO
-+	help
-+	  This option enables support for WIZ module present in TI's J721E
-+	  SoC. WIZ is a serdes wrapper used to configure some of the input
-+	  signals to the SERDES (Sierra/Torrent). This driver configures
-+	  three clock selects (pll0, pll1, dig) and resets for each of the
-+	  lanes.
-+
- config OMAP_CONTROL_PHY
- 	tristate "OMAP CONTROL PHY Driver"
- 	depends on ARCH_OMAP2PLUS || COMPILE_TEST
-diff --git a/drivers/phy/ti/Makefile b/drivers/phy/ti/Makefile
-index bff901eb0ecc..dcba2571c9bd 100644
---- a/drivers/phy/ti/Makefile
-+++ b/drivers/phy/ti/Makefile
-@@ -8,3 +8,4 @@ obj-$(CONFIG_PHY_TUSB1210)		+= phy-tusb1210.o
- obj-$(CONFIG_TWL4030_USB)		+= phy-twl4030-usb.o
- obj-$(CONFIG_PHY_AM654_SERDES)		+= phy-am654-serdes.o
- obj-$(CONFIG_PHY_TI_GMII_SEL)		+= phy-gmii-sel.o
-+obj-$(CONFIG_PHY_J721E_WIZ)		+= phy-j721e-wiz.o
-diff --git a/drivers/phy/ti/phy-j721e-wiz.c b/drivers/phy/ti/phy-j721e-wiz.c
-new file mode 100644
-index 000000000000..2a95da843e9f
---- /dev/null
-+++ b/drivers/phy/ti/phy-j721e-wiz.c
-@@ -0,0 +1,904 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/**
-+ * Wrapper driver for SERDES used in J721E
-+ *
-+ * Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
-+ * Author: Kishon Vijay Abraham I <kishon@ti.com>
-+ */
-+
-+#include <dt-bindings/phy/phy.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/mux/consumer.h>
-+#include <linux/of_address.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/regmap.h>
-+#include <linux/reset-controller.h>
-+
-+#define WIZ_SERDES_CTRL		0x404
-+#define WIZ_SERDES_TOP_CTRL	0x408
-+#define WIZ_SERDES_RST		0x40c
-+#define WIZ_LANECTL(n)		(0x480 + (0x40 * (n)))
-+
-+#define WIZ_MAX_LANES		4
-+#define WIZ_MUX_NUM_CLOCKS	3
-+#define WIZ_DIV_NUM_CLOCKS_16G	2
-+#define WIZ_DIV_NUM_CLOCKS_10G	1
-+
-+enum wiz_lane_standard_mode {
-+	LANE_MODE_GEN1,
-+	LANE_MODE_GEN2,
-+	LANE_MODE_GEN3,
-+	LANE_MODE_GEN4,
-+};
-+
-+enum wiz_refclk_mux_sel {
-+	PLL0_REFCLK,
-+	PLL1_REFCLK,
-+	REFCLK_DIG,
-+};
-+
-+enum wiz_refclk_div_sel {
-+	CMN_REFCLK,
-+	CMN_REFCLK1,
-+};
-+
-+static const struct reg_field por_en = REG_FIELD(WIZ_SERDES_CTRL, 31, 31);
-+static const struct reg_field phy_reset_n = REG_FIELD(WIZ_SERDES_RST, 31, 31);
-+static const struct reg_field pll1_refclk_mux_sel =
-+					REG_FIELD(WIZ_SERDES_RST, 29, 29);
-+static const struct reg_field pll0_refclk_mux_sel =
-+					REG_FIELD(WIZ_SERDES_RST, 28, 28);
-+static const struct reg_field refclk_dig_sel_16g =
-+					REG_FIELD(WIZ_SERDES_RST, 24, 25);
-+static const struct reg_field refclk_dig_sel_10g =
-+					REG_FIELD(WIZ_SERDES_RST, 24, 24);
-+static const struct reg_field pma_cmn_refclk_int_mode =
-+					REG_FIELD(WIZ_SERDES_TOP_CTRL, 28, 29);
-+static const struct reg_field pma_cmn_refclk_mode =
-+					REG_FIELD(WIZ_SERDES_TOP_CTRL, 30, 31);
-+static const struct reg_field pma_cmn_refclk_dig_div =
-+					REG_FIELD(WIZ_SERDES_TOP_CTRL, 26, 27);
-+static const struct reg_field pma_cmn_refclk1_dig_div =
-+					REG_FIELD(WIZ_SERDES_TOP_CTRL, 24, 25);
-+
-+static const struct reg_field p_enable[WIZ_MAX_LANES] = {
-+	REG_FIELD(WIZ_LANECTL(0), 30, 31),
-+	REG_FIELD(WIZ_LANECTL(1), 30, 31),
-+	REG_FIELD(WIZ_LANECTL(2), 30, 31),
-+	REG_FIELD(WIZ_LANECTL(3), 30, 31),
-+};
-+
-+static const struct reg_field p_align[WIZ_MAX_LANES] = {
-+	REG_FIELD(WIZ_LANECTL(0), 29, 29),
-+	REG_FIELD(WIZ_LANECTL(1), 29, 29),
-+	REG_FIELD(WIZ_LANECTL(2), 29, 29),
-+	REG_FIELD(WIZ_LANECTL(3), 29, 29),
-+};
-+
-+static const struct reg_field p_raw_auto_start[WIZ_MAX_LANES] = {
-+	REG_FIELD(WIZ_LANECTL(0), 28, 28),
-+	REG_FIELD(WIZ_LANECTL(1), 28, 28),
-+	REG_FIELD(WIZ_LANECTL(2), 28, 28),
-+	REG_FIELD(WIZ_LANECTL(3), 28, 28),
-+};
-+
-+static const struct reg_field p_standard_mode[WIZ_MAX_LANES] = {
-+	REG_FIELD(WIZ_LANECTL(0), 24, 25),
-+	REG_FIELD(WIZ_LANECTL(1), 24, 25),
-+	REG_FIELD(WIZ_LANECTL(2), 24, 25),
-+	REG_FIELD(WIZ_LANECTL(3), 24, 25),
-+};
-+
-+struct wiz_clk_mux {
-+	struct clk_hw		hw;
-+	struct regmap_field	*field;
-+	u32			*table;
-+	struct clk_init_data	clk_data;
-+};
-+
-+#define to_wiz_clk_mux(_hw) container_of(_hw, struct wiz_clk_mux, hw)
-+
-+struct wiz_clk_divider {
-+	struct clk_hw		hw;
-+	struct regmap_field	*field;
-+	struct clk_div_table	*table;
-+	struct clk_init_data	clk_data;
-+};
-+
-+#define to_wiz_clk_div(_hw) container_of(_hw, struct wiz_clk_divider, hw)
-+
-+struct wiz_clk_mux_sel {
-+	struct regmap_field	*field;
-+	u32			table[4];
-+	const char		*node_name;
-+};
-+
-+struct wiz_clk_div_sel {
-+	struct regmap_field	*field;
-+	struct clk_div_table	*table;
-+	const char		*node_name;
-+};
-+
-+static struct wiz_clk_mux_sel clk_mux_sel_16g[] = {
-+	{
-+		/*
-+		 * Mux value to be configured for each of the input clocks
-+		 * in the order populated in device tree
-+		 */
-+		.table = { 1, 0 },
-+		.node_name = "pll0_refclk",
-+	},
-+	{
-+		.table = { 1, 0 },
-+		.node_name = "pll1_refclk",
-+	},
-+	{
-+		.table = { 1, 3, 0, 2 },
-+		.node_name = "refclk_dig",
-+	},
-+};
-+
-+static struct wiz_clk_mux_sel clk_mux_sel_10g[] = {
-+	{
-+		/*
-+		 * Mux value to be configured for each of the input clocks
-+		 * in the order populated in device tree
-+		 */
-+		.table = { 1, 0 },
-+		.node_name = "pll0_refclk",
-+	},
-+	{
-+		.table = { 1, 0 },
-+		.node_name = "pll1_refclk",
-+	},
-+	{
-+		.table = { 1, 0 },
-+		.node_name = "refclk_dig",
-+	},
-+};
-+
-+static struct clk_div_table clk_div_table[] = {
-+	{ .val = 0, .div = 1, },
-+	{ .val = 1, .div = 2, },
-+	{ .val = 2, .div = 4, },
-+	{ .val = 3, .div = 8, },
-+};
-+
-+static struct wiz_clk_div_sel clk_div_sel[] = {
-+	{
-+		.table = clk_div_table,
-+		.node_name = "cmn_refclk",
-+	},
-+	{
-+		.table = clk_div_table,
-+		.node_name = "cmn_refclk1",
-+	},
-+};
-+
-+enum wiz_type {
-+	J721E_WIZ_16G,
-+	J721E_WIZ_10G,
-+};
-+
-+struct wiz {
-+	struct regmap		*regmap;
-+	enum wiz_type		type;
-+	struct wiz_clk_mux_sel	*clk_mux_sel;
-+	struct wiz_clk_div_sel	*clk_div_sel;
-+	unsigned int		clk_div_sel_num;
-+	struct regmap_field	*por_en;
-+	struct regmap_field	*phy_reset_n;
-+	struct regmap_field	*p_enable[WIZ_MAX_LANES];
-+	struct regmap_field	*p_align[WIZ_MAX_LANES];
-+	struct regmap_field	*p_raw_auto_start[WIZ_MAX_LANES];
-+	struct regmap_field	*p_standard_mode[WIZ_MAX_LANES];
-+	struct regmap_field	*pma_cmn_refclk_int_mode;
-+	struct regmap_field	*pma_cmn_refclk_mode;
-+	struct regmap_field	*pma_cmn_refclk_dig_div;
-+	struct regmap_field	*pma_cmn_refclk1_dig_div;
-+
-+	struct device		*dev;
-+	u32			num_lanes;
-+	struct platform_device	*serdes_pdev;
-+	struct reset_controller_dev wiz_phy_reset_dev;
-+};
-+
-+static int wiz_reset(struct wiz *wiz)
-+{
-+	int ret;
-+
-+	ret = regmap_field_write(wiz->por_en, 0x1);
-+	if (ret)
-+		return ret;
-+
-+	mdelay(1);
-+
-+	ret = regmap_field_write(wiz->por_en, 0x0);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int wiz_mode_select(struct wiz *wiz)
-+{
-+	u32 num_lanes = wiz->num_lanes;
-+	int ret;
-+	int i;
-+
-+	for (i = 0; i < num_lanes; i++) {
-+		ret = regmap_field_write(wiz->p_standard_mode[i],
-+					 LANE_MODE_GEN4);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int wiz_init_raw_interface(struct wiz *wiz, bool enable)
-+{
-+	u32 num_lanes = wiz->num_lanes;
-+	int i;
-+	int ret;
-+
-+	for (i = 0; i < num_lanes; i++) {
-+		ret = regmap_field_write(wiz->p_align[i], enable);
-+		if (ret)
-+			return ret;
-+
-+		ret = regmap_field_write(wiz->p_raw_auto_start[i], enable);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int wiz_init(struct wiz *wiz)
-+{
-+	struct device *dev = wiz->dev;
-+	int ret;
-+
-+	ret = wiz_reset(wiz);
-+	if (ret) {
-+		dev_err(dev, "WIZ reset failed\n");
-+		return ret;
-+	}
-+
-+	ret = wiz_mode_select(wiz);
-+	if (ret) {
-+		dev_err(dev, "WIZ mode select failed\n");
-+		return ret;
-+	}
-+
-+	ret = wiz_init_raw_interface(wiz, true);
-+	if (ret) {
-+		dev_err(dev, "WIZ interface initialization failed\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int wiz_regfield_init(struct wiz *wiz)
-+{
-+	struct wiz_clk_mux_sel *clk_mux_sel;
-+	struct wiz_clk_div_sel *clk_div_sel;
-+	struct regmap *regmap = wiz->regmap;
-+	int num_lanes = wiz->num_lanes;
-+	struct device *dev = wiz->dev;
-+	int i;
-+
-+	wiz->por_en = devm_regmap_field_alloc(dev, regmap, por_en);
-+	if (IS_ERR(wiz->por_en)) {
-+		dev_err(dev, "POR_EN reg field init failed\n");
-+		return PTR_ERR(wiz->por_en);
-+	}
-+
-+	wiz->phy_reset_n = devm_regmap_field_alloc(dev, regmap,
-+						   phy_reset_n);
-+	if (IS_ERR(wiz->phy_reset_n)) {
-+		dev_err(dev, "PHY_RESET_N reg field init failed\n");
-+		return PTR_ERR(wiz->phy_reset_n);
-+	}
-+
-+	wiz->pma_cmn_refclk_int_mode =
-+		devm_regmap_field_alloc(dev, regmap, pma_cmn_refclk_int_mode);
-+	if (IS_ERR(wiz->pma_cmn_refclk_int_mode)) {
-+		dev_err(dev, "PMA_CMN_REFCLK_INT_MODE reg field init failed\n");
-+		return PTR_ERR(wiz->pma_cmn_refclk_int_mode);
-+	}
-+
-+	wiz->pma_cmn_refclk_mode =
-+		devm_regmap_field_alloc(dev, regmap, pma_cmn_refclk_mode);
-+	if (IS_ERR(wiz->pma_cmn_refclk_mode)) {
-+		dev_err(dev, "PMA_CMN_REFCLK_MODE reg field init failed\n");
-+		return PTR_ERR(wiz->pma_cmn_refclk_mode);
-+	}
-+
-+	clk_div_sel = &wiz->clk_div_sel[CMN_REFCLK];
-+	clk_div_sel->field = devm_regmap_field_alloc(dev, regmap,
-+						     pma_cmn_refclk_dig_div);
-+	if (IS_ERR(clk_div_sel->field)) {
-+		dev_err(dev, "PMA_CMN_REFCLK_DIG_DIV reg field init failed\n");
-+		return PTR_ERR(clk_div_sel->field);
-+	}
-+
-+	if (wiz->type == J721E_WIZ_16G) {
-+		clk_div_sel = &wiz->clk_div_sel[CMN_REFCLK1];
-+		clk_div_sel->field =
-+			devm_regmap_field_alloc(dev, regmap,
-+						pma_cmn_refclk1_dig_div);
-+		if (IS_ERR(clk_div_sel->field)) {
-+			dev_err(dev, "PMA_CMN_REFCLK1_DIG_DIV reg field init failed\n");
-+			return PTR_ERR(clk_div_sel->field);
-+		}
-+	}
-+
-+	clk_mux_sel = &wiz->clk_mux_sel[PLL0_REFCLK];
-+	clk_mux_sel->field = devm_regmap_field_alloc(dev, regmap,
-+						     pll0_refclk_mux_sel);
-+	if (IS_ERR(clk_mux_sel->field)) {
-+		dev_err(dev, "PLL0_REFCLK_SEL reg field init failed\n");
-+		return PTR_ERR(clk_mux_sel->field);
-+	}
-+
-+	clk_mux_sel = &wiz->clk_mux_sel[PLL1_REFCLK];
-+	clk_mux_sel->field = devm_regmap_field_alloc(dev, regmap,
-+						     pll1_refclk_mux_sel);
-+	if (IS_ERR(clk_mux_sel->field)) {
-+		dev_err(dev, "PLL1_REFCLK_SEL reg field init failed\n");
-+		return PTR_ERR(clk_mux_sel->field);
-+	}
-+
-+	clk_mux_sel = &wiz->clk_mux_sel[REFCLK_DIG];
-+	if (wiz->type == J721E_WIZ_10G)
-+		clk_mux_sel->field =
-+			devm_regmap_field_alloc(dev, regmap,
-+						refclk_dig_sel_10g);
-+	else
-+		clk_mux_sel->field =
-+			devm_regmap_field_alloc(dev, regmap,
-+						refclk_dig_sel_16g);
-+
-+	if (IS_ERR(clk_mux_sel->field)) {
-+		dev_err(dev, "REFCLK_DIG_SEL reg field init failed\n");
-+		return PTR_ERR(clk_mux_sel->field);
-+	}
-+
-+	for (i = 0; i < num_lanes; i++) {
-+		wiz->p_enable[i] = devm_regmap_field_alloc(dev, regmap,
-+							   p_enable[i]);
-+		if (IS_ERR(wiz->p_enable[i])) {
-+			dev_err(dev, "P%d_ENABLE reg field init failed\n", i);
-+			return PTR_ERR(wiz->p_enable[i]);
-+		}
-+
-+		wiz->p_align[i] = devm_regmap_field_alloc(dev, regmap,
-+							  p_align[i]);
-+		if (IS_ERR(wiz->p_align[i])) {
-+			dev_err(dev, "P%d_ALIGN reg field init failed\n", i);
-+			return PTR_ERR(wiz->p_align[i]);
-+		}
-+
-+		wiz->p_raw_auto_start[i] =
-+		  devm_regmap_field_alloc(dev, regmap, p_raw_auto_start[i]);
-+		if (IS_ERR(wiz->p_raw_auto_start[i])) {
-+			dev_err(dev, "P%d_RAW_AUTO_START reg field init fail\n",
-+				i);
-+			return PTR_ERR(wiz->p_raw_auto_start[i]);
-+		}
-+
-+		wiz->p_standard_mode[i] =
-+		  devm_regmap_field_alloc(dev, regmap, p_standard_mode[i]);
-+		if (IS_ERR(wiz->p_standard_mode[i])) {
-+			dev_err(dev, "P%d_STANDARD_MODE reg field init fail\n",
-+				i);
-+			return PTR_ERR(wiz->p_standard_mode[i]);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static u8 wiz_clk_mux_get_parent(struct clk_hw *hw)
-+{
-+	struct wiz_clk_mux *mux = to_wiz_clk_mux(hw);
-+	struct regmap_field *field = mux->field;
-+	unsigned int val;
-+
-+	regmap_field_read(field, &val);
-+	return clk_mux_val_to_index(hw, mux->table, 0, val);
-+}
-+
-+static int wiz_clk_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct wiz_clk_mux *mux = to_wiz_clk_mux(hw);
-+	struct regmap_field *field = mux->field;
-+	int val;
-+
-+	val = mux->table[index];
-+	return regmap_field_write(field, val);
-+}
-+
-+static const struct clk_ops wiz_clk_mux_ops = {
-+	.set_parent = wiz_clk_mux_set_parent,
-+	.get_parent = wiz_clk_mux_get_parent,
-+};
-+
-+static int wiz_mux_clk_register(struct wiz *wiz, struct device_node *node,
-+				struct regmap_field *field, u32 *table)
-+{
-+	struct device *dev = wiz->dev;
-+	struct clk_init_data *init;
-+	const char **parent_names;
-+	unsigned int num_parents;
-+	struct wiz_clk_mux *mux;
-+	const char *clk_name;
-+	struct clk *clk;
-+	int ret;
-+
-+	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
-+	if (!mux)
-+		return -ENOMEM;
-+
-+	num_parents = of_clk_get_parent_count(node);
-+	if (num_parents < 2) {
-+		dev_err(dev, "SERDES clock must have parents\n");
-+		return -EINVAL;
-+	}
-+
-+	parent_names = devm_kzalloc(dev, (sizeof(char *) * num_parents),
-+				    GFP_KERNEL);
-+	if (!parent_names)
-+		return -ENOMEM;
-+
-+	of_clk_parent_fill(node, parent_names, num_parents);
-+
-+	ret = of_property_read_string(node, "clock-output-names", &clk_name);
-+	if (ret) {
-+		dev_err(dev, "Unable to read clock-output-names DT property\n");
-+		return ret;
-+	}
-+
-+	init = &mux->clk_data;
-+
-+	init->ops = &wiz_clk_mux_ops;
-+	init->flags = CLK_SET_RATE_NO_REPARENT;
-+	init->parent_names = parent_names;
-+	init->num_parents = num_parents;
-+	init->name = clk_name;
-+
-+	mux->field = field;
-+	mux->table = table;
-+	mux->hw.init = init;
-+
-+	clk = devm_clk_register(dev, &mux->hw);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	ret = of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	if (ret)
-+		dev_err(dev, "Failed to add clock provider: %s\n", clk_name);
-+
-+	return ret;
-+}
-+
-+static unsigned long wiz_clk_div_recalc_rate(struct clk_hw *hw,
-+					     unsigned long parent_rate)
-+{
-+	struct wiz_clk_divider *div = to_wiz_clk_div(hw);
-+	struct regmap_field *field = div->field;
-+	int val;
-+
-+	regmap_field_read(field, &val);
-+
-+	return divider_recalc_rate(hw, parent_rate, val, div->table, 0x0, 2);
-+}
-+
-+static long wiz_clk_div_round_rate(struct clk_hw *hw, unsigned long rate,
-+				   unsigned long *prate)
-+{
-+	struct wiz_clk_divider *div = to_wiz_clk_div(hw);
-+
-+	return divider_round_rate(hw, rate, prate, div->table, 2, 0x0);
-+}
-+
-+static int wiz_clk_div_set_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long parent_rate)
-+{
-+	struct wiz_clk_divider *div = to_wiz_clk_div(hw);
-+	struct regmap_field *field = div->field;
-+	int val;
-+
-+	val = divider_get_val(rate, parent_rate, div->table, 2, 0x0);
-+	if (val < 0)
-+		return val;
-+
-+	return regmap_field_write(field, val);
-+}
-+
-+static const struct clk_ops wiz_clk_div_ops = {
-+	.recalc_rate = wiz_clk_div_recalc_rate,
-+	.round_rate = wiz_clk_div_round_rate,
-+	.set_rate = wiz_clk_div_set_rate,
-+};
-+
-+static int wiz_div_clk_register(struct wiz *wiz, struct device_node *node,
-+				struct regmap_field *field,
-+				struct clk_div_table *table)
-+{
-+	struct device *dev = wiz->dev;
-+	struct wiz_clk_divider *div;
-+	struct clk_init_data *init;
-+	const char **parent_names;
-+	const char *clk_name;
-+	struct clk *clk;
-+	int ret;
-+
-+	div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
-+	if (!div)
-+		return -ENOMEM;
-+
-+	ret = of_property_read_string(node, "clock-output-names", &clk_name);
-+	if (ret) {
-+		dev_err(dev, "Unable to read clock-output-names DT property\n");
-+		return ret;
-+	}
-+
-+	parent_names = devm_kzalloc(dev, sizeof(char *), GFP_KERNEL);
-+	if (!parent_names)
-+		return -ENOMEM;
-+
-+	of_clk_parent_fill(node, parent_names, 1);
-+
-+	init = &div->clk_data;
-+
-+	init->ops = &wiz_clk_div_ops;
-+	init->flags = 0;
-+	init->parent_names = parent_names;
-+	init->num_parents = 1;
-+	init->name = clk_name;
-+
-+	div->field = field;
-+	div->table = table;
-+	div->hw.init = init;
-+
-+	clk = devm_clk_register(dev, &div->hw);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	ret = of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	if (ret)
-+		dev_err(dev, "Failed to add clock provider: %s\n", clk_name);
-+
-+	return ret;
-+}
-+
-+static void wiz_clock_cleanup(struct wiz *wiz, struct device_node *node)
-+{
-+	struct wiz_clk_mux_sel *clk_mux_sel = wiz->clk_mux_sel;
-+	struct device_node *clk_node;
-+	int i;
-+
-+	for (i = 0; i < WIZ_MUX_NUM_CLOCKS; i++) {
-+		clk_node = of_get_child_by_name(node, clk_mux_sel[i].node_name);
-+		of_clk_del_provider(clk_node);
-+		of_node_put(clk_node);
-+	}
-+}
-+
-+static int wiz_clock_init(struct wiz *wiz, struct device_node *node)
-+{
-+	struct wiz_clk_mux_sel *clk_mux_sel = wiz->clk_mux_sel;
-+	struct device *dev = wiz->dev;
-+	struct device_node *clk_node;
-+	const char *node_name;
-+	unsigned long rate;
-+	struct clk *clk;
-+	int ret;
-+	int i;
-+
-+	clk = devm_clk_get(dev, "core_ref_clk");
-+	if (IS_ERR(clk)) {
-+		dev_err(dev, "core_ref_clk clock not found\n");
-+		ret = PTR_ERR(clk);
-+		return ret;
-+	}
-+
-+	rate = clk_get_rate(clk);
-+	if (rate >= 100000000)
-+		regmap_field_write(wiz->pma_cmn_refclk_int_mode, 0x1);
-+	else
-+		regmap_field_write(wiz->pma_cmn_refclk_int_mode, 0x3);
-+
-+	clk = devm_clk_get(dev, "ext_ref_clk");
-+	if (IS_ERR(clk)) {
-+		dev_err(dev, "ext_ref_clk clock not found\n");
-+		ret = PTR_ERR(clk);
-+		return ret;
-+	}
-+
-+	rate = clk_get_rate(clk);
-+	if (rate >= 100000000)
-+		regmap_field_write(wiz->pma_cmn_refclk_mode, 0x0);
-+	else
-+		regmap_field_write(wiz->pma_cmn_refclk_mode, 0x2);
-+
-+	for (i = 0; i < WIZ_MUX_NUM_CLOCKS; i++) {
-+		node_name = clk_mux_sel[i].node_name;
-+		clk_node = of_get_child_by_name(node, node_name);
-+		if (!clk_node) {
-+			dev_err(dev, "Unable to get %s node\n", node_name);
-+			ret = -EINVAL;
-+			goto err;
-+		}
-+
-+		ret = wiz_mux_clk_register(wiz, clk_node, clk_mux_sel[i].field,
-+					   clk_mux_sel[i].table);
-+		if (ret) {
-+			dev_err(dev, "Failed to register %s clock\n",
-+				node_name);
-+			of_node_put(clk_node);
-+			goto err;
-+		}
-+
-+		of_node_put(clk_node);
-+	}
-+
-+	for (i = 0; i < wiz->clk_div_sel_num; i++) {
-+		node_name = clk_div_sel[i].node_name;
-+		clk_node = of_get_child_by_name(node, node_name);
-+		if (!clk_node) {
-+			dev_err(dev, "Unable to get %s node\n", node_name);
-+			ret = -EINVAL;
-+			goto err;
-+		}
-+
-+		ret = wiz_div_clk_register(wiz, clk_node, clk_div_sel[i].field,
-+					   clk_div_sel[i].table);
-+		if (ret) {
-+			dev_err(dev, "Failed to register %s clock\n",
-+				node_name);
-+			of_node_put(clk_node);
-+			goto err;
-+		}
-+
-+		of_node_put(clk_node);
-+	}
-+
-+	return 0;
-+err:
-+	wiz_clock_cleanup(wiz, node);
-+
-+	return ret;
-+}
-+
-+static int wiz_phy_reset_assert(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	struct device *dev = rcdev->dev;
-+	struct wiz *wiz = dev_get_drvdata(dev);
-+	int ret = 0;
-+
-+	if (id == 0) {
-+		ret = regmap_field_write(wiz->phy_reset_n, false);
-+		return ret;
-+	}
-+
-+	ret = regmap_field_write(wiz->p_enable[id - 1], false);
-+	return ret;
-+}
-+
-+static int wiz_phy_reset_deassert(struct reset_controller_dev *rcdev,
-+				  unsigned long id)
-+{
-+	struct device *dev = rcdev->dev;
-+	struct wiz *wiz = dev_get_drvdata(dev);
-+	int ret;
-+
-+	if (id == 0) {
-+		ret = regmap_field_write(wiz->phy_reset_n, true);
-+		return ret;
-+	}
-+
-+	ret = regmap_field_write(wiz->p_enable[id - 1], true);
-+	return ret;
-+}
-+
-+static const struct reset_control_ops wiz_phy_reset_ops = {
-+	.assert = wiz_phy_reset_assert,
-+	.deassert = wiz_phy_reset_deassert,
-+};
-+
-+static struct regmap_config wiz_regmap_config = {
-+	.reg_bits = 32,
-+	.val_bits = 32,
-+	.reg_stride = 4,
-+	.fast_io = true,
-+};
-+
-+static const struct of_device_id wiz_id_table[] = {
-+	{
-+		.compatible = "ti,j721e-wiz-16g", .data = (void *)J721E_WIZ_16G
-+	},
-+	{
-+		.compatible = "ti,j721e-wiz-10g", .data = (void *)J721E_WIZ_10G
-+	},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, wiz_id_table);
-+
-+static int wiz_probe(struct platform_device *pdev)
-+{
-+	struct reset_controller_dev *phy_reset_dev;
-+	struct device *dev = &pdev->dev;
-+	struct device_node *node = dev->of_node;
-+	struct platform_device *serdes_pdev;
-+	struct device_node *child_node;
-+	struct regmap *regmap;
-+	struct resource res;
-+	void __iomem *base;
-+	struct wiz *wiz;
-+	u32 num_lanes;
-+	int ret;
-+
-+	wiz = devm_kzalloc(dev, sizeof(*wiz), GFP_KERNEL);
-+	if (!wiz)
-+		return -ENOMEM;
-+
-+	wiz->type = (enum wiz_type)of_device_get_match_data(dev);
-+
-+	child_node = of_get_child_by_name(node, "serdes");
-+	if (!child_node) {
-+		dev_err(dev, "Failed to get SERDES child DT node\n");
-+		return -ENODEV;
-+	}
-+
-+	ret = of_address_to_resource(child_node, 0, &res);
-+	if (ret) {
-+		dev_err(dev, "Failed to get memory resource\n");
-+		goto err_addr_to_resource;
-+	}
-+
-+	base = devm_ioremap(dev, res.start, resource_size(&res));
-+	if (IS_ERR(base))
-+		goto err_addr_to_resource;
-+
-+	regmap = devm_regmap_init_mmio(dev, base, &wiz_regmap_config);
-+	if (IS_ERR(regmap)) {
-+		dev_err(dev, "Failed to initialize regmap\n");
-+		ret = PTR_ERR(regmap);
-+		goto err_addr_to_resource;
-+	}
-+
-+	ret = of_property_read_u32(node, "num-lanes", &num_lanes);
-+	if (ret) {
-+		dev_err(dev, "Failed to read num-lanes property\n");
-+		goto err_addr_to_resource;
-+	}
-+
-+	if (num_lanes > WIZ_MAX_LANES) {
-+		dev_err(dev, "Cannot support %d lanes\n", num_lanes);
-+		goto err_addr_to_resource;
-+	}
-+
-+	wiz->dev = dev;
-+	wiz->regmap = regmap;
-+	wiz->num_lanes = num_lanes;
-+	if (wiz->type == J721E_WIZ_10G)
-+		wiz->clk_mux_sel = clk_mux_sel_10g;
-+	else
-+		wiz->clk_mux_sel = clk_mux_sel_16g;
-+
-+	wiz->clk_div_sel = clk_div_sel;
-+
-+	if (wiz->type == J721E_WIZ_10G)
-+		wiz->clk_div_sel_num = WIZ_DIV_NUM_CLOCKS_10G;
-+	else
-+		wiz->clk_div_sel_num = WIZ_DIV_NUM_CLOCKS_16G;
-+
-+	platform_set_drvdata(pdev, wiz);
-+
-+	ret = wiz_regfield_init(wiz);
-+	if (ret) {
-+		dev_err(dev, "Failed to initialize regfields\n");
-+		goto err_addr_to_resource;
-+	}
-+
-+	phy_reset_dev = &wiz->wiz_phy_reset_dev;
-+	phy_reset_dev->dev = dev;
-+	phy_reset_dev->ops = &wiz_phy_reset_ops,
-+	phy_reset_dev->owner = THIS_MODULE,
-+	phy_reset_dev->of_node = node;
-+	/* Reset for each of the lane and one for the entire SERDES */
-+	phy_reset_dev->nr_resets = num_lanes + 1;
-+
-+	ret = devm_reset_controller_register(dev, phy_reset_dev);
-+	if (ret < 0) {
-+		dev_warn(dev, "Failed to register reset controller\n");
-+		goto err_addr_to_resource;
-+	}
-+
-+	pm_runtime_enable(dev);
-+	ret = pm_runtime_get_sync(dev);
-+	if (ret < 0) {
-+		dev_err(dev, "pm_runtime_get_sync failed\n");
-+		goto err_get_sync;
-+	}
-+
-+	ret = wiz_clock_init(wiz, node);
-+	if (ret < 0) {
-+		dev_warn(dev, "Failed to initialize clocks\n");
-+		goto err_get_sync;
-+	}
-+
-+	serdes_pdev = of_platform_device_create(child_node, NULL, dev);
-+	if (!serdes_pdev) {
-+		dev_WARN(dev, "Unable to create SERDES platform device\n");
-+		goto err_pdev_create;
-+	}
-+	wiz->serdes_pdev = serdes_pdev;
-+
-+	ret = wiz_init(wiz);
-+	if (ret) {
-+		dev_err(dev, "WIZ initialization failed\n");
-+		goto err_wiz_init;
-+	}
-+
-+	of_node_put(child_node);
-+	return 0;
-+
-+err_wiz_init:
-+	of_platform_device_destroy(&serdes_pdev->dev, NULL);
-+
-+err_pdev_create:
-+	wiz_clock_cleanup(wiz, node);
-+
-+err_get_sync:
-+	pm_runtime_put(dev);
-+	pm_runtime_disable(dev);
-+
-+err_addr_to_resource:
-+	of_node_put(child_node);
-+
-+	return ret;
-+}
-+
-+static int wiz_remove(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *node = dev->of_node;
-+	struct platform_device *serdes_pdev;
-+	struct wiz *wiz;
-+
-+	wiz = dev_get_drvdata(dev);
-+	serdes_pdev = wiz->serdes_pdev;
-+
-+	of_platform_device_destroy(&serdes_pdev->dev, NULL);
-+	wiz_clock_cleanup(wiz, node);
-+	pm_runtime_put(dev);
-+	pm_runtime_disable(dev);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver wiz_driver = {
-+	.probe		= wiz_probe,
-+	.remove		= wiz_remove,
-+	.driver		= {
-+		.name	= "wiz",
-+		.of_match_table = wiz_id_table,
-+	},
-+};
-+module_platform_driver(wiz_driver);
-+
-+MODULE_AUTHOR("Texas Instruments Inc.");
-+MODULE_DESCRIPTION("TI J721E WIZ driver");
-+MODULE_LICENSE("GPL v2");
+On 16.10.19 12:01, Johannes Thumshirn wrote:
+> Now that we have symbol namespaces, use them in MCB to not pollute the
+> default namespace with MCB internals.
+> 
+> Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+
+Reviewed-by: Michael Moese <mmoese@suse.de>
+
+> ---
+>  drivers/gpio/gpio-menz127.c            |  1 +
+>  drivers/iio/adc/men_z188_adc.c         |  1 +
+>  drivers/mcb/mcb-core.c                 | 28 ++++++++++++++--------------
+>  drivers/mcb/mcb-lpc.c                  |  1 +
+>  drivers/mcb/mcb-parse.c                |  2 +-
+>  drivers/mcb/mcb-pci.c                  |  1 +
+>  drivers/tty/serial/8250/8250_men_mcb.c |  1 +
+>  drivers/tty/serial/men_z135_uart.c     |  1 +
+>  drivers/watchdog/menz69_wdt.c          |  1 +
+>  9 files changed, 22 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-menz127.c b/drivers/gpio/gpio-menz127.c
+> index 70fdb42a8e88..1e21c661d79d 100644
+> --- a/drivers/gpio/gpio-menz127.c
+> +++ b/drivers/gpio/gpio-menz127.c
+> @@ -211,3 +211,4 @@ MODULE_AUTHOR("Andreas Werner <andreas.werner@men.de>");
+>  MODULE_DESCRIPTION("MEN 16z127 GPIO Controller");
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_ALIAS("mcb:16z127");
+> +MODULE_IMPORT_NS(MCB);
+> diff --git a/drivers/iio/adc/men_z188_adc.c b/drivers/iio/adc/men_z188_adc.c
+> index 3b2fbb7ce431..196c8226381e 100644
+> --- a/drivers/iio/adc/men_z188_adc.c
+> +++ b/drivers/iio/adc/men_z188_adc.c
+> @@ -167,3 +167,4 @@ MODULE_AUTHOR("Johannes Thumshirn <johannes.thumshirn@men.de>");
+>  MODULE_LICENSE("GPL");
+>  MODULE_DESCRIPTION("IIO ADC driver for MEN 16z188 ADC Core");
+>  MODULE_ALIAS("mcb:16z188");
+> +MODULE_IMPORT_NS(MCB);
+> diff --git a/drivers/mcb/mcb-core.c b/drivers/mcb/mcb-core.c
+> index b72e82efaee5..38fbb3b59873 100644
+> --- a/drivers/mcb/mcb-core.c
+> +++ b/drivers/mcb/mcb-core.c
+> @@ -191,7 +191,7 @@ int __mcb_register_driver(struct mcb_driver *drv, struct module *owner,
+>  
+>  	return driver_register(&drv->driver);
+>  }
+> -EXPORT_SYMBOL_GPL(__mcb_register_driver);
+> +EXPORT_SYMBOL_NS_GPL(__mcb_register_driver, MCB);
+>  
+>  /**
+>   * mcb_unregister_driver() - Unregister a @mcb_driver from the system
+> @@ -203,7 +203,7 @@ void mcb_unregister_driver(struct mcb_driver *drv)
+>  {
+>  	driver_unregister(&drv->driver);
+>  }
+> -EXPORT_SYMBOL_GPL(mcb_unregister_driver);
+> +EXPORT_SYMBOL_NS_GPL(mcb_unregister_driver, MCB);
+>  
+>  static void mcb_release_dev(struct device *dev)
+>  {
+> @@ -249,7 +249,7 @@ int mcb_device_register(struct mcb_bus *bus, struct mcb_device *dev)
+>  
+>  	return ret;
+>  }
+> -EXPORT_SYMBOL_GPL(mcb_device_register);
+> +EXPORT_SYMBOL_NS_GPL(mcb_device_register, MCB);
+>  
+>  static void mcb_free_bus(struct device *dev)
+>  {
+> @@ -301,7 +301,7 @@ struct mcb_bus *mcb_alloc_bus(struct device *carrier)
+>  	kfree(bus);
+>  	return ERR_PTR(rc);
+>  }
+> -EXPORT_SYMBOL_GPL(mcb_alloc_bus);
+> +EXPORT_SYMBOL_NS_GPL(mcb_alloc_bus, MCB);
+>  
+>  static int __mcb_devices_unregister(struct device *dev, void *data)
+>  {
+> @@ -323,7 +323,7 @@ void mcb_release_bus(struct mcb_bus *bus)
+>  {
+>  	mcb_devices_unregister(bus);
+>  }
+> -EXPORT_SYMBOL_GPL(mcb_release_bus);
+> +EXPORT_SYMBOL_NS_GPL(mcb_release_bus, MCB);
+>  
+>  /**
+>   * mcb_bus_put() - Increment refcnt
+> @@ -338,7 +338,7 @@ struct mcb_bus *mcb_bus_get(struct mcb_bus *bus)
+>  
+>  	return bus;
+>  }
+> -EXPORT_SYMBOL_GPL(mcb_bus_get);
+> +EXPORT_SYMBOL_NS_GPL(mcb_bus_get, MCB);
+>  
+>  /**
+>   * mcb_bus_put() - Decrement refcnt
+> @@ -351,7 +351,7 @@ void mcb_bus_put(struct mcb_bus *bus)
+>  	if (bus)
+>  		put_device(&bus->dev);
+>  }
+> -EXPORT_SYMBOL_GPL(mcb_bus_put);
+> +EXPORT_SYMBOL_NS_GPL(mcb_bus_put, MCB);
+>  
+>  /**
+>   * mcb_alloc_dev() - Allocate a device
+> @@ -371,7 +371,7 @@ struct mcb_device *mcb_alloc_dev(struct mcb_bus *bus)
+>  
+>  	return dev;
+>  }
+> -EXPORT_SYMBOL_GPL(mcb_alloc_dev);
+> +EXPORT_SYMBOL_NS_GPL(mcb_alloc_dev, MCB);
+>  
+>  /**
+>   * mcb_free_dev() - Free @mcb_device
+> @@ -383,7 +383,7 @@ void mcb_free_dev(struct mcb_device *dev)
+>  {
+>  	kfree(dev);
+>  }
+> -EXPORT_SYMBOL_GPL(mcb_free_dev);
+> +EXPORT_SYMBOL_NS_GPL(mcb_free_dev, MCB);
+>  
+>  static int __mcb_bus_add_devices(struct device *dev, void *data)
+>  {
+> @@ -412,7 +412,7 @@ void mcb_bus_add_devices(const struct mcb_bus *bus)
+>  {
+>  	bus_for_each_dev(&mcb_bus_type, NULL, NULL, __mcb_bus_add_devices);
+>  }
+> -EXPORT_SYMBOL_GPL(mcb_bus_add_devices);
+> +EXPORT_SYMBOL_NS_GPL(mcb_bus_add_devices, MCB);
+>  
+>  /**
+>   * mcb_get_resource() - get a resource for a mcb device
+> @@ -428,7 +428,7 @@ struct resource *mcb_get_resource(struct mcb_device *dev, unsigned int type)
+>  	else
+>  		return NULL;
+>  }
+> -EXPORT_SYMBOL_GPL(mcb_get_resource);
+> +EXPORT_SYMBOL_NS_GPL(mcb_get_resource, MCB);
+>  
+>  /**
+>   * mcb_request_mem() - Request memory
+> @@ -454,7 +454,7 @@ struct resource *mcb_request_mem(struct mcb_device *dev, const char *name)
+>  
+>  	return mem;
+>  }
+> -EXPORT_SYMBOL_GPL(mcb_request_mem);
+> +EXPORT_SYMBOL_NS_GPL(mcb_request_mem, MCB);
+>  
+>  /**
+>   * mcb_release_mem() - Release memory requested by device
+> @@ -469,7 +469,7 @@ void mcb_release_mem(struct resource *mem)
+>  	size = resource_size(mem);
+>  	release_mem_region(mem->start, size);
+>  }
+> -EXPORT_SYMBOL_GPL(mcb_release_mem);
+> +EXPORT_SYMBOL_NS_GPL(mcb_release_mem, MCB);
+>  
+>  static int __mcb_get_irq(struct mcb_device *dev)
+>  {
+> @@ -495,7 +495,7 @@ int mcb_get_irq(struct mcb_device *dev)
+>  
+>  	return __mcb_get_irq(dev);
+>  }
+> -EXPORT_SYMBOL_GPL(mcb_get_irq);
+> +EXPORT_SYMBOL_NS_GPL(mcb_get_irq, MCB);
+>  
+>  static int mcb_init(void)
+>  {
+> diff --git a/drivers/mcb/mcb-lpc.c b/drivers/mcb/mcb-lpc.c
+> index 8f1bde437a7e..506676754538 100644
+> --- a/drivers/mcb/mcb-lpc.c
+> +++ b/drivers/mcb/mcb-lpc.c
+> @@ -168,3 +168,4 @@ module_exit(mcb_lpc_exit);
+>  MODULE_AUTHOR("Andreas Werner <andreas.werner@men.de>");
+>  MODULE_LICENSE("GPL");
+>  MODULE_DESCRIPTION("MCB over LPC support");
+> +MODULE_IMPORT_NS(MCB);
+> diff --git a/drivers/mcb/mcb-parse.c b/drivers/mcb/mcb-parse.c
+> index 3b69e6aa3d88..0266bfddfbe2 100644
+> --- a/drivers/mcb/mcb-parse.c
+> +++ b/drivers/mcb/mcb-parse.c
+> @@ -253,4 +253,4 @@ int chameleon_parse_cells(struct mcb_bus *bus, phys_addr_t mapbase,
+>  
+>  	return ret;
+>  }
+> -EXPORT_SYMBOL_GPL(chameleon_parse_cells);
+> +EXPORT_SYMBOL_NS_GPL(chameleon_parse_cells, MCB);
+> diff --git a/drivers/mcb/mcb-pci.c b/drivers/mcb/mcb-pci.c
+> index 14866aa22f75..dc88232d9af8 100644
+> --- a/drivers/mcb/mcb-pci.c
+> +++ b/drivers/mcb/mcb-pci.c
+> @@ -131,3 +131,4 @@ module_pci_driver(mcb_pci_driver);
+>  MODULE_AUTHOR("Johannes Thumshirn <johannes.thumshirn@men.de>");
+>  MODULE_LICENSE("GPL");
+>  MODULE_DESCRIPTION("MCB over PCI support");
+> +MODULE_IMPORT_NS(MCB);
+> diff --git a/drivers/tty/serial/8250/8250_men_mcb.c b/drivers/tty/serial/8250/8250_men_mcb.c
+> index 02c5aff58a74..80a5c063ed70 100644
+> --- a/drivers/tty/serial/8250/8250_men_mcb.c
+> +++ b/drivers/tty/serial/8250/8250_men_mcb.c
+> @@ -174,3 +174,4 @@ MODULE_AUTHOR("Michael Moese <michael.moese@men.de");
+>  MODULE_ALIAS("mcb:16z125");
+>  MODULE_ALIAS("mcb:16z025");
+>  MODULE_ALIAS("mcb:16z057");
+> +MODULE_IMPORT_NS(MCB);
+> diff --git a/drivers/tty/serial/men_z135_uart.c b/drivers/tty/serial/men_z135_uart.c
+> index e5d3ebab6dae..4f53a4caabf6 100644
+> --- a/drivers/tty/serial/men_z135_uart.c
+> +++ b/drivers/tty/serial/men_z135_uart.c
+> @@ -930,3 +930,4 @@ MODULE_AUTHOR("Johannes Thumshirn <johannes.thumshirn@men.de>");
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_DESCRIPTION("MEN 16z135 High Speed UART");
+>  MODULE_ALIAS("mcb:16z135");
+> +MODULE_IMPORT_NS(MCB);
+> diff --git a/drivers/watchdog/menz69_wdt.c b/drivers/watchdog/menz69_wdt.c
+> index ed18238c5407..8973f98bc6a5 100644
+> --- a/drivers/watchdog/menz69_wdt.c
+> +++ b/drivers/watchdog/menz69_wdt.c
+> @@ -168,3 +168,4 @@ module_mcb_driver(men_z069_driver);
+>  MODULE_AUTHOR("Johannes Thumshirn <jth@kernel.org>");
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_ALIAS("mcb:16z069");
+> +MODULE_IMPORT_NS(MCB);
+> 
+
 -- 
-2.17.1
+Michael Moese <mmoese@suse.de>
+QA Engineer
+PGP Fingerprint: 4CCE 3896 F873 2CA5 2382  3C6F 6021 375C 8635 7E74
 
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5
+90409 Nürnberg
+Germany
+
+(HRB 36809, AG Nürnberg)
+Geschäftsführer: Felix Imendörffer
