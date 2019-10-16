@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ABCBD88F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 09:08:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C793D88F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 09:08:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389674AbfJPHHv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 03:07:51 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36792 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389242AbfJPHHr (ORCPT
+        id S2390221AbfJPHIF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 03:08:05 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33972 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389615AbfJPHHt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 03:07:47 -0400
-Received: by mail-lj1-f195.google.com with SMTP id v24so22815609ljj.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 00:07:45 -0700 (PDT)
+        Wed, 16 Oct 2019 03:07:49 -0400
+Received: by mail-lj1-f196.google.com with SMTP id j19so22839209lja.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 00:07:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=oxDmBN8xjRHLwjCrJVEkKzUtkBzzYQgLKNmxBNYk6Lk=;
-        b=mJD0Y8fakTfV82mrGHxCoBR8AE4xJv6jTGnyRdffnT3gp8w5fy8thy7oRDclKCdlla
-         9AKy2bnASj/sE5hke5dqFXtvW7zM260aK7qraQkvSRmMbE3qohdSyOgif3XtAsjpgL9U
-         qQogQrSc2/Lngg0Mq/odTr+eGg+gm5xaIJwcIRKs4K/+zPRr+L6Mv9SIDgbtkWJfw6AR
-         e622onDA+2WGpBrRXKKoDwnghIA2tO5jUJPZYBMzz91m3lO7t4XCgGkm3+cKhzhtOkaA
-         9h1miXyTVi6KvzyaWYfBk3bsBykMkC0+hU7bBluJU3FRdvfiT6TPpzTpOLf7+csf/s1d
-         uHpQ==
+        bh=mHYtIhe59LgkE0iURxc0+3vHk4byPJGL3D4yPD8SiX4=;
+        b=TuNdLmYaPeWTQwLP1dnD3cA7caOQ67xFZrQFsZOLSt6chsyvzGxpyctNGBFc3HHnPt
+         FUlUM20/hHnzwyJw1bMzCmRrrK8Sjv5iQIIlyPwssziKMiasOEltnGhPOkpZlMgDhjFa
+         XunsJX+zwo9+tJKqQE9mTQ+EqoJzlZkoXY+JX+5zGhdExn4lDX7WykCX1S2baxF2F75u
+         gxXf1d1e1ZbeYH1kShWAxlUgGx2Dk+RlQQIbhogCr6KuA3rUMcpTfbmHLQAt4Q2xoXKG
+         vNSL9X1pRU4/tWNL1mc0hgXSGvVlAPXk0zYYju5gQTVrDWc1Ks6ehfw+TRqI+hN4S0iW
+         p4kQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=oxDmBN8xjRHLwjCrJVEkKzUtkBzzYQgLKNmxBNYk6Lk=;
-        b=DY5oQ3MZQn4cDnuf/y4k3v59e2xhk0q6FCoZBW9555LLh/ERbzeh++fueeGs0qGZwq
-         0M2MUX89zoPlW+1aJjurArOQMhBDCQheYEzpz0mDKh6pTHhL4SLn5QQvqx6MOSzFvW0E
-         qkURtsKC4sj8lbTOK+eIEkjLpf3msXCpVvmXE/ILv0F2V/XBL78WKkouow6mKvsoTXcO
-         +ruyYrhKf8qLR3KWknKXW+g09jsh95ZCqdo/7PlTDkgDiut+gHKi9fH87J+Qts2je+/Z
-         zEjCCcCtlt5cOm87+2hYhv33NPevGdPS8CyLMwDCW6+x8GQOKOZsa+2eAVcqNqHNRNJz
-         OaeA==
-X-Gm-Message-State: APjAAAWj7zfPiYY5c/oXp8LfPXLBlIsN8MRuckOFZRKALepoLZbYtNcb
-        UHzSU7M3XWD153DxxtpGUBw=
-X-Google-Smtp-Source: APXvYqzFJq0X14+N0B33ZyE/bD1IVOERGHXz7HXUP3dLkoHMUCclXOJf/F7lmiWKgsFUVqC3O42ZPQ==
-X-Received: by 2002:a2e:8204:: with SMTP id w4mr25118019ljg.212.1571209665267;
-        Wed, 16 Oct 2019 00:07:45 -0700 (PDT)
+        bh=mHYtIhe59LgkE0iURxc0+3vHk4byPJGL3D4yPD8SiX4=;
+        b=LhBoHaSMTpJ6Q6pAPO7vOxGNzQbCmqBKETznhqBM0lWsNNnNjcQtIhJzisRF16LRw4
+         riqvKnh/298LTS1uoxTeTmlmabtibeV0ARQPY6DvIRU9clAHdij1FQOp+/uBbrjz5scH
+         jLTeavSIRjKC8Oqu6Hs0WNVYqKdlzDvBwFvNuVTJXl7/6bkcF36wbyLibNkYHWCT2dVr
+         Wv1iKaEw6Wfcu5SlQ8Or483oP1Lx0RCbkV/U9JEpm+3QaN/nTUYyDZmjmFmn6pMqeHQo
+         ncV+T7klcoeTAP8iVUV8n1H49Rtxk4xe/t9SZutei5SzhUSOtCIj8oevwah4Z7RmLHxI
+         bl7w==
+X-Gm-Message-State: APjAAAWzlf4qN2/Vl52TME3jVurauk/6vnEpQBrtmYqkfD5Q6xcF694U
+        u/Ndgnac5aQbZ1qdFnjKFp8=
+X-Google-Smtp-Source: APXvYqwfZtptI3V5Zo3A4sicYjMnE/4Cg4n106UWQ8VH2oVQUkqbEnH1ctIdHJb69OGR6hPK07D5yA==
+X-Received: by 2002:a2e:8417:: with SMTP id z23mr24777343ljg.46.1571209666572;
+        Wed, 16 Oct 2019 00:07:46 -0700 (PDT)
 Received: from localhost.localdomain (c213-102-65-51.bredband.comhem.se. [213.102.65.51])
-        by smtp.gmail.com with ESMTPSA id j191sm1361493lfj.49.2019.10.16.00.07.43
+        by smtp.gmail.com with ESMTPSA id j191sm1361493lfj.49.2019.10.16.00.07.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2019 00:07:44 -0700 (PDT)
+        Wed, 16 Oct 2019 00:07:45 -0700 (PDT)
 From:   codekipper@gmail.com
 To:     mripard@kernel.org, wens@csie.org, linux-sunxi@googlegroups.com
 Cc:     linux-arm-kernel@lists.infradead.org, lgirdwood@gmail.com,
         broonie@kernel.org, linux-kernel@vger.kernel.org,
         alsa-devel@alsa-project.org, be17068@iperbole.bo.it,
         Marcus Cooper <codekipper@gmail.com>
-Subject: [PATCH v6 2/7] ASoC: sun4i-i2s: Add functions for RX and TX channel offsets
-Date:   Wed, 16 Oct 2019 09:07:35 +0200
-Message-Id: <20191016070740.121435-3-codekipper@gmail.com>
+Subject: [PATCH v6 3/7] ASoC: sun4i-i2s: Add functions for RX and TX channel enables
+Date:   Wed, 16 Oct 2019 09:07:36 +0200
+Message-Id: <20191016070740.121435-4-codekipper@gmail.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191016070740.121435-1-codekipper@gmail.com>
 References: <20191016070740.121435-1-codekipper@gmail.com>
@@ -66,76 +66,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcus Cooper <codekipper@gmail.com>
 
-Newer SoCs like the H6 have the channel offset bits in a different
+Newer SoCs like the H6 have the channel enable bits in a different
 position to what is on the H3. As we will eventually add multi-
 channel support then create function calls as opposed to regmap
 fields to add support for different devices.
 
 Signed-off-by: Marcus Cooper <codekipper@gmail.com>
 ---
- sound/soc/sunxi/sun4i-i2s.c | 31 +++++++++++++++++++++++++------
- 1 file changed, 25 insertions(+), 6 deletions(-)
+ sound/soc/sunxi/sun4i-i2s.c | 32 +++++++++++++++++++++++++++++---
+ 1 file changed, 29 insertions(+), 3 deletions(-)
 
 diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-index f1a80973c450..875567881f30 100644
+index 875567881f30..8d28a386872f 100644
 --- a/sound/soc/sunxi/sun4i-i2s.c
 +++ b/sound/soc/sunxi/sun4i-i2s.c
-@@ -157,6 +157,8 @@ struct sun4i_i2s_quirks {
- 	int	(*set_chan_cfg)(const struct sun4i_i2s *,
- 				const struct snd_pcm_hw_params *);
+@@ -159,6 +159,8 @@ struct sun4i_i2s_quirks {
  	int	(*set_fmt)(struct sun4i_i2s *, unsigned int);
-+	void	(*set_txchanoffset)(const struct sun4i_i2s *, int);
-+	void	(*set_rxchanoffset)(const struct sun4i_i2s *);
+ 	void	(*set_txchanoffset)(const struct sun4i_i2s *, int);
+ 	void	(*set_rxchanoffset)(const struct sun4i_i2s *);
++	void	(*set_txchanen)(const struct sun4i_i2s *, int, int);
++	void	(*set_rxchanen)(const struct sun4i_i2s *, int);
  };
  
  struct sun4i_i2s {
-@@ -467,6 +469,23 @@ static int sun8i_i2s_set_chan_cfg(const struct sun4i_i2s *i2s,
+@@ -462,9 +464,7 @@ static int sun8i_i2s_set_chan_cfg(const struct sun4i_i2s *i2s,
+ 			   SUN8I_I2S_FMT0_LRCK_PERIOD_MASK,
+ 			   SUN8I_I2S_FMT0_LRCK_PERIOD(lrck_period));
+ 
+-	regmap_update_bits(i2s->regmap, SUN8I_I2S_TX_CHAN_SEL_REG,
+-			   SUN8I_I2S_TX_CHAN_EN_MASK,
+-			   SUN8I_I2S_TX_CHAN_EN(channels));
++	i2s->variant->set_txchanen(i2s, 0, channels);
+ 
  	return 0;
  }
+@@ -486,6 +486,24 @@ static void sun8i_i2s_set_rxchanoffset(const struct sun4i_i2s *i2s)
+ 			   SUN8I_I2S_TX_CHAN_OFFSET(i2s->offset));
+ }
  
-+static void sun8i_i2s_set_txchanoffset(const struct sun4i_i2s *i2s, int output)
++static void sun8i_i2s_set_txchanen(const struct sun4i_i2s *i2s, int output,
++				   int channel)
 +{
 +	if (output >= 0 && output < 4)
 +		regmap_update_bits(i2s->regmap,
 +				   SUN8I_I2S_TX_CHAN_SEL_REG + (output * 4),
-+				   SUN8I_I2S_TX_CHAN_OFFSET_MASK,
-+				   SUN8I_I2S_TX_CHAN_OFFSET(i2s->offset));
++				   SUN8I_I2S_TX_CHAN_EN_MASK,
++				   SUN8I_I2S_TX_CHAN_EN(channel));
 +}
 +
-+static void sun8i_i2s_set_rxchanoffset(const struct sun4i_i2s *i2s)
++static void sun8i_i2s_set_rxchanen(const struct sun4i_i2s *i2s, int channel)
 +{
 +	regmap_update_bits(i2s->regmap,
 +			   SUN8I_I2S_RX_CHAN_SEL_REG,
-+			   SUN8I_I2S_TX_CHAN_OFFSET_MASK,
-+			   SUN8I_I2S_TX_CHAN_OFFSET(i2s->offset));
++			   SUN8I_I2S_TX_CHAN_EN_MASK,
++			   SUN8I_I2S_TX_CHAN_EN(channel));
 +}
 +
  static int sun4i_i2s_hw_params(struct snd_pcm_substream *substream,
  			       struct snd_pcm_hw_params *params,
  			       struct snd_soc_dai *dai)
-@@ -661,12 +680,10 @@ static int sun8i_i2s_set_soc_fmt(struct sun4i_i2s *i2s,
+@@ -510,6 +528,12 @@ static int sun4i_i2s_hw_params(struct snd_pcm_substream *substream,
+ 		return ret;
+ 	}
  
- 	regmap_update_bits(i2s->regmap, SUN4I_I2S_CTRL_REG,
- 			   SUN8I_I2S_CTRL_MODE_MASK, mode);
--	regmap_update_bits(i2s->regmap, SUN8I_I2S_TX_CHAN_SEL_REG,
--			   SUN8I_I2S_TX_CHAN_OFFSET_MASK,
--			   SUN8I_I2S_TX_CHAN_OFFSET(i2s->offset));
--	regmap_update_bits(i2s->regmap, SUN8I_I2S_RX_CHAN_SEL_REG,
--			   SUN8I_I2S_TX_CHAN_OFFSET_MASK,
--			   SUN8I_I2S_TX_CHAN_OFFSET(i2s->offset));
-+	if (i2s->variant->set_txchanoffset)
-+		i2s->variant->set_txchanoffset(i2s, 0);
-+	if (i2s->variant->set_rxchanoffset)
-+		i2s->variant->set_rxchanoffset(i2s);
- 
- 	/* DAI clock master masks */
- 	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
-@@ -1136,6 +1153,8 @@ static const struct sun4i_i2s_quirks sun8i_h3_i2s_quirks = {
- 	.get_wss		= sun8i_i2s_get_sr_wss,
- 	.set_chan_cfg		= sun8i_i2s_set_chan_cfg,
++	if (i2s->variant->set_txchanen)
++		i2s->variant->set_txchanen(i2s, 0, channels);
++
++	if (i2s->variant->set_rxchanen)
++		i2s->variant->set_rxchanen(i2s, channels);
++
+ 	switch (params_physical_width(params)) {
+ 	case 16:
+ 		width = DMA_SLAVE_BUSWIDTH_2_BYTES;
+@@ -1155,6 +1179,8 @@ static const struct sun4i_i2s_quirks sun8i_h3_i2s_quirks = {
  	.set_fmt		= sun8i_i2s_set_soc_fmt,
-+	.set_txchanoffset	= sun8i_i2s_set_txchanoffset,
-+	.set_rxchanoffset	= sun8i_i2s_set_rxchanoffset,
+ 	.set_txchanoffset	= sun8i_i2s_set_txchanoffset,
+ 	.set_rxchanoffset	= sun8i_i2s_set_rxchanoffset,
++	.set_txchanen		= sun8i_i2s_set_txchanen,
++	.set_rxchanen		= sun8i_i2s_set_rxchanen,
  };
  
  static const struct sun4i_i2s_quirks sun50i_a64_codec_i2s_quirks = {
