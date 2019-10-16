@@ -2,105 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15BF3D915A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:47:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE358D9164
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:48:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393254AbfJPMrU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 08:47:20 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35552 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388855AbfJPMrU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 08:47:20 -0400
-Received: by mail-pg1-f194.google.com with SMTP id p30so14251363pgl.2;
-        Wed, 16 Oct 2019 05:47:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Rq3f4eSp8CIkVoHGSORWyEkMMIc3Sw4eQTsm9V9rf2g=;
-        b=au50oT2NSPX7rC67A9Rgrd7RefLKrT2LB3kY/ByGZbTSuOf5ad2TOwoVDqAN9UIVyk
-         mdXYIX73xCfCXSvyeyNmB+qAi28C52kNVnGyLTLJUQuZJx+Y0vSZngxrLqvAsTF8/SmD
-         laMin8995YinlrUPOFqtbpLd5GglFMs1r9D8BwsC6cBdnnqY1coX6J+8kSqgSNXZ8qfd
-         xdHPuDQQdFT9yRERBzgPuB5PzfDQM+MjSlcx+yr0PeWVb3diXN8ur55yCe+FynczCmAg
-         ePWqc0/tWRasdYkj65C2f64x5k3PduW7tN8Iu3h4BEiib0KHyjLK8TGekRjicZcJm7lm
-         0LXg==
-X-Gm-Message-State: APjAAAUNF3aJGOwkcE8v4qrrvwlaabpkl1TQdtRmihe8LpRfMblmbPFZ
-        R5wDvYJm4hjo9vr6F6h6ktc=
-X-Google-Smtp-Source: APXvYqxXeJUjiiG3waBwmyhci4T1gcY8YNpB2uTrlbsBKl/glHPqm2PbQTCIMDpRZuX/+szbuVY8Kg==
-X-Received: by 2002:a62:86c5:: with SMTP id x188mr45003130pfd.228.1571230037854;
-        Wed, 16 Oct 2019 05:47:17 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id y138sm28615611pfb.174.2019.10.16.05.47.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2019 05:47:16 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id F3CBB40251; Wed, 16 Oct 2019 12:47:15 +0000 (UTC)
-Date:   Wed, 16 Oct 2019 12:47:15 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Alan Maguire <alan.maguire@oracle.com>
-Cc:     linux-kselftest@vger.kernel.org, brendanhiggins@google.com,
-        skhan@linuxfoundation.org, keescook@chromium.org,
-        yzaikin@google.com, akpm@linux-foundation.org,
-        yamada.masahiro@socionext.com, catalin.marinas@arm.com,
-        joe.lawrence@redhat.com, penguin-kernel@i-love.sakura.ne.jp,
-        schowdary@nvidia.com, urezki@gmail.com,
-        andriy.shevchenko@linux.intel.com, changbin.du@intel.com,
-        kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 linux-kselftest-test 0/3] kunit: support building
- core/tests as modules
-Message-ID: <20191016124715.GG16384@42.do-not-panic.com>
-References: <1570546546-549-1-git-send-email-alan.maguire@oracle.com>
- <20191014092051.GZ16384@42.do-not-panic.com>
- <alpine.LRH.2.20.1910141452470.6620@dhcp-10-175-191-179.vpn.oracle.com>
+        id S2393295AbfJPMsf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 08:48:35 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:56930 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390608AbfJPMsc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 08:48:32 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id DF2B21A0542;
+        Wed, 16 Oct 2019 14:48:28 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D0CBE1A001A;
+        Wed, 16 Oct 2019 14:48:28 +0200 (CEST)
+Received: from fsr-ub1664-026.ea.freescale.net (fsr-ub1664-026.ea.freescale.net [10.171.81.59])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 24F1D205D2;
+        Wed, 16 Oct 2019 14:48:28 +0200 (CEST)
+From:   Stefan-Gabriel Mirea <stefan-gabriel.mirea@nxp.com>
+To:     corbet@lwn.net, robh+dt@kernel.org, mark.rutland@arm.com,
+        gregkh@linuxfoundation.org, catalin.marinas@arm.com,
+        will@kernel.org, shawnguo@kernel.org, leoyang.li@nxp.com
+Cc:     jslaby@suse.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v7 0/5] Add initial support for S32V234-EVB
+Date:   Wed, 16 Oct 2019 15:48:22 +0300
+Message-Id: <1571230107-8493-1-git-send-email-stefan-gabriel.mirea@nxp.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.20.1910141452470.6620@dhcp-10-175-191-179.vpn.oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 14, 2019 at 03:02:03PM +0100, Alan Maguire wrote:
-> 
-> 
-> On Mon, 14 Oct 2019, Luis Chamberlain wrote:
-> 
-> > On Tue, Oct 08, 2019 at 03:55:43PM +0100, Alan Maguire wrote:
-> > > The current kunit execution model is to provide base kunit functionality
-> > > and tests built-in to the kernel.  The aim of this series is to allow
-> > > building kunit itself and tests as modules.  This in turn allows a
-> > > simple form of selective execution; load the module you wish to test.
-> > > In doing so, kunit itself (if also built as a module) will be loaded as
-> > > an implicit dependency.
-> > > 
-> > > Because this requires a core API modification - if a module delivers
-> > > multiple suites, they must be declared with the kunit_test_suites()
-> > > macro - we're proposing this patch as a candidate to be applied to the
-> > > test tree before too many kunit consumers appear.  We attempt to deal
-> > > with existing consumers in patch 1.
-> > 
-> > This is neat and makes sense to me.
-> 
-> Thanks for taking a look!
-> 
-> > However the ordering of the patches
-> > seems odd. If modules depend on kunit module, then shouldn't that go
-> > first? Ie, we want this to be bisectable in proper order.
-> > 
-> 
-> The reasoning here is it seemed a more likely scenario that users mught  
-> build kunit built-in (CONFIG_KUNIT=y) along with test suites built as 
-> modules (CONFIG_KUNIT_TEST=m). So the intermediate state after patch 2 - 
-> tests buildable as modules while kunit is still built-in-only - made more 
-> sense to me as something users might do in practice so that's why I 
-> ordered things that way.  I'm working on a new revision of the patchset
-> though, so if you feel strongly about this shout and I'll try and accommodate
-> the alternative ordering.
+Hello,
 
-No, that makes sense. All good.
+NXP's S32V234[1] ("Treerunner") vision microprocessors are targeted for
+high-performance, computationally intensive vision and sensor fusion
+applications that require automotive safety levels. They include leading
+edge Camera Vision modules like APEX-2, ISP and GPU. The S32V234-EVB and
+S32V234-SBC boards are available for customer evaluation.
 
-  Luis
+The following patch series introduces minimal enablement support for the
+NXP S32V234-EVB2[2] board, which leverages most of the SoC capabilities.
+Up to v2, this series also included the fsl_linflexuart driver, which has
+been included in Linux 5.4-rc1[3].
+
+In the future, we aim to submit multiple drivers upstream, which can be
+found in the kernel of our Auto Linux BSP[4] ("ALB"), starting with basic
+pinmuxing, clock and uSDHC drivers.
+
+For validation, you can use the U-Boot bootloader in the ALB[5], which we
+build and test with our patched version of the Linaro GCC 6.3.1 2017.05
+toolchain for ARM 64-bit, with sources available on [6].
+
+Changes in v7:
+* Rebase the patch 'serial: fsl_linflexuart: Be consistent with the name'
+  on the tty-next branch in Greg's tty git tree.
+
+Changes in v6:
+* In the patch 'serial: fsl_linflexuart: Be consistent with the name',
+  avoid updating the definition of PORT_LINFLEXUART; that was an
+  independent fix which has been submitted and accepted[9] separately;
+* Avoid using 'base64' as 'Content-Transfer-Encoding'.
+
+Changes in v5:
+* Remove the patch 'dt-bindings: serial: Document Freescale LINFlexD UART'
+  following its acceptance in Linux 5.4-rc1[8];
+* Rebase the other patches on v5.4-rc1.
+
+Changes in v4:
+* Remove the patch 'serial: fsl_linflexuart: Update compatible string'
+  following its acceptance[7];
+* Rebase the patch 'serial: fsl_linflexuart: Be consistent with the name'
+  on the tty-next branch in Greg's tty git tree.
+
+Changes in v3:
+* Remove the patch 'tty: serial: Add linflexuart driver for S32V234'
+  following its acceptance[3];
+* Replace 'Freescale' with 'NXP' in the ARCH_S32 config definition and the
+  'model' property from the device tree;
+* Remove the 'fsl-' prefixes from the dtsi and dts file names;
+* Move the 'model' property from (fsl-)s32v234.dtsi to s32v234-evb.dts;
+* Add newlines between the cpu nodes in s32v234.dtsi;
+* Make use of GIC_SPI, GIC_PPI, GIC_CPU_MASK_SIMPLE and IRQ_TYPE_* in the
+  'interrupts' tuples;
+* Move the 'timer' and 'interrupt-controller' nodes before 'soc' in
+  s32v234.dtsi;
+* Be consistent with the 'LINFlexD' spelling in documentation, strings and
+  comments; add new patch 'serial: fsl_linflexuart: Be consistent with the
+  name' to update the LINFlexD driver as well;
+* Remove from fsl,s32-linflexuart.txt a statement regarding the limitation
+  to UART mode;
+* Make the compatible string SoC specific ("fsl,s32v234-linflexuart"); add
+  new patch 'serial: fsl_linflexuart: Update compatible string' to update
+  the LINFlexD driver as well;
+* In the LINFlexD binding documentation, insert a space between label and
+  node name and remove the 'status' property.
+
+Changes in v2:
+* Update the entry in fsl.yaml to apply to all S32V234 based boards;
+* Add chosen node to dts, with a 'stdout-path' property for earlycon;
+* Remove linflex_verify_port(), because it was only called from
+  uart_set_info(), which was going to always fail at the "baud_base < 9600"
+  check, as we are not using uartclk from uart_port yet;
+* Fix compatible string used in OF_EARLYCON_DECLARE.
+
+[1] https://www.nxp.com/products/processors-and-microcontrollers/arm-based-processors-and-mcus/s32-automotive-platform/vision-processor-for-front-and-surround-view-camera-machine-learning-and-sensor-fusion:S32V234
+[2] https://www.nxp.com/support/developer-resources/evaluation-and-development-boards/ultra-reliable-dev-platforms/s32v-mpus-platforms/s32v-vision-and-sensor-fusion-evaluation-system:S32V234EVB
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=09864c1cdf5c537bd01bff45181406e422ea988c
+[4] https://source.codeaurora.org/external/autobsps32/linux/
+[5] https://source.codeaurora.org/external/autobsps32/u-boot/
+[6] https://source.codeaurora.org/external/s32ds/compiler/gcc/
+[7] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2bd3661ea0eb2056852cbc58c5d96bb4df2f164f
+[8] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0e16feab6cce2b91d2996d4bc4eff01ece577c4a
+[9] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=9050079719021776e48437827eb9d5986b6e45d4
+
+Eddy Petrișor (1):
+  dt-bindings: arm: fsl: Add the S32V234-EVB board
+
+Mihaela Martinas (2):
+  arm64: Introduce config for S32
+  arm64: defconfig: Enable configs for S32V234
+
+Stefan-Gabriel Mirea (1):
+  serial: fsl_linflexuart: Be consistent with the name
+
+Stoica Cosmin-Stefan (1):
+  arm64: dts: fsl: Add device tree for S32V234-EVB
+
+ .../admin-guide/kernel-parameters.txt         |   2 +-
+ .../devicetree/bindings/arm/fsl.yaml          |   6 +
+ arch/arm64/Kconfig.platforms                  |   5 +
+ arch/arm64/boot/dts/freescale/Makefile        |   2 +
+ arch/arm64/boot/dts/freescale/s32v234-evb.dts |  25 ++++
+ arch/arm64/boot/dts/freescale/s32v234.dtsi    | 139 ++++++++++++++++++
+ arch/arm64/configs/defconfig                  |   3 +
+ drivers/tty/serial/Kconfig                    |   8 +-
+ drivers/tty/serial/fsl_linflexuart.c          |   4 +-
+ include/uapi/linux/serial_core.h              |   2 +-
+ 10 files changed, 188 insertions(+), 8 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/freescale/s32v234-evb.dts
+ create mode 100644 arch/arm64/boot/dts/freescale/s32v234.dtsi
+
+-- 
+2.22.0
+
