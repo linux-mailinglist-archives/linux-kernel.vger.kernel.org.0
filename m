@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3485BD9E60
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:03:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5301ED9EFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438176AbfJPV6b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:58:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50524 "EHLO mail.kernel.org"
+        id S2406835AbfJPWEF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:04:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395507AbfJPV5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:57:40 -0400
+        id S2438433AbfJPV7O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:59:14 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F019F21D7A;
-        Wed, 16 Oct 2019 21:57:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E6C2218DE;
+        Wed, 16 Oct 2019 21:59:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263059;
-        bh=mtdqMHulVyKXbq3Tr2bNi74wNnHB7ppgGT1q3gSmhwI=;
+        s=default; t=1571263153;
+        bh=sa4eUBZuMlSSMi6W6tiquabBPrqcRrjXGCzvIZP5hbo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Paopr+5lklS1JYg/weezT+qORU5YnvW8ffn6OkwF6Ah82j0/zJacFPYhjnM3Tyyvs
-         5R3C6GLpyuQmvTjhnypMVIPg/g7STB4yOfZSjNiJVx5BK0pLcVth4q7jQp17ZbLL6b
-         uszo8DMyYB1Zs+AX4eIVyUCkNc05f60tL1lI1tQw=
+        b=fmXX370ttx2//i3VdFADpYVNXIoghpVHbXkez4XiTyjzh7K1dMLUJIT0VAeZn7UHK
+         Rxg/NwK2LGJG6lZW4qe/QgkQki1Ay3Hl70PIg6+sqVo0nfqKFOjgGFfBqFrHPJfSkQ
+         hwcUQu7Jj2Vej5rOREx4CEmLekXmH5L8j3pu1wnM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        stable@vger.kernel.org, Marco Felsch <m.felsch@pengutronix.de>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 61/81] iio: adc: stm32-adc: fix a race when using several adcs with dma and irq
-Date:   Wed, 16 Oct 2019 14:51:12 -0700
-Message-Id: <20191016214843.894642341@linuxfoundation.org>
+Subject: [PATCH 5.3 081/112] gpio: fix getting nonexclusive gpiods from DT
+Date:   Wed, 16 Oct 2019 14:51:13 -0700
+Message-Id: <20191016214904.616631307@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
-References: <20191016214805.727399379@linuxfoundation.org>
+In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
+References: <20191016214844.038848564@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,133 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
+From: Marco Felsch <m.felsch@pengutronix.de>
 
-[ Upstream commit dcb10920179ab74caf88a6f2afadecfc2743b910 ]
+[ Upstream commit be7ae45cfea97e787234e00e1a9eb341acacd84e ]
 
-End of conversion may be handled by using IRQ or DMA. There may be a
-race when two conversions complete at the same time on several ADCs.
-EOC can be read as 'set' for several ADCs, with:
-- an ADC configured to use IRQs. EOCIE bit is set. The handler is normally
-  called in this case.
-- an ADC configured to use DMA. EOCIE bit isn't set. EOC triggers the DMA
-  request instead. It's then automatically cleared by DMA read. But the
-  handler gets called due to status bit is temporarily set (IRQ triggered
-  by the other ADC).
-So both EOC status bit in CSR and EOCIE control bit must be checked
-before invoking the interrupt handler (e.g. call ISR only for
-IRQ-enabled ADCs).
+Since commit ec757001c818 ("gpio: Enable nonexclusive gpiods from DT
+nodes") we are able to get GPIOD_FLAGS_BIT_NONEXCLUSIVE marked gpios.
+Currently the gpiolib uses the wrong flags variable for the check. We
+need to check the gpiod_flags instead of the of_gpio_flags else we
+return -EBUSY for GPIOD_FLAGS_BIT_NONEXCLUSIVE marked and requested
+gpiod's.
 
-Fixes: 2763ea0585c9 ("iio: adc: stm32: add optional dma support")
-
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Fixes: ec757001c818 gpio: Enable nonexclusive gpiods from DT nodes
+Cc: stable@vger.kernel.org
+Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+[Bartosz: the function was moved to gpiolib-of.c so updated the patch]
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+[Bartosz: backported to v5.3.y]
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/adc/stm32-adc-core.c | 43 +++++++++++++++++++++++++++++---
- drivers/iio/adc/stm32-adc-core.h |  1 +
- 2 files changed, 41 insertions(+), 3 deletions(-)
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/adc/stm32-adc-core.c b/drivers/iio/adc/stm32-adc-core.c
-index ce2cc61395d63..38eb966930793 100644
---- a/drivers/iio/adc/stm32-adc-core.c
-+++ b/drivers/iio/adc/stm32-adc-core.c
-@@ -27,12 +27,16 @@
-  * @eoc1:	adc1 end of conversion flag in @csr
-  * @eoc2:	adc2 end of conversion flag in @csr
-  * @eoc3:	adc3 end of conversion flag in @csr
-+ * @ier:	interrupt enable register offset for each adc
-+ * @eocie_msk:	end of conversion interrupt enable mask in @ier
-  */
- struct stm32_adc_common_regs {
- 	u32 csr;
- 	u32 eoc1_msk;
- 	u32 eoc2_msk;
- 	u32 eoc3_msk;
-+	u32 ier;
-+	u32 eocie_msk;
- };
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index d9074191edef4..e4203c1eb869d 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -4303,7 +4303,7 @@ struct gpio_desc *gpiod_get_from_of_node(struct device_node *node,
+ 	transitory = flags & OF_GPIO_TRANSITORY;
  
- struct stm32_adc_priv;
-@@ -241,6 +245,8 @@ static const struct stm32_adc_common_regs stm32f4_adc_common_regs = {
- 	.eoc1_msk = STM32F4_EOC1,
- 	.eoc2_msk = STM32F4_EOC2,
- 	.eoc3_msk = STM32F4_EOC3,
-+	.ier = STM32F4_ADC_CR1,
-+	.eocie_msk = STM32F4_EOCIE,
- };
- 
- /* STM32H7 common registers definitions */
-@@ -248,8 +254,24 @@ static const struct stm32_adc_common_regs stm32h7_adc_common_regs = {
- 	.csr = STM32H7_ADC_CSR,
- 	.eoc1_msk = STM32H7_EOC_MST,
- 	.eoc2_msk = STM32H7_EOC_SLV,
-+	.ier = STM32H7_ADC_IER,
-+	.eocie_msk = STM32H7_EOCIE,
- };
- 
-+static const unsigned int stm32_adc_offset[STM32_ADC_MAX_ADCS] = {
-+	0, STM32_ADC_OFFSET, STM32_ADC_OFFSET * 2,
-+};
-+
-+static unsigned int stm32_adc_eoc_enabled(struct stm32_adc_priv *priv,
-+					  unsigned int adc)
-+{
-+	u32 ier, offset = stm32_adc_offset[adc];
-+
-+	ier = readl_relaxed(priv->common.base + offset + priv->cfg->regs->ier);
-+
-+	return ier & priv->cfg->regs->eocie_msk;
-+}
-+
- /* ADC common interrupt for all instances */
- static void stm32_adc_irq_handler(struct irq_desc *desc)
- {
-@@ -260,13 +282,28 @@ static void stm32_adc_irq_handler(struct irq_desc *desc)
- 	chained_irq_enter(chip, desc);
- 	status = readl_relaxed(priv->common.base + priv->cfg->regs->csr);
- 
--	if (status & priv->cfg->regs->eoc1_msk)
-+	/*
-+	 * End of conversion may be handled by using IRQ or DMA. There may be a
-+	 * race here when two conversions complete at the same time on several
-+	 * ADCs. EOC may be read 'set' for several ADCs, with:
-+	 * - an ADC configured to use DMA (EOC triggers the DMA request, and
-+	 *   is then automatically cleared by DR read in hardware)
-+	 * - an ADC configured to use IRQs (EOCIE bit is set. The handler must
-+	 *   be called in this case)
-+	 * So both EOC status bit in CSR and EOCIE control bit must be checked
-+	 * before invoking the interrupt handler (e.g. call ISR only for
-+	 * IRQ-enabled ADCs).
-+	 */
-+	if (status & priv->cfg->regs->eoc1_msk &&
-+	    stm32_adc_eoc_enabled(priv, 0))
- 		generic_handle_irq(irq_find_mapping(priv->domain, 0));
- 
--	if (status & priv->cfg->regs->eoc2_msk)
-+	if (status & priv->cfg->regs->eoc2_msk &&
-+	    stm32_adc_eoc_enabled(priv, 1))
- 		generic_handle_irq(irq_find_mapping(priv->domain, 1));
- 
--	if (status & priv->cfg->regs->eoc3_msk)
-+	if (status & priv->cfg->regs->eoc3_msk &&
-+	    stm32_adc_eoc_enabled(priv, 2))
- 		generic_handle_irq(irq_find_mapping(priv->domain, 2));
- 
- 	chained_irq_exit(chip, desc);
-diff --git a/drivers/iio/adc/stm32-adc-core.h b/drivers/iio/adc/stm32-adc-core.h
-index 94aa2d2577dc9..2579d514c2a34 100644
---- a/drivers/iio/adc/stm32-adc-core.h
-+++ b/drivers/iio/adc/stm32-adc-core.h
-@@ -25,6 +25,7 @@
-  * --------------------------------------------------------
-  */
- #define STM32_ADC_MAX_ADCS		3
-+#define STM32_ADC_OFFSET		0x100
- #define STM32_ADCX_COMN_OFFSET		0x300
- 
- /* STM32F4 - Registers for each ADC instance */
+ 	ret = gpiod_request(desc, label);
+-	if (ret == -EBUSY && (flags & GPIOD_FLAGS_BIT_NONEXCLUSIVE))
++	if (ret == -EBUSY && (dflags & GPIOD_FLAGS_BIT_NONEXCLUSIVE))
+ 		return desc;
+ 	if (ret)
+ 		return ERR_PTR(ret);
 -- 
 2.20.1
 
