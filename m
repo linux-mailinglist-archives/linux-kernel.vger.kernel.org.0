@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CE55D9E10
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24E1DD9DD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406601AbfJPV4P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:56:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47312 "EHLO mail.kernel.org"
+        id S2437610AbfJPVxv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:53:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437889AbfJPV4D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:56:03 -0400
+        id S2437591AbfJPVxr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:53:47 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD76121925;
-        Wed, 16 Oct 2019 21:56:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CBDD021925;
+        Wed, 16 Oct 2019 21:53:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262963;
-        bh=kItMa3ZmoBBQ34nmiHaR0G1kAuwiIlzSQGOy69IYQY8=;
+        s=default; t=1571262827;
+        bh=OyUlPjNeANd8E09a9byU60G74exCztVEBMkvSlrpIsQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jtjm02bM3GLmcn0DCQT/+popnaIW/hlttV6v2khim1+OLngU0w0wU0LOHpn6tglcu
-         l52uQgJIUWX0rMxYFlqZwov7Je8JxOHJmh4gL8x+Vf8Q4EA/yx3zeKfAGmmO+NVsmU
-         aYvDCNXYqhBjo41RSRDJscd2zPCsVZOMV+ZEr2ZU=
+        b=Oo41bmgC68295rCBeCLhKDjro6BYJUSgndSnwWnqxN70aY3cUal0td5gg9KqJ+l32
+         Z76b0aztjAANSWLJM73HkrtvTMck22fuUDQGM0RJD1YdwFSO2IlOLOTeWVAc22F6EP
+         KTWGURBbq2R1cse82Yc/PHfGXwPa8673vOv4sJXY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+5630ca7c3b2be5c9da5e@syzkaller.appspotmail.com,
-        Johan Hovold <johan@kernel.org>,
-        Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 4.14 30/65] USB: microtek: fix info-leak at probe
+        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.4 69/79] CIFS: Force reval dentry if LOOKUP_REVAL flag is set
 Date:   Wed, 16 Oct 2019 14:50:44 -0700
-Message-Id: <20191016214825.281688203@linuxfoundation.org>
+Message-Id: <20191016214827.621573775@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
-References: <20191016214756.457746573@linuxfoundation.org>
+In-Reply-To: <20191016214729.758892904@linuxfoundation.org>
+References: <20191016214729.758892904@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,38 +43,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Pavel Shilovsky <piastryyy@gmail.com>
 
-commit 177238c3d47d54b2ed8f0da7a4290db492f4a057 upstream.
+commit 0b3d0ef9840f7be202393ca9116b857f6f793715 upstream.
 
-Add missing bulk-in endpoint sanity check to prevent uninitialised stack
-data from being reported to the system log and used as endpoint
-addresses.
+Mark inode for force revalidation if LOOKUP_REVAL flag is set.
+This tells the client to actually send a QueryInfo request to
+the server to obtain the latest metadata in case a directory
+or a file were changed remotely. Only do that if the client
+doesn't have a lease for the file to avoid unneeded round
+trips to the server.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable <stable@vger.kernel.org>
-Reported-by: syzbot+5630ca7c3b2be5c9da5e@syzkaller.appspotmail.com
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Acked-by: Oliver Neukum <oneukum@suse.com>
-Link: https://lore.kernel.org/r/20191003070931.17009-1-johan@kernel.org
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/image/microtek.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ fs/cifs/dir.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/image/microtek.c
-+++ b/drivers/usb/image/microtek.c
-@@ -720,6 +720,10 @@ static int mts_usb_probe(struct usb_inte
+--- a/fs/cifs/dir.c
++++ b/fs/cifs/dir.c
+@@ -830,10 +830,16 @@ lookup_out:
+ static int
+ cifs_d_revalidate(struct dentry *direntry, unsigned int flags)
+ {
++	struct inode *inode;
++
+ 	if (flags & LOOKUP_RCU)
+ 		return -ECHILD;
  
- 	}
- 
-+	if (ep_in_current != &ep_in_set[2]) {
-+		MTS_WARNING("couldn't find two input bulk endpoints. Bailing out.\n");
-+		return -ENODEV;
-+	}
- 
- 	if ( ep_out == -1 ) {
- 		MTS_WARNING( "couldn't find an output bulk endpoint. Bailing out.\n" );
+ 	if (d_really_is_positive(direntry)) {
++		inode = d_inode(direntry);
++		if ((flags & LOOKUP_REVAL) && !CIFS_CACHE_READ(CIFS_I(inode)))
++			CIFS_I(inode)->time = 0; /* force reval */
++
+ 		if (cifs_revalidate_dentry(direntry))
+ 			return 0;
+ 		else {
+@@ -844,7 +850,7 @@ cifs_d_revalidate(struct dentry *direntr
+ 			 * attributes will have been updated by
+ 			 * cifs_revalidate_dentry().
+ 			 */
+-			if (IS_AUTOMOUNT(d_inode(direntry)) &&
++			if (IS_AUTOMOUNT(inode) &&
+ 			   !(direntry->d_flags & DCACHE_NEED_AUTOMOUNT)) {
+ 				spin_lock(&direntry->d_lock);
+ 				direntry->d_flags |= DCACHE_NEED_AUTOMOUNT;
 
 
