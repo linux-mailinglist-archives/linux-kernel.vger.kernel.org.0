@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01A67D9E82
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:03:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2377D9E52
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:03:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438507AbfJPV70 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:59:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52066 "EHLO mail.kernel.org"
+        id S2438119AbfJPV6J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:58:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395490AbfJPV61 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:58:27 -0400
+        id S1727241AbfJPV5P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:57:15 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E398521928;
-        Wed, 16 Oct 2019 21:58:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A301921928;
+        Wed, 16 Oct 2019 21:57:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263107;
-        bh=E2zSj+5l3fEHkyKOKlJHqKi0v60aNokAkhOX6t/Y5CM=;
+        s=default; t=1571263034;
+        bh=jlGR3XPRL+NAmC7s4hIpPBFodatK9NRysbSifcG7A+0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EmqSYgHawF6aYHWT/qa0YRLk4BSAhddbMqIROvCfhovXc5A9wkpVMLGSuhIuG80wl
-         x/8/Prve/eagStGzBQqrcy7rmSztGPIfgwnsrA7h7nA1n+QBnLvZlQw68GGu3ywVuQ
-         L2vPpVbXhk+NKc6E2AVUyWbriwGoxOHmRZHyX4fg=
+        b=fQZYx3YRpx1IQFrNG/mLdlGEQjhCwBpuklaAH0C+hwOEclZ5mVVlrTNC1WAr/J46d
+         xWPXCz7Eg/HPHEn8lLaQNIZessT/VxkF9H9cLAKTJHzJnbSViSQTekGezJLD6c3j0V
+         DZ1GPysR3XNu6xo2ol4QN6cd0U/Z9Zsa7+GgFXEs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 5.3 022/112] USB: chaoskey: fix use-after-free on release
-Date:   Wed, 16 Oct 2019 14:50:14 -0700
-Message-Id: <20191016214850.841829463@linuxfoundation.org>
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Tomoki Sekiyama <tomoki.sekiyama@gmail.com>,
+        syzbot+b24d736f18a1541ad550@syzkaller.appspotmail.com
+Subject: [PATCH 4.19 04/81] USB: yurex: Dont retry on unexpected errors
+Date:   Wed, 16 Oct 2019 14:50:15 -0700
+Message-Id: <20191016214808.920844358@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
-References: <20191016214844.038848564@linuxfoundation.org>
+In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
+References: <20191016214805.727399379@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,52 +44,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-commit 93ddb1f56ae102f14f9e46a9a9c8017faa970003 upstream.
+commit 32a0721c6620b77504916dac0cea8ad497c4878a upstream.
 
-The driver was accessing its struct usb_interface in its release()
-callback without holding a reference. This would lead to a
-use-after-free whenever the device was disconnected while the character
-device was still open.
+According to Greg KH, it has been generally agreed that when a USB
+driver encounters an unknown error (or one it can't handle directly),
+it should just give up instead of going into a potentially infinite
+retry loop.
 
-Fixes: 66e3e591891d ("usb: Add driver for Altus Metrum ChaosKey device (v2)")
-Cc: stable <stable@vger.kernel.org>     # 4.1
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191009153848.8664-3-johan@kernel.org
+The three codes -EPROTO, -EILSEQ, and -ETIME fall into this category.
+They can be caused by bus errors such as packet loss or corruption,
+attempting to communicate with a disconnected device, or by malicious
+firmware.  Nowadays the extent of packet loss or corruption is
+negligible, so it should be safe for a driver to give up whenever one
+of these errors occurs.
+
+Although the yurex driver handles -EILSEQ errors in this way, it
+doesn't do the same for -EPROTO (as discovered by the syzbot fuzzer)
+or other unrecognized errors.  This patch adjusts the driver so that
+it doesn't log an error message for -EPROTO or -ETIME, and it doesn't
+retry after any errors.
+
+Reported-and-tested-by: syzbot+b24d736f18a1541ad550@syzkaller.appspotmail.com
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+CC: Tomoki Sekiyama <tomoki.sekiyama@gmail.com>
+CC: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/Pine.LNX.4.44L0.1909171245410.1590-100000@iolanthe.rowland.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/chaoskey.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/usb/misc/yurex.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/misc/chaoskey.c
-+++ b/drivers/usb/misc/chaoskey.c
-@@ -98,6 +98,7 @@ static void chaoskey_free(struct chaoske
- 		usb_free_urb(dev->urb);
- 		kfree(dev->name);
- 		kfree(dev->buf);
-+		usb_put_intf(dev->interface);
- 		kfree(dev);
+--- a/drivers/usb/misc/yurex.c
++++ b/drivers/usb/misc/yurex.c
+@@ -132,6 +132,7 @@ static void yurex_interrupt(struct urb *
+ 	switch (status) {
+ 	case 0: /*success*/
+ 		break;
++	/* The device is terminated or messed up, give up */
+ 	case -EOVERFLOW:
+ 		dev_err(&dev->interface->dev,
+ 			"%s - overflow with length %d, actual length is %d\n",
+@@ -140,12 +141,13 @@ static void yurex_interrupt(struct urb *
+ 	case -ENOENT:
+ 	case -ESHUTDOWN:
+ 	case -EILSEQ:
+-		/* The device is terminated, clean up */
++	case -EPROTO:
++	case -ETIME:
+ 		return;
+ 	default:
+ 		dev_err(&dev->interface->dev,
+ 			"%s - unknown status received: %d\n", __func__, status);
+-		goto exit;
++		return;
  	}
- }
-@@ -145,6 +146,8 @@ static int chaoskey_probe(struct usb_int
- 	if (dev == NULL)
- 		goto out;
  
-+	dev->interface = usb_get_intf(interface);
-+
- 	dev->buf = kmalloc(size, GFP_KERNEL);
- 
- 	if (dev->buf == NULL)
-@@ -174,8 +177,6 @@ static int chaoskey_probe(struct usb_int
- 			goto out;
+ 	/* handle received message */
+@@ -177,7 +179,6 @@ static void yurex_interrupt(struct urb *
+ 		break;
  	}
  
--	dev->interface = interface;
--
- 	dev->in_ep = in_ep;
- 
- 	if (le16_to_cpu(udev->descriptor.idVendor) != ALEA_VENDOR_ID)
+-exit:
+ 	retval = usb_submit_urb(dev->urb, GFP_ATOMIC);
+ 	if (retval) {
+ 		dev_err(&dev->interface->dev, "%s - usb_submit_urb failed: %d\n",
 
 
