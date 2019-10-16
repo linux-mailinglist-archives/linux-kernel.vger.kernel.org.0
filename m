@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98E66DA13E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:26:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC58ADA0E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:26:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437689AbfJPWVH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:21:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42758 "EHLO mail.kernel.org"
+        id S1732195AbfJPWQj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:16:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437564AbfJPVxk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:53:40 -0400
+        id S2390047AbfJPVzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:55:05 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA21F218DE;
-        Wed, 16 Oct 2019 21:53:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C682521928;
+        Wed, 16 Oct 2019 21:55:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262819;
-        bh=/65x1RXpW1BL+sNWRXmIXwJn2MK+GW4GX8yPWk69DX0=;
+        s=default; t=1571262904;
+        bh=3c2kS2mxJ7C3LDuJuFK1tbyWUqOCOE6bNTAiIJ4faJo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jVob2SxtZrjBdJfJCAshH2e9pbWco2y4KHnZA4+PO9dohZyL8DCLKwCIObPAd6vBA
-         iRvH+HTPuTAVMTxkzXTRN/lBgpccFs6Iv2N/fkuyBG7iLs2LTxHfgZPc3FIGEez41Y
-         sLvHFA3GskNRq8/6cRzsbZRfBmGzFUsfkTi5N2gI=
+        b=TflJldFvkX9ZyEQgcQgjSZd+XafgA9quQ7HvSVN+3xIAXh2osMS0qYkrnu0YooTAv
+         fVgmldrVFxOdUQ9t1b0/gOXXpFWp7epFB6/lXAqg98nqaBqwE1VXQfMhD5qup5C81W
+         8MQ4rJMp1ANHOHeb96IMePakGJEmh32asYt/YGzQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.4 62/79] USB: legousbtower: fix open after failed reset request
-Date:   Wed, 16 Oct 2019 14:50:37 -0700
-Message-Id: <20191016214824.430528358@linuxfoundation.org>
+        stable@vger.kernel.org, Jacky Cao <Jacky.Cao@sony.com>,
+        Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 4.9 65/92] USB: dummy-hcd: fix power budget for SuperSpeed mode
+Date:   Wed, 16 Oct 2019 14:50:38 -0700
+Message-Id: <20191016214841.701965735@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214729.758892904@linuxfoundation.org>
-References: <20191016214729.758892904@linuxfoundation.org>
+In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
+References: <20191016214759.600329427@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,51 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Jacky.Cao@sony.com <Jacky.Cao@sony.com>
 
-commit 0b074f6986751361ff442bc1127c1648567aa8d6 upstream.
+commit 2636d49b64671d3d90ecc4daf971b58df3956519 upstream.
 
-The driver would return with a nonzero open count in case the reset
-control request failed. This would prevent any further attempts to open
-the char dev until the device was disconnected.
+The power budget for SuperSpeed mode should be 900 mA
+according to USB specification, so set the power budget
+to 900mA for dummy_start_ss which is only used for
+SuperSpeed mode.
 
-Fix this by incrementing the open count only on successful open.
+If the max power consumption of SuperSpeed device is
+larger than 500 mA, insufficient available bus power
+error happens in usb_choose_configuration function
+when the device connects to dummy hcd.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Jacky Cao <Jacky.Cao@sony.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20190919083039.30898-5-johan@kernel.org
+Link: https://lore.kernel.org/r/16EA1F625E922C43B00B9D82250220500871CDE5@APYOKXMS108.ap.sony.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/legousbtower.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/gadget/udc/dummy_hcd.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/misc/legousbtower.c
-+++ b/drivers/usb/misc/legousbtower.c
-@@ -354,7 +354,6 @@ static int tower_open (struct inode *ino
- 		retval = -EBUSY;
- 		goto unlock_exit;
- 	}
--	dev->open_count = 1;
+--- a/drivers/usb/gadget/udc/dummy_hcd.c
++++ b/drivers/usb/gadget/udc/dummy_hcd.c
+@@ -50,6 +50,7 @@
+ #define DRIVER_VERSION	"02 May 2005"
  
- 	/* reset the tower */
- 	result = usb_control_msg (dev->udev,
-@@ -394,13 +393,14 @@ static int tower_open (struct inode *ino
- 		dev_err(&dev->udev->dev,
- 			"Couldn't submit interrupt_in_urb %d\n", retval);
- 		dev->interrupt_in_running = 0;
--		dev->open_count = 0;
- 		goto unlock_exit;
- 	}
+ #define POWER_BUDGET	500	/* in mA; use 8 for low-power port testing */
++#define POWER_BUDGET_3	900	/* in mA */
  
- 	/* save device in the file's private structure */
- 	file->private_data = dev;
- 
-+	dev->open_count = 1;
-+
- unlock_exit:
- 	mutex_unlock(&dev->lock);
- 
+ static const char	driver_name[] = "dummy_hcd";
+ static const char	driver_desc[] = "USB Host+Gadget Emulator";
+@@ -2433,7 +2434,7 @@ static int dummy_start_ss(struct dummy_h
+ 	dum_hcd->rh_state = DUMMY_RH_RUNNING;
+ 	dum_hcd->stream_en_ep = 0;
+ 	INIT_LIST_HEAD(&dum_hcd->urbp_list);
+-	dummy_hcd_to_hcd(dum_hcd)->power_budget = POWER_BUDGET;
++	dummy_hcd_to_hcd(dum_hcd)->power_budget = POWER_BUDGET_3;
+ 	dummy_hcd_to_hcd(dum_hcd)->state = HC_STATE_RUNNING;
+ 	dummy_hcd_to_hcd(dum_hcd)->uses_new_polling = 1;
+ #ifdef CONFIG_USB_OTG
 
 
