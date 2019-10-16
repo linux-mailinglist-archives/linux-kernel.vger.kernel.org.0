@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 925DDD9ED9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C73CD9EB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406769AbfJPWCz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:02:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54478 "EHLO mail.kernel.org"
+        id S2438858AbfJPWAm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:00:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438543AbfJPV7d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:59:33 -0400
+        id S2438549AbfJPV7e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:59:34 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03406218DE;
-        Wed, 16 Oct 2019 21:59:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29A9C21925;
+        Wed, 16 Oct 2019 21:59:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263173;
-        bh=PnK/FwqO/xgaKpMwhmCootWXP5GSiD5o327VEuPnSAM=;
+        s=default; t=1571263174;
+        bh=Ig9XCHHU2qVu85xjuwYavYgJ/lRzNKn2H+xGprt53V0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qHFNvpQl0Xmm6cmfnhcZoRXg2epyLfudGHEZxOMnOS9s02AkbYCxvbNgLcxsdf7vs
-         vesviiiGKWgzdNtVbzvxgEs95EsoRa667Wz0WC8p73it3acvw63hfnI4kKwJoKvc30
-         +v11HueMIXWvXCpq3IigePQDZS/KnP4h6Dv4PoBg=
+        b=hLbu5/N5bztuHTcU2k1Mq2xi21/jdM9aCJbWBozbt19StO2LuwzjpQZ2BmuTVZQZ4
+         MUc/NNLIiDhiNWsu+KAhtx3HPupUNGjkJLetCPMSbKKNjf/8IJwaf1IokighMC0zMX
+         SB/v0hEBcJ5z8hipWNxoBx+K9TNB7x6MsXAbUPCA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rob Clark <robdclark@chromium.org>,
-        Fabio Estevam <festevam@gmail.com>
-Subject: [PATCH 5.3 100/112] drm/msm: Use the correct dma_sync calls harder
-Date:   Wed, 16 Oct 2019 14:51:32 -0700
-Message-Id: <20191016214906.445819351@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 5.3 101/112] media: stkwebcam: fix runtime PM after driver unbind
+Date:   Wed, 16 Oct 2019 14:51:33 -0700
+Message-Id: <20191016214906.560739268@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
 References: <20191016214844.038848564@linuxfoundation.org>
@@ -43,60 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Clark <robdclark@chromium.org>
+From: Johan Hovold <johan@kernel.org>
 
-commit 9f614197c744002f9968e82c649fdf7fe778e1e7 upstream.
+commit 30045f2174aab7fb4db7a9cf902d0aa6c75856a7 upstream.
 
-Looks like the dma_sync calls don't do what we want on armv7 either.
-Fixes:
+Since commit c2b71462d294 ("USB: core: Fix bug caused by duplicate
+interface PM usage counter") USB drivers must always balance their
+runtime PM gets and puts, including when the driver has already been
+unbound from the interface.
 
-  Unable to handle kernel paging request at virtual address 50001000
-  pgd = (ptrval)
-  [50001000] *pgd=00000000
-  Internal error: Oops: 805 [#1] SMP ARM
-  Modules linked in:
-  CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.3.0-rc6-00271-g9f159ae07f07 #4
-  Hardware name: Freescale i.MX53 (Device Tree Support)
-  PC is at v7_dma_clean_range+0x20/0x38
-  LR is at __dma_page_cpu_to_dev+0x28/0x90
-  pc : [<c011c76c>]    lr : [<c01181c4>]    psr: 20000013
-  sp : d80b5a88  ip : de96c000  fp : d840ce6c
-  r10: 00000000  r9 : 00000001  r8 : d843e010
-  r7 : 00000000  r6 : 00008000  r5 : ddb6c000  r4 : 00000000
-  r3 : 0000003f  r2 : 00000040  r1 : 50008000  r0 : 50001000
-  Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-  Control: 10c5387d  Table: 70004019  DAC: 00000051
-  Process swapper/0 (pid: 1, stack limit = 0x(ptrval))
+Leaving the interface with a positive PM usage counter would prevent a
+later bound driver from suspending the device.
 
-Signed-off-by: Rob Clark <robdclark@chromium.org>
-Fixes: 3de433c5b38a ("drm/msm: Use the correct dma_sync calls in msm_gem")
-Tested-by: Fabio Estevam <festevam@gmail.com>
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
+Note that runtime PM has never actually been enabled for this driver
+since the support_autosuspend flag in its usb_driver struct is not set.
+
+Fixes: c2b71462d294 ("USB: core: Fix bug caused by duplicate interface PM usage counter")
+Cc: stable <stable@vger.kernel.org>
+Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191001084908.2003-5-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/msm/msm_gem.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/usb/stkwebcam/stk-webcam.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/msm/msm_gem.c
-+++ b/drivers/gpu/drm/msm/msm_gem.c
-@@ -50,7 +50,7 @@ static void sync_for_device(struct msm_g
- {
- 	struct device *dev = msm_obj->base.dev->dev;
+--- a/drivers/media/usb/stkwebcam/stk-webcam.c
++++ b/drivers/media/usb/stkwebcam/stk-webcam.c
+@@ -643,8 +643,7 @@ static int v4l_stk_release(struct file *
+ 		dev->owner = NULL;
+ 	}
  
--	if (get_dma_ops(dev)) {
-+	if (get_dma_ops(dev) && IS_ENABLED(CONFIG_ARM64)) {
- 		dma_sync_sg_for_device(dev, msm_obj->sgt->sgl,
- 			msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
- 	} else {
-@@ -63,7 +63,7 @@ static void sync_for_cpu(struct msm_gem_
- {
- 	struct device *dev = msm_obj->base.dev->dev;
- 
--	if (get_dma_ops(dev)) {
-+	if (get_dma_ops(dev) && IS_ENABLED(CONFIG_ARM64)) {
- 		dma_sync_sg_for_cpu(dev, msm_obj->sgt->sgl,
- 			msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
- 	} else {
+-	if (is_present(dev))
+-		usb_autopm_put_interface(dev->interface);
++	usb_autopm_put_interface(dev->interface);
+ 	mutex_unlock(&dev->lock);
+ 	return v4l2_fh_release(fp);
+ }
 
 
