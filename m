@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97F76D9E8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78C83D9E8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438576AbfJPV7i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:59:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52394 "EHLO mail.kernel.org"
+        id S2438591AbfJPV7k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:59:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438224AbfJPV6j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:58:39 -0400
+        id S2438228AbfJPV6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:58:41 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A91F21928;
-        Wed, 16 Oct 2019 21:58:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59F3021925;
+        Wed, 16 Oct 2019 21:58:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263119;
-        bh=jFXAIx9g4Rar81Kccj33nbuvqOQF4Z/HIzIz/pbtx48=;
+        s=default; t=1571263120;
+        bh=y8truStfN1WkIHglGgpdViTzyA8SDBHckzAXehcL7B4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a8INY40GSNG4n8+h85XAJ8K5UuKS9dPBdgyFANAh7gszMwWcw58Q2GQh8Q0uTc2em
-         TD+H6KqfX5cjFJzr0FyJFUHNjFtwI9MgJlWFUxyWmnaan7Z7I+0vO0RlNths0Z7heW
-         DUNVqgpiX2IyovUXS7h/nbg9zGjEOHUmm7Xstrc4=
+        b=rS0dr0bD2id8eYwCvBuIitXlQp47gVrYtuABrW4JINaOpX4T/E+AqfSpI1os8PU1d
+         jvqBxGAJ+3DTym4Ae0YuE9QFPvZGH06r1z7HgGa+ZlMvJEM3F4eev5DLjAkw0h8kBC
+         Bwy/zfxJDeATpJCbXbtcCflBCIvGvG+z0L2wXefg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 5.3 043/112] USB: legousbtower: fix use-after-free on release
-Date:   Wed, 16 Oct 2019 14:50:35 -0700
-Message-Id: <20191016214854.683057469@linuxfoundation.org>
+        stable@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH 5.3 044/112] mei: me: add comet point (lake) LP device ids
+Date:   Wed, 16 Oct 2019 14:50:36 -0700
+Message-Id: <20191016214854.808452660@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
 References: <20191016214844.038848564@linuxfoundation.org>
@@ -42,43 +42,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Tomas Winkler <tomas.winkler@intel.com>
 
-commit 726b55d0e22ca72c69c947af87785c830289ddbc upstream.
+commit 4d86dfd38285c83a6df01093b8547f742e3b2470 upstream.
 
-The driver was accessing its struct usb_device in its release()
-callback without holding a reference. This would lead to a
-use-after-free whenever the device was disconnected while the character
-device was still open.
+Add Comet Point devices IDs for Comet Lake U platforms.
 
-Fixes: fef526cae700 ("USB: legousbtower: remove custom debug macro")
-Cc: stable <stable@vger.kernel.org>     # 3.12
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191009153848.8664-5-johan@kernel.org
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Link: https://lore.kernel.org/r/20191001235958.19979-1-tomas.winkler@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/legousbtower.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/misc/mei/hw-me-regs.h |    3 +++
+ drivers/misc/mei/pci-me.c     |    3 +++
+ 2 files changed, 6 insertions(+)
 
---- a/drivers/usb/misc/legousbtower.c
-+++ b/drivers/usb/misc/legousbtower.c
-@@ -296,6 +296,7 @@ static inline void tower_delete (struct
- 	kfree (dev->read_buffer);
- 	kfree (dev->interrupt_in_buffer);
- 	kfree (dev->interrupt_out_buffer);
-+	usb_put_dev(dev->udev);
- 	kfree (dev);
- }
+--- a/drivers/misc/mei/hw-me-regs.h
++++ b/drivers/misc/mei/hw-me-regs.h
+@@ -79,6 +79,9 @@
+ #define MEI_DEV_ID_CNP_H      0xA360  /* Cannon Point H */
+ #define MEI_DEV_ID_CNP_H_4    0xA364  /* Cannon Point H 4 (iTouch) */
  
-@@ -810,7 +811,7 @@ static int tower_probe (struct usb_inter
++#define MEI_DEV_ID_CMP_LP     0x02e0  /* Comet Point LP */
++#define MEI_DEV_ID_CMP_LP_3   0x02e4  /* Comet Point LP 3 (iTouch) */
++
+ #define MEI_DEV_ID_ICP_LP     0x34E0  /* Ice Lake Point LP */
  
- 	mutex_init(&dev->lock);
+ #define MEI_DEV_ID_TGP_LP     0xA0E0  /* Tiger Lake Point LP */
+--- a/drivers/misc/mei/pci-me.c
++++ b/drivers/misc/mei/pci-me.c
+@@ -96,6 +96,9 @@ static const struct pci_device_id mei_me
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_CNP_H, MEI_ME_PCH12_CFG)},
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_CNP_H_4, MEI_ME_PCH8_CFG)},
  
--	dev->udev = udev;
-+	dev->udev = usb_get_dev(udev);
- 	dev->open_count = 0;
- 	dev->disconnected = 0;
++	{MEI_PCI_DEVICE(MEI_DEV_ID_CMP_LP, MEI_ME_PCH12_CFG)},
++	{MEI_PCI_DEVICE(MEI_DEV_ID_CMP_LP_3, MEI_ME_PCH8_CFG)},
++
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_ICP_LP, MEI_ME_PCH12_CFG)},
  
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_TGP_LP, MEI_ME_PCH12_CFG)},
 
 
