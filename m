@@ -2,156 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50126D96E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:19:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A128D96ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:19:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393811AbfJPQTO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 12:19:14 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:34890 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727154AbfJPQTN (ORCPT
+        id S2394178AbfJPQTd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 12:19:33 -0400
+Received: from mail-wm1-f51.google.com ([209.85.128.51]:53800 "EHLO
+        mail-wm1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404130AbfJPQTc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 12:19:13 -0400
-Received: by mail-io1-f66.google.com with SMTP id q10so54685545iop.2;
-        Wed, 16 Oct 2019 09:19:13 -0700 (PDT)
+        Wed, 16 Oct 2019 12:19:32 -0400
+Received: by mail-wm1-f51.google.com with SMTP id i16so3591727wmd.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 09:19:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=h32JWLot+gceae0jQn6+dpZ85M9IjTbgfAQ5j4grnTA=;
-        b=UXaaodg3AFzS4aSYdIEd36mhiJEN7vilHRmzWu5tZGMnYleV6eUDOKw4ScHHm1iIo9
-         YhV+fJpyY2lM/ApsjxfbQ41c7Bh9SxHYRzYZybNuFE9tB4D2sCUT+OXc65qbawa6rr/n
-         UV8HHfghrJBRDgHhKSJ3A61llDuxCoCn9IgMl7xXWVb8AolKDi2B4N8vtlQWM6vmdSWO
-         aO7204bSLfoLbtIynHam5CXwCUJyWj0od89S5T3cW5nCJXMS4PrhQWg0FWc4mXmcubY2
-         mjW03XFhU3DSsP1EykwtCvouoektuZJhxOghw3m91RHSQ5XqnKKSGrj9B456LWjHdq5c
-         Zdww==
+        bh=ClDQ27rib9gTJsQGXTTJRHusNU/eeaE+CiY63Jy96js=;
+        b=R8ZUM76BwybIlfHTtRwSrwoeTc0Mm9dKOaxg1WK0QsHiLZlUH+m6fN0gP9qidVD9UO
+         rt4KY3Z8S7I4b4fVvyHlt2c3Y5LEhzWqyoSrjgcXq3TPRDi/GDxJWxx8D0qVAksqziO6
+         LAXz+tbSR8VjMmLtGRWn0oL0rz/OXkks//cZD0Kpi9iohJ7ZRw3DkXqeqvMZWRTo1Sp9
+         IPbuJHaekq415jw2F+9KtXMCBZu/GcvpEYnRGPwT2tbab7MTuSBGt4WFKfFXQCvy3RFU
+         K5GcdUL+FW/vh8hltdoCQli7FCk42R7JNG0zQznhzQWbCnSXdgWUKfNakM7kQ0Y/f4JV
+         PDSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=h32JWLot+gceae0jQn6+dpZ85M9IjTbgfAQ5j4grnTA=;
-        b=ZxZHHMW7OZpKHw4V/0SxIsPRIehy9RkD+jHaYPnYmJuD/PChkj5Fsnk0OnIPP9tRVQ
-         H1o9PtjVVye7Z59Wty+IASEptM0LXbaCIO93PhZrOL4kJ/CEzxKzdWKdsS9aAkm6vowS
-         lI56/WqXuCsO4lKrlG8RcKoOOZVfRO4MrUXI+ru1Dbvdhu7snqBhhsKixQGk51hHlZlI
-         2/sICrAFbqvkWz17wVhO+MnpKKP9zJECUjb3Ew+ukm4yiP5CHuKWsz7aY9APKh4w0BNW
-         fcCEENdVPEdgjihB5mzRPb5UgwIOMoIXIzJCwuXqYhsNG4qllUnqBmZujwAgWHG0GmNc
-         qRxQ==
-X-Gm-Message-State: APjAAAU1mMg0yynMQd9OSz56Q1RhCy1fEQVwjk1sw/nDUekLnXHDhm+E
-        owTWldsdcuL8dlNI1ovYn7svnPf824bj8pOYdwI=
-X-Google-Smtp-Source: APXvYqyhl5iUSYWpUQKJhr3nSoqeJuYCD1HiKNf1oQRQxqz8oX8fx+54lB4kBMH1RO7fz+6Vb8PFFolkd/cH6Qoz2Ps=
-X-Received: by 2002:a05:6638:632:: with SMTP id h18mr31488191jar.55.1571242752159;
- Wed, 16 Oct 2019 09:19:12 -0700 (PDT)
+        bh=ClDQ27rib9gTJsQGXTTJRHusNU/eeaE+CiY63Jy96js=;
+        b=km6mmm7krUp+aUTH/RJxOAOFScxATnnAannW9hE1SyctJy/uX37eCOmp+Rc6TLwFHa
+         fhIsEmOIzNR2OqEVcORsQEemwZXmsx1sgaiQIqKDuHa05N4eJQxLzNi/vz5zroofnO2x
+         bj+6rX5/XEdhoLfgZ1mOrsMcS16acYd2ppeka9uRUUbFn/YsVSnGb+IuubVMB3TV77op
+         Nu/4L6QTvltNxWrk5WJjNqx+WOv6S2jzSPn9D+POQCmXqt8Kw2FV1dnJIwx0pq1Ft3Iq
+         tMb8NzqfthmImGzTMwn0bm1nzXzAh5OQaApztaesS1xt1alXHVClTNYXtWNkb63lbZ5V
+         3Xpw==
+X-Gm-Message-State: APjAAAWQ/Cn2+JsISHQm5SgXfwxMIiOiIxBL9MzOAsueH5LWMXBfgrJY
+        oGtNywv9U2ZoSaUmujYNpw0xESncOISyIMJXHClNkA==
+X-Google-Smtp-Source: APXvYqwh8+A8W2StIQF2g+j5jrtEm7yZmJlKM7cnB2ptXcCThx5FPhYGZlDdtFTcJ8UwxXhdehgQHSIszElU/Zr+g78=
+X-Received: by 2002:a7b:c395:: with SMTP id s21mr4085418wmj.102.1571242770235;
+ Wed, 16 Oct 2019 09:19:30 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191002114626.12407-1-aford173@gmail.com> <20191002203149.g22igmfndbve7m3n@earth.universe>
-In-Reply-To: <20191002203149.g22igmfndbve7m3n@earth.universe>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Wed, 16 Oct 2019 11:19:00 -0500
-Message-ID: <CAHCN7xK2MFJbZkjaboDnfHJa4SgGMc7CL3+ZUL4UBCFV00W9+g@mail.gmail.com>
-Subject: Re: [PATCH] Revert "Bluetooth: hci_ll: set operational frequency earlier"
-To:     Sebastian Reichel <sre@kernel.org>
-Cc:     "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Adam Ford <adam.ford@logicpd.com>
+References: <20191016111541.20208-1-yuehaibing@huawei.com>
+In-Reply-To: <20191016111541.20208-1-yuehaibing@huawei.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Wed, 16 Oct 2019 12:19:15 -0400
+Message-ID: <CADnq5_MzELoYV2=Fzioy_YqxdyQg+RXQKL4CUwayGP3_RMRg3A@mail.gmail.com>
+Subject: Re: [PATCH -next] drm/amd/display: Make dc_link_detect_helper static
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     "Wentland, Harry" <harry.wentland@amd.com>,
+        "Leo (Sunpeng) Li" <sunpeng.li@amd.com>,
+        "Deucher, Alexander" <alexander.deucher@amd.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Chunming Zhou <David1.Zhou@amd.com>,
+        Dave Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Jun Lei <Jun.Lei@amd.com>, Anthony Koo <Anthony.Koo@amd.com>,
+        Eric Yang <Eric.Yang2@amd.com>,
+        Wenjing Liu <Wenjing.Liu@amd.com>,
+        David Francis <David.Francis@amd.com>,
+        Nikola Cornij <nikola.cornij@amd.com>,
+        Chris Park <Chris.Park@amd.com>,
+        Martin Leung <martin.leung@amd.com>, david.galiffi@amd.com,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 2, 2019 at 3:31 PM Sebastian Reichel <sre@kernel.org> wrote:
+On Wed, Oct 16, 2019 at 8:29 AM YueHaibing <yuehaibing@huawei.com> wrote:
 >
-> Hi,
+> Fix sparse warning:
 >
-> On Wed, Oct 02, 2019 at 06:46:26AM -0500, Adam Ford wrote:
-> > As nice as it would be to update firmware faster, that patch broke
-> > at least two different boards, an OMAP4+WL1285 based Motorola Droid
-> > 4, as reported by Sebasian Reichel and the Logic PD i.MX6Q +
-> > WL1837MOD.
-> >
-> > This reverts commit a2e02f38eff84f199c8e32359eb213f81f270047.
-> >
-> > Signed-off-by: Adam Ford <aford173@gmail.com>
+> drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_link.c:746:6:
+>  warning: symbol 'dc_link_detect_helper' was not declared. Should it be static?
 >
-> Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
->
-> This should be backported stable
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Is there any chance of this getting picked up for the 5.4 kernel?
-It's been a couple weeks, and I haven't seen any responses beyond
-Sebastian's Ack and request for backport.
+Applied.  thanks!
 
-adam
+Alex
 
+> ---
+>  drivers/gpu/drm/amd/display/dc/core/dc_link.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 >
-> -- Sebastian
+> diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link.c b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+> index fb18681..9350536 100644
+> --- a/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+> +++ b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+> @@ -743,7 +743,8 @@ static bool wait_for_alt_mode(struct dc_link *link)
+>   * This does not create remote sinks but will trigger DM
+>   * to start MST detection if a branch is detected.
+>   */
+> -bool dc_link_detect_helper(struct dc_link *link, enum dc_detect_reason reason)
+> +static bool dc_link_detect_helper(struct dc_link *link,
+> +                                 enum dc_detect_reason reason)
+>  {
+>         struct dc_sink_init_data sink_init_data = { 0 };
+>         struct display_sink_capability sink_caps = { 0 };
+> --
+> 2.7.4
 >
-> > diff --git a/drivers/bluetooth/hci_ll.c b/drivers/bluetooth/hci_ll.c
-> > index 285706618f8a..d9a4c6c691e0 100644
-> > --- a/drivers/bluetooth/hci_ll.c
-> > +++ b/drivers/bluetooth/hci_ll.c
-> > @@ -621,13 +621,6 @@ static int ll_setup(struct hci_uart *hu)
-> >
-> >       serdev_device_set_flow_control(serdev, true);
-> >
-> > -     if (hu->oper_speed)
-> > -             speed = hu->oper_speed;
-> > -     else if (hu->proto->oper_speed)
-> > -             speed = hu->proto->oper_speed;
-> > -     else
-> > -             speed = 0;
-> > -
-> >       do {
-> >               /* Reset the Bluetooth device */
-> >               gpiod_set_value_cansleep(lldev->enable_gpio, 0);
-> > @@ -639,20 +632,6 @@ static int ll_setup(struct hci_uart *hu)
-> >                       return err;
-> >               }
-> >
-> > -             if (speed) {
-> > -                     __le32 speed_le = cpu_to_le32(speed);
-> > -                     struct sk_buff *skb;
-> > -
-> > -                     skb = __hci_cmd_sync(hu->hdev,
-> > -                                          HCI_VS_UPDATE_UART_HCI_BAUDRATE,
-> > -                                          sizeof(speed_le), &speed_le,
-> > -                                          HCI_INIT_TIMEOUT);
-> > -                     if (!IS_ERR(skb)) {
-> > -                             kfree_skb(skb);
-> > -                             serdev_device_set_baudrate(serdev, speed);
-> > -                     }
-> > -             }
-> > -
-> >               err = download_firmware(lldev);
-> >               if (!err)
-> >                       break;
-> > @@ -677,7 +656,25 @@ static int ll_setup(struct hci_uart *hu)
-> >       }
-> >
-> >       /* Operational speed if any */
-> > +     if (hu->oper_speed)
-> > +             speed = hu->oper_speed;
-> > +     else if (hu->proto->oper_speed)
-> > +             speed = hu->proto->oper_speed;
-> > +     else
-> > +             speed = 0;
-> > +
-> > +     if (speed) {
-> > +             __le32 speed_le = cpu_to_le32(speed);
-> > +             struct sk_buff *skb;
-> >
-> > +             skb = __hci_cmd_sync(hu->hdev, HCI_VS_UPDATE_UART_HCI_BAUDRATE,
-> > +                                  sizeof(speed_le), &speed_le,
-> > +                                  HCI_INIT_TIMEOUT);
-> > +             if (!IS_ERR(skb)) {
-> > +                     kfree_skb(skb);
-> > +                     serdev_device_set_baudrate(serdev, speed);
-> > +             }
-> > +     }
-> >
-> >       return 0;
-> >  }
-> > --
-> > 2.17.1
-> >
+>
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
