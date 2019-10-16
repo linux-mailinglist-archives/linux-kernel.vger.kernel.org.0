@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C6D3DA037
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:24:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E170CD9FA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407113AbfJPWJO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:09:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50324 "EHLO mail.kernel.org"
+        id S2391361AbfJPV4w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:56:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406676AbfJPV5e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:57:34 -0400
+        id S1732322AbfJPV40 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:56:26 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A626F21D7E;
-        Wed, 16 Oct 2019 21:57:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FB6A21925;
+        Wed, 16 Oct 2019 21:56:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263053;
-        bh=yu2b8zJoFmrxOFUFT+kolrRnQxcolcv/5ntmye+pqkc=;
+        s=default; t=1571262985;
+        bh=Dc9+ogRIAZPbdKsx3Y3UPw4dJ/jP6cmYHivfV2jcg8w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xRNbicW3ceflw2Zi5a1ESzVa9ui5t0CSxSg5rmD3+tXQShFLo4kff+4nOt8xcNU+n
-         kbq1MgPIKkfrQfXsVoL9a7E1donxuQEpbyrdMwr7SyuUXLhWC//rzyMcppecWTvPpB
-         nKuZ7KteW3+nuOz/12rWAR/dxz45OX0v6ESFeKhw=
+        b=mOnNju/OlG89HZ15Ale60cyIsh/xJQ0wvXamx+ojzUpAnW+hRa5ZqMJCf3HBfVFVv
+         DXOkcMPixyQCH2qcC4MueD9FrkUawb1S1s8+VYpft+QcgNvpwdAHuPZvoS7wPUsknC
+         so6JgtvPCSiGNKmTPPCezqwc/XLw5KN45xHRscXU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Heinrich Schuchardt <xypron.glpk@gmx.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 56/81] kernel/sysctl.c: do not override max_threads provided by userspace
-Date:   Wed, 16 Oct 2019 14:51:07 -0700
-Message-Id: <20191016214842.621065901@linuxfoundation.org>
+        stable@vger.kernel.org, Andreas Klinger <ak@it-klinger.de>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 54/65] iio: adc: hx711: fix bug in sampling of data
+Date:   Wed, 16 Oct 2019 14:51:08 -0700
+Message-Id: <20191016214837.290861729@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
-References: <20191016214805.727399379@linuxfoundation.org>
+In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
+References: <20191016214756.457746573@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,83 +45,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+From: Andreas Klinger <ak@it-klinger.de>
 
-commit b0f53dbc4bc4c371f38b14c391095a3bb8a0bb40 upstream.
+[ Upstream commit 4043ecfb5fc4355a090111e14faf7945ff0fdbd5 ]
 
-Partially revert 16db3d3f1170 ("kernel/sysctl.c: threads-max observe
-limits") because the patch is causing a regression to any workload which
-needs to override the auto-tuning of the limit provided by kernel.
+Fix bug in sampling function hx711_cycle() when interrupt occures while
+PD_SCK is high. If PD_SCK is high for at least 60 us power down mode of
+the sensor is entered which in turn leads to a wrong measurement.
 
-set_max_threads is implementing a boot time guesstimate to provide a
-sensible limit of the concurrently running threads so that runaways will
-not deplete all the memory.  This is a good thing in general but there
-are workloads which might need to increase this limit for an application
-to run (reportedly WebSpher MQ is affected) and that is simply not
-possible after the mentioned change.  It is also very dubious to
-override an admin decision by an estimation that doesn't have any direct
-relation to correctness of the kernel operation.
+Switch off interrupts during a PD_SCK high period and move query of DOUT
+to the latest point of time which is at the end of PD_SCK low period.
 
-Fix this by dropping set_max_threads from sysctl_max_threads so any
-value is accepted as long as it fits into MAX_THREADS which is important
-to check because allowing more threads could break internal robust futex
-restriction.  While at it, do not use MIN_THREADS as the lower boundary
-because it is also only a heuristic for automatic estimation and admin
-might have a good reason to stop new threads to be created even when
-below this limit.
+This bug exists in the driver since it's initial addition. The more
+interrupts on the system the higher is the probability that it happens.
 
-This became more severe when we switched x86 from 4k to 8k kernel
-stacks.  Starting since 6538b8ea886e ("x86_64: expand kernel stack to
-16K") (3.16) we use THREAD_SIZE_ORDER = 2 and that halved the auto-tuned
-value.
-
-In the particular case
-
-  3.12
-  kernel.threads-max = 515561
-
-  4.4
-  kernel.threads-max = 200000
-
-Neither of the two values is really insane on 32GB machine.
-
-I am not sure we want/need to tune the max_thread value further.  If
-anything the tuning should be removed altogether if proven not useful in
-general.  But we definitely need a way to override this auto-tuning.
-
-Link: http://lkml.kernel.org/r/20190922065801.GB18814@dhcp22.suse.cz
-Fixes: 16db3d3f1170 ("kernel/sysctl.c: threads-max observe limits")
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Heinrich Schuchardt <xypron.glpk@gmx.de>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: c3b2fdd0ea7e ("iio: adc: hx711: Add IIO driver for AVIA HX711")
+Signed-off-by: Andreas Klinger <ak@it-klinger.de>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/fork.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/iio/adc/hx711.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2623,7 +2623,7 @@ int sysctl_max_threads(struct ctl_table
- 	struct ctl_table t;
- 	int ret;
- 	int threads = max_threads;
--	int min = MIN_THREADS;
-+	int min = 1;
- 	int max = MAX_THREADS;
+diff --git a/drivers/iio/adc/hx711.c b/drivers/iio/adc/hx711.c
+index 8eb3f1bbe332b..0dec733471d56 100644
+--- a/drivers/iio/adc/hx711.c
++++ b/drivers/iio/adc/hx711.c
+@@ -101,14 +101,14 @@ struct hx711_data {
  
- 	t = *table;
-@@ -2635,7 +2635,7 @@ int sysctl_max_threads(struct ctl_table
- 	if (ret || !write)
- 		return ret;
+ static int hx711_cycle(struct hx711_data *hx711_data)
+ {
+-	int val;
++	unsigned long flags;
  
--	set_max_threads(threads);
-+	max_threads = threads;
+ 	/*
+ 	 * if preempted for more then 60us while PD_SCK is high:
+ 	 * hx711 is going in reset
+ 	 * ==> measuring is false
+ 	 */
+-	preempt_disable();
++	local_irq_save(flags);
+ 	gpiod_set_value(hx711_data->gpiod_pd_sck, 1);
  
- 	return 0;
+ 	/*
+@@ -118,7 +118,6 @@ static int hx711_cycle(struct hx711_data *hx711_data)
+ 	 */
+ 	ndelay(hx711_data->data_ready_delay_ns);
+ 
+-	val = gpiod_get_value(hx711_data->gpiod_dout);
+ 	/*
+ 	 * here we are not waiting for 0.2 us as suggested by the datasheet,
+ 	 * because the oscilloscope showed in a test scenario
+@@ -126,7 +125,7 @@ static int hx711_cycle(struct hx711_data *hx711_data)
+ 	 * and 0.56 us for PD_SCK low on TI Sitara with 800 MHz
+ 	 */
+ 	gpiod_set_value(hx711_data->gpiod_pd_sck, 0);
+-	preempt_enable();
++	local_irq_restore(flags);
+ 
+ 	/*
+ 	 * make it a square wave for addressing cases with capacitance on
+@@ -134,7 +133,8 @@ static int hx711_cycle(struct hx711_data *hx711_data)
+ 	 */
+ 	ndelay(hx711_data->data_ready_delay_ns);
+ 
+-	return val;
++	/* sample as late as possible */
++	return gpiod_get_value(hx711_data->gpiod_dout);
  }
+ 
+ static int hx711_read(struct hx711_data *hx711_data)
+-- 
+2.20.1
+
 
 
