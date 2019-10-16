@@ -2,39 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6640FD9EAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D96E7D9E3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:03:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438786AbfJPWA3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:00:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53914 "EHLO mail.kernel.org"
+        id S2389689AbfJPV5P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:57:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438461AbfJPV7S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:59:18 -0400
+        id S2395383AbfJPV4g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:56:36 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEC55218DE;
-        Wed, 16 Oct 2019 21:59:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B9B521928;
+        Wed, 16 Oct 2019 21:56:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263157;
-        bh=+z+39EK4lI4JE1/tBx7E6JtZIILC2csIKnEB6iWYPFs=;
+        s=default; t=1571262996;
+        bh=HdPM/9FoLj8uItAc5KmRuQ+e5lvgdJjgzjajg0U+Q1k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GLYmQYtt1ult0WPYr1ZK/P1FhNl5t9c2/yQO+22ySc1mP4HYxMicvIMEftrr6v2IC
-         vxzyQf/69ufxP7Wm1TPdNyJZXUgqk/996tU3okqreGBct5vAwTfyGjg9amQLhdB7A2
-         IxQ3CMUXWjs1YxRo5YSeE0PPQv6w2Uj8AR1BWu/0=
+        b=W2cSUzU8pdtPnso8oTLhtVu50l9vtRSMvr59EFHY2kLDZeonRgqJNWGmVH2OwHkSg
+         PVrajj8RRZ4UUx9uZdVWHXV/iMCnWzeFpNVuJXyo6AZ3eHGQ5bZrFN9QVNe2JTp0nT
+         TVYNTXSWyrHbvURn+9VjpnDRwrJ4wGckhlbB9n+4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.3 086/112] Btrfs: fix memory leak due to concurrent append writes with fiemap
+        stable@vger.kernel.org,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        Borislav Petkov <bp@suse.de>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 64/65] x86/asm: Fix MWAITX C-state hint value
 Date:   Wed, 16 Oct 2019 14:51:18 -0700
-Message-Id: <20191016214905.047723990@linuxfoundation.org>
+Message-Id: <20191016214840.468371204@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
-References: <20191016214844.038848564@linuxfoundation.org>
+In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
+References: <20191016214756.457746573@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,150 +50,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
 
-commit c67d970f0ea8dcc423e112137d34334fa0abb8ec upstream.
+commit 454de1e7d970d6bc567686052329e4814842867c upstream.
 
-When we have a buffered write that starts at an offset greater than or
-equals to the file's size happening concurrently with a full ranged
-fiemap, we can end up leaking an extent state structure.
+As per "AMD64 Architecture Programmer's Manual Volume 3: General-Purpose
+and System Instructions", MWAITX EAX[7:4]+1 specifies the optional hint
+of the optimized C-state. For C0 state, EAX[7:4] should be set to 0xf.
 
-Suppose we have a file with a size of 1Mb, and before the buffered write
-and fiemap are performed, it has a single extent state in its io tree
-representing the range from 0 to 1Mb, with the EXTENT_DELALLOC bit set.
+Currently, a value of 0xf is set for EAX[3:0] instead of EAX[7:4]. Fix
+this by changing MWAITX_DISABLE_CSTATES from 0xf to 0xf0.
 
-The following sequence diagram shows how the memory leak happens if a
-fiemap a buffered write, starting at offset 1Mb and with a length of
-4Kb, are performed concurrently.
+This hasn't had any implications so far because setting reserved bits in
+EAX is simply ignored by the CPU.
 
-          CPU 1                                                  CPU 2
+ [ bp: Fixup comment in delay_mwaitx() and massage. ]
 
-  extent_fiemap()
-    --> it's a full ranged fiemap
-        range from 0 to LLONG_MAX - 1
-        (9223372036854775807)
-
-    --> locks range in the inode's
-        io tree
-      --> after this we have 2 extent
-          states in the io tree:
-          --> 1 for range [0, 1Mb[ with
-              the bits EXTENT_LOCKED and
-              EXTENT_DELALLOC_BITS set
-          --> 1 for the range
-              [1Mb, LLONG_MAX[ with
-              the EXTENT_LOCKED bit set
-
-                                                  --> start buffered write at offset
-                                                      1Mb with a length of 4Kb
-
-                                                  btrfs_file_write_iter()
-
-                                                    btrfs_buffered_write()
-                                                      --> cached_state is NULL
-
-                                                      lock_and_cleanup_extent_if_need()
-                                                        --> returns 0 and does not lock
-                                                            range because it starts
-                                                            at current i_size / eof
-
-                                                      --> cached_state remains NULL
-
-                                                      btrfs_dirty_pages()
-                                                        btrfs_set_extent_delalloc()
-                                                          (...)
-                                                          __set_extent_bit()
-
-                                                            --> splits extent state for range
-                                                                [1Mb, LLONG_MAX[ and now we
-                                                                have 2 extent states:
-
-                                                                --> one for the range
-                                                                    [1Mb, 1Mb + 4Kb[ with
-                                                                    EXTENT_LOCKED set
-                                                                --> another one for the range
-                                                                    [1Mb + 4Kb, LLONG_MAX[ with
-                                                                    EXTENT_LOCKED set as well
-
-                                                            --> sets EXTENT_DELALLOC on the
-                                                                extent state for the range
-                                                                [1Mb, 1Mb + 4Kb[
-                                                            --> caches extent state
-                                                                [1Mb, 1Mb + 4Kb[ into
-                                                                @cached_state because it has
-                                                                the bit EXTENT_LOCKED set
-
-                                                    --> btrfs_buffered_write() ends up
-                                                        with a non-NULL cached_state and
-                                                        never calls anything to release its
-                                                        reference on it, resulting in a
-                                                        memory leak
-
-Fix this by calling free_extent_state() on cached_state if the range was
-not locked by lock_and_cleanup_extent_if_need().
-
-The same issue can happen if anything else other than fiemap locks a range
-that covers eof and beyond.
-
-This could be triggered, sporadically, by test case generic/561 from the
-fstests suite, which makes duperemove run concurrently with fsstress, and
-duperemove does plenty of calls to fiemap. When CONFIG_BTRFS_DEBUG is set
-the leak is reported in dmesg/syslog when removing the btrfs module with
-a message like the following:
-
-  [77100.039461] BTRFS: state leak: start 6574080 end 6582271 state 16402 in tree 0 refs 1
-
-Otherwise (CONFIG_BTRFS_DEBUG not set) detectable with kmemleak.
-
-CC: stable@vger.kernel.org # 4.16+
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: "x86@kernel.org" <x86@kernel.org>
+Cc: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lkml.kernel.org/r/20191007190011.4859-1-Janakarajan.Natarajan@amd.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/file.c |   13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/mwait.h |    2 +-
+ arch/x86/lib/delay.c         |    4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -1591,7 +1591,6 @@ static noinline ssize_t btrfs_buffered_w
- 	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
- 	struct btrfs_root *root = BTRFS_I(inode)->root;
- 	struct page **pages = NULL;
--	struct extent_state *cached_state = NULL;
- 	struct extent_changeset *data_reserved = NULL;
- 	u64 release_bytes = 0;
- 	u64 lockstart;
-@@ -1611,6 +1610,7 @@ static noinline ssize_t btrfs_buffered_w
- 		return -ENOMEM;
+--- a/arch/x86/include/asm/mwait.h
++++ b/arch/x86/include/asm/mwait.h
+@@ -21,7 +21,7 @@
+ #define MWAIT_ECX_INTERRUPT_BREAK	0x1
+ #define MWAITX_ECX_TIMER_ENABLE		BIT(1)
+ #define MWAITX_MAX_LOOPS		((u32)-1)
+-#define MWAITX_DISABLE_CSTATES		0xf
++#define MWAITX_DISABLE_CSTATES		0xf0
  
- 	while (iov_iter_count(i) > 0) {
-+		struct extent_state *cached_state = NULL;
- 		size_t offset = offset_in_page(pos);
- 		size_t sector_offset;
- 		size_t write_bytes = min(iov_iter_count(i),
-@@ -1758,9 +1758,20 @@ again:
- 		if (copied > 0)
- 			ret = btrfs_dirty_pages(inode, pages, dirty_pages,
- 						pos, copied, &cached_state);
-+
-+		/*
-+		 * If we have not locked the extent range, because the range's
-+		 * start offset is >= i_size, we might still have a non-NULL
-+		 * cached extent state, acquired while marking the extent range
-+		 * as delalloc through btrfs_dirty_pages(). Therefore free any
-+		 * possible cached extent state to avoid a memory leak.
-+		 */
- 		if (extents_locked)
- 			unlock_extent_cached(&BTRFS_I(inode)->io_tree,
- 					     lockstart, lockend, &cached_state);
-+		else
-+			free_extent_state(cached_state);
-+
- 		btrfs_delalloc_release_extents(BTRFS_I(inode), reserve_bytes,
- 					       true);
- 		if (ret) {
+ static inline void __monitor(const void *eax, unsigned long ecx,
+ 			     unsigned long edx)
+--- a/arch/x86/lib/delay.c
++++ b/arch/x86/lib/delay.c
+@@ -113,8 +113,8 @@ static void delay_mwaitx(unsigned long _
+ 		__monitorx(raw_cpu_ptr(&cpu_tss_rw), 0, 0);
+ 
+ 		/*
+-		 * AMD, like Intel, supports the EAX hint and EAX=0xf
+-		 * means, do not enter any deep C-state and we use it
++		 * AMD, like Intel's MWAIT version, supports the EAX hint and
++		 * EAX=0xf0 means, do not enter any deep C-state and we use it
+ 		 * here in delay() to minimize wakeup latency.
+ 		 */
+ 		__mwaitx(MWAITX_DISABLE_CSTATES, delay, MWAITX_ECX_TIMER_ENABLE);
 
 
