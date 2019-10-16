@@ -2,346 +2,230 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2D38D9E1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DCE7D9E05
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406656AbfJPV4a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:56:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47700 "EHLO mail.kernel.org"
+        id S2437836AbfJPVzw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:55:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406603AbfJPV4P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:56:15 -0400
+        id S2387517AbfJPVzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:55:50 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12AAB21928;
-        Wed, 16 Oct 2019 21:56:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A30F2218DE;
+        Wed, 16 Oct 2019 21:55:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262975;
-        bh=1wRhUPX/YB9BZt4tha0c6Pz1MO4vlrr1JZilj1NUghY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=HozqOSuQ9RTaKb6TVOpQHES5LvtBqej4h8LQ1NE+oMSYfMtsYGGWClZ56P52HhtSe
-         n8Ae/XxAkzcwj/zyJns+r0KF3+/41kQMy9tMFgLWORwN68KwP9k2EzuKxx+cSdoeXN
-         9Hi+/E/Sg5X3m8Ia1mRLnnqhwzuhC5nujKgMCFYA=
+        s=default; t=1571262949;
+        bh=/Qm60I01/MSUA1yqo/Wb5JuM5yJfsbegXMZ5KP1CZ4Y=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=wxXJJYhcRTz26fjqqHHZSrTjQH39dZZnrJ2ImHMk4jaQg43wvIcyrhX70yLwJQEA0
+         +Yf6Y5NlL4Bre/COa9zGyl2nFPLP8NR8E2nuP0+B1fZ52GZaKa+u58Un9/twMQ7W1T
+         ahCJ9p8+hc6fmTXJYnWBTXZShIKRSI1ng5P5wXBc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.14 00/65] 4.14.150-stable review
-Date:   Wed, 16 Oct 2019 14:50:14 -0700
-Message-Id: <20191016214756.457746573@linuxfoundation.org>
+        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 02/65] f2fs: use EINVAL for superblock with invalid magic
+Date:   Wed, 16 Oct 2019 14:50:16 -0700
+Message-Id: <20191016214757.197686639@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-MIME-Version: 1.0
+In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
+References: <20191016214756.457746573@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.150-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.14.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.14.150-rc1
-X-KernelTest-Deadline: 2019-10-18T21:48+00:00
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.14.150 release.
-There are 65 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+From: Icenowy Zheng <icenowy@aosc.io>
+
+[ Upstream commit 38fb6d0ea34299d97b031ed64fe994158b6f8eb3 ]
+
+The kernel mount_block_root() function expects -EACESS or -EINVAL for a
+unmountable filesystem when trying to mount the root with different
+filesystem types.
+
+However, in 5.3-rc1 the behavior when F2FS code cannot find valid block
+changed to return -EFSCORRUPTED(-EUCLEAN), and this error code makes
+mount_block_root() fail when trying to probe F2FS.
+
+When the magic number of the superblock mismatches, it has a high
+probability that it's just not a F2FS. In this case return -EINVAL seems
+to be a better result, and this return value can make mount_block_root()
+probing work again.
+
+Return -EINVAL when the superblock has magic mismatch, -EFSCORRUPTED in
+other cases (the magic matches but the superblock cannot be recognized).
+
+Fixes: 10f966bbf521 ("f2fs: use generic EFSBADCRC/EFSCORRUPTED")
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/f2fs/super.c | 36 ++++++++++++++++++------------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 344aa861774bd..e70975ca723b7 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1814,11 +1814,11 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+ 	struct super_block *sb = sbi->sb;
+ 	unsigned int blocksize;
+ 
+-	if (F2FS_SUPER_MAGIC != le32_to_cpu(raw_super->magic)) {
++	if (le32_to_cpu(raw_super->magic) != F2FS_SUPER_MAGIC) {
+ 		f2fs_msg(sb, KERN_INFO,
+ 			"Magic Mismatch, valid(0x%x) - read(0x%x)",
+ 			F2FS_SUPER_MAGIC, le32_to_cpu(raw_super->magic));
+-		return 1;
++		return -EINVAL;
+ 	}
+ 
+ 	/* Currently, support only 4KB page cache size */
+@@ -1826,7 +1826,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+ 		f2fs_msg(sb, KERN_INFO,
+ 			"Invalid page_cache_size (%lu), supports only 4KB\n",
+ 			PAGE_SIZE);
+-		return 1;
++		return -EFSCORRUPTED;
+ 	}
+ 
+ 	/* Currently, support only 4KB block size */
+@@ -1835,7 +1835,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+ 		f2fs_msg(sb, KERN_INFO,
+ 			"Invalid blocksize (%u), supports only 4KB\n",
+ 			blocksize);
+-		return 1;
++		return -EFSCORRUPTED;
+ 	}
+ 
+ 	/* check log blocks per segment */
+@@ -1843,7 +1843,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+ 		f2fs_msg(sb, KERN_INFO,
+ 			"Invalid log blocks per segment (%u)\n",
+ 			le32_to_cpu(raw_super->log_blocks_per_seg));
+-		return 1;
++		return -EFSCORRUPTED;
+ 	}
+ 
+ 	/* Currently, support 512/1024/2048/4096 bytes sector size */
+@@ -1853,7 +1853,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+ 				F2FS_MIN_LOG_SECTOR_SIZE) {
+ 		f2fs_msg(sb, KERN_INFO, "Invalid log sectorsize (%u)",
+ 			le32_to_cpu(raw_super->log_sectorsize));
+-		return 1;
++		return -EFSCORRUPTED;
+ 	}
+ 	if (le32_to_cpu(raw_super->log_sectors_per_block) +
+ 		le32_to_cpu(raw_super->log_sectorsize) !=
+@@ -1862,7 +1862,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+ 			"Invalid log sectors per block(%u) log sectorsize(%u)",
+ 			le32_to_cpu(raw_super->log_sectors_per_block),
+ 			le32_to_cpu(raw_super->log_sectorsize));
+-		return 1;
++		return -EFSCORRUPTED;
+ 	}
+ 
+ 	segment_count = le32_to_cpu(raw_super->segment_count);
+@@ -1878,7 +1878,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+ 		f2fs_msg(sb, KERN_INFO,
+ 			"Invalid segment count (%u)",
+ 			segment_count);
+-		return 1;
++		return -EFSCORRUPTED;
+ 	}
+ 
+ 	if (total_sections > segment_count ||
+@@ -1887,35 +1887,35 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+ 		f2fs_msg(sb, KERN_INFO,
+ 			"Invalid segment/section count (%u, %u x %u)",
+ 			segment_count, total_sections, segs_per_sec);
+-		return 1;
++		return -EFSCORRUPTED;
+ 	}
+ 
+ 	if ((segment_count / segs_per_sec) < total_sections) {
+ 		f2fs_msg(sb, KERN_INFO,
+ 			"Small segment_count (%u < %u * %u)",
+ 			segment_count, segs_per_sec, total_sections);
+-		return 1;
++		return -EFSCORRUPTED;
+ 	}
+ 
+ 	if (segment_count > (le64_to_cpu(raw_super->block_count) >> 9)) {
+ 		f2fs_msg(sb, KERN_INFO,
+ 			"Wrong segment_count / block_count (%u > %llu)",
+ 			segment_count, le64_to_cpu(raw_super->block_count));
+-		return 1;
++		return -EFSCORRUPTED;
+ 	}
+ 
+ 	if (secs_per_zone > total_sections || !secs_per_zone) {
+ 		f2fs_msg(sb, KERN_INFO,
+ 			"Wrong secs_per_zone / total_sections (%u, %u)",
+ 			secs_per_zone, total_sections);
+-		return 1;
++		return -EFSCORRUPTED;
+ 	}
+ 	if (le32_to_cpu(raw_super->extension_count) > F2FS_MAX_EXTENSION) {
+ 		f2fs_msg(sb, KERN_INFO,
+ 			"Corrupted extension count (%u > %u)",
+ 			le32_to_cpu(raw_super->extension_count),
+ 			F2FS_MAX_EXTENSION);
+-		return 1;
++		return -EFSCORRUPTED;
+ 	}
+ 
+ 	if (le32_to_cpu(raw_super->cp_payload) >
+@@ -1924,7 +1924,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+ 			"Insane cp_payload (%u > %u)",
+ 			le32_to_cpu(raw_super->cp_payload),
+ 			blocks_per_seg - F2FS_CP_PACKS);
+-		return 1;
++		return -EFSCORRUPTED;
+ 	}
+ 
+ 	/* check reserved ino info */
+@@ -1936,12 +1936,12 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+ 			le32_to_cpu(raw_super->node_ino),
+ 			le32_to_cpu(raw_super->meta_ino),
+ 			le32_to_cpu(raw_super->root_ino));
+-		return 1;
++		return -EFSCORRUPTED;
+ 	}
+ 
+ 	/* check CP/SIT/NAT/SSA/MAIN_AREA area boundary */
+ 	if (sanity_check_area_boundary(sbi, bh))
+-		return 1;
++		return -EFSCORRUPTED;
+ 
+ 	return 0;
+ }
+@@ -2216,11 +2216,11 @@ static int read_raw_super_block(struct f2fs_sb_info *sbi,
+ 		}
+ 
+ 		/* sanity checking of raw super */
+-		if (sanity_check_raw_super(sbi, bh)) {
++		err = sanity_check_raw_super(sbi, bh);
++		if (err) {
+ 			f2fs_msg(sb, KERN_ERR,
+ 				"Can't find valid F2FS filesystem in %dth superblock",
+ 				block + 1);
+-			err = -EFSCORRUPTED;
+ 			brelse(bh);
+ 			continue;
+ 		}
+-- 
+2.20.1
 
-Responses should be made by Fri 18 Oct 2019 09:43:41 PM UTC.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.150-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.14.150-rc1
-
-Dave Chinner <dchinner@redhat.com>
-    xfs: clear sb->s_fs_info on mount failure
-
-Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
-    x86/asm: Fix MWAITX C-state hint value
-
-Steven Rostedt (VMware) <rostedt@goodmis.org>
-    tracing: Get trace_array reference for available_tracers files
-
-Steven Rostedt (VMware) <rostedt@goodmis.org>
-    ftrace: Get a reference counter for the trace_array on filter files
-
-Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
-    tracing/hwlat: Don't ignore outer-loop duration when calculating max_latency
-
-Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
-    tracing/hwlat: Report total time spent in all NMIs during the sample
-
-Johan Hovold <johan@kernel.org>
-    media: stkwebcam: fix runtime PM after driver unbind
-
-Al Viro <viro@zeniv.linux.org.uk>
-    Fix the locking in dcache_readdir() and friends
-
-Paul Burton <paul.burton@mips.com>
-    MIPS: Disable Loongson MMI instructions for kernel build
-
-Trond Myklebust <trondmy@gmail.com>
-    NFS: Fix O_DIRECT accounting of number of bytes read/written
-
-Josef Bacik <josef@toxicpanda.com>
-    btrfs: fix incorrect updating of log root tree
-
-Andreas Klinger <ak@it-klinger.de>
-    iio: adc: hx711: fix bug in sampling of data
-
-Andreas Klinger <ak@it-klinger.de>
-    iio: hx711: add delay until DOUT is ready
-
-Navid Emamdoost <navid.emamdoost@gmail.com>
-    Staging: fbtft: fix memory leak in fbtft_framebuffer_alloc
-
-Bartosz Golaszewski <bgolaszewski@baylibre.com>
-    gpiolib: don't clear FLAG_IS_OUT when emulating open-drain/open-source
-
-Brian Norris <briannorris@chromium.org>
-    firmware: google: increment VPD key_len properly
-
-Michal Hocko <mhocko@suse.com>
-    kernel/sysctl.c: do not override max_threads provided by userspace
-
-Pavel Shilovsky <piastryyy@gmail.com>
-    CIFS: Force reval dentry if LOOKUP_REVAL flag is set
-
-Pavel Shilovsky <piastryyy@gmail.com>
-    CIFS: Force revalidate inode when dentry is stale
-
-Pavel Shilovsky <piastryyy@gmail.com>
-    CIFS: Gracefully handle QueryInfo errors during open
-
-Steve MacLean <Steve.MacLean@microsoft.com>
-    perf inject jit: Fix JIT_CODE_MOVE filename
-
-Ian Rogers <irogers@google.com>
-    perf llvm: Don't access out-of-scope array
-
-Ard Biesheuvel <ard.biesheuvel@linaro.org>
-    efivar/ssdt: Don't iterate over EFI vars if no SSDT override was specified
-
-David Frey <dpfrey@gmail.com>
-    iio: light: opt3001: fix mutex unlock race
-
-Hans de Goede <hdegoede@redhat.com>
-    iio: adc: axp288: Override TS pin bias current for some models
-
-Marco Felsch <m.felsch@pengutronix.de>
-    iio: adc: ad799x: fix probe error handling
-
-Navid Emamdoost <navid.emamdoost@gmail.com>
-    staging: vt6655: Fix memory leak in vt6655_probe
-
-Johan Hovold <johan@kernel.org>
-    USB: legousbtower: fix use-after-free on release
-
-Johan Hovold <johan@kernel.org>
-    USB: legousbtower: fix open after failed reset request
-
-Johan Hovold <johan@kernel.org>
-    USB: legousbtower: fix potential NULL-deref on disconnect
-
-Johan Hovold <johan@kernel.org>
-    USB: legousbtower: fix deadlock on disconnect
-
-Johan Hovold <johan@kernel.org>
-    USB: legousbtower: fix slab info leak at probe
-
-Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-    usb: renesas_usbhs: gadget: Fix usb_ep_set_{halt,wedge}() behavior
-
-Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-    usb: renesas_usbhs: gadget: Do not discard queues in usb_ep_set_{halt,wedge}()
-
-Jacky.Cao@sony.com <Jacky.Cao@sony.com>
-    USB: dummy-hcd: fix power budget for SuperSpeed mode
-
-Johan Hovold <johan@kernel.org>
-    USB: microtek: fix info-leak at probe
-
-Johan Hovold <johan@kernel.org>
-    USB: usblcd: fix I/O after disconnect
-
-Johan Hovold <johan@kernel.org>
-    USB: serial: fix runtime PM after driver unbind
-
-Reinhard Speyerer <rspmn@arcor.de>
-    USB: serial: option: add support for Cinterion CLS8 devices
-
-Daniele Palmas <dnlplm@gmail.com>
-    USB: serial: option: add Telit FN980 compositions
-
-Beni Mahler <beni.mahler@gmx.net>
-    USB: serial: ftdi_sio: add device IDs for Sienna and Echelon PL-20
-
-Johan Hovold <johan@kernel.org>
-    USB: serial: keyspan: fix NULL-derefs on open() and write()
-
-Randy Dunlap <rdunlap@infradead.org>
-    serial: uartlite: fix exit path null pointer
-
-Johan Hovold <johan@kernel.org>
-    USB: ldusb: fix NULL-derefs on driver unbind
-
-Johan Hovold <johan@kernel.org>
-    USB: chaoskey: fix use-after-free on release
-
-Johan Hovold <johan@kernel.org>
-    USB: usblp: fix runtime PM after driver unbind
-
-Johan Hovold <johan@kernel.org>
-    USB: iowarrior: fix use-after-free after driver unbind
-
-Johan Hovold <johan@kernel.org>
-    USB: iowarrior: fix use-after-free on release
-
-Johan Hovold <johan@kernel.org>
-    USB: iowarrior: fix use-after-free on disconnect
-
-Johan Hovold <johan@kernel.org>
-    USB: adutux: fix use-after-free on release
-
-Johan Hovold <johan@kernel.org>
-    USB: adutux: fix NULL-derefs on disconnect
-
-Johan Hovold <johan@kernel.org>
-    USB: adutux: fix use-after-free on disconnect
-
-Colin Ian King <colin.king@canonical.com>
-    USB: adutux: remove redundant variable minor
-
-Kai-Heng Feng <kai.heng.feng@canonical.com>
-    xhci: Increase STS_SAVE timeout in xhci_suspend()
-
-Rick Tseng <rtseng@nvidia.com>
-    usb: xhci: wait for CNR controller not ready bit in xhci resume
-
-Jan Schmidt <jan@centricular.com>
-    xhci: Check all endpoints for LPM timeout
-
-Mathias Nyman <mathias.nyman@linux.intel.com>
-    xhci: Prevent device initiated U1/U2 link pm if exit latency is too long
-
-Mathias Nyman <mathias.nyman@linux.intel.com>
-    xhci: Fix false warning message about wrong bounce buffer write length
-
-Johan Hovold <johan@kernel.org>
-    USB: usb-skeleton: fix NULL-deref on disconnect
-
-Johan Hovold <johan@kernel.org>
-    USB: usb-skeleton: fix runtime PM after driver unbind
-
-Johan Hovold <johan@kernel.org>
-    USB: yurex: fix NULL-derefs on disconnect
-
-Alan Stern <stern@rowland.harvard.edu>
-    USB: yurex: Don't retry on unexpected errors
-
-Bastien Nocera <hadess@hadess.net>
-    USB: rio500: Remove Rio 500 kernel driver
-
-Icenowy Zheng <icenowy@aosc.io>
-    f2fs: use EINVAL for superblock with invalid magic
-
-Will Deacon <will@kernel.org>
-    panic: ensure preemption is disabled during panic()
-
-
--------------
-
-Diffstat:
-
- Documentation/usb/rio.txt                | 138 --------
- MAINTAINERS                              |   7 -
- Makefile                                 |   4 +-
- arch/arm/configs/badge4_defconfig        |   1 -
- arch/arm/configs/corgi_defconfig         |   1 -
- arch/arm/configs/pxa_defconfig           |   1 -
- arch/arm/configs/s3c2410_defconfig       |   1 -
- arch/arm/configs/spitz_defconfig         |   1 -
- arch/mips/configs/mtx1_defconfig         |   1 -
- arch/mips/configs/rm200_defconfig        |   1 -
- arch/mips/loongson64/Platform            |   4 +
- arch/mips/vdso/Makefile                  |   1 +
- arch/x86/include/asm/mwait.h             |   2 +-
- arch/x86/lib/delay.c                     |   4 +-
- drivers/firmware/efi/efi.c               |   3 +
- drivers/firmware/google/vpd_decode.c     |   2 +-
- drivers/gpio/gpiolib.c                   |  27 +-
- drivers/iio/adc/ad799x.c                 |   4 +-
- drivers/iio/adc/axp288_adc.c             |  32 ++
- drivers/iio/adc/hx711.c                  |  49 ++-
- drivers/iio/light/opt3001.c              |   6 +-
- drivers/media/usb/stkwebcam/stk-webcam.c |   3 +-
- drivers/staging/fbtft/fbtft-core.c       |   7 +-
- drivers/staging/vt6655/device_main.c     |   4 +-
- drivers/tty/serial/uartlite.c            |   3 +-
- drivers/usb/class/usblp.c                |   8 +-
- drivers/usb/gadget/udc/dummy_hcd.c       |   3 +-
- drivers/usb/host/xhci-ring.c             |   4 +-
- drivers/usb/host/xhci.c                  |  32 +-
- drivers/usb/image/microtek.c             |   4 +
- drivers/usb/misc/Kconfig                 |  10 -
- drivers/usb/misc/Makefile                |   1 -
- drivers/usb/misc/adutux.c                |  26 +-
- drivers/usb/misc/chaoskey.c              |   5 +-
- drivers/usb/misc/iowarrior.c             |  16 +-
- drivers/usb/misc/ldusb.c                 |  24 +-
- drivers/usb/misc/legousbtower.c          |  58 ++--
- drivers/usb/misc/rio500.c                | 574 -------------------------------
- drivers/usb/misc/rio500_usb.h            |  37 --
- drivers/usb/misc/usblcd.c                |  33 +-
- drivers/usb/misc/yurex.c                 |  18 +-
- drivers/usb/renesas_usbhs/common.h       |   1 +
- drivers/usb/renesas_usbhs/fifo.c         |   2 +-
- drivers/usb/renesas_usbhs/fifo.h         |   1 +
- drivers/usb/renesas_usbhs/mod_gadget.c   |  18 +-
- drivers/usb/renesas_usbhs/pipe.c         |  15 +
- drivers/usb/renesas_usbhs/pipe.h         |   1 +
- drivers/usb/serial/ftdi_sio.c            |   3 +
- drivers/usb/serial/ftdi_sio_ids.h        |   9 +
- drivers/usb/serial/keyspan.c             |   4 +-
- drivers/usb/serial/option.c              |  11 +
- drivers/usb/serial/usb-serial.c          |   5 +-
- drivers/usb/usb-skeleton.c               |  15 +-
- fs/btrfs/tree-log.c                      |  36 +-
- fs/cifs/dir.c                            |   8 +-
- fs/cifs/file.c                           |   6 +
- fs/cifs/inode.c                          |   4 +
- fs/f2fs/super.c                          |  36 +-
- fs/libfs.c                               | 134 ++++----
- fs/nfs/direct.c                          |  78 +++--
- fs/xfs/xfs_super.c                       |  10 +
- kernel/fork.c                            |   4 +-
- kernel/panic.c                           |   1 +
- kernel/trace/ftrace.c                    |  27 +-
- kernel/trace/trace.c                     |  17 +-
- kernel/trace/trace_hwlat.c               |   4 +-
- tools/perf/util/jitdump.c                |   6 +-
- tools/perf/util/llvm-utils.c             |   6 +-
- 68 files changed, 567 insertions(+), 1055 deletions(-)
 
 
