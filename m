@@ -2,34 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8B70D9EA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 266BCD9E84
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438732AbfJPWAO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:00:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53516 "EHLO mail.kernel.org"
+        id S2438530AbfJPV7a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:59:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726231AbfJPV7I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:59:08 -0400
+        id S2438158AbfJPV63 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:58:29 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE54221A4C;
-        Wed, 16 Oct 2019 21:59:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE934218DE;
+        Wed, 16 Oct 2019 21:58:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263148;
-        bh=uySbU/iStrpg7gYqVAO/jw0Lt6eyVT6b5EdH9JhGSaU=;
+        s=default; t=1571263109;
+        bh=od/c6TzyPXpf7ky7GdR+hgCyRAWNPIOfz+b/0alOEFE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f5uKPT06r378iZZK/osr3cpQ8Ksn/XcJo5ESnIVCGZ+GwUEf9cgz8p35DauIkot14
-         pKmgeMNt/FxTRgn+Ig6APtNI1QXdMx6wk5eFAoarXHJGqlSyx6b4TyUMlgKOx2kLj0
-         myg+t/hnZoNZ+mhWdq0vgxer+gc35OQ8Bvmb9rw4=
+        b=JovtOjimZaP+h7jnLLJ630XNFUxDdNcI0J6TATQxQnyn7lHIILpahmfhdi1VmRj3b
+         0LmYkXWcDyFt0Xq07J563qrl3kZ+pOI59WvYwrp5gGdllijbJLTcZVpo4FZg8Vtkjd
+         arzHlfN003QX5wdFwchKwWbxu/bSuBQFu1Z6uZZk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 5.3 030/112] USB: serial: fix runtime PM after driver unbind
-Date:   Wed, 16 Oct 2019 14:50:22 -0700
-Message-Id: <20191016214853.073187033@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+5630ca7c3b2be5c9da5e@syzkaller.appspotmail.com,
+        Johan Hovold <johan@kernel.org>,
+        Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 5.3 032/112] USB: microtek: fix info-leak at probe
+Date:   Wed, 16 Oct 2019 14:50:24 -0700
+Message-Id: <20191016214853.313145937@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
 References: <20191016214844.038848564@linuxfoundation.org>
@@ -44,39 +47,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Johan Hovold <johan@kernel.org>
 
-commit d51bdb93ca7e71d7fb30a572c7b47ed0194bf3fe upstream.
+commit 177238c3d47d54b2ed8f0da7a4290db492f4a057 upstream.
 
-Since commit c2b71462d294 ("USB: core: Fix bug caused by duplicate
-interface PM usage counter") USB drivers must always balance their
-runtime PM gets and puts, including when the driver has already been
-unbound from the interface.
+Add missing bulk-in endpoint sanity check to prevent uninitialised stack
+data from being reported to the system log and used as endpoint
+addresses.
 
-Leaving the interface with a positive PM usage counter would prevent a
-later bound driver from suspending the device.
-
-Fixes: c2b71462d294 ("USB: core: Fix bug caused by duplicate interface PM usage counter")
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 Cc: stable <stable@vger.kernel.org>
+Reported-by: syzbot+5630ca7c3b2be5c9da5e@syzkaller.appspotmail.com
 Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191001084908.2003-4-johan@kernel.org
+Acked-by: Oliver Neukum <oneukum@suse.com>
+Link: https://lore.kernel.org/r/20191003070931.17009-1-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/usb-serial.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/usb/image/microtek.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/usb/serial/usb-serial.c
-+++ b/drivers/usb/serial/usb-serial.c
-@@ -314,10 +314,7 @@ static void serial_cleanup(struct tty_st
- 	serial = port->serial;
- 	owner = serial->type->driver.owner;
+--- a/drivers/usb/image/microtek.c
++++ b/drivers/usb/image/microtek.c
+@@ -716,6 +716,10 @@ static int mts_usb_probe(struct usb_inte
  
--	mutex_lock(&serial->disc_mutex);
--	if (!serial->disconnected)
--		usb_autopm_put_interface(serial->interface);
--	mutex_unlock(&serial->disc_mutex);
-+	usb_autopm_put_interface(serial->interface);
+ 	}
  
- 	usb_serial_put(serial);
- 	module_put(owner);
++	if (ep_in_current != &ep_in_set[2]) {
++		MTS_WARNING("couldn't find two input bulk endpoints. Bailing out.\n");
++		return -ENODEV;
++	}
+ 
+ 	if ( ep_out == -1 ) {
+ 		MTS_WARNING( "couldn't find an output bulk endpoint. Bailing out.\n" );
 
 
