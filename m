@@ -2,114 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC10BD943C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 16:47:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D557D9446
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 16:49:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405581AbfJPOrx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 10:47:53 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:37066 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726697AbfJPOrx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 10:47:53 -0400
-Received: from ramsan ([84.194.98.4])
-        by xavier.telenet-ops.be with bizsmtp
-        id EEnq2100X05gfCL01EnqeS; Wed, 16 Oct 2019 16:47:50 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1iKkac-0003rY-Fq; Wed, 16 Oct 2019 16:47:50 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1iKkac-0007hO-Dp; Wed, 16 Oct 2019 16:47:50 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Chris Brandt <chris.brandt@renesas.com>,
-        Rob Herring <robh@kernel.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 4/4] clocksource/drivers/renesas-ostm: Use unique device name instead of ostm
-Date:   Wed, 16 Oct 2019 16:47:47 +0200
-Message-Id: <20191016144747.29538-5-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191016144747.29538-1-geert+renesas@glider.be>
-References: <20191016144747.29538-1-geert+renesas@glider.be>
+        id S2390237AbfJPOtu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 10:49:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33984 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730251AbfJPOtu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 10:49:50 -0400
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 022C32168B;
+        Wed, 16 Oct 2019 14:49:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571237389;
+        bh=TVHkTQZcT9q9ZjJzYOSkolVYYuNP2y6v7NQ51/mM5q8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bcf31tblggd+MJJkjJ9MWL3/6Xm57VNAYnvAEXEXu/qG9MTqKIwOaCCRWRD6tCt+u
+         pUnsMBBBwSJMxdN+D/t5cMU9aJACRsrTR5piIFe6N4GEmJ1uGCotm3uyYDWh+9v5lN
+         GO/aBm+6T/Z1kI0UaQXd3CDgadNWxjpsme7Jfbg8=
+Date:   Wed, 16 Oct 2019 16:49:46 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Alistair Francis <alistair@alistair23.me>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        wens@csie.org, alistair23@gmail.com
+Subject: Re: [PATCH] arm64: dts: sun50i: sopine-baseboard: Expose serial1,
+ serial2 and serial3
+Message-ID: <20191016144946.p3tm67vh5lqigndn@gilmour>
+References: <20191012200524.23512-1-alistair@alistair23.me>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="n5scbjei5snz6qva"
+Content-Disposition: inline
+In-Reply-To: <20191012200524.23512-1-alistair@alistair23.me>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently all OSTM devices are called "ostm", also in kernel messages.
 
-As there can be multiple instances in an SoC, this can confuse the user.
-Hence construct a unique name from the DT node name, like is done for
-platform devices.
+--n5scbjei5snz6qva
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On RSK+RZA1, the boot log changes like:
+Hi,
 
-    -clocksource: ostm: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 57352151442 ns
-    +clocksource: timer@fcfec000: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 57352151442 ns
-     sched_clock: 32 bits at 33MHz, resolution 30ns, wraps every 64440619504ns
-    -ostm: used for clocksource
-    -ostm: used for clock events
-    +/soc/timer@fcfec000: used for clocksource
-    +/soc/timer@fcfec400: used for clock events
-     ...
-    -clocksource: Switched to clocksource ostm
-    +clocksource: Switched to clocksource timer@fcfec000
+On Sat, Oct 12, 2019 at 01:05:24PM -0700, Alistair Francis wrote:
+> Follow what the sun50i-a64-pine64.dts does and expose all 5 serial
+> connections.
+>
+> Signed-off-by: Alistair Francis <alistair@alistair23.me>
+> ---
+>  .../allwinner/sun50i-a64-sopine-baseboard.dts | 25 +++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+> index 124b0b030b28..49c37b21ab36 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+> @@ -56,6 +56,10 @@
+>  	aliases {
+>  		ethernet0 = &emac;
+>  		serial0 = &uart0;
+> +		serial1 = &uart1;
+> +		serial2 = &uart2;
+> +		serial3 = &uart3;
+> +		serial4 = &uart4;
+>  	};
+>
+>  	chosen {
+> @@ -280,6 +284,27 @@
+>  	};
+>  };
+>
+> +/* On Pi-2 connector */
+> +&uart2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&uart2_pins>;
+> +	status = "disabled";
+> +};
+> +
+> +/* On Euler connector */
+> +&uart3 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&uart3_pins>;
+> +	status = "disabled";
+> +};
+> +
+> +/* On Euler connector, RTS/CTS optional */
+> +&uart4 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&uart4_pins>;
+> +	status = "disabled";
+> +};
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4:
-  - Rebase on top of timer_of conversion, and use np->full_name or %pOF,
-    like the timer-of core does,
+Since these are all the default muxing, maybe we should just set that
+in the DTSI?
 
-v3:
-  - Make the name format similar to the one used for platform devices,
-  - Use kasprintf() instead of buffer size guessing,
-  - Use a real example from rskrza1.
+Maxime
 
-v2 (by Jacopo):
-  - Use np->fullname.
----
- drivers/clocksource/renesas-ostm.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+--n5scbjei5snz6qva
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/clocksource/renesas-ostm.c b/drivers/clocksource/renesas-ostm.c
-index 46012d905604bc43..3d06ba66008c7029 100644
---- a/drivers/clocksource/renesas-ostm.c
-+++ b/drivers/clocksource/renesas-ostm.c
-@@ -64,9 +64,9 @@ static int __init ostm_init_clksrc(struct timer_of *to)
- 	writeb(CTL_FREERUN, timer_of_base(to) + OSTM_CTL);
- 	writeb(TS, timer_of_base(to) + OSTM_TS);
- 
--	return clocksource_mmio_init(timer_of_base(to) + OSTM_CNT, "ostm",
--				     timer_of_rate(to), 300, 32,
--				     clocksource_mmio_readl_up);
-+	return clocksource_mmio_init(timer_of_base(to) + OSTM_CNT,
-+				     to->np->full_name, timer_of_rate(to), 300,
-+				     32, clocksource_mmio_readl_up);
- }
- 
- static u64 notrace ostm_read_sched_clock(void)
-@@ -190,13 +190,13 @@ static int __init ostm_init(struct device_node *np)
- 			goto err_cleanup;
- 
- 		ostm_init_sched_clock(to);
--		pr_info("ostm: used for clocksource\n");
-+		pr_info("%pOF: used for clocksource\n", np);
- 	} else {
- 		ret = ostm_init_clkevt(to);
- 		if (ret)
- 			goto err_cleanup;
- 
--		pr_info("ostm: used for clock events\n");
-+		pr_info("%pOF: used for clock events\n", np);
- 	}
- 
- 	return 0;
--- 
-2.17.1
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXacuCgAKCRDj7w1vZxhR
+xakUAQDKMLPFYrXgJoIqujk/rfbeUS2P3a0rGnGDrfrvSZkCMAD+JRTAJwfGyT0T
+0GAa8ejfAZiZ2/8OCoW/Y++QrQ3JhA4=
+=Q2Sd
+-----END PGP SIGNATURE-----
+
+--n5scbjei5snz6qva--
