@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D423FD8F81
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:32:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8318D8F92
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:32:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405022AbfJPLcE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 07:32:04 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:50340 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405004AbfJPLcA (ORCPT
+        id S2405128AbfJPLcg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 07:32:36 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:43572 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405015AbfJPLcD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 07:32:00 -0400
+        Wed, 16 Oct 2019 07:32:03 -0400
 Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9GBVwBa097095;
-        Wed, 16 Oct 2019 06:31:58 -0500
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9GBW0c3104070;
+        Wed, 16 Oct 2019 06:32:01 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1571225518;
-        bh=CeaOaqcl4Uu9ifeSuH7/fVJFutdpe4ac6xNqVwY2mwg=;
+        s=ti-com-17Q1; t=1571225521;
+        bh=FYnyDkp8O13hgdHJFePiQ3GXV91GcizfC8VXOBovgOI=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=el6aMYvUJwHzV4vT35vR51d9h/jte5Qz/MEfGv7bu9A5VaH16s9noG1gUI9LtHJE3
-         tte5C/vSVxnZl/crmpzEq8gt0P57+fNyX9BxGYKU9q2ecZopWbBv2hbkvFcm943Y/r
-         oAHGTYIINS6bnWhj1VcAP9P+7m6jzIIK+kz2psY8=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9GBVwKW113752
+        b=aiH2bDkZvm0M9NKL0SNcRGN/ppi7gtvIBZQ4REoFOEKZ4rx1LnI3bRvq5DItXDnHr
+         Ktt8/kV6wLtBBrshoP650loZVfWXmO3wYbr/Lcn6L+UqhWYSsRZfPsi8Z5wwAJ9ocE
+         u785tMD6YXvoGMJNosccAAN+75ibWIvtldGaspRQ=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9GBW0AR113772
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Oct 2019 06:31:58 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+        Wed, 16 Oct 2019 06:32:00 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 16
- Oct 2019 06:31:51 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ Oct 2019 06:31:53 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 16 Oct 2019 06:31:51 -0500
+ Frontend Transport; Wed, 16 Oct 2019 06:31:53 -0500
 Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9GBVkm8097485;
-        Wed, 16 Oct 2019 06:31:56 -0500
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9GBVkm9097485;
+        Wed, 16 Oct 2019 06:31:58 -0500
 From:   Kishon Vijay Abraham I <kishon@ti.com>
 To:     Kishon Vijay Abraham I <kishon@ti.com>,
         Roger Quadros <rogerq@ti.com>, Jyri Sarha <jsarha@ti.com>
 CC:     Anil Varughese <aniljoy@cadence.com>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH 04/13] phy: cadence: Sierra: Add support for SERDES_16G used in J721E SoC
-Date:   Wed, 16 Oct 2019 17:01:08 +0530
-Message-ID: <20191016113117.12370-5-kishon@ti.com>
+Subject: [PATCH 05/13] phy: cadence: Sierra: Make cdns_sierra_phy_init() as phy_ops
+Date:   Wed, 16 Oct 2019 17:01:09 +0530
+Message-ID: <20191016113117.12370-6-kishon@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191016113117.12370-1-kishon@ti.com>
 References: <20191016113117.12370-1-kishon@ti.com>
@@ -56,44 +56,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SERDES_16G in TI's J721E SoC uses Cadence Sierra PHY. Add
-support to use Cadence Sierra driver in J721E SoC.
+Instead of invoking cdns_sierra_phy_init() from probe, add it in
+phy_ops so that it's initialized when the PHY consumer invokes
+phy_init()
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- drivers/phy/cadence/phy-cadence-sierra.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/phy/cadence/phy-cadence-sierra.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/phy/cadence/phy-cadence-sierra.c b/drivers/phy/cadence/phy-cadence-sierra.c
-index d0e7ae1c67b1..89a3b732c311 100644
+index 89a3b732c311..5c617248841f 100644
 --- a/drivers/phy/cadence/phy-cadence-sierra.c
 +++ b/drivers/phy/cadence/phy-cadence-sierra.c
-@@ -551,11 +551,25 @@ static const struct cdns_sierra_data cdns_map_sierra = {
- 	cdns_usb_regs
+@@ -174,7 +174,7 @@ static struct regmap_config cdns_sierra_phy_config_ctrl_config = {
+ 	.reg_read = cdns_regmap_read,
  };
  
-+static const struct cdns_sierra_data cdns_ti_map_sierra = {
-+	SIERRA_MACRO_ID,
-+	0x0,
-+	0x1,
-+	ARRAY_SIZE(cdns_pcie_regs),
-+	ARRAY_SIZE(cdns_usb_regs),
-+	cdns_pcie_regs,
-+	cdns_usb_regs
-+};
+-static void cdns_sierra_phy_init(struct phy *gphy)
++static int cdns_sierra_phy_init(struct phy *gphy)
+ {
+ 	struct cdns_sierra_inst *ins = phy_get_drvdata(gphy);
+ 	struct cdns_sierra_phy *phy = dev_get_drvdata(gphy->dev.parent);
+@@ -183,6 +183,10 @@ static void cdns_sierra_phy_init(struct phy *gphy)
+ 	struct cdns_reg_pairs *vals;
+ 	u32 num_regs;
+ 
++	/* Initialise the PHY registers, unless auto configured */
++	if (phy->autoconf)
++		return 0;
 +
- static const struct of_device_id cdns_sierra_id_table[] = {
- 	{
- 		.compatible = "cdns,sierra-phy-t0",
- 		.data = &cdns_map_sierra,
- 	},
-+	{
-+		.compatible = "ti,sierra-phy-t0",
-+		.data = &cdns_ti_map_sierra,
-+	},
- 	{}
- };
- MODULE_DEVICE_TABLE(of, cdns_sierra_id_table);
+ 	if (ins->phy_type == PHY_TYPE_PCIE) {
+ 		num_regs = phy->init_data->pcie_regs;
+ 		vals = phy->init_data->pcie_vals;
+@@ -190,7 +194,7 @@ static void cdns_sierra_phy_init(struct phy *gphy)
+ 		num_regs = phy->init_data->usb_regs;
+ 		vals = phy->init_data->usb_vals;
+ 	} else {
+-		return;
++		return -EINVAL;
+ 	}
+ 	for (i = 0; i < ins->num_lanes; i++) {
+ 		for (j = 0; j < num_regs ; j++) {
+@@ -198,6 +202,8 @@ static void cdns_sierra_phy_init(struct phy *gphy)
+ 			regmap_write(regmap, vals[j].off, vals[j].val);
+ 		}
+ 	}
++
++	return 0;
+ }
+ 
+ static int cdns_sierra_phy_on(struct phy *gphy)
+@@ -216,6 +222,7 @@ static int cdns_sierra_phy_off(struct phy *gphy)
+ }
+ 
+ static const struct phy_ops ops = {
++	.init		= cdns_sierra_phy_init,
+ 	.power_on	= cdns_sierra_phy_on,
+ 	.power_off	= cdns_sierra_phy_off,
+ 	.owner		= THIS_MODULE,
+@@ -436,10 +443,6 @@ static int cdns_sierra_phy_probe(struct platform_device *pdev)
+ 		sp->phys[node].phy = gphy;
+ 		phy_set_drvdata(gphy, &sp->phys[node]);
+ 
+-		/* Initialise the PHY registers, unless auto configured */
+-		if (!sp->autoconf)
+-			cdns_sierra_phy_init(gphy);
+-
+ 		node++;
+ 	}
+ 	sp->nsubnodes = node;
 -- 
 2.17.1
 
