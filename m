@@ -2,91 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51611D9098
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:17:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73C0DD909A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:18:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392926AbfJPMRe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 08:17:34 -0400
-Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:57011 "EHLO
-        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729700AbfJPMRe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 08:17:34 -0400
-Received: from [192.168.2.10] ([46.9.232.237])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id KiF7iHR3HPduvKiFAiqtHK; Wed, 16 Oct 2019 14:17:32 +0200
-Subject: Re: [PATCH] media: v4l2-ctrl: Add p_def to v4l2_ctrl_config
-To:     Ricardo Ribalda Delgado <ribalda@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191014141427.30708-1-ribalda@kernel.org>
-From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Message-ID: <f03e39da-2fe0-b1af-c409-8460c2fc5e9f@xs4all.nl>
-Date:   Wed, 16 Oct 2019 14:17:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2405165AbfJPMSQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 08:18:16 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:4555 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2392929AbfJPMSP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 08:18:15 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DF9A43079B77;
+        Wed, 16 Oct 2019 12:18:13 +0000 (UTC)
+Received: from [10.3.116.74] (ovpn-116-74.phx2.redhat.com [10.3.116.74])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4343B5C1D8;
+        Wed, 16 Oct 2019 12:18:10 +0000 (UTC)
+Subject: Re: [PATCH] ipmi: Don't allow device module unload when in use
+To:     minyard@acm.org
+Cc:     openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Corey Minyard <cminyard@mvista.com>
+References: <20191014134141.GA25427@t560>
+ <20191014154632.11103-1-minyard@acm.org>
+From:   tony camuso <tcamuso@redhat.com>
+Message-ID: <40e26052-3ccb-684a-540f-61ff47077690@redhat.com>
+Date:   Wed, 16 Oct 2019 08:18:09 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <20191014141427.30708-1-ribalda@kernel.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20191014154632.11103-1-minyard@acm.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfBR5pB19oFAukO9VtYHkDDfsL69Wfo06FqENWD1XFNDyvhP+5hkzAB1ymsexnJiSLZ7R+eG58CqR8/JwPS04BpBnh3t84NT8LBa7b6Ct839dMJ0IMWO6
- dW7GIL7L5AmUHBiXDpy9Yu5hIIz4AnYBKlKAZwc5Y0I1ogUIn9t17Ldwx/93c7ue69Enp5T4xzi1IwhJkmxooU43wYkmluHG+ey0KkRXZnMWYOWqaGGfLK69
- Vh1ekO2I+1RT5Z+Z7DuRUklG0/SIWMq6cNfL0voobicuom02DZmBbBda7WGRCbsz
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 16 Oct 2019 12:18:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/14/19 4:14 PM, Ricardo Ribalda Delgado wrote:
-> This allows setting the default value on compound controls created via
-> v4l2_ctrl_new_custom.
+On 10/14/19 11:46 AM, minyard@acm.org wrote:
+> From: Corey Minyard <cminyard@mvista.com>
 > 
-> Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
+> If something has the IPMI driver open, don't allow the device
+> module to be unloaded.  Before it would unload and the user would
+> get errors on use.
+> 
+> This change is made on user request, and it makes it consistent
+> with the I2C driver, which has the same behavior.
+> 
+> It does change things a little bit with respect to kernel users.
+> If the ACPI or IPMI watchdog (or any other kernel user) has
+> created a user, then the device module cannot be unloaded.  Before
+> it could be unloaded,
+> 
+> This does not affect hot-plug.  If the device goes away (it's on
+> something removable that is removed or is hot-removed via sysfs)
+> then it still behaves as it did before.
+> 
+> Reported-by: tony camuso <tcamuso@redhat.com>
+> Signed-off-by: Corey Minyard <cminyard@mvista.com>
 > ---
->  drivers/media/v4l2-core/v4l2-ctrls.c | 2 +-
->  include/media/v4l2-ctrls.h           | 2 ++
->  2 files changed, 3 insertions(+), 1 deletion(-)
+> Tony, here is a suggested change for this.  Can you look it over and
+> see if it looks ok?
 > 
-> diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-> index bf50d37ef6c1..12cf38f73f7b 100644
-> --- a/drivers/media/v4l2-core/v4l2-ctrls.c
-> +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-> @@ -2583,7 +2583,7 @@ struct v4l2_ctrl *v4l2_ctrl_new_custom(struct v4l2_ctrl_handler *hdl,
->  			type, min, max,
->  			is_menu ? cfg->menu_skip_mask : step, def,
->  			cfg->dims, cfg->elem_size,
-> -			flags, qmenu, qmenu_int, ptr_null, priv);
-> +			flags, qmenu, qmenu_int, cfg->p_def, priv);
->  	if (ctrl)
->  		ctrl->is_private = cfg->is_private;
->  	return ctrl;
-> diff --git a/include/media/v4l2-ctrls.h b/include/media/v4l2-ctrls.h
-> index 26205ba3a0a0..2fca5b823961 100644
-> --- a/include/media/v4l2-ctrls.h
-> +++ b/include/media/v4l2-ctrls.h
-> @@ -375,6 +375,7 @@ struct v4l2_ctrl_handler {
->   * @max:	The control's maximum value.
->   * @step:	The control's step value for non-menu controls.
->   * @def:	The control's default value.
-> + * @p_def:	The control's default value for compound controls.
->   * @dims:	The size of each dimension.
->   * @elem_size:	The size in bytes of the control.
->   * @flags:	The control's flags.
-> @@ -403,6 +404,7 @@ struct v4l2_ctrl_config {
->  	s64 max;
->  	u64 step;
->  	s64 def;
-> +	union v4l2_ctrl_ptr p_def;
->  	u32 dims[V4L2_CTRL_MAX_DIMS];
->  	u32 elem_size;
->  	u32 flags;
+> Thanks,
+> 
+> -corey
+> 
+>   drivers/char/ipmi/ipmi_msghandler.c | 23 ++++++++++++++++-------
+>   include/linux/ipmi_smi.h            | 12 ++++++++----
+>   2 files changed, 24 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+> index 2aab80e19ae0..15680de18625 100644
+> --- a/drivers/char/ipmi/ipmi_msghandler.c
+> +++ b/drivers/char/ipmi/ipmi_msghandler.c
+> @@ -448,6 +448,8 @@ enum ipmi_stat_indexes {
+>   
+>   #define IPMI_IPMB_NUM_SEQ	64
+>   struct ipmi_smi {
+> +	struct module *owner;
+> +
+>   	/* What interface number are we? */
+>   	int intf_num;
+>   
+> @@ -1220,6 +1222,11 @@ int ipmi_create_user(unsigned int          if_num,
+>   	if (rv)
+>   		goto out_kfree;
+>   
+> +	if (!try_module_get(intf->owner)) {
+> +		rv = -ENODEV;
+> +		goto out_kfree;
+> +	}
+> +	
+>   	/* Note that each existing user holds a refcount to the interface. */
+>   	kref_get(&intf->refcount);
+>   
+> @@ -1349,6 +1356,7 @@ static void _ipmi_destroy_user(struct ipmi_user *user)
+>   	}
+>   
+>   	kref_put(&intf->refcount, intf_free);
+> +	module_put(intf->owner);
+>   }
+>   
+>   int ipmi_destroy_user(struct ipmi_user *user)
+> @@ -2459,7 +2467,7 @@ static int __get_device_id(struct ipmi_smi *intf, struct bmc_device *bmc)
+>    * been recently fetched, this will just use the cached data.  Otherwise
+>    * it will run a new fetch.
+>    *
+> - * Except for the first time this is called (in ipmi_register_smi()),
+> + * Except for the first time this is called (in ipmi_add_smi()),
+>    * this will always return good data;
+>    */
+>   static int __bmc_get_device_id(struct ipmi_smi *intf, struct bmc_device *bmc,
+> @@ -3377,10 +3385,11 @@ static void redo_bmc_reg(struct work_struct *work)
+>   	kref_put(&intf->refcount, intf_free);
+>   }
+>   
+> -int ipmi_register_smi(const struct ipmi_smi_handlers *handlers,
+> -		      void		       *send_info,
+> -		      struct device            *si_dev,
+> -		      unsigned char            slave_addr)
+> +int ipmi_add_smi(struct module         *owner,
+> +		 const struct ipmi_smi_handlers *handlers,
+> +		 void		       *send_info,
+> +		 struct device         *si_dev,
+> +		 unsigned char         slave_addr)
+>   {
+>   	int              i, j;
+>   	int              rv;
+> @@ -3406,7 +3415,7 @@ int ipmi_register_smi(const struct ipmi_smi_handlers *handlers,
+>   		return rv;
+>   	}
+>   
+> -
+> +	intf->owner = owner;
+>   	intf->bmc = &intf->tmp_bmc;
+>   	INIT_LIST_HEAD(&intf->bmc->intfs);
+>   	mutex_init(&intf->bmc->dyn_mutex);
+> @@ -3514,7 +3523,7 @@ int ipmi_register_smi(const struct ipmi_smi_handlers *handlers,
+>   
+>   	return rv;
+>   }
+> -EXPORT_SYMBOL(ipmi_register_smi);
+> +EXPORT_SYMBOL(ipmi_add_smi);
+>   
+>   static void deliver_smi_err_response(struct ipmi_smi *intf,
+>   				     struct ipmi_smi_msg *msg,
+> diff --git a/include/linux/ipmi_smi.h b/include/linux/ipmi_smi.h
+> index 4dc66157d872..deec18b8944a 100644
+> --- a/include/linux/ipmi_smi.h
+> +++ b/include/linux/ipmi_smi.h
+> @@ -224,10 +224,14 @@ static inline int ipmi_demangle_device_id(uint8_t netfn, uint8_t cmd,
+>    * is called, and the lower layer must get the interface from that
+>    * call.
+>    */
+> -int ipmi_register_smi(const struct ipmi_smi_handlers *handlers,
+> -		      void                     *send_info,
+> -		      struct device            *dev,
+> -		      unsigned char            slave_addr);
+> +int ipmi_add_smi(struct module            *owner,
+> +		 const struct ipmi_smi_handlers *handlers,
+> +		 void                     *send_info,
+> +		 struct device            *dev,
+> +		 unsigned char            slave_addr);
+> +
+> +#define ipmi_register_smi(handlers, send_info, dev, slave_addr) \
+> +	ipmi_add_smi(THIS_MODULE, handlers, send_info, dev, slave_addr)
+>   
+>   /*
+>    * Remove a low-level interface from the IPMI driver.  This will
 > 
 
-I'm not sure about this. It might be a bit awkward to initialize p_def given that it is a union.
-
-Perhaps a simple void pointer would be easier?
+Thanks, Corey.
 
 Regards,
+Tony
 
-	Hans
