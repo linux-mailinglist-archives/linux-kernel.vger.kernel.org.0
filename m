@@ -2,49 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59449D9507
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 17:08:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81971D94FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 17:07:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394122AbfJPPHy convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 16 Oct 2019 11:07:54 -0400
-Received: from skedge04.snt-world.com ([91.208.41.69]:42178 "EHLO
-        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393440AbfJPPHc (ORCPT
+        id S2393967AbfJPPHm convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 16 Oct 2019 11:07:42 -0400
+Received: from skedge03.snt-world.com ([91.208.41.68]:33926 "EHLO
+        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391793AbfJPPHk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 11:07:32 -0400
-Received: from sntmail10s.snt-is.com (unknown [10.203.32.183])
+        Wed, 16 Oct 2019 11:07:40 -0400
+Received: from sntmail12r.snt-is.com (unknown [10.203.32.182])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by skedge04.snt-world.com (Postfix) with ESMTPS id 1F6EA7CDEC5;
-        Wed, 16 Oct 2019 17:07:30 +0200 (CEST)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail10s.snt-is.com
- (10.203.32.183) with Microsoft SMTP Server (version=TLS1_2,
+        by skedge03.snt-world.com (Postfix) with ESMTPS id E261067A917;
+        Wed, 16 Oct 2019 17:07:36 +0200 (CEST)
+Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail12r.snt-is.com
+ (10.203.32.182) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Wed, 16 Oct
- 2019 17:07:29 +0200
+ 2019 17:07:36 +0200
 Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
  sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
- 15.01.1713.004; Wed, 16 Oct 2019 17:07:29 +0200
+ 15.01.1713.004; Wed, 16 Oct 2019 17:07:36 +0200
 From:   Schrempf Frieder <frieder.schrempf@kontron.de>
 To:     "krzk@kernel.org" <krzk@kernel.org>,
         "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        Schrempf Frieder <frieder.schrempf@kontron.de>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
+        Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>
+CC:     Schrempf Frieder <frieder.schrempf@kontron.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH 07/10] ARM: dts: imx6ul-kontron-n6x1x-s: Add vbus-supply and
- overcurrent polarity to usb nodes
-Thread-Topic: [PATCH 07/10] ARM: dts: imx6ul-kontron-n6x1x-s: Add vbus-supply
- and overcurrent polarity to usb nodes
-Thread-Index: AQHVhDNtcWNwI7uv4EKgHVctQq99lQ==
-Date:   Wed, 16 Oct 2019 15:07:29 +0000
-Message-ID: <20191016150622.21753-8-frieder.schrempf@kontron.de>
+Subject: [PATCH 09/10] dt-bindings: arm: fsl: Add more Kontron i.MX6UL/ULL
+ compatibles
+Thread-Topic: [PATCH 09/10] dt-bindings: arm: fsl: Add more Kontron
+ i.MX6UL/ULL compatibles
+Thread-Index: AQHVhDNx9HC1slWSqkmSSUsv/8gk3g==
+Date:   Wed, 16 Oct 2019 15:07:36 +0000
+Message-ID: <20191016150622.21753-10-frieder.schrempf@kontron.de>
 References: <20191016150622.21753-1-frieder.schrempf@kontron.de>
 In-Reply-To: <20191016150622.21753-1-frieder.schrempf@kontron.de>
 Accept-Language: de-DE, en-US
@@ -58,15 +55,15 @@ Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
 X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 1F6EA7CDEC5.A22E5
+X-SnT-MailScanner-ID: E261067A917.AD3B9
 X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
 X-SnT-MailScanner-SpamCheck: 
 X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: devicetree@vger.kernel.org, festevam@gmail.com,
-        kernel@pengutronix.de, krzk@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        robh+dt@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org
+X-SnT-MailScanner-To: aisheng.dong@nxp.com, andrew.smirnov@gmail.com,
+        devicetree@vger.kernel.org, krzk@kernel.org,
+        linux-kernel@vger.kernel.org, manivannan.sadhasivam@linaro.org,
+        mark.rutland@arm.com, robh+dt@kernel.org, robh@kernel.org,
+        shawnguo@kernel.org
 X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -75,48 +72,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-To silence the warnings shown by the driver at boot time, we add a
-fixed regulator for the 5V supply of usbotg2 and specify the polarity
-of the overcurrent signal for usbotg1.
+Add the compatibles for Kontron i.MX6UL N6311 SoM and boards and
+the compatibles for Kontron i.MX6ULL N6411 SoM and boards.
 
 Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 ---
- arch/arm/boot/dts/imx6ul-kontron-n6x1x-s.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ Documentation/devicetree/bindings/arm/fsl.yaml | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm/boot/dts/imx6ul-kontron-n6x1x-s.dtsi b/arch/arm/boot/dts/imx6ul-kontron-n6x1x-s.dtsi
-index 779d75f42268..a2393568488f 100644
---- a/arch/arm/boot/dts/imx6ul-kontron-n6x1x-s.dtsi
-+++ b/arch/arm/boot/dts/imx6ul-kontron-n6x1x-s.dtsi
-@@ -43,6 +43,13 @@
- 		regulator-max-microvolt = <3300000>;
- 	};
+diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+index 1b4b4e6573b5..6d718272725d 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.yaml
++++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+@@ -162,6 +162,7 @@ properties:
+           - enum:
+               - fsl,imx6ul-14x14-evk      # i.MX6 UltraLite 14x14 EVK Board
+               - kontron,imx6ul-n6310-som  # Kontron N6310 SOM
++              - kontron,imx6ul-n6311-som  # Kontron N6311 SOM
+           - const: fsl,imx6ul
  
-+	reg_5v: regulator-5v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "5v";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+	};
+       - description: Kontron N6310 S Board
+@@ -170,6 +171,12 @@ properties:
+           - const: kontron,imx6ul-n6310-som
+           - const: fsl,imx6ul
+ 
++      - description: Kontron N6311 S Board
++        items:
++          - const: kontron,imx6ul-n6311-s
++          - const: kontron,imx6ul-n6311-som
++          - const: fsl,imx6ul
 +
- 	reg_usb_otg1_vbus: regulator-usb-otg1-vbus {
- 		compatible = "regulator-fixed";
- 		regulator-name = "usb_otg1_vbus";
-@@ -189,6 +196,7 @@
- 	srp-disable;
- 	hnp-disable;
- 	adp-disable;
-+	over-current-active-low;
- 	vbus-supply = <&reg_usb_otg1_vbus>;
- 	status = "okay";
- };
-@@ -196,6 +204,7 @@
- &usbotg2 {
- 	dr_mode = "host";
- 	disable-over-current;
-+	vbus-supply = <&reg_5v>;
- 	status = "okay";
- };
+       - description: Kontron N6310 S 43 Board
+         items:
+           - const: kontron,imx6ul-n6310-s-43
+@@ -181,6 +188,13 @@ properties:
+         items:
+           - enum:
+               - fsl,imx6ull-14x14-evk     # i.MX6 UltraLiteLite 14x14 EVK Board
++              - kontron,imx6ull-n6411-som # Kontron N6411 SOM
++          - const: fsl,imx6ull
++
++      - description: Kontron N6411 S Board
++        items:
++          - const: kontron,imx6ull-n6411-s
++          - const: kontron,imx6ull-n6411-som
+           - const: fsl,imx6ull
  
+       - description: i.MX6ULZ based Boards
 -- 
 2.17.1
