@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DC60D9EB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16F92D9EE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438838AbfJPWAj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:00:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54110 "EHLO mail.kernel.org"
+        id S2406824AbfJPWDe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:03:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438493AbfJPV7Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:59:24 -0400
+        id S2438497AbfJPV7Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:59:25 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F14A218DE;
-        Wed, 16 Oct 2019 21:59:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 85114222C5;
+        Wed, 16 Oct 2019 21:59:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263163;
-        bh=u/Y53TAPxRLJPRHjG5gc+qtkO7jxIITbVNG7+QLOzPk=;
+        s=default; t=1571263164;
+        bh=/iJQzNXElDmKgwIE4nZvZC9laLfJRJJ8f7XcsOp9AWs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hZQv0HEes7lwb8e81mw+06sO0ygrQXskqI0Dms+hkADHRO/w8yCi0CFhet06H/Pv/
-         1vwGuF7l+at8YG9fHXFxPqgzn5LMDkfeAM9mPwR2wAGNqrUE+PI2fZ5KkgRLMhfhiE
-         pQ7G8gFUUT6C+lTpXkm3qUoCx/NYZaOPPOU1GV98=
+        b=RO/ZYagQ6vWWLGqcA/h8hrBwliTXUmGAkmssGGX3s9dCuR1mcgpmXBLk0qZC27I6p
+         rGwJfVhDcVKqb8yqN6JDA70rXxlauP+natsWzFNa3Mtng/54Lln3jv1pg/IJ/k9B4Q
+         ppH1oYucLFetKIyJjnBhK5RqJJYanRrHlPXtk0/o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Meng Zhuo <mengzhuo1203@gmail.com>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        linux-mips@vger.kernel.org, Paul Burton <paul.burton@mips.com>
-Subject: [PATCH 5.3 091/112] MIPS: elf_hwcap: Export userspace ASEs
-Date:   Wed, 16 Oct 2019 14:51:23 -0700
-Message-Id: <20191016214905.514353521@linuxfoundation.org>
+        stable@vger.kernel.org, Adit Ranadive <aditr@vmware.com>,
+        Vishnu Dasa <vdasa@vmware.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 5.3 092/112] RDMA/vmw_pvrdma: Free SRQ only once
+Date:   Wed, 16 Oct 2019 14:51:24 -0700
+Message-Id: <20191016214905.597203901@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
 References: <20191016214844.038848564@linuxfoundation.org>
@@ -44,89 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+From: Adit Ranadive <aditr@vmware.com>
 
-commit 38dffe1e4dde1d3174fdce09d67370412843ebb5 upstream.
+commit 18545e8b6871d21aa3386dc42867138da9948a33 upstream.
 
-A Golang developer reported MIPS hwcap isn't reflecting instructions
-that the processor actually supported so programs can't apply optimized
-code at runtime.
+An extra kfree cleanup was missed since these are now deallocated by core.
 
-Thus we export the ASEs that can be used in userspace programs.
-
-Reported-by: Meng Zhuo <mengzhuo1203@gmail.com>
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: linux-mips@vger.kernel.org
-Cc: Paul Burton <paul.burton@mips.com>
-Cc: <stable@vger.kernel.org> # 4.14+
-Signed-off-by: Paul Burton <paul.burton@mips.com>
+Link: https://lore.kernel.org/r/1568848066-12449-1-git-send-email-aditr@vmware.com
+Cc: <stable@vger.kernel.org>
+Fixes: 68e326dea1db ("RDMA: Handle SRQ allocations by IB/core")
+Signed-off-by: Adit Ranadive <aditr@vmware.com>
+Reviewed-by: Vishnu Dasa <vdasa@vmware.com>
+Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/include/uapi/asm/hwcap.h |   11 +++++++++++
- arch/mips/kernel/cpu-probe.c       |   33 +++++++++++++++++++++++++++++++++
- 2 files changed, 44 insertions(+)
+ drivers/infiniband/hw/vmw_pvrdma/pvrdma_srq.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/arch/mips/include/uapi/asm/hwcap.h
-+++ b/arch/mips/include/uapi/asm/hwcap.h
-@@ -6,5 +6,16 @@
- #define HWCAP_MIPS_R6		(1 << 0)
- #define HWCAP_MIPS_MSA		(1 << 1)
- #define HWCAP_MIPS_CRC32	(1 << 2)
-+#define HWCAP_MIPS_MIPS16	(1 << 3)
-+#define HWCAP_MIPS_MDMX     (1 << 4)
-+#define HWCAP_MIPS_MIPS3D   (1 << 5)
-+#define HWCAP_MIPS_SMARTMIPS (1 << 6)
-+#define HWCAP_MIPS_DSP      (1 << 7)
-+#define HWCAP_MIPS_DSP2     (1 << 8)
-+#define HWCAP_MIPS_DSP3     (1 << 9)
-+#define HWCAP_MIPS_MIPS16E2 (1 << 10)
-+#define HWCAP_LOONGSON_MMI  (1 << 11)
-+#define HWCAP_LOONGSON_EXT  (1 << 12)
-+#define HWCAP_LOONGSON_EXT2 (1 << 13)
+--- a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_srq.c
++++ b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_srq.c
+@@ -230,8 +230,6 @@ static void pvrdma_free_srq(struct pvrdm
  
- #endif /* _UAPI_ASM_HWCAP_H */
---- a/arch/mips/kernel/cpu-probe.c
-+++ b/arch/mips/kernel/cpu-probe.c
-@@ -2198,6 +2198,39 @@ void cpu_probe(void)
- 		elf_hwcap |= HWCAP_MIPS_MSA;
- 	}
+ 	pvrdma_page_dir_cleanup(dev, &srq->pdir);
  
-+	if (cpu_has_mips16)
-+		elf_hwcap |= HWCAP_MIPS_MIPS16;
-+
-+	if (cpu_has_mdmx)
-+		elf_hwcap |= HWCAP_MIPS_MDMX;
-+
-+	if (cpu_has_mips3d)
-+		elf_hwcap |= HWCAP_MIPS_MIPS3D;
-+
-+	if (cpu_has_smartmips)
-+		elf_hwcap |= HWCAP_MIPS_SMARTMIPS;
-+
-+	if (cpu_has_dsp)
-+		elf_hwcap |= HWCAP_MIPS_DSP;
-+
-+	if (cpu_has_dsp2)
-+		elf_hwcap |= HWCAP_MIPS_DSP2;
-+
-+	if (cpu_has_dsp3)
-+		elf_hwcap |= HWCAP_MIPS_DSP3;
-+
-+	if (cpu_has_mips16e2)
-+		elf_hwcap |= HWCAP_MIPS_MIPS16E2;
-+
-+	if (cpu_has_loongson_mmi)
-+		elf_hwcap |= HWCAP_LOONGSON_MMI;
-+
-+	if (cpu_has_loongson_ext)
-+		elf_hwcap |= HWCAP_LOONGSON_EXT;
-+
-+	if (cpu_has_loongson_ext2)
-+		elf_hwcap |= HWCAP_LOONGSON_EXT2;
-+
- 	if (cpu_has_vz)
- 		cpu_probe_vz(c);
+-	kfree(srq);
+-
+ 	atomic_dec(&dev->num_srqs);
+ }
  
 
 
