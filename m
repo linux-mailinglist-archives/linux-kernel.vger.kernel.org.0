@@ -2,74 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13916D8C79
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 11:24:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3DEBD8C80
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 11:26:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404167AbfJPJYs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 05:24:48 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:47562 "EHLO huawei.com"
+        id S2404202AbfJPJ0c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 05:26:32 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4185 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2391925AbfJPJYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 05:24:47 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 9493277D8DAEA9F0BA43;
-        Wed, 16 Oct 2019 17:24:45 +0800 (CST)
-Received: from huawei.com (10.175.105.18) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Wed, 16 Oct 2019
- 17:24:34 +0800
-From:   Miaohe Lin <linmiaohe@huawei.com>
-To:     <pbonzini@redhat.com>, <rkrcmar@redhat.com>,
-        <sean.j.christopherson@intel.com>, <vkuznets@redhat.com>,
-        <wanpengli@tencent.com>, <jmattson@google.com>, <joro@8bytes.org>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-        <hpa@zytor.com>
-CC:     <x86@kernel.org>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linmiaohe@huawei.com>,
-        <mingfangsen@huawei.com>
-Subject: [PATCH] KVM: SVM: Fix potential wrong physical id in avic_handle_ldr_update
-Date:   Wed, 16 Oct 2019 17:25:08 +0800
-Message-ID: <1571217908-7693-1-git-send-email-linmiaohe@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S2389885AbfJPJ0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 05:26:32 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id EF505E7907969BC478FD;
+        Wed, 16 Oct 2019 17:26:29 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Wed, 16 Oct 2019
+ 17:26:20 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <eli.billauer@gmail.com>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] char: xillybus: use devm_platform_ioremap_resource() to simplify code
+Date:   Wed, 16 Oct 2019 17:25:46 +0800
+Message-ID: <20191016092546.26332-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.175.105.18]
+X-Originating-IP: [10.133.213.239]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Guest physical APIC ID may not equal to vcpu->vcpu_id in some case.
-We may set the wrong physical id in avic_handle_ldr_update as we
-always use vcpu->vcpu_id.
+Use devm_platform_ioremap_resource() to simplify the code a bit.
+This is detected by coccinelle.
 
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- arch/x86/kvm/svm.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/char/xillybus/xillybus_of.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index f8ecb6d..67cb5ba 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -4591,6 +4591,8 @@ static int avic_handle_ldr_update(struct kvm_vcpu *vcpu)
- 	int ret = 0;
- 	struct vcpu_svm *svm = to_svm(vcpu);
- 	u32 ldr = kvm_lapic_get_reg(vcpu->arch.apic, APIC_LDR);
-+	u32 apic_id_reg = kvm_lapic_get_reg(vcpu->arch.apic, APIC_ID);
-+	u32 id = (apic_id_reg >> 24) & 0xff;
+diff --git a/drivers/char/xillybus/xillybus_of.c b/drivers/char/xillybus/xillybus_of.c
+index bfafd8f..96b6de8 100644
+--- a/drivers/char/xillybus/xillybus_of.c
++++ b/drivers/char/xillybus/xillybus_of.c
+@@ -116,7 +116,6 @@ static int xilly_drv_probe(struct platform_device *op)
+ 	struct xilly_endpoint *endpoint;
+ 	int rc;
+ 	int irq;
+-	struct resource *res;
+ 	struct xilly_endpoint_hardware *ephw = &of_hw;
  
- 	if (ldr == svm->ldr_reg)
- 		return 0;
-@@ -4598,7 +4600,7 @@ static int avic_handle_ldr_update(struct kvm_vcpu *vcpu)
- 	avic_invalidate_logical_id_entry(vcpu);
+ 	if (of_property_read_bool(dev->of_node, "dma-coherent"))
+@@ -129,9 +128,7 @@ static int xilly_drv_probe(struct platform_device *op)
  
- 	if (ldr)
--		ret = avic_ldr_write(vcpu, vcpu->vcpu_id, ldr);
-+		ret = avic_ldr_write(vcpu, id, ldr);
+ 	dev_set_drvdata(dev, endpoint);
  
- 	if (!ret)
- 		svm->ldr_reg = ldr;
+-	res = platform_get_resource(op, IORESOURCE_MEM, 0);
+-	endpoint->registers = devm_ioremap_resource(dev, res);
+-
++	endpoint->registers = devm_platform_ioremap_resource(op, 0);
+ 	if (IS_ERR(endpoint->registers))
+ 		return PTR_ERR(endpoint->registers);
+ 
 -- 
-1.8.3.1
+2.7.4
+
 
