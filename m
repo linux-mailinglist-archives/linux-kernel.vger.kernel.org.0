@@ -2,109 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4D9FD95B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 17:35:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D41DD95C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 17:37:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405084AbfJPPfe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 11:35:34 -0400
-Received: from mx2a.mailbox.org ([80.241.60.219]:16483 "EHLO mx2a.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405055AbfJPPfe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 11:35:34 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx2a.mailbox.org (Postfix) with ESMTPS id 1ED8AA1149;
-        Wed, 16 Oct 2019 17:35:32 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
-        with ESMTP id 9R7HIXzq1RpU; Wed, 16 Oct 2019 17:35:28 +0200 (CEST)
-Date:   Thu, 17 Oct 2019 02:35:20 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] cgroup: pids: use {READ,WRITE}_ONCE for pids->limit
- operations
-Message-ID: <20191016153520.zet5mn5xsygig4xc@yavin.dot.cyphar.com>
-References: <20191012010539.6131-1-cyphar@cyphar.com>
- <20191014154136.GF18794@devbig004.ftw2.facebook.com>
- <20191014155931.jl7idjebhqxb3ck3@yavin.dot.cyphar.com>
- <20191014163307.GG18794@devbig004.ftw2.facebook.com>
- <20191016083218.ttsaqnxpjh5i5bgv@yavin.dot.cyphar.com>
- <20191016142756.GN18794@devbig004.ftw2.facebook.com>
- <20191016152946.34j5x45ko5auhv3g@yavin.dot.cyphar.com>
+        id S2405257AbfJPPhU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 11:37:20 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:47472 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405139AbfJPPhT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 11:37:19 -0400
+Received: from [213.220.153.21] (helo=localhost.localdomain)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1iKlMS-00050w-2l; Wed, 16 Oct 2019 15:37:16 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     oleg@redhat.com, linux-kernel@vger.kernel.org
+Cc:     aarcange@redhat.com, akpm@linux-foundation.org,
+        christian@kellner.me, cyphar@cyphar.com, elena.reshetova@intel.com,
+        guro@fb.com, jannh@google.com, ldv@altlinux.org,
+        linux-api@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        mhocko@suse.com, mingo@kernel.org, peterz@infradead.org,
+        shuah@kernel.org, tglx@linutronix.de, viro@zeniv.linux.org.uk,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH v2 1/5] pidfd: verify task is alive when printing fdinfo
+Date:   Wed, 16 Oct 2019 17:36:02 +0200
+Message-Id: <20191016153606.2326-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191015141332.4055-1-christian.brauner@ubuntu.com>
+References: <20191015141332.4055-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gae43k7kt3kmufic"
-Content-Disposition: inline
-In-Reply-To: <20191016152946.34j5x45ko5auhv3g@yavin.dot.cyphar.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Currently, when a task is dead we still print the pid it used to use in
+the fdinfo files of its pidfds. This doesn't make much sense since the
+pid may have already been reused. So verify that the task is still
+alive by introducing the task_alive() helper which will be used by other
+callers in follow-up patches.
+If the task is not alive anymore, we will print -1. This allows us to
+differentiate between a task not being present in a given pid namespace
+- in which case we already print 0 - and a task having been reaped.
 
---gae43k7kt3kmufic
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Note that this uses PIDTYPE_PID for the check. Technically, we could've
+checked PIDTYPE_TGID since pidfds currently only refer to thread-group
+leaders but if they won't anymore in the future then this check becomes
+problematic without it being immediately obvious to non-experts imho. If
+a thread is created via clone(CLONE_THREAD) than struct pid has a single
+non-empty list pid->tasks[PIDTYPE_PID] and this pid can't be used as a
+PIDTYPE_TGID meaning pid->tasks[PIDTYPE_TGID] will return NULL even
+though the thread-group leader might still be very much alive. So
+checking PIDTYPE_PID is fine and is easier to maintain should we ever
+allow pidfds to refer to threads.
 
-On 2019-10-17, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> On 2019-10-16, Tejun Heo <tj@kernel.org> wrote:
-> > Hello, Aleksa.
-> >=20
-> > On Wed, Oct 16, 2019 at 07:32:19PM +1100, Aleksa Sarai wrote:
-> > > Maybe I'm misunderstanding Documentation/atomic_t.txt, but it looks to
-> > > me like it's explicitly saying that I shouldn't use atomic64_t if I'm
-> > > just using it for fetching and assignment.
-> >=20
-> > Hah, where is it saying that?
->=20
-> Isn't that what this says:
->=20
-> > Therefore, if you find yourself only using the Non-RMW operations of
-> > atomic_t, you do not in fact need atomic_t at all and are doing it
-> > wrong.
->=20
-> Doesn't using just atomic64_read() and atomic64_set() fall under "only
-> using the non-RMW operations of atomic_t"? But yes, I agree that any
-> locking is overkill.
->=20
-> > > As for 64-bit on 32-bit machines -- that is a separate issue, but from
-> > > [1] it seems to me like there are more problems that *_ONCE() fixes t=
-han
-> > > just split reads and writes.
-> >=20
-> > Your explanations are too wishy washy.  If you wanna fix it, please do
-> > it correctly.  R/W ONCE isn't the right solution here.
->=20
-> Sure, I will switch it to use atomic64_read() and atomic64_set() instead
-> if that's what you'd prefer. Though I will mention that on quite a few
-> architectures atomic64_read() is defined as:
->=20
->   #define atomic64_read(v)        READ_ONCE((v)->counter)
+Cc: Jann Horn <jannh@google.com>
+Cc: Christian Kellner <christian@kellner.me>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: linux-api@vger.kernel.org
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+/* v1 */
+Link: https://lore.kernel.org/r/20191015141332.4055-1-christian.brauner@ubuntu.com
 
-Though I guess that's because on those architectures it turns out that
-READ_ONCE is properly atomic?
+/* v2 */
+- Oleg Nesterov <oleg@redhat.com>:
+  - simplify check whether task is still alive to hlist_empty()
+  - optionally introduce generic helper to replace open coded
+    hlist_emtpy() checks whether or not a task is alive
+- Christian Brauner <christian.brauner@ubuntu.com>:
+  - introduce task_alive() helper and use in pidfd_show_fdinfo()
+---
+ include/linux/pid.h |  4 ++++
+ kernel/fork.c       | 17 +++++++++++------
+ 2 files changed, 15 insertions(+), 6 deletions(-)
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+diff --git a/include/linux/pid.h b/include/linux/pid.h
+index 9645b1194c98..5f1c8ce10b71 100644
+--- a/include/linux/pid.h
++++ b/include/linux/pid.h
+@@ -85,6 +85,10 @@ static inline struct pid *get_pid(struct pid *pid)
+ 
+ extern void put_pid(struct pid *pid);
+ extern struct task_struct *pid_task(struct pid *pid, enum pid_type);
++static inline bool task_alive(struct pid *pid, enum pid_type type)
++{
++	return !hlist_empty(&pid->tasks[type]);
++}
+ extern struct task_struct *get_pid_task(struct pid *pid, enum pid_type);
+ 
+ extern struct pid *get_task_pid(struct task_struct *task, enum pid_type type);
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 782986962d47..ef9a9d661079 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1732,15 +1732,20 @@ static int pidfd_release(struct inode *inode, struct file *file)
+  */
+ static void pidfd_show_fdinfo(struct seq_file *m, struct file *f)
+ {
+-	struct pid_namespace *ns = proc_pid_ns(file_inode(m->file));
+ 	struct pid *pid = f->private_data;
+-	pid_t nr = pid_nr_ns(pid, ns);
++	struct pid_namespace *ns;
++	pid_t nr = -1;
+ 
+-	seq_put_decimal_ull(m, "Pid:\t", nr);
++	if (likely(task_alive(pid, PIDTYPE_PID))) {
++		ns = proc_pid_ns(file_inode(m->file));
++		nr = pid_nr_ns(pid, ns);
++	}
++
++	seq_put_decimal_ll(m, "Pid:\t", nr);
+ 
+ #ifdef CONFIG_PID_NS
+-	seq_put_decimal_ull(m, "\nNSpid:\t", nr);
+-	if (nr) {
++	seq_put_decimal_ll(m, "\nNSpid:\t", nr);
++	if (nr > 0) {
+ 		int i;
+ 
+ 		/* If nr is non-zero it means that 'pid' is valid and that
+@@ -1749,7 +1754,7 @@ static void pidfd_show_fdinfo(struct seq_file *m, struct file *f)
+ 		 * Start at one below the already printed level.
+ 		 */
+ 		for (i = ns->level + 1; i <= pid->level; i++)
+-			seq_put_decimal_ull(m, "\t", pid->numbers[i].nr);
++			seq_put_decimal_ll(m, "\t", pid->numbers[i].nr);
+ 	}
+ #endif
+ 	seq_putc(m, '\n');
+-- 
+2.23.0
 
---gae43k7kt3kmufic
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXac4XgAKCRCdlLljIbnQ
-EqfmAQCvvl9RoS0Za1ejIafzulKxMufJWahNQcrCVULRur+MvwEA+lhgaq8rJ/Qb
-48BFtp02gSX3aYFTdGOSILPOV6Op+Ak=
-=c8Qz
------END PGP SIGNATURE-----
-
---gae43k7kt3kmufic--
