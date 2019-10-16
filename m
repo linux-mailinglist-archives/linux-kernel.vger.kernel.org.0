@@ -2,44 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7217DA0D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:26:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 762E8DA018
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:24:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407443AbfJPWQD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:16:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45804 "EHLO mail.kernel.org"
+        id S2406938AbfJPWIA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:08:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437754AbfJPVzS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:55:18 -0400
+        id S2438075AbfJPV55 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:57:57 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 297E121D7A;
-        Wed, 16 Oct 2019 21:55:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BEE4F20872;
+        Wed, 16 Oct 2019 21:57:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262917;
-        bh=c+80AyRjtEUyKEjVzvFoFL1js9MaBhs+Nw2cCytC8BE=;
+        s=default; t=1571263076;
+        bh=jupoLtEGOBhyopY35fjDjzZFi6x64VwY8NVV5LOWpds=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t2Kh53J4inxbVr48w9XhdNk0w9gdKnnfF46we1/i/TwxQkTkMfmtsYF4QFq4N0xA+
-         gkI/nKxRT9iPmSGjHej/0QVSYt6ZSfF2Thr9ZUpMny0AWhY02PpPjOMwEqlO0xp2l+
-         TidMrRli42BICEehAFBqAdmMPQhRj9xk0kYh+FsM=
+        b=iyM4FlnZxVUChTl1Uydt4bP0a/4AtdRVhabiPjJT9O463wDmAoTyTLb9Nvq/a9e02
+         tJ1My4pVBKr8Ocok4UQbZ4bf0vIO2Z7EZ/rdWQr8MRQl4orjKo+vNhE2TwG3slDUha
+         /tt1BWsP2gRVzN0Cs9crovILSwyg1AnAH1gcOaV4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ian Rogers <irogers@google.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Stephane Eranian <eranian@google.com>,
-        Wang Nan <wangnan0@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.9 77/92] perf llvm: Dont access out-of-scope array
-Date:   Wed, 16 Oct 2019 14:50:50 -0700
-Message-Id: <20191016214846.206485152@linuxfoundation.org>
+        stable@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH 4.19 40/81] mei: me: add comet point (lake) LP device ids
+Date:   Wed, 16 Oct 2019 14:50:51 -0700
+Message-Id: <20191016214837.632477233@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
-References: <20191016214759.600329427@linuxfoundation.org>
+In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
+References: <20191016214805.727399379@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,55 +42,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ian Rogers <irogers@google.com>
+From: Tomas Winkler <tomas.winkler@intel.com>
 
-commit 7d4c85b7035eb2f9ab217ce649dcd1bfaf0cacd3 upstream.
+commit 4d86dfd38285c83a6df01093b8547f742e3b2470 upstream.
 
-The 'test_dir' variable is assigned to the 'release' array which is
-out-of-scope 3 lines later.
+Add Comet Point devices IDs for Comet Lake U platforms.
 
-Extend the scope of the 'release' array so that an out-of-scope array
-isn't accessed.
-
-Bug detected by clang's address sanitizer.
-
-Fixes: 07bc5c699a3d ("perf tools: Make fetch_kernel_version() publicly available")
-Cc: stable@vger.kernel.org # v4.4+
-Signed-off-by: Ian Rogers <irogers@google.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lore.kernel.org/lkml/20190926220018.25402-1-irogers@google.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Link: https://lore.kernel.org/r/20191001235958.19979-1-tomas.winkler@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/llvm-utils.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/misc/mei/hw-me-regs.h |    3 +++
+ drivers/misc/mei/pci-me.c     |    3 +++
+ 2 files changed, 6 insertions(+)
 
---- a/tools/perf/util/llvm-utils.c
-+++ b/tools/perf/util/llvm-utils.c
-@@ -220,14 +220,14 @@ static int detect_kbuild_dir(char **kbui
- 	const char *prefix_dir = "";
- 	const char *suffix_dir = "";
+--- a/drivers/misc/mei/hw-me-regs.h
++++ b/drivers/misc/mei/hw-me-regs.h
+@@ -139,6 +139,9 @@
+ #define MEI_DEV_ID_CNP_H      0xA360  /* Cannon Point H */
+ #define MEI_DEV_ID_CNP_H_4    0xA364  /* Cannon Point H 4 (iTouch) */
  
-+	/* _UTSNAME_LENGTH is 65 */
-+	char release[128];
++#define MEI_DEV_ID_CMP_LP     0x02e0  /* Comet Point LP */
++#define MEI_DEV_ID_CMP_LP_3   0x02e4  /* Comet Point LP 3 (iTouch) */
 +
- 	char *autoconf_path;
+ #define MEI_DEV_ID_ICP_LP     0x34E0  /* Ice Lake Point LP */
  
- 	int err;
+ #define MEI_DEV_ID_TGP_LP     0xA0E0  /* Tiger Lake Point LP */
+--- a/drivers/misc/mei/pci-me.c
++++ b/drivers/misc/mei/pci-me.c
+@@ -105,6 +105,9 @@ static const struct pci_device_id mei_me
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_CNP_H, MEI_ME_PCH8_CFG)},
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_CNP_H_4, MEI_ME_PCH8_CFG)},
  
- 	if (!test_dir) {
--		/* _UTSNAME_LENGTH is 65 */
--		char release[128];
--
- 		err = fetch_kernel_version(NULL, release,
- 					   sizeof(release));
- 		if (err)
++	{MEI_PCI_DEVICE(MEI_DEV_ID_CMP_LP, MEI_ME_PCH12_CFG)},
++	{MEI_PCI_DEVICE(MEI_DEV_ID_CMP_LP_3, MEI_ME_PCH8_CFG)},
++
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_ICP_LP, MEI_ME_PCH12_CFG)},
+ 
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_TGP_LP, MEI_ME_PCH12_CFG)},
 
 
