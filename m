@@ -2,69 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87C5AD8B36
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:40:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 642D1D8B3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:40:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391687AbfJPIkV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 04:40:21 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:56295 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389897AbfJPIkV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 04:40:21 -0400
-X-Originating-IP: 86.207.98.53
-Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id F1DF9E000C;
-        Wed, 16 Oct 2019 08:40:17 +0000 (UTC)
-Date:   Wed, 16 Oct 2019 10:40:17 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Cc:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Joshua Kinard <kumba@gentoo.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v2] rtc: ds1685: add indirect access method and remove
- plat_read/plat_write
-Message-ID: <20191016084017.GZ3125@piout.net>
-References: <20191014214621.25257-1-tbogendoerfer@suse.de>
+        id S2391703AbfJPIks (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 04:40:48 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43212 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389094AbfJPIkr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 04:40:47 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 473FB18CB8E5;
+        Wed, 16 Oct 2019 08:40:47 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-16.pek2.redhat.com [10.72.12.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 378E260A97;
+        Wed, 16 Oct 2019 08:40:32 +0000 (UTC)
+Subject: Re: [PATCH 3/3 v3] x86/kdump: clean up all the code related to the
+ backup region
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Dave Young <dyoung@redhat.com>, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, bhe@redhat.com, jgross@suse.com,
+        dhowells@redhat.com, Thomas.Lendacky@amd.com, vgoyal@redhat.com,
+        kexec@lists.infradead.org
+References: <20191012022140.19003-1-lijiang@redhat.com>
+ <20191012022140.19003-4-lijiang@redhat.com>
+ <87d0f22oi5.fsf@x220.int.ebiederm.org>
+ <20191012121625.GA11587@dhcp-128-65.nay.redhat.com>
+ <87zhi51ers.fsf@x220.int.ebiederm.org>
+ <72edff0b-9778-2e83-224b-7fe70dfb8d73@redhat.com>
+ <8736fu1d8k.fsf@x220.int.ebiederm.org>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <c42dd338-6fee-9311-df3a-0a3aa8c80cde@redhat.com>
+Date:   Wed, 16 Oct 2019 16:40:29 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191014214621.25257-1-tbogendoerfer@suse.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <8736fu1d8k.fsf@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.63]); Wed, 16 Oct 2019 08:40:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/10/2019 23:46:21+0200, Thomas Bogendoerfer wrote:
-> SGI Octane (IP30) doesn't have RTC register directly mapped into CPU
-> address space, but accesses RTC registers with an address and data
-> register.  This is now supported by additional access functions, which
-> are selected by a new field in platform data. Removed plat_read/plat_write
-> since there is no user and their usage could introduce lifetime issue,
-> when functions are placed in different modules.
+在 2019年10月15日 19:04, Eric W. Biederman 写道:
+> lijiang <lijiang@redhat.com> writes:
 > 
-> Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-> ---
-> Changes in v2:
+>> 在 2019年10月13日 11:54, Eric W. Biederman 写道:
+>>> Dave Young <dyoung@redhat.com> writes:
+>>>
+>>>> Hi Eric,
+>>>>
+>>>> On 10/12/19 at 06:26am, Eric W. Biederman wrote:
+>>>>> Lianbo Jiang <lijiang@redhat.com> writes:
+>>>>>
+>>>>>> When the crashkernel kernel command line option is specified, the
+>>>>>> low 1MiB memory will always be reserved, which makes that the memory
+>>>>>> allocated later won't fall into the low 1MiB area, thereby, it's not
+>>>>>> necessary to create a backup region and also no need to copy the first
+>>>>>> 640k content to a backup region.
+>>>>>>
+>>>>>> Currently, the code related to the backup region can be safely removed,
+>>>>>> so lets clean up.
+>>>>>>
+>>>>>> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+>>>>>> ---
+>>>>>
+>>>>>> diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
+>>>>>> index eb651fbde92a..cc5774fc84c0 100644
+>>>>>> --- a/arch/x86/kernel/crash.c
+>>>>>> +++ b/arch/x86/kernel/crash.c
+>>>>>> @@ -173,8 +173,6 @@ void native_machine_crash_shutdown(struct pt_regs *regs)
+>>>>>>  
+>>>>>>  #ifdef CONFIG_KEXEC_FILE
+>>>>>>  
+>>>>>> -static unsigned long crash_zero_bytes;
+>>>>>> -
+>>>>>>  static int get_nr_ram_ranges_callback(struct resource *res, void *arg)
+>>>>>>  {
+>>>>>>  	unsigned int *nr_ranges = arg;
+>>>>>> @@ -234,9 +232,15 @@ static int prepare_elf64_ram_headers_callback(struct resource *res, void *arg)
+>>>>>>  {
+>>>>>>  	struct crash_mem *cmem = arg;
+>>>>>>  
+>>>>>> -	cmem->ranges[cmem->nr_ranges].start = res->start;
+>>>>>> -	cmem->ranges[cmem->nr_ranges].end = res->end;
+>>>>>> -	cmem->nr_ranges++;
+>>>>>> +	if (res->start >= SZ_1M) {
+>>>>>> +		cmem->ranges[cmem->nr_ranges].start = res->start;
+>>>>>> +		cmem->ranges[cmem->nr_ranges].end = res->end;
+>>>>>> +		cmem->nr_ranges++;
+>>>>>> +	} else if (res->end > SZ_1M) {
+>>>>>> +		cmem->ranges[cmem->nr_ranges].start = SZ_1M;
+>>>>>> +		cmem->ranges[cmem->nr_ranges].end = res->end;
+>>>>>> +		cmem->nr_ranges++;
+>>>>>> +	}
+>>>>>
+>>>>> What is going on with this chunk?  I can guess but this needs a clear
+>>>>> comment.
+>>>>
+>>>> Indeed it needs some code comment, this is based on some offline
+>>>> discussion.  cat /proc/vmcore will give a warning because ioremap is
+>>>> mapping the system ram.
+>>>>
+>>>> We pass the first 1M to kdump kernel in e820 as system ram so that 2nd
+>>>> kernel can use the low 1M memory because for example the trampoline
+>>>> code.
+>>>>
+>>>>>
+>>>>>>  
+>>>>>>  	return 0;
+>>>>>>  }
+>>>>>
+>>>>>> @@ -356,9 +337,12 @@ int crash_setup_memmap_entries(struct kimage *image, struct boot_params *params)
+>>>>>>  	memset(&cmd, 0, sizeof(struct crash_memmap_data));
+>>>>>>  	cmd.params = params;
+>>>>>>  
+>>>>>> -	/* Add first 640K segment */
+>>>>>> -	ei.addr = image->arch.backup_src_start;
+>>>>>> -	ei.size = image->arch.backup_src_sz;
+>>>>>> +	/*
+>>>>>> +	 * Add the low memory range[0x1000, SZ_1M], skip
+>>>>>> +	 * the first zero page.
+>>>>>> +	 */
+>>>>>> +	ei.addr = PAGE_SIZE;
+>>>>>> +	ei.size = SZ_1M - PAGE_SIZE;
+>>>>>>  	ei.type = E820_TYPE_RAM;
+>>>>>>  	add_e820_entry(params, &ei);
+>>>>>
+>>>>> Likewise here.  Why do we need a special case?
+>>>>> Why the magic with PAGE_SIZE?
+>>>>
+>>>> Good catch, the zero page part is useless, I think no other special
+>>>> reason, just assumed zero page is not usable, but it should be ok to
+>>>> remove the special handling, just pass 0 - 1M is good enough.
+>>>
+>>> But if we have stopped special casing the low 1M.  Why do we need a
+>>> special case here at all?
+>>>
+>> Here, need to pass the low memory range to kdump kernel, which will guarantee
+>> the availability of low memory in kdump kernel, otherwise, kdump kernel won't
+>> use the low memory region.
+>>
+>>> If you need the special case it is almost certainly wrong to say you
+>>> have ram above 640KiB and below 1MiB.  That is the legacy ROM and video
+>>> MMIO area.
+>>>
+>>> There is a reason the original code said 640KiB.
+>>>
+>> Do you mean that the 640k region is good enough here instead of 1MiB?
 > 
-> - check if rtc->read and rtc->write are setup
-> - spell out indirect in function names and explain difference
->   between standard and indirect functions
+> Reading through the code of crash_setup_memap_entries I see that what
+> the code is doing now.  The code is repeating the e820 memory map with
+> the memory areas that were not reserved for the crash kernel removed.
 > 
->  arch/mips/sgi-ip32/ip32-platform.c |  2 +-
->  drivers/rtc/rtc-ds1685.c           | 78 +++++++++++++++++++++++++-------------
->  include/linux/rtc/ds1685.h         |  8 ++--
->  3 files changed, 58 insertions(+), 30 deletions(-)
+> In which case what the code needs to be doing something like:
 > 
-Applied, thanks.
+> 	cmd.type = E820_TYPE_RAM;
+> 	flags = IORESOURCE_MEM;
+> 	walk_iomem_res_desc(IORES_DESC_RESERVED, flags, 0, 1024*1024, &cmd,
+> 			       memmap_entry_callback);
+> 
+> Depending on which bugs exist it might make sense to limit this to
+> the low 640KiB.  But finding something the kernel already recognizes
+> as RAM should prevent most of those problems already.  Barring bugs
+> I admit it doesn't make sense to repeat the work that someone else
+> has already done.
+> 
+> This bit:
+> 	/* Add e820 reserved ranges */
+> 	cmd.type = E820_TYPE_RESERVED;
+> 	flags = IORESOURCE_MEM;
+> 	walk_iomem_res_desc(IORES_DESC_RESERVED, flags, 0, -1, &cmd,
+> 			   memmap_entry_callback);
+> 
+> Should probably start at 1MiB instead of 0.  Just so we don't report the
+> memory below 1MiB as unconditionally reserved.   I don't properly
+> understand the IORES_DESC_RESERVED flag, and how that differs from
+> flags.  So please test my suggestions to verify the code works as
+> expected.
+> 
+Thanks for your comment, Eric.
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+I will make a test based on your suggestions. But i need an SME machine,
+maybe i will reply later.
+
+Thanks.
+Lianbo
+
+> Eric
+> 
