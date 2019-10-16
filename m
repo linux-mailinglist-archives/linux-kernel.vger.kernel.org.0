@@ -2,103 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 899B9D8F34
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:19:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D84BD8F2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:18:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392748AbfJPLTW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 07:19:22 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:40236 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392706AbfJPLTV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 07:19:21 -0400
-Received: from [213.220.153.21] (helo=localhost.localdomain)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1iKhKp-0003tb-89; Wed, 16 Oct 2019 11:19:19 +0000
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     christian.brauner@ubuntu.com
-Cc:     ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
-        kafai@fb.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        songliubraving@fb.com, yhs@fb.com, Aleksa Sarai <cyphar@cyphar.com>
-Subject: [PATCH bpf-next v4 3/3] bpf: use copy_struct_from_user() in bpf() syscall
-Date:   Wed, 16 Oct 2019 13:18:10 +0200
-Message-Id: <20191016111810.1799-4-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016111810.1799-1-christian.brauner@ubuntu.com>
-References: <20191016034432.4418-1-christian.brauner@ubuntu.com>
- <20191016111810.1799-1-christian.brauner@ubuntu.com>
+        id S2392693AbfJPLS4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 07:18:56 -0400
+Received: from foss.arm.com ([217.140.110.172]:36942 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389063AbfJPLS4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 07:18:56 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 005F828;
+        Wed, 16 Oct 2019 04:18:54 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2B2573F6C4;
+        Wed, 16 Oct 2019 04:18:50 -0700 (PDT)
+Date:   Wed, 16 Oct 2019 12:18:47 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Marco Elver <elver@google.com>
+Cc:     akiyks@gmail.com, stern@rowland.harvard.edu, glider@google.com,
+        parri.andrea@gmail.com, andreyknvl@google.com, luto@kernel.org,
+        ard.biesheuvel@linaro.org, arnd@arndb.de, boqun.feng@gmail.com,
+        bp@alien8.de, dja@axtens.net, dlustig@nvidia.com,
+        dave.hansen@linux.intel.com, dhowells@redhat.com,
+        dvyukov@google.com, hpa@zytor.com, mingo@redhat.com,
+        j.alglave@ucl.ac.uk, joel@joelfernandes.org, corbet@lwn.net,
+        jpoimboe@redhat.com, luc.maranget@inria.fr, npiggin@gmail.com,
+        paulmck@linux.ibm.com, peterz@infradead.org, tglx@linutronix.de,
+        will@kernel.org, kasan-dev@googlegroups.com,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
+Subject: Re: [PATCH 7/8] locking/atomics, kcsan: Add KCSAN instrumentation
+Message-ID: <20191016111847.GB44246@lakrids.cambridge.arm.com>
+References: <20191016083959.186860-1-elver@google.com>
+ <20191016083959.186860-8-elver@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191016083959.186860-8-elver@google.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In v5.4-rc2 we added a new helper (cf. [1]) copy_struct_from_user().
-This helper is intended for all codepaths that copy structs from
-userspace that are versioned by size. The bpf() syscall does exactly
-what copy_struct_from_user() is doing.
-Note that copy_struct_from_user() is calling min() already. So
-technically, the min_t() call could go. But the size is used further
-below so leave it.
+Hi Marco,
 
-[1]: f5a1a536fa14 ("lib: introduce copy_struct_from_user() helper")
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Aleksa Sarai <cyphar@cyphar.com>
-Cc: bpf@vger.kernel.org
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
-/* v1 */
-Link: https://lore.kernel.org/r/20191009160907.10981-4-christian.brauner@ubuntu.com
+On Wed, Oct 16, 2019 at 10:39:58AM +0200, Marco Elver wrote:
+> This adds KCSAN instrumentation to atomic-instrumented.h.
+> 
+> Signed-off-by: Marco Elver <elver@google.com>
+> ---
+>  include/asm-generic/atomic-instrumented.h | 192 +++++++++++++++++++++-
+>  scripts/atomic/gen-atomic-instrumented.sh |   9 +-
+>  2 files changed, 199 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/asm-generic/atomic-instrumented.h b/include/asm-generic/atomic-instrumented.h
+> index e8730c6b9fe2..9e487febc610 100644
+> --- a/include/asm-generic/atomic-instrumented.h
+> +++ b/include/asm-generic/atomic-instrumented.h
+> @@ -19,11 +19,13 @@
+>  
+>  #include <linux/build_bug.h>
+>  #include <linux/kasan-checks.h>
+> +#include <linux/kcsan-checks.h>
+>  
+>  static inline int
+>  atomic_read(const atomic_t *v)
+>  {
+>  	kasan_check_read(v, sizeof(*v));
+> +	kcsan_check_atomic(v, sizeof(*v), false);
 
-/* v2 */
-Link: https://lore.kernel.org/r/20191016004138.24845-4-christian.brauner@ubuntu.com
-- Alexei Starovoitov <ast@kernel.org>:
-  - remove unneeded initialization
+For legibility and consistency with kasan, it would be nicer to avoid
+the bool argument here and have kcsan_check_atomic_{read,write}()
+helpers...
 
-/* v3 */
-Link: https://lore.kernel.org/r/20191016034432.4418-4-christian.brauner@ubuntu.com
-unchanged
+> diff --git a/scripts/atomic/gen-atomic-instrumented.sh b/scripts/atomic/gen-atomic-instrumented.sh
+> index e09812372b17..c0553743a6f4 100755
+> --- a/scripts/atomic/gen-atomic-instrumented.sh
+> +++ b/scripts/atomic/gen-atomic-instrumented.sh
+> @@ -12,15 +12,20 @@ gen_param_check()
+>  	local type="${arg%%:*}"
+>  	local name="$(gen_param_name "${arg}")"
+>  	local rw="write"
+> +	local is_write="true"
+>  
+>  	case "${type#c}" in
+>  	i) return;;
+>  	esac
+>  
+>  	# We don't write to constant parameters
+> -	[ ${type#c} != ${type} ] && rw="read"
+> +	if [ ${type#c} != ${type} ]; then
+> +		rw="read"
+> +		is_write="false"
+> +	fi
+>  
+>  	printf "\tkasan_check_${rw}(${name}, sizeof(*${name}));\n"
+> +	printf "\tkcsan_check_atomic(${name}, sizeof(*${name}), ${is_write});\n"
 
-/* v4 */
-- Alexei Starovoitov <ast@kernel.org>:
-  - move misplaced min after copy_struct_from_user()
----
- kernel/bpf/syscall.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+... which would also simplify this.
 
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index d554ca7671b6..47bf4a81002d 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -2812,21 +2812,18 @@ static int bpf_task_fd_query(const union bpf_attr *attr,
- 
- SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr __user *, uattr, unsigned int, size)
- {
--	union bpf_attr attr = {};
-+	union bpf_attr attr;
- 	int err;
- 
- 	if (sysctl_unprivileged_bpf_disabled && !capable(CAP_SYS_ADMIN))
- 		return -EPERM;
- 
--	err = bpf_check_uarg_tail_zero(uattr, sizeof(attr), size);
-+	/* copy attributes from user space, may be less than sizeof(bpf_attr) */
-+	err = copy_struct_from_user(&attr, sizeof(attr), uattr, size);
- 	if (err)
- 		return err;
- 	size = min_t(u32, size, sizeof(attr));
- 
--	/* copy attributes from user space, may be less than sizeof(bpf_attr) */
--	if (copy_from_user(&attr, uattr, size) != 0)
--		return -EFAULT;
--
- 	err = security_bpf(cmd, &attr, size);
- 	if (err < 0)
- 		return err;
--- 
-2.23.0
+Though as below, we might want to wrap both in a helper local to
+atomic-instrumented.h.
 
+>  }
+>  
+>  #gen_param_check(arg...)
+> @@ -108,6 +113,7 @@ cat <<EOF
+>  ({									\\
+>  	typeof(ptr) __ai_ptr = (ptr);					\\
+>  	kasan_check_write(__ai_ptr, ${mult}sizeof(*__ai_ptr));		\\
+> +	kcsan_check_atomic(__ai_ptr, ${mult}sizeof(*__ai_ptr), true);	\\
+>  	arch_${xchg}(__ai_ptr, __VA_ARGS__);				\\
+>  })
+>  EOF
+> @@ -148,6 +154,7 @@ cat << EOF
+>  
+>  #include <linux/build_bug.h>
+>  #include <linux/kasan-checks.h>
+> +#include <linux/kcsan-checks.h>
+
+We could add the following to this preamble:
+
+static inline void __atomic_check_read(const volatile void *v, size_t size)
+{
+	kasan_check_read(v, sizeof(*v));
+	kcsan_check_atomic(v, sizeof(*v), false);
+}
+
+static inline void __atomic_check_write(const volatile void *v, size_t size)
+{
+	kasan_check_write(v, sizeof(*v));
+	kcsan_check_atomic(v, sizeof(*v), true);
+}
+
+... and only have the one call in each atomic wrapper.
+
+Otherwise, this looks good to me.
+
+Thanks,
+Mark.
