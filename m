@@ -2,81 +2,336 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68585D94FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 17:07:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 506B5D94F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 17:07:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393820AbfJPPHf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 11:07:35 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50545 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726248AbfJPPHb (ORCPT
+        id S1731530AbfJPPHY convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 16 Oct 2019 11:07:24 -0400
+Received: from skedge04.snt-world.com ([91.208.41.69]:42096 "EHLO
+        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726052AbfJPPHX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 11:07:31 -0400
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iKktN-0007P5-O1; Wed, 16 Oct 2019 17:07:13 +0200
-Date:   Wed, 16 Oct 2019 17:07:13 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-cc:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Adrian Reber <adrian@lisas.de>,
-        Andrei Vagin <avagin@openvz.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Shuah Khan <shuah@kernel.org>,
-        containers@lists.linux-foundation.org, criu@openvz.org,
-        linux-api@vger.kernel.org, x86@kernel.org,
-        Andrei Vagin <avagin@gmail.com>
-Subject: Re: [PATCHv7 19/33] lib/vdso: Prepare for time namespace support
-In-Reply-To: <a726e64f-bf73-4eca-6acf-75926898d88a@arm.com>
-Message-ID: <alpine.DEB.2.21.1910161704120.2046@nanos.tec.linutronix.de>
-References: <20191011012341.846266-1-dima@arista.com> <20191011012341.846266-20-dima@arista.com> <a726e64f-bf73-4eca-6acf-75926898d88a@arm.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 16 Oct 2019 11:07:23 -0400
+Received: from sntmail10s.snt-is.com (unknown [10.203.32.183])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by skedge04.snt-world.com (Postfix) with ESMTPS id D9A7E7CDEAC;
+        Wed, 16 Oct 2019 17:07:19 +0200 (CEST)
+Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail10s.snt-is.com
+ (10.203.32.183) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Wed, 16 Oct
+ 2019 17:07:19 +0200
+Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
+ sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
+ 15.01.1713.004; Wed, 16 Oct 2019 17:07:19 +0200
+From:   Schrempf Frieder <frieder.schrempf@kontron.de>
+To:     "krzk@kernel.org" <krzk@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        Schrempf Frieder <frieder.schrempf@kontron.de>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>
+CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH 01/10] ARM: dts: imx6ul-kontron-n6310: Move common SoM nodes
+ to a separate file
+Thread-Topic: [PATCH 01/10] ARM: dts: imx6ul-kontron-n6310: Move common SoM
+ nodes to a separate file
+Thread-Index: AQHVhDNnN9aGUH4T40yWqnEyL2tHog==
+Date:   Wed, 16 Oct 2019 15:07:19 +0000
+Message-ID: <20191016150622.21753-2-frieder.schrempf@kontron.de>
+References: <20191016150622.21753-1-frieder.schrempf@kontron.de>
+In-Reply-To: <20191016150622.21753-1-frieder.schrempf@kontron.de>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.17.1
+x-originating-ip: [172.25.9.193]
+x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-SnT-MailScanner-Information: Please contact the ISP for more information
+X-SnT-MailScanner-ID: D9A7E7CDEAC.A4F5B
+X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
+X-SnT-MailScanner-SpamCheck: 
+X-SnT-MailScanner-From: frieder.schrempf@kontron.de
+X-SnT-MailScanner-To: devicetree@vger.kernel.org, festevam@gmail.com,
+        kernel@pengutronix.de, krzk@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        robh+dt@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 16 Oct 2019, Vincenzo Frascino wrote:
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-< SNIP >
+The Kontron N6311 and N6411 SoMs are very similar to N6310. In
+preparation to add support for them, we move the common nodes to a
+separate file imx6ul-kontron-n6x1x-som-common.dtsi.
 
-> > --- a/lib/vdso/Kconfig
-> > +++ b/lib/vdso/Kconfig
-> > @@ -24,4 +24,10 @@ config GENERIC_COMPAT_VDSO
-> >  	help
-> >  	  This config option enables the compat VDSO layer.
-> >  
-> > +config VDSO_TIMENS
-> 
-> To uniform the naming with the rest of the file and with CONFIG_TIME_NS, can we
-> please change the name of this config option in GENERIC_VDSO_TIME_NS? And then
-> follow the logic explained by Thomas in patch 1 of this series.
+Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+---
+ .../boot/dts/imx6ul-kontron-n6310-som.dtsi    |  95 +-------------
+ .../dts/imx6ul-kontron-n6x1x-som-common.dtsi  | 123 ++++++++++++++++++
+ 2 files changed, 124 insertions(+), 94 deletions(-)
+ create mode 100644 arch/arm/boot/dts/imx6ul-kontron-n6x1x-som-common.dtsi
 
-Can you pretty please finally start to trim your replies?
-
-If you didn't read the link I sent you earlier, then here is the relevant
-paragraph:
-
-  It's an annoyance to have to scroll down through several pages of quoted
-  text to find a single line of reply or to figure out that after that
-  reply the rest of the e-mail is just useless ballast.
-
-I know that corporate mail style does not care about that, but I pretty
-much care.
-
-Thanks,
-
-	tglx
+diff --git a/arch/arm/boot/dts/imx6ul-kontron-n6310-som.dtsi b/arch/arm/boot/dts/imx6ul-kontron-n6310-som.dtsi
+index a896b2348dd2..47d3ce5d255f 100644
+--- a/arch/arm/boot/dts/imx6ul-kontron-n6310-som.dtsi
++++ b/arch/arm/boot/dts/imx6ul-kontron-n6310-som.dtsi
+@@ -6,7 +6,7 @@
+  */
+ 
+ #include "imx6ul.dtsi"
+-#include <dt-bindings/gpio/gpio.h>
++#include "imx6ul-kontron-n6x1x-som-common.dtsi"
+ 
+ / {
+ 	model = "Kontron N6310 SOM";
+@@ -18,49 +18,7 @@
+ 	};
+ };
+ 
+-&ecspi2 {
+-	cs-gpios = <&gpio4 22 GPIO_ACTIVE_HIGH>;
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_ecspi2>;
+-	status = "okay";
+-
+-	spi-flash@0 {
+-		compatible = "mxicy,mx25v8035f", "jedec,spi-nor";
+-		spi-max-frequency = <50000000>;
+-		reg = <0>;
+-	};
+-};
+-
+-&fec1 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_enet1 &pinctrl_enet1_mdio>;
+-	phy-mode = "rmii";
+-	phy-handle = <&ethphy1>;
+-	status = "okay";
+-
+-	mdio {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+-		ethphy1: ethernet-phy@1 {
+-			reg = <1>;
+-			micrel,led-mode = <0>;
+-			clocks = <&clks IMX6UL_CLK_ENET_REF>;
+-			clock-names = "rmii-ref";
+-		};
+-	};
+-};
+-
+-&fec2 {
+-	phy-mode = "rmii";
+-	status = "disabled";
+-};
+-
+ &qspi {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_qspi>;
+-	status = "okay";
+-
+ 	spi-flash@0 {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+@@ -81,54 +39,3 @@
+ 		};
+ 	};
+ };
+-
+-&iomuxc {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_reset_out>;
+-
+-	pinctrl_ecspi2: ecspi2grp {
+-		fsl,pins = <
+-			MX6UL_PAD_CSI_DATA03__ECSPI2_MISO      0x100b1
+-			MX6UL_PAD_CSI_DATA02__ECSPI2_MOSI      0x100b1
+-			MX6UL_PAD_CSI_DATA00__ECSPI2_SCLK      0x100b1
+-			MX6UL_PAD_CSI_DATA01__GPIO4_IO22       0x100b1
+-		>;
+-	};
+-
+-	pinctrl_enet1: enet1grp {
+-		fsl,pins = <
+-			MX6UL_PAD_ENET1_RX_EN__ENET1_RX_EN      0x1b0b0
+-			MX6UL_PAD_ENET1_RX_ER__ENET1_RX_ER      0x1b0b0
+-			MX6UL_PAD_ENET1_RX_DATA0__ENET1_RDATA00 0x1b0b0
+-			MX6UL_PAD_ENET1_RX_DATA1__ENET1_RDATA01 0x1b0b0
+-			MX6UL_PAD_ENET1_TX_EN__ENET1_TX_EN      0x1b0b0
+-			MX6UL_PAD_ENET1_TX_DATA0__ENET1_TDATA00 0x1b0b0
+-			MX6UL_PAD_ENET1_TX_DATA1__ENET1_TDATA01 0x1b0b0
+-			MX6UL_PAD_ENET1_TX_CLK__ENET1_REF_CLK1  0x4001b009
+-		>;
+-	};
+-
+-	pinctrl_enet1_mdio: enet1mdiogrp {
+-		fsl,pins = <
+-			MX6UL_PAD_GPIO1_IO07__ENET1_MDC         0x1b0b0
+-			MX6UL_PAD_GPIO1_IO06__ENET1_MDIO        0x1b0b0
+-		>;
+-	};
+-
+-	pinctrl_qspi: qspigrp {
+-		fsl,pins = <
+-			MX6UL_PAD_NAND_WP_B__QSPI_A_SCLK        0x70a1
+-			MX6UL_PAD_NAND_READY_B__QSPI_A_DATA00   0x70a1
+-			MX6UL_PAD_NAND_CE0_B__QSPI_A_DATA01     0x70a1
+-			MX6UL_PAD_NAND_CE1_B__QSPI_A_DATA02     0x70a1
+-			MX6UL_PAD_NAND_CLE__QSPI_A_DATA03       0x70a1
+-			MX6UL_PAD_NAND_DQS__QSPI_A_SS0_B        0x70a1
+-		>;
+-	};
+-
+-	pinctrl_reset_out: rstoutgrp {
+-		fsl,pins = <
+-			MX6UL_PAD_SNVS_TAMPER9__GPIO5_IO09      0x1b0b0
+-		>;
+-	};
+-};
+diff --git a/arch/arm/boot/dts/imx6ul-kontron-n6x1x-som-common.dtsi b/arch/arm/boot/dts/imx6ul-kontron-n6x1x-som-common.dtsi
+new file mode 100644
+index 000000000000..ba50c2966998
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6ul-kontron-n6x1x-som-common.dtsi
+@@ -0,0 +1,123 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2017 exceet electronics GmbH
++ * Copyright (C) 2018 Kontron Electronics GmbH
++ * Copyright (c) 2019 Krzysztof Kozlowski <krzk@kernel.org>
++ */
++
++#include <dt-bindings/gpio/gpio.h>
++
++&ecspi2 {
++	cs-gpios = <&gpio4 22 GPIO_ACTIVE_HIGH>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_ecspi2>;
++	status = "okay";
++
++	spi-flash@0 {
++		compatible = "mxicy,mx25v8035f", "jedec,spi-nor";
++		spi-max-frequency = <50000000>;
++		reg = <0>;
++	};
++};
++
++&fec1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_enet1 &pinctrl_enet1_mdio>;
++	phy-mode = "rmii";
++	phy-handle = <&ethphy1>;
++	status = "okay";
++
++	mdio {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ethphy1: ethernet-phy@1 {
++			reg = <1>;
++			micrel,led-mode = <0>;
++			clocks = <&clks IMX6UL_CLK_ENET_REF>;
++			clock-names = "rmii-ref";
++		};
++	};
++};
++
++&fec2 {
++	phy-mode = "rmii";
++	status = "disabled";
++};
++
++&qspi {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_qspi>;
++	status = "okay";
++
++	spi-flash@0 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "spi-nand";
++		spi-max-frequency = <108000000>;
++		spi-tx-bus-width = <4>;
++		spi-rx-bus-width = <4>;
++		reg = <0>;
++
++		partition@0 {
++			label = "ubi1";
++			reg = <0x00000000 0x08000000>;
++		};
++
++		partition@8000000 {
++			label = "ubi2";
++			reg = <0x08000000 0x08000000>;
++		};
++	};
++};
++
++&iomuxc {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_reset_out>;
++
++	pinctrl_ecspi2: ecspi2grp {
++		fsl,pins = <
++			MX6UL_PAD_CSI_DATA03__ECSPI2_MISO      0x100b1
++			MX6UL_PAD_CSI_DATA02__ECSPI2_MOSI      0x100b1
++			MX6UL_PAD_CSI_DATA00__ECSPI2_SCLK      0x100b1
++			MX6UL_PAD_CSI_DATA01__GPIO4_IO22       0x100b1
++		>;
++	};
++
++	pinctrl_enet1: enet1grp {
++		fsl,pins = <
++			MX6UL_PAD_ENET1_RX_EN__ENET1_RX_EN      0x1b0b0
++			MX6UL_PAD_ENET1_RX_ER__ENET1_RX_ER      0x1b0b0
++			MX6UL_PAD_ENET1_RX_DATA0__ENET1_RDATA00 0x1b0b0
++			MX6UL_PAD_ENET1_RX_DATA1__ENET1_RDATA01 0x1b0b0
++			MX6UL_PAD_ENET1_TX_EN__ENET1_TX_EN      0x1b0b0
++			MX6UL_PAD_ENET1_TX_DATA0__ENET1_TDATA00 0x1b0b0
++			MX6UL_PAD_ENET1_TX_DATA1__ENET1_TDATA01 0x1b0b0
++			MX6UL_PAD_ENET1_TX_CLK__ENET1_REF_CLK1  0x4001b009
++		>;
++	};
++
++	pinctrl_enet1_mdio: enet1mdiogrp {
++		fsl,pins = <
++			MX6UL_PAD_GPIO1_IO07__ENET1_MDC         0x1b0b0
++			MX6UL_PAD_GPIO1_IO06__ENET1_MDIO        0x1b0b0
++		>;
++	};
++
++	pinctrl_qspi: qspigrp {
++		fsl,pins = <
++			MX6UL_PAD_NAND_WP_B__QSPI_A_SCLK        0x70a1
++			MX6UL_PAD_NAND_READY_B__QSPI_A_DATA00   0x70a1
++			MX6UL_PAD_NAND_CE0_B__QSPI_A_DATA01     0x70a1
++			MX6UL_PAD_NAND_CE1_B__QSPI_A_DATA02     0x70a1
++			MX6UL_PAD_NAND_CLE__QSPI_A_DATA03       0x70a1
++			MX6UL_PAD_NAND_DQS__QSPI_A_SS0_B        0x70a1
++		>;
++	};
++
++	pinctrl_reset_out: rstoutgrp {
++		fsl,pins = <
++			MX6UL_PAD_SNVS_TAMPER9__GPIO5_IO09      0x1b0b0
++		>;
++	};
++};
+-- 
+2.17.1
