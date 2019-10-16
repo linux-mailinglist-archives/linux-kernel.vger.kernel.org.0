@@ -2,37 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 762E8DA018
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:24:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C61DD9F79
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406938AbfJPWIA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:08:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51042 "EHLO mail.kernel.org"
+        id S2437804AbfJPVzY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:55:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438075AbfJPV55 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:57:57 -0400
+        id S2437759AbfJPVzT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:55:19 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BEE4F20872;
-        Wed, 16 Oct 2019 21:57:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BB3520872;
+        Wed, 16 Oct 2019 21:55:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263076;
-        bh=jupoLtEGOBhyopY35fjDjzZFi6x64VwY8NVV5LOWpds=;
+        s=default; t=1571262918;
+        bh=LDZOW25CksuYhiJrj429Qcn7l6gHU+rXtoF0UIaiRyo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iyM4FlnZxVUChTl1Uydt4bP0a/4AtdRVhabiPjJT9O463wDmAoTyTLb9Nvq/a9e02
-         tJ1My4pVBKr8Ocok4UQbZ4bf0vIO2Z7EZ/rdWQr8MRQl4orjKo+vNhE2TwG3slDUha
-         /tt1BWsP2gRVzN0Cs9crovILSwyg1AnAH1gcOaV4=
+        b=0tS77SCkIz7cOskk55gyAesspOa4Cb2wlbd65gAmMMB+AfsciTJinvTOot3qOsgYG
+         0V+Ry76hFeB47s6Nt41ZxUNDy8nTNQz0scTCvHhYcUqk4DyZCfu/u5GVOnfzZjjPdI
+         Y9qbjFlKVuPlWGSQGqEB08xYecz/LCBQptTv/snI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH 4.19 40/81] mei: me: add comet point (lake) LP device ids
+        stable@vger.kernel.org,
+        Steve MacLean <Steve.MacLean@Microsoft.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Brian Robbins <brianrob@microsoft.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Eric Saint-Etienne <eric.saint.etienne@oracle.com>,
+        John Keeping <john@metanate.com>,
+        John Salem <josalem@microsoft.com>,
+        Leo Yan <leo.yan@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Song Liu <songliubraving@fb.com>,
+        Stephane Eranian <eranian@google.com>,
+        Tom McDonald <thomas.mcdonald@microsoft.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.9 78/92] perf inject jit: Fix JIT_CODE_MOVE filename
 Date:   Wed, 16 Oct 2019 14:50:51 -0700
-Message-Id: <20191016214837.632477233@linuxfoundation.org>
+Message-Id: <20191016214846.371892544@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
-References: <20191016214805.727399379@linuxfoundation.org>
+In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
+References: <20191016214759.600329427@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,45 +59,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomas Winkler <tomas.winkler@intel.com>
+From: Steve MacLean <Steve.MacLean@microsoft.com>
 
-commit 4d86dfd38285c83a6df01093b8547f742e3b2470 upstream.
+commit b59711e9b0d22fd47abfa00602fd8c365cdd3ab7 upstream.
 
-Add Comet Point devices IDs for Comet Lake U platforms.
+During perf inject --jit, JIT_CODE_MOVE records were injecting MMAP records
+with an incorrect filename. Specifically it was missing the ".so" suffix.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-Link: https://lore.kernel.org/r/20191001235958.19979-1-tomas.winkler@intel.com
+Further the JIT_CODE_LOAD record were silently truncating the
+jr->load.code_index field to 32 bits before generating the filename.
+
+Make both records emit the same filename based on the full 64 bit
+code_index field.
+
+Fixes: 9b07e27f88b9 ("perf inject: Add jitdump mmap injection support")
+Cc: stable@vger.kernel.org # v4.6+
+Signed-off-by: Steve MacLean <Steve.MacLean@Microsoft.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Brian Robbins <brianrob@microsoft.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Eric Saint-Etienne <eric.saint.etienne@oracle.com>
+Cc: John Keeping <john@metanate.com>
+Cc: John Salem <josalem@microsoft.com>
+Cc: Leo Yan <leo.yan@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Song Liu <songliubraving@fb.com>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Tom McDonald <thomas.mcdonald@microsoft.com>
+Link: http://lore.kernel.org/lkml/BN8PR21MB1362FF8F127B31DBF4121528F7800@BN8PR21MB1362.namprd21.prod.outlook.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/mei/hw-me-regs.h |    3 +++
- drivers/misc/mei/pci-me.c     |    3 +++
- 2 files changed, 6 insertions(+)
+ tools/perf/util/jitdump.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/misc/mei/hw-me-regs.h
-+++ b/drivers/misc/mei/hw-me-regs.h
-@@ -139,6 +139,9 @@
- #define MEI_DEV_ID_CNP_H      0xA360  /* Cannon Point H */
- #define MEI_DEV_ID_CNP_H_4    0xA364  /* Cannon Point H 4 (iTouch) */
+--- a/tools/perf/util/jitdump.c
++++ b/tools/perf/util/jitdump.c
+@@ -369,7 +369,7 @@ static int jit_repipe_code_load(struct j
+ 	size_t size;
+ 	u16 idr_size;
+ 	const char *sym;
+-	uint32_t count;
++	uint64_t count;
+ 	int ret, csize;
+ 	pid_t pid, tid;
+ 	struct {
+@@ -391,7 +391,7 @@ static int jit_repipe_code_load(struct j
+ 		return -1;
  
-+#define MEI_DEV_ID_CMP_LP     0x02e0  /* Comet Point LP */
-+#define MEI_DEV_ID_CMP_LP_3   0x02e4  /* Comet Point LP 3 (iTouch) */
-+
- #define MEI_DEV_ID_ICP_LP     0x34E0  /* Ice Lake Point LP */
+ 	filename = event->mmap2.filename;
+-	size = snprintf(filename, PATH_MAX, "%s/jitted-%d-%u.so",
++	size = snprintf(filename, PATH_MAX, "%s/jitted-%d-%" PRIu64 ".so",
+ 			jd->dir,
+ 			pid,
+ 			count);
+@@ -493,7 +493,7 @@ static int jit_repipe_code_move(struct j
+ 		return -1;
  
- #define MEI_DEV_ID_TGP_LP     0xA0E0  /* Tiger Lake Point LP */
---- a/drivers/misc/mei/pci-me.c
-+++ b/drivers/misc/mei/pci-me.c
-@@ -105,6 +105,9 @@ static const struct pci_device_id mei_me
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_CNP_H, MEI_ME_PCH8_CFG)},
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_CNP_H_4, MEI_ME_PCH8_CFG)},
- 
-+	{MEI_PCI_DEVICE(MEI_DEV_ID_CMP_LP, MEI_ME_PCH12_CFG)},
-+	{MEI_PCI_DEVICE(MEI_DEV_ID_CMP_LP_3, MEI_ME_PCH8_CFG)},
-+
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_ICP_LP, MEI_ME_PCH12_CFG)},
- 
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_TGP_LP, MEI_ME_PCH12_CFG)},
+ 	filename = event->mmap2.filename;
+-	size = snprintf(filename, PATH_MAX, "%s/jitted-%d-%"PRIu64,
++	size = snprintf(filename, PATH_MAX, "%s/jitted-%d-%" PRIu64 ".so",
+ 	         jd->dir,
+ 	         pid,
+ 		 jr->move.code_index);
 
 
