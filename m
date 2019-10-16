@@ -2,213 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70CB1D8E7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 12:48:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 663F7D8EA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 12:54:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392561AbfJPKsI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 06:48:08 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:52840 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731877AbfJPKsG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 06:48:06 -0400
-Received: from 79.184.255.51.ipv4.supernova.orange.pl (79.184.255.51) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
- id aa54f32a6c5ccca0; Wed, 16 Oct 2019 12:48:02 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     Linux ACPI <linux-acpi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Dmitry Osipenko <digetx@gmail.com>
-Subject: [RFT][PATCH 3/3] PM: QoS: Drop frequency QoS types from device PM QoS
-Date:   Wed, 16 Oct 2019 12:47:53 +0200
-Message-ID: <3223584.6srSoYZK3A@kreacher>
-In-Reply-To: <2811202.iOFZ6YHztY@kreacher>
-References: <2811202.iOFZ6YHztY@kreacher>
+        id S2388925AbfJPKyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 06:54:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50514 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726083AbfJPKyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 06:54:17 -0400
+Received: from localhost (unknown [209.136.236.94])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 824162067D;
+        Wed, 16 Oct 2019 10:54:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571223255;
+        bh=yFzd53J4K2VB7WLByqAWeKHKRwRFjS6u0jt4bslhMbI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PHpXkc0Rwa5omeBdC4gekAAL6HKvioRqL2J9e/WX8/GleZxWzR+FdCGvv7EmH4tsf
+         Xn7mwFo0zCmJiOIi6gWyMeniVBa7PWzbHHuA3f6vQW4z5PWryMvLiRGMt50NsR1F4o
+         JvEok6KCso4YIE0jMupjfr0Ja+uO1er1M/1jWCiQ=
+Date:   Wed, 16 Oct 2019 02:18:15 -0700
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     pumahsu <pumahsu@google.com>
+Cc:     heikki.krogerus@linux.intel.com, badhri@google.com,
+        kyletso@google.com, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: Add sysfs node to show cc orientation
+Message-ID: <20191016091815.GA1175217@kroah.com>
+References: <20191016034314.231363-1-pumahsu@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191016034314.231363-1-pumahsu@google.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Wed, Oct 16, 2019 at 11:43:14AM +0800, pumahsu wrote:
+> Export the Type-C cc orientation so that user space can
+> get this information.
+> 
+> Signed-off-by: pumahsu <pumahsu@google.com>
+> ---
+>  Documentation/ABI/testing/sysfs-class-typec |  7 +++++++
+>  drivers/usb/typec/class.c                   | 11 +++++++++++
+>  2 files changed, 18 insertions(+)
 
-There are no more active users of DEV_PM_QOS_MIN_FREQUENCY and
-DEV_PM_QOS_MAX_FREQUENCY device PM QoS request types, so drop them
-along with the code supporting them.
+Hi,
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/base/power/qos.c |   70 +----------------------------------------------
- include/linux/pm_qos.h   |    8 -----
- 2 files changed, 2 insertions(+), 76 deletions(-)
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-Index: linux-pm/include/linux/pm_qos.h
-===================================================================
---- linux-pm.orig/include/linux/pm_qos.h
-+++ linux-pm/include/linux/pm_qos.h
-@@ -34,8 +34,6 @@ enum pm_qos_flags_status {
- #define PM_QOS_RESUME_LATENCY_NO_CONSTRAINT	PM_QOS_LATENCY_ANY
- #define PM_QOS_RESUME_LATENCY_NO_CONSTRAINT_NS	PM_QOS_LATENCY_ANY_NS
- #define PM_QOS_LATENCY_TOLERANCE_DEFAULT_VALUE	0
--#define PM_QOS_MIN_FREQUENCY_DEFAULT_VALUE	0
--#define PM_QOS_MAX_FREQUENCY_DEFAULT_VALUE	(-1)
- #define PM_QOS_LATENCY_TOLERANCE_NO_CONSTRAINT	(-1)
- 
- #define PM_QOS_FLAG_NO_POWER_OFF	(1 << 0)
-@@ -54,8 +52,6 @@ struct pm_qos_flags_request {
- enum dev_pm_qos_req_type {
- 	DEV_PM_QOS_RESUME_LATENCY = 1,
- 	DEV_PM_QOS_LATENCY_TOLERANCE,
--	DEV_PM_QOS_MIN_FREQUENCY,
--	DEV_PM_QOS_MAX_FREQUENCY,
- 	DEV_PM_QOS_FLAGS,
- };
- 
-@@ -97,14 +93,10 @@ struct pm_qos_flags {
- struct dev_pm_qos {
- 	struct pm_qos_constraints resume_latency;
- 	struct pm_qos_constraints latency_tolerance;
--	struct pm_qos_constraints min_frequency;
--	struct pm_qos_constraints max_frequency;
- 	struct pm_qos_flags flags;
- 	struct dev_pm_qos_request *resume_latency_req;
- 	struct dev_pm_qos_request *latency_tolerance_req;
- 	struct dev_pm_qos_request *flags_req;
--	struct dev_pm_qos_request *min_frequency_req;
--	struct dev_pm_qos_request *max_frequency_req;
- };
- 
- /* Action requested to pm_qos_update_target */
-Index: linux-pm/drivers/base/power/qos.c
-===================================================================
---- linux-pm.orig/drivers/base/power/qos.c
-+++ linux-pm/drivers/base/power/qos.c
-@@ -115,20 +115,10 @@ s32 dev_pm_qos_read_value(struct device
- 
- 	spin_lock_irqsave(&dev->power.lock, flags);
- 
--	switch (type) {
--	case DEV_PM_QOS_RESUME_LATENCY:
-+	if (type == DEV_PM_QOS_RESUME_LATENCY) {
- 		ret = IS_ERR_OR_NULL(qos) ? PM_QOS_RESUME_LATENCY_NO_CONSTRAINT
- 			: pm_qos_read_value(&qos->resume_latency);
--		break;
--	case DEV_PM_QOS_MIN_FREQUENCY:
--		ret = IS_ERR_OR_NULL(qos) ? PM_QOS_MIN_FREQUENCY_DEFAULT_VALUE
--			: pm_qos_read_value(&qos->min_frequency);
--		break;
--	case DEV_PM_QOS_MAX_FREQUENCY:
--		ret = IS_ERR_OR_NULL(qos) ? PM_QOS_MAX_FREQUENCY_DEFAULT_VALUE
--			: pm_qos_read_value(&qos->max_frequency);
--		break;
--	default:
-+	} else {
- 		WARN_ON(1);
- 		ret = 0;
- 	}
-@@ -169,14 +159,6 @@ static int apply_constraint(struct dev_p
- 			req->dev->power.set_latency_tolerance(req->dev, value);
- 		}
- 		break;
--	case DEV_PM_QOS_MIN_FREQUENCY:
--		ret = pm_qos_update_target(&qos->min_frequency,
--					   &req->data.pnode, action, value);
--		break;
--	case DEV_PM_QOS_MAX_FREQUENCY:
--		ret = pm_qos_update_target(&qos->max_frequency,
--					   &req->data.pnode, action, value);
--		break;
- 	case DEV_PM_QOS_FLAGS:
- 		ret = pm_qos_update_flags(&qos->flags, &req->data.flr,
- 					  action, value);
-@@ -227,24 +209,6 @@ static int dev_pm_qos_constraints_alloca
- 	c->no_constraint_value = PM_QOS_LATENCY_TOLERANCE_NO_CONSTRAINT;
- 	c->type = PM_QOS_MIN;
- 
--	c = &qos->min_frequency;
--	plist_head_init(&c->list);
--	c->target_value = PM_QOS_MIN_FREQUENCY_DEFAULT_VALUE;
--	c->default_value = PM_QOS_MIN_FREQUENCY_DEFAULT_VALUE;
--	c->no_constraint_value = PM_QOS_MIN_FREQUENCY_DEFAULT_VALUE;
--	c->type = PM_QOS_MAX;
--	c->notifiers = ++n;
--	BLOCKING_INIT_NOTIFIER_HEAD(n);
--
--	c = &qos->max_frequency;
--	plist_head_init(&c->list);
--	c->target_value = PM_QOS_MAX_FREQUENCY_DEFAULT_VALUE;
--	c->default_value = PM_QOS_MAX_FREQUENCY_DEFAULT_VALUE;
--	c->no_constraint_value = PM_QOS_MAX_FREQUENCY_DEFAULT_VALUE;
--	c->type = PM_QOS_MIN;
--	c->notifiers = ++n;
--	BLOCKING_INIT_NOTIFIER_HEAD(n);
--
- 	INIT_LIST_HEAD(&qos->flags.list);
- 
- 	spin_lock_irq(&dev->power.lock);
-@@ -305,18 +269,6 @@ void dev_pm_qos_constraints_destroy(stru
- 		memset(req, 0, sizeof(*req));
- 	}
- 
--	c = &qos->min_frequency;
--	plist_for_each_entry_safe(req, tmp, &c->list, data.pnode) {
--		apply_constraint(req, PM_QOS_REMOVE_REQ, PM_QOS_MIN_FREQUENCY_DEFAULT_VALUE);
--		memset(req, 0, sizeof(*req));
--	}
--
--	c = &qos->max_frequency;
--	plist_for_each_entry_safe(req, tmp, &c->list, data.pnode) {
--		apply_constraint(req, PM_QOS_REMOVE_REQ, PM_QOS_MAX_FREQUENCY_DEFAULT_VALUE);
--		memset(req, 0, sizeof(*req));
--	}
--
- 	f = &qos->flags;
- 	list_for_each_entry_safe(req, tmp, &f->list, data.flr.node) {
- 		apply_constraint(req, PM_QOS_REMOVE_REQ, PM_QOS_DEFAULT_VALUE);
-@@ -428,8 +380,6 @@ static int __dev_pm_qos_update_request(s
- 	switch(req->type) {
- 	case DEV_PM_QOS_RESUME_LATENCY:
- 	case DEV_PM_QOS_LATENCY_TOLERANCE:
--	case DEV_PM_QOS_MIN_FREQUENCY:
--	case DEV_PM_QOS_MAX_FREQUENCY:
- 		curr_value = req->data.pnode.prio;
- 		break;
- 	case DEV_PM_QOS_FLAGS:
-@@ -557,14 +507,6 @@ int dev_pm_qos_add_notifier(struct devic
- 		ret = blocking_notifier_chain_register(dev->power.qos->resume_latency.notifiers,
- 						       notifier);
- 		break;
--	case DEV_PM_QOS_MIN_FREQUENCY:
--		ret = blocking_notifier_chain_register(dev->power.qos->min_frequency.notifiers,
--						       notifier);
--		break;
--	case DEV_PM_QOS_MAX_FREQUENCY:
--		ret = blocking_notifier_chain_register(dev->power.qos->max_frequency.notifiers,
--						       notifier);
--		break;
- 	default:
- 		WARN_ON(1);
- 		ret = -EINVAL;
-@@ -604,14 +546,6 @@ int dev_pm_qos_remove_notifier(struct de
- 		ret = blocking_notifier_chain_unregister(dev->power.qos->resume_latency.notifiers,
- 							 notifier);
- 		break;
--	case DEV_PM_QOS_MIN_FREQUENCY:
--		ret = blocking_notifier_chain_unregister(dev->power.qos->min_frequency.notifiers,
--							 notifier);
--		break;
--	case DEV_PM_QOS_MAX_FREQUENCY:
--		ret = blocking_notifier_chain_unregister(dev->power.qos->max_frequency.notifiers,
--							 notifier);
--		break;
- 	default:
- 		WARN_ON(1);
- 		ret = -EINVAL;
+You are receiving this message because of the following common error(s)
+as indicated below:
 
+- It looks like you did not use your "real" name for the patch on either
+  the Signed-off-by: line, or the From: line (both of which have to
+  match).  Please read the kernel file, Documentation/SubmittingPatches
+  for how to do this correctly.
 
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
+thanks,
+
+greg k-h's patch email bot
