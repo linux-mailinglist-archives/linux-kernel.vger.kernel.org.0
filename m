@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E205DD9DD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3956FD9DFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437662AbfJPVyE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:54:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43378 "EHLO mail.kernel.org"
+        id S2395211AbfJPVz1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:55:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394931AbfJPVx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:53:57 -0400
+        id S2437801AbfJPVzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:55:24 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 11CF821925;
-        Wed, 16 Oct 2019 21:53:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87DAC21A49;
+        Wed, 16 Oct 2019 21:55:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262837;
-        bh=0pRgjxjxcQutTSf8K2BeQpWt/9VHQ1dqxNGgKWkcSAg=;
+        s=default; t=1571262923;
+        bh=EE8r8kOpU5cZ96Shez9OnNPtZeQUgC5DTwgzYVqlx8Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NSWR96jlQyJm2h6JnIy0YEj0+PuelceXGt5K3Y1YUVwWBfiWpHNL0JcEGIqCVM9RP
-         CNocMGsNBTh8YaUydBNvDB8ANfblYHoWIvQ4SkqtdbFbCBo9oqwt3dB/ExM4AksIjV
-         92S5EnY+lwhkwm3HggTEmBdqtrmfMqLlFM9aJFP4=
+        b=en/BkUV/yw1ox3wElZSZb0x7Fj+P7GfxdnoLdw0x1C0S5KCtI2+6kZv/vP4gGR15E
+         Ddlyc5DFbX013WOY3YuqrE0CkiYVAS7CMjZDr3GbyDUpL2Zt9MlrutTULEBaQWg5QX
+         ur5BU61dr2hR3VaymUZw55phTvc+j8zGVQdUlIos=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Ajay Kaher <akaher@vmware.com>
-Subject: [PATCH 4.4 79/79] xfs: clear sb->s_fs_info on mount failure
-Date:   Wed, 16 Oct 2019 14:50:54 -0700
-Message-Id: <20191016214834.705602853@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Vetter <daniel.vetter@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 83/92] staging: fbtft: Stop using BL_CORE_DRIVER1
+Date:   Wed, 16 Oct 2019 14:50:56 -0700
+Message-Id: <20191016214847.581586403@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214729.758892904@linuxfoundation.org>
-References: <20191016214729.758892904@linuxfoundation.org>
+In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
+References: <20191016214759.600329427@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,78 +46,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dave Chinner <dchinner@redhat.com>
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-commit c9fbd7bbc23dbdd73364be4d045e5d3612cf6e82 upstream.
+[ Upstream commit 9adfe5c89be497bb8761a9f788297c258d535334 ]
 
-We recently had an oops reported on a 4.14 kernel in
-xfs_reclaim_inodes_count() where sb->s_fs_info pointed to garbage
-and so the m_perag_tree lookup walked into lala land.
+Leaking driver internal tracking into the already massively confusing
+backlight power tracking is really confusing.
 
-Essentially, the machine was under memory pressure when the mount
-was being run, xfs_fs_fill_super() failed after allocating the
-xfs_mount and attaching it to sb->s_fs_info. It then cleaned up and
-freed the xfs_mount, but the sb->s_fs_info field still pointed to
-the freed memory. Hence when the superblock shrinker then ran
-it fell off the bad pointer.
+Luckily we have already a drvdata structure, so fixing this is really
+easy.
 
-With the superblock shrinker problem fixed at teh VFS level, this
-stale s_fs_info pointer is still a problem - we use it
-unconditionally in ->put_super when the superblock is being torn
-down, and hence we can still trip over it after a ->fill_super
-call failure. Hence we need to clear s_fs_info if
-xfs-fs_fill_super() fails, and we need to check if it's valid in
-the places it can potentially be dereferenced after a ->fill_super
-failure.
-
-Signed-Off-By: Dave Chinner <dchinner@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Ajay Kaher <akaher@vmware.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/xfs/xfs_super.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/staging/fbtft/fbtft-core.c | 4 ++--
+ drivers/staging/fbtft/fbtft.h      | 1 +
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -1572,6 +1572,7 @@ xfs_fs_fill_super(
-  out_close_devices:
- 	xfs_close_devices(mp);
-  out_free_fsname:
-+	sb->s_fs_info = NULL;
- 	xfs_free_fsname(mp);
- 	kfree(mp);
-  out:
-@@ -1589,6 +1590,10 @@ xfs_fs_put_super(
+diff --git a/drivers/staging/fbtft/fbtft-core.c b/drivers/staging/fbtft/fbtft-core.c
+index 587f68aa466c2..f4682ba44cd74 100644
+--- a/drivers/staging/fbtft/fbtft-core.c
++++ b/drivers/staging/fbtft/fbtft-core.c
+@@ -247,7 +247,7 @@ static int fbtft_request_gpios_dt(struct fbtft_par *par)
+ static int fbtft_backlight_update_status(struct backlight_device *bd)
  {
- 	struct xfs_mount	*mp = XFS_M(sb);
+ 	struct fbtft_par *par = bl_get_data(bd);
+-	bool polarity = !!(bd->props.state & BL_CORE_DRIVER1);
++	bool polarity = par->polarity;
  
-+	/* if ->fill_super failed, we have no mount to tear down */
-+	if (!sb->s_fs_info)
-+		return;
-+
- 	xfs_notice(mp, "Unmounting Filesystem");
- 	xfs_filestream_unmount(mp);
- 	xfs_unmountfs(mp);
-@@ -1598,6 +1603,8 @@ xfs_fs_put_super(
- 	xfs_destroy_percpu_counters(mp);
- 	xfs_destroy_mount_workqueues(mp);
- 	xfs_close_devices(mp);
-+
-+	sb->s_fs_info = NULL;
- 	xfs_free_fsname(mp);
- 	kfree(mp);
- }
-@@ -1617,6 +1624,9 @@ xfs_fs_nr_cached_objects(
- 	struct super_block	*sb,
- 	struct shrink_control	*sc)
- {
-+	/* Paranoia: catch incorrect calls during mount setup or teardown */
-+	if (WARN_ON_ONCE(!sb->s_fs_info))
-+		return 0;
- 	return xfs_reclaim_inodes_count(XFS_M(sb));
- }
+ 	fbtft_par_dbg(DEBUG_BACKLIGHT, par,
+ 		"%s: polarity=%d, power=%d, fb_blank=%d\n",
+@@ -296,7 +296,7 @@ void fbtft_register_backlight(struct fbtft_par *par)
+ 	/* Assume backlight is off, get polarity from current state of pin */
+ 	bl_props.power = FB_BLANK_POWERDOWN;
+ 	if (!gpio_get_value(par->gpio.led[0]))
+-		bl_props.state |= BL_CORE_DRIVER1;
++		par->polarity = true;
  
+ 	bd = backlight_device_register(dev_driver_string(par->info->device),
+ 				par->info->device, par, &fbtft_bl_ops, &bl_props);
+diff --git a/drivers/staging/fbtft/fbtft.h b/drivers/staging/fbtft/fbtft.h
+index 89c4b5b76ce69..0275319906748 100644
+--- a/drivers/staging/fbtft/fbtft.h
++++ b/drivers/staging/fbtft/fbtft.h
+@@ -241,6 +241,7 @@ struct fbtft_par {
+ 	ktime_t update_time;
+ 	bool bgr;
+ 	void *extra;
++	bool polarity;
+ };
+ 
+ #define NUMARGS(...)  (sizeof((int[]){__VA_ARGS__})/sizeof(int))
+-- 
+2.20.1
+
 
 
