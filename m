@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06CBAD9F8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C888D9F3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395323AbfJPVzn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:55:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46510 "EHLO mail.kernel.org"
+        id S2437579AbfJPVxo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:53:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395272AbfJPVzh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:55:37 -0400
+        id S2437534AbfJPVxe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:53:34 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73CEA21D7F;
-        Wed, 16 Oct 2019 21:55:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7797A20872;
+        Wed, 16 Oct 2019 21:53:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262936;
-        bh=p2hpVRbC8Jly2F1s4pNUtyiOKFL/9LU3ijU71COuF3g=;
+        s=default; t=1571262813;
+        bh=pOCrst16gNH88uIbZ4MKF+ZZd8DAYqOcxYzBcFMGtB0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xcZcpMY2N7ZFEBzPv+yvLDa3Qq1dmV15jiiDxj7BE5uE5g9Ifwskn2k0Ix78c9rSz
-         rs46TjFS+UrBw0yKX5VN/AL6KvuGKjS3fbwGQzPlNdj3zcY/kr2kgxXdEB3x7AkiYc
-         Oi/sdB/ofOANaja4sbedOoxOX9YSzD0EpEAG4TYo=
+        b=ydgxTh+ENwvXMdD7TUV885kBDvCzJH4acvl0BB2hL0WviHMnKrsEZPqEYKUJgAQfC
+         3b4wCmBOyhRANbV3AUOMAd4QAECe9VstelheOXULJNnGvVjDQWLNMF6rAC5Vk98fgS
+         5g+9DNgDGobpZtWgt/fVswo9Irw0fw6FN3vG1Rc0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.9 58/92] USB: serial: keyspan: fix NULL-derefs on open() and write()
+        stable@vger.kernel.org, Jacky Cao <Jacky.Cao@sony.com>,
+        Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 4.4 56/79] USB: dummy-hcd: fix power budget for SuperSpeed mode
 Date:   Wed, 16 Oct 2019 14:50:31 -0700
-Message-Id: <20191016214839.504017372@linuxfoundation.org>
+Message-Id: <20191016214819.206934415@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
-References: <20191016214759.600329427@linuxfoundation.org>
+In-Reply-To: <20191016214729.758892904@linuxfoundation.org>
+References: <20191016214729.758892904@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,74 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Jacky.Cao@sony.com <Jacky.Cao@sony.com>
 
-commit 7d7e21fafdbc7fcf0854b877bd0975b487ed2717 upstream.
+commit 2636d49b64671d3d90ecc4daf971b58df3956519 upstream.
 
-Fix NULL-pointer dereferences on open() and write() which can be
-triggered by a malicious USB device.
+The power budget for SuperSpeed mode should be 900 mA
+according to USB specification, so set the power budget
+to 900mA for dummy_start_ss which is only used for
+SuperSpeed mode.
 
-The current URB allocation helper would fail to initialise the newly
-allocated URB if the device has unexpected endpoint descriptors,
-something which could lead NULL-pointer dereferences in a number of
-open() and write() paths when accessing the URB. For example:
+If the max power consumption of SuperSpeed device is
+larger than 500 mA, insufficient available bus power
+error happens in usb_choose_configuration function
+when the device connects to dummy hcd.
 
-	BUG: kernel NULL pointer dereference, address: 0000000000000000
-	...
-	RIP: 0010:usb_clear_halt+0x11/0xc0
-	...
-	Call Trace:
-	 ? tty_port_open+0x4d/0xd0
-	 keyspan_open+0x70/0x160 [keyspan]
-	 serial_port_activate+0x5b/0x80 [usbserial]
-	 tty_port_open+0x7b/0xd0
-	 ? check_tty_count+0x43/0xa0
-	 tty_open+0xf1/0x490
-
-	BUG: kernel NULL pointer dereference, address: 0000000000000000
-	...
-	RIP: 0010:keyspan_write+0x14e/0x1f3 [keyspan]
-	...
-	Call Trace:
-	 serial_write+0x43/0xa0 [usbserial]
-	 n_tty_write+0x1af/0x4f0
-	 ? do_wait_intr_irq+0x80/0x80
-	 ? process_echoes+0x60/0x60
-	 tty_write+0x13f/0x2f0
-
-	BUG: kernel NULL pointer dereference, address: 0000000000000000
-	...
-	RIP: 0010:keyspan_usa26_send_setup+0x298/0x305 [keyspan]
-	...
-	Call Trace:
-	 keyspan_open+0x10f/0x160 [keyspan]
-	 serial_port_activate+0x5b/0x80 [usbserial]
-	 tty_port_open+0x7b/0xd0
-	 ? check_tty_count+0x43/0xa0
-	 tty_open+0xf1/0x490
-
-Fixes: fdcba53e2d58 ("fix for bugzilla #7544 (keyspan USB-to-serial converter)")
-Cc: stable <stable@vger.kernel.org>	# 2.6.21
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Jacky Cao <Jacky.Cao@sony.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/16EA1F625E922C43B00B9D82250220500871CDE5@APYOKXMS108.ap.sony.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/keyspan.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/gadget/udc/dummy_hcd.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/serial/keyspan.c
-+++ b/drivers/usb/serial/keyspan.c
-@@ -1250,8 +1250,8 @@ static struct urb *keyspan_setup_urb(str
+--- a/drivers/usb/gadget/udc/dummy_hcd.c
++++ b/drivers/usb/gadget/udc/dummy_hcd.c
+@@ -50,6 +50,7 @@
+ #define DRIVER_VERSION	"02 May 2005"
  
- 	ep_desc = find_ep(serial, endpoint);
- 	if (!ep_desc) {
--		/* leak the urb, something's wrong and the callers don't care */
--		return urb;
-+		usb_free_urb(urb);
-+		return NULL;
- 	}
- 	if (usb_endpoint_xfer_int(ep_desc)) {
- 		ep_type_name = "INT";
+ #define POWER_BUDGET	500	/* in mA; use 8 for low-power port testing */
++#define POWER_BUDGET_3	900	/* in mA */
+ 
+ static const char	driver_name[] = "dummy_hcd";
+ static const char	driver_desc[] = "USB Host+Gadget Emulator";
+@@ -2435,7 +2436,7 @@ static int dummy_start_ss(struct dummy_h
+ 	dum_hcd->rh_state = DUMMY_RH_RUNNING;
+ 	dum_hcd->stream_en_ep = 0;
+ 	INIT_LIST_HEAD(&dum_hcd->urbp_list);
+-	dummy_hcd_to_hcd(dum_hcd)->power_budget = POWER_BUDGET;
++	dummy_hcd_to_hcd(dum_hcd)->power_budget = POWER_BUDGET_3;
+ 	dummy_hcd_to_hcd(dum_hcd)->state = HC_STATE_RUNNING;
+ 	dummy_hcd_to_hcd(dum_hcd)->uses_new_polling = 1;
+ #ifdef CONFIG_USB_OTG
 
 
