@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAA52DA053
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:25:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AA1DD9F5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407187AbfJPWKT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:10:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49824 "EHLO mail.kernel.org"
+        id S2395085AbfJPVyx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:54:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437980AbfJPV5R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:57:17 -0400
+        id S2395077AbfJPVyt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:54:49 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 582C221928;
-        Wed, 16 Oct 2019 21:57:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C525621925;
+        Wed, 16 Oct 2019 21:54:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263037;
-        bh=ONS2EygcQU152NOuMAZMhNEtFoUo4KLiKujogzhpwkw=;
+        s=default; t=1571262888;
+        bh=P5NtuhAKJT/bg8hSfmlpvsSZBTc9coutHozqB4XXYcY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iykxtzwHiygYs+JhMzGfUGuEdyOrpzkFYx1DvBQwjIieq6DTdybzuqkuHUCdVdrXq
-         RYolmeZrTPUn0iZQyR3a0uUlXK0rqCcCKIO4dLvHtQjU1vMQLsFkzTqDST34+V1bm3
-         1beastq+1l+ue0sal51hrPDZ+Mr1MSvyLBBGY2WQ=
+        b=r3cc0LqbgLurJqsCZMJK54LR+aLnBXE10OhT/cr8V6X7ArLlto+eC5NUIDHdISVbw
+         8EEVDl9L9BvVjruIp2sgyXnfqx1uRnbxpqDSJH4Y2neLEU7FvucxWPjBo45amyHEv+
+         VPWz7TzxQc+mlQ/LXCXswhST90l4u0PF4rI8Uwog=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.19 07/81] USB: usb-skeleton: fix NULL-deref on disconnect
+        stable@vger.kernel.org, Rick Tseng <rtseng@nvidia.com>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: [PATCH 4.9 45/92] usb: xhci: wait for CNR controller not ready bit in xhci resume
 Date:   Wed, 16 Oct 2019 14:50:18 -0700
-Message-Id: <20191016214812.519618795@linuxfoundation.org>
+Message-Id: <20191016214833.875184728@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
-References: <20191016214805.727399379@linuxfoundation.org>
+In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
+References: <20191016214759.600329427@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,70 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Rick Tseng <rtseng@nvidia.com>
 
-commit bed5ef230943863b9abf5eae226a20fad9a8ff71 upstream.
+commit a70bcbc322837eda1ab5994d12db941dc9733a7d upstream.
 
-The driver was using its struct usb_interface pointer as an inverted
-disconnected flag and was setting it to NULL before making sure all
-completion handlers had run. This could lead to NULL-pointer
-dereferences in the dev_err() statements in the completion handlers
-which relies on said pointer.
+NVIDIA 3.1 xHCI card would lose power when moving power state into D3Cold.
+Thus we need to wait for CNR bit to clear in xhci resume, just as in
+xhci init.
 
-Fix this by using a dedicated disconnected flag.
-
-Note that this is also addresses a NULL-pointer dereference at release()
-and a struct usb_interface reference leak introduced by a recent runtime
-PM fix, which depends on and should have been submitted together with
-this patch.
-
-Fixes: 4212cd74ca6f ("USB: usb-skeleton.c: remove err() usage")
-Fixes: 5c290a5e42c3 ("USB: usb-skeleton: fix runtime PM after driver unbind")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191009170944.30057-2-johan@kernel.org
+[Minor changes to comment and commit message -Mathias]
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Rick Tseng <rtseng@nvidia.com>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Link: https://lore.kernel.org/r/1570190373-30684-6-git-send-email-mathias.nyman@linux.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/usb-skeleton.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/usb/host/xhci.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/drivers/usb/usb-skeleton.c
-+++ b/drivers/usb/usb-skeleton.c
-@@ -59,6 +59,7 @@ struct usb_skel {
- 	spinlock_t		err_lock;		/* lock for errors */
- 	struct kref		kref;
- 	struct mutex		io_mutex;		/* synchronize I/O with disconnect */
-+	unsigned long		disconnected:1;
- 	wait_queue_head_t	bulk_in_wait;		/* to wait for an ongoing read */
- };
- #define to_skel_dev(d) container_of(d, struct usb_skel, kref)
-@@ -236,7 +237,7 @@ static ssize_t skel_read(struct file *fi
- 	if (rv < 0)
- 		return rv;
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -1045,6 +1045,18 @@ int xhci_resume(struct xhci_hcd *xhci, b
+ 		hibernated = true;
  
--	if (!dev->interface) {		/* disconnect() was called */
-+	if (dev->disconnected) {		/* disconnect() was called */
- 		rv = -ENODEV;
- 		goto exit;
- 	}
-@@ -418,7 +419,7 @@ static ssize_t skel_write(struct file *f
- 
- 	/* this lock makes sure we don't submit URBs to gone devices */
- 	mutex_lock(&dev->io_mutex);
--	if (!dev->interface) {		/* disconnect() was called */
-+	if (dev->disconnected) {		/* disconnect() was called */
- 		mutex_unlock(&dev->io_mutex);
- 		retval = -ENODEV;
- 		goto error;
-@@ -569,7 +570,7 @@ static void skel_disconnect(struct usb_i
- 
- 	/* prevent more I/O from starting */
- 	mutex_lock(&dev->io_mutex);
--	dev->interface = NULL;
-+	dev->disconnected = 1;
- 	mutex_unlock(&dev->io_mutex);
- 
- 	usb_kill_anchored_urbs(&dev->submitted);
+ 	if (!hibernated) {
++		/*
++		 * Some controllers might lose power during suspend, so wait
++		 * for controller not ready bit to clear, just as in xHC init.
++		 */
++		retval = xhci_handshake(&xhci->op_regs->status,
++					STS_CNR, 0, 10 * 1000 * 1000);
++		if (retval) {
++			xhci_warn(xhci, "Controller not ready at resume %d\n",
++				  retval);
++			spin_unlock_irq(&xhci->lock);
++			return retval;
++		}
+ 		/* step 1: restore register */
+ 		xhci_restore_registers(xhci);
+ 		/* step 2: initialize command ring buffer */
 
 
