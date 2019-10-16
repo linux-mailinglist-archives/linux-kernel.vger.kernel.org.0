@@ -2,54 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C655D9F09
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97379D9E5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:03:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406865AbfJPWEc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:04:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53350 "EHLO mail.kernel.org"
+        id S2438133AbfJPV6T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:58:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438375AbfJPV7E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:59:04 -0400
+        id S1726834AbfJPV5Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:57:24 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45D80222C1;
-        Wed, 16 Oct 2019 21:59:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4BF721928;
+        Wed, 16 Oct 2019 21:57:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263143;
-        bh=K/ms87F2xzjse/R2MJ6RrvqzNR/clpL9pFvRPU5peDg=;
+        s=default; t=1571263044;
+        bh=DunNQsyNa1VNuHxx2OOC8Q0qfEOKg0cfD+bPhM640gk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QAGejVG6ioEaTHMiveJNZcAsC2xw0jz5lCoeXuO0jLjCJlx1c+Rosxr+8UOkJyTea
-         yxxhDeIZ41kH8nCseNIrHjTCQm7b2cTf57zbLRrrh5Cf+0e1K4vBxBsm7PTCg072Ot
-         a3AKeSBFbrDjavQB0+/wnfxsMjCU4RLnpO7GybIE=
+        b=dJe6q+vIebxnHKYjGjQdUaYBcUEa/ZxyG+VewlRbDp35C/Ia5YRaD3PXkSAxzYX82
+         Is0uiFXzFNoTFgkQRIOC+Utko6NCKZVZsXd9I3feeRk1HmlMIGWqg/Jqk6nMSpHt8S
+         wZgH/kSDI2MSL4tGJ6e8VzoroL6dg0cuFGt8bEKk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Steve MacLean <Steve.MacLean@Microsoft.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Brian Robbins <brianrob@microsoft.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Eric Saint-Etienne <eric.saint.etienne@oracle.com>,
-        John Keeping <john@metanate.com>,
-        John Salem <josalem@microsoft.com>,
-        Leo Yan <leo.yan@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Song Liu <songliubraving@fb.com>,
-        Stephane Eranian <eranian@google.com>,
-        Tom McDonald <thomas.mcdonald@microsoft.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 5.3 067/112] perf inject jit: Fix JIT_CODE_MOVE filename
+        stable@vger.kernel.org, David Frey <dpfrey@gmail.com>,
+        Andreas Dannenberg <dannenberg@ti.com>, Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.19 48/81] iio: light: opt3001: fix mutex unlock race
 Date:   Wed, 16 Oct 2019 14:50:59 -0700
-Message-Id: <20191016214902.440901739@linuxfoundation.org>
+Message-Id: <20191016214839.933714089@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
-References: <20191016214844.038848564@linuxfoundation.org>
+In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
+References: <20191016214805.727399379@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -59,73 +44,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steve MacLean <Steve.MacLean@microsoft.com>
+From: David Frey <dpfrey@gmail.com>
 
-commit b59711e9b0d22fd47abfa00602fd8c365cdd3ab7 upstream.
+commit 82f3015635249a8c8c45bac303fd84905066f04f upstream.
 
-During perf inject --jit, JIT_CODE_MOVE records were injecting MMAP records
-with an incorrect filename. Specifically it was missing the ".so" suffix.
+When an end-of-conversion interrupt is received after performing a
+single-shot reading of the light sensor, the driver was waking up the
+result ready queue before checking opt->ok_to_ignore_lock to determine
+if it should unlock the mutex. The problem occurred in the case where
+the other thread woke up and changed the value of opt->ok_to_ignore_lock
+to false prior to the interrupt thread performing its read of the
+variable. In this case, the mutex would be unlocked twice.
 
-Further the JIT_CODE_LOAD record were silently truncating the
-jr->load.code_index field to 32 bits before generating the filename.
-
-Make both records emit the same filename based on the full 64 bit
-code_index field.
-
-Fixes: 9b07e27f88b9 ("perf inject: Add jitdump mmap injection support")
-Cc: stable@vger.kernel.org # v4.6+
-Signed-off-by: Steve MacLean <Steve.MacLean@Microsoft.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Brian Robbins <brianrob@microsoft.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Eric Saint-Etienne <eric.saint.etienne@oracle.com>
-Cc: John Keeping <john@metanate.com>
-Cc: John Salem <josalem@microsoft.com>
-Cc: Leo Yan <leo.yan@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Tom McDonald <thomas.mcdonald@microsoft.com>
-Link: http://lore.kernel.org/lkml/BN8PR21MB1362FF8F127B31DBF4121528F7800@BN8PR21MB1362.namprd21.prod.outlook.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: David Frey <dpfrey@gmail.com>
+Reviewed-by: Andreas Dannenberg <dannenberg@ti.com>
+Fixes: 94a9b7b1809f ("iio: light: add support for TI's opt3001 light sensor")
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/jitdump.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/iio/light/opt3001.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/tools/perf/util/jitdump.c
-+++ b/tools/perf/util/jitdump.c
-@@ -396,7 +396,7 @@ static int jit_repipe_code_load(struct j
- 	size_t size;
- 	u16 idr_size;
- 	const char *sym;
--	uint32_t count;
-+	uint64_t count;
- 	int ret, csize, usize;
- 	pid_t pid, tid;
- 	struct {
-@@ -419,7 +419,7 @@ static int jit_repipe_code_load(struct j
- 		return -1;
+--- a/drivers/iio/light/opt3001.c
++++ b/drivers/iio/light/opt3001.c
+@@ -694,6 +694,7 @@ static irqreturn_t opt3001_irq(int irq,
+ 	struct iio_dev *iio = _iio;
+ 	struct opt3001 *opt = iio_priv(iio);
+ 	int ret;
++	bool wake_result_ready_queue = false;
  
- 	filename = event->mmap2.filename;
--	size = snprintf(filename, PATH_MAX, "%s/jitted-%d-%u.so",
-+	size = snprintf(filename, PATH_MAX, "%s/jitted-%d-%" PRIu64 ".so",
- 			jd->dir,
- 			pid,
- 			count);
-@@ -530,7 +530,7 @@ static int jit_repipe_code_move(struct j
- 		return -1;
+ 	if (!opt->ok_to_ignore_lock)
+ 		mutex_lock(&opt->lock);
+@@ -728,13 +729,16 @@ static irqreturn_t opt3001_irq(int irq,
+ 		}
+ 		opt->result = ret;
+ 		opt->result_ready = true;
+-		wake_up(&opt->result_ready_queue);
++		wake_result_ready_queue = true;
+ 	}
  
- 	filename = event->mmap2.filename;
--	size = snprintf(filename, PATH_MAX, "%s/jitted-%d-%"PRIu64,
-+	size = snprintf(filename, PATH_MAX, "%s/jitted-%d-%" PRIu64 ".so",
- 	         jd->dir,
- 	         pid,
- 		 jr->move.code_index);
+ out:
+ 	if (!opt->ok_to_ignore_lock)
+ 		mutex_unlock(&opt->lock);
+ 
++	if (wake_result_ready_queue)
++		wake_up(&opt->result_ready_queue);
++
+ 	return IRQ_HANDLED;
+ }
+ 
 
 
