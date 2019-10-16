@@ -2,72 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A226D8C35
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 11:09:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A345DD8C1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 11:06:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391893AbfJPJJZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 05:09:25 -0400
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:24354 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388342AbfJPJJZ (ORCPT
+        id S2391815AbfJPJGc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 05:06:32 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:36252 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727399AbfJPJGc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 05:09:25 -0400
-Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
- EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
- 15.0.1156.6; Wed, 16 Oct 2019 02:09:21 -0700
-Received: from akaher-virtual-machine.eng.vmware.com (unknown [10.197.103.239])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 66AE5B2609;
-        Wed, 16 Oct 2019 05:09:23 -0400 (EDT)
-From:   Ajay Kaher <akaher@vmware.com>
-To:     <gregkh@linuxfoundation.org>
-CC:     <davem@davemloft.net>, <kuznet@ms2.inr.ac.ru>, <jmorris@namei.org>,
-        <yoshfuji@linux-ipv6.org>, <kaber@trash.net>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>, <srivatsab@vmware.com>,
-        <srivatsa@csail.mit.edu>, <amakhalov@vmware.com>,
-        <srinidhir@vmware.com>, <bvikas@vmware.com>, <anishs@vmware.com>,
-        <vsirnapalli@vmware.com>, <srostedt@vmware.com>,
-        <akaher@vmware.com>, Mao Wenan <maowenan@huawei.com>
-Subject: [PATCH 4.9.y] Revert "net: sit: fix memory leak in sit_init_net()"
-Date:   Wed, 16 Oct 2019 14:33:54 +0530
-Message-ID: <1571216634-44834-1-git-send-email-akaher@vmware.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 16 Oct 2019 05:06:32 -0400
+Received: by mail-lf1-f67.google.com with SMTP id u16so4224191lfq.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 02:06:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:in-reply-to:references:mime-version
+         :content-transfer-encoding;
+        bh=3rHYjSn/fPz1RWaGjBzSPmxHyXb9HMcMJGjWVoGxGPI=;
+        b=dZcrc7drlitYAWv20+Jq+uoC3xeizi2y47hD+dcBI2t4uPjxpcp2vBpQlHoDF2Mtk0
+         ApHd8bnow5M64tUmafJ4NE16aNjESmPHQ7PRdmzIMK/l3uKLHUsmmCay9YyLMU+8ChGb
+         X/aIMvNuszj82rbR1lnz7ozOPesUo7C2MHpJg045uuFs8SCPlLzfyHoov7Qmu3M2rbNq
+         1/AqGNaDpIx898NzGen4hZhvULlOG+xzHUXPFNMPAqlvcfkrxgm/4mY87Cq105PUINXw
+         JqH0sIBaNqxewfqATCc+7CjF58hfRGq/bsfSrjBGxmOQwmOWZNvgSDIJIqHZfQ6+7Xud
+         kXPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=3rHYjSn/fPz1RWaGjBzSPmxHyXb9HMcMJGjWVoGxGPI=;
+        b=IYdXHn9aq/ImWnYlPnD3ewUo/E84PDgHKpxzlhg9/SE1vKLYvqHzZ+WpXZ3QW+zbfh
+         tFY4zlhrWRuCP6Zm+iWoyOQByJZPcfubDWyWvZziuga6COa4KtCxJRz5mTDHBe0FGRn2
+         sWaU0n4Jf8URJS1MJ8AWhgBXcfU7kRvyv69H3wXdgGM2GKXC08sup1nyMWQSnmB2L8bv
+         LpuYZgeQCMyrzuxpNMJTS7fMz0KVuqZPJMdFnSL6OTF2DpmD1jQHwM9vbCufWU9vfTx+
+         hTYf+tdOPicrSNicWAunbwR8mtOZGt19mRJPA5xbQhp7AeVN0Cm6kWQWI1IHSyameSpO
+         8+Sg==
+X-Gm-Message-State: APjAAAVutr0ZC3lz3toQ5qApQMPRL3Suq2DoE1hBNpJS+kldw/73+ets
+        xvVLyJYJY5KRivcMhAdCMXqFRfCaXEJycQ==
+X-Google-Smtp-Source: APXvYqz3/NNjkhaIQyTJX9b35fU8jvLbes0EA17X2xo/PmZ8MWdseCUjfXMlz7gWyLq9Kpg4hqy9SQ==
+X-Received: by 2002:a19:c518:: with SMTP id w24mr5616642lfe.14.1571216789905;
+        Wed, 16 Oct 2019 02:06:29 -0700 (PDT)
+Received: from localhost ([78.133.233.210])
+        by smtp.gmail.com with ESMTPSA id v203sm215365lfa.25.2019.10.16.02.06.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 16 Oct 2019 02:06:29 -0700 (PDT)
+Date:   Wed, 16 Oct 2019 11:06:12 +0200
+From:   Marek Bykowski <marek.bykowski@gmail.com>
+To:     mark.rutland@arm.com, will.deacon@arm.com, pawel.moll@arm.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 1/2] bus: arm-ccn: Enable stats for CCN-512
+ interconnect
+Message-ID: <20191016110612.17381ad6@gmail.com>
+In-Reply-To: <1570454475-2848-1-git-send-email-marek.bykowski@gmail.com>
+References: <1570454475-2848-1-git-send-email-marek.bykowski@gmail.com>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-001.vmware.com: akaher@vmware.com does not
- designate permitted sender hosts)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 375d6d454a95ebacb9c6eb0b715da05a4458ffef which is
-commit 07f12b26e21ab359261bf75cfcb424fdc7daeb6d upstream.
+Add compatible string for the ARM CCN-502 interconnect
 
-Unnecessarily calling free_netdev() from sit_init_net().
-ipip6_dev_free() of 4.9.y called free_netdev(), so no need
-to call again after ipip6_dev_free().
-
-Cc: Mao Wenan <maowenan@huawei.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Ajay Kaher <akaher@vmware.com>
+Signed-off-by: Marek Bykowski <marek.bykowski@gmail.com>
+Signed-off-by: Boleslaw Malecki <boleslaw.malecki@tieto.com>
 ---
- net/ipv6/sit.c | 1 -
- 1 file changed, 1 deletion(-)
+Changelog v1->v2:
+- Change the subject to reflect where the driver got moved to (drivers/perf) from
+  (drivers/bus).
+- Add credit to my work mate that helped me validate the counts from
+  the interconnect.
+---
+ drivers/perf/arm-ccn.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/ipv6/sit.c b/net/ipv6/sit.c
-index 47ca2a2..16eba7b 100644
---- a/net/ipv6/sit.c
-+++ b/net/ipv6/sit.c
-@@ -1856,7 +1856,6 @@ static int __net_init sit_init_net(struct net *net)
- 
- err_reg_dev:
- 	ipip6_dev_free(sitn->fb_tunnel_dev);
--	free_netdev(sitn->fb_tunnel_dev);
- err_alloc_dev:
- 	return err;
- }
--- 
-2.7.4
-
+diff --git a/drivers/perf/arm-ccn.c b/drivers/perf/arm-ccn.c
+index 7dd850e02f19..b6e00f35a448 100644
+--- a/drivers/perf/arm-ccn.c
++++ b/drivers/perf/arm-ccn.c
+@@ -1545,6 +1545,7 @@ static int arm_ccn_remove(struct platform_device *pdev)
+ static const struct of_device_id arm_ccn_match[] = {
+        { .compatible = "arm,ccn-502", },
+        { .compatible = "arm,ccn-504", },
++       { .compatible = "arm,ccn-512", },
+        {},
+ };
+ MODULE_DEVICE_TABLE(of, arm_ccn_match);
