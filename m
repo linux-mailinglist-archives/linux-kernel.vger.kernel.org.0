@@ -2,80 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB9CCD9283
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 15:32:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1B47D9289
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 15:33:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405380AbfJPNcb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 09:32:31 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:48400 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405363AbfJPNcb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 09:32:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=bI3j/lNqd37v2UjsCOVjDYtbKavFToQzGAe5GTYyiDo=; b=CB6a2dFSBDFrSxogDUqW0XQkV4
-        hHU+dY+NSZ+cmUosWV13i2DVtvZfDilF3/4Uj3BHJxP182Rl6Evg77wG49m1LMzsbNMkQDLdGg8HV
-        vWP9jgzqcESxYmMq3VDDSign3wN24T7rzoGhxSHDLUTJXfkiZO/uNVXpEF4hGcA0FMRo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.92.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1iKjPT-0007bb-8z; Wed, 16 Oct 2019 15:32:15 +0200
-Date:   Wed, 16 Oct 2019 15:32:15 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Chris Snook <chris.snook@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jay Cliburn <jcliburn@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-mips@vger.kernel.org
-Subject: Re: [PATCH v1 1/4] net: ag71xx: port to phylink
-Message-ID: <20191016133215.GA17013@lunn.ch>
-References: <20191014061549.3669-1-o.rempel@pengutronix.de>
- <20191014061549.3669-2-o.rempel@pengutronix.de>
- <20191016121216.GD4780@lunn.ch>
- <20191016122401.jnldnlwruv7h5kgy@pengutronix.de>
+        id S2405400AbfJPNdx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 09:33:53 -0400
+Received: from mail-wm1-f44.google.com ([209.85.128.44]:54520 "EHLO
+        mail-wm1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405388AbfJPNdw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 09:33:52 -0400
+Received: by mail-wm1-f44.google.com with SMTP id p7so2943152wmp.4;
+        Wed, 16 Oct 2019 06:33:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BFXJh5YwdqvqkTvI55Rp72RJZ5nJ2dgoIfxiju6Kc5s=;
+        b=LbcP6M3awlWA/xKI7gZTJ93F41yKo1zgsEX8wdkvb5OapDjr2THcmnkGmwQ5khfy0b
+         m44DA08Ov5qA8YP7ZiTD0f50WTv0CXtHhFXs5uDjNuio5m7NPhVcRwJXZTAznjwHyTcx
+         1T2mKL5Q11EU07B8ciu3B9WFV8cquhx7F6CelJ9hltIHQSp3mZkNz2uMc0j5OUnIfxQo
+         Vy3Hmh/ZyY3Z+SYMe2eV7hoHHIKcbwyBg1jGo+kSLDSH4knMK8vPyXvTeWuE2oi/c8XE
+         emK/3omGGUYa97U9WgfBfEx5HGsYBfi/k/Hf00HG5bUss2yCWmfLbaGsQYOV6+Psjrx+
+         mAkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BFXJh5YwdqvqkTvI55Rp72RJZ5nJ2dgoIfxiju6Kc5s=;
+        b=L7a5kU1bQekN6zvaF2vdqDFxkCgKK9N7/hpfFjjzgX5tFxh7FDKGfQDj6dTtNLtVl9
+         lzPgZjPPic3KMHGRgAms/HH2vN33djkWdxDR/iZ4HN9CLQx+RM9kFEFTUwwniuER6j+M
+         eSJxKRxMgTFt3vEeTdH+8VwxTAIarkyQJs0dB5Pi2z/ggYdGyyqVHxzco4p4iGIjM4wu
+         3McXunDl6M+NYqkd3jNJHh7NvqBqDYY8GNn7yRiwYTlXMknWQnRoQnCVcfA0R2uQzAv6
+         bEoxP1kAsiYdmaiMRdc3IajcX+XvvzSKJFanimKsIQ2faDe7YmTvRzsNcT6w2gLErUUF
+         Q9fw==
+X-Gm-Message-State: APjAAAX/uTE/DopNwM6csZDjCMK3+TTX5KQtrcJUezDtzNGntkT2qJYj
+        aYa6DyumHf5fOdEIzCCq3Ko=
+X-Google-Smtp-Source: APXvYqxSO35Wwnr4fa2v5+O2FpqGRKcz3QzjOWm+Jz0C/0YUoZHznBT0G3al+EcSCbjzWVXvfBo9pw==
+X-Received: by 2002:a7b:cc0c:: with SMTP id f12mr3458368wmh.40.1571232829451;
+        Wed, 16 Oct 2019 06:33:49 -0700 (PDT)
+Received: from Red.localdomain ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id h17sm3139998wme.6.2019.10.16.06.33.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2019 06:33:48 -0700 (PDT)
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     davem@davemloft.net, herbert@gondor.apana.org.au,
+        mark.rutland@arm.com, mripard@kernel.org, robh+dt@kernel.org,
+        wens@csie.org
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com,
+        Corentin Labbe <clabbe.montjoie@gmail.com>
+Subject: [PATCH 0/4] crypto: add sun8i-ss driver for Allwinner Security System
+Date:   Wed, 16 Oct 2019 15:33:41 +0200
+Message-Id: <20191016133345.9076-1-clabbe.montjoie@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191016122401.jnldnlwruv7h5kgy@pengutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 02:24:01PM +0200, Oleksij Rempel wrote:
-> On Wed, Oct 16, 2019 at 02:12:16PM +0200, Andrew Lunn wrote:
-> > On Mon, Oct 14, 2019 at 08:15:46AM +0200, Oleksij Rempel wrote:
-> > > The port to phylink was done as close as possible to initial
-> > > functionality.
-> > > Theoretically this HW can support flow control, practically seems to be not
-> > > enough to just enable it. So, more work should be done.
-> > > 
-> > > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > 
-> > Hi Oleksij
-> > 
-> > Please include Russell King in Cc: in future.
-> 
-> He was included in To:. Do you mean, I need to move him from To to Cc?
+Hello
 
-Ah, sorry. Missed him among all the other To:
+This patch serie adds support for the second version of Allwinner Security System.
+The first generation of the Security System is already handled by the sun4i-ss driver.
+Due to major change, the first driver cannot handle the second one.
+This new Security System is present on A80 and A83T SoCs.
 
-I don't know if there are any strict rules, but i tend to use To: for
-the maintainer you expect to merge the patch, and Cc: for everybody
-else, and the lists.
+For the moment, the driver support only DES3/AES in ECB/CBC mode.
+Patchs for CTR/CTS, RSA and RNGs will came later.
 
-    Andrew
+This serie is tested with CRYPTO_MANAGER_EXTRA_TESTS
+and tested on:
+sun8i-a83t-bananapi-m3
+sun9i-a80-cubieboard4
+
+This serie is based on top of the "crypto: add sun8i-ce driver for
+Allwinner crypto engine" serie.
+
+Regards
+
+Corentin Labbe (4):
+  crypto: Add Allwinner sun8i-ss cryptographic offloader
+  dt-bindings: crypto: Add DT bindings documentation for sun8i-ss
+    Security System
+  ARM: dts: sun8i: a83t: Add Security System node
+  ARM: dts: sun9i: a80: Add Security System node
+
+ .../bindings/crypto/allwinner,sun8i-ss.yaml   |  64 ++
+ arch/arm/boot/dts/sun8i-a83t.dtsi             |  10 +
+ arch/arm/boot/dts/sun9i-a80.dtsi              |  10 +
+ drivers/crypto/allwinner/Kconfig              |  28 +
+ drivers/crypto/allwinner/Makefile             |   1 +
+ drivers/crypto/allwinner/sun8i-ss/Makefile    |   2 +
+ .../allwinner/sun8i-ss/sun8i-ss-cipher.c      | 438 ++++++++++++
+ .../crypto/allwinner/sun8i-ss/sun8i-ss-core.c | 641 ++++++++++++++++++
+ drivers/crypto/allwinner/sun8i-ss/sun8i-ss.h  | 218 ++++++
+ 9 files changed, 1412 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/crypto/allwinner,sun8i-ss.yaml
+ create mode 100644 drivers/crypto/allwinner/sun8i-ss/Makefile
+ create mode 100644 drivers/crypto/allwinner/sun8i-ss/sun8i-ss-cipher.c
+ create mode 100644 drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c
+ create mode 100644 drivers/crypto/allwinner/sun8i-ss/sun8i-ss.h
+
+-- 
+2.21.0
+
