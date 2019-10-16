@@ -2,115 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DFD0D94AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 17:01:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6820BD94A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 17:01:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392064AbfJPPB2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 11:01:28 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36429 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388424AbfJPPB1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 11:01:27 -0400
-Received: by mail-wm1-f68.google.com with SMTP id m18so3150872wmc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 08:01:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:date:from:user-agent:mime-version:to:cc:subject
-         :references:in-reply-to:content-transfer-encoding;
-        bh=gBIzGINd7SQ7oBpqM/NJJHdjeRpwfDkX8l55pEp/DuE=;
-        b=smKnNLAdHYOllIrDVEixkFAORjdfr8hXbLNqEQ4Y86ccXGJ2haZwseq5xHkD53KgX6
-         Z+paZ18i1xxzkCj+/+SuQ3+Jjdbmv9/+mRGYwpHesZlawlcZJqPN9fyireiqrD1gpTIG
-         QswcolaJdFVRJfqKmY7IznmClaEJ3kItGuPWH142RbnLnpI5oRhLmXiQLmU1mr7iWcTn
-         JyYsoeUy+14SuALGRgCiTbh6UE6PYB739bMFf49vjTkIi4H2w8pTT7vv3yi9WJUtLXOd
-         UwlmEo+oRjsr/6Oc6ZW/8+lAEvnVlPOte7ZZMsVHErGzv7ahW68fqIi3yAgy6hX26A1H
-         8jRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:user-agent:mime-version:to
-         :cc:subject:references:in-reply-to:content-transfer-encoding;
-        bh=gBIzGINd7SQ7oBpqM/NJJHdjeRpwfDkX8l55pEp/DuE=;
-        b=ou+yeTyOdnhm7RQH2jpIgtpjuNxthou+6N/9m+oPO4SGWpmFY6fOQjDXzr55prhyDI
-         yaDZ3SFaRg9E3Ryb5zGRBnMspQznFAK47hKGXXl1t7tc3LFwURNZ7Jdf04Rxcs6GK/b+
-         LVJV8BnuVssN5NLkeMeatpxenx6SGc9hXSs+B4/swhXDg1cY5xEvz8VXdN1qj1kNxChC
-         ETSPR2aQJpbOxGXEfvM5vqeZ3kXjk4RQ62v87WAm+50MlKqK0CGqf+nS0bpvqP0L9PUw
-         spmFdZKgcdCOwOKRTkia8Fy98qM9u/3WNVCjg4J9lqjRDGNnOkfPBK7fu6lj2OrlKbX2
-         ZqHg==
-X-Gm-Message-State: APjAAAXQbIOz2CJf12FHrg6bMTm+Ex/caROfW4unyNT6NicKzOgVvcWV
-        KIU4SrFXTG3SWW/B+4BOX5K94hMD
-X-Google-Smtp-Source: APXvYqy5c+iODVvlN/NaNMiUViYa/0uPuY6zL9LTYzJyhEB55wAcb/XR7G5uWTK7JhQ5XCN5gulJWg==
-X-Received: by 2002:a1c:4986:: with SMTP id w128mr3666689wma.69.1571238085613;
-        Wed, 16 Oct 2019 08:01:25 -0700 (PDT)
-Received: from [109.186.90.35] (109-186-90-35.bb.netvision.net.il. [109.186.90.35])
-        by smtp.gmail.com with ESMTPSA id z125sm3358100wme.37.2019.10.16.08.01.23
-        (version=TLS1 cipher=AES128-SHA bits=128/128);
-        Wed, 16 Oct 2019 08:01:24 -0700 (PDT)
-Message-ID: <5DA730B2.2@gmail.com>
-Date:   Wed, 16 Oct 2019 18:01:06 +0300
-From:   Eli Billauer <eli.billauer@gmail.com>
-User-Agent: Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.1.12) Gecko/20100907 Fedora/3.0.7-1.fc12 Thunderbird/3.0.7
+        id S2391666AbfJPPBO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 11:01:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43250 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388424AbfJPPBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 11:01:14 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6E36DB308;
+        Wed, 16 Oct 2019 15:01:12 +0000 (UTC)
+Date:   Wed, 16 Oct 2019 17:01:11 +0200 (CEST)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Steven Rostedt <rostedt@goodmis.org>
+cc:     mingo@redhat.com, jpoimboe@redhat.com, jikos@kernel.org,
+        pmladek@suse.com, joe.lawrence@redhat.com,
+        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
+        shuah@kernel.org, kamalesh@linux.vnet.ibm.com,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] ftrace: Introduce PERMANENT ftrace_ops flag
+In-Reply-To: <20191016105814.2061a106@gandalf.local.home>
+Message-ID: <alpine.LSU.2.21.1910161700450.7750@pobox.suse.cz>
+References: <20191016113316.13415-1-mbenes@suse.cz> <20191016105814.2061a106@gandalf.local.home>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-To:     YueHaibing <yuehaibing@huawei.com>
-CC:     arnd@arndb.de, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] char: xillybus: use devm_platform_ioremap_resource()
- to simplify code
-References: <20191016092546.26332-1-yuehaibing@huawei.com>
-In-Reply-To: <20191016092546.26332-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Wed, 16 Oct 2019, Steven Rostedt wrote:
 
-Thanks for the patch.
+> On Wed, 16 Oct 2019 13:33:12 +0200
+> Miroslav Benes <mbenes@suse.cz> wrote:
+> 
+> > Livepatch uses ftrace for redirection to new patched functions. It means
+> > that if ftrace is disabled, all live patched functions are disabled as
+> > well. Toggling global 'ftrace_enabled' sysctl thus affect it directly.
+> > It is not a problem per se, because only administrator can set sysctl
+> > values, but it still may be surprising.
+> > 
+> > Introduce PERMANENT ftrace_ops flag to amend this. If the
+> > FTRACE_OPS_FL_PERMANENT is set on any ftrace ops, the tracing cannot be
+> > disabled by disabling ftrace_enabled. Equally, a callback with the flag
+> > set cannot be registered if ftrace_enabled is disabled.
+> > 
+> > v2->v3:
+> > - ftrace_enabled explicitly set to true
+> > - selftest from Joe Lawrence (I just split it to two patches)
+> > - typo fix
+> > 
+> > v1->v2:
+> > - different logic, proposed by Joe Lawrence
+> > 
+> > Joe Lawrence (2):
+> >   selftests/livepatch: Make dynamic debug setup and restore generic
+> >   selftests/livepatch: Test interaction with ftrace_enabled
+> > 
+> > Miroslav Benes (1):
+> >   ftrace: Introduce PERMANENT ftrace_ops flag
+> > 
+> 
+> Would you like me to take all three patches through my tree?
 
-I have to admit that this goes slightly against my instinct not to touch 
-code that works. But I'll leave the tradeoff to people who know better 
-than me.
+I think that would be the easiest, yes.
 
-Anyhow, I've verified that it compiles well, and the functional 
-equivalence is quite obvious.
-
-Regards,
-    Eli
-
-Acked-by: Eli Billauer <eli.billauer@gmail.com>
-
-On 16/10/19 12:25, YueHaibing wrote:
-> Use devm_platform_ioremap_resource() to simplify the code a bit.
-> This is detected by coccinelle.
->
-> Signed-off-by: YueHaibing<yuehaibing@huawei.com>
-> ---
->   drivers/char/xillybus/xillybus_of.c | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
->
-> diff --git a/drivers/char/xillybus/xillybus_of.c b/drivers/char/xillybus/xillybus_of.c
-> index bfafd8f..96b6de8 100644
-> --- a/drivers/char/xillybus/xillybus_of.c
-> +++ b/drivers/char/xillybus/xillybus_of.c
-> @@ -116,7 +116,6 @@ static int xilly_drv_probe(struct platform_device *op)
->   	struct xilly_endpoint *endpoint;
->   	int rc;
->   	int irq;
-> -	struct resource *res;
->   	struct xilly_endpoint_hardware *ephw =&of_hw;
->
->   	if (of_property_read_bool(dev->of_node, "dma-coherent"))
-> @@ -129,9 +128,7 @@ static int xilly_drv_probe(struct platform_device *op)
->
->   	dev_set_drvdata(dev, endpoint);
->
-> -	res = platform_get_resource(op, IORESOURCE_MEM, 0);
-> -	endpoint->registers = devm_ioremap_resource(dev, res);
-> -
-> +	endpoint->registers = devm_platform_ioremap_resource(op, 0);
->   	if (IS_ERR(endpoint->registers))
->   		return PTR_ERR(endpoint->registers);
->
->    
-
+Thanks
+Miroslav
