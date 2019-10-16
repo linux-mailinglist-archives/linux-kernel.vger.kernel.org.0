@@ -2,119 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 337E6D8AF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:28:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEA84D8AEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:27:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732431AbfJPI26 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 16 Oct 2019 04:28:58 -0400
-Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:60618 "EHLO
-        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729333AbfJPI25 (ORCPT
+        id S2391669AbfJPI1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 04:27:51 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42868 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729709AbfJPI1u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 04:28:57 -0400
-Received: from mailgate01.nec.co.jp ([114.179.233.122])
-        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x9G8Sewh006533
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 16 Oct 2019 17:28:40 +0900
-Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x9G8Seei024790;
-        Wed, 16 Oct 2019 17:28:40 +0900
-Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
-        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x9G8S49m019488;
-        Wed, 16 Oct 2019 17:28:40 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.149] [10.38.151.149]) by mail01b.kamome.nec.co.jp with ESMTP id BT-MMP-9545169; Wed, 16 Oct 2019 17:27:38 +0900
-Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
- BPXC21GP.gisp.nec.co.jp ([10.38.151.149]) with mapi id 14.03.0439.000; Wed,
- 16 Oct 2019 17:27:37 +0900
-From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To:     David Hildenbrand <david@redhat.com>
-CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] mm, soft-offline: convert parameter to pfn
-Thread-Topic: [PATCH] mm, soft-offline: convert parameter to pfn
-Thread-Index: AQHVg/CjSPbKnBteSU6QJtzEs3jIHKdcT6KAgAAIvQA=
-Date:   Wed, 16 Oct 2019 08:27:36 +0000
-Message-ID: <20191016082735.GB13770@hori.linux.bs1.fc.nec.co.jp>
-References: <20191016070924.GA10178@hori.linux.bs1.fc.nec.co.jp>
- <e931b14b-da27-2720-5344-b5c0b08b38ad@redhat.com>
-In-Reply-To: <e931b14b-da27-2720-5344-b5c0b08b38ad@redhat.com>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.34.125.150]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <D19E38659F43DE43834A1C8A7974B60F@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
+        Wed, 16 Oct 2019 04:27:50 -0400
+Received: by mail-pg1-f193.google.com with SMTP id f14so8727386pgi.9
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 01:27:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ZBU8KtWqaPlvm9aGAuLUyV54XDJ4T42xfnXwt2IbHm8=;
+        b=jaTe+Z9SL0l41r3xbeeskPOYmc7zKJ2qW2CcVNLyMJ+gQLe4dCAo4PkjkWGbaL+c0m
+         i+syX0nJ5qzIDEwxSgnMC4xZ5aGfqFF8XIEn3FFlFy4gbRwv0eFQ+3dSlAIVSMq7G4ZP
+         rYHk54WTHVtVLS1SIdW65A58XjG7vn9VQ9JgP2ot90BjseIpHPsmduKA6Lnt4OLFuq3v
+         TmYp9mUdp8GmOSLbVZ17GsE44I+w8D9qQM0PgsoGOBcNzurEN+0JdUM9fIfOXgRBc1Vi
+         tRQicfje5MGgwtZ9e/Nflt0Bx8rP+pq/KtBkHECpDJEjmrBkGJgNQK8AKrW/jMw8xTa3
+         nrTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZBU8KtWqaPlvm9aGAuLUyV54XDJ4T42xfnXwt2IbHm8=;
+        b=aramuP6+kU0qMjToLy3Xx+XVX+xdJOS951clXWvyQ1NMCjmtbYoMjDYgl/vtPZVSRQ
+         oMvBhLiklNXgmIDY5O7UTrCtijZnqusMJOVIe1E2HIwHGHZD0FJOHs62CXJAx8yDc64B
+         HFxz+ZZWgsWqXP2gqrx+gZ+qh+Zp507y1uJayqTo+x3Y37FypsZTugJQZDebPpTMhasF
+         YYaojxlKWVczLhxJg2zWkQ6e2V1HnJ7pulLL9eTPsgJUwEtSV1gGKkdjrI5hzxGtWggA
+         230+VtPKGpXjWrx8JQ3ps9GuKS/X7LXVNSZqFkk1zIHTqX49fXODmebl9BBRImgSkc4X
+         c+XA==
+X-Gm-Message-State: APjAAAV0viMlAJjwyPQUev86ntg2b68ZptHApxv8TNK3vlJ3UyVXpfyX
+        AAfHloPT2cGSF6gPS9zEdrUl5g==
+X-Google-Smtp-Source: APXvYqw2HuEJr6hFR0qslv2UzEWwBhoszStKl4ceu9NlZWQejXp2FiWt/eWTKHoyvc3xDCv3gvPwKA==
+X-Received: by 2002:a17:90a:2425:: with SMTP id h34mr3519628pje.113.1571214469897;
+        Wed, 16 Oct 2019 01:27:49 -0700 (PDT)
+Received: from localhost ([122.172.151.112])
+        by smtp.gmail.com with ESMTPSA id x11sm9580112pja.3.2019.10.16.01.27.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 16 Oct 2019 01:27:49 -0700 (PDT)
+Date:   Wed, 16 Oct 2019 13:57:42 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Pavel Machek <pavel@ucw.cz>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH V7 5/7] cpufreq: Register notifiers with the PM QoS
+ framework
+Message-ID: <20191016082742.nttzuofes6uds4pu@vireshk-i7>
+References: <5ad2624194baa2f53acc1f1e627eb7684c577a19.1562210705.git.viresh.kumar@linaro.org>
+ <2c7a751a58adb4ce6f345dab9714b924504009b6.1562583394.git.viresh.kumar@linaro.org>
+ <a1c503a7-6136-a405-369c-596a680183f2@gmail.com>
+ <20191015114637.pcdbs2ctxl4xoxdo@vireshk-i7>
+ <CAJZ5v0g3kRfa2WXy=xz3Mj15Pwb5tm1xg=uPODoifnv70O1ORA@mail.gmail.com>
+ <CAJZ5v0hxsy3ZKFvtWULHAVog4=3rYQfd3-61A9dNaKeUbiDtrg@mail.gmail.com>
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0hxsy3ZKFvtWULHAVog4=3rYQfd3-61A9dNaKeUbiDtrg@mail.gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 09:56:19AM +0200, David Hildenbrand wrote:
-> On 16.10.19 09:09, Naoya Horiguchi wrote:
-> > Hi,
-> > 
-> > I wrote a simple cleanup for parameter of soft_offline_page(),
-> > based on thread https://lkml.org/lkml/2019/10/11/57.
-> > 
-> > I know that we need more cleanup on hwpoison-inject, but I think
-> > that will be mentioned in re-write patchset Oscar is preparing now.
-> > So let me shared only this part as a separate one now.
-...
+On 15-10-19, 23:50, Rafael J. Wysocki wrote:
+> On Tue, Oct 15, 2019 at 5:53 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+
+> > > - Update QoS framework with the knowledge of related CPUs, this has been pending
+> > >   until now from my side. And this is the thing we really need to do. Eventually
+> > >   we shall have only a single notifier list for all CPUs of a policy, at least
+> > >   for MIN/MAX frequencies.
+> >
+> > - Move the PM QoS requests and notifiers to the new policy CPU on all
+> > changes of that.  That is, when cpufreq_offline() nominates the new
+> > "leader", all of the QoS stuff for the policy needs to go to this one.
 > 
-> I think you should rebase that patch on linux-next (where the
-> pfn_to_online_page() check is in place). I assume you'll want to move the
-> pfn_to_online_page() check into soft_offline_page() then as well?
+> Alas, that still will not work, because things like
+> acpi_processor_ppc_init() only work accidentally for one-CPU policies.
 
-I rebased to next-20191016. And yes, we will move pfn_to_online_page()
-into soft offline code.  It seems that we can also move pfn_valid(),
-but is simply moving like below good enough for you?
+I am not sure what problem you see here ? Can you please explain a bit more.
 
-  @@ -1877,11 +1877,17 @@ static int soft_offline_free_page(struct page *page)
-    * This is not a 100% solution for all memory, but tries to be
-    * ``good enough'' for the majority of memory.
-    */
-  -int soft_offline_page(struct page *page, int flags)
-  +int soft_offline_page(unsigned long pfn, int flags)
-   {
-   	int ret;
-  -	unsigned long pfn = page_to_pfn(page);
-  +	struct page *page;
-   
-  +	if (!pfn_valid(pfn))
-  +		return -ENXIO;
-  +	/* Only online pages can be soft-offlined (esp., not ZONE_DEVICE). */
-  +	if (!pfn_to_online_page(pfn))
-  +		return -EIO;
-  +	page = pfn_to_page(pfn);
-   	if (is_zone_device_page(page)) {
-   		pr_debug_ratelimited("soft_offline: %#lx page is device page\n",
-   				pfn);
-  -- 
+> Generally, adding such a PM QoS request to a non-policy CPU simply has
+> no effect until it becomes a policy CPU which may be never.
 
-Or we might have an option to do as memory_failure() does like below:
+I was thinking maybe we can read the constraints for all CPUs in the
+policy->cpus mask in cpufreq_set_policy() and so this part of the problem will
+just go away. The only part that would be left is to remove the QoS constraints
+properly.
 
-  int memory_failure(unsigned long pfn, int flags)
-  {
-          ....
-          p = pfn_to_online_page(pfn);
-          if (!p) {
-                  if (pfn_valid(pfn)) {
-                          pgmap = get_dev_pagemap(pfn, NULL);
-                          if (pgmap)
-                                  return memory_failure_dev_pagemap(pfn, flags,
-                                                                    pgmap);
-                  }
-                  pr_err("Memory failure: %#lx: memory outside kernel control\n",
-                          pfn);
-                  return -ENXIO;
-          }
+> It looks like using device PM QoS for cpufreq is a mistake in general
+> and what is needed is a struct pm_qos_constraints member in struct
+> cpufreq_policy and something like
+> 
+> struct freq_pm_qos_request {
+>         enum freq_pm_qos_req_type type; /* min or max */
+>         struct plist_node pnode;
+>         struct cpufreq_policy *policy;
+> };
+> 
+> Then, pm_qos_update_target() can be used for adding, updating and
+> removing requests.
 
-Thanks,
-Naoya Horiguchi
+-- 
+viresh
