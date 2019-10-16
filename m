@@ -2,124 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B76CD8C69
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 11:21:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C25BD8C7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 11:24:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391926AbfJPJV2 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 16 Oct 2019 05:21:28 -0400
-Received: from mail.savoirfairelinux.com ([208.88.110.44]:55206 "EHLO
-        mail.savoirfairelinux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726480AbfJPJV2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 05:21:28 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.savoirfairelinux.com (Postfix) with ESMTP id 7DD609C02F3;
-        Wed, 16 Oct 2019 05:21:26 -0400 (EDT)
-Received: from mail.savoirfairelinux.com ([127.0.0.1])
-        by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id HYlKbr2B05BK; Wed, 16 Oct 2019 05:21:25 -0400 (EDT)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.savoirfairelinux.com (Postfix) with ESMTP id CCB989C03A3;
-        Wed, 16 Oct 2019 05:21:25 -0400 (EDT)
-X-Virus-Scanned: amavisd-new at mail.savoirfairelinux.com
-Received: from mail.savoirfairelinux.com ([127.0.0.1])
-        by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id DtRpUWLBM3Fo; Wed, 16 Oct 2019 05:21:25 -0400 (EDT)
-Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [192.168.48.237])
-        by mail.savoirfairelinux.com (Postfix) with ESMTP id 900CB9C02F3;
-        Wed, 16 Oct 2019 05:21:25 -0400 (EDT)
-Date:   Wed, 16 Oct 2019 05:21:25 -0400 (EDT)
-From:   Gilles Doffe <gilles.doffe@savoirfairelinux.com>
-To:     shawnguo <shawnguo@kernel.org>
-Cc:     devicetree <devicetree@vger.kernel.org>,
-        rennes <rennes@savoirfairelinux.com>,
-        =?utf-8?Q?J=C3=A9rome?= Oufella 
-        <jerome.oufella@savoirfairelinux.com>,
-        robh+dt <robh+dt@kernel.org>,
-        mark rutland <mark.rutland@arm.com>,
-        s hauer <s.hauer@pengutronix.de>,
-        kernel <kernel@pengutronix.de>, festevam <festevam@gmail.com>,
-        linux-imx <linux-imx@nxp.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <1837032218.9373931.1571217685548.JavaMail.zimbra@savoirfairelinux.com>
-In-Reply-To: <20191007112430.GD7150@dragon>
-References: <20190916104353.7278-1-gilles.doffe@savoirfairelinux.com> <20191007112430.GD7150@dragon>
-Subject: Re: [PATCH v3] ARM: dts: imx6qdl-rex: add gpio expander pca9535
+        id S2391961AbfJPJYr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 05:24:47 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:47512 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726480AbfJPJYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 05:24:47 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 58B5D5162D73CB561496;
+        Wed, 16 Oct 2019 17:24:45 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Wed, 16 Oct 2019
+ 17:24:36 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <minyard@acm.org>, <arnd@arndb.de>, <gregkh@linuxfoundation.org>
+CC:     <openipmi-developer@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] ipmi: bt-bmc: use devm_platform_ioremap_resource() to simplify code
+Date:   Wed, 16 Oct 2019 17:21:31 +0800
+Message-ID: <20191016092131.23096-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Zimbra 8.8.11_GA_3737 (ZimbraWebClient - GC76 (Linux)/8.8.11_GA_3737)
-Thread-Topic: imx6qdl-rex: add gpio expander pca9535
-Thread-Index: 0SgUHsAJvXpg4HUlY55gc/ziL2JF9g==
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ Le 7 Oct 19, à 13:24, shawnguo shawnguo@kernel.org a écrit :
+Use devm_platform_ioremap_resource() to simplify the code a bit.
+This is detected by coccinelle.
 
-> On Mon, Sep 16, 2019 at 12:43:53PM +0200, Gilles DOFFE wrote:
->> The pca9535 gpio expander is present on the Rex baseboard, but missing
->> from the dtsi.
->> The pca9535 is on i2c2 bus which is common to the three SOM
->> variants (Basic/Pro/Ultra), thus it is activated by default.
->> 
->> Add also the new gpio controller and the associated interrupt line
->> MX6QDL_PAD_NANDF_CS3__GPIO6_IO16.
->> 
->> Signed-off-by: Gilles DOFFE <gilles.doffe@savoirfairelinux.com>
->> ---
->>  arch/arm/boot/dts/imx6qdl-rex.dtsi | 19 +++++++++++++++++++
->>  1 file changed, 19 insertions(+)
->> 
->> diff --git a/arch/arm/boot/dts/imx6qdl-rex.dtsi
->> b/arch/arm/boot/dts/imx6qdl-rex.dtsi
->> index 97f1659144ea..8a748ca1b108 100644
->> --- a/arch/arm/boot/dts/imx6qdl-rex.dtsi
->> +++ b/arch/arm/boot/dts/imx6qdl-rex.dtsi
->> @@ -132,6 +132,19 @@
->>  	pinctrl-0 = <&pinctrl_i2c2>;
->>  	status = "okay";
->>  
->> +	pca9535: gpio8@27 {
-> 
-> gpio-expander might be a better node name?
-> 
-> Shawn
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/char/ipmi/bt-bmc.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Indeed, v4 incoming. ;)
+diff --git a/drivers/char/ipmi/bt-bmc.c b/drivers/char/ipmi/bt-bmc.c
+index 40b9927..d36aeac 100644
+--- a/drivers/char/ipmi/bt-bmc.c
++++ b/drivers/char/ipmi/bt-bmc.c
+@@ -444,15 +444,13 @@ static int bt_bmc_probe(struct platform_device *pdev)
+ 
+ 	bt_bmc->map = syscon_node_to_regmap(pdev->dev.parent->of_node);
+ 	if (IS_ERR(bt_bmc->map)) {
+-		struct resource *res;
+ 		void __iomem *base;
+ 
+ 		/*
+ 		 * Assume it's not the MFD-based devicetree description, in
+ 		 * which case generate a regmap ourselves
+ 		 */
+-		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-		base = devm_ioremap_resource(&pdev->dev, res);
++		base = devm_platform_ioremap_resource(pdev, 0);
+ 		if (IS_ERR(base))
+ 			return PTR_ERR(base);
+ 
+-- 
+2.7.4
 
-Thank you Shawn.
 
-> 
->> +		compatible = "nxp,pca9535";
->> +		reg = <0x27>;
->> +		gpio-controller;
->> +		#gpio-cells = <2>;
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&pinctrl_pca9535>;
->> +		interrupt-parent = <&gpio6>;
->> +		interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
->> +		interrupt-controller;
->> +		#interrupt-cells = <2>;
->> +	};
->> +
->>  	eeprom@57 {
->>  		compatible = "atmel,24c02";
->>  		reg = <0x57>;
->> @@ -237,6 +250,12 @@
->>  			>;
->>  		};
->>  
->> +		pinctrl_pca9535: pca9535 {
->> +			fsl,pins = <
->> +				MX6QDL_PAD_NANDF_CS3__GPIO6_IO16	0x17059
->> +		   >;
->> +		};
->> +
->>  		pinctrl_uart1: uart1grp {
->>  			fsl,pins = <
->>  				MX6QDL_PAD_CSI0_DAT10__UART1_TX_DATA	0x1b0b1
->> --
->> 2.20.1
