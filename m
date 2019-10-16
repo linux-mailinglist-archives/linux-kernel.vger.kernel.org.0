@@ -2,83 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0E87D8DCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 12:23:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52327D8DDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 12:25:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392381AbfJPKXm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 06:23:42 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:35599 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388923AbfJPKXm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 06:23:42 -0400
-Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id CAB1124000F;
-        Wed, 16 Oct 2019 10:23:39 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     geert+renesas@glider.be
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: adc: max9611: Defer probe on POR read
-Date:   Wed, 16 Oct 2019 12:25:20 +0200
-Message-Id: <20191016102520.124370-1-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.23.0
+        id S2392407AbfJPKZx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 06:25:53 -0400
+Received: from foss.arm.com ([217.140.110.172]:35270 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730972AbfJPKZx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 06:25:53 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA6CB28;
+        Wed, 16 Oct 2019 03:25:52 -0700 (PDT)
+Received: from bogus (unknown [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D936C3F6C4;
+        Wed, 16 Oct 2019 03:25:50 -0700 (PDT)
+Date:   Wed, 16 Oct 2019 11:25:45 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Yunfeng Ye <yeyunfeng@huawei.com>
+Cc:     Will Deacon <will@kernel.org>,
+        David Laight <David.Laight@ACULAB.COM>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "wuyun.wu@huawei.com" <wuyun.wu@huawei.com>, hushiyuan@huawei.com,
+        linfeilong@huawei.com
+Subject: Re: [PATCH V2] arm64: psci: Reduce waiting time of
+ cpu_psci_cpu_kill()
+Message-ID: <20191016102545.GA11386@bogus>
+References: <18068756-0f39-6388-3290-cf03746e767d@huawei.com>
+ <20191015162358.bt5rffidkv2j4xqb@willie-the-truck>
+ <ab42357e-f4f9-9019-e8d9-7e9bfe106e9e@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ab42357e-f4f9-9019-e8d9-7e9bfe106e9e@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The max9611 driver tests communications with the chip by reading the die
-temperature during the probe function. If the temperature register
-POR (power-on reset) value is returned from the test read, defer probe to
-give the chip a bit more time to properly exit from reset.
+On Wed, Oct 16, 2019 at 11:22:23AM +0800, Yunfeng Ye wrote:
+>
+>
+> On 2019/10/16 0:23, Will Deacon wrote:
+> > Hi,
+> >
+> > On Sat, Sep 21, 2019 at 07:21:17PM +0800, Yunfeng Ye wrote:
+> >> If psci_ops.affinity_info() fails, it will sleep 10ms, which will not
+> >> take so long in the right case. Use usleep_range() instead of msleep(),
+> >> reduce the waiting time, and give a chance to busy wait before sleep.
+> >
+> > Can you elaborate on "the right case" please? It's not clear to me
+> > exactly what problem you're solving here.
+> >
+> The situation is that when the power is off, we have a battery to save some
+> information, but the battery power is limited, so we reduce the power consumption
+> by turning off the cores, and need fastly to complete the core shutdown. However, the
+> time of cpu_psci_cpu_kill() will take 10ms. We have tested the time that it does not
+> need 10ms, and most case is about 50us-500us. if we reduce the time of cpu_psci_cpu_kill(),
+> we can reduce 10% - 30% of the total time.
+>
 
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Have you checked why PSCI AFFINITY_INFO not returning LEVEL_OFF quickly
+then ? We wait for upto 5s in cpu_wait_death(worst case) before cpu_kill
+is called from __cpu_die.
 
----
-Geert,
-  I've not been able to reproduce the issue on my boards (M3-N
-Salvator-XS and M3-W Salvator-X). As you reported the issue you might be
-able to reproduce it, could you please test this?
+Moreover I don't understand the argument here. The cpu being killed
+will be OFF, as soon as it can and firmware controls that and this
+change is not related to CPU_OFF. And this CPU calling cpu_kill can
+sleep and 10ms is good to enter idle states if it's idle saving power,
+so I fail to map the power saving you mention above.
 
-Also, I opted for deferring probe instead of arbitrary repeat the
-temperature read. What's your opinion?
+> So change msleep (10) to usleep_range() to reduce the waiting time. In addition,
+> we don't want to be scheduled during the sleeping time, some threads may take a
+> long time and don't give up the CPU, which affects the time of core shutdown,
+> Therefore, we add a chance to busy-wait max 1ms.
+>
 
-Thanks
-   j
----
- drivers/iio/adc/max9611.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+On the other hand, usleep_range reduces the timer interval and hence
+increases the chance of the callee CPU not to enter deeper idle states.
 
-diff --git a/drivers/iio/adc/max9611.c b/drivers/iio/adc/max9611.c
-index da073d72f649..30ae5879252c 100644
---- a/drivers/iio/adc/max9611.c
-+++ b/drivers/iio/adc/max9611.c
-@@ -80,6 +80,7 @@
-  * The complete formula to calculate temperature is:
-  *     ((adc_read >> 7) * 1000) / (1 / 480 * 1000)
-  */
-+#define MAX9611_TEMP_POR		0x8000
- #define MAX9611_TEMP_MAX_POS		0x7f80
- #define MAX9611_TEMP_MAX_NEG		0xff80
- #define MAX9611_TEMP_MIN_NEG		0xd980
-@@ -480,8 +481,10 @@ static int max9611_init(struct max9611_dev *max9611)
- 	if (ret)
- 		return ret;
+What am I missing here ? What's the use case or power off situation
+you are talking about above ?
 
--	regval &= MAX9611_TEMP_MASK;
-+	if (regval == MAX9611_TEMP_POR)
-+		return -EPROBE_DEFER;
+>
+> > I've also added Sudeep to the thread, since I'd like his ack on the change.
+> >
 
-+	regval &= MAX9611_TEMP_MASK;
- 	if ((regval > MAX9611_TEMP_MAX_POS &&
- 	     regval < MAX9611_TEMP_MIN_NEG) ||
- 	     regval > MAX9611_TEMP_MAX_NEG) {
+Thanks Will.
+
 --
-2.23.0
-
+Regards,
+Sudeep
