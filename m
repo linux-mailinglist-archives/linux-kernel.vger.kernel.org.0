@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B545D8DFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 12:34:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5720D8E01
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 12:34:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392460AbfJPKeo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 06:34:44 -0400
-Received: from mail-eopbgr30043.outbound.protection.outlook.com ([40.107.3.43]:35415
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        id S2404659AbfJPKex (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 06:34:53 -0400
+Received: from mail-eopbgr150055.outbound.protection.outlook.com ([40.107.15.55]:63106
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726645AbfJPKen (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 06:34:43 -0400
+        id S2392462AbfJPKew (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 06:34:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
  s=selector2-armh-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UvaLJ9iCW/GukE6Q6/g2aWg+NqCkBH1FlUg88c+A1ko=;
- b=ji/J+1Zp78yAUtVtVhe1tn+kYdlPjci8ONd4VJjxkgMZixi6jJgroFmYElEGM3qFBVuHDJV3MPQJo57TwFGF/O3jXN3ZKH1CvrQQGI9e0a0a7uzGfd5jZ404Tydjl2q2EpZim3AB/xX1GvZeJXEvOU/rEq0hY2cIEQvrtE5UsU4=
-Received: from VI1PR0802CA0038.eurprd08.prod.outlook.com
- (2603:10a6:800:a9::24) by DBBPR08MB4712.eurprd08.prod.outlook.com
- (2603:10a6:10:f4::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2347.18; Wed, 16 Oct
- 2019 10:34:37 +0000
-Received: from DB5EUR03FT050.eop-EUR03.prod.protection.outlook.com
- (2a01:111:f400:7e0a::205) by VI1PR0802CA0038.outlook.office365.com
- (2603:10a6:800:a9::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2347.18 via Frontend
- Transport; Wed, 16 Oct 2019 10:34:37 +0000
+ bh=aTLIBaRIXBywulqqapRfWZZE7ga1kAVvsh5MVHvOcGM=;
+ b=v6LlkbKrB0oh022g70bFJsEIE2XHwbYRLPWUSHmTECKpbdGwFv28zaSIxIXh8C5YccpuypsBQhJiHXCEDBeywE3PAqflPkktKsHM5fqL1LTX5I7C90PZi0ukCpkfR8yHL6Vc/ggnrOJYxaZ9tHHh/g1/BFSzXybo+lXA8zDZ6S4=
+Received: from HE1PR08CA0044.eurprd08.prod.outlook.com (2603:10a6:7:2a::15) by
+ VI1PR0801MB1743.eurprd08.prod.outlook.com (2603:10a6:800:55::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2347.16; Wed, 16 Oct
+ 2019 10:34:47 +0000
+Received: from DB5EUR03FT058.eop-EUR03.prod.protection.outlook.com
+ (2a01:111:f400:7e0a::205) by HE1PR08CA0044.outlook.office365.com
+ (2603:10a6:7:2a::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2347.16 via Frontend
+ Transport; Wed, 16 Oct 2019 10:34:46 +0000
 Authentication-Results: spf=temperror (sender IP is 63.35.35.123)
  smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
  header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=none action=none
@@ -34,43 +34,43 @@ Authentication-Results: spf=temperror (sender IP is 63.35.35.123)
 Received-SPF: TempError (protection.outlook.com: error in processing during
  lookup of arm.com: DNS Timeout)
 Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- DB5EUR03FT050.mail.protection.outlook.com (10.152.21.128) with Microsoft SMTP
+ DB5EUR03FT058.mail.protection.outlook.com (10.152.20.255) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.2305.15 via Frontend Transport; Wed, 16 Oct 2019 10:34:36 +0000
-Received: ("Tessian outbound 851a1162fca7:v33"); Wed, 16 Oct 2019 10:34:31 +0000
+ 15.20.2305.15 via Frontend Transport; Wed, 16 Oct 2019 10:34:45 +0000
+Received: ("Tessian outbound 081de437afc7:v33"); Wed, 16 Oct 2019 10:34:41 +0000
 X-CheckRecipientChecked: true
-X-CR-MTA-CID: 7b89b7875e6a661f
+X-CR-MTA-CID: ed6632e7ef1f2c9e
 X-CR-MTA-TID: 64aa7808
-Received: from 552a0589a21a.2 (ip-172-16-0-2.eu-west-1.compute.internal [104.47.13.59])
-        by 64aa7808-outbound-1.mta.getcheckrecipient.com id F6CEAD20-7757-4509-8BF8-6E164F6873B2.1;
-        Wed, 16 Oct 2019 10:34:26 +0000
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04lp2059.outbound.protection.outlook.com [104.47.13.59])
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id 552a0589a21a.2
+Received: from cc6315660be6.2 (ip-172-16-0-2.eu-west-1.compute.internal [104.47.5.51])
+        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 647D6AB5-3CFD-4314-A2A5-1A5B8AF87251.1;
+        Wed, 16 Oct 2019 10:34:35 +0000
+Received: from EUR02-HE1-obe.outbound.protection.outlook.com (mail-he1eur02lp2051.outbound.protection.outlook.com [104.47.5.51])
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id cc6315660be6.2
     (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
-    Wed, 16 Oct 2019 10:34:26 +0000
+    Wed, 16 Oct 2019 10:34:35 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jb5mFZlLHB1EusT3qSYG+NQyRb7kV6x5kC+ucLmy8+sY+qO7oB1kB0yxZicZAc4lmE0xQdaTX/Lz1i/9ydCAhUV3RIZF2aqpObnn8NzdWokjJx2cyHW7h7ivxTHTkXXeWtCos0QuE7XOIIM+0UFa6DtF0F3NZJNK9hS4y4UZI8bITEexTkDjsHGKFqv4it2FbvPJ97BzPv1bCLxmXNzUBy0ZiOx0G6xTnxN4QmyHZuH2GClBwjAB0E92Vx804vNwM0RU4NRq/ukPm3kuQ2orSzGdoTpeb8R8G6wDguMdhOusgVwud3yhGOb5DK/Fv4ig48FzH0/0H1MymAAWdJN2nw==
+ b=VwUverQXsU/W89UymcmONmasOsobpum6QDoN7kgFJvnXYvFG21DMQhFzFGEOPOzIy8ym7MTZZgRTAk3Dp6v/SRO1P4lIDdeZLrO4RIDC9DJjke8Vo0/VtPIUwJWozU9i0D/lEu1Sa8qyrdB161Y5z+7lxPPAKWQTPax8tySwcAUFbB2VoD3ifJlB2m6KfKCxdlh4rxOcO7UU6TJvaRaw52oczyCDGVaj58t6i80DPz80vz/5v8lqO4bEt19VpMJO5CR3jnX3HOY2r3gzNoXQP0HBdhHKT9ukCLQ1HGxSVqtk+85jdRNMv6ojnEPTn7Icjpp0SZhmFEKD4tEVAL+uMw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UvaLJ9iCW/GukE6Q6/g2aWg+NqCkBH1FlUg88c+A1ko=;
- b=ZKgSHOZhRJ7Suvge3ewzIiutWAhN2qliZYJev5ZgnNUiNbo8FLQNkWEYXjcRfcVS8bKutxi82xCN07hLldYmkalrc5kp+PFeHql0k6jVUfIaJ3DJJugM7EydMyjoyglDThX8BdVGS8uRrHAxeBriNU3AL5iBi8F6d3xsNbmweqdEfQQuQJFFsVmEFxp2mUkgJn4jc8dUWgZc7qmgA6zGwXBbeDqkSBV7NKQqrioinvOfTnLa6eDjAQ5MdgjdekfD7uARZMWmLtgkkc7MSrD9ZxRk+FH1ez7G5FU7fwYuftnNkIrAjrX7Zs6mj+M3HyGB6ky47k+/c36YU6Nr8fcPww==
+ bh=aTLIBaRIXBywulqqapRfWZZE7ga1kAVvsh5MVHvOcGM=;
+ b=YyicKbbcNMX1Gk29GMsgNBK+baTKuBo6HFM4BMZKHmv1PJNa0CERXkVmbDliMMKHtYnzNEQsueF0gEgIZXMr/6YX/1LhhtyXAJIxlBuQ2sRtKeXQScBuAbANGhXKtlHpAys1J5V9rmC3tS3ThRnxuJ0qykoSRjShM6Y7xe4HhHTs1+5xaYsBrvX9+QfzE5eS8L5YIslkJWBs1dzYmQ/oLDnP6Gq74pMDxQQWzf5zo8sGWpdmtKmM7PLSKseK84xJF7C56tqXhkuMbD7jzMrT4PWDLkHIssW5md5tQrmJnJZ1BB4CteSUrD7S9f6Ru0ubfV+gXkrG4YTQJYKGlBA3MQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
  header.d=arm.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
  s=selector2-armh-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UvaLJ9iCW/GukE6Q6/g2aWg+NqCkBH1FlUg88c+A1ko=;
- b=ji/J+1Zp78yAUtVtVhe1tn+kYdlPjci8ONd4VJjxkgMZixi6jJgroFmYElEGM3qFBVuHDJV3MPQJo57TwFGF/O3jXN3ZKH1CvrQQGI9e0a0a7uzGfd5jZ404Tydjl2q2EpZim3AB/xX1GvZeJXEvOU/rEq0hY2cIEQvrtE5UsU4=
+ bh=aTLIBaRIXBywulqqapRfWZZE7ga1kAVvsh5MVHvOcGM=;
+ b=v6LlkbKrB0oh022g70bFJsEIE2XHwbYRLPWUSHmTECKpbdGwFv28zaSIxIXh8C5YccpuypsBQhJiHXCEDBeywE3PAqflPkktKsHM5fqL1LTX5I7C90PZi0ukCpkfR8yHL6Vc/ggnrOJYxaZ9tHHh/g1/BFSzXybo+lXA8zDZ6S4=
 Received: from VE1PR08MB5006.eurprd08.prod.outlook.com (10.255.159.31) by
  VE1PR08MB5152.eurprd08.prod.outlook.com (20.179.30.155) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.17; Wed, 16 Oct 2019 10:34:23 +0000
+ 15.20.2347.17; Wed, 16 Oct 2019 10:34:30 +0000
 Received: from VE1PR08MB5006.eurprd08.prod.outlook.com
  ([fe80::40ed:7ed3:90cf:ece5]) by VE1PR08MB5006.eurprd08.prod.outlook.com
  ([fe80::40ed:7ed3:90cf:ece5%3]) with mapi id 15.20.2347.023; Wed, 16 Oct 2019
- 10:34:23 +0000
+ 10:34:30 +0000
 From:   "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
 To:     Liviu Dudau <Liviu.Dudau@arm.com>,
         "airlied@linux.ie" <airlied@linux.ie>,
@@ -93,12 +93,14 @@ CC:     "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
         "Oscar Zhang (Arm Technology China)" <Oscar.Zhang@arm.com>,
         "Channing Chen (Arm Technology China)" <Channing.Chen@arm.com>,
         Mihail Atanassov <Mihail.Atanassov@arm.com>,
-        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
-Subject: [PATCH v5 3/4] drm/komeda: Add drm_ctm_to_coeffs()
-Thread-Topic: [PATCH v5 3/4] drm/komeda: Add drm_ctm_to_coeffs()
-Thread-Index: AQHVhA1Gtm4BORRiPkmxAOi2mqef/g==
-Date:   Wed, 16 Oct 2019 10:34:22 +0000
-Message-ID: <20191016103339.25858-4-james.qian.wang@arm.com>
+        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>
+Subject: [PATCH v5 4/4] drm/komeda: Adds gamma and color-transform support for
+ DOU-IPS
+Thread-Topic: [PATCH v5 4/4] drm/komeda: Adds gamma and color-transform
+ support for DOU-IPS
+Thread-Index: AQHVhA1KKjv8+ZR4kki+4DzZfnBljg==
+Date:   Wed, 16 Oct 2019 10:34:30 +0000
+Message-ID: <20191016103339.25858-5-james.qian.wang@arm.com>
 References: <20191016103339.25858-1-james.qian.wang@arm.com>
 In-Reply-To: <20191016103339.25858-1-james.qian.wang@arm.com>
 Accept-Language: en-US
@@ -114,20 +116,20 @@ Authentication-Results-Original: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.20.1
 x-ms-publictraffictype: Email
-X-MS-Office365-Filtering-Correlation-Id: f2301104-d00a-4ebc-0e87-08d7522470d0
+X-MS-Office365-Filtering-Correlation-Id: 8dd0fa02-d450-4281-1b74-08d752247643
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-TrafficTypeDiagnostic: VE1PR08MB5152:|VE1PR08MB5152:|DBBPR08MB4712:
+X-MS-TrafficTypeDiagnostic: VE1PR08MB5152:|VE1PR08MB5152:|VI1PR0801MB1743:
 x-ms-exchange-transport-forked: True
-X-Microsoft-Antispam-PRVS: <DBBPR08MB47127D7D3655A352912DD8BEB3920@DBBPR08MB4712.eurprd08.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <VI1PR0801MB1743B866E46981440D6E114FB3920@VI1PR0801MB1743.eurprd08.prod.outlook.com>
 x-checkrecipientrouted: true
-x-ms-oob-tlc-oobclassifiers: OLM:3513;OLM:3513;
+x-ms-oob-tlc-oobclassifiers: OLM:2582;OLM:2582;
 x-forefront-prvs: 0192E812EC
-X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(346002)(396003)(366004)(136003)(376002)(189003)(199004)(6506007)(4326008)(2171002)(25786009)(478600001)(66066001)(99286004)(103116003)(76176011)(52116002)(71190400001)(64756008)(71200400001)(256004)(66446008)(66476007)(36756003)(66946007)(14454004)(66556008)(8936002)(50226002)(8676002)(386003)(81166006)(81156014)(486006)(26005)(2501003)(186003)(55236004)(2906002)(5660300002)(110136005)(1076003)(305945005)(446003)(2201001)(6486002)(6436002)(11346002)(476003)(6512007)(316002)(6116002)(3846002)(102836004)(54906003)(86362001)(2616005)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR08MB5152;H:VE1PR08MB5006.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(346002)(396003)(366004)(136003)(376002)(189003)(199004)(6506007)(4326008)(2171002)(25786009)(478600001)(66066001)(99286004)(103116003)(76176011)(52116002)(71190400001)(64756008)(71200400001)(256004)(14444005)(66446008)(66476007)(36756003)(66946007)(14454004)(66556008)(8936002)(50226002)(8676002)(386003)(81166006)(81156014)(486006)(26005)(2501003)(186003)(55236004)(2906002)(5660300002)(110136005)(1076003)(305945005)(446003)(2201001)(6486002)(6436002)(11346002)(476003)(6512007)(316002)(6116002)(3846002)(102836004)(54906003)(86362001)(2616005)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR08MB5152;H:VE1PR08MB5006.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: arm.com does not designate
  permitted sender hosts)
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original: 3RgZdF6spsqYgK4RVB7WKLLVKDKw04R1xUx+L1xTYPfTqIU5tken4iy29AWLvfqCgPDS+jPreX1QpcrYDWuv5MpYpKERUFIco1HmM4HOFPY87BYGssLT1L6mgYOlBNtvmAE9zIp8anMYuYQNF9VnOIXYAiwzYodUxQtrpYiP3zEq9EnE89vAV12i5ZLA53AODMx+Uo3nwwsinAV00G2ELk2EICseBYafN7dFxruHCk2w1N/am8KPdQlC8jjAGMNDXnqv2iTrgcgMNESz6Pvcx9h+DVSwzdsTNpBEmXToyKLD4zch12lRFtHcHv+H8R+isHSS3MC+xqxS4QGmOz25gDgHjjTlacJfVkSjWPt7kbHxzaHKf5ANaNoasDMMfweDj1lvXGKCJ7BsE+3dJEmeG6kD2+1lhW41AFAoM+MUBNg=
+X-Microsoft-Antispam-Message-Info-Original: aqLUHqH8Rkexwy/Q+geqpVkYcQCqBlQTlXgJ8kQMtQMwXvmIt93V4vwTGHpzJflQer9pVaAhLXq2ygVREDd+QkdwNdSXgHSk4pItPHhfztur42YsS5hidsnQd9aIETBR2Gngwe95/2OIyk1G6DKsGlQWDVdHvXTj7MH7/86PNQ844wSwkCzDbzCbobBXHVMHk3cQmlk5/nStZcL3NICfc9bSwEul8EDWhFOB90jvwHmxL7eNGlYt4H+99K82fMECccQ9afyep+hKA0pDZ1XOgClSvcUJ2Q4k4KUF7cDUerCwQCjtKBZnnc33TxFLRGjyzMvMi7jvlcSU4yoQHfBXcC7a7sK7rrgR66DTdYf/ihMuKbhAueBgKS6LbDd31vn0+iJBkoC2OK2carzC/8+aIM8cc/tHETBR3JmuAhMNJy4=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
@@ -135,79 +137,136 @@ X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR08MB5152
 Original-Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=james.qian.wang@arm.com; 
 X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: DB5EUR03FT050.eop-EUR03.prod.protection.outlook.com
-X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(396003)(136003)(346002)(376002)(189003)(199004)(6486002)(50466002)(102836004)(2201001)(36756003)(4326008)(103116003)(99286004)(478600001)(2906002)(76176011)(2501003)(305945005)(66066001)(356004)(86362001)(1076003)(25786009)(7736002)(6512007)(14454004)(23756003)(2616005)(126002)(476003)(47776003)(486006)(2171002)(26826003)(386003)(5660300002)(11346002)(26005)(336012)(6116002)(446003)(63350400001)(8746002)(8936002)(8676002)(316002)(70206006)(3846002)(70586007)(6506007)(50226002)(76130400001)(81166006)(81156014)(22756006)(186003)(110136005)(54906003);DIR:OUT;SFP:1101;SCL:1;SRVR:DBBPR08MB4712;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:TempError;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;MX:1;A:1;
-X-MS-Office365-Filtering-Correlation-Id-Prvs: f3ed9998-e2d7-49d9-031c-08d7522468cc
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: DB5EUR03FT058.eop-EUR03.prod.protection.outlook.com
+X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(396003)(376002)(346002)(39860400002)(136003)(189003)(199004)(5660300002)(2201001)(50466002)(8676002)(4326008)(14454004)(36756003)(26005)(70586007)(102836004)(26826003)(25786009)(478600001)(76130400001)(23756003)(86362001)(22756006)(1076003)(486006)(110136005)(103116003)(66066001)(336012)(2906002)(54906003)(63350400001)(2171002)(7736002)(11346002)(126002)(47776003)(476003)(2616005)(446003)(316002)(50226002)(6116002)(356004)(14444005)(2501003)(386003)(6506007)(76176011)(186003)(70206006)(99286004)(305945005)(6486002)(8746002)(3846002)(81166006)(6512007)(8936002)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0801MB1743;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:TempError;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;MX:1;A:1;
+X-MS-Office365-Filtering-Correlation-Id-Prvs: 4e9eaf6b-3e12-4541-972e-08d752246d1a
 NoDisclaimer: True
 X-Forefront-PRVS: 0192E812EC
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: CYpOmjENviF4IjMhiixkd7w6K0pMqMYGFZwwEZy9StrACsU+40jQGDs1Fg6Bldo/iD3vyu02t4UhNAx1WpIt7rq9GXR0+EOJh1QLGhdOmEhcuw/cZ9r99V7mjoTrj+srCVzGva4Nk9np6eegCnAGaLLHQ0/fyyE27UMsrOxVZpybcdVHUcwEhPqgZwKmrM2wpBRT84xjxAPURs/aNETnaZhRmxnTynWNd7COa4QS+lJjgPWs3TeIFoENE3OgzB/8qA9+wmDvk5e4MWfN/Gp3s1XMkBChnqJ0iWBGpJ8ZkHTH60Nms/mk/lguDkmhT5bPqmzd59l6W31zCXaWFD6QsG7aPaxHkSKXkWMlGcDDohBH9GH8b5RffV1RKbmAJE2GUfGeItc4D2yBli2zv2xzN/7sFd0qcWl5H6HkO89Sm/M=
+X-Microsoft-Antispam-Message-Info: CHWVjJFtxR2SVj/BFHc7r96K/ZSURHn0xs1oKDXaXs4Sz9TypsNggDoEqwX9KF2c07/CybRbJEeb9PrX8U5HhXXmt9dAsk7sd3/oLT/fwpLxmFBiw520OR+f1GfQIzvXsvr2sOPFgJcI6xTOxBraTDRhgssjxr6mSgxAG5VyAq+xhe4OIElsTPZtQrnF4wZ7nINPV6Op+KS0DjMwGQCtwJ9q1+yIrOWGbH11UcT9xsZbCQzjudMvBssrQvB4W6frfrH7z+b1Fia/y3VreDjaLVlffNTUdwxODwWStp4Q4OEkz/m8xlbF/jzvuGkxbrUHlNww/GrYaLL+M1OduJRie6cwtak7GB7KoeLyJoL7UHfF5I2fpsqYugnEeVfP/LBJGJRIb9W5mTzgsvnDM8QfkvOudV/Zk1o53oPTJmiRT8k=
 X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2019 10:34:36.0677
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2019 10:34:45.2103
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f2301104-d00a-4ebc-0e87-08d7522470d0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8dd0fa02-d450-4281-1b74-08d752247643
 X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR08MB4712
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0801MB1743
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This function is for converting drm_color_ctm matrix to komeda hardware
-required required Q2.12 2's complement CSC matrix.
+From: "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>
 
-v2:
-  Move the fixpoint conversion function s31_32_to_q2_12() to drm core
-  as a shared helper.
+Adds gamma and color-transform support for DOU-IPS.
+Adds two caps members fgamma_coeffs and ctm_coeffs to komeda_improc_state.
+If color management changed, set gamma and color-transform accordingly.
 
-Signed-off-by: james qian wang (Arm Technology China) <james.qian.wang@arm.=
-com>
-Reviewed-by: Mihail Atanassov <mihail.atanassov@arm.com>
+v5: Rebase with drm-misc-next
+
+Signed-off-by: Lowry Li (Arm Technology China) <lowry.li@arm.com>
 ---
- .../gpu/drm/arm/display/komeda/komeda_color_mgmt.c | 14 ++++++++++++++
- .../gpu/drm/arm/display/komeda/komeda_color_mgmt.h |  1 +
- 2 files changed, 15 insertions(+)
+ .../arm/display/komeda/d71/d71_component.c    | 20 +++++++++++++++++++
+ .../gpu/drm/arm/display/komeda/komeda_crtc.c  |  2 ++
+ .../drm/arm/display/komeda/komeda_pipeline.h  |  3 +++
+ .../display/komeda/komeda_pipeline_state.c    |  6 ++++++
+ 4 files changed, 31 insertions(+)
 
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.c b/drive=
-rs/gpu/drm/arm/display/komeda/komeda_color_mgmt.c
-index c180ce70c26c..d8e449e6ebda 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.c
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.c
-@@ -117,3 +117,17 @@ void drm_lut_to_fgamma_coeffs(struct drm_property_blob=
- *lut_blob, u32 *coeffs)
+diff --git a/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c b/drive=
+rs/gpu/drm/arm/display/komeda/d71/d71_component.c
+index 6740b8422f11..63a1b6f9cbba 100644
+--- a/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c
++++ b/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c
+@@ -1032,7 +1032,9 @@ static int d71_merger_init(struct d71_dev *d71,
+ static void d71_improc_update(struct komeda_component *c,
+ 			      struct komeda_component_state *state)
  {
- 	drm_lut_to_coeffs(lut_blob, coeffs, sector_tbl, ARRAY_SIZE(sector_tbl));
++	struct drm_crtc_state *crtc_st =3D state->crtc->state;
+ 	struct komeda_improc_state *st =3D to_improc_st(state);
++	struct d71_pipeline *pipe =3D to_d71_pipeline(c->pipeline);
+ 	u32 __iomem *reg =3D c->reg;
+ 	u32 index, mask =3D 0, ctrl =3D 0;
+=20
+@@ -1043,6 +1045,24 @@ static void d71_improc_update(struct komeda_componen=
+t *c,
+ 	malidp_write32(reg, BLK_SIZE, HV_SIZE(st->hsize, st->vsize));
+ 	malidp_write32(reg, IPS_DEPTH, st->color_depth);
+=20
++	if (crtc_st->color_mgmt_changed) {
++		mask |=3D IPS_CTRL_FT | IPS_CTRL_RGB;
++
++		if (crtc_st->gamma_lut) {
++			malidp_write_group(pipe->dou_ft_coeff_addr, FT_COEFF0,
++					   KOMEDA_N_GAMMA_COEFFS,
++					   st->fgamma_coeffs);
++			ctrl |=3D IPS_CTRL_FT; /* enable gamma */
++		}
++
++		if (crtc_st->ctm) {
++			malidp_write_group(reg, IPS_RGB_RGB_COEFF0,
++					   KOMEDA_N_CTM_COEFFS,
++					   st->ctm_coeffs);
++			ctrl |=3D IPS_CTRL_RGB; /* enable gamut */
++		}
++	}
++
+ 	mask |=3D IPS_CTRL_YUV | IPS_CTRL_CHD422 | IPS_CTRL_CHD420;
+=20
+ 	/* config color format */
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c b/drivers/gpu=
+/drm/arm/display/komeda/komeda_crtc.c
+index 252015210fbc..1c452ea75999 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
+@@ -617,6 +617,8 @@ static int komeda_crtc_add(struct komeda_kms_dev *kms,
+=20
+ 	crtc->port =3D kcrtc->master->of_output_port;
+=20
++	drm_crtc_enable_color_mgmt(crtc, 0, true, KOMEDA_COLOR_LUT_SIZE);
++
+ 	return err;
  }
-+
-+void drm_ctm_to_coeffs(struct drm_property_blob *ctm_blob, u32 *coeffs)
-+{
-+	struct drm_color_ctm *ctm;
-+	u32 i;
-+
-+	if (!ctm_blob)
-+		return;
-+
-+	ctm =3D ctm_blob->data;
-+
-+	for (i =3D 0; i < KOMEDA_N_CTM_COEFFS; i++)
-+		coeffs[i] =3D drm_color_ctm_s31_32_to_qm_n(ctm->matrix[i], 3, 12);
-+}
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.h b/drive=
-rs/gpu/drm/arm/display/komeda/komeda_color_mgmt.h
-index 08ab69281648..2f4668466112 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.h
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.h
-@@ -18,6 +18,7 @@
- #define KOMEDA_N_CTM_COEFFS		9
 =20
- void drm_lut_to_fgamma_coeffs(struct drm_property_blob *lut_blob, u32 *coe=
-ffs);
-+void drm_ctm_to_coeffs(struct drm_property_blob *ctm_blob, u32 *coeffs);
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h b/drivers=
+/gpu/drm/arm/display/komeda/komeda_pipeline.h
+index bd6ca7c87037..ac8725e24853 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
+@@ -11,6 +11,7 @@
+ #include <drm/drm_atomic.h>
+ #include <drm/drm_atomic_helper.h>
+ #include "malidp_utils.h"
++#include "komeda_color_mgmt.h"
 =20
- const s32 *komeda_select_yuv2rgb_coeffs(u32 color_encoding, u32 color_rang=
-e);
+ #define KOMEDA_MAX_PIPELINES		2
+ #define KOMEDA_PIPELINE_MAX_LAYERS	4
+@@ -327,6 +328,8 @@ struct komeda_improc_state {
+ 	struct komeda_component_state base;
+ 	u8 color_format, color_depth;
+ 	u16 hsize, vsize;
++	u32 fgamma_coeffs[KOMEDA_N_GAMMA_COEFFS];
++	u32 ctm_coeffs[KOMEDA_N_CTM_COEFFS];
+ };
+=20
+ /* display timing controller */
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c b/d=
+rivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
+index 42bdc63dcffa..0930234abb9d 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
+@@ -802,6 +802,12 @@ komeda_improc_validate(struct komeda_improc *improc,
+ 		st->color_format =3D BIT(__ffs(avail_formats));
+ 	}
+=20
++	if (kcrtc_st->base.color_mgmt_changed) {
++		drm_lut_to_fgamma_coeffs(kcrtc_st->base.gamma_lut,
++					 st->fgamma_coeffs);
++		drm_ctm_to_coeffs(kcrtc_st->base.ctm, st->ctm_coeffs);
++	}
++
+ 	komeda_component_add_input(&st->base, &dflow->input, 0);
+ 	komeda_component_set_output(&dflow->input, &improc->base, 0);
 =20
 --=20
 2.20.1
