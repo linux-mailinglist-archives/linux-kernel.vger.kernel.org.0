@@ -2,114 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F4067D86DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 05:43:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42A86D86EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 05:45:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732820AbfJPDnY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 23:43:24 -0400
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:38167 "EHLO
-        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726491AbfJPDnX (ORCPT
+        id S2389700AbfJPDpG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 23:45:06 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:55611 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726491AbfJPDot (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 23:43:23 -0400
-Received: by mail-pl1-f201.google.com with SMTP id g7so13388924plo.5
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 20:43:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=3r2fWGxvgUo0Yo2JWFT9X062NRVoB/qS/ldqIiIuY8s=;
-        b=KT9pcH/Y/FaK79bj33Qplyav4SbvcU1eXOx+WWEi8c9T7Gt8wzPnGCoIFGeytCNgeU
-         It/vKDY57qKVstZ0RcnIdE9xUZ+p7B3NuT+v1wF6M7ogvTbTqg5Xu3+ZVBcS3aFfpt5F
-         yqWgjKQvjeJIdB2NUGY1Id1Ernfk+37C5wqfoPpqM2s3dWKP4LCv6ucy/wr8lNzztO2Y
-         oJQyTKA7R0zy60+QoMOMsWOz5QD7S53OXekL/0Xb3BlSlG72IueBnAOUlBN6J4njWg/i
-         Yi8O7/0xoMl4noa2Kb94yamYqvf7e9QV13Kby15xQ7u9JQCa76gxrplIL9bNT0J6uHHY
-         T0EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=3r2fWGxvgUo0Yo2JWFT9X062NRVoB/qS/ldqIiIuY8s=;
-        b=e3kx6yCGd/5FS0zhNFi9GoMon8LLwgUWZsxHayV+bYA9AkzQRZ8BgTMmw8oWIzIasx
-         81M0Cd81+JDXvOzqtnR0IaW90VHK4Pn4Uwxx8LFTnnT5UNYsm0EZf9SHiV7FNbWfuozQ
-         ODT1LsWWERcgoKhfX86tyWI63K3j5qiTkUdB9uZ/QjIe9zSMICYsVneIvQNUtPnNTuS5
-         q/hXR/UyJEf+DDb3H2xew3/KKFXFLPC8rRUBWhe2vbdg2/k+Bq7/WNDErKOKPRYgAOff
-         unIKDXw65nVDEVOLOxmpirSAAeQt3WQE8SVOXHv1D6spAgqgZfywEwQEb8cXqxUZBGkm
-         tj/Q==
-X-Gm-Message-State: APjAAAXa8V+FoWuTZf020Y1nQqHlv2IMxJEk8U70ssx8Y4EkaEI+rGi1
-        qlImx43xayTD66OUo1PU2jiHvS+47HOJ
-X-Google-Smtp-Source: APXvYqyJAy3vPQrYVK62MzhPtX5xwdVYaUoQaNuPEgf8HBFGfgBsL6wMLw93KjNV7LBk5eI+MCW5197pm/KY
-X-Received: by 2002:a63:d916:: with SMTP id r22mr42503950pgg.46.1571197400669;
- Tue, 15 Oct 2019 20:43:20 -0700 (PDT)
-Date:   Wed, 16 Oct 2019 11:43:14 +0800
-Message-Id: <20191016034314.231363-1-pumahsu@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.23.0.700.g56cf767bdb-goog
-Subject: [PATCH] usb: typec: Add sysfs node to show cc orientation
-From:   pumahsu <pumahsu@google.com>
-To:     heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org
-Cc:     badhri@google.com, kyletso@google.com, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pumahsu <pumahsu@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 15 Oct 2019 23:44:49 -0400
+Received: from [213.220.153.21] (helo=localhost.localdomain)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1iKaEw-0000Wg-GC; Wed, 16 Oct 2019 03:44:46 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     christian.brauner@ubuntu.com
+Cc:     ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
+        kafai@fb.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        songliubraving@fb.com, yhs@fb.com
+Subject: [PATCH v3 0/3] bpf: switch to new usercopy helpers
+Date:   Wed, 16 Oct 2019 05:44:29 +0200
+Message-Id: <20191016034432.4418-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191016004138.24845-1-christian.brauner@ubuntu.com>
+References: <20191016004138.24845-1-christian.brauner@ubuntu.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Export the Type-C cc orientation so that user space can
-get this information.
+Hey everyone,
 
-Signed-off-by: pumahsu <pumahsu@google.com>
----
- Documentation/ABI/testing/sysfs-class-typec |  7 +++++++
- drivers/usb/typec/class.c                   | 11 +++++++++++
- 2 files changed, 18 insertions(+)
+In v5.4-rc2 we added two new helpers check_zeroed_user() and
+copy_struct_from_user() including selftests (cf. [1]). It is a generic
+interface designed to copy a struct from userspace. The helpers will be
+especially useful for structs versioned by size of which we have quite a
+few.
 
-diff --git a/Documentation/ABI/testing/sysfs-class-typec b/Documentation/ABI/testing/sysfs-class-typec
-index d7647b258c3c..419f952c991d 100644
---- a/Documentation/ABI/testing/sysfs-class-typec
-+++ b/Documentation/ABI/testing/sysfs-class-typec
-@@ -108,6 +108,13 @@ Contact:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
- Description:
- 		Revision number of the supported USB Type-C specification.
- 
-+What:		/sys/class/typec/<port>/cc_orientation
-+Date:		September 2019
-+Contact:	Puma Hsu <pumahsu@google.com>
-+Description:
-+		Indicates which cc orientation is active now, or 0 when
-+		nothing is connected.
-+
- 
- USB Type-C partner devices (eg. /sys/class/typec/port0-partner/)
- 
-diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-index 7d8805d9bf37..00edae63da8e 100644
---- a/drivers/usb/typec/class.c
-+++ b/drivers/usb/typec/class.c
-@@ -1238,6 +1238,16 @@ static ssize_t usb_power_delivery_revision_show(struct device *dev,
- }
- static DEVICE_ATTR_RO(usb_power_delivery_revision);
- 
-+static ssize_t cc_orientation_show(struct device *dev,
-+						struct device_attribute *attr,
-+						char *buf)
-+{
-+	struct typec_port *p = to_typec_port(dev);
-+
-+	return sprintf(buf, "%d\n", typec_get_orientation(p));
-+}
-+static DEVICE_ATTR_RO(cc_orientation);
-+
- static struct attribute *typec_attrs[] = {
- 	&dev_attr_data_role.attr,
- 	&dev_attr_power_operation_mode.attr,
-@@ -1248,6 +1258,7 @@ static struct attribute *typec_attrs[] = {
- 	&dev_attr_usb_typec_revision.attr,
- 	&dev_attr_vconn_source.attr,
- 	&dev_attr_port_type.attr,
-+	&dev_attr_cc_orientation.attr,
- 	NULL,
- };
- ATTRIBUTE_GROUPS(typec);
+The most obvious benefit is that this helper lets us get rid of
+duplicate code. We've already switched over sched_setattr(), perf_event_open(),
+and clone3(). More importantly it will also help to ensure that users
+implementing versioning-by-size end up with the same core semantics.
+
+This point is especially crucial since we have at least one case where
+versioning-by-size is used but with slighly different semantics:
+sched_setattr(), perf_event_open(), and clone3() all do do similar
+checks to copy_struct_from_user() while rt_sigprocmask(2) always rejects
+differently-sized struct arguments.
+
+This little series switches over bpf codepaths that have hand-rolled
+implementations of these helpers.
+
+This series can also be pulled:
+
+The following changes since commit 5bc60de50dfea235634fdf38cbc992fb968d113b:
+
+  selftests: bpf: Don't try to read files without read permission (2019-10-15 16:27:25 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/bpf-copy-struct-from-user
+
+for you to fetch changes up to 31a197d406cc01451e98312665d116c2dbb08202:
+
+  bpf: use copy_struct_from_user() in bpf() syscall (2019-10-16 05:32:38 +0200)
+
+----------------------------------------------------------------
+bpf-copy-struct-from-user
+
+----------------------------------------------------------------
+Christian Brauner (3):
+      bpf: use check_zeroed_user() in bpf_check_uarg_tail_zero()
+      bpf: use copy_struct_from_user() in bpf_prog_get_info_by_fd()
+      bpf: use copy_struct_from_user() in bpf() syscall
+
+ kernel/bpf/syscall.c | 45 ++++++++++++++++-----------------------------
+ 1 file changed, 16 insertions(+), 29 deletions(-)
+
+Thanks!
+Christian
+
+/* v1 */
+Link: https://lore.kernel.org/r/20191009160907.10981-1-christian.brauner@ubuntu.com
+
+/* v2 */
+Link: https://lore.kernel.org/r/20191016004138.24845-1-christian.brauner@ubuntu.com
+- rebase onto bpf-next
+
+/* Reference */
+[1]: f5a1a536fa14 ("lib: introduce copy_struct_from_user() helper")
+
+Christian Brauner (3):
+  bpf: use check_zeroed_user() in bpf_check_uarg_tail_zero()
+  bpf: use copy_struct_from_user() in bpf_prog_get_info_by_fd()
+  bpf: use copy_struct_from_user() in bpf() syscall
+
+ kernel/bpf/syscall.c | 45 ++++++++++++++++----------------------------
+ 1 file changed, 16 insertions(+), 29 deletions(-)
+
 -- 
-2.23.0.700.g56cf767bdb-goog
+2.23.0
 
