@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 266BCD9E84
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:04:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F4F9D9E40
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:03:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438530AbfJPV7a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:59:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52116 "EHLO mail.kernel.org"
+        id S2391803AbfJPV53 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:57:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438158AbfJPV63 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:58:29 -0400
+        id S2437931AbfJPV4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:56:52 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE934218DE;
-        Wed, 16 Oct 2019 21:58:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3AE8218DE;
+        Wed, 16 Oct 2019 21:56:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263109;
-        bh=od/c6TzyPXpf7ky7GdR+hgCyRAWNPIOfz+b/0alOEFE=;
+        s=default; t=1571263011;
+        bh=QnzyiG1RU6k+z3AYzuEm5NDXb59XVvAABJsQUEMmJf4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JovtOjimZaP+h7jnLLJ630XNFUxDdNcI0J6TATQxQnyn7lHIILpahmfhdi1VmRj3b
-         0LmYkXWcDyFt0Xq07J563qrl3kZ+pOI59WvYwrp5gGdllijbJLTcZVpo4FZg8Vtkjd
-         arzHlfN003QX5wdFwchKwWbxu/bSuBQFu1Z6uZZk=
+        b=xN0CGx/EHvmjbCaXeum43DjaegBVQtCklvrofDiPk6ZIsZQaSQ0NARUNMdfEWkWOY
+         WNraNH+VnogbRmIA7jZcfTENtunmnJOcyxNZJe2JFZG+dVJjuEtgnGzBQttiJ2xRbb
+         WUwFYfZZ8oI0iiQG6ntcyb4PrjUv/0eVUH834wr4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+5630ca7c3b2be5c9da5e@syzkaller.appspotmail.com,
-        Johan Hovold <johan@kernel.org>,
-        Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 5.3 032/112] USB: microtek: fix info-leak at probe
+        stable@vger.kernel.org, Torez Smith <torez@redhat.com>,
+        Bill Kuzeja <william.kuzeja@stratus.com>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: [PATCH 4.19 13/81] xhci: Prevent deadlock when xhci adapter breaks during init
 Date:   Wed, 16 Oct 2019 14:50:24 -0700
-Message-Id: <20191016214853.313145937@linuxfoundation.org>
+Message-Id: <20191016214818.188637314@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
-References: <20191016214844.038848564@linuxfoundation.org>
+In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
+References: <20191016214805.727399379@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,38 +44,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Bill Kuzeja <William.Kuzeja@stratus.com>
 
-commit 177238c3d47d54b2ed8f0da7a4290db492f4a057 upstream.
+commit 8de66b0e6a56ff10dd00d2b0f2ae52e300178587 upstream.
 
-Add missing bulk-in endpoint sanity check to prevent uninitialised stack
-data from being reported to the system log and used as endpoint
-addresses.
+The system can hit a deadlock if an xhci adapter breaks while initializing.
+The deadlock is between two threads: thread 1 is tearing down the
+adapter and is stuck in usb_unlocked_disable_lpm waiting to lock the
+hcd->handwidth_mutex. Thread 2 is holding this mutex (while still trying
+to add a usb device), but is stuck in xhci_endpoint_reset waiting for a
+stop or config command to complete. A reboot is required to resolve.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable <stable@vger.kernel.org>
-Reported-by: syzbot+5630ca7c3b2be5c9da5e@syzkaller.appspotmail.com
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Acked-by: Oliver Neukum <oneukum@suse.com>
-Link: https://lore.kernel.org/r/20191003070931.17009-1-johan@kernel.org
+It turns out when calling xhci_queue_stop_endpoint and
+xhci_queue_configure_endpoint in xhci_endpoint_reset, the return code is
+not checked for errors. If the timing is right and the adapter dies just
+before either of these commands get issued, we hang indefinitely waiting
+for a completion on a command that didn't get issued.
+
+This wasn't a problem before the following fix because we didn't send
+commands in xhci_endpoint_reset:
+
+commit f5249461b504 ("xhci: Clear the host side toggle manually when
+    endpoint is soft reset")
+
+With the patch I am submitting, a duration test which breaks adapters
+during initialization (and which deadlocks with the standard kernel) runs
+without issue.
+
+Fixes: f5249461b504 ("xhci: Clear the host side toggle manually when endpoint is soft reset")
+Cc: <stable@vger.kernel.org> # v4.17+
+Cc: Torez Smith <torez@redhat.com>
+Signed-off-by: Bill Kuzeja <william.kuzeja@stratus.com>
+Signed-off-by: Torez Smith <torez@redhat.com>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Link: https://lore.kernel.org/r/1570190373-30684-7-git-send-email-mathias.nyman@linux.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/image/microtek.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/usb/host/xhci.c |   23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/image/microtek.c
-+++ b/drivers/usb/image/microtek.c
-@@ -716,6 +716,10 @@ static int mts_usb_probe(struct usb_inte
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -3065,6 +3065,7 @@ static void xhci_endpoint_reset(struct u
+ 	unsigned int ep_index;
+ 	unsigned long flags;
+ 	u32 ep_flag;
++	int err;
  
+ 	xhci = hcd_to_xhci(hcd);
+ 	if (!host_ep->hcpriv)
+@@ -3114,7 +3115,17 @@ static void xhci_endpoint_reset(struct u
+ 		xhci_free_command(xhci, cfg_cmd);
+ 		goto cleanup;
  	}
- 
-+	if (ep_in_current != &ep_in_set[2]) {
-+		MTS_WARNING("couldn't find two input bulk endpoints. Bailing out.\n");
-+		return -ENODEV;
+-	xhci_queue_stop_endpoint(xhci, stop_cmd, udev->slot_id, ep_index, 0);
++
++	err = xhci_queue_stop_endpoint(xhci, stop_cmd, udev->slot_id,
++					ep_index, 0);
++	if (err < 0) {
++		spin_unlock_irqrestore(&xhci->lock, flags);
++		xhci_free_command(xhci, cfg_cmd);
++		xhci_dbg(xhci, "%s: Failed to queue stop ep command, %d ",
++				__func__, err);
++		goto cleanup;
 +	}
++
+ 	xhci_ring_cmd_db(xhci);
+ 	spin_unlock_irqrestore(&xhci->lock, flags);
  
- 	if ( ep_out == -1 ) {
- 		MTS_WARNING( "couldn't find an output bulk endpoint. Bailing out.\n" );
+@@ -3128,8 +3139,16 @@ static void xhci_endpoint_reset(struct u
+ 					   ctrl_ctx, ep_flag, ep_flag);
+ 	xhci_endpoint_copy(xhci, cfg_cmd->in_ctx, vdev->out_ctx, ep_index);
+ 
+-	xhci_queue_configure_endpoint(xhci, cfg_cmd, cfg_cmd->in_ctx->dma,
++	err = xhci_queue_configure_endpoint(xhci, cfg_cmd, cfg_cmd->in_ctx->dma,
+ 				      udev->slot_id, false);
++	if (err < 0) {
++		spin_unlock_irqrestore(&xhci->lock, flags);
++		xhci_free_command(xhci, cfg_cmd);
++		xhci_dbg(xhci, "%s: Failed to queue config ep command, %d ",
++				__func__, err);
++		goto cleanup;
++	}
++
+ 	xhci_ring_cmd_db(xhci);
+ 	spin_unlock_irqrestore(&xhci->lock, flags);
+ 
 
 
