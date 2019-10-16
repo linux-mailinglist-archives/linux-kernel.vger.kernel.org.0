@@ -2,110 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49A3FD94FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 17:07:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4597D950B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 17:08:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394096AbfJPPHp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 11:07:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49100 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2391793AbfJPPHn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 11:07:43 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E93B1B41A;
-        Wed, 16 Oct 2019 15:07:41 +0000 (UTC)
-Date:   Wed, 16 Oct 2019 17:07:41 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Miroslav Benes <mbenes@suse.cz>
-Cc:     rostedt@goodmis.org, jikos@kernel.org, joe.lawrence@redhat.com,
-        jpoimboe@redhat.com, mingo@redhat.com, shuah@kernel.org,
-        kamalesh@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, live-patching@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] selftests/livepatch: Test interaction with
- ftrace_enabled
-Message-ID: <20191016150741.vrnwik5kkzcxubr2@pathway.suse.cz>
-References: <20191016113316.13415-1-mbenes@suse.cz>
- <20191016113316.13415-4-mbenes@suse.cz>
+        id S2404801AbfJPPIL convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 16 Oct 2019 11:08:11 -0400
+Received: from skedge03.snt-world.com ([91.208.41.68]:34040 "EHLO
+        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729815AbfJPPIL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 11:08:11 -0400
+Received: from sntmail12r.snt-is.com (unknown [10.203.32.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by skedge03.snt-world.com (Postfix) with ESMTPS id 8E62867A910;
+        Wed, 16 Oct 2019 17:08:07 +0200 (CEST)
+Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail12r.snt-is.com
+ (10.203.32.182) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Wed, 16 Oct
+ 2019 17:08:07 +0200
+Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
+ sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
+ 15.01.1713.004; Wed, 16 Oct 2019 17:08:07 +0200
+From:   Schrempf Frieder <frieder.schrempf@kontron.de>
+To:     "krzk@kernel.org" <krzk@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh@kernel.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>
+CC:     Schrempf Frieder <frieder.schrempf@kontron.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH 10/10] MAINTAINERS: Add an entry for Kontron Electronics ARM
+ board support
+Thread-Topic: [PATCH 10/10] MAINTAINERS: Add an entry for Kontron Electronics
+ ARM board support
+Thread-Index: AQHVhDOEhsJ15O7bEUOF2rAmDLstWQ==
+Date:   Wed, 16 Oct 2019 15:08:07 +0000
+Message-ID: <20191016150622.21753-11-frieder.schrempf@kontron.de>
+References: <20191016150622.21753-1-frieder.schrempf@kontron.de>
+In-Reply-To: <20191016150622.21753-1-frieder.schrempf@kontron.de>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.17.1
+x-originating-ip: [172.25.9.193]
+x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191016113316.13415-4-mbenes@suse.cz>
-User-Agent: NeoMutt/20170912 (1.9.0)
+X-SnT-MailScanner-Information: Please contact the ISP for more information
+X-SnT-MailScanner-ID: 8E62867A910.AE729
+X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
+X-SnT-MailScanner-SpamCheck: 
+X-SnT-MailScanner-From: frieder.schrempf@kontron.de
+X-SnT-MailScanner-To: davem@davemloft.net, gregkh@linuxfoundation.org,
+        jonathan.cameron@huawei.com, krzk@kernel.org,
+        linux-kernel@vger.kernel.org, mchehab+samsung@kernel.org,
+        paulmck@linux.ibm.com, robh+dt@kernel.org, robh@kernel.org
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2019-10-16 13:33:15, Miroslav Benes wrote:
-> From: Joe Lawrence <joe.lawrence@redhat.com>
-> 
-> Since livepatching depends upon ftrace handlers to implement "patched"
-> code functionality, verify that the ftrace_enabled sysctl value
-> interacts with livepatch registration as expected.  At the same time,
-> ensure that ftrace_enabled is set and part of the test environment
-> configuration that is saved and restored when running the selftests.
-> 
-> Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
-> Signed-off-by: Miroslav Benes <mbenes@suse.cz>
-> ---
->  tools/testing/selftests/livepatch/Makefile    |  3 +-
->  .../testing/selftests/livepatch/functions.sh  | 14 +++-
->  .../selftests/livepatch/test-ftrace.sh        | 65 +++++++++++++++++++
->  3 files changed, 80 insertions(+), 2 deletions(-)
->  create mode 100755 tools/testing/selftests/livepatch/test-ftrace.sh
-> 
-> diff --git a/tools/testing/selftests/livepatch/Makefile b/tools/testing/selftests/livepatch/Makefile
-> index fd405402c3ff..1886d9d94b88 100644
-> --- a/tools/testing/selftests/livepatch/Makefile
-> +++ b/tools/testing/selftests/livepatch/Makefile
-> @@ -4,6 +4,7 @@ TEST_PROGS_EXTENDED := functions.sh
->  TEST_PROGS := \
->  	test-livepatch.sh \
->  	test-callbacks.sh \
-> -	test-shadow-vars.sh
-> +	test-shadow-vars.sh \
-> +	test-ftrace.sh
->  
->  include ../lib.mk
-> diff --git a/tools/testing/selftests/livepatch/functions.sh b/tools/testing/selftests/livepatch/functions.sh
-> index b7e5a67ae434..31eb09e38729 100644
-> --- a/tools/testing/selftests/livepatch/functions.sh
-> +++ b/tools/testing/selftests/livepatch/functions.sh
-> @@ -32,12 +32,16 @@ function die() {
->  function push_config() {
->  	DYNAMIC_DEBUG=$(grep '^kernel/livepatch' /sys/kernel/debug/dynamic_debug/control | \
->  			awk -F'[: ]' '{print "file " $1 " line " $2 " " $4}')
-> +	FTRACE_ENABLED=$(sysctl --values kernel.ftrace_enabled)
->  }
->  
->  function pop_config() {
->  	if [[ -n "$DYNAMIC_DEBUG" ]]; then
->  		echo -n "$DYNAMIC_DEBUG" > /sys/kernel/debug/dynamic_debug/control
->  	fi
-> +	if [[ -n "$FTRACE_ENABLED" ]]; then
-> +		sysctl kernel.ftrace_enabled="$FTRACE_ENABLED" &> /dev/null
-> +	fi
->  }
->  
->  function set_dynamic_debug() {
-> @@ -47,12 +51,20 @@ function set_dynamic_debug() {
->  		EOF
->  }
->  
-> +function set_ftrace_enabled() {
-> +	local sysctl="$1"
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-The variable is not later used.
+Kontron Electronics GmbH produces several ARM boards, that are
+planned to be upstreamed eventually. For now we have some
+i.MX6UL/ULL based SoMs and boards, that are already available
+in the kernel.
 
-> +	result=$(sysctl kernel.ftrace_enabled="$1" 2>&1 | paste --serial --delimiters=' ')
-> +	echo "livepatch: $result" > /dev/kmsg
-> +}
+Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+---
+ MAINTAINERS | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Otherwise, the patch looks good to me. After removing or using the
-variable:
-
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-
-Best Regards,
-Petr
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 296de2b51c83..a461d31ee98d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9103,6 +9103,12 @@ F:	include/linux/kmod.h
+ F:	lib/test_kmod.c
+ F:	tools/testing/selftests/kmod/
+ 
++KONTRON ELECTRONICS ARM BOARDS SUPPORT
++M:	Frieder Schrempf <frieder.schrempf@kontron.de>
++S:	Maintained
++F:	arch/arm/boot/dts/imx6ul-kontron-*
++F:	arch/arm/boot/dts/imx6ull-kontron-*
++
+ KPROBES
+ M:	Naveen N. Rao <naveen.n.rao@linux.ibm.com>
+ M:	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+-- 
+2.17.1
