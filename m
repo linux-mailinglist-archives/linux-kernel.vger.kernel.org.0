@@ -2,89 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3923D96D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:18:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63B6FD96DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:18:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393649AbfJPQSl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 12:18:41 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:40330 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727154AbfJPQSk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 12:18:40 -0400
-Received: by mail-yb1-f193.google.com with SMTP id s7so7993827ybq.7
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 09:18:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=SLHuUAI51zqpOoY4mLBl+fp0NibSGRXA+wwSOeMW2Ic=;
-        b=rvNQylRzWjq/sDxLXksL1A5D7OVt0fv1VWMAQUOp3axuwKdUIgf5tbL8gr0T4DKdi5
-         ZFJrsYtCO847NNxoDTqX9vapUBRbPitGsZDOwONFhBaGiopmAN8nAI58Fcs7VIgtO2lm
-         bYneVujpt3dX1gj8sQaZq8kY40rzC+NFypsPb3vvbnVoOAyV/QaqcQ7i/GXOytITeGE6
-         knmd9xZ+nlgweNjb+LJnd1uOy1E6ICn8xqOuT3QyrwCun0YrwFI4IkP3rkG10JlRn8l9
-         vKwsdmsOJTDO8CRqTnT/56MLs2Vxv9fktWaM4zvDSes/80088NJzk5eXs95AfAEu8Ryf
-         ixLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=SLHuUAI51zqpOoY4mLBl+fp0NibSGRXA+wwSOeMW2Ic=;
-        b=fppm1X3rquQw9qi4XGYomk/NDxSYVrXaBiOnjSV2JIixvf37x+FzjJSrQXEnyM44Ij
-         NB2E8mtGgbYssgTmF83PGwYYS4OPSuJVDuSeNDJC/lO2OlSYyepfbUjbM1JsveZstWkz
-         7Z+c3C8AIWv2X+8GOScoex8EIrg9eXXyTnys6cRWuyd3nLcDepWJ0D9Czb+4VItA+vqi
-         oCcmdo/4Yshq7NMSeiWh+ZaRurfY3pJk53GiQinEMVBP1A76i5PjrERKlOTcmb0+XTzv
-         aXnBwxIRBvQw33HyNQ3BKUiUoiiHu0Amtr0O3R0qsxBkcYbJsVyrPYwOP7t3yLUoKtPa
-         /Cqg==
-X-Gm-Message-State: APjAAAW8ZW93Xi6GR3mBi5DNHk9j83OXEPglIx7UnXeqCKxUfrNZ6moT
-        U5eN9P4Qss0pPtjAxIyHO9M=
-X-Google-Smtp-Source: APXvYqxUdwndWyzgAzuSdir0CRTy89OMPv/sP13h8hC81Pqrz64D/iPT34B8yMayZLpuiltGgdbJRw==
-X-Received: by 2002:a25:3086:: with SMTP id w128mr29101340ybw.385.1571242719670;
-        Wed, 16 Oct 2019 09:18:39 -0700 (PDT)
-Received: from localhost.localdomain (072-189-084-142.res.spectrum.com. [72.189.84.142])
-        by smtp.gmail.com with ESMTPSA id 5sm6037910ywb.73.2019.10.16.09.18.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2019 09:18:38 -0700 (PDT)
-From:   William Breathitt Gray <vilhelm.gray@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com,
-        William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH] linux/bitopts.h: Add for_each_set_clump8 documentation
-Date:   Wed, 16 Oct 2019 12:18:25 -0400
-Message-Id: <20191016161825.301082-1-vilhelm.gray@gmail.com>
-X-Mailer: git-send-email 2.23.0
+        id S2393741AbfJPQSx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 12:18:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32998 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727154AbfJPQSv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 12:18:51 -0400
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF22521928;
+        Wed, 16 Oct 2019 16:18:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571242731;
+        bh=4COz89P1zpzTlupxFFQQGh+6woY2hW0X2gsI1bc8HjQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=xwM3DTxgTRrC9GLPoyMIVyLVBPvVCnMIYci5oDwuIfmHMX1amrkAZRVTHxCv2wXtc
+         iN9BRwPh3p5AIcva79D+7Ov7/Jet8aumvERgrxkZ9IfryBELEq9tQ6GTaGWHZTJSpO
+         FvlLYzakgxBw3HbEL7engUbcO4kAnu7OK4vX8AWM=
+Received: by mail-lj1-f179.google.com with SMTP id f5so24654496ljg.8;
+        Wed, 16 Oct 2019 09:18:50 -0700 (PDT)
+X-Gm-Message-State: APjAAAUXkIUHaNPy8woBVm4cfuX74uUpiYXDPfyGsVwW0S1FBSG+4VzZ
+        +u4XqI6hBlrp9w9MbLWrOxzq4BnLLM1pfRUJkkg=
+X-Google-Smtp-Source: APXvYqzu0RRV4q5pmM2b1sIMqFIXCTIwcolo7Dbv37lXTeqNkqpQA3nPxoPmIeAXJmVDW5spOsl8eEkJOiSX9IsOuoQ=
+X-Received: by 2002:a2e:9ec2:: with SMTP id h2mr23068539ljk.85.1571242729071;
+ Wed, 16 Oct 2019 09:18:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191002164316.14905-1-krzk@kernel.org> <20191002164316.14905-6-krzk@kernel.org>
+ <20191014113240.GN12262@dragon>
+In-Reply-To: <20191014113240.GN12262@dragon>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Wed, 16 Oct 2019 19:18:34 +0300
+X-Gmail-Original-Message-ID: <CAJKOXPccVj3KJTzzxvQpzFeBYHX1onoh+DfApr8AA-QxvPzWLg@mail.gmail.com>
+Message-ID: <CAJKOXPccVj3KJTzzxvQpzFeBYHX1onoh+DfApr8AA-QxvPzWLg@mail.gmail.com>
+Subject: Re: [PATCH v3 06/10] ARM: dts: imx: Rename "iram" node to "sram"
+To:     Shawn Guo <shawnguo@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-omap@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document in kerneldoc form the for_each_set_clump8 macro.
+On Mon, 14 Oct 2019 at 14:33, Shawn Guo <shawnguo@kernel.org> wrote:
+>
+> On Wed, Oct 02, 2019 at 06:43:12PM +0200, Krzysztof Kozlowski wrote:
+> > The device node name should reflect generic class of a device so rename
+> > the "iram" node to "sram".  This will be also in sync with upcoming DT
+> > schema.  No functional change.
+> >
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>
+> Acked-by: Shawn Guo <shawnguo@kernel.org>
+>
+> Let me know if you want it go through IMX tree.
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- include/linux/bitops.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+Yes please, I think each of these should go through soc maintainers.
 
-diff --git a/include/linux/bitops.h b/include/linux/bitops.h
-index fb94a10f7853..76ec8f0ce3e8 100644
---- a/include/linux/bitops.h
-+++ b/include/linux/bitops.h
-@@ -40,6 +40,13 @@ extern unsigned long __sw_hweight64(__u64 w);
- 	     (bit) < (size);					\
- 	     (bit) = find_next_zero_bit((addr), (size), (bit) + 1))
- 
-+/**
-+ * for_each_set_clump8 - iterate over bitmap for each 8-bit clump with set bits
-+ * @start: bit offset to start search and to store the current iteration offset
-+ * @clump: location to store copy of current 8-bit clump
-+ * @bits: bitmap address to base the search on
-+ * @size: bitmap size in number of bits
-+ */
- #define for_each_set_clump8(start, clump, bits, size) \
- 	for ((start) = find_first_clump8(&(clump), (bits), (size)); \
- 	     (start) < (size); \
--- 
-2.23.0
-
+Best regards,
+Krzysztof
