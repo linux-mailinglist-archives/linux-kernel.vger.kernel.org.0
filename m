@@ -2,67 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4076DD9982
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 20:48:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C265CD9975
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 20:47:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394412AbfJPSsL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 14:48:11 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:35199 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391023AbfJPSsK (ORCPT
+        id S2394354AbfJPSrZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 14:47:25 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:46110 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394329AbfJPSrY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 14:48:10 -0400
-Received: by mail-pl1-f196.google.com with SMTP id c3so11690471plo.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 11:48:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=wC98WIDkH0hSNVFQ7wzPlaxBULQBFBdfYyMFOq37980=;
-        b=qPmaZ+7D0WD73vsiBSf59pK67kdYOZikuKDh5qN3nRa16D56DeQJMXPTjn8cDG3OP3
-         2c7GEed2LTPU/0mspxTaCWOCYz+25/M8dRXkp2ZOThpaATa9JGigM1sW87/TRCnGOyr1
-         ev7pUg+V/bcVhOSZjnLvSKtilSvJ42yWlm5plaw7ss2ejeTiZ5mzXn9QKtzDyh5eIhmb
-         EcyqziTT3TT2lnl7hiKF2PovAm05rVzflB4pFY9OHhc+lzpcEBC6D8kJ3tqwyGfKEGks
-         7/40iDjzgDjmjr6ZeMVvhfiWhTvBb+x5J6GkpD1Ho1j/1pqJQdVKlAv8xfOigRFESfLs
-         Ctbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=wC98WIDkH0hSNVFQ7wzPlaxBULQBFBdfYyMFOq37980=;
-        b=DUuxcXshkxWJ+VHOJZDj2Wpx2UjT1lCqnm67eg6rdJX0GKsP23oGLCi5z63pZyGuLZ
-         2L/tndqLTzNmtJRLMtUWUGN6UWrAK8j3hcAO2/Dfa1KbRqj2x/M/nNVHdiuLHI1ZYGaW
-         VYwxC5edbpIonixNYuAd0Rvaoq5hn+nOiBLwE9z4kzRkOpKA2QolpFMpT8S71w0JB7hj
-         IxQgWf1cb8q+Hw5ZAepsQT+MduXCp9G+ZGw5cbWTnr6UYWQ2qbIt/f247s+iastlzXkm
-         WDZGP4MDClZnx8sSKlw0uV/BA+4DOCifW1iwclaQznODmZl/WDuYjWOPa846LCHhGScl
-         b+Ww==
-X-Gm-Message-State: APjAAAV8nOahFD/OTsc7FJrefg/s0ktTTIFsyojTFGSqUKnL0WquMcb3
-        WVysYJuDT+JAbPkljzhlNZ1cm3goYZXlSpNlBtU=
-X-Google-Smtp-Source: APXvYqyJ7Qynk73iqWM2hgnnJFulL4xXkqSM6vZGwj3rdmA7G5Nzy881/sofPuAMK4ifap8VokHiliC6nuUrii9fK2A=
-X-Received: by 2002:a17:902:968d:: with SMTP id n13mr44023890plp.261.1571251689914;
- Wed, 16 Oct 2019 11:48:09 -0700 (PDT)
+        Wed, 16 Oct 2019 14:47:24 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9GIlIZo082274;
+        Wed, 16 Oct 2019 13:47:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1571251638;
+        bh=9qtMg4Ujoj7uLz0uW9F6ZZv2YQ82OKsxSuuQQhFRj8Q=;
+        h=From:To:CC:Subject:Date;
+        b=JTpXEpkfRc5ldi3y2XVdpJXtkmSIE/ee9KRu897EG3hkM0ZyL3WE266yCdMqAIGsx
+         V1JOIeIdf+RFs9/6JyFhsrhwkUV0PAsumefl4wlyRG+LpGZJgtd0ye1MNZMgLC1yD2
+         y1YEObTbby/FvV1ow4yttoXW7g5HBSxvsbwQXZzo=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9GIlId6055319;
+        Wed, 16 Oct 2019 13:47:18 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 16
+ Oct 2019 13:47:18 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 16 Oct 2019 13:47:18 -0500
+Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9GIlIh8094854;
+        Wed, 16 Oct 2019 13:47:18 -0500
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Tony Lindgren <tony@atomide.com>, Tero Kristo <t-kristo@ti.com>
+CC:     Rob Herring <robh+dt@kernel.org>, <linux-omap@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Benoit Parrot <bparrot@ti.com>
+Subject: [Patch 0/3] ARM: dts: am43x-vpfe/ov2659.patch
+Date:   Wed, 16 Oct 2019 13:49:51 -0500
+Message-ID: <20191016184954.14048-1-bparrot@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Received: by 2002:a17:90a:350d:0:0:0:0 with HTTP; Wed, 16 Oct 2019 11:48:09
- -0700 (PDT)
-Reply-To: peacemaurice54@gmail.com
-From:   Peace maurice <annben010@gmail.com>
-Date:   Wed, 16 Oct 2019 18:48:09 +0000
-Message-ID: <CAApjmfReB1C6JWpcHG06ZK3-Afb0WSFw3V86ZLLUqoH7+kYr8g@mail.gmail.com>
-Subject: Kedves
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DO YOU SPEAK ENGLISH?
-Kedves, =C3=A9n vagyok a Peace Maurice, nagyszer=C5=B1 lenne megismerni t=
-=C3=A9ged,
-nagyon fontos =C3=A9s bizalmas =C3=BCgyem van, amelyet meg szeretn=C3=A9k b=
-esz=C3=A9lni
-veled, =C3=A9s v=C3=A1laszoln=C3=A9k m=C3=A9g t=C3=B6bb besz=C3=A9lget=C3=
-=A9s c=C3=A9lj=C3=A1b=C3=B3l.
-=C3=9Cdv=C3=B6zlettel,
-B=C3=A9ke.
+This patch series adds the missing camera endpoint (ov2659) as well as
+the required source clocks nodes for the sensor.
+
+On the am437x-sk-evm the camera sensor is sourced from clkout1 but that
+clock nodes/tree was removed as it was unsed at the time, we are
+re-adding the needed clock nodes here.
+
+Benoit Parrot (2):
+  ARM: dts: am437x-sk-evm: Add VPFE and OV2659 entries
+  ARM: dts: am43x-epos-evm: Add VPFE and OV2659 entries
+
+Tero Kristo (1):
+  ARM: dts: am43xx: add support for clkout1 clock
+
+ arch/arm/boot/dts/am437x-sk-evm.dts  | 27 +++++++++++++-
+ arch/arm/boot/dts/am43x-epos-evm.dts | 23 +++++++++++-
+ arch/arm/boot/dts/am43xx-clocks.dtsi | 54 ++++++++++++++++++++++++++++
+ 3 files changed, 102 insertions(+), 2 deletions(-)
+
+-- 
+2.17.1
+
