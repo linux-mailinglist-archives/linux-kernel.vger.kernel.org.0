@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AF60DA0AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:25:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EE3FDA150
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:27:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405419AbfJPWOK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:14:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46650 "EHLO mail.kernel.org"
+        id S2439389AbfJPWVy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:21:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42368 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395298AbfJPVzl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:55:41 -0400
+        id S2394868AbfJPVx2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:53:28 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C79B021925;
-        Wed, 16 Oct 2019 21:55:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 161C3218DE;
+        Wed, 16 Oct 2019 21:53:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262940;
-        bh=Q1iSEHmxWvAe4+jgyVigR4xHfYjuLUmCWmswNSncyW0=;
+        s=default; t=1571262808;
+        bh=OLGdegQHa3DJYJi1u/8icXbWKnf3l+8tAQ9VivWuHj4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m6sBFB3Kp3nQSxfjlZbo7ZwyVG+IF1+Pg7OyUjnLkPXyoHzrd1IWiZaTDSz0SZ+KN
-         QTkBbVfvDFvb67I3xYq1WLkBwvmiDMsLHl/fHtj4n97ISwNG+0UndcngyKs/jZFMB0
-         yIdhrjulDbOLw9w+ckmbXgKGbrbOTuFZlVlB2O/s=
+        b=ERasPI9cZBMXK9W+VRKSPZJ1S5tZdKDRIA0x7n/hXUWrxz8xAxAWFqKqLSMh0EFJQ
+         r2IfT0Yv8SOLsI5E8x0C2jPguQortJnixDzHieX3aWfjtUZhQY9hVi7JJo4YrTmjZ2
+         S8W+TJbhqJ5U3PqCEwpHBXdZ7DtltZfY8A3WWl80=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rick Tseng <rtseng@nvidia.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.14 11/65] usb: xhci: wait for CNR controller not ready bit in xhci resume
+        stable@vger.kernel.org, Beni Mahler <beni.mahler@gmx.net>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.4 50/79] USB: serial: ftdi_sio: add device IDs for Sienna and Echelon PL-20
 Date:   Wed, 16 Oct 2019 14:50:25 -0700
-Message-Id: <20191016214804.494024704@linuxfoundation.org>
+Message-Id: <20191016214814.086738098@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
-References: <20191016214756.457746573@linuxfoundation.org>
+In-Reply-To: <20191016214729.758892904@linuxfoundation.org>
+References: <20191016214729.758892904@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,45 +43,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rick Tseng <rtseng@nvidia.com>
+From: Beni Mahler <beni.mahler@gmx.net>
 
-commit a70bcbc322837eda1ab5994d12db941dc9733a7d upstream.
+commit 357f16d9e0194cdbc36531ff88b453481560b76a upstream.
 
-NVIDIA 3.1 xHCI card would lose power when moving power state into D3Cold.
-Thus we need to wait for CNR bit to clear in xhci resume, just as in
-xhci init.
+Both devices added here have a FTDI chip inside. The device from Echelon
+is called 'Network Interface' it is actually a LON network gateway.
 
-[Minor changes to comment and commit message -Mathias]
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Rick Tseng <rtseng@nvidia.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/1570190373-30684-6-git-send-email-mathias.nyman@linux.intel.com
+ ID 0403:8348 Future Technology Devices International, Ltd
+ https://www.eltako.com/fileadmin/downloads/de/datenblatt/Datenblatt_PL-SW-PROF.pdf
+
+ ID 0920:7500 Network Interface
+ https://www.echelon.com/products/u20-usb-network-interface
+
+Signed-off-by: Beni Mahler <beni.mahler@gmx.net>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/usb/serial/ftdi_sio.c     |    3 +++
+ drivers/usb/serial/ftdi_sio_ids.h |    9 +++++++++
+ 2 files changed, 12 insertions(+)
 
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -1044,6 +1044,18 @@ int xhci_resume(struct xhci_hcd *xhci, b
- 		hibernated = true;
+--- a/drivers/usb/serial/ftdi_sio.c
++++ b/drivers/usb/serial/ftdi_sio.c
+@@ -1025,6 +1025,9 @@ static const struct usb_device_id id_tab
+ 	/* EZPrototypes devices */
+ 	{ USB_DEVICE(EZPROTOTYPES_VID, HJELMSLUND_USB485_ISO_PID) },
+ 	{ USB_DEVICE_INTERFACE_NUMBER(UNJO_VID, UNJO_ISODEBUG_V1_PID, 1) },
++	/* Sienna devices */
++	{ USB_DEVICE(FTDI_VID, FTDI_SIENNA_PID) },
++	{ USB_DEVICE(ECHELON_VID, ECHELON_U20_PID) },
+ 	{ }					/* Terminating entry */
+ };
  
- 	if (!hibernated) {
-+		/*
-+		 * Some controllers might lose power during suspend, so wait
-+		 * for controller not ready bit to clear, just as in xHC init.
-+		 */
-+		retval = xhci_handshake(&xhci->op_regs->status,
-+					STS_CNR, 0, 10 * 1000 * 1000);
-+		if (retval) {
-+			xhci_warn(xhci, "Controller not ready at resume %d\n",
-+				  retval);
-+			spin_unlock_irq(&xhci->lock);
-+			return retval;
-+		}
- 		/* step 1: restore register */
- 		xhci_restore_registers(xhci);
- 		/* step 2: initialize command ring buffer */
+--- a/drivers/usb/serial/ftdi_sio_ids.h
++++ b/drivers/usb/serial/ftdi_sio_ids.h
+@@ -38,6 +38,9 @@
+ 
+ #define FTDI_LUMEL_PD12_PID	0x6002
+ 
++/* Sienna Serial Interface by Secyourit GmbH */
++#define FTDI_SIENNA_PID		0x8348
++
+ /* Cyber Cortex AV by Fabulous Silicon (http://fabuloussilicon.com) */
+ #define CYBER_CORTEX_AV_PID	0x8698
+ 
+@@ -688,6 +691,12 @@
+ #define BANDB_ZZ_PROG1_USB_PID	0xBA02
+ 
+ /*
++ * Echelon USB Serial Interface
++ */
++#define ECHELON_VID		0x0920
++#define ECHELON_U20_PID		0x7500
++
++/*
+  * Intrepid Control Systems (http://www.intrepidcs.com/) ValueCAN and NeoVI
+  */
+ #define INTREPID_VID		0x093C
 
 
