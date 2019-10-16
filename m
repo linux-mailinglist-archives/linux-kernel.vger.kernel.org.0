@@ -2,98 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1EDBD86E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 05:44:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F035D86F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 05:47:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387472AbfJPDow (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 23:44:52 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:55620 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732850AbfJPDou (ORCPT
+        id S2389707AbfJPDrF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 23:47:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33190 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726491AbfJPDrE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 23:44:50 -0400
-Received: from [213.220.153.21] (helo=localhost.localdomain)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1iKaEx-0000Wg-Om; Wed, 16 Oct 2019 03:44:47 +0000
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     christian.brauner@ubuntu.com
-Cc:     ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
-        kafai@fb.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        songliubraving@fb.com, yhs@fb.com, Aleksa Sarai <cyphar@cyphar.com>
-Subject: [PATCH v3 3/3] bpf: use copy_struct_from_user() in bpf() syscall
-Date:   Wed, 16 Oct 2019 05:44:32 +0200
-Message-Id: <20191016034432.4418-4-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016034432.4418-1-christian.brauner@ubuntu.com>
-References: <20191016004138.24845-1-christian.brauner@ubuntu.com>
- <20191016034432.4418-1-christian.brauner@ubuntu.com>
+        Tue, 15 Oct 2019 23:47:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=lEWx+UcLpjc4KWKcEW1+PWSmi50tgZmjOZfoB8gc4Z0=; b=bvUvLkCZ/lM3nfg8dRn4Rby90
+        6tm5t6HgvANdT8lfI4/c1AUt0cV9N9yzP+bTBJcDpfIA0f5eD8ikUUFb2L3ZujeofE9rFB+DcTrQ3
+        vfqXZPUGrMiebMroUw17r/Fcri6IrpiQr0SoD6YyGJ4Cs+GP8oC1AiJd6wrnJgOnvQcm63kRo76TR
+        AWR9Mrvib9X42zArYzWXiq9V8cm7BuqIynEuufKHGk1v2rmRF+D8xJDY7nSP9YNGaW1GCVIbZL/cF
+        W8zE3XxzNdTak5wGCc6vy8PablKcKpdWahoWyxuF/pdYNw42bju7QTEXf4cLjBNR7UHVkyAgnHaD2
+        wtWal3F6Q==;
+Received: from [2601:1c0:6280:3f0::9ef4]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iKaHA-0004MI-Al; Wed, 16 Oct 2019 03:47:04 +0000
+Subject: Re: [PATCH] usb: typec: Add sysfs node to show cc orientation
+To:     pumahsu <pumahsu@google.com>, heikki.krogerus@linux.intel.com,
+        gregkh@linuxfoundation.org
+Cc:     badhri@google.com, kyletso@google.com, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191016034314.231363-1-pumahsu@google.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <577ac2f6-f073-1bd0-0adb-33fa8243773c@infradead.org>
+Date:   Tue, 15 Oct 2019 20:47:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191016034314.231363-1-pumahsu@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In v5.4-rc2 we added a new helper (cf. [1]) copy_struct_from_user().
-This helper is intended for all codepaths that copy structs from
-userspace that are versioned by size. The bpf() syscall does exactly
-what copy_struct_from_user() is doing.
-Note that copy_struct_from_user() is calling min() already. So
-technically, the min_t() call could go. But the size is used further
-below so leave it.
+On 10/15/19 8:43 PM, pumahsu wrote:
+> Export the Type-C cc orientation so that user space can
+> get this information.
+> 
+> Signed-off-by: pumahsu <pumahsu@google.com>
 
-[1]: f5a1a536fa14 ("lib: introduce copy_struct_from_user() helper")
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: bpf@vger.kernel.org
-Acked-by: Aleksa Sarai <cyphar@cyphar.com>
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
-/* v1 */
-Link: https://lore.kernel.org/r/20191009160907.10981-4-christian.brauner@ubuntu.com
+Hi,
+what the * is cc orientation?
 
-/* v2 */
-Link: https://lore.kernel.org/r/20191016004138.24845-4-christian.brauner@ubuntu.com
-- Alexei Starovoitov <ast@kernel.org>:
-  - remove unneeded initialization
+> ---
+>  Documentation/ABI/testing/sysfs-class-typec |  7 +++++++
+>  drivers/usb/typec/class.c                   | 11 +++++++++++
+>  2 files changed, 18 insertions(+)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-class-typec b/Documentation/ABI/testing/sysfs-class-typec
+> index d7647b258c3c..419f952c991d 100644
+> --- a/Documentation/ABI/testing/sysfs-class-typec
+> +++ b/Documentation/ABI/testing/sysfs-class-typec
+> @@ -108,6 +108,13 @@ Contact:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
+>  Description:
+>  		Revision number of the supported USB Type-C specification.
+>  
+> +What:		/sys/class/typec/<port>/cc_orientation
+> +Date:		September 2019
+> +Contact:	Puma Hsu <pumahsu@google.com>
+> +Description:
+> +		Indicates which cc orientation is active now, or 0 when
+> +		nothing is connected.
+> +
+>  
+>  USB Type-C partner devices (eg. /sys/class/typec/port0-partner/)
+>  
+> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
+> index 7d8805d9bf37..00edae63da8e 100644
+> --- a/drivers/usb/typec/class.c
+> +++ b/drivers/usb/typec/class.c
+> @@ -1238,6 +1238,16 @@ static ssize_t usb_power_delivery_revision_show(struct device *dev,
+>  }
+>  static DEVICE_ATTR_RO(usb_power_delivery_revision);
+>  
+> +static ssize_t cc_orientation_show(struct device *dev,
+> +						struct device_attribute *attr,
+> +						char *buf)
+> +{
+> +	struct typec_port *p = to_typec_port(dev);
+> +
+> +	return sprintf(buf, "%d\n", typec_get_orientation(p));
+> +}
+> +static DEVICE_ATTR_RO(cc_orientation);
+> +
+>  static struct attribute *typec_attrs[] = {
+>  	&dev_attr_data_role.attr,
+>  	&dev_attr_power_operation_mode.attr,
+> @@ -1248,6 +1258,7 @@ static struct attribute *typec_attrs[] = {
+>  	&dev_attr_usb_typec_revision.attr,
+>  	&dev_attr_vconn_source.attr,
+>  	&dev_attr_port_type.attr,
+> +	&dev_attr_cc_orientation.attr,
+>  	NULL,
+>  };
+>  ATTRIBUTE_GROUPS(typec);
+> 
 
-/* v3 */
-unchanged
----
- kernel/bpf/syscall.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 151447f314ca..0920593eacd0 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -2814,20 +2814,17 @@ static int bpf_task_fd_query(const union bpf_attr *attr,
- 
- SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr __user *, uattr, unsigned int, size)
- {
--	union bpf_attr attr = {};
-+	union bpf_attr attr;
- 	int err;
- 
- 	if (sysctl_unprivileged_bpf_disabled && !capable(CAP_SYS_ADMIN))
- 		return -EPERM;
- 
--	err = bpf_check_uarg_tail_zero(uattr, sizeof(attr), size);
--	if (err)
--		return err;
- 	size = min_t(u32, size, sizeof(attr));
--
- 	/* copy attributes from user space, may be less than sizeof(bpf_attr) */
--	if (copy_from_user(&attr, uattr, size) != 0)
--		return -EFAULT;
-+	err = copy_struct_from_user(&attr, sizeof(attr), uattr, size);
-+	if (err)
-+		return err;
- 
- 	err = security_bpf(cmd, &attr, size);
- 	if (err < 0)
 -- 
-2.23.0
-
+~Randy
