@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A246D9DF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43677D9E02
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437816AbfJPVzZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:55:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45932 "EHLO mail.kernel.org"
+        id S2395362AbfJPVzq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:55:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437772AbfJPVzU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:55:20 -0400
+        id S2395349AbfJPVzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:55:45 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0010121D7D;
-        Wed, 16 Oct 2019 21:55:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6AF7E218DE;
+        Wed, 16 Oct 2019 21:55:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262920;
-        bh=91dLTxL1+yZrbkADc3p44ZP+AXwaxgJkAIS8hUcNT8o=;
+        s=default; t=1571262944;
+        bh=uNohVdhBifiuMEKTQUmSHwCBhepRBWL4dR1TiZyFf0I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dNvDpF3/I82xcVe/we1KLBCXLLUgwf8FCMDpAL2jUtPvwPSwrtYnh0iltBrrh31lZ
-         KztgoaM8xrvk6laTx9PxSoHUNbj3YgVZ6lGlYWgZEGWDMGFIW25gXUauH/Dzle6fl1
-         GoS987ZfCcf7YL65wa0c9gK9MvKcDBKONUTHr17E=
+        b=tQNEo31pu9VTAm07PwT0VPKDbii2pPcgR9HhI1zw1vDGkDd3HziB/iJdyeQJmCtxz
+         vg1JNX5NdFESAcZr0cn44tBzPn/C0r0qsuXT9258SP/YIH2pmsBC7IuQKtgItlSqpS
+         I/XKCsoeWeBnGn3bnZhHpvzMg3GxW9trCjwTGRWs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.9 53/92] USB: iowarrior: fix use-after-free after driver unbind
-Date:   Wed, 16 Oct 2019 14:50:26 -0700
-Message-Id: <20191016214837.632917418@linuxfoundation.org>
+Subject: [PATCH 4.14 15/65] USB: adutux: fix NULL-derefs on disconnect
+Date:   Wed, 16 Oct 2019 14:50:29 -0700
+Message-Id: <20191016214807.808311626@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
-References: <20191016214759.600329427@linuxfoundation.org>
+In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
+References: <20191016214756.457746573@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,61 +44,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Johan Hovold <johan@kernel.org>
 
-commit b5f8d46867ca233d773408ffbe691a8062ed718f upstream.
+commit b2fa7baee744fde746c17bc1860b9c6f5c2eebb7 upstream.
 
-Make sure to stop also the asynchronous write URBs on disconnect() to
-avoid use-after-free in the completion handler after driver unbind.
+The driver was using its struct usb_device pointer as an inverted
+disconnected flag, but was setting it to NULL before making sure all
+completion handlers had run. This could lead to a NULL-pointer
+dereference in a number of dev_dbg statements in the completion handlers
+which relies on said pointer.
 
-Fixes: 946b960d13c1 ("USB: add driver for iowarrior devices.")
-Cc: stable <stable@vger.kernel.org>	# 2.6.21: 51a2f077c44e ("USB: introduce usb_anchor")
+The pointer was also dereferenced unconditionally in a dev_dbg statement
+release() something which would lead to a NULL-deref whenever a device
+was disconnected before the final character-device close if debugging
+was enabled.
+
+Fix this by unconditionally stopping all I/O and preventing
+resubmissions by poisoning the interrupt URBs at disconnect and using a
+dedicated disconnected flag.
+
+This also makes sure that all I/O has completed by the time the
+disconnect callback returns.
+
+Fixes: 1ef37c6047fe ("USB: adutux: remove custom debug macro and module parameter")
+Fixes: 66d4bc30d128 ("USB: adutux: remove custom debug macro")
+Cc: stable <stable@vger.kernel.org>     # 3.12
 Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191009104846.5925-4-johan@kernel.org
+Link: https://lore.kernel.org/r/20190925092913.8608-2-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/iowarrior.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/usb/misc/adutux.c |   16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
---- a/drivers/usb/misc/iowarrior.c
-+++ b/drivers/usb/misc/iowarrior.c
-@@ -89,6 +89,7 @@ struct iowarrior {
- 	char chip_serial[9];		/* the serial number string of the chip connected */
- 	int report_size;		/* number of bytes in a report */
- 	u16 product_id;
-+	struct usb_anchor submitted;
- };
+--- a/drivers/usb/misc/adutux.c
++++ b/drivers/usb/misc/adutux.c
+@@ -79,6 +79,7 @@ struct adu_device {
+ 	char			serial_number[8];
  
- /*--------------*/
-@@ -435,11 +436,13 @@ static ssize_t iowarrior_write(struct fi
- 			retval = -EFAULT;
- 			goto error;
- 		}
-+		usb_anchor_urb(int_out_urb, &dev->submitted);
- 		retval = usb_submit_urb(int_out_urb, GFP_KERNEL);
- 		if (retval) {
- 			dev_dbg(&dev->interface->dev,
- 				"submit error %d for urb nr.%d\n",
- 				retval, atomic_read(&dev->write_busy));
-+			usb_unanchor_urb(int_out_urb);
- 			goto error;
- 		}
- 		/* submit was ok */
-@@ -782,6 +785,8 @@ static int iowarrior_probe(struct usb_in
- 	iface_desc = interface->cur_altsetting;
- 	dev->product_id = le16_to_cpu(udev->descriptor.idProduct);
+ 	int			open_count; /* number of times this port has been opened */
++	unsigned long		disconnected:1;
  
-+	init_usb_anchor(&dev->submitted);
+ 	char		*read_buffer_primary;
+ 	int			read_buffer_length;
+@@ -120,7 +121,7 @@ static void adu_abort_transfers(struct a
+ {
+ 	unsigned long flags;
+ 
+-	if (dev->udev == NULL)
++	if (dev->disconnected)
+ 		return;
+ 
+ 	/* shutdown transfer */
+@@ -243,7 +244,7 @@ static int adu_open(struct inode *inode,
+ 	}
+ 
+ 	dev = usb_get_intfdata(interface);
+-	if (!dev || !dev->udev) {
++	if (!dev) {
+ 		retval = -ENODEV;
+ 		goto exit_no_device;
+ 	}
+@@ -326,7 +327,7 @@ static int adu_release(struct inode *ino
+ 	}
+ 
+ 	adu_release_internal(dev);
+-	if (dev->udev == NULL) {
++	if (dev->disconnected) {
+ 		/* the device was unplugged before the file was released */
+ 		if (!dev->open_count)	/* ... and we're the last user */
+ 			adu_delete(dev);
+@@ -355,7 +356,7 @@ static ssize_t adu_read(struct file *fil
+ 		return -ERESTARTSYS;
+ 
+ 	/* verify that the device wasn't unplugged */
+-	if (dev->udev == NULL) {
++	if (dev->disconnected) {
+ 		retval = -ENODEV;
+ 		pr_err("No device or device unplugged %d\n", retval);
+ 		goto exit;
+@@ -520,7 +521,7 @@ static ssize_t adu_write(struct file *fi
+ 		goto exit_nolock;
+ 
+ 	/* verify that the device wasn't unplugged */
+-	if (dev->udev == NULL) {
++	if (dev->disconnected) {
+ 		retval = -ENODEV;
+ 		pr_err("No device or device unplugged %d\n", retval);
+ 		goto exit;
+@@ -766,11 +767,14 @@ static void adu_disconnect(struct usb_in
+ 
+ 	usb_deregister_dev(interface, &adu_class);
+ 
++	usb_poison_urb(dev->interrupt_in_urb);
++	usb_poison_urb(dev->interrupt_out_urb);
 +
- 	/* set up the endpoint information */
- 	for (i = 0; i < iface_desc->desc.bNumEndpoints; ++i) {
- 		endpoint = &iface_desc->endpoint[i].desc;
-@@ -905,6 +910,7 @@ static void iowarrior_disconnect(struct
- 		   Deleting the device is postponed until close() was called.
- 		 */
- 		usb_kill_urb(dev->int_in_urb);
-+		usb_kill_anchored_urbs(&dev->submitted);
- 		wake_up_interruptible(&dev->read_wait);
- 		wake_up_interruptible(&dev->write_wait);
- 		mutex_unlock(&dev->mutex);
+ 	mutex_lock(&adutux_mutex);
+ 	usb_set_intfdata(interface, NULL);
+ 
+ 	mutex_lock(&dev->mtx);	/* not interruptible */
+-	dev->udev = NULL;	/* poison */
++	dev->disconnected = 1;
+ 	mutex_unlock(&dev->mtx);
+ 
+ 	/* if the device is not opened, then we clean up right now */
 
 
