@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00707D9DEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6133D9DCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395144AbfJPVzA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:55:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45036 "EHLO mail.kernel.org"
+        id S2437565AbfJPVxk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:53:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395087AbfJPVyx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:54:53 -0400
+        id S2394866AbfJPVx2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:53:28 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D8EE20872;
-        Wed, 16 Oct 2019 21:54:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31123218DE;
+        Wed, 16 Oct 2019 21:53:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262892;
-        bh=vsdgNqKiAWkFY+P2z+lkOSG8ENvBsRipuXmCpmjROsA=;
+        s=default; t=1571262807;
+        bh=WJxsk3iTHP/EXOLmCy0Peiyb2dGusCZDXFkH7uI2Tk4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u0ckSjnV9w/BsfS+dMgxw6lH+WO48Mm3Q2N13Qme0QoxLq1gpl0wmZHdz/UUvfGgy
-         dK8C1FGIZkiHlWrkXMj7ayAleRVCxzKfo3AXVGJGBYYYIQKTMTpZ2Cq37u0wq0eomB
-         jLIYJ2Cknjet+Z/KpCsbo5mBjutDnrSEVNqOm1Gw=
+        b=XT4H6hbTX+rWzul3t/nLiU3/MNnKDBWKmCkjZsh/FAgbJYQh4w1vvCMu0NEvQGVOL
+         fXk29lI7JpHxyCZ+FKONyFBn1Ng7xZ4aH/hSFibqzpySK8Dk2PUDNKTvbfQwf71apH
+         zQbOwerTrI8HbBbCgw2aKBhcWwHmNmSYRTS4g1qo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.9 49/92] USB: adutux: fix NULL-derefs on disconnect
-Date:   Wed, 16 Oct 2019 14:50:22 -0700
-Message-Id: <20191016214835.619726516@linuxfoundation.org>
+Subject: [PATCH 4.4 49/79] USB: serial: keyspan: fix NULL-derefs on open() and write()
+Date:   Wed, 16 Oct 2019 14:50:24 -0700
+Message-Id: <20191016214812.286675565@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
-References: <20191016214759.600329427@linuxfoundation.org>
+In-Reply-To: <20191016214729.758892904@linuxfoundation.org>
+References: <20191016214729.758892904@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,107 +44,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Johan Hovold <johan@kernel.org>
 
-commit b2fa7baee744fde746c17bc1860b9c6f5c2eebb7 upstream.
+commit 7d7e21fafdbc7fcf0854b877bd0975b487ed2717 upstream.
 
-The driver was using its struct usb_device pointer as an inverted
-disconnected flag, but was setting it to NULL before making sure all
-completion handlers had run. This could lead to a NULL-pointer
-dereference in a number of dev_dbg statements in the completion handlers
-which relies on said pointer.
+Fix NULL-pointer dereferences on open() and write() which can be
+triggered by a malicious USB device.
 
-The pointer was also dereferenced unconditionally in a dev_dbg statement
-release() something which would lead to a NULL-deref whenever a device
-was disconnected before the final character-device close if debugging
-was enabled.
+The current URB allocation helper would fail to initialise the newly
+allocated URB if the device has unexpected endpoint descriptors,
+something which could lead NULL-pointer dereferences in a number of
+open() and write() paths when accessing the URB. For example:
 
-Fix this by unconditionally stopping all I/O and preventing
-resubmissions by poisoning the interrupt URBs at disconnect and using a
-dedicated disconnected flag.
+	BUG: kernel NULL pointer dereference, address: 0000000000000000
+	...
+	RIP: 0010:usb_clear_halt+0x11/0xc0
+	...
+	Call Trace:
+	 ? tty_port_open+0x4d/0xd0
+	 keyspan_open+0x70/0x160 [keyspan]
+	 serial_port_activate+0x5b/0x80 [usbserial]
+	 tty_port_open+0x7b/0xd0
+	 ? check_tty_count+0x43/0xa0
+	 tty_open+0xf1/0x490
 
-This also makes sure that all I/O has completed by the time the
-disconnect callback returns.
+	BUG: kernel NULL pointer dereference, address: 0000000000000000
+	...
+	RIP: 0010:keyspan_write+0x14e/0x1f3 [keyspan]
+	...
+	Call Trace:
+	 serial_write+0x43/0xa0 [usbserial]
+	 n_tty_write+0x1af/0x4f0
+	 ? do_wait_intr_irq+0x80/0x80
+	 ? process_echoes+0x60/0x60
+	 tty_write+0x13f/0x2f0
 
-Fixes: 1ef37c6047fe ("USB: adutux: remove custom debug macro and module parameter")
-Fixes: 66d4bc30d128 ("USB: adutux: remove custom debug macro")
-Cc: stable <stable@vger.kernel.org>     # 3.12
+	BUG: kernel NULL pointer dereference, address: 0000000000000000
+	...
+	RIP: 0010:keyspan_usa26_send_setup+0x298/0x305 [keyspan]
+	...
+	Call Trace:
+	 keyspan_open+0x10f/0x160 [keyspan]
+	 serial_port_activate+0x5b/0x80 [usbserial]
+	 tty_port_open+0x7b/0xd0
+	 ? check_tty_count+0x43/0xa0
+	 tty_open+0xf1/0x490
+
+Fixes: fdcba53e2d58 ("fix for bugzilla #7544 (keyspan USB-to-serial converter)")
+Cc: stable <stable@vger.kernel.org>	# 2.6.21
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20190925092913.8608-2-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/adutux.c |   16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ drivers/usb/serial/keyspan.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/misc/adutux.c
-+++ b/drivers/usb/misc/adutux.c
-@@ -80,6 +80,7 @@ struct adu_device {
- 	char			serial_number[8];
+--- a/drivers/usb/serial/keyspan.c
++++ b/drivers/usb/serial/keyspan.c
+@@ -1249,8 +1249,8 @@ static struct urb *keyspan_setup_urb(str
  
- 	int			open_count; /* number of times this port has been opened */
-+	unsigned long		disconnected:1;
- 
- 	char		*read_buffer_primary;
- 	int			read_buffer_length;
-@@ -121,7 +122,7 @@ static void adu_abort_transfers(struct a
- {
- 	unsigned long flags;
- 
--	if (dev->udev == NULL)
-+	if (dev->disconnected)
- 		return;
- 
- 	/* shutdown transfer */
-@@ -244,7 +245,7 @@ static int adu_open(struct inode *inode,
+ 	ep_desc = find_ep(serial, endpoint);
+ 	if (!ep_desc) {
+-		/* leak the urb, something's wrong and the callers don't care */
+-		return urb;
++		usb_free_urb(urb);
++		return NULL;
  	}
- 
- 	dev = usb_get_intfdata(interface);
--	if (!dev || !dev->udev) {
-+	if (!dev) {
- 		retval = -ENODEV;
- 		goto exit_no_device;
- 	}
-@@ -327,7 +328,7 @@ static int adu_release(struct inode *ino
- 	}
- 
- 	adu_release_internal(dev);
--	if (dev->udev == NULL) {
-+	if (dev->disconnected) {
- 		/* the device was unplugged before the file was released */
- 		if (!dev->open_count)	/* ... and we're the last user */
- 			adu_delete(dev);
-@@ -356,7 +357,7 @@ static ssize_t adu_read(struct file *fil
- 		return -ERESTARTSYS;
- 
- 	/* verify that the device wasn't unplugged */
--	if (dev->udev == NULL) {
-+	if (dev->disconnected) {
- 		retval = -ENODEV;
- 		pr_err("No device or device unplugged %d\n", retval);
- 		goto exit;
-@@ -525,7 +526,7 @@ static ssize_t adu_write(struct file *fi
- 		goto exit_nolock;
- 
- 	/* verify that the device wasn't unplugged */
--	if (dev->udev == NULL) {
-+	if (dev->disconnected) {
- 		retval = -ENODEV;
- 		pr_err("No device or device unplugged %d\n", retval);
- 		goto exit;
-@@ -794,11 +795,14 @@ static void adu_disconnect(struct usb_in
- 
- 	usb_deregister_dev(interface, &adu_class);
- 
-+	usb_poison_urb(dev->interrupt_in_urb);
-+	usb_poison_urb(dev->interrupt_out_urb);
-+
- 	mutex_lock(&adutux_mutex);
- 	usb_set_intfdata(interface, NULL);
- 
- 	mutex_lock(&dev->mtx);	/* not interruptible */
--	dev->udev = NULL;	/* poison */
-+	dev->disconnected = 1;
- 	mutex_unlock(&dev->mtx);
- 
- 	/* if the device is not opened, then we clean up right now */
+ 	if (usb_endpoint_xfer_int(ep_desc)) {
+ 		ep_type_name = "INT";
 
 
