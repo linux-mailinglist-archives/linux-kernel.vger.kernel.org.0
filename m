@@ -2,325 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE7FBD9629
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:00:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD9E3D9645
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:01:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406021AbfJPQAr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 12:00:47 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:48488 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405996AbfJPQAq (ORCPT
+        id S2394170AbfJPQBl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 12:01:41 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:37061 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406061AbfJPQBc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 12:00:46 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9GG0WGs045904;
-        Wed, 16 Oct 2019 11:00:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1571241632;
-        bh=EJK//JMShkFomcxIL7CoEODYJVjSFbKnvbLo+tDSL6s=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=OSTCyjFAVfALAh0iC6Ya7BpiiXn9qsZe0z2kxu8EEeamZxX/aYjyahVYPcRLa1JKb
-         rscB76Ixwh+gN5X+CSM3DnUcNEI5O/Leh7S3nVHP7Y8uojVazbusrCOye/qEHoc00F
-         6P1iZDbY0JUh6sfqnPV9qrT4jlwKcBMIHyKdvEws=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9GG0Wcp083043;
-        Wed, 16 Oct 2019 11:00:32 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 16
- Oct 2019 11:00:25 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 16 Oct 2019 11:00:32 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9GG0W4N061798;
-        Wed, 16 Oct 2019 11:00:32 -0500
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Dan Murphy <dmurphy@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Wed, 16 Oct 2019 12:01:32 -0400
+Received: by mail-pl1-f194.google.com with SMTP id u20so11487363plq.4;
+        Wed, 16 Oct 2019 09:01:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VS8Uu9XK5BYTkXggZlLRkkUxjyNh72QfWUUWr6EbcIw=;
+        b=FCCfI0klLQS4Z10j8a1gIL9eEdoCIDOTwlIxRe+brd8tt5hCVC3BQmQYA/ysjE5VnZ
+         /tYu+pzk/Z86PPN+4tWnwQYjJOwMTBWNSrYqW4vuEBvfiTePimU/Exd1azq+Ukl8fTjW
+         Omr1gBKfg/DlYYDQeyAei7PW1B9OxXQe4foYjVRel4TxiDxB2NIeJFCl4gWlFT+puw/q
+         o9kz4hWfuPQssQZCIGmyeDCV5CtKYXWfIv9nrA4kiRtpQDovSpT/eP198g0hM2qcu9Kc
+         o0FKMahbxxatLHomN/1uDGTB5DEo+zDebecv7Twe6gFOaCbPVBTCG29RDh486x6egQna
+         gMAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VS8Uu9XK5BYTkXggZlLRkkUxjyNh72QfWUUWr6EbcIw=;
+        b=KmXqi25tBxd+l619QPbrdG9vHoTf9/nbxA1cMQ2pLvr6pa+h4UVoJDHvyGsr4iK2Tw
+         d+AmuTnog7QzGEcfppXNNKO5VxL8l6manvabdYPlbqU0ks8xKH8BjnW7F51U6/yE3Mbs
+         bhLfQMrj/Iq114IivNJS9LYtZTcalgZFSU7sISHgTnK6Hbt/+I+1IpSr3oTyJcoeDdT3
+         9r7bPWR1gQgW4UD0NExo1E1iVlmq+n8l7iFsyytd7hOeZSspD8NJouwrcp6PjStx3rHJ
+         ZzrGOjh6aebOVgoDWyqv/wrRlHrrOnrMWR1dr1zjBUGiShiSNu6HLDqcYqGbP2Om1dHE
+         80rg==
+X-Gm-Message-State: APjAAAXuHD4xmEg8Vud/O1657aFSHLtEjr8iy6oJNF0JJyIHIoLy6pe5
+        A+37rc/bZOxcNTmvu32ZhoSrVDha
+X-Google-Smtp-Source: APXvYqzMMiW8EFwqe9wnTpSPSy4ylIuRniI/O8VbWuqZbnC/HrQraMYZeYYjbDNiqE8h/l9g5dgjxw==
+X-Received: by 2002:a17:902:9687:: with SMTP id n7mr42268039plp.172.1571241690785;
+        Wed, 16 Oct 2019 09:01:30 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id i37sm3092913pje.23.2019.10.16.09.01.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2019 09:01:28 -0700 (PDT)
+Date:   Wed, 16 Oct 2019 09:01:26 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>
-Subject: [PATCH v13 18/18] dt: bindings: Update lp55xx binding to recommended LED naming
-Date:   Wed, 16 Oct 2019 10:59:54 -0500
-Message-ID: <20191016155954.29044-19-dmurphy@ti.com>
-X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
-In-Reply-To: <20191016155954.29044-1-dmurphy@ti.com>
-References: <20191016155954.29044-1-dmurphy@ti.com>
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v5 11/14] software node: move small properties inline
+ when copying
+Message-ID: <20191016160126.GB35946@dtor-ws>
+References: <20191011230721.206646-1-dmitry.torokhov@gmail.com>
+ <20191011230721.206646-12-dmitry.torokhov@gmail.com>
+ <20191015122028.GI32742@smile.fi.intel.com>
+ <20191015182553.GG105649@dtor-ws>
+ <20191016074857.GN32742@smile.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191016074857.GN32742@smile.fi.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the LP55xx DT binding examples to the recommended node
-naming convention.  There are no changes to the DT properties.
+On Wed, Oct 16, 2019 at 10:48:57AM +0300, Andy Shevchenko wrote:
+> On Tue, Oct 15, 2019 at 11:25:53AM -0700, Dmitry Torokhov wrote:
+> > On Tue, Oct 15, 2019 at 03:20:28PM +0300, Andy Shevchenko wrote:
+> > > On Fri, Oct 11, 2019 at 04:07:18PM -0700, Dmitry Torokhov wrote:
+> > > > When copying/duplicating set of properties, move smaller properties that
+> > > > were stored separately directly inside property entry structures. We can
+> > > > move:
+> > > > 
+> > > > - up to 8 bytes from U8 arrays
+> > > > - up to 4 words
+> > > > - up to 2 double words
+> > > > - one U64 value
+> > > > - one or 2 strings.
+> > > 
+> > > Can you show where you extract such values?
+> > 
+> > the "value" union's largest member is u64, which is 8 bytes. Strings are
+> > pointers, so on 32-bit arches you can stuff 2 pointers into 8 bytes,
+> > while on 64-bits you have space for only one.
+> > 
+> > > 
+> > > > +	if (!dst->is_inline && dst->length <= sizeof(dst->value)) {
+> > > > +		/* We have an opportunity to move the data inline */
+> > > > +		const void *tmp = dst->pointer;
+> > > > +
+> > > 
+> > > > +		memcpy(&dst->value, tmp, dst->length);
+> > > 
+> > > ...because this is strange trick.
+> > 
+> > Not sure what is so strange about it. You just take data that is stored
+> > separately and move it into the structure, provided that it is not too
+> > big (i.e. it does not exceed sizeof(value union) size).
+> 
+> You store a value as union, but going to read as a member of union?
+> I'm pretty sure it breaks standard rules.
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
-CC: Rob Herring <robh+dt@kernel.org>
-CC: Tony Lindgren <tony@atomide.com>
-CC: "Benoît Cousson" <bcousson@baylibre.com>
-CC: Linus Walleij <linus.walleij@linaro.org>
-CC: Shawn Guo <shawnguo@kernel.org>
-CC: Sascha Hauer <s.hauer@pengutronix.de>
-CC: Pengutronix Kernel Team <kernel@pengutronix.de>
-CC: Fabio Estevam <festevam@gmail.com>
-CC: NXP Linux Team <linux-imx@nxp.com>
----
- .../devicetree/bindings/leds/leds-lp55xx.txt  | 58 +++++++++----------
- 1 file changed, 29 insertions(+), 29 deletions(-)
+No, I move the values _in place_ of the union, and the data is always
+fetched via void pointers. And copying data via char * or memcpy() is
+allowed even in C99 and C11.
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lp55xx.txt b/Documentation/devicetree/bindings/leds/leds-lp55xx.txt
-index 0ccc1efc2499..5475f45ef51f 100644
---- a/Documentation/devicetree/bindings/leds/leds-lp55xx.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-lp55xx.txt
-@@ -48,7 +48,7 @@ example 1) LP5521
- 'lp5521_pri:channel1' and 'lp5521_pri:channel2', with a heartbeat trigger
- on channel 0.
- 
--lp5521@32 {
-+led-controller@32 {
- 	#address-cells = <1>;
- 	#size-cells = <0>;
- 	compatible = "national,lp5521";
-@@ -56,20 +56,20 @@ lp5521@32 {
- 	label = "lp5521_pri";
- 	clock-mode = /bits/ 8 <2>;
- 
--	chan@0 {
-+	led@0 {
- 		reg = <0>;
- 		led-cur = /bits/ 8 <0x2f>;
- 		max-cur = /bits/ 8 <0x5f>;
- 		linux,default-trigger = "heartbeat";
- 	};
- 
--	chan@1 {
-+	led@1 {
- 		reg = <1>;
- 		led-cur = /bits/ 8 <0x2f>;
- 		max-cur = /bits/ 8 <0x5f>;
- 	};
- 
--	chan@2 {
-+	led@2 {
- 		reg = <2>;
- 		led-cur = /bits/ 8 <0x2f>;
- 		max-cur = /bits/ 8 <0x5f>;
-@@ -88,70 +88,70 @@ ASEL1    ASEL0    Address
-  VEN      GND       34h
-  VEN      VEN       35h
- 
--lp5523@32 {
-+led-controller@32 {
- 	#address-cells = <1>;
- 	#size-cells = <0>;
- 	compatible = "national,lp5523";
- 	reg = <0x32>;
- 	clock-mode = /bits/ 8 <1>;
- 
--	chan@0 {
-+	led@0 {
- 		reg = <0>;
- 		chan-name = "d1";
- 		led-cur = /bits/ 8 <0x14>;
- 		max-cur = /bits/ 8 <0x20>;
- 	};
- 
--	chan@1 {
-+	led@1 {
- 		reg = <1>;
- 		chan-name = "d2";
- 		led-cur = /bits/ 8 <0x14>;
- 		max-cur = /bits/ 8 <0x20>;
- 	};
- 
--	chan@2 {
-+	led@2 {
- 		reg = <2>;
- 		chan-name = "d3";
- 		led-cur = /bits/ 8 <0x14>;
- 		max-cur = /bits/ 8 <0x20>;
- 	};
- 
--	chan@3 {
-+	led@3 {
- 		reg = <3>;
- 		chan-name = "d4";
- 		led-cur = /bits/ 8 <0x14>;
- 		max-cur = /bits/ 8 <0x20>;
- 	};
- 
--	chan@4 {
-+	led@4 {
- 		reg = <4>;
- 		chan-name = "d5";
- 		led-cur = /bits/ 8 <0x14>;
- 		max-cur = /bits/ 8 <0x20>;
- 	};
- 
--	chan@5 {
-+	led@5 {
- 		reg = <5>;
- 		chan-name = "d6";
- 		led-cur = /bits/ 8 <0x14>;
- 		max-cur = /bits/ 8 <0x20>;
- 	};
- 
--	chan@6 {
-+	led@6 {
- 		reg = <6>;
- 		chan-name = "d7";
- 		led-cur = /bits/ 8 <0x14>;
- 		max-cur = /bits/ 8 <0x20>;
- 	};
- 
--	chan@7 {
-+	led@7 {
- 		reg = <7>;
- 		chan-name = "d8";
- 		led-cur = /bits/ 8 <0x14>;
- 		max-cur = /bits/ 8 <0x20>;
- 	};
- 
--	chan@8 {
-+	led@8 {
- 		reg = <8>;
- 		chan-name = "d9";
- 		led-cur = /bits/ 8 <0x14>;
-@@ -162,35 +162,35 @@ lp5523@32 {
- example 3) LP5562
- 4 channels are defined.
- 
--lp5562@30 {
-+led-controller@30 {
- 	#address-cells = <1>;
- 	#size-cells = <0>;
- 	compatible = "ti,lp5562";
- 	reg = <0x30>;
- 	clock-mode = /bits/8 <2>;
- 
--	chan@0 {
-+	led@0 {
- 		reg = <0>;
- 		chan-name = "R";
- 		led-cur = /bits/ 8 <0x20>;
- 		max-cur = /bits/ 8 <0x60>;
- 	};
- 
--	chan@1 {
-+	led@1 {
- 		reg = <1>;
- 		chan-name = "G";
- 		led-cur = /bits/ 8 <0x20>;
- 		max-cur = /bits/ 8 <0x60>;
- 	};
- 
--	chan@2 {
-+	led@2 {
- 		reg = <2>;
- 		chan-name = "B";
- 		led-cur = /bits/ 8 <0x20>;
- 		max-cur = /bits/ 8 <0x60>;
- 	};
- 
--	chan@3 {
-+	led@3 {
- 		reg = <3>;
- 		chan-name = "W";
- 		led-cur = /bits/ 8 <0x20>;
-@@ -202,7 +202,7 @@ example 4) LP8501
- 9 channels are defined. The 'pwr-sel' is LP8501 specific property.
- Others are same as LP5523.
- 
--lp8501@32 {
-+led-controller@32 {
- 	#address-cells = <1>;
- 	#size-cells = <0>;
- 	compatible = "ti,lp8501";
-@@ -210,63 +210,63 @@ lp8501@32 {
- 	clock-mode = /bits/ 8 <2>;
- 	pwr-sel = /bits/ 8 <3>;	/* D1~9 connected to VOUT */
- 
--	chan@0 {
-+	led@0 {
- 		reg = <0>;
- 		chan-name = "d1";
- 		led-cur = /bits/ 8 <0x14>;
- 		max-cur = /bits/ 8 <0x20>;
- 	};
- 
--	chan@1 {
-+	led@1 {
- 		reg = <1>;
- 		chan-name = "d2";
- 		led-cur = /bits/ 8 <0x14>;
- 		max-cur = /bits/ 8 <0x20>;
- 	};
- 
--	chan@2 {
-+	led@2 {
- 		reg = <2>;
- 		chan-name = "d3";
- 		led-cur = /bits/ 8 <0x14>;
- 		max-cur = /bits/ 8 <0x20>;
- 	};
- 
--	chan@3 {
-+	led@3 {
- 		reg = <3>;
- 		chan-name = "d4";
- 		led-cur = /bits/ 8 <0x14>;
- 		max-cur = /bits/ 8 <0x20>;
- 	};
- 
--	chan@4 {
-+	led@4 {
- 		reg = <4>;
- 		chan-name = "d5";
- 		led-cur = /bits/ 8 <0x14>;
- 		max-cur = /bits/ 8 <0x20>;
- 	};
- 
--	chan@5 {
-+	led@5 {
- 		reg = <5>;
- 		chan-name = "d6";
- 		led-cur = /bits/ 8 <0x14>;
- 		max-cur = /bits/ 8 <0x20>;
- 	};
- 
--	chan@6 {
-+	led@6 {
- 		reg = <6>;
- 		chan-name = "d7";
- 		led-cur = /bits/ 8 <0x14>;
- 		max-cur = /bits/ 8 <0x20>;
- 	};
- 
--	chan@7 {
-+	led@7 {
- 		reg = <7>;
- 		chan-name = "d8";
- 		led-cur = /bits/ 8 <0x14>;
- 		max-cur = /bits/ 8 <0x20>;
- 	};
- 
--	chan@8 {
-+	led@8 {
- 		reg = <8>;
- 		chan-name = "d9";
- 		led-cur = /bits/ 8 <0x14>;
+But I am wondering why are we actually worrying about all of this? The
+kernel is gnu89 and I think is going to stay this way because we use
+initializers with a cast in a lot of places:
+
+#define __RAW_SPIN_LOCK_UNLOCKED(lockname)      \
+        (raw_spinlock_t) __RAW_SPIN_LOCK_INITIALIZER(lockname)
+
+and C99 and gnu99 do not allow this. See
+https://lore.kernel.org/lkml/20141019231031.GB9319@node.dhcp.inet.fi/
+
+Thanks.
+
 -- 
-2.22.0.214.g8dca754b1e
-
+Dmitry
