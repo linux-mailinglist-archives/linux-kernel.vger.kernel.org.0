@@ -2,85 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3993ED983C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 19:08:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B379D9837
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 19:07:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404890AbfJPRId (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 13:08:33 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:34741 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389259AbfJPRIb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 13:08:31 -0400
-Received: by mail-lf1-f65.google.com with SMTP id r22so18145466lfm.1;
-        Wed, 16 Oct 2019 10:08:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=FuDtedlY48DcctCZGWagsRf8MsM87uwA3mMuVGQ2AP8=;
-        b=j+a1VT2OS4bm7ECykAC43ju60WarYAfWCbRzuFLrL1hxbpgI3Z4j7pRhUEai/49rJ9
-         i48Z56uH5ua66STUHM58TXOltWf4jqVt4q70XzNx6Xa/pb+7PaTc9wej5Uc6Wn5/krkQ
-         Vb5+qH2HJrsvo4vOpu/boufSBlQMCwGX9+hcTLZy3E696r2y0B23YccJG92eOKxRjjzJ
-         fvBSjdk9kz2z5Rin4tvxtefT/UsjzQ9A2Vht8QkBkV33orbNGrGwyM5GMDqwjZP8Jlgj
-         qKETLs4Jb5W07NgAbvDu2uVy5YSvJHNegP8luJGJOGZUHoKkAQ9Dvqv6sVk1rmMfwZP/
-         zr2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=FuDtedlY48DcctCZGWagsRf8MsM87uwA3mMuVGQ2AP8=;
-        b=eYpbH9QG43SeINBZuzrQaaXbFmxC/tSjQTSakajQIuwWfu23KsxjDskq93ipH7ItBN
-         I2/ZM1pce6wU1eCuwLMgnevPGFWWlqFeGECeJN3nyPpScBv8w8IRVhLdPfgURFB8nfOp
-         Be3rVwBMRf3WhQF3bB90uGS69TxUSyzdDuJ5TfRkFRmhb646yI1emN/WqfQyjJhrv0uQ
-         U/sQWc6U+H/rHJtVp3B2fU1G3IJcFZw1cyMN5EJ7D78PkRkLXirrm0EN7OxC4loa+XGh
-         wPQQLq9b4pZgM9qOIAxL7jped56UVWAOGxlQTk7iW8mU5CIgiMn32+ALVgYe6uyP0m1i
-         rLAw==
-X-Gm-Message-State: APjAAAUtqLxjpzu5CQah3F/5uV8fQK3rv8JVBEVGEr7o9KLAqMpFj2x6
-        pvVqgz4x3HW9xDU74KEclMM=
-X-Google-Smtp-Source: APXvYqybaFGO1u4fZEPYMstx4sfISrbUPkeIsHhbcRYljDhIpvBSINMvFHrAxe5eS+JI8E/hZaMnnA==
-X-Received: by 2002:a19:6a08:: with SMTP id u8mr1490535lfu.74.1571245709687;
-        Wed, 16 Oct 2019 10:08:29 -0700 (PDT)
-Received: from localhost.localdomain ([87.101.228.250])
-        by smtp.gmail.com with ESMTPSA id q24sm6299182ljj.6.2019.10.16.10.08.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 16 Oct 2019 10:08:29 -0700 (PDT)
-From:   Christian Hewitt <christianshewitt@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Christian Hewitt <christianshewitt@gmail.com>
-Subject: [PATCH 1/2] arm64: dts: meson-gxm-vega-s96: set rc-vega-s9x ir keymap
-Date:   Wed, 16 Oct 2019 21:07:36 +0400
-Message-Id: <1571245657-4471-2-git-send-email-christianshewitt@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1571245657-4471-1-git-send-email-christianshewitt@gmail.com>
-References: <1571245657-4471-1-git-send-email-christianshewitt@gmail.com>
+        id S2394006AbfJPRHo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 13:07:44 -0400
+Received: from foss.arm.com ([217.140.110.172]:45988 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2393829AbfJPRHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 13:07:44 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C81928;
+        Wed, 16 Oct 2019 10:07:43 -0700 (PDT)
+Received: from e110467-lin.cambridge.arm.com (e110467-lin.cambridge.arm.com [10.1.197.57])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6A83F3F6C4;
+        Wed, 16 Oct 2019 10:07:42 -0700 (PDT)
+From:   Robin Murphy <robin.murphy@arm.com>
+To:     joro@8bytes.org
+Cc:     iommu@lists.linux-foundation.org, maz@kernel.org,
+        julien.grall@arm.com, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH] iommu/dma: Relax locking in iommu_dma_prepare_msi()
+Date:   Wed, 16 Oct 2019 18:07:36 +0100
+Message-Id: <5af5e77102ca52576cb96816f0abcf6398820055.1571245656.git.robin.murphy@arm.com>
+X-Mailer: git-send-email 2.21.0.dirty
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an IR node to the Vega S96 dts to include the rc-vega-s9x keymap.
+Since commit ece6e6f0218b ("iommu/dma-iommu: Split iommu_dma_map_msi_msg()
+in two parts"), iommu_dma_prepare_msi() should no longer have to worry
+about preempting itself, nor being called in atomic context at all. Thus
+we can downgrade the IRQ-safe locking to a simple mutex to avoid angering
+the new might_sleep() check in iommu_map().
 
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+Reported-by: Qian Cai <cai@lca.pw>
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-gxm-vega-s96.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/iommu/dma-iommu.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-vega-s96.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-vega-s96.dts
-index e2ea675..0bdf51d 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxm-vega-s96.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxm-vega-s96.dts
-@@ -35,3 +35,7 @@
- 		reg = <0>;
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index f321279baf9e..4ba3c49de017 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -19,6 +19,7 @@
+ #include <linux/iova.h>
+ #include <linux/irq.h>
+ #include <linux/mm.h>
++#include <linux/mutex.h>
+ #include <linux/pci.h>
+ #include <linux/scatterlist.h>
+ #include <linux/vmalloc.h>
+@@ -43,7 +44,6 @@ struct iommu_dma_cookie {
+ 		dma_addr_t		msi_iova;
  	};
- };
-+
-+&ir {
-+	linux,rc-map-name = "rc-vega-s9x";
-+};
+ 	struct list_head		msi_page_list;
+-	spinlock_t			msi_lock;
+ 
+ 	/* Domain for flush queue callback; NULL if flush queue not in use */
+ 	struct iommu_domain		*fq_domain;
+@@ -62,7 +62,6 @@ static struct iommu_dma_cookie *cookie_alloc(enum iommu_dma_cookie_type type)
+ 
+ 	cookie = kzalloc(sizeof(*cookie), GFP_KERNEL);
+ 	if (cookie) {
+-		spin_lock_init(&cookie->msi_lock);
+ 		INIT_LIST_HEAD(&cookie->msi_page_list);
+ 		cookie->type = type;
+ 	}
+@@ -1150,7 +1149,7 @@ static struct iommu_dma_msi_page *iommu_dma_get_msi_page(struct device *dev,
+ 		if (msi_page->phys == msi_addr)
+ 			return msi_page;
+ 
+-	msi_page = kzalloc(sizeof(*msi_page), GFP_ATOMIC);
++	msi_page = kzalloc(sizeof(*msi_page), GFP_KERNEL);
+ 	if (!msi_page)
+ 		return NULL;
+ 
+@@ -1180,7 +1179,7 @@ int iommu_dma_prepare_msi(struct msi_desc *desc, phys_addr_t msi_addr)
+ 	struct iommu_domain *domain = iommu_get_domain_for_dev(dev);
+ 	struct iommu_dma_cookie *cookie;
+ 	struct iommu_dma_msi_page *msi_page;
+-	unsigned long flags;
++	static DEFINE_MUTEX(msi_prepare_lock);
+ 
+ 	if (!domain || !domain->iova_cookie) {
+ 		desc->iommu_cookie = NULL;
+@@ -1190,13 +1189,12 @@ int iommu_dma_prepare_msi(struct msi_desc *desc, phys_addr_t msi_addr)
+ 	cookie = domain->iova_cookie;
+ 
+ 	/*
+-	 * We disable IRQs to rule out a possible inversion against
+-	 * irq_desc_lock if, say, someone tries to retarget the affinity
+-	 * of an MSI from within an IPI handler.
++	 * In fact we should already be serialised by irq_domain_mutex
++	 * here, but that's way subtle, so belt and braces...
+ 	 */
+-	spin_lock_irqsave(&cookie->msi_lock, flags);
++	mutex_lock(&msi_prepare_lock);
+ 	msi_page = iommu_dma_get_msi_page(dev, msi_addr, domain);
+-	spin_unlock_irqrestore(&cookie->msi_lock, flags);
++	mutex_unlock(&msi_prepare_lock);
+ 
+ 	msi_desc_set_iommu_cookie(desc, msi_page);
+ 
 -- 
-2.7.4
+2.21.0.dirty
 
