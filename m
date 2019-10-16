@@ -2,51 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53137D9F76
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE1C6D9FE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:24:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437784AbfJPVzV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:55:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45762 "EHLO mail.kernel.org"
+        id S2406907AbfJPWFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:05:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437748AbfJPVzR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:55:17 -0400
+        id S2438312AbfJPV6y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:58:54 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C7D1218DE;
-        Wed, 16 Oct 2019 21:55:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7A1C21925;
+        Wed, 16 Oct 2019 21:58:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262916;
-        bh=61zl7DkTaWrXCdCD6qktASwL8w1xwvcJ3Y+nDn38yoY=;
+        s=default; t=1571263133;
+        bh=C30LIA4zxBrlR+4FaEQFknN7Iq8Y10iVG/GYZVZn4zI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aVhWrnaswqTQjQsdIPP8LDcoErM56dPS7JJVgIaJe6Lruq7znAHVpleEF+Ym3Q1Tm
-         ANX13YnlPo9gQJsCylwxGolX1gQDUSYme47GcXNEHuukGCr2lKpBukq2gZQafzH+wk
-         EXWWEiCbqjPjoOKYOFAOb/mhJqntphH50K4bxtXI=
+        b=PgndQ1df8RGzCKYtA7MWvxVSk8zLeMKje6XbUzMjfYz1X2hANXM7Gwy7u6xCKCCNM
+         QK/dISwHZS00+RlNazDJoNBEyZY/gZbayMPQ91hCyGHnExIQZY7zBXa8JHoXvSdoW2
+         5OBdJClKUt8+W3aJWf7WO8z7wCWT6/iJ1JUPkXiw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Scott Talbert <swt@techie.net>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Ben Dooks <ben.dooks@codethink.co.uk>,
-        Dave Young <dyoung@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Lukas Wunner <lukas@wunner.de>, Lyude Paul <lyude@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Octavian Purdila <octavian.purdila@intel.com>,
-        Peter Jones <pjones@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 76/92] efivar/ssdt: Dont iterate over EFI vars if no SSDT override was specified
+        stable@vger.kernel.org, David Frey <dpfrey@gmail.com>,
+        Andreas Dannenberg <dannenberg@ti.com>, Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 5.3 057/112] iio: light: opt3001: fix mutex unlock race
 Date:   Wed, 16 Oct 2019 14:50:49 -0700
-Message-Id: <20191016214845.951472119@linuxfoundation.org>
+Message-Id: <20191016214859.675094894@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
-References: <20191016214759.600329427@linuxfoundation.org>
+In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
+References: <20191016214844.038848564@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -56,59 +44,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: David Frey <dpfrey@gmail.com>
 
-commit c05f8f92b701576b615f30aac31fabdc0648649b upstream.
+commit 82f3015635249a8c8c45bac303fd84905066f04f upstream.
 
-The kernel command line option efivar_ssdt= allows the name to be
-specified of an EFI variable containing an ACPI SSDT table that should
-be loaded into memory by the OS, and treated as if it was provided by
-the firmware.
+When an end-of-conversion interrupt is received after performing a
+single-shot reading of the light sensor, the driver was waking up the
+result ready queue before checking opt->ok_to_ignore_lock to determine
+if it should unlock the mutex. The problem occurred in the case where
+the other thread woke up and changed the value of opt->ok_to_ignore_lock
+to false prior to the interrupt thread performing its read of the
+variable. In this case, the mutex would be unlocked twice.
 
-Currently, that code will always iterate over the EFI variables and
-compare each name with the provided name, even if the command line
-option wasn't set to begin with.
-
-So bail early when no variable name was provided. This works around a
-boot regression on the 2012 Mac Pro, as reported by Scott.
-
-Tested-by: Scott Talbert <swt@techie.net>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: <stable@vger.kernel.org> # v4.9+
-Cc: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: Dave Young <dyoung@redhat.com>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Jerry Snitselaar <jsnitsel@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Lukas Wunner <lukas@wunner.de>
-Cc: Lyude Paul <lyude@redhat.com>
-Cc: Matthew Garrett <mjg59@google.com>
-Cc: Octavian Purdila <octavian.purdila@intel.com>
-Cc: Peter Jones <pjones@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Cc: linux-integrity@vger.kernel.org
-Fixes: 475fb4e8b2f4 ("efi / ACPI: load SSTDs from EFI variables")
-Link: https://lkml.kernel.org/r/20191002165904.8819-3-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: David Frey <dpfrey@gmail.com>
+Reviewed-by: Andreas Dannenberg <dannenberg@ti.com>
+Fixes: 94a9b7b1809f ("iio: light: add support for TI's opt3001 light sensor")
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/firmware/efi/efi.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/iio/light/opt3001.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -243,6 +243,9 @@ static __init int efivar_ssdt_load(void)
- 	void *data;
+--- a/drivers/iio/light/opt3001.c
++++ b/drivers/iio/light/opt3001.c
+@@ -686,6 +686,7 @@ static irqreturn_t opt3001_irq(int irq,
+ 	struct iio_dev *iio = _iio;
+ 	struct opt3001 *opt = iio_priv(iio);
  	int ret;
++	bool wake_result_ready_queue = false;
  
-+	if (!efivar_ssdt[0])
-+		return 0;
+ 	if (!opt->ok_to_ignore_lock)
+ 		mutex_lock(&opt->lock);
+@@ -720,13 +721,16 @@ static irqreturn_t opt3001_irq(int irq,
+ 		}
+ 		opt->result = ret;
+ 		opt->result_ready = true;
+-		wake_up(&opt->result_ready_queue);
++		wake_result_ready_queue = true;
+ 	}
+ 
+ out:
+ 	if (!opt->ok_to_ignore_lock)
+ 		mutex_unlock(&opt->lock);
+ 
++	if (wake_result_ready_queue)
++		wake_up(&opt->result_ready_queue);
 +
- 	ret = efivar_init(efivar_ssdt_iter, &entries, true, &entries);
+ 	return IRQ_HANDLED;
+ }
  
- 	list_for_each_entry_safe(entry, aux, &entries, list) {
 
 
