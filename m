@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A921BD8CDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 11:48:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EE56D8CE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 11:49:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392075AbfJPJs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 05:48:56 -0400
-Received: from mga05.intel.com ([192.55.52.43]:49636 "EHLO mga05.intel.com"
+        id S2404244AbfJPJtu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 05:49:50 -0400
+Received: from mga12.intel.com ([192.55.52.136]:15152 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389173AbfJPJs4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 05:48:56 -0400
+        id S1732579AbfJPJtu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 05:49:50 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2019 02:48:55 -0700
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2019 02:49:49 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.67,303,1566889200"; 
-   d="scan'208";a="207858159"
+   d="scan'208";a="397113421"
 Received: from linux.intel.com ([10.54.29.200])
-  by orsmga002.jf.intel.com with ESMTP; 16 Oct 2019 02:48:54 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 16 Oct 2019 02:49:48 -0700
 Received: from [10.125.252.157] (abudanko-mobl.ccr.corp.intel.com [10.125.252.157])
-        by linux.intel.com (Postfix) with ESMTP id 133815803C5;
-        Wed, 16 Oct 2019 02:48:51 -0700 (PDT)
-Subject: [PATCH v2 1/4] perf/core,x86: introduce sync_task_ctx() method at
- struct pmu
+        by linux.intel.com (Postfix) with ESMTP id DD5BF58048F;
+        Wed, 16 Oct 2019 02:49:45 -0700 (PDT)
+Subject: [PATCH v2 2/4] perf/x86: install platform specific sync_task_ctx
+ adapter
 From:   Alexey Budankov <alexey.budankov@linux.intel.com>
 To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
@@ -40,8 +40,8 @@ Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>
 References: <5964c7e9-ab6f-c0d0-3dca-31196606e337@linux.intel.com>
 Organization: Intel Corp.
-Message-ID: <5b95f1f5-8706-448f-5a19-b6cd955aca14@linux.intel.com>
-Date:   Wed, 16 Oct 2019 12:48:51 +0300
+Message-ID: <32754937-d7a6-8121-fce3-81a71d26fac4@linux.intel.com>
+Date:   Wed, 16 Oct 2019 12:49:44 +0300
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
@@ -55,53 +55,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Declare sync_task_ctx() methods at the generic and x86 specific
-pmu types to bridge calls to platform specific pmu code on optimized
-context switch path between equivalent task perf event contexts.
+Bridge perf core and x86 sync_task_ctx() method calls.
 
 Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 ---
- arch/x86/events/perf_event.h | 8 ++++++++
- include/linux/perf_event.h   | 7 +++++++
- 2 files changed, 15 insertions(+)
+ arch/x86/events/core.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index ecacfbf4ebc1..a25e6d7eb87b 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -682,6 +682,14 @@ struct x86_pmu {
- 	 */
- 	atomic_t	lbr_exclusive[x86_lbr_exclusive_max];
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 15b90b1a8fb1..2c293bbd093f 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -2243,6 +2243,12 @@ static void x86_pmu_sched_task(struct perf_event_context *ctx, bool sched_in)
+ 		x86_pmu.sched_task(ctx, sched_in);
+ }
  
-+	/*
-+	 * perf task context (i.e. struct perf_event_context::task_ctx_data) switch helper
-+	 * to bridge calls from perf/core to perf/x86. See struct pmu::sync_task_ctx() usage
-+	 * for examples;
-+	 */
-+	void		(*sync_task_ctx)(struct x86_perf_task_context *one,
-+					 struct x86_perf_task_context *another);
++static void x86_pmu_sync_task_ctx(void *one, void *another)
++{
++	if (x86_pmu.sync_task_ctx)
++		x86_pmu.sync_task_ctx(one, another);
++}
 +
- 	/*
- 	 * AMD bits
- 	 */
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 61448c19a132..60bf17af69f0 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -409,6 +409,13 @@ struct pmu {
- 	 */
- 	size_t				task_ctx_size;
+ void perf_check_microcode(void)
+ {
+ 	if (x86_pmu.check_microcode)
+@@ -2297,6 +2303,7 @@ static struct pmu pmu = {
+ 	.event_idx		= x86_pmu_event_idx,
+ 	.sched_task		= x86_pmu_sched_task,
+ 	.task_ctx_size          = sizeof(struct x86_perf_task_context),
++	.sync_task_ctx		= x86_pmu_sync_task_ctx,
+ 	.check_period		= x86_pmu_check_period,
  
-+	/*
-+	 * PMU specific parts of task perf event context (i.e. ctx->task_ctx_data)
-+	 * can be synchronized using this function. See Intel LBR callstack support
-+	 * implementation and Perf core context switch handling callbacks for usage
-+	 * examples.
-+	 */
-+	void (*sync_task_ctx)		(void *one, void *another);
- 
- 	/*
- 	 * Set up pmu-private data structures for an AUX area
+ 	.aux_output_match	= x86_pmu_aux_output_match,
 -- 
 2.20.1
 
