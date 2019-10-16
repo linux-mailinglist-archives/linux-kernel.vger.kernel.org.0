@@ -2,177 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48B64D9004
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:52:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01D3BD901C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:57:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392839AbfJPLwP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 07:52:15 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50650 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392812AbfJPLwN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 07:52:13 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AEA0D8980F1;
-        Wed, 16 Oct 2019 11:52:12 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-43.ams2.redhat.com [10.36.116.43])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5587B1001B20;
-        Wed, 16 Oct 2019 11:52:09 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 8D43731EA4; Wed, 16 Oct 2019 13:52:05 +0200 (CEST)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Dave Airlie <airlied@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Xinliang Liu <z.liuxinliang@hisilicon.com>,
-        Rongrong Zou <zourongrong@gmail.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Chen Feng <puck.chen@hisilicon.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sean Paul <sean@poorly.run>,
-        linux-kernel@vger.kernel.org (open list),
-        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
-        BOCHS VIRTUAL GPU)
-Subject: [PATCH v4 11/11] drm/vram: drop DRM_VRAM_MM_FILE_OPERATIONS
-Date:   Wed, 16 Oct 2019 13:52:03 +0200
-Message-Id: <20191016115203.20095-12-kraxel@redhat.com>
-In-Reply-To: <20191016115203.20095-1-kraxel@redhat.com>
-References: <20191016115203.20095-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.67]); Wed, 16 Oct 2019 11:52:12 +0000 (UTC)
+        id S1728497AbfJPL5F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 07:57:05 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34248 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726372AbfJPL5F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 07:57:05 -0400
+Received: by mail-lj1-f195.google.com with SMTP id j19so23728636lja.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 04:57:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iidcREMNQbpSj7QIK2mzZsgN87zkGYqiHC5Wx2Lqiak=;
+        b=jvhmFw29RQ+Dns+Za4F1tRmgVK0ZuenK8or5kZmFZRyWfQDPB+9f7vW8B+y1mTSNvQ
+         TUt4JofxObqVRWPBRSXPkRwDp0JQyi0D73IiQuWuNN5K04zAOtFOgaetQwdP5L4VNLoP
+         yWPmfwui3g75hUe9hLuM9r95lSgDVkVOse30aneEq+q+xhmNnACGRHvwAoLZ+xjcz02W
+         hfFOTSFMNOXZ3ap/vy8Ni5ObkdDbV+LmWE5uRV0B7v7qIxF/VyW8qY/2fpO8ObzSYQGh
+         3hvzgeEXRh34v0VcNa2D2oCuRrrumztwdaggykegm9yp3hDoAw2+DgZbdu8ISU8CXBiP
+         uh3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iidcREMNQbpSj7QIK2mzZsgN87zkGYqiHC5Wx2Lqiak=;
+        b=UOFUOHUFtv8QbSEZO3nsZL9I/2VMG4sAmi9N9rf7FzfwXTqDsz6PbPjyb2DlfAG4m1
+         drRqcfq5xT2Ee9H17X4qT3a3KHj5k8wtNqQkM7FM7/p2was7dZCCJN2Z0onLkNdph4gA
+         hONTOklMU61xZ67+7uKH3nL6lQj7mxjJN5DgogSeAn+ps98QfUr2YP9vh9aCZgo57u7Q
+         W3+Eukm3snRc/DvbIwKRirvVWvwadlLHQBetmXGMcOl66HsFkbcdlk8Vokb0SehYEE9u
+         SHwurwkXvTqI4CXdlVhMsLXRbkUgFFgNaEj4aaVf64MbLq691mqh58doQM33isAXBLx3
+         npNA==
+X-Gm-Message-State: APjAAAVuZtRtbS2pczEqX8Uwkutz3Wfy8smrjBLQxUPpqnVhyJKPGqga
+        LN3kdwd2fFabhYnGM5+CAeU7LzmqZXWO9U/hd8gLig==
+X-Google-Smtp-Source: APXvYqyb/+1D2Q12S3rc/Nnw1v5q7R17Mxz022QcdTRXckzc4D9WCVzrb76DAT9UWuaTvMsGk3Ge2ukLzvF+zu9Jq84=
+X-Received: by 2002:a05:651c:237:: with SMTP id z23mr17973207ljn.214.1571227021131;
+ Wed, 16 Oct 2019 04:57:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <1568878421-12301-1-git-send-email-vincent.guittot@linaro.org>
+ <1568878421-12301-5-git-send-email-vincent.guittot@linaro.org> <17c4e175-d580-a43d-1278-b7a54c697544@linux.ibm.com>
+In-Reply-To: <17c4e175-d580-a43d-1278-b7a54c697544@linux.ibm.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 16 Oct 2019 13:56:49 +0200
+Message-ID: <CAKfTPtB-12oAe5ssxrp4aO35qC9H_EWK=UcuqEDXSucKEWngzA@mail.gmail.com>
+Subject: Re: [PATCH v3 04/10] sched/fair: rework load_balance
+To:     Parth Shah <parth@linux.ibm.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Phil Auld <pauld@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Hillf Danton <hdanton@sina.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Not needed any more because we don't have vram specific fops
-any more.  DEFINE_DRM_GEM_FOPS() can be used instead.
+On Wed, 16 Oct 2019 at 09:21, Parth Shah <parth@linux.ibm.com> wrote:
+>
+>
+>
+> On 9/19/19 1:03 PM, Vincent Guittot wrote:
+>
+> [...]
+>
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > ---
+> >  kernel/sched/fair.c | 585 ++++++++++++++++++++++++++++++++++------------------
+> >  1 file changed, 380 insertions(+), 205 deletions(-)
+> >
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index 017aad0..d33379c 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -7078,11 +7078,26 @@ static unsigned long __read_mostly max_load_balance_interval = HZ/10;
+> >
+> >  enum fbq_type { regular, remote, all };
+> >
+> > +/*
+> > + * group_type describes the group of CPUs at the moment of the load balance.
+> > + * The enum is ordered by pulling priority, with the group with lowest priority
+> > + * first so the groupe_type can be simply compared when selecting the busiest
+> > + * group. see update_sd_pick_busiest().
+> > + */
+> >  enum group_type {
+> > -     group_other = 0,
+> > +     group_has_spare = 0,
+> > +     group_fully_busy,
+> >       group_misfit_task,
+> > +     group_asym_packing,
+> >       group_imbalanced,
+> > -     group_overloaded,
+> > +     group_overloaded
+> > +};
+> > +
+> > +enum migration_type {
+> > +     migrate_load = 0,
+> > +     migrate_util,
+> > +     migrate_task,
+> > +     migrate_misfit
+> >  };
+> >
+> >  #define LBF_ALL_PINNED       0x01
+> > @@ -7115,7 +7130,7 @@ struct lb_env {
+> >       unsigned int            loop_max;
+> >
+> >       enum fbq_type           fbq_type;
+> > -     enum group_type         src_grp_type;
+> > +     enum migration_type     balance_type;
+> >       struct list_head        tasks;
+> >  };
+> >
+> > @@ -7347,7 +7362,7 @@ static int detach_tasks(struct lb_env *env)
+> >  {
+> >       struct list_head *tasks = &env->src_rq->cfs_tasks;
+> >       struct task_struct *p;
+> > -     unsigned long load;
+> > +     unsigned long util, load;
+> >       int detached = 0;
+> >
+> >       lockdep_assert_held(&env->src_rq->lock);
+> > @@ -7380,19 +7395,53 @@ static int detach_tasks(struct lb_env *env)
+> >               if (!can_migrate_task(p, env))
+> >                       goto next;
+> >
+> > -             load = task_h_load(p);
+> > +             switch (env->balance_type) {
+> > +             case migrate_load:
+> > +                     load = task_h_load(p);
+> >
+> > -             if (sched_feat(LB_MIN) && load < 16 && !env->sd->nr_balance_failed)
+> > -                     goto next;
+> > +                     if (sched_feat(LB_MIN) &&
+> > +                         load < 16 && !env->sd->nr_balance_failed)
+> > +                             goto next;
+> >
+> > -             if ((load / 2) > env->imbalance)
+> > -                     goto next;
+> > +                     if ((load / 2) > env->imbalance)
+> > +                             goto next;
+> > +
+> > +                     env->imbalance -= load;
+> > +                     break;
+> > +
+> > +             case migrate_util:
+> > +                     util = task_util_est(p);
+> > +
+> > +                     if (util > env->imbalance)
+>
+> Can you please explain what would happen for
+> `if (util/2 > env->imbalance)` ?
+> just like when migrating load, even util shouldn't be migrated if
+> env->imbalance is just near the utilization of the task being moved, isn't it?
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
----
- include/drm/drm_gem_vram_helper.h              | 18 ------------------
- drivers/gpu/drm/ast/ast_drv.c                  |  5 +----
- drivers/gpu/drm/bochs/bochs_drv.c              |  5 +----
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c    |  5 +----
- drivers/gpu/drm/mgag200/mgag200_drv.c          |  5 +----
- drivers/gpu/drm/vboxvideo/vbox_drv.c           |  5 +----
- 6 files changed, 5 insertions(+), 38 deletions(-)
+I have chosen uti and not util/2 to be conservative because
+migrate_util is used to fill spare capacity.
+With `if (util/2 > env->imbalance)`, we can more easily overload the
+local group or pick too much utilization from the overloaded group.
 
-diff --git a/include/drm/drm_gem_vram_helper.h b/include/drm/drm_gem_vram_helper.h
-index 5e48fdac4a1d..b8ad4531ebb4 100644
---- a/include/drm/drm_gem_vram_helper.h
-+++ b/include/drm/drm_gem_vram_helper.h
-@@ -184,22 +184,4 @@ struct drm_vram_mm *drm_vram_helper_alloc_mm(
- 	struct drm_device *dev, uint64_t vram_base, size_t vram_size);
- void drm_vram_helper_release_mm(struct drm_device *dev);
- 
--/**
-- * define DRM_VRAM_MM_FILE_OPERATIONS - default callback functions for \
--	&struct file_operations
-- *
-- * Drivers that use VRAM MM can use this macro to initialize
-- * &struct file_operations with default functions.
-- */
--#define DRM_VRAM_MM_FILE_OPERATIONS \
--	.llseek		= no_llseek, \
--	.read		= drm_read, \
--	.poll		= drm_poll, \
--	.unlocked_ioctl = drm_ioctl, \
--	.compat_ioctl	= drm_compat_ioctl, \
--	.mmap		= drm_gem_mmap, \
--	.open		= drm_open, \
--	.release	= drm_release \
--
--
- #endif
-diff --git a/drivers/gpu/drm/ast/ast_drv.c b/drivers/gpu/drm/ast/ast_drv.c
-index e0e8770462bc..1f17794b0890 100644
---- a/drivers/gpu/drm/ast/ast_drv.c
-+++ b/drivers/gpu/drm/ast/ast_drv.c
-@@ -200,10 +200,7 @@ static struct pci_driver ast_pci_driver = {
- 	.driver.pm = &ast_pm_ops,
- };
- 
--static const struct file_operations ast_fops = {
--	.owner = THIS_MODULE,
--	DRM_VRAM_MM_FILE_OPERATIONS
--};
-+DEFINE_DRM_GEM_FOPS(ast_fops);
- 
- static struct drm_driver driver = {
- 	.driver_features = DRIVER_MODESET | DRIVER_GEM,
-diff --git a/drivers/gpu/drm/bochs/bochs_drv.c b/drivers/gpu/drm/bochs/bochs_drv.c
-index 3b9b0d9bbc14..10460878414e 100644
---- a/drivers/gpu/drm/bochs/bochs_drv.c
-+++ b/drivers/gpu/drm/bochs/bochs_drv.c
-@@ -58,10 +58,7 @@ static int bochs_load(struct drm_device *dev)
- 	return ret;
- }
- 
--static const struct file_operations bochs_fops = {
--	.owner		= THIS_MODULE,
--	DRM_VRAM_MM_FILE_OPERATIONS
--};
-+DEFINE_DRM_GEM_FOPS(bochs_fops);
- 
- static struct drm_driver bochs_driver = {
- 	.driver_features	= DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC,
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-index 4f52c83b9b4c..2fd4ca91a62d 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-@@ -26,10 +26,7 @@
- #include "hibmc_drm_drv.h"
- #include "hibmc_drm_regs.h"
- 
--static const struct file_operations hibmc_fops = {
--	.owner		= THIS_MODULE,
--	DRM_VRAM_MM_FILE_OPERATIONS
--};
-+DEFINE_DRM_GEM_FOPS(hibmc_fops);
- 
- static irqreturn_t hibmc_drm_interrupt(int irq, void *arg)
- {
-diff --git a/drivers/gpu/drm/mgag200/mgag200_drv.c b/drivers/gpu/drm/mgag200/mgag200_drv.c
-index 4f9df3b93598..397f8b0a9af8 100644
---- a/drivers/gpu/drm/mgag200/mgag200_drv.c
-+++ b/drivers/gpu/drm/mgag200/mgag200_drv.c
-@@ -58,10 +58,7 @@ static void mga_pci_remove(struct pci_dev *pdev)
- 	drm_put_dev(dev);
- }
- 
--static const struct file_operations mgag200_driver_fops = {
--	.owner = THIS_MODULE,
--	DRM_VRAM_MM_FILE_OPERATIONS
--};
-+DEFINE_DRM_GEM_FOPS(mgag200_driver_fops);
- 
- static struct drm_driver driver = {
- 	.driver_features = DRIVER_GEM | DRIVER_MODESET,
-diff --git a/drivers/gpu/drm/vboxvideo/vbox_drv.c b/drivers/gpu/drm/vboxvideo/vbox_drv.c
-index 6ee308b453da..8512d970a09f 100644
---- a/drivers/gpu/drm/vboxvideo/vbox_drv.c
-+++ b/drivers/gpu/drm/vboxvideo/vbox_drv.c
-@@ -181,10 +181,7 @@ static struct pci_driver vbox_pci_driver = {
- #endif
- };
- 
--static const struct file_operations vbox_fops = {
--	.owner = THIS_MODULE,
--	DRM_VRAM_MM_FILE_OPERATIONS
--};
-+DEFINE_DRM_GEM_FOPS(vbox_fops);
- 
- static struct drm_driver driver = {
- 	.driver_features =
--- 
-2.18.1
-
+>
+> > +                             goto next;
+> > +
+> > +                     env->imbalance -= util;
+> > +                     break;
+> > +[ ... ]
+>
+> Thanks,
+> Parth
+>
