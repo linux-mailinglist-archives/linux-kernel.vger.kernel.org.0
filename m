@@ -2,204 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA088D88EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 09:06:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BC89D88F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 09:08:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389343AbfJPHGl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 03:06:41 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41636 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387777AbfJPHGl (ORCPT
+        id S2389559AbfJPHHp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 03:07:45 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41208 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389242AbfJPHHo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 03:06:41 -0400
-Received: by mail-wr1-f67.google.com with SMTP id p4so10773408wrm.8;
-        Wed, 16 Oct 2019 00:06:38 -0700 (PDT)
+        Wed, 16 Oct 2019 03:07:44 -0400
+Received: by mail-lj1-f195.google.com with SMTP id f5so22818178ljg.8
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 00:07:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fy0Igawx+eGgGntcbgCob/Oi3WyPHOBuVYeVnj6J198=;
-        b=lXI1+nMFTpbZQCJE2YZmWssTNO/Cd6w7JlpW5EEU5S+fG64Xs+A4c/IIfvcBUYfkR8
-         HBbHuB8GjnQffMSBUl/lDHqdvIzYd1rTCG7mz1SoEJlnWURct9NLPukqgib9FBt1qtHw
-         uaFnTc8mWZvLN/Z93b/L6QW7g7UV6/e9cRdDk10om+BoqCNOjYazgs4jTexpdI7oW4w0
-         w+ZUh+qUVpI9Z+bmlXOi+5iDGjdGBQfWgYXHeRKWH/r7uPnci16jcYE0+yzCBJe4mzd0
-         TNPfsWOY2wVuKUprhPysbFhcXZfY4MZYQz9I4nQZqaG/BcyOpkC7AZGfmxCu8NzG5yTc
-         D5Aw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZhTgNjpKNQusZyPVoOQIc1FXI/m0QRLJulVFef76XX8=;
+        b=Do+e/YaGZ/1kWMOZw1D1T1VnuBALKM+/iodChqull8q+46Lag2kJ3nIo7vEhP38y5z
+         Yx/BSyBkRCVuh2n96BV0wQa7eiQhZ5cUKWivQV2hY6S4HKkKx/H/d/PUMMWgG3ijMTkd
+         FYzGq1f2k8UALpZUFtbNZnLTwxCcUN7lHYIXoZNUxbO8KeQaEDMPbhl+j0zXHFiR6+rE
+         7uH3DeWFbEeiHiVkSfzGwUCsOhj4OVpiJIsw+y6VTfTeBUUl9E3FK8ZI3X8d0ynXfjnA
+         3ieluyI+90fOxZE3q2V+qrlN/M0gdWB2+7TCVXM8WXSwLy8VbfZTLXMEAVgGe7ZaYvii
+         SU+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fy0Igawx+eGgGntcbgCob/Oi3WyPHOBuVYeVnj6J198=;
-        b=C/L3mi8+ZlCiaGrHhSMke+7RozeiAkppJYObEv0akrvHGCxW+aVznUsW8dByivOBlq
-         +/27VHeJPNOPeJqhSjpEf+wr3Z5qeh7xvPc0G4ECdWebHCLx8icoPSQXemI/dBLQmtRW
-         JKqEnZck9nUrkEpLgdJtRWKobUxd0ZIbWFdwskcw1RdnuQn8JLrz2lJa4e5facx6cgRr
-         YwF4Ujszwg+LOou5SHdrMlihbPq5xj+9p7LvaTa4OsWMyIlJXjY9TZh4A7KW5AjJmYkt
-         51JAIj4AEaFKFi6wvr94X39MORhAXLs7ZBQbHTRNm9lEw9Wz/x/vMIa7/2SjpHHFmFEl
-         ncVg==
-X-Gm-Message-State: APjAAAWbyyLhhVZsDIg1iafLvRl7bdGXlt00a+u7iarA0eXAiCeOfm+e
-        oPoqOhK9Ojiao2dJCmgZw/Gi5jCp
-X-Google-Smtp-Source: APXvYqw6N0t13E+81VszyfgVqlQlypn9E08dVdeUj2+xS1aYERza5WnnIUhPE6yvc0WBX33f37mjCg==
-X-Received: by 2002:adf:cd8d:: with SMTP id q13mr1298032wrj.103.1571209597634;
-        Wed, 16 Oct 2019 00:06:37 -0700 (PDT)
-Received: from localhost (p2E5BE2CE.dip0.t-ipconnect.de. [46.91.226.206])
-        by smtp.gmail.com with ESMTPSA id n22sm1531230wmk.19.2019.10.16.00.06.36
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZhTgNjpKNQusZyPVoOQIc1FXI/m0QRLJulVFef76XX8=;
+        b=FyWBOTBqA04Xda52TnVQT5J0arjRBzZ2VQ4PeECDSlSg57ex3ihIn81bJRZWlbDJK2
+         oX2xsUXvgf4TRBXiVlA+tNQ8hp5xyS0mjWFq7NMmt5N/8tHC/XKsmy2nx3OgFEqD0QMJ
+         3V4QNBjc6LhRjnREwDFdOAbn6HW5uzw+E38o179yc8NdoCN8H0lM/U2gLD2y2StCOsuO
+         arWFZcx1XX1/k3FAXpllkf3FiPFUXVeDawqJ0VDPgqO677H0rfYM44iW1jpCfuEc8teJ
+         WzJJwt5A3C4uxfuPId7p7ayXaY6Q10I/zW16P/aO/j7/mydWBp1FGLtYurUhFNTQEtpQ
+         84Jw==
+X-Gm-Message-State: APjAAAXam4fancr1E9pgIEFHJCsEtZBrp/wgBTXEFs0OEF2Lo6Sfy8oi
+        7/8g97HgUpir8T/IQt+4Dso=
+X-Google-Smtp-Source: APXvYqwClC2cQSENX+/5tnSvwIw58bgtoluNV+WC1Z1QqCdducKDlTv9sD/34p2DOfggOz109aI5SQ==
+X-Received: by 2002:a2e:957:: with SMTP id 84mr25058609ljj.23.1571209662571;
+        Wed, 16 Oct 2019 00:07:42 -0700 (PDT)
+Received: from localhost.localdomain (c213-102-65-51.bredband.comhem.se. [213.102.65.51])
+        by smtp.gmail.com with ESMTPSA id j191sm1361493lfj.49.2019.10.16.00.07.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2019 00:06:36 -0700 (PDT)
-Date:   Wed, 16 Oct 2019 09:06:35 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Fabrice Gasnier <fabrice.gasnier@st.com>
-Cc:     robh+dt@kernel.org, u.kleine-koenig@pengutronix.de,
-        alexandre.torgue@st.com, mark.rutland@arm.com,
-        mcoquelin.stm32@gmail.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pwm@vger.kernel.org, benjamin.gaignard@st.com,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v2 3/3] pwm: stm32: add power management support
-Message-ID: <20191016070635.GC1296874@ulmo>
-References: <1570193633-6600-1-git-send-email-fabrice.gasnier@st.com>
- <1570193633-6600-4-git-send-email-fabrice.gasnier@st.com>
+        Wed, 16 Oct 2019 00:07:41 -0700 (PDT)
+From:   codekipper@gmail.com
+To:     mripard@kernel.org, wens@csie.org, linux-sunxi@googlegroups.com
+Cc:     linux-arm-kernel@lists.infradead.org, lgirdwood@gmail.com,
+        broonie@kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, be17068@iperbole.bo.it,
+        Marcus Cooper <codekipper@gmail.com>
+Subject: [PATCH v6 0/7] ASoC: sun4i-i2s: Updates to the driver
+Date:   Wed, 16 Oct 2019 09:07:33 +0200
+Message-Id: <20191016070740.121435-1-codekipper@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="QRj9sO5tAVLaXnSD"
-Content-Disposition: inline
-In-Reply-To: <1570193633-6600-4-git-send-email-fabrice.gasnier@st.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Marcus Cooper <codekipper@gmail.com>
 
---QRj9sO5tAVLaXnSD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi All,
+To be able to add support for the Allwinner H6 I've changed some of the
+original reg fields into function calls as this made it easier to setup
+for multi-channel audio especially across different SoCs. I've also
+stripped out all the other patches unrelated to this which I will deliver
+after support for the H6 has gone in.
 
-On Fri, Oct 04, 2019 at 02:53:53PM +0200, Fabrice Gasnier wrote:
-> Add suspend/resume PM sleep ops. When going to low power, enforce the PWM
-> channel isn't active. Let the PWM consumers disable it during their own
-> suspend sequence, see [1]. So, perform a check here, and handle the
-> pinctrl states. Also restore the break inputs upon resume, as registers
-> content may be lost when going to low power mode.
->=20
-> [1] https://lkml.org/lkml/2019/2/5/770
->=20
-> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-> ---
-> Changes in v2:
-> Follow Uwe suggestions/remarks:
-> - Add a precursor patch to ease reviewing
-> - Use registers read instead of pwm_get_state
-> - Add a comment to mention registers content may be lost in low power mode
-> ---
->  drivers/pwm/pwm-stm32.c | 38 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 38 insertions(+)
+These other patches are required for HDMI audio which is driving this
+patchset and they can be found here
+https://github.com/codekipper/linux-sunxi/commits/upstream-i2s
+BR,
+CK
 
-Applied, thanks. I made two minor changes, though, see below.
+---
+v6 changes compared to v5 are:
+- rebased onto the recent tdm delivery
+- stripped out patches not required for the H6 delivery
 
->=20
-> diff --git a/drivers/pwm/pwm-stm32.c b/drivers/pwm/pwm-stm32.c
-> index cf8658c..546b661 100644
-> --- a/drivers/pwm/pwm-stm32.c
-> +++ b/drivers/pwm/pwm-stm32.c
-> @@ -12,6 +12,7 @@
->  #include <linux/mfd/stm32-timers.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> +#include <linux/pinctrl/consumer.h>
->  #include <linux/platform_device.h>
->  #include <linux/pwm.h>
-> =20
-> @@ -655,6 +656,42 @@ static int stm32_pwm_remove(struct platform_device *=
-pdev)
->  	return 0;
->  }
-> =20
-> +static int __maybe_unused stm32_pwm_suspend(struct device *dev)
-> +{
-> +	struct stm32_pwm *priv =3D dev_get_drvdata(dev);
-> +	unsigned int ch;
+v5 changes compared to v4 are:
+- removed delivered patches.
+- Added more details to commit messages.
+- replaced some reg fields with function calls.
+- Added DSP_A and DSP_B support for H3 and later SoCs.
+- Added support for the Allwinner H6.
 
-I renamed this to just "i", which is more idiomatic for loop variables.
-The function is small enough not to need to differentiate between loop
-variables.
+v4 changes compared to v3 are:
+- Moved patches around so that the more controversial of patches are
+  at the top of the stack.
+- Added more details to commit messages.
+- Fixed 20bit audio PCM format to use 4 bytes.
+- Reduced number of flags used to indicate a new SoC.
 
-> +	u32 ccer, mask;
-> +
-> +	/* Look for active channels */
-> +	ccer =3D active_channels(priv);
-> +
-> +	for (ch =3D 0; ch < priv->chip.npwm; ch++) {
-> +		mask =3D TIM_CCER_CC1E << (ch * 4);
-> +		if (ccer & mask) {
-> +			dev_err(dev, "The consumer didn't stop us (%s)\n",
-> +				priv->chip.pwms[ch].label);
+v3 changes compared to v2 are:
+ - added back slave mode changes
+ - added back the use of tdm properties
+ - changes to regmap and caching
+ - removed loopback functionality
+ - fixes to the channel offset mask
 
-Changed this to:
+v2 changes compared to v1 are:
+ - removed slave mode changes which didn't set mclk and bclk div.
+ - removed use of tdm and now use a dedicated property.
+ - fix commit message to better explain reason for sign extending
+ - add divider calculations for newer SoCs.
+ - add support for multi-lane i2s data output.
+ - add support for 20, 24 and 32 bit samples.
+ - add loopback property so blocks can be tested without a codec.
 
-	"PWM %u still in use by consumer %s\n", i, priv->chip.pwms[i].label
+---
+Jernej Skrabec (2):
+  dt-bindings: ASoC: sun4i-i2s: Add H6 compatible
+  ASoC: sun4i-i2s: Add support for H6 I2S
 
-I think that might help clarify which PWM is still enabled in case the
-consumers don't set a label.
+Marcus Cooper (5):
+  ASoC: sun4i-i2s: Move channel select offset
+  ASoC: sun4i-i2s: Add functions for RX and TX channel offsets
+  ASoC: sun4i-i2s: Add functions for RX and TX channel enables
+  ASoC: sun4i-i2s: Add functions for RX and TX channel selects
+  ASoC: sun4i-i2s: Add functions for RX and TX channel mapping
 
-Thierry
+ .../sound/allwinner,sun4i-a10-i2s.yaml        |   2 +
+ sound/soc/sunxi/sun4i-i2s.c                   | 337 ++++++++++++++++--
+ 2 files changed, 305 insertions(+), 34 deletions(-)
 
-> +			return -EBUSY;
-> +		}
-> +	}
-> +
-> +	return pinctrl_pm_select_sleep_state(dev);
-> +}
-> +
-> +static int __maybe_unused stm32_pwm_resume(struct device *dev)
-> +{
-> +	struct stm32_pwm *priv =3D dev_get_drvdata(dev);
-> +	int ret;
-> +
-> +	ret =3D pinctrl_pm_select_default_state(dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* restore breakinput registers that may have been lost in low power */
-> +	return stm32_pwm_apply_breakinputs(priv);
-> +}
-> +
-> +static SIMPLE_DEV_PM_OPS(stm32_pwm_pm_ops, stm32_pwm_suspend, stm32_pwm_=
-resume);
-> +
->  static const struct of_device_id stm32_pwm_of_match[] =3D {
->  	{ .compatible =3D "st,stm32-pwm",	},
->  	{ /* end node */ },
-> @@ -667,6 +704,7 @@ static struct platform_driver stm32_pwm_driver =3D {
->  	.driver	=3D {
->  		.name =3D "stm32-pwm",
->  		.of_match_table =3D stm32_pwm_of_match,
-> +		.pm =3D &stm32_pwm_pm_ops,
->  	},
->  };
->  module_platform_driver(stm32_pwm_driver);
-> --=20
-> 2.7.4
->=20
+-- 
+2.23.0
 
---QRj9sO5tAVLaXnSD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2mwXsACgkQ3SOs138+
-s6GqmQ//aMbyiuKupfEKiM3NlzeTFHoXGDg+k4W+S9nTP9R1XcCo+LUn9otYurGO
-f44vih/M5jOuxA1RJ3w3Ji1fFOLD4/QXpTCN1nf+E1U0E/wo8HuPjpPJsZGj3vEJ
-YeLxDNmpVe/VID1GKuyACOChqCI0dSvMmZYqbKMSSRhUVNmfja/FnubM6iCQ8xzY
-qqUDkr4R1OCc4EjB9h5L+uBb+vy6iwGxEIZZNuMn3khiVvNTZpiI0D5qGLC0eVLM
-3pDe6BTs/B7sI6OgQ2EJjqne9CbYXT3j/ANty3k4NcPXnMZ2nJT+8anoczxo2ZwB
-zyA5SzMctvcCHNpqrbAZLuOPERTA//X8BisEzJ9YRC1WjKuvJ9ykyXWWtcEnYdyr
-JeS6NNslrxDC1Fl4mrJV4rEJqm01giH2Pz1J0+8FAYYiga9QYQoYqjjxos6NSxde
-PcruGHt6xLWd647jwNGDrrG1G8gz+7xUEVpyHD8xSVXsNZ41Rst3WSkmwmu0vr4Y
-S7y5ylK/O9SW9p3yhyVuQPCc0rk/Mgln4BnOj8jq0FQDNVFosnC0eKX3tI8/CWlB
-Mpe9Rc7W4v3Hr7GBXoNqbNx4Uudfg7exBCc0pk2LFrobvyyjy+1vmKPtW6HnH4k3
-S6h+dAMVH0QFmOimR8+QXtzTSUQ3ik96+Na4q+C44ozzuX/EBNs=
-=+BC6
------END PGP SIGNATURE-----
-
---QRj9sO5tAVLaXnSD--
