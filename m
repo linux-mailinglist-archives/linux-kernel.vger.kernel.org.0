@@ -2,80 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0F60D944A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 16:50:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5193D9450
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 16:51:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393171AbfJPOun (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 10:50:43 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:28125 "EHLO mx1.redhat.com"
+        id S2393836AbfJPOvG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 10:51:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730251AbfJPOum (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 10:50:42 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2390729AbfJPOvG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 10:51:06 -0400
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9A66E89F302;
-        Wed, 16 Oct 2019 14:50:42 +0000 (UTC)
-Received: from localhost (unknown [10.36.118.69])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B0A5760127;
-        Wed, 16 Oct 2019 14:50:39 +0000 (UTC)
-Date:   Wed, 16 Oct 2019 15:50:38 +0100
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH] vsock/virtio: remove unused 'work' field from 'struct
- virtio_vsock_pkt'
-Message-ID: <20191016145038.GH5487@stefanha-x1.localdomain>
-References: <20191015150051.104631-1-sgarzare@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 331AE2168B;
+        Wed, 16 Oct 2019 14:51:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571237465;
+        bh=Xh/9gWmwBKdF+8neE3kItdxVMfpHXwc3n8w1uZywGNQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bMkLi5d63UN14+72d9h18uH19CkeKG76vGq+CqQ+wIG2Cyem630Ojwrt9CEOdzh1f
+         nfcG0oLaZc2le2vb93goK32+ObpHGn+url2irqclWJw+pWdZempUJgMh0VLuA1KDwD
+         FgYwaZLYrXiSq3mJDbHG9vjPT2zA1qR1eMkuVBy4=
+Date:   Wed, 16 Oct 2019 16:51:03 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Code Kipper <codekipper@gmail.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        "Andrea Venturi (pers)" <be17068@iperbole.bo.it>
+Subject: Re: [PATCH v6 1/7] ASoC: sun4i-i2s: Move channel select offset
+Message-ID: <20191016145103.im4h75qi2fcdcmar@gilmour>
+References: <20191016070740.121435-1-codekipper@gmail.com>
+ <20191016070740.121435-2-codekipper@gmail.com>
+ <20191016080420.4cbxn2hdt3wwtrhl@gilmour>
+ <CAEKpxBmNCA4U8-X8iSwOxBZ7T3dp6352S2Kfxc6f5E4N671zvg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="EemXnrF2ob+xzFeB"
+        protocol="application/pgp-signature"; boundary="fi6amry3fbotqfax"
 Content-Disposition: inline
-In-Reply-To: <20191015150051.104631-1-sgarzare@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.68]); Wed, 16 Oct 2019 14:50:42 +0000 (UTC)
+In-Reply-To: <CAEKpxBmNCA4U8-X8iSwOxBZ7T3dp6352S2Kfxc6f5E4N671zvg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---EemXnrF2ob+xzFeB
+--fi6amry3fbotqfax
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 15, 2019 at 05:00:51PM +0200, Stefano Garzarella wrote:
-> The 'work' field was introduced with commit 06a8fc78367d0
-> ("VSOCK: Introduce virtio_vsock_common.ko")
-> but it is never used in the code, so we can remove it to save
-> memory allocated in the per-packet 'struct virtio_vsock_pkt'
->=20
-> Suggested-by: Michael S. Tsirkin <mst@redhat.com>
-> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> ---
->  include/linux/virtio_vsock.h | 1 -
->  1 file changed, 1 deletion(-)
+On Wed, Oct 16, 2019 at 10:41:31AM +0200, Code Kipper wrote:
+> On Wed, 16 Oct 2019 at 10:04, Maxime Ripard <mripard@kernel.org> wrote:
+> >
+> > On Wed, Oct 16, 2019 at 09:07:34AM +0200, codekipper@gmail.com wrote:
+> > > From: Marcus Cooper <codekipper@gmail.com>
+> > >
+> > > On the newer SoCs the offset is used to set the mode of the
+> > > connection. As it is to be used elsewhere then it makes sense
+> > > to move it to the main structure.
+> >
+> > Elsewhere where, and to do what?
+> Thanks...How does this sound?
+>
+> As it is to be used to set the same offset for each TX data channel in use
+> during multi-channel audio then let's move it to the main structure.
 
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+That still doesn't explain why you want to move it to the main
+structure. It's there, it's calculated already, and can be used during
+multi-channel audio if you set it up in the same function. What you
+need to explain is why you can't do it in the same function.
 
---EemXnrF2ob+xzFeB
+Maxime
+
+--fi6amry3fbotqfax
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl2nLj4ACgkQnKSrs4Gr
-c8hxgQf/fJM59TTkQU6f/aLvKMLRivTzsa1Yz/4hy25NeYI++lHojSBwzdtd1BxY
-PF945mWrEnCumX+FOqHdpwX6oRU4bnJ0pc3kzHPrxnLYoyHT1NYNPnEHnaZERFfP
-7OdE3RMXooLx+JM7MrIn8Fh/ElR2Bi4JhUw+zOUMEO96aY+HIJ7cAPsDG3QTHinj
-TL4WUjSRZEqwfZKvJ0TiydqJR/RKjpNEi1bYrTV9TzW84/5AmWternJ3sS76dH3w
-2Qb9yLIBpDSbOnohYQQunrl8VuYdeCw2w0NZc9jsbslAgs6yc5EIE/6PoX//fwOn
-Tf1ER5hbSetx0Lk+7Jaw3eVDH5r6Uw==
-=GpdO
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXacuVwAKCRDj7w1vZxhR
+xTaQAP0X2iGfJ5IY9S8B+s9Zh5MP11erZjYLItvMfIJTyW5EAgD/QxPJRbfuSz03
+Mqd/XK6k/sf6xBYpSzArepQAruvCDQs=
+=rCXO
 -----END PGP SIGNATURE-----
 
---EemXnrF2ob+xzFeB--
+--fi6amry3fbotqfax--
