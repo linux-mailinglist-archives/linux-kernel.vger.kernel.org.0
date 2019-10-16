@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3EB7D9FB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EFF1DA122
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:26:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395469AbfJPV5Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:57:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48904 "EHLO mail.kernel.org"
+        id S2405629AbfJPWTp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:19:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43514 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395434AbfJPV4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:56:48 -0400
+        id S2437637AbfJPVyB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:54:01 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C14BE218DE;
-        Wed, 16 Oct 2019 21:56:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D179021925;
+        Wed, 16 Oct 2019 21:54:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263008;
-        bh=XE/YkTvqc1UUzp6Bz2d0CnVwHgwtQ36P/CX2TSzYC8E=;
+        s=default; t=1571262841;
+        bh=/nAysgjTFmewi/5K89zTSe8m+NSh6ZbHkmJVyj9QHAw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SK7A3K+9AVjizb0rEPRH6qgFZa3gJK1ZoQMRCvV+ZdTyLdBOw3x94zf6W0IQyWQmi
-         iWXbNgrW37NyuI3W6T0BqweLWked5PQ+MQtZKw9o3gqD0PRin7qHZkGEXuPCHFPJ1t
-         YDUzpL7vRkISrYGu2qNXrLw/ZyGYyuQrlY824F6w=
+        b=CUzwGpNafoBJxs0QGOeA6MBjtpWH9Lr3e198myUhQDwOfMLJOunFbU02u2TDH5NhC
+         y0TymvrWOKTsZuEJm5oBcv+m6T0VZRKda9W+lAblRYAl8HPpoy3/8rRLnuYg6odBzH
+         Wuko88zUcEKCArLxLHb1nIW3u7biugMPtxKiD4eM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Schmidt <jan@centricular.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.19 10/81] xhci: Check all endpoints for LPM timeout
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.4 46/79] USB: chaoskey: fix use-after-free on release
 Date:   Wed, 16 Oct 2019 14:50:21 -0700
-Message-Id: <20191016214815.170211026@linuxfoundation.org>
+Message-Id: <20191016214808.032672151@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
-References: <20191016214805.727399379@linuxfoundation.org>
+In-Reply-To: <20191016214729.758892904@linuxfoundation.org>
+References: <20191016214729.758892904@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,46 +42,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Schmidt <jan@centricular.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit d500c63f80f2ea08ee300e57da5f2af1c13875f5 upstream.
+commit 93ddb1f56ae102f14f9e46a9a9c8017faa970003 upstream.
 
-If an endpoint is encountered that returns USB3_LPM_DEVICE_INITIATED, keep
-checking further endpoints, as there might be periodic endpoints later
-that return USB3_LPM_DISABLED due to shorter service intervals.
+The driver was accessing its struct usb_interface in its release()
+callback without holding a reference. This would lead to a
+use-after-free whenever the device was disconnected while the character
+device was still open.
 
-Without this, the code can set too high a maximum-exit-latency and
-prevent the use of multiple USB3 cameras that should be able to work.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Jan Schmidt <jan@centricular.com>
-Tested-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/1570190373-30684-4-git-send-email-mathias.nyman@linux.intel.com
+Fixes: 66e3e591891d ("usb: Add driver for Altus Metrum ChaosKey device (v2)")
+Cc: stable <stable@vger.kernel.org>     # 4.1
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191009153848.8664-3-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/usb/misc/chaoskey.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -4631,12 +4631,12 @@ static int xhci_update_timeout_for_endpo
- 	alt_timeout = xhci_call_host_update_timeout_for_endpoint(xhci, udev,
- 		desc, state, timeout);
+--- a/drivers/usb/misc/chaoskey.c
++++ b/drivers/usb/misc/chaoskey.c
+@@ -96,6 +96,7 @@ static void chaoskey_free(struct chaoske
+ 	usb_dbg(dev->interface, "free");
+ 	kfree(dev->name);
+ 	kfree(dev->buf);
++	usb_put_intf(dev->interface);
+ 	kfree(dev);
+ }
  
--	/* If we found we can't enable hub-initiated LPM, or
-+	/* If we found we can't enable hub-initiated LPM, and
- 	 * the U1 or U2 exit latency was too high to allow
--	 * device-initiated LPM as well, just stop searching.
-+	 * device-initiated LPM as well, then we will disable LPM
-+	 * for this device, so stop searching any further.
- 	 */
--	if (alt_timeout == USB3_LPM_DISABLED ||
--			alt_timeout == USB3_LPM_DEVICE_INITIATED) {
-+	if (alt_timeout == USB3_LPM_DISABLED) {
- 		*timeout = alt_timeout;
- 		return -E2BIG;
+@@ -144,6 +145,8 @@ static int chaoskey_probe(struct usb_int
+ 	if (dev == NULL)
+ 		return -ENOMEM;
+ 
++	dev->interface = usb_get_intf(interface);
++
+ 	dev->buf = kmalloc(size, GFP_KERNEL);
+ 
+ 	if (dev->buf == NULL) {
+@@ -169,8 +172,6 @@ static int chaoskey_probe(struct usb_int
+ 		strcat(dev->name, udev->serial);
  	}
+ 
+-	dev->interface = interface;
+-
+ 	dev->in_ep = in_ep;
+ 
+ 	dev->size = size;
 
 
