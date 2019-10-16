@@ -2,88 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 189B4D8F2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:19:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A77F5D8F51
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:23:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392702AbfJPLTR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 07:19:17 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:37626 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389534AbfJPLTR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 07:19:17 -0400
-Received: by mail-lf1-f65.google.com with SMTP id w67so17149187lff.4
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 04:19:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1AlVFzVNzLFhybDABbQIP7y9fwuWZqgdiTuBdrVDMgU=;
-        b=ZE6OEgnZ8yrNuwOpjQUl1DrdrhOJcU/OfJQ+UWAJV5VSuBLt4kobSn90ZvkwKhz3/W
-         DmWuNa8o4L6xpUpEA32J5Ft1QTqgjgdu1dbOpgk5naABVzkOtVTLGgWzYWNTzQ0WgTbb
-         Y5niXn2s+/QyNMl5FrZPP125aQ4QKxA3TA4Lw+iuOCQIhfIOlJhBFdeOJIR1GZ+oDqDq
-         hCnZiK17J2nBsS8Ybej2tVBY0I7+6EKSRi0R6PvzZFSb1ptl6XnMGK+lHRNew2QPY1xJ
-         KNOCbpWsHgotFI3zRLMVcXg5iQytMnF3Gq7qsWWyjGRj8Jo3TTknxKUco7I816TsaM43
-         NMEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1AlVFzVNzLFhybDABbQIP7y9fwuWZqgdiTuBdrVDMgU=;
-        b=Pcf2J6vW3XBrunanob1wA5cw3Lbe3Li5MMhbXabFMXcu36miWVbj4LDwwksjlYJdyh
-         Qm7stzRgJPEy1lkr1GajvwvucYMJrjd9TWFxWFjls4ks/TfOPF8+IiOb+XKvEQ59fVyt
-         naG0Ki/pBCBHB03959h2QxWb4zRGcl4HKyOplPn8J1jfFHzhSsLzLsJHgjeRZyZSOocy
-         hyCDesrG3npXYlqNxyDAvuWbFeGnyxDfYqo3Iv/JD+VDF3GUhFB6k/uS51nPIsbny4O2
-         X0Zw6OIR9ICJfnExklK7qW7/kvxsYQoBAIwi4EXRksLoav+n0/CLbHx4M1DGVpq9PAUU
-         eJ+Q==
-X-Gm-Message-State: APjAAAWKPZV3jmE8lH+YkHhKGOe8936tDIS6Y/MwgIHdFJy4mQJglMSP
-        4gJzoZL2EFgPmWgTkTo7hWDAaJAmPMwRauc+XuUv2A==
-X-Google-Smtp-Source: APXvYqzpMNbiy51j6vtkjPuuhusjbti4CJFbH8pcmfYvGpawltJmnzSIwtrjLRWD8kgfIxeJjRT4UBofz6S6sUNLEa8=
-X-Received: by 2002:ac2:4345:: with SMTP id o5mr4806342lfl.60.1571224755662;
- Wed, 16 Oct 2019 04:19:15 -0700 (PDT)
+        id S2403856AbfJPLXd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 07:23:33 -0400
+Received: from mx1.unisoc.com ([222.66.158.135]:23338 "EHLO SHSQR01.unisoc.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2403823AbfJPLXd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 07:23:33 -0400
+X-Greylist: delayed 2254 seconds by postgrey-1.27 at vger.kernel.org; Wed, 16 Oct 2019 07:23:30 EDT
+Received: from SHSQR01.spreadtrum.com (localhost [127.0.0.2] (may be forged))
+        by SHSQR01.unisoc.com with ESMTP id x9GAjkpG035605;
+        Wed, 16 Oct 2019 18:45:46 +0800 (CST)
+        (envelope-from Chunyan.Zhang@unisoc.com)
+Received: from ig2.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+        by SHSQR01.spreadtrum.com with ESMTPS id x9GAi8PG033493
+        (version=TLSv1 cipher=AES256-SHA bits=256 verify=NO);
+        Wed, 16 Oct 2019 18:44:09 +0800 (CST)
+        (envelope-from Chunyan.Zhang@unisoc.com)
+Received: from localhost (10.0.93.106) by BJMBX02.spreadtrum.com (10.0.64.8)
+ with Microsoft SMTP Server (TLS) id 15.0.847.32; Wed, 16 Oct 2019 18:44:17
+ +0800
+From:   Chunyan Zhang <chunyan.zhang@unisoc.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Xiaolong Zhang <xiaolong.zhang@unisoc.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH] clk: sprd: change to implement .prepare instead of .enable
+Date:   Wed, 16 Oct 2019 18:44:14 +0800
+Message-ID: <1571222654-12315-1-git-send-email-chunyan.zhang@unisoc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <20191008044153.12734-1-andrew@aj.id.au>
-In-Reply-To: <20191008044153.12734-1-andrew@aj.id.au>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 16 Oct 2019 13:19:01 +0200
-Message-ID: <CACRpkda5cWaA7R3XzyiERCCgwUrjnXd+wCBeKvt-wtjex7wNDg@mail.gmail.com>
-Subject: Re: [PATCH 0/7] pinctrl: Fixes for AST2600 support
-To:     Andrew Jeffery <andrew@aj.id.au>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Joel Stanley <joel@jms.id.au>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        johnny_huang@aspeedtech.com, ryanchen.aspeed@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.0.93.106]
+X-ClientProxiedBy: shcas04.spreadtrum.com (10.29.35.89) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL: SHSQR01.spreadtrum.com x9GAi8PG033493
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 8, 2019 at 6:41 AM Andrew Jeffery <andrew@aj.id.au> wrote:
 
-> This series resolves several issues found in testing by Johnny Huang from
-> ASPEED, who also contributed the patches to fix them. We'll have more patches
-> from him in the near future (which I'm pretty happy about).
->
-> The major issue resolved is the way I grouped the eMMC pins. What I had was
-> ugly and I want to get rid of it before the binding is solidified with the 5.4
-> release.
+From: Xiaolong Zhang <xiaolong.zhang@unisoc.com>
 
-Should some of these go in with fixes? All of them? Or just some?
-I applied them to devel right now (for v5.5).
+Some pll_sc_gate clocks need to wait a certain long time for being stable
+after enabled, for this reason enabling this kind of clocks shouldn't be
+done in clk_ops.enable() which would be called at interrupt context. So
+we move the operation to .prepare(), and also hooks to .unprepare() with
+disabling pll_sc_gate clocks.
 
-> The remaining fixes are minor issues that stem from lack of documentation or
-> understanding on my part, and at least one brain-fart.
+Signed-off-by: Xiaolong Zhang <xiaolong.zhang@unisoc.com>
+Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+---
+ drivers/clk/sprd/gate.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-Do they need to go in to v5.4 or not?
+diff --git a/drivers/clk/sprd/gate.c b/drivers/clk/sprd/gate.c
+index 1491c00575fa..d8b480f852f3 100644
+--- a/drivers/clk/sprd/gate.c
++++ b/drivers/clk/sprd/gate.c
+@@ -80,7 +80,7 @@ static int sprd_sc_gate_enable(struct clk_hw *hw)
+ 	return 0;
+ }
+ 
+-static int sprd_pll_sc_gate_enable(struct clk_hw *hw)
++static int sprd_pll_sc_gate_prepare(struct clk_hw *hw)
+ {
+ 	struct sprd_gate *sg = hw_to_sprd_gate(hw);
+ 
+@@ -120,9 +120,11 @@ const struct clk_ops sprd_sc_gate_ops = {
+ };
+ EXPORT_SYMBOL_GPL(sprd_sc_gate_ops);
+ 
++#define sprd_pll_sc_gate_unprepare sprd_sc_gate_disable
++
+ const struct clk_ops sprd_pll_sc_gate_ops = {
+-	.disable	= sprd_sc_gate_disable,
+-	.enable		= sprd_pll_sc_gate_enable,
++	.unprepare	= sprd_pll_sc_gate_unprepare,
++	.prepare	= sprd_pll_sc_gate_prepare,
+ 	.is_enabled	= sprd_gate_is_enabled,
+ };
+ EXPORT_SYMBOL_GPL(sprd_pll_sc_gate_ops);
+-- 
+2.20.1
 
-I need a shortlist of anything that should go into v5.4 if anything.
 
-Yours,
-Linus Walleij
