@@ -2,101 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67D63D9566
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 17:21:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E7BAD9571
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 17:24:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393552AbfJPPVy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 11:21:54 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:37930 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392877AbfJPPVx (ORCPT
+        id S2393592AbfJPPYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 11:24:02 -0400
+Received: from smtprelay0139.hostedemail.com ([216.40.44.139]:50396 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389061AbfJPPYC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 11:21:53 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9GF4lBs149062;
-        Wed, 16 Oct 2019 15:21:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=1k/exljLrxFAW5tfrPeMCcZcoF6D571S9KzF3OmzfC8=;
- b=TDdl8b/hQnTmo4V3Sc3k+P1chL1cyQMGLN+bP2ef9psad4wdHM8KhoWjapkmtsRQZora
- cvF+xZdFWYrEo+YWfdhBh/lq48hH5nNpuD57S9DlY3lVy4JqxjXaOWBTPEatVnHPOfOL
- kGX1YVgkkM8PRZkg0S4sIBjgMGfRq5Al4l8EIhWNrJdBkNC6bbs08oR1ZKtaeMuBe/rD
- ECYVHYkW9bJk4PB2my5vDk+NwXx6OPnJoBqZmblGZExc4sPX9tW2fKHEo4bKlf0wjXAG
- qgdhz12CxUC8f/5keIn5p4AJATqSG25I0QpvWCF/DnKxTz9AMxU0wnQVu8vDyHDWzWY+ FA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2vk7frfk81-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 16 Oct 2019 15:21:47 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9GF3Zd4042845;
-        Wed, 16 Oct 2019 15:21:46 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2vnf7tjwvx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 16 Oct 2019 15:21:46 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9GFLj01002476;
-        Wed, 16 Oct 2019 15:21:45 GMT
-Received: from [192.168.1.222] (/71.63.128.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 16 Oct 2019 08:21:45 -0700
-Subject: Re: [PATCH] hugetlb: Fix clang compilation warning
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20191016142324.52250-1-vincenzo.frascino@arm.com>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <29fdadee-2e0c-0886-73b3-358f983fd1fd@oracle.com>
-Date:   Wed, 16 Oct 2019 08:21:40 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        Wed, 16 Oct 2019 11:24:02 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 5FF50182CF408;
+        Wed, 16 Oct 2019 15:24:00 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 10,1,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::,RULES_HIT:41:355:379:599:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3167:3353:3622:3865:3866:3867:3868:3870:3871:3872:4250:4321:5007:6119:6248:6742:7903:10007:10226:10400:10450:10455:10848:11232:11658:11914:12297:12663:12740:12760:12895:13069:13311:13357:13439:14181:14659:14777:19904:19999:21080:21324:21433:21627:30003:30054:30083:30090:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:1:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: paste39_3fc0e2c85714f
+X-Filterd-Recvd-Size: 2548
+Received: from XPS-9350.home (unknown [47.151.152.152])
+        (Authenticated sender: joe@perches.com)
+        by omf18.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 16 Oct 2019 15:23:57 +0000 (UTC)
+Message-ID: <fb0e7c13da405970d5cbd59c10005daaf970b8da.camel@perches.com>
+Subject: Re: [PATCH v3] x86, efi: never relocate kernel below lowest
+ acceptable address
+From:   Joe Perches <joe@perches.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>
+Cc:     Kairui Song <kasong@redhat.com>, linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
+        x86@kernel.org, linux-efi@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Date:   Wed, 16 Oct 2019 08:23:56 -0700
+In-Reply-To: <20191016152014.GC4261@linux.intel.com>
+References: <20191012034421.25027-1-kasong@redhat.com>
+         <20191014101419.GA4715@zn.tnic> <20191014202111.GP15552@linux.intel.com>
+         <20191014211825.GJ4715@zn.tnic> <20191016152014.GC4261@linux.intel.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-In-Reply-To: <20191016142324.52250-1-vincenzo.frascino@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9412 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=708
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910160130
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9412 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=768 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910160130
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/16/19 7:23 AM, Vincenzo Frascino wrote:
-> Building the kernel with a recent version of clang I noticed the warning
-> below:
+On Wed, 2019-10-16 at 18:20 +0300, Jarkko Sakkinen wrote:
+> On Mon, Oct 14, 2019 at 11:18:25PM +0200, Borislav Petkov wrote:
+> > On Mon, Oct 14, 2019 at 11:21:11PM +0300, Jarkko Sakkinen wrote:
+> > > Was there a section in the patch submission documentation to point out
+> > > when people send patches with all the possible twists for an acronym?
+> > 
+> > I don't think so.
+> > 
+> > > This is giving me constantly gray hairs with TPM patches.
+> > 
+> > Well, I'm slowly getting tired of repeating the same crap over and over
+> > again about how important it is to document one's changes and to write
+> > good commit messages. The most repeated answers I'm simply putting into
+> > canned reply templates because, well, saying it once or twice is not
+> > enough anymore. :-\
+> > 
+> > And yeah, I see your pain. Same here, actually.
+> > 
+> > In the acronym case, I'd probably add a regex to my patch massaging
+> > script and convert those typos automatically and be done with it.
 > 
-> mm/hugetlb.c:4055:40: warning: expression does not compute the number of
-> elements in this array; element type is 'unsigned long', not 'u32'
-> (aka 'unsigned int') [-Wsizeof-array-div]
->         hash = jhash2((u32 *)&key, sizeof(key)/sizeof(u32), 0);
->                                           ~~~ ^
-> mm/hugetlb.c:4049:16: note: array 'key' declared here
->         unsigned long key[2];
->                       ^
-> mm/hugetlb.c:4055:40: note: place parentheses around the 'sizeof(u32)'
-> expression to silence this warning
->         hash = jhash2((u32 *)&key, sizeof(key)/sizeof(u32), 0);
->                                               ^  CC      fs/ext4/ialloc.o
-> 
-> Fix the warning adding parentheses around the sizeof(u32) expression.
-> 
-> Cc: Mike Kravetz <mike.kravetz@oracle.com>
-> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+> Wonder if checkpatch.pl could be extended to know acronyms e.g. have a
+> db of known acronyms.
 
-Thanks,
+?  examples please.
 
-However, this is already addressed in Andrew's tree.
-https://ozlabs.org/~akpm/mmotm/broken-out/hugetlbfs-hugetlb_fault_mutex_hash-cleanup.patch
+checkpatch has a db for misspellings, I supposed another for
+acronyms could be added, but how would false positives be avoided?
 
--- 
-Mike Kravetz
+
