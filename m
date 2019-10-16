@@ -2,72 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F01B3D8C19
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 11:03:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A226D8C35
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 11:09:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390743AbfJPJDf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 05:03:35 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3780 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727399AbfJPJDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 05:03:35 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 2E9197370965DC43FFBB;
-        Wed, 16 Oct 2019 17:03:33 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Wed, 16 Oct 2019
- 17:03:24 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <gregkh@linuxfoundation.org>, <daniela.mormocea@gmail.com>,
-        <gustavo@embeddedor.com>, <linux.bhar@gmail.com>,
-        <philipp.panzer@fau.de>, <nishka.dasgupta@yahoo.com>,
-        <harold.andre@gmx.fr>
-CC:     <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] staging: ralink-gdma: use devm_platform_ioremap_resource() to simplify code
-Date:   Wed, 16 Oct 2019 17:03:05 +0800
-Message-ID: <20191016090305.23392-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S2391893AbfJPJJZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 05:09:25 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:24354 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388342AbfJPJJZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 05:09:25 -0400
+Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Wed, 16 Oct 2019 02:09:21 -0700
+Received: from akaher-virtual-machine.eng.vmware.com (unknown [10.197.103.239])
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 66AE5B2609;
+        Wed, 16 Oct 2019 05:09:23 -0400 (EDT)
+From:   Ajay Kaher <akaher@vmware.com>
+To:     <gregkh@linuxfoundation.org>
+CC:     <davem@davemloft.net>, <kuznet@ms2.inr.ac.ru>, <jmorris@namei.org>,
+        <yoshfuji@linux-ipv6.org>, <kaber@trash.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>, <srivatsab@vmware.com>,
+        <srivatsa@csail.mit.edu>, <amakhalov@vmware.com>,
+        <srinidhir@vmware.com>, <bvikas@vmware.com>, <anishs@vmware.com>,
+        <vsirnapalli@vmware.com>, <srostedt@vmware.com>,
+        <akaher@vmware.com>, Mao Wenan <maowenan@huawei.com>
+Subject: [PATCH 4.9.y] Revert "net: sit: fix memory leak in sit_init_net()"
+Date:   Wed, 16 Oct 2019 14:33:54 +0530
+Message-ID: <1571216634-44834-1-git-send-email-akaher@vmware.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: akaher@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify the code a bit.
-This is detected by coccinelle.
+This reverts commit 375d6d454a95ebacb9c6eb0b715da05a4458ffef which is
+commit 07f12b26e21ab359261bf75cfcb424fdc7daeb6d upstream.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Unnecessarily calling free_netdev() from sit_init_net().
+ipip6_dev_free() of 4.9.y called free_netdev(), so no need
+to call again after ipip6_dev_free().
+
+Cc: Mao Wenan <maowenan@huawei.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Ajay Kaher <akaher@vmware.com>
 ---
- drivers/staging/ralink-gdma/ralink-gdma.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ net/ipv6/sit.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/staging/ralink-gdma/ralink-gdma.c b/drivers/staging/ralink-gdma/ralink-gdma.c
-index 900424d..eabf109 100644
---- a/drivers/staging/ralink-gdma/ralink-gdma.c
-+++ b/drivers/staging/ralink-gdma/ralink-gdma.c
-@@ -796,7 +796,6 @@ static int gdma_dma_probe(struct platform_device *pdev)
- 	struct gdma_dma_dev *dma_dev;
- 	struct dma_device *dd;
- 	unsigned int i;
--	struct resource *res;
- 	int ret;
- 	int irq;
- 	void __iomem *base;
-@@ -818,8 +817,7 @@ static int gdma_dma_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	dma_dev->data = data;
+diff --git a/net/ipv6/sit.c b/net/ipv6/sit.c
+index 47ca2a2..16eba7b 100644
+--- a/net/ipv6/sit.c
++++ b/net/ipv6/sit.c
+@@ -1856,7 +1856,6 @@ static int __net_init sit_init_net(struct net *net)
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(&pdev->dev, res);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
- 	dma_dev->base = base;
+ err_reg_dev:
+ 	ipip6_dev_free(sitn->fb_tunnel_dev);
+-	free_netdev(sitn->fb_tunnel_dev);
+ err_alloc_dev:
+ 	return err;
+ }
 -- 
 2.7.4
-
 
