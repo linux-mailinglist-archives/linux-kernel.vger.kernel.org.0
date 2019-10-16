@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45AE8D9FF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:24:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1BD4D9F87
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392612AbfJPWGX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:06:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52278 "EHLO mail.kernel.org"
+        id S2390020AbfJPVzm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:55:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438188AbfJPV6e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:58:34 -0400
+        id S2390372AbfJPVzf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:55:35 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6318D21925;
-        Wed, 16 Oct 2019 21:58:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9516C21D80;
+        Wed, 16 Oct 2019 21:55:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263113;
-        bh=DnX9JcJUzaW9xf1hlMgjIBDo4bmZg7W4Nni/YxvAVvc=;
+        s=default; t=1571262934;
+        bh=M6SR5GjYxGUI+9nzIIp3JhPfCJi1hqJh+mra8AS75kU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0BCdVj99JMRVrDxfV3wVaP67gEpOEc24DfkC8DkE2ne1CPRTHLrkkteJMyOTrSxMC
-         JuGCOwenXwufBQHugHK0+ioiLMDhisz/MbVSL0Z3ug729ry3bIAaccREbcH64alIJo
-         RHHOD8ok9yf3dTamt6oSaWNsKYFCtP106g9MSW+I=
+        b=Tii2GyRwd3z2uLltI0hB8YYCxt/l+xMGPwHxNcajQngEVScQZT6a45rg6f+28ni4y
+         JGS8w6E7BCrc7AuVM8R+1cAzJesN02zYIw6bZho1OTyVh0qfQfYVnX+ckXtEXfrkfS
+         IIfuGeoHVq2pIZLsc51sEA92Gny9NMDLSXcKaWmI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: [PATCH 5.3 037/112] usb: typec: ucsi: ccg: Remove run_isr flag
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.9 56/92] USB: ldusb: fix NULL-derefs on driver unbind
 Date:   Wed, 16 Oct 2019 14:50:29 -0700
-Message-Id: <20191016214853.978001035@linuxfoundation.org>
+Message-Id: <20191016214838.885312409@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
-References: <20191016214844.038848564@linuxfoundation.org>
+In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
+References: <20191016214759.600329427@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,129 +42,130 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 8530e4e20ec2355c273f4dba9002969e68275e5f upstream.
+commit 58ecf131e74620305175a7aa103f81350bb37570 upstream.
 
-The "run_isr" flag is used for preventing the driver from
-calling the interrupt service routine in its runtime resume
-callback when the driver is expecting completion to a
-command, but what that basically does is that it hides the
-real problem. The real problem is that the controller is
-allowed to suspend in the middle of command execution.
+The driver was using its struct usb_interface pointer as an inverted
+disconnected flag, but was setting it to NULL before making sure all
+completion handlers had run. This could lead to a NULL-pointer
+dereference in a number of dev_dbg, dev_warn and dev_err statements in
+the completion handlers which relies on said pointer.
 
-As a more appropriate fix for the problem, using autosuspend
-delay time that matches UCSI_TIMEOUT_MS (5s). That prevents
-the controller from suspending while still in the middle of
-executing a command.
+Fix this by unconditionally stopping all I/O and preventing
+resubmissions by poisoning the interrupt URBs at disconnect and using a
+dedicated disconnected flag.
 
-This fixes a potential deadlock. Both ccg_read() and
-ccg_write() are called with the mutex already taken at least
-from ccg_send_command(). In ccg_read() and ccg_write, the
-mutex is only acquired so that run_isr flag can be set.
+This also makes sure that all I/O has completed by the time the
+disconnect callback returns.
 
-Fixes: f0e4cd948b91 ("usb: typec: ucsi: ccg: add runtime pm workaround")
-Cc: stable@vger.kernel.org
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Link: https://lore.kernel.org/r/20191004100219.71152-2-heikki.krogerus@linux.intel.com
+Fixes: 2824bd250f0b ("[PATCH] USB: add ldusb driver")
+Cc: stable <stable@vger.kernel.org>     # 2.6.13
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191009153848.8664-4-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/typec/ucsi/ucsi_ccg.c |   42 +++-----------------------------------
- 1 file changed, 4 insertions(+), 38 deletions(-)
+ drivers/usb/misc/ldusb.c |   24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
---- a/drivers/usb/typec/ucsi/ucsi_ccg.c
-+++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
-@@ -195,7 +195,6 @@ struct ucsi_ccg {
+--- a/drivers/usb/misc/ldusb.c
++++ b/drivers/usb/misc/ldusb.c
+@@ -158,6 +158,7 @@ MODULE_PARM_DESC(min_interrupt_out_inter
+ struct ld_usb {
+ 	struct mutex		mutex;		/* locks this structure */
+ 	struct usb_interface*	intf;		/* save off the usb interface pointer */
++	unsigned long		disconnected:1;
  
- 	/* fw build with vendor information */
- 	u16 fw_build;
--	bool run_isr; /* flag to call ISR routine during resume */
- 	struct work_struct pm_work;
- };
+ 	int			open_count;	/* number of times this port has been opened */
  
-@@ -224,18 +223,6 @@ static int ccg_read(struct ucsi_ccg *uc,
- 	if (quirks && quirks->max_read_len)
- 		max_read_len = quirks->max_read_len;
- 
--	if (uc->fw_build == CCG_FW_BUILD_NVIDIA &&
--	    uc->fw_version <= CCG_OLD_FW_VERSION) {
--		mutex_lock(&uc->lock);
--		/*
--		 * Do not schedule pm_work to run ISR in
--		 * ucsi_ccg_runtime_resume() after pm_runtime_get_sync()
--		 * since we are already in ISR path.
--		 */
--		uc->run_isr = false;
--		mutex_unlock(&uc->lock);
--	}
--
- 	pm_runtime_get_sync(uc->dev);
- 	while (rem_len > 0) {
- 		msgs[1].buf = &data[len - rem_len];
-@@ -278,18 +265,6 @@ static int ccg_write(struct ucsi_ccg *uc
- 	msgs[0].len = len + sizeof(rab);
- 	msgs[0].buf = buf;
- 
--	if (uc->fw_build == CCG_FW_BUILD_NVIDIA &&
--	    uc->fw_version <= CCG_OLD_FW_VERSION) {
--		mutex_lock(&uc->lock);
--		/*
--		 * Do not schedule pm_work to run ISR in
--		 * ucsi_ccg_runtime_resume() after pm_runtime_get_sync()
--		 * since we are already in ISR path.
--		 */
--		uc->run_isr = false;
--		mutex_unlock(&uc->lock);
--	}
--
- 	pm_runtime_get_sync(uc->dev);
- 	status = i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
- 	if (status < 0) {
-@@ -1133,7 +1108,6 @@ static int ucsi_ccg_probe(struct i2c_cli
- 	uc->ppm.sync = ucsi_ccg_sync;
- 	uc->dev = dev;
- 	uc->client = client;
--	uc->run_isr = true;
- 	mutex_init(&uc->lock);
- 	INIT_WORK(&uc->work, ccg_update_firmware);
- 	INIT_WORK(&uc->pm_work, ccg_pm_workaround_work);
-@@ -1195,6 +1169,8 @@ static int ucsi_ccg_probe(struct i2c_cli
- 
- 	pm_runtime_set_active(uc->dev);
- 	pm_runtime_enable(uc->dev);
-+	pm_runtime_use_autosuspend(uc->dev);
-+	pm_runtime_set_autosuspend_delay(uc->dev, 5000);
- 	pm_runtime_idle(uc->dev);
- 
- 	return 0;
-@@ -1237,7 +1213,6 @@ static int ucsi_ccg_runtime_resume(struc
- {
- 	struct i2c_client *client = to_i2c_client(dev);
- 	struct ucsi_ccg *uc = i2c_get_clientdata(client);
--	bool schedule = true;
- 
- 	/*
- 	 * Firmware version 3.1.10 or earlier, built for NVIDIA has known issue
-@@ -1245,17 +1220,8 @@ static int ucsi_ccg_runtime_resume(struc
- 	 * Schedule a work to call ISR as a workaround.
- 	 */
- 	if (uc->fw_build == CCG_FW_BUILD_NVIDIA &&
--	    uc->fw_version <= CCG_OLD_FW_VERSION) {
--		mutex_lock(&uc->lock);
--		if (!uc->run_isr) {
--			uc->run_isr = true;
--			schedule = false;
--		}
--		mutex_unlock(&uc->lock);
--
--		if (schedule)
--			schedule_work(&uc->pm_work);
--	}
-+	    uc->fw_version <= CCG_OLD_FW_VERSION)
-+		schedule_work(&uc->pm_work);
- 
- 	return 0;
+@@ -197,12 +198,10 @@ static void ld_usb_abort_transfers(struc
+ 	/* shutdown transfer */
+ 	if (dev->interrupt_in_running) {
+ 		dev->interrupt_in_running = 0;
+-		if (dev->intf)
+-			usb_kill_urb(dev->interrupt_in_urb);
++		usb_kill_urb(dev->interrupt_in_urb);
+ 	}
+ 	if (dev->interrupt_out_busy)
+-		if (dev->intf)
+-			usb_kill_urb(dev->interrupt_out_urb);
++		usb_kill_urb(dev->interrupt_out_urb);
  }
+ 
+ /**
+@@ -210,8 +209,6 @@ static void ld_usb_abort_transfers(struc
+  */
+ static void ld_usb_delete(struct ld_usb *dev)
+ {
+-	ld_usb_abort_transfers(dev);
+-
+ 	/* free data structures */
+ 	usb_free_urb(dev->interrupt_in_urb);
+ 	usb_free_urb(dev->interrupt_out_urb);
+@@ -267,7 +264,7 @@ static void ld_usb_interrupt_in_callback
+ 
+ resubmit:
+ 	/* resubmit if we're still running */
+-	if (dev->interrupt_in_running && !dev->buffer_overflow && dev->intf) {
++	if (dev->interrupt_in_running && !dev->buffer_overflow) {
+ 		retval = usb_submit_urb(dev->interrupt_in_urb, GFP_ATOMIC);
+ 		if (retval) {
+ 			dev_err(&dev->intf->dev,
+@@ -396,7 +393,7 @@ static int ld_usb_release(struct inode *
+ 		retval = -ENODEV;
+ 		goto unlock_exit;
+ 	}
+-	if (dev->intf == NULL) {
++	if (dev->disconnected) {
+ 		/* the device was unplugged before the file was released */
+ 		mutex_unlock(&dev->mutex);
+ 		/* unlock here as ld_usb_delete frees dev */
+@@ -427,7 +424,7 @@ static unsigned int ld_usb_poll(struct f
+ 
+ 	dev = file->private_data;
+ 
+-	if (!dev->intf)
++	if (dev->disconnected)
+ 		return POLLERR | POLLHUP;
+ 
+ 	poll_wait(file, &dev->read_wait, wait);
+@@ -466,7 +463,7 @@ static ssize_t ld_usb_read(struct file *
+ 	}
+ 
+ 	/* verify that the device wasn't unplugged */
+-	if (dev->intf == NULL) {
++	if (dev->disconnected) {
+ 		retval = -ENODEV;
+ 		printk(KERN_ERR "ldusb: No device or device unplugged %d\n", retval);
+ 		goto unlock_exit;
+@@ -546,7 +543,7 @@ static ssize_t ld_usb_write(struct file
+ 	}
+ 
+ 	/* verify that the device wasn't unplugged */
+-	if (dev->intf == NULL) {
++	if (dev->disconnected) {
+ 		retval = -ENODEV;
+ 		printk(KERN_ERR "ldusb: No device or device unplugged %d\n", retval);
+ 		goto unlock_exit;
+@@ -768,6 +765,9 @@ static void ld_usb_disconnect(struct usb
+ 	/* give back our minor */
+ 	usb_deregister_dev(intf, &ld_usb_class);
+ 
++	usb_poison_urb(dev->interrupt_in_urb);
++	usb_poison_urb(dev->interrupt_out_urb);
++
+ 	mutex_lock(&dev->mutex);
+ 
+ 	/* if the device is not opened, then we clean up right now */
+@@ -775,7 +775,7 @@ static void ld_usb_disconnect(struct usb
+ 		mutex_unlock(&dev->mutex);
+ 		ld_usb_delete(dev);
+ 	} else {
+-		dev->intf = NULL;
++		dev->disconnected = 1;
+ 		/* wake up pollers */
+ 		wake_up_interruptible_all(&dev->read_wait);
+ 		wake_up_interruptible_all(&dev->write_wait);
 
 
