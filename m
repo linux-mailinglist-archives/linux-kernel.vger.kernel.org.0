@@ -2,74 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 121ECD9657
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:05:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4C5BD9633
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:01:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730468AbfJPQFb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 12:05:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56226 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727714AbfJPQFb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 12:05:31 -0400
-Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E0B12067D;
-        Wed, 16 Oct 2019 16:05:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571241930;
-        bh=Kx2mEOhlNQSvn3TSaXkT9PV90J17hLoKYSDzCwfVLhM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=J+eMBFhmov31ZYMZ9+meo/lpVNH9/YsFxHhNusz95iMu7HUIESsVWjsc7fX14EsFI
-         m28DAug80KrXLHnJI3sQlu9UOdcOSnLYmGvWUiQ5QJPSLw1nnUHyU75hojgMSFpHO/
-         dG+415nasZr/HEXyyjSxI8LLckvKSicPH6UAoWFA=
-Date:   Wed, 16 Oct 2019 06:53:00 -0700
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Johannes Thumshirn <jthumshirn@suse.de>
-Cc:     Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Michael Moese <mmoese@suse.de>, Jessica Yu <jeyu@kernel.org>
-Subject: Re: [PATCH] drivers: mcb: use symbol namespaces
-Message-ID: <20191016135300.GA302460@kroah.com>
-References: <20191016100158.1400-1-jthumshirn@suse.de>
- <20191016125139.GA26497@kroah.com>
- <48f87640-d277-fdb6-3d6e-3f88b7623f22@suse.de>
+        id S2405946AbfJPQAg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 12:00:36 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:41852 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393089AbfJPQAd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 12:00:33 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9GG0SgN121856;
+        Wed, 16 Oct 2019 11:00:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1571241628;
+        bh=rq/HWjjq8ZeHViYRdXMn/qnAWL4sJr4Q5KqrNzD47O4=;
+        h=From:To:CC:Subject:Date;
+        b=dR8qOu+xg5qBW+yPIiSPxE726od7IZZt8yc6i00m3JuFwG20WCRCRavyB5ACw8Krf
+         a73atI9ndV/ByIrztzzEZOYxWjXENEyVsUsifI2AFObyZZaRW/NNheUIQ2kD3XjQDM
+         ZGwG1HNKLsLyp03+k+t59sdyaOqHjFqfi5BcEifw=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9GG0S9F094746
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 16 Oct 2019 11:00:28 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 16
+ Oct 2019 11:00:21 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 16 Oct 2019 11:00:21 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9GG0SS8096931;
+        Wed, 16 Oct 2019 11:00:28 -0500
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v13 00/18] Multicolor Framework v13
+Date:   Wed, 16 Oct 2019 10:59:36 -0500
+Message-ID: <20191016155954.29044-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <48f87640-d277-fdb6-3d6e-3f88b7623f22@suse.de>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 03:45:08PM +0200, Johannes Thumshirn wrote:
-> On 16/10/2019 14:51, Greg KH wrote:
-> > On Wed, Oct 16, 2019 at 12:01:58PM +0200, Johannes Thumshirn wrote:
-> >> Now that we have symbol namespaces, use them in MCB to not pollute the
-> >> default namespace with MCB internals.
-> >>
-> >> Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-> >> ---
-> >>  drivers/gpio/gpio-menz127.c            |  1 +
-> >>  drivers/iio/adc/men_z188_adc.c         |  1 +
-> >>  drivers/mcb/mcb-core.c                 | 28 ++++++++++++++--------------
-> >>  drivers/mcb/mcb-lpc.c                  |  1 +
-> >>  drivers/mcb/mcb-parse.c                |  2 +-
-> >>  drivers/mcb/mcb-pci.c                  |  1 +
-> >>  drivers/tty/serial/8250/8250_men_mcb.c |  1 +
-> >>  drivers/tty/serial/men_z135_uart.c     |  1 +
-> >>  drivers/watchdog/menz69_wdt.c          |  1 +
-> >>  9 files changed, 22 insertions(+), 15 deletions(-)
-> > 
-> > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> Btw do you want me to send it to you again shortly before the merge
-> window opens or can you queue it up before?
+Hello
 
-I can take this now, into my -next tree.  I'll do so later this week
-unless you object.
+Changes from v12:
+https://lore.kernel.org/patchwork/project/lkml/list/?series=413816
 
-thanks,
+Add 2 patches per request.
+- Updated LP55xx dt binding to LED node naming convention [18/18]
+- Update LP55xx-common to use devm_* for LED class registration [12/18]
 
-greg k-h
+Removed the dt binding changes from the 4/18 back into 1/18
+
+MC Framework
+- Removed inline functions from the header due to not being able to build the
+code as a module as ifdef was not set giving a redefinition issue when the module
+was being created.
+
+LP55xx/23/21
+- Renamed intensity_fn to multicolor_brightness_fn
+- Call the devm_multicolor class registration
+
+LP50xx
+- Call the devm_multicolor class registration
+
+Dan
+
+Dan Murphy (18):
+  dt: bindings: Add multicolor class dt bindings documention
+  dt-bindings: leds: Add multicolor ID to the color ID list
+  leds: Add multicolor ID to the color ID list
+  leds: multicolor: Introduce a multicolor class definition
+  dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers
+  leds: lp50xx: Add the LP50XX family of the RGB LED driver
+  dt: bindings: lp55xx: Be consistent in the document with LED acronym
+  dt: bindings: lp55xx: Update binding for Multicolor Framework
+  ARM: dts: n900: Add reg property to the LP5523 channel node
+  ARM: dts: imx6dl-yapp4: Add reg property to the lp5562 channel node
+  ARM: dts: ste-href: Add reg property to the LP5521 channel nodes
+  leds: lp55xx: Convert LED class registration to devm_*
+  leds: lp55xx: Add multicolor framework support to lp55xx
+  leds: lp5523: Update the lp5523 code to add multicolor brightness
+    function
+  leds: lp5521: Add multicolor framework multicolor brightness support
+  leds: lp55xx: Fix checkpatch file permissions issues
+  leds: lp5523: Fix checkpatch issues in the code
+  dt: bindings: Update lp55xx binding to recommended LED naming
+
+ .../ABI/testing/sysfs-class-led-multicolor    |  36 +
+ .../bindings/leds/leds-class-multicolor.txt   |  98 +++
+ .../devicetree/bindings/leds/leds-lp50xx.txt  | 148 ++++
+ .../devicetree/bindings/leds/leds-lp55xx.txt  | 163 +++-
+ Documentation/leds/index.rst                  |   1 +
+ Documentation/leds/leds-class-multicolor.rst  |  96 +++
+ arch/arm/boot/dts/imx6dl-yapp4-common.dtsi    |  14 +-
+ arch/arm/boot/dts/omap3-n900.dts              |  29 +-
+ arch/arm/boot/dts/ste-href.dtsi               |  22 +-
+ drivers/leds/Kconfig                          |  23 +
+ drivers/leds/Makefile                         |   2 +
+ drivers/leds/led-class-multicolor.c           | 271 ++++++
+ drivers/leds/led-core.c                       |   1 +
+ drivers/leds/leds-lp50xx.c                    | 799 ++++++++++++++++++
+ drivers/leds/leds-lp5521.c                    |  20 +
+ drivers/leds/leds-lp5523.c                    |  39 +-
+ drivers/leds/leds-lp55xx-common.c             | 199 ++++-
+ drivers/leds/leds-lp55xx-common.h             |   9 +
+ include/dt-bindings/leds/common.h             |   3 +-
+ include/linux/led-class-multicolor.h          |  97 +++
+ include/linux/platform_data/leds-lp55xx.h     |   7 +
+ 21 files changed, 1980 insertions(+), 97 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-led-multicolor
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-lp50xx.txt
+ create mode 100644 Documentation/leds/leds-class-multicolor.rst
+ create mode 100644 drivers/leds/led-class-multicolor.c
+ create mode 100644 drivers/leds/leds-lp50xx.c
+ create mode 100644 include/linux/led-class-multicolor.h
+
+-- 
+2.22.0.214.g8dca754b1e
+
