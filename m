@@ -2,68 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E4F0D8E7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 12:48:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5D44D8E2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 12:41:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404658AbfJPKsJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 06:48:09 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:46265 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388377AbfJPKsG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 06:48:06 -0400
-Received: from 79.184.255.51.ipv4.supernova.orange.pl (79.184.255.51) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
- id 55930553095aead4; Wed, 16 Oct 2019 12:48:04 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     Linux ACPI <linux-acpi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Dmitry Osipenko <digetx@gmail.com>
-Subject: [RFT][PATCH 0/3] cpufreq / PM: QoS: Introduce frequency QoS and use it in cpufreq
-Date:   Wed, 16 Oct 2019 12:37:58 +0200
-Message-ID: <2811202.iOFZ6YHztY@kreacher>
+        id S2392374AbfJPKlR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 06:41:17 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:43388 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726259AbfJPKlR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 06:41:17 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 332E06C094A5466FB9A7;
+        Wed, 16 Oct 2019 18:41:15 +0800 (CST)
+Received: from [127.0.0.1] (10.202.227.179) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Wed, 16 Oct 2019
+ 18:41:05 +0800
+Subject: Re: [PATCH] perf jevents: Fix resource leak in process_mapfile()
+To:     Yunfeng Ye <yeyunfeng@huawei.com>, <peterz@infradead.org>,
+        <mingo@redhat.com>, <acme@kernel.org>, <mark.rutland@arm.com>,
+        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
+        <namhyung@kernel.org>, <ak@linux.intel.com>,
+        <lukemujica@google.com>, <kan.liang@linux.intel.com>,
+        <yuzenghui@huawei.com>
+References: <bf113089-e3cd-50f9-f7ed-17d07512a702@huawei.com>
+CC:     <linux-kernel@vger.kernel.org>, <hushiyuan@huawei.com>,
+        <linfeilong@huawei.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <87e66585-1564-3523-59f6-cab15b7e1717@huawei.com>
+Date:   Wed, 16 Oct 2019 11:40:57 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <bf113089-e3cd-50f9-f7ed-17d07512a702@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.179]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+On 16/10/2019 08:47, Yunfeng Ye wrote:
+> There are memory leaks and file descriptor resource leaks in
+> process_mapfile().
+>
+> Fix this by adding free() and fclose() on the error paths.
+>
+> Fixes: 80eeb67fe577 ("perf jevents: Program to convert JSON file")
+> Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+> ---
+>  tools/perf/pmu-events/jevents.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
+> index e2837260ca4d..6e60d4cff592 100644
+> --- a/tools/perf/pmu-events/jevents.c
+> +++ b/tools/perf/pmu-events/jevents.c
+> @@ -758,6 +758,7 @@ static int process_mapfile(FILE *outfp, char *fpath)
+>  	char *line, *p;
+>  	int line_num;
+>  	char *tblname;
+> +	int ret = 0;
+>
+>  	pr_info("%s: Processing mapfile %s\n", prog, fpath);
+>
+> @@ -769,6 +770,7 @@ static int process_mapfile(FILE *outfp, char *fpath)
+>  	if (!mapfp) {
+>  		pr_info("%s: Error %s opening %s\n", prog, strerror(errno),
+>  				fpath);
+> +		free(line);
+>  		return -1;
+>  	}
+>
+> @@ -795,7 +797,8 @@ static int process_mapfile(FILE *outfp, char *fpath)
+>  			/* TODO Deal with lines longer than 16K */
+>  			pr_info("%s: Mapfile %s: line %d too long, aborting\n",
+>  					prog, fpath, line_num);
+> -			return -1;
+> +			ret = -1;
+> +			goto out;
 
-The motivation for this series is to address the problem discussed here:
+There's a subtle change of behaviour here, i.e. now calling 
+print_mapping_table_suffix(), but I don't think that it makes any 
+difference.
 
-https://lore.kernel.org/linux-pm/5ad2624194baa2f53acc1f1e627eb7684c577a19.1562210705.git.viresh.kumar@linaro.org/T/#md2d89e95906b8c91c15f582146173dce2e86e99f
+However, does outfp remain open also in this case:
 
-and also reported here:
+main(int argc, char *argv[])
+{
+...
 
-https://lore.kernel.org/linux-pm/20191015155735.GA29105@bogus/
+if (process_mapfile(eventsfp, mapfile)) {
+	pr_info("%s: Error processing mapfile %s\n", prog, mapfile);
+	/* Make build fail */
+	return 1;
+}
 
-Plus, generally speaking, using the policy CPU as a proxy for the policy
-with respect to PM QoS does not feel particularly straightforward to me
-and adds extra complexity.
+return 0;
 
-Anyway, the first patch adds frequency QoS that is based on "raw" PM QoS (kind
-of in analogy with device PM QoS) and is just about min and max frequency
-requests (no direct relationship to devices).
+empty_map:
+	fclose(eventsfp);
+	...
+}
 
-The second patch switches over cpufreq and its users to the new frequency QoS.
-[The Fixes: tag has been tentatively added to it.]
+I think that this code works on the basis that the program exits on any 
+sort of error and releases resources automatically. Having said that, it 
+is a good practice to tidy up.
 
-The third one removes frequency request types from device PM QoS.
+John
 
-Unfortunately, the patches are rather big, but also they are quite
-straightforward.
-
-I didn't have the time to test this series, so giving it a go would be much
-appreciated.
-
-Thanks,
-Rafael
-
+>  		}
+>  		line[strlen(line)-1] = '\0';
+>
+> @@ -825,7 +828,9 @@ static int process_mapfile(FILE *outfp, char *fpath)
+>
+>  out:
+>  	print_mapping_table_suffix(outfp);
+> -	return 0;
+> +	fclose(mapfp);
+> +	free(line);
+> +	return ret;
+>  }
+>
+>  /*
+>
 
 
