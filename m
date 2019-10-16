@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE1C6D9FE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:24:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0595DA06F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:25:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406907AbfJPWFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:05:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52910 "EHLO mail.kernel.org"
+        id S2407294AbfJPWLZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:11:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438312AbfJPV6y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:58:54 -0400
+        id S2390317AbfJPV4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:56:47 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7A1C21925;
-        Wed, 16 Oct 2019 21:58:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A541B218DE;
+        Wed, 16 Oct 2019 21:56:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263133;
-        bh=C30LIA4zxBrlR+4FaEQFknN7Iq8Y10iVG/GYZVZn4zI=;
+        s=default; t=1571263006;
+        bh=O8UjQ4x0Fx6h09P9x5rGbqkTYxcErLtEExEddN8goos=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PgndQ1df8RGzCKYtA7MWvxVSk8zLeMKje6XbUzMjfYz1X2hANXM7Gwy7u6xCKCCNM
-         QK/dISwHZS00+RlNazDJoNBEyZY/gZbayMPQ91hCyGHnExIQZY7zBXa8JHoXvSdoW2
-         5OBdJClKUt8+W3aJWf7WO8z7wCWT6/iJ1JUPkXiw=
+        b=BvmIuF5oT7CAyS3WgSpLb8Iy4IVtpkp5MKnNAOrG8n/LfWE2X+JxJkrQbJwTd7sBX
+         gP2dpLlCIDnKw4FiXL1E+XOIAHwTZNpsNemVTjv+rMn4AIIJLvxI/EFRmQ0h6Paee1
+         Me4FVkbdQgBADLHnC229r4a39A95+9Q6sr0yQTwk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Frey <dpfrey@gmail.com>,
-        Andreas Dannenberg <dannenberg@ti.com>, Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 5.3 057/112] iio: light: opt3001: fix mutex unlock race
-Date:   Wed, 16 Oct 2019 14:50:49 -0700
-Message-Id: <20191016214859.675094894@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.14 36/65] USB: legousbtower: fix potential NULL-deref on disconnect
+Date:   Wed, 16 Oct 2019 14:50:50 -0700
+Message-Id: <20191016214827.704428536@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
-References: <20191016214844.038848564@linuxfoundation.org>
+In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
+References: <20191016214756.457746573@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,56 +42,140 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Frey <dpfrey@gmail.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 82f3015635249a8c8c45bac303fd84905066f04f upstream.
+commit cd81e6fa8e033e7bcd59415b4a65672b4780030b upstream.
 
-When an end-of-conversion interrupt is received after performing a
-single-shot reading of the light sensor, the driver was waking up the
-result ready queue before checking opt->ok_to_ignore_lock to determine
-if it should unlock the mutex. The problem occurred in the case where
-the other thread woke up and changed the value of opt->ok_to_ignore_lock
-to false prior to the interrupt thread performing its read of the
-variable. In this case, the mutex would be unlocked twice.
+The driver is using its struct usb_device pointer as an inverted
+disconnected flag, but was setting it to NULL before making sure all
+completion handlers had run. This could lead to a NULL-pointer
+dereference in a number of dev_dbg and dev_err statements in the
+completion handlers which relies on said pointer.
 
-Signed-off-by: David Frey <dpfrey@gmail.com>
-Reviewed-by: Andreas Dannenberg <dannenberg@ti.com>
-Fixes: 94a9b7b1809f ("iio: light: add support for TI's opt3001 light sensor")
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Fix this by unconditionally stopping all I/O and preventing
+resubmissions by poisoning the interrupt URBs at disconnect and using a
+dedicated disconnected flag.
+
+This also makes sure that all I/O has completed by the time the
+disconnect callback returns.
+
+Fixes: 9d974b2a06e3 ("USB: legousbtower.c: remove err() usage")
+Fixes: fef526cae700 ("USB: legousbtower: remove custom debug macro")
+Fixes: 4dae99638097 ("USB: legotower: remove custom debug macro and module parameter")
+Cc: stable <stable@vger.kernel.org>     # 3.5
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20190919083039.30898-4-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/light/opt3001.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/usb/misc/legousbtower.c |   26 +++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
 
---- a/drivers/iio/light/opt3001.c
-+++ b/drivers/iio/light/opt3001.c
-@@ -686,6 +686,7 @@ static irqreturn_t opt3001_irq(int irq,
- 	struct iio_dev *iio = _iio;
- 	struct opt3001 *opt = iio_priv(iio);
- 	int ret;
-+	bool wake_result_ready_queue = false;
+--- a/drivers/usb/misc/legousbtower.c
++++ b/drivers/usb/misc/legousbtower.c
+@@ -194,6 +194,7 @@ struct lego_usb_tower {
+ 	unsigned char		minor;		/* the starting minor number for this device */
  
- 	if (!opt->ok_to_ignore_lock)
- 		mutex_lock(&opt->lock);
-@@ -720,13 +721,16 @@ static irqreturn_t opt3001_irq(int irq,
- 		}
- 		opt->result = ret;
- 		opt->result_ready = true;
--		wake_up(&opt->result_ready_queue);
-+		wake_result_ready_queue = true;
+ 	int			open_count;	/* number of times this port has been opened */
++	unsigned long		disconnected:1;
+ 
+ 	char*			read_buffer;
+ 	size_t			read_buffer_length; /* this much came in */
+@@ -293,8 +294,6 @@ static inline void lego_usb_tower_debug_
+  */
+ static inline void tower_delete (struct lego_usb_tower *dev)
+ {
+-	tower_abort_transfers (dev);
+-
+ 	/* free data structures */
+ 	usb_free_urb(dev->interrupt_in_urb);
+ 	usb_free_urb(dev->interrupt_out_urb);
+@@ -434,7 +433,8 @@ static int tower_release (struct inode *
+ 		retval = -ENODEV;
+ 		goto unlock_exit;
  	}
- 
- out:
- 	if (!opt->ok_to_ignore_lock)
- 		mutex_unlock(&opt->lock);
- 
-+	if (wake_result_ready_queue)
-+		wake_up(&opt->result_ready_queue);
+-	if (dev->udev == NULL) {
 +
- 	return IRQ_HANDLED;
++	if (dev->disconnected) {
+ 		/* the device was unplugged before the file was released */
+ 
+ 		/* unlock here as tower_delete frees dev */
+@@ -470,10 +470,9 @@ static void tower_abort_transfers (struc
+ 	if (dev->interrupt_in_running) {
+ 		dev->interrupt_in_running = 0;
+ 		mb();
+-		if (dev->udev)
+-			usb_kill_urb (dev->interrupt_in_urb);
++		usb_kill_urb(dev->interrupt_in_urb);
+ 	}
+-	if (dev->interrupt_out_busy && dev->udev)
++	if (dev->interrupt_out_busy)
+ 		usb_kill_urb(dev->interrupt_out_urb);
  }
  
+@@ -509,7 +508,7 @@ static unsigned int tower_poll (struct f
+ 
+ 	dev = file->private_data;
+ 
+-	if (!dev->udev)
++	if (dev->disconnected)
+ 		return POLLERR | POLLHUP;
+ 
+ 	poll_wait(file, &dev->read_wait, wait);
+@@ -556,7 +555,7 @@ static ssize_t tower_read (struct file *
+ 	}
+ 
+ 	/* verify that the device wasn't unplugged */
+-	if (dev->udev == NULL) {
++	if (dev->disconnected) {
+ 		retval = -ENODEV;
+ 		pr_err("No device or device unplugged %d\n", retval);
+ 		goto unlock_exit;
+@@ -642,7 +641,7 @@ static ssize_t tower_write (struct file
+ 	}
+ 
+ 	/* verify that the device wasn't unplugged */
+-	if (dev->udev == NULL) {
++	if (dev->disconnected) {
+ 		retval = -ENODEV;
+ 		pr_err("No device or device unplugged %d\n", retval);
+ 		goto unlock_exit;
+@@ -751,7 +750,7 @@ static void tower_interrupt_in_callback
+ 
+ resubmit:
+ 	/* resubmit if we're still running */
+-	if (dev->interrupt_in_running && dev->udev) {
++	if (dev->interrupt_in_running) {
+ 		retval = usb_submit_urb (dev->interrupt_in_urb, GFP_ATOMIC);
+ 		if (retval)
+ 			dev_err(&dev->udev->dev,
+@@ -816,6 +815,7 @@ static int tower_probe (struct usb_inter
+ 
+ 	dev->udev = udev;
+ 	dev->open_count = 0;
++	dev->disconnected = 0;
+ 
+ 	dev->read_buffer = NULL;
+ 	dev->read_buffer_length = 0;
+@@ -941,6 +941,10 @@ static void tower_disconnect (struct usb
+ 	/* give back our minor and prevent further open() */
+ 	usb_deregister_dev (interface, &tower_class);
+ 
++	/* stop I/O */
++	usb_poison_urb(dev->interrupt_in_urb);
++	usb_poison_urb(dev->interrupt_out_urb);
++
+ 	mutex_lock(&dev->lock);
+ 
+ 	/* if the device is not opened, then we clean up right now */
+@@ -948,7 +952,7 @@ static void tower_disconnect (struct usb
+ 		mutex_unlock(&dev->lock);
+ 		tower_delete (dev);
+ 	} else {
+-		dev->udev = NULL;
++		dev->disconnected = 1;
+ 		/* wake up pollers */
+ 		wake_up_interruptible_all(&dev->read_wait);
+ 		wake_up_interruptible_all(&dev->write_wait);
 
 
