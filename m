@@ -2,50 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61B40D90BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:24:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6286D90A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:20:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392977AbfJPMYO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 08:24:14 -0400
-Received: from icp-osb-irony-out4.external.iinet.net.au ([203.59.1.220]:10512
-        "EHLO icp-osb-irony-out4.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387581AbfJPMYN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 08:24:13 -0400
-X-Greylist: delayed 557 seconds by postgrey-1.27 at vger.kernel.org; Wed, 16 Oct 2019 08:24:12 EDT
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AaAABYCadd/zXSMGcNWRkBAQEBAQE?=
- =?us-ascii?q?BAQEBAQEBAQEBAREBAQEBAQEBAQEBAYF7hDyEJY80AQEBAQEBBoERJYl4igy?=
- =?us-ascii?q?HIwkBAQEBAQEBAQE3AQGEQAKDHTgTAgwBAQEEAQEBAQEFAwGFWIYZAQEBAQM?=
- =?us-ascii?q?jFUEQCw0IAwICJgICVwYNBgIBAYMeglOtaHWBMhqFM4MwgUiBDCiBZYpBeIE?=
- =?us-ascii?q?HgTgMgl8+h1KCXgSNOIh1lyAIgiSVFSGOIgOLHS2pUIF6MxoIKAiDJ1CQS2K?=
- =?us-ascii?q?RSgEB?=
-X-IPAS-Result: =?us-ascii?q?A2AaAABYCadd/zXSMGcNWRkBAQEBAQEBAQEBAQEBAQEBA?=
- =?us-ascii?q?REBAQEBAQEBAQEBAYF7hDyEJY80AQEBAQEBBoERJYl4igyHIwkBAQEBAQEBA?=
- =?us-ascii?q?QE3AQGEQAKDHTgTAgwBAQEEAQEBAQEFAwGFWIYZAQEBAQMjFUEQCw0IAwICJ?=
- =?us-ascii?q?gICVwYNBgIBAYMeglOtaHWBMhqFM4MwgUiBDCiBZYpBeIEHgTgMgl8+h1KCX?=
- =?us-ascii?q?gSNOIh1lyAIgiSVFSGOIgOLHS2pUIF6MxoIKAiDJ1CQS2KRSgEB?=
-X-IronPort-AV: E=Sophos;i="5.67,303,1566835200"; 
-   d="scan'208";a="202259568"
-Received: from unknown (HELO [10.44.0.192]) ([103.48.210.53])
-  by icp-osb-irony-out4.iinet.net.au with ESMTP; 16 Oct 2019 20:14:50 +0800
-Subject: Re: [PATCH 10/34] m68k/coldfire: Use CONFIG_PREEMPTION
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-m68k@lists.linux-m68k.org
-References: <20191015191821.11479-1-bigeasy@linutronix.de>
- <20191015191821.11479-11-bigeasy@linutronix.de>
- <39d20c16-50a4-34f5-f98c-979138bf1a29@linux-m68k.org>
- <20191016075520.eauiemlvbo5a37d4@linutronix.de>
-From:   Greg Ungerer <gerg@linux-m68k.org>
-Message-ID: <f59db1e5-2249-3b80-a869-6f4a306f015b@linux-m68k.org>
-Date:   Wed, 16 Oct 2019 22:14:48 +1000
+        id S2405184AbfJPMUX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 08:20:23 -0400
+Received: from relay.sw.ru ([185.231.240.75]:56526 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2392928AbfJPMUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 08:20:22 -0400
+Received: from [172.16.25.5]
+        by relay.sw.ru with esmtp (Exim 4.92.2)
+        (envelope-from <aryabinin@virtuozzo.com>)
+        id 1iKiHd-0008JI-Fd; Wed, 16 Oct 2019 15:20:05 +0300
+Subject: Re: [PATCH v8 1/5] kasan: support backing vmalloc space with real
+ shadow memory
+To:     Daniel Axtens <dja@axtens.net>, kasan-dev@googlegroups.com,
+        linux-mm@kvack.org, x86@kernel.org, glider@google.com,
+        luto@kernel.org, linux-kernel@vger.kernel.org,
+        mark.rutland@arm.com, dvyukov@google.com, christophe.leroy@c-s.fr
+Cc:     linuxppc-dev@lists.ozlabs.org, gor@linux.ibm.com
+References: <20191001065834.8880-1-dja@axtens.net>
+ <20191001065834.8880-2-dja@axtens.net>
+ <352cb4fa-2e57-7e3b-23af-898e113bbe22@virtuozzo.com>
+ <87ftjvtoo7.fsf@dja-thinkpad.axtens.net>
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
+Message-ID: <8f573b40-3a5a-ed36-dffb-4a54faf3c4e1@virtuozzo.com>
+Date:   Wed, 16 Oct 2019 15:19:50 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191016075520.eauiemlvbo5a37d4@linutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <87ftjvtoo7.fsf@dja-thinkpad.axtens.net>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -53,36 +41,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sebastian,
 
-On 16/10/19 5:55 pm, Sebastian Andrzej Siewior wrote:
-> On 2019-10-16 10:50:41 [+1000], Greg Ungerer wrote:
->> Hi Sebastian,
-> Hi Greg,
+On 10/14/19 4:57 PM, Daniel Axtens wrote:
+> Hi Andrey,
 > 
->> On 16/10/19 5:17 am, Sebastian Andrzej Siewior wrote:
->>> From: Thomas Gleixner <tglx@linutronix.de>
->>>
->>> CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by CONFIG_PREEMPT_RT.
->>> Both PREEMPT and PREEMPT_RT require the same functionality which today
->>> depends on CONFIG_PREEMPT.
->>>
->>> Switch the entry code over to use CONFIG_PREEMPTION.
->>>
->>> Cc: Greg Ungerer <gerg@linux-m68k.org>
+> 
+>>> +	/*
+>>> +	 * Ensure poisoning is visible before the shadow is made visible
+>>> +	 * to other CPUs.
+>>> +	 */
+>>> +	smp_wmb();
 >>
->> Acked-by: Greg Ungerer <gerg@linux-m68k.org>
+>> I'm not quite understand what this barrier do and why it needed.
+>> And if it's really needed there should be a pairing barrier
+>> on the other side which I don't see.
 > 
-> Thank you.
+> Mark might be better able to answer this, but my understanding is that
+> we want to make sure that we never have a situation where the writes are
+> reordered so that PTE is installed before all the poisioning is written
+> out. I think it follows the logic in __pte_alloc() in mm/memory.c:
 > 
->> Do you want me to take this via the m68knommu git tree?
->> Or are you taking the whole series via some other tree?
+> 	/*
+> 	 * Ensure all pte setup (eg. pte page lock and page clearing) are
+> 	 * visible before the pte is made visible to other CPUs by being
+> 	 * put into page tables.
+> 	 *
+> 	 * The other side of the story is the pointer chasing in the page
+> 	 * table walking code (when walking the page table without locking;
+> 	 * ie. most of the time). Fortunately, these data accesses consist
+> 	 * of a chain of data-dependent loads, meaning most CPUs (alpha
+> 	 * being the notable exception) will already guarantee loads are
+> 	 * seen in-order. See the alpha page table accessors for the
+> 	 * smp_read_barrier_depends() barriers in page table walking code.
+> 	 */
+> 	smp_wmb(); /* Could be smp_wmb__xxx(before|after)_spin_lock */
 > 
-> It is up to you. You have all the dependencies so you can either add it
-> to your -next branch or leave it and we will pick it up for you.
+> I can clarify the comment.
+> 
 
-Patch added to the m68knommu git tree, for-next branch.
+I don't see how is this relevant here.
 
-Thanks
-Greg
+barrier in __pte_alloc() for very the following case:
 
+CPU 0							CPU 1
+__pte_alloc():                                          pte_offset_kernel(pmd_t * dir, unsigned long address):
+     pgtable_t new = pte_alloc_one(mm);                        pte_t *new = (pte_t *) pmd_page_vaddr(*dir) + ((address >> PAGE_SHIFT) & (PTRS_PER_PAGE - 1));  
+     smp_wmb();                                                smp_read_barrier_depends();
+     pmd_populate(mm, pmd, new);
+							/* do something with pte, e.g. check if (pte_none(*new)) */
+
+
+It's needed to ensure that if CPU1 sees pmd_populate() it also sees initialized contents of the 'new'.
+
+In our case the barrier would have been needed if we had the other side like this:
+
+if (!pte_none(*vmalloc_shadow_pte)) {
+	shadow_addr = (unsigned long)__va(pte_pfn(*vmalloc_shadow_pte) << PAGE_SHIFT);
+	smp_read_barrier_depends();
+	*shadow_addr; /* read the shadow, barrier ensures that if we see installed pte, we will see initialized shadow memory. */
+}
+
+
+Without such other side the barrier is pointless.
