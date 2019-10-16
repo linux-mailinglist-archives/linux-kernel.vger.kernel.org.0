@@ -2,69 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B974D9724
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:24:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDB32D973D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:25:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406239AbfJPQYR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 12:24:17 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44334 "EHLO mx1.redhat.com"
+        id S2406275AbfJPQZe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 12:25:34 -0400
+Received: from mga17.intel.com ([192.55.52.151]:53038 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406222AbfJPQYQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 12:24:16 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DEB2130860C1;
-        Wed, 16 Oct 2019 16:24:15 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.44])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 803E35D9CD;
-        Wed, 16 Oct 2019 16:24:12 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Wed, 16 Oct 2019 18:24:13 +0200 (CEST)
-Date:   Wed, 16 Oct 2019 18:24:09 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     linux-kernel@vger.kernel.org, aarcange@redhat.com,
-        akpm@linux-foundation.org, christian@kellner.me, cyphar@cyphar.com,
-        elena.reshetova@intel.com, guro@fb.com, jannh@google.com,
-        ldv@altlinux.org, linux-api@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, mhocko@suse.com, mingo@kernel.org,
-        peterz@infradead.org, shuah@kernel.org, tglx@linutronix.de,
-        viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v2 1/5] pidfd: verify task is alive when printing fdinfo
-Message-ID: <20191016162408.GB31585@redhat.com>
-References: <20191015141332.4055-1-christian.brauner@ubuntu.com>
- <20191016153606.2326-1-christian.brauner@ubuntu.com>
+        id S2392349AbfJPQZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 12:25:34 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2019 09:25:33 -0700
+X-IronPort-AV: E=Sophos;i="5.67,304,1566889200"; 
+   d="scan'208";a="189729232"
+Received: from xiaoyaol-mobl.ccr.corp.intel.com (HELO [10.255.31.58]) ([10.255.31.58])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/AES256-SHA; 16 Oct 2019 09:25:29 -0700
+Subject: Re: [PATCH v9 09/17] x86/split_lock: Handle #AC exception for split
+ lock
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        x86 <x86@kernel.org>, kvm@vger.kernel.org
+References: <1560897679-228028-1-git-send-email-fenghua.yu@intel.com>
+ <1560897679-228028-10-git-send-email-fenghua.yu@intel.com>
+ <alpine.DEB.2.21.1906262209590.32342@nanos.tec.linutronix.de>
+ <20190626203637.GC245468@romley-ivt3.sc.intel.com>
+ <alpine.DEB.2.21.1906262338220.32342@nanos.tec.linutronix.de>
+ <20190925180931.GG31852@linux.intel.com>
+ <3ec328dc-2763-9da5-28d6-e28970262c58@redhat.com>
+ <alpine.DEB.2.21.1910161142560.2046@nanos.tec.linutronix.de>
+ <57f40083-9063-5d41-f06d-fa1ae4c78ec6@redhat.com>
+ <c3ff2fb3-4380-fb07-1fa3-15896a09e748@intel.com>
+ <d30652bb-89fa-671a-5691-e2c76af231d0@redhat.com>
+ <8808c9ac-0906-5eec-a31f-27cbec778f9c@intel.com>
+ <alpine.DEB.2.21.1910161519260.2046@nanos.tec.linutronix.de>
+ <ba2c0aab-1d7c-5cfd-0054-ac2c266c1df3@redhat.com>
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+Message-ID: <bea889c5-1599-1eb8-ff3a-3bde1e58afa3@intel.com>
+Date:   Thu, 17 Oct 2019 00:25:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191016153606.2326-1-christian.brauner@ubuntu.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 16 Oct 2019 16:24:16 +0000 (UTC)
+In-Reply-To: <ba2c0aab-1d7c-5cfd-0054-ac2c266c1df3@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/16, Christian Brauner wrote:
+On 10/16/2019 11:37 PM, Paolo Bonzini wrote:
+> On 16/10/19 16:43, Thomas Gleixner wrote:
+>>
+>> N | #AC       | #AC enabled | SMT | Ctrl    | Guest | Action
+>> R | available | on host     |     | exposed | #AC   |
+>> --|-----------|-------------|-----|---------|-------|---------------------
+>>    |           |             |     |         |       |
+>> 0 | N         |     x       |  x  |   N     |   x   | None
+>>    |           |             |     |         |       |
+>> 1 | Y         |     N       |  x  |   N     |   x   | None
+> 
+> So far so good.
+> 
+>> 2 | Y         |     Y       |  x  |   Y     |   Y   | Forward to guest
+>>
+>> 3 | Y         |     Y       |  N  |   Y     |   N   | A) Store in vCPU and
+>>    |           |             |     |         |       |    toggle on VMENTER/EXIT
+>>    |           |             |     |         |       |
+>>    |           |             |     |         |       | B) SIGBUS or KVM exit code
+> 
+> (2) is problematic for the SMT=y case, because of what happens when #AC
+> is disabled on the host---safe guests can start to be susceptible to
+> DoS.
+> 
+> For (3), which is the SMT=n case,, the behavior is the same independent of
+> guest #AC.
+> 
+> So I would change these two lines to:
+> 
+>    2 | Y         |     Y       |  Y  |   N     |   x   | On first guest #AC,
+>      |           |             |     |         |       | disable globally on host.
+>      |           |             |     |         |       |
+>    3 | Y         |     Y       |  N  |   Y     |   x   | Switch MSR_TEST_CTRL on
+>      |           |             |     |         |       | enter/exit, plus:
+>      |           |             |     |         |       | A) #AC forwarded to guest.
+>      |           |             |     |         |       | B) SIGBUS or KVM exit code
 >
-> +static inline bool task_alive(struct pid *pid, enum pid_type type)
-> +{
-> +	return !hlist_empty(&pid->tasks[type]);
-> +}
 
-So you decided to add a helper ;) OK, but note that its name is very
-confusing and misleading. Even more than pid_alive() we already have.
+I just want to get confirmed that in (3), we should split into 2 case:
 
-What does "alive" actually mean? Say, task_alive(pid, PIDTYPE_SID) == F
-after fork(). Then it becomes T if this task does setsid().
+a) if host has it enabled, still apply the constraint that guest is 
+forcibly enabled? so we don't switch MSR_TEST_CTL.
 
-And why task_ if it accepts pid+pid_type? May be pid_has_task() or
-something like this...
-
-OK, since I can't suggest a better name I won't really argue. Feel free
-to add my reviewed-by to this series.
-
-Oleg.
-
+b) if host has it disabled, we can switch MSR_TEST_CTL on enter/exit.
