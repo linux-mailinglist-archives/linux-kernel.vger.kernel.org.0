@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95FFBDA110
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:26:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 998DFDA000
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:24:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393755AbfJPWSu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:18:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44064 "EHLO mail.kernel.org"
+        id S2407015AbfJPWGz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:06:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437707AbfJPVyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:54:20 -0400
+        id S2438143AbfJPV6X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:58:23 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2F1F20872;
-        Wed, 16 Oct 2019 21:54:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86F8920872;
+        Wed, 16 Oct 2019 21:58:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262859;
-        bh=8RDZahehh86mUaLsL8w6c3B6FC/eAknSP6AsN0Pn2IM=;
+        s=default; t=1571263102;
+        bh=ONS2EygcQU152NOuMAZMhNEtFoUo4KLiKujogzhpwkw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W+0cpdLWXtP0anK6BMUQRM3bq05Q4P2jwnaitgyB04VJslmerBDOV1EhvUHxcvznI
-         ARs4CfUeUNIqopPrzH1b8UaYbRgBqA3haucsb2hFPHRPcJdT0WVCFERgJRCO4RuSjq
-         Bb1Wq7tJs9UPoN8RMBSbNTmE8vljP6K2J+n6RDFQ=
+        b=OGsKmEtTHI6/7yobLzpUo5XPhGb9lFjUwTyPfDYuhoFM80QYVo+VwaAD1DA98ckuw
+         iW8g7RJtHESJ+fAxN775L59SRdlCrRcAy+yoAtiwra1Wlxqp9bWv8ZTExlKzxdqFRD
+         /La7iI81he6mvnuecWpPLxfvP88l4QCzQBgjobuo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 25/92] kernel/elfcore.c: include proper prototypes
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 5.3 006/112] USB: usb-skeleton: fix NULL-deref on disconnect
 Date:   Wed, 16 Oct 2019 14:49:58 -0700
-Message-Id: <20191016214820.207374320@linuxfoundation.org>
+Message-Id: <20191016214845.594625051@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
-References: <20191016214759.600329427@linuxfoundation.org>
+In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
+References: <20191016214844.038848564@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,51 +42,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit 0f74914071ab7e7b78731ed62bf350e3a344e0a5 ]
+commit bed5ef230943863b9abf5eae226a20fad9a8ff71 upstream.
 
-When building with W=1, gcc properly complains that there's no prototypes:
+The driver was using its struct usb_interface pointer as an inverted
+disconnected flag and was setting it to NULL before making sure all
+completion handlers had run. This could lead to NULL-pointer
+dereferences in the dev_err() statements in the completion handlers
+which relies on said pointer.
 
-  CC      kernel/elfcore.o
-kernel/elfcore.c:7:17: warning: no previous prototype for 'elf_core_extra_phdrs' [-Wmissing-prototypes]
-    7 | Elf_Half __weak elf_core_extra_phdrs(void)
-      |                 ^~~~~~~~~~~~~~~~~~~~
-kernel/elfcore.c:12:12: warning: no previous prototype for 'elf_core_write_extra_phdrs' [-Wmissing-prototypes]
-   12 | int __weak elf_core_write_extra_phdrs(struct coredump_params *cprm, loff_t offset)
-      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~
-kernel/elfcore.c:17:12: warning: no previous prototype for 'elf_core_write_extra_data' [-Wmissing-prototypes]
-   17 | int __weak elf_core_write_extra_data(struct coredump_params *cprm)
-      |            ^~~~~~~~~~~~~~~~~~~~~~~~~
-kernel/elfcore.c:22:15: warning: no previous prototype for 'elf_core_extra_data_size' [-Wmissing-prototypes]
-   22 | size_t __weak elf_core_extra_data_size(void)
-      |               ^~~~~~~~~~~~~~~~~~~~~~~~
+Fix this by using a dedicated disconnected flag.
 
-Provide the include file so gcc is happy, and we don't have potential code drift
+Note that this is also addresses a NULL-pointer dereference at release()
+and a struct usb_interface reference leak introduced by a recent runtime
+PM fix, which depends on and should have been submitted together with
+this patch.
 
-Link: http://lkml.kernel.org/r/29875.1565224705@turing-police
-Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 4212cd74ca6f ("USB: usb-skeleton.c: remove err() usage")
+Fixes: 5c290a5e42c3 ("USB: usb-skeleton: fix runtime PM after driver unbind")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191009170944.30057-2-johan@kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- kernel/elfcore.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/usb-skeleton.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/elfcore.c b/kernel/elfcore.c
-index e556751d15d94..a2b29b9bdfcb2 100644
---- a/kernel/elfcore.c
-+++ b/kernel/elfcore.c
-@@ -2,6 +2,7 @@
- #include <linux/fs.h>
- #include <linux/mm.h>
- #include <linux/binfmts.h>
-+#include <linux/elfcore.h>
+--- a/drivers/usb/usb-skeleton.c
++++ b/drivers/usb/usb-skeleton.c
+@@ -59,6 +59,7 @@ struct usb_skel {
+ 	spinlock_t		err_lock;		/* lock for errors */
+ 	struct kref		kref;
+ 	struct mutex		io_mutex;		/* synchronize I/O with disconnect */
++	unsigned long		disconnected:1;
+ 	wait_queue_head_t	bulk_in_wait;		/* to wait for an ongoing read */
+ };
+ #define to_skel_dev(d) container_of(d, struct usb_skel, kref)
+@@ -236,7 +237,7 @@ static ssize_t skel_read(struct file *fi
+ 	if (rv < 0)
+ 		return rv;
  
- Elf_Half __weak elf_core_extra_phdrs(void)
- {
--- 
-2.20.1
-
+-	if (!dev->interface) {		/* disconnect() was called */
++	if (dev->disconnected) {		/* disconnect() was called */
+ 		rv = -ENODEV;
+ 		goto exit;
+ 	}
+@@ -418,7 +419,7 @@ static ssize_t skel_write(struct file *f
+ 
+ 	/* this lock makes sure we don't submit URBs to gone devices */
+ 	mutex_lock(&dev->io_mutex);
+-	if (!dev->interface) {		/* disconnect() was called */
++	if (dev->disconnected) {		/* disconnect() was called */
+ 		mutex_unlock(&dev->io_mutex);
+ 		retval = -ENODEV;
+ 		goto error;
+@@ -569,7 +570,7 @@ static void skel_disconnect(struct usb_i
+ 
+ 	/* prevent more I/O from starting */
+ 	mutex_lock(&dev->io_mutex);
+-	dev->interface = NULL;
++	dev->disconnected = 1;
+ 	mutex_unlock(&dev->io_mutex);
+ 
+ 	usb_kill_anchored_urbs(&dev->submitted);
 
 
