@@ -2,51 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58523D9911
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 20:20:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77F28D990D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 20:20:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436612AbfJPSUM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 14:20:12 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:36950 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436553AbfJPSTz (ORCPT
+        id S2436589AbfJPSUD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 14:20:03 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:58046 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436567AbfJPST5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 14:19:55 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9GIJs5P082711;
-        Wed, 16 Oct 2019 13:19:54 -0500
+        Wed, 16 Oct 2019 14:19:57 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9GIJuV4028038;
+        Wed, 16 Oct 2019 13:19:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1571249994;
-        bh=qO1QBda1j09wFru/dRnYU6qoLbxJZvjOQKHQRIr6kD0=;
+        s=ti-com-17Q1; t=1571249996;
+        bh=/ChmFDql8zNtnRIKsf8+9j23q+q3h1gjoj0SqTaGnco=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=bmAcZo9wMxP3O2YDcSRNuC9jWb7Y+ezd+FCtDMePUQFM8xBruhNcM0Ae8qvF4qEgh
-         xvf7UVjrH8OQTb+IxuJev3Gp7jLTNwTnOOWF7NB7DXIVOaXS8CvzTpq66bzJsfi0o4
-         N9vUVS68wUjtPpZP+VxnQdpneGCoK5sSJDSMw2e0=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9GIJsEE125496
+        b=YvwaGM8inYpgKzEc33dax49Mo9ULeCezJiByf2b2FFQr2lqM1GngjAm9cpvCDxgqu
+         l7yLZBWisdwSCI1moixqh7kGKSiaSc4OcGogLFyQMrxKMLUjp03mc/q2GPfyB2Sdrt
+         p2kNYyUCxYeIjDN+TQQ/iue45YngtlmAk10jz040=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9GIJtxq033711
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Oct 2019 13:19:54 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+        Wed, 16 Oct 2019 13:19:56 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 16
- Oct 2019 13:19:47 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ Oct 2019 13:19:48 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 16 Oct 2019 13:19:54 -0500
+ Frontend Transport; Wed, 16 Oct 2019 13:19:55 -0500
 Received: from legion.dal.design.ti.com (legion.dal.design.ti.com [128.247.22.53])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9GIJsGN074684;
-        Wed, 16 Oct 2019 13:19:54 -0500
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9GIJtrW074704;
+        Wed, 16 Oct 2019 13:19:55 -0500
 Received: from localhost ([10.250.79.55])
-        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id x9GIJrZ07934;
-        Wed, 16 Oct 2019 13:19:53 -0500 (CDT)
+        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id x9GIJsZ07956;
+        Wed, 16 Oct 2019 13:19:54 -0500 (CDT)
 From:   "Andrew F. Davis" <afd@ti.com>
 To:     Jiri Kosina <trivial@kernel.org>
 CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         "Andrew F . Davis" <afd@ti.com>
-Subject: [PATCH 08/10] i40e: Remove unneeded conversions to bool
-Date:   Wed, 16 Oct 2019 14:19:42 -0400
-Message-ID: <20191016181944.25106-5-afd@ti.com>
+Subject: [PATCH 09/10] ixgbe: Remove unneeded conversions to bool
+Date:   Wed, 16 Oct 2019 14:19:43 -0400
+Message-ID: <20191016181944.25106-6-afd@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191016181944.25106-1-afd@ti.com>
 References: <20191016181944.25106-1-afd@ti.com>
@@ -62,22 +62,23 @@ Found with scripts/coccinelle/misc/boolconv.cocci.
 
 Signed-off-by: Andrew F. Davis <afd@ti.com>
 ---
- drivers/net/ethernet/intel/i40e/i40e_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/intel/ixgbe/ixgbe_common.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
-index 6031223eafab..87a9f2b586d5 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_main.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
-@@ -11435,7 +11435,7 @@ static int i40e_get_rss_aq(struct i40e_vsi *vsi, const u8 *seed,
- 	}
- 
- 	if (lut) {
--		bool pf_lut = vsi->type == I40E_VSI_MAIN ? true : false;
-+		bool pf_lut = vsi->type == I40E_VSI_MAIN;
- 
- 		ret = i40e_aq_get_rss_lut(hw, vsi->id, pf_lut, lut, lut_size);
- 		if (ret) {
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c
+index 0bd1294ba517..2d896d663e3d 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c
+@@ -64,8 +64,7 @@ bool ixgbe_device_supports_autoneg_fc(struct ixgbe_hw *hw)
+ 			hw->mac.ops.check_link(hw, &speed, &link_up, false);
+ 			/* if link is down, assume supported */
+ 			if (link_up)
+-				supported = speed == IXGBE_LINK_SPEED_1GB_FULL ?
+-				true : false;
++				supported = speed == IXGBE_LINK_SPEED_1GB_FULL;
+ 			else
+ 				supported = true;
+ 		}
 -- 
 2.17.1
 
