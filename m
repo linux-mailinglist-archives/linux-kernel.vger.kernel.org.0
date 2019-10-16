@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 398F1D9AA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 22:01:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7FAFD9AA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 22:01:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437033AbfJPUBn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 16:01:43 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:43614 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727575AbfJPUBE (ORCPT
+        id S2436940AbfJPUBI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 16:01:08 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:44490 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436926AbfJPUBF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 16:01:04 -0400
-Received: by mail-qt1-f193.google.com with SMTP id t20so32647838qtr.10
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 13:01:03 -0700 (PDT)
+        Wed, 16 Oct 2019 16:01:05 -0400
+Received: by mail-qt1-f196.google.com with SMTP id u40so37954617qth.11
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 13:01:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=soleen.com; s=google;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=2dB/JT7cpleUq4odQT8133EyCdo3KLVbNGsuR1ejXK0=;
-        b=CiaFl7Mk/0Ai1uwEa1O2lGNLVpZo5+wb8v4pxmTWNb/dm2ro8mnYZnV8Edb/RXkgRm
-         ki9I2+kYEPNZ+agtblWoi4KTtibPFfC2vJiQksWU9jlWzvdVmWqdIkA4Lb0g30wQcKQL
-         vpQgAcBEBz8iFcDhWcWOcJFD4aLtX8PKUsr7KjYk5pXKwhCAV4dpCJ/hfY7qSm7PN9TL
-         O2WTpHeLIh+12Q279PtAXhUhmTU/kr03dDQNBMsaRp6U/XSuSZ//IdFVQofebNWXkdPb
-         7sUSw+IThgjUN6desgaUOBQdZufgn2uDSC9v6BTW3ULEOcUHxK+y1y0yRmtPvPsMsmeI
-         wKMQ==
+        bh=ADaPlgsxUTXDoToK9CJnC6JqPCrliOXSW+GZvxTqrfM=;
+        b=fWcMHMdeRF61RXXgFbsSde0TUuD9iStZlRHqG/LFIDJV9kompUv7iirW+QMwSWacq4
+         glwYmN0mLJqvl56lLSgUR0hi/113Jr7CRUAmkNwj/53dD8wDyz4Ktzv54yJTXzM/IvBb
+         IjObZQ00IZjvNNnyyPoOufxxPcHrZLUqHHp9DP8qFOU3lA7py7Rb86VMbW7fE9d6kzsQ
+         ri5vQnwoNik+8utdxKj8qvVZTOqS+ZAIQ8JCpMewuiQRK/yF4Zo/cOHUZs5jWzuIoX6o
+         zASj7LGsGPsZak57aoUTxJanmeQNkP67QrmcjHHwC8ePUGZmqQk5Ata/sR17HULf7JVc
+         jO4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=2dB/JT7cpleUq4odQT8133EyCdo3KLVbNGsuR1ejXK0=;
-        b=E0ffZV/P38+M/IPu83xpiTdXyay60aQL+8NySxgFa3c6Ve1m4s7FnoUm5Qd+RyAAf1
-         wohlnph2weQZhZysYRyCq3IQYt4nirmn01RpO2AmLRQr8Cf5YrmqZIdNFnkr0IUJKLzh
-         5TWkOR/I3v01fIjaTV2jDJ1HmsVHVNWA+S1NeMW2QZafxY2gSu2ipgHVXBLzh4ClNaes
-         L20uvkZheym6IRetqo7XxydbLFRtZOb8YBcStfkUoxJWaYCF23dLk/sIQQSvdJgXKA1P
-         zkfzxPbwpwvEiybv/VVtQHLAlTiJCpYbyT+U1uY7Pkq5JWFzo0HWxFpOdKIk6K7SC2PJ
-         0Myg==
-X-Gm-Message-State: APjAAAUGJ7Tr5Z78KCKnRCf2F65/yCDp1PXu5BGJOz177YW66jwRZYkS
-        3BEOvOdsztqfgm0qyPE9cqEfQg==
-X-Google-Smtp-Source: APXvYqwMAUjRlLpWrrpgx3tDKuFsAxRFXePefh3P5/JOzZtFez2e3nLHNDhNVIJG5zsuWzwbBLXj9g==
-X-Received: by 2002:ad4:51cc:: with SMTP id p12mr29646954qvq.243.1571256062832;
-        Wed, 16 Oct 2019 13:01:02 -0700 (PDT)
+        bh=ADaPlgsxUTXDoToK9CJnC6JqPCrliOXSW+GZvxTqrfM=;
+        b=PNuf9WjoiIijuIgGTr4S0n8Kq+mwuFaPbub7UpxIhaGoxDjZJOfFK4bxQBvwpLpttx
+         ql9Pe1qu9XRLfz6c8rsaEaQif1gJby1UQX0CrywQyvo0UfmlWsFFSdLTQNjustJhL4w1
+         ra3Noyki/yUO3tZO4KX8muE8yxpdjp7tU9oDbs0pLVxzpsdf/H4LgYoY0PNFxA3+4LSz
+         8CQvC/RHf8GkDHpsg2VW2EyBJLPCo9oxRYkeR9TwSUqocKyGH16oi50yG7/GoWixdIqU
+         eAqJCkvbm31G5BzWUYE5gK8dbCf0QrXi8ztbSEjGrX/0DbU8hq5f7ZG1wZmbbkBrj/XI
+         3Sfg==
+X-Gm-Message-State: APjAAAWrU4A6EbsvXD1K9Pl+Hx/TjqjeMK6j7p5n7Md3oji8/iOvzPtK
+        6XgxHXTKcYiTvucgIzwzb2vUHA==
+X-Google-Smtp-Source: APXvYqynGGdSXuDQaPwJSbR7snjT6dI3cQ574+9wJQuf+wqqsCeR4boU0L9zKxkcwuMKg89ls9wgtg==
+X-Received: by 2002:ac8:1413:: with SMTP id k19mr47859620qtj.360.1571256064395;
+        Wed, 16 Oct 2019 13:01:04 -0700 (PDT)
 Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id c204sm13342030qkb.90.2019.10.16.13.01.01
+        by smtp.gmail.com with ESMTPSA id c204sm13342030qkb.90.2019.10.16.13.01.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2019 13:01:02 -0700 (PDT)
+        Wed, 16 Oct 2019 13:01:03 -0700 (PDT)
 From:   Pavel Tatashin <pasha.tatashin@soleen.com>
 To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         ebiederm@xmission.com, kexec@lists.infradead.org,
@@ -55,9 +55,9 @@ To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         matthias.bgg@gmail.com, bhsharma@redhat.com, linux-mm@kvack.org,
         mark.rutland@arm.com, steve.capper@arm.com, rfontana@redhat.com,
         tglx@linutronix.de
-Subject: [PATCH v7 16/25] arm64: kexec: call kexec_image_info only once
-Date:   Wed, 16 Oct 2019 16:00:25 -0400
-Message-Id: <20191016200034.1342308-17-pasha.tatashin@soleen.com>
+Subject: [PATCH v7 17/25] arm64: kexec: cpu_soft_restart change argument types
+Date:   Wed, 16 Oct 2019 16:00:26 -0400
+Message-Id: <20191016200034.1342308-18-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191016200034.1342308-1-pasha.tatashin@soleen.com>
 References: <20191016200034.1342308-1-pasha.tatashin@soleen.com>
@@ -68,45 +68,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, kexec_image_info() is called during load time, and
-right before kernel is being kexec'ed. There is no need to do both.
-So, call it only once when segments are loaded and the physical
-location of page with copy of arm64_relocate_new_kernel is known.
+Change argument types from unsigned long to a more descriptive
+phys_addr_t.
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
 ---
- arch/arm64/kernel/machine_kexec.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ arch/arm64/kernel/cpu-reset.h | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machine_kexec.c
-index 46718b289a6b..f94119b5cebc 100644
---- a/arch/arm64/kernel/machine_kexec.c
-+++ b/arch/arm64/kernel/machine_kexec.c
-@@ -66,6 +66,7 @@ int machine_kexec_post_load(struct kimage *kimage)
- 	memcpy(reloc_code, arm64_relocate_new_kernel,
- 	       arm64_relocate_new_kernel_size);
- 	kimage->arch.kern_reloc = __pa(reloc_code);
-+	kexec_image_info(kimage);
+diff --git a/arch/arm64/kernel/cpu-reset.h b/arch/arm64/kernel/cpu-reset.h
+index ed50e9587ad8..3a54c4d987f3 100644
+--- a/arch/arm64/kernel/cpu-reset.h
++++ b/arch/arm64/kernel/cpu-reset.h
+@@ -10,17 +10,17 @@
  
- 	return 0;
- }
-@@ -80,8 +81,6 @@ int machine_kexec_post_load(struct kimage *kimage)
-  */
- int machine_kexec_prepare(struct kimage *kimage)
+ #include <asm/virt.h>
+ 
+-void __cpu_soft_restart(unsigned long el2_switch, unsigned long entry,
+-	unsigned long arg0, unsigned long arg1, unsigned long arg2);
++void __cpu_soft_restart(phys_addr_t el2_switch, phys_addr_t entry,
++	phys_addr_t arg0, phys_addr_t arg1, phys_addr_t arg2);
+ 
+-static inline void __noreturn cpu_soft_restart(unsigned long entry,
+-					       unsigned long arg0,
+-					       unsigned long arg1,
+-					       unsigned long arg2)
++static inline void __noreturn cpu_soft_restart(phys_addr_t entry,
++					       phys_addr_t arg0,
++					       phys_addr_t arg1,
++					       phys_addr_t arg2)
  {
--	kexec_image_info(kimage);
--
- 	if (kimage->type != KEXEC_TYPE_CRASH && cpus_are_stuck_in_kernel()) {
- 		pr_err("Can't kexec: CPUs are stuck in the kernel.\n");
- 		return -EBUSY;
-@@ -167,8 +166,6 @@ void machine_kexec(struct kimage *kimage)
- 	WARN(in_kexec_crash && (stuck_cpus || smp_crash_stop_failed()),
- 		"Some CPUs may be stale, kdump will be unreliable.\n");
+ 	typeof(__cpu_soft_restart) *restart;
  
--	kexec_image_info(kimage);
--
- 	/* Flush the reboot_code_buffer in preparation for its execution. */
- 	__flush_dcache_area(reboot_code_buffer, arm64_relocate_new_kernel_size);
+-	unsigned long el2_switch = !is_kernel_in_hyp_mode() &&
++	phys_addr_t el2_switch = !is_kernel_in_hyp_mode() &&
+ 		is_hyp_mode_available();
+ 	restart = (void *)__pa_symbol(__cpu_soft_restart);
  
 -- 
 2.23.0
