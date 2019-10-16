@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE8E4D868D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 05:33:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EE48D8699
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 05:34:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403798AbfJPDdp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 23:33:45 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:22945 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730211AbfJPDdo (ORCPT
+        id S2403907AbfJPDeA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 23:34:00 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:55178 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2403846AbfJPDd4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 23:33:44 -0400
-X-UUID: 9b3a021651fe4c8b987019d54e8d0414-20191016
-X-UUID: 9b3a021651fe4c8b987019d54e8d0414-20191016
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        Tue, 15 Oct 2019 23:33:56 -0400
+X-UUID: deac3bc8dda64fb798a66b26f48df80c-20191016
+X-UUID: deac3bc8dda64fb798a66b26f48df80c-20191016
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
         (envelope-from <yong.wu@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 940793888; Wed, 16 Oct 2019 11:33:41 +0800
+        with ESMTP id 678728529; Wed, 16 Oct 2019 11:33:49 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
  mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 16 Oct 2019 11:33:37 +0800
+ 15.0.1395.4; Wed, 16 Oct 2019 11:33:46 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 16 Oct 2019 11:33:36 +0800
+ Transport; Wed, 16 Oct 2019 11:33:45 +0800
 From:   Yong Wu <yong.wu@mediatek.com>
 To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Joerg Roedel <joro@8bytes.org>,
@@ -38,9 +38,9 @@ CC:     Evan Green <evgreen@chromium.org>,
         <youlin.pei@mediatek.com>, Nicolas Boichat <drinkcat@chromium.org>,
         <anan.sun@mediatek.com>, <cui.zhang@mediatek.com>,
         <chao.hao@mediatek.com>, <edison.hsieh@mediatek.com>
-Subject: [PATCH v4 2/7] iommu/mediatek: Add a new tlb_lock for tlb_flush
-Date:   Wed, 16 Oct 2019 11:33:07 +0800
-Message-ID: <1571196792-12382-3-git-send-email-yong.wu@mediatek.com>
+Subject: [PATCH v4 3/7] iommu/mediatek: Use gather to achieve the tlb range flush
+Date:   Wed, 16 Oct 2019 11:33:08 +0800
+Message-ID: <1571196792-12382-4-git-send-email-yong.wu@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1571196792-12382-1-git-send-email-yong.wu@mediatek.com>
 References: <1571196792-12382-1-git-send-email-yong.wu@mediatek.com>
@@ -52,102 +52,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The commit 4d689b619445 ("iommu/io-pgtable-arm-v7s: Convert to IOMMU API
-TLB sync") help move the tlb_sync of unmap from v7s into the iommu
-framework. It helps add a new function "mtk_iommu_iotlb_sync", But it
-lacked the lock, then it will cause the variable "tlb_flush_active"
-may be changed unexpectedly, we could see this warning log randomly:
+Use the iommu_gather mechanism to achieve the tlb range flush.
+Gather the iova range in the "tlb_add_page", then flush the merged iova
+range in iotlb_sync.
 
-mtk-iommu 10205000.iommu: Partial TLB flush timed out, falling back to
-full flush
-
-The HW requires tlb_flush/tlb_sync in pairs strictly, this patch adds
-a new tlb_lock for tlb operations to fix this issue.
-
-Fixes: 4d689b619445 ("iommu/io-pgtable-arm-v7s: Convert to IOMMU API TLB
-sync")
+Suggested-by: Tomasz Figa <tfiga@chromium.org>
 Signed-off-by: Yong Wu <yong.wu@mediatek.com>
 ---
- drivers/iommu/mtk_iommu.c | 23 ++++++++++++++++++++++-
- drivers/iommu/mtk_iommu.h |  1 +
- 2 files changed, 23 insertions(+), 1 deletion(-)
+ drivers/iommu/mtk_iommu.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-index 76b9388..c2f6c78 100644
+index c2f6c78..81ac95f 100644
 --- a/drivers/iommu/mtk_iommu.c
 +++ b/drivers/iommu/mtk_iommu.c
-@@ -219,22 +219,37 @@ static void mtk_iommu_tlb_sync(void *cookie)
- static void mtk_iommu_tlb_flush_walk(unsigned long iova, size_t size,
- 				     size_t granule, void *cookie)
- {
-+	struct mtk_iommu_data *data = cookie;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&data->tlb_lock, flags);
- 	mtk_iommu_tlb_add_flush_nosync(iova, size, granule, false, cookie);
- 	mtk_iommu_tlb_sync(cookie);
-+	spin_unlock_irqrestore(&data->tlb_lock, flags);
- }
- 
- static void mtk_iommu_tlb_flush_leaf(unsigned long iova, size_t size,
- 				     size_t granule, void *cookie)
- {
-+	struct mtk_iommu_data *data = cookie;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&data->tlb_lock, flags);
- 	mtk_iommu_tlb_add_flush_nosync(iova, size, granule, true, cookie);
- 	mtk_iommu_tlb_sync(cookie);
-+	spin_unlock_irqrestore(&data->tlb_lock, flags);
- }
- 
- static void mtk_iommu_tlb_flush_page_nosync(struct iommu_iotlb_gather *gather,
- 					    unsigned long iova, size_t granule,
+@@ -245,11 +245,9 @@ static void mtk_iommu_tlb_flush_page_nosync(struct iommu_iotlb_gather *gather,
  					    void *cookie)
  {
-+	struct mtk_iommu_data *data = cookie;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&data->tlb_lock, flags);
- 	mtk_iommu_tlb_add_flush_nosync(iova, granule, granule, true, cookie);
-+	spin_unlock_irqrestore(&data->tlb_lock, flags);
+ 	struct mtk_iommu_data *data = cookie;
+-	unsigned long flags;
++	struct iommu_domain *domain = &data->m4u_dom->domain;
+ 
+-	spin_lock_irqsave(&data->tlb_lock, flags);
+-	mtk_iommu_tlb_add_flush_nosync(iova, granule, granule, true, cookie);
+-	spin_unlock_irqrestore(&data->tlb_lock, flags);
++	iommu_iotlb_gather_add_page(domain, gather, iova, granule);
  }
  
  static const struct iommu_flush_ops mtk_iommu_flush_ops = {
-@@ -453,7 +468,12 @@ static void mtk_iommu_flush_iotlb_all(struct iommu_domain *domain)
- static void mtk_iommu_iotlb_sync(struct iommu_domain *domain,
+@@ -469,9 +467,15 @@ static void mtk_iommu_iotlb_sync(struct iommu_domain *domain,
  				 struct iommu_iotlb_gather *gather)
  {
--	mtk_iommu_tlb_sync(mtk_iommu_get_m4u_data());
-+	struct mtk_iommu_data *data = mtk_iommu_get_m4u_data();
-+	unsigned long flags;
+ 	struct mtk_iommu_data *data = mtk_iommu_get_m4u_data();
++	size_t length = gather->end - gather->start;
+ 	unsigned long flags;
+ 
++	if (gather->start == ULONG_MAX)
++		return;
 +
-+	spin_lock_irqsave(&data->tlb_lock, flags);
-+	mtk_iommu_tlb_sync(data);
-+	spin_unlock_irqrestore(&data->tlb_lock, flags);
+ 	spin_lock_irqsave(&data->tlb_lock, flags);
++	mtk_iommu_tlb_add_flush_nosync(gather->start, length, gather->pgsize,
++				       false, data);
+ 	mtk_iommu_tlb_sync(data);
+ 	spin_unlock_irqrestore(&data->tlb_lock, flags);
  }
- 
- static phys_addr_t mtk_iommu_iova_to_phys(struct iommu_domain *domain,
-@@ -733,6 +753,7 @@ static int mtk_iommu_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	spin_lock_init(&data->tlb_lock);
- 	list_add_tail(&data->list, &m4ulist);
- 
- 	if (!iommu_present(&platform_bus_type))
-diff --git a/drivers/iommu/mtk_iommu.h b/drivers/iommu/mtk_iommu.h
-index fc0f16e..8cae22d 100644
---- a/drivers/iommu/mtk_iommu.h
-+++ b/drivers/iommu/mtk_iommu.h
-@@ -58,6 +58,7 @@ struct mtk_iommu_data {
- 	struct iommu_group		*m4u_group;
- 	bool                            enable_4GB;
- 	bool				tlb_flush_active;
-+	spinlock_t			tlb_lock; /* lock for tlb range flush */
- 
- 	struct iommu_device		iommu;
- 	const struct mtk_iommu_plat_data *plat_data;
 -- 
 1.9.1
 
