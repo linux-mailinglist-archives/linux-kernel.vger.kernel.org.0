@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A46B9DA0AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:25:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AAF7DA0B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:25:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407391AbfJPWOS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:14:18 -0400
-Received: from mga05.intel.com ([192.55.52.43]:35629 "EHLO mga05.intel.com"
+        id S2407402AbfJPWOY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 18:14:24 -0400
+Received: from mga02.intel.com ([134.134.136.20]:65505 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2407371AbfJPWOL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 18:14:11 -0400
+        id S2407371AbfJPWOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 18:14:21 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2019 15:14:11 -0700
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2019 15:14:12 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.67,305,1566889200"; 
-   d="scan'208";a="195725844"
+   d="scan'208";a="347561461"
 Received: from viggo.jf.intel.com (HELO localhost.localdomain) ([10.54.77.144])
-  by fmsmga007.fm.intel.com with ESMTP; 16 Oct 2019 15:14:10 -0700
-Subject: [PATCH 1/4] node: Define and export memory migration path
+  by orsmga004.jf.intel.com with ESMTP; 16 Oct 2019 15:14:12 -0700
+Subject: [PATCH 2/4] mm/migrate: Defer allocating new page until needed
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-mm@kvack.org, dan.j.williams@intel.com,
         Dave Hansen <dave.hansen@linux.intel.com>,
         keith.busch@intel.com
 From:   Dave Hansen <dave.hansen@linux.intel.com>
-Date:   Wed, 16 Oct 2019 15:11:49 -0700
+Date:   Wed, 16 Oct 2019 15:11:51 -0700
 References: <20191016221148.F9CCD155@viggo.jf.intel.com>
 In-Reply-To: <20191016221148.F9CCD155@viggo.jf.intel.com>
-Message-Id: <20191016221149.74AE222C@viggo.jf.intel.com>
+Message-Id: <20191016221151.854D5735@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -38,146 +38,272 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Keith Busch <keith.busch@intel.com>
 
-Prepare for the kernel to auto-migrate pages to other memory nodes
-with a user defined node migration table. This allows creating single
-migration target for each NUMA node to enable the kernel to do NUMA
-page migrations instead of simply reclaiming colder pages. A node
-with no target is a "terminal node", so reclaim acts normally there.
-The migration target does not fundamentally _need_ to be a single node,
-but this implementation starts there to limit complexity.
+Migrating pages had been allocating the new page before it was actually
+needed. Subsequent operations may still fail, which would have to handle
+cleaning up the newly allocated page when it was never used.
 
-If you consider the migration path as a graph, cycles (loops) in the
-graph are disallowed.  This avoids wasting resources by constantly
-migrating (A->B, B->A, A->B ...).  The expectation is that cycles will
-never be allowed, and this rule is enforced if the user tries to make
-such a cycle.
+Defer allocating the page until we are actually ready to make use of
+it, after locking the original page. This simplifies error handling,
+but should not have any functional change in behavior. This is just
+refactoring page migration so the main part can more easily be reused
+by other code.
 
 Signed-off-by: Keith Busch <keith.busch@intel.com>
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 ---
 
- b/drivers/base/node.c  |   73 +++++++++++++++++++++++++++++++++++++++++++++++++
- b/include/linux/node.h |    6 ++++
- 2 files changed, 79 insertions(+)
+ b/mm/migrate.c |  154 ++++++++++++++++++++++++++++-----------------------------
+ 1 file changed, 76 insertions(+), 78 deletions(-)
 
-diff -puN drivers/base/node.c~0003-node-Define-and-export-memory-migration-path drivers/base/node.c
---- a/drivers/base/node.c~0003-node-Define-and-export-memory-migration-path	2019-10-16 15:06:55.895952599 -0700
-+++ b/drivers/base/node.c	2019-10-16 15:06:55.902952599 -0700
-@@ -101,6 +101,10 @@ static const struct attribute_group *nod
- 	NULL,
- };
- 
-+#define TERMINAL_NODE -1
-+static int node_migration[MAX_NUMNODES] = {[0 ...  MAX_NUMNODES - 1] = TERMINAL_NODE};
-+static DEFINE_SPINLOCK(node_migration_lock);
-+
- static void node_remove_accesses(struct node *node)
- {
- 	struct node_access_nodes *c, *cnext;
-@@ -530,6 +534,74 @@ static ssize_t node_read_distance(struct
+diff -puN mm/migrate.c~0004-mm-migrate-Defer-allocating-new-page-until-needed mm/migrate.c
+--- a/mm/migrate.c~0004-mm-migrate-Defer-allocating-new-page-until-needed	2019-10-16 15:06:57.032952596 -0700
++++ b/mm/migrate.c	2019-10-16 15:06:57.037952596 -0700
+@@ -1005,56 +1005,17 @@ out:
+ 	return rc;
  }
- static DEVICE_ATTR(distance, S_IRUGO, node_read_distance, NULL);
  
-+static ssize_t migration_path_show(struct device *dev,
-+				   struct device_attribute *attr,
-+				   char *buf)
-+{
-+	return sprintf(buf, "%d\n", node_migration[dev->id]);
-+}
-+
-+static ssize_t migration_path_store(struct device *dev,
-+				    struct device_attribute *attr,
-+				    const char *buf, size_t count)
-+{
-+	int i, err, nid = dev->id;
-+	nodemask_t visited = NODE_MASK_NONE;
-+	long next;
-+
-+	err = kstrtol(buf, 0, &next);
-+	if (err)
-+		return -EINVAL;
-+
-+	if (next < 0) {
-+		spin_lock(&node_migration_lock);
-+		WRITE_ONCE(node_migration[nid], TERMINAL_NODE);
-+		spin_unlock(&node_migration_lock);
-+		return count;
+-static int __unmap_and_move(struct page *page, struct page *newpage,
+-				int force, enum migrate_mode mode)
++static int __unmap_and_move(new_page_t get_new_page,
++			    free_page_t put_new_page,
++			    unsigned long private, struct page *page,
++			    enum migrate_mode mode,
++			    enum migrate_reason reason)
+ {
+ 	int rc = -EAGAIN;
+ 	int page_was_mapped = 0;
+ 	struct anon_vma *anon_vma = NULL;
+ 	bool is_lru = !__PageMovable(page);
+-
+-	if (!trylock_page(page)) {
+-		if (!force || mode == MIGRATE_ASYNC)
+-			goto out;
+-
+-		/*
+-		 * It's not safe for direct compaction to call lock_page.
+-		 * For example, during page readahead pages are added locked
+-		 * to the LRU. Later, when the IO completes the pages are
+-		 * marked uptodate and unlocked. However, the queueing
+-		 * could be merging multiple pages for one bio (e.g.
+-		 * mpage_readpages). If an allocation happens for the
+-		 * second or third page, the process can end up locking
+-		 * the same page twice and deadlocking. Rather than
+-		 * trying to be clever about what pages can be locked,
+-		 * avoid the use of lock_page for direct compaction
+-		 * altogether.
+-		 */
+-		if (current->flags & PF_MEMALLOC)
+-			goto out;
+-
+-		lock_page(page);
+-	}
+-
+-	if (PageWriteback(page)) {
+-		/*
+-		 * Only in the case of a full synchronous migration is it
+-		 * necessary to wait for PageWriteback. In the async case,
+-		 * the retry loop is too short and in the sync-light case,
+-		 * the overhead of stalling is too much
+-		 */
+-		switch (mode) {
+-		case MIGRATE_SYNC:
+-		case MIGRATE_SYNC_NO_COPY:
+-			break;
+-		default:
+-			rc = -EBUSY;
+-			goto out_unlock;
+-		}
+-		if (!force)
+-			goto out_unlock;
+-		wait_on_page_writeback(page);
+-	}
++	struct page *newpage;
+ 
+ 	/*
+ 	 * By try_to_unmap(), page->mapcount goes down to 0 here. In this case,
+@@ -1073,6 +1034,12 @@ static int __unmap_and_move(struct page
+ 	if (PageAnon(page) && !PageKsm(page))
+ 		anon_vma = page_get_anon_vma(page);
+ 
++	newpage = get_new_page(page, private);
++	if (!newpage) {
++		rc = -ENOMEM;
++		goto out;
 +	}
-+	if (next >= MAX_NUMNODES || !node_online(next))
-+		return -EINVAL;
 +
-+	/*
-+	 * Follow the entire migration path from 'nid' through the point where
-+	 * we hit a TERMINAL_NODE.
-+	 *
-+	 * Don't allow loops migration cycles in the path.
-+	 */
-+	node_set(nid, visited);
-+	spin_lock(&node_migration_lock);
-+	for (i = next; node_migration[i] != TERMINAL_NODE;
-+	     i = node_migration[i]) {
-+		/* Fail if we have visited this node already */
-+		if (node_test_and_set(i, visited)) {
-+			spin_unlock(&node_migration_lock);
-+			return -EINVAL;
+ 	/*
+ 	 * Block others from accessing the new page when we get around to
+ 	 * establishing additional references. We are usually the only one
+@@ -1082,11 +1049,11 @@ static int __unmap_and_move(struct page
+ 	 * This is much like races on refcount of oldpage: just don't BUG().
+ 	 */
+ 	if (unlikely(!trylock_page(newpage)))
+-		goto out_unlock;
++		goto out_put;
+ 
+ 	if (unlikely(!is_lru)) {
+ 		rc = move_to_new_page(newpage, page, mode);
+-		goto out_unlock_both;
++		goto out_unlock;
+ 	}
+ 
+ 	/*
+@@ -1105,7 +1072,7 @@ static int __unmap_and_move(struct page
+ 		VM_BUG_ON_PAGE(PageAnon(page), page);
+ 		if (page_has_private(page)) {
+ 			try_to_free_buffers(page);
+-			goto out_unlock_both;
++			goto out_unlock;
+ 		}
+ 	} else if (page_mapped(page)) {
+ 		/* Establish migration ptes */
+@@ -1122,15 +1089,9 @@ static int __unmap_and_move(struct page
+ 	if (page_was_mapped)
+ 		remove_migration_ptes(page,
+ 			rc == MIGRATEPAGE_SUCCESS ? newpage : page, false);
+-
+-out_unlock_both:
+-	unlock_page(newpage);
+ out_unlock:
+-	/* Drop an anon_vma reference if we took one */
+-	if (anon_vma)
+-		put_anon_vma(anon_vma);
+-	unlock_page(page);
+-out:
++	unlock_page(newpage);
++out_put:
+ 	/*
+ 	 * If migration is successful, decrease refcount of the newpage
+ 	 * which will not free the page because new page owner increased
+@@ -1141,12 +1102,20 @@ out:
+ 	 * state.
+ 	 */
+ 	if (rc == MIGRATEPAGE_SUCCESS) {
++		set_page_owner_migrate_reason(newpage, reason);
+ 		if (unlikely(!is_lru))
+ 			put_page(newpage);
+ 		else
+ 			putback_lru_page(newpage);
++	} else if (put_new_page) {
++		put_new_page(newpage, private);
++	} else {
++		put_page(newpage);
+ 	}
+-
++out:
++	/* Drop an anon_vma reference if we took one */
++	if (anon_vma)
++		put_anon_vma(anon_vma);
+ 	return rc;
+ }
+ 
+@@ -1171,16 +1140,11 @@ static ICE_noinline int unmap_and_move(n
+ 				   int force, enum migrate_mode mode,
+ 				   enum migrate_reason reason)
+ {
+-	int rc = MIGRATEPAGE_SUCCESS;
+-	struct page *newpage;
++	int rc = -EAGAIN;
+ 
+ 	if (!thp_migration_supported() && PageTransHuge(page))
+ 		return -ENOMEM;
+ 
+-	newpage = get_new_page(page, private);
+-	if (!newpage)
+-		return -ENOMEM;
+-
+ 	if (page_count(page) == 1) {
+ 		/* page was freed from under us. So we are done. */
+ 		ClearPageActive(page);
+@@ -1191,17 +1155,57 @@ static ICE_noinline int unmap_and_move(n
+ 				__ClearPageIsolated(page);
+ 			unlock_page(page);
+ 		}
+-		if (put_new_page)
+-			put_new_page(newpage, private);
+-		else
+-			put_page(newpage);
++		rc = MIGRATEPAGE_SUCCESS;
+ 		goto out;
+ 	}
+ 
+-	rc = __unmap_and_move(page, newpage, force, mode);
+-	if (rc == MIGRATEPAGE_SUCCESS)
+-		set_page_owner_migrate_reason(newpage, reason);
++	if (!trylock_page(page)) {
++		if (!force || mode == MIGRATE_ASYNC)
++			return rc;
++
++		/*
++		 * It's not safe for direct compaction to call lock_page.
++		 * For example, during page readahead pages are added locked
++		 * to the LRU. Later, when the IO completes the pages are
++		 * marked uptodate and unlocked. However, the queueing
++		 * could be merging multiple pages for one bio (e.g.
++		 * mpage_readpages). If an allocation happens for the
++		 * second or third page, the process can end up locking
++		 * the same page twice and deadlocking. Rather than
++		 * trying to be clever about what pages can be locked,
++		 * avoid the use of lock_page for direct compaction
++		 * altogether.
++		 */
++		if (current->flags & PF_MEMALLOC)
++			return rc;
+ 
++		lock_page(page);
++	}
++
++	if (PageWriteback(page)) {
++		/*
++		 * Only in the case of a full synchronous migration is it
++		 * necessary to wait for PageWriteback. In the async case,
++		 * the retry loop is too short and in the sync-light case,
++		 * the overhead of stalling is too much
++		 */
++		switch (mode) {
++		case MIGRATE_SYNC:
++		case MIGRATE_SYNC_NO_COPY:
++			break;
++		default:
++			rc = -EBUSY;
++			goto out_unlock;
 +		}
++		if (!force)
++			goto out_unlock;
++		wait_on_page_writeback(page);
 +	}
-+	WRITE_ONCE(node_migration[nid], next);
-+	spin_unlock(&node_migration_lock);
++	rc = __unmap_and_move(get_new_page, put_new_page, private,
++			      page, mode, reason);
 +
-+	return count;
-+}
-+static DEVICE_ATTR_RW(migration_path);
-+
-+/**
-+ * next_migration_node() - Get the next node in the migration path
-+ * @current_node: The starting node to lookup the next node
-+ *
-+ * @returns: node id for next memory node in the migration path hierarchy from
-+ * 	     @current_node; -1 if @current_node is terminal or its migration
-+ * 	     node is not online.
-+ */
-+int next_migration_node(int current_node)
-+{
-+	int nid = READ_ONCE(node_migration[current_node]);
-+
-+	if (nid >= 0 && node_online(nid))
-+		return nid;
-+	return TERMINAL_NODE;
-+}
-+
- static struct attribute *node_dev_attrs[] = {
- 	&dev_attr_cpumap.attr,
- 	&dev_attr_cpulist.attr,
-@@ -537,6 +609,7 @@ static struct attribute *node_dev_attrs[
- 	&dev_attr_numastat.attr,
- 	&dev_attr_distance.attr,
- 	&dev_attr_vmstat.attr,
-+	&dev_attr_migration_path.attr,
- 	NULL
- };
- ATTRIBUTE_GROUPS(node_dev);
-diff -puN include/linux/node.h~0003-node-Define-and-export-memory-migration-path include/linux/node.h
---- a/include/linux/node.h~0003-node-Define-and-export-memory-migration-path	2019-10-16 15:06:55.898952599 -0700
-+++ b/include/linux/node.h	2019-10-16 15:06:55.902952599 -0700
-@@ -134,6 +134,7 @@ static inline int register_one_node(int
- 	return error;
++out_unlock:
++	unlock_page(page);
+ out:
+ 	if (rc != -EAGAIN) {
+ 		/*
+@@ -1242,9 +1246,8 @@ out:
+ 		if (rc != -EAGAIN) {
+ 			if (likely(!__PageMovable(page))) {
+ 				putback_lru_page(page);
+-				goto put_new;
++				goto done;
+ 			}
+-
+ 			lock_page(page);
+ 			if (PageMovable(page))
+ 				putback_movable_page(page);
+@@ -1253,13 +1256,8 @@ out:
+ 			unlock_page(page);
+ 			put_page(page);
+ 		}
+-put_new:
+-		if (put_new_page)
+-			put_new_page(newpage, private);
+-		else
+-			put_page(newpage);
+ 	}
+-
++done:
+ 	return rc;
  }
  
-+extern int next_migration_node(int current_node);
- extern void unregister_one_node(int nid);
- extern int register_cpu_under_node(unsigned int cpu, unsigned int nid);
- extern int unregister_cpu_under_node(unsigned int cpu, unsigned int nid);
-@@ -186,6 +187,11 @@ static inline void register_hugetlbfs_wi
- 						node_registration_func_t unreg)
- {
- }
-+
-+static inline int next_migration_node(int current_node)
-+{
-+	return -1;
-+}
- #endif
- 
- #define to_node(device) container_of(device, struct node, dev)
 _
