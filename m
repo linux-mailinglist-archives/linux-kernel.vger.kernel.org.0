@@ -2,67 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00B22D8F56
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:25:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE793D8F5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 13:25:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403924AbfJPLZB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 07:25:01 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:48867 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403826AbfJPLZB (ORCPT
+        id S2404908AbfJPLZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 07:25:57 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42030 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732462AbfJPLZ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 07:25:01 -0400
-Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1iKhQJ-0005Pd-IO; Wed, 16 Oct 2019 12:24:59 +0100
-Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.2)
-        (envelope-from <ben@rainbowdash.codethink.co.uk>)
-        id 1iKhQI-0005T4-S5; Wed, 16 Oct 2019 12:24:58 +0100
-From:   "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
-To:     linux-kernel@lists.codethink.co.uk
-Cc:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
-Subject: [PATCH] kthread: make __kthread_queue_delayed_work static
-Date:   Wed, 16 Oct 2019 12:24:58 +0100
-Message-Id: <20191016112458.20974-1-ben.dooks@codethink.co.uk>
-X-Mailer: git-send-email 2.23.0
+        Wed, 16 Oct 2019 07:25:57 -0400
+Received: by mail-lj1-f194.google.com with SMTP id y23so23567887lje.9
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 04:25:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=LFk6sNVy6XuWO8svgO6+SSQcv4B4DXcQwZI92acaUZg=;
+        b=wlgzQ3oAP2ptN6X3utRzkAkjiqbEvYZXZQ+934tvjKy32thr8vZSqIc3pjPQLtXgfH
+         jeUBx5S+U2BSXgq2bY3a6rZHCVzdzh+kGvbE07If8ZiWQLa2h2+10RU4koLv03ux3gjE
+         DCzgydf/q4oYSBTGeXWDkZTjJjNQfG0kl/C1baQNK4RkmkkBDVuU8EPk3rS1S21Ok64P
+         Pjs+a+EA94Nyt6KVp1f5UHI6dOEEB26gXM8gWR7Sv++h4vM+Y5KkwFnMR/zr6gAyKTgc
+         h01AoRKaUw8x7ixZkwD232rQIiApexPE1UixgnWHen2AVtsKl7yBpql2TxBthHjwEaYS
+         6gow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=LFk6sNVy6XuWO8svgO6+SSQcv4B4DXcQwZI92acaUZg=;
+        b=TPHgwEzY7XzAMvO1QUxZ69hk6vAOQOINWlESX3afuYLpVbavdbRV0KDU6waGXVsX2I
+         af2oJyN+BSnRnG/NLXhSuHmzDhqirly16lDuvB6vv6z4q4G6HHmvrQb110b2LL1Qy+Cc
+         m+WIyZ+jSUSM/F4CIR7BIqVxlbgsxcaSSsgEtZB8s0w4+7AIOATHPBd4DFBCInI02ucF
+         SW+52eft7HDyichU5bMx3mnbodvz2T6Qat3dz5ABqf59nkYF2pLjhS5x4m7s0rkeRwPW
+         g+UptkoJKswcFYhbG/lNkVs8kRXFZmkM17ck3b0Pk4G11qNdt80ybceNxNtKbAXEsFk/
+         EwGw==
+X-Gm-Message-State: APjAAAUiSmYpOt4Luho5ZxXs0V8ij2B+2BcTg4DIzhmkN730IL8DK13i
+        2i7ndBbaqYEwCF/PhJuYB5WbUWTsmxV9+R9Ror7F7g==
+X-Google-Smtp-Source: APXvYqwSxhfGwr8JdpJK0AeAGHl2j1JLtgGa4YJbf2sWoCxuxnBaFU4sl8NjUq/icemc6j6BY/vNAsSpnZssdNul8CE=
+X-Received: by 2002:a2e:481a:: with SMTP id v26mr18130946lja.41.1571225156108;
+ Wed, 16 Oct 2019 04:25:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191008204800.19870-1-dmurphy@ti.com> <20191008204800.19870-9-dmurphy@ti.com>
+In-Reply-To: <20191008204800.19870-9-dmurphy@ti.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 16 Oct 2019 13:25:43 +0200
+Message-ID: <CACRpkdZQmgO-VMVMQz9P5S-Ff5JWBZ+CzN-TS+cwqMSmBargHg@mail.gmail.com>
+Subject: Re: [PATCH v11 08/16] dt: bindings: lp55xx: Update binding for
+ Multicolor Framework
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The __kthread_queue_delayed_work is not exported so
-make it static, to avoid the following sparse warning:
+On Tue, Oct 8, 2019 at 10:48 PM Dan Murphy <dmurphy@ti.com> wrote:
 
-kernel/kthread.c:869:6: warning: symbol '__kthread_queue_delayed_work' was not declared. Should it be static?
+> Update the DT binding to include the properties to use the
+> multicolor framework for the devices that use the LP55xx
+> framework.
+>
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> CC: Tony Lindgren <tony@atomide.com>
+> CC: "Beno=C3=AEt Cousson" <bcousson@baylibre.com>
+> CC: Linus Walleij <linus.walleij@linaro.org>
+> CC: Shawn Guo <shawnguo@kernel.org>
+> CC: Sascha Hauer <s.hauer@pengutronix.de>
+> CC: Pengutronix Kernel Team <kernel@pengutronix.de>
+> CC: Fabio Estevam <festevam@gmail.com>
+> CC: NXP Linux Team <linux-imx@nxp.com>
 
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
----
-Cc: linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org
----
- kernel/kthread.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-diff --git a/kernel/kthread.c b/kernel/kthread.c
-index 621467c33fef..b262f47046ca 100644
---- a/kernel/kthread.c
-+++ b/kernel/kthread.c
-@@ -866,9 +866,9 @@ void kthread_delayed_work_timer_fn(struct timer_list *t)
- }
- EXPORT_SYMBOL(kthread_delayed_work_timer_fn);
- 
--void __kthread_queue_delayed_work(struct kthread_worker *worker,
--				  struct kthread_delayed_work *dwork,
--				  unsigned long delay)
-+static void __kthread_queue_delayed_work(struct kthread_worker *worker,
-+					 struct kthread_delayed_work *dwork,
-+					 unsigned long delay)
- {
- 	struct timer_list *timer = &dwork->timer;
- 	struct kthread_work *work = &dwork->work;
--- 
-2.23.0
-
+Yours,
+Linus Walleij
