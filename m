@@ -2,227 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6947CD8BEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:58:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7AE7D8BF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 10:59:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388426AbfJPI6B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 04:58:01 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56666 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730468AbfJPI6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 04:58:00 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 242D118C4282;
-        Wed, 16 Oct 2019 08:58:00 +0000 (UTC)
-Received: from [10.36.117.237] (ovpn-117-237.ams2.redhat.com [10.36.117.237])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B0C3819C68;
-        Wed, 16 Oct 2019 08:57:58 +0000 (UTC)
-Subject: Re: [PATCH] mm, soft-offline: convert parameter to pfn
-To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20191016070924.GA10178@hori.linux.bs1.fc.nec.co.jp>
- <e931b14b-da27-2720-5344-b5c0b08b38ad@redhat.com>
- <20191016082735.GB13770@hori.linux.bs1.fc.nec.co.jp>
- <c78962ba-ffa1-90e2-0116-6c94d082de2f@redhat.com>
- <20191016085359.GD13770@hori.linux.bs1.fc.nec.co.jp>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <997b5b51-db71-3e27-1f84-cbaa24fa66c7@redhat.com>
-Date:   Wed, 16 Oct 2019 10:57:57 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        id S2391829AbfJPI7k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 04:59:40 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:46424 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388817AbfJPI7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 04:59:39 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 0D8C0BE2ADF6A9344CCD;
+        Wed, 16 Oct 2019 16:59:38 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Wed, 16 Oct 2019
+ 16:59:30 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <gregkh@linuxfoundation.org>, <matthias.bgg@gmail.com>,
+        <bhanusreemahesh@gmail.com>, <jbi.octave@gmail.com>,
+        <swboyd@chromium.org>, <yuehaibing@huawi.com>,
+        <sergio.paracuellos@gmail.com>, <puranjay12@gmail.com>,
+        <arma2ff0@gmail.com>, <kimbrownkd@gmail.com>
+CC:     <devel@driverdev.osuosl.org>,
+        <linux-arm-kernel@lists.ifradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] staging: mt7621-dma: use devm_platform_ioremap_resource() to simplify code
+Date:   Wed, 16 Oct 2019 16:58:33 +0800
+Message-ID: <20191016085833.26376-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <20191016085359.GD13770@hori.linux.bs1.fc.nec.co.jp>
-Content-Type: text/plain; charset=iso-2022-jp; format=flowed; delsp=yes
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.62]); Wed, 16 Oct 2019 08:58:00 +0000 (UTC)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16.10.19 10:54, Naoya Horiguchi wrote:
-> On Wed, Oct 16, 2019 at 10:34:52AM +0200, David Hildenbrand wrote:
->> On 16.10.19 10:27, Naoya Horiguchi wrote:
->>> On Wed, Oct 16, 2019 at 09:56:19AM +0200, David Hildenbrand wrote:
->>>> On 16.10.19 09:09, Naoya Horiguchi wrote:
->>>>> Hi,
->>>>>
->>>>> I wrote a simple cleanup for parameter of soft_offline_page(),
->>>>> based on thread https://lkml.org/lkml/2019/10/11/57.
->>>>>
->>>>> I know that we need more cleanup on hwpoison-inject, but I think
->>>>> that will be mentioned in re-write patchset Oscar is preparing now.
->>>>> So let me shared only this part as a separate one now.
->>> ...
->>>>
->>>> I think you should rebase that patch on linux-next (where the
->>>> pfn_to_online_page() check is in place). I assume you'll want to move the
->>>> pfn_to_online_page() check into soft_offline_page() then as well?
->>>
->>> I rebased to next-20191016. And yes, we will move pfn_to_online_page()
->>> into soft offline code.  It seems that we can also move pfn_valid(),
->>> but is simply moving like below good enough for you?
->>
->> At least I can't am the patch to current next/master (due to
->> pfn_to_online_page()).
+Use devm_platform_ioremap_resource() to simplify the code a bit.
+This is detected by coccinelle.
 
-Could also be that my "git am" skills failed as the mail was not a  
-proper patch itself :)
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/staging/mt7621-dma/mtk-hsdma.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
->>
->>>
->>>     @@ -1877,11 +1877,17 @@ static int soft_offline_free_page(struct page *page)
->>>       * This is not a 100% solution for all memory, but tries to be
->>>       * ``good enough'' for the majority of memory.
->>>       */
->>>     -int soft_offline_page(struct page *page, int flags)
->>>     +int soft_offline_page(unsigned long pfn, int flags)
->>>      {
->>>      	int ret;
->>>     -	unsigned long pfn = page_to_pfn(page);
->>>     +	struct page *page;
->>>     +	if (!pfn_valid(pfn))
->>>     +		return -ENXIO;
->>>     +	/* Only online pages can be soft-offlined (esp., not ZONE_DEVICE). */
->>>     +	if (!pfn_to_online_page(pfn))
->>>     +		return -EIO;
->>>     +	page = pfn_to_page(pfn);
->>>      	if (is_zone_device_page(page)) {
->>>      		pr_debug_ratelimited("soft_offline: %#lx page is device page\n",
->>>      				pfn);
->>>     --
->>>
->>> Or we might have an option to do as memory_failure() does like below:
->>
->> In contrast to soft offlining, memory failure can deal with devmem. So I
->> think the above makes sense.
-> 
-> OK, so here's the revised one.
-> 
-> Thanks,
-> Naoya Horiguchi
-> ---
-> From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> Date: Wed, 16 Oct 2019 17:00:33 +0900
-> Subject: [PATCH] mm, soft-offline: convert parameter to pfn
-> 
-> Currently soft_offline_page() receives struct page, and its sibling
-> memory_failure() receives pfn. This discrepancy looks weird and makes
-> precheck on pfn validity tricky. So let's align them.
-> 
-> Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> ---
->   drivers/base/memory.c |  7 +------
->   include/linux/mm.h    |  2 +-
->   mm/madvise.c          |  2 +-
->   mm/memory-failure.c   | 14 ++++++++++----
->   4 files changed, 13 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-> index 55907c27075b..a757d9ed88a7 100644
-> --- a/drivers/base/memory.c
-> +++ b/drivers/base/memory.c
-> @@ -538,12 +538,7 @@ static ssize_t soft_offline_page_store(struct device *dev,
->   	if (kstrtoull(buf, 0, &pfn) < 0)
->   		return -EINVAL;
->   	pfn >>= PAGE_SHIFT;
-> -	if (!pfn_valid(pfn))
-> -		return -ENXIO;
-> -	/* Only online pages can be soft-offlined (esp., not ZONE_DEVICE). */
-> -	if (!pfn_to_online_page(pfn))
-> -		return -EIO;
-> -	ret = soft_offline_page(pfn_to_page(pfn), 0);
-> +	ret = soft_offline_page(pfn, 0);
->   	return ret == 0 ? count : ret;
->   }
->   
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 44d058723db9..fd360d208346 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2794,7 +2794,7 @@ extern int sysctl_memory_failure_early_kill;
->   extern int sysctl_memory_failure_recovery;
->   extern void shake_page(struct page *p, int access);
->   extern atomic_long_t num_poisoned_pages __read_mostly;
-> -extern int soft_offline_page(struct page *page, int flags);
-> +extern int soft_offline_page(unsigned long pfn, int flags);
->   
->   
->   /*
-> diff --git a/mm/madvise.c b/mm/madvise.c
-> index 2be9f3fdb05e..99dd06fecfa9 100644
-> --- a/mm/madvise.c
-> +++ b/mm/madvise.c
-> @@ -887,7 +887,7 @@ static int madvise_inject_error(int behavior,
->   			pr_info("Soft offlining pfn %#lx at process virtual address %#lx\n",
->   					pfn, start);
->   
-> -			ret = soft_offline_page(page, MF_COUNT_INCREASED);
-> +			ret = soft_offline_page(pfn, MF_COUNT_INCREASED);
->   			if (ret)
->   				return ret;
->   			continue;
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 05c8c6df25e6..bdf408d7f65c 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -1476,7 +1476,7 @@ static void memory_failure_work_func(struct work_struct *work)
->   		if (!gotten)
->   			break;
->   		if (entry.flags & MF_SOFT_OFFLINE)
-> -			soft_offline_page(pfn_to_page(entry.pfn), entry.flags);
-> +			soft_offline_page(entry.pfn, entry.flags);
->   		else
->   			memory_failure(entry.pfn, entry.flags);
->   	}
-> @@ -1857,7 +1857,7 @@ static int soft_offline_free_page(struct page *page)
->   
->   /**
->    * soft_offline_page - Soft offline a page.
-> - * @page: page to offline
-> + * @pfn: pfn to soft-offline
->    * @flags: flags. Same as memory_failure().
->    *
->    * Returns 0 on success, otherwise negated errno.
-> @@ -1877,11 +1877,17 @@ static int soft_offline_free_page(struct page *page)
->    * This is not a 100% solution for all memory, but tries to be
->    * ``good enough'' for the majority of memory.
->    */
-> -int soft_offline_page(struct page *page, int flags)
-> +int soft_offline_page(unsigned long pfn, int flags)
->   {
->   	int ret;
-> -	unsigned long pfn = page_to_pfn(page);
-> +	struct page *page;
->   
-> +	if (!pfn_valid(pfn))
-> +		return -ENXIO;
-> +	/* Only online pages can be soft-offlined (esp., not ZONE_DEVICE). */
-> +	page = pfn_to_online_page(pfn);
-> +	if (!page)
-> +		return -EIO;
->   	if (is_zone_device_page(page)) {
-
--> this is now no longer possible! So you can drop the whole if  
-(is_zone_device....) case
-
->   		pr_debug_ratelimited("soft_offline: %#lx page is device page\n",
->   				pfn);
-> 
-
-Apart from that, looks good to me.
-
+diff --git a/drivers/staging/mt7621-dma/mtk-hsdma.c b/drivers/staging/mt7621-dma/mtk-hsdma.c
+index d964642..4d541c4 100644
+--- a/drivers/staging/mt7621-dma/mtk-hsdma.c
++++ b/drivers/staging/mt7621-dma/mtk-hsdma.c
+@@ -650,7 +650,6 @@ static int mtk_hsdma_probe(struct platform_device *pdev)
+ 	struct mtk_hsdma_chan *chan;
+ 	struct mtk_hsdam_engine *hsdma;
+ 	struct dma_device *dd;
+-	struct resource *res;
+ 	int ret;
+ 	int irq;
+ 	void __iomem *base;
+@@ -667,8 +666,7 @@ static int mtk_hsdma_probe(struct platform_device *pdev)
+ 	if (!hsdma)
+ 		return -EINVAL;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	base = devm_ioremap_resource(&pdev->dev, res);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+ 	hsdma->base = base + HSDMA_BASE_OFFSET;
 -- 
+2.7.4
 
-Thanks,
 
-David / dhildenb
