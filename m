@@ -2,38 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6651D9DC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:53:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18EB3D9DE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394830AbfJPVxH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:53:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41620 "EHLO mail.kernel.org"
+        id S2395034AbfJPVyj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:54:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394799AbfJPVxD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:53:03 -0400
+        id S2394985AbfJPVyZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:54:25 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6591521A49;
-        Wed, 16 Oct 2019 21:53:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 521A421D7E;
+        Wed, 16 Oct 2019 21:54:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262782;
-        bh=0TygEq0obD9yYFXBpeYVPtjciUgfWD7m0vV61+y6fIg=;
+        s=default; t=1571262863;
+        bh=h6wRVoLPUSm/SKyRy9VEyl8Eo7KmTBlKk3hM820NPoo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G1D17U8myz+1/o2Am/Ol4aaMCx5AvJiSBqMFtjPLZ7IdR1+WJt1oN34ja4sgjQLVw
-         u4vQsJQro1LcuoLnPO170/4nHgeYXO77kRwk8Tk/adX7VzRWt77zu88xhH4xse8hPQ
-         pU0EC6GO79nl81FsXhuvUMFJ3ZW+R6vrHVg9Hbr8=
+        b=IV/eFqhUMJAMqOQYS5e7k4r/UZkG9WNyEbdMKIUncuODupcY3N1EsUuWPMY7hUX2G
+         RqWufyrDo/M558x0VMYMsJVEZUPHQ8ejyysOick6eaS5p4ZktoqQVc1lHT7M5eFvSL
+         YUeF1ruYPJjDHhxiuTUCLki3Nt05R2+vwBX5fD30=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>
-Subject: [PATCH 4.4 23/79] crypto: caam - fix concurrency issue in givencrypt descriptor
-Date:   Wed, 16 Oct 2019 14:49:58 -0700
-Message-Id: <20191016214752.249557377@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Stephane Eranian <eranian@google.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 29/92] perf stat: Reset previous counts on repeat with interval
+Date:   Wed, 16 Oct 2019 14:50:02 -0700
+Message-Id: <20191016214824.135274289@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214729.758892904@linuxfoundation.org>
-References: <20191016214729.758892904@linuxfoundation.org>
+In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
+References: <20191016214759.600329427@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,90 +50,168 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Horia Geantă <horia.geanta@nxp.com>
+From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 
-commit 48f89d2a2920166c35b1c0b69917dbb0390ebec7 upstream.
+[ Upstream commit b63fd11cced17fcb8e133def29001b0f6aaa5e06 ]
 
-IV transfer from ofifo to class2 (set up at [29][30]) is not guaranteed
-to be scheduled before the data transfer from ofifo to external memory
-(set up at [38]:
+When using 'perf stat' with repeat and interval option, it shows wrong
+values for events.
 
-[29] 10FA0004           ld: ind-nfifo (len=4) imm
-[30] 81F00010               <nfifo_entry: ofifo->class2 type=msg len=16>
-[31] 14820004           ld: ccb2-datasz len=4 offs=0 imm
-[32] 00000010               data:0x00000010
-[33] 8210010D    operation: cls1-op aes cbc init-final enc
-[34] A8080B04         math: (seqin + math0)->vseqout len=4
-[35] 28000010    seqfifold: skip len=16
-[36] A8080A04         math: (seqin + math0)->vseqin len=4
-[37] 2F1E0000    seqfifold: both msg1->2-last2-last1 len=vseqinsz
-[38] 69300000   seqfifostr: msg len=vseqoutsz
-[39] 5C20000C      seqstr: ccb2 ctx len=12 offs=0
+The wrong values will be shown for the first interval on the second and
+subsequent repetitions.
 
-If ofifo -> external memory transfer happens first, DECO will hang
-(issuing a Watchdog Timeout error, if WDOG is enabled) waiting for
-data availability in ofifo for the ofifo -> c2 ififo transfer.
+Without the fix:
 
-Make sure IV transfer happens first by waiting for all CAAM internal
-transfers to end before starting payload transfer.
+  # perf stat -r 3 -I 2000 -e faults -e sched:sched_switch -a sleep 5
 
-New descriptor with jump command inserted at [37]:
+     2.000282489                 53      faults
+     2.000282489                513      sched:sched_switch
+     4.005478208              3,721      faults
+     4.005478208              2,666      sched:sched_switch
+     5.025470933                395      faults
+     5.025470933              1,307      sched:sched_switch
+     2.009602825 1,84,46,74,40,73,70,95,47,520      faults 		<------
+     2.009602825 1,84,46,74,40,73,70,95,49,568      sched:sched_switch  <------
+     4.019612206              4,730      faults
+     4.019612206              2,746      sched:sched_switch
+     5.039615484              3,953      faults
+     5.039615484              1,496      sched:sched_switch
+     2.000274620 1,84,46,74,40,73,70,95,47,520      faults		<------
+     2.000274620 1,84,46,74,40,73,70,95,47,520      sched:sched_switch	<------
+     4.000480342              4,282      faults
+     4.000480342              2,303      sched:sched_switch
+     5.000916811              1,322      faults
+     5.000916811              1,064      sched:sched_switch
+  #
 
-[..]
-[36] A8080A04         math: (seqin + math0)->vseqin len=4
-[37] A1000401         jump: jsl1 all-match[!nfifopend] offset=[01] local->[38]
-[38] 2F1E0000    seqfifold: both msg1->2-last2-last1 len=vseqinsz
-[39] 69300000   seqfifostr: msg len=vseqoutsz
-[40] 5C20000C      seqstr: ccb2 ctx len=12 offs=0
+prev_raw_counts is allocated when using intervals. This is used when
+calculating the difference in the counts of events when using interval.
 
-[Note: the issue is present in the descriptor from the very beginning
-(cf. Fixes tag). However I've marked it v4.19+ since it's the oldest
-maintained kernel that the patch applies clean against.]
+The current counts are stored in prev_raw_counts to calculate the
+differences in the next iteration.
 
-Cc: <stable@vger.kernel.org> # v4.19+
-Fixes: 1acebad3d8db8 ("crypto: caam - faster aead implementation")
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-[Horia: backport to v4.4, v4.9]
-Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+On the first interval of the second and subsequent repetitions,
+prev_raw_counts would be the values stored in the last interval of the
+previous repetitions, while the current counts will only be for the
+first interval of the current repetition.
 
+Hence there is a possibility of events showing up as big number.
+
+Fix this by resetting prev_raw_counts whenever perf stat repeats the
+command.
+
+With the fix:
+
+  # perf stat -r 3 -I 2000 -e faults -e sched:sched_switch -a sleep 5
+
+     2.019349347              2,597      faults
+     2.019349347              2,753      sched:sched_switch
+     4.019577372              3,098      faults
+     4.019577372              2,532      sched:sched_switch
+     5.019415481              1,879      faults
+     5.019415481              1,356      sched:sched_switch
+     2.000178813              8,468      faults
+     2.000178813              2,254      sched:sched_switch
+     4.000404621              7,440      faults
+     4.000404621              1,266      sched:sched_switch
+     5.040196079              2,458      faults
+     5.040196079                556      sched:sched_switch
+     2.000191939              6,870      faults
+     2.000191939              1,170      sched:sched_switch
+     4.000414103                541      faults
+     4.000414103                902      sched:sched_switch
+     5.000809863                450      faults
+     5.000809863                364      sched:sched_switch
+  #
+
+Committer notes:
+
+This was broken since the cset introducing the --interval feature, i.e.
+--repeat + --interval wasn't tested at that point, add the Fixes tag so
+that automatic scripts can pick this up.
+
+Fixes: 13370a9b5bb8 ("perf stat: Add interval printing")
+Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Tested-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: stable@vger.kernel.org # v3.9+
+Link: http://lore.kernel.org/lkml/20190904094738.9558-2-srikar@linux.vnet.ibm.com
+[ Fixed up conflicts with libperf, i.e. some perf_{evsel,evlist} lost the 'perf' prefix ]
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/caam/caamalg.c |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ tools/perf/builtin-stat.c |  3 +++
+ tools/perf/util/stat.c    | 17 +++++++++++++++++
+ tools/perf/util/stat.h    |  1 +
+ 3 files changed, 21 insertions(+)
 
---- a/drivers/crypto/caam/caamalg.c
-+++ b/drivers/crypto/caam/caamalg.c
-@@ -75,7 +75,7 @@
- #define DESC_AEAD_BASE			(4 * CAAM_CMD_SZ)
- #define DESC_AEAD_ENC_LEN		(DESC_AEAD_BASE + 11 * CAAM_CMD_SZ)
- #define DESC_AEAD_DEC_LEN		(DESC_AEAD_BASE + 15 * CAAM_CMD_SZ)
--#define DESC_AEAD_GIVENC_LEN		(DESC_AEAD_ENC_LEN + 9 * CAAM_CMD_SZ)
-+#define DESC_AEAD_GIVENC_LEN		(DESC_AEAD_ENC_LEN + 10 * CAAM_CMD_SZ)
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index e55dbceadad6c..5cb58f3afa355 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -2564,6 +2564,9 @@ int cmd_stat(int argc, const char **argv, const char *prefix __maybe_unused)
+ 			fprintf(output, "[ perf stat: executing run #%d ... ]\n",
+ 				run_idx + 1);
  
- /* Note: Nonce is counted in enckeylen */
- #define DESC_AEAD_CTR_RFC3686_LEN	(4 * CAAM_CMD_SZ)
-@@ -437,6 +437,7 @@ static int aead_set_sh_desc(struct crypt
- 	u32 geniv, moveiv;
- 	u32 ctx1_iv_off = 0;
- 	u32 *desc;
-+	u32 *wait_cmd;
- 	const bool ctr_mode = ((ctx->class1_alg_type & OP_ALG_AAI_MASK) ==
- 			       OP_ALG_AAI_CTR_MOD128);
- 	const bool is_rfc3686 = alg->caam.rfc3686;
-@@ -702,6 +703,14 @@ copy_iv:
++		if (run_idx != 0)
++			perf_evlist__reset_prev_raw_counts(evsel_list);
++
+ 		status = run_perf_stat(argc, argv);
+ 		if (forever && status != -1 && !interval) {
+ 			print_counters(NULL, argc, argv);
+diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
+index 39345c2ddfc22..d4f872f1750e6 100644
+--- a/tools/perf/util/stat.c
++++ b/tools/perf/util/stat.c
+@@ -145,6 +145,15 @@ static void perf_evsel__free_prev_raw_counts(struct perf_evsel *evsel)
+ 	evsel->prev_raw_counts = NULL;
+ }
  
- 	/* Will read cryptlen */
- 	append_math_add(desc, VARSEQINLEN, SEQINLEN, REG0, CAAM_CMD_SZ);
++static void perf_evsel__reset_prev_raw_counts(struct perf_evsel *evsel)
++{
++	if (evsel->prev_raw_counts) {
++		evsel->prev_raw_counts->aggr.val = 0;
++		evsel->prev_raw_counts->aggr.ena = 0;
++		evsel->prev_raw_counts->aggr.run = 0;
++       }
++}
 +
-+	/*
-+	 * Wait for IV transfer (ofifo -> class2) to finish before starting
-+	 * ciphertext transfer (ofifo -> external memory).
-+	 */
-+	wait_cmd = append_jump(desc, JUMP_JSL | JUMP_TEST_ALL | JUMP_COND_NIFP);
-+	set_jump_tgt_here(desc, wait_cmd);
+ static int perf_evsel__alloc_stats(struct perf_evsel *evsel, bool alloc_raw)
+ {
+ 	int ncpus = perf_evsel__nr_cpus(evsel);
+@@ -195,6 +204,14 @@ void perf_evlist__reset_stats(struct perf_evlist *evlist)
+ 	}
+ }
+ 
++void perf_evlist__reset_prev_raw_counts(struct perf_evlist *evlist)
++{
++	struct perf_evsel *evsel;
 +
- 	append_seq_fifo_load(desc, 0, FIFOLD_CLASS_BOTH | KEY_VLF |
- 			     FIFOLD_TYPE_MSG1OUT2 | FIFOLD_TYPE_LASTBOTH);
- 	append_seq_fifo_store(desc, 0, FIFOST_TYPE_MESSAGE_DATA | KEY_VLF);
++	evlist__for_each_entry(evlist, evsel)
++		perf_evsel__reset_prev_raw_counts(evsel);
++}
++
+ static void zero_per_pkg(struct perf_evsel *counter)
+ {
+ 	if (counter->per_pkg_mask)
+diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
+index c29bb94c48a4b..b8845aceac31a 100644
+--- a/tools/perf/util/stat.h
++++ b/tools/perf/util/stat.h
+@@ -94,6 +94,7 @@ void perf_stat__print_shadow_stats(struct perf_evsel *evsel,
+ int perf_evlist__alloc_stats(struct perf_evlist *evlist, bool alloc_raw);
+ void perf_evlist__free_stats(struct perf_evlist *evlist);
+ void perf_evlist__reset_stats(struct perf_evlist *evlist);
++void perf_evlist__reset_prev_raw_counts(struct perf_evlist *evlist);
+ 
+ int perf_stat_process_counter(struct perf_stat_config *config,
+ 			      struct perf_evsel *counter);
+-- 
+2.20.1
+
 
 
