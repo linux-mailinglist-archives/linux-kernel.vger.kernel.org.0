@@ -2,184 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA3D1D8D55
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 12:09:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5131D8D5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 12:09:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392233AbfJPKJO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 06:09:14 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:6866 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727235AbfJPKJN (ORCPT
+        id S2404491AbfJPKJW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 06:09:22 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:41198 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727235AbfJPKJV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 06:09:13 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9G9vJSb022321;
-        Wed, 16 Oct 2019 12:08:57 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=DRK6nnWxIpQcRpa27goNNKQ6VsydMmtRJ5E896Ce4Mg=;
- b=bgO95zmf6k2aVs9w1Xi40fm7M97azWEHfHLRVkbo0ZJC5b8wbkMYjy3JqcGa/3hDtU0V
- a05oW0Z2xC+WtxdaqXmFvJSIC5d8mRebsgQ2gbwHQCcHBrjAlDqrdLtQG869tjSoHhtP
- bB9U3dxRq3HkKMd4MSk5tFrPp0gemXEoUjf8Chyhjstyx9zuSluokafzcfjR6hcdMNUH
- ZTTJ/EKLLxFqT+Wx4Y/tB9Go12HCV/e7mZuqVVqTs6yBEmPhYXEb0NDZ/5mVM9AcTrOZ
- yBiTzslx4ssweZHkXlP4z3lwYc8XBKg+K4PgT3xZQFZtj0PaIz3KNoZS0hOVI8iOVFPq GA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2vk4kx5eyf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Oct 2019 12:08:57 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 07B0410002A;
-        Wed, 16 Oct 2019 12:08:56 +0200 (CEST)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C67EE205D2C;
-        Wed, 16 Oct 2019 12:08:56 +0200 (CEST)
-Received: from SAFEX1HUBCAS23.st.com (10.75.90.46) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 16 Oct
- 2019 12:08:56 +0200
-Received: from [10.48.0.192] (10.48.0.192) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 16 Oct 2019 12:08:56
- +0200
-Subject: Re: [PATCH v2 3/3] pwm: stm32: add power management support
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     <robh+dt@kernel.org>, <u.kleine-koenig@pengutronix.de>,
-        <alexandre.torgue@st.com>, <mark.rutland@arm.com>,
-        <mcoquelin.stm32@gmail.com>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
-        <benjamin.gaignard@st.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <1570193633-6600-1-git-send-email-fabrice.gasnier@st.com>
- <1570193633-6600-4-git-send-email-fabrice.gasnier@st.com>
- <20191016070635.GC1296874@ulmo>
-From:   Fabrice Gasnier <fabrice.gasnier@st.com>
-Message-ID: <15371530-a932-08b7-dd78-a7e20d213203@st.com>
-Date:   Wed, 16 Oct 2019 12:08:54 +0200
+        Wed, 16 Oct 2019 06:09:21 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9GA90T6077650;
+        Wed, 16 Oct 2019 05:09:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1571220540;
+        bh=KNxeu9yfZ4RGKar+cjwljVCo17/rn+guhBIxyB5Xi5Q=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=HPTMJU739RMoB0ZNu8pPABGgIMHbJ4MMLVqxFPrm0LDF1NQbbshmld+lDmDazw4Ph
+         NppIfYVJTQWyg8jCEfNgYHOAD/fgsOWYMy9SWi1Jg6coE1IHiU0yebMSR7gtvttsAB
+         PFzUJjvfwyKnee3TpFiK1povC+/dsI5Mvy4W3ZCw=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9GA90V3127814
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 16 Oct 2019 05:09:00 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 16
+ Oct 2019 05:08:53 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 16 Oct 2019 05:08:53 -0500
+Received: from [192.168.2.14] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9GA8vjP092532;
+        Wed, 16 Oct 2019 05:08:58 -0500
+Subject: Re: [PATCH v2 0/2] usb: cdns3: fixes for 5.4-rc
+To:     <felipe.balbi@linux.intel.com>, <gregkh@linuxfoundation.org>
+CC:     <pawell@cadence.com>, <peter.chen@nxp.com>, <nsekhar@ti.com>,
+        <kurahul@cadence.com>, <linux-usb@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20191016100452.32613-1-rogerq@ti.com>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <6435c2c9-c8fb-3ec8-5e5c-b1d3b72b0b2e@ti.com>
+Date:   Wed, 16 Oct 2019 13:08:57 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191016070635.GC1296874@ulmo>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <20191016100452.32613-1-rogerq@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.48.0.192]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-16_03:2019-10-15,2019-10-16 signatures=0
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/16/19 9:06 AM, Thierry Reding wrote:
-> On Fri, Oct 04, 2019 at 02:53:53PM +0200, Fabrice Gasnier wrote:
->> Add suspend/resume PM sleep ops. When going to low power, enforce the PWM
->> channel isn't active. Let the PWM consumers disable it during their own
->> suspend sequence, see [1]. So, perform a check here, and handle the
->> pinctrl states. Also restore the break inputs upon resume, as registers
->> content may be lost when going to low power mode.
->>
->> [1] https://lkml.org/lkml/2019/2/5/770
->>
->> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
->> ---
->> Changes in v2:
->> Follow Uwe suggestions/remarks:
->> - Add a precursor patch to ease reviewing
->> - Use registers read instead of pwm_get_state
->> - Add a comment to mention registers content may be lost in low power mode
->> ---
->>  drivers/pwm/pwm-stm32.c | 38 ++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 38 insertions(+)
-> 
-> Applied, thanks. I made two minor changes, though, see below.
-> 
->>
->> diff --git a/drivers/pwm/pwm-stm32.c b/drivers/pwm/pwm-stm32.c
->> index cf8658c..546b661 100644
->> --- a/drivers/pwm/pwm-stm32.c
->> +++ b/drivers/pwm/pwm-stm32.c
->> @@ -12,6 +12,7 @@
->>  #include <linux/mfd/stm32-timers.h>
->>  #include <linux/module.h>
->>  #include <linux/of.h>
->> +#include <linux/pinctrl/consumer.h>
->>  #include <linux/platform_device.h>
->>  #include <linux/pwm.h>
->>  
->> @@ -655,6 +656,42 @@ static int stm32_pwm_remove(struct platform_device *pdev)
->>  	return 0;
->>  }
->>  
->> +static int __maybe_unused stm32_pwm_suspend(struct device *dev)
->> +{
->> +	struct stm32_pwm *priv = dev_get_drvdata(dev);
->> +	unsigned int ch;
-> 
-> I renamed this to just "i", which is more idiomatic for loop variables.
-> The function is small enough not to need to differentiate between loop
-> variables.
-> 
->> +	u32 ccer, mask;
->> +
->> +	/* Look for active channels */
->> +	ccer = active_channels(priv);
->> +
->> +	for (ch = 0; ch < priv->chip.npwm; ch++) {
->> +		mask = TIM_CCER_CC1E << (ch * 4);
->> +		if (ccer & mask) {
->> +			dev_err(dev, "The consumer didn't stop us (%s)\n",
->> +				priv->chip.pwms[ch].label);
-> 
-> Changed this to:
-> 
-> 	"PWM %u still in use by consumer %s\n", i, priv->chip.pwms[i].label
-> 
-> I think that might help clarify which PWM is still enabled in case the
-> consumers don't set a label.
+Hi, Greg
 
-Hi Thierry,
+I see that you've already picked up v1.
+V2 is a very minor fix and this series can be ignored.
 
-Many thanks for all the improvements on this series!
+cheers,
+-roger
 
-Best Regards,
-Fabrice
-
+On 16/10/2019 13:04, Roger Quadros wrote:
+> Hi,
 > 
-> Thierry
+> Here are 2 fixes we found while testing the cdns3 driver
+> on our platform.
 > 
->> +			return -EBUSY;
->> +		}
->> +	}
->> +
->> +	return pinctrl_pm_select_sleep_state(dev);
->> +}
->> +
->> +static int __maybe_unused stm32_pwm_resume(struct device *dev)
->> +{
->> +	struct stm32_pwm *priv = dev_get_drvdata(dev);
->> +	int ret;
->> +
->> +	ret = pinctrl_pm_select_default_state(dev);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* restore breakinput registers that may have been lost in low power */
->> +	return stm32_pwm_apply_breakinputs(priv);
->> +}
->> +
->> +static SIMPLE_DEV_PM_OPS(stm32_pwm_pm_ops, stm32_pwm_suspend, stm32_pwm_resume);
->> +
->>  static const struct of_device_id stm32_pwm_of_match[] = {
->>  	{ .compatible = "st,stm32-pwm",	},
->>  	{ /* end node */ },
->> @@ -667,6 +704,7 @@ static struct platform_driver stm32_pwm_driver = {
->>  	.driver	= {
->>  		.name = "stm32-pwm",
->>  		.of_match_table = stm32_pwm_of_match,
->> +		.pm = &stm32_pwm_pm_ops,
->>  	},
->>  };
->>  module_platform_driver(stm32_pwm_driver);
->> -- 
->> 2.7.4
->>
+> The first one fixes a corner case where super-speed in host mode
+> doesn't work if device was plugged before the cdns3 driver probes.
+> 
+> The second one fixes the case when gadget driver is
+> limited to full-speed.
+> 
+> cheers,
+> -roger
+> 
+> Changelog:
+> v2
+> - treat USB_DR_MODE_UNKNOWN as error case
+> 
+> Roger Quadros (2):
+>    usb: cdns3: fix cdns3_core_init_role()
+>    usb: cdns3: gadget: Fix full-speed mode
+> 
+>   drivers/usb/cdns3/core.c   | 22 +++++++++++++++++++++-
+>   drivers/usb/cdns3/gadget.c |  1 +
+>   2 files changed, 22 insertions(+), 1 deletion(-)
+> 
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
