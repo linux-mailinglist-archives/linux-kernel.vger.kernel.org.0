@@ -2,90 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1022FD8CDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 11:49:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A921BD8CDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 11:48:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392085AbfJPJs5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 05:48:57 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54815 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392065AbfJPJs4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S2392075AbfJPJs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 16 Oct 2019 05:48:56 -0400
-Received: by mail-wm1-f66.google.com with SMTP id p7so2151170wmp.4
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 02:48:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=iQTEy8UXFGNr/FdOe7iND6VR46p8IWrfWOuMln2JTYU=;
-        b=ZZdZfTpiIUaMrIV4BWVDOdaeQMZ8BQi3QI0QA/5kmySHz6rxYJY1Rv1AhnjnRIbW0O
-         1l8+DsY7UcFfVmPqgzyacq8wAxP+EX9rdn6ANCLfyOX7bQ3ix5aob9VGT3W+MiZ5n8s4
-         xdFD3YNihzyzclsQ27U3NbNfKak8IG+bDWtgMxOmVrxS+4zZz+7eHfAearIPVx7O4e43
-         wIf3P2Za2RUKrK3pZ4iSy98Y4+K7ubRXRPHo/hRmzm4C8mQcUq9NMKG+eEU89YY9kfoE
-         4KX2NJ7NO24fPm9g45BDPKOGOJhYjCh9ikZ4C5gVw4BVE3GRacyMQsz3FEWMU7U/V7+n
-         YmyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=iQTEy8UXFGNr/FdOe7iND6VR46p8IWrfWOuMln2JTYU=;
-        b=KikdTyteH9OYcQGbEiXGTMY49XLyh/8M2TrP8JABltAicb9PzbSLy/kuNDZix+yUws
-         t90z/p0F2GpCWL51xOoLA0aGKr65761y2HLScgNuiauM0wOyeNjnomVSi88FRDECPgQe
-         ujwcKBvic5ExG6bEfmh/1xLcFtS0HKCH3Gun0KsgVJoF/X5xWKnzrIjBaEP8sw0OSSbm
-         QFL50OXhPCflG2HwPSlGEEbwbHCpFXmMmnBb7ND6O7puqXuATR4K3dJAh+IYh3UDJz/u
-         5xmLk1SMtdTvLhTvwJojHm3dHFiUUwnW8abH6k7xVfGu284xQzqgU+hwOIeL4NnmEaKb
-         gk4w==
-X-Gm-Message-State: APjAAAXWpjN+on8aJhuVbtxWGtxa+E36yQsV2sC0ok4u1a0Sn0Px0Ang
-        NG0roR6SZ8Mxl67TRvy1cMXqRA==
-X-Google-Smtp-Source: APXvYqxXlPXCL0knKbkdHTjpJOD+EZQvj/zxHayInG5YUOAEsEwDnXPfuddylcztatyogiSWvF9X9g==
-X-Received: by 2002:a1c:1bc5:: with SMTP id b188mr2685843wmb.164.1571219334851;
-        Wed, 16 Oct 2019 02:48:54 -0700 (PDT)
-Received: from dell ([95.149.164.86])
-        by smtp.gmail.com with ESMTPSA id p85sm2163443wme.23.2019.10.16.02.48.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Oct 2019 02:48:54 -0700 (PDT)
-Date:   Wed, 16 Oct 2019 10:48:51 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mfd: arizona: switch to using devm_gpiod_get()
-Message-ID: <20191016094851.GC4365@dell>
-References: <20191003002832.GA13466@dtor-ws>
+Received: from mga05.intel.com ([192.55.52.43]:49636 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389173AbfJPJs4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 05:48:56 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2019 02:48:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,303,1566889200"; 
+   d="scan'208";a="207858159"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga002.jf.intel.com with ESMTP; 16 Oct 2019 02:48:54 -0700
+Received: from [10.125.252.157] (abudanko-mobl.ccr.corp.intel.com [10.125.252.157])
+        by linux.intel.com (Postfix) with ESMTP id 133815803C5;
+        Wed, 16 Oct 2019 02:48:51 -0700 (PDT)
+Subject: [PATCH v2 1/4] perf/core,x86: introduce sync_task_ctx() method at
+ struct pmu
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Ian Rogers <irogers@google.com>,
+        Song Liu <songliubraving@fb.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <5964c7e9-ab6f-c0d0-3dca-31196606e337@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <5b95f1f5-8706-448f-5a19-b6cd955aca14@linux.intel.com>
+Date:   Wed, 16 Oct 2019 12:48:51 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
+In-Reply-To: <5964c7e9-ab6f-c0d0-3dca-31196606e337@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191003002832.GA13466@dtor-ws>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 02 Oct 2019, Dmitry Torokhov wrote:
 
-> Now that gpiolib recognizes wlf,reset legacy GPIO and will handle it
-> even if DTS uses it without -gpio[s] suffix, we can switch to more
-> standard devm_gpiod_get() and later remove devm_gpiod_get_from_of_node().
-> 
-> Note that we will lose "arizona /RESET" custom GPIO label, but since we
-> do not set such custom label when using the modern binding, I opted to
-> not having it here either.
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  drivers/mfd/arizona-core.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
+Declare sync_task_ctx() methods at the generic and x86 specific
+pmu types to bridge calls to platform specific pmu code on optimized
+context switch path between equivalent task perf event contexts.
 
-Applied, thanks.
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+ arch/x86/events/perf_event.h | 8 ++++++++
+ include/linux/perf_event.h   | 7 +++++++
+ 2 files changed, 15 insertions(+)
 
+diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+index ecacfbf4ebc1..a25e6d7eb87b 100644
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -682,6 +682,14 @@ struct x86_pmu {
+ 	 */
+ 	atomic_t	lbr_exclusive[x86_lbr_exclusive_max];
+ 
++	/*
++	 * perf task context (i.e. struct perf_event_context::task_ctx_data) switch helper
++	 * to bridge calls from perf/core to perf/x86. See struct pmu::sync_task_ctx() usage
++	 * for examples;
++	 */
++	void		(*sync_task_ctx)(struct x86_perf_task_context *one,
++					 struct x86_perf_task_context *another);
++
+ 	/*
+ 	 * AMD bits
+ 	 */
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 61448c19a132..60bf17af69f0 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -409,6 +409,13 @@ struct pmu {
+ 	 */
+ 	size_t				task_ctx_size;
+ 
++	/*
++	 * PMU specific parts of task perf event context (i.e. ctx->task_ctx_data)
++	 * can be synchronized using this function. See Intel LBR callstack support
++	 * implementation and Perf core context switch handling callbacks for usage
++	 * examples.
++	 */
++	void (*sync_task_ctx)		(void *one, void *another);
+ 
+ 	/*
+ 	 * Set up pmu-private data structures for an AUX area
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.20.1
+
