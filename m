@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5CCCD9DCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 060D3D9DBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:52:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394880AbfJPVx3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:53:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42152 "EHLO mail.kernel.org"
+        id S2394789AbfJPVw3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:52:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394837AbfJPVxW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:53:22 -0400
-Received: from localhost (unknown [192.55.54.58])
+        id S2394765AbfJPVw2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:52:28 -0400
+Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8CE321A4C;
-        Wed, 16 Oct 2019 21:53:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A005F218DE;
+        Wed, 16 Oct 2019 21:52:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262801;
-        bh=A/GUR8jKlGoJbWO4krzlD2ky3UB/AYk6f6PkrqbWfYQ=;
+        s=default; t=1571262747;
+        bh=1pWgX6uDTUOH3YJheezI2u1Praf4IWP5+BgBbA3TdN8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LusOh1wUhGqE212qpG8MbB2LrW4l0qfYXTFdjvEfi1asYBqPzvkhzs+9MOo0WMyjz
-         Pdwb93CumDI/21W9CnWZ/ff3Cz1JLsfxzEvqn6KYaniW1RZO7jnb4LLFww/aTjjPGW
-         g0/DzLk80L5mtCLxM8xbYMx8SGQRYDBG865Df9eM=
+        b=lUWgP8ZmeakA17yihpJiWULISmUQC9yjkGCusyWPj3BtKVaIZS/oqQESCYvRk42z9
+         iYKT8yC1M3/YCPaZui5kY5aygy7Z2+JxZeCw2HFdowIWwcx77P7jzR/dlpTctgOmIA
+         g5tgD2dZ37OMJurj0CubIL4ZAZj0gNUvQYGuWz20=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Andrew Donnellan <ajd@linux.ibm.com>
-Subject: [PATCH 4.4 07/79] powerpc/powernv: Restrict OPAL symbol map to only be readable by root
-Date:   Wed, 16 Oct 2019 14:49:42 -0700
-Message-Id: <20191016214736.089883453@linuxfoundation.org>
+        stable@vger.kernel.org, Alexander Aring <alex.aring@gmail.com>,
+        syzbot+f4509a9138a1472e7e80@syzkaller.appspotmail.com,
+        Johan Hovold <johan@kernel.org>,
+        Stefan Schmidt <stefan@datenfreihafen.org>
+Subject: [PATCH 4.4 10/79] ieee802154: atusb: fix use-after-free at disconnect
+Date:   Wed, 16 Oct 2019 14:49:45 -0700
+Message-Id: <20191016214738.771838140@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191016214729.758892904@linuxfoundation.org>
 References: <20191016214729.758892904@linuxfoundation.org>
@@ -43,54 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrew Donnellan <ajd@linux.ibm.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit e7de4f7b64c23e503a8c42af98d56f2a7462bd6d upstream.
+commit 7fd25e6fc035f4b04b75bca6d7e8daa069603a76 upstream.
 
-Currently the OPAL symbol map is globally readable, which seems bad as
-it contains physical addresses.
+The disconnect callback was accessing the hardware-descriptor private
+data after having having freed it.
 
-Restrict it to root.
-
-Fixes: c8742f85125d ("powerpc/powernv: Expose OPAL firmware symbol map")
-Cc: stable@vger.kernel.org # v3.19+
-Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20190503075253.22798-1-ajd@linux.ibm.com
+Fixes: 7490b008d123 ("ieee802154: add support for atusb transceiver")
+Cc: stable <stable@vger.kernel.org>     # 4.2
+Cc: Alexander Aring <alex.aring@gmail.com>
+Reported-by: syzbot+f4509a9138a1472e7e80@syzkaller.appspotmail.com
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/platforms/powernv/opal.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/net/ieee802154/atusb.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/platforms/powernv/opal.c
-+++ b/arch/powerpc/platforms/powernv/opal.c
-@@ -580,7 +580,10 @@ static ssize_t symbol_map_read(struct fi
- 				       bin_attr->size);
- }
+--- a/drivers/net/ieee802154/atusb.c
++++ b/drivers/net/ieee802154/atusb.c
+@@ -756,10 +756,11 @@ static void atusb_disconnect(struct usb_
  
--static BIN_ATTR_RO(symbol_map, 0);
-+static struct bin_attribute symbol_map_attr = {
-+	.attr = {.name = "symbol_map", .mode = 0400},
-+	.read = symbol_map_read
-+};
+ 	ieee802154_unregister_hw(atusb->hw);
  
- static void opal_export_symmap(void)
- {
-@@ -597,10 +600,10 @@ static void opal_export_symmap(void)
- 		return;
++	usb_put_dev(atusb->usb_dev);
++
+ 	ieee802154_free_hw(atusb->hw);
  
- 	/* Setup attributes */
--	bin_attr_symbol_map.private = __va(be64_to_cpu(syms[0]));
--	bin_attr_symbol_map.size = be64_to_cpu(syms[1]);
-+	symbol_map_attr.private = __va(be64_to_cpu(syms[0]));
-+	symbol_map_attr.size = be64_to_cpu(syms[1]);
+ 	usb_set_intfdata(interface, NULL);
+-	usb_put_dev(atusb->usb_dev);
  
--	rc = sysfs_create_bin_file(opal_kobj, &bin_attr_symbol_map);
-+	rc = sysfs_create_bin_file(opal_kobj, &symbol_map_attr);
- 	if (rc)
- 		pr_warn("Error %d creating OPAL symbols file\n", rc);
+ 	pr_debug("atusb_disconnect done\n");
  }
 
 
