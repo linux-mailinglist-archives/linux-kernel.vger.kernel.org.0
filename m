@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECB72D9F65
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E543D9F3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395133AbfJPVy7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:54:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45066 "EHLO mail.kernel.org"
+        id S1729939AbfJPVxc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:53:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395090AbfJPVyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:54:54 -0400
+        id S2394842AbfJPVxX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:53:23 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8464521925;
-        Wed, 16 Oct 2019 21:54:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93A6721925;
+        Wed, 16 Oct 2019 21:53:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262893;
-        bh=Sa+6Pf0T69eMRUz9sXVo9A+EjgsvDu3rNexnocYZWFs=;
+        s=default; t=1571262802;
+        bh=mYrFo0W9gI8djX/nmVkmDQqAzDr5zN+mypISr36JtF0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gcADDCF7Uu/LVdhsodOEcs9btM9IKp/3fXIfZgjDe3nKlHdThIQz8zHUZ6VWkCnJV
-         vZAWby1E9PPJHPNN1knKH8iQUwjeBqPMUjZ1XSQESZJZ1hB6WYoR3rG6qW4cEvpMPn
-         tEUjkmVMEEPHuWPKo1Q8AelPF3Ti2fsaLivzmhys=
+        b=0+LT/8stROdzAdiKjWubc5if38PmqGqikDgzSB0BjrnNX9zIOtn4qObn4Pu78S7uX
+         lal70PlTnEW0+sblJzhIf8lqWtl37EnNh+fjvDqkrEKFZRl4QPEHyXwpFptgEsr9A7
+         3qDn5cg6x0OW5nmGqQc6mwnyLQKq+T7FJXgy5z0Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.9 10/92] usercopy: Avoid HIGHMEM pfn warning
+        stable@vger.kernel.org, Sean Nyekjaer <sean@geanix.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 4.4 08/79] can: mcp251x: mcp251x_hw_reset(): allow more time after a reset
 Date:   Wed, 16 Oct 2019 14:49:43 -0700
-Message-Id: <20191016214806.748467068@linuxfoundation.org>
+Message-Id: <20191016214737.921480788@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
-References: <20191016214759.600329427@linuxfoundation.org>
+In-Reply-To: <20191016214729.758892904@linuxfoundation.org>
+References: <20191016214729.758892904@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,88 +43,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kees Cook <keescook@chromium.org>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
 
-commit 314eed30ede02fa925990f535652254b5bad6b65 upstream.
+commit d84ea2123f8d27144e3f4d58cd88c9c6ddc799de upstream.
 
-When running on a system with >512MB RAM with a 32-bit kernel built with:
+Some boards take longer than 5ms to power up after a reset, so allow
+some retries attempts before giving up.
 
-	CONFIG_DEBUG_VIRTUAL=y
-	CONFIG_HIGHMEM=y
-	CONFIG_HARDENED_USERCOPY=y
-
-all execve()s will fail due to argv copying into kmap()ed pages, and on
-usercopy checking the calls ultimately of virt_to_page() will be looking
-for "bad" kmap (highmem) pointers due to CONFIG_DEBUG_VIRTUAL=y:
-
- ------------[ cut here ]------------
- kernel BUG at ../arch/x86/mm/physaddr.c:83!
- invalid opcode: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC
- CPU: 1 PID: 1 Comm: swapper/0 Not tainted 5.3.0-rc8 #6
- Hardware name: Dell Inc. Inspiron 1318/0C236D, BIOS A04 01/15/2009
- EIP: __phys_addr+0xaf/0x100
- ...
- Call Trace:
-  __check_object_size+0xaf/0x3c0
-  ? __might_sleep+0x80/0xa0
-  copy_strings+0x1c2/0x370
-  copy_strings_kernel+0x2b/0x40
-  __do_execve_file+0x4ca/0x810
-  ? kmem_cache_alloc+0x1c7/0x370
-  do_execve+0x1b/0x20
-  ...
-
-The check is from arch/x86/mm/physaddr.c:
-
-	VIRTUAL_BUG_ON((phys_addr >> PAGE_SHIFT) > max_low_pfn);
-
-Due to the kmap() in fs/exec.c:
-
-		kaddr = kmap(kmapped_page);
-	...
-	if (copy_from_user(kaddr+offset, str, bytes_to_copy)) ...
-
-Now we can fetch the correct page to avoid the pfn check. In both cases,
-hardened usercopy will need to walk the page-span checker (if enabled)
-to do sanity checking.
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-Fixes: f5509cc18daa ("mm: Hardened usercopy")
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Link: https://lore.kernel.org/r/201909171056.7F2FFD17@keescook
+Fixes: ff06d611a31c ("can: mcp251x: Improve mcp251x_hw_reset()")
+Cc: linux-stable <stable@vger.kernel.org>
+Tested-by: Sean Nyekjaer <sean@geanix.com>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/usercopy.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/net/can/spi/mcp251x.c |   19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
---- a/mm/usercopy.c
-+++ b/mm/usercopy.c
-@@ -15,6 +15,7 @@
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+--- a/drivers/net/can/spi/mcp251x.c
++++ b/drivers/net/can/spi/mcp251x.c
+@@ -627,7 +627,7 @@ static int mcp251x_setup(struct net_devi
+ static int mcp251x_hw_reset(struct spi_device *spi)
+ {
+ 	struct mcp251x_priv *priv = spi_get_drvdata(spi);
+-	u8 reg;
++	unsigned long timeout;
+ 	int ret;
  
- #include <linux/mm.h>
-+#include <linux/highmem.h>
- #include <linux/slab.h>
- #include <asm/sections.h>
+ 	/* Wait for oscillator startup timer after power up */
+@@ -641,10 +641,19 @@ static int mcp251x_hw_reset(struct spi_d
+ 	/* Wait for oscillator startup timer after reset */
+ 	mdelay(MCP251X_OST_DELAY_MS);
  
-@@ -217,7 +218,12 @@ static inline const char *check_heap_obj
- 	if (!virt_addr_valid(ptr))
- 		return NULL;
+-	reg = mcp251x_read_reg(spi, CANSTAT);
+-	if ((reg & CANCTRL_REQOP_MASK) != CANCTRL_REQOP_CONF)
+-		return -ENODEV;
+-
++	/* Wait for reset to finish */
++	timeout = jiffies + HZ;
++	while ((mcp251x_read_reg(spi, CANSTAT) & CANCTRL_REQOP_MASK) !=
++	       CANCTRL_REQOP_CONF) {
++		usleep_range(MCP251X_OST_DELAY_MS * 1000,
++			     MCP251X_OST_DELAY_MS * 1000 * 2);
++
++		if (time_after(jiffies, timeout)) {
++			dev_err(&spi->dev,
++				"MCP251x didn't enter in conf mode after reset\n");
++			return -EBUSY;
++		}
++	}
+ 	return 0;
+ }
  
--	page = virt_to_head_page(ptr);
-+	/*
-+	 * When CONFIG_HIGHMEM=y, kmap_to_page() will give either the
-+	 * highmem page or fallback to virt_to_page(). The following
-+	 * is effectively a highmem-aware virt_to_head_page().
-+	 */
-+	page = compound_head(kmap_to_page((void *)ptr));
- 
- 	/* Check slab allocator for flags and size. */
- 	if (PageSlab(page))
 
 
