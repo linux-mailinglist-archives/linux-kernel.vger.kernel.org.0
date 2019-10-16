@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B231DA0A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:25:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94460D9FB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:24:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393334AbfJPWNw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:13:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46714 "EHLO mail.kernel.org"
+        id S2395519AbfJPV5l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:57:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395278AbfJPVzo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:55:44 -0400
+        id S2437943AbfJPV44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:56:56 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F9F021925;
-        Wed, 16 Oct 2019 21:55:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 314F320872;
+        Wed, 16 Oct 2019 21:56:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262943;
-        bh=mROoGw3K30hCRnp8qGru45WqsaXtMc1lRQErYgNGCVk=;
+        s=default; t=1571263016;
+        bh=hAsqppvURYM9GWpczI9rGWlTdjnFjUFXQk2AxTJM8U8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZtqpnEiUYxwR/NO3/RdsrsKRnVV/Ru4arIKLPevEZHdIKhywNkf6qsSKIOjWo53kL
-         wmbl3nFuoyQ7SrLSqH7ed54e4+4t9kQ/0tnJFKEimyfZCfCuS3mDtX/cNMqZxFHcmc
-         UbGucEFO1eOidT+9yJsFHwm67JNLqlOGaIhM+2KE=
+        b=JhT/Qq8WqFMaOMgz0Hvmcme3rWhh371ywdqSdXe9rLhxw14KjpbUvC/0IYg5Gq/Id
+         Iy21zJsL+HaaRf8fEP5R0crslPpyvF46x9S2RZnEiSwljW/nc2Sgl3BHaoH+uhmA1x
+         Gy00CzzI6Q8JW3HsQsR7TyN84vUx3d/F52HLUybg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+0243cb250a51eeefb8cc@syzkaller.appspotmail.com,
+        syzbot+0761012cebf7bdb38137@syzkaller.appspotmail.com,
         Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 14/65] USB: adutux: fix use-after-free on disconnect
-Date:   Wed, 16 Oct 2019 14:50:28 -0700
-Message-Id: <20191016214806.795994962@linuxfoundation.org>
+Subject: [PATCH 4.19 18/81] USB: iowarrior: fix use-after-free on disconnect
+Date:   Wed, 16 Oct 2019 14:50:29 -0700
+Message-Id: <20191016214823.748674574@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
-References: <20191016214756.457746573@linuxfoundation.org>
+In-Reply-To: <20191016214805.727399379@linuxfoundation.org>
+References: <20191016214805.727399379@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,50 +46,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Johan Hovold <johan@kernel.org>
 
-commit 44efc269db7929f6275a1fa927ef082e533ecde0 upstream.
+commit edc4746f253d907d048de680a621e121517f484b upstream.
 
-The driver was clearing its struct usb_device pointer, which it used as
-an inverted disconnected flag, before deregistering the character device
-and without serialising against racing release().
+A recent fix addressing a deadlock on disconnect introduced a new bug
+by moving the present flag out of the critical section protected by the
+driver-data mutex. This could lead to a racing release() freeing the
+driver data before disconnect() is done with it.
 
-This could lead to a use-after-free if a racing release() callback
-observes the cleared pointer and frees the driver data before
-disconnect() is finished with it.
+Due to insufficient locking a related use-after-free could be triggered
+also before the above mentioned commit. Specifically, the driver needs
+to hold the driver-data mutex also while checking the opened flag at
+disconnect().
 
-This could also lead to NULL-pointer dereferences in a racing open().
-
-Fixes: f08812d5eb8f ("USB: FIx locks and urb->status in adutux (updated)")
-Cc: stable <stable@vger.kernel.org>     # 2.6.24
-Reported-by: syzbot+0243cb250a51eeefb8cc@syzkaller.appspotmail.com
-Tested-by: syzbot+0243cb250a51eeefb8cc@syzkaller.appspotmail.com
+Fixes: c468a8aa790e ("usb: iowarrior: fix deadlock on disconnect")
+Fixes: 946b960d13c1 ("USB: add driver for iowarrior devices.")
+Cc: stable <stable@vger.kernel.org>	# 2.6.21
+Reported-by: syzbot+0761012cebf7bdb38137@syzkaller.appspotmail.com
 Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20190925092913.8608-1-johan@kernel.org
+Link: https://lore.kernel.org/r/20191009104846.5925-2-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/adutux.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/usb/misc/iowarrior.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/misc/adutux.c
-+++ b/drivers/usb/misc/adutux.c
-@@ -764,14 +764,15 @@ static void adu_disconnect(struct usb_in
- 
+--- a/drivers/usb/misc/iowarrior.c
++++ b/drivers/usb/misc/iowarrior.c
+@@ -866,8 +866,6 @@ static void iowarrior_disconnect(struct
  	dev = usb_get_intfdata(interface);
- 
--	mutex_lock(&dev->mtx);	/* not interruptible */
--	dev->udev = NULL;	/* poison */
- 	usb_deregister_dev(interface, &adu_class);
--	mutex_unlock(&dev->mtx);
- 
- 	mutex_lock(&adutux_mutex);
+ 	mutex_lock(&iowarrior_open_disc_lock);
  	usb_set_intfdata(interface, NULL);
+-	/* prevent device read, write and ioctl */
+-	dev->present = 0;
  
-+	mutex_lock(&dev->mtx);	/* not interruptible */
-+	dev->udev = NULL;	/* poison */
-+	mutex_unlock(&dev->mtx);
-+
- 	/* if the device is not opened, then we clean up right now */
- 	if (!dev->open_count)
- 		adu_delete(dev);
+ 	minor = dev->minor;
+ 	mutex_unlock(&iowarrior_open_disc_lock);
+@@ -878,8 +876,7 @@ static void iowarrior_disconnect(struct
+ 	mutex_lock(&dev->mutex);
+ 
+ 	/* prevent device read, write and ioctl */
+-
+-	mutex_unlock(&dev->mutex);
++	dev->present = 0;
+ 
+ 	if (dev->opened) {
+ 		/* There is a process that holds a filedescriptor to the device ,
+@@ -889,8 +886,10 @@ static void iowarrior_disconnect(struct
+ 		usb_kill_urb(dev->int_in_urb);
+ 		wake_up_interruptible(&dev->read_wait);
+ 		wake_up_interruptible(&dev->write_wait);
++		mutex_unlock(&dev->mutex);
+ 	} else {
+ 		/* no process is using the device, cleanup now */
++		mutex_unlock(&dev->mutex);
+ 		iowarrior_delete(dev);
+ 	}
+ 
 
 
