@@ -2,187 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B21EED969B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:11:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4913ED96C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 18:16:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405428AbfJPQLF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 12:11:05 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:52142 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2405297AbfJPQLE (ORCPT
+        id S2393274AbfJPQQF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 12:16:05 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34132 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390076AbfJPQQF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 12:11:04 -0400
-Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9GG9DpB017694;
-        Wed, 16 Oct 2019 09:10:52 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=GfoXv/Fqrk3PRrOlR1VGGxedXFlxXp5lwUxvKUBzTd0=;
- b=f/FhoMQMas9VfT21hDDC5oindrZWOB/z/4gLjBwZ583Qh/AmJreIdBJr/ckT9CA/XF07
- YV9az2kR89mcKf1EpP3+4ZMbrgYctxmCuYq0EXBKUnGP0uASC9604XFfrJq1rRIC+FTd
- oatDC3o2LplByf9lpneQ4p+T+xgSLYsH4vc= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2vmtajk77s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Wed, 16 Oct 2019 09:10:52 -0700
-Received: from ash-exhub104.TheFacebook.com (2620:10d:c0a8:82::d) by
- ash-exhub101.TheFacebook.com (2620:10d:c0a8:82::e) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Wed, 16 Oct 2019 09:10:51 -0700
-Received: from NAM03-BY2-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.35.175) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
- via Frontend Transport; Wed, 16 Oct 2019 09:10:51 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nfLE0fn41+yTPiDi/hC18IO5rB4yuKvMPcrN4B+4C1K0vAinG3VbSDmwfoRQ5fU3XbKFelD7ATRe2WftkP/oeGTEE1qOBVPFD+7MbUCgGEhw7OBbxSLuQWA0UXDaZnuf+A4tbXrtFSLHZ2MXKe1S8kK1C+Am9qWazn+OAt20xQnB+9gMoU72P6WJHKUoxLIxDhKJQd0FuFDyU5rAEeNuhbGoT6NQuNLooPxKi4pD8uvI9y7h+AXimpqUXdKs31xfR0uaJcSWghCdcQDZkbQFBYF6Wc9A+UTLdj18tOjuEtY0MQQDrClDGHgYn5d+vQsRcC9jTZtOar8iUu1K3Jw+YQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GfoXv/Fqrk3PRrOlR1VGGxedXFlxXp5lwUxvKUBzTd0=;
- b=ln4FznQYIlDzVGKe/nQ+sXfvL0zJZEekx9qJw4rn/pGa5eHjSr7uRfBc9v2EGZ+xICStfW69yY00px3xrEjPBjHqy5KRkBFpWNf3AVcAeTFSHbmicIBytqPCvypgvBcPmC7gvJK2x/BSb+kEytdFTEMjSUC4lOqeROb/T/kJt+WoikR/Yjt7Zrr+TWR6DiivH9ZjvcoIco8aG8h/YOxqhvsOHO/Jrm6Fm7I0Ln/GybLTFLK5vrTQf2ewQh1kyz6wdx1ARPP0tnPOl44WiCEVXIp82o/bl/OpmbJgWFQTycXmdaokJ8rPWIIN5NSfu+DxsmUOsFzIJJCWhF6yr6yi7Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GfoXv/Fqrk3PRrOlR1VGGxedXFlxXp5lwUxvKUBzTd0=;
- b=H5VrYAlkUO2VBUbmsLMebxxx9jOHT64a+oa0efAD2xP0cmDVATH8wq+yzSF3hA9eSh9E/5497tDTPBXsWemfkBpH0OEXWS1rygtcicBLRnG2bupqzSDmKyUilwx2VSI56RoKzVJDyEbiYjNCZk3nHR9S9pW4y5rTh0yutBMyZ80=
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.3.22) by
- MWHPR15MB1360.namprd15.prod.outlook.com (10.173.228.148) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.18; Wed, 16 Oct 2019 16:10:49 +0000
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::fdc8:5546:bace:15f5]) by MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::fdc8:5546:bace:15f5%5]) with mapi id 15.20.2347.023; Wed, 16 Oct 2019
- 16:10:49 +0000
-From:   Song Liu <songliubraving@fb.com>
-To:     Oleg Nesterov <oleg@redhat.com>
-CC:     open list <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
-        Kernel Team <Kernel-team@fb.com>,
-        "william.kucharski@oracle.com" <william.kucharski@oracle.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Subject: Re: [PATCH 4/4] uprobe: only do FOLL_SPLIT_PMD for uprobe register
-Thread-Topic: [PATCH 4/4] uprobe: only do FOLL_SPLIT_PMD for uprobe register
-Thread-Index: AQHVg/TTl1jUwKEEhEe4JMFjXQBksqddLX+AgABDI4A=
-Date:   Wed, 16 Oct 2019 16:10:49 +0000
-Message-ID: <CE3DD093-E5B4-4C98-A7B7-3B05D7732D3C@fb.com>
-References: <20191016073731.4076725-1-songliubraving@fb.com>
- <20191016073731.4076725-5-songliubraving@fb.com>
- <20191016121031.GA31585@redhat.com>
-In-Reply-To: <20191016121031.GA31585@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3594.4.19)
-x-originating-ip: [2620:10d:c090:200::1:35f7]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f833eda3-5037-4061-1739-08d752536944
-x-ms-traffictypediagnostic: MWHPR15MB1360:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MWHPR15MB136008E9AF88264DB162F3E8B3920@MWHPR15MB1360.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 0192E812EC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(396003)(366004)(376002)(136003)(189003)(199004)(6116002)(64756008)(8676002)(6512007)(66556008)(6246003)(6506007)(54906003)(316002)(229853002)(478600001)(81156014)(86362001)(71200400001)(486006)(476003)(71190400001)(33656002)(50226002)(81166006)(6436002)(186003)(102836004)(46003)(66476007)(76116006)(66446008)(6916009)(446003)(305945005)(66946007)(53546011)(11346002)(2616005)(7736002)(76176011)(14444005)(2906002)(14454004)(256004)(99286004)(6486002)(25786009)(4326008)(36756003)(8936002)(5660300002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1360;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: gD7QeNp7jW9EDkRJgYqRFBP3Z2osBfBS4C+DiI5k2mQ3+1rGYlPIWPSrj2sUpLJjKtHjDstYIliFdYbN3DcFdD1gHjw5Vv2o5l05VtgeCNwdOhF7DIUKUfExfQlo1Hp1gI1c7b9iSmQ4phnjk69b3yrt8uz7ReTy8nnA55QVg6lk56CPtnCT1C7f78LF8OKcrPGYpS04SBIqaoTBv7RJ2jR0s9R2sNNxSm0yM/9GiVI/GMHmW/ezK2XraW4s8YHaJ/OGiH1DzzeFUQTSUXhn/pataKhs8PTOn2RqvgbVKGkoVw8GHLLn5Xu6rjEzKWez+lyUh3TUhv09vr7B9sJOxUZj8a8lepPI+wzXYwdyo2u014nZNHOTz+NEsljyFRlL+fididLNVRFmpBV9HB5435qlHQ4qvmrXMxkLwFDAjPo=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <E81786F0A079F04B926518CE3CA6CF2D@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 16 Oct 2019 12:16:05 -0400
+Received: by mail-lf1-f66.google.com with SMTP id r22so18010971lfm.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 09:16:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1ylL1eydi6OUMBpWNcbTT5Kqt/V1VFfcpzawFZbwf6M=;
+        b=kDSeyOj2cXVo7ubdqGLKFFuJ5cwxCUGu2SnwcczXReu8aRgDcead9Wx74qE6k3g3pE
+         /07VqXUD5t1xAzaAb2w/P2S+kDu9v7iCNXin8iwCbXhpcKi8EG1A2GmMevstjIgJsKAV
+         9T4qEBQcU5aRhoXOw+QwOeSdEIjAMq1EE0I4c9TmZKtTP7eCND+NEHSTRHfMMM9JN4lZ
+         p/ITNKm/aLkWLrIn27E60n4e65CNws8LVq/AMlALEwJ5P8dJbhOA8n0PXVL/+h5p+6L9
+         UqVqldxfOwPgSaioISiX3JNEN7mxF8WoKmEyn4UvRK3STHuPAdDOgxkeBJhX6pkJRBiX
+         a14A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1ylL1eydi6OUMBpWNcbTT5Kqt/V1VFfcpzawFZbwf6M=;
+        b=EeUDDbJKFOpQMVuG/t2F4kHGT4qEO0ngXNFdUmgiUfnFyoJCRxZxqLqWocZBl/kQeW
+         j7MCfE2CoIYHJgWd2Z2jROYPn/kLvdBOox3VbBGLBqhVarPgHdDTkEa8KvJTjye4GW3I
+         PiNMKO+snE3Z6hbWRNKL1Bt/Z/mt3uNwnmCE9vds5w3BKhpisQPLLFPUEhoiO1nNjm+c
+         PLJO3T151A2X0V88fKI37pTqfwKqGx7UYs3Fniibo586gSbGv0EoZyb+Uq6kqGbBuRkf
+         3H9hS3T6tG5204SOa8/2FDRZ+6RjszZ8E4mUGegFPovtS9FMX1LYf35yQKYDWOF/Cp1y
+         KXaQ==
+X-Gm-Message-State: APjAAAWLsnvMBNwb7flxs4a9bBo3lVhZhCBFQZUxBiexvnHm9pOrbYlP
+        3pu6NHvkyCMTg8WxRChsG2gHgXpcldSLMf92hCs=
+X-Google-Smtp-Source: APXvYqxro5i35Ft6ZD3j7iIxrRJ7VRGx4dCwTbmqD/NDL7ZHsmxJkNf1lH2oVljT+08Fxt5pyVK8s657Msykgea09JE=
+X-Received: by 2002:ac2:5610:: with SMTP id v16mr25010105lfd.93.1571242563292;
+ Wed, 16 Oct 2019 09:16:03 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: f833eda3-5037-4061-1739-08d752536944
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2019 16:10:49.5778
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: n60JP/0m0vc2RSQreU45iujkoUxM7EwykTgNYbS6RqMGzG6c9MLtUKOwp/ROEZrkGlYjAwRDatefkUNv+wIoDQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1360
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-16_07:2019-10-16,2019-10-16 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 adultscore=0 mlxscore=0
- mlxlogscore=999 suspectscore=0 bulkscore=0 clxscore=1015 impostorscore=0
- malwarescore=0 spamscore=0 lowpriorityscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1910160135
-X-FB-Internal: deliver
+References: <20191012200524.23512-1-alistair@alistair23.me>
+ <20191016144946.p3tm67vh5lqigndn@gilmour> <CAGb2v67QrTJjSO99UNs-=3ZZnK948am11=izRTHT6gZ06E28eA@mail.gmail.com>
+In-Reply-To: <CAGb2v67QrTJjSO99UNs-=3ZZnK948am11=izRTHT6gZ06E28eA@mail.gmail.com>
+From:   Alistair Francis <alistair23@gmail.com>
+Date:   Wed, 16 Oct 2019 09:10:54 -0700
+Message-ID: <CAKmqyKO1QugY=JHORoGnPjTqZQV-jMfey8T3144vaqTwNoCwqA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: sun50i: sopine-baseboard: Expose serial1,
+ serial2 and serial3
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Maxime Ripard <mripard@kernel.org>,
+        Alistair Francis <alistair@alistair23.me>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Oct 16, 2019 at 7:54 AM Chen-Yu Tsai <wens@csie.org> wrote:
+>
+> On Wed, Oct 16, 2019 at 10:49 PM Maxime Ripard <mripard@kernel.org> wrote:
+> >
+> > Hi,
+> >
+> > On Sat, Oct 12, 2019 at 01:05:24PM -0700, Alistair Francis wrote:
+> > > Follow what the sun50i-a64-pine64.dts does and expose all 5 serial
+> > > connections.
+> > >
+> > > Signed-off-by: Alistair Francis <alistair@alistair23.me>
+> > > ---
+> > >  .../allwinner/sun50i-a64-sopine-baseboard.dts | 25 +++++++++++++++++++
+> > >  1 file changed, 25 insertions(+)
+> > >
+> > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+> > > index 124b0b030b28..49c37b21ab36 100644
+> > > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+> > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+> > > @@ -56,6 +56,10 @@
+> > >       aliases {
+> > >               ethernet0 = &emac;
+> > >               serial0 = &uart0;
+> > > +             serial1 = &uart1;
+> > > +             serial2 = &uart2;
+> > > +             serial3 = &uart3;
+> > > +             serial4 = &uart4;
+> > >       };
+> > >
+> > >       chosen {
+> > > @@ -280,6 +284,27 @@
+> > >       };
+> > >  };
+> > >
+> > > +/* On Pi-2 connector */
+> > > +&uart2 {
+> > > +     pinctrl-names = "default";
+> > > +     pinctrl-0 = <&uart2_pins>;
+> > > +     status = "disabled";
+> > > +};
+> > > +
+> > > +/* On Euler connector */
+> > > +&uart3 {
+> > > +     pinctrl-names = "default";
+> > > +     pinctrl-0 = <&uart3_pins>;
+> > > +     status = "disabled";
+> > > +};
+> > > +
+> > > +/* On Euler connector, RTS/CTS optional */
+> > > +&uart4 {
+> > > +     pinctrl-names = "default";
+> > > +     pinctrl-0 = <&uart4_pins>;
+> > > +     status = "disabled";
+> > > +};
+> >
+> > Since these are all the default muxing, maybe we should just set that
+> > in the DTSI?
+>
+> Maybe not, since people may want to only use RX/TX, and leave the other
+> two pins for GPIO?
 
+I think this makes the most sense for the default.
 
-> On Oct 16, 2019, at 5:10 AM, Oleg Nesterov <oleg@redhat.com> wrote:
->=20
-> On 10/16, Song Liu wrote:
->>=20
->> --- a/kernel/events/uprobes.c
->> +++ b/kernel/events/uprobes.c
->> @@ -474,14 +474,17 @@ int uprobe_write_opcode(struct arch_uprobe *auprob=
-e, struct mm_struct *mm,
->> 	struct vm_area_struct *vma;
->> 	int ret, is_register, ref_ctr_updated =3D 0;
->> 	bool orig_page_huge =3D false;
->> +	unsigned int gup_flags =3D FOLL_FORCE;
->>=20
->> 	is_register =3D is_swbp_insn(&opcode);
->> 	uprobe =3D container_of(auprobe, struct uprobe, arch);
->>=20
->> retry:
->> +	if (is_register)
->> +		gup_flags |=3D FOLL_SPLIT_PMD;
->> 	/* Read the page with vaddr into memory */
->> -	ret =3D get_user_pages_remote(NULL, mm, vaddr, 1,
->> -			FOLL_FORCE | FOLL_SPLIT_PMD, &old_page, &vma, NULL);
->> +	ret =3D get_user_pages_remote(NULL, mm, vaddr, 1, gup_flags,
->> +				    &old_page, &vma, NULL);
->> 	if (ret <=3D 0)
->> 		return ret;
->>=20
->> @@ -489,6 +492,9 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe,=
- struct mm_struct *mm,
->> 	if (ret <=3D 0)
->> 		goto put_old;
->>=20
->> +	WARN(!is_register && PageCompound(old_page),
->> +	     "uprobe unregister should never work on compound page\n");
->=20
-> But this can happen with the change above. You can't know if *vaddr was
-> previously changed by install_breakpoint() or not.
+Alistair
 
-> If not, verify_opcode() should likely save us, but we can't rely on it.
-> Say, someone can write "int3" into vm_file at uprobe->offset.
-
-I think this won't really happen. With is_register =3D=3D false, we already=
-=20
-know opcode is not "int3", so current call must be from set_orig_insn().=20
-Therefore, old_page must be installed by uprobe, and cannot be compound.
-
-The other way is not guaranteed. With is_register =3D=3D true, it is still
-possible current call is from set_orig_insn(). However, we do not rely
-on this path.=20
-
-Does this make sense? Or did I miss anything?
-
->=20
-> And I am not sure it is safe to continue in this case, I'd suggest to
-> return -EWHATEVER to avoid the possible crash.
-
-I think we can return -ESOMETHING here to be safe. However, if the=20
-analysis above makes sense, it is not necessary.=20
-
-Thanks,
-Song
-
-
+>
+> ChenYu
