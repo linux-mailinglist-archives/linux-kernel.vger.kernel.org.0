@@ -2,199 +2,405 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC6B1D9DB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:49:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 391FFD9DCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 23:56:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394762AbfJPVtQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 17:49:16 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42644 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394721AbfJPVtP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:49:15 -0400
-Received: by mail-wr1-f65.google.com with SMTP id n14so29658716wrw.9
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 14:49:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+X7Hc9+9kZ9bvpM8j/9p1fpCYhA60kt0JDHGpFj+5jQ=;
-        b=IIV5RTsu/wsF2/pG92OGHkVY+WtcDtHGJENZGEUl4ecpYY/EdHl7ZV24lWSE/7bg75
-         awpDLSfhp6Rt2GPFWVsace2lFiTdjrG2GHSkVpV9dW8glXMi+PdZu5nDwjrQ/zIbXnJm
-         wSkUtLBxErpeuxGX44IIuQ8ak4MmAoTl0ti7JKucEXDimq82FcwVEMj8Lk0uHmQH/ibd
-         hUTmcfVF8yHVJPCREXIxnFlZeXGYa/jHfW+kAicUmMFMgBkhJffjJP80BboGz50yno/h
-         zKMa8UqmfubQMSOq6O1AmBUP1dIxTEt2MgHxNbhMWw8SsUkgLVBXB5NlHHtx1AuQS+30
-         kfnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+X7Hc9+9kZ9bvpM8j/9p1fpCYhA60kt0JDHGpFj+5jQ=;
-        b=VwJm6IWUg7g4WQCzmxM5qyeGzLKUsG7Wu0zjtIEld70ZRuqZ0tMeB1Cw9UxQXUAGLJ
-         TTPkQusiqSIn9eCoKgxtiHpnFckVCMgm/6JjtWja4yUib2B3eVUoddoxraJ9gaV6Co65
-         whTOjcV5QxHlx/mTKwCuXdt4D/t7NKo7BmczS5TuI4EyLzcbZ+SWtaCTZMbHIAiYbVPl
-         pPDWKbta5O82FuL7igOap2oo1OrNwy88g/QZSj4YKRSKfycxsQhfR9sH8eymEIRnwvXx
-         G6PLBIa0tP3me+d45XQzf6fZchtJB3odHUhnERuU4Cmggosn37rIqwUtX0H7PRY+n1TE
-         1s3A==
-X-Gm-Message-State: APjAAAX93nKxzbFmaRDoBaGe4ds1TkAqfqNudG29VD5uujPdvQH2NXSM
-        fC2IF4zpbLdZA8b2NqbZcH9Wb/lnc+KTJIJbys+6rA==
-X-Google-Smtp-Source: APXvYqy2ifTj/41CUJKYlnNnPwUNZyeUFAW1IL2uPIvDye8iXvKbGZf1qbfoyxHPUr/zGy6mTaUMmPY3A5iLHFg3OT0=
-X-Received: by 2002:a5d:4302:: with SMTP id h2mr34229wrq.35.1571262550711;
- Wed, 16 Oct 2019 14:49:10 -0700 (PDT)
+        id S2437556AbfJPVxh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:53:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42242 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2394849AbfJPVxZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:53:25 -0400
+Received: from localhost (unknown [192.55.54.58])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44C5E21D7E;
+        Wed, 16 Oct 2019 21:53:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571262804;
+        bh=kdvONDq8tJQninaMd2pc4XUpFPlfL5h7BQ/kmR9as4Y=;
+        h=From:To:Cc:Subject:Date:From;
+        b=vODTWU1VY5IRw6VzU8pr1RLltDEuYluWg3uR0aPuJ4yn6gyjekvw1C4+IMYjLFI8c
+         SqBh3bXIS7wSVkPYKaatycNZaw85DMPmX+DNsCOhEnREfxSbENjMS1oPttYtAS7qlr
+         Pgh2/+60yeSa6sbaWKOlAjs//p99Q9XlLwpVm/wY=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.4 00/79] 4.4.197-stable review
+Date:   Wed, 16 Oct 2019 14:49:35 -0700
+Message-Id: <20191016214729.758892904@linuxfoundation.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-References: <20191010185631.26541-1-davidgow@google.com> <20191011140727.49160042fafa20d5867f8df7@linux-foundation.org>
- <CABVgOS=UwWxwD97c6y-XzbLWVhznPjBO3qvQEzX=8jTJ-gBi3A@mail.gmail.com> <20191011145519.7b7a1d16ecdead9bec212c01@linux-foundation.org>
-In-Reply-To: <20191011145519.7b7a1d16ecdead9bec212c01@linux-foundation.org>
-From:   David Gow <davidgow@google.com>
-Date:   Wed, 16 Oct 2019 14:48:59 -0700
-Message-ID: <CABVgOS=W4cfFoE=JT4mbk1zkUsreucrw_B81R2jwDCFPocomHQ@mail.gmail.com>
-Subject: Re: [PATCH linux-kselftest/test v2] lib/list-test: add a test for the
- 'list' doubly linked list
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Shuah Khan <shuah@kernel.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, kunit-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-        boundary="0000000000003a8a3005950e1215"
+User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.197-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.4.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.4.197-rc1
+X-KernelTest-Deadline: 2019-10-18T21:48+00:00
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---0000000000003a8a3005950e1215
-Content-Type: text/plain; charset="UTF-8"
+This is the start of the stable review cycle for the 4.4.197 release.
+There are 79 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-Hi all,
+Responses should be made by Fri 18 Oct 2019 09:43:41 PM UTC.
+Anything received after that time might be too late.
 
-Thanks, Andrew, for the review and for adding this to the -mm tree --
-having some soak time in -next has been helpful and picked up at least
-one bug.
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.197-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+and the diffstat can be found below.
 
-Since KUnit is not yet in Linus' branch, though, it probably makes
-sense to put this test into the linux-kselftest/test branch, so that
-there aren't any chances of the list test getting in without the KUnit
-infrastructure. Ultimately, once KUnit is upstream, this shouldn't be
-an issue, but it is probably easier to consolidate things for now.
-Does that sound sensible?
+thanks,
 
-In any case, I plan to send a v3 patch out shortly which addresses
-some memory allocation warnings (caught by Dan Carpenter, thanks!). I
-could always do that as a separate bugfix patch if people preferred,
-though, but if this switches to the linux-kselftest/test branch, I
-feel we might as well get it right in the original patch.
+greg k-h
 
-Cheers,
--- David
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.4.197-rc1
+
+Dave Chinner <dchinner@redhat.com>
+    xfs: clear sb->s_fs_info on mount failure
+
+Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
+    x86/asm: Fix MWAITX C-state hint value
+
+Steven Rostedt (VMware) <rostedt@goodmis.org>
+    tracing: Get trace_array reference for available_tracers files
+
+Johan Hovold <johan@kernel.org>
+    media: stkwebcam: fix runtime PM after driver unbind
+
+Pavel Shilovsky <piastryyy@gmail.com>
+    CIFS: Force revalidate inode when dentry is stale
+
+Ross Lagerwall <ross.lagerwall@citrix.com>
+    cifs: Check uniqueid for SMB2+ and return -ESTALE if necessary
+
+Navid Emamdoost <navid.emamdoost@gmail.com>
+    Staging: fbtft: fix memory leak in fbtft_framebuffer_alloc
+
+Suzuki K Poulose <suzuki.poulose@arm.com>
+    arm64: Rename cpuid_feature field extract routines
+
+Suzuki K Poulose <suzuki.poulose@arm.com>
+    arm64: capabilities: Handle sign of the feature bit
+
+Michal Hocko <mhocko@suse.com>
+    kernel/sysctl.c: do not override max_threads provided by userspace
+
+Pavel Shilovsky <piastryyy@gmail.com>
+    CIFS: Force reval dentry if LOOKUP_REVAL flag is set
+
+Pavel Shilovsky <piastryyy@gmail.com>
+    CIFS: Gracefully handle QueryInfo errors during open
+
+Ian Rogers <irogers@google.com>
+    perf llvm: Don't access out-of-scope array
+
+David Frey <dpfrey@gmail.com>
+    iio: light: opt3001: fix mutex unlock race
+
+Marco Felsch <m.felsch@pengutronix.de>
+    iio: adc: ad799x: fix probe error handling
+
+Navid Emamdoost <navid.emamdoost@gmail.com>
+    staging: vt6655: Fix memory leak in vt6655_probe
+
+Johan Hovold <johan@kernel.org>
+    USB: legousbtower: fix use-after-free on release
+
+Johan Hovold <johan@kernel.org>
+    USB: legousbtower: fix open after failed reset request
+
+Johan Hovold <johan@kernel.org>
+    USB: legousbtower: fix potential NULL-deref on disconnect
+
+Johan Hovold <johan@kernel.org>
+    USB: legousbtower: fix deadlock on disconnect
+
+Johan Hovold <johan@kernel.org>
+    USB: legousbtower: fix slab info leak at probe
+
+Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+    usb: renesas_usbhs: gadget: Fix usb_ep_set_{halt,wedge}() behavior
+
+Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+    usb: renesas_usbhs: gadget: Do not discard queues in usb_ep_set_{halt,wedge}()
+
+Jacky.Cao@sony.com <Jacky.Cao@sony.com>
+    USB: dummy-hcd: fix power budget for SuperSpeed mode
+
+Johan Hovold <johan@kernel.org>
+    USB: microtek: fix info-leak at probe
+
+Johan Hovold <johan@kernel.org>
+    USB: usblcd: fix I/O after disconnect
+
+Johan Hovold <johan@kernel.org>
+    USB: serial: fix runtime PM after driver unbind
+
+Reinhard Speyerer <rspmn@arcor.de>
+    USB: serial: option: add support for Cinterion CLS8 devices
+
+Daniele Palmas <dnlplm@gmail.com>
+    USB: serial: option: add Telit FN980 compositions
+
+Beni Mahler <beni.mahler@gmx.net>
+    USB: serial: ftdi_sio: add device IDs for Sienna and Echelon PL-20
+
+Johan Hovold <johan@kernel.org>
+    USB: serial: keyspan: fix NULL-derefs on open() and write()
+
+Randy Dunlap <rdunlap@infradead.org>
+    serial: uartlite: fix exit path null pointer
+
+Johan Hovold <johan@kernel.org>
+    USB: ldusb: fix NULL-derefs on driver unbind
+
+Johan Hovold <johan@kernel.org>
+    USB: chaoskey: fix use-after-free on release
+
+Johan Hovold <johan@kernel.org>
+    USB: usblp: fix runtime PM after driver unbind
+
+Johan Hovold <johan@kernel.org>
+    USB: iowarrior: fix use-after-free after driver unbind
+
+Johan Hovold <johan@kernel.org>
+    USB: iowarrior: fix use-after-free on release
+
+Johan Hovold <johan@kernel.org>
+    USB: iowarrior: fix use-after-free on disconnect
+
+Johan Hovold <johan@kernel.org>
+    USB: adutux: fix use-after-free on release
+
+Johan Hovold <johan@kernel.org>
+    USB: adutux: fix NULL-derefs on disconnect
+
+Johan Hovold <johan@kernel.org>
+    USB: adutux: fix use-after-free on disconnect
+
+Colin Ian King <colin.king@canonical.com>
+    USB: adutux: remove redundant variable minor
+
+Kai-Heng Feng <kai.heng.feng@canonical.com>
+    xhci: Increase STS_SAVE timeout in xhci_suspend()
+
+Rick Tseng <rtseng@nvidia.com>
+    usb: xhci: wait for CNR controller not ready bit in xhci resume
+
+Jan Schmidt <jan@centricular.com>
+    xhci: Check all endpoints for LPM timeout
+
+Mathias Nyman <mathias.nyman@linux.intel.com>
+    xhci: Prevent device initiated U1/U2 link pm if exit latency is too long
+
+Johan Hovold <johan@kernel.org>
+    USB: usb-skeleton: fix NULL-deref on disconnect
+
+Johan Hovold <johan@kernel.org>
+    USB: usb-skeleton: fix runtime PM after driver unbind
+
+Johan Hovold <johan@kernel.org>
+    USB: yurex: fix NULL-derefs on disconnect
+
+Alan Stern <stern@rowland.harvard.edu>
+    USB: yurex: Don't retry on unexpected errors
+
+Bastien Nocera <hadess@hadess.net>
+    USB: rio500: Remove Rio 500 kernel driver
+
+Will Deacon <will@kernel.org>
+    panic: ensure preemption is disabled during panic()
+
+Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+    ASoC: sgtl5000: Improve VAG power and mute control
+
+Johannes Berg <johannes.berg@intel.com>
+    nl80211: validate beacon head
+
+Jouni Malinen <j@w1.fi>
+    cfg80211: Use const more consistently in for_each_element macros
+
+Johannes Berg <johannes.berg@intel.com>
+    cfg80211: add and use strongly typed element iteration macros
+
+Horia Geantă <horia.geanta@nxp.com>
+    crypto: caam - fix concurrency issue in givencrypt descriptor
+
+Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+    perf stat: Fix a segmentation fault when using repeat forever
+
+Steven Rostedt (VMware) <rostedt@goodmis.org>
+    tools lib traceevent: Do not free tep->cmdlines in add_new_comm() on failure
+
+Valdis Kletnieks <valdis.kletnieks@vt.edu>
+    kernel/elfcore.c: include proper prototypes
+
+zhengbin <zhengbin13@huawei.com>
+    fuse: fix memleak in cuse_channel_open
+
+Ido Schimmel <idosch@mellanox.com>
+    thermal: Fix use-after-free when unregistering thermal zone device
+
+Trek <trek00@inbox.ru>
+    drm/amdgpu: Check for valid number of registers to read
+
+Luis Henriques <lhenriques@suse.com>
+    ceph: fix directories inode i_blkbits initialization
+
+Igor Druzhinin <igor.druzhinin@citrix.com>
+    xen/pci: reserve MCFG areas earlier
+
+Chengguang Xu <cgxu519@zoho.com.cn>
+    9p: avoid attaching writeback_fid on mmap with type PRIVATE
+
+Jia-Ju Bai <baijiaju1990@gmail.com>
+    fs: nfs: Fix possible null-pointer dereferences in encode_attrs()
+
+Sascha Hauer <s.hauer@pengutronix.de>
+    ima: always return negative code for error
+
+Johannes Berg <johannes.berg@intel.com>
+    cfg80211: initialize on-stack chandefs
+
+Johan Hovold <johan@kernel.org>
+    ieee802154: atusb: fix use-after-free at disconnect
+
+Alexander Sverdlin <alexander.sverdlin@nokia.com>
+    crypto: qat - Silence smp_processor_id() warning
+
+Marc Kleine-Budde <mkl@pengutronix.de>
+    can: mcp251x: mcp251x_hw_reset(): allow more time after a reset
+
+Andrew Donnellan <ajd@linux.ibm.com>
+    powerpc/powernv: Restrict OPAL symbol map to only be readable by root
+
+Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+    ASoC: Define a set of DAPM pre/post-up events
+
+Jack Wang <jinpu.wang@cloud.ionos.com>
+    KVM: nVMX: handle page fault in vmread fix
+
+Vasily Gorbik <gor@linux.ibm.com>
+    s390/cio: exclude subchannels with no parent from pseudo check
+
+Vasily Gorbik <gor@linux.ibm.com>
+    s390/cio: avoid calling strlen on null pointer
+
+Vasily Gorbik <gor@linux.ibm.com>
+    s390/topology: avoid firing events before kobjs are created
+
+Thomas Huth <thuth@redhat.com>
+    KVM: s390: Test for bad access register and size at the start of S390_MEM_OP
 
 
+-------------
+
+Diffstat:
+
+ Documentation/usb/rio.txt                      | 138 ------
+ MAINTAINERS                                    |   7 -
+ Makefile                                       |   4 +-
+ arch/arm/configs/badge4_defconfig              |   1 -
+ arch/arm/configs/corgi_defconfig               |   1 -
+ arch/arm/configs/s3c2410_defconfig             |   1 -
+ arch/arm/configs/spitz_defconfig               |   1 -
+ arch/arm64/include/asm/cpufeature.h            |  29 +-
+ arch/arm64/kernel/cpufeature.c                 |  35 +-
+ arch/arm64/kernel/debug-monitors.c             |   2 +-
+ arch/arm64/kvm/sys_regs.c                      |   2 +-
+ arch/arm64/mm/context.c                        |   3 +-
+ arch/mips/configs/mtx1_defconfig               |   1 -
+ arch/mips/configs/rm200_defconfig              |   1 -
+ arch/powerpc/platforms/powernv/opal.c          |  11 +-
+ arch/s390/kernel/topology.c                    |   3 +-
+ arch/s390/kvm/kvm-s390.c                       |   2 +-
+ arch/x86/include/asm/mwait.h                   |   2 +-
+ arch/x86/kvm/vmx.c                             |   2 +-
+ arch/x86/lib/delay.c                           |   4 +-
+ drivers/crypto/caam/caamalg.c                  |  11 +-
+ drivers/crypto/qat/qat_common/adf_common_drv.h |   2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c        |   3 +
+ drivers/iio/adc/ad799x.c                       |   4 +-
+ drivers/iio/light/opt3001.c                    |   6 +-
+ drivers/media/usb/stkwebcam/stk-webcam.c       |   3 +-
+ drivers/net/can/spi/mcp251x.c                  |  19 +-
+ drivers/net/ieee802154/atusb.c                 |   3 +-
+ drivers/s390/cio/ccwgroup.c                    |   2 +-
+ drivers/s390/cio/css.c                         |   2 +
+ drivers/staging/fbtft/fbtft-core.c             |   7 +-
+ drivers/staging/vt6655/device_main.c           |   4 +-
+ drivers/thermal/thermal_core.c                 |   2 +-
+ drivers/tty/serial/uartlite.c                  |   3 +-
+ drivers/usb/class/usblp.c                      |   8 +-
+ drivers/usb/gadget/udc/dummy_hcd.c             |   3 +-
+ drivers/usb/host/xhci.c                        |  32 +-
+ drivers/usb/image/microtek.c                   |   4 +
+ drivers/usb/misc/Kconfig                       |  10 -
+ drivers/usb/misc/Makefile                      |   1 -
+ drivers/usb/misc/adutux.c                      |  26 +-
+ drivers/usb/misc/chaoskey.c                    |   5 +-
+ drivers/usb/misc/iowarrior.c                   |  16 +-
+ drivers/usb/misc/ldusb.c                       |  24 +-
+ drivers/usb/misc/legousbtower.c                |  58 ++-
+ drivers/usb/misc/rio500.c                      | 578 -------------------------
+ drivers/usb/misc/rio500_usb.h                  |  37 --
+ drivers/usb/misc/usblcd.c                      |  33 +-
+ drivers/usb/misc/yurex.c                       |  18 +-
+ drivers/usb/renesas_usbhs/common.h             |   1 +
+ drivers/usb/renesas_usbhs/fifo.c               |   2 +-
+ drivers/usb/renesas_usbhs/fifo.h               |   1 +
+ drivers/usb/renesas_usbhs/mod_gadget.c         |  18 +-
+ drivers/usb/renesas_usbhs/pipe.c               |  15 +
+ drivers/usb/renesas_usbhs/pipe.h               |   1 +
+ drivers/usb/serial/ftdi_sio.c                  |   3 +
+ drivers/usb/serial/ftdi_sio_ids.h              |   9 +
+ drivers/usb/serial/keyspan.c                   |   4 +-
+ drivers/usb/serial/option.c                    |  11 +
+ drivers/usb/serial/usb-serial.c                |   5 +-
+ drivers/usb/usb-skeleton.c                     |  15 +-
+ drivers/xen/pci.c                              |  21 +-
+ fs/9p/vfs_file.c                               |   3 +
+ fs/ceph/inode.c                                |   7 +-
+ fs/cifs/dir.c                                  |   8 +-
+ fs/cifs/file.c                                 |   6 +
+ fs/cifs/inode.c                                |  28 +-
+ fs/fuse/cuse.c                                 |   1 +
+ fs/nfs/nfs4xdr.c                               |   2 +-
+ fs/xfs/xfs_super.c                             |  10 +
+ include/linux/ieee80211.h                      |  53 +++
+ include/sound/soc-dapm.h                       |   2 +
+ kernel/elfcore.c                               |   1 +
+ kernel/fork.c                                  |   4 +-
+ kernel/panic.c                                 |   1 +
+ kernel/trace/trace.c                           |  17 +-
+ net/wireless/nl80211.c                         |  39 +-
+ net/wireless/reg.c                             |   2 +-
+ net/wireless/wext-compat.c                     |   2 +-
+ security/integrity/ima/ima_crypto.c            |   5 +-
+ sound/soc/codecs/sgtl5000.c                    | 232 ++++++++--
+ tools/lib/traceevent/event-parse.c             |   3 +-
+ tools/perf/builtin-stat.c                      |   2 +-
+ tools/perf/util/llvm-utils.c                   |   6 +-
+ 84 files changed, 719 insertions(+), 995 deletions(-)
 
 
-On Fri, Oct 11, 2019 at 2:55 PM Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> On Fri, 11 Oct 2019 14:37:25 -0700 David Gow <davidgow@google.com> wrote:
->
-> > On Fri, Oct 11, 2019 at 2:05 PM Andrew Morton <akpm@linux-foundation.org> wrote:
-> > >
-> > > <looks at kunit>
-> > >
-> > > Given that everything runs at late_initcall time, shouldn't everything
-> > > be __init, __initdata etc so all the code and data doesn't hang around
-> > > for ever?
-> > >
-> >
-> > That's an interesting point. We haven't done this for KUnit tests to
-> > date, and there is certainly a possibility down the line that we may
-> > want to be able to run these tests in other circumstances. (There's
-> > some work being done to allow KUnit and KUnit tests to be built as
-> > modules here: https://lkml.org/lkml/2019/10/8/628 for example.) Maybe
-> > it'd be worth having macros which wrap __init/__initdata etc as a way
-> > of futureproofing tests against such a change?
-> >
-> > Either way, I suspect this is something that should probably be
-> > considered for KUnit as a whole, rather than on a test-by-test basis.
->
-> Sure, a new set of macros for this makes sense.  Can be retrofitted any
-> time.
->
-> There might be a way of loading all of list_test.o into a discardable
-> section at link time instead of sprinkling annotation all over the .c
-> code.
-
---0000000000003a8a3005950e1215
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIIPCgYJKoZIhvcNAQcCoIIO+zCCDvcCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-ggxtMIIEkjCCA3qgAwIBAgINAewckktV4F6Q7sAtGDANBgkqhkiG9w0BAQsFADBMMSAwHgYDVQQL
-ExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UEAxMK
-R2xvYmFsU2lnbjAeFw0xODA2MjAwMDAwMDBaFw0yODA2MjAwMDAwMDBaMEsxCzAJBgNVBAYTAkJF
-MRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSEwHwYDVQQDExhHbG9iYWxTaWduIFNNSU1FIENB
-IDIwMTgwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCUeobu8FdB5oJg6Fz6SFf8YsPI
-dNcq4rBSiSDAwqMNYbeTpRrINMBdWuPqVWaBX7WHYMsKQwCOvAF1b7rkD+ROo+CCTJo76EAY25Pp
-jt7TYP/PxoLesLQ+Ld088+BeyZg9pQaf0VK4tn23fOCWbFWoM8hdnF86Mqn6xB6nLsxJcz4CUGJG
-qAhC3iedFiCfZfsIp2RNyiUhzPAqalkrtD0bZQvCgi5aSNJseNyCysS1yA58OuxEyn2e9itZJE+O
-sUeD8VFgz+nAYI5r/dmFEXu5d9npLvTTrSJjrEmw2/ynKn6r6ONueZnCfo6uLmP1SSglhI/SN7dy
-L1rKUCU7R1MjAgMBAAGjggFyMIIBbjAOBgNVHQ8BAf8EBAMCAYYwJwYDVR0lBCAwHgYIKwYBBQUH
-AwIGCCsGAQUFBwMEBggrBgEFBQcDCTASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBRMtwWJ
-1lPNI0Ci6A94GuRtXEzs0jAfBgNVHSMEGDAWgBSP8Et/qC5FJK5NUPpjmove4t0bvDA+BggrBgEF
-BQcBAQQyMDAwLgYIKwYBBQUHMAGGImh0dHA6Ly9vY3NwMi5nbG9iYWxzaWduLmNvbS9yb290cjMw
-NgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIzLmNybDBn
-BgNVHSAEYDBeMAsGCSsGAQQBoDIBKDAMBgorBgEEAaAyASgKMEEGCSsGAQQBoDIBXzA0MDIGCCsG
-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
-KwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMFEGCCsGAQUF
-BwEBBEUwQzBBBggrBgEFBQcwAoY1aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQv
-Z3NzbWltZWNhMjAxOC5jcnQwHwYDVR0jBBgwFoAUTLcFidZTzSNAougPeBrkbVxM7NIwPwYDVR0f
-BDgwNjA0oDKgMIYuaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9jYS9nc3NtaW1lY2EyMDE4LmNy
-bDANBgkqhkiG9w0BAQsFAAOCAQEAJ/zitSY5ytjRHvjJRs//GXSqWUC9k+0tOBStoNWdT0W+IU1B
-1LFJELO6cCMS7c1z3KsQoLfLNc/eSYUv/jVWQoXht3qEyYjRS0s/yq8fxvm89uCGbGqtPjygIohU
-o4MsxfvqX/0D3LDZjBSQFsM5pzdIj2c+yEsDuTz1ZZONpsYJZ8e+2sd2soqYkQPjgrTw/DC4iLup
-tRDKk7xLOvTS4GEcnNBZx8EPg9sKqyP51KSxSKQRKAH+fuugWhJTI582FJI1zXnFXW7CywdhCCfI
-nCNqI2fk/FFl6FVqgaJKm30Sp4GZUd2VnH0aGYJq3gYFVph+jvojHGcUqOO5ggMjPTGCAmEwggJd
-AgEBMF8wSzELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExITAfBgNVBAMT
-GEdsb2JhbFNpZ24gU01JTUUgQ0EgMjAxOAIQARE2WR1lhjWKYHwTHLtF1jANBglghkgBZQMEAgEF
-AKCB1DAvBgkqhkiG9w0BCQQxIgQg4r8Ard2+L1AsIa986Utq7TyDAveQ8MCG6UsBzr/kWJUwGAYJ
-KoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTkxMDE2MjE0OTExWjBpBgkq
-hkiG9w0BCQ8xXDBaMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJYIZIAWUDBAECMAoGCCqG
-SIb3DQMHMAsGCSqGSIb3DQEBCjALBgkqhkiG9w0BAQcwCwYJYIZIAWUDBAIBMA0GCSqGSIb3DQEB
-AQUABIIBAH6rfUbR3IsK7gb8ynVOPvTJ4OWmRmC83xgKKgfIxwtAx376fjRyH7kkNENBYuVOHOYz
-zRK4L5UVb5MgVcvI9Rw9H6bfgHz1Svm6SYtXQGydqxtBbMAyA0eUBUtPdsAEuPuJ6ZChEHjnVyvu
-AmnCX7CO9t1EniCZx0qKFLUHq9tJenLBgXDlt9ksKlNSF+y2Ozx4UN2Eq6o8/JG0PW2TYFPhInBS
-agrd7kVhYONNogMlwpHnS5WXIXEIem4RTcMgmmSQA7gcynvcbCFhBoj3UZZNpxeGcZNk0EBcpd6V
-5HPTtFMjkcKluvL/vJQg4hRqUaSkNXYxI+H3vH5YgMWtzU8=
---0000000000003a8a3005950e1215--
