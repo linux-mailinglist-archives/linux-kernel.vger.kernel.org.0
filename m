@@ -2,55 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78786D91AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:56:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7614D91B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 14:57:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393330AbfJPM4s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 08:56:48 -0400
-Received: from foss.arm.com ([217.140.110.172]:39214 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731287AbfJPM4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 08:56:47 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 35A5428;
-        Wed, 16 Oct 2019 05:56:47 -0700 (PDT)
-Received: from arrakis.emea.arm.com (unknown [10.1.196.49])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 53F393F68E;
-        Wed, 16 Oct 2019 05:56:46 -0700 (PDT)
-Date:   Wed, 16 Oct 2019 13:56:44 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64/mm: Poison initmem while freeing with
- free_reserved_area()
-Message-ID: <20191016125643.GI49619@arrakis.emea.arm.com>
-References: <1570163038-32067-1-git-send-email-anshuman.khandual@arm.com>
+        id S2393378AbfJPM5N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 08:57:13 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:39324 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393368AbfJPM5M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 08:57:12 -0400
+Received: by mail-qk1-f193.google.com with SMTP id 4so22598868qki.6
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 05:57:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iKYnCxXI+enDKKpRO1ujL8VETmHUaDu3E+T33R6ISPM=;
+        b=g+hwROET54h2vndrV5UvySYq7yp4qvTU86tqp4hmxXDtqKunS2ZAkElaa58Q5b4Q8D
+         M1ywHBIht82QXc0sQVnbrPHvj/77gY5eosNK8hQ57ufu93BZWmbfvHTwXMyNa6fnpzXa
+         1PN3FvGDq+leBePGK/7aSGNWvUDLqMkfCcbyiVYHfRQtVyXktxQg8UuNek2nnYs/epA9
+         LTtVGWlzRReML6keZeXR3wcPzCm8eQWLQk3G/4OKsBlnUS3D94qdF20EvR61SCA9XRva
+         ssR4DyZSN19wIDjz3MgR9L2lJCmq5uSYaMwXvKF0seOtB1wgHwYAWSVCE58/8T/cafDj
+         cjzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iKYnCxXI+enDKKpRO1ujL8VETmHUaDu3E+T33R6ISPM=;
+        b=Lf3kbjwZQdlfQ0W+aHOl0qS5HxTylc08RCjWIq5Q5Gkn2J+p1xaXx8kLJZY0CFzqrc
+         I4FXGu2WOwMV3ItZ8biph5em5jpmEevSP1vSoMVQIzyZ6L8sbQR99+wTjg+pp/jL+RlR
+         /POP3I5Qa5BhiJgJPEwbgSs4S73kPM7oXMxmwMqShJhJ0PrkHid6AEYlVIG20mwOmMVr
+         Mcv21K5RbdC/HKXSTP91ejk2rll6b+SkHUZprZ+GiAiMC7eHy65UPCdJMfQQDFtC7aQ1
+         74zzsXAkuKlOg1B7eH3pUBB42+kgZMqkqlCFCuKKGZHJs/lAQ42fFEZHUd86ffjza9Ub
+         DGWQ==
+X-Gm-Message-State: APjAAAWeTOVHMepvtpT7E+Szn1kWhz1YhHedYxv02ohI1d4nxX/mHVyx
+        S6u0CEj/FXuNzcpjozGTYCnpvyKqDzm21P5Ivb76PA==
+X-Google-Smtp-Source: APXvYqznfR9xVNBpGb36Jsp8fvtPYC6w0IX8Z65LGupMXk2zMNyuYFGC3dG8oecpreWNjUjM4OyYtcubd/IaRbgJffA=
+X-Received: by 2002:a05:620a:34b:: with SMTP id t11mr38227900qkm.213.1571230629198;
+ Wed, 16 Oct 2019 05:57:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1570163038-32067-1-git-send-email-anshuman.khandual@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191007033200.13443-1-brgl@bgdev.pl> <20191014081220.GK4545@dell>
+In-Reply-To: <20191014081220.GK4545@dell>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 16 Oct 2019 14:56:57 +0200
+Message-ID: <CACRpkda9Kco-bVPw1OA6FMpQ1L8dZ4WFJ227wTCM9rh5JE7-+A@mail.gmail.com>
+Subject: Re: [PATCH v5 0/7] backlight: gpio: simplify the driver
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 04, 2019 at 09:53:58AM +0530, Anshuman Khandual wrote:
-> Platform implementation for free_initmem() should poison the memory while
-> freeing it up. Hence pass across POISON_FREE_INITMEM while calling into
-> free_reserved_area(). The same is being followed in the generic fallback
-> for free_initmem() and some other platforms overriding it.
-> 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+On Mon, Oct 14, 2019 at 10:12 AM Lee Jones <lee.jones@linaro.org> wrote:
 
-Queued for 5.5. Thanks.
+> >  arch/sh/boards/mach-ecovec24/setup.c         |  33 ++++--
+>
+> I guess we're just waiting for the SH Acks now?
 
--- 
-Catalin
+The one maintainer with this board is probably overloaded.
+
+I would say just apply it, it can't hold back the entire series.
+
+Yours,
+Linus Walleij
