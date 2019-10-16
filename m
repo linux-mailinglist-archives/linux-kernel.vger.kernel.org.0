@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4960ADA087
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:25:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D13C9D9F85
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2019 00:23:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406659AbfJPWM1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 18:12:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47912 "EHLO mail.kernel.org"
+        id S2395294AbfJPVzk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 17:55:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406628AbfJPV4V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:56:21 -0400
+        id S2395252AbfJPVzd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:55:33 -0400
 Received: from localhost (unknown [192.55.54.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA0D221925;
-        Wed, 16 Oct 2019 21:56:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9ABBA21D7F;
+        Wed, 16 Oct 2019 21:55:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571262980;
-        bh=7GqnbcH+r90nThr865WG1XKok01vq2QVJ4b1QhEQN5Y=;
+        s=default; t=1571262932;
+        bh=+Xx8dEvgQfqrBHSIOX0sGjnhqv4hoRx4grH9nfmkAtg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2JkH+MvONciyf/yd7aWjhLhjk5FkVr7AlfaNH8jhbTLBq08k9pU5826W44KxYPROD
-         HpTNGpH8m9LXLDYoW69s+uU93jprg73Gfa//epjGX72vQG2emTl31JVUvtami9RLeS
-         0bFNAHWbaWWExRMYmJsrBAqxWLWEYIhexsoBfT3E=
+        b=aIIpjv+fGVWGMJRJ7NLrZloPPGEAQZfDEO1HeEw2/Xm7uaIXi7yW87Hfg296YDzPq
+         VTjYALCcJ0spv5GOexF1EbbSyIV3sn/Xedl7PYcsoQt92QrABhsTE9WTNTU/VOVnoU
+         QcreUb7kXbVWH+3p7qniuNhK7mIbs/Y08bBdUqBI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hung-Te Lin <hungte@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 50/65] firmware: google: increment VPD key_len properly
-Date:   Wed, 16 Oct 2019 14:51:04 -0700
-Message-Id: <20191016214835.824729336@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Ajay Kaher <akaher@vmware.com>
+Subject: [PATCH 4.9 92/92] xfs: clear sb->s_fs_info on mount failure
+Date:   Wed, 16 Oct 2019 14:51:05 -0700
+Message-Id: <20191016214849.217245343@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
-References: <20191016214756.457746573@linuxfoundation.org>
+In-Reply-To: <20191016214759.600329427@linuxfoundation.org>
+References: <20191016214759.600329427@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,48 +44,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Norris <briannorris@chromium.org>
+From: Dave Chinner <dchinner@redhat.com>
 
-[ Upstream commit 442f1e746e8187b9deb1590176f6b0ff19686b11 ]
+commit c9fbd7bbc23dbdd73364be4d045e5d3612cf6e82 upstream.
 
-Commit 4b708b7b1a2c ("firmware: google: check if size is valid when
-decoding VPD data") adds length checks, but the new vpd_decode_entry()
-function botched the logic -- it adds the key length twice, instead of
-adding the key and value lengths separately.
+We recently had an oops reported on a 4.14 kernel in
+xfs_reclaim_inodes_count() where sb->s_fs_info pointed to garbage
+and so the m_perag_tree lookup walked into lala land.
 
-On my local system, this means vpd.c's vpd_section_create_attribs() hits
-an error case after the first attribute it parses, since it's no longer
-looking at the correct offset. With this patch, I'm back to seeing all
-the correct attributes in /sys/firmware/vpd/...
+Essentially, the machine was under memory pressure when the mount
+was being run, xfs_fs_fill_super() failed after allocating the
+xfs_mount and attaching it to sb->s_fs_info. It then cleaned up and
+freed the xfs_mount, but the sb->s_fs_info field still pointed to
+the freed memory. Hence when the superblock shrinker then ran
+it fell off the bad pointer.
 
-Fixes: 4b708b7b1a2c ("firmware: google: check if size is valid when decoding VPD data")
-Cc: <stable@vger.kernel.org>
-Cc: Hung-Te Lin <hungte@chromium.org>
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-Reviewed-by: Guenter Roeck <groeck@chromium.org>
-Link: https://lore.kernel.org/r/20190930214522.240680-1-briannorris@chromium.org
+With the superblock shrinker problem fixed at teh VFS level, this
+stale s_fs_info pointer is still a problem - we use it
+unconditionally in ->put_super when the superblock is being torn
+down, and hence we can still trip over it after a ->fill_super
+call failure. Hence we need to clear s_fs_info if
+xfs-fs_fill_super() fails, and we need to check if it's valid in
+the places it can potentially be dereferenced after a ->fill_super
+failure.
+
+Signed-Off-By: Dave Chinner <dchinner@redhat.com>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Ajay Kaher <akaher@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/google/vpd_decode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/xfs/xfs_super.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/firmware/google/vpd_decode.c b/drivers/firmware/google/vpd_decode.c
-index e75abe9fa122c..6c7ab2ba85d2f 100644
---- a/drivers/firmware/google/vpd_decode.c
-+++ b/drivers/firmware/google/vpd_decode.c
-@@ -62,7 +62,7 @@ static int vpd_decode_entry(const u32 max_len, const u8 *input_buf,
- 	if (max_len - consumed < *entry_len)
- 		return VPD_FAIL;
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -1674,6 +1674,7 @@ xfs_fs_fill_super(
+  out_close_devices:
+ 	xfs_close_devices(mp);
+  out_free_fsname:
++	sb->s_fs_info = NULL;
+ 	xfs_free_fsname(mp);
+ 	kfree(mp);
+  out:
+@@ -1691,6 +1692,10 @@ xfs_fs_put_super(
+ {
+ 	struct xfs_mount	*mp = XFS_M(sb);
  
--	consumed += decoded_len;
-+	consumed += *entry_len;
- 	*_consumed = consumed;
- 	return VPD_OK;
++	/* if ->fill_super failed, we have no mount to tear down */
++	if (!sb->s_fs_info)
++		return;
++
+ 	xfs_notice(mp, "Unmounting Filesystem");
+ 	xfs_filestream_unmount(mp);
+ 	xfs_unmountfs(mp);
+@@ -1700,6 +1705,8 @@ xfs_fs_put_super(
+ 	xfs_destroy_percpu_counters(mp);
+ 	xfs_destroy_mount_workqueues(mp);
+ 	xfs_close_devices(mp);
++
++	sb->s_fs_info = NULL;
+ 	xfs_free_fsname(mp);
+ 	kfree(mp);
  }
--- 
-2.20.1
-
+@@ -1719,6 +1726,9 @@ xfs_fs_nr_cached_objects(
+ 	struct super_block	*sb,
+ 	struct shrink_control	*sc)
+ {
++	/* Paranoia: catch incorrect calls during mount setup or teardown */
++	if (WARN_ON_ONCE(!sb->s_fs_info))
++		return 0;
+ 	return xfs_reclaim_inodes_count(XFS_M(sb));
+ }
+ 
 
 
