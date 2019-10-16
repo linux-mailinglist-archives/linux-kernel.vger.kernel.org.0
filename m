@@ -2,111 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9113AD9835
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 19:07:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A485BD983A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 19:08:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393743AbfJPRHB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 13:07:01 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44850 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388161AbfJPRHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 13:07:00 -0400
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 345B788313
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 17:07:00 +0000 (UTC)
-Received: by mail-wm1-f69.google.com with SMTP id g67so1233483wmg.4
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 10:07:00 -0700 (PDT)
+        id S2394057AbfJPRIb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 13:08:31 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:39445 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731357AbfJPRIb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 13:08:31 -0400
+Received: by mail-lf1-f68.google.com with SMTP id 195so5156943lfj.6;
+        Wed, 16 Oct 2019 10:08:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=2P/J10KlExGhDcB/BIJubTdscdcTfMDb1fvy/oTWkxE=;
+        b=ZGYmSpcC+3Ytg3A4d6uhwt45ZuOLxHufU1G0+taRHgxS3toGOBjb2JzbcSWfMNmpTU
+         KeFH2531iE4BbVgauuva6vCMqk6x1S+j2FGJ7d0qxr18PUOa0ShTbfsqI/IfX5VZY56E
+         V4GW/AFw9LXBobpOBAibIjTVR05CM5vsrXocFOVmvr8d0XVtkQb0GPMyNaETKXecPXge
+         6IwX8fwx79qyuk63skOebNKrBeVxgS62nCUSPSenSY1JBm5m/9LwA9gaADdn1bCzyX98
+         u4RvdYPMryzI6wAXT3UR3zJvI5CIHgO4kFjeDF9Z8kdJ/k6KxBbdksBz23uYBMlvXT+m
+         XhrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=gs7j7P97MguiwVXLFd4gwkovHtcAde4RLohzpgnXT0M=;
-        b=BMr0FShOnwe1mN1IYVDgVOpD2RgspUr/O0JVXNCIwuE7flP5WwHyx9tNvLUNRQ5EAq
-         IOx3EalrmZ+Sph8nyoJsxp/keqSJ7Ok/ZIf1p2YMSmXrq9X7ccprkNxzfSgbCPpgP8fC
-         yw2frzJgqcB72bYEBVZpxatuCEXrRdBUzsgFd4vwu5dx1OEXy7Eod9Ec9Gk/ieQfP+lT
-         BJV7RFu7Qxvh9HOdsGDJBKFYNqOmynJunQxdNiDou4o2BBaJ8CbFaXxPlFvmKPblBbdG
-         dzQ863r2LYHs+Xz60G/jTCQAqWc5Sr5vNst8Frhe2IhTqrwjuKuFFeEyVmE/3m0bMoW4
-         YW6w==
-X-Gm-Message-State: APjAAAVMYDbPXLi5NyPLLLl9u7prIkY5ry2G+bCa6zQQkYDKXVWKkfOJ
-        rNzGPJmmx3aOxcoti8LL0uc3vZaI8YpZvXZNboTMrzx7nvkq8pIu+HliG3DHNO6xGqTWmTp4cAk
-        C7br4Ma5ZcJkkzgVx7o4+Yc/D
-X-Received: by 2002:a05:600c:2503:: with SMTP id d3mr4584935wma.44.1571245618930;
-        Wed, 16 Oct 2019 10:06:58 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyTOPCffn6fos0yiy5ZNrUHWqJEU8VeKDXOXKziUzRHJm9s4opmF4QO5ABHTLAraHwRok8b9A==
-X-Received: by 2002:a05:600c:2503:: with SMTP id d3mr4584913wma.44.1571245618706;
-        Wed, 16 Oct 2019 10:06:58 -0700 (PDT)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id e18sm35106204wrv.63.2019.10.16.10.06.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2019 10:06:58 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     suleiman@google.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: Re: [PATCH] kvm: clear kvmclock MSR on reset
-In-Reply-To: <1570704617-32285-1-git-send-email-pbonzini@redhat.com>
-References: <1570704617-32285-1-git-send-email-pbonzini@redhat.com>
-Date:   Wed, 16 Oct 2019 19:06:57 +0200
-Message-ID: <87wod439hq.fsf@vitty.brq.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=2P/J10KlExGhDcB/BIJubTdscdcTfMDb1fvy/oTWkxE=;
+        b=eHdHS9BWuOPNz6WUCS90d8fF1bWrdehPZioM6vKxA8go7rp6s2bR2xnBjTgbeiRQ51
+         EAWCePWJAesPvs9MedGuOc6NrMhcRZfDbPHzFVMrMl9pp3Z01hKdp1Je9auFqyRuHBLc
+         3gG+F3v2JjSFg2nDxaLdAgHvlND7OHZ/DzMV0oY7lS7rx6BtY7g+BgVjYRz/y9X1lUO6
+         sqGMqQg1+yYNGuRMB914mMQDAzUMkUdf4sfl5Rrez2Q3id4eOp7Hyt8nOfhtg+M7f5CE
+         4ZIeXuHvZGTuiUJF2qehc2OXOwQzu8/hzEKoQ1CLt2EV6F16ZjvGW0s3QU0dTriROuSc
+         VZ5Q==
+X-Gm-Message-State: APjAAAX2dcF0qdPolvtds0CqqQFr3IkiRdOSiMffJbHRoq4o8BOqDPEz
+        ecvOmImxEQ3nXLPPccpdD2GjQs6fw0nKNl6C+O4=
+X-Google-Smtp-Source: APXvYqzlz5fV6bpUwwy0e8WQAyU1+u5vJPm1G3iUaorsGa524M1CGUWd8NgCE96FPsw76VqbLrnH9w==
+X-Received: by 2002:ac2:4550:: with SMTP id j16mr8421098lfm.126.1571245707268;
+        Wed, 16 Oct 2019 10:08:27 -0700 (PDT)
+Received: from localhost.localdomain ([87.101.228.250])
+        by smtp.gmail.com with ESMTPSA id q24sm6299182ljj.6.2019.10.16.10.08.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 16 Oct 2019 10:08:26 -0700 (PDT)
+From:   Christian Hewitt <christianshewitt@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Christian Hewitt <christianshewitt@gmail.com>
+Subject: [PATCH 0/2] arm64: dts: meson: Tronsmart Vega ir keymap updates
+Date:   Wed, 16 Oct 2019 21:07:35 +0400
+Message-Id: <1571245657-4471-1-git-send-email-christianshewitt@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Paolo Bonzini <pbonzini@redhat.com> writes:
+The Tronsmart Vega S95 (S905) and S96 (S912) Android STBs use the
+same IR remote. The rc-vega-s9x keymap has been accepted for Linux
+v5.5 [0] so add the keymap to the respective dts.
 
-> After resetting the vCPU, the kvmclock MSR keeps the previous value but it is
-> not enabled.  This can be confusing, so fix it.
->
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> ---
->  arch/x86/kvm/x86.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index f26f8be4e621..a55252c69118 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -2533,6 +2533,7 @@ static int kvm_pv_enable_async_pf(struct kvm_vcpu *vcpu, u64 data)
->  static void kvmclock_reset(struct kvm_vcpu *vcpu)
->  {
->  	vcpu->arch.pv_time_enabled = false;
-> +	vcpu->arch.time = 0;
->  }
->  
->  static void kvm_vcpu_flush_tlb(struct kvm_vcpu *vcpu, bool invalidate_gpa)
-> @@ -2698,8 +2699,6 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->  	case MSR_KVM_SYSTEM_TIME: {
->  		struct kvm_arch *ka = &vcpu->kvm->arch;
->  
-> -		kvmclock_reset(vcpu);
-> -
->  		if (vcpu->vcpu_id == 0 && !msr_info->host_initiated) {
->  			bool tmp = (msr == MSR_KVM_SYSTEM_TIME);
->  
-> @@ -2713,14 +2712,13 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->  		kvm_make_request(KVM_REQ_GLOBAL_CLOCK_UPDATE, vcpu);
->  
->  		/* we verify if the enable bit is set... */
-> +		vcpu->arch.pv_time_enabled = false;
->  		if (!(data & 1))
->  			break;
->  
->  		if (kvm_gfn_to_hva_cache_init(vcpu->kvm,
->  		     &vcpu->arch.pv_time, data & ~1ULL,
->  		     sizeof(struct pvclock_vcpu_time_info)))
-> -			vcpu->arch.pv_time_enabled = false;
-> -		else
->  			vcpu->arch.pv_time_enabled = true;
+[0] https://patchwork.linuxtv.org/patch/59434/
 
-Hm, are you sure you didn't want to write !kvm_gfn_to_hva_cache_init()?
+Christian Hewitt (2):
+  arm64: dts: meson-gxm-vega-s96: set rc-vega-s9x ir keymap
+  arm64: dts: meson-gxbb-vega-s95: set rc-vega-s9x ir keymap
 
->  
->  		break;
+ arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi | 1 +
+ arch/arm64/boot/dts/amlogic/meson-gxm-vega-s96.dts   | 4 ++++
+ 2 files changed, 5 insertions(+)
 
 -- 
-Vitaly
+2.7.4
+
