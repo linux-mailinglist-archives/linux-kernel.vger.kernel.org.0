@@ -2,1239 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 585B9D8D39
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 12:04:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 977D8D8D43
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 12:05:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388424AbfJPKEt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 06:04:49 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35360 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728081AbfJPKEt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 06:04:49 -0400
-Received: by mail-wm1-f65.google.com with SMTP id y21so2091653wmi.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 03:04:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=unjDeDVFZAxp2+92fhsHf2hbKpVLtBjf1aANazCtKf0=;
-        b=nZmxqNjRCjQGVFGncOVuTBc6+OjwGuyFGh3AGeAFJXEYsby+WpEIaigWlMDz+o7bnK
-         oMKJT+bpCqqeV7sOn0rqAEIxmmWIJyvmYpfen0q1acy4ppnHAKtbHkT9iFotr+xPUmH9
-         BKVSLerC2qniMyDzuyETPiIS/5GenWH1PB5t4Cv3D4mYYl3cpIvAoPCsZ6fphHyAe9SS
-         jB/1xq8oElbyT1e/Wr+J/NYV+jXD6iLlBRVoasvgZfgtLZyF+i8wo41pKR7gVpsTjCE4
-         bDh5JrxQi1Mut30aY273uCLYkf5z4N2MehKOuC5lHtm81ObWJ78baovc6Nxn78qqk1kX
-         JYAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=unjDeDVFZAxp2+92fhsHf2hbKpVLtBjf1aANazCtKf0=;
-        b=hlN2US64nO5smmJURkokYYkJlwF/bSlnBWEz5bMrgp5qSUc4cb9BL5djvxrU6/NNY4
-         /ctmSBpiHBLdNGlIzICOGXclY7AcxmXZ48rhCmBj6HGGw5nzVrqTYbcBTtBrWJrwciZY
-         F5AHn422IjRxqnCUKgH92Be6d8xx1t/fkQGS2fYK8LvKMacOiESb1QyewnN+784qvEy7
-         REfPqLa+sNGTKSPoAhPArWqz/G03uL0bB0Daz/qspYydM4mqCsyyT4c4tzMe6ji6TBiI
-         /gJFPpvP45rlcwnUORxJEn/xHDbx5Rp4X6SqHYylnMcYyzfuQtTJOWYzmaqi+w9JVscX
-         FuHA==
-X-Gm-Message-State: APjAAAXf2V9HPH0QfIVjrqrkK+knW8R8zPVCQUY6KiDEs8rrI/cIrKcZ
-        WiO2Wn5sMIG/NMu37Qn56eb2FQ==
-X-Google-Smtp-Source: APXvYqxI8PHMN0s8Sh0axkWkuCQ9XSOewz3KTj+4NzwS+qYghZIVpaELvmYCpIcGKlxDM8p4lUPCrA==
-X-Received: by 2002:a1c:bc07:: with SMTP id m7mr2697525wmf.103.1571220280517;
-        Wed, 16 Oct 2019 03:04:40 -0700 (PDT)
-Received: from dell ([95.149.164.86])
-        by smtp.gmail.com with ESMTPSA id z1sm6671584wrn.57.2019.10.16.03.04.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Oct 2019 03:04:39 -0700 (PDT)
-Date:   Wed, 16 Oct 2019 11:04:38 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Gene Chen <gene.chen.richtek@gmail.com>
-Cc:     matthias.bgg@gmail.com, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        gene_chen@richtek.com, Wilma.Wu@mediatek.com,
-        shufan_lee@richtek.com, cy_huang@richtek.com
-Subject: Re: [PATCH v3] mfd: mt6360: add pmic mt6360 driver
-Message-ID: <20191016100438.GF4365@dell>
-References: <1569338741-2784-1-git-send-email-gene.chen.richtek@gmail.com>
- <20191004133324.GE18429@dell>
- <CAE+NS37bQyWknxy+bXYZqyHH_3RbhTQJc5fVd=ibjV6QMz_rew@mail.gmail.com>
- <CAE+NS37TEcfxOy97WL0kQ2u8zM9sbROaEr-1b81hX2eoqh-sfg@mail.gmail.com>
+        id S2392215AbfJPKFm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 06:05:42 -0400
+Received: from mail-eopbgr20040.outbound.protection.outlook.com ([40.107.2.40]:7240
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727442AbfJPKFl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Oct 2019 06:05:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lJQGczWTScr5w+6CN4LiAycC4W1vCOYvima47Au+h8Y=;
+ b=VnZlvFbCFOalu0ZgqPwQYzXCpT3Ds+mHvNprLVJ529f2aubOeCLB9UsWP8JnkCRGhtc9co9LrpIHN0frzWPFwn7NraOZvG5SNVQOTpgLpk7th7IlDJwt1Fl5EkNepRbYVtJPLKha8KhsKudmhXWNJuRymP8rTduGvD6kVd2Pses=
+Received: from DB6PR0801CA0062.eurprd08.prod.outlook.com (2603:10a6:4:2b::30)
+ by AM5PR0802MB2595.eurprd08.prod.outlook.com (2603:10a6:203:a2::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2347.21; Wed, 16 Oct
+ 2019 10:04:55 +0000
+Received: from VE1EUR03FT063.eop-EUR03.prod.protection.outlook.com
+ (2a01:111:f400:7e09::205) by DB6PR0801CA0062.outlook.office365.com
+ (2603:10a6:4:2b::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2347.16 via Frontend
+ Transport; Wed, 16 Oct 2019 10:04:55 +0000
+Authentication-Results: spf=temperror (sender IP is 63.35.35.123)
+ smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
+ header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=none action=none
+ header.from=arm.com;
+Received-SPF: TempError (protection.outlook.com: error in processing during
+ lookup of arm.com: DNS Timeout)
+Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
+ VE1EUR03FT063.mail.protection.outlook.com (10.152.18.236) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.2305.15 via Frontend Transport; Wed, 16 Oct 2019 10:04:54 +0000
+Received: ("Tessian outbound 851a1162fca7:v33"); Wed, 16 Oct 2019 10:04:51 +0000
+X-CR-MTA-TID: 64aa7808
+Received: from 826696268afc.1 (ip-172-16-0-2.eu-west-1.compute.internal [104.47.14.59])
+        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 890A5724-0D73-4B48-9524-DA7DF9F4AD28.1;
+        Wed, 16 Oct 2019 10:04:46 +0000
+Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-vi1eur04lp2059.outbound.protection.outlook.com [104.47.14.59])
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id 826696268afc.1
+    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384);
+    Wed, 16 Oct 2019 10:04:46 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Pa9wSs6v2ufdWB+TzQ26BgiClPtKSEtk7UJlA7RV0aRbla4eCY0RtAcLg/dLTWM+kuUjcyp4V+24oW9iJzJQy5NC8q+c+AdyAN1ia2Yeu9i/mHL7ngjzfj4iSg675TReWSNxwj+j1bkhkNv2iretEQ/4PYJFk2lIk092ZqVMJ2UCX7zr+ncX6pplh6tncMnhbvNGXuqCLtr+7nEuWawQ9H3iF5s7vx3lqDe+dY4zVzYcKvyj3zupAdRQTTgMvc4ZQtl5eX8QZORDlEgI8FBCJWNMmwiXrS5Un7o1lJflANUfLxZ+YN+6Qzqb4R6tXKM7szw9XaqFF/+9vnQW4wiPaQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lJQGczWTScr5w+6CN4LiAycC4W1vCOYvima47Au+h8Y=;
+ b=ofdSrNLzR7e69S+3PjyjcZcGf5EF8CgFZSkv5R9DOmp8C+UXuOxN8OBo3mhAVELMKm9vG8uV0rbZ2uMqtmYQ4ZiKfqMvKCOsYE7DOfPAItohJXTTljy5vWVwSXGhM5O14U9A88PqzCnqd0lfCiDakoBB95lD58NcmebKPtqtTFHCe2Q/0bZksysncKXBUdS16VJVErSYFCELA3j/m2nW7fNmk5xl8Gnlymc8FF9RBTgDwtbonQ/7EAdPgANjMUQ0Qd86tGV7DZQwfudUiHGAwZ6zTwB5dCkFMCZ2TcouG0Av3MYassHYWJS3YyKc1M7v4/osM0zgeOzreamNWt9qjQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lJQGczWTScr5w+6CN4LiAycC4W1vCOYvima47Au+h8Y=;
+ b=VnZlvFbCFOalu0ZgqPwQYzXCpT3Ds+mHvNprLVJ529f2aubOeCLB9UsWP8JnkCRGhtc9co9LrpIHN0frzWPFwn7NraOZvG5SNVQOTpgLpk7th7IlDJwt1Fl5EkNepRbYVtJPLKha8KhsKudmhXWNJuRymP8rTduGvD6kVd2Pses=
+Received: from HE1PR0801MB1676.eurprd08.prod.outlook.com (10.168.146.150) by
+ HE1PR0801MB1865.eurprd08.prod.outlook.com (10.168.94.149) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2347.22; Wed, 16 Oct 2019 10:04:43 +0000
+Received: from HE1PR0801MB1676.eurprd08.prod.outlook.com
+ ([fe80::b056:4113:e0bd:110d]) by HE1PR0801MB1676.eurprd08.prod.outlook.com
+ ([fe80::b056:4113:e0bd:110d%6]) with mapi id 15.20.2347.023; Wed, 16 Oct 2019
+ 10:04:43 +0000
+From:   "Jianyong Wu (Arm Technology China)" <Jianyong.Wu@arm.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "yangbo.lu@nxp.com" <yangbo.lu@nxp.com>,
+        "john.stultz@linaro.org" <john.stultz@linaro.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
+        "maz@kernel.org" <maz@kernel.org>,
+        "richardcochran@gmail.com" <richardcochran@gmail.com>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        "will@kernel.org" <will@kernel.org>,
+        Suzuki Poulose <Suzuki.Poulose@arm.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Steve Capper <Steve.Capper@arm.com>,
+        "Kaly Xin (Arm Technology China)" <Kaly.Xin@arm.com>,
+        "Justin He (Arm Technology China)" <Justin.He@arm.com>,
+        nd <nd@arm.com>
+Subject: RE: [PATCH v5 2/6] ptp: Reorganize ptp_kvm modules to make it
+ arch-independent.
+Thread-Topic: [PATCH v5 2/6] ptp: Reorganize ptp_kvm modules to make it
+ arch-independent.
+Thread-Index: AQHVg0Yy3IKxJp51oU6H7J1V0yQ+3Kdc2u8AgAAwgwA=
+Date:   Wed, 16 Oct 2019 10:04:43 +0000
+Message-ID: <HE1PR0801MB1676A5DA4C0B996FEDB2D47BF4920@HE1PR0801MB1676.eurprd08.prod.outlook.com>
+References: <20191015104822.13890-1-jianyong.wu@arm.com>
+ <20191015104822.13890-3-jianyong.wu@arm.com>
+ <e0260f51-ad29-02ba-a46f-ebaa68f7a9ea@redhat.com>
+In-Reply-To: <e0260f51-ad29-02ba-a46f-ebaa68f7a9ea@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ts-tracking-id: 224ccb43-40ba-42fe-bb9c-f48f986e50d3.1
+x-checkrecipientchecked: true
+Authentication-Results-Original: spf=none (sender IP is )
+ smtp.mailfrom=Jianyong.Wu@arm.com; 
+x-originating-ip: [113.29.88.7]
+x-ms-publictraffictype: Email
+X-MS-Office365-Filtering-Correlation-Id: 403fef5c-4de9-4196-5b4e-08d752204ab3
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-TrafficTypeDiagnostic: HE1PR0801MB1865:|HE1PR0801MB1865:|AM5PR0802MB2595:
+x-ms-exchange-transport-forked: True
+X-Microsoft-Antispam-PRVS: <AM5PR0802MB259529C546423D854AF47AA8F4920@AM5PR0802MB2595.eurprd08.prod.outlook.com>
+x-checkrecipientrouted: true
+x-ms-oob-tlc-oobclassifiers: OLM:7219;OLM:7219;
+x-forefront-prvs: 0192E812EC
+X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(346002)(136003)(366004)(376002)(396003)(13464003)(189003)(199004)(9686003)(86362001)(6436002)(55016002)(316002)(2201001)(3846002)(71200400001)(229853002)(11346002)(486006)(446003)(6116002)(66066001)(476003)(71190400001)(6636002)(76176011)(186003)(55236004)(6506007)(110136005)(99286004)(53546011)(54906003)(2501003)(7696005)(256004)(102836004)(26005)(4744005)(33656002)(7736002)(7416002)(74316002)(305945005)(52536014)(5660300002)(25786009)(2906002)(478600001)(8936002)(76116006)(66946007)(4326008)(66556008)(66446008)(64756008)(6246003)(14454004)(81166006)(66476007)(81156014)(8676002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0801MB1865;H:HE1PR0801MB1676.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Untrusted: BCL:0;
+X-Microsoft-Antispam-Message-Info-Original: KA8atxduN7y7VJWTypMr4oOoPQJZK2+A9jCrfRzSjua2VSCl8wHq+yYTUZSB+H/gVmvq3HPl3Hj8ZU3WbHggWain+8An8Lkr3LYXLVsrBAplNSwiKbE326TKuTCTbeQnEL4mfcBgECDsxJxIWTZ9pzY/ZLqoi1qJ8NwVt1nxIcqzr28pRu2qx6SjRAPrW3LhTi66EPg/jOJt67NiSD9np/LHbUQjg78YRgvOjQxR7nxJWrsqW53LD/rDcxbRjpgMMFm9WoS/3I9xsTD0hRpfG6j5vxk3YL/FGnVD35Oo9QIxNT+VjR1h0mSENWMNFS748u580xmf3ERPW+pDcyC/ehhIvtrumAK8ni9iPfD8N2QR7i4HEo++sGKk+X8uxMPfFfb6zTm84EHwwajZau3NOiT5InCH9QVEGjvdqJNeOWA=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAE+NS37TEcfxOy97WL0kQ2u8zM9sbROaEr-1b81hX2eoqh-sfg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0801MB1865
+Original-Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Jianyong.Wu@arm.com; 
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: VE1EUR03FT063.eop-EUR03.prod.protection.outlook.com
+X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(376002)(136003)(39860400002)(346002)(396003)(13464003)(189003)(199004)(36906005)(76130400001)(33656002)(47776003)(486006)(50466002)(22756006)(76176011)(476003)(126002)(110136005)(54906003)(55016002)(66066001)(70206006)(70586007)(86362001)(2201001)(446003)(26005)(74316002)(186003)(316002)(9686003)(11346002)(6506007)(436003)(53546011)(63350400001)(23676004)(2486003)(336012)(7696005)(102836004)(2501003)(2906002)(356004)(8936002)(26826003)(14454004)(478600001)(81156014)(81166006)(4326008)(229853002)(7736002)(5660300002)(6116002)(3846002)(25786009)(8676002)(6636002)(99286004)(6246003)(305945005)(52536014)(450100002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR0802MB2595;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:TempError;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;MX:1;A:1;
+X-MS-Office365-Filtering-Correlation-Id-Prvs: 89cf402e-eeb9-4982-23dd-08d752204445
+NoDisclaimer: True
+X-Forefront-PRVS: 0192E812EC
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: G4Ct70+gzil5gJgwwtBj8bvZV2a8JnlNudgDD3+GVjZsY5rlJU8hNGEG/YpAdICH3T2BBSSG3AHdQm2jZBol2WzFP+rjzVYLfhKNhRPM8jgBAG0oTqxqtrqOcc6J45wt0EPISyJ3O+k2t9vpp/hxaY6k6eX60vllRIXAKqHaIASjsvoj7YG02qYG23sgbWNm4SBQVNwQLRp7E0OZ0EqmkN4ndnzhMtxexhN5fSg5Es+APqN918vqgq9NrSbsUnoPuYipqDgYVgdb6+2xXMA9527y/j52BEEO8dtwbuPfMW5Pm9QNUEUy5IPwJwe0qRGFUtLRpp52vvTR5dN0goDUfqo5v+EZhfA884SwEGW9MgGS+K2VaxCAHffAtPVPgttk0rJ3lj9ROQG740U3FpW3M4xF2zUFKJpfJXAElc+K5fQ=
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2019 10:04:54.0082
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 403fef5c-4de9-4196-5b4e-08d752204ab3
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0802MB2595
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 15 Oct 2019, Gene Chen wrote:
-
-> Hi Lee,
-> 
-> we find OF_MFD_CELL is not defined in mfd/core.h, which is ready to
-> merge to next kernel version
-> https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next-history/+/master/Next/merge.log
-
-It's here:
-
-Merging mfd/for-mfd-next (38a6fc63a3ea mfd: db8500-prcmu: Example using new OF_MFD_CELL/MFD_CELL_BASIC MACROs)
-$ git merge mfd/for-mfd-next
-Merge made by the 'recursive' strategy.
- drivers/mfd/ab8500-core.c    | 138 +++++++++++++------------------------------
- drivers/mfd/db8500-prcmu.c   |  21 +++----
- drivers/mfd/intel-lpss-pci.c |  28 ++++++---
- drivers/mfd/ipaq-micro.c     |   6 +-
- drivers/mfd/rk808.c          |  22 ++-----
- include/linux/mfd/core.h     |  29 +++++++++                <===== [THIS ONE]
- include/linux/mfd/rk808.h    |   2 +-
- 7 files changed, 105 insertions(+), 141 deletions(-)
-
-https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next-history/+/master/Next/merge.log#4470
-
-> may i ask how can i upstream without this definition?
-> e.g. we pull this patch and build pass, new patch without add macro define
-> 
-> 2019-10-08 2:24 GMT+08:00, Gene Chen <gene.chen.richtek@gmail.com>:
-> > Hi Jones,
-> >
-> > Thanks for review, we will fix some comment which your suggestion in next
-> > patch
-> >
-> > Lee Jones <lee.jones@linaro.org> 於 2019年10月4日 週五 下午9:33寫道：
-> >>
-> >> Wolfram,
-> >>
-> >> Would you be kind enough to grep for your name below?
-> >>
-> >> On Tue, 24 Sep 2019, Gene Chen wrote:
-> >>
-> >> > From: Gene Chen <gene_chen@richtek.com>
-> >> >
-> >> > Add mfd driver for mt6360 pmic chip include
-> >> > Battery Charger/USB_PD/Flash LED/RGB LED/LDO/Buck
-> >> >
-> >> > Signed-off-by: Gene Chen <gene_chen@richtek.com
-> >> > ---
-> >> >  drivers/mfd/Kconfig                |  12 +
-> >> >  drivers/mfd/Makefile               |   1 +
-> >> >  drivers/mfd/mt6360-core.c          | 463
-> >> > +++++++++++++++++++++++++++++++++++++
-> >> >  include/linux/mfd/mt6360-private.h | 279 ++++++++++++++++++++++
-> >> >  include/linux/mfd/mt6360.h         |  33 +++
-> >> >  5 files changed, 788 insertions(+)
-> >> >  create mode 100644 drivers/mfd/mt6360-core.c
-> >> >  create mode 100644 include/linux/mfd/mt6360-private.h
-> >> >  create mode 100644 include/linux/mfd/mt6360.h
-> >> >
-> >> > changelogs between v1 & v2
-> >> > - include missing header file
-> >> >
-> >> > changelogs between v2 & v3
-> >> > - add changelogs
-> >> >
-> >> > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> >> > index f129f96..a422c76 100644
-> >> > --- a/drivers/mfd/Kconfig
-> >> > +++ b/drivers/mfd/Kconfig
-> >> > @@ -862,6 +862,18 @@ config MFD_MAX8998
-> >> >         additional drivers must be enabled in order to use the
-> >> > functionality
-> >> >         of the device.
-> >> >
-> >> > +config MFD_MT6360
-> >> > +     tristate "Mediatek MT6360 SubPMIC"
-> >> > +     select MFD_CORE
-> >> > +     select REGMAP_I2C
-> >> > +     select REGMAP_IRQ
-> >> > +     depends on I2C
-> >> > +     help
-> >> > +       Say Y here to enable MT6360 PMU/PMIC/LDO functional support.
-> >> > +       PMU part include charger, flashlight, rgb led
-> >> > +       PMIC part include 2-channel BUCKs and 2-channel LDOs
-> >> > +       LDO part include 4-channel LDOs
-> >>
-> >>           PMU part includes Charger, Flashlight, RGB and LED
-> >>           PMIC part includes 2-channel BUCKs and 2-channel LDOs
-> >>           LDO part includes 4-channel LDOs
-> >>
-> >
-> > ACK. RGB LED is one of indicator light, only single feature
-> >
-> >> >  config MFD_MT6397
-> >> >       tristate "MediaTek MT6397 PMIC Support"
-> >> >       select MFD_CORE
-> >> > diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> >> > index f026ada..77a8f0b 100644
-> >> > --- a/drivers/mfd/Makefile
-> >> > +++ b/drivers/mfd/Makefile
-> >> > @@ -241,6 +241,7 @@ obj-$(CONFIG_INTEL_SOC_PMIC)      +=
-> >> > intel-soc-pmic.o
-> >> >  obj-$(CONFIG_INTEL_SOC_PMIC_BXTWC)   += intel_soc_pmic_bxtwc.o
-> >> >  obj-$(CONFIG_INTEL_SOC_PMIC_CHTWC)   += intel_soc_pmic_chtwc.o
-> >> >  obj-$(CONFIG_INTEL_SOC_PMIC_CHTDC_TI)        +=
-> >> > intel_soc_pmic_chtdc_ti.o
-> >> > +obj-$(CONFIG_MFD_MT6360)     += mt6360-core.o
-> >> >  obj-$(CONFIG_MFD_MT6397)     += mt6397-core.o
-> >> >
-> >> >  obj-$(CONFIG_MFD_ALTERA_A10SR)       += altera-a10sr.o
-> >> > diff --git a/drivers/mfd/mt6360-core.c b/drivers/mfd/mt6360-core.c
-> >> > new file mode 100644
-> >> > index 0000000..d3580618
-> >> > --- /dev/null
-> >> > +++ b/drivers/mfd/mt6360-core.c
-> >> > @@ -0,0 +1,463 @@
-> >> > +// SPDX-License-Identifier: GPL-2.0
-> >> > +/*
-> >> > + * Copyright (c) 2019 MediaTek Inc.
-> >> > + */
-> >> > +
-> >> > +#include <linux/i2c.h>
-> >> > +#include <linux/init.h>
-> >> > +#include <linux/kernel.h>
-> >> > +#include <linux/mfd/core.h>
-> >> > +#include <linux/module.h>
-> >> > +#include <linux/of_irq.h>
-> >> > +#include <linux/of_platform.h>
-> >> > +#include <linux/version.h>
-> >> > +
-> >> > +#include <linux/mfd/mt6360.h>
-> >> > +#include <linux/mfd/mt6360-private.h>
-> >> > +
-> >> > +/* reg 0 -> 0 ~ 7 */
-> >> > +#define MT6360_CHG_TREG_EVT          (4)
-> >> > +#define MT6360_CHG_AICR_EVT          (5)
-> >> > +#define MT6360_CHG_MIVR_EVT          (6)
-> >> > +#define MT6360_PWR_RDY_EVT           (7)
-> >> > +/* REG 1 -> 8 ~ 15 */
-> >> > +#define MT6360_CHG_BATSYSUV_EVT              (9)
-> >> > +#define MT6360_FLED_CHG_VINOVP_EVT   (11)
-> >> > +#define MT6360_CHG_VSYSUV_EVT                (12)
-> >> > +#define MT6360_CHG_VSYSOV_EVT                (13)
-> >> > +#define MT6360_CHG_VBATOV_EVT                (14)
-> >> > +#define MT6360_CHG_VBUSOV_EVT                (15)
-> >> > +/* REG 2 -> 16 ~ 23 */
-> >> > +/* REG 3 -> 24 ~ 31 */
-> >> > +#define MT6360_WD_PMU_DET            (25)
-> >> > +#define MT6360_WD_PMU_DONE           (26)
-> >> > +#define MT6360_CHG_TMRI                      (27)
-> >> > +#define MT6360_CHG_ADPBADI           (29)
-> >> > +#define MT6360_CHG_RVPI                      (30)
-> >> > +#define MT6360_OTPI                  (31)
-> >> > +/* REG 4 -> 32 ~ 39 */
-> >> > +#define MT6360_CHG_AICCMEASL         (32)
-> >> > +#define MT6360_CHGDET_DONEI          (34)
-> >> > +#define MT6360_WDTMRI                        (35)
-> >> > +#define MT6360_SSFINISHI             (36)
-> >> > +#define MT6360_CHG_RECHGI            (37)
-> >> > +#define MT6360_CHG_TERMI             (38)
-> >> > +#define MT6360_CHG_IEOCI             (39)
-> >> > +/* REG 5 -> 40 ~ 47 */
-> >> > +#define MT6360_PUMPX_DONEI           (40)
-> >> > +#define MT6360_BAT_OVP_ADC_EVT               (41)
-> >> > +#define MT6360_TYPEC_OTP_EVT         (42)
-> >> > +#define MT6360_ADC_WAKEUP_EVT                (43)
-> >> > +#define MT6360_ADC_DONEI             (44)
-> >> > +#define MT6360_BST_BATUVI            (45)
-> >> > +#define MT6360_BST_VBUSOVI           (46)
-> >> > +#define MT6360_BST_OLPI                      (47)
-> >> > +/* REG 6 -> 48 ~ 55 */
-> >> > +#define MT6360_ATTACH_I                      (48)
-> >> > +#define MT6360_DETACH_I                      (49)
-> >> > +#define MT6360_QC30_STPDONE          (51)
-> >> > +#define MT6360_QC_VBUSDET_DONE               (52)
-> >> > +#define MT6360_HVDCP_DET             (53)
-> >> > +#define MT6360_CHGDETI                       (54)
-> >> > +#define MT6360_DCDTI                 (55)
-> >> > +/* REG 7 -> 56 ~ 63 */
-> >> > +#define MT6360_FOD_DONE_EVT          (56)
-> >> > +#define MT6360_FOD_OV_EVT            (57)
-> >> > +#define MT6360_CHRDET_UVP_EVT                (58)
-> >> > +#define MT6360_CHRDET_OVP_EVT                (59)
-> >> > +#define MT6360_CHRDET_EXT_EVT                (60)
-> >> > +#define MT6360_FOD_LR_EVT            (61)
-> >> > +#define MT6360_FOD_HR_EVT            (62)
-> >> > +#define MT6360_FOD_DISCHG_FAIL_EVT   (63)
-> >> > +/* REG 8 -> 64 ~ 71 */
-> >> > +#define MT6360_USBID_EVT             (64)
-> >> > +#define MT6360_APWDTRST_EVT          (65)
-> >> > +#define MT6360_EN_EVT                        (66)
-> >> > +#define MT6360_QONB_RST_EVT          (67)
-> >> > +#define MT6360_MRSTB_EVT             (68)
-> >> > +#define MT6360_OTP_EVT                       (69)
-> >> > +#define MT6360_VDDAOV_EVT            (70)
-> >> > +#define MT6360_SYSUV_EVT             (71)
-> >> > +/* REG 9 -> 72 ~ 79 */
-> >> > +#define MT6360_FLED_STRBPIN_EVT              (72)
-> >> > +#define MT6360_FLED_TORPIN_EVT               (73)
-> >> > +#define MT6360_FLED_TX_EVT           (74)
-> >> > +#define MT6360_FLED_LVF_EVT          (75)
-> >> > +#define MT6360_FLED2_SHORT_EVT               (78)
-> >> > +#define MT6360_FLED1_SHORT_EVT               (79)
-> >> > +/* REG 10 -> 80 ~ 87 */
-> >> > +#define MT6360_FLED2_STRB_EVT                (80)
-> >> > +#define MT6360_FLED1_STRB_EVT                (81)
-> >> > +#define MT6360_FLED2_STRB_TO_EVT     (82)
-> >> > +#define MT6360_FLED1_STRB_TO_EVT     (83)
-> >> > +#define MT6360_FLED2_TOR_EVT         (84)
-> >> > +#define MT6360_FLED1_TOR_EVT         (85)
-> >> > +/* REG 11 -> 88 ~ 95 */
-> >> > +/* REG 12 -> 96 ~ 103 */
-> >> > +#define MT6360_BUCK1_PGB_EVT         (96)
-> >> > +#define MT6360_BUCK1_OC_EVT          (100)
-> >> > +#define MT6360_BUCK1_OV_EVT          (101)
-> >> > +#define MT6360_BUCK1_UV_EVT          (102)
-> >> > +/* REG 13 -> 104 ~ 111 */
-> >> > +#define MT6360_BUCK2_PGB_EVT         (104)
-> >> > +#define MT6360_BUCK2_OC_EVT          (108)
-> >> > +#define MT6360_BUCK2_OV_EVT          (109)
-> >> > +#define MT6360_BUCK2_UV_EVT          (110)
-> >> > +/* REG 14 -> 112 ~ 119 */
-> >> > +#define MT6360_LDO1_OC_EVT           (113)
-> >> > +#define MT6360_LDO2_OC_EVT           (114)
-> >> > +#define MT6360_LDO3_OC_EVT           (115)
-> >> > +#define MT6360_LDO5_OC_EVT           (117)
-> >> > +#define MT6360_LDO6_OC_EVT           (118)
-> >> > +#define MT6360_LDO7_OC_EVT           (119)
-> >> > +/* REG 15 -> 120 ~ 127 */
-> >> > +#define MT6360_LDO1_PGB_EVT          (121)
-> >> > +#define MT6360_LDO2_PGB_EVT          (122)
-> >> > +#define MT6360_LDO3_PGB_EVT          (123)
-> >> > +#define MT6360_LDO5_PGB_EVT          (125)
-> >> > +#define MT6360_LDO6_PGB_EVT          (126)
-> >> > +#define MT6360_LDO7_PGB_EVT          (127)
-> >> > +
-> >> > +#define MT6360_REGMAP_IRQ_REG(_irq_evt)              \
-> >> > +     REGMAP_IRQ_REG(_irq_evt, (_irq_evt) / 8, BIT((_irq_evt) % 8))
-> >> > +
-> >> > +#define MT6360_MFD_CELL(_name)                                       \
-> >> > +     {                                                       \
-> >> > +             .name = #_name,                                 \
-> >> > +             .of_compatible = "mediatek," #_name,            \
-> >> > +             .num_resources = ARRAY_SIZE(_name##_resources), \
-> >> > +             .resources = _name##_resources,                 \
-> >> > +     }
-> >>
-> >> Please do not roll your own MACROS like this.  If they are helpful for
-> >> you, they are likely to be helpful for others.  However, this is your
-> >> lucky day, as we've been here before.  Please rebase onto the MFD tree
-> >> where you will find some pre-authored macros which aren't too
-> >> dissimilar to this one.  Please use one of those instead.
-> >>
-> >
-> > ACK
-> >
-> >> > +static const struct regmap_irq mt6360_pmu_irqs[] =  {
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_CHG_TREG_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_CHG_AICR_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_CHG_MIVR_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_PWR_RDY_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_CHG_BATSYSUV_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_FLED_CHG_VINOVP_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_CHG_VSYSUV_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_CHG_VSYSOV_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_CHG_VBATOV_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_CHG_VBUSOV_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_WD_PMU_DET),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_WD_PMU_DONE),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_CHG_TMRI),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_CHG_ADPBADI),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_CHG_RVPI),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_OTPI),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_CHG_AICCMEASL),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_CHGDET_DONEI),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_WDTMRI),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_SSFINISHI),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_CHG_RECHGI),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_CHG_TERMI),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_CHG_IEOCI),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_PUMPX_DONEI),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_CHG_TREG_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_BAT_OVP_ADC_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_TYPEC_OTP_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_ADC_WAKEUP_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_ADC_DONEI),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_BST_BATUVI),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_BST_VBUSOVI),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_BST_OLPI),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_ATTACH_I),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_DETACH_I),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_QC30_STPDONE),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_QC_VBUSDET_DONE),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_HVDCP_DET),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_CHGDETI),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_DCDTI),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_FOD_DONE_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_FOD_OV_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_CHRDET_UVP_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_CHRDET_OVP_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_CHRDET_EXT_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_FOD_LR_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_FOD_HR_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_FOD_DISCHG_FAIL_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_USBID_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_APWDTRST_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_EN_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_QONB_RST_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_MRSTB_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_OTP_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_VDDAOV_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_SYSUV_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_FLED_STRBPIN_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_FLED_TORPIN_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_FLED_TX_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_FLED_LVF_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_FLED2_SHORT_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_FLED1_SHORT_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_FLED2_STRB_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_FLED1_STRB_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_FLED2_STRB_TO_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_FLED1_STRB_TO_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_FLED2_TOR_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_FLED1_TOR_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_BUCK1_PGB_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_BUCK1_OC_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_BUCK1_OV_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_BUCK1_UV_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_BUCK2_PGB_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_BUCK2_OC_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_BUCK2_OV_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_BUCK2_UV_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_LDO1_OC_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_LDO2_OC_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_LDO3_OC_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_LDO5_OC_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_LDO6_OC_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_LDO7_OC_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_LDO1_PGB_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_LDO2_PGB_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_LDO3_PGB_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_LDO5_PGB_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_LDO6_PGB_EVT),
-> >> > +     MT6360_REGMAP_IRQ_REG(MT6360_LDO7_PGB_EVT),
-> >> > +};
-> >> > +
-> >> > +static int mt6360_pmu_handle_post_irq(void *irq_drv_data)
-> >> > +{
-> >> > +     struct mt6360_pmu_info *mpi = irq_drv_data;
-> >> > +
-> >> > +     return regmap_update_bits(mpi->regmap,
-> >> > +             MT6360_PMU_IRQ_SET, MT6360_IRQ_RETRIG,
-> >> > MT6360_IRQ_RETRIG);
-> >> > +}
-> >> > +
-> >> > +static const struct regmap_irq_chip mt6360_pmu_irq_chip = {
-> >> > +     .irqs = mt6360_pmu_irqs,
-> >> > +     .num_irqs = ARRAY_SIZE(mt6360_pmu_irqs),
-> >> > +     .num_regs = MT6360_PMU_IRQ_REGNUM,
-> >> > +     .mask_base = MT6360_PMU_CHG_MASK1,
-> >> > +     .status_base = MT6360_PMU_CHG_IRQ1,
-> >> > +     .ack_base = MT6360_PMU_CHG_IRQ1,
-> >> > +     .init_ack_masked = true,
-> >> > +     .use_ack = true,
-> >> > +     .handle_post_irq = mt6360_pmu_handle_post_irq,
-> >> > +};
-> >> > +
-> >> > +static const struct regmap_config mt6360_pmu_regmap_config = {
-> >> > +     .reg_bits = 8,
-> >> > +     .val_bits = 8,
-> >> > +     .max_register = MT6360_PMU_MAXREG,
-> >> > +};
-> >> > +
-> >> > +static const struct resource mt6360_adc_resources[] = {
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_ADC_DONEI, "adc_donei"),
-> >> > +};
-> >> > +
-> >> > +static const struct resource mt6360_chg_resources[] = {
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_CHG_TREG_EVT, "chg_treg_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_PWR_RDY_EVT, "pwr_rdy_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_CHG_BATSYSUV_EVT,
-> >> > "chg_batsysuv_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_CHG_VSYSUV_EVT, "chg_vsysuv_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_CHG_VSYSOV_EVT, "chg_vsysov_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_CHG_VBATOV_EVT, "chg_vbatov_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_CHG_VBUSOV_EVT, "chg_vbusov_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_CHG_AICCMEASL, "chg_aiccmeasl"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_WDTMRI, "wdtmri"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_CHG_RECHGI, "chg_rechgi"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_CHG_TERMI, "chg_termi"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_CHG_IEOCI, "chg_ieoci"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_PUMPX_DONEI, "pumpx_donei"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_ATTACH_I, "attach_i"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_CHRDET_EXT_EVT, "chrdet_ext_evt"),
-> >> > +};
-> >> > +
-> >> > +static const struct resource mt6360_led_resources[] = {
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_FLED_CHG_VINOVP_EVT,
-> >> > "fled_chg_vinovp_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_FLED_LVF_EVT, "fled_lvf_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_FLED2_SHORT_EVT, "fled2_short_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_FLED1_SHORT_EVT, "fled1_short_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_FLED2_STRB_TO_EVT,
-> >> > "fled2_strb_to_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_FLED1_STRB_TO_EVT,
-> >> > "fled1_strb_to_evt"),
-> >> > +};
-> >> > +
-> >> > +static const struct resource mt6360_pmic_resources[] = {
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_BUCK1_PGB_EVT, "buck1_pgb_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_BUCK1_OC_EVT, "buck1_oc_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_BUCK1_OV_EVT, "buck1_ov_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_BUCK1_UV_EVT, "buck1_uv_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_BUCK2_PGB_EVT, "buck2_pgb_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_BUCK2_OC_EVT, "buck2_oc_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_BUCK2_OV_EVT, "buck2_ov_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_BUCK2_UV_EVT, "buck2_uv_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_LDO6_OC_EVT, "ldo6_oc_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_LDO7_OC_EVT, "ldo7_oc_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_LDO6_PGB_EVT, "ldo6_pgb_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_LDO7_PGB_EVT, "ldo7_pgb_evt"),
-> >> > +};
-> >> > +
-> >> > +static const struct resource mt6360_ldo_resources[] = {
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_LDO1_OC_EVT, "ldo1_oc_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_LDO2_OC_EVT, "ldo2_oc_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_LDO3_OC_EVT, "ldo3_oc_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_LDO5_OC_EVT, "ldo5_oc_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_LDO1_PGB_EVT, "ldo1_pgb_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_LDO2_PGB_EVT, "ldo2_pgb_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_LDO3_PGB_EVT, "ldo3_pgb_evt"),
-> >> > +     DEFINE_RES_IRQ_NAMED(MT6360_LDO5_PGB_EVT, "ldo5_pgb_evt"),
-> >> > +};
-> >> > +
-> >> > +static const struct mfd_cell mt6360_devs[] = {
-> >> > +     MT6360_MFD_CELL(mt6360_adc),
-> >> > +     MT6360_MFD_CELL(mt6360_chg),
-> >> > +     MT6360_MFD_CELL(mt6360_led),
-> >> > +     MT6360_MFD_CELL(mt6360_pmic),
-> >> > +     MT6360_MFD_CELL(mt6360_ldo),
-> >> > +     /* tcpc dev */
-> >> > +     {
-> >> > +             .name = "mt6360_tcpc",
-> >> > +             .of_compatible = "mediatek,mt6360_tcpc",
-> >>
-> >> There is a macro for this too (OF_MFD_CELL())
-> >>
-> >
-> > ACK
-> >
-> >> > +     },
-> >> > +};
-> >> > +
-> >> > +static const unsigned short mt6360_slave_addr[MT6360_SLAVE_MAX] = {
-> >> > +     MT6360_PMU_SLAVEID,
-> >> > +     MT6360_PMIC_SLAVEID,
-> >> > +     MT6360_LDO_SLAVEID,
-> >> > +     MT6360_TCPC_SLAVEID,
-> >> > +};
-> >> > +
-> >> > +static int mt6360_pmu_probe(struct i2c_client *client,
-> >> > +                         const struct i2c_device_id *id)
-> >>
-> >> If you use .probe_new (see below) you can omit the 'id' param.
-> >>
-> >
-> > ACK
-> >
-> >> > +{
-> >> > +     struct mt6360_pmu_info *mpi;
-> >>
-> >> We normally call this ddata.
-> >>
-> >
-> > ACK
-> >
-> >> > +     unsigned int reg_data = 0;
-> >> > +     int i, ret;
-> >> > +
-> >> > +     mpi = devm_kzalloc(&client->dev, sizeof(*mpi), GFP_KERNEL);
-> >> > +     if (!mpi)
-> >> > +             return -ENOMEM;
-> >>
-> >> '\n' here.
-> >>
-> >
-> > ACK
-> >
-> >> > +     mpi->dev = &client->dev;
-> >> > +     i2c_set_clientdata(client, mpi);
-> >> > +
-> >> > +     /* regmap regiser */
-> >>
-> >> This comment is spelt incorrectly and doesn't really add anything.
-> >>
-> >
-> > ACK
-> >
-> >> > +     mpi->regmap = devm_regmap_init_i2c(client,
-> >> > &mt6360_pmu_regmap_config);
-> >> > +     if (IS_ERR(mpi->regmap)) {
-> >> > +             dev_err(&client->dev, "regmap register fail\n");
-> >>
-> >> "Failed to register regmap"
-> >>
-> >
-> > ACK
-> >
-> >> > +             return PTR_ERR(mpi->regmap);
-> >> > +     }
-> >>
-> >> '\n' here.
-> >>
-> >
-> > ACK
-> >
-> >> > +     /* chip id check */
-> >>
-> >> Again, the code is pretty obvious.
-> >>
-> >
-> > ACK
-> >
-> >> > +     ret = regmap_read(mpi->regmap, MT6360_PMU_DEV_INFO, &reg_data);
-> >> > +     if (ret < 0) {
-> >> > +             dev_err(&client->dev, "device not found\n");
-> >>
-> >> "Device not found"
-> >>
-> >
-> > ACK
-> >
-> >> > +             return ret;
-> >> > +     }
-> >>
-> >> '\n' here.
-> >>
-> >
-> > ACK
-> >
-> >> > +     if ((reg_data & CHIP_VEN_MASK) != CHIP_VEN_MT6360) {
-> >> > +             dev_err(&client->dev, "not mt6360 chip\n");
-> >>
-> >> "Device not supported"
-> >>
-> >
-> > ACK
-> >
-> >> > +             return -ENODEV;
-> >> > +     }
-> >>
-> >> '\n' here.
-> >>
-> >
-> > ACK
-> >
-> >> > +     mpi->chip_rev = reg_data & CHIP_REV_MASK;
-> >>
-> >> Do this above the check, then do
-> >>
-> >>   (mpi->chip_rev != CHIP_VEN_MT6360)
-> >>
-> >> ... above.
-> >>
-> >
-> > ACK
-> >
-> >> > +     /* irq register */
-> >>
-> >> Please remove all of these comments.
-> >>
-> >
-> > ACK
-> >
-> >> > +     memcpy(&mpi->irq_chip, &mt6360_pmu_irq_chip,
-> >> > sizeof(mpi->irq_chip));
-> >>
-> >> Why do we need to make a copy of it?
-> >>
-> >
-> > consider of using mutiple mt6360 chips, we can seperate diff i2c
-> > irq_chip.name by device_name originally
-> > but we can't find silimar case by overview other mfd driver
-> > we will delete this
-> >
-> >> > +     mpi->irq_chip.name = dev_name(&client->dev);
-> >>
-> >> We already know the name.  Why do we need to do this dynamically?
-> >>
-> >
-> > same as above
-> >
-> >> > +     mpi->irq_chip.irq_drv_data = mpi;
-> >>
-> >> We already saved ddata.  Why do we need to save it here as well?
-> >>
-> >
-> > we implement ops ".handle_post_irq" for irq retrigger when irq stuck keep
-> > low
-> >
-> >> > +     ret = devm_regmap_add_irq_chip(&client->dev, mpi->regmap,
-> >> > client->irq,
-> >> > +                                    IRQF_TRIGGER_FALLING, 0,
-> >> > &mpi->irq_chip,
-> >> > +                                    &mpi->irq_data);
-> >> > +     if (ret < 0) {
-> >>
-> >> Is (ret > 0) valid?
-> >>
-> >
-> > we consider mt6360 driver need add irq_chip for full functionality
-> >
-> >> > +             dev_err(&client->dev, "regmap irq chip add fail\n");
-> >>
-> >> "Failed to add Regmap IRQ Chip"
-> >>
-> >
-> > ACK
-> >
-> >> > +             return ret;
-> >> > +     }
-> >>
-> >> '\n' here.
-> >>
-> >
-> > ACK
-> >
-> >> > +     /* new i2c slave device */
-> >> > +     for (i = 0; i < MT6360_SLAVE_MAX; i++) {
-> >> > +             if (mt6360_slave_addr[i] == client->addr) {
-> >> > +                     mpi->i2c[i] = client;
-> >> > +                     continue;
-> >> > +             }
-> >> > +             mpi->i2c[i] = i2c_new_dummy(client->adapter,
-> >> > +                                         mt6360_slave_addr[i]);
-> >> > +             if (!mpi->i2c[i]) {
-> >> > +                     dev_err(&client->dev, "new i2c dev [%d] fail\n",
-> >> > i);
-> >> > +                     ret = -ENODEV;
-> >> > +                     goto out;
-> >> > +             }
-> >> > +             i2c_set_clientdata(mpi->i2c[i], mpi);
-> >> > +     }
-> >>
-> >> This doesn't look right to me.
-> >>
-> >> Wolfram, would you be kind enough to take a look?
-> >>
-> >> '\n' here.
-> >>
-> >
-> > ACK
-> >
-> >> > +     /* mfd cell register */
-> >> > +     ret = devm_mfd_add_devices(&client->dev, PLATFORM_DEVID_AUTO,
-> >> > +                                mt6360_devs, ARRAY_SIZE(mt6360_devs),
-> >> > NULL,
-> >> > +                                0,
-> >> > regmap_irq_get_domain(mpi->irq_data));
-> >> > +     if (ret < 0) {
-> >> > +             dev_err(&client->dev, "mfd add cells fail\n");
-> >> > +             goto out;
-> >> > +     }
-> >>
-> >> '\n' here.
-> >>
-> >
-> > ACK
-> >
-> >> > +     dev_info(&client->dev, "Successfully probed\n");
-> >>
-> >> Please remove this line.  It doesn't provide anything.
-> >>
-> >
-> > ACK
-> >
-> >> > +     return 0;
-> >> > +out:
-> >> > +     while (--i >= 0) {
-> >> > +             if (mpi->i2c[i]->addr == client->addr)
-> >> > +                     continue;
-> >> > +             i2c_unregister_device(mpi->i2c[i]);
-> >> > +     }
-> >>
-> >> '\n' here.
-> >>
-> >
-> > ACK
-> >
-> >> > +     return ret;
-> >> > +}
-> >> > +
-> >> > +static int mt6360_pmu_remove(struct i2c_client *client)
-> >> > +{
-> >> > +     struct mt6360_pmu_info *mpi = i2c_get_clientdata(client);
-> >> > +     int i;
-> >> > +
-> >> > +     for (i = 0; i < MT6360_SLAVE_MAX; i++) {
-> >> > +             if (mpi->i2c[i]->addr == client->addr)
-> >> > +                     continue;
-> >> > +             i2c_unregister_device(mpi->i2c[i]);
-> >> > +     }
-> >>
-> >> '\n' here.
-> >>
-> >
-> > ACK
-> >
-> >> > +     return 0;
-> >> > +}
-> >> > +
-> >> > +static int __maybe_unused mt6360_pmu_suspend(struct device *dev)
-> >> > +{
-> >> > +     struct i2c_client *i2c = to_i2c_client(dev);
-> >> > +
-> >> > +     if (device_may_wakeup(dev))
-> >> > +             enable_irq_wake(i2c->irq);
-> >>
-> >> '\n' here.
-> >>
-> >
-> > ACK
-> >
-> >> > +     return 0;
-> >> > +}
-> >> > +
-> >> > +static int __maybe_unused mt6360_pmu_resume(struct device *dev)
-> >> > +{
-> >> > +
-> >> > +     struct i2c_client *i2c = to_i2c_client(dev);
-> >> > +
-> >> > +     if (device_may_wakeup(dev))
-> >> > +             disable_irq_wake(i2c->irq);
-> >>
-> >> '\n' here.
-> >>
-> >
-> > ACK
-> >
-> >> > +     return 0;
-> >> > +}
-> >> > +
-> >> > +static SIMPLE_DEV_PM_OPS(mt6360_pmu_pm_ops,
-> >> > +                      mt6360_pmu_suspend, mt6360_pmu_resume);
-> >> > +
-> >> > +static const struct of_device_id __maybe_unused mt6360_pmu_of_id[] = {
-> >> > +     { .compatible = "mediatek,mt6360_pmu", },
-> >> > +     {},
-> >> > +};
-> >> > +MODULE_DEVICE_TABLE(of, mt6360_pmu_of_id);
-> >> > +
-> >> > +static const struct i2c_device_id mt6360_pmu_id[] = {
-> >> > +     { "mt6360_pmu", 0 },
-> >> > +     {},
-> >> > +};
-> >> > +MODULE_DEVICE_TABLE(i2c, mt6360_pmu_id);
-> >>
-> >> If you use .probe_new (see below, you can remove this table.
-> >>
-> >
-> > ACK
-> >
-> >> > +static struct i2c_driver mt6360_pmu_driver = {
-> >> > +     .driver = {
-> >> > +             .name = "mt6360_pmu",
-> >> > +             .owner = THIS_MODULE,
-> >>
-> >> This is no longer required.
-> >>
-> >
-> > ACK
-> >
-> >> > +             .pm = &mt6360_pmu_pm_ops,
-> >> > +             .of_match_table = of_match_ptr(mt6360_pmu_of_id),
-> >> > +     },
-> >> > +     .probe = mt6360_pmu_probe,
-> >>
-> >> Use .probe_new here.
-> >>
-> >
-> > ACK
-> >
-> >> > +     .remove = mt6360_pmu_remove,
-> >> > +     .id_table = mt6360_pmu_id,
-> >> > +};
-> >> > +module_i2c_driver(mt6360_pmu_driver);
-> >> > +
-> >> > +MODULE_AUTHOR("CY_Huang <cy_huang@richtek.com>");
-> >> > +MODULE_DESCRIPTION("MT6360 PMU I2C Driver");
-> >> > +MODULE_LICENSE("GPL");
-> >> > +MODULE_VERSION("1.0.0");
-> >> > diff --git a/include/linux/mfd/mt6360-private.h
-> >> > b/include/linux/mfd/mt6360-private.h
-> >> > new file mode 100644
-> >> > index 0000000..b07b3d9
-> >> > --- /dev/null
-> >> > +++ b/include/linux/mfd/mt6360-private.h
-> >>
-> >> Why do you need 2 header files?
-> >>
-> >
-> > According to our architecture as attachment,
-> > mt6360 have 4 i2c slave address for different parts
-> > so we set whole register table in mt6360-private.h, it will be
-> > included by other modules
-> > we will delete it next patch
-> > and we will add until we use it
-> >
-> >> > @@ -0,0 +1,279 @@
-> >> > +/* SPDX-License-Identifier: GPL-2.0 */
-> >> > +/*
-> >> > + * Copyright (c) 2019 MediaTek Inc.
-> >> > + */
-> >> > +
-> >> > +#ifndef __MT6360_PRIVATE_H__
-> >> > +#define __MT6360_PRIVATE_H__
-> >>
-> >> __MFD_MT6360_H__
-> >>
-> >> > +#include <linux/interrupt.h>
-> >> > +
-> >> > +/* PMU register defininition */
-> >> > +#define MT6360_PMU_DEV_INFO                  (0x00)
-> >> > +#define MT6360_PMU_CORE_CTRL1                        (0x01)
-> >> > +#define MT6360_PMU_RST1                              (0x02)
-> >> > +#define MT6360_PMU_CRCEN                     (0x03)
-> >> > +#define MT6360_PMU_RST_PAS_CODE1             (0x04)
-> >> > +#define MT6360_PMU_RST_PAS_CODE2             (0x05)
-> >> > +#define MT6360_PMU_CORE_CTRL2                        (0x06)
-> >> > +#define MT6360_PMU_TM_PAS_CODE1                      (0x07)
-> >> > +#define MT6360_PMU_TM_PAS_CODE2                      (0x08)
-> >> > +#define MT6360_PMU_TM_PAS_CODE3                      (0x09)
-> >> > +#define MT6360_PMU_TM_PAS_CODE4                      (0x0A)
-> >> > +#define MT6360_PMU_IRQ_IND                   (0x0B)
-> >> > +#define MT6360_PMU_IRQ_MASK                  (0x0C)
-> >> > +#define MT6360_PMU_IRQ_SET                   (0x0D)
-> >> > +#define MT6360_PMU_SHDN_CTRL                 (0x0E)
-> >> > +#define MT6360_PMU_TM_INF                    (0x0F)
-> >> > +#define MT6360_PMU_I2C_CTRL                  (0x10)
-> >> > +#define MT6360_PMU_CHG_CTRL1                 (0x11)
-> >> > +#define MT6360_PMU_CHG_CTRL2                 (0x12)
-> >> > +#define MT6360_PMU_CHG_CTRL3                 (0x13)
-> >> > +#define MT6360_PMU_CHG_CTRL4                 (0x14)
-> >> > +#define MT6360_PMU_CHG_CTRL5                 (0x15)
-> >> > +#define MT6360_PMU_CHG_CTRL6                 (0x16)
-> >> > +#define MT6360_PMU_CHG_CTRL7                 (0x17)
-> >> > +#define MT6360_PMU_CHG_CTRL8                 (0x18)
-> >> > +#define MT6360_PMU_CHG_CTRL9                 (0x19)
-> >> > +#define MT6360_PMU_CHG_CTRL10                        (0x1A)
-> >> > +#define MT6360_PMU_CHG_CTRL11                        (0x1B)
-> >> > +#define MT6360_PMU_CHG_CTRL12                        (0x1C)
-> >> > +#define MT6360_PMU_CHG_CTRL13                        (0x1D)
-> >> > +#define MT6360_PMU_CHG_CTRL14                        (0x1E)
-> >> > +#define MT6360_PMU_CHG_CTRL15                        (0x1F)
-> >> > +#define MT6360_PMU_CHG_CTRL16                        (0x20)
-> >> > +#define MT6360_PMU_CHG_AICC_RESULT           (0x21)
-> >> > +#define MT6360_PMU_DEVICE_TYPE                       (0x22)
-> >> > +#define MT6360_PMU_QC_CONTROL1                       (0x23)
-> >> > +#define MT6360_PMU_QC_CONTROL2                       (0x24)
-> >> > +#define MT6360_PMU_QC30_CONTROL1             (0x25)
-> >> > +#define MT6360_PMU_QC30_CONTROL2             (0x26)
-> >> > +#define MT6360_PMU_USB_STATUS1                       (0x27)
-> >> > +#define MT6360_PMU_QC_STATUS1                        (0x28)
-> >> > +#define MT6360_PMU_QC_STATUS2                        (0x29)
-> >> > +#define MT6360_PMU_CHG_PUMP                  (0x2A)
-> >> > +#define MT6360_PMU_CHG_CTRL17                        (0x2B)
-> >> > +#define MT6360_PMU_CHG_CTRL18                        (0x2C)
-> >> > +#define MT6360_PMU_CHRDET_CTRL1                      (0x2D)
-> >> > +#define MT6360_PMU_CHRDET_CTRL2                      (0x2E)
-> >> > +#define MT6360_PMU_DPDN_CTRL                 (0x2F)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL1          (0x30)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL2          (0x31)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL3          (0x32)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL4          (0x33)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL5          (0x34)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL6          (0x35)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL7          (0x36)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL8          (0x37)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL9          (0x38)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL10         (0x39)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL11         (0x3A)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL12         (0x3B)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL13         (0x3C)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL14         (0x3D)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL15         (0x3E)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL16         (0x3F)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL17         (0x40)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL18         (0x41)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL19         (0x42)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL20         (0x43)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL21         (0x44)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL22         (0x45)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL23         (0x46)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL24         (0x47)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL25         (0x48)
-> >> > +#define MT6360_PMU_BC12_CTRL                 (0x49)
-> >> > +#define MT6360_PMU_CHG_STAT                  (0x4A)
-> >> > +#define MT6360_PMU_RESV1                     (0x4B)
-> >> > +#define MT6360_PMU_TYPEC_OTP_TH_SEL_CODEH    (0x4E)
-> >> > +#define MT6360_PMU_TYPEC_OTP_TH_SEL_CODEL    (0x4F)
-> >> > +#define MT6360_PMU_TYPEC_OTP_HYST_TH         (0x50)
-> >> > +#define MT6360_PMU_TYPEC_OTP_CTRL            (0x51)
-> >> > +#define MT6360_PMU_ADC_BAT_DATA_H            (0x52)
-> >> > +#define MT6360_PMU_ADC_BAT_DATA_L            (0x53)
-> >> > +#define MT6360_PMU_IMID_BACKBST_ON           (0x54)
-> >> > +#define MT6360_PMU_IMID_BACKBST_OFF          (0x55)
-> >> > +#define MT6360_PMU_ADC_CONFIG                        (0x56)
-> >> > +#define MT6360_PMU_ADC_EN2                   (0x57)
-> >> > +#define MT6360_PMU_ADC_IDLE_T                        (0x58)
-> >> > +#define MT6360_PMU_ADC_RPT_1                 (0x5A)
-> >> > +#define MT6360_PMU_ADC_RPT_2                 (0x5B)
-> >> > +#define MT6360_PMU_ADC_RPT_3                 (0x5C)
-> >> > +#define MT6360_PMU_ADC_RPT_ORG1                      (0x5D)
-> >> > +#define MT6360_PMU_ADC_RPT_ORG2                      (0x5E)
-> >> > +#define MT6360_PMU_BAT_OVP_TH_SEL_CODEH              (0x5F)
-> >> > +#define MT6360_PMU_BAT_OVP_TH_SEL_CODEL              (0x60)
-> >> > +#define MT6360_PMU_CHG_CTRL19                        (0x61)
-> >> > +#define MT6360_PMU_VDDASUPPLY                        (0x62)
-> >> > +#define MT6360_PMU_BC12_MANUAL                       (0x63)
-> >> > +#define MT6360_PMU_CHGDET_FUNC                       (0x64)
-> >> > +#define MT6360_PMU_FOD_CTRL                  (0x65)
-> >> > +#define MT6360_PMU_CHG_CTRL20                        (0x66)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL26         (0x67)
-> >> > +#define MT6360_PMU_CHG_HIDDEN_CTRL27         (0x68)
-> >> > +#define MT6360_PMU_RESV2                     (0x69)
-> >> > +#define MT6360_PMU_USBID_CTRL1                       (0x6D)
-> >> > +#define MT6360_PMU_USBID_CTRL2                       (0x6E)
-> >> > +#define MT6360_PMU_USBID_CTRL3                       (0x6F)
-> >> > +#define MT6360_PMU_FLED_CFG                  (0x70)
-> >> > +#define MT6360_PMU_RESV3                     (0x71)
-> >> > +#define MT6360_PMU_FLED1_CTRL                        (0x72)
-> >> > +#define MT6360_PMU_FLED_STRB_CTRL            (0x73)
-> >> > +#define MT6360_PMU_FLED1_STRB_CTRL2          (0x74)
-> >> > +#define MT6360_PMU_FLED1_TOR_CTRL            (0x75)
-> >> > +#define MT6360_PMU_FLED2_CTRL                        (0x76)
-> >> > +#define MT6360_PMU_RESV4                     (0x77)
-> >> > +#define MT6360_PMU_FLED2_STRB_CTRL2          (0x78)
-> >> > +#define MT6360_PMU_FLED2_TOR_CTRL            (0x79)
-> >> > +#define MT6360_PMU_FLED_VMIDTRK_CTRL1                (0x7A)
-> >> > +#define MT6360_PMU_FLED_VMID_RTM             (0x7B)
-> >> > +#define MT6360_PMU_FLED_VMIDTRK_CTRL2                (0x7C)
-> >> > +#define MT6360_PMU_FLED_PWSEL                        (0x7D)
-> >> > +#define MT6360_PMU_FLED_EN                   (0x7E)
-> >> > +#define MT6360_PMU_FLED_Hidden1                      (0x7F)
-> >> > +#define MT6360_PMU_RGB_EN                    (0x80)
-> >> > +#define MT6360_PMU_RGB1_ISNK                 (0x81)
-> >> > +#define MT6360_PMU_RGB2_ISNK                 (0x82)
-> >> > +#define MT6360_PMU_RGB3_ISNK                 (0x83)
-> >> > +#define MT6360_PMU_RGB_ML_ISNK                       (0x84)
-> >> > +#define MT6360_PMU_RGB1_DIM                  (0x85)
-> >> > +#define MT6360_PMU_RGB2_DIM                  (0x86)
-> >> > +#define MT6360_PMU_RGB3_DIM                  (0x87)
-> >> > +#define MT6360_PMU_RESV5                     (0x88)
-> >> > +#define MT6360_PMU_RGB12_Freq                        (0x89)
-> >> > +#define MT6360_PMU_RGB34_Freq                        (0x8A)
-> >> > +#define MT6360_PMU_RGB1_Tr                   (0x8B)
-> >> > +#define MT6360_PMU_RGB1_Tf                   (0x8C)
-> >> > +#define MT6360_PMU_RGB1_TON_TOFF             (0x8D)
-> >> > +#define MT6360_PMU_RGB2_Tr                   (0x8E)
-> >> > +#define MT6360_PMU_RGB2_Tf                   (0x8F)
-> >> > +#define MT6360_PMU_RGB2_TON_TOFF             (0x90)
-> >> > +#define MT6360_PMU_RGB3_Tr                   (0x91)
-> >> > +#define MT6360_PMU_RGB3_Tf                   (0x92)
-> >> > +#define MT6360_PMU_RGB3_TON_TOFF             (0x93)
-> >> > +#define MT6360_PMU_RGB_Hidden_CTRL1          (0x94)
-> >> > +#define MT6360_PMU_RGB_Hidden_CTRL2          (0x95)
-> >> > +#define MT6360_PMU_RESV6                     (0x97)
-> >> > +#define MT6360_PMU_SPARE1                    (0x9A)
-> >> > +#define MT6360_PMU_SPARE2                    (0xA0)
-> >> > +#define MT6360_PMU_SPARE3                    (0xB0)
-> >> > +#define MT6360_PMU_SPARE4                    (0xC0)
-> >> > +#define MT6360_PMU_CHG_IRQ1                  (0xD0)
-> >> > +#define MT6360_PMU_CHG_IRQ2                  (0xD1)
-> >> > +#define MT6360_PMU_CHG_IRQ3                  (0xD2)
-> >> > +#define MT6360_PMU_CHG_IRQ4                  (0xD3)
-> >> > +#define MT6360_PMU_CHG_IRQ5                  (0xD4)
-> >> > +#define MT6360_PMU_CHG_IRQ6                  (0xD5)
-> >> > +#define MT6360_PMU_QC_IRQ                    (0xD6)
-> >> > +#define MT6360_PMU_FOD_IRQ                   (0xD7)
-> >> > +#define MT6360_PMU_BASE_IRQ                  (0xD8)
-> >> > +#define MT6360_PMU_FLED_IRQ1                 (0xD9)
-> >> > +#define MT6360_PMU_FLED_IRQ2                 (0xDA)
-> >> > +#define MT6360_PMU_RGB_IRQ                   (0xDB)
-> >> > +#define MT6360_PMU_BUCK1_IRQ                 (0xDC)
-> >> > +#define MT6360_PMU_BUCK2_IRQ                 (0xDD)
-> >> > +#define MT6360_PMU_LDO_IRQ1                  (0xDE)
-> >> > +#define MT6360_PMU_LDO_IRQ2                  (0xDF)
-> >> > +#define MT6360_PMU_CHG_STAT1                 (0xE0)
-> >> > +#define MT6360_PMU_CHG_STAT2                 (0xE1)
-> >> > +#define MT6360_PMU_CHG_STAT3                 (0xE2)
-> >> > +#define MT6360_PMU_CHG_STAT4                 (0xE3)
-> >> > +#define MT6360_PMU_CHG_STAT5                 (0xE4)
-> >> > +#define MT6360_PMU_CHG_STAT6                 (0xE5)
-> >> > +#define MT6360_PMU_QC_STAT                   (0xE6)
-> >> > +#define MT6360_PMU_FOD_STAT                  (0xE7)
-> >> > +#define MT6360_PMU_BASE_STAT                 (0xE8)
-> >> > +#define MT6360_PMU_FLED_STAT1                        (0xE9)
-> >> > +#define MT6360_PMU_FLED_STAT2                        (0xEA)
-> >> > +#define MT6360_PMU_RGB_STAT                  (0xEB)
-> >> > +#define MT6360_PMU_BUCK1_STAT                        (0xEC)
-> >> > +#define MT6360_PMU_BUCK2_STAT                        (0xED)
-> >> > +#define MT6360_PMU_LDO_STAT1                 (0xEE)
-> >> > +#define MT6360_PMU_LDO_STAT2                 (0xEF)
-> >> > +#define MT6360_PMU_CHG_MASK1                 (0xF0)
-> >> > +#define MT6360_PMU_CHG_MASK2                 (0xF1)
-> >> > +#define MT6360_PMU_CHG_MASK3                 (0xF2)
-> >> > +#define MT6360_PMU_CHG_MASK4                 (0xF3)
-> >> > +#define MT6360_PMU_CHG_MASK5                 (0xF4)
-> >> > +#define MT6360_PMU_CHG_MASK6                 (0xF5)
-> >> > +#define MT6360_PMU_QC_MASK                   (0xF6)
-> >> > +#define MT6360_PMU_FOD_MASK                  (0xF7)
-> >> > +#define MT6360_PMU_BASE_MASK                 (0xF8)
-> >> > +#define MT6360_PMU_FLED_MASK1                        (0xF9)
-> >> > +#define MT6360_PMU_FLED_MASK2                        (0xFA)
-> >> > +#define MT6360_PMU_FAULTB_MASK                       (0xFB)
-> >> > +#define MT6360_PMU_BUCK1_MASK                        (0xFC)
-> >> > +#define MT6360_PMU_BUCK2_MASK                        (0xFD)
-> >> > +#define MT6360_PMU_LDO_MASK1                 (0xFE)
-> >> > +#define MT6360_PMU_LDO_MASK2                 (0xFF)
-> >> > +#define MT6360_PMU_MAXREG                    (MT6360_PMU_LDO_MASK2)
-> >> > +
-> >> > +
-> >> > +/* MT6360_PMU_IRQ_SET */
-> >> > +#define MT6360_PMU_IRQ_REGNUM        (MT6360_PMU_LDO_IRQ2 -
-> >> > MT6360_PMU_CHG_IRQ1 + 1)
-> >> > +#define MT6360_IRQ_RETRIG    BIT(2)
-> >> > +
-> >> > +#define CHIP_VEN_MASK                                (0xF0)
-> >> > +#define CHIP_VEN_MT6360                              (0x50)
-> >> > +#define CHIP_REV_MASK                                (0x0F)
-> >> > +
-> >> > +/* IRQ definitions */
-> >>
-> >> Remove this please.
-> >>
-> >> > +struct mt6360_pmu_irq_desc {
-> >> > +     const char *name;
-> >> > +     irq_handler_t irq_handler;
-> >> > +};
-> >>
-> >> Where is this used?
-> >>
-> >> > +#define  MT6360_DT_VALPROP(name, type) \
-> >> > +                     {#name, offsetof(type, name)}
-> >>
-> >> Where is this used?
-> >>
-> >> > +struct mt6360_val_prop {
-> >> > +     const char *name;
-> >> > +     size_t offset;
-> >> > +};
-> >> > +
-> >> > +static inline void mt6360_dt_parser_helper(struct device_node *np, void
-> >> > *data,
-> >> > +                                        const struct mt6360_val_prop
-> >> > *props,
-> >> > +                                        int prop_cnt)
-> >> > +{
-> >> > +     int i;
-> >> > +
-> >> > +     for (i = 0; i < prop_cnt; i++) {
-> >> > +             if (unlikely(!props[i].name))
-> >> > +                     continue;
-> >> > +             of_property_read_u32(np, props[i].name, data +
-> >> > props[i].offset);
-> >> > +     }
-> >> > +}
-> >>
-> >> What are you using this for?  Why is the standard API not sufficient?
-> >>
-> >> > +#define MT6360_PDATA_VALPROP(name, type, reg, shift, mask, func, base)
-> >> > \
-> >> > +                     {offsetof(type, name), reg, shift, mask, func,
-> >> > base}
-> >>
-> >> Where is this used?
-> >>
-> >> > +struct mt6360_pdata_prop {
-> >> > +     size_t offset;
-> >> > +     u8 reg;
-> >> > +     u8 shift;
-> >> > +     u8 mask;
-> >> > +     u32 (*transform)(u32 val);
-> >> > +     u8 base;
-> >> > +};
-> >> > +
-> >> > +static inline int mt6360_pdata_apply_helper(void *context, void
-> >> > *pdata,
-> >> > +                                        const struct mt6360_pdata_prop
-> >> > *prop,
-> >> > +                                        int prop_cnt)
-> >> > +{
-> >> > +     int i, ret;
-> >> > +     u32 val;
-> >> > +
-> >> > +     for (i = 0; i < prop_cnt; i++) {
-> >> > +             val = *(u32 *)(pdata + prop[i].offset);
-> >> > +             if (prop[i].transform)
-> >> > +                     val = prop[i].transform(val);
-> >> > +             val += prop[i].base;
-> >> > +             ret = regmap_update_bits(context,
-> >> > +                          prop[i].reg, prop[i].mask, val <<
-> >> > prop[i].shift);
-> >> > +             if (ret < 0)
-> >> > +                     return ret;
-> >> > +     }
-> >> > +     return 0;
-> >> > +}
-> >>
-> >> Where is this used?  What does it do?
-> >>
-> >> > +#endif /* __MT6360_PRIVATE_H__ */
-> >> > diff --git a/include/linux/mfd/mt6360.h b/include/linux/mfd/mt6360.h
-> >> > new file mode 100644
-> >> > index 0000000..ba2e80a
-> >> > --- /dev/null
-> >> > +++ b/include/linux/mfd/mt6360.h
-> >> > @@ -0,0 +1,33 @@
-> >> > +/* SPDX-License-Identifier: GPL-2.0 */
-> >> > +/*
-> >> > + * Copyright (c) 2019 MediaTek Inc.
-> >> > + */
-> >> > +
-> >> > +#ifndef __MT6360_H__
-> >> > +#define __MT6360_H__
-> >> > +
-> >> > +#include <linux/regmap.h>
-> >> > +
-> >> > +enum {
-> >> > +     MT6360_SLAVE_PMU = 0,
-> >> > +     MT6360_SLAVE_PMIC,
-> >> > +     MT6360_SLAVE_LDO,
-> >> > +     MT6360_SLAVE_TCPC,
-> >> > +     MT6360_SLAVE_MAX,
-> >> > +};
-> >> > +
-> >> > +#define MT6360_PMU_SLAVEID   (0x34)
-> >> > +#define MT6360_PMIC_SLAVEID  (0x1A)
-> >> > +#define MT6360_LDO_SLAVEID   (0x64)
-> >> > +#define MT6360_TCPC_SLAVEID  (0x4E)
-> >>
-> >> What kind of slave ID?  I2C address?
-> >>
-> >> > +struct mt6360_pmu_info {
-> >> > +     struct i2c_client *i2c[MT6360_SLAVE_MAX];
-> >> > +     struct device *dev;
-> >>
-> >> > +     struct regmap *regmap;
-> >> > +     struct regmap_irq_chip_data *irq_data;
-> >> > +     struct regmap_irq_chip irq_chip;
-> >> > +     unsigned int chip_rev;
-> >>
-> >> Why are you saving these?
-> >>
-> >> Where do you reuse them?
-> >>
-> >> > +};
-> >> > +
-> >> > +#endif /* __MT6360_H__ */
-> >>
-> >
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+SGkgUGFvbG8sDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUGFvbG8g
+Qm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNvbT4NCj4gU2VudDogV2VkbmVzZGF5LCBPY3RvYmVy
+IDE2LCAyMDE5IDM6MTAgUE0NCj4gVG86IEppYW55b25nIFd1IChBcm0gVGVjaG5vbG9neSBDaGlu
+YSkgPEppYW55b25nLld1QGFybS5jb20+Ow0KPiBuZXRkZXZAdmdlci5rZXJuZWwub3JnOyB5YW5n
+Ym8ubHVAbnhwLmNvbTsgam9obi5zdHVsdHpAbGluYXJvLm9yZzsNCj4gdGdseEBsaW51dHJvbml4
+LmRlOyBzZWFuLmouY2hyaXN0b3BoZXJzb25AaW50ZWwuY29tOyBtYXpAa2VybmVsLm9yZzsNCj4g
+cmljaGFyZGNvY2hyYW5AZ21haWwuY29tOyBNYXJrIFJ1dGxhbmQgPE1hcmsuUnV0bGFuZEBhcm0u
+Y29tPjsNCj4gd2lsbEBrZXJuZWwub3JnOyBTdXp1a2kgUG91bG9zZSA8U3V6dWtpLlBvdWxvc2VA
+YXJtLmNvbT4NCj4gQ2M6IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFybS1r
+ZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsNCj4ga3ZtYXJtQGxpc3RzLmNzLmNvbHVtYmlhLmVk
+dTsga3ZtQHZnZXIua2VybmVsLm9yZzsgU3RldmUgQ2FwcGVyDQo+IDxTdGV2ZS5DYXBwZXJAYXJt
+LmNvbT47IEthbHkgWGluIChBcm0gVGVjaG5vbG9neSBDaGluYSkNCj4gPEthbHkuWGluQGFybS5j
+b20+OyBKdXN0aW4gSGUgKEFybSBUZWNobm9sb2d5IENoaW5hKQ0KPiA8SnVzdGluLkhlQGFybS5j
+b20+OyBuZCA8bmRAYXJtLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2NSAyLzZdIHB0cDog
+UmVvcmdhbml6ZSBwdHBfa3ZtIG1vZHVsZXMgdG8gbWFrZSBpdA0KPiBhcmNoLWluZGVwZW5kZW50
+Lg0KPiANCj4gT24gMTUvMTAvMTkgMTI6NDgsIEppYW55b25nIFd1IHdyb3RlOg0KPiA+ICsJcmV0
+ID0ga3ZtX2FyY2hfcHRwX2luaXQoKTsNCj4gPiArCWlmICghcmV0KQ0KPiA+ICsJCXJldHVybiAt
+RU9QTk9UU1VQUDsNCj4gDQo+IFRoaXMgc2hvdWxkIGJlICJpZiAocmV0KSIuDQo+IA0KDQpZZWFo
+LCBJIGNoYW5nZSB0aGlzIGF0IHBhdGNoIDUvNiwgYnV0IG5lZWQgY2hhbmdlIGl0IGhlcmUuDQoN
+ClRoYW5rcw0KSmlhbnlvbmcNCg0KPiBQYW9sbw0KDQo=
