@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DC27D86C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 05:35:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93A1BD86B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 05:34:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391077AbfJPDey (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 15 Oct 2019 23:34:54 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46945 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403847AbfJPDdx (ORCPT
+        id S2403880AbfJPDd5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 15 Oct 2019 23:33:57 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:39188 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403850AbfJPDdy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Oct 2019 23:33:53 -0400
-Received: by mail-pg1-f196.google.com with SMTP id e15so5392352pgu.13
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 20:33:51 -0700 (PDT)
+        Tue, 15 Oct 2019 23:33:54 -0400
+Received: by mail-pl1-f195.google.com with SMTP id s17so10568868plp.6
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2019 20:33:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=mmGMZQlCR6mgA59oWS1f2Nk927cLgLJYDtngM3i0DmQ=;
-        b=uLkbH/AL8pOg7wAkq783Kv7Wli+S4S1fkwXvQK1hsdZz8RMDlTmkhaDVpBDw/mkoO4
-         zBTWunDgn6kC1ewqFmgahk4sa4DL54pMRwCKWKiTye44tvTXsqTp6tTiQkBUQj9ZE7WX
-         GFlecPGJ8qg9BS/QnlLtz2ltiSGv/DD9h60Nk3yaik8zidbbaF1cr9PvCiBb3MgexH43
-         QqgoYOBBbb1zOJvedENxG6asKQFB/TzSZAY/z04OpFQSmYX6mevmQD1DMHMmEQbMZkNW
-         uW8J/Od3UKmRiRZSjx5lUM8HYObGLRFjd7aVMByq0wV3Rc+Qi/ZvxrF44OpKP2tjyR0R
-         0vhw==
+        bh=XYmCRZgf8b2IcaP7U8709/cAdbizYn9CNcdmOHw1lAQ=;
+        b=M+j3OSTd6OWlEcLeVpxIyqrceKfn8UXv80YolW6qvBqb5QXn0w1KjA3liz7wZvvEPE
+         2jK1cjfZbCKO8KDuKnvDQSgiagX/xGJbc7M3TJeUvCEhRvnvCmaM3oJ+CzoqDax+5nDM
+         QhYddsNAxjU+dLqhpM1jwvYZ8hXoy1hMpKir6wed8XX+ayBTHSnLwfyIamo33p9a1xp2
+         PAFkXAZ1JRCrng+9VkPVr1NmtmNHaKLd8mlCKTBqHOgBYVb6XVr8pEhba5xWk52mw9+8
+         cSsq/uXaMZ29Xuo+Uq8QcmxDRCg2hc4P7CPQKjNqb4foAoUmOCclW3wtYJbBM6L5tf0X
+         OSTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=mmGMZQlCR6mgA59oWS1f2Nk927cLgLJYDtngM3i0DmQ=;
-        b=dNtecFIT+kwkj7f1rpyTQQ+IeCI1QJcXDyzzbr9i8X9axNej4nRT1ZFzkxJwHgFP3K
-         zOWSU79XpOyVrk961K5Y8W/RC8YLjZeZHhvD3JXcm3oJg7AUgm95Aki0HnwdnI5VTEUN
-         UlAFn+dOHsKib6lYONUAaHiEsye3MyX3TXhwn2Ft8J4J9rPadysgTKlrq1MoIJ1MIO7h
-         9SmIbwP7uXYhR4t1VushNG5GQ734MXBrpGwJCezeowIQ9Bo3lVpn2MTrk66Qe/z/q/pF
-         3uVRPWpOGcAZyx1qYlZY+kz8lO9ymJU6gRp0dDYczmQsSorDRYhIMy/VMY7VHYUmNH1w
-         DUUg==
-X-Gm-Message-State: APjAAAWWzteDCtzxqkVzTnUKqcokMCokusZt7Ehz6RpsDUrgzkvD8xfO
-        Dyy5NIbG+kX1AUNj8Jev3r5RGj0ETGg=
-X-Google-Smtp-Source: APXvYqws+YMGIIyJ9Z71j/JJfgVn5iU2tJXSMhO0gdaPFucclq53zCDhmjLlxCTNhG2oSTVllo97hA==
-X-Received: by 2002:a62:e206:: with SMTP id a6mr42231705pfi.64.1571196830986;
-        Tue, 15 Oct 2019 20:33:50 -0700 (PDT)
+        bh=XYmCRZgf8b2IcaP7U8709/cAdbizYn9CNcdmOHw1lAQ=;
+        b=MB0Mm8B7DQD4vrzh+SGUoWYty9GNNUJQVqw/ZxSg0tZHjgsqMZIwzSCxMtH8Xjfoqh
+         E6xRynuUyfu9Zyd0uVSuPHgqvp8R1h6BhAlAFeUNswQo7uEnFu306bjh2m86J+6KsKtY
+         l0zQvqMws8OWAoihybXYDthItyTATygjZg/6iHeBD/3QcWk/7H57jm5Av5QYLrQ0rxFv
+         4RfeuQZPY54ykC59dHeAY3bdXmAM1Pr8Eenxbs7vLvP3MYt0oRseXYuEHIOiAjmFBZZ2
+         LzXg32e6aRxuQxKe7PaXMI3oLOmaLhoFvxb0npN709dgT8asbOQQzbH1tQ9wer0YNTxW
+         UWvA==
+X-Gm-Message-State: APjAAAUuTqgmHetMNlFnx7yPhzTiYVdm/QgLbFXen+iz8pp47UC796qo
+        FLsQqogj8cDY0V88RHafgPCqoajD5xA=
+X-Google-Smtp-Source: APXvYqwtJMHOOIbFTp5wm3D/o0iQ0CChhCx+w+5i1GrQwEE/EFW7imOCSKYWaKsUoO/zz8QDQxMKfA==
+X-Received: by 2002:a17:902:a605:: with SMTP id u5mr37825346plq.140.1571196832574;
+        Tue, 15 Oct 2019 20:33:52 -0700 (PDT)
 Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id l23sm748356pjy.12.2019.10.15.20.33.49
+        by smtp.gmail.com with ESMTPSA id l23sm748356pjy.12.2019.10.15.20.33.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2019 20:33:50 -0700 (PDT)
+        Tue, 15 Oct 2019 20:33:51 -0700 (PDT)
 From:   John Stultz <john.stultz@linaro.org>
 To:     lkml <linux-kernel@vger.kernel.org>
 Cc:     John Stultz <john.stultz@linaro.org>,
@@ -61,9 +61,9 @@ Cc:     John Stultz <john.stultz@linaro.org>,
         Valentin Schneider <valentin.schneider@arm.com>,
         Jack Pham <jackp@codeaurora.org>, linux-usb@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [RFC][PATCH v3 05/11] usb: dwc3: Rework clock initialization to be more flexible
-Date:   Wed, 16 Oct 2019 03:33:34 +0000
-Message-Id: <20191016033340.1288-6-john.stultz@linaro.org>
+Subject: [RFC][PATCH v3 06/11] usb: dwc3: Rework resets initialization to be more flexible
+Date:   Wed, 16 Oct 2019 03:33:35 +0000
+Message-Id: <20191016033340.1288-7-john.stultz@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191016033340.1288-1-john.stultz@linaro.org>
 References: <20191016033340.1288-1-john.stultz@linaro.org>
@@ -72,16 +72,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The dwc3 core binding specifies three clocks:
-  ref, bus_early, and suspend
+The dwc3 core binding specifies one reset.
 
-which are all controlled in the driver together.
+However some variants of the hardware my not have more.
 
-However some variants of the hardware my not have all three clks
-
-So this patch reworks the reading of the clks from the dts to
-use devm_clk_bulk_get_all() will will fetch all the clocks
-specified in the dts together.
+So this patch reworks the reading of the resets to fetch all the
+resets specified in the dts together.
 
 This patch was reccomended by Rob Herring <Rob.Herring@arm.com>
 as an alternative to creating multiple bindings for each variant
@@ -109,61 +105,22 @@ Signed-off-by: John Stultz <john.stultz@linaro.org>
 v3: Rework dwc3 core rather then adding another dwc-of-simple
     binding.
 ---
- drivers/usb/dwc3/core.c | 20 +++++---------------
- 1 file changed, 5 insertions(+), 15 deletions(-)
+ drivers/usb/dwc3/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index a039e35ec7ad..4d4f1836b62c 100644
+index 4d4f1836b62c..ef52ffa5d6cb 100644
 --- a/drivers/usb/dwc3/core.c
 +++ b/drivers/usb/dwc3/core.c
-@@ -305,12 +305,6 @@ static int dwc3_core_soft_reset(struct dwc3 *dwc)
- 	return 0;
- }
+@@ -1442,7 +1442,7 @@ static int dwc3_probe(struct platform_device *pdev)
  
--static const struct clk_bulk_data dwc3_core_clks[] = {
--	{ .id = "ref" },
--	{ .id = "bus_early" },
--	{ .id = "suspend" },
--};
--
- /*
-  * dwc3_frame_length_adjustment - Adjusts frame length if required
-  * @dwc3: Pointer to our controller context structure
-@@ -1418,11 +1412,6 @@ static int dwc3_probe(struct platform_device *pdev)
- 	if (!dwc)
- 		return -ENOMEM;
+ 	dwc3_get_properties(dwc);
  
--	dwc->clks = devm_kmemdup(dev, dwc3_core_clks, sizeof(dwc3_core_clks),
--				 GFP_KERNEL);
--	if (!dwc->clks)
--		return -ENOMEM;
--
- 	dwc->dev = dev;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-@@ -1458,17 +1447,18 @@ static int dwc3_probe(struct platform_device *pdev)
+-	dwc->reset = devm_reset_control_get_optional_shared(dev, NULL);
++	dwc->reset = devm_reset_control_array_get(dev, true, true);
+ 	if (IS_ERR(dwc->reset))
  		return PTR_ERR(dwc->reset);
  
- 	if (dev->of_node) {
--		dwc->num_clks = ARRAY_SIZE(dwc3_core_clks);
--
--		ret = devm_clk_bulk_get(dev, dwc->num_clks, dwc->clks);
-+		ret = devm_clk_bulk_get_all(dev, &dwc->clks);
- 		if (ret == -EPROBE_DEFER)
- 			return ret;
- 		/*
- 		 * Clocks are optional, but new DT platforms should support all
- 		 * clocks as required by the DT-binding.
- 		 */
--		if (ret)
-+		if (ret < 0)
- 			dwc->num_clks = 0;
-+		else
-+			dwc->num_clks = ret;
-+
- 	}
- 
- 	ret = reset_control_deassert(dwc->reset);
 -- 
 2.17.1
 
