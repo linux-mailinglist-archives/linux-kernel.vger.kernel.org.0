@@ -2,111 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D72CD8C4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 11:13:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E43A4D8C50
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 11:15:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732456AbfJPJNg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 05:13:36 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:45015 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726893AbfJPJNf (ORCPT
+        id S2391601AbfJPJPQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 05:15:16 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:43093 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726893AbfJPJPQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 05:13:35 -0400
-Received: by mail-vs1-f66.google.com with SMTP id w195so15089297vsw.11
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2019 02:13:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ipeEMzhkOnzLxRec01CNpfZFCUUDDiAMbxb6yqTWXBA=;
-        b=YwhVp3jXvvqcOhfdfczRJh1EKr5+6HoKBHcZx6gHHVyTtb4HVI3D0NnVyZtvBbamze
-         2QAmeG0HKMlBTIPbmlhbXGyO2l1aHhfqqkouQCaZ37spLThYv+Rr3TYLnfiUIfXKAVBY
-         C+WLBNLi+I4um0rvG3aAolHwF+Q3M0izXm4O23fR90FmAF/+PzGvOg1v9Yq461wCXr3p
-         Zqy88yoPfQPXlPx0vnO6pULpXTRIt0ztVLhQrcA2aha0+04kH3ch3Lk77Euvbra6haj2
-         pEuypRTL3b/yGQinH96Zckmig3xyv21svIzwof2O/MrXXTGufowhje33mrWBttIIy1FU
-         aA6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ipeEMzhkOnzLxRec01CNpfZFCUUDDiAMbxb6yqTWXBA=;
-        b=JhtXUc+OkxwghNE7YdZlPE0BXPoD2TanqQMuE4TlB+kanQ3M0KA7F7+uR59Ok38Trp
-         gHIBXgJIRPVCK9wC0yZM4RyJ8v6FoL3n7aaR4v1J90rVjiMIr9hN5ECzBSUtJRu9mNAl
-         2/RT9nAclsDdVWHHWs29E6HTeWbuQ6OICEcLl1a0TPwoLDOxGptLm/P2sgtU4a6PmYg8
-         Ter12MnejNVpBj4TexvrIkZfcaah7L1HnSgw/2Ovuav6q1iCuvw4Bb3wFrIc6wuKO3zA
-         rpiBr8/oc0xuaJm2VaghbhImmpeTKxMoiixea2NyTVMFkgnB8GxE9K1p3fHxXlWAdaeX
-         zBLQ==
-X-Gm-Message-State: APjAAAW7NBtmN79FtVPOcdjvDWKz4ay/xM3mLvnnFapAC2DQIv5M8vw2
-        k0dMfo7Hs51jYl11mKJvDeb6Pf86ZylF/sxnoL0=
-X-Google-Smtp-Source: APXvYqwvPz+okueO6liKcnbswClu66DZ/pQ8pTDxUw42psNY+AYLr68zWA+OHWK/KTz0h7RPWY7wot4rxEPB0hnatBY=
-X-Received: by 2002:a67:5c41:: with SMTP id q62mr21584181vsb.236.1571217213101;
- Wed, 16 Oct 2019 02:13:33 -0700 (PDT)
+        Wed, 16 Oct 2019 05:15:16 -0400
+Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1iKfOh-0001AB-75; Wed, 16 Oct 2019 10:15:11 +0100
+Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.2)
+        (envelope-from <ben@rainbowdash.codethink.co.uk>)
+        id 1iKfOg-0006xX-Gi; Wed, 16 Oct 2019 10:15:10 +0100
+From:   "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
+To:     linux-kernel@lists.codethink.co.uk
+Cc:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] mm: include <linux/mman.h> for vm_committed_as_batch
+Date:   Wed, 16 Oct 2019 10:15:09 +0100
+Message-Id: <20191016091509.26708-1-ben.dooks@codethink.co.uk>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-References: <20191016084632.26424-1-yuehaibing@huawei.com>
-In-Reply-To: <20191016084632.26424-1-yuehaibing@huawei.com>
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-Date:   Wed, 16 Oct 2019 12:13:07 +0300
-Message-ID: <CAFCwf11Zew-SdHxz7Nj3gFXRhfF74UgXPJdXJsXj8f=xth_mbg@mail.gmail.com>
-Subject: Re: [PATCH -next] habanalabs: remove set but not used variable 'qman_base_addr'
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tomer Tayar <ttayar@habana.ai>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Omer Shpigelman <oshpigelman@habana.ai>,
-        Dalit Ben Zoor <dbenzoor@habana.ai>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 11:48 AM YueHaibing <yuehaibing@huawei.com> wrote:
->
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/misc/habanalabs/goya/goya.c: In function 'goya_init_mme_cmdq':
-> drivers/misc/habanalabs/goya/goya.c:1536:6: warning:
->  variable 'qman_base_addr' set but not used [-Wunused-but-set-variable]
->
-> It is never used, so can be removed.
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/misc/habanalabs/goya/goya.c | 4 ----
->  1 file changed, 4 deletions(-)
->
-> diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
-> index 6fba14b..1ef34ec 100644
-> --- a/drivers/misc/habanalabs/goya/goya.c
-> +++ b/drivers/misc/habanalabs/goya/goya.c
-> @@ -1533,7 +1533,6 @@ static void goya_init_mme_cmdq(struct hl_device *hdev)
->         u32 mtr_base_lo, mtr_base_hi;
->         u32 so_base_lo, so_base_hi;
->         u32 gic_base_lo, gic_base_hi;
-> -       u64 qman_base_addr;
->
->         mtr_base_lo = lower_32_bits(CFG_BASE + mmSYNC_MNGR_MON_PAY_ADDRL_0);
->         mtr_base_hi = upper_32_bits(CFG_BASE + mmSYNC_MNGR_MON_PAY_ADDRL_0);
-> @@ -1545,9 +1544,6 @@ static void goya_init_mme_cmdq(struct hl_device *hdev)
->         gic_base_hi =
->                 upper_32_bits(CFG_BASE + mmGIC_DISTRIBUTOR__5_GICD_SETSPI_NSR);
->
-> -       qman_base_addr = hdev->asic_prop.sram_base_address +
-> -                               MME_QMAN_BASE_OFFSET;
-> -
->         WREG32(mmMME_CMDQ_CP_MSG_BASE0_ADDR_LO, mtr_base_lo);
->         WREG32(mmMME_CMDQ_CP_MSG_BASE0_ADDR_HI, mtr_base_hi);
->         WREG32(mmMME_CMDQ_CP_MSG_BASE1_ADDR_LO, so_base_lo);
-> --
-> 2.7.4
->
->
+mm_init.c needs to include <linux/mman.h> for the
+definition of vm_committed_as_batch. Fixes the following
+sparse warning:
 
-This patch is:
-Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
-Applied to -next
-Thanks,
-Oded
+mm/mm_init.c:141:5: warning: symbol 'vm_committed_as_batch' was not declared. Should it be static?
+
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+---
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org
+---
+ mm/init-mm.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/mm/init-mm.c b/mm/init-mm.c
+index fb1e15028ef0..19603302a77f 100644
+--- a/mm/init-mm.c
++++ b/mm/init-mm.c
+@@ -5,6 +5,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/list.h>
+ #include <linux/cpumask.h>
++#include <linux/mman.h>
+ 
+ #include <linux/atomic.h>
+ #include <linux/user_namespace.h>
+-- 
+2.23.0
+
