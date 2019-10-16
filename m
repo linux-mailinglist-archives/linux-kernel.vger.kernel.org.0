@@ -2,51 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2121D990C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 20:20:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58523D9911
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2019 20:20:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436579AbfJPST7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 16 Oct 2019 14:19:59 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:42948 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732498AbfJPSTy (ORCPT
+        id S2436612AbfJPSUM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 16 Oct 2019 14:20:12 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:36950 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436553AbfJPSTz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Oct 2019 14:19:54 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9GIJrtO075094;
-        Wed, 16 Oct 2019 13:19:53 -0500
+        Wed, 16 Oct 2019 14:19:55 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9GIJs5P082711;
+        Wed, 16 Oct 2019 13:19:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1571249993;
-        bh=nySnbiUxuIsqbHhqmn0FbBUD6yHOrtqrKQi9klsEvvE=;
+        s=ti-com-17Q1; t=1571249994;
+        bh=qO1QBda1j09wFru/dRnYU6qoLbxJZvjOQKHQRIr6kD0=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=iz5MIiNOwqZQfNBBwrDOoWvUS2w+PpF8Cc/kkETVf4ojMSY+qIUp5WXrI8LpZTO+t
-         /6F12bkCIixukUeZ3ArtIomeChLXATUg5rbgSN9+Y2FA+dfB7iJS/yO8m2Y0S7ND+/
-         ri9f9Y9lzkmXmmzu/0b3DAVk+mRBAVcu57iDIIiA=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9GIJrom067465
+        b=bmAcZo9wMxP3O2YDcSRNuC9jWb7Y+ezd+FCtDMePUQFM8xBruhNcM0Ae8qvF4qEgh
+         xvf7UVjrH8OQTb+IxuJev3Gp7jLTNwTnOOWF7NB7DXIVOaXS8CvzTpq66bzJsfi0o4
+         N9vUVS68wUjtPpZP+VxnQdpneGCoK5sSJDSMw2e0=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9GIJsEE125496
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Oct 2019 13:19:53 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+        Wed, 16 Oct 2019 13:19:54 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 16
- Oct 2019 13:19:52 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ Oct 2019 13:19:47 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 16 Oct 2019 13:19:46 -0500
+ Frontend Transport; Wed, 16 Oct 2019 13:19:54 -0500
 Received: from legion.dal.design.ti.com (legion.dal.design.ti.com [128.247.22.53])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9GIJqGK074664;
-        Wed, 16 Oct 2019 13:19:52 -0500
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9GIJsGN074684;
+        Wed, 16 Oct 2019 13:19:54 -0500
 Received: from localhost ([10.250.79.55])
-        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id x9GIJpZ07913;
-        Wed, 16 Oct 2019 13:19:51 -0500 (CDT)
+        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id x9GIJrZ07934;
+        Wed, 16 Oct 2019 13:19:53 -0500 (CDT)
 From:   "Andrew F. Davis" <afd@ti.com>
 To:     Jiri Kosina <trivial@kernel.org>
 CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         "Andrew F . Davis" <afd@ti.com>
-Subject: [PATCH 07/10] [SCSI] Buslogic: Remove unneeded conversions to bool
-Date:   Wed, 16 Oct 2019 14:19:41 -0400
-Message-ID: <20191016181944.25106-4-afd@ti.com>
+Subject: [PATCH 08/10] i40e: Remove unneeded conversions to bool
+Date:   Wed, 16 Oct 2019 14:19:42 -0400
+Message-ID: <20191016181944.25106-5-afd@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191016181944.25106-1-afd@ti.com>
 References: <20191016181944.25106-1-afd@ti.com>
@@ -62,22 +62,22 @@ Found with scripts/coccinelle/misc/boolconv.cocci.
 
 Signed-off-by: Andrew F. Davis <afd@ti.com>
 ---
- drivers/scsi/BusLogic.c | 2 +-
+ drivers/net/ethernet/intel/i40e/i40e_main.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/BusLogic.c b/drivers/scsi/BusLogic.c
-index c25e8a54e869..6a0a74e9edc9 100644
---- a/drivers/scsi/BusLogic.c
-+++ b/drivers/scsi/BusLogic.c
-@@ -2236,7 +2236,7 @@ static bool __init blogic_inquiry(struct blogic_adapter *adapter)
- 					"INQUIRE INSTALLED DEVICES ID 0 TO 7");
- 		for (tgt_id = 0; tgt_id < 8; tgt_id++)
- 			adapter->tgt_flags[tgt_id].tgt_exists =
--				(installed_devs0to7[tgt_id] != 0 ? true : false);
-+				(installed_devs0to7[tgt_id] != 0);
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
+index 6031223eafab..87a9f2b586d5 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_main.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
+@@ -11435,7 +11435,7 @@ static int i40e_get_rss_aq(struct i40e_vsi *vsi, const u8 *seed,
  	}
- 	/*
- 	   Issue the Inquire Setup Information command.
+ 
+ 	if (lut) {
+-		bool pf_lut = vsi->type == I40E_VSI_MAIN ? true : false;
++		bool pf_lut = vsi->type == I40E_VSI_MAIN;
+ 
+ 		ret = i40e_aq_get_rss_lut(hw, vsi->id, pf_lut, lut, lut_size);
+ 		if (ret) {
 -- 
 2.17.1
 
